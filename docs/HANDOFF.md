@@ -1,3 +1,8 @@
+# STATE 2026-10-09 NIGHT (read this first)
+Phase 2 is DONE and PROMOTED (library v6, 218 deep notes). Backups in sync (GitHub DomLynch/Games-Analysis public, Mac ~/Developer/Games-Analysis, VPS /root/Games-Analysis). Audit: 34/40 clean; 9,929 quotes verified. NEXT (Dom approved all, none started): re-rate unread P/N cells (wave 1 lists ready in /private/tmp/p2/wave2, brief-rerate.md), cross-game pattern pages, gap analysis vs the 22-row parity checklist, numbers table, cross-genre transfers, deeper design research, per-lane build kits. Rules: Sonnet 5.5 medium only, no Haiku; every claim needs a quoted donor line checked by /private/tmp/p2/proof/verify_receipts.py (copy in repo gate/); VPS only for donor reads; back up before bulk edits.
+
+---- (older handoff below, now historical) ----
+
 # Donor library, phase 2 handoff (written 2026-10-09, before /clear)
 
 Read this first. Then read the memory files in the project memory folder.
