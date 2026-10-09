@@ -1,6 +1,6 @@
 # orbitersim-orbiter (rendering-performance, cell 17)
 
-Donor: /mnt/frankendom-donors/orbitersim-orbiter/OVP/D3D9Client/Scene.cpp | Licence: MIT (repo LICENSE); Scene.cpp's own header says dual GPL v3 / LGPL v3, so treat as clean-room | C++ | symbol Scene::CheckVisual / GetObjectAppRad
+Donor: /mnt/frankendom-donors/orbitersim-orbiter/OVP/D3D9Client/Scene.cpp | Licence: Scene.cpp header says dual GPL v3 / LGPL v3 (repo LICENSE is MIT), so treat as clean-room | C++ | symbol Scene::CheckVisual / GetObjectAppRad
 
 ## 1. Mechanism
 
@@ -61,7 +61,7 @@ function checkVisual(v: Vis, cam: { x: number; y: number; z: number }, viewHeigh
 
 - Frankendom target: TARGET src/fight/zone-lod.ts (new module; zone objects are data, so the thresholds live in the zone catalogue). Today: no Frankendom module covers this.
 - Parity-checklist row: 16 (colour grade / quality, K4) is the nearest row; with row 20 (catalogue as runtime source) for the thresholds as zone data.
-- Reuse tag: adapt (MIT, the formula and hysteresis can be lifted; the thresholds are Orbiter's and must be tuned for Frankendom).
+- Reuse tag: rewrite-from-idea (the file header is GPL/LGPL, so clean-room only; the formula and the two-threshold idea are generic, the thresholds are Orbiter's and must be tuned for Frankendom).
 - Brief rule served: (category default, not per-cell) 3 (warm up at zone entry); rules 7-9 n/a
 
 ## 6. Gaps and risks

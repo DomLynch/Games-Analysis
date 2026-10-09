@@ -1,6 +1,6 @@
 # OpenTTD-OpenTTD (city-map-design, cell 20)
 
-Donor: /mnt/frankendom-donors/OpenTTD-OpenTTD/src/genworld.cpp | Licence: GPL-2.0 | C++ | symbol _GenerateWorld / GenerateWorld (input line 94 verified: `_GenerateWorld`; `GenerateWorld` at 291)
+Donor: /mnt/frankendom-donors/OpenTTD-OpenTTD/src/genworld.cpp | Licence: GPL-2.0-only (per COPYING.md and the OpenTTD file headers: version 2) | C++ | symbol _GenerateWorld / GenerateWorld (input line 94 verified: `_GenerateWorld`; `GenerateWorld` at 291)
 
 ## 1. Mechanism
 
@@ -30,10 +30,10 @@ Donor: /mnt/frankendom-donors/OpenTTD-OpenTTD/src/genworld.cpp | Licence: GPL-2.
 
 ## 4. TypeScript sketch
 
-simplified: the sketch is a two-function model: ordered stages run with one generator, then a warm-up. It omits the branch on the landscape result (flat/empty versus generated), the mode checks that skip the tile loop and the script loop, the abort path with cleanup, the progress weights, the seed sentinel, and the map-height-limit estimate. Its `warmUp` runs the tile loop and then the script loop exactly as the donor orders them, but with the script tick before the sleep check where the donor checks sleep after each tick (the same order).
+simplified: the sketch is a two-function model: ordered stages run with one generator, then a warm-up. It omits the branch on the landscape result (flat/empty versus generated), the mode checks that skip the tile loop and the script loop, the abort path with cleanup, the progress weights, the seed sentinel, and the map-height-limit estimate. Its `warmUp` runs the tile loop and then the script loop in the donor's order (the script tick, then the sleep check). The tile warm-up is unconditional here, where the donor skips it in the empty mode.
 
 ```ts
-// Licence: GPL-2.0 - clean-room sketch, no lines translated
+// Licence: GPL-2.0-only - clean-room sketch, no lines translated
 // Clean-room: a seeded map build in ordered stages, followed by a fixed warm-up before play starts.
 type Rng = { next(): number }; // seeded generator; the caller supplies it from one seed
 type Stage = { name: string; run: (rng: Rng) => void };
@@ -64,7 +64,7 @@ function warmUp(tileTick: () => void, scriptTick: () => void, scriptSleeping: ()
 
 - Frankendom target: `origins/world/generate.ts` (`generateZone(template, seed, overrides)` and `generateRegion`: zones from a template and a seed, "same template + seed gives the same zone, byte for byte", using a seeded mulberry32 `prng`, never `Math.random`) and the loader `origins/zones/loader.ts` (the one place that reads and checks a zone data package). Both exist on the VPS snapshot /root/work-k7 (not main); headers and `origins/world/README.md` read only. The donor adds a fixed warm-up after generation, which would sit at zone entry in the loader.
 - Parity-checklist row: none of rows 1 to 22 (rows are the fight engine; zone data is outside them). Feature-map section: zones as data, brief rule 10 (zone copies with seeding) and `docs/specs/zone-runtime.md` (the loader's governing spec).
-- Reuse tag: rewrite-from-idea (GPL-2.0, clean-room sketch only).
+- Reuse tag: rewrite-from-idea (GPL-2.0-only, clean-room sketch only).
 - Brief rule served: 10 (zone copies with soft cap and seeding); rules 7-9 n/a
 
 ## 6. Gaps and risks

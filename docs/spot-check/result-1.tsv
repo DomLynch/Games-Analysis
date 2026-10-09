@@ -1,0 +1,21 @@
+game	category	old_rating	verdict	finding
+shlomif-PySolFC	ai-aggro	N	HOLDS	Solitaire collection; no enemies or aggro.
+pshenok-server-survival	ai-aggro	N	HOLDS	Tower-defense style sim; requests flow along links, no target selection/chase. Only camera orbit code matches grep.
+supertuxkart-stk-code	spawns-encounters	N	UNDER	three_strikes_battle.cpp:629-690 spawnSpareTireKarts: difficulty-scaled timer, spawns N helper karts from count of players low on lives, with lifespan. Adaptive rubber-band spawn director usable for catch-up NPC/pickup spawns.
+Wargus-wargus	combat-sim	N	HOLDS	Only Lua unit stat tables (BasicDamage/Armor); resolution lives in the external Stratagus engine, not here.
+azerothcore-azerothcore-wotlk	camera	N	HOLDS	CinematicMgr.cpp is a server-driven fly-by cutscene camera (waypoint timestamps, lookahead); cutscene only, not gameplay camera. Weak P at best.
+teeworlds-teeworlds	combat-sim	N	UNDER	character.cpp:714-800 CCharacter::TakeDamage: knockback impulse, friendly-fire gate, self-damage halving, armor-then-health split, damage-indicator event, hit sound to attacker and spectators, death and kill credit. Compact authoritative server damage resolution ideal for a fast fighting game.
+flareteam-flare-game	camera	N	HOLDS	Repo is only mods/data/art; engine absent, no camera code.
+SFTtech-openage	server-tick-netcode	N	HOLDS	event_loop.cpp is a local discrete-event queue with curves; no network, tick sync or lag handling.
+SCAR	server-tick-netcode	N	HOLDS	Skyrim SKSE attack-combo plugin hooks; no server tick/netcode.
+Blizzard-s2client-api	ai-aggro	N	HOLDS	bot_examples.cc MarineMicroBot (3150-3260) has nearest-target pick and step back after a kill; tiny demo client for an external API, P-level at most.
+clockworklabs-SpacetimeDB	server-tick-netcode	P	OVER	Evidence update.rs is database schema auto-migration, not a tick loop or sync. Scheduled reducers exist only as binding docs/smoketests; nothing game-tick or lag related.
+2004Scape-Server	ai-aggro	P	UNDER	Npc.ts:247-282 huntAll plus 913-965 huntPlayers: rate-throttled hunt scan within huntrange via HuntIterator, filters (vis, busy, AFK, too-strong-by-combat-level, recently-in-combat, multi-zone rule, var/inventory conditions), random pick among candidates, optional stop-hunting after first find. Real data-driven NPC aggro acquisition, directly reusable.
+gawric-Unity-Client-for-L2J	progression	P	UNDER	MaxLevelExp.cs:8-142 LevelServer: full L2 XP threshold table to level 81, GetLevelFromExp and GetExpToNextLevel (PlayerStats.ExpPercent uses it). Self-contained XP curve and level-lookup; client-side display only, no level-up effects.
+flareteam-flare-game	combat-sim	P	HOLDS	Only data: powers/*.txt (cleave: multitarget, base_damage=melee) and engine/combat.txt clamp ranges; no resolution code in repo. Evidence .blend is irrelevant but P is fair for data definitions.
+OpenDUNE-OpenDUNE	ai-aggro	P	UNDER	unit.c:923-980 Unit_FindBestTargetUnit (+ Unit_FindBestTargetEncoded at ~2396, Unit_FindBestTargetStructure): scans all units, range-mode filter, scores each with Unit_GetTargetUnitPriority, picks max; compares unit vs structure priority; team.c:259 applies it per team with kamikaze mode. Classic priority-scored target selection for enemy AI.
+keldaanCommunity-pokemonAutoChess	loot-drops	P	HOLDS	pve-stages.ts per-stage getRewards: random component pick with no-repeat filter and shiny bonus; real but small reward tables, P fair. Evidence file items-statistic.ts is stats, not drops.
+l1j-en-classic	rendering-performance	P	OVER	GeneralThreadPool.java is an executor/thread pool wrapper, not rendering, culling or LOD (server-only game). Nothing for batching/culling; N.
+2004Scape-Server	camera	P	HOLDS	Server only sends CAM_LOOKAT/MOVETO/SHAKE/RESET packets and CameraInfo records; no control logic. P fair.
+gawric-Unity-Client-for-L2J	combat-sim	P	HOLDS	Evidence L2WeaponPrefabBuilder is an editor tool. AttackTimingHelper.cs derives attack cycle ms from pAtkSpd (500000/pAtkSpd) for animation timing only; damage resolution is server side. P fair.
+hedgewars-hw	spawns-encounters	P	HOLDS	desert01.lua just calls SpawnSupplyCrate at fixed coordinates; scripted placement, no wave/respawn logic. P fair.

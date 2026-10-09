@@ -2,7 +2,7 @@
 
 Donor: `/mnt/frankendom-donors/PixelGuys-Cubyz/src/network/protocols.zig` | Licence: GPL-3 | Zig | symbol `protocols.onReceive` / `handShake`
 
-Checked: (verified: `onReceive` at 48-62, `handShake` struct at 89, `playerPosition` struct 416-442, `entityPosition` struct 444-533). Also read: `init` (29-46), `User.receiveData` (server.zig 542-552), the `HandShakeState` enum (network.zig 1478-1487).
+Checked: (verified: `onReceive` at 48-62, `handShake` struct at 89, `playerPosition` struct 416-442, `entityPosition` struct 444-533). Also read: `init` (29-46), `User.receiveData` (server.zig 542-552), the `HandShakeState` enum (`src/network.zig` 1478-1487).
 
 ## 1. Mechanism
 

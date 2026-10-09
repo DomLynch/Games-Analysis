@@ -18,7 +18,7 @@ Checked: Symbol `NetworkBase::Tick` at 480-511, `TickServer` 540-579, `TickClien
 - `NetworkBase::Tick`: `/mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2/network/NetworkBase.cpp` 480-511. Delta time, mode dispatch, deferred close and reconnect.
 - `NetworkBase::TickServer`: `/mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2/network/NetworkBase.cpp` 540-579. Per-connection packet processing, disconnect on failure, cooldown decay, pings, advertising, accept.
 - `NetworkBase::TickClient`: `/mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2/network/NetworkBase.cpp` 586-708 (connecting and connected states; read in full).
-- `NetworkBase::CheckDesynchronizaton`: `/mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2/network/NetworkBase.cpp` 883-910. Client-side random-state check per game tick; enters the desynced state and asks for a snapshot.
+- `NetworkBase::CheckDesynchronizaton`: `/mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2/network/NetworkBase.cpp` 883-910. Client-side random-state check per game tick; on a mismatch only marks the connection desynced, records `desyncTick`, shows the desync message and closes the connection unless `stayConnected` is set. `RequestStateSnapshot` (912-917) is a separate call that the check does not make.
 - `NetworkBase::DecayCooldown`: same file 219-232. Per-player cooldown map decremented by elapsed ms.
 - `NetworkBase::ProcessConnection`: `/mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2/network/NetworkBase.cpp` 1799-1850 (read in full). Reads up to `kMaxPacketsPerTick` = 100 packets (line 65) per call; a disconnect or an invalid connection after a packet returns false (1810-1824), and so does `receivedDataRecently` failing (1836-1847; the timeout is 40 s, NetworkConnection.cpp 26).
 
@@ -27,7 +27,7 @@ Checked: Symbol `NetworkBase::Tick` at 480-511, `TickServer` 540-579, `TickClien
 | Reusable algorithm | Game-specific constants |
 |---|---|
 | Server owns the state; clients send commands; desync is a check against the server's random state | Random state word (theirs, the scenario RNG) |
-| Desync is a state, not a crash: mark, notify, ask for a snapshot | Message text and status window (theirs) |
+| Desync is a state, not a crash: mark it, record the tick, notify, close unless configured to stay (a snapshot request is a separate call) | Message text and status window (theirs) |
 | Per-connection processing with cooldown decay per player | Cooldown decays by elapsed ms (theirs, 226) |
 | Heartbeat ping | 3000 ms interval (theirs, 563 and 695) |
 | Per-tick packet cap and silence timeout | 100 packets (theirs, line 65); 40 s no-data timeout (theirs, NetworkConnection.cpp 26) |
@@ -35,7 +35,7 @@ Checked: Symbol `NetworkBase::Tick` at 480-511, `TickServer` 540-579, `TickClien
 
 ## 4. TypeScript sketch
 
-simplified: omits the ping and ping list, the advertiser, accepting new sockets, the per-tick packet cap (100), the 40 s silence timeout, the entity-checksum comparison, the "map not loaded" and "no data for this tick" passes, and the client state machine. Cooldown here drops by a fixed 1 per tick instead of by elapsed milliseconds.
+simplified: omits the ping and ping list, the advertiser, accepting new sockets, the per-tick packet cap (100), the 40 s silence timeout, the entity-checksum comparison, the desync message and the close-unless-stayConnected step (the sketch only marks the state), the "map not loaded" and "no data for this tick" passes, and the client state machine. Cooldown here drops by a fixed 1 per tick instead of by elapsed milliseconds.
 
 ```ts
 // Licence: GPL-3.0 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -58,7 +58,7 @@ function serverNetTick(conns: Conn[], process: (c: Conn) => boolean): Conn[] {
 function checkDesync(state: Desync, tick: number, mine: number, server: number): Desync {
   if (state) return state;                 // already desynced; do not repeat
   if (mine === server) return null;
-  return { tick };                         // mark, then ask for a snapshot for this tick
+  return { tick };                         // mark desynced and record the tick; the donor then notifies and closes unless stayConnected (snapshot request is separate)
 }
 ```
 

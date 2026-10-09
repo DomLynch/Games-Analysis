@@ -1,10 +1,10 @@
 # ioquake-ioq3 (animation-rigs, cell 3)
 
-Donor: /mnt/frankendom-donors/ioquake-ioq3/code/renderergl1/tr_animation.c | Licence: GPL-2 | C | symbol R_MDRAddAnimSurfaces / RB_MDRSurfaceAnim
+Donor: /mnt/frankendom-donors/ioquake-ioq3/code/renderergl1/tr_animation.c | Licence: GPL-2.0-or-later (per tr_animation.c header) | C | symbol R_MDRAddAnimSurfaces / RB_MDRSurfaceAnim
 
 ## 1. Mechanism
 - Donor: ioquake3 renderer (renderergl1) for MDR skeletal models. Animation is done on the GPU-less CPU path: bones are blended on the CPU and vertices are skinned per draw.
-- R_MDRAddAnimSurfaces (181-304) runs per entity each render: wraps both frame numbers by modulo only when the entity has the wrap-frames flag (197-201), then validates them: if either frame or old frame is out of range (negative or at or above the frame count), both are reset to 0 (not clamped or wrapped; 209-218). It then calls R_MDRCullModel (224) and returns on CULL_OUT. R_MDRCullModel (45-129) first tests a bounding sphere per frame (skipped for non-normalised axes, 57-108), then culls on the merged box of both frames (110-128). Next it calls R_ComputeLOD (230): with fewer than 2 LODs it uses 0; otherwise it projects the frame's bounding radius, scales by r_lodscale (capped at 20), multiplies by the LOD count, clamps and adds r_lodbias (tr_mesh.c 166-235). The model returns early if it has no LODs, and the LOD index is clamped (232-235). Lighting is set up unless it is a third-person personal model with shadows at 1 or less (244-247), then fog (250), then each surface gets a shader (custom shader; or a custom skin matched by surface name, else default; or the surface's own shader index; else default; 257-276), optional stencil or projection shadow surfaces (281-297), and the main draw surface only when it is not the personal model (299-300).
+- R_MDRAddAnimSurfaces (181-304) runs per entity each render: wraps both frame numbers by modulo only when the entity has the wrap-frames flag (197-201), then validates them: if either frame or old frame is out of range (negative or at or above the frame count), both are reset to 0 (not clamped or wrapped; 209-218). It then calls R_MDRCullModel (224) and returns on CULL_OUT. R_MDRCullModel (45-129) first tests a bounding sphere per frame (skipped for non-normalised axes, 57-108), then culls on the merged box of both frames (110-128). Next it calls R_ComputeLOD (230): with fewer than 2 LODs it uses 0; otherwise it projects the frame's bounding radius, scales by r_lodscale (capped at 20), multiplies by the LOD count and clamps; r_lodbias is added after either path and the result is clamped again (tr_mesh.c 166-237). The model returns early if it has no LODs, and the LOD index is clamped (232-235). Lighting is set up unless it is a third-person personal model with shadows at 1 or less (244-247), then fog (250), then each surface gets a shader (custom shader; or a custom skin matched by surface name, else default; or the surface's own shader index; else default; 257-276), optional stencil or projection shadow surfaces (281-297), and the main draw surface only when it is not the personal model (299-300).
 - RB_MDRSurfaceAnim (311-422) runs at draw time: if the entity's frame and old frame are equal, backlerp is forced to 0; otherwise it is the entity's backlerp and frontlerp is 1 minus it (329-338). It copies the triangle indexes (357-361). When backlerp is 0 the frame's bones are used as is (366-370); otherwise all numBones x 12 floats are blended as frontlerp x frame + backlerp x oldframe (375-378).
 - Each vertex is the sum over its weights of weight x (bone matrix row dotted with the weight's offset, plus the matrix translation column), giving the position (398-400). The normal uses the same sum with the vertex normal and without the translation column (402-404). Texture coordinates are copied (415-416).
 - Output: indexes, positions, normals and texture coordinates appended to the tess draw buffer (407-421). It reads the entity's frame fields and backlerp from backEnd.currentEntity; it writes no game state.
@@ -29,7 +29,7 @@ Donor: /mnt/frankendom-donors/ioquake-ioq3/code/renderergl1/tr_animation.c | Lic
 simplified: positions only (donor also skins normals without translation and copies texture coordinates and indexes); culling, LOD, shader pick and shadows omitted; the caller must pass back = 0 when the two frames are equal (donor forces this itself, 329-333); bones are plain arrays, not the packed bone struct.
 
 ```ts
-// Licence: GPL-2 | clean-room: written from the mechanism, no donor lines.
+// Licence: GPL-2.0-or-later | clean-room: written from the mechanism, no donor lines.
 // Keyframe blend then skin. Each bone is a 3 x 4 matrix (12 numbers, row-major).
 // The pose is the linear blend of two keyframes by one factor. Each vertex is the weighted sum
 // of its bone-transformed offsets. With the same frame on both sides, no blend is needed.
@@ -64,7 +64,7 @@ function skinSurface(verts: Vertex[], cur: Mat34[], old: Mat34[], back: number):
 ## 5. Lands in
 - Frankendom file: TARGET src/fight/creature-pose.ts (proposed, pose blend for K3 creatures; today the creature clips are the origins own copy at origins/preview/mob-clips.ts, not under src/).
 - Parity-checklist row: 7 (creature actor and clips, K3 creatures). The donor's draw path (cull, LOD, shadows) is a World concern, not a fight row.
-- Reuse tag: rewrite-from-idea (GPL-2; mechanism only).
+- Reuse tag: rewrite-from-idea (GPL-2.0-or-later; mechanism only).
 - Brief rule served: (category default, not per-cell) 1 (one combat core, two clients); rules 7-9 n/a
 
 ## 6. Gaps and risks
@@ -73,4 +73,4 @@ function skinSurface(verts: Vertex[], cur: Mat34[], old: Mat34[], back: number):
 - The donor's culling and LOD are presentation. Frankendom's hit boxes and kill checks must come from the one engine and the server, never the skinned mesh (one engine; server-verified kills).
 - Zones are data: a creature's pose format and clip list belong in the catalogue (row 20/21), not in per-zone skinning code.
 - MC_UnCompress is a storage decode; Frankendom's clips need not use a compressed matrix format.
-- GPL-2: mechanism only; no lines copied.
+- GPL-2.0-or-later: mechanism only; no lines copied.

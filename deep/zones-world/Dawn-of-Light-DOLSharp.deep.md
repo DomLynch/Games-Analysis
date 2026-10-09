@@ -1,6 +1,6 @@
 # Dawn-of-Light-DOLSharp (zones-world, cell 7)
 
-Donor: /mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/world/Zone.cs | Licence: GPL-2 | C# | symbol Zone.ObjectEnterZone / GetObjectsInRadius
+Donor: /mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/world/Zone.cs | Licence: GPL-2.0-or-later per Zone.cs header (LICENSE file is GPL-2 text) | C# | symbol Zone.ObjectEnterZone / GetObjectsInRadius
 
 Symbol check (opened, 2026-10-09 correction pass): ObjectEnterZone 465-504, GetObjectsInRadius 542-675, GetSubZoneIndex 447-458 all land on the named functions. Also opened: private ObjectEnterZone overload 512-535, UnsafeAddToListWith(out)DistanceCheck 678-761, Relocate 766-845, UnsafeUpdateSubZoneTimestamp 848-859, ShouldElementMove 862-923, CheckSquareDistance 988-1009, CheckMinDistance 1025-1050, CheckMaxDistance 1065-1074.
 
@@ -31,7 +31,7 @@ Symbol check (opened, 2026-10-09 correction pass): ObjectEnterZone 465-504, GetO
 | Lazy bucket fix-up when a query touches a list, plus a timed sweep | Ghost test: not Active or wrong region (theirs, 869-871) |
 
 ## 4. TypeScript sketch
-simplified: no locking; no init-on-first-use; no per-list refresh timestamp or timed Relocate sweep (fix-up happens only when a query touches a list); objects that left the zone are re-entered into the same grid instead of being routed to another zone by coordinate; the donor appends the whole out-of-zone and in-zone move sets after the walk, while this sketch re-buckets as it goes; no ignoreZ (2D only); bucket key is cell plus kind in one string map instead of an array of lists.
+simplified: no locking; no init-on-first-use; no per-list refresh timestamp or timed Relocate sweep (fix-up happens only when a query touches a list); objects that left the zone are dropped (enter ignores a coordinate outside the grid) instead of being routed to another zone by coordinate; no region check in the ghost test (inactive only); the donor appends the whole out-of-zone and in-zone move sets after the walk, while this sketch re-buckets as it goes; no ignoreZ (2D only); bucket key is cell plus kind in one string map instead of an array of lists.
 ```ts
 // Licence: GPL-2 (Dawn-of-Light-DOLSharp) | clean-room: written from the mechanism, no donor lines.
 type Kind = 'player' | 'npc' | 'item' | 'door';

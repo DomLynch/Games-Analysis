@@ -14,7 +14,7 @@ Symbol check (opened on the VPS, 2026-10-09): followTarget 599, followTrans 642,
 
 ## 2. Key functions
 - Camera::tickThirdPerson (OpenGothic) | /mnt/frankendom-donors/OpenGothic/common/camera.cpp | 787-856 | per-frame driver: offset, collision pull-in, smoothing, range collision, origin and angles.
-- Camera::followTarget (OpenGothic) | /mnt/frankendom-donors/OpenGothic/common/camera.cpp | 599-673 | eases the aim toward the desired point (inertia or direct).
+- Camera::followTarget (OpenGothic) | /mnt/frankendom-donors/OpenGothic/common/camera.cpp | 599-640 | eases the aim toward the desired point (inertia or direct); `followTrans` (642-657) and `followRot` (659-673) are separate functions.
 - Camera::followTrans (OpenGothic) | /mnt/frankendom-donors/OpenGothic/common/camera.cpp | 642-657 | origin eases toward aim + dir x range.
 - Camera::calcCameraColision (ray fan) (OpenGothic) | /mnt/frankendom-donors/OpenGothic/common/camera.cpp | 858-900 | 3x3 fan of physics rays from the aim, returns the nearest blocked distance minus padding.
 - Camera::calcCameraColision (single ray) (OpenGothic) | /mnt/frankendom-donors/OpenGothic/common/camera.cpp | 915-931 | shortens the target offset with one ray.

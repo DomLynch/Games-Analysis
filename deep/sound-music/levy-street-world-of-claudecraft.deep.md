@@ -20,7 +20,7 @@ Donor: /mnt/frankendom-donors/levy-street-world-of-claudecraft/src/game/music_zo
 - `riftMusicZoneForTheme`, `/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/game/music_zones.ts`, lines 106-108. Display name to rift cue, void fallback.
 - `shouldResetMusicForDungeonEntry`, same file, lines 114-119. Restart music only on a real dungeon change.
 - `musicZoneForLocation`, same file, lines 122-135. Layered priority: dungeon, then hub, then overworld.
-- `dungeonMusicZoneForDungeon` (called at line 130; defined at line 15 of `/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/game/dungeon_music_zones.ts`, body not read). Dungeon id to cue.
+- `dungeonMusicZoneForDungeon` (called at line 130; defined at line 15 of `/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/game/dungeon_music_zones.ts`, lines 15-17: a 7-entry table (lines 5-13) with a `dungeon_hollow_crypt` fallback; read in full). Dungeon id to cue.
 
 ## 3. Numbers vs mechanism
 

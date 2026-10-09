@@ -1,10 +1,11 @@
 # otland-forgottenserver (inventory-bank-equipment, cell 9)
 
-Donor: /mnt/frankendom-donors/otland-forgottenserver/src/depotchest.cpp | Licence: GPL-2 | C++ | symbol DepotChest::queryAdd
+Donor: /mnt/frankendom-donors/otland-forgottenserver/src/depotchest.cpp | Licence: GPL-2.0 per LICENSE and the depotchest.cpp header | C++ | symbol DepotChest::queryAdd
+
 Symbol check: DepotChest::queryAdd (14) confirmed (opened this pass, whole file 1-64). postAddNotification (46-51) is a relay for the owning locker. Base Container::queryAdd was not read.
 
 ## 1. Mechanism
-- Server-side admission check for a depot (bank-like chest). Runs synchronously before every move or add into the depot.
+- Server-side admission check for a depot (bank-like chest). Admission check for adds into the depot (callers not read).
 - Inputs: the target thing, count, flags, and the acting creature. Output: a ReturnValue code (ok, NOTPOSSIBLE, DEPOTISFULL, or the base class result).
 - Non-items are refused (NOTPOSSIBLE). Unless the NOLIMIT flag bit is set, it computes how many depot slots the add would use: a partly moved stackable counts 1; an item not already at the top level of this depot counts its holding count + 1 when it is a container, otherwise 1.
 - If getItemHoldingCount() + that count exceeds maxDepotItems the add is refused with DEPOTISFULL. Otherwise it defers to Container::queryAdd (line 43; that base was not read).
@@ -19,18 +20,18 @@ Symbol check: DepotChest::queryAdd (14) confirmed (opened this pass, whole file 
 ## 3. Numbers vs mechanism
 | Reusable algorithm | Game-specific constants |
 |---|---|
-| Capacity counted in holdings, so a container costs its contents plus one (lines 31-33, 38) | maxDepotItems (theirs; used at line 38, definition not read) |
-| Bypass flag for admin or internal moves (line 22) | FLAG_NOLIMIT bit (theirs; bit value defined elsewhere, not read) |
+| Capacity counted in holdings, so a container costs its contents plus one (lines 31-33, 38) | maxDepotItems (theirs; used at line 38; a per-chest member defaulting to 0, depotchest.h:31, set through `setMaxDepotItems` at depotchest.h:17; the per-account-group value comes from groups.xml `maxdepotitems`, groups.cpp:66, player.cpp:4666; callers of the setter not read) |
+| Bypass flag for admin or internal moves (line 22) | FLAG_NOLIMIT = 1 << 0 (theirs; src/thing.h:19) |
 | Stackable partial moves cost one slot (lines 26-28) | items[type].maxItems (theirs; line 11, passed to the Container base as the chest's own capacity, not part of queryAdd) |
 
 ## 4. TypeScript sketch
-simplified: the final defer to Container::queryAdd (line 43) is replaced by returning 'ok'; the addCount order (stackable first, then foreign-parent overwrite) matches the donor.
+simplified: the final defer to Container::queryAdd (line 43) is replaced by returning 'ok'; the addCount order (stackable first, then foreign-parent overwrite) matches the donor; no `actor`, `index` or ReturnValue enum (three result codes only); item fields (`holding`, `topParent`) are given, not looked up.
 ```ts
-// Licence: GPL-2 (otland-forgottenserver) | clean-room: written from the mechanism, no donor lines.
+// Licence: GPL-2.0 (otland-forgottenserver) | clean-room: written from the mechanism, no donor lines.
 type Admit = 'ok' | 'DEPOT_FULL' | 'NOT_POSSIBLE';
 interface Item { stackable: boolean; count: number; isContainer: boolean; holding: number; topParent: string; }
 interface Depot { id: string; holding: number; maxItems: number; }
-const FLAG_NOLIMIT = 1 << 0; // theirs: bit value
+const FLAG_NOLIMIT = 1 << 0; // theirs: thing.h:19
 
 // Admission check run before any add into the depot.
 function depotAdmit(d: Depot, item: Item | null, moveCount: number, flags: number): Admit {

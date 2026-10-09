@@ -17,7 +17,7 @@ Symbol check (re-opened): canInterrupt 260, isInComboWindow 275, isPrehit 301, e
 - Sequence::isInComboWindow | /mnt/frankendom-donors/OpenGothic/common/graphics/mesh/animation.cpp | 275-278 | window test for one combo step.
 - Sequence::isPrehit | /mnt/frankendom-donors/OpenGothic/common/graphics/mesh/animation.cpp | 301-315 | true while a hit frame is still ahead.
 - Sequence::processEvents | /mnt/frankendom-donors/OpenGothic/common/graphics/mesh/animation.cpp | 418-456 | fires tags for frames crossed since the last tick.
-- Sequence::processEvent | /mnt/frankendom-donors/OpenGothic/common/graphics/mesh/animation.cpp | 458-? | per-tag switch that counts or records each tag (end not read).
+- Sequence::processEvent | /mnt/frankendom-donors/OpenGothic/common/graphics/mesh/animation.cpp | 458-518 | per-tag switch that counts or records each tag.
 
 ## 3. Numbers vs mechanism
 | Reusable algorithm | Game-specific constants |

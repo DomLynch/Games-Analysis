@@ -1,10 +1,10 @@
 # pokerth-pokerth (sound-music, cell 15)
 
-Donor: /mnt/frankendom-donors/pokerth-pokerth/src/gui/qt/sound/qtaudioplayer.cpp | Licence: AGPL-3 | C++ | symbol WavMixer::play / QtAudioPlayer::playSound
+Donor: /mnt/frankendom-donors/pokerth-pokerth/src/gui/qt/sound/qtaudioplayer.cpp | Licence: AGPL-3.0 per repo COPYING (no per-file header in qtaudioplayer.cpp) | C++ | symbol WavMixer::play / QtAudioPlayer::playSound
 
 ## 1. Mechanism
 - QtAudioPlayer::playSound(name) is the entry for one-shot sound effects. It returns at once unless audio is enabled and the play-sound-effects setting is on. It then dispatches (501-511) to one of four backends: a software mixer, an external player (paplay or pw-play, with a volume argument), the Windows multimedia API (Windows builds only), or by default a Qt sound-effect object, which restarts a clip that is already playing (514-544). The player id argument is unused.
-- Software mixer backend: WavMixer::play(key) looks up the shared PCM for the key and adds a voice (the PCM pointer and a position of 0) under a mutex. It then emits `readyRead` to wake the output sink; the comment (164-170) says a pull-mode sink stops pulling after a buffer underrun until that signal, observed on Android while the app is in the background. The mixer's volume is clamped to 0..1 (176). The WAV loader above it (up to line 148) walks RIFF chunks and stores the data chunk as PCM; it was not read in full.
+- Software mixer backend: WavMixer::play(key) looks up the shared PCM for the key and adds a voice (the PCM pointer and a position of 0) under a mutex. It then emits `readyRead` to wake the output sink; the comment (164-170) says a pull-mode sink stops pulling after a buffer underrun until that signal, observed on Android while the app is in the background. The mixer's volume is clamped to 0..1 (176). The WAV loader above it (`loadWav`, 94-148) reads the whole file, walks RIFF chunks, and accepts only PCM, 2 channels, 44100 Hz, 16-bit (anything else logs and returns false, 124-130); it stores the data chunk (clamped to the bytes available) as the key's PCM.
 - WavMixer::readData(maxBytes) is pulled by the audio sink. It rounds the request to whole 4-byte frames, zero-fills the buffer, and returns silence if no voice is active. With N voices active, each voice is scaled by the mixer volume times 1 over the square root of N, then added into 16-bit samples with clamping per add (226-228). A voice that reaches its end is removed (232-234). The comment (208-211) says the attenuation was added against clipping that caused stuttering on Windows 11.
 - paplay backend (546-572): `SoundVolume` divided by 10 is turned into a 0 to 65536 volume (paplay) or a 0 to 1 float with two decimals (pw-play, chosen by whether the binary name ends in `paplay`), and an external process is started detached.
 - Inputs: sound key, config flags, volume setting, output sink pulls. Output: mixed samples or an external playback. Play is event-driven; mixing is pull-driven by the sink.
@@ -21,12 +21,12 @@ Donor: /mnt/frankendom-donors/pokerth-pokerth/src/gui/qt/sound/qtaudioplayer.cpp
 | Voice list with a shared PCM and a position; retire at the end | none (algorithm) |
 | 1 over root-N attenuation as voices overlap, to avoid clipping | the rule is the mechanism; the source comment says it was tuned for a Windows stutter (theirs) |
 | Clamp summed samples to the 16-bit range | 16-bit range (algorithm) |
-| Frame alignment of 4 bytes (two channels of 16-bit) | stereo 16-bit (line 195-196) (theirs) |
+| Frame alignment of 4 bytes (two channels of 16-bit) | stereo 16-bit (line 195-196) and loader format PCM 44100 Hz (line 124) (theirs) |
 | Config flag gate for effects | setting name PlaySoundEffects (theirs) |
 | External volume scale | setting SoundVolume divided by 10, times 65536 (lines 556-557) (theirs) |
 
 ## 4. TypeScript sketch
-simplified: voices hold a PCM array shared by key in the donor (the sketch passes the array); the sketch has no mutex, no `readyRead` wake-up, no sample-loader, and its `pos` counts samples where the donor counts bytes; `volume` is fixed instead of clamped by `setVolume`.
+simplified: voices hold a PCM array shared by key in the donor (the sketch passes the array); the sketch has no mutex, no `readyRead` wake-up, no sample-loader (the donor loader only accepts 44100 Hz stereo 16-bit PCM), no 4-byte frame rounding of the request, and its `pos` counts samples where the donor counts bytes; the donor truncates each scaled sample to an integer before adding, the sketch adds the float and lets the typed array truncate on store; `volume` is fixed instead of clamped by `setVolume`.
 
 ```ts
 // Licence: AGPL-3 (pokerth-pokerth). CLEAN-ROOM: written from the mechanism, no donor lines.

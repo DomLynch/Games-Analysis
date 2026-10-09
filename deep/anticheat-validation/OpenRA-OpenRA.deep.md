@@ -1,6 +1,6 @@
 # OpenRA-OpenRA (anticheat-validation, cell 6)
 
-Donor: `/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Traits/World/ValidateOrder.cs` | Licence: GPL-3 | C# | symbol `ValidateOrder.OrderValidation` (verified at 23). The call site that makes this a gate is `ResolveOrder` in `OpenRA.Game/Network/UnitOrders.cs` (417), read in this cell.
+Donor: `/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Traits/World/ValidateOrder.cs` | Licence: GPL-3.0-or-later (per ValidateOrder.cs header) | C# | symbol `ValidateOrder.OrderValidation` (verified at 23). The call site that makes this a gate is `ResolveOrder` in `OpenRA.Game/Network/UnitOrders.cs` (417), read in this cell.
 
 ## 1. Mechanism
 
@@ -34,7 +34,7 @@ No numbers in the validator itself. The debug log channel name ("debug", line 33
 simplified: the donor's accept rule is the last step of the same validator (47), and the dead-or-missing test belongs to the call site; the sketch splits the target's own accept into a second validator (`traitAccepts`) and keeps the drop in `resolveOrder`, so an order with no subject returns true from the donor's validator and false from the sketch's second one (the donor never reaches it, because `ResolveOrder` drops it first). The sketch omits grouped-order splitting, the lobby lookup (it passes `clientKnown`), the bot-presence test (the donor requires the owner client to be a bot; the sketch only checks the controller index) and the log line.
 
 ```ts
-// Licence: GPL-3 (donor). CLEAN-ROOM sketch: written from the mechanism description, not a translation of donor lines.
+// Licence: GPL-3.0-or-later (donor). CLEAN-ROOM sketch: written from the mechanism description, not a translation of donor lines.
 interface Owner { clientId: number | null; botController: number | null; }
 interface Subject { id: number; dead: boolean; owner: Owner | null; accepts(orderName: string): boolean; }
 interface Order { subject: Subject | null; name: string; }

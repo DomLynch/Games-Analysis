@@ -28,7 +28,7 @@ Donor: `/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/server/ai_
 | Commitment: keep the target while the current action does not allow a change | Interrupt conditions (theirs, per schedule) |
 | Reachable beats unreachable regardless of priority | Rule itself (mechanism) |
 | Priority by relation (hate above fear above other) | Priority values (theirs, data per relation) |
-| Distance tie-break with tolerance, then seen / visible tie-break | `EnemyDistTolerance` (theirs; 0 default, 100 for the Hunter, ai_basenpc.h 1037, npc_hunter.cpp 1210) |
+| Distance tie-break with tolerance, then seen / visible tie-break | `EnemyDistTolerance` (theirs; 0 default, 100 for the Hunter, ai_basenpc.h 1037, episodic/npc_hunter.cpp 1210) |
 | Ignore unseen enemies after a short window, if the NPC opts in | 0.4 s window (theirs, `BestEnemy` line 7727) |
 | Periodic forced re-choice | every 1.5 s; unseen over 10 s (theirs, lines 10184-10186) |
 | Report from another NPC is not a first-hand sighting: no reaction delay | 0.3 s idle, 0.1 s alert (theirs, console variables) |

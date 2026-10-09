@@ -1,6 +1,6 @@
 # gemrb-gemrb (economy-trade, cell 11)
 
-Donor: /mnt/frankendom-donors/gemrb-gemrb/gemrb/GUIScripts/GUISTORE.py | Licence: GPL-2 | C++ (Python GUI scripts) | symbol BuyPressed/SellPressed/UpdateStoreShoppingWindow
+Donor: /mnt/frankendom-donors/gemrb-gemrb/gemrb/GUIScripts/GUISTORE.py | Licence: GPL-2.0-or-later per SPDX tag in GUISTORE.py | C++ (Python GUI scripts) | symbol BuyPressed/SellPressed/UpdateStoreShoppingWindow
 Symbol check: BuyPressed (1066), SellPressed (1113) and UpdateStoreShoppingWindow (435) confirmed. The price maths is GetRealPrice (1747), which the input did not name. It is the real core.
 
 ## 1. Mechanism
@@ -8,7 +8,7 @@ Symbol check: BuyPressed (1066), SellPressed (1113) and UpdateStoreShoppingWindo
 - Inputs per item: base Price, MaxStackAmount, MaxCharge, Usages0, the store's BuyMarkup, SellMarkup, Depreciation and StoreFlags, the best-Charisma PC's bonus (BestCharmer, 1789; chosen near 430), the reputation table repmodst, and the Mercantile feat.
 - Base (1749-1754): Price; times Usages0 if the item stacks (MaxStackAmount > 1), else times Usages0 over MaxCharge when MaxCharge > 0.
 - Store sells to player (mode "sell" in the code, 1761-1764 and 1786-1794): markup = SellMarkup, minus 5 with Mercantile. Charisma bonus is ADDED to the markup (1790). Then, unless the store has SHOP_NOREPADJ, the markup is multiplied by the repmodst value for reputation // 10 and divided by 100 (1793-1794). Price = base x markup // 100, and 1 if that is 0 while the item's Price > 0 (1796-1799).
-- Player sells to store (mode "buy" in the code, 1757-1760 and 1775-1785): markup = BuyMarkup, plus 5 with Mercantile; if the store already holds copies (FindStoreItem), markup falls by count x Depreciation, floored at 20; GEM, RING and AMULET types set count to 0. No Charisma or reputation in this mode. Same price formula and 1-gold floor as above. The comment at 1771 says infinite-stock stores use only the markup; that is stated in a comment, the code relies on the store's item count.
+- Player sells to store (mode "buy" in the code, 1757-1760 and 1775-1785): markup = BuyMarkup, plus 5 with Mercantile; if the store already holds copies (FindStoreItem), markup falls by count x Depreciation, floored at 20; GEM, RING and AMULET types set count to 0, but the 20 floor is still applied when the store holds a copy (1777-1785). No Charisma or reputation in this mode. Same price formula and 1-gold floor as above. The comment at 1771 says infinite-stock stores use only the markup; that is stated in a comment, the code relies on the store's item count.
 - BuyPressed (1066-1087) refuses if the BuySum global exceeds party gold, then walks the store backwards (removals shift slots), recomputes each selected item's price and deducts it only when ChangeStoreItem succeeds (1083-1084). SellPressed (1113-1134) moves each selected item (bag path backwards, pack path forwards), then adds SellSum to party gold unconditionally and plays DEF_SOLD (1131-1132). Its own comment at 1121 asks "what if the transaction fails?": a failed ChangeStoreItem is not checked, so gold is still paid.
 - Output: inventory and store slot changes, party gold, redraw.
 - Naming trap: GetRealPrice takes mode "sell" for BuySum and "buy" for SellSum. The mode names are from the store's side, not the player's.
@@ -32,9 +32,9 @@ Symbol check: BuyPressed (1066), SellPressed (1113) and UpdateStoreShoppingWindo
 | Jewellery exempt from depreciation | GEM, RING, AMULET type list (theirs, 1779-1781) |
 
 ## 4. TypeScript sketch
-simplified: item quantity is passed in as a ready number (the donor derives it from stack count or charges over max charge, and multiplies by the selected amount). The best-Charisma PC choice, the reputation table lookup and the SHOP_ID price of 1 are inputs or omitted. Failed transfers are not modelled (the donor ignores them on a sale; on a buy it charges only per success).
+simplified: for jewellery the sketch skips the 20 percent floor altogether, where the donor still applies it when the store holds a copy; item quantity is passed in as a ready number (the donor derives it from stack count or charges over max charge, and multiplies by the selected amount). The best-Charisma PC choice, the reputation table lookup and the SHOP_ID price of 1 are inputs or omitted. Failed transfers are not modelled (the donor ignores them on a sale; on a buy it charges only per success).
 ```ts
-// Licence: GPL-2 (gemrb-gemrb). CLEAN-ROOM: written from the mechanism, no donor lines.
+// Licence: GPL-2.0-or-later (gemrb-gemrb). CLEAN-ROOM: written from the mechanism, no donor lines.
 interface StoreTerms { buyMarkup: number; sellMarkup: number; depreciation: number; noRepAdjust: boolean; }
 interface ItemTerms { price: number; usable: number; isJewel: boolean; ownedInStore: number; }
 
@@ -80,4 +80,4 @@ function commitBuy(gold: number, sel: Selection): { gold: number; ok: boolean } 
 - Price is computed client-side in Python and the gold change is a separate client call (1084, 1131). Frankendom's server-verified rule means totals are recomputed on the server inside one ledger batch (shop-buy.ts does this for buys).
 - SellPressed pays SellSum even when a transfer fails (comment at 1121). Do not copy that; pay per verified item.
 - Charisma and reputation are donor inputs. Frankendom has no such stat or reputation table; the closest data is career level (shop.ts minLevel), so this note's modifier stack should not be ported as is.
-- Donor is GPL-2, so only the mechanism is described here.
+- Donor is GPL-2.0-or-later, so only the mechanism is described here.

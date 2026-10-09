@@ -1,6 +1,6 @@
 # endless-sky-endless-sky (combat-sim, cell 1)
 
-Donor: `/mnt/frankendom-donors/endless-sky-endless-sky/source/DamageProfile.cpp` | Licence: GPL-3 (file header: Copyright 2022 Amazinite, GPL-3 or later) | C++ | symbol `DamageProfile::CalculateDamage`
+Donor: `/mnt/frankendom-donors/endless-sky-endless-sky/source/DamageProfile.cpp` | Licence: GPL-3.0-or-later per DamageProfile.cpp header (Copyright 2022 Amazinite) | C++ | symbol `DamageProfile::CalculateDamage`
 
 Checked: Symbol `CalculateDamage` opens at 69 and closes at 168 (verified, read in full). `CalculateScaling` is 172-198 and the constructors 27-44, also read in full.
 
@@ -34,7 +34,7 @@ Checked: Symbol `CalculateDamage` opens at 69 and closes at 168 (verified, read 
 simplified: omits cloak and shield-portion permeability, the protection divisors, the relative (percent of max) damage terms, the minable variant, the non-shield damage types and the force vector, and the pre-scaling by projectile distance. `splitHit` returns plain damage numbers; the hull overkill term is not divided by protection here. Order matches the donor: shield fraction (capped by remaining shields), then hull from the complementary share.
 
 ```ts
-// Licence: GPL-3 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
+// Licence: GPL-3.0-or-later (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
 // clean-room
 interface Target { shield: number; maxShield: number; hull: number; protection: number; resist: number; permeability: number; disruption: number; }
 interface Shot { hullDamage: number; shieldDamage: number; piercing: number; disabledDamage: number; }
@@ -80,7 +80,7 @@ function blastScale(distance: number, blastRadius: number, triggerRadius: number
 
 ## 6. Gaps and risks
 
-- GPL-3: clean-room only. The sketch is written from the mechanism.
+- GPL-3.0-or-later: clean-room only. The sketch is written from the mechanism.
 - Ship shields, hull and permeability are a space model. Frankendom has guard, parry and stamina in the duel engine, not shields and hull. Only the layer-split shape (cap at what the first layer holds, overflow to the next) transfers.
 - The per-type table is large and specific to ships. Frankendom should not import the table; it needs its own damage types, if any.
 - Force (knockback) from the impact point is a physics vector. Frankendom has stagger and posture, not a vector; no direct use.

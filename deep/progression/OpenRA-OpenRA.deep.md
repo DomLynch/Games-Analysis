@@ -1,6 +1,6 @@
 # OpenRA-OpenRA (progression, cell 10)
 
-Donor: /mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Traits/GainsExperience.cs | Licence: GPL-3 | C# | symbol GainsExperience.GiveExperience / GiveLevels
+Donor: /mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Traits/GainsExperience.cs | Licence: GPL-3.0-or-later per GainsExperience.cs header | C# | symbol GainsExperience.GiveExperience / GiveLevels
 Symbol check: GiveLevels opens at 105 and closes at 112; GiveExperience opens at 114 and closes at 139 (both opened this pass). Kill-side input is /mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Traits/GivesExperience.cs, Killed at 57-77, opened this pass.
 
 ## 1. Mechanism
@@ -30,7 +30,7 @@ Symbol check: GiveLevels opens at 105 and closes at 112; GiveExperience opens at
 ## 4. TypeScript sketch
 simplified: the Valued fallback of 1 when the actor has no Valued trait, the lower clamp at 0, starting XP, the kill-side relationship check and the victim and killer percentage modifiers (GivesExperience.cs 57-77), the player-level experience feed, the silent flag and all presentation (sound, text, sprite) are omitted; the dev-order gate is omitted; the modifier is passed in rather than read from the actor.
 ```ts
-// Licence: GPL-3 | clean-room: written from the mechanism, no donor lines.
+// Licence: GPL-3.0-or-later | clean-room: written from the mechanism, no donor lines.
 // XP with level thresholds. Thresholds are precomputed as absolute XP (percent x per-unit value).
 // Adding XP clamps at the top threshold and grants each crossed level's condition exactly once.
 interface Gains { xp: number; level: number; granted: string[]; }

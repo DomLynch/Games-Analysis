@@ -1,6 +1,6 @@
 # levy-street-world-of-claudecraft (city-map-design, cell 20)
 
-Donor: `/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/dawnhold_layout.ts` | Licence: MIT | TypeScript | symbol `DAWNHOLD / dawnholdLift / inDawnholdBailey` | input line 17 verified: `DAWNHOLD` (the authored plan) opens at 17 and closes at 39. `inDawnholdBailey` at 259-265, `dawnholdLift` at 322-370. The file header says it is a "pure leaf: deterministic, no rng, no SimContext".
+Donor: `/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/dawnhold_layout.ts` | Licence: MIT | TypeScript | symbol `DAWNHOLD / dawnholdLift / inDawnholdBailey` | input line 17 verified: `DAWNHOLD` (the authored plan) opens at 17 and closes at 39. `inDawnholdBailey` at 259-264, `dawnholdLift` at 322-370. The file header says it is a "pure leaf: deterministic, no rng, no SimContext".
 
 ## 1. Mechanism
 
@@ -25,14 +25,14 @@ Donor: `/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/dawnhold
 | Reusable algorithm | Game-specific constants |
 |---|---|
 | Authored plan as one data object read by every consumer | The Dawnhold plan values (theirs) |
-| Wall as a strip of thickness t; walkable top at a height; a gate is a gap in the strip | Wall thickness 3.0 (line 30); walk height 9.7 (line 32); module 7 (line 28) (theirs) |
-| Highest applicable surface wins (walls, towers, ramps) | Tower half-width 3.0 (line 36) and tall tower height 14.2 (line 34) (theirs) |
+| Wall as a strip of thickness t; walkable top at a height; a gate is a gap in the strip | Wall thickness 3.0 (line 30); walk height 9.7 (line 32); module 7 (line 28) (theirs; those value lines are under 15 characters, so the receipts are their comment lines 27, 29, 31) |
+| Highest applicable surface wins (walls, towers, ramps) | Tower half-width 3.0 (line 36, receipted by its comment at 35) and tall tower height 14.2 (line 34) (theirs) |
 | Graded pad with a smooth skirt over 8 units (smoothstep weight) | Skirt 8 units (theirs, lines 300-301); pad 232-300 by 854-944 at height 3.2 (theirs, line 21) |
 | Clearance around the pad for scatter | Clearance 4 units (theirs, line 286) |
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the wall strips (with the along-wall guards and the gate gaps), the pad weight, and the final subtraction of the pad height. It omits the court walls and the court gate, the towers, the ramps, the `abs <= 0` early return's other branches (the sketch folds it into one expression), the parapet, ledges, buildings and fields. The sketch passes the wall lines as arguments where the donor reads module constants, and it uses a wall-half parameter in place of `wallTh / 2`.
+simplified: the sketch folds the `abs <= 0` early return and the pad-height subtraction into one expression, and keeps the wall strips (with the along-wall guards and the gate gaps), the pad weight, and the final subtraction of the pad height. It omits the court walls and the court gate, the towers, the ramps, the parapet, ledges, buildings and fields. The sketch passes the wall lines as arguments where the donor reads module constants, and it uses a wall-half parameter in place of `wallTh / 2`.
 
 ```ts
 // Licence: MIT (donor). Logic lifted in TypeScript from src/sim/dawnhold_layout.ts (dawnholdLift, dawnholdPadWeight, wallStripAbs); the Dawnhold numbers are passed in, not proposed. Partial: the wall strips, pad and skirt are lifted; towers, ramps and court walls are left out. No imports.

@@ -1,12 +1,12 @@
 # lichess-org-mobile (sound-music, cell 15)
 
-Donor: /mnt/frankendom-donors/lichess-org-mobile/lib/src/service/sound_service.dart | Licence: GPL-3.0 | Dart | symbol SoundService::play
+Donor: /mnt/frankendom-donors/lichess-org-mobile/lib/src/service/sound_service.dart | Licence: GPL-3.0 per root LICENSE (sound_service.dart has no header) | Dart | symbol SoundService::play
 
 ## 1. Mechanism
 - SoundService.play(sound, volume) is the single entry for one-shot cues. It reads two settings, sound-enabled and master volume. The volume argument is checked only by an `assert` (176, debug builds). If sound is off, or master times the requested volume is zero, it returns. Otherwise it plays the sound id at master times the requested volume. On Linux that goes to an external command (pw-play, paplay or aplay, found at start-up by checking `/usr/bin`, `/usr/local/bin`, then `which`, 61-81). The volume is clamped to 0..1 and passed as an argument for pw-play (`--volume`) and paplay (times 65536); aplay gets no volume argument (100-113). On other platforms it goes to a sound-effect plugin set to at most two concurrent streams.
 - `SoundService.initialize()` (153-172) runs once at start: it reads the saved theme, initialises the plugin or finds the Linux command, then loads every sound for the theme.
 - _loadSound(theme, sound): tries the theme's file; if missing, falls back to the standard theme's file. On Linux the file is copied once to a temp folder and its path cached (83-98); the plugin keeps the loaded clip otherwise. A failed initialisation is only logged (169-171).
-- changeTheme(theme): releases the old set, re-initialises, loads the move sound first so it is ready, plays it if asked, then loads the rest.
+- changeTheme(theme): releases the old set, re-initialises the plugin (non-Linux only; on Linux it only clears the cached paths), loads the move sound first so it is ready, plays it if asked, then loads the rest.
 - playCaptureSound chooses the explosion cue for the atomic variant, else the capture cue.
 - Inputs: sound id, volume in 0 to 1, preferences, theme. Output: one playback. Event-driven.
 

@@ -5,7 +5,7 @@ Donor: /mnt/frankendom-donors/TurningWheel-Barony/src/ui/GameUI.cpp | Licence: B
 ## 1. Mechanism
 
 - Bars are built once per player. `createHPMPBars` builds the HP and MP frames (fade layer, progress layer, end caps, value text). `createEnemyBar` builds one floating enemy bar (base layer, damage-ghost layer, progress layer). `createXPBar` builds the XP bar with a per-player colour sprite.
-- Per frame, `Player::HUD_t::processHUD` (12507-12755) creates any missing frame (minimap, timer, XP, HP/MP, enemy bar frames, status queue and others, 12683-12734), then calls `updateXPBar`, `updateHPBar`, `updateMPBar` (12740-12742), culls expired enemy entries (`cullExpiredHPBars`, not read) and calls `updateEnemyBar2` for each remaining one (12747-12753).
+- Per frame, `Player::HUD_t::processHUD` (12507-12755) creates any missing frame (minimap, timer, XP, HP/MP, enemy bar frames, status queue and others, 12683-12734), then calls `updateXPBar`, `updateHPBar`, `updateMPBar` (12740-12742; the three call lines are too short to receipt), culls expired enemy entries (`cullExpiredHPBars`, not read) and calls `updateEnemyBar2` for each remaining one (12747-12753).
 - `updateHPBar` (33482-33831) sets the background width from max HP: while `MAXHP` is below `hpmpbarMaxWidthAmount` the width multiplier is a base percent plus a step per whole interval of max HP past a start value (integer division). Defaults at lines 108-112 are 160, interval 5, start 20, base 30, step 2.5; the JSON loader overrides them (from line 26157). Its inputs are `stats.MAXHP`, `stats.HP`, and those values.
 - HP foreground: a loss snaps the bar down and starts a flash (33559-33568). A gain eases toward the setpoint by 1/20 of the gap per tick, scaled to a 144 fps reference, and snaps when within 1 point (33577-33595). A second "faded" layer is the damage ghost: after a loss it holds for 30 ticks since `animateTicks`, then eases down by 1/20 of the gap at the same 144 fps scale (33614-33628); a gain pulls it up to the foreground.
 - Enemy bars are added when an entity takes damage (`updateEnemyBar`, called from damage sites in entity.cpp, actmonster.cpp and others). Each entry tracks its enemy uid, HP and a fade state.
@@ -20,7 +20,7 @@ Donor: /mnt/frankendom-donors/TurningWheel-Barony/src/ui/GameUI.cpp | Licence: B
 | createEnemyBar | /mnt/frankendom-donors/TurningWheel-Barony/src/ui/GameUI.cpp | 4283-4381 | Builds a floating enemy bar with a damage-ghost layer, opacity 0 at start |
 | createXPBar | /mnt/frankendom-donors/TurningWheel-Barony/src/ui/GameUI.cpp | 4421-4557 | Builds the XP bar; body sprite chosen by player index |
 | Player::HUD_t::processHUD | /mnt/frankendom-donors/TurningWheel-Barony/src/ui/GameUI.cpp | 12507-12755 | Per-frame order: create missing frames, update XP, HP, MP, then enemy bars |
-| Player::HUD_t::updateHPBar | /mnt/frankendom-donors/TurningWheel-Barony/src/ui/GameUI.cpp | 33482-33831 | HP width from max HP, foreground ease, damage flash, damage ghost (opened to line 33640; the rest not read) |
+| Player::HUD_t::updateHPBar | /mnt/frankendom-donors/TurningWheel-Barony/src/ui/GameUI.cpp | 33482-33831 | HP width from max HP, foreground ease, damage flash, damage ghost (opened to line 33660; the rest, the ghost opacity fade on death and the MP-style tail, not read) |
 | Player::HUD_t::updateEnemyBar2 | /mnt/frankendom-donors/TurningWheel-Barony/src/ui/GameUI.cpp | 32583-33096 | Per-enemy position, fade and expiry by distance (opened to line ~32760; the rest not read) |
 | Player::HUD_t::updateXPBar | /mnt/frankendom-donors/TurningWheel-Barony/src/ui/GameUI.cpp | 31290-31727 | XP setpoint is `min(100, EXP)` (line 31376); show/hide fade; level and class text (opened to ~31380; the rest not read) |
 
@@ -38,7 +38,7 @@ Donor: /mnt/frankendom-donors/TurningWheel-Barony/src/ui/GameUI.cpp | Licence: B
 
 Lift: the logic is lifted from the path above (BSD-2 permits it). The sketch keeps the structure and names, not the original lines.
 
-simplified: the faded damage-ghost layer (hold 30 ticks, then ease down) is omitted, the compact-width variants of the config values are collapsed to one set, and the expiry test (delay, distance, splitscreen loop) is not included; only the fade-out step is.
+simplified: the faded damage-ghost layer (hold 30 ticks, then ease down) is omitted, the donor's snap-down when the foreground is above the setpoint without a fresh loss (33609-33612) is omitted, the compact-width variants of the config values are collapsed to one set, and the expiry test (delay, distance, splitscreen loop) is not included; only the fade-out step is.
 
 ```ts
 // Licence: BSD-2
@@ -85,7 +85,7 @@ function fadeOpacity(current: number, expired: boolean, fpsScale60: number): num
 
 ## 6. Gaps and risks
 
-- The donor shows damage locally: the enemy bar and its ghost layer are driven by client-side damage events. Frankendom must draw only the server-sent HP, with no predicted damage on the bar.
+- The donor's enemy bar is fed by `updateEnemyBar` calls at damage sites in the simulation files (entity.cpp, actmonster.cpp, actarrow.cpp and others; whether a remote client gets them over the network was not traced), and the ghost layer is local animation. Frankendom must draw only the server-sent HP, with no predicted damage on the bar.
 - The foreground HP bar snaps down on a loss, and the damage ghost layer eases down after 30 ticks (33614-33628), so the number never leads the server value on a loss. On a gain the foreground eases up and the displayed bar can lag the server HP. Frankendom must decide whether that is acceptable.
 - Enemy bars are keyed by entity uid and expire by camera distance. A 1v1 duel has one enemy and a fixed camera; keep the duel path simple and drop the per-enemy list.
 - The enemy bar sets HP to 0 when its entity is missing (32618-32621), a purely local rule. Under server-verified kills, the HP shown at 0 must come from the server's death event.

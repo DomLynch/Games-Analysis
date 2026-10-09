@@ -8,8 +8,8 @@ Checked: `calculateDamage` opens at 6 and closes at 28 (verified; the file is 28
 
 - A pure damage formula for one unit attacking one entity on a grid. Inputs: the attacker unit (current health), the target entity (its defence stat and whether it is a shielded unit), the weapon (its damage against this target type), the cover value on each side, the attack-side and defence-side status multipliers, a flat-damage status value, and a luck multiplier.
 - If the weapon is flat-damage, the result is the weapon's damage plus the flat status value, with a floor. Otherwise: health factor = 0.666 x (health / max health) + 0.334, so a damaged attacker keeps at least a third of its power.
-- Offence = weapon damage x attack status, zeroed if the target is a shielded unit. Defence = target's defence x defence status. Cover on the attacker side multiplies by `1 + coverA / 400`, or by 1 for an attacker without cover (air and building units, 25); cover on the target side multiplies the defence by `1 + coverB / 100`, or by 1 for a target without cover (26). A shielded unit target zeroes the offence (23). Weapon damage comes from a per-target-type table, 0 if absent (`getDamage`, Unit.tsx 481-483).
-- Result = max(floor, health factor x offence x attacker cover x luck - defence x target cover). Called per attack from the caller. The preview wrapper `calculateLikelyDamage` (9-48) calls it with luck 1, adds the tile cover from the map (finite values only) plus a building-cover bonus when a building stands on the tile (31-32), multiplies by a modifier, rounds up, floors at `MinDamage`, and multiplies by the poison-skill factor when the target is poisoned and the attacker's player has the acid-bomber skill (40-44). No tick: one call per attack.
+- Offence = weapon damage x attack status, zeroed if the target is a shielded unit. Defence = target's defence x defence status. Cover on the attacker side multiplies by `1 + coverA / 400`, or by 1 for an attacker without cover (25; which entity kinds count as cover-free is decided by `isEntityWithoutCover`, whose body was not read); cover on the target side multiplies the defence by `1 + coverB / 100`, or by 1 for a target without cover (26). A shielded unit target zeroes the offence (23). Weapon damage comes from a per-target-type table, 0 if absent (`getDamage`, Unit.tsx 481-483).
+- Result = max(floor, health factor x offence x attacker cover x luck - defence x target cover). Called per attack from the caller. The preview wrapper `calculateLikelyDamage` (9-48) calls it with luck passed as the literal 1 (line 36, a bare literal with no quotable receipt), adds the tile cover from the map (finite values only) plus a building-cover bonus when a building stands on the tile (31-32), multiplies by a modifier, rounds up, floors at `MinDamage`, and multiplies by the poison-skill factor when the target is poisoned and the attacker's player has the acid-bomber skill (40-44). No tick: one call per attack.
 - The preview wrapper calls the same formula with luck fixed at one, so a preview is this function with one input changed, not a second rule.
 
 ## 2. Key functions
@@ -31,15 +31,15 @@ Checked: `calculateDamage` opens at 6 and closes at 28 (verified; the file is 28
 
 ## 4. TypeScript sketch
 
-simplified: shapes are reduced to the numbers the formula reads; the sketch drops the unit and entity type checks (the donor tests shield only on unit targets, and cover-free types by entity kind), and takes `weaponDamage` as a number instead of looking it up by target type. The flat-damage branch and the main branch are in the donor's order, and the lifted lines are unchanged in logic.
+simplified: shapes are reduced to the numbers the formula reads; the sketch drops the unit and entity type checks (the donor tests shield only on unit targets, 23, and cover-free entities through `isEntityWithoutCover`, 25-26), and takes `weaponDamage` as a number instead of looking it up by target type. The flat-damage branch and the main branch are in the donor's order, and the lifted lines are unchanged in logic.
 
 ```ts
 // Licence: MIT (donor). Logic lifted from athena/lib/calculateDamage.tsx lines 17-27; MaxHealth and MinDamage are passed in (theirs: 100 and 5).
 // Plain TypeScript, no imports. Shapes are reduced to the numbers the formula reads.
 interface Side {
   health: number;          // attacker's current health
-  cover: number;           // cover value on the attacker's tile (0 for air or building)
-  noCover: boolean;        // true for air or building units
+  cover: number;           // cover value on the attacker's tile
+  noCover: boolean;        // true for a cover-free attacker (donor: isEntityWithoutCover)
 }
 interface Target {
   defence: number;         // target's defence stat

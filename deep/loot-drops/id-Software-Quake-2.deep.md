@@ -1,11 +1,11 @@
 # id-Software-Quake-2 (loot-drops, cell 8)
 
-Donor: `/mnt/frankendom-donors/id-Software-Quake-2/game/g_items.c` | Licence: GPL-2.0 (gnu.txt) | C | symbol `Touch_Item / Drop_Item / DoRespawn` (verified: `Touch_Item` at 761, `Drop_Item` at 843, `DoRespawn` at 119, `SetRespawn` at 146).
+Donor: `/mnt/frankendom-donors/id-Software-Quake-2/game/g_items.c` | Licence: GPL-2.0-or-later per g_items.c header (gnu.txt is the GPLv2 text) | C | symbol `Touch_Item / Drop_Item / DoRespawn` (verified: `Touch_Item` at 761, `Drop_Item` at 843, `DoRespawn` at 119, `SetRespawn` at 146).
 
 ## 1. Mechanism
 
 - An item is an entity with a touch hook. `Touch_Item` (761-821) runs when a living client touches it. It calls the item's pickup function, which returns whether it was taken. If taken: a screen flash, a status-bar icon and message, a sound by type (health uses a sound by amount), and the selected-item change for usable items. Then, whether or not the pickup was taken, it fires the item's targets once (a spawnflag marks them used), so targets fire even when the pickup is refused.
-- Pickup is refused in the pickup function, not in the touch hook: health refuses when the player is at max health (Pickup_Health 556-559, unless the item ignores the max); powerups refuse at a per-skill quantity limit (Pickup_Powerup 158-168).
+- Pickup is refused in the pickup function, not in the touch hook: health refuses when the player is at max health (Pickup_Health 558-560, unless the item ignores the max); powerups refuse at a per-skill quantity limit (Pickup_Powerup 164-168).
 - If an item was taken: the hiding is done by the pickup function's own `SetRespawn` call, which sets the respawn flag. The pickup functions call it only in deathmatch and only for items that are not dropped (for example Pickup_Powerup 174-175, Pickup_Health 581-582 with 30 s, Pickup_PowerArmor 737-738). `Touch_Item` (814-820) then clears that flag and keeps the entity (it does not hide it), or frees the entity if the flag was not set, so in single player a taken item is freed and does not respawn. Dropped items are always freed on pickup and never respawn. In cooperative play, items flagged to stay remain (unless dropped).
 - `SetRespawn` (146-154) hides the entity (no-client, non-solid) and schedules `DoRespawn` after a delay. `DoRespawn` (119-144) picks one entity from a team chain at random (`rand() % count`), shows it, makes it solid again, and sends a respawn event.
 - `Drop_Item` (843-890) spawns a tossed entity owned by the dropper (owner set at 862; the one-second think is set at 885), placed by a trace from the dropper's view when the dropper is a client (offset 24, 0, -16; box 15), and tossed with velocity 100 along the view direction and 300 up. Its touch hook is `drop_temp_touch`, which ignores the owner; `drop_make_touchable` runs one second later (`level.time + 1`, level.time is in seconds) and swaps the hook to `Touch_Item`, so after that second the dropper can take it too. In deathmatch the same function schedules `G_FreeEdict` another 29 s later, so a dropped item lasts 30 s in total; outside deathmatch it does not expire.
@@ -33,7 +33,7 @@ Donor: `/mnt/frankendom-donors/id-Software-Quake-2/game/g_items.c` | Licence: GP
 
 simplified: the cooperative stay-in-world rule, the respawn-flag handling in `Touch_Item`, the pickup effects (flash, icon, sound), the trace-based placement and the toss velocity are omitted; the sketch's drop exclusion is `OWNER_EXCLUDE_MS`, a millisecond version of the donor's 1 s (theirs), and the deathmatch 30 s expiry is not modelled.
 ```ts
-// Licence: GPL-2.0 (gnu.txt) (donor). CLEAN-ROOM sketch: written from the mechanism description, not a translation of donor lines.
+// Licence: GPL-2.0-or-later per g_items.c header (gnu.txt is the GPLv2 text) (donor). CLEAN-ROOM sketch: written from the mechanism description, not a translation of donor lines.
 interface Item { id: number; alive: boolean; hidden: boolean; dropped: boolean; respawnAt: number | null; teamChain: number[]; targetsUsed?: boolean; }
 interface Player { id: number; hp: number; maxHp: number; }
 

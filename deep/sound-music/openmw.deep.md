@@ -6,11 +6,11 @@ Donor: /mnt/frankendom-donors/openmw/apps/openmw/mwsound/soundmanagerimp.cpp | L
 
 - One music slot. Music is a single streamed track. Callers use `streamMusic(filename, type, fade)` (351-359), which sets `mMusicType` and then calls `advanceMusic`.
 - Scripted-music hold: when the current type is `MWScript` and the new request is any other type, the request is dropped (line 354-355). Built-in playlists cannot interrupt scripted music.
-- `advanceMusic` (333-344): if nothing is playing, it starts the track now through `streamMusicFull`. If something is playing, it stores the request in `mNextMusic` (a second request during the fade overwrites it) and sets a fade-out on the current track.
+- `advanceMusic` (333-344): if nothing is playing, it starts the track now through `streamMusicFull`. If something is playing, it stores the request in `mNextMusic` (a second request during the fade overwrites it) and sets a fade-out on the current track (`setFadeout`, sound.hpp 66: a volume ramp to zero from the current fade volume, flagged to stop at the end; calling it again restarts the ramp from wherever the volume is).
 - `streamMusicFull` (301-331): returns if output is not initialised, stops the current track, returns if the filename is empty (so an empty request acts as a stop), opens a decoder (on failure it logs and returns, leaving the old track stopped), creates the stream at base volume `volumeFromType(Music)`, flags it as 2D, no environment scaling, and hands the decoder to the output.
 - `volumeFromType` (93-117): master volume times the per-type volume (music, sfx, voice, footsteps; movie and mask get master volume only).
-- Frame tick: `update(duration)` (1233-1255) runs each frame. It returns early if output is not ready or playback is paused. On the main menu with nothing playing it starts the title track. Then it updates sounds (`updateSounds`) and, outside the no-game state, warms cell sounds, then updates the region sound and the water sound (1248-1254).
-- `updateMusic` (1214-1231), called at line 1107 inside the sounds update that `update()` calls (the enclosing function, around lines 1090-1212, was only partly read): if there is no stream, the fade completed or the stream stopped, it stops, then starts `mNextMusic` if set (and clears it), otherwise resets `mMusicType` to Normal. Otherwise it updates the stream.
+- Frame tick: `update(duration)` (1233-1255) runs each frame. It returns early if output is not ready or playback is paused. On the main menu with nothing playing it starts the title track. The title track is only requested if the title file exists in the VFS. Then it updates sounds (`updateSounds`) and, outside the no-game state, warms cell sounds, then updates the region sound and the water sound (1248-1254).
+- `updateMusic` (1214-1231), called at line 1107 inside `updateSounds` (1074-1212), which `update()` calls. `updateSounds` first adds `duration` to a timer and returns early until at least 1/30 s has passed (`sMinUpdateInterval`, line 54; lines 1089-1093), so music updates run at most about 30 times a second with the accumulated duration. Then: if there is no stream, `updateFade` returned false (a fade-out with stop-at-end has reached its target, sound.hpp 130-154) or the stream stopped, it stops, then starts `mNextMusic` if set (and clears it), otherwise resets `mMusicType` to Normal (so the scripted hold also clears when no stream exists). Otherwise it updates the stream.
 - `playTrack` (460-479) is for non-music tracks: it creates a stream at the type's volume, plays it, and keeps it in a sorted list of active tracks. It returns the stream pointer, or null if output is not ready or the stream fails to start.
 - Output: audio side effects. The tick is per frame with a `duration` argument.
 
@@ -32,13 +32,13 @@ Donor: /mnt/frankendom-donors/openmw/apps/openmw/mwsound/soundmanagerimp.cpp | L
 | Scripted music holds the slot against built-in playlists | `MusicType::MWScript` and `MusicType::Normal` enum values (theirs) |
 | Output volume = master times per-type setting | Setting keys `mMasterVolume`, `mMusicVolume`, `mSfxVolume` and others (theirs) |
 | Title track starts on the main menu when nothing is playing | `MWSound::titleMusic` file path (theirs) |
-| Per-frame tick with a duration argument | Region and water sound updaters (theirs) |
+| Per-frame tick with a duration argument | Region and water sound updaters (theirs); update throttle `sMinUpdateInterval` = 1/30 s (line 54, theirs) |
 
 ## 4. TypeScript sketch
 
 Clean-room sketch: written from the mechanism above, no lines translated.
 
-simplified: the title-track rule, the stream object and decoder, `updateFade` semantics (the donor's `updateFade` returns false when the fade is over, not read), empty-filename stop and the per-type volume are omitted; a request during a fade only replaces the queued path and restarts the fade timer, as in the donor.
+simplified: the title-track rule, the stream object and decoder, `updateFade` semantics (the donor's `updateFade` returns false when a stop-at-end fade is over), empty-filename stop and the per-type volume are omitted; a request during a fade replaces the queued path and restarts the fade (the donor restarts a volume ramp from the current fade volume; the sketch restarts a plain timer); the donor's `updateMusic` runs only after a 1/30 s throttle in `updateSounds` and also resets `mMusicType` to Normal whenever no stream exists (the sketch returns early when idle).
 
 ```ts
 // Licence: GPL-3 - clean-room sketch, no lines translated

@@ -1,16 +1,16 @@
 # otland-forgottenserver (spawns-encounters, cell 4)
 
-Donor: /mnt/frankendom-donors/otland-forgottenserver/src/spawn.cpp | Licence: GPL-2 | C++ | symbol Spawn::checkSpawn / Spawn::spawnMonster (opened: findPlayer 258-271, spawnMonster block 273-310, spawnMonster single 312-342, startup 344-351, checkSpawn 353-383, cleanup 385-397, addBlock 399-405; spawn.h line 56 and configmanager.cpp line 273 by search)
+Donor: /mnt/frankendom-donors/otland-forgottenserver/src/spawn.cpp | Licence: GPL-2 per spawn.cpp header ("GPL-2.0 License ... LICENSE file"; LICENSE is the GPL-2 text) | C++ | symbol Spawn::checkSpawn / Spawn::spawnMonster (opened: XML load 55-135, findPlayer 258-271, spawnMonster block 273-310, spawnMonster single 312-342, startup 344-351, checkSpawn 353-383, cleanup 385-397, addBlock 399-405; spawn.h line 56 and configmanager.cpp line 273 by search)
 Licence note: GPL-2. CLEAN-ROOM sketch only.
 
 ## 1. Mechanism
 
-- A `Spawn` is a set of spawn blocks keyed by id (`spawnMap`). Each block has a position, a facing, a respawn interval (ms; the XML `spawntime` times 1000, kept inside a min / max bound, spawn.cpp 67-72) and a list of (monster type, weight) entries. `addBlock` (399-405) lowers the spawn's own `interval` to the smallest block interval; it starts at 60000 ms (spawn.h line 56).
+- A `Spawn` is a set of spawn blocks keyed by id (`spawnMap`). Each block has a position, a facing, a respawn interval (ms; the XML `spawntime` times 1000; a block outside 10 s to 1 day is skipped with a warning, not clamped, spawn.cpp 20-21 and 67-76) and a list of (monster type, weight) entries (default weight 100 / entry count, totals capped at 100, sorted heaviest first, 104-133). `addBlock` (399-405) lowers the spawn's own `interval` to the smallest block interval; it starts at 60000 ms (spawn.h line 56).
 - `startup()` (344-351) calls the block spawn once per block in startup mode: no player-view check, and the creature is placed with `internalPlaceCreature` without sending events (320-326).
 - After that, a recurring check event runs every `getInterval()` ms (the spawn's interval: the smallest block interval, at most 60 s). `checkSpawn()` (353-383) first runs `cleanup()` (385-397), which drops any spawned monster that `isRemoved()` from `spawnedMap`.
 - For each block with no entry in `spawnedMap` and with `now >= lastSpawn + interval`, it calls the block spawn. A block with a live monster is skipped. A failed attempt sets that block's `lastSpawn` to now and continues; a success counts toward the cap and the loop breaks once the count reaches `RATE_SPAWN` (default 1, configmanager.cpp 273; read from the config). The check reschedules itself only while `spawnedMap` is smaller than `spawnMap` (380-382).
 - The block spawn (273-310): unless in startup mode, `findPlayer(pos)` (258-271) is true if any player spectator of that point lacks the ignored-by-monsters flag (`getSpectators(..., onlyPlayers = true)`); then the block is "blocked", and only types flagged ignoring-spawn-block can spawn there.
-- Type choice: a block with one entry skips the roll and spawns that type. A block with several entries walks them in order; each non-blocked type needs `weight >= normal_random(1, 100)` (a fresh roll per type; `normal_random` was not read) and a successful placement. If that pass places nothing and not every type was blocked, a second pass spawns the first non-blocked type with no roll, so a multi-type block still spawns something unless all its types are blocked or placement fails.
+- Type choice: a block with one entry skips the roll and spawns that type. A block with several entries walks them in order; each non-blocked type needs `weight >= normal_random(1, 100)` (a fresh roll per type; `normal_random`, tools.cpp 190-201, is a bell curve: a normal draw with mean 0.5 and sd 0.25 re-drawn until inside 0..1, scaled to the range, so rolls cluster near 50 and a weight of W is not a W% chance) and a successful placement. If that pass places nothing and not every type was blocked, a second pass spawns the first non-blocked type with no roll, so a multi-type block still spawns something unless all its types are blocked or placement fails.
 - The single-monster spawn (312-342) creates the monster, runs the `onSpawn` script event (which may veto, 316), places it, sets facing, spawn link and master position, records it in `spawnedMap` and stamps `spawnMap[spawnId].lastSpawn` with wall-clock `OTSYS_TIME()` (340).
 - Output: a monster at the block position with its master position and facing set; the block records `lastSpawn` for its next interval.
 
@@ -29,16 +29,16 @@ Licence note: GPL-2. CLEAN-ROOM sketch only.
 
 | Reusable algorithm | Game-specific constants |
 |---|---|
-| Per-slot respawn: one live entity per slot, a cooldown after each attempt | Group interval default 60000 ms (theirs, spawn.h 56); smallest block interval wins (spawn.cpp 401) |
+| Per-slot respawn: one live entity per slot, a cooldown after each attempt | Group interval default 60000 ms (theirs, spawn.h 56); smallest block interval wins (spawn.cpp 401); block interval bounds 10 s to 1 day (theirs, spawn.cpp 20-21) |
 | Block a respawn while a player is in view; allow exceptions by flag | Ignored-by-monsters player flag; ignore-block monster flag (theirs) |
-| Weighted type roll per slot: roll 1..100, first hit wins | Weights in percent, 1..100 roll (theirs, line 289), plus an unrolled fallback pass (line 309) |
+| Weighted type roll per slot: heaviest type first, first hit wins | Weights 1..100 against a bell-curve roll of 1..100 (theirs, line 289; tools.cpp 190-201), default weight 100 / entry count (line 104), plus an unrolled fallback pass (line 309) |
 | Global cap on spawns per check | RATE_SPAWN default 1 (theirs, configmanager.cpp 273) |
 
 ## 4. TypeScript sketch
 
 Licence: GPL-2. CLEAN-ROOM sketch: written from the mechanism above, not translated from the donor.
 
-simplified: the startup mode (no view check), the `onSpawn` veto, facing and master position, reference counting, the scheduler (the caller calls `checkSlots` on the spawn's interval and stops when every slot is alive), the spawn-wide interval (smallest block interval) and the interval bounds are omitted; `place` hides the placement failing; the blocked-type skip is a filter instead of the donor's counter.
+simplified: the startup mode (no view check), the `onSpawn` veto, facing and master position, reference counting, the scheduler (the caller calls `checkSlots` on the spawn's interval and stops when every slot is alive), the spawn-wide interval (smallest block interval) and the interval bounds and the heaviest-first sort are omitted; `rollPct` stands for the donor's bell-curve roll, so a host that returns a uniform roll gives a different hit chance; `place` hides the placement failing; the blocked-type skip is a filter instead of the donor's counter.
 
 ```ts
 // clean-room sketch of a slot-based respawn with view blocking and weighted types.
@@ -50,7 +50,7 @@ interface Host {
   playerInView(pos: { x: number; y: number }): boolean;
   place(type: string, pos: { x: number; y: number }): boolean;
   isAlive(id: string): boolean;
-  rollPct(): number; // 1..100
+  rollPct(): number; // 1..100 (donor: bell curve, not uniform)
 }
 function trySpawnSlot(slot: Slot, slotId: string, h: Host): boolean {
   const blocked = h.playerInView(slot.pos);
@@ -96,8 +96,8 @@ Brief rule served: 4 (zones are data on one runtime); rules 7-9 n/a
 
 ## 6. Gaps and risks
 
-- Server-verified kills: the donor's clock is wall-clock `OTSYS_TIME()` and its weighted roll uses an unseeded `normal_random`. Frankendom's respawn must run on the server (origins/server/world-spawns.ts) with the seeded stream for the type roll, so replay and verification agree.
-- Zones as data: the 60 s default, the 1..100 weights and RATE_SPAWN are constants / config in the donor. In Frankendom they are row and zone fields (`respawnSeconds`, weights), not literals (no hidden numbers).
+- Server-verified kills: the donor's clock is wall-clock `OTSYS_TIME()` and its weighted roll uses an unseeded `normal_random` (a bell curve, not a uniform draw). Frankendom's respawn must run on the server (origins/server/world-spawns.ts) with the seeded stream for the type roll, so replay and verification agree.
+- Zones as data: the 60 s default, the 1..100 weights, the 10 s / 1 day bounds and RATE_SPAWN are constants / config in the donor. In Frankendom they are row and zone fields (`respawnSeconds`, weights), not literals (no hidden numbers).
 - One ledger: a respawn must not reopen a paid kill; the paid window is the per-account window in origins/server/mob-rewards.ts, not the slot's `lastSpawn`.
 - The view-block rule needs player presence on the server; origins/server/world-spawns.ts has presence's pose, but no view test exists. Without a zone-geometry rule it cannot be copied.
 - MAX_ATTACKERS = 3: slots alive near a player say nothing about how many are engaged; at most 3 engaged on one player (src/fight/world.ts).

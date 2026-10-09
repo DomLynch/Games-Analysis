@@ -1,6 +1,6 @@
 # OpenRA-OpenRA (combat-sim, cell 1)
 
-Donor: `/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Traits/Armament.cs` | Licence: GPL-3 | C# | symbol `Armament.FireBarrel / Tick / CheckFire`
+Donor: `/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Traits/Armament.cs` | Licence: GPL-3.0-or-later per Armament.cs header (COPYING is GPL-3) | C# | symbol `Armament.FireBarrel / Tick / CheckFire`
 
 Checked: `FireBarrel` is at 296-363, `CheckFire` at 272-294, `Tick` at 211-236 (`ITick.Tick` wrapper at 238), `CanFire` 252-268, `UpdateBurst` 365-392, `ScheduleDelayedAction` 244-250, all read in full (verified). The donor does the firing cadence and burst; the hit itself is a projectile object, not read here.
 
@@ -39,7 +39,7 @@ Checked: `FireBarrel` is at 296-363, `CheckFire` at 272-294, `Tick` at 211-236 (
 simplified: the sketch omits the trait-disabled and paused checks, the turret and min-range gates, weapon validity, the cap on `ticksSinceLastShot`, recoil, the delayed-action queue (spawn lag, sounds), notify callbacks, percentage reload modifiers and the burst-index barrel pick (it always cycles). The inter-burst delay index is clamped to the array end, which the donor does not do.
 
 ```ts
-// Licence: GPL-3 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
+// Licence: GPL-3.0-or-later (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
 // clean-room
 interface Burst { size: number; interDelays: number[]; reload: number; }
 interface Weapon { burst: Burst; spawnLag: number; }
@@ -87,7 +87,7 @@ function spawnAt(now: number, w: Weapon): number {
 
 ## 6. Gaps and risks
 
-- GPL-3: clean-room only. The sketch is written from the mechanism.
+- GPL-3.0-or-later: clean-room only. The sketch is written from the mechanism.
 - The donor fires a projectile object; the hit resolves in the projectile, not here. Frankendom's kills are server-verified, so the cadence gate must live in the one engine and be replayed by the verifier, not left to a client.
 - The donor is a real-time RTS with many actors and a tick-counted gate; Frankendom's duel is a 60 Hz step capped at MAX_ATTACKERS = 3 on one target. Only the gate and burst shape transfer.
 - The barrel and muzzle geometry is a rendering concern (checklist rows 6 and 10) and does not belong in the engine step.

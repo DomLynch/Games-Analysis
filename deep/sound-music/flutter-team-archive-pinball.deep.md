@@ -3,11 +3,11 @@
 Donor: /mnt/frankendom-donors/flutter-team-archive-pinball/packages/pinball_audio/lib/src/pinball_audio.dart | Licence: MIT | Dart | symbol PinballAudioPlayer
 
 ## 1. Mechanism
-- PinballAudioPlayer keeps a table from each sound id to one strategy object, built in the constructor. Each strategy knows its asset path, its volume and how to play. There are five kinds (plus a play-once loop subclass): simple (play now, optional volume), throttled (play at most once per gap, default volume), random A or B (pick one of two clips, each in a pool of 4 players), single-audio pool (overlapping instances up to a maximum), and looped (background music; the `_SingleLoopAudio` subclass starts it only once, 139-147).
+- PinballAudioPlayer keeps a table from each sound id to one strategy object, built in the constructor. Each strategy knows its asset path, its volume and how to play. There are five kinds (plus a play-once loop subclass): simple (play now, optional volume), throttled (play at most once per gap, default volume), random A or B (pick one of two clips, each in its own pool), single-audio pool (overlapping instances up to a maximum), and looped (background music; the `_SingleLoopAudio` subclass starts it only once, 139-147).
 - load() (367-371) sets the audio cache prefix to empty and returns a list of each strategy's load function; it does not run them, the caller must.
 - play(id) looks up the strategy and calls its play. An unregistered id is an assertion in debug and ignored in release.
-- Throttled play (216-243): records the time of the last play from `clock.now()` (the `clock` package, injectable). A new play is accepted when there was none, or when the time since the last accepted play is strictly more than the gap. A rejected call does not move the window, so the gap counts from the last sound that actually played.
-- Random A or B (174-214): a coin flip (`nextBool`) from an injected `Random`, which defaults to an unseeded `Random()` (line 266); each clip is in a 4-player pool (199, 204), so plays can overlap.
+- Throttled play (216-243): records the time of the last play from `clock.now()` (the `clock` package, injectable). A new play is accepted when there was none, or when the time since the last accepted play is strictly more than the gap. The timestamp is set inside the accepting branch (237-241), so a rejected call does not move the window and the gap counts from the last sound that actually played.
+- Random A or B (174-214): a coin flip (`nextBool`) from an injected `Random`, which defaults to an unseeded `Random()` (line 266); each clip has its own audio pool (196-207), so plays can overlap.
 - Inputs: sound id, clock, random seed. Output: sound playback calls. Event-driven; no per-tick update.
 
 ## 2. Key functions
@@ -20,9 +20,9 @@ Donor: /mnt/frankendom-donors/flutter-team-archive-pinball/packages/pinball_audi
 | Reusable algorithm | Game-specific constants |
 |---|---|
 | Per-cue time gate that only counts accepted plays | 6 s gap for the dino cue (line 282); 2 s gap for the cow cue (338) (theirs) |
-| Random pick between two variants, pooled | volume 0.6 for the bumper and kicker variants (325, 332) (theirs) |
-| Pool with a maximum of overlapping instances | maximum 2 players for the flipper (308); volume 0.3 for the rollover (303) (theirs) |
-| Loop for background music | volume 0.6 (line 344) (theirs) |
+| Random pick between two variants, pooled | per-cue volume, default 1 (theirs, 212) |
+| Pool with a maximum of overlapping instances | the flipper pool's `maxPlayers` (theirs, 154) |
+| Loop for background music | per-cue volume, default 1 (theirs, 122) |
 | Table from id to strategy, unknown ids ignored | none (algorithm) |
 
 ## 4. TypeScript sketch

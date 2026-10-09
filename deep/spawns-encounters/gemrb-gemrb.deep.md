@@ -1,10 +1,10 @@
 # gemrb-gemrb (spawns-encounters, cell 4)
 
-Donor: /mnt/frankendom-donors/gemrb-gemrb/gemrb/core/IniSpawn.cpp | Licence: GPL-2 | C++ | symbol IniSpawn::SpawnGroup / SpawnCreature (opened: SelectSpawnPoint 152-208, SpawnCreature 628-785, SpawnGroup 787-814, InitialSpawn 817-835, ExitSpawn 837-840, CheckSpawn 843-848; Schedule in /mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Core.cpp 259-262)
+Donor: /mnt/frankendom-donors/gemrb-gemrb/gemrb/core/IniSpawn.cpp | Licence: GPL-2.0-or-later per SPDX header in IniSpawn.cpp (repo COPYING is GPL-2 text) | C++ | symbol IniSpawn::SpawnGroup / SpawnCreature (opened: SelectSpawnPoint 152-208, SpawnCreature 628-785, SpawnGroup 787-814, InitialSpawn 817-835, ExitSpawn 837-840, CheckSpawn 843-848; Schedule in /mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Core.cpp 259-262)
 
 ## 1. Mechanism
 
-- Spawns are declared in an area's spawn INI (a PST feature, per the comment at Map.cpp 933). The INI names an `enter` entry, an `exit` entry and a list of `events` (IniSpawn.cpp 90-110, read at start-up). Each entry has an `interval` (raised to at least 15, line 538 of the same file) and a list of critters; each critter has creature files, `create_qty` (default: `spec_qty`), `spec_qty` as the total quantity (default 1), a point definition, a time-of-day mask (default all hours; a 24-character string can switch hours off) and gating flags. The parsing (`ReadSpawnEntry`, 210-540) was only skimmed at those lines.
+- Spawns are declared in an area's spawn INI (a PST feature, per the comment at Map.cpp 932). The INI's `spawn_main` section names an `enter` entry, an `exit` entry and a list of `events` (IniSpawn.cpp 99-115, read in the constructor). Each entry has an `interval` (raised to at least 15, line 538 of the same file) and a list of critters; each critter has creature files, `create_qty` (default: `spec_qty`), `spec_qty` as the total quantity (default 1), a point definition, a time-of-day mask (default all hours; a 24-character string can switch hours off) and gating flags. The parsing (`ReadSpawnEntry`, 210-540) was only skimmed at those lines.
 - `InitialSpawn()` (817-835) runs `SpawnGroup(enterspawn)`, sets the area locals and, if a party spawn point is defined, moves the extra party members away. It is called at the end of the INI set-up (the line after the `events` read, marked "maybe not correct" in the source), not from a separate area-enter hook. `ExitSpawn()` (837-840) runs the exit group; it is called from Game.cpp 762. `CheckSpawn()` (843-848) runs every event group and is the respawn path; it is called from Map.cpp 934 inside the map's update function (the function name and its call rate were not read, only lines 925-934).
 - `SpawnGroup` (787-814) returns at once if the entry has no critters. It returns if the interval has not elapsed: `lastSpawndate + interval >= gameTime`, tested only when both the interval and the game time are non-zero. For each critter it tests `Schedule(critter.TimeOfDay, event.lastSpawndate)`: note that the time passed is the event's last spawn date, not the current time, so the hour tested is the hour of the previous spawn (zero before the first). If that passes it spawns `SpawnCount` copies; each copy calls `SelectSpawnPoint` (except copies after the first when the hold-point flag is set), then `SpawnCreature`. After each critter that passed the schedule test (once its copies are done) it stamps `event.lastSpawndate = gameTime`, so later critters of the same event are tested against the new stamp.
 - `Schedule` (Core.cpp 259-262) is `(schedule & SCHEDULE_MASK(time)) != 0`; per the comment, hours are offset by half an hour (bit 0 covers 00:30 to 01:29).
@@ -27,11 +27,11 @@ Donor: /mnt/frankendom-donors/gemrb-gemrb/gemrb/core/IniSpawn.cpp | Licence: GPL
 
 | Reusable algorithm | Game-specific constants |
 |---|---|
-| Interval-gated group respawn, stamped with last spawn time | Interval from the INI, minimum 15, in game-time units (theirs; the unit was not read) |
+| Interval-gated group respawn, stamped with last spawn time | Interval from the INI, minimum 15, compared with `Game::GameTime` (an atomic uint32 starting at 0, Game.h 253; the unit is not stated there, the journal-entry field at Game.h 124 comments "in game time seconds") (theirs, IniSpawn.cpp 537-538) |
 | Hide-from-view spawn: spawn only where the player cannot see | Visibility test via map IsVisible (theirs, lines 171 and 653) |
 | Population cap: count existing objects against a quota before spawning | Quota per critter, default 1 (theirs, line 443 of the INI reader) |
 | Difficulty gate by bit mask on area difficulty | Difficulty values 1, 2, 4 map to bits (theirs, 661-670) |
-| Random pick from a list, plus indexed or safest point selection | Point selection modes r, i, s, e (theirs, 154-186) |
+| Random pick from a list, plus indexed or safest point selection | Point selection modes r, i, s, e (theirs, 154-189) |
 
 ## 4. TypeScript sketch
 

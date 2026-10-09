@@ -1,0 +1,279 @@
+game	system	level	evidence	note
+00-Evan-shattered-pixel-dungeon	crafting	FULL	core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/scenes/AlchemyScene.java	alchemy pot combining ingredients into potions and items
+00-Evan-shattered-pixel-dungeon	quests	FULL	core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/npcs/Ghost.java	NPC quests: ghost, wandmaker, blacksmith, imp
+00-Evan-shattered-pixel-dungeon	skills-professions	FULL	core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/hero/Talent.java	tiered talent trees per hero class
+00-Evan-shattered-pixel-dungeon	classes-levels	FULL	core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/hero/HeroClass.java	hero classes with subclasses and XP levels
+00-Evan-shattered-pixel-dungeon	achievements	FULL	core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/Badges.java	badge unlock system
+00-Evan-shattered-pixel-dungeon	leaderboards	FULL	core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/Rankings.java	local run rankings after death
+00-Evan-shattered-pixel-dungeon	fog-of-war	FULL	core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/tiles/FogOfWar.java	visibility and explored fog rendering
+00-Evan-shattered-pixel-dungeon	procedural-generation	FULL	core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/levels/builders	procedural room-based level builders and item Generator
+00-Evan-shattered-pixel-dungeon	status-effects	FULL	core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/buffs	large set of buffs and debuffs
+00-Evan-shattered-pixel-dungeon	magic-spells	FULL	core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/items/wands	wands, scroll spells and hero spells
+00-Evan-shattered-pixel-dungeon	loot-rarity-affixes	FULL	core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/items/weapon/enchantments	weapon enchantments and glyphs, item generator tables
+00-Evan-shattered-pixel-dungeon	permadeath	FULL	core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/GamesInProgress.java	run-based game; death deletes the save
+00-Evan-shattered-pixel-dungeon	save-load	FULL	core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/Dungeon.java	bundle-based save and restore of game state
+00-Evan-shattered-pixel-dungeon	bosses-raids	FULL	core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/Tengu.java	five floor bosses with arenas
+00-Evan-shattered-pixel-dungeon	cooking	PARTIAL	core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/items/food	meat cooking and food items, no recipes system
+00-Evan-shattered-pixel-dungeon	farming-gardening	PARTIAL	core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/plants	seeds and plants grown on dungeon tiles
+00-Evan-shattered-pixel-dungeon	pets-companions	PARTIAL	core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/items/spells	summoned elementals and allies
+00-Evan-shattered-pixel-dungeon	localisation	FULL	core/src/main/assets/messages	translated property files per language
+00-Evan-shattered-pixel-dungeon	economy-sinks	PARTIAL	core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/npcs/Shopkeeper.java	shopkeeper buy and sell gold sink
+00-Evan-shattered-pixel-dungeon	dungeons-instances	FULL	core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/levels	depth-based floors as the whole game structure
+0ad-0ad	housing-building	FULL	binaries/data/mods/public/simulation/components/Builder.js	builders construct foundations into structures
+0ad-0ad	chat	FULL	binaries/data/mods/public/gui/session/chat	in-game and lobby chat with addressees
+0ad-0ad	trading-player	PARTIAL	binaries/data/mods/public/simulation/components/Trader.js	trade routes between markets, no direct player-to-player trade
+0ad-0ad	auction-market	PARTIAL	binaries/data/mods/public/simulation/components/Barter.js	resource bartering at market structures
+0ad-0ad	quests	PARTIAL	binaries/data/mods/public/gui/session/objectives	scenario objectives and campaign scripted triggers
+0ad-0ad	siege-war	FULL	binaries/data/mods/public/simulation/components/Attack.js	RTS combat, siege weapons, capturing structures
+0ad-0ad	leaderboards	FULL	binaries/data/mods/public/gui/lobby/LeaderboardPage	lobby rating leaderboard page
+0ad-0ad	minimap-maps	FULL	source/simulation2/components/CCmpMinimap.cpp	minimap with flares and diplomacy colours
+0ad-0ad	fog-of-war	FULL	binaries/data/mods/public/simulation/components/Fogging.js	visibility, fogging and shroud of map
+0ad-0ad	procedural-generation	FULL	binaries/data/mods/public/maps/random	many random map generator scripts
+0ad-0ad	modding-scripting	FULL	binaries/data/mods/public/simulation/components	JS component system and mod folder structure
+0ad-0ad	save-load	FULL	binaries/data/mods/public/gui/loadgame	savegame write, list and load
+0ad-0ad	multiplayer-netcode	FULL	source/network/NetServer.cpp	enet lockstep server and client with lobby
+0ad-0ad	status-effects	FULL	binaries/data/mods/public/simulation/components/StatusEffectsReceiver.js	poison and other attack effects
+0ad-0ad	classes-levels	PARTIAL	binaries/data/mods/public/simulation/components/Promotion.js	unit promotion ranks from kills
+0ad-0ad	economy-sinks	PARTIAL	binaries/data/mods/public/simulation/components/Upkeep.js	resource upkeep intervals for entities
+0ad-0ad	replay-spectate	FULL	binaries/data/mods/public/gui/replaymenu	replay menu and replay playback
+0ad-0ad	tutorial	FULL	binaries/data/mods/public/campaigns/tutorial.json	tutorial campaign and tutorial maps
+0ad-0ad	localisation	FULL	binaries/data/l10n	gettext translations via tinygettext
+0ad-0ad	farming-gardening	PARTIAL	binaries/data/mods/public/simulation/templates/template_structure_resource_field.xml	farm fields gathered by workers
+0ad-0ad	factions-reputation	PARTIAL	binaries/data/mods/public/simulation/components/Diplomacy.js	diplomacy states between players, civ definitions
+2004Scape-Server	crafting	FULL	data/src/scripts/skill_crafting	crafting, smithing, fletching, herblore skills
+2004Scape-Server	skills-professions	FULL	data/src/scripts/skill_smithing	many RuneScape skills with levels and xp
+2004Scape-Server	fishing	FULL	data/src/scripts/skill_fishing	fishing spots and rods
+2004Scape-Server	cooking	FULL	data/src/scripts/skill_cooking	cooking raw food with burn chance
+2004Scape-Server	quests	FULL	data/src/scripts/quests	54 quest script directories
+2004Scape-Server	dialogue-trees	FULL	data/src/scripts/quests/quest_dragon	chat-npc multi-choice dialogue scripts
+2004Scape-Server	banking-storage	FULL	data/src/scripts/interface_bank	bank interface and scripts
+2004Scape-Server	trading-player	FULL	data/src/scripts/interface_trade	player to player trade window
+2004Scape-Server	auction-market	PARTIAL	data/src/scripts/shop	NPC shops, no player auction
+2004Scape-Server	chat	FULL	data/src/scripts/interface_chat	public private chat modes and friends list
+2004Scape-Server	magic-spells	FULL	data/src/scripts/skill_magic	spellbook, teleports, combat spells
+2004Scape-Server	status-effects	PARTIAL	data/src/scripts/skill_prayer	prayers, poison and stat drains
+2004Scape-Server	pvp-duels-arena	FULL	data/src/scripts/minigames/game_duelarena	duel arena minigame and wilderness pvp
+2004Scape-Server	bosses-raids	PARTIAL	data/src/scripts/areas/area_wilderness	scripted boss npcs such as dragons
+2004Scape-Server	leaderboards	FULL	prisma/singleworld/migrations/20250122221641_initial	hiscore tables in database schema
+2004Scape-Server	multiplayer-netcode	FULL	src/network	server-side game protocol, login, ws and tcp servers
+2004Scape-Server	modding-scripting	FULL	src/engine/script	RuneScript compiler and VM for content
+2004Scape-Server	save-load	FULL	src/engine/entity/PlayerLoading.ts	player save and load to database
+2004Scape-Server	tutorial	FULL	data/src/scripts/tutorial	tutorial island scripts
+2004Scape-Server	loot-rarity-affixes	PARTIAL	data/src/scripts/drop tables	npc drop tables
+2004Scape-Server	classes-levels	PARTIAL	data/src/scripts/levelup	skill levels and combat level, no classes
+2004Scape-Server	character-creation	PARTIAL	data/src/scripts/tutorial	appearance design interface on tutorial island
+2004Scape-Server	minimap-maps	PARTIAL	src/engine/GameMap.ts	world map regions and client minimap
+afritz1-OpenTESArena	weather	FULL	OpenTESArena/src/Weather/WeatherInstance.cpp	rain, snow, fog weather instances per climate
+afritz1-OpenTESArena	day-night	FULL	OpenTESArena/src/Time/Clock.cpp	game clock driving sky, sun, moons and lighting
+afritz1-OpenTESArena	minimap-maps	FULL	OpenTESArena/src/Interface/AutomapUiMVC.cpp	automap, province map and world map screens
+afritz1-OpenTESArena	procedural-generation	FULL	OpenTESArena/src/World/ArenaWildUtils.cpp	generated cities, wilderness and dungeons
+afritz1-OpenTESArena	dungeons-instances	FULL	OpenTESArena/src/World/ArenaInteriorUtils.cpp	interior dungeons and building levels
+afritz1-OpenTESArena	character-creation	FULL	OpenTESArena/src/Player/CharacterCreationState.cpp	race, class, gender, attributes, name flow
+afritz1-OpenTESArena	classes-levels	FULL	OpenTESArena/src/Stats/CharacterClassLibrary.cpp	character classes, races and level-up logic
+afritz1-OpenTESArena	dialogue-trees	PARTIAL	OpenTESArena/src/Interface/DialogueManager.cpp	citizen talk, directions and rumors
+afritz1-OpenTESArena	loot-rarity-affixes	PARTIAL	OpenTESArena/src/Items/ItemMaterialLibrary.cpp	item materials and conditions from enemy loot
+alexbatalov-fallout1-ce	skills-professions	FULL	src/game/skill.cc	18 skills, tagged skills, skill use rolls
+alexbatalov-fallout1-ce	classes-levels	FULL	src/game/stat.cc	SPECIAL stats, XP levels, perks and traits
+alexbatalov-fallout1-ce	character-creation	FULL	src/game/editor.cc	character editor for SPECIAL, traits, tagged skills
+alexbatalov-fallout1-ce	dialogue-trees	FULL	src/game/gdialog.cc	branching NPC dialogue with reaction and skill checks
+alexbatalov-fallout1-ce	parties-groups	PARTIAL	src/game/party.cc	recruitable party members controlled in combat
+alexbatalov-fallout1-ce	trading-player	PARTIAL	src/game/inventry.cc	barter window with NPCs, no player trading
+alexbatalov-fallout1-ce	minimap-maps	FULL	src/game/automap.cc	automap and pipboy world map
+alexbatalov-fallout1-ce	save-load	FULL	src/game/loadsave.cc	multi-slot save and load of maps and state
+alexbatalov-fallout1-ce	modding-scripting	FULL	src/int/intrpret.cc	scripting VM running compiled int scripts for maps and NPCs
+alexbatalov-fallout1-ce	factions-reputation	PARTIAL	src/game/reaction.cc	karma and NPC reaction rolls
+alexbatalov-fallout1-ce	status-effects	PARTIAL	src/game/critter.cc	poison and radiation damage over time
+alexbatalov-fallout1-ce	stealth	PARTIAL	src/game/skill.cc	sneak skill and stealth checks
+alexbatalov-fallout1-ce	procedural-generation	PARTIAL	src/game/worldmap.cc	random encounters on world map travel
+alexbatalov-fallout2-ce	skills-professions	FULL	src/skill.cc	18 skills, tagged skills, skill use rolls
+alexbatalov-fallout2-ce	classes-levels	FULL	src/stat.cc	SPECIAL stats, XP levels, perks and traits
+alexbatalov-fallout2-ce	character-creation	FULL	src/character_editor.cc	character editor and character selector
+alexbatalov-fallout2-ce	dialogue-trees	FULL	src/game_dialog.cc	branching NPC dialogue with reaction and skill checks
+alexbatalov-fallout2-ce	parties-groups	PARTIAL	src/party_member.cc	recruitable party members controlled in combat
+alexbatalov-fallout2-ce	trading-player	PARTIAL	src/inventory.cc	barter window with NPCs, no player trading
+alexbatalov-fallout2-ce	minimap-maps	FULL	src/automap.cc	automap and pipboy world map
+alexbatalov-fallout2-ce	save-load	FULL	src/loadsave.cc	multi-slot save and load of maps and state
+alexbatalov-fallout2-ce	modding-scripting	FULL	src/interpreter.cc	scripting VM plus sfall opcodes and global scripts
+alexbatalov-fallout2-ce	factions-reputation	PARTIAL	src/reaction.cc	karma and NPC reaction rolls
+alexbatalov-fallout2-ce	status-effects	PARTIAL	src/critter.cc	poison and radiation damage over time
+alexbatalov-fallout2-ce	stealth	PARTIAL	src/skill.cc	sneak skill and stealth checks
+alexbatalov-fallout2-ce	procedural-generation	PARTIAL	src/worldmap.cc	random encounters on world map travel
+amilich-isometric-city	housing-building	FULL	src/components/game/buildingHelpers.ts	tile-based placement of zones, roads, rails and buildings
+amilich-isometric-city	day-night	PARTIAL	src/components/game/lightingSystem.ts	night lighting and darkness overlay
+amilich-isometric-city	minimap-maps	FULL	src/components/game/MiniMap.tsx	minimap for city and park
+amilich-isometric-city	save-load	FULL	src/lib/cityManager.ts	multiple saved cities with save worker
+amilich-isometric-city	multiplayer-netcode	FULL	src/lib/multiplayer/supabaseProvider.ts	co-op rooms synced via supabase
+amilich-isometric-city	tutorial	PARTIAL	src/hooks/useTipSystem.ts	tip system advising the player
+amilich-isometric-city	localisation	PARTIAL	src/loadTranslations.js	translation loader for UI strings
+amilich-isometric-city	economy-sinks	FULL	src/components/game/panels/BudgetPanel.tsx	budget, taxes and service spending
+amilich-isometric-city	mounts-vehicles	PARTIAL	src/components/game/trafficSystem.ts	autonomous cars, trains, planes and boats
+amilich-isometric-city	procedural-generation	PARTIAL	src/context/CoasterContext.tsx	generated lakes and terrain for new parks
+BehaviorTree-BehaviorTree.CPP	NONE	NONE	.	library for behaviour trees, no game systems
+Blizzard-s2client-api	NONE	NONE	.	API wrapper for StarCraft II bots, no game systems
+CombatPathingRevolution	NONE	NONE	.	SKSE plugin for Skyrim combat pathing AI hooks only
+boardgameio-boardgame.io	multiplayer-netcode	FULL	src/client/transport/socketio.ts	socket.io client and server transport with master
+boardgameio-boardgame.io	save-load	FULL	src/server/db	pluggable storage: flatfile, inmemory, localstorage
+boardgameio-boardgame.io	replay-spectate	PARTIAL	src/client/debug/log	debug log panel with time travel replay of moves
+coding-horror-basic-computer-games	auction-market	PARTIAL	83_Stock_Market	stock buy and sell simulation against random prices
+coding-horror-basic-computer-games	economy-sinks	PARTIAL	43_Hammurabi	grain, land and plague resource management loop
+coding-horror-basic-computer-games	siege-war	PARTIAL	27_Civil_War	text battle simulation with attack and defend choices
+coding-horror-basic-computer-games	minimap-maps	PARTIAL	84_Super_Star_Trek	galaxy and sector sensor map printout
+colyseus-colyseus	multiplayer-netcode	FULL	packages/core/src/Room.ts	rooms, state sync, transports and protocol
+colyseus-colyseus	matchmaking	FULL	packages/core/src/matchmaker	room matchmaker and lobby seat reservation
+clockworklabs-SpacetimeDB	multiplayer-netcode	FULL	demo/Blackholio	realtime multiplayer demo game on server database with several clients
+clockworklabs-SpacetimeDB	chat	PARTIAL	templates/chat-react-ts	chat sample apps on the database
+angband-angband	character-creation	FULL	src/player-birth.c	birth flow for race, class, stats and options
+angband-angband	classes-levels	FULL	src/player-class.c	classes, races and XP level progression
+angband-angband	magic-spells	FULL	src/player-spell.c	class spellbooks, realms and spell casting
+angband-angband	loot-rarity-affixes	FULL	src/obj-make.c	ego items, artifacts, curses and random artifacts
+angband-angband	procedural-generation	FULL	src/gen-cave.c	dungeon level generation with room and vault templates
+angband-angband	dungeons-instances	FULL	src/generate.c	generated dungeon levels with stairs and profiles
+angband-angband	quests	PARTIAL	src/player-quest.c	fixed kill quests for the two final bosses
+angband-angband	status-effects	FULL	src/player-timed.c	timed player and monster effects
+angband-angband	permadeath	FULL	src/ui-death.c	death is final; character dumps and tombstone
+angband-angband	save-load	FULL	src/savefile.c	savefile format with versioned blocks
+angband-angband	leaderboards	FULL	src/score.c	high-score table
+angband-angband	auction-market	PARTIAL	src/store.c	town stores buy and sell items
+angband-angband	banking-storage	PARTIAL	src/store.c	player home storage in town
+angband-angband	minimap-maps	PARTIAL	src/ui-map.c	scrolling map and level map view
+angband-angband	modding-scripting	PARTIAL	lib/gamedata	data-driven text files define monsters, items and classes
+angband-angband	bosses-raids	PARTIAL	lib/gamedata/quest.txt	Sauron and Morgoth unique bosses
+Anuken-Mindustry	crafting	FULL	core/src/mindustry/world/blocks/production	drills and crafters turn items into products in factory chains
+Anuken-Mindustry	housing-building	FULL	core/src/mindustry/world/blocks/ConstructBlock.java	player placed block construction and schematics
+Anuken-Mindustry	chat	FULL	core/src/mindustry/ui/fragments/ChatFragment.java	in-game chat and console
+Anuken-Mindustry	quests	PARTIAL	core/src/mindustry/game/MapObjectives.java	campaign and map objectives with markers
+Anuken-Mindustry	weather	FULL	core/src/mindustry/content/Weathers.java	rain, sandstorm, snow weather effects
+Anuken-Mindustry	pvp-duels-arena	FULL	core/src/mindustry/game/Gamemode.java	PvP game mode with teams
+Anuken-Mindustry	siege-war	FULL	core/src/mindustry/game/Waves.java	wave defence and attack maps with enemy bases
+Anuken-Mindustry	bosses-raids	PARTIAL	core/src/mindustry/game/SpawnGroup.java	wave spawn groups with boss effect
+Anuken-Mindustry	achievements	FULL	core/src/mindustry/service/Achievement.java	Steam achievements and stat tracking
+Anuken-Mindustry	minimap-maps	FULL	core/src/mindustry/graphics/MinimapRenderer.java	minimap and full map fragment
+Anuken-Mindustry	fog-of-war	FULL	core/src/mindustry/game/FogControl.java	fog of war with block and unit vision
+Anuken-Mindustry	procedural-generation	FULL	core/src/mindustry/maps/generators	planet sector and map generators with filters
+Anuken-Mindustry	modding-scripting	FULL	core/src/mindustry/mod/Mods.java	mod loader, JS scripts and content parser
+Anuken-Mindustry	save-load	FULL	core/src/mindustry/game/Saves.java	save slots and sector saves
+Anuken-Mindustry	multiplayer-netcode	FULL	core/src/mindustry/core/NetServer.java	dedicated and hosted multiplayer server
+Anuken-Mindustry	status-effects	FULL	core/src/mindustry/content/StatusEffects.java	burning, freezing, wet and other status effects
+Anuken-Mindustry	tutorial	PARTIAL	core/src/mindustry/ui/fragments/HintsFragment.java	contextual hints for new players
+Anuken-Mindustry	localisation	FULL	core/assets/bundles	translation bundles for 36 languages
+Anuken-Mindustry	mounts-vehicles	PARTIAL	core/src/mindustry/content/UnitTypes.java	controllable mech, legged and air units
+ax-grymyr-l2dn-server	crafting	FULL	L2Dn/L2Dn.GameServer.Model/InstanceManagers/RecipeManager.cs	recipe crafting plus random craft
+ax-grymyr-l2dn-server	housing-building	PARTIAL	L2Dn/L2Dn.GameServer.Model/Model/Residences	clan halls and residences owned by clans
+ax-grymyr-l2dn-server	guilds-clans	FULL	L2Dn/L2Dn.GameServer.Model/Model/Clans	clans, alliances, clan levels and warehouse
+ax-grymyr-l2dn-server	parties-groups	FULL	L2Dn/L2Dn.GameServer.Model/Model/Party.cs	parties, command channels and matching rooms
+ax-grymyr-l2dn-server	chat	FULL	L2Dn/L2Dn.GameServer.Scripts/Handlers/ChatHandlers	general, shout, trade, clan, party, whisper chat
+ax-grymyr-l2dn-server	trading-player	FULL	L2Dn/L2Dn.GameServer.Model/Model/TradeList.cs	player trade and private store lists
+ax-grymyr-l2dn-server	auction-market	FULL	L2Dn/L2Dn.GameServer.Model/Model/ItemAuction	item auctions, commission house and world exchange
+ax-grymyr-l2dn-server	banking-storage	FULL	L2Dn/L2Dn.GameServer.Model/Model/ItemContainers/PlayerWarehouse.cs	warehouses, freight and clan warehouse
+ax-grymyr-l2dn-server	quests	PARTIAL	L2Dn/L2Dn.GameServer.Model/Model/Quests	quest engine with only tutorial quest script included
+ax-grymyr-l2dn-server	skills-professions	FULL	L2Dn/L2Dn.GameServer.Model/Model/Skills	skill trees, learning and enchanting
+ax-grymyr-l2dn-server	fishing	FULL	L2Dn/L2Dn.GameServer.Model/Model/Fishings	fishing rods, bait and catch logic
+ax-grymyr-l2dn-server	farming-gardening	FULL	L2Dn/L2Dn.GameServer.Model/InstanceManagers/CastleManorManager.cs	manor seeds and crop procurement
+ax-grymyr-l2dn-server	mounts-vehicles	FULL	L2Dn/L2Dn.GameServer.Model/InstanceManagers/AirShipManager.cs	airships, boats, shuttles and mounts
+ax-grymyr-l2dn-server	pets-companions	FULL	L2Dn/L2Dn.GameServer.Model/Model/PetData.cs	pets, summons and pet leveling
+ax-grymyr-l2dn-server	pvp-duels-arena	FULL	L2Dn/L2Dn.GameServer.Model/Model/Olympiads	olympiad, duels and PvP flags
+ax-grymyr-l2dn-server	siege-war	FULL	L2Dn/L2Dn.GameServer.Model/Model/Sieges	castle and fort sieges
+ax-grymyr-l2dn-server	dungeons-instances	FULL	L2Dn/L2Dn.GameServer.Model/Model/InstanceZones	instanced dungeons
+ax-grymyr-l2dn-server	bosses-raids	FULL	L2Dn/L2Dn.GameServer.Model/InstanceManagers/GrandBossManager.cs	grand bosses and raid bosses
+ax-grymyr-l2dn-server	achievements	PARTIAL	L2Dn/L2Dn.GameServer.Model/Model/AchievementBox.cs	achievement box and daily missions
+ax-grymyr-l2dn-server	leaderboards	FULL	L2Dn/L2Dn.GameServer.Model/InstanceManagers/RankManager.cs	player rankings and ranking history
+ax-grymyr-l2dn-server	modding-scripting	FULL	L2Dn/L2Dn.GameServer.Scripts	C# script handlers for AI, quests and effects
+ax-grymyr-l2dn-server	multiplayer-netcode	FULL	L2Dn/L2Dn.Protocol/Network	client protocol, packets and encryption
+ax-grymyr-l2dn-server	magic-spells	FULL	L2Dn/L2Dn.GameServer.Model/Model/Skills	spell skills with targets and effects
+ax-grymyr-l2dn-server	status-effects	FULL	L2Dn/L2Dn.GameServer.Model/Model/EffectList.cs	buffs, debuffs and abnormal states
+ax-grymyr-l2dn-server	classes-levels	FULL	L2Dn/L2Dn.GameServer/DataPack/skillTrees	class tiers and skill trees
+ax-grymyr-l2dn-server	character-creation	PARTIAL	L2Dn/L2Dn.GameServer.Model/Network/IncomingPackets	character create packet handling
+ax-grymyr-l2dn-server	loot-rarity-affixes	FULL	L2Dn/L2Dn.GameServer.Model/Model/Options	item options, enchant and ensoul effects
+ax-grymyr-l2dn-server	tutorial	PARTIAL	L2Dn/L2Dn.GameServer.Scripts/Quests/Q00206Tutorial.cs	tutorial quest script
+azerothcore-azerothcore-wotlk	crafting	PARTIAL	src/server/game/Skills/SkillExtraItems.cpp	profession crafting via spell effects and skill extra items
+azerothcore-azerothcore-wotlk	guilds-clans	FULL	src/server/game/Guilds/Guild.cpp	guilds with ranks, bank tabs and events
+azerothcore-azerothcore-wotlk	parties-groups	FULL	src/server/game/Groups/Group.cpp	parties, raid groups and loot rules
+azerothcore-azerothcore-wotlk	chat	FULL	src/server/game/Chat/Channels	chat channels, whispers, say and yell
+azerothcore-azerothcore-wotlk	trading-player	FULL	src/server/game/Handlers/TradeHandler.cpp	player to player trade window
+azerothcore-azerothcore-wotlk	auction-market	FULL	src/server/game/AuctionHouse/AuctionHouseMgr.cpp	auction house with bids and buyout
+azerothcore-azerothcore-wotlk	banking-storage	FULL	src/server/game/Handlers/BankHandler.cpp	player bank and guild bank, mail
+azerothcore-azerothcore-wotlk	quests	FULL	src/server/game/Quests/QuestDef.cpp	quest templates, objectives and rewards
+azerothcore-azerothcore-wotlk	dialogue-trees	FULL	src/server/game/Entities/Creature/GossipDef.cpp	gossip menus with options for NPCs
+azerothcore-azerothcore-wotlk	skills-professions	FULL	src/server/game/Skills	professions and weapon skills with discovery
+azerothcore-azerothcore-wotlk	fishing	PARTIAL	src/server/game/Loot/LootMgr.cpp	fishing loot tables and bobber hazard
+azerothcore-azerothcore-wotlk	weather	FULL	src/server/game/Weather/WeatherMgr.cpp	zone weather states with sound
+azerothcore-azerothcore-wotlk	day-night	PARTIAL	src/server/game/Time/GameTime.cpp	in-game time and calendar used by events
+azerothcore-azerothcore-wotlk	mounts-vehicles	FULL	src/server/game/Entities/Vehicle/Vehicle.cpp	vehicles, transports, mounts and taxis
+azerothcore-azerothcore-wotlk	pets-companions	FULL	src/server/game/Entities/Pet/Pet.cpp	hunter and warlock pets with pet scripts
+azerothcore-azerothcore-wotlk	pvp-duels-arena	FULL	src/server/game/Battlegrounds/Arena.cpp	battlegrounds, arenas, duels and outdoor pvp
+azerothcore-azerothcore-wotlk	siege-war	FULL	src/server/game/Battlefield	Wintergrasp battlefield and outdoor pvp objectives
+azerothcore-azerothcore-wotlk	dungeons-instances	FULL	src/server/game/Instances/InstanceSaveMgr.cpp	saved instances with lockouts and dungeon finder
+azerothcore-azerothcore-wotlk	bosses-raids	FULL	src/server/scripts/Northrend	scripted raid and dungeon boss encounters
+azerothcore-azerothcore-wotlk	achievements	FULL	src/server/game/Achievements/AchievementMgr.cpp	achievement criteria and rewards
+azerothcore-azerothcore-wotlk	replay-spectate	PARTIAL	src/server/game/ArenaSpectator/ArenaSpectator.cpp	arena spectator addon support
+azerothcore-azerothcore-wotlk	modding-scripting	FULL	src/server/game/Scripting/ScriptMgr.cpp	script hooks and loadable modules
+azerothcore-azerothcore-wotlk	multiplayer-netcode	FULL	src/server/game/Server/WorldSocket.cpp	world server socket and session protocol
+azerothcore-azerothcore-wotlk	factions-reputation	FULL	src/server/game/Reputation/ReputationMgr.cpp	faction standings and reputation rewards
+azerothcore-azerothcore-wotlk	magic-spells	FULL	src/server/game/Spells/Spell.cpp	spell casting engine with effects and auras
+azerothcore-azerothcore-wotlk	status-effects	FULL	src/server/game/Spells/Auras	buff, debuff and aura system
+azerothcore-azerothcore-wotlk	classes-levels	FULL	src/server/game/Entities/Player/Player.cpp	classes, talents and level progression
+azerothcore-azerothcore-wotlk	character-creation	FULL	src/server/game/Handlers/CharacterHandler.cpp	character create, delete and enum
+azerothcore-azerothcore-wotlk	loot-rarity-affixes	FULL	src/server/game/Loot/LootMgr.cpp	loot tables with item quality and random enchants
+azerothcore-azerothcore-wotlk	stealth	PARTIAL	src/server/game/Entities/Unit	stealth and detection auras on units
+beyond-all-reason-Beyond-All-Reason	housing-building	PARTIAL	units/ArmBuildings	builder units construct base structures and defenses
+beyond-all-reason-Beyond-All-Reason	chat	FULL	luaui/Widgets/gui_chat.lua	in-game chat with team and spectator channels
+beyond-all-reason-Beyond-All-Reason	quests	PARTIAL	luarules/gadgets/api_missions.lua	mission API with triggers for scripted scenarios
+beyond-all-reason-Beyond-All-Reason	siege-war	FULL	luarules/gadgets/game_dominion.lua	RTS combat with dominion and capture modes
+beyond-all-reason-Beyond-All-Reason	bosses-raids	FULL	luarules/gadgets/raptor_spawner_defense.lua	PvE raptor and scavenger waves with boss drones
+beyond-all-reason-Beyond-All-Reason	achievements	PARTIAL	luarules/gadgets/game_awards.lua	end-of-game awards
+beyond-all-reason-Beyond-All-Reason	minimap-maps	FULL	luaui/Widgets/gui_minimap.lua	minimap and picture-in-picture minimap
+beyond-all-reason-Beyond-All-Reason	fog-of-war	FULL	luaui/Widgets/gui_infolos.lua	line of sight and radar fog views
+beyond-all-reason-Beyond-All-Reason	day-night	PARTIAL	luarules/gadgets/map_nightmode.lua	map night mode lighting
+beyond-all-reason-Beyond-All-Reason	weather	PARTIAL	luarules/gadgets/cmd_weather_brush.lua	weather brush tool for map effects
+beyond-all-reason-Beyond-All-Reason	modding-scripting	FULL	luarules/gadgets	Lua gadgets and widgets define game rules
+beyond-all-reason-Beyond-All-Reason	save-load	PARTIAL	luarules/gadgets/game_restart_with_state.lua	restart game with saved state
+beyond-all-reason-Beyond-All-Reason	status-effects	PARTIAL	luarules/gadgets/unit_stun_script.lua	EMP stun and paralyze effects
+beyond-all-reason-Beyond-All-Reason	stealth	PARTIAL	luarules/gadgets/unit_cloak.lua	unit cloaking
+beyond-all-reason-Beyond-All-Reason	replay-spectate	FULL	luaui/Widgets/gui_replaybuttons.lua	replay controls and spectator HUD
+beyond-all-reason-Beyond-All-Reason	tutorial	PARTIAL	singleplayer/scenarios	scripted single-player scenarios
+beyond-all-reason-Beyond-All-Reason	localisation	FULL	language/en	translated language files for several locales
+beyond-all-reason-Beyond-All-Reason	economy-sinks	PARTIAL	luarules/gadgets/game_tax_resource_sharing.lua	resource sharing tax and energy conversion
+Card-Forge-forge	chat	FULL	forge-gui/src/main/java/forge/gamemodes/net/ChatMessage.java	lobby and in-game chat for online play
+Card-Forge-forge	multiplayer-netcode	FULL	forge-gui/src/main/java/forge/gamemodes/net	netty server and client with delta packets
+Card-Forge-forge	quests	FULL	forge-gui-mobile/src/forge/adventure/data/AdventureQuestData.java	adventure quests with stages plus Quest mode
+Card-Forge-forge	dialogue-trees	FULL	forge-gui-mobile/src/forge/adventure/data/DialogData.java	branching NPC dialogue in adventure mode
+Card-Forge-forge	auction-market	PARTIAL	forge-gui-mobile/src/forge/adventure/scene/ShopScene.java	adventure shops for cards and items
+Card-Forge-forge	crafting	PARTIAL	forge-gui-mobile/src/forge/adventure/scene/SpellSmithScene.java	spell smith creates cards for gold or shards
+Card-Forge-forge	procedural-generation	FULL	forge-gui-mobile/src/forge/adventure/world/World.java	noise and wave function collapse world generation
+Card-Forge-forge	save-load	FULL	forge-gui-mobile/src/forge/adventure/scene/SaveLoadScene.java	adventure save slots and world saves
+Card-Forge-forge	localisation	FULL	forge-gui/res/languages	translations and localized card names
+Card-Forge-forge	tutorial	FULL	forge-gui/res/tutorial	tutorial puzzle files for new players
+Card-Forge-forge	minimap-maps	FULL	forge-gui-mobile/src/forge/adventure/scene/MapViewScene.java	world map with points of interest
+Card-Forge-forge	dungeons-instances	PARTIAL	forge-gui-mobile/src/forge/adventure/pointofintrest/PointOfInterest.java	dungeon and cave points of interest
+Card-Forge-forge	classes-levels	PARTIAL	forge-gui-mobile/src/forge/adventure/data/HeroData.java	adventure hero classes and player progression
+Card-Forge-forge	modding-scripting	FULL	forge-gui/res/cardsfolder	card script language defines every card
+CleverRaven-Cataclysm-DDA	crafting	FULL	src/crafting.cpp	recipes, crafting UI, proficiencies and requirements
+CleverRaven-Cataclysm-DDA	housing-building	FULL	src/construction.cpp	terrain and furniture construction plus basecamps
+CleverRaven-Cataclysm-DDA	guilds-clans	PARTIAL	src/faction.cpp	NPC factions with opinions and camps
+CleverRaven-Cataclysm-DDA	parties-groups	PARTIAL	src/mission_companion.cpp	NPC followers and companion missions
+CleverRaven-Cataclysm-DDA	trading-player	PARTIAL	src/npctrade.cpp	barter trade UI with NPC traders
+CleverRaven-Cataclysm-DDA	quests	FULL	src/mission.cpp	missions from NPCs with start and completion
+CleverRaven-Cataclysm-DDA	dialogue-trees	FULL	src/npctalk.cpp	JSON dialogue topics with conditions and effects
+CleverRaven-Cataclysm-DDA	skills-professions	FULL	src/skill.cpp	skills with training plus proficiencies and professions
+CleverRaven-Cataclysm-DDA	cooking	FULL	data/json/recipes/food	food recipes with cooking requirements
+CleverRaven-Cataclysm-DDA	farming-gardening	FULL	src/activity_actor.cpp	planting seeds, harvesting and farming activities
+CleverRaven-Cataclysm-DDA	fishing	PARTIAL	src/activity_actor.cpp	fishing activity
+CleverRaven-Cataclysm-DDA	weather	FULL	src/weather.cpp	weather generation and effects
+CleverRaven-Cataclysm-DDA	day-night	FULL	src/calendar.cpp	calendar, sunrise and sunset, seasons
+CleverRaven-Cataclysm-DDA	mounts-vehicles	FULL	src/vehicle.cpp	player built vehicles and mounted animals
+CleverRaven-Cataclysm-DDA	pets-companions	PARTIAL	src/monster.cpp	tamable and friendly monsters, pets
+CleverRaven-Cataclysm-DDA	achievements	FULL	src/achievement.cpp	JSON driven achievements
+CleverRaven-Cataclysm-DDA	leaderboards	PARTIAL	src/scores_ui.cpp	scores and statistics display
+CleverRaven-Cataclysm-DDA	minimap-maps	FULL	src/pixel_minimap.cpp	minimap and overmap UI
+CleverRaven-Cataclysm-DDA	fog-of-war	FULL	src/map_memory.cpp	remembered tiles and light-based vision
+CleverRaven-Cataclysm-DDA	procedural-generation	FULL	src/mapgen.cpp	overmap and mapgen of cities, buildings and terrain
+CleverRaven-Cataclysm-DDA	modding-scripting	FULL	src/mod_manager.cpp	many data mods with JSON effects-on-condition
+CleverRaven-Cataclysm-DDA	save-load	FULL	src/savegame.cpp	world save and load
+CleverRaven-Cataclysm-DDA	stealth	PARTIAL	data/json/move_modes.json	sneaking movement mode
+CleverRaven-Cataclysm-DDA	magic-spells	FULL	src/magic.cpp	spells, enchantments and Magiclysm mod
+CleverRaven-Cataclysm-DDA	status-effects	FULL	src/effect.cpp	effects, diseases, morale and mutations
+CleverRaven-Cataclysm-DDA	permadeath	FULL	src/memorial_logger.cpp	death ends character with memorial file
+CleverRaven-Cataclysm-DDA	character-creation	FULL	src/newcharacter.cpp	scenarios, professions, traits and stats
+CleverRaven-Cataclysm-DDA	loot-rarity-affixes	PARTIAL	data/json/itemgroups	item groups weighted spawn tables
+CleverRaven-Cataclysm-DDA	tutorial	FULL	src/gamemode_tutorial.cpp	tutorial game mode
+CleverRaven-Cataclysm-DDA	localisation	FULL	lang	gettext translations with plural and gender support

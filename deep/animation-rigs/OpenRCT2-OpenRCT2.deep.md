@@ -1,6 +1,6 @@
 # OpenRCT2-OpenRCT2 (animation-rigs, cell 3)
 
-Donor: /mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2/peep/PeepAnimations.cpp | Licence: GPL-3.0 | C++ | symbol getAnimationsByPeepType / availableGuestAnimations
+Donor: /mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2/peep/PeepAnimations.cpp | Licence: GPL-3.0 (per PeepAnimations.cpp header and licence.txt) | C++ | symbol getAnimationsByPeepType / availableGuestAnimations
 
 ## 1. Mechanism
 - Donor: OpenRCT2 peep (guest and staff) animation sets. The code does not drive a skeleton; it chooses which animation clip name a peep plays for a named action, and which costume set to load.
@@ -8,7 +8,7 @@ Donor: /mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2/peep/PeepAnimations
 - getAnimationsByPeepType (102-118) switches on the type; guest, handyman, mechanic and security return their own table, and entertainer or any other value returns the entertainer table. getAnimationPeepType (120-134) separately maps a StaffType to a peep type with the same entertainer default.
 - findRandomPeepAnimationsIndexForType (196-212) picks one loaded animation object of a type: it first gets the indexes with the random-only filter, retries unfiltered if that is empty, returns the null index if still empty, and otherwise takes one sample with a std::mt19937 seeded from std::random_device.
 - findAllPeepAnimationsIndexesForType (160-176) scans the 255 object slots (kMaxPeepAnimationsObjects = 255 in ObjectLimits.h:37), keeps slots whose loaded object matches the type, and with randomOnly set skips objects whose ShouldExcludeFromRandomPlacement is true.
-- The callers that choose a set per peep, and the PeepAnimationsObject class, were not read here; the table and pick functions are the mechanism. The rest of the file (getAnimationGroupsByPeepType 214-243, getAvailableCostumeStrings 245-278, inferMaxAnimationDimensions 280-377: costume list and sprite bounds for the UI) is not used by the sketch.
+- The callers that choose a set per peep, and the PeepAnimationsObject class, were not read here; the table and pick functions are the mechanism. The rest of the file (getAnimationGroupsByPeepType 214-246, getAvailableCostumeStrings 248-281, inferMaxAnimationDimensions 284-377: costume list and sprite bounds for the UI) is not used by the sketch.
 
 ## 2. Key functions
 - getAnimationsByPeepType | /mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2/peep/PeepAnimations.cpp | 102-118 | returns the action table for a peep type; entertainer is the default branch.
@@ -36,9 +36,9 @@ type ActorClass = "guest" | "handyman" | "entertainer";
 interface AnimSet { id: number; cls: ActorClass; excludeFromRandom: boolean; }
 
 const CLIPS: Record<ActorClass, Record<string, string>> = {
-  guest: { walking: "walking", wave: "wave", sittingIdle: "sittingIdle" },   // illustrative subset (theirs)
-  handyman: { walking: "walking", wave: "wave" },
-  entertainer: { walking: "walking", wave: "wave2" },
+  guest: { walking: "walking", wave: "wave", sittingIdle: "sittingIdle" },   // illustrative subset of the donor names
+  handyman: { walking: "walking", watchRide: "watchRide", staffSweep: "staffSweep" },
+  entertainer: { walking: "walking", wave2: "wave2" },
 };
 
 function clipFor(cls: string, action: string): string | undefined {

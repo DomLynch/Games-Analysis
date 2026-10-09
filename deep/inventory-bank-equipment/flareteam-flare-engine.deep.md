@@ -28,7 +28,7 @@ Symbol check: `MenuInventory::add` (881) is correct. `applyEquipment` (1180) and
 
 | Name | Path | Lines | What it does |
 |---|---|---|---|
-| MenuInventory::add | /mnt/frankendom-donors/flareteam-flare-engine/src/MenuInventory.cpp | 881-992 | Places a stack into CARRIED or EQUIPMENT; auto-equip; quest-item overflow; merge |
+| MenuInventory::add | /mnt/frankendom-donors/flareteam-flare-engine/src/MenuInventory.cpp | 881-989 | Places a stack into CARRIED or EQUIPMENT; auto-equip; quest-item overflow; merge |
 | MenuInventory::applyEquipment | /mnt/frankendom-donors/flareteam-flare-engine/src/MenuInventory.cpp | 1180-1333 | Recalculates provisional primary stats, set counts, requirement and slot checks (loop 1190-1264); then item stats, effects, slot disabling |
 | MenuInventory::applyItemSetBonuses | /mnt/frankendom-donors/flareteam-flare-engine/src/MenuInventory.cpp | 1386-1401 | Applies set bonuses where the count meets the requirement |
 | MenuInventory::applyBonus | /mnt/frankendom-donors/flareteam-flare-engine/src/MenuInventory.cpp | 1403-1444 | Applies one bonus record as an effect (or power level bonus) |

@@ -1,6 +1,6 @@
 # id-Software-Quake (camera, cell 14)
 
-Donor: /mnt/frankendom-donors/id-Software-Quake/QW/client/cl_cam.c | Licence: GPL-2.0 (gnu.txt) | C (QuakeWorld client; QuakeC scripts are not involved) | symbol Cam_Track / Cam_Lock
+Donor: /mnt/frankendom-donors/id-Software-Quake/QW/client/cl_cam.c | Licence: GPL-2.0-or-later (per cl_cam.c header; header says version 2 or any later version, refers to GNU.txt) | C (QuakeWorld client; QuakeC scripts are not involved) | symbol Cam_Track / Cam_Lock
 Symbol check: Cam_Lock (123), Cam_TryFlyby (151), Cam_IsVisible (184), InitFlyby (201) and Cam_Track (315) confirmed on the VPS.
 
 ## 1. Mechanism
@@ -23,7 +23,7 @@ Symbol check: Cam_Lock (123), Cam_TryFlyby (151), Cam_IsVisible (184), InitFlyby
 |---|---|
 | Pick the nearest unobstructed spot from a set of candidate directions | 12 candidate directions (theirs; lines 214-279), the lowest score wins (the rule is the algorithm) |
 | Probe length and accept window | 800 units probe (theirs; line 161); 32 minimum and 800 maximum accept (theirs; line 170) |
-| Visibility: unobstructed and not too close | 16 units minimum distance (theirs; line 196) |
+| Visibility: unobstructed and not too close | 16 units minimum distance (theirs; line 196 is too short to quote, the distance is computed at 194-195) |
 | Teleport threshold | 16 units (theirs; line 378) |
 | Re-search throttle | 0.1 s (theirs; line 345, cam_lastviewtime) |
 | Sentinel for no result | 1000 initial max (line 213, 282) and 9999 reject (lines 166, 171, 178) (theirs) |
@@ -32,7 +32,7 @@ Symbol check: Cam_Lock (123), Cam_TryFlyby (151), Cam_IsVisible (184), InitFlyby
 simplified: the 12 direction vectors are passed in by the caller (the donor builds them from the pitch-zeroed view); trace stands in for PM_PlayerMove (hull trace); the reject value 9999 is Infinity; the lock/desired-position state, the 0.1 s throttle, the chase/flyby output, the high-track target pick and the retry with the visibility check off are omitted.
 
 ```ts
-// Licence: GPL-2.0 (gnu.txt) (id-Software-Quake, QW client). CLEAN-ROOM: written from the mechanism, no donor lines.
+// Licence: GPL-2.0-or-later (id-Software-Quake, QW client). CLEAN-ROOM: written from the mechanism, no donor lines.
 type V = { x: number; y: number; z: number };
 type Trace = { end: V; hitWorld: boolean; wet: boolean };
 const PROBE = 800, MIN_HIT = 32, MAX_HIT = 800, MIN_VIS = 16;   // all theirs
@@ -75,7 +75,7 @@ function isVisible(player: V, spot: V, trace: (a: V, b: V) => Trace): boolean {
 ## 5. Lands in
 - Frankendom target: src/fight/camera.ts for any shared helper (the spot-picking trace), with the spectator driver in the replay client; today: src/camera* and src/record (moving). Not fight logic: a spectator is not a fight participant.
 - Parity row: 19 (fight record / replay: spectator view of a recorded fight), with 11 (fight camera, standoff) for the unobstructed-spot idea.
-- Reuse tag: rewrite-from-idea (GPL-2.0)
+- Reuse tag: rewrite-from-idea (GPL-2.0-or-later)
 - Brief rule served: (category default, not per-cell) 1 (one combat core, two clients); rules 7-9 n/a
 
 ## 6. Gaps and risks

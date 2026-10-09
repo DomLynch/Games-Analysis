@@ -16,7 +16,7 @@ Donor: /mnt/frankendom-donors/LostCityRS-Engine-TS/src/server/friend/FriendServe
 ## 2. Key functions
 - `FriendServer` class and constructor - /mnt/frankendom-donors/LostCityRS-Engine-TS/src/server/friend/FriendServer.ts lines 62-498 (the class closes at 498). Socket server, message dispatch.
 - Message handler (`socket.on('message')`) - same file lines 84-403. Opcode dispatch, including PLAYER_LOGIN (107-142), FRIENDLIST_ADD (185-204), PRIVATE_MESSAGE (256-285), PUBLIC_CHAT_LOG (286-297), relay opcodes (298-396).
-- `initializeWorld` - same file lines 412-419. Replaces the world socket and sets the slot count.
+- `initializeWorld` - same file lines 412-419. Terminates and replaces the world socket; the 2000-slot array is created only if that world has none yet (repo 48-50).
 - `broadcastWorldToFollowers` - same file lines 445-451. Sends a world update to each follower.
 - `sendPlayerWorldUpdate` - same file lines 462-478. Applies the visibility rule before sending (sends to the viewer's world socket; skipped if the viewer has no world).
 - `sendPrivateMessage` - same file lines 480-497. Routes to the target's world socket.
@@ -89,4 +89,4 @@ export function worldUpdateFor(s: FriendState, viewer: string, other: string): n
 - A full world drops the login silently (128-132); Frankendom's layers (one-shard §5) assign a new layer instead.
 - Pit is client only; this is server code and must not run in the Pit client. Zones are data: a social module must key off the account, not the zone.
 - Conflict with one engine, server-verified kills, MAX_ATTACKERS = 3: none (no combat code in this donor path).
-- Not read: `getPlayerWorldSocket`'s callers outside this file, and `db/query.js`. Everything else in FriendServer.ts (1-688) and FriendServerRepository.ts (1-387) was read.
+- Not read: `getPlayerWorldSocket`'s callers outside this file, and `db/query.js`. FriendServer.ts 50-498 and FriendServerRepository.ts (1-387) were read; the `FriendClient` class (FriendServer.ts 500-688) and the file's first 49 lines (imports, opcode enums) were not.

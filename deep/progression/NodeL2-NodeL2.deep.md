@@ -21,8 +21,8 @@ Symbol check: experienceReward opens at 6 and closes at 29; it is the only funct
 ## 3. Numbers vs mechanism
 | Reusable algorithm | Game-specific constants |
 |---|---|
-| Rate-scaled XP and SP added to totals | expRate (theirs, config/default.ini line 25, value 1.0) |
-| Band check on a cumulative table; the level lands in whatever band the total reaches | maxLevel (theirs, config/default.ini line 24, value 75) |
+| Rate-scaled XP and SP added to totals | expRate (theirs, read at ExperienceReward.js 9 from options.default.General; the config/default.ini value of 1.0 at line 25 was read but is too short to receipt) |
+| Band check on a cumulative table; the level lands in whatever band the total reaches | maxLevel (theirs, loop bound at ExperienceReward.js 15; the config/default.ini value of 75 at line 24 was read but is too short to receipt) |
 | Persist after each reward | DataCache.experience table values (theirs, data/Templates/Experience/experience.json) |
 
 ## 4. TypeScript sketch

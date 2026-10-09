@@ -8,8 +8,8 @@ Donor: /mnt/frankendom-donors/OpenDiablo2-OpenDiablo2/d2game/d2player/hud.go | L
 - On the uncached path `CustomWidget.Render` calls the render function directly (`d2core/d2ui/custom_widget.go`, 44-52). It does not apply the widget's position, so the offset comes only from the `PushTranslation` inside each draw function.
 - `renderStaminaBar` (508-523): pushes the translation (273, 572) and a modulate effect. Fill = `Stamina / MaxStamina`. Colour is light brown, switching to red when the fill is below 0.25. Draws a rectangle of width `int(fill * staminaBarWidth)` (102.0, line 32) and height `staminaBarHeight` (19.0). There is no clamp.
 - `renderExperienceBar` (525-532): pushes (256, 561). Fill = `Experience / NextLevelExp`. Draws a white rectangle of width `int(fill * expBarWidth)` (120.0) and a literal height 2 (line 531).
-- `HUD.Advance(elapsed)` (661-672): once per tick it refreshes the stamina and experience tooltip text. It does not draw bars.
-- Tooltip text (`setStaminaTooltipText` 560-567, `setExperienceTooltipText` 569-~582, which rewrites `%u` to `%d` and casts to `uint`) formats the current and max values from localised strings. 
+- `HUD.Advance(elapsed)` (661-672): once per tick it refreshes the stamina and experience tooltip text (662-663), then advances the health and mana globes (665-671). It does not draw the two bars.
+- Tooltip text (`setStaminaTooltipText` 560-567, `setExperienceTooltipText` 569-583, which rewrites `%u` to `%d` and casts to `uint`) formats the current and max values from localised strings. 
 - Output: draw calls and tooltip text only. No game state is written. Inputs are read directly from the hero's stats.
 
 ## 2. Key functions
@@ -19,7 +19,7 @@ Donor: /mnt/frankendom-donors/OpenDiablo2-OpenDiablo2/d2game/d2player/hud.go | L
 - `HUD.renderExperienceBar`, same file, lines 525-532. Experience fill as a white bar.
 - `HUD.Advance`, same file, lines 661-672. Per-tick tooltip refresh.
 - `HUD.setStaminaTooltipText`, same file, lines 560-567. Current and max stamina into the localised string.
-- `HUD.setExperienceTooltipText`, same file, lines 569-~582 (end not opened). Same for experience, `%u` rewritten to `%d`.
+- `HUD.setExperienceTooltipText`, same file, lines 569-583. Same for experience, `%u` rewritten to `%d`.
 - Constants, same file: bar sizes and low threshold at 30-35, offsets at 50-55, colours at 68-70.
 - `CustomWidget.Render`, `/mnt/frankendom-donors/OpenDiablo2-OpenDiablo2/d2core/d2ui/custom_widget.go`, lines 44-52. Draw dispatch; the uncached path has no position translation.
 

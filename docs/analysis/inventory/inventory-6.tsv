@@ -1,0 +1,294 @@
+game	system	level	evidence	note
+smogon-pokemon-showdown	chat	FULL	server/chat.ts	Room and PM chat with commands and plugins
+smogon-pokemon-showdown	auction-market	PARTIAL	server/chat-plugins/auction.ts	Chat-room auction for drafting players with bids
+smogon-pokemon-showdown	pvp-duels-arena	FULL	sim/battle.ts	Turn-based player-vs-player battle simulator
+smogon-pokemon-showdown	leaderboards	FULL	server/ladders.ts	Elo ladders per format
+smogon-pokemon-showdown	replay-spectate	FULL	server/replays.ts	Saved battle replays and room spectating
+smogon-pokemon-showdown	status-effects	FULL	sim/dex-conditions.ts	Status conditions, volatiles and field conditions
+smogon-pokemon-showdown	weather	FULL	test/sim/misc/weather.js	Battle weather and terrain effects with tests
+smogon-pokemon-showdown	multiplayer-netcode	FULL	server/sockets.ts	Websocket server and client protocol
+smogon-pokemon-showdown	modding-scripting	FULL	data/mods	Dozens of rule and generation mods over base data
+smogon-pokemon-showdown	localisation	FULL	translations	Translation files for several languages
+smogon-pokemon-showdown	procedural-generation	PARTIAL	data/random-battles	Random team generators per format
+smogon-pokemon-showdown	tournaments	FULL	server/tournaments	Elimination and round-robin bracket generators
+smogon-pokemon-showdown	minigames	PARTIAL	server/chat-plugins/uno.ts	Chat-room Uno, hangman, trivia games
+STJr-SRB2	multiplayer-netcode	FULL	src/netcode	Client-server netgame, file transfer, master server
+STJr-SRB2	modding-scripting	FULL	src/lua_script.c	Lua scripting API plus SOC/DeHackEd data modding
+STJr-SRB2	save-load	FULL	src/p_saveg.c	Savegame and netgame state serialisation
+STJr-SRB2	replay-spectate	FULL	src/g_demo.c	Demo recording/playback and spectator mode
+STJr-SRB2	pvp-duels-arena	FULL	src/g_game.c	Match, CTF, tag competitive gametypes
+STJr-SRB2	chat	FULL	src/hu_stuff.c	In-game text chat and console messages
+STJr-SRB2	achievements	FULL	src/m_cond.c	Emblems and unlockable conditions
+STJr-SRB2	minimap-maps	PARTIAL	src/am_map.c	Automap view
+STJr-SRB2	status-effects	PARTIAL	src/p_user.c	Shield and power-up timers on player
+STJr-SRB2	pets-companions	PARTIAL	src/b_bot.c	AI sidekick bot follows player
+STJr-SRB2	localisation	PARTIAL	src/locale	Gettext po/pot catalogue
+STJr-SRB2	weather	PARTIAL	src/p_mobj.c	Rain and snow precipitation objects
+supertuxkart-stk-code	multiplayer-netcode	FULL	src/network	Online and LAN racing with server, lobby, rewinding
+supertuxkart-stk-code	achievements	FULL	src/achievements	Achievement tracking and web sync
+supertuxkart-stk-code	replay-spectate	FULL	src/replay	Replay recording, ghost karts and playback
+supertuxkart-stk-code	modding-scripting	FULL	src/scriptengine	AngelScript track scripting plus addon downloads
+supertuxkart-stk-code	mounts-vehicles	FULL	src/karts	Karts with physics, characteristics and animations
+supertuxkart-stk-code	pvp-duels-arena	FULL	src/modes/three_strikes_battle.cpp	Battle, soccer, CTF and free-for-all modes
+supertuxkart-stk-code	leaderboards	PARTIAL	src/race/highscores.cpp	Local per-track high scores plus online profiles
+supertuxkart-stk-code	weather	FULL	src/graphics/weather.cpp	Rain, snow and lightning effects
+supertuxkart-stk-code	chat	PARTIAL	src/network/protocols/chat_commands.cpp	Lobby chat and chat commands online
+supertuxkart-stk-code	tutorial	FULL	src/modes/tutorial_world.cpp	Interactive tutorial world and tips manager
+supertuxkart-stk-code	localisation	FULL	data/po	Gettext translations for many languages
+supertuxkart-stk-code	quests	PARTIAL	src/challenges/challenge_data.cpp	Story mode challenges unlock content
+supertuxkart-stk-code	save-load	PARTIAL	src/config/saved_grand_prix.cpp	Saved grand prix and player progress
+supertuxkart-stk-code	loot-rarity-affixes	PARTIAL	src/items/powerup_manager.cpp	Random power-up item boxes, no rarity tiers
+supertuxkart-stk-code	racing-ai	FULL	src/karts/controller	AI kart controllers for race and battle
+teeworlds-teeworlds	multiplayer-netcode	FULL	src/engine/shared/network.cpp	UDP client-server networking with server browser and master server
+teeworlds-teeworlds	chat	FULL	src/game/client/components/chat.cpp	In-game public, team and whisper chat
+teeworlds-teeworlds	replay-spectate	FULL	src/engine/shared/demo.cpp	Demo recording playback and spectator mode
+teeworlds-teeworlds	pvp-duels-arena	FULL	src/game/server/gamemodes/ctf.cpp	DM, TDM, CTF, LMS, LTS game modes
+teeworlds-teeworlds	localisation	PARTIAL	src/game/client/localization.cpp	Localize code present, language directory empty
+teeworlds-teeworlds	map-editor	FULL	src/game/editor/editor.cpp	Built-in tile map editor
+teeworlds-teeworlds	voting	FULL	src/game/voting.h	Player votes for map, kick, options
+teeworlds-teeworlds	modding-scripting	PARTIAL	src/game/server/gamemodes/mod.cpp	Mod gamemode skeleton, C++ gamecontroller extension
+tmewett-BrogueCE	procedural-generation	FULL	src/brogue/Architect.c	Procedural dungeon level and room generation, seeded
+tmewett-BrogueCE	dungeons-instances	FULL	src/brogue/Architect.c	Multi-depth dungeon descent with levels
+tmewett-BrogueCE	permadeath	FULL	src/brogue/RogueMain.c	Death ends the run, high score recorded
+tmewett-BrogueCE	replay-spectate	FULL	src/brogue/Recordings.c	Keystroke recordings replay whole runs
+tmewett-BrogueCE	save-load	PARTIAL	src/brogue/Recordings.c	Saves via recording of inputs, resumed by replay
+tmewett-BrogueCE	stealth	FULL	src/brogue/Time.c	Stealth range changes with resting, sneaking and noise
+tmewett-BrogueCE	status-effects	FULL	src/brogue/Time.c	Poison, burning, haste, slow, levitation timers
+tmewett-BrogueCE	loot-rarity-affixes	FULL	src/brogue/Items.c	Random items with enchant levels, runics and malevolent curses
+tmewett-BrogueCE	magic-spells	PARTIAL	src/brogue/Items.c	Staffs, wands, charms and monster bolts instead of spell lists
+tmewett-BrogueCE	pets-companions	FULL	src/brogue/Monsters.c	Captive monsters become followers and allies
+tmewett-BrogueCE	fog-of-war	FULL	src/brogue/Movement.c	Discovered and magic-mapped cell tracking
+tmewett-BrogueCE	leaderboards	PARTIAL	src/brogue/RogueMain.c	Local high score list
+tmewett-BrogueCE	modding-scripting	PARTIAL	src/variants	Game variants Rapid and Bullet Brogue via globals tables
+tmewett-BrogueCE	lighting	FULL	src/brogue/Light.c	Dynamic light sources and darkness
+TurningWheel-Barony	classes-levels	FULL	src/charclass.cpp	Playable classes with stats and level-ups
+TurningWheel-Barony	skills-professions	FULL	src/stat.cpp	Weapon, magic, lockpicking proficiencies that level with use
+TurningWheel-Barony	magic-spells	FULL	src/magic	Learnable spells, casting, spell effects
+TurningWheel-Barony	multiplayer-netcode	FULL	src/net.cpp	Online and LAN co-op up to 4 players, lobbies
+TurningWheel-Barony	procedural-generation	FULL	src/maps.cpp	Random dungeon level generation
+TurningWheel-Barony	dungeons-instances	FULL	src/maps.cpp	Descending multi-floor dungeon with special levels
+TurningWheel-Barony	minimap-maps	FULL	src/interface/drawminimap.cpp	Minimap drawing of explored level
+TurningWheel-Barony	modding-scripting	FULL	src/mod_tools.cpp	Mod tools with JSON data, map editor
+TurningWheel-Barony	localisation	FULL	lang/en.txt	Translatable string files per language
+TurningWheel-Barony	banking-storage	PARTIAL	src/actchest.cpp	Lootable chests with inventory
+TurningWheel-Barony	achievements	PARTIAL	src/steam.cpp	Steam achievements and statistics
+TurningWheel-Barony	save-load	FULL	src/scores.cpp	Saved games and score records
+TurningWheel-Barony	crafting	PARTIAL	src/item_tool.cpp	Alchemy potion mixing and item tinkering
+TurningWheel-Barony	status-effects	FULL	src/stat.cpp	Many status effect flags on entities
+TurningWheel-Barony	loot-rarity-affixes	PARTIAL	src/items.cpp	Item beatitude, curses and random item generation
+TurningWheel-Barony	npc-shops	FULL	src/shops.cpp	Shopkeeper buying and selling UI
+TurningWheel-Barony	character-creation	FULL	src/ui/MainMenu.cpp	Class and appearance selection per player
+TurningWheel-Barony	leaderboards	PARTIAL	src/scores.cpp	Local top score list
+ValveSoftware-halflife	pvp-duels-arena	FULL	dlls/multiplay_gamerules.cpp	Deathmatch and team deathmatch rules, plus DMC and Ricochet mods
+ValveSoftware-halflife	multiplayer-netcode	PARTIAL	dlls/multiplay_gamerules.cpp	Game-side multiplayer logic only, engine netcode closed
+ValveSoftware-halflife	save-load	FULL	dlls/saverestore.h	Entity save/restore across level transitions
+ValveSoftware-halflife	pets-companions	PARTIAL	dlls/barney.cpp	Friendly NPCs that follow and fight with player
+ValveSoftware-halflife	dialogue-trees	PARTIAL	dlls/talkmonster.cpp	Scripted NPC talk, scripted sequences, no branching trees
+ValveSoftware-halflife	chat	FULL	cl_dll/saytext.cpp	Say and team-say text on HUD
+ValveSoftware-halflife	leaderboards	PARTIAL	cl_dll/scoreboard.cpp	In-match scoreboard
+ValveSoftware-halflife	replay-spectate	PARTIAL	dlls/spectator.cpp	Spectator mode and demo playback hooks
+ValveSoftware-halflife	mounts-vehicles	PARTIAL	dlls/func_tank.cpp	Mounted turrets and trains
+ValveSoftware-halflife	status-effects	PARTIAL	dlls/player.cpp	Damage types, poison, radiation, drowning
+ValveSoftware-halflife	modding-scripting	PARTIAL	dmc	SDK for mods with DMC and Ricochet examples
+ValveSoftware-halflife	bosses-raids	PARTIAL	dlls/bigmomma.cpp	Scripted boss monsters like Gonarch
+ValveSoftware-halflife	npc-ai	FULL	dlls/AI_BaseNPC_Schedule.cpp	Schedule and task based monster AI
+ValveSoftware-source-sdk-2013	mounts-vehicles	FULL	src/game/server/hl2/vehicle_jeep.cpp	Drivable jeep, airboat, APC with vehicle physics
+ValveSoftware-source-sdk-2013	achievements	FULL	src/game/shared/achievementmgr.cpp	Achievement manager with HL2 and TF2 achievements
+ValveSoftware-source-sdk-2013	pets-companions	FULL	src/game/server/hl2/npc_citizen17.cpp	Squad-following citizen allies and Alyx, Dog
+ValveSoftware-source-sdk-2013	dialogue-trees	PARTIAL	src/game/server/sceneentity.cpp	Choreographed scenes and NPC speech, not branching trees
+ValveSoftware-source-sdk-2013	pvp-duels-arena	FULL	src/game/shared/teamplayroundbased_gamerules.cpp	HL2MP deathmatch and TF2 round-based team rules
+ValveSoftware-source-sdk-2013	multiplayer-netcode	PARTIAL	src/game/shared/multiplay_gamerules.cpp	Game-side prediction and rules, engine netcode closed
+ValveSoftware-source-sdk-2013	save-load	FULL	src/game/server/saverestore_gamedll.cpp	Entity save and restore system
+ValveSoftware-source-sdk-2013	modding-scripting	PARTIAL	src/game/shared/vscript_shared.cpp	VScript hooks plus SDK mod framework and FGD tools
+ValveSoftware-source-sdk-2013	bosses-raids	PARTIAL	src/game/server/tf/bot_npc	TF2 boss NPC bots
+ValveSoftware-source-sdk-2013	chat	FULL	src/game/client/hud_basechat.cpp	In-game text chat HUD
+ValveSoftware-source-sdk-2013	replay-spectate	PARTIAL	src/game/client/game_controls/SpectatorGUI.cpp	Spectator UI and replay stats hooks
+ValveSoftware-source-sdk-2013	npc-ai	FULL	src/game/server/NextBot	NextBot framework and nav mesh generation
+ValveSoftware-source-sdk-2013	status-effects	PARTIAL	src/game/server/tf/tf_player.cpp	TF2 conditions like burn, bleed, buffs
+vcmi-vcmi	magic-spells	FULL	lib/spells	Adventure and battle spells with schools and effects
+vcmi-vcmi	procedural-generation	FULL	lib/rmg	Random map generator with zones, templates and placers
+vcmi-vcmi	multiplayer-netcode	FULL	server/CVCMIServer.cpp	Client-server lobby, hotseat and online multiplayer
+vcmi-vcmi	chat	FULL	client/GameChatHandler.cpp	Lobby and in-game chat
+vcmi-vcmi	modding-scripting	FULL	luascript	Mod system with JSON configs and Lua scripting
+vcmi-vcmi	quests	FULL	lib/mapObjects/Quest.cpp	Seer hut quests and map objectives
+vcmi-vcmi	housing-building	FULL	lib/mapObjects/CGTownInstance.cpp	Town building construction with prerequisites
+vcmi-vcmi	auction-market	PARTIAL	lib/mapObjects/CGMarket.cpp	Resource and artifact market exchange with fixed rates
+vcmi-vcmi	skills-professions	FULL	lib/CSkillHandler.cpp	Hero secondary skills with levels
+vcmi-vcmi	classes-levels	FULL	config/heroClasses.json	Hero classes with experience and level-up
+vcmi-vcmi	save-load	FULL	lib/serializer	Binary and JSON save serialization
+vcmi-vcmi	replay-spectate	PARTIAL	lib/gameState/ReplayLog.cpp	Replay log of game events
+vcmi-vcmi	leaderboards	PARTIAL	lib/gameState/HighScore.cpp	Campaign and scenario high score calculation
+vcmi-vcmi	localisation	FULL	launcher/translation	Multi-language translations and launcher language setup
+vcmi-vcmi	minimap-maps	FULL	client/adventureMap/CMinimap.cpp	Adventure map minimap
+vcmi-vcmi	fog-of-war	FULL	lib/CPlayerState.h	Per-team hidden and revealed map tiles
+vcmi-vcmi	siege-war	FULL	client/battle/BattleSiegeController.cpp	Castle siege battles with walls and towers
+vcmi-vcmi	status-effects	FULL	lib/bonuses	Bonus system for unit and hero effects
+vcmi-vcmi	factions-reputation	PARTIAL	config/factions	Town factions with creatures and buildings, no reputation
+vcmi-vcmi	campaigns	FULL	lib/campaign	Campaign scenarios with carryover bonuses
+vcmi-vcmi	game-ai	FULL	AI	Adventure and battle AI players
+vcmi-vcmi	map-editor	FULL	mapeditor	Qt map editor
+vcmi-vcmi	tavern-heroes	PARTIAL	lib/gameState/TavernHeroesPool.cpp	Hire heroes from tavern pool
+veloren-veloren	crafting	FULL	common/src/recipe.rs	Recipe book, crafting stations, modular weapon components
+veloren-veloren	parties-groups	FULL	common/src/comp/group.rs	Player groups with invites and shared UI
+veloren-veloren	chat	FULL	common/src/comp/chat.rs	Global, group, faction, say chat modes
+veloren-veloren	trading-player	FULL	server/src/events/trade.rs	Player-to-player and NPC trade windows with pricing
+veloren-veloren	quests	PARTIAL	rtsim/src/data/quest.rs	Rtsim NPC quests and player quest HUD
+veloren-veloren	dialogue-trees	PARTIAL	voxygen/src/hud/quest.rs	NPC dialogue prompts for quests and trades
+veloren-veloren	skills-professions	FULL	common/src/comp/skillset	Weapon skill trees and skill points
+veloren-veloren	weather	FULL	server/src/weather	Simulated rain, cloud and wind weather
+veloren-veloren	day-night	FULL	common/state/src/state.rs	Time of day cycle with sun and moon
+veloren-veloren	mounts-vehicles	FULL	common/src/mounting.rs	Riding animals, airships and boats
+veloren-veloren	pets-companions	FULL	server/src/pet.rs	Tameable pets that follow owner
+veloren-veloren	dungeons-instances	FULL	world/src/site	Generated dungeons, caves and castles as sites
+veloren-veloren	procedural-generation	FULL	world/src/sim	Procedural world, civs, sites and terrain
+veloren-veloren	minimap-maps	FULL	voxygen/src/hud/minimap.rs	Minimap and full world map
+veloren-veloren	modding-scripting	FULL	plugin	WASM plugin system and asset RON data
+veloren-veloren	save-load	FULL	server/src/persistence	SQLite character persistence
+veloren-veloren	multiplayer-netcode	FULL	network	Custom protocol networking, MMO-style server
+veloren-veloren	status-effects	FULL	common/src/comp/buff.rs	Buffs and debuffs with durations
+veloren-veloren	permadeath	PARTIAL	common/src/comp/hardcore.rs	Hardcore character option
+veloren-veloren	character-creation	FULL	server/src/character_creator.rs	Body and appearance customisation
+veloren-veloren	loot-rarity-affixes	FULL	assets/common/loot_tables	Loot tables with item quality tiers
+veloren-veloren	localisation	FULL	common/i18n	Fluent translations for dozens of languages
+veloren-veloren	economy-sinks	PARTIAL	world/src/civ/econ.rs	Simulated town economy with trade goods
+veloren-veloren	tutorial	PARTIAL	voxygen/src/hud/tutorial.rs	In-game tutorial HUD hints
+veloren-veloren	stealth	PARTIAL	common/src/combat.rs	Sneaking and stealth damage modifiers
+veloren-veloren	npc-simulation	FULL	rtsim	Real-time simulation of NPCs off-screen
+veloren-veloren	combat-abilities	FULL	common/src/combat.rs	Weapon abilities, poise, combos, energy
+Wargus-wargus	magic-spells	FULL	scripts/spells.lua	Unit spells like blizzard, polymorph, haste for Warcraft II units
+Wargus-wargus	modding-scripting	FULL	scripts/scripts.lua	Game defined in Lua scripts over Stratagus engine
+Wargus-wargus	multiplayer-netcode	PARTIAL	scripts/menus/network.lua	Network game menus and lobby, engine does netcode
+Wargus-wargus	chat	PARTIAL	scripts/menus/network.lua	Network game chat settings
+Wargus-wargus	replay-spectate	PARTIAL	scripts/menus/replay.lua	Replay menu for recorded games
+Wargus-wargus	save-load	FULL	scripts/menus/save.lua	Save and load game menus
+Wargus-wargus	localisation	FULL	scripts/translate	Gettext po translations for several languages
+Wargus-wargus	housing-building	FULL	scripts/constructions.lua	RTS base building with construction stages
+Wargus-wargus	quests	PARTIAL	scripts/menus/objectives.lua	Campaign mission objectives
+Wargus-wargus	siege-war	FULL	scripts/ai	RTS combat with ground, air, sea attack AI
+Wargus-wargus	minimap-maps	PARTIAL	scripts/ui.lua	Minimap placement in UI themes
+Wargus-wargus	factions-reputation	PARTIAL	scripts/human	Human and Orc races with own units and upgrades
+Wargus-wargus	campaigns	FULL	campaigns	Human and Orc campaigns plus expansions
+Wargus-wargus	map-editor	FULL	scripts/editor.lua	Map editor with brushes
+Wargus-wargus	game-ai	FULL	scripts/ai.lua	Multiple scripted computer opponents
+Wargus-wargus	fog-of-war	PARTIAL	scripts/menus/options.lua	Fog of war option, engine implements
+Warzone2100-warzone2100	multiplayer-netcode	FULL	lib/netplay	Lobby, lockstep netplay, NAT port mapping
+Warzone2100-warzone2100	chat	FULL	src/chat.cpp	In-game and lobby chat with team and ally messages
+Warzone2100-warzone2100	replay-spectate	FULL	lib/netplay/netreplay.cpp	Multiplayer replay recording and spectator widgets
+Warzone2100-warzone2100	modding-scripting	FULL	src/qtscript.cpp	JavaScript scripting API for AI and rules, plus mods
+Warzone2100-warzone2100	save-load	FULL	src/gamestate_savegame.cpp	Savegame serialization
+Warzone2100-warzone2100	localisation	FULL	po	Gettext translations managed via Crowdin
+Warzone2100-warzone2100	weather	FULL	data/base/script/weather.js	Rain and snow atmospherics
+Warzone2100-warzone2100	fog-of-war	FULL	src/advvis.cpp	Advanced visibility and fog rendering
+Warzone2100-warzone2100	minimap-maps	FULL	src/radar.cpp	Radar minimap
+Warzone2100-warzone2100	tutorial	FULL	data/base/script/tutorial.js	Scripted tutorial
+Warzone2100-warzone2100	quests	PARTIAL	src/mission.cpp	Campaign missions with objectives
+Warzone2100-warzone2100	campaigns	FULL	data/base/campaigns	Three campaign chapters and challenge missions
+Warzone2100-warzone2100	siege-war	FULL	src/combat.cpp	RTS combat with structures, artillery, projectiles
+Warzone2100-warzone2100	housing-building	FULL	src/structure.cpp	Base building with structures and defenses
+Warzone2100-warzone2100	crafting	PARTIAL	src/design.h	Droid design from chassis, body, weapon components
+Warzone2100-warzone2100	skills-professions	PARTIAL	src/research.cpp	Research tree unlocks technology
+Warzone2100-warzone2100	economy-sinks	PARTIAL	src/power.cpp	Power resource generation and spending
+Warzone2100-warzone2100	leaderboards	PARTIAL	src/scores.cpp	Mission score and player stats graph
+Warzone2100-warzone2100	game-ai	FULL	data/mp/multiplay/skirmish	Scripted skirmish AIs
+Warzone2100-warzone2100	mounts-vehicles	PARTIAL	src/transporter.cpp	Transporters carrying droids
+Warzone2100-warzone2100	voting	PARTIAL	src/multivote.cpp	Lobby kick and map votes
+Warzone2100-warzone2100	achievements	PARTIAL	src/challenge.cpp	Challenge missions with recorded results
+wesnoth-wesnoth	modding-scripting	FULL	src/scripting/game_lua_kernel.cpp	WML plus Lua scripting for campaigns, units, AI
+wesnoth-wesnoth	multiplayer-netcode	FULL	src/server/wesnothd	Multiplayer server, lobby and game creation
+wesnoth-wesnoth	chat	FULL	src/chat_command_handler.cpp	Lobby and in-game chat commands
+wesnoth-wesnoth	replay-spectate	FULL	src/replay.cpp	Replay recording and observer mode
+wesnoth-wesnoth	save-load	FULL	src/savegame.cpp	Savegames with campaign carryover
+wesnoth-wesnoth	localisation	FULL	po	Gettext translations in dozens of languages
+wesnoth-wesnoth	achievements	FULL	src/achievements.cpp	Campaign achievements defined in config
+wesnoth-wesnoth	day-night	FULL	src/tod_manager.cpp	Time of day schedule affects combat
+wesnoth-wesnoth	fog-of-war	FULL	src/actions/shroud_clearing_action.cpp	Fog and shroud vision clearing
+wesnoth-wesnoth	classes-levels	FULL	src/actions/advancement.cpp	Unit experience and advancement trees
+wesnoth-wesnoth	status-effects	FULL	src/units/abilities.cpp	Poison, slow, petrify and unit abilities
+wesnoth-wesnoth	magic-spells	PARTIAL	src/units/attack_type.cpp	Magical attacks and weapon specials, no spell lists
+wesnoth-wesnoth	campaigns	FULL	data/campaigns	Over twenty story campaigns
+wesnoth-wesnoth	dialogue-trees	PARTIAL	src/storyscreen	Story screens and scenario message events
+wesnoth-wesnoth	game-ai	FULL	src/ai	Pluggable AI engine with RCA and micro AIs
+wesnoth-wesnoth	map-editor	FULL	src/editor	Built-in map editor
+wesnoth-wesnoth	modding-addons	FULL	src/addon	Add-on server client for user content
+wesnoth-wesnoth	factions-reputation	PARTIAL	data/multiplayer/factions	Playable factions with unit rosters
+wesnoth-wesnoth	economy-sinks	PARTIAL	src/actions/create.cpp	Gold for recruiting and upkeep
+wesnoth-wesnoth	siege-war	PARTIAL	src/actions/attack.cpp	Tactical turn-based combat
+wesnoth-wesnoth	minimap-maps	PARTIAL	src/map/map.cpp	Minimap in game UI
+wesnoth-wesnoth	procedural-generation	FULL	src/generators/map_create.cpp	Random map generator with Lua mapgen
+wesnoth-wesnoth	pvp-duels-arena	FULL	data/multiplayer	Multiplayer scenarios and eras
+widelands-widelands	housing-building	FULL	data/tribes/buildings	Tribe buildings with construction sites and production
+widelands-widelands	economy-logistics	FULL	src/economy	Ware requests, flags, roads and routing economy
+widelands-widelands	crafting	FULL	data/tribes/buildings/productionsites	Production sites turn wares into goods
+widelands-widelands	multiplayer-netcode	FULL	src/network	LAN and internet multiplayer host and client
+widelands-widelands	chat	FULL	src/chat/chat.cc	Lobby and in-game chat
+widelands-widelands	modding-scripting	FULL	src/scripting	Lua scripting for scenarios, win conditions, tribes
+widelands-widelands	save-load	FULL	src/game_io	Savegame packets for full game state
+widelands-widelands	replay-spectate	FULL	src/logic/replay.cc	Replays and watching games
+widelands-widelands	localisation	FULL	data/i18n	Translations and fonts for many locales
+widelands-widelands	tutorial	FULL	data/campaigns/tutorials.lua	Four scripted tutorial campaigns
+widelands-widelands	campaigns	FULL	data/campaigns	Tribe campaigns with scripted scenarios
+widelands-widelands	game-ai	FULL	src/ai	Computer player with economy and warfare logic
+widelands-widelands	map-editor	FULL	src/editor	Map editor and random map generator
+widelands-widelands	procedural-generation	FULL	src/editor/map_generator.cc	Random map generation
+widelands-widelands	mounts-vehicles	PARTIAL	src/logic/map_objects/tribes/ship/ship.cc	Ships, seafaring, expeditions and warships
+widelands-widelands	siege-war	FULL	src/ai/defaultai_warfare.cc	Military sites, soldiers and attack mechanics
+widelands-widelands	classes-levels	PARTIAL	data/tribes/buildings/trainingsites	Soldier training raises health, attack, defense levels
+widelands-widelands	fog-of-war	FULL	src/logic/vision.h	Per-player vision and fog tracking
+widelands-widelands	win-conditions	FULL	data/scripting/win_conditions	Selectable victory rule scripts
+widelands-widelands	auction-market	PARTIAL	data/tribes/buildings/markets	Market buildings for trading wares
+xoreos-xoreos	dialogue-trees	PARTIAL	src/aurora/dlgfile.cpp	Reads BioWare DLG conversation files and KotOR dialog GUI
+xoreos-xoreos	parties-groups	PARTIAL	src/engines/kotorbase/partycontroller.cpp	KotOR party selection and leader control
+xoreos-xoreos	save-load	PARTIAL	src/engines/kotorbase/savedgame.cpp	Loads KotOR saved games
+xoreos-xoreos	character-creation	PARTIAL	src/engines/nwn/gui/chargen	NWN character generation screens
+xoreos-xoreos	modding-scripting	PARTIAL	src/aurora/nwscript	NWScript bytecode interpreter and engine functions
+xoreos-xoreos	localisation	PARTIAL	src/aurora/talkman.cpp	Talk table string lookup per language
+xoreos-xoreos	classes-levels	PARTIAL	src/engines/kotorbase/creatureinfo.cpp	Creature class, skills and attribute data
+xoreos-xoreos	pathfinding	PARTIAL	src/engines/aurora/pathfinding.cpp	Walkmesh pathfinding and A-star
+xoreos-xoreos	file-format-readers	FULL	src/aurora	Readers for Aurora archive, GFF, 2DA formats
+XProger-OpenLara	save-load	FULL	src/savegame.h	Saves level state, inventory and Lara progress
+XProger-OpenLara	localisation	FULL	src/lang	Text tables for about 18 languages with glyph sets
+XProger-OpenLara	multiplayer-netcode	PARTIAL	src/network.h	Network session layer for multiplayer
+XProger-OpenLara	banking-storage	PARTIAL	src/inventory.h	Inventory ring menu with items and options page
+XProger-OpenLara	achievements	PARTIAL	src/gameflow.h	Secrets counter and level stats
+XProger-OpenLara	npc-ai	FULL	src/enemy.h	Enemy animal and monster AI like wolves, bears, bats
+XProger-OpenLara	rendering-backends	FULL	src/gapi	Many graphics APIs and retro platform ports
+xu4-engine-u4	dialogue-trees	FULL	src/discourse.cpp	Keyword-based NPC conversations from town talk files
+xu4-engine-u4	magic-spells	FULL	src/spell.cpp	Ultima IV spells with reagents and mixing
+xu4-engine-u4	parties-groups	FULL	src/party.cpp	Eight-member party with companions
+xu4-engine-u4	save-load	FULL	src/savegame.cpp	Original-format save game reading and writing
+xu4-engine-u4	dungeons-instances	FULL	src/dungeon.cpp	Multi-level dungeons with rooms and altars
+xu4-engine-u4	factions-reputation	FULL	src/shrine.cpp	Eight virtues, karma and shrine meditation
+xu4-engine-u4	character-creation	FULL	src/intro.cpp	Virtue question-based avatar class creation
+xu4-engine-u4	classes-levels	PARTIAL	src/stats.cpp	Party member classes, experience levels, stats
+xu4-engine-u4	status-effects	PARTIAL	src/combat.cpp	Poison, sleep and other combat conditions
+xu4-engine-u4	mounts-vehicles	PARTIAL	src/game.cpp	Ships, horse and balloon travel
+xu4-engine-u4	day-night	PARTIAL	src/game.cpp	Moon phases and moongate cycle
+xu4-engine-u4	weather	PARTIAL	src/game.cpp	Wind direction affecting ship sailing
+xu4-engine-u4	modding-scripting	PARTIAL	src/script_boron.cpp	Module system with Boron script config
+xu4-engine-u4	npc-shops	PARTIAL	src/city.cpp	Town shops, inns and vendors
+xu4-engine-u4	quests	PARTIAL	src/codex.cpp	Avatar quest ending with Codex of Ultimate Wisdom
+xu4-engine-u4	combat-tactical	FULL	src/combat.cpp	Tactical grid combat with creatures
+yairm210-Unciv	procedural-generation	FULL	core/src/com/unciv/logic/map/mapgenerator	Perlin-based terrain, rivers, wonders and resource placement
+yairm210-Unciv	multiplayer-netcode	FULL	core/src/com/unciv/logic/multiplayer	Async multiplayer with server storage and API
+yairm210-Unciv	chat	PARTIAL	core/src/com/unciv/logic/multiplayer/chat	Multiplayer game chat
+yairm210-Unciv	minimap-maps	FULL	core/src/com/unciv/ui/screens/worldscreen/minimap	World map minimap
+yairm210-Unciv	trading-player	FULL	core/src/com/unciv/logic/trade/TradeLogic.kt	Diplomatic trade offers between civilizations
+yairm210-Unciv	quests	FULL	core/src/com/unciv/logic/civilization/managers/quests/QuestManager.kt	City-state quests for civilizations
+yairm210-Unciv	modding-scripting	FULL	core/src/com/unciv/ui/screens/modmanager	JSON rulesets, uniques and in-game mod manager
+yairm210-Unciv	localisation	FULL	android/assets/jsons/translations	Property file translations for many languages
+yairm210-Unciv	save-load	FULL	core/src/com/unciv/logic/files/UncivFiles.kt	Save, load, autosave and map files
+yairm210-Unciv	tutorial	FULL	core/src/com/unciv/ui/screens/basescreen/TutorialController.kt	Tutorial tasks and popups
+yairm210-Unciv	replay-spectate	PARTIAL	core/src/com/unciv/ui/screens/victoryscreen/VictoryScreenReplay.kt	Replay of world map history at game end
+yairm210-Unciv	siege-war	FULL	core/src/com/unciv/logic/battle/Battle.kt	Turn-based combat, cities, nukes, great generals
+yairm210-Unciv	classes-levels	PARTIAL	android/assets/jsons/Civ V - Gods & Kings/UnitPromotions.json	Unit promotions via experience
+yairm210-Unciv	factions-reputation	FULL	core/src/com/unciv/logic/civilization/managers/quests	City-state influence and diplomacy relations
+yairm210-Unciv	map-editor	FULL	core/src/com/unciv/ui/screens/mapeditorscreen	Built-in map editor
+yairm210-Unciv	game-ai	FULL	core/src/com/unciv/logic/automation	Automation for AI civs, units and cities
+yairm210-Unciv	economy-sinks	PARTIAL	core/src/com/unciv/logic/civilization/managers/GoldenAgeManager.kt	Gold, happiness and unit maintenance costs
+yairm210-Unciv	victory-conditions	FULL	core/src/com/unciv/logic/civilization/managers/VictoryManager.kt	Multiple victory types
+yairm210-Unciv	espionage	FULL	core/src/com/unciv/logic/civilization/managers/EspionageManager.kt	Spies and espionage actions
+yairm210-Unciv	religion	FULL	core/src/com/unciv/logic/civilization/managers/ReligionManager.kt	Religion founding and spread
+YarnSpinnerTool-YarnSpinner	dialogue-trees	FULL	YarnSpinner/Dialogue.cs	Yarn dialogue language VM with nodes, options, jumps, variables
+YarnSpinnerTool-YarnSpinner	localisation	PARTIAL	YarnSpinner.Compiler/StringTableManager.cs	String tables and line tagging for translation
+YarnSpinnerTool-YarnSpinner	modding-scripting	PARTIAL	YarnSpinner/Library.cs	Scripting language with user-defined functions and commands
+ZenKit	NONE	NONE	.	Library reading Gothic file formats and Daedalus scripts, no game systems

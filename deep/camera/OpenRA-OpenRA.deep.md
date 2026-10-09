@@ -1,17 +1,17 @@
 # OpenRA-OpenRA (camera, cell 14)
 
-Donor: /mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Game/Graphics/Viewport.cs | Licence: GPL-3 | C# | symbol Viewport (CenterLocation, AdjustZoom, scroll)
+Donor: /mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Game/Graphics/Viewport.cs | Licence: GPL-3.0-or-later (per Viewport.cs header) | C# | symbol Viewport (CenterLocation, AdjustZoom, scroll)
 
 Symbol check (opened on the VPS, 2026-10-09): AdjustZoom(dz) 102, AdjustZoom(dz, center) 108, ToggleZoom 118, UnlockMinimumZoom 127, Tick 183, CalculateMinimumZoom 194, UpdateViewportZooms 224, Center(WPos) 350, Center(Vector2) 357, Scroll 364.
 
 ## 1. Mechanism
 - The viewport stores a centre in world pixels (CenterLocation) and a zoom factor. View size in pixels is the native resolution divided by zoom, so zoom in makes the visible area smaller.
-- Tick() runs once per game viewport tick. If the distance setting changed it calls UpdateViewportZooms (224-261), which recomputes MinZoom and MaxZoom, resets the current zoom to MinZoom, and notifies INotifyViewportZoomExtentsChanged traits. If a ViewportCenterProvider is set (for example, follow a selection), Center() moves the centre to that point, clamped to map bounds. Center(Vector2) first converts the point with worldRenderer.ScreenPosition (not read), then clamps with mapBounds.Clamp (Rectangle extension, not read). Center(WPos) (350-355) and Center(actors) (339-348, averages actor positions) are sibling overloads. Then the ViewportTick event fires for other listeners.
+- Tick() runs once per game viewport tick. If the distance setting changed it calls UpdateViewportZooms (224-261), which recomputes MinZoom and MaxZoom, resets the current zoom to MinZoom (the default; also done by the call at line 180, outside Tick; the two callers that pass false, lines 99 and 131, only clamp it), and notifies INotifyViewportZoomExtentsChanged traits. If a ViewportCenterProvider is set (for example, follow a selection), Center(...) is called with the provider's result (which overload is chosen depends on the provider's return type, not read), moving the centre to that point, clamped to map bounds. Center(Vector2) first converts the point with worldRenderer.ScreenPosition (not read), then clamps with mapBounds.Clamp (Rectangle extension, not read). Center(WPos) (350-355) and Center(actors) (339-348, averages actor positions) are sibling overloads. Then the ViewportTick event fires for other listeners.
 - AdjustZoom(dz) multiplies zoom by exp(dz), so equal positive and negative steps cancel. The result is clamped to [MinZoom, MaxZoom], or to the unlocked minimum when that is set.
 - AdjustZoom(dz, screen point) first records the world point under the cursor, applies the zoom, then moves the centre by the difference so that point stays under the cursor, and clamps to map bounds.
 - Scroll(delta, ignoreBorders) adds delta divided by zoom to the centre (so panning speed in screen pixels is constant), clamping to map bounds unless ignoreBorders is set.
 - ToggleZoom: if zoom is below MinZoom (an unlocked zoom) set MinZoom; otherwise flip between MinZoom and MaxZoom (zoom above min goes to min, else to max).
-- UpdateViewportZooms (224-261): MinZoom = defaultScale when native zoom is allowed or overridden, else CalculateMinimumZoom(range) x defaultScale; MaxZoom = min(MinZoom x MaxZoomScale, native height x defaultScale / MaxZoomWindowHeight); unlockedMinZoom = MinZoom x unlockedMinZoomScale when unlocked. The viewportSizes fields are from WorldViewportSizes (not read).
+- UpdateViewportZooms (224-261): MinZoom = defaultScale when the user scale is overridden (overrideUserScale) or native zoom is allowed and the distance setting is Native, else CalculateMinimumZoom(range) x defaultScale; MaxZoom = min(MinZoom x MaxZoomScale, native height x defaultScale / MaxZoomWindowHeight); unlockedMinZoom = MinZoom x unlockedMinZoomScale when unlocked. The viewportSizes fields are from WorldViewportSizes (not read).
 - Inputs: scroll deltas, wheel steps, cursor position, provider centre, map bounds, zoom limits. Output: CenterLocation, ViewportSize, and dirty flags for the cell region. Scroll and zoom run on input events; Tick runs on the game viewport tick.
 
 ## 2. Key functions
@@ -36,7 +36,7 @@ Symbol check (opened on the VPS, 2026-10-09): AdjustZoom(dz) 102, AdjustZoom(dz,
 ## 4. TypeScript sketch
 simplified: the sketch omits UIScale, the unlocked minimum zoom, ViewportSize (it uses view size directly, same as donor only when UIScale is 1 and view equals native size), the Center(WPos) conversion, the cell dirty flags, and UpdateViewportZooms (limits are constructor inputs). Clamp is a plain box clamp (donor mapBounds.Clamp, not read).
 ```ts
-// Licence: GPL-3 (OpenRA-OpenRA). CLEAN-ROOM: written from the mechanism, no donor lines.
+// Licence: GPL-3.0-or-later (OpenRA-OpenRA). CLEAN-ROOM: written from the mechanism, no donor lines.
 type Pt = { x: number; y: number };
 type Box = { x0: number; y0: number; x1: number; y1: number };
 class Cam {
@@ -71,7 +71,7 @@ class Cam {
 ## 5. Lands in
 - Frankendom target: src/fight/camera.ts (new module; today: src/camera* (moving), slice K4). The fight camera is client presentation; the follow point comes from engine state.
 - Parity row: 11 (fight camera, camera kick, standoff).
-- Reuse tag: rewrite-from-idea (GPL-3)
+- Reuse tag: rewrite-from-idea (GPL-3.0-or-later)
 - Brief rule served: (category default, not per-cell) 1 (one combat core, two clients); rules 7-9 n/a
 
 ## 6. Gaps and risks

@@ -1,6 +1,6 @@
 # scummvm-scummvm (inventory-bank-equipment, cell 9)
 
-Donor: /mnt/frankendom-donors/scummvm-scummvm/engines/hpl1/penumbra-overture/Inventory.cpp | Licence: GPL-3 | C++ | symbol cInventoryItem.Init / cInventorySlot / cInventoryContext
+Donor: /mnt/frankendom-donors/scummvm-scummvm/engines/hpl1/penumbra-overture/Inventory.cpp | Licence: GPL-3.0-or-later per Inventory.cpp header | C++ | symbol cInventoryItem.Init / cInventorySlot / cInventoryContext
 
 ## 1. Mechanism
 - Donor: ScummVM's HPL1 "Penumbra Overture" engine, one slot-based inventory (cInventory) holding cInventoryItem objects in a map keyed by name, with a list of cInventorySlot widgets for the grid.
@@ -11,7 +11,7 @@ Donor: /mnt/frankendom-donors/scummvm-scummvm/engines/hpl1/penumbra-overture/Inv
 - Removal (RemoveItem, 1195-1218) clears any slot holding the item, erases it from the map, clears the current selection and frees the object.
 - Init (430-457) copies name, image gfx objects (when an image file is set), description, game name, type, sub-type, hud model file and name, drop flag, count flag and count, and the mesh entity source file.
 - Context menu (cInventoryContext::Setup, 802-812): action list comes from the item type's GetActions(canBeDropped), so the menu is data-driven per type.
-- Runs in the UI update loop (per frame, not a fixed tick); there is no server and no authority check.
+- Runs client-side in the game UI; the caller (update loop or script hooks) was not read (not read); no server or authority check appears in the opened functions.
 
 ## 2. Key functions
 - cInventoryItem::Init | /mnt/frankendom-donors/scummvm-scummvm/engines/hpl1/penumbra-overture/Inventory.cpp | 430-457 | copies the game-item fields (name, type, sub-type, count, drop flag, mesh) into the inventory item.
@@ -30,7 +30,7 @@ Donor: /mnt/frankendom-donors/scummvm-scummvm/engines/hpl1/penumbra-overture/Inv
 ## 4. TypeScript sketch
 simplified: the donor adds the item to the map BEFORE the slot search, so a full grid leaves it mapped but unslotted; the sketch inserts only after a slot is found and returns false instead. The pickup sub-title, pickup callback and AddItemFromFile variant are omitted; removal is by id, the donor's by pointer.
 ```ts
-// Licence: GPL-3 | clean-room: written from the mechanism, no donor lines.
+// Licence: GPL-3.0-or-later | clean-room: written from the mechanism, no donor lines.
 // Slot inventory: stack counted items by (type, sub-type); otherwise a per-type hook may refuse,
 // then the first empty slot takes the item. No room returns false so the caller can act (the donor leaves the item in its map with no slot, unreported).
 interface Item { id: string; type: string; sub: string; count: number; counted: boolean; }

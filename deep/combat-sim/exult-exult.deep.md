@@ -1,15 +1,15 @@
 # exult-exult (combat-sim, cell 1)
 
-Donor: `/mnt/frankendom-donors/exult-exult/combat.cc` | Licence: GPL-2 | C++ | symbol `Combat_schedule.attack_target/find_foe/now_what`
+Donor: `/mnt/frankendom-donors/exult-exult/combat.cc` | Licence: GPL-2.0-or-later per combat.cc header | C++ | symbol `Combat_schedule.attack_target/find_foe/now_what`
 
 Checked: At 1190. Verified: `attack_target` 1190-1396, `now_what` 1554-1725, `find_foe` 688-785, `back_off` 804-856, `Need_new_opponent` 1520-1532, all read in full.
 
 ## 1. Mechanism
 
-- Each NPC carries a combat schedule. `Combat_schedule::now_what()` (1554-1725) runs on every NPC tick. Its states are initial, approach, strike, fire and wait-return. It begins in the initial state, which does nothing except the distance check, so usecode can set an opponent first (1556-1566).
+- Each NPC carries a combat schedule. `Combat_schedule::now_what()` (1554-1725) runs each time the NPC's previous action finishes (a timer-queue callback). Its states are initial, approach, strike, fire and wait-return. It begins in the initial state, which does nothing except the distance check, so usecode can set an opponent first (1556-1566).
 - Initial state: if the NPC is more than 50 tiles from the camera actor it goes dormant; otherwise it moves to approach and starts a 200 ms timer (1559-1565). A sleeping NPC re-checks after one second (1567-1570). A fleeing NPC runs away; a monster that cannot die switches to nearest-attack mode; a party member that has fled more than twice and is out of combat resumes following the avatar (1572-1584).
 - `Need_new_opponent` (1520-1532) clears the target when it is dead, off screen, or invisible (1-in-4 roll unless the NPC can see invisible).
-- Approach uses a dexterity bar. While `dex_points` is below `dex_to_attack`, each tick adds the NPC's dexterity and the NPC waits. Once the bar is full, it first tries invisibility (`rand() % 300 < intelligence`) or summon (`rand() % 600 < intelligence`); each use spends `dex_to_attack`. If neither fires it calls `start_strike()`. Where the bar is reset on a plain strike is in `start_strike` (not read).
+- Approach: with no target it calls `approach_foe()` (858-957: finds a foe, runs away in flee or low-health cases, teleports on a 1-in-4 roll when able, otherwise builds an A* path to the target and counts a failure when no path exists). With a target it uses a dexterity bar. While `dex_points` is below `dex_to_attack`, each tick adds the NPC's dexterity and the NPC waits. Once the bar is full, it first tries invisibility (only if the NPC is not already invisible and can be: `rand() % 300 < intelligence`), then summon (only if it can: `rand() % 600 < intelligence` and the summon itself succeeds); each successful use spends `dex_to_attack`. If neither fires it calls `start_strike()`. Where the bar is reset on a plain strike is in `start_strike` (not read).
 - Strike (1610-1637): the state is set back to approach first, the NPC returns to its ready frame, and it calls `attack_target`; after a successful strike on a non-actor target the target is cleared, so objects are struck once. Fire state (1638-1678) does the same for ranged weapons or a spell, with a delay that grows with the spell script length. Wait-return (1679-1683) only adds dexterity to the bar after a returning weapon.
 - Giving up (1687-1724): after more than 5 failures a party member walks back to the avatar and follows; an off-screen NPC goes dormant; a good-aligned one returns to its normal schedule; others wander a few tiles.
 - `find_foe` (688-785): it drops opponents that died (or sleep, when the NPC is the avatar), refills the list from nearby candidates when empty (a practice target wins for duels), then picks one by attack mode: weakest, strongest, nearest, protect (attackers of the protected), random, berserk (coin flip between random and nearest), defend (nearest above half health, otherwise weakest), flank (one that an ally attacks). The pick is removed from the list.
@@ -33,14 +33,14 @@ Checked: At 1190. Verified: `attack_target` 1190-1396, `now_what` 1554-1725, `fi
 | Attack value = skill + lucky bonus + party bias, ranged bonus, distance penalty for thrown weapons only | +3 lucky (weapon and ammo each), +6 ranged, bias 2 times difficulty (theirs, 1333-1339) |
 | One hit roll against the target's defence | `try_to_hit` body (not read) |
 | Dormancy beyond a radius | 50 tiles (theirs, 1559) |
-| Re-check after a fixed idle wait | 200 ms and 1000 ms timers (theirs, 1564, 1568); give up after 5 failures (1687) |
+| Re-check after a fixed idle wait | 200 ms and 1000 ms timers (theirs, 1564, 1568); give up after more than 5 failures (1687) |
 
 ## 4. TypeScript sketch
 
-simplified: the sketch covers only the approach branch (bar accrual, ability roll, strike), target validity, the attack value and the back-off test. It omits the initial and sleeping states, fleeing, the strike and fire states, the `failures` give-up path, ammo use, projectiles and the off-screen test in `Need_new_opponent`. The sketch rolls one ability roll; the donor rolls invisibility first (odds 1 in 300 scaled by intelligence), then summon (1 in 600), only if the NPC can use them. The bar is checked before the strike, accrued otherwise, as in the donor.
+simplified: the sketch covers only the approach branch (bar accrual, ability roll, strike), target validity, the attack value and the back-off test. It omits the initial and sleeping states, fleeing, the strike and fire states, the `failures` give-up path, ammo use, projectiles and the off-screen test in `Need_new_opponent`. The sketch rolls one ability roll with a caller-supplied odds value; the donor rolls invisibility first (a roll under 300 must come in below intelligence), then summon (a roll under 600 below intelligence, and the summon must succeed), each only if the NPC can use it. Its back-off test is only `attacker distance < weapon range`; the donor skips the back-off only when the attacker is the current target and the weapon range is at most the distance (815-817), so it backs off in every other case, including when the attacker is a different foe, and it moves to a free neighbouring tile (not modelled). The no-target branch (`approach_foe`) is reduced to 'wait'. The bar is checked before the strike, accrued otherwise, as in the donor.
 
 ```ts
-// Licence: GPL-2 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
+// Licence: GPL-2.0-or-later (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
 interface Npc {
   dexPoints: number;
   dexPerTick: number;
@@ -89,12 +89,12 @@ function backOffNeeded(attackerDistance: number, weaponRange: number): boolean {
 
 - TARGET `src/fight/world.ts`, parity-checklist row 4 (fight loop: aggro, chase, leash). The dexterity bar is a pacing idea for creature strikes. Row 4 is origins' own copy today (K2b / K2c delete), so creature-side cadence lives there until it moves; `src/fight/world.ts` owns the Zone 1 loop and `MAX_ATTACKERS` (line 22, checked in worktree `frankendom-backend`, commit 46e670530).
 - today: `src/fight/world.ts` and `src/fight/world-combat.ts`.
-- Reuse tag: adapt
+- Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 - Brief rule served: 1 (one combat core, two clients); rules 7-9 n/a
 
 ## 6. Gaps and risks
 
-- GPL-2: clean-room only. The sketch is written from the described mechanism and is not a line-for-line translation.
+- GPL-2.0-or-later: clean-room only. The sketch is written from the described mechanism and is not a line-for-line translation.
 - The strike cadence is per NPC tick (a timer-queue delay in game frames). Frankendom's Zone 1 loop is a fixed 1/60 accumulator in `src/fight/world-combat.ts`, so any bar must be counted in those ticks and replayed by the server verifier.
 - The melee hit roll is in `try_to_hit` (not read). Frankendom's hit roll is in `src/fight/duel.ts (today: src/duel.ts, moving)`; do not take a roll from this file.
 - Frankendom caps attackers at three (`MAX_ATTACKERS = 3` in `src/fight/world.ts`). This file has no comparable cap (it picks one foe per NPC); do not add one from here.

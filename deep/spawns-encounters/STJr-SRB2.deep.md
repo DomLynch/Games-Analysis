@@ -1,14 +1,14 @@
 # STJr-SRB2 (spawns-encounters, cell 4)
 
-Donor: /mnt/frankendom-donors/STJr-SRB2/src/p_mobj.c | Licence: GPL-2 | C | symbol P_RemoveMobj (queue push) / P_RespawnSpecials (opened: P_RemoveMobj 11180-11283, P_RespawnSpecials 11548-11583, P_SpawnMapThing 13533-13567; P_Ticker 715-917 and P_PreTicker 920-983 in /mnt/frankendom-donors/STJr-SRB2/src/p_tick.c)
+Donor: /mnt/frankendom-donors/STJr-SRB2/src/p_mobj.c | Licence: GPL-2 per LICENSE and p_mobj.c header | C | symbol P_RemoveMobj (queue push) / P_RespawnSpecials (opened: P_RemoveMobj 11180-11283, P_RespawnSpecials 11548-11583, P_SpawnMapThing 13533-13567; P_Ticker 715-917 and P_PreTicker 920-983 in /mnt/frankendom-donors/STJr-SRB2/src/p_tick.c)
 
 ## 1. Mechanism
 
-- When a respawnable item (ring, coin, NiGHTS star, red or blue team ring, weapon or panel pickup, and only if it has a `spawnpoint`) is removed, `P_RemoveMobj` (11180-11283; the queue push is 11189-11205, the rest of the function removes overlays and followers and was not read) stores a pointer to that item's original map spawn record (`mobj->spawnpoint`) and `leveltime` in two parallel 1024-slot arrays used as a FIFO ring (`itemrespawnque`, `itemrespawntime`, 11173-11175; `ITEMQUESIZE` 1024 in p_local.h line 276). Items flagged `MF2_DONTRESPAWN` are never queued. `P_SpawnMobj` sets that flag on a monitor when not in a netgame / multiplayer, or in co-op for 1up and score monitors (10736-10744).
+- When a respawnable item (ring, coin, NiGHTS star, red or blue team ring, weapon or panel pickup, and only if it has a `spawnpoint`) is removed, `P_RemoveMobj` (11180-11283; the queue push is 11189-11205, the rest of the function removes overlays and followers and was not read) stores a pointer to that item's original map spawn record (`mobj->spawnpoint`) and `leveltime` in two parallel 1024-slot arrays used as a FIFO ring (`itemrespawnque`, `itemrespawntime`, 11173-11175; `ITEMQUESIZE` 1024 in p_local.h line 276). Items flagged `MF2_DONTRESPAWN` are never queued. `P_SpawnMobj` sets that flag on a monitor when not in a netgame / multiplayer, or in co-op for 1up and score monitors (10740-10748).
 - If the queue is full, the oldest entry is dropped (the tail advances, 11203-11204).
-- `P_RespawnSpecials` (11548-11583) runs once per tic in the thinker pass: `P_Ticker` line 818 and `P_PreTicker` line 970 (p_tick.c), each directly after `P_UpdateSpecials`.
+- `P_RespawnSpecials` (11548-11583) runs once per call of `P_Ticker` (line 818) and of `P_PreTicker` (line 970, inside its frame loop) (p_tick.c), each directly after `P_UpdateSpecials`.
 - It returns early unless: the session is netgame or multiplayer, the map is not a NiGHTS map (`maptol & TOL_NIGHTS`), the `respawnitem` cvar is on (default On, line 11343), and the map is not a special stage (`G_IsSpecialStage`). The queue must be non-empty.
-- Only the oldest entry (the tail) is considered. It is released when `leveltime - removedAt >= respawnitemtime * TICRATE`. The cvar `respawnitemtime` defaults to 30 (line 11342; its allowed range was not read); `TICRATE` is 35 (doomdef.h line 464).
+- Only the oldest entry (the tail) is considered. It is released when `leveltime - removedAt >= respawnitemtime * TICRATE`. The cvar `respawnitemtime` defaults to 30 (line 11342, allowed range 1-300 at 11341); `TICRATE` is 35 (doomdef.h line 464).
 - Release calls `P_SpawnMapThing` (13533-13567) on the stored record. That function returns without a mobj for type 0, the 3D-mode start thing, non-mobj map things, a refusal by `P_AllowMobjSpawn`, or a substitution to `MT_NULL`; otherwise it computes position and height and calls `P_SpawnMobjFromMapThing` (not read). The tail advances in every case, so at most one record leaves the queue per tic whether or not an object appeared.
 - Output: normally a new mobj at its home position. Whether the spawn writes anything back to the record (`P_SpawnMobjFromMapThing` was not read) is unknown; the same record can be queued again each time the item is removed.
 - The queue is file-scope globals in p_mobj.c (11173-11175); when it is cleared on level change was not read. How the spawn reaches other players was not traced.
@@ -20,7 +20,7 @@ Donor: /mnt/frankendom-donors/STJr-SRB2/src/p_mobj.c | Licence: GPL-2 | C | symb
 | P_RemoveMobj | /mnt/frankendom-donors/STJr-SRB2/src/p_mobj.c | 11180-11283 (queue push 11189-11205) | Pushes a removed respawnable item's spawn record and tick onto the ring queue, then does unrelated removal work |
 | P_RespawnSpecials | /mnt/frankendom-donors/STJr-SRB2/src/p_mobj.c | 11548-11583 | Per tic: gates on mode and cvars, releases the queue head after the delay, rebuilds the item |
 | P_SpawnMapThing | /mnt/frankendom-donors/STJr-SRB2/src/p_mobj.c | 13533-13567 | Builds a mobj from a map thing record (type lookup, substitution, placement) |
-| P_SpawnMobj | /mnt/frankendom-donors/STJr-SRB2/src/p_mobj.c | 10627-11088 (DONTRESPAWN at 10736-10744; the rest not read) | Allocates and initialises a mobj; sets DONTRESPAWN for monitors in some modes |
+| P_SpawnMobj | /mnt/frankendom-donors/STJr-SRB2/src/p_mobj.c | 10627-11088 (DONTRESPAWN at 10740-10748; the rest not read) | Allocates and initialises a mobj; sets DONTRESPAWN for monitors in some modes |
 | P_Ticker (call at 818) / P_PreTicker (call at 970) | /mnt/frankendom-donors/STJr-SRB2/src/p_tick.c | 715-917 (call at 818); 920-983 (call at 970) | Runs P_RespawnSpecials once per tic in both thinker paths |
 
 ## 3. Numbers vs mechanism

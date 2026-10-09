@@ -1,6 +1,6 @@
 # id-Software-Quake (server-tick-netcode, cell 5)
 
-Donor: `/mnt/frankendom-donors/id-Software-Quake/WinQuake/net_main.c` | Licence: GPL-2.0 (gnu.txt) | C (QuakeC scripts) | symbol `NET_Connect` / `NET_SendMessage`
+Donor: `/mnt/frankendom-donors/id-Software-Quake/WinQuake/net_main.c` | Licence: GPL-2.0-or-later per net_main.c header (gnu.txt is GPL v2) | C (QuakeC scripts) | symbol `NET_Connect` / `NET_SendMessage`
 
 Checked: (verified: `NET_Connect` at 368-441, `NET_SendMessage` at 625-653, `NET_GetMessage` 540-603). Note: the two symbols are a driver dispatch layer. The reliability logic sits one layer down in `net_dgrm.c` (`Datagram_SendMessage` 161-205, `SendMessageNext` 208-238, `ReSendMessage` 241-271, `Datagram_GetMessage` 315-463), all read in full.
 
@@ -23,7 +23,7 @@ Checked: (verified: `NET_Connect` at 368-441, `NET_SendMessage` at 625-653, `NET
 
 | Reusable algorithm | Game-specific constants |
 |---|---|
-| Stop-and-wait reliable send: one message outstanding, next send waits for ACK | `MAX_DATAGRAM` chunk size (theirs; defined in a header, value not read here) |
+| Stop-and-wait reliable send: one message outstanding, next send waits for ACK | `MAX_DATAGRAM` chunk size = 1024 (theirs, quakedef.h 102) |
 | Sequence numbers: ACK every data packet, deliver only the next expected | `NET_HEADERSIZE` = 2 unsigned ints (theirs, net.h 32) |
 | Unreliable packets: deliver if newer, count the gap | `NETFLAG_*` flag bits (theirs) |
 | Silence timeout closes the link | `net_messagetimeout` = 300 s (theirs, net_main.c 66) |
@@ -32,7 +32,7 @@ Checked: (verified: `NET_Connect` at 368-441, `NET_SendMessage` at 625-653, `NET
 
 ## 4. TypeScript sketch
 
-simplified: omits the 1.0 s resend of an unacknowledged chunk, the receiver-side chunk reassembly (only the EOM chunk delivers), the unreliable channel, the forged-address check, control packets and short-packet drops. The silence timeout here is a plain parameter; the donor applies it only when a poll returned nothing.
+simplified: omits the 1.0 s resend of an unacknowledged chunk, the receiver-side chunk reassembly (only the EOM chunk delivers), the unreliable channel, the forged-address check, control packets and short-packet drops. The silence timeout here is a plain parameter; the donor applies it only when a poll returned nothing, and refreshes `lastMessageTime` only when a message was delivered, where the sketch's `onData` refreshes `lastHeard` on every data packet. After an ACK with bytes left the sketch returns the next chunk at once; the donor sets `sendNext` and sends it at the end of the poll (459-460).
 
 ```ts
 // Licence: GPL-2.0 (gnu.txt) (donor). CLEAN-ROOM sketch: written from the mechanism description, not a translation of donor lines.

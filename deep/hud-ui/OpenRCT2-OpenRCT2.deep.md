@@ -1,15 +1,15 @@
 # OpenRCT2-OpenRCT2 (hud-ui, cell 16)
 
-Donor: /mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2-ui/windows/Finances.cpp | Licence: GPL-3.0 | C++ | symbol Finances window widget tables (makeFinancesWidgets)
+Donor: /mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2-ui/windows/Finances.cpp | Licence: GPL-3.0 (Finances.cpp header: licensed under GPL version 3) | C++ | symbol Finances window widget tables (makeFinancesWidgets)
 
 ## 1. Mechanism
 
 - Runs as a UI window (`FinancesWindow`) with six pages: summary, cash graph, park-value graph, weekly-profit graph, marketing, research. Each page is a widget table built from one shared shell (`makeFinancesWidgets`: frame, resize grip, six tab buttons) plus page-specific widgets.
-- Input: the park's finance records (`_parkData` is read at line 226; the graph series at 800-808; the expenditure table and date handling are not read). The finance pages only read; the research and marketing pages call into other handlers (`onMouseUpMarketing`, `WindowResearchFundingMouseUp`, not read), so whether they write to the simulation is not verified.
+- Input: the park's finance records (`_parkData` is read at line 226; the graph series at 800-808; the expenditure table and date handling are not read). The graph pages only read. The summary page is not read-only: the loan increase and decrease buttons (`onMouseDownSummary`, 533-568) build a `ParkSetLoanAction` and hand it to `GameActions::Execute` (546-547, 562-563), so the window requests the change and the action layer applies it. The research and marketing pages call into other handlers (`onMouseUpMarketing`, `WindowResearchFundingMouseUp`, not read), so whether they write to the simulation is not verified.
 - `setPage(p)` swaps the widget table, resizes the window (fixed size for summary, research and marketing, with the default branch giving the marketing size; resizable for the three graph pages), presses the matching tab exclusively, resets `currentFrame` to 0, and redraws. It is a no-op if the page is already active and the widgets are already set.
 - `onUpdate` runs every UI tick: it advances `currentFrame` and invalidates the active tab widget (the tab animation), and, on the three graph pages only, calls `UpdateHoverIndex` (not read) and invalidates the background if it changed.
 - Graph scale: the Y maximum is the largest absolute defined series value, rounded up to its leading digit (681 becomes 700), with a floor of `10.00_GBP` (money units). The rounding is `((max + oom - 1) / oom) * oom`, so an exact 700 stays 700 (the donor comment says "increments"). Centred graphs use `-max` as the minimum; others start at 0. The left padding is the larger of the widest axis label (of `-max` or `max`) plus tick padding, and `kGraphTopLeftPadding.x`.
-- Output: window state and draw calls (labels, table cells, graph lines, tab images); the finance pages change no game state.
+- Output: window state and draw calls (labels, table cells, graph lines, tab images); the graph pages change no game state; the summary page's loan buttons submit a game action (see Input).
 
 ## 2. Key functions
 
@@ -30,10 +30,10 @@ Donor: /mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2-ui/windows/Finances
 
 ## 4. TypeScript sketch
 
-simplified: values are plain numbers with null for undefined (the donor uses `kMoney64Undefined` and fixed-point money); `hoverIndex` is an invented helper, since the donor's `UpdateHoverIndex` was not read; label-width padding and the window/tab logic are omitted.
+simplified: values are plain numbers with null for undefined (the donor uses `kMoney64Undefined` and fixed-point money, with integer division where the sketch uses floor and ceil); `hoverIndex` is an invented helper, since the donor's `UpdateHoverIndex` was not read; label-width padding, the graph layout recalculation and the window/tab logic are omitted; the loan actions are not modelled.
 
 ```ts
-// Licence: GPL-3.0 - clean-room sketch, no lines translated
+// Licence: GPL-3.0 (donor) - clean-room sketch, no lines translated
 // Clean-room: a graph axis maximum rounded up to its leading digit, with a floor and an optional centred range.
 // Nice maximum for a graph axis: round the largest absolute value up to its leading digit.
 function niceAxisMax(values: (number | null)[], floor: number): number {
@@ -73,8 +73,8 @@ function hoverIndex(pointerX: number, plotLeft: number, plotWidth: number, point
 
 ## 6. Gaps and risks
 
-- The window reads finance records straight from the park data. In Frankendom, economy numbers must come from the server ledger, not a client copy.
+- The window reads finance records straight from the park data, and the loan buttons submit a game action (`ParkSetLoanAction`, 546 and 562) rather than editing state. In Frankendom, economy numbers must come from the server ledger, not a client copy, and any write from a Pit-client ledger view must go through a server-verified request in the same way.
 - The axis helper is pure and reusable. Missing points are skipped (line 803) and an empty or all-zero series gives the floor value (10), so the empty state looks like a small graph.
 - Hover and tab animation run on UI ticks. The HUD must not drive any fight or ledger change.
 - `onPrepareDrawGraph` walks the whole series on every prepare-draw (lines 801-808); the summary page tracks `_lastPaintedMonth` (lines 236, 470), the rest of that cache is not read. A multi-zone view would need a summary.
-- Nothing here conflicts with the one-engine, zones-as-data or server-verified-kill rulings, because the donor is a read-only view.
+- Nothing here conflicts with the one-engine, zones-as-data or server-verified-kill rulings, because the donor's graph pages are read-only and its loan buttons only submit an action that the simulation applies (the shape Frankendom wants: client requests, server validates). The sketch models none of that.

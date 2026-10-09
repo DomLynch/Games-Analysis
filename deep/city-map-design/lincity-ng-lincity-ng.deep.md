@@ -1,6 +1,6 @@
 # lincity-ng-lincity-ng (city-map-design, cell 20)
 
-Donor: /mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/init_game.cpp | Licence: GPL-2.0 (code; data dual GPL/CC-BY-SA) | C++ | symbol setup_land / create_new_city / setup_river (input line 144 verified: `setup_land`; `create_new_city` at 235, `setup_river` at 754)
+Donor: /mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/init_game.cpp | Licence: GPL-2.0-or-later per init_game.cpp header (code; data dual GPL/CC-BY-SA per COPYING-data.txt) | C++ | symbol setup_land / create_new_city / setup_river (input line 144 verified: `setup_land`; `create_new_city` at 235, `setup_river` at 754)
 
 ## 1. Mechanism
 
@@ -8,7 +8,7 @@ Donor: /mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/init_game.cpp | 
 - Inputs: the city settings (with-village, without-trees), the map size, a climate choice (0 to 3), and the random generator. Climate sets the aridity value (wetter or drier) and the mountain value.
 - Rivers: the old path (`setup_river`, 754-779, then `setup_ground` 820) carves one river from the bottom edge, a 3-tile-wide mouth of 1 + len/18 + rand%(len/8) tiles that forks into two tributaries (`setup_river2`, 781-818, recursive forks while y > 20). The new path (`new_setup_river_ground`, 308-627) first builds a height field by diamond-square with a mountain-scaled random offset that shrinks by 0.7 per level (`fract`, line 351; `Keco` 30, line 356), smooths it twice with a gaussian mask (sigma 3.5, mask size 7), mirrors it so the two lowest borders face the viewer, and picks a sea level (~1/5.3 of the corner heights, capped at a third of the maximum); then `new_setup_river` (629-719) pours a set number of lakes and rivers from random points, following water downhill with a priority queue and a weighted coin for the runner-up, ending at the border or another river, then flattens lake levels by backtracking upstream; finally everything below sea level is flooded (608-616).
 - Land: `setup_land` finds distance from water with a first-in-first-out relaxation over the grid. A neighbour takes the current tile's distance plus one and its water level when that gives a lower cost. Cost = (distance squared divided by 5, plus 1) plus aridity plus (altitude minus water level) times 50 over the altitude step.
-- Each bare tile (194-219): a random value `rand() % (d2/5 + 1)` plus aridity plus the altitude term gives a score `r`. Before that, when the global aridity is positive, it is cut for tiles near water: to a third if the squared distance is under 5, to two thirds if under 17, unchanged farther out (209-214). River tiles and non-bare tiles are skipped (202-203). `do_rand_ecology` (1000-1113) then maps `r` to a ground type by band with one more random draw: from r >= 300 (mostly desert, rest bare or a tree) down through 160, 80, 40, 0, -40, -80, -120 to wetland below that (water tiles appear from -80 down; with the without-trees setting every tree outcome becomes bare). Every tile that is not desert gets the underground-water flag (1110-1112).
+- Each bare tile (194-219): a random value `rand() % (d2/5 + 1)` plus aridity plus the altitude term gives a score `r`. Before that, when the global aridity is positive, it is cut for tiles near water: to a third if the squared distance is under 5, to two thirds if under 17, unchanged farther out (209-214). River tiles and non-bare tiles are skipped (202-203). `do_rand_ecology` (1000-1113) then maps `r` to a ground type by band with one more random draw: from r >= 300 (mostly desert, rest bare or a tree) down through 160, 80, 40, 0, -40, -80, -120 to wetland below that (water tiles appear only below -40, from the band -80 to -41 down; with the without-trees setting every tree outcome becomes bare). Every tile that is not desert gets the underground-water flag (1110-1112).
 - Coal reserves are placed before the ground exists (`coal_reserve_setup`, 283-301: random start cells in the interior, a short random walk adding random coal at each of five steps); ore is set uniformly on every tile after the land (303-306). Villages (`random_start`, 897) and the border transport connection come last.
 - Output: the map tiles. Nothing per tick.
 
@@ -38,7 +38,7 @@ Donor: /mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/init_game.cpp | 
 simplified: the sketch covers only the water-distance relaxation and the score. It omits the visible-tile test, the band table (`do_rand_ecology`) and everything after the score, the two ground generators (diamond-square and rivers), the lake backtracking, the sea flood, the reserves, villages and transport. In `spreadWater` the dry-cell initial level uses `Math.trunc(alt * 0.75)` where the donor computes `3 * alt / 4` in integers (the same for non-negative altitudes), and the initial distance is passed as `farStart` (the donor uses 50). `ecologyScore` damps aridity exactly as the donor does but draws with `Math.floor(unit() * bound)` in place of `rand() % bound`.
 
 ```ts
-// Licence: GPL-2.0 (code; data dual GPL/CC-BY-SA) - CLEAN-ROOM sketch, written from the section 1 description, not from the donor's code.
+// Licence: GPL-2.0-or-later (code; data dual GPL/CC-BY-SA) - clean-room sketch of the algorithm (restructured: helper functions, table-driven damping), no lines translated.
 // Idea: every tile gets a "distance to water" and a "reference water level"; the nearest-looking source wins by a
 // blended cost of distance and height. A random draw then turns that into an ecology score per bare tile.
 
@@ -104,7 +104,7 @@ export function ecologyScore(d: number, alt: number, level: number, t: Tuning, u
 
 ## 6. Gaps and risks
 
-- RNG: the donor uses the C library `rand()` for the climate, mountain value, coal, the old river path, the diamond-square offsets and `setup_land` itself, and a separate generator (`BasicUrbg`) for the new river path (630, 638, 674, 783, 790). Neither is seeded per zone copy; Frankendom must use one seeded generator (rule 10), as `relief.ts` and `generate.ts` already do.
+- RNG: the donor uses the C library `rand()` for the climate, mountain value, coal, the old river mouth (759, 766), the diamond-square offsets and `setup_land` itself, and a separate generator (`BasicUrbg`) for the new river path and for the old path's tributaries (630, 638, 674, 782, 790). Neither is seeded per zone copy; Frankendom must use one seeded generator (rule 10), as `relief.ts` and `generate.ts` already do.
 - The donor's relaxation uses a FIFO queue (a deque) and relaxes by cost, so a tile can be re-queued; it does not guarantee the exact shortest distance in one pass. Frankendom should decide whether that is acceptable.
 - Climate values and ecology bands are donor constants (249-258, 1002-1082). Frankendom zones need them as data with defaults.
 - Villages, reserves and transport connections are a city-builder layer; Frankendom's zones need only the terrain part.

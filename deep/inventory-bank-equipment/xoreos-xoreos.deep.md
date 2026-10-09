@@ -1,6 +1,6 @@
 # xoreos-xoreos (inventory-bank-equipment, cell 9)
 
-Donor: /mnt/frankendom-donors/xoreos-xoreos/src/engines/nwn2/inventory.cpp | Licence: GPL-3 | C++ | symbol Inventory::insertItem / getItemInSlot / load
+Donor: /mnt/frankendom-donors/xoreos-xoreos/src/engines/nwn2/inventory.cpp | Licence: GPL-3.0-or-later per inventory.cpp header | C++ | symbol Inventory::insertItem / getItemInSlot / load
 
 ## 1. Mechanism
 - Donor: xoreos NWN2 creature/object inventory. Two stores: a general bag (inventoryItems, a vector indexed by slot, nullptr = empty) and equipped items (equippedItems, indexed by equipment slot).
@@ -23,19 +23,19 @@ Donor: /mnt/frankendom-donors/xoreos-xoreos/src/engines/nwn2/inventory.cpp | Lic
 |---|---|
 | Requested index honoured if free, else first free, else append | Default slot index 0 (theirs, header default) |
 | Equip-slot bit flags map to a fixed slot enum; unknown flag is an error | 18 slots: head, chest, boots, arms, right hand, left hand, cloak, left ring, right ring, neck, belt, arrows, bullets, bolts, creature weapon L/R/B, creature armour (theirs, inventory.cpp 173-190) |
-| Overflow of an equipped item into the general bag | Equip capacity kInventorySlotMax (theirs; enum value at types.h 253, count not read) |
+| Overflow of an equipped item into the general bag | Equip capacity kInventorySlotMax (theirs; the last enumerator at types.h:253, one past the 18 named slots at 235-252) |
 
 ## 4. TypeScript sketch
 simplified: the donor maps flags with an explicit 18-case switch and throws on any other value (the sketch accepts any single bit); the slot-below-max bounds check, the bag list read by Repos_Index and the GFF reads are omitted; equipped slots here are a Map, not a fixed-size vector.
 ```ts
-// Licence: GPL-3 | clean-room: written from the mechanism, no donor lines.
+// Licence: GPL-3.0-or-later | clean-room: written from the mechanism, no donor lines.
 // Bag placement: a requested index is used if free; otherwise the first free index; otherwise append.
 // Equip load: a bit-flag slot is filled if free, else the item falls back to the bag.
 type Bag = (string | null)[];
 
-function insertItem(bag: Bag, item: string, want?: number): number {
+function insertItem(bag: Bag, item: string, want = 0): number {
   const max = bag.length;
-  let at = want ?? max;
+  let at = want;
   if (at < max && bag[at] !== null) {
     const free = bag.indexOf(null);
     at = free !== -1 ? free : max;

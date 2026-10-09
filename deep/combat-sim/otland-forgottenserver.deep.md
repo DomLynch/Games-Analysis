@@ -6,7 +6,7 @@ Checked: At 788 (verified: `doTargetCombat` 788-885; `getCombatDamage` 63-98, no
 
 ## 1. Mechanism
 
-- `getCombatDamage` (63-98) sets the raw damage for a combat param. Every roll is `normal_random(min, max)` (tools.cpp 190-201): a draw from a normal distribution with mean 0.5 and sd 0.25, redrawn until it falls in 0 to 1, then mapped onto min..max, so mid values are far likelier than the ends. Kinds: a plain damage formula uses `mina..maxa` (68-69); otherwise a creature's own min and max if it has them (monsters, 72-73); else for a player a script callback, or the level-magic formula `level x 2 + (magic level + special magic level) x 3`, fused as `levelFormula x mina + minb` to `levelFormula x maxa + maxb` (77-82), or the skill formula `minb .. weaponDamage x maxa + maxb` plus the weapon's element as the secondary damage (83-93). Output: `CombatDamage` with primary and secondary values.
+- `getCombatDamage` (63-98) sets the raw damage for a combat param. Every roll is `normal_random(min, max)` (tools.cpp 190-201): a draw from a normal distribution with mean 0.5 and sd 0.25, redrawn until it falls in 0 to 1, then mapped onto min..max, so mid values are far likelier than the ends. Kinds: a plain damage formula uses `mina..maxa` (68-69); otherwise a creature's own min and max if it has them (72-73; which creature kinds supply them was not read); else for a player a script callback, or the level-magic formula `level x 2 + (magic level + special magic level) x 3`, fused as `levelFormula x mina + minb` to `levelFormula x maxa + maxb` (77-82), or the skill formula `minb .. weaponDamage x maxa + maxb` plus the weapon's element as the secondary damage (83-93). Output: `CombatDamage` with primary and secondary values.
 - `doTargetCombat` (788-885) runs for one target. Order: a distance effect if set (790-792); for health damage, `g_game.combatBlockHit` (798, body in `game.cpp`, not read), and a blocked hit returns; mana drain skips all of this and goes straight to `combatChangeMana` (823-825).
 - PvP halving (803-809): if the caster is a player, the target is a different player not on black skull, and the damage is not healing, both primary and secondary values are halved (integer division).
 - Critical (811-819): if not already critical and not healing or condition damage, a caster-player's critical chance and amount apply (both must be above zero): on a roll of 1-100 at or under the chance, `round(value x amount / 100)` is added to both values and the hit is flagged critical.
@@ -31,25 +31,25 @@ Checked: At 788 (verified: `doTargetCombat` 788-885; `getCombatDamage` 63-98, no
 
 ## 4. TypeScript sketch
 
-simplified: omits the block gate, the secondary damage value, the PvP exemptions beyond one flag, the mana-drain path, condition application and dispel, and the once-per-hit and below-max leech conditions. The critical sketch keeps the donor's rounding; the sketch does not model the "both values above zero" requirement.
+simplified: omits the block gate, the secondary damage value, the PvP exemptions beyond one flag, the mana-drain path, condition application and dispel, and the once-per-hit and below-max leech conditions. The chance rolls in `criticalAdd` and `leechHeal` use the same bell-shaped draw as the donor's `normal_random(1, 100)` (combat.cpp 814, 857, 867; tools.cpp 190-201), not a uniform draw, via `bellRoll`; the caller supplies the unit draw. The critical sketch keeps the donor's rounding; the sketch does not model the "both values above zero" requirement.
 
 ```ts
 // Licence: GPL-2 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
-type Roll = () => number; // uniform in [0, 1)
+type Roll = () => number; // the donor's bell-shaped unit draw in [0, 1] (normal(0.5, 0.25), redrawn outside 0..1), see bellRoll
 
 // PvP: damage between two players is halved, unless the target is flagged for it.
 function pvpHalve(damage: number, casterIsPlayer: boolean, targetIsPlayer: boolean, targetExempt: boolean): number {
   return casterIsPlayer && targetIsPlayer && !targetExempt ? Math.trunc(damage / 2) : damage;
 }
 
-// Critical: a chance roll; when it hits, add a percent of damage on top.
+// Critical: a chance roll (the donor's normal_random(1, 100), combat.cpp 814); when it hits, add a percent of damage on top.
 function criticalAdd(damage: number, chancePct: number, amountPct: number, roll: Roll): number {
-  return roll() * 100 <= chancePct ? Math.round((damage * amountPct) / 100) : 0;
+  return bellRoll(1, 100, roll) <= chancePct ? Math.round((damage * amountPct) / 100) : 0;
 }
 
-// Leech: a chance roll; when it hits, heal a fraction of the total damage.
+// Leech: a chance roll (normal_random(1, 100), combat.cpp 857, 867); when it hits, heal a fraction of the total damage.
 function leechHeal(totalDamage: number, chancePct: number, amountPer10000: number, roll: Roll): number {
-  if (roll() * 100 > chancePct) return 0;
+  if (bellRoll(1, 100, roll) > chancePct) return 0;
   return Math.round((Math.abs(totalDamage) * amountPer10000) / 10000);
 }
 

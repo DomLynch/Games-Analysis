@@ -25,7 +25,7 @@ Donor: `/mnt/frankendom-donors/tmewett-BrogueCE/src/brogue/Monsters.c` | Licence
 | Keep tracking with a small chance of losing track outside the radius | 97 % keep (theirs) |
 | Awareness radius from a stealth value, times two | Stealth range x 2 (theirs) |
 | Hard cut-off beyond three times the radius | Factor 3 (theirs) |
-| Flee at low HP with a threshold, and a stricter threshold for permanent fear | 3/4 and 1/4 of max HP (theirs) |
+| Flee at low HP with hysteresis: start at the low threshold, keep fleeing and recover only at the higher one | Start at 1/4 of max HP, stay fleeing at or below 3/4, recover at 3/4 or more (theirs) |
 | Flee ends when the fear source is 3 or more away | 3 cells (theirs) |
 | Perceived distance by scent map, with a direct shortcut in view | Scent doubles distance (theirs) |
 

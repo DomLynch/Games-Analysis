@@ -1,6 +1,6 @@
 # endless-sky-endless-sky (rendering-performance, cell 17)
 
-Donor: /mnt/frankendom-donors/endless-sky-endless-sky/source/shader/BatchDrawList.cpp | Licence: GPL-3 | C++ | symbol BatchDrawList::Add / Cull
+Donor: /mnt/frankendom-donors/endless-sky-endless-sky/source/shader/BatchDrawList.cpp | Licence: GPL-3.0-or-later per BatchDrawList.cpp header | C++ | symbol BatchDrawList::Add / Cull
 
 ## 1. Mechanism
 

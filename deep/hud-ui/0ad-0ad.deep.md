@@ -1,6 +1,6 @@
 # 0ad-0ad (hud-ui, cell 16)
 
-Donor: /mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/gui/session/selection_details.js | Licence: GPL-2 | JavaScript | symbol displaySingle / updateGarrisonHealthBar
+Donor: /mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/gui/session/selection_details.js | Licence: GPL-2.0-or-later (LICENSE.txt: binaries/data is GPL v2 or later; no per-file header in selection_details.js) | JavaScript | symbol displaySingle / updateGarrisonHealthBar
 
 ## 1. Mechanism
 
@@ -30,10 +30,10 @@ Donor: /mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/gui/session/sele
 
 ## 4. TypeScript sketch
 
-simplified: the donor hides the group bar only when summed hitpoints are zero or less, and a zero or missing summed max is not guarded (zero max draws a full bar, missing max gives NaN); the sketch also hides on max <= 0. The garrison variant (sums over holders, `|| 0` on both fields) and the tooltip call are omitted.
+simplified: the donor hides the group bar only when summed hitpoints are zero or less, and a zero or missing summed max is not guarded (zero max draws a full bar, missing max gives NaN); the sketch also hides on max <= 0, in both the group and the single-unit function (the donor's single bar shows full when hitpoints is positive and max is 0). The single-unit text caption (ceil of both values) and section layout are omitted. The garrison variant (sums over holders, `|| 0` on both fields) and the tooltip call are omitted.
 
 ```ts
-// Licence: GPL-2 - clean-room sketch, no lines translated
+// Licence: GPL-2.0-or-later (donor) - clean-room sketch, no lines translated
 // Clean-room: a health bar fraction for one unit and for a selected group, clamped and hidden when empty.
 type Hp = { hitpoints?: number; maxHitpoints?: number };
 

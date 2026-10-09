@@ -25,7 +25,7 @@ Donor: /mnt/frankendom-donors/open-duelyst-duelyst/app/audio/SoundEffectSequence
 | Stop cancels the pending advance | none (algorithm) |
 
 ## 4. TypeScript sketch
-simplified: `seconds` is always supplied (the donor falls back to the clip's own length, or 0 if unknown); the sketch's `stop` cancels only the timer, not the playing clip (the donor's data `stop` also halts the audio); entries are stored in a list with an id check, where the donor also keeps an id-to-data map and a loop flag per entry; `addSoundEffects` (39-43) is omitted.
+simplified: `seconds` is always supplied (the donor falls back to the clip's own length, or 0 if unknown); the sketch's `stop` cancels only the timer, not the playing clip (the donor's data `stop` also halts the audio); the sketch advances the index before playing (the donor plays first, then advances; same result unless play re-enters synchronously); entries are one list with an id check, where the donor keeps an id-to-data map plus the list and wraps each entry in a data object that owns its play and stop; a null playlist entry (donor: chain silently ends) is not modelled; `addSoundEffects` (39-43) is omitted.
 
 ```ts
 // Licence: CC0-1.0 (open-duelyst-duelyst). Sketch written from the mechanism; donor path cited above.

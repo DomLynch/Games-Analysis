@@ -1,14 +1,14 @@
 # id-Software-Quake-2 (spawns-encounters, cell 4)
 
-Donor: /mnt/frankendom-donors/id-Software-Quake-2/game/g_spawn.c | Licence: GPL-2.0 (gnu.txt) | C | symbol SpawnEntities / ED_CallSpawn (opened: ED_CallSpawn 278-312, ED_ParseEdict 414-457, SpawnEntities 520-620)
+Donor: /mnt/frankendom-donors/id-Software-Quake-2/game/g_spawn.c | Licence: GPL-2.0-or-later per g_spawn.c header (gnu.txt is the GPL-2 text) | C | symbol SpawnEntities / ED_CallSpawn (opened: ED_CallSpawn 278-312, ED_ParseEdict 414-457, SpawnEntities 520-620)
 
 ## 1. Mechanism
 
-- At map load, `SpawnEntities` (520-620) first clamps the `skill` cvar to 0..3 (floor, then bounds) and force-sets the cvar if it changed (528-534), saves client data, frees the level memory tag, zeroes the level state and the entity array, and records the map name and spawn point (536-548).
+- At map load, `SpawnEntities` (520-620) first clamps the `skill` cvar to 0..3 (floor, then bounds) and force-sets the cvar if it changed (528-534), saves client data, frees the level memory tag, zeroes the level state and the entity array, and records the map name and spawn point, and points the player entities at their client slots (536-548).
 - It then parses the map's entity text one `{ ... }` block at a time (554-603). The first block fills the world entity (`g_edicts[0]`); each later block gets a fresh entity from `G_Spawn`. `ED_ParseEdict` (414-457) reads the key-value pairs of one block; keys starting with an underscore are discarded as comments; a block with no pairs zeroes the entity.
 - Right after parsing, a map hack clears the not-hard flag on one `trigger_once` with model `*27` in the map `command` (569-571).
 - Each entity except the world is filtered by mode (573-600). In deathmatch an entity flagged not-deathmatch is freed and counted as inhibited. Otherwise (the coop test is commented out, 587) the skill value decides: skill 0 removes not-easy entities, skill 1 not-medium, skill 2 or 3 not-hard. The filter flags are cleared on kept entities, in either mode (599).
-- `ED_CallSpawn` (278-312) is then called for each kept entity. It logs and returns for a null class name; first checks the item list (`itemlist`, `SpawnItem`), then the spawn-function table (`spawns`), calling the first name match; a name with no match is logged ("doesn't have a spawn function") and the entity is left as parsed. The spawn functions themselves (monster set-up, aggro hooks) were not read.
+- `ED_CallSpawn` (278-312) is called inside the same parse loop (602), straight after the filter, for each kept entity and also for the world entity (the filter block is skipped for it). It logs and returns for a null class name; first checks the item list (`itemlist`, `SpawnItem`), then the spawn-function table (`spawns`), calling the first name match; a name with no match is logged ("doesn't have a spawn function") and the entity is left as parsed. The spawn functions themselves (monster set-up, aggro hooks) were not read.
 - After the loop: the inhibited count is logged, then `G_FindTeams` chains entities with a matching team field (470-510, read) and `PlayerTrail_Init` runs.
 - Inputs: the entity text, the mode, the skill. Outputs: spawned entities with their hooks set by the spawn function.
 - Tick: map load, once.
@@ -31,12 +31,12 @@ Donor: /mnt/frankendom-donors/id-Software-Quake-2/game/g_spawn.c | Licence: GPL-
 
 ## 4. TypeScript sketch
 
-Licence: GPL-2.0. CLEAN-ROOM sketch: written from the mechanism above, not translated from the donor.
+Licence: GPL-2.0-or-later. CLEAN-ROOM sketch: written from the mechanism above, not translated from the donor.
 
-simplified: text parsing and the world-entity exemption (the donor never filters the first entity), clearing the filter flags after the check, the coop flag (commented out in the donor), the item-list-first dispatch (one table here), the map hack, level reset, team chaining and the cvar force-set are omitted; the sketch clamps the difficulty itself before the filter.
+simplified: text parsing; the world-entity exemption (the donor never filters the first entity but still calls its spawn function); spawning inside the parse loop rather than over a finished list, clearing the filter flags after the check, the coop flag (commented out in the donor), the item-list-first dispatch (one table here), the map hack, level reset, team chaining and the cvar force-set are omitted; the sketch clamps the difficulty itself before the filter.
 
 ```ts
-// Licence: GPL-2.0 (gnu.txt) (donor). CLEAN-ROOM sketch: written from the mechanism description, not a translation of donor lines.
+// Licence: GPL-2.0-or-later (donor). CLEAN-ROOM sketch: written from the mechanism description, not a translation of donor lines.
 interface ZoneEntry { cls: string; fields: Record<string, string>; flags: { easy?: boolean; medium?: boolean; hard?: boolean; notDeathmatch?: boolean; }; }
 
 // Clamp difficulty to a small integer band.

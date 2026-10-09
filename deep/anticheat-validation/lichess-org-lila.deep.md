@@ -31,7 +31,7 @@ Donor: `/mnt/frankendom-donors/lichess-org-lila/modules/irwin/src/main/KaladinAp
 
 ## 4. TypeScript sketch
 
-simplified: the sketch drops the bot exclusion, the shared sequencer, the queue-again rule, the history indexing, the six-month scan with early stop, the metrics, the moderator notification, and the report content (reason and note). `eligible` takes per-speed move counts and tests either one, as the donor does. `drainResponses` marks the whole batch read before acting, as the donor does with one bulk update. `decide` keeps the titled-player exception at the mark threshold.
+simplified: the sketch drops the bot exclusion, the shared sequencer, the queue-again rule, the history indexing, the six-month scan with early stop, the metrics, the moderator notification, and the report content (reason and note). `eligible` takes per-speed move counts and tests either one, as the donor does. `drainResponses` marks the whole batch read before acting, as the donor does with one bulk update, but it skips error-only responses (the donor reads them too and records their error, 103-106) and takes the queue in array order, not response-time order. `decide` keeps the titled-player exception at the mark threshold.
 
 ```ts
 // Licence: AGPL-3.0 (donor). CLEAN-ROOM sketch: written from the mechanism description, not a translation of donor lines.

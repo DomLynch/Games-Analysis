@@ -1,6 +1,6 @@
 # endless-sky-endless-sky (camera, cell 14)
 
-Donor: /mnt/frankendom-donors/endless-sky-endless-sky/source/Camera.cpp | Licence: GPL-3 | C++ | symbol Camera::MoveTo
+Donor: /mnt/frankendom-donors/endless-sky-endless-sky/source/Camera.cpp | Licence: GPL-3.0-or-later (per Camera.cpp header) | C++ | symbol Camera::MoveTo
 Symbol check: Camera::SnapTo (31-42) and Camera::MoveTo (46-75) confirmed on the VPS. The input line 46 is the start of MoveTo.
 
 ## 1. Mechanism
@@ -8,7 +8,7 @@ Symbol check: Camera::SnapTo (31-42) and Camera::MoveTo (46-75) confirmed on the
 - It keeps the previous target (oldTarget). The target's per-frame motion is baseVelocity = target minus oldTarget.
 - If the acceleration option is off, the centre jumps to the target, velocity is the base velocity, and accel is zero.
 - Otherwise there are two lerps. First, the lead (accel) moves toward the base velocity by 0.1 (velocity tracking). Second, the centre moves to the centre plus that lead, then toward the target by 0.01 (position centring). This gives a camera that leads a moving ship and settles on it.
-- Hyperspace: when the influence is above zero, the centre is pulled further toward the target by the square root of the influence (faster centring), and the lead is set to the base velocity instead of being blended.
+- Hyperspace: when the influence is non-zero (the donor tests truthiness, line 67; the sketch tests above zero), the centre is pulled further toward the target by the square root of the influence (faster centring), and the lead is set to the base velocity instead of being blended.
 - An accel-reversed option (multiplier -1, line 58) mirrors the stored lead about the base velocity (lines 61 and 74: the stored value is lerped with the base velocity by the multiplier), so the lead pushes the other way. In the normal mode the multiplier is 1 and the stored value is the lead itself.
 - SnapTo(target, keepVelocity) sets the centre and oldTarget to the target. With keepVelocity, both the centre and oldTarget are set to the target minus the current velocity (centre = target minus velocity) so the camera keeps moving through a jump, and velocity and accel are zeroed (MoveTo recomputes them later in the frame).
 - Inputs: target point, hyperspace influence, the acceleration preference. Output: centre, velocity, accel. Runs once per frame.
@@ -31,7 +31,7 @@ Symbol check: Camera::SnapTo (31-42) and Camera::MoveTo (46-75) confirmed on the
 simplified: the accel-off branch (centre = target, velocity = base velocity, early return, lines 50-56) and the reversed-accel multiplier (lines 58-61, 74) are omitted, so the multiplier is fixed at 1; hyperspace influence is treated as a plain number, and the stored lead is the donor's accel.
 
 ```ts
-// Licence: GPL-3 (endless-sky-endless-sky). CLEAN-ROOM: written from the mechanism, no donor lines.
+// Licence: GPL-3.0-or-later (endless-sky-endless-sky). CLEAN-ROOM: written from the mechanism, no donor lines.
 type P = { x: number; y: number };
 const add = (a: P, b: P): P => ({ x: a.x + b.x, y: a.y + b.y });
 const sub = (a: P, b: P): P => ({ x: a.x - b.x, y: a.y - b.y });
@@ -68,7 +68,7 @@ class Follow {
 ## 5. Lands in
 - Frankendom target: src/fight/camera.ts (today: src/camera* (moving)). The lead-and-centre pattern is a candidate for the fight camera's follow.
 - Parity row: 11 (fight camera, camera kick, standoff; Zone 1 has its own follow cam today).
-- Reuse tag: rewrite-from-idea (GPL-3)
+- Reuse tag: rewrite-from-idea (GPL-3.0-or-later)
 - Brief rule served: (category default, not per-cell) 1 (one combat core, two clients); rules 7-9 n/a
 
 ## 6. Gaps and risks

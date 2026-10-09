@@ -1,13 +1,13 @@
 # electronicarts-CnC_Remastered_Collection (combat-sim, cell 1)
 
-Donor: `/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/REDALERT/COMBAT.CPP` | Licence: GPL-3 | C++ | symbol `Modify_Damage`
+Donor: `/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/REDALERT/COMBAT.CPP` | Licence: GPL-3.0-or-later with permitted Section 7 additional restrictions, per COMBAT.CPP header and LICENSE.md | C++ | symbol `Modify_Damage`
 
 Checked: Symbol `Modify_Damage` opens at 69 and closes at 126 (verified, read in full). Its caller `ObjectClass::Take_Damage` (OBJECT.CPP 1690-1760) was also read.
 
 ## 1. Mechanism
 
 - One pure function turns a raw damage number into the damage a target takes. Inputs: raw damage (signed; negative means heal), the warhead type (the attack's damage family), the armour class of the target, and the distance from the impact point in the game's sub-tile units. Output: an integer damage value, clamped.
-- Order of steps: (a) zero in, zero out; (b) inert or no-warhead attacks return zero; (c) a negative value (heal) returns its full value only when `distance < 8` and the armour and warhead types match, otherwise zero (83-93); (d) multiply by the warhead-vs-armour modifier from a table (98; the modifier is a fixed-point value). Step (c) has two forms: under the `FIXIT_CSII` macro the match is warhead not mechanical with no armour, or mechanical with armour; without the macro, any warhead with no armour. Where `FIXIT_CSII` is defined was not found by grep, so which form is live is not known; the sketch models the first.
+- Order of steps: (a) zero in, zero out; (b) inert or no-warhead attacks return zero; (c) a negative value (heal) returns its full value only when `distance < 8` and the armour and warhead types match, otherwise zero (83-93); (d) multiply by the warhead-vs-armour modifier from a table (98; the modifier is a fixed-point value). Step (c) has two forms: under the `FIXIT_CSII` macro the match is warhead not mechanical with no armour, or mechanical with armour; without the macro, any warhead with no armour. `FIXIT_CSII` is defined unconditionally at REDALERT/DEFINES.H line 89, and the comment after it (lines 90-99) says the changes are permanent, so the first form is the live one in Red Alert; the sketch models it.
 - Distance fall-off (only if damage is still non-zero, 103-122): the distance is divided by `PIXEL_LEPTON_W/4` when the warhead has no spread factor, otherwise by `spread x (PIXEL_LEPTON_W/2)`, then bounded to 0-16. If that is non-zero, the damage is divided by it. If the bounded distance is under 4, the damage is raised to at least `Rule.MinDamage`. The total is then capped at `Rule.MaxDamage`.
 - Early outs (71-77): zero damage returns zero; the inert special flag, or a no-warhead attack, returns zero.
 - Runs once per hit. The one caller found is `ObjectClass::Take_Damage` (OBJECT.CPP 1707 in Red Alert, 1397 in Tiberian Dawn); it skips `Modify_Damage` for forced damage, applies a dog special case (full strength to the intended victim, zero to others), and for a negative result adds strength only for infantry (or units and aircraft under `FIXIT_CSII`) before returning no damage (1706-1740). Callers of `Take_Damage` were not read.
@@ -24,17 +24,17 @@ Checked: Symbol `Modify_Damage` opens at 69 and closes at 126 (verified, read in
 | Reusable algorithm | Game-specific constants |
 |---|---|
 | Damage = raw x (warhead vs armour factor) | Warhead x armour table (theirs, data) |
-| Distance fall-off: divide by bounded distance, floor at a minimum for close hits | Distance bound 0-16 (theirs, 109); close band below 4 (theirs, 119); `Rule.MinDamage` default 1 (theirs, RULES.CPP 222, ini-overridable 485) |
+| Distance fall-off: divide by bounded distance, floor at a minimum for close hits | Distance bound 0-16 (theirs, 109); close band below 4 (theirs, 119); `Rule.MinDamage` default 1 (theirs, RULES.CPP 222, a line too short to quote; ini-overridable 485) |
 | Cap at a maximum | `Rule.MaxDamage` default 1000 (theirs, RULES.CPP 223, ini-overridable 484) |
 | Heal: full value only at close range with a type match, otherwise zero | Heal close distance 8 leptons (theirs, 85, 90) |
 | Spread divisor per warhead, base divisor when none | `PIXEL_LEPTON_W` scaling (theirs, 105, 107) |
 
 ## 4. TypeScript sketch
 
-simplified: omits the inert special flag and no-warhead early return, the fixed-point arithmetic (plain floats here, with floor), the non-FIXIT_CSII heal form, and the caller's forced-damage and dog cases. Order matches the donor: zero check, heal branch, table multiply, distance divide, floor, cap.
+simplified: `baseDivisor` is passed in as the donor's `PIXEL_LEPTON_W/4` (the spread divisor is rebuilt as spread x baseDivisor x 2); omits the inert special flag and no-warhead early return, the fixed-point arithmetic (plain floats here, with floor), the non-FIXIT_CSII heal form, and the caller's forced-damage and dog cases. Order matches the donor: zero check, heal branch, table multiply, distance divide, floor, cap.
 
 ```ts
-// Licence: GPL-3 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
+// Licence: GPL-3.0-or-later with Section 7 additions (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
 // clean-room
 interface Warhead {
   // factor by armour class index (table lives in data, not in this function)
@@ -83,7 +83,7 @@ function modifyDamage(
 
 ## 6. Gaps and risks
 
-- GPL-3: clean-room only.
+- GPL-3.0-or-later with Section 7 additions: clean-room only.
 - The donor is a real-time strategy game with a damage table per warhead and armour pair. Frankendom's duel uses its own hit, guard and parry rules (checklist rows 1 and 3); the factor table is only useful if the catalogue (row 21) gains a weapon-by-armour grid. That is a design call, not a donor fact.
 - Distance is in sub-tile units from the impact point. A duel is a close fight with no grid; the distance fall-off has no direct use there.
 - Heal sign handling is a donor convention (negative damage). Frankendom should not encode heals this way without a separate rule.

@@ -29,7 +29,7 @@ Donor: `/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/mob/soci
 
 ## 4. TypeScript sketch
 
-simplified: the spatial-grid radius query becomes a scan of all mobs; the family comes from a field instead of the template table; the quest-gate check and the `inCombat` flag are omitted; `addThreat` is a plain map increment; the social-flag gate and the caller's flee loop are not sketched.
+simplified: the spatial-grid radius query becomes a scan of all mobs; the family comes from a field instead of the template table; the quest-gate check and the `inCombat` flag are omitted; `addThreat` is a plain map increment; the per-family radius lookup (the radius is passed in), the social-flag gate and the caller's flee loop are not sketched; the donor's `rally` has no radius parameter (always 5).
 ```ts
 // Licence: MIT (donor). Sketch written from the described mechanism; lifting the real lines is permitted (social_aggro.ts 25-89).
 interface Mob { id: number; x: number; y: number; family: string; template: string; state: 'idle' | 'chase' | 'flee'; target: number | null; threat: Map<number, number>; anchor: { x: number; y: number } | null; hostile: boolean; owned: boolean; dead: boolean; }

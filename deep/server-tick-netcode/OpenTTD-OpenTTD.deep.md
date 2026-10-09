@@ -1,6 +1,6 @@
 # OpenTTD-OpenTTD (server-tick-netcode, cell 5)
 
-Donor: `/mnt/frankendom-donors/OpenTTD-OpenTTD/src/network/network_server.cpp` | Licence: GPL-2.0 | C++ | symbol `NetworkServer_Tick`
+Donor: `/mnt/frankendom-donors/OpenTTD-OpenTTD/src/network/network_server.cpp` | Licence: GPL-2.0-only per network_server.cpp header | C++ | symbol `NetworkServer_Tick`
 
 Checked: At 1739 (verified). Also read: `ServerNetworkGameSocketHandler::SendFrame` (648), `ReceiveClientAck` (1248), `ReceiveClientMapOk` (1064), `NetworkCalculateLag` (network.cpp 295).
 
@@ -37,7 +37,7 @@ Checked: At 1739 (verified). Also read: `ServerNetworkGameSocketHandler::SendFra
 
 ## 4. TypeScript sketch
 
-simplified: only the Active-state lag and token drops are modelled (the other per-status limits, the 2 s MapWait ping, the byte budget and the sync packet are omitted); PreActive is entered by the join handler, not by the frame send; packets are shown as comments.
+simplified: only the Active-state lag and token drops are modelled (the other per-status limits, the 2 s MapWait ping, the byte budget, the sync packet, the `send_frame` flag, the command-queue call and the slow-client console warning (`lag_test`) are omitted; the sketch also issues a token to every status, where the donor sends frames only to PreActive and later); PreActive is entered by the join handler, not by the frame send; packets are shown as comments.
 
 ```ts
 // Licence: GPL-2.0 (donor). CLEAN-ROOM sketch: written from the mechanism description, not a translation of donor lines.

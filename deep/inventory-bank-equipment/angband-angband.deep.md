@@ -1,10 +1,10 @@
 # angband-angband (inventory-bank-equipment, cell 9)
 
-Donor: /mnt/frankendom-donors/angband-angband/src/ui-equip-cmp.c | Licence: UNCLEAR | C | symbol display_object_comparison / sel_better_than
+Donor: /mnt/frankendom-donors/angband-angband/src/ui-equip-cmp.c | Licence: GPL-2 or the Angband licence (dual, per the source header; the Angband licence allows copying for educational, research and non-profit purposes only) | C | symbol display_object_comparison / sel_better_than
 
-Licence note: UNCLEAR. CLEAN-ROOM sketch only.
+Licence note: GPL-2 or the Angband licence (dual, per the source header; the Angband licence allows copying for educational, research and non-profit purposes only). CLEAN-ROOM sketch only.
 
-Symbol check: `sel_better_than` (input line 265 does not land on it; the definition is at 1635-1639) is inside `#if 0` (1634) ... `#endif` (1640). It is not compiled in this tree, so it is dead code and is not the mechanism. The live logic is the equipment-comparison view: the quality classification (in add_obj_to_summary, 2038-2109), the side-by-side comparison display (`display_object_comparison`, 1440-1471), and the sort and filter path (`sort_items` 1922-1929, `cmp_by_quality` 1876-1881, `filter_items` 1836-1865). These are described below.
+Symbol check: `sel_better_than` (input line 265 does not land on it; the definition is at 1635-1639) is inside `#if 0` (1634) ... `#endif` (1640) (the two directive lines are too short to receipt; the definition at 1635-1639 is receipted). It is not compiled in this tree, so it is dead code and is not the mechanism. The live logic is the equipment-comparison view: the quality classification (in add_obj_to_summary, 2038-2109), the side-by-side comparison display (`display_object_comparison`, 1440-1471), and the sort and filter path (`sort_items` 1922-1929, `cmp_by_quality` 1876-1881, `filter_items` 1836-1865). These are described below.
 
 ## 1. Mechanism
 
@@ -23,7 +23,7 @@ Symbol check: `sel_better_than` (input line 265 does not land on it; the definit
 | add_obj_to_summary (quality block 2080-2104) | /mnt/frankendom-donors/angband-angband/src/ui-equip-cmp.c | 2038-2109 | Sets qual, slot, source, colour from the object and the ignore level |
 | display_object_comparison | /mnt/frankendom-donors/angband-angband/src/ui-equip-cmp.c | 1440-1471 | Shows one item or two side by side |
 | filter_items | /mnt/frankendom-donors/angband-angband/src/ui-equip-cmp.c | 1836-1865 | Builds the visible index list from a simple or complex filter |
-| apply_simple_filter | /mnt/frankendom-donors/angband-angband/src/ui-equip-cmp.c | 1715-1772 | AND or OR over selector functions |
+| apply_simple_filter | /mnt/frankendom-donors/angband-angband/src/ui-equip-cmp.c | 1715-1771 | AND or OR over selector functions |
 | sort_items | /mnt/frankendom-donors/angband-angband/src/ui-equip-cmp.c | 1922-1929 | Sorts the index array with the chosen key list |
 | cmp_by_location / cmp_by_quality / cmp_by_short_name / cmp_by_slot | /mnt/frankendom-donors/angband-angband/src/ui-equip-cmp.c | 1868-1897 | Comparators for sort keys |
 | cmp_for_sort_items | /mnt/frankendom-donors/angband-angband/src/ui-equip-cmp.c | 1900-1919 | Walks the key list until a comparator returns nonzero |
@@ -41,17 +41,19 @@ Symbol check: `sel_better_than` (input line 265 does not land on it; the definit
 
 ## 4. TypeScript sketch
 
-Licence: UNCLEAR. CLEAN-ROOM sketch: written from the mechanism above, not translated from the donor.
+Licence: GPL-2 or Angband licence. CLEAN-ROOM sketch: written from the mechanism above, not translated from the donor.
 
-simplified: only the simple AND/OR filter is sketched (no complex expression stack, no config-vs-easy filter choice, no page reset); sources omit floor and home; the donor's lower-is-better quality enum order (artifact first) is replaced by an explicit ascending rank here; pack/ignore-level lookup is passed in as arguments; no value columns, short names or two-item compare.
+simplified: only the simple AND/OR filter is sketched (no complex expression stack, no config-vs-easy filter choice, no page reset); sources omit floor and home; the donor's quality order (artifact lowest, so an ascending sort puts the best first) and source order (worn, pack, floor, home, store) are kept as explicit rank tables; pack/ignore-level lookup is passed in as arguments; no value columns, short names or two-item compare.
 
 ```ts
 // clean-room sketch of a read-only comparison view: classify, filter, sort by index.
-// Licence line: UNCLEAR donor; this sketch is clean-room, written from mechanism only.
+// Licence line: GPL-2 / Angband licence donor; this sketch is clean-room, written from mechanism only.
 type Quality = 'bad' | 'average' | 'good' | 'ego' | 'artifact';
-type Source = 'equipped' | 'pack' | 'floor' | 'home' | 'store';
+type Source = 'worn' | 'pack' | 'floor' | 'home' | 'store';
 interface Candidate { id: string; name: string; slot: string; source: Source; quality: Quality; values: number[]; }
-const QUALITY_ORDER: Record<Quality, number> = { bad: 0, average: 1, good: 2, ego: 3, artifact: 4 };
+// Lowest rank sorts first, so artifacts lead an ascending sort.
+const QUALITY_ORDER: Record<Quality, number> = { artifact: 0, ego: 1, good: 2, average: 3, bad: 4 };
+const SOURCE_ORDER: Record<Source, number> = { worn: 0, pack: 1, floor: 2, home: 3, store: 4 };
 function classify(ignoreLevel: 'good' | 'average' | 'bad' | undefined, isArtifact: boolean, hasEgo: boolean): Quality {
   if (ignoreLevel) return ignoreLevel;
   if (isArtifact) return 'artifact';
@@ -78,7 +80,7 @@ function sortIndices(list: Candidate[], idx: number[], keys: ((a: Candidate, b: 
   });
 }
 const byQuality = (a: Candidate, b: Candidate) => QUALITY_ORDER[a.quality] - QUALITY_ORDER[b.quality];
-const bySource = (a: Candidate, b: Candidate) => (a.source < b.source ? -1 : a.source > b.source ? 1 : 0);
+const bySource = (a: Candidate, b: Candidate) => SOURCE_ORDER[a.source] - SOURCE_ORDER[b.source];
 const byName = (a: Candidate, b: Candidate) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 ```
 
@@ -95,6 +97,6 @@ Brief rule served: (category default, not per-cell) one-character, one-ledger ru
 
 - The donor's quality class depends on identification state and on an "ignore" setting. Frankendom gear is catalogue data, always known; the unknown-as-average rule is not needed.
 - The filter and sort engine is large (complex expression trees). Frankendom's gear room needs only a few sorts; do not port the expression engine.
-- Licence is UNCLEAR, so no lines may be lifted. Only the mechanism is used, written clean-room.
+- Licence is GPL-2 or the non-profit Angband licence, so no lines may be lifted. Only the mechanism is used, written clean-room.
 - Conflict check: a compare view is read-only, so it fits any one-engine layout. It must not write gear state.
 - The `sel_better_than` symbol in the input is dead code. Do not cite it as the mechanism.

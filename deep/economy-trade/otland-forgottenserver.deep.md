@@ -1,6 +1,6 @@
 # otland-forgottenserver (economy-trade, cell 11)
 
-Donor: /mnt/frankendom-donors/otland-forgottenserver/src/game.cpp | Licence: GPL-2 | C++ | symbol Game::playerRequestTrade / Game::playerSellItem
+Donor: /mnt/frankendom-donors/otland-forgottenserver/src/game.cpp | Licence: GPL-2.0 (game.cpp header; LICENSE is GPL v2 text) | C++ | symbol Game::playerRequestTrade / Game::playerSellItem
 Symbol check: playerRequestTrade (2634) and playerSellItem (3079) confirmed. The sale price and stock rules are not in C++. They are in the Lua NPC callback that Npc::onPlayerTrade calls (npc.cpp 358 and 1197), so that path is part of the mechanism; the Lua scripts themselves were not read.
 
 ## 1. Mechanism
@@ -30,7 +30,7 @@ Symbol check: playerRequestTrade (2634) and playerSellItem (3079) confirmed. The
 | Two-sided accept, dry-run both sides, then swap | TRADE_* state names, ITEM_STACK_SIZE = 100 container cap (theirs, game.h 63) |
 
 ## 4. TypeScript sketch
-simplified: the sale path is the validate-then-forward shape only (the donor returns silently on failure; the sketch returns a reason). The trade path models the checks in the donor's order up to the throw/pickup/unique/already-trading gates but omits the house-invite, floor, walk-to-retry, container-size and script-event steps. The accept swap is added as swapTrade (dry-run both sides, then move).
+simplified: the sale path is the validate-then-forward shape only (the donor returns silently on failure; the sketch returns a reason). The trade path models the checks in the donor's order up to the throw/pickup/unique/already-trading gates but omits the house-invite, floor, walk-to-retry, container-size and script-event steps. The sale sketch also drops the player lookup and the fluid sub-type conversion. The accept swap is added as swapTrade: it checks only that each side has room (the donor also refuses two equipped backpacks, runs separate add and remove dry runs, releases the tradeItems entries first, fires onTradeAccept, and rechecks line of throw), then moves both.
 ```ts
 // Licence: GPL-2 (otland-forgottenserver). CLEAN-ROOM: written from the mechanism, no donor lines.
 interface ShopOwner { onSell(player: string, itemId: number, count: number, amount: number): boolean; }

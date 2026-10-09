@@ -1,6 +1,6 @@
 # OpenDAoC-OpenDAoC-Core (anticheat-validation, cell 6)
 
-Donor: `/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameutils/PlayerMovementMonitor.cs` | Licence: GPL-3 | C# | symbol `PlayerMovementMonitor.ValidateMovement / HandleSpeedHack` at 84 and 193 (verified: `ValidateMovement` opens at 84 and ends at 145; `HandleSpeedHack` at 193 and ends at 220; `RecordPosition` at 51-82; `TryGetSafePosition` at 161; `Pause` at 147).
+Donor: `/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameutils/PlayerMovementMonitor.cs` | Licence: GPL-3.0 (per repo LICENSE; the source file has no header) | C# | symbol `PlayerMovementMonitor.ValidateMovement / HandleSpeedHack` at 84 and 193 (verified: `ValidateMovement` opens at 84 and ends at 145; `HandleSpeedHack` at 193 and ends at 220; `RecordPosition` at 51-82; `TryGetSafePosition` at 161; `Pause` at 147).
 
 ## 1. Mechanism
 
@@ -34,10 +34,10 @@ Donor: `/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameutils/Playe
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the speed test, the sliding window, the action choice and the safe-point test as four separate functions. It omits sample recording (the same-tick replace rule and the speed-drop bookkeeping that feeds `sinceSpeedDrop`), the reset of the teleport count when the window empties, the teleport-sample choice, the previous-sample guard, the fly and privilege exemptions, the move itself, and the lag of the safe position by one candidate (the sketch's safe-point test is a single interval-and-distance check). `Pause` is not sketched.
+simplified: the sketch keeps the speed test, the sliding window, the action choice and the safe-point test as four separate functions. It omits sample recording (the same-tick replace rule and the speed-drop bookkeeping that feeds `sinceSpeedDrop`; the donor also requires a recorded drop, `_lastSpeedDecreaseTime > 0`), the reset of the teleport count when the window empties, the teleport-sample choice, the previous-sample guard, the fly and privilege exemptions, the move itself, and the lag of the safe position by one candidate (the sketch's safe-point test is a single interval-and-distance check). `Pause` is not sketched.
 
 ```ts
-// Licence: GPL-3 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
+// Licence: GPL-3.0 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
 interface Sample { x: number; y: number; t: number; maxSpeed: number; }
 
 const TOLERANCE = 1.15;   // theirs
@@ -48,8 +48,9 @@ const LATENCY_MS = 750;   // theirs
 
 // Speed check on the last two samples: is the move longer than the allowed distance?
 function moveTooFar(prev: Sample, cur: Sample, tickMs: number, prevMaxSpeed: number, sinceSpeedDrop: number): boolean {
-  const dt = cur.t - prev.t + tickMs;
-  if (dt <= 0) return false;
+  const raw = cur.t - prev.t;
+  if (raw <= 0) return false;               // the donor checks the raw difference before adding the tick
+  const dt = raw + tickMs;
   const speed = sinceSpeedDrop <= LATENCY_MS ? Math.max(prevMaxSpeed, cur.maxSpeed) : cur.maxSpeed;
   const allowed = (speed * TOLERANCE * dt) / 1000;
   const dist2 = (cur.x - prev.x) ** 2 + (cur.y - prev.y) ** 2;

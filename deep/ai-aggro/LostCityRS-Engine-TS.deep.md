@@ -6,7 +6,7 @@ Donor: `/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/entity/Npc.ts` | 
 
 - Each NPC's `turn()` (109-192) runs once per world tick. Hunting runs before regen, timers and the queue. If the NPC has a hunt mode, and the hunt is not paused by "nobody near" (unless observers are present, or the hunt targets players), it calls `huntAll(hunt)` for non-player hunts only (`Npc.ts` 159-169, call at 164) and increments `huntClock`. Player hunts are skipped in `turn()` and driven from the world tick loop (`World.ts` 587), for NPCs with observers.
 - `huntAll` (258-286): clears the old target. Throttle: returns if `huntClock < hunt.rate - 1`. Returns if the hunt is off or `huntrange < 1`. Gathers candidates by hunt type (players, NPCs, objects, locations) and picks one uniformly at random.
-- Player candidates (`huntPlayers`, 996-1050) are filtered in order: not busy; not AFK; not too strong for a non-wilderness hunt (combat level above twice the NPC's vis level); skip if the player's own combat variable, or the NPC's own combat variable, is within 8 ticks of now (lines 1017-1024; these two checks are bypassed in a multi-combat zone or when the NPC's current target is already that player); variable checks; inventory counts (total, by param, or by category).
+- Player candidates (`huntPlayers`, 996-1050) are filtered in order: not busy; not AFK; not too strong for a non-wilderness hunt (combat level above twice the NPC's vis level); skip if the player's own combat variable, or the NPC's own combat variable, is within 8 ticks of now (lines 1017-1024; these two checks are bypassed in a multi-combat zone or when the NPC's current target is already that player); variable checks; inventory counts (by object, by param, or by category).
 - `consumeHuntTarget` (962-994): needs a target and a live hunt mode. If the find-new mode is a queue, it runs that queue script. Otherwise it sets the NPC's interaction to script on the target with the find-new mode. Then it clears the target and `huntClock`. If the hunt does not keep hunting, `huntMode` is set to -1 (one hunt, then done).
 - Inputs: NPC position, hunt type record, world tick. Outputs: an interaction or a queued script. Tick: once per world tick, with `huntClock` as the throttle.
 
@@ -29,7 +29,7 @@ Donor: `/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/entity/Npc.ts` | 
 
 ## 4. TypeScript sketch
 
-simplified: the hunt-type dispatch (NPC, object and location hunts), the off / huntrange check, the nobody-near pause, the too-strong, variable and inventory filters, and the multi-combat and already-targeting bypass of the combat window are omitted; the combat window is reduced to one `now - combatTick >= cooldown` test; the hand-off is a return value instead of an interaction or queue script. The donor picks with `Math.random`.
+simplified: the hunt-type dispatch (NPC, object and location hunts), the off / huntrange check, the nobody-near pause, the too-strong, variable and inventory filters, and the multi-combat and already-targeting bypass of the combat window are omitted; the combat window is reduced to one `now - combatTick >= cooldown` test; the hand-off is a return value instead of an interaction or queue script. The per-tick order (clear target, throttle, pick, clock++, consume) follows `turn()`. The donor picks with `Math.random`.
 ```ts
 // Licence: MIT (donor). Sketch written from the described mechanism; lifting the real lines is permitted (Npc.ts 258-286, 962-994).
 interface Candidate { id: number; busy: boolean; afk: boolean; combatTick: number; }
@@ -48,7 +48,7 @@ function pickTarget(list: Candidate[], now: number, cooldown: number, rnd: () =>
   return ok[Math.floor(rnd() * ok.length)];
 }
 
-// One hunt, one hand-off: set the target, clear the target and clock, and drop the mode unless it keeps hunting.
+// One hunt, one hand-off: hand off the target, then clear the target and clock, and drop the mode unless it keeps hunting.
 function consume(h: Hunter): 'handoff' | 'none' {
   if (!h.target || !h.mode) return 'none';
   const keep = h.mode.keepHunting;

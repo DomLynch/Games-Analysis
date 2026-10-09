@@ -4,13 +4,13 @@ Donor: /mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Traits/Player/Pla
 Ranges opened and confirmed: ChangeCash 114-127, GiveResources 134-152, TakeResources 159-166, GiveCash 168-213, TakeCash 220-244.
 
 ## 1. Mechanism
-- Donor: OpenRA PlayerResources trait. Each player holds two pools: Cash and Resources (ore-like, capped by ResourceCapacity). A debit through TakeCash spends Resources first, then Cash (line 234 comment). Cash, Resources and ResourceCapacity carry [VerifySync] (lines 100-107); Earned and Spent are plain running totals for stats.
+- Donor: OpenRA PlayerResources trait. Each player holds two pools: Cash and Resources (ore-like, capped by ResourceCapacity). A debit through TakeCash spends Resources first, then Cash (line 234 comment). Cash, Resources and ResourceCapacity carry [VerifySync] (lines 100-107); Earned and Spent are plain running totals (what reads them was not read).
 - GiveResources (134) adds to Resources and counts Earned; anything above capacity is discarded and removed from Earned (or added to Spent on a refund).
 - TakeResources (159) is an all-or-nothing debit of Resources only.
 - TakeCash (220) debits Resources first, then Cash; a debit that takes Resources below zero is carried into Cash. It refuses when Cash plus Resources is short, and can raise a rate-limited low-funds notice.
 - GiveCash (168-213) adds with checked arithmetic: on overflow Cash saturates at int.MaxValue; Earned saturates the same way, and a refund subtracts from Spent instead (saturating at int.MinValue).
 - ChangeCash (114) is the signed entry point: a positive amount is GiveCash; a negative amount is clamped so the player never goes below zero total, then TakeCash.
-- Called on demand by the caller (production and order code; the call sites were not read). No timer.
+- Called on demand by the caller (production and order code; the call sites were not read). None of the methods read here runs on a timer.
 
 ## 2. Key functions
 - PlayerResources.ChangeCash | /mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Traits/Player/PlayerResources.cs | 114-127 | signed cash change, clamped so funds never go negative.

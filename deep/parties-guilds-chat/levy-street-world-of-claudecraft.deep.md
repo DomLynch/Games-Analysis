@@ -6,7 +6,7 @@ Donor: /mnt/frankendom-donors/levy-street-world-of-claudecraft/server/guild_rost
 - Input: a guild name from GET /api/guilds/roster?name=... (route table 141-148, handler 122-139). The rate limit is checked first (123-126, 429 when spent), then the name is trimmed; empty or longer than 64 characters answers 400 (129-132). The route is anonymous and sits on the shared per-IP public read budget.
 - guildRosterCached (89-115) keys the cache by the lowercased name (90). A cached entry younger than 30 s is returned as is (92).
 - On a miss, one single-flight read per key runs readGuildRoster: one SQL statement under the heavy statement timeout. It joins guilds, guild_members and characters, and keeps only characters whose account passes ELIGIBLE_ACCOUNT_SQL, so banned or suspended members drop off without delisting the guild. It matches realm, a case-insensitive guild name, and `c.state IS NOT NULL` (52); level and lifetime XP are read from the character's state JSON, defaulting to 0 (45-46).
-- Order: rank (leader, then officer, then member), then lifetime XP descending, then character name ascending. The row count is capped at GUILD_ROSTER_MAX_MEMBERS (55, which is 1,000 in src/sim/guild_roster.ts lines 110-111).
+- Order: rank (leader, then officer, then member), then lifetime XP descending, then character name ascending. The row count is capped at GUILD_ROSTER_MAX_MEMBERS (55, which the comment at src/sim/guild_roster.ts 108 gives as 1,000, defined at lines 110-111 from base members plus pages times seats (those three inputs not read)).
 - Output (59-69): { guild, members: [{ name, rank, class, level, lifetimeXp }] }, or null when no row matches. The guild name comes from the first row. Any rank other than leader or officer is reported as member (64).
 - Only non-null results are stored (98-101). The cache holds up to 512 keys and clears entirely at the cap (99), so name probing cannot grow it. One in-flight thunk per key is kept in `rosterInFlight` and removed when the read settles (103-105, 107).
 - On a read error the caller logs (112) and returns the stale cached entry (the one read at 91, possibly expired), or null (113). The route answers 404 for null and 200 otherwise (134-138).
@@ -20,10 +20,11 @@ Donor: /mnt/frankendom-donors/levy-street-world-of-claudecraft/server/guild_rost
 
 ## 3. Numbers vs mechanism
 | Reusable algorithm | Game-specific constants |
+|---|---|
 | Single-flight coalescing of one read per key | Cache TTL 30 s (theirs, `GUILD_ROSTER_TTL_MS`, line 22) |
 | TTL cache keyed by lowercased name; misses never stored | Cache cap 512 keys, clear-all at cap (theirs, `ROSTER_CACHE_MAX`, line 26) |
-| Ranked, bounded row read with an explicit cap | Rank order leader, officer, member (theirs); row cap GUILD_ROSTER_MAX_MEMBERS = 1,000 (theirs, src/sim/guild_roster.ts line 110; used at guild_roster.ts line 34 and 55); rank order is in the SQL CASE at lines 53-54 |
-| Eligibility filter on the account state of each member | ELIGIBLE_ACCOUNT_SQL (theirs, server/db.ts line 378: not banned, not currently suspended) |
+| Ranked, bounded row read with an explicit cap | Rank order leader, officer, member (theirs); row cap GUILD_ROSTER_MAX_MEMBERS = 1,000 per the comment (theirs, src/sim/guild_roster.ts lines 108-111; used at guild_roster.ts line 34 and 55); rank order is in the SQL CASE at lines 53-54 |
+| Eligibility filter on the account state of each member | ELIGIBLE_ACCOUNT_SQL (theirs, server/db.ts lines 377-378: not banned, not currently suspended) |
 | Length-checked name input | 64 characters maximum (theirs, line 129) |
 | Anonymous public read on a per-IP budget | Shared per-IP public read budget (theirs) |
 

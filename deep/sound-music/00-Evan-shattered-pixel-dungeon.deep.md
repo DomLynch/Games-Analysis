@@ -25,7 +25,7 @@ Donor: /mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/SPD-classes/src/ma
 | Do not advance to the next track during a fade | Fade check in the track-end callback (theirs) |
 
 ## 4. TypeScript sketch
-simplified: no `playNextTrack` (queue rebuild by chance and shuffle on track end), no pause flag in `updateMusic`, no enable flag, and `playTracks` returns on a same list without refreshing the volume or resuming playback; starting a track does not cancel a running fade in the sketch (the donor does, line 221).
+simplified: no `playNextTrack` (queue rebuild by chance and shuffle on track end), no pause flag in `updateMusic`, no enable flag, and `playTracks` differs from the donor in these ways: it just returns on a null, empty or length-mismatched list where the donor calls `stop()` first (88-91); it returns on a same list without refreshing the volume or resuming playback; it has no shuffle argument, no `enabled` check before playing, no `player != null` condition on the same-list test, no `reset()`, no last-played clear, no pre-creation of every track's player with the try/catch reset path (133-146), and no iOS .ogg to .mp3 swap (93-98); starting a track does not cancel a running fade in the sketch (the donor does, line 221). At fade end the sketch resets only `fadeTotal`; the donor sets `fadeTime` and `fadeTotal` both to -1 (178).
 
 ```ts
 // Licence: GPL-3 (00-Evan-shattered-pixel-dungeon). CLEAN-ROOM: from the mechanism only.

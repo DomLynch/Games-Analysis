@@ -1,6 +1,6 @@
 # gemrb-gemrb (combat-sim, cell 1)
 
-Donor: `/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Scriptable/CombatInfo.cpp` | Licence: GPL-2 | C++ (Python GUI scripts) | symbol `ArmorClass / ToHitStats RefreshTotal`
+Donor: `/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Scriptable/CombatInfo.cpp` | Licence: GPL-2.0-or-later per SPDX tag in CombatInfo.cpp | C++ (Python GUI scripts) | symbol `ArmorClass / ToHitStats RefreshTotal`
 
 Checked: At 87 (verified: `ArmorClass::RefreshTotal` 87-94; `ToHitStats::RefreshTotal` 207-213; `SetBonusInternal` 21-62; `GetTotalForAttackNum` 301-310; the whole file 15-325 was read). This file is stat bookkeeping. The hit roll itself is not in this file (see section 6).
 
@@ -33,7 +33,7 @@ Checked: At 87 (verified: `ArmorClass::RefreshTotal` 87-94; `ToHitStats::Refresh
 simplified: `stackSlot` is only the larger-magnitude half of the third-edition rule; the opposite-sign summing rule and the cumulative-generic exception are omitted. The sketch has no owner write-back, no base-stat setters and no permanent-versus-temporary effect handling.
 
 ```ts
-// Licence: GPL-2 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
+// Licence: GPL-2.0-or-later (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
 type Mode = 'cumulative' | 'flat' | 'percent';
 interface Bonus { value: number; mode: Mode; }
 
@@ -73,7 +73,7 @@ function perAttackTotal(t: number, attackNumber: number, decrement: number): num
 
 ## 6. Gaps and risks
 
-- GPL-2: clean-room only.
+- GPL-2.0-or-later: clean-room only.
 - This file is not the hit or AC roll. Only the aggregation shape is here. The roll and damage path are not in this file and must not be taken from memory.
 - The stacking modes and the per-attack decrement are D&D-style. Frankendom's stats are stance, stamina and posture in `src/fight/duel.ts (today: src/duel.ts, moving)` (stance per-mille deltas, `src/fight/stance.ts (today: src/stance.ts, moving)`); this does not map unless the catalogue (checklist row 21) gets a slot model for gear.
 - Any gear slot model must stay out of the record and the sim unless the record version changes (`src/fight/speeds.ts` notes the same rule for speeds).

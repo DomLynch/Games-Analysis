@@ -1,15 +1,15 @@
 # freeciv-freeciv (combat-sim, cell 1)
 
-Donor: `/mnt/frankendom-donors/freeciv-freeciv/common/combat.c` | Licence: GPL-2 | C | symbol `win_chance / unit_win_chance / get_total_attack_power`
+Donor: `/mnt/frankendom-donors/freeciv-freeciv/common/combat.c` | Licence: GPL-2.0-or-later per combat.c header | C | symbol `win_chance / unit_win_chance / get_total_attack_power`
 
-Checked: `win_chance` 334-406, `unit_win_chance` 480-496, `get_total_attack_power` 615-638, `get_modified_firepower` 411-474, all read in full (verified). `get_total_defense_power` (above 600) was not read.
+Checked: `win_chance` 334-406, `unit_win_chance` 480-496, `get_total_attack_power` 615-638, `get_modified_firepower` 411-474, all read in full (verified). `get_total_defense_power` (772), `get_attack_power` (540) and `defense_multiplication` (650) were not read.
 
 ## 1. Mechanism
 
 - Closed-form odds for a round-based fight. Inputs: attacker strength and hit points and firepower (`as`, `ahp`, `afp`), defender strength, hit points, firepower (`ds`, `dhp`, `dfp`). Output: a double, the attacker's probability of winning the whole fight. Pure function, no RNG, no state.
 - Each round, the attacker loses with probability `ds / (as + ds)` (50/50 when both are zero). A side dies when it has taken enough hits: the attacker survives `ceil(ahp / dfp)` lost rounds, the defender survives `ceil(dhp / afp)` lost rounds.
 - `win_chance` sums, over every count of lost rounds below the attacker's limit, the probability of the series that ends with the attacker's last needed win. It uses an incremental binomial coefficient so each term is one multiply from the last. Result: a single probability, no simulation.
-- `unit_win_chance` (480-496) feeds this with the total attack power (`get_total_attack_power`, 615-638: base attack times an attack-bonus percent from effects), the total defence power, and the firepower after situational modifiers from `get_modified_firepower` (411-474): the attacker's firepower doubles for a city-buster against a unit in a city; a bad-wall attacker is clamped when the defender has a defence bonus; against a bad city defender in a city the attacker doubles and the defender is clamped; a low-firepower combat bonus clamps the defender; land bombardment clamps both. The defence power comes from `get_total_defense_power` (not read), and the attack power is evaluated against the defender's tile and city (626-635).
+- `unit_win_chance` (480-496) feeds this with the total attack power (`get_total_attack_power`, 615-638: base attack from `get_attack_power`, not read, times an attack-bonus percent from effects), the total defence power, and the firepower after situational modifiers from `get_modified_firepower` (411-474): the attacker's firepower doubles for a city-buster against a unit in a city; a bad-wall attacker is clamped when the defender has a defence bonus; against a bad city defender in a city the attacker doubles and the defender is clamped; a low-firepower combat bonus clamps the defender; land bombardment clamps both. The defence power comes from `get_total_defense_power` (772, not read), and the attack power is evaluated against the defender's tile and city (626-635).
 - Tick: not a tick. Called on demand (for a preview or an AI choice) and does not change state.
 
 ## 2. Key functions
@@ -34,7 +34,7 @@ Checked: `win_chance` 334-406, `unit_win_chance` 480-496, `get_total_attack_powe
 simplified: the sketch computes only the closed form; it omits the firepower modifiers, the effect-based attack and defence power, and the case where firepower is zero (the donor divides by it unchecked at 337-338). Terms are accumulated by an equivalent multiplication order (the donor carries the coefficient, the loss power and the base in one running product).
 
 ```ts
-// Licence: GPL-2 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
+// Licence: GPL-2.0-or-later (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
 // clean-room
 // Attacker's chance of winning a round-based fight, from strength, hit points and firepower.
 function winChance(as: number, ahp: number, afp: number, ds: number, dhp: number, dfp: number): number {
@@ -70,7 +70,7 @@ function oddsPreview(attackPower: number, attackHp: number, attackFp: number,
 
 ## 6. Gaps and risks
 
-- GPL-2: clean-room only. The sketch is written from the mechanism; the donor's derivation comment is not copied.
+- GPL-2.0-or-later: clean-room only. The sketch is written from the mechanism; the donor's derivation comment is not copied.
 - The model assumes independent rounds with fixed per-round odds. Frankendom's duel has windups, parry, stagger and a stamina economy, so the round model is an approximation; it would not match the live fight without a calibration.
 - If odds are ever shown (HUD, checklist row 14), they must come from the server's number, not a client recomputation, so the one ledger and the display agree.
 - The donor's firepower and modifier rules are per-matchup data. Frankendom has no firepower stat; do not add one from this file.

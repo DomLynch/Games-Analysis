@@ -1,9 +1,9 @@
 # MovingBlocks-Terasology (sound-music, cell 15)
 
-Donor: /mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/logic/characters/CharacterSoundSystem.java | Licence: Apache-2.0 | Java | symbol CharacterSoundSystem.onFootstep
+Donor: /mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/logic/characters/CharacterSoundSystem.java | Licence: Apache-2.0 per SPDX header | Java | symbol CharacterSoundSystem.onFootstep
 
 ## 1. Mechanism
-- Event-driven footsteps, jumps and landings for a character. Each is a handler for an event that the movement system emits (FootstepEvent, JumpEvent, VerticalCollisionEvent). Nothing runs per frame. Two death handlers (`onDeath` on `DoDestroyEvent` 122-128, `onPlayerDeath` 130-~136, end not opened) play a random death clip at the death volume with no throttle and no `lastSoundTime` update.
+- Event-driven footsteps, jumps and landings for a character. Each is a handler for an event (FootstepEvent, JumpEvent, VerticalCollisionEvent); which system emits them was not read. The same class also has respawn and swim-stroke handlers (139-155, not modelled). Nothing runs per frame. Two death handlers (`onDeath` on `DoDestroyEvent` 122-128, `onPlayerDeath` 130-137) play a random death clip at the death volume with no throttle and no `lastSoundTime` update.
 - Footstep: the block under the feet is the block at the character's floored local position with y minus one. If that block defines step sounds, they are used; otherwise (including a block with no sounds object, which logs an error, 62-63) the character's own footstep set is used. If the set is non-empty and `lastSoundTime + MIN_TIME < now` (strict, MIN_TIME = 10 ms, line 38), i.e. more than MIN_TIME has passed since this character's last sound, one clip is picked at random and a PlaySoundEvent is sent with the footstep volume. The last-sound time is saved.
 - Jump: the same throttle. It uses the jump set and falls back to the footstep set. Volume is the jump volume.
 - Landing: the fall speed is the negative of the vertical velocity. The volume modifier is (fall speed minus 7) times 0.2. At or below zero, nothing plays. The modifier is capped at 2. Then, with the same throttle, a clip from the landing set (or footsteps) is played at landing volume times the modifier.
@@ -13,7 +13,7 @@ Donor: /mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/t
 - CharacterSoundSystem.onFootstep (Terasology) | /mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/logic/characters/CharacterSoundSystem.java | 53-75 | surface-based step set, throttle, random pick.
 - CharacterSoundSystem.onJump (Terasology) | /mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/logic/characters/CharacterSoundSystem.java | 78-92 | jump set with footstep fallback, same throttle.
 - CharacterSoundSystem.onLanded (Terasology) | /mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/logic/characters/CharacterSoundSystem.java | 95-120 | fall-speed volume ramp with a cap, landing set with footstep fallback.
-- CharacterSoundSystem.onDeath / onPlayerDeath (Terasology) | /mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/logic/characters/CharacterSoundSystem.java | 122-136 | death clip, no throttle.
+- CharacterSoundSystem.onDeath / onPlayerDeath (Terasology) | /mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/logic/characters/CharacterSoundSystem.java | 122-137 | death clip, no throttle.
 
 ## 3. Numbers vs mechanism
 | Reusable algorithm | Game-specific constants |

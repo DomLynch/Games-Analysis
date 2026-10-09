@@ -1,6 +1,6 @@
 # angband-angband (quests-dialogue, cell 12)
 
-Donor: /mnt/frankendom-donors/angband-angband/src/player-quest.c | Licence: UNCLEAR (the file header, lines 10-16, offers GPL-2 or the Angband licence; treated as clean-room only) | C | symbol quest_check / is_quest (input line 219 verified: `quest_check`; `is_quest` at 140)
+Donor: /mnt/frankendom-donors/angband-angband/src/player-quest.c | Licence: GPL-2 or the Angband licence (dual, file header lines 10-16; the Angband licence is educational / research / non-profit only; treated as clean-room only) | C | symbol quest_check / is_quest (input line 219 verified: `quest_check`; `is_quest` at 140)
 
 ## 1. Mechanism
 - A kill-count quest tied to dungeon depth. Each quest record holds a name, the depth it applies to (level), a monster race, a max count (max_num) and a current count (cur_num). The quest list is parsed from the data file quest.txt (name, level, race, number; lines 36-135) into a global array, and `player_quests_reset` (157-171) copies name, level, race and max_num into each player's own array; the current count starts at zero (`mem_zalloc`, 163).
@@ -28,7 +28,7 @@ Donor: /mnt/frankendom-donors/angband-angband/src/player-quest.c | Licence: UNCL
 simplified: omits the data-file parse and per-player copy, the stairs placement and message, the win effects (title redraw, messages), and the return value. The sketch counts open quests after the loop; the donor counts them inside the loop as it goes, which gives the same total because a quest's level is updated before it is counted. The donor's `cur_num` keeps no cap other than the equality test; the sketch matches that.
 
 ```ts
-// Licence: UNCLEAR (angband-angband). CLEAN-ROOM: written from the mechanism description,
+// Licence: GPL-2 or Angband licence (angband-angband). CLEAN-ROOM: written from the mechanism description,
 // no donor lines were translated.
 interface Quest { name: string; depth: number; race: number; max: number; cur: number; }
 
@@ -56,7 +56,7 @@ function isQuestDepth(quests: Quest[], depth: number): boolean {
 ## 5. Lands in
 - Frankendom target: `origins/server/quest-advance.ts` (server-side quest progress; it exists on the VPS snapshot /root/work-k7, not main, and only its header comment was read) fed by the server-verified kill record, not by `src/fight/`. A kill-count objective is a quest condition in the contracts' data (`origins/quests/journal.ts`).
 - Parity-checklist row: 18 (loot roll and XP award; post-K item 3, rewards unified on the server) is the nearest row for a kill event. Feature-map section: Origins O2 quests (`docs/specs/origins/modernuo-quests.md` on the snapshot).
-- Reuse tag: rewrite-from-idea (licence UNCLEAR, so the mechanism only)
+- Reuse tag: rewrite-from-idea (GPL-2 / non-profit Angband licence, so the mechanism only)
 - Brief rule served: (category default, not per-cell) zone-schema rule; rules 7-9 n/a
 
 ## 6. Gaps and risks
@@ -66,5 +66,5 @@ function isQuestDepth(quests: Quest[], depth: number): boolean {
 - The count is per player and the match is on depth and race only; two players killing the same monster would each need their own count. A Frankendom kill credit follows the server's attacker record (MAX_ATTACKERS = 3), not whoever called the check.
 - The quest list is loaded from a data file (quest.txt), which fits zones-as-data; the stairs reward is code. Frankendom rewards are data on the stage (granted once).
 - Pit is a client only and has no quests.
-- Licence is UNCLEAR, so the sketch is clean-room only.
+- Licence is GPL-2 or the non-profit Angband licence, so the sketch is clean-room only.
 - Not read: `quest.txt`, `player_quests_free`, `scatter`, and the kill path that calls `quest_check`.

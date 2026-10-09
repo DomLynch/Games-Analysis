@@ -1,12 +1,12 @@
 # Anuken-Mindustry (server-tick-netcode, cell 5)
 
-Donor: `/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/core/NetServer.java` | Licence: GPL-3 | Java | symbol `NetServer::clientSnapshot`
+Donor: `/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/core/NetServer.java` | Licence: GPL-3.0 per repo LICENSE (NetServer.java has no licence header) | Java | symbol `NetServer::clientSnapshot`
 
 Checked: `@Remote` annotation at 754, `clientSnapshot` declared at 755, closing brace at 903 (all read).
 
 ## 1. Mechanism
 
-- The client sends its own state (position, velocity, rotation, pointer, shooting, boosting, chat, build plans, view rectangle) as an unreliable snapshot, many times a second. The server accepts it, applies the parts it trusts, and writes the client's claimed position into the unit's sync buffer.
+- The client sends its own state (position, velocity, rotation, pointer, shooting, boosting, chat, build plans, view rectangle) as an unreliable snapshot, many times a second. The server accepts it, applies the parts it trusts, and writes a position into the unit's sync buffer: the client's claimed position when strict verification is off, the server-moved position when it is on (883-895).
 - Intake (`clientSnapshot`, 755-903): a snapshot with a missing connection or an id older than `lastReceivedClientSnapshot` is dropped (770). Eight floats (x, y, velocity, pointer, rotation, base rotation) are checked for NaN or infinity via `invalid` (712) and reset to zero (773-780). Position verification is on only when the admin policy is strict AND the process is headless (782). The first snapshot seeds `lastReceivedClientTime` to now minus 16 ms (784). Flags are gated: shooting is disabled for a mech that is flying; boosting is disabled for flying or non-boosting unit types.
 - Build plans (only if the player is a builder, 810-839) are checked one by one: tile exists, plan is well formed, not already done, not in `con.rejectedRequests`, and allowed by `admins.allowAction`. A plan that fails the policy is removed on the client with `Call.removeQueueBlock` and added to the rejected list (832-833). The rejected list is cleared after each snapshot (841), so a rejection only suppresses repeats within the same snapshot.
 - Dead player: only `player.x/y` is set to the claimed values (897-898); no movement, aim or weapon update. Alive: weapons and aim are set from the claim (844-846). The position is ignored if the client says it is dead or the unit id does not match (854). Velocity is clamped to the unit's max speed (858).
@@ -31,7 +31,7 @@ Checked: `@Remote` annotation at 754, `clientSnapshot` declared at 755, closing 
 
 ## 4. TypeScript sketch
 
-simplified: omits the dead-player branch, the `ignorePosition` case (client says dead or unit id mismatch), the velocity clamp, the flag gating, the build-plan loop, and the first-snapshot time seeding. The sequence id is stored before the checks here; the donor stores it at the very end (901). Non-strict servers keep the claimed position.
+simplified: omits the dead-player branch, the `ignorePosition` case (client says dead or unit id mismatch), the velocity clamp, the flag gating, the build-plan loop, and the first-snapshot time seeding. The sequence id and the time are stored before the checks here; the donor stores both at the very end (901-902). NaN reset covers only x and y (donor covers eight floats). The ground/flying `move`/`trns` split and the sync buffer are omitted, and the function returns a position instead of moving the unit. Non-strict servers keep the claimed position.
 
 ```ts
 // Licence: GPL-3 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.

@@ -1,0 +1,243 @@
+game	system	level	evidence	note
+FunkinCrew-Funkin	modding-scripting	FULL	source/funkin/modding/PolymodHandler.hx	Polymod mods with scripted classes, modules and events
+FunkinCrew-Funkin	save-load	FULL	source/funkin/save/Save.hx	Versioned save data with migrators
+FunkinCrew-Funkin	achievements	PARTIAL	source/funkin/api/newgrounds/Medals.hx	Newgrounds medals unlock API
+FunkinCrew-Funkin	leaderboards	PARTIAL	source/funkin/api/newgrounds/Leaderboards.hx	Newgrounds score leaderboards submission
+FunkinCrew-Funkin	dialogue-trees	PARTIAL	source/funkin/data/dialogue/ConversationRegistry.hx	Scripted speaker conversations between songs
+FunkinCrew-Funkin	character-creation	PARTIAL	source/funkin/ui/charSelect/CharSelectSubState.hx	Character select screen with unlock locks
+FunkinCrew-Funkin	minimap-maps	PARTIAL	source/funkin/ui/story	Story-mode week selection menu
+FWGS-xash3d-fwgs	multiplayer-netcode	FULL	engine/common/net_chan.c	GoldSrc netchan client-server protocol with server frame handling
+FWGS-xash3d-fwgs	save-load	FULL	engine/server/sv_save.c	Server savegame and level transition saving
+FWGS-xash3d-fwgs	replay-spectate	PARTIAL	engine/client/cl_demo.c	Demo recording and playback
+FWGS-xash3d-fwgs	modding-scripting	PARTIAL	engine/server/sv_game.c	Loads mod game DLLs via engine API; cfg scripting
+gawric-Unity-Client-for-L2J	multiplayer-netcode	FULL	l2-unity/Assets/Scripts/Networking/ClientLibrary	L2J login and game packet client, encrypted, server-synced movement
+gawric-Unity-Client-for-L2J	chat	FULL	l2-unity/Assets/Scripts/UI/Game/Chat	Chat window with channels via RequestSay2 packets
+gawric-Unity-Client-for-L2J	guilds-clans	PARTIAL	l2-unity/Assets/Scripts/UI/Game/Clan	Pledge/clan UI and join/oust packets
+gawric-Unity-Client-for-L2J	parties-groups	PARTIAL	l2-unity/Assets/Scripts/UI/Game/Party	Party window and join-answer packets
+gawric-Unity-Client-for-L2J	trading-player	PARTIAL	l2-unity/Assets/Scripts/UI/Game/Trade	Player trade window and trade packets
+gawric-Unity-Client-for-L2J	auction-market	PARTIAL	l2-unity/Assets/Scripts/UI/Game/Merchant	NPC shop buy/sell UI
+gawric-Unity-Client-for-L2J	crafting	PARTIAL	l2-unity/Assets/Scripts/UI/Game/Craft	Recipe book and recipe item make packets
+gawric-Unity-Client-for-L2J	quests	PARTIAL	l2-unity/Assets/Scripts/UI/Game/Quest	Quest list window and abort packet
+gawric-Unity-Client-for-L2J	minimap-maps	PARTIAL	l2-unity/Assets/Scripts/UI/Game/Map	Map windows
+gawric-Unity-Client-for-L2J	magic-spells	FULL	l2-unity/Assets/Scripts/Game/Skill	Skill use, skillbar, effects and learn UI
+gawric-Unity-Client-for-L2J	skills-professions	PARTIAL	l2-unity/Assets/Scripts/UI/Game/SkillLearn	Skill learning window
+gawric-Unity-Client-for-L2J	status-effects	PARTIAL	l2-unity/Assets/Scripts/UI/Game/Buffer	Buff bar display
+gawric-Unity-Client-for-L2J	day-night	FULL	l2-unity/Assets/Scripts/Rendering/Sky/DayNightCycle.cs	World clock, sky domes, clouds and celestial discs
+gawric-Unity-Client-for-L2J	character-creation	PARTIAL	l2-unity/Assets/Scripts/Game/Character/CharacterCreator.cs	Character select and create with appearance parts
+gawric-Unity-Client-for-L2J	classes-levels	PARTIAL	l2-unity/Assets/Scripts/Combat/Status/PlayerStatus.cs	Player stats and level data from server
+gawric-Unity-Client-for-L2J	dialogue-trees	PARTIAL	l2-unity/Assets/Scripts/UI/Game/HtmlWindow.cs	Server HTML NPC dialogue windows with bypass links
+gawric-Unity-Client-for-L2J	loot-rarity-affixes	PARTIAL	l2-unity/Assets/Scripts/UI/Game/ItemEnchant	Item enchanting and drops
+geckosio-geckos.io	multiplayer-netcode	FULL	packages/server	WebRTC UDP-like client/server channels and rooms library
+geckosio-geckos.io	chat	PARTIAL	packages/chatApp	Example chat app built on the channels
+gemrb-gemrb	dialogue-trees	FULL	gemrb/core/Dialog.cpp	Infinity Engine DLG dialogue states, triggers and actions
+gemrb-gemrb	quests	PARTIAL	gemrb/GUIScripts/bg2/GUIJRNL.py	Journal entries UI driven by game scripts
+gemrb-gemrb	save-load	FULL	gemrb/core/SaveGameIterator.cpp	Save game iteration, quicksave, area extraction
+gemrb-gemrb	magic-spells	FULL	gemrb/core/Spellbook.cpp	Memorized spellbook, spell casting and spell resources
+gemrb-gemrb	status-effects	FULL	gemrb/core/EffectQueue.cpp	Effect opcodes queue applying buffs, debuffs and timed effects
+gemrb-gemrb	classes-levels	FULL	gemrb/GUIScripts/LevelUp.py	Class tables, level-up, dual and multiclass
+gemrb-gemrb	character-creation	FULL	gemrb/GUIScripts/GUICG4.py	Multi-step character generation screens
+gemrb-gemrb	skills-professions	FULL	gemrb/GUIScripts/LUSkillsSelection.py	Skill and proficiency point selection
+gemrb-gemrb	parties-groups	FULL	gemrb/GUIScripts/PartyReform.py	Six-member party management and reforming
+gemrb-gemrb	modding-scripting	FULL	gemrb/core/GameScript	BCS game script interpreter plus Python GUI scripting
+gemrb-gemrb	auction-market	PARTIAL	gemrb/core/Store.cpp	NPC stores buy, sell, identify and rent
+gemrb-gemrb	banking-storage	PARTIAL	gemrb/core/Scriptable/Container.cpp	World containers and inventory slots
+gemrb-gemrb	minimap-maps	FULL	gemrb/core/WorldMap.cpp	Area minimap control and world map travel
+gemrb-gemrb	fog-of-war	FULL	gemrb/core/FogRenderer.cpp	Explored and visible fog rendering
+gemrb-gemrb	stealth	PARTIAL	gemrb/core/Scriptable/Actor.cpp	Hide in shadows and invisibility handling
+gemrb-gemrb	day-night	PARTIAL	gemrb/core/Calendar.cpp	Game calendar and time-of-day lighting
+gemrb-gemrb	factions-reputation	PARTIAL	gemrb/core/Game.cpp	Party reputation and alignment affecting stores and NPCs
+gemrb-gemrb	localisation	FULL	gemrb/plugins/TLKImporter	TLK string tables and encoding conversion
+graememcc-micropolisJS	housing-building	FULL	src/buildingTool.js	Zone, road, rail, power and park placement tools
+graememcc-micropolisJS	economy-sinks	FULL	src/budget.js	Taxes, funding and budget of services
+graememcc-micropolisJS	procedural-generation	FULL	src/mapGenerator.js	Random terrain, rivers and trees map generation
+graememcc-micropolisJS	save-load	FULL	src/storage.js	Saves cities to local storage
+graememcc-micropolisJS	city-simulation	FULL	src/simulation.js	Residential, commercial, industrial demand, traffic, pollution simulation
+graememcc-micropolisJS	disasters	FULL	src/disasterManager.js	Fire, flood, tornado, monster and earthquake disasters
+graememcc-micropolisJS	city-evaluation	FULL	src/evaluation.js	Mayor score and approval ratings
+hedgewars-hw	multiplayer-netcode	FULL	gameServer/ServerCore.hs	Haskell and Rust lobby/room game servers with protocol
+hedgewars-hw	chat	FULL	hedgewars/uChat.pas	In-game chat plus lobby chat with flood detection
+hedgewars-hw	modding-scripting	FULL	hedgewars/uScript.pas	Lua scripting for game modes, missions and extras
+hedgewars-hw	procedural-generation	FULL	hedgewars/uLandGenPerlin.pas	Random terrain generators, templates, mazes and WFC
+hedgewars-hw	achievements	PARTIAL	share/hedgewars/Data/Scripts/Achievements.lua	Achievement tracking script and frontend UI
+hedgewars-hw	tutorial	FULL	share/hedgewars/Data/Missions/Training	Basic training missions for weapons and movement
+hedgewars-hw	quests	PARTIAL	share/hedgewars/Data/Missions/Campaign	Scripted story campaigns with objectives
+hedgewars-hw	localisation	FULL	share/hedgewars/Data/Locale	Translations in over a hundred locale files
+hedgewars-hw	pvp-duels-arena	FULL	hedgewars/uTeams.pas	Turn-based team versus team matches
+hedgewars-hw	replay-spectate	PARTIAL	gameServer/HWProtoCore.hs	Server-side spectating of running rooms
+hedgewars-hw	weather	PARTIAL	share/hedgewars/Data/Themes	Theme-driven snow, rain and ambient effects
+hedgewars-hw	destructible-terrain	FULL	hedgewars/uLandGraphics.pas	Pixel destructible landscape from explosions
+hedgewars-hw	ai-opponents	FULL	hedgewars/uAI.pas	Computer-controlled teams with ammo tests
+heroiclabs-nakama	guilds-clans	FULL	server/api_group.go	Groups with roles, membership and group chat
+heroiclabs-nakama	parties-groups	FULL	server/party_handler.go	Real-time parties with join requests and leader
+heroiclabs-nakama	chat	FULL	server/api_channel.go	Room, group and direct message channels with history
+heroiclabs-nakama	leaderboards	FULL	server/core_leaderboard.go	Ranked leaderboards with scheduled resets and rank cache
+heroiclabs-nakama	multiplayer-netcode	FULL	server/match_handler.go	Authoritative realtime matches over websocket
+heroiclabs-nakama	modding-scripting	FULL	server/runtime_lua.go	Go, Lua and JavaScript server runtimes with hooks
+heroiclabs-nakama	save-load	PARTIAL	server/core_storage.go	Cloud storage objects with permissions and versions
+heroiclabs-nakama	matchmaking	FULL	server/matchmaker.go	Ticket based matchmaker with properties and queries
+heroiclabs-nakama	friends-social	FULL	server/core_friend.go	Friend lists, requests and blocking
+heroiclabs-nakama	wallet-economy	PARTIAL	server/core_wallet.go	Virtual currency wallet ledger
+id-Software-DOOM	save-load	FULL	linuxdoom-1.10/p_saveg.c	Savegame archiving of players, thinkers and specials
+id-Software-DOOM	multiplayer-netcode	FULL	linuxdoom-1.10/d_net.c	Lockstep ticcmd networking for up to four players
+id-Software-DOOM	minimap-maps	FULL	linuxdoom-1.10/am_map.c	Automap with zoom, follow and marks
+id-Software-DOOM	chat	PARTIAL	linuxdoom-1.10/hu_stuff.c	Multiplayer text chat via heads-up display
+id-Software-DOOM	replay-spectate	PARTIAL	linuxdoom-1.10/g_game.c	Demo recording and playback
+id-Software-DOOM	status-effects	PARTIAL	linuxdoom-1.10/p_user.c	Timed powerups: invulnerability, invisibility, radiation suit
+id-Software-DOOM	bosses-raids	PARTIAL	linuxdoom-1.10/p_enemy.c	Boss death triggers for end-of-episode bosses
+id-Software-DOOM	pvp-duels-arena	PARTIAL	linuxdoom-1.10/d_net.c	Deathmatch and cooperative network modes
+id-Software-Quake	multiplayer-netcode	FULL	WinQuake/net_main.c	Client-server network layer with datagram and loopback drivers
+id-Software-Quake	modding-scripting	FULL	WinQuake/pr_exec.c	QuakeC virtual machine executing game logic progs
+id-Software-Quake	save-load	FULL	WinQuake/host_cmd.c	Savegame and loadgame commands
+id-Software-Quake	chat	PARTIAL	WinQuake/host_cmd.c	Say and team-say messages to players
+id-Software-Quake	replay-spectate	PARTIAL	WinQuake/cl_demo.c	Demo record and playback
+id-Software-Quake	status-effects	PARTIAL	qw-qc/items.qc	Quad damage, invulnerability, invisibility, biosuit powerups
+id-Software-Quake	pvp-duels-arena	PARTIAL	QW/progs/client.qc	QuakeWorld deathmatch with spectator mode
+id-Software-Quake-2	multiplayer-netcode	FULL	qcommon/net_chan.c	Netchan reliable and unreliable client-server protocol
+id-Software-Quake-2	modding-scripting	FULL	game	Game DLL source separate from engine, loadable mods
+id-Software-Quake-2	save-load	FULL	game/g_save.c	Savegame and level-change state serialization
+id-Software-Quake-2	bosses-raids	FULL	game/m_boss31.c	Boss monsters: Makron, Jorg, Supertank, Boss2
+id-Software-Quake-2	chat	PARTIAL	game/g_cmds.c	Say and team-say commands
+id-Software-Quake-2	pvp-duels-arena	FULL	ctf	Deathmatch and capture the flag game mode
+id-Software-Quake-2	replay-spectate	PARTIAL	game/g_chase.c	Chase camera spectating and demo playback
+id-Software-Quake-2	status-effects	PARTIAL	game/g_items.c	Quad damage, invulnerability, rebreather, enviro suit powerups
+id-Software-Quake-2	ai-monsters	FULL	game/g_ai.c	Monster sight, hearing, movement and attack AI
+id-Software-wolf3d	save-load	FULL	WOLFSRC/WL_MENU.C	Save and load game menus with state files
+id-Software-wolf3d	leaderboards	PARTIAL	WOLFSRC/WL_INTER.C	Local high score table
+id-Software-wolf3d	bosses-raids	PARTIAL	WOLFSRC/WL_ACT2.C	End-of-level boss enemies
+id-Software-wolf3d	stealth	PARTIAL	WOLFSRC/WL_STATE.C	Enemy sight and alertness checks, sound alerts
+id-Software-wolf3d	localisation	PARTIAL	WOLFSRC/SPANISH.H	Spanish and foreign language string headers
+id-Software-wolf3d	secret-areas	PARTIAL	WOLFSRC/WL_ACT1.C	Push wall secrets
+ihhub-fheroes2	housing-building	FULL	src/fheroes2/castle/castle_town.cpp	Castle building construction tree per race
+ihhub-fheroes2	magic-spells	FULL	src/fheroes2/spell/spell_book.cpp	Spell book, mage guilds and adventure and combat spells
+ihhub-fheroes2	siege-war	FULL	src/fheroes2/battle/battle_catapult.cpp	Castle sieges with catapult, towers, moat and bridge
+ihhub-fheroes2	auction-market	PARTIAL	src/fheroes2/kingdom/resource_trading.cpp	Marketplace resource exchange rates
+ihhub-fheroes2	economy-sinks	PARTIAL	src/fheroes2/kingdom/payment.cpp	Resource costs, daily income and building payments
+ihhub-fheroes2	skills-professions	FULL	src/fheroes2/heroes/skill.cpp	Hero primary and secondary skills
+ihhub-fheroes2	classes-levels	FULL	src/fheroes2/kingdom/experience.cpp	Hero race classes, experience and level-up
+ihhub-fheroes2	minimap-maps	FULL	src/fheroes2/gui/interface_radar.cpp	Radar minimap and world view
+ihhub-fheroes2	fog-of-war	FULL	src/fheroes2/maps/maps_tiles.cpp	Per-player fog of war and tile reveal
+ihhub-fheroes2	procedural-generation	FULL	src/fheroes2/maps/map_random_generator.cpp	Random map generator
+ihhub-fheroes2	save-load	FULL	src/fheroes2/game/game_io.cpp	Save and load game serialization
+ihhub-fheroes2	leaderboards	PARTIAL	src/fheroes2/game/highscores.cpp	Local high score tables
+ihhub-fheroes2	localisation	FULL	files/lang	Gettext translation files for many languages
+ihhub-fheroes2	ai-opponents	FULL	src/fheroes2/ai	Computer players for kingdom, heroes, castles and battle
+ihhub-fheroes2	campaign	FULL	src/fheroes2/campaign	Scripted campaigns with scenarios and carry-over awards
+ihhub-fheroes2	factions-reputation	PARTIAL	src/fheroes2/kingdom/morale.cpp	Morale and luck modifiers for armies
+inkjs	dialogue-trees	FULL	src/engine/Story.ts	Ink branching narrative runtime with choices, diverts and variables
+inkjs	save-load	PARTIAL	src/engine/StoryState.ts	Story state JSON save and restore
+ioquake-ioq3	multiplayer-netcode	FULL	code/qcommon/net_chan.c	Netchan with delta-compressed snapshots, client and server
+ioquake-ioq3	pvp-duels-arena	FULL	code/game/g_arenas.c	Deathmatch, tournament, team and CTF game modes
+ioquake-ioq3	modding-scripting	FULL	code/qcommon/vm.c	QVM bytecode virtual machine loading mod game, cgame and ui
+ioquake-ioq3	chat	PARTIAL	code/game/g_cmds.c	Say and team-say messages
+ioquake-ioq3	ai-bots	FULL	code/botlib	Bot navigation (AAS) and bot chat and command AI
+ioquake-ioq3	replay-spectate	PARTIAL	code/client/cl_main.c	Demo record and playback; spectator team
+ioquake-ioq3	status-effects	PARTIAL	code/game/g_active.c	Timed powerups: quad damage, haste, regeneration
+ioquake-ioq3	leaderboards	PARTIAL	code/game/g_rankings.c	Global rankings hooks reporting player stats
+jynew-jynew	modding-scripting	FULL	jyx2/Assets/Scripts/LuaCore	XLua scripting bridge, mod loader and Lua event scripts
+jynew-jynew	save-load	FULL	jyx2/Assets/Scripts/GameSave	Runtime data, roles and world-map save serialization
+jynew-jynew	skills-professions	FULL	jyx2/Assets/Scripts/GameBattle/SkillCastHelper.cs	Martial-art skill casting with ranges and coverage
+jynew-jynew	dialogue-trees	PARTIAL	jyx2/Assets/Scripts/UI/ChatUIPanel.cs	Chat panel with selection items driven by event scripts
+jynew-jynew	quests	PARTIAL	jyx2/Assets/Scripts/GameCore/StoryEngine.cs	Story events and flags via event graphs and Lua
+jynew-jynew	auction-market	PARTIAL	jyx2/Assets/Scripts/UI/ShopUIPanel.cs	NPC shop buy and sell
+jynew-jynew	parties-groups	PARTIAL	jyx2/Assets/Scripts/UI/SelectRolePanel.cs	Recruitable team members and team selection
+jynew-jynew	mounts-vehicles	PARTIAL	jyx2/Assets/Scripts/GameMaps/Jyx2Boat.cs	Boat travel on the map
+jynew-jynew	banking-storage	PARTIAL	jyx2/Assets/Scripts/UI/BagUIPanel.cs	Inventory bag UI
+jynew-jynew	loot-rarity-affixes	PARTIAL	jyx2/Assets/Scripts/GameMaps/MapChest.cs	Treasure chests on maps
+jynew-jynew	tactical-grid-combat	FULL	jyx2/Assets/Scripts/GameBattle/BattleManager.cs	Turn-based grid battles with AI
+jynew-jynew	minimap-maps	PARTIAL	jyx2/Assets/Scripts/GameMaps/BigMapLocationNameDrawer.cs	Big world map with location names
+keldaanCommunity-pokemonAutoChess	multiplayer-netcode	FULL	app/rooms/game-room.ts	Colyseus authoritative game rooms for 8-player lobbies
+keldaanCommunity-pokemonAutoChess	chat	FULL	app/rooms/commands/lobby-commands.ts	Lobby and room chat messages
+keldaanCommunity-pokemonAutoChess	leaderboards	FULL	app/services/leaderboard.ts	Ranked leaderboards by elo, level and event
+keldaanCommunity-pokemonAutoChess	pvp-duels-arena	FULL	app/core/simulation.ts	Auto-battles between players with elo ranking
+keldaanCommunity-pokemonAutoChess	trading-player	PARTIAL	app/core/trade-logic.ts	Trading units with cooldowns by rarity and items
+keldaanCommunity-pokemonAutoChess	achievements	PARTIAL	app/models/titles.ts	Player titles unlocked by milestones
+keldaanCommunity-pokemonAutoChess	weather	FULL	app/utils/weather.ts	Weather conditions affecting synergies and passives
+keldaanCommunity-pokemonAutoChess	bosses-raids	PARTIAL	app/models/pve-stages.ts	PvE stage encounters with boss opponents
+keldaanCommunity-pokemonAutoChess	magic-spells	FULL	app/core/abilities	Large library of unit abilities
+keldaanCommunity-pokemonAutoChess	status-effects	FULL	app/core/effects	Status and effect system for units in fights
+keldaanCommunity-pokemonAutoChess	economy-sinks	FULL	app/models/shop.ts	Gold shop, rerolls, interest and level purchases
+keldaanCommunity-pokemonAutoChess	localisation	FULL	app/public/dist/client/locales	i18next translations in many languages
+keldaanCommunity-pokemonAutoChess	replay-spectate	PARTIAL	app/rooms/game-room.ts	Spectating of running games
+keldaanCommunity-pokemonAutoChess	ai-bots	FULL	app/core/bot-logic.ts	Computer bots that play full games
+keldaanCommunity-pokemonAutoChess	tournaments	FULL	app/core/tournament-logic.ts	Scheduled tournament brackets
+keldaanCommunity-pokemonAutoChess	matchmaking	FULL	app/core/matchmaking.ts	Elo-based matchmaking
+keldaanCommunity-pokemonAutoChess	classes-levels	PARTIAL	app/models/pokemon-factory.ts	Unit evolution stars and player level
+KsanaDock-Microverse	save-load	FULL	script/GameSaveManager.gd	Save and load slot UI for world and characters
+KsanaDock-Microverse	character-creation	PARTIAL	script/ai/background_story/BackgroundStoryManager.gd	Character personality and background story setup
+KsanaDock-Microverse	ai-npc-dialogue	FULL	script/ai/DialogManager.gd	LLM-driven NPC dialogue and conversations between characters
+KsanaDock-Microverse	npc-memory	FULL	script/ai/memory/MemoryManager.gd	Per-character memory for AI agents
+KsanaDock-Microverse	chat	PARTIAL	script/ChatHistory.gd	Conversation history log
+l1j-en-classic	multiplayer-netcode	FULL	src/l1j/server/server/network	Lineage 1 game server with encrypted packet handling
+l1j-en-classic	chat	FULL	src/l1j/server/server/clientpackets/C_Chat.java	Normal, whisper, party, clan and global chat
+l1j-en-classic	guilds-clans	FULL	src/l1j/server/server/model/L1Clan.java	Clans with create, join, ban and clan warehouse
+l1j-en-classic	parties-groups	FULL	src/l1j/server/server/clientpackets/C_Party.java	Party create, invite, leave, ban and party chat
+l1j-en-classic	trading-player	FULL	src/l1j/server/server/clientpackets/C_Trade.java	Player-to-player trade window with confirm and cancel
+l1j-en-classic	auction-market	PARTIAL	src/l1j/server/server/controllers/AuctionTimeController.java	Clan house auction board and NPC shops
+l1j-en-classic	banking-storage	FULL	src/l1j/server/server/model/L1DwarfInventory.java	Personal, elf and clan warehouses
+l1j-en-classic	housing-building	PARTIAL	src/l1j/server/server/controllers/HouseTaxTimeController.java	Clan houses with tax and furniture
+l1j-en-classic	siege-war	FULL	src/l1j/server/server/controllers/WarTimeController.java	Castle siege wars between clans
+l1j-en-classic	pets-companions	FULL	src/l1j/server/server/model/Instance/L1PetInstance.java	Pets and summons with pet items and pet matches
+l1j-en-classic	fishing	PARTIAL	src/l1j/server/server/controllers/FishingTimeController.java	Fishing action with timed catches
+l1j-en-classic	magic-spells	FULL	src/l1j/server/server/model/skill/L1SkillUse.java	Skill and spell casting with timers and executors
+l1j-en-classic	status-effects	FULL	src/l1j/server/server/model/poison/L1Poison.java	Poison, paralysis, silence and timed buffs
+l1j-en-classic	classes-levels	FULL	src/l1j/server/server/model/classes/L1ClassFeature.java	Seven classes with experience table and level-up
+l1j-en-classic	dungeons-instances	FULL	src/l1j/server/server/controllers/TimedDungeonController.java	Timed dungeons, prison and Ultimate Battle arenas
+l1j-en-classic	bosses-raids	PARTIAL	src/l1j/server/server/controllers/BossEventController.java	Scheduled boss spawn events
+l1j-en-classic	quests	PARTIAL	src/l1j/server/server/model/L1Quest.java	Per-character quest step tracking
+l1j-en-classic	dialogue-trees	PARTIAL	src/l1j/server/server/clientpackets/C_NPCAction.java	NPC talk and action HTML dialog responses
+l1j-en-classic	leaderboards	PARTIAL	src/l1j/server/server/controllers/RankingsController.java	Player rankings computation
+l1j-en-classic	day-night	PARTIAL	src/l1j/server/server/model/gametime/L1GameTimeClock.java	In-game clock affecting light and spawns
+l1j-en-classic	loot-rarity-affixes	PARTIAL	src/l1j/server/server/datatables/DropTable.java	Monster drop tables and item enchantment
+l1j-en-classic	status-polymorph	PARTIAL	src/l1j/server/server/model/L1PolyMorph.java	Transform into monsters via polymorph
+l1j-en-classic	mail-board	PARTIAL	src/l1j/server/server/datatables/MailTable.java	Player mail and bulletin boards
+levy-street-world-of-claudecraft	multiplayer-netcode	FULL	src/net	Authoritative MMO server with wire protocol and reconciliation
+levy-street-world-of-claudecraft	chat	FULL	server/chat_log.ts	Channels, filters, rate limits and moderation
+levy-street-world-of-claudecraft	guilds-clans	FULL	src/sim/guild_roster.ts	Guild ranks, roster, bank, board and tiers
+levy-street-world-of-claudecraft	parties-groups	FULL	src/ui/party_frames.ts	Party frames, targeting hotkeys and raid groups
+levy-street-world-of-claudecraft	trading-player	FULL	src/ui/trade_view.ts	Player trade window including bind-on-pickup trades
+levy-street-world-of-claudecraft	auction-market	FULL	src/sim/market.ts	Market listings, orders, sweeps and sale log
+levy-street-world-of-claudecraft	banking-storage	FULL	src/sim/bank.ts	Personal bank tabs, sockets and guild bank
+levy-street-world-of-claudecraft	crafting	FULL	src/sim/professions/crafting.ts	Recipes, stations, masterwork, enchanting and perfecting
+levy-street-world-of-claudecraft	skills-professions	FULL	src/sim/professions/training.ts	Gathering and crafting professions with trainers and proficiency
+levy-street-world-of-claudecraft	fishing	FULL	src/sim/professions/fishing.ts	Fishing zones, bands and telemetry
+levy-street-world-of-claudecraft	farming-gardening	FULL	src/sim/professions/farming.ts	Farm patches, crops, beds and persistence
+levy-street-world-of-claudecraft	cooking	PARTIAL	src/sim/professions/feast.ts	Feasts and cooking-related recipes
+levy-street-world-of-claudecraft	quests	FULL	src/sim/quests	Quest commands, credit, markers, daily, weekly and world quests
+levy-street-world-of-claudecraft	achievements	FULL	src/sim/deeds.ts	Deeds with completion tracking and board
+levy-street-world-of-claudecraft	leaderboards	FULL	server/leaderboard.ts	Server leaderboards for deeds, guilds and world quests
+levy-street-world-of-claudecraft	factions-reputation	FULL	src/sim/factions.ts	Factions with vendors and rewards
+levy-street-world-of-claudecraft	mounts-vehicles	FULL	src/sim/mounts.ts	Mounts, mount racing and training
+levy-street-world-of-claudecraft	pets-companions	FULL	src/sim/pet	Pet AI, commands and warlock/hunter pets
+levy-street-world-of-claudecraft	pvp-duels-arena	FULL	src/sim/pvp	Battlegrounds, world PvP, honor, hill control, arena window
+levy-street-world-of-claudecraft	dungeons-instances	FULL	src/sim/content/dungeons.ts	Dungeons with finder, difficulty and delves
+levy-street-world-of-claudecraft	bosses-raids	FULL	src/sim/world_boss.ts	World bosses and raids with lockouts
+levy-street-world-of-claudecraft	magic-spells	FULL	src/sim/combat/ability_resolution.ts	Large ability and spell system with scaling
+levy-street-world-of-claudecraft	status-effects	FULL	src/sim/combat/auras.ts	Auras, crowd control, DoTs and stacking
+levy-street-world-of-claudecraft	classes-levels	FULL	src/sim/content/classes.ts	Classes with talents and progression
+levy-street-world-of-claudecraft	character-creation	FULL	server/character_create_db.ts	Character create, appearance and select screen
+levy-street-world-of-claudecraft	loot-rarity-affixes	FULL	src/sim/loot_quality	Item quality tiers, loot rolls and heroic items
+levy-street-world-of-claudecraft	minimap-maps	FULL	src/ui/minimap_painter.ts	Minimap, continent and dungeon maps
+levy-street-world-of-claudecraft	day-night	FULL	src/render/day_night_core.ts	Day night cycle with clock and sky
+levy-street-world-of-claudecraft	weather	PARTIAL	src/render/weather.ts	Weather fields rendering
+levy-street-world-of-claudecraft	stealth	PARTIAL	src/render/stealth.ts	Stealth state rendering and action bar indicator
+levy-street-world-of-claudecraft	tutorial	FULL	src/sim/tutorial	Tutorial drills, lessons and greeting
+levy-street-world-of-claudecraft	localisation	FULL	src/ui/i18n.ts	Many locales for UI, entities and talents
+levy-street-world-of-claudecraft	save-load	FULL	server/characters.ts	Postgres-backed persistent characters with saves
+levy-street-world-of-claudecraft	modding-scripting	PARTIAL	src/editor	In-browser world editor and realm builder
+levy-street-world-of-claudecraft	replay-spectate	PARTIAL	src/ui/spectate_badge.ts	Spectate indicator in arena matches
+levy-street-world-of-claudecraft	mail	FULL	src/sim/mail	Player mail and parcels with post office
+levy-street-world-of-claudecraft	ai-agent-env	FULL	headless	Headless RL gym environment for agents
+lichess-org-lila	chat	FULL	modules/chat	Game, tournament and study chat with moderation
+lichess-org-lila	guilds-clans	FULL	modules/team	Teams with membership, requests and team tournaments
+lichess-org-lila	leaderboards	FULL	modules/user/src/main/RankingApi.scala	Rating rankings and top lists
+lichess-org-lila	achievements	PARTIAL	modules/user/src/main/TrophyApi.scala	Trophies awarded to users
+lichess-org-lila	pvp-duels-arena	FULL	modules/tournament	Arena and Swiss tournaments plus challenges and simuls
+lichess-org-lila	replay-spectate	FULL	modules/tv	Live game viewing, TV channels, relays and replays
+lichess-org-lila	tutorial	FULL	modules/learn	Interactive learn-chess lessons
+lichess-org-lila	multiplayer-netcode	FULL	modules/socket	WebSocket realtime play and messaging
+lichess-org-lila	localisation	FULL	translation	Translations in many languages
+lichess-org-lila	ai-opponents	PARTIAL	modules/bot	Bot accounts and engine opponents
+lichess-org-lila	matchmaking	FULL	modules/pool	Lobby and rating-pool pairing
+lichess-org-lila	rating-system	FULL	modules/rating	Glicko ratings per variant
+lichess-org-lila	puzzles	FULL	modules/puzzle	Tactics puzzles with ratings and storm/racer modes
+lichess-org-lila	game-analysis	FULL	modules/analyse	Computer analysis, opening explorer and study tools

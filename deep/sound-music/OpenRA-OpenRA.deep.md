@@ -1,12 +1,13 @@
 # OpenRA-OpenRA (sound-music, cell 15)
 
-Donor: /mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Game/Sound/Sound.cs | Licence: GPL-3 | C# | symbol Sound.Play / PlayLooped / PlayMusic
+Donor: /mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Game/Sound/Sound.cs | Licence: GPL-3.0-or-later per Sound.cs header | C# | symbol Sound.Play / PlayLooped / PlayMusic
 
 ## 1. Mechanism
 - Sound is the game's audio front end. The core Play(type, player, name, headRelative, pos, volumeModifier, loop) returns null when the name is empty, when all sound is disabled, when world sound is disabled and this is a world sound, or when a player is given and it is not the local player. Otherwise it asks the sound engine (`Play2D`, with the source loaded and cached by name through the `sounds` cache) for a source with `InternalSoundVolume` (the settings sound volume times a global modifier, line 318) times the cue's volume modifier, at the given position, with the headRelative flag deciding whether the position is relative to the listener.
 - Public wrappers (160-177) choose the mode: no position means head-relative (UI or global); a position means positional (world). PlayLooped (166-167) sets the loop flag. `PlayToPlayer` passes a player for the owner gate. The overloads taking a list of names pick one with `world.LocalRandom` (169-177), a local, non-synced generator.
 - Music: PlayMusicThen (231-246) returns if the track is missing, stores a completion callback, and unpauses the track if it is the current one; otherwise PlayMusic (248-268) stops the current track and streams the new one with the loop setting (`Settings.Sound.Repeat` from PlayMusicThen) and the music volume times the track's modifier.
 - Tick (217-225) checks each game tick whether the music has completed. If so it stops music and calls the stored callback without a null check (`onMusicComplete()`, line 223); the callback is cleared only when a load fails (262).
+- Predefined voice and notification cues go through `PlayPredefined` (359-459): a pool picks the next clip (`pool.GetNext()`), and the pool's interrupt type (Overlap, Interrupt or DoNotPlay) decides whether a still-playing cue for the same actor (voices) or the same name (notifications) is stopped, blocks the new one, or is ignored. This path is not modelled in the sketch.
 - Video audio: a separate stream from memory, with pause, resume and stop.
 - MuteAudio and UnmuteAudio set the engine volume to 0 or 1.
 - Inputs: sound type, name, world position, volume modifier, owning player, loop flag. Output: an ISound handle, or null. Play runs at the call site; music-complete polling runs per game tick.
@@ -79,7 +80,7 @@ class SoundFront {
 
 ## 6. Gaps and risks
 - Built for an RTS with many simultaneous players and fog. Frankendom duels have two sides; the owner gate maps to "whose cue is this", which needs a rule.
-- No voice priority, ducking or pooling in lines 30-330 of this file (the rest was not read). Those would be needed for a dense fight with up to MAX_ATTACKERS = 3 attackers.
+- `Play` and the music calls have no voice priority, ducking or channel limit. The only overlap control is the per-pool interrupt type in `PlayPredefined` (419-455), which is per actor or per cue name, not a global voice cap. A dense fight with up to MAX_ATTACKERS = 3 attackers would need a cap of its own.
 - Music completion is polled from a tick. Frankendom's music path should use its own clock or the Web Audio end event; do not copy the poll.
 - The stop-then-start behaviour in PlayMusic has no crossfade.
 - Audio is a client consumer of the one fight state; cue picks use a local RNG in the donor, which Frankendom must keep separate from the fight RNG.

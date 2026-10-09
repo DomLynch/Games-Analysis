@@ -1,0 +1,263 @@
+game	system	level	evidence	note
+crashkonijn-GOAP	NONE	NONE	.	Unity GOAP AI planner library; no game systems
+crawl-crawl	skills-professions	FULL	crawl-ref/source/skills.cc	Trainable skills with XP allocation
+crawl-crawl	magic-spells	FULL	crawl-ref/source/spl-cast.cc	Spell casting, schools, failure rates, spellbooks
+crawl-crawl	status-effects	FULL	crawl-ref/source/duration-data.h	Player durations and monster enchantments
+crawl-crawl	permadeath	FULL	crawl-ref/source/hiscores.cc	Roguelike permadeath with high score on death
+crawl-crawl	leaderboards	FULL	crawl-ref/source/hiscores.cc	High score table and morgue dumps
+crawl-crawl	procedural-generation	FULL	crawl-ref/source/dungeon.cc	Random level generation with vault maps
+crawl-crawl	dungeons-instances	FULL	crawl-ref/source/branch.cc	Branches of dungeon levels with depth
+crawl-crawl	character-creation	FULL	crawl-ref/source/newgame.cc	Species and background selection at start
+crawl-crawl	classes-levels	FULL	crawl-ref/source/species.cc	Species, backgrounds (jobs) and XP levels
+crawl-crawl	loot-rarity-affixes	FULL	crawl-ref/source/artefact.cc	Randomised artefacts and ego brands on items
+crawl-crawl	minimap-maps	PARTIAL	crawl-ref/source/dgn-overview.cc	Level overview and map knowledge display
+crawl-crawl	fog-of-war	FULL	crawl-ref/source/map-knowledge.cc	Remembered map cells and line of sight
+crawl-crawl	modding-scripting	FULL	crawl-ref/source/clua.cc	Lua scripting for vaults and user macros
+crawl-crawl	save-load	FULL	crawl-ref/source/files.cc	Versioned save games with tag format
+crawl-crawl	tutorial	FULL	crawl-ref/source/hints.cc	Hints mode and tutorial for new players
+crawl-crawl	replay-spectate	PARTIAL	crawl-ref/source/arena.cc	Arena monster-vs-monster spectating
+crawl-crawl	multiplayer-netcode	PARTIAL	crawl-ref/source/webserver	Webtiles server with spectator watching
+crawl-crawl	pets-companions	FULL	crawl-ref/source/god-companions.cc	Allies, summoned and god-granted companions
+crawl-crawl	bosses-raids	PARTIAL	crawl-ref/source/ghost.cc	Uniques and player ghosts from bones files
+crawl-crawl	factions-reputation	PARTIAL	crawl-ref/source/god-abil.cc	Gods with piety, conduct and wrath
+crawl-crawl	economy-sinks	PARTIAL	crawl-ref/source/shopping.cc	Shops where gold buys items
+cuteshaun-lineage2-api	crafting	DATA-ONLY	data/generated/interlude/recipes.json	Recipe data for Lineage 2 Interlude
+cuteshaun-lineage2-api	quests	DATA-ONLY	data/generated/interlude/quests.json	Quest definitions parsed from datapack
+cuteshaun-lineage2-api	skills-professions	DATA-ONLY	data/generated/interlude/skills.json	Skill definitions
+cuteshaun-lineage2-api	classes-levels	DATA-ONLY	data/generated/interlude/classes.json	Character class tree data
+cuteshaun-lineage2-api	loot-rarity-affixes	DATA-ONLY	data/generated/interlude/drops.json	Monster drop tables
+cuteshaun-lineage2-api	economy-sinks	DATA-ONLY	data/generated/interlude/buylists.json	NPC shop buy lists
+cvet-fonline	multiplayer-netcode	FULL	Source/Client/NetworkClient.cpp	Authoritative server, TCP/WebSocket/UDP transports, replication
+cvet-fonline	modding-scripting	FULL	Source/Common/ScriptSystem.cpp	AngelScript and C# gameplay scripting backends
+cvet-fonline	save-load	FULL	Source/Server/DataBase.cpp	JSON/SQLite/Mongo persistence backends
+cvet-fonline	fog-of-war	FULL	Source/Client/FogOfWar.cpp	Client hex fog of war rendering
+cvet-fonline	localisation	FULL	Source/Common/TextPack.cpp	Text packs for localized strings
+CytopiaTeam-Cytopia	housing-building	PARTIAL	src/game/ZoneManager.cxx	City zoning and building placement on isometric map
+CytopiaTeam-Cytopia	procedural-generation	FULL	src/engine/map/TerrainGenerator.cxx	Noise-based procedural terrain generation
+CytopiaTeam-Cytopia	modding-scripting	PARTIAL	src/scripting/ScriptEngine.cxx	AngelScript engine and JSON tile data mods
+CytopiaTeam-Cytopia	save-load	PARTIAL	src/engine/Map.cxx	Versioned savegame serialisation of map
+CytopiaTeam-Cytopia	localisation	FULL	data/languages	Gettext translations in 20+ languages
+CytopiaTeam-Cytopia	economy-sinks	PARTIAL	src/game/PowerManager.cxx	Power grid and utility simulation for city
+daggerfall-unity	guilds-clans	FULL	Assets/Scripts/Game/Guilds/GuildManager.cs	Fighters, Mages, Thieves, Temples, Dark Brotherhood, orders with ranks
+daggerfall-unity	quests	FULL	Assets/Scripts/Game/Questing/QuestMachine.cs	Scripted quest language, machine and journal
+daggerfall-unity	dialogue-trees	PARTIAL	Assets/Scripts/Game/TalkManager.cs	Topic-based NPC conversation system
+daggerfall-unity	crafting	PARTIAL	Assets/Scripts/Game/MagicAndEffects/PotionRecipe.cs	Potion making, spellmaking and enchanting
+daggerfall-unity	banking-storage	FULL	Assets/Scripts/Game/DaggerfallBankManager.cs	Bank accounts, loans and deposits
+daggerfall-unity	skills-professions	FULL	Assets/Scripts/Game/Entities/DaggerfallSkills.cs	Skills that improve through use
+daggerfall-unity	weather	FULL	Assets/Scripts/Game/WeatherManager.cs	Rain, snow, fog weather cycles
+daggerfall-unity	day-night	FULL	Assets/Scripts/Internal/WorldTime.cs	World clock with sun lighting
+daggerfall-unity	mounts-vehicles	PARTIAL	Assets/Scripts/Game/TransportManager.cs	Horse, cart and ship transport
+daggerfall-unity	minimap-maps	FULL	Assets/Scripts/Game/Automap.cs	Dungeon automap and exterior map
+daggerfall-unity	modding-scripting	FULL	Assets/Game/Addons/ModSupport/ModManager.cs	Mod packages with scripts and assets
+daggerfall-unity	save-load	FULL	Assets/Scripts/Game/Serialization/SaveLoadManager.cs	Full game save and load
+daggerfall-unity	factions-reputation	FULL	Assets/Scripts/Game/Player/PersistentFactionData.cs	Faction reputation and relations
+daggerfall-unity	stealth	PARTIAL	Assets/Scripts/Game/Entities/EntityConcealmentBehaviour.cs	Invisibility and concealment, enemy senses
+daggerfall-unity	magic-spells	FULL	Assets/Scripts/Game/MagicAndEffects/EntityEffectManager.cs	Effect-based spells, spell maker and enchanting
+daggerfall-unity	status-effects	FULL	Assets/Scripts/Game/MagicAndEffects/Effects/Diseases	Diseases, poisons and spell effect bundles
+daggerfall-unity	character-creation	FULL	Assets/Scripts/Game/UserInterfaceWindows/CreateCharClassSelect.cs	Race, class, reflex and bonus selection
+daggerfall-unity	classes-levels	FULL	Assets/Scripts/Game/Entities/PlayerEntity.cs	Classes, stats and level-up
+daggerfall-unity	loot-rarity-affixes	FULL	Assets/Scripts/Game/Items/LootTables.cs	Item materials, enchantments and loot tables
+daggerfall-unity	economy-sinks	PARTIAL	Assets/Scripts/Game/LoanChecker.cs	Loans, repairs, tavern and travel costs
+daggerfall-unity	housing-building	PARTIAL	Assets/Scripts/Game/UserInterfaceWindows/DaggerfallBankPurchasePopUp.cs	Buy houses and ships through bank
+daggerfall-unity	localisation	FULL	Assets/Localization	String tables and locales
+daggerfall-unity	crime-justice	PARTIAL	Assets/Scripts/Game/UserInterfaceWindows/DaggerfallCourtWindow.cs	Crime, guards, court and legal repute
+Dawn-of-Light-DOLSharp	crafting	FULL	GameServer/craft	Armor, weapon, alchemy, tailoring, spellcraft crafting skills
+Dawn-of-Light-DOLSharp	housing-building	FULL	GameServer/housing/HouseMgr.cs	Player houses with indoor/outdoor items and permissions
+Dawn-of-Light-DOLSharp	guilds-clans	FULL	GameServer/gameutils/Guild.cs	Guilds with ranks, alliances and banners
+Dawn-of-Light-DOLSharp	parties-groups	FULL	GameServer/gameutils/Group.cs	Groups, battlegroups and chat groups
+Dawn-of-Light-DOLSharp	chat	FULL	GameServer/gameutils/ChatGroup.cs	Chat groups, guild chat and channels
+Dawn-of-Light-DOLSharp	trading-player	FULL	GameServer/gameutils/PlayerTradeWindow.cs	Player-to-player trade window
+Dawn-of-Light-DOLSharp	auction-market	PARTIAL	GameServer/gameutils/MarketSearch.cs	Market cache and search of consignment items
+Dawn-of-Light-DOLSharp	banking-storage	FULL	GameServer/gameobjects/GameVault.cs	Vaults and house vaults for item storage
+Dawn-of-Light-DOLSharp	quests	FULL	GameServer/quests	Quests, tasks, missions and data quests
+Dawn-of-Light-DOLSharp	dialogue-trees	PARTIAL	GameServer/behaviour	NPC behaviour triggers, dialog and whisper actions
+Dawn-of-Light-DOLSharp	skills-professions	FULL	GameServer/skillhandler	Specializations, abilities and styles
+Dawn-of-Light-DOLSharp	weather	FULL	GameServer/managers/worldmanager/WeatherManager.cs	Per-region weather system
+Dawn-of-Light-DOLSharp	mounts-vehicles	PARTIAL	GameServer/commands/playercommands/horse.cs	Horse mounts and boats
+Dawn-of-Light-DOLSharp	pets-companions	FULL	GameServer/gameobjects/GamePet.cs	Class pets with brains and commands
+Dawn-of-Light-DOLSharp	pvp-duels-arena	FULL	GameServer/gameutils/GameDuel.cs	Duels plus realm-vs-realm server rules
+Dawn-of-Light-DOLSharp	siege-war	FULL	GameServer/keeps/KeepManager.cs	Keeps, towers, siege weapons and relics
+Dawn-of-Light-DOLSharp	dungeons-instances	FULL	GameServer/world/Instance/Instance.cs	Instanced regions with jump points
+Dawn-of-Light-DOLSharp	bosses-raids	PARTIAL	GameServer/gameobjects/Dragons	Dragon and epic bosses
+Dawn-of-Light-DOLSharp	factions-reputation	PARTIAL	GameServer/gameutils/FactionMgr.cs	NPC factions and realm relations
+Dawn-of-Light-DOLSharp	stealth	FULL	GameServer/effects/StealthEffect.cs	Stealth effect and stealther abilities
+Dawn-of-Light-DOLSharp	magic-spells	FULL	GameServer/spells	Spell handlers per class and line
+Dawn-of-Light-DOLSharp	status-effects	FULL	GameServer/effects/GameSpellEffect.cs	Spell effects, buffs, debuffs and immunity
+Dawn-of-Light-DOLSharp	character-creation	FULL	GameServer/packets/Client/168/CharacterCreateRequestHandler.cs	Realm, race, class creation
+Dawn-of-Light-DOLSharp	classes-levels	FULL	GameServer/gameobjects/CharacterClasses	Many classes with levels and realm ranks
+Dawn-of-Light-DOLSharp	loot-rarity-affixes	PARTIAL	GameServer/gameutils/LootGeneratorTemplate.cs	Loot generators and loot lists
+Dawn-of-Light-DOLSharp	economy-sinks	PARTIAL	GameServer/craft/Repair.cs	Repair, merchants and currency wallet
+Dawn-of-Light-DOLSharp	modding-scripting	FULL	GameServer/gameutils/DOLScriptCompiler.cs	Runtime C# script compilation and GameServerScripts
+Dawn-of-Light-DOLSharp	save-load	FULL	DOLDatabase	MySQL/SQLite persistence of characters and world
+Dawn-of-Light-DOLSharp	multiplayer-netcode	FULL	GameServer/packets	Client packet handlers for DAoC protocol
+Dawn-of-Light-DOLSharp	localisation	FULL	GameServer/language	Language files for EN DE FR ES IT CZ NL
+Dawn-of-Light-DOLSharp	tutorial	PARTIAL	GameServerScripts/gameevents/TutorialJumpPointHandler.cs	Tutorial zone jump point
+Dawn-of-Light-DOLSharp	mail	PARTIAL	GameServer/gameutils/MailMgr.cs	In-game player mail
+DCurrent-openbor	modding-scripting	FULL	engine/source/scriptlib	Built-in script engine and module text format
+DCurrent-openbor	save-load	PARTIAL	engine/source/savedata.h	Save data for scores and progress
+DFHack-dfhack	NONE	NONE	.	Memory-access tool and Lua scripting layer for Dwarf Fortress; no own game systems
+dhewm-dhewm3	multiplayer-netcode	FULL	neo/framework/async/AsyncServer.cpp	Client-server async networking with message channels
+dhewm-dhewm3	pvp-duels-arena	FULL	neo/d3xp/MultiplayerGame.cpp	Deathmatch, team DM, tourney and CTF modes
+dhewm-dhewm3	modding-scripting	FULL	neo/d3xp/script/Script_Interpreter.cpp	Compiled game script language and decl files
+dhewm-dhewm3	save-load	FULL	neo/framework/Session.cpp	Savegame and map-restore sessions
+dhewm-dhewm3	replay-spectate	PARTIAL	neo/framework/DemoFile.cpp	Demo recording and playback; MP spectators
+dkfans-keeperfx	housing-building	FULL	src/room_data.c	Dungeon rooms built on slabs, claim and dig
+dkfans-keeperfx	magic-spells	FULL	src/magic_powers.c	Keeper powers, spells and creature spells
+dkfans-keeperfx	multiplayer-netcode	FULL	src/net_main.c	LAN/online lobby, lockstep netcode, resync
+dkfans-keeperfx	replay-spectate	FULL	src/replay.c	Game replays and network spectator mode
+dkfans-keeperfx	modding-scripting	FULL	src/lvl_script.c	Level script language, Lua API and config mods
+dkfans-keeperfx	save-load	FULL	src/game_saves.c	Savegame slots and loading
+dkfans-keeperfx	leaderboards	PARTIAL	src/highscores.c	Highscore table per campaign
+dkfans-keeperfx	localisation	FULL	lang	Gettext po files for many languages
+dkfans-keeperfx	classes-levels	PARTIAL	src/config_creature.c	Creature models with XP levels and stats
+dkfans-keeperfx	economy-sinks	PARTIAL	src/room_treasure.c	Gold treasury, payday and building costs
+dkfans-keeperfx	minimap-maps	PARTIAL	src/frontmenu_ingame_map.c	In-game overview map
+dkfans-keeperfx	skills-professions	PARTIAL	src/creature_states_train.c	Creature training, research and job assignment
+dkfans-keeperfx	ai-opponent	FULL	src/player_computer.c	Computer keeper AI players
+dkfans-keeperfx	pathfinding	FULL	src/ariadne.c	Navigation mesh pathfinding
+electronicarts-CnC_Remastered_Collection	minimap-maps	FULL	TIBERIANDAWN/RADAR.CPP	Radar minimap with power dependency
+electronicarts-CnC_Remastered_Collection	fog-of-war	FULL	TIBERIANDAWN/CELL.CPP	Shroud and map reveal per cell
+electronicarts-CnC_Remastered_Collection	save-load	FULL	TIBERIANDAWN/SAVELOAD.CPP	Save and load of RTS game state
+electronicarts-CnC_Remastered_Collection	multiplayer-netcode	FULL	TIBERIANDAWN/CONNECT.CPP	Lockstep multiplayer over IPX/connection queues
+electronicarts-CnC_Remastered_Collection	quests	PARTIAL	TIBERIANDAWN/SCENARIO.CPP	Scenario missions with triggers and objectives
+electronicarts-CnC_Remastered_Collection	leaderboards	PARTIAL	TIBERIANDAWN/SCORE.CPP	End of mission score screen
+electronicarts-CnC_Remastered_Collection	factions-reputation	PARTIAL	TIBERIANDAWN/HOUSE.CPP	Houses (GDI, Nod) with sides and allies
+electronicarts-CnC_Remastered_Collection	economy-sinks	FULL	TIBERIANDAWN/FACTORY.CPP	Credits, harvesting, production cost and power
+electronicarts-CnC_Remastered_Collection	siege-war	FULL	TIBERIANDAWN/TEAM.CPP	RTS unit teams, combat and base assault
+electronicarts-CnC_Remastered_Collection	modding-scripting	PARTIAL	TIBERIANDAWN/TRIGGER.CPP	INI-driven triggers and teams; Steam Workshop mods
+endless-sky-endless-sky	quests	FULL	source/Mission.cpp	Missions with jobs, plot chains, conditions and rewards
+endless-sky-endless-sky	dialogue-trees	FULL	source/Conversation.cpp	Branching conversations with choices
+endless-sky-endless-sky	factions-reputation	FULL	source/Government.cpp	Governments, reputation and politics
+endless-sky-endless-sky	economy-sinks	FULL	source/Account.cpp	Credits, salaries, mortgages, depreciation
+endless-sky-endless-sky	banking-storage	PARTIAL	source/BankPanel.cpp	Bank loans and mortgages
+endless-sky-endless-sky	auction-market	PARTIAL	source/Trade.cpp	Commodity prices per system for trading goods
+endless-sky-endless-sky	minimap-maps	FULL	source/MapPanel.cpp	Galaxy map plus in-flight radar and minimap
+endless-sky-endless-sky	weather	PARTIAL	source/Weather.cpp	Hazard weather events in systems
+endless-sky-endless-sky	pets-companions	PARTIAL	source/ShipManager.cpp	Escort ships, fleet and hired crew
+endless-sky-endless-sky	stealth	PARTIAL	source/Ship.cpp	Ship cloaking device
+endless-sky-endless-sky	modding-scripting	FULL	source/Plugin.cpp	Plugins and data-file driven game content
+endless-sky-endless-sky	save-load	FULL	source/SavedGame.cpp	Pilot save files
+endless-sky-endless-sky	character-creation	PARTIAL	source/StartConditions.cpp	Choose starting scenario and ship
+EQEmu	crafting	FULL	zone/tradeskills.cpp	Tradeskill recipes and combines
+EQEmu	guilds-clans	FULL	zone/guild_mgr.cpp	Guilds with ranks, banks and world sync
+EQEmu	parties-groups	FULL	zone/groups.cpp	Groups with xtargets and group leadership
+EQEmu	chat	FULL	ucs	Universal chat server with channels and mail
+EQEmu	trading-player	FULL	zone/trading.cpp	Player trade window and barter
+EQEmu	auction-market	FULL	common/bazaar.cpp	Bazaar trader mode and item search
+EQEmu	banking-storage	PARTIAL	zone/parcels.cpp	Bank slots and parcel delivery
+EQEmu	quests	FULL	zone/tasks.cpp	Task system with shared tasks and quest scripts
+EQEmu	dialogue-trees	PARTIAL	zone/dialogue_window.cpp	NPC say-link dialogue windows
+EQEmu	skills-professions	FULL	common/skills.cpp	Skill caps, tradeskills and skill-ups
+EQEmu	fishing	PARTIAL	zone/client.cpp	Fishing skill and catches
+EQEmu	weather	PARTIAL	zone/zone.cpp	Zone weather settings
+EQEmu	day-night	FULL	common/eqtime.cpp	In-game EQ time and calendar
+EQEmu	mounts-vehicles	PARTIAL	zone/horse.cpp	Horse mounts
+EQEmu	pets-companions	FULL	zone/pets.cpp	Pets, mercenaries and bots
+EQEmu	pvp-duels-arena	PARTIAL	zone/attack.cpp	Duels and PvP rules
+EQEmu	dungeons-instances	FULL	zone/dynamic_zone.cpp	Dynamic zones, expeditions and adventures
+EQEmu	bosses-raids	FULL	zone/raids.cpp	Raids with leaders and loot
+EQEmu	factions-reputation	FULL	common/faction.cpp	NPC faction standing and hits
+EQEmu	stealth	PARTIAL	zone/aa.cpp	Hide, sneak and related abilities
+EQEmu	magic-spells	FULL	zone/spells.cpp	Spell casting, spell effects and buffs
+EQEmu	status-effects	FULL	zone/spell_effects.cpp	Buffs, debuffs, DoTs, mez and stuns
+EQEmu	character-creation	PARTIAL	world/sof_char_create_data.h	Race, class and deity selection at world server
+EQEmu	classes-levels	FULL	common/classes.cpp	Classes, deities and experience levels
+EQEmu	loot-rarity-affixes	FULL	zone/loot.cpp	Loot tables, global loot and drops
+EQEmu	economy-sinks	PARTIAL	zone/tribute.cpp	Tribute, merchants and currency
+EQEmu	modding-scripting	FULL	zone/lua_parser.cpp	Lua and Perl quest scripting plus rules system
+EQEmu	save-load	FULL	common/database.cpp	MySQL persistence of characters and world
+EQEmu	multiplayer-netcode	FULL	common/net	Server emulator with login, world, zone and UDP streams
+evennia-evennia	chat	FULL	evennia/comms/comms.py	Channels and messages between accounts
+evennia-evennia	multiplayer-netcode	FULL	evennia/server/portal	Portal/server split with telnet, websocket, SSH
+evennia-evennia	modding-scripting	FULL	evennia/scripts	Python typeclasses, scripts and batch commands
+evennia-evennia	save-load	FULL	evennia/server/models.py	Django database persistence of all objects
+evennia-evennia	localisation	FULL	evennia/locale	Gettext translations for many languages
+evennia-evennia	crafting	PARTIAL	evennia/contrib/game_systems/crafting/crafting.py	Contrib recipe-based crafting system
+evennia-evennia	trading-player	PARTIAL	evennia/contrib/game_systems/barter	Contrib barter trade between players
+evennia-evennia	banking-storage	PARTIAL	evennia/contrib/game_systems/storage	Contrib storage containers
+evennia-evennia	achievements	PARTIAL	evennia/contrib/game_systems/achievements	Contrib achievement tracking
+evennia-evennia	status-effects	PARTIAL	evennia/contrib/rpg/buffs/buff.py	Contrib buffs and debuffs with duration
+evennia-evennia	character-creation	PARTIAL	evennia/contrib/rpg/character_creator	Contrib character creator menu
+evennia-evennia	skills-professions	PARTIAL	evennia/contrib/rpg/traits	Contrib traits, stats and skills
+evennia-evennia	quests	PARTIAL	evennia/contrib/tutorials/evadventure/quests.py	EvAdventure tutorial quest system
+evennia-evennia	dungeons-instances	PARTIAL	evennia/contrib/tutorials/evadventure/dungeon.py	Tutorial dungeon generation
+evennia-evennia	procedural-generation	PARTIAL	evennia/contrib/grid/mapbuilder	Contrib map builder and wilderness
+evennia-evennia	minimap-maps	PARTIAL	evennia/contrib/grid/ingame_map_display	Contrib in-game ASCII map display
+evennia-evennia	dialogue-trees	PARTIAL	evennia/contrib/tutorials/talking_npc	Contrib menu-based NPC conversation
+evennia-evennia	pvp-duels-arena	PARTIAL	evennia/contrib/game_systems/turnbattle	Contrib turn-based combat systems
+evennia-evennia	economy-sinks	PARTIAL	evennia/contrib/tutorials/evadventure/shops.py	Tutorial shops
+evennia-evennia	loot-rarity-affixes	PARTIAL	evennia/contrib/tutorials/evadventure/random_tables.py	Tutorial random loot tables
+evennia-evennia	classes-levels	PARTIAL	evennia/contrib/tutorials/evadventure/rules.py	Tutorial ruleset with levels
+evennia-evennia	mail	PARTIAL	evennia/contrib/game_systems/mail	Contrib in-game mail
+evennia-evennia	day-night	PARTIAL	evennia/contrib/base_systems/custom_gametime	Contrib custom in-game calendar and time
+exult-exult	parties-groups	FULL	party.cc	Avatar party members following and fighting
+exult-exult	save-load	FULL	gamedat.cc	Savegame writing and reading of game state
+exult-exult	day-night	FULL	gameclk.cc	Game clock driving palette and NPC schedules
+exult-exult	dialogue-trees	FULL	usecode/conversation.cc	Usecode-driven NPC conversation with faces
+exult-exult	magic-spells	PARTIAL	gumps/Spellbook_gump.cc	Spellbook UI; spell logic in usecode
+exult-exult	weather	PARTIAL	effects.cc	Weather effects such as rain and fog
+exult-exult	modding-scripting	FULL	usecode/ucfunction.cc	Usecode virtual machine runs scripted game logic
+exult-exult	pets-companions	PARTIAL	party.cc	Party followers act as companions
+exult-exult	npc-schedules	FULL	schedule.cc	NPC daily schedules and activities
+flareteam-flare-engine	quests	FULL	src/QuestLog.cpp	Quest log driven by map and NPC events
+flareteam-flare-engine	dialogue-trees	FULL	src/MenuTalker.cpp	NPC dialog with conditional event-driven text
+flareteam-flare-engine	banking-storage	FULL	src/MenuStash.cpp	Shared stash and item storage
+flareteam-flare-engine	economy-sinks	PARTIAL	src/MenuVendor.cpp	Vendors buy and sell with currency
+flareteam-flare-engine	minimap-maps	FULL	src/MenuMiniMap.cpp	In-game minimap
+flareteam-flare-engine	fog-of-war	FULL	src/FogOfWar.cpp	Map fog of war reveal
+flareteam-flare-engine	loot-rarity-affixes	FULL	src/LootManager.cpp	Loot tables and item bonuses
+flareteam-flare-engine	status-effects	FULL	src/EffectManager.cpp	Timed buffs, debuffs, DoT and shield effects
+flareteam-flare-engine	magic-spells	FULL	src/PowerManager.cpp	Data-driven powers and spells
+flareteam-flare-engine	classes-levels	FULL	src/StatBlock.cpp	Stats, levels and hero classes
+flareteam-flare-engine	character-creation	FULL	src/GameStateNew.cpp	New game hero appearance and class choice
+flareteam-flare-engine	modding-scripting	FULL	src/ModManager.cpp	Mod folders override all content
+flareteam-flare-engine	save-load	FULL	src/SaveLoad.cpp	Save slots with game state
+flareteam-flare-engine	localisation	FULL	src/GetText.cpp	Gettext translations
+flareteam-flare-engine	permadeath	PARTIAL	src/Avatar.cpp	Optional permadeath deletes saved game
+flareteam-flare-engine	pets-companions	PARTIAL	src/PowerManager.cpp	Summoned allies via powers
+flareteam-flare-engine	stealth	PARTIAL	src/EntityBehavior.cpp	Hero stealth stat reduces enemy threat range
+flareteam-flare-engine	skills-professions	PARTIAL	src/MenuPowers.cpp	Power tree unlocks via points
+flareteam-flare-game	quests	DATA-ONLY	mods/empyrean_campaign/quests	Quest definitions for the Empyrean campaign
+flareteam-flare-game	dialogue-trees	DATA-ONLY	mods/empyrean_campaign/npcs	NPC definitions with dialog and vendor stock
+flareteam-flare-game	magic-spells	DATA-ONLY	mods/empyrean_campaign/powers	Power and spell definition files
+flareteam-flare-game	loot-rarity-affixes	DATA-ONLY	mods/empyrean_campaign/loot	Loot table and item definition files
+flareteam-flare-game	classes-levels	DATA-ONLY	mods/empyrean_campaign/engine/classes.txt	Hero classes and XP table
+flareteam-flare-game	localisation	DATA-ONLY	mods/empyrean_campaign/languages	Gettext po translation files
+flareteam-flare-game	fog-of-war	DATA-ONLY	mods/empyrean_campaign/engine/fow_mask.txt	Fog of war mask settings
+flareteam-flare-game	dungeons-instances	DATA-ONLY	mods/empyrean_campaign/maps	Tiled maps for dungeons and areas
+flutter-team-archive-pinball	leaderboards	FULL	lib/leaderboard	Online Firebase leaderboard with initials
+flutter-team-archive-pinball	localisation	FULL	lib/l10n	ARB localisation strings for many languages
+flutter-team-archive-pinball	tutorial	PARTIAL	lib/how_to_play	How-to-play instructions dialog
+flutter-team-archive-pinball	character-creation	PARTIAL	lib/select_character	Choose character theme for the ball
+freeciv-freeciv	achievements	FULL	common/achievements.c	Ruleset-defined achievements awarded to players
+freeciv-freeciv	multiplayer-netcode	FULL	server/sernet.c	Client-server networking with packet generator
+freeciv-freeciv	chat	FULL	server/handchat.c	In-game chat and private messages
+freeciv-freeciv	trading-player	PARTIAL	common/diptreaty.c	Diplomatic treaties exchanging clauses and techs
+freeciv-freeciv	save-load	FULL	server/savegame	Savegame formats with compatibility
+freeciv-freeciv	procedural-generation	FULL	server/generator	Height-map and fracture map generators
+freeciv-freeciv	modding-scripting	FULL	server/scripting	Lua scripting and rulesets/modpacks
+freeciv-freeciv	localisation	FULL	translations	Gettext translations of game and rulesets
+freeciv-freeciv	fog-of-war	FULL	common/vision.c	Vision, fog and known tiles
+freeciv-freeciv	minimap-maps	FULL	client/overview_common.c	Overview minimap of the world
+freeciv-freeciv	leaderboards	PARTIAL	server/score.c	Player score calculation and ranking
+freeciv-freeciv	siege-war	PARTIAL	common/combat.c	Unit combat, conquest and diplomatic war states
+freeciv-freeciv	economy-sinks	PARTIAL	common/traderoutes.c	Trade routes, taxes and upkeep
+freeciv-freeciv	factions-reputation	PARTIAL	common/nation.c	Nations with diplomatic relations
+freeciv-freeciv	ai-opponent	FULL	ai/classic	Computer players with difficulty levels
+freeciv-freeciv	tech-tree	FULL	common/tech.c	Technology research tree
+freeciv-freeciv	city-management	FULL	common/city.c	Cities, specialists, improvements and worklists
+freeciv-freeciv	calendar	PARTIAL	common/calendar.c	Turn-based calendar and year progression
+freeorion-freeorion	modding-scripting	FULL	default/scripting	FOCS and Python content definitions for techs, species, buildings
+freeorion-freeorion	multiplayer-netcode	FULL	network	Client-server networking with lobby and turn orders
+freeorion-freeorion	procedural-generation	FULL	default/python/universe_generation	Python galaxy, systems and planets generation
+freeorion-freeorion	save-load	FULL	server/SaveLoad.cpp	Server save and load of universe state
+freeorion-freeorion	chat	FULL	UI/ChatWnd.cpp	In-game chat window between empires
+freeorion-freeorion	localisation	FULL	default/stringtables	Stringtables for many languages
+freeorion-freeorion	tech-tree	FULL	default/scripting/techs	Technology research tree
+freeorion-freeorion	siege-war	FULL	combat/CombatSystem.cpp	Automated space combat and planetary defense
+freeorion-freeorion	factions-reputation	PARTIAL	Empire/Diplomacy.cpp	Diplomatic statuses between empires
+freeorion-freeorion	fog-of-war	FULL	universe/Visibility.h	Visibility levels and detection of objects
+freeorion-freeorion	minimap-maps	FULL	UI/MapWnd.cpp	Galaxy map with supply and fleet overlays
+freeorion-freeorion	ai-opponent	FULL	default/python/AI	Python AI players with research and invasion
+freeorion-freeorion	economy-sinks	PARTIAL	default/scripting/policies	Policies cost influence; production and research points
+freeorion-freeorion	character-creation	PARTIAL	UI/GalaxySetupWnd.cpp	Galaxy and empire setup (species, capital)

@@ -1,14 +1,14 @@
 # crawl-crawl (spawns-encounters, cell 4)
 
-Donor: /mnt/frankendom-donors/crawl-crawl/crawl-ref/source/dungeon.cc | Licence: GPL-2 | C++ | symbol _builder_monsters / _num_mons_wanted (opened: _builder_monsters 4391-4446, _num_mons_wanted 1776-1794)
+Donor: /mnt/frankendom-donors/crawl-crawl/crawl-ref/source/dungeon.cc | Licence: GPL-2.0-or-later per crawl-crawl/LICENSE (README: GPLv2+) | C++ | symbol _builder_monsters / _num_mons_wanted (opened: _builder_monsters 4391-4446, _num_mons_wanted 1776-1794)
 
 ## 1. Mechanism
 
-- Monsters are placed once, at level generation, not on a timer. `_build_dungeon_level()` (dungeon.cc 2868-2969) calls `_builder_monsters()` at line 2935, after vault placement, uniques, traps and `_dgn_verify_connectivity` (2932) and before `_builder_items()` (2938). `builder()` (247) is the outer entry; the call into `_build_dungeon_level` is not on its first lines and was not read.
+- Monsters are placed once, at level generation, not on a timer. `_build_dungeon_level()` (dungeon.cc 2868-2969) calls `_builder_monsters()` at line 2935, after vault placement, `_place_uniques`, traps and `_dgn_verify_connectivity` (2933) and before `_builder_items()` (2938). `builder()` (247) is the outer entry; the call into `_build_dungeon_level` is not on its first lines and was not read.
 - Input: the branch and depth being built, the player's entrance position, and the level's map-mask markers (cells marked `MMT_NO_MONS` are excluded).
-- `_builder_monsters` returns at once in the Temple branch. `_num_mons_wanted()` (1776-1794) returns 0 for disconnected branches (other than Pandemonium) and for branches with no monsters. Otherwise it rolls `roll_dice(3, _mon_die_size())`, caps the result at 60, and for Zot depth 5 takes `max(10, n - 4)`. `_mon_die_size` (1730-1773) is a per-branch table value; for the main Dungeon it is a per-depth switch (12 at depth 1 down to 4 at depth 10, then up to 6, default 12); Lair depth 5 uses the default die.
-- Each monster gets a behaviour and a proximity rule. At absolute depth 0 it sleeps and must stay away from the entrance. Else in a connected branch, 1 in 8 keeps the default behaviour (the `mgen_data` constructor default is `BEH_HOSTILE`, in mgen_data.h, so awake) and is kept away from all stairs. Else (not Pandemonium) it sleeps, and at the delver starting depth it stays away from the entrance. Pandemonium monsters keep the default awake behaviour. Bands are permitted and cells marked `MMT_NO_MONS` are excluded.
-- `place_monster` (mon-place.cc 631-833): refuses if the level already holds `MAX_MONSTERS - 1` monsters (line 643), picks a random in-bounds cell, retrying up to 45 times until `_valid_monster_generation_location` passes (stairs or entrance within `LOS_RADIUS`, lines 581-607) and the cell is not masked, then places the monster and, if a band is wanted, its members around it.
+- `_builder_monsters` returns at once in the Temple branch. `_num_mons_wanted()` (1776-1794) returns 0 for disconnected branches (other than Pandemonium) and for branches with no monsters. Otherwise it rolls `roll_dice(3, _mon_die_size())`, caps the result at 60, and for Zot depth 5 takes `max(10, n - 4)`. `_mon_die_size` (1730-1773) is a per-branch table value; for the main Dungeon it is a per-depth switch at 1744 (12 at depth 1 down to 4 at depth 10, then up to 6, default 12; the per-depth values were read at 1746-1771 but are not receipted); Lair depth 5 uses the default die.
+- Each monster gets a behaviour and a proximity rule. At absolute depth 0 it sleeps and must stay away from the entrance. Else in a connected branch, 1 in 8 keeps the default behaviour (the `mgen_data` constructor default is `BEH_HOSTILE`, mgen-data.h line 127, so awake) and is kept away from all stairs. Else (not Pandemonium) it sleeps, and at the delver starting depth it stays away from the entrance. Pandemonium monsters keep the default awake behaviour. Bands are permitted and cells marked `MMT_NO_MONS` are excluded.
+- `place_monster` (mon-place.cc 631-833): refuses if the level already holds `MAX_MONSTERS - 1` monsters (line 643), picks a random in-bounds cell, retrying up to 45 times until `_valid_monster_generation_location` passes (stairs or entrance within `LOS_RADIUS`, lines 581-611) and the cell is not masked, then places the monster and, if a band is wanted, its members around it.
 - After the loop: aquatic monsters are placed (`_place_aquatic_monsters`, 4299-4337; skipped in Shoals, Abyss, Pandemonium, Zot and Dungeon depth below 6), unless in the Crypt, where `_place_assorted_zombies` (4361) is called instead.
 - Output: sleeping or awake monster objects on the level grid. Nothing ticks; the level is fixed after build.
 
@@ -21,7 +21,7 @@ Donor: /mnt/frankendom-donors/crawl-crawl/crawl-ref/source/dungeon.cc | Licence:
 | _num_mons_wanted | /mnt/frankendom-donors/crawl-crawl/crawl-ref/source/dungeon.cc | 1776-1794 | Chooses the monster count from 3d(die), capped at 60 |
 | _mon_die_size | /mnt/frankendom-donors/crawl-crawl/crawl-ref/source/dungeon.cc | 1730-1773 | Returns the die size for the branch, with a depth table for the Dungeon |
 | place_monster | /mnt/frankendom-donors/crawl-crawl/crawl-ref/source/mon-place.cc | 631-833 | Places one monster plus its band; checks the monster cap; 45 position tries |
-| _valid_monster_generation_location | /mnt/frankendom-donors/crawl-crawl/crawl-ref/source/mon-place.cc | 543-613 (proximity checks at 581-607) | Rejects cells near stairs or the entrance according to the proximity flag |
+| _valid_monster_generation_location | /mnt/frankendom-donors/crawl-crawl/crawl-ref/source/mon-place.cc | 543-614 (proximity checks at 581-611) | Rejects cells near stairs or the entrance according to the proximity flag |
 | _place_aquatic_monsters | /mnt/frankendom-donors/crawl-crawl/crawl-ref/source/dungeon.cc | 4299-4337 | Places water monsters after the main loop |
 
 ## 3. Numbers vs mechanism
@@ -37,7 +37,7 @@ Donor: /mnt/frankendom-donors/crawl-crawl/crawl-ref/source/dungeon.cc | Licence:
 
 Licence: GPL-2. CLEAN-ROOM sketch: written from the mechanism above, not translated from the donor.
 
-simplified: bands, the 45-try position search and the monster cap (the `place` callback hides them); the Temple early return, the Zot depth 5 adjustment and the aquatic / zombie pass are omitted; the die size is passed in instead of read from the branch and depth table; 'awake' means the default hostile behaviour.
+simplified: bands, the 45-try position search and the monster cap (the `place` callback hides them); the Shoals flora and prefer-land flag, the Temple early return, the Zot depth 5 adjustment and the aquatic / zombie pass are omitted; the die size is passed in instead of read from the branch and depth table; 'awake' means the default hostile behaviour.
 
 ```ts
 // clean-room sketch of build-time encounter placement.

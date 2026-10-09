@@ -1,6 +1,6 @@
 # PixelGuys-Cubyz (zones-world, cell 7)
 
-Donor: /mnt/frankendom-donors/PixelGuys-Cubyz/src/server/terrain/biomes.zig | Licence: GPL-3 | Zig | symbol Biome / TreeNode.init / TreeNode.getBiome / finishLoading
+Donor: /mnt/frankendom-donors/PixelGuys-Cubyz/src/server/terrain/biomes.zig | Licence: GPL-3.0 per LICENSE file (no per-file header) | Zig | symbol Biome / TreeNode.init / TreeNode.getBiome / finishLoading
 
 Symbol check (opened, 2026-10-09 correction pass): Biome struct 171-410 (ClimateProperties 172-218, fields 220-265, init from 267, hasTag ends 409-410), TreeNode union 490-591 (init 501-567, getBiome 569-590), finishLoading 652-722 all land on the named code. Also opened: ValueNoise.zig samplePoint2D (28-38), percentileTable (40) and percentile (91-98); terrain.zig climateWavelengths (88, 115-120); climategen/NoiseBasedVoronoi.zig 95-175 (the caller).
 
@@ -30,7 +30,7 @@ Symbol check (opened, 2026-10-09 correction pass): Biome struct 171-410 (Climate
 | Seed points rejected when closer than a fraction of their radii | 0.85 factor, 100 rejections per chunk (theirs, NoiseBasedVoronoi 102, 116) |
 
 ## 4. TypeScript sketch
-simplified: the donor's borders come from a 128-entry percentile table of its own value noise (sketch takes a `pct` function and the caller supplies it); the donor draws a fresh noise seed per level from a shared seed (the sketch leaves noise to the caller); the leaf uses an alias table, the sketch a linear weighted scan; zero-chance biomes are not removed; the flag layout is replaced by an axis array per zone; the Voronoi seed-point placement that calls the tree is not in the sketch.
+simplified: the donor's borders come from a 128-entry percentile table of its own value noise (sketch takes a `pct` function and the caller supplies it); the donor draws a fresh noise seed per level from a shared seed (the sketch leaves noise to the caller); the leaf uses an alias table, the sketch a linear weighted scan; zero-chance biomes are not removed; the flag layout is replaced by an axis array per zone (the donor's low is exactly the first flag set, high exactly the third, anything else is middle, which the axis value hides); the Voronoi seed-point placement that calls the tree is not in the sketch.
 ```ts
 // Licence: GPL-3 | clean-room: written from the mechanism, no donor lines.
 // Zone pick from climate data. A tree splits zones by one climate axis per level into three groups (low, mid, high).

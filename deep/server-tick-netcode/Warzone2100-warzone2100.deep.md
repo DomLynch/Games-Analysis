@@ -1,13 +1,13 @@
 # Warzone2100-warzone2100 (server-tick-netcode, cell 5)
 
-Donor: `/mnt/frankendom-donors/Warzone2100-warzone2100/lib/netplay/netplay.cpp` | Licence: GPL-2 | C++ | symbol `NETsend` / `NETrecvNet` / `NETplayerDropped`
+Donor: `/mnt/frankendom-donors/Warzone2100-warzone2100/lib/netplay/netplay.cpp` | Licence: GPL-2.0-or-later per netplay.cpp header | C++ | symbol `NETsend` / `NETrecvNet` / `NETplayerDropped`
 
-Checked: (verified at 1610, 2927, 1139; all three read in full). The pending-disconnect resolver just above `NETsend` (1585-1606) was also read.
+Checked: (verified at 1610, 2927, 1139; all three read in full). The pending-disconnect resolver just above `NETsend` (`NETsendProcessDelayedActions`, 1584-1606) was also read.
 
 ## 1. Mechanism
 
 - A star topology. Clients talk to the host; the host relays to the other players. The host is also a player.
-- `NETsend` (1610-1724) takes a queue descriptor (broadcast to all, one player, or a temporary pre-join socket) and a message. Returns early if comms are off (1614). On the host it writes the message to each non-null connected socket in range, skipping `queue.exclude` (1643-1678). A write error is logged and, for non-temporary queues, the player is added to `netSendPendingDisconnectPlayerIndexes` (1674); that set is consumed in a separate function (1585-1606) that logs and calls `NETplayerClientsDisconnect`. On a client sending to the host, it writes to the host socket only if the host is alive, and a write error calls `NETclientHandleHostDisconnected` (1681-1708). A client sending to any other player wraps the message in `NET_SEND_TO_PLAYER` and asks the host to relay it (1711-1721).
+- `NETsend` (1610-1724) takes a queue descriptor (broadcast to all, one player, or a temporary pre-join socket) and a message. Returns early if comms are off (1614). On the host it writes the message to each non-null connected socket in range, skipping `queue.exclude` (1643-1678). A write error is logged and, for non-temporary queues, the player is added to `netSendPendingDisconnectPlayerIndexes` (1674); that set is consumed in a separate function (`NETsendProcessDelayedActions`, 1584-1606) that logs and calls `NETplayerClientsDisconnect`. On a client sending to the host, it writes to the host socket only if the host is alive, and a write error calls `NETclientHandleHostDisconnected` (1681-1708). A client sending to any other player wraps the message in `NET_SEND_TO_PLAYER` and asks the host to relay it (1711-1721).
 - `NETrecvNet` (2927-3009) is called by the game loop and returns true when there is a non-system message for the caller. On the host it first fixes the player count, accepts incoming connections, admits joiners, runs the lobby handler and checks players are alive (2939-2949). It polls the readable sockets with a zero timeout (`NET_READ_TIMEOUT` = 0 ms, line 103; 2952), then for each slot reads into a fixed buffer and appends bytes to that player's queue (`NETinsertRawData`, 2959-2978). A slot that returns no data and whose socket pointer has been cleared is a dropped player: the host calls `NETplayerDropped` and nulls the slot (2979-2990). Finally it walks all queues; system messages are handled inside (`NETprocessSystemMessage`), and the first message it cannot handle is returned to the caller (2994-3006).
 - `NETplayerDropped` (1139-1173), host only: counts the drop (`sync_counter.drops++`), does the leave cleanup (`MultiPlayerLeave`) for every drop, and marks the connection status as dropped (1172). Only while the game has not started yet (`ingame.localJoiningInProgress`, 1155) does it also broadcast `NET_PLAYER_DROPPED`, clear the slot, reset ready status for everyone unless the dropped player was a spectator, and re-check the ready state (1155-1170). After the game starts there is no broadcast here.
 - Inputs: outgoing messages and sockets. Outputs: per-player inbound queues, relayed messages, drop notices.
@@ -24,15 +24,15 @@ Checked: (verified at 1610, 2927, 1139; all three read in full). The pending-dis
 | Reusable algorithm | Game-specific constants |
 |---|---|
 | Host-authoritative relay: clients send to the host, the host fans out | `MAX_CONNECTED_PLAYERS` = player slots + spectator slots (theirs, nettypes.h 51) |
-| Queue descriptor: all, one, or pre-join | queue type enum (theirs) |
+| Queue descriptor: all, one, or pre-join | queue type enum: broadcast, net, tmp (theirs, netplay.cpp 1623-1629) |
 | Write errors marked and resolved later, never mid-loop | pending-disconnect set (theirs) |
 | Per-player inbound byte queue, parsed by type | `NET_BUFFER_SIZE` = `MaxMsgSize * 8`, about 256K (theirs, netplay.cpp 112) |
 | Poll with a timeout, then process | `NET_READ_TIMEOUT` = 0 ms, so the poll never blocks (theirs, netplay.cpp 103) |
-| Drop = socket cleared, announced once by the host | drop message type (theirs) |
+| Drop = socket cleared, announced once by the host | drop message type `NET_PLAYER_DROPPED` (theirs, netplay.cpp 1158) |
 
 ## 4. TypeScript sketch
 
-simplified: the sketch omits the client-to-host-to-player relay (`NET_SEND_TO_PLAYER`), temporary pre-join sockets, the zero-timeout poll, the system-message handling in `NETrecvNet`, the ready-state reset on a pre-start drop, `MultiPlayerLeave`, and compression and stats. The notice excludes the dropped peer, which the donor does by clearing the slot.
+simplified: the sketch omits the client-to-host-to-player relay (`NET_SEND_TO_PLAYER`), temporary pre-join sockets, the zero-timeout poll, the system-message handling in `NETrecvNet`, the ready-state reset on a pre-start drop, `MultiPlayerLeave`, and compression and stats. The notice excludes the dropped peer; in the donor that slot's socket pointer is already null when `NETplayerDropped` runs (2979), so the broadcast skips it (1646).
 
 ```ts
 // Licence: GPL-2 (donor). CLEAN-ROOM sketch: written from the mechanism description, not a translation of donor lines.

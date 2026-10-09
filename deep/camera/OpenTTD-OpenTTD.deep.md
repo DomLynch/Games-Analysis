@@ -1,6 +1,6 @@
 # OpenTTD-OpenTTD (camera, cell 14)
 
-Donor: /mnt/frankendom-donors/OpenTTD-OpenTTD/src/viewport.cpp | Licence: GPL-2.0 | C++ | symbol UpdateViewportPosition / ClampSmoothScroll
+Donor: /mnt/frankendom-donors/OpenTTD-OpenTTD/src/viewport.cpp | Licence: GPL-2.0-only (per viewport.cpp header: version 2) | C++ | symbol UpdateViewportPosition / ClampSmoothScroll
 
 Symbol check (opened on the VPS, 2026-10-09): ClampViewportToMap 1931, ClampSmoothScroll 1963, UpdateViewportPosition 1991.
 
@@ -31,7 +31,7 @@ Symbol check (opened on the VPS, 2026-10-09): ClampViewportToMap 1931, ClampSmoo
 ## 4. TypeScript sketch
 simplified: the sketch omits the follow-vehicle branch, the in/out write-back of the clamped destination, the clamp of the position when there is no gap, integer truncation (donor uses int64 delta_left and int math), the map-size scaling of the cap (TILE_UNITS is a placeholder), and the overlay rebuild. The stuck test compares the clamped position to the position before the step, as in the donor.
 ```ts
-// Licence: GPL-2.0 (OpenTTD-OpenTTD). CLEAN-ROOM: written from the mechanism, no donor lines.
+// Licence: GPL-2.0-only (OpenTTD-OpenTTD). CLEAN-ROOM: written from the mechanism, no donor lines.
 type Pt = { x: number; y: number };
 const PERIOD_MS = 30;          // timing period (theirs)
 const KEEP = 0.75;             // share of the gap kept per period (theirs)
@@ -67,7 +67,7 @@ function updateScroll(pos: Pt, dest: Pt, dtMs: number, clampToMap: (p: Pt) => Pt
 ## 5. Lands in
 - Frankendom target: src/fight/camera.ts (new module, smooth-follow step; today: src/camera* (moving), slice K4). The vehicle-snap branch has no Frankendom equivalent.
 - Parity row: 11 (fight camera, camera kick, standoff).
-- Reuse tag: rewrite-from-idea (GPL-2.0)
+- Reuse tag: rewrite-from-idea (GPL-2.0-only)
 - Brief rule served: (category default, not per-cell) 1 (one combat core, two clients); rules 7-9 n/a
 
 ## 6. Gaps and risks

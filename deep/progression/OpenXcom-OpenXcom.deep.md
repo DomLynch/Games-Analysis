@@ -1,6 +1,6 @@
 # OpenXcom-OpenXcom (progression, cell 10)
 
-Donor: /mnt/frankendom-donors/OpenXcom-OpenXcom/src/Savegame/SavedGame.cpp | Licence: GPL-3 | C++ | symbol SavedGame::handlePromotions
+Donor: /mnt/frankendom-donors/OpenXcom-OpenXcom/src/Savegame/SavedGame.cpp | Licence: GPL-3.0-or-later per SavedGame.cpp header | C++ | symbol SavedGame::handlePromotions
 Symbol check: handlePromotions opens at 1510 and closes at 1608; inspectSoldiers 1643-1660; getSoldierScore 1667-1675; Soldier::promoteRank 323-331; Soldier::addKillCount 399-402; BattleUnit::updateGeoscapeStats 2182-2186; postMissionProcedures 2195-2261 (closing brace at 2261; improveStat 2268-2275 follows). All opened this pass. Callers opened: /mnt/frankendom-donors/OpenXcom-OpenXcom/src/Battlescape/DebriefingState.cpp lines 600-635, 1175-1220, 1255-1275.
 
 ## 1. Mechanism
@@ -33,7 +33,7 @@ Symbol check: handlePromotions opens at 1510 and closes at 1608; inspectSoldiers
 ## 4. TypeScript sketch
 simplified: rookie and the rookie-to-squaddie step are omitted (ranks here start at squaddie = 0); the transfers and base scan is replaced by a plain roster; the score is passed in as a number, not computed from stats; soldiers promoted do not set a recent-promotion flag; the count bookkeeping is replaced by counting the roster per rank each pass (same result); stat gains and wound recovery are omitted.
 ```ts
-// Licence: GPL-3 | clean-room: written from the mechanism, no donor lines.
+// Licence: GPL-3.0-or-later | clean-room: written from the mechanism, no donor lines.
 // Rank by quota: commander first (one seat, only if none and the roster is big enough), then each lower
 // rank is filled to roster / divisor from the best-scored candidate of the rank below.
 // Ranks: 0 squaddie, 1 sergeant, 2 captain, 3 colonel, 4 commander.

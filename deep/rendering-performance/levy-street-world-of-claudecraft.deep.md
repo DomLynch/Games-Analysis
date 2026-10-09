@@ -81,7 +81,7 @@ export function createQueue(admit: (u: Unit) => boolean) {
 
 ## 6. Gaps and risks
 - The donor queue is for WebGL/WebGPU shader and upload work. Frankendom work that is pure CPU would not benefit from the tail-cap logic. Confirm the Frankendom renderer exposes a sync point before adopting it.
-- The admission budget is a seam with no default. Without a budget the queue simply starts units in priority order, which the donor says was the behaviour before the seam existed.
+- The admission budget is a seam with no default. Without a budget the queue simply starts units in priority order. Before the first noteFrame the donor itself starts units in plain priority/FIFO order (lines 759-760 region, selectNext unarmed path 724-731).
 - Diagnostic stats (stats(), recent window, longest waits) are large. They are not needed for the mechanism; trim before porting.
 - Nothing here is server-related. One engine in src/fight, zones as data, server-verified kills: the queue is a client render concern, has no contract with the server tick or the ledger, and must not gate anything the server verifies. MAX_ATTACKERS = 3 is unrelated to its tail cap of 2 (do not conflate the numbers).
-- Verified now: the whole file was opened (lines 95-160, 405-1048). Not read: lines 160-404 (type definitions, `GpuQueueShutdown` helpers) and the imported `gpu_queue_window_core`, which `recent.record/stats` call.
+- Verified now: lines 60-160, 405-1048 were opened (not the whole file). Not read: lines 160-404 (type definitions, `GpuQueueShutdown` helpers) and the imported `gpu_queue_window_core`, which `recent.record/stats` call.

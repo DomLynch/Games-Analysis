@@ -1,12 +1,12 @@
 # OpenTTD-OpenTTD (hud-ui, cell 16)
 
-Donor: /mnt/frankendom-donors/OpenTTD-OpenTTD/src/smallmap_gui.cpp | Licence: GPL-2.0 | C++ | symbol SmallMapWindow::DrawSmallMapColumn / DrawVehicles
+Donor: /mnt/frankendom-donors/OpenTTD-OpenTTD/src/smallmap_gui.cpp | Licence: GPL-2.0-only per smallmap_gui.cpp header ("version 2") | C++ | symbol SmallMapWindow::DrawSmallMapColumn / DrawVehicles
 
 ## 1. Mechanism
 
 - Runs as the small-map window's paint pass (`SmallMapWindow::DrawSmallMapColumn` and `DrawVehicles`), called from `DrawSmallMap` (lines 1066-1126) when the window redraws, not on a game tick (the caller of `DrawSmallMap` is not read).
 - Input: the map tile grid, the window's scroll position and zoom, the current map type (contour, vehicles, link stats, and others), and the list of vehicles and towns.
-- Terrain: the map is drawn in diagonal columns. Each screen pixel maps back to a tile; each tile block (zoom by zoom tiles) is coloured by `GetTileColours`, which picks the most important tile in the block (by tile type: for example a tunnel or bridge beats plain land) and returns its colour for the given map type. `GetTileColours` (1330-1404) remaps a tunnel or bridge to rail, road or water by transport type before the pick, and in the Industries view an industry that is shown returns its own colour at once, beating the importance table.
+- Terrain: the map is drawn in diagonal columns. `DrawSmallMap` (1085-1108) steps across the window two pixels at a time (`x += 2`, line 1107, too short to receipt), alternating the start tile between (tile_y + zoom) and (tile_x - zoom), and calls `DrawSmallMapColumn` (917-950), which walks down the diagonal by `zoom` tiles per step. Each tile block (zoom by zoom tiles, clamped to the map; with freeform edges a block touching tile row/column 0 is shrunk or skipped) is coloured by `GetTileColours` (1330-1404). That function first remaps a tunnel or bridge to rail, road or water by transport type (so the table's own tunnel/bridge entry is never the winner), then picks the tile with the highest `_tiletype_importance` (strictly greater wins, so the first of equals stays), then calls a per-map-type colour function with the winner and its type. In the Industries view a shown industry returns its own colour at once (white for the highlighted industry only on its blink state), beating the table; a hidden industry is treated as water or clear.
 - Vehicles: every vehicle is visited once. Effects and hidden or unclickable vehicles are skipped. Its tile position is remapped to flat coordinates, clipped to the window, and drawn as one or two pixels, coloured by vehicle type in the vehicles view and white otherwise.
 - After the terrain pass `DrawSmallMap` (1110-1125) also draws vehicles for the contour and vehicles views, the link-stat overlay, town names, industry names and map indicators (those helpers other than vehicles are not read). Output: pixels into the window buffer only. No state change.
 
@@ -15,7 +15,7 @@ Donor: /mnt/frankendom-donors/OpenTTD-OpenTTD/src/smallmap_gui.cpp | Licence: GP
 - `SmallMapWindow::DrawSmallMapColumn`, `/mnt/frankendom-donors/OpenTTD-OpenTTD/src/smallmap_gui.cpp`, lines 917-950. One column of tile colours into the buffer.
 - `SmallMapWindow::DrawVehicles`, same file, lines 957-989. Walks all vehicles, remaps, clips, and draws 1-2 pixels.
 - `SmallMapWindow::DrawSmallMap`, same file, lines 1066-1126. Fills the background, walks the diagonal columns from the top-left tile and calls the column draw; then vehicles (contour and vehicle views), link stats, towns, industry names, indicators.
-- `SmallMapWindow::RemapTile`, same file, lines 1134-1146, with `SmallmapRemapCoords` at lines 667-673. Tile to flat window coordinates: x is twice (y minus x), y is their sum; negative offsets round towards minus infinity when zoomed.
+- `SmallMapWindow::RemapTile`, same file, lines 1134-1146, with `SmallmapRemapCoords` at lines 667-673. Tile to flat window coordinates: x is twice (y minus x), y is their sum (line 671, too short to receipt); negative offsets round towards minus infinity when zoomed.
 - `SmallMapWindow::GetTileColours`, same file, lines 1330-1404. Picks the most important tile in a zoom block (importance table at 399-411) and returns its colour for the map type.
 
 ## 3. Numbers vs mechanism
@@ -29,10 +29,10 @@ Donor: /mnt/frankendom-donors/OpenTTD-OpenTTD/src/smallmap_gui.cpp | Licence: GP
 
 ## 4. TypeScript sketch
 
-simplified: `cellColour` returns the winning tile's own colour; the donor passes the winner and its type to a per-map-type colour function and special-cases industries; the tunnel/bridge remap, freeform-edge handling, the blitter and the scroll/clip offsets are omitted.
+simplified: `cellColour` returns the winning tile's own colour; the donor passes the winner and its type to a per-map-type colour function and special-cases industries; the tunnel/bridge remap, freeform-edge handling, the blitter and the diagonal column walk are omitted. `remap` takes scroll already converted to tiles (the donor divides pixel scroll by TILE_SIZE and divides after rounding). `dotFor` takes a position already remapped and omits the Effect/Hidden/Unclickable skips, the sub-scroll and clip-origin offsets, and the vehicle-type colour (white outside the vehicles view).
 
 ```ts
-// Licence: GPL-2.0 - clean-room sketch, no lines translated
+// Licence: GPL-2.0-only (donor) - clean-room sketch, no lines translated
 // Clean-room: a minimap cell coloured by its most important occupant, and a remap from world cell to flat screen point.
 // Kinds follow the donor's tile types. A tunnel or bridge is not its own kind: the caller counts it as rail,
 // road or water by its transport type before the pick (as the donor does in its colour pick).

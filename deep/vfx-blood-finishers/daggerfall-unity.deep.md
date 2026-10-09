@@ -1,6 +1,6 @@
 # daggerfall-unity (vfx-blood-finishers, cell 13)
 
-Donor: /mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/EnemyBlood.cs | Licence: MIT | C# | symbol EnemyBlood.ShowBloodSplash
+Donor: /mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/EnemyBlood.cs | Licence: MIT (per EnemyBlood.cs header and LICENSE) | C# | symbol EnemyBlood.ShowBloodSplash
 Symbol check: EnemyBlood.ShowBloodSplash (26-39) confirmed. The file is 56 lines and was read whole again. The class also has ShowMagicSparkles (41-54), which uses the same code shape.
 
 ## 1. Mechanism
@@ -60,6 +60,6 @@ function showBloodSplash(frame: number, hit: Vec3, facing: Vec3, gameReady: bool
 
 ## 6. Gaps and risks
 - Minimal: one billboard per hit. It does not handle wounds, decals, finishers or any state.
-- No server or sync concern: the splash is cosmetic and client-only, which fits one engine and server-verified kills as long as the hit is decided on the server and the splash is driven by the engine's hit event, not the other way round. With MAX_ATTACKERS = 3 splash count per frame is small. The offset uses the enemy's forward vector, so it would float off a wound on a hero turning mid-hit; Frankendom should use the hit point's own normal.
+- No server or sync concern: the splash is cosmetic and client-only, which fits one engine and server-verified kills as long as the hit is decided on the server and the splash is driven by the engine's hit event, not the other way round. With MAX_ATTACKERS = 3 splash count per frame is small. The donor offsets along `transform.forward` of the component's host object (its facing, not a surface normal; the attachment is not shown in this file), so the splash is not tied to the actual hit surface; Frankendom should use the hit point's own normal.
 - Uses Daggerfall's billboard component, so Frankendom must supply its own sprite-at-point primitive.
 - The lifetime of the one-shot billboard is handled by the Billboard component (OneShot flag); this file does not show the end condition.

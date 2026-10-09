@@ -1,6 +1,6 @@
 # Warzone2100-warzone2100 (rendering-performance, cell 17)
 
-Donor: /mnt/frankendom-donors/Warzone2100-warzone2100/lib/ivis_opengl/piedraw.cpp | Licence: GPL-2 | C++ | symbol InstancedMeshRenderer::initialize
+Donor: /mnt/frankendom-donors/Warzone2100-warzone2100/lib/ivis_opengl/piedraw.cpp | Licence: GPL-2.0-or-later per piedraw.cpp header | C++ | symbol InstancedMeshRenderer::initialize
 
 ## 1. Mechanism
 

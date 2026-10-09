@@ -24,7 +24,7 @@ Symbol check: the input pointed to `Monster::dropLoot` (src/monster.cpp line 196
 | Creature::onDeath | /mnt/frankendom-donors/otland-forgottenserver/src/creature.cpp | 448-521 | Credits kills, then calls dropCorpse |
 | Creature::dropCorpse | /mnt/frankendom-donors/otland-forgottenserver/src/creature.cpp | 523-582 | Makes the corpse, runs death events, calls dropLoot at 577 |
 | default onDropLoot (Lua) | /mnt/frankendom-donors/otland-forgottenserver/data/scripts/events/monster/default_onDropLoot.lua | 3-40 | Stamina gate, loop over loot entries, loot message |
-| Container.createLootItem (Lua) | /mnt/frankendom-donors/otland-forgottenserver/data/lib/core/container.lua | 5-55 | One roll per entry; count for stackables; child loot recursion |
+| Container.createLootItem (Lua) | /mnt/frankendom-donors/otland-forgottenserver/data/lib/core/container.lua | 5-69 | One roll per entry; count for stackables; child loot recursion |
 | getLootRandom (Lua) | /mnt/frankendom-donors/otland-forgottenserver/data/global.lua | 91-93 | Random 0..100000 divided by the loot rate |
 | Monster:onDropLoot (Lua) | /mnt/frankendom-donors/otland-forgottenserver/data/events/scripts/monster.lua | 1-9 | Runs the default event, then updates the kill tracker |
 

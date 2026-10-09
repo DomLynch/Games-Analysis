@@ -1,6 +1,6 @@
 # dhewm-dhewm3 (animation-rigs, cell 3)
 
-Donor: /mnt/frankendom-donors/dhewm-dhewm3/neo/d3xp/IK.cpp | Licence: GPL-3 | C++ | symbol idIK_Walk.Evaluate / idIK::SolveTwoBones
+Donor: /mnt/frankendom-donors/dhewm-dhewm3/neo/d3xp/IK.cpp | Licence: GPL-3.0-or-later (per IK.cpp header) | C++ | symbol idIK_Walk.Evaluate / idIK::SolveTwoBones
 
 ## 1. Mechanism
 - Donor: Doom 3 (dhewm3 port) procedural inverse kinematics on animated characters. idIK is the base; idIK_Walk drives legs and waist from floor traces; idIK_Reach drives an arm toward a target.
@@ -28,10 +28,10 @@ Donor: /mnt/frankendom-donors/dhewm-dhewm3/neo/d3xp/IK.cpp | Licence: GPL-3 | C+
 | Minimum waist distance above floor and ankles | minWaistFloorDist and minWaistAnkleDist, default 0 (theirs, Init 539-540) |
 
 ## 4. TypeScript sketch
-simplified: only the two-bone solve (SolveTwoBones 185-210) is sketched; the walk cycle (pivot, floor traces, smoothing, waist, GetBoneAxis) is omitted. Two deliberate differences from the donor: the sketch also fails on zero length, and clamps y to 0 before sqrt; the donor does neither.
+simplified: only the two-bone solve (SolveTwoBones 185-210) is sketched; the walk cycle (pivot, floor traces, smoothing, waist, GetBoneAxis) is omitted. Two deliberate differences from the donor: the sketch also fails on zero length, clamps y to 0 before sqrt, and falls back to a unit divisor when the pole is parallel to the bone; the donor does none of these.
 
 ```ts
-// Licence: GPL-3 | clean-room: written from the mechanism, no donor lines.
+// Licence: GPL-3.0-or-later | clean-room: written from the mechanism, no donor lines.
 // Two-bone IK. Given the hip and ankle positions and the two bone lengths, find the knee.
 // The knee sits on the circle of the thigh length around the hip, bent toward a pole direction.
 // Out of reach: the knee goes to the midpoint and the call reports failure.
@@ -71,4 +71,4 @@ function solveTwoBones(start: V3, end: V3, pole: V3, len0: number, len1: number)
 - The donor's walk cycle uses Doom 3's entity model and gravity axis. Frankendom's rig and its ground rule need to be stated before it is ported.
 - The donor's idIK_Reach (arm to target) is not covered here; only Evaluate, SolveTwoBones, GetBoneAxis, ClearJointMods and Init (440-559) were read. EnableAll/DisableAll (805-818) reset the smoothing state; the sketch has no state.
 - Symbol note (re-opened): idIK_Walk::Evaluate is at 566-775; idIK::SolveTwoBones is at 185-210.
-- GPL-3: mechanism only, no lines copied. The sketch uses only the two-bone solve, not the walk cycle.
+- GPL-3.0-or-later: mechanism only, no lines copied. The sketch uses only the two-bone solve, not the walk cycle.

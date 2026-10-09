@@ -1,6 +1,6 @@
 # LostCityRS-Engine-TS (server-tick-netcode, cell 5)
 
-Donor: `/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/World.ts` | Licence: MIT | TypeScript | symbol `World.cycle`
+Donor: `/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/World.ts` | Licence: MIT per repo LICENSE | TypeScript | symbol `World.cycle`
 
 Checked: At 340 (verified: `cycle()` opens at 340 and ends at 527; `TICKRATE` = 600 at line 120; the self-rescheduling `setTimeout` is at line 508). All of 293-336 and 340-527 read; the phase functions themselves (`processWorld` and so on, 529-) were not read.
 
@@ -10,7 +10,7 @@ Checked: At 340 (verified: `cycle()` opens at 340 and ends at 527; `TICKRATE` = 
 - Fixed phase order inside one cycle: world queue and NPC hunts (`processWorld`), client input (`processClientsIn`: AFK events, packets, pathfinding requests), spawn and despawn triggers (`processNpcEventQueue`), NPC processing, player processing (queues, timers, interactions, movement), logouts, logins, zones (active zone build, loc and obj respawn, shared buffer), info (movement and info masks), client output (flush), then cleanup of per-tick flags (345-415).
 - After the phases: shutdown check, periodic autosave (`PLAYER_SAVERATE` = 1500 ticks, comment says 15 minutes, 425-428), a server check-in session log every `PLAYER_COORDLOGRATE` = 50 ticks (430-434), session logs and wealth events posted to a logger thread (437-459), per-phase timing stats copied and pushed to Prometheus in production (461-493), then `currentTick++` and `nextTick += this.tickRate` (503-504). The per-instance `tickRate` starts at `TICKRATE` (163) and is set to 0 during shutdown (1235).
 - Scheduling: `setTimeout(cycle, max(0, tickRate - elapsed - drift))`, where drift = how late this cycle started against `nextTick`, computed at the start of the cycle (343, 508). The next tick is therefore kept on a fixed grid, not "600 ms after the last one".
-- Error path (509-526): an exception in a cycle logs the error, removes every player, and then calls `process.exit(1)`. The server does NOT carry on. (The earlier note said it did; that was wrong.)
+- Error path (509-526): an exception in a cycle logs the error, removes every player, and then calls `process.exit(1)`. The server does NOT carry on.
 
 ## 2. Key functions
 

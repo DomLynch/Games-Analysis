@@ -20,9 +20,9 @@ Symbol check: class Backpack (55), insertItem (65), deleteItem (73), consumeSoul
 ## 3. Numbers vs mechanism
 | Reusable algorithm | Game-specific constants |
 |---|---|
-| Stack decrement with remove-at-zero and a write per change | Soulshot cost: the equipped weapon's soulshot field, with a chance-based cheaper roll (miser) (theirs, Items/C4WeaponSA.js 48-52, soulshotCost) |
+| Stack decrement with remove-at-zero and a write per change | Soulshot cost: the equipped weapon's soulshot field, with a chance-based cheaper roll (miser) (theirs, Items/C4WeaponSA.js 48-51, soulshotCost) |
 | Guard on pet-locked stacks and dead actors | Shot kinds soulshot and spiritshot (theirs) |
-| Use request routed by item kind through catalogues | Fishing rod grade table, ids 6529 to 6534 and 7560 (theirs, Backpack.js 29-37) |
+| Use request routed by item kind through catalogues | Fishing rod grade table, ids 6529 to 6534 and 7560 (theirs, Backpack.js 30-38, FISHING_ROD_GRADES) |
 
 ## 4. TypeScript sketch
 simplified: the dead-actor early return, the client item-list push and the callback are omitted; persistence is reduced to a flag; a missing id returns null as the donor's fetchItem no-ops.

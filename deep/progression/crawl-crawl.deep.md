@@ -1,12 +1,12 @@
 # crawl-crawl (progression, cell 10)
 
-Donor: /mnt/frankendom-donors/crawl-crawl/crawl-ref/source/skills.cc | Licence: GPL-2 | C++ | symbol calc_skill_level_change / skill_exp_needed
+Donor: /mnt/frankendom-donors/crawl-crawl/crawl-ref/source/skills.cc | Licence: GPL-2.0-or-later per LICENSE (GPL v2 or any later version) | C++ | symbol calc_skill_level_change / skill_exp_needed
 Symbol check: calc_skill_level_change opens at 430 and closes at 449; calc_skill_cost 169-181; scaled_skill_cost 215-225 (a UI cost display, not used in the mechanism); exercise 860-880; _level_up_check 884-899; _train 1618-1695; train_skills 1049-1097; _get_skill_cost_for 2631-2651; skill_exp_needed 2653-2657 (all opened this pass). Caller opened: /mnt/frankendom-donors/crawl-crawl/crawl-ref/source/player.cc lines 2955-2978.
 
 ## 1. Mechanism
 - Turn-based roguelike skills. Practice is recorded, then earned XP is spent in a training pass, then skill points convert to levels.
 - Practice: exercise(skill, degree) (860-880) returns if the skill is already at MAX_SKILL_LEVEL (27, defines.h 143). Otherwise, per degree it always pushes the skill into the exercises_all queue and, only when the skill is currently trained, also into the exercises queue (each queue is fixed length: push back, pop front). It then calls reset_training.
-- Driver (not previously listed): gain_exp in player.cc (2955-2978) adds the experience, adds 10 x skill_xp to exp_available, calls train_skills (and loops while a selected skill can still be afforded), then level_change. So the training pass runs when XP is gained, not on every turn. train_skills (1049-1097) picks a path (distributed-training mutation, innate-caster mutation, or the normal loop), spends via _train_skills, calls check_skill_level_change for every skill, then resets training. The normal loop caps each batch at the XP that reaches the next skill cost level (1079-1083).
+- Driver (not previously listed): gain_exp in player.cc (function opens at 2905; only 2955-2978 read) adds the experience, adds 10 x skill_xp to exp_available, calls train_skills (and loops while a selected skill can still be afforded), then level_change. So the training pass runs when XP is gained, not on every turn. train_skills (1049-1097) picks a path (distributed-training mutation, innate-caster mutation, or the normal loop), spends via _train_skills, calls check_skill_level_change for every skill, then resets training. The normal loop caps each batch at the XP that reaches the next skill cost level (1079-1083).
 - Cost per point: calc_skill_cost(you.skill_cost_level) (169-181) is a fixed 27-entry table (1 up to 265); the cost level comes from the character's total experience (comment 154-158), not from the skill.
 - Threshold: skill_exp_needed(level, skill, species) (2653-2657) = _get_skill_cost_for(level) (2631-2651) times species_apt_factor(skill, species) (declared skills.h 122, body not read), converted to unsigned int. The table for levels 0 to 27 is 25 x L x (L + 1); for each breakpoint 9, 18 and 26 that the level is above, it adds half of 25 x (L - breakpoint) x (L - breakpoint + 1), integer division (2625-2647).
 - Spend: _train (1618-1695) takes cost = the per-point cost. In the normal path it sets a spending limit of min(10 x 265, available XP), points = limit / cost, capped by the points left to the player's training target (1602-1616 helper opened), and cost becomes points x cost. In the distributed-training path (a mutation) it scales the per-point cost with random rounding and adds a single point. It returns 0 if points are 0 or the cost exceeds the XP. Remaining skill manual points add bonus points (up to the points bought) (1648-1661). Then it adds to the skill's points, deducts cost from exp_available, adds it to total_experience and the wind category weights. _level_up_check (884-899) is called after training elsewhere (1026, 1161, 1199): when the skill's points reach the level 27 threshold it zeroes the training weight and, outside a simulation, sets both train modes to disabled.
@@ -33,7 +33,7 @@ Symbol check: calc_skill_level_change opens at 430 and closes at 449; calc_skill
 ## 4. TypeScript sketch
 simplified: only the threshold curve and the level walk are sketched. Omitted: the species aptitude factor (passed in as a plain multiplier, with truncation to an integer as the donor's unsigned conversion does), the cost-per-point table, _train and its spending limit and target cap, the practice queues, the skill-manual bonus, the mutation paths and the training disable at the cap. The walk has no lower bound assertion.
 ```ts
-// Licence: GPL-2 (crawl-crawl) | clean-room: written from the mechanism, no donor lines.
+// Licence: GPL-2.0-or-later (crawl-crawl) | clean-room: written from the mechanism, no donor lines.
 const MAX_LEVEL = 27;            // theirs
 const BREAKPOINTS = [9, 18, 26]; // theirs
 
@@ -77,7 +77,7 @@ function levelFor(start: number, points: number, aptitude: number): number {
 
 ## 6. Gaps and risks
 - Frankendom ruling "one ledger": the donor spends a pool of XP across several skills and mutates points, queues, total_experience and wind weights in one call chain. Frankendom has one career credit, written in one transaction (origins/server/mob-rewards.ts), with no spendable pool.
-- Frankendom ruling "server-verified kills": gain_exp (player.cc 2955-2978) trusts the caller's XP. Frankendom computes CP only from a server-replayed kill.
+- Frankendom ruling "server-verified kills": gain_exp (player.cc, tail 2955-2978 read) trusts the caller's XP. Frankendom computes CP only from a server-replayed kill.
 - Turn-based pass triggered per XP gain; Frankendom's real-time fight needs the award attached to the verified kill, not to a tick.
 - RNG: the distributed-training path uses random rounding (_train 1633) and the manual bonus is state-dependent. Frankendom awards are integer and seeded (model.ts); any ported rounding must use the seeded stream.
 - Species aptitude body (species_apt_factor, skills.cc 2620-2623 apt_to_factor is the exponential 1/2^(apt/4); the per-species table was not read) would be catalogue fields in Frankendom ("no hidden numbers").

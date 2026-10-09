@@ -1,6 +1,6 @@
 # DCurrent-openbor (sound-music, cell 15)
 
-Donor: /mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/soundmix.c | Licence: UNCLEAR (clean-room only) | C | symbol mixaudio / sound_play_sample_with_options / sound_find_lowest_priority_channel
+Donor: /mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/soundmix.c | Licence: BSD-3-Clause-style per root LICENSE (OpenBOR Team / Senile Team; soundmix.c header points to it); clean-room only | C | symbol mixaudio / sound_play_sample_with_options / sound_find_lowest_priority_channel
 
 ## 1. Mechanism
 - A software sound mixer. A fixed pool of playback channels (grouped in banks, tracked by bit masks) holds the active sounds. The mixer fills an output buffer of a given length (todo): `update_sample` (1760-) clears the mix buffer and calls `mixaudio(todo)` at line 1800; that this runs on the audio thread was inferred from the "Soundblaster ISR" comment (1757-1758) and the `SB_lock_audio` calls, and the platform callback that invokes it was not read.
@@ -23,14 +23,14 @@ Donor: /mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/soundmix.c 
 | Fixed channel pool with a priority allocator: free first, else steal the lowest priority not above the new one | Bank size 64 (`sound_channel.h` 28) and pool size `SOUND_CHANNEL_COUNT_MAX` (line 29, banks times 64) (theirs) |
 | Mix only active channels, skip paused ones | Bank mask layout (theirs, 64-bit masks) |
 | Fixed-point playback position with a period per frame, loop wrap | Fixed-point format (theirs) |
-| Left and right channel volumes with a clamp to max | `MAX_SAMPLE_VOLUME` (value not read) (theirs) |
+| Left and right channel volumes with a clamp to max | `MAX_SAMPLE_VOLUME` = 100 (theirs, soundmix.c 78) |
 | Sample conversion from 8, 16 or 24 bit, mono or stereo | Supported bit depths and channel layouts (theirs) |
 
 ## 4. TypeScript sketch
 simplified: no volume clamp, sample validation, start-phase stagger, delay or chance fields, streaming path, interpolation, looping or fixed-point position; `mixBuffer` delegates sample reading to a callback; the stolen channel's stream is closed and its record cleared in the donor (2481-2484).
 
 ```ts
-// Licence: UNCLEAR (DCurrent-openbor). CLEAN-ROOM: from the mechanism description; no donor lines.
+// Licence: BSD-style 3-clause (DCurrent-openbor). CLEAN-ROOM: from the mechanism description; no donor lines.
 interface Channel { id: number; priority: number; reserved: boolean; active: boolean; paused: boolean; }
 interface Pool { channels: Channel[]; }
 
@@ -75,11 +75,11 @@ function mixBuffer(pool: Pool, frames: number, sampleAt: (ch: Channel, f: number
 ## 5. Lands in
 - Frankendom file(s): TARGET `src/fight/sound.ts` (channel priority and stealing for combat cues). Most of the mixer engine is more than Frankendom needs.
 - Parity-checklist row: 12 (combat sound cues).
-- Reuse tag: rewrite-from-idea (licence UNCLEAR, so the mechanism only). Frankendom likely uses the browser's audio graph rather than a software mixer.
+- Reuse tag: rewrite-from-idea (BSD-style licence; mechanism only by project convention). Frankendom likely uses the browser's audio graph rather than a software mixer.
 - Brief rule served: (category default, not per-cell) zone-schema rule; rules 7-9 n/a
 
 ## 6. Gaps and risks
 - A software mixer in C. Frankendom runs in the browser, so the audio graph is the platform's; this file is only a reference for priority and channel stealing.
 - Priority rule as read: higher value wins, a steal needs the victim's value at most the new one's (line 2443), and ties go to the first channel scanned. Frankendom's cue priorities would be data (zones as data) with a default.
-- Licence UNCLEAR: the sketch is clean-room only and no code may be copied.
+- Licence is BSD-style (3-clause, attribution kept): the sketch is clean-room only by project convention and no code is copied.
 - The record holds a random play-chance roll (`rand32`, line 2510). Under the one-engine and server-verified rulings, cue randomness must not share the fight RNG, and audio timing must not affect fight state or the fight record (row 19).

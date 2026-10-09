@@ -1,0 +1,21 @@
+file	verdict	issues
+ai-aggro/OpenXcom-OpenXcom.deep.md	CLEAN	none. Note: AIModule.cpp header is GPL v3 or later, label says GPL-3 (not counted).
+ai-aggro/otland-forgottenserver.deep.md	CLEAN	none
+animation-rigs/openmw.deep.md	WRONG	Sec 1 refreshHitRecoilAnims: 'For the player, a held block state clears when block is no longer asserted (396-400)'. Donor 396: if (mPtr == getPlayer() && mHitState == CharState_Block && block) clears mHitState; block is the local bool = stats.getBlock() && !knockout && !recovery && !knockdown, so it clears when block IS asserted (true), not when it stops. Also Sec 1 refreshMovementAnims order: note says drops swim, swaps run->walk if still missing, adds weapon suffix. Donor order: swim erase (653-660), weapon suffix (670-689), then run->walk replace (691-695) and reset/return if still missing (697-703).
+anticheat-validation/OpenDAoC-OpenDAoC-Core.deep.md	CLEAN	none
+camera/id-Software-Quake.deep.md	CLEAN	none
+combat-sim/OpenDAoC-OpenDAoC-Core.deep.md	MINOR	Sec 1 FinalizeAttack: 'A Blocked result calls OnArmorHit with the target's active left weapon (525-526 branch, line 523)'. The Blocked branch is WeaponAction.cs 522-523 (else if Blocked ... OnArmorHit(attackData, target.ActiveLeftWeapon)); line 525 is HandleReflexAttack, 526 is the closing brace.
+combat-sim/OpenEnroth-OpenEnroth.deep.md	CLEAN	none
+combat-sim/rathena-rathena.deep.md	CLEAN	none
+economy-trade/crawl-crawl.deep.md	CLEAN	none. Note: crawl-ref LICENSE says GPL v2 or later, label says GPL-2 (not counted).
+economy-trade/opentibiabr-otclient.deep.md	CLEAN	none
+hud-ui/ValveSoftware-halflife.deep.md	CLEAN	none
+hud-ui/levy-street-world-of-claudecraft.deep.md	CLEAN	none
+inventory-bank-equipment/00-Evan-shattered-pixel-dungeon.deep.md	CLEAN	none
+inventory-bank-equipment/angband-angband.deep.md	CLEAN	none
+progression/NodeL2-NodeL2.deep.md	CLEAN	none
+rendering-performance/endless-sky-endless-sky.deep.md	CLEAN	none
+sound-music/id-Software-DOOM.deep.md	CLEAN	none. Note: soundsrv.c header cites the DOOM Source Code License; repo LICENSE.TXT is GPL v2, label matches the file.
+sound-music/lichess-org-mobile.deep.md	CLEAN	none
+sound-music/open-duelyst-duelyst.deep.md	CLEAN	none
+zones-world/OpenDAoC-OpenDAoC-Core.deep.md	CLEAN	none

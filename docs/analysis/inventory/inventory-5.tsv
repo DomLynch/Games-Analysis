@@ -1,0 +1,275 @@
+game	system	level	evidence	note
+NodeL2-NodeL2	character-creation	FULL	src/GameServer/Network/Request/CreateNewChar.js	Create and delete characters across five races
+NodeL2-NodeL2	classes-levels	PARTIAL	src/GameServer/Actor/Generics/ExperienceReward.js	XP gain and level-up from mob kills
+NodeL2-NodeL2	chat	PARTIAL	src/GameServer/Network/Request/Speak.js	Basic speak packet, no broadcast to others
+NodeL2-NodeL2	parties-groups	PARTIAL	src/GameServer/Network/Request/AskForTeamUp.js	Party invite request and answer packets
+NodeL2-NodeL2	skills-professions	PARTIAL	data/Skills/Tree/tree.json	Skill tree data, skill use handler, mechanics unfinished
+NodeL2-NodeL2	multiplayer-netcode	PARTIAL	src/GameServer/Network/Opcodes.js	Lineage II client protocol server, no broadcast yet
+NodeL2-NodeL2	dialogue-trees	PARTIAL	src/GameServer/World/Generics/NpcTalk.js	NPC HTML dialog pages with link clicks
+NodeL2-NodeL2	save-load	PARTIAL	src/Database.js	MariaDB persistence of characters
+NodeL2-NodeL2	npc-shop	PARTIAL	src/GameServer/World/Generics/PurchaseItems.js	Buy items from NPC shop
+NodeL2-NodeL2	teleport	PARTIAL	data/Teleports/teleports.json	Gatekeeper teleport destinations
+official-stockfish-Stockfish	NONE	NONE	.	Chess engine with no game systems
+OpenBW-openbw	replay-spectate	FULL	replay.h	Replays StarCraft Brood War replay files
+OpenBW-openbw	fog-of-war	FULL	bwgame.h	Per-player visibility and fog simulation
+OpenBW-openbw	minimap-maps	PARTIAL	ui/ui.h	Minimap rendering and unit visibility on it
+OpenBW-openbw	save-load	PARTIAL	replay_saver.h	Saves replays, no full savegame
+OpenBW-openbw	multiplayer-netcode	PARTIAL	sync_server_asio_tcp.h	Lockstep sync servers over tcp and sockets
+OpenBW-openbw	status-effects	FULL	bwgame.h	Lockdown, stasis, maelstrom timers on units
+OpenBW-openbw	magic-spells	PARTIAL	bwgame.h	Tech and upgrade research, caster abilities
+OpenBW-openbw	stealth	PARTIAL	bwgame.h	Cloaked units list and detection
+OpenBW-openbw	rts-simulation	FULL	bwgame.h	Deterministic Brood War unit, order and combat simulation
+OpenDAoC-OpenDAoC-Core	crafting	FULL	GameServer/craft/CraftingMgr.cs	Many tradeskills: armor, weapon, alchemy, tailoring
+OpenDAoC-OpenDAoC-Core	housing-building	FULL	GameServer/housing/HouseMgr.cs	Player houses with indoor and outdoor items
+OpenDAoC-OpenDAoC-Core	guilds-clans	FULL	GameServer/gameutils/Guild.cs	Guild ranks, events, banners
+OpenDAoC-OpenDAoC-Core	parties-groups	FULL	GameServer/gameutils/Group.cs	Groups, battlegroups and alliances
+OpenDAoC-OpenDAoC-Core	chat	PARTIAL	GameServer/gameutils/ChatGroup.cs	Chat groups and chat utilities
+OpenDAoC-OpenDAoC-Core	trading-player	FULL	GameServer/gameutils/PlayerTradeWindow.cs	Player to player trade window
+OpenDAoC-OpenDAoC-Core	auction-market	FULL	GameServer/gameutils/MarketSearch.cs	Consignment merchants and market search
+OpenDAoC-OpenDAoC-Core	banking-storage	FULL	GameServer/gameobjects/GameVault.cs	Personal, guild and house vaults
+OpenDAoC-OpenDAoC-Core	quests	FULL	GameServer/quests	Quests, tasks and missions per realm
+OpenDAoC-OpenDAoC-Core	skills-professions	FULL	GameServer/skillhandler	Specializations, abilities and skill handlers
+OpenDAoC-OpenDAoC-Core	mounts-vehicles	PARTIAL	GameServer/gameobjects/GameTaxi.cs	Taxi and boat transport NPCs
+OpenDAoC-OpenDAoC-Core	pets-companions	FULL	GameServer/gameobjects/GameSummonedPet.cs	Summoned and class pets
+OpenDAoC-OpenDAoC-Core	pvp-duels-arena	FULL	GameServer/gameutils/GameDuel.cs	Duels plus PvP server rules
+OpenDAoC-OpenDAoC-Core	siege-war	FULL	GameServer/keeps/KeepManager.cs	Keeps, towers, siege weapons, relics
+OpenDAoC-OpenDAoC-Core	dungeons-instances	FULL	GameServer/world/Instance/RegionInstance.cs	Instanced regions and adventure wings
+OpenDAoC-OpenDAoC-Core	bosses-raids	PARTIAL	GameServer/gameobjects/GameEpicBoss.cs	Epic boss and epic dungeon NPC classes
+OpenDAoC-OpenDAoC-Core	loot-rarity-affixes	PARTIAL	GameServer/gameutils/LootMgr.cs	Loot generators including unique item drops
+OpenDAoC-OpenDAoC-Core	modding-scripting	FULL	GameServer/gameutils/ScriptMgr.cs	Runtime compilation of C# server scripts
+OpenDAoC-OpenDAoC-Core	save-load	PARTIAL	GameServer/database	Character and world persistence in database
+OpenDAoC-OpenDAoC-Core	multiplayer-netcode	FULL	GameServer/packets	Client and server packet handlers
+OpenDAoC-OpenDAoC-Core	factions-reputation	PARTIAL	GameServer/gameutils/FactionMgr.cs	Mob factions and friend or foe standings
+OpenDAoC-OpenDAoC-Core	stealth	FULL	GameServer/ECS-Effects/StealthECSEffect.cs	Stealth effect and stealther abilities
+OpenDAoC-OpenDAoC-Core	magic-spells	FULL	GameServer/spells	Large spell handler library per class
+OpenDAoC-OpenDAoC-Core	status-effects	FULL	GameServer/ECS-Effects	Buffs, debuffs, crowd control effects
+OpenDAoC-OpenDAoC-Core	character-creation	PARTIAL	GameServer/gameobjects/PlayerRace.cs	Races and starting stats
+OpenDAoC-OpenDAoC-Core	classes-levels	FULL	GameServer/playerclasses	Class definitions across three realms
+OpenDAoC-OpenDAoC-Core	day-night	PARTIAL	GameServer/world/DayNightCycleTimer.cs	Day and night cycle timer
+OpenDAoC-OpenDAoC-Core	tutorial	PARTIAL	GameServer/scripts/gameevents/TutorialJumpPointHandler.cs	Tutorial zone jump point
+OpenDAoC-OpenDAoC-Core	localisation	FULL	GameServer/language	Multi-language text files and manager
+OpenDAoC-OpenDAoC-Core	realm-abilities	FULL	GameServer/realmabilities	Realm rank special abilities
+OpenDAoC-OpenDAoC-Core	relics	FULL	GameServer/relics	Capturable realm relics with pads and gates
+OpenDAoC-OpenDAoC-Core	mail	FULL	GameServer/gameutils/MailMgr.cs	Player mail manager
+OpenDAoC-OpenDAoC-Core	player-titles	FULL	GameServer/playertitles	Unlockable player titles
+OpenDAoC-OpenDAoC-Core	combat-styles	FULL	GameServer/styles	Melee combat styles
+OpenDiablo2-OpenDiablo2	character-creation	FULL	d2game/d2gamescreen/select_hero_class.go	Hero class selection and character select
+OpenDiablo2-OpenDiablo2	classes-levels	PARTIAL	d2core/d2hero/hero_state.go	Hero stats and level state
+OpenDiablo2-OpenDiablo2	skills-professions	PARTIAL	d2game/d2player/skilltree.go	Skill tree and skill select panels
+OpenDiablo2-OpenDiablo2	loot-rarity-affixes	PARTIAL	d2core/d2item/diablo2item/item_factory.go	Item generation with properties and affixes
+OpenDiablo2-OpenDiablo2	quests	PARTIAL	d2game/d2player/quest_log.go	Quest log panel UI
+OpenDiablo2-OpenDiablo2	parties-groups	PARTIAL	d2game/d2player/party_panel.go	Party panel UI
+OpenDiablo2-OpenDiablo2	multiplayer-netcode	PARTIAL	d2networking	TCP and UDP client server packets
+OpenDiablo2-OpenDiablo2	procedural-generation	PARTIAL	d2core/d2map/d2mapgen/act1_overworld.go	Act 1 wilderness map generation
+OpenDiablo2-OpenDiablo2	save-load	PARTIAL	d2core/d2hero/hero_state_factory.go	Hero state save and load
+OpenDiablo2-OpenDiablo2	modding-scripting	PARTIAL	d2script/engine.go	Embedded script engine
+OpenDiablo2-OpenDiablo2	banking-storage	PARTIAL	d2game/d2player/inventory_grid.go	Inventory grid and gold panel
+open-duelyst-duelyst	achievements	FULL	app/sdk/achievements	Many achievement categories with factory
+open-duelyst-duelyst	quests	FULL	app/sdk/quests	Daily and generated quests
+open-duelyst-duelyst	tutorial	FULL	app/sdk/challenges/tutorial	Tutorial and per-faction challenges
+open-duelyst-duelyst	crafting	FULL	server/lib/data_access/inventory.coffee	Craft and disenchant cards with spirit
+open-duelyst-duelyst	pvp-duels-arena	FULL	app/sdk/gameType.coffee	Ranked, casual, gauntlet and friendly duels
+open-duelyst-duelyst	multiplayer-netcode	FULL	server/game.coffee	Game server with network manager
+open-duelyst-duelyst	replay-spectate	FULL	app/replay/replayEngine.coffee	Replay engine and watch views
+open-duelyst-duelyst	leaderboards	PARTIAL	app/sdk/rank	Rank divisions and ladder
+open-duelyst-duelyst	localisation	FULL	app/localization/locales	English, German and Chinese locales
+open-duelyst-duelyst	magic-spells	FULL	app/sdk/spells	Card spells with many effects
+open-duelyst-duelyst	status-effects	FULL	app/sdk/modifiers	Modifier system for unit effects
+open-duelyst-duelyst	bosses-raids	PARTIAL	app/original_resources/boss_battles	Boss battle assets and cards
+open-duelyst-duelyst	economy-sinks	PARTIAL	app/data/shop.json	Shop, premium shop and gold spending
+open-duelyst-duelyst	loot-rarity-affixes	PARTIAL	app/sdk/giftCrates	Booster packs, loot crates and rarity cards
+open-duelyst-duelyst	classes-levels	PARTIAL	app/sdk/progression	Faction progression and levels
+open-duelyst-duelyst	ai-opponent	FULL	server/ai	Starter and phase two AI opponents
+OpenDUNE-OpenDUNE	save-load	FULL	src/saveload	Savegame saving and loading of game state
+OpenDUNE-OpenDUNE	fog-of-war	FULL	src/map.c	Tile unveiling and fog removal
+OpenDUNE-OpenDUNE	minimap-maps	PARTIAL	src/map.c	Minimap dirty tiles and display
+OpenDUNE-OpenDUNE	modding-scripting	PARTIAL	src/script	Original EMC script interpreter for units
+OpenDUNE-OpenDUNE	localisation	PARTIAL	src/string.c	Language suffix file loading for five languages
+OpenDUNE-OpenDUNE	rts-simulation	FULL	src/unit.c	Units, structures, houses, teams and AI
+OpenDUNE-OpenDUNE	economy	PARTIAL	src/house.c	Spice credits and house resources
+OpenEnroth-OpenEnroth	quests	FULL	src/Engine/Tables/QuestTable.cpp	Quest data and quest events
+OpenEnroth-OpenEnroth	dialogue-trees	FULL	src/GUI/UI/UIDialogue.cpp	NPC dialogue with topics
+OpenEnroth-OpenEnroth	skills-professions	FULL	src/Engine/Objects/CombinedSkillValue.cpp	Character skills with mastery levels
+OpenEnroth-OpenEnroth	classes-levels	FULL	src/Engine/Objects/Character.cpp	Classes, stats, experience and levelling
+OpenEnroth-OpenEnroth	character-creation	FULL	src/GUI/UI/UIPartyCreation.cpp	Party creation screen
+OpenEnroth-OpenEnroth	magic-spells	FULL	src/Engine/Spells/Spells.cpp	Spell casting, spellbook and spell effects
+OpenEnroth-OpenEnroth	status-effects	FULL	src/Engine/Conditions.cpp	Character conditions and spell buffs
+OpenEnroth-OpenEnroth	loot-rarity-affixes	FULL	src/Engine/Objects/ItemEnchantment.h	Standard and special item enchantments
+OpenEnroth-OpenEnroth	banking-storage	PARTIAL	src/Engine/Objects/Chest.cpp	Chests and containers
+OpenEnroth-OpenEnroth	weather	PARTIAL	src/Engine/Graphics/Weather.cpp	Rain and snow weather rendering
+OpenEnroth-OpenEnroth	save-load	FULL	src/Engine/SaveLoad.cpp	Savegame snapshots and loading
+OpenEnroth-OpenEnroth	modding-scripting	FULL	src/Scripting	Lua scripting bindings
+OpenEnroth-OpenEnroth	replay-spectate	PARTIAL	src/Engine/Components/Trace	Trace recording and playback for tests
+OpenEnroth-OpenEnroth	localisation	FULL	src/Engine/Localization.cpp	Localised game text tables
+OpenEnroth-OpenEnroth	achievements	PARTIAL	src/Engine/Tables/AwardTable.cpp	Character awards table
+OpenEnroth-OpenEnroth	factions-reputation	PARTIAL	src/Engine/Tables/HostilityTable.cpp	Monster and NPC hostility groups
+OpenEnroth-OpenEnroth	pets-companions	PARTIAL	src/Engine/Objects/NPC.cpp	Hireable NPC followers
+OpenEnroth-OpenEnroth	turn-based-combat	FULL	src/Engine/TurnEngine	Turn based combat mode
+OpenEnroth-OpenEnroth	card-minigame	FULL	src/Arcomage	Arcomage card minigame
+OpenEnroth-OpenEnroth	merchant-shops	FULL	src/Engine/Tables/MerchantTable.cpp	Merchant shops and house buildings
+OpenGothic	quests	FULL	common/game/questlog.cpp	Quest log with topics and entries
+OpenGothic	dialogue-trees	FULL	common/ui/dialogmenu.cpp	Dialogue choice menu driven by scripts
+OpenGothic	save-load	FULL	common/game/serialize.cpp	Savegame serialization and header
+OpenGothic	modding-scripting	FULL	common/game/gamescript.cpp	Runs original Daedalus game scripts
+OpenGothic	magic-spells	FULL	common/game/definitions/spelldefinitions.cpp	Spell definitions and visual effects
+OpenGothic	stealth	PARTIAL	common/game/playercontrol.cpp	Sneak mode toggle
+OpenGothic	day-night	PARTIAL	common/game/gametime.h	In-game day and hour clock
+OpenGothic	factions-reputation	PARTIAL	common/game/gamescript.h	Guild and person attitude between NPCs
+OpenGothic	inventory-trade	FULL	common/game/inventory.cpp	Inventory and NPC trading
+OpenGothic	combat-ai	FULL	common/game/fightalgo.cpp	NPC fight AI and damage calculation
+OpenGothic	npc-routines	FULL	common/game/aistate.cpp	NPC AI states, perception and routines
+openmw	crafting	FULL	apps/openmw/mwmechanics/alchemy.cpp	Alchemy, enchanting, repair, recharge
+openmw	skills-professions	FULL	apps/openmw/mwmechanics/npcstats.cpp	Skills, attributes and skill use progression
+openmw	classes-levels	FULL	apps/openmw/mwgui/levelupdialog.cpp	Class, birthsign and level up
+openmw	character-creation	FULL	apps/openmw/mwgui/charactercreation.cpp	Race, class, birth sign creation
+openmw	quests	FULL	apps/openmw/mwdialogue/quest.cpp	Journal and quest state
+openmw	dialogue-trees	FULL	apps/openmw/mwdialogue/dialoguemanagerimp.cpp	Topic dialogue with filters and keywords
+openmw	banking-storage	PARTIAL	apps/openmw/mwclass/container.cpp	World containers and item stores
+openmw	factions-reputation	FULL	apps/openmw/mwlua/factionbindings.cpp	Faction membership, ranks and reputation
+openmw	guilds-clans	PARTIAL	apps/openmw/mwmechanics/npcstats.cpp	Faction membership and ranks
+openmw	weather	FULL	apps/openmw/mwworld/weather.cpp	Weather types and transitions per region
+openmw	day-night	FULL	apps/openmw/mwrender/sky.cpp	Sky, sun, moons and time of day
+openmw	minimap-maps	FULL	apps/openmw/mwgui/mapwindow.cpp	Local and global map windows
+openmw	fog-of-war	PARTIAL	apps/openmw/mwrender/localmap.cpp	Explored area reveal on local map
+openmw	magic-spells	FULL	apps/openmw/mwmechanics/spellcasting.cpp	Spell casting, effects and resistances
+openmw	status-effects	FULL	apps/openmw/mwmechanics/activespells.cpp	Active spells and magic effects
+openmw	stealth	FULL	apps/openmw/mwmechanics/pickpocket.cpp	Sneaking, pickpocket, detection of actors
+openmw	save-load	FULL	apps/openmw/mwstate/statemanagerimp.cpp	Quick save, save and load
+openmw	modding-scripting	FULL	apps/openmw/mwscript	Morrowind script interpreter plus Lua API
+openmw	pets-companions	PARTIAL	apps/openmw/mwgui/companionwindow.cpp	Companion NPC window and follow AI
+openmw	loot-rarity-affixes	PARTIAL	apps/openmw/mwmechanics/levelledlist.cpp	Levelled lists for items and creatures
+openmw	localisation	FULL	components/l10n	Localisation message bundles
+openmw	economy-sinks	PARTIAL	apps/openmw/mwgui/trainingwindow.cpp	Paid training, travel and repair
+openmw	crime-bounty	FULL	apps/openmw/mwmechanics/mechanicsmanagerimp.cpp	Crime, bounty and jail
+openmw	lockpicking-security	FULL	apps/openmw/mwmechanics/security.cpp	Lockpick and probe tools
+openmw	merchant-trade	FULL	apps/openmw/mwgui/tradewindow.cpp	Barter with merchants
+openmw	navmesh-pathfinding	FULL	components/detournavigator	Navmesh generation and AI pathing
+pshenok-server-survival	achievements	FULL	src/achievements/achievements.js	Achievement definitions and UI
+pshenok-server-survival	tutorial	FULL	src/tutorial.js	Guided tutorial and hints
+pshenok-server-survival	localisation	FULL	src/i18n.js	Eleven languages in locales folder
+pshenok-server-survival	save-load	FULL	src/persistence/save-load.js	Saves and loads game state
+pshenok-server-survival	economy-sinks	FULL	src/core/economy.js	Budget, service costs and income
+pshenok-server-survival	quests	PARTIAL	src/campaign/objectives.js	Campaign level objectives
+pshenok-server-survival	random-events	FULL	src/core/events.js	DDoS spikes and random events
+pshenok-server-survival	campaign-levels	FULL	src/campaign/levels.js	25 hand-crafted levels in five chapters
+rathena-rathena	crafting	FULL	db/re/produce_db.txt	Production recipes plus skill-based crafting
+rathena-rathena	guilds-clans	FULL	src/map/guild.cpp	Guilds, clans and guild skills
+rathena-rathena	parties-groups	FULL	src/map/party.cpp	Party system with shared exp
+rathena-rathena	chat	FULL	src/map/chat.cpp	Chat rooms and channels
+rathena-rathena	trading-player	FULL	src/map/trade.cpp	Player trade windows
+rathena-rathena	auction-market	FULL	src/char/int_auction.cpp	Auction house, vending and buying stores
+rathena-rathena	banking-storage	FULL	src/map/storage.cpp	Personal, guild and cart storage
+rathena-rathena	quests	FULL	src/map/quest.cpp	Quest log with db-defined quests
+rathena-rathena	dialogue-trees	FULL	src/map/script.cpp	NPC scripted dialogue with menus
+rathena-rathena	skills-professions	FULL	src/map/skill.cpp	Job skills and skill trees
+rathena-rathena	cooking	PARTIAL	npc/quests/cooking_quest.txt	Cooking quest NPC script
+rathena-rathena	weather	PARTIAL	doc/mapflags.txt	Map flags for snow, fog, clouds
+rathena-rathena	day-night	PARTIAL	npc/mapflag/night.txt	Night mapflag and date handling
+rathena-rathena	mounts-vehicles	PARTIAL	src/map/pc.cpp	Riding states for peco, dragon, mado
+rathena-rathena	pets-companions	FULL	src/map/pet.cpp	Pets, homunculus, mercenaries, elementals
+rathena-rathena	pvp-duels-arena	FULL	src/map/duel.cpp	Duels, PvP maps, battlegrounds
+rathena-rathena	siege-war	FULL	db/castle_db.yml	War of Emperium castles and guild siege
+rathena-rathena	dungeons-instances	FULL	src/map/instance.cpp	Instanced dungeons from instance db
+rathena-rathena	bosses-raids	PARTIAL	src/map/mob.cpp	MVP boss monsters and rewards
+rathena-rathena	achievements	FULL	src/map/achievement.cpp	Achievement db and levels
+rathena-rathena	leaderboards	PARTIAL	src/char/char.cpp	Ranking lists for classes
+rathena-rathena	modding-scripting	FULL	src/map/script.cpp	NPC scripting language interpreter
+rathena-rathena	save-load	FULL	src/char/char.cpp	Character server persistence to SQL
+rathena-rathena	multiplayer-netcode	FULL	src/map/clif.cpp	Client packet layer for MMO
+rathena-rathena	factions-reputation	FULL	db/reputation.yml	Reputation groups and levels
+rathena-rathena	status-effects	FULL	src/map/status.cpp	Status changes and buffs
+rathena-rathena	magic-spells	FULL	src/map/skill.cpp	Spells and skill db
+rathena-rathena	character-creation	FULL	src/char/char.cpp	Character creation and deletion
+rathena-rathena	classes-levels	FULL	db/job_stats.yml	Jobs, base and job levels
+rathena-rathena	loot-rarity-affixes	FULL	db/item_randomopt_db.yml	Random item options and item groups
+rathena-rathena	localisation	FULL	conf/msg_conf	Message conf per language
+rathena-rathena	mail	FULL	src/map/mail.cpp	Player mail with items
+rathena-rathena	refining	FULL	db/refine.yml	Equipment refining and enchanting
+rathena-rathena	cash-shop	FULL	src/map/cashshop.cpp	Cash shop
+Return-To-The-Roots-s25client	crafting	FULL	libs/s25main/buildings/nobUsual.cpp	Production buildings turning goods into goods
+Return-To-The-Roots-s25client	housing-building	FULL	libs/s25main/buildings/noBuildingSite.cpp	Construction sites and building placement
+Return-To-The-Roots-s25client	chat	FULL	libs/s25main/network/GameMessage_Chat.cpp	In-game and lobby chat messages
+Return-To-The-Roots-s25client	siege-war	FULL	libs/s25main/buildings/nobMilitary.cpp	Military buildings, attack and conquest
+Return-To-The-Roots-s25client	minimap-maps	FULL	libs/s25main/Minimap.cpp	Ingame minimap and preview minimap
+Return-To-The-Roots-s25client	fog-of-war	FULL	libs/s25main/FOWObjects.cpp	Fog of war remembered objects
+Return-To-The-Roots-s25client	procedural-generation	FULL	libs/s25main/mapGenerator	Random map generator with islands, rivers
+Return-To-The-Roots-s25client	modding-scripting	FULL	libs/s25main/lua	Lua scripting for missions and maps
+Return-To-The-Roots-s25client	quests	PARTIAL	data/RTTR/campaigns	Campaign missions scripted in Lua
+Return-To-The-Roots-s25client	save-load	FULL	libs/s25main/Savegame.cpp	Savegames of full game state
+Return-To-The-Roots-s25client	replay-spectate	FULL	libs/s25main/Replay.cpp	Replay recording and playback
+Return-To-The-Roots-s25client	multiplayer-netcode	FULL	libs/s25main/network/GameServer.cpp	Game server, client and lobby
+Return-To-The-Roots-s25client	localisation	FULL	libs/s25main/languages.cpp	Language selection and translations
+Return-To-The-Roots-s25client	ai-opponents	FULL	libs/s25main/ai	AI players
+Return-To-The-Roots-s25client	diplomacy-post	PARTIAL	libs/s25main/postSystem	Post box messages and diplomacy questions
+Return-To-The-Roots-s25client	road-network	FULL	libs/s25main/RoadSegment.cpp	Road building and ware transport
+Return-To-The-Roots-s25client	seafaring	FULL	libs/s25main/buildings/nobHarborBuilding.cpp	Harbors, ships and expeditions
+ryzom-ryzomcore	crafting	FULL	ryzom/server/src/entities_game_service/phrase_manager/faber_phrase.cpp	Faber crafting from raw materials
+ryzom-ryzomcore	skills-professions	FULL	ryzom/common/src/game_share/skills.cpp	Skill tree progression system
+ryzom-ryzomcore	guilds-clans	FULL	ryzom/server/src/entities_game_service/guild_manager	Guild manager with grades and inventory
+ryzom-ryzomcore	parties-groups	FULL	ryzom/server/src/entities_game_service/team_manager	Team manager
+ryzom-ryzomcore	chat	FULL	ryzom/client/src/interface_v3/chat_window.cpp	Chat windows, groups and dynamic chat
+ryzom-ryzomcore	trading-player	FULL	ryzom/server/src/entities_game_service/game_item_manager/player_inv_xchg.cpp	Player exchange inventory
+ryzom-ryzomcore	banking-storage	FULL	ryzom/server/src/entities_game_service/game_item_manager/player_inv_room.cpp	Apartment room and bag storage
+ryzom-ryzomcore	housing-building	PARTIAL	ryzom/server/src/entities_game_service/building_manager	Player apartments and guild rooms
+ryzom-ryzomcore	quests	FULL	ryzom/server/src/entities_game_service/mission_manager	Missions with steps, rewards and teams
+ryzom-ryzomcore	dialogue-trees	PARTIAL	ryzom/client/src/interface_v3/bot_chat_manager.cpp	NPC bot chat pages
+ryzom-ryzomcore	mounts-vehicles	FULL	ryzom/server/src/entities_game_service/stables/stable.cpp	Stables and mounts
+ryzom-ryzomcore	pets-companions	FULL	ryzom/server/src/entities_game_service/game_item_manager/player_inv_pet.cpp	Pack animals and pet inventories
+ryzom-ryzomcore	pvp-duels-arena	FULL	ryzom/server/src/entities_game_service/pvp_manager/pvp_duel.cpp	Duels, PvP zones, faction PvP
+ryzom-ryzomcore	siege-war	FULL	ryzom/server/src/entities_game_service/outpost_manager/outpost.cpp	Guild outposts with squads and state machine
+ryzom-ryzomcore	dungeons-instances	PARTIAL	ryzom/server/src/entities_game_service/world_instances.cpp	World instances
+ryzom-ryzomcore	weather	FULL	ryzom/server/src/entities_game_service/weather/weather.cpp	Server weather system
+ryzom-ryzomcore	day-night	FULL	ryzom/common/src/game_share/light_cycle.cpp	Light cycle and time
+ryzom-ryzomcore	fog-of-war	PARTIAL	ryzom/common/src/game_share/fog_of_war.cpp	Fog of war map data
+ryzom-ryzomcore	minimap-maps	FULL	ryzom/client/src/interface_v3/group_map.cpp	Map interface group
+ryzom-ryzomcore	factions-reputation	FULL	ryzom/server/src/entities_game_service/fame_pd.cpp	Fame with factions
+ryzom-ryzomcore	magic-spells	FULL	ryzom/server/src/entities_game_service/phrase_manager/magic_phrase.cpp	Magic phrases and spell actions
+ryzom-ryzomcore	status-effects	FULL	ryzom/server/src/entities_game_service/phrase_manager/stun_effect.cpp	Stun, DOT, HOT, bleed and buff effects
+ryzom-ryzomcore	modding-scripting	FULL	ryzom/server/src/dynamic_scenario_service	Ring scenario editor and dynamic scenarios
+ryzom-ryzomcore	multiplayer-netcode	FULL	ryzom/server/src/frontend_service	Frontend service and shard services
+ryzom-ryzomcore	save-load	FULL	ryzom/server/src/persistant_data_service	Persistent data service
+ryzom-ryzomcore	foraging-harvesting	FULL	ryzom/server/src/entities_game_service/phrase_manager/forage_phrase.cpp	Prospect and extract raw materials
+ryzom-ryzomcore	seasons	FULL	ryzom/common/src/game_share/season.cpp	Seasons affecting the world
+ryzom-ryzomcore	death-penalties	FULL	ryzom/server/src/entities_game_service/death_penalties.cpp	Death penalty rules
+ryzom-ryzomcore	mail-forum	FULL	ryzom/server/src/mail_forum_service	Mail and forum service
+SCAR	combat-ai-combos	PARTIAL	src/Hook_AttackCombo.cpp	Skyrim mod adding NPC attack combo behaviour
+scummvm-scummvm	save-load	FULL	gui/saveload.cpp	Save and load dialogs across engines
+scummvm-scummvm	localisation	FULL	common/translation.cpp	Many language translations via po files
+scummvm-scummvm	achievements	FULL	engines/achievements.cpp	Achievement tracking for supported games
+scummvm-scummvm	replay-spectate	PARTIAL	gui/EventRecorder.cpp	Records and plays back input events
+scummvm-scummvm	modding-scripting	PARTIAL	common/lua	Embedded Lua support
+scummvm-scummvm	adventure-engines	FULL	engines	Over one hundred reimplemented game engines
+SFTtech-openage	modding-scripting	FULL	doc/nyan	Nyan data language drives game content and mods
+SFTtech-openage	pathfinding	PARTIAL	libopenage/pathfinding	Flow field and sector pathfinding
+SFTtech-openage	asset-conversion	FULL	openage/convert	Converts original Age of Empires assets
+SFTtech-openage	rts-simulation	PARTIAL	libopenage/gamestate	Entities, components, move and idle systems
+shlomif-PySolFC	save-load	FULL	pysollib/game/__init__.py	Save and load game files
+shlomif-PySolFC	localisation	FULL	pysollib/mygettext.py	Translated UI via po files
+shlomif-PySolFC	replay-spectate	PARTIAL	pysollib/game/__init__.py	Demo mode and game restart
+shlomif-PySolFC	undo-redo	FULL	pysollib/move.py	Undo, redo and bookmarks
+shlomif-PySolFC	hints	FULL	pysollib/hint.py	Move hints and auto-play
+shlomif-PySolFC	statistics	FULL	pysollib/stats.py	Player and game statistics
+shlomif-PySolFC	solitaire-games	FULL	pysollib/games	Eighty-plus solitaire variants
+SimHacker-micropolis	housing-building	FULL	MicropolisCore/src/MicropolisEngine/src/tool.cpp	Zoning and building tools
+SimHacker-micropolis	procedural-generation	FULL	MicropolisCore/src/MicropolisEngine/src/generate.cpp	Random terrain generation
+SimHacker-micropolis	economy-sinks	FULL	MicropolisCore/src/MicropolisEngine/src/budget.cpp	Taxes, budget and maintenance
+SimHacker-micropolis	save-load	FULL	MicropolisCore/src/MicropolisEngine/src/fileio.cpp	City file loading and saving
+SimHacker-micropolis	localisation	PARTIAL	micropolis-java/strings	Translated city messages
+SimHacker-micropolis	minimap-maps	FULL	micropolis-java/src/micropolisj/gui/OverlayMapView.java	Overlay map views
+SimHacker-micropolis	disasters	FULL	MicropolisCore/src/MicropolisEngine/src/disasters.cpp	Fire, flood, tornado, monster, earthquake
+SimHacker-micropolis	traffic-power-simulation	FULL	MicropolisCore/src/MicropolisEngine/src/traffic.cpp	Traffic and power grid simulation
+SimHacker-micropolis	achievements	PARTIAL	MicropolisCore/src/MicropolisEngine/src/evaluate.cpp	City score and evaluation
+simutrans-simutrans	chat	FULL	src/simutrans/gui/chat_frame.cc	Multiplayer chat window
+simutrans-simutrans	multiplayer-netcode	FULL	src/simutrans/network	Server and client networking
+simutrans-simutrans	modding-scripting	FULL	src/simutrans/script	Squirrel scripting for scenarios and AI
+simutrans-simutrans	quests	PARTIAL	src/simutrans/dataobj/scenario.cc	Scenario goals and objectives
+simutrans-simutrans	achievements	PARTIAL	src/simutrans/simachievements.cc	Steam achievements hooks
+simutrans-simutrans	leaderboards	PARTIAL	src/simutrans/dataobj/records.cc	Speed and record tables
+simutrans-simutrans	save-load	FULL	src/simutrans/dataobj/loadsave.cc	Save and load game files
+simutrans-simutrans	localisation	FULL	simutrans/text	Many translated language tab files
+simutrans-simutrans	procedural-generation	FULL	src/simutrans/world/simworld.cc	Random world and terrain generation
+simutrans-simutrans	minimap-maps	FULL	src/simutrans/gui/minimap.cc	Minimap with overlays
+simutrans-simutrans	economy-sinks	PARTIAL	src/simutrans/player/finance.cc	Company finances and maintenance costs
+simutrans-simutrans	ai-opponents	FULL	src/simutrans/player/ai_goods.cc	Goods and passenger AI, scripted AI
+simutrans-simutrans	transport-logistics	FULL	src/simutrans/dataobj/schedule.cc	Vehicle schedules, lines, convoys
+simutrans-simutrans	city-growth	FULL	src/simutrans/world/simcity.cc	Cities growing and generating passengers

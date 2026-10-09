@@ -12,7 +12,7 @@ Donor: `/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Traits/BotModule
 - Watchdog (attack-move 158-165, attack 235-242): if the leader's cell and the target have not changed for 63 world ticks (the comment says 2.5 s), drop back to idle. This stops a squad that cannot path to its target from running pathfinding every tick.
 - `ShouldFlee` (StateBase.cs 83-104): never flee if an own building is within `DangerScanRadius` (10 cells); otherwise gather preferred enemy units with attack ability within that radius and apply the flee predicate, which for ground squads is `!CanAttack`.
 - Flee (255-270): calls `GoToRandomOwnBuilding` (helper in StateBase, body not read; by name it sends the units to an own building), enters idle, and unregisters the squad on deactivate.
-- `CanAttack` (167-183): feeds four inputs (own health %, enemy health %, relative attack power, relative speed) to a fuzzy engine and attacks when the crisp output is below 30. The rule text is in static arrays from line 23 and was read for the first rules only.
+- `CanAttack` (167-183): feeds four inputs (own health %, enemy health %, relative attack power, relative speed) to a fuzzy engine and attacks when the crisp output is below 30. The rule text is in static arrays from line 23; only the first rule was read, the rest is (not read).
 
 ## 2. Key functions
 

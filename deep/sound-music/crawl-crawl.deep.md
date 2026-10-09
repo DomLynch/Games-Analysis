@@ -1,6 +1,6 @@
 # crawl-crawl (sound-music, cell 15)
 
-Donor: /mnt/frankendom-donors/crawl-crawl/crawl-ref/source/sound.cc | Licence: GPL-2 | C++ | symbol parse_sound / check_sound_patterns
+Donor: /mnt/frankendom-donors/crawl-crawl/crawl-ref/source/sound.cc | Licence: GPL-2.0-or-later per root LICENSE (sound.cc has no header) | C++ | symbol parse_sound / check_sound_patterns
 
 ## 1. Mechanism
 
@@ -28,13 +28,13 @@ Donor: /mnt/frankendom-donors/crawl-crawl/crawl-ref/source/sound.cc | Licence: G
 | Decide first, play second, so the caller can branch on a hit | Sound root path from `Options.sound_file_path` (theirs) |
 | Command-line backend with a length cap and a shell-safety check | 255-character command buffer; `SOUND_PLAY_COMMAND` macro (theirs) |
 | Single-channel mode: halt the previous sound before starting a new one | `one_SDL_sound_channel` option (theirs) |
-| Global on/off gate before any work | `Options.sounds_on` (theirs) |
+| Global on/off gate checked at the last step, just before the audio work (the pattern scan and path join always run) | `Options.sounds_on` (theirs) |
 
 ## 4. TypeScript sketch
 
 Clean-room sketch: written from the mechanism above, no lines translated.
 
-simplified: the backend choice (WinMM, shell command, SDL), the one-channel rule and chunk freeing are omitted: `play` is a callback; the donor's `check_sound_patterns` returns an empty mapping on no match where the sketch returns null; the donor's `catpath` is replaced by a slash join.
+simplified: the backend choice (WinMM, shell command, SDL), the one-channel rule and chunk freeing are omitted: `play` is a callback; the donor's `check_sound_patterns` returns an empty mapping on no match where the sketch returns null; the donor's `catpath` is replaced by a slash join; the sketch's `onMessage` folds `parse_sound`, `play_sound(sound_mapping)` and the `sounds_on` test of `play_sound(file, ...)` into one function, keeping the donor order (scan, empty check, path join, then the sounds-on gate).
 
 ```ts
 // Licence: GPL-2 - clean-room sketch, no lines translated
@@ -63,10 +63,10 @@ function onMessage(
   basePath: string,
   play: Player,
 ): void {
-  if (!soundsOn) return;
-  const hit = matchSound(message, table);
+  const hit = matchSound(message, table);   // donor order: scan first, always
   if (hit === null || hit.soundfile === '') return;
   const path = `${basePath.replace(/\/+$/, '')}/${hit.soundfile}`;
+  if (!soundsOn) return;                    // donor tests the flag inside the file-level play, after the path join
   play(path, hit.interruptGame);
 }
 ```

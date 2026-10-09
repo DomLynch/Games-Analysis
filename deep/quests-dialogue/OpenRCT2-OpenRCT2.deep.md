@@ -71,6 +71,6 @@ function check(kind: "guests" | "value", p: Park, g: Goal, alreadyDone: boolean)
 - Deadlines use the donor's calendar (months elapsed). Frankendom needs the server tick and a period definition in data.
 - The only failure side effect is the donor's park closure (260-262). Frankendom must define what a failed objective does (no closure is implied), and a quest failure must not delete progress.
 - The checks keep no state of their own (every method is `const`), so a pending objective has no timer or progress record in this file; Frankendom's journal stores stage and progress per character.
-- Thresholds are hard-coded in the code (600 rating, 10 coasters, 6.00 and 7.00), not data. Frankendom keeps them in quest content.
+- Thresholds are hard-coded in the code (600 rating in guests-by at line 30; guests-and-rating instead uses the named constant kLowParkRatingThreshold at line 105, whose value was not read; 10 coasters, 6.00 and 7.00), not data. Frankendom keeps them in quest content.
 - Pit is a client only and has no objectives. Nothing here touches fight authority, kill verification or MAX_ATTACKERS.
 - Not read: the caller that runs `Check` each period, `GetDate`, the park data type, and the objective fields' definitions in `ScenarioObjective.h`.

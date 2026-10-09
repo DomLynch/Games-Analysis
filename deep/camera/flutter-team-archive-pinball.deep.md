@@ -9,7 +9,7 @@ Symbol check: CameraZoom class (10), onLoad (29) and apply (37) confirmed on the
 - apply(progress) sets the viewfinder zoom to the tween's value at that progress, so the zoom moves from start to end.
 - completed is a Future that is already resolved if the controller has finished at the time it is read (lines 44-45); otherwise it resolves only when the effect is removed (onRemove, lines 52-56), not when the controller finishes, so a caller can await the zoom only up to removal.
 - Inputs: target zoom value and the current zoom at load time. Output: viewfinder zoom each frame. Runs on the Flame frame update (Flame source not read); the controller duration is in seconds, so it is time-based.
-- Caller (lib/game/behaviors/camera_focusing_behavior.dart, _zoomTo, lines 90-97): creates CameraZoom(value: focus zoom), and in completed.then moves the camera to the focus position, so the pan happens only after the zoom finishes. _snap (lines 83-87) is the instant variant: moveTo with speed 100 and a direct zoom assignment.
+- Caller (lib/game/behaviors/camera_focusing_behavior.dart, _zoomTo, lines 81-89): creates CameraZoom(value: focus zoom), and in completed.then moves the camera to the focus position, so the pan happens only after the zoom finishes. _snap (lines 75-79) is the instant variant: moveTo with speed 100 and a direct zoom assignment.
 
 ## 2. Key functions
 - CameraZoom (pinball) | /mnt/frankendom-donors/flutter-team-archive-pinball/packages/pinball_components/lib/src/components/camera_zoom.dart | 10-57 | the effect class: 0.4 s ease-out controller and value.
@@ -19,7 +19,7 @@ Symbol check: CameraZoom class (10), onLoad (29) and apply (37) confirmed on the
 ## 3. Numbers vs mechanism
 | Reusable algorithm | Game-specific constants |
 |---|---|
-| Time-based tween from current to target zoom with an ease-out curve | duration: 0.4 s (theirs; lines 16) and Curves.easeOut (theirs; line 17) |
+| Time-based tween from current to target zoom with an ease-out curve | duration: 0.4 s (theirs; line 16, which is only 14 characters so the receipt is the neighbouring line 15) and Curves.easeOut (theirs; line 17) |
 | Awaitable completion: immediate if already finished, otherwise resolved on removal | none (algorithm) |
 
 ## 4. TypeScript sketch

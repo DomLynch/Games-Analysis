@@ -1,6 +1,6 @@
 # jynew-jynew (sound-music, cell 15)
 
-Donor: /mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/ResourceManagement/AudioManager.cs | Licence: UNCLEAR (licence file has no standard text) | C# (Unity, XLua/Lua) | symbol AudioManager.PlayMusic / PlayClipAtPoint
+Donor: /mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/ResourceManagement/AudioManager.cs | Licence: UNCLEAR (source header says all code is MIT, but the root LICENSE is a custom text that forbids use of any code or resources without the project's public authorisation; the two conflict) | C# (Unity, XLua/Lua) | symbol AudioManager.PlayMusic / PlayClipAtPoint
 
 ## 1. Mechanism
 
@@ -35,10 +35,10 @@ Donor: /mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/ResourceManagement
 
 Clean-room sketch: written from the mechanism above, no lines translated. Keeps the donor's behaviour, including the last-load-wins race.
 
-simplified: loading is a callback (the donor uses `ResLoader.LoadAsset`), there is no settings subscription (volume is set directly), and the sketch's `playById` does not guard against re-playing the same track, as in the donor; `stop` mirrors `StopMusic`.
+simplified: loading is a callback (the donor uses `ResLoader.LoadAsset`), there is no settings subscription (volume is set directly), and the sketch's `playById` does not guard against re-playing the same track, as in the donor; `stop` mirrors `StopMusic` and also forgets the current path; `playIfDifferent` compares paths where the donor compares clip references (29).
 
 ```ts
-// Licence: UNCLEAR (licence file has no standard text) - clean-room sketch, no lines translated
+// Licence: UNCLEAR (header says MIT, root LICENSE forbids unauthorised use) - clean-room sketch, no lines translated
 // Clean-room: one looping music channel; id to path; a load plays when it resolves, last to resolve wins.
 type Loader = (path: string) => Promise<ArrayBuffer | null>;
 
@@ -92,5 +92,5 @@ class MusicChannel {
 - Hard cut on track change. No crossfade, ducking or pause on scene or dialogue change.
 - `PlayClipAtPoint(path, ...)` does not check for a null clip. The behaviour on null was not traced.
 - Music volume is subscribed once and kept live; sound-effect volume is read only at each call. A settings change mid-sound does not apply to playing one-shots.
-- Licence conflict to flag: the file header says all code is MIT, but the licence file has no standard text, and the row licence is UNCLEAR. Treated as UNCLEAR, so clean-room only.
+- Licence conflict to flag: the file header says all code is MIT, but the root LICENSE is a custom text that forbids use of any code or resources without the project's public authorisation, and the row licence is UNCLEAR. Treated as UNCLEAR, so clean-room only.
 - Client only. No conflict with the one-engine ruling, because this is not a fight system; music or cue triggers come from server-verified fight events, never the reverse. Zone music chosen from data follows the zones-as-data ruling, not this code.

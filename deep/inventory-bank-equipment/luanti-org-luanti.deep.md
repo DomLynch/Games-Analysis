@@ -1,6 +1,6 @@
 # luanti-org-luanti (inventory-bank-equipment, cell 9)
 
-Donor: /mnt/frankendom-donors/luanti-org-luanti/builtin/game/item.lua | Licence: LGPL | Lua | symbol core.item_drop / core.item_pickup / core.handle_node_drops
+Donor: /mnt/frankendom-donors/luanti-org-luanti/builtin/game/item.lua | Licence: LGPL-2.1-or-later per LICENSE.txt and COPYING.LESSER | Lua | symbol core.item_drop / core.item_pickup / core.handle_node_drops
 
 Symbol check: `core.item_drop` at 360-381, `core.item_pickup` at 383-399, `core.handle_node_drops` at 462-488 and `core.get_node_drops` at 41-133 (read as the drop source) all land as named. The input cell says C++; the file is Lua.
 
@@ -35,7 +35,7 @@ Symbol check: `core.item_drop` at 360-381, `core.item_pickup` at 383-399, `core.
 simplified: the drop-table step (`get_node_drops`: rarity roll, tool filters, `max_items`, palette metadata) is not sketched, drops come in as a list; `playerDrop` returns a plan and does not clear the stack or handle the spawn-failure branch (379-380) or the non-player case (no lift, no velocity); there is no `dropped_by` record; the pickup chain returns the first callback's result as-is (donor wraps it in an ItemStack).
 
 ```ts
-// Licence: LGPL (donor). CLEAN-ROOM sketch: written from the mechanism description, not a translation of donor lines.
+// Licence: LGPL-2.1-or-later (donor). CLEAN-ROOM sketch: written from the mechanism description, not a translation of donor lines.
 interface Inv { add(item: string): string | null; }   // returns the remainder, or null if all fit
 interface World { spawn(pos: { x: number; y: number; z: number }, item: string): void; }
 

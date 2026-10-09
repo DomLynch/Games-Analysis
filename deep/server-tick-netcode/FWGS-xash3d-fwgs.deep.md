@@ -1,6 +1,6 @@
 # FWGS-xash3d-fwgs (server-tick-netcode, cell 5)
 
-Donor: `/mnt/frankendom-donors/FWGS-xash3d-fwgs/engine/server/sv_main.c` | Licence: UNCLEAR (no licence file on disk). Treated as clean-room only. | C | symbol `SV_RunGameFrame / SV_ReadPackets`
+Donor: `/mnt/frankendom-donors/FWGS-xash3d-fwgs/engine/server/sv_main.c` | Licence: GPL-3.0-or-later (per the source file header; no separate licence file on disk). Treated as clean-room only. | C | symbol `SV_RunGameFrame / SV_ReadPackets`
 
 Checked: Symbol `SV_RunGameFrame` opens at 600 and closes at 631 (verified). `SV_ReadPackets` is at 378-463. The per-frame caller `Host_ServerFrame` is at 676-717. All three read in full.
 
@@ -30,10 +30,10 @@ Checked: Symbol `SV_RunGameFrame` opens at 600 and closes at 631 (verified). `SV
 
 ## 4. TypeScript sketch
 
-simplified: omits the not-simulating early return, the status line, the not-initialised return, the command time-window check, timeouts, movevars and resource requests, the per-client reply flags, and the post-send cleanup and heartbeat. Order changed to match the donor: the residual is added BEFORE inbound packets are read, not inside the step loop.
+simplified: omits the not-simulating early return, the donor's condition that the residual is banked only while the server is simulating or not yet active (684-685), the status line, the not-initialised return, the command time-window check, timeouts, movevars and resource requests, the per-client reply flags, and the post-send cleanup and heartbeat. Order changed to match the donor: the residual is added BEFORE inbound packets are read, not inside the step loop.
 
 ```ts
-// Licence: UNCLEAR (no licence file on disk). Clean-room sketch written from the described mechanism, not a translation of the donor lines.
+// Licence: GPL-3.0-or-later (per file header). Clean-room sketch written from the described mechanism, not a translation of the donor lines.
 // clean-room
 interface Sim { time: number; residual: number; step: (dt: number) => void; }
 
@@ -64,12 +64,12 @@ function serverFrame(sim: Sim, hostDt: number, fps: number,
 
 - TARGET `src/fight/tick.ts` (new module, fight engine): the server tick loop for the fight: fixed step, read-then-step-then-reply order, and a catch-up cap that the donor lacks. Parity-checklist row 4 (fight loop at 60 Hz, events to page; K2b / K2c delete) and row 18 (post-K item 3 server tick).
 - today: the 60 Hz step per tick already exists on the client side (`src/net/pvp.ts` driver stepped once per tick through `Match`'s pvp mode, `src/net/rollback.ts` `frame()` once per tick); there is no server tick loop and no catch-up cap. (read in worktree `frankendom-combat-p3`, commit 6adcab27e). Zone 1 and the origins each own a copy of the fight loop (checklist row 4).
-- Reuse tag: rewrite-from-idea (clean-room; licence unclear)
+- Reuse tag: rewrite-from-idea (clean-room; GPL-3.0-or-later)
 - Brief rule served: 1 (one combat core, two clients); rules 7-9 n/a
 
 ## 6. Gaps and risks
 
-- Licence unclear: clean-room only. The sketch is written from the mechanism; no lines are copied. The licence should be confirmed before any reuse; Lead decides.
+- Licence is GPL-3.0-or-later (copyleft): clean-room only. The sketch is written from the mechanism; no lines are copied.
 - The catch-up loop has no cap. If the host falls far behind, one frame can run many steps. Frankendom needs a cap (and a rule for what happens to the excess time).
 - The fixed step is set by a cvar (`sv_fps`). Frankendom's zone data should set it per zone, with a default.
 - Packet intake is a socket and netchannel layer (fragments, file transfer, NAT). Frankendom's Supabase and HTTP path is not a netchannel; only the order of steps transfers.

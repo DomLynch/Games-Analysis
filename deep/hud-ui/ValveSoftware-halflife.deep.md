@@ -49,6 +49,7 @@ function rowFits(row: number, rowGap: number, pickHeight: number, maxHeight: num
 // Add an entry, wrapping the cursor when the next row would leave the screen.
 function addEntry(e: Entry, now: number, drawTime: number, rowGap: number, pickHeight: number, maxHeight: number): void {
   if (!e) return;
+  if (e.kind === 'ammo' && !e.count) return; // zero-count ammo is not added (ammohistory.cpp 48-49)
   if (!rowFits(cursor, rowGap, pickHeight, maxHeight) || cursor >= SLOTS) cursor = 0;
   slots[cursor++] = { ...e, expiresAt: now + drawTime } as Entry;
 }
@@ -60,11 +61,14 @@ function drawPass(now: number, drawTime: number): { row: number; kind: string; b
     const s = slots[i];
     if (!s) continue;
     s.expiresAt = Math.min(s.expiresAt, now + drawTime);
-    if (s.expiresAt <= now) { slots[i] = null; continue; }
+    if (s.expiresAt <= now) {
+      slots[i] = null;
+      if (slots.every((x) => x === null)) cursor = 0; // donor's CheckClearHistory, run only when an entry expires (119)
+      continue;
+    }
     const brightness = Math.min(255, Math.floor((s.expiresAt - now) * 80));
     out.push({ row: i, kind: s.kind, brightness });
   }
-  if (slots.every((x) => x === null)) cursor = 0;
   return out;
 }
 ```

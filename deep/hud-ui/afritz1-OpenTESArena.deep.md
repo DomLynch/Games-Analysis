@@ -7,9 +7,9 @@ Donor: /mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Interface/Ga
 - Input: a `Player`'s `currentHealth` and `maxHealth`, plus its `effectsState` flags for drunk and diseased (the gradient does not read paralysed).
 - `Player::isHealthCriticallyLow` (Player.cpp 791) clamps the health ratio to 0 to 1 and returns true at or below 0.15 (793-794). A `maxHealth` of 0 is not guarded: 0/0 is NaN, the clamp keeps NaN and the comparison is false.
 - `GameWorldUiModel::getCurrentPlayerStatusGradientType` (GameWorldUiMVC.cpp 358) returns exactly one state, in priority order: NearDeath, then Poisoned (drunk), then Diseased, then Buffed (disabled by `else if (false)`), else Healthy.
-- `GameWorldUiView::getStatusGradientTextureAsset` (924) turns the state into a texture asset: `StatusGradients` with the enum's integer as frame index. The enum order is Healthy 0, Diseased 1, Poisoned 2, NearDeath 3, Buffed 4 (GameWorldUiMVC.h 108-115).
+- `GameWorldUiView::getStatusGradientTextureAsset` (924) turns the state into a texture asset: `StatusGradients` with the enum's integer as frame index. The enum order is Healthy 0, Diseased 1, Poisoned 2, NearDeath 3, Buffed 4 (GameWorldUiMVC.h 108-115; the one-word enum member lines are too short to receipt, so the order is read but not receipted).
 - Output: one texture for the status gradient drawn by the game-world UI view. No state is written back.
-- These functions have no tick of their own and write nothing; they are pure reads. Who calls the gradient function and when is not read.
+- These functions have no tick of their own and write nothing; they are pure reads. The gradient is read when the classic game-world UI refreshes (`GameWorldUiState.cpp` 775, only when not in the modern interface) and when the pause menu is built (`PauseMenuUiState.cpp` 94); the texture is set on an image element named StatusGradientImageElementName, drawn by that UI as a backdrop beside the portrait, not as a screen-edge tint. How often the refresh runs was not traced.
 - `GetStatusEffectString` (GameWorldUiMVC.cpp 86-~115, opened) reads the same check at line 89 plus diseased, drunk and paralysed, but with a different priority: diseased first (96), then critically hurt (100), then drunk (104). It is a text path, not the gradient path.
 
 ## 2. Key functions
@@ -77,7 +77,7 @@ function gradientFrameIndex(state: GradientState): number {
 
 ## 5. Lands in
 
-- Frankendom: TARGET `src/fight/hud.ts` (low-health feedback, the screen-edge tint), today: `src/hud.ts` (moving).
+- Frankendom: TARGET `src/fight/hud.ts` (low-health feedback; the donor draws it as a portrait backdrop, so a screen-edge tint would be Frankendom's own choice), today: `src/hud.ts` (moving).
 - Parity checklist row 14 (HUD). Row 16 (colour grade/quality) is the alternative if the tint is treated as a grade.
 - Reuse tag: adapt
 - Brief rule served: (category default, not per-cell) 1 (one combat core, two clients); rules 7-9 n/a

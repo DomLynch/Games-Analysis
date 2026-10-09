@@ -1,16 +1,16 @@
 # 00-Evan-shattered-pixel-dungeon (hud-ui, cell 16)
 
-Donor: /mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/ui/HealthBar.java | Licence: GPL-3 | Java | symbol HealthBar.level(Char)
+Donor: /mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/ui/HealthBar.java | Licence: GPL-3.0-or-later per HealthBar.java header (LICENSE.txt is GPL v3) | Java | symbol HealthBar.level(Char)
 
 ## 1. Mechanism
 
 - Input: a `Char` (HP, max HP, shield amount, incoming damage over time). `level(Char)` (93-102) computes `max = max(HP + shield, maxHP)`. The shield can push the denominator above max HP.
 - It passes three fractions to `level(health, shield, DOT)`: health = HP / max, shield = (HP + shield) / max, DOT = incomingDOT / max. The shield segment stacks on top of health.
 - A null `Char` does nothing; the bar keeps its last values.
-- `level(float, float, float)` (86-91) stores the three values and calls `layout()` at once. There is no tick: the bar redraws on every call.
+- `level(float, float, float)` (86-91) stores the three values and calls `layout()` at once (line 90; line too short to receipt). There is no tick: the bar redraws on every call.
 - `layout()` (64-80) sizes four colour blocks in draw order: background (full width), shield, health, DOT. Each length is snapped up to whole screen pixels using the camera zoom: `width * ceil(fraction * pixelWidth) / pixelWidth`.
 - The DOT block sits at the right edge of the shield segment (`Dot.x += Shld.width - Dot.width`). It darkens the health portion it will remove.
-- The DOT clamp (`Dot.scale.x = min(Dot.scale.x, Shld.scale.x)`, line 78) does cap the DOT width: in `ColorBlock` (`SPD-classes/.../noosa/ColorBlock.java` 35-41) `size()` sets `scale` and `width()` returns `scale.x`, so scale is the pixel width. The DOT block is never wider than the shield block.
+- The DOT clamp (`Dot.scale.x = min(Dot.scale.x, Shld.scale.x)`, line 78) does cap the DOT width: in `ColorBlock` (`SPD-classes/.../noosa/ColorBlock.java` 35-42) `size()` sets `scale` and `width()` returns `scale.x`, so scale is the pixel width. The DOT block is never wider than the shield block.
 - Output: a 2-pixel-high bar; red background, white shield, green health, translucent black DOT.
 
 ## 2. Key functions
@@ -33,10 +33,10 @@ Donor: /mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java
 
 Clean-room sketch: written from the mechanism above, no lines translated.
 
-simplified: no Char or camera objects (zoom is a plain parameter, donor falls back to 1 when no camera), no `layout()` call chain; order of the four blocks matches the donor.
+simplified: no Char or camera objects (zoom is a plain parameter, donor falls back to 1 when no camera), no `layout()` call chain, no null-Char guard, no bar x/y origin, height or colours; the three fractions come from one function instead of `level(Char)` then `level(float,float,float)`; order of the four blocks matches the donor.
 
 ```ts
-// Licence: GPL-3 - clean-room sketch, no lines translated
+// Licence: GPL-3.0-or-later (donor) - clean-room sketch, no lines translated
 // Clean-room: a stacked pool bar as fractions of one denominator; the DOT segment ends at the shield edge.
 type Actor = { hp: number; maxHp: number; shield: number; incomingDot: number };
 type Segments = { health: number; shield: number; dot: number };

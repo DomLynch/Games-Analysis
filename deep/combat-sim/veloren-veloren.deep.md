@@ -1,6 +1,6 @@
 # veloren-veloren (combat-sim, cell 1)
 
-Donor: `/mnt/frankendom-donors/veloren-veloren/common/src/combat.rs` | Licence: GPL-3 | Rust | symbol `Attack.apply_attack`
+Donor: `/mnt/frankendom-donors/veloren-veloren/common/src/combat.rs` | Licence: GPL-3.0-or-later per workspace Cargo.toml (combat.rs has no header) | Rust | symbol `Attack.apply_attack`
 
 Checked: At 283 (verified, closes at 1052). Also read in full: `compute_block_damage_decrement` (186-257), `Attack::compute_damage_reduction` (259-281), `Damage::compute_damage_reduction` (1748-1787), `calculate_health_change` (1789-1844).
 
@@ -40,7 +40,7 @@ Checked: At 283 (verified, closes at 1052). Also read in full: `compute_block_da
 simplified: omits penetration by the attacker, the piercing penetration of protection, facing and block-angle checks, the poise cost of blocking, per-kind side effects (slashing energy drain, crushing poise), all combat effects, and the group and PvP filters. Falling, buff and other damage sources skip mitigation in the donor and are not modelled. The precise bonus is damage x precision x (power - 1), added to the damage, as in the donor.
 
 ```ts
-// Licence: GPL-3 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
+// Licence: GPL-3.0-or-later (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
 interface Hit { value: number; precise: number; blockable: boolean; }
 
 // Saturating armour fraction: more protection helps, with diminishing return.
@@ -78,7 +78,7 @@ function healthLoss(h: Hit, reduction: number, soak: number, precisionPower: num
 
 ## 6. Gaps and risks
 
-- GPL-3: clean-room only.
+- GPL-3.0-or-later: clean-room only.
 - Armour here is a per-slot inventory model feeding one protection number. Frankendom's gear dressing (checklist row 15) is cosmetic wear and tint grades; only the saturating-fraction shape could transfer, and only if armour becomes a catalogue field (row 21).
 - The reduction order matters: precision, then soak, then multiply. Frankendom's existing order in the duel step (`src/duel.ts`, moving) was not read here and must be compared before anything changes.
 - Poise and knockback are a physics model. Frankendom's posture and stagger sit in the duel step (checklist rows 1 and 3); this file gives no new rule for them.

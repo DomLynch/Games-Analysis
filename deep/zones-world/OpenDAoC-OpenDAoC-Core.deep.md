@@ -1,8 +1,8 @@
 # OpenDAoC-OpenDAoC-Core (zones-world, cell 7)
 
-Donor: /mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/world/WorldMgr.cs | Licence: GPL-3 | C# | symbol WorldMgr.RegisterZone / RegisterRegion / Init
+Donor: /mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/world/WorldMgr.cs | Licence: GPL-3.0 per LICENSE (WorldMgr.cs has no per-file header) | C# | symbol WorldMgr.RegisterZone / RegisterRegion / Init
 
-Symbol check (opened, 2026-10-09 correction pass): Init 423-458, RegisterRegion 544-548, RegisterZone 581-639 land on the named methods. Also opened: EarlyInit 231-379 (where regions and zones are actually loaded), instance creation 985-1064 and RemoveInstance 1069-1077.
+Symbol check (opened, 2026-10-09 correction pass): Init 423-458, RegisterRegion 544-548, RegisterZone 581-639 land on the named methods. Also opened: EarlyInit 231-379 (where regions and zones are actually loaded), instance creation (CreateInstance 968-1064) and RemoveInstance 1069-1077.
 
 ## 1. Mechanism
 - WorldMgr is a static registry: m_regions and m_zones are ConcurrentDictionary<ushort, ...> (137, 147), with a separate per-region zone data list m_zonesData for instances (247, 941).
@@ -10,7 +10,7 @@ Symbol check (opened, 2026-10-09 correction pass): Init 423-458, RegisterRegion 
 - Init(regionsData) (423-458) is the second stage. It initialises LootMgr (427), creates and initialises the day and night timer (429-430), then for every region record that has a registered region calls region.LoadFromDatabase to load mobs, merchants, items and bind points (437-441) and logs the four totals (443-449). Any exception is logged and returns false (451-456).
 - RegisterRegion(data) (544-548) calls Region.Create(data) and then ConcurrentDictionary.TryAdd by id. A duplicate id returns null. The new Region object is constructed before the check; what Region.Create does is not read.
 - RegisterZone (581-639): looks up the region; if missing it logs a warning and returns without registering (583-590). A zone water level of 0 is taken to mean "unset" and is replaced by the region's, and this is written back into the passed ZoneData (593-596). Diving starts as the region's setting; DivingFlag 1 forces it on and 2 forces it off (598-603). The Zone is built with origin = offset * 8192 and width and height = size * 8192 (608-611) plus the lava flag and the four bonuses and realm (615-620), appended to region.Zones and stored in m_zones[zoneID] (634-635), which silently overwrites an existing entry with the same id.
-- Instances (985-1064): a new region is added under a requested id, or the first free id from DEFAULT_VALUE_FOR_INSTANCE_ID_SEARCH_START (1003-1015). The skin region's saved ZoneData list is replayed: each entry takes the first free zone id (reserved via m_zones.TryAdd(id, null), 1054) and is registered with all four bonuses 0 and realm 0 (1056), then instance.Start() (1062). RemoveInstance (1069-1077) drops the region and its zones.
+- Instances (CreateInstance 968-1064): a new region is registered under a requested id (reserved with a null placeholder via TryAdd) or under the first free id from DEFAULT_VALUE_FOR_INSTANCE_ID_SEARCH_START, which is 1000 (962, 1003-1015); the instance object is then built and stored at that id (1027-1028). If the skin has no saved zones, it returns null after the region is already stored (1038-1046). The skin region's saved ZoneData list is replayed: each entry takes the first free zone id (reserved via m_zones.TryAdd(id, null), 1054) and is registered with all four bonuses 0 and realm 0 (1056), then instance.Start() (1062). RemoveInstance (1069-1077) drops the region and its zones.
 - Inputs: region and zone rows. Outputs: registry entries. Startup plus instance create and remove.
 
 ## 2. Key functions
@@ -18,7 +18,7 @@ Symbol check (opened, 2026-10-09 correction pass): Init 423-458, RegisterRegion 
 - WorldMgr.Init | /mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/world/WorldMgr.cs | 423-458 | second stage: loot, day/night timer, per-region entity load from the database.
 - WorldMgr.RegisterRegion | /mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/world/WorldMgr.cs | 544-548 | region registry with a duplicate guard.
 - WorldMgr.RegisterZone | /mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/world/WorldMgr.cs | 581-639 | zone creation from data with region inheritance and 8192 unit scaling.
-- WorldMgr instance creation | /mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/world/WorldMgr.cs | 985-1064 | clones a template region's zones under fresh ids with zero bonuses.
+- WorldMgr.CreateInstance | /mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/world/WorldMgr.cs | 968-1064 | clones a template region's zones under fresh ids with zero bonuses.
 
 ## 3. Numbers vs mechanism
 | Reusable algorithm | Game-specific constants |
@@ -27,10 +27,10 @@ Symbol check (opened, 2026-10-09 correction pass): Init 423-458, RegisterRegion 
 | Child inherits water level and diving from parent unless set | Diving flag values 1 and 2; water level 0 means unset (theirs, 593, 600-603) |
 | Zone bounds in grid units scaled to world units | Unit scale 8192 (theirs, 608-611) |
 | Per-zone bonuses carried with the zone; instances get none | XP, RP, BP and coin bonus fields, realm number (theirs, 581, 1056) |
-| Template zones cloned into an instance under free ids | Instance id search start (theirs, name only; value not read) |
+| Template zones cloned into an instance under free ids | Instance id search start 1000 (theirs, 962) |
 
 ## 4. TypeScript sketch
-simplified: no database, no mobs or merchants load (the Init stage), no region side effects from Region.Create, no lava, realm, rp/bp/coin bonuses, no day/night timer; the donor writes the inherited water level back into the input ZoneData and the sketch does not (it computes it into the new zone only); instance zones are shown without the instance region itself being created or started.
+simplified: no database, no mobs or merchants load (the Init stage), no region side effects from Region.Create, no lava, realm, rp/bp/coin bonuses, no day/night timer; the donor writes the inherited water level back into the input ZoneData and the sketch does not (it computes it into the new zone only); instance zones are shown without the instance region itself being created or started; no sort or frontier default (EarlyInit), no zone names (the donor appends " (Instance)"), and no zone-id reservation step (the donor reserves with TryAdd(id, null) before registering).
 ```ts
 // Licence: GPL-3 (OpenDAoC-OpenDAoC-Core) | clean-room: written from the mechanism, no donor lines.
 const UNIT = 8192; // theirs: world units per zone-grid step
@@ -87,6 +87,6 @@ function registerInstance(templates: ZoneData[], instanceRegionId: number): void
 ## 6. Gaps and risks
 - One engine, zones as data: Frankendom loads zone files, not database rows, and spawns come from the zone record; the donor mixes a world-level mob table into the region load (EarlyInit 258-311). Do not copy that coupling.
 - The donor's zone XP/RP/BP/coin bonuses (581) would bypass the one ledger if copied as a multiplier on the client. Any Frankendom zone bonus must be applied by the server reward path only (server-verified kills).
-- Instances here are server regions for groups (985-1064). Frankendom's Pit stays a client of the shared engine, not an instance region; instance creation is out of scope for the first port.
+- Instances here are server regions for groups (968-1064). Frankendom's Pit stays a client of the shared engine, not an instance region; instance creation is out of scope for the first port.
 - Zone transitions and the region side effects of Region.Create / LoadFromDatabase were not read.
 - The 8192 unit scale and the 0 = unset water rule are theirs; Frankendom's rules are Lead's. MAX_ATTACKERS = 3 has no counterpart in this file.

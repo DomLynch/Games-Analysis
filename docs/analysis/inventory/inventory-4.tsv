@@ -1,0 +1,319 @@
+game	system	level	evidence	note
+lichess-org-mobile	chat	PARTIAL	lib/src/model/chat	In-game and study chat with message models
+lichess-org-mobile	pvp-duels-arena	FULL	lib/src/model/tournament	Arena tournaments and challenges between players
+lichess-org-mobile	guilds-clans	PARTIAL	lib/src/model/team	Teams: join, browse, team messaging
+lichess-org-mobile	tutorial	FULL	lib/src/model/learn	Interactive chess lessons for beginners
+lichess-org-mobile	replay-spectate	FULL	lib/src/model/tv	Watch live games and broadcasts
+lichess-org-mobile	multiplayer-netcode	FULL	lib/src/network	Websocket and HTTP clients for real-time play
+lichess-org-mobile	localisation	FULL	l10n.yaml	Many-language translations via Crowdin and ARB files
+lichess-org-mobile	save-load	PARTIAL	lib/src/db	Local database storing games and settings
+lichess-org-mobile	puzzles-training	FULL	lib/src/model/puzzle	Chess puzzle engine with themes and streaks
+lichess-org-mobile	analysis-engine	FULL	lib/src/model/engine	Local Stockfish game analysis
+lightvector-KataGo	NONE	NONE	.	Go-playing neural net engine; no game systems beyond the board game itself
+lincity-ng-lincity-ng	housing-building	FULL	src/lincity/modules	City buildings and zones placed by player
+lincity-ng-lincity-ng	minimap-maps	FULL	src/lincity-ng/MiniMap.cpp	Minimap widget of city
+lincity-ng-lincity-ng	save-load	FULL	src/lincity/xmlloadsave.cpp	XML save and load of city state
+lincity-ng-lincity-ng	localisation	FULL	data/locale	PO translations for many languages
+lincity-ng-lincity-ng	tutorial	FULL	data/help/en/tutorial.xml	In-game help pages with tutorial text
+lincity-ng-lincity-ng	mounts-vehicles	PARTIAL	src/lincity/Vehicles.cpp	Decorative cars and trains on transport tiles
+lincity-ng-lincity-ng	city-simulation	FULL	src/lincity/simulate.cpp	Core economic city simulation tick
+lincity-ng-lincity-ng	resource-logistics	FULL	src/lincity/transport.cpp	Commodity transport network between buildings
+LostCityRS-Engine-TS	multiplayer-netcode	FULL	src/network	RS2 client protocol, login and world servers
+LostCityRS-Engine-TS	modding-scripting	FULL	src/engine/script	RuneScript bytecode VM driving content
+LostCityRS-Engine-TS	chat	PARTIAL	src/engine/entity/ChatModes.ts	Public, private and clan chat modes with filter
+LostCityRS-Engine-TS	skills-professions	PARTIAL	src/engine/entity/PlayerStat.ts	Player stats and skill xp tracking
+LostCityRS-Engine-TS	save-load	PARTIAL	src/engine/entity/PlayerLoading.ts	Loads and saves player data to database
+LostCityRS-Engine-TS	banking-storage	PARTIAL	src/engine/Inventory.ts	Inventory containers used for bank and equipment
+LostCityRS-Engine-TS	character-creation	PARTIAL	src/network/game/client/model/IdkSaveDesign.ts	Appearance design packet for new player
+LostCityRS-Engine-TS	pathfinding	FULL	src/engine/routefinder	Route finding with collision flags
+LostCityRS-Engine-TS	friends-list	FULL	src/server/friend	Friend and ignore list server
+OpenRA-OpenRA	housing-building	FULL	OpenRA.Mods.Common/Traits/Buildings	Base building placement and construction
+OpenRA-OpenRA	chat	FULL	mods/cnc/chrome/ingame-chat.yaml	In-game chat UI
+OpenRA-OpenRA	factions-reputation	PARTIAL	OpenRA.Game/Traits/World/Faction.cs	Playable factions with differing rules
+OpenRA-OpenRA	fog-of-war	FULL	OpenRA.Mods.Common/Traits/CreatesShroud.cs	Shroud and fog reveal traits
+OpenRA-OpenRA	minimap-maps	FULL	OpenRA.Mods.Common/Traits/Radar	Radar minimap
+OpenRA-OpenRA	procedural-generation	FULL	OpenRA.Mods.Common/MapGenerator	Random map generators
+OpenRA-OpenRA	modding-scripting	FULL	OpenRA.Mods.Common/Scripting	Lua mission scripting and yaml-based mods
+OpenRA-OpenRA	multiplayer-netcode	FULL	OpenRA.Game/Network	Lockstep netcode and dedicated server
+OpenRA-OpenRA	quests	PARTIAL	mods/ra/missions.yaml	Campaign missions list
+OpenRA-OpenRA	replay-spectate	FULL	mods/cnc/chrome/replaybrowser.yaml	Replay browser and observer UI
+OpenRA-OpenRA	save-load	PARTIAL	OpenRA.Game/Network/GameSave.cs	Saved games for skirmish and missions
+OpenRA-OpenRA	stealth	FULL	OpenRA.Mods.Common/Traits/Cloak.cs	Cloak and disguise traits
+OpenRA-OpenRA	status-effects	FULL	OpenRA.Mods.Common/Traits/Conditions	Conditions granting unit modifiers
+OpenRA-OpenRA	classes-levels	PARTIAL	OpenRA.Mods.Common/Traits/GainsExperience.cs	Unit veterancy ranks
+OpenRA-OpenRA	magic-spells	PARTIAL	OpenRA.Mods.Common/Traits/SupportPowers	Support powers like airstrikes and nukes
+OpenRA-OpenRA	mounts-vehicles	FULL	OpenRA.Mods.Common/Traits/Cargo.cs	Transports, carryalls and passengers
+OpenRA-OpenRA	localisation	FULL	mods/common/fluent	Fluent translation files
+OpenRA-OpenRA	ai-bots	FULL	OpenRA.Mods.Common/Traits/BotModules	Skirmish AI bot modules
+OpenRA-OpenRA	resource-harvesting	FULL	OpenRA.Mods.Common/Traits/Harvester.cs	Harvesters collecting resources for economy
+OpenRA-OpenRA	power-grid	FULL	OpenRA.Mods.Common/Traits/Power	Power production and low-power effects
+OpenRCT2-OpenRCT2	housing-building	FULL	src/openrct2-ui/ride/Construction.cpp	Ride and track construction tools
+OpenRCT2-OpenRCT2	chat	FULL	src/openrct2-ui/interface/Chat.cpp	Multiplayer chat
+OpenRCT2-OpenRCT2	weather	FULL	src/openrct2/world/Weather.cpp	Weather states affecting guests
+OpenRCT2-OpenRCT2	economy-sinks	FULL	src/openrct2/management/Finance.cpp	Loans, expenses, park finance
+OpenRCT2-OpenRCT2	achievements	PARTIAL	src/openrct2/management/Award.cpp	Park awards
+OpenRCT2-OpenRCT2	quests	PARTIAL	src/openrct2/scenario/ScenarioObjective.cpp	Scenario objectives
+OpenRCT2-OpenRCT2	procedural-generation	FULL	src/openrct2/world/map_generator	Random terrain generator
+OpenRCT2-OpenRCT2	modding-scripting	FULL	src/openrct2/scripting	Duktape plugin API with hooks
+OpenRCT2-OpenRCT2	multiplayer-netcode	FULL	src/openrct2/network	Client-server multiplayer
+OpenRCT2-OpenRCT2	replay-spectate	FULL	src/openrct2/ReplayManager.cpp	Record and replay game
+OpenRCT2-OpenRCT2	save-load	FULL	src/openrct2/park	Park file import and export
+OpenRCT2-OpenRCT2	localisation	FULL	data/language	Many language files
+OpenRCT2-OpenRCT2	mounts-vehicles	FULL	src/openrct2/ride/Vehicle.cpp	Coaster and ride vehicle physics
+OpenRCT2-OpenRCT2	minimap-maps	FULL	src/openrct2-ui/windows/Map.cpp	Park map window
+OpenRCT2-OpenRCT2	research	FULL	src/openrct2/management/Research.cpp	Ride and scenery research
+OpenRCT2-OpenRCT2	guest-simulation	FULL	src/openrct2/entity/Guest.cpp	Guest needs and behaviours
+OpenRCT2-OpenRCT2	staff-management	FULL	src/openrct2/entity/Staff.cpp	Hire handymen, mechanics, entertainers
+OpenRCT2-OpenRCT2	marketing	FULL	src/openrct2/management/Marketing.cpp	Advertising campaigns
+OpenTTD-OpenTTD	housing-building	FULL	src/rail_cmd.cpp	Rail, road, station construction commands
+OpenTTD-OpenTTD	chat	FULL	src/network/network_chat_gui.cpp	Multiplayer chat
+OpenTTD-OpenTTD	economy-sinks	FULL	src/economy.cpp	Company finance, loans, cargo payment
+OpenTTD-OpenTTD	leaderboards	FULL	src/highscore.cpp	Highscores and league tables
+OpenTTD-OpenTTD	mounts-vehicles	FULL	src/train.h	Trains, road vehicles, ships, aircraft
+OpenTTD-OpenTTD	modding-scripting	FULL	src/script	Squirrel AI and GameScript APIs
+OpenTTD-OpenTTD	multiplayer-netcode	FULL	src/network	Client-server multiplayer
+OpenTTD-OpenTTD	save-load	FULL	src/saveload	Savegame serialisation
+OpenTTD-OpenTTD	localisation	FULL	src/lang	Many language strings
+OpenTTD-OpenTTD	minimap-maps	FULL	src/smallmap_gui.cpp	Small map window
+OpenTTD-OpenTTD	procedural-generation	FULL	src/genworld.cpp	World generation
+OpenTTD-OpenTTD	quests	PARTIAL	src/goal.cpp	Goals and story pages from GameScript
+OpenTTD-OpenTTD	ai-opponents	FULL	src/ai	AI companies
+OpenTTD-OpenTTD	town-growth	FULL	src/town_cmd.cpp	Towns grow and accept cargo
+OpenTTD-OpenTTD	industry-chains	FULL	src/industry_cmd.cpp	Industries produce and consume cargo
+OpenTTD-OpenTTD	subsidies	FULL	src/subsidy.cpp	Route subsidies
+OpenTTD-OpenTTD	vehicle-orders	FULL	src/order_cmd.cpp	Orders and timetables
+OpenXcom-OpenXcom	crafting	FULL	src/Mod/RuleManufacture.cpp	Workshop manufacturing of items
+OpenXcom-OpenXcom	housing-building	FULL	src/Mod/RuleBaseFacility.cpp	Base facility construction
+OpenXcom-OpenXcom	quests	PARTIAL	src/Mod/RuleAlienMission.cpp	Alien missions and mission sites
+OpenXcom-OpenXcom	minimap-maps	FULL	src/Battlescape/MiniMapView.cpp	Battlescape minimap
+OpenXcom-OpenXcom	procedural-generation	FULL	src/Battlescape/BattlescapeGenerator.cpp	Random battle maps from blocks
+OpenXcom-OpenXcom	save-load	FULL	src/Savegame/SavedGame.cpp	Savegame serialisation
+OpenXcom-OpenXcom	modding-scripting	FULL	src/Mod/Mod.cpp	Ruleset loading, mod overrides, scripts
+OpenXcom-OpenXcom	localisation	FULL	bin/common/Language	Language files
+OpenXcom-OpenXcom	mounts-vehicles	FULL	src/Savegame/Craft.cpp	Craft and ground vehicles
+OpenXcom-OpenXcom	achievements	FULL	src/Mod/RuleCommendations.cpp	Soldier commendations
+OpenXcom-OpenXcom	classes-levels	PARTIAL	src/Mod/RuleSoldier.cpp	Soldier ranks and stats
+OpenXcom-OpenXcom	permadeath	PARTIAL	src/Savegame/SoldierDeath.cpp	Soldiers killed stay dead
+OpenXcom-OpenXcom	research	FULL	src/Mod/RuleResearch.cpp	Research tree
+OpenXcom-OpenXcom	tactical-combat	FULL	src/Battlescape	Turn-based tactical combat
+OpenXcom-OpenXcom	encyclopedia	FULL	src/Ufopaedia	In-game Ufopaedia
+OpenXcom-OpenXcom	banking-storage	PARTIAL	src/Savegame/ItemContainer.cpp	Base item stores
+orbitersim-orbiter	modding-scripting	FULL	Script	Lua scripting and plugin SDK
+orbitersim-orbiter	replay-spectate	FULL	Src/Orbiter/FlightRecorder.cpp	Flight recording and playback
+orbitersim-orbiter	tutorial	DATA-ONLY	Scenarios/Tutorials	Tutorial scenario files
+orbitersim-orbiter	minimap-maps	FULL	Src/Orbiter/MfdMap.cpp	Map MFD display
+orbitersim-orbiter	mounts-vehicles	FULL	Src/Vessel	Spacecraft vessel modules
+orbitersim-orbiter	save-load	PARTIAL	Scenarios	Scenario files and quicksave
+orbitersim-orbiter	orbital-mechanics	FULL	Src/Orbiter/Astro.cpp	Orbital dynamics and gravity
+orbitersim-orbiter	docking	FULL	Src/Orbiter/MfdDocking.cpp	Docking instrument MFD
+otland-forgottenserver	housing-building	FULL	src/house.cpp	Buyable houses with tiles and doors
+otland-forgottenserver	guilds-clans	FULL	src/guild.cpp	Guild ranks and membership
+otland-forgottenserver	parties-groups	FULL	src/party.cpp	Party with shared exp
+otland-forgottenserver	chat	FULL	src/chat.cpp	Chat channels
+otland-forgottenserver	auction-market	FULL	src/iomarket.cpp	Market offers database
+otland-forgottenserver	banking-storage	FULL	src/depotchest.cpp	Depot chests and lockers
+otland-forgottenserver	quests	FULL	data/scripts/quests	Quest scripts
+otland-forgottenserver	dialogue-trees	FULL	src/npc.cpp	NPC keyword conversations
+otland-forgottenserver	classes-levels	FULL	src/vocation.cpp	Vocations and levels
+otland-forgottenserver	fishing	PARTIAL	data/actions/scripts/tools/fishing.lua	Fishing rod action script
+otland-forgottenserver	cooking	PARTIAL	data/actions/scripts/others/food.lua	Food eating and regeneration
+otland-forgottenserver	mounts-vehicles	FULL	src/mounts.cpp	Player mounts
+otland-forgottenserver	bosses-raids	FULL	data/scripts/globalevents/raids	Scheduled raid spawns
+otland-forgottenserver	magic-spells	FULL	src/spells.cpp	Spells and runes
+otland-forgottenserver	status-effects	FULL	src/condition.cpp	Conditions like poison and haste
+otland-forgottenserver	modding-scripting	FULL	src/luascript.cpp	Lua API for scripts
+otland-forgottenserver	save-load	FULL	src/iomapserialize.cpp	Map and player persistence
+otland-forgottenserver	multiplayer-netcode	FULL	src/protocolgame.cpp	Game protocol server
+otland-forgottenserver	leaderboards	PARTIAL	data/scripts/network/highscores.lua	Highscores via lua
+otland-forgottenserver	weapons-combat	FULL	src/weapons.cpp	Weapons and combat formulae
+PixelGuys-Cubyz	crafting	FULL	src/items/recipes.zig	Recipe system
+PixelGuys-Cubyz	chat	FULL	src/gui/windows/chat.zig	Chat window and commands
+PixelGuys-Cubyz	banking-storage	FULL	src/gui/windows/chest.zig	Chest blocks with inventory
+PixelGuys-Cubyz	procedural-generation	FULL	src/server/terrain	Terrain, biome and cave generation
+PixelGuys-Cubyz	modding-scripting	FULL	mods	Zig mods and zon asset packs
+PixelGuys-Cubyz	save-load	FULL	src/server/storage.zig	World chunk storage
+PixelGuys-Cubyz	multiplayer-netcode	FULL	src/network.zig	Client-server networking
+PixelGuys-Cubyz	day-night	PARTIAL	src/server/command/time.zig	Game time and time command
+PixelGuys-Cubyz	procedural-tools	FULL	src/proceduralItem	Tools built from parts
+PixelGuys-Cubyz	blueprints	FULL	src/blueprint.zig	Structure blueprints
+PixelGuys-Cubyz	permissions	FULL	src/server/permission.zig	Permission groups
+pmbstyle-L2Solo	crafting	FULL	src/GameServer/Crafting	Recipes and crafting
+pmbstyle-L2Solo	guilds-clans	FULL	src/GameServer/Clan	Clans, halls, warehouses
+pmbstyle-L2Solo	housing-building	PARTIAL	src/GameServer/ClanHall	Clan halls
+pmbstyle-L2Solo	parties-groups	FULL	src/GameServer/Bot/AI/PartyPulling.js	Parties with bot party AI
+pmbstyle-L2Solo	chat	FULL	src/GameServer/Bot/AI/BotChatText.js	Chat with bot chatter
+pmbstyle-L2Solo	trading-player	FULL	src/GameServer/PrivateStore.js	Private store and AFK trade
+pmbstyle-L2Solo	banking-storage	FULL	src/GameServer/Warehouse	Warehouse storage
+pmbstyle-L2Solo	quests	FULL	src/GameServer/Quest	Quest scripts
+pmbstyle-L2Solo	dialogue-trees	FULL	data/Html	NPC html dialogs
+pmbstyle-L2Solo	skills-professions	FULL	src/GameServer/Skills	Skill tree and learning
+pmbstyle-L2Solo	pets-companions	FULL	src/GameServer/Pets	Pets and summons
+pmbstyle-L2Solo	mounts-vehicles	PARTIAL	src/GameServer/Pets/PetMount.js	Pet mounting
+pmbstyle-L2Solo	pvp-duels-arena	FULL	src/GameServer/World/ArenaDuelService.js	Arena duels and PvP flag
+pmbstyle-L2Solo	bosses-raids	FULL	src/GameServer/RaidBoss	Raid boss spawns
+pmbstyle-L2Solo	day-night	FULL	src/GameServer/World/DayNightSpawnManager.js	Day and night spawns
+pmbstyle-L2Solo	classes-levels	FULL	src/GameServer/ClassProgression.js	Class progression
+pmbstyle-L2Solo	character-creation	FULL	src/GameServer/Network/Request/CreateNewChar.js	New character creation
+pmbstyle-L2Solo	status-effects	FULL	src/GameServer/Effects	Buff catalog and ticker
+pmbstyle-L2Solo	economy-sinks	FULL	data/Admin/Shop	NPC shop data
+pmbstyle-L2Solo	multiplayer-netcode	FULL	src/GameServer/Network	L2 protocol server
+pmbstyle-L2Solo	save-load	FULL	src/GameServer/Persistence	Database persistence
+pmbstyle-L2Solo	leaderboards	PARTIAL	src/WorldObserver/public/leaderboards.js	Observer leaderboard page
+pmbstyle-L2Solo	magic-spells	FULL	src/GameServer/Skills	Spell skills
+pmbstyle-L2Solo	ai-bots	FULL	src/GameServer/Bot	Bot population
+pmbstyle-L2Solo	farming-gardening	PARTIAL	src/GameServer/Manor	Manor crop system
+opentibiabr-otclient	auction-market	FULL	modules/game_market	Market UI
+opentibiabr-otclient	banking-storage	FULL	modules/game_stash	Stash UI
+opentibiabr-otclient	bosses-raids	PARTIAL	modules/game_cyclopedia/tab/bosstiary	Bosstiary tracker UI
+opentibiabr-otclient	quests	FULL	modules/game_questlog	Quest log UI
+opentibiabr-otclient	trading-player	FULL	modules/game_playertrade	Player trade UI
+opentibiabr-otclient	skills-professions	FULL	modules/game_skills	Skills panel
+opentibiabr-otclient	minimap-maps	FULL	modules/game_minimap	Minimap module
+opentibiabr-otclient	magic-spells	FULL	modules/game_spelllist	Spell list UI
+opentibiabr-otclient	mounts-vehicles	FULL	modules/game_playermount	Mount toggling
+opentibiabr-otclient	tutorial	FULL	modules/game_tutorial	Tutorial module
+opentibiabr-otclient	leaderboards	FULL	modules/game_highscore	Highscores UI
+opentibiabr-otclient	localisation	FULL	data/locales	Locale files
+opentibiabr-otclient	modding-scripting	FULL	mods	Lua modules and bot mods
+opentibiabr-otclient	multiplayer-netcode	FULL	src/client/protocolgame.h	Game protocol client
+opentibiabr-otclient	housing-building	PARTIAL	src/client/houses.h	House data handling
+opentibiabr-otclient	chat	FULL	modules/game_console	Chat console
+opentibiabr-otclient	economy-sinks	PARTIAL	modules/game_shop	In-game store
+opentibiabr-otclient	loot-rarity-affixes	PARTIAL	modules/game_quickloot	Quickloot and loot splitter
+opentibiabr-otclient	auto-walk-pathing	FULL	modules/game_walk	Walking and pathing
+pokerth-pokerth	multiplayer-netcode	FULL	src/net	Online poker server and client
+pokerth-pokerth	chat	FULL	src/chatcleaner	Table chat with chat cleaner
+pokerth-pokerth	leaderboards	FULL	src/gui/qt6-qml/pages/RankingPage.qml	Ranking pages
+pokerth-pokerth	character-creation	PARTIAL	src/core/avatarmanager.h	Player avatars
+pokerth-pokerth	replay-spectate	FULL	src/engine/local_engine/replay.cpp	Hand replay
+pokerth-pokerth	localisation	FULL	data/translations	Translations
+pokerth-pokerth	ai-bots	FULL	src/pokerth_bot.cpp	Bot players
+pokerth-pokerth	poker-engine	FULL	src/engine	Texas hold'em rules engine
+pokerth-pokerth	game-lobby	FULL	src/net/serverlobbythread.cpp	Lobby and game creation
+luanti-org-luanti	crafting	FULL	src/craftdef.cpp	Craft recipe definitions
+luanti-org-luanti	chat	FULL	src/chat.cpp	Chat and commands
+luanti-org-luanti	day-night	FULL	src/daynightratio.h	Day night ratio
+luanti-org-luanti	modding-scripting	FULL	builtin	Lua mod API
+luanti-org-luanti	procedural-generation	FULL	src/mapgen	Map generators
+luanti-org-luanti	multiplayer-netcode	FULL	src/network	Client-server networking
+luanti-org-luanti	save-load	FULL	src/database	Map and player databases
+luanti-org-luanti	localisation	FULL	src/translation.h	Translation support
+luanti-org-luanti	minimap-maps	FULL	src/client/minimap.cpp	Minimap
+luanti-org-luanti	banking-storage	PARTIAL	src/inventory.cpp	Inventory and node storage
+luanti-org-luanti	dungeons-instances	PARTIAL	src/mapgen/dungeongen.cpp	Dungeon generation
+luanti-org-luanti	pathfinding	FULL	src/pathfinder.cpp	Path finding
+miki151-keeperrl	achievements	FULL	achievement_info.h	Achievements with Steam
+miki151-keeperrl	character-creation	FULL	avatar_info.cpp	Avatar selection
+miki151-keeperrl	crafting	FULL	workshops.cpp	Workshops making items
+miki151-keeperrl	day-night	FULL	sunlight_info.cpp	Sunlight cycle
+miki151-keeperrl	fog-of-war	FULL	visibility_map.cpp	Visibility map
+miki151-keeperrl	housing-building	FULL	zones.cpp	Dungeon rooms and furniture
+miki151-keeperrl	leaderboards	FULL	highscores.cpp	Highscores
+miki151-keeperrl	localisation	FULL	translations.cpp	Translations
+miki151-keeperrl	magic-spells	FULL	spell.cpp	Spells and schools
+miki151-keeperrl	minimap-maps	FULL	minimap_gui.cpp	Minimap
+miki151-keeperrl	modding-scripting	FULL	mod_info.h	Mods and workshop
+miki151-keeperrl	pets-companions	PARTIAL	companion_info.h	Companions
+miki151-keeperrl	procedural-generation	FULL	level_maker.cpp	Level generation
+miki151-keeperrl	save-load	FULL	saved_game_info.h	Save games
+miki151-keeperrl	siege-war	FULL	collective_attack.cpp	Enemy attacks on dungeon
+miki151-keeperrl	status-effects	FULL	buff_info.h	Buffs and lasting effects
+miki151-keeperrl	tutorial	FULL	tutorial.cpp	Tutorial
+miki151-keeperrl	factions-reputation	PARTIAL	tribe.cpp	Tribes and alignment
+miki151-keeperrl	research	FULL	technology.cpp	Technology research
+miki151-keeperrl	immigration	FULL	immigration.cpp	Immigrants join
+miki151-keeperrl	minion-ai	FULL	monster_ai.cpp	Minion AI and tasks
+ModernUO	crafting	FULL	Projects/UOContent/Engines/Craft	Crafting by skill
+ModernUO	housing-building	FULL	Projects/UOContent/Multis/Houses	Player houses
+ModernUO	guilds-clans	FULL	Projects/Server/Guild.cs	Guilds
+ModernUO	parties-groups	FULL	Projects/Server/Party.cs	Parties
+ModernUO	chat	FULL	Projects/UOContent/Engines/Chat	Chat channels
+ModernUO	trading-player	FULL	Projects/Server/SecureTrade.cs	Secure trade
+ModernUO	quests	FULL	Projects/UOContent/Engines/Quests	Quest engines
+ModernUO	skills-professions	FULL	Projects/Server/Skills.cs	Skills
+ModernUO	fishing	FULL	Projects/UOContent/Items/Skill Items/Fishing	Fishing
+ModernUO	farming-gardening	FULL	Projects/UOContent/Engines/Plants	Plant growing
+ModernUO	cooking	FULL	Projects/UOContent/Items/Food	Food items
+ModernUO	weather	FULL	Projects/UOContent/Misc/Weather.cs	Weather
+ModernUO	mounts-vehicles	FULL	Projects/UOContent/Mobiles/Animals/Mounts	Mounts
+ModernUO	pvp-duels-arena	FULL	Projects/UOContent/Engines/ConPVP	Duels
+ModernUO	bosses-raids	FULL	Projects/UOContent/Engines/CannedEvil	Champion spawns
+ModernUO	dungeons-instances	PARTIAL	Projects/UOContent/Regions/DungeonRegion.cs	Dungeon regions
+ModernUO	factions-reputation	FULL	Projects/UOContent/Engines/Factions	Factions
+ModernUO	stealth	FULL	Projects/UOContent/Skills/Stealth.cs	Stealth skill
+ModernUO	magic-spells	FULL	Projects/UOContent/Spells	Spells
+ModernUO	status-effects	FULL	Projects/Server/Poison.cs	Poison
+ModernUO	character-creation	FULL	Projects/UOContent/Engines/Character Creation	Char creation
+ModernUO	loot-rarity-affixes	FULL	Projects/UOContent/Misc/LootPack.cs	Loot packs
+ModernUO	multiplayer-netcode	FULL	Projects/Server/Network	Network
+ModernUO	save-load	FULL	Projects/Server/Serialization	World saves
+ModernUO	modding-scripting	PARTIAL	Distribution/Data	Json data, C# scripts
+ModernUO	localisation	FULL	Projects/Server/Localization	Cliloc
+ModernUO	pets-companions	FULL	Projects/UOContent/Mobiles/Monsters/Summons	Pets
+ModernUO	treasure-hunting	FULL	Projects/UOContent/Items/TreasureChests	Treasure maps
+ModernUO	spawners	FULL	Projects/UOContent/Engines/Spawners	Spawn
+MovingBlocks-Terasology	multiplayer-netcode	FULL	engine/src/main/java/org/terasology/engine/network	Client server replication
+MovingBlocks-Terasology	save-load	FULL	engine/src/main/java/org/terasology/engine/persistence	Chunk save
+MovingBlocks-Terasology	replay-spectate	FULL	engine/src/main/java/org/terasology/engine/recording	Record and replay
+MovingBlocks-Terasology	localisation	FULL	engine/src/main/java/org/terasology/engine/i18n	i18n
+MovingBlocks-Terasology	procedural-generation	FULL	engine/src/main/java/org/terasology/engine/world/generation	World gen
+MovingBlocks-Terasology	day-night	PARTIAL	engine/src/main/java/org/terasology/engine/world/time	World time
+MovingBlocks-Terasology	modding-scripting	FULL	engine/src/main/java/org/terasology/engine/core	Module system
+MovingBlocks-Terasology	entity-component-system	FULL	engine/src/main/java/org/terasology/engine/entitySystem	ECS
+NetHack-NetHack	quests	FULL	src/quest.c	Role quests
+NetHack-NetHack	skills-professions	FULL	include/skills.h	Weapon skills
+NetHack-NetHack	magic-spells	FULL	src/spell.c	Spells
+NetHack-NetHack	pets-companions	FULL	src/dog.c	Pets
+NetHack-NetHack	dungeons-instances	FULL	src/dungeon.c	Dungeon branches
+NetHack-NetHack	procedural-generation	FULL	src/mklev.c	Level generation
+NetHack-NetHack	save-load	FULL	src/save.c	Save
+NetHack-NetHack	permadeath	FULL	src/end.c	Death ends game
+NetHack-NetHack	classes-levels	FULL	src/role.c	Roles
+NetHack-NetHack	character-creation	FULL	src/u_init.c	Starting inventory
+NetHack-NetHack	status-effects	FULL	src/timeout.c	Timed effects
+NetHack-NetHack	leaderboards	FULL	src/topten.c	High scores
+NetHack-NetHack	fog-of-war	FULL	src/vision.c	Vision
+NetHack-NetHack	modding-scripting	FULL	nhlua	Lua
+NetHack-NetHack	tutorial	FULL	dat/tut-1.lua	Tutorial level
+NetHack-NetHack	mounts-vehicles	FULL	src/steed.c	Riding
+NetHack-NetHack	bosses-raids	PARTIAL	src/wizard.c	Wizard
+NetHack-NetHack	cooking	PARTIAL	src/eat.c	Eating
+NetHack-NetHack	economy-sinks	PARTIAL	src/shk.c	Shops
+NetHack-NetHack	achievements	PARTIAL	src/insight.c	Achievements
+NetHack-NetHack	religion-prayer	FULL	src/pray.c	Prayer
+NetHack-NetHack	polymorph	FULL	src/polyself.c	Polymorph
+NetHack-NetHack	engraving	FULL	src/engrave.c	Engraving
+NetHack-NetHack	traps	FULL	src/trap.c	Traps
+diasurgical-DevilutionX	banking-storage	FULL	Source/qol/stash.cpp	Stash
+diasurgical-DevilutionX	chat	PARTIAL	Source/qol/chatlog.cpp	Chat log
+diasurgical-DevilutionX	classes-levels	FULL	Source/player.cpp	Classes
+diasurgical-DevilutionX	dialogue-trees	PARTIAL	Source/towners.cpp	Towner talk
+diasurgical-DevilutionX	economy-sinks	FULL	Source/stores.cpp	Shops
+diasurgical-DevilutionX	multiplayer-netcode	FULL	Source/dvlnet	Netplay
+diasurgical-DevilutionX	parties-groups	PARTIAL	Source/panels/partypanel.cpp	Party panel
+diasurgical-DevilutionX	quests	FULL	Source/quests.cpp	Quests
+diasurgical-DevilutionX	minimap-maps	FULL	Source/automap.cpp	Automap
+diasurgical-DevilutionX	magic-spells	FULL	Source/spells.cpp	Spells
+diasurgical-DevilutionX	save-load	FULL	Source/loadsave.cpp	Saves
+diasurgical-DevilutionX	procedural-generation	FULL	Source/levels	Level gen
+diasurgical-DevilutionX	dungeons-instances	FULL	Source/levels	Dungeon levels
+diasurgical-DevilutionX	modding-scripting	FULL	Source/lua	Lua
+diasurgical-DevilutionX	localisation	FULL	Translations	Translations
+diasurgical-DevilutionX	replay-spectate	PARTIAL	Source/engine/demomode.cpp	Demo mode
+diasurgical-DevilutionX	pvp-duels-arena	PARTIAL	assets/arena	Arena
+diasurgical-DevilutionX	fog-of-war	PARTIAL	Source/vision.cpp	Vision
+diasurgical-DevilutionX	loot-rarity-affixes	FULL	Source/items.cpp	Magic and unique items
+nkzw-tech-athena-crisis	multiplayer-netcode	PARTIAL	apollo/socket	Socket rooms
+nkzw-tech-athena-crisis	replay-spectate	FULL	hera/replay	Replay
+nkzw-tech-athena-crisis	fog-of-war	FULL	athena/Vision.tsx	Vision
+nkzw-tech-athena-crisis	procedural-generation	FULL	athena/generator	Generator
+nkzw-tech-athena-crisis	skills-professions	PARTIAL	athena/info/Skill.tsx	Unit skills
+nkzw-tech-athena-crisis	quests	PARTIAL	athena/Objectives.tsx	Objectives
+nkzw-tech-athena-crisis	dialogue-trees	PARTIAL	hera/campaign/LevelDialogue.tsx	Dialogue
+nkzw-tech-athena-crisis	localisation	FULL	i18n	i18n
+nkzw-tech-athena-crisis	housing-building	FULL	athena/map/Building.tsx	Buildings
+nkzw-tech-athena-crisis	achievements	PARTIAL	hera/ui/PlayerAchievement.tsx	Achievements
+nkzw-tech-athena-crisis	ai-opponent	FULL	dionysus	AI
+nkzw-tech-athena-crisis	map-editor	FULL	hera/editor	Editor
+nkzw-tech-athena-crisis	roguelike-relics	PARTIAL	athena/info/RogueRelic.tsx	Relics
+nkzw-tech-athena-crisis	turn-based-tactics	FULL	apollo/Action.tsx	Actions

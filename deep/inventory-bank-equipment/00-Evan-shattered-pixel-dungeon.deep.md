@@ -1,6 +1,6 @@
 # 00-Evan-shattered-pixel-dungeon (inventory-bank-equipment, cell 9)
 
-Donor: /mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/items/Item.java | Licence: GPL-3 | Java | symbol Item.collect / doPickUp / doDrop / split
+Donor: /mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/items/Item.java | Licence: GPL-3.0 per LICENSE.txt | Java | symbol Item.collect / doPickUp / doDrop / split
 Licence note: GPL-3. CLEAN-ROOM sketch only.
 
 ## 1. Mechanism
@@ -8,7 +8,7 @@ Licence note: GPL-3. CLEAN-ROOM sketch only.
 - Every item lives in exactly one container: the hero's backpack or a nested bag. `Item.collect(Bag container)` (Item.java line 206) is the one place that puts an item into a container.
 - Inputs: the item (with its quantity), the target container. Output: true if the item (or all of it, after merging) ended up in a container, false if the container refused it.
 - Order of the collect: a zero-quantity item is "collected" trivially. An item already in the container is a no-op. Then it tries each nested bag that can hold it, and returns on the first success. If the container cannot hold it, it fails. If the item is stackable, it merges into the first same-class stack (Item.merge, L198: adds quantity, zeroes the source) and also fires badge, talent, catalog and quickslot updates (side effects, not modelled). Otherwise it appends, replaces any quickslot placeholder and re-sorts the list.
-- `Bag.canHold` (bags/Bag.java line 193): a bag accepts a new item when it has a free slot (default capacity 20), or the item is a bag, or the item is stackable and a same-class stack already exists. While the owner has the lost-inventory debuff (and the bag is not loading), only items marked to survive are accepted. That check comes first.
+- `Bag.canHold` (bags/Bag.java line 193): a bag accepts a new item when it has a free slot (default capacity 20 from `Bag.capacity()`, line 54, which subclasses can override), or the item is a bag, or the item is stackable and a same-class stack already exists. While the owner has the lost-inventory debuff (and the bag is not loading), only items marked to survive are accepted. That check comes first.
 - `doPickUp` (line 125) collects into the backpack and then spends the pickup delay as a turn cost. `doDrop` (line 138) spends TIME_TO_DROP (1.0, L68), then detaches the whole stack from the backpack and drops it on the hero's tile.
 - `split(amount)` (line 287) makes a copy through the save bundle, sets its quantity to `amount`, and subtracts it from the original. It returns null if the amount is zero or negative or at least the whole stack (or if the new instance cannot be created).
 - Runs on the player's action (pick up, drop, merge). In the opened code, slot limits are enforced in Bag.canHold and stack merging in collect; no per-stack size cap appears in either.
@@ -31,7 +31,7 @@ Licence note: GPL-3. CLEAN-ROOM sketch only.
 | Single container of slots with a per-slot capacity; stackables merge into an existing stack before taking a slot | Default capacity 20 slots (theirs) |
 | Nested containers tried first, in order, first success wins | Bags can hold bags (theirs) |
 | Split by quantity; the split can never take the whole stack | Split bounds: greater than zero, less than whole (theirs) |
-| Action costs a turn (pickup and drop) | Drop time 1.0 (L68, theirs); the pickup delay value (pickupDelay(), L704) is not read |
+| Action costs a turn (pickup and drop) | Drop time 1.0 (TIME_TO_DROP, L68, theirs); pickup delay 1.0 (TIME_TO_PICK_UP, L67, returned by pickupDelay(), L704, theirs) |
 | A debuff that blocks new items unless flagged to survive | Lost-inventory buff (theirs) |
 
 ## 4. TypeScript sketch

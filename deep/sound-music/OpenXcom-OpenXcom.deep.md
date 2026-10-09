@@ -1,11 +1,11 @@
 # OpenXcom-OpenXcom (sound-music, cell 15)
 
-Donor: /mnt/frankendom-donors/OpenXcom-OpenXcom/src/Engine/Music.cpp | Licence: GPL-3 | C++ | symbol Music::play / stop
+Donor: /mnt/frankendom-donors/OpenXcom-OpenXcom/src/Engine/Music.cpp | Licence: GPL-3.0-or-later per Music.cpp header | C++ | symbol Music::play / stop
 
 ## 1. Mechanism
 - A thin wrapper over the SDL mixer's music channel. A Music object holds one loaded track, from a file (52-62) or from memory (69-80); both throw an exception if SDL cannot load it.
 - play(loop) (86-101): if the game is not muted and a track is loaded, it stops the object's current playback first, then starts the loaded track with the loop count (-1 means forever). A failed start is logged as a warning.
-- stop() (106-116): if not muted, it calls `func_mute()` (the Adlib synth's instant stop: `adlplayer.cpp` 529-534 zeroes polyphony, clears the playing flag and resets the Adlib channels), clears the mixer's music hook and halts the music.
+- stop() (106-116): if not muted, it calls `func_mute()` (the Adlib synth's instant stop: `Engine/Adlib/adlplayer.cpp` 529-534 zeroes polyphony, clears the playing flag and resets the Adlib channels), clears the mixer's music hook and halts the music.
 - pause and resume: pause halts the mixer's music. If the current music type is "none", which means the synthesised Adlib player is driving it, the hook is cleared; resume restores the hook when needed.
 - isPlaying() (151-160): reports `Mix_Playing(-1) != 0` (any mixer channel, not only music), and false when muted.
 - Inputs: a track (file or bytes), a loop count, the mute option. Output: music starts or stops. No per-tick logic; the caller decides when.
@@ -59,8 +59,8 @@ class Music {
 - Brief rule served: (category default, not per-cell) zone-schema rule; rules 7-9 n/a
 
 ## 6. Gaps and risks
-- `func_mute` only resets the Adlib synth (`adlplayer.cpp` 529-534); it is irrelevant to Frankendom.
-- `Music.cpp` has no crossfade or fade-out (the Adlib player has its own volume fade, `adlplayer.cpp` 537-, not read in full). Frankendom music transitions need their own design.
+- `func_mute` only resets the Adlib synth (`Engine/Adlib/adlplayer.cpp` 529-534); it is irrelevant to Frankendom.
+- `Music.cpp` has no crossfade or fade-out (the Adlib player has its own volume fade, `Engine/Adlib/adlplayer.cpp` 537-, not read in full). Frankendom music transitions need their own design.
 - Adlib synth fallback is not relevant to Frankendom.
 - Pause on focus loss is present in the donor; Frankendom needs the same rule if the page loses focus.
 - Client-only audio; it must not feed the one fight engine, and mute is a setting, not zone data.

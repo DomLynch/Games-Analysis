@@ -1,6 +1,6 @@
 # id-Software-Quake (combat-sim, cell 1)
 
-Donor: `/mnt/frankendom-donors/id-Software-Quake/qw-qc/combat.qc` | Licence: GPL-2.0 (gnu.txt) | C (QuakeC scripts) | symbol `T_Damage`
+Donor: `/mnt/frankendom-donors/id-Software-Quake/qw-qc/combat.qc` | Licence: GPL-2.0-or-later (per combat.qc header: version 2 or any later version) | C (QuakeC scripts) | symbol `T_Damage`
 
 Checked: Symbol `T_Damage` is defined at 134 and closes at 271 (verified, read in full). Its own header comment says it "should be the only function that ever reduces health".
 
@@ -23,7 +23,7 @@ Checked: Symbol `T_Damage` is defined at 134 and closes at 271 (verified, read i
 
 | Reusable algorithm | Game-specific constants |
 |---|---|
-| Armour soaks a fraction of the hit, rounded up, capped at what remains | Armour fractions 0.3 / 0.6 / 0.8 with values 100 / 150 / 200 (theirs, items.qc 410-427) |
+| Armour soaks a fraction of the hit, rounded up, capped at what remains | Armour fractions 0.3 / 0.6 / 0.8 with values 100 / 150 / 200 (theirs, items.qc 410-427; the value lines are under 15 characters, so the receipts are their classname lines 410, 416, 422) |
 | Health takes the rest of the hit | None (the subtraction) |
 | Momentum from the blast centre, proportional to damage | Momentum factor 8 (theirs, combat.qc 197) |
 | Self-hit boost for rocket jumps | `rj` multiplier global (theirs, defs.qc 469, default 1; set from an info key, client.qc 545) |
@@ -35,7 +35,7 @@ Checked: Symbol `T_Damage` is defined at 134 and closes at 271 (verified, read i
 simplified: the sketch follows the donor order (quad, armour, momentum, then the godmode and invincibility gates, then health), so a god-moded victim still loses armour and is pushed, as in the donor. It omits the door exception for quad, the end-of-frame client damage accumulators, team play, the invincibility sound, the `rj` self-hit boost, the world-inflictor and walk-type conditions on momentum, and the pain call. Armour fraction and value come from the item in the donor.
 
 ```ts
-// Licence: GPL-2.0 (gnu.txt) (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
+// Licence: GPL-2.0-or-later (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
 // clean-room
 interface Victim {
   health: number;
@@ -68,12 +68,12 @@ function applyHit(v: Victim, raw: number, quadMultiplier: number, pushFactor: nu
 
 - TARGET `src/fight/damage.ts` (new module, engine damage step): the one place health changes. Parity-checklist row 1 (duel step / sim). Today the flat combat helpers are in `src/combat.ts` (moving to `src/fight/combat.ts`).
 - today: `src/combat.ts` (moving).
-- Reuse tag: adapt
+- Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 - Brief rule served: 1 (one combat core, two clients); rules 7-9 n/a
 
 ## 6. Gaps and risks
 
-- GPL-2.0: clean-room only. The sketch is written from the mechanism.
+- GPL-2.0-or-later: clean-room only. The sketch is written from the mechanism.
 - The donor's rule that one function reduces health matches Frankendom's one-ledger rule; the donor does not enforce it across the server (it is a convention in the script). Frankendom must enforce it in code.
 - Team-play and friendly-fire rules are cvar-driven. Frankendom has no team model in the duel; only the gate shape transfers.
 - Momentum is a physics push, applied even to a victim who is immune. Frankendom's guard, stance and stagger live in the duel step (checklist rows 1 and 3); a vector push has no counterpart. Do not port the push as a state change.

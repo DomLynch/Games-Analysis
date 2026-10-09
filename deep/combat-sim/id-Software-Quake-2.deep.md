@@ -1,6 +1,6 @@
 # id-Software-Quake-2 (combat-sim, cell 1)
 
-Donor: `/mnt/frankendom-donors/id-Software-Quake-2/ctf/g_combat.c` | Licence: GPL-2.0 (gnu.txt) | C | symbol `T_Damage / M_ReactToDamage / CheckArmor`
+Donor: `/mnt/frankendom-donors/id-Software-Quake-2/ctf/g_combat.c` | Licence: GPL-2.0-or-later (per g_combat.c header: version 2 or any later version) | C | symbol `T_Damage / M_ReactToDamage / CheckArmor`
 
 Checked: `T_Damage` opens at 374 and closes at 559 (verified, read in full). `CheckPowerArmor` 171-253, `CheckArmor` 255-293, `M_ReactToDamage` 295-358 and `CheckTeamDamage` 360-372 were also read in full.
 
@@ -30,7 +30,7 @@ Checked: `T_Damage` opens at 374 and closes at 559 (verified, read in full). `Ch
 |---|---|
 | Armour soak = ceil(protection x damage), capped at what remains | Protection per armour item, normal and energy (theirs, data) |
 | Knockback = force x knockback / mass, mass floor | Force 500 (theirs, 446); mass floor 50 (theirs, 438); self-hit force 1600 (theirs, 444) |
-| Damage bonus for a surprise hit on an idle target | x2 (theirs, 420) |
+| Damage bonus for a surprise hit on an idle target | x2 (theirs, 420; that line is too short to quote, so the receipt is the condition on 419) |
 | Easy skill halves damage in single player | x0.5, minimum 1 (theirs, 402-407) |
 | Power armour: screen takes 1/3, shield 2/3 of the hit, one cell per point (CTF) | 0.3 facing threshold, 1/3 and 2/3 (theirs, 223, 228, 234) |
 | Death when health <= 0; death stops knockback | Threshold 0 (mechanism) |
@@ -38,20 +38,20 @@ Checked: `T_Damage` opens at 374 and closes at 559 (verified, read in full). `Ch
 
 ## 4. TypeScript sketch
 
-simplified: omits friendly fire, easy-skill halving, the strength and resistance techs, power armour, team armour protect and team damage avoidance, the no-knockback conditions, pain and the monster reaction. Order follows the donor: surprise bonus, knockback computed from the damage, immunity gates, then armour, then health. The sketch has no minimum-damage clamp, and neither does the donor (only the easy-skill halving keeps a minimum of 1).
+simplified: omits friendly fire, easy-skill halving, the strength and resistance techs, power armour, team armour protect and team damage avoidance, the no-knockback conditions, pain and the monster reaction. Knockback is scaled from the separate `knockback` argument of the hit, not from the damage (the surprise bonus does not change it), and is returned as a scalar instead of being added to a velocity vector. Order follows the donor: surprise bonus, knockback, immunity gates, then armour, then health. The sketch has no minimum-damage clamp, and neither does the donor (only the easy-skill halving keeps a minimum of 1).
 
 ```ts
-// Licence: GPL-2.0 (gnu.txt) (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
+// Licence: GPL-2.0-or-later (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
 // clean-room
 interface Target { health: number; armour: number; armourProtection: number; invulnerable: boolean; }
-interface HitIn { raw: number; surprise: boolean; selfHit: boolean; radius: boolean; }
+interface HitIn { raw: number; knockback: number; surprise: boolean; selfHit: boolean; radius: boolean; }
 interface HitOut { healthLoss: number; soaked: number; dead: boolean; knockback: number; }
 
 // Monsters and players share the same pipeline; only the gate and bonus differ.
-function applyHit(t: Target, h: HitIn, knockbackForce: number, mass: number): HitOut {
+function applyHit(t: Target, h: HitIn, mass: number): HitOut {
   let damage = h.raw;
   if (h.surprise && !h.radius) damage *= 2;                 // surprise bonus
-  const kb = (h.selfHit ? 1600 : knockbackForce) * damage / Math.max(mass, 50);
+  const kb = (h.selfHit ? 1600 : 500) * h.knockback / Math.max(mass, 50);
 
   if (t.invulnerable) return { healthLoss: 0, soaked: damage, dead: false, knockback: kb };
 
@@ -69,12 +69,12 @@ function applyHit(t: Target, h: HitIn, knockbackForce: number, mass: number): Hi
 
 - TARGET `src/fight/damage.ts` (new module, engine damage step): the single damage step, with armour soak and the surprise and self-hit rules as data. Parity-checklist row 1 (duel step / sim); armour values are a catalogue field, row 21.
 - today: `src/combat.ts` (moving to `src/fight/combat.ts`) holds the flat combat helpers; no damage module exists yet.
-- Reuse tag: adapt
+- Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 - Brief rule served: 1 (one combat core, two clients); rules 7-9 n/a
 
 ## 6. Gaps and risks
 
-- GPL-2.0: clean-room only.
+- GPL-2.0-or-later: clean-room only.
 - The donor is a shooter with radius damage, power armour and per-item protection. Frankendom's duel uses guard and parry, not per-hit armour items; the soak shape transfers, the item table does not.
 - Knockback is a velocity vector with mass. Frankendom has stagger and posture (checklist rows 1 and 3); no vector push should enter the engine.
 - Friendly fire and team armour protect are team-mode rules; Frankendom has no team model in the duel.

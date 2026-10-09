@@ -1,6 +1,6 @@
 # lincity-ng-lincity-ng (economy-trade, cell 11)
 
-Donor: /mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/market.cpp | Licence: GPL-2.0 (code; data dual GPL/CC-BY-SA) | C++ | symbol Market::update
+Donor: /mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/market.cpp | Licence: GPL-2.0-or-later per market.cpp header (code; data dual GPL/CC-BY-SA per COPYING-data.txt) | C++ | symbol Market::update
 
 ## 1. Mechanism
 - Lincity-NG market building. Each commodity (food, goods, labour, waste and so on) has a stock level and a capacity per building. A market gives and takes goods to and from the buildings around it.
@@ -9,8 +9,8 @@ Donor: /mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/market.c
 - Each pooled partner is then pushed toward the target by Construction::equilibrate_stuff (lintypes.cpp 774-849; `this` is the partner, the market is passed as the remote side). Normal case: flow = target x partner capacity / 1000 - partner stock (789). Positive flow (partner receives) is refused unless partner.take and market.give, and negative flow unless partner.give and market.take (790-795). Positive flow is capped at market capacity / TRANSPORT_RATE (8) and at the market's stock (796-801); negative flow is capped at -(market capacity / 8) and at the market's free space, and set to 0 if that would turn positive (803-810). If the partner is evacuating, its flow is all it holds up to the market's free space (833-838). Both stocks are updated (846-847). The market's updated stock is written back after all partners (156).
 - Tax side effect (813-831): when a non-transport, non-market partner receives labour, goods or coal, the world.taxable counters for that commodity grow by the flow.
 - Labour (159-165, 190-215): each tick, if the market holds at least `labor` labour, it consumes `labor`, adds it to world.taxable.labor and counts a working day. When total_time % 25 == 17, the average fill (100 x sum of ratios / (n x 1000), 0 if n is 0) sets the level: under 10 percent = 1, under 20 = 5, under 50 = 12, else 28 (LABOR_MARKET_*, market.hpp 52-55). When total_time % 100 == 99: production counters reset, busy = working_days (184-189).
-- Waste (167-182): on every tick where total_time % 50 is not 0 (the first `if` has no braces and wraps the waste test), if waste is at least 85 percent of MAX_WASTE_IN_MARKET the market burns 70 percent of the max, adds pollution at the tile south-east of it, and rolls a Bernoulli fire chance (WASTE_BURN_UNCONTROLLED x group fire_chance / 100), skipped if the tile has fire cover.
-- Cover (217-218, 221-233): when total_time % DAYS_BETWEEN_COVER == 75 (DAYS_BETWEEN_COVER = NUMOF_DAYS_IN_MONTH x 3, all_buildings.hpp 46), cover() flags a square of tiles within the group range with FLAG_MARKET_COVER_CHECK.
+- Waste (167-182): on every tick where total_time % 50 is not 0 (the first `if` has no braces and wraps the waste test), if waste is at least 85 percent of MAX_WASTE_IN_MARKET the market burns 70 percent of the max, adds pollution at the tile south-east of it, and rolls a Bernoulli fire chance (WASTE_BURN_UNCONTROLLED x group fire_chance / 100); the roll happens first and the fire starts only if the tile has no fire cover (173-178).
+- Cover (217-218, 221-233): when total_time % DAYS_BETWEEN_COVER == 75 (DAYS_BETWEEN_COVER = NUMOF_DAYS_IN_MONTH x 3 = 300, src/lincity/all_buildings.hpp 46 and lintypes.hpp 59), cover() flags a square of tiles within the group range with FLAG_MARKET_COVER_CHECK.
 - Output: updated stock levels on the market and its partners, labour consumed and taxed, pollution and a possible fire.
 
 ## 2. Key functions
@@ -30,7 +30,7 @@ Donor: /mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/market.c
 ## 4. TypeScript sketch
 simplified: labour, waste, taxable counters, the skip rule for low labour and the cover pass are omitted. Truncating integer division (donor ints) is shown as Math.floor. The loop that visits commodities and the market's write-back are left to the caller. Flow clamps follow the donor, including the negative-flow-to-zero clamp.
 ```ts
-// Licence: GPL-2.0 (code; data dual GPL/CC-BY-SA) | clean-room: written from the mechanism, no donor lines.
+// Licence: GPL-2.0-or-later (code; data dual GPL/CC-BY-SA) | clean-room: written from the mechanism, no donor lines.
 // Neighbour equalisation for one good. Each building has stock, capacity and give/take rules.
 // The market pools itself and its willing neighbours, computes a shared fill ratio, and pushes each
 // neighbour toward it by a rate-limited flow, bounded by both sides' space and stock.
@@ -91,4 +91,4 @@ function push(self: Store, p: Store, target: number): void {
 - The donor mutates both buildings in place through pointers (846-847). Frankendom's one-ledger rule needs every flow as a ledger entry, not an in-place stock edit.
 - Waste fire and pollution have no Frankendom counterpart; they are out of scope.
 - Data files are dual licensed (CC-BY-SA as well); keep only the mechanism, as the licence column says.
-- GPL-2.0: mechanism only.
+- GPL-2.0-or-later: mechanism only.

@@ -3,7 +3,7 @@
 Donor: /mnt/frankendom-donors/otland-forgottenserver/src/party.cpp | Licence: GPL-2 | C++ | symbol Party::joinParty / Party::shareExperience (input line 167 verified: `joinParty`)
 
 ## 1. Mechanism
-- Shared experience is a party setting. Only the leader can switch it on (Party::setSharedExperience). While it is on, the party keeps a party-wide "enabled" flag that is recomputed (updateSharedExperience, 322-331) on join (209), leave (111), a leadership change (148), a member's activity or its clearing (453, 462), and a player-side hook at player.cpp 1416, 1806 and 1890 (the last three not read). Turning sharing off does not reset the enabled flag (371-373); the award path requires both flags.
+- Shared experience is a party setting. Only the leader can switch it on (Party::setSharedExperience). While it is on, the party keeps a party-wide "enabled" flag that is recomputed (updateSharedExperience, 322-331) on join (209), leave (111), a leadership change (148), a member's activity or its clearing (453, 462), and a player-side hook at player.cpp 1416 (a bare `party->updateSharedExperience()` call, read) and at 1806 and 1890 (not read). Turning sharing off does not reset the enabled flag (371-373); the award path requires both flags.
 - Eligibility (getSharedExperienceStatus) checks the leader first, then each member, and returns the first failing reason. Checks per member (395-431), in this order: an empty member list fails at once (397); level at least ceil(2/3 of the highest level among leader and members) (401-411); within 30 tiles in x and in y and within 1 floor of the leader, inclusive (`isInRange` uses <=, position.h 40-43); and recent activity, unless the player has the NotGainInFight flag: a missing entry in the activity map, or one older than the config value `pzLocked` (default 60000 ms), fails (418-429).
 - Activity is written by updatePlayerTicks(player, points) (449-455) when points is non-zero and the player lacks NotGainInFight, and cleared by clearPlayerPoints (457-464). The callers are in player.cpp: damage dealt to a hostile monster (3704-3717), healing a party partner or a partner's summon (3719-3736), and the idle-status hook which clears it (3695-3702).
 - Join (joinParty, 167-217): a Lua hook can veto (170). If the member list is empty the leader's pending invitations are cleared (176). The member is appended, its party pointer is set, a join message is broadcast (181-183), its invitations are cleared, icons and skulls are refreshed, `updateSharedExperience` runs (209), and the joiner gets a message.
@@ -25,6 +25,7 @@ Donor: /mnt/frankendom-donors/otland-forgottenserver/src/party.cpp | Licence: GP
 
 ## 3. Numbers vs mechanism
 | Reusable algorithm | Game-specific constants |
+|---|---|
 | Party-wide enabled flag from ordered per-member checks; first failing reason returned | Level floor ceil(2 x highest level / 3) (theirs, party.cpp line 408) |
 | Range gate on the leader's position, tile window in x and y plus floor window | Range 30 tiles in x and 30 in y, floor window 1 each way (theirs, party.h lines 14-15, used at party.cpp 413-414; isInRange in position.h 40-43) |
 | Activity gate from a timestamp map keyed by player id | Activity window pzLocked, default 60000 ms (theirs, configmanager.cpp line 265, read at party.cpp 426) |
@@ -90,4 +91,4 @@ export function shareXp(amount: number, members: Member[], leader: Member, grant
 - Chat, invitations, icons and skulls (the message and icon calls in 181-207) are UI and protocol work this read does not use.
 - Lua hooks (onJoin, onShareExperience, onRevokeInvitation, onDisband) are the donor's extension points; Frankendom has no equivalent here.
 - Pit is a client only and has no party XP. Zones are data: range and floor window are engine constants, not per-zone code.
-- Not read: `Party::leaveParty` (lines 60-122 beyond 95-122), `Party::disband`, player.cpp 1806 and 1890, and `Position::getDistanceZ`.
+- Not read: `Party::disband` bodies beyond the opening lines, player.cpp 1806 and 1890, and `Position::getDistanceZ`. `Party::leaveParty` (57-122) was read.

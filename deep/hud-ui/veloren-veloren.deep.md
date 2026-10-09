@@ -32,7 +32,7 @@ Donor: /mnt/frankendom-donors/veloren-veloren/voxygen/src/hud/mod.rs | Licence: 
 ## 4. TypeScript sketch
 Sketch type: clean-room (GPL-3 donor). Written from the mechanism above, no lines translated.
 
-simplified: one function stands in for what the donor spreads across `update_layout` (pulse at 1608, overlay at 1610, floaters at 1817, 1990, 3231), and the pulse is updated even when the UI is off in the sketch only after the early return (the donor also returns before `update_layout` when `show.ui` is false, so the pulse does not advance while hidden); `hpMax <= 0` maps to 0 percent, where the donor gets NaN; marker pruning, Tab fix, crafting-sprite filter and the world-space `ui.maintain` are omitted.
+simplified: one function stands in for what the donor spreads across `update_layout` (pulse at 1608, overlay at 1610, floaters at 1817, 1990, 3231); like the donor (5290-5292), the sketch returns the queued events before doing any layout work when the UI is off, so the pulse and floater timers do not advance while hidden; `hpMax <= 0` maps to 0 percent, where the donor gets NaN; marker pruning, Tab fix, crafting-sprite filter and the world-space `ui.maintain` are omitted.
 
 ```ts
 // Licence: GPL-3 - clean-room sketch, no lines translated

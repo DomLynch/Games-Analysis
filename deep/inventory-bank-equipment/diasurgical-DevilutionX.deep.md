@@ -1,8 +1,8 @@
 # diasurgical-DevilutionX (inventory-bank-equipment, cell 9)
 
-Donor: /mnt/frankendom-donors/diasurgical-DevilutionX/Source/inv.cpp | Licence: UNCLEAR (licence file has no standard text) | C++ | symbol FindSlotForItem / AutoEquip / CanEquip
+Donor: /mnt/frankendom-donors/diasurgical-DevilutionX/Source/inv.cpp | Licence: Sustainable Use License v1.0 (donor LICENSE.md: internal business or non-commercial use only, free non-commercial distribution only); clean-room only, never a line-by-line translation | C++ | symbol FindSlotForItem / AutoEquip / CanEquip
 
-Licence note: UNCLEAR (the licence file has no standard text). CLEAN-ROOM sketch only.
+Licence note: Sustainable Use License v1.0 (donor LICENSE.md; internal business or non-commercial use only). CLEAN-ROOM sketch only, never a line-by-line translation.
 
 Symbol check: `FindSlotForItem` (688), `AutoEquip` (283 and 1353) and `CanEquip` (245 and 185) are all present as cited. The auto-equip entry point to use is the no-slot overload at 1353, which loops body locations in order. `CanEquip(Player&, Item&, bodyLocation)` at 245 is the per-slot check it calls.
 
@@ -16,8 +16,8 @@ Symbol check: `FindSlotForItem` (688), `AutoEquip` (283 and 1353) and `CanEquip`
   - Any other size calls `app_fatal` (735). Returns an optional (empty when nothing fits).
 - `CheckItemFitsInInventorySlot` (660-679) tests each covered cell is empty, or occupied only by the ignored item (`abs(cell) - 1 == itemIndexToIgnore`, 670, so a swap can be tested without removing first), the column stays below 10 and the row stays inside the 40 cells.
 - `AutoPlaceItemInInventory` (1400-1416) uses that result: it appends the item to `InvList`, marks its cells with `AddItemToInvGrid` (1409), and calls `CalcScrolls` (1410).
-- `AutoEquip(player, item, persist, send)` (1353-1366) first rejects anything failing the item-only `CanEquip(item)` (185-189), then walks body locations from `INVLOC_HEAD` up to `NUM_INVLOC` (1359) and calls the per-location overload (283-300); the first that succeeds wins. That overload, when `persistItem` is set, writes `InvBody[loc]` (`ChangeEquipment`, 274-281), plays a sound if network-send and option are on, and calls `CalcPlrInv` (296).
-- Per location, `CanEquip(player, item, loc)` (245-272) requires: `CanEquip(item)` (is equipment and its stat requirements are met, `_iStatFlag`, 185-189), `player._pmode <= PM_WALK_SIDEWAYS` (247; the enum order itself was not read, so which modes that covers is not verified), and the slot is empty. Then the item type must match the slot: amulet, armour (chest), hands via `CanWield`, helm, or ring (251-271). `CanWield` (199-235) checks one-hand or two-hand location and the free-hand state, with a dual-wield exception for the class flagged `DualWield` (Bard, per the comment at 217) that allows a second one-handed sword or mace.
+- `AutoEquip(player, item, persist, send)` (1353-1366) first rejects anything failing the item-only `CanEquip(item)` (185-189), then walks body locations from `INVLOC_HEAD` up to `NUM_INVLOC` (1359; the enum order is head, left ring, right ring, amulet, left hand, right hand, chest, player.h:72-81) and calls the per-location overload (283-300); the first that succeeds wins. That overload, when `persistItem` is set, writes `InvBody[loc]` (`ChangeEquipment`, 274-281), plays a sound if network-send and option are on, and calls `CalcPlrInv` (296).
+- Per location, `CanEquip(player, item, loc)` (245-272) requires: `CanEquip(item)` (is equipment and its stat requirements are met, `_iStatFlag`, 185-189), `player._pmode <= PM_WALK_SIDEWAYS` (247; `PLR_MODE`, player.h:109-122, so stand and the three walk modes pass; attack, block, got-hit, death, spell and the rest refuse), and the slot is empty. Then the item type must match the slot: amulet, armour (chest), hands via `CanWield`, helm, or ring (251-271). `CanWield` (199-235) checks one-hand or two-hand location and the free-hand state, with a dual-wield exception for the class flagged `DualWield` (Bard, per the comment at 217) that allows a second one-handed sword or mace.
 - Output: the item in the grid or in a body slot. Runs on the player's pickup and equip actions.
 
 ## 2. Key functions
@@ -42,13 +42,13 @@ Symbol check: `FindSlotForItem` (688), `AutoEquip` (283 and 1353) and `CanEquip`
 
 ## 4. TypeScript sketch
 
-Licence: UNCLEAR. CLEAN-ROOM sketch: written from the mechanism above, not translated from the donor.
+Licence: Sustainable Use License v1.0 (non-commercial / internal use only). CLEAN-ROOM sketch: written from the mechanism above, not translated from the donor.
 
 simplified: grid is a 2D (x, y) scan instead of the donor's flat start-cell scan; the 1x3 and 2x3 scan orders are replaced by the height-2 rule; no fatal on unknown sizes; negative anchor/occupied cell encoding is dropped (all cells hold id+1); `CanEquip` (stat requirement, busy mode, `CanWield` dual-wield rule) is a callback; `AutoEquip` omits the up-front item-only check, `persistItem`, sound and recalculation.
 
 ```ts
 // clean-room sketch of first-fit grid placement with an ignore-index swap test.
-// Licence line: UNCLEAR donor; this sketch is clean-room, written from mechanism only.
+// Licence line: Sustainable Use License v1.0 donor (non-commercial only); this sketch is clean-room, written from mechanism only.
 const COLS = 10;   // theirs
 const ROWS = 4;    // theirs
 const EMPTY = 0;
@@ -104,7 +104,7 @@ Brief rule served: one-character, one-ledger rule (server inventory is the autho
 
 ## 6. Gaps and risks
 
-- The licence is UNCLEAR, so no lines may be lifted. Only the mechanism is used, written clean-room. Lead must resolve the licence before any code is taken.
+- The licence is the Sustainable Use License v1.0 (internal business or non-commercial use only), so no lines may be lifted. Only the mechanism is used, written clean-room. Lead must confirm the licence is acceptable for a commercial product before any code is taken.
 - A grid pack is a roguelike-style pack. Frankendom's gear room is a set of named slots. The grid is not needed for the duel and would add a surface that no fight uses.
 - Auto-equip picks the first slot that fits. Frankendom must decide which slot a gear item belongs to from the catalogue, not from the first free slot.
 - The check "not busy" reads the player's movement mode. Frankendom must reject an equip change during a fight on the server, not by a client flag.

@@ -20,6 +20,7 @@ Donor: /mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Clan/ClanActionServ
 
 ## 3. Numbers vs mechanism
 | Reusable algorithm | Game-specific constants |
+|---|---|
 | Fixed deadline checked before each claim, with a release for a claim that came in late | Resolve budget 80 ms (theirs, ClanSimulationConfig.js line 34) |
 | Lease on each claim, recovered when it expires | Lease 120000 ms (theirs, config line 39); recovery itself is in Database, not read |
 | Defer with a retry delay, capped | Planning deferral cap 5000 ms (theirs, ClanActionService.js line 158); LLM and titles pending cap 1000 ms (lines 165, 168); retry delay 60000 ms (config line 40) |

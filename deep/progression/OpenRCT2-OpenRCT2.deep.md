@@ -24,7 +24,7 @@ Symbol check: ResearchUpdate opens at 311 and closes at 371; ResearchNextDesign 
 ## 3. Numbers vs mechanism
 | Reusable algorithm | Game-specific constants |
 |---|---|
-| Fixed-point progress counter that overflows into the next stage | 16-bit stage size 0x10000 (theirs, Research.cpp 107 and 339) |
+| Fixed-point progress counter that overflows into the next stage | 16-bit stage size: remaining-progress base 0x10000 (theirs, Research.cpp 107) and overflow test against 0xFFFF (line 339) |
 | Rate per funding level added on a slow tick | Rates 0, 160, 250, 400 (theirs, _researchRate, Research.cpp 42-47) |
 | Runs only on every Nth tick | Every 32 ticks (theirs, Research.cpp 323) |
 | Three-stage state machine per item, each stage closed by overflow | Stage names and their order (theirs) |
@@ -32,7 +32,7 @@ Symbol check: ResearchUpdate opens at 311 and closes at 371; ResearchNextDesign 
 | Expected date = remaining / rate, projected onto the calendar | Factor 128 and 0x10000 month-tick scale (theirs, Research.cpp 109-116, UI only) |
 
 ## 4. TypeScript sketch
-simplified: categories are collapsed to item ids in the priority set (the donor tests a category bit mask); the invented list is not de-duplicated; news, windows, the legacy same-ride-type unlock, the expected-date calculation and the editor check are omitted; on an empty queue the donor's funding-reset action is reduced to setting funding 0; the donor's FINISHED_ALL stage case (forcing funding NONE every slow tick) is folded into that.
+simplified: categories are collapsed to item ids in the priority set (the donor tests a category bit mask); news, windows, the legacy same-ride-type unlock, the expected-date calculation and the editor check are omitted; on an empty queue the donor's funding-reset action is reduced to setting funding 0; the donor's FINISHED_ALL stage case (forcing funding NONE every slow tick) is folded into that.
 ```ts
 // Licence: GPL-3.0 | clean-room: written from the mechanism, no donor lines.
 // Timed unlock queue: one fixed-point counter. Every stage (wait, design, completion) ends when the counter

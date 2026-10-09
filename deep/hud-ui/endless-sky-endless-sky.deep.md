@@ -1,15 +1,15 @@
 # endless-sky-endless-sky (hud-ui, cell 16)
 
-Donor: /mnt/frankendom-donors/endless-sky-endless-sky/source/MiniMap.cpp | Licence: GPL-3 | C++ | symbol MiniMap::Step / Draw
+Donor: /mnt/frankendom-donors/endless-sky-endless-sky/source/MiniMap.cpp | Licence: GPL-3.0-or-later per MiniMap.cpp header | C++ | symbol MiniMap::Step / Draw
 
 ## 1. Mechanism
 
 - Minimap over the star map, run as a per-frame step (`MiniMap::Step`) and a draw (`MiniMap::Draw`). It shows the systems near the flagship's current system and the next jump target.
 - Inputs: the flagship (current system, whether it is entering hyperspace, whether a jump command is set), the travel plan, and the player's preference (off, always, or only when jumping).
-- Target choice each step: the next system is the flagship's jump target while jumping; otherwise the last system of the travel plan. The target is cleared when the flagship reaches it.
+- Target choice each step (lines 69-102): while the flagship is entering hyperspace or has a jump command set, the next system is its jump target; otherwise, unless it is mid-hyperspace, the last system of the travel plan. A new target replaces the old one only if it exists or the linger has ended (line 92), so a cancelled jump leaves the old target on the map during the linger. If the target did not change and the flagship is now in it, the target is cleared.
 - Lingering: when a jump starts, the minimap is shown for 300 steps (about 5 seconds at 60 steps a second); it fades in over the first 30 steps and fades out over its last 30 steps.
 - Centre: when the current or target system changes, the centre is set halfway between current and target (or on current alone) and a lerp of 150 steps moves the centre from its old value to the new one. A second lerp toward the target starts while entering hyperspace.
-- Draw (148-292): only two systems get the full treatment, the current system and the target (if any), each by `drawSystemLinks` (178-269): name (placeholder "Unexplored System" if the name is not known), a ring in the government colour if the player can view it and it is inhabited, else a dim ring, a brighter ring (radii 11 and 9) on the current system, a ring and a link line for each linked system the player can view, and mission pointers. A directional arrow runs current to target, dashed when the target is not a hyperspace link (279-291). The alpha is 0.5, times `fade/30` only in the "when jumping" preference (158-164).
+- Draw (148-292): only two systems get the full treatment, the current system and the target (if any), each by `drawSystemLinks` (178-269): name (placeholder "Unexplored System" if the name is not known), a ring in the government colour if the player can view it and it is inhabited, else a dim ring, a brighter ring (radii 11 and 9) on the current system, a link line for each linked system unless the player can view neither end, plus a ring for each such linked system not yet drawn, and mission pointers. A directional arrow runs current to target, dashed when the target is not a hyperspace link (279-291). The alpha is 0.5, times `fade/30` only in the "when jumping" preference (158-164).
 - Output: draw calls only, at the `mini-map` point of the `hud` interface (line 172). Nothing is written to the world.
 
 ## 2. Key functions
@@ -33,7 +33,7 @@ Donor: /mnt/frankendom-donors/endless-sky-endless-sky/source/MiniMap.cpp | Licen
 simplified: the donor's centre lerp never reaches t = 1 (it applies `lerpCount / 150` before incrementing, so the last applied step is 149/150); the sketch reaches the target exactly. The second "entering hyperspace" lerp and its guard (line 131), the target choice and the ring/link/mission drawing are omitted.
 
 ```ts
-// Licence: GPL-3 - clean-room sketch, no lines translated
+// Licence: GPL-3.0-or-later - clean-room sketch, no lines translated
 // Clean-room: a minimap centre that lerps toward the midpoint of current and next system, with a linger and fade timer.
 type Pt = { x: number; y: number };
 const LERP_STEPS = 150;
@@ -78,7 +78,7 @@ class CentreLerp {
 ## 5. Lands in
 
 - Frankendom target: `src/fight/hud.ts` (minimap panel and centre lerp), parity checklist row 14 (HUD); today: `src/hud.ts` (moving). The nodes and links come from zone data (zones as data), not from the HUD.
-- Reuse tag: rewrite-from-idea (GPL-3, clean-room sketch only).
+- Reuse tag: rewrite-from-idea (GPL-3.0-or-later, clean-room sketch only).
 - Brief rule served: (category default, not per-cell) 1 (one combat core, two clients); rules 7-9 n/a
 
 ## 6. Gaps and risks

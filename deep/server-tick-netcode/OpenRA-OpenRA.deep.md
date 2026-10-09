@@ -1,16 +1,16 @@
 # OpenRA-OpenRA (server-tick-netcode, cell 5)
 
-Donor: `/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Game/Network/OrderManager.cs` | Licence: GPL-3 | C# | symbol `OrderManager.TryTick / ReceiveSync / ReceiveOrders`
+Donor: `/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Game/Network/OrderManager.cs` | Licence: GPL-3.0-or-later per OrderManager.cs header | C# | symbol `OrderManager.TryTick / ReceiveSync / ReceiveOrders`
 
 Checked: Symbol `TryTick` at 300, closes at 328 (verified). `ReceiveSync` 161-170, `ReceiveOrders` 189-195, `SendOrders` 224-232, `ProcessOrders` 234-285 all read.
 
 ## 1. Mechanism
 
 - A lockstep game: every client runs the same simulation, and the only input is the orders each client sends. Inputs per client: a queue of order packets, each tagged with the frame it is for. Output: on each net frame the simulation advances only when every client's packet is present; the orders are applied in the iteration order of the `pendingOrders` dictionary (whether that order is the same on every peer was not checked).
-- Each host frame, `TryTick` (300-328). `IsNetFrame` is `LocalFrameNumber % NetFrameInterval == 0` (332; default 3, Session.cs 222). On a non-net frame it always ticks and just increments `LocalFrameNumber` (324-325). On a net frame it first checks that every client other than the local one has a packet queued (308); if so it calls `SendOrders` (313), which sends the local orders once per net frame, guarded by `sentOrdersFrame` and the game-save marker (226-231). It then requires `IsReadyForNextFrame` (every queue non-empty, game started, 202) before `ProcessOrders` (319-321). `ProcessOrders` dequeues one packet per client, throws if the packet's frame is not `NetFrameNumber` (244-245), handles a disconnect marker by queueing removal and calling `World.OnClientDisconnected` (247-253), applies each order (255-259), removes disconnected clients (262-263), sends the sync hash plus a defeat-state bitmask (265-275), and increments `NetFrameNumber` (284).
+- Each host frame, `TryTick` (300-328). `IsNetFrame` is `LocalFrameNumber % NetFrameInterval == 0` (332; default 3, Session.cs 222). On a non-net frame it always ticks and just increments `LocalFrameNumber` (324-325). On a net frame it first checks that every client other than the local one has a packet queued (308); if so it calls `SendOrders` (313), which sends the local orders once per net frame, guarded by `sentOrdersFrame` and the game-save marker (226-231). It then requires `IsReadyForNextFrame` (every queue non-empty, game started, 202) before `ProcessOrders` (319-321). `ProcessOrders` dequeues one packet per client, throws if the packet's frame is not `NetFrameNumber` (244-245), handles a disconnect marker by queueing removal and calling `World.OnClientDisconnected` (247-253), applies each order (255-259), removes disconnected clients (262-263), sends the sync hash plus a defeat-state bitmask when `NetFrameNumber >= GameSaveLastSyncFrame`, otherwise a zero hash and zero state (265-275), and increments `NetFrameNumber` (284).
 - `ReceiveOrders` (189) enqueues a client's packet; an unknown client throws. `ReceiveSync` (161) keeps the first hash and defeat state seen for a frame; a later report with a different value for the same frame calls `OutOfSync` (163-169).
 - A client whose packet is late stalls the whole game at the next net frame (no tick), which is the lockstep cost.
-- Tick: called every host frame; on net frames the simulation runs only if the readiness check passes. `SuggestedTimestep` (204-222, replay and game-save speed) and `Connection.Receive` (197-200) were read but are not modelled.
+- Tick: called every host frame; on net frames the simulation runs only if the readiness check passes. `SuggestedTimestep` (204-222, replay and game-save speed) and `ReceiveAllOrdersAndCheckSync` (197-200, which calls `Connection.Receive`) were read but are not modelled.
 
 ## 2. Key functions
 
@@ -31,7 +31,7 @@ Checked: Symbol `TryTick` at 300, closes at 328 (verified). `ReceiveSync` 161-17
 
 ## 4. TypeScript sketch
 
-simplified: omits the net-frame interval (every host frame is treated as a net frame), the separate pre-check that excludes the local peer, `SendOrders`, the disconnect marker, the sync send and the frame-number increments; the sketch also omits the game-save and replay branches.
+simplified: omits the net-frame interval (every host frame is treated as a net frame), the separate pre-check that excludes the local peer, `SendOrders`, the disconnect marker, the sync send and the frame-number increments; the sketch also omits the game-save and replay branches, the `GameStarted` test in the readiness check, and the defeat-state half of the sync comparison (`checkSync` compares the hash only and returns a flag instead of calling `OutOfSync`).
 
 ```ts
 // Licence: GPL-3 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.

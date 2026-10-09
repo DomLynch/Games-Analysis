@@ -1,6 +1,6 @@
 # levy-street-world-of-claudecraft (inventory-bank-equipment, cell 9)
 
-Donor: /mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/bags.ts | Licence: MIT | TypeScript | symbol canAddItem / addStacked / equipBag
+Donor: /mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/bags.ts | Licence: MIT per LICENSE (package.json agrees) | TypeScript | symbol canAddItem / addStacked / equipBag
 
 Licence note: MIT. The logic may be lifted from the path above; this sketch restates the structure in its own names.
 
@@ -26,7 +26,7 @@ Symbol check: `canAddItem` 267-275, `addStacked` 359-401, `equipBag` 672-767 all
 | freePoolSlots / poolCapacityOf | /mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/bag_pools.ts | 68-79, 102-112 | Two-pool budget and free-slot answer for fresh stacks |
 | addStacked | /mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/bags.ts | 359-401 | Tops up matching stacks, then pushes new slots |
 | equipBag | /mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/bags.ts | 672-767 | Swaps a worn bag, guards overflow, refuses special-property bags |
-| stackSizeOf | /mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/bags.ts | 98-103 | Stack size from the def; unstacked kinds get 1 |
+| stackSizeOf | /mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/bags.ts | 98-102 | Stack size from the def; unstacked kinds get 1 |
 
 ## 3. Numbers vs mechanism
 

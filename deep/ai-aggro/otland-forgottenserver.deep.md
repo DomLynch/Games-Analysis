@@ -30,7 +30,7 @@ Donor: `/mnt/frankendom-donors/otland-forgottenserver/src/monster.cpp` | Licence
 
 ## 4. TypeScript sketch
 
-simplified: the zone, visibility and floor checks are one boolean on the candidate; `canUseAttack`, `canAttackCreature` and `canFollowCreature` are passed in as booleans; the ATTACKRANGE type, the dispatcher task and the follow-creature skip in the fallback list are omitted; the nearest fallback over the whole target list is kept.
+simplified: the zone, visibility and floor checks are one boolean on the candidate; `canUseAttack`, `canAttackCreature` and `canFollowCreature` are passed in as booleans; the ATTACKRANGE and DEFAULT search types are omitted (the sketch's `random` is the donor RANDOM, which skips the `canUseAttack` filter; DEFAULT would pick at random from the filtered list, with the last-resort loop when it is empty), as are the dispatcher task, the summon case in `selectTarget` (the donor attacks when hostile or a summon; the sketch only when hostile) and the target-list membership check in `selectTarget`; the follow-creature skip in the result list and the last-resort loop, and the nearest fallback over the whole target list, are kept.
 ```ts
 // Licence: GPL-2 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
 interface Pos { x: number; y: number; z: number; }

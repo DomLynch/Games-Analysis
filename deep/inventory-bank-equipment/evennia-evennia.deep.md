@@ -1,6 +1,6 @@
 # evennia-evennia (inventory-bank-equipment, cell 9)
 
-Donor: /mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/equipment.py | Licence: BSD-3 | Python | symbol EquipmentHandler
+Donor: /mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/equipment.py | Licence: BSD-3-Clause per LICENSE.txt | Python | symbol EquipmentHandler
 
 Symbol check: `EquipmentHandler` at line 16 is the class, as cited. Its logic is in `validate_slot_usage` (89-111), `count_slots` (63-78), `max_slots` (80-87), `move` (233-285), `add` (287-302) and `remove` (304-345). All opened and checked.
 
@@ -17,7 +17,7 @@ Symbol check: `EquipmentHandler` at line 16 is the class, as cited. Its logic is
 - It calls `self.remove(obj)` first (253; this itself saves, 343-344, when something was removed), so the object is not counted twice, then `validate_slot_usage` (255), then reads `inventory_use_slot` with a backpack default (257), does the swap, appends non-None evictions to the backpack (279-282), then saves (285).
 - `add(obj)` (287-302) puts an object in the backpack after the budget check.
 - `remove(obj_or_slot)` (304-345) empties a slot, the whole backpack, or one object (found in a slot or the backpack), and returns what was removed. Saves only if the result list is non-empty (343-344); emptying an already-empty named slot still appends None to the result (328), so it saves.
-- Output: updated slot state, and a list of evicted objects. Runs on the player's equip, unequip and pick-up commands.
+- Output: `move`, `add` return nothing and mutate the slot state (then `_save`); only `remove` returns a list (the removed objects). Evicted items are appended to the backpack, not returned. Runs on the player's equip, unequip and pick-up commands.
 
 ## 2. Key functions
 
@@ -42,7 +42,7 @@ Symbol check: `EquipmentHandler` at line 16 is the class, as cited. Its logic is
 
 Licence: BSD-3. The logic may be lifted from the path above; this sketch restates the structure in its own names.
 
-simplified: the sketch evicts the previous occupant of a weapon or shield hand to the backpack, which the donor does not do (265-269 overwrite it); no persistence call; no `inherits_from` type check; `remove` is inlined and not exposed; `count_slots` treats sizes as plain numbers and has no default for a missing size; the budget is passed in rather than computed from constitution.
+simplified: `move` here returns the evicted list (the donor's `move` returns None); the sketch evicts the previous occupant of a weapon or shield hand to the backpack, which the donor does not do (265-269 overwrite it); no persistence call; no `inherits_from` type check; `remove` is inlined and not exposed; `count_slots` treats sizes as plain numbers and has no default for a missing size; the budget is passed in rather than computed from constitution.
 
 ```ts
 // Licence: BSD-3 (evennia-evennia, evennia/contrib/tutorials/evadventure/equipment.py
@@ -84,7 +84,7 @@ function move(l: Loadout, item: Item, budget: number): Item[] {
 }
 ```
 
-Gap noted in the sketch: `move` evicts to the backpack without checking the budget a second time. The donor does the same (see section 6).
+Note: eviction only moves items between slots and the backpack, and the donor's `count_slots` sums both, so total usage does not change on eviction; only the incoming object is validated (see section 6).
 
 ## 5. Lands in
 
@@ -97,7 +97,7 @@ Brief rule served: one-character, one-ledger rule (server inventory is the autho
 
 ## 6. Gaps and risks
 
-- Eviction in `move` does not re-check the backpack budget (validate runs once, at 255, before evictions). Evicted items can push the total over the budget. Frankendom must not copy this: any eviction must be checked against capacity, or the gear room can hold more than it should.
+- `validate_slot_usage` runs once in `move` (255) and checks only the incoming object. Eviction does not raise usage (slot and backpack are both counted, 63-78), so no second check is needed; but `remove` at 253 runs and saves before the validate, so a failed validate leaves the item already removed from the slots (a donor hazard). Frankendom should validate before mutating, so a refused equip leaves the loadout untouched.
 - `move` overwrites the existing item in a weapon or shield hand without sending it to the backpack (265-269), so the old item vanishes from the handler's state. Frankendom must evict it (as the sketch does) so the one ledger never loses an item.
 - The budget is constitution plus 10. Frankendom has no constitution stat in the duel, so the budget must come from the catalogue or a gear-room rule.
 - The slot model is an object-per-slot record. It fits the named gear slots of the gear room well; a backpack list fits only if Frankendom has a backpack at all.

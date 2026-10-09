@@ -4,9 +4,9 @@ Donor: /mnt/frankendom-donors/miki151-keeperrl/window_view.cpp | Licence: GPL-2.
 
 ## 1. Mechanism
 
-- `WindowView::updateView` (window_view.cpp 512) runs each time a new game view arrives (it returns early if the view was not yet rendered and the caller is not the render thread, 514-515). Order: refresh game info, switch tile layout, `rebuildGui()`, update map objects, `updateMinimap()`, then `playSounds()` (lines 517-533).
-- `rebuildGui` (297-425) rebuilds the whole GUI tree on every call: it first calls `rebuildMinimapGui` and sets the map bounds, clears the temporary elements (308), adds a mouse wheel (unless disabled in options), key handlers (movement, zoom, minimap toggle, escape) and a joystick handler (415-423), then chooses a right bar and a bottom bar by info type: player, band, spectator, or screenshot (no bars).
-- Overlays and the message box are placed with `getOverlayPosition` (427-457), a switch over nine alignments (minions, top-left, immigration, villains, bottom-left, left, messages, tutorial, map hint, centre) with a position formula each, mostly relative to the right-bar width and bottom-bar height. Preferred height is clipped to the space above the bottom bar (410).
+- `WindowView::updateView` (window_view.cpp 512) runs each time a new game view arrives (it returns early if the view was not yet rendered and the caller is not the render thread, 514-515). Order: refresh game info, switch tile layout, `rebuildGui()` (lines 525-526 are too short to receipt), update map objects, `updateMinimap()`, then `playSounds()` (lines 517-533).
+- `rebuildGui` (297-425) rebuilds the whole GUI tree on every call: it first calls `rebuildMinimapGui` and sets the map bounds, clears the temporary elements (308), adds a mouse wheel (unless disabled in options) and key handlers (movement, zoom, minimap toggle, escape), then chooses a right bar and a bottom bar by info type: player, band, spectator, or screenshot (no bars); after the bars and overlays (356-414) it adds the joystick handler (415-423) and sets its bounds to the map area.
+- Overlays and the message box are placed with `getOverlayPosition` (427-457), a switch over ten alignments (minions, top-left, immigration, villains, bottom-left, left, messages, tutorial, map hint, centre) with a position formula each, mostly relative to the right-bar width and bottom-bar height. Preferred height is clipped to the space above the bottom bar (410).
 - `rebuildMinimapGui` (285) builds the minimap window at a computed origin and width, with a row of icons under it.
 - `updateMinimap` (504) sets the minimap bounds: a square of 40 cells around the player's map position, or the whole level when the enlarged minimap is on.
 - Inputs: game info, options, map scroll position and square size, renderer size, level bounds. Output: a new GUI element tree with bounds. No tick and no sim write.
@@ -33,7 +33,7 @@ Donor: /mnt/frankendom-donors/miki151-keeperrl/window_view.cpp | Licence: GPL-2.
 
 Clean-room sketch: written from the mechanism in section 1, no lines translated (licence is GPL-2.0 for code).
 
-simplified: the donor places overlays by nine alignments with a different formula each (the three alignments in the sketch are invented and only approximate two of them); the enlarged-minimap toggle, the donor's centre-of-screen computation from the map scroll position and square size, and the screenshot/spectator branches are omitted.
+simplified: the donor places overlays by ten alignments with a different formula each (the three alignments in the sketch are invented and only approximate two of them); the enlarged-minimap toggle, the donor's centre-of-screen computation from the map scroll position and square size, and the screenshot/spectator branches are omitted.
 
 ```ts
 // Licence: GPL-2.0 (code; data files under separate terms) - clean-room sketch, no lines translated

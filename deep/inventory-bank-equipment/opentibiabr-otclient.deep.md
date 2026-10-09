@@ -1,12 +1,12 @@
 # opentibiabr-otclient (inventory-bank-equipment, cell 9)
 
-Donor: /mnt/frankendom-donors/opentibiabr-otclient/src/client/game.cpp | Licence: MIT | C++ | symbol Game::processInventoryChange / use / move
+Donor: /mnt/frankendom-donors/opentibiabr-otclient/src/client/game.cpp | Licence: MIT per LICENSE and the game.cpp header | C++ | symbol Game::processInventoryChange / use / move
 
 Symbol check: processInventoryChange (329), move (809), use (846) confirmed. The donor is a client: no inventory rule is decided here.
 
 ## 1. Mechanism
 - Thin client. The client never decides slot contents. processInventoryChange(slot, item) (329-335) receives what the server already applied, stamps the item position as (UINT16_MAX, slot, 0) when the item is non-null (331-332) and writes it into the local player's slot via `setInventoryItem` (334; null clears the slot).
-- Requests only. move(thing, toPos, count) (809-819) first forces count to 1 when it is zero or less (811-812), then returns early when `canPerformGameAction()` is false, the thing is null, or the position is unchanged (814-815; the body of `canPerformGameAction` was not read), then sends a move packet with the item id; creatures send the `Proto::Creature` constant instead (817-818; its value was not read).
+- Requests only. move(thing, toPos, count) (809-819) first forces count to 1 when it is zero or less (811-812), then returns early when `canPerformGameAction()` is false, the thing is null, or the position is unchanged (814-815; the body of `canPerformGameAction` was not read), then sends a move packet with the item id; creatures send the `Proto::Creature` constant instead (817-818; value 99, `ItemOpcode::Creature` at src/client/protocolcodes.h:42).
 - moveToParentContainer (821-828) returns early on cannot-act, null thing or count <= 0, then calls move() with the thing's own x and y and z = 254 (a literal; read as the protocol's "into the parent container" marker, the meaning itself is not defined in this file).
 - use(thing) (846-860) returns early on cannot-act or null thing. The position is the thing's own; only when `pos.isValid()` is false (a "virtual item", 852-853) is it replaced with (0xFFFF, 0, 0). It sends a use packet with that position, the id, the stack position and `findEmptyContainerId()` (857; body 1781-1786: first index in `m_containers` that is null), then fires the Lua hook `onUse` with the position, id, stack position and 0 (859).
 - Inputs: a thing reference, a target Position, a count. Outputs: outbound packets and Lua callbacks only.
@@ -23,7 +23,7 @@ Symbol check: processInventoryChange (329), move (809), use (846) confirmed. The
 | Reusable algorithm | Game-specific constants |
 |---|---|
 | Client mirrors server slot echoes; sends intents only | Protocol sentinels 0xFFFF (inventory, game.cpp:332 and 853) and 254 (parent container, game.cpp:827) (theirs) |
-| Count normalised to at least 1 before a move request | `Proto::Creature` sent in place of the item id (theirs, game.cpp:817) |
+| Count normalised to at least 1 before a move request | `Proto::Creature` = 99 sent in place of the item id (theirs, game.cpp:817, protocolcodes.h:42) |
 | Same-position move suppressed on the client | None |
 
 ## 4. TypeScript sketch
@@ -39,7 +39,7 @@ interface Wire {
 }
 const INVENTORY_X = 0xffff; // theirs: protocol sentinel for "inventory"
 const PARENT_Z = 254;       // theirs: protocol sentinel for "parent container"
-const CREATURE_ID = -1;     // theirs: protocol id used for creatures
+const CREATURE_ID = 99;     // theirs: Proto::Creature, the item id sent for creatures
 
 class InventoryClient {
   private slots = new Map<number, Thing | null>();

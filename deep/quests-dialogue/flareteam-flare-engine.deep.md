@@ -23,7 +23,7 @@ Donor: /mnt/frankendom-donors/flareteam-flare-engine/src/QuestLog.cpp | Licence:
 | Data-driven quests loaded from per-file data | File-level last-defined-wins across mods (theirs, line 64) |
 
 ## 4. TypeScript sketch
-simplified: the sketch drops the file parse and the mod override, the group ids and per-quest bold names and separators, the completed-quests heading with its count, the ordering of the completed block before the active block, the notification flag, and the disabled colour. Its requirement test is one function per section (the donor evaluates a vector of event components through the campaign object). It does keep the derive-from-requirements and change-detect steps, and reverses both lists as the donor does.
+simplified: the sketch drops the file parse and the mod override, the group ids and per-quest bold names and separators, the completed-quests heading with its count, the notification flag, and the disabled colour. Its requirement test is one function per section (the donor evaluates a vector of event components through the campaign object). It does keep the derive-from-requirements and change-detect steps, emits the completed block before the active block, and reverses both lists as the donor does.
 
 ```ts
 // Licence: GPL-3 (flareteam-flare-engine). CLEAN-ROOM: written from the mechanism, no donor lines.

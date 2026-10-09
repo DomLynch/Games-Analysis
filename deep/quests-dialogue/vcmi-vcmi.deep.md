@@ -1,6 +1,6 @@
 # vcmi-vcmi (quests-dialogue, cell 12)
 
-Donor: /mnt/frankendom-donors/vcmi-vcmi/lib/mapObjects/Quest.cpp | Licence: GPL-2 | C++ | symbol Quest::checkQuest / takeRequirements (input line 110 verified: `Quest::checkQuest`; `takeRequirements` at 115, `QuestSource::isQuestAvailable` at 423, `SeerHut::onHeroVisit` at 731)
+Donor: /mnt/frankendom-donors/vcmi-vcmi/lib/mapObjects/Quest.cpp | Licence: GPL-2.0-or-later per Quest.cpp header | C++ | symbol Quest::checkQuest / takeRequirements (input line 110 verified: `Quest::checkQuest`; `takeRequirements` at 115, `QuestSource::isQuestAvailable` at 423, `SeerHut::onHeroVisit` at 731)
 
 ## 1. Mechanism
 - A seer hut offers one quest at a time to a hero. A quest is a mission (a hero gate through mission.heroAllowed, whose body was not read, plus creature stacks, artifacts and resources; a table at lines 62-79 classifies a mission into one of 16 kinds such as bring-artifact, bring-creature, hero-level, kill-creature and reach-date), plus a last day, a set of allowed difficulties, a repeat flag and a completed flag.
@@ -31,7 +31,7 @@ Donor: /mnt/frankendom-donors/vcmi-vcmi/lib/mapObjects/Quest.cpp | Licence: GPL-
 simplified: the sketch's `meets` combines the creature and artifact checks, where the donor's `checkQuest` only calls `heroAllowed` (and the army helper is separate, with callers not read). Omitted: the per-player first-visit log, the advance flag, the dialogue and empty-seer text, the hand-off to the reward path, assembled-artifact disassembly, the whole-army rule (passed as a parameter), the mission-kind classifier, and error logging for a missing artifact. Order of the three takes (artifacts, creatures, resources) matches the donor.
 
 ```ts
-// Licence: GPL-2 (vcmi-vcmi). CLEAN-ROOM: written from the mechanism, no donor lines.
+// Licence: GPL-2.0-or-later (vcmi-vcmi). CLEAN-ROOM: written from the mechanism, no donor lines.
 type Req = { creatures: Map<string, number>; artifacts: string[]; gold: number };
 type Quest = { lastDay: number; difficulties: Set<string>; repeated: boolean; done: boolean; req: Req };
 type Hero = { owner: string; army: Map<string, number>; artifacts: Set<string> };

@@ -1,6 +1,6 @@
 # flareteam-flare-engine (spawns-encounters, cell 4)
 
-Donor: /mnt/frankendom-donors/flareteam-flare-engine/src/EnemyGroupManager.cpp | Licence: GPL-3 | C++ | symbol EnemyGroupManager::getRandomEnemy (opened: constructor 30-70, getRandomEnemy 76-123, getEnemiesInCategory 125-132; call sites at MapRenderer.cpp 94, EntityManager.cpp 266, Avatar.cpp 1008 found by search, bodies read only for the call lines)
+Donor: /mnt/frankendom-donors/flareteam-flare-engine/src/EnemyGroupManager.cpp | Licence: GPL-3.0-or-later per EnemyGroupManager.cpp header (COPYING is the GPLv3 text) | C++ | symbol EnemyGroupManager::getRandomEnemy (opened: constructor 30-70, getRandomEnemy 76-123, getEnemiesInCategory 125-132; call sites at MapRenderer.cpp 94, EntityManager.cpp 266, Avatar.cpp 1008 found by search, bodies read only for the call lines)
 
 ## 1. Mechanism
 

@@ -1,6 +1,6 @@
 # xu4-engine-u4 (parties-guilds-chat, cell 18)
 
-Donor: /mnt/frankendom-donors/xu4-engine-u4/src/party.cpp | Licence: GPL-3 | C++ | symbol PartyMember / Party::join (input line 33 verified: `PartyMember::PartyMember`)
+Donor: /mnt/frankendom-donors/xu4-engine-u4/src/party.cpp | Licence: GPL-3.0 per COPYING (party.cpp carries no per-file notice) | C++ | symbol PartyMember / Party::join (input line 33 verified: `PartyMember::PartyMember`)
 
 ## 1. Mechanism
 - This "party" is the single-player companion roster of an Ultima IV save: up to 8 slots, with the avatar in slot 0. It is not networked and has no chat or shared XP.
@@ -22,6 +22,7 @@ Donor: /mnt/frankendom-donors/xu4-engine-u4/src/party.cpp | Licence: GPL-3 | C++
 
 ## 3. Numbers vs mechanism
 | Reusable algorithm | Game-specific constants |
+|---|---|
 | Fixed-size roster with a swap-in on join and a refusal on each gate | 8 slots (theirs, party.cpp line 990) |
 | Experience gate: count against a fraction of the leader's max stat | Divisor 100 on avatar max HP (theirs, line 994) |
 | Gate on a per-class score held in a range | Karma refused when above 0 and below 40 (theirs, lines 998-999) |
@@ -89,4 +90,4 @@ export function memberAt(roster: Rec[], members: number, index: number): Rec | u
 - AdjustValueMax does not clamp below, so a negative XP award reduces XP and an unsigned field would wrap (utils.h 14-22). Frankendom awards go through the ledger with integer and range checks.
 - `join` checks only the first name match and trusts `saveGame->members` to be consistent with the wrappers; `syncMembers` is the only repair.
 - Pit is a client only; zones are data. A companion roster does not interact with MAX_ATTACKERS = 3 here (companions would be extra attackers on the player side, a combat decision).
-- Not read: `Party::endTurn` (line 820), the gear and status effects on members, and `Party::swapPlayers` (1160s).
+- Not read: `Party::endTurn` (line 820), the gear and status effects on members, and `Party::swapPlayers` (1156).

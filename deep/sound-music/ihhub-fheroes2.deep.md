@@ -1,12 +1,12 @@
 # ihhub-fheroes2 (sound-music, cell 15)
 
-Donor: /mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/audio/audio_manager.cpp | Licence: GPL-2 | C++ | symbol PlayMusicImpl / playLoopSoundsImpl / PlaySound
+Donor: /mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/audio/audio_manager.cpp | Licence: GPL-2.0-or-later per audio_manager.cpp header | C++ | symbol PlayMusicImpl / playLoopSoundsImpl / PlaySound
 
 ## 1. Mechanism
 - The audio manager plays two kinds of sound. One-shot effects go through PlaySound(m82), which validates the id, drops queued one-shots and plays now (or queues it asynchronously through PlaySoundAsync). Looping positional effects are kept per sound type, each with an angle and a distance.
 - Music: PlayMusicImpl(track, source, mode) returns at once if the same track is already playing. Otherwise it tries the music database; for an external music file it uses that file; otherwise it converts the built-in track id to a MIDI from the XMI data (the expansion data is preferred when present) and plays it.
 - Async (262-): an AsyncSoundManager runs slow MIDI starts off the game thread. pushMusic (265-274) keeps only the latest music request (an optional slot); pushLoopSound (287-296) keeps only the latest loop update; one-shots go on a deque (`_soundTasks`, 282). `PlaySound` (844-857) calls `removeSoundTasks` to drop queued one-shots and then plays directly; `PlaySoundAsync` (859-) is the queued variant.
-- playLoopSoundsImpl(desired effects, is3D) reconciles the desired loop set with the channels already playing. If the 3D setting changed, all loop effects are cleared first. Channels that have stopped on their own are dropped. Then, per sound type (675-737): (1) a desired effect that is equal to a live channel's effect (angle and distance, equality operator not read) keeps that channel; (2) remaining desired effects are paired with the remaining live channels one at a time by findPairOfClosestSoundEffects, and the channel is moved with Mixer::setPosition; (3) channels left over are stopped; (4) effects left over start new looping channels with the sound type's WAV (750-775; an empty WAV or a failed play is skipped).
+- playLoopSoundsImpl(desired effects, is3D) reconciles the desired loop set with the channels already playing. If the 3D setting changed, all loop effects are cleared first. Channels that have stopped on their own are dropped. Then, per sound type in the loop at 675-737: (1) a desired effect that is equal to a live channel's effect (angle and distance, equality operator not read) keeps that channel; (2) remaining desired effects are paired with the remaining live channels one at a time by findPairOfClosestSoundEffects, and the channel is moved with Mixer::setPosition; (3) after the loop has run over all the sound types, channels left over are stopped (739-748); (4) then effects left over start new looping channels with the sound type's WAV (750-775; an empty WAV or a failed play is skipped).
 - findPairOfClosestSoundEffects picks the pair with the smallest angle difference, then the smallest distance difference. On a full tie the later pair wins.
 - Inputs: desired effects (type, angle, distance), live channel state, 3D flag. Output: mixer start, stop and reposition calls. Runs once per loop update request, under the async manager's recursive mutex (648).
 - Setup (781-801): 32 mixer channels (785), sound and music volume as `100 * setting / 10` (797, 799), music fade-in 900 ms (800).
@@ -27,7 +27,7 @@ Donor: /mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/audio/audio_manager.cp
 | Preferred music source order: database, file, expansion MIDI, base MIDI | the expansion data check (`g_midiHeroes2xAGG.isGood()`, line 575); 32 channels (785); 900 ms music fade-in (800) (theirs) |
 
 ## 4. TypeScript sketch
-simplified: the sketch handles one sound type (the donor loops over the types and keeps a separate list for each); the 3D-flag change that clears all loop effects, the mutex, the async manager and the WAV lookup are omitted; `Loop` equality is exact angle and distance.
+simplified: the sketch handles one sound type (the donor loops over the types and keeps a separate list for each); the stop-leftovers and start-new steps run inside the one-type call (the donor runs them once after the loop over all types); the 3D-flag change that clears all loop effects, the mutex, the async manager and the WAV lookup are omitted; `Loop` equality is exact angle and distance.
 
 ```ts
 // Licence: GPL-2 (ihhub-fheroes2). CLEAN-ROOM: written from the mechanism, no donor lines.

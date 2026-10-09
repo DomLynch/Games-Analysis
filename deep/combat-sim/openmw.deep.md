@@ -32,7 +32,7 @@ Checked: At 71 (verified: `blockMeleeAttack` 71-178; `getHitChance` 316-350; `pr
 
 ## 4. TypeScript sketch
 
-simplified: omits the gates (knocked down, hit recovery, paralysis, ready to block, shield slot), the swing term, the still bonus, fatigue loss on a block, shield durability, the hit-chance contest with the defender's evasion, and the full-negate of the blocked damage.
+simplified: omits the gates (knocked down, hit recovery, paralysis, ready to block, shield slot), the swing term, the still bonus, fatigue loss on a block, the shield's durability bookkeeping (the sketch's `shieldWear` is only `damage x wearPerDamage`; the donor takes the damage truncated to an integer 1:1, caps it at the shield's remaining health and unequips the shield at zero), the choice of the attacker's skill (hand-to-hand when unarmed, otherwise the weapon's skill; `attackTerm` takes the skill as given), the hit-chance contest with the defender's evasion, and the full-negate of the blocked damage.
 
 ```ts
 // Licence: GPL-3 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.

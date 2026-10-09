@@ -1,6 +1,6 @@
 # 00-Evan-shattered-pixel-dungeon (camera, cell 14)
 
-Donor: /mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/SPD-classes/src/main/java/com/watabou/noosa/Camera.java | Licence: GPL-3 | Java | symbol Camera.update / shake / panFollow
+Donor: /mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/SPD-classes/src/main/java/com/watabou/noosa/Camera.java | Licence: GPL-3.0-or-later (per Camera.java header) | Java | symbol Camera.update / shake / panFollow
 
 Symbol check (opened on the VPS, 2026-10-09): update 175-226, shift 236, setCenterOffset 241, snapTo 251, panTo 261, panFollow 267, setFollowDeadzone 276, updateMatrix 300, shake 317.
 
@@ -30,7 +30,7 @@ Symbol check (opened on the VPS, 2026-10-09): update 175-226, shift 236, setCent
 ## 4. TypeScript sketch
 simplified: the sketch omits the follow target's visibility check, the centre offset (so snapTo ignores it), the panTarget point (panTo and the stale-target pan; here the pan only runs while a target exists), the panIntensity > 0 gate (an intensity of 0 gives k = 0, same effect), panTo, shift, setCenterOffset and the matrix update. Target is a plain point, not a sprite centre.
 ```ts
-// Licence: GPL-3 (00-Evan-shattered-pixel-dungeon). CLEAN-ROOM: from the mechanism only.
+// Licence: GPL-3.0-or-later (00-Evan-shattered-pixel-dungeon). CLEAN-ROOM: from the mechanism only.
 interface Cam { x: number; y: number; target?: { x: number; y: number }; intensity: number;
   deadFrac: number; viewW: number; viewH: number; shakeMag: number; shakeLeft: number; shakeDur: number;
   shakeX: number; shakeY: number; }
@@ -69,11 +69,11 @@ function shake(c: Cam, magnitude: number, duration: number): void {
 ## 5. Lands in
 - Frankendom target: src/fight/camera.ts (new module; today: src/camera* (moving), slice K4). Dead-zone follow and shake are candidates for the fight camera's framing; the camera-kick part of row 11 could use the shake.
 - Parity-checklist row: 11 (fight camera, camera kick, standoff).
-- Reuse tag: rewrite-from-idea (GPL-3; the dead-zone follow and damped shake are the idea)
+- Reuse tag: rewrite-from-idea (GPL-3.0-or-later; the dead-zone follow and damped shake are the idea)
 - Brief rule served: (category default, not per-cell) 1 (one combat core, two clients); rules 7-9 n/a
 
 ## 6. Gaps and risks
 - A 2D camera for a tile map. Frankendom's fight camera is 3D or a fixed chase, so only the follow and shake ideas transfer.
 - Shake is random and uses the donor's random source; Frankendom needs a seeded or cosmetic-only source so it cannot affect the server.
 - Snap and pan clear each other's state in a specific order. Frankendom should define that order explicitly.
-- Donor is GPL-3, so only the mechanism is described here.
+- Donor is GPL-3.0-or-later, so only the mechanism is described here.

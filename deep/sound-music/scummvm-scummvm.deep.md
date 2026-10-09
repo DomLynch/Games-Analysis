@@ -1,6 +1,6 @@
 # scummvm-scummvm (sound-music, cell 15)
 
-Donor: /mnt/frankendom-donors/scummvm-scummvm/engines/icb/footstep.cpp | Licence: GPL-3 | C++ | symbol _game_session::UpdateFootstep
+Donor: /mnt/frankendom-donors/scummvm-scummvm/engines/icb/footstep.cpp | Licence: GPL-3.0-or-later per footstep.cpp header | C++ | symbol _game_session::UpdateFootstep
 
 ## 1. Mechanism
 
@@ -8,7 +8,7 @@ Donor: /mnt/frankendom-donors/scummvm-scummvm/engines/icb/footstep.cpp | Licence
 - Inputs: the listener entity `L` position, the player position `player.log`, the current animation type `L->cur_anim_type` and frame `L->anim_pc` in the open animation `PXanim`, the footstep state on the mega (`M->footstep_weight`, `M->footstep_special`, `M->footstep_status`), and the floor the entity stands on (`L->owner_floor_rect`).
 - Gate: the player must be within 20 m in X and Z (2000 units each, and a circle of the same radius in XZ) and within 2 m vertically. Outside the gate nothing happens and the status is not reset.
 - Trigger: the current animation frame has a left or right foot-down flag. The status flag is a rising-edge latch: a step plays only when the previous check was not a step, so one foot plant gives one sound.
-- Volume: `weight * 63 / 100`, quartered when crouched, halved when not running, and boosted by half when walking. The weight is set by script from 0 to 200.
+- Volume: `weight * 63 / 100`, quartered when crouched; otherwise halved when the animation is not run; then boosted by half when the animation is walk (the boost applies after either reduction). The weight is set by script from 0 to 200.
 - Sound pick (184-214): a special-mega sound if the flag is set (no fallback); otherwise the first floor-override match on the floor number, replaced by the ladder sound on the four ladder-climb animations, then the default sound if still none; nothing plays if all are zero.
 - Output: one `RegisterSound(cur_id, ..., sfx, "foot", (int8)vol)` call per step. `RegisterSound` was not read; whether it reaches any server is unverified. Volume cannot overflow the int8 cast: the weight is capped at 200 (line 94), so `vol` is at most 126.
 
@@ -31,7 +31,7 @@ Donor: /mnt/frankendom-donors/scummvm-scummvm/engines/icb/footstep.cpp | Licence
 
 ## 4. TypeScript sketch
 
-simplified: the ladder-sound override and the special single-sound mode are omitted (so the `climb` stance is unused); the donor's volume is integer arithmetic (the sketch computes in floats and truncates once at the end); the donor reads the foot flags from the open animation file at the entity's frame; gate and latch order are the same as the donor's.
+simplified: the ladder-sound override and the special single-sound mode are omitted (so the `climb` stance is unused); the donor's volume is integer arithmetic (the sketch computes in floats and truncates once at the end); the donor keys the floor table by floor number (first match, and nothing plays if no sound resolves to non-zero; the sketch keys by string and always has a default); the donor reads the foot flags from the open animation file at the entity's frame; gate and latch order are the same as the donor's.
 
 ```ts
 // Licence: GPL-3 - clean-room sketch, no lines translated

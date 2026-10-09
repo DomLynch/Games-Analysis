@@ -9,7 +9,7 @@ Symbol check: exchangeItemCategory (66), exchangeHardLock (155) and exchangeCate
 - Step 1, category: mount first, then mech chroma, then equipment if the def has a slot, else other. Order matters so a future mount with a slot keeps its own category (comment 59-65). `other` is the closed default: an unrecognised kind is not tradable (53-55).
 - Step 2, hard lock (155-180): quest kind is refused (160). Then the per-copy predicate isTransferLockedInstance (166; transfer_lock.ts 18-22, read: true when the payload has bindOnTrade === true or boundTo defined): it answers bound_copy if boundTo is present (presence, not truthiness, since pid 0 is real) else bind_armed (167). Then soulbound (not for mounts, 169) and noMarketList (not for chromas, 170). Last, the owner's own item lock (178; item_lock_flag.ts 16-18: payload.locked === true), kept last on purpose (171-177).
 - Policy is not here: whether a category trades, the price floor value and operator exclusions stay on the server (comment 29-34).
-- Step 3, price floor: only the equipment category uses the quality floor (190-192). Mounts and chromas are traded at any tier. The "epic by default" value is from the comment at 188, the floor itself lives on the server (not read).
+- Step 3, price floor: only the equipment category uses the quality floor (190-192). Mounts and chromas are traded at any tier. The "epic by default" value is from the comment at 187, the floor itself lives on the server (not read).
 - Output: null (eligible) or one ExchangeLock reason. A browse category (weapon, armor, mount, chroma, other) and a subcategory (weapon type or armour slot) feed the filter UI.
 - Pure functions, no clock, no rng (comment 36-42), so nothing runs per tick; the header says they are called at listing and at bag extraction.
 
@@ -27,7 +27,7 @@ Symbol check: exchangeItemCategory (66), exchangeHardLock (155) and exchangeCate
 | Ordered refusal list, per-copy state checked before def flags | Lock names and their order (theirs) |
 | Exception per category for a flag (mounts may be soulbound, chromas may be no-market-list) | Which categories are exempt (theirs, a product rule) |
 | One shared predicate used by all enforcement points | isTransferLockedInstance (transfer_lock.ts 18-22) and isItemLocked (item_lock_flag.ts 16-18), small leaf files (theirs) |
-| Quality floor applied to one category only | Floor applies to equipment; "epic by default" per the comment at 188, value lives on the server (theirs) |
+| Quality floor applied to one category only | Floor applies to equipment; "epic by default" per the comment at 187, value lives on the server (theirs) |
 
 ## 4. TypeScript sketch
 simplified: browse category and subcategory (83-105) are omitted; the per-copy predicate (transfer_lock.ts) is inlined as two checks on the copy, and the instance field `locked` is named playerLocked. Order matches the donor: quest, bound or armed copy, soulbound, no-market-list, owner lock.

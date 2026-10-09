@@ -8,7 +8,7 @@ Donor: /mnt/frankendom-donors/levy-street-world-of-claudecraft/src/ui/absorb_bar
 - `absorbTotal` (absorb_bar.ts 32) sums the remaining value of every aura of kind `absorb`, clamping each to zero or more. Spent or negative shields add nothing.
 - `absorbBarViewInto` (55) fills a caller-owned view. It takes `{ hp, maxHp, auras?, total? }`, floors max at 1 and hp at 0, uses `total ?? absorbTotal(auras ?? [])` (clamped at 0), and derives the shield size as total over max (clamped 0 to 1), `fillFrac` (hp plus total over max, clamped, "kept for callers/tests"), overshield when hp plus total reaches max, and the start: the health fraction normally, or right-aligned (1 minus size) when overshielded.
 - `absorbSegmentTransform` (82) returns a CSS transform string: `translateX` to the start (quantized to 3 decimals) and `scaleX` to the size, so the segment spans [start, start + size]. A zero shield keeps the same two-function shape, so CSS transitions do not flip.
-- The comment at lines 52-53 says HUD unit frames call `absorbBarViewInto` every animation frame (callers are in `unit_frame.ts` and `unit_frame_painter.ts`, found by grep, not read). The header (lines 6-7) says the sim decrements the absorb values in `dealDamage`; that sim code was not read. This module only reads them.
+- The comment at lines 52-53 says HUD unit frames call `absorbBarViewInto` every animation frame (`unit_frame.ts` calls `absorbBarViewInto` at line 343 and `absorbBarView` at 246; `unit_frame_painter.ts` uses `absorbSegmentTransform`; confirmed by grep, bodies not read). The header (lines 6-7) says the sim decrements the absorb values in `dealDamage`; that sim code was not read. This module only reads them.
 - Output: a view object and a transform string. Nothing written back.
 
 ## 2. Key functions
@@ -36,7 +36,7 @@ Donor: /mnt/frankendom-donors/levy-street-world-of-claudecraft/src/ui/absorb_bar
 
 Lift: the logic is lifted from the paths above (MIT permits it). Function names match the source. `clamp01` is restated, since the source imports it from `./clamp`.
 
-simplified: the sketch passes `total` as a plain argument (the donor takes an input object and falls back to summing auras), omits the `fillFrac` field, and drops the injectable `scaleX` writer (default `scaleX(n)`, lines 85, 103-105).
+simplified: the sketch passes `total` as a plain argument (the donor takes an input object and falls back to summing auras), omits the `fillFrac` field, does not clamp a negative `total` to zero (the donor does, line 59), and drops the injectable `scaleX` writer (default `scaleX(n)`, lines 85, 103-105).
 
 ```ts
 // Licence: MIT

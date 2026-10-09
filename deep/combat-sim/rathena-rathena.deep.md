@@ -1,6 +1,6 @@
 # rathena-rathena (combat-sim, cell 1)
 
-Donor: `/mnt/frankendom-donors/rathena-rathena/src/map/battle.cpp` | Licence: GPL-3 | C++ | symbol `battle_damage / battle_calc_*`
+Donor: `/mnt/frankendom-donors/rathena-rathena/src/map/battle.cpp` | Licence: GPL-3.0 per repo LICENSE (battle.cpp header says only "Licensed under GNU GPL", no version) | C++ | symbol `battle_damage / battle_calc_*`
 
 Checked: At 319. Verified: line 319 opens `battle_damage` (the doc comment sits above it, 300-318) and it ends at 365. Read in full: `battle_calc_attack` 6753-6796, `battle_calc_weapon_attack` start 5387-5480, `is_attack_critical` 3017-3155, `is_attack_hitting` 3228-3318, `battle_calc_base_damage` 2515-2635, `battle_calc_defense_reduction` 4720-4884, `battle_calc_attack_post_defense` 4894-4941. The rest of `battle_calc_weapon_attack` (5480-) was not read.
 
@@ -17,7 +17,7 @@ Checked: At 319. Verified: line 319 opens `battle_damage` (the doc comment sits 
 
 ## 2. Key functions
 
-- `battle_calc_attack`: `battle_calc_attack` dispatcher, `battle.cpp` 6753-6796. Dispatch, miss and absorb mapping, blocking.
+- `battle_calc_attack`: the dispatcher, `battle.cpp` 6753-6796. Dispatch, miss and absorb mapping, blocking.
 - `is_attack_hitting`: `battle.cpp` 3228-3318. Hit roll with flee, crit bypass and hitrate clamp.
 - `is_attack_critical`: `battle.cpp` 3017-3155. Critical chance.
 - `battle_calc_base_damage`: `battle.cpp` 2515-2635 (read in full). Uniform base roll, DEX-scaled minimum, size and base attack adds.
@@ -43,7 +43,7 @@ Checked: At 319. Verified: line 319 opens `battle_damage` (the doc comment sits 
 simplified: omits the lucky dodge and the critical check order (critical is tested before hit in the donor), the flee penalty by attacker count, the size correction, base-attack and refine adds, the VIT random term, the renewal critical multiplier and every skill-specific branch. The hit roll here is a float comparison; the donor uses an integer `rnd()%100`. Pre-renewal DEF is capped at 100 in the sketch as in the donor.
 
 ```ts
-// Licence: GPL-3 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
+// Licence: GPL-3.0 (donor, per repo LICENSE). clean-room sketch written from the described mechanism, not a translation of the donor lines.
 type Roll = () => number; // uniform in [0, 1)
 
 // Hit chance: base plus attacker accuracy minus defender evasion, clamped to a configured range.
@@ -89,7 +89,7 @@ function finalDamage(afterDefence: number): number {
 
 ## 6. Gaps and risks
 
-- GPL-3: clean-room only. The sketch is written from the mechanism and is not a line-for-line translation.
+- GPL-3.0: clean-room only. The sketch is written from the mechanism and is not a line-for-line translation.
 - Two formula families (pre-renewal and renewal) sit behind `#ifdef RENEWAL`. Pick one for Frankendom and do not mix them.
 - Flee and accuracy are MMO stat tables. Frankendom's catalogue (checklist row 21) has none of them; nothing here maps without adding fields.
 - `battle_damage` applies the damage at once and computes a walk delay; the timed delay is a separate function. Frankendom resolves inside the 60 Hz step, so no delay timer should be copied.
