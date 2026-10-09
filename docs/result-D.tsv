@@ -1,0 +1,39 @@
+file	a	b	c	d	e	f	g	notes
+hud-ui/0ad-0ad	5	3	0	1	1	3	1	fixed ranges (displaySingle 52-368, displayMultiple 371-496, update 499-542, garrison 14-49), NaN/Infinity claim, unverified tooltip claim, added simplified line, row 14
+hud-ui/00-Evan-shattered-pixel-dungeon	0	2	0	2	1	1	1	DOT clamp claim was wrong (scale is width in ColorBlock); sketch now clamps; target file
+hud-ui/OpenDiablo2-OpenDiablo2	1	2	3	1	1	1	1	alpha value (0xc8), constants cited with lines, experience tooltip range, simplified line, target file/row
+hud-ui/OpenRCT2-OpenRCT2	3	5	2	1	1	2	1	ranges, unverified write/animation/cache claims removed, floor/padding corrected, row 14/22
+hud-ui/OpenTTD-OpenTTD	5	3	2	1	1	0	1	ranges, DrawSmallMap extras, edge-pixel bug in sketch, GetTileColours industries branch, row 14
+hud-ui/PixelGuys-Cubyz	3	5	2	1	1	2	1	hoveredAWindow claim wrong (inventory drop, not world input), toggleWindow bypass, modal render, openHud inventory.init, row 14/5
+hud-ui/STJr-SRB2	3	7	3	1	1	3	1	banner is two patches from both edges and only when deadtimer>=0; countdown>1; hu_showscores scopes; Lua hook range; sketch fixed (banner delay, countdown); row 14/17
+hud-ui/TurningWheel-Barony	0	5	2	1	1	3	1	missed damage-ghost layer, gap claim wrong, expiry conditions, defaults cited, enemy_hp=0 verified; ranges ok; row 14/10
+hud-ui/ValveSoftware-halflife	1	4	3	1	1	2	1	slot count 12 (sketch said 8), item overload burns slot, ammo row draws number without sprite, callers grep only, constants cited, row 14/18
+hud-ui/afritz1-OpenTESArena	0	3	1	1	1	2	1	GetStatusEffectString has different priority (not same order); unguarded zero max; caller claim cut; target file
+hud-ui/diasurgical-DevilutionX	0	3	4	1	1	2	1	pass/render claim cut (not read), gap 8 after icon height, 81 scale source cited, DrawMainPanelButtons wording, row 14/17
+hud-ui/endless-sky-endless-sky	1	3	2	1	1	2	1	draw claim wrong (only current+target drawn), lambda range 178-269, sketch timer order fixed, lerp never reaches 1, row 14
+hud-ui/levy-street-world-of-claudecraft	0	2	2	1	1	1	1	fillFrac field and input object omitted; per-frame/caller claim re-sourced; row 14/3
+hud-ui/luanti-org-luanti	3	4	2	1	1	3	1	update_elem semantics, hud_changed, zero-max NaN (not hidden), ranges, breath gate, row 14
+hud-ui/miki151-keeperrl	1	4	2	1	1	2	1	getOverlayPosition has 9 alignments (sketch invented 3), early return in updateView, constants cited, no-target fixed to row 14
+hud-ui/orbitersim-orbiter	2	4	1	1	1	1	1	caller range 238-260, mode 2 older-panel fallback, panelmode assigned before load, double retry; target camera.ts row 11
+hud-ui/veloren-veloren	1	4	3	1	1	3	1	pulse range 1606-1618, NaN on zero max, skill-point floater not opened, unread widget pass range fixed 1625-4748, header, row 14/10
+sound-music/00-Evan-shattered-pixel-dungeon	1	5	0	2	2	2	1	resume wording wrong (isPlaying), play() cancels fade, fadeOut rescale missing in sketch (fixed), playNextTrack range 196-217, no-target fixed to row 12
+sound-music/DCurrent-openbor	0	6	1	1	1	2	1	added interpolation, chance/delay fields, forced-channel rule, thread claim marked inferred; row 12/sound.ts
+sound-music/FunkinCrew-Funkin	0	3	0	2	2	1	1	sketch added volume on add (donor does not) fixed; forEachAlive; legacy flags; target/row 12
+sound-music/MovingBlocks-Terasology	1	3	2	1	2	3	1	added death handlers (no throttle), strict inequality, null sounds error, target/row 12, seeded-claim reworded
+sound-music/OpenRA-OpenRA	2	5	1	1	2	2	1	sketch invented known-name gate (removed), volume formula, PlayLooped/PlayMusic ranges, Tick null-callback, LocalRandom, target/row 12
+sound-music/OpenTTD-OpenTTD	2	5	2	1	2	2	1	startSound order (alloc before load) fixed in sketch, volume not divided by 255, tile fx y is minus half tile, ranges, vehicle fx
+sound-music/OpenXcom-OpenXcom	1	3	0	1	2	2	1	func_mute now read (Adlib reset); isPlaying is any channel; play range 86-101; no-target fixed (proposed module claim cut)
+sound-music/PixelGuys-Cubyz	1	6	2	1	2	3	1	cache is 4x4=16 not 4; mixMusic WAS readable (5s spline fade, loop, audio thread) now added; mono/stereo mismatch; AudioData.init; no-target fixed
+sound-music/angband-angband	0	2	1	2	2	3	1	status unknown/error/loaded (no retry) in sketch; randint0 RNG gap; per-message cap; target/row 12
+sound-music/crawl-crawl	0	3	0	1	2	1	1	ranges all ok; SDL path details (unchecked load, free while playing), UNUSED(interrupt_game), config keys; target src/feedback->src/fight/sound.ts row 12
+sound-music/flutter-team-archive-pinball	0	6	4	1	2	3	1	random is unseeded by default (doc said seeded); load() returns closures; pools of 4; single-loop flag; constants cited; target/row 12
+sound-music/id-Software-DOOM	0	5	0	1	2	3	1	cut-same only first match; first free slot; derror exit; updatesounds caller not read; handle counter; target/row 12
+sound-music/ihhub-fheroes2	0	4	1	1	2	1	1	ranges ok; async claims verified (latest-only slots); equality operator unread; constants 32 channels/900ms; target/row 12
+sound-music/jynew-jynew	0	3	0	1	2	1	1	path form has no same-clip guard (restarts); StopMusic/GetCurrentMusic noted; target/row 12
+sound-music/levy-street-world-of-claudecraft	1	2	5	1	2	1	1	test-pin claim re-sourced to comment; dungeon_music_zones line 15; constants cited; no-target fixed to rows 20/21/12
+sound-music/lichess-org-mobile	0	4	2	1	2	1	1	assert-only volume check; aplay has no volume; initialize range; constants cited; target/row 12
+sound-music/open-duelyst-duelyst	0	3	0	2	2	1	1	sketch stop/callback order (donor calls callback then stop) fixed; duration fallback chain; target/row 12,9
+sound-music/openmw	1	4	0	1	2	1	1	updateMusic called inside updateSounds (not update); empty filename stop; mNextMusic overwrite; header added; target/row 12
+sound-music/orbitersim-orbiter	1	3	4	1	2	1	1	playback-type switch (internal-only/radio/wind/global) added; comment-vs-code (half-loudness vs inverse square); call-site range 258-272; constants cited; row 12/11
+sound-music/pokerth-pokerth	0	4	2	1	2	2	1	WinMM windows-only; QSoundEffect restarts; wake-up comment source; loader unread; voice append unbounded cited; target/row 12
+sound-music/scummvm-scummvm	2	5	2	1	2	3	1	per-character not active-only; call range 872-885; int8 clip claim wrong (cap gives 126); ladder overrides floor; fn ranges; fixed no-row/no-file; header added
