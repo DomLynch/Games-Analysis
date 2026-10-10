@@ -1,0 +1,58 @@
+{
+  "donor": "alexbatalov-fallout1-ce",
+  "topic": "world-fiction",
+  "depth": "thin",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/worldmap.cc",
+    "/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/worldmap.h",
+    "/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/game_vars.h",
+    "/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/endgame.cc",
+    "/mnt/frankendom-donors/alexbatalov-fallout1-ce/LICENSE.md"
+  ],
+  "counts": {
+    "town_count": 12,
+    "town_special_ids": 3,
+    "site_slots_per_town": 7,
+    "town_first_visit_gvars": 12,
+    "site_knowledge_gvars_nonzero": 43,
+    "xlate_map_rows": 66,
+    "hotspot_site_rows_grep": 42,
+    "enemy_flags": 14,
+    "town_message_labels_in_box": 0,
+    "rumour_text_in_box": 0
+  },
+  "rule": "A town or site is known when its first-visit flag or its site flag is set. Flags are copied into a per-town, per-site table at map refresh. One special place (Vault 13 entrance) is also revealed by a time threshold. Factions carry one enemy flag each, set by scripts and read by the ending. Labels and text are from message files that are not in the box. The code read here is the state rule only, which is the part that transfers.",
+  "data_fields": [
+    {"name": "town_count", "unit": "towns", "donor_value_or_null": null},
+    {"name": "site_slots_per_town", "unit": "sites", "donor_value_or_null": null},
+    {"name": "known_rule", "unit": "boolean", "donor_value_or_null": null},
+    {"name": "time_gate", "unit": "game_time units (unit not read)", "donor_value_or_null": null},
+    {"name": "enemy_flag_count", "unit": "flags", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "known when visited or flagged",
+    "one flag per site, copied into a table on refresh",
+    "one time-gated reveal for one special place",
+    "one hostility flag per faction, read by the ending"
+  ],
+  "change": [
+    "our own towns and faction names (not the donor set)",
+    "zone-to-faction data table instead of hand-listed flag ids",
+    "one known bit per zone on the server ledger; client draws dots only",
+    "time gate as a named constant in zone-clock data, not a magic number",
+    "ending text chosen on the server from ledger flags"
+  ],
+  "look_test": "World map at 375 wide: one region hidden, one zone shown by a visit and one by an event flag set in a test, one zone tinted for an angered faction. Compare fog on and off. Publish to /preview/ with no release rows.",
+  "licence_note": "Sustainable Use License 1.0 (LICENSE.md line 1): personal, non-commercial and internal use only. Restricted donor: category-level shape only, no code or text adapted. Data pack (master.dat, msg files, scripts) not in box; user-supplied (class D).",
+  "tags": ["faction-map", "signage", "rumour", "timed-event", "new:visit-or-flag-reveal", "new:town-known-flag", "new:faction-enemy-flag"],
+  "not_read": [
+    "message files (town labels, rumour and sign text) - not in box",
+    "scripts (.int) that set and read the enemy and knowledge flags - not in box",
+    "worldmap.cc:2821-2826 second Vault 13 branch condition",
+    "unit of game_time used by the time gate",
+    "worldmap.cc known-town checks at 1701 and 1963 beyond what is named",
+    "alexbatalov-fallout2-ce (sibling in DC005) for this topic",
+    "idle/ambient, death/respawn, loot ceremony, walk density, 375-wide readability (not in this half)"
+  ]
+}

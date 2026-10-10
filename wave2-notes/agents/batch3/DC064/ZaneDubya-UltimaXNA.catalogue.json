@@ -1,0 +1,180 @@
+{
+  "donor": "ZaneDubya-UltimaXNA",
+  "counts": {
+    "creatures": 384,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "count_notes": {
+    "creatures": "distinct body IDs typed Monster (292) plus Animal (92), dev/Data/bodytable.cfg; 1065 rows, 1002 distinct IDs in total. AU060 figures (509/218/75/19/4) did not reproduce from this file.",
+    "classes": "0 classes or professions. Races enum has 2 values (Human, Elf) at dev/Ultima/Data/Races.cs lines 16-17; creator hard-codes race to Human (CreateCharAppearanceGump.cs line 33).",
+    "weapons": "0 weapon items in the box. Stance families only (ActionIndexes.cs 60-90).",
+    "gear_sets": "0 sets. 593 distinct Equipment-typed body IDs are gear body classes, not sets.",
+    "zones": "0 biome or dungeon data in the box. 5 season values (Seasons.cs lines 15-20) are listed under zones, not counted."
+  },
+  "creature_families": [
+    {"family": "monster bodies (named variant ladders, brutes, dragons, serpents, insects, elementals, undead, animated weapon, bird boss)", "distinct_ids": 292, "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Data/bodytable.cfg"},
+    {"family": "animal bodies (birds named: lines 944-945)", "distinct_ids": 92, "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Data/bodytable.cfg"},
+    {"family": "human-typed bodies incl. elf and gargoyle sets", "distinct_ids": 25, "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Data/bodytable.cfg lines 914-916, 960-961"},
+    {"family": "sea bodies", "distinct_ids": 4, "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Data/bodytable.cfg line 165"}
+  ],
+  "top_creatures": [
+    {
+      "label": "Armoured horned brute with armour-tier variant bodies",
+      "why": "One silhouette, three body IDs for three armour tiers, so a tier is a body swap. Big horned outline should read at 375 wide. Signature: three melee attacks, a stumble and get-hit reactions.",
+      "keep": "Body-ID variant ladder for one family; attack set from the monster clips",
+      "change": "Our own plating shapes; a tier colour on the rim; resolve the duplicate ID 281 (Equipment at line 248, Monster at line 943)",
+      "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Data/bodytable.cfg lines 927, 942, 943; /mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/World/Entities/Mobiles/Animations/ActionIndexes.cs lines 25-40"
+    },
+    {
+      "label": "Dragon family split into variant bodies (winged, wolf-type, large undead)",
+      "why": "Several dragon bodies give a tier ladder without new rigs.",
+      "keep": "Family split by variant ID",
+      "change": "Our wing silhouette and element palette; add a flight or hover clip (the monster enum has none)",
+      "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Data/bodytable.cfg lines 967, 968, 995; /mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/World/Entities/Mobiles/Animations/ActionIndexes.cs lines 25-40"
+    },
+    {
+      "label": "Multi-head serpent boss",
+      "why": "Multi-head outline reads at a distance. Attacks have no per-head clip; the monster branch passes raw indices through for MonsterAction.",
+      "keep": "Multi-head silhouette and per-head attacks",
+      "change": "Our head count and attack timing; custom action indices for each head",
+      "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Data/bodytable.cfg line 929; /mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/World/Entities/Mobiles/Animations/ActionTranslator.cs lines 197-198"
+    },
+    {
+      "label": "Armoured insect and mechanical scorpion",
+      "why": "Plated insect silhouettes are very readable and suit a metal finish.",
+      "keep": "Insect body with plates and a metallic sheen",
+      "change": "Our leg count and metal palette",
+      "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Data/bodytable.cfg lines 963, 966"
+    },
+    {
+      "label": "Lava elemental",
+      "why": "Rock-and-heat body with a hot palette reads as danger.",
+      "keep": "Elemental made of stone and heat",
+      "change": "Our glow ramp, and an idle that is not a plain stand",
+      "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Data/bodytable.cfg line 969"
+    },
+    {
+      "label": "Undead winged gargoyle",
+      "why": "Horned, winged, grey-stone silhouette; the donor has gargoyle bodies for both sexes and a gargoyle pet.",
+      "keep": "Horned and winged outline in grey stone",
+      "change": "Our horn and wing shape; a spectral glow. Gargoyle race (IsGargoyle) has no caller in the box",
+      "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Data/bodytable.cfg lines 960-961, 971, 293; /mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/Data/Body.cs lines 111-118"
+    },
+    {
+      "label": "Animated weapon creature",
+      "why": "A weapon that comes alive is a strong readable silhouette at 375 wide and bridges weapons and creatures.",
+      "keep": "The weapon shape itself as the body",
+      "change": "Our own weapon, its own sound, a glow on the blade",
+      "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Data/bodytable.cfg line 991"
+    },
+    {
+      "label": "Undead caster boss",
+      "why": "A robed caster reads as magic coming.",
+      "keep": "Caster boss with a dark aura",
+      "change": "A real cast clip: the monster enum has no cast index (only humanoid has Cast_Directed and Cast_Area)",
+      "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Data/bodytable.cfg line 992 (body ID 830); /mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/World/Entities/Mobiles/Animations/ActionIndexes.cs lines 25-40"
+    }
+  ],
+  "classes": [
+    {"name": "Human", "role": "default playable race; the only one the creator offers", "mechanic": "none beyond body set", "progression": "not in box", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/UI/LoginGumps/CreateCharAppearanceGump.cs line 33"},
+    {"name": "Elf", "role": "race enum value 2 and elf body IDs 605-607", "mechanic": "data only; creator cannot select it", "progression": "not in box", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/Data/Races.cs line 17; /mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Data/bodytable.cfg lines 914-916"},
+    {"name": "Gargoyle", "role": "body set (IDs 666, 667, 694, 695), typed Human in the table", "mechanic": "IsGargoyle defined, no caller in the box", "progression": "not in box", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/Data/Body.cs lines 111-118"},
+    {"name": "Skill slot build (three skills, 0-50 each, defaults 50/50/0)", "role": "character build at creation", "mechanic": "pick three skills from a 55-slot list; paired sliders share the total", "progression": "fixed at creation; no later respec read", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/UI/LoginGumps/CreateCharSkillsGump.cs lines 87-89, 97"},
+    {"name": "Attribute budget (three stats, 10-60, defaults 60/10/10)", "role": "stat spread at creation", "mechanic": "paired sliders move points between stats", "progression": "fixed at creation", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/UI/LoginGumps/CreateCharSkillsGump.cs lines 68-70; /mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/UI/Controls/HSliderBar.cs lines 168, 173"},
+    {"name": "Magery (eight circles of eight spells, reagent costs)", "role": "spell ladder", "mechanic": "64 spells, each with circle, icon and reagent list; 13 reagents in two groups", "progression": "circle number is data; unlock rules not in client", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/Data/SpellsMagery.cs lines 18, 38, 101; /mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/Data/Reagents.cs lines 24-29"}
+  ],
+  "weapon_families": [
+    {"family": "one-handed attack", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/World/Entities/Mobiles/Animations/ActionIndexes.cs line 71"},
+    {"family": "unarmed (two attack variants)", "ref": "ActionIndexes.cs lines 72-73"},
+    {"family": "two-handed (down, across, jab)", "ref": "ActionIndexes.cs lines 74-76"},
+    {"family": "bow (draw and second draw)", "ref": "ActionIndexes.cs lines 80-81"},
+    {"family": "mounted attack sets", "ref": "ActionIndexes.cs line 88 onward"},
+    {"family": "animated weapon creature", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Data/bodytable.cfg line 991"}
+  ],
+  "gear_tiers": [
+    {"tier": "none in box", "note": "No item, material or set data. Material lever is the hue ramp only (HueData.cs line 83; Hues.cs lines 9, 23, 37).", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/Resources/HueData.cs"},
+    {"tier": "gear body classes", "note": "593 distinct Equipment-typed body IDs; gear keys off the body class, not a list of items", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Data/bodytable.cfg lines 247-248, 1084"},
+    {"tier": "containers", "note": "30 gump rows plus one default; rectangle, drop sound and optional whitelist", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Data/containers.cfg line 20"}
+  ],
+  "zones": [
+    {"zone": "Season: Spring (0), Summer (1, default), Fall (2), Winter (3), Desolation (4)", "note": "Seasonal swap by static item ID at chunk load; 93 table entries, 23 map Desolation to ID 1", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/Data/Seasons.cs lines 15-20; /mnt/frankendom-donors/ZaneDubya-UltimaXNA/plugins/SeasonChangerPlugin/SeasonChangerModule.cs lines 55, 61, 67; /mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/World/Maps/Map.cs lines 127, 195"},
+    {"zone": "Biomes, dungeon archetypes, hazards", "note": "Not in the box (map and region files are client data)", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/ReadMe.md line 14"},
+    {"zone": "Weather hook", "note": "Packet registered and not drawn (handler only calls AnnounceUnhandledPacket)", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/World/WorldClient.cs lines 85, 1272-1274"}
+  ],
+  "looks": [
+    {"label": "Brightness-ramp hue recolour", "technique": "grey level of the sprite indexes a per-hue ramp row in a lookup texture", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Content/Shaders/IsometricWorld.fx lines 60-101; /mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/Resources/HueData.cs lines 29-101"},
+    {"label": "Partial hue for trims", "technique": "only neutral (grey) pixels take the tint; coloured pixels survive", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Content/Shaders/IsometricWorld.fx lines 90-95"},
+    {"label": "Fixed base lighting mix", "technique": "0.8 base plus 0.2 normal-dot-light term in the pixel shader", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Content/Shaders/IsometricWorld.fx line 114"},
+    {"label": "Stencil-gated ground shadow", "technique": "opaque pixels write one half-transparent dark pixel; stencil gate in C# not read", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Content/Shaders/IsometricWorld.fx lines 159-168"},
+    {"label": "Minimap colour key (hazard)", "technique": "magenta pixel replaced by minimap texture; any real magenta is replaced too", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Content/Shaders/IsometricWorld.fx lines 120-127"},
+    {"label": "Rolling 256 px minimap", "technique": "48x48 cache of 8-tile blocks; full redraw only when centre jumps more than one block", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/World/WorldViews/MiniMapTexture.cs lines 38-39, 66-67"},
+    {"label": "Minimap reticle blink and size cycle", "technique": "250 ms blink; double click toggles small and large; hidden to small to large to hidden", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/UI/WorldGumps/MiniMapGump.cs lines 27, 46, 115, 125-127, 131-135"},
+    {"label": "Lightning flash", "technique": "10-frame UI sprite sequence tracking the source each update", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/World/Entities/Effects/LightningEffect.cs line 55; /mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/World/EntityViews/LightningEffectView.cs lines 40-41"},
+    {"label": "Projectile with impact child", "technique": "travel time 75 ms per tile of distance, straight lerp, heading from atan2; impact child queued at launch and fired on end", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/World/Entities/Effects/MovingEffect.cs lines 145, 160, 165; /mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/World/Managers/EffectManager.cs lines 56, 112"},
+    {"label": "Constant-acceleration particle position", "technique": "position from the integral of a linear velocity change, in the vertex shader; file is deprecated and not wired into the path read", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/res/depreciated/ParticleEffect.fx lines 79, 82"},
+    {"label": "Carried light changes walk", "technique": "walk and run switch to armed sets when a light source is carried", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/World/Entities/Mobiles/Animations/ActionTranslator.cs lines 55-56"},
+    {"label": "Animal and monster idle set", "technique": "animal graze, fidget and lie-down; monster fidget 1 and 2", "ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/World/Entities/Mobiles/Animations/ActionIndexes.cs lines 38, 48, 54, 56"}
+  ],
+  "originals": [
+    {
+      "name": "Armour-tier brute",
+      "idea": "One brute body; the zone data field picks a body variant per armour tier, so tier is a body swap, not a new model.",
+      "keep": "One body, variants by tier, no extra rig",
+      "change": "Our plate shapes, a tier-coloured rim and an armour-break clip. Rows 7 and 23 of the parity checklist."
+    },
+    {
+      "name": "Brightness-ramp finish",
+      "idea": "Grey art indexed by brightness into a per-finish ramp, with a partial mode so trims keep their colour.",
+      "keep": "Ramp per finish; partial mode for trims",
+      "change": "Our hard specular band and a separate channel for hit flash so the highlight survives. Rows 15 and 16."
+    },
+    {
+      "name": "Winged creature with its own fly clip",
+      "idea": "Winged silhouettes as separate body IDs, selected by a family table.",
+      "keep": "Wing family keyed by body ID",
+      "change": "Add the flight clip the donor lacks, and a glide on the death fall. Row 7."
+    },
+    {
+      "name": "Projectile with impact child",
+      "idea": "Travel time from distance; an impact child fires when the shot lands.",
+      "keep": "Time from distance; impact on arrival",
+      "change": "An arc with a cap, and the target fix from defect D2. Rows 10 and 13."
+    },
+    {
+      "name": "Locked chest with whitelist and drop sound",
+      "idea": "Each container is data: place on screen, drop sound, item whitelist.",
+      "keep": "Container as data",
+      "change": "Drop sound tied to rarity and a rim glow when a valid item hovers. Row 18."
+    },
+    {
+      "name": "Season swap at zone load",
+      "idea": "A static-ID to variant table applied when the chunk loads.",
+      "keep": "ID to variant table, applied at load",
+      "change": "A per-zone season field in zone data, not per chunk; our own variant art. Zones are data on one runtime."
+    },
+    {
+      "name": "Two-number light level",
+      "idea": "Overall light plus personal light, combined and clamped to a level.",
+      "keep": "Two terms, one clamped level",
+      "change": "Fix defect D4 and add a per-zone night dial. Row 16."
+    },
+    {
+      "name": "Paired-slider stat budget",
+      "idea": "A fixed point total moved between paired sliders, each with min and max.",
+      "keep": "Fixed total moved between paired sliders; per-stat min and max",
+      "change": "Our three stats and class caps, with a visible total. Progression and build diversity."
+    }
+  ],
+  "licence_note": "Code: GNU GPL v3 or later (dev/Data/credits.txt line 4; License.txt). Shape and idea only, own code. Data tables copied from RunUO (bodytable.cfg line 3; containers.cfg line 3); RunUO licence not in the box. Client game data not in the box; credits.txt line 16 says Electronic Arts. Class C per AU060. Not a legal opinion.",
+  "not_read": [
+    "Server half (RunUO-style logic): not in the box. No escalation, spawns, loot or XP numbers.",
+    "Client data (hues.mul, Cliloc, maps, art, music names): not in the box. Loader code read at cited lines only.",
+    "ASound base class (Play and Dispose), AnnounceUnhandledPacket body (WorldClient.cs line 1052), stencil setup, Utility.RandomValue (class not in box), plugins/ExamplePlugin, doc/CodeAudit.txt.",
+    "Shader blend state and whether output alpha is premultiplied (IsometricWorld.fx line 105).",
+    "HairStyles.cs and Chairs.cs.",
+    "Minimap loop bounds beyond the rebuild start (MiniMapTexture.cs line 71)."
+  ]
+}

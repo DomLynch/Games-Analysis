@@ -1,0 +1,47 @@
+{
+  "donor": "swgemu-engine3",
+  "cell": "DC052",
+  "half_read": "engine half (MMOEngine/src/engine/core: task queues, task manager, scheduler, worker). No game content in this donor. Paired donor: swgemu-Core3 (data pack).",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "count_notes": "No game content. engine/core holds 21 headers and 15 sources (find). Whole-tree counts (538 .h, 166 .cpp) are from audit AU051, not recounted.",
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [],
+  "looks": [],
+  "originals": [
+    {
+      "name": "Tick timer wheel for zone timers",
+      "idea": "One priority queue keyed by due time that holds respawn, despawn-grace and boss timers for every zone.",
+      "keep": "A priority queue keyed by execution time; a delay add that replaces an already queued task so no task is queued twice; waking the waiting thread when the new task is at the top (TimedTaskQueue.cpp lines 38, 42, 97).",
+      "change": "Our own timer types; the delay unit is confirmed in our code (not traced in the donor)."
+    },
+    {
+      "name": "Save-blocking side queue",
+      "idea": "A named side queue with its own worker count that pauses during a save, so a slow write never stalls the fight tick.",
+      "keep": "Named queues with their own thread counts and a save-event block default (TaskManagerImpl.h line 62).",
+      "change": "Our queues for world simulation and for I/O; no shared lock with the fight loop."
+    },
+    {
+      "name": "Scheduler and worker split",
+      "idea": "Scheduler threads decide when work is due; worker threads do the work; I/O has its own scheduler set.",
+      "keep": "Separate worker, scheduler and I/O scheduler vectors (TaskManagerImpl.h lines 27, 28, 30).",
+      "change": "The hand-off between scheduler and worker is not traced in the donor; design it ourselves. Replace the one-millisecond poll (TaskScheduler.cpp line 84) with a timed wake-up."
+    }
+  ],
+  "licence_note": "README and COPYING say GNU AGPL v3; source headers say Copyright (C) 2007-2019 SWGEmu. Third-party code under MMOEngine/external has licence texts not read. Code is AGPL v3: clean-room, shape only. Not a legal view.",
+  "not_read": [
+    "lib/ binaries (22 MB), external/ third-party code and its licence texts, doc/Doxyfile, conf/filter, build/win32/UpgradeLog.XML",
+    "TaskScheduler.cpp beyond lines 72 to 84 and 133; TaskWorkerThread.cpp; TaskQueue.cpp; TaskManagerImpl.cpp beyond the lines cited",
+    "Delay unit in TimedTaskQueue::add (likely milliseconds, not traced)",
+    "Most of MMOEngine/src outside engine/core"
+  ]
+}

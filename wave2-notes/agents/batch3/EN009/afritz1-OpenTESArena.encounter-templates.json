@@ -1,0 +1,191 @@
+{
+  "donor": "afritz1-OpenTESArena",
+  "topic": "encounter-templates",
+  "depth": "full",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/ArenaEntityUtils.cpp",
+    "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Game/GameState.cpp",
+    "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Time/ArenaClockUtils.h",
+    "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/CitizenUtils.h",
+    "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/ArenaCitizenUtils.h",
+    "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/EntityChunkManager.cpp",
+    "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Assets/MIFUtils.h",
+    "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Math/Random.cpp",
+    "/mnt/frankendom-donors/afritz1-OpenTESArena/data/exe/aExeStrings.txt",
+    "/mnt/frankendom-donors/afritz1-OpenTESArena/LICENSE.txt",
+    "/mnt/frankendom-donors/afritz1-OpenTESArena/README.md"
+  ],
+  "counts": {
+    "encounter_record_fields": 3,
+    "groups_per_level": 2,
+    "spawn_tries_per_radius": 40,
+    "guard_count_min": 1,
+    "guard_count_max": 3,
+    "max_encounter_scaling_level": 20,
+    "level_jitter_values": 4,
+    "citizens_per_chunk_cap": 30,
+    "units_per_voxel": 128,
+    "clock_game_s_per_real_s": 13.0,
+    "camping_clock_multiplier": 600,
+    "exe_string_lines": 449,
+    "exe_string_sections": 24,
+    "encounter_tables_in_repo": 0,
+    "encounter_chance_values_in_repo": 0
+  },
+  "rule": "(A) When: outdoors one roll per in-game hour; town one roll per in-game minute at night when no citizens are near; dungeons one roll per in-game minute unless camping; interiors one roll per minute even while camping; camping adds an hour roll; raised platform blocks; no roll while an enemy is already near; chance is a percent from the exe table (not in the box), 20 for building trespass, 25 on two holiday nights, index 13+ means none. (B) Level: working level = min(L+1, 20) + 0..3; folded bounded dice (peak at L); accept if r >= L/2, else trim to even and retry (net effect: draw from the upper half of [0,L]); new game level capped at 0..2; main quest floored at L minus 0..2; a level selects one of two groups by coin; a group is a record (count, id, level). (C) Where: per member, offset = signed 16-bit draw >> 6 (about -512..511 units), divided by 128 units per voxel (about -4..+3 voxels); only the player's tile is rejected (occupancy and floor checks commented out); 40 tries per radius, radius doubles; a member on a bad voxel is skipped, not retried; guard response 1-3 guards, first arrival plays Halt (violence) or StopThief (theft). (D) Camp: clock 13 game s per real s, camping x600 (one hour roll per 0.46 real s); an enemy near after rest shows a popup and clears the camp.",
+  "data_fields": [
+    {
+      "name": "clock_game_s_per_real_s",
+      "unit": "game s per real s",
+      "donor_value_or_null": 13.0
+    },
+    {
+      "name": "camping_clock_multiplier",
+      "unit": "x",
+      "donor_value_or_null": 600
+    },
+    {
+      "name": "encounter_level_plus",
+      "unit": "levels above player",
+      "donor_value_or_null": 1
+    },
+    {
+      "name": "encounter_level_cap",
+      "unit": "level",
+      "donor_value_or_null": 20
+    },
+    {
+      "name": "encounter_level_jitter",
+      "unit": "levels 0..N-1",
+      "donor_value_or_null": 4
+    },
+    {
+      "name": "level_accept_ratio",
+      "unit": "fraction of level (r >= L/2)",
+      "donor_value_or_null": 0.5
+    },
+    {
+      "name": "new_game_level_cap",
+      "unit": "level",
+      "donor_value_or_null": 2
+    },
+    {
+      "name": "main_quest_floor_jitter",
+      "unit": "levels below player 0..N-1",
+      "donor_value_or_null": 3
+    },
+    {
+      "name": "spawn_offset_shift",
+      "unit": "bits (signed 16-bit draw)",
+      "donor_value_or_null": 6
+    },
+    {
+      "name": "spawn_tries_per_radius",
+      "unit": "tries",
+      "donor_value_or_null": 40
+    },
+    {
+      "name": "units_per_voxel",
+      "unit": "Arena units",
+      "donor_value_or_null": 128
+    },
+    {
+      "name": "trespass_chance",
+      "unit": "percent",
+      "donor_value_or_null": 20
+    },
+    {
+      "name": "holiday_night_chance",
+      "unit": "percent",
+      "donor_value_or_null": 25
+    },
+    {
+      "name": "encounter_none_index",
+      "unit": "table index",
+      "donor_value_or_null": 13
+    },
+    {
+      "name": "guard_count_min",
+      "unit": "guards",
+      "donor_value_or_null": 1
+    },
+    {
+      "name": "guard_count_max",
+      "unit": "guards",
+      "donor_value_or_null": 3
+    },
+    {
+      "name": "citizen_cap_per_chunk",
+      "unit": "citizens",
+      "donor_value_or_null": 30
+    },
+    {
+      "name": "citizen_spawn_min_dist",
+      "unit": "Arena units",
+      "donor_value_or_null": 2048
+    },
+    {
+      "name": "citizen_spawn_max_dist",
+      "unit": "Arena units",
+      "donor_value_or_null": 3072
+    },
+    {
+      "name": "encounter_chance_table",
+      "unit": "percent per environment",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "encounter_group_table",
+      "unit": "records (count, id, level)",
+      "donor_value_or_null": null
+    }
+  ],
+  "keep": [
+    "Encounter as a record of count, id and level, so a group is one tiered threat",
+    "Level pick that clusters near the player with a fold and a small jitter",
+    "Two groups per level, one chosen by coin, so the same level varies in look",
+    "Gate: no new encounter while one is already near",
+    "Hour-based roll outdoors, minute-based roll indoors, so the place sets the pace",
+    "Camp as a fast-forward state with per-hour rolls, cut off by a message when enemies arrive",
+    "Guard response as a capped group (1 to 3) with a sound that depends on the crime",
+    "Spawns close enough to be felt, with a 40-try search per radius before expanding"
+  ],
+  "change": [
+    "Terrain hard-coded to 0 (GameState.cpp line 1311): pass the tile's real terrain",
+    "Occupancy and floor checks commented out (ArenaEntityUtils.cpp lines 1257 to 1265): restore the floor check in the try loop",
+    "Members on a bad voxel are dropped silently (GameState.cpp line 895): retry, then drop with a log and return the count",
+    "Trim step (ArenaEntityUtils.cpp line 1191) is not a halving and has no comment: decide and document",
+    "Donor cadence is game time per hour (about 4.6 real minutes outdoors): use real-time rolls tuned to about one encounter per 20 s of walking",
+    "Donor tables and chances live in the user's exe: ours are zone data with our own numbers",
+    "Donor ring of about 4 voxels is close: ours needs a minimum distance and an out-of-view start"
+  ],
+  "look_test": "One scene flag, no release rows. Three presets, one minute of walking each: (A) a close ring of about 4 units; (B) a ring of 8-16 units out of the view cone; (C) a 1-3 record from the level fold against a fixed 3. Also run the camp fast-forward with an hour counter and the interrupt message. Dom judges on his phone: is a close spawn startling or cheap; does the camp read as rest; how many encounters per minute of walking at each preset. Target file: src/fight/encounter-template.ts (row 4).",
+  "licence_note": "Code MIT (LICENSE.txt line 1 'The MIT License (MIT)'; line 3 'Copyright (c) 2016-2026 The OpenTESArena Developers'). README line 9: no game assets are distributed. Encounter chances, tables and offsets come from the user's own Arena executable, which is not in the box; aExeStrings.txt holds offsets only. MIT code may be adapted with the notice kept, so the level fold, record shape and camp clock are adaptable shapes; no data copied; our own numbers and names.",
+  "tags": [
+    "encounter-ambush",
+    "encounter-camp",
+    "encounter-patrol",
+    "encounter-lair",
+    "walk-density",
+    "scheduler",
+    "duration-rule",
+    "timed-event",
+    "new:encounter-record",
+    "new:level-fold-picker",
+    "new:camp-fast-forward"
+  ],
+  "not_read": [
+    "ArenaEntityUtils.cpp lines 1 to 1000 (guard types, armour, citizens, trespass helpers)",
+    "ArenaInteriorUtils isPlayerTrespassing",
+    "EntityChunkManager citizen loop beyond the cap",
+    "snapToTileCenter",
+    "Camping start and stop code",
+    "Popup and dialogue text (not quoted)",
+    "Sound and animation assets",
+    "Encounter chance and table values (exe, not in box)",
+    "Death and respawn presentation",
+    "Loot reveal ceremony",
+    "Readability at 375 wide (sprites not in box)"
+  ]
+}

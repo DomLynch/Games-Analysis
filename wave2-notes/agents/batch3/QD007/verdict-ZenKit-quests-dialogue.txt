@@ -1,0 +1,19 @@
+ZenKit (quests-dialogue, cell 12) | Verdict: PARTIAL | depth: thin | Licence: MIT (license.md line 1, "# The MIT license"; GothicKit Contributors) | donor: /mnt/frankendom-donors/ZenKit
+
+Files opened (VPS, sed or grep):
+1. /mnt/frankendom-donors/ZenKit/docs/engine/objects/oCLogTopic.yml (the list's hint file; the whole property table)
+2. /mnt/frankendom-donors/ZenKit/docs/engine/objects/oCLogManager.yml (topic count and topic list)
+3. /mnt/frankendom-donors/ZenKit/include/zenkit/SaveGame.hh (lines 45-92: SaveTopicSection, SaveTopicStatus, SaveLogTopic, Mission)
+4. /mnt/frankendom-donors/ZenKit/src/SaveGame.cc (lines 80-150 load, 180-235 save)
+5. /mnt/frankendom-donors/ZenKit/include/zenkit/addon/daedalus.hh (lines 221-236: IMission)
+6. /mnt/frankendom-donors/ZenKit/src/addon/daedalus.cc (grep for C_MISSION, lines 192-206)
+7. /mnt/frankendom-donors/ZenKit/src/vobs/Misc.cc (grep for mission, 317-318 and 473-474: five mission ints, read and write only)
+Repo-wide grep for SaveTopicStatus::, success_conditions, offer_conditions and status_index: the only hits are the save-file read/write and the Daedalus field registration. No code in ZenKit evaluates a condition or changes a status.
+
+Checked: ZenKit is a file-format library for Gothic save games and script objects. A quest log topic is data: a description, a section (missions or notes), a five-value status (FREE, RUNNING, SUCCESS, FAILURE, OBSOLETE), and an append-only list of entry strings. A mission is a Daedalus object with five script hooks (offer, running, success, failure, obsolete), each with a conditions function, plus a saved status index. The transitions between states are written in the game's Daedalus scripts, which ZenKit does not contain or run, so no order of operations or numbers for quest progression can be read here. Confidence: high that the donor has only the data shape and the save round-trip; high that no transition logic is present in the files listed.
+
+Best transferable idea: Store a quest as a small record (status enum, append-only entry list, per-status condition hooks) that the engine only persists, with the script or server deciding transitions, and let the log view show a status by section (a Free status hides the entry).
+
+Decision (proposed): adapt - the record shape (status plus append-only entries plus per-status hooks) fits one ledger and zones as data; the transition rules and the server check would be ours, since this donor has none.
+
+Thin notes: the entry count is stored twice in both directions (LOGTOPICENTRYCOUNT and LOGMANAGERENTRYCOUNT; the loader reads it at SaveGame.cc 129 and 132 and discards the second, with a comment that they are always equal); a consistency check idea, not a mechanism.

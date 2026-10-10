@@ -1,0 +1,90 @@
+{
+  "donor": "openmw",
+  "topic": "status-effects",
+  "depth": "full",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/openmw/files/data-mw/scripts/omw/combat/local.lua",
+    "/mnt/frankendom-donors/openmw/files/data/scripts/omw/combat/interface_local.lua",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/combat.cpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/character.cpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/creaturestats.cpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/creaturestats.hpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/magiceffects.cpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/activespells.cpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/activespells.hpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/spelleffects.cpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/spellcasting.cpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwworld/timestamp.hpp",
+    "/mnt/frankendom-donors/openmw/apps/opencs/model/world/defaultgmsts.cpp"
+  ],
+  "counts": {
+    "stagger_gates": 2,
+    "stagger_outcomes": 2,
+    "knockdown_roll_range": 100,
+    "fall_knockdown_rules": 1,
+    "knockdown_block_rules": 4,
+    "stacking_rules_by_key": 1,
+    "non_stackable_spell_rules": 2,
+    "consumable_stackable_flags": 2,
+    "ai_setting_status_effects": 4,
+    "corprus_worsen_period_hours": 24,
+    "magic_data_records_in_box": 0
+  },
+  "rule": "Stagger is a flinch by default. A hit becomes a knockdown only when the raw health damage (before armour) is above zero and at least agility times the knockdown damage multiplier, AND an odds roll from 0 to 99 meets a threshold that rises with agility. Otherwise it is a flinch (hit recovery). A knockdown lasts exactly as long as its hit animation: the state clears when that animation stops playing. Statuses are keyed by (effect id, argument); magnitudes with the same key add. A non-stackable spell from the same source does not re-add while active; a temporary clashing effect replaces the old one. Consumables are temporary AND stackable so they add. Each frame's application is clipped to the time left (min(timeLeft, dt)). Corprus-style statuses worsen every 24 game hours. Fear-like statuses are AI-setting modifiers (Demoralize and Rally on Flee, Frenzy and Calm on Fight), valid only on NPCs of the matching kind; the player is never a valid target.",
+  "data_fields": [
+    {"name": "stagger_damage_gate_per_agility", "unit": "health damage per agility point", "donor_value_or_null": null},
+    {"name": "knockdown_odds_base", "unit": "percent (threshold on 0-99 roll)", "donor_value_or_null": null},
+    {"name": "knockdown_odds_per_agility", "unit": "percent per agility point", "donor_value_or_null": null},
+    {"name": "knockdown_roll_range", "unit": "count of roll outcomes (0-99 inclusive)", "donor_value_or_null": null},
+    {"name": "ko_damage_multiplier", "unit": "x damage on a knocked-down or unaware target", "donor_value_or_null": null},
+    {"name": "fall_knockdown_rule", "unit": "health lost vs acrobatics skill times fatigue term (rule, not a number)", "donor_value_or_null": null},
+    {"name": "status_magnitude_clip", "unit": "seconds (last frame clipped to time left)", "donor_value_or_null": null},
+    {"name": "corprus_worsen_period", "unit": "game hours", "donor_value_or_null": null},
+    {"name": "ai_setting_fight_delta", "unit": "int AI points (Frenzy adds, Calm subtracts)", "donor_value_or_null": null},
+    {"name": "ai_setting_flee_delta", "unit": "int AI points (Demoralize adds, Rally subtracts)", "donor_value_or_null": null},
+    {"name": "dispel_chance_per_magnitude", "unit": "percent (roll 0-99 below magnitude)", "donor_value_or_null": null},
+    {"name": "stack_rule_non_stackable", "unit": "enum: refresh-or-ignore (rule, not a number)", "donor_value_or_null": null},
+    {"name": "stack_rule_consumable", "unit": "enum: add (rule, not a number)", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Flinch by default; fall only when a damage gate and an agility-scaled roll both pass.",
+    "A knockdown lasts exactly as long as its clip; the clip length is the duration.",
+    "One ledger key per (effect, argument); magnitudes with the same key add.",
+    "Spells refresh rather than re-stack; consumables add.",
+    "Each frame's application is clipped to the time left, so the last frame does not overshoot.",
+    "Knocked-down and paralysed states remove evasion and block, and turn hand-to-hand hits into health damage.",
+    "Fear-like effects are AI-setting modifiers on the Flee and Fight settings, valid only on NPCs of the matching kind.",
+    "A killing blow while knocked down plays its own death-on-the-ground clip."
+  ],
+  "change": [
+    "Stagger roll comes from the server seed and is written to the fight record, not math.random in a client Lua script.",
+    "Duration stored in server ticks; the client plays the clip at that rate, so the server tick is not tied to the animation.",
+    "Per-target knockdown cooldown in the engine, because three attackers roll three times per round.",
+    "Round the per-frame status magnitude in float and apply once per status change (open check: whether the donor's Frenzy and Calm flags make this matter).",
+    "Use our own numbers, names and poses; no donor magnitudes or clip names."
+  ],
+  "look_test": "Training dummy in the Pit with light, medium and heavy hit buttons. Light: flinch only. Heavy on a low-agility dummy: fall, grounded for the clip, then stand-up. Heavy on a high-agility dummy: flinch only. Death while down: a separate ground death clip. Judge on a 375-wide screen that flinch and fall differ at a glance and the fall ends where its clip ends.",
+  "licence_note": "Code is GPLv3 (README.md line 9; LICENSE is the GPL v3 text). Clean-room: shape and rule only, no code and no donor numbers copied. The magic-effect and spell records, which carry game numbers, are in the data half and are not in the box. No legal conclusions.",
+  "tags": [
+    "stagger",
+    "knockdown",
+    "status-stack",
+    "duration-rule",
+    "fear",
+    "new:hit-recovery",
+    "new:worsening-status",
+    "new:ai-setting-modifier",
+    "new:stackable-consumable",
+    "new:death-while-down"
+  ],
+  "not_read": [
+    "Morrowind data half: magic effect records and their flags (NoMagnitude, AppliedOnce), spell records, real GMST values (not in the box).",
+    "Status icon rendering and camera shake or hitstop on a fall (render code).",
+    "Combat AI packages that choose attack or flee after a status (only the AI-setting modifiers were read).",
+    "Respawn flow after death (only the death-while-down clip mapping was read).",
+    "Loot reveal, walk density, idle and ambient behaviour (not in the status code).",
+    "Fall damage for flying or swimming actors beyond the one fall handler.",
+    "Audio for status and fall cues (no audio in the box)."
+  ]
+}

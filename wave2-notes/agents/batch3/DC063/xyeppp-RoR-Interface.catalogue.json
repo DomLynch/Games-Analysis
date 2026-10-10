@@ -1,0 +1,88 @@
+{
+  "donor": "xyeppp-RoR-Interface",
+  "counts": {
+    "creatures": 162,
+    "classes": 24,
+    "weapons": 0,
+    "gear_sets": 38,
+    "zones": 0
+  },
+  "count_notes": {
+    "creatures": "bestiary/species.csv, 162 data rows (163 lines with header). 34 distinct subtypes used. Counts are line counts, not receipted.",
+    "classes": "24 career columns (oldworldarmory/armor_set_entries.csv header; career_column_entries.csv 24 rows). Career names not read.",
+    "weapons": "0 read. No weapon table was found in the tome folders listed; not searched across all 11206 files.",
+    "gear_sets": "38 armour sets in oldworldarmory/armor_set_tier_entries.csv (tier 1: 5, tier 2: 6, tier 3: 5, tier 4: 22).",
+    "zones": "0 counted. NO_DEHASH/xml (6 files) not read beyond one layout file."
+  },
+  "creature_families": [
+    "spirit-kin (category word, from the first ten of 35 subtype image names read; not exhaustive)",
+    "beast-kin",
+    "daemonic",
+    "giant-kind",
+    "elf-kin",
+    "dragon-class"
+  ],
+  "top_creatures": [
+    {
+      "label": "Three-band toughness scale",
+      "why": "The armour-class column of the species table clusters in three bands (roughly 0 to 138, 250 to 273, 620 to 644). A readable three-step threat tier on a card at 375 wide. Inference: the bands are tiers; not confirmed.",
+      "keep": "Three threat bands as the tier signal.",
+      "change": "Show as a threat ring with three steps, not a number.",
+      "ref": "/mnt/frankendom-donors/xyeppp-RoR-Interface/interface/interfacecore/tome/bestiary/species.csv:2 (row shape; band counts by awk, not receipted)"
+    },
+    {
+      "label": "Subtype family card",
+      "why": "Each creature row points to a subtype, and each subtype points to a type and a portrait. The card can be built from the row, so the family is the grouping.",
+      "keep": "Family-first grouping through subtype rows.",
+      "change": "A silhouette tile and one colour per family.",
+      "ref": "/mnt/frankendom-donors/xyeppp-RoR-Interface/interface/interfacecore/tome/bestiary/subtypes.csv:1"
+    },
+    {
+      "label": "Uneven three-way realm split",
+      "why": "Three realm groups with uneven sizes (38, 140 and 132 rows). A three-way split that is not even reads as a real contest.",
+      "keep": "A three-way split with uneven sides.",
+      "change": "Our own names and a different sign for each side.",
+      "ref": "/mnt/frankendom-donors/xyeppp-RoR-Interface/interface/interfacecore/tome/bestiary/realms.csv:1"
+    }
+  ],
+  "classes": [
+    {"name": "career (24 columns)", "role": "not read (career names not in the box as read)", "signature": "set flags per career column", "progression": "not read", "ref": "/mnt/frankendom-donors/xyeppp-RoR-Interface/interface/interfacecore/tome/oldworldarmory/armor_set_entries.csv:1; career_column_entries.csv"},
+    {"name": "realms (3 groups)", "role": "faction-like grouping of creature ids", "signature": "uneven split: 38, 140, 132 rows", "progression": "not read", "ref": "/mnt/frankendom-donors/xyeppp-RoR-Interface/interface/interfacecore/tome/bestiary/realms.csv:1"}
+  ],
+  "weapon_families": [],
+  "gear_tiers": [
+    {"tier": "tier 1", "sets": 5, "note": "lowest of four tiers in the armour table", "ref": "/mnt/frankendom-donors/xyeppp-RoR-Interface/interface/interfacecore/tome/oldworldarmory/armor_set_tier_entries.csv:1"},
+    {"tier": "tier 2", "sets": 6, "note": "", "ref": "/mnt/frankendom-donors/xyeppp-RoR-Interface/interface/interfacecore/tome/oldworldarmory/armor_set_tier_entries.csv:1"},
+    {"tier": "tier 3", "sets": 5, "note": "", "ref": "/mnt/frankendom-donors/xyeppp-RoR-Interface/interface/interfacecore/tome/oldworldarmory/armor_set_tier_entries.csv:1"},
+    {"tier": "tier 4", "sets": 22, "note": "dominant top tier; the look of each tier is in art not read", "ref": "/mnt/frankendom-donors/xyeppp-RoR-Interface/interface/interfacecore/tome/oldworldarmory/armor_set_tier_entries.csv:1"}
+  ],
+  "zones": [],
+  "looks": [
+    {"label": "Death and respawn card", "technique": "auto-respawn timer on death, respawn options from the respawn data, minute and second readout, closes at zero; a live killer line", "ref": "/mnt/frankendom-donors/xyeppp-RoR-Interface/interface/default/ea_deathwindow/source/deathwindow.lua:47, 54-55, 83, 91, 122"},
+    {"label": "Rim flash on hit-point drop (defect as read)", "technique": "1.5 second pop-and-ease flash on a hit-point drop, a reference-counted enable gate; the countdown in OnUpdate is commented out so the timer never ends and later flashes do not start (as read, not run in game)", "ref": "/mnt/frankendom-donors/xyeppp-RoR-Interface/interface/default/ea_screenflashwindow/source/screenflashwindow.lua:13, 43-50, 59, 86, 98, 105"},
+    {"label": "Take-one loot row", "technique": "hover shows the item inspect; select then accept as separate steps; pick sound not seen", "ref": "/mnt/frankendom-donors/xyeppp-RoR-Interface/interface/default/ea_lootwindow/source/chooseonelootwindow.lua:60, 89, 98"},
+    {"label": "Window-per-system HUD", "technique": "action bars, cast timer, mouse-over target, objective trackers, overhead map, world map, zone control, public-quest loot and a layout editor, each as a module; names from the folder list, not opened", "ref": "/mnt/frankendom-donors/xyeppp-RoR-Interface/interface/default/ea_casttimerwindow; ea_mouseovertargetwindow; ea_objectivetrackers; ea_overheadmapwindow; ea_worldmapwindow; ea_zonecontrolwindow; ea_pqlootwindow; easystem_layouteditor; ea_actionbars"},
+    {"label": "Sigil fragment ladder", "technique": "fragments with 0 to 5 tasks feed sigils; the task table has 4 to 6 tasks per fragment task", "ref": "/mnt/frankendom-donors/xyeppp-RoR-Interface/interface/interfacecore/tome/sigils/fragments.csv:1; fragment_tasks.csv:1; sigil_entries.csv:2"}
+  ],
+  "originals": [
+    {"name": "Respawn Choice Card", "idea": "A death card with three abstract respawn choices and a timer ring that the loss stays readable through.", "keep": "Respawn options on death, an auto-respawn timer, a live killer line.", "change": "Three abstract choices with no place names; a timer ring; a short last-hit line with a sting."},
+    {"name": "Rim Flash with a Working Timer", "idea": "A hit-feedback rim vignette that flashes on each hit-point drop and an off switch.", "keep": "Flash driven by hit-point drops; enable gate.", "change": "A rim vignette in a threat colour, not a full-screen tint; the countdown ends so every later hit can flash."},
+    {"name": "Take-One Loot Row", "idea": "Three loot cards in a row; hover or tap to inspect, then take one.", "keep": "Inspect before choosing; take one.", "change": "Three cards at 375 wide, a rarity bar and a lid-lift ceremony with a sound per rarity."},
+    {"name": "Bestiary Silhouette Card", "idea": "Each creature is one data row and its card is built from that row.", "keep": "One row to one card.", "change": "A silhouette tile and a three-step threat ring in place of numeric fields."},
+    {"name": "Sigil Pip Ladder", "idea": "A gear slot filled by a set number of fragment tasks, shown as pips.", "keep": "Fragments with a fixed task count fill a slot.", "change": "A pip ring per task with a short tick; each sigil tier has its own ability, not one shared ability."}
+  ],
+  "licence_note": "None stated. No LICENSE file; the README gives no licence; module headers credit the publisher. NO_DEHASH export has no stated provenance. Asset class C. Category level only: no names, lore text, coordinates or exact art reproduced.",
+  "not_read": [
+    "server half (not in the box)",
+    "all DDS, TGA, TTF and PNG files (names and counts only)",
+    "most Lua and XML: only the death, screen-flash and loot handlers were read; ea_pqlootwindow, map and zone windows, cast timer not opened",
+    "tome text (lore, manual, card, armoury, history CSV bodies): headers and row counts only; protected text, not reproduced",
+    "bestiary ability, HP and damage values: not in the box as read",
+    "NO_DEHASH: one XML file read for layout; five other XML and two TXT files not read",
+    "ror_mapextension.csv and credits CSVs: listed only",
+    "weapon data: not found in the folders listed",
+    "zone data: not read",
+    "sound and music: no sound files seen in the AU059 inventory; not searched exhaustively",
+    "death window respawn action handler and the loot accept handler body"
+  ]
+}

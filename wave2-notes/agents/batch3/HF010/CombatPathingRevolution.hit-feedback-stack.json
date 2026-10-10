@@ -1,0 +1,55 @@
+{
+  "donor": "CombatPathingRevolution",
+  "topic": "hit-feedback-stack",
+  "depth": "thin",
+  "half_read": "data",
+  "paths": [
+    "/mnt/frankendom-donors/CombatPathingRevolution/LICENSE",
+    "/mnt/frankendom-donors/CombatPathingRevolution/README.md",
+    "/mnt/frankendom-donors/CombatPathingRevolution/src/Fallback_Hook.cpp",
+    "/mnt/frankendom-donors/CombatPathingRevolution/src/Util.cpp",
+    "/mnt/frankendom-donors/CombatPathingRevolution/src/Circling_Hook.cpp",
+    "/mnt/frankendom-donors/CombatPathingRevolution/src/Backoff_Hook.cpp",
+    "/mnt/frankendom-donors/CombatPathingRevolution/src/Advance_Hook.cpp",
+    "/mnt/frankendom-donors/CombatPathingRevolution/src/PayloadInterpreter/payloadHandlers/CPRHandler.cpp",
+    "/mnt/frankendom-donors/CombatPathingRevolution/src/main.cpp",
+    "/mnt/frankendom-donors/CombatPathingRevolution/Nemesis_Engine/mod/mscpr/0_master/#0106.txt",
+    "/mnt/frankendom-donors/CombatPathingRevolution/Nemesis_Engine/mod/mscpr/0_master/#0107.txt",
+    "/mnt/frankendom-donors/CombatPathingRevolution/Nemesis_Engine/mod/mscpr/0_master/#0108.txt",
+    "/mnt/frankendom-donors/CombatPathingRevolution/BehaviorDataInjector/MaxsuCPR_BDI.json",
+    "/private/tmp/p2/wave2-haiku/batch3/AU011/CombatPathingRevolution.assets.md"
+  ],
+  "counts": {
+    "feedback_code_hits_in_src": 0,
+    "fallback_rescale_sites": 2,
+    "behaviour_file_lines": {"0106": 1489, "0107": 763, "0108": 6015}
+  },
+  "rule": "The C++ sets no hit-stop, shake, flash, sound or knockback. Hit reactions are authored in the Havok behaviour graph as named events (HitFrame, CamHit, blockHitStop, staggerStart, FlinchStart, recoilLargeStart) and magnitude variables (staggerMagnitude, recoilMagnitude); the engine that orders them is not in the box. The one timing rule in the code is a fallback window: value = min + mult * (max - min), with mult from the combat style, distance floored at twice the bound radius, and wait taken from graph variables with the game's setting as fallback.",
+  "data_fields": [
+    {"name": "fallback_mult", "unit": "0 to 1 per combat style", "donor_value_or_null": null},
+    {"name": "fallback_wait_min", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "fallback_wait_max", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "fallback_dist_min", "unit": "game units", "donor_value_or_null": null},
+    {"name": "fallback_dist_max", "unit": "game units", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "one scalar per style rescaling a min and max window",
+    "distance floor at twice the body radius"
+  ],
+  "change": [
+    "no hit feedback to keep; hit-feedback decision is nothing to adapt",
+    "our names, our numbers, server fixed tick instead of graph timing"
+  ],
+  "look_test": "Two enemies in the Pit with the same body and style scalar 0.2 and 0.9. Watch attack then back-off. The low scalar should hold ground and wait briefly; the high scalar should step far back and wait longer. Judge at 375 wide whether the difference reads without a label.",
+  "licence_note": "Code MIT (LICENSE line 3, Copyright (c) 2022 max-su-2019; README line 56). README credits Fenix (line 61) and Dtry (line 63) for source parts; their licence is not stated in the repo. Havok behaviour files are game-derived animation data of unstated origin: class C, concept only, no names or values copied.",
+  "tags": ["duration-rule", "new:feedback-in-graph", "new:style-scalar-window", "stagger", "knockback", "bleed"],
+  "not_read": [
+    "bodies of Circling_Hook.cpp, Backoff_Hook.cpp, Advance_Hook.cpp (names and grep only)",
+    "CPRHandler.cpp beyond the first lines",
+    "#0107.txt and #0108.txt value sections",
+    "MaxsuCPR_BDI.json (grep only; no hit names found in it)",
+    "doc/en/Developers Guidelines of CPR.md",
+    "CombatPathingRevolution.pdb",
+    "Skyrim engine (not in box)"
+  ]
+}

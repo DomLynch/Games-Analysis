@@ -1,0 +1,62 @@
+{
+  "donor": "alexbatalov-fallout1-ce",
+  "topic": "encounter-templates",
+  "depth": "thin",
+  "half_read": "engine",
+  "verdict": "PARTIAL",
+  "decision": "adapt (idea); defect fixed (separate loop index)",
+  "paths": [
+    "/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/worldmap.cc",
+    "/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/worldmap.h",
+    "/mnt/frankendom-donors/alexbatalov-fallout1-ce/LICENSE.md"
+  ],
+  "counts": {
+    "terrain_types": 4,
+    "terrain_cells_desert": 370,
+    "terrain_cells_mountain": 162,
+    "terrain_cells_city": 29,
+    "terrain_cells_coast": 279,
+    "chance_class_cells_0": 29,
+    "chance_class_cells_1": 215,
+    "chance_class_cells_2": 502,
+    "chance_class_cells_3": 94,
+    "encounter_variable_values_distinct": 16,
+    "random_scenes_total": 8,
+    "random_scenes_per_terrain": "3, 2, 1, 2",
+    "special_scenes": 6,
+    "special_band_weights_percent": "30, 20, 20, 10, 10, 10",
+    "walk_block_steps_range": "60 to 120 (survival skill 0 to 100)"
+  },
+  "rule": "Walk counter per step; each block of steps (set by survival skill) runs a roll and heals a day's rest. Roll only outside towns: per-cell chance class sets a three-dice threshold; under it means an encounter. Rare gate only after an encounter: three dice plus Luck plus two per Explorer rank, minus five, must reach 18; then a d100 over six bands, each band once per game (mask saved with the game; all six used means generic only). Scene: the special scene, or one of the terrain's random scenes picked uniformly. Auto-travel to a town runs the steps and the heal but no roll.",
+  "data_fields": [
+    {"name": "steps_per_roll_base", "unit": "steps", "donor_value_or_null": null},
+    {"name": "steps_per_roll_skill_gain", "unit": "steps per survival skill point", "donor_value_or_null": null},
+    {"name": "time_per_step", "unit": "ticks (day divided by steps_per_roll)", "donor_value_or_null": null},
+    {"name": "chance_threshold_by_class", "unit": "dice sum, one per cell class (4)", "donor_value_or_null": null},
+    {"name": "rare_gate_level", "unit": "dice sum plus luck plus 2 per explorer rank", "donor_value_or_null": null},
+    {"name": "special_band_weights", "unit": "percent (six bands)", "donor_value_or_null": null},
+    {"name": "special_once_per_game", "unit": "bool per band", "donor_value_or_null": null},
+    {"name": "encounter_scene_pick", "unit": "uniform over existing scenes per terrain", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Fixed-step roll with a skill that stretches the interval (more skill, fewer encounters per distance)",
+    "Chance per terrain or cell class as a threshold table",
+    "Rare special gated by a stat sum, each special once per game",
+    "Auto-travel to a known waypoint skips the roll but still passes time and heals"
+  ],
+  "change": [
+    "Replace the three-dice threshold with a designer probability table so the rare rate is set directly",
+    "Fixed server ticks instead of the step loop's frame timing",
+    "Defect: the special band loop reuses the movement loop counter (worldmap.cc 1426, 1609, 1639); after a special, the second movement pass of that frame is skipped; fix: separate index variable"
+  ],
+  "look_test": "Flag: walk-density knob on the existing world walk; preview only (/preview/, no release rows, no lock). Build: a roll every N steps with N as a visible setting (60 and 120 for the test). Dom walks three minutes at each setting and judges whether three minutes reads as the right number of meetings on a 375-wide screen. Target file: origins/server/world-spawns.ts. Ruling row: 23 (zone population).",
+  "licence_note": "Sustainable Use License 1.0 (LICENSE.md line 1); line 15 limits use to internal business or non-commercial or personal use. Shape and mechanism only for us; no code, constants, scene names or text copied; donor_value fields null. No legal conclusion.",
+  "tags": ["walk-density", "encounter-ambush", "scheduler", "new:step-block-roll", "new:special-once", "new:fast-travel-skip", "new:stat-gated-rare"],
+  "not_read": [
+    "data pack (absent from box): encounter scene files, messages, critter and item stats",
+    "encounter scene scripts and any encounter groups; formations (none in this half)",
+    "combat code, sound layer, scene scripts",
+    "timed world event around line 2440-2500 (world event, not an encounter)",
+    "idle and ambient animation, death and respawn, loot ceremony, boss staging: not read"
+  ]
+}

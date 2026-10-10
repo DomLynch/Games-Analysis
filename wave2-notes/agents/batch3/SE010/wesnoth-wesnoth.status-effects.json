@@ -1,0 +1,82 @@
+{
+  "donor": "wesnoth-wesnoth",
+  "topic": "status-effects",
+  "depth": "full",
+  "verdict": "STRONG",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/macros/weapon_specials.cfg",
+    "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/macros/traits.cfg",
+    "/mnt/frankendom-donors/wesnoth-wesnoth/data/lua/stun.lua",
+    "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/units/merfolk/Brawler.cfg",
+    "/mnt/frankendom-donors/wesnoth-wesnoth/src/actions/attack.cpp",
+    "/mnt/frankendom-donors/wesnoth-wesnoth/src/actions/heal.cpp",
+    "/mnt/frankendom-donors/wesnoth-wesnoth/src/actions/advancement.cpp",
+    "/mnt/frankendom-donors/wesnoth-wesnoth/src/units/unit.cpp",
+    "/mnt/frankendom-donors/wesnoth-wesnoth/src/units/unit.hpp",
+    "/mnt/frankendom-donors/wesnoth-wesnoth/src/movetype.hpp",
+    "/mnt/frankendom-donors/wesnoth-wesnoth/src/game_config.cpp",
+    "/mnt/frankendom-donors/wesnoth-wesnoth/src/units/drawer.cpp",
+    "/mnt/frankendom-donors/wesnoth-wesnoth/src/reports.cpp",
+    "/mnt/frankendom-donors/wesnoth-wesnoth/src/game_board.cpp",
+    "/mnt/frankendom-donors/wesnoth-wesnoth/po/wesnoth/wesnoth.pot",
+    "/mnt/frankendom-donors/wesnoth-wesnoth/po/wesnoth-help/wesnoth-help.pot"
+  ],
+  "counts": {
+    "weapon_special_macro_lines": 18,
+    "weapon_specials_distinct": 17,
+    "status_specials": 4,
+    "unit_cfg_files_data_core_units": 327,
+    "unit_files_using_poison": 18,
+    "unit_files_using_slow": 16,
+    "unit_files_using_stun": 1,
+    "unit_files_using_petrifies": 0,
+    "unit_states": 3,
+    "poison_cure_levels": 3,
+    "immunity_traits_unpoisonable": 3,
+    "lua_stun_file_lines": 89,
+    "po_wesnoth_pot_msgids": 1468,
+    "po_wesnoth_help_pot_msgids": 775
+  },
+  "rule": "A hit applies each status once (no stacking): poison and slow are set only when absent; petrify sets the petrified state and ends the fight. Slowed damage uses the larger divisor (half damage) and doubles movement cost. Slow clears at the affected unit's own side turn end; stun (a Lua side effect) clears at the affected side's turn end too. Poison ticks only on the poisoned unit's own side turn, is cured by a village at any time, by a same-side healer, or slowed by an allied healer, and cannot take HP below 1. Petrify clears only at scenario start or advancement; poison clears on a cure or at scenario start or advancement. Status tints are averaged when several are present at a fixed blend ratio.",
+  "data_fields": [
+    {"name": "slow_damage_scale", "unit": "multiplier on damage", "donor_value_or_null": null},
+    {"name": "slow_move_cost_scale", "unit": "multiplier on move cost", "donor_value_or_null": null},
+    {"name": "poison_tick_hp", "unit": "HP per own-side turn", "donor_value_or_null": null},
+    {"name": "poison_floor_hp", "unit": "HP (minimum poison can reach)", "donor_value_or_null": null},
+    {"name": "poison_amount_config", "unit": "HP (game-config setting)", "donor_value_or_null": null},
+    {"name": "stun_clears_on", "unit": "affected side turn end", "donor_value_or_null": null},
+    {"name": "stun_zoc_off", "unit": "bool", "donor_value_or_null": null},
+    {"name": "petrify_duration", "unit": "ticks (donor has none; ends at scenario end)", "donor_value_or_null": null},
+    {"name": "immunity_traits", "unit": "list", "donor_value_or_null": null},
+    {"name": "status_tint_blend", "unit": "fixed ratio, averaged colour", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "one flag per debuff with one paired visual (tint plus icon)",
+    "no stacking: a second application is ignored",
+    "expiry at the affected unit's own turn end (in real time: next N ticks or next attack)",
+    "poison that cannot kill",
+    "cure by place (village or shrine) and by ability (healer)",
+    "half-damage slow with a move-cost penalty",
+    "averaged tint when several statuses are present"
+  ],
+  "change": [
+    "stun as a Lua side effect with a repeating clean-up event (donor defect): expiry as an engine timestamp",
+    "petrify with no timer (donor defect): petrify takes a duration in data",
+    "turn-based clocks become tick or attack-based clocks",
+    "stun as zone of control becomes cannot take the hate target or cannot pull a second attacker"
+  ],
+  "target": {"file": "src/fight/status.ts", "parity_row": 1},
+  "look_test": "Style-flag preview on the existing duel scene: four foes at 375 wide (plain, poisoned, slowed, both averaged), a stunned foe next to a free foe, and a foe at one HP while poisoned; judge whether each status reads from tint and icon without text; compare a per-turn clock against a tick clock in a three-attacker fight.",
+  "licence_note": "GNU GPL version 2 (COPYING line 2-3); copyright file says version 2 or later (copyright lines 2-6); data under the same project copyright; per-asset licences not read. Clean-room shape only; no code, WML, icons or strings copied.",
+  "reuse_tag": "not checked against our repo from this lane",
+  "tags": ["status-stack", "duration-rule", "new:stun", "new:slow", "new:poison-tick", "new:petrify", "new:cure-rule", "new:immunity-trait", "new:tint-blend", "new:status-icon"],
+  "not_read": [
+    "multiplayer server (src/server)",
+    "AI handlers beyond a grep for status names",
+    "petrified draw path in full",
+    "status sound entries",
+    "translation files beyond entry counts",
+    "attack-prediction odds display for slow"
+  ]
+}

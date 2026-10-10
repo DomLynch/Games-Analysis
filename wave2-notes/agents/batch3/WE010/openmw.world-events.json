@@ -1,0 +1,70 @@
+{
+  "donor": "openmw",
+  "topic": "world-events",
+  "depth": "full",
+  "half_read": "server",
+  "paths": [
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwworld/cellstore.cpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwclass/creature.cpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwworld/scene.cpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwworld/timestamp.hpp",
+    "/mnt/frankendom-donors/openmw/components/lua/asyncpackage.cpp",
+    "/mnt/frankendom-donors/openmw/components/lua/scriptscontainer.cpp",
+    "/mnt/frankendom-donors/openmw/components/lua/scriptscontainer.hpp",
+    "/mnt/frankendom-donors/openmw/files/data/openmw_aux/time.lua",
+    "/mnt/frankendom-donors/openmw/files/lua_api/openmw/async.lua",
+    "/mnt/frankendom-donors/openmw/files/data/scripts/omw/activationhandlers.lua",
+    "/mnt/frankendom-donors/openmw/files/data/openmw_aux/calendar.lua",
+    "/mnt/frankendom-donors/openmw/apps/opencs/model/world/defaultgmsts.cpp"
+  ],
+  "counts": {
+    "respawn_gate_months_editor_default": 4,
+    "corpse_clear_hours_editor_default": 72,
+    "corpse_respawn_hours_editor_default": 72,
+    "timer_clocks": 3,
+    "timer_kinds": 2,
+    "idle_group_slots_grep": 8,
+    "lua_timer_call_sites_in_shipped_scripts": 1,
+    "instruction_avg_coef_per_frame": 0.0333
+  },
+  "rule": "Lazy cell respawn: on load with respawn requested, if now minus a per-cell stamp exceeds 24*30*months hours, stamp now and respawn each dead creature/NPC/list with custom state once its corpse-clear or respawn delay has passed, restoring it to its placed position. Timers: per-script min-heap per clock (sim, game, real), fired each frame in order; savable timers keep a callback name, unsavable ones are lost on save. Repeat: next delay = 1.5*period - fmod(now - base + period/2, period), which snaps to the base grid without drift; first call random in [0, period).",
+  "data_fields": [
+    {"name": "respawn_gate_days", "unit": "days", "donor_value_or_null": null},
+    {"name": "corpse_clear_h", "unit": "hours", "donor_value_or_null": null},
+    {"name": "corpse_respawn_h", "unit": "hours", "donor_value_or_null": null},
+    {"name": "respawn_flag", "unit": "bool per placement", "donor_value_or_null": null},
+    {"name": "timer_clock", "unit": "enum sim|game|real", "donor_value_or_null": null},
+    {"name": "timer_savable", "unit": "bool", "donor_value_or_null": null},
+    {"name": "timer_delay_s", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "repeat_period_s", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "initial_delay_s", "unit": "seconds, default random in [0, period)", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Respawn decided on zone entry, not while watching",
+    "One stamp per zone instance, not one timer per creature",
+    "Restore to the original placement point",
+    "Savable named timers versus unsavable timers as an explicit choice",
+    "Grid-snapped repeat that absorbs lateness without drift",
+    "Random first delay to spread load",
+    "Decayed per-script cost average"
+  ],
+  "change": [
+    "Clock is server time, not in-game hours",
+    "Respawn is server-verified and the client only presents it",
+    "Savable timers only in our ledger; no unsavable timers",
+    "Budget enforcement must be specified (not read in donor)"
+  ],
+  "look_test": "Three-creature camp in a test zone. Kill it, leave, set the gate to 90 s of server time. Re-enter at 10 s (should stay empty) and at 100 s (should return on the same spots, with no message). Judge whether the return reads as the world moving on or as a cheat. Repeat with a 20 s gate.",
+  "licence_note": "GPL-3.0 code (README.md line 9). Shape only, clean room. No code, names or strings reused. Morrowind data not in box.",
+  "tags": ["scheduler", "timed-event", "duration-rule", "new:respawn-on-entry", "new:timer-savability", "new:grid-snapped-repeat"],
+  "not_read": [
+    "Caller of CellStore respawn (scene.cpp loadCell conditions beyond line 497)",
+    "mwworld time advance and worldimp time handling",
+    "mwmechanics creature list spawning",
+    "Budget enforcement in scriptscontainer.cpp (beyond decay start)",
+    "aiwander.cpp (grep only: idle group names; timing not read in full)",
+    "calendarconfig.lua (month table)",
+    "Morrowind data: .esm, .bsa, records, cells (not in box)",
+    "Client camera and UI scripts for this topic"
+  ]
+}

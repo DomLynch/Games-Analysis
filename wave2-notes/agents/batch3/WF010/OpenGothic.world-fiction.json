@@ -1,0 +1,157 @@
+{
+  "donor": "OpenGothic",
+  "topic": "world-fiction",
+  "depth": "full",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/OpenGothic/common/world/worldobjects.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/world/objects/npc.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/game/gamescript.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/game/constants.h",
+    "/mnt/frankendom-donors/OpenGothic/common/game/questlog.h",
+    "/mnt/frankendom-donors/OpenGothic/common/game/questlog.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/ui/chapterscreen.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/ui/documentmenu.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/gothic.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/world/perceptionmsg.h",
+    "/mnt/frankendom-donors/OpenGothic/LICENSE",
+    "/mnt/frankendom-donors/OpenGothic/README.md"
+  ],
+  "counts": {
+    "perception_types": 32,
+    "perception_none_slots": 1,
+    "quest_sections": 2,
+    "quest_statuses": 4,
+    "chapter_pending_slots": 1,
+    "game_data_files_in_box": 0
+  },
+  "rule": "STRONG. Deeds (kill, theft, defeat, body, fight sound) are pushed to a passive queue during a tick; at the start of the next tick the queue is taken out and each near NPC in normal AI state takes each deed, if the actor is not the NPC itself and the squared distance is within the deed's range. Range is per deed kind with the NPC's sense range as fallback. Each NPC runs its own perception on a due time, reset to now plus its perception time (minimum one tick). Quest journal: two sections, four statuses. Chapter card: queued until no dialogue runs, pauses the world, plays a stinger, closes on time or Escape. Document: fit factor for wide pages, map page with the player cursor turned to heading.",
+  "data_fields": [
+    {
+      "name": "deed_kind",
+      "unit": "enum id",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "range",
+      "unit": "world units (-1 = unset)",
+      "donor_value_or_null": -1
+    },
+    {
+      "name": "sense_range",
+      "unit": "world units, per NPC",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "perception_time",
+      "unit": "ticks, minimum 1, per NPC",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "delivery_delay",
+      "unit": "ticks",
+      "donor_value_or_null": 1
+    },
+    {
+      "name": "quiet",
+      "unit": "bool per deed",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "hears",
+      "unit": "bool per NPC",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "topic_key",
+      "unit": "string",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "section",
+      "unit": "0 mission, 1 note",
+      "donor_value_or_null": 0
+    },
+    {
+      "name": "status",
+      "unit": "1 running, 2 success, 3 failed, 4 obsolete",
+      "donor_value_or_null": 1
+    },
+    {
+      "name": "title",
+      "unit": "string",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "subtitle",
+      "unit": "string",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "stinger",
+      "unit": "sound name",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "time",
+      "unit": "script value (unit not checked)",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "pause",
+      "unit": "bool",
+      "donor_value_or_null": true
+    },
+    {
+      "name": "page_margin",
+      "unit": "px, scaled",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "world_bounds",
+      "unit": "world units x, y, w, h",
+      "donor_value_or_null": null
+    }
+  ],
+  "keep": [
+    "One-tick delivery of deeds",
+    "Per-deed range with sense-range fallback",
+    "Per-NPC perception cadence",
+    "Two-section journal with four statuses",
+    "Queued chapter card with pause, stinger and Escape",
+    "Document pages with a map cursor turned to heading"
+  ],
+  "change": [
+    "Range unset value -1, and 0 is honoured (donor treats 0 as unset)",
+    "Hearing gate ON for quiet deeds (donor comments it out)",
+    "Journal entry on an unknown topic creates the topic or warns (donor drops it silently)",
+    "Chapter card queue instead of one pending slot",
+    "No pause when the card image failed to load",
+    "Document margins and font scale with the fit factor",
+    "Deed kinds about 6 instead of 32; script reactions replaced by our data rows",
+    "No donor names, dialogue or textures"
+  ],
+  "look_test": "In the test zone, kill one creature in view of two others at about 5 m and 12 m. The nearer one turns and shows a line one beat later; the far one does nothing. Judge whether the beat reads as noticed. Then a chapter card at 375 wide (title top, subtitle bottom, three-second pause, stinger) against a plain subtitle line. Target: src/fight/witness.ts (new), parity row 4; sub-line one-tick delay on row 18.",
+  "licence_note": "MIT (LICENSE:1; copyright line 3, Copyright (c) 2019 Try; permission grant line 5). Code may be adapted if the copyright and permission notice travel with it. Game assets and scripts are not in the box and must come from Gothic 2: Night of the Raven (README.md:25), so content stays category-level. This summarises the files, not a legal opinion.",
+  "tags": [
+    "rumour",
+    "scheduler",
+    "name-card",
+    "stinger",
+    "signage",
+    "new:witness-queue",
+    "new:quest-log",
+    "new:document-map",
+    "new:one-tick-delivery"
+  ],
+  "not_read": [
+    "Gothic 2 scripts (reaction to each deed), world and dialogue data (not in box)",
+    "textures, music, sound, fonts (not in box)",
+    "ZenKit format library (empty submodule dir in the box)",
+    "world/objects/npc.cpp beyond lines 4167-4264",
+    "common/ui/gamemenu.cpp (journal screen UI)",
+    "documentmenu.cpp tick and input paths",
+    "gamescript.cpp beyond the bindings cited",
+    "shader folder and the spacer editor folder"
+  ]
+}

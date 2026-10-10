@@ -1,0 +1,138 @@
+{
+  "donor": "rathena-rathena",
+  "topic": "status-effects",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/rathena-rathena/src/map/status.cpp",
+    "/mnt/frankendom-donors/rathena-rathena/src/map/status.hpp",
+    "/mnt/frankendom-donors/rathena-rathena/src/map/skill.cpp",
+    "/mnt/frankendom-donors/rathena-rathena/src/map/battle.cpp",
+    "/mnt/frankendom-donors/rathena-rathena/db/re/status.yml",
+    "/private/tmp/p2/wave2-haiku/batch3/SE007/rathena-rathena.receipts.tsv"
+  ],
+  "counts": {
+    "status_yml_entries": 1018,
+    "status_yml_remove_on_damaged": 17,
+    "status_yml_boss_resist": 67,
+    "status_yml_fail_blocks": 122,
+    "status_yml_endonstart_blocks": 167,
+    "status_yml_endreturn_blocks": 6,
+    "status_cpp_lines": 16511,
+    "status_hpp_lines": 3746,
+    "receipts_verified": 48
+  },
+  "rule": "Each timed status passes one ordered pipeline in status_change_start: gates (dead, map, boss/MVP immunity); end-and-return list; fail list checked before any roll; a resistance function that takes a percent term from one stat, then a fixed term, then a chance floor, then one roll; a duration with a percent cut from the same stat, a fixed term applied last that may be negative, and a duration floor. A status that is already active is replaced (timer deleted and restarted, values overwritten) unless its definition says keep-higher. The fail list, not code, decides whether a status blocks itself (Stun) or refreshes (Bleeding). Damage-over-time statuses run on per-status intervals and stop at a fraction of max HP; knockback checks immunity, ends listed statuses and respects roots before moving.",
+  "data_fields": [
+    {
+      "name": "resistStat",
+      "unit": "enum vit|agi|int|mdef|luk",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "resistPctPerPoint",
+      "unit": "percent of chance per stat point",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "resistFixedBonusPct",
+      "unit": "percent points off chance after percent term",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "chanceFloorPct",
+      "unit": "percent",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "durationCutPctPerPoint",
+      "unit": "percent of duration per stat point",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "durationFixedMs",
+      "unit": "ms, negative adds time",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "durationFloorMs",
+      "unit": "ms",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "failList",
+      "unit": "status ids; a self id blocks re-application",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "reapply",
+      "unit": "enum refresh|keep_higher",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "tickIntervalMs",
+      "unit": "ms, per damage-over-time status",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "dotStopAtHpPct",
+      "unit": "percent of max HP",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "warnDelayMs",
+      "unit": "ms, warning stage before a delayed status starts",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "bossImmune",
+      "unit": "bool",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "mvpImmune",
+      "unit": "bool",
+      "donor_value_or_null": null
+    }
+  ],
+  "keep": [
+    "Resist pipeline order: percent resist, fixed resist, floor, one roll, then duration cut, fixed term, floor.",
+    "Fail list as the rule for hard-lock chaining (no stacking a lock on a lock).",
+    "Refresh-or-block chosen per status in data, not in code.",
+    "Stun holds through hits; Freeze breaks on the first hit (RemoveOnDamaged flag).",
+    "Stone-wait as a readable warning before the damage phase.",
+    "Bleed cannot kill a non-player (damage capped at health minus one)."
+  ],
+  "change": [
+    "Resist stat mapping per status is ours (not the donor's stat ladder).",
+    "One formula for players and monsters, with a boss flag; drop the donor's monster-only halving and separate resist shape.",
+    "Status names, icons, tick counts and numbers are ours.",
+    "Fear does not end Blind unless the design asks for it.",
+    "Frankendom ledger runs in the engine fixed step (src/fight/status.ts), not one client timer per status."
+  ],
+  "look_test": "On the duel stub, add Stun (holds through hits), Freeze (breaks on the first hit) and Bleed (slow tick, refreshes, one icon). Dom hits three times on a 375 wide phone. Pass when he sees one Bleed timer, Freeze shatters on the first hit, Stun holds, and he can tell the locks apart from icon and shape alone. Compare against a per-attacker Bleed stack.",
+  "licence_note": "Code GNU GPL v3 (LICENSE line 1; README.md line 81). db/re/status.yml carries a GPL v3 header (lines 1-17). The game whose content the data describes is not named; origin unclear. Shape only, clean-room; donor values and names not carried over. Not legal advice.",
+  "tags": [
+    "status-stack",
+    "fear",
+    "bleed",
+    "knockback",
+    "duration-rule",
+    "boss-elite-pattern",
+    "new:fail-list-chain-lock",
+    "new:reapply-policy",
+    "new:resist-pipeline",
+    "new:warn-then-drain"
+  ],
+  "not_read": [
+    "status_change_end body (status.cpp 13430 onward)",
+    "status_change_timer_sub (status.cpp 15234)",
+    "full sc_type enum (status.hpp 233-1450; not counted)",
+    "status_calc_state beyond the Fear case (status.cpp 5510-5640 partly read)",
+    "skills that apply each status (skill.cpp 1323, 3839-3851 seen by grep only)",
+    "unit_blown step rules (knockback distance)",
+    "db/re/status.yml entries for Stone (line 49), Poison, Curse, Blind, Confusion, Silence and the rest",
+    "db/re/skill_db.yml durations",
+    "client half: not in the box"
+  ]
+}

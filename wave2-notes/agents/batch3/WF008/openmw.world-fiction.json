@@ -1,0 +1,54 @@
+{
+  "donor": "openmw",
+  "topic": "world-fiction",
+  "depth": "thin",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/mechanicsmanagerimp.cpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwdialogue/dialoguemanagerimp.cpp",
+    "/mnt/frankendom-donors/openmw/components/esm3/loadfact.hpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/npcstats.hpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/npcstats.cpp",
+    "/mnt/frankendom-donors/openmw/README.md",
+    "/mnt/frankendom-donors/openmw/LICENSE"
+  ],
+  "counts": {
+    "rank_records_per_faction": 10,
+    "rank_names_per_faction": 10,
+    "skill_slots_per_faction": 7,
+    "attribute_slots_per_faction": 2,
+    "morrowind_records_in_box": 0
+  },
+  "rule": "Each NPC's attitude to the player comes from a signed reaction per faction pair. If the NPC's own faction is one the player belongs to and has not been expelled from, use that faction's reaction to itself; otherwise scan the player's non-expelled factions and take the smallest reaction, with the rank of that faction. The attitude term is the reaction times a rank-based multiplier and a personality term, added to disposition. Runtime overrides are stored per faction pair and win over the record's own table.",
+  "data_fields": [
+    {"name": "faction_reaction_pair", "unit": "signed int per faction pair", "donor_value_or_null": null},
+    {"name": "rank_count_per_faction", "unit": "count", "donor_value_or_null": null},
+    {"name": "rank_rep_requirement", "unit": "reputation points", "donor_value_or_null": null},
+    {"name": "attitude_rank_multiplier", "unit": "GMST float (fDispFactionRankMult), not in box", "donor_value_or_null": null},
+    {"name": "global_reputation_clamp", "unit": "points 0-255", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "A signed reaction per faction pair, so one rival can be liked by one group and disliked by another with no extra rule.",
+    "Worst standing among the player's non-expelled factions decides the attitude.",
+    "Expulsion removes a faction from the count.",
+    "Runtime overrides per pair win over the base table."
+  ],
+  "change": [
+    "Fix the first-candidate test: track a found flag instead of the iterator position, since reaction starts at 0 (mechanicsmanagerimp.cpp:496 and :524).",
+    "Our own ids, values and rank bands; no Morrowind data.",
+    "Compute attitude on the server; the client shows the label only."
+  ],
+  "look_test": "Two NPCs from different factions in one zone, one greeting line each. Change the player's standing with one faction on the server and reload. Dom should see both greetings move in the same direction, readable at 375 wide without numbers. Compare worst-standing-wins against primary-faction-only. Style flag only; no release rows.",
+  "licence_note": "Code GPLv3 (README.md:9; LICENSE:1). Shape only, clean-room: no code, names, text or record content may be copied. Morrowind data is not in the box (AU039). Asset licences per AU039.",
+  "tags": ["faction-map", "new:faction-reaction-pair", "new:worst-standing-wins"],
+  "not_read": [
+    "npcstats.cpp bodies beyond grep hits (expell, getExpelled, reputation accessors, clamp, state save block)",
+    "components/esm3/loadfact.cpp body (grep only)",
+    "apps/openmw/mwlua/factionbindings.cpp body (grep only)",
+    "apps/opencs/model/world/nestedcoladapterimp.cpp (grep only)",
+    "files/data/scripts/omw Lua scripts (no faction logic found by grep; not read)",
+    "components/esm4 rumour-type records (another game; not read)",
+    "Morrowind ESM data: FACT, BOOK, names, sign text, rumour topics (not in the box)",
+    "files/lang and files/data/l10n string tables (not read)"
+  ]
+}

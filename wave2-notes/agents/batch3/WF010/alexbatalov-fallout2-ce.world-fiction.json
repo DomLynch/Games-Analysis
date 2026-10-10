@@ -1,0 +1,178 @@
+{
+  "donor": "alexbatalov-fallout2-ce",
+  "topic": "world-fiction",
+  "depth": "full",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/endgame.cc",
+    "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/character_editor.cc",
+    "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/pipboy.cc",
+    "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/message.cc",
+    "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/worldmap.cc",
+    "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/worldmap.h",
+    "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/map.cc",
+    "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/reaction.cc",
+    "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/scripts.cc",
+    "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/game_vars.h",
+    "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/credits.cc",
+    "/mnt/frankendom-donors/alexbatalov-fallout2-ce/LICENSE.md"
+  ],
+  "counts": {
+    "city_enum_named_entries": 49,
+    "city_enum_sentinel": 1,
+    "special_encounter_entries": 13,
+    "random_biome_entries": 4,
+    "standing_vars_declared": 23,
+    "standing_vars_displayed": 19,
+    "standing_vars_no_engine_reader": 4,
+    "karma_flags": 9,
+    "endgame_movie_flags": 18,
+    "standing_bands": 7,
+    "holodisk_page_lines": 35,
+    "subtitle_line_cap": 50,
+    "subtitle_wrap_px": 540,
+    "subtitle_fallback_s_per_char": 0.08,
+    "endgame_data_rows": "not in box",
+    "death_card_rows": "not in box"
+  },
+  "rule": "STRONG. Endings stack: every data row whose flag equals its value is shown in file order (no break). Death card: a gated, weighted pick (row enabled while flag < value, zone and level gates, inclusive roll 0..total, walk enabled rows); fix the index so the chosen row is the row itself. Standing: seven bands from a standing value, shown only for discovered zones. Quest list: grouped by place, shown at display threshold, struck through at completion. Subtitles: time per line = clip duration x line characters / total characters, fallback 0.08 s per character.",
+  "data_fields": [
+    {
+      "name": "flag",
+      "unit": "id",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "value",
+      "unit": "int",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "panel",
+      "unit": "id",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "clip",
+      "unit": "name",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "direction",
+      "unit": "1 or -1 (pan only)",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "weight",
+      "unit": "percent",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "flag_below",
+      "unit": "flag and value",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "zone_known",
+      "unit": "zone id",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "min_level",
+      "unit": "character level",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "fallback_s_per_char",
+      "unit": "seconds",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "line_cap",
+      "unit": "lines",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "wrap_px",
+      "unit": "px (ours to test at 375)",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "standing",
+      "unit": "points",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "bands",
+      "unit": "points",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "penalty",
+      "unit": "points",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "lines_per_page",
+      "unit": "lines (ours 5-6 at 375)",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "display_threshold",
+      "unit": "flag value",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "completed_threshold",
+      "unit": "flag value",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "variant_token",
+      "unit": "text token",
+      "donor_value_or_null": null
+    }
+  ],
+  "keep": [
+    "Stacked rows in data order, no break",
+    "Gated weighted pick with an inclusive roll",
+    "Discovery-gated standing bands",
+    "Voice-timed lines on a solid strip, bottom anchored",
+    "Quest list grouped by place, completion struck through",
+    "Note pages with an end sentinel",
+    "Gender-markup idea as inline variant tokens, off by default"
+  ],
+  "change": [
+    "Fix the death-card index (pick returns the row itself)",
+    "Forced death card named by key, not index 12",
+    "Holodisk page-search bound compares with start plus 500",
+    "Quest list bound check on the last row",
+    "Quest sort tie-break on data row order",
+    "Area-name copy bounded with a terminator",
+    "640x480 layout to 375 phone layout; card of three lines max",
+    "Death card is a card, not a movie; no donor titles, names or lines"
+  ],
+  "look_test": "Three stacked rows at 375 wide on a solid strip, timed at 0.08 s per character, against the same text as one line. Death card from a pool of three with weights 50/30/20 and one level-gated row; die ten times, no disabled row shows. Seven-band standing ladder for three discovered zones and one undiscovered zone (undiscovered absent). Target: src/fight/death-card.ts (new), parity row 17.",
+  "licence_note": "Sustainable Use License 1.0 (LICENSE.md:1; line 15 limits use to internal business, non-commercial or personal use; no removing notices). Restricted: inspiration category-level only; no code, names, titles or lines reused. Game data is user-supplied and not in the box (AU003 class D). This summarises the files, not a legal opinion.",
+  "tags": [
+    "naming-grammar",
+    "faction-map",
+    "signage",
+    "duration-rule",
+    "new:ending-stack",
+    "new:death-card",
+    "new:standing-ladder",
+    "new:quest-log",
+    "new:narration-subtitle",
+    "new:variant-token"
+  ],
+  "not_read": [
+    "data/endgame.txt, enddeath.txt, quests.txt, holodisk.txt, genrep.txt, karmavar.txt (not in box)",
+    "text/*.msg string tables, voice clips, art, data pack (not in box)",
+    "credits.cc body (only the 38 ms scroll constant)",
+    "worldmap.cc beyond the name lookup",
+    "dialog.cc",
+    "karma title body in character_editor.cc (only the list call)",
+    "pipboy.cc draw path beyond the quest and note functions"
+  ]
+}

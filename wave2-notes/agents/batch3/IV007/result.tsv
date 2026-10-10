@@ -1,0 +1,2 @@
+game	category	old	verdict	depth	finding
+SCAR	inventory-bank-equipment	P	NONE	thin	/mnt/frankendom-donors/SCAR/src/Function.cpp:22-29 is only a melee-range loop over equipped items; the donor (Skyrim melee attack selector) has no bag, bank, stacking or loot model; see verdict-SCAR-inventory-bank-equipment.txt

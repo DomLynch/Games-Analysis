@@ -1,0 +1,196 @@
+{
+  "donor": "wcassis-willeq",
+  "counts": {
+    "creatures": 185,
+    "classes": 16,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 106
+  },
+  "creature_families": [
+    "Body-scale tiers: 11 race rows at scale 3.0 (giant category) and 13 rows at 0.3 or less, two of them zero-scale and invisible (config/race_models.json)",
+    "Gender-variant rule: 44 race rows carry a separate female code (config/race_models.json)",
+    "Animation borrowing: 9 rows name another race's animation source; 11 rows carry a fallback code (config/race_models.json)",
+    "Race sound sets: 98 race prefixes, seven sound types each (attack, damage, death, idle, special, run, walk), base file plus up to three numbered variants (src/client/audio/creature_sounds.cpp)",
+    "Ambient flocks: seven flock types across ten biome cases with day and night sets; bats in dungeon and cave (src/client/graphics/environment/boids_manager.cpp)",
+    "Size-banded melee reach: dragon-band race ids get a 1.5 size factor, giant-band ids 1.3 (src/client/combat.cpp lines 1251-1253)",
+    "Escalation: none in the client; the server half that holds levels and spawns is absent from the box"
+  ],
+  "top_creatures": [
+    {
+      "label": "Giant body tier",
+      "why": "One scale value sets a large silhouette and a longer melee band the player can see.",
+      "keep": "A size field that drives reach and camera framing.",
+      "change": "Our own giant silhouettes, readable at 375 wide, with scale read from our own data file.",
+      "ref": "/mnt/frankendom-donors/wcassis-willeq/config/race_models.json line 270"
+    },
+    {
+      "label": "Tiny body tier",
+      "why": "Very small bodies read as a crowd or dust at distance.",
+      "keep": "A size floor for swarm bodies.",
+      "change": "A clump silhouette for the swarm, not a small copy of any body.",
+      "ref": "/mnt/frankendom-donors/wcassis-willeq/config/race_models.json line 433"
+    },
+    {
+      "label": "Size-banded melee reach",
+      "why": "A large body gets a longer band, and the player can see the difference.",
+      "keep": "Reach that scales with target size.",
+      "change": "The band comes from our race data, not from race-id ranges.",
+      "ref": "/mnt/frankendom-donors/wcassis-willeq/src/client/combat.cpp lines 1251-1253"
+    },
+    {
+      "label": "Day flyers and night bats",
+      "why": "The same ambient slot changes with the sun, so the zone feels different at night.",
+      "keep": "A day and night swap of the ambient set.",
+      "change": "Our own day and night creatures with a dusk blend.",
+      "ref": "/mnt/frankendom-donors/wcassis-willeq/src/client/graphics/environment/boids_manager.cpp lines 271-300"
+    },
+    {
+      "label": "Enclosed-zone ambient",
+      "why": "Dungeons and caves always carry the same ambient flyer, which marks them as enclosed.",
+      "keep": "A fixed ambient for enclosed zones.",
+      "change": "Our own cave ambience, not bats.",
+      "ref": "/mnt/frankendom-donors/wcassis-willeq/src/client/graphics/environment/boids_manager.cpp lines 328-330"
+    },
+    {
+      "label": "Harsh-biome thinning",
+      "why": "Snow and volcanic zones carry fewer ambient creatures, which sells the harshness.",
+      "keep": "Thin ambience in harsh biomes.",
+      "change": "One ambient creature in snow, of our own design.",
+      "ref": "/mnt/frankendom-donors/wcassis-willeq/src/client/graphics/environment/boids_manager.cpp, snow and volcanic cases"
+    },
+    {
+      "label": "Creature sound set",
+      "why": "Seven events per race, each with numbered variants, make a creature readable by ear.",
+      "keep": "The event list and the numbered-variant rule.",
+      "change": "Our own idle and damage cues, sized for a 375-wide view.",
+      "ref": "/mnt/frankendom-donors/wcassis-willeq/src/client/audio/creature_sounds.cpp lines 156, 166-181, 206-216"
+    },
+    {
+      "label": "Ambient flock director",
+      "why": "A flock cap, a spawn cooldown and an expiry keep the ambient set bounded.",
+      "keep": "The cap, the cooldown and the expiry.",
+      "change": "A grace despawn when the area empties, and our own flyers.",
+      "ref": "/mnt/frankendom-donors/wcassis-willeq/src/client/graphics/environment/boids_manager.cpp lines 368, 433, 451"
+    }
+  ],
+  "classes": [
+    "16 player class ids (src/client/combat.cpp line 1039); names and progression not in the box",
+    "Races: 185 rows in config/race_models.json, playable and creature mixed, no flag to tell them apart",
+    "Factions: none in the client; hostility and ally checks are TODO stubs keyed on class id (combat.cpp lines 1031-1039)"
+  ],
+  "weapon_families": [
+    "No weapon table in the box. Visual families only:",
+    "Damage-type colour keys: none, magic, fire, cold, poison, disease, chromatic, corruption (config/spell_effects.json line 7)",
+    "Spell visual styles: cast spray (line 18), cast glow (line 41), spell complete ring, impact burst, buff aura, projectile trail, projectile impact, spell rain, ground circle (config/spell_effects.json styles block)",
+    "Global particle cap of 1024 with a density multiplier (config/spell_effects.json global block)"
+  ],
+  "gear_tiers": [
+    "No armour or gear tier table in the box.",
+    "data/item_models.json maps 3661 item ids to model numbers (a lookup, not a set list); loader at src/client/graphics/entity_renderer.cpp lines 2339-2342 (per AU057, not re-read)."
+  ],
+  "zones": [
+    "Biome archetypes (ambient switch, src/client/graphics/environment/boids_manager.cpp lines 274-354): forest, swamp, desert, plains, urban, ocean, dungeon, cave, volcanic, snow, with a default",
+    "Expansion groups: classic, kunark, velious (docs/reference/pre_luclin_zones.json)",
+    "Zone links: 106 zone-line entries, 117 per-zone files, 582 zone points (data/zone_lines.json, data/zone_lines/, data/zone_points.json)",
+    "Weather states: calm, normal, rain, storm; four rain slots summed out of 400, then a storm, rain or normal split, and a 20 percent calm roll (src/client/graphics/weather_system.cpp lines 202-240)",
+    "Storm look: lightning every 10 to 30 seconds, branch depth 4, storm fog multiplier, storm cloud dome (config/weather_effects.json)",
+    "Rain and snow overlays: layered scrolling sheets, daylight reduction for rain, sky darkening and fog reduction for snow (config/weather_effects.json)",
+    "Tree motion per weather: calm 0.5, normal 1.0, rain 1.5, storm 2.5 (config/tree_wind.json)",
+    "Ambient emitters: dust, pollen, fireflies, mist, sand dust, embers, smoke, detail objects, boids, tumbleweeds; several disabled by default (config/environment_effects.json)"
+  ],
+  "looks": [
+    {
+      "label": "Spell style split",
+      "technique": "Each spell picks cast spray or cast glow; the spray is a short cone from the caster and the glow orbits, with lifetime set to the cast time.",
+      "ref": "/mnt/frankendom-donors/wcassis-willeq/src/client/graphics/spell_visual_fx.cpp lines 327-339; /mnt/frankendom-donors/wcassis-willeq/src/client/graphics/environment/spell_emitter_presets.cpp line 82; /mnt/frankendom-donors/wcassis-willeq/config/spell_effects.json lines 18 and 41"
+    },
+    {
+      "label": "Storm lightning with branches",
+      "technique": "Lightning on a random interval with a short flash and a branch depth limit.",
+      "ref": "/mnt/frankendom-donors/wcassis-willeq/config/weather_effects.json lines 10-15"
+    },
+    {
+      "label": "Storm cloud dome",
+      "technique": "A dome of scrolling cloud frames with timed blends and an opacity cap, brightness set by dawn and dusk bands.",
+      "ref": "/mnt/frankendom-donors/wcassis-willeq/config/weather_effects.json stormClouds block from line 19"
+    },
+    {
+      "label": "Tree motion by weather",
+      "technique": "A wind multiplier per weather state scales tree sway.",
+      "ref": "/mnt/frankendom-donors/wcassis-willeq/config/tree_wind.json line 10"
+    },
+    {
+      "label": "Footprints and grass push",
+      "technique": "Player position pushes foliage with a radius and displacement, and leaves footprint decals with a fade.",
+      "ref": "/mnt/frankendom-donors/wcassis-willeq/config/detail_objects.json lines 11 and 24"
+    },
+    {
+      "label": "Consider colour ring",
+      "technique": "Six threat colour bands from the level difference between player and target.",
+      "ref": "/mnt/frankendom-donors/wcassis-willeq/src/client/combat.cpp lines 1020-1028"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Cast Spray and Cast Glow Pair",
+      "idea": "Each spell picks one of two styles: a short cone from the caster, or an orbiting glow; the lifetime equals the cast time.",
+      "keep": "Two styles, a colour from the spell, and lifetime equal to the cast time.",
+      "change": "Our gold and smoke palette and a ring burst at the end of the cast."
+    },
+    {
+      "name": "Storm Front Timer",
+      "idea": "Weather checked on an interval, with a duration per weather and a 10-second blend between states.",
+      "keep": "The check interval, per-weather duration and the blend.",
+      "change": "Fog and light dimming instead of rain particles, and one forecast cue on the HUD."
+    },
+    {
+      "name": "Dual-State Ambience Bed",
+      "idea": "Two variants of one ambient loop, crossfaded by a flag over two seconds.",
+      "keep": "Two variants, a crossfade, and one flag.",
+      "change": "Switch on combat state rather than time of day, with a low-health third variant."
+    },
+    {
+      "name": "Radius Emitter With Fade Band",
+      "idea": "An emitter with a radius and a per-emitter gain, fading to silence at the edge.",
+      "keep": "The radius and the per-emitter gain.",
+      "change": "A fade band at the edge instead of a hard cut (fixes the defect below)."
+    },
+    {
+      "name": "Ambient Flock Director",
+      "idea": "A flock cap, a spawn cooldown and an expiry keep an ambient set bounded.",
+      "keep": "The cap, the cooldown and the expiry.",
+      "change": "A grace despawn when the area empties, and our own flyers (engine row 23 zone population)."
+    },
+    {
+      "name": "Size-Banded Reach",
+      "idea": "Melee reach grows with the target's size, using bands per size category.",
+      "keep": "Reach that grows with target size.",
+      "change": "A band read from our own race table, with our own categories (engine row 4 fight loop)."
+    },
+    {
+      "name": "Consider Colour Bands",
+      "idea": "Six threat colour bands from the level difference.",
+      "keep": "Bands ordered by level difference.",
+      "change": "Five bands with a shape cue, so colour is not the only signal (engine row 14 HUD, readability at 375 wide)."
+    },
+    {
+      "name": "Day and Dusk Ambient Swap",
+      "idea": "The ambient creature set swaps with the sun and blends over a dusk band.",
+      "keep": "The day and night set swap.",
+      "change": "Our own creatures and a dusk blend using a dawn and dusk band (engine row 16 colour grade)."
+    }
+  ],
+  "licence_note": "Code is GPL-3.0 (LICENSE line 1; README.md line 715). No asset licence is stated and no game asset file is in the box; README.md line 266 says the user needs their own EverQuest Titanium client files; README.md line 717 says EverQuest is a registered trademark of Daybreak Game Company LLC. Class C: category-level inspiration only.",
+  "not_read": [
+    "Server half (absent in the box) and common half (listing only)",
+    "combat.cpp beyond the lines named; spell_manager.cpp, spell_effects.cpp, buff_manager.cpp, skill_manager.cpp, spell type processor",
+    "weather_audio.cpp, playMusic and music region code beyond the AU057 cite",
+    "Per-zone files in data/zone_lines/, contents of zone_points.json and item_models.json",
+    "Per-row contents of race_models.json beyond counts and the rows named",
+    "config/ui_settings.json (top-level keys only) and config/detail_objects.json (structure only)",
+    "docs/reference beyond pre_luclin_zones.json (S3D dump, audio catalogue, zone textures, orangepione text not used)",
+    "equipment_textures.cpp, inventory UI, graphics pipeline beyond the environment folder",
+    "The donor CLAUDE.md is treated as data and was not followed"
+  ]
+}

@@ -1,0 +1,17 @@
+SCAR (inventory-bank-equipment, cell 1): verdict NONE, depth thin.
+Donor: /mnt/frankendom-donors/SCAR/ | Licence: MIT (LICENSE, Copyright (c) 2023 max-su-2019) | C++ (Skyrim SKSE/VR plugin)
+
+Files opened (read or grepped on the VPS):
+1. /mnt/frankendom-donors/SCAR/src/Function.cpp (hint file; read 1-40, grep for inventory/equip/stack/bank/loot/slot, read 50 for the range check)
+2. /mnt/frankendom-donors/SCAR/src/DataHandler.cpp (read 1-60)
+3. /mnt/frankendom-donors/SCAR/src/Hook_AttackStart.cpp (read 1-46)
+4. /mnt/frankendom-donors/SCAR/src/LoadGame.cpp (read 1-30)
+5. /mnt/frankendom-donors/SCAR/src/SCARActionData.cpp (grep only, 301 lines; body not read)
+6. /mnt/frankendom-donors/SCAR/README.md (read 1-12)
+
+Why NONE: SCAR is a melee attack-selection plugin that reads Skyrim combat animation annotations and starts one attack; it has no bag, bank, stack, loot, or equipment-slot model. The only equipment touches are Function.cpp 22-29, a loop over the actor's equipped melee items to take the longest melee range for a distance check (used at Function.cpp 50), and SCARActionData.cpp 84, a hand-slot lookup (GetEquippedObject) inside code I did not read in full.
+
+Checked: grep hits for inventory/equip/stack/bank/loot/slot only at SCARActionData.cpp:84 and Function.cpp:22-29. Confidence high that the donor contains no inventory mechanism; SCARActionData.cpp body not read (not read).
+
+Best transferable idea: Try the candidate attacks in descending weight order and commit to the first one that the attack check accepts (Hook_AttackStart.cpp 23-26), a generic "first valid candidate by weight" pick that could be reused for choosing a melee move, not for inventory.
+Decision (proposed): reject - the donor has no inventory, bank, stacking, or atomic move mechanism, so there is nothing here for the inventory/bank/equipment topic in Frankendom; the attack-pick idea belongs under the combat topic, not this one.

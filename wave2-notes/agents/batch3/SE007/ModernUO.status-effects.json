@@ -1,0 +1,200 @@
+{
+  "donor": "ModernUO",
+  "topic": "status-effects",
+  "depth": "full",
+  "half_read": "server",
+  "paths": [
+    "/mnt/frankendom-donors/ModernUO/Projects/Server/Poison.cs",
+    "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Misc/Poison.cs",
+    "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Misc/PoisonKinds.cs",
+    "/mnt/frankendom-donors/ModernUO/Projects/Server/Mobiles/Mobile.cs",
+    "/mnt/frankendom-donors/ModernUO/Projects/Server/Mobiles/Mods/StatMod.cs",
+    "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Spells/Base/SpellHelper.cs",
+    "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Items/Weapons/Abilities/BleedAttack.cs",
+    "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Items/Weapons/Abilities/ParalyzingBlow.cs",
+    "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs",
+    "/mnt/frankendom-donors/ModernUO/Projects/Server/Timer/Timer.TimerWheel.cs",
+    "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Spells/Fourth/Curse.cs",
+    "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Spells/Third/Poison.cs",
+    "/private/tmp/p2/wave2-haiku/batch3/SE007/ModernUO.receipts.tsv",
+    "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Spells/Mysticism/BombardSpell.cs",
+    "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Spells/Mysticism/MysticSpell.cs",
+    "/mnt/frankendom-donors/ModernUO/Projects/Server/Skills.cs",
+    "/mnt/frankendom-donors/ModernUO/Projects/Server/Utilities/Utility.cs"
+  ],
+  "counts": {
+    "poison_impl_registrations": 19,
+    "poison_tiers_per_family": 5,
+    "stat_mod_call_sites_read": 6,
+    "bleed_ticks": 5,
+    "bleed_tick_interval_s": 2,
+    "paralyze_freeze_timers": 2,
+    "receipts_verified": 50,
+    "knockback_defects": 1
+  },
+  "rule": "Two rules for the same target. (1) Named slot: a stat modifier is keyed by a name; the caller refuses a same-slot application that is not stronger, a stronger one removes the old modifier and adds the new one with its full duration, and modifiers in different slots add. (2) Poison tier ladder: an active poison blocks any equal or lower tier, a higher tier replaces it (timer restarted); a creature's immune tier at or above the poison tier refuses it, and a paragon raises its immune tier by one. A poison tick is one plus a percent of current HP, clamped to the tier band; the tick count is fixed. Locks (paralyze, freeze) are one flag and one timer: a re-application during the lock is ignored, not extended; a paralyzing blow refuses a paralysed target and opens an immunity window after each lock. Bleed restarts its timer on a new bleed, runs five ticks two seconds apart, with a level that falls each tick and damage in a band over that level. Death clears poison and both locks.",
+  "data_fields": [
+    {
+      "name": "slot.key",
+      "unit": "string, one slot per key per target",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "slot.offset",
+      "unit": "stat points, signed",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "slot.durationS",
+      "unit": "seconds, full duration on replace",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "slot.policy",
+      "unit": "enum stronger_replaces|weaker_refused",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "poison.tier",
+      "unit": "integer",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "poison.family",
+      "unit": "enum standard|darkglow|parasitic",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "poison.pctCurrentHpPerTick",
+      "unit": "percent of current HP before clamp",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "poison.minDmg",
+      "unit": "HP",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "poison.maxDmg",
+      "unit": "HP",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "poison.intervalS",
+      "unit": "seconds",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "poison.ticks",
+      "unit": "count",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "creature.immuneTier",
+      "unit": "integer",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "boss.immuneTierBump",
+      "unit": "integer, one tier paragon-style",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "lock.durationPlayerS",
+      "unit": "seconds",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "lock.durationNpcS",
+      "unit": "seconds",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "lock.immunityAfterS",
+      "unit": "seconds added after the lock",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "lock.breaksOnDamage",
+      "unit": "bool",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "bleed.ticks",
+      "unit": "count",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "bleed.intervalS",
+      "unit": "seconds",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "bleed.levelStart",
+      "unit": "integer, falls by one per tick",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "bleed.nonPlayerMultiplier",
+      "unit": "multiplier",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "bleed.manaCost",
+      "unit": "integer",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "knockBack.divisor",
+      "unit": "skill points per unit of chance",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "knockBack.maxChance",
+      "unit": "percent, clamp ceiling",
+      "donor_value_or_null": null
+    }
+  ],
+  "keep": [
+    "Named-slot rule: stronger replaces and restarts, weaker refused, different slots sum.",
+    "Poison tier ladder: equal or lower tier refused while active; higher replaces.",
+    "Creature immune tier with a one-tier boss bump (the boss-elite pattern).",
+    "Post-lock immunity window as data.",
+    "Bleed beat: five ticks, falling size, one sound and one blood decal per tick, a final message.",
+    "Death clears poison and both locks."
+  ],
+  "change": [
+    "All ticks and rolls are server-side; the client only plays what the server decided.",
+    "Drop the pre-AOS coin-flip repeat and the 40 percent reveal as they stand.",
+    "breaksOnDamage is per effect in data (donor paralysis breaks on damage; donor freeze does not in the path read).",
+    "Numbers, names, sounds and icons are ours.",
+    "Defect in the donor's Bombard knock-back: chance divided by 20 with a comment that says 12 percent, so every cast from a skill sum of 20 knocks back. Fix: clamp(sum / divisor, 0, maxChance) with divisor and maxChance as data fields."
+  ],
+  "look_test": "On the duel stub, three attackers each start a Bleed within one second, then a buff and a curse land on the same stat. Dom watches on a 375 wide phone. Pass when there is one Bleed with one timer and a falling tick size, a stronger poison replaces a weaker one and an equal one does nothing, the buff and the curse both show, and the post-lock window stops a second lock. Compare against a per-attacker Bleed stack.",
+  "licence_note": "Code GPL-3.0 (LICENSE; Copyright 2019-2020 ModernUO Development Team (Kamron Batman); StatMod.cs header 2019-2026). No separate data licence stated; THIRD-PARTY-NOTICES lists dotnet (MIT) and mkdocs only. The emulated game is not named in the repo. Shape only, clean-room; no donor numbers or names carried over. Donor root AGENTS.md, CLAUDE.md and GEMINI.md treated as data, not read, not followed. Not legal advice.",
+  "tags": [
+    "status-stack",
+    "bleed",
+    "duration-rule",
+    "boss-elite-pattern",
+    "ordered-feedback",
+    "new:named-slot-rule",
+    "new:tier-ladder",
+    "new:lock-immunity-window",
+    "new:tick-falloff",
+    "knockback"
+  ],
+  "not_read": [
+    "Mobile.Damage body beyond lines 5956-5990",
+    "CheckPoisonImmunity default and DisruptiveAction",
+    "cure-poison spells and bandage rule (bleed doc)",
+    "SpellHelper offset functions (around lines 280-296)",
+    "ParalyzingBlow IsImmune and BeginImmunity detail (lines 96 onward)",
+    "death and respawn presentation beyond the clears in Kill",
+    "poison message strings",
+    "data half (Distribution/Data) for status config",
+    "client half: not in the box",
+    "BombardSpell.cs outside lines 66-82 (spell setup and targeting)",
+    "Mobile.Move side effects after a knock-back step"
+  ]
+}

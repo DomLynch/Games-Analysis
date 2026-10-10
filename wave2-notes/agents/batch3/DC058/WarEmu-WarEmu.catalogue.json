@@ -1,0 +1,85 @@
+{
+  "donor": "WarEmu-WarEmu",
+  "counts": {
+    "creatures": 0,
+    "classes": 24,
+    "weapons": 9,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "creature_families": [
+    {"family": "creature types (enum)", "count": 6, "members": "animals, demons, humanoids, monsters, plants, undead", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/World/Creatures/Creature_proto.cs line 27"},
+    {"family": "creature subtypes (enum)", "count": 16, "members": "beasts, birds, insects and arachnids, reptiles, unmarked demons, four demon sub-families (one per patron), beast-men type, dwarf-type, greenskin-type, human-type, ogre-type, rat-folk type, chaos-breed type", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/World/Creatures/Creature_proto.cs line 38"},
+    {"family": "spawn waypoint modes", "count": 3, "members": "loop, one-way, random", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/World/Creatures/Creature_spawn.cs line 132"}
+  ],
+  "top_creatures": [
+    {"label": "Retaliating brute (counter on hit)", "why": "Mechanic-level archetype; no creature rows in box, so silhouette not judged.", "keep": "one-shot retaliation per window", "change": "arm on a cooldown timestamp instead of every tick", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/WorldServer/World/Abilities/Handlers/Zone/DealDamagesWhenHitHandler.cs lines 39, 47, 49"},
+    {"label": "Front sweeper (cone with target cap)", "why": "Cone that caps hits; cap of 3 matches a many-vs-one ceiling.", "keep": "cone with a cap on targets", "change": "cap is a field in ability data, not a check on ability ids", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/WorldServer/World/Abilities/Handlers/Zone/DealDamagesInFront.cs line 62"},
+    {"label": "Spent-then-flees", "why": "Resource zeroed then a timed lock: a readable low-HP tell.", "keep": "zero the action resource, then a timed lock", "change": "one-second warning tell and four-second lock", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/WorldServer/World/Abilities/Handlers/Entries/FleeAbilityHandler.cs line 66"},
+    {"label": "Tethered guard", "why": "Tether radius from spawn with a guard brain that does nothing on its own.", "keep": "tether radius; guard brain idle", "change": "walk back at a fixed speed, not a snap", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/WorldServer/World/Interfaces/CombatInterface.cs line 298; /mnt/frankendom-donors/WarEmu-WarEmu/WorldServer/World/AI/GuardBrain.cs line 16"},
+    {"label": "Scaled spawns", "why": "Min and max scale per prototype makes each spawn a little different.", "keep": "min and max scale per prototype", "change": "seeded roll so a replay matches", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/World/Creatures/Creature_proto.cs lines 111 and 118"}
+  ],
+  "classes": [
+    {"group": "career lines", "count": 24, "role": "archetype grouping not in box", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs lines 998 to 1025"},
+    {"group": "races", "count": 7, "role": "split across two realms; membership per race not read", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs line 369; line 764 (realms)"},
+    {"group": "tactic types", "count": 3, "role": "career, renown, tome", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs line 964"},
+    {"group": "career categories", "count": 19, "role": "career and race tactic and morale; archetype tactic and morale; renown stat tiers A, B, C; renown offensive, defensive, resists; realm renown; tome sets A and B; specialization; automatic", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs line 1084"},
+    {"group": "specialization paths", "count": 3, "role": "three-path choice", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs line 1109"},
+    {"group": "ability types", "count": 7, "role": "standard, morale, tactic, granted, passive, pet, guild; morale logic not found in server code read", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs line 1062"}
+  ],
+  "weapon_families": [
+    {"family": "sword", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs line 931 (ItemTypes)"},
+    {"family": "axe", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs line 931"},
+    {"family": "hammer", "note": "two-handed status is per item (Item_Info.TwoHanded), not per type", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs line 931"},
+    {"family": "spear", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs line 931"},
+    {"family": "staff (caster focus)", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs line 931"},
+    {"family": "dagger", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs line 931"},
+    {"family": "bow", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs line 931"},
+    {"family": "gun", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs line 931"},
+    {"family": "pistol", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs line 931"}
+  ],
+  "gear_tiers": [
+    {"tier": "rarity ladder", "members": "utility (1), common (2), uncommon (3), rare (4), very rare (5), artifact (6)", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/SystemData.cs line 76"},
+    {"tier": "armour and robe classes", "members": "light armour, medium armour, heavy armour, robe, medium robe; plus one shield type", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs line 931"},
+    {"tier": "mount tiers", "members": "basic mount, advanced mount; speed field in Mount_Info", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/World/Items/Mount_Info.cs"},
+    {"tier": "equipment slots", "members": "19 slot ids in ItemSlots; EquipSlots adds two pocket slots", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs lines 1033 and 1124"},
+    {"tier": "dye channels (inference)", "members": "none, A, B, both", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs line 1054"}
+  ],
+  "zones": [
+    {"zone": "zone schema", "note": "tier, type, min and max level, region, offset; no zone rows", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/World/Maps/Zone_Info.cs line 79"},
+    {"zone": "two-sided capture areas", "note": "order and destruction influence ids per area, counted only inside the explore region", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/World/Maps/Zone_Area.cs lines 51 and 54; /mnt/frankendom-donors/WarEmu-WarEmu/WorldServer/Managers/AreaMapMgr.cs lines 79 to 96"},
+    {"zone": "instanced scenarios", "note": "min and max level, min and max players, tier, map id, enabled", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/World/Scenarios/Scenario_Info.cs"},
+    {"zone": "public quests", "note": "four difficulty steps plus unknown; basic and advanced reward types", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs line 594; /mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/SystemData.cs line 765"},
+    {"zone": "keep siege ladder (enum only)", "note": "five steps: safe, outer walls, inner sanctum, keep lord, sieged; not used in WorldServer code read", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs line 973"},
+    {"zone": "cultivation plot", "note": "six growth stages", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs line 531"}
+  ],
+  "looks": [
+    {"label": "Object state flags", "technique": "17 unit states the client could read (berserk, stealth, taunted, detaunted, knocked down, scale up, carrying banner, carrying flag, combo, keep, three mutation states, transform states); client draw code not in box", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs line 638"},
+    {"label": "Scale variance per spawn", "technique": "min and max scale per prototype; random roll per spawn", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/World/Creatures/Creature_proto.cs lines 111 and 118"},
+    {"label": "Two-channel dye (inference)", "technique": "four tint-mask values suggest two tint channels; shader not in box", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs line 1054"},
+    {"label": "Con ladder", "technique": "nine threat steps from no-level through trivial, easy, equal, challenging, dangerous, deadly, to friendly; colours not in box", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs line 329"},
+    {"label": "Codex", "technique": "12 sections and 7 reward kinds in one in-game codex", "ref": "/mnt/frankendom-donors/WarEmu-WarEmu/Common/Database/GameData.cs line 380"}
+  ],
+  "originals": [
+    {"name": "Two-sided capture ring", "idea": "One zone meter drawn as a ring with two sides; counts only inside the explore region; flickers when contested.", "keep": "two influence values counted only inside the explore region", "change": "one ring meter; side picked by realm (fixes the donor's undeclared InfluenceId read at AreaMapMgr.cs lines 86 and 90)"},
+    {"name": "Sticky threat", "idea": "Threat goes to the attacker with the largest share of damage received, with stickiness and a healing term.", "keep": "share-of-damage pick (CombatInterface.cs lines 36 and 343 to 355)", "change": "stickiness band (value to tune) and healing term; engine-owned list; donor's GetHate ignores healing"},
+    {"name": "Counter stance", "idea": "One-shot retaliation per window that re-arms on a cooldown.", "keep": "one-shot per window (DealDamagesWhenHitHandler.cs lines 39, 47 to 49)", "change": "cooldown timestamp instead of re-arm on every OnTick"},
+    {"name": "Cone with a three-target cap", "idea": "Front cone that caps hits; the cap and root time are ability data.", "keep": "cone with a cap (DealDamagesInFront.cs line 62)", "change": "cap and root time as data fields, not checks on ability ids; cap of 3 matches MAX_ATTACKERS"},
+    {"name": "Spent-then-flee", "idea": "Action resource drops to zero, then flee is locked for a while.", "keep": "zero the resource and lock (FleeAbilityHandler.cs line 66)", "change": "one-second tell before the flee; four-second lock"},
+    {"name": "Tether with a walk-back", "idea": "Tether radius from spawn; attackers lose aggro; the creature walks home at a fixed speed.", "keep": "tether radius 200 (CombatInterface.cs line 298); aggro clear on evade (line 285)", "change": "walk back with a short reset window, not the donor's position snap (ReturnToSpawn, lines 307 to 314; Object.cs line 423)"},
+    {"name": "Two-channel dye", "idea": "Each item carries two independent tint channels.", "keep": "two channels (GameData.cs line 1054, inferred)", "change": "our own palettes; dye slot count from data"},
+    {"name": "Staged crop plot", "idea": "A harvestable zone node with six visible growth stages.", "keep": "six stages (GameData.cs line 531)", "change": "stage shows as height at 375 wide; harvest is a zone data node"}
+  ],
+  "licence_note": "No LICENSE, COPYING or NOTICE in the top two levels. Assembly metadata is a template default (Common/Properties/AssemblyInfo.cs line 11). 38 WorldServer .cs files carry a GPL header saying version 2 or later, with no LICENSE file behind it. Treat as no clean licence: clean-room, shape only. Rights holder unknown; the server reads archive files from a commercial client that is not in the box. Class C.",
+  "not_read": [
+    "data half: creature, item, zone and scenario rows (not in box; no .sql dump found)",
+    "client half and archives (not in box; read at run time by the server)",
+    "binary DLLs and .suo (names only)",
+    "CombatInterface Update and AttackAI (only hate, aggro and evade read)",
+    "abilities beyond the 7 files read (9 more handler files not opened)",
+    "Scripting, LobbyServer and Launcher network code (file lists only)",
+    "morale logic (only a packet opcode found)",
+    "factions enum members; race-to-realm mapping",
+    "hud-ui, sound layering, death and respawn presentation, boss intro, walk density, drop ceremony"
+  ]
+}

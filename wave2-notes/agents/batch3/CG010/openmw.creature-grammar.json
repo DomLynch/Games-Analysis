@@ -1,0 +1,92 @@
+{
+  "donor": "openmw",
+  "topic": "creature-grammar",
+  "depth": "thin",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/levelledlist.cpp",
+    "/mnt/frankendom-donors/openmw/components/esm3/loadlevlist.cpp",
+    "/mnt/frankendom-donors/openmw/components/esm3/loadlevlist.hpp",
+    "/mnt/frankendom-donors/openmw/components/esm3/loadcrea.cpp",
+    "/mnt/frankendom-donors/openmw/components/esm3/loadcrea.hpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwclass/creature.cpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwclass/creaturelevlist.cpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwworld/worldimp.cpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/character.cpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwgui/waitdialog.cpp",
+    "/mnt/frankendom-donors/openmw/apps/opencs/model/world/defaultgmsts.cpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwlua/types/creature.cpp"
+  ],
+  "counts": {
+    "creature_records_in_box": 0,
+    "levelled_list_flag_bits": 2,
+    "creature_attack_pairs_per_record": 3,
+    "creature_type_values": 4,
+    "creature_sound_generator_types_named_in_code": 8,
+    "pack_members_formula": "1 + roll(iNumberCreatures)",
+    "pack_placement_units": 220,
+    "clip_variant_choice": "count existing numbered clips, roll one",
+    "cs_default_iNumberCreatures": 1,
+    "cs_default_fCorpseClearDelay": 72,
+    "cs_default_fCorpseRespawnDelay": 72,
+    "receipts_verified": 60
+  },
+  "rule": "One base creature record; a variant names its base in CNAM and carries its own stats; scale multiplies the reference scale; sound lookup falls back from the variant's base id to any creature sharing the same model, then to a generic set. A levelled list picks one record by player level: chance-none roll first, then only the highest eligible level tier (or every eligible tier when the list's all-levels bit is set), then a uniform pick, recursing into nested lists. A rest interruption places a pack of 1 + roll(iNumberCreatures) members, each a levelled pick, 220 units from the player. A creature-list point respawns its creature only after the death stamp plus the lesser of two corpse delays. Natural attacks: three min/max pairs chosen by attack type; damage is linear in swing strength.",
+  "data_fields": [
+    {"name": "creature.level", "unit": "level int", "donor_value_or_null": null},
+    {"name": "creature.attack_pair_min[0..2]", "unit": "hp per hit", "donor_value_or_null": null},
+    {"name": "creature.attack_pair_max[0..2]", "unit": "hp per hit", "donor_value_or_null": null},
+    {"name": "creature.base_id", "unit": "ref id (CNAM link)", "donor_value_or_null": null},
+    {"name": "creature.scale", "unit": "multiplier (XSCL)", "donor_value_or_null": null},
+    {"name": "creature.blood_type", "unit": "6-bit int", "donor_value_or_null": null},
+    {"name": "levelled.chance_none", "unit": "percent 0-100", "donor_value_or_null": null},
+    {"name": "levelled.entry.level", "unit": "level int", "donor_value_or_null": null},
+    {"name": "levelled.all_levels", "unit": "bool flag", "donor_value_or_null": null},
+    {"name": "spawn.pack_max", "unit": "creatures (game setting iNumberCreatures)", "donor_value_or_null": null},
+    {"name": "spawn.pack_distance", "unit": "units", "donor_value_or_null": null},
+    {"name": "spawn.respawn_grace", "unit": "game time (fCorpseRespawnDelay, fCorpseClearDelay, lesser of the two)", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "One base record with a variant link, so a re-skin inherits its family.",
+    "Scale as a per-variant multiplier.",
+    "Sound set looked up by base id, then by shared model, then generic.",
+    "Tier pick: chance-none roll, highest eligible tier only (unless flagged), uniform pick.",
+    "Bounded pack roll placed at a fixed distance.",
+    "Respawn only after the corpse delay has passed."
+  ],
+  "change": [
+    "Add a depth cap to the recursive levelled pick (levelledlist.cpp:76-78 has none).",
+    "Build the base-id to sound-set map once at load (creature.cpp:614-626 rescans per request).",
+    "Re-pick when a list entry is missing so the pack keeps its size (levelledlist.cpp nonexistent-item branch returns none).",
+    "Use named fields, not Morrowind flag bits; the creature and item flag bits are swapped in the format (loadlevlist.hpp:68 and :91).",
+    "Clamp pack size to MAX_ATTACKERS = 3 and make pack size per-zone data.",
+    "Server makes every pick once at spawn and sends the chosen base id; the client presents it."
+  ],
+  "look_test": "Target src/fight/creature-family.ts (proposed), parity row 7. Build one base creature and three variants changing only colour set, scale (0.85, 1.0, 1.2) and one glow accent, all sharing the base voice set. Render a 2-second idle loop and a 375-wide still for each, and a pack of three beside the player. Dom checks: the three read as one family at 375 wide; the scale step is visible in the pack; the glow does not hide the silhouette in the fight camera. Pass if all three read as one family; if not, drop the colour change first.",
+  "licence_note": "Code GPLv3 (README.md:9 per AU039; LICENSE). Shape only, clean-room. Morrowind data is not in the box and is not used. No GPL code, identifiers or GPL-derived numbers are carried over; donor_value_or_null is null for every field.",
+  "tags": [
+    "creature-family",
+    "recolour-tier",
+    "scale-tier",
+    "swapped-ability",
+    "encounter-ambush",
+    "scheduler",
+    "new:levelled-tier-pick",
+    "new:variant-link",
+    "new:pack-roll",
+    "new:attack-pairs",
+    "new:sound-fallback",
+    "new:respawn-grace",
+    "seed-discipline"
+  ],
+  "not_read": [
+    "Morrowind ESM creature, levelled-list and sound records (not in the box)",
+    "Meshes, skeleton and animation clip files (not in the box)",
+    "Creature death animation beyond the note at creature.cpp:149",
+    "Morrowind GMST values for iNumberCreatures and corpse delays (only CS defaults read)",
+    "Random idle timing: no code path found in the read; idle-state mapping read in outline only (character.cpp:249-261, 1181)",
+    "Lua creature API beyond baseCreature field (mwlua/types/creature.cpp:43)",
+    "Sound generator data and the full sound-type name table (creature.cpp around 677-730)",
+    "Encounter spawning and walk density (other topic)"
+  ]
+}

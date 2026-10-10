@@ -1,0 +1,92 @@
+{
+  "donor": "vthibault-roBrowser",
+  "counts": {
+    "creatures": 1567,
+    "classes": 211,
+    "weapons": 29,
+    "gear_sets": 0,
+    "zones": 12
+  },
+  "creature_families": [
+    {"family": "humanoid-type", "distinct_names": 69, "basis": "rough name-keyword bucket"},
+    {"family": "beast or animal", "distinct_names": 61, "basis": "rough name-keyword bucket"},
+    {"family": "insect or arachnid", "distinct_names": 37, "basis": "rough name-keyword bucket"},
+    {"family": "undead or spooky", "distinct_names": 29, "basis": "rough name-keyword bucket"},
+    {"family": "mineral construct", "distinct_names": 23, "basis": "rough name-keyword bucket"},
+    {"family": "plant or fungus", "distinct_names": 19, "basis": "rough name-keyword bucket"},
+    {"family": "boss-like tokens", "distinct_names": 17, "basis": "rough name-keyword bucket"},
+    {"family": "egg-type tokens", "distinct_names": 17, "basis": "rough name-keyword bucket"},
+    {"family": "ice", "distinct_names": 17, "basis": "rough name-keyword bucket"},
+    {"family": "dragonkin", "distinct_names": 13, "basis": "rough name-keyword bucket"},
+    {"family": "demonic", "distinct_names": 12, "basis": "rough name-keyword bucket"},
+    {"family": "aquatic", "distinct_names": 12, "basis": "rough name-keyword bucket"},
+    {"family": "slime or blob", "distinct_names": 9, "basis": "rough name-keyword bucket"},
+    {"family": "fire", "distinct_names": 4, "basis": "rough name-keyword bucket"},
+    {"family": "shadow scale classes", "rows": 351, "basis": "src/DB/Monsters/ShadowTable.js: 0.5 (117), 2.0 (60), 0.7 (48), 1.2 (40), 0.0 no shadow (37), 1.5 (34)"}
+  ],
+  "top_creatures": [
+    {"label": "Plated insect swarm", "why": "Swarm numbers are a readability test at 375 wide. Judged from name family only; no art in box, silhouette not judged.", "keep": "many of one shape, shared sound", "change": "fewer, heavier shells; one shared signature sound", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Monsters/MonsterTable.js (rows 1000 and up)"},
+    {"label": "Mineral construct", "why": "Slow, heavy, big-shadow archetype.", "keep": "slow stomp; largest shadow class", "change": "glowing exposed core as the weak point", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Monsters/MonsterTable.js; /mnt/frankendom-donors/vthibault-roBrowser/src/DB/Monsters/ShadowTable.js"},
+    {"label": "Undead drifter", "why": "Pale, floating, low threat to read.", "keep": "translucent idle bob", "change": "fog trail that marks where it has been, to aid threat reading", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Monsters/MonsterTable.js"},
+    {"label": "Dragonkin", "why": "Largest shadow class pairs with a big body.", "keep": "scale and wings as silhouette", "change": "one wing; tail sweep as signature move", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Monsters/ShadowTable.js"},
+    {"label": "Demonic", "why": "Horned silhouette reads fast.", "keep": "horn shape", "change": "summon tell (ground ring) before arrival", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Monsters/MonsterTable.js"},
+    {"label": "Slime or blob", "why": "Squash-and-bounce is the simplest idle vocabulary.", "keep": "squash idle", "change": "hit reaction splits into two small blobs", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Monsters/MonsterTable.js"},
+    {"label": "Aquatic ambusher", "why": "Rise-from-ground ambush shape.", "keep": "fin silhouette", "change": "rises from a water tile as an ambush", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Monsters/MonsterTable.js"},
+    {"label": "Beast pack", "why": "Packs test many-vs-one.", "keep": "quadruped pack that circles", "change": "one shared aggro list for the pack, engine-owned", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Monsters/MonsterTable.js"}
+  ],
+  "classes": [
+    {"group": "base jobs", "count": 28, "ids": "0 to 27", "role": "not assigned (name strings not copied)", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Jobs/JobConst.js"},
+    {"group": "H variants", "count": 45, "ids": "from 4001", "progression": "second tier after base", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Jobs/JobConst.js"},
+    {"group": "B variants", "count": 69, "ids": "from 4023", "progression": "baby or child variant", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Jobs/JobConst.js"},
+    {"group": "later classes and pet or transform ids", "count": 69, "ids": "4046 onward", "progression": "later-class band and pet-style sprites", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Jobs/JobConst.js"}
+  ],
+  "weapon_families": [
+    {"family": "blade", "types": "short sword, sword, two-hand sword", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Items/WeaponType.js"},
+    {"family": "spear, axe, mace, rod", "types": "one-hand and two-hand forms of each", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Items/WeaponType.js"},
+    {"family": "ranged", "types": "bow", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Items/WeaponType.js"},
+    {"family": "gun group", "types": "handgun, rifle, gatling, shotgun, grenade launcher", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Items/WeaponType.js lines 34 to 38"},
+    {"family": "misc", "types": "knuckle, instrument, whip, book, katar, shuriken, two-hand rod", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Items/WeaponType.js"},
+    {"family": "dual-type pairs", "types": "6 combinations (ids 25 to 30)", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Items/WeaponType.js lines 42 to 47"},
+    {"family": "hit-sound families", "types": "6 distinct files: sword, axe, mace, rod, spear, arrow; mace used by 18 rows including the no-weapon fallback", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Items/WeaponSoundTable.js"}
+  ],
+  "gear_tiers": [
+    {"tier": "none in data", "note": "Item rows have no rarity field (fields: display names, resource names, description arrays, slotCount, ClassNum). Description colour markup is text emphasis, not a tier system.", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Items/ItemTable.js"},
+    {"tier": "socket count", "note": "slotCount on item rows (8,402 rows)", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Items/ItemTable.js"},
+    {"tier": "shield size steps", "note": "4 keyed rows", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Items/ShieldTable.js"},
+    {"tier": "headgear", "note": "868 rows; no tier", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Items/HatTable.js"}
+  ],
+  "zones": [
+    {"zone": "boss-room sky pair", "note": "pale warm sky with dark red cloud tint", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Effects/WeatherEffect.js line 36"},
+    {"zone": "tower sky pair", "note": "dark purple sky with pink cloud tint", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Effects/WeatherEffect.js line 35"},
+    {"zone": "blue-sky maps", "note": "10 rows sharing one sky pair", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Effects/WeatherEffect.js lines 23 to 32"},
+    {"zone": "ground hazards", "note": "112 ground-unit rows: wall types (safety, fire, ice), slow field, mine, pillar, healing area", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Skills/SkillUnit.js"}
+  ],
+  "looks": [
+    {"label": "Vertex-wave water with looping caustic strip", "technique": "surface height is a sine of position plus a time offset; texture frame picked over 32 frames", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Map/Water.js lines 97 and 235"},
+    {"label": "Pre-aged cloud pool", "technique": "150 sprites, random life up to 8000 ms, born 2000 ms in the past", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Effects/Sky.js lines 30, 128, 129"},
+    {"label": "Stepped lock-on ring", "technique": "20 brightness steps; spin of tick over 4 degrees; one uniform tints two channels", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Effects/LockOnTarget.js lines 102, 157, 260"},
+    {"label": "Damage numbers", "technique": "1500 ms lifetime; alpha 1 minus life fraction; size scaled by a factor; colour chosen by hit-type bits", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Effects/Damage.js lines 159, 163, 361, 363"},
+    {"label": "Keyed effects with random variants", "technique": "323 keyed entries; %d in a file name replaced by a random range; sound and attached-entity flag per entry", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Effects/EffectTable.js line 25 (header) and entry bodies"},
+    {"label": "Shadow by monster id", "technique": "scale per id; zero means no shadow", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Monsters/ShadowTable.js lines 17 and 19"},
+    {"label": "Hit sound per weapon type", "technique": "one hit file per weapon family; mace as fallback", "ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/DB/Items/WeaponSoundTable.js lines 18 and 20"}
+  ],
+  "originals": [
+    {"name": "Caustic shallows", "idea": "Shallow-water floor with a vertex wave and a 32-frame caustic loop; ripples radiate from fight impacts.", "keep": "cheap vertex wave; looping caustic strip", "change": "ripples come from hits; our palette; no clouds"},
+    {"name": "Rune halo", "idea": "Target ring with discrete steps (12 or 20), two colours, and a facing spoke.", "keep": "discrete steps for readability; slow spin", "change": "segmented runes; spin follows the fighter's stance rather than a fixed rate"},
+    {"name": "Ember numbers", "idea": "Hit numbers that punch in, arc up and fade.", "keep": "colour by hit class; alpha by life", "change": "punch scale on spawn; arc path; own glyphs"},
+    {"name": "Zone sky card", "idea": "One keyed zone table with gradient and horizon band fields; boss rooms get a dim entry.", "keep": "one table keyed by zone", "change": "gradient and horizon as data fields"},
+    {"name": "Ground hazard set", "idea": "Four ground hazards as data rows: wall, slow field, mine, healing area; each with a warning ring before it is live.", "keep": "id-keyed ground-unit map", "change": "warning ring before activation"},
+    {"name": "Hit families", "idea": "Six hit-sound families; dual-weapon characters layer both; a crit stinger sits on top.", "keep": "family-level mapping", "change": "explicit fallback family with a log line when a weapon has no family"}
+  ],
+  "licence_note": "LICENSE is GPL-3.0 (Version 3, 29 June 2007). Vendored MP3 player says MPL 1.1 (src/Audio/mp3-player/license.txt). No game-content owner is named. Name tables look like original game text: structure only, no strings reused. Class B for code, C for data tables.",
+  "not_read": [
+    "server half (not in box; README line 30 names an external proxy)",
+    "paired donor MrAntares-roBrowserLegacy (in box, not read)",
+    "src/Engine (most), src/Renderer/Entity (animation), sound loader, UI",
+    "name, description and skill text tables (structure only)",
+    "StatusInfo.js rows (not counted)",
+    "client art, models, maps, audio (none in box)",
+    "vendored libraries beyond headers",
+    "hud-ui minimap and world map, touch UX, loot, progression, spawn density, death and respawn, boss intro"
+  ]
+}

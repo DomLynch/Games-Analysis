@@ -1,0 +1,16 @@
+SCAR (quests-dialogue, cell 12) | Verdict: NONE | depth: thin | Licence: MIT (LICENSE line 1, "MIT License") | donor: /mnt/frankendom-donors/SCAR
+
+Files opened (sed or grep on the VPS):
+1. /mnt/frankendom-donors/SCAR/src/DataHandler.cpp (lines 1-40; the list's hint file)
+2. /mnt/frankendom-donors/SCAR/src/SCARActionData.cpp (lines 1-30)
+3. /mnt/frankendom-donors/SCAR/src/Hook_AttackCombo.cpp (lines 1-35)
+4. /mnt/frankendom-donors/SCAR/README.md (lines 1-40)
+5. /mnt/frankendom-donors/SCAR/LICENSE (lines 1-5)
+6. /mnt/frankendom-donors/SCAR/Nemesis_Engine/mod/scar/0_master/#0106.txt (grep only, line 98)
+Repo-wide grep -rni for quest, dialog, objective, reward, topic across src, docs and Nemesis_Engine: every hit was a false positive or an animation name ("RequestPluginAPI", "RequestLOS", "IdleDialogueStart").
+
+Checked: The donor is a Skyrim SKSE plugin that makes NPC melee combos choose from weighted animation actions (README.md line 3). It has no quest state, objectives, rewards, ledger or dialogue tree. Confidence that no quest or dialogue code exists: high, for the files listed and the grep.
+
+Best transferable idea: Sort candidate actions by weight, then try each in order with a random percentage gate; the first one that succeeds wins (Hook_AttackCombo.cpp lines 12 and 22-24 as read), which could choose among alternate NPC lines, though the donor uses it for combat combos only.
+
+Decision (proposed): reject - the donor has no quest or dialogue mechanism, and its weighted-combo roll is a combat detail already covered by parity rows 2 and 3 (AI brain, guard/parry/stamina).

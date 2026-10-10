@@ -1,0 +1,226 @@
+{
+  "donor": "swgemu-Core3",
+  "cell": "DC052",
+  "half_read": "server data pack (MMOCoreORB/bin/scripts Lua templates, lair, spawn, managers, screenplays, licence files) plus three server C++ files for the lair despawn (src/server/zone/objects/tangible). Client half (.tre art, audio, models) absent from the box. Paired donor: swgemu-engine3 (engine half, read in part).",
+  "counts": {
+    "creatures": 3624,
+    "classes": 7,
+    "weapons": 457,
+    "gear_sets": 23,
+    "zones": 10
+  },
+  "count_notes": "creatures = Creature:new definitions under mobile/ (grep); classes = playable professions (10 species keys also read); weapons = .lua files under object/weapon incl. index files; gear_sets = armour material families (folders); zones = planet region files (2,309 region rows); grep counts, not every file opened.",
+  "creature_families": [
+    "Dantooine pack ladder: graul 30, mauler 35, mangler 39, ancient 50, marauder 173 (HAM 120000, scale 1.35)",
+    "Dantooine herd grazer: bol 29, pack runner 26, swift charging bol 34 (boss)",
+    "Dantooine quenker 23 / ravager 38 / relic reaper 45; voritor 22 to 30; huurton 2 to 84; thune 26 to 48, mammoth thune 129 (boss); piket 30 to 37",
+    "Dragon family, socialGroup krayt (6 templates): juvenile canyon 122, canyon 275, giant canyon 300, adolescent/ancient/grand 336 (same stats, scale differs)",
+    "Rancor family (14): youth 45 to ancient bull 98",
+    "Spider family (19): broodling 8 to giant recluse 115",
+    "Nightsister spider family (18): broodling 8 to kiin dray 126 (scale 4.0) and spiderclan elder 277 (humanoid caster)",
+    "Mite nest family (49): hatchling 2 to 9, worker 12 to 15, guard 13 to 24, queen 15 to 60",
+    "Kliknik (18): swarming 10 to dark queen 40",
+    "Borgle (14, 6 to 37); torton (13, 12 to 37); squill (11, 10 to 50); rasp (13, 4 to 40); panther (13, 10 to 56); boar (12, 10 to 50); veermok (11, 20 to 26); endor marauder (13, 22 to 56); aakuan (12, 11 to 31); drall (12, 8 to 22)"
+  ],
+  "top_creatures": [
+    {
+      "label": "Dune wyrm in three sizes",
+      "why": "One stat block and size alone reads as the tier at 375 wide; adolescent, ancient and grand share level 336, HAM 410000, damage and resists.",
+      "keep": "Identical stat block across sizes; size as the tier cue; a +100 accuracy bonus on the two larger sizes only.",
+      "change": "Our own scale ramp and a distinct roar per size; move the accuracy bonus to the top size only.",
+      "ref": "mobile/tatooine/krayt_dragon_adolescent.lua lines 6, 11, 28, 54; mobile/tatooine/krayt_dragon_grand.lua line 28; krayt_dragon_ancient.lua line 53"
+    },
+    {
+      "label": "Venom brood matron",
+      "why": "A 1.75 scale spider whose two attack lists are area poison and strong poison.",
+      "keep": "Paired area and single poison attack set; scale step to a large spider.",
+      "change": "A visible poison pool telegraph before the bite; our own damage type.",
+      "ref": "mobile/dathomir/giant_gaping_spider_recluse.lua lines 11, 14, 31"
+    },
+    {
+      "label": "Brood tyrant",
+      "why": "Scale 4.0, HAM 41000, level 126: the largest creature in the spider family.",
+      "keep": "A 4x silhouette jump for the boss step.",
+      "change": "Our own egg-sac look and an attack set that is not poison-only.",
+      "ref": "mobile/dathomir/kiin_dray.lua lines 6, 11, 30"
+    },
+    {
+      "label": "Nest ladder, hatchling to queen",
+      "why": "Named stages that read by size and name; the queen tops a nest.",
+      "keep": "Hatchling 7 to queen 26 as separate templates.",
+      "change": "The queen as a clear-the-nest objective with egg-sac loot.",
+      "ref": "mobile/talus/giant_decay_mite_hatchling.lua line 6; mobile/talus/giant_decay_mite_queen.lua line 6"
+    },
+    {
+      "label": "Pack beast with a late marauder tier",
+      "why": "Top tier at level 173 with HAM 120000 and scale 1.35 after tiers at 30 to 50.",
+      "keep": "Pack-plus-killer flags and a sharp HAM jump.",
+      "change": "Gate the tier by a zone difficulty band, not a level number.",
+      "ref": "mobile/dantooine/graul_marauder.lua lines 6, 11, 31"
+    },
+    {
+      "label": "Armoured herd leader",
+      "why": "Herd boss at level 129, HAM 81000, low resists (25 to 35): a fight that is easy to hit.",
+      "keep": "Herd and killer flags; the low resist profile.",
+      "change": "A plated back and a crest look of our own.",
+      "ref": "mobile/dantooine/mammoth_thune.lua lines 6, 11, 14, 31"
+    },
+    {
+      "label": "Resist-wall beast",
+      "why": "Three resist slots at 200 force a weapon swap.",
+      "keep": "A nine-slot resist vector with several near-immune slots (slot order not read).",
+      "change": "Our own damage type names; the immunity shown as a sheen on the hide.",
+      "ref": "mobile/dathomir/ancient_bull_rancor.lua lines 6, 14"
+    },
+    {
+      "label": "Union-of-masters elite caster",
+      "why": "Level 277 caster whose attacks merge five master ability lists.",
+      "keep": "Merging several master ability lists into one elite.",
+      "change": "Our own ability set and a silhouette that reads at 375 wide.",
+      "ref": "mobile/dathomir/spiderclan_elder.lua lines 8, 13, 48"
+    }
+  ],
+  "classes": [
+    "Combat brawler: melee; starting kit of three melee choices; ability tiers novice 4, mid 12, master 20 (NPC lists)",
+    "Combat marksman: ranged; starting kit of three ranged choices; ability tiers novice 3, mid 10, master 15",
+    "Crafting artisan: tools; starting kit of three tools",
+    "Jedi: force; unlocked after mastering 6 holo-grind professions (mastery-count gate); default progression type is village",
+    "Outdoors scout: tracking; starting kit of one tool",
+    "Science medic: medical; starting kit of one food tool",
+    "Social entertainer: performance; starting kit of one instrument",
+    "Playable species keys (10): bothan, human, ithorian, moncal, rodian, sullustan, trandoshan, twilek, wookiee, zabrak",
+    "Factions: imperial (371 socialGroup lines), rebel (291), neutral; tribal clans with about 12 role archetypes each (dantooine)"
+  ],
+  "weapon_families": [
+    "Sword 121; two-handed sword 91; polearm 44; carbine 18; pistol 29; rifle 25; knife 13; grenade 15; heavy 10; baton 9; turret 9; axe 7; droid 5; unarmed 4; special 4; creature 20; vehicle 3",
+    "Damage types across templates: lightsaber 195, kinetic 55, energy 47, blast 14, acid 11, heat 8, electricity 6, stun 5, cold 2",
+    "Attack types: melee 227, ranged 80, force 21, grenade 8",
+    "Crafted blade ladder, gen1 to gen5 (88 files): min damage 70, 80, 130 for gen1 to gen3; wounds ratio 15, 19, 25, 37, 45; gen5 needs the gen4 certificate",
+    "Rifles: E11 60 to 120 (wounds 10); bowcaster 110 to 180 (wounds 13); T21 135 to 400 (speed 7, wounds 28); berserker heat rifle 160 to 452, gated by skill flurryshot2"
+  ],
+  "gear_tiers": [
+    "Armour material families (23): bone, bounty hunter, chitin, composite, ithorian defender/guardian/sentinel, kashyyykian black mountain/ceremonial/hunting, mandalorian, marauder (27 files), marine, nightsister, padded, ris, singing mountain clan, stormtrooper (13), tantel (6), ubese (12), zam",
+    "Set pattern: one piece per slot (helmet, chest plate, bicep l/r, bracer l/r, gloves, leggings, boots) plus belt, bandolier, jacket, pants or shirt; some sets add _quest variants",
+    "Robes: light and dark Jedi robes in five steps (s01 to s05), padawan robe, test robe",
+    "Set bonuses: none found in scripts or in src/server/zone/objects (search for set-bonus and armour-set terms)",
+    "Armour rating numbers: not present in the armour templates read (no rating fields found)",
+    "DNA sample quality bands 1 (very high) to 7 (very low), each a sample item; a 200-row level-indexed stat table sits beside them (link not traced)",
+    "Crafted blade gen4 and gen5 share the gen4 certificate; gen4 min and max damage not in its own file (shared base not read)"
+  ],
+  "zones": [
+    "Planets (region rows): naboo 495, talus 372, tatooine 292, dantooine 276, lok 180, rori 167, corellia 151, dathomir 141, yavin4 123, endor 112",
+    "Region rows carry name, x, y, shape (circle, rectangle, ring), flags, spawn groups and max spawn count (dantooine eastern mountains: 128)",
+    "Region flags: spawn, no-spawn, world spawn, no world spawn, no-build, camping, city, nav, named, locked, no-combat, no-duel, PVP, overt, rebel, imperial, no-pet",
+    "Dungeon archetypes: corellian corvette (10 screenplay files), death-watch bunker (5), geonosian bio lab (4), warren (3; locked rooms; named NPC respawn 1800 s)",
+    "Caves (38), POI (56), outposts and cities (36), events (11), battlefield (1)",
+    "Hazards: poison gas cloud object; death-watch overlord mines; warren walker and droid guards",
+    "Lairs: 1,852 lair templates with weighted mobiles, boss mobiles, spawn limit and five difficulty bands of buildings",
+    "Spawn groups: lair entries carry min and max difficulty bands (for example 50 to 60 on dantooine), number to spawn, weight and size; about 13,198 lair references in spawn files"
+  ],
+  "looks": [
+    {
+      "label": "Hue-index skins",
+      "technique": "One model with an index list drawn from four blocks of eight (0 to 7, 8 to 15, 16 to 23, 24 to 31); palette ramp is client-side and absent.",
+      "ref": "mobile/dantooine/graul.lua line 30; mobile/dantooine/bol.lua line 30"
+    },
+    {
+      "label": "Scale tiers",
+      "technique": "A scale multiplier per variant with the same stat block (dragon sizes 0.85, 2.05, 2.35); most common scales 1.05 to 1.25.",
+      "ref": "mobile/tatooine/krayt_dragon_adolescent.lua line 28; mobile/tatooine/krayt_dragon_grand.lua line 28"
+    },
+    {
+      "label": "Glowing swarm",
+      "technique": "A particle emitter for an ambient glowing flock, named by template only.",
+      "ref": "object/static/particle/pt_flocking_glowzees.lua line 44"
+    },
+    {
+      "label": "Glowing light and volcano glow",
+      "technique": "Particle emitters named for glowing light and glow effects (names only).",
+      "ref": "object/static/particle/pt_frn_all_glowing_light_s3.lua; object/static/particle/particle_volcano_glow_1.lua"
+    },
+    {
+      "label": "Gold-trim NPC variants",
+      "technique": "An outfit variant with a gold finish; about 24 template files carry gold in the name. Visual is in .iff (absent).",
+      "ref": "object/mobile/dressed_death_watch_gold.lua line 44"
+    },
+    {
+      "label": "Poison gas cloud",
+      "technique": "A dungeon hazard object; name only.",
+      "ref": "object/tangible/dungeon/poison_gas_cloud.lua"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Scale-tier wyrm",
+      "idea": "A dragon-like beast in three sizes that share one stat block, so size alone signals the tier at 375 wide.",
+      "keep": "One stat block across sizes; size as the tier cue.",
+      "change": "Our own scales, a distinct roar per size, the accuracy bonus only on the top size."
+    },
+    {
+      "name": "Brood matron with a poison pool",
+      "idea": "A large spider with an area poison and a single poison attack, telegraphed by a pool on the ground.",
+      "keep": "Paired area and single poison attack set; a scale step to a boss size.",
+      "change": "A visible pool telegraph; our own damage type."
+    },
+    {
+      "name": "Nest ladder with a queen objective",
+      "idea": "Named nest stages from hatchling to queen; clearing the queen ends the nest.",
+      "keep": "Named stages as separate templates.",
+      "change": "Egg-sac loot and a nest-clearing objective."
+    },
+    {
+      "name": "Herd leader with a pack link",
+      "idea": "A herd grazer whose leader pulls nearby herd members into the fight when hit.",
+      "keep": "PACK and HERD flags as data.",
+      "change": "A plated look and our own call."
+    },
+    {
+      "name": "Nine-slot resist vector",
+      "idea": "A beast with several near-immune damage slots that forces a weapon swap.",
+      "keep": "A nine-slot vector with several near-immune slots.",
+      "change": "Our damage names; immunity shown as a sheen on the hide."
+    },
+    {
+      "name": "Elite built from masters",
+      "idea": "A caster whose ability list merges several master lists.",
+      "keep": "Merging several master ability lists into one elite.",
+      "change": "Our own ability set and silhouette."
+    },
+    {
+      "name": "Forged blade ladder",
+      "idea": "Five blade tiers gated by certificates, with the wounds ratio as the hidden power step.",
+      "keep": "Five tiers; a certificate gate; the wounds ratio step.",
+      "change": "Our own element and a visible glow per tier."
+    },
+    {
+      "name": "Mastery-count unlock",
+      "idea": "A class unlocks after mastering six of many tracks.",
+      "keep": "A count-of-masteries gate.",
+      "change": "Our own tracks (for example six of twelve stances)."
+    },
+    {
+      "name": "Level-banded stat table with quality bands",
+      "idea": "One 200-row table with banded increments, scaled by a quality band.",
+      "keep": "One table, banded increments, a quality band.",
+      "change": "Our own numbers; a comment that matches the table (the donor's hit-band comment disagrees with its table)."
+    },
+    {
+      "name": "Empty-zone despawn with grace",
+      "idea": "A zone object despawns after a grace period with no players in range, cancelled on entry, re-checked when it fires.",
+      "keep": "Grace timer; cancel on entry; re-check at fire time.",
+      "change": "Track counted players as a set so a visibility change cannot desync the count."
+    }
+  ],
+  "licence_note": "README and COPYING say GNU AGPL v3. Many Lua data files carry a GNU LGPL header (audit AU051: 18,274 of 30,521 .lua files in bin/scripts contain GNU Lesser text; none contain GNU Affero). The two statements conflict. Asset licence: none in repo; game-data origin not stated. Client art absent. Treat as shape only, not a copy. Not a legal view.",
+  "not_read": [
+    "MMOCoreORB/src beyond three despawn files and a set-bonus search",
+    "Most of the 3,624 creature files, 17,485 object files and 2,857 loot files (counted, not opened)",
+    "ai/ trees beyond herd.lua and villageRaider.lua (audit only)",
+    "managers/faction_manager.lua, managers/loot_manager.lua, managers/creature_manager.lua",
+    "sql/datatables.sql, sql/swgemu.sql, sql/mantis.sql beyond audit headers",
+    "doc/ spreadsheets and images; bin/terrain and bin/navmeshes binaries",
+    "Armour rating numbers; gen4 and gen5 shared base damage",
+    "Herd dwell times (8 to 15 s) are from audit AU051, not re-read",
+    "How DNA quality bands connect to the 200-row stat table"
+  ]
+}

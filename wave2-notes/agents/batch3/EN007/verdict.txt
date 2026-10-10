@@ -1,0 +1,18 @@
+EN007 verdict notes (topic encounter-templates)
+
+OpenDAoC-OpenDAoC-Core, escort shape: NONE (quest escort). Cell verdict stays STRONG on ambush, patrol, lair, camp and the aggro budget.
+Candidates opened for the escort shape (3 minimum):
+  1. /mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameobjects/GamePlayer.cs lines 12196-12214 (CommandNpcFollow: a controlled pet is told to follow its owner; no destination, no arrival, no abandon).
+  2. /mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/realmabilities/effects/rr5/MinionRescueEffect.cs lines 96-118 (rescue spirits follow a target player inside a radius; timed by a 200 ms ECS timer).
+  3. /mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/spells/Masterlevel/Sojourner.cs lines 205-215 (summoner follow spell; sets a follow target and distances).
+  Search: grep -rn -i "escort" over GameServer returned zero hits.
+Best transferable idea (escort shape): a rescue spirit that follows a target player inside a set radius is the closest reusable piece, so a light escort could use a follow-within-radius order with a timed re-check instead of a quest-owned walk.
+
+ModernUO, all shapes: STRONG. No PARTIAL or NONE cell in this topic.
+Best transferable idea (ModernUO): make a camp or lair a data row (fixed roster, boundary-crossing trigger, lifetime that restarts only while occupied), and let an ambush trigger aggro the triggering player the moment it spawns.
+
+Confidence notes:
+- ModernUO escort death defect (D3): read in code, not run. Medium.
+- ModernUO proximity count defect (D2): read in code, not run; the donor fixture uses count 1, so it may simply not have been exercised. Medium-high.
+- OpenDAoC camp bonus reset (D1): the step is clear from the code; the intent is not stated. Medium.
+- OpenDAoC patrol creation (D2): latent; call sites not read.

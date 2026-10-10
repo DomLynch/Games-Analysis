@@ -1,0 +1,14 @@
+WF009 verdict, topic world-fiction (naming grammars, faction maps, rumour and sign text, zone story lines)
+
+afritz1-OpenTESArena: STRONG (depth full, half read: client)
+  Candidate files read or grepped on the VPS (14): World/MapGeneration.cpp, Assets/TextAssetLibrary.cpp, Assets/ExeData.h, Assets/ExeData.cpp (grep of loader keys), Interface/DialogueManager.cpp, Interface/DialogueFunctions.cpp, Interface/DialogueFunctions.h, Interface/GameWorldUiState.cpp, WorldMap/ArenaLocationUtils.h, Assets/CityDataFile.h, data/exe/aExeStrings.txt, LICENSE.txt (line 1 by receipt check), data/audio/MusicDefinitions.txt (not opened), README (grep only).
+  Why STRONG: the sign-name grammar, the per-city no-repeat set, the seeded first-name token, the rule table for NPC names, and the nearest-entrance rumour are all read in code and the table sizes are declared in ExeData.h.
+  Not read: the string values and the NAMECHNK.DAT and TEMPLATE.DAT contents (not in box).
+  Confidence: high on structure and sizes; medium on the reroll behaviour (read, not run).
+  Best transferable idea: a two-word sign grammar with a per-zone no-repeat set and a seeded first-name token, where every rumour points at a real entrance the player can walk to.
+
+alexbatalov-fallout1-ce: PARTIAL (depth thin, half read: client)
+  Candidate files read or grepped on the VPS (6): src/game/worldmap.cc, src/game/worldmap.h, src/game/game_vars.h, src/game/endgame.cc (grep and sed reads), LICENSE.md (lines 1 and 15 by receipt check only; the rest via the AU003 audit).
+  Why PARTIAL: the visit-or-flag reveal, the time-gated reveal and the faction enemy flags are real and read. There is no naming grammar, sign text or rumour text in the code; those are in the message files and scripts that are not in the box.
+  Restricted licence (Sustainable Use License): category-level shape only.
+  Best transferable idea: a town or zone is shown on the map only after a visit or an event flag, with one fixed time gate for one special place, and one hostility flag per faction read by the ending.

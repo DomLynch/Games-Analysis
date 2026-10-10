@@ -1,0 +1,210 @@
+{
+  "donor": "Warzone2100-warzone2100",
+  "counts": {
+    "creatures": 34,
+    "classes": 4,
+    "weapons": 109,
+    "gear_sets": 0,
+    "zones": 44
+  },
+  "creature_families": [
+    "Scavenger ground line (class Babas, 7 chassis): original mode picks 5 vehicle cases plus an infantry default that covers half of rolls; ultimate mode has 33 ground templates (ultimateScavengers.js)",
+    "Scavenger air line: 2 helicopter templates (light machine-gun weapon, heavier rocket-pod weapon); production checks count against two per VTOL pad",
+    "NEXUS takeover line: 3 ground templates with a NEXUS link weapon; group attacks need more than 4 gathered",
+    "Player droid line: 12 designable chassis (light, medium, heavy) and 129 DROID templates",
+    "Cyborg line: 13 cyborg chassis including 3 jump-jet variants at 370 hit points against 200 for the standard cyborg; 18 CYBORG templates",
+    "Support: 10 construct templates, 8 command templates, 2 person templates, 1 transporter (5000 hit points)",
+    "Escalation is by research tier and by timed scavenger scripts (produceThings 300, buildThings 900, groundAttackStuff 1200, helicopterAttack 2900, cleanupBaseInfo 8000); no level scaling and no boss script read"
+  ],
+  "top_creatures": [
+    {
+      "label": "Scrap swarm infantry",
+      "why": "Cheap infantry that makes up half of original-mode scavenger output; in a crowd it reads as a dense cluster at 375 wide.",
+      "keep": "A cheap swarm as half of production; infantry as the default rather than the exception.",
+      "change": "Our own silhouette and a lunge behaviour instead of a machine-gun stance; cap the swarm by zone budget.",
+      "ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/data/mp/multiplay/script/scavengers/originalScavengers.js lines 13 and 20; /mnt/frankendom-donors/Warzone2100-warzone2100/data/base/stats/body.json line 2"
+    },
+    {
+      "label": "Flame bus",
+      "why": "A bus-sized chassis that sprays flame and leaves burn over time; the burn is the signature, not the hit.",
+      "keep": "A large chassis with a close-range flame and a burn follow-up.",
+      "change": "A flame cart that leaves an ember trail instead of a fixed burn radius.",
+      "ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/data/mp/multiplay/script/scavengers/originalScavengers.js line 19; /mnt/frankendom-donors/Warzone2100-warzone2100/data/base/stats/weapons.json lines 217-245"
+    },
+    {
+      "label": "Hijack truck",
+      "why": "A support truck whose weapon takes over enemy units; the threat is that your own units turn.",
+      "keep": "Takeover as a weapon subclass, not a spell; a small group of takeover trucks.",
+      "change": "A timed control of about four seconds with a counter-hack the target can use.",
+      "ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/data/mp/multiplay/script/scavengers/ultimateScavengers.js line 69; /mnt/frankendom-donors/Warzone2100-warzone2100/data/base/stats/weapons.json line 3151"
+    },
+    {
+      "label": "Scout wing",
+      "why": "Air harassment that circles a target area with random offsets, so the approach changes each pass.",
+      "keep": "Scout orders to a random offset around the nearest target; two-per-pad production check.",
+      "change": "A strafing dive with a shadow telegraph before the pass.",
+      "ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/data/mp/multiplay/script/scavengers/ultimateScavengers.js lines 75-76, 381, 591-616"
+    },
+    {
+      "label": "Jump-jet cyborg",
+      "why": "The same cyborg shape with 370 hit points, almost double the standard; reads as an elite at 375 wide.",
+      "keep": "One tier change expressed as hit points plus a jump.",
+      "change": "A dash-hop with a landing shockwave instead of a plain jump.",
+      "ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/data/base/stats/body.json lines 979 and 986"
+    },
+    {
+      "label": "Heavy droid chassis",
+      "why": "The top designable droid body: highest kinetic armour and highest build power of the designable set; a clear silhouette for the heaviest unit.",
+      "keep": "Heavy plate with a slow turn as the top chassis.",
+      "change": "A brace stance the player sets, trading speed for a frontal reduction.",
+      "ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/data/base/stats/body.json lines 92-102"
+    },
+    {
+      "label": "Super carrier",
+      "why": "A transport-class body with very high hit points and armour; a convoy anchor the eye reads from far away.",
+      "keep": "A carrier body in its own class that is nearly unkillable by normal weapons.",
+      "change": "A visible weak point on the rear and a slow reveal, so it is a target and not a wall.",
+      "ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/data/base/stats/body.json line 1137"
+    },
+    {
+      "label": "Cyborg flamer",
+      "why": "A close flame with a burn tail, cheap and short-ranged; it punishes standing still.",
+      "keep": "Flame plus burn as a cheap close threat.",
+      "change": "A heat shimmer instead of a burn number, so the threat is visible at 375 wide.",
+      "ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/data/base/stats/weapons.json lines 1589-1615"
+    }
+  ],
+  "classes": [
+    "Droids: vehicles, light to heavy, with tiered propulsion",
+    "Cyborgs: legged infantry, with a jump-jet tier",
+    "Babas: scavenger light vehicles and infantry",
+    "Transports: one super-heavy carrier body"
+  ],
+  "weapon_families": [
+    "Machine gun (33 entries), cannon (14), slow rocket (9), flame (8), missile (8), rocket (7), gauss rail (7), energy laser (6), bomb (4), anti-air gun (3), howitzer (3), mortar (3), electronic takeover (2), command (1), laser satellite (1)",
+    "Effect classes: anti-personnel, all-rounder, anti-tank, artillery, flamer, anti-aircraft, bunker buster; damage vs locomotion grid (weaponmodifier.json) and vs structure class grid (structuremodifier.json)",
+    "Rail ladder: three tiers, rising damage, top tier with longer fire pause and no-friendly-fire flag (weapons.json from line 3612)",
+    "Burn over time on flames and incendiary bombs: periodical damage with a radius and time (weapons.json lines 244-245, 898-900)"
+  ],
+  "gear_tiers": [
+    "Chassis size: light 26 entries, medium 4, heavy 5, super heavy 1 (body.json size field, all 36 entries)",
+    "Propulsion tiers I to III for tracks (400, 600, 800 percent hit-point share), half-tracks (200, 350, 500), hover (150, 200, 300), wheels (100, 200, 300), VTOL (100, 150, 300); legs (50, 100, 150) (propulsion.json)",
+    "Vehicle armour ladder: Composite Alloys rows 01 to 09, costed 1800 to 17600 research points, each +30 armour and +30 hit-point share; rows 10 and 11 have no cost and are named as AI buffs (research.json)",
+    "Cyborg armour ladder: rows 01 to 09, costed 1200 to 15600, same +30 values; rows 10 and 11 no cost (research.json)",
+    "Heat armour rows 07 and 08 have no cost (research.json)"
+  ],
+  "zones": [
+    "Arizona tileset: sand, sandy brush, red brush, pink rock; no weather branch in weather.js",
+    "Rockies tileset: snow weather; cliff-face and sheet-ice hazards",
+    "Urban tileset: road, rubble, buildings; rain weather",
+    "Terrain: 12 types with a speed factor per locomotion; water slows ground to 60 and boosts hover to 150; cliff face slows legs and tracks to 60; lift is 250 everywhere (terraintable.json)",
+    "Maps: 44 playable multiplayer maps from 2 to 10 players (names only); maze-named maps are the closest dungeon archetype",
+    "Campaign: three start levels (alpha, beta, gamma), one level each",
+    "Ruin and cover dressing: 46 building features, 14 skyscrapers, 16 trees, 14 vehicle features, 11 boulders, scavenger ruins (features.json)"
+  ],
+  "looks": [
+    {
+      "label": "Projectile light by subclass",
+      "technique": "A subclass table sets a warm colour for kinetic and flame weapons and a cool colour for energy; a per-weapon override layer sits over it. Light is sustained for the whole flight.",
+      "ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/data/base/stats/effectlights.json lines 7-8; /mnt/frankendom-donors/Warzone2100-warzone2100/doc/EffectLights.md lines 51-55"
+    },
+    {
+      "label": "Peak-normalised light sum",
+      "technique": "Per-pixel point lights are summed in tiles and the total is scaled back by its strongest channel rather than clipped per channel, which keeps the colour from going flat.",
+      "ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/data/base/shaders/pointlights.frag lines 193-194"
+    },
+    {
+      "label": "Glow limits as a rule",
+      "technique": "Brightness above about 2.0 flattens to a disk; a fade longer than about 400 ms leaves a phantom light; a saturated hue reads as a colour filter over ground, not as light.",
+      "ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/doc/EffectLights.md lines 51, 53, 55"
+    },
+    {
+      "label": "Range ring clipped to the map",
+      "technique": "A range ring is an analytic disk SDF intersected with the map box, so the ring follows the map edge when the range runs past it.",
+      "ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/data/base/shaders/range_ring_sdf.frag lines 35 and 40"
+    },
+    {
+      "label": "Burn patch",
+      "technique": "A radius-based burn area after a hit, with a time value, applied as a periodical damage zone.",
+      "ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/data/base/stats/weapons.json lines 244-245, 898-900"
+    },
+    {
+      "label": "Weather by tileset",
+      "technique": "A per-tileset weather call on a 66 percent gate, otherwise clear (rain on urban, snow on rockies).",
+      "ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/data/base/script/weather.js lines 9-25"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Tide of Scrap",
+      "idea": "A cheap-infantry director that keeps half of the production as light swarm units and the rest as vehicles, with a zone budget that caps the swarm and despawns it after a grace period when the area empties.",
+      "keep": "The half-and-half production split and the cheap swarm as a default.",
+      "change": "Our silhouettes, a zone budget and a despawn grace timer (row 23)."
+    },
+    {
+      "name": "Takeover Truck",
+      "idea": "A support truck whose weapon converts a nearby enemy for a short time; the target can counter-hack it.",
+      "keep": "Takeover as a weapon subclass with a small group of trucks.",
+      "change": "A timed control of about four seconds and a counter-hack, not a permanent swap (engine rows 3 and 4)."
+    },
+    {
+      "name": "Scout Wing",
+      "idea": "Air harassment that scouts to random offsets around the nearest target, with production tied to pads.",
+      "keep": "Scout orders with random offsets and a pad-based production limit.",
+      "change": "A strafing dive with a shadow telegraph (engine row 2, AI brain)."
+    },
+    {
+      "name": "Reinforce or Retreat",
+      "idea": "An attacked structure calls its nearest group; a thin group pulls the attack group in; an injured unit retreats below 85 percent health.",
+      "keep": "The 85 percent retreat and the thin-group reinforcement.",
+      "change": "A threat list in the engine instead of the nearest-base rule (engine row 4 and the many-on-one rule)."
+    },
+    {
+      "name": "Rail Ladder",
+      "idea": "Three weapon tiers with rising damage and reach; the top tier breaks one rule.",
+      "keep": "The ladder and the top-tier exception.",
+      "change": "Our names, a charge-up glow, and a different exception (for example a piercing shot, not a no-friendly-fire flag)."
+    },
+    {
+      "name": "Damage Grid",
+      "idea": "One grid of damage types by target class with percentages and one flat special row.",
+      "keep": "The grid and the flat special row.",
+      "change": "Our armour classes and a colour grid readable at 375 wide (engine rows 1 and 3)."
+    },
+    {
+      "name": "Biome Speed Card",
+      "idea": "A table of surface speed by locomotion class, with water and ice rows that favour different classes.",
+      "keep": "Surface type times locomotion class.",
+      "change": "Our biome tags; swimmers gain on water, not on ice (engine row 5, zones as data)."
+    },
+    {
+      "name": "Glow Rules",
+      "idea": "Warm light for kinetic weapons, cool light for energy, a brightness cap, and a short fade.",
+      "keep": "The colour split, the brightness cap and the short fade.",
+      "change": "Our own palette with no donor colour values (engine row 12 visual side and row 16 grade)."
+    },
+    {
+      "name": "Armour Ladder",
+      "idea": "Nine cost-gated armour steps of equal bonus, plus AI-only rows.",
+      "keep": "The cost gates and the nine-step length.",
+      "change": "A bonus that grows per tier, a visible plate step, and no hidden AI-only rows (engine row 18 loot and XP, row 20 catalogue)."
+    },
+    {
+      "name": "Arena Weather Timer",
+      "idea": "Weather checked on a timer per arena type, with a 10-second blend and a default state.",
+      "keep": "The check, the blend and the default state.",
+      "change": "Arena modifiers (fog and light) instead of rain (engine row 23 zone population and the server tick sub-line)."
+    }
+  ],
+  "licence_note": "Code and default data are GPL-2.0-or-later (README.md line 300); COPYING.NONGPL lists per-file exceptions (MIT, CC BY-SA, CC0 and others); name and logo use permitted by COPYING.README line 43. Inspiration is shape only, clean-room.",
+  "not_read": [
+    "Engine half: src/ and lib/ (AU056 read licence headers only); the units of enumRange and setTimer are unverified",
+    "Shader bodies other than pointlights.frag and range_ring_sdf.frag; distance_fog.glsl by name only",
+    "PIE models (structs, components, effects, features) and audio.json: names and counts only",
+    "Campaign scripts and rules.js: names only",
+    "Skirmish AI logic (cobra, nb, nexus, semperfi, bonecrusher): folder names only",
+    "Map descriptors (.gam) and their contents: names and counts only",
+    "structure.json details and feature stats beyond counts",
+    "Empty submodules in this snapshot (texpages, music, fonts, terrain overrides, campaign mods)"
+  ]
+}

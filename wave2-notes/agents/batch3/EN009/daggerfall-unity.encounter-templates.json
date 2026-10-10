@@ -1,0 +1,255 @@
+{
+  "donor": "daggerfall-unity",
+  "topic": "encounter-templates",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Utility/RandomEncounters.cs",
+    "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs",
+    "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs",
+    "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Utility/FoeSpawner.cs",
+    "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Questing/Actions/CreateFoe.cs",
+    "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Internal/WorldTime.cs",
+    "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/EnemySenses.cs",
+    "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/EnemyDeath.cs",
+    "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/UserInterfaceWindows/DaggerfallRestWindow.cs",
+    "/mnt/frankendom-donors/daggerfall-unity/Assets/StreamingAssets/Quests/M0B21Y19.txt",
+    "/mnt/frankendom-donors/daggerfall-unity/Assets/StreamingAssets/Quests/M0B00Y16.txt"
+  ],
+  "counts": {
+    "encounter_tables_live": 45,
+    "encounter_entries_per_table": 20,
+    "dungeon_type_tables": 19,
+    "climate_tables": 18,
+    "building_tables": 6,
+    "unused_table_index": 38,
+    "quest_script_files": 265,
+    "quest_create_foe_every_lines": 235,
+    "quest_every_0_minutes_lines": 10,
+    "quest_send_every_lines": 6,
+    "guard_cap_active": 5,
+    "indoor_guard_burst_min": 2,
+    "indoor_guard_burst_max": 5,
+    "expected_outdoor_day_spawns_per_real_hour": 1.43,
+    "expected_outdoor_night_spawns_per_real_hour": 2.0,
+    "game_minute_real_seconds": 5
+  },
+  "rule": "Three rules. (A) Picker: Dice100 roll; 1-80 gives a level window [L-3, L+3] clipped to the list (low edge below 0 snaps to [0,5], high edge above 19 snaps to [14,19]); 81-95 gives [0, L+1]; 96-100 gives [0,19], or [0, L+2] when L<=5; then a uniform pick. Tables are per place (dungeon type, climate day/night, building). (B) Cadence: one roll per elapsed game minute, only in 12 of every 144 game minutes; roll 1-in-36 outdoors by day, 1-in-24 outdoors by night and in town at night, town by day never; dungeon only while resting and alerted (1-in-36), else never; a spawn ends the catch-up pass. The world clock runs at 12 game seconds per real second, so one game minute is 5 real seconds. (C) Placement and alert: a ray from the player at the view angle plus 0-4 degrees on a random side; wall hit backs off by separation 1.25 divided by the wall-normal cosine; no hit places a point between min and max distance; floor probe 4 units; empty sphere 0.65 at 1.25 above floor; retry each frame, no cap. Alert is raised while a targeting enemy sees the player, cleared when that enemy dies, decays after 480 game minutes. Quest grammar: create foe SYMBOL every N minutes M times with P percent success; interval N*60 game seconds; first spawn phase-randomised; each interval one P roll, failed rolls do not use up M; one group in flight; send form waits for the town rect. Guards: after a crime, guard NPCs within 77.5 units are switched off and replaced; a non-guard citizen behind the player may become a guard at 1-in-4; fallback 2-5 guards in a spawner at 12.8-51.2 units; indoor burst 2-5; cap of 5 active.",
+  "data_fields": [
+    {
+      "name": "world_clock_scale",
+      "unit": "game s per real s",
+      "donor_value_or_null": 12
+    },
+    {
+      "name": "roll_window_game_minutes",
+      "unit": "game min active per 144-min cycle",
+      "donor_value_or_null": 12
+    },
+    {
+      "name": "roll_cycle_game_minutes",
+      "unit": "game min",
+      "donor_value_or_null": 144
+    },
+    {
+      "name": "roll_one_in_outdoor_day",
+      "unit": "1 in N",
+      "donor_value_or_null": 36
+    },
+    {
+      "name": "roll_one_in_outdoor_night",
+      "unit": "1 in N",
+      "donor_value_or_null": 24
+    },
+    {
+      "name": "roll_one_in_town_night",
+      "unit": "1 in N",
+      "donor_value_or_null": 24
+    },
+    {
+      "name": "roll_one_in_dungeon_rest_alert",
+      "unit": "1 in N",
+      "donor_value_or_null": 36
+    },
+    {
+      "name": "alert_decay",
+      "unit": "game min",
+      "donor_value_or_null": 480
+    },
+    {
+      "name": "spawn_min_dist_town_outdoor",
+      "unit": "Unity units",
+      "donor_value_or_null": 10
+    },
+    {
+      "name": "spawn_min_dist_dungeon_rest",
+      "unit": "Unity units",
+      "donor_value_or_null": 8
+    },
+    {
+      "name": "spawn_max_dist",
+      "unit": "Unity units",
+      "donor_value_or_null": 20
+    },
+    {
+      "name": "view_angle_jitter",
+      "unit": "degrees",
+      "donor_value_or_null": 4
+    },
+    {
+      "name": "separation_at_wall",
+      "unit": "Unity units",
+      "donor_value_or_null": 1.25
+    },
+    {
+      "name": "floor_probe",
+      "unit": "Unity units",
+      "donor_value_or_null": 4
+    },
+    {
+      "name": "open_space_sphere",
+      "unit": "Unity units",
+      "donor_value_or_null": 0.65
+    },
+    {
+      "name": "level_band_half_width",
+      "unit": "levels",
+      "donor_value_or_null": 3
+    },
+    {
+      "name": "band_low_tail_roll_max",
+      "unit": "roll 1-100",
+      "donor_value_or_null": 95
+    },
+    {
+      "name": "band_mid_top_offset",
+      "unit": "levels above player",
+      "donor_value_or_null": 1
+    },
+    {
+      "name": "band_high_top_offset_low_level",
+      "unit": "levels above player (level 5 or less)",
+      "donor_value_or_null": 2
+    },
+    {
+      "name": "band_low_level_threshold",
+      "unit": "player level",
+      "donor_value_or_null": 5
+    },
+    {
+      "name": "encounter_list_length",
+      "unit": "entries per table",
+      "donor_value_or_null": 20
+    },
+    {
+      "name": "guard_active_cap",
+      "unit": "guards",
+      "donor_value_or_null": 5
+    },
+    {
+      "name": "guard_indoor_burst_min",
+      "unit": "guards",
+      "donor_value_or_null": 2
+    },
+    {
+      "name": "guard_indoor_burst_max",
+      "unit": "guards",
+      "donor_value_or_null": 5
+    },
+    {
+      "name": "guard_legal_threshold",
+      "unit": "legal rep",
+      "donor_value_or_null": -10
+    },
+    {
+      "name": "guard_roll_per_game_min",
+      "unit": "percent",
+      "donor_value_or_null": 5
+    },
+    {
+      "name": "guard_citizen_pick_radius",
+      "unit": "Unity units",
+      "donor_value_or_null": 77.5
+    },
+    {
+      "name": "guard_non_guard_roll",
+      "unit": "1 in N",
+      "donor_value_or_null": 4
+    },
+    {
+      "name": "guard_fallback_min_dist",
+      "unit": "Unity units",
+      "donor_value_or_null": 12.8
+    },
+    {
+      "name": "guard_fallback_max_dist",
+      "unit": "Unity units",
+      "donor_value_or_null": 51.2
+    },
+    {
+      "name": "quest_interval",
+      "unit": "game min (script N)",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "quest_count",
+      "unit": "spawns (script M; -1 means indefinite)",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "quest_chance",
+      "unit": "percent per interval (script P)",
+      "donor_value_or_null": null
+    }
+  ],
+  "keep": [
+    "Level band 80/15/5 with a low tail and a fixed top list, so a high-level walker meets the top six",
+    "Encounter list chosen by place, indexed by place type, not by one global table",
+    "Roll window in a short active slice of a longer cycle (12 of 144), so walking is quiet most of the time",
+    "Out-of-view start with a minimum distance, a wall separation and an empty-space test",
+    "Alert as a timed heat value: raised while seen, dropped when the targeter dies, decays on a timer",
+    "Quest grammar as data: every N, M times, P percent; failed rolls do not use up M; send waits for return",
+    "Escort as a HUD portrait added and dropped, with two repute outcomes",
+    "Guard response that comes out of the crowd (the guard NPC is replaced)"
+  ],
+  "change": [
+    "Placement retries each frame with no cap: cap at 40 tries, then skip and emit the encounter event once",
+    "Donor view angle uses the vertical field of view (Unity API, not from the donor): use the horizontal half-angle from aspect ratio for phone portrait",
+    "Placement method duplicated in FoeSpawner.cs and CreateFoe.cs: one helper",
+    "Donor walking cadence is sparse (about one outdoor encounter per 30-40 real minutes); ours must be far denser, set as zone data and tuned by look test",
+    "Guard burst 2-5 indoors and up to 5 active: ours is 3 (MAX_ATTACKERS)",
+    "Donor enemy lists are classic game content: use our families and Pit characters",
+    "Donor comment says classic disables the citizen; the code disables only guard NPCs: keep the code behaviour, correct the comment in our notes"
+  ],
+  "look_test": "One scene flag, no release rows. Three presets, one minute of walking each: (A) spawn 8-20 units inside the view cone; (B) spawn in an out-of-view ring using the phone horizontal angle; (C) B with 1-3 members rolled, against a fixed 3. Dom judges on his phone at 375 wide: is the first sight of B a surprise or a pop; can a 3-member group read as one threat; does C feel like a patrol or a mob; how many encounters per minute of walking at each preset. Target file: src/fight/encounter-template.ts (row 4).",
+  "licence_note": "Code MIT (LICENSE line 1 'MIT License'; line 3 'Copyright (c) 2009-2023 Daggerfall Workshop'). Assets/Licenses text names a different holder and range (AU013, not re-read). Encounter tables are transcribed from the classic executable (RandomEncounters.cs line 22) and quest text is game content (class C per AU013). Shape only: a level band, a list per place, a cadence, a grammar. No enemy lists or dialogue copied. Clean-room tables and names. No legal conclusion.",
+  "tags": [
+    "encounter-ambush",
+    "encounter-camp",
+    "encounter-patrol",
+    "encounter-lair",
+    "encounter-escort",
+    "walk-density",
+    "scheduler",
+    "timed-event",
+    "duration-rule",
+    "new:level-band-picker",
+    "new:alert-heat",
+    "new:quest-spawn-grammar"
+  ],
+  "not_read": [
+    "DOS data pack (not in box): ARENA2 files, creature stats and sprites",
+    "EnemyBasics.cs creature rows and idle animation sets",
+    "Sound clips and sound effect names",
+    "EnemySenses.cs beyond the two alert lines",
+    "DaggerfallUI.cs around line 652",
+    "Quest parser beyond CreateFoe.cs",
+    "PlayerEntity.cs non-immediate guard branch from line 691",
+    "PlayerEntity.cs ship and swim gates in detail",
+    "Rest window timing and loiter path",
+    "Death and respawn presentation",
+    "Loot reveal ceremony",
+    "Readability at 375 wide (sprites not in box)",
+    "Assets/StreamingAssets/Tables folder (Quests-Foes and other name tables)"
+  ]
+}

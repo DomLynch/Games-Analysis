@@ -1,0 +1,156 @@
+{
+  "donor": "xu4-engine-u4",
+  "counts": {
+    "creatures": 60,
+    "classes": 8,
+    "weapons": 16,
+    "gear_sets": 8,
+    "zones": 57
+  },
+  "count_notes": {
+    "creatures": "config.b (module/Ultima-IV) has 60 (id: rows, ids 0-59; the asset audit AU059 said 35, corrected). Counts are grep, not receipted.",
+    "classes": "config.b rows 2-9 (Mage, Bard, Fighter, Druid, Tinker, Paladin, Ranger, Shepherd).",
+    "weapons": "config.b weapons table, 16 rows (lines 23-46).",
+    "gear_sets": "8 armour entries (config.b lines 13-20). There are no set bonuses; the count is the armour tier count.",
+    "zones": "maps.b: 1 world, 17 city or castle or town or village or ruin, 8 dungeon, 8 shrine, 23 combat = 57 entries. Map types counted by grep."
+  },
+  "creature_families": [
+    {"family": "transport and town", "rows": "0-17", "note": "2 horse rows, 8 class rows, 7 town rows, 1 lord-type NPC with a ranged magic effect (config.b:49-70)"},
+    {"family": "sea and nature", "rows": "18-24", "note": "pirate vessel (sails), 4 sea creatures (swim; one poisons), 2 forces of nature that wander and cannot attack (config.b:73-81)"},
+    {"family": "vermin and beasts", "rows": "25, 26, 27, 29, 31, 34, 40", "note": "small groups, encounterSize 6 to 15 (config.b:84-88, 93, 103)"},
+    {"family": "undead", "rows": "28, 36, 38, 46", "note": "undead flag and sleep resistance (config.b:94-97, 105)"},
+    {"family": "raiders", "rows": "30, 37, 39, 41, 42, 43", "note": "humanoid groups (config.b:89-96)"},
+    {"family": "casters", "rows": "33, 35, 44, 45, 48", "note": "rows that cast or teleport, including a gaze-type row that spawns on death (config.b:91-107)"},
+    {"family": "top tier", "rows": "49-52", "note": "encounterSize 6, 4, 4, 1; flying, fire-resist, top row size 1 (config.b:108-111)"},
+    {"family": "scene rows", "rows": "53-59", "note": "non-hostile set-dressing rows and one fire-field phantom that divides (config.b:113-129)"}
+  ],
+  "top_creatures": [
+    {
+      "label": "Storm ring",
+      "why": "A roaming hazard that wanders, cannot attack, and can move onto the player so the player is carried off their line. It reads as weather, a different threat shape from a monster.",
+      "keep": "A hazard that moves the player; wandering with no attack.",
+      "change": "A telegraphed spinning ring with a ground shadow and a slow tick sound; storm, not water.",
+      "ref": "/mnt/frankendom-donors/xu4-engine-u4/module/Ultima-IV/config.b:80-81"
+    },
+    {
+      "label": "Split jelly",
+      "why": "Survives a hit, then a 1-in-2 roll splits it; the copy takes half the HP. The damage the player dealt creates the threat.",
+      "keep": "Split on a surviving hit, driven by the damage the player dealt.",
+      "change": "Fix the HP rounding (child floor(hp/2), parent takes the rest), cap splits per encounter, and give each split a squish sound. Splits also come from field damage in the engine, so cap those too.",
+      "ref": "/mnt/frankendom-donors/xu4-engine-u4/module/Ultima-IV/config.b:88; /mnt/frankendom-donors/xu4-engine-u4/src/creature.cpp:512, 526-528, 738"
+    },
+    {
+      "label": "Bloom spawner",
+      "why": "Dies into another monster. A death that adds a threat keeps the fight going without a new encounter.",
+      "keep": "A death that spawns a creature of a set type.",
+      "change": "One-second telegraph before the swarm, a smaller swarm, and spawns count against the attacker cap. The spawn is behind an enhancement flag in the engine.",
+      "ref": "/mnt/frankendom-donors/xu4-engine-u4/module/Ultima-IV/config.b:94; /mnt/frankendom-donors/xu4-engine-u4/src/creature.cpp:534-541"
+    },
+    {
+      "label": "Chest mimic",
+      "why": "Looks like a chest, does not move, and reveals within 5 tiles. A camouflaged threat that rewards careful walking.",
+      "keep": "Camouflage that reveals by distance.",
+      "change": "Reveal at 2 tiles with a lid tremor as the tell; no reveal through walls.",
+      "ref": "/mnt/frankendom-donors/xu4-engine-u4/module/Ultima-IV/config.b:91; /mnt/frankendom-donors/xu4-engine-u4/src/creature.cpp:555"
+    },
+    {
+      "label": "Warding sage",
+      "why": "When it acts it puts an anti-magic aura on the party for two turns. A visible rule that blocks the player's spells.",
+      "keep": "A single timed anti-magic aura that the party can read.",
+      "change": "A visible halo on the caster, a counter-spell sound, and a real-time duration instead of turns.",
+      "ref": "/mnt/frankendom-donors/xu4-engine-u4/module/Ultima-IV/config.b:107; /mnt/frankendom-donors/xu4-engine-u4/src/creature.cpp:317-318; /mnt/frankendom-donors/xu4-engine-u4/src/aura.h:13-19"
+    },
+    {
+      "label": "Escort ladder",
+      "why": "Rarer elites enter a common group by a dice roll (1-in-8 leader, 1-in-32 grand-leader per slot), so a low-tier row can bring an elite chain.",
+      "keep": "The odds and the rule that the base row is always present.",
+      "change": "An elite announces itself with a banner or horn; zone data decides which chain can appear in which zone.",
+      "ref": "/mnt/frankendom-donors/xu4-engine-u4/module/Ultima-IV/config.b:84, 97; /mnt/frankendom-donors/xu4-engine-u4/src/combat.cpp:347-354"
+    },
+    {
+      "label": "Pack swarm",
+      "why": "Large groups of small creatures that are weak alone. Group size is a per-row number, so swarm size is data.",
+      "keep": "Group size as a per-row field.",
+      "change": "Fewer visible bodies at 375 wide, the melee cap of 3 respected, and the rest waiting in a ring.",
+      "ref": "/mnt/frankendom-donors/xu4-engine-u4/module/Ultima-IV/config.b:84-85, 93; /mnt/frankendom-donors/xu4-engine-u4/src/combat.cpp:375, 380-381"
+    },
+    {
+      "label": "Lava line thrower",
+      "why": "A ranged attack that uses a terrain effect and a leave-tile flag, and it resists fire. The ground changes because of the fight.",
+      "keep": "A ranged attack that changes the ground.",
+      "change": "A glow line that fades in a second, with no lasting terrain change. What the leave-tile flag does in the engine was not read.",
+      "ref": "/mnt/frankendom-donors/xu4-engine-u4/module/Ultima-IV/config.b:106"
+    }
+  ],
+  "classes": [
+    {"name": "Mage", "base_hp": 112, "weapon_locks": "no mace, axe, sword, bow, crossbow, halberd, magic axe, magic sword, magic bow; wand allowed", "armour": "skin, cloth, mystic robe (no leather, no chain, no plate)", "role": "ranged row (magic flash); spells not read", "ref": "config.b:53; config.b:13-20, 23-46"},
+    {"name": "Bard", "base_hp": 48, "weapon_locks": "no halberd, magic axe, magic sword; wand allowed", "armour": "skin, cloth, leather, mystic robe (no chain, no plate)", "role": "not read", "ref": "config.b:54; config.b:13-20, 23-46"},
+    {"name": "Fighter", "base_hp": 96, "weapon_locks": "no magic axe, magic bow, wand; halberd and magic sword allowed", "armour": "skin, cloth, leather, mystic robe, chain, plate, magic chain (no magic plate)", "role": "not read", "ref": "config.b:55; config.b:16-19, 36, 40"},
+    {"name": "Druid", "base_hp": 64, "weapon_locks": "no axe, sword, halberd, magic axe, magic sword; wand and magic bow allowed", "armour": "skin, cloth, leather, mystic robe", "role": "not read", "ref": "config.b:56; config.b:13-20, 31-46"},
+    {"name": "Tinker", "base_hp": 96, "weapon_locks": "no wand, magic bow allowed; halberd, magic axe, magic sword allowed", "armour": "skin, cloth, leather, mystic robe, chain, plate (no magic chain, no magic plate)", "role": "not read", "ref": "config.b:57; config.b:16-17, 36-40"},
+    {"name": "Paladin", "base_hp": 128, "weapon_locks": "no wand; halberd, magic axe, magic sword, magic bow allowed", "armour": "all armour including magic chain and magic plate", "role": "not read", "ref": "config.b:58; config.b:16-19"},
+    {"name": "Ranger", "base_hp": 144, "weapon_locks": "magic sword and magic bow allowed; no halberd, magic axe, wand", "armour": "skin, cloth, leather, mystic robe", "role": "not read", "ref": "config.b:59; config.b:15, 40"},
+    {"name": "Shepherd", "base_hp": 48, "weapon_locks": "no bow, crossbow, magic bow, magic sword, halberd, magic axe, wand", "armour": "skin, cloth, leather, mystic robe", "role": "not read", "ref": "config.b:60; config.b:13-15, 20, 27-46"}
+  ],
+  "weapon_families": [
+    {"family": "melee", "rows": "Hands, Staff, Mace, Axe, Sword", "note": "range 1; damage 8, 16, 40, 48, 64; class locks on mace, axe and sword"},
+    {"family": "thrown and ranged", "rows": "Dagger, Sling, Bow, Crossbow", "note": "range 10; dagger is lost when thrown (config.b:27)"},
+    {"family": "special", "rows": "Flaming Oil, Halberd", "note": "oil leaves a fire field and is lost on use (config.b:34); halberd has reach 2, absolute range and attacks through objects; class-locked (config.b:36-38)"},
+    {"family": "magic", "rows": "Magic Axe, Magic Sword, Magic Bow, Magic Wand, Mystic Sword", "note": "damage 80 to 255; magic axe returns (config.b:39); magic wand has separate hit and miss effect tiles (config.b:42)"}
+  ],
+  "gear_tiers": [
+    {"tier": "Skin", "value": 96, "lock": "none", "ref": "config.b:13"},
+    {"tier": "Cloth", "value": 128, "lock": "none", "ref": "config.b:14"},
+    {"tier": "Leather", "value": 144, "lock": "not mage", "ref": "config.b:15"},
+    {"tier": "Chain Mail", "value": 160, "lock": "fighter, tinker, paladin", "ref": "config.b:16"},
+    {"tier": "Plate Mail", "value": 176, "lock": "fighter, tinker, paladin", "ref": "config.b:17"},
+    {"tier": "Magic Chain", "value": 192, "lock": "fighter, paladin", "ref": "config.b:18"},
+    {"tier": "Magic Plate", "value": 208, "lock": "paladin only", "ref": "config.b:19"},
+    {"tier": "Mystic Robe", "value": 248, "lock": "none (top defence)", "ref": "config.b:20"}
+  ],
+  "zones": [
+    {"type": "world", "count": 1, "note": "one 256 by 256 world, chunked by 32", "ref": "maps.b:2"},
+    {"type": "city, castle, town, village, ruin", "count": 17, "note": "32 by 32, exit border", "ref": "maps.b:63 onward"},
+    {"type": "dungeon", "count": 8, "note": "8 by 8 per level, 8 levels, 16 rooms; the abyss has 64 rooms", "ref": "maps.b:236, 325-326"},
+    {"type": "shrine", "count": 8, "note": "11 by 11 fixed border", "ref": "maps.b:328"},
+    {"type": "combat (battle map per terrain)", "count": 23, "note": "11 by 11 in the entries read; brick, dungeon, inn, ship-at-sea and others", "ref": "maps.b:352, 363, 367, 369"},
+    {"type": "terrain speed and hazard rules", "count": null, "note": "slow, vslow, vvslow; swamp poison; field tiles with dispel flags", "ref": "config.b:132-167"},
+    {"type": "dungeon traps", "count": 3, "note": "winds (quench the light), falling rock, pit (view shake)", "ref": "dungeon.h:97-101; dungeon.cpp:275-290"}
+  ],
+  "looks": [
+    {"label": "Water scroll", "technique": "tile scroll advancing 4 steps a second; water uses a pool tile to scroll", "ref": "graphics.b:419-420; src/tileanim.cpp:35; src/screen.h:106"},
+    {"label": "Idle frame at half rate", "technique": "frame advances on about half of draws via a random percent gate; when the gate fails the sprite holds its last frame", "ref": "graphics.b:421; src/tileanim.cpp:140"},
+    {"label": "Slow idle", "technique": "slow frame at a random 5 percent gate (guards)", "ref": "graphics.b:422"},
+    {"label": "Flame band", "technique": "a warm colour band is repainted with random jitter each frame; no colour copied", "ref": "graphics.b:434-438; src/tileanim.cpp:107"},
+    {"label": "Phantom flicker", "technique": "frame plus scroll on a flicker sprite", "ref": "graphics.b:444"},
+    {"label": "Flag animations", "technique": "invert-based flag animations with context frames (city, castle, ship, pirate)", "ref": "graphics.b:423-433"},
+    {"label": "Effect tiles per ranged row", "technique": "magic flash, hit flash, poison field, rocks, energy, sleep, lava as the hit and miss tile for ranged rows (magic flash 6 rows, hit flash 3, poison 3, rocks 2, others 1 each; single-line rows only)", "ref": "config.b:49-129"},
+    {"label": "Camouflage reveal", "technique": "hidden creature shows when the nearest opponent is within 5 tiles", "ref": "src/creature.cpp:555"},
+    {"label": "Death line", "technique": "a short message on the defeat line; XP reported only for a kill by the player", "ref": "src/creature.cpp:700-702"},
+    {"label": "Sound cue set", "technique": "named cues for cast start, flash, fizzle, poison, evade, heal, level up, gate, wind and whirlpool (sound list, not played)", "ref": "config.b:474-510"}
+  ],
+  "originals": [
+    {"name": "Storm Ring", "idea": "A wandering hazard that cannot attack and carries the player when it moves onto them.", "keep": "A hazard that moves the player; no attack.", "change": "Telegraphed spinning ring with a shadow and tick sound; zone data sets its path. Parity rows 4 and 23."},
+    {"name": "Split Slime", "idea": "A creature that splits after it survives a hit, so the player's damage creates the threat.", "keep": "Split on a surviving hit.", "change": "HP split floor(hp/2) and parent takes the rest; splits capped per encounter; splits count toward the attacker cap. Parity rows 1 and 18."},
+    {"name": "Bloom Spawner", "idea": "A creature that dies into a swarm.", "keep": "A death that adds a threat.", "change": "One-second telegraph, a smaller swarm, and the swarm uses the attacker cap. Parity row 17."},
+    {"name": "Chest Mimic", "idea": "A hidden threat that looks like a loot chest and reveals in range.", "keep": "Camouflage that reveals by distance.", "change": "Reveal at 2 tiles with a lid tremor, no reveal through walls. Parity row 11."},
+    {"name": "Warding Sage", "idea": "A caster whose action puts a timed anti-magic aura on the party.", "keep": "One visible aura slot with a duration.", "change": "Halo, counter-spell cue, real-time seconds. Parity row 13."},
+    {"name": "Escort Ladder", "idea": "Elites join common groups by a dice roll along a leader chain.", "keep": "1-in-8 leader and 1-in-32 grand-leader odds; base row always present.", "change": "A banner or horn for an elite; zone data (row 23) decides which chain can appear. Parity row 23."},
+    {"name": "Storm Gear Ladder", "idea": "Armour tiers with class locks: an open top tier and a paladin-only tier.", "keep": "Top tier open to all; a paladin-only tier.", "change": "A crest for exclusive tiers and a rim light for the middle tier; no metal shader from this donor. Parity row 15."},
+    {"name": "Winds Trap", "idea": "A dungeon hazard that dims the light source.", "keep": "A hazard that drains light.", "change": "The light flickers with a soft sound; the torch is not removed. Parity row 16."}
+  ],
+  "licence_note": "Code: GNU GPL v3 (COPYING line 1 GNU GENERAL PUBLIC LICENSE; line 2 Version 3, 29 June 2007). Assets: mixed and mostly unstated; some music and art credit individual rights holders; the original Ultima IV game data is not in the repo and the README calls it closed-source freeware. Asset class C. Shape only, clean-room, never a copy.",
+  "not_read": [
+    "original Ultima IV game data (not in the repo)",
+    "src/ beyond creature.cpp (50-110, 300-345, 500-560, 680-760), combat.cpp (320-390), party.cpp (120-150), aura.h, aura.cpp, dungeon.h and dungeon.cpp trap and token sections, tileanim.cpp (15-190 in part)",
+    "spell.cpp and the sleep and negate spell code (class roles beyond the locks and the Mage ranged row)",
+    "leavestile flag effect in the engine",
+    "config.b vendors body and the 16-entry palette values (not copied)",
+    "maps.b bodies beyond the cited lines; vendors.b (1384 lines, header only)",
+    "graphics.b sprite and tile lists (beyond the animation block and the cited lines)",
+    "U4-Upgrade config.b (296 bytes, no creature rows) and graphics.b (listing only)",
+    "all PNG, OGG, WAV, RFX and TXF files (names and counts only)",
+    "doc/ text beyond names",
+    "fight camera, party death and respawn screens, boss or intro staging"
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "donor": "diasurgical-DevilutionX",
+  "topic": "status-effects",
+  "depth": "full",
+  "verdict": "STRONG",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/monster.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/missiles.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/player.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/items.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/engine/render/scrollrt.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/engine/rectangle.hpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/monster.h",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/monsters/monstdat.tsv",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/items/item_suffixes.tsv",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/items/unique_itemdat.tsv",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/spells/spelldat.tsv"
+  ],
+  "counts": {
+    "monstdat_base_rows": 112,
+    "gothit_frames_distribution": {"0": 1, "1": 4, "4": 11, "5": 12, "6": 33, "7": 12, "8": 17, "9": 5, "10": 4, "11": 13},
+    "gothit_rate_rows_equal_1": 112,
+    "monster_rows_with_knockback_flag": 1,
+    "always_hard_hit_monster_types": 4,
+    "item_suffix_rows_gethit": 7,
+    "item_suffix_rows_fastattack": 4,
+    "item_suffix_rows_fastrecover": 3,
+    "unique_item_lines_matching_status_tokens": 21,
+    "spell_rows": 36,
+    "stone_curse_timer_cap_before_shift": 15,
+    "shatter_timer_frames": 11,
+    "fear_radius_tiles": 4
+  },
+  "rule": "Landed hit order: petrified targets are auto-hit on every player path; knockback moves the old tile one step and always starts hit recovery (except golems); a hard hit (whole damage >= foe level + offset) starts hit recovery unless petrified; hit recovery locks the foe for its GotHit frames; a death sets nearby Fallen-type foes to Retreat for max(base - level, min) steps inside a square of radius 4; petrify is a timed mode swap that does not stack and restores the saved mode on expiry; the player flinches only above a level-based whole-damage threshold, and recovery items skip 1-3 animation frames.",
+  "data_fields": [
+    {"name": "hard_hit_level_offset", "unit": "levels above foe level", "donor_value_or_null": null},
+    {"name": "stagger_frames", "unit": "frames (per monster row)", "donor_value_or_null": null},
+    {"name": "stagger_ticks_per_frame", "unit": "ticks", "donor_value_or_null": null},
+    {"name": "knockback_tiles", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "knockback_staggers", "unit": "bool", "donor_value_or_null": null},
+    {"name": "petrify_timer_base", "unit": "spell level plus n", "donor_value_or_null": null},
+    {"name": "petrify_timer_cap", "unit": "ticks (before donor shift)", "donor_value_or_null": null},
+    {"name": "shatter_frames", "unit": "frames", "donor_value_or_null": null},
+    {"name": "fear_radius", "unit": "tiles (square 2r+1)", "donor_value_or_null": null},
+    {"name": "fear_retreat_base", "unit": "steps (minus foe level)", "donor_value_or_null": null},
+    {"name": "fear_retreat_min", "unit": "steps", "donor_value_or_null": null},
+    {"name": "flinch_threshold_level_bonus", "unit": "levels", "donor_value_or_null": null},
+    {"name": "recovery_frames_skipped", "unit": "frames (0-3)", "donor_value_or_null": null},
+    {"name": "gethit_flat", "unit": "damage per hit", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "hard-hit threshold relative to foe level, so small pokes do nothing",
+    "stagger as a locked hit-reaction animation",
+    "petrify as an auto-hit window, not immunity",
+    "petrify does not stack",
+    "fear scatter of nearby Fallen-type foes on a death",
+    "petrified kill shatters instead of the normal death"
+  ],
+  "change": [
+    "no hidden shift on timers: explicit ticks in data",
+    "knockback always staggers in the donor: make it a data flag and decide with the look test",
+    "golem exemption becomes a heavy-foe flag",
+    "fear uses a square; keep the square for grid readability"
+  ],
+  "target": {"file": "src/fight/status.ts", "parity_row": 1},
+  "look_test": "Style-flag preview on the existing duel scene: small poke vs hard hit vs knockback on one foe; petrified foe (grey palette, stops acting, every swing lands); Fallen pack scatter on a death; two lock lengths and knockback with and without stagger; judge at 375 wide in a three-attacker fight.",
+  "licence_note": "Sustainable Use License 1.0, non-commercial only (LICENSE.md line 1); assets under it by location (README.md line 82); Blizzard copyright notice (README.md line 86); origin of art not stated (AU015). Clean-room shape only; no sprites, palettes, names or table rows copied.",
+  "reuse_tag": "not checked against our repo from this lane",
+  "tags": ["stagger", "knockback", "fear", "duration-rule", "status-stack", "new:petrify", "new:stone-palette", "new:auto-hit-window", "new:flinch-threshold", "new:recovery-frames"],
+  "not_read": [
+    "monster AI handlers beyond UpdateModeStance dispatch",
+    "status sound mapping (hit sound noted only from M_StartHit)",
+    "petrified draw path in full",
+    "spelldat.tsv column meanings",
+    "FASTRECOVER tier to flag mapping",
+    "tick length in milliseconds",
+    "multiplayer dvlnet path",
+    "OpenDiablo2-OpenDiablo2 (not paired donor)"
+  ]
+}

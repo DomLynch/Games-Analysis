@@ -1,0 +1,93 @@
+{
+  "donor": "l1j-en-classic",
+  "topic": "status-effects",
+  "depth": "full",
+  "half_read": "server",
+  "paths": [
+    "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/L1Bleed.java",
+    "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/L1CurseParalysis.java",
+    "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/L1Paralysis.java",
+    "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/L1Character.java",
+    "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/L1Attack.java",
+    "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/skill/L1SkillUse.java",
+    "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/skill/L1SkillTimer.java",
+    "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/skill/L1SkillTimerTimerImpl.java",
+    "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/skill/executor/L1Panic.java",
+    "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/skill/executor/L1Weakness.java",
+    "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/skill/executor/L1Disease.java",
+    "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/skill/executor/L1WindShackle.java",
+    "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/skill/executor/L1BuffSkillExecutorImpl.java",
+    "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/poison/L1Poison.java",
+    "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/poison/L1DamagePoison.java",
+    "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/poison/L1ParalysisPoison.java",
+    "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql"
+  ],
+  "counts": {
+    "java_files_in_src": 775,
+    "status_files_read": 17,
+    "L1SkillId_constants": 278,
+    "skills_insert_statements": 440,
+    "skills_table_line": 1772,
+    "skills_buffDuration_line": 1782
+  },
+  "rule": "One poison slot per target; a monster cannot poison its own family; some equipment and one skill block poison. Curse paralysis is a telegraphed three-phase state: a windup (visible tint, server message), then a timed lock, then a cure; players get a long windup, monsters none; the curse is refused while earth bind, ice lance, freezing blizzard or freezing breath is active. Short random stuns and bleeds draw one weighted number from a fixed range and map it to a few discrete durations. Bleed is 5 damage per second and never brings HP below one. Skill-effect timers tick once per second and round the length down to whole seconds. A re-application replaces a timer only if it is longer, and a zero-time flag stays until killed. Stat debuffs add directly to stats with no categories or caps.",
+  "data_fields": [
+    {"name": "poison_slots_per_target", "unit": "count", "donor_value_or_null": null},
+    {"name": "npc_poison_proc_chance", "unit": "percent per hit", "donor_value_or_null": null},
+    {"name": "npc_poison_span", "unit": "ms", "donor_value_or_null": null},
+    {"name": "curse_windup_player", "unit": "ms", "donor_value_or_null": null},
+    {"name": "curse_windup_monster", "unit": "ms", "donor_value_or_null": null},
+    {"name": "curse_lock", "unit": "ms", "donor_value_or_null": null},
+    {"name": "curse_lockout_after_lock", "unit": "ms", "donor_value_or_null": null},
+    {"name": "shock_stun_table", "unit": "weighted buckets of seconds", "donor_value_or_null": null},
+    {"name": "bleed_duration_table", "unit": "weighted buckets of seconds", "donor_value_or_null": null},
+    {"name": "bleed_tick_damage", "unit": "HP per second", "donor_value_or_null": null},
+    {"name": "bleed_hp_floor", "unit": "HP", "donor_value_or_null": null},
+    {"name": "status_timer_tick", "unit": "ms", "donor_value_or_null": null},
+    {"name": "stat_debuff_step", "unit": "points per stat", "donor_value_or_null": null},
+    {"name": "poison_damage_span", "unit": "ms", "donor_value_or_null": null},
+    {"name": "poison_flag_player", "unit": "ms", "donor_value_or_null": null},
+    {"name": "poison_flag_npc", "unit": "ms", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "One status slot per target for poison, with a family rule so a pack cannot poison itself",
+    "A telegraphed windup (visible tint and server message) before a hard lock",
+    "Weighted short-stun and bleed durations drawn from one roll",
+    "Per-second bleed that never brings HP below one",
+    "Visible per-target icon with seconds for timed states",
+    "True-sum-then-clamp for stat debuffs (the stored true value is kept; only the used value is clamped)",
+    "Remaining time restored on login (restoreEffect)"
+  ],
+  "change": [
+    "Single server tick clock in milliseconds, not whole-second timers (L1SkillTimerTimerImpl.java:21)",
+    "A real timed lockout after curse and poison paralysis: both set and kill the lockout flag in one call (L1CurseParalysis.java:82, :84; L1ParalysisPoison.java:74, :75)",
+    "No blocking Thread.sleep in the windup (L1CurseParalysis.java:56); schedule the lock as a second step",
+    "On interrupt, call cure() so the tint and the paralysis object are cleared",
+    "Bleed for all targets, not only players (the cast at L1SkillUse.java:2132)",
+    "Duration tables as data with percentages computed from bucket sizes (the comments at L1Bleed.java:63 and L1SkillUse.java:2102-2106 disagree with the draw)"
+  ],
+  "look_test": "Debug-only, no release rows. One target: a windup tint for two seconds, then a hard four-second freeze, versus an instant four-second freeze. Dom judges at 375 wide whether the windup reads as a warning. Second part: an eight-second bleed with a tick each second, versus a tick every two seconds, judged for readability.",
+  "licence_note": "Code GPL v2 per COPYING line 1 and README.md line 115; README.md line 84 states clean-room. No content assets in the box. Shape only: no code copied, no table values used as data. Our own values only.",
+  "tags": [
+    "status-stack",
+    "duration-rule",
+    "bleed",
+    "new:stun",
+    "new:telegraph-windup",
+    "new:status-slot",
+    "new:weighted-duration",
+    "new:stat-modifier-stack",
+    "new:status-exclusion",
+    "new:family-no-self-poison"
+  ],
+  "not_read": [
+    "Client half (absent by design; no art, sound or models in the box)",
+    "Skill row values (only the skills table header and a statement count)",
+    "L1SkillStop.java (600 lines), L1SilencePoison.java, L1PoisonTrap.java beyond line 52, L1Cube",
+    "Earth Bind, Ice Lance, freezing executors, haste and slow paths, mob-skill execution",
+    "L1SkillTimerCreator.java body",
+    "Connector zip and tool folder",
+    "Fear, knockback, knockdown, stagger: none found in the server half (grep over 775 files)",
+    "Idle or ambient behaviour, death and respawn presentation, loot ceremony, walk density (not in these files)"
+  ]
+}

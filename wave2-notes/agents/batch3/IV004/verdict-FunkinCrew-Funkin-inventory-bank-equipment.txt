@@ -1,0 +1,9 @@
+# FunkinCrew-Funkin (inventory-bank-equipment, cell 1) : NONE
+Donor: /mnt/frankendom-donors/FunkinCrew-Funkin/source/funkin/ | Licence: Apache 2.0 (LICENSE.md, "The Friday Night Funkin' source code is licensed under the Apache 2.0 license") | Haxe
+Checked: grep -rniE for inventory, equip, bank, loot, stack, backpack, slot, currency, unlock and item/class names across source/ returned no inventory, equipment, bank, loot or bag system. Files opened (candidates, 4): api/newgrounds/NGSaveSlot.hx (hint file; a Newgrounds cloud save-slot wrapper, lines 10-60), save/SaveSystem.hx (save-slot binding and archive of bad save data, lines 24-80), ui/debug/charting/commands/MoveItemsCommand.hx (chart-editor move command, lines 12-60), ui/charSelect/CharacterUnlockState.hx (character unlock screen, lines 24-105). Confidence high that no inventory mechanism exists in this donor; I did not read the full ui/ tree.
+
+Why NONE: the only "slot" in this repo is a save file slot (one game-save per numbered slot), not an item slot. There is no bag, bank, equipment set, stack count or loot.
+MoveItemsCommand moves chart notes, not items, and CharacterUnlockState only shows an unlock dialog; neither holds owned goods.
+
+Best transferable idea: MoveItemsCommand clones its inputs in the constructor (lines 25-26), removes the originals and builds clamped clones in execute() (lines 35-51), and undo() (line 77) subtracts the moved copies, so a multi-item move is one reversible command.
+Decision (proposed): reject for inventory (no inventory here); the undo-command shape is only a candidate for a later editor tool, not a player feature.

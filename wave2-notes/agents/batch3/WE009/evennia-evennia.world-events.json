@@ -1,0 +1,82 @@
+{
+  "donor": "evennia-evennia",
+  "topic": "world-events",
+  "depth": "full",
+  "half_read": "server",
+  "paths": [
+    "/mnt/frankendom-donors/evennia-evennia/evennia/utils/gametime.py",
+    "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/base_systems/custom_gametime/custom_gametime.py",
+    "/mnt/frankendom-donors/evennia-evennia/evennia/scripts/scripts.py",
+    "/mnt/frankendom-donors/evennia-evennia/evennia/scripts/taskhandler.py",
+    "/mnt/frankendom-donors/evennia-evennia/evennia/scripts/tickerhandler.py",
+    "/mnt/frankendom-donors/evennia-evennia/evennia/scripts/monitorhandler.py",
+    "/mnt/frankendom-donors/evennia-evennia/evennia/utils/tests/test_gametime.py",
+    "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/tutorial_world/mob.py",
+    "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/tutorial_world/rooms.py",
+    "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/dungeon.py",
+    "/mnt/frankendom-donors/evennia-evennia/LICENSE.txt"
+  ],
+  "counts": {
+    "schedule_entry_points": 2,
+    "persistent_one_shot_scheduler": 1,
+    "ticker_handler": 1,
+    "monitor_handler": 1,
+    "contrib_callers_of_gametime_schedule": 0,
+    "contrib_callers_of_monitor_handler": 0,
+    "contrib_callers_of_ticker_handler": 2,
+    "tutorial_mob_pace_states": 4,
+    "dungeon_branch_life_seconds": 604800,
+    "warning_lines_before_collapse_in_code_read": 0
+  },
+  "rule": "The donor has four timer primitives and no world-event director. A game-clock schedule computes seconds to the next matching in-game time and creates a persistent script that calls back and re-arms. As read, the re-arm is unconditional, so a one-shot schedule keeps firing at each matching time: the repeat flag is not stored, and the restarted task resets the call count the repeat limit depends on. A persistent task scheduler saves (due date, callback, args) to server config and at boot schedules each one for max(0, due minus now), so overdue tasks fire at once; cancelled tasks are pruned after 60 seconds. Interval tickers pool subscriptions per interval. A monitor registers callbacks for attribute saves. Content timers: a dungeon branch with no new room for a week collapses and moves its occupants to the start room; the exit roll is 50 percent per tick; the mob patrols at 6 ticks, aggressive at 2, hunts at 1, stays dead 100 seconds and returns; an idle line fires one in 100 ticks.",
+  "data_fields": [
+    {"name": "schedule_interval", "unit": "game seconds", "donor_value_or_null": null},
+    {"name": "silence_collapse_life", "unit": "seconds", "donor_value_or_null": 604800},
+    {"name": "exit_open_chance", "unit": "percent per tick", "donor_value_or_null": 50},
+    {"name": "patrol_pace", "unit": "seconds per tick", "donor_value_or_null": 6},
+    {"name": "aggressive_pace", "unit": "seconds per tick", "donor_value_or_null": 2},
+    {"name": "hunt_pace", "unit": "seconds per tick", "donor_value_or_null": 1},
+    {"name": "dead_wait", "unit": "seconds", "donor_value_or_null": 100},
+    {"name": "idle_line_chance", "unit": "percent per tick", "donor_value_or_null": 1},
+    {"name": "stale_task_timeout", "unit": "seconds", "donor_value_or_null": 60},
+    {"name": "catch_up_on_boot", "unit": "boolean", "donor_value_or_null": true}
+  ],
+  "keep": [
+    "A persistent one-shot task list that catches up overdue tasks at boot.",
+    "A silence timer that closes a zone after a quiet period and moves occupants rather than killing them.",
+    "Patrol paces by state (slow wander, fast attack, fastest hunt) on one ticker per state.",
+    "A rare idle line on a per-tick roll, so a standing body reads as alive.",
+    "A dead wait then a timed return."
+  ],
+  "change": [
+    "Add a single warning line before a timed closure; the donor's collapse has a message but no warning in the code read.",
+    "Refresh the silence timer on every exit traversal, not only when a new room is made.",
+    "Fix the one-shot schedule re-arm: store the repeat flag and stop when it is false; add a test that fires twice.",
+    "Replace import-time defaults with None and set on creation.",
+    "Make the docstring and the code agree on the exit roll (every five minutes versus fifty percent per tick).",
+    "Mark catch-up fires so an event due during downtime is applied once.",
+    "One interval loop for the server, not one ticker per mob."
+  ],
+  "look_test": "Target file src/fight/zone_timers.ts (new module), row 23 (zone population: despawn on empty with a grace timer). On a phone-width test zone with one room and three exits, set the silence length to 60 seconds. Build A (donor-like): no warning, a closure message at 60 seconds, occupants moved to the entrance. Build B: a warning line at 40 seconds, then the same closure. Build C: the timer restarts on every known exit walk. Walk back and forth through known exits for 90 seconds in each build. Pass when the warning reads as one line at 375 wide, the closure kills no one, and the restart rule matches what the player believes they did.",
+  "licence_note": "BSD 3-Clause (LICENSE.txt line 1); contributions under the same licence per the earlier audit's Licensing reading. Donor values are usable here, marked in data_fields. EvAdventure rule tables are credited in the README as CC BY (not verified against source) and are not used by this note.",
+  "tags": [
+    "world-event",
+    "timed-event",
+    "scheduler",
+    "encounter-patrol",
+    "duration-rule",
+    "walk-density",
+    "new:silence-timer",
+    "new:restart-catch-up"
+  ],
+  "not_read": [
+    "web client JavaScript and CSS (client half not read)",
+    "evadventure combat_base, combat_twitch, combat_turnbased and chargen bodies",
+    "tutorial_world tests and the rest of the tutorial rooms",
+    "evennia/contrib/grid/wilderness encounter logic",
+    "evennia/contrib/rpg/buffs timed effect engine (module size only)",
+    "evennia/scripts/ondemandhandler.py",
+    "documentation pages other than the licensing page read in the earlier audit",
+    "AGENTS.md and CLAUDE.md at the donor root (present; not read; not followed as instructions)"
+  ]
+}
