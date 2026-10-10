@@ -1,0 +1,97 @@
+{
+  "donor": "daochook-daochook",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "halves_read": "client add-on Lua (partial: addons/libs/daoc/1127101_1409/, addons/find/find.lua). Server half and data-pack half not in the box; binaries not read.",
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [],
+  "weapon_families": [
+    "weapon item type band 1-28 (items.lua:395-396); stat line shows DPS and speed, or a count for type 16 (find.lua:51-52)"
+  ],
+  "gear_tiers": [
+    "item record fields: condition, durability, quality (percent), bonus, bonus level (items.lua:418-422); no tier names in files read",
+    "item type bands: armour 31-38 (items.lua:397-398), house 49-71 (items.lua:399-400)",
+    "equipment slot list: head, body, neck, hands, feet, jewel, cloak, legs, arms, quivers, horse barding (items.lua:462-494)"
+  ],
+  "zones": [],
+  "looks": [
+    {
+      "label": "Relative-difficulty name marks",
+      "technique": "signed integer -2..+2 rendered as --- or +++ after the target name, shown only on the current target",
+      "ref": "addons/libs/daoc/1127101_1409/entities.lua:504-506"
+    },
+    {
+      "label": "Sectioned item inspect card",
+      "technique": "slot line, separator, name, level, up to five value lines, separator, optional spell block gated by bit flags 0x08 and 0x10",
+      "ref": "addons/find/find.lua:164-186"
+    },
+    {
+      "label": "Filter-then-table item finder",
+      "technique": "name filter, fixed-width columns (Slot, Quality, Bonus, Name), row selectable across columns, hover card",
+      "ref": "addons/find/find.lua:139-165"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Threat ticks",
+      "idea": "A five-step tick row above an enemy name showing its level against the hero, from -2 to +2.",
+      "keep": "signed five-step scale, shown only on the current target",
+      "change": "our own glyphs with a non-colour cue, readable at 375 wide"
+    },
+    {
+      "name": "Loot inspect card",
+      "idea": "A sectioned card: slot line, level, up to five value lines, then an optional spell block after a separator.",
+      "keep": "sections, separators, flag-gated spell block",
+      "change": "tap to inspect on the phone, compare-to-equipped row, our own layout"
+    },
+    {
+      "name": "Gear finder panel",
+      "idea": "Name filter over a table with fixed columns Slot, Quality, Bonus, Name and a detail view.",
+      "keep": "filter-then-table shape",
+      "change": "card list on a 375-wide phone, no hover, slot filter chip"
+    },
+    {
+      "name": "Fixed body-slot list",
+      "idea": "A fixed slot set (head, body, neck, hands, feet, cloak, legs, arms, jewel) plus mount and quiver slots held as data.",
+      "keep": "slot set is data, not code",
+      "change": "our own slot names for the hero rig, a companion slot in place of horse slots"
+    },
+    {
+      "name": "Per-build data folders",
+      "idea": "One config per build id and a version-scoped module folder over a shared core.",
+      "keep": "version data in one folder, shared code in another",
+      "change": "content packs for zones and creatures as catalogue data, not client builds"
+    },
+    {
+      "name": "Dev event feed",
+      "idea": "A rolling list of recent events in a dev-only window.",
+      "keep": "rolling recent-events list",
+      "change": "dev toggle, category filters, event IDs that link to the fight replay"
+    },
+    {
+      "name": "Banded item IDs",
+      "idea": "Item type IDs grouped into numeric bands (weapon 1-28, armour 31-38, house 49-71).",
+      "keep": "numeric bands so a loader can tell categories apart",
+      "change": "our own band layout with readable IDs in the catalogue"
+    }
+  ],
+  "licence_note": "Code is GNU AGPL v3 (LICENSE line 1; README lines 69-71). No game art, audio, models or maps in the tree. The logo repo/daochook.png is class C and not opened. Shape only; no code reused.",
+  "not_read": [
+    "daochook.exe, hook.dll, addons/libs/socket/ssl.dll (binaries)",
+    "11130_0 build modules (same file names as 1127101_1409, not opened)",
+    "addons/libs/socket/ and addons/packetlogger/ bodies",
+    "addons/example*/ bodies",
+    "config/pointers/*.ini bodies (per-build pointer tables, not described)",
+    "config/boot/example.ini",
+    "repo/daochook.png (logo)",
+    "third-party library licence texts (not in the tree)",
+    "donor website (not fetched)",
+    "server half and data-pack half (not in the box)"
+  ]
+}

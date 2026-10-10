@@ -1,0 +1,100 @@
+{
+  "donor": "Dawn-of-Light-DOLSharp",
+  "topic": "onboarding-first-30min",
+  "cell": "OB013",
+  "verdict": "STRONG",
+  "depth": "full",
+  "half_read": "server",
+  "paths": [
+    "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServerScripts/quests/Albion/ANewHeroesWelcome.cs",
+    "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServerScripts/quests/Albion/MovementAndInteraction.cs",
+    "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServerScripts/quests/Albion/CityOfCamelot.cs",
+    "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServerScripts/quests/Albion/ChildsPlay.cs",
+    "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServerScripts/quests/Albion/GreetingsArmsman.cs",
+    "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServerScripts/startup/script/CreationStartupEquipment.cs",
+    "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServerScripts/startup/script/CharacterCreationSettings.cs",
+    "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServerScripts/dbupdater/insert/StartupLocation.xml",
+    "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServerScripts/dbupdater/insert/Zones.xml",
+    "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/language/EN/Quests/Albion/ANewHeroesWelcome.txt"
+  ],
+  "counts": {
+    "albion_quest_files": 54,
+    "midgard_quest_files": 25,
+    "hibernia_quest_files": 14,
+    "zone_rows": 473,
+    "startup_location_rows": 136,
+    "albion_en_quest_string_files": 11,
+    "albion_trainer_folder_files": 22,
+    "midgard_trainer_folder_files": 19,
+    "hibernia_trainer_folder_files": 21,
+    "onboarding_quests_read": 5,
+    "greetings_whisper_keywords": 5,
+    "city_of_camelot_steps": 10,
+    "service_destinations_in_assistant_menu": 6
+  },
+  "rule": "A quest is a step counter advanced by server triggers (Interact, WhisperReceive keyword, EnterArea with a radius, GiveItem to a named target) with actions (GiveQuest, IncQuestStep, Talk, FinishQuest). Each quest has a level window, so an early quest closes by level (City of Camelot is level 1 only). Rewards are XP on accept and finish, a basic item or one optional item, and a money share. Starter gear is chosen by class id with class 0 meaning all. Each service is introduced by visiting it through the Camelot Assistant's six-place destination menu.",
+  "data_fields": [
+    {"name": "area_radius", "unit": "coordinate units", "donor_value_or_null": null},
+    {"name": "level_min", "unit": "character level", "donor_value_or_null": null},
+    {"name": "level_max", "unit": "character level", "donor_value_or_null": null},
+    {"name": "xp_on_accept", "unit": "xp", "donor_value_or_null": null},
+    {"name": "xp_on_finish", "unit": "xp", "donor_value_or_null": null},
+    {"name": "money_copper_fixed", "unit": "copper", "donor_value_or_null": null},
+    {"name": "money_share_percent", "unit": "percent", "donor_value_or_null": null},
+    {"name": "choice_count", "unit": "items", "donor_value_or_null": null},
+    {"name": "starting_money_copper", "unit": "copper", "donor_value_or_null": null},
+    {"name": "starting_level", "unit": "character level", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Three-beat opener: walk into a ring, one whisper word, tap the instructor",
+    "Level window as a deadline (a level-1 quest closes at level 2)",
+    "One-verb journal line per step with bracketed keywords",
+    "Six-place service menu through one NPC, one service per trip",
+    "One-word whisper lesson (combat style words) before a one-of-six choice",
+    "Class-chosen starter set announced by a centre-screen message"
+  ],
+  "change": [
+    "Ten-step City of Camelot chain with NPC waits: use three to five steps in our first 30 minutes",
+    "PC verbs (left-click, right-click) become tap verbs on a 375 wide screen",
+    "Typed whisper keyword becomes a tap chip",
+    "NPC wait steps are finished by the server, not by the player asking again",
+    "Replace every donor name and place name (GPL, clean-room)"
+  ],
+  "look_test": "Build a 375-wide mock with four beats: a ring walk that changes the journal line; one tap-chip replacing the whisper; a six-pin service sheet opening one pin per errand; a reward card with the class-chosen starter set and a centre-screen line. Compare whether Dom finds the next tap within 10 seconds and whether the journal stays at two lines.",
+  "licence_note": "GNU GPL v2 or later (LICENSE; gplheader.txt line 7). Clean-room, shape only: no lines, no string text, no donor names or places. Content of the quest strings is the donor's. No legal conclusion.",
+  "tags": [
+    "first-loot",
+    "new:hub-tour",
+    "new:tutorial-trigger",
+    "new:starter-kit",
+    "new:level-window",
+    "new:whisper-keyword",
+    "new:service-menu",
+    "new:reward-choice",
+    "new:centre-screen-reward"
+  ],
+  "frankendom_target": {
+    "file": "src/fight/award.ts (proposed, does not exist)",
+    "row": 18,
+    "row_name": "loot roll and XP award"
+  },
+  "first_90_seconds": "Server half only: the realm 1 start row is in region 27 (x 95638, y 101322). Lord Stamford is about 128 coordinate units away in x. The first thing the player is told comes from the quest journal and Stamford's dialogue. The client screen before any control is not in the half read.",
+  "first_fight_and_kill": "No first-kill gate in this half. The Greetings kill hook is commented out (GreetingsArmsman.cs 583). Mob levels and first-fight rigging live in the database (not read).",
+  "first_hit_feedback": "Client-side; not in the server half.",
+  "loot_reveal": "Child's Play reward uses a centre-screen message. Other rewards are silent item grants with a system message.",
+  "idle_and_ambient": "NPC emote Ponder during a letter-reading beat (CityOfCamelot.cs 1081). Nothing else in this half.",
+  "death_and_respawn": "Not read.",
+  "walk_density": "Not read.",
+  "readability_375": "Not verifiable from the server half.",
+  "not_read": [
+    "Client half (not in this repo; paired libraries named in the audit: BifrostTitan-DAoC-Client-Lib, dol-leodagan-DaocClientLib; not opened)",
+    "NPC and mob template rows (in the database, not in this repo)",
+    "StarterEquipment rows (database)",
+    "Midgard and Hibernia equivalents (Childs_Play.cs, ChildsPlay.cs, ImportantDelivery.cs, Frontiers.cs)",
+    "Examples and Tutorials folder (author examples, not player onboarding)",
+    "EN string files beyond ANewHeroesWelcome.txt (folder count only)",
+    "Death and respawn presentation",
+    "Minute 5, 10 and 30 timings (depend on database XP tables and mob levels)",
+    "Argument meanings of the Money.GetMoney call in CityOfCamelot.cs 1124"
+  ]
+}

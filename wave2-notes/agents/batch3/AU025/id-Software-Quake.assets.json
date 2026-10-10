@@ -1,0 +1,57 @@
+{
+  "donor": "id-Software-Quake",
+  "code_licence": "GNU GPL (readme.txt line 16 says all code is GPL; gnu.txt is GPL version 2 text; per-file headers cite the GNU General Public License)",
+  "asset_licence": "Game data is not in the box. readme.txt says the Quake data files remain copyrighted under original terms and cannot be redistributed. EULA summaries in WinQuake/data (LICINFO.TXT, RLICNSE.TXT) limit use. Logos and icons have no separate licence in the tree.",
+  "rights_holder_status": "original company: id Software (readme.txt signed by John Carmack, Id Software); engine only, game data absent from box; not clean-room, not a fan project",
+  "best_class": "D",
+  "asset_groups": [
+    {"kind": "game_data_pack", "path": "not in box (no .pak, .bsp, .mdl, .wav, .lmp, .spr found)", "count_hint": "0", "licence": "copyrighted, original terms (readme.txt lines 38-39)", "class": "D", "note": "absent"},
+    {"kind": "quakec_source", "path": "qw-qc/*.qc (17 files); QW/progs/*.qc (17 files)", "count_hint": "34 files", "licence": "GPL (readme.txt line 16)", "class": "C", "note": "game logic as QuakeC; shape only"},
+    {"kind": "compiled_progs", "path": "qw-qc/qwprogs.dat (197684 bytes); qw-qc/files.dat (5764 bytes)", "count_hint": "2 binary files", "licence": "not stated for compiled output", "class": "C", "note": "binary, not opened"},
+    {"kind": "documentation_text", "path": "WinQuake/data/MANUAL.TXT, COMEXP.TXT, README.TXT, RLICNSE.TXT, HELP.TXT, LICINFO.TXT, ORDER.TXT", "count_hint": "7 text files", "licence": "EULA summaries (LICINFO.TXT line 17; RLICNSE.TXT line 2)", "class": "C", "note": "do not reproduce"},
+    {"kind": "logos_icons", "path": "WinQuake/quake.gif, WinQuake/quake.ico, WinQuake/qe3.ico, QW/quakeworld.bmp, QW/quake.gif, QW/client/qwcl2.ico", "count_hint": "6 images", "licence": "not stated; id trademarks (LICINFO.TXT line 38)", "class": "C", "note": "brand marks"},
+    {"kind": "asset_name_tables", "path": "qw-qc/weapons.qc (precache_sound, line 38-40); items.qc, world.qc, doors.qc, misc.qc, triggers.qc", "count_hint": "precache_sound and precache_model string literals", "licence": "GPL code", "class": "C", "note": "path strings only"},
+    {"kind": "third_party_binaries_sdk", "path": "WinQuake/kit/GLQUAKE.EXE, OPENGL32.DLL, cwsdpmi.exe, scitech/, dxsdk/", "count_hint": "several binaries and .lib files", "licence": "not read", "class": "C", "note": "not opened, not run"}
+  ],
+  "inspiration": [
+    "Damage batching per attack: gather pending damage per target and apply once at the end (weapons.qc lines 202-224). Defect: a new target flushes the previous one, so alternating hits split into separate applications. Fix: keep a small per-target list and flush once per attack. Keep the idea.",
+    "Blood as a one-count, visible-only event (weapons.qc lines 151-155). Keep the send-to-visible-clients idea; change the effect to sparks or embers on armour.",
+    "Melee as a short forward line test from body height (weapons.qc lines 62-69). Keep the reach test; change the swing to an arc.",
+    "Area-damage visibility: a trace to the target centre plus offset points decides whether splash reaches (combat.qc lines 47-72). Keep the multi-point check with our own sample pattern.",
+    "Named sound channels: each role has its own channel, so a weapon sound does not cut an item sound (weapons.qc line 449). Keep the channel-per-role idea.",
+    "Repeat cues throttled with a timestamp so a looping effect does not spam the mix (combat.qc line 212).",
+    "Per-entity precache lists as literal asset-path tables (weapons.qc line 40). Idea: per-zone asset manifests for preloading."
+  ],
+  "briefs": [
+    {
+      "label": "Melee sweep with a short reach test (item)",
+      "why": "A short forward test from body height gives a clear hit window; the swing is the readable part at phone width.",
+      "keep": "a short reach test from chest height; one hit window per swing; a sound on the weapon channel",
+      "change": "an arc sweep instead of a straight line; our own weapon silhouette; a different swing sound",
+      "ref": "qw-qc/weapons.qc lines 62-69 (W_FireAxe)"
+    },
+    {
+      "label": "Blood event burst (effect)",
+      "why": "One short burst per hit, sent only to clients that can see it, keeps the screen readable in a crowd.",
+      "keep": "one event per hit; only visible clients receive it; short life",
+      "change": "sparks or embers on armour instead of blood; our own palette; a different burst shape",
+      "ref": "qw-qc/weapons.qc lines 151-155 (SpawnBlood)"
+    },
+    {
+      "label": "Splash visibility with offset samples (area effect)",
+      "why": "Checking the centre and four offset points makes area hits fair around a corner.",
+      "keep": "a multi-point visibility check for area effects; the check is separate from the damage",
+      "change": "our own sample pattern and point count; our own splash shape",
+      "ref": "qw-qc/combat.qc lines 47-72 (CanDamage)"
+    }
+  ],
+  "not_read": [
+    "Game data (absent from box)",
+    "Documentation text beyond LICINFO.TXT and RLICNSE.TXT headers",
+    "qwprogs.dat and files.dat (binary)",
+    "Executables and .lib/.dll files (not opened, not run)",
+    "QuakeC bodies beyond the excerpts listed",
+    "WinQuake engine .c files beyond screen.c line 5",
+    "Camera, HUD, zones, spawns, loot tables (items.qc), animation frames (player.qc, sprites.qc)"
+  ]
+}

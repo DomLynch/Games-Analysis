@@ -1,0 +1,73 @@
+{
+  "donor": "teeworlds-teeworlds",
+  "half_read": "data half (datasrc/: content.py, skins, ui, mapres, audio, fonts, editor); code halves src/game/client and src/game/server present in box but only names seen; maps and languages submodules empty",
+  "code_licence": "license.txt: permissive notice, Copyright (C) 2007-2024 Magnus Auvinen; use and redistribution incl. commercial allowed with attribution and altered-source marking; src/engine/external third-party libraries carry their own licences (mostly BSD or zlib/libpng per the file; not checked per library)",
+  "asset_licence": "license.txt: all content under 'data' and 'datasrc' except the font is CC-BY-SA 3.0 (URL given in file); fonts have their own licence (datasrc/fonts/LICENSE opens with DejaVu notices); maps and languages come from submodules absent in the box",
+  "rights_holder_status": "original open-source game; copyright line names Magnus Auvinen (2007-2024); asset contributors listed by handle in license.txt; no clean-room, fan-project or leaked-data statement in the files",
+  "best_class": "B",
+  "asset_groups": [
+    {"kind": "tee skin bodies", "path": "datasrc/skins/body/*.png", "count_hint": "16 PNG, 256x256 (standard.png checked)", "licence": "CC-BY-SA 3.0 (folder licence)", "class": "B", "note": "base body art per skin"},
+    {"kind": "skin parts and skin JSON", "path": "datasrc/skins/", "count_hint": "122 files: 82 PNG, 40 JSON", "licence": "CC-BY-SA 3.0", "class": "B", "note": "JSON gives per-part sprite name and tint triple; example skins/piggy.json"},
+    {"kind": "main game sprite sheet", "path": "datasrc/game.png", "count_hint": "1024x512, grid 32x16", "licence": "CC-BY-SA 3.0", "class": "B", "note": "weapons, pickups, hook, ninja bar, muzzle frames"},
+    {"kind": "particle sheet", "path": "datasrc/particles.png", "count_hint": "512x512, grid 8x8", "licence": "CC-BY-SA 3.0", "class": "B", "note": "splat, smoke, air-jump particles"},
+    {"kind": "emoticon sheet", "path": "datasrc/emoticons.png", "count_hint": "512x512, grid 4x4", "licence": "CC-BY-SA 3.0", "class": "B", "note": "emote set"},
+    {"kind": "dead tee sprite", "path": "datasrc/deadtee.png", "count_hint": "64x64", "licence": "CC-BY-SA 3.0", "class": "B", "note": "death mark"},
+    {"kind": "parallax and doodad layers", "path": "datasrc/mapres/*.png", "count_hint": "32 PNG, mostly 1024 px", "licence": "CC-BY-SA 3.0", "class": "B", "note": "desert, jungle, clouds, stars and others; zone backdrops"},
+    {"kind": "UI art and theme maps", "path": "datasrc/ui/ (icons, themes)", "count_hint": "46 files: 40 PNG, 6 .map; ui/themes has 11 entries", "licence": "CC-BY-SA 3.0", "class": "B", "note": ".map theme files for day and night of three themes; not opened"},
+    {"kind": "sounds", "path": "datasrc/audio/", "count_hint": "131 WavPack .wv, about 3.1 MB", "licence": "CC-BY-SA 3.0", "class": "B", "note": "numbered variant families; one music file (music_menu.wv) only"},
+    {"kind": "country flags", "path": "datasrc/countryflags/", "count_hint": "251 PNG plus index.json", "licence": "CC-BY-SA 3.0 folder licence; flag origin not stated", "class": "B", "note": "flag icons"},
+    {"kind": "editor art", "path": "datasrc/editor/", "count_hint": "10 files: 4 PNG, 6 JSON", "licence": "CC-BY-SA 3.0", "class": "B", "note": "map editor art and automap JSON"},
+    {"kind": "fonts", "path": "datasrc/fonts/ (DejaVuSans.ttf, SourceHanSans.ttc)", "count_hint": "5 files, about 21 MB", "licence": "own licence; datasrc/fonts/LICENSE covers DejaVu; no separate SourceHanSans licence seen", "class": "C", "note": "unclear for the Source Han font"},
+    {"kind": "maps", "path": "datasrc/maps/", "count_hint": "0 (empty submodule)", "licence": "submodule teeworlds-maps; not present", "class": "D", "note": "playable map files absent from the box"},
+    {"kind": "languages", "path": "datasrc/languages/", "count_hint": "0 (empty submodule)", "licence": "submodule teeworlds-translation; not present", "class": "D", "note": "translation files absent"},
+    {"kind": "data table scripts", "path": "datasrc/content.py, datatypes.py, network.py", "count_hint": "686, 401, 484 lines", "licence": "code licence (license.txt permissive notice, attribution)", "class": "A", "note": "content.py holds 185 sprite entries, about 29 sound sets, animations, weapon specs, pickups"}
+  ],
+  "inspiration": [
+    "Parts-based character: a tee is a stack of parts (body, markings, decoration, hands, feet, eyes, hats), each with a sprite grid and a tint setting. Frankendom: greyscale base parts tinted per part; armour plates tinted from a metal ramp.",
+    "Recolour picker in the settings menu: a hue-saturation-lightness picker (CMenus::RenderHSLPicker) for part tints. Frankendom: one picker per part with a live preview.",
+    "Three-frame weapon muzzle: three muzzle sprites used in turn for one attack. Frankendom: a short three-frame flash per attack.",
+    "Keyframe slash: six keyframes on normalised time with a fast snap through the middle and rest at both ends. Frankendom: a windup that snaps and settles, readable at 375 px.",
+    "Chain as a repeated link sprite with a separate head sprite for the hook. Frankendom: a tether drawn from a repeated link along the line.",
+    "Energy bar built from a left cap, fill and right cap in full and empty variants. Frankendom: a segmented stamina gauge for the hud topic.",
+    "Splat left behind at death: a particle splat plus a 64 px dead-tee sprite. Frankendom: a dim, non-gory mark for row 17 and row 8.",
+    "Numbered sound variant families (2 to 3 per event). Frankendom: a variant pool per event so the same hit is not heard twice in a row."
+  ],
+  "briefs": [
+    {
+      "label": "Ninja slash arc",
+      "why": "a short windup and a snap that settles gives one readable motion that fits a fast duel at 375 px",
+      "keep": ["six-keyframe attack with windup, fast snap and rest at both ends", "three sound variants per attack", "three-frame muzzle"],
+      "change": ["a two-part curved blade with a glow trail", "sounds from our own foley set", "muzzle is a rune burst"],
+      "ref": "datasrc/content.py lines 618 to 624 (animation), 188 (sound variants), 410 to 412 (muzzle sprites)"
+    },
+    {
+      "label": "Rune tether",
+      "why": "a tether made of repeated links is readable across a fight and shows where a pull comes from",
+      "keep": ["one link sprite repeated along the line", "separate head sprite at the end"],
+      "change": ["a braided rune rope with a glowing head ring", "head shows the target's team colour", "rope form is ours"],
+      "ref": "datasrc/content.py lines 407 to 408 (hook_chain, hook_head)"
+    },
+    {
+      "label": "Parts-tinted fighter",
+      "why": "a character made of tinted parts can be recoloured per player with a few numbers",
+      "keep": ["body, marking, hands, feet and eyes as separate parts", "each part has its own tint"],
+      "change": ["armour plates tinted from a metal ramp, not hue and saturation triples", "eyes are a visor slit with a team glow", "armour silhouette is ours"],
+      "ref": "datasrc/skins/piggy.json (lines 3 to 11); datasrc/skins/body/standard.png"
+    },
+    {
+      "label": "Segmented energy bar",
+      "why": "a bar built from caps and a fill is cheap to draw and easy to read at a glance",
+      "keep": ["left cap, fill and right cap sprites", "full and empty variants"],
+      "change": ["segmented gauge in our hud colours, not a pill bar", "fill pulses when full", "caps drawn in our icon style"],
+      "ref": "datasrc/content.py lines 426 to 429 (ninja bar sprites); datasrc/game.png"
+    }
+  ],
+  "not_read": [
+    "code halves src/game/client and src/game/server (only one grep line from client components)",
+    "datatypes.py and network.py bodies",
+    "individual sprite PNG contents (a few headers only)",
+    "ui/themes .map files and editor JSON",
+    "font files (sizes only)",
+    "maps and languages submodules (absent)"
+  ]
+}

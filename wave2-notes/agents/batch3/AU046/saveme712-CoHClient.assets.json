@@ -1,0 +1,26 @@
+{
+  "donor": "saveme712-CoHClient",
+  "code_licence": "Unlicense / public domain dedication for the tool's own code (LICENSE line 1). Vendored code keeps its own terms: MinHook (BSD-style, mh/hook.c line 3), hde (licence text not read), ImGui (header says MIT, its LICENSE.txt is absent from the box), glm (no licence text found).",
+  "asset_licence": "No game assets in the box. No non-code asset licence applies.",
+  "rights_holder_status": "Modification of the City of Heroes client (README line 2). README does not name the publisher. README describes live-game use that gets accounts banned (line 8) and a patch of hardware-ID tracking (line 14). Recorded as the file says; game-facing code not used or summarised.",
+  "best_class": "D",
+  "halves_read": "README, LICENSE, vendored library headers and file tree. Hook layer (CoHClient/*.cpp, coh.h, reverse.h) NOT read beyond names and line counts, by choice. No game client and no server half in box.",
+  "asset_groups": [
+    {"kind": "game content (textures, models, sounds, text tables, maps)", "path": "none in box", "count_hint": "0", "licence": "n/a", "class": "D", "note": "Game client not in the box."},
+    {"kind": "tool's own code", "path": "CoHClient/, CoHClient.sln, mh/ (own use)", "count_hint": "8 source files (6 .cpp, 2 .h)", "licence": "Unlicense (LICENSE line 1)", "class": "A", "note": "Code only, no assets."},
+    {"kind": "MinHook (vendored)", "path": "mh/hook.c, mh/trampoline.c, mh/buffer.c, include/MinHook.h", "count_hint": "about 6 files", "licence": "BSD-style, notice retention (mh/hook.c lines 3-12)", "class": "A", "note": "Attribution and notice retention. Code, not assets."},
+    {"kind": "hde disassembler (vendored)", "path": "mh/hde/hde32.c, hde64.c, table32.h, table64.h, pstdint.h", "count_hint": "7 files", "licence": "copyright line only read (mh/hde/hde64.h line 3); licence text not read", "class": "C", "note": "Licence text not read."},
+    {"kind": "ImGui (vendored)", "path": "ImGui/imgui*.cpp, ImGui/imstb_*.h, ImGui/imgui*.h", "count_hint": "about 17 source files", "licence": "header says standard MIT (ImGui/imgui.cpp line 24); the LICENSE.txt it names is not in the box", "class": "C", "note": "Unclear until the licence file is found; code, not assets."},
+    {"kind": "glm maths headers (vendored)", "path": "glm/ (278 hpp, 138 inl)", "count_hint": "416 headers", "licence": "no licence text found in the box", "class": "C", "note": "Code, not assets."}
+  ],
+  "inspiration": [
+    "None usable from the game side: the box has no game content, and the game-facing code is a live-game modification whose method I did not mine.",
+    "Category-level only (not game design): the project vendors an immediate-mode GUI library (ImGui) for an in-client panel, a dev-tool pattern for our own test builds. The project's render code (CoHClient/render.cpp, 107 lines) was not read."
+  ],
+  "briefs": [],
+  "not_read": [
+    "CoHClient/*.cpp, coh.h, reverse.h (hook layer), by choice",
+    "ImGui sources beyond the header comment; glm sources beyond the file count; hde sources beyond the copyright line; MinHook sources beyond the copyright block",
+    "Licence text for hde, glm and ImGui (ImGui's LICENSE.txt absent)"
+  ]
+}

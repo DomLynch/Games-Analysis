@@ -1,0 +1,39 @@
+{
+  "donor": "rathena-rathena",
+  "code_licence": "GNU GPL v3. LICENSE file present; README.md line 81 'Licensed under [GNU General Public License v3.0]'.",
+  "asset_licence": "No separate asset licence. Data files in db/ carry a GPL v3 header with 'Copyright(C) 2024 rAthena Development Team'. The source game of the data is not named in the files read. Binary files (GeoIP.dat, map_cache.dat) licence not read.",
+  "rights_holder_status": "Unknown. Files name the rAthena Development Team as copyright holder; they do not name the game whose monster, item and skill data sit in db/.",
+  "best_class": "C",
+  "half_read": "Server half (C++ tree, read at the top level only) plus data pack (db/ tables read by header and boss block). Client half not in the box.",
+  "asset_groups": [
+    {"kind": "monster_table", "path": "db/re/mob_db.yml", "count_hint": "about 2675 entries (grep of '- Id:')", "licence": "GPL v3 header (file-stated); source game not named", "class": "C", "note": "stats, drops, boss flags, MVP prize lists; GPL so shape only"},
+    {"kind": "skill_table", "path": "db/re/skill_db.yml", "count_hint": "about 1635 entries", "licence": "GPL v3 header (file-stated)", "class": "C", "note": "skill data; rows not read"},
+    {"kind": "item_drop_quest_tables", "path": "db/re/item_db*.yml, map_drops.yml, quest_db.yml, reputation*.yml and others", "count_hint": "db/ holds 181 .yml, 23 .txt, 5 .dat", "licence": "GPL v3 header (file-stated)", "class": "C", "note": "not opened beyond headers"},
+    {"kind": "mob_skill_script", "path": "db/re/mob_skill_db.txt", "count_hint": "15004 lines", "licence": "GPL v3 (repo)", "class": "C", "note": "header read (lines 1-4): based on an Aegis episode table; rows not read"},
+    {"kind": "effect_catalogue_doc", "path": "doc/effect_list.md", "count_hint": "978 lines", "licence": "repo GPL v3; doc terms not separately read", "class": "C", "note": "numbered client effect list; header read"},
+    {"kind": "npc_quest_scripts", "path": "npc/", "count_hint": "1178 files", "licence": "repo GPL v3 (not checked per file)", "class": "C", "note": "script text and quest dialogue; not opened; protected text not reproduced"},
+    {"kind": "binary_data", "path": "db/GeoIP.dat, db/map_cache.dat, db/re/map_cache.dat", "count_hint": "3 files", "licence": "not read", "class": "C", "note": "binary; not opened"},
+    {"kind": "sql", "path": "sql-files/", "count_hint": "many .sql files", "licence": "repo GPL v3", "class": "C", "note": "not opened"},
+    {"kind": "audio_sprites_models", "path": "none found in db/", "count_hint": "0 in db/", "licence": "n/a", "class": "D", "note": "whole-tree check not run"}
+  ],
+  "inspiration": [
+    "Boss entry with a boss class flag and a separate MVP prize table with per-item rates (db/re/mob_db.yml lines 1840-1844). Idea: a boss is one flag away from a different reward ceremony.",
+    "Boss skill range longer than its chase range (db/re/mob_db.yml lines 1827-1828). Idea: ranged skills fire before the boss closes in, so the threat is felt early.",
+    "A numbered catalogue of hit and impact effects that scripts can trigger (doc/effect_list.md line 3). Idea: a small named list of hit feels, each paired with a sound cue.",
+    "A flat monster skill script table keyed by monster (db/re/mob_skill_db.txt lines 1-4). Idea: each monster is a list of skills with cast conditions in one text table.",
+    "Attack delay and motion fields on each boss entry (db/re/mob_db.yml around line 1834). Idea: wind-up and recovery are data fields, so each telegraph is tunable."
+  ],
+  "briefs": [
+    {"label": "tiered boss with its own prize table", "why": "one flag switches a boss to a shared-reward ceremony", "keep": "boss flag plus an MVP-only prize list with per-item rates", "change": "the prize list feeds a shared loot ceremony with a party share and our own item set", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/mob_db.yml lines 1840-1844"},
+    {"label": "boss that casts from beyond chase range", "why": "the threat is felt before melee", "keep": "skill range longer than chase range, so ranged skills fire first", "change": "a visible wind-up ring at 375 wide before each ranged cast, and a different silhouette", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/mob_db.yml lines 1827-1828"},
+    {"label": "named hit-feel catalogue", "why": "scripts pick a numbered hit feel", "keep": "numbered IDs that scripts trigger", "change": "our own feel names and a paired combat sound cue per entry", "ref": "/mnt/frankendom-donors/rathena-rathena/doc/effect_list.md line 3"},
+    {"label": "monster skill script table", "why": "one flat table says what each monster casts and when", "keep": "skills keyed by monster with cast conditions", "change": "our conditions are HP-threshold and aggro-count triggers that match the hate-list rule", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/mob_skill_db.txt lines 1-4 (header only)"}
+  ],
+  "cross_link": "Spawns and loot: mob_db.yml drops and MVP prizes, map_drops.yml (not read). VFX: doc/effect_list.md (header read). Animation: attack and motion fields in mob_db.yml. Zones: npc/ and map caches (not read). Sound: none in db/. HUD: none.",
+  "not_read": [
+    "mob_db.yml rows outside lines 1807-1850; item_db*.yml; skill_db.yml rows; quest_db.yml; map_drops.yml; mob_skill_db.txt rows",
+    "npc/ (1178 files); sql-files/; the rest of doc/; 3rdparty licence texts; GeoIP.dat and map_cache.dat",
+    "src/ server code beyond the tree listing",
+    "Client half: not in the box"
+  ]
+}

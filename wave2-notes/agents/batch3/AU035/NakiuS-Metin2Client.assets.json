@@ -1,0 +1,44 @@
+{
+  "donor": "NakiuS-Metin2Client",
+  "code_licence": "CONFLICT. LICENSE line 1 'MIT License', line 3 'Copyright (c) 2018 - Ymir / Jonatan Acahu'. _RESTRICTED-NOTE.txt line 1: 'leaked Metin2 client source, no valid licence'. Treated as restricted: shape and idea only.",
+  "asset_licence": "None in the box. No shipped art, sound, model, map or font files. Build libraries (27 .lib under extern/library) have no licence line of their own (class C).",
+  "rights_holder_status": "Named in LICENSE as Ymir / Jonatan Acahu; the restricted note says leaked. Conflicting; do not seek mirrors. Game is commercial (not stated in the files; not checked on the web).",
+  "best_class": "D for shipped assets (none present); C for the client code and build libraries; inspiration category-level only",
+  "asset_groups": [
+    {"kind": "art_models_sound_maps_fonts", "path": "not in box (no png, dds, tga, jpg, gr2, grp, mp3, wav, ogg, ttf or fnt files found by extension)", "count_hint": "0", "licence": "n/a", "class": "D", "note": "Client art and data packs are not in this box."},
+    {"kind": "data_tables_absent", "path": "locale/<locale>/item_proto and locale/<locale>/mob_proto (referenced: source/GameLib/ItemManager.cpp line 276; source/UserInterface/PythonApplication.cpp lines 1016 and 1018; source/UserInterface/Locale.cpp lines 320 and 365)", "count_hint": "0 in box", "licence": "n/a", "class": "D", "note": "The client loads item and mob prototype tables per locale. The tables are not in the box; the stat numbers cannot be checked. Name and stat tables are the data half; the paired server half is not in the box either."},
+    {"kind": "packed_archive_reader", "path": "source/EterPack/ (EterPackManager.cpp, EterPack.cpp, EterPackCursor.cpp)", "count_hint": "reader code only", "licence": "Restricted note; no own licence", "class": "D", "note": "Reader code present; archives absent. Archive policy not studied."},
+    {"kind": "build_libraries", "path": "extern/library/ (27 .lib files, e.g. d3dx8.lib, glut.lib, SecureEngineSDK32.lib)", "count_hint": "27", "licence": "Unknown per file", "class": "C", "note": "Binary library files; not opened. A protection SDK is named by file name only."},
+    {"kind": "build_artefacts", "path": "vs_files/UserInterface/Distribute/ (PythonApplication.cod, Metin2Distribute.map)", "count_hint": "2 files", "licence": "Unknown", "class": "C", "note": "Build output; not read."},
+    {"kind": "text_misc", "path": "source/UserInterface/Version.py; extern/include (boost Unicode data and readme txt files)", "count_hint": "1 Python file, 6 txt files under extern", "licence": "Boost files carry their own licence (not read)", "class": "C", "note": "Not game text."},
+    {"kind": "ui_code", "path": "source/UserInterface/", "count_hint": "167 entries", "licence": "Restricted note", "class": "C", "note": "UI code, names only."}
+  ],
+  "brief_rule": "Recreate as a clearly distinct original, never a copy; each brief names the trait kept and the trait changed. Restricted donor: category-level only, no instance-level looks.",
+  "inspiration": [
+    "Combo chain with a timed input window and a pre-input buffer: a press inside the window is remembered and fires at the next hit boundary; a press after the window is refused. For rows 3 and 5. Files: source/GameLib/ActorInstanceBattle.cpp lines 156-253.",
+    "Dropped early input in the fallback path: a motion without input-window data accepts the next hit only after most of the swing, and an earlier press is not stored. Idea kept (gate on swing progress); defect fixed in ours by buffering the early press. File: ActorInstanceBattle.cpp lines 199-209.",
+    "Normal-attack gate on swing progress: a fresh swing is accepted only when the current one is nearly done, or when the actor is waiting. For row 4 and row 5. File: ActorInstanceBattle.cpp lines 457-468.",
+    "Ranged mode keeps a late press as a next-attack request, run when the current motion ends. For row 13 (specials) with bow-like weapons. File: ActorInstanceBattle.cpp lines 180-181 and 242-251.",
+    "Swing progress as elapsed time times a per-actor speed ratio, with an older attack-speed term commented out. For row 6 (hero actor and animation): one ratio per motion. Files: ActorInstanceBattle.cpp lines 451-455; ActorInstance.cpp line 181.",
+    "Battle hit effect selected by an id on the actor (SetBattleHitEffect). For rows 8 and 10 (blood and hit impact): an effect id on the hit record. File: ActorInstanceBattle.cpp line 8."
+  ],
+  "briefs": [
+    {"label": "Chain-swing window", "why": "A multi-hit swing chain where a press in the late part of each swing queues the next hit gives a rhythm that rewards timing without needing a perfect press. It reads at 375 wide because the chain is one character moving in one direction.", "keep": "Input-window buffer: a press inside the window is queued, and fires at the next hit boundary.", "change": "Our window is shorter at the start of a chain and longer on the last hit; the queue holds one press only; each hit adds a short recovery that the chain cannot skip.", "ref": "source/GameLib/ActorInstanceBattle.cpp lines 156-253 (category only; no numbers)"},
+    {"label": "Late-press keeper for ranged attacks", "why": "A ranged attack that holds a late press until the shot ends stops the bow feeling unresponsive, without making the ranged action fire on every press.", "keep": "A press after the window is kept as a next-attack request and run when the motion ends.", "change": "Keep only the most recent press; cancel the kept press if the target leaves the line; show it as a small ring at the hero's feet.", "ref": "source/GameLib/ActorInstanceBattle.cpp lines 180-181 and 242-251"},
+    {"label": "Attack gate on swing progress", "why": "Accepting a new swing only near the end of the last one makes each blow visible and avoids overlapping animations, which helps a crowd fight stay readable.", "keep": "A gate on swing progress for normal attacks; accepted when the actor is idle.", "change": "Buffer early presses instead of dropping them (our fix); set the gate per weapon class, not one value for all.", "ref": "source/GameLib/ActorInstanceBattle.cpp lines 457-468 (line 466 is the test)"},
+    {"label": "Per-motion speed ratio", "why": "Driving an animation by elapsed time times one ratio lets speed changes (slow, fast) apply to a single motion without rewriting the clip.", "keep": "Elapsed time times a per-motion ratio; the actor sets the ratio, not the clip.", "change": "The ratio comes from our engine's attack-speed value per hero, not from a separate function; no commented-out path kept.", "ref": "source/GameLib/ActorInstanceBattle.cpp lines 451-455; source/GameLib/ActorInstance.cpp line 181"},
+    {"label": "Hit effect by id", "why": "A hit effect chosen by an id on the hit record lets one hit type look different per target without a new code path.", "keep": "Effect id on the hit record; the actor sets it before the hit lands.", "change": "Our effect ids are per damage class (cut, blunt, arrow), with our own particle style; no copy of any effect table.", "ref": "source/GameLib/ActorInstanceBattle.cpp line 8"}
+  ],
+  "defects_found": [
+    {"where": "source/GameLib/ActorInstanceBattle.cpp lines 199-209", "defect": "In the fallback branch an early press is neither fired nor stored (no pre-input is set), so the input is lost.", "fix": "store the early press as a pre-input and fire it at the same boundary as the timed branch."}
+  ],
+  "not_read": [
+    "The game server (absent from the box)",
+    "item_proto and mob_proto tables (absent from the box)",
+    "EterPack archive policy and crypto code (not studied)",
+    "source/UserInterface (167 entries, names only)",
+    "source/GameLib beyond ActorInstanceBattle.cpp and ActorInstance.cpp lines cited",
+    "Non-ASCII comment lines in ActorInstanceBattle.cpp (lines 185 and 202 among them; not receipted)",
+    "The 27 .lib files, the .cod and .map artefacts, extern/include (boost)"
+  ]
+}

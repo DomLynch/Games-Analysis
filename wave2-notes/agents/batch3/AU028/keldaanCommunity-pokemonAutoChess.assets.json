@@ -1,0 +1,47 @@
+{
+  "donor": "keldaanCommunity-pokemonAutoChess",
+  "code_licence": "GNU GPL v3 (LICENSE line 2, 'Version 3, 29 June 2007')",
+  "asset_licence": "no asset licence file in the box. README line 5 and policy.md line 14 say all rights to The Pokemon Company. Sound effects, translations and credit records have no separate licence found (class C).",
+  "rights_holder_status": "fan project (policy.md line 14, 'open-source, non-profit fan project'); the files name The Pokemon Company as holder of rights (README line 5); individual artists are credited in credits.json (names not reproduced here)",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "pokemon sprites", "path": "app/public/src/assets/pokemons/", "count_hint": "2385 files (about 1190 PNG with JSON atlases); sample 503 x 313 px", "licence": "all rights to The Pokemon Company (README line 5)", "class": "C", "note": "file names are dex and form numbers such as 0000-0001; image contents not read"},
+    {"kind": "portraits", "path": "app/public/src/assets/portraits/", "count_hint": "48765 files (13553 PNG); sample 40 x 40 px", "licence": "as above", "class": "C", "note": "per-species credits.txt files exist (names not reproduced)"},
+    {"kind": "ability icons", "path": "app/public/src/assets/abilities{tps}/", "count_hint": "5566 files (5512 PNG); sample 40 x 48 px", "licence": "as above", "class": "C", "note": "folder name carries a literal {tps} suffix"},
+    {"kind": "attack, item, status icons", "path": "app/public/src/assets/attacks{tps}, item{tps}, status{tps}, status", "count_hint": "771, 370, 299, 27 files", "licence": "as above", "class": "C", "note": "not opened"},
+    {"kind": "types and trading icons", "path": "app/public/src/assets/types, types{tps}, trading_platform{tps}", "count_hint": "31, 31, 30 files", "licence": "as above", "class": "C", "note": "not opened"},
+    {"kind": "tilesets, maps, environment", "path": "app/public/src/assets/tilesets, maps, environment", "count_hint": "1516, 144, 188 files", "licence": "as above", "class": "C", "note": "not opened"},
+    {"kind": "UI and misc art", "path": "app/public/src/assets/ui, icons, titles, ranks, posters, theme, flags, notifications, unown, loading_hints, community-servers", "count_hint": "about 580 files in total", "licence": "as above", "class": "C", "note": "not opened"},
+    {"kind": "sound effects", "path": "app/public/src/assets/sounds/", "count_hint": "20 .ogg files", "licence": "no licence stated in the box", "class": "C", "note": "buttonclick, buttonhover, finish1 to finish8, evolutiont2, evolutiont3, joinroom, leaveroom, newroom, notification, refresh, setready, startgame, carouselunlock; names only"},
+    {"kind": "video", "path": "app/public/src/ (location not checked)", "count_hint": "5 .mp4 files", "licence": "as above", "class": "C", "note": "not opened"},
+    {"kind": "music", "path": "not in the box; README line 22 says a script downloads it", "count_hint": "0 music files found in the box", "licence": "n/a", "class": "D", "note": "nothing to take from the box"},
+    {"kind": "translations (text)", "path": "app/public/dist/client/locales/", "count_hint": "14 language folders; en/translation.json has 355 top-level keys (count only)", "licence": "repo GPL by default; no separate licence found", "class": "C", "note": "strings not read"},
+    {"kind": "species data table", "path": "app/models/precomputed/pokemons-data.csv and app/types/delays.json", "count_hint": "CSV 1176 lines incl. header; delays.json 1186 entries", "licence": "repo GPL by default", "class": "C", "note": "the species table holds stats and look keys; header read, rows not read"},
+    {"kind": "artist credit records", "path": "app/models/precomputed/credits.json and app/public/src/assets/pokemons/credit_names.txt", "count_hint": "one JSON line; credit name list", "licence": "repo GPL by default", "class": "C", "note": "contains personal names and handles; not reproduced"},
+    {"kind": "asset-tool forks", "path": "edit/assetpack/assetpack-cli-fork/ and edit/assetpack/plugin-texture-packer-fork/", "count_hint": "2 LICENSE files", "licence": "MIT License, PixiJS 2022 (LICENSE files read)", "class": "A", "note": "tool code only, not game art"}
+  ],
+  "inspiration": [
+    "Sticky target: keep the same target while it is alive, targettable and in range; retarget only when it is lost or out of range (app/core/attacking-state.ts line 26 comment, line 47 branch, lines 62-63 retarget). Keep it for the many-vs-one target choice (rows 2 and 4); change to our leash and hate list.",
+    "Conditional finisher targeting: while a status is active, the attacker takes the lowest hit points plus shield among candidates in range (attacking-state.ts lines 34-44). Keep a state that changes target choice (row 13); change the trigger and the visual.",
+    "Tie-break by carried item: among candidates at equal distance, prefer those holding a particular item (app/core/pokemon-state.ts line 1137). Keep distance first, then a data tie-break; change the tie-breakers to our own.",
+    "Attack timing from speed and frame data: attack duration = 1000 / (0.4 + 0.007 x speed) (attacking-state.ts line 131); the hit lands at a fraction of the animation from per-species frame counts (line 135, types/delays.json); projectile travel time from distance and speed (line 143). Keep the wind-up separate from the cooldown and the hit on the impact frame (rows 6 and 7); change the curve and drop the per-species table.",
+    "Command queue then unit update: each step runs queued commands first (simulation.ts line 1314), then each unit updates (blue at line 1332, red at line 1349), with a damage meter sampled just before each unit (lines 1319-1330). Keep deferred hits as commands and a fixed order (row 1, server tick); change to our fixed step.",
+    "Pixel-size icon vocabulary: 40 x 40 portraits and 40 x 48 ability icons (samples). Keep one small glyph per ability on a fixed grid for readability at 375 wide (row 14); change the glyph shapes.",
+    "Per-species credit records: credits.json holds primary and secondary credits per species with a total. Keep a credit record per asset as data; change the format; never reproduce personal names."
+  ],
+  "briefs": [
+    {"label": "Ranged caster with a visible wind-up", "why": "a shot is telegraphed by a short pose before it lands, so the player can read incoming fire", "keep": "a delay before the shot equal to a fraction of the attack duration; a travel time from distance", "change": "our own projectile, sound and aim line; a different silhouette. Dom rule: a distinct original, never a copy. Category-level only (class C)", "ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/attacking-state.ts (lines 131-143)"},
+    {"label": "Lowest-life finisher mode", "why": "a status turns a normal attacker into a finisher, which gives a clear mid-fight change", "keep": "conditional target override that picks the lowest hit points plus shield in range", "change": "our trigger and our visual, not the status name. Dom rule: a distinct original, never a copy", "ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/attacking-state.ts (lines 33-44)"},
+    {"label": "Tie-break by carried item", "why": "equal-distance targets resolve by something the player can see", "keep": "nearest first, then a holder-of-item tie-break", "change": "our hate list or class as the tie-break, not an item. Dom rule: a distinct original, never a copy", "ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/pokemon-state.ts (around line 1137)"},
+    {"label": "Forty-pixel ability glyph", "why": "one small square glyph per ability reads at 375 wide", "keep": "a 40 px square icon on a fixed grid, one glyph per ability", "change": "our glyph shapes and palette. Dom rule: a distinct original, never a copy", "ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/public/src/assets/abilities{tps}/ (sample 40 x 48 px)"},
+    {"label": "Sticky chase target", "why": "enemies stop flip-flopping between targets, so a fight reads as one duel", "keep": "keep the current target while valid; retarget only when lost", "change": "our leash and aggro rules. Dom rule: a distinct original, never a copy", "ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/attacking-state.ts (lines 26-64)"}
+  ],
+  "not_read": [
+    "pokemon-state.ts beyond the lines named above; simulation.ts beyond lines 1310-1352; app/core/abilities/ (toxic-spore.ts grep-matched only); weather and stage logic",
+    "Image contents of sprites, portraits, icons and tilesets (sizes sampled from one file per folder)",
+    "Sound and video contents; music (not in box)",
+    "Locale strings (count only); app/public/src/pages/ components (listed, not read)",
+    "Rooms, matchmaking, services, precomputed-pokemons.ts loader (listed, not read)",
+    "Both halves are in the box: server app/ (partly read) and client app/public/src/ (inventory only)"
+  ]
+}

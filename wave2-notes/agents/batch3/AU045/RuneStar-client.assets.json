@@ -1,0 +1,94 @@
+{
+  "donor": "RuneStar-client",
+  "code_licence": "GNU AGPL-3.0: LICENSE line 1 'GNU AFFERO GENERAL PUBLIC LICENSE' (the file is the AGPL version 3 text). NOTICE line 1 'Copyright (C) 2017-2020, Hunter WB <hunterwb.com>'; NOTICE line 4 says the program is under the GNU Affero General Public License.",
+  "asset_licence": "LICENSE-GRAPHICS (in plugins/src/main/resources/org/runestar/client/plugins/emojis/) is the full CC BY 4.0 text (line 1 'Attribution 4.0 International'). The file does not say which emoji files it covers or who holds the copyright. No licence file found for the RuneScape fonts in api/src/main/resources or for the icon PNGs.",
+  "rights_holder_status": "_RESTRICTED-NOTE.txt line 1: 'RESTRICTED: Jagex-derived OSRS client. Study shape/idea only; never copy code or constants.' This is a note added by Dom on 2026-10-10, not a licence. NOTICE names Hunter WB as copyright holder of the code. Owner of the emoji art and the RuneScape fonts is not stated in the files read.",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "Emoji sprite sheet and shortcode name list",
+      "path": "plugins/src/main/resources/org/runestar/client/plugins/emojis/ (emojis.png, names.csv, LICENSE-GRAPHICS)",
+      "count_hint": "names.csv is one line with 1,740 commas (about 1,741 short names; count from commas, file has no line break); emojis.png size not measured",
+      "licence": "LICENSE-GRAPHICS line 1 is CC BY 4.0 full text; the file does not name the covered files or the holder",
+      "class": "C",
+      "note": "CONFLICT-LIKE AMBIGUITY: a CC BY 4.0 licence file sits in the folder, but nothing ties it to emojis.png or names the author, so class C per the ambiguity rule. If Dom confirms the holder and scope, this becomes class A with attribution. names.csv is a DATA TABLE of shortcodes (first entries: grinning, smiley, smile)"
+    },
+    {
+      "kind": "RuneScape-style pixel fonts (TTF)",
+      "path": "api/src/main/resources/org/runestar/client/api/ (RuneScape-Plain-11.ttf, RuneScape-Plain-12.ttf, RuneScape-Bold-12.ttf)",
+      "count_hint": "3 .ttf files",
+      "licence": "none stated in the repo",
+      "class": "C",
+      "note": "binary, not opened. Restricted donor note applies"
+    },
+    {
+      "kind": "Plugin and UI icon PNGs",
+      "path": "plugins/src/main/resources/org/runestar/client/plugins/screenshot/camera.png; plugins/.../clanchat/clanchat-ranks.png; plugins/.../notes/pencil-on-page.png; api/src/main/resources/org/runestar/client/api/ (caret-up.png, cog.png, icon.png)",
+      "count_hint": "6 .png files plus the emoji sheet (7 .png in resources in total per the file count)",
+      "licence": "none stated in the repo",
+      "class": "C",
+      "note": "binary, not opened"
+    },
+    {
+      "kind": "Plugin text docs (per-plugin README.md)",
+      "path": "plugins/src/main/java/org/runestar/client/plugins/*/README.md (for example emojis/README.md, barrows/README.md, lowdetail/README.md)",
+      "count_hint": "22 README.md files",
+      "licence": "covered by the repo AGPL statement only; no separate licence line read",
+      "class": "C",
+      "note": "text docs, shape only. Not opened"
+    },
+    {
+      "kind": "Code (Kotlin plugins, client, api, updater, raw accessors): not content",
+      "path": "plugins/src/main/java/org/runestar/client/plugins/ (55 .kt files); client/, api/, raw/, raw-base/, updater*/, cache-ids/ (pom only)",
+      "count_hint": "55 .kt plugin files",
+      "licence": "AGPL-3.0 (LICENSE; NOTICE)",
+      "class": "A",
+      "note": "AGPL code: clean-room, shape only. Do not adapt code. Only Implings.kt read, in part"
+    },
+    {
+      "kind": "Data half: cache IDs and generated accessors (not in the repo)",
+      "path": "cache-ids/ (pom.xml only, no generated IDs in the box), raw/ and raw-base/ (pom.xml), client.jar.version (version string 2020-08-27-35a2496)",
+      "count_hint": "0 data files",
+      "licence": "none",
+      "class": "D",
+      "note": "the OSRS cache and its IDs are not in the box. Nothing usable here for content"
+    }
+  ],
+  "inspiration": [
+    "Hunt-creature marker, category level: a rare roaming creature gets a translucent outline and a short name tag, drawn at both the minimap and the main view (plugins/.../implings/Implings.kt, lines 38, 54, 63). Recreate the marker with our own silhouette and tag style.",
+    "Chat shortcodes to sprites: a list of short names maps to a single emoji sheet (emojis/names.csv, emojis/emojis.png). Recreate as a text-to-sprite chat set with our own art and our own names.",
+    "Low-detail mode as a player toggle for weak devices: plugins lowdetail, flatshading and fpsthrottle are named as toggles (folder names only, lowdetail/README.md present, not opened). Recreate as one visible low-detail switch for our 375 wide play, with our own settings.",
+    "Visible frame throttle as a setting: fpsthrottle is a named plugin (folder only, not opened). Recreate as a throttle option on the settings screen, with our own numbers."
+  ],
+  "briefs": [
+    {
+      "label": "hunt-creature tag (own label, category level)",
+      "why": "A small target with an outline and a name tag is readable at 375 wide. One signature behaviour: it wanders off and returns. One signature sound: a short chime on sight. Could be ours at 20-30 percent resemblance.",
+      "keep": "outline plus name tag at both the minimap and the main view",
+      "change": "our own silhouette, our own tag style and no outline on the minimap. Recreate as a clearly distinct original, never a copy; restricted donor, shape only",
+      "ref": "plugins/src/main/java/org/runestar/client/plugins/implings/Implings.kt (lines 38, 54, 63)"
+    },
+    {
+      "label": "shortcode chat sprite set (own label)",
+      "why": "Short names typed in chat become small pictures that read at 375 wide. One signature trait: a shared sheet with a name list. Could be ours at 20-30 percent resemblance. Category level only",
+      "keep": "a single sheet plus a name list, so one table drives all the pictures",
+      "change": "our own sheet, our own names, our own set of picture themes. Recreate as a clearly distinct original, never a copy",
+      "ref": "plugins/src/main/resources/org/runestar/client/plugins/emojis/names.csv and emojis.png"
+    },
+    {
+      "label": "low-detail switch (own label)",
+      "why": "A single switch that cuts visual cost helps weak phones and reads as a clean settings choice. One signature behaviour: flat shading when on. Could be ours at 20-30 percent resemblance",
+      "keep": "a single visible low-detail toggle",
+      "change": "our own flat-shading style and our own cut list. Recreate as a clearly distinct original, never a copy",
+      "ref": "plugins/src/main/java/org/runestar/client/plugins/lowdetail/ and flatshading/ (folder names only; README present)"
+    }
+  ],
+  "not_read": [
+    "Server half: not in the repo (game server is Jagex's); client half: client/ folder listed, not opened",
+    "Data half: cache-ids/ and raw/ generated code not present or not read; OSRS cache not in the box",
+    "emojis.png and all other PNG and TTF files: names and counts only",
+    "plugins/*/ bodies other than Implings.kt, plugins/*/README.md other than the title line of README.MD",
+    "updater, updater-deob, updater-mapper and launcher modules: listed only",
+    "Restricted donor: no constants, colours, coordinates or code copied; descriptions are shape-level"
+  ]
+}

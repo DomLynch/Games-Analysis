@@ -1,0 +1,97 @@
+{
+  "donor": "t-harper-swg-client-ts",
+  "code_licence": "none stated: no LICENSE file at repo root; package.json has no license field; README has no licence line (grep -i licen on README.md found nothing)",
+  "asset_licence": "none stated: assets/ holds only README.md; asset binaries are gitignored and not in the repo",
+  "rights_holder_status": "unknown from this repo's files. README names a SWG-Source server and the SOE protocol but gives no copyright line. The paired folder SWG-Source-dsrc has a _RESTRICTED-NOTE.txt calling its content leaked official SWG (Sony Online/Disney) source; that is the other folder's file, not this repo's.",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "binary test fixtures (IFF, POB, STF, hex, JSON)",
+      "path": "tests/fixtures/",
+      "count_hint": "9 files, 60K total: object-template-cantina-tatooine.iff (1.5K), portal-layout-cantina-tatooine.pob (23K), stf-*.stf (48-133 bytes), login-enum and session .hex/.json",
+      "licence": "none stated in this repo",
+      "class": "C",
+      "note": "Game-format binary fixtures of unknown provenance. Not parsed beyond file names and sizes (binary, not read). Use only as format reference, never as content."
+    },
+    {
+      "kind": "string tables (STF, locale binary)",
+      "path": "tests/fixtures/stf-*.stf and src/iff/stf-reader.ts",
+      "count_hint": "3 STF fixtures; entry count not parsed (not read)",
+      "licence": "none stated in this repo",
+      "class": "C",
+      "note": "Reader checks a u32 magic 0xabcd and a 5-byte header (stf-reader.ts lines 71-72). Names and text inside the tables were not opened."
+    },
+    {
+      "kind": "docs (protocol and handbook text)",
+      "path": "docs/ (lifecycle.md, wire-spec.md, adding-a-message.md, control-socket.md, examples-walkthrough.md, player-handbook.md, docs-portal-readme.md, handbook-snapshot.json)",
+      "count_hint": "8 files",
+      "licence": "none stated in this repo",
+      "class": "C",
+      "note": "Prose about the wire protocol and client API. Only grep hits were read; not read in full. Do not copy text."
+    },
+    {
+      "kind": "data table (lives in paired folder, not in this repo)",
+      "path": "SWG-Source-dsrc/sku.0/sys.shared/compiled/game/datatables/player/planet_map_cat.tab (present in the box; cited by src/client/script/map.ts)",
+      "count_hint": "1 table; rows not read",
+      "licence": "paired SWG-Source-dsrc/LICENSE.md is LGPL-3.0 text, but the same folder's _RESTRICTED-NOTE.txt says leaked proprietary source with no licence. Conflicting: class C.",
+      "class": "C",
+      "note": "Data half of the client. The client hardcodes its category names from this table (map.ts lines 17, 30-32, 39-52). Read the table name only, no rows."
+    },
+    {
+      "kind": "art, models, textures, audio, fonts, maps",
+      "path": "none in this repo",
+      "count_hint": "0",
+      "licence": "n/a",
+      "class": "D",
+      "note": "README says headless: no rendering, no audio, no animation. Nothing visual or audible to reuse here."
+    }
+  ],
+  "inspiration": [
+    "Planet-wide landmark pointer: one cached list of every named place on the planet, fetched once and then queried many times. Filter by category, drop inactive places, then sort nearest-first with an optional radius cap (map.ts lines 6, 226-232). For us this is a minimap or waypoint pointer to shrines, chests or the Pit gate in any zone. Keep the cache-once shape; change the source to our zone data.",
+    "Hub categories as a small fixed table of about twelve named categories with stable numeric ids (map.ts lines 39-51): bank, cantina, starport, medical centre, cloning, hotel, guild, city and others. Idea for our zones: a fixed hub-type list (camp, shrine, gate, market) as zone data fields rather than free text.",
+    "Friendly-name aliases sit in front of the canonical category table, so 'hospital' resolves to 'medicalcenter' (map.ts lines 58-64). Good for authoring: accept common words in content files, store one canonical key.",
+    "Golden pin test: the category index table is locked by a unit test so a data-table bump fails CI instead of silently shifting ids (map.ts line 19). Matches our catalogue-as-runtime-source row 20: a data change must fail a test, not drift.",
+    "Versioned binary headers fail loudly: the STF reader checks a fixed magic before trusting any entry (stf-reader.ts lines 71-72). Apply the same idea to any binary catalogue we ship: check magic and version, refuse on mismatch.",
+    "Golden binary fixtures per format (one object template, one portal layout, one login packet dump) make the parsers testable without the live server. Idea for our zone layout files: keep one small fixture per zone format."
+  ],
+  "briefs": [
+    {
+      "label": "Nearest-landmark pointer (own label: Waypoint Beacon)",
+      "why": "A single cached list of places, filtered and sorted by distance, gives a clear pointer at any range. The pointer is a readable cue at 375 wide because only the nearest one is shown.",
+      "keep": "cache once per zone; filter by category; nearest first; optional radius; inactive places hidden",
+      "change": "our pointer colours by threat or quest state, not by a category id; it is drawn as a ground ring plus a short bearing tick, not a text row; the source is zone data, not a server list",
+      "ref": "src/client/script/map.ts lines 6, 226-232 (resolvePlaces)"
+    },
+    {
+      "label": "Hub-type zone tag set (own label: Hub Tags)",
+      "why": "About twelve stable hub tags make a zone readable at a glance: each hub has one tag and one icon family.",
+      "keep": "small fixed tag list with stable ids; one tag per hub; ids never reused",
+      "change": "our tags are camp, shrine, gate, market and pit, with our own names and icons; no copy of the donor's category names or ids",
+      "ref": "src/client/script/map.ts lines 39-51 (MAP_CATEGORY_INDEX)"
+    }
+  ],
+  "cross_link": {
+    "camera": "none in this repo (headless)",
+    "zones": "map.ts category table is a zone-type list (see briefs)",
+    "spawns": "none read",
+    "loot": "none in this repo",
+    "hud-ui": "nearest-place pointer and category list map onto our minimap and world map",
+    "vfx": "none (headless)",
+    "animation": "none (headless)",
+    "sound": "none (headless)"
+  },
+  "halves": {
+    "read": "client half (src/client, src/iff, README, docs list)",
+    "server_half_in_box": "SWG-Source-src (C++ engine tree). Not read.",
+    "data_half_in_box": "SWG-Source-dsrc (541M). Read only: planet_map_cat.tab name, _RESTRICTED-NOTE.txt, LICENSE.md head."
+  },
+  "not_read": [
+    "tests/fixtures binary contents (IFF, POB, STF, hex) beyond names and sizes",
+    "stf entry counts and any string text",
+    "docs/*.md prose beyond grep hits",
+    "src/terrain/sim and bin/find-flat-land.ts (flat-patch zone-siting search; described in README only)",
+    "src/client/knowledge.ts (only export list seen)",
+    "SWG-Source-src server half (not opened)",
+    "planet_map_cat.tab rows (not opened)"
+  ]
+}

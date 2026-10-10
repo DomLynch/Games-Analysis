@@ -1,0 +1,44 @@
+{
+  "donor": "SFTtech-openage",
+  "code_licence": "GPL-3.0-or-later default (copying.md:2-3, README.md:215); named BSD 3-clause and LGPL 2.0 exceptions (copying.md:220, 243, 248)",
+  "asset_licence": "No separate asset licence stated. Repo files fall under the GPL3+ default. Original game media is not shipped and needs the user's own copy (README.md:6, doc/media_convert.md:4).",
+  "rights_holder_status": "volunteer project by the openage authors (copying.md author table); uses original game data at run time, not shipped; no clean-room statement in box",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "glsl shaders", "path": "assets/shaders/", "count_hint": "67 files", "licence": "GPL3+ default", "class": "B", "note": "copyleft condition; only final.frag.glsl opened: texture pass-through"},
+    {"kind": "qml ui", "path": "assets/test/qml/", "count_hint": "19 files", "licence": "GPL3+ default", "class": "B", "note": "not read"},
+    {"kind": "svg icons and logo", "path": "assets/doc/, assets/logo/", "count_hint": "9 svg", "licence": "GPL3+ default", "class": "B", "note": "README badges; not read in detail"},
+    {"kind": "png test images", "path": "assets/test/textures/, assets/textures/torn_paper_edge.png, assets/logo/banner.png", "count_hint": "8 png", "licence": "GPL3+ default", "class": "C", "note": "includes gaben.png (test_gaben.texture:6); provenance not stated in box; treat as unclear"},
+    {"kind": "texture, sprite, terrain metadata", "path": "assets/test/textures/", "count_hint": "13 files", "licence": "GPL3+ default", "class": "B", "note": "openage text metadata format"},
+    {"kind": "nyan test", "path": "assets/test/nyan/pong.nyan", "count_hint": "1 file", "licence": "GPL3+ default", "class": "B", "note": "not read"},
+    {"kind": "docx", "path": "assets/textures/torn_paper_edge.docx", "count_hint": "1 file", "licence": "GPL3+ default", "class": "B", "note": "binary, not read"},
+    {"kind": "converter config", "path": "cfg/converter/games/, cfg/converter/games/game_editions.toml", "count_hint": "about 14 files", "licence": "GPL3+ default", "class": "B", "note": "maps editions to original file names (datfile, terrain.drs, blendomatic.dat); no game data itself"},
+    {"kind": "reverse-engineered unit stats", "path": "doc/reverse_engineering/unit_stats/unit_stats_*.csv", "count_hint": "5 files, 764 lines total", "licence": "none stated; GPL3+ default by repo", "class": "C", "note": "numbers about proprietary AoE units; licence of data unclear"},
+    {"kind": "terrain catalogue (in doc)", "path": "doc/media/terrain.md", "count_hint": "27 terrain types", "licence": "GPL3+ default", "class": "B", "note": "id, file, priority, tile count, description table"},
+    {"kind": "original game media", "path": "not in box (user supplies)", "count_hint": "0 shipped", "licence": "proprietary (user's own copy)", "class": "D", "note": "nothing shipped; would be C for any use"}
+  ],
+  "inspiration": [
+    "Terrain edge blending by priority: the higher-priority terrain is alpha-masked over the lower to make a transition tile (doc/media/blendomatic.md:21). Shape for zone border looks with our own priority values.",
+    "Terrain as a numbered catalogue with priority and tile count per type (doc/media/terrain.md:10). Shape for a biome data table.",
+    "Unit stat row: armour split into melee and pierce, attack-type letter, bonus-vs-class text (doc/reverse_engineering/unit_stats/unit_stats_aoc.csv:1). Shape for catalogue fields (row 21).",
+    "Viewcone line of sight: units cannot see behind buildings and hidden units break cover only on attack (doc/ideas/gameplay.md:207-215). Idea for stealth and ambush visibility.",
+    "Pinned comparator: two armies auto-fight to the end with no player input (doc/ideas/gameplay.md:159). Shape for a duel bench.",
+    "Ambient weather and day-night as view-distance and darkness rules (doc/ideas/gameplay.md:11-30). Relevant to ambience.",
+    "Minimap symbols for points of interest instead of colours (doc/ideas/interface.md:12-14). Relevant to hud-ui.",
+    "Wildlife startle: a flock scatters when a tree is felled, and the sound carries further than sight (doc/ideas/gameplay.md:35). Relevant to sound-music and spawns."
+  ],
+  "briefs": [
+    {"label": "scatter wildlife", "why": "a cheap sign of distant activity that the ear picks up first", "keep": "idle wildlife, a trigger, a scatter, a sound that carries further than sight", "change": "a different creature family and silhouette, our own trigger (a fight nearby), a different flight pattern", "ref": "/mnt/frankendom-donors/SFTtech-openage/doc/ideas/gameplay.md:35"},
+    {"label": "reed waiter", "why": "a unit that waits in cover and reveals on its first action", "keep": "hidden to some observers only; reveal on attack", "change": "our own LOS rule and silhouette, a different hiding prop, a visible tell before reveal", "ref": "/mnt/frankendom-donors/SFTtech-openage/doc/ideas/gameplay.md:34"},
+    {"label": "auto-duel bench", "why": "two forces fight to the end with no input, useful for balance", "keep": "mirror match, winner-takes-all, no player input", "change": "runs on the server engine as a bench tool, not a player mode", "ref": "/mnt/frankendom-donors/SFTtech-openage/doc/ideas/gameplay.md:159"},
+    {"label": "ember on timber", "why": "flammable structures can catch and need a counter", "keep": "a fire that can be lit, and a counter that puts it out", "change": "spark source from our own effect, no spies, a different spread rule", "ref": "/mnt/frankendom-donors/SFTtech-openage/doc/ideas/gameplay.md:21-23"},
+    {"label": "priority border tile", "why": "a clean transition tile between two terrains with a stated priority order", "keep": "alpha-masked overlay chosen by priority", "change": "our own priority values and mask shapes, applied to zone borders", "ref": "/mnt/frankendom-donors/SFTtech-openage/doc/media/blendomatic.md:21"}
+  ],
+  "not_read": [
+    "openage-data (data pack) is not in the box; README.md:63 names it",
+    "67 glsl shaders, 19 qml, 9 svg, 8 png: file list only, binaries not opened",
+    "openage/convert python tree (261 files): names only",
+    "doc/nyan API reference and doc/media/* other than blendomatic, terrain, slp, drs, sound: not read",
+    "gaben.png: not opened; provenance not stated in box"
+  ]
+}

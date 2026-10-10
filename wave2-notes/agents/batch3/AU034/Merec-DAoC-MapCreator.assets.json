@@ -1,0 +1,41 @@
+{
+  "donor": "Merec-DAoC-MapCreator",
+  "code_licence": "GPL-2.0 (LICENSE, GNU GPL v2 text; source headers carry the GPL notice)",
+  "asset_licence": "no separate asset licence stated; repo LICENSE (GPL-2.0) applies to the tree; origin of pre-rendered PNG and DDS files not stated",
+  "rights_holder_status": "unknown for game data and pre-rendered images; repo names Stefan Schäfer as copyright holder of the source; README says the tool uses the DAoC game client (not in box)",
+  "best_class": "C",
+  "halves_read": "single desktop tool; no server or client half in box; data half = MapCreator/data (listed, Zones.xml and fixtures.xml read); DAoC client not in box",
+  "asset_groups": [
+    {"kind": "pre-rendered 2D sprites (objects)", "path": "MapCreator/data/prerendered/objects/", "count_hint": "11 PNG", "licence": "none stated; repo GPL-2.0 by LICENSE", "class": "C", "note": "relic temples in three faction variants, boats, logs, rock barrier, pier; origin not stated; not opened"},
+    {"kind": "pre-rendered 2D sprites (trees)", "path": "MapCreator/data/prerendered/trees/", "count_hint": "44 PNG", "licence": "none stated; repo GPL-2.0 by LICENSE", "class": "C", "note": "oaks, birches, pines, elms, beech, dead and gnarled trees; origin not stated; not opened"},
+    {"kind": "textures", "path": "MapCreator/data/textures/", "count_hint": "5 files (3 DDS, 2 PNG)", "licence": "none stated; repo GPL-2.0 by LICENSE", "class": "C", "note": "lava.dds, watery.dds, elmleaves_rt_1.dds, leaves_mask.png, tree_leaves.png; not opened"},
+    {"kind": "UI and about images", "path": "MapCreator/Resources/", "count_hint": "2 files (jpg, png)", "licence": "none stated", "class": "C", "note": "MapCreatorInfo.jpg, dol_small.png; not opened"},
+    {"kind": "application icon", "path": "MapCreator/icon.ico", "count_hint": "1 file", "licence": "none stated", "class": "C", "note": "not opened"},
+    {"kind": "data table (zones)", "path": "MapCreator/data/Zones.xml", "count_hint": "363 lines, 240 zone entries", "licence": "repo GPL-2.0 by LICENSE", "class": "B", "note": "type counts Outdoor 124, Dungeons 49, Indoor 27, Instances 26, Battlegrounds 11, Capitol 3; place names are game terms (class C for names)"},
+    {"kind": "data table (fixtures)", "path": "MapCreator/fixtures.xml", "count_hint": "137 lines, 8 categories", "licence": "repo GPL-2.0 by LICENSE", "class": "B", "note": "renderer modes None, Shaded, Flat, Image; light ramp and shadow records per category"},
+    {"kind": "schemas and generated settings", "path": "MapCreator/data/*.xsd, *.xsc, *.xss, *.Designer.cs", "count_hint": "about 10 files", "licence": "repo GPL-2.0 by LICENSE", "class": "B", "note": "generated dataset code; not read beyond headers"},
+    {"kind": "binary libraries", "path": "libs/ (5 DLLs); tools/filever.exe", "count_hint": "6 binaries", "licence": "none stated in box", "class": "C", "note": "dependency binaries; not opened"},
+    {"kind": "audio, fonts, meshes, UI skin", "path": "none in box", "count_hint": "0", "licence": "n/a", "class": "D", "note": "no such content"}
+  ],
+  "inspiration": [
+    "Bounds and water are computed from terrain instead of flood-filled; a top-down zone map from one height and water pass suits a minimap. Source: README changelog, older entries (rewrite of the bounds generator and the water calculation).",
+    "Fixture categories carry a render mode, a light ramp and a shadow offset each; one small table styles every landmark on a map. Ref MapCreator/fixtures.xml lines 3 and 17.",
+    "River types are a small enum with lava as its own class, not a recoloured water. Ref MapCreator/Classes/Constants.cs line 40.",
+    "Foliage uses a leaf-mask texture on a flat card and a per-map tree transparency setting, which keeps foliage readable without dense geometry. Ref MapCreator/data/textures/tree_leaves.png and leaves_mask.png (not read).",
+    "Landmarks come in faction variants with one footprint: keep the silhouette, change the faction ornament. Ref MapCreator/data/prerendered/objects/Hib_RelicTemple_F.png and Mid_RelicTemple_F.png (not read).",
+    "Zones carry a type tag in one XML table (outdoor, dungeon, indoor, instance, battleground, capitol), which matches zones as data on one runtime. Ref MapCreator/data/Zones.xml line 6."
+  ],
+  "briefs": [
+    {"label": "Faction keep landmark", "why": "a tall, centred silhouette reads as a minimap marker at 375 wide", "keep": "central tower silhouette and footprint shared across three factions", "change": "Recreate as a distinct original, never a copy: different roof and arch, faction colour by tint not copied ornament", "ref": "MapCreator/data/prerendered/objects/Hib_RelicTemple_F.png; Mid_RelicTemple_F.png; alb_relictemple_f.png (not read)"},
+    {"label": "Gnarled dead tree", "why": "a bare crown reads at distance against living foliage", "keep": "split bare crown and dark trunk silhouette", "change": "Recreate as a distinct original, never a copy: different branch count and an ember knot at the base", "ref": "MapCreator/data/prerendered/trees/Hdeadtree.png; Beech_gnarl_dead.png (not read)"},
+    {"label": "Leaf-mask canopy", "why": "one mask texture gates a flat canopy, cheap to draw at scale", "keep": "leaf mask on a flat card for foliage", "change": "Recreate as a distinct original, never a copy: our own leaf shape and a sway rule", "ref": "MapCreator/data/textures/tree_leaves.png; leaves_mask.png (not read)"},
+    {"label": "Lava band", "why": "lava as its own class reads as a hazard, not as water", "keep": "a distinct lava class in the river enum", "change": "Recreate as a distinct original, never a copy: a slow glowing band with a crust and its own sound cue", "ref": "MapCreator/Classes/Constants.cs:40; MapCreator/data/textures/lava.dds (not read)"}
+  ],
+  "not_read": [
+    "all PNG and DDS image pixels (names and sizes only; sizes from ls)",
+    "libs/*.dll and tools/filever.exe (binaries)",
+    "MapCreator/Classes/MpkWrapper.cs and other .cs files beyond the lines cited",
+    "NifUtil source (names only)",
+    "CLAUDE.md and AGENTS.md: not present in this donor"
+  ]
+}

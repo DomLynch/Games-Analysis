@@ -1,0 +1,129 @@
+{
+  "donor": "scummvm-scummvm",
+  "code_licence": "GNU GPL version 3 (COPYING line 2 'Version 3, 29 June 2007'); source headers say 'either version 3 of the License, or' (engines/scumm/scumm.cpp:9). README has no licence section.",
+  "asset_licence": "Mixed, per file set: fonts per dists/engine-data/fonts/fonts/README (BSD, SIL OFL, Apache 2.0, LGPL 2.1+, some files unassigned or no licence stated); soundfont dists/soundfonts/Roland_SC-55.sf2 GPL v3 or greater (COPYRIGHT.Roland_SC-55 line 1); game data in dists/engine-data and devtools/create_ultima/files: no licence stated, described as taken from original executables; gui/themes: no licence stated.",
+  "rights_holder_status": "Mixed. GPL project with named contributors (COPYRIGHT). Engine data packs and Ultima resources are described in the files as taken from original commercial game executables; rights holders not named in the box: unknown. Font families named in README. Soundfont credit 'deemster' (2015).",
+  "best_class": "B",
+  "asset_groups": [
+    {
+      "kind": "fonts (Go Mono)",
+      "path": "dists/engine-data/fonts/fonts/GoMono-*.ttf",
+      "count_hint": "4 files (names per README)",
+      "licence": "BSD per README line 3",
+      "class": "A",
+      "note": "keep licence file; not opened"
+    },
+    {
+      "kind": "fonts (Liberation, Noto, Source Code Variable)",
+      "path": "dists/engine-data/fonts/fonts/",
+      "count_hint": "about 28 ttf",
+      "licence": "SIL OFL per README lines 4, 6, 7",
+      "class": "B",
+      "note": "OFL conditions; text of OFL not read"
+    },
+    {
+      "kind": "fonts (Wine; Material icons)",
+      "path": "dists/engine-data/fonts/fonts/",
+      "count_hint": "unassigned",
+      "licence": "LGPL 2.1+ (Wine, line 9) and Apache 2.0 (Material, line 5); files not named",
+      "class": "B",
+      "note": "per-file mapping not stated"
+    },
+    {
+      "kind": "fonts with no licence stated",
+      "path": "dists/engine-data/fonts/fonts/ (ms_sans_serif.ttf, system.ttf, topaz, VL Gothic)",
+      "count_hint": "3-4 items",
+      "licence": "not stated (README line 8 ends with '...')",
+      "class": "C",
+      "note": "unclear"
+    },
+    {
+      "kind": "soundfont",
+      "path": "dists/soundfonts/Roland_SC-55.sf2",
+      "count_hint": "1 file, 3.28 MB (not opened)",
+      "licence": "GPL v3 or greater (COPYRIGHT.Roland_SC-55 line 1)",
+      "class": "B",
+      "note": "copyleft condition if shipped; instrument origin not stated in file"
+    },
+    {
+      "kind": "engine data packs (game data)",
+      "path": "dists/engine-data/*.dat, *.zip, *.tbl, *.cpt, *.m4b, *.lab, got.gfx, got.aud",
+      "count_hint": "about 50 files; ultima.dat 16 MB, fonts-cjk.dat 38 MB",
+      "licence": "not stated; README says taken from original executables (lines 58, 61, 74, 98, 133)",
+      "class": "C",
+      "note": "do not use; shape only if at all"
+    },
+    {
+      "kind": "Ultima IV/VI resources",
+      "path": "devtools/create_ultima/files/ultima4, ultima6",
+      "count_hint": "ultima4 481 files in six dirs; ultima6 359 in three dirs plus top-level bmp",
+      "licence": "not stated; ultima4_resources.cpp:64 extracts from avatar.exe",
+      "class": "C",
+      "note": "original-game derived; do not use"
+    },
+    {
+      "kind": "gui theme art and layouts",
+      "path": "gui/themes/",
+      "count_hint": "several bmp/svg/stx/zip per theme",
+      "licence": "not stated (no licence file in theme folders)",
+      "class": "C",
+      "note": "layout .stx is a usable format idea only"
+    },
+    {
+      "kind": "translations",
+      "path": "po/",
+      "count_hint": "34 .po files",
+      "licence": "GPL project (repo) - not stated per file",
+      "class": "C",
+      "note": "not opened"
+    },
+    {
+      "kind": "code (engines, common, gui, devtools)",
+      "path": "engines/, common/, gui/, devtools/",
+      "count_hint": "10486 cpp, 10105 h",
+      "licence": "GPL v3 or later",
+      "class": "code",
+      "note": "code not copied; shape only (clean-room)"
+    }
+  ],
+  "inspiration": [
+    "One timeline queue of scheduled events keyed by map time, with named types for doors, walls, teleporters, pits and negative 'reaction' events (engines/dm/timeline.h:39-52, 100-102; names only, logic not read). Fits spawn and despawn timers (row 23).",
+    "Creature groups own a set of cells, each member has an ordinal per cell, flags mark attacking, side-attacking and any-party-member attacks (engines/dm/group.h:93-95, 107-111, 127-139, 183). Fits many-vs-one target choice and the attacker cap (row 4).",
+    "A 44-slot action-by-defence matrix resolves a block or hit with one lookup (engines/dm/timeline.cpp:43; timeline.h:196). Keep the structure; values are game-derived and not recorded here.",
+    "Projectiles and explosions in their own module (engines/dm/projexpl.h:41-43), split from melee; a clean split for ranged enemies and burst effects.",
+    "Resolution-keyed layout files with scalable variables for line height, font height and borders (gui/themes/common/lowres_layout.stx:22-25). Fits a 375-wide HUD (row 14).",
+    "One README per font pack naming the licence per family (dists/engine-data/fonts/fonts/README lines 3-9). Copy the habit for our credits file.",
+    "Line-based string tables with blank-line-separated entries and speaker tags (devtools/create_ultima/files/ultima4/text). A simple dialogue format; text must be ours.",
+    "Soundfont as a layering aid (GPL v3+ file): an instrument bank for placeholder music; licence is copyleft if shipped, so keep it off our build unless Dom rules otherwise."
+  ],
+  "briefs": [
+    {
+      "label": "Timed reaction tile",
+      "why": "A floor tile reacts only when a party member is next to it, so the player reads it before stepping on.",
+      "keep": "a timed event on the map timeline; a reaction event fired by proximity",
+      "change": "our tile look and sound; reaction delay in our tick units; no pit or fake-wall copy",
+      "ref": "engines/dm/timeline.h:39-52, 100-102 (names only; logic not read)"
+    },
+    {
+      "label": "Creature cluster",
+      "why": "A group takes four cells, one slot each, so it reads as one blob with spacing.",
+      "keep": "a group that owns cells, one ordinal per cell, one attacking flag",
+      "change": "our silhouettes; a tighter or looser cluster; a different slot order and body arrangement",
+      "ref": "engines/dm/group.h:111-139, 183"
+    },
+    {
+      "label": "Timed projectile burst",
+      "why": "A missile flies on the timeline and bursts on arrival with a short shape, readable at 375 wide.",
+      "keep": "projectile as an event on the same timed queue; a burst that lasts a few frames",
+      "change": "our colour, burst shape and sound cue; no copy of the module",
+      "ref": "engines/dm/projexpl.h:41-43"
+    }
+  ],
+  "not_read": [
+    "Most engines (only engines/dm headers and cpp parts cited); engines/dm/*.cpp beyond cited lines",
+    "All .dat, .zip, .gfx, .aud, .m4b, .lab, .sf2, .ttf, .png, .bmp files (binary, not opened)",
+    "gui/themes/highres_layout.stx, other THEMERC files, theme .svg art",
+    "po/*.po (listed only); LICENSES/* texts (listed only); create_ultima/files/ultima6 text",
+    "README.md (grep only; no licence text found)"
+  ]
+}

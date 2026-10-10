@@ -1,0 +1,93 @@
+{
+  "donor": "lightvector-KataGo",
+  "code_licence": "MIT-style permission and warranty text for all content not covered by the listed third-party parts (LICENSE line 13 'the license for all OTHER content in this repo is as follows', permission text from line 20). The file does not name the licence in the lines read. Third-party libraries under cpp/external carry their own licences (LICENSE lines 1-6); cpp/core/sha2.cpp embeds its own licence (lines 7-8).",
+  "asset_licence": "Same LICENSE as the code for every non-library file (LICENSE line 13). The repo holds no game art, sound or music. Neural network weights are not in the repo: README points to separate downloads (README lines 149-154 name a human SL model file fetched from releases).",
+  "rights_holder_status": "Open-source project. LICENSE line 17 says 'Copyright 2025 David J Wu (\"lightvector\") and/or other authors'; CONTRIBUTORS lists the named authors. No leak or decompile statement.",
+  "best_class": "D",
+  "asset_groups": [
+    {
+      "kind": "documentation diagrams",
+      "path": "images/docs/ (23 png; file names show neural-net block sketches, MCTS and tree diagrams, a chess transposition sketch, and older-policy failure examples)",
+      "count_hint": "23 png, about 4.2 MB for images/",
+      "licence": "Same LICENSE as code (line 13 and the permission text from line 20). Named as 'other content'.",
+      "class": "A (permissive, with the LICENSE notice kept). Not useful for a game; listed for completeness.",
+      "note": "Diagrams explain search and network internals. They are not game assets. Not opened (file list only)."
+    },
+    {
+      "kind": "analysis configs and example command files",
+      "path": "cpp/configs/ (10 entries, for example gtp_example.cfg, analysis_example.cfg, gtp_human5k_example.cfg, gtp_human9d_search_example.cfg, match_example.cfg, task_example.cfg; training/ and book/ subfolders)",
+      "count_hint": "10 entries",
+      "licence": "Same LICENSE as code.",
+      "class": "A (text configs under the repo licence)",
+      "note": "Config names carry the rank-imitation idea (5k and 9d variants). Not opened beyond names."
+    },
+    {
+      "kind": "test inputs and analysis fixtures",
+      "path": "cpp/tests/analysis/*.txt (for example humansl.txt.noauto, symmetry.txt, focus.txt, pvvisits.txt, evalcache.txt); python/testdata/benchmark_data_1024.npz (binary, not opened)",
+      "count_hint": "several txt, one npz",
+      "licence": "Same LICENSE as code.",
+      "class": "A for text fixtures; binary npz not opened",
+      "note": "Fixture names show what the analysis API is tested for (per-move ownership, focus, PV visits, eval cache). Not opened beyond names."
+    },
+    {
+      "kind": "game-record and bot-list text",
+      "path": "misc/bots/ogs.txt, misc/bots/kgs.txt, misc/badgogodgames/*.txt (3 files), sgf files (6 in the tree)",
+      "count_hint": "2 bot lists, 3 bad-game lists, 6 sgf",
+      "licence": "Same LICENSE as code.",
+      "class": "A (text under the repo licence). Bot account names in the lists are not recorded here.",
+      "note": "Curated lists of games the engine handles badly; a test-set idea. Contents not read (names and counts only)."
+    },
+    {
+      "kind": "rules documents",
+      "path": "docs/rules.html, docs/rulesv0.html, docs/rulesv1.html",
+      "count_hint": "3 html",
+      "licence": "Same LICENSE as code.",
+      "class": "A (text). Not game art.",
+      "note": "Rules for board scoring; not read beyond a grep for ruleset names."
+    }
+  ],
+  "halves_read": [
+    "engine docs: README.md (licence section, human-style section, analysis output lines), docs/Analysis_Engine.md (analysis option lines 91-94, 264)",
+    "engine source (cpp/): tree listing and test folder names only; no source file read",
+    "client or GUI half: not in this repo (the README points to external GUIs such as Lizzie and Sabaki); none in the box"
+  ],
+  "matching_half_in_box": "none. This donor is an engine with an analysis API; no game client is in the box.",
+  "inspiration": [
+    "Per-cell ownership field: the engine reports, for each board cell, a prediction from -1 to 1 of who will own it, and can also report one for each candidate move (docs/Analysis_Engine.md lines 91-93). Keep the one-number-per-cell field drawn as heat; change it into zone-control heat for our arena, with a different palette and an outline for the zone edge.",
+    "Expected score alongside win chance: the engine reports both a win-rate style number and an estimate of the expected score (README.md line 243). Keep two readouts for one state: how likely, and how much. Change it into a fight readout with win chance plus expected damage swing.",
+    "Cost warning on the heat field: the ownership option doubles memory use and slightly lowers speed (docs/Analysis_Engine.md line 91). Keep the switch that makes the expensive layer opt-in; use the same rule for any heavy HUD overlay on phones.",
+    "Rank-shaped opponent: the human-style mode imitates play at a stated rank instead of playing the strongest move (README.md lines 149-154; cpp/configs/gtp_human5k_example.cfg). Keep the idea of an opponent whose mistakes look human; change it into a style-based opponent with three readable tells.",
+    "Per-move preview: the analysis can report ownership for each candidate move too (docs/Analysis_Engine.md line 93). Keep the per-option read-out; change it into a per-attack damage-zone preview on hover or long-press.",
+    "Curated bad-case lists: misc/badgogodgames holds lists of games the engine handles badly (names only, not read). Keep the idea of a named regression list of known bad scenarios for our fight tests; change the content to our own fight situations."
+  ],
+  "briefs": [
+    {
+      "label": "Zone-control heat overlay",
+      "why": "A single number per cell drawn as a gradient makes control of an area readable at a glance, which suits a crowded arena at 375 wide.",
+      "keep": "one value per cell from -1 to 1; cool to warm colour ramp; opt-in layer",
+      "change": "our own two-colour ramp for two factions; an outline on the zone edge; drawn only in a debug or tactics mode",
+      "ref": "docs/Analysis_Engine.md lines 91-93 (ownership option and per-move ownership); README.md line 243"
+    },
+    {
+      "label": "Human-paced opponent with visible tells",
+      "why": "An opponent that errs in human-looking places feels fair, and a fight can be tuned to a rank without changing the search.",
+      "keep": "imitate a stated level; mistakes come from the level, not from random noise",
+      "change": "the level is a fighting style with three named tells, not a rank; the tells are our own animations",
+      "ref": "cpp/configs/gtp_human5k_example.cfg; README.md lines 149-154"
+    },
+    {
+      "label": "Two-number fight readout",
+      "why": "Showing a chance and a size side by side tells the player both whether to press and how much it is worth.",
+      "keep": "a probability next to a magnitude for the same state",
+      "change": "win chance and expected damage swing in our HUD; our own labels and colours",
+      "ref": "README.md line 243 (expected score next to winrate)"
+    }
+  ],
+  "not_read": [
+    "cpp/ source files (tree listing and test folder names only)",
+    "SelfplayTraining.md and TrainingHistory.md at the repo root (not opened)",
+    "all png diagrams (names only); misc/*.txt contents (names and counts only)",
+    "python/ scripts (names only); python/testdata/benchmark_data_1024.npz (binary, not opened)",
+    "docs/rules*.html content beyond a grep for ruleset names"
+  ]
+}

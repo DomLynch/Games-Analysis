@@ -1,0 +1,115 @@
+{
+  "donor": "vthibault-roBrowser",
+  "halves_read": "Client half (browser-side JavaScript under src/, PHP remote-client files under client/, and the DB tables under src/DB). Server half is NOT in the box: README.md line 30 names an external websocket proxy (a separate project). Paired donor in the box: MrAntares-roBrowserLegacy (folder present, not read).",
+  "code_licence": "GPL-3.0. LICENSE line 2 reads 'Version 3, 29 June 2007'. Vendored third-party files keep their own licences: src/Audio/mp3-player/license.txt says MPL 1.1 (line 1); src/Vendors/ and src/Utils/ carry their own headers (RequireJS, jQuery, gl-matrix, html2canvas; headers read, not all files read).",
+  "asset_licence": "No game assets in the box. client/data, client/BGM and client/resources contain placeholder files only (client/data/add-data-folder-files-here.txt and client/BGM/add-bgm-here.txt are empty; client/resources holds a .htaccess). client/readme.md line 14 tells the user to add their own GRF files. The repo states no separate licence for any asset.",
+  "rights_holder_status": "unknown for the game content. README.md line 3 calls roBrowser a web-based clone of Ragnarok Online and the setup needs the user's own client files. The repo files do not name the owner of the game content. No copyright line for game content found.",
+  "best_class": "D",
+  "asset_groups": [
+    {
+      "kind": "game client files (art, models, sprites, maps, audio)",
+      "path": "client/data/, client/BGM/, client/resources/",
+      "count_hint": "0 game files; placeholders only",
+      "licence": "not in box; user supplies own GRF and DATA.INI (client/readme.md line 14)",
+      "class": "D",
+      "note": "Nothing to use. The remote client extracts files from the user's own GRF archive (client/readme.md line 8). Models, sprites and maps are therefore not in the box and were not inspected."
+    },
+    {
+      "kind": "keyed text and ID tables (item, monster, skill, effect names and descriptions)",
+      "path": "src/DB/Items/ItemTable.js (about 8,400 numeric-keyed lines by grep, may include nested keys; 185k lines); src/DB/Monsters/MonsterTable.js (about 2,270 keyed lines); src/DB/Skills/SkillDescription.js (14,993 lines); src/DB/Skills/SkillInfo.js (11,858 lines); src/DB/Effects/EffectTable.js (2,446 lines)",
+      "count_hint": "about 8,400 numeric-keyed item lines (grep count), about 2,270 monster/job keyed lines, about 15k lines of skill text",
+      "licence": "GPL-3.0 as repo code; the text strings look like original game text with no separate licence stated in the file",
+      "class": "C",
+      "note": "Provenance of the name and description strings is not stated in the repo; treat as original game text. Only the structure was read (first MonsterTable entries are job-class names; not read beyond the first lines). Do not reuse strings. Use the ID-to-text split as a data pattern only."
+    },
+    {
+      "kind": "vendored third-party libraries and MP3 player",
+      "path": "src/Vendors/ (6 files); src/Audio/mp3-player/",
+      "count_hint": "6 vendored JavaScript libraries plus the MP3 player folder",
+      "licence": "MPL 1.1 for mp3-player (license.txt line 1). Other vendored files carry their own headers (RequireJS 2.1.8 and text plugin, jQuery 1.9.1, gl-matrix BSD-style, html2canvas v0.34).",
+      "class": "B",
+      "note": "Third-party code, not game content. Keep the notices if any file is reused."
+    },
+    {
+      "kind": "WebGL shader and effect code (code, not art)",
+      "path": "src/Renderer/Map/Water.js; src/Renderer/Effects/Sky.js; src/Renderer/Effects/LockOnTarget.js; src/Renderer/Effects/Damage.js",
+      "count_hint": "4 effect files read in part",
+      "licence": "GPL-3.0 (repo code)",
+      "class": "B",
+      "note": "Code. GPL-3 conditions apply if copied. Use as reference, re-write our own."
+    },
+    {
+      "kind": "per-map sky and cloud colour table (data inside a code file)",
+      "path": "src/DB/Effects/WeatherEffect.js",
+      "count_hint": "about 12 map entries (first ones read)",
+      "licence": "GPL-3.0 (repo file)",
+      "class": "B",
+      "note": "Keyed by map file name; two colour pairs per entry (sky colour and cloud tint). Numbers not recorded here."
+    },
+    {
+      "kind": "UI art, fonts, icons, sound files",
+      "path": "applications/ (icon_128.png, icon_16.png); tools/converter (loading.gif, arrow-up.png); src/ (no art folder found)",
+      "count_hint": "3 PNG and 1 GIF; no fonts or audio",
+      "licence": "not stated in the repo for these files",
+      "class": "C",
+      "note": "Only app icons and converter UI images. Not opened beyond the file list."
+    }
+  ],
+  "inspiration": [
+    "Water is a flat plane whose vertices are pushed up and down by a sine of their x plus z position, offset by a per-frame clock. A texture strip cycles through a fixed set of frames with a modulo index (src/Renderer/Map/Water.js lines 97, 232, 235). Recreate: a gentle ripple on a flat quad plus a looping caustic strip, our own palette, our own ripple direction.",
+    "Sky clouds are a fixed pool of about 150 billboards (src/Renderer/Effects/Sky.js line 30). Each cloud gets a random life, and its birth time is set 2 s in the past so the sky is already full when the zone loads (Sky.js lines 128 and 129). The pool-plus-random-life pattern costs no per-frame allocation.",
+    "The lock-on or cast ring is a flat disc that rotates each tick and changes brightness in 20 discrete steps over a 20-tick cycle, with a single tint uniform in the fragment shader (LockOnTarget.js lines 102, 157, 260). Discrete steps read clearly at 375 wide and cost almost nothing.",
+    "Damage numbers take their colour from the hit class and fade by the fraction of their life used (src/Renderer/Effects/Damage.js line 363). Keep colour-by-class and fade-by-life; change the rise path and the entry scale.",
+    "Sky colour and cloud tint live in one table keyed by map file name (src/DB/Effects/WeatherEffect.js lines 22 to 23). Each zone gets a sky and a cloud pair as data. Our zone data can carry the same two fields, extended to a gradient.",
+    "Blob shadow size is a small table keyed by monster ID, with a zero value for things that should have no shadow (src/DB/Monsters/ShadowTable.js, data structure read; numbers not recorded). Shadow scale as data, not code, is a clean catalogue-field pattern (row 21).",
+    "Catalogue IDs are kept apart from display text: numeric-keyed tables for items, monsters and skills, with text in the same keyed record (src/DB/DBManager.js loads them). Keep the ID and text split for our catalogue; write our own text.",
+    "The effect table resolves an effect name to a file name pattern, with a random number substituted for a placeholder (EffectTable.js header comment, read; no receipt). Idea: one effect name resolves to a random variant. Useful for blood and impact variety (row 8)."
+  ],
+  "briefs": [
+    {
+      "label": "Ripple lake",
+      "why": "A low-amplitude ripple reads as water at 375 wide without a heavy shader. Calm, cheap, and readable from a fight camera.",
+      "keep": "Vertex sine driven by position and a time offset; a looping caustic strip with a frame index.",
+      "change": "Recreate as a clearly distinct original, never a copy: ripples radiate from impact points instead of a global wave; our own palette; a green-grey tone instead of a blue pond; a different loop length.",
+      "ref": "src/Renderer/Map/Water.js lines 97, 232, 235"
+    },
+    {
+      "label": "Cloud pool drift",
+      "why": "A fixed pool of sprites with random life gives a living sky and no per-frame allocation. Pre-aged spawns mean the sky never starts empty.",
+      "keep": "Fixed pool, random life, back-dated spawn so the sky starts full.",
+      "change": "Recreate as a clearly distinct original: fewer, larger shaped sprites in our palette; soft shadows drifting over the ground instead of clouds; spawn position tied to the zone wind direction.",
+      "ref": "src/Renderer/Effects/Sky.js lines 30, 128, 129"
+    },
+    {
+      "label": "Twenty-step lock ring",
+      "why": "A rotating ground ring that pulses in discrete steps is a readable lock-on marker that reads at phone size.",
+      "keep": "Flat rotating disc; discrete brightness steps; one tint uniform.",
+      "change": "Recreate as a clearly distinct original: a segmented runic ring with two colours and a radial spoke; the pulse follows the target's threat level, not a fixed cycle.",
+      "ref": "src/Renderer/Effects/LockOnTarget.js lines 102, 157, 260"
+    },
+    {
+      "label": "Fading hit number",
+      "why": "Colour by hit class plus fade by life gives an instant read of what happened in a busy fight.",
+      "keep": "Colour set per hit class; alpha fades with life fraction.",
+      "change": "Recreate as a clearly distinct original: a short punch-scale on spawn, an arc path, and our own glyph set; never the same font or rise path.",
+      "ref": "src/Renderer/Effects/Damage.js line 363"
+    },
+    {
+      "label": "Zone sky pair table",
+      "why": "One table of sky and cloud colour per zone makes each zone feel distinct for almost no code.",
+      "keep": "A keyed table per zone with a sky colour and a cloud tint.",
+      "change": "Recreate as a clearly distinct original: a three-stop gradient and a horizon band per zone, stored as zone data fields, not a map file name key.",
+      "ref": "src/DB/Effects/WeatherEffect.js lines 22 to 23"
+    }
+  ],
+  "cross_link": "vfx: yes (Water.js, Sky.js, LockOnTarget.js, Damage.js; read). zones: yes (WeatherEffect.js sky table). spawns: no assets. loot: ItemTable.js is a data table; not read beyond the header. camera: src/Renderer/Camera.js exists, not read. hud-ui: no art in box. animation: src/Renderer/Entity/EntityAnimations.js exists, not read. sound: src/Renderer/Map/Sounds.js and src/Renderer/Entity/EntitySound.js exist, not read; no audio files in box.",
+  "not_read": [
+    "Server half (not in box; README points to an external websocket proxy).",
+    "All client PHP files under client/ (Client.php, Grf.php, Bmp.php, index.php) beyond the readme.",
+    "src/Renderer/Entity/*, src/Renderer/Camera.js, src/Renderer/Map/Sounds.js, src/Renderer/Map/Models.js and the rest of src/Engine/ (only file names).",
+    "Full text of ItemTable.js, SkillDescription.js, SkillInfo.js, EffectTable.js (structure only).",
+    "tools/build and tools/converter (only the file list).",
+    "src/Vendors/ and src/Utils/ beyond license headers.",
+    "applications/node-webkit and applications/chrome-app (not opened)."
+  ]
+}

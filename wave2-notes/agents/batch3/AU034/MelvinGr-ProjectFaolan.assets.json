@@ -1,0 +1,39 @@
+{
+  "donor": "MelvinGr-ProjectFaolan",
+  "code_licence": "none stated (no LICENSE or COPYING file; text grep for licen/copyright found no licence text)",
+  "asset_licence": "none stated; no art, audio or map folders in the box",
+  "rights_holder_status": "unknown from repo files; README says the project is not under development and is an Age of Conan server protocol emulator",
+  "best_class": "D",
+  "halves_read": "server half (Faolan/, Faolan.Core/ entities and enums); client half not in box; data half is binary SQLite (not read)",
+  "asset_groups": [
+    {"kind": "archives (old source snapshots, not assets)", "path": "Faolan.Files/Archive/", "count_hint": "3 zip + 1 rar", "licence": "none stated", "class": "C", "note": "listings show old source trees (trunk/, projects/, .svn); file names include Private and Pre; not opened or extracted"},
+    {"kind": "UI/logo image", "path": "Faolan.Files/logo.png", "count_hint": "1 file, 2277 bytes", "licence": "none stated", "class": "C", "note": "not opened"},
+    {"kind": "embedded database (data tables)", "path": "Faolan.Files/projectfaolan.db; Faolan/faolan.db", "count_hint": "50176 bytes for projectfaolan.db", "licence": "none stated", "class": "C", "note": "binary SQLite, not read; probable gameplay tables live here"},
+    {"kind": "packet byte dump", "path": "Faolan/Resources/bigboy.txt", "count_hint": "1 line of hex bytes", "licence": "none stated", "class": "D", "note": "wire-byte capture, not art; first 300 bytes read"},
+    {"kind": "data entities (text data tables as code)", "path": "Faolan.Core/Data/Spell.cs; Npc.cs; Item.cs", "count_hint": "17, 28, 12 lines", "licence": "none stated", "class": "C", "note": "spell, NPC and item record shapes; no values present"},
+    {"kind": "enums (class, race, realm, etc.)", "path": "Faolan.Core/Enums/", "count_hint": "13 files; Class.cs has 12 entries", "licence": "none stated", "class": "C", "note": "game-specific class names; keep the shape, do not reuse names"},
+    {"kind": "server config", "path": "Faolan/faolan.json", "count_hint": "1 file", "licence": "none stated", "class": "D", "note": "ports and DB paths only"},
+    {"kind": "art, 3D, audio, fonts, maps", "path": "none in box", "count_hint": "0", "licence": "n/a", "class": "D", "note": "no non-code content beyond the items above"}
+  ],
+  "inspiration": [
+    "A spell is one flat record (cast time, mana cost, min and max damage, level, effect link); keep the flat shape for data-driven skills, add a telegraph window. Ref Faolan.Core/Data/Spell.cs lines 10-15.",
+    "Each NPC carries one integer faction next to health, stamina, mana and exp reward; a faction id can drive a shared hate list for many-on-one fights. Ref Faolan.Core/Data/Npc.cs lines 14-18.",
+    "The class kit is one byte-typed enum with twelve entries; a small archetype enum keeps kits as data. Names are game-specific; keep the shape only. Ref Faolan.Core/Enums/Class.cs line 3.",
+    "A hex packet dump is a replay-fixture idea: recorded wire bytes as test input for a fight record and replay (parity row 19). Ref Faolan/Resources/bigboy.txt (first bytes only).",
+    "Separate dev and production DB paths in one JSON config keep local and live data apart. Ref Faolan/faolan.json."
+  ],
+  "briefs": [
+    {"label": "Flat spell record", "why": "one row per skill makes a kit easy to tune", "keep": "flat record with cast time, cost and min/max damage", "change": "Recreate as a distinct original, never a copy: spells reference fight-engine ids and carry a telegraph window instead of a plain cast time", "ref": "Faolan.Core/Data/Spell.cs:10-15"},
+    {"label": "Faction tag on each enemy", "why": "one integer groups enemies for shared aggro", "keep": "an integer faction on each NPC row", "change": "Recreate as a distinct original, never a copy: tags are hate-list groups with a leash rule, not a bare number", "ref": "Faolan.Core/Data/Npc.cs:14"},
+    {"label": "Archetype enum", "why": "a compact archetype list keeps kits data-driven", "keep": "byte-typed list of archetype codes", "change": "Recreate as a distinct original, never a copy: kits are combinations of three tags with our own names", "ref": "Faolan.Core/Enums/Class.cs:3"}
+  ],
+  "not_read": [
+    "projectfaolan.db and faolan.db (binary SQLite)",
+    "logo.png (size only)",
+    "all four archives in Faolan.Files/Archive (listings only, first entries)",
+    "Faolan.Core/Network (7 files) and Faolan/GameServer (13 files) beyond names",
+    "Faolan/Migrations contents (names only)",
+    "Faolan.Core/Data/Item.cs contents (line count only)",
+    "CLAUDE.md and AGENTS.md: not present in this donor"
+  ]
+}

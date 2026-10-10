@@ -1,0 +1,116 @@
+{
+  "donor": "ZaneDubya-UltimaXNA",
+  "code_licence": "GNU GPL version 3. License.txt line 1 is the GPL v3 text heading; dev/LICENSE.txt also opens with the GPL v3 text (only its head was read). dev/Data/credits.txt line 4 says the program is GPL v3 or any later version. Credits line 10 says it includes code from other open source projects (RunUO, UltimaSDK, OpenUO); those licences are not in the tree.",
+  "asset_licence": "No separate asset licence in the tree. Repo GPL covers the program; no file states a licence for res/ art, the cfg data tables, or the shader. The cfg headers say 'taken from RunUO' (RunUO licence not in tree). The Ultima Online client data is not in the tree and is credited to Electronic Arts. Treated as unclear (class C) for everything, and proprietary (class C) for client data.",
+  "rights_holder_status": "Mixed. Code: UltimaXNA Development Team (credits.txt line 2). Game data: credits.txt line 16 says Ultima Online is (c) 2015 Electronic Arts, Inc., and line 17 says UltimaXNA is in no way affiliated with EA. ReadMe.md line 14 says the repo does not include the Ultima Online resource files. So the donor is a client that needs the user's own proprietary data.",
+  "best_class": "C",
+  "half_read": "Client half (dev/ and the shader, data tables, docs). The server half is NOT this repo; ReadMe.md line 16 says the client is tested against RunUO 2.6 (not in the box). The data half (Ultima Online client files: hues.mul, Cliloc, art/gump/sound MULs, Music/Digital mp3s) is NOT in the box; the loaders in code name them. Paired server donors ModernUO and client donors ClassicUO / crossuo exist in the box but are not in this batch and were not read.",
+  "asset_groups": [
+    {
+      "kind": "client data pack (absent from the tree)",
+      "path": "Loaded by name in code: hues.mul (dev/Ultima/Resources/HueData.cs line 66), Cliloc.<language> (dev/Ultima/Resources/ClilocResource.cs line 48), Music/Digital/<name>.mp3 (dev/Ultima/Audio/UOMusic.cs line 29), plus art, gump, sound and map files via ResourceProvider",
+      "count_hint": "Not in tree",
+      "licence": "Ultima Online copyright line in credits.txt line 16 (Electronic Arts). ReadMe.md line 14 says the files are not included.",
+      "class": "C",
+      "note": "Proprietary. The user must supply their own copy. Frankendom must not copy, convert or ship these. Their names and loader calls are the only things read."
+    },
+    {
+      "kind": "data tables (plain text cfg)",
+      "path": "dev/Data/bodytable.cfg (about 1,114 lines), dev/Data/containers.cfg (50 lines)",
+      "count_hint": "bodytable: about 509 Equipment rows, 218 Monster, 75 Animal, 19 Human, 4 Sea by a count of the type column; containers: 0x-keyed gump rows with rect, drop sound and an optional item-ID list",
+      "licence": "Header in each file: 'taken from RunUO' (containers.cfg line 3, bodytable.cfg line 3). RunUO licence not in tree; the repo GPL is what the program carries.",
+      "class": "C",
+      "note": "Tables that map body IDs to a body class, and container gump IDs to a rectangle, a drop sound and an item whitelist. The table shape is the useful part. Read: header and first rows of both files only."
+    },
+    {
+      "kind": "credits and rich-text sample",
+      "path": "dev/Data/credits.txt (short file of legacy html-like markup; line count not taken)",
+      "count_hint": "1 file",
+      "licence": "Credits text states GPL v3 or later (line 4) and the EA trademark note (lines 16-17).",
+      "class": "C",
+      "note": "Credits page markup with inline colour and font-family spans. Not reused."
+    },
+    {
+      "kind": "logos and icon (raster)",
+      "path": "res/UltimaXNAIcon64.png, res/UltimaXNALogo1024.png, res/ultimaxna.ico",
+      "count_hint": "2 PNG, 1 ICO",
+      "licence": "None stated beyond the repo GPL.",
+      "class": "C",
+      "note": "Project art. Not opened; pixel sizes not measured. Do not reuse without asking."
+    },
+    {
+      "kind": "shader source (code-like, HLSL .fx)",
+      "path": "dev/Content/Shaders/IsometricWorld.fx (205 lines); res/depreciated/ParticleEffect.fx (not read)",
+      "count_hint": "1 active shader file with 4 pixel shaders and a hue technique and a minimap technique",
+      "licence": "GPL v3 for the repo (program). Shader is code under GPL: clean-room, shape only for us.",
+      "class": "C",
+      "note": "Read in part: the hue pixel shader, the shadow pass, the grayscale pass. Frankendom may recreate the idea from scratch, not copy the code."
+    },
+    {
+      "kind": "technical docs (plain text)",
+      "path": "doc/VertexPositionNormalTextureHue.txt, doc/Html tags supported by UltimaXNA.txt, doc/CodeAudit.txt",
+      "count_hint": "3 files",
+      "licence": "Repo GPL only",
+      "class": "C",
+      "note": "Two read (hue attribute packing; legacy html tag subset). CodeAudit.txt not read."
+    }
+  ],
+  "inspiration": [
+    "Grey-to-ramp recolour: a neutral sprite takes many tints because its brightness is looked up in a per-tint ramp. The ramp is a short strip per hue, not a full gradient. For armour, a steel or gold finish can come from one grey base sprite plus our own ramps (IsometricWorld.fx PixelShader_Hue; HueData.cs getTextureData).",
+    "Two recolour modes: full tint over everything, or tint only the neutral pixels so trim and coloured details survive (IsometricWorld.fx line 92 comment). Strong for armour trim and for hero gear dressing.",
+    "A single vertex attribute packs tint index, tint mode, transparency and a no-lighting flag (doc/VertexPositionNormalTextureHue.txt). A shader author can use the packing idea with our own bit layout.",
+    "Container gumps as data: each container has a rectangle, a drop sound and an optional item-ID whitelist (containers.cfg). A loot chest that accepts only certain items, with its own drop sound, is a clean loot-ceremony pattern.",
+    "Body classes keyed by body ID (bodytable.cfg): equipment, monster, animal, human and sea rows. Gear rules attach to a body class, not to each creature. Relevant to gear dressing and to creature rigs.",
+    "Shadow pass with a stencil: an opaque sprite writes one half-transparent dark pixel, and the stencil stops overlaps from darkening twice (IsometricWorld.fx PixelShader_ShadowSet). Good model for ground shadows under our creatures.",
+    "Legacy rich-text subset: a few tags (bold, italic, underline, outline, size, alignment), block layout, unknown tags ignored (doc/Html tags supported by UltimaXNA.txt). Fits item descriptions in our HUD."
+  ],
+  "briefs": [
+    {
+      "label": "Neutral-ramp armour finish",
+      "why": "Metal reads at 375 wide from one hard highlight band. One grey base sprite plus several ramps gives gold, steel and bronze without redrawing each piece. Signature effect: a bright rim that holds its colour when the piece is hit.",
+      "keep": "Brightness of the base pixel picks a column in a per-tint ramp. A partial mode tints only the neutral pixels so trim survives.",
+      "change": "Author our own ramps per material with a hard specular band at the top, not a generic tint. Put the tint on a second channel so hit flash does not wipe the highlight. Different ramp count and order per material.",
+      "ref": "dev/Content/Shaders/IsometricWorld.fx (PixelShader_Hue, around lines 60-100); dev/Ultima/Resources/HueData.cs (getTextureData)"
+    },
+    {
+      "label": "Locked chest with item filter and own drop sound",
+      "why": "A chest that accepts only some items reads at a glance: the gump shape says what goes in. A drop sound per container is a cheap loot ceremony.",
+      "keep": "Each container is data: size and place on the gump, drop sound, optional whitelist of item IDs.",
+      "change": "Give each chest its own silhouette and lid animation. Tie the drop sound to rarity tier, and add a rim glow when a valid item hovers over it. Our item IDs, not theirs.",
+      "ref": "dev/Data/containers.cfg (first data rows; format line 10)"
+    },
+    {
+      "label": "Body-class gear rule",
+      "why": "Gear fits a body class, not a species. A quadruped and a biped can share a gear rule set, so new creatures need no new gear work.",
+      "keep": "A table from body ID to class (equipment, monster, animal, human, sea). Gear and rigs key off the class.",
+      "change": "Use our own classes: plated biped, armoured quadruped, serpent, winged. Rig rules per class, and a visible silhouette change when gear is worn.",
+      "ref": "dev/Data/bodytable.cfg (header at line 9; type column)"
+    },
+    {
+      "label": "Single-pass ground shadow",
+      "why": "Overlapping sprites do not darken twice, so a crowd of creatures stays readable at 375 wide. The soft ground shadow sells weight.",
+      "keep": "Stencil gate: one dark half-transparent write per screen pixel for opaque sprites.",
+      "change": "A soft oval for bipeds and a wider flat shape for quadrupeds, shaped per creature class rather than one blob.",
+      "ref": "dev/Content/Shaders/IsometricWorld.fx (PixelShader_ShadowSet)"
+    },
+    {
+      "label": "Tag-subset item text",
+      "why": "Short item text with bold stat lines and rarity colour reads on a phone. A tiny tag set is easy for writers.",
+      "keep": "A handful of tags, block layout, unknown tags ignored so bad markup never breaks the panel.",
+      "change": "Our own tags for rarity and stat lines; no legacy tag names. Colour from our palette.",
+      "ref": "doc/Html tags supported by UltimaXNA.txt"
+    }
+  ],
+  "not_read": [
+    "Ultima Online client data (absent from the tree; the loader names were read, the data was not)",
+    "Server half (RunUO, not in the tree) and paired donors in the box (ModernUO, ClassicUO, crossuo): not in this batch, not read",
+    "dev/Ultima/Audio/UOSound.cs and UOMusic.cs beyond the mp3 path; AudioService.cs",
+    "dev/Ultima/Resources (art, gump, animation, font loaders) beyond the file list; dev/Ultima/Data beyond the Hues.cs header",
+    "Remaining shader passes: PixelShader_MiniMap and the body of the grayscale pass (only the names and the lines around the hue pass were read)",
+    "res/depreciated/ParticleEffect.fx",
+    "res/ image pixel sizes; ultimaxna.ico",
+    "doc/CodeAudit.txt",
+    "plugins/ExamplePlugin/ (listed, not read)",
+    "Bodytable and containers rows beyond the first few; containers.cfg full list"
+  ]
+}

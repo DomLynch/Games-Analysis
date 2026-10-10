@@ -1,0 +1,93 @@
+{
+  "donor": "DCurrent-openbor",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "halves_read": "engine half (engine/source, root README and LICENSE). Data-pack half (sprites, scripts, sounds, maps) not in the box; no paired donor found by name in the root listing.",
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "combat_fields": [
+    "16 defence fields in defense_fields.def:1-16: block power, block ratio, block threshold, block type, block damage min/max/adjust, damage min/max/adjust, knockdown, pain, factor, death config flags, meta tag, meta data",
+    "block ratio exposed to scripts via openborscript/commands.c:79; the engine code that applies the block rule was not located"
+  ],
+  "zones": [],
+  "looks": [
+    {
+      "label": "Fixed blend table with tint composition",
+      "technique": "six named blend functions (screen, multiply, overlay, hardlight, dodge, half) indexed by a number; tint mode combines a tint colour blend with the alpha blend",
+      "ref": "engine/source/gamelib/pixelformat.c:612, 631-637; gamelib/types.h:302"
+    },
+    {
+      "label": "Per-row sine shimmer",
+      "technique": "each output row shifted by one sine table value; amplitude per sprite, wavelength = 256 / float, phase advances per row",
+      "ref": "engine/source/gamelib/transform.c:1455, 1479, 1516-1526, 1580. Defect (not run): no zero check on wavelength at transform.c:1517; fix: clamp to at least 1"
+    },
+    {
+      "label": "Per-actor draw record",
+      "technique": "alpha, tint colour, tint mode and water settings exposed as script-readable properties on one draw record",
+      "ref": "engine/source/openborscript/drawmethod.c:25, 172, 179, 186"
+    },
+    {
+      "label": "Palette records",
+      "technique": "palettes allocated and loaded as records so one sprite can have recoloured variants (body not read)",
+      "ref": "engine/source/openborscript/drawmethod.c:474, 523"
+    },
+    {
+      "label": "Named screen filters",
+      "technique": "output filter set: scanline (and TV scanline), dot-matrix, tv2x, bilinear as selectable output modes",
+      "ref": "engine/source/gfxlib/gfx.c:18-27; gfxlib/scanline.c:65; gfxlib/tv2x.c:11; gfxlib/dotmatrix.c:23"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Hit-flash tint",
+      "idea": "A short tint pulse on the struck actor from one tint colour and one blend mode held in one per-actor record.",
+      "keep": "tint colour and blend mode as one record",
+      "change": "our own colours with a non-colour cue; pulse length tied to hitstop"
+    },
+    {
+      "name": "Heat shimmer and ghost wobble",
+      "idea": "A per-row sine offset on a sprite for a spectral move or boss aura.",
+      "keep": "row-based sine offset with amplitude and wavelength as data",
+      "change": "our frame clock as the time base; amplitude capped for 375-wide readability; off in low-quality mode"
+    },
+    {
+      "name": "Retro screen filter",
+      "idea": "A named list of output filters (scanline, dot-matrix, soft) selected per device.",
+      "keep": "named, selectable filter list",
+      "change": "CSS or WebGL overlay, off by default on phones"
+    },
+    {
+      "name": "Palette-swap variants",
+      "idea": "One sprite and many recoloured variants from one palette table.",
+      "keep": "palette as a loadable table per variant",
+      "change": "our own hue shifts tied to gear tiers in the catalogue, not new art"
+    },
+    {
+      "name": "Defence record per defence type",
+      "idea": "One record per defence type holding block power, block threshold, block ratio, damage min/max/adjust, knockdown and pain.",
+      "keep": "one record per defence type, tuned as data",
+      "change": "our own field names and our own block rule (engine rule not read here)"
+    }
+  ],
+  "licence_note": "Code under a 3-clause BSD-style licence (LICENSE line 1 names Roel van Mastbergen and Senile Team; line 2 OpenBOR Team). No licence found for art (PNG, GIF, ICO); class C. README line 3 calls the engine royalty free, which is the repo's statement about the engine only. Shape only; no code reused.",
+  "not_read": [
+    "engine C source beyond the files named (block-applying code not located)",
+    "data-pack half (not in the box)",
+    "palette body (drawmethod.c:474 onward)",
+    "PNG, GIF, ICO, ICNS bodies (names and sizes only, from the audit)",
+    "Android mipmap PNGs",
+    "tools/ (7-Zip, devkitpro, bin, borpak) and all binaries",
+    "tests/test_invariant_borpak.c",
+    "README compile and contribute sections",
+    "third-party licence texts (7-Zip)",
+    "translation.txt body (177 msgid entries counted with grep -c; nothing quoted)"
+  ]
+}

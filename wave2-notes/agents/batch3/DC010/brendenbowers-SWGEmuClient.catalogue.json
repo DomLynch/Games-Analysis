@@ -1,0 +1,58 @@
+{
+  "donor": "brendenbowers-SWGEmuClient",
+  "reader": "DC010",
+  "halves_read": [
+    "client: Plugins/SWGGame/Source/SWGEmuClient (combat, terrain flora, posture, force and performance components); Plugins/SWGEmu/Source (network layer, object fields) in part",
+    "data in repo: Plugins/SWGEmu/Content/SWGFormTagMappings.csv (13 template rows)",
+    "asset listing only: Content/ (materials, input, props, levels, UI names)"
+  ],
+  "paired_halves_in_box_not_read": ["ProjectSWGCore-Holocore (server)", "swgemu-Core3 (server)", "SWG-Source-dsrc (data templates)"],
+  "counts": {"creatures": 0, "classes": 0, "weapons": 0, "gear_sets": 0, "zones": 0},
+  "count_basis": "no creature, class, weapon, gear or zone table in this repo (client only; game data comes from TRE files that the README says are not in the repo); zero is a repo fact, not a count of the game",
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [
+    "Force state: force pool value, maximum and a state value (Public/Components/SWGForceComponent.h:18-25); regeneration rule not read",
+    "Entertainer performance state (Public/Components/SWGPerformanceComponent.h:11)",
+    "Crafting posture and combat attitude (evasive, normal, aggressive) in ESWGPosture (Public/Common/SWGPostureTypes.h)"
+  ],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [
+    "Terrain flora streaming in four tiers: Collidable, NonCollidable, RadialNear and a default RadialFar, each with a distance band (SWGTerrainFloraSubsystem.cpp:258-285; enum header not read)",
+    "Ring streaming with hysteresis: load inside the band, unload only past the band plus one cell of slack (cpp:280-285, :322, :335)",
+    "Nearest-first placement queue with an in-flight cap (cpp:350, :362, :372)",
+    "Planet map landmark kinds: 21 entries with label and marker colour (SWGMapMarkers.cpp; colours not reproduced)",
+    "Template mapping: interiors keyed by cell number, not object id (CCLT row in SWGFormTagMappings.csv)"
+  ],
+  "looks": [
+    {"label": "Posture as a status list", "technique": "one enum carries stunned, blinded, dizzy, intimidated, immobilized, frozen, poisoned, bleeding, diseased, on fire and similar states, one code per state; what each state drives was not found in the read code (GlowingJedi appears only in the enum)", "ref": "/mnt/frankendom-donors/brendenbowers-SWGEmuClient/Plugins/SWGGame/Source/SWGEmuClient/Public/Common/SWGPostureTypes.h:14-58, :117"},
+    {"label": "Combat refusal feedback gap", "technique": "refusals are logged, not shown; the donor notes the server explains over system chat, which is not decoded yet", "ref": "/mnt/frankendom-donors/brendenbowers-SWGEmuClient/Plugins/SWGGame/Source/SWGEmuClient/Private/Subsystems/SWGCombatSubsystem.cpp:457-512"},
+    {"label": "Holo panels, translucent build ghost, radial ring, scan field, layered sky (from audit only)", "technique": "named in AU007; materials and widgets not opened; category-level only", "ref": "/private/tmp/p2/wave2-haiku/batch3/AU007/brendenbowers-SWGEmuClient.assets.md (names only)"},
+    {"label": "Target outline on HUD", "technique": "a HUD outline material (name only; not opened)", "ref": "/mnt/frankendom-donors/brendenbowers-SWGEmuClient/Content/SWGEmu/UI/HUD/M_TargetOutline.uasset"}
+  ],
+  "originals": [
+    {"name": "Swing Gate", "idea": "auto-attack with one pending server reply at a time; cooldown set by the server timer with a floor; transient refusals retry after a fixed interval, other refusals stop", "keep": "one pending reply; server-set cooldown with floor; transient vs final refusal classes", "change": "a pending swing keeps its action id so a timeout cannot send a second swing; every refusal shows a short HUD line"},
+    {"name": "Ring Stream", "idea": "zone props load by annulus with unload slack, nearest-first queue and an in-flight cap", "keep": "annulus test, load and unload with slack, nearest-first queue, cap", "change": "zone cells are data; cap is a per-frame millisecond budget"},
+    {"name": "Status Stack", "idea": "one status enum drives both movement and the HUD for states such as stun, blind, poison and frozen", "keep": "single status code per state", "change": "first set of six statuses, each with icon and sound; no glow state without a handler"},
+    {"name": "Focus Pool", "idea": "a separate pool value with a maximum and a state flag on the hero, for special abilities", "keep": "pool value, maximum and state flag", "change": "our own name and a regeneration rule earned in fights, not on a timer"},
+    {"name": "Landmark Board", "idea": "a fixed set of landmark kinds with labels on the planet map", "keep": "fixed set of kinds with labels", "change": "our own kinds and icons, placed from zone data"},
+    {"name": "Holo Ledger", "idea": "translucent panels for character sheet, map and inventory, with thin meter lines (category-level, from AU007)", "keep": "translucent frames with thin meter lines", "change": "our palette, angular frames and our own type"},
+    {"name": "Ghost Placement", "idea": "a translucent build preview before a placement is committed (category-level, from AU007)", "keep": "ghost before commit", "change": "our grid and colour states; a footprint outline"}
+  ],
+  "licence_note": "No LICENSE, COPYING or NOTICE file. Plugins/SWGEmu/README.md: provided as-is for educational purposes related to SWG EMU (per AU007). Epic template headers in engine target files. Asset licence not stated for .uasset, .umap, CSV or GIFs. README says TRE data from a retail client is required and not in repo. Rights-holder status unknown from repo. Class C: category-level inspiration only. Not a legal opinion.",
+  "not_read": [
+    "server halves (ProjectSWGCore-Holocore, swgemu-Core3, SWG-Source-dsrc) are in the box but outside this donor list",
+    "most UI widgets and materials (names from AU007 only)",
+    "travel subsystem, map scene, combat animation chain (PlayCombatAnimations), combat spam handler",
+    "PendingTimeout value and MinSwingInterval and RetryInterval values (declared in headers not read)",
+    "ESWGTerrainFloraTier enum header and the flora placer",
+    "all .uasset and .umap files, the three GIFs, and the input assets",
+    "CreatureObject and PlayerObject baseline fields beyond the grep hits"
+  ],
+  "defects": [
+    "Swing timeout (SWGCombatSubsystem.cpp:361-368) resends without checking whether the first swing landed; a late first reply is then ignored; possible double swing. Fix: keep the action id, wait longer, or dedupe by action count on the server.",
+    "Refusals only logged (cpp:468-476). Fix: a short HUD line per refusal.",
+    "UpdateStreaming scans a square of cells per tier per call; PumpPlaceQueue copies and sorts the whole queue per call (cpp:348-379). Fix: heap for the queue and a per-frame cap on work."
+  ]
+}

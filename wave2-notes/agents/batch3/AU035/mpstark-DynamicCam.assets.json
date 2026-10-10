@@ -1,0 +1,45 @@
+{
+  "donor": "mpstark-DynamicCam",
+  "code_licence": "MIT License (LICENSE line 1 and 5; copyright line 3: mpstark and LudiusMaximus; DynamicCam.toc line 40 'X-License: The MIT License (MIT)')",
+  "asset_licence": "No separate asset licence in the repo. Ui/Textures binaries have no per-file licence line (class C). Locales covered by the repo MIT. Libs/ holds only a pointer file (Libs/LICENSE.md line 1); libraries are external per .pkgmeta and not in the box.",
+  "rights_holder_status": "Fan addon for World of Warcraft. The repo names Blizzard in comments and the toc points at game-client icon paths (not in the box), but states no official affiliation. Addon code and text: MIT, copyright mpstark and LudiusMaximus. Status of game-client assets referenced: unknown.",
+  "best_class": "A for MIT addon code and locale text (with the MIT notice); C for the three Ui/Textures binaries and third-party presets",
+  "asset_groups": [
+    {"kind": "code_lua", "path": "/mnt/frankendom-donors/mpstark-DynamicCam/ (top-level .lua, Options/, Ui/)", "count_hint": "about 25,900 Lua lines", "licence": "MIT (repo LICENSE)", "class": "A", "note": "Situation engine in SituationManager.lua; data in DefaultSettings.lua and Presets.lua; camera transition code in SituationManager.lua 509-630."},
+    {"kind": "ui_textures", "path": "Ui/Textures/", "count_hint": "3 files: export-button.png (65 KB), import-button.png (71 KB), commondropdownsettings2x.blp (132 KB)", "licence": "No per-file licence; origin not stated", "class": "C", "note": "BLP is a Blizzard texture format; not opened (no header read)."},
+    {"kind": "locale_text", "path": "Locales/", "count_hint": "12 Lua locale files plus Locales.xml; enUS.lua 679 lines", "licence": "MIT (repo LICENSE)", "class": "A", "note": "Languages: en, de, es ES and MX, fr, it, ko, pt-BR, ru, zh CN and TW. No string values quoted."},
+    {"kind": "preset_data", "path": "Presets.lua", "count_hint": "table of named presets with author and importString fields", "licence": "Repo MIT for the file; preset authors named (LudiusMaximus, Shushudaa); no own licence line", "class": "C", "note": "Encoded import strings not copied."},
+    {"kind": "lib_externals", "path": "Libs/ (only LICENSE.md present); .pkgmeta lists externals", "count_hint": "0 library files in box", "licence": "Per Libs/LICENSE.md: owned and licensed by their respective owners", "class": "C", "note": "LibCamera, LibEasing, LibMountInfo, Ace3 and others are fetched externally; not in box; not read."},
+    {"kind": "game_client_assets_referenced", "path": "DynamicCam.toc lines 4-5 (IconTexture paths)", "count_hint": "2 referenced game-client icons, not in box", "licence": "Unknown (not in box)", "class": "D", "note": "Referenced only; nothing shipped from the game."}
+  ],
+  "brief_rule": "Recreate as a clearly distinct original, never a copy; each brief names the trait kept and the trait changed.",
+  "inspiration": [
+    "Camera picker as data: each camera situation is a record with a priority, the events that can flip it, a condition string, enter and exit times, and optional rotation. The top true record wins and flips send messages. For the fight camera (row 11) the records map to fight phases: idle, engage, parry, finisher. File: SituationManager.lua lines 1040-1126; DefaultSettings.lua lines 166-195.",
+    "Fight overrides everything: the combat situation carries priority 50 while non-combat situations sit between 0 and 11. One clear override above all others. File: DefaultSettings.lua lines 193-195.",
+    "Hold-off before leaving a framing so the camera does not flicker in and out of combat. The delay is a number on the situation record. File: SituationManager.lua lines 1088-1107.",
+    "Timed rotation on entry: a degree yaw with a named easing curve, or a continuous yaw with a speed field, both with a transition time. For an engage swing. File: SituationManager.lua lines 509-528 (StopRotation at 532, not read in full).",
+    "Zoom remembered before a situation and restored on exit, with a never, always or adaptive setting. File: SituationManager.lua lines 613-630.",
+    "Shareable presets with an author name and an encoded string, so a camera feel can be passed on with credit. File: Presets.lua lines 10-22 (strings not copied)."
+  ],
+  "briefs": [
+    {"label": "Engage swing", "why": "A short sideways swing into the target as a fight starts makes the first blow feel deliberate and frames the opponent. The swing gives the moment a clear start.", "keep": "A timed yaw with a named easing curve, started by a state change (engage), not a per-frame guess.", "change": "Swing angle comes from the actual target bearing, the duration is a zone-tuned number of about 0.5 seconds, and the swing is cancelled if the target dies mid-swing.", "ref": "/mnt/frankendom-donors/mpstark-DynamicCam/SituationManager.lua lines 509-528"},
+    {"label": "Hold-off framing", "why": "Keeping a combat framing for a short time after the last blow stops the camera jittering between tight and wide when a fight pauses.", "keep": "A per-situation hold-off number on the record; leaving waits for the timer.", "change": "Our hold-off counts from the last landed hit, not a wall-clock delay; it is 1.5 seconds and resets on any new hit.", "ref": "/mnt/frankendom-donors/mpstark-DynamicCam/SituationManager.lua lines 1088-1107"},
+    {"label": "Priority ladder for fight phases", "why": "A single ordered list (finisher above parry above engage above idle) makes it obvious which camera wins when two phases overlap, and it reads at 375 wide because each phase has one framing.", "keep": "Priority number per record; the highest true record wins; a flip message on each change.", "change": "Our phases are finisher, parry, engage and idle; ties are broken by a fixed order key, not by table iteration.", "ref": "/mnt/frankendom-donors/mpstark-DynamicCam/DefaultSettings.lua lines 193-195; SituationManager.lua lines 1045-1073"},
+    {"label": "Zoom memory on fight exit", "why": "Returning to the camera the player had before the fight, instead of a fixed default, feels respectful of their setup.", "keep": "Remember the value before a situation and restore it on exit; a never option exists.", "change": "Restore the hero's framing for the zone, not the raw zoom number, and skip the restore after a death.", "ref": "/mnt/frankendom-donors/mpstark-DynamicCam/SituationManager.lua lines 613-630"},
+    {"label": "Shareable framing preset", "why": "A preset that carries an author name and a compact string lets players share a camera feel and credit the maker, which fits a community of fight fans.", "keep": "Named presets with an author field and a compact encoded string.", "change": "Encode our own camera fields (distance, height, swing), not the donor's string format; name presets for fights, not for the donor's situations.", "ref": "/mnt/frankendom-donors/mpstark-DynamicCam/Presets.lua lines 10-22 (strings not copied)"}
+  ],
+  "defects_found": [
+    {"where": "SituationManager.lua lines 1111-1125", "defect": "delayTime is cleared only when a new top situation is chosen (line 1119); when no situation is active (lines 1120-1124) it is left stale, so the next hold-off test at line 1104 can pass at once.", "fix": "clear delayTime whenever a swap happens, in both branches."},
+    {"where": "SituationManager.lua lines 1049 and 1070", "defect": "Equal priorities resolve by pairs() iteration order, which Lua does not define, so ties may change between runs.", "fix": "iterate a fixed sorted list or give each record a unique order key."}
+  ],
+  "not_read": [
+    "Core.lua body (grep only for the Blizzard notes)",
+    "Options.lua (152 KB; grep only)",
+    "ZoomBasedEditor.lua, ZoomBasedSettings.lua, MouseZoom.lua, UiHideModule.lua, Sharing.lua (names and sizes only)",
+    "SituationManager.lua lines 774-1039 (ChangeSituation body) and the rest of the file",
+    "Ui/*.lua and Options/*.lua bodies (names only)",
+    "The three Ui/Textures binaries (names and sizes only; no header read)",
+    "Libs externals (not in the box)",
+    "Locales beyond line counts (no string values quoted)"
+  ]
+}

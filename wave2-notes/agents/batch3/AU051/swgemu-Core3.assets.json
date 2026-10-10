@@ -1,0 +1,41 @@
+{
+  "donor": "swgemu-Core3",
+  "code_licence": "GNU AGPL v3 per README.md licence section (line 171) and COPYING (line 1). Lua data scripts under MMOCoreORB/bin/scripts carry a GNU LGPL header (18,274 of 30,521 .lua files matched 'GNU Lesser'; 0 matched 'GNU Affero'); credits.lua says LGPL either version 2 or later. The two licence statements conflict.",
+  "asset_licence": "No separate asset licence file in the repo. Data files fall under the LGPL headers where present. The origin of the Star Wars Galaxies game data (names, stats, templates) is not stated in any repo file. Client art, audio and models are not in the repo; README line 21 says the user needs the client .tre files.",
+  "rights_holder_status": "fan project (SWGEmu, volunteer). README says the server was reverse-engineered from scratch (line 9). Data origin: unknown from repo files.",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "client art, audio, models", "path": "(absent) bin/conf/config.lua lists client .tre archives", "count_hint": "0 in repo", "licence": "none in repo; user supplies own .tre", "class": "D", "note": "README line 21 says the user needs the .tre files from the client."},
+    {"kind": "creature templates (Lua data)", "path": "MMOCoreORB/bin/scripts/mobile", "count_hint": "6,499 files; 35 top level; 105 in mobile/dantooine", "licence": "LGPL header per file where present (not checked file by file)", "class": "C", "note": "Stats, resists, harvest yields, behaviour flags; name keys are string-file references (@mob/creature_names). Example mobile/dantooine/bol.lua. Schema in mobile/creatures.lua."},
+    {"kind": "object templates (Lua data)", "path": "MMOCoreORB/bin/scripts/object", "count_hint": "17,485 files", "licence": "LGPL header per file where present (not checked file by file)", "class": "C", "note": "Shared templates for buildings, weapons, armour, creatures and more. Names only read."},
+    {"kind": "loot tables (Lua data)", "path": "MMOCoreORB/bin/scripts/loot", "count_hint": "2,857 files (groups 656, items 2,197)", "licence": "LGPL header per file where present (not checked file by file)", "class": "C", "note": "Not opened beyond counts."},
+    {"kind": "AI behaviour trees (Lua data)", "path": "MMOCoreORB/bin/scripts/ai", "count_hint": "about 12 files", "licence": "LGPL header per file where present (not checked file by file)", "class": "C", "note": "herd.lua, villageRaider.lua read in part; others not read."},
+    {"kind": "SQL data dumps", "path": "MMOCoreORB/sql/datatables.sql, sql/swgemu.sql, sql/mantis.sql", "count_hint": "datatables 2.25 MB (171 INSERT INTO); swgemu 1.8 MB (47 INSERT INTO); mantis 27 KB", "licence": "none stated beyond repo", "class": "C", "note": "Data tables such as appearance_appearance_table (datatables.sql line 25) and clientregion_* and command tables. mantis.sql not read."},
+    {"kind": "docs spreadsheets and images", "path": "MMOCoreORB/doc", "count_hint": "5 .xls, 6 .png, 3 .zip", "licence": "none stated", "class": "C", "note": "Spreadsheets (client strings reference, item types, loot groups, client object types, crc tables) and AI diagrams. Not opened."},
+    {"kind": "terrain and navmesh", "path": "MMOCoreORB/bin/terrain, MMOCoreORB/bin/navmeshes", "count_hint": "2 terrain files (mustafar_height.tga, test_terrain.trn); 1 navmesh file", "licence": "none stated", "class": "C", "note": "Not opened."}
+  ],
+  "inspiration": [
+    "Herd wanderer: a leader-led group moves between five generated patrol points set 50.0 from home, waits 8 to 15 s on arrival, then rests (ai/herd.lua lines 18, 23, 36). Recreate as a leader-led drift between spawn-anchored points.",
+    "Body-drop ledger: each beast carries separate meat, hide and bone yields (bol.lua lines 16 and 18 show two). A kill reads as a small resource ledger. Recreate with per-family yields and our own resource names.",
+    "Hue-index skins: one model with a short list of hue indices gives many colour variants (bol.lua line 30). Recreate with our own palette ramps, one model per family.",
+    "Social flags as one bitmask: a pack flag and a herd flag share one field (bol.lua line 25). Recreate as flags on our creature template so a pack member pulls its neighbours into a fight.",
+    "Social key: creatures share a socialGroup string (ancient_graul.lua line 3). Recreate as a family key in zone data.",
+    "Nine-slot resistance vector per creature (bol.lua line 14). Slot order not read. Recreate as a short per-damage-type vector so weapon choice matters.",
+    "Look-first reflex: the raider tree is a selector whose first branch looks for a target (ai/villageRaider.lua lines 1 to 3). Recreate as an aggro reflex with a readable wind-up before the charge."
+  ],
+  "briefs": [
+    {"label": "Grazing herd beast (own label)", "why": "A low, heavy, head-down silhouette reads calm, which suits a herd that drifts. Silhouette idea only; no art in this donor.", "keep": "PACK and HERD flags; one model with several hue skins; the group grazes as one cluster.", "change": "Armoured back plates instead of plain hide; longer neck; our own palette ramp; leader marked by a crest. Sound: none in donor, ours to design. Recreate as a distinct original, not a copy.", "ref": "MMOCoreORB/bin/scripts/mobile/dantooine/bol.lua lines 25, 29, 30"},
+    {"label": "Patrolling herd leader (own label)", "why": "A group that wanders, then stops to rest, is a readable calm-before-fight beat.", "keep": "Dwell of 8 to 15 s on arrival at a patrol point, then move on.", "change": "The pause has a head-up scan animation; zone data sets the dwell numbers; our own patrol shape. Recreate as a distinct original, not a copy.", "ref": "MMOCoreORB/bin/scripts/ai/herd.lua lines 18, 23, 36"},
+    {"label": "Reflex raider (own label)", "why": "A short look-first tree gives a clear first beat.", "keep": "Look for a target first.", "change": "A visible wind-up before the charge and our own aggro radius. Recreate as a distinct original, not a copy.", "ref": "MMOCoreORB/bin/scripts/ai/villageRaider.lua lines 1 to 3"}
+  ],
+  "not_read": [
+    "MMOCoreORB/src (server C++): counts only",
+    "Most of the 6,499 mobile, 17,485 object and 2,857 loot files: counted, not opened",
+    "sql/mantis.sql, sql/updates/, most of datatables.sql (header and one CREATE TABLE only)",
+    "doc/ spreadsheets, images, zips; bin/terrain and bin/navmeshes binaries",
+    "ai/ files other than herd.lua (first 30 lines) and villageRaider.lua (first 3 lines)",
+    "creatures.lua beyond the first 30 lines",
+    "custom_scripts/, screenplays/, docker/, linux/, wsl2/",
+    "The 12,247 .lua files with no matched licence string: their own text not checked"
+  ]
+}

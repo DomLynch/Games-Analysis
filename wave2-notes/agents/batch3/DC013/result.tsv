@@ -1,0 +1,3 @@
+donor	creatures	classes	weapons	gear_sets	zones	receipts	status	top_highlights	unverified
+clockworklabs-SpacetimeDB	2	0	0	0	1	38 ok / 0 failed	done	split-and-rejoin body cluster; heavy slow body; mass-capped camera zoom	no runtime test; client-unreal, server-csharp/cpp/ts and crates engine not read; math.rs body not read
+cmangos-mangos-classic	24	9	21	null	32	63 ok / 0 failed	done	hate-holding brute (1.1x melee / 1.3x range switch); weather walk per zone; pool-fed spawns with limit	class mechanics not read per class; Warden modules not opened; Spell.sql row content not read; DungeonEncounter ~610 rows is grep-level; no client half in box; Blizzard content kept at category level

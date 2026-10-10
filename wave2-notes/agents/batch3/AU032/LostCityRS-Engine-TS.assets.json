@@ -1,0 +1,120 @@
+{
+  "donor": "LostCityRS-Engine-TS",
+  "code_licence": "MIT License, Copyright (c) 2023-2026 Lost City (LICENSE line 3; README says MIT). Third-party: src/db/dialect/LICENSE is MIT, Copyright (c) 2024 Dylan Blokhuis; src/3rdparty/bzip2-wasm/LICENSE is the bzip2 licence, copyright 1996-2019 Julian R Seward (text read, redistribution conditions as written).",
+  "asset_licence": "No licence text for the packaged assets in the repo. The only sound asset is a SoundFont whose own RIFF INFO metadata says Public Domain (see group 1). The game content (maps, models, sprites, MIDI, configs) is in a separate Content repository that is NOT in the box; the engine expects it at srcDir '../content' (src/util/WorldConfig.ts line 142).",
+  "rights_holder_status": "Lost City holds the MIT copyright line (LICENSE line 3). The README calls the engine reverse-engineered code designed to simulate the cycle behaviour of early RS2 (README.md line 8). The README calls the Client-TS a human-driven port of the original code (line 41) and the Client-Java a research project to decompile the original code (line 39). The original game owner is not named in this folder. Treat any original game content as restricted; the code is MIT as stated.",
+  "best_class": "A for code and the SoundFont (self-declared); D for game content (absent from the box)",
+  "asset_groups": [
+    {
+      "kind": "SoundFont (binary, RIFF sfbk)",
+      "path": "public/client/SCC1_Florestan.sf2 (3,272,882 bytes)",
+      "count_hint": "1 file",
+      "licence": "No licence text in the repo. RIFF INFO field ICOP reads Public Domain (read from the first 1 KB via strings; no receipt, binary). ICMT carries two author web addresses (not copied).",
+      "class": "A (self-declared public domain; verify the source before relying on it)",
+      "note": "Instrument bank for the client's MIDI playback (public/client/client.js refers to it). Not auditioned. The self-declared status is the file's own claim."
+    },
+    {
+      "kind": "map-editor UI icons (PNG)",
+      "path": "public/maped/editicon.png (86 bytes), editicondefault.png (984 bytes), keybind.png (1,802 bytes)",
+      "count_hint": "3 files",
+      "licence": "covered by the repo-level MIT line (no per-file licence)",
+      "class": "A",
+      "note": "Tiny UI icons. Not opened beyond size."
+    },
+    {
+      "kind": "word-filter source data",
+      "path": "data/raw/wordenc (13,463 bytes, 174 lines)",
+      "count_hint": "174 lines",
+      "licence": "repo-level MIT line; origin of the list not stated in the repo",
+      "class": "A (repo MIT); origin unstated, so check before reuse",
+      "note": "Source for the four word-filter tables in src/cache/wordenc (bad words, domains, fragments, TLDs). Contents not reproduced."
+    },
+    {
+      "kind": "prebuilt client bundle and worker",
+      "path": "public/client/client.js (350,315 bytes), public/client/ondemandworker.js (10,134 bytes)",
+      "count_hint": "2 files",
+      "licence": "repo-level MIT line",
+      "class": "A",
+      "note": "Code, not content. Built from Client-TS."
+    },
+    {
+      "kind": "MIDI wasm (third-party)",
+      "path": "public/client/tinymidipcm.wasm (59,802 bytes)",
+      "count_hint": "1 file",
+      "licence": "repo-level MIT line; the Client-TS submodule that supplies it has no licence in the box",
+      "class": "C",
+      "note": "Binary code from a third-party submodule. Licence unclear from the box."
+    },
+    {
+      "kind": "map-editor script",
+      "path": "public/maped/maped.js (293,543 bytes), public/maped/ondemandworker.js (9,120 bytes)",
+      "count_hint": "2 files",
+      "licence": "repo-level MIT line",
+      "class": "A",
+      "note": "Code. Not read beyond size."
+    },
+    {
+      "kind": "key material (not content)",
+      "path": "data/config/public.pem (223 bytes), data/config/private.pem (562 bytes)",
+      "count_hint": "2 files",
+      "licence": "not applicable",
+      "class": "D",
+      "note": "Flag for Dom: a private key file (private.pem) sits in the committed tree. Not opened and not reproduced. Check whether it is a live key before any sharing."
+    },
+    {
+      "kind": "game content (NOT in box)",
+      "path": "external Content repository at ../content (src/util/WorldConfig.ts line 142)",
+      "count_hint": "not in box",
+      "licence": "unknown",
+      "class": "D",
+      "note": "The pack tools expect text config sources by extension, for example .npc (tools/pack/config/PackShared.ts line 87), plus .obj, .loc, .seq, .flo and .dbtable, and sprites, MIDI and SoundFont inputs. None of that is in the box."
+    }
+  ],
+  "inspiration": [
+    "Fixed world tick: the world ticks every 600 ms (src/engine/World.ts line 120), and each cycle runs in a stated order: client input (line 355), NPC event queue for spawn and despawn triggers (line 358), NPC processing (line 367), zones with loc and obj respawn (line 390), then cleanup (line 415). This maps onto the Frankendom sub-line 'server tick: fixed step, input intake, per-tick NPC budget': the fixed step and input intake exist, but I found no per-tick NPC budget. processNpcs turns every NPC in the list each tick (World.ts line 667). That is a gap to design, not a copy. Mechanism, not art.",
+    "Respawn speeds up with population: removeNpc and removeObj scale the respawn duration by (4000 minus players) over 4000, with players clamped at 2000 (World.ts lines 1733 and 1734, applied at lines 1313 and 1523). A busy zone refills faster, at most twice as fast at the cap. The code comment says the author is not sure the cap is right (World.ts line 1732). Zone population (parity row 23): a busy-zone respawn lever with no extra art.",
+    "Three lifecycle states (src/engine/entity/EntityLifeCycle.ts lines 2 to 4): FOREVER (never respawns), RESPAWN (engine-placed, comes back after a delay), DESPAWN (script-placed, removed for good). Spawn caps and despawn policy can key off the state. No despawn grace timer exists in this code (a search for grace found none), so the grace-on-empty rule in row 23 is ours to design.",
+    "Respawn countdown is gated: Npc.turn decrements its lifecycle tick only while the NPC is not delayed (src/engine/entity/Npc.ts line 121). A delayed NPC's respawn clock stops. Check whether that is intended before copying; it may be a defect.",
+    "Lifecycle tick clamps to at least one tick (src/engine/entity/Entity.ts line 40): a zero or tiny duration cannot become zero. A small guard worth copying.",
+    "Recolour variants of effects as text config: the spot-animation pack reads model, anim, resizeh and resizev, and recol pairs (tools/pack/config/SpotAnimConfig.ts lines 77 and 123). Effects as data, packed for both client and server."
+  ],
+  "briefs": [
+    {
+      "label": "Population-scaled respawn clock (zone pulse)",
+      "why": "Quiet zones refill slowly and busy zones refill fast, with no extra art and one formula.",
+      "keep": "a linear scale in player count; a hard clamp so the scale stops growing; the same rule for NPCs and objects",
+      "change": "our clamp point and floor (for example a floor at a quarter of the base time); a per-zone coverage value; a despawn grace timer on empty zones",
+      "ref": "LostCityRS-Engine-TS/src/engine/World.ts (lines 1733 and 1734)"
+    },
+    {
+      "label": "Three-state entity lifecycle",
+      "why": "Splitting permanent, respawning and script-placed entities keeps the spawn rules readable.",
+      "keep": "permanent, respawn and script-placed as three distinct states",
+      "change": "our names; a fourth state for a timed event or boss lock; the state drives the cap rules",
+      "ref": "LostCityRS-Engine-TS/src/engine/entity/EntityLifeCycle.ts (lines 2 to 4)"
+    },
+    {
+      "label": "Recolour-variant effect record",
+      "why": "One model, one animation and a few colour pairs give many effect variants with no new art.",
+      "keep": "model, animation, resize and colour pairs as text fields",
+      "change": "our own colour pair set and our resize values; our effect names; a per-rarity palette",
+      "ref": "LostCityRS-Engine-TS/tools/pack/config/SpotAnimConfig.ts (line 123)"
+    },
+    {
+      "label": "Fixed-step turn order",
+      "why": "A stated turn order (input, triggers, NPCs, zones, cleanup) makes timing bugs easy to find.",
+      "keep": "a fixed step length; a named order of phases; cleanup as the last phase",
+      "change": "our own phase list, with the boss phase separate; a per-tick NPC budget that defers work instead of dropping it",
+      "ref": "LostCityRS-Engine-TS/src/engine/World.ts (lines 120 and 355 to 415)"
+    }
+  ],
+  "not_read": [
+    "Content repository (absent from the box)",
+    "Most of src/engine/script and its handlers (only NpcOps line 94 was read)",
+    "tools/pack graphics, sound and midi packers (listed only)",
+    "The SoundFont audio itself (binary; RIFF INFO metadata only)",
+    "public/client/client.js and public/maped/maped.js (size only)",
+    "data/config/private.pem and public.pem (existence and size only; not opened)",
+    "Halves: server half (this folder) read in part. Client halves LostCityRS-Client-TS and LostCityRS-Client-Java are in the box (separate notes). Data pack (Content repository) is NOT in the box."
+  ]
+}

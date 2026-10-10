@@ -1,0 +1,41 @@
+{
+  "donor": "openmw",
+  "code_licence": "GPLv3 (README.md:9 'License: GPLv3'; LICENSE is the GPL v3 text, LICENSE:1). Separate licence files exist for cmake scripts (cmake/COPYING-CMAKE-SCRIPTS) and for an extern video player (extern/osg-ffmpeg-videoplayer/License.txt, not read).",
+  "asset_licence": "Mixed, as the README and font files state. Fonts: DejaVuLGCSansMono.ttf is 'custom' (README.md:16, DejaVuFontLicense.txt:1); DemonicLetters.ttf and MysticCards.ttf are SIL Open Font License with a Reserved Font Name (README.md:17-18; DemonicLettersFontLicense.txt:2; MysticCardsFontLicense.txt:2). Textures, MyGUI layouts and Lua scripts have no licence file of their own; the repo GPLv3 is the only stated licence and does not say it covers them one by one.",
+  "rights_holder_status": "OpenMW project (open-source engine) that requires the user to own Morrowind (README.md:4). The README names Bethesda Softworks as the Morrowind publisher (README.md:4). Morrowind data is not in the box. Copyright holders of the font and texture files are named only in the font licence files (OpenMW Team, Georg Duffner, Bitstream, Isak Larborn).",
+  "best_class": "B",
+  "asset_groups": [
+    {"kind": "Morrowind original game data (ESM, BSA, NIF, DDS, sound)", "path": "not in box (README.md:4 says the user must own the game)", "count_hint": "0 in box (find for .esm, .esp, .bsa, .nif: none)", "licence": "none in box; user supplies", "class": "C", "note": "Proprietary game data. Absent. Inspiration only."},
+    {"kind": "fonts (TTF plus .omwfont descriptors and licence texts)", "path": "files/data/fonts/ (DejaVuLGCSansMono, DemonicLetters, MysticCards)", "count_hint": "3 TTF files", "licence": "DejaVu: custom (README.md:16); DemonicLetters and MysticCards: SIL OFL with Reserved Font Name (README.md:17-18)", "class": "B", "note": "OFL-style conditions: keep the licence text with the font; the reserved font name is a condition for modified versions (per the licence files' header lines). DejaVu is custom: class C for that one font."},
+    {"kind": "textures (DDS and PNG)", "path": "files/data/textures/ (37 .dds in the tree), files/data/textures/omw/water_nm.png, openmw.bmp (repo icon)", "count_hint": "37 DDS, 14 PNG across files/", "licence": "no own licence file; repo GPLv3 by default, not stated", "class": "C", "note": "Unclear whether GPLv3 covers each texture. Named groups: omw_steam_button_*.dds and omw_psx_button_*.dds (controller glyphs), omw_menu_scroll_*.dds, omw_map_color_palette.dds, water normal map. Not opened."},
+    {"kind": "MyGUI layouts and skins (XML)", "path": "files/data/mygui/ (openmw_*.layout, *.skin.xml, core.skin, core.xml)", "count_hint": "88 files", "licence": "repo GPLv3 (text only, not stated per file)", "class": "B", "note": "GPL-covered UI definitions; share-alike on distribution if treated as part of the Program. Layout names read: HUD, inventory, dialogue, chargen, controller buttons."},
+    {"kind": "Lua gameplay scripts (code)", "path": "files/data/scripts/omw/ (camera/, input/, mechanics/, ui/), files/data-mw/scripts/, files/data/openmw_aux/", "count_hint": "65 Lua files across three folders", "licence": "repo GPLv3 (code)", "class": "B", "note": "Code under GPLv3, so share-alike if copied. Read: camera/head_bobbing.lua lines 15-33 only. third_person and smoothmovement: names only."},
+    {"kind": "post-process effect files", "path": "files/data/shaders/*.omwfx (adjustments, bloomlinear, debug, internal_distortion)", "count_hint": "4 named .omwfx files, plus GLSL under files/shaders/", "licence": "repo GPLv3 (code)", "class": "B", "note": "Names only, bodies not read."},
+    {"kind": "audio, music, models, maps", "path": "none in box", "count_hint": "0 audio, 0 model files", "licence": "n/a", "class": "D", "note": "Morrowind data holds these and is not here."},
+    {"kind": "extern licence file", "path": "extern/osg-ffmpeg-videoplayer/License.txt", "count_hint": "1 file (not read)", "licence": "its own licence (not read)", "class": "C", "note": "Third-party code. Not read."}
+  ],
+  "inspiration": [
+    "Head bob driven by smoothed speed: a cosine-based arc sampler and an effect weight that updates from frame time (files/data/scripts/omw/camera/head_bobbing.lua:25, :30, :33). Recreate as a low-amplitude camera bob on the exploration camera, faded out in fights (camera row 11).",
+    "Controller glyphs as two texture families: a PlayStation-style set (circle, square, triangle, x, dpad) and a Steam-style set (a, b, x, y, sticks, triggers, menu, view), picked per device, placed as ImageBox widgets (files/data/mygui/openmw_controllerbuttons.layout:16-17). Recreate for touch and gamepad prompts with our own glyph shapes.",
+    "Two display fonts for flavour text: a demonic-letter face and a card-style face (files/data/fonts/DemonicLetters.ttf, MysticCards.ttf). Use the title style only, never for body text; our own font or a licence-clean free font needed for anything shipped.",
+    "Water ripple from a separate normal-map PNG (files/data/textures/omw/water_nm.png; name only, not opened). Pair a ripple normal map with our Gerstner-style sum for a surface that reads at 375 wide.",
+    "Colour and post effects as named files (files/data/shaders/*.omwfx: adjustments, bloomlinear, internal_distortion, debug). Pattern for row 16 (colour grade): one named effect file per grade and per quality level, switched by setting.",
+    "UI separated into layout and skin: MyGUI .layout files describe structure; .skin.xml and core.skin hold the look (files/data/mygui/). Keep the same split for our HUD so a dark or high-contrast skin swaps without touching layouts (hud-ui topic).",
+    "Gameplay scripts split by concern: camera, input, mechanics, ui folders (files/data/scripts/omw/). Pattern for our client modules: one file per concern, so the camera and HUD never own game rules."
+  ],
+  "briefs": [
+    {"label": "Rippling marsh water", "why": "A normal map on a flat water plane gives fine ripples at low cost, so the surface reads close up and from far off.", "keep": "a separate normal-map texture for ripples; a flat plane with a moving normal; a glint from the sun", "change": "our own normal map drawn for our world, not the donor's; add a depth-based shoreline tint; a slower swell in combat zones", "ref": "files/data/textures/omw/water_nm.png (texture name only, not opened)"},
+    {"label": "Gentle walking sway", "why": "A cosine ease on the bob makes steps feel soft; the update takes a smoothed speed input (head_bobbing.lua:33), so the bob does not follow raw speed.", "keep": "cosine-based arc for the bob; a smoothed speed input; a weight variable updated each frame (effectWeight, head_bobbing.lua:25)", "change": "our own amplitude and period; zero bob during the fight camera; a per-zone strength value in the data, not in the script", "ref": "files/data/scripts/omw/camera/head_bobbing.lua:25, :30, :33"},
+    {"label": "Dark-title font for zone names", "why": "A display face with a strange letter shape sets a mood on zone names and item titles without any art.", "keep": "one display face for titles only; a card-style face for item names; no body text in either", "change": "our own face or a clearly licensed free face; keep licence text with it; never use a reserved font name on a modified copy", "ref": "files/data/fonts/DemonicLetters.ttf; files/data/fonts/MysticCards.ttf (licence conditions: DemonicLettersFontLicense.txt:2, MysticCardsFontLicense.txt:2)"}
+  ],
+  "not_read": [
+    "Morrowind data (absent)",
+    "components/ and apps/ C++ (record readers and combat code; not read for this asset audit)",
+    "textures (37 DDS, 14 PNG): opened none; only names read",
+    "files/data/mygui layout and skin bodies (names only, except controllerbuttons.layout:16-17)",
+    "Lua bodies beyond head_bobbing.lua (lines 15-33 read); third_person, smoothmovement, projectiles and the rest: names only",
+    "files/data/shaders/*.omwfx bodies and files/shaders GLSL: names only",
+    "extern/osg-ffmpeg-videoplayer/License.txt and cmake/COPYING-CMAKE-SCRIPTS: not read",
+    "docs/ (manual text), CHANGELOG.md, AUTHORS.md: not read"
+  ]
+}

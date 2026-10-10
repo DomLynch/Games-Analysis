@@ -1,0 +1,104 @@
+{
+  "donor": "Mag-nus-acclient-AI-RE",
+  "code_licence": "MIT (LICENSE, 'Copyright (c) 2026 Mag-nus') for the repo's own files, as the LICENSE file states. The decompiled Asheron's Call client code it analyses is marked RESTRICTED in _RESTRICTED-NOTE.txt: study shape and idea only, never copy code, constants or text (Dom's instruction, 2026-10-10, per the note).",
+  "asset_licence": "No game assets bundled. acclient.exe and acclient.pdb are excluded and must be user-supplied (README.md lines 33-38; .gitignore). No separate asset licence stated. The DAT game-data files are not in the repo; docs describe their format only.",
+  "rights_holder_status": "Decompilation of retail Asheron's Call binaries. The restricted note names the client as proprietary (Turbine). README.md line 6 says retail service shut down in January 2017. README.md line 8 says the binaries are ones the repo owner possesses. The files do not call it a leak. Current rights owner: unknown from the files.",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "binary game art, models, textures, audio, DAT data",
+      "path": "(none in repo; acclient.exe and acclient.pdb excluded, README.md lines 33-38)",
+      "count_hint": "0 files of game content in repo",
+      "licence": "n/a",
+      "class": "D",
+      "note": "Nothing usable shipped. Sound, render and DAT resource formats are described in docs but no content is present. Frankendom gets no art, audio or text from this box."
+    },
+    {
+      "kind": "decompiled client code (restricted)",
+      "path": "2013-09 11.4186/acclient.c, 2013-09 11.4186/acclient.h, 2013-09 11.4186/acclient 6.95.16808.c, 2013-09 11.4186/acclient-src/, 2015-10 11.6096/acclient.c, 2015-10 11.6096/acclient 6.6.14.605 Diffed.c",
+      "count_hint": "very large decompilations (not counted); acclient.c checked at one anchor only",
+      "licence": "MIT for repo files; decompiled proprietary code marked RESTRICTED in _RESTRICTED-NOTE.txt",
+      "class": "C",
+      "note": "Restricted: category-level ideas only. One anchor checked: 2013-09 11.4186/acclient.c line 380231 is the Render::CalcDegLevel function the docs name."
+    },
+    {
+      "kind": "analysis docs (prose)",
+      "path": "2013-09 11.4186/docs/00-architecture.md to 11-memory-leak-investigation.md; 2015-10 11.6096/docs/ (12-15 and README)",
+      "count_hint": "about 9,400 lines across the docs folder",
+      "licence": "MIT (repo files)",
+      "class": "C",
+      "note": "Prose about the code. The docs cite line numbers; I did not check most of them against the code. Read: 04 (power bar, damage section, headings), 05 (camera start, radar), 06 (degrade controller, headings), 07 (headings only), 09 (ambient beds, music, triggers)."
+    },
+    {
+      "kind": "reverse-engineering indexes and symbol tables (derived from proprietary binary)",
+      "path": "2013-09 11.4186/docs/func_index.tsv (2.25 MB), 2013-09 11.4186/docs/struct_index.txt (424 KB), 2013-09 11.4186/docs/class_index.tsv (31 KB), 2015-10 11.6096/docs/symbol_transplant_11.6096.tsv, tools/pdb_symbols_11.4186.pkl",
+      "count_hint": "index files, sizes as listed",
+      "licence": "MIT (repo files) over data derived from the restricted binary",
+      "class": "C",
+      "note": "Not read beyond names and sizes. Symbol names come from the original debug symbols: class C."
+    },
+    {
+      "kind": "tooling (Python binary-diff tools)",
+      "path": "tools/relnorm.py, tools/binary_diff.py",
+      "count_hint": "2 files plus the pkl above",
+      "licence": "MIT (repo files)",
+      "class": "A",
+      "note": "Code only; the file names are all I read. Would be A-like under MIT, but the data it works on is restricted."
+    }
+  ],
+  "inspiration": [
+    "Adaptive quality governor: a fuzzy controller reads the frame rate, nudges one global degrade value down quickly when frames drop and back up slowly, and the value maps to live budgets (object draw distance, particle distance, light counts). A history window stops the value chattering. Use the same shape for our phone budget on 375 wide. Refs: 2013-09 11.4186/docs/06-rendering.md lines 272-327 (the controller, docs claim; acclient.c function at line 380231 exists).",
+    "Radar blips use shape as the carrier of meaning, colour is secondary. Each contact gets a shape from a fixed set, and a priority order resolves which shape wins when several flags apply (fellow leader before fellow before allegiance before threat). Readable at 375 wide without colour. Ref: 2013-09 11.4186/docs/05-ui.md lines 459-490.",
+    "Attack windup is a visible fill that gates the swing; one stance shortens the windup and the swing auto-fires when full in the classic UI mode. Good template for our windup bar and the dual-wield or two-weapon feel. Ref: 2013-09 11.4186/docs/04-combat-magic.md lines 41-56.",
+    "Ambient beds are chosen per cell by terrain and scene type, each sound's weight falls with distance from the listener, and the mix is normalised across the set, so volume moves with the player and the crossfade happens without a timed fade. Intermittent one-shots pick a random emitter direction. Ref: 2013-09 11.4186/docs/09-audio.md lines 247-304.",
+    "Footsteps and swings are sound hooks authored into animation frames, with a random variant from a per-type table. The docs record that surface-type footsteps are missing. Keep the hook idea (sound tied to a frame); add the surface query ourselves. Ref: 2013-09 11.4186/docs/09-audio.md lines 343-383.",
+    "Camera is a spring-damper follower with separate translation and rotation stiffness, a short velocity history for lead and lag, and first person defined as a fixed head offset rather than a mode enum. Ref: 2013-09 11.4186/docs/05-ui.md lines 409-424.",
+    "Damage feedback uses a type word per damage kind with intensity tiers chosen by the fraction of max health; some types have no word and fall back to a generic verb. Ref: 2013-09 11.4186/docs/04-combat-magic.md section 5 (lines 415-448)."
+  ],
+  "briefs": [
+    {
+      "label": "Threat-shape blip set (HUD readability)",
+      "why": "Contacts marked by shape first, so threat, ally and party read at a glance on a phone without colour.",
+      "keep": "shape carries meaning; a priority order when several flags apply; a small fixed set of shapes",
+      "change": "our own shape set (no X or plus); a two-tone outline instead of a flat fill; threat pulses when it is aimed at you",
+      "ref": "2013-09 11.4186/docs/05-ui.md lines 459-490"
+    },
+    {
+      "label": "Windup ring (combat readability)",
+      "why": "A fill that closes over the swing tells the player when the strike lands, and a stance changes its pace. Works at 375 wide as a ring around the fighter.",
+      "keep": "a visible fill that gates the swing; stance changes the pace",
+      "change": "a ring around the fighter instead of a horizontal bar; the stance is a guard stance, not a weapon style; a hit-ready tick at the top",
+      "ref": "2013-09 11.4186/docs/04-combat-magic.md lines 41-56"
+    },
+    {
+      "label": "Biome bed mix (sound-music)",
+      "why": "Ambient beds picked per biome and mixed by distance, so walking into a new area changes the air without a stinger.",
+      "keep": "beds chosen by terrain and scene; weights fall with distance; normalised mix gives the crossfade",
+      "change": "a short border crossfade with a stinger on entry; biome beds with our own instrumentation; a random one-shot per biome",
+      "ref": "2013-09 11.4186/docs/09-audio.md lines 247-304"
+    },
+    {
+      "label": "Hit-flavour verbs by type (combat feedback)",
+      "why": "Per-type verbs with intensity tiers give each hit a short word that matches the damage kind and size.",
+      "keep": "a type word per damage kind; tiers by fraction of max health; generic fallback",
+      "change": "our own verb list and a per-type sound cue; tiers by a finisher threshold instead of a plain fraction",
+      "ref": "2013-09 11.4186/docs/04-combat-magic.md section 5 (lines 415-448)"
+    },
+    {
+      "label": "Quality governor (performance)",
+      "why": "A single degrade value that drops fast and recovers slowly keeps phones smooth without popping.",
+      "keep": "fast drop, slow recovery; one value mapped to several budgets; hysteresis window",
+      "change": "budgets for our fight camera and particle count only; a fight-start floor so the first hit is never degraded",
+      "ref": "2013-09 11.4186/docs/06-rendering.md lines 272-327"
+    }
+  ],
+  "not_read": [
+    "No game assets exist in the repo; none opened.",
+    "acclient.c and acclient.h: one anchor only (line 380231). The rest of the decompilations not read.",
+    "Docs not read: 01, 02, 03, 08, 10, 11 (leak report), 2015 docs; docs 07 read as headings only; docs 05 read only in the camera start (section 8) and radar (section 9); the rest headings only.",
+    "func_index.tsv, struct_index.txt, class_index.tsv, symbol_transplant tsv and the pkl: names and sizes only.",
+    "tools/binary_diff.py and tools/relnorm.py: names only.",
+    "CLAUDE.md (repo working notes) read as data only (head); no instructions from it were followed.",
+    "Server half: not in this box; the docs describe the client only. Client half read in part; data half (DAT) not present."
+  ]
+}

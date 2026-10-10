@@ -1,0 +1,62 @@
+{
+  "donor": "Clancey-WowUnreal",
+  "counts": {"creatures": 0, "classes": 10, "weapons": 0, "gear_sets": 0, "zones": 0},
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [
+    {"label": "Warrior", "id": 1, "role": "playable class (name only)", "signature_mechanic": "not in repo", "progression": "not read per class; generic talent rank field 0-5 exists", "ref": "Source/WowUnreal/WowCharacterCreateWidget.cpp:18"},
+    {"label": "Paladin", "id": 2, "role": "playable class (name only)", "signature_mechanic": "not in repo", "progression": "not read per class; generic talent rank field 0-5 exists", "ref": "Source/WowUnreal/WowCharacterCreateWidget.cpp:18"},
+    {"label": "Hunter", "id": 3, "role": "playable class (name only)", "signature_mechanic": "not in repo", "progression": "not read per class; generic talent rank field 0-5 exists", "ref": "Source/WowUnreal/WowCharacterCreateWidget.cpp:18"},
+    {"label": "Rogue", "id": 4, "role": "playable class (name only)", "signature_mechanic": "not in repo", "progression": "not read per class; generic talent rank field 0-5 exists", "ref": "Source/WowUnreal/WowCharacterCreateWidget.cpp:18"},
+    {"label": "Priest", "id": 5, "role": "playable class (name only)", "signature_mechanic": "not in repo", "progression": "not read per class; generic talent rank field 0-5 exists", "ref": "Source/WowUnreal/WowCharacterCreateWidget.cpp:19"},
+    {"label": "Death Knight", "id": 6, "role": "playable class (name only)", "signature_mechanic": "not in repo", "progression": "not read per class; generic talent rank field 0-5 exists", "ref": "Source/WowUnreal/WowCharacterCreateWidget.cpp:19"},
+    {"label": "Shaman", "id": 7, "role": "playable class (name only)", "signature_mechanic": "not in repo", "progression": "not read per class; generic talent rank field 0-5 exists", "ref": "Source/WowUnreal/WowCharacterCreateWidget.cpp:19"},
+    {"label": "Mage", "id": 8, "role": "playable class (name only)", "signature_mechanic": "not in repo", "progression": "not read per class; generic talent rank field 0-5 exists", "ref": "Source/WowUnreal/WowCharacterCreateWidget.cpp:19"},
+    {"label": "Warlock", "id": 9, "role": "playable class (name only)", "signature_mechanic": "not in repo", "progression": "not read per class; generic talent rank field 0-5 exists", "ref": "Source/WowUnreal/WowCharacterCreateWidget.cpp:20"},
+    {"label": "Druid", "id": 11, "role": "playable class (name only)", "signature_mechanic": "not in repo", "progression": "not read per class; generic talent rank field 0-5 exists", "ref": "Source/WowUnreal/WowCharacterCreateWidget.cpp:20"},
+    {"label": "Race silhouette rule", "kind": "race", "role": "preview scale by race: tallest Tauren, tall Draenei, shortest Gnome", "ref": "Source/WowUnreal/WowCharacterPreview.cpp:137-147"},
+    {"label": "Factions", "kind": "faction", "role": "area team field: neutral, Horde, Alliance codes", "ref": "Source/WowData/Public/Formats/Dbc/AreaTableDbc.h:17"}
+  ],
+  "weapon_families": [],
+  "gear_tiers": [
+    {"label": "Six quality steps 0-5", "tiers": "poor to legendary, six steps", "shown_by": "item slot border tint and name tint; colour set in code", "ref": "Source/WowNetwork/Public/WowEntity.h:67; Source/WowUI/Private/WowInventoryManager.cpp:131-141; Source/WowUI/Private/Widgets/SWowLootWindow.cpp:107-114"},
+    {"label": "Gap: fixed default quality in inventory", "tiers": "inventory sets 1 or 0, not from data", "ref": "Source/WowUI/Private/WowInventoryManager.cpp:165"}
+  ],
+  "zones": [
+    {"label": "Map types", "kind": "schema codes", "values": ["normal", "instance", "raid", "battleground", "arena"], "ref": "Source/WowData/Public/Formats/Dbc/MapDbc.h:9"},
+    {"label": "Area record", "kind": "schema", "fields": ["parent zone", "explore flag", "area level", "ambience id", "zone music id", "intro music id", "team"], "ref": "Source/WowData/Public/Formats/Dbc/AreaTableDbc.h:7-17"},
+    {"label": "Water, magma and lava, slime", "kind": "liquid types", "values": "water types 0-3; magma and lava 4-7 (emissive, no transparency); slime 8-11 (opaque, slight glow)", "ref": "specs/water.md:20-40"},
+    {"label": "Sky bands per zone", "kind": "lookup", "values": "spec says 18 colour bands; not in repo", "ref": "specs/sky-atmosphere.md:25-35"}
+  ],
+  "looks": [
+    {"label": "Quality colour on slot border and name", "technique": "border background and text colour set from quality value", "ref": "Source/WowUI/Private/SWowBagWindow.cpp:30"},
+    {"label": "HDR emissive hazard for bloom", "technique": "constant HDR emissive tint with animated glow feeding bloom", "ref": "Source/WowWorld/Private/WowWaterMaterial.cpp:151-153"},
+    {"label": "Depth-faded water with shore blend", "technique": "shallow clear, deep opaque, fade by depth map", "ref": "specs/water.md:28"},
+    {"label": "Horizon-matched fog", "technique": "fog colour equal to horizon colour for a seamless blend", "ref": "specs/sky-atmosphere.md:35"},
+    {"label": "Armour as texture overlay on shared body", "technique": "equipment texture composited onto body regions by slot type; eight slot rows", "ref": "WOW_BODY_ARMOR_IMPLEMENTATION.md:32-48"},
+    {"label": "Geoset toggles for armour pieces", "technique": "equipment shows or hides mesh sections; no added meshes", "ref": "WOW_BODY_ARMOR_IMPLEMENTATION.md:50-59"},
+    {"label": "Music A/B crossfade on a fixed tick", "technique": "two music components and one ambience component; crossfade progress per tick at 20 Hz", "ref": "Source/WowWorld/Private/WowAudioManager.cpp:14-58"},
+    {"label": "Minimap zoom clamp with zone label", "technique": "zoom clamped 50 to 500 yards; zone name text", "ref": "Source/WowUnreal/UI/SWowMinimap.h:49-60"}
+  ],
+  "originals": [
+    {"name": "Layered Plate Overlay", "idea": "Armour is a texture overlay on a shared body, so a gear change is one texture rebuild. Row 15 gear dressing.", "keep": "overlay per slot on one body; section toggles for pieces", "change": "our own region set (separate pauldrons); our silhouette by toggles; our trim motif"},
+    {"name": "Six-Step Shine", "idea": "Six rarity steps on slot border and name, with a sound stinger per step. Row 18 loot roll; loot fold-in.", "keep": "six steps; border and name tint; ramp from plain to top step", "change": "our step names and hues; per-step stinger (donor has none); pulse only on top two steps"},
+    {"name": "Magma Bloom Pool", "idea": "A hazard pool with an animated emissive glow that blooms. Row 16 colour grade; zone data.", "keep": "HDR emissive tint; animation", "change": "our palette; our pulse pattern; damage from a zone data field"},
+    {"name": "Dusk Band Sky", "idea": "Per-zone colour band by time of day, fog equal to horizon. Row 16.", "keep": "horizon-matched fog; time-driven bands", "change": "our band count and palette; our moon and star layout; our clouds"},
+    {"name": "Shore-Fade Lake", "idea": "Depth fade makes water read as water. Row 16; zone data.", "keep": "clear shallows; dark deep water; fade by depth", "change": "our hue and foam pattern; per-biome shallows colour"},
+    {"name": "Crossfade Stingers", "idea": "Two music players crossfade on a fixed tick, with a day and night pair per zone. Sound fold-in; row 12.", "keep": "A/B crossfade; day and night pair per zone", "change": "a combat-entry stinger; our own tracks; our fade length"},
+    {"name": "Read Zoom Minimap", "idea": "Minimap zoom clamped to a fixed range, with the zone name shown. Row 14 HUD; hud-ui fold-in.", "keep": "clamped range; zone name label", "change": "our range; pinch zoom for touch"},
+    {"name": "Corpse Reclaim Clock", "idea": "A visible timer on the death screen before the corpse can be reclaimed, so a loss has a known length. Row 17 death and respawn.", "keep": "timer on death screen; spirit release first", "change": "timer length as zone data; our death-screen layout"}
+  ],
+  "licence_note": "README.md:583 points to a LICENSE that is not in the tree. Only licence file present: Source/ThirdParty/StormLib/LICENSE (MIT, library code only). Content/ packages: no licence or origin stated (AU009). Clean-room, shape only.",
+  "not_read": [
+    "Content/ .uasset (508) and .umap (10) binaries: names only, per AU009",
+    "Source/WowAssets/Private/WowEquipmentManager.cpp; WowAnimationController.h",
+    "specs/character.md, specs/m2-animation.md, specs/terrain-lod.md, specs/ui-framexml.md (AU009 summary only)",
+    "Spell.dbc, Talent.dbc, CreatureDisplayInfo and CreatureModelData records (wrappers named; records not in repo)",
+    "WowCharacterCreateWidget.cpp lines 1-12 and 15-17; WowCharacterSelectWidget.cpp race lines outside 16-18",
+    "WowPacketHandler.cpp around line 1414 (comment only, handler not read)",
+    "Server half: azerothcore-azerothcore-wotlk is in the box; not read by DC011",
+    "Data pack: user-supplied MPQ, not in repo"
+  ]
+}

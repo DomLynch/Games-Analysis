@@ -1,0 +1,80 @@
+{
+  "donor": "OpenTTD-OpenTTD",
+  "code_licence": "GNU GPL v2 (README.md:26, README.md:174); third-party folders under Zlib, MIT, BSL, Unicode, BSD/CC0, Apache per README.md:176-204",
+  "asset_licence": "GPL v2 stated in base-set nfo headers (media/baseset/openttd/openttd.nfo:6, media/baseset/orig_extra/orig_extra.nfo:6) and font note (media/baseset/OpenTTD-font.md:4); original TTD data not in repo (README.md:88)",
+  "rights_holder_status": "open-source project by the OpenTTD team (CREDITS.md); no company owner in files read; original TTD owner unknown",
+  "best_class": "B",
+  "brief_rule": "Recreate every idea as a clearly distinct original, never a copy. Each brief names the trait KEPT and the trait CHANGED. Class C/D content stays at category level.",
+  "asset_groups": [
+    {"kind": "2D sprite sources (nfo + png)", "path": "media/baseset/openttd/", "count_hint": "22 nfo, 33 png", "licence": "GPL v2 (nfo header)", "class": "B", "note": "signals, mono font, foundations, tramtracks, bridges, canals, rocks; sprite sheets read by count only"},
+    {"kind": "2D sprite sources extra (nfo + png)", "path": "media/baseset/orig_extra/", "count_hint": "13 nfo, 13 png", "licence": "GPL v2 (nfo header)", "class": "B", "note": "rivers, shore, canals, airports, chars, fix graphics"},
+    {"kind": "compiled base GRF binaries", "path": "media/baseset/openttd.grf, media/baseset/orig_extra.grf", "count_hint": "676 KB and 445 KB", "licence": "no own licence line; binary holds GPL text", "class": "B", "note": "built from the nfo/png sources; ambiguous as binaries, classed by source"},
+    {"kind": "TrueType fonts", "path": "media/baseset/OpenTTD-Sans.ttf, -Serif.ttf, -Small.ttf, -Mono.ttf", "count_hint": "4 files, 68-93 KB", "licence": "GPL-2.0 (media/baseset/OpenTTD-font.md:4)", "class": "B", "note": "by Zephyris, maintained upstream"},
+    {"kind": "title screen data", "path": "media/baseset/opntitle.dat", "count_hint": "138 KB", "licence": "repo default GPL (README.md:174); no per-file line", "class": "B", "note": "OTTZ header; contents not decoded (not read)"},
+    {"kind": "original-set reference configs", "path": "media/baseset/orig_dos.obg, orig_win.obg, orig_dos_de.obg, orig_*.obm, orig_*.obs", "count_hint": "about 10 small text files, 0.3-3 KB", "licence": "repo default GPL; text says they describe the original graphics/music/sounds", "class": "D", "note": "config text, not assets (media/baseset/orig_dos.obg:1, media/baseset/orig_dos.obm:1)"},
+    {"kind": "icons and logos", "path": "media/openttd.*.png, media/openttd.svg, media/openttd.64.xpm", "count_hint": "119 media files total, 3.3 MB", "licence": "repo default GPL (not per-file read)", "class": "B", "note": "app icons in several sizes"},
+    {"kind": "vehicle data table", "path": "src/table/engines.h", "count_hint": "766 lines, about 120 rows", "licence": "GPL (code file)", "class": "B", "note": "MT/MR/RVI macros; intro date and year window per vehicle (engines.h:26, engines.h:103)"},
+    {"kind": "town name tables", "path": "src/table/townname.h", "count_hint": "3318 lines", "licence": "GPL (code file); origin of word lists not stated in the file", "class": "B", "note": "named lists by region and part; names not reproduced"},
+    {"kind": "string table", "path": "src/lang/english.txt (+ 66 other src/lang files)", "count_hint": "6073 lines, 4801 STR_ keys", "licence": "GPL (code file)", "class": "B", "note": "prefixes: CONFIG 715, VEHICLE 395, ERROR 369, NEWS 87"},
+    {"kind": "industry layout table", "path": "src/table/industry_land.h", "count_hint": "947 lines", "licence": "GPL (code file)", "class": "B", "note": "not read"},
+    {"kind": "sound and music", "path": "src/sound/, src/music/", "count_hint": "driver code only, no audio files in the repo", "licence": "GPL (code)", "class": "D", "note": "audio comes from OpenSFX/OpenMSX or original TTD files (README.md:76-102)"}
+  ],
+  "inspiration": [
+    "Vehicle breakdown is a hazard with memory: each miss adds 1 to a hidden chance, a 1-in-25 bonus roll adds 25 more, and a hit resets it (src/vehicle.cpp:1350-1366). Use a pity counter so miss streaks end, for parry, crit or dodge in fast duels.",
+    "The failure is telegraphed by a state before it lands: a 'about to fail' state, then a 'failed' state, then a countdown (src/vehicle.cpp:1378-1388). A readable warning before the hard effect suits a 375 px fight camera.",
+    "A quality stat is turned into a lookup table: reliability shifted down by 10 bits indexes a 64-entry chance table (src/vehicle.cpp:1305 and 1363). Cheap to tune and easy for a designer to read as a curve.",
+    "Fatigue drains on every check, not only while moving (src/vehicle.cpp:1331-1333), with one exemption state for loading (src/vehicle.cpp:1328-1329). The design idea is the exemption: a safe spot where stamina does not drain.",
+    "A reset point buys a grace period: leaving the depot refills reliability and divides the breakdown chance by four (src/vehicle.cpp:196-200). Good model for a respawn or shrine with a short protection window.",
+    "Gear is gated by a time window in each data row (src/table/engines.h:26 macro, example row src/table/engines.h:103). Our version: gear unlocked by zone or progression stage instead of the calendar.",
+    "The string set is a flat table of about 4800 keys with a prefix per system (src/lang/english.txt:534 for the news block). Keeps HUD and log text out of logic code."
+  ],
+  "briefs": [
+    {
+      "label": "stall-warning failure",
+      "why": "A hit is announced by a short 'about to fail' state before the real effect, so the player can read it. Silhouette-level read at 375 px: a single pulsing mark on the creature's joint, not a full effect.",
+      "keep": ["two-step telegraph (warn state, then hard state)", "one signature cue that starts the warning", "warning length set by data, not code"],
+      "change": ["warning is a colour pulse on a joint, not smoke", "warning length per attack, not per creature", "a different cue sound so it does not copy any donor sound"],
+      "ref": "src/vehicle.cpp:1378-1388"
+    },
+    {
+      "label": "pity hazard roll",
+      "why": "Each miss raises the chance, a rare bonus roll adds more, and a hit resets it. Streaks of misses end, which players feel as fairness. Only the shape is kept.",
+      "keep": ["accumulating miss counter", "rare bonus roll on top of the normal roll", "reset to zero on a hit"],
+      "change": ["per-fighter counter for crit or dodge, not per vehicle", "different step sizes and a cap per fight", "lookup curve from our own stat, not the donor table"],
+      "ref": "src/vehicle.cpp:1350-1366, table src/vehicle.cpp:1305"
+    },
+    {
+      "label": "rest-exempt fatigue",
+      "why": "Fatigue drains on every check, but one state is exempt, so a safe action resets the pressure. The exemption is the feel: a planned pause in a fight.",
+      "keep": ["always-on drain with a rest exemption", "exemption tied to one clear action", "drain applied in one place per check"],
+      "change": ["exemption while guarding or on a shrine, not while loading", "drain per hit taken, not per tick", "stamina bar colour ramp of our own"],
+      "ref": "src/vehicle.cpp:1328-1333"
+    },
+    {
+      "label": "depot grace on respawn",
+      "why": "Leaving the depot restores the stat and cuts the risk for a short period, so a fresh start is not punished at once. Good for respawn rules.",
+      "keep": ["full restore on reset point", "risk cut to a quarter on exit", "comment states the reason in code"],
+      "change": ["restore on a shrine, with a short protection window", "protection ends on the first attack, not a timer", "no shared numbers with the donor"],
+      "ref": "src/vehicle.cpp:196-200"
+    },
+    {
+      "label": "era-gated gear rows",
+      "why": "Each gear row has its own introduction date and window, so the set of items changes over the game. Shows how data rows can carry availability as well as stats.",
+      "keep": ["one macro per gear class", "availability window in the data row", "stats and availability in one table"],
+      "change": ["window keyed to zone or progression stage, not calendar years", "no donor names or stat values", "tables in our own catalogue format"],
+      "ref": "src/table/engines.h:26, src/table/engines.h:103"
+    }
+  ],
+  "not_read": [
+    "sprite PNG pixel contents and nfo sprite lines beyond counts",
+    "media/baseset/opntitle.dat contents",
+    "66 other src/lang language files",
+    "src/table/industry_land.h",
+    "src/table/sprites.h",
+    "src/news_gui.cpp",
+    "src/animated_tile.cpp (listing only)",
+    "src/town_cmd.cpp",
+    "src/3rdparty licence files beyond README mentions",
+    "COPYING.md body (header only)"
+  ]
+}

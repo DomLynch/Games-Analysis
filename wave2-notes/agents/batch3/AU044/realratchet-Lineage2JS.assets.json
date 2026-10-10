@@ -1,0 +1,37 @@
+{
+  "donor": "realratchet-Lineage2JS",
+  "code_licence": "Unclear. package.json line 12 says \"license\": \"ISC\"; no LICENSE file in the tree.",
+  "asset_licence": "None shipped. README says the user supplies the client install (line 27). Screenshots and map reference images carry no licence statement.",
+  "rights_holder_status": "Proprietary, decompile-informed. README line 6 names NCSOFT as the company behind the game; README line 13 says the work uses encrypted asset binaries and disassembly.",
+  "best_class": "C",
+  "half_read": "Client half (src/ renderer and asset decoder, read in part). Server half not in the box (README line 21: future work). Data pack not in the box (user-supplied client install).",
+  "asset_groups": [
+    {"kind": "screenshots", "path": "docs/tower_inside.jpg, docs/tower_outside.jpg, docs/tower_statues.jpg", "count_hint": "3 JPG, 1.3 to 1.6 MB each", "licence": "none stated", "class": "C", "note": "game previews (README line 27); not opened"},
+    {"kind": "map_reference_images", "path": "reference/mapC6.jpg, reference/map-interlaced.jpg, reference/map-reference.gif", "count_hint": "3 files, 260 to 363 KB", "licence": "none stated", "class": "C", "note": "map references; not opened"},
+    {"kind": "ui_image", "path": "html/skybox.png", "count_hint": "1 file, 556 bytes", "licence": "none stated", "class": "C", "note": "size only; may be a placeholder"},
+    {"kind": "source_and_styles", "path": "src/**/*.ts, style/*.scss", "count_hint": "419 .ts plus a few .js, .vs, .glsl, .scss", "licence": "none (no LICENSE file)", "class": "C", "note": "code; clean-room shape only"},
+    {"kind": "audio_models_maps_text", "path": "none in tree", "count_hint": "0", "licence": "n/a", "class": "D", "note": "ext count showed no audio or model files"}
+  ],
+  "inspiration": [
+    "Splash puffs at contact sized from the body's collider, faced to the wake only while moving, spawned at a speed-driven rate from the effect script (src/rendering/water-hit-effect.ts lines 9-38).",
+    "Additive two-sided celestial sprite with depth write off, for a moon or sun glow (src/rendering/sky-renderer.ts lines 25-33).",
+    "Per-vertex baked glow mixed into the lighting term through a half-domain step (src/objects/lit-actor.ts lines 193-194). Recreate with an explicit tint ramp.",
+    "Damped bone chain with a stiffness term and a collision resolve limit for hair and cape (src/objects/dynamic-hair-simulation.ts lines 17, 23; names only).",
+    "Camera handedness fix in the projection matrix, with the up axis set once (src/rendering/ue2-conventions.ts lines 10, 17, 19). Useful when importing mirrored data.",
+    "Sky and environment colour pipeline (sky-renderer.ts, env-info.ts, l2-env.ts): only the sky-renderer head was read."
+  ],
+  "briefs": [
+    {"label": "shoreline splash puffs", "why": "a splash that grows with the body and faces the wake only while moving", "keep": "size tied to the body's collider; spawn rate driven by speed", "change": "a flat sprite burst in our own shapes and palette, faced away from the wake", "ref": "/mnt/frankendom-donors/realratchet-Lineage2JS/src/rendering/water-hit-effect.ts lines 9-38"},
+    {"label": "night-sky moon glow", "why": "an additive, two-sided body that reads as a glow at dusk", "keep": "additive blending, depth write off, two-sided sprite", "change": "our own disc and a dusk-tinted halo, with a different count of bodies", "ref": "/mnt/frankendom-donors/realratchet-Lineage2JS/src/rendering/sky-renderer.ts lines 25-33"},
+    {"label": "vertex-baked glow mixing", "why": "baked per-vertex glow softens the lighting", "keep": "baked per-vertex glow mixed with the lighting term", "change": "an explicit tint ramp in our own shader, not a modulate domain", "ref": "/mnt/frankendom-donors/realratchet-Lineage2JS/src/objects/lit-actor.ts lines 193-194"},
+    {"label": "springy cape bones", "why": "a short damped chain sways and stops on contact", "keep": "a damped bone chain with a collision limit", "change": "fewer segments and our own wind-driven sway law, not input-driven", "ref": "/mnt/frankendom-donors/realratchet-Lineage2JS/src/objects/dynamic-hair-simulation.ts lines 17, 23 (names only)"}
+  ],
+  "cross_link": "Camera: ue2-conventions.ts (projection handedness fix). VFX: water-hit-effect.ts, sky-renderer.ts. Animation: dynamic-hair-simulation.ts. Sound, zones, spawns, loot, HUD: no assets; src game and UI files not read.",
+  "not_read": [
+    "Most of src/ (419 .ts files), beyond the sections named above",
+    "src/assets decoders, env-info.ts, l2-env.ts (beyond names), skill-viewer, physics, ue-script VM",
+    "docs/*.jpg and reference/* images (sizes from ls only)",
+    "html/skybox.png contents; style/*.scss; package-lock.json; .vscode",
+    "Server half and data pack: not in the box"
+  ]
+}

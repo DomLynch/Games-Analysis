@@ -1,0 +1,154 @@
+{
+  "donor": "ProjectSWGCore-Holocore",
+  "code_licence": "AGPL-3.0 per LICENSE.txt (line 1 'GNU AFFERO GENERAL PUBLIC LICENSE, Version 3') and per build.gradle.kts and Kotlin file headers ('GNU Affero General Public License ... version 3 ... or any later version'). CONFLICT: README.md line 3 badge says 'license-GPLv3'. The files do not resolve it; read as AGPL-3.0-or-later from the licence text and headers.",
+  "asset_licence": "No licence file in serverdata/ (5,592 files, 91M), no CREDITS or NOTICE file found at top level, and no per-folder licence read. The repo files give no asset licence and no source for the game data. Class C for all serverdata groups.",
+  "rights_holder_status": "Fan emulator project: 'ProjectSWG is an emulation project for Star Wars Galaxies' (Kotlin header lines 4-7) and README 'Holocore is a Star Wars Galaxies server emulator' (line 7). The serverdata uses original-game formats (.iff template paths, .trn terrain, .tga heightmaps, .sdb tables, string tables). The repo files do not say whether that data was extracted from the original game client or who holds its rights. Status: unknown for the data; treat as restricted (C). No clean-room statement, no original-game-data statement.",
+  "best_class": "C (all asset groups; no permissive or share-alike asset licence found in the repo files)",
+  "asset_groups": [
+    {
+      "kind": "string tables (text)",
+      "path": "serverdata/strings/strings.sdb",
+      "count_hint": "189,081 lines; key/value rows grouped by a file column; about 3,280 distinct file groups; English UI and NPC lines",
+      "licence": "none stated",
+      "class": "C",
+      "note": "Largest text asset. Rows are tab-separated (file, key, value). Read as a grammar only: a group name, a key slug, and a value string. Values not quoted here."
+    },
+    {
+      "kind": "dialogue and conversation scripts (JSON)",
+      "path": "serverdata/conversation/ (subfolders per zone and per NPC type, e.g. tatooine_jabbas_palace/, questgiver/, trainers/; plus .sdb and .msdb index files)",
+      "count_hint": "about 3,862 .json files across serverdata (serverdata-wide count); 11 .msdb files",
+      "licence": "none stated",
+      "class": "C",
+      "note": "Branching NPC dialogue trees (names only; no file content read). Content not quoted."
+    },
+    {
+      "kind": "NPC tables (creature stats, looks, loot links)",
+      "path": "serverdata/npc/ (npc_1.sdb 997 lines, npc_2.sdb 1003, npc_3.sdb 308, npc_4.sdb 997, npc_5.sdb 1032, npc_stats.sdb 101, npc_weapon.sdb 575, npc_equipment.sdb 20, npc_standard_attack.sdb 27, npc_mood.txt, npc_emotes.txt, npc_action.txt)",
+      "count_hint": "about 4,300 lines across npc_1 to npc_5 including header rows (997, 1003, 308, 997, 1032)",
+      "licence": "none stated",
+      "class": "C",
+      "note": "One row per NPC: template, planet, faction, scale min and max, hue, attack and movement speed, default weapon, aggressive and assist radius, death-blow flag, three loot-table chances and names, skill mods. Data-first source for creature identity and behaviour numbers."
+    },
+    {
+      "kind": "item tables",
+      "path": "serverdata/items/ (items_armor.sdb, items_weapon.sdb 304 lines, items_weapon_cu.sdb, items_wearable.sdb, items_crystal.sdb, items_item.sdb, master_item.msdb)",
+      "count_hint": "8 or more item files listed (not counted in full); items_weapon.sdb 304 lines",
+      "licence": "none stated",
+      "class": "C",
+      "note": "Item stats and template paths. Not opened beyond names and counts."
+    },
+    {
+      "kind": "loot tables",
+      "path": "serverdata/loot/loot_table.sdb (934 lines, 313 distinct loot ids, columns loot_id, difficulty, min_cl, max_cl, comment_group_0, items_group_0, chance_group_0); serverdata/loot/rls_items.sdb",
+      "count_hint": "about 311 loot ids (313 distinct first-column values including header rows); NORMAL, ELITE and BOSS rows",
+      "licence": "none stated",
+      "class": "C",
+      "note": "Each loot id has difficulty rows (NORMAL, ELITE, BOSS) with level bands (min_cl, max_cl); items are grouped with a per-group chance. Good data pattern for loot tiers. Only the first rows read."
+    },
+    {
+      "kind": "appearance and species table",
+      "path": "serverdata/appearance/appearance_table.sdb (1077 lines); serverdata/cybernetics/cybernetics.sdb",
+      "count_hint": "1 table, 1077 lines, columns per species and sex (human, rodian, moncal, wookiee, twi'lek, trandoshan, zabrak, bothan, ithorian, sullustan)",
+      "licence": "none stated",
+      "class": "C",
+      "note": "Maps a base object template to a male or female variant per species. Data pattern only."
+    },
+    {
+      "kind": "spawn tables",
+      "path": "serverdata/spawn/ (dynamic/dynamic_spawns.sdb 961 lines; city, dungeon, event, gcw, instance, invasion, outback, poi, common_mustafar.sdb); serverdata/patrol/",
+      "count_hint": "about 15 spawn folders; dynamic_spawns 961 lines",
+      "licence": "none stated",
+      "class": "C",
+      "note": "Spawn sets per zone type. dynamic_spawns.sdb header lists boss, elite and normal_1 to normal_9 slots; the code (DynamicSpawnService.kt) spawns elite and normal_1 to normal_4 per pulse. Only the header row read."
+    },
+    {
+      "kind": "combat tables",
+      "path": "serverdata/combat/mine_types.sdb (14 lines); serverdata/combat/ folder only has this file",
+      "count_hint": "1 file, 14 lines (header, types row, then mine rows); only the first 6 lines read",
+      "licence": "none stated",
+      "class": "C",
+      "note": "Mine or trap family: detonate range, blast radius, damage min and max, damage type, explosion effect file. Read: header, types row and four rows."
+    },
+    {
+      "kind": "terrain (binary and image)",
+      "path": "serverdata/terrain/ (20 .tga heightmap and mask files; 21 .trn terrain files; e.g. kashyyyk_main_height.tga, dathomir.trn)",
+      "count_hint": "serverdata-wide counts: 20 .tga, 21 .trn",
+      "licence": "none stated",
+      "class": "C",
+      "note": "Heightmaps and terrain data for zones. Not opened (binary). Zone geometry is data, a good pattern for zones as data, but the files are not ours to copy."
+    },
+    {
+      "kind": "name generator grammar (text)",
+      "path": "src/main/resources/namegen/ (race_bothan, race_human, race_ithorian, race_moncal, race_rodian, race_sullustan, race_trandoshan, race_twilek, race_wookiee, race_zabrak .txt; resources.txt 1273 bytes; filter/ folder)",
+      "count_hint": "10 race lists plus resources.txt; about 1,100 lines of text in total (wc)",
+      "licence": "race_wookiee.txt header says 'Based off of the names listed on' a fan wiki category page (URL in file). No licence line for any list.",
+      "class": "C",
+      "note": "resources.txt holds the syllable grammar (vowels, start and end consonant sets, max length, surname chance). Grammar is a generic idea; the lists are not ours to copy. Only resources.txt and the wookiee header read."
+    },
+    {
+      "kind": "security and images",
+      "path": "src/main/resources/security/Holocore.p12 (2.4K keystore); pswg-banner.png (README banner, 29K)",
+      "count_hint": "2 files",
+      "licence": "none stated",
+      "class": "D",
+      "note": "Keystore is binary and not opened; not usable and not inspected. Banner image not opened. Nothing usable for Frankendom."
+    }
+  ],
+  "inspiration": [
+    "Creature row as data: one line per NPC carries scale band (min and max), hue, attack speed, movement speed, aggressive and assist radius, a death-blow flag and up to three loot tables with their own chances (serverdata/npc/npc_1.sdb line 1 header and line 3 creature row). Recreate the schema for our creature catalogue with our own numbers.",
+    "Scale band for variety from one model: a creature's scale is a min-max range (0.6 to 0.8 in the sample row), so one body gives several sizes at a glance. Keep the band idea, change the species and proportions (npc_1.sdb line 3).",
+    "Trap family as a small table: each type has a detonate range below the blast radius, a damage range with min and max, a damage type and one explosion effect file. Four to six types cover hazard variety (serverdata/combat/mine_types.sdb lines 3-6).",
+    "Spawn pulse near a player: a percentage roll on movement, a cap on alive spawns near the player (default 12), an egg placed within 250 metres, and one elite plus normal slots 1 to 4 drawn from a spawn set (DynamicSpawnService.kt lines 58-59, 98-100, 149-170, 198). Map onto walk density; move the cap to zone data.",
+    "Three-tier loot roll: up to three tables per NPC, each with its own chance, and a chance of zero or less means the table does not exist; credits and items toggled separately (LootGenerationService.kt lines 98-109, 124, 77). Keep the three-tier idea for our loot ceremony.",
+    "Difficulty tiers inside one loot id: normal, elite and boss rows share an id and a level band (serverdata/loot/loot_table.sdb header and first rows). Pattern for elite and boss loot in one table.",
+    "Syllable grammar for names: a vowel set, start and end consonant sets, a max length and a surname chance, one grammar file for each species (src/main/resources/namegen/resources.txt). Build our own grammar per faction; do not copy the donor lists."
+  ],
+  "briefs": [
+    {
+      "label": "Plated pack-hunter (category: large melee beast)",
+      "why": "A big plated animal that attacks slowly and moves fast reads as a threat at range and rewards dodging.",
+      "keep": "scale band with a wide size range; attack speed slower than move speed; aggressive radius and assist radius set separately so the pack calls in",
+      "change": "our own limb count and head shape; a palette built from one new hue family; a different hide pattern and an ember glow at the seams",
+      "ref": "serverdata/npc/npc_1.sdb line 3 (creature row; read the numbers, not the name)"
+    },
+    {
+      "label": "Proximity trap family",
+      "why": "A small set of traps with clear detonate ranges and damage bands gives hazards variety at 375 wide.",
+      "keep": "detonate range smaller than blast radius; damage min and max per type; one damage type and one effect per trap",
+      "change": "our trap shapes and names; spike, sigil and rune types instead of mines; our own effect files",
+      "ref": "serverdata/combat/mine_types.sdb lines 3-6"
+    },
+    {
+      "label": "Walk-density spawn pulse",
+      "why": "A small percent chance per step with a cap on nearby spawns keeps the world busy but never crowded.",
+      "keep": "percent roll on movement; alive cap near the player; spawn point offset within a set distance; one elite and normal slots per set",
+      "change": "a round offset instead of a square; cap per zone rather than per player; a visible rising signal before the spawn appears",
+      "ref": "src/main/java/com/projectswg/holocore/services/support/npc/spawn/DynamicSpawnService.kt lines 58-59, 98-100, 149-170"
+    },
+    {
+      "label": "Three-tier loot roll",
+      "why": "Three tables with their own chances let one kill give a common, a rare and a boss drop without one big table.",
+      "keep": "three tables per creature; a chance of zero removes a table; credits and items switched separately",
+      "change": "our item families and rarity colours; a drop ceremony sound per tier; no copied table",
+      "ref": "src/main/java/com/projectswg/holocore/services/gameplay/combat/loot/LootGenerationService.kt lines 98-109"
+    },
+    {
+      "label": "Syllable name grammar per faction",
+      "why": "A short grammar with start and end sounds gives names that feel of one people without a list.",
+      "keep": "vowel set; start and end consonant sets; a max length; a surname chance",
+      "change": "our own sound palette per faction; no copied lists; a different length cap",
+      "ref": "src/main/resources/namegen/resources.txt (grammar sections)"
+    }
+  ],
+  "not_read": [
+    "the Java and Kotlin code beyond the spawn and loot services and their headers (637 files under src/main/java); the server half and the paired client are not in this box (no client folder at top level)",
+    "pswgcommon/ (git submodule, empty folder on disk)",
+    "most of serverdata (5,592 files): only headers, counts and a few rows read; the 3,862 conversation JSON files not read; strings values not quoted",
+    "terrain .tga and .trn binary files (names and counts only)",
+    "src/main/resources/namegen/race_*.txt lists other than the wookiee header (only resources.txt grammar opened)",
+    "Holocore.p12 keystore and pswg-banner.png (not opened)",
+    "test folder, .idea, Docker and CI files; docs not present as a folder",
+    "README Discord and contribution guides read only for asset-relevant lines",
+    "serverdata/conversation JSON content (names only)"
+  ]
+}

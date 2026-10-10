@@ -1,0 +1,84 @@
+{
+  "donor": "YarnSpinnerTool-YarnSpinner",
+  "code_licence": "MIT. LICENSE.md line 1 reads 'The MIT License (MIT)'. YarnSpinner/YarnSpinner.csproj and YarnSpinner.Compiler/YarnSpinner.Compiler.csproj set PackageLicenseExpression to MIT.",
+  "asset_licence": "No separate asset licence in the tree. LICENSE.md grants MIT for 'the Software'; no file under Documentation/ or Tests/ states its own licence, and the README names a logo author without a licence line. Treated as unclear (class C).",
+  "rights_holder_status": "Original company. README Credits says the project is developed by Yarn Spinner Pty. Ltd., an Australian company, a spinoff of Secret Lab Pty. Ltd. No game data in the tree.",
+  "best_class": "C",
+  "half_read": "Compiler / tool half (YarnSpinner.Compiler, the language spec in Documentation/Yarn-Spec.md, and Tests/ dialogue scripts). The runtime half is NOT in the box: the README names 'Yarn Spinner for Unity' as a separate official package. No Yarn runtime folder exists under /mnt/frankendom-donors (only inkjs, a different narrative tool, which is not in this batch and was not read).",
+  "asset_groups": [
+    {
+      "kind": "dialogue test scripts (story text)",
+      "path": "Tests/TestCases/*.yarn, Tests/Basic.yarn, Tests/Compiler.yarn, Tests/Options.yarn, Tests/TaggedLines.yarn, Tests/TestCases/Duplicates/lipsum*.yarn",
+      "count_hint": "85 .yarn files repo-wide; Tests/ holds 123 files in total",
+      "licence": "No separate licence; repo MIT covers 'the Software' only",
+      "class": "C",
+      "note": "Compiler test cases written as tiny dialogue: lines, options, once-only blocks, declared variables, shadow line IDs, line groups. Filler text in lipsum*.yarn is Lorem Ipsum placeholder. Read: Basic.yarn (head), Once.yarn, SmartVariables.yarn, LineGroups.yarn (head), ShadowLines.yarn (head), Duplicates/lipsum1.yarn (head). Not read: the remaining ~80 .yarn files and ParseFailures/."
+    },
+    {
+      "kind": "logos (raster)",
+      "path": "Documentation/YarnSpinnerLogo.png, Documentation/YarnSpinnerLogo-small.png, Documentation/NYUGameCenter.png, Documentation/patreon.png",
+      "count_hint": "4 PNG files in the repo",
+      "licence": "None stated. README line 40 credits the logo to Cecile Richard; NYU and Patreon images are sponsor marks.",
+      "class": "C",
+      "note": "Not opened; pixel sizes not measured. Do not reuse without asking. Sponsor and logo marks are not ours to take."
+    },
+    {
+      "kind": "syntax diagrams (vector)",
+      "path": "Documentation/railroads/*.svg",
+      "count_hint": "27 SVG files repo-wide",
+      "licence": "No separate licence; repo MIT only",
+      "class": "C",
+      "note": "Railroad (syntax) diagrams for each grammar rule, referenced from Yarn-Spec.md (for example railroads/option.svg at line 596). Not opened beyond names. Drawn diagrams; the idea of per-rule syntax diagrams is generic and can be recreated."
+    },
+    {
+      "kind": "language spec (prose)",
+      "path": "Documentation/Yarn-Spec.md (docs_overrides/*.md not read)",
+      "count_hint": "Yarn-Spec.md 992 lines",
+      "licence": "Repo MIT, no separate licence",
+      "class": "C",
+      "note": "Yarn language version 2 spec, last updated 30 September 2021. Read in part: headings, lines 1-25, 69-80, 590-600. Prose is not reproduced here."
+    }
+  ],
+  "inspiration": [
+    "Dialogue as a plain, line-based script: spoken lines, options and game commands in one readable file. For us the idea is an NPC script that writers edit without code; keep the structure, write our own syntax.",
+    "Once-only and visited gates. A block or option can show a different branch after its first play (Tests/TestCases/Once.yarn). Recreate as a per-character flag on the one ledger, so an NPC remembers a duel or a quest step.",
+    "Conditional options that appear or hide by state, and options that vanish after one use (Once.yarn option lines). Good for a gated choice list in the phone UI; the hidden-vs-locked choice is ours to make.",
+    "Declared, derived variables: a value computed from other state and re-evaluated on use (Tests/TestCases/SmartVariables.yarn line 9). Maps to derived stats or gate checks in the engine.",
+    "Shadow line IDs: one canonical line and a second entry that points at its key, so the text is stored once for every variant (Tests/TestCases/ShadowLines.yarn; YarnSpinner.Compiler/Visitors/StringTableGeneratorVisitor.cs lines 147-151). A clean localisation pattern for our string tables.",
+    "Line groups: a set of lines where the first-meeting line and the later lines are chosen by state (Tests/TestCases/LineGroups.yarn). Useful for one character with several moods.",
+    "Generated railroad (syntax) diagrams per grammar rule (Documentation/railroads). A good model for a writer-facing rules page that we draw ourselves."
+  ],
+  "briefs": [
+    {
+      "label": "Remembering greeter (first-visit line, later-visit line)",
+      "why": "An NPC who reacts to a player who has been before makes a zone feel attentive. Cheap state, big effect. Readable at 375 wide because it is one text bubble, not art.",
+      "keep": "A first-time line and a later-time branch on the same node, selected by one stored flag. Signature sound: a short stinger when the greeting changes.",
+      "change": "Gate on the duel record (won or lost a fight with this NPC) rather than a plain visit. Give the later line a different voice and a fixed portrait tint. Store the flag on our one character ledger, not in the script.",
+      "ref": "Tests/TestCases/Once.yarn and Tests/TestCases/LineGroups.yarn (paths only; this donor is class C, so the idea is recreated from scratch)"
+    },
+    {
+      "label": "Gated choice list (some options appear only when state allows)",
+      "why": "Choices that appear or vanish keep a conversation short and make the world feel like it remembers. The option list is the same UI at phone width.",
+      "keep": "Option lines with a condition; an option that can be used once and then disappears. Signature effect: the option row fades out after use.",
+      "change": "Show a locked row with a short reason instead of hiding it, and draw the lock with our own icon. Make the state source our ledger, not script variables.",
+      "ref": "Tests/TestCases/Once.yarn (option lines with conditions)"
+    },
+    {
+      "label": "Shadow-keyed variant line",
+      "why": "One canonical line serves every variant and every language, so writers do not copy text. Costs nothing at runtime.",
+      "keep": "A second entry that carries no text of its own and points at the first entry's key.",
+      "change": "Use our own plain key scheme and keep the source line next to the variant for review. Do not copy the tag syntax.",
+      "ref": "Tests/TestCases/ShadowLines.yarn; YarnSpinner.Compiler/Visitors/StringTableGeneratorVisitor.cs (lines 147-151)"
+    }
+  ],
+  "not_read": [
+    "Unity runtime package (not in the box; named in README line 26)",
+    "YarnSpinner.Tests/ C# test code (21 files) and YarnSpinner/ runtime library source beyond the csproj",
+    "Documentation/railroads/*.svg contents (only the count and names were seen)",
+    "The four PNG logos (sizes and pixels not measured)",
+    "Most Tests/TestCases/*.yarn files (only the heads or named files above were read); Tests/TestCases/ParseFailures/",
+    "Documentation/Yarn-Spec.md beyond lines 1-25, 69-80, 590-600 and the heading list",
+    "docs_overrides/*.md, filter.yml, .vscode/, .github/ workflows",
+    "Paired runtime donor: none in the box; inkjs is another narrative tool in the box and was not read"
+  ]
+}

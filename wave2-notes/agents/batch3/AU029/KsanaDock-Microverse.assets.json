@@ -1,0 +1,43 @@
+{
+  "donor": "KsanaDock-Microverse",
+  "code_licence": "MIT (LICENSE line 1 and line 3 'Copyright (c) 2025 KsanaDock'; README_EN.md line 241 says the project is MIT-licensed).",
+  "asset_licence": "No asset licence file or per-folder licence in the box. README_EN.md line 249 credits 'Art Assets: LimeZu' with a link, but states no terms. Ambiguous, so class C.",
+  "rights_holder_status": "Credited third-party art (LimeZu named as the artist in the README only). Project copyright KsanaDock (LICENSE line 3). No licence line for the font.",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "character body sprite sheets", "path": "asset/characters/body (8 png, names end in x32)", "count_hint": "8 png", "licence": "not stated; LimeZu credit only", "class": "C", "note": "One sheet per persona. Used with AnimatedSprite2D for idle, run, sit and stand (script/CharacterController.gd lines 46, 343-409)."},
+    {"kind": "character portraits", "path": "asset/characters/portraits (8 png, names end in P32)", "count_hint": "8 png", "licence": "not stated; LimeZu credit only", "class": "C", "note": "Face portraits for the dialogue card. Pixel size taken from the file name (32), not verified by header."},
+    {"kind": "prop and object tiles (incl. animated props)", "path": "asset/objects (310 png, plus animated_* gif, e.g. animated_party_balloon_red_32x32.gif)", "count_hint": "310 png, 4 gif", "licence": "not stated; LimeZu credit only", "class": "C", "note": "32 px props by file name. Animated props include balloons, carts, a TV and a hospital door."},
+    {"kind": "single-object office props", "path": "asset/singleObjects/office_objects", "count_hint": "339 png", "licence": "not stated; LimeZu credit only", "class": "C", "note": "Office furniture and props; use in scene/maps/Office.tscn not verified."},
+    {"kind": "UI tile singles and UI sheets", "path": "asset/ui/singles32x32 (3,610 png in folders named after UI sheets with a ~1 suffix); asset/ui/GUI.png, Modern_UI_Style_1_32x32.png, Modern_UI_Style_2_32x32.png, dialog_bubble_bg.png", "count_hint": "3,610 + 4 png", "licence": "not stated; LimeZu credit only", "class": "C", "note": "Sheet names suggest a commercial UI pack; the files do not say which pack. dialog_bubble_bg.png is used as a nine-patch frame (script/ui/DialogBubble.gd line 15)."},
+    {"kind": "map tiles (interiors and exteriors)", "path": "asset/maps/interiors (13 png), asset/maps/exteriors (1 png), asset/maps/animated_party_balloon_blue_32x32.gif", "count_hint": "14 png, 1 gif", "licence": "not stated; LimeZu credit only", "class": "C", "note": "Interior names include Modern_Office and Generic_Home (file names only)."},
+    {"kind": "pixel font", "path": "asset/fonts/fusion-pixel-12px-proportional-zh_hans.otf (4.05 MB)", "count_hint": "1 otf", "licence": "not stated in box", "class": "C", "note": "Used by the dialog bubble label (script/ui/DialogBubble.gd line 26 sets the word-wrap mode and the font is loaded from this folder)."},
+    {"kind": "promo and cover images", "path": "pics/ (KsanaDock.png, Cover.png, office.png, a business card png)", "count_hint": "4 png", "licence": "not stated", "class": "C", "note": "Promotional images in the README. Not read."},
+    {"kind": "shader", "path": "asset/ui/shaders/glass_blur.gdshader.uid only", "count_hint": "1 uid file", "licence": "n/a", "class": "D", "note": "Only the uid file is in the tree. The shader source is not present."},
+    {"kind": "audio", "path": "none (no wav, ogg or mp3 in tree)", "count_hint": "0", "licence": "n/a", "class": "D", "note": "No sound or music files in the box."}
+  ],
+  "inspiration": [
+    "Office as a small-prop town: 32 px props placed on a tile grid, with furniture, carts and balloons as ambient life (asset/objects, asset/singleObjects, pics/office.png). Keep the dense small-prop read; change the prop set to our own theme.",
+    "Speech bubble as a nine-patch frame: the bubble is a nine-patch background with a word-wrapped pixel label, has a default duration argument of 5.0 seconds (line 39) and a target-side flag (is_target_on_right); the auto-hide and flip bodies were not read (script/ui/DialogBubble.gd lines 15, 26, 39). Recreate with our own frame and a tail that points at the speaker.",
+    "Arrival ease: the walk speed lerps from 40 percent to full over the last 50 px before the target, so the character slows into the spot (script/CharacterController.gd line 274). Keep the ease-out; add a settle pose on arrival.",
+    "Direction-keyed clips: one clip name per state and facing (idle, run, sit, stand) for four directions (script/CharacterController.gd lines 46, 343-409). Keep the clip-per-facing pattern; change the set to add a three-quarter facing and a look-around idle.",
+    "Ambient animated props: short looping 32 px props (party balloons in four colours, carts, a TV, a hospital door) give a room life without characters moving (asset/objects/animated_*). Recreate the loop set with fire, lanterns and a flicker.",
+    "Portrait and body pairs: each persona has a face portrait for the dialogue card and a body sheet for the world view (asset/characters/portraits and body). Keep the pair; change the portrait to a two-tone palette with a class emblem.",
+    "Persona table keyed by name: one constant holds a config per named persona (script/CharacterPersonality.gd line 6). Good shape for a data-driven roster with a per-persona voice and look."
+  ],
+  "not_read": [
+    "script/ai/* (APIManager, DialogService, memory, background story): not opened",
+    "script/CharacterPersonality.gd persona text: keys seen with grep only; descriptions not read or copied",
+    "scene/*.tscn beyond names: not read",
+    "asset/ui/singles32x32 contents (3,610 files): counts only",
+    "pics/ image content: not opened",
+    "README.md (Chinese), CONTRIBUTING.md, IMPORT_FILES_SOLUTION.md: not read",
+    "Server or back end: none in the box; the AI service is external (APIConfig.gd, not read)"
+  ],
+  "briefs": [
+    {"label": "Nine-patch speech bubble", "why": "A short line reads at phone width without a full panel, and it leaves on its own.", "keep": "nine-patch frame; default duration argument of 5 seconds; a target-side flag", "change": "a tail that points at the speaker; the text reveals one word at a time; our own pixel font", "ref": "/mnt/frankendom-donors/KsanaDock-Microverse/script/ui/DialogBubble.gd (lines 15, 26, 39)"},
+    {"label": "Arrival ease", "why": "Slowing into a target looks deliberate and avoids a hard stop.", "keep": "speed eases from a low fraction to full over the last stretch before the target", "change": "a settle pose on arrival (a small dip and a shift of weight); the ease length depends on the stance", "ref": "/mnt/frankendom-donors/KsanaDock-Microverse/script/CharacterController.gd (line 274)"},
+    {"label": "Lantern loop props", "why": "Looping small props make a room feel alive with no character movement.", "keep": "32 px props on a loop; a set of colour variants of the same prop", "change": "fire, lantern and torch flicker instead of balloons and carts; loops offset in time so no two match", "ref": "/mnt/frankendom-donors/KsanaDock-Microverse/asset/objects (animated_party_balloon_red_32x32.gif and the other animated_* files)"},
+    {"label": "Persona card pair", "why": "A face card for talk and a body sprite for the world lets one character read in two places.", "keep": "portrait and body as a pair per persona", "change": "two-tone portrait palette; a class emblem in the corner; body sprite proportions set per class", "ref": "/mnt/frankendom-donors/KsanaDock-Microverse/asset/characters/portraits/JackP32.png and asset/characters/body (file names only)"}
+  ]
+}

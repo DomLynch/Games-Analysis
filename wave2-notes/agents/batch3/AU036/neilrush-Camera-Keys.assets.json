@@ -1,0 +1,81 @@
+{
+ "donor": "neilrush-Camera-Keys",
+ "code_licence": "BSD 2-Clause (LICENSE:1; copyright line LICENSE:3 'Copyright (c) 2021, neilrush'); same BSD text in plugin header (CameraKeysPlugin.java:2-4)",
+ "asset_licence": "No separate asset licence. Repo LICENSE is the only licence; it does not name images separately.",
+ "rights_holder_status": "individual plugin authors; header names Adam (2018), Abexlry (2018) and neilrush (2021). Not a company; no game content in repo.",
+ "best_class": "D",
+ "asset_groups": [
+  {
+   "kind": "plugin icon",
+   "path": "icon.png",
+   "count_hint": "1 PNG, 48x48",
+   "licence": "repo BSD-2; images not named",
+   "class": "C",
+   "note": "Not reused; trivial."
+  },
+  {
+   "kind": "overlay icon",
+   "path": "src/main/resources/com/camerakeys/zoomIcon.png",
+   "count_hint": "1 PNG, 22x22",
+   "licence": "repo BSD-2; images not named",
+   "class": "C",
+   "note": "Loaded by CameraKeysOverlay.java:49."
+  },
+  {
+   "kind": "README demo images",
+   "path": "README.md (imgur links, lines 1, 7-8, 12, 36)",
+   "count_hint": "external, not in repo",
+   "licence": "not stated",
+   "class": "D",
+   "note": "Not in repo; not assessed."
+  }
+ ],
+ "inspiration": [
+  "One key, three modes: hold, toggle and set as a small state machine (src/main/java/com/camerakeys/CameraKeysPlugin.java:448-495).",
+  "A preset is cancelled only after a short tick lockout and only when the user moves it past a threshold (CameraKeysPlugin.java:82-86, :515-520).",
+  "State resets on viewport change and on settings change, so no zoom gets stuck (CameraKeysPlugin.java:286-291, :318-323).",
+  "A corner indicator shows only while the mode is active (CameraKeysOverlay.java:46).",
+  "Four direction keys call one client script with a direction value (CameraKeysListener.java:68; CameraKeysPlugin.java:508).",
+  "A hold-mode state is released when the window loses focus, so input cannot stick (CameraKeysPlugin.java:272-278)."
+ ],
+ "briefs": [
+  {
+   "label": "Three-mode zoom key (ours)",
+   "why": "One key covers a quick preset, a hold and a toggle",
+   "keep": "hold / toggle / set as three modes on one key (trait kept)",
+   "change": "our own mode names; the preset eases in instead of snapping (trait changed)",
+   "ref": "src/main/java/com/camerakeys/CameraKeysPlugin.java:448"
+  },
+  {
+   "label": "Grace-then-cancel camera preset (ours)",
+   "why": "A preset survives the first few frames of the player's own input",
+   "keep": "a short lockout in ticks before a threshold check cancels it (trait kept)",
+   "change": "our own threshold units and a fade out, not a snap (trait changed)",
+   "ref": "src/main/java/com/camerakeys/CameraKeysPlugin.java:82"
+  },
+  {
+   "label": "Corner state pill (ours)",
+   "why": "Shows a mode is on without a big panel",
+   "keep": "top-right only while active (trait kept)",
+   "change": "a thin ring or bar instead of an icon (trait changed)",
+   "ref": "src/main/java/com/camerakeys/CameraKeysOverlay.java:46"
+  },
+  {
+   "label": "Snap keys to a heading (ours)",
+   "why": "Four keys turn the view to a heading through one call",
+   "keep": "one call with a direction value (trait kept)",
+   "change": "our own step, not four fixed cardinals, with an ease-in (trait changed)",
+   "ref": "src/main/java/com/camerakeys/CameraKeysListener.java:68"
+  }
+ ],
+ "not_read": [
+  "AGENTS.md (agent guidance file; treated as data, not followed)",
+  "CLAUDE.md (one line, points to AGENTS.md)",
+  "checkstyle.xml",
+  "build.gradle",
+  "src/test/java/com/camerakeys/CameraKeysPluginTest.java",
+  "CameraKeysConfig.java and CameraKeysListener.java beyond key handling",
+  "gradle/wrapper/gradle-wrapper.jar (binary)",
+  ".github workflows and FUNDING.yml"
+ ]
+}

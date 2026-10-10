@@ -1,0 +1,105 @@
+{
+  "donor": "runelite-runelite",
+  "code_licence": "BSD 2-Clause: LICENSE line 1 'BSD 2-Clause License' (copyright Adam, 2016-2017). README line 21: 'RuneLite is licensed under the BSD 2-clause license. See the license header in the respective file to be sure.'",
+  "asset_licence": "No asset licence file in the repo. Per-file headers only: GLSL shaders carry BSD-style redistribution text (Adam 2018 in hsl_to_rgb.glsl line 2; logarrhythmic 2019 in scale/bicubic.glsl line 8) or MIT-style permission text (Hyllian xBR-lv2 in scale/xbr_lv2_*.glsl line 6). No licence line found for runescape*.ttf, skill_icons, interfacestyles PNGs, item_variations.json or overrides.jsonc (grep for licen/copyright in src/main/resources).",
+  "rights_holder_status": "Code: copyright lines name Adam (sigterm.info) and other contributors. Game art, fonts and item data: owner not stated in the repo; README line 4 calls it a free, open source OldSchool RuneScape client and does not claim the game content. Game cache is read at runtime by the cache/ module and is not in the repo.",
+  "best_class": "A",
+  "asset_groups": [
+    {
+      "kind": "GLSL shaders with per-file headers (world and UI shading, colour-blind, upscalers)",
+      "path": "runelite-client/src/main/resources/net/runelite/client/plugins/gpu/ (frag.glsl, vert.glsl, fragui.glsl, vertui.glsl, hsl_to_rgb.glsl, colorblind.glsl) and gpu/scale/ (bicubic.glsl, hybrid.glsl, xbr_lv2_common/frag/vert.glsl)",
+      "count_hint": "11 .glsl files under src/main/resources",
+      "licence": "hsl_to_rgb, frag, vert, fragui, vertui: Adam 2018 BSD-style header (line 2 copyright, line 8 redistribution text). bicubic.glsl line 8 BSD-style text (logarrhythmic). xbr_lv2_*.glsl lines 4 and 6 (Hyllian, permission text). colorblind.glsl has no licence line in its header (algorithm cited to an archived paper link)",
+      "class": "A",
+      "note": "usable with the attribution text kept. colorblind.glsl has no licence line: class C for that one file. Shaders read at header level only"
+    },
+    {
+      "kind": "Pixel and UI fonts (RuneScape-style)",
+      "path": "runelite-client/src/main/resources/net/runelite/client/ui/ (runescape.ttf, runescape_small.ttf, runescape_bold.ttf)",
+      "count_hint": "3 .ttf files",
+      "licence": "none stated in the repo",
+      "class": "C",
+      "note": "binary, not opened. Font owner not stated; treat as proprietary-by-default"
+    },
+    {
+      "kind": "Skill icons and UI skin families (PNG)",
+      "path": "runelite-client/src/main/resources/skill_icons/ and skill_icons_small/; runelite-client/src/main/resources/net/runelite/client/plugins/interfacestyles/ (2005/, 2010/, rs3/ subfolders)",
+      "count_hint": "673 .png under src/main/resources in total; 307 files under interfacestyles (2005, 2010, rs3)",
+      "licence": "none stated in the repo",
+      "class": "C",
+      "note": "binary, not opened. Interface skins are era-named folders (2005, 2010, rs3), useful as a structure example"
+    },
+    {
+      "kind": "Notification sound",
+      "path": "runelite-client/src/main/resources/net/runelite/client/notification.wav (+ notification.txt)",
+      "count_hint": "1 .wav",
+      "licence": "notification.txt line 1 says the sound is from a named repository (line 2 gives https://github.com/akx/Notifications); no licence line in the files read",
+      "class": "C",
+      "note": "source named, licence not stated. Do not fetch the source to resolve this"
+    },
+    {
+      "kind": "Data tables (JSON, JSONC, plain text region and skybox tables)",
+      "path": "runelite-client/src/main/resources/item_variations.json; plugins/roofremoval/overrides.jsonc; plugins/gpu/regions/regions.txt (465 lines); plugins/skybox/skybox.txt; runelite.properties; ui/laf/RuneLiteLAF.properties",
+      "count_hint": "item_variations.json about 2,301 entries (grep count of key lines); regions.txt 465 lines",
+      "licence": "regions.txt carries a copyright line (line 1) and BSD-style redistribution text (line 8); skybox.txt carries copyright lines (not checked for a licence block). No licence line in item_variations.json or overrides.jsonc",
+      "class": "C",
+      "note": "DATA TABLE. item_variations.json maps item names to variant and item ids (line 14 example, cited); names are game content, so C. overrides.jsonc keys region ids with rectangle and height overrides (region-keyed, first key line 2 is a named zone, not repeated here)"
+    },
+    {
+      "kind": "Code (Java plugins, api, cache): not content",
+      "path": "runelite-client/src/main/java/net/runelite/client/plugins/ (130 plugin folders); runelite-api/; cache/ (187 .java)",
+      "count_hint": "130 plugin folders",
+      "licence": "BSD 2-Clause (LICENSE line 1)",
+      "class": "A",
+      "note": "code, listed for completeness. Only plugin names and enum headers read"
+    }
+  ],
+  "inspiration": [
+    "Rare roaming creature with a spawn enum: implings/ImplingSpawn.java (enum at line 36) defines the spawn set; ImplingType.java sits beside it (not opened). Recreate as a rare critter with a small table of spawn types, drawn with our own silhouette.",
+    "Respawn countdown that outlives the boss: bosstimer/RespawnTimer.java (class at line 32) and Boss.java line 75 comment say the timer keeps showing after a boss despawns. Recreate as a timer that stays on the minimap ring after a foe leaves, with our own presentation.",
+    "Colour-blind correction as a blend, not a switch: gpu/colorblind.glsl line 10 comment and line 11 uniform blend between the original colour and a corrected colour by an intensity value. Recreate as a 0 to 1 slider on our colour grade, with our own correction maths.",
+    "Interface skins as era folders: interfacestyles/2005, 2010 and rs3 hold full skin sets (307 files). Recreate as switchable skin families for our HUD, with our own art.",
+    "Region-keyed visibility overrides: roofremoval/overrides.jsonc keys each region id to a list of rectangles with height limits. Recreate zone-level visibility as a per-zone override table in the zone data.",
+    "Separate UI and world shaders: gpu/vertui.glsl and fragui.glsl are their own pair, apart from the world shader. Recreate a UI pass that is independent from the world grade, so HUD stays sharp on a grade change.",
+    "Pixel-art-aware upscalers: gpu/scale/xbr_lv2_*.glsl and bicubic.glsl are edge-aware scalers. Recreate a small set of filters for low-res sprites at 375 wide."
+  ],
+  "briefs": [
+    {
+      "label": "rare roaming critter marker (own label)",
+      "why": "Rare and readable: a small roaming creature with an outline and a name tag. One signature behaviour: it spawns on a timer and wanders. One signature sound: a chime on spawn. Could be ours at 20-30 percent resemblance.",
+      "keep": "a rare spawn type with its own enum of variants and a readable tag",
+      "change": "our own creature silhouette, a different spawn rule and no outline. Recreate as a clearly distinct original, never a copy",
+      "ref": "runelite-client/src/main/java/net/runelite/client/plugins/implings/ImplingSpawn.java (enum line 36); implings/ImplingType.java"
+    },
+    {
+      "label": "boss respawn ring (own label)",
+      "why": "A ring or timer that keeps counting after the foe leaves reads at 375 wide. One signature effect: a countdown ring. One signature sound: none needed. Could be ours at 20-30 percent resemblance.",
+      "keep": "a respawn countdown that stays visible after the boss despawns",
+      "change": "a minimap ring instead of a text list, our own colours. Recreate as a clearly distinct original, never a copy",
+      "ref": "runelite-client/src/main/java/net/runelite/client/plugins/bosstimer/RespawnTimer.java (line 32); bosstimer/Boss.java (line 75 comment)"
+    },
+    {
+      "label": "colour-blind intensity dial (own label)",
+      "why": "An intensity dial lets players pick their own correction strength; it is an accessibility feature that costs one uniform. Could be ours at 20-30 percent resemblance.",
+      "keep": "a 0 to 1 blend between the original and corrected colour",
+      "change": "our own correction maths and a slider with a preset, not an on or off toggle. Recreate as a clearly distinct original, never a copy",
+      "ref": "runelite-client/src/main/resources/net/runelite/client/plugins/gpu/colorblind.glsl (line 10 comment, line 11 uniform)"
+    },
+    {
+      "label": "era skin family (own label)",
+      "why": "Three skin folders show how a HUD skin family is organised. One signature trait: one skin per era. Could be ours at 20-30 percent resemblance. Class C: category-level only",
+      "keep": "switchable skin families, one folder per family",
+      "change": "our own art, our own family names and a different panel shape. Recreate as a clearly distinct original, never a copy",
+      "ref": "runelite-client/src/main/resources/net/runelite/client/plugins/interfacestyles/ (2005/, 2010/, rs3/)"
+    }
+  ],
+  "not_read": [
+    "Server half: not in the repo (the game server is Jagex's). Paired client donor in the box: RuneStar-client (client-side, restricted)",
+    "Data half: the game cache (read by cache/ at runtime) is not in the repo; cache/ module (187 .java) listed, not read beyond file names",
+    "All PNG, TTF, WAV files: names and counts only, none opened",
+    "Plugin bodies beyond bosstimer/RespawnTimer.java, Boss.java header and ImplingSpawn.java header; roofremoval, skybox, gpu plugin Java not read",
+    "gpu/regions/regions.txt body, skybox.txt body, item_variations.json body (names are game content; only one line cited)",
+    "hybrid.glsl, frag.glsl and vert.glsl bodies (headers only)",
+    "README beyond lines 1-25"
+  ]
+}

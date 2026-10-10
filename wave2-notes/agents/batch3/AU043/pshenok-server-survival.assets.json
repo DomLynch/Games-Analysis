@@ -1,0 +1,134 @@
+{
+  "donor": "pshenok-server-survival",
+  "code_licence": "MIT (LICENSE line 1 'MIT License'; line 3 'Copyright (c) 2025 Kostyantyn Pshenychnyy'). Only licence file in the repo.",
+  "asset_licence": "No separate asset licence. The single LICENSE (MIT) is the only licence file in the repo; the text read was the first lines, and it does not name an asset carve-out (full MIT text not re-read here). Third-party code loaded at runtime (Three.js r128 from cdnjs, Tailwind from cdn.tailwindcss.com) carries its own licence, not in the repo.",
+  "rights_holder_status": "Individual author: MIT copyright line names Kostyantyn Pshenychnyy (2025). Original game, not a fan or leaked project by the files read. Music and sound files show no separate author or licence line in the repo. Status for music and sounds: unknown (no source line in the files read).",
+  "best_class": "A for code-built visuals, level data, locale text and docs under the repo MIT (attribution needed; LICENSE names no asset carve-out, so class A is conditional on that reading); C for music, sound effects, the demo GIF and inline icons (no per-file licence line).",
+  "asset_groups": [
+    {
+      "kind": "music (MP3)",
+      "path": "assets/sounds/game-background.mp3 (4,267,757 bytes); assets/sounds/menu.mp3 (7,755,659 bytes); loaded in src/services/SoundService.js lines 22 and 27",
+      "count_hint": "2 tracks, about 12 MB total",
+      "licence": "No per-file licence or author line in the repo. Covered only by the repo-wide MIT if the MIT covers assets (not stated either way).",
+      "class": "C",
+      "note": "Two looping background tracks with separate volumes (0.2 game, 0.3 menu; SoundService.js lines 25 and 30). Loaded only on first play (preload none)."
+    },
+    {
+      "kind": "sound effects (MP3)",
+      "path": "assets/sounds/click-5.mp3 (2,918 bytes; hover, SoundService.js line 34); assets/sounds/click-9.mp3 (2,870 bytes; click, line 35); assets/sounds/click-10.mp3 (4,910 bytes; no reference found in src, game.js or index.html)",
+      "count_hint": "3 short clips",
+      "licence": "No per-file licence or author line in the repo.",
+      "class": "C",
+      "note": "Hover at volume 0.4 and click at 0.5 (SoundService.js lines 38-39). click-10 is not used in the code paths grepped; unused asset."
+    },
+    {
+      "kind": "animated demo (GIF)",
+      "path": "assets/gameplay.gif (1,069,610 bytes); used in index.html lines 20 and 25 and README.md line 3",
+      "count_hint": "1 file",
+      "licence": "No licence line in the repo.",
+      "class": "C",
+      "note": "Gameplay demo. Not opened (binary). Used as a README and in-page preview."
+    },
+    {
+      "kind": "3D scene (procedural, no model files)",
+      "path": "src/entities/Service.js line 92; game.js line 367; src/sim/autoscaling.js line 223; the visuals are Three.js primitives built in code",
+      "count_hint": "Three.js geometry calls: BoxGeometry 15, CylinderGeometry 7, TorusGeometry 3, SphereGeometry 3, RingGeometry 3, ConeGeometry 3, plus 3 other polyhedra (grep counts)",
+      "licence": "n/a (code-built). Three.js itself is loaded from cdnjs and has its own licence, not in the repo.",
+      "class": "A",
+      "note": "No texture files, no model files, no sprite sheets in the repo (grep for loaders found one match, src/ui/share.js, not read). Everything visual is code, so there is no art to take; only the arrangement idea is usable."
+    },
+    {
+      "kind": "inline icons (SVG)",
+      "path": "index.html (36 inline <svg> tags; favicon data URI at line 11)",
+      "count_hint": "36 inline SVG tags",
+      "licence": "none stated; inline in the repo under MIT",
+      "class": "C",
+      "note": "Icons drawn in markup. Not opened in detail."
+    },
+    {
+      "kind": "campaign levels (data)",
+      "path": "src/campaign/levels.js (1,014 lines; 25 level entries; schema comment lines 1-34)",
+      "count_hint": "25 levels in 4 chapters; schema covers chapter, icon, budget, durationSec, preBuilt, trafficDistribution, rps, burstPattern, forceOutageAtSec, forceRegionOutageAtSec, regionOutageDurationSec, failConditions, objectives",
+      "licence": "MIT (repo) by the repo's own licence; no separate asset statement",
+      "class": "A",
+      "note": "Level and objective data as code. Level text is in the locale files, not here (see next group). Chapter names are in the header comment (line 6)."
+    },
+    {
+      "kind": "locale strings (text, 11 languages)",
+      "path": "src/locales/ (de.js, en.js, fr.js, hi.js, it.js, ko.js, nep.js, pt-BR.js, ru.js, uk.js, zh.js); en.js 986 lines with about 930 key lines",
+      "count_hint": "11 locale files; en.js keys about 930; 25 level_<id>_title keys in en.js",
+      "licence": "MIT (repo) by the repo's own licence; no separate statement",
+      "class": "A",
+      "note": "Narrative and UI text for each level is looked up by convention: level_<id>_title, _scenario, _learn, _debrief (levels.js line 9). tests/locales.test.mjs guards key drift (line 1). Strings not quoted."
+    },
+    {
+      "kind": "achievements (data)",
+      "path": "src/achievements/definitions.js (226 lines; about 38 entries with id); src/achievements/ui.js",
+      "count_hint": "about 38 achievement definitions",
+      "licence": "MIT (repo)",
+      "class": "A",
+      "note": "Achievement definitions as code; titles and text expected in locale files (not read)."
+    },
+    {
+      "kind": "docs (balance and specs)",
+      "path": "docs/GAME_BALANCE_ANALYSIS.md (464 lines); docs/superpowers/plans and docs/superpowers/specs (campaign design spec named in levels.js line 2)",
+      "count_hint": "1 analysis file; plans and specs folders",
+      "licence": "MIT (repo)",
+      "class": "A",
+      "note": "Design notes. Not read beyond the path references."
+    }
+  ],
+  "inspiration": [
+    "Burst-and-outage level script: a level can force a burst of spawns on a fixed interval (enabled, interval 5 s, burst size 30 in one level) and a scheduled outage at a set game time that restores after a duration, so the player sees the traffic shift back (levels.js lines 20-24, 122). Recreate as a wave timeline with a restore step for our zones; keep the schedule as data.",
+    "Fail conditions as data: each level sets a reputation floor and a timeout (failConditions: reputation below 50 and a 180 s timeout in one level; 135 s in another) (levels.js lines 60, 90). Pattern for mission fail states in our zone data.",
+    "Four chapters as learning stages: Basics, Optimization, Defense and Mastery, Production Readiness (levels.js line 6). Idea: group our mechanics into four stages that unlock in order (progression topic).",
+    "One-key view toggle: T switches between a three-quarter (isometric) view and a plan (top-down) view (README.md line 168). Keep the single key for a plan view; change the angles and animate the transition.",
+    "Hover and click sound pair: a quieter hover clip (0.4) and a louder click clip (0.5) on separate audio objects, each loaded on first play (SoundService.js lines 34-39). Keep the two-tier UI sound split; use our own sounds, not these clips.",
+    "Background music loaded late: two looping tracks, separate volume per track, and no download until the first play (SoundService.js lines 15-30). Keep the late load and per-track volume; the file sizes (about 4 MB and 8 MB) are the reason to keep it.",
+    "Score feedback row: a blocked attack costs one dollar of mitigation and shows +10 in the next column (README.md line 103; column headers not read). Idea: a small cost and a clear positive for a defensive win, shown next to the event."
+  ],
+  "briefs": [
+    {
+      "label": "Scheduled wave burst with a restore",
+      "why": "A fixed-interval burst and a timed outage that resets give players a rhythm to learn and a clear before and after.",
+      "keep": "interval burst with an enable flag and a size; a timed outage that restores after a set duration",
+      "change": "our own enemy wave shapes and a warning cue before each burst; a restore that shows the enemies redistributing",
+      "ref": "src/campaign/levels.js lines 20, 22, 24, 122"
+    },
+    {
+      "label": "Four-stage unlock path",
+      "why": "Four named stages of rising difficulty make a long campaign feel like a set of short chapters.",
+      "keep": "four stages in order; each stage a fixed block of levels",
+      "change": "our own stage names and themes (no donor names); a stage-end boss instead of a debrief",
+      "ref": "src/campaign/levels.js line 6"
+    },
+    {
+      "label": "Plan-view toggle on one key",
+      "why": "A plan view on one key lets the player read positions at a glance when the angled view hides them.",
+      "keep": "one key to switch view; a plan view that shows the whole map",
+      "change": "our camera angles and key; a smooth tween between the two views; a minimap in the plan view",
+      "ref": "README.md line 168"
+    },
+    {
+      "label": "Quiet hover, louder click",
+      "why": "A soft hover cue and a firmer click make UI feedback readable with the sound on and easy to ignore.",
+      "keep": "two cues for two actions; hover quieter than click",
+      "change": "our own clip (a tick, not a click); a separate cue for the buy action",
+      "ref": "src/services/SoundService.js lines 34-39"
+    }
+  ],
+  "not_read": [
+    "all of src/ beyond the lines cited (about 40 JS files named; contents not read)",
+    "game.js (74K) beyond line 367",
+    "index.html beyond the script and icon lines (112K inline markup and CSS)",
+    "style.css (9K)",
+    "assets/sounds audio content and assets/gameplay.gif pixels (names and sizes only)",
+    "locale string values (counts and key shapes only)",
+    "tests/ contents (names only)",
+    "docs/GAME_BALANCE_ANALYSIS.md and docs/superpowers contents (names only)",
+    "the full MIT licence text (first 5 lines read)",
+    ".github workflows, issue templates, FUNDING.yml",
+    "src/ui/share.js (one loader-grep match, not read)",
+    "README table column headers (the scoring table at README.md line 103)"
+  ]
+}

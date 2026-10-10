@@ -1,0 +1,153 @@
+{
+ "donor": "nkzw-tech-athena-crisis",
+ "code_licence": "MIT (LICENSE.md:3, Copyright (c) 2024 Nakazawa Tech KK); MIT scope is code and docs only (LICENSE.md:29)",
+ "asset_licence": "Proprietary / separate terms per LICENSE.md:29 and README.md:115; contact for licence fee. No open asset licence text in the repo.",
+ "rights_holder_status": "original company: Nakazawa Tech KK (LICENSE.md:5; README.md:115 'intellectual property of Nakazawa Tech KK'); commercial game with open core",
+ "best_class": "C",
+ "asset_groups": [
+  {
+   "kind": "remote art host (no images in repo)",
+   "path": "art/AssetInfo.tsx",
+   "count_hint": "1 constant (AssetDomain)",
+   "licence": "proprietary (README.md:111 art loaded remotely)",
+   "class": "C",
+   "note": "Art pipeline is code only; sprites are not in this box."
+  },
+  {
+   "kind": "fonts",
+   "path": "offline/fonts/AthenaNova.woff2, offline/fonts/PressStart2P.woff2, offline/fonts/MadouFutoMaru.woff2",
+   "count_hint": "3 files, 17 KB / 29 KB / 400 KB",
+   "licence": "not stated in repo (no font licence file found)",
+   "class": "C",
+   "note": "Font stack in ui/CSS.tsx:9 and :12. Do not reuse without a stated licence."
+  },
+  {
+   "kind": "key art / branding",
+   "path": "offline/keyart.jpg",
+   "count_hint": "1 image, 670 KB",
+   "licence": "proprietary (README.md:130 uses it as the game keyart)",
+   "class": "C",
+   "note": "Branding; not for reuse."
+  },
+  {
+   "kind": "shell images",
+   "path": "offline/Background.png, offline/apple-touch-icon.png, ui/assets/Background.png",
+   "count_hint": "3 images (131 B, 3 KB, size not taken)",
+   "licence": "not stated",
+   "class": "C",
+   "note": "Not opened beyond size."
+  },
+  {
+   "kind": "placeholder-named audio",
+   "path": "ui/Empty.ogg, ui/Empty.aac",
+   "count_hint": "2 files (4 KB, 587 B)",
+   "licence": "not stated",
+   "class": "C",
+   "note": "Content not opened."
+  },
+  {
+   "kind": "test render images",
+   "path": "tests/__tests__/__image_snapshots__/*.png",
+   "count_hint": "58 PNG files",
+   "licence": "derived from game art; not stated",
+   "class": "C",
+   "note": "Count only; not opened."
+  },
+  {
+   "kind": "unit name pools (text in code)",
+   "path": "athena/info/UnitNames.tsx",
+   "count_hint": "114 lines; per-gender lists at :8-9",
+   "licence": "proprietary content (README.md:115)",
+   "class": "C",
+   "note": "Names not reproduced."
+  },
+  {
+   "kind": "unit type and definition tables (code)",
+   "path": "athena/info/Unit.tsx",
+   "count_hint": "4,032 lines",
+   "licence": "MIT (code) for the code; the content values are proprietary (README.md:115)",
+   "class": "C",
+   "note": "Only enum and type declarations read (:23, :57, :63, :70)."
+  },
+  {
+   "kind": "sound and song name registry (code)",
+   "path": "athena/info/Music.tsx",
+   "count_hint": "105 lines; SoundName :1, SongName :88",
+   "licence": "MIT (code); audio itself not in repo",
+   "class": "C",
+   "note": "Names only."
+  },
+  {
+   "kind": "attack effect sprite type (code)",
+   "path": "athena/info/AttackSprite.tsx",
+   "count_hint": "union type from :1",
+   "licence": "MIT (code)",
+   "class": "C",
+   "note": "Type only, not read in full."
+  },
+  {
+   "kind": "decorator definitions (code)",
+   "path": "athena/info/Decorator.tsx",
+   "count_hint": "DecoratorInfo class :55",
+   "licence": "MIT (code)",
+   "class": "C",
+   "note": "Read only the class line and lookup at :523."
+  }
+ ],
+ "inspiration": [
+  "One sprite set, many looks: runtime colour-map swap per faction and per biome (art/VariantConfiguration.tsx:7; art/BiomeVariants.tsx:5).",
+  "The swap is gated to non-production or offline builds (art/Sprites.tsx:24): a dev-time check that keeps art changes fast to see.",
+  "Three attack stance tags (long, short, once) change how a strike plays (athena/info/Unit.tsx:70). Ranged and melee read apart.",
+  "Each attack kind has its own effect-sprite type (athena/info/AttackSprite.tsx:1): instant feedback per attack.",
+  "Typed registries for sound and song names (athena/info/Music.tsx:1, :88) catch cue-name typos at build time.",
+  "Unit names come from per-gender pools with a random helper (athena/info/UnitNames.tsx:8-9): cheap variety.",
+  "Fonts are picked per locale through a font stack (ui/CSS.tsx:9, :12): a per-language fallback idea."
+ ],
+ "briefs": [
+  {
+   "label": "Stance-tagged strike (ours)",
+   "why": "Melee and ranged strikes read apart at 375 px",
+   "keep": "three stance tags that change how a strike plays (trait kept)",
+   "change": "our own tag names and timing; a one-shot finisher tag with a different wind-up (trait changed)",
+   "ref": "athena/info/Unit.tsx:70"
+  },
+  {
+   "label": "Faction re-skin from one art set (ours)",
+   "why": "Many factions from one art set saves art time",
+   "keep": "source-to-target colour map per faction (trait kept)",
+   "change": "our own ramps and an edge rim light instead of a flat swap (trait changed)",
+   "ref": "art/VariantConfiguration.tsx:7"
+  },
+  {
+   "label": "Attack effect registry (ours)",
+   "why": "One named effect per attack kind gives instant feedback",
+   "keep": "a typed effect per attack kind (trait kept)",
+   "change": "our own effect shapes and sound pairing (trait changed)",
+   "ref": "athena/info/AttackSprite.tsx:1"
+  },
+  {
+   "label": "Typed cue registry (ours)",
+   "why": "A typed cue list catches typos at build",
+   "keep": "typed sound list (trait kept)",
+   "change": "our own cue names and grouping (trait changed)",
+   "ref": "athena/info/Music.tsx:1"
+  },
+  {
+   "label": "Gendered name pools (ours)",
+   "why": "Short per-gender lists give fast variety",
+   "keep": "per-gender pools with a random pick (trait kept)",
+   "change": "our own pools and a different generator shape (trait changed)",
+   "ref": "athena/info/UnitNames.tsx:8"
+  }
+ ],
+ "not_read": [
+  "server half (not in repo; README.md:89 says backend is not open source)",
+  "data pack: art, music, story, character text (not in repo; README.md:111)",
+  "all PNG/JPG/OGG/AAC/woff2 contents (names and sizes only)",
+  "tests/__tests__/__image_snapshots__ images (count only)",
+  "athena/info/Unit.tsx unit definitions beyond the type declarations",
+  "athena/info/SpriteVariants.tsx list (only the union start line)",
+  "infra/assets SVG logos",
+  "docs/ folder"
+ ]
+}

@@ -1,0 +1,24 @@
+# KsanaDock-Microverse (hud-ui, cell 1) | VERDICT: NONE (confidence: high)
+Donor: /mnt/frankendom-donors/KsanaDock-Microverse | Licence: MIT License, Copyright (c) 2025 KsanaDock (read from LICENSE; code may be adapted) | Godot 4 GDScript | hint file was script/ui/SaveLoadUIManager.gd (the hint is the wrong file for the topic)
+
+Files opened (candidates, at least 3):
+1. /mnt/frankendom-donors/KsanaDock-Microverse/script/ui/SaveLoadUIManager.gd (lines 1-36, read in full; the hint file)
+2. /mnt/frankendom-donors/KsanaDock-Microverse/script/ui/SaveLoadUI.gd (lines 1-40 read; the panel body and button wiring)
+3. /mnt/frankendom-donors/KsanaDock-Microverse/script/ui/GodUI.gd (lines 160-205 read; character list and detail panel; 1106 lines total, rest not read)
+4. /mnt/frankendom-donors/KsanaDock-Microverse/script/ui/GlobalSettingsUI.gd (lines 172-176 read; map button; rest only grep-searched)
+5. /mnt/frankendom-donors/KsanaDock-Microverse/script/ui/MapSelection.gd (16 lines, read in full)
+6. /mnt/frankendom-donors/KsanaDock-Microverse/project.godot (grep only for input/touch/locale keys)
+Searches run (grep -rn -i over script/ and scene/): minimap, mini_map, health, target_frame, touch, InputEventScreen, lock, TranslationServer, tr(" ; file search for *.csv, *.po, *.translation, *.json, *.cfg.
+
+What was found and what was not:
+- Panels: a modal save/load overlay (CanvasLayer, hidden at start, F3 toggles it, ESC closes it, input marked handled) and a character detail panel (GodUI). This is a generic panel toggle, not a HUD mechanism.
+- Health: a text label ("健康：..."), no bar, no target frame, no lock-on.
+- Minimap / world map: none. The "map" button opens MapSelection.tscn, a list of one office scene (MapSelection.gd), not a map view.
+- Touch UX: none (no InputEventScreen*, no touch handling found).
+- Input buffer, lock-on forgiveness: none found.
+- String tables / localisation: none. No .csv, .po or .translation file exists in the donor, and TranslationServer is not used. UI strings are Chinese literals hard-coded in .gd files (for example GodUI.gd line 176). The table has 0 entries, so there is no grammar to describe.
+- Accessibility: no font-size or contrast option found in GlobalSettingsUI.gd (lines 101-151 not read; the grep for font/scale/accessib/locale returned nothing).
+
+Best transferable idea: when a stat is missing, a status panel shows a stated default (get_meta(key, default)) so the panel never renders blank, which is a small rule for our own detail frames.
+Decision (proposed): reject — the donor has no HUD mechanism for minimap, target frames, touch or lock-on, so there is nothing here for parity row 14; the default-value fallback is a one-line rule that needs no donor to justify it.
+Checked: topic searched in all of script/ and scene/ by grep; the hint file was read first and is the wrong file. Not read: most of GodUI.gd (about 900 lines) and GlobalSettingsUI.gd outside the map button. Those would only matter if they hid a minimap or touch layer, which grep did not find.

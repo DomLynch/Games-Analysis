@@ -1,0 +1,40 @@
+{
+  "donor": "SWG-Source-dsrc",
+  "code_licence": "GNU LGPL v3 text in LICENSE.md (line 1 'GNU Lesser General Public License'; line 11 'This version of the GNU Lesser General Public License incorporates'). README.md line 3 says the repo was forked from Stella Bellum and asks for credit. The repo files do not say which licence covers the data tables.",
+  "asset_licence": "Conflicting. LICENSE.md is LGPL v3 text, but _RESTRICTED-NOTE.txt line 1 says 'leaked official SWG (Sony Online/Disney) source, proprietary, no licence'. Class C for every data group.",
+  "rights_holder_status": "leaked / restricted (per _RESTRICTED-NOTE.txt): official SWG source, proprietary. Fork of Stella Bellum per README.md line 3.",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "data tables (.tab), lairs and camps", "path": "sku.0/sys.server/compiled/game/datatables/npc_lair", "count_hint": "1,825 files", "licence": "conflicting (see code_licence)", "class": "C", "note": "One table per camp or herd (file names such as bandit_camp.tab). Not opened beyond names."},
+    {"kind": "data tables (.tab), quest task and quest list", "path": "sku.0/sys.shared/compiled/game/datatables/questtask/quest and questlist/quest", "count_hint": "1,640 + 1,640 files", "licence": "conflicting", "class": "C", "note": "Paired tables. Not opened."},
+    {"kind": "data tables (.tab), points of interest", "path": "sku.0/sys.server/compiled/game/datatables/poi", "count_hint": "742 files", "licence": "conflicting", "class": "C", "note": "Not opened."},
+    {"kind": "data tables (.tab), ground spawn types", "path": "sku.0/sys.server/compiled/game/datatables/spawning/ground_spawning/types", "count_hint": "716 files (tatooine 243)", "licence": "conflicting", "class": "C", "note": "Spawn type tables. Two-column header read with head -3 on one file (name and float size). Otherwise not opened."},
+    {"kind": "data tables (.tab), space and static NPC spawns", "path": "sku.0/sys.shared/compiled/game/datatables/space, sku.0/sys.server/compiled/game/datatables/spawning/static_npc", "count_hint": "648 + 341 files", "licence": "conflicting", "class": "C", "note": "Not opened."},
+    {"kind": "data tables (.tab), all", "path": "sku.0/*/compiled/game/datatables", "count_hint": "15,799 .tab files in total", "licence": "conflicting", "class": "C", "note": "Counts from find; not opened."},
+    {"kind": "text docs with rules", "path": "sku.0/sys.server/compiled/game/datatables/loot/dungeon/tables.txt, food/food_data.txt, ship/ship_balance.txt, crafting/readme*.txt, and similar", "count_hint": "32 .txt in tree", "licence": "conflicting", "class": "C", "note": "tables.txt: one loot table per dungeon, five levels (line 4). Others not read."},
+    {"kind": "unopened data and script files", "path": "sku.0/ (all)", "count_hint": ".tpf 63,454; .java 5,638; .mif 337; .me 71; .tdf 63; .xls 21; .pl 12; .cfg 9; .xml 2; .yml 2", "licence": "conflicting", "class": "C", "note": "Extensions counted by find; contents not opened. .java files are server-side code by extension only."},
+    {"kind": "palette images", "path": "sku.0/sys.shared/built/game/palette", "count_hint": "32 .tga (pc_eye_* family)", "licence": "conflicting", "class": "C", "note": "Colour palettes. Not opened."},
+    {"kind": "string / CRC table", "path": "sku.0/sys.shared/compiled/game/misc/planet_crc_string_table.txt", "count_hint": "47 lines", "licence": "conflicting", "class": "C", "note": "Only the line count was taken."},
+    {"kind": "art and audio", "path": "(none found)", "count_hint": "0 .dds, .msh, .wav", "licence": "n/a", "class": "D", "note": "Name search across the repo."}
+  ],
+  "inspiration": [
+    "Lair as a unit: a camp or herd is one table with its own roster (npc_lair, 1,825 files, named by camp or herd). Idea: a camp is a landmark with a small roster, not a random spawn. Recreate with our own camp layouts and rosters.",
+    "Five-tier dungeon loot: each dungeon has one loot table with five levels (datatables/loot/dungeon/tables.txt line 4). Idea: a visible five-step climb per dungeon. Recreate with our own tier names and rarity colour.",
+    "Region spawn types: spawn types split per region (spawning/ground_spawning/types, 716 files; tatooine 243). Idea: region-scoped spawn tables feeding the walk-density numbers (row 23 zone population).",
+    "Paired quest tables: a quest list and its tasks sit in matching table sets (1,640 each). Idea: keep quest tasks in their own table that points to the list. Recreate with our own schema.",
+    "Palette swatches keyed by feature: 32 palette images with a feature prefix (built/game/palette, pc_eye_* family) give colour variation without new models. Idea: one palette per feature family, the same one-model/many-skin idea as the Core3 hue list. Recreate with our own ramps."
+  ],
+  "briefs": [
+    {"label": "Roster camp (own label)", "why": "A camp that holds a small mixed roster is a readable hostile landmark on the map.", "keep": "One table per camp with its own roster.", "change": "Our own camp layout, roster and names; behaviour and sound not read in this donor. Recreate as a distinct original, not a copy.", "ref": "sku.0/sys.server/compiled/game/datatables/npc_lair/bandit_camp.tab (file name only; not opened)"},
+    {"label": "Five-tier dungeon chest (own label)", "why": "Five tiers per dungeon make a visible climb through the zone.", "keep": "Five levels per dungeon, one table each.", "change": "Our tier names, rarity colour and drop rules. Recreate as a distinct original, not a copy.", "ref": "sku.0/sys.server/compiled/game/datatables/loot/dungeon/tables.txt line 4"},
+    {"label": "Region spawn type (own label)", "why": "Spawn types grouped by region give each zone its own feel and density.", "keep": "Region-scoped spawn tables.", "change": "Our zones and our walk-density numbers (row 23). Recreate as a distinct original, not a copy.", "ref": "sku.0/sys.server/compiled/game/datatables/spawning/ground_spawning/types/ (directory; files not opened)"}
+  ],
+  "not_read": [
+    "Contents of all .tab files (names and counts only; one spawn type file read with head -3)",
+    ".tpf, .java, .mif, .me, .tdf, .xls, .pl, .cfg, .xml, .yml files: counted by extension, not opened",
+    "datatables/loot/dungeon/tables.txt beyond the first six lines",
+    "planet_crc_string_table.txt beyond its line count",
+    "The 32 palette .tga files",
+    "include/, .github/, build.xml beyond its top, build.properties beyond its first lines, README.md beyond line 3"
+  ]
+}

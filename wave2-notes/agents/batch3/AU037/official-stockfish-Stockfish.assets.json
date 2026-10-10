@@ -1,0 +1,33 @@
+{
+  "donor": "official-stockfish-Stockfish",
+  "code_licence": "GNU General Public License v3 (Copying.txt line 1; README line 110 says GPL v3). Engine source headers carry the copyright line (src/uci.cpp:3).",
+  "asset_licence": "No game assets in the box. The neural network (nn-252f33942263.nnue, named in src/evaluate.h:36) is not in the box; README lines 59-60 say it is a separate file embedded in binary builds. scripts/net.sh fetches it by name (net.sh:77). README lines 125-126 say the network is trained on Leela Chess Zero data under the Open Database License (ODbL). The licence of the network file itself is not stated in the box.",
+  "rights_holder_status": "original open-source project. The source header names The Stockfish developers (src/uci.cpp:3); AUTHORS (7 KB) was not read.",
+  "best_class": "D",
+  "half_read": "engine half (src/movepick.cpp, timeman.cpp, engine.cpp option, evaluate.h, uci.cpp header, scripts/net.sh) read in part. Data pack half: the network file is not in the box; the fetch script was read, the file was not. Client or UI half: none (the engine speaks the UCI protocol). Paired donor in this batch: none.",
+  "asset_groups": [
+    {"kind": "documentation", "path": "README.md; CONTRIBUTING.md; CITATION.cff; AUTHORS; Copying.txt", "count_hint": "5 files", "licence": "GPL v3 (Copying.txt)", "class": "D", "note": "README read in part. CONTRIBUTING.md and CITATION.cff not read."},
+    {"kind": "credits list", "path": "Top CPU Contributors.txt", "count_hint": "one list, about 25 KB", "licence": "not stated", "class": "D", "note": "Contributor list. Not read beyond its name; not reused."},
+    {"kind": "CI matrices", "path": ".github/ci/arm_matrix.json; .github/ci/universal_matrix.json; other .github files (20 files)", "count_hint": "20 files under .github", "licence": "GPL v3 at most", "class": "D", "note": "Build configuration. Not read."},
+    {"kind": "neural network weights", "path": "not in box (named in src/evaluate.h:36; fetched by scripts/net.sh)", "count_hint": "0 files in box", "licence": "not stated in box; training data ODbL (README 125-126)", "class": "C", "note": "If ever fetched, treat as unclear and class C. Not downloaded, not opened."},
+    {"kind": "images, audio, fonts, maps, models", "path": "whole tree", "count_hint": "0 files", "licence": "not applicable", "class": "D", "note": "Extension search for png, svg, wav, ogg, ttf, bin and nnue returned nothing."}
+  ],
+  "inspiration": [
+    "Staged move picking: the hash-table move is tried first, then captures, then quiet moves; quiet moves are sorted by history scores with a good-quiet cut-off (src/movepick.cpp:282-296; cut-off constant at line 284). For a fight AI: try the last working combo first, then the highest-value option, then the rest, with a cut-off that separates good from weak options.",
+    "Two-tier time budget: a soft target from remaining time times a scale factor (src/timeman.cpp:159), and a hard ceiling of 0.8097 of remaining time minus an overhead (timeman.cpp:161). Keep the soft and hard pair: it maps to a per-decision AI budget and to the per-tick NPC budget in row 18.",
+    "Swappable evaluation data: the engine exposes an EvalFile option with a default network name (src/engine.cpp:136; src/evaluate.h:36). The fetch script checks a hash and deletes a bad file (scripts/net.sh:18-31). For a learned AI brain: version the weights by hash and fall back cleanly when the file is missing.",
+    "Budget top-up: a further 25 percent of the soft budget is added in one branch (timeman.cpp:165). The branch condition was not read, so treat this only as a pointer to a budget top-up rule.",
+    "Testing culture: the README says improvements need large numbers of test games run by volunteers. Keep the idea for balance: run many headless simulated fights before a tuning change ships. Not receipted (README contributing section).",
+    "No creature, item, zone, effect or sound exists in this donor. The inspiration is all in the AI and budget logic. Nothing here is class A or B."
+  ],
+  "briefs": [],
+  "not_read": [
+    "src/search.cpp, src/evaluate.cpp, src/tt.cpp, src/nnue/* (feature transformer and layers), src/syzygy (tablebases), src/universal/*",
+    "src/tune.h and tune.cpp (tuning parameters; the SPSA name was not found by grep in the header)",
+    "src/timeman.cpp beyond lines 159-165",
+    "src/movepick.cpp beyond lines 282-296; src/movepick.h",
+    "tests/ (perft.sh, reprosearch.sh, signature.sh, testing.py, instrumented.py)",
+    "CONTRIBUTING.md, AUTHORS, CITATION.cff, .github workflows",
+    "scripts/net.sh beyond lines 3, 18, 28, 77 (no download performed)"
+  ]
+}

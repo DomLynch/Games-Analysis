@@ -1,0 +1,121 @@
+{
+  "donor": "TurningWheel-Barony",
+  "code_licence": "BSD 2-Clause (LICENSE.txt line 3: 'licensed under the BSD 2-Clause License:'; copyright line 5: 'Copyright (c) 2013-2020, Turning Wheel LLC'). Third-party libraries carry their own licences in LICENSE.curl.txt, LICENSE.freetype.txt, LICENSE.libtheoraplayer.txt and LICENSE.libtheora.txt, LICENSE.nativefiledialog.txt, LICENSE.opus.txt, LICENSE.physfs.txt, LICENSE.SDL2_ttf.txt, LICENSE.zlib.txt (not read).",
+  "asset_licence": "Game assets are not in this repo. README.md line 13 says a purchased copy of Barony is needed to play; INSTALL.md line 62 points to a separate assets folder (BARONY_DATADIR). The repo's own text and data files (lang/, cippie-devstuff/, npcnames/playernames lists) fall under the BSD 2-Clause repo statement; the files give no separate licence for them.",
+  "rights_holder_status": "code: Turning Wheel LLC (LICENSE.txt line 5). Game assets: rights holder not named in the repo; the files only say a purchased copy is required. Not a fan project or clean-room by the files' own words; the open-source release is by the copyright holder.",
+  "best_class": "A",
+  "asset_groups": [
+    {
+      "kind": "localisation and item/monster text tables (JSON and numbered text)",
+      "path": "lang/en.txt (7,274 lines, about 5,753 numbered entries); lang/item_names.json (2,738 lines, items with identified and unidentified names, version 1); lang/book_names.json (39 lines); lang/compendium_lang/ (11 JSON files: achievements, codex, items, magic, monsters, world and lang_* twins, about 7,561 lines total)",
+      "count_hint": "about 5,753 numbered string entries in en.txt; item table not counted in full",
+      "licence": "BSD 2-Clause repo statement (LICENSE.txt). No separate notice found for these text files (checked the root LICENSE files only).",
+      "class": "A",
+      "note": "Permissive with attribution (keep the BSD notice). Still recreate wording ourselves per Dom's rule; copy the structure, not the sentences. en.txt header describes the entry grammar (line 2)."
+    },
+    {
+      "kind": "design notes (developer scribbles)",
+      "path": "cippie-devstuff/ (about 25 text and design files, e.g. types of spell failure.txt, kill zone.txt, minotaur.txt, magic system draft.txt, secret classes and magic and spells and items.txt, README.txt)",
+      "count_hint": "about 25 entries (folders and text; the 7 PNG files are listed separately)",
+      "licence": "BSD 2-Clause repo statement. README.txt says the notes are released 'as is', 'NOT a guarantee', and some are outdated.",
+      "class": "A",
+      "note": "Ideas only. Use as inspiration, not as spec. The author says some features are already implemented."
+    },
+    {
+      "kind": "mockup and dev screenshots (PNG)",
+      "path": "cippie-devstuff/wat.png, screenshot1.png, floating torch.png, FIRE.png, summon nothing.png, magic system/magic_gui/*.png (two mockups)",
+      "count_hint": "about 7 PNG files, not opened",
+      "licence": "BSD 2-Clause repo statement",
+      "class": "C",
+      "note": "Dev art of unknown origin inside the repo. Look only, do not reuse pixels. Not opened."
+    },
+    {
+      "kind": "icons",
+      "path": "Barony_Icon256x256.png, BaronyEditor_Icon256x256.png, barony.ico, barony.icns, editor.ico, editor.icns, game.ico",
+      "count_hint": "app icons only",
+      "licence": "BSD 2-Clause repo statement",
+      "class": "C",
+      "note": "Brand icons of the copyright holder. Do not reuse as our brand. Not opened."
+    },
+    {
+      "kind": "font",
+      "path": "lang/en.ttf",
+      "count_hint": "1 file, size not checked",
+      "licence": "not stated in the repo files read",
+      "class": "C",
+      "note": "Font licence not in the repo files read; treat as unclear."
+    },
+    {
+      "kind": "game art (sprites, tiles, models), sound, music",
+      "path": "not in this repo (README.md line 13; INSTALL.md line 62)",
+      "count_hint": "0 in repo",
+      "licence": "n/a (come from a purchased copy)",
+      "class": "D",
+      "note": "Nothing to reuse from the box. Do not look for a copy outside the purchase."
+    },
+    {
+      "kind": "controller mapping and name lists",
+      "path": "gamecontrollerdb.txt (41 KB), npcnames-female.txt, npcnames-male.txt, playernames-female.txt, playernames-male.txt",
+      "count_hint": "5 text files",
+      "licence": "BSD 2-Clause repo statement (gamecontrollerdb.txt may carry its own upstream notice; not checked)",
+      "class": "A",
+      "note": "Name lists are plain text. Usable with attribution; for our NPCs write our own names."
+    }
+  ],
+  "inspiration": [
+    "Monster stats are rolled from a per-type default: max HP gets base plus a random amount up to a range, current HP rolls from its own range when the ranges differ, and if the two ranges match current HP follows the max roll. HP is clamped to max afterwards (entity.cpp lines 20127-20157; defaults switch in stat_shared.cpp line 159). Row 7 and row 18 variance: same creature type, a few points different, roll-then-clamp order.",
+    "Items carry two names: an identified name and an unidentified one (item_names.json lines 5-6). Loot ceremony: a new drop shows its generic name until used or identified. Keep the two-name field; reveal with a colour and sound stinger, not text (row 18 and phone inspect).",
+    "Spell failure rises when the spell is less known: the more it is cast, the better it is known (types of spell failure.txt line 10). Failure types: mana overdraw costs health, a fizzle, a self-damage explosion, a summoned threat (lines 14-17). Row 13 specials: a learning-curve failure ladder the player can read.",
+    "A death opt-out zone: after death the player may enter a hard arena for a second life, or accept permanent loss (kill zone.txt line 1). Row 17 death and respawn: a loss made bearable by a risky second chance, with the choice shown up front.",
+    "A creature signature tied to a player state: a brute leaps and tackles when the player is levitating over a pit (minotaur.txt line 1). Row 7 creature behaviour and pit zones: trigger on a player state, telegraph the leap.",
+    "Numbered string tables with one entry per line, a number, a space, then the string, and '#' comments (lang/en.txt line 2). Locale-ready and easy to diff. For the catalogue (row 20 and 21): one numbered table per language, keys as numbers, not text."
+  ],
+  "briefs": [
+    {
+      "label": "Pit Tackler (own label)",
+      "why": "A brute that waits for the player to be in a risky state (over a pit) and then leaps is readable at 375 wide: the leap is the telegraph, and the player's choice (cross or wait) is the fight.",
+      "keep": "a trigger tied to the player's state; a leap that ends in a tackle; a readable wind-up before the leap",
+      "change": "our brute is a bull-shaped creature with a glowing neck ring, not a minotaur design; our trigger is a bridge or ledge we author in zone data; the leap is a wind-up plus ground shadow, not a jump arc",
+      "ref": "cippie-devstuff/minotaur.txt line 1"
+    },
+    {
+      "label": "Unlabelled Relic (own label)",
+      "why": "An item that shows a generic name until identified makes each loot drop a small question, and the reveal is the reward.",
+      "keep": "two names per item (generic until identified, real after); reveal by use",
+      "change": "our reveal is a colour and sound stinger with a glyph-shape hint; the generic label is a shape, not a word; the item families are ours",
+      "ref": "lang/item_names.json lines 5-6"
+    },
+    {
+      "label": "Second Chance Arena (own label)",
+      "why": "A death that offers a short, hard second life makes a loss feel like a choice, not a wall.",
+      "keep": "death leads to a choice: a hard arena with a chance back, or permanent loss; the choice is shown before it is made",
+      "change": "our arena is a timed duel against one champion from our roster; the afterlife is a shrine and a flicker of light, not the donor's wording; the chance back is a visible token, not a hidden roll",
+      "ref": "cippie-devstuff/kill zone.txt line 1"
+    }
+  ],
+  "cross_link": {
+    "camera": "none read",
+    "zones": "pit and ledge zones (minotaur idea); arena as a death zone (kill zone idea)",
+    "spawns": "per-type monster stats roll (see inspiration 1); spawn logic not read",
+    "loot": "two-name items (item_names.json); loot drops not read",
+    "hud-ui": "none read (no HUD code opened)",
+    "vfx": "spell fizzle and explosion ladder (cippie types of spell failure.txt)",
+    "animation": "none in box (no sprite or model files)",
+    "sound": "none in box (no sound files found at depth 4)"
+  },
+  "halves": {
+    "read": "single codebase (src/ and lang/); the game is one client with a host mode, no separate server half in the box",
+    "server_half_in_box": "none separate",
+    "data_half_in_box": "lang/ JSON and text tables read; the game's binary data pack is not in the repo"
+  },
+  "not_read": [
+    "game art, sprites, models and sounds (absent from repo)",
+    "lang/compendium_lang JSON contents beyond the line counts",
+    "lang/item_names.json beyond the first item",
+    "src/entity.cpp and src/stat_shared.cpp beyond the cited ranges",
+    "third-party licence texts beyond the list",
+    "cippie-devstuff PNG mockups (not opened)",
+    "cippie-devstuff notes other than the four cited",
+    "lang/en.ttf licence"
+  ]
+}

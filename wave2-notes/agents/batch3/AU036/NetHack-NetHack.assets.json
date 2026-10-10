@@ -1,0 +1,162 @@
+{
+ "donor": "NetHack-NetHack",
+ "code_licence": "NetHack General Public License (dat/license:1); copyright lines name NetHack Development Team (dat/data.base:3) and M. Stephenson (dat/license:2)",
+ "asset_licence": "Mixed: sound/wav CC0 (9) and CC-BY 4.0 (5) per sound/wav/attributions.txt; tile art (win/share) has no per-file licence line; old instrument samples have no licence file (README claim only)",
+ "rights_holder_status": "community open-source project (NetHack Development Team; per-file credits to Warwick Allison for original tiles and Kestrel Gregorich-Trevor for tile art)",
+ "best_class": "A",
+ "asset_groups": [
+  {
+   "kind": "sound (modern clips, CC0/CC-BY)",
+   "path": "sound/wav/se_squeak_*.uu, sound/wav/sa2_xplevelup.uu, sound/wav/sa2_xpleveldown.uu",
+   "count_hint": "14 attributed clips",
+   "licence": "CC0 1.0 (9) and CC-BY 4.0 (5), per sound/wav/attributions.txt:9 and :21",
+   "class": "A",
+   "note": "Usable with attribution; CC-BY needs credit. Files are .uu (uuencoded), not opened beyond names."
+  },
+  {
+   "kind": "sound (old instrument samples)",
+   "path": "sound/wav/sound_*.uu",
+   "count_hint": "47 files",
+   "licence": "none in repo; sound/wav/README:36-37 says 'should be no copyright'",
+   "class": "C",
+   "note": "Unclear; treat as inspiration only. Source library not in repo."
+  },
+  {
+   "kind": "2D tiles (monsters)",
+   "path": "win/share/monsters.txt",
+   "count_hint": "789 tiles, 16x16 text grid with palette header",
+   "licence": "not stated per file; only licence file is NGPL (dat/license:55)",
+   "class": "C",
+   "note": "Monster art, credit line win/share/monsters.txt:53. Ambiguous licence, so class C."
+  },
+  {
+   "kind": "2D tiles (objects)",
+   "path": "win/share/objects.txt",
+   "count_hint": "483 tiles",
+   "licence": "not stated per file",
+   "class": "C",
+   "note": "Item art. Fallback tile at objects.txt:33."
+  },
+  {
+   "kind": "2D tiles (other / dungeon)",
+   "path": "win/share/other.txt",
+   "count_hint": "243 tiles",
+   "licence": "not stated per file",
+   "class": "C",
+   "note": "Terrain and symbol tiles (not read in detail)."
+  },
+  {
+   "kind": "decal overlays",
+   "path": "win/share/decals.txt",
+   "count_hint": "3 tiles",
+   "licence": "not stated per file",
+   "class": "C",
+   "note": "Overlay merged on top of base tile (decals.txt:2)."
+  },
+  {
+   "kind": "splash image",
+   "path": "win/share/nhsplash.xpm",
+   "count_hint": "196x111, 256 colours",
+   "licence": "not stated",
+   "class": "C",
+   "note": "Header read only."
+  },
+  {
+   "kind": "app icons and store art",
+   "path": "sys/windows/vs/Images/*.png",
+   "count_hint": "52 PNG files",
+   "licence": "not stated",
+   "class": "C",
+   "note": "Not read; packaging art for Windows."
+  },
+  {
+   "kind": "level maps and fills (Lua)",
+   "path": "dat/*.lua",
+   "count_hint": "131 files",
+   "licence": "NGPL (code licence applies, no per-file licence)",
+   "class": "C",
+   "note": "Map and spawn data; minefill.lua:17 and :37 are read."
+  },
+  {
+   "kind": "quest dialogue (text)",
+   "path": "dat/quest.lua",
+   "count_hint": "132 KB",
+   "licence": "NGPL",
+   "class": "C",
+   "note": "Protected-style dialogue; not reproduced."
+  },
+  {
+   "kind": "flavour text tables",
+   "path": "dat/rumors.tru, dat/rumors.fal, dat/epitaph.txt, dat/oracles.txt, dat/bogusmon.txt",
+   "count_hint": "390, 397, 401, 105, 562 lines",
+   "licence": "NGPL",
+   "class": "C",
+   "note": "Random flavour lines; summary only."
+  },
+  {
+   "kind": "help and data text",
+   "path": "dat/help, dat/cmdhelp, dat/opthelp, dat/history, dat/data.base, dat/tribute",
+   "count_hint": "data.base 291 KB, tribute 383 KB",
+   "licence": "NGPL",
+   "class": "C",
+   "note": "Only data.base header read; tribute not read."
+  }
+ ],
+ "inspiration": [
+  "16x16 pixel art written as text grids over a small palette; a readable silhouette and a dark keyline carry each creature (win/share/monsters.txt:33).",
+  "Sex/size variants are one silhouette with a size and body-shape change, not a new design (win/share/monsters.txt:53-54).",
+  "A generic 'strange object' tile (win/share/objects.txt:33) keeps unknown loot from rendering blank.",
+  "Decals are small overlays merged on top of a base tile at draw time (win/share/decals.txt:2): a cheap status-rim technique.",
+  "Found-sound creak clips each pitched to a note, so a few clips make a tune (sound/wav/attributions.txt:5).",
+  "Mines fill is one generator call that smooths, joins and walls a cave region, then a spawn list (dat/minefill.lua:17, :37-40).",
+  "Flavour lines live in plain text tables drawn at random (dat/rumors.tru, dat/epitaph.txt): cheap flavour system for hub or loot messages."
+ ],
+ "briefs": [
+  {
+   "label": "Segmented crawler (ours)",
+   "why": "Low wide silhouette with a segmented body reads at tile size",
+   "keep": "wide low silhouette; dark keyline on every tile; two-tone body (trait kept)",
+   "change": "cool blue-grey chitin palette; crested head; glowing seam instead of plain abdomen (trait changed)",
+   "ref": "win/share/monsters.txt:33"
+  },
+  {
+   "label": "Fallback loot sack (ours)",
+   "why": "Unknown loot never renders blank",
+   "keep": "generic fallback family under specific items",
+   "change": "rarity-coloured rim on a sack, not a blank sheet",
+   "ref": "win/share/objects.txt:33"
+  },
+  {
+   "label": "Status rim overlay (ours)",
+   "why": "State drawn over a base sprite, not a separate sprite",
+   "keep": "overlay-on-base composition",
+   "change": "a ring or rim, not a pictogram",
+   "ref": "win/share/decals.txt:2"
+  },
+  {
+   "label": "Tuned creak cue (ours)",
+   "why": "Short found-sound clips pitched to notes make a tune from few files",
+   "keep": "pitch-tuned clip family for cues",
+   "change": "our own recorded or synthesised material, not these clips",
+   "ref": "sound/wav/attributions.txt:5"
+  },
+  {
+   "label": "Cave fill with walls (ours)",
+   "why": "One call smooths, joins and walls a cave",
+   "keep": "smoothing plus joined regions plus walls from one call",
+   "change": "our zone spawn table; different wall and ore look",
+   "ref": "dat/minefill.lua:17"
+  }
+ ],
+ "not_read": [
+  "win/share/nhicns.uu",
+  "sys/windows/vs/Images/*.png (contents)",
+  "sound/wav/*.uu (contents; only names and attributions read)",
+  "dat/tribute",
+  "dat/quest.lua (contents; size only)",
+  "dat/data.base (beyond header)",
+  "win/share/other.txt (contents; count only)",
+  "engine half: src/, include/, sys/, util/ (only names; not read)",
+  "sys/amiga and other ports' binary art"
+ ]
+}

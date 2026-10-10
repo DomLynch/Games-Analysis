@@ -1,0 +1,141 @@
+{
+  "donor": "pokerth-pokerth",
+  "code_licence": "GNU AGPL-3.0 (COPYING line 1 'GNU AFFERO GENERAL PUBLIC LICENSE'; README 'licensed under the GNU Affero General Public License version 3 or later')",
+  "asset_licence": "Mixed, per group, as listed in data/data-copyright.txt. Fonts: SIL OFL 1.1 (DejaVu with Bitstream Vera and public-domain DejaVu changes; Noto Color Emoji OFL; Montserrat, PT Serif, Orbitron OFL). Card decks: LGPL 3.0 (cards-simple and default/default4c, GPL 3.0 text incorporated by reference). Discworld/Star Trek/Lemming/stardust card rank glyphs: OFL or unstated. Sounds: sources are KDE and kde-look URLs plus 'donated by' users, no licence line. Table PNGs, card backs and several decks: 'generated with ChatGPT (OpenAI)', no licence line. Avatars: Wikimedia Commons URLs, no licence line in file. 'Own work (PokerTH Development Team)' for some items, no licence line in file.",
+  "rights_holder_status": "mixed, per group, from repo files only: PokerTH project (marked 'own work' for some items; copyright line 2006-2026 for the code and the README); third-party sources with URLs (KDE, kde-look, Wikimedia Commons, icons8, pokerth.net donors, a GitHub fork of a playing-card deck); AI-generated items (ChatGPT, vectorise.ai) with no rights statement; one group marked 'inspired by Terry Pratchett's Discworld'. No clean-room, original-game-data or leak statement in these files: a card game with no game-data dependency is not stated either way. Unknown for most art and all sounds.",
+  "best_class": "C overall (mixed). A only for the OFL fonts; B for the LGPL card-deck group; C for everything else (sounds, Wikimedia avatars, ChatGPT-generated tables and backs, Discworld-motif art)",
+  "asset_groups": [
+    {
+      "kind": "fonts",
+      "path": "data/fonts/ (DejaVuSans-Bold.ttf, NotoColorEmoji.ttf) plus src/gui/qt6-qml/resources/Inter-VariableFont.ttf and NotoColorEmoji.ttf (2 files in data/fonts, 11M)",
+      "count_hint": "2 font files in data/fonts (11M); 1 Inter variable font and 1 emoji font in the QML resources",
+      "licence": "SIL OFL 1.1 (Noto, Montserrat, PT Serif, Orbitron as listed); DejaVu Bitstream Vera licence for DejaVu Sans Bold",
+      "class": "A",
+      "note": "Fonts are the only group with an explicit permissive licence named in the file; OFL keeps the licence text with the font. Inter-OFL.txt and NotoColorEmoji-OFL.txt named in README (not read)."
+    },
+    {
+      "kind": "card decks (QML client, SVG)",
+      "path": "data/gfx/qml/cards/ (11 deck folders: bella_union_4c, blacklight_4c, default, default4c, discworld, lemming, nobus_4c_classic, stardust_dark, stardust_light, star_trek, xanax_card_deck_01); src/gui/qt6-qml/resources/cards-simple/ (52 SVG)",
+      "count_hint": "11 deck folders in data/gfx/qml/cards; 54 entries each counted for discworld, default and lemming; 52 SVG in cards-simple",
+      "licence": "LGPL 3.0 for default/default4c and cards-simple (file says so); blacklight_4c own work for colours and glow, geometry from default4c; discworld, lemming, star_trek, stardust rank glyphs under their font OFL or ChatGPT/vectorise.ai; lemming deck is a rebuild of a named third-party deck with '(c) lemming (2021)' and no licence line",
+      "class": "B",
+      "note": "LGPL 3.0 is copyleft for the library; the file treats the artwork as LGPL-covered. Discworld group class C because of ChatGPT generation and Pratchett-inspired motifs. Lemming group C (rebuild of another author's deck, no licence line). Card-deck set: 'Vectorized Playing Cards' lineage."
+    },
+    {
+      "kind": "card backs (QML)",
+      "path": "data/gfx/qml/backside/ (16 folders incl. disco, discworld, matrix, pirates, star_trek, stardust, bbc_anthem, danuxi, nobus_classic_*); data/gfx/gui/backside/ (mile_high_club, bbc_anthem, terminus_hotel_2)",
+      "count_hint": "16 QML back folders; 3 GUI back folders; disco backside.svg made by generate_disco_backside.py (repo root, not read)",
+      "licence": "disco and stardust: 'own work (PokerTH Development Team)'; discworld and pirates: ChatGPT-generated, vectorised with vectorise.ai; matrix: Droid Sans Fallback (Apache 2.0) plus DejaVu; star_trek: icons8 icon (licence not stated in file)",
+      "class": "C",
+      "note": "Mixed. The disco and stardust backs are the only items with a rights holder named (the project). icons8 entry gives a URL and no licence line. Only disco, discworld, matrix, pirates, star_trek, stardust are named in data-copyright.txt; the other QML back folders have no entry in that file (not read)."
+    },
+    {
+      "kind": "table art (PNG + SVG, 20 themes)",
+      "path": "data/gfx/qml/table/<theme>/ (20 theme folders, 11 files each: table.png, preview.png, preview_portrait.png, actionCall/Raise/Fold/AllIn.svg, blind and dealer pucks .svg, <theme>tablestyle.xml); data/gfx/gui/table/ (5 folders, older GUI client)",
+      "count_hint": "20 QML theme folders (README line 39); about 1.5M to 5.7M each; 89M data/gfx in total",
+      "licence": "table.png for disco, discworld, greencasino and ivoire-chene (contributed by narmod), matrix, pirates, saloon, star_trek: 'generated with ChatGPT (OpenAI)' with no licence line; other themes: not read for provenance",
+      "class": "C",
+      "note": "Table PNGs: the copyright file has entries only for disco, discworld, greencasino, ivoire-chene, matrix, pirates, saloon, star_trek (generated with ChatGPT, or contributed by narmod for greencasino and ivoire-chene). No entry at all for bbc_anthem, danuxi, default, lemming, mile_high_club, mute, mute2, teal, terminus_hotel_2, tripsixes, wanted, xanax, so their provenance is unknown from repo files."
+    },
+    {
+      "kind": "sounds (WAV)",
+      "path": "data/sounds/default/ (14 .wav + .directory); a copy at src/gui/qt6-qml/resources/sounds/default/ (28 .wav/.ogg across the tree)",
+      "count_hint": "14 WAV files in data/sounds/default (2.7M)",
+      "licence": "No licence line. Sources: KDE knotify beep URLs (yourturn, lobbychatnotify); kde-look kJazz URL (onlinegameready); 'donated by pokerth.net user: doc_dos' (allin, bet, raise, check, call, dealtwocards); 'donated by pokerth.net user: texas_outlaw' (blinds_raises_level1 to 3)",
+      "class": "C",
+      "note": "KDE sources imply a KDE licence but the file gives only a URL, so class C. Audio content not opened (names and sizes only)."
+    },
+    {
+      "kind": "avatars (PNG)",
+      "path": "data/gfx/avatars/default/ (misc/ and people/ folders; 1 folder under gfx/avatars)",
+      "count_hint": "misc: all pictures; people: 13 named Wikimedia Commons portraits (listed by URL); plus donated pictures",
+      "licence": "No licence line. Wikimedia Commons URLs for historic portraits; 'donated by pokerth.net user: ZeiZei' for misc; 'donated by friends and family' for others",
+      "class": "C",
+      "note": "Portraits are of historical figures; the file gives Commons URLs but no licence text. Not checked on the web (repo files only)."
+    },
+    {
+      "kind": "UI SVG/PNG (QML resources)",
+      "path": "src/gui/qt6-qml/resources/ (about 60 icon SVGs such as chip.svg, close.svg, gameChat.svg; gameTableHD.png, gameTableUHD.png; hands/ folder; emotes/ and cflags/ folders)",
+      "count_hint": "many top-level SVG/PNG (count not taken); plus hands/, emotes/ and cflags/ folders",
+      "licence": "Covered by src/gui/qt6-qml/resources attribution (cards-simple-attribution.txt for cards; Inter-OFL.txt and NotoColorEmoji-OFL.txt for fonts). Icons not individually licensed in the file (not read)",
+      "class": "C",
+      "note": "The README says fonts, icons and cards in this folder have attribution files next to them; only the cards attribution was read."
+    },
+    {
+      "kind": "text (translations and misc)",
+      "path": "data/translations/ (about 90 .qm compiled translation files, 5.5M); data/misc/ (LGPL and GPL texts, agpl.html, third_party_libs.txt, cacert.pem)",
+      "count_hint": "about 90 .qm files in data/translations (count not taken)",
+      "licence": "third_party_libs.txt lists Qt 6.9.2 LTS, Boost, libprotobuf, websocketpp; 'OpenSSL Toolkit' acknowledgement; chat translation via Google Translate and MyMemory (external services)",
+      "class": "C",
+      "note": "Translations are compiled Qt .qm files (binary, not opened). Source .ts files not checked. External translation services are a runtime dependency, not an asset."
+    },
+    {
+      "kind": "previews and screenshots",
+      "path": "preview/ (theme_preview.png, screenshots_localgame/, screenshots_online_chat/); README image links",
+      "count_hint": "PNG screenshots in preview/ (count not taken)",
+      "licence": "Not stated in the files read",
+      "class": "D",
+      "note": "Documentation images; not game content."
+    }
+  ],
+  "inspiration": [
+    "Table art as one raster per theme, with the felt rectangle centred by a crop plus a centre-mode rule. The theme XML states the felt edges in pixel coordinates and says only the crop shifts the table against the card row. Transfer as a layout rule: the arena backdrop is cropped so its centre matches the action focal point (data/gfx/qml/table/disco/discotablestyle.xml, header comment lines 1-30).",
+    "Action buttons keep the same shape for each action but change the material. The pirates theme turns the four action colours into four wood tones with knots, rivets and edge light (data/gfx/qml/table/pirates/piratestablestyle.xml line 16 onward; disco equivalent at line 22). Recreate: one button shape, four material tones matched to role.",
+    "Small-size card readability rule: below 75 px the card switches to one large rank glyph and one suit symbol, dropping the detail (data-copyright.txt lines 69-71; src/gui/qt6-qml/resources/cards-simple/). Maps directly onto the 375 wide readability problem for small HUD icons.",
+    "Blind and dealer tokens encode state by material and size. The small blind is pale and worn, the big blind rich gold; the dealer is a cast-iron ball with a fuse placed in the free corner so it stays nearly as large as the coins (piratestablestyle.xml line 22 and following). Recreate as target-marking tokens with clearly different materials.",
+    "Faceted sphere backdrop built from projected grid facets and gradient glow, not filters, because the renderer cannot do filters (data/gfx/qml/backside/disco/backside.svg header lines 2-4; generator generate_disco_backside.py in repo root, not read). Technique transferable to a glow effect built from gradients only.",
+    "Sound design per game event: separate short cues for each action (fold, check, call, raise, bet, all-in, deal), a your-turn beep, and an escalating blind-level stinger with three levels (data/sounds/default/ file names only; audio not opened). Idea: escalating stingers per tier (wave, threat level), recreated from scratch.",
+    "Skin packs as data: each table or card-back theme is a folder of art plus one XML style file with a preview image, so themes are added without code changes (data/gfx/qml/table/*/ 20 folders, data/gfx/qml/cards/ 11 folders). Pattern for loot-set or zone skins as data."
+  ],
+  "briefs": [
+    {
+      "label": "Plank-tone action bar",
+      "why": "Four action buttons read as physical objects with one shape and four material tones, so the choice is clear even at small size.",
+      "keep": "one shared button shape; four tones from one material family; rivet and edge-light details; the role-to-tone map",
+      "change": "use stone, iron and bone tones, not timber; change the bevel and corner radius; add a role icon instead of relying on colour alone",
+      "ref": "data/gfx/qml/table/pirates/piratestablestyle.xml (line 16 onward, action buttons); disco equivalent data/gfx/qml/table/disco/discotablestyle.xml line 22"
+    },
+    {
+      "label": "Faceted glow ball (gradient-only)",
+      "why": "A single faceted sphere with a gradient glow reads at a glance and needs no filters, which suits a fast browser canvas.",
+      "keep": "faceted surface from projected grid cells; gradient glow instead of a filter; dark-room lighting",
+      "change": "use a shard or crystal form instead of a sphere; a different glow colour and ornament; a moving light pattern instead of a fixed one",
+      "ref": "data/gfx/qml/backside/disco/backside.svg (header lines 2-4)"
+    },
+    {
+      "label": "Mini-glyph at small size",
+      "why": "Below a size threshold the card drops its detail and keeps one large glyph and one symbol, so it stays legible.",
+      "keep": "a size threshold that switches to a simplified glyph set; one large mark plus one symbol",
+      "change": "use our own threat or target icons, not card ranks; different threshold in pixels for a 375 wide layout",
+      "ref": "data-copyright.txt lines 69-71; src/gui/qt6-qml/resources/cards-simple/ (52 SVG)"
+    },
+    {
+      "label": "Fuse-token marker",
+      "why": "A round marker with an accent placed in the free corner keeps its size when it carries extra detail.",
+      "keep": "object placed off-centre so the extra element does not shrink the main body; heavy material read",
+      "change": "use a rune-stone or ember marker; a different shape; no fuse",
+      "ref": "data/gfx/qml/table/pirates/piratestablestyle.xml (line 22 and the dealer note that follows it)"
+    },
+    {
+      "label": "Escalating level stinger",
+      "why": "Three levels of one stinger tell the player the stakes went up without a new tune each time.",
+      "keep": "one motif, three steps; the step is tied to a game clock that moves up",
+      "change": "our own motif and instrument; tie to wave or threat tier; never reuse the donor's sound file",
+      "ref": "data/sounds/default/blinds_raises_level1.wav, _level2.wav, _level3.wav (names only; audio not opened)"
+    }
+  ],
+  "not_read": [
+    "src/ (engine, client and server C++ code) except src/gui/qt6-qml/resources/cards-simple-attribution.txt; so the client half and server half are not read for assets (paired donor in this box: none named)",
+    "all WAV audio content (names and sizes only)",
+    "PNG/SVG pixel content of table, card and back art (only the XML comment headers and the copyright file were read)",
+    "data/gfx/gui/ (old GUI client art, 5 table folders and 3 back folders, names only)",
+    "data/translations/ (.qm binaries), data/misc/cacert.pem",
+    "preview/ screenshots and images",
+    "src/gui/qt6-qml/resources/Inter-OFL.txt and NotoColorEmoji-OFL.txt (named in README, not opened)",
+    "generate_disco_backside.py and the other generate_*.py scripts in repo root (not read)",
+    "docs/ folder (gui_styling_howto.txt named in copyright file, not read)",
+    "the 20 table style XML files other than disco, saloon, discworld, pirates (headers only for these four)",
+    "the 'people' avatar images themselves (URLs only read)",
+    "data/gfx/qml/table/*/ 'preview' and 'table.png' pixel content for every theme; the source of the disco backside generator"
+  ]
+}

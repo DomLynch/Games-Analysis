@@ -1,0 +1,14 @@
+DCurrent-openbor, topic onboarding-first-30min (cell OB013)
+
+Verdict for onboarding: PARTIAL. The box holds the engine only; the first-run content (scenes, level sets, join scripts, sprites) is not there.
+Verdict for the hit-pause rule (first hit feedback): STRONG. Read in full, order of operations explained, see the note.
+
+Candidate files for the PARTIAL onboarding verdict:
+1. /mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c: READ (openborMain boot, intro loop and main menu at 56462-56690; choose_mode 54313; menu_difficulty 54013; playgame 53772; drop-in join 25670-25690; hit resolution 31700-31745; bounce quake 32368-32395; death blink 36120-36245; playscene 52558).
+2. /mnt/frankendom-donors/DCurrent-openbor/media: LISTED. Only _DUMMY present; no scene, level or module data.
+3. /mnt/frankendom-donors/DCurrent-openbor/engine/translation.txt: COUNTED (178 msgid lines, header included). Header read only.
+4. data/levels.txt, data/scenes/logo.txt, data/scenes/intro.txt, data/scenes/howto.txt, data/scripts/join1.c: NAMED by openbor.c, NOT in the repo (checked by media/ listing and by the file list of engine/).
+
+Honesty note: only one source file (openbor.c) was read in depth; the other candidates were listed or counted. The PARTIAL verdict rests on the absence of module content in the box, not on a search of the whole donor for alternative onboarding code.
+
+Search terms used with grep -rn in engine/ (narrow path, no whole-tree find): intro, title, splash, credits, first, onboard, tutorial, new game, startup, press start, join. Matches outside openbor.c are in the Android JNI includes and openborscript (not onboarding).

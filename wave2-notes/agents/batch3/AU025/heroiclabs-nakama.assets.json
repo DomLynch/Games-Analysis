@@ -1,0 +1,40 @@
+{
+  "donor": "heroiclabs-nakama",
+  "code_licence": "Apache License 2.0 (LICENSE; README section License)",
+  "asset_licence": "No separate asset licence. Repo LICENSE (Apache-2.0) is the only licence file; it does not name images, icons or fonts. Font and logo licences are not stated.",
+  "rights_holder_status": "original project: copyright line 'The Nakama Authors' in Lua modules; Heroic Labs named in README; not a fan, leak or decompile",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "lua_sample_modules", "path": "data/modules/*.lua", "count_hint": "9 files, 1098 lines", "licence": "Apache-2.0 (header in each file)", "class": "A", "note": "server logic samples, code not art"},
+    {"kind": "go_code", "path": "server/, main.go, sample_go_module/", "count_hint": "Go source", "licence": "Apache-2.0 (LICENSE)", "class": "A", "note": "code; not in scope for assets"},
+    {"kind": "ui_icons_svg", "path": "console/ui/dist/static/hiro_*.svg", "count_hint": "16 files", "licence": "not stated separately", "class": "C", "note": "feature glyphs; repo licence does not name them"},
+    {"kind": "fonts", "path": "console/ui/dist/static/*.woff2, *.ttf", "count_hint": "14 files (Inter, Roboto Mono, codicon)", "licence": "not stated in tree", "class": "C", "note": "no font licence file found"},
+    {"kind": "screenshots_logo", "path": ".github/*.png", "count_hint": "7 PNG files", "licence": "not stated separately", "class": "C", "note": "logo is a brand mark; file says nothing on trademarks"},
+    {"kind": "api_definitions_text", "path": "console/api.swagger.json, console/console.swagger.json, CHANGELOG.md", "count_hint": "2 JSON, 104 changelog headings", "licence": "Apache-2.0 repo", "class": "A", "note": "structure only; no game text"}
+  ],
+  "inspiration": [
+    "A single-stroke feature icon family on one square grid gives each feature (rewards, leaderboards, energy, inventory, auctions) its own glyph. Useful UI vocabulary for our hub and HUD. Reference: console/ui/dist/static/hiro_base-CVjIFC1v.svg.",
+    "Two-tone gradient glyphs: one gradient per icon with a flat secondary shape. Technique to recreate with our own palette. Reference: console/ui/dist/static/hiro_base-CVjIFC1v.svg line 1.",
+    "Matchmaker gate: a match is created only when exactly two queued users share a mode property. Small property check before a match exists. Reference: data/modules/match_init.lua lines 48-62.",
+    "Match label as a readable skill bucket (sample default skill=100-150). Idea: lobby labels from queue tags. Reference: data/modules/match.lua line 48.",
+    "Tournament windows as data fields (duration, reset schedule, max size) instead of code. Idea: season windows as zone or event data. Reference: data/modules/tournament.lua line 54.",
+    "Ops dashboard layout (players, modules, storage panels) for our Pit admin view, not for players. Reference: .github/dashboard.png and .github/players.png.",
+    "Authoritative match tick is configured per handler (sample uses 1 per second), so a fast fight would need its own rate. Reference: data/modules/match.lua line 47."
+  ],
+  "briefs": [
+    {
+      "label": "Feature glyph family (UI only, no creature in donor)",
+      "why": "A small, consistent set of two-tone glyphs makes a dense menu readable at 375 wide; each glyph is one silhouette idea.",
+      "keep": "one square grid for all glyphs; one gradient per icon with a flat secondary shape; one readable silhouette per feature",
+      "change": "our own palette and stroke weight; our own feature shapes (not the donor's shape set); a tinted rim that matches the Pit grade",
+      "ref": "console/ui/dist/static/hiro_base-CVjIFC1v.svg line 1 (and sibling hiro_*.svg files)"
+    }
+  ],
+  "not_read": [
+    "SVG icon bodies beyond hiro_base line 1",
+    "Font files and PNG screenshots (binary; listed only)",
+    "Go server internals beyond match_registry.go line 315",
+    "Client SDKs (not in the tree)",
+    "console/ui JS bundles (names only)"
+  ]
+}

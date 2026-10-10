@@ -1,0 +1,75 @@
+{
+  "donor": "orbitersim-orbiter",
+  "brief_rule": "Recreate every idea as a clearly distinct original, never a copy. Each brief names the trait KEPT and the trait CHANGED. Class C content stays at category level: no speaker names, no clip content, no texture or mesh look.",
+  "code_licence": "MIT for Orbiter core (LICENSE:3, README.md:20); D3D9Client LGPL (README.md:23); XRSound MIT, Douglas E. Beachy (Sound/XRSound/LICENSE:3); other Extern/ code has its own licence files (not all read)",
+  "asset_licence": "mixed and mostly not stated. Font and icon files have their own licence terms (Extern/imgui/Lekton SIL OFL 1.1 line 1; architext FFC line 1; Font Awesome Free, CC BY 4.0 per credit.htm:365). Sound clips: module MIT but clip source is NASA TV with named speakers (XRSound.cfg:548-550), licence for clips not stated. Textures, meshes, scenarios, flights and gravity models: no licence line found in files read. Planet textures are not in the git repo (README.md:74).",
+  "rights_holder_status": "mixed: core is individual author Martin Schweiger (LICENSE:3); textures described as processed from Landsat-7 and ESA/NASA data (Doc/Orbiter User Manual/SOL.tex:86, 111); gravity models cite PDS (CREDITS.tex:80-83); voice clips from NASA TV with named crew (XRSound.cfg:548-550); other owners unknown",
+  "best_class": "A",
+  "asset_groups": [
+    {"kind": "sound clips (XRSound default set)", "path": "Sound/XRSound/assets/XRSound/Default/", "count_hint": "454 WAV: 301 Default, 141 Altea STS, 12 Cabin Ambience", "licence": "module MIT (Sound/XRSound/LICENSE:3); clip licence not stated; source note: recorded from NASA TV (XRSound.cfg:550)", "class": "C", "note": "real-person speech; do not reuse voices; structure only"},
+    {"kind": "cabin ambience loops", "path": "Sound/XRSound/assets/XRSound/Default/Cabin Ambience/ (amb0-amb12.wav)", "count_hint": "12 WAV", "licence": "as the clip set above, not stated per file", "class": "C", "note": "ambience bed variants; idea only"},
+    {"kind": "sound module assets (other)", "path": "Sound/XRSound/assets/", "count_hint": "469 files (454 WAV, 15 others: 5 cfg, 1 txt, 1 ogg, docs and images)", "licence": "MIT (module)", "class": "A", "note": "config and docs; clip folder is class C"},
+    {"kind": "sound config", "path": "Sound/XRSound/assets/XRSound/XRSound.cfg", "count_hint": "one config with [SYSTEM] and event sections", "licence": "MIT (module)", "class": "A", "note": "event-to-folder mapping: Sound ID = 11002; MachCalloutsGroup line 543"},
+    {"kind": "planet and sky textures", "path": "Textures/ (261 files, 228 MB; dds 169, tex 40, png 33, bmp 16)", "count_hint": "261 files", "licence": "not stated; planet textures not in git (README.md:74); manual says third-party imagery (SOL.tex:86, 111)", "class": "C", "note": "subfolders Atlantis, KSC, Cockpit, Common, D3D9, samples, generic, csphere, MenuInfoBar"},
+    {"kind": "sky survey maps", "path": "Textures/csphere/", "count_hint": "20 .tex files", "licence": "not stated", "class": "C", "note": "named after survey programmes (not read)"},
+    {"kind": "3D meshes", "path": "Meshes/*.msh", "count_hint": "34 files, 2.5 MB", "licence": "not stated", "class": "C", "note": "spacecraft, station, launch-site geometry; not read"},
+    {"kind": "scenario files", "path": "Scenarios/", "count_hint": "187 files, 880 KB", "licence": "not stated per file; screenshot credit inside Venus.scn:3", "class": "C", "note": "text with HTML descriptions; topic folders"},
+    {"kind": "flight recordings", "path": "Flights/", "count_hint": "154 files, 8.3 MB (49 pos, 49 att, 45 atc, 11 dat)", "licence": "not stated", "class": "C", "note": "not read"},
+    {"kind": "vessel configs", "path": "Config/Vessels/", "count_hint": "8 .cfg", "licence": "repo default MIT (not per file)", "class": "A", "note": "not read"},
+    {"kind": "HUD panel configs", "path": "Config/MFD/", "count_hint": "Attitude.cfg, Default.cfg, ScriptMFD.cfg, TestMFD1/2", "licence": "repo default MIT", "class": "A", "note": "not read"},
+    {"kind": "gravity model tables", "path": "GravityModels/", "count_hint": "7 files, 13 MB", "licence": "cited to PDS (CREDITS.tex:80-83); licence not stated", "class": "C", "note": "Notes on Gravity Models.txt not read"},
+    {"kind": "manuals (TeX sources)", "path": "Doc/", "count_hint": "438 files, 65 MB", "licence": "not stated; CREDITS.tex lists people and sources", "class": "C", "note": "includes Doc/Scenery readme that cites external data sites (not verified)"},
+    {"kind": "help pages", "path": "Html/", "count_hint": "219 files, 4.1 MB", "licence": "credit page CC BY 4.0 for Font Awesome (credit.htm:365)", "class": "C", "note": "help pages not read beyond the credit page"},
+    {"kind": "fonts and icon font", "path": "Extern/imgui/ (Lekton, architext, License-FA)", "count_hint": "3 licence files with font files", "licence": "SIL OFL 1.1 (Lekton, line 1); FFC (architext, line 1); Font Awesome Free (License-FA.txt:5), CC BY 4.0 per credit page", "class": "A", "note": "use with each file's own terms; full texts not read"},
+    {"kind": "third-party code and libs", "path": "Extern/ (370 files, 4.3 MB)", "count_hint": "370 files", "licence": "own licence files (Penlight, luafilesystem etc.), not read in full", "class": "D", "note": "code, not assets"},
+    {"kind": "utilities", "path": "Utils/", "count_hint": "147 files, 5.2 MB", "licence": "not stated", "class": "C", "note": "not read"}
+  ],
+  "inspiration": [
+    "Ambience beds: twelve looped cabin-ambience clips sit under the event sounds, one bed chosen at a time (Sound/XRSound/assets/XRSound/Default/Cabin Ambience/). Idea: several looped beds per zone with variants, chosen by state. Fits the sound-music bed-per-zone topic.",
+    "Callouts by event group: the module maps sound IDs to clip folders (Sound/XRSound/assets/XRSound/XRSound.cfg:540-543). Idea: each fight event (guard, parry, break, finisher) maps to a callout group in data, so the sound is set by the table, not code.",
+    "Random-interval chatter: a bank of clips plays at random intervals (XRSound.cfg:546-550). Idea: idle barks at random intervals from a bank of our own generated lines, never real voices.",
+    "Staged mission chain: three chained mission scenarios plus a quickstart (Scenarios/Checklists/Mission 1 - DG to ISS.scn, Mission 2 - ISS to Mir.scn, Mission 3 - Deorbit.scn). Idea: a progression chain of start-state files, each one a playable stage, zones as data.",
+    "Swappable HUD panels defined by config: Config/MFD/ holds Attitude.cfg, Default.cfg and ScriptMFD.cfg. Idea: HUD panels as data with a default and a special panel, chosen per class or stance.",
+    "Optional hi-res texture tier: the base install ships without planet textures and a high-resolution set is added later (README.md:72-78). Idea: base art pack plus an optional hi-res pack at the same paths.",
+    "Per-body parameter tables with a notes file (GravityModels/, notes file not read). Idea: per-zone parameter tables documented in a notes file next to the data."
+  ],
+  "briefs": [
+    {
+      "label": "cabin hum bed",
+      "why": "A looped low ambience bed that is always under the scene and changes variant with state gives a sense of place without music. Readable as a sound signature at fight volume: a low, steady, slightly varied hum.",
+      "keep": ["several looped beds with variants", "one bed chosen by state, not by time", "a bed that sits under all event sounds"],
+      "change": ["bed per zone (arena, shrine, pit), not a cabin", "bed reacts to threat level, not flight state", "our own sound design, no donor clips"],
+      "ref": "Sound/XRSound/assets/XRSound/Default/Cabin Ambience/ (amb0-amb12.wav)"
+    },
+    {
+      "label": "idle bark bank",
+      "why": "Short idle lines at random intervals keep a quiet arena alive without music. The random interval is what makes it feel alive; the bank size sets how often a line repeats.",
+      "keep": ["random interval between lines", "a bank of lines, not one clip", "lines play only in idle time"],
+      "change": ["lines are our own generated barks, never real voices", "interval tied to the spawn timer", "no speaker or station chatter style"],
+      "ref": "XRSound.cfg:546-550 (Sound/XRSound/assets/XRSound/XRSound.cfg)"
+    },
+    {
+      "label": "staged mission chain",
+      "why": "A short chain of start-state files, each a playable stage with its own start, makes progression feel like missions rather than levels. Shows how stage files can be data.",
+      "keep": ["chain of start-state files", "a quickstart stage first", "stage names describe the goal"],
+      "change": ["stages are our zones with spawn and loot changes", "chain branches on a choice, not a straight line", "no donor mission text"],
+      "ref": "Scenarios/Checklists/Mission 1 - DG to ISS.scn, Mission 2 - ISS to Mir.scn, Mission 3 - Deorbit.scn"
+    },
+    {
+      "label": "panel-per-stance HUD",
+      "why": "Each HUD panel is a separate config file, so the player can swap a panel for a task (attitude, default) without new code. Useful for readability at 375 px with fewer panels per stance.",
+      "keep": ["one config per panel", "a default panel and a task panel", "panels defined as data"],
+      "change": ["panels per stance (guard, attack, rest) not per flight task", "threat colour ramp of our own", "no donor layout"],
+      "ref": "Config/MFD/Attitude.cfg, Config/MFD/Default.cfg, Config/MFD/ScriptMFD.cfg"
+    }
+  ],
+  "not_read": [
+    "any texture, mesh, flight or WAV content (counts and names only)",
+    "Src/ and OVP/ code, including the D3D9Client body",
+    "GravityModels/Notes on Gravity Models.txt",
+    "Config/Vessels and Config/MFD contents",
+    "full licence texts in Extern/ (SIL, FFC, Font Awesome beyond first lines)",
+    "scenario bodies except Venus.scn line 3",
+    "Utils/ and Html/ contents beyond the credit page"
+  ]
+}

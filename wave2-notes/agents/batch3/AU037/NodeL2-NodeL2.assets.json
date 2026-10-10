@@ -1,0 +1,44 @@
+{
+  "donor": "NodeL2-NodeL2",
+  "code_licence": "Apache License 2.0 (LICENSE line 2; README line 47 says Apache 2.0)",
+  "asset_licence": "None stated. data/ (JSON datapack and HTML dialogue) has no licence file or header. README line 12 says the Lineage II client is a separate download not in the box. README line 44 says 50 percent of the datapack is unimplemented.",
+  "rights_holder_status": "unknown. The repo does not say where the datapack came from. README line 1 names LINEAGE II as the game the server emulates. Not checked beyond repo files.",
+  "best_class": "C",
+  "half_read": "server (src/GameServer, read in part) and data pack (data/, read in part). Client half is not in the box: the tree has no client files and README line 12 says it is a separate download. Paired donor in this batch: none.",
+  "asset_groups": [
+    {"kind": "stat table (NPC and monster records)", "path": "data/Npcs/npcs.json", "count_hint": "2223 records", "licence": "none stated", "class": "C", "note": "Name, level, hostile flag, base stats, clan helpRadius (line 10). Only the field layout was read; no values copied."},
+    {"kind": "spawn table (coordinate lists per NPC)", "path": "data/Npcs/Spawns/spawns.json", "count_hint": "7868 records, about 3.2 MB", "licence": "none stated", "class": "C", "note": "Coordinates per spawn point. Read at schema level only."},
+    {"kind": "drop tables (grouped chance rolls)", "path": "data/Npcs/Rewards/rewards.json", "count_hint": "3450 records, about 0.9 MB", "licence": "none stated", "class": "C", "note": "Each group has an overall percent and per-item chances. Mechanism read in src/GameServer/World/Generics/NpcRewards.js."},
+    {"kind": "item tables", "path": "data/Items/Weapons/weapons.json; data/Items/Armors/armors.json; data/Items/Others/others.json", "count_hint": "weapons 473, armours 684, others 3488 records", "licence": "none stated", "class": "C", "note": "Armour kind counts from grep: Armor.Wear 288, Armor.Jewel 104, Armor.Fabric 80, Armor.Shield 72, Armor.Chain 62, Armor.Leather 59, Armor.Pet 19. Item names read only as fields; the license-like quest item names are game items, not licences."},
+    {"kind": "skill tables with per-level rows", "path": "data/Skills/Active/active.json (393 records); data/Skills/Tree/tree.json, data/Skills/Passive/passive.json, data/Skills/Switch/switch.json", "count_hint": "active 393 records", "licence": "none stated", "class": "C", "note": "Only active.json was read; the other three skill files were not opened."},
+    {"kind": "teleport table", "path": "data/Teleports/teleports.json", "count_hint": "93 lines, entry count not taken", "licence": "none stated", "class": "C", "note": "Location description, price, spawn coordinates."},
+    {"kind": "templates (spawn and shortcut templates)", "path": "data/Templates/ (Spawns/spawns.json read; Items, Shortcuts, Revitalize, Experience, templates.json not read)", "count_hint": "not counted", "licence": "none stated", "class": "C", "note": "Per-class spawn template read at line level only."},
+    {"kind": "dialogue (HTML bypass menus)", "path": "data/Html/ (11 files including Admin/ and Gatekeeper/)", "count_hint": "11 files", "licence": "none stated", "class": "C", "note": "Only data/Html/126.html was read. Dialogue text is protected text; not reproduced here."},
+    {"kind": "shop data", "path": "data/Admin/Shop/shop.json", "count_hint": "not counted", "licence": "none stated", "class": "C", "note": "Not read."},
+    {"kind": "art, audio, maps, models, fonts", "path": "whole tree", "count_hint": "0 files", "licence": "not applicable", "class": "D", "note": "Extension count over all 228 files: js 171, json 39, html 11, sql 1, sh 1, md 1, ini 1, LICENSE 1. No image, audio, model, map or font file in the box."}
+  ],
+  "inspiration": [
+    "Two-stage drop roll: a group fires on an overall percent, then one item in the group is picked by walking cumulative chance values and stopping at the first hit (src/GameServer/World/Generics/NpcRewards.js:10-17). Easy to recreate as zone data with originals.",
+    "Spawn data as per-template coordinate lists with a bounds field and a loop over spawn points (src/GameServer/World/Generics/SpawnNpcs.js:12-14; data/Templates/Spawns/spawns.json:3-4). Matches the zones-as-data ruling and row 23.",
+    "Aggro is a per-creature flag plus a radius: a scan of nearby hostile NPCs within 500 units when the player is within a 5000-unit circle (src/GameServer/Actor/Generics/UpdateEnvironment.js:6 and 22; src/GameServer/Model/Npc.js:35).",
+    "Leash: once in combat, an NPC checks distance each interval and drops combat when the actor is 150 or more units away (src/GameServer/Npc/Npc.js:57-66). Shape to reuse for row 4 (leash).",
+    "Staggered replies: after a 1000-unit move, NPC info is re-sent with a random delay per NPC (utils.randomNumber(2000); the helper's range was not read) rather than in one burst (src/GameServer/Actor/Generics/UpdateEnvironment.js:9-11). Useful for the per-tick budget idea in row 18.",
+    "Skill levels stored as rows of power, mana, hp, item cost per level in one table (data/Skills/Active/active.json:5). Matches catalogue-as-data rows 20 and 21.",
+    "Dialogue as small HTML pages with bypass links (data/Html/126.html:4). A simple talk-menu shape; keep the menu structure, write our own text.",
+    "Defects to fix, not copy: the combat timeout builds a zero-coordinates object (src/GameServer/Npc/Npc.js:57-61) whose use was not read; a hard-coded z hack is marked TODO by the author (src/GameServer/Actor/Generics/UpdateEnvironment.js:24). Fix: keep the leash idea, and return to the spawn anchor by explicit zone data."
+  ],
+  "briefs": [
+    {"label": "Leashed roaming guard (own label)", "why": "A hostile that waits near its anchor, engages when a player comes within a set radius, and gives up the chase at a fixed leash distance. Idea only: no art in the box, so the silhouette at 375 wide is for us to design.", "keep": "Radius-on-enter aggro; a leash distance that drops combat; a single hostile flag per creature record", "change": "Anchor is a zone-data point, not a coordinate table per class; leash ends with a visible walk-home and a short reset animation; a distinct original design, never a copy of any donor creature", "ref": "src/GameServer/Actor/Generics/UpdateEnvironment.js:22; src/GameServer/Npc/Npc.js:65-66; data/Npcs/npcs.json:3"},
+    {"label": "Two-roll drop bundle (own label)", "why": "A drop reads as a ceremony: first a chance to drop anything at all, then one item from a weighted group. Gives a readable loot story.", "keep": "Overall chance gate then weighted pick; first match wins; item range min to max", "change": "Our drop uses rarity colour and a distinct sound cue; the weights live in zone data with a named table; the drop model is a new original, not the donor's item art", "ref": "src/GameServer/World/Generics/NpcRewards.js:10-17; data/Npcs/Rewards/rewards.json:4"}
+  ],
+  "not_read": [
+    "data/Skills/Tree, Passive and Switch JSON",
+    "data/Items/Armors and Others content beyond the kind counts",
+    "data/Templates/Items, Shortcuts, Revitalize, Experience, templates.json",
+    "data/Admin/Shop/shop.json",
+    "data/Html other than 126.html",
+    "src/AuthenticationServer and most of src/GameServer/Network",
+    "database/sql/database.sql (schema not opened)",
+    "config/default.ini values (contains credential-style settings; deliberately not recorded)"
+  ]
+}

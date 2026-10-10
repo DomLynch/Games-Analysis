@@ -1,0 +1,115 @@
+{
+  "donor": "Wargus-wargus",
+  "halves_read": "Data half and tool code: Lua scripts (scripts/), campaign and map files (campaigns/, maps/), a PUD format note (doc/pud-specs.txt), and C++ tools (wartool.cpp, pud.cpp, rip_music, StormLib). Engine half (Stratagus) is NOT in the box; the game data (Warcraft II art, sound, music, briefing text) is NOT in the box and the README says the user must extract it from their own Warcraft II installer (README.md line 9). No paired donor found in the box for Stratagus.",
+  "code_licence": "GPL-2.0. COPYING line 2 reads 'Version 2, June 1991'. Lua scripts carry per-file copyright lines (for example scripts/ai.lua lines 13 and 14 list Lutz Sammer, Jimmy Salmon, cybermind and Kyran Jackson) and 'any later version' wording (line 19). Third-party tools listed in COPYING-3rd: cdda2wav (GPL, line 11) and ffmpeg (LGPL 2.1, line 22).",
+  "asset_licence": "No separate asset licence found. The repo does not ship the original Warcraft II art, sound or music. The map and campaign files carry no licence line in the files read. The shader files (shaders/*.glsl) and contrib/*.png carry no licence text (grep for licence or copyright in the two shader files and the contrib folder found none).",
+  "rights_holder_status": "unknown for the game content. README.md line 9 says the game data must come from the user's Warcraft II installer; the repo does not state who owns that data. Code copyright lines name the Wargus and Stratagus contributors (Lutz Sammer, Jimmy Salmon, Pali Rohár, Kyran Jackson).",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "original game data (art, sound, music, briefing screens and text)",
+      "path": "not in box. campaigns/human/ and campaigns/orc/ contain 14 .sms scripts each and no art, text or audio; the scripts reference paths such as campaigns/human/interface/introscreen1.png that are not in the box (campaigns/human/level01h_c.sms line 8)",
+      "count_hint": "0 in box",
+      "licence": "not stated in the repo; README says extract from the user's own installer",
+      "class": "C",
+      "note": "Original game data. Inspiration only, at category level. Do not extract, copy or reuse."
+    },
+    {
+      "kind": "unit, building and spell definitions as Lua data (code-licence data)",
+      "path": "scripts/human/units.lua (about 50 DefineUnitType entries); scripts/orc/units.lua; scripts/spells.lua (589 lines); scripts/upgrade.lua; scripts/human/anim.lua (469 lines of animation timelines)",
+      "count_hint": "about 50 unit entries per race; 589 spell lines; 469 animation lines",
+      "licence": "GPL-2.0 (repo code); the unit names and stats describe the original game design",
+      "class": "B",
+      "note": "Licence is GPL-2.0 for the file, so copyleft conditions apply if copied. The design describes Warcraft II units, so use the data shape, not the content."
+    },
+    {
+      "kind": "community maps (skirmish and FTM) as Stratagus map files and descriptor text",
+      "path": "maps/skirmish/singleplayer/ (about 170 entries mixing .sms, .smp, .txt, .bmp, .gz); maps/skirmish/multiplayer/; maps/ftm/ (12 .sms and matching .smp, .png preview files); maps/test/ and maps/fl/, maps/king/",
+      "count_hint": "about 244 map-folder files in total; 12 ftm maps; about 170 singleplayer entries",
+      "licence": "not stated in the files read; GPL-2.0 applies to the repo as a whole only where the file is code",
+      "class": "C",
+      "note": "No map licence line found in the descriptor read (maps/skirmish/singleplayer/(4)little-island.txt, head only). Class C until the author terms are seen."
+    },
+    {
+      "kind": "GLSL post-process shaders",
+      "path": "shaders/aa-jinc2-sharp.cg.glsl, bloom.cg.glsl, crt-easymode.cg.glsl, crt-reverse-aa.cg.glsl, dotmask.cg.glsl, tv-highcontrast-hd.cg.glsl, xbr-lv2.cg.glsl",
+      "count_hint": "7 shader files, 2164 lines in total",
+      "licence": "not stated (no licence text found in crt-easymode and xbr-lv2 by grep)",
+      "class": "C",
+      "note": "Looks like third-party shader code with no licence line in the box. Unclear, so class C. Not read in full."
+    },
+    {
+      "kind": "HUD icons and contrib images",
+      "path": "contrib/*.png (13 icons: food, health, mana, ore, score, cross and similar)",
+      "count_hint": "13 PNG",
+      "licence": "not stated; no licence text next to contrib/",
+      "class": "C",
+      "note": "Small icons. Licence unclear, so class C. Not opened beyond the file list."
+    },
+    {
+      "kind": "translation strings and UI text",
+      "path": "PO files (12 in the repo; location not checked); scripts/menus/*.lua (15 menu scripts); scripts/translate/ (1 file)",
+      "count_hint": "12 .po files in total in the repo",
+      "licence": "GPL-2.0 for the repo code; the translation strings are contributor work with the README naming POEditor projects",
+      "class": "C",
+      "note": "Text is not copied. Use the structure (per-language PO files) only."
+    },
+    {
+      "kind": "PUD format specification (text)",
+      "path": "doc/pud-specs.txt",
+      "count_hint": "1 file",
+      "licence": "no licence line in the head read; credit line names Daniel Lemberg as compiler (line 3)",
+      "class": "C",
+      "note": "Format notes made by hex editing the original data. Use for understanding only; no code reuse claimed."
+    }
+  ],
+  "inspiration": [
+    "Attack animation as a timeline: a list of tokens such as frame numbers, waits, an 'unbreakable begin' and 'unbreakable end' pair, a named sound, and an 'attack' event fired near the impact frame (scripts/human/anim.lua lines 48 to 50). Technique: the swing has a commit window and the hit and the sound are tied to one frame. Transferable to our hero and creature attack timelines in milliseconds (row 6 and row 7), with an explicit hit-frame flag and hitstop.",
+    "Spells are data records with fields for name, mana cost, range, target type and an action list (for example adjust vitals then spawn a missile) plus a condition block (scripts/spells.lua lines 116 and 121). Transferable to our skill rows (row 13): a skill is a data record whose action list the engine runs.",
+    "Units are declared one per entry with a display name and stat block (scripts/human/units.lua line 36). Transferable to the catalogue fields (row 21): one row per creature with fixed fields; keep it plain.",
+    "Campaign levels are scripts that load a level, show a briefing card with an image and voice lines, and then declare triggers (campaigns/human/level01h_c.sms lines 3 to 14). Transferable as a zone intro card and tutorial triggers (zone data, row 23).",
+    "Each map has a small text descriptor with size, terrain mix, player count and resource totals (maps/skirmish/singleplayer/(4)little-island.txt, head read). Transferable as a zone card: size, biome mix, population and danger tier on one screen.",
+    "The AI is split into scripts per faction and per year, with attack-wave files for land, sea and air (scripts/ai/*.lua, file list only). Idea for wave logic as data per zone; not read in depth."
+  ],
+  "briefs": [
+    {
+      "label": "Wind-up ribbon",
+      "why": "A swing with a commit window and a sound on the impact frame reads as weight, even at 375 wide.",
+      "keep": "Frame list with waits; an unbreakable window around the swing; a named sound on the impact frame.",
+      "change": "Recreate as a clearly distinct original, never a copy: a millisecond timeline with a telegraph arc and a hitstop on contact; our own weapon silhouette and sound design.",
+      "ref": "scripts/human/anim.lua lines 48 to 50"
+    },
+    {
+      "label": "Action-list spell",
+      "why": "A spell defined as an action list is easy to tune and to read in a catalogue row.",
+      "keep": "Spell record with cost, range, target type and an action list.",
+      "change": "Recreate as a clearly distinct original: our skills are short-range beams or a hit area, not missiles; the condition block checks stamina and guard state.",
+      "ref": "scripts/spells.lua lines 116 and 121"
+    },
+    {
+      "label": "Briefing card",
+      "why": "A short intro card with an image, objectives and a single voiced line starts a zone well.",
+      "keep": "An intro card per level with an image, objectives and triggers declared in one place.",
+      "change": "Recreate as a clearly distinct original: a one-screen card at 375 wide with one line of voice; our own art; no level-name copy.",
+      "ref": "campaigns/human/level01h_c.sms lines 3 to 14"
+    },
+    {
+      "label": "Zone card",
+      "why": "A compact summary of a map (size, terrain mix, players) helps a player pick a zone before entering it.",
+      "keep": "A small metadata block per map.",
+      "change": "Recreate as a clearly distinct original: our zone card shows spawn density and a danger tier, not resource totals.",
+      "ref": "maps/skirmish/singleplayer/(4)little-island.txt (head read)"
+    }
+  ],
+  "cross_link": "vfx: no assets in box (the effect files are not read). zones: yes (map descriptors, campaign intro and triggers). spawns: AI wave scripts exist (scripts/ai/), not read in depth. loot: not read. camera: none. hud-ui: contrib icons and menus (not read in depth; class C). animation: yes (anim.lua timelines). sound: sound.lua exists (not read); the sound references in anim.lua and campaign briefings name the sound events, but the sound files are not in the box.",
+  "not_read": [
+    "Stratagus engine (not in box).",
+    "Original Warcraft II data (not in box).",
+    "scripts/ai/*.lua beyond the copyright header (ai_zoisite_2013.lua line 13 read).",
+    "Most of scripts/human and scripts/orc (only units.lua line 36 and anim.lua lines 45 to 50 read).",
+    "Full shader source (only the file list and grep for licence lines).",
+    "StormLib, wartool.cpp and pud.cpp (file list and names only).",
+    "Map binaries (.smp, .gz) and PNG and BMP previews (not opened).",
+    "contrib/*.png (file list only)."
+  ]
+}

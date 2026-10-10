@@ -1,0 +1,328 @@
+{
+  "donor": "cuteshaun-lineage2-api",
+  "counts": {
+    "creatures": 2541,
+    "classes": 89,
+    "weapons": 1217,
+    "gear_sets": 51,
+    "zones": 209
+  },
+  "creature_families": [
+    {"kind": "family", "family": "orc, tribal and humanoid warrior/shaman/archer names (keyword heuristic, mine)", "rows": 212},
+    {"kind": "family", "family": "undead (keyword heuristic)", "rows": 201},
+    {"kind": "family", "family": "insect and arachnid (keyword heuristic)", "rows": 149},
+    {"kind": "family", "family": "beast (keyword heuristic)", "rows": 131},
+    {"kind": "family", "family": "demon and dark (keyword heuristic)", "rows": 111},
+    {"kind": "family", "family": "golem and construct (keyword heuristic)", "rows": 110},
+    {"kind": "family", "family": "reptile and lizardfolk (keyword heuristic)", "rows": 101},
+    {"kind": "family", "family": "angel and holy (keyword heuristic)", "rows": 86},
+    {"kind": "family", "family": "eye and aberration (keyword heuristic)", "rows": 27},
+    {"kind": "family", "family": "giant (keyword heuristic)", "rows": 6},
+    {"kind": "family", "family": "unclassified by my keywords", "rows": 1407},
+    {"kind": "tier", "text": "Monster rows (2541, 2056 distinct names) span levels 0 to 99; 3 rows sit in the 90s, 414 in the 80s."},
+    {"kind": "tier", "text": "aiAggro is true on 986 of 2541 Monster rows; the unit of aiAggro is not read."},
+    {"kind": "tier", "text": "RaidBoss rows: 208, levels 20 to 80. A Raid Boss skill tag sits on 214 monster, raid or grand rows."},
+    {"kind": "tier", "text": "GrandBoss rows: 15, levels 50 to 87, HP up to 7,500,000 in the rows read. One name repeats at several HP values (Antharas at 6.1M, 6.8M and 7.5M)."},
+    {"kind": "tier", "text": "Monster rows with HP at or above 300,000: 8 rows, levels 55 to 87, radius up to 63 and height up to 90 in the data fields."}
+  ],
+  "top_creatures": [
+    {
+      "label": "Colossal hunter beast",
+      "why": "One of 8 Monster rows at 300k HP or more. Radius and height fields are large, so size alone reads at 375 wide.",
+      "keep": "Size as the threat signal: body radius and height as data fields; very high HP on a roaming monster.",
+      "change": "A crystal or bone colossus with one signature shape of its own; not a real-world animal.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/npcs.json:263657 (id 22215, HP 339687, radius 60, height 89.7)"
+    },
+    {
+      "label": "Phased grand boss",
+      "why": "Grand boss rows repeat one name at several HP values, so a single boss has tiers.",
+      "keep": "Several HP tiers for one boss as difficulty variants.",
+      "change": "One entity with phases and a phase cue, not separate rows.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/npcs.json:324155 (id 29019, name Antharas; other rows of the same name follow)"
+    },
+    {
+      "label": "Raid gate elite",
+      "why": "208 raid boss rows; the tier is a skill tag on the creature, not a separate zone.",
+      "keep": "Tier as a skill tag that the server and the client both read.",
+      "change": "Our own gate rule and reward; no copy of the tier table.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/npcs.json:264579"
+    },
+    {
+      "label": "Huge aggro dragon",
+      "why": "A dragon-class monster with a large radius, a high run speed and an aiAggro value of 1000 (unit not read).",
+      "keep": "A very large aggro value on a boss so it pulls from far away.",
+      "change": "Aggro as a threat table with decay, not one number.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/npcs.json:327646 (id 29069, Behemoth Dragon)"
+    },
+    {
+      "label": "Weak-point caster",
+      "why": "Creatures carry per-element weak-point skills (Sacred, Blunt, Fire, Wind, Archery), on 486, 323, 128, 111 and 107 monster, raid or grand rows in my count.",
+      "keep": "Per-creature weakness to one damage type, read by the damage formula.",
+      "change": "Show the weakness as a readable glyph at 375 wide; no copy of the attack-name table.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/skills.json:204473"
+    },
+    {
+      "label": "Stat-stack elite",
+      "why": "Monsters carry modifier skills (HP, physical and magic attack and defence modifiers, ids 4408 to 4413 as seen) that scale base stats, on about 900 to 1100 rows each.",
+      "keep": "Base stats scaled by a stack of named modifier skills.",
+      "change": "Our own stack per tier, short enough to inspect in the fight HUD.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/skills.json:211072 (HP Modifiers)"
+    },
+    {
+      "label": "Mage-proof elite",
+      "why": "A full magic resist skill appears on 667 monster, raid or grand rows. The resist is a readable counter to casters.",
+      "keep": "A counter-class elite that tells the player what to change.",
+      "change": "Give the elite a visible tell before it resists.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/skills.json:175019"
+    },
+    {
+      "label": "Caster and archer pack",
+      "why": "AI type is a per-NPC field: DEFAULT on 6071 NPC rows, MAGE on 260, ARCHER on 129, CORPSE on 12.",
+      "keep": "AI type as one field with a few presets.",
+      "change": "Our own presets and behaviours; the donor does not describe what each preset does.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/npcs.json:98215"
+    }
+  ],
+  "classes": [
+    "89 class rows: 52 Fighter, 26 Mystic, 11 Priest types.",
+    "5 races: Human 29, Elf 20, Dark Elf 20, Orc 13, Dwarf 7 rows (classes.json, race field, e.g. line 76705).",
+    "professionLevel 0 to 3 (promotion steps): 9, 18, 31, 31 rows.",
+    "9 rows have no parent id, which I read as base classes (not cross-checked by id)."
+  ],
+  "weapon_families": [
+    {"kind": "family", "family": "SWORD", "rows": 196},
+    {"kind": "family", "family": "BLUNT", "rows": 171},
+    {"kind": "family", "family": "BIGBLUNT", "rows": 157},
+    {"kind": "family", "family": "DUAL", "rows": 134},
+    {"kind": "family", "family": "DAGGER", "rows": 125},
+    {"kind": "family", "family": "POLE", "rows": 103},
+    {"kind": "family", "family": "BOW", "rows": 94},
+    {"kind": "family", "family": "DUALFIST", "rows": 75},
+    {"kind": "family", "family": "BIGSWORD", "rows": 64},
+    {"kind": "family", "family": "ETC", "rows": 46},
+    {"kind": "family", "family": "PET", "rows": 33},
+    {"kind": "family", "family": "FIST", "rows": 11},
+    {"kind": "family", "family": "FISHINGROD", "rows": 7},
+    {"kind": "family", "family": "NONE", "rows": 1},
+    {"kind": "property", "text": "408 weapon rows carry an itemSkill; 65 carry an oncrit_skill proc with oncrit_chance; 72 items carry oncast_skill; 79 items carry enchant4_skill."},
+    {
+      "kind": "striking",
+      "label": "Critical-anger sword",
+      "why": "A critical-hit proc sword: a skill fires on crit at a set chance.",
+      "keep": "Proc on critical hit as item data with a chance and a skill.",
+      "change": "Our own proc name and effect; one readable sound and glow.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/items.json:209561 (grade c, proc chance 10)"
+    },
+    {
+      "kind": "striking",
+      "label": "Poison-crit sword",
+      "why": "Same proc shape with a poison skill and a higher chance (15).",
+      "keep": "Element on the proc, so a sword has a second identity.",
+      "change": "Element palette and effect; no copy of the skill.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/items.json:210043 (grade c, proc chance 15)"
+    },
+    {
+      "kind": "striking",
+      "label": "Cursed short blade",
+      "why": "A low-grade dagger (grade d) with a 50 chance proc: the chance is high and the grade low, so it is a gamble, not a stat upgrade.",
+      "keep": "A high-risk proc on a cheap item.",
+      "change": "A lower chance with a clear tell.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/items.json:74988 (grade d, DAGGER, proc chance 50)"
+    },
+    {
+      "kind": "striking",
+      "label": "Drain-crit blade",
+      "why": "Proc chance 35 with a drain skill (grade c): a heal-on-crit shape.",
+      "keep": "Heal on crit as a readable proc.",
+      "change": "Heal size and VFX.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/items.json:210189 (grade c, proc chance 35)"
+    },
+    {
+      "kind": "striking",
+      "label": "Twin blades",
+      "why": "134 DUAL rows, 54 of them grade b. Paired sprites are a visible tier of their own.",
+      "keep": "Two-handed pairs as their own family.",
+      "change": "Pair silhouette and handle.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/items.json:58741"
+    }
+  ],
+  "gear_tiers": [
+    {"kind": "tier", "tier": "grade", "values": "none, d, c, b, a, s (6 steps). Counts over all items: none 7335, d 318, c 504, b 506, a 409, s 134.", "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/scripts/parse-items.ts:169"},
+    {"kind": "tier", "tier": "armour weight class", "values": "HEAVY 88, LIGHT 83, MAGIC 104 (robe); blank on 802 of 1125 armour rows; PET 34, NONE 14.", "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/items.json"},
+    {"kind": "tier", "tier": "material", "values": "PAPER 2776, STEEL 2097, LIQUID 1998, FINE_STEEL 491, LEATHER 406, WOOD 236, CRYSTAL 171, CLOTH 166, BLOOD_STEEL 130, ORIHARUKON 119, MITHRIL 118, ADAMANTAITE 109, BONE 91, SILVER 76, GOLD 59, BRONZE 49, DAMASCUS 44, CHRYSOLITE 42, SCALE_OF_DRAGON 6 (counts over all item rows; the ladder order in the md is my reading of the names).", "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/items.json"},
+    {"kind": "tier", "tier": "armour set", "values": "51 sets with 2 to 5 pieces (22 with 4, 15 with 3, 11 with 5, 3 with 2). Ten families come in heavy, light and robe triplets: 30 sets. Bonus is a skill id and level (for example 3500-1).", "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/armor-sets.json:4"},
+    {
+      "kind": "striking",
+      "label": "Crystal triplet set",
+      "why": "A crystal material set in three weight variants (heavy, light, robe) under one name.",
+      "keep": "One set name with three weight variants.",
+      "change": "Our own palette and silhouette per variant.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/armor-sets.json:376"
+    },
+    {
+      "kind": "striking",
+      "label": "Dragon-hide set",
+      "why": "A leather set named after a dragon; the item table has 6 rows with a dragon-scale material.",
+      "keep": "A dragon material as the top tier of a leather line.",
+      "change": "Our own hide texture and a different tier name.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/armor-sets.json:548"
+    },
+    {
+      "kind": "striking",
+      "label": "Majestic triplet",
+      "why": "A set whose middle variant is leather rather than light armour, so the three variants differ in material as well as weight.",
+      "keep": "Material changes between variants of one set.",
+      "change": "Our own material ladder.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/armor-sets.json:495"
+    },
+    {
+      "kind": "striking",
+      "label": "Robe tier with a shared name",
+      "why": "The name Mithril Robe Set appears on two rows, so the name is not a unique key in this table.",
+      "keep": "Nothing to copy; a note for our own data keys.",
+      "change": "Use ids as keys, not names.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/armor-sets.json:24"
+    },
+    {
+      "kind": "striking",
+      "label": "Starter wood set",
+      "why": "The first set in the table is a wood starter with three pieces (chest, legs, head).",
+      "keep": "A starter set with few pieces, so the first tier reads at a glance.",
+      "change": "Our own look and piece count.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/armor-sets.json:4"
+    }
+  ],
+  "zones": [
+    {"kind": "archetype", "text": "Huntingzone rows: 209, by type 1 (87), 2 (42), 3 (35), 7 (28), 5 (6), 4 (6), 6 (5); type 0 absent. Type meaning is not decoded (parser header says so). Min level: 93 rows at 0 to 9 (unspecified), then 18, 18, 15, 19, 11, 15, 13, 7 per 10-level band up to 80."},
+    {"kind": "archetype", "text": "Region grid: 19 named regions on an 11 by 16 cell grid, each cell a region id (regions.json)."},
+    {"kind": "archetype", "text": "NPC types that look like modes, read from names only: DungeonGatekeeper 30, RiftInvader 132, SepulcherNpc 62, SiegeGuard 302 with CastleDoorman 69, ClanHallDoorman 40, FestivalMonster 110, FeedableBeast 63. The donor does not say which zone each belongs to."},
+    {"kind": "spawn", "text": "spawns.json: 40878 rows; 37585 are Monster rows. Their respawnDelay values are most often 15, 20, 25, 30, 40 and 60 seconds."},
+    {"kind": "spawn", "text": "Boss rows (206) carry respawnDelay values of 0, 129600 s (36 h) and 403200 s (112 h). 59 percent of all spawn rows have 0; the parser says some respawn timing lives in server code, so 0 is not proof of instant respawn. periodOfDay is 0 (any) because the source has none."},
+    {"kind": "loot", "text": "drops.json: 2376 drop tables keyed by npcId, each with categories and item rows carrying min, max and a raw chance value. The unit of chance is not stated in the parser."},
+    {
+      "kind": "striking",
+      "label": "Rift invader district",
+      "why": "132 RiftInvader rows. By name, a dungeon mode made of NPC waves rather than a map (name read only).",
+      "keep": "A mode defined by an NPC type and a spawn list.",
+      "change": "Our own waves and timer.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/npcs.json:233096"
+    },
+    {
+      "kind": "striking",
+      "label": "Sepulcher chamber",
+      "why": "62 SepulcherNpc rows: a gated set of underground rooms, by name.",
+      "keep": "Gated rooms as data.",
+      "change": "Our own room shapes and gate rule.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/npcs.json:401425"
+    },
+    {
+      "kind": "striking",
+      "label": "Dungeon gatekeeper",
+      "why": "30 gatekeeper NPCs: dungeon entry is an NPC, not a portal object.",
+      "keep": "Entry as an NPC with a list of destinations.",
+      "change": "Our own entry cost and cue.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/npcs.json:381516"
+    },
+    {
+      "kind": "striking",
+      "label": "Feedable beast pen",
+      "why": "63 FeedableBeast rows: by name, a creature that changes state when the player feeds it; a small loop.",
+      "keep": "A creature that changes state on a player action.",
+      "change": "Our own feed item and reward.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/npcs.json:214608"
+    },
+    {
+      "kind": "striking",
+      "label": "Grid region map",
+      "why": "19 regions on an 11 by 16 grid: the map is coarse data, one id per cell.",
+      "keep": "A coarse region grid as zone data.",
+      "change": "Our own cell size and region names.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/data/generated/interlude/regions.json:5"
+    }
+  ],
+  "looks": [
+    {
+      "label": "Two-density icon set",
+      "technique": "Icons at 1x plus a 2x copy scaled with nearest-neighbour, shown with CSS image-rendering pixelated, so pixel edges stay crisp on phones.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/src/app/page.tsx:6 and /mnt/frankendom-donors/cuteshaun-lineage2-api/public/landing-icons/README.md:1"
+    },
+    {
+      "label": "Category-named icon grid",
+      "technique": "About 4002 item and skill icons named by category and index (for example an accessory icon with an i00 suffix), mapped from group tables by a script. Addressable by code.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/public/icons/accessary_angel_circlet_i00.png (folder public/icons/)"
+    },
+    {
+      "label": "Motif emblems",
+      "technique": "Landing emblems with one focal element each (floral weapon, worn blade, single eye, pixel compass, guardian figure). Names read only; images not opened.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/public/landing-icons/eye-monster.png, forgotten-blade.png, blood-orchid.png, compass-pixel.png, gatekeeper.png"
+    },
+    {
+      "label": "Grade as a string, not a look",
+      "technique": "The API types grade as a string from none to s. This donor attaches no colour or effect to a grade.",
+      "ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/types.ts:14"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Tiered warden set",
+      "idea": "A gear tier with three weight variants (heavy, light, robe) sharing one set name.",
+      "keep": "One set name, three weight variants, each with its own piece list.",
+      "change": "Our own material, palette and silhouette per variant."
+    },
+    {
+      "name": "Weak-point glyph",
+      "idea": "Each creature shows one damage type it is weak to, as a glyph readable at 375 wide.",
+      "keep": "One weakness per creature, read by the damage formula.",
+      "change": "Our own glyph shape; no copy of the attack-name table."
+    },
+    {
+      "name": "Phase guardian",
+      "idea": "One grand boss with HP phases and a phase cue, instead of several rows with the same name.",
+      "keep": "HP tiers as the escalation signal.",
+      "change": "Phases inside one entity, with a visible cue at each change."
+    },
+    {
+      "name": "Breach gatekeeper",
+      "idea": "An NPC gate that opens a timed rift district with waves of invaders.",
+      "keep": "Entry as an NPC, and a mode defined by spawn data.",
+      "change": "Our own wave timer and reward, kept inside zone data (parity row 23 spawn fields)."
+    },
+    {
+      "name": "Proc blade ladder",
+      "idea": "Crit-proc weapons across grades, with the chance and the skill as item data.",
+      "keep": "A proc is an item field, not special-case code.",
+      "change": "Fewer procs, each with a readable tell and one sound."
+    },
+    {
+      "name": "Colossus hunter",
+      "idea": "A roaming very large monster whose size and HP are its threat signal.",
+      "keep": "Size and HP as the readable threat.",
+      "change": "Our own silhouette and a single signature attack."
+    },
+    {
+      "name": "Region grid zones",
+      "idea": "A coarse grid of region ids as the zone map, each cell pointing at a zone.",
+      "keep": "Zone shape as a grid of ids.",
+      "change": "Our own cell size; zones as data on one runtime."
+    },
+    {
+      "name": "Two-speed respawn",
+      "idea": "Fast respawn for common monsters (about 15 to 60 s) and slow respawn for bosses, both as zone data fields.",
+      "keep": "Two respawn tiers in one table.",
+      "change": "Our own numbers; the donor's respawn values are not reused."
+    }
+  ],
+  "licence_note": "Code: MIT, copyright line in LICENSE (line 3). No asset or data licence in the tree. The icon pack and the datapack-derived JSON carry no licence line. README line 54 says community project, not affiliated with NCSoft. Audit class C: inspiration stays category-level.",
+  "not_read": [
+    "Game-server half (aCis datapack source) is not in this donor; named in script comments only.",
+    "datapack .dat name and group tables (16 binary files) are not decoded by me; the decoder under scripts/audit describes an encrypted and compressed format and I did not attempt decoding.",
+    "Icon images in public/icons (about 4002 PNG) and public/landing-icons: names read, images not opened.",
+    "Font licences (DepartureMono, ia-writer-quattro).",
+    "quests, recipes, buylists, multisells, hennas, questname JSON: not read beyond names.",
+    "skills.json bodies beyond the ids and names I queried.",
+    "Drop chance units (raw attribute, unit not stated); aiAggro unit.",
+    "Spawn density per walk distance (not measured; no clustering by zone done).",
+    "tests/ snapshots and docs/openapi.json.",
+    "Matching halves in the box (not read by me): elberacasa-Lineage2Elbera, ax-grymyr-l2dn-server, pmbstyle-L2Solo, NodeL2-NodeL2, realratchet-Lineage2JS, pier-oliviert-lineage (server or JS); shnok-l2-unity and gawric-Unity-Client-for-L2J (client). Named in the asset audit only."
+  ]
+}

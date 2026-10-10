@@ -1,0 +1,295 @@
+{
+  "donor": "cmangos-mangos-classic",
+  "counts": {
+    "creatures": 24,
+    "classes": 9,
+    "weapons": 21,
+    "gear_sets": null,
+    "zones": 32
+  },
+  "count_notes": {
+    "creatures": "24 creature families (SharedDefines.h 1196-1222); 11 creature types (1179-1189); 5 elite tiers plus one unknown sentinel (1224-1232); creature_template has one sample row in the base dump",
+    "classes": "9 active classes (SharedDefines.h 72-86); 9 race enum entries, 8 with start data",
+    "weapons": "21 weapon subclass enum entries (ItemPrototype.h 193-215); 74 sample item rows in base dump, quality values 0 and 1 only",
+    "gear_sets": "not counted; set mechanism only (Item.h 36-37)",
+    "zones": "32 rows in instance_template (mangos.sql insert line 2549); 4 map types (DBCEnums.h 99-103); 3 battleground rows"
+  },
+  "creature_families": [
+    {
+      "label": "Animal-like families",
+      "count": 18,
+      "note": "DBC-derived creature families, category only; names not repeated",
+      "ref": "src/game/Globals/SharedDefines.h:1196-1222"
+    },
+    {
+      "label": "Demon-pet-like families",
+      "count": 5,
+      "note": "category only",
+      "ref": "src/game/Globals/SharedDefines.h:1196-1222"
+    },
+    {
+      "label": "Remote-controlled family",
+      "count": 1,
+      "note": "category only",
+      "ref": "src/game/Globals/SharedDefines.h:1196-1222"
+    },
+    {
+      "label": "Creature types",
+      "count": 11,
+      "note": "beast, dragonkin, demon, elemental, giant, undead, humanoid, critter, mechanical, unspecified, totem",
+      "ref": "src/game/Globals/SharedDefines.h:1179-1189"
+    },
+    {
+      "label": "Elite tiers",
+      "count": 5,
+      "note": "normal, elite, rare-elite, world boss, rare (plus unknown sentinel)",
+      "ref": "src/game/Globals/SharedDefines.h:1224-1232"
+    }
+  ],
+  "top_creatures": [
+    {
+      "label": "Rare roamer",
+      "why": "a rare tier that walks in the open, so an encounter is a surprise",
+      "keep": "a separate rare tier as a data flag",
+      "change": "our tell is a short aura and a sting; our own look",
+      "ref": "src/game/Globals/SharedDefines.h:1224-1232"
+    },
+    {
+      "label": "Wedge breather",
+      "why": "a front cone with a data-set angle is a readable telegraph in a 375-wide view",
+      "keep": "angle from a table per attack; a negative value flips to the back side",
+      "change": "our angles; wedge drawn on the ground before the attack (0.8 s is our proposal, not from the code)",
+      "ref": "src/game/Spells/Spell.h:1147-1153; src/game/Spells/Spell.cpp:7586-7591; sql/base/dbc/original_data/SpellCone.sql:38"
+    },
+    {
+      "label": "Phased guardian",
+      "why": "boss phases are data: encounter rows keyed by map and difficulty",
+      "keep": "encounter credit by creature or spell; last-encounter flag per instance",
+      "change": "our phase triggers and HP steps live in zone data",
+      "ref": "sql/base/mangos.sql:2248 (instance_encounters); sql/base/dbc/original_data/DungeonEncounter.sql:25 (instance_dungeon_encounters)"
+    },
+    {
+      "label": "Hate-holding brute",
+      "why": "a melee brute keeps its target until another player is clearly ahead on threat",
+      "keep": "switch only at 1.1 times threat in melee or 1.3 times at range",
+      "change": "MAX_ATTACKERS = 3 and a visible hate marker",
+      "ref": "src/game/Combat/ThreatManager.cpp:398-406"
+    },
+    {
+      "label": "Model-sized brute",
+      "why": "reach and speed per model are data, so a big model reads big",
+      "keep": "per-model combat reach and speed as data",
+      "change": "our rig sizes",
+      "ref": "sql/base/mangos.sql:1096 (creature_model_info, 17 rows)"
+    }
+  ],
+  "classes": [
+    {
+      "label": "Plate melee",
+      "role": "front-line melee",
+      "signature_mechanic": "not read per class",
+      "progression": "60 levels per class (class level stats: 540 rows = 9 classes x 60 levels)",
+      "ref": "src/game/Globals/SharedDefines.h:72-86; sql/base/mangos.sql:4965"
+    },
+    {
+      "label": "Plate-and-mail holy hybrid",
+      "role": "hybrid melee and support",
+      "signature_mechanic": "not read per class",
+      "progression": "same 60-level stat table",
+      "ref": "src/game/Globals/SharedDefines.h:72-86"
+    },
+    {
+      "label": "Ranged hunter",
+      "role": "ranged with a pet",
+      "signature_mechanic": "not read per class",
+      "progression": "same 60-level stat table",
+      "ref": "src/game/Globals/SharedDefines.h:72-86"
+    },
+    {
+      "label": "Stealth rogue",
+      "role": "burst melee",
+      "signature_mechanic": "not read per class",
+      "progression": "same 60-level stat table",
+      "ref": "src/game/Globals/SharedDefines.h:72-86"
+    },
+    {
+      "label": "Healer priest",
+      "role": "healer and caster",
+      "signature_mechanic": "not read per class",
+      "progression": "same 60-level stat table",
+      "ref": "src/game/Globals/SharedDefines.h:72-86"
+    },
+    {
+      "label": "Hybrid shaman",
+      "role": "caster and melee hybrid",
+      "signature_mechanic": "not read per class",
+      "progression": "same 60-level stat table",
+      "ref": "src/game/Globals/SharedDefines.h:72-86"
+    },
+    {
+      "label": "Caster mage",
+      "role": "ranged caster",
+      "signature_mechanic": "not read per class",
+      "progression": "same 60-level stat table",
+      "ref": "src/game/Globals/SharedDefines.h:72-86"
+    },
+    {
+      "label": "Pet warlock",
+      "role": "caster with a summoned pet",
+      "signature_mechanic": "not read per class",
+      "progression": "same 60-level stat table",
+      "ref": "src/game/Globals/SharedDefines.h:72-86"
+    },
+    {
+      "label": "Shape-shifter druid",
+      "role": "shape-shifting hybrid",
+      "signature_mechanic": "not read per class",
+      "progression": "same 60-level stat table",
+      "ref": "src/game/Globals/SharedDefines.h:72-86"
+    }
+  ],
+  "weapon_families": [
+    {
+      "label": "Axe (one and two hand)",
+      "ref": "src/game/Entities/ItemPrototype.h:193-215"
+    },
+    {
+      "label": "Bow, gun, crossbow, thrown, wand (ranged families)",
+      "ref": "src/game/Entities/ItemPrototype.h:193-215"
+    },
+    {
+      "label": "Mace (one and two hand)",
+      "ref": "src/game/Entities/ItemPrototype.h:193-215"
+    },
+    {
+      "label": "Polearm and spear (long reach)",
+      "ref": "src/game/Entities/ItemPrototype.h:193-215"
+    },
+    {
+      "label": "Sword (one and two hand)",
+      "ref": "src/game/Entities/ItemPrototype.h:193-215"
+    },
+    {
+      "label": "Staff, fist, dagger, exotic, misc, fishing pole, obsolete",
+      "ref": "src/game/Entities/ItemPrototype.h:193-215"
+    }
+  ],
+  "gear_tiers": [
+    {
+      "label": "Quality ladder, 7 tiers (poor to artifact)",
+      "note": "drop rate per tier looked up in config (LootMgr.cpp:387, config 40-46); colour names only in enum comments; the client is not in the box",
+      "ref": "src/game/Globals/SharedDefines.h:249-255; src/game/Loot/LootMgr.cpp:387"
+    },
+    {
+      "label": "Cloth to plate material ladder",
+      "note": "armour subclasses: cloth, leather, mail, plate; off-hand buckler and shield; relic libram, idol, totem",
+      "ref": "src/game/Entities/ItemPrototype.h:236-248"
+    },
+    {
+      "label": "Set bonus by piece count",
+      "note": "up to 8 spell slots per set",
+      "ref": "src/game/Entities/Item.h:36-37"
+    }
+  ],
+  "zones": [
+    {
+      "label": "Open world (common map)",
+      "ref": "src/game/Server/DBCEnums.h:99-103"
+    },
+    {
+      "label": "Dungeon (instance map)",
+      "note": "instance_template 32 rows; ghost return point and mount flag per instance",
+      "ref": "sql/base/mangos.sql:2549"
+    },
+    {
+      "label": "Raid map",
+      "ref": "src/game/Server/DBCEnums.h:99-103"
+    },
+    {
+      "label": "Battleground",
+      "note": "3 rows in battleground_template",
+      "ref": "sql/base/mangos.sql:325"
+    },
+    {
+      "label": "Weather walk per zone",
+      "note": "four types, grade 0 to 1 in three bands; seasons in 91-day blocks",
+      "ref": "src/game/Weather/Weather.cpp:61-205"
+    }
+  ],
+  "looks": [
+    {
+      "label": "Front and back wedge",
+      "technique": "cone angle from a table; negative flips to back; back is complement of a wide front arc",
+      "ref": "src/game/Spells/Spell.h:1147-1153; src/game/Entities/Object.cpp:1579; src/game/Spells/Spell.cpp:7586-7591"
+    },
+    {
+      "label": "Vertical allowance for area hits",
+      "technique": "height band shrinks with distance from centre; NPC caster on player targets gets full height; 3D slab test for ground telegraphs",
+      "ref": "src/game/Spells/Spell.h:1142-1144"
+    },
+    {
+      "label": "Weather intensity states",
+      "technique": "grade into light, medium and heavy states per type plus fine below 0.27; drives fog, rain or snow visuals",
+      "ref": "src/game/Weather/Weather.cpp:256-290"
+    },
+    {
+      "label": "Per-model hitbox data",
+      "technique": "bounding radius and combat reach per model as data",
+      "ref": "sql/base/mangos.sql:1096"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Wedge Breath",
+      "idea": "a creature front wedge with an angle from data, drawn on the ground before the attack",
+      "keep": "data-set front angle; back wedges by sign",
+      "change": "our angles; telegraph drawn before the attack; server-verified hit (rows 4 and 13)"
+    },
+    {
+      "name": "Hate Anchor",
+      "idea": "an elite brute that holds its target until a rival is clearly ahead on threat",
+      "keep": "sticky target; switch at 1.1 times in melee, 1.3 times at range; taunt wins",
+      "change": "MAX_ATTACKERS = 3; hate marker on screen (rows 4 and 5)"
+    },
+    {
+      "name": "Walkers' Weather",
+      "idea": "zone weather as a walk over three intensity bands with a season",
+      "keep": "the walk; 30 percent hold; three bands; seasons",
+      "change": "one band table for logic and visuals; the fair branch returns cleanly (rows 16 and 23)"
+    },
+    {
+      "name": "Ghost Walk",
+      "idea": "death sends the hero to a per-zone return point, with a sickness that scales with level",
+      "keep": "per-zone return point as data; level-scaled sickness",
+      "change": "sickness in seconds with a short damage ramp, not a long debuff (rows 17 and 18)"
+    },
+    {
+      "name": "Pool of Wanderers",
+      "idea": "a spawn pool with a limit that refills as members fall",
+      "keep": "limit minus alive; refill on death",
+      "change": "retries until the pool is full; a real CanSpawn gate (row 23)"
+    },
+    {
+      "name": "Rare Roamer",
+      "idea": "a rare tier that spawns seldom and pays more",
+      "keep": "rare tier flag; better reward for it",
+      "change": "our tell (aura and sting) and our reward table (rows 18 and 12)"
+    },
+    {
+      "name": "Set Pieces",
+      "idea": "gear sets whose effects unlock by piece count",
+      "keep": "thresholds by piece count; up to 8 effects",
+      "change": "our steps and our effects (rows 15 and 18)"
+    }
+  ],
+  "licence_note": "Code: GNU GPL v2 (LICENSE line 2 read); shape only, no code copied. Game content: COPYRIGHT.md line 7 names Blizzard Entertainment copyright; SQL dumps are game-derived; treated as class C per AU010; category-level inspiration only.",
+  "not_read": [
+    "warden modules (73 binaries, not opened)",
+    "sql/updates (four folders), characters.sql and realmd.sql beyond names, logs.sql",
+    "Spell.sql row content (count only, about 22,000 rows grep-level)",
+    "most of src/game: AI, Maps, Movement, Quests, BattleGround, PlayerBot, AuctionHouseBot, creature AI in Entities, most of Player.cpp and Spell.cpp",
+    "contrib/mmap (name only), dep/ and DroidSans font (audit only)",
+    "client half: none in the box",
+    "DungeonEncounter.sql rows: about 610 (grep-level, not exact)"
+  ]
+}

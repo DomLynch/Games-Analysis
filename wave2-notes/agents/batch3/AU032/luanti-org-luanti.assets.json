@@ -1,0 +1,152 @@
+{
+  "donor": "luanti-org-luanti",
+  "code_licence": "LGPL-2.1 or later for the source (COPYING.LESSER is the LGPL 2.1 text; LICENSE.txt 'License of Luanti source code' says 'either version 2.1 of the License, or (at your option) any later version', line 123; README badge says LGPLv2.1+). Other code: irr/LICENSE (Irrlicht licence, Copyright 2002-2012 Nikolaus Gebhardt) and lib/lstrpack/LICENSE.txt (Copyright 1994-2025 Lua.org, PUC-Rio).",
+  "asset_licence": "Mixed, stated per file in LICENSE.txt and per mod in the mod LICENSE files. Textures and sounds in the main distribution: CC BY-SA 3.0 Unported by default (LICENSE.txt line 8), with listed exceptions: Apache 2.0 (refresh.png, line 11), CC BY-SA 4.0 (Zughy, cx384, DS authors, lines 14 onward), CC-BY 4.0 (server_public.png, line 23), Material Design (Apache 2.0). Fonts: Arimo and Cousine under SIL OFL 1.1; DroidSansFallbackFull under Apache 2.0. games/devtest: 'the same license as for Luanti applies' (games/devtest/LICENSE.txt line 4). glTF test models: CC0 and CC-BY 4.0 for the files named in games/devtest/mods/gltf/LICENSE.md; other glTF files not named. testentities: Sam and Lava Flan under CC BY-SA 3.0; Cool Guy refers to irr/LICENSE with an ambiguous author line.",
+  "rights_holder_status": "Community open-source project, not a company. README line 12: 'Copyright (C) 2010-2026 Perttu Ahola and contributors'. LICENSE.txt lists many named per-file authors (for example celeron55 under 'Everything not listed', line 28). No commercial owner appears in these files. The files do not claim clean-room or leaked material. Mostly clear for reuse under the stated licences.",
+  "best_class": "A for fonts, CC0 and CC-BY glTF models and the Apache icon; B for the main UI textures and sounds (CC BY-SA); C for unlicensed models, the animated spider and the misc icons",
+  "asset_groups": [
+    {
+      "kind": "UI and HUD textures (PNG)",
+      "path": "textures/base/pack/ (logo.png 256 by 256, minimap_mask_round.png 512 by 512, smoke_puff.png 16 by 16, joystick_bg.png, joystick_center.png, joystick_off.png, chat_show_btn.png, minimap_btn.png, progress_bar.png and others)",
+      "count_hint": "97 PNG files (sizes from the PNG header, not opened)",
+      "licence": "CC BY-SA 3.0 by default (LICENSE.txt line 8), with listed per-file exceptions: Apache 2.0 (refresh.png, line 11), CC BY-SA 4.0 (Zughy, cx384 and others, line 14 onward), CC-BY 4.0 (server_public.png, line 23), Material Design Apache 2.0 (contentdb thumbs)",
+      "class": "B",
+      "note": "Share-alike applies to the default group. Attribution list in LICENSE.txt must ship with any copy."
+    },
+    {
+      "kind": "fonts (TTF)",
+      "path": "fonts/ (Arimo x4, Cousine x4, DroidSansFallbackFull.ttf 5.4 MB; licence files per family)",
+      "count_hint": "9 TTF files plus 3 licence texts",
+      "licence": "Arimo: SIL OFL 1.1 (fonts/Arimo-LICENSE.txt line 3). Cousine: SIL OFL 1.1 (fonts/Cousine-LICENSE.txt line 3). DroidSansFallbackFull: Apache 2.0 (fonts/DroidSansFallbackFull-LICENSE.txt line 3)",
+      "class": "A",
+      "note": "Ship the licence text with the font. Not opened beyond the listing."
+    },
+    {
+      "kind": "glTF test models (CC0 and CC-BY named)",
+      "path": "games/devtest/mods/gltf/models/ and textures/ (spider gltf_spider.gltf, frog, snow man, minimal triangle, multi-track)",
+      "count_hint": "16 glTF or GLB files in gltf/models",
+      "licence": "gltf/LICENSE.md: spider (gltf_spider.gltf and .png) CC0 (line 3 and line 5); frog CC-BY 4.0 (attribution needed); snow man CC0; minimal triangle and triangle without indices CC0 (Khronos sample); multi-track 1 and 2 CC0",
+      "class": "A (CC0 and CC-BY files named in LICENSE.md)",
+      "note": "Only the files named in LICENSE.md are covered. Others in the same folder are not named there (see next group)."
+    },
+    {
+      "kind": "glTF test models (not named in the mod licence)",
+      "path": "games/devtest/mods/gltf/models/gltf_spider_animated.gltf (one JSON line, Khronos Blender exporter); gltf_blender_cube*.gltf/.glb; gltf_simple_skin*.gltf; gltf_simple_sparse_accessor.gltf; gltf_triangle_with_vertex_stride.gltf",
+      "count_hint": "about 10 files",
+      "licence": "not stated for these files; LICENSE.md names other files only",
+      "class": "C",
+      "note": "The animated spider has a rig but is not the CC0 spider named in LICENSE.md. Treat as unclear."
+    },
+    {
+      "kind": "test mob models with named authors",
+      "path": "games/devtest/mods/testentities/models/ (testentities_sam.b3d and .png, testentities_lava_flan.x and .png, testentities_cool_guy.x and .png)",
+      "count_hint": "6 files",
+      "licence": "testentities/models/LICENSE.txt: Sam (original by MirceaKitsune, CC BY-SA 3.0; line 3); Lava Flan (Zeg9, CC BY-SA 3.0); Cool Guy credited to 'hecks' and refers to irr/LICENSE (ambiguous)",
+      "class": "B for Sam and Lava Flan; C for Cool Guy (ambiguous author line)",
+      "note": "Share-alike for Sam and Lava Flan."
+    },
+    {
+      "kind": "test textures and nodes (devtest)",
+      "path": "games/devtest/mods/*/textures/ and other folders under games/devtest (about 413 PNG files across 35 test mods); testnodes/models/*.obj (4 files)",
+      "count_hint": "413 PNG; 5 OBJ across devtest",
+      "licence": "textures: devtest says 'the same license as for Luanti applies' (games/devtest/LICENSE.txt line 4), so the CC BY-SA default applies by route. OBJ models: no licence named for them",
+      "class": "B for textures by route; C for OBJ models (not named)",
+      "note": "Not individually opened."
+    },
+    {
+      "kind": "sound test assets",
+      "path": "games/devtest/mods/soundstuff/sounds/ (soundstuff_sinus.ogg, soundstuff_mono.ogg) and soundstuff/textures/ (13 PNG)",
+      "count_hint": "2 OGG, 13 PNG",
+      "licence": "soundstuff_sinus.ogg and the soundstuff art are listed under DS, CC BY-SA 4.0 (LICENSE.txt, DS entry). soundstuff_mono.ogg is not listed; default CC BY-SA 3.0 applies by route",
+      "class": "B",
+      "note": "Audio not played. Test tones only."
+    },
+    {
+      "kind": "testformspec media",
+      "path": "games/devtest/mods/testformspec/ (LICENSE.txt and media)",
+      "count_hint": "not counted",
+      "licence": "games/devtest/mods/testformspec/LICENSE.txt says only 'Content imported from minetest_game.' and names no licence",
+      "class": "C",
+      "note": "Origin named, licence not named."
+    },
+    {
+      "kind": "misc icons",
+      "path": "misc/ (luanti-icon-24x24.png, luanti-icon.ico, luanti.svg, luanti-xorg-icon-128.png and others; 15 entries)",
+      "count_hint": "15 entries",
+      "licence": "LICENSE.txt credits erle for misc/luanti-icon-24x24.png, misc/luanti-icon.ico, misc/luanti.svg (line 'erle' block); no licence named for the rest",
+      "class": "C",
+      "note": "Not textures or sounds, so the textures default line does not clearly cover them."
+    },
+    {
+      "kind": "translation catalogues (text)",
+      "path": "po/ (79 language folders, luanti.po in each; de/luanti.po has 1,576 msgid entries) and 55 .tr files across the tree",
+      "count_hint": "79 .po folders; 55 .tr files",
+      "licence": "no per-file licence. The source licence section covers code and the textures and sounds section covers media; translations are not named",
+      "class": "C",
+      "note": "String table. Grammar: standard gettext msgid and msgstr pairs. Strings not quoted."
+    },
+    {
+      "kind": "Lua mod and engine code",
+      "path": "builtin/ (105 Lua files), games/devtest/mods (Lua), src/ (C++ engine), irr/, lib/",
+      "count_hint": "206 Lua files in the tree",
+      "licence": "LGPL-2.1 or later (see code_licence); irr and lstrpack under their own licences",
+      "class": "A (LGPL, keep notices and share changes)",
+      "note": "Code, not content. Read in part; see not_read."
+    }
+  ],
+  "inspiration": [
+    "Dropped items as a small pile (builtin/game/item_entity.lua): a dropped stack is a wield-item entity that spins slowly, scaled by its size (line 67), merges with an identical stack nearby (try_merge_with, line 104 self-check), and expires after a time to live based on age (on_step, line 161). Relevant to the loot drop ceremony: the spin, the merge and the expiry are the whole pile.",
+    "Death as one calm card (builtin/game/death_screen.lua, 54 lines): an overlay with a short 'You died' title and a single respawn button (btn_respawn, line 26), with a fallback text style for clients that lack centred labels. A loss made bearable by one clear action.",
+    "Three-state touch stick art (textures/base/pack/joystick_bg.png, joystick_center.png, joystick_off.png): a ring base, a centre knob and an off state. With a chat and minimap toggle pair (chat_show_btn.png, minimap_btn.png), a readable touch vocabulary. Relevant to the touch UX fold-in.",
+    "Minimap as a HUD element with a mask (builtin/game/hud.lua line 248 registers a 'minimap' element; textures/base/pack/minimap_mask_round.png is a round mask, 512 by 512 from the PNG header). A minimap is a HUD element with a mask texture, not a separate screen.",
+    "Animated eight-legged burrower rig (games/devtest/mods/gltf/models/gltf_spider_animated.gltf): 48 unique leg bone names (four legs per side, each with base, upper, mid, fore and lower bones plus an IK target), two pincer chains with jaw bases, a head, a neck and body segments. Category idea: a wide, low, segmented creature with pincers and IK feet. Keep at category level (licence unclear).",
+    "A 16 px soft puff sprite (textures/base/pack/smoke_puff.png, 16 by 16 from the PNG header) for dust and hit smoke. A tiny soft sprite reads at small size and costs almost nothing.",
+    "Sound test tones (games/devtest/mods/soundstuff/sounds/soundstuff_sinus.ogg and soundstuff_mono.ogg): a clean sine and a mono tone set for calibrating cue loudness. Audio not played; idea only."
+  ],
+  "briefs": [
+    {
+      "label": "Eight-legged burrower with IK feet (category level)",
+      "why": "A wide, low, segmented silhouette reads at 375 px, and IK-planted legs make the threat readable from its walk.",
+      "keep": "segmented body; many legs with IK targets so the feet plant; a pincer pair at the head",
+      "change": "six legs, not eight; a shell hump instead of visible segments; mandibles with their own hinge and a glowing seam",
+      "ref": "games/devtest/mods/gltf/models/gltf_spider_animated.gltf (rig names, line 1; licence unclear, so category level only)"
+    },
+    {
+      "label": "Loot pile spin and merge",
+      "why": "Identical drops merge and spin slowly, which keeps the screen clean at a loot pile.",
+      "keep": "slow spin scaled by item size; merge with an identical stack on overlap; age-based expiry",
+      "change": "a rarity halo in our rarity colours; a different spin rate; a short pickup flash instead of a bare pop",
+      "ref": "builtin/game/item_entity.lua (lines 67 and 104; expiry at 161)"
+    },
+    {
+      "label": "One-button death card",
+      "why": "A single respawn action on a plain overlay keeps a loss from becoming a menu.",
+      "keep": "one respawn action; a plain overlay; a fallback text style",
+      "change": "show the loss summary (what dropped, time to respawn) above the button; a timer instead of a bare button",
+      "ref": "builtin/game/death_screen.lua (line 26)"
+    },
+    {
+      "label": "Three-state touch stick",
+      "why": "A ring, a knob and an off state make a touch stick readable without labels.",
+      "keep": "ring base; centre knob; an off state when released",
+      "change": "our thumb-reach placement; a lock-on forgiveness ring around the knob; our own art, not the Luanti icons",
+      "ref": "textures/base/pack/joystick_bg.png, joystick_center.png, joystick_off.png (art, CC BY-SA default: keep only as a reference, redraw)"
+    },
+    {
+      "label": "Soft 16 px dust puff",
+      "why": "A small soft sprite gives dust and hit smoke at a glance on a phone.",
+      "keep": "small soft sprite; low opacity; short life",
+      "change": "our palette, a stretched sprite for dust, a directional drift",
+      "ref": "textures/base/pack/smoke_puff.png (16 by 16 from the header)"
+    }
+  ],
+  "not_read": [
+    "Audio files (not played)",
+    "Textures and models (listed and sized from headers; not opened as images or meshes)",
+    "C++ engine source under src/ and irr/ (grep hits only: touch controls in src/gui/touchcontrols.cpp and touchscreenlayout.cpp were listed, not read)",
+    "Most of builtin/ (only death_screen.lua, item_entity.lua and the minimap registration in hud.lua were read)",
+    "po/ catalogues (count and grammar only; no strings quoted)",
+    "doc/ and the games/devtest mod code (listed, not read)",
+    "Halves: the engine is one binary with client and server in it, so the engine-side and client-side code are both in this tree. The paired content game (minetest_game) is NOT in the box; only the devtest test game is present."
+  ]
+}

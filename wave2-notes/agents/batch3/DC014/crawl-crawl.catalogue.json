@@ -1,0 +1,106 @@
+{
+  "donor": "crawl-crawl",
+  "counts": {
+    "creatures": 676,
+    "classes": 28,
+    "weapons": 61,
+    "gear_sets": 10,
+    "zones": 60
+  },
+  "count_notes": {
+    "creatures": "689 yaml in dat/mons minus 13 TEST/sensed/player helper files; includes some scenery objects",
+    "classes": "28 backgrounds (dat/jobs); 35 species (dat/species, minus 13 deprecated) are listed under classes",
+    "weapons": "61 base rows in source/item-prop.cc Weapon_prop (some legacy-guarded)",
+    "gear_sets": "10 dragon-scale tiers (source/item-prop.cc 285-303); no set-bonus system seen, not searched; 23 base armour rows and 153 artefacts are separate",
+    "zones": "60 rows in source/branch-data.h; some ids repeat across portal rows, distinct count not taken"
+  },
+  "half_read": "both halves in one repo: engine (source/*.cc, *.h) and data pack (source/dat/); no paired donor in the box",
+  "creature_families": [
+    "dragons, drakes, wyverns, hydras (about 23 files; 14 named dragons)",
+    "draconians (15 files: 8 colour variants plus base and job forms)",
+    "undead: zombies, skeletons, ghouls, wraiths, liches, vampires, mummies, ghosts (about 30)",
+    "demons, fiends, imps, devils (about 36)",
+    "humanoid races and beast kin: elves, merfolk, nagas, centaurs, trolls, ogres, orcs, goblins, kobolds, gnolls, spriggans, tengu, minotaurs (about 73)",
+    "constructs, crystals, statues, orbs: ironbound (6), jade crystal (4) (about 34)",
+    "arachnids and insects (about 29)",
+    "plants and fungi (about 20)",
+    "reptiles, amphibians, jellies, slimes (about 38)",
+    "elementals (8); golems (5)"
+  ],
+  "top_creatures": [
+    {"label": "Elemental wyrm", "why": "winged giant quadruped, one element per body, breath as a signature spell, flat early-depth population (weight 295, depths 0-5)", "keep": "winged quadruped silhouette, one element per colour, breath spell with a clear telegraph", "change": "body proportions (not a dragon), element set, breath shape and timing", "ref": "dat/mons/fire-dragon.yaml (shape line 21, spells line 16); mon-pick-data.h:20"},
+    {"label": "Bone wyrm", "why": "undead tag on a giant flyer reads as a skeleton at a glance", "keep": "undead holiness, winged silhouette, large size", "change": "no see-invisible requirement, our own bone pattern and wing build", "ref": "dat/mons/bone-dragon.yaml (holiness line 7)"},
+    {"label": "Hollow sovereign", "why": "undead caster whose will is set to invulnerable, a clean damage-check boss read", "keep": "undead caster, mind-proof will, speech on alert", "change": "our own abilities and silhouette (robes to armour)", "ref": "dat/mons/lich.yaml (holiness, will)"},
+    {"label": "Clan of eight drakes", "why": "one body in eight colour variants, each with one breath type given as a fake mutation", "keep": "palette plus one trait per variant", "change": "our breath types, clan names, per-clan silhouettes", "ref": "dat/species/draconian-red.yaml (line 40); dat/mons/*draconian*.yaml (15 files)"},
+    {"label": "Iron warden", "why": "six ironbound variants each carry a different spell set, so one construct body reads as several roles", "keep": "construct silhouette, one role per variant", "change": "our crafting flavour and spell names", "ref": "dat/mons/ironbound-thunderhulk.yaml; dat/mons/ironbound-frostheart.yaml"},
+    {"label": "Shard elemental", "why": "four elemental crystal forms; the fire form is flagged unblindable and avatar (other flags not checked)", "keep": "one crystal identity per element; unblindable", "change": "faceted shard shape (not a face), our element palette", "ref": "dat/mons/jade-crystal-fire.yaml (flags); jade-crystal-ice/earth/air.yaml"},
+    {"label": "Hydra of the mere", "why": "unique boss with the tall_tile flag (17 files carry it), fast regeneration", "keep": "tall boss frame; regeneration as pressure", "change": "head count, regen rule (for example regen stops while hit), frame size", "ref": "dat/mons/lernaean-hydra.yaml (flags line 3)"},
+    {"label": "Rolling ember", "why": "orb shape with projectile and insubstantial flags, random sprite variance, no threat flag: reads as a hazard, not a target", "keep": "ball silhouette that is a hazard; random tile variance", "change": "our telegraph and colour (no copy of the orb art)", "ref": "dat/mons/orb-of-destruction.yaml (flags; tile_variance: random)"}
+  ],
+  "classes": [
+    "Warrior: Brigand (fighting, dodging, stealth, throwing, weapon); Fighter (armour, shields); Gladiator (fighting, throwing, dodging, weapon); Hunter (stealth, weapon); Monk (dodging, weapon). Skill-led, no spells.",
+    "Zealot: Berserker (fighting, weapon, dodging); Chaos Knight (armour, weapon); Cinder Acolyte (fire skill, scorch spell).",
+    "Adventurer: Artificer (evocations, armour); Delver (stealth, weapon); Wanderer (no skills listed).",
+    "Mage: Air, Earth, Fire and Ice Elementalists (element conjurations and spells); Alchemist (poison and sticky-flame spells); Conjurer (magic dart, searing ray, prism); Forgewright (grapnel, spike launcher, clockwork bee, golem and lightning-spire spells); Hedge Wizard (blink, imp call, grave claw, cloud); Necromancer (soul splinter, grave claw, drain, animate dead, agony curse); Summoner (summons: mammal, imp, familiar, crocodile, seismosaurus egg).",
+    "Warrior-mage: Enchanter (hibernation, confusing touch, dance, gloom); Hexslinger (jinxbite, sigil of binding, cause fear, bullseye); Reaver (kiss of death, momentum strike, hailstorm, rending blade); Warper (blink, beckoning, teleport other, piledriver, electric charge).",
+    "Metamorph: Mystic (fire, earth, air, ice and shapeshifting skills; ice thorns, sirocco, dragon veins); Shapeshifter (unarmed, shapeshifting); Stalker (stealth, shapeshifting, weapon).",
+    "Species (35): difficulty Simple 9, Intermediate 9, Advanced 9, draconian colour variants 8 with no tier; mutations in 43 species files; each draconian colour adds one breath as a fake mutation."
+  ],
+  "weapon_families": [
+    "maces and flails (club, whip, mace, flail, morningstar, great mace, dire flail, eveningstar, giant clubs, sacred scourge)",
+    "short blades (dagger, rapier, short sword, athame, quick blade, cutlass, falchion, scimitar line)",
+    "long blades (long sword, great sword, double and triple sword, blessed variants)",
+    "axes (hand, war, broad, battle, executioner)",
+    "polearms (spear, trident, halberd, partisan, glaive, bardiche, trishula, lajatang)",
+    "staves (magical staves use their own stats row)",
+    "ranged (bows, crossbows, slings, blowgun, hand cannon; hand cannon weight lowered on purpose)",
+    "each base weapon has a weighted brand list (whip: normal most common, then venom and electrocution, then draining, freezing, flaming, vampirism)"
+  ],
+  "gear_tiers": [
+    "base body ladder by AC, EV penalty and shop price: animal skin (2, 0, 3); robe (2, 0, 9); leather (3, -40, 20); ring mail (5, -70, 40); scale mail (6, -100, 40); chain mail (8, -140, 60); plate (10, -180, 180); crystal plate (14, -230, 600)",
+    "shields: buckler (AC 3), kite (AC 8), tower (AC 13)",
+    "dragon-scale ladder (AC, EV penalty, price, one property): steam (5, 0, 375, steam resist); acid (6, -50, 400, corrosion resist); swamp (7, -70, 450, poison resist); quicksilver (9, -70, 500, willpower); fire (8, -90, 500, +2 fire resist, cold weakness); ice (9, -110, 500, +2 cold resist, fire weakness); pearl (10, -110, 1000, negative-energy resist); storm (10, -150, 650, electricity resist); shadow (11, -150, 575, stealth); golden (12, -230, 800, fire, cold and poison resist)",
+    "monster hides map species to armour (_monster_hides, item-prop.cc around 1347-1360)",
+    "artefacts (153) carry colour tokens (gold 7, silver 5, iron 2, dark 8 and others) and their own item tiles"
+  ],
+  "zones": [
+    "water: Swamp (loud ambient, die size 8), Shoals (loud)",
+    "lair and den branches: Lair, Snake pit, Spider nest, Slime pits (quiet, die size 7), Orc and Elf halls, Dwarf",
+    "undead and bone: Crypt, Tomb (quiet), Necropolis, Ossuary",
+    "deep and vault: Vaults, Blade, Depths (Zot as sub-branch), Forest",
+    "hell: Vestibule and Dis, Gehenna, Cocytus, Tartarus (a hell die-size constant of 6 exists; rows using it not checked)",
+    "endless and special: Abyss (spawn rate 5, ramps after depth 5), Pandemonium, Ziggurat (item colour follows the milestone ladder), Labyrinth, Bazaar, Trove",
+    "portal zones (dat/des/portals, 15 files): Arena, Bailey, Bazaar, Crucible, Desolation, Gauntlet, Gulch, Ice cave, Necropolis, Ossuary, Sewer, Trove, Volcano, Wizlab, Ziggurat",
+    "hazards in code: lava, deep water, shallow water (named in the vortex colour function, colour.cc 279-300); escape feature per branch",
+    "per-branch fields: floor colour, rock colour, ambient noise (normal, quiet, loud), monster die size, rune, travel shortcut"
+  ],
+  "looks": [
+    {"label": "Per-cell animated element colour", "technique": "colour is a function of position and time, not a texture: waves band moves with turn count mod 20; disjunction is a radial swirl phase; orb glow is a ring rippling outward from the player (bit 4 of frame minus 2/3 distance)", "ref": "source/colour.cc 165-175, 200-236, 299-304"},
+    {"label": "Hashed colour variance", "technique": "per-cell colour seeded from birth time, position, frame and depth, so random looks stay stable across frames", "ref": "source/colour.cc 47-55"},
+    {"label": "Four-phase elemental cycle", "technique": "earth, air or lightning, magma, ice, changing every 200 elapsed units", "ref": "source/colour.cc 174-195"},
+    {"label": "Milestone colour ladder", "technique": "one item colour climbs bone, shimmer blue, magic, flash, jewel at 1, 3, 9 and 27 completed milestones", "ref": "source/items.cc 4164-4172, 4294"},
+    {"label": "Aura refresh", "technique": "a short status is re-set each tick and overrides a shorter one rather than stacking; hostile auras stop when the source is in a sanctuary; phalanx barrier is adjacent-only and protects only its summoner", "ref": "source/mon-aura.cc 215, 238"},
+    {"label": "Tile variance as idle motion", "technique": "52 monster files set tile_variance to cycle, mod, random or water", "ref": "dat/mons/README.md; dat/mons/orb-of-destruction.yaml"},
+    {"label": "Tall boss frame", "technique": "17 monsters carry tall_tile so bosses read as bigger on a 32-pixel grid", "ref": "dat/mons/lernaean-hydra.yaml; AU011 for the 32-pixel grid"}
+  ],
+  "originals": [
+    {"name": "Scale Ladder", "idea": "a ten-tier scale set where AC rises, evasion falls, and each tier carries one property", "keep": "AC up, evasion down, one property per tier", "change": "our tier names, property set, price curve, a visible tier bump on the hero"},
+    {"name": "Milestone Relic", "idea": "an item whose colour steps up as zones are cleared", "keep": "thresholds at 1, 3, 9, 27 completions", "change": "our milestones (zone clears, bosses), our palette, a sound cue per step"},
+    {"name": "Ripple Ward", "idea": "a relic that pulses in rings outward from the hero", "keep": "phase delayed by distance so the pulse travels", "change": "3D rings sized for 375 px; a slower pulse in calm states"},
+    {"name": "Clan of Breath", "idea": "one humanoid body in several colour clans, each with one breath element", "keep": "one body, colour as trait", "change": "our elements, per-clan silhouettes, our breath telegraph"},
+    {"name": "Depth Table", "idea": "per-zone encounter tables with FLAT, SEMI, PEAK, RISE and FALL weights per monster", "keep": "distribution shapes per monster and depth", "change": "our weights and zone fields (cap, respawn, grace); parity row 23"},
+    {"name": "Halo Sight", "idea": "a see-through halo at the hero so occluders fade near the hero", "keep": "radial alpha falloff and a radius cap", "change": "elliptical iso falloff and a fade time tuned for the fight camera (row 11)"},
+    {"name": "Palette Dye", "idea": "recolour gear by the red channel into a palette, with a grey-only hue mode and a ghost mode", "keep": "one shader, grey-only hue, ghost mode", "change": "our palette and ghost look (crossuo shader reference, not crawl)"},
+    {"name": "Refresh Aura", "idea": "a boss aura that refreshes rather than stacks, suppressed in a safe zone", "keep": "refresh not stack; sanctuary suppression", "change": "our aura radius, safe-zone rule and status names"}
+  ],
+  "licence_note": "Code GPLv2+ (per AU011, README line 96). Data in dat/ under the same general GPLv2+ statement. Tile art mostly CC0 or public domain per LICENSE and rltiles/license.txt (per AU011). Mechanics used as shape only; no text, art or lore copied.",
+  "not_read": [
+    "monster AI (mon-behv.cc, mon-act.cc), breath spell effects (spl-*.cc), death and corpse presentation (mon-death.cc), boss intros",
+    "tile PNGs (not viewed); silhouettes judged from shape and flag fields",
+    "dat/descript text (counted only: 2558 monster description rows, 1954 item rows, 230 ego rows, 956 unrand rows)",
+    "dat/des vault and portal stamps and dat/dlua layouts (counted or listed only)",
+    "hell branch rows that use the die-size constant",
+    "set-bonus logic (not searched)",
+    "job play code (berserk and other class mechanics for skill-only backgrounds)"
+  ]
+}

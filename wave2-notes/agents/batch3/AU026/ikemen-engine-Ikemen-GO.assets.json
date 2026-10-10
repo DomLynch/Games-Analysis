@@ -1,0 +1,44 @@
+{
+  "donor": "ikemen-engine-Ikemen-GO",
+  "half_read": "engine (Go source, partial) plus the engine-side data half (data/*.zss, common.air, common.cmd, common.const). The character and stage content is absent from the box. Paired fighting donor by name: nonameentername-openfight (not read by me).",
+  "code_licence": "MIT (LICENCE.txt line 1; line 33: applies to the engine and the scripts in this repo)",
+  "asset_licence": "Mixed: scripts and data under MIT (line 33); Gacel default-3x5 font and Cylia logo under CC-BY 3.0 (lines 52-56); Open Sans fonts under Apache 2.0 (font/Open_Sans/LICENSE.txt); release-build assets may differ (line 60, not in box); screenpack is a separate CC-BY 3 repo (README line 58, not in box)",
+  "rights_holder_status": "open-source fan engine fork (MIT), contributors listed in LICENCE.txt; no commercial characters or stages in the box",
+  "best_class": "A",
+  "asset_groups": [
+    {"kind": "engine common state scripts (data)", "path": "data/*.zss, data/common.air, data/common.cmd, data/common.const", "count_hint": "13 files, about 97 KB; common1.cns.zss has 53 StateDef blocks", "licence": "MIT (LICENCE.txt line 33, scripts in this repo)", "class": "A", "note": "hit, guard, air, knockdown and dizzy states shared by all characters"},
+    {"kind": "Lua front-end scripts", "path": "external/script/*.lua", "count_hint": "6 files", "licence": "MIT (LICENCE.txt line 33)", "class": "A", "note": "menu and start scripts"},
+    {"kind": "engine code and shaders", "path": "src/*.go, src/shaders, external/shaders", "count_hint": "55 .go files and 18 .spv, 13 .glsl repo-wide", "licence": "MIT (LICENCE.txt line 1)", "class": "A", "note": "engine code; shaders are sources"},
+    {"kind": "Open Sans fonts", "path": "font/Open_Sans/*.ttf", "count_hint": "10 TTF files", "licence": "Apache License Version 2.0 (font/Open_Sans/LICENSE.txt)", "class": "A", "note": "keep the Apache notice"},
+    {"kind": "default-3x5 bitmap font", "path": "font/default-3x5.sff, font/default-3x5-bold.sff, font/*.def", "count_hint": "2 sff, 3 def", "licence": "CC-BY 3.0 (LICENCE.txt line 52 and the font line)", "class": "B", "note": "attribution needed; binary not opened"},
+    {"kind": "Cylia logo and icons", "path": "external/icons/IkemenCylia_*.png, external/icons/Ikemen_Cylia*.ico", "count_hint": "3 png, 2 ico", "licence": "CC-BY 3.0 (LICENCE.txt line 56); mapping of exact files is my inference from the names", "class": "B", "note": "attribution needed"},
+    {"kind": "other engine icons", "path": "external/icons/Ikemen.ico, external/icons/Ikemen_V2.ico", "count_hint": "2 ico", "licence": "not stated in the licence text", "class": "C", "note": "unclear; not read"},
+    {"kind": "default screenpack (motif)", "path": "not in box (separate repo)", "count_hint": "0", "licence": "CC-BY 3 (README.md line 58)", "class": "C", "note": "not in box"},
+    {"kind": "release-build assets", "path": "not in box", "count_hint": "0", "licence": "could differ (LICENCE.txt line 60)", "class": "C", "note": "not in box; ScreenpackLicence.txt not present"},
+    {"kind": "characters and stages", "path": "none in box (external/mods is empty)", "count_hint": "0", "licence": "n/a", "class": "D", "note": "nothing usable in the box"}
+  ],
+  "inspiration": [
+    "Hit reaction as a timed state with a branch: stand-hit shake holds until a timer ends, then goes to knockback or fall by the hit's air or ground flags (data/common1.cns.zss line 497 onward, line 499 shake choice). Keep the timed shake; change the axis and the ending.",
+    "Just-defend window: a short perfect-guard window opened from the first guard frame while holding back; a guard hit inside it sets a flag (data/functions.zss line 68 IkSys_JustDefend; window written as gameTime plus 3 at line 73). Keep the window; change the reward.",
+    "Edge-triggered low-life cue: one-shot flag when life first drops to a quarter of max (data/functions.zss line 85 IkSys_Danger, condition at line 87). Keep the one-shot; change the look and sound.",
+    "Deterministic order of operations in collision: characters sorted by priority (reversal, then hit definition, then none; ties by id), push pass, then gethit flag reset, then hit detection (src/char.go lines 14904-14957). Keep the order; use our server tick and ids.",
+    "Parry as a reversal flag latched once per game time (data/functions.zss line 56 IkSys_Parry). Keep the once-per-tick latch; change the timing ring.",
+    "Input buffer through hit pause via command entries (data/common.cmd line 11, buffer.hitpause). Keep a buffer that runs through hitstop; relevant to the hud-ui input-buffer fold-in.",
+    "Common states and common commands as data appended to every character (data/common1.cns.zss; data/common.cmd header; data/common.air header). Data-first, the same shape as our catalogue fields."
+  ],
+  "briefs": [
+    {"label": "stand-hit shake (own label, effect)", "why": "a hit reaction that holds for a timer and then branches", "keep": "shake until a timer ends, then knock or fall by air or ground", "change": "shake along a different axis; a short grey flash at the end", "ref": "/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/data/common1.cns.zss lines 497-511"},
+    {"label": "just-defend window (own label, mechanic)", "why": "a short perfect-guard window readable at 375 wide", "keep": "a three-tick window from the first guard frame", "change": "shield-ring visual and a stamina refund rather than a bonus flag", "ref": "/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/data/functions.zss lines 68-82"},
+    {"label": "low-life pulse (own label, effect)", "why": "one cue the first time life drops to a quarter", "keep": "one-shot edge trigger at a quarter of max life", "change": "heartbeat sound instead of a red vignette", "ref": "/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/data/functions.zss lines 85-92"},
+    {"label": "reversal ordering (own label, mechanic)", "why": "a reversal on the same tick as a hit wins by priority, deterministically", "keep": "reversal first, then hit definition, then none; ties by id", "change": "our server tick and entity ids; a timing ring on the enemy's feet", "ref": "/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/char.go lines 14904-14957"},
+    {"label": "dizzy stars (own label, effect)", "why": "a status that is high only while active and emits one event per tick", "keep": "one event per tick while the status holds", "change": "stars orbit the head, not a sprite", "ref": "/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/data/functions.zss lines 94-105"}
+  ],
+  "cross_link": "fight loop and parry (rows 3, 4); controls (row 5, command buffers); hero and creature clips (rows 6, 7, the actual clips absent); hit impact and hitstop (row 10); combat sound cues (row 12, force feedback per shake state); hud-ui (row 14, guard bar in src/fightscreen.go lines 1291 and 1341, grep hits only); sound-music and loot and zones: none in box; idle vocabulary: stand state at data/common1.cns.zss line 23",
+  "not_read": [
+    "character and stage content (absent) and release-build screenpack (absent)",
+    "data/action.zss, guardbreak.zss, dizzy.zss, tag.zss, training.zss, score.zss, system.zss, demo.zss, common.const (names only apart from the cited functions)",
+    "most of src/*.go (char.go at the collision pass only; fightscreen.go at grep hits only; compiler and bytecode not read)",
+    "SFF and TTF binaries, SPIR-V shaders, build folder",
+    "nonameentername-openfight (paired fighting donor, outside my batch)"
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "donor": "dol-leodagan-DaocClientLib",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 4
+  },
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [],
+  "weapon_families": [],
+  "gear_tiers": [
+    "No armour or weapon data in the repo. Craft recipe record (Craft/CraftDataRecipe.cs): ItemLevel (line 64) and MaterialLevel (line 68) are separate tier axes; SkillLevel at line 60",
+    "Craft ingredient record (Craft/CraftDataIngredient.cs): Count (line 47), SubRecipe (line 51) lets an ingredient be another recipe; line 77 formats the nested name"
+  ],
+  "zones": [
+    "Zone types in code (Zone/ZoneGeometry.cs enum at line 38): Terrain, City, Dungeon, SkyCity. Zone records: 0 in the box",
+    "Zone type picks the renderer (Drawing/ZoneRendererChooser.cs lines 48, 55-61): Terrain to TerrainRenderer, City to CityRenderer, Dungeon and SkyCity to DungeonRenderer",
+    "Rivers and lava as one typed band (Zone/RiverGeometry.cs): banks (line 41), type field documented RIVER or LAVA (lines 52-54), multitexture (line 62), height (line 70)",
+    "Zone jumps as data records (Zone/ZoneJump.cs class at line 34; Zone/JumpPoint.cs not read)",
+    "Terrain height calculator kept apart from visuals (Zone/TerrainHeightCalculator.cs class at line 34)",
+    "Tree override store: cluster lookup first, then single tree, then empty (Tree/TreeReplacementMap.cs lines 56-68)",
+    "Dungeon water (Zone/DungeonWaterGeometry.cs): listed only, not read"
+  ],
+  "looks": [
+    {
+      "label": "Instanced dungeon props",
+      "technique": "One mesh, many transforms: each geometry added once with its world matrix (one instance per geometry)",
+      "ref": "DaocClientLib.Drawing/DungeonRenderer.cs line 78"
+    },
+    {
+      "label": "Lava band look",
+      "technique": "The look sits in the texture field of the river record; the texture property was not read in full",
+      "ref": "DaocClientLib/Zone/RiverGeometry.cs lines 52-54 (type); texture property not read"
+    },
+    {
+      "label": "Placeholder agent silhouette",
+      "technique": "Procedural cylinder from a radius, a height and a segment count, readable from a distance until art lands",
+      "ref": "DaocClientLib.Demo/AgentCylinder.cs line 39 (class), vertex lines 91 and 103"
+    },
+    {
+      "label": "World object roles",
+      "technique": "Three roles per world object: Pickee (clickable), Collidee (solid), Visible (drawn only)",
+      "ref": "DaocClientLib.Demo/ZoneObjModel.cs lines 44-48"
+    },
+    {
+      "label": "Demo UI skin",
+      "technique": "One image holds the whole demo UI skin; provenance and licence not stated; not opened",
+      "ref": "DaocClientLib.Demo/GwenSkin.png"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Ember Channel",
+      "idea": "A banked liquid band defined as data with a liquid-type field",
+      "keep": "One shape for water and lava; banks as data",
+      "change": "Our own bank stones with cracked crust; ember glow and heat shimmer instead of a water texture; a different width profile"
+    },
+    {
+      "name": "Set-Piece Trees",
+      "idea": "A procedural forest keeps a few trees where a designer needs them, through an override list",
+      "keep": "Cluster-then-single lookup order",
+      "change": "Per-cell offsets and a tree-type swap as well as an offset. Defect in the donor (DungeonRenderer.cs lines 63-78): matched offsets stack into one instance; fix: one instance per matched tree, each the base matrix times that tree's offset"
+    },
+    {
+      "name": "Pillar Hall",
+      "idea": "Many repeated props drawn with one mesh and per-placement transforms",
+      "keep": "One mesh, many transforms",
+      "change": "Our own prop designs and a per-prop tint"
+    },
+    {
+      "name": "Gate Renderer Map",
+      "idea": "A zone type in data selects the presentation class",
+      "keep": "Data decides presentation",
+      "change": "Our own zone types (arena, gate, ruin, sky platform)"
+    },
+    {
+      "name": "Nested Craft Card",
+      "idea": "An ingredient can be another recipe, shown as one line",
+      "keep": "Nested sub-recipes",
+      "change": "Station grouping and a result preview"
+    },
+    {
+      "name": "Pick, Block, Show",
+      "idea": "Every world object is clickable, solid, or visual-only",
+      "keep": "Three roles per object",
+      "change": "Our names and our hit rules for the fight camera"
+    },
+    {
+      "name": "Capsule Stand-in",
+      "idea": "A procedural stand-in shape for an agent until art lands",
+      "keep": "A plain procedural shape with radius and height",
+      "change": "A capsule with a head mark, not a cylinder"
+    }
+  ],
+  "licence_note": "LICENSE line 1: MIT License, copyright dol-leodagan 2015; source headers repeat the MIT notice (e.g. DaocClientLib/Tree/TreeReplacementMap.cs line 4). Code may be adapted; keep the notice. DAoC game data is not in the repo; the user supplies it from their own install (README.md lines 4 and 16). DAoC data is proprietary-origin, class C, owner not stated. Demo UI skin licence not stated. Looks stay category-level.",
+  "not_read": [
+    "Craft/CraftListData.cs and Craft/CraftFileUtils.cs: listed only",
+    "TinyMPK.cs, TinyMPKFile.cs, PCXDecoder.cs (format parsers): formats named in code only, not read in full",
+    "Zone/NifGeometry.cs, Zone/ZoneData.cs, Zone/ZoneDataList.cs, Zone/DungeonWaterGeometry.cs, Zone/JumpPoint.cs: listed only",
+    "Zone/ZoneGeometry.cs body beyond the enum and constants; Zone/TerrainHeightCalculator.cs body: not read",
+    "Drawing/TerrainRenderer.cs, Drawing/CityRenderer.cs, Drawing/ClientMesh.cs: not read",
+    "DaocClientLib.Demo/ (DemoWindow*.cs, Camera.cs, GwenTextWriter.cs): not read",
+    "DaocClientLib.Test/: listed only; test resource placeholder per audit AU016 (not re-checked)",
+    "Dependencies/SharpNav.dll and SharpNav.XML: binary and docs, not opened",
+    "niflib.net/ and gwen-donet/ submodules: empty in this tree",
+    "Defect noticed, not run: DungeonRenderer.cs lines 63-78 fold all matched tree offsets into one instance; see the catalogue md for the fix"
+  ]
+}

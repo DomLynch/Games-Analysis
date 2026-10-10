@@ -1,0 +1,39 @@
+{
+  "donor": "Kelsidavis-WoWee",
+  "code_licence": "MIT with an additional restriction (LICENSE line 1; lines 15-19: may not be used as the basis for, or a component of, any commercial video game or other commercial game product without express written permission). NOTICE line 13: restriction added 2026-07-21; earlier code is plain MIT.",
+  "asset_licence": "original music ALL RIGHTS RESERVED (LICENSE lines 31-47: not to be copied, redistributed, modified, sampled or used in derivative work without written permission); textures described but not in the box; shaders and Data/ JSON under the code licence",
+  "rights_holder_status": "Wowee Contributors (code, LICENSE line 3); Kelsi Davis (original music, LICENSE line 33); Blizzard Entertainment (WoW marks and assets, NOTICE line 26); the user supplies WoW data (ATTRIBUTION.md line 71); the HD texture pack owner is not named: unknown",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "original music", "path": "assets/Original Music/", "count_hint": "19 mp3 files", "licence": "ALL RIGHTS RESERVED (LICENSE lines 31-47; NOTICE lines 19-21)", "class": "C", "note": "not usable; listening and inspiration only; contents not opened"},
+    {"kind": "splash and brand images", "path": "assets/krayonload.png, Wowee.png, wowee-soundtrack.png, hellfire-peninsula.png, others under assets/", "count_hint": "6 png under assets/", "licence": "not named in NOTICE; no per-file licence: unclear", "class": "C", "note": "not opened"},
+    {"kind": "shaders", "path": "assets/shaders/", "count_hint": "90 glsl, 84 spv, 4 glsli", "licence": "repo licence with the additional restriction (LICENSE lines 15-19)", "class": "B", "note": "condition: no use as a basis for or component of a commercial game without written permission; binaries (spv) not opened"},
+    {"kind": "Data JSON (protocol and layout tables)", "path": "Data/opcodes/, Data/expansions/tbc, wotlk, turtle", "count_hint": "about 14 JSON files", "licence": "repo licence with the additional restriction", "class": "B", "note": "opcode tables and DBC layouts; they describe the user's client files and hold no names or looks; contents not opened"},
+    {"kind": "HD textures (described, not in box)", "path": "assets/textures/ (README only in the box)", "count_hint": "298 BLP described in README line 5; 0 BLP files in the box", "licence": "source is the TurtleHD Texture Pack (Turtle WoW), README line 3; licence not stated", "class": "C", "note": "nothing to take from the box"},
+    {"kind": "in-game sound (referenced, not shipped)", "path": "src/audio/ambient_sound_manager.cpp line 138 and combat_sound_manager.cpp lines 137-173 (MPQ-style paths)", "count_hint": "n/a", "licence": "user's own client data (ATTRIBUTION.md line 71)", "class": "D", "note": "the sound files are not in the box"},
+    {"kind": "WoW game data", "path": "not in repo; user supplies MPQ and DBC data", "count_hint": "n/a", "licence": "Blizzard marks (NOTICE line 26); user-owned data", "class": "D", "note": "nothing shipped"}
+  ],
+  "inspiration": [
+    "Zone ambience bed by place and time: updateZoneAmbience (src/audio/ambient_sound_manager.cpp lines 762-780) picks a loop library from zone type and day or night (line 770; forest case line 774) and is silent indoors and in cities (line 764). Keep one loop per biome, switched by time of day; change to our biome set and a dusk blend instead of a hard switch.",
+    "Music with explicit fades: playMusic(fadeInMs) starts at zero volume and ramps with a timer (src/audio/music_manager.cpp lines 64-98, fade length line 98); stopMusic(fadeMs) fades out, then stops at zero (lines 195-208, comment line 204). Keep an explicit fade length on every change; change the stinger timing and the bed duck.",
+    "Capped positional emitters: at most 5 fire and 3 water emitters are audible at once; the others are dropped by distance (src/audio/ambient_sound_manager.cpp lines 302-320; caps at lines 306-307). Keep a cap per emitter type (rows 12 and 16); change our numbers.",
+    "Weapon-size swing and crit cues: playWeaponSwing(size, isCrit) (src/audio/combat_sound_manager.cpp line 137) and playImpact(size, impactType, isCrit) (line 173). Keep a swing sound by size class and an impact by impact type with a crit variant (row 12); change our size classes and the crit sound.",
+    "Server-authoritative loot and death: loot and death arrive as server packets (src/game/inventory_handler.cpp and combat_handler.cpp, grep-matched, not read). Keep the rule that the client renders what the server reports (rows 17 and 18); this is a ruling check, not an asset."
+  ],
+  "briefs": [
+    {"label": "Biome ambience bed, day and night", "why": "the place and time set the mood with no HUD, and towns and interiors go quiet", "keep": "one loop per biome switched by time of day; silence indoors and in towns", "change": "our own biome set and a dusk blend instead of a hard switch. Dom rule: a distinct original; never copy any WoW or WoWee sound", "ref": "/mnt/frankendom-donors/Kelsidavis-WoWee/src/audio/ambient_sound_manager.cpp (lines 762-780)"},
+    {"label": "Fade-in stinger", "why": "a short cue opens a fight or a reward without a hard cut", "keep": "a fade-in and fade-out length named on every change", "change": "our own stinger melody and a duck of the bed under it. Dom rule: a distinct original; never copy the Original Music", "ref": "/mnt/frankendom-donors/Kelsidavis-WoWee/src/audio/music_manager.cpp (lines 64-98 and 195-208)"},
+    {"label": "Capped emitter sounds", "why": "a crowded area stays clear because only a few sources sound at once", "keep": "a cap of a few audible emitters per type; the rest are silent", "change": "our own caps per emitter type. Dom rule: a distinct original, never a copy", "ref": "/mnt/frankendom-donors/Kelsidavis-WoWee/src/audio/ambient_sound_manager.cpp (lines 302-320)"},
+    {"label": "Weapon-size swing cue", "why": "a heavy weapon sounds heavy, and a crit has its own sound", "keep": "a swing sound keyed to weapon size class and a crit flag", "change": "our size classes and our crit sound. Dom rule: a distinct original, never a copy", "ref": "/mnt/frankendom-donors/Kelsidavis-WoWee/src/audio/combat_sound_manager.cpp (lines 137-173)"}
+  ],
+  "not_read": [
+    "src/game/ and src/ui/ beyond grep matches; src/network, src/rendering, src/pipeline, src/core/entity_spawner.cpp (listed only)",
+    "Shader contents (glsl text and spv binaries not opened)",
+    "Music file contents (mp3, not opened); the 6 PNG contents; the 1 .ico",
+    "Data/ JSON contents beyond file names",
+    "extern/ third-party licences, tests/, and the Lua addon scripts",
+    "Server half: not in the box (client repo; TrinityCore, MaNGOS and AzerothCore are named as references only)",
+    "Data half: WoW MPQ and DBC game data are not in the box",
+    "Border crossfade between zone beds: not read (only the zone switch in updateZoneAmbience was read)"
+  ]
+}

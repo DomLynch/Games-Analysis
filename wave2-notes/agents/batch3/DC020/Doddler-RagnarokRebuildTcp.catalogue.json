@@ -1,0 +1,222 @@
+{
+  "donor": "Doddler-RagnarokRebuildTcp",
+  "counts": {
+    "creatures": 335,
+    "classes": 26,
+    "weapons": 503,
+    "gear_sets": 22,
+    "zones": 276
+  },
+  "creature_families": [
+    "Beast 65",
+    "Insect 47",
+    "Demihuman 46",
+    "Demon 46",
+    "Formless 37",
+    "Plant 34",
+    "Undead 28",
+    "Aquatic 19",
+    "Angel 8",
+    "Dragon 5",
+    "54 Boss rows (Special=Boss) across the races; 20 rows with IDs 6000+ (12 flagged DoddlerCustomMonsters)",
+    "Element tiers 1-4 on the same element (Db/Monsters.csv Element column)",
+    "Boss minion table: 54 rows across 36 bosses (Db/SpawnMinionTable.csv)"
+  ],
+  "top_creatures": [
+    {
+      "label": "Clutch-spitting hoard beetle",
+      "why": "A telegraphed egg volley every 200 ms; each egg lives about 5 s and has a 15 percent chance to become a summon; hides and heals below 40 percent HP",
+      "keep": "Volley rhythm; eggs as separate small targets; hide phase below 40 percent HP",
+      "change": "Our creature is a sand-crab that buries and sprays clutches; a three-beat volley; our own sound cue",
+      "ref": "Db/Monsters.csv line 69 (code GOLDEN_BUG); Script/MonsterSkills/Bosses.txt lines 18, 23, 27-28, 62, 69-75"
+    },
+    {
+      "label": "Winged sentinel quartet",
+      "why": "Four bosses in one race, all on the standard boss AI, with close attack timings (480 or 420) and different element tiers (Neutral4, Dark3, Holy3, Holy3): one family, four identities",
+      "keep": "One family with shared timing; four element variants",
+      "change": "Our names and our element set; only one sentinel attacks at a time",
+      "ref": "Db/Monsters.csv lines 333-336 (IDs 6018-6021)"
+    },
+    {
+      "label": "Ant brood trio with larvae",
+      "why": "Three small fast soldiers plus larvae that assist; a many-vs-one read around one boss",
+      "keep": "Small assist units; the egg as a stationary plant-AI object",
+      "change": "Our insect family; larvae drag toward the player instead of looting",
+      "ref": "Db/Monsters.csv lines 323-328 (IDs 6006-6011); Db/SpawnMinionTable.csv lines 16-18"
+    },
+    {
+      "label": "Spore-burst fungus field",
+      "why": "A dense field of 90 spores with a 5-15 s respawn window; density reads as a hazard field",
+      "keep": "Dense field with a short respawn; poison tiers 2 and 4",
+      "change": "A spore bursts into a fan on death; no damage over time; our own ground tint",
+      "ref": "Db/Monsters.csv lines 330-331 (IDs 6013-6014); Script/Spawns/gef_dun.txt line 7"
+    },
+    {
+      "label": "Silver-weak beast",
+      "why": "Weakness written as a data tag, so any item rule can read it and the player has a reason to swap gear",
+      "keep": "Tag-driven weakness",
+      "change": "Our weakness element (for example ice); a visible tell on the creature",
+      "ref": "Db/Monsters.csv line 320 (ID 6003, Tags column)"
+    },
+    {
+      "label": "Swarm summoner",
+      "why": "One large demon calls ten small flyers at once; ten at once reads as a cloud at 375 wide",
+      "keep": "Big summoner with a fixed minion count",
+      "change": "Our own flyers as a swarm of small winged shapes; our own call animation",
+      "ref": "Db/Monsters.csv line 182 (code DRACULA); Db/SpawnMinionTable.csv line 2"
+    },
+    {
+      "label": "Rare large dragon",
+      "why": "The dragon race has only five rows, so the silhouette stays special; Large size class",
+      "keep": "Rare race kept as reserved content; Large size class",
+      "change": "Our dragon silhouette and element",
+      "ref": "Db/Monsters.csv line 277 (ID 4274, code MUTANT_DRAGON)"
+    },
+    {
+      "label": "Top-tier ghost boss",
+      "why": "The only monster with the Ghost4 element tier; a unique tier gives it an identity; five minions",
+      "keep": "A single top-tier element as identity; five minions",
+      "change": "Our own ghost visual; a fade in and out instead of a fixed look",
+      "ref": "Db/Monsters.csv line 51 (ID 4048, code GHOSTRING); Db/SpawnMinionTable.csv line 22"
+    }
+  ],
+  "classes": [
+    "Base class (cap level 10), Db/Jobs.csv Id 0",
+    "Six first-tier classes (cap 50), Jobs.csv Id 1-6: sword melee with taunt and endure; archer with eye-buffs and volley; mage with elemental bolts and walls; acolyte with support; thief with stealth and ranged; merchant with a cart",
+    "Thirteen second-tier classes (cap 70), Jobs.csv Id 7-19; Skills/SkillTree.toml names six of them (knight, wizard, priest, hunter, assassin, blacksmith); seven not found in SkillTree.toml and not searched further",
+    "Three branch classes at cap 70 (Jobs.csv Id 20-22) and three at cap 50 (Id 23-25)",
+    "Three special rows (Id 499, 507, 513) not used",
+    "Progression: skill tree with prerequisites by rank (Skills/SkillTree.toml line 16); about 220 skill sections in Skills/Skills.toml; 78 status-effect sections in Skills/StatusEffects.toml"
+  ],
+  "weapon_families": [
+    "22 weapon types (Db/ItemsWeapons.csv Type column): dagger 69 rows, sword 51, rod 35, mace 34, 2H sword 33, bow 31, 2H spear 30, whip 26, katar 25, knuckle 25, book 24, 2H axe 23, plus gun types (handgun, rifle, shotgun, gatling, grenade), shuriken and instrument",
+    "Tier by Rank column: rank 1 has 53 rows, rank 2 has 72, rank 3 has 198, rank 4 has 180; level ranges overlap across tiers, so tier is a power band, not a level gate",
+    "Elemental: 91 of 503 weapons carry a non-neutral property (wind 22, dark 15, fire 13, holy 13, water 11, earth 9, poison 3, undead 3, ghost 2)",
+    "Element swap: consumable items change weapon element (Script/Items/MiscEffects.txt lines 2-3)",
+    "Speed per class and weapon kind: Db/WeaponAttackTiming.csv; most cells 1 to 1.6, many cells read 4 (meaning not verified)",
+    "Refine success table: Db/RefineSuccess.csv (20 steps, four weapon tiers plus armour); rows 1-11 read; success falls from 100 to 10-20 percent by steps 10-11"
+  ],
+  "gear_tiers": [
+    "Armour rows: Db/Armor.csv 581 (headgear 198, body 43, accessory 27, footgear 12, shield 10, garment 8, 283 with no type); Db/ItemsEquipment.csv 555 rows",
+    "Tier shown by weapon Rank column, refine step, and a per-item sprite field (WeaponSprite on weapons); no metallic, gold or crystal shader found by file name in RebuildClient/Assets/Shaders",
+    "Material words in item names (not looks): ice 20, glass 10, gold 9, golden 5, silver 3, mithril 1, crystal 1, diamond 1; no mythic metal tier found in the tables read",
+    "Cards: 441 rows (Db/ItemsCards.csv); 440 card-effect lines (Script/Items/CardEffects.txt); card prefixes Low Level, Lucky, Aqua, Mirror",
+    "Card-pair sets: 22 sets (Script/Items/ComboEffects.txt); mini-boss pairs add flee 18 plus one small stat; other pairs differ (line 2: agility 5, flee 10)",
+    "Equipment effect example: one shield gives nine element resistances at 20 each (Script/Items/EquipmentEffects.txt line 4)"
+  ],
+  "zones": [
+    "Biomes by MapMode (Db/Maps.csv): field 142, dungeon 77, indoor 31, town 12, none 14; 276 map rows",
+    "Dungeon archetypes (18 warp files, Script/Warps/Dungeons): sewer, maze, tower, undersea tunnel, pyramid, sunken hull, magma vault, bug nest, orc camp, toy factory, clock tower, forest labyrinth, undead crypt, and others",
+    "Hazards: AllWater flag on undersea floors (Db/Maps.csv lines 32-33); NoTeleport flags on three maps; timed map-wide curse event (Script/Event/MiasmaDungeons.txt lines 12-13, 42-81); spore field (Script/Spawns/gef_dun.txt line 7)",
+    "Instances: 29 rows (Db/Instances.csv): job zones (line 25), guild realm, a war-of-siege comment row, dungeon and field instances",
+    "Top zone ideas: undersea tunnel floors (Maps.csv lines 32-33); timed curse pyramid with three waves (MiasmaDungeons.txt lines 42-81); spore field (gef_dun.txt line 7); job zones (Instances.csv line 25); guild realm (Instances.csv)"
+  ],
+  "looks": [
+    {
+      "label": "Explosion frame strip with timing in the name",
+      "technique": "17 frames at 0.1 s each; the delay is in the file name; an animator controller sits beside the strip",
+      "ref": "RebuildClient/Assets/Textures/Explosion/frame_00_delay-0.1s.png to frame_16_delay-0.1s.png"
+    },
+    {
+      "label": "Casting ring and motes",
+      "technique": "Additive particles with a soft fade by depth; a ring material and a firefly material",
+      "ref": "RebuildClient/Assets/Textures/CastCircle.mat; Textures/Casting.mat; Textures/Firefly.mat; Shaders/FireflyShader.shader lines 10 and 69"
+    },
+    {
+      "label": "Screen swirl for a status",
+      "technique": "Full-screen polar swirl with a sine wobble and a strength value from 0 to 1",
+      "ref": "RebuildClient/Assets/Shaders/IllusionStatusShader.shader lines 118 and 123"
+    },
+    {
+      "label": "Crit digit style",
+      "technique": "Per-digit layout with a crit variant that adds horizontal jitter and a brightness factor",
+      "ref": "RebuildClient/Assets/Shaders/DamageIndicator.shader lines 256 and 268; RebuildClient/Assets/DamageIndicator/Crit.mat"
+    },
+    {
+      "label": "Flying text path per damage type",
+      "technique": "Nine path assets (bounce, combo, critical, damage, debuff, effect, exp, heal, miss) each carry a trajectory curve and a size curve",
+      "ref": "RebuildClient/Assets/Data/FlyingText/CriticalPath.asset lines 13 and 44; the other eight *Path.asset files"
+    },
+    {
+      "label": "Miasma haze material",
+      "technique": "A map-wide haze registered as an effect and a status",
+      "ref": "RebuildClient/Assets/Materials/miasmaclouds.mat; Script/Event/MiasmaDungeons.txt line 12"
+    },
+    {
+      "label": "Window frame kit",
+      "technique": "Transparent and no-bottom variants of one frame, with corner and bottom handles",
+      "ref": "RebuildClient/Assets/Textures/UI/basewin_bg2-transparent-nobottom.png; Textures/UI/bottom_handle.psd; Textures/UI/corner_handle.psd"
+    },
+    {
+      "label": "Element tier digits",
+      "technique": "Four strengths of one element shown by a digit suffix in the data",
+      "ref": "Db/Monsters.csv Element column"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Burrow Clutch Crab",
+      "idea": "A boss that buries and sprays small clutches on a fixed beat, with a hide phase under 40 percent HP",
+      "keep": "Fixed-beat volley, separate small targets, hide phase",
+      "change": "Our crab, a three-beat volley, our own sound cue"
+    },
+    {
+      "name": "Four Wardens",
+      "idea": "One winged family in four element tiers that share animations",
+      "keep": "One family, four element variants",
+      "change": "Our names and elements; only one warden attacks at a time"
+    },
+    {
+      "name": "Swarm Brood",
+      "idea": "Small fast soldiers plus larvae that assist a boss",
+      "keep": "Assist units; egg as a stationary object",
+      "change": "Larvae drag toward the player"
+    },
+    {
+      "name": "Pollen Field",
+      "idea": "Dense short-respawn spore pods that burst into a fan on death",
+      "keep": "Density and short respawn",
+      "change": "No damage over time; a burst fan"
+    },
+    {
+      "name": "Frost-Weak Hide",
+      "idea": "A creature tag that makes it weak to one element, with a visible tell",
+      "keep": "Tag-driven weakness",
+      "change": "Our element and our tell"
+    },
+    {
+      "name": "Element Draught",
+      "idea": "A timed consumable that changes the weapon element and tints the aura",
+      "keep": "Element swap",
+      "change": "Our duration and aura shader"
+    },
+    {
+      "name": "Stance Table",
+      "idea": "One data table of speed per class and weapon kind",
+      "keep": "Data-driven matrix",
+      "change": "Our multipliers and kinds; verify the meaning of cell value 4 first"
+    },
+    {
+      "name": "Blight Ritual",
+      "idea": "A timed map curse with three waves, gated by a config flag",
+      "keep": "Wave structure; config gate",
+      "change": "A three-stage ritual with its own fog"
+    }
+  ],
+  "licence_note": "license.txt line 1: custom non-commercial licence; anything based on the code may not be used for commercial purposes, and a server or service that takes donations or sells in-game rewards counts as commercial. Credit requested, not required (line 5). Third-party MIT only for 3rdParty/LeanTween and the Color picker. Project art and data are Ragnarok-Online-origin and not in the repo (README.md line 5). Class C: clean-room, shape and category only; donor names never used as labels.",
+  "not_read": [
+    "RoRebuildOld/ (older server and zone server): listing only",
+    "RebuildClient/Assets/Scripts (client C#): not read",
+    "RebuildClient/Assets scenes, prefabs, most textures: listing only",
+    "Other/RoStatProcessing.xlsx and Other/LuckTest.xlsx (binary spreadsheets): not read",
+    "Other/RoWikiGenerator, DataToClientUtility, Keys: not read",
+    "ItemDescriptions/*.txt: line counts only (about 9,249 lines); text not read or quoted",
+    "Db/ItemBoxSummonList.csv, Db/ItemMonsterSummonList.csv, Db/Npcs.csv: not read; Db/Effects.csv header and first 25 rows only",
+    "Script/MonsterSkills scripts other than Bosses.txt and MiasmaDungeons.txt: listed only",
+    "Script/Event milestone files: one grep only",
+    "RebuildClient/Assets/Data/SharedItemIcons.txt and cardillustrations.txt: only through audit AU016",
+    "Sprites and sounds: not in the repo (README.md line 35)",
+    "Defect noticed, not verified: Script/MonsterSkills/Bosses.txt line 20 comment says resummon at 4 or fewer minions, value is 8; which governs was not verified",
+    "Defect noticed, not verified: WeaponAttackTiming.csv cells of 4 (meaning); MvpList.csv chance unit (per 10000 or per 100000) not verified"
+  ]
+}

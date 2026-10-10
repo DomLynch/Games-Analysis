@@ -1,0 +1,204 @@
+{
+  "donor": "daggerfall-unity",
+  "counts": {
+    "creatures": 42,
+    "classes": 18,
+    "weapons": 18,
+    "gear_sets": 0,
+    "zones": 19
+  },
+  "halves": {
+    "client": "read (Assets/Scripts, Assets/Shaders, data tables as text)",
+    "data_pack": "not in the box (DOS data supplied by the user)",
+    "server": "not applicable (single-player client)"
+  },
+  "creature_families": [
+    "animal",
+    "darkness-kin",
+    "daylight-kin",
+    "undead",
+    "daedra",
+    "golem",
+    "water-kin",
+    "human (NPC rows, not counted as creatures)",
+    "behaviour: ground, flying, aquatic, spectral, guard"
+  ],
+  "top_creatures": [
+    {
+      "label": "Silver-bound wraith",
+      "why": "see-through flyer that only takes silver-tier hits; reads as not like the others",
+      "keep": "flying see-through movement and the metal gate",
+      "change": "our own silhouette, a telegraph before each hit, damage tuned to our duel step",
+      "ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Utility/EnemyBasics.cs lines 830-843 and 1002-1015 (spectral rows ID 18 and 23)"
+    },
+    {
+      "label": "Gate brute",
+      "why": "tier-gated melee brute; the rule is the threat",
+      "keep": "gate that refuses weak metal",
+      "change": "rune flash and sound instead of a text popup",
+      "ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Utility/EnemyBasics.cs lines 1073-1086 (daedra row ID 25)"
+    },
+    {
+      "label": "Reef lurker",
+      "why": "water-bound threat that works as a zone-edge ambush",
+      "keep": "cannot leave water",
+      "change": "our own ambush cue and look",
+      "ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Utility/EnemyBasics.cs (aquatic rows ID 11, 41, 42)"
+    },
+    {
+      "label": "Sky whelp",
+      "why": "fast daylight flyer with a distinct silhouette",
+      "keep": "flying swoop idea",
+      "change": "our own shape and colour",
+      "ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Utility/EnemyBasics.cs (flying daylight rows ID 34 and 40)"
+    },
+    {
+      "label": "Golem quartet",
+      "why": "one tier, four element variants; reads as a family",
+      "keep": "same tier, element swap",
+      "change": "our own palette per element",
+      "ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Utility/EnemyBasics.cs (golem rows ID 35-38)"
+    },
+    {
+      "label": "Crypt sovereign",
+      "why": "top-tier undead with a negative armour value; armour that goes below zero",
+      "keep": "negative armour at the top band",
+      "change": "our numbers and a readable aura",
+      "ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Utility/EnemyBasics.cs (top undead rows ID 32-33)"
+    },
+    {
+      "label": "Ranged sentry",
+      "why": "human ranged unit with a second attack slot on some rows",
+      "keep": "two attack slots as a mode switch",
+      "change": "our own weapons and cue",
+      "ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Utility/EnemyBasics.cs (human rows 128-145; second slot on 130 and 133)"
+    },
+    {
+      "label": "Town guard",
+      "why": "non-hostile behaviour that halts rather than fights",
+      "keep": "halt as a town rule",
+      "change": "our own guard look and call",
+      "ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Utility/EnemyBasics.cs line 2198 (row ID 146)"
+    }
+  ],
+  "classes": [
+    "18 career enum entries (EntityEnums.cs line 51): mage, spellsword, battlemage, sorcerer, healer, nightblade, bard, burglar, rogue, acrobat, thief, assassin, monk, archer, ranger, barbarian, warrior, knight. Signature mechanics and progression numbers are in career records in the data pack (not in the box).",
+    "11 race entries (EntityEnums.cs line 32): eight playable peoples plus vampire, werewolf and wereboar as state races. Vampirism and lycanthropy set a silver gate (VampirismEffect.cs line 125; LycanthropyEffect.cs line 198).",
+    "Progression shape (FormulaHelper.cs lines 325, 336, 348): player level = floor((skill sum - start + 28) / 15); skill uses grow by 1.04 per level; hit points roll per level-up within the career range (roll seeded from render frame, see defects)."
+  ],
+  "weapon_families": [
+    "base families (10): long blade, staff, dagger, mace, flail, warhammer, battleaxe, bow, melee, werecreature claws (DaggerfallUnityEnums.cs WeaponTypes)",
+    "magic variants (7): long blade, staff, dagger, mace, flail, warhammer, battleaxe; an enchanted weapon takes the magic variant (ItemHelper.cs line 918)",
+    "18 weapon items plus arrow as ammo (ItemEnums.cs line 210)",
+    "elements for resistances and enchants (DFCareer.cs line 493): fire, frost, disease or poison, shock, magic",
+    "affinity bane effects (PotentVs.cs line 86) and on-hit effects (HealthLeech.cs line 23), 24 enchant effect files"
+  ],
+  "gear_tiers": [
+    "metal ladder (ItemEnums.cs line 64): iron, steel, silver, elven, dwarven, mithril, adamantium, ebony, orcish, daedric; steel is the file default with no tint",
+    "armour roll on loot (FormulaHelper.cs lines 2160-2162): leather below 70; chain 70-89; metal plate 90 and up",
+    "plate metal rolled by player level (FormulaHelper.cs lines 2124-2139): level modifier doubles above level 10 and quadruples below; bucket table at ItemBuilder.cs line 42",
+    "armour slots (ItemEnums.cs line 195): cuirass, gauntlets, greaves, two pauldrons, helm, boots, four shield types",
+    "set bonuses: none found (grep hits were character-creation bonuses)",
+    "looks: one art per weapon, recoloured per metal tier by remapping a 16-index palette band (ImageProcessing.cs lines 427, 457; FPSWeapon.cs line 704)"
+  ],
+  "zones": [
+    "19 dungeon archetypes (DFRegion.cs line 171): crypt, orc stronghold, human stronghold, prison, desecrated temple, mine, natural cave, coven, vampire haunt, laboratory, harpy nest, ruined castle, spider nest, giant stronghold, dragon's den, barbarian stronghold, volcanic caves, scorpion nest, cemetery",
+    "15 location types (DFRegion.cs line 66): city, hamlet, village, farm, labyrinth, temple, tavern, keep, wealthy home, poor home, ruin, graveyard, coven, ship home, cult",
+    "4 outdoor climate bases (DaggerfallUnityEnums.cs line 66): desert, mountain, temperate, swamp; seasons: summer, winter, rain",
+    "hazards: diseases and poisons (23 files across Effects/Diseases and Effects/Poisons); lycanthropy and vampirism states (DaggerfallUnityEnums.cs line 660)",
+    "dungeon lighting: room lights culled by distance, polled every 0.4 s (DungeonLightHandler.cs lines 25-26)"
+  ],
+  "looks": [
+    {
+      "label": "Metal tiers from one art",
+      "technique": "remap a 16-index palette band per tier, steel left as default",
+      "ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Utility/ImageProcessing.cs lines 427, 457, 610; Assets/Scripts/Game/FPSWeapon.cs lines 701-704"
+    },
+    {
+      "label": "Ghost shader",
+      "technique": "alpha cut-out plus emission map in a transparent queue; albedo has emission subtracted (code comment: so other lights do not add to it)",
+      "ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Shaders/GhostShader.shader lines 1, 45 (read)"
+    },
+    {
+      "label": "One-shot FX billboards",
+      "technique": "blood splash and sparkles from one archive at 10 fps, one-shot",
+      "ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/EnemyBlood.cs lines 37, 52"
+    },
+    {
+      "label": "Retro palettization and posterization",
+      "technique": "palette snap and posterize shaders (names only, bodies not read)",
+      "ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Shaders/DaggerfallRetroPalettization.shader; DaggerfallRetroPosterization.shader"
+    },
+    {
+      "label": "Automap ink reveal",
+      "technique": "tile texture array map reveal (names only, bodies not read)",
+      "ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Shaders/DaggerfallAutomap.shader; Assets/Scripts/Game/AutomapModel.cs (not read)"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Silver-bound wraith",
+      "idea": "a see-through flyer that only takes top-metal hits",
+      "keep": "flight, see-through, the metal gate",
+      "change": "our own silhouette, a telegraph, our own cue"
+    },
+    {
+      "name": "Gate brute",
+      "idea": "a tier-gated melee brute, one gate per zone",
+      "keep": "refuses weak metal",
+      "change": "rune flash and sound instead of a text popup"
+    },
+    {
+      "name": "Reef lurker",
+      "idea": "water-bound ambusher at zone edges",
+      "keep": "cannot leave water",
+      "change": "our look and ambush cue"
+    },
+    {
+      "name": "Four-element golem set",
+      "idea": "one tier, four element variants",
+      "keep": "family and stats",
+      "change": "our palette per element"
+    },
+    {
+      "name": "Metal ladder gear",
+      "idea": "ten metal tiers from one art",
+      "keep": "palette band remap",
+      "change": "our ramp colours and a glint on the top two tiers"
+    },
+    {
+      "name": "Level-weighted loot roll",
+      "idea": "low-level players rarely see top metal",
+      "keep": "shape of the roll",
+      "change": "our numbers and a server-side random source"
+    },
+    {
+      "name": "Spawn ring placement",
+      "idea": "place spawns in a distance band from the player, outside view, with a ground probe and overlap check",
+      "keep": "the ray and the separation",
+      "change": "a bounded number of tries, then widen the band or skip with a log"
+    },
+    {
+      "name": "Attract call cadence",
+      "idea": "ambient call within a radius on a random delay of 3-9 s, mostly a call and sometimes a step sound, dampened when blocked",
+      "keep": "cadence and dampening",
+      "change": "our own calls"
+    }
+  ],
+  "defects": [
+    "HP per level-up seeded from render frame count (FormulaHelper.cs line 348). Fix: take the roll from the server random source and record it.",
+    "Foe spawn placement has no attempt cap (FoeSpawner.cs lines 119-200, retried each frame from line 76). Fix: cap tries per spawn, then widen the band or give up with a log.",
+    "Dungeon light polls at 0.4 s (DungeonLightHandler.cs line 26), so lights pop in up to 0.4 s late. Fix: check on player cell change or a shorter poll.",
+    "Material bucket sum is 259 but the roll is clamped to 256 (ItemBuilder.cs line 42; RandomMaterial in FormulaHelper.cs). The last bucket is reachable only at the top two values. Check it is intended; if not, make the sum 256."
+  ],
+  "licence_note": "Root LICENSE line 1: MIT License; line 3: Copyright (c) 2009-2023 Daggerfall Workshop. Assets/Licenses/Daggerfall Unity.txt line 3 names a different holder and range (2014-2022, MIT). Game-like text, tables and textures are class C per AU013. Inspiration stays category-level; recreate as distinct originals.",
+  "not_read": [
+    "data-pack half (sprites, sounds, MAGIC.DEF artifacts, CLASSES career records, monster art and sound tables): not in the box",
+    "quest scripts (265 files), BIOG questionnaires, Text (113 files), Tables beyond headers and first lines (Quests-Foes 78 lines names only; Quests-Items 137; Quests-Places 188; Quests-Factions 469; Quests-Diseases 20)",
+    "shader bodies except GhostShader (names only for the rest)",
+    "RaceTemplate.cs, DungeonTextureTables.cs (structure only), CastWhenStrikes.cs, most enchant effects",
+    "Standard Assets water, TMP and font assets, soundfont, Editor, Packages, ProjectSettings",
+    "MapChance and Weight fields in EnemyBasics.cs (meaning not read)",
+    "artifact stats (23 entries in an enum; stats are in MAGIC.DEF, not in the box)"
+  ]
+}

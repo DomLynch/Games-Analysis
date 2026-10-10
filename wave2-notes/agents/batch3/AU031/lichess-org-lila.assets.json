@@ -1,0 +1,120 @@
+{
+  "donor": "lichess-org-lila",
+  "code_licence": "AGPL-3.0 (LICENSE; COPYING.md line 9-12 'GNU Affero General Public License ... version 3 ... any later version')",
+  "asset_licence": "Mixed, per row of the COPYING.md tables. Default for any file not listed is lila AGPL (COPYING.md line 3-4). Listed exceptions: CC0 1.0, MIT, Apache 2.0, OFL, GPLv2+, GPLv3+, CC BY 3.0/4.0, CC BY-SA 4.0/1.0, CC BY-NC-SA 4.0 (many piece sets and lisp sounds), 'free for personal non commercial use' (piece set alpha), 'freeware' (chess7, companion, leipzig), and 'Only use to refer to lichess.org' (logo, favicon). COPYING.md lines 84-102 list 'the other sounds in public/sound' and 'the other artwork in public/images' under the non-free heading; the file does not say which licence applies to them, so they are class C.",
+  "rights_holder_status": "Open-source project. COPYING.md line 4 says 'copyright (c) 2012-2026 the lila authors' and points to the commit log for authors. Third-party sets and fonts are credited per row in COPYING.md. No clean-room, leak or decompile statement in the files read.",
+  "best_class": "A",
+  "asset_groups": [
+    {
+      "kind": "piece sets (2D chess piece art)",
+      "path": "public/piece/ (43 folders)",
+      "count_hint": "43 set folders (ls)",
+      "licence": "Per set, from COPYING.md rows: rhosgfx CC0 1.0 (line 48); fantasy, spatial, celtic MIT (lines 52-54); kiwen-suwi, Firi CC BY 4.0 (lines 64, 69); totoy, papercut CC BY 4.0 (lines 98-99); shapes CC BY-SA 4.0 (line 46); mono, cburnett, merida GPLv2+ (lines 40-41, 45); mpchess GPL3 (line 65); letter, pirouetti, pixel AGPLv3+ (lines 43-44, 47); many sadsnake1 / cooke / monarchy / minimal-warmth / california / caliente / anarcandy / disguised sets CC BY-NC-SA 4.0 (lines 49-63, 66-70); xkcd CC BY-NC-SA 2.5 (line 68); alpha, chess7, companion, leipzig, reillycraig, riohacha, shahi-ivory-brown with non-free terms (lines 90-97).",
+      "class": "A for CC0/MIT/CC BY sets; B for GPL/AGPL/CC BY-SA sets; C for NC, non-free or unlisted sets",
+      "note": "Per-set class. Pixel-grid set (pixel, AGPLv3+) and letter-glyph set (letter, AGPLv3+) are the most useful as art references. Do not copy any set; only the silhouette idea is in scope."
+    },
+    {
+      "kind": "sound effects and music",
+      "path": "public/sound/ (536 files, mp3 and ogg; folders futuristic 58, nes 42, piano 56, sfx 56, lisp 44, woodland 56, robot 52, standard 43, instrument/celesta and instrument/clav 54 each, instrument/swells 6, other 13)",
+      "count_hint": "536 files",
+      "licence": "COPYING.md lines 71-74 list futuristic, nes, piano, sfx as AGPLv3+ by Enigmahack. Line 75 lists lisp as CC BY-NC-SA 4.0 by EdinburghCollective. Lines 101 'The other sounds in public/sound' sit under the non-free heading with no licence named. COPYING.md refers to the path 'public/sounds/...' (plural) but the tree uses 'public/sound/...' (singular); that mismatch is recorded as found.",
+      "class": "B for AGPL-listed folders (share-alike, copyleft). C for lisp (NC) and for robot, woodland, standard, instrument, other (unclear).",
+      "note": "futuristic/ has a long cue list (Capture, Check, Checkmate, Berserk, LowTime, CountDown0-10, Victory, Defeat, Draw, Move, Error, Explosion, Tournament1st, etc.). robot/ (head of listing only) shares the core names Berserk, Capture, Check, Checkmate, CountDown0-10 but adds its own (energy3, failure2, yeet, ping). So packs share a core cue set and add their own extras; they do not all share one full list. Good design reference for sound packs."
+    },
+    {
+      "kind": "board, UI and flair images",
+      "path": "public/images/ (555 files: webp 236, svg 173, png 102, jpg 44; about 25 MB)",
+      "count_hint": "555 files",
+      "licence": "COPYING.md rows: staunton and trophy MIT (lines 32, 34); board AGPLv3+ (line 38); learn/pieces GPLv2+ (line 39); practice and puzzle-themes icons CC BY 3.0 from game-icons.net (lines 80-81); emoji/horsey CC BY-NC-SA 4.0 (line 31); the staunton 'Staunton' piece has a '(?)' attribution (line 96). Line 102 'The other artwork in public/images' sits under the non-free heading with no licence named.",
+      "class": "A for MIT and CC BY 3.0 groups (with credit); B for AGPL/GPL groups; C for NC, '(?)' and unlisted artwork",
+      "note": "Board thumbnail set and practice/puzzle icon sets are the nearest things to Frankendom HUD and skin pickers. Not read individually (not read)."
+    },
+    {
+      "kind": "fonts",
+      "path": "public/font/",
+      "count_hint": "several families (ls only)",
+      "licence": "COPYING.md lines 26-30: lichess icon font has OFL, MIT, CC BY 3.0 and AGPLv3+ credit rows; lichess.chess font GPLv2+ (pgn4web authors); Noto Sans and Roboto Apache 2.0; Segment7 SIL OFL.",
+      "class": "A for Apache/OFL (with licence notice); B for GPLv2+; C for mixed icon font until its origin is checked",
+      "note": "Not opened (not read). Fonts are not a design priority for Frankendom; listed for completeness."
+    },
+    {
+      "kind": "video clips",
+      "path": "public/video/ (info-*.webm, 540 KB total in du)",
+      "count_hint": "10+ files (ls head only)",
+      "licence": "No row in COPYING.md names public/video; falls under the default AGPL line 3-4 by the file's own rule, but the file does not state this for video. Class C until checked.",
+      "class": "C",
+      "note": "Short explainer clips about analysis overlays (arrows, pinned pieces, undefended pieces). Not opened."
+    },
+    {
+      "kind": "string tables (localisation source)",
+      "path": "translation/source/*.xml (44 files; grep '<string' count 3059 across them)",
+      "count_hint": "3059 string elements in 44 files",
+      "licence": "COPYING.md line 82: translation/source/puzzleTheme.xml is CC0 1.0. Other translation XML files are not named; default AGPL line 3-4.",
+      "class": "A for puzzleTheme.xml (CC0); B for others (AGPL default by the file's own rule)",
+      "note": "This is the DATA half for text. Strings are not quoted here. The ui/ files read the same keys, so these tables are the names and labels source."
+    },
+    {
+      "kind": "data pack for bots and NNUE tables",
+      "path": "public/data/bot/README.md; public/lifat/README.md (NNUE and maia table)",
+      "count_hint": "1 README each; models not in repo",
+      "licence": "Not named by a row; default AGPL line 3-4.",
+      "class": "D (no usable content in the box; bot assets are 'not to be versioned' per the README; NNUE model files are not in the repo, only their names are listed in a table)",
+      "note": "Read the README headers only. Not read further."
+    }
+  ],
+  "halves_read": [
+    "client: ui/storm/src/ctrl.ts, ui/storm/src/config.ts, ui/lib/src/puz/combo.ts, ui/racer/src/boost.ts",
+    "server: modules/rating/src/main/Glicko.scala (lines 1-40), modules/puzzle/src/main/PuzzleStreak.scala (lines 1-20)",
+    "data: translation/source/puzzleTheme.xml (line 82 licence row), public/data/bot/README.md, public/sound/ file names"
+  ],
+  "matching_half_in_box": "lichess-org-mobile is the client app for the same server; lila is the server half for lichess-org-mobile. Both are in the box.",
+  "inspiration": [
+    "Puzzle Storm combo ladder: a combo meter with a short table of thresholds and a time bonus each time a threshold is crossed. A wrong move resets the combo and takes time off the clock (ui/storm/src/config.ts, ui/storm/src/ctrl.ts). Keep the table-as-data and the reset on error; change the reward to a stamina or guard refill for a fight.",
+    "Racer boost flag: a car gets a short 'boosting' state for one second after its score rises, which drives a visual kick without a timer object (ui/racer/src/boost.ts). Keep the one-second window; apply it to a combo or parry flash on the hero or creature.",
+    "Rating shown as an interval, not a point: the server displays rating minus and plus two deviations, and a player is only ranked when deviation is under a threshold (modules/rating/src/main/Glicko.scala). Keep the interval display for a hidden-stat readout; change the naming and the threshold.",
+    "Sound packs with a shared core cue set: the futuristic and robot folders both carry Berserk, Capture, Check, Checkmate and CountDown0-10, and each adds its own extras (public/sound/futuristic/, public/sound/robot/). Recreate the core-plus-extras layout for our own packs with new sounds; a theme then swaps the sound, not the code path.",
+    "Countdown ticks as numbered files (CountDown0 to CountDown10) in each pack, so a countdown needs no code change per theme (public/sound/futuristic/, public/sound/robot/). Keep the numbered-tick pattern; change the voice and timbre.",
+    "Pixel-grid piece set (public/piece/pixel) and letter-glyph set (public/piece/letter): silhouettes built from a grid or a single glyph still read at small size. Useful as a readability test at 375 wide, not as a look to copy.",
+    "Board thumbnail previews (public/images/board/ and lichess-org-mobile assets/board-thumbnails): a grid of small material previews in a picker. Keep the picker idea for arena surface skins; use our own materials and palettes."
+  ],
+  "briefs": [
+    {
+      "label": "Storm-style combo ladder with a stamina refill",
+      "why": "A readable meter with four tiers; each tier gives a clear reward and a clear sound. It reads at 375 wide as a single bar with notches.",
+      "keep": "threshold table as data; reward on crossing a threshold; reset on a miss",
+      "change": "reward is a guard or stamina refill, not clock time; a miss costs guard, not time; tier colours come from our own ramp",
+      "ref": "ui/storm/src/config.ts (combo levels); ui/lib/src/puz/combo.ts lines 37-47 (bonus on threshold)"
+    },
+    {
+      "label": "Numbered countdown tick pack",
+      "why": "A short countdown the player hears before a round or a timed finisher, built from numbered files so the count works in every theme.",
+      "keep": "one file per second, same names in every pack, a distinct low-time cue",
+      "change": "our own voice and timbre; the tick is a clay-metal or bone click, not the lila tone",
+      "ref": "public/sound/futuristic/CountDown0.mp3 to CountDown10.mp3 (and public/sound/robot/)"
+    },
+    {
+      "label": "Pixel-grid unit silhouette test",
+      "why": "A unit built from a small grid still reads as one shape at phone size; the set is a good test for threat readability.",
+      "keep": "single-colour silhouette with one accent; grid-aligned edges",
+      "change": "our head and limb proportions; a two-tone palette; no chess shape language",
+      "ref": "public/piece/pixel/ (AGPLv3+, reference only)"
+    },
+    {
+      "label": "Short 'just scored' flash",
+      "why": "A one-second flag that turns on when a score rises and turns off on its own gives feedback without a stored timer.",
+      "keep": "a per-entity timestamp that is checked against the current time",
+      "change": "the flash is a parry or combo flare on the attacker, not a car boost",
+      "ref": "ui/racer/src/boost.ts lines 15-26 (setPlayers and isBoosting)"
+    }
+  ],
+  "not_read": [
+    "AGENTS.md (read as data only; not used as instructions; not opened in full)",
+    "public/sound/* audio files (only names and counts read; no audio opened)",
+    "public/images/* artwork (only the file counts and folder names read)",
+    "public/font/* and public/video/* (names only)",
+    "modules/* beyond modules/rating/src/main/Glicko.scala and modules/puzzle/src/main/PuzzleStreak.scala",
+    "ui/* beyond ui/storm, ui/racer, ui/lib/src/puz/combo.ts",
+    "translation/source/*.xml content (only the count and the puzzleTheme.xml licence row)",
+    "public/lifat/* gallery and NNUE table beyond README headers"
+  ]
+}

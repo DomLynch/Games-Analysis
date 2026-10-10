@@ -1,0 +1,42 @@
+{
+  "donor": "otland-forgottenserver",
+  "code_licence": "GPL-2.0. The root LICENSE file is the GNU General Public License Version 2, June 1991 text.",
+  "asset_licence": "No separate asset licence file found in the donor. The only licence file is the root LICENSE (GPL v2 text). No per-folder licence, CREDITS or NOTICE file under data/. The files do not state whether data/ is covered by the root LICENSE; treated as unclear (class C).",
+  "rights_holder_status": "unknown. README.md says the project is a fork of the OpenTibia Server project. src/ carries 'Copyright 2023 The Forgotten Server Authors' lines (152 matching lines; no SPDX headers found in src/). No rights-holder statement for the game data in data/ was found in the files read.",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "creature data (XML)", "path": "data/monster/monsters/*.xml", "count_hint": "1166 files", "licence": "unclear, root LICENSE only", "class": "C", "note": "Stats, attacks, defences, elements, immunities. Looks are numeric client IDs (for example look type 495 in abyssador.xml); the sprites are not in this donor. Partly read: abyssador.xml, animated_sword.xml, grep counts over the folder."},
+    {"kind": "item data (XML + binary)", "path": "data/items/items.xml, data/items/items.otb", "count_hint": "15101 item entries in items.xml", "licence": "unclear, root LICENSE only", "class": "C", "note": "Item names, weight, armour, slot type. items.otb is binary and was not opened beyond its name."},
+    {"kind": "map and world spawns", "path": "data/world/forgotten.otbm, data/world/forgotten-spawn.xml, data/world/forgotten-house.xml", "count_hint": "otbm 3.4 MB (binary, not opened); spawn file 362 spawn blocks; house file 12 KB", "licence": "unclear, root LICENSE only", "class": "C", "note": "Map is a binary OTBM file; only its size was read. Spawn blocks are centre, radius and per-monster spawntime lists."},
+    {"kind": "system XML tables", "path": "data/XML/outfits.xml, data/XML/stages.xml, data/XML/vocations.xml, data/XML/groups.xml, data/XML/mounts.xml", "count_hint": "5 files", "licence": "unclear, root LICENSE only", "class": "C", "note": "Outfit list with male/female type, premium and unlocked flags; stage multipliers; vocation and group tables. Only heads were read."},
+    {"kind": "script text (Lua)", "path": "data/scripts, data/creaturescripts, data/actions, data/movements, data/weapons, data/talkactions, data/globalevents, data/events, data/npc, data/spells/lib/spells.lua", "count_hint": "601 .lua files", "licence": "unclear, root LICENSE only", "class": "C", "note": "Game logic in Lua. Names only were listed; not read in depth. Code, not art."},
+    {"kind": "spells table", "path": "data/spells/spells.xml", "count_hint": "1 file", "licence": "unclear, root LICENSE only", "class": "C", "note": "The file is an empty root element with a comment that points to the Lua spell scripts. Spell data lives in Lua."},
+    {"kind": "art (2D sprites, 3D models, tilesets, UI art)", "path": "whole donor tree", "count_hint": "0 files", "licence": "not applicable", "class": "D", "note": "A find for png, jpg, gif, bmp, spr, dat, ttf, otf found no art files. Sprites and client art belong to the OTClient half, which is not in this donor."},
+    {"kind": "audio", "path": "whole donor tree", "count_hint": "0 files", "licence": "not applicable", "class": "D", "note": "A find for ogg, wav, mp3 found no audio files."},
+    {"kind": "text (contributor list)", "path": "AUTHORS", "count_hint": "about 150 names", "licence": "covered by the project text, not separately licensed", "class": "D", "note": "Contributor names only. Not reproduced."}
+  ],
+  "inspiration": [
+    "Boss as a rotation of tells: abyssador.xml gives one boss five attack channels, each with its own interval and roll (fire, energy, lifedrain, earth, speed). It also re-targets on a timer roll (targetchange interval 5000, chance 8). Keep: several timed channels, each with its own roll. Change: our own wind-up and telegraph shapes and our own channel names.",
+    "A cheap timed slow as a readable tell: the 'speed' channel in abyssador.xml applies a speed change of -400 for duration 2500, chance 20. Keep: a timed slow that ends by itself. Change: a distinct ring, colour and sound so the status is readable at 375 px.",
+    "Self-protection: the boss has a healing defence with interval 1000 and chance 1, a healing defence with interval 5000 and chance 30, and an invisibility defence with interval 2000, chance 25, duration 3000 (units as written in the file, not converted). Keep: healing on a roll with a clear cue. Change: a telegraphed glow and a sound cue, not a silent heal.",
+    "Damage typing as data: the elements block gives percentages per damage type (physical +10, death -20, energy -20 in abyssador.xml). A creature can be weak or strong to one damage type with no code change. Fits the many-on-one and zone data rulings.",
+    "An item that comes alive: animated_sword.xml is a creature whose look is an item look (look typeex 26883), experience 0, speed 360, with melee and a short manadrain/energy mix. Keep: an enemy that looks like the thing it was. Change: silhouette, palette and attack names so it is clearly ours.",
+    "Spawn clusters as data: forgotten-spawn.xml has 362 spawn blocks, each a centre, a radius of 5 and a list of monsters with spawntime 60 s. This is a direct data model for row 23 (zone population: cap, respawn, coverage). Keep: centre, radius and respawn as plain fields. Change: our own cap and grace-timer values.",
+    "Gold-plated armour as a stat line: 'golden armor' in items.xml is weight 8000, armour 14, slot body. The gold look is a client sprite, not in this box. Idea for us: keep the armour number and make the gold a palette ramp and specular task for an artist, not a data field.",
+    "Cosmetic unlock table: outfits.xml lists each outfit by sex type with looktype, premium flag and unlocked flag. Idea for progression (cosmetic collections): one table with an unlocked yes or no and a premium flag per look."
+  ],
+  "briefs": [
+    {"label": "Multi-channel tyrant boss (own label)", "why": "A boss that reads as a cycle of tells: five timed attacks and a rare self-heal, so the fight has rhythm.", "keep": "five timed attack channels with separate rolls; a re-target roll on a timer; a rare telegraphed self-heal", "change": "silhouette (tall, crowned, no island theme); palette (cold teal and bone instead of the donor's colours); attack names and wind-up shapes of our own", "ref": "data/monster/monsters/abyssador.xml (lines 22-50 for the attack channels, line 39 for the healing roll)"},
+    {"label": "Sentient blade (own label)", "why": "An item that comes alive is instantly readable and cheap to author: the look is a weapon, the behaviour is a small fast melee with a bolt.", "keep": "the look is an item; experience 0 in the file (what that means in the server logic was not read); a fast melee tempo of about 2 s", "change": "silhouette (hooked polearm, not a straight blade); element colour ramp; attack set (no manadrain; a pull instead of a plain energy bolt)", "ref": "data/monster/monsters/animated_sword.xml (line 2 for race and name, line 4 for the item look, the flags block, not line-numbered)"},
+    {"label": "Scatter pack spawn block (own label)", "why": "A spawn cluster with a radius and a respawn timer makes a patrol feel like a place, not a grid.", "keep": "a centre with a small radius; a per-member respawn of 60 s; members placed with small offsets", "change": "our own pack size and cap; a patrol path instead of a fixed spot; grace timer before despawn", "ref": "data/world/forgotten-spawn.xml (line 3 for the spawn centre and radius, line 4 for a member)"}
+  ],
+  "not_read": [
+    "data/world/forgotten.otbm and data/items/items.otb (binary; size only)",
+    "all 1166 creature files except abyssador.xml and animated_sword.xml (counts from grep only)",
+    "all 601 Lua files (listed by folder, not opened beyond names)",
+    "outfits.xml, stages.xml, vocations.xml, groups.xml, mounts.xml beyond their first lines",
+    "src/ C++ beyond the file listing (code, not the assignment's focus)",
+    "sprites, sounds, fonts: none present in this donor",
+    "the paired client half: edubart-otclient, opentibiabr-otclient, OTCv8-otclientv8 and mattyx14-TheForgottenTibiaClient exist in the box by name; not opened, and not verified which one matches the README link (mehah/otclient)"
+  ]
+}

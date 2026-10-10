@@ -1,0 +1,21 @@
+# LG2 notes (batch 3, legal-art research; nothing downloaded)
+
+Scope: WebSearch and WebFetch read only; narrow ls/grep on the VPS under /mnt/frankendom-donors. Donor notes DPK1, DPK2 and DPK3 were read first. Web page text was treated as data. The list entry "Morrowind (OpenMW, Daggerfall, Arena, Skyrim-era)" is split into four rows: Morrowind, Daggerfall, Arena, and Skyrim-era.
+
+**EverQuest.** everquest.com (WebFetch) shows a "Play Free" button and a "Download the Game" link to an installer. The page states no free-tier terms, and its Shop menu lists paid items (Membership, Expansions). Box: daeken-OpenEQ README lines 330-331 say no client assets are shipped, and no .s3d, .eqg or .wld is in the donor. eq-p99-tools-eq-client README lines 4-6 load from a user-supplied install. Recommend ask-Dom-to-approve-download. Substitute: none clearly licensed found.
+
+**Dark Age of Camelot.** darkageofcamelot.com (WebFetch) advertises an "Endless Conquest Play For Free!" banner, but the "Download the Client" link goes to a trial site and the page does not say the client is free, so Dom should confirm the route. Search summaries say Endless Conquest is a free account type on the official client; this is secondhand. Box: BifrostTitan-DAoC-Client-Lib and dol-leodagan-DaocClientLib read client data from a local install and hold no MPK, PCX or NIF. Recommend ask-Dom-to-approve-download. shadowofze-OfflineDAoC is a private-server client pack and was not used.
+
+**Asheron's Call.** Search results say the subscription ended in 2014 and official servers closed in January 2017, citing a fan-forum repost; Turbine's own site was not fetched and not confirmed. No current official free client was found. Box: Chorizite-Chorizite/acclient.map is symbol text only, and Mag-nus README says acclient.exe is user-provided. ACEmulator-ACE holds schema only. Recommend describe-only. Any AC art route would be an emulator client pack, which is forbidden.
+
+**Morrowind.** openmw.org (WebFetch) mentions Morrowind only in release notes and does not state a data policy. openmw README line 4 says "You need to own the game for OpenMW to play Morrowind", and README line 41 says it reads your own Morrowind install. No free Morrowind release was found. Recommend owner-copy-only. Substitute: none.
+
+**Daggerfall.** Search results (rpgsite.net, GameSpot, UESP) say Bethesda released Daggerfall free on Steam in April 2022, and earlier as a free download on its own site in 2009. Not verified on the Steam store page itself. daggerfall-unity README lines 24-26 name the free Steam copy, and Assets/Game holds scripts only. Recommend ask-Dom-to-approve-download (Steam account needed). Substitute: none.
+
+**Arena.** Search results (rpgsite.net, rpgcodex, UESP Arena:Files) say Bethesda gave Arena away free in 2004 from its own site and listed it free on Steam in April 2022. The Steam page I tried by guessed URL was for another game (Myridian), so that URL is not cited. afritz1-OpenTESArena README line 9 says no game assets are distributed, and its data/ holds engine-made meshes, shaders, ui and audio. Recommend ask-Dom-to-approve-download. Substitute: none.
+
+**Skyrim-era Elder Scrolls.** Not researched in this pass. Box: CombatPathingRevolution needs Skyrim SE and SKSE, per DPK1 notes. Recommend describe-only.
+
+**Baldur's Gate / Infinity Engine.** Search results found no official free release or free demo. Beamdog Enhanced Editions are paid, and Siege of Dragonspear is a paid expansion. GemRB README lines 17-22 say full BG or IWD data must be installed. Box: gemrb-gemrb/demo holds a trivial demo, licensed CC-BY-SA-4.0 and GPL-2.0-or-later per REUSE.toml lines 38-49 (DPK3 note); that is usable in the box for the demo only. Recommend owner-copy-only.
+
+**Free substitute (fantasy character art).** One search turned up "Isometric Hero and Heroine" by Clint Bellanger on OpenGameArt, listed as CC-BY 3.0, with a note that it contains a CC-BY-SA item. This is from a search summary and the page was not fetched, so check its licence on the page before use. The PixVoxel wargame sprites are CC0 but military, not fantasy, so they are a poor match. No clearly licensed substitute was verified for EverQuest, Dark Age of Camelot, Asheron's Call, the Elder Scrolls set or Infinity Engine.

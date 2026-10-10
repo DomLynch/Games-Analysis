@@ -1,0 +1,29 @@
+{
+  "donor": "Rabrg-refactored-client",
+  "code_licence": "Unknown. No LICENSE file and no licence statement in the tree (73 .java, README.md, _RESTRICTED-NOTE.txt, .gitignore).",
+  "asset_licence": "None. No asset files in the tree.",
+  "rights_holder_status": "Proprietary and restricted: _RESTRICTED-NOTE.txt says 'Jagex-derived RuneScape 317 client'; Rasterizer3D.java line 3 says 'Decompiled by JODE'.",
+  "best_class": "D",
+  "half_read": "Client half only (src/com/jagex/runescape). No server half in the box. No cache or data pack in the box.",
+  "asset_groups": [
+    {"kind": "non_code_content", "path": "none in tree", "count_hint": "0", "licence": "n/a", "class": "D", "note": "no sprites, models, audio, maps or string tables"},
+    {"kind": "code_restricted", "path": "src/com/jagex/runescape/**", "count_hint": "73 Java files", "licence": "unknown; restricted by _RESTRICTED-NOTE.txt", "class": "C", "note": "decompiled client code; category-level inspiration only"}
+  ],
+  "inspiration": [
+    "A low-memory software renderer with one global quality flag (Rasterizer3D.java lines 11 and 14). Idea: one switch that drops expensive paths, per device tier.",
+    "Precomputed angle and shading lookup tables instead of per-frame maths (Rasterizer3D.java lines 18, 20, 21). Idea: a lookup that drives a dusk-to-night colour ramp.",
+    "A priority-ordered queue of outstanding asset requests with a checksum on arrival (OnDemandRequester.java lines 21, 22, 27). Idea: zone chunks load by priority and are verified before use.",
+    "A keep-alive counter on the request connection (OnDemandRequester.java, field declared; body not read). Idea: a heartbeat for long asset sessions."
+  ],
+  "briefs": [
+    {"label": "angle lookup ramp", "why": "precomputed angle tables replace per-frame trig", "keep": "indexed lookup tables", "change": "the table drives a dusk-to-night colour ramp in our GPU shader, not a rasteriser", "ref": "/mnt/frankendom-donors/Rabrg-refactored-client/src/com/jagex/runescape/media/Rasterizer3D.java lines 18-21"},
+    {"label": "priority asset queue with a checksum", "why": "assets are requested by priority and verified on arrival", "keep": "a priority queue of outstanding requests and a check on arrival", "change": "zone chunks load in a per-frame budget with a visible loading ribbon, not a silent socket", "ref": "/mnt/frankendom-donors/Rabrg-refactored-client/src/com/jagex/runescape/net/requester/OnDemandRequester.java lines 21, 22, 27"},
+    {"label": "one quality switch", "why": "a single flag gates the expensive texture path", "keep": "one switch for the expensive path", "change": "quality tiers per device, not a boolean", "ref": "/mnt/frankendom-donors/Rabrg-refactored-client/src/com/jagex/runescape/media/Rasterizer3D.java lines 11, 14"}
+  ],
+  "cross_link": "Zones and scene (Scene.java, SceneCluster.java), loot (cache/def/ItemDefinition.java), sound (sound/SoundTrack*.java) and camera (CameraAngle.java) exist as names only; not read; no assets in the box for any of them.",
+  "not_read": [
+    "All 73 Java files beyond Rasterizer3D.java lines 1-28 and OnDemandRequester.java lines 1-28",
+    "Scene.java, SceneCluster.java, SoundTrack*.java, Model.java, Game.java, GameShell.java, cache/def/*",
+    "Any data file for the cache (none in the box)"
+  ]
+}

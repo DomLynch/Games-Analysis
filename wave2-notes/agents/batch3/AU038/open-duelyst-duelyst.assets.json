@@ -1,0 +1,137 @@
+{
+  "donor": "open-duelyst-duelyst",
+  "code_licence": "CC0 1.0 Universal per README.md:53 ('OpenDuelyst is licensed under the Creative Commons Zero v1.0 Universal license'), package.json:3 ('license': 'CC0-1.0'), and LICENSE/COPYING (identical CC0 legal code, LICENSE:3). Third-party packages keep their own licences: packages/warlock/LICENSE (MIT, line 1), packages/backfire/LICENSE (Firebase copyright line, line 1), app/vendor/cocos2d-html5/licenses (copyright lines only, full text not read).",
+  "asset_licence": "The repo-wide CC0 line (README.md:53, LICENSE) is the only licence statement. No per-asset licence, attribution or credit file exists for the art, music, sound or fonts (name search for licence, credit, notice, attribution, OFL and copyright found none under app/resources or app/original_resources). The README says the game was developed by Counterplay Games and released in 2016 (README.md:6). The files do not show a grant from that developer for the art. Treated as class C (ambiguous chain of title, commercial origin).",
+  "rights_holder_status": "original company named: README.md:6 says the game was developed by Counterplay Games and released in 2016, and the repo preserves that game after its 2020 shutdown (README). The repo states CC0 for the whole project. The files do not state whether the company granted the art to that licence. Mark: original company; repo licence claim unverified against the art.",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "unit and boss sprites (texture atlases: png plus plist)",
+      "path": "app/resources/units/ (1,392 files, 57 MB); app/resources/boss_battles/ (90 files, 31 MB)",
+      "count_hint": "units: 696 plist atlases; boss_andromeda.png header reads 1024 x 1024",
+      "licence": "repo CC0 line only; origin is the commercial game",
+      "class": "C",
+      "note": "One atlas per unit. Frame keys are named '<unit>_<animation>_<index>.png' (units/boss_andromeda.plist:7). Read: plist key names and one png header (width and height from bytes 16 to 23). Pixel art style not viewed."
+    },
+    {
+      "kind": "portraits (hex-framed, two resolutions)",
+      "path": "app/resources/boss_battles/ (e.g. boss_andromeda_portrait_hex.png and the @2x version); app/resources/generals/ (124 files, 74 MB); app/resources/icons/ (746 files)",
+      "count_hint": "generals 124 files; icons 746 files; profile_icons 256 files",
+      "licence": "repo CC0 line only",
+      "class": "C",
+      "note": "Portraits use a '@2x' suffix for the high resolution set. Names only; images not viewed."
+    },
+    {
+      "kind": "maps, scenes, tiles, card backgrounds, FX, particles",
+      "path": "app/resources/maps/ (79 files, 67 MB); app/resources/scenes/ (128 files, 29 MB); app/resources/tiles/ (72 files); app/resources/card_backgrounds/ (138 files, 9.3 MB); app/resources/fx/ (423 files, 13 MB); app/resources/particles/ (145 files, 2.9 MB); app/resources/prismatic/ (13 files)",
+      "count_hint": "about 1,000 image files plus plists",
+      "licence": "repo CC0 line only",
+      "class": "C",
+      "note": "Prismatic rarity set: three gradient overlays (prismatic_gradient_blue/green/red.png) plus one atlas (prismatic_card.plist). Names only."
+    },
+    {
+      "kind": "music (m4a)",
+      "path": "app/resources/music/ (22 files, 63 MB); app/resources/codex/*_audio.m4a (inside codex/, 146 MB folder)",
+      "count_hint": "22 music files; per-battle-map tracks named music_battlemap*",
+      "licence": "repo CC0 line only; no per-track credit file found",
+      "class": "C",
+      "note": "Names read (for example music_battlemap_duskfall.m4a). Audio not played or opened."
+    },
+    {
+      "kind": "sound effects and announcer lines (m4a)",
+      "path": "app/resources/sfx/ (671 files, 20 MB)",
+      "count_hint": "671 files",
+      "licence": "repo CC0 line only",
+      "class": "C",
+      "note": "Faction announcer clips come in a first and second line per faction (sfx_announcer_lyonar_1st.m4a and _2nd). Names read only."
+    },
+    {
+      "kind": "fonts (ttf, woff)",
+      "path": "app/resources/fonts/ (31 files, 3.9 MB, including averta-*-webfont.ttf and Lato-*.ttf); app/original_resources/fonts/ (6 ttf, fontawesome-webfont.ttf, Lato)",
+      "count_hint": "31 + 6 font files, plus 1 woff and 1 eot",
+      "licence": "no licence file found in the repo for these fonts; repo CC0 line only",
+      "class": "C",
+      "note": "Font licences are not stated in the repo files. Not opened."
+    },
+    {
+      "kind": "original (pre-processed) source art",
+      "path": "app/original_resources/ (588 MB: 2,795 png, 433 jpg, 12 gif, 4 plist, 1 svg)",
+      "count_hint": "about 3,250 files",
+      "licence": "repo CC0 line only",
+      "class": "C",
+      "note": "Source art the runtime art was cut from. Not opened."
+    },
+    {
+      "kind": "localisation text (JSON, data half for names and descriptions)",
+      "path": "app/localization/locales/en/ (34 json files: cards.json, card_sets.json, factions.json, rarity.json, achievements.json, boss_battles.json and others); de/ and zh-tw/ also present (69 json files in all)",
+      "count_hint": "69 json files across 3 locales",
+      "licence": "repo CC0 line only",
+      "class": "C",
+      "note": "Card names and rules text are game text. Key shape read (cards.json:2 and key names); no text quoted beyond a key."
+    },
+    {
+      "kind": "card and rule definitions (code: data half for stats and effects)",
+      "path": "app/sdk/cards/ (84 .coffee files, including cardsLookupComplete.coffee); app/sdk/spells/ and app/sdk/step.coffee",
+      "count_hint": "84 card files",
+      "licence": "repo CC0 (code)",
+      "class": "A",
+      "note": "Code under CC0 by the repo's own line. Read: spellDoubleAttributeBuffs.coffee and the Step class line. Card stat values are in the code files, not read beyond the lookup list."
+    },
+    {
+      "kind": "third-party packages (code)",
+      "path": "packages/warlock/ (MIT per LICENSE line 1); packages/backfire/ (Firebase copyright per LICENSE line 1); packages/chroma-js and Backbone.VirtualCollection (licence not read)",
+      "count_hint": "4 package folders",
+      "licence": "as stated in each package's own LICENSE",
+      "class": "A",
+      "note": "Code only. The licence of chroma-js and Backbone.VirtualCollection was not read."
+    }
+  ],
+  "inspiration": [
+    "Copy the bonus, not the base: one spell reads a unit's current attack and health, subtracts the unit's base values, and applies only the leftover bonus to the target. If both leftovers are zero it does nothing (spellDoubleAttributeBuffs.coffee:15-21). Recreate as a modifier-stack rule: a spell copies a unit's accumulated buffs, not its base stats. Good for the parity row 3 and stat-modifier ideas.",
+    "One atlas per unit with frame keys that name the animation and the index (units/boss_andromeda.plist:7). Recreate as one sheet per creature with frame names like idle, attack and hit plus an index, so an animation player can pick frames by name.",
+    "Rarity shine as an overlay: a card rarity is shown with three gradient overlay files and one atlas, not a new card art (app/resources/prismatic/). Recreate as a rare-item shine: one gradient overlay per rarity colour, drawn over the item icon.",
+    "Hex-framed portraits with an @2x pair: boss portraits are cut in a hex frame and shipped at two resolutions (app/resources/boss_battles/). Recreate as a boss portrait in a frame that stays readable at 375 wide, with a high-resolution twin for retina screens.",
+    "Two-line announcer per faction: each faction has a first and second announcer line (app/resources/sfx/sfx_announcer_*). Recreate as a two-stage fight call (opening and first hit) per boss, with a distinct voice per boss.",
+    "One music bed per battle map: battle tracks are named per map and faction (app/resources/music/music_battlemap*). Recreate as a music bed per zone with a stinger for boss rooms. Maps to the sound-music topic: layering and ambience beds per biome.",
+    "Locale split by feature: 34 English locale files, one per feature (cards, battle, rift, codex, rank, tutorial), and each card has a name key and a description key (app/localization/locales/en/). Recreate with one locale file per feature and the same name-plus-description pair for items and abilities."
+  ],
+  "briefs": [
+    {
+      "label": "Bonus-copy spell",
+      "why": "A spell that rewards building up a unit rather than ignoring it. Reads at 375 wide as a small icon with a visible stat change.",
+      "keep": "Copy the difference between a unit's current and base stats, and apply only the difference. Do nothing when the difference is zero.",
+      "change": "Copy a different stat set (for example the speed bonus into a shield), and show the copied amount as a tick mark, not a number. Recreate as a clearly distinct original, never a copy.",
+      "ref": "app/sdk/spells/spellDoubleAttributeBuffs.coffee (lines 15-21)"
+    },
+    {
+      "label": "Hex-framed warden portrait",
+      "why": "A boss portrait in a hex frame reads at a small size and fits a card and a phone screen. The two-size set keeps it sharp on high-density screens.",
+      "keep": "Hex-shaped frame. Two sizes, the high one named with a @2x suffix.",
+      "change": "A round-cut frame with an ember ring, a different palette, and the portrait cropped to the head rather than the full figure. Recreate as a clearly distinct original, never a copy.",
+      "ref": "app/resources/boss_battles/ (portrait_hex file pair)"
+    },
+    {
+      "label": "Rarity shine overlay",
+      "why": "A rare item that shines without changing its art. Cheap to draw: one gradient overlay per colour.",
+      "keep": "A gradient overlay per rarity colour, drawn over the icon. A small atlas for the shine.",
+      "change": "Our shine moves across the item on a timer and sits on a dark frame, not a bright card. Recreate as a clearly distinct original, never a copy.",
+      "ref": "app/resources/prismatic/ (prismatic_card.plist; prismatic_gradient_*.png)"
+    },
+    {
+      "label": "Two-line boss call",
+      "why": "A boss that speaks twice, once on entry and once on its first hit, gives the fight two readable beats with sound alone.",
+      "keep": "Two lines per boss, the first at entry, the second at the first big hit.",
+      "change": "One voice per boss in a different register, not a faction announcer. Recreate as a clearly distinct original, never a copy.",
+      "ref": "app/resources/sfx/ (sfx_announcer_*_1st.m4a and _2nd.m4a)"
+    }
+  ],
+  "not_read": [
+    "Server half (server/, 2.9 MB): not read. Client half read in part (app/sdk/cards, app/sdk/spells, app/sdk/step.coffee, app/localization key names).",
+    "All art, music and sound: names, counts and sizes only. One unit png header read (width and height). No image or audio opened.",
+    "app/original_resources/ fonts and images: not opened.",
+    "Card stat values in app/sdk/cards/*.coffee: lookup file names only; no card body read.",
+    "Full locale text: not read (keys only from cards.json:2).",
+    "Licence full texts for cocos2d-html5 (app/vendor/cocos2d-html5/licenses/*.txt) and chroma-js: copyright lines only, not read in full.",
+    "Step class body beyond its declaration (app/sdk/step.coffee:5)."
+  ]
+}

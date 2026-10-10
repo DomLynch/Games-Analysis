@@ -1,0 +1,114 @@
+{
+  "donor": "psforever-PSF-LoginServer",
+  "code_licence": "GNU GPL v3 (LICENSE.md line 4 'Version 3, 29 June 2007'; README.md line 252 'GNU GPLv3. See LICENSE.md for the full copy.'). Source headers: '// Copyright (c) 2017 PSForever' (scripts/copyright.sh line 4).",
+  "asset_licence": "None stated. zonemaps/, guid-pools/, overrides/ and the other data folders carry no licence file or licence line in the repo files read. README and THANKS say nothing about the data's origin or licence.",
+  "rights_holder_status": "Community preservation project: README lines 5-6 'recreated login and world servers for PlanetSide 1 ... to preserve PlanetSide 1's unique gameplay and history'. README line 8 says the servers are built to work with PlanetSide version 3.15.84.0. The game client is not in the box. The data (zone placements, lattice, id pools, overrides) is game-format data, and the files do not say how it was produced or who holds its rights. THANKS.md line 16 credits packet captures (714 files) that are not in the box (none found by name, maxdepth 4). Status: unknown for the data; treat as restricted (C). No clean-room statement.",
+  "best_class": "C (all data groups; code is GPL v3 and is shape-only for Frankendom)",
+  "asset_groups": [
+    {
+      "kind": "zone object placements (JSON)",
+      "path": "src/main/resources/zonemaps/map01.json to map15.json, map96.json to map99.json (map files); ugd01 to ugd06 and zpl_ugd01 to zpl_ugd06 (underground and zone-variant files, not counted)",
+      "count_hint": "about 30,012 object entries across map*.json (ObjectType lines counted); map files 3.5K to 890K each; zonemaps folder 9.7M",
+      "licence": "none stated",
+      "class": "C",
+      "note": "Each entry: Id, ObjectName, ObjectType, Owner, AbsX, AbsY, AbsZ, Yaw, GUID, MapID, IsChildObject. Most common types (count): locker_cryo 4,373; gr_door_ext 3,361; gr_door_int 2,738; lock_small 2,638; zipline 2,570; order_terminal 1,959; manned_turret 1,205; spawn_tube_door 1,010; respawn_tube 1,010; painbox_radius_continuous 948. Object names are base names; not quoted here."
+    },
+    {
+      "kind": "lattice (base link graph, JSON)",
+      "path": "src/main/resources/zonemaps/lattice.json (22K); src/test/resources/zonemaps/lattice.json",
+      "count_hint": "33 keys: map01 to map10, map96 to map99, ugd01 to ugd06, intercontinental (26 links), caverns-c1 to c6 and six caverns pair keys; map keys hold 20 to 27 links each",
+      "licence": "none stated",
+      "class": "C",
+      "note": "Pairs of base names per map key: which bases link to which. Code adds each pair to the map (Zones.scala lines 417-420) and loads a separate intercontinental set (lines 749-753, 872)."
+    },
+    {
+      "kind": "id pools (JSON)",
+      "path": "src/main/resources/guid-pools/ (c1.json to c6.json, default.json; 27 JSON files in folder counting zonemaps split)",
+      "count_hint": "27 JSON files in guid-pools/; each c file about 98 bytes; default.json 1254 bytes",
+      "licence": "none stated",
+      "class": "C",
+      "note": "Start, Max and Selector per pool (c1.json holds one 'environment' pool: start 0, max 937, selector specific). Read: c1.json only; default.json header only."
+    },
+    {
+      "kind": "property overrides (adb lists)",
+      "path": "server/src/main/resources/overrides/game_objects0.adb.lst (124 lines), game_objects29, 30, 31, 32, game_objectstz.adb.lst",
+      "count_hint": "6 files; game_objects0 124 lines; 2.8K to 10K each",
+      "licence": "none stated",
+      "class": "C",
+      "note": "Lines of the form 'add_property <object> <property> <value>' overriding base item properties, e.g. equip and holster times. Sample lines read: the unit of the number is not stated in the file read."
+    },
+    {
+      "kind": "schema and notes (SQL, tex, md)",
+      "path": "server/src/main/resources/db/ (18 .sql files); notes/login-server.tex (protocol notes); README.md",
+      "count_hint": "18 sql files; 1 tex file",
+      "licence": "none stated",
+      "class": "D",
+      "note": "Database schema and protocol notes, text only. Not read for content. Not an asset for Frankendom."
+    },
+    {
+      "kind": "packet captures (not in box)",
+      "path": "none found by name at maxdepth 4; tools/decode-packets/ and tools/client/ (folders of source)",
+      "count_hint": "0 found by name",
+      "licence": "n/a",
+      "class": "D",
+      "note": "THANKS.md credits 714 capture files that are not in this tree. Nothing to use."
+    },
+    {
+      "kind": "images",
+      "path": "README.md image links point to cloud image hosts (not in the repo)",
+      "count_hint": "about 6 linked images, none in the tree",
+      "licence": "n/a",
+      "class": "D",
+      "note": "No image assets in the tree."
+    }
+  ],
+  "inspiration": [
+    "Base as a placed-object list: each object has a type, a position, a yaw, an id and a map id, so a whole base is data, not code (zonemaps/map01.json first entry lines 2-12). Recreate the schema for our zones with our own object types.",
+    "Base vocabulary: a small set of recurring object types (storage lockers, terminals, a respawn tube, a turret, a zipline, doors with interior and exterior versions) makes each base read the same way at a glance. Keep the repeat, change the forms (zonemaps/map01.json types, count table in the md).",
+    "Link graph per zone: a pair list per map says which bases connect, and a separate list links the zones (lattice.json; Zones.scala lines 417-420, 749-753). Keep the two-tier graph: local links per zone and one inter-zone list. Use for spawn routes and travel.",
+    "Toggled hazard volume: a sphere sitting slightly below the surface, an always-on flag that can be off, and a fixed small damage that hits health only (GlobalDefinitionsMiscellaneous.scala lines 861-870). Keep the toggle and the health-only rule; change the shape to a ring and the cadence to a visible pulse.",
+    "Respawn point as an object with a fixed delay field (ams_respawn_tube.Delay = 10 with a comment that 10 is temporary, default 1; GlobalDefinitionsMiscellaneous.scala lines 38-40). Keep a respawn delay as a field on the spawn object; change to our zone timing.",
+    "Overlay overrides: a separate list of per-item property overrides laid on top of base definitions (overrides/*.adb.lst). Keep the overlay layering for our balance values, change the values and the format.",
+    "Id pools per zone: a start and a max per pool so entity ids in different zones never collide (guid-pools/c1.json). Keep the block-per-zone rule; change the sizes."
+  ],
+  "briefs": [
+    {
+      "label": "Respawn pod with a delay",
+      "why": "A visible pod that brings a player back after a set wait gives every death a clear next step.",
+      "keep": "spawn point as an object with one delay field; a spawn-tube object placed in the zone that the player steps into",
+      "change": "our own pod shape and material; a countdown shown on the pod; a different delay per zone",
+      "ref": "src/main/scala/net/psforever/objects/global/GlobalDefinitionsMiscellaneous.scala lines 38-40"
+    },
+    {
+      "label": "Toggled hazard ring",
+      "why": "A hazard that can be switched on and off and hits health only reads as a rule the player can learn.",
+      "keep": "always-on flag that can be off; sphere offset below the surface; small fixed damage to health only",
+      "change": "ring shape instead of sphere; a pulse light on each tick; our own damage type",
+      "ref": "src/main/scala/net/psforever/objects/global/GlobalDefinitionsMiscellaneous.scala lines 861-870"
+    },
+    {
+      "label": "Two-tier base graph",
+      "why": "A link list per zone plus one list between zones gives travel and spawn routes without code per route.",
+      "keep": "pair list per zone; separate inter-zone list; links read from data at load",
+      "change": "our zone names; links drawn as a road or a river; a cost per link",
+      "ref": "src/main/resources/zonemaps/lattice.json; src/main/scala/net/psforever/zones/Zones.scala lines 417-420"
+    },
+    {
+      "label": "Zipline traversal",
+      "why": "A fast drop between two points changes how a map is read and gives a second route.",
+      "keep": "two fixed ends; a one-way or two-way use; a fast ride between them",
+      "change": "a rope bridge or vine instead of a steel cable; our own ride speed and sound",
+      "ref": "src/main/resources/zonemaps/map01.json (ObjectType zipline; grep for it, lines not checked)"
+    }
+  ],
+  "not_read": [
+    "src/main/scala (about 1,336 scala files) apart from the painbox definitions, respawn tube definition and lattice loader lines in Zones.scala; the server half is in src/ and server/, the game client is not in the box",
+    "zonemaps: map contents beyond the first object of map01 and the object-type counts; ugd and zpl_ugd files not opened",
+    "guid-pools other than c1.json and the default.json size",
+    "overrides lists beyond the first 3 lines of game_objects0.adb.lst; other override files not opened",
+    "db/*.sql (18 files) and notes/login-server.tex",
+    "tools/client and tools/decode-packets source folders (names only)",
+    "test resources other than lattice.json",
+    "README sections on setup (read for licence and client version only)"
+  ]
+}

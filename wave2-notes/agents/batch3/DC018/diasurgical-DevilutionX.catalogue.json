@@ -1,0 +1,572 @@
+{
+  "donor": "diasurgical-DevilutionX",
+  "counts": {
+    "creatures": 112,
+    "classes": 6,
+    "weapons": 48,
+    "gear_sets": 0,
+    "zones": 7
+  },
+  "count_notes": {
+    "creatures": "112 base rows in assets/txtdata/monsters/monstdat.tsv (lines 2-113) over 24 AI families; plus 100 unique rows in unique_monstdat.tsv over 27 AI tags",
+    "classes": "6 rows in assets/txtdata/classes/classdat.tsv",
+    "weapons": "48 base weapon rows in assets/txtdata/items/itemdat.tsv over 5 families",
+    "gear_sets": "no set-bonus system found; 35 armour base rows in 5 groups are counted as gear tiers",
+    "zones": "7 dungeon types in Source/levels/gendung_defs.hpp lines 16-22; plus 3 arena and 2 level set-piece maps and the town map"
+  },
+  "creature_families": [
+    {
+      "label": "Shambler",
+      "ai_tag": "Zombie",
+      "rows": 4,
+      "lines": "2-5",
+      "availability": "Always",
+      "depth_window_minDunLvl_maxDunLvl": "1-5",
+      "monster_level": "1-6",
+      "class_bucket": "Undead"
+    },
+    {
+      "label": "Bone blade line",
+      "ai_tag": "SkeletonMelee",
+      "rows": 23,
+      "lines": "10-102",
+      "availability": "8 Always, 4 Retail, 11 Never",
+      "depth_window_minDunLvl_maxDunLvl": "1-22",
+      "monster_level": "1-30",
+      "class_bucket": "Undead 12, Demon 5, Animal 6"
+    },
+    {
+      "label": "Bone archer",
+      "ai_tag": "SkeletonRanged",
+      "rows": 4,
+      "lines": "22-25",
+      "availability": "Always",
+      "depth_window_minDunLvl_maxDunLvl": "2-6",
+      "monster_level": "3-9",
+      "class_bucket": "Undead"
+    },
+    {
+      "label": "Bone king (single)",
+      "ai_tag": "SkeletonKing",
+      "rows": 1,
+      "lines": "52",
+      "availability": "Never",
+      "depth_window_minDunLvl_maxDunLvl": "4",
+      "monster_level": "9",
+      "class_bucket": "Undead"
+    },
+    {
+      "label": "Scurrying scavenger",
+      "ai_tag": "Scavenger",
+      "rows": 4,
+      "lines": "18-21",
+      "availability": "Always",
+      "depth_window_minDunLvl_maxDunLvl": "1-6",
+      "monster_level": "2-8",
+      "class_bucket": "Animal"
+    },
+    {
+      "label": "Fallen pack",
+      "ai_tag": "Fallen",
+      "rows": 8,
+      "lines": "6-17",
+      "availability": "Always",
+      "depth_window_minDunLvl_maxDunLvl": "1-5",
+      "monster_level": "1-7",
+      "class_bucket": "Animal"
+    },
+    {
+      "label": "Hopping bat",
+      "ai_tag": "Bat",
+      "rows": 4,
+      "lines": "40-43",
+      "availability": "Always",
+      "depth_window_minDunLvl_maxDunLvl": "2-8",
+      "monster_level": "3-13",
+      "class_bucket": "Animal 3, Demon 1"
+    },
+    {
+      "label": "Ambush hider",
+      "ai_tag": "Sneak",
+      "rows": 4,
+      "lines": "31-34",
+      "availability": "Retail",
+      "depth_window_minDunLvl_maxDunLvl": "2-10",
+      "monster_level": "5-13",
+      "class_bucket": "Demon"
+    },
+    {
+      "label": "Horned rusher",
+      "ai_tag": "Rhino",
+      "rows": 4,
+      "lines": "66-69",
+      "availability": "Retail",
+      "depth_window_minDunLvl_maxDunLvl": "7-12",
+      "monster_level": "13-19",
+      "class_bucket": "Animal"
+    },
+    {
+      "label": "Goat pair",
+      "ai_tag": "GoatMelee, GoatRanged",
+      "rows": 8,
+      "lines": "36-39, 44-47",
+      "availability": "Retail",
+      "depth_window_minDunLvl_maxDunLvl": "4-9",
+      "monster_level": "8-14",
+      "class_bucket": "Demon"
+    },
+    {
+      "label": "Fat brute",
+      "ai_tag": "Fat",
+      "rows": 4,
+      "lines": "54-57",
+      "availability": "Retail",
+      "depth_window_minDunLvl_maxDunLvl": "5-12",
+      "monster_level": "10-20",
+      "class_bucket": "Demon"
+    },
+    {
+      "label": "Acid spitter",
+      "ai_tag": "Acid",
+      "rows": 4,
+      "lines": "48-51",
+      "availability": "Retail",
+      "depth_window_minDunLvl_maxDunLvl": "6-14",
+      "monster_level": "11-25",
+      "class_bucket": "Animal"
+    },
+    {
+      "label": "Winged guardian",
+      "ai_tag": "Gargoyle",
+      "rows": 4,
+      "lines": "83-86",
+      "availability": "Retail",
+      "depth_window_minDunLvl_maxDunLvl": "5-12",
+      "monster_level": "9-23",
+      "class_bucket": "Demon"
+    },
+    {
+      "label": "Magma caster",
+      "ai_tag": "Magma",
+      "rows": 4,
+      "lines": "62-65",
+      "availability": "Retail",
+      "depth_window_minDunLvl_maxDunLvl": "8-11",
+      "monster_level": "13-18",
+      "class_bucket": "Demon"
+    },
+    {
+      "label": "Fire-man",
+      "ai_tag": "FireMan",
+      "rows": 4,
+      "lines": "74-77",
+      "availability": "Never",
+      "depth_window_minDunLvl_maxDunLvl": "21-24",
+      "monster_level": "16-22",
+      "class_bucket": "Demon"
+    },
+    {
+      "label": "Storm caster",
+      "ai_tag": "Storm",
+      "rows": 8,
+      "lines": "70-81",
+      "availability": "4 Never, 4 Retail",
+      "depth_window_minDunLvl_maxDunLvl": "8-24",
+      "monster_level": "12-24",
+      "class_bucket": "Demon"
+    },
+    {
+      "label": "Flame hulk",
+      "ai_tag": "Mega",
+      "rows": 4,
+      "lines": "87-90",
+      "availability": "Retail",
+      "depth_window_minDunLvl_maxDunLvl": "10-15",
+      "monster_level": "20-26",
+      "class_bucket": "Demon"
+    },
+    {
+      "label": "Weave-sprinter",
+      "ai_tag": "Snake",
+      "rows": 4,
+      "lines": "91-94",
+      "availability": "Retail",
+      "depth_window_minDunLvl_maxDunLvl": "11-16",
+      "monster_level": "21-27",
+      "class_bucket": "Demon"
+    },
+    {
+      "label": "Charm caster",
+      "ai_tag": "Succubus",
+      "rows": 4,
+      "lines": "103-106",
+      "availability": "Retail",
+      "depth_window_minDunLvl_maxDunLvl": "12-16",
+      "monster_level": "24-30",
+      "class_bucket": "Demon"
+    },
+    {
+      "label": "Fade-kite caster",
+      "ai_tag": "Counselor",
+      "rows": 5,
+      "lines": "107-113 (interleaved)",
+      "availability": "4 Retail, 1 Never",
+      "depth_window_minDunLvl_maxDunLvl": "13-21",
+      "monster_level": "25-30",
+      "class_bucket": "Demon"
+    },
+    {
+      "label": "Single bosses",
+      "ai_tag": "Butcher, Golem, final boss",
+      "rows": 3,
+      "lines": "53, 111, 112",
+      "availability": "Never",
+      "depth_window_minDunLvl_maxDunLvl": "1, 1, 26",
+      "monster_level": "1, 12, 30",
+      "class_bucket": "Demon"
+    }
+  ],
+  "top_creatures": [
+    {
+      "label": "Weave-sprinter",
+      "why": "Readable S-shape silhouette at 375 wide; one signature behaviour: sway, then a lunge at 2 tiles",
+      "keep": "six-step sway pattern; lunge trigger",
+      "change": "body shape, colour, add a rear-up telegraph before the lunge",
+      "ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/monster.cpp:2671 (pattern); SnakeAi 2669-2723; assets/txtdata/monsters/monstdat.tsv lines 91-94"
+    },
+    {
+      "label": "Rally drummer",
+      "why": "A caller that changes other enemies' goals, so a fight escalates",
+      "keep": "rally radius scaling with tier; timed attack goal",
+      "change": "trigger from a banner or totem, not only a self-heal roll; visible rally ring",
+      "ref": "Source/monster.cpp:2334-2357 (FallenAi rally); M_FallenFear at 4450; monstdat.tsv lines 6-17"
+    },
+    {
+      "label": "Fade-kite warlock",
+      "why": "A learnable cycle of retreat, vanish and return",
+      "keep": "retreat under half HP then fade back in; missile type picked by tier",
+      "change": "fade visual; short wind-up before each vanish",
+      "ref": "Source/monster.cpp:2724-2785 (CounselorAi), index at 2757; monstdat.tsv lines 107-113"
+    },
+    {
+      "label": "Winged guardian",
+      "why": "Retreats then heals, so the player must chase it",
+      "keep": "retreat until a range threshold, then heal",
+      "change": "heal from a relic or pool, not a free self-heal",
+      "ref": "Source/monster.cpp:2480-2508 (GargoyleAi), lines 2496 and 2501; monstdat.tsv lines 83-86"
+    },
+    {
+      "label": "Ambush hider",
+      "why": "Fade-in and fade-out at fixed distances is a strong silhouette tell",
+      "keep": "distance rule (5 minus tier)",
+      "change": "fade colour; tell sound (audio files absent, not judged)",
+      "ref": "Source/monster.cpp:2526-2577 (SneakAi), line 2532; monstdat.tsv lines 31-34"
+    },
+    {
+      "label": "Storm caster",
+      "why": "Distance-keeping caster that creates space in a fight",
+      "keep": "keep-distance plus lightning control missile",
+      "change": "remove the always-true walk branch (defect); add a telegraph",
+      "ref": "Source/monster.cpp:2013-2068 (AiRangedAvoidance), defect at 2052-2053, missile at 1966; monstdat.tsv lines 70-81"
+    },
+    {
+      "label": "Flame hulk",
+      "why": "Big ranged area threat with a melee fallback",
+      "keep": "mid-range inferno special; melee fallback",
+      "change": "flame colour; ground warning",
+      "ref": "Source/monster.cpp:2818-2878 (MegaAi); monstdat.tsv lines 87-90"
+    },
+    {
+      "label": "Final boss (single row)",
+      "why": "1666 max HP, 60 max damage, knockback flag, and a fixed special damage in code",
+      "keep": "ranged-avoidance boss with a special",
+      "change": "use a phase structure we design; the donor has one row only",
+      "ref": "monstdat.tsv line 112; Source/monster.cpp:2023 (special damage 40)"
+    }
+  ],
+  "classes": [
+    {
+      "name": "Warrior",
+      "role": "melee",
+      "signature": "CriticalStrike: critical chance equals character level percent, doubles damage",
+      "progression": "base and max stats, life and mana per level; 50-level XP table",
+      "ref": "assets/txtdata/classes/warrior/attributes.tsv line 2; Source/player.cpp:574-577"
+    },
+    {
+      "name": "Rogue",
+      "role": "ranged and trap-aware",
+      "signature": "TrapSense: trapped chests and doors labelled in info box",
+      "progression": "same table shape; higher ranged to-hit",
+      "ref": "assets/txtdata/classes/rogue/attributes.tsv; Source/objects.cpp:4908-4909"
+    },
+    {
+      "name": "Sorcerer",
+      "role": "caster",
+      "signature": "no class flag; magic cap 250, magic to-hit 70 at start",
+      "progression": "lvlMana 2 (tied with rogue, monk, bard); adjMana -2 at start in attributes.tsv",
+      "ref": "assets/txtdata/classes/sorcerer/attributes.tsv"
+    },
+    {
+      "name": "Monk",
+      "role": "support and healing",
+      "signature": "no class flag; highest Heal Other multiplier (3)",
+      "progression": "stat caps around 150 to 80",
+      "ref": "assets/txtdata/classes/monk/attributes.tsv"
+    },
+    {
+      "name": "Bard",
+      "role": "dual wield",
+      "signature": "DualWield: one-handed sword or mace in both hands",
+      "progression": "mid stats across the board",
+      "ref": "assets/txtdata/classes/bard/attributes.tsv; Source/inv.cpp:220-226"
+    },
+    {
+      "name": "Barbarian",
+      "role": "heavy melee and resist",
+      "signature": "CriticalStrike, IronSkin (armour + level/4), NaturalResistance (resists + level)",
+      "progression": "highest strength and vitality caps; no magic",
+      "ref": "assets/txtdata/classes/barbarian/attributes.tsv line 2; Source/items.cpp:2600-2601, 2611-2615"
+    }
+  ],
+  "weapon_families": [
+    {
+      "family": "sword",
+      "rows": 16,
+      "hands": "14 one-handed, 2 two-handed",
+      "levels": "1-17",
+      "durability": "8-100"
+    },
+    {
+      "family": "bow",
+      "rows": 9,
+      "hands": "two-handed",
+      "levels": "1-19",
+      "durability": "30-60"
+    },
+    {
+      "family": "staff",
+      "rows": 8,
+      "hands": "two-handed",
+      "levels": "1-12",
+      "durability": "25-75"
+    },
+    {
+      "family": "mace",
+      "rows": 8,
+      "hands": "one-handed (7), two-handed (1)",
+      "levels": "1-10",
+      "durability": "20-50"
+    },
+    {
+      "family": "axe",
+      "rows": 7,
+      "hands": "two-handed",
+      "levels": "2-12",
+      "durability": "10-75"
+    }
+  ],
+  "gear_tiers": [
+    {
+      "group": "heavy armour",
+      "rows": 6,
+      "armour": "0-75",
+      "durability": "40-100",
+      "levels": "0-25"
+    },
+    {
+      "group": "medium armour",
+      "rows": 5,
+      "armour": "0-35",
+      "durability": "40-65",
+      "levels": "0-17"
+    },
+    {
+      "group": "light armour",
+      "rows": 8,
+      "armour": "1-17",
+      "durability": "6-45",
+      "levels": "1-9"
+    },
+    {
+      "group": "helm",
+      "rows": 9,
+      "armour": "0-18",
+      "durability": "15-60",
+      "levels": "0-20"
+    },
+    {
+      "group": "shield",
+      "rows": 7,
+      "armour": "1-20",
+      "durability": "16-60",
+      "levels": "1-23"
+    },
+    {
+      "tier_signal": "magic items: blue name (ColorBlue); unique items: gold-white name (ColorWhitegold)",
+      "ref": "Source/items.h:432-442"
+    },
+    {
+      "tier_signal": "affixes: prefix 1 in 4 (FlipCoin(4)), suffix 2 in 3 (!FlipCoin(3)); one forced if neither",
+      "ref": "Source/items.cpp:1181-1191"
+    }
+  ],
+  "zones": [
+    {
+      "name": "town",
+      "type": "DTYPE_TOWN",
+      "notes": "town map assets/levels/towndata/automap.dun"
+    },
+    {
+      "name": "cathedral",
+      "type": "DTYPE_CATHEDRAL",
+      "notes": "drlg_l1 by file name; special theme rooms (InitThemes, themes.cpp 826-861)"
+    },
+    {
+      "name": "catacombs",
+      "type": "DTYPE_CATACOMBS",
+      "notes": "drlg_l2 by file name"
+    },
+    {
+      "name": "caves",
+      "type": "DTYPE_CAVES",
+      "notes": "drlg_l3 by file name; colour-band palette cycle (palette.cpp 365)"
+    },
+    {
+      "name": "hell",
+      "type": "DTYPE_HELL",
+      "notes": "drlg_l4 by file name; blood-wall lighting; lighting table rotate (diablo.cpp 3523-3524)"
+    },
+    {
+      "name": "nest",
+      "type": "DTYPE_NEST",
+      "notes": "uses drlg_l3 branch (drlg_l3.cpp 1496); monsters carry light radius 9 (missiles.cpp 1338)"
+    },
+    {
+      "name": "crypt",
+      "type": "DTYPE_CRYPT",
+      "notes": "crypt.cpp; lava pulse every other frame and glow every frame (palette.cpp 370-371)"
+    }
+  ],
+  "looks": [
+    {
+      "label": "Palette remap per variant",
+      "technique": "one sprite set recoloured by a remap table per variant (66 remap files for monsters)",
+      "ref": "assets/txtdata/monsters/monstdat.tsv column 5 (trnFile)"
+    },
+    {
+      "label": "Zone palette cycling",
+      "technique": "caves cycle colours 1-31; hell rotates the lighting table; crypt pulses lava every other frame and glows every frame",
+      "ref": "Source/engine/palette.cpp:363-367, 370-380; Source/lighting.cpp:477; Source/diablo.cpp:3514-3525"
+    },
+    {
+      "label": "Hell blood-wall lighting",
+      "technique": "per-shade lighting table for blood walls on hell levels",
+      "ref": "Source/engine/light_tables.cpp (hell branch, around lines 52-63)"
+    },
+    {
+      "label": "Shade ladder",
+      "technique": "16 light tables of 256 entries; last one pitch black",
+      "ref": "Source/engine/light_tables.cpp:20-48"
+    },
+    {
+      "label": "Rarity name colour",
+      "technique": "name colour alone signals magic (blue) and unique (gold-white)",
+      "ref": "Source/items.h:432-442"
+    },
+    {
+      "label": "Monster light radius",
+      "technique": "a light of radius 9 on nest levels, 3 elsewhere",
+      "ref": "Source/missiles.cpp:1338-1339"
+    },
+    {
+      "label": "Unique boss info panel",
+      "technique": "unique name in gold-white and history text in info box",
+      "ref": "Source/control/control_infobox.cpp:422-424"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Coil Stalker",
+      "idea": "a weave-then-lunge pursuer that lunges at two tiles",
+      "keep": "sway-then-lunge with a range trigger",
+      "change": "zigzag with pauses, our silhouette, a wind-up tell"
+    },
+    {
+      "name": "Rally Drummer",
+      "idea": "a caller that rallies allies in a radius that grows with tier",
+      "keep": "radius scaling and the timed attack goal",
+      "change": "triggered by a banner object; visible ring"
+    },
+    {
+      "name": "Fade-kite Warlock",
+      "idea": "retreats under half HP, vanishes, returns, picks a missile by tier",
+      "keep": "the cycle and the tier-picked missile",
+      "change": "visuals and a longer wind-up"
+    },
+    {
+      "name": "Zone Director (parity row 23)",
+      "idea": "population from walkable area divided by a constant; group size by depth; leashed boss escort within 3 tiles",
+      "keep": "the counts and the leash",
+      "change": "fix the group walk (deltaY); add despawn on empty with a grace timer and respawn timers, which this donor lacks"
+    },
+    {
+      "name": "Zone Glow",
+      "idea": "per-zone palette cycling at different rates",
+      "keep": "cheap ambience with no extra sprites",
+      "change": "our colours and rates"
+    },
+    {
+      "name": "Alignment-locked affixes",
+      "idea": "prefix and suffix rolls with a useful-only restriction and a good or evil lock",
+      "keep": "the lock and the useful-only restriction",
+      "change": "weights and names"
+    },
+    {
+      "name": "Level-scaled crit",
+      "idea": "critical chance equal to character level percent, doubling damage",
+      "keep": "scaling with level",
+      "change": "cap near 20 percent and tie it to a class trait"
+    }
+  ],
+  "defects": [
+    {
+      "ref": "Source/monster.cpp:341",
+      "defect": "group walk moves yp by deltaX, not deltaY (the comment names the intended fix)",
+      "fix": "use .deltaY"
+    },
+    {
+      "ref": "Source/monster.cpp:2052-2053",
+      "defect": "roll is GenerateRnd(100) but threshold is 1000 * (intelligence + 5), so the branch always fires",
+      "fix": "scale the threshold to the roll, then tune"
+    },
+    {
+      "ref": "Source/player.cpp:574-577 and 742-745",
+      "defect": "two critical blocks in different functions; order against item percent bonus not traced",
+      "fix": "one shared helper"
+    },
+    {
+      "ref": "Source/monster.cpp:1448",
+      "defect": "app_fatal on unexpected quest state in the talk path",
+      "fix": "log and return"
+    },
+    {
+      "ref": "Source/monster.cpp:3730-3736",
+      "defect": "scatter loop may not end if PlaceGroup places nothing (suspected, not run)",
+      "fix": "retry cap"
+    }
+  ],
+  "licence_note": "Sustainable Use License 1.0, non-commercial use only (LICENSE.md line 1); assets under the same licence by location (README.md line 82); Blizzard copyright notice (README.md line 86); origin of in-tree art not stated (AU015). Clean-room, shape only.",
+  "not_read": [
+    "Art (CLX, TRN, DUN, PAL, PNG) beyond names and counts (AU015)",
+    "Walk density per 20 seconds of walking (not measured; InitObjects read only as structure, objects.cpp 3812-3880)",
+    "ProcessMonsters (monster.cpp 4257) and death and corpse code (MonsterDeath 1498; dead.cpp)",
+    "Themes beyond InitThemes; drlg_l1 to l4 generator bodies; crypt.cpp; palette_update_hive",
+    "Hellfire mod bodies (mods/hf txtdata); only manifest and file list read",
+    "Readability at 375 wide; touch UX (controls/); loot drop ceremony and inspect flow",
+    "Meaning of the Stream flag in sound/effects.tsv; audio files absent",
+    "Monster AI helpers beyond those cited (AiAvoidance, ZombieAi, SkeletonAi and the quest-boss AI functions)",
+    "Server and multiplayer half (dvlnet) not read; OpenDiablo2 not read and not a paired half",
+    "Unique rows: aggregated columns only; unique names not reproduced"
+  ],
+  "creature_families_note": "depth window (minDunLvl/maxDunLvl) decides where a monster appears (IsMonsterAvailable, monster.cpp 3154-3162); monster level is the separate level column"
+}

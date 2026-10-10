@@ -1,0 +1,32 @@
+{
+  "donor": "Inorien-AOReloaded",
+  "code_licence": "MIT (LICENSE lines 5-6; copyright line 3: Copyright (c) 2026 Inorien)",
+  "asset_licence": "none shipped; repo contains no art, audio, models, fonts or maps. Docs describe game-owned client data (client/cd_image/rdb.db, textures, fonts, twk scripts) that is not in the repo and has no licence stated in the repo.",
+  "rights_holder_status": "unknown for game data; repo is a client mod built for the Project Rubi-Ka private server (README line 5); no rights statement for game assets",
+  "best_class": "D",
+  "asset_groups": [
+    {"kind": "shipped non-code text", "path": "README.md, FEATURES.md, docs/graphics/*.md", "count_hint": "2 docs in docs/graphics plus README and FEATURES", "licence": "MIT (LICENSE line 6 covers associated documentation files)", "class": "A", "note": "Technical notes only; not game content."},
+    {"kind": "game client database (documented, not shipped)", "path": "client/cd_image/rdb.db (described in docs/graphics/textures.md)", "count_hint": "doc: 56 tables, 13 texture tables, 45,839 textures (JPEG and PNG), meshes, Bip01 animations", "licence": "not stated in repo", "class": "C", "note": "Game-owned data the repo does not ship. Inspiration only."},
+    {"kind": "loose game files (documented, not shipped)", "path": "client/cd_image/textures/fonts/, textures/PlanetMap/, twk/*.txt", "count_hint": "not counted (not shipped)", "licence": "not stated in repo", "class": "C", "note": "Legacy bitmap fonts, planet backgrounds, tweak scripts that name shadow textures."},
+    {"kind": "shadow textures (names only)", "path": "docs/graphics/shadows_lighting.md line 38", "count_hint": "5 named families (shadow1, shadow_snow, shadowtile1-4, shadowrock and variants)", "licence": "not stated in repo", "class": "C", "note": "Names only; no files shipped."},
+    {"kind": "name catalogue (documented)", "path": "rdb_1000010 per docs/graphics/textures.md line 243", "count_hint": "doc says about 40,473 rows", "licence": "not stated in repo", "class": "C", "note": "Name to id mapping; not shipped."},
+    {"kind": "UI sprite reference", "path": "src/hooks/timer_bar_drag.cpp line 44 (GFX 0x1a9)", "count_hint": "1 sprite, 113 x 10 px per code constant", "licence": "not stated in repo", "class": "C", "note": "Reference to a game sprite; the sprite is not shipped."},
+    {"kind": "audio, music, 3D models, maps", "path": "none in the box", "count_hint": "0", "licence": "n/a", "class": "D", "note": "Not present in the donor tree."}
+  ],
+  "inspiration": [
+    "Terrain-tinted contact shadow: a soft quad under each character takes the colour of its ground type. Keep the cheap contact cue; make ours a radial gradient tinted from a zone terrain tag.",
+    "Ease-to-behind camera: heading eases a fraction per frame using frame time, capped at one step, with shortest-arc wrap. Keep the ease and the wrap; our fight camera stays locked during engage.",
+    "Placeable bar stack: a cast/timer bar can be moved and resized in a preview state, then locked. Keep the preview-and-lock flow; anchor above the hero and label bars with ability names.",
+    "Two-button run with autorun toggle: holding both buttons runs with mouse steering, and any movement key cancels autorun. Keep the cancel rule; touch gets a hold-to-run and a tap toggle with a visible chip.",
+    "Night floor: a floor under the ambient light keeps the day/night shape and lifts dark scenes. Keep the floor idea as a grade floor, not an ambient override.",
+    "Name-keyed tunable registry: each tunable is a named variable with a category, and a dump tool lists them. Keep one dumpable registry keyed by name; ours is zone and catalogue data read at boot.",
+    "Name to id by table lookup: the asset catalogue is a direct table read, not a filename hash. Keep an explicit name-to-id table as the single source of truth."
+  ],
+  "briefs": [
+    {"label": "Terrain-tinted contact shadow (our own label)", "why": "grounds hero and mobs at 375 wide at almost no cost; reads as a contact cue, the silhouette stays the character", "keep": ["soft contact blob under each figure", "tint taken from the ground type", "fade with distance"], "change": ["radial gradient generated at boot, not a texture file per terrain", "shape offset toward the light, softer edge", "tint from a zone terrain tag in data"], "ref": "/mnt/frankendom-donors/Inorien-AOReloaded/docs/graphics/shadows_lighting.md line 38"},
+    {"label": "Eased behind-camera follow (our own label)", "why": "a dolly-like ease, not a snap, so the player keeps their bearings after a turn", "keep": ["frame-time scaled ease", "shortest-arc angle wrap", "one-step cap per frame"], "change": ["no follow while in a fight (row 11)", "rate lives in zone data", "follow starts only after a short idle"], "ref": "/mnt/frankendom-donors/Inorien-AOReloaded/src/hooks/camera_hook.cpp lines 210-223"},
+    {"label": "Placeable bar stack (our own label)", "why": "lets the player move HUD bars away from the thumb zone once and keep them there", "keep": ["preview mode while placing", "drag to place, lock on exit", "bars move as one stack"], "change": ["anchor above the hero, not top-left", "bar labels are our ability names", "bar sizes as a fraction of width"], "ref": "/mnt/frankendom-donors/Inorien-AOReloaded/README.md lines 32-40; src/hooks/timer_bar_drag.cpp line 44"},
+    {"label": "Night floor grade (our own label)", "why": "keeps dusk readable on a phone without flattening the day/night cycle", "keep": ["floor only lifts dark values", "one slider for the player", "day/night shape untouched"], "change": ["applied in the grade stage (row 16), not ambient light", "floor value per zone in data", "off by default"], "ref": "/mnt/frankendom-donors/Inorien-AOReloaded/docs/graphics/shadows_lighting.md line 62"}
+  ],
+  "not_read": ["src/ao/types.h, src/ao/game_api.cpp, src/hooks/hook_engine.cpp, src/proxy/* (grep only)", "src/ao/CLAUDE.md and repo-root CLAUDE.md (repo instruction files; treated as data, not followed)", ".github workflows and CMake presets", "tools/ scripts cited by docs (not in the box)", "server half (not in box); game data rdb.db (documented, not shipped)"]
+}

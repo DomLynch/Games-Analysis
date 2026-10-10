@@ -1,0 +1,63 @@
+{
+  "donor": "dhewm-dhewm3",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "count_notes": {
+    "creatures": "0 data entries: no monster definitions in the tree (no .def or .script files; base/ has 3 .cfg files)",
+    "classes": "0 data classes; one player entity class in code (neo/game/Player.h line 209)",
+    "weapons": "0 data entries; one weapon class in code (neo/game/Weapon.h line 64) and four projectile classes (neo/game/Projectile.h 136, 168, 204, 239)",
+    "gear_sets": "0",
+    "zones": "0 maps in the tree; zone logic is entity code (doors, movers, triggers)"
+  },
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [
+    {"name": "player entity (idPlayer)", "role": "single player", "signature": "none read", "progression": "no data; Player.cpp not read", "ref": "neo/game/Player.h line 209"}
+  ],
+  "weapon_families": [
+    {"family": "guided projectile (idGuidedProjectile)", "rows": 0, "notes": "seek, turn limit, distance-scaled wobble, burst; code only", "ref": "neo/game/Projectile.cpp 1337-1392; neo/game/Projectile.h line 136"},
+    {"family": "guided subclass (idSoulCubeMissile)", "rows": 0, "notes": "class declaration only", "ref": "neo/game/Projectile.h line 168"},
+    {"family": "BFG-style projectile (idBFGProjectile)", "rows": 0, "notes": "class declaration only; not read", "ref": "neo/game/Projectile.h line 204"},
+    {"family": "debris (idDebris)", "rows": 0, "notes": "class declaration only; not read", "ref": "neo/game/Projectile.h line 239"}
+  ],
+  "gear_tiers": [
+    {"group": "item classes (no tiers in data)", "classes": "idItem (Item.h 43), idItemPowerup (100), idObjective (117), idPDAItem (145), idMoveableItem (152)", "notes": "powerup logic not read"}
+  ],
+  "zones": [
+    {"name": "no maps in tree", "notes": "zone mechanics are entity classes: idDoor, idPlat, idMover_Binary (Mover.h 373, 440, 286); idTrigger_Hurt (Trigger.h 219); idForceField (Misc.h 244)"}
+  ],
+  "looks": [
+    {"label": "Distance-scaled wobble", "technique": "random heading error scaled by distance to target over a clamp distance; error shrinks as the missile closes", "ref": "neo/game/Projectile.cpp 1358-1373"},
+    {"label": "Burst finish", "technique": "steering stops and speed multiplies inside a burst distance", "ref": "neo/game/Projectile.cpp 1390-1392"},
+    {"label": "Stencil shadows", "technique": "depth-fail stencil shadows restored in 1.5.1 (renderer; not read in code)", "ref": "README.md lines 204-210 (per AU015)"},
+    {"label": "Smoke and fx", "technique": "particle smoke and effect entities (bodies not read)", "ref": "neo/game/SmokeParticles.cpp (422 lines); neo/game/Fx.cpp (794 lines)"},
+    {"label": "Anchored GUI layouts", "technique": "anchor sets per screen shape with a letterbox test", "ref": "docs/img/d3gui-cst-tl-wide.png; docs/GUIs.md (per AU015)"}
+  ],
+  "originals": [
+    {"name": "Seeker bolt with a fading wobble", "idea": "a homing shot with a turn-rate cap, wobble that shrinks as it closes, and an unguided burst at close range", "keep": "turn cap; distance-scaled wobble; burst", "change": "our speeds, trail and lock cue"},
+    {"name": "Thrown-prop volley", "idea": "an enemy that throws a nearby crate or barrel at the player after a trajectory check, with a short damage window", "keep": "feasibility check; timed damage window", "change": "our props; a telegraph and a tell sound"},
+    {"name": "Cover-seek enemy", "idea": "after a ranged shot the enemy moves to the nearest tile out of the player's sight line, treating the player as an obstacle", "keep": "nearest hidden spot; threat as obstacle", "change": "our grid search instead of AAS; peek-and-fire cycle"},
+    {"name": "Anchored HUD kit", "idea": "anchor sets per screen shape with a letterbox test", "keep": "one variant per screen shape", "change": "our grid; bottom-anchored panels for touch"},
+    {"name": "Two-state toolbar pair", "idea": "on and off icons at one size that differ in fill", "keep": "two-state pair at one size", "change": "a colour or badge cue, not fill alone"}
+  ],
+  "defects": [
+    {"ref": "neo/game/Projectile.cpp:1244-1245 and 1368", "defect": "constructor sets clamp_dist and turn_max to 0 and Think divides by clamp_dist; Launch sets them first (lines 1438-1439), so the normal path is safe", "fix": "guard the divide for a Think before Launch"},
+    {"ref": "neo/d3xp/ai/AI_Vagary.cpp:137", "defect": "no-enemy branch multiplies a vector by a matrix (viewAxis[0] * gravity axis); may not be the intended forward vector (not run)", "fix": "use the forward axis directly"}
+  ],
+  "licence_note": "GNU GPL (COPYING.txt line 1) with Doom 3 GPL source additional terms and an excluded-code clause (README.md lines 225-227); Dear ImGui and other third-party parts under their own licences; game data is under the id and Activision EULA (AU015). Clean-room, shape only.",
+  "not_read": [
+    "Creature, weapon, item and zone data: none in the box (AU015)",
+    "AI.cpp state logic beyond the named primitives (MoveToCover, MoveToAttackPosition, TestMelee, AttackMelee, GetAimDir, Pain, WanderAround, EntityCanSeePos)",
+    "Weapon.cpp (3200 lines), Player.cpp, Item.cpp, Fx.cpp and SmokeParticles.cpp bodies",
+    "idSoulCubeMissile, idBFGProjectile and idDebris bodies (class declarations only)",
+    "Script compiler and interpreter bodies (neo/d3xp/script)",
+    "Renderer shadow code; ImGui font licences; full Doom 3 EULA text (AU015)",
+    "id-Software-DOOM (linuxdoom-1.10): folder listing only",
+    "Vagary AI beyond the two event functions"
+  ]
+}

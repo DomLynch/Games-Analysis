@@ -1,0 +1,35 @@
+{
+  "donor": "wowserhq-wowser",
+  "code_licence": "MIT (LICENSE line 3 'Copyright (c) 2012-2018 Wowser Contributors'; package.json line 7 \"license\": \"MIT\")",
+  "asset_licence": "No licence file for the 10 PNG UI images. The MIT LICENSE speaks of the 'Software' and does not say whether it covers images; class C. No audio, fonts, models, maps or string files in the box. Game data is read at runtime from the user's own client.",
+  "rights_holder_status": "unknown: README says a copy of the official Wrath client is required (line 37) and says not to distribute game data you do not own (line 119); the repo does not say who holds the PNG art; no clean-room statement",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "ui_frame_png", "path": "src/components/wowser/ui/frame/images/panel.png, panel-headless.png, thin.png, thick.png; src/components/wowser/ui/frame/dividers/images/horizontal.png, thick-horizontal.png", "count_hint": "6 files; panel 206x206 px and thin 300x300 px from PNG header; others not measured", "licence": "not stated (MIT LICENSE scope unclear for images)", "class": "C", "note": "Nine-slice border art used via CSS border-image (frame/index.styl lines 23, 34, 44, 63). Pixel content not opened."},
+    {"kind": "hud_portrait_png", "path": "src/components/game/portrait/images/portrait.png, icon-portrait.png", "count_hint": "2 files; portrait 178x59 px, icon 66x66 px from PNG header", "licence": "not stated (MIT LICENSE scope unclear for images)", "class": "C", "note": "Unit plate and icon used as CSS backgrounds (portrait/index.styl line 6)."},
+    {"kind": "logo_favicon_png", "path": "src/components/wowser/images/logo.png; public/favicon.png", "count_hint": "2 files; logo 204x47 px, favicon 65x65 px from PNG header", "licence": "not stated (MIT LICENSE scope unclear for images)", "class": "C", "note": "Branding images of the project. Licence not stated per file."},
+    {"kind": "code_styl_jsx", "path": "src/components/**/*.styl (16 files), src/components/**/*.jsx (14 files), src/lib/**/*.js (74 files)", "count_hint": "104 code files", "licence": "MIT (repo-wide)", "class": "A", "note": "Code and styling, not assets. Keep the copyright notice if reused."},
+    {"kind": "game_data_runtime", "path": "user's client MPQ archives (src/lib/server/pipeline/archive.js lines 6-20 chain) and DBFilesClient\\<name>.dbc (src/lib/pipeline/dbc/loader.js line 9)", "count_hint": "0 in box", "licence": "none in repo", "class": "D", "note": "Read at runtime from the user's own install. Not in the box. Table names used: CreatureDisplayInfo, CreatureModelData (src/lib/game/unit.js lines 44, 49), Map (src/lib/game/world/map.js line 126)."}
+  ],
+  "inspiration": [
+    "Nine-slice frames: one PNG per weight (thin, thick, panel) plus a headless panel with a smaller border (src/components/wowser/ui/frame/index.styl lines 23, 34, 44, 63). A cheap family of frames from one texture each.",
+    "A dark plate offset slightly outside each frame on a lower layer (frame/index.styl lines 10-19) gives contrast against bright scenes without a border colour.",
+    "Unit plate: a round icon overlapping the left edge of the plate, name to the right of it, level in the corner, a divider below (portrait/index.styl). Reads self and target in one glance.",
+    "HUD shows the target plate only when a target exists (src/components/game/hud/index.jsx lines 16-17). The default is empty and the UI grows with the fight.",
+    "Table-by-name joins: creature id to CreatureDisplayInfo to CreatureModelData (src/lib/game/unit.js lines 44-49). A clean chain for our catalogue (id, display, model) once we write our own rows.",
+    "Ordered content patch chain: archives listed in order, later patches overwrite earlier ones (src/lib/server/pipeline/archive.js lines 6-20). Our zones-as-data could use a base file plus overlays the same way."
+  ],
+  "briefs": [
+    {"label": "Unit plate with overlapping icon", "why": "Wide plate, round icon hanging off the left edge, name and level inline; reads who is who at 375 wide. Silhouette: plate plus overhanging circle. Signature sound or effect: none in the box.", "keep": ["icon overlapping the plate edge to draw the eye", "name left of level, divider beneath", "one plate per unit, same layout for self and target"], "change": ["a tall chamfered plate in our own shape, not the donor's wide plate", "icon ring in our palette and our own display face", "threat as a bar on the bottom edge instead of decoration; recreate from scratch as an original, never copy the art"], "ref": "src/components/game/portrait/index.styl; src/components/game/portrait/images/portrait.png (178x59 px)"},
+    {"label": "Headless framed panel", "why": "Nine-slice panel from one texture, with a smaller-border variant when there is no title bar; cheap to make a family of frames at any width.", "keep": ["one border texture stretched with slice insets", "two border weights for two kinds of panel", "a dark offset plate behind the frame for contrast"], "change": ["chamfered corners and no ornament", "our own edge art, drawn from scratch", "a different slice size so no two frames look alike"], "ref": "src/components/wowser/ui/frame/index.styl lines 21-63; images/panel-headless.png"},
+    {"label": "Target plate only with a target", "why": "A second plate appears only when a target exists, so empty space is the default and the UI grows with the fight.", "keep": ["conditional second plate", "empty default with no target"], "change": ["on phones the target plate stacks above the self plate", "threat shown as an edge colour, not a name colour", "a different plate shape from the self plate, recreated as our own"], "ref": "src/components/game/hud/index.jsx lines 16-17"}
+  ],
+  "not_read": [
+    "src/lib/pipeline/m2, adt and wmo model and terrain loaders (names only)",
+    "Worker pool, net/socket, auth and realms code",
+    "Chat, stats and quests components beyond the HUD and portrait files",
+    "PNG pixel content (binary, not opened)",
+    "bin/serve, package-lock.json",
+    "Half: pipeline and UI read; the DBC and MPQ data files are not in the box and the matching client half is wowserhq-client"
+  ]
+}

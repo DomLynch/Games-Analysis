@@ -1,0 +1,81 @@
+{
+  "donor": "OpenDUNE-OpenDUNE",
+  "code_licence": "GNU GPL v2.0 per COPYING (COPYING:2 'Version 2, June 1991') and README.txt:8 ('OpenDUNE is licensed under the GNU General Public License version 2.0').",
+  "asset_licence": "No asset files are in the repo. README.txt:64 says to copy the original Dune II 1.07 data files (including dune2.exe) into data/. The repo files give no licence for the original data, which the user supplies. Icon files in os/ have no own licence line; they fall under the repo's GPL-2.0 by default.",
+  "rights_holder_status": "uses original game data: the engine needs the user's own copy of Dune II 1.07 data files (README.txt:64). Original developer named in README.txt:4 ('originally made by Westwood Studios, and released by Virgin Entertainment'). The repo does not state the current rights holder.",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "game data tables written in C (unit, structure, house, landscape, explosion, animation, sound, widget, window)",
+      "path": "src/table/unitinfo.c; src/table/structureinfo.c; src/table/houseinfo.c; src/table/landscapeinfo.c; src/table/explosion.c; src/table/animation.c; src/table/sound.c; src/table/widgetinfo.c; src/table/windowdesc.c; src/table/actioninfo.c; src/table/teamaction.c; src/table/tilediff.c; src/table/selectiontype.c; src/table/movementtype.c; src/table/houseanimation.c",
+      "count_hint": "16 table files; unitinfo.c declares g_table_unitInfo[UNIT_MAX] (line 14); about 108 brace lines in unitinfo.c, 149 in structureinfo.c, 292 in explosion.c, 359 in animation.c (brace lines, not entries)",
+      "licence": "repo GPL-2.0 (code); origin of the values not stated in the files",
+      "class": "C",
+      "note": "This is the data half, as code. Rows hold names, sprite file names (for example 'carryall.wsa' at unitinfo.c:20), flags, and effect and animation command lists. Read: unitinfo.c lines 1-30, explosion.c lines 1-14, animation.c lines 1-10."
+    },
+    {
+      "kind": "string IDs (enum) and loader for the text pack",
+      "path": "src/table/strings.h (enum of string IDs, 536 entries; STR_ATTACK at line 8); src/string.c (String_Load at line 110; String_Init at line 170); src/file.c (PAK file cache)",
+      "count_hint": "536 string ID entries; text itself is in the user's PAK data",
+      "licence": "text not in repo; ID enum is repo GPL-2.0",
+      "class": "C",
+      "note": "The IDs are stable keys; the text lives in the original data pack. Good model for our locale keys. Text not quoted."
+    },
+    {
+      "kind": "application icons",
+      "path": "os/png_icon/opendune_16x16.png; os/png_icon/opendune_32x32.png; os/png_icon/dune2_32x32.png; os/macosx/opendune.icns; os/macosx/dune2.icns; os/win32/opendune.ico; os/win32/dune2.ico",
+      "count_hint": "3 png, 2 icns, 2 ico",
+      "licence": "no licence line in the files; repo GPL-2.0 by default",
+      "class": "C",
+      "note": "The dune2 icons may be derived from the original game. Not opened."
+    },
+    {
+      "kind": "original game data pack (NOT in box)",
+      "path": "data/ (empty in the repo; README.txt:64 says to copy the original Dune II 1.07 files, including dune2.exe, here)",
+      "count_hint": "not in box",
+      "licence": "proprietary (original game); user supplies",
+      "class": "C",
+      "note": "Sprites, sounds, music, maps and text all live here. The table names cited by the loader are the only trace in the box (unitinfo.c:20; animation.c:7)."
+    }
+  ],
+  "inspiration": [
+    "Effect as a short command list: each explosion is a few commands in order: set sprite, set a short timeout, bloom, stop (explosion.c:8-14). Recreate our impact effects as a per-effect command list (sprite, wait, spawn child, stop) in data, so a new hit effect is a table row. Maps to parity row 10 (hit impact) and row 8 (blood and decals).",
+    "Eight-facing move table with a pause step: the unit move animation is a table over eight facings and eight steps; each step is one command, some are timed pauses (animation.c:7-10). Recreate as an eight-facing clip table for creature walk and attack, where each step is a command, not an image index. Maps to parity row 7 (creature clips).",
+    "Unit flags as data: each unit row carries flags such as shadow, factory, can be picked up, no message on death (unitinfo.c:14-30). Recreate per-creature flags (shadow, can be carried, quiet death) as data fields, not code branches.",
+    "Default AI action list per unit type: a short fixed list of AI actions per type (g_table_actionsAI, unitinfo.c:12). Recreate as a per-creature list of default behaviours (hunt, guard, ambush) that the brain walks in order.",
+    "Stable string IDs with a per-language pack: 536 enum IDs with the text loaded from a pack at start (strings.h:8; string.c:110). Recreate as stable keys in our locale files, so changing a translation never changes code.",
+    "Enhancement list as defect ledger: enhancement.txt lists fixes to the original game's bugs by category, each entry a problem and its fix (enhancement.txt:3). Use the same shape for our donor-defect notes: idea kept, defect and fix listed. Only the head was read."
+  ],
+  "briefs": [
+    {
+      "label": "Lift-and-carry hauler",
+      "why": "A flying unit whose job is to lift another unit. Reads at 375 wide as a shadow under a body that carries a load.",
+      "keep": "Carries another unit. A shadow on the ground. A flag that says the carried unit can be lifted.",
+      "change": "A ray-shaped, bird-like hauler with a glow under the belly rather than a box with rotors. A different load: a fallen ally or a crate. Recreate as a clearly distinct original, never a copy.",
+      "ref": "src/table/unitinfo.c (unit row 0, lines 14-20)"
+    },
+    {
+      "label": "Bloom burst impact",
+      "why": "A short, readable hit effect built as a few commands, so it is cheap to draw and easy to tune.",
+      "keep": "Three to four steps: sprite, short timeout, bloom, stop.",
+      "change": "A shard ring with a sharp flash rather than a round bloom; a colour per damage type. Recreate as a clearly distinct original, never a copy.",
+      "ref": "src/table/explosion.c (lines 8-14)"
+    },
+    {
+      "label": "Eight-facing walk table",
+      "why": "A walk cycle stored as a table over facings and steps means every creature gets the same timing vocabulary without new code.",
+      "keep": "Eight facings. Each step is a command, some timed pauses.",
+      "change": "Twelve facings for a spider-like body, with leg-pair steps instead of one frame step. Recreate as a clearly distinct original, never a copy.",
+      "ref": "src/table/animation.c (lines 7-10)"
+    }
+  ],
+  "not_read": [
+    "Original data pack: not in the box; no game art, sound, music or text read.",
+    "All table files beyond the lines cited: unitinfo.c, structureinfo.c, houseinfo.c, landscapeinfo.c, explosion.c, animation.c, sound.c, widget and window tables not read beyond the cited lines.",
+    "src/table/strings.h: IDs counted by pattern, not every entry read.",
+    "src/string.c String_Load body and src/file.c PAK code: only the function and cache comment lines were read.",
+    "enhancement.txt: only the first few lines read; the full defect list not read.",
+    "os/ icons: names and counts only; none opened.",
+    "Halves: the engine (src/) and the table files are the code half read in part. No server half; the data pack is absent. No paired donor in the box."
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "donor": "OpenDiablo2-OpenDiablo2",
+  "code_licence": "GNU GPL v3 per LICENSE (LICENSE:2 'Version 3, 29 June 2007') and the README badge 'License: GPL v3' (README.md:14).",
+  "asset_licence": "No asset licence file. README.md:29 says 'The project does not ship with the assets or content required to play Diablo 2.' The user must supply their own copy of the game. Non-game images in the repo (logo, screenshots, font) have no licence line in the repo files.",
+  "rights_holder_status": "uses original game data: the engine needs the user's own copy of the commercial game (README.md:29 and the purchase links in README). The repo itself ships no game data. Logo credit by name: 'Diablo2 Logo' by Jose Pardilla (README.md:78). Format spec credit: DT1 file specifications by Paul SIRAMY (README.md:79).",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "game data tables (user-supplied, NOT in box)",
+      "path": "named in code: /data/global/excel/skills.txt, monstats.txt, monstats2.txt, levels.txt, superuniques.txt (d2common/d2resource/resource_paths.go:318, :451, :452; d2core/d2records/monster_stats_record.go:11)",
+      "count_hint": "not in box; read from the user's MPQ at runtime",
+      "licence": "proprietary (original game); README requires the user's own copy",
+      "class": "C",
+      "note": "This is the data half of the game: monster, skill, level and item tables. The loader names the tables; the values are not in the repo. Data-first: cite the table names, not the loader."
+    },
+    {
+      "kind": "test fixtures that look like game files (binary and text)",
+      "path": "d2common/d2fileformats/d2animdata/testdata/AnimData.d2 (570,304 bytes); d2common/d2fileformats/d2animdata/testdata/BadData.d2 (570,368 bytes); d2common/d2loader/testdata/D.mpq (891 bytes); d2common/d2loader/testdata/A|B|C/common.txt and exclusive_*.txt (small)",
+      "count_hint": "2 large binary .d2, 1 small .mpq, 6 small .txt",
+      "licence": "none stated; repo GPL",
+      "class": "C",
+      "note": "AnimData.d2 is a 570 KB binary of the animation-data kind. Its first 48 bytes were dumped (od) and show a header and ASCII mode codes; I did not parse it. Origin not stated in repo files, so C. Do not run or ship it."
+    },
+    {
+      "kind": "stray Windows binary at repo root",
+      "path": "rh.exe",
+      "count_hint": "1 file, 5,479,424 bytes",
+      "licence": "not stated in repo files",
+      "class": "C",
+      "note": "Not read, not run. The README does not say what it is for. Flag for a human to identify before anyone uses or ships it."
+    },
+    {
+      "kind": "logos and project images (raster)",
+      "path": "d2logo.png (118,649 bytes); d2logo.ico (200,454 bytes); d2discord.png (110,186 bytes)",
+      "count_hint": "3 files",
+      "licence": "none stated for the image itself; README credits the logo to Jose Pardilla (README.md:78)",
+      "class": "C",
+      "note": "Named artist, no licence line. Not opened."
+    },
+    {
+      "kind": "documentation screenshots and animation (show game art)",
+      "path": "docs/MainMenuSS.png, docs/SelectHeroSS.png, docs/Gameplay.png, docs/Inventory.png, docs/game_panels.png, docs/areas.gif, docs/ButtonMedium.png, docs/ButtonWide.png, docs/download.png, docs/installer.png and others (19 png, 1 gif in docs/)",
+      "count_hint": "about 20 images",
+      "licence": "none stated",
+      "class": "C",
+      "note": "They show the commercial game's screens, so the art in them is game art. Not opened. Use only as a reference of the UI layout a human can look at, never as an asset source."
+    },
+    {
+      "kind": "font file",
+      "path": "docs/diablo.woff (18,560 bytes)",
+      "count_hint": "1 file",
+      "licence": "none stated",
+      "class": "C",
+      "note": "Web font in docs; origin not stated. Not opened."
+    },
+    {
+      "kind": "engine test code and format readers (code, not assets)",
+      "path": "d2common/d2fileformats/ (d2dc6, d2dt1, d2ds1, d2dcc, d2pl2, d2cof, d2animdata, d2txt, d2tbl, d2font, d2mpq); d2common/d2fileformats/d2dc6/dc6.ksy (Kaitai format description, 1,457 bytes)",
+      "count_hint": "about 600 .go files in the repo",
+      "licence": "repo GPL v3 (code)",
+      "class": "A",
+      "note": "Code that reads the proprietary formats. Licence of the code is GPL v3; the formats themselves are not owned by the repo. Listed as code only."
+    }
+  ],
+  "inspiration": [
+    "Edge-placed hub, generated field: the town is placed on one edge of the map and the wilderness is generated outward from the opposite side; in the south-edge case, water-border stamps are placed along one side of the map (d2core/d2map/d2mapgen/act1_overworld.go:53-79). Recreate as a hub on one edge of a fight zone with the field spreading from it.",
+    "Stamp as a preset piece: a preset map piece is loaded and placed like a stamp by position (d2core/d2map/d2mapstamp/stamp.go:20; factory.go:31-32). Recreate as a prefab room in our zone data with a placement position and a size.",
+    "Free-space check before placing: an area counts as empty only inside the map bounds and only when no tile on it has a floor (d2core/d2map/d2mapgen/map_generator.go:47-57; the lines read check floors only). Recreate as a placement rule for spawn points and props so nothing spawns in the wrong place.",
+    "Layered equipment on a directional animation: a direction is a set of cells that are recalculated per frame (d2dcc/dcc_direction_frame.go:57-70), and 64 facings map onto the stored directions (d2dcc/dcc_dir_lookup.go:13, function name only, not read). Recreate as a body with gear layers composed per frame, so armour swaps without new art. Maps to parity row 15 (gear dressing).",
+    "Stat formulas as tiny expressions: item stat rules are parsed from text with unary and ternary operators (d2common/d2calculation/d2parser/operations.go:48 getTernaryOperations; lexer in d2lexer/lexer.go). Recreate as a data field per item that holds a small formula, so new items need no new code. Keep the operators small."
+  ],
+  "briefs": [
+    {
+      "label": "Edge-hub field",
+      "why": "A hub on one side of the screen with a field growing away from it. At 375 wide the hub reads as the safe edge, the field as the risk.",
+      "keep": "Hub placed on an edge. Field generated outward from it. A border strip on one side.",
+      "change": "Our hub is a cliff ledge or a sky island rather than a town, the field spirals outward, the border is fog rather than water. Recreate as a clearly distinct original, never a copy.",
+      "ref": "d2core/d2map/d2mapgen/act1_overworld.go (placement by edge, lines 53-79)"
+    },
+    {
+      "label": "Gear-layer hero",
+      "why": "Armour that is drawn as layers over one body means every gear piece is a layer, not a new sprite sheet.",
+      "keep": "Body and gear as separate layers composed per frame. Facing lookup from a 64-direction table.",
+      "change": "Our layers are a fixed stack per silhouette slot (helm, shoulder, plate, cape), tuned for the 375 px fight camera, with a palette per layer. Recreate as a clearly distinct original, never a copy.",
+      "ref": "d2common/d2fileformats/d2dcc/dcc_direction_frame.go (lines 57-70); d2dcc/dcc_dir_lookup.go (Dir64ToDcc)"
+    },
+    {
+      "label": "Formula item",
+      "why": "An item that carries its own small rule keeps the item table honest: one formula per item, no code per item.",
+      "keep": "A small expression language with ternary and unary operators, parsed from text.",
+      "change": "Our formulas are limited to the stat names in our catalogue, and the inspect screen shows the result as a plain line, not the formula. Recreate as a clearly distinct original, never a copy.",
+      "ref": "d2common/d2calculation/d2parser/operations.go (getTernaryOperations, line 48)"
+    }
+  ],
+  "not_read": [
+    "All game data tables: not in the box (user's MPQ). Table names cited from the loader only.",
+    "AnimData.d2 and BadData.d2: first 48 bytes dumped only; not parsed.",
+    "rh.exe: not read, not run.",
+    "All images in docs/ and the logos: not opened.",
+    "docs/diablo.woff: not opened.",
+    "d2core/d2map/d2mapgen/d2wilderness/wilderness_tile_types.go, d2calculation lexer and parser bodies beyond the operator table, d2dcc decoder beyond direction frame, d2game and d2player, d2core/d2audio, d2core/d2render: not read.",
+    "d2networking, d2thread: not read.",
+    "Halves: single client engine read (d2core, d2common, d2game in part). Server half: none in this repo; the successor repo AbyssEngine is named in README.md and is not in the box. The data pack is the user's MPQ (absent)."
+  ]
+}

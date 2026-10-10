@@ -1,0 +1,36 @@
+{
+  "donor": "ValveSoftware-source-sdk-2013",
+  "code_licence": "Source 1 SDK LICENSE (LICENSE:1, LICENSE:9): use and modify the SDK for a modified Valve game on the Source 1 engine; distributions must be free of charge (LICENSE:13). Valve's own text, not a named open-source licence",
+  "asset_licence": "no separate asset licence; same LICENSE covers the SDK as shipped; retail models, sounds and textures are not in the box and the README says the SDK needs Source SDK 2013 Multiplayer installed via Steam (README.md:18)",
+  "rights_holder_status": "original company: Valve Corporation (LICENSE:3)",
+  "best_class": "C",
+  "half_read": "data half: game/mod_hl2mp scripts, resource strings, HUD animation rules, one soundscape block; code half (src/) not read; paired retail data not in the box",
+  "asset_groups": [
+    {"kind": "weapon and game scripts (text)", "path": "game/mod_hl2mp/scripts/ (weapon_*.txt, HudAnimations.txt, game_sounds_*.txt, soundscapes_*.txt, launcher and HUD .res, key lists)", "count_hint": "about 29 .txt, 8 .res, 3 .lst across game/", "licence": "Valve SDK LICENSE as shipped", "class": "C", "note": "weapon rows with sound slots per event and NPC variants (weapon_ar2.txt:5-26); HUD motion script (HudAnimations.txt:20-21); random soundscape blocks (soundscapes_streetwar.txt:21)"},
+    {"kind": "localised string tables (UTF-16)", "path": "game/mod_hl2mp/resource/mod_hl2mp_english.txt; game/mod_tf/resource/mod_tf_english.txt", "count_hint": "hl2mp file: about 65 lines, 48 quoted keys by iconv count; tf file not counted", "licence": "Valve SDK LICENSE as shipped", "class": "C", "note": "full-name keys and menu-suffix keys; HUD line breaks inside display names; key prefixes HL2, HL2MP, ScoreBoard, Playerid, Game"},
+    {"kind": "map", "path": "game/mod_hl2mp/maps/dm_lockdown.bsp", "count_hint": "1 file, 11,384,400 bytes", "licence": "Valve SDK LICENSE as shipped", "class": "C", "note": "binary map, not opened"},
+    {"kind": "logo texture and material", "path": "game/mod_tf/materials/logo/new_tf2_logo.vtf and .vmt; game/mod_hl2mp/materials/example_model_material.vmt", "count_hint": "2 vmt, 1 vtf (1,398,288 bytes)", "licence": "Valve SDK LICENSE as shipped", "class": "C", "note": "not opened"},
+    {"kind": "models, sounds, music", "path": "none in box", "count_hint": "0 .mdl, 0 .vtx, 0 .vvd, 0 .wav, 0 .mp3", "licence": "n/a", "class": "D", "note": "retail assets come from the Steam install, not this repo"}
+  ],
+  "inspiration": [
+    "Weapon as a data row: one script per weapon with a display-name key, models, ammo type, clip size, reserve, damage, a weapon-wheel bucket and position, and sound slots per event (single shot, double shot, reload, empty, special) (game/mod_hl2mp/scripts/weapon_ar2.txt:5-26 region). Each event has an NPC variant, so AI shots can be mixed without changing the player's sound.",
+    "HUD motion as a tiny script: one line animates a panel property (colour, position, size, alpha) to a target with a named easing (Linear, Accel, Deaccel); events can start or stop other events at a given time (game/mod_hl2mp/scripts/HudAnimations.txt:20-21 and the command comments).",
+    "Random ambience bed: a soundscape block picks a wave at random from a pool with a time range and a volume range, so ambience does not loop identically (game/mod_hl2mp/scripts/soundscapes_streetwar.txt:21 region).",
+    "Two-length labels: each item has a full-name key and a short menu key with a suffix, so the detail view and the narrow menu can each use the right length (game/mod_hl2mp/resource/mod_hl2mp_english.txt, key grammar only).",
+    "Two-line display names: some display names put a short parenthetical subtitle on a second line, which reads on a narrow screen (game/mod_hl2mp/resource/mod_hl2mp_english.txt, key grammar only)."
+  ],
+  "briefs": [
+    {"label": "Rifle with NPC shot variants", "why": "each shot type has its own sound, and the AI variant is separate so enemy fire can be tuned without touching the player's sound", "keep": "sound slot per event with an NPC variant", "change": "our own weapon and sound slots; no donor sound names; fewer fields per weapon row", "ref": "game/mod_hl2mp/scripts/weapon_ar2.txt:5-26"},
+    {"label": "Two-line weapon name", "why": "a short name plus a parenthetical subtitle reads without truncation on a phone", "keep": "name then a short subtitle", "change": "our own names and subtitles", "ref": "game/mod_hl2mp/resource/mod_hl2mp_english.txt (key grammar only, not quoted)"},
+    {"label": "Random ambience bed", "why": "random pick with a time range and a volume range stops ambience reading as a loop", "keep": "interval range, volume range, wave pool", "change": "per-biome pools of our own sounds", "ref": "game/mod_hl2mp/scripts/soundscapes_streetwar.txt:21 region"},
+    {"label": "Eased HUD motion vocabulary", "why": "three named curves cover most UI motion, and events can chain", "keep": "named easing and event chaining", "change": "a different curve set and our own hit-flash timing", "ref": "game/mod_hl2mp/scripts/HudAnimations.txt:20-21"}
+  ],
+  "cross_link": "sound-music: weapon sound slots and random ambience block (random pick, not a crossfade); hud-ui: HUD motion script and two-length labels; loot and progression: weapon row fields; camera, spawns, VFX, animation: not in the box",
+  "not_read": [
+    "src/ code tree",
+    "dm_lockdown.bsp and new_tf2_logo.vtf beyond file sizes",
+    "game_sounds and soundscape files beyond one block",
+    "UTF-16 string bodies beyond the key count",
+    "third-party notices beyond the headings cited"
+  ]
+}

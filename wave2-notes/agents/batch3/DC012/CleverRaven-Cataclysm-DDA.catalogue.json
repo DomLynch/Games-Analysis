@@ -1,0 +1,100 @@
+{
+  "donor": "CleverRaven-Cataclysm-DDA",
+  "counts": {"creatures": 1221, "classes": 64, "weapons": 420, "gear_sets": 62, "zones": 44},
+  "creature_families": [
+    {"name": "Insect and spider", "entries": 145, "ref": "data/json/monsters/insect_spider.json"},
+    {"name": "Mammal", "entries": 123, "ref": "data/json/monsters/mammal.json"},
+    {"name": "Fish", "entries": 121, "ref": "data/json/monsters/fish.json"},
+    {"name": "Reptile and amphibian", "entries": 80, "ref": "data/json/monsters/reptile_amphibian.json"},
+    {"name": "Nether kin", "entries": 75, "ref": "data/json/monsters/nether.json"},
+    {"name": "Fungal undead (19 dusted families)", "entries": 70, "ref": "data/json/monsters/fungus_zombie.json"},
+    {"name": "Bird", "entries": 58, "ref": "data/json/monsters/bird.json"},
+    {"name": "Feral humans", "entries": 44, "ref": "data/json/monsters/feral_humans.json"},
+    {"name": "Zed undead (24 files)", "entries": 226, "ref": "data/json/monsters/zed*.json"},
+    {"name": "Triffid and plant kin", "entries": 13, "ref": "data/json/monsters/triffid.json"},
+    {"name": "Mi-go (7 roles)", "entries": 7, "ref": "data/json/monsters/mi-go.json"},
+    {"name": "Yrax (trifacet, triakis, quadraphract family, golden monolith)", "entries": 8, "ref": "data/json/monsters/yrax.json"},
+    {"name": "Kraken and octopus kin", "entries": 4, "ref": "data/json/monsters/kraken_spawn.json"},
+    {"name": "Singularity bosses", "entries": 3, "ref": "data/json/monsters/singularities.json"},
+    {"name": "String-dimension line-walkers", "entries": 7, "ref": "data/json/monsters/string_dimension.json"},
+    {"name": "Defence bots, drones, turrets, mechsuits", "entries": 30, "ref": "data/json/monsters/defense_bot.json; drones.json; turrets.json; mechsuits.json"}
+  ],
+  "top_creatures": [
+    {"label": "Three-stage flesh climber", "why": "three named stages with hp 100, 200, 400 and speed 50, 80, 140; each stage is a new threat", "keep": "stage chain where hp and speed rise together; timed upgrade step", "change": "silhouette (bark-plated giant); palette; stage triggers by fight state", "ref": "data/json/monsters/jabberwock.json:3,29,67"},
+    {"label": "Limbed shard crab", "why": "2400 hp body with 400 hp legs; a leg collapse fires a hurt event", "keep": "limbs as separate hp pools; limb collapse as a mid-fight event", "change": "crab silhouette; leg tells; event drops a guard rather than a text message", "ref": "data/json/monsters/yrax.json:275,343,360"},
+    {"label": "Gilded sentinel", "why": "immobile, pacifist landmark that casts spells; placed as a zone landmark", "keep": "non-attacking landmark that casts", "change": "palette; silhouette; spell set", "ref": "data/json/monsters/yrax.json:193; data/json/overmap/map_extras.json:243"},
+    {"label": "Event-horizon hoarder", "why": "immobile boss, 3000 hp, six spells; its spawns split off and burst into a bigger form", "keep": "boss whose spawn becomes a bigger threat on death", "change": "silhouette; a timed split at half hp instead", "ref": "data/json/monsters/singularities.json:583"},
+    {"label": "Carapace raider squad", "why": "seven roles in one family, read by colour and loadout; guards stun with a shriek and a taser", "keep": "one family, roles by colour and kit", "change": "colours; silhouettes; stun as a telegraphed pulse", "ref": "data/json/monsters/mi-go.json:164,225"},
+    {"label": "Tentacle matriarch", "why": "850 hp, speed 120; grab-drag, drag follow-up, then a long barbed tentacle", "keep": "two-step grab then drag", "change": "pull direction; tells; one target at a time for many-on-one", "ref": "data/json/monsters/kraken_spawn.json:116,141"},
+    {"label": "Axis-locked line-walkers", "why": "three colours each locked to one axis with a ranged pull; vanish message on death", "keep": "readable movement lock as identity", "change": "our own lock (lanes); no dimension lore", "ref": "data/json/monsters/string_dimension.json:29"},
+    {"label": "Spore-stalked dead", "why": "three-stage transformation of a known enemy; death bursts from the spore stage", "keep": "visible three-stage change of a known enemy type", "change": "our growth tells; a burst that is not fungus", "ref": "data/json/monsters/fungus_zombie.json:3,11,88"}
+  ],
+  "classes": [
+    {"name": "Tiger style (martial art)", "role": "melee stance", "mechanic": "static stat trade: Strength to accuracy, Dexterity taken away", "progression": "learn difficulty 10; style priority", "ref": "data/json/martialarts.json:1398,1408"},
+    {"name": "Dragon style (martial art)", "role": "melee stance", "mechanic": "Intelligence to accuracy, Dexterity taken away", "progression": "learn difficulty 10", "ref": "data/json/martialarts.json:422,433"},
+    {"name": "Crane style (martial art)", "role": "melee stance", "mechanic": "bash damage moves from Strength to Dexterity (parsed)", "progression": "learn difficulty 10", "ref": "data/json/martialarts.json:373"},
+    {"name": "Leopard style (martial art)", "role": "melee stance", "mechanic": "bash damage moves from Strength to Dexterity (parsed)", "progression": "learn difficulty 10", "ref": "data/json/martialarts.json"},
+    {"name": "Snake style (martial art)", "role": "melee stance", "mechanic": "accuracy and bash damage move to Perception (parsed)", "progression": "learn difficulty 10", "ref": "data/json/martialarts.json:1197"},
+    {"name": "Species (34 ids)", "role": "biology set for resistances and flags", "mechanic": "not read", "progression": "none", "ref": "data/json/species.json:80"},
+    {"name": "Professions (219 entries)", "role": "starting job with kit and skills", "mechanic": "start skills and kit; not combat classes", "progression": "none", "ref": "data/json/professions.json:666"},
+    {"name": "Mutation tree (883 entries, 30 categories)", "role": "progression traits and body parts", "mechanic": "categories, sub-body parts, branch files (mycus, supernatural); read by name and count", "progression": "mutation trees", "ref": "data/json/mutations/"}
+  ],
+  "weapon_families": [
+    {"name": "Five-tier metal ladder (lc, mc, hc, ch, qt prefixes)", "tiers": 5, "technique": "copy base, swap metal via replace_materials", "ref": "data/json/items/melee/swords_and_blades.json:1539,1545"},
+    {"name": "Long swords", "technique": "mc_longsword: bash 9, cut 36, 1904 g, techniques WBLOCK_2, BRUTAL, RAPID", "ref": "data/json/items/melee/swords_and_blades.json:1488,1514"},
+    {"name": "Bronze blades (xiphos, khopesh)", "technique": "bronze as its own metal line (parsed)", "ref": "data/json/items/melee/swords_and_blades.json"},
+    {"name": "Glass shiv", "technique": "glass as a breakable primitive (parsed)", "ref": "data/json/items/melee/swords_and_blades.json"},
+    {"name": "Knives and kukri (wood and steel grips)", "technique": "mixed-material grips (parsed)", "ref": "data/json/items/melee/swords_and_blades.json"},
+    {"name": "Weapon categories (25)", "technique": "category list for skills and techniques", "ref": "data/json/weapon_categories.json"}
+  ],
+  "gear_tiers": [
+    {"name": "Steel ladder", "tiers": ["budget steel (chip 11)", "low carbon (chip 17)", "medium carbon (chip 18)", "high carbon (chip 18, parsed)", "hardened carbon (chip 20, parsed)", "tempered carbon (chip 20)"], "technique": "material step changes resistance, not weight (steels density 8.0, parsed)", "ref": "data/json/materials.json:387,388,394,1984,1992,2011,2042,2059,2067"},
+    {"name": "Precious metals", "technique": "gold density 19.32; silver 10.49; bronze 8.8; gold on 19 armour entries (parsed)", "ref": "data/json/materials.json"},
+    {"name": "Chainmail hauberk ladder", "technique": "tempered entry copies base and swaps steel for tempered chain", "ref": "data/json/items/armor/suits_protection.json:1823"},
+    {"name": "Helm close ladder", "technique": "low carbon entry uses looks_like helmet_sallet; higher tiers copy it", "ref": "data/json/items/armor/helmets.json:2324"},
+    {"name": "Chitin armour", "technique": "hardened chitin (chip 14) and biosilicified chitin (chip 7) (parsed)", "ref": "data/json/materials.json"},
+    {"name": "Bespoke armour", "technique": "10 bespoke files; exoskeleton files not read", "ref": "data/json/items/armor/bespoke_armor/"}
+  ],
+  "zones": [
+    {"name": "Overmap location types (44)", "type": "zone types", "technique": "woods, fields, swamp, water, shores, subterranean, subway, labs, roads, crater, nether, portal storm dungeon, string-dimension cores, scarlet sea, netherum labyrinth, labyrinth2, inner cabins", "ref": "data/json/overmap/special_locations.json; data/json/overmap/"},
+    {"name": "Netherum labyrinth", "type": "dungeon archetype", "technique": "30 mapgen files: rooms, nests (mazes, 6x6 passages, chasm halls), treasure rooms, flooded rooms, safehouse, teleport stairs", "ref": "data/json/mapgen/netherum/"},
+    {"name": "Portal storm dungeon", "type": "dungeon archetype", "technique": "portal storm hallways and specials", "ref": "data/json/mapgen/portal_storm_dungeon/"},
+    {"name": "String dimension", "type": "dungeon archetype", "technique": "one-axis zone rule", "ref": "data/json/mapgen/string_dimension/"},
+    {"name": "Scarlet sea", "type": "dungeon archetype", "technique": "reverberation zone (parsed)", "ref": "data/json/mapgen/scarlet_sea/"},
+    {"name": "Portal weather escalation", "type": "weather phases", "technique": "early, distant, close, then full portal storm; scarlet storms 1 to 5", "ref": "data/json/weather_type.json:421,522"},
+    {"name": "Portal map extra", "type": "map extra", "technique": "vertical range -5 to +5", "ref": "data/json/overmap/map_extras.json:195"},
+    {"name": "Golden monolith field", "type": "map extra", "technique": "landmark that does not attack", "ref": "data/json/overmap/map_extras.json:243"},
+    {"name": "Hazard fields (98 types)", "type": "hazards", "technique": "fire (dangerous at first level), electric sparks, webs, darkness, shadow, toxic and tear gas, acid, fog", "ref": "data/json/field_type.json:331,340"}
+  ],
+  "looks": [
+    {"label": "Fire light ladder", "technique": "first level emits light 20 with a warm colour and is dangerous; later levels brighter", "ref": "data/json/field_type.json:331,340"},
+    {"label": "Bioluminescence ladder", "technique": "glimmer 4, glow 9, shine 20", "ref": "data/json/field_type.json:488,493"},
+    {"label": "Light override as hazard", "technique": "darkness sets light to 0; shadow sets it to 3.7 (parsed)", "ref": "data/json/field_type.json"},
+    {"label": "Named emitters", "technique": "66 emitters: smoke plumes, sparks, shock bursts, air streams (parsed)", "ref": "data/json/emit.json"},
+    {"label": "Fungal death burst", "technique": "death effect at the spore stage bursts out", "ref": "data/json/monsters/fungus_zombie.json:88"},
+    {"label": "Colour as family identity", "technique": "mi-go pink and red; yrax yellow; linelanders pink, light cyan, red (parsed)", "ref": "data/json/monsters/mi-go.json:164; yrax.json; string_dimension.json"}
+  ],
+  "originals": [
+    {"name": "Three-stage flesh climber", "idea": "a melee brute that grows through three stages, each faster and tougher", "keep": "stage chain with hp and speed rising together", "change": "stage triggers by fight state; our silhouette and palette"},
+    {"name": "Limbed shard crab", "idea": "a crab boss whose legs are separate hp pools; a collapsed leg is a mid-fight event", "keep": "separate limb hp; limb-collapse event", "change": "crab silhouette; leg tells; no text message"},
+    {"name": "Gilded sentinel", "idea": "a pacifist landmark that casts spells and marks a zone", "keep": "non-attacking landmark that casts", "change": "palette; spell set; zone-data placement"},
+    {"name": "Event-horizon hoarder", "idea": "an immobile boss that splits a spawn and becomes bigger when it dies", "keep": "spawn that becomes a bigger threat on death", "change": "silhouette; timed split at half hp"},
+    {"name": "Carapace raider squad", "idea": "one enemy family with seven roles read by colour and kit", "keep": "one family; roles by colour and kit", "change": "colours; silhouettes; telegraphed stun pulse"},
+    {"name": "Tentacle matriarch", "idea": "a grab, then drag, then a barbed reach", "keep": "two-step grab and drag", "change": "pull direction; tells; one target at a time"},
+    {"name": "Stance stat trade", "idea": "stances that move a stat from one role to another", "keep": "stance as a stat trade", "change": "our stance names and stat pairs"},
+    {"name": "Five-step metal ladder with sheen", "idea": "a material swap ladder that changes chip resistance and shows a sheen per tier", "keep": "material swap ladder; chip resistance", "change": "visible sheen per tier, which the donor lacks"},
+    {"name": "Portal storm phases", "idea": "weather that climbs through four phases", "keep": "four climbing phases", "change": "visuals and timings"}
+  ],
+  "licence_note": "CC BY-SA 3.0 Unported (LICENSE.txt line 1). Shape-only inspiration; our own numbers, names and art; no tables or text copied.",
+  "not_read": [
+    "engine combat, AI, sound and rendering code; src/mongroup.cpp, monster.cpp, mapgen.cpp only at cited lines",
+    "many hp, speed and cost values (parsed, not receipted)",
+    "hc and ch steel values except cited lines; gold and silver counts (parsed)",
+    "items/armor/combat_exoskeleton*.json",
+    "mutations (read by file name and count only)",
+    "monster_factions.json, faction_missions.json",
+    "sound/ and gfx/ folders",
+    "emit.json bodies",
+    "copy-from chains not fully resolved; some hp and speed fields show None when inherited"
+  ]
+}

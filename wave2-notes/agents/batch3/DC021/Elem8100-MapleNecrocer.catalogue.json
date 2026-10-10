@@ -1,0 +1,69 @@
+{
+  "donor": "Elem8100-MapleNecrocer",
+  "class": "D (game content); viewer techniques only",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "counts_note": "No game data in the box. Viewer forms (33 *Form.cs files) are viewers for user-supplied WZ data, not catalogue content.",
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [],
+  "looks": [
+    {
+      "label": "Particle emitter with variance",
+      "technique": "Each particle draws position, size, colour, spin and angle from a base value plus random variance; default emission rate 200",
+      "ref": "MapleNecrocer/Client/Particle/ParticleEmitter.cs:63, 92-98 (NextVar helper not read)"
+    },
+    {
+      "label": "Segmented tooltip frame",
+      "technique": "Frame built from corner and edge pieces (nw, ne and others) placed by offset",
+      "ref": "MapleNecrocer/Client/ToolTip.cs:66-67, 90-91"
+    },
+    {
+      "label": "Runtime damage-number style packs",
+      "technique": "A named style pack chosen from a list at runtime; loads its own number images",
+      "ref": "MapleNecrocer/DamageSkinForm.cs:28-29"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Segmented Panel Frame",
+      "idea": "A UI panel built from separate corner and edge pieces so any ornament fits.",
+      "keep": "Separate corner and edge pieces.",
+      "change": "Ornament, palette and corner caps."
+    },
+    {
+      "name": "Drifting Motes",
+      "idea": "Ambient motes with colour and size variance that fall slowly.",
+      "keep": "Colour and size variance, slow fall.",
+      "change": "Motion curve and colours per zone."
+    },
+    {
+      "name": "Skinnable Hit Numbers",
+      "idea": "Floating damage numbers with named style packs swapped at runtime.",
+      "keep": "Runtime style packs.",
+      "change": "Typography and crit and miss shapes."
+    },
+    {
+      "name": "Per-Family Asset Viewer",
+      "idea": "One small viewer per content family for our asset browser.",
+      "keep": "The one-viewer-per-family pattern.",
+      "change": "Our own content families."
+    }
+  ],
+  "licence_note": "Code MIT (LICENSE line 1 'The MIT License (MIT)'; line 3 'Copyright © 2023 Elem8100'); code may be adapted with the notice kept. No game art or data in the repo. Small UI icons, one .ico, a WzComparerR2-credited shader and 20 third-party DLLs have no per-file licence in the repo; do not reuse them (AU018). Viewer for MapleStory client data; game-data owner not named in the repo.",
+  "not_read": [
+    "WzComparerR2 libraries and the 20 DLLs in Reference/ (licence and class from AU018)",
+    "Most *Form.cs files: named only",
+    "ParticleRandom.cs and the NextVar helper",
+    "No audio, fonts, maps or 3D models exist in the repo (AU018)",
+    "Data half (WZ files): absent by design, user-supplied"
+  ]
+}

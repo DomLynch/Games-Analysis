@@ -1,0 +1,90 @@
+{
+  "donor": "SCAR",
+  "code_licence": "MIT (LICENSE line 1; copyright line 3: 2023 max-su-2019)",
+  "asset_licence": "No separate asset licence. The repo LICENSE (MIT) is the only licence file. Community moveset credited in README line 72 is not in the box and its licence is not stated.",
+  "rights_holder_status": "Community SKSE/VR mod for a commercial game (author Maxsu & Monitor per Nemesis_Engine/mod/scar/info.ini). Repo contains no game data. Game-owner status not stated: unknown.",
+  "best_class": "D",
+  "asset_groups": [
+    {
+      "kind": "docs screenshots",
+      "path": "docs/images/",
+      "count_hint": "3 JPG (not opened)",
+      "licence": "repo MIT only; no image licence stated",
+      "class": "C",
+      "note": "origin of screenshots not stated"
+    },
+    {
+      "kind": "Havok text templates (Nemesis)",
+      "path": "Nemesis_Engine/mod/scar/",
+      "count_hint": "49 text files",
+      "licence": "repo MIT",
+      "class": "A",
+      "note": "text data, event-name string tables; not art; keep copyright notice"
+    },
+    {
+      "kind": "behaviour injector json",
+      "path": "BehaviorDataInjector/SCAR_BDI.json",
+      "count_hint": "1 entry",
+      "licence": "repo MIT",
+      "class": "A",
+      "note": "one int graph variable SCAR_AttackVariants"
+    },
+    {
+      "kind": "art/models/textures/audio/fonts/maps",
+      "path": "(none in box)",
+      "count_hint": "0",
+      "licence": "n/a",
+      "class": "D",
+      "note": "no such files by extension"
+    },
+    {
+      "kind": "debug symbols",
+      "path": "SCAR.pdb",
+      "count_hint": "1 file, 35.9 MB",
+      "licence": "repo MIT",
+      "class": "D",
+      "note": "build artefact, not opened"
+    }
+  ],
+  "inspiration": [
+    "Ranked attack options in one clip: sorted by annotation priority, first option that passes all checks wins, the rest are skipped (src/Hook_AttackCombo.cpp:22; src/SCARActionData.cpp:297-300).",
+    "Chance is rolled per option, then the range test runs, so a rare heavy move and a frequent light move share one clip (src/SCARActionData.cpp:212; docs/EN/Developers Manual For SCAR 2.0+.md:24).",
+    "Reach as a sector in the attacker's own frame: distance band, facing window and height overlap, with the target's bound radius added (src/Function.cpp:56-110).",
+    "Two cooldown models: a shared alias several options respect, or an option's own timer; idle options without an alias get no cooldown (src/SCARActionData.cpp:112, 231, 254).",
+    "Reach-arc telegraph: outer sector for reach, inner ring for the dead zone, a line to the target; currently a debug overlay only (src/Function.cpp:113-143).",
+    "Windup-window gating: a heavy option is valid only between two local times of its own clip (src/SCARActionData.cpp:191).",
+    "Engine-style pause after a finished attack for pathing attackers, reproduced as a game-setting-driven delay (src/Hook_AttackStart.cpp:13-16).",
+    "Known oddities to avoid: the priority field is an annotation time (docs line 31), and the chance clamp range is -180..180 for a 0-100 field (src/SCARActionData.cpp:32)."
+  ],
+  "briefs": [
+    {
+      "label": "Reach-arc telegraph",
+      "why": "Danger reads as a ground sector before the hit, so the player can step out of it.",
+      "keep": "outer sector for reach; inner ring for the dead zone; a line to the target",
+      "change": "our palette; ground fill that pulses during windup; a fade, not a debug overlay",
+      "ref": "src/Function.cpp:113-143; docs/images/Scar Angle Range 01.JPG (not opened)"
+    },
+    {
+      "label": "Chance-stacked action ladder",
+      "why": "One creature mixes a rare heavy move and a common light move with no extra states.",
+      "keep": "ordered options, each with a chance and a range band; first pass wins",
+      "change": "options are zone/creature data rows, not strings in animation files; each option has a telegraph tag",
+      "ref": "src/SCARActionData.cpp:182-295; docs/EN/Developers Manual For SCAR 2.0+.md:24"
+    },
+    {
+      "label": "Windup-gated heavy strike",
+      "why": "A heavy move fires only in a short slice of its windup, so a timed dodge matters.",
+      "keep": "a clip-time window that gates the move",
+      "change": "window measured in our rig's frames; a sound cue when it opens; a different impact sign",
+      "ref": "src/SCARActionData.cpp:191; docs/EN/Developers Manual For SCAR 2.0+.md:185-186"
+    }
+  ],
+  "not_read": [
+    "src/SCARActionData.h, src/Hook_AttackStart.h, src/main.cpp, src/LoadGame.cpp, src/DataHandler.h, src/Function.h",
+    "src/DebugAPI/*, src/TrueHUD/TrueHUDAPI.h, src/PrecisionAPI/PrecisionAPI.h, src/OpenAnimationReplacer/API/*",
+    "docs/images/*.JPG and *.jpg (binary, not opened); SCAR.pdb (binary, not opened)",
+    "docs/CN/Moveset适配教程.md; docs/EN/How To Patch Moveset For SCAR.md",
+    "docs/EN/Developers Manual For SCAR 2.0+.md and docs/EN/Apply Randomization For SCAR.md: grep matches only, not read in full",
+    "Nemesis template bodies beyond the header line of 0_master/#0106.txt; extern/ submodules (empty)"
+  ]
+}

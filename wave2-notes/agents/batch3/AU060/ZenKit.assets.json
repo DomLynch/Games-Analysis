@@ -1,0 +1,101 @@
+{
+  "donor": "ZenKit",
+  "code_licence": "MIT. license.md line 1 reads 'The MIT license'; line 2 reads 'Copyright © 2021-2024 GothicKit Contributors'.",
+  "asset_licence": "No separate asset licence in the tree. license.md covers the software under MIT; no docs, sample or logo file states its own licence. The Gothic-derived test samples have no licence line in the files read; their readmes say the proprietary world, script and message files must come from a user-owned Gothic copy. Treated as unclear (class C) for samples and docs; class D for any game art (none is in the box).",
+  "rights_holder_status": "Mixed. The library: GothicKit Contributors (license.md line 2). It re-implements file formats of the ZenGin made by Piranha Bytes for Gothic and Gothic II (readme.md line 17), and says it is heavily based on ZenLib (readme.md line 18; ZenLib not in the box). Game data: not in the box, and the files do not state its owner beyond Piranha Bytes.",
+  "best_class": "C",
+  "half_read": "Data-format library half (src/, docs/, tests/samples). The game-data half (Gothic 1 and 2 installs: WORLD.ZEN, MENU.DAT, OU.BIN and the VDF archives) is NOT in the box. Paired donor in the box: OpenGothic (the engine side, not in this batch, not read).",
+  "asset_groups": [
+    {
+      "kind": "test samples: Gothic 2 world objects and save games (binary)",
+      "path": "tests/samples/G2/ (VOb/*.zen, Save/, SaveFast/*.SAV, MAT, FNT, MAN); tests/samples/G1/ (same kinds)",
+      "count_hint": "about 50 .zen files repo-wide; 24 .SAV files repo-wide; 47 MB under tests/samples/",
+      "licence": "None stated in the files read. tests/samples/world.zen.readme line 1 says the world tests need a user-owned Gothic 1 copy and a proprietary file that is excluded from version control.",
+      "class": "C",
+      "note": "Binary. Not opened beyond extension and name. Origin of the committed G1/G2 samples is not stated in the files read. Do not copy or ship; use only as a format reference through the parser."
+    },
+    {
+      "kind": "test samples: other binary and archives",
+      "path": "tests/samples/*.vdf (basic.vdf, basic_zipped.vdf), erz.tex, waran.msb, morph0.mmb, mesh0.mrm, hierarchy0.mdh, secretdoor.mdm, smoke_waterpipe.mdm, binary.zen, ascii.zen",
+      "count_hint": "count not taken (tests/samples/ totals 47 MB with the G1/G2 trees)",
+      "licence": "tests/samples/basic.vdf.dir/README.md line 1 says the VDF data is just sample data merged into basic.vdf; no licence line.",
+      "class": "C",
+      "note": "Binary model, mesh, texture and archive samples. Not opened. Readable only through the parser."
+    },
+    {
+      "kind": "logos (raster and vector)",
+      "path": "assets/logo.png, assets/logo-square.png, assets/logo.svg, assets/logo-square.svg, docs/assets/logo.png, docs/assets/logo-square.png",
+      "count_hint": "6 files",
+      "licence": "None stated beyond the repo MIT.",
+      "class": "C",
+      "note": "assets/logo.png is 1123 x 263 and assets/logo-square.png is 263 x 263 (read from the PNG header bytes). Project art; do not reuse without asking."
+    },
+    {
+      "kind": "docs icons (raster)",
+      "path": "docs/assets/icons/spacer-*.png, plus other PNG in the repo (14 PNG in total)",
+      "count_hint": "14 PNG repo-wide",
+      "licence": "None stated beyond the repo MIT.",
+      "class": "C",
+      "note": "Small type-icon images for the class docs (names only read)."
+    },
+    {
+      "kind": "data tables (YAML): class property catalogue",
+      "path": "docs/engine/objects/*.yml (11 files, for example oCMOB.yml, oCItem.yml, oCMobContainer.yml, oCInfo.yml, oCMission.yml, oCCSTrigger.yml); docs/engine/objects/_generate.py and _template.mdt",
+      "count_hint": "11 YAML class definitions plus generator and template",
+      "licence": "Repo MIT, no separate licence. The yml sources list third-party reference sites (not visited).",
+      "class": "C",
+      "note": "Each class lists its properties, types, versions per game and the source site. This is the data-first table for ZenGin objects. Read: oCMOB.yml header and first lines only."
+    },
+    {
+      "kind": "format and class docs (prose)",
+      "path": "docs/engine/formats/, docs/engine/objects/*.md, docs/library/",
+      "count_hint": "101 .md files repo-wide",
+      "licence": "Repo MIT, no separate licence",
+      "class": "C",
+      "note": "Read in part: zCTrigger.md (summary and first filter lines), zCTouchDamage.md (summary and first lines). Not reproduced here."
+    }
+  ],
+  "inspiration": [
+    "Trigger as an event filter and relay: a volume or listener checks what touched it (an NPC, the player, or another object), checks whether it reacts to that kind of event, then relays to a target. It can be enabled and disabled at runtime (docs/engine/objects/zCTrigger.md lines 16-18). For us: a zone volume that tells a spawn or NPC director when a player enters.",
+    "Touch damage as a timed volume: damage applies to what sits inside, with a repeat delay, a volume scale for the impact sound, and a collision type (src/vobs/Misc.cc lines 198-212, VTouchDamage::load). A zone hazard built as data, with the tick telegraphed by visuals.",
+    "Carryable props: a movable object can be moved or carried (docs/engine/objects/oCMOB.yml line 6). Useful for world props and loot pick-up flow, readable as a simple silhouette at 375 wide.",
+    "Class-by-class catalogue with versions: each object class lists its properties, their types and version IDs in YAML (docs/engine/objects/*.yml). A model for our catalogue-as-runtime-source (rows 20-21).",
+    "Versioned object parsers: each class's parse and load functions take a game-version argument (src/vobs/Misc.cc line 194 for VTouchDamage::parse), so one loader serves several versions of the same format. Only the idea is useful; the binary format itself is not ours to copy.",
+    "Zone-scoped fog, music and far-plane volumes exist as separate classes (names in docs/engine/objects: zCZoneZFog, oCZoneMusic, zCZoneVobFarPlane). Zone atmosphere as data, one volume per effect. Doc names only; not read."
+  ],
+  "briefs": [
+    {
+      "label": "Pressure-plate hazard (timed damage volume)",
+      "why": "A floor hazard that ticks while you stand in it is readable at 375 wide if the rim pulses before each tick. One signature sound per tick makes it feel dangerous without new art.",
+      "keep": "Damage applies only while inside, on a repeat delay, with a volume scale for the impact sound and a collision type. Signature effect: a short tick sound and a red rim flash.",
+      "change": "Telegraph each tick with a rising rim pulse that finishes a beat before damage. Use a different hazard style (gas, spikes or rising water, not fire). Keep all numbers in zone data, never in code.",
+      "ref": "src/vobs/Misc.cc (VTouchDamage::load, lines 198-212); docs/engine/objects/zCTouchDamage.md (summary line 16)"
+    },
+    {
+      "label": "Relay trigger (filtered volume that tells a target)",
+      "why": "One volume that reports entry by a chosen kind of actor drives a whole encounter. Lets a zone designer wire a fight start without script code.",
+      "keep": "Two checks (who touched it, whether this trigger reacts to that kind of event), then a relay to a target. Enable and disable at runtime.",
+      "change": "Name our events for combat (enter, leave, hit, clear) and keep a per-zone target list. The relay goes to the spawn director, not to a script.",
+      "ref": "docs/engine/objects/zCTrigger.md (lines 16-18)"
+    },
+    {
+      "label": "Carryable crate",
+      "why": "A prop the player can pick up and move gives small physical play. A crate silhouette reads at 375 wide with a bold outline.",
+      "keep": "A prop class with a move-or-carry flag; a simple pick-up state.",
+      "change": "Our own silhouettes (sack, barrel, lantern) and a weight rule that slows the carrier. No shared art.",
+      "ref": "docs/engine/objects/oCMOB.yml (line 6); docs/engine/objects/oCMOB.md"
+    }
+  ],
+  "not_read": [
+    "Game data halves: Gothic 1 and 2 installs (WORLD.ZEN, MENU.DAT, OU.BIN, VDF archives) are not in the box; the readme files were read",
+    "All binary samples under tests/samples (G1, G2, meshes, textures, saves): names and counts only, nothing opened beyond extension",
+    "docs/engine/formats/ and docs/library/ beyond the file list",
+    "src/ beyond src/vobs/Misc.cc (VTouchDamage); src/world/, DaedalusVm.cc, SaveGame.cc, Archive.cc, Mesh.cc, Texture.cc",
+    "docs/engine/objects/*.yml beyond oCMOB.yml header; zCTriggerWorldStart, zCMover, oCMobContainer docs not read",
+    "vendor submodules named in .gitmodules (doctest, mio, libsquish): not in the tree, licences not read",
+    "ZenLib (reference implementation named in readme.md) is not in the box",
+    "Paired donor OpenGothic is in the box and was not read",
+    "Logo pixel sizes beyond the two PNG headers; docs/assets/icons images not opened",
+    ".github workflows (build, docs, lint)"
+  ]
+}

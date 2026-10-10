@@ -1,0 +1,96 @@
+{
+  "donor": "Segs-Segs",
+  "code_licence": "BSD 3-Clause (LICENSE.md line 1; copyright 2006-2020, SEGS Project line 3; README line 11 'under the terms of the BSD License').",
+  "asset_licence": "No separate asset licence for the repo. Fonts carry their own files: Cantarell SIL OFL 1.1 (font_license.txt line 4); DejaVu Sans Bitstream Vera plus public-domain changes (license.txt line 1); CuppaJoe licence assumed by the repo to be OFL with no licence found (font_license.txt lines 1-2); Hussar Nova OFL 1.1; M+ 1c; TexGyreCursor GUST; SF Laundromatic freeware EULA PDF (not opened). Zone and spawn Lua data: no licence stated.",
+  "rights_holder_status": "Code: SEGS Project (BSD). Zone, encounter and spawn data: repo names a CoH client and says it interfaces with super hero MMORPG clients; the repo does not state who owns the game content. Unknown.",
+  "best_class": "B",
+  "asset_groups": [
+    {
+      "kind": "server code (C++, Lua engine glue, SQL)",
+      "path": "Servers/, Common/, Components/, Data/mysql/",
+      "count_hint": "690 h, 397 cpp, 195 hpp, 227 lua (repo-wide)",
+      "licence": "BSD 3-Clause (LICENSE.md)",
+      "class": "A",
+      "note": "keep notice; code not copied, shape only where needed"
+    },
+    {
+      "kind": "fonts with OFL or public-domain-change files",
+      "path": "Utilities/EditorComponents/Resources/fonts/ (Cantarell, DejaVu Sans, Hussar Nova, TexGyreCursor, M+ 1c)",
+      "count_hint": "about 30 ttf/otf across Utilities",
+      "licence": "per family licence files (OFL 1.1, Bitstream Vera, GUST, M+ FONTS)",
+      "class": "B",
+      "note": "conditions per family file; not all read"
+    },
+    {
+      "kind": "font with assumed licence",
+      "path": "Utilities/EditorComponents/Resources/fonts/CuppaJoe/",
+      "count_hint": "3 ttf/otf plus webfont variants",
+      "licence": "none found; repo assumes OFL (font_license.txt lines 1-2)",
+      "class": "C",
+      "note": "unclear; do not use without a licence check"
+    },
+    {
+      "kind": "font with EULA",
+      "path": "Utilities/EditorComponents/Resources/fonts/SF Laundromatic/",
+      "count_hint": "8 ttf plus shyfoundry_freeware_eula.pdf",
+      "licence": "freeware EULA PDF (not opened)",
+      "class": "C",
+      "note": "terms not read"
+    },
+    {
+      "kind": "zone, encounter and spawn data (Lua)",
+      "path": "Data/scripts/ (City_*, Trial_*, Hazard_* folders; Encounter_Manager.lua, spawners.lua, Universal_Spawns.lua)",
+      "count_hint": "32 entries in Data/scripts",
+      "licence": "not stated; repo names a CoH client",
+      "class": "C",
+      "note": "content of a commercial MMO client; mechanics only; write our own zone data"
+    },
+    {
+      "kind": "art, audio, models in the server repo",
+      "path": "(png 14, svg 22, ui 19 listed only)",
+      "count_hint": "55 listed",
+      "licence": "not stated",
+      "class": "C",
+      "note": "not opened"
+    }
+  ],
+  "inspiration": [
+    "Encounter manager as a small state machine: sleeping, idle, active, panic, despawn, plus an is-active flag (Data/scripts/Encounter_Manager.lua:13-18, 79-91). Fits zone population (row 23).",
+    "Probability per encounter slot: base plus adjustment, clamped to 0-100 (Data/scripts/Encounter_Manager.lua:31-32, 119-127). Shape for zone fields: cap, chance, respawn, grace, coverage.",
+    "100-percent slots are anchors and survive a normal despawn pass (Data/scripts/Encounter_Manager.lua:225). A rule for boss or quest anchors.",
+    "Content and state split: scripts hold zones, spawns, contacts and missions; the database holds player state and supergroups (Data/SCHEMA.md:11-13). Fits one character, one ledger.",
+    "Universal spawn definitions reused by name across maps, from a marker slot to a spawn definition (Data/scripts/Universal_Spawns.lua:5-9).",
+    "Panic as a timed state with an initiator list (Data/scripts/Encounter_Manager.lua:29-30, 88-90). Idea kept; the timer is declared but not built.",
+    "Civilian and car spawns at a marker with random offset and rotation (Data/scripts/spawners.lua:127-206). Ambient life at walk-density level (spawns row 23)."
+  ],
+  "briefs": [
+    {
+      "label": "Panic scatter",
+      "why": "A group that is attacked breaks away for a set time, which makes a fight read as a reaction.",
+      "keep": "panic as a timed state tied to the group; a list of who started it",
+      "change": "a shorter, tighter scatter with our gait and sound cue; return rule tied to our threat list",
+      "ref": "Data/scripts/Encounter_Manager.lua:16, 29-30, 88-90"
+    },
+    {
+      "label": "Probability slot with anchor flag",
+      "why": "A slot holds a squad with a spawn chance; a 100-percent slot stays as an anchor.",
+      "keep": "a chance field and an anchor flag per slot",
+      "change": "our fields (cap, chance, respawn, grace, coverage) and naming; anchors become boss stands",
+      "ref": "Data/scripts/Encounter_Manager.lua:31-32, 225"
+    },
+    {
+      "label": "Tray with empty-state plates",
+      "why": "Each slot shows an empty plate; an icon layer appears when filled, so the state reads at a glance.",
+      "keep": "separate empty plate and icon overlay per slot",
+      "change": "our slot count, palette and a bigger touch target at 375 wide",
+      "ref": "AssetSource/Ingame/UI/HUD/Tray_Inspirations_Empty.svg (Segs-Segs-Client donor)"
+    }
+  ],
+  "not_read": [
+    "Servers/MapServer/MapInstance.cpp and the rest of the C++ server (listed only)",
+    "Data/scripts map folders (City_*, Trial_*, Hazard_*), ES_Library_Objects.lua, contacts.lua, entities.lua (listed only)",
+    "Data/mysql/*.sql (listed only); Data/SCHEMA.md beyond line 13",
+    "All fonts (binary), all png, svg, ui and xml files (listed only); SF Laundromatic EULA PDF (not opened)",
+    "3rd_party licence texts beyond listing; SEGSAdmin/License.txt (head only); Utilities/Distribution/License.txt (head only)"
+  ]
+}

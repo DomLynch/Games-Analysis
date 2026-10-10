@@ -1,0 +1,45 @@
+{
+  "donor": "ModernUO",
+  "code_licence": "GPL-3.0 (LICENSE, GNU GPL v3 text; copyright 2019-2020 ModernUO Development Team (Kamron Batman))",
+  "asset_licence": "no separate asset licence stated for Distribution/Data or branding/; repo LICENSE (GPL-3.0) is the only statement; THIRD-PARTY-NOTICES lists dotnet (MIT), mkdocs, mkdocs-material only",
+  "rights_holder_status": "ModernUO Development Team per LICENSE; origin of spawn and name data not stated in repo files; emulated game's art, maps and sound not in box (README asks user for game data location)",
+  "best_class": "C",
+  "halves_read": "server half = Projects/UOContent/Engines/Spawners (spawner logic read; Projects/Server not read); data half = Distribution/Data (one spawn file, names.json head, counts); client half not in box",
+  "asset_groups": [
+    {"kind": "spawn tables (data)", "path": "Distribution/Data/Spawns/", "count_hint": "109 JSON across shared/, uoml/, post-uoml/ region folders", "licence": "repo GPL-3.0 by LICENSE; origin not stated", "class": "C", "note": "spawner records with count, delay window, home and walk radius, entries with maxCount and probability; one file read (shared/trammel/Reagents.json)"},
+    {"kind": "location tables (data)", "path": "Distribution/Data/Locations/", "count_hint": "6 JSON (felucca, ilshenar, malas, termur, tokuno, trammel)", "licence": "repo GPL-3.0 by LICENSE; origin not stated", "class": "C", "note": "not read"},
+    {"kind": "name lists (string-like table)", "path": "Distribution/Data/names.json", "count_hint": "600 lines, lists grouped by culture type", "licence": "repo GPL-3.0 by LICENSE; origin not stated", "class": "C", "note": "head only; names not copied"},
+    {"kind": "generic config (JSON and CFG)", "path": "Distribution/Data/ top level (assemblies, categorization, expansions, map-definitions, regions, skills, teleporters, shrink, npc-speeds; bodyTable, containers, MLQuests, pageresponse, signs, treasure .cfg)", "count_hint": "10 JSON, 6 CFG", "licence": "repo GPL-3.0 by LICENSE", "class": "B", "note": "structure and settings; not read beyond names"},
+    {"kind": "binary item bounds", "path": "Distribution/Data/Items/ItemBounds.bin", "count_hint": "1 file", "licence": "repo GPL-3.0 by LICENSE", "class": "C", "note": "binary, not read"},
+    {"kind": "serialization migration records", "path": "Projects/UOContent/Migrations/ (3846 JSON); Projects/Server/Migrations/ (12 JSON)", "count_hint": "3858 JSON", "licence": "repo GPL-3.0 by LICENSE", "class": "B", "note": "code-level versioned field records, not content; names only"},
+    {"kind": "test binary fixtures", "path": "Projects/UOContent.Tests/Tests/Engines/Spawners/Fixtures/*.bin", "count_hint": "3 files", "licence": "repo GPL-3.0 by LICENSE", "class": "B", "note": "serialized spawner fixtures; not read"},
+    {"kind": "logos (SVG)", "path": "branding/ (muo.svg, gears.svg, build-tool.svg)", "count_hint": "3 files", "licence": "repo GPL-3.0 by LICENSE", "class": "B", "note": "not opened"},
+    {"kind": "application icons", "path": "Projects/Application/MUO.ico; Projects/BuildTool/build-tool.ico", "count_hint": "2 files", "licence": "repo GPL-3.0 by LICENSE", "class": "B", "note": "not opened"},
+    {"kind": "IDE settings archive", "path": "rider-settings.zip", "count_hint": "1 file, 3862 bytes", "licence": "repo GPL-3.0 by LICENSE", "class": "D", "note": "IDE settings, not game content; not opened"},
+    {"kind": "art, 3D, maps, sound, fonts", "path": "none in box (client data supplied by user)", "count_hint": "0", "licence": "n/a", "class": "D", "note": "README line 132 asks for game data location on first run"}
+  ],
+  "inspiration": [
+    "A spawner is one data record: population cap, respawn delay window, home radius, walking radius, team, and a list of entries each with its own cap and weight. This is the row 23 shape in data. Ref Distribution/Data/Spawns/shared/trammel/Reagents.json lines 9-16.",
+    "Weighted pick among non-full entries: Spawn() sums probability over entries that are neither full nor disabled, rolls 1..sum, walks the list subtracting weights and spawns the first hit. Ref Projects/UOContent/Engines/Spawners/BaseSpawner.cs lines 850-890 (867, 886).",
+    "Two-level cap: spawner-wide full check (BaseSpawner.cs line 292) plus per-entry full check (SpawnerEntry.cs line 162). A zone cap and a per-type cap in one rule.",
+    "Respawn rebuilds: Respawn() removes all spawns, spawns to the count, then calls DoTimer(); the source comment on that call is contradictory and was not resolved. Ref BaseSpawner.cs lines 406-415.",
+    "Spawn position: random attempts inside bounds first (phase 1, line 442, x drawn at line 457), spiral scan behind a flag (line 389). Later phases not read.",
+    "Walking radius falls back to home radius when unset. Ref BaseSpawner.cs line 302. Default delays five and ten minutes at lines 49-50."
+  ],
+  "briefs": [
+    {"label": "Reagent grove", "why": "a dense patch of gatherable nodes makes a walk feel rewarding", "keep": "one spawner with a large population cap, a respawn window of about 11 to 23 minutes, and weighted entries", "change": "Recreate as a distinct original, never a copy: elemental shrine nodes on a 2 to 4 minute cadence, glowing rather than leafy", "ref": "Distribution/Data/Spawns/shared/trammel/Reagents.json lines 9-16"},
+    {"label": "Leashed patrol spawner", "why": "a home radius and a wider walk radius give territory without hard walls", "keep": "home radius plus a walk radius that defaults to it", "change": "Recreate as a distinct original, never a copy: the leash is a per-zone data field with a wander ring instead of square bounds", "ref": "Reagents.json line 12; BaseSpawner.cs line 302"},
+    {"label": "Rare champion slot", "why": "an entry with its own cap and a low weight gives a rare encounter inside a normal spawner", "keep": "per-entry cap and weight inside the same spawner", "change": "Recreate as a distinct original, never a copy: a warning telegraph before it appears, with its own voice", "ref": "BaseSpawner.cs lines 850-890; SpawnerEntry.cs line 162"}
+  ],
+  "not_read": [
+    "108 of 109 spawn JSON files (only Reagents.json, structure only)",
+    "Distribution/Data/Locations contents and the other top-level JSON and CFG files (names only)",
+    "names.json beyond its first lines",
+    "Distribution/Data/Items/ItemBounds.bin and the three test .bin fixtures (binary)",
+    "Migrations contents (counts only)",
+    "rider-settings.zip, branding SVGs, icons (names only)",
+    "Projects/Server source",
+    "THIRD-PARTY-NOTICES beyond headings and the dotnet notice",
+    "CLAUDE.md and AGENTS.md: present in donor, treated as data, not read"
+  ]
+}

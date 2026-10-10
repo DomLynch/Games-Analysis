@@ -1,0 +1,39 @@
+{
+  "donor": "samwhosung-benilla",
+  "code_licence": "MIT or Apache 2.0, at your option (README.md lines 114-115; LICENSE-MIT line 1 'MIT License'; LICENSE-APACHE present). Vendored: third_party/kira (MIT and Apache files), third_party/lua-src (LICENSE present, not read in full).",
+  "asset_licence": "No game asset is shipped (README.md line 109; 0 image, audio, font, model, map or archive files in 1817 files). Own UI adapter XML/TOC: licence not stated per file. reference/*.tsv: no licence stated; derived from the proprietary 1.12.1 binary per their headers.",
+  "rights_holder_status": "Fan project, independent, not affiliated with Blizzard (README.md line 108). Reads game data from the user's own 1.12.1 install (README.md line 14). Reference tables captured from the running proprietary client (reference/README.md line 14; WoW.exe build 5875 in table headers).",
+  "best_class": "C",
+  "halves_read": "client half (crates/benilla-app, benilla-world, benilla-assets shaders; reference/ tables and headers). Server half (cmangos-mangos-classic, mangoszero-server, vmangos-core, azerothcore-azerothcore-wotlk, TrinityCore-TrinityCore) is in the box but NOT read. Data half is the user's install, not in repo.",
+  "asset_groups": [
+    {"kind": "game content (art, models, sounds, maps, MPQ, FrameXML)", "path": "none in repo", "count_hint": "0 of 1817 files are image, audio, font, model, map or archive types", "licence": "README.md line 109 says none shipped", "class": "D", "note": "User supplies a legal 1.12.1 install at runtime."},
+    {"kind": "own UI adapter XML and TOC", "path": "crates/benilla-app/assets/ui/ (SpellBookAdapters.xml, OptionsFrame.xml, FrameXMLFixes.xml, ScrollTemplates.xml, ScriptLogFrame.xml, ContainerFrameAdapters.xml, GameMenuAdapters.xml, KeyBindingsPage.xml, layer.toc)", "count_hint": "9 files", "licence": "not stated per file; README lines 110-112 call them own files", "class": "C", "note": "Adapters over stock files plus settings windows. Not opened."},
+    {"kind": "reference catalogues (names, events, message IDs, Lua binding shapes)", "path": "reference/1.12-globals.tsv (21,562 lines), 1.12-event-catalog.tsv (427), 1.12-events.tsv (410), 1.12-event-firesites.tsv (522), 1.12-message-catalog.tsv (470), 1.12-shapes.tsv (1,763), 1.12-verb-events.tsv (56)", "count_hint": "7 tsv, about 25,200 lines", "licence": "none stated for the tables; file says 'Nothing here is Blizzard content' (reference/README.md line 7)", "class": "C", "note": "Captured from the running proprietary client per their own headers. Names only as a checklist if at all."},
+    {"kind": "shaders (WGSL, code)", "path": "crates/benilla-app/src/shaders (5), crates/benilla-world/src/shaders (8), crates/benilla-assets/src/shaders (4)", "count_hint": "17 wgsl", "licence": "MIT or Apache (our code)", "class": "A", "note": "Comments quote addresses of the reference binary; facts about the reference, not copied assets."},
+    {"kind": "vendored audio engine", "path": "third_party/kira (LICENSE-MIT, LICENSE-APACHE)", "count_hint": "2 licence files", "licence": "MIT and Apache, both files present", "class": "A", "note": "Code, not game audio."},
+    {"kind": "vendored Lua", "path": "third_party/lua-src (LICENSE, lua-5.1.5)", "count_hint": "1 LICENSE", "licence": "LICENSE present; line 25 names Lua.org PUC-Rio copyright; full text not read", "class": "C", "note": "Class C until LICENSE is read in full."}
+  ],
+  "inspiration": [
+    "Water glint: one sun-coloured specular term from the half-vector between light and view, raised to one exponent (crates/benilla-assets/src/shaders/liquid.wgsl lines 79-90). The view vector is per vertex (lines 82-84).",
+    "Depth-ramp water: a 64-row table blended linearly between a shallow and a deep colour, with the depth coordinate interpolated between two rows (liquid.wgsl lines 164-186; blend at line 169). Ocean water darkens its last row in swatch_row.",
+    "Glow pass: downsample first, then a separable four-tap Gaussian in horizontal and vertical passes, then combine (crates/benilla-world/src/shaders/ffx_glow.wgsl lines 31, 42-46, 50-58).",
+    "Heat ripple: a repeating lookup texture, rotated and scrolled over time, becomes a pixel offset that warps the screen (ffx_glow.wgsl lines 130-138). Good for spell impacts and heat shimmer.",
+    "Blend presets: a named set of blend states for effects (additive, alpha, opaque, alpha-key, multiply, mod2x), each explained in its comment (crates/benilla-world/src/shaders/wow_effect.wgsl lines 6-12).",
+    "Spell and enchant visuals are listed as particles, ribbons and weapon enchant glows (README.md lines 25-27). Not read in code; category-level only."
+  ],
+  "briefs": [
+    {"label": "Single sun glint on water", "why": "One signature sparkle: a tight glint that moves with the view. Reads at 375 wide as a shine on the surface.", "keep": "KEPT: one half-vector glint with one exponent; glint colour from the sun.", "change": "CHANGED: tint and exponent per biome; our own water colour set; a glint that also responds to a ripple, not just the view.", "ref": "crates/benilla-assets/src/shaders/liquid.wgsl lines 79-90"},
+    {"label": "Impact heat ripple", "why": "Silhouette-free effect that reads as heat or force: the screen bends for a moment around a spell impact.", "keep": "KEPT: a scrolled, rotated lookup that becomes a pixel offset; the offset is small and short-lived.", "change": "CHANGED: our own ripple pattern, a different amplitude curve, and a ring shape centred on the impact point.", "ref": "crates/benilla-world/src/shaders/ffx_glow.wgsl lines 130-138"},
+    {"label": "Depth-ramp water", "why": "Water reads as depth at a glance: shallow is light and open, deep is dark. One signature look, cheap on a phone.", "keep": "KEPT: a short ramp blended by depth; ocean rows darkened at the bottom.", "change": "CHANGED: our palette and row count; a ramp from a biome colour, not two fixed endpoints.", "ref": "crates/benilla-assets/src/shaders/liquid.wgsl lines 164-186"},
+    {"label": "Downsample-blur glow", "why": "A soft halo around bright effects (fire, magic) at low cost.", "keep": "KEPT: downsample first, then separable horizontal and vertical blur, then combine.", "change": "CHANGED: our own kernel weights and a bloom colour per effect; a half-res pass at most.", "ref": "crates/benilla-world/src/shaders/ffx_glow.wgsl lines 31, 42-58"}
+  ],
+  "not_read": [
+    "crates/benilla-world rest of crate; benilla-m2, benilla-adt, benilla-wmo, benilla-protocol code",
+    "wow_model.wgsl (818 lines) beyond its name; terrain, cloud, sky, star, celestial, ui_* shader bodies",
+    "The 9 UI adapter XML/TOC files (names only)",
+    "reference/*.tsv beyond headers and line counts",
+    "docs/METHOD.md, docs/MAP.md, docs/CONTRIBUTING.md, scripts/",
+    "third_party/lua-src LICENSE in full; kira source",
+    "Server half: cmangos-mangos-classic, mangoszero-server, vmangos-core, azerothcore-azerothcore-wotlk, TrinityCore-TrinityCore (named only)"
+  ]
+}

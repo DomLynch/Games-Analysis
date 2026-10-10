@@ -1,0 +1,40 @@
+{
+  "donor": "kivutar-goro",
+  "code_licence": "MIT (LICENSE line 1; LICENSE line 3 names Jean-André Santoni; website/index.html line 63 says MIT-licensed)",
+  "asset_licence": "No asset or per-folder licence file found in the tree. The repo does not ship Ragnarok Online game data (website/index.html line 474; docs/client-setup.md says the user supplies a 2008-era RO data folder).",
+  "rights_holder_status": "Fan reimplementation of the Ragnarok Online client (README line 22). Game data not shipped. Website footer (index.html line 531) says RO and its game imagery belong to their respective rights holders and the project is not affiliated with Gravity.",
+  "best_class": "D",
+  "asset_groups": [
+    {"kind": "game data (sprites, models, maps, audio, GRF)", "path": "not in tree", "count_hint": "0 files of .gr2/.rsm/.gnd/.spr/.act/.wav/.mp3/.ogg by extension", "licence": "none shipped; user supplies original RO data", "class": "D", "note": "Client loads RO data at runtime from a user folder (docs/client-setup.md). Nothing to reuse as is."},
+    {"kind": "website art (screenshots, feature shots, hero illustration)", "path": "website/assets/*.webp (16 webp in repo)", "count_hint": "9 screenshots, 4 feature shots, 3 loliruri hero images", "licence": "not stated for these files; footer line 531 says game imagery belongs to rights holders", "class": "C", "note": "Screenshot names point to RO locations and scenes. Hero art has no credit line in any file read (grep for loliruri found only og:image and a feature line). Origin unknown."},
+    {"kind": "app and site icons", "path": "internal/appicon/icon.png, website/assets/icon.png, packaging/linux/goro.png", "count_hint": "3 png", "licence": "project MIT for source; icon licence not stated", "class": "C", "note": "Own-project icon likely, but no line says so. Not opened."},
+    {"kind": "audio", "path": "audio/*.go (code only)", "count_hint": "0 audio files in tree", "licence": "n/a", "class": "D", "note": "Audio code exists (audio/sfx.go, bgm.go) but no sound or music files are in the box."},
+    {"kind": "data tables in Go (names and look ids)", "path": "db/monster_tables.go (6,262 quoted-entry lines; MonsterResourceName at line 3, MonsterDisplayName at line 3743, MonsterShadowSize near line 6172), db/item_tables.go (ItemTable at line 59, 11,114 lines; WeaponResourceName line 8464, ShieldResourceName 8497, HatResourceName 8504, RobeResourceName 10909)", "count_hint": "thousands of id-to-name and id-to-resource entries", "licence": "MIT for the Go source; the names and ids describe RO content, rights status unclear", "class": "C", "note": "Id-to-name and id-to-art-resource maps. Names not reproduced here. Treat the content as RO-derived data (class C) even though the file is MIT source."},
+    {"kind": "markup, styles and site script", "path": "website/index.html, website/styles.css, website/script.js, docs/*.md", "count_hint": "a few files", "licence": "project MIT (index.html line 530)", "class": "A", "note": "Own project text and styles under the stated MIT line. Not a game asset."}
+  ],
+  "inspiration": [
+    "Ground drop as a small physical object: a fixed-step gravity sim at 60 steps per second, capped at 120 frames, with a bounce factor and a speed damping, that stops when the bounce is small. A drop lands, bounces about twice, and settles. Shadow is drawn at a quarter of the entity shadow so it does not stretch north of the item sprite (game/items.go lines 55-60 and the loop near line 815).",
+    "Prestige aura as three stacked layers: a ground ring, a body glow and a floating bubble, each with its own effect id, synced every frame from the actor's level. The aura carries a 24 hour lifetime (game/level99_aura.go lines 11 and 19 onward). Good model for a status aura that is readable at 375 wide.",
+    "Damage numbers as per-digit billboards: digits are cut from one sprite strip with a 2 px gap, then floated up with a z-lift, scale and alpha curve chosen by the kind of hit (game/damage_numbers.go lines 113-155 and 187-232).",
+    "Hit ring as a short timed flat ring: inner and outer radius grow over a few frames, a fade-out frame ends it, and a particle burst sits on top (db/effects_hit.go lines 8-30). Cheap and clear at phone size.",
+    "Cylinder effect as a column of the same texture drawn several times with staggered start offsets, so one light pillar reads as many (game/effects_cylinder.go lines 12-30). Useful for teleports and boss arrival.",
+    "Look-by-id maps: monster and item tables map numeric ids to names and to art resource names (db/item_tables.go lines 8464-10909). The catalogue can keep the id-to-look split so a new look does not change the item row.",
+    "Layered data folders: a DATA.INI lists archives in priority order and the first archive that has a file wins (docs/client-setup.md, GRF archives section). A priority list is a clean way to let zone or event packs override base data."
+  ],
+  "not_read": [
+    "res/*.go loaders (grf.go, act.go, spr, gr2, gnd, rsw): code, not opened",
+    "2 .lua, 2 .java, 1 .c, 1 .mod, 1 .xml, 1 .js in the tree: not opened",
+    "website/assets image content beyond names and counts; the 3 loliruri files were not opened as pictures",
+    "db/skills.go, db/status.go, db/status_icons.go and other db tables: names only, not read for content",
+    "docs other than client-setup.md (rathena-setup.md, world-map.md, woe-20080910.md, etc.): not read",
+    "TODO.md, legacy-mail doc, classic-ro-client-gap-checklist.md: not read",
+    "Server half (rAthena) is not in the box; docs/rathena-setup.md mentions it but was not read",
+    "Data half (RO client folder) is not in the box; docs/client-setup.md names a third-party archive, which was not fetched or assessed"
+  ],
+  "briefs": [
+    {"label": "Stepped drop bounce", "why": "A dropped item reads as a physical object. It lands, bounces about twice and settles, so loot feels like it fell, not appeared.", "keep": "fixed-step gravity; bounce ratio on each landing; stop when the bounce is small; shadow at a quarter size", "change": "drops hover on a rarity-coloured light column instead of a bounce; bounce ratio set per rarity tier; ground ring instead of a shadow ellipse", "ref": "/mnt/frankendom-donors/kivutar-goro/game/items.go (constants lines 55-60; loop near line 815)"},
+    {"label": "Prestige ring aura", "why": "Three stacked layers (ground, body, bubble) make a status read at a distance and stay clear at 375 wide.", "keep": "three layers with separate timing; synced to the actor each frame; long lifetime tied to a level", "change": "colour ramp by prestige tier; rotating glyph ring instead of bubbles; the aura pulses on fight start only", "ref": "/mnt/frankendom-donors/kivutar-goro/game/level99_aura.go (lines 11-25)"},
+    {"label": "Kind-coloured damage digits", "why": "Per-digit floaters let a combo read as a stack of numbers, and the kind colour says what happened without words.", "keep": "digits composed from one strip with a small gap; float up with z-lift; fade by kind colour", "change": "two-frame pop scale on each digit; crit digits shake sideways; a hit-count tag stacks under the number", "ref": "/mnt/frankendom-donors/kivutar-goro/game/damage_numbers.go (lines 113-155, 187-232)"},
+    {"label": "Flat hit ring", "why": "A short expanding ring plus particles gives impact at a glance with very few sprites.", "keep": "ring grows and fades over a few frames; particle burst on top", "change": "ring colour by element; a three-frame hitstop flash in the ring centre; ring is drawn flat on the ground, not as a sprite sheet", "ref": "/mnt/frankendom-donors/kivutar-goro/db/effects_hit.go (lines 8-30)"}
+  ]
+}

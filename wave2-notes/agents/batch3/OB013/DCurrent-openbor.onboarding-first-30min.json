@@ -1,0 +1,94 @@
+{
+  "donor": "DCurrent-openbor",
+  "topic": "onboarding-first-30min",
+  "cell": "OB013",
+  "verdict": "PARTIAL for onboarding (no first-run content in the box); STRONG for the hit-pause rule (first hit feedback)",
+  "depth": "thin",
+  "depth_note": "Onboarding is thin: the engine has no module content. Hit-pause rule read in full.",
+  "half_read": "engine",
+  "paths": [
+    "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c",
+    "/mnt/frankendom-donors/DCurrent-openbor/engine/translation.txt",
+    "/mnt/frankendom-donors/DCurrent-openbor/media",
+    "/mnt/frankendom-donors/DCurrent-openbor/LICENSE"
+  ],
+  "counts": {
+    "openbor_c_lines": 56749,
+    "tr_string_call_lines": 155,
+    "tr_unique_titles": 128,
+    "translation_msgid_lines": 178,
+    "media_files_other_than_dummy": 0,
+    "menu_main_items": 5,
+    "default_continues": 5,
+    "default_lives_when_zero": 3,
+    "splash_hold_seconds_max": 6,
+    "intro_replay_seconds": 20
+  },
+  "rule": "Per landed hit, in order: flash spawns at the target; combo timer starts; the attacker gets a pause only if its pause window has ended or it is airborne (with the air flag off); the victim always gets the same pause, applied to its movement timer, animation timer and think timer.",
+  "data_fields": [
+    {"name": "pause_add", "unit": "engine ticks (same clock as the game timer; inferred)", "donor_value_or_null": null},
+    {"name": "air_bypasses_pause_window", "unit": "boolean", "donor_value_or_null": null},
+    {"name": "flash_on_hit", "unit": "boolean", "donor_value_or_null": null},
+    {"name": "combo_delay", "unit": "ticks", "donor_value_or_null": null},
+    {"name": "bounce_quake_strength", "unit": "quake counter (unit not read)", "donor_value_or_null": 4},
+    {"name": "intro_replay_seconds", "unit": "seconds (engine constant via game_speed * 20)", "donor_value_or_null": 20},
+    {"name": "splash_hold_seconds_max", "unit": "seconds (engine constant via game_speed * 6)", "donor_value_or_null": 6},
+    {"name": "lives_default_when_zero", "unit": "lives", "donor_value_or_null": 3},
+    {"name": "continues_global_default", "unit": "continues", "donor_value_or_null": 5}
+  ],
+  "keep": [
+    "Victim stun is unconditional on a landed hit",
+    "Attacker recovery is gated by a window on the ground, so combos do not freeze the attacker",
+    "Explicit air rule (donor default bypasses the window; ours should be a data flag)",
+    "Attract loop: a six-second hold that any button skips, then a logo, then an intro that replays every 20 seconds and resets on menu input",
+    "Blinking PRESS START over the attract art",
+    "Drop-in join on any button per slot, with lives reset to the set value"
+  ],
+  "change": [
+    "Pause is written into four timer fields by hand; use one pause field per entity read by movement, animation and think",
+    "The donor comment marks the attacker timer write as temporary (line 31733): do not keep the comment, keep the rule",
+    "Quake applies on bounce only, not on each hit: do not copy as hit shake",
+    "Menu order and five items: our menu is ours to design"
+  ],
+  "defect_review": [
+    {"defect": "hand-synced timers in four fields", "fix": "one pause field per entity, set on the server tick"},
+    {"defect": "air case is a default that bypasses the window", "fix": "explicit air flag in data, decided per fight"}
+  ],
+  "look_test": "Two phone mocks at 375 wide. Hit pause: a tap-to-hit prototype with a tunable victim freeze and an attacker freeze that waits for its window on the ground; test three rapid hits. Attract loop: logo, then a 20-second intro replay that any tap pushes back, with a blinking PRESS START; compare with our title.",
+  "licence_note": "Engine code under a 3-clause BSD-style licence (LICENSE lines 1-7). Code may be adapted if the copyright notice is kept; the sketch here is re-expressed, not copied. Art and game content: no licence stated, inspiration only. The README says the original game used assets from a third-party series (README line 21 per the audit); no art tracing to that line is used.",
+  "tags": [
+    "hit-stop",
+    "flash",
+    "screen-shake",
+    "ordered-feedback",
+    "new:attract-loop",
+    "new:splash-hold",
+    "new:drop-in-join",
+    "new:lives-continues",
+    "new:bounce-rumble",
+    "new:boot-flow"
+  ],
+  "frankendom_target": {
+    "file": "src/fight/hit-pause.ts (proposed, does not exist)",
+    "row": 10,
+    "row_name": "hit impact / hitstop",
+    "sub_line": "server tick: fixed step, input intake, per-tick NPC budget"
+  },
+  "first_90_seconds": "Boot: six-second hold skipped by any button, then the logo scene, then the intro scene, then PRESS START over the intro art. The scene files are not in the repo (media/ holds only _DUMMY), so what the player sees is not known for any shipped module.",
+  "first_fight_and_kill": "Staged by module data (not in the box). No first-kill gate in the engine.",
+  "first_hit_feedback": "Flash at the target, combo timer, victim stun, attacker recovery gate (engine half, read in full). Shake only on bounce. Fall sound and pad rumble on landing.",
+  "loot_reveal": "Not in the engine half.",
+  "idle_and_ambient": "Attract loop replays the intro scene every 20 seconds; menu input pushes the next replay out.",
+  "death_and_respawn": "Death sequence can blink the dying entity (per-model flags, no-blink command exists). Players switch to a player blink action on death. Continues come from the level set, with a global default of five. Respawn and continue screens not read.",
+  "walk_density": "Not read.",
+  "readability_375": "Not verified. Menu uses three font slots (menu/font1-3) on a fixed cell grid.",
+  "not_read": [
+    "Data pack (media/ holds only _DUMMY): no scene files (logo.txt, intro.txt, howto.txt), no data/levels.txt, no join scripts (join1-4.c), no sprites, sounds or module content",
+    "engine/source/openborscript/ (scripting) beyond file size",
+    "Hall Of Fame and Options screens beyond their names",
+    "Respawn and continue screens",
+    "Body of translation.txt beyond the header; counted only",
+    "Module folder (none identified in the box by folder name; not opened)",
+    "Minute 5, 10 and 30 timings (depend on module data)"
+  ]
+}

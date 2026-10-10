@@ -1,0 +1,139 @@
+{
+  "donor": "Warzone2100-warzone2100",
+  "halves_read": "Both halves are in one repo: the game client and server source (src/, lib/, 3rdparty/) and the data pack (data/). Only the data half was read in depth here: data/base/stats (JSON balance tables), data/base/audio (audio.json and file counts), data/base/structs and data/base/effects (PIE model headers, file names), data/mp (multiplayer maps and components), and the licence files (COPYING, COPYING.README, COPYING.NONGPL, README.md, .gitmodules). Source code was not read beyond the licence headers.",
+  "code_licence": "GPL-2.0-or-later. README.md line 300 states the project is free software under GPL; COPYING.README line 14 says 'Everything included (source code and data)' is GPL version 2 or later, except the music and video not included. Third-party code under 3rdparty/ has its own licences (MIT, BSD, Boost, MPL 2.0, ISC, CC0 for expected; see COPYING.NONGPL).",
+  "asset_licence": "Mixed, file by file. COPYING.README line 14 and line 15 sets the default as GPL-2 or later for included data. COPYING.NONGPL lists the exceptions: CC0 (some maps and images), CC BY-SA 3.0 (some textures, wheel models, a campaign banner, one multiplayer map), CC BY 4.0 (Font Awesome replay icons), MIT (flag images and Bootstrap UI icons, AMD FSR and SMAA shaders), OFL 1.1 (a CJK font, not in box). Music and video are not in the box (COPYING.README line 15; README.md line 38; data/music is an empty submodule).",
+  "rights_holder_status": "Original game released by Eidos with Pumpkin Studios (README.md lines 34 and 37 name Pumpkin Studios and Eidos). COPYING.README line 43 grants permission to use the name, logos, stories and texts. Individual artists are credited in COPYING.NONGPL for listed files. The rights position for the remaining game art, audio and music is not stated beyond the GPL default and the per-file list. Treat as released-source, not clean-room.",
+  "best_class": "B",
+  "asset_groups": [
+    {
+      "kind": "3D models (PIE text meshes)",
+      "path": "data/base/structs (164 .pie), data/base/components/bodies (35), data/base/components/weapons (141), data/base/components/prop (71), data/base/effects (130), data/base/features (104), data/mp/components/weapons (52), data/mp/components/bodies (16), data/mp/effects (16); 873 .pie in total",
+      "count_hint": "873 .pie files, text format (PIE 2 header, TEXTURE line, LEVELS, POINTS, polygon lists)",
+      "licence": "GPL-2.0-or-later by default (COPYING.README line 14). Of the eight wheel models listed in COPYING.NONGPL lines 48 to 55 (CC BY-SA 3.0), six are at the listed data/base/components/prop/ path; prsrwhl1.pie and prslwhl1.pie are present only under data/mp/components/prop/ (checked).",
+      "class": "B",
+      "note": "Default is GPL-2 or later with share-alike style conditions for copies. Structure is readable text, so the format can be studied. Models reference texture pages that are not in the box (structs/miuptrim.pie line 3 names page-12-player-buildings.png)."
+    },
+    {
+      "kind": "textures and UI images (PNG)",
+      "path": "data/base/images/ (flags 38 files; frontend and intfac icons; replay icons; notifications 5 files; wz_original_campaign_banner.png); 791 PNG in data/ in total",
+      "count_hint": "791 PNG in data/; texture atlases data/base/texpages/ are an empty submodule (0 PNG)",
+      "licence": "MIT for flags (COPYING.NONGPL line 62) and Bootstrap UI icons (line 106); CC BY 4.0 for Font Awesome replay icons (line 117); CC BY-SA 3.0 for the campaign banner (line 60); other PNG default GPL-2 or later",
+      "class": "A for MIT and CC BY 4.0 items (with notice or attribution); B for CC BY-SA and default GPL items",
+      "note": "The listed texture-atlas files (backdrops, sky, rockies, droid weapons) are not in the box: data/base/texpages and data/texpages are empty or absent. Attribution text is in COPYING.NONGPL."
+    },
+    {
+      "kind": "audio sound effects and voice lines (OGG)",
+      "path": "data/base/audio/ (sfx 6 folders incl. weapons 29 and explosions, tutorial 80, extra 56, memressp (voice sets), countdown 29, vtoltalk 18, taunts, proxmessages, multi, nexus, radclick); 548 OGG in data/base/audio in total",
+      "count_hint": "548 .ogg, 2 JSON, 1 FODT",
+      "licence": "GPL-2.0-or-later by default (COPYING.README line 14); no audio path appears in COPYING.NONGPL (grep)",
+      "class": "B",
+      "note": "Readable event table in audio.json (fileName, loop, range in world units, volume). Music is not in the box (data/music is empty)."
+    },
+    {
+      "kind": "balance and stats tables (JSON)",
+      "path": "data/base/stats/ (weapons.json 109 id entries, body.json 36, structure.json 131, templates.json 168, research.json 413, propulsion.json, weaponmodifier.json, terraintable.json, propulsionsounds.json, features.json, sensor.json, repair.json and more); data/mp/stats/ (multiplayer copies)",
+      "count_hint": "18 base stat files plus multiplayer copies; 428 JSON in data/ in total",
+      "licence": "GPL-2.0-or-later by default (COPYING.README line 14)",
+      "class": "B",
+      "note": "Data-first source. Weapon effect versus propulsion table in weaponmodifier.json; surface speed by locomotion in terraintable.json; weapon effect field in weapons.json."
+    },
+    {
+      "kind": "multiplayer maps (descriptors and terrain)",
+      "path": "data/mp/multiplay/maps/ (115 entries: 54 .gam descriptors and folders such as 2c-DustyMaze, 4c-DustyMaze-2v2, 4c-DustyMaze-FFA, 7c-Thales); for example 4c-DustyMaze-FFA holds game.js and ttypes.ttp",
+      "count_hint": "54 .gam map descriptors",
+      "licence": "CC0 for 2c-DustyMaze, 4c-DustyMaze-2v2 and 4c-DustyMaze-FFA (COPYING.NONGPL lines 118 to 121); CC BY-SA 3.0 for 7c-Thales (line 123); other maps default GPL-2 or later",
+      "class": "A for the CC0 maps; B for CC BY-SA and default maps",
+      "note": "The listed CC0 folder 4c-DustyMaze-FFA holds only two files in the box (checked). game.map is not present for that folder."
+    },
+    {
+      "kind": "campaign and mod data (JSON and submodules)",
+      "path": "data/base/campaigns/ (alpha.json, beta.json, gamma.json); data/mods/campaign/ (4 entries; reclamation and fractured-kingdom are separate submodules per .gitmodules lines 62 to 67)",
+      "count_hint": "3 campaign JSON; 77 .wrf files in data/ in total",
+      "licence": "GPL-2.0-or-later by default; submodule contents licensed by their own repos (not in box)",
+      "class": "B",
+      "note": "Campaign mod content was not read."
+    },
+    {
+      "kind": "game logic scripts (JavaScript)",
+      "path": "data/base/script/ (78 .js); 243 .js in data/ in total",
+      "count_hint": "243 .js files",
+      "licence": "GPL-2.0-or-later by default",
+      "class": "B",
+      "note": "Not read beyond the file list."
+    },
+    {
+      "kind": "fonts, terrain overrides and music (submodules, not in box)",
+      "path": "data/fonts/ (empty; submodule per .gitmodules line 48); data/music/ (empty; submodule per .gitmodules line 25); data/terrain_overrides/high/ and data/terrain_overrides/classic/ (both empty, 0 files each)",
+      "count_hint": "0 files in box",
+      "licence": "fonts: OFL 1.1 for the CJK font listed in COPYING.NONGPL line 58 (not in box); music: not included (COPYING.README line 15; README.md line 38)",
+      "class": "D",
+      "note": "Nothing usable in the box for these groups."
+    },
+    {
+      "kind": "shaders (GLSL and Vulkan variants)",
+      "path": "data/base/shaders/ (fsr1_easu.frag, fsr1_rcas.frag, smaa_*.frag and .vert, sky_radiance.glsl, skybox.frag and variants under vk/)",
+      "count_hint": "about 30 shader files",
+      "licence": "MIT for fsr1 and smaa (listed in COPYING.NONGPL; the 8 fsr1 and smaa files are present in data/base/shaders/, checked); default GPL-2 or later for the rest",
+      "class": "A for listed MIT shader files; B for the rest",
+      "note": "Shaders are code. Not read beyond the file list."
+    }
+  ],
+  "inspiration": [
+    "Weapon effect against movement class is one table: each weapon effect has a percentage per propulsion class (tracked, wheeled, legged, hover, lift, half-tracked, propellor). Some effects are flat, which is a deliberate choice (data/base/stats/weaponmodifier.json lines 11 and 38). Recreate: a damage-type by target-class grid for our creature classes and armour types, with flat rows for special damage.",
+    "Surface speed is a table per terrain type with a speed factor for each locomotion class (data/base/stats/terraintable.json lines 4 and 5). Recreate: each ground type sets a speed multiplier per creature locomotion (swim, fly, burrow, walk); our biome tags use the same shape.",
+    "Sound events are rows with a file name, a loop flag, a range in world units (the file says 128 units equal one tile) and a volume from 0 to 100 (data/base/audio/audio.json line 3). Recreate: our combat cues as rows with range and volume so the impact sound falls off with distance (row 12).",
+    "Effects such as blood, dust, explosion and smoke are small models stored in the same text mesh format as units (data/base/effects/fxblood.pie, fxdust.pie, fxdirt.pie, fxexpdrt.pie; file names only, not opened). Recreate: blood and dust as short-lived particle sprites in our palette, driven by one effect table (row 8).",
+    "Units are assembled from separate body, locomotion and weapon parts (data/base/components/bodies, prop, weapons). Recreate: our hero gear as layered parts on one rig (row 15), so a new weapon is a new part, not a new model.",
+    "Structures and features reuse one texture page per model (structs/miuptrim.pie line 3). Recreate as a shared atlas per zone for props, to keep draw calls low."
+  ],
+  "briefs": [
+    {
+      "label": "Duel grid of damage types",
+      "why": "A small effect-by-class grid gives every damage type a clear strength and weakness that a player can learn in one fight.",
+      "keep": "Damage types as rows; target classes as columns; percentage per cell; a flat row for the special case.",
+      "change": "Recreate as a clearly distinct original, never a copy: our armour and creature classes, our damage names, a colour grid readable at 375 wide, and no shared numbers.",
+      "ref": "data/base/stats/weaponmodifier.json lines 11, 38"
+    },
+    {
+      "label": "Ground speed card",
+      "why": "A surface that slows heavy creatures but not swimmers makes terrain matter without a new mechanic.",
+      "keep": "Surface type with a speed multiplier per locomotion class.",
+      "change": "Recreate as a clearly distinct original: our biome tags (bog, ash, ice) and our locomotion classes; swimmers gain on water and bog, not on ice.",
+      "ref": "data/base/stats/terraintable.json lines 4, 5"
+    },
+    {
+      "label": "Blood as a small effect model",
+      "why": "A short, distinct blood burst reads as a hit at phone size and costs little to draw.",
+      "keep": "Blood as a separate short-lived effect in the same content pipeline as models.",
+      "change": "Recreate as a clearly distinct original: a fan of droplets as 2D sprites in our palette, colour by wound level, no copy of the original shape.",
+      "ref": "data/base/effects/fxblood.pie (file name only, not opened)"
+    },
+    {
+      "label": "Three-part hero build",
+      "why": "Swapping body, locomotion and weapon parts gives many builds from few parts.",
+      "keep": "Units assembled from separate body, locomotion and weapon parts.",
+      "change": "Recreate as a clearly distinct original: our hero rig with armour plates, cape and weapon as layers; no unit body copy.",
+      "ref": "data/base/components/bodies; data/base/components/weapons (directories)"
+    },
+    {
+      "label": "Range-scaled combat cue",
+      "why": "A sound with a world-unit range and a loop flag falls off with distance, so a fight sounds closer or further by the camera.",
+      "keep": "Event rows with file, loop flag, range and volume.",
+      "change": "Recreate as a clearly distinct original: our three-layer hit cue, range in our own arena units, and a stinger on kill.",
+      "ref": "data/base/audio/audio.json line 3"
+    }
+  ],
+  "cross_link": "vfx: yes (effect model names in data/base/effects; blood and dust). zones: yes (terraintable.json speed by surface; mp map descriptors). spawns: not read (research and structure data only). loot: not read (stats tables exist). camera: not read (shaders only). hud-ui: contrib-like icons in data/base/images (frontend and intfac; MIT and CC BY 4.0 items). animation: model headers only; not read. sound: yes (audio.json event rows, sfx folders, proxmessages).",
+  "not_read": [
+    "Source code under src/ and lib/ (licence headers only).",
+    "Most PIE model bodies (headers and names only).",
+    "All 243 JavaScript scripts (file counts only).",
+    "Campaign JSON and multiplayer map descriptors beyond the file list.",
+    "Shader source (file list only).",
+    "Music and videos (not in box).",
+    "Terrain texture atlases (empty submodule).",
+    "Two CC BY-SA wheel models listed under data/base (prsrwhl1.pie, prslwhl1.pie) exist only under data/mp/components/prop/ (not opened).",
+    "The CC BY-SA sky and rockies textures and the backdrop textures (listed but not present)."
+  ]
+}

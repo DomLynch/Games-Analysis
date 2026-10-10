@@ -1,0 +1,46 @@
+{
+  "donor": "knervous-eqsage",
+  "code_licence": "MIT for the sage/ sub-package (sage/package.json line 30 \"license\": \"MIT\"). The root package.json has no licence field and the box has no root LICENSE file, so the root code licence is not stated.",
+  "asset_licence": "Not stated anywhere in the box. The bundle under public/static contains EverQuest-named data, UI and models with no licence line.",
+  "rights_holder_status": "unknown from repo files. The about dialog says the tool interacts with a local EverQuest install (src/components/dialogs/about-dialog.jsx line 60). The bundle holds EverQuest-derived UI, item and zone data. No copyright or rights-holder line found.",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "EverQuest UI atlas and UI parts", "path": "public/static/eqassets/images (656 png), public/static/eqassets/atlas.json (about 205 KB, name to texture plus rectangle), public/ui (148 png/jpg)", "count_hint": "656 png in eqassets, 148 loose UI files", "licence": "not stated", "class": "C", "note": "atlas.json maps named UI elements to sheet rectangles. Sheet pixel sizes not verified (no header read)."},
+    {"kind": "animated class portrait icons", "path": "public/static/eqassets/animated (15 gif)", "count_hint": "15 gif", "licence": "not stated", "class": "C", "note": "Looping class icons (names such as bard, berserker, cleric). Not opened."},
+    {"kind": "UI font", "path": "src/components/eq-ui/styles/Menuetto.ttf", "count_hint": "1 ttf", "licence": "not stated in box", "class": "C", "note": "Only font in the tree; no font licence file."},
+    {"kind": "item name table (data)", "path": "public/static/items.json (3.7 MB; top-level keys IT<n>, then item id, then a list of name variants)", "count_hint": "436 IT keys", "licence": "not stated", "class": "C", "note": "Names are EverQuest item names. Not reproduced here. Tier words repeat across armour families (see inspiration)."},
+    {"kind": "zone table (data)", "path": "public/static/zoneData.json (1.6 MB; records with short_name, id, long_name, file names, safe_x and safe_y)", "count_hint": "610 zone records", "licence": "not stated", "class": "C", "note": "Zone rows keyed by short name, with a safe point. Long zone names not reproduced."},
+    {"kind": "3D character figures", "path": "public/static/clz.glb (1.9 MB), public/static/load2.glb (19 MB)", "count_hint": "2 glb", "licence": "not stated", "class": "C", "note": "exporter/constants.js places several class figures from load2.glb at offsets, and one default figure from clz.glb. Mesh and poly count not measured (not read)."},
+    {"kind": "water and sky textures", "path": "public/static/water_n.png (2 KB), water_e.png (68 KB), water_n.dds (175 KB), water_e.dds (197 KB), ra_watertest_c_01.png and .dds, skybox_px/nx/py/ny/pz/nz.jpg (about 84 KB total)", "count_hint": "about 12 files", "licence": "not stated", "class": "C", "note": "A normal map and an environment map pair for water, plus a six-face JPG sky box."},
+    {"kind": "other UI and promo images", "path": "public/static: Flare2.png, q.png, qi.png, eqsage1.png, zone-builder.png, zone-editor.png, model-viewer.png, favicon.ico", "count_hint": "about 8 files", "licence": "not stated", "class": "C", "note": "Tool screenshots and small UI images. Not opened."},
+    {"kind": "MIDI music", "path": "public/static/qeynos2_0.mid (7 KB), regal_rpg_sea_shanty.mid (483 B, repo root)", "count_hint": "2 mid", "licence": "not stated", "class": "C", "note": "MIDI needs a soundfont to play. Music origin not stated."},
+    {"kind": "soundfont (stub only)", "path": "public/static/Nokia_30.sf2 (132 bytes)", "count_hint": "1 file", "licence": "not stated", "class": "D", "note": "The file is a git-LFS pointer (version https://git-lfs.github.com/spec/v1; declared size 2,193,356 bytes). The real soundfont is not in the box."},
+    {"kind": "silence placeholder audio", "path": "public/static/5-seconds-of-silence.mp3 (41 KB)", "count_hint": "1 file", "licence": "not stated", "class": "C", "note": "Silent audio file; its use in the app was not read."},
+    {"kind": "EverQuest S3D and EQG source archives", "path": "not in tree (no .s3d, .eqg or .wld files found)", "count_hint": "0", "licence": "n/a", "class": "D", "note": "The README says the tool converts these files at runtime (README line 3). The user supplies them from a local install."}
+  ],
+  "inspiration": [
+    "Tiered armour names: each armour family appears in six tier variants with tier words in the name, so a tier reads at a glance (public/static/items.json, see the first armour entries near line 19033). Recreate the six-tier ladder with our own tier words, a colour ramp and a silhouette step, not the donor's names.",
+    "Water as two maps: a small normal map (water_n) and an environment map (water_e) are loaded together for a surface (src/components/builder/export-dialog.jsx lines 235-240). Recreate with two procedural maps: a wave-line normal and a zone-tinted reflection. The water_n file is only 2 KB, so the detail is simple.",
+    "Cheap sky: a six-face JPG cube sky with small faces, where the top face is the smallest (public/static/skybox_*.jpg, about 84 KB in total). Recreate with a horizon band and a time-of-day tint, not a detailed cube.",
+    "Zone as one row: each zone is a record with a short id, a numeric id, a map file and a safe point (public/static/zoneData.json, safe_x and safe_y on each record). Keep a safe point on every zone row; add a walk-density field so a zone can say what appears every 20 seconds of walking.",
+    "Named sprite atlas with four-state tiles: atlas.json maps names to a sheet rectangle, and achievement tiles come in locked, unlocked, hover and selected states (public/static/eqassets/atlas.json, Achievement_* images). Keep the four states; change the locked state to show a shape cue, not only grey.",
+    "Animated class icons: a looping gif per class for the portrait corner (public/static/eqassets/animated, 15 gif). Recreate as a short looping sprite, not a gif.",
+    "One figure file, several figures: a single GLB holds the class figures and the exporter places them at offsets for a lineup (src/components/exporter/constants.js lines 6-11). Keep the single-file lineup for previews; change proportions so each class has its own silhouette."
+  ],
+  "not_read": [
+    "src/viewer/controllers/SoundController.js and other viewer code: not opened",
+    "sage/lib (s3d, eqg, pfs, model decoders) and the .wasm modules: not read",
+    "public/ui (148 files) and eqassets images: names and counts only, no image content",
+    "items.json and zoneData.json: structure seen with grep and head; no full read",
+    "load2.glb and clz.glb: sizes only; mesh, rig and poly counts not read",
+    "README.md beyond line 3; no licence text in README found",
+    "Spire side (zone database editor named in README line 5): not in the box; src/components/spire is the client UI only, not read",
+    "Paired donor for the EverQuest server half: none found in this box"
+  ],
+  "briefs": [
+    {"label": "Six-tier armour ladder", "why": "Tier must read at a glance at 375 wide. A fixed ladder of six tiers per armour family does that without a second icon.", "keep": "six tiers per armour family; the same family name on every tier; tier shows as a fixed word step", "change": "tiers shown by colour ramp and trim count, not name words; silhouette step (shoulder or skirt) at the top tiers; our own tier words", "ref": "/mnt/frankendom-donors/knervous-eqsage/public/static/items.json (armour entries near line 19033)"},
+    {"label": "Two-map water sheet", "why": "A wave normal and a reflection map read as water without extra geometry.", "keep": "a normal map and an environment map loaded as one pair for a surface", "change": "wave lines instead of ripples; reflection tinted by the zone colour; scroll speed set per zone", "ref": "/mnt/frankendom-donors/knervous-eqsage/src/components/builder/export-dialog.jsx (lines 235-240); public/static/water_n.png"},
+    {"label": "Hub sky cube", "why": "A cheap six-face sky with a horizon band gives a hub zone a sense of place.", "keep": "six small faces; the horizon band carries the detail", "change": "fixed sun glyph and a time-of-day tint; no skyline silhouette", "ref": "/mnt/frankendom-donors/knervous-eqsage/public/static/skybox_px.jpg (and the other five faces)"},
+    {"label": "Preview lineup", "why": "Every class figure in one file, placed at offsets, gives a quick comparison for a class select screen.", "keep": "one model file with several figures placed at offsets", "change": "each figure has a distinct silhouette and proportion; a plinth per figure instead of a flat stage", "ref": "/mnt/frankendom-donors/knervous-eqsage/src/components/exporter/constants.js (lines 6-11)"}
+  ]
+}

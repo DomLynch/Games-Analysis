@@ -1,0 +1,41 @@
+{
+  "donor": "pier-oliviert-lineage",
+  "code_licence": "none stated. No LICENSE, COPYING, NOTICE or CREDITS file in the donor, and manifest.json has no licence field. The only licence text found is the MIT header in the bundled jquery.js (a third-party library, not the donor's own code).",
+  "asset_licence": "none stated. No licence file or per-folder licence. assets/textures/ is listed in .gitignore, so the textures folder is excluded from the repo; the donor copy still holds one PNG. Third-party files: jquery.js (MIT header, line 9); pixi.js (no licence text found by search).",
+  "rights_holder_status": "unknown from the files. The files name a commercial game title ('Lineage: The Bloodpledge' in window.html line 4 and templates/login.html line 3; manifest name 'Lineage'). README is a packet-exchange walk-through (handshake and encryption notes). The files do not say who owns the title or the protocol. Treated as restricted: class C, category-level inspiration only.",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "third-party library (code, not an asset)", "path": "assets/javascripts/jquery.js", "count_hint": "1 file, jQuery 1.9.1 (header)", "licence": "MIT per header line 9 ('Released under the MIT license')", "class": "A", "note": "Code, not game content. Listed so the licence is on record. Usable with the MIT notice if ever needed; not part of our asset plan."},
+    {"kind": "third-party library (code, not an asset)", "path": "assets/javascripts/pixi.js", "count_hint": "1 file, minified PIXI build (about 60 KB)", "licence": "not stated (search for licence text found none)", "class": "C", "note": "Minified; the first line starts with the PIXI namespace and carries no licence header. Unclear, so class C."},
+    {"kind": "textures (2D)", "path": "assets/textures/bunny.png", "count_hint": "1 PNG, 4 KB on disk (not opened)", "licence": "none stated; folder listed in .gitignore", "class": "D", "note": "The only image in the donor. Its name suggests a test placeholder; not opened. No usable game art found."},
+    {"kind": "stylesheets (CSS)", "path": "assets/stylesheets/login.css, game.css, chat.css", "count_hint": "3 files, about 4 KB each on disk", "licence": "none stated", "class": "C", "note": "Layout only (for example #game fills the window). Reads as code, not art. Only game.css head was read."},
+    {"kind": "UI text (HTML templates)", "path": "templates/login.html, characters.html, chat.html, game.html", "count_hint": "4 files, 1006 bytes total", "licence": "none stated", "class": "C", "note": "Login title, character select, chat panel and game shell. Commercial title string appears in login.html line 3. Short; the strings are the title and labels only."},
+    {"kind": "protocol definitions (code)", "path": "lib/packets/server (11 files), lib/packets/client (4 files), lib/packets/packet.js, lib/socket/*.js", "count_hint": "15 packet files", "licence": "none stated", "class": "C", "note": "Fixed-field message classes (for example a move record with id, position and heading). Restricted: described only at category level, no constants."},
+    {"kind": "data tables (XML, JSON, CSV, locale)", "path": "none in the donor", "count_hint": "0 files", "licence": "not applicable", "class": "D", "note": "No data tables, no string table, no locale. Creature, item and map data are not present in this client."},
+    {"kind": "audio", "path": "none in the donor", "count_hint": "0 files", "licence": "not applicable", "class": "D", "note": "No sound or music files found."},
+    {"kind": "fonts, maps, 3D models", "path": "none in the donor", "count_hint": "0 files", "licence": "not applicable", "class": "D", "note": "None found."}
+  ],
+  "inspiration": [
+    "Screen stack for the whole client: lineage.js holds a list of controllers (login, character select, game) with a push that renders the new screen and a current() accessor. Keep the idea: one stack drives login, character select, world and any menu. Defect: pop() on line 22 returns slice(index, 0), which returns an empty list and removes nothing. Fix: remove the controller from the list (splice) and return it. Decision: adapt (idea) with the fix.",
+    "Fixed-centre follow view: camera.js positions the character at the screen centre plus the tile offset times 32 px (line 18). The camera move() is an empty stub (line 15), so the world moves only by offset. Idea for the fight camera (parity row 11): keep the hero fixed at centre and move the world by offset; add smoothing and a fight framing that the stub does not have.",
+    "One tile unit in one place: the tile component receives tileSize 32 with the renderer size (game_controller.js line 22). Idea: one grid constant passed to every component so the tile, the hero offset and the camera agree.",
+    "Components on one stage: the game controller builds chat, tiles, characters and camera as components on one display stage (game_controller.js, from line 17). Keep this split: state in controllers, drawing in components. Good match for the client-only camera/HUD ruling.",
+    "Chat as channel tabs with history per tab: engine/chat.js finds a tab list, marks the global tab active and keeps a history array per channel tab (lines 9-10). Idea for hud-ui chat: per-channel history and a default channel.",
+    "Small fixed-field movement record: the move message carries a character id, x, y and a one-byte heading (move.js, lines 14-19). Idea for the many-on-one sync (row 18 and post-K item 3): one short record per moving actor with heading, not a full state dump."
+  ],
+  "briefs": [
+    {"label": "Fixed-centre follow view (own label)", "why": "The hero stays put and the world slides under it; the motion reads as movement without a moving camera rig.", "keep": "hero fixed at screen centre; world offset by tile times a fixed unit; one grid constant shared by all components", "change": "add smoothing and a fight framing (wider on the foe, not the hero); no empty move stub; a shake only on heavy hits", "ref": "lib/components/camera.js lines 15 and 18; lib/controllers/game_controller.js line 22"},
+    {"label": "Screen stack for login to world (own label)", "why": "One stack makes every screen change predictable: push a screen, pop it back, never leave a dead one behind.", "keep": "a single controller stack; push renders the new screen; current() is the top", "change": "pop must remove (fix the slice defect); our own screens (title, hero pick, fight, pit, results); a fade between screens", "ref": "lib/lineage.js lines 16-25; lib/controllers/characters_controller.js line 34"},
+    {"label": "Tabbed chat with per-channel history (own label)", "why": "Channels keep their own scroll history, so switching a tab never loses a line.", "keep": "a global default tab; per-tab history; the active tab state on the tab list", "change": "channel names and colour tags of our own; a fight-log channel that is read-only", "ref": "lib/engine/chat.js lines 9-10; templates/chat.html"}
+  ],
+  "not_read": [
+    "lib/packets/server/*.js and lib/packets/client/*.js except move.js (category-level only; restricted)",
+    "lib/socket/encryption.js, encryptor.js, decryptor.js and the README key walk-through (restricted; not described beyond the heading)",
+    "lib/tests/encryptions.js and lib/models/characters/*.js (names only)",
+    "assets/javascripts/pixi.js beyond its first line (minified)",
+    "assets/stylesheets/login.css, chat.css beyond their size (game.css head only)",
+    "templates/characters.html, chat.html, game.html (sizes only; login.html read at one line)",
+    "assets/textures/bunny.png (name only; not opened)",
+    "pair half: no Lineage 1 server by name in the box. Lineage 2 donors exist by name (elberacasa-Lineage2Elbera, cuteshaun-lineage2-api, shnok-l2-unity, gawric-Unity-Client-for-L2J, NodeL2-NodeL2, ax-grymyr-l2dn-server); a different title by name; not opened, not verified as a match"
+  ]
+}

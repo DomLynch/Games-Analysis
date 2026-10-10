@@ -1,0 +1,43 @@
+{
+  "donor": "SimHacker-micropolis",
+  "code_licence": "GNU GPL version 3 (README line 3 says released under the GPL; micropolis-java/COPYING and micropolis-activity/COPYING begin Version 3, 29 June 2007)",
+  "asset_licence": "none stated separately for art, sounds, fonts or city data; no licence file found in the asset folders; the GPL and Electronic Arts copyright lines name the software and manual, not the art by name. Separate name licence: MICROPOLIS public name licence (Version 1, 2024, Micropolis GmbH) covers use of the name",
+  "rights_holder_status": "original company release with community ports: Electronic Arts copyright lines (1989-2007; 2002 software and manual) and Maxis credits; micropolis-java copyright 2013 Jason Long; trademark held by Micropolis GmbH per the name licence",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "sprite and tile sheets (xpm)", "path": "/mnt/frankendom-donors/SimHacker-micropolis/micropolis-activity/images", "count_hint": "341 files; 158 tiles-N, 61 obj sheets", "licence": "none stated for art", "class": "C", "note": "pixel size and palette not read"},
+    {"kind": "numbered resource files and UI scripts", "path": "/mnt/frankendom-donors/SimHacker-micropolis/MicropolisCore/res", "count_hint": "hexa.NNN 11, snro.NNN 8, stri.NNN 4, Tcl scripts", "licence": "none stated", "class": "C", "note": "names only; format not read"},
+    {"kind": "building 3D kit (PNG parts, Blender files, render scripts)", "path": "/mnt/frankendom-donors/SimHacker-micropolis/micropolis-graphics/buildings_3d", "count_hint": "32 building folders; 94 PNG; 32 .blend; 6 .map scripts", "licence": "none stated for art", "class": "C", "note": "standards.txt read (Blender scene configuration)"},
+    {"kind": "java graphics (PNG)", "path": "/mnt/frankendom-donors/SimHacker-micropolis/micropolis-java/graphics and micropolis-java/resources", "count_hint": "PNG set incl. seaport and stadium images", "licence": "none stated for art", "class": "C", "note": "not opened"},
+    {"kind": "sounds (wav, mp3)", "path": "/mnt/frankendom-donors/SimHacker-micropolis/MicropolisCore/res/sounds, micropolis-activity/res/sounds, micropolis-java/resources/sounds", "count_hint": "49 + 49 + 14 wav-class files; 11 mp3 in tree", "licence": "none stated for sounds", "class": "C", "note": "names only; content not listened to"},
+    {"kind": "fonts (ttf)", "path": "/mnt/frankendom-donors/SimHacker-micropolis/micropolis-activity/res/dejavu-lgc", "count_hint": "21 .ttf in the whole tree", "licence": "no licence file in the folder; family name DejaVu LGC", "class": "C", "note": "not opened"},
+    {"kind": "city save files (cty)", "path": "/mnt/frankendom-donors/SimHacker-micropolis/MicropolisCore/src/cities", "count_hint": "72 .cty files across the tree", "licence": "none stated", "class": "C", "note": "binary, not opened"},
+    {"kind": "string tables (properties, en/de/sv)", "path": "/mnt/frankendom-donors/SimHacker-micropolis/micropolis-java/strings", "count_hint": "12 files, 1172 lines in total", "licence": "none stated", "class": "C", "note": "CityMessages.properties has 108 lines with =; text not quoted"},
+    {"kind": "HTML documentation and source pages", "path": "/mnt/frankendom-donors/SimHacker-micropolis (MicropolisCore/src/html, manual credits)", "count_hint": "311 HTML files in the tree", "licence": "GPL-3 and Electronic Arts copyright lines in credits", "class": "C", "note": "text not reused"}
+  ],
+  "inspiration": [
+    "Tile sheets as numbered indexes with a few families (terrain, objects, large landmarks such as stadium and seaport). The sheet index is the data. Ref: /mnt/frankendom-donors/SimHacker-micropolis/micropolis-activity/images (tiles-N and obj families)",
+    "One fixed render rig for a whole building kit: orthographic camera at one angle, a hemisphere fill and a sun light, a set output size and a stated scale, so every building reads from one angle. Matches the client-only camera and light rule. Ref: /mnt/frankendom-donors/SimHacker-micropolis/micropolis-graphics/buildings_3d/standards.txt lines 1-25",
+    "Buildings split into separate render parts (body, roof, turf, sign, shed, east and west faces) so a sign or roof can change without a new model. Ref: /mnt/frankendom-donors/SimHacker-micropolis/micropolis-graphics/buildings_3d/com01/roof.png and sign.png; res06/east_bldg.png",
+    "Footprint size classes (1x1, 3x3, 4x4) with a 16 and a 32 pixel variant, shown in the render script names. Ref: /mnt/frankendom-donors/SimHacker-micropolis/micropolis-graphics/buildings_3d/scripts/3x3_32x32.map",
+    "A text crop map from source boxes to atlas cells, so a render pass becomes a tile atlas by script. Ref: /mnt/frankendom-donors/SimHacker-micropolis/micropolis-graphics/buildings_3d/scripts/3x3_32x32.map line 1 onward",
+    "Short named cues for build and demolish actions, plus a disaster cue set (monster roar, explosion near and far, siren). Names only, content not listened to. Refs: /mnt/frankendom-donors/SimHacker-micropolis/MicropolisCore/res/sounds/build.wav and bulldozer.wav; micropolis-java/resources/sounds/monster.wav",
+    "Advisor messages keyed by need, one line per key (residential need, commercial need), a readable warning table with translations. Ref: /mnt/frankendom-donors/SimHacker-micropolis/micropolis-java/strings/CityMessages.properties line 9 onward"
+  ],
+  "briefs": [
+    {"label": "Quay compound", "why": "a waterside building with a 3x3 footprint reads as a different zone at a glance", "keep": "a 3x3 footprint; waterside siting; a crane-like silhouette", "change": "a stone quay with a painted gate instead of a plain yard; a lantern line on the quay edge; a different roof form. Recreate as a clearly distinct original", "ref": "/mnt/frankendom-donors/SimHacker-micropolis/micropolis-java/graphics/seaport_3x3.png (look not read)"},
+    {"label": "Arena ring", "why": "a round bowl is a readable landmark silhouette at 375 wide", "keep": "a large round landmark; a single entrance", "change": "a ring of banners and a torch row instead of stands; a different roof profile. Recreate as a distinct original", "ref": "/mnt/frankendom-donors/SimHacker-micropolis/micropolis-java/graphics/stadium2.png (look not read)"},
+    {"label": "Hill giant roar", "why": "one signature roar plus an explosion pair makes a disaster readable by ear", "keep": "one roar cue; two explosion levels for near and far", "change": "a deep chant instead of a roar; a ground rumble in place of the siren; a different pitch. Recreate as a distinct original", "ref": "/mnt/frankendom-donors/SimHacker-micropolis/micropolis-java/resources/sounds/monster.wav (content not listened to)"},
+    {"label": "Raise and clear sounds", "why": "the build and the clear actions each have a named cue, so the player hears the change", "keep": "one cue per build action; one per clear action", "change": "our own foley: a pitch lift on build and a dust hiss on clear. Recreate as a distinct original", "ref": "/mnt/frankendom-donors/SimHacker-micropolis/MicropolisCore/res/sounds/build.wav and bulldozer.wav (content not listened to)"},
+    {"label": "Locked-camera item set", "why": "one camera and one light rig makes every item in a set look like one artist made it", "keep": "a fixed camera angle; a set output size; a two-light rig", "change": "our fight camera's three-quarter angle; a rim light from the fight camera; a different output size. Recreate as a distinct original", "ref": "/mnt/frankendom-donors/SimHacker-micropolis/micropolis-graphics/buildings_3d/standards.txt lines 1-25"}
+  ],
+  "not_read": [
+    "Wiki Assets page (not in the tree; linked from README)",
+    "All PNG, xpm, blend, wav, mp3, ttf, jpg, tiff and gif contents: names and counts only",
+    ".cty city files: names and counts only",
+    "String tables beyond one count and one key line",
+    "MicropolisCore C++ and micropolis-java code: licence headers only",
+    "laszlo notices.xml, turbogears, aws and wikimedia folders",
+    "DejaVu font licence: no file found in the folder"
+  ]
+}

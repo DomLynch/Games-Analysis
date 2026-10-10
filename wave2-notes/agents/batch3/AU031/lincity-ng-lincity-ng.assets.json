@@ -1,0 +1,140 @@
+{
+  "donor": "lincity-ng-lincity-ng",
+  "code_licence": "GPL-2.0 (COPYING.txt line 1 'GNU GENERAL PUBLIC LICENSE Version 2'; README.md lines 133-134 'either version 2 of the License'). Windows DLLs in packages carry their own licences (COPYING-dll.txt).",
+  "asset_licence": "Data files are dual-licensed: COPYING-data.txt lines 1-2 say the models, svg files, images, sound and music files and the xml data files are 'dual licensed under under the GPL and CC-by-sa-v2'. The CC BY-SA 2.0 legal text is included (COPYING-data.txt line 351). Font data/fonts/sans.ttf is DejaVu Sans with a Bitstream Vera licence (COPYING-fonts.txt line 1; full terms not read). Locale (.po), help text and opening maps are not named in COPYING-data.txt, so their licence is not stated in the files read.",
+  "rights_holder_status": "Open-source continuation of LinCity. README.md line 130 says 'Copyright (C) 1995-2026 LinCity-NG contributors'. data/gui/creditslist.xml credits 'Original Idea and Code' to Ian J. Peters (1995-1997) and lists later code contributors. No leak or decompile statement.",
+  "best_class": "B",
+  "asset_groups": [
+    {
+      "kind": "3D models and render pipeline",
+      "path": "data/models/ (156 files, about 115 MB): 60 .blend source files, building and terrain pngs, data/models/textures/ (42 jpg), data/models/render/ (render.py, render.sh, Makefile, autocrop.cxx, croprender.sh)",
+      "count_hint": "60 .blend, 156 files total",
+      "licence": "Dual GPL / CC BY-SA 2.0 (COPYING-data.txt lines 1-2 name models).",
+      "class": "B (share-alike condition via CC BY-SA 2.0 or GPL, as the file offers both)",
+      "note": ".blend files are binary and were not opened (names and size only). render.py is Blender-era Python 2 style (a print statement at its top). Pipeline described in the inspiration list."
+    },
+    {
+      "kind": "tile sprites (buildings, terrain, roads)",
+      "path": "data/images/tiles/ (348 entries: png plus images.xml; images.xml has 382 image lines)",
+      "count_hint": "348 entries, 382 image lines",
+      "licence": "Dual GPL / CC BY-SA 2.0 (COPYING-data.txt line 1 names images).",
+      "class": "B",
+      "note": "Sizes read from PNG headers only: blacksmith0.png 262 x 193, green.png 128 x 70. Anchors per image in images.xml (for example green.png at x 64, y 70)."
+    },
+    {
+      "kind": "GUI and menu images",
+      "path": "data/images/gui/, data/images/mainmenu/, data/gui/ (27 xml files: options, mainmenu, minimap, speedpanel, buttonpanel, dialogs)",
+      "count_hint": "27 gui files, images folder 584 files total",
+      "licence": "Dual GPL / CC BY-SA 2.0 for images and xml data (COPYING-data.txt lines 1-2).",
+      "class": "B",
+      "note": "minimap.xml, minimapswitchbuttons.xml, speedpanel.xml and buttonpanel.xml are the HUD layout data. Not opened beyond names."
+    },
+    {
+      "kind": "sound effects",
+      "path": "data/sounds/ (138 wav, sounds.xml with 141 sound lines including commented-out ones)",
+      "count_hint": "138 wav",
+      "licence": "Dual GPL / CC BY-SA 2.0 (COPYING-data.txt lines 1-2 name sound files).",
+      "class": "B",
+      "note": "Several numbered variants per event (for example Blacksmith1-3, Farm1-3, Health1-5, Fire1-3, Green1-4). Not opened."
+    },
+    {
+      "kind": "music",
+      "path": "data/music/default/ (3 ogg tracks plus default.xml)",
+      "count_hint": "3 ogg",
+      "licence": "Dual GPL / CC BY-SA 2.0 (COPYING-data.txt line 1 names music files). Track titles name their artists in default.xml, which the file uses as attribution.",
+      "class": "B",
+      "note": "Track selection by tech-level band is described in the inspiration list. Audio not opened."
+    },
+    {
+      "kind": "string tables (locale)",
+      "path": "data/locale/ (18 .po files; de.po has 413 msgid entries)",
+      "count_hint": "18 .po",
+      "licence": "Not named in COPYING-data.txt. Code licence GPL-2.0 applies to code; the files do not say which licence covers the .po files.",
+      "class": "C (unclear)",
+      "note": "This is the DATA half for text. Strings are not quoted here."
+    },
+    {
+      "kind": "help text and help templates",
+      "path": "data/help/ (1006 files, about 4.2 MB, one folder per language) and data/help_templates/ (164 files)",
+      "count_hint": "1006 + 164 files",
+      "licence": "Not named in COPYING-data.txt.",
+      "class": "C (unclear)",
+      "note": "Not opened."
+    },
+    {
+      "kind": "opening maps and bitmap font",
+      "path": "data/opening/ (22 files: scn.gz map files such as good_times.scn.gz and bad_times.scn.gz, plus iso8859-1-8x8.fnt and .raw)",
+      "count_hint": "22 files",
+      "licence": "Not named in COPYING-data.txt.",
+      "class": "C (unclear)",
+      "note": "Map files are compressed binary and were not opened (names only)."
+    },
+    {
+      "kind": "font",
+      "path": "data/fonts/sans.ttf (DejaVu Sans)",
+      "count_hint": "1 ttf",
+      "licence": "COPYING-fonts.txt line 1: DejaVu font bundled with LincityNG; Bitstream Vera licence text in the same file. Full terms not read.",
+      "class": "C (terms not read)",
+      "note": "Not opened."
+    }
+  ],
+  "halves_read": [
+    "data half: data/music/default/default.xml (full), data/images/tiles/images.xml (lines 1-10 and the image count), data/sounds/sounds.xml (lines 1-14 and the count), data/models/render/render.py (lines 1-20), data/models/render/render.sh (top lines), data/gui/creditslist.xml (lines 1-30)",
+    "code half: src/lincity-ng/Sound.cpp (loadMusicTheme lines 190-235; playMusic lines 428-469; track change lines 395-420)",
+    "simulation half: src/lincity/ listed by file names only (not read). It is the game logic that the data tables feed."
+  ],
+  "matching_half_in_box": "src/lincity/ (simulation) and src/lincity-ng/ (client) are both in this repo. The data pack is the third half. Nothing is absent from the box.",
+  "inspiration": [
+    "Pre-rendered tiles from 3D sources: each building has a .blend source, a script renders it through an orthographic camera at a fixed tilt and rotation, and a shell loop writes the results to the tile folder (data/models/render/render.py line 20; render.sh line 6). Keep one source per building and one fixed render setup; change to our own rig, tilt and palette.",
+    "Tall sprites anchored by a point: tile sizes differ (blacksmith0.png 262 x 193 against green.png 128 x 70) and each image gets an anchor in images.xml (green.png at x 64, y 70). Keep anchors for tall props so their base sits on the grid; use anchors for our fighter and creature sprites.",
+    "Music that follows a progression value: each track carries a lowest and highest band, and the player moves to the next track when the current band does not match (default.xml line 7; Sound.cpp lines 442-454). Keep the band data per track; change the value to fight tier or zone danger.",
+    "Sound variety by numbered variants: several files per event (Blacksmith1-3, Farm1-3, Health1-5, Fire1-3) so a repeated action does not repeat exactly (data/sounds/). Keep 3-5 variants per hit or event; change the variants to pitch and timbre changes of our own hit sounds.",
+    "Disaster prop as one model with three sounds: a fire has its own model (data/models/fire.blend, binary) and three sound variants (data/sounds/Fire1.wav to Fire3.wav). Keep one model plus three variants for a hazard; change it to an arena fire pit or a floor trap with a different flame shape.",
+    "Load rules per asset kind: images attach to the latest resource ID in a group, sounds attach to all earlier IDs (data/images/tiles/images.xml line 3; data/sounds/sounds.xml line 3). Keep a clear rule per kind so one group file stays short; the rule itself is a loader detail, not a look to copy."
+  ],
+  "defects_noted": [
+    {
+      "where": "src/lincity-ng/Sound.cpp lines 222-223",
+      "defect": "highest-tech-level 0 is a sentinel for no upper limit, so a real top band of 0 cannot be written. The sentinel is then replaced by 10 times the maximum tech level.",
+      "fix": "use an explicit 'no limit' flag or a sentinel that cannot be a real value (for example a negative number)."
+    },
+    {
+      "where": "src/lincity-ng/Sound.cpp lines 447-454 with playMusic and changeTrack (lines 395-420)",
+      "defect": "when the current track is out of band, playMusic calls changeTrack, which calls playMusic again. Read from the code (not run): if no track in the theme matches the current band, this does not stop. The default theme has a catch-all first track, so it is not hit there.",
+      "fix": "stop after one full pass over the playlist and keep silence or the last good track. Keep the band idea."
+    }
+  ],
+  "briefs": [
+    {
+      "label": "Workshop prop with a wide base and tall roof",
+      "why": "A wide footprint with a tall pitched top reads as one object at small size, which helps a crowded map or arena.",
+      "keep": "wide base plus tall silhouette; anchor on the base so the prop sits on the grid",
+      "change": "our own roof shape, materials and palette; the prop is a forge or ruin of our own design",
+      "ref": "data/images/tiles/blacksmith0.png (262 x 193); data/images/tiles/images.xml anchors"
+    },
+    {
+      "label": "Hazard fire pit with three sound variants",
+      "why": "A hazard that has one model and three sound variants is easy to recognise and does not repeat exactly.",
+      "keep": "one model, three numbered sound variants, loops while active",
+      "change": "an arena fire pit with a different flame shape and a low hum of our own",
+      "ref": "data/models/fire.blend (binary, not opened); data/sounds/Fire1.wav to Fire3.wav"
+    },
+    {
+      "label": "Tiered music that follows fight intensity",
+      "why": "Music that moves to a new track when the stakes rise gives a clear sense of progress without a menu.",
+      "keep": "bands per track; the next track is chosen by the current band",
+      "change": "band value is fight tier or zone danger; tracks are our own",
+      "ref": "data/music/default/default.xml line 7; src/lincity-ng/Sound.cpp lines 442-454"
+    }
+  ],
+  "not_read": [
+    ".blend model files (binary; names and size only)",
+    "PNG and JPG content beyond header sizes of three tiles",
+    "all wav and ogg audio (names and counts only)",
+    "data/locale/*.po and data/help/* text (counts only; de.po msgid count only)",
+    "data/opening/* map files and bitmap font (names only)",
+    "font licence terms (COPYING-fonts.txt beyond line 1)",
+    "src/lincity/ simulation source (file names only); src/lincity-ng/ beyond Sound.cpp",
+    "data/gui/*.xml content beyond creditslist.xml (names only)"
+  ]
+}

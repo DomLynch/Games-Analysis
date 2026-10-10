@@ -1,0 +1,136 @@
+{
+  "donor": "Return-To-The-Roots-s25client",
+  "code_licence": "GPL-2.0-or-later: README.md line 4 'SPDX-License-Identifier: GPL-2.0-or-later'; LICENSE file is the GPL v2 text (line 2 'Version 2, June 1991'); LICENSES/ folder has GPL-2.0-or-later and GPL-3.0-or-later texts.",
+  "asset_licence": "Mixed, per .reuse/dep5: data/RTTR/assets/* GPL-2.0-or-later (dep5 line 12); data/RTTR/texte/* GPL-2.0-or-later (dep5 line 16); data/RTTR/MUSIC/S2_Standard.pll GPL-2.0-or-later (dep5 line 20); data/RTTR/MUSIC/SNG/* CC0-1.0 (dep5 line 24). The original Settlers II Gold graphics and data are NOT in the repo; README line 14 says the user must supply them.",
+  "rights_holder_status": "Fan project: README line 9 says it aims to renew the original The Settlers 2. Copyright lines name Settlers Freaks (sf-team). The original game's owner is not named in the files read. README line 13 says the project keeps the original graphics and sounds, which conflicts with dep5 listing data/RTTR/assets/* as GPL-2.0-or-later, so the origin of the S2-named sprite files is unclear.",
+  "best_class": "A",
+  "asset_groups": [
+    {
+      "kind": "CC0 music tracks (Settlers II style songs)",
+      "path": "data/RTTR/MUSIC/SNG/ (SNG_0001.OGG to SNG_0014.OGG)",
+      "count_hint": "14 .OGG files, about 14 MB for the MUSIC folder",
+      "licence": "CC0-1.0 per .reuse/dep5 lines 22-24 only; the OGG files carry no per-file licence (not opened)",
+      "class": "A",
+      "note": "best usable group. Usable as is, with the caveat that the only statement is the dep5 file"
+    },
+    {
+      "kind": "GPL music playlist",
+      "path": "data/RTTR/MUSIC/S2_Standard.pll",
+      "count_hint": "1 file",
+      "licence": "GPL-2.0-or-later per dep5 line 20",
+      "class": "B",
+      "note": "share-alike condition (GPL). Not opened"
+    },
+    {
+      "kind": "Bitmap UI and menu art, credits portraits, fireworks sprite set, font and language lists",
+      "path": "data/RTTR/assets/base/ (logo.bmp, menu.bmp, splash.bmp, credits/ 5 bmp, fireworks/ 32 bmp, io_new/, map_new/, colors.act, fonts.lst, languages.ini, client.ger)",
+      "count_hint": "66 .bmp and 16 .lst and 1 .act and 1 .ini and 1 .ger and 1 .links under data/RTTR/assets (129 files total)",
+      "licence": "GPL-2.0-or-later per dep5 line 12 (data/RTTR/assets/*)",
+      "class": "C",
+      "note": "CONFLICT: dep5 says GPL-2.0-or-later (B), but README line 13 says original S2 graphics are kept. Origin of each file is not stated, so class C until settled. Not opened (binary). colors.act and languages.ini are plain text or palette data"
+    },
+    {
+      "kind": "Settlers II style sprite and map families (nation, add-on and override sets)",
+      "path": "data/RTTR/assets/nations/Babylonians/ (bab_z.lst, wbab_z.lst, bab_icon.lst, charburner.lst, jobs.bob); data/RTTR/assets/addons/0x00000006, 0x01000000, 0x01000001 (LST files); data/RTTR/assets/overrides/ (LST files such as MAP_0_Z.LST, ROM_ICON.LST)",
+      "count_hint": "43 .LST files in the assets tree in total, many under overrides and addons",
+      "licence": "covered by dep5 line 12 (data/RTTR/assets/*) as GPL-2.0-or-later, and named after original S2 files, so origin unknown",
+      "class": "C",
+      "note": "CONFLICT as above. Names mirror original S2 DATA naming (MAP_0_Z.LST, ROM_ICON.LST). Not opened"
+    },
+    {
+      "kind": "Terrain and biome tables (Lua data)",
+      "path": "data/RTTR/gamedata/world/ (default.lua, greenland.lua 385 lines, wasteland.lua 377 lines, winterworld.lua 367 lines)",
+      "count_hint": "4 files, 1136 lines in total",
+      "licence": "SPDX-License-Identifier: GPL-2.0-or-later in the header of greenland.lua and sound.scs (line 3, receipt-backed); dep5 does not list data/RTTR/gamedata/ explicitly, so the header is the only licence line read for these files",
+      "class": "B",
+      "note": "DATA TABLE. greenland.lua lines 5 and 11 point at original-game files via <RTTR_GAME>, so the look data needs the user's S2 install. Named terrain types gl_snow, gl_mountain, gl_desert, gl_meadow, gl_water (lines 46-74) and road atlas positions (lines 24, 29)"
+    },
+    {
+      "kind": "Mission scripts (Roman campaign and world campaign)",
+      "path": "data/RTTR/campaigns/roman/ (11 files, MISS200.lua to MISS209.lua), data/RTTR/campaigns/world/ (10 files incl. campaign.lua)",
+      "count_hint": "21 Lua files",
+      "licence": "no per-folder licence and no SPDX line seen in the MISS200 header; class B rests on the repo-wide GPL-2.0-or-later reading only. MISS200 line 2 says it is mission 1 of the original Roman Campaign",
+      "class": "B",
+      "note": "DATA TABLE for missions. Only the MISS200 header read (includes a TODO block and a version check function); mission logic not read"
+    },
+    {
+      "kind": "In-game text (readme and keyboard layout, 8 files in several languages)",
+      "path": "data/RTTR/texte/ (readme.txt 383 lines; de/, fr/, pl/ readme and keyboardlayout; keyboardlayout.txt)",
+      "count_hint": "8 files; root readme.txt 383 lines",
+      "licence": "GPL-2.0-or-later per dep5 line 16 (data/RTTR/texte/*)",
+      "class": "B",
+      "note": "help text, not a string table of game names. Not read beyond the first 15 lines of readme.txt"
+    },
+    {
+      "kind": "Sound conversion table",
+      "path": "data/RTTR/sound.scs",
+      "count_hint": "one table, item index to source frequency",
+      "licence": "GPL-2.0-or-later (header line 3)",
+      "class": "B",
+      "note": "technical table, not content"
+    },
+    {
+      "kind": "Original game graphics and data (external, not in the repo)",
+      "path": "referenced as <RTTR_GAME>/GFX/TEXTURES/TEX5.LBM and <RTTR_GAME>/DATA/MAP_0_Z.LST (greenland.lua lines 5 and 11); data/RTTR/MAPS/ is empty (0 files)",
+      "count_hint": "0 files in the repo",
+      "licence": "README line 14: user must supply an original The Settlers II Gold Edition install",
+      "class": "D",
+      "note": "nothing usable in the box for these; the repo points at files the user owns"
+    },
+    {
+      "kind": "Code (not content): C++ client, libs/, external/ libraries",
+      "path": "libs/ (s25client, s25main, common, driver, libGamedata, libsamplerate, rttrConfig); external/ (libsiedler2, libutil, liblobby, glad, kaguya, turtle, languages, mygettext, s25edit, s25update)",
+      "count_hint": "not counted",
+      "licence": "GPL-2.0-or-later (LICENSE line 2 GPL v2 text; README line 4)",
+      "class": "B",
+      "note": "listed for completeness only; GPL code, not adapted here"
+    }
+  ],
+  "inspiration": [
+    "Biome as data: each biome file names its terrain types (gl_snow, gl_mountain, gl_desert, gl_meadow, gl_water) and points at one atlas for all of them (greenland.lua lines 46-74). Recreate a zone as a named terrain set that uses one texture atlas, with our own palette.",
+    "Upgrade as a second strip on the same atlas: the normal road and the upgraded road are two rows of one texture (greenland.lua lines 24 and 29). Recreate an upgrade cue as a second visual strip, so a tier change reads without a new asset.",
+    "Colour-keyed celebration bursts: the fireworks folder holds one burst sprite set per player slot (assets/base/fireworks/10.player.bmp and up, 32 files). Recreate a win burst as a per-team colour set, drawn with our own particles.",
+    "Missions as data-driven scripts with a version check and a TODO header (campaigns/roman/MISS200.lua). Recreate a mission as a data file with a version gate and a checklist of open items.",
+    "Faction as a full sprite family: a nation folder holds its own map, icon and job sprites (assets/nations/Babylonians). Recreate a faction's identity as its own silhouette set and icon family, never copying the existing sprites."
+  ],
+  "briefs": [
+    {
+      "label": "colour-keyed victory burst (own label)",
+      "why": "Readable at 375 wide: a short burst in the winner's colour is one silhouette; one signature effect (a radial burst of sparks); one signature sound (a soft pop). Could be ours at 20-30 percent resemblance.",
+      "keep": "per-player colour burst that fires on a win or milestone",
+      "change": "particle burst instead of sprite frames, our own palette and a different burst shape. Recreate as a clearly distinct original, never a copy",
+      "ref": "data/RTTR/assets/base/fireworks/10.player.bmp (32 files in that folder; not opened, binary)"
+    },
+    {
+      "label": "named biome terrain set (own label)",
+      "why": "A biome is a readable palette and silhouette family at 375 wide. One signature behaviour: each terrain type has its own walkable rule in the data. Could be ours at 20-30 percent resemblance.",
+      "keep": "a zone defined as a list of named terrain types that share one atlas",
+      "change": "our own biome names, palette and terrain rules. Recreate as a clearly distinct original, never a copy",
+      "ref": "data/RTTR/gamedata/world/greenland.lua (lines 46-74 named terrain types); wasteland.lua and winterworld.lua (same pattern, not read)"
+    },
+    {
+      "label": "upgrade strip on the road atlas (own label)",
+      "why": "A tier change reads at a glance on a road tile; one signature effect is a second line drawn over the first. Could be ours at 20-30 percent resemblance.",
+      "keep": "upgrade shown as a second strip of the same texture, no new file",
+      "change": "a glow or dashed line instead of a stacked strip, our own colour. Recreate as a clearly distinct original, never a copy",
+      "ref": "data/RTTR/gamedata/world/greenland.lua lines 24 and 29 (pos entries for normal and upgraded road)"
+    },
+    {
+      "label": "faction sprite family (own label)",
+      "why": "A faction is identified by one silhouette family. One signature trait: its own icon set. Could be ours at 20-30 percent resemblance. Class C: category-level only",
+      "keep": "a faction owns a full set of sprites, icon and map objects",
+      "change": "our own silhouettes, proportions and icon style. Recreate as a clearly distinct original, never a copy",
+      "ref": "data/RTTR/assets/nations/Babylonians/ (folder; origin unclear, class C)"
+    }
+  ],
+  "not_read": [
+    "Server and client halves: the single s25client binary, libs/s25client and libs/s25main, not opened (directory listing only)",
+    "Data half: the original Settlers II DATA and GFX folders are absent from the repo; not available to read",
+    "data/RTTR/assets/*.bmp and *.LST: binary, names and counts only; no file opened",
+    "data/RTTR/MUSIC/SNG/*.OGG: not opened; licence taken from dep5 only",
+    "wasteland.lua and winterworld.lua: not read beyond line counts",
+    "campaigns/world/*.lua and roman mission bodies MISS201 to MISS209: not read",
+    "external/ submodules (libsiedler2 and others): directory listing only",
+    "data/RTTR/texte/de, fr, pl readme and keyboard layout bodies: not read"
+  ]
+}

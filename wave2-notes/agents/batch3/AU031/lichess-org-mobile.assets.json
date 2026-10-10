@@ -1,0 +1,100 @@
+{
+  "donor": "lichess-org-mobile",
+  "code_licence": "GPL-3.0 or later (LICENSE: 'GNU GENERAL PUBLIC LICENSE Version 3'; COPYING.md lines 12-15 'version 3 of the License, or (at your option) any later version')",
+  "asset_licence": "Default for any file not listed is Lichess Mobile GPL-3.0 or later (COPYING.md lines 4-5). Listed exceptions: Fontawesome in assets/fonts under SIL OFL 1.1 (COPYING.md line 29); assets/images/learn/pieces under GPLv2+ (line 30); assets/images/learn/*.webp under CC BY 3.0, rasterised from lila SVGs (line 31). Sounds, the other three icon fonts, board thumbnails, maia, fide-fed and stockfish images, and JSON data are not named in the table, so the file's default applies. Sounds in assets/sounds/lisp are the same lisp sounds lila lists as CC BY-NC-SA 4.0 (see lichess-org-lila COPYING.md line 75); this repo does not say so, so the two donors conflict on those files. Class C for that folder.",
+  "rights_holder_status": "Open-source app. COPYING.md line 6 says 'copyright (c) 2022-2023 Lichess Mobile contributors'; author list is in the commit log. Some assets are credited to third parties (see rows above). No leak or decompile statement.",
+  "best_class": "B",
+  "asset_groups": [
+    {
+      "kind": "sound effects (six theme folders)",
+      "path": "assets/sounds/{lisp,nes,sfx,futuristic,piano,standard}/ (42 .mp3 and 42 .aifc, about 2.7 MB)",
+      "count_hint": "84 audio files (42 mp3 + 42 aifc) across 6 folders",
+      "licence": "No row names assets/sounds. Default GPL-3.0+ by COPYING.md lines 4-5. lisp/ conflicts with lichess-org-lila COPYING.md line 75 (CC BY-NC-SA 4.0).",
+      "class": "B for nes, sfx, futuristic, piano, standard (GPL share-alike by the file's default). C for lisp (NC conflict).",
+      "note": "Cue names are an enum in lib/src/service/sound_service.dart; the enum comment says they must match the standard folder (line 21). Learn-only cues exist in the standard folder only (line 34)."
+    },
+    {
+      "kind": "icon and UI fonts",
+      "path": "assets/fonts/ (ChessSansPiratf.ttf, SocialIcons.ttf, PuzzleIcons.ttf, LichessIcons.ttf)",
+      "count_hint": "4 ttf",
+      "licence": "Fontawesome row is SIL OFL 1.1 only for the Fontawesome font (COPYING.md line 29). The other four are not named; default GPL-3.0+ by the file's own rule.",
+      "class": "A for the Fontawesome font (OFL, with notice); C for the other four until their origin is checked",
+      "note": "Not opened beyond names (not read). PuzzleIcons.ttf is a candidate icon set for the puzzle HUD; check its origin first."
+    },
+    {
+      "kind": "board surface thumbnails",
+      "path": "assets/board-thumbnails/ (25 jpg: wood, wood2, wood3, wood4, maple, maple2, marble, blueMarble, metal, leather, canvas, newspaper, grey, blue, blue2, blue3, brown, green, greenPlastic, olive, purple, purpleDiag, pinkPyramid, horsey, ncf-board)",
+      "count_hint": "25 jpg",
+      "licence": "Not named in COPYING.md; default GPL-3.0+ by the file's own rule.",
+      "class": "B (GPL default); C if the photos or textures have a separate origin not stated in the repo",
+      "note": "Material preview chips for a skin picker. Not opened (not read)."
+    },
+    {
+      "kind": "learn and practice art",
+      "path": "assets/images/learn/ (webp), assets/images/learn/pieces/",
+      "count_hint": "webp files; count not run",
+      "licence": "COPYING.md line 30 pieces GPLv2+ (Thibault Duplessis and Colin M.L. Burnett); line 31 learn/*.webp CC BY 3.0 from game-icons.net (rasterised from lila SVGs).",
+      "class": "A for CC BY 3.0 (with credit); B for GPLv2+ (share-alike)",
+      "note": "game-icons.net icons are the cleanest permissive art in this donor, with credit."
+    },
+    {
+      "kind": "other images (maia, fide-fed, stockfish, logos, anon faces, maintenance)",
+      "path": "assets/images/ (webp 280 total across folders, png none)",
+      "count_hint": "280 webp, about 7.3 MB for all of assets/",
+      "licence": "Not named; default GPL-3.0+ by the file's own rule.",
+      "class": "B (default); C where an external origin is implied (fide-fed flags, maia icons)",
+      "note": "fide-fed folder holds country-coded flag images (3-letter codes in file names). Flags are not relevant to a fight game."
+    },
+    {
+      "kind": "data tables (JSON and binary)",
+      "path": "assets/endgames.json, assets/practice.json (about 212 KB), assets/positions.json (about 22 KB), assets/chess_openings.db (1.1 MB), assets/maia/ and assets/images/maia/",
+      "count_hint": "3 json, 1 db, maia folder",
+      "licence": "Not named; default GPL-3.0+ by the file's own rule.",
+      "class": "B for JSON (default GPL); C for chess_openings.db (binary, origin not stated, not opened)",
+      "note": "DATA half for this donor (heads read only). endgames.json is a list of named FEN positions with an ECO field. practice.json is a tree of sections, each holding studies. positions.json is an opening move tree with ECO codes and names. Names are data and are not quoted here."
+    }
+  ],
+  "halves_read": [
+    "client: lib/src/service/sound_service.dart (lines 15-40, 120-145), lib/src/service/move_feedback.dart (lines 1-48), lib/src/model/puzzle/storm_controller.dart (lines 100-122)",
+    "data: assets/ folder listing and file names; JSON heads (endgames.json, practice.json, positions.json first lines)",
+    "server half: not in this donor; the matching server is lichess-org-lila (in the box, read for licence rows and the storm and rating code)"
+  ],
+  "inspiration": [
+    "Layered move feedback: one function decides a feedback tier from the event type. A plain move gets a light tap, a check gets a medium tap, and a capture goes to the capture sound (lib/src/service/move_feedback.dart lines 14-35). Keep the one-function map from event to tier; change the tiers to our hit (light), parry (medium) and finisher (heavy).",
+    "Three-channel punishment for a wrong move: an error sound, a heavy haptic and a time penalty, all in the same branch (lib/src/model/puzzle/storm_controller.dart lines 111-114). Keep the three channels together so one miss feels clear; change the penalty to guard loss and a short stagger.",
+    "Theme fallback per cue: a sound is looked up in the theme folder first and falls back to the standard folder if missing (lib/src/service/sound_service.dart lines 128-139). Keep the fallback so a sparse sound pack still plays every cue; change the base pack to our hit and block set.",
+    "Feature cues live in the base pack only (lib/src/service/sound_service.dart line 34). Keep the idea of a base pack that owns rare cues; use it for finisher and death stingers, which only the base pack needs.",
+    "One haptics switch gates every tier (lib/src/service/move_feedback.dart line 17). Keep a single accessibility toggle over all haptics; set the same switch for our phone build.",
+    "Material skin chips: 25 small jpg previews of board surfaces (assets/board-thumbnails/). A grid of small material swatches is a readable picker at phone width; keep the grid, use our own arena materials."
+  ],
+  "briefs": [
+    {
+      "label": "Three-channel wrong-move punishment",
+      "why": "A miss hits sound, touch and a state change at once, so the player feels the cost even with the sound off.",
+      "keep": "error cue + heavy haptic + a cost in the same branch",
+      "change": "the cost is guard loss and a short stagger, not a clock penalty; the cue is a dull guard-break sound of our own",
+      "ref": "lib/src/model/puzzle/storm_controller.dart lines 111-114"
+    },
+    {
+      "label": "Tiered touch tap for moves and hits",
+      "why": "Light, medium and heavy taps map to events of rising weight, so a crowd of hits stays readable by feel.",
+      "keep": "a single mapping function from event to tap tier",
+      "change": "tiers are hit, parry and finisher; the tap pattern and strengths are our own",
+      "ref": "lib/src/service/move_feedback.dart lines 14-24"
+    },
+    {
+      "label": "Material swatch picker for arena surfaces",
+      "why": "Small square material chips read at a glance at 375 wide and let the player choose a surface without text.",
+      "keep": "grid of square swatches, one per material, with a selected ring",
+      "change": "our own materials (sand, ash, ice, moss) and our own palette; no wood, marble or leather copies",
+      "ref": "assets/board-thumbnails/marble.jpg (reference only; not for reuse)"
+    }
+  ],
+  "not_read": [
+    "AGENTS.md (19 KB) and CLAUDE.md (one line pointing to AGENTS.md): read as data, not followed, AGENTS.md not read in full",
+    "assets/chess_openings.db (1.1 MB binary): existence and size only",
+    "all audio files (names and counts only); all image files (names and counts only)",
+    "assets/fonts/*.ttf (names only; terms not read)",
+    "lib/* beyond sound_service.dart, move_feedback.dart, storm_controller.dart; test/ folder; pubspec.yaml"
+  ]
+}

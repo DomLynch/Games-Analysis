@@ -1,0 +1,36 @@
+{
+  "donor": "OpenBW-openbw",
+  "code_licence": "Not stated in the box. There is no LICENSE file for the engine; README.md (3 lines) points to an external build guide and says nothing about licence. The only licence file is deps/asio/LICENSE_1_0.txt (Boost Software License 1.0) for the vendored asio library.",
+  "asset_licence": "No game assets in the box. The engine loads the original game's archive and data-table files at runtime (data_loading.h:1038 archive reader; load_units_dat at 1440, load_weapons_dat at 1518). Those files are not in the box. The box has 400 files: hpp 317, ipp 51, h 25, cpp 3, txt 2, md 1, cmake 1. No archive, data-table, image, audio or map file.",
+  "rights_holder_status": "uses original game data (then proprietary, per the rule). The box names the original game only in one code comment (bwgame.h:21334). No ownership or licence statement for the data in the box.",
+  "best_class": "C",
+  "half_read": "engine (bwgame.h frame and unit update, sync.h scheduling, replay.h playback, data_loading.h loaders and archive reader, all in part) read. UI or client: ui/CMakeLists.txt and ui/native_sound.h read in part; ui/sdl2.cpp and ui/ui.h not read. Data pack: absent from the box (extension count above, not a guess). Paired donor in this batch: none.",
+  "asset_groups": [
+    {"kind": "original game data (archives and data tables)", "path": "not in box; read by data_loading.h (archive reader at 1038; table loaders at 1440, 1518, 1629)", "count_hint": "0 files in box", "licence": "not in box; proprietary per rule", "class": "C", "note": "User must supply their own copy. Loader signatures read; no data values read."},
+    {"kind": "character-code table", "path": "korean.h (1857 lines; table_81 starts at line 13)", "count_hint": "1857 lines of 16-bit code points", "licence": "none stated", "class": "C", "note": "Text encoding table in the engine. Source of the table is not stated in the file. Not reproduced."},
+    {"kind": "entity identifier enums", "path": "bwenums.h (53898 bytes)", "count_hint": "not counted", "licence": "none stated", "class": "D", "note": "Names of game entities and images. Identifiers only; do not reuse the names."},
+    {"kind": "UI and sound interface (code)", "path": "ui/native_sound.h (play takes channel, sound, volume, pan at line 13); ui/CMakeLists.txt; ui/sdl2.cpp (not read)", "count_hint": "code", "licence": "none stated", "class": "D", "note": "Interface only. No sound file in the box."},
+    {"kind": "vendored library", "path": "deps/asio/ (asio.hpp, asio/ tree, LICENSE_1_0.txt)", "count_hint": "most of the 317 hpp files in the box (exact split not taken)", "licence": "Boost Software License 1.0 (LICENSE_1_0.txt line 1)", "class": "D", "note": "Third-party library code, not a game asset."}
+  ],
+  "inspiration": [
+    "Deterministic frame step: the frame counter advances, then the frame is processed, then triggers run (bwgame.h:13191-13194). This is the fixed-step shape for row 18 (server tick).",
+    "Seeded random source with per-source counters: a linear congruential generator with a fixed multiplier and an increment (bwgame.h:13197-13201) and a counter per random source (bwgame.h:237). Idea: give each system its own random stream and count the draws, so a desync can be found.",
+    "Staggered order processing: units are dealt processing buckets 0 to 7 that are re-dealt every 150 frames (bwgame.h:12879-12887). Spreads AI decisions across frames: the per-tick NPC budget idea in row 18.",
+    "Lockstep scheduling: actions are stamped with an 8-bit frame tag and run when the sync frame matches (sync.h:191-195). Compact stamps; wrap-around must be handled.",
+    "Replay as recorded actions: each replay frame executes the stored actions, then advances the state; playing past the end is an error (replay.h:229-230). Matches the fight record and replay row 19. Re-express with our own input log.",
+    "Sound call shape: a play call takes a channel, a sound, a volume and a stereo pan (ui/native_sound.h:13). Pan per combat cue is the sound-music idea to borrow.",
+    "Typed loaders per table: separate loaders for units, weapons, upgrades and flingy data (data_loading.h:1440, 1518, 1564, 1629). Catalogue-as-runtime-source, rows 20 and 21."
+  ],
+  "briefs": [
+    {"label": "Lockstep ghost replay (own label)", "why": "A fight can be watched again from a log of inputs, so a memorable moment can be shown back at the same timing. Behaviour idea only: the box has no art.", "keep": "Per-frame action log; the same engine re-runs the log; a clear error when the log ends", "change": "We log player inputs only, add a camera path and a scrubber, and show a distinct original ghost fighter; no trait copied from the donor", "ref": "replay.h:229-230; sync.h:195"},
+    {"label": "Staggered-think fighters (own label)", "why": "Many enemies can decide their next step without all deciding on the same frame, which keeps frame time flat with a crowd on screen.", "keep": "Fixed set of processing buckets; buckets re-dealt on a long timer", "change": "Buckets come from the zone and spawn id, tied to the per-tick budget of row 18; our own rhythm, not the donor's 150-frame value", "ref": "bwgame.h:12879-12887"}
+  ],
+  "not_read": [
+    "bwgame.h beyond the lines cited (about 22000 lines; only frame loop, unit update and RNG read)",
+    "ui/sdl2.cpp, ui/ui.h, ui/native_window.h, ui/native_window_drawing.h, ui/common.h, ui/gfxtest.cpp",
+    "sync_server_asio_*.h networking files",
+    "replay_saver.h, data_types.h, game_types.h, actions.h, util.h, containers.h, static_vector.h, circular_vector.h, intrusive_list.h, strf.h",
+    "data_loading.h table bodies beyond the loader signatures",
+    "deps/asio beyond its licence file"
+  ]
+}

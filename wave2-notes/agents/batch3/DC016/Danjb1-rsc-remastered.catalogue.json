@@ -1,0 +1,70 @@
+{
+  "donor": "Danjb1-rsc-remastered",
+  "counts": {
+    "creatures": null,
+    "classes": null,
+    "weapons": null,
+    "gear_sets": null,
+    "zones": null
+  },
+  "halves": {
+    "client": "partly read: directory tree, class-level names, two class declarations (SoftwareRenderer.java line 23; SpriteEntity.java line 8); 78 Java files in total",
+    "data_pack": "listed by name and size only; the gzipped XML definitions and the archives were not opened (restriction)",
+    "server": "not in the box (top level checked: build.bat, docs, README.md, rsc-client, run.bat)"
+  },
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [
+    "category only: a rule that hides roofs and upper storeys when the player is indoors (docs/TODO.md line 18); zone content not read"
+  ],
+  "looks": [
+    {
+      "label": "Sprite entities over rendered terrain",
+      "technique": "sprite entities with position, size and layer drawn over a software-rendered map (category level)",
+      "ref": "/mnt/frankendom-donors/Danjb1-rsc-remastered/rsc-client/src/client/game/render/SoftwareRenderer.java line 23; /mnt/frankendom-donors/Danjb1-rsc-remastered/rsc-client/src/client/game/scene/SpriteEntity.java line 8"
+    },
+    {
+      "label": "Indoor occlusion",
+      "technique": "hide roofs and upper storeys when the player is inside (planned in the TODO; category level)",
+      "ref": "/mnt/frankendom-donors/Danjb1-rsc-remastered/docs/TODO.md line 18"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Bottom-sheet tab panel",
+      "idea": "a tabbed set of systems (inventory, magic, friends, stats, map, settings) in a bottom sheet on phones",
+      "keep": "one tab strip and one panel per system",
+      "change": "a bottom sheet on phones, our own icons and colours"
+    },
+    {
+      "name": "Success and failure cue pair",
+      "idea": "each verb gets a short success cue and a separate failure cue",
+      "keep": "the pair per verb",
+      "change": "our own synthesised cues in one instrument family"
+    },
+    {
+      "name": "Indoor roof hide",
+      "idea": "upper storeys and roofs hidden while the player is inside",
+      "keep": "hide by player state",
+      "change": "our own geometry rule and camera"
+    },
+    {
+      "name": "Heading reset",
+      "idea": "one command resets the view heading to north",
+      "keep": "single command reset",
+      "change": "our own camera reset"
+    }
+  ],
+  "defects": [],
+  "licence_note": "RESTRICTED note (_RESTRICTED-NOTE.txt line 1): no licence; derived from the RuneScape Classic client; study shape and idea only, never copy code or constants. No LICENSE or copyright line in the tree; rights holder unknown.",
+  "not_read": [
+    "all archives, gzip XML definitions (10 files), WAV cues (37), images and both jars",
+    "Java bodies beyond class-level names (game/ui, game/render, game/world, game/scene, loading, res)",
+    "server half (not in the box)",
+    "docs other than ideas.md, TODO.md and about.md (names only)",
+    "build.bat and run.bat bodies beyond build commands"
+  ]
+}

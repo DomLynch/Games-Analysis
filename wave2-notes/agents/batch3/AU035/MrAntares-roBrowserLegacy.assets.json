@@ -1,0 +1,47 @@
+{
+  "donor": "MrAntares-roBrowserLegacy",
+  "code_licence": "GNU GPL v3 (LICENSE lines 1-2; package.json line 45 'GNU GPL V3')",
+  "asset_licence": "No asset licence in the repo. Game art and data are not shipped: the Remote Client serves assets extracted from the user's own GRF files (README.md line 54). Repo-level GPL covers the game-data tables under src/DB (class C; provenance not stated). Third-party icons and images carry no per-file licence (class C).",
+  "rights_holder_status": "Client code: ROBrowser authors (file headers name Vincent Thibault and Antares). Ragnarok Online game and data owner: not named in the repo; unknown. Game files are not in the box.",
+  "best_class": "C for src/DB game-data tables, UI images and vendor wasm; D for game art, sprites, maps and sound (absent)",
+  "asset_groups": [
+    {"kind": "game_data_tables_js", "path": "src/DB/ (Monsters/, Items/, Skills/, Status/, Jobs/, Map/, Pets/, Effects/)", "count_hint": "about 60 JS table and const files; large: ItemTable.js 8412 lines, SkillInfo.js 13642, MonsterTable.js 3749, MonsterNameTable.js 2457", "licence": "GPL v3 (repo); no separate licence; game-data provenance not stated", "class": "C", "note": "Data half in the box. MonsterTable.js header says 'Monster Table ID' but the entries read are job and class names. Bodies beyond heads not read for most files."},
+    {"kind": "weapon_trail_and_hit_sound_tables", "path": "src/DB/Items/WeaponTrailTable.js (46 lines), src/DB/Items/WeaponHitSoundTable.js (48 lines), WeaponSoundTable.js", "count_hint": "3 tables", "licence": "GPL v3 (repo)", "class": "C", "note": "Trail effect name keyed by weapon type. Trail names not copied."},
+    {"kind": "per_creature_shadow_and_projectile_tables", "path": "src/DB/Monsters/ShadowTable.js (363 lines), src/DB/Monsters/AttackEffectTable.js (258 lines)", "count_hint": "2 tables", "licence": "GPL v3 (repo)", "class": "C", "note": "Shadow scale per id; projectile effect per job."},
+    {"kind": "replay_format_code", "path": "src/Engine/Replay/ (ReplayParser.js 1174 lines, ReplayPlayer.js 597, ReplaySocket.js 61, ReplayTypes.js 260)", "count_hint": "4 files", "licence": "GPL v3 (repo); format spec derived from a third-party reference whose licence is not in the box", "class": "C", "note": "Format named as Ragnarok Online Replay Format (.rrf)."},
+    {"kind": "ui_images", "path": "src/UI/Components/GrfViewer/Icons/ (11 PNG + load.gif); src/UI/Components/Error/error.png; src/UI/Components/Intro/images/background.jpg; applications/*/icon.png (3); docs/img (6 PNG)", "count_hint": "about 24 image files", "licence": "GPL v3 (repo); no per-file licence", "class": "C", "note": "Origin not stated per file; not opened."},
+    {"kind": "vendor_wasm", "path": "src/Vendors/liblua5.1.wasm", "count_hint": "1 file", "licence": "Not stated in box", "class": "C", "note": "Name says Lua 5.1 as WASM; not read."},
+    {"kind": "text_and_json_misc", "path": "src/UI/Components/MobileUI/robrowser_mobileui.txt; 5 JSON and 5 TXT files elsewhere; rathena/tools/docker/asset/*.txt (2)", "count_hint": "about 12 files", "licence": "GPL v3 (repo)", "class": "C", "note": "Not read."},
+    {"kind": "game_art_sprites_maps_sound", "path": "not in box (read from the user's GRF at run time; loaders in src/Loaders/)", "count_hint": "0", "licence": "n/a", "class": "D", "note": "Absent from the repo; user supplies client files."},
+    {"kind": "server_half_and_remote_asset_server", "path": "rathena/ (placeholder + docker config only); roBrowserLegacy-RemoteClient-PHP/ (placeholder only)", "count_hint": "0 server code in box", "licence": "n/a", "class": "D", "note": "No server half in the box; no paired donor in the box."}
+  ],
+  "brief_rule": "Recreate as a clearly distinct original, never a copy; each brief names the trait kept and the trait changed. GPL donor: shape and idea only; no code copied.",
+  "inspiration": [
+    "Server-timed animation: the client stretches the attack clip so its length matches the server's attack time, so the server owns the timing and the client only plays it. For rows 6 and 7. File: src/Engine/MapEngine/Entity.js lines 629-642.",
+    "Lead-time projectile: a bow shot starts its effect after a lead computed from the motion, so the arrow leaves with the swing. Keep the lead as its own value (the donor edits the received packet in place at line 647; defect for us). For rows 10 and 13. File: Entity.js lines 645-656.",
+    "Weapon trail per weapon class: one trail look chosen by weapon class from a table, with our own palette. For row 15 (gear dressing) and row 10. File: src/DB/Items/WeaponTrailTable.js lines 16-26.",
+    "Shadow scale per creature from a small id-keyed table, sized to the creature's footprint, with flying creatures at zero. For readability at 375 wide. File: src/DB/Monsters/ShadowTable.js lines 12-14.",
+    "Projectile look chosen by creature job from a lookup table, so a ranged creature gets its own shot without a new code path. For rows 7 and 13. Files: src/DB/Monsters/AttackEffectTable.js line 10; Entity.js line 657.",
+    "Replay as tagged fields: the parser reads known field ids and skips unknown ones, so old replays still load. For row 19 (fight record and replay). File: src/Engine/Replay/ReplayParser.js lines 487-506."
+  ],
+  "briefs": [
+    {"label": "Server-stretched swing", "why": "A hero's swing that always lasts exactly the time the server allows makes the hit land when the swing ends, which reads clearly at 375 wide because the body's motion and the hit moment line up.", "keep": "The server sets the swing time; the client stretches or squeezes the clip to match it.", "change": "Our hit is decided by the engine tick and the client only plays the clip; the clip has a fixed hit frame that is not scaled; a fight camera cue fires on the hit frame.", "ref": "src/Engine/MapEngine/Entity.js lines 629-642"},
+    {"label": "Arrow with a lead", "why": "An arrow that leaves a fraction after the bow draw looks like it was loosed by the body, not spawned at the target, and it stays readable against a crowd.", "keep": "A projectile starts after a lead computed from the motion; the lead is a field of the shot.", "change": "Our lead is a per-weapon catalogue value, not a change to the server packet; the arrow is a short bright streak, not the donor's effect.", "ref": "src/Engine/MapEngine/Entity.js lines 645-656"},
+    {"label": "Trail per blade class", "why": "A swing trail whose look depends on the blade class lets a player read the weapon at a glance during a fast fight, without extra UI.", "keep": "One trail look per weapon class, chosen by a table entry.", "change": "Our trails use our own palette (cool for blades, warm for blunt weapons); trail length follows swing speed; no donor trail names.", "ref": "src/DB/Items/WeaponTrailTable.js lines 16-26"},
+    {"label": "Footprint shadow table", "why": "A shadow sized from the creature's footprint, with flying creatures at no shadow, keeps the ground readable at a glance on a phone.", "keep": "A small id-keyed scale table for shadows.", "change": "We size from our silhouette width at 375 wide, and flying creatures use a ring below them instead of a shadow.", "ref": "src/DB/Monsters/ShadowTable.js lines 12-14"},
+    {"label": "Fight record with tagged fields", "why": "A fight record made of id-tagged fields lets the replay format grow without breaking old recordings, which matters for a long-lived fight log.", "keep": "Known fields by id; unknown fields skipped.", "change": "Our fields are attack time, hit, guard, parry and server tick, not the donor's ids; the record has its own version byte.", "ref": "src/Engine/Replay/ReplayParser.js lines 487-506"}
+  ],
+  "defects_found": [
+    {"where": "src/Engine/MapEngine/Entity.js lines 647 and 652", "defect": "The received attack time is changed in place (pkt.attackMT += delayTime) and later read as the start tick, so the packet no longer holds the server value.", "fix": "keep the server attack time and the lead as separate fields."},
+    {"where": "src/Engine/MapEngine/Entity.js line 641", "defect": "_soundTime is computed at line 641, and no other reference to it appears in Entity.js (grep -rn within that file; other files not searched).", "fix": "remove it, or wire the sound to it, once the timing is settled."}
+  ],
+  "not_read": [
+    "rAthena server (absent from the box)",
+    "ItemTable.js, SkillInfo.js, MonsterNameTable.js and MonsterTable.js bodies (heads or line counts only)",
+    "All image, GIF, JPG and WASM files (names and counts only)",
+    "The 5 JSON and 5 TXT files and the MobileUI text (not read)",
+    "ReplayParser.js beyond lines 487-506; ReplayPlayer.js beyond line 221",
+    "Entity.js outside lines 629-657; the rest of src/Engine/MapEngine",
+    "docs/*.md beyond the lines cited"
+  ]
+}

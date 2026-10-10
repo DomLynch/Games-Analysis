@@ -1,0 +1,38 @@
+{
+  "donor": "OpenGothic",
+  "code_licence": "MIT (LICENSE:5, copyright line LICENSE:3, 'Copyright (c) 2019 Try'). lib/miniz has its own LICENSE file (lib/miniz/LICENSE:1).",
+  "asset_licence": "No asset licence file in the box. The README says the game assets and scripts are not provided and must come from a Gothic 2 install (README.md:25). LICENSE (MIT) is the only licence file at repo root and does not name any asset folder.",
+  "rights_holder_status": "community re-implementation of Gothic 2: Night of the Raven (README.md:2); it runs on the user's original game data (README.md:5). Original rights holder not named in the repo files. Unknown beyond that.",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "original Gothic 2 game data (scripts, world, models, textures, sound, music)", "path": "not in box (README.md:25); the data would be loaded from the user's Gothic 2 install via -g", "count_hint": "0 in box (find for .tga, .mds, .zen, .wav, .mp3, .ogg, .mod, .ttf found none)", "licence": "none in box; user supplies", "class": "C", "note": "Proprietary game data. Not present, so nothing to use. Inspiration only."},
+    {"kind": "editor UI icons (PNG)", "path": "spacer/assets/ic/*.png and spacer/assets/im/point_light.png", "count_hint": "15 PNG files", "licence": "no separate licence; repo LICENSE (MIT) by default, not stated for images", "class": "C", "note": "Small glyphs (add, close, expand triangles, check on and off, folder, file). Licence unclear for images. Not opened."},
+    {"kind": "app icon and screenshot", "path": "icon.ico (22066 bytes), scr0.png (2702212 bytes, root)", "count_hint": "2 files", "licence": "repo LICENSE by default; screenshot content presumably from the game (not stated)", "class": "C", "note": "Screenshot may show original game content; the repo does not say. Not opened (binary)."},
+    {"kind": "shaders (GLSL, code)", "path": "shader/ (about 31 folders and files: water/, sky/, hud/, ssao/, hiz/, virtual_shadow/, epipolar/, lighting/, materials/, inventory/, bink/, rtsm/, swrt/, software_rendering/)", "count_hint": "count not taken", "licence": "repo LICENSE (MIT)", "class": "A", "note": "Code, not art. Water, sky and fog bodies partly read (see inspiration)."},
+    {"kind": "packaging metadata", "path": "packaging/opengothic.appdata.xml", "count_hint": "1 file", "licence": "repo LICENSE", "class": "A", "note": "Store metadata. Not read."},
+    {"kind": "audio, music, fonts, models, textures, maps", "path": "none in box", "count_hint": "0 (see find result above)", "licence": "n/a", "class": "D", "note": "Music and sound are played from the user's game data (common/gamemusic.h, common/sound/soundfx.h)."},
+    {"kind": "submodules (empty in this box)", "path": "lib/ZenKit, lib/TinySoundFont, lib/Tempest, lib/bullet3, lib/dmusic, lib/rapidjson (each 0 entries)", "count_hint": "0 entries each", "licence": "unknown (their LICENSE files are not in this box)", "class": "C", "note": "ZenKit is the file-format library that would read the data half. It is an empty submodule here, so the format code is not in the box."}
+  ],
+  "inspiration": [
+    "Water surface as a sum of a few directional Gerstner waves, phase driven by a tick counter, with a floor on the amplitude so calm water still moves (shader/water/gerstner_wave.glsl:17-32). Recreate with three or four waves in our water shader.",
+    "Water is split into separate passes: underwater view, reflection and a mesh path (shader/water/underwater.frag, water_reflection.frag, water_reflection.mesh). A separate underwater pass is a clear look change for a shallow pool.",
+    "Sky from precomputed look-up tables: transmittance, multiple scattering, sky-view and clouds (shader/sky/*.frag and *.comp; multiple-scattering approximation at sky_multi_scattering.frag:15, transmittance step at :58). For a fast browser, keep one sky-view table per frame and skip the rest.",
+    "Music as a small state machine: named music states and a tag set, chosen from the current theme and tags (common/gamemusic.h:8-34). Recreate as zone and combat cue states with tags for mood, with crossfades on zone border.",
+    "Entities as instances of a script symbol: a world NPC is created from an instance id and binds to a symbol in the script VM (common/world/objects/npc.cpp:182-194, :264). Our catalogue pattern: one data row per instance, one class-like template per type (rows 20-21).",
+    "Light and fog effects by name only (not read): epipolar light shafts (shader/epipolar/), volumetric and virtual shadow passes (shader/virtual_shadow/), screen-space ambient occlusion (shader/ssao/). Look at the shader bodies before choosing any one for our look."
+  ],
+  "briefs": [
+    {"label": "Calm lake surface", "why": "A few crossed waves plus an amplitude floor make a flat lake move without any texture; the surface reads from the sun glint alone.", "keep": "three or four directional waves summed in the shader; phase from the tick counter; amplitude floor so calm water still moves", "change": "our own wave directions and count; a shoreline foam band from depth instead of none; our own palette, not the donor's blue-green", "ref": "shader/water/gerstner_wave.glsl:17-32 (wave amplitude and Gerstner sum)"},
+    {"label": "Dusk sky with a sun disc", "why": "A precomputed sky-view table gives a horizon colour that changes with sun height; one table per frame is cheap for a browser.", "keep": "sky from a look-up table; a sun disc drawn over the sky", "change": "our own sun direction and palette per zone; no volumetric cloud layer; a stylised horizon band", "ref": "shader/sky/sky_multi_scattering.frag:15 and :58; shader/sky/sun.frag (name only, not read)"},
+    {"label": "Zone mood music cue", "why": "One state chosen from a theme and tags lets a single cue set cover many places; the game can change mood without a new track for each place.", "keep": "named music states; tags such as place or danger; one selector that picks the cue", "change": "our own cue names and tags tied to the zone data; add a stinger on boss intro; no copy of the donor's track set", "ref": "common/gamemusic.h:8-34 (state enum and set-theme call)"}
+  ],
+  "not_read": [
+    "game data: not in box (Gothic 2 scripts, world, models, textures, sound, music)",
+    "lib/ZenKit, lib/TinySoundFont, lib/Tempest, lib/bullet3, lib/dmusic, lib/rapidjson (empty submodule dirs; cannot read)",
+    "lib/miniz (only the first copyright line read)",
+    "shader/hud, shader/inventory, shader/ssao, shader/virtual_shadow, shader/epipolar, shader/bink (names only)",
+    "common/world, common/ui, common/graphics (only the lines cited)",
+    "scr0.png and icon.ico (binary; not opened)",
+    "spacer/ editor sources (only the asset folder listing)"
+  ]
+}

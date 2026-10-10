@@ -1,0 +1,37 @@
+{
+  "donor": "uglyoldbob-l1j-client",
+  "code_licence": "GPL-3.0 (COPYING:2); no per-file SPDX headers found in src or rust/src",
+  "asset_licence": "none stated in repo; game data is not bundled and is read from a separate Lineage install (src/config.cpp:158, src/README.txt:4)",
+  "rights_holder_status": "uses original game data (proprietary, not in repo); owner not named in a licence file; NCsoft appears only in a Windows install path (src/LineageWindows.ini:1)",
+  "best_class": "C",
+  "half_read": "client; data half via src/resources/known.h table index; server half not read",
+  "asset_groups": [
+    {"kind": "sprite index", "path": "src/sprite_table.txt and rust/src/resources/sprite_table.txt", "count_hint": "2 files, 2,171,928 bytes each (same size, not compared)", "licence": "none stated", "class": "C", "note": "numeric sprite and action index read as a number stream (src/sdl_user.cpp:380-391); not decoded"},
+    {"kind": "data table index (text)", "path": "src/resources/known.h", "count_hint": "about 50 table, sprite-pack and tile-pack name lines (52 lines match the extensions by grep)", "licence": "GPL-3.0 as repo text; describes proprietary tables", "class": "C", "note": "names level-up lines, stat text, spell names with costs, zone rectangles, village names, help and tips"},
+    {"kind": "third-party mirror (images, html, text)", "path": "powerpc/", "count_hint": "about 120 gif, 112 html, a few txt and zip", "licence": "not seen", "class": "C", "note": "unrelated course-site content; file types only, not opened"},
+    {"kind": "models, sounds, fonts, maps", "path": "none in repo", "count_hint": "0", "licence": "n/a", "class": "D", "note": "sound and tile files load by number from the game install (src/resources/music.cpp:72, src/resources/tile.cpp:197)"}
+  ],
+  "inspiration": [
+    "Animation as an action table: each sprite record holds a fixed list of action slots, and each slot is a list of frames with a timing value and an audio cue, so the sound is tied to the frame (rust/src/sprites.rs:8 and :17). Recreate with our own action names and seconds.",
+    "Layered gear on one body: a sprite record carries a clothing count and a list of clothing ids, so outfits swap without new bodies (rust/src/sprites.rs:22-23). Keeps one silhouette readable at 375 wide.",
+    "Zones as rectangle rows: a zone is a text id, a map id and a start and end box, so bounds are data (src/resources/known.h:75). Ours can carry spawn caps and biome fields on the same row.",
+    "Per-class celebration lines: a level-up message table per class makes the progression moment personal (src/resources/known.h:12).",
+    "Spell names with costs in one text table: the HUD reads name and cost from one row (src/resources/known.h:43).",
+    "Per-language table files: each table is loaded with a language letter in its file name (src/resources/table.cpp:133). Good pattern for locale files."
+  ],
+  "briefs": [
+    {"label": "Frame-cued swing", "why": "the impact sound lands on the exact frame where the blade meets the target; the cue is part of the animation data", "keep": "sound cue on a specific frame; a per-action slot holding frames", "change": "our own action names instead of numbered slots; timing in seconds not ticks; cue tied to a hit frame we author", "ref": "rust/src/sprites.rs:8 and rust/src/sprites.rs:17"},
+    {"label": "Layered gear on one body", "why": "a count plus a list of clothing ids means one silhouette reads as many outfits", "keep": "base body plus a clothing list; a per-sprite shadow field", "change": "armour as rig plates on our hero, not sprite swaps; our own layer order rules", "ref": "rust/src/sprites.rs:22-23"},
+    {"label": "Zone as a rectangle row", "why": "name, map and bounds on one row keeps zones as data, not code", "keep": "rectangle rows for zone bounds", "change": "our rows also carry spawn caps, respawn and biome fields; no Lineage map ids", "ref": "src/resources/known.h:75"},
+    {"label": "Class-keyed level-up line", "why": "a short line keyed to the class at each level makes the moment feel personal", "keep": "message table keyed by class", "change": "our own wording and voice; one line per build path, not per Lineage class", "ref": "src/resources/known.h:12"}
+  ],
+  "cross_link": "animation (frame cue) and sound (numbered files) notes above; zone rectangle rows for zones; camera, spawns, loot, HUD and VFX assets not in this box (not read)",
+  "not_read": [
+    "server half (not in this review)",
+    "3 zip files",
+    "powerpc mirror beyond file types",
+    "update/ patch tool (names only)",
+    "body of sprite_table.txt (not decoded)",
+    "bodies of src/encryption files (copyright line only)"
+  ]
+}

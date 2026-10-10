@@ -1,0 +1,43 @@
+{
+  "donor": "shoff-ShadowbaneCacheViewer",
+  "code_licence": "none stated: no LICENSE/COPYING/NOTICE at repo root, src/ or Native/; bundled jQuery and Bootstrap carry their own licence files (jQuery licence text, Bootstrap MIT)",
+  "asset_licence": "none stated; README says the .cache game files are the property of the owner of the Shadowbane IP and are not contained in the repo",
+  "rights_holder_status": "unknown: README refers to the owner of the Shadowbane IP without naming them; the repo does not say the author is a fan, clean-room or licensee",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "cache object text views (hex dumps)", "path": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/Documents/CObjects_Text_Views", "count_hint": "13 files, 76K", "licence": "none stated; game-derived per name", "class": "C", "note": "hex dumps of cache records, not readable text; only first line of one file read"},
+    {"kind": "Wavefront material placeholders", "path": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/Exports", "count_hint": "10 .mtl files, all 0 bytes, no .obj", "licence": "none stated", "class": "D", "note": "empty; prop names only (for example Crater, Hourglass, Bramble Gate)"},
+    {"kind": "Maya export materials and textures", "path": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/Documents/ExportedFromMaya", "count_hint": "2 .mtl, 2 PNG (40K each), 2 .swatch", "licence": "none stated; origin of PNG textures not stated", "class": "C", "note": "head.mtl read; PNG not opened"},
+    {"kind": "UV map image", "path": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/src/Shadowbane.Cache/uv_map.png", "count_hint": "1 file, 528K", "licence": "none stated", "class": "C", "note": "not opened"},
+    {"kind": "cache index archive", "path": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/Documents/CacheObjectIndexes.rar", "count_hint": "1 file, 8.7M", "licence": "none stated", "class": "C", "note": "archive; not opened or extracted"},
+    {"kind": "spreadsheet of duplicate render ids", "path": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/Documents/duplicate_render_ids.xlsx", "count_hint": "1 file", "licence": "none stated", "class": "C", "note": "not opened"},
+    {"kind": "third-party PDF documents", "path": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/Documents (opengl-book_pdf.pdf 44M, comparison_of_3d_file_formats.pdf 392K, asfamcfileformat.pdf 60K)", "count_hint": "3 files", "licence": "not stated in repo", "class": "C", "note": "not opened"},
+    {"kind": "010 binary templates (format description)", "path": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/010Templates", "count_hint": "11 .bt files", "licence": "none stated", "class": "C", "note": "README says incomplete; header read for mesh.bt"}
+  ],
+  "inspiration": [
+    "One object-kind enum with flag bits and a comment per flag: sun, basic props, buildings and interactive objects, items, mobile things, deeds, keys and warrants, particles and interface. Ref: /mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/src/Shadowbane.Cache/ObjectType.cs lines 3-26",
+    "A claimable plot marker is one record with three presentation ids (world render, inventory icon, minimap icon): one entity, three views. Matches the hud-ui minimap topic. Ref: /mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/src/Shadowbane.Models/Deed.cs lines 6-29",
+    "A load-time skip list for known-bad render ids, so one broken entry does not stop the load. Ref: /mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/src/Shadowbane.Cache.IO/BadRenderIds.cs lines 7-17",
+    "One small record type per object kind, each with its own parse step chosen by the kind flag (Deed, Particle, ModelObject). Ref: /mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/src/Shadowbane.Models/Particle.cs lines 6-24",
+    "Format discovery kept as binary templates beside the parser (010 .bt files), so the byte layout is visible to the next reader. Ref: /mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/010Templates/mesh.bt line 2",
+    "A Maya-style material block as the export unit for a prop: one named material with diffuse, specular, transparency and shine terms. Shape only, no values recorded. Ref: /mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/Documents/ExportedFromMaya/head.mtl lines 1-8"
+  ],
+  "briefs": [
+    {"label": "Land claim stake", "why": "one claim object shows up in three places (in the world, in the bag, on the minimap) with the same identity", "keep": "one record with three icon ids; a claimable plot", "change": "a stake with a pennant instead of a deed sheet; our zone colour as the palette key; no unused id fields. Recreate as a clearly distinct original, never a copy", "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/src/Shadowbane.Models/Deed.cs lines 14-29"},
+    {"label": "Vine gate", "why": "a gate prop reads as a barrier at 375 wide", "keep": "a passable-or-blocked barrier prop", "change": "a hinged wooden gate with a lantern instead of thorns. Recreate as a distinct original", "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/Exports/Bramble Gate.mtl (0 bytes; name only, look not read)"},
+    {"label": "Sand timer shrine", "why": "a visible countdown object in a zone gives players a readable clock", "keep": "a timer prop placed in the zone", "change": "a stone shrine with a flame instead of sand; the flame drops at the timer end. Recreate as a distinct original", "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/Exports/Hourglass.mtl (0 bytes; name only, look not read)"},
+    {"label": "Impact pit", "why": "a pit is a readable hazard shape on the ground", "keep": "a ground-level hazard", "change": "a glowing rim and a smoke column instead of a flat hole. Recreate as a distinct original", "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/Exports/Crater.mtl (0 bytes; name only, look not read)"},
+    {"label": "Clan totem spire", "why": "a tall totem reads as a landmark at range", "keep": "a tall totem landmark", "change": "our own stacked head design, a different ornament set, a coloured banner. Recreate as a distinct original", "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/Exports/Lizardman Totem.mtl (0 bytes; name only, look not read)"}
+  ],
+  "not_read": [
+    "The .cache game data: not in this box (README excludes it; no .cache files in the extension listing)",
+    "Documents/CacheObjectIndexes.rar: archive, not opened or extracted",
+    "Documents/duplicate_render_ids.xlsx: not opened",
+    "Documents PDFs (opengl-book_pdf.pdf, comparison_of_3d_file_formats.pdf, asfamcfileformat.pdf): not opened",
+    "uv_map.png and Maya PNG textures: binary, not opened",
+    "Native C++ viewer bodies (animation, skeleton, animcontrol, model, zones): file names only",
+    "src Mesh.cs, Skeleton.cs, Animation code: not read",
+    "Shadowbane.Web pages and tests: not read",
+    "Cache object text views beyond the first line of one file"
+  ]
+}

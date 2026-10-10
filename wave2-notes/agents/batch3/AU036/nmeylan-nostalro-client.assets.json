@@ -1,0 +1,139 @@
+{
+ "donor": "nmeylan-nostalro-client",
+ "code_licence": "Apache License 2.0 (LICENSE.md:1-3)",
+ "asset_licence": "No game assets in repo (README.md:7). Fonts under SIL OFL 1.1 (lib/renderer/src/fonts/OFL-LICENSE.txt:1, :8). Game-derived name tables and fixtures: not stated.",
+ "rights_holder_status": "fan client; README.md:5 says it reuses parts of rust-ro; docs name Gravity clients (docs/internal/packets.md:13) and the game as Ragnarok Online (docs/configuration.md:376); data archive owner not stated in repo and the user supplies it (README.md:43-48)",
+ "best_class": "B",
+ "asset_groups": [
+  {
+   "kind": "UI and display fonts",
+   "path": "lib/renderer/src/fonts/NotoSans-Regular.ttf, NotoSans-Bold.ttf, NotoSansKR-Regular.otf",
+   "count_hint": "3 files; 2.0 MB, 631 KB, 1.5 MB",
+   "licence": "SIL OFL 1.1 (OFL-LICENSE.txt:1, :8); full OFL text not read",
+   "class": "B",
+   "note": "Conditions per OFL: keep the licence with the font. Only usable non-code asset in the repo; general UI font, not game art."
+  },
+  {
+   "kind": "font licence text",
+   "path": "lib/renderer/src/fonts/OFL-LICENSE.txt",
+   "count_hint": "4.3 KB",
+   "licence": "n/a",
+   "class": "n/a",
+   "note": "Licence file for the fonts above."
+  },
+  {
+   "kind": "shader source (visual code)",
+   "path": "lib/renderer/src/shaders/*.wgsl",
+   "count_hint": "16 files",
+   "licence": "Apache-2.0 (code)",
+   "class": "A",
+   "note": "Code; adaptable with the Apache notice kept. Names: sprite, terrain, water, model, model_animated, gr2_model, ui, six effect_* files, screen_distortion, ground_proxy, grid_selector."
+  },
+  {
+   "kind": "name table (game names in code)",
+   "path": "lib/formats/src/builtin_name_table.rs",
+   "count_hint": "3,688 lines; table constant at :1",
+   "licence": "code Apache-2.0; name content not stated",
+   "class": "C",
+   "note": "Game-derived names; not reproduced."
+  },
+  {
+   "kind": "name table, Korean (in code)",
+   "path": "lib/formats/src/builtin_accessory_table.rs",
+   "count_hint": "1,224 lines; constant at :1",
+   "licence": "code Apache-2.0; name content not stated",
+   "class": "C",
+   "note": "Korean-language names; not reproduced."
+  },
+  {
+   "kind": "test fixtures (game-derived tables)",
+   "path": "lib/formats/tests/fixtures/ (accessoryid.lua, accname.lua, acid_lua50/51.lub, aname_lua50/51.lub, idnum2itemresnametable.txt, jname_lua51.lub, npcid_lua50/51.lub)",
+   "count_hint": "10 files, about 1 MB",
+   "licence": "not stated",
+   "class": "C",
+   "note": "Some files are not UTF-8 text; not decoded."
+  },
+  {
+   "kind": "companion AI config",
+   "path": "companion_ai.json",
+   "count_hint": "320 lines",
+   "licence": "Apache-2.0 (repo, project config)",
+   "class": "A",
+   "note": "Project config, not game content. Numbers not recorded."
+  },
+  {
+   "kind": "game data archive",
+   "path": "data/data.grf (not in repo)",
+   "count_hint": "not in repo",
+   "licence": "not in repo",
+   "class": "D",
+   "note": "README.md:43-48: user supplies it."
+  },
+  {
+   "kind": "background music and guild emblems",
+   "path": "data/BGM, data/emblem (config defaults; not in repo)",
+   "count_hint": "no .mp3/.wav/.ogg files in repo",
+   "licence": "not in repo",
+   "class": "D",
+   "note": "README.md:100-101 names the defaults."
+  }
+ ],
+ "inspiration": [
+  "Nearest-texel sampling keeps pixel sprites hard, with no dark rim; the author names the aliasing trade-off (README.md:137-141).",
+  "Sprite projection in three steps: cell to world, depth at the anchor, facing frame (docs/internal/sprite-projection.md:64, :79, :147).",
+  "Two effect kinds: a sprite-sheet particle effect and a multi-layer texture effect with blend and loop (Features.md:33-34).",
+  "Casting feedback as ring families: a start ring and separate cast circles (Features.md:38-39). Category only.",
+  "A companion runs a small state machine once per engine tick (docs/internal/companion-ai.md:27) tuned by per-companion fields such as aggro and a tank cap (companion_ai.json:3, :16).",
+  "Map props place ambient effects such as torch, smoke, bubble and fog (Features.md:20).",
+  "A screen-space distortion effect marks a special state (Features.md:22; lib/renderer/src/shaders/screen_distortion.wgsl)."
+ ],
+ "briefs": [
+  {
+   "label": "Hard-pixel sprite with a built-in rim (ours)",
+   "why": "Nearest sampling keeps pixel art crisp, but the silhouette loses its edge at small sizes",
+   "keep": "hard pixels with nearest sampling (trait kept)",
+   "change": "a palette-matched 1 px rim so the silhouette reads at 375 px (trait changed)",
+   "ref": "README.md:137"
+  },
+  {
+   "label": "Companion with a tank cap (ours)",
+   "why": "A pet that stops tanking after a set number of enemies keeps fights readable",
+   "keep": "tick-driven state machine per companion with a cap on tanked enemies (trait kept)",
+   "change": "our own state names and a signature lure shout (trait changed)",
+   "ref": "docs/internal/companion-ai.md:27; companion_ai.json:16"
+  },
+  {
+   "label": "Map prop ambience (ours)",
+   "why": "Props make a zone feel alive for little cost",
+   "keep": "map data places small ambient effects (trait kept)",
+   "change": "our own prop set and effect timing (trait changed)",
+   "ref": "Features.md:20"
+  },
+  {
+   "label": "Screen distortion on a critical hit (ours)",
+   "why": "A short warp reads as impact at a glance",
+   "keep": "screen-space distortion as a signal (trait kept)",
+   "change": "our own wave shape, fired only on a critical hit (trait changed)",
+   "ref": "lib/renderer/src/shaders/screen_distortion.wgsl"
+  },
+  {
+   "label": "Cast ring family (ours)",
+   "why": "Rings at cast start tell the player an attack is coming",
+   "keep": "a start ring plus a separate channel circle (trait kept)",
+   "change": "our own geometry and colours (trait changed)",
+   "ref": "Features.md:38-39"
+  }
+ ],
+ "not_read": [
+  "server half (separate repo; docs/internal/architecture.md:15)",
+  "game data archive and BGM (not in repo)",
+  "all 16 shader bodies (names only; screen_distortion.wgsl name only)",
+  "lib/formats/src/gr2/oodle.rs and bink.rs (decoder code named at Features.md:24; not read)",
+  "lib/formats parsers spr.rs, act.rs, str_effect.rs, rsw.rs, gnd.rs, gat.rs (names and line counts only)",
+  "builtin_name_table.rs and builtin_accessory_table.rs beyond the constant line",
+  "fixture file contents (sizes and names only)",
+  "tools/ viewers and lib/ui-core (code)",
+  "docs/internal/packets.md beyond line 13",
+  "README.md sections other than asset and sprite notes"
+ ]
+}

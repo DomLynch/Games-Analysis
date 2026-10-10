@@ -1,0 +1,30 @@
+{
+  "donor": "wowserhq-client",
+  "code_licence": "MIT (LICENSE line 1 'MIT License', copyright 2019-2024 Wowser Contributors; README line 81 repo-wide blanket)",
+  "asset_licence": "No separate asset licence. Shipped XML, TOC and shader files fall under the repo-wide MIT blanket. Blizzard UI files referenced by the XML are not in the box and have no licence in the repo.",
+  "rights_holder_status": "unknown: repo says a copy of the official Wrath client is required (README line 27) and says not to distribute game data you do not own (line 70); no clean-room statement; AUTHORS lists fallenoak and timkurvers",
+  "best_class": "A",
+  "asset_groups": [
+    {"kind": "ui_layout_xml", "path": "public/Wowser/Wowser.toc, WowserParent.xml, WowserFrame.xml", "count_hint": "3 files", "licence": "MIT (repo-wide blanket)", "class": "A", "note": "Loading-screen layout only. References Blizzard texture and font paths (WowserFrame.xml line 8; Wowser.toc line 1) that are not in the box."},
+    {"kind": "shader_glsl", "path": "public/Shaders/pixel/glsles300/UI.frag, DebugLine.frag; public/Shaders/vertex/glsles300/UI.vert, DebugLine.vert", "count_hint": "4 files, 78-251 bytes each (ls)", "licence": "MIT (repo-wide blanket)", "class": "A", "note": "Tiny GLSL ES 3.00 UI and debug-line shaders. Bodies not read."},
+    {"kind": "lua_vendor", "path": "src/ui/scripting/vendor/bit.lua, compat.lua", "count_hint": "2 files", "licence": "not stated in the file; bit.lua header names a fengari test-suite URL; repo-wide MIT blanket only", "class": "C", "note": "Upstream licence text not in the box. Class C because it is unclear."},
+    {"kind": "game_art_and_data_referenced", "path": "Blizzard Interface paths referenced from public/Wowser/*.xml and Wowser.toc; README step 4 expects the user to extract them into public/", "count_hint": "0 in box", "licence": "none in repo", "class": "D", "note": "Not in the box. Any use needs the user's own client files, which the README says not to redistribute."}
+  ],
+  "inspiration": [
+    "Loading screen as three stacked layers: a full-bleed backdrop, one small emblem low in the centre, and one small corner caption (public/Wowser/WowserFrame.xml lines 7-39). It reads as alive while data loads.",
+    "In this donor the corner caption is a version string. Ours can use the same corner slot for a rotating tip plus a progress bar.",
+    "Layout as a declarative XML tree with anchors and absolute sizes (WowserFrame.xml lines 3-16). Makes the 375-wide HUD layout data rather than code.",
+    "Lua vendored for UI scripting (src/ui/scripting/vendor) with XML layout gives a data-first UI: layout as a tree, behaviour as script. Relevant to hud-ui; only the vendor headers were read.",
+    "No creature, item, armour, zone or effect content is in this donor, so there are no creature or armour ideas to take from it."
+  ],
+  "briefs": [
+    {"label": "Quiet loading screen stack", "why": "Calm and readable at 375 wide; a low centred emblem and a corner caption tell the player the game is alive while data loads. Silhouette and sound: none in the box.", "keep": ["three stacked layers: backdrop, emblem, caption", "emblem centred near the bottom edge and not competing with the scene", "caption kept small in one corner"], "change": ["original backdrop painted in our palette, never a copied loading image", "our own emblem in place of the donor's emblem slot", "caption carries a rotating tip with a progress bar instead of a version string; recreate from scratch as an original"], "ref": "public/Wowser/WowserFrame.xml lines 7-39 (file: /mnt/frankendom-donors/wowserhq-client/public/Wowser/WowserFrame.xml)"}
+  ],
+  "not_read": [
+    "src/gfx/apis/webgpu and src/ui/components/* (TypeScript logic; names only)",
+    "Shader bodies (sizes only)",
+    "package-lock.json, vite.config.ts, .github CI",
+    "src/utils/fetch.ts read only at line 6",
+    "Half: client only; the data half (Blizzard XML and DBC) is not in this repo"
+  ]
+}

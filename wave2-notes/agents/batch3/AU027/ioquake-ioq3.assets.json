@@ -1,0 +1,32 @@
+{
+  "donor": "ioquake-ioq3",
+  "code_licence": "GPL-2 (COPYING.txt line 2); metainfo project_license GPL-2.0-or-later (metainfo line 6); exception: zlib-based unzip code per docs/id-readme.txt lines 14-16",
+  "asset_licence": "split: game data (baseq3 pk3) not in box, supplied by user (README lines 99, 104, 144), class C; icon art (misc/*.png, svg, icns, ico) no licence line found, class C; in-repo text, ui scripts, docs and glsl under the GPL tree, class B",
+  "rights_holder_status": "id Software copyright in code headers (code/game/syn.h line 3, 1999-2005); metainfo says first GPL release by id software on August 20th, 2005 (line 14); game data owner not named in repo; game data is commercial per README line 97-99",
+  "best_class": "B",
+  "asset_groups": [
+    {"kind": "game data (pk3: maps, MD3 models, textures, sounds, scripts)", "path": "not in box (README lines 104, 144 say user supplies baseq3 pk3)", "count_hint": "0 in box", "licence": "game data not under GPL (README line 99)", "class": "C", "note": "Not present. Original game data is supplied by the user. Inspiration only."},
+    {"kind": "icon art (raster and vector)", "path": "misc/quake3.png, misc/quake3.svg, misc/linux/quake3-tango.png, misc/macos/*.icns and *.iconset, misc/macos/macos-dmg-background.png, misc/windows/quake3.ico", "count_hint": "13 png, 1 svg, 3 icns, 1 ico (counts from find; sizes not measured)", "licence": "no licence line found in the files read; 'tango' appears only in file names", "class": "C", "note": "Licence unclear. Not opened beyond licence grep."},
+    {"kind": "HUD and menu scripts", "path": "ui/hud.txt, ui/hud2.txt, ui/ingame.txt, ui/menus.txt, ui/menudef.h", "count_hint": "7, 7, 16, 39, 308 lines", "licence": "GPL-2 project tree", "class": "B", "note": "Menu loaders point at ui/hud.menu and ui/min_hud.menu, which are not in the box."},
+    {"kind": "docs (text)", "path": "docs/*.txt, docs/*.md, README.md, CONTRIBUTING.md", "count_hint": "5 md and 14 txt across the tree", "licence": "GPL-2 project tree (README and docs are in the repo)", "class": "B", "note": "Format notes (MD4 skeleton, MD3 frames) useful as reference."},
+    {"kind": "shaders (glsl)", "path": "code/renderergl2/glsl/*.glsl", "count_hint": "30 files", "licence": "GPL-2 project tree", "class": "B", "note": "Code, not assets. Shape only for us."},
+    {"kind": "item table (data as C)", "path": "code/game/bg_misc.c line 44 (bg_itemlist) through line 884", "count_hint": "one table, weapon and powerup rows", "licence": "GPL-2 project tree", "class": "B", "note": "Content table in code; sound, model and icon paths point at pk3 assets not in box."},
+    {"kind": "sound, music, models, maps, textures, fonts", "path": "none in box", "count_hint": "0", "licence": "n/a", "class": "D", "note": "Not present in the donor tree."}
+  ],
+  "inspiration": [
+    "One shared pickup gate per item kind: weapons always taken, ammo refused at a cap, health refused at max, power-ups always taken. Keep one shared rule the client predicts and the server confirms; ours is server-verified with per-kind data fields.",
+    "Item rows that carry the whole item: name, pickup cue, icon, world model and type in one row. Keep one row per item with its cues together; change the rows to point at our catalogue with rarity colour and a sound key.",
+    "Hovering power-up pickup: the entity is marked as suspended so it floats above the ground and is seen at a glance. Keep the hover and the single pickup cue; change the shape to a ring of light with a per-power glow.",
+    "Single-light radius shadow: a shadow pass needs one light origin and a radius. Keep one light and one radius; on phones bake a soft disc and cap the lights at two.",
+    "Depth-only crease darkening: a screen-space pass that needs only depth and view info. Keep the cheap contact darkening; gate it behind the quality tier.",
+    "Two HUD presets chosen by a loaded list: a full and a minimal layout. Keep the minimal preset as a switch; our layout keeps bars in the thumb zone at 375 wide.",
+    "Bone-only creature storage: vertices attach to bones so each frame stores bone positions only. Keep bone-only frame data for creature clips; use our own rig and bone names."
+  ],
+  "briefs": [
+    {"label": "Hovering power-up (our own label)", "why": "a floating pickup is found by eye on a phone at 375 wide; one cue and one hover read at a glance", "keep": ["hover above ground", "one pickup cue", "slow spin"], "change": ["ring of light, not a box", "glow colour per power", "label in our HUD, not a world text"], "ref": "/mnt/frankendom-donors/ioquake-ioq3/code/game/bg_misc.c line 521"},
+    {"label": "Light-radius soft shadow (our own label)", "why": "a soft disc under a moving light gives depth without a full shadow pass", "keep": ["one light", "one radius", "fade at the edge"], "change": ["baked soft disc on phones", "two lights max", "offset toward the light direction"], "ref": "/mnt/frankendom-donors/ioquake-ioq3/code/renderergl2/glsl/pshadow_fp.glsl lines 1-7"},
+    {"label": "Crease darkening pass (our own label)", "why": "cheap depth-based contact darkening that seats props into the scene", "keep": ["depth-only input", "screen-space pass", "radius per frame"], "change": ["tier-gated", "radius in data", "off on the low tier"], "ref": "/mnt/frankendom-donors/ioquake-ioq3/code/renderergl2/glsl/ssao_fp.glsl lines 1-3"},
+    {"label": "Bone-only creature rig (our own label)", "why": "keeps creature clips small enough for a phone download", "keep": ["vertices attached to bones", "bone positions per frame", "skeleton shared across clips"], "change": ["our bone names and chain count per creature", "not the MD4 layout", "clip data in the catalogue"], "ref": "/mnt/frankendom-donors/ioquake-ioq3/docs/md4-readme.txt line 10"}
+  ],
+  "not_read": ["game data pk3, maps, models, sounds, textures (not in box)", "libs/pak/unzip.cpp (not in box)", "code/thirdparty/curl-8.15.0 licence text", "ui/menus.txt, ui/ingame.txt, ui/menudef.h (listed only)", "code/game/ai_chat.c and ai_dmq3.c (line counts only)", "all binary images (png, icns, ico, xcf, dmg background), not opened", "misc/quake3.svg (licence grep only)", "server half (listed only); data pack (absent)"]
+}

@@ -1,0 +1,32 @@
+{
+  "donor": "xoreos-xoreos",
+  "code_licence": "GPL-3.0-or-later (COPYING GPL v3 text; README line 5; dists/debian/copyright line 7 'License: GPL-3.0-or-later' for Files: *)",
+  "asset_licence": "Embedded DejaVu Sans Mono Bold byte array in src/common/systemfonts.cpp: Bitstream Vera licence text in doc/LICENSE.Bitstream with conditions (keep notices, rename if modified, no sale alone), Arev glyph notice; packaging file lists 'License: Bitstream, Arev' (lines 296-299). Icon dists/win32/xoreos.ico: CC-BY-SA-3.0 per dists/debian/copyright lines 26-29. Icon dists/macosx/xoreos.icns: no licence line found.",
+  "rights_holder_status": "reimplementation of BioWare's Aurora engine per README lines 4-5; no game data in the box; code copyright 'xoreos Team' (debian copyright line 6); font copyright Bitstream, Inc. 2003 and Tavmjong Bah 2006 per the packaging file; game ownership not stated",
+  "best_class": "B",
+  "asset_groups": [
+    {"kind": "embedded_font", "path": "src/common/systemfonts.cpp (kDejaVuSansMonoBold, line 38, to about line 20760)", "count_hint": "one font, about 20.7k lines of hex bytes", "licence": "Bitstream Vera licence text (doc/LICENSE.Bitstream) with DejaVu public-domain changes and Arev glyph notice (systemfonts.cpp lines 33-35; debian copyright lines 296-299)", "class": "B", "note": "Conditions per licence text: keep copyright and trademark notice in all copies; modified fonts renamed without Bitstream or Vera; not sold alone. Byte values not opened."},
+    {"kind": "icon_ico", "path": "dists/win32/xoreos.ico", "count_hint": "1 file", "licence": "CC-BY-SA-3.0 (dists/debian/copyright lines 26-29)", "class": "B", "note": "Share-alike licence named by the packaging file. Binary not opened."},
+    {"kind": "icon_icns", "path": "dists/macosx/xoreos.icns", "count_hint": "1 file", "licence": "not stated (no entry in dists/debian/copyright)", "class": "C", "note": "Unclear licence. Binary not opened."},
+    {"kind": "doc_config_text", "path": "doc/xoreos.conf.example; doc/doxygen/README; doc/LICENSE.Arev, LICENSE.Bitstream, LICENSE.LGPLv2.1, LICENSE.GPLv2", "count_hint": "about 6 text files", "licence": "GPL-3.0-or-later (repo) plus the font licence texts", "class": "B", "note": "Documentation and licence texts, not game content."},
+    {"kind": "game_data_runtime", "path": "user's own game archives (src/aurora keyfile, biffile, erffile, rimfile; names only)", "count_hint": "0 in box", "licence": "none in repo", "class": "D", "note": "Read at runtime from the user's own install. Not in the box."}
+  ],
+  "inspiration": [
+    "A built-in fallback font compiled into the binary (src/common/systemfonts.cpp line 38), so debug and fallback text always draws even with no font file. Our version: a pixel face we design ourselves.",
+    "Data-first format tables: 2DA (src/aurora/2dafile.h line 22), TLK talk tables (src/aurora/talktable_tlk.cpp line 25), GFF field IDs (src/aurora/gff4fields.h line 2390). Names and stats as rows read by one loader for every game. Use: our catalogue fields as data rows.",
+    "One language-name table (src/aurora/language_strings.h line 30) drives the language list and string lookup.",
+    "Per-area minimap as one image chosen by area name, shown or hidden (src/engines/sonic/areaminimap.cpp lines 44 and 62). The file is 90 lines; the body was not read.",
+    "Core plus per-game front-ends: shared aurora/ and common/ core under per-game engine folders. Matches our one-engine, zones-as-data ruling.",
+    "The donor says no normal gameplay is implemented yet (README line 36), so there is little gameplay to take from it."
+  ],
+  "briefs": [
+    {"label": "Per-zone minimap card", "why": "An image keyed by zone name, shown or hidden on request; the simplest minimap there is. Silhouette and sound: none in the box.", "keep": ["one image per zone, loaded by name", "a show and hide toggle", "the map stays out of the main HUD until asked for"], "change": ["fog-of-war reveal drawn from zone geometry at runtime", "touch-first corner toggle sized for 375 wide", "generated map, not shipped art; recreate from scratch as an original"], "ref": "src/engines/sonic/areaminimap.cpp lines 44 and 62 (body not read)"},
+    {"label": "Built-in debug font", "why": "Text never fails to draw, because the font is compiled into the build.", "keep": ["a font compiled in for debug and fallback text", "no external file needed to draw UI text"], "change": ["our own pixel face designed from scratch, not a Bitstream or DejaVu derivative", "a glyph set limited to our UI strings"], "ref": "src/common/systemfonts.cpp line 38"}
+  ],
+  "not_read": [
+    "Embedded font bytes and both icon binaries (binary, not opened)",
+    "src/aurora archive loaders (keyfile, biffile, erffile, rimfile) and the per-game engine bodies (names only)",
+    "doxygen, tests, external/ libraries, dists/ packaging beyond the copyright file",
+    "Half: engine read; the user's game archives are not in the box"
+  ]
+}

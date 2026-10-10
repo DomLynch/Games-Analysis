@@ -1,0 +1,104 @@
+{
+  "donor": "maddogg221-SWGVulkanClient",
+  "code_licence": "Custom 'personal, non-commercial' licence in LICENSE.md: personal non-commercial use, fork and modify allowed, no commercial use, no selling or charging, no affiliation claims with SOE/Daybreak/Lucasfilm/Disney/SWGEmu; redistribution only non-commercial with the licence included unmodified. Third-party libraries fetched at build time keep their own licences (LICENSE.md section 5).",
+  "asset_licence": "No separate asset licence stated. The repo bundles no game art, models, textures or audio (HOWTO.md line 9 and README.md line 26 say the user supplies their own SWG client data). The two text lists under libs/assets/data/ carry no licence line of their own; the repo licence is the only statement in the files.",
+  "rights_holder_status": "conflicting, as the files state it: README.md and LICENSE.md describe a clean-room reimplementation with no copyrighted game assets; code comments in libs/terrain/include/terrain/MultiFractal.h (lines 8-9) and libs/animation/include/animation/SkeletalPose.h (lines 119-120) say the code is ported from SOE client source recovered from a git history / a 2015 leak. Rights holders named in LICENSE.md section 2: Sony Online Entertainment, Daybreak Game Company, Lucasfilm, Disney, SWGEmu. Otherwise unknown.",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "binary game art, models, textures, audio",
+      "path": "(none in repo; user supplies own SWG install per HOWTO.md line 9)",
+      "count_hint": "0 files in repo",
+      "licence": "n/a",
+      "class": "D",
+      "note": "Nothing bundled. Parsers in libs/assets/src read the user's own .tre/.iff/.skt/.ans data only at run time (per HOWTO.md; the parser sources were not read)."
+    },
+    {
+      "kind": "text data list (object template paths)",
+      "path": "libs/assets/data/object_template_candidates.txt",
+      "count_hint": "10,682 lines, one object template path per line",
+      "licence": "none stated; covered only by repo licence",
+      "class": "C",
+      "note": "Mechanically extracted list of game object paths (tools/dummyclient/Visualizer.cpp line 610 says so). Paths only: categories such as building, static, tangible, installation, intangible, weapon, resource container and factory; mobile/creature excluded. Read first 10 lines only."
+    },
+    {
+      "kind": "text data list (terrain layout pairs)",
+      "path": "libs/assets/data/real_terrain_grading_map.txt",
+      "count_hint": "496 lines, each an object path and a terrain layout file, tab-separated",
+      "licence": "none stated; covered only by repo licence",
+      "class": "C",
+      "note": "Read first 2 lines only. Lists which structures take terrain grading; the same data drives the grading rule in PROGRESS.md line 88."
+    },
+    {
+      "kind": "shaders (HLSL)",
+      "path": "libs/renderer/shaders/Mesh.hlsl, Terrain.hlsl, Label.hlsl, Wireframe.hlsl",
+      "count_hint": "172 lines total (58, 43, 37, 34)",
+      "licence": "repo licence (LICENSE.md)",
+      "class": "C",
+      "note": "Code, not art. Mesh.hlsl uses one fixed directional light and a wrapped shade term (line 54-56). Only Mesh.hlsl lines 1-11 and 54-56 read; the others not read."
+    },
+    {
+      "kind": "ported terrain and skeleton code (provenance says SOE source)",
+      "path": "libs/terrain/include/terrain/MultiFractal.h, libs/terrain/src/MultiFractal.cpp, libs/terrain/src/Affector.cpp, libs/animation/include/animation/SkeletalPose.h",
+      "count_hint": "4 files read in part",
+      "licence": "repo licence, but provenance comments name SOE source",
+      "class": "C",
+      "note": "Comments say the fractal and bind-pose logic is ported from leaked or recovered SOE source; conflicts with README clean-room claim. Treat as restricted: shape and technique only, no constants or ported formulas."
+    },
+    {
+      "kind": "tooling (Blender addon, dummy client, pcap decoder)",
+      "path": "tools/swg_blender_toolkit/ (7 .py files), tools/dummyclient/ (15 files), tools/pcapdecoder/ (2 files)",
+      "count_hint": "24 files",
+      "licence": "repo licence",
+      "class": "C",
+      "note": "File names and NOTES.md head only (not read beyond that): dummyclient has screenshot capture, a rest-pose auto test and animation diagnostics; the Blender toolkit imports skeleton and animation data."
+    }
+  ],
+  "inspiration": [
+    "Terrain is built from stacked noise octaves: each octave has its own frequency, amplitude, bias and gain, the octaves are combined by a rule chosen in data, and then a stack of height and colour-ramp affectors shapes the result. Recreate with original noise and our own affector names. Refs: libs/terrain/include/terrain/MultiFractal.h (lines 8-21), libs/terrain/src/Affector.cpp:120.",
+    "Grading is a per-structure data flag, not a global rule: player-built houses and halls get no grading and a small visible seam is accepted; only certain non-player categories get it. Good idea for our zone props: the seam rule lives in the data. Ref: PROGRESS.md line 88.",
+    "Object catalogue split by category (static, tangible, installation, building, weapon, resource container, factory) with creatures held out until skeletal support exists. Useful as a template for our catalogue: one list per spawn/prop class, with a note on what the runtime cannot yet show. Ref: libs/assets/data/object_template_candidates.txt, tools/dummyclient/Visualizer.cpp line 610.",
+    "Mesh shading is one fixed directional light with a wrapped term (the lit side is pushed up, the dark side never goes fully black), multiplied by the sampled texture, with a 1x1 white fallback texture for untextured parts. A clean look for a stylised fight at 375 wide. Ref: libs/renderer/shaders/Mesh.hlsl lines 54-56.",
+    "Bind-pose handling is a separate debug switch that replays the rest pose with the bind rotation, so a rest-pose error can be isolated from clip data. Good for our creature rest-pose check. Ref: libs/animation/include/animation/SkeletalPose.h (line 119 onward, provenance caveat applies).",
+    "A dedicated dummy client with screenshot capture and a rest-pose auto test: one headless run produces a set of pose images for review. Idea only, reuse the pattern with our own harness and camera at 375 wide. Refs: tools/dummyclient/ScreenshotCapture.cpp and RestPoseAutoTest.cpp (names only, not read)."
+  ],
+  "briefs": [
+    {
+      "label": "Flattened outpost on hills (zone)",
+      "why": "A mound-and-plateau camp: the ground is pulled into a flat pad under the buildings and the hills roll off in noise. Reads at 375 wide as a clear camp shape against the rising ridge.",
+      "keep": "a flat footprint pad with a clear edge; rolling hills from stacked noise; height-banded colour",
+      "change": "a different footprint (round wall ring, not rectangular); desert-to-ash palette instead of green; one tall signal post instead of tents",
+      "ref": "libs/terrain/src/Affector.cpp:120; PROGRESS.md line 88"
+    },
+    {
+      "label": "Wrap-lit stylised fighter (hero/creature shading)",
+      "why": "A single key light with a wrapped shade keeps the dark side readable and makes silhouettes pop in a crowd. Works at 375 wide without a rim pass.",
+      "keep": "one fixed key light; wrapped shade so no pure black; texture times flat colour",
+      "change": "warm-cool split light instead of one white light; a painted rim band; our own colour ramp",
+      "ref": "libs/renderer/shaders/Mesh.hlsl lines 54-56"
+    },
+    {
+      "label": "Ridge-line pass (zone signature)",
+      "why": "A ridge with ragged top edges, built from the same noise but sharpened, gives each zone a skyline that reads from a distance.",
+      "keep": "noise octaves with per-octave tuning; height banding",
+      "change": "ridged rather than rounded noise; spiky tops; a cliff-foot colour line",
+      "ref": "libs/terrain/include/terrain/MultiFractal.h lines 8-21"
+    },
+    {
+      "label": "Pose sheet capture (camera/QA)",
+      "why": "A headless run that photographs a rest pose and a few key poses at a fixed camera makes silhouette bugs visible to a human at a glance.",
+      "keep": "fixed-camera stills per pose; a rest-pose check first",
+      "change": "our fight camera at 375 wide; add the mid-fight pose; output to our own still folder",
+      "ref": "tools/dummyclient/ScreenshotCapture.cpp (name only, not read)"
+    }
+  ],
+  "not_read": [
+    "No binary assets exist in the repo; none opened.",
+    "libs/assets/src parsers (IFF, skeleton, animation, mesh) not read; only file names listed.",
+    "libs/swgproto, libs/soe, libs/worldmodel, libs/clientcommon, libs/creatureanim, libs/animation source not read (only the bind-pose comment).",
+    "libs/terrain/src other than Affector.cpp:120 not read (MultiFractal.cpp, TerrainGenerator.cpp, TrnFile.cpp names only).",
+    "tools/dummyclient sources (Visualizer.cpp read only lines 606-614 and 1130 search hit; the rest not read), tools/swg_blender_toolkit .py files not read, tools/pcapdecoder not read.",
+    "Terrain.hlsl, Label.hlsl, Wireframe.hlsl not read beyond line counts.",
+    "Server half: none in the box (README says Core3, GPL, is a reference only; not in this donor set). Client half read in part."
+  ]
+}

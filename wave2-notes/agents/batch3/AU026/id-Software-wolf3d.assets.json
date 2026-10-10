@@ -1,0 +1,47 @@
+{
+  "donor": "id-Software-wolf3d",
+  "half_read": "source only (client code, names and enemy state tables); data pack (graphics, maps, audio) absent from the box",
+  "code_licence": "Limited-use licence agreement in WOLFSRC/README/LICENSE.DOC (also duplicated in README.rst): educational use of portions of source; no commercial exploitation of the Software; no redistribution; owned by ID",
+  "asset_licence": "Same limited-use agreement, whose Software definition includes artwork data and music; no separate asset licence; no asset data in the box",
+  "rights_holder_status": "original company (id Software named as owner in LICENSE.DOC); source-only release",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "graphics name enum (empty body) and counts", "path": "WOLFSRC/GFXE_WL6.H", "count_hint": "NUMCHUNKS 414, NUMTILE16 144, enum body empty", "licence": "limited-use agreement", "class": "C", "note": "names and counts only; no pixels; picture names not listed in this release"},
+    {"kind": "graphics data pack (art, sprites, walls)", "path": "none in box (loader expects VSWAP; not present)", "count_hint": "0", "licence": "n/a", "class": "D", "note": "nothing usable in the box"},
+    {"kind": "sound name enum", "path": "WOLFSRC/AUDIOWL6.H", "count_hint": "NUMSOUNDS 87 per block; 288 sound chunks; music from index 261", "licence": "limited-use agreement", "class": "C", "note": "names only; the audio data (AUDIOHED / AUDIO) is not in the box"},
+    {"kind": "audio data (sound and music chunks)", "path": "none in box (loader names AUDIOHED in WOLFSRC/ID_CA.C)", "count_hint": "0", "licence": "n/a", "class": "D", "note": "nothing usable in the box"},
+    {"kind": "map name enum (TED5 header)", "path": "WOLFSRC/MAPSWL6.H", "count_hint": "about 60 name lines (not verified exactly)", "licence": "limited-use agreement", "class": "C", "note": "names only; map layouts (GAMEMAPS) not in the box"},
+    {"kind": "map layouts", "path": "none in box (loader names GAMEMAPS in WOLFSRC/ID_CA.C)", "count_hint": "0", "licence": "n/a", "class": "D", "note": "nothing usable in the box"},
+    {"kind": "sprite name enum (decls in WL_DEF.H)", "path": "WOLFSRC/WL_DEF.H", "count_hint": "about 533 distinct SPR_ tokens", "licence": "limited-use agreement", "class": "C", "note": "names only; sprite pixels not in the box"},
+    {"kind": "enemy state tables and shot logic (data-like code)", "path": "WOLFSRC/WL_ACT2.C", "count_hint": "3872 lines; statetype tables from about line 386", "licence": "limited-use agreement", "class": "C", "note": "inspiration only (category level); per-difficulty hit-point table at line 42"},
+    {"kind": "binaries (not read)", "path": "WOLFSRC/WOLF.EXE, WOLFSRC/SV.EXE, WOLFSRC/OBJ/GAMEPAL.OBJ, WOLFSRC/OBJ/SIGNON.OBJ, DEICE.EXE", "count_hint": "5 binaries, sizes 6 KB to 64 KB", "licence": "limited-use agreement", "class": "C", "note": "not read beyond names and sizes"},
+    {"kind": "fan text (not game content)", "path": "WOLFSRC/GOODSTUF.TXT", "count_hint": "2 KB", "licence": "not stated", "class": "C", "note": "a fan letter collection; not game text; not quoted"}
+  ],
+  "inspiration": [
+    "Shot chance is a function of range and of whether the defender can see the shooter; a shot the player cannot see is more accurate, and a running player makes shots harder (WL_ACT2.C T_Shoot, line 3444). Keep 'visible means dodgeable'; change it to a telegraph timer.",
+    "Shooter classes count range differently: the SS and boss classes use a shorter effective range (WL_ACT2.C lines 3461-3462). Keep a per-class accuracy curve; change the curve.",
+    "Attack state chain: a shooting state that fires on the middle frame and then returns to chase (WL_ACT2.C line 431). Windup, release, recover for rows 4 and 7.",
+    "Walk/chase cycle from four frames with one-frame holds between pairs (WL_ACT2.C lines 434-439). The hold beat reads as a pause at 375 wide.",
+    "Death: the scream fires on the first frame of the death chain, then a four-frame fall that holds its last frame (WL_ACT2.C lines 441-444). Sound on frame one; the body stays readable.",
+    "Difficulty as a column: one hit-point table with four rows, one per difficulty (WL_ACT2.C line 42). Data-first shape for row 21 and row 22.",
+    "Dog leap: five frames with the bite on frame two (WL_ACT2.C line 511). Telegraphed lunge for a row-7 clip.",
+    "Ghost hover: two frames, no ground contact (WL_ACT2.C line 460). Translucent pursuer reads as a threat without a new model.",
+    "Projectile chain: a rocket state that spawns a smoke-puff chain, then a three-frame boom (WL_ACT2.C lines 181-189). Effects as state chains are data."
+  ],
+  "briefs": [
+    {"label": "patrol gunner (own label)", "why": "readable silhouette; four-frame stride with a hold beat; shot on the middle frame", "keep": "four-frame stride with hold beat; windup-release-recover; shot on mid-frame", "change": "armour-plated silhouette with a cape, not a uniform; cool steel palette with ember accent; crossbow arm, not a pistol", "ref": "/mnt/frankendom-donors/id-Software-wolf3d/WOLFSRC/WL_ACT2.C lines 418-444 and 431"},
+    {"label": "hound leaper (own label)", "why": "fast beast whose leap is the signature move", "keep": "five-frame leap with bite on frame two; patrol loop then chase loop", "change": "bipedal beast with a glowing jaw; different leap arc; different ear and tail shape", "ref": "/mnt/frankendom-donors/id-Software-wolf3d/WOLFSRC/WL_ACT2.C lines 503-525"},
+    {"label": "wisp chaser (own label)", "why": "hovering translucent pursuer that needs no ground contact", "keep": "two-frame hover bob; transparency reads as danger", "change": "ember-tailed smoke wraith with a lantern core, not a ghost", "ref": "/mnt/frankendom-donors/id-Software-wolf3d/WOLFSRC/WL_ACT2.C lines 460-470"},
+    {"label": "range-scaled armoured shooter (own label)", "why": "heavy whose accuracy depends on range and class", "keep": "accuracy as a function of range and class", "change": "telegraph ring replaces the hit dice; shoulder-cannon silhouette", "ref": "/mnt/frankendom-donors/id-Software-wolf3d/WOLFSRC/WL_ACT2.C lines 3444-3520"},
+    {"label": "smoke-trailed bolt (own label, effect)", "why": "projectile that leaves its own puffs and ends in a short boom", "keep": "puffs on their own timer; three-frame boom", "change": "ember bolt with a spark trail; cyan boom", "ref": "/mnt/frankendom-donors/id-Software-wolf3d/WOLFSRC/WL_ACT2.C lines 181-189"}
+  ],
+  "cross_link": "camera: WL_DRAW.C / WL_SCALE.C (names only, not read); spawns: layouts absent; loot: none; hud-ui: none read; vfx: smoke and boom state chains; animation: state chains; sound: names only",
+  "not_read": [
+    "WOLF3D.MAP (127 KB linker map)",
+    "WOLFSRC/WOLF.EXE, SV.EXE, WOLF3D.DSK, WOLF.OBR, OBJ/*.OBJ, WOLFSRC.1, DEICE.EXE, INSTALL.BAT",
+    "all *.ASM files",
+    "WL_DRAW.C, WL_SCALE.C, WL_MENU.C, WL_TEXT.C beyond names",
+    "GFXE_SOD.H, AUDIOSOD.H, MAPSSOD.H",
+    "exact map-name count and exact sprite-table count"
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "donor": "Shmerrick-ProjectWAR",
+  "code_licence": "unstated: no LICENSE, COPYING or NOTICE at repo root; README has no licence section",
+  "asset_licence": "unstated for zone pieces, LOS binaries, packet logs, icons and databases; third-party DLLs under their own licences (not read); WAR client not in copy, README.md:48-53 links third-party client mirrors, licence of client not stated in repo",
+  "rights_holder_status": "unknown in repo files; treat client-derived content as restricted (README links third-party client mirrors; not followed or verified)",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "zone map pieces (jpg)", "path": "ImportIntoProject/zones/zone*/piece*.jpg", "count_hint": "290 jpg in zone folders", "licence": "unstated", "class": "C", "note": "world-map tiles; provenance not stated; restricted"},
+    {"kind": "zone terrain and offset images (png)", "path": "ImportIntoProject/zones/zone*/terrain.png, offset.png", "count_hint": "439 png in zone folders", "licence": "unstated", "class": "C", "note": "not opened"},
+    {"kind": "zone influence and piece tables (csv)", "path": "ImportIntoProject/zones/zone*/influenceids.csv, ImportIntoProject/zones/mappieces.csv", "count_hint": "78 csv in zone folders; mappieces.csv 10 lines", "licence": "unstated", "class": "C", "note": "area to realm and influence id; piece offset and size"},
+    {"kind": "zone folders", "path": "ImportIntoProject/zones/zone001 to zone2xx", "count_hint": "219 zone folders", "licence": "unstated", "class": "C", "note": "one folder per zone"},
+    {"kind": "precomputed line of sight (binary)", "path": "ImportIntoProject/los/*.bin", "count_hint": "249 files; 100.bin 23.9 MB, 101.bin 51.5 MB", "licence": "unstated", "class": "C", "note": "binary, not opened"},
+    {"kind": "captured packet logs (txt)", "path": "ImportIntoProject/Abilities/*.txt", "count_hint": "6 files; one about 35800 lines, 641 packet markers", "licence": "unstated", "class": "C", "note": "protocol traces; restricted; keep high level, do not reproduce"},
+    {"kind": "server config (xml)", "path": "ImportIntoProject/Configs/mythloginserviceconfig.xml", "count_hint": "1 file", "licence": "unstated", "class": "C", "note": "connection settings shape only"},
+    {"kind": "server icons", "path": "Common/Icons/*.ico", "count_hint": "4 files", "licence": "unstated", "class": "C", "note": "account, launcher, lobby, world"},
+    {"kind": "database archives", "path": "Database/Database.7z, Database/cooler_sai_sql_changes.7z", "count_hint": "2 files, 10.1 MB and 11.8 MB", "licence": "unstated", "class": "C", "note": "compressed, not opened"},
+    {"kind": "third-party dlls", "path": "deps/EasyMyp, deps/NifLib, deps/protobuf, deps/BulletSharp.dll", "count_hint": "several", "licence": "third-party, not read", "class": "C", "note": "not read"},
+    {"kind": "game client (absent)", "path": "not in copy; README.md:50-53 links mirrors", "count_hint": "0", "licence": "unknown in repo", "class": "D", "note": "absent from copy; not followed"}
+  ],
+  "inspiration": [
+    "Zone map as stitched pieces with a stored offset and size per piece (ImportIntoProject/zones/mappieces.csv:1). Shape for zone map and minimap.",
+    "Per-area control table: each area holds one realm id and one influence id (ImportIntoProject/zones/zone001/influenceids.csv:1). Shape for a contested zone where ownership is a data field.",
+    "Precomputed visibility per zone in one binary file per zone (ImportIntoProject/los/*.bin). Shape for viewcone and LOS; large files are a trade-off.",
+    "Captured packet logs grouped by realm and class (ImportIntoProject/Abilities/). Shape only: scenario inputs for server tick tests (row 18); do not reproduce.",
+    "One folder per zone with its own map and tables (219 zone folders). Shape for zones as data (row 23).",
+    "Behaviour-tree library in packages (BehaviourTree.1.0.73), name only. Shape for AI brain (row 2). Not read."
+  ],
+  "briefs": [
+    {"label": "contested district", "why": "a zone that flips to whichever side holds it, read off one owner field per area", "keep": "a per-area owner id table; the flip is data, not code", "change": "our factions and a three-tile ring as the owner mark instead of realm colours", "ref": "ImportIntoProject/zones/zone001/influenceids.csv:1"},
+    {"label": "stitched zone map", "why": "a big map built from pieces with a stored offset and size, so one map loads in parts", "keep": "a piece table with offset and size", "change": "our own piece grid and our own minimap symbols, not realm colours", "ref": "ImportIntoProject/zones/mappieces.csv:1"},
+    {"label": "pre-baked sight", "why": "visibility is precomputed per zone so the game does not ray-cast every frame", "keep": "a per-zone visibility file loaded at zone start", "change": "our own grid format, a smaller file, and a viewcone rule instead of a full-zone bitmap", "ref": "ImportIntoProject/los/100.bin (binary, not opened)"}
+  ],
+  "not_read": [
+    "game client: not in copy",
+    "Database archives (7z, compressed)",
+    "all binaries: LOS bins, DLLs, icons",
+    "all jpg and png content",
+    "Abilities files beyond first lines (packet logs)",
+    "config xml beyond shape",
+    "WarZone C++ (KDTreeCPU, Intersections): named only",
+    "WorldServer and LobbyServer code: out of asset scope",
+    "AGENTS.md: treated as data"
+  ]
+}

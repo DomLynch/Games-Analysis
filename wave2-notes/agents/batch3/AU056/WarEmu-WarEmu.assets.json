@@ -1,0 +1,90 @@
+{
+  "donor": "WarEmu-WarEmu",
+  "halves_read": "Server half: WorldServer (combat, AI, client-file manager, area influence), Common (database schema classes). Client half (the original game client) is NOT in the box; the server reads its archive files at runtime via WorldServer/Managers/ClientFileMgr.cs. Data half: row data is not in the box (Common/Database holds schema classes only; no .sql dump found by a narrow search). Paired client half in the box: none found.",
+  "code_licence": "No licence file found in the top two levels (no LICENSE, COPYING or NOTICE; the repo search for licence text found no licence file). Assembly metadata in Properties/AssemblyInfo.cs is a Microsoft template default (AssemblyInfo.cs line 11). Treat as no stated licence, which means default copyright; class C.",
+  "asset_licence": "No game assets in the box. The repo ships 38 non-.cs files: project files, resx forms, config, one .suo, and binary DLLs under deps/ and FrameWork/bin/ (not opened).",
+  "rights_holder_status": "unknown. No copyright or owner statement in the repo beyond template metadata. The code reads archive files from a commercial game client (ClientFileMgr.cs), but the repo does not say who owns them or whether they are included.",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "original game client archives (world art, models, textures, text)",
+      "path": "not in box. Read at runtime by WorldServer/Managers/ClientFileMgr.cs; archive tools present as deps/EasyMyp/*.dll (MYPHandler.dll, HashCreator.dll, HashDictionary.dll, WarhammerOnlineHash.dll; binaries, not opened)",
+      "count_hint": "0 in box",
+      "licence": "not stated; the repo does not include the files",
+      "class": "C",
+      "note": "Proprietary client data. Inspiration only, at category level."
+    },
+    {
+      "kind": "zone and area data schema (keyed rows not in box)",
+      "path": "Common/Database/World/Maps/Zone_Area.cs (fields ZoneId, AreaId, Realm, PieceId, OrderInfluenceId, DestroInfluenceId, TokExploreEntry); Common/Database/World/Creatures/Creature_proto.cs (creature prototype schema)",
+      "count_hint": "2 schema classes read; rows not in box",
+      "licence": "no licence stated",
+      "class": "C",
+      "note": "Schema only. The data half (the rows) is not in the box, so zone and creature content cannot be checked."
+    },
+    {
+      "kind": "client height data loader (bitmap heightmaps)",
+      "path": "WorldServer/Managers/ClientFileMgr.cs (HeighMapInfo with Bitmap Offset and Bitmap Terrain, lines 240 to 249)",
+      "count_hint": "code only",
+      "licence": "no licence stated",
+      "class": "C",
+      "note": "Reads bitmaps from the client archive, so the bitmaps are not in the box."
+    },
+    {
+      "kind": "UI forms and embedded resources (not read)",
+      "path": "ServerLauncher/Form1.resx; Launcher/Accueil.resx; Launcher/Accueil.Designer.cs",
+      "count_hint": "2 resx files",
+      "licence": "no licence stated",
+      "class": "C",
+      "note": "Resx files can embed images; not opened, so no art claim is made."
+    }
+  ],
+  "inspiration": [
+    "Each zone area has two influence ids, one for the order side and one for the destruction side. An area only counts for a pin inside its explore region (AreaMapMgr.cs lines 79 and 89; Zone_Area.cs lines 51 and 54). Technique: a two-sided capture rule stored as zone data. Transferable as a tug-of-war capture meter per zone, drawn on the map and owned by the zone, not by a realm.",
+    "Hate is the attacker's share of all damage the creature has taken, and the target is the player with the highest share (CombatInterface.cs lines 29 to 36 and 355). Transferable to our hate list (engine-owned, MAX_ATTACKERS = 3). Defect to fix when adapting: the share depends on the total, so every hit changes everyone's number, and healing is not counted. Fix: add a short stickiness band and a healing term.",
+    "Leash: a creature more than a fixed distance from its spawn point evades (drops aggro on every attacker first, then stops combat) and walks home (CombatInterface.cs lines 271 and 298). Transferable to the leash in the fight loop (row 4). Keep the evade-clears-aggro step; change the instant drop to a short walk-back with a reset window.",
+    "The creature brain is a base class with separate passive, aggressive and guard brains (WorldServer/World/AI/, AgressiveBrain.cs line 10). Transferable as one brain base with data-selected brains per zone (row 2).",
+    "A global config flag can turn off realm-tagged PvP area rules for the whole server (ClientFileMgr.cs line 53). Transferable as one switch over zone rules, not per-zone code.",
+    "Terrain height can come from small bitmap maps sampled per pin, not from a mesh (ClientFileMgr.cs line 248). Idea for zone heightfields as a grey image per zone; cheap to author."
+  ],
+  "briefs": [
+    {
+      "label": "Two-sided capture meter",
+      "why": "A zone capture that swings between two sides reads as a tug of war at a glance, and works on a small map.",
+      "keep": "Two influence values per area; influence only counts inside the explore region.",
+      "change": "Recreate as a clearly distinct original, never a copy: one meter owned by the zone, not by a realm; drawn as a ring with our own colours; contested zones flicker instead of changing colour.",
+      "ref": "WorldServer/Managers/AreaMapMgr.cs lines 79, 89; Common/Database/World/Maps/Zone_Area.cs lines 51, 54"
+    },
+    {
+      "label": "Share-of-damage aggro",
+      "why": "A share-based pick rule is simple and explains itself to players who ask why a monster switched.",
+      "keep": "Hate equals the attacker's share of damage taken; highest share wins.",
+      "change": "Recreate as a clearly distinct original: add a stickiness band so the target does not flip on small gaps; add a healing term; keep the hate list inside the engine as our rule requires.",
+      "ref": "WorldServer/World/Interfaces/CombatInterface.cs lines 29, 36, 355"
+    },
+    {
+      "label": "Walk-home leash",
+      "why": "A tether from spawn keeps fights in the zone; clearing aggro on leash stops endless chases.",
+      "keep": "Distance-from-spawn tether; evade clears aggro on every attacker.",
+      "change": "Recreate as a clearly distinct original: a slow walk-back with a short invulnerable reset instead of an instant drop; the tether radius comes from the zone data row.",
+      "ref": "WorldServer/World/Interfaces/CombatInterface.cs lines 271, 298"
+    },
+    {
+      "label": "Brain trio",
+      "why": "Three behaviour classes (passive, aggressive, guard) behind one base keep creature AI easy to read and extend.",
+      "keep": "One base brain class; passive, aggressive and guard variants.",
+      "change": "Recreate as a clearly distinct original: brains chosen per zone catalogue row, plus a fourth brain that patrols a route; our naming and states.",
+      "ref": "WorldServer/World/AI/AgressiveBrain.cs line 10"
+    }
+  ],
+  "cross_link": "vfx: no assets in box. zones: yes (AreaMapMgr, Zone_Area influence model; capture rule). spawns: creature prototypes schema only (Creature_proto.cs); spawn data not in box. loot: not read. hud-ui: map influence data only. animation: none in box. sound: none in box. Combat and leash are relevant to rows 4 and 2 (AI).",
+  "not_read": [
+    "Client archive contents (not in box).",
+    "deps/EasyMyp/*.dll and deps/protobuf/*.dll and FrameWork/bin/*.dll (binaries, names only).",
+    "WarEmulator.suo, FrameWork.suo, CharacterCacher and AccountCacher beyond file list.",
+    "Resx files (Form1.resx, Accueil.resx) and Designer files.",
+    "LobbyServer, LauncherServer and Launcher network code (file list only).",
+    "WorldServer/World/Scripting and Abilities (file list only).",
+    "CombatInterface.cs Update() and AttackAI() (only the hate and evade functions were read)."
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "donor": "Clancey-wowrust",
+  "counts": {"creatures": 0, "classes": 0, "weapons": 0, "gear_sets": 0, "zones": 0},
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [
+    {"label": "Race ids named in test_login (10 ids, 8 with model path)", "kind": "race", "role": "player model by race and gender", "signature_mechanic": "none in repo", "progression": "none", "ref": "crates/wow-client/src/bin/test_login.rs:430-446; crates/wow-formats/src/m2.rs:472-488"},
+    {"label": "Blood Elf and Draenei (ids 10, 11)", "kind": "race", "role": "name only", "signature_mechanic": "none", "progression": "none", "ref": "crates/wow-client/src/bin/test_login.rs:443-444; crates/wow-formats/src/m2.rs:488 (no model arm)"}
+  ],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [
+    {"label": "Per-light sky lookup by map and position", "kind": "lookup", "ref": "crates/wow-formats/src/dbc.rs:378; dbc.rs:398"},
+    {"label": "Transparent water pass behind terrain", "kind": "render rule", "ref": "crates/wow-render/src/water.rs:150"}
+  ],
+  "looks": [
+    {"label": "Additive ribbon trail with age fade", "technique": "TrailSegment age and max age; RibbonVertex RGBA with alpha fade; additive blend", "ref": "crates/wow-render/src/ribbon.rs:7-13; ribbon.rs:48-53"},
+    {"label": "Particle alpha or additive blend", "technique": "BlendMode Alpha or Additive; additive for fire and sparks", "ref": "crates/wow-render/src/particle.rs:55-60"},
+    {"label": "Time-of-day sky bands with horizon fog", "technique": "LightColorBand time slots and packed colours; SkyColors with fog from horizon band; struct holds 16 slots", "ref": "crates/wow-formats/src/dbc.rs:106-130"},
+    {"label": "Transparent water depth rule", "technique": "depth write off, depth test on, so water draws behind terrain", "ref": "crates/wow-render/src/water.rs:145-151"}
+  ],
+  "originals": [
+    {"name": "Dusk Band Sky", "idea": "One colour band per time of day sets a zone's mood; fog takes the horizon colour so the seam disappears. Row 16 colour grade.", "keep": "time-indexed bands; horizon-matched fog; sun disc from the clock", "change": "our own band count and palette per biome; our own moon; painted clouds"},
+    {"name": "Swing Ribbon", "idea": "An additive ribbon shows the arc of a swing or spell. Rows 10 and 13.", "keep": "additive blend; fading age tail", "change": "jagged edge; tail length set per ability; our colour ramp"},
+    {"name": "Behind-Terrain Water Pass", "idea": "Transparent water writes no depth but still tests depth, so it draws behind terrain. Row 16.", "keep": "depth write off, depth test on", "change": "our hue and wave normals"},
+    {"name": "Protected Core HUD Set", "idea": "A fixed core set of panels that addons cannot remove. Row 14 HUD. Audit-only: not re-read in code.", "keep": "protected group of core panels", "change": "our panel set and layout file format"},
+    {"name": "Painted Ground Blend", "idea": "Four ground layers blended by hand-painted masks so ground reads as ground, not tiles. Audit-only: not re-read in code.", "keep": "mask per chunk; LOD steps", "change": "our materials; our masks; noise on blend edges"}
+  ],
+  "licence_note": "README.md:156 says 'Private project. Not for distribution.' No LICENSE file; Cargo.toml has no licence line. Audit AU009: code none stated, assets none stated (no game data in repo). Clean-room, shape only.",
+  "not_read": [
+    "crates/wow-ui/src/lib.rs (grep hit only, via AU009)",
+    "PLAN.md and IMPLEMENTATION_PLAN.md (AU009 quotes only)",
+    "crates/wow-formats/README_DBC_SKY.md (title only, via AU009)",
+    "crates/wow-render/shaders/text.wgsl and ui.wgsl (names only)",
+    "crates/wow-app, crates/wow-assets, crates/wow-audio, crates/wow-lua (grep hits only)",
+    "config/default.toml, config/keybinds.toml, scripts/*.sh, Cargo.lock",
+    "No creature, class, weapon, gear or zone records exist in the repo: DBC data is user-supplied",
+    "Server half: not in this donor; paired server azerothcore-azerothcore-wotlk is in the box, not read by DC011"
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "donor": "OpenRCT2-OpenRCT2",
+  "code_licence": "GPL-3.0 (licence.txt; readme.md section 6 says GPL version 3 or any later version)",
+  "asset_licence": "No asset licence file in the box. The repo-wide GPL-3.0 is stated for OpenRCT2 as a whole; the file does not say whether it covers resources/ or data/. Game objects, music, sound effects, title sequences and replays are separate downloads listed in assets.json (not in the box, licence not in the box).",
+  "rights_holder_status": "Re-implementation of RollerCoaster Tycoon 2 (readme.md line 11). The readme says the game needs original RCT2 files to play (readme.md line 74). Clean-room status is not stated in the files.",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "shaders (GLSL, code)", "path": "data/shaders/ (10 files: .vert and .frag)", "count_hint": "10 files", "licence": "repo-wide GPL-3.0 only (scope to shaders not stated separately)", "class": "B", "note": "applypalette.frag is one texture lookup: an 8-bit index texture read into a 256-entry palette uniform (data/shaders/applypalette.frag line 3 and line 12)."},
+    {"kind": "palettes (PNG ramps + JSON colour arrays)", "path": "resources/palettes/ (base, map_base, map_glass, map_translucent, marker, sprites.json)", "count_hint": "5 folders, sprites.json 245+ lines of colour arrays (not fully read)", "licence": "none stated in box", "class": "C", "note": "Named palette sets for base colours, map views (glass and translucent variants) and markers. Hex colours not recorded here."},
+    {"kind": "bitmap fonts (PNG glyph sheets)", "path": "resources/fonts/ (latin/ 708 PNG, cyrillic/, currency/, plus bold/small/tiny glyph variants at the top level)", "count_hint": "899 PNG under resources/fonts", "licence": "none stated in box", "class": "C", "note": "Each glyph exists in bold, small and tiny sizes (e.g. resources/fonts/a-breve-uc-bold.png, a-breve-uc-small.png, a-breve-uc-tiny.png)."},
+    {"kind": "UI art (PNG icons, sideways tabs, logo)", "path": "resources/g2/ (icons/, loader/, surface/, logo.png, sideways-tab*.png, sprites.json)", "count_hint": "172 files under resources/g2", "licence": "none stated in box", "class": "C", "note": "Manifest resources/g2/sprites.json lists each icon by relative path (line 27 icons/zoom_in.png)."},
+    {"kind": "track and ride piece sprites (PNG + manifest)", "path": "resources/tracks/track/ (23 type folders, e.g. alpine, bm, bm_invert) and resources/tracks/support/, resources/tracks/sprites.json (about 1.17 MB)", "count_hint": "23 track type folders; manifest not fully read", "licence": "none stated in box; origin of sprites not stated", "class": "C", "note": "Track and support piece art; the readme links RCT2 original data as the source of ride content, so origin is unclear and class is C."},
+    {"kind": "logos and app icons", "path": "resources/logo/ (icon_x16..x2048.png, icon.ico, icon_flag.svg), resources/mac/ (openrct2.icns, Assets.car)", "count_hint": "about 15 icon files", "licence": "none stated in box", "class": "C", "note": "App icon set in several sizes. Not read beyond file names."},
+    {"kind": "language strings (text tables)", "path": "data/language/ (28 files, e.g. en-GB.txt with 3874 lines)", "count_hint": "28 locale files", "licence": "repo-wide GPL-3.0 only (scope not stated)", "class": "C", "note": "STR_XXXX id lines followed by the text after a colon; comment lines start with #; inline tokens such as {COMMA16} and {STRINGID} carry values. Text not quoted here."},
+    {"kind": "scenario patch data files", "path": "data/scenario_patches/ (142 .parkpatch files)", "count_hint": "142 files", "licence": "none stated in box", "class": "C", "note": "Named patch files that change scenario data. Format not read (only names counted)."},
+    {"kind": "objects, music, sfx, title sequences, replays (not in box)", "path": "assets.json lists five release zips by URL with sha256 pins: objects.zip (v1.8.0), openmusic.zip (v1.6.1), opensound.zip (v1.0.6), title-sequences.zip (v0.4.26), replays.zip (v0.0.97)", "count_hint": "not in box", "licence": "not in box (the URL pages would hold it; not opened, per rule)", "class": "C", "note": "Park objects (rides, scenery, guests) and music/sfx are not in the box, so nothing from them was read."}
+  ],
+  "inspiration": [
+    "One sprite set, many looks: a single 8-bit index texture is recoloured by swapping a 256-entry palette in the fragment shader (data/shaders/applypalette.frag, line 12). Recreate a per-zone tint or a damage flash this way with our own palettes.",
+    "Named palette sets as separate files (base, map_base, map_glass, map_translucent, marker, and a darken step in resources/palettes/base) make it easy to give the map, the HUD and the world each their own ramp.",
+    "Glyph sheets in three size tiers (bold, small, tiny) per character (resources/fonts/latin) keep text readable at several sizes. For a 375 px phone HUD the same idea gives one font with a size ladder.",
+    "A translucent map palette (resources/palettes/map_glass) suggests a dimmed glass overlay for a minimap or world map where the terrain stays readable underneath.",
+    "Scenario changes are shipped as small data-only patch files (data/scenario_patches, 142 files) rather than code. Content tweaks can ship as data without a release of the engine.",
+    "Locale strings use stable ids (STR_XXXX) and inline value tokens ({COMMA16}, {STRINGID}) so the same sentence can carry numbers in any language (data/language/en-GB.txt line 2 describes the format)."
+  ],
+  "briefs": [
+    {"label": "Glass map overlay", "why": "A translucent tinted layer over the terrain keeps the map readable and reads as a separate view layer, which suits a 375 px map sheet.", "keep": "a translucent overlay palette separate from the base palette; the terrain stays visible under the overlay", "change": "our overlay uses a cool steel ramp and a grid-free look; no dark glass border; overlay opacity set per zone", "ref": "resources/palettes/map_glass/ and resources/palettes/map_translucent/ (not read beyond folder names)"},
+    {"label": "Per-zone palette swap", "why": "One art set recoloured per zone gives a fast biome change without new art files.", "keep": "a single index texture with a 256-entry palette lookup in the fragment stage", "change": "our swap is a zone colour grade (lighting tint), not ride or team colours; the palette is zone data, not a file per variant", "ref": "data/shaders/applypalette.frag lines 3 and 12"},
+    {"label": "Three-size glyph ladder", "why": "Pre-drawn small and tiny glyphs stay sharp at small sizes where scaling a large glyph would blur.", "keep": "one glyph set in several pixel sizes for the same face", "change": "our HUD uses one sans family with weight steps for 375 px phones, not a pixel font", "ref": "resources/fonts/latin/ (e.g. a-breve-uc-tiny.png, a-breve-uc-small.png)"}
+  ],
+  "not_read": [
+    "src/ (engine code, 10 folders) not read in this pass: the asset audit covers data and resources only.",
+    "objects.zip, openmusic.zip, opensound.zip, title-sequences.zip, replays.zip: not in the box; only assets.json URLs and sha256 pins were read.",
+    "resources/tracks/sprites.json (about 1.17 MB) and resources/palettes/sprites.json: sized and sampled only, not read in full.",
+    "PNG files: only names and folder counts were read; no image was opened.",
+    "data/language/ files other than en-GB.txt: counted (28 files), not read.",
+    "data/scenario_patches/*.parkpatch: names counted (142), contents not read.",
+    "resources/mac/Assets.car and resources/mac/Archived: names only.",
+    "Clean-room status of the re-implementation: not stated in files read."
+  ]
+}

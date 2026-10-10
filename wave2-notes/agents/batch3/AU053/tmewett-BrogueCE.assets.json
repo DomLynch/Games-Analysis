@@ -1,0 +1,98 @@
+{
+  "donor": "tmewett-BrogueCE",
+  "code_licence": "GNU Affero General Public License v3 (root LICENSE.txt, full AGPL text). Source file headers also say 'Copyright 2012. All rights reserved.' next to the AGPL grant: the two lines conflict, so code is treated as AGPL-3.0 shape-only for us.",
+  "asset_licence": "bin/assets/LICENSE.txt covers tiles.png only: Creative Commons Attribution-ShareAlike 4.0. It does not state a licence for icon.png or tiles.bin.",
+  "rights_holder_status": "community fork of Brogue. Source headers name Brian Walker as creator (src/brogue/Light.c lines 5-6). bin/assets/LICENSE.txt names 'Brogue: Community Edition maintainers' and says the tiles derive from Oryx Design Lab's Brogue Tiles (AGPL distribution). README links the original website. No company named.",
+  "best_class": "B",
+  "asset_groups": [
+    {
+      "kind": "2D tile atlas (pixel art, glyph-style tiles)",
+      "path": "bin/assets/tiles.png",
+      "count_hint": "PNG header (IHDR, bytes 16-23) gives 2048 x 5568 px; 405,688 bytes. Image not opened.",
+      "licence": "CC BY-SA 4.0 (bin/assets/LICENSE.txt line 5)",
+      "class": "B",
+      "note": "Share-alike and attribution condition. Use as is only with attribution and share-alike; for our build, recreate tiles from scratch. Derives from Oryx Design Lab tiles per the same file (line 10)."
+    },
+    {
+      "kind": "app icon",
+      "path": "bin/assets/icon.png",
+      "count_hint": "256 x 256 px (IHDR); 61,867 bytes. Not opened.",
+      "licence": "not stated (LICENSE.txt names tiles.png only)",
+      "class": "C",
+      "note": "No licence line for this file: unclear, so inspiration only."
+    },
+    {
+      "kind": "binary tile data",
+      "path": "bin/assets/tiles.bin",
+      "count_hint": "147,456 bytes. Format not read.",
+      "licence": "not stated",
+      "class": "C",
+      "note": "Unknown binary; no licence line. Not opened beyond size."
+    },
+    {
+      "kind": "data tables in code (creature, tile, item-kind rows)",
+      "path": "src/brogue/Globals.c (monsterCatalog at line 1025, about 68 rows incl. the player row; tileCatalog at line 315 to about line 579); src/variants/GlobalsBrogue.c (potionTable_Brogue at line 665, scroll, wand and charm tables follow)",
+      "count_hint": "creature rows about 68; tile rows about 265 lines; four item-kind tables",
+      "licence": "AGPL-3.0 (root LICENSE.txt)",
+      "class": "B",
+      "note": "Copyleft code. Shape only: copy the field list idea, write our own values and names. Data half of the game is in these tables, not in a separate pack."
+    },
+    {
+      "kind": "sounds, music, fonts, maps, levels",
+      "path": "none in this repo (bin/assets has 4 files: two PNG, one txt, one bin)",
+      "count_hint": "0 audio files",
+      "licence": "n/a",
+      "class": "D",
+      "note": "No audio or music shipped. Level generation code is src/brogue/Architect.c (listed in the tree, not read)."
+    }
+  ],
+  "inspiration": [
+    "Creature rows are one flat record each: name, glyph, colour, HP, defence, accuracy, damage range, regen, move speed, attack speed, blood type, light, large flag, drop chance and drop type (monsterCatalog, src/brogue/Globals.c line 1025 onward). Use this as the row-21 field list for our catalogue: one flat row per creature, every number a field, nothing hard-coded in the engine.",
+    "Hit chance is accuracy times a defence curve, clamped 0-100, computed in fixed point (src/brogue/Combat.c lines 105-131; defenseFraction in src/brogue/PowerTables.c line 184). Forced hits come first: stuck, captive, seized-and-seizing defenders always get hit (Combat.c lines 110-117). Keep the forced-hit order before the roll for our duel step (row 1).",
+    "Replay is an input log, not a frame log: each keystroke and mouse event is written as a compact event, the header stores version, mode, seed, turn count and deepest level in 36 bytes (Recordings.c lines 30, 133-146, 193). Playback reads events back with recallEvent (line 340). Idea for row 19: record the seed and the fight inputs, rebuild the fight on replay.",
+    "Glyph-first readability: each creature is one glyph index plus one colour (the ch and color columns). Threat reads from silhouette and colour before any text. Idea for our 375-wide readability: one bold silhouette per creature class, a colour per threat tier, no label needed to tell two enemies apart.",
+    "Tiles carry their own light and flags as data: each tile row has a glow light value and a flags and mechFlags pair (tileCatalog, Globals.c lines 315-320). Idea for zone dressing: lights and walkable/blocking flags are per-tile data, so the same tile can glow or block without code changes.",
+    "Item kinds are separate variant tables (potion, scroll, wand, charm) selected per build (GlobalsBrogue.c lines 665-713). Idea for loot: keep one table per item family with a shared row shape, and let the variant pick which table is live."
+  ],
+  "briefs": [
+    {
+      "label": "Glyph Skirmisher (own label)",
+      "why": "A single bold silhouette in one colour reads at a glance even at 375 wide. The creature row (name, colour, HP, damage range) carries the whole threat story.",
+      "keep": "one readable silhouette per creature class; one colour per threat tier; a flat stat row per creature",
+      "change": "ours is a sprite with a head-and-shoulders silhouette and a limb shape, not a glyph; our palette is ours; stat names and numbers are ours",
+      "ref": "src/brogue/Globals.c line 1025 (monsterCatalog) and the rat/kobold/jackal rows directly under it"
+    },
+    {
+      "label": "Lit Hazard Tile (own label)",
+      "why": "A tile that carries its own light and its own walkable or blocking flags lets a zone look dangerous without a single line of code.",
+      "keep": "per-tile glow value; per-tile flags for block and hazard; one table of tile rows",
+      "change": "our tiles are zone data with our own names; the glow colour is ours; the hazard is a fire or fog tile we author, not the donor's tile set",
+      "ref": "src/brogue/Globals.c lines 315-320 (tileCatalog header row with light and flags columns)"
+    }
+  ],
+  "cross_link": {
+    "camera": "none read",
+    "zones": "tileCatalog is a zone-dressing table (see briefs)",
+    "spawns": "monsterCatalog drop and spawn fields (DFChance, DFType) exist; spawn logic not read",
+    "loot": "four item-kind tables (potion, scroll, wand, charm) in GlobalsBrogue.c; table rows not read",
+    "hud-ui": "glyph readability idea is HUD-relevant; no HUD code read",
+    "vfx": "tile glow light values are a VFX-adjacent data field",
+    "animation": "none in box (no sprite frames)",
+    "sound": "none in box (no audio files)"
+  },
+  "halves": {
+    "read": "code and data tables (src/brogue, src/variants), bin/assets, LICENSE.txt, README lines",
+    "server_half_in_box": "not applicable: single-player roguelike with no separate server",
+    "data_half_in_box": "data is inside the C source tables; no separate pack"
+  },
+  "not_read": [
+    "bin/assets/tiles.png and icon.png pixel content (size from IHDR only)",
+    "bin/assets/tiles.bin format and content",
+    "monsterCatalog and tileCatalog row contents beyond the header and first rows",
+    "item-kind table rows (potion, scroll, wand, charm)",
+    "src/brogue/PowerTables.c defenseFraction body (only the signature)",
+    "src/brogue/Monsters.c and Dijkstra.c (AI and pathing)",
+    "changes/ folder fix notes",
+    "src/platform/tiles.c (not read; name suggests tile drawing)"
+  ]
+}

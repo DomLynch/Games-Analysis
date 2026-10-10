@@ -1,0 +1,80 @@
+{
+  "donor": "OTCv8-otclientv8",
+  "brief_rule": "Recreate every idea as a clearly distinct original, never a copy. Each brief names the trait KEPT and the trait CHANGED. Class C content stays at category level: no game art, no sprite look, no death-screen wording copied.",
+  "code_licence": "MIT (LICENSE:1); copyright lines OTClient 2010-2017 and OTClientV8 2018-2023 (LICENSE:3-4)",
+  "asset_licence": "not stated. No licence or copyright line found in data/, layouts/ or styles. Only the MIT licence file exists, and it names the software. data/locales/en.lua:10 says English only.",
+  "rights_holder_status": "unknown for all art, fonts and sound. README.md:4 names Tibia as the game the client was made for. The sprite and data pack is absent and the README says the user supplies it (README.md:92). The font name cipsoftFont appears at data/fonts/cipsoftFont.otfont:2; the owner is not stated.",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "game icons", "path": "data/images/game/ (npcicons, emblems, skulls, viplist, states and more)", "count_hint": "181 PNG; npc icons 18 x 18 px", "licence": "not stated", "class": "C", "note": "game-linked art; category-level ideas only"},
+    {"kind": "status-effect icons", "path": "data/images/game/states/", "count_hint": "17 PNG, 18 x 18 px", "licence": "not stated", "class": "C", "note": "names include poisoned, bleeding, burning, freezing, haste, slowed, drowning, drunk, hungry"},
+    {"kind": "UI kit", "path": "data/images/ui/", "count_hint": "57 PNG; rarity_frames.png 160 x 32; rarity_white.png and rarity_blue.png 32 x 32", "licence": "not stated", "class": "C", "note": "windows, buttons, scrollbars, rarity frames"},
+    {"kind": "top bar buttons", "path": "data/images/topbuttons/", "count_hint": "32 PNG", "licence": "not stated", "class": "C", "note": ""},
+    {"kind": "other images", "path": "data/images/ bars, flags, optionstab, crosshair, shaders, background.png (1024 x 719), loading.png (128 x 128), clienticon.png", "count_hint": "24 PNG", "licence": "not stated", "class": "C", "note": ""},
+    {"kind": "cursors", "path": "data/cursors/", "count_hint": "5 PNG and cursors.otml", "licence": "not stated", "class": "C", "note": ""},
+    {"kind": "sound cues", "path": "data/sounds/", "count_hint": "8 OGG: alarm, Creature_Detected, Player_Detected, Player_Attack, Private_Message, Low_Health, Low_Mana, magnum", "licence": "not stated", "class": "C", "note": "named event cues; not decoded"},
+    {"kind": "fonts", "path": "data/fonts/", "count_hint": "11 .otfont plus PNG sheets", "licence": "not stated (names suggest Verdana and Terminus; not verified in files)", "class": "C", "note": "cipsoftFont 8 px high (cipsoftFont.otfont:4-5)"},
+    {"kind": "shaders", "path": "data/shaders/ (8 .frag), data/images/shaders (5 PNG)", "count_hint": "8 fragment shaders", "licence": "not stated", "class": "C", "note": "not read"},
+    {"kind": "UI definitions", "path": "data/styles/ (34 entries), layouts/retro (114 files), layouts/mobile (6 files)", "count_hint": "34 + 120 files", "licence": "not stated", "class": "C", "note": "layout overrides data/ by path (layouts/README.md:1)"},
+    {"kind": "locales", "path": "data/locales/ (en, de, es, pl, pt, sv .lua)", "count_hint": "6 files", "licence": "not stated", "class": "C", "note": "en.lua:10 says English needs no translation; other locales not read"},
+    {"kind": "Lua client modules", "path": "modules/ (about 58 module folders, 315 .lua files, about 74,378 lines)", "count_hint": "315 .lua", "licence": "MIT (code)", "class": "A", "note": "code, not art; death and cooldown read"},
+    {"kind": "mods", "path": "mods/game_healthbars/", "count_hint": "2 files", "licence": "MIT (code)", "class": "A", "note": "healthbars.lua not read"},
+    {"kind": "sprite and data pack", "path": "data/things/ (absent in the box)", "count_hint": "0 files; README.md:92 says the user adds it", "licence": "n/a", "class": "D", "note": "not supplied; do not look for it"},
+    {"kind": "client binaries", "path": "root: otclient_dx.exe, otclient_gl.exe, otclient_linux, otclient_mac, otclientv8.apk, d3dcompiler_47.dll, libEGL.dll, libGLESv2.dll", "count_hint": "8 files, 0.1 MB to 22.5 MB", "licence": "MIT (client, LICENSE:1)", "class": "A", "note": "not read"}
+  ],
+  "inspiration": [
+    "Three death kinds (regular, unfair, blessed), each with its own text and window size, and the cost shown as a number (modules/game_playerdeath/playerdeath.lua:3-7, 51-65; penalty shown at line 57). Keep the tiers and the numbers; our own tiers and words.",
+    "The death window offers two choices: one re-enters the world, the other leaves safely, with Enter and Escape bound to them (playerdeath.lua:70-85). A respawn-or-leave choice gives the player control at the worst moment.",
+    "A single death notice: the 'You are dead' line is skipped when the centre label is visible (playerdeath.lua:35-40, guard at line 37). One source of truth stops two notices stacking.",
+    "A radial or linear sweep on each skill icon: the fill step is 10000 divided by the duration, scheduled again 100 ms later (modules/game_cooldown/cooldown.lua:149-162, scheduling at lines 155-158). Good readability for short cooldowns, but see the tick defect below.",
+    "A shared bar per spell group: one bar and one icon stand for a whole group of skills (cooldown.lua:203-224). Useful when several attacks share a recovery.",
+    "A small status badge set: 17 state icons, 18 x 18 px, one per status effect (data/images/game/states/). Badges readable at 375 px.",
+    "A rarity frame strip: a 160 x 32 px strip with white and blue 32 x 32 pieces next to it (data/images/ui/rarity_frames.png; rarity_white.png; rarity_blue.png). Five 32 px cells is an inference from the size, not verified in code.",
+    "Named sound cues per combat event: eight OGG cues, including low health and low mana, attack and detection (data/sounds/). Each cue is an event name, so the map from event to sound is easy to edit.",
+    "Layout overrides: a layout replaces any file in data/ with the same path (layouts/README.md:1). A mobile set of 6 files and a retro set of 114 files show a small override for touch use."
+  ],
+  "defects": [
+    {"file": "modules/game_cooldown/cooldown.lua", "lines": "213-214", "defect": "progressRect.icon = icon runs before the check 'if progressRect then', so a missing bar errors on that line", "fix": "move the assignment inside the if block; keep the group bar idea"},
+    {"file": "modules/game_cooldown/cooldown.lua", "lines": "155-158", "defect": "fixed 100 ms step regardless of duration, so short cooldowns look jumpy", "fix": "advance by frame time and clamp the fill to 100; keep the sweep idea"}
+  ],
+  "briefs": [
+    {
+      "label": "18 px state badge",
+      "why": "A small badge per status effect, readable at 375 px, lets the player read what is on them without text. The badge is the signature; the colour and the outline make it striking.",
+      "keep": ["one badge per status effect, 18 px", "a small set of badges (17 here)", "badges sit on the portrait or bar"],
+      "change": ["silhouettes from our own status list, not these icons", "a border colour per family (harm, aid, control)", "badge pulses once on apply, not on every tick"],
+      "ref": "data/images/game/states/ (17 PNG, 18 x 18 px)"
+    },
+    {
+      "label": "three-tier death screen",
+      "why": "Three kinds of death, each with a different tone and the cost shown in numbers, make a loss feel explained rather than random. Keeps the death readable.",
+      "keep": ["tiered death kinds", "cost shown as a number in the window", "two choices, re-enter or leave safe"],
+      "change": ["our own tier names and text", "cost shown as a bar, not a sentence", "respawn point shown on the window"],
+      "ref": "modules/game_playerdeath/playerdeath.lua:3-7, 51-85"
+    },
+    {
+      "label": "shared group cooldown bar",
+      "why": "One bar for a whole group of attacks tells the player the recovery is shared. Simple at 375 px and a clear read.",
+      "keep": ["one bar stands for a group", "the group bar is separate from single-skill bars", "the bar fills on the same sweep"],
+      "change": ["group is a weapon family, not a spell group", "bar sits under the attack buttons, not in a side panel", "fill uses frame time, not a 100 ms step"],
+      "ref": "modules/game_cooldown/cooldown.lua:203-226"
+    },
+    {
+      "label": "rarity frame strip",
+      "why": "A frame strip with one cell per rarity gives loot a colour and border read without text. Shows how one strip can serve every rarity.",
+      "keep": ["one strip with a cell per rarity", "a frame around the item icon", "frame size matches the icon cell"],
+      "change": ["our own rarity count and colour ramp", "frame with a different corner ornament", "no donor frame art"],
+      "ref": "data/images/ui/rarity_frames.png (160 x 32 px); rarity_white.png; rarity_blue.png"
+    }
+  ],
+  "not_read": [
+    "any PNG or OGG content (names and sizes only)",
+    "data/shaders/*.frag bodies",
+    "layouts/retro and layouts/mobile contents (counts only)",
+    "locales other than en.lua",
+    "modules/ bodies other than game_playerdeath and game_cooldown",
+    "mods/game_healthbars/healthbars.lua",
+    "the client binaries",
+    "server half (not in this folder; not searched elsewhere in the box)"
+  ]
+}

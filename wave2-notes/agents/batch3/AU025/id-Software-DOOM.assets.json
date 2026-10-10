@@ -1,0 +1,65 @@
+{
+  "donor": "id-Software-DOOM",
+  "code_licence": "Conflicting: LICENSE.TXT is GNU GPL v2 text; source headers cite a 'DOOM Source Code License' not in the tree; README.TXT says 'released for your non-profit use'. Treated as unclear: clean-room, shape only.",
+  "asset_licence": "No asset files in the box, so no asset licence applies. Data pack (WAD) is absent; README.TXT says real DOOM data is required.",
+  "rights_holder_status": "original company: id Software copyright lines (1993-1996); README closing line 'Copyright (c) ZeniMax Media Inc.'; engine only, needs proprietary data not in box",
+  "best_class": "D",
+  "asset_groups": [
+    {"kind": "sprites_textures_hud_art", "path": "not in box (searched for *.wad, *.lmp, *.pcx, *.png, *.dmx)", "count_hint": "0", "licence": "none", "class": "D", "note": "absent from box"},
+    {"kind": "audio", "path": "not in box (sound table only at linuxdoom-1.10/sounds.c)", "count_hint": "0 audio files", "licence": "none", "class": "D", "note": "sound table only"},
+    {"kind": "maps_levels", "path": "not in box", "count_hint": "0", "licence": "none", "class": "D", "note": "absent from box"},
+    {"kind": "sprite_family_names_table", "path": "linuxdoom-1.10/info.c (sprnames, line 40)", "count_hint": "one 4-letter prefix per sprite family", "licence": "DOOM source licence unclear", "class": "C", "note": "naming vocabulary only"},
+    {"kind": "animation_state_table", "path": "linuxdoom-1.10/info.c (states, line 135)", "count_hint": "one line per state", "licence": "DOOM source licence unclear", "class": "C", "note": "timing chains; not reproduced here"},
+    {"kind": "object_table", "path": "linuxdoom-1.10/info.c (mobjinfo, line 1106); info.h MT_ enum", "count_hint": "about 137 object types", "licence": "DOOM source licence unclear", "class": "C", "note": "object families and their state links"},
+    {"kind": "sound_table", "path": "linuxdoom-1.10/sounds.c (S_sfx, line 114)", "count_hint": "176 entries", "licence": "DOOM source licence unclear", "class": "C", "note": "names and numeric fields; audio absent"},
+    {"kind": "string_table_header", "path": "linuxdoom-1.10/d_englsh.h, dstrings.h", "count_hint": "286 and 5 #define lines (counted, not read)", "licence": "DOOM source licence unclear", "class": "C", "note": "message keys; content not read"}
+  ],
+  "inspiration": [
+    "Grunt-type trooper: a short look loop, a quick flinch, a death chain, and a separate heavy-death chain for big hits (info.c states near lines 310-330). Recreate the timing pattern with our own timings and silhouette.",
+    "Effects as objects with tiny state chains: a dust puff for wall hits and a blood object for flesh hits (info.c lines 226-229). Recreate the idea with sparks on armour and ember puffs, not the same sprites.",
+    "The player has a separate extreme-death chain (info.c line 301). The death presentation picks a branch by hit size, so a heavy kill reads differently.",
+    "Weapons as four-state chains: ready, lower, raise, fire (info.c lines 135-140 show the chain shape). One sprite family per weapon keeps them readable at phone width.",
+    "Sound cues with a priority number so the loud cue wins when many play at once (sounds.c line 119 shape). Keep the priority idea; change the names and timbres.",
+    "One family prefix per object family keeps the asset vocabulary small (info.c line 41).",
+    "Object table as one row per type linking spawn and see states, with death-related states such as xdeathstate (info.c lines 1106 and 1122). A data-first way to build creatures from states."
+  ],
+  "briefs": [
+    {
+      "label": "Grunt heavy-death chain (creature)",
+      "why": "A readable collapse: a normal death for small hits and a separate heavy branch for big hits, so the player sees damage size.",
+      "keep": "short two-frame idle loop; quick flinch; death chain; separate heavy-death chain",
+      "change": "armoured silhouette instead of a uniform trooper; a glowing seam that flares in the heavy death; our own timings and collapse direction",
+      "ref": "linuxdoom-1.10/info.c lines 310-330 (state chain; sprite art not in box, not read)"
+    },
+    {
+      "label": "Dust puff and blood splat (effects)",
+      "why": "Two effect objects make the surface readable: dust for walls, blood for flesh; both pop at spawn and fade fast.",
+      "keep": "one effect per surface type; full-bright at spawn; short chain",
+      "change": "sparks on armour and ember puffs instead of blood on metal; a different palette; no blood on the Pit floor",
+      "ref": "linuxdoom-1.10/info.c lines 226-229"
+    },
+    {
+      "label": "Four-state weapon chain (gear)",
+      "why": "A weapon that reads as ready, lowers, raises and fires with four frames keeps the action clear at 375 wide.",
+      "keep": "ready, lower, raise, fire as separate states; one family prefix per weapon",
+      "change": "our own gear silhouette; a charge glow in place of the flash frame; our own sound cue",
+      "ref": "linuxdoom-1.10/info.c lines 135-140 (punch chain shape)"
+    },
+    {
+      "label": "Priority sound cue table (sound)",
+      "why": "Each cue carries a priority so the important one wins under load; this keeps the mix readable in a crowded fight.",
+      "keep": "name plus priority per cue; link-style conflict handling if the design needs it",
+      "change": "our own cue names and timbres; our own priority scale",
+      "ref": "linuxdoom-1.10/sounds.c lines 114-119 (table shape)"
+    }
+  ],
+  "not_read": [
+    "Sprite art, WAD data, sounds, maps (absent from box)",
+    "d_englsh.h and dstrings contents (counts only)",
+    "info.c beyond excerpts at lines 40-41, 135-140, 226-229, 301, 310-325, 1106-1112",
+    "sounds.c beyond lines 114-119 and entry count",
+    "sndserv/, ipx/, sersrc/ sources",
+    "p_enemy.c, p_pspr.c, st_stuff.c, hu_stuff.c, r_*.c, d_items.c",
+    "DOOM Source Code License text (not in box)"
+  ]
+}

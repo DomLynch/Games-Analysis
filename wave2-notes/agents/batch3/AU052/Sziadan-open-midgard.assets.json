@@ -1,0 +1,65 @@
+{
+  "donor": "Sziadan-open-midgard",
+  "half_read": "client half only (src/: render, world, skill, session, network, cipher); no server half in the box; cited eAthena reference (Ref/eAthena_src_2011) absent",
+  "code_licence": "GPL-3.0 (LICENSE begins with GNU GPL Version 3 text; README says see LICENSE for the project license). Third-party: third_party/qt (LGPL-3.0 and GPL-3.0 texts); miniaudio.h licence not read.",
+  "asset_licence": "No game assets in the repo. README requires a legally obtained Ragnarok Online data/runtime setup (data.grf, data/clientinfo.xml), which the user supplies and which is not in the box.",
+  "rights_holder_status": "README calls it an open source recreation of the Ragnarok Online client; code comments name Gravity (the publisher) as the origin of formats and a cipher; no permission from the rights holder is stated in the repo; how the formats were obtained is not stated",
+  "best_class": "D",
+  "asset_groups": [
+    {"kind": "runtime game data (sprites, effects, sounds, archives)", "path": "not in box (data.grf, clientinfo.xml, .str, .act, .spr, .wav named in README and code)", "count_hint": "0 in box", "licence": "publisher data; user must supply", "class": "C", "note": "absent; per README must be legally obtained by the user"},
+    {"kind": "effect catalog table", "path": "src/world/RagEffectCatalog.generated.inc", "count_hint": "159 rows (168 lines)", "licence": "GPL-3.0 project file; table origin not stated", "class": "C", "note": "row: id, up to two effect file names, optional procedural handler name, two small integers (meaning not read)"},
+    {"kind": "job name table", "path": "src/session/JobNameTable.generated.inc", "count_hint": "1644 rows", "licence": "as above", "class": "C", "note": "hex id to upper-case key; names not recorded"},
+    {"kind": "skill id table", "path": "src/skill/SkillEnumIdTable.inc", "count_hint": "1000 rows", "licence": "as above", "class": "C", "note": "id to upper-snake name; header cites a referenced enum not in box"},
+    {"kind": "extracted strings", "path": "extracted_asset_strings.txt", "count_hint": "24 lines", "licence": "origin: strings from an original client binary", "class": "C", "note": "data path and class-name strings; not quoted"},
+    {"kind": "image", "path": "cursor_actions_sheet.png", "count_hint": "1 file, 384x384", "licence": "none stated", "class": "D", "note": "beside a .cursor editor-rules folder; not game art by name; header only"},
+    {"kind": "third-party texts", "path": "third_party/qt/*", "count_hint": "4 text files", "licence": "Qt LGPL-3.0 and GPL-3.0 texts", "class": "n/a", "note": "code licences, not assets"}
+  ],
+  "inspiration": [
+    "Effect catalog as one row per skill: a row names asset-backed effect files or a named procedural handler, so a spell can ship with a fallback in the same row.",
+    "Named procedural effect handlers: portal, ready-portal, warp zone in two generations, map pillar, map magic zone, map particle, recovery and others. Zone gates and landmarks as named procedural effects rather than art.",
+    "Layered effects built from bands and segments, each with its own state (EffectBandState, EffectSegmentState, CEffectPrim): a magic effect as a ground ring, a column and sparks with separate timing.",
+    "Effects that outlive or detach from their owner: DetachFromMaster and OnActorDeleted let an aura stay in the world after its caster is removed (names only, bodies not read).",
+    "Effect-linked sound: a sound is chosen from the effect's asset name when the effect starts (names only, bodies not read).",
+    "Portal visual as a particle column with a ground ring (SpawnPortal, names only).",
+    "Id-to-name tables for jobs and skills (1644 and 1000 rows): a keyed shape for progression trees, names must be our own."
+  ],
+  "briefs": [
+    {
+      "label": "Left-behind aura",
+      "why": "when a caster drops, the aura hangs in the world and fades, so the loss reads without a message",
+      "keep": ["aura detaches from its owner when the owner is removed", "aura runs its own timeline and does not vanish with the owner", "fade rather than cut"],
+      "change": ["an ember ring that drifts up instead of a column", "colour from the zone palette, not a fixed tint", "shorter fade so it fits a fast duel"],
+      "ref": "Sziadan-open-midgard/src/world/RagEffect.cpp (DetachFromMaster line 4259, OnActorDeleted line 4294)"
+    },
+    {
+      "label": "Gate pillar",
+      "why": "a gate that reads as a vertical column plus a ground ring can be seen across a zone and at 375 px wide",
+      "keep": ["vertical particle column marks the gate", "ground ring is a separate part"],
+      "change": ["a split rift shape in two tones", "ring carries a zone name plate", "silhouette checked at 375 px"],
+      "ref": "Sziadan-open-midgard/src/world/RagEffect.cpp (SpawnPortal line 4432); enum in src/world/RagEffect.h line 175"
+    },
+    {
+      "label": "Spell row with fallback",
+      "why": "one data row that names an asset effect and a procedural fallback lets content ship before the art does",
+      "keep": ["row holds an asset effect and a procedural handler name", "handler is used when the asset is missing"],
+      "change": ["our row also holds a threat tint and a sound id", "our handler names are our own words"],
+      "ref": "Sziadan-open-midgard/src/world/RagEffectCatalog.generated.inc (header lines 1 to 4)"
+    },
+    {
+      "label": "Banded spell effect",
+      "why": "an effect built from a few timed bands reads as one motion and is cheap to tune",
+      "keep": ["effect is a short list of bands, each with segments and its own state"],
+      "change": ["fewer, larger shapes so it reads at phone size", "one band is always the impact flash"],
+      "ref": "Sziadan-open-midgard/src/world/RagEffect.h (EffectBandState line 44, EffectSegmentState line 58, CEffectPrim line 75)"
+    }
+  ],
+  "not_read": [
+    "bodies of CRagEffect functions (signature lines only)",
+    "GPak.cpp, CDec.h, Bitmap.cpp bodies (grep lines only)",
+    "GameActor.cpp (one grep line)",
+    "miniaudio.h and Qt texts (names only)",
+    "docs/ and .cursor rules (names only)",
+    "cursor_actions_sheet.png (dimensions only)",
+    "server half (absent)"
+  ]
+}

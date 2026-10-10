@@ -1,0 +1,47 @@
+{
+  "donor": "kblaschke-Iris2",
+  "code_licence": "GNU GPL v3 (COPYING lines 5-6, 'GNU GENERAL PUBLIC LICENSE' and 'Version 3, 29 June 2007')",
+  "asset_licence": "CONFLICTING: COPYING line 1 says the models and textures in data/models/ are GPLv3; README lines 146-149 say there is currently no licence for them and that replacement art is planned under a Creative Commons licence. No licence text in the box for the other data/ folders (class C).",
+  "rights_holder_status": "Iris Team (README line 1); models and textures credited to the iris1 team (README line 147); user must own Ultima Online data (README line 8); whether data/models art is converted from Ultima Online art is not stated: unknown",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "3D meshes", "path": "data/models/models/", "count_hint": "2743 .mesh files across data/", "licence": "conflicting: COPYING line 1 (GPLv3) vs README line 146 (no licence)", "class": "C", "note": "folders such as to_008000 and files such as mdl_007154.mesh; not opened"},
+    {"kind": "textures", "path": "data/models/textures/", "count_hint": "754 png, 36 dds, 3 tga, 5 bmp, 4 jpg across data/", "licence": "same conflict as meshes", "class": "C", "note": "tex_NNN.png naming; pixel sizes not read"},
+    {"kind": "UI art 2D", "path": "data/base/", "count_hint": "51 files", "licence": "no licence text for this folder in the box", "class": "C", "note": "compassframe_*, bar.png, aura.png, scroll.png, simplebutton.png, menu_bg.jpg; names only"},
+    {"kind": "fonts", "path": "data/base/font/", "count_hint": "3 ttf", "licence": "not in box (not read)", "class": "C", "note": "FreeSans.ttf, FreeSerif.ttf, FreeMono.ttf"},
+    {"kind": "particles", "path": "data/particles/particles/ and data/particles/textures/", "count_hint": "11 .particle files and 11 textures", "licence": "no licence text for this folder in the box", "class": "C", "note": "Wither, MindRot, PoisonStrike, ConsecrateWeapon, healing, fireballs, explosions and others; names only"},
+    {"kind": "skybox", "path": "data/skybox/textures/", "count_hint": "about 24 dds", "licence": "no licence text for this folder in the box", "class": "C", "note": "cleansky_*, darksun_*, sunset_* and skybox_* families; names only"},
+    {"kind": "terrain textures", "path": "data/terrain/", "count_hint": "about 4 textures plus multitex masks", "licence": "no licence text for this folder in the box", "class": "C", "note": "perlinvolume.dds, water.jpg, watertrans.png, waves2.dds; names only"},
+    {"kind": "compositors and shader text", "path": "data/compositors/ and data/grannys/", "count_hint": "7 .compositor files plus shader programs", "licence": "repo GPLv3 applies to this code text", "class": "B", "note": "NightVision, RadialBlur, BlackAndWhite, EdgeDetection, Embossed; copyleft condition; code, not art"},
+    {"kind": "ogre sample media", "path": "data/ogreSampleMedia/", "count_hint": "2 sample meshes and packs/OgreCore.zip", "licence": "not read (grep for licen in txt, html, md found nothing)", "class": "C", "note": "jaiqua.mesh and knot.mesh not opened; top-level licenses/Ogre3d.html not read"},
+    {"kind": "lugre third-party media", "path": "lugre/lib/paged_geometry/examples/media/ and lugre/lib/caelum/resources/", "count_hint": "about 20 .mesh files", "licence": "per-folder licence not read", "class": "C", "note": "tree and plant meshes; not opened"},
+    {"kind": "Ultima Online binary data", "path": "not in repo: tiledata.mul, artidx.mul, art.mul, gumpidx.mul, gumpart.mul, Cliloc.enu (names in src/data.cpp lines 21-30)", "count_hint": "n/a", "licence": "user-owned copy of Ultima Online (README line 8)", "class": "D", "note": "nothing shipped in the repo; the user supplies it"},
+    {"kind": "audio", "path": "(whole tree)", "count_hint": "0 ogg, wav, mp3, mid files", "licence": "n/a", "class": "D", "note": "no sound or music in the box"}
+  ],
+  "inspiration": [
+    "Floating hit numbers coloured by event: damage yellow, HP loss red, HP gain green, mana blue and smaller, each with its own life span (lua/lib.3d.combat.lua lines 50-100). Keep the colour-by-event idea; change the palette and add a pop-in.",
+    "Upper-floor cutaway: anything above a head-height threshold is hidden when the player is inside (lua/lib.blendout.lua lines 6 and 11). Keep the automatic hide; change it to dissolving only the occluding piece.",
+    "Death as an explicit state, not a missing entity: the corpse module notes that health bars cannot tell death from leaving the screen (lua/lib.corpse.lua, comment block after line 11; not receipted). Relevant to row 17.",
+    "Fullscreen mood pass: NightVision and similar compositors draw one fullscreen quad after the scene (data/compositors/NightVision.compositor, line 2). Keep one state-driven pass; change the grade so it is not green night vision.",
+    "One signature particle per status: separate particle sets for mind, poison, wither, pain and strangle effects (data/particles/particles/, names only). Keep one set per status; change silhouettes and palette (rows 8 and 13).",
+    "Named sky families by mood: cleansky, darksun and sunset sets (data/skybox/textures/, names only). Keep named sets switched by zone mood; change the palette.",
+    "Layered text tables: a base string file plus an override file (lua/lib.cliloc.lua lines 26-40, CreateClilocLoader). Keep base plus override for our text tables; the strings themselves are not in the box."
+  ],
+  "briefs": [
+    {"label": "Floating hit numbers by event type", "why": "a hit reads as a type before the number is read; short numbers stay legible at 375 wide", "keep": "colour by event type; size tier by magnitude; rise and fade over about two seconds", "change": "our own glyph style, a pop-in scale and our palette, not the yellow, red and green trio. Dom rule: recreate as a clearly distinct original, never a copy", "ref": "/mnt/frankendom-donors/kblaschke-Iris2/lua/lib.3d.combat.lua (lines 50-100)"},
+    {"label": "Upper-floor cutaway for the fight camera", "why": "the player stays visible inside a building without changing the camera rig", "keep": "automatic hide of what sits above a head-height threshold; ground stays visible", "change": "dissolve only the occluding piece, dithered not hard-cut; our own threshold. Dom rule: a distinct original, never a copy", "ref": "/mnt/frankendom-donors/kblaschke-Iris2/lua/lib.blendout.lua (lines 6-30)"},
+    {"label": "State-driven mood pass", "why": "one switch changes the whole frame, so a state reads without a HUD label", "keep": "one fullscreen pass after the scene, driven by a single state value", "change": "our palette rather than green night vision; a timed pulse instead of a constant. Dom rule: a distinct original, never a copy", "ref": "/mnt/frankendom-donors/kblaschke-Iris2/data/compositors/NightVision.compositor (line 2)"},
+    {"label": "One signature particle per status", "why": "a status reads as a shape during a fight, not as a text label", "keep": "one particle set per status; the motion carries the status", "change": "our own silhouettes and colours, no copied motif, one sound pair per status. Dom rule: a distinct original, never a copy", "ref": "/mnt/frankendom-donors/kblaschke-Iris2/data/particles/particles/Wither.particle (file listed, not opened)"}
+  ],
+  "not_read": [
+    "lugre/ except lugre/lib/cadune_tree/license.txt (first lines only)",
+    "licenses/ texts: lua.txt, lugre.txt, Ogre3d.html, tinyxml.txt (list only)",
+    "FreeSans, FreeSerif, FreeMono licence text (not in box)",
+    "All 2743 .mesh contents, all texture pixel data, all .particle contents, skybox and terrain contents",
+    "config/shards/*.xml contents (9 files, names only)",
+    "lua/ beyond lib.3d.combat.lua, lib.blendout.lua, lib.corpse.lua, lib.cliloc.lua (lib.buff.lua, lib.bodygfx.lua, lib.2d.effect.lua not read)",
+    "data/ogreSampleMedia contents and packs/OgreCore.zip",
+    "Server half: none in the box (the client connects to an external Ultima Online shard)",
+    "Data half: Ultima Online binary files are not in the box"
+  ]
+}

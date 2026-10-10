@@ -1,0 +1,211 @@
+{
+  "donor": "elberacasa-Lineage2Elbera",
+  "class": "C",
+  "counts": {
+    "creatures": 0,
+    "classes": 9,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "counts_note": "Verified in the box: classes = 9 fallback placeholder entries in editor/charcreate/app.js. creatures, weapons, gear_sets, zones = 0 verified records (retail data pack and aCis server are not in the box). Docs claims kept separately in docs_claims.",
+  "docs_claims": {
+    "npc_records": 6519,
+    "built_npc_mesh_transforms": 495,
+    "weapon_meshes": 181,
+    "weapon_item_ids": 413,
+    "weapongrp_records": 1313,
+    "world_tiles_tile_map_md": 153,
+    "world_tiles_map_format_md": 157,
+    "armour_race_slots": 28,
+    "skillvfx_sprite_emitters": 714,
+    "skillvfx_mesh_emitters": 408
+  },
+  "creature_families": [
+    "translucent wraith family: 3 families, 7 NPC ids, alpha-blended Shader on living meshes (docs/native-npc-material-evidence.md)",
+    "winged fallen-NPC family: 2 NPC ids, two-sided alpha-tested wings (docs/native-npc-material-evidence.md)",
+    "metal-sheen livestock: 1 NPC id, environment-map specular left unresolved by the author (docs/native-npc-material-evidence.md)",
+    "small pests and forest animals: named in docs only, no clip data read (docs/npc-animation-variants.md)",
+    "village guards and merchants: death-pose variants, 4 classes, 10 NPC records per docs (docs/npc-animation-variants.md)",
+    "generic monster clip contract: idle, walk, run, attack, die, plus corpse and special (tools/src/char_pipeline/build_monsters.py)"
+  ],
+  "top_creatures": [
+    {
+      "label": "Wraith pack",
+      "why": "Alpha-blended translucency reads as ghostly at range and needs no new mesh.",
+      "keep": "Translucent body and slow drift idle.",
+      "change": "Our own silhouette, rim glow and stinger; no living-NPC mesh reuse.",
+      "ref": "docs/native-npc-material-evidence.md:42; editor/world/js/npcmaterials.js:1-20"
+    },
+    {
+      "label": "Fallen watcher",
+      "why": "A body that reads dead while its wings still move reads as a threat not yet spent.",
+      "keep": "Death-pose idle and two-sided alpha-cut wings.",
+      "change": "Wings open on aggro; our own wing shape; no FinalBlend.",
+      "ref": "docs/native-npc-material-evidence.md:77-84; docs/npc-animation-variants.md:1-12"
+    },
+    {
+      "label": "Gilded beast",
+      "why": "A sheen on an ordinary animal reads as rare at 375 px.",
+      "keep": "The sheen as a rarity signal.",
+      "change": "Rim light and spark motes instead of an environment map.",
+      "ref": "docs/native-npc-material-evidence.md:12-14"
+    },
+    {
+      "label": "Small pest pack",
+      "why": "Weak evidence: named in docs only; listed so a human can look.",
+      "keep": "Per-class idle variants.",
+      "change": "Our own pest design.",
+      "ref": "docs/npc-animation-variants.md:13"
+    },
+    {
+      "label": "Standard monster clip set",
+      "why": "One readable seven-clip set across many creatures keeps fights legible.",
+      "keep": "The seven-clip set.",
+      "change": "Add a telegraphed special windup with a sound cue.",
+      "ref": "tools/src/char_pipeline/build_monsters.py:1-11"
+    }
+  ],
+  "classes": [
+    "Races (5): human, elf, dark elf, orc, dwarf; placeholder body build only (editor/charcreate/app.js:16-52, 301-306)",
+    "Fighter (melee type): role melee; signature mechanic not in box; present for all 5 races (editor/charcreate/app.js:16-52)",
+    "Mystic (caster type): role caster; signature mechanic not in box; present for 4 races, not dwarf (editor/charcreate/app.js:16-52)",
+    "Progression: skills trained at a trainer, costs and eligibility are server state; henna stat symbols over six stats (gateway/src/skilltraining.js; gateway/src/henna.js:7)",
+    "Factions: not found in the box"
+  ],
+  "weapon_families": [
+    "one-hand: 92 meshes (docs/weapon-pipeline.md:65)",
+    "pole or staff: 25 meshes (docs/weapon-pipeline.md:65)",
+    "shield, left hand: 17 meshes; a shield can satisfy a skill's weapon gate (docs/weapon-pipeline.md:65; editor/world/js/weapongate.js:6, 19)",
+    "two-hand: 16 meshes (docs/weapon-pipeline.md:65)",
+    "bow: 13 meshes (docs/weapon-pipeline.md:65)",
+    "dual fist: 11 meshes, always worn as a pair (docs/weapon-pipeline.md:65)",
+    "dual sword: 5 meshes; one item references two one-hand meshes (docs/weapon-pipeline.md:65)",
+    "other: 2 meshes (docs/weapon-pipeline.md:65)",
+    "grades NONE, D, C, B, A, S as values 0 to 5 (docs/weapon-pipeline.md:34)",
+    "elemental and set bonuses: not in the box"
+  ],
+  "gear_tiers": [
+    "Armour is slot substitution: a chest piece replaces the upper-body mesh (tools/mesh/build_armor.py:1-20)",
+    "gloves (body_part 9): 145 meshes (tools/mesh/build_armor.py:19)",
+    "chest (10): 95 meshes (tools/mesh/build_armor.py:19)",
+    "full armour (15): 74 items, chest plus legs (tools/mesh/build_armor.py:21)",
+    "cloak (13): cloak mesh suffix (tools/mesh/build_armor.py:21)",
+    "head (6): 96 items, zero geometry; helmets not drawn (tools/mesh/build_armor.py:26-27)",
+    "grade shown as a letter symbol after the item name, not a tint (editor/world/js/ui/tooltip.js:33)",
+    "henna symbols: six stat bytes (INT, STR, CON, MEN, DEX, WIT), may be negative deltas (gateway/src/henna.js:7)",
+    "crystallize action gated by a character ability; yield table not read (editor/world/js/ui/inventorywnd.js:614-616)",
+    "sets: not in the box"
+  ],
+  "zones": [
+    "Starting villages: one town map per race start: talking, elf, darkelf, orc, dwarf (docs/minimap-mapping.md:12)",
+    "Giran area: three per-tile town map textures (docs/minimap-mapping.md:13)",
+    "World: tile grid of geodata, 153 or 157 tiles per two docs; north is negative Y, Dwarven lands north, Talking Island south (docs/tile-map.md:3, 13; docs/map-format.md:4)",
+    "Sky: flat background, cloud sheet, two starfield sheets, sun, moon and lens-flare rig (editor/world/js/sky.js:7)",
+    "Interiors: BSP pipeline, repeated columns (AU017 captions; not read)",
+    "Dungeon archetypes and hazards: not in the box"
+  ],
+  "looks": [
+    {
+      "label": "Sprite emitter sheet",
+      "technique": "Camera-facing quads with colour ramp, opacity fade in and out, size-over-life curve, burst or stream spawn (714 emitters per header claim)",
+      "ref": "editor/world/js/skillvfx.js:1-16"
+    },
+    {
+      "label": "Mesh emitter caster ring",
+      "technique": "Mesh emitter places a magic circle under each caster and a mesh bolt on the projectile",
+      "ref": "editor/world/js/skillvfx.js:20"
+    },
+    {
+      "label": "Cloud alpha mask",
+      "technique": "Flat colour times an alpha mask; the alpha carries the shape, the RGB is constant",
+      "ref": "editor/world/js/sky.js:18"
+    },
+    {
+      "label": "Two-sided alpha-cut wings",
+      "technique": "FinalBlend with alpha test and two-sided flag on the wing texture",
+      "ref": "docs/native-npc-material-evidence.md:77-84"
+    },
+    {
+      "label": "Translucent ghost shader",
+      "technique": "Shader blend state chosen per NPC on living meshes",
+      "ref": "docs/native-npc-material-evidence.md:42"
+    },
+    {
+      "label": "Grade letter symbol",
+      "technique": "Letter symbol after a white item name; no colour tint on the name",
+      "ref": "editor/world/js/ui/tooltip.js:33"
+    },
+    {
+      "label": "Nine-slice tooltip frame",
+      "technique": "Nine-slice frame with 8 px corners",
+      "ref": "editor/world/js/ui/tooltip.js:36"
+    },
+    {
+      "label": "Armour mesh substitution",
+      "technique": "Per-slot mesh swap on the body, not an attached prop",
+      "ref": "tools/mesh/build_armor.py:19-27"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Wraith Drift",
+      "idea": "A translucent pack that drifts and flickers on hit.",
+      "keep": "Translucent body and drift idle.",
+      "change": "Own silhouette, rim glow and stinger; no living-NPC mesh reuse."
+    },
+    {
+      "name": "Watching Corpse",
+      "idea": "A fallen guard whose wings open on aggro.",
+      "keep": "Death-pose idle and alpha-cut wings.",
+      "change": "Our own wing shape and open trigger."
+    },
+    {
+      "name": "Gilded Hog",
+      "idea": "A rare livestock creature with a sheen.",
+      "keep": "Sheen as the rarity cue.",
+      "change": "Rim light and spark motes, no environment map."
+    },
+    {
+      "name": "Caster Ring",
+      "idea": "A ring under the caster while casting.",
+      "keep": "Mesh-ring idea.",
+      "change": "Our own pattern and team colour."
+    },
+    {
+      "name": "Grade Badge",
+      "idea": "Letter badges NONE to S beside the item name.",
+      "keep": "Symbol approach, no colour-only tiers.",
+      "change": "Our own glyphs and a shape cue for colour-blind players."
+    },
+    {
+      "name": "Shield Stance",
+      "idea": "A left-hand shield opens a skill set.",
+      "keep": "The gate rule.",
+      "change": "A visible stance pose and a HUD hint."
+    },
+    {
+      "name": "Paired Fists",
+      "idea": "Paired fist weapons read as one item.",
+      "keep": "The pair read.",
+      "change": "Our own glove design."
+    },
+    {
+      "name": "Two-Celestial Dusk",
+      "idea": "Sun and moon visible together in a dusk zone.",
+      "keep": "The layered sky read.",
+      "change": "Our own palette and positions."
+    }
+  ],
+  "licence_note": "Project code MIT (LICENSE line 3, as AU017 states; not re-read by DC021). Vendored three.js MIT. Game content: no licence granted; the README says original content belongs to its owners (AU017; README lines 491-492). Screenshots not redistributable (docs/img/README.md:31, per AU017). Class C: category-level inspiration only.",
+  "not_read": [
+    "Server half (aCis gameserver and loginserver): not in the box",
+    "Data pack (npcgrp.dat, weapongrp.dat, armorgrp.dat, .utx, .ukx): not in the box",
+    "editor/world/js beyond the cited files; npcwaitanim.js, skillfx_anim.js, most of tools/ui check scripts",
+    "progress.md (267 KB)",
+    "docs/img captions and screenshots",
+    "gateway/src/questnames.js and recipes.js: line counts only",
+    "AGENTS.md: treated as data, not followed",
+    "tools/dat export scripts: not read beyond names"
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "donor": "ihhub-fheroes2",
+  "half_read": "engine source (battle, ai, monster code, partial) plus the project data pack (files/, maps/, docs/). The paired original game data (HEROES2.agg, HEROES2X.agg) is absent from the box.",
+  "code_licence": "GNU GPL Version 2 (LICENSE; README Licence section says the project is GPL v2.0)",
+  "asset_licence": "Original game resources: rights stated in README as belonging to former The 3DO Company, transferred to Ubisoft (absent from box). Project data: no per-file licence; GPL-2 by README only. Soundfont: GeneralUser GS licence text with a sample-origin caveat.",
+  "rights_holder_status": "uses original game data (proprietary, absent from box); engine is a community re-implementation under GPL-2",
+  "best_class": "B",
+  "asset_groups": [
+    {"kind": "original game art (sprites, portraits, tiles)", "path": "not in box (user supplies HEROES2.agg)", "count_hint": "0", "licence": "owned by former The 3DO Company, transferred to Ubisoft (README)", "class": "D", "note": "absent; proprietary"},
+    {"kind": "original game sound and music", "path": "not in box", "count_hint": "0", "licence": "as above", "class": "D", "note": "absent; proprietary"},
+    {"kind": "project art pack", "path": "files/data/resurrection.h2d", "count_hint": "41427 bytes; about 60 named image entries (grep, not decoded)", "licence": "GPL-2 by README; no per-file licence", "class": "B", "note": "prop idle loops numbered 0-5, biome variants, UI buttons, spell icons; share-alike via README"},
+    {"kind": "soundfont", "path": "files/soundfonts/fheroes2.sf3", "count_hint": "2610591 bytes", "licence": "GeneralUser GS licence text: free use, with the author's own sample-origin caveat; files/soundfonts/README.txt says unused samples removed", "class": "C", "note": "provenance uncertain per the author; class C until checked"},
+    {"kind": "maps", "path": "maps/*.fh2m", "count_hint": "11 files", "licence": "none per map; GPL-2 by README only", "class": "C", "note": "author per map not stated; binary not opened"},
+    {"kind": "translations (po catalogues)", "path": "files/lang/*.po", "count_hint": "23 .po files; de.po has 3273 msgid entries", "licence": "GPL-2 by README; no per-file licence", "class": "B", "note": "text strings; not quoted"},
+    {"kind": "translations (JSON)", "path": "docs/json/lang_*.json", "count_hint": "23 files", "licence": "GPL-2 by README", "class": "B", "note": "text; not quoted"},
+    {"kind": "battle and monster data tables (code)", "path": "src/fheroes2/monster/monster_info.cpp", "count_hint": "table from line 233; animation file names from line 146", "licence": "GPL-2 code", "class": "C", "note": "clean-room shape only; no constants"},
+    {"kind": "platform and web extras (not read)", "path": "files/emscripten, files/images/platform, src/fheroes2 icons", "count_hint": "not counted", "licence": "GPL-2 by README", "class": "B", "note": "not read beyond names"}
+  ],
+  "inspiration": [
+    "Turn order: one function picks the next unit from the active units of both armies by speed, and a tie goes to whichever army moves first (src/fheroes2/battle/battle_arena.cpp lines 169-180). Keep the deterministic tie-break; use the input tick as the tie-break in the real-time duel.",
+    "Morale as a per-turn roll: a good or bad mode is rolled at the start of a unit's turn from its morale value; the AI avoids the bad mode more often than a human (src/fheroes2/battle/battle_troop.cpp line 301). Keep the per-turn roll that changes one action; change the presentation to an aura.",
+    "Stalemate guard: a counted limit on turns without a death (src/fheroes2/ai/ai_battle.cpp lines 678-690; retreat branch not read). Keep a counted no-kill limit; use a real-time no-hit timer with a countdown.",
+    "Battle stat table as data columns: attack, defence, damage min and max, hit points, speed, shots, abilities, weaknesses (src/fheroes2/monster/monster_info.cpp line 234 header, table from line 233). Data-first shape for rows 20 and 21.",
+    "Tier sharing: several creature tiers point to one animation file (monster_info.cpp line 147). An upgrade reuses the base sheet and changes only its stat row; change the visuals to show the upgrade.",
+    "Idle loops by name: a numbered six-frame loop per prop or critter, and transition loops for buildings (files/data/resurrection.h2d entry names only). Idle vocabulary for rows 7 and 14."
+  ],
+  "briefs": [
+    {"label": "veteran spear line (own label)", "why": "cheap front-line tier that becomes a stronger tier on the same sprite sheet", "keep": "stat-row upgrade on a shared sheet; faster tier with more hit points", "change": "polearm silhouette with a tower shield, not a pike; different colour ramp", "ref": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/monster/monster_info.cpp lines 233-238 and 147"},
+    {"label": "bow tier pair (own label)", "why": "ranged base tier and an upgrade distinguished by a shot-count column", "keep": "shots as a stock column; upgrade shares the base sheet", "change": "quiver shown as visible pips on the HUD; different bow silhouette", "ref": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/monster/monster_info.cpp lines 146-147"},
+    {"label": "morale aura (own label, effect)", "why": "good or bad mode is a per-turn random roll that changes one action", "keep": "per-turn roll with biased odds for the bad mode", "change": "gold or grey aura and a ground ring, not a text line", "ref": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/battle/battle_troop.cpp line 301"},
+    {"label": "prop idle loop (own label)", "why": "six-frame numbered loops for small props and critters", "keep": "numbered six-frame idle loop", "change": "our own critter (for example a lantern moth), not the donor's cat", "ref": "/mnt/frankendom-donors/ihhub-fheroes2/files/data/resurrection.h2d (entry names barrel_animation_0..5, black_cat_animation_0..5)"},
+    {"label": "stalemate timer (own label, mechanic)", "why": "a counted stretch with no deaths ends a fight", "keep": "counted no-kill limit", "change": "real-time no-hit timer shown as a countdown on the HUD", "ref": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/ai/ai_battle.cpp lines 678-690"}
+  ],
+  "cross_link": "battle and tiers (rows 1, 2, 4, 18, 20, 21); hud-ui: battle morale indicator (battle_interface.cpp RedrawActionMorale, grep hit only); sound-music: trimmed soundfont, layering not read; loot, spawns, zones: none (map files not opened); vfx: none read; death and respawn presentation: not read",
+  "not_read": [
+    "resurrection.h2d content beyond entry names",
+    "the 11 .fh2m maps",
+    "soundfont internals",
+    "platform images, emscripten files, icons",
+    "translation text (counts only)",
+    "monster_anim.cpp",
+    "ai_battle.cpp beyond the stalemate check and planner entry",
+    "battle_arena.cpp beyond the turn-order function",
+    "battle_interface.cpp beyond the morale grep hit",
+    "original HEROES2.agg (absent)"
+  ]
+}

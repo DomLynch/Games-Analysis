@@ -1,0 +1,42 @@
+{
+  "donor": "ryzom-ryzomcore",
+  "code_licence": "GNU AGPL v3 (README.md line 5; COPYING line 1; nel/COPYING and snowballs2/COPYING are AGPL text).",
+  "asset_licence": "README.md line 5: art assets dual-licensed CC-BY-SA 3.0 and FAL 1.3. The art packs are not in this box. README line 55: configuration files implied public domain samples (which files not stated). Tool/editor images: not stated, class C.",
+  "rights_holder_status": "README.md line 49: original source code copyright (C) 2001-2022 Winch Gate Property Limited. README line 15: community-maintained, not officially affiliated with the commercial game. README line 37: owner released client, server and graphics assets as open source (as the README says). No leak or decompile described in repo files.",
+  "best_class": "B",
+  "halves_read": "client data half (ryzom/client/data/gamedev, ryzom/common/data_common, data_leveldesign listing) and snowballs2 sample game (client and server position code). Server half (ryzom/server, nelns) present in box, NOT read.",
+  "asset_groups": [
+    {"kind": "game art packs (models, textures, world audio)", "path": "not in box; families.txt names root_bricks.tga, power.tga, area.tga (absent)", "count_hint": "0 .dds, 0 .ogg, 0 game .tga/.png under ryzom/client/data", "licence": "README line 5: CC-BY-SA 3.0 and FAL 1.3 (for art the box does not contain)", "class": "D", "note": "Absent from this box. Not searched elsewhere."},
+    {"kind": "tool and editor images", "path": "ryzom/tools/** (e.g. ryzom/tools/client/client_config_qt/resources/*.png), studio/, web/", "count_hint": "whole repo: 347 png, 58 tga, 137 bmp, 313 ico, 62 gif, 56 cur", "licence": "not stated; README art line does not say whether tool icons count", "class": "C", "note": "Not opened."},
+    {"kind": "engine logo set", "path": "nel/resources, nelns/resources, snowballs2/resources (nel.png, nel.bmp, nevraxpill.ico)", "count_hint": "about 10 files", "licence": "AGPL by location (nel/COPYING); not checked per file", "class": "B", "note": "Engine logos. Not opened."},
+    {"kind": "NeL sample 3D primitives", "path": "nel/samples/pacs/shapes/{cylinder,arena,rectangle}.shape; nel/samples/3d/cluster_viewer/shapes/{sphere01-08,box02}.shape", "count_hint": "12 .shape", "licence": "AGPL by location (nel/COPYING); per-folder licence not checked", "class": "B", "note": "Placeholder primitives. Not opened (binary)."},
+    {"kind": "NeL sample sounds", "path": "nel/samples/sound/**/base_samples/{beep,tuut}.wav", "count_hint": "6 .wav", "licence": "AGPL by location; not checked per folder", "class": "B", "note": "Beeps, not opened."},
+    {"kind": "game data tables (combat spell bricks, families, formulas, HUD XML and Lua, chat strings)", "path": "ryzom/client/data/gamedev/bricks_client.txt (54 lines), families.txt (15), formulas.txt (9), interfaces_v3/ (73 xml, 23 lua, 5 txt, 1 css)", "count_hint": "about 130 text files", "licence": "AGPL on the source tree; README line 55 config sentence may apply to some; not stated per file", "class": "B", "note": "Text tables, the main useful non-code content in this donor. Names and effect text are in these tables."},
+    {"kind": "chat and combat-feed strings", "path": "ryzom/common/data_common/chat/bs_combat.txt (40 lines), bot_chat.txt (33 lines), chat_static.cdb", "count_hint": "about 80 lines of text", "licence": "AGPL on the source tree", "class": "B", "note": "Feed message templates with colour prefixes and placeholders."},
+    {"kind": "Lua scenario and UI scripts; DB schema", "path": "ryzom/common/data_common/r2/*.lua and others; database.xml; msg.xml", "count_hint": "109 lua", "licence": "AGPL on the source tree", "class": "B", "note": "Not read beyond names."},
+    {"kind": "level-design zones and docs", "path": "ryzom/common/data_leveldesign/ (28 .zone, 262 .html)", "count_hint": "290 files", "licence": "AGPL on the source tree", "class": "B", "note": "Not opened."},
+    {"kind": "snowballs2 sample game art", "path": "snowballs2/client/data (only .gitkeep), snowballs2/server, snowballs2/resources", "count_hint": "0 game art files", "licence": "AGPL (snowballs2/COPYING)", "class": "D", "note": "No art in that tree."}
+  ],
+  "inspiration": [
+    "Syllable-built spells: a spell is a root verb plus modifier bricks (power level, range, area). The brick table has 8 roots, 27 modifiers and 18 suffix bricks, each with a short made-up syllable (ryzom/client/data/gamedev/bricks_client.txt lines 2-53). Copy the composition rule, not the names.",
+    "Viewpoint combat feed: one message key per event, separate text for you-attack, hit-you and other-vs-other, a colour prefix per line type, placeholders for names (ryzom/common/data_common/chat/bs_combat.txt lines 5-7). Clean shape for a 375-wide combat log.",
+    "Lob projectile: a fixed-duration flight. Horizontal position is a linear blend from start to end; a sine lift adds height that grows with the square of throw distance (snowballs2/server/position/snowballs/position/physics.cpp lines 32-35). Reads as a throw without a physics sim.",
+    "Map landmark actions as a data list: rows of id, label key and handler for target, teleport, rename, remove, create and search (ryzom/client/data/gamedev/interfaces_v3/map.xml lines 12-32). Good shape for a data-driven world-map action row.",
+    "Lift derivative defect (keep the idea): evalSpeed (physics.cpp lines 41-44) does not divide the lift term by the flight time, and takes horizontal speed from a separate _Speed. Fix: derive both from one flight duration and clamp at the arc end."
+  ],
+  "briefs": [
+    {"label": "Syllable-built ability", "why": "Readable at 375 wide as a three-slot picker: verb, power, area. One signature behaviour: the ability name is assembled from the picks, so a build reads like a word.", "keep": "KEPT: one root verb plus modifier slots (power, range, area); short made-up syllables.", "change": "CHANGED: our own syllables and verb set; three tap-chips on a phone, not a text string; the area slot shows a ring preview.", "ref": "ryzom/client/data/gamedev/bricks_client.txt lines 2-53; ryzom/client/data/gamedev/families.txt lines 2-4"},
+    {"label": "Viewpoint combat line", "why": "One signature effect: the same event reads differently to you, to the target and to a bystander, in one colour per kind of line.", "keep": "KEPT: separate templates for you-attack, hit-you and other-vs-other; placeholders for names.", "change": "CHANGED: our own colour set (no donor colour codes); shorter lines for 375 wide; a small icon before each line in place of a colour prefix.", "ref": "ryzom/common/data_common/chat/bs_combat.txt lines 5-7"},
+    {"label": "Lob arc throw", "why": "Silhouette: a high, readable arc that is taller for longer throws. One signature sound: a soft whoosh on release and a splat on landing.", "keep": "KEPT: lift grows with the square of distance; sine arc over a fixed flight time.", "change": "CHANGED: a shorter flight and a lift cap; a ground shadow ring under the arc; speed and lift derived from one flight duration (the donor's defect fixed).", "ref": "snowballs2/server/position/snowballs/position/physics.cpp lines 32-35, 41-44"},
+    {"label": "Landmark action row", "why": "Data-driven map actions read as a short verb row, so the map UI stays one shape for every landmark.", "keep": "KEPT: the landmark actions as a list of id, label key and handler.", "change": "CHANGED: a bottom sheet with three verbs on phone; different ids and labels; our own search flow.", "ref": "ryzom/client/data/gamedev/interfaces_v3/map.xml lines 12-32"}
+  ],
+  "not_read": [
+    "ryzom/server and nelns (server half, present, not read)",
+    "ryzom/client/src, ryzom/common/src, nel/src, nel/samples code, studio/src, web/",
+    "ryzom/common/data_leveldesign (28 .zone, 262 .html)",
+    "interfaces_v3 xml and lua beyond map.xml lines 12-32",
+    "bs_combat.txt beyond lines 5-7; bot_chat.txt; the 109 data_common lua files",
+    "all .shape and .wav contents (binary, not opened)",
+    "formulas.txt beyond its 9-line count (column meanings not checked)"
+  ]
+}

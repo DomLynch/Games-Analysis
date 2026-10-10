@@ -1,0 +1,51 @@
+{
+  "donor": "ClassicUO",
+  "counts": {"creatures": 0, "classes": 3, "weapons": 0, "gear_sets": 0, "zones": 0},
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [
+    {"name": "Human", "role": "race (origin)", "mechanic": "none in client beyond character creation", "progression": "none", "ref": "src/ClassicUO.Client/Game/Data/RaceType.cs:5-10"},
+    {"name": "Elf", "role": "race (origin)", "mechanic": "none in client beyond character creation", "progression": "none", "ref": "src/ClassicUO.Client/Game/Data/RaceType.cs:5-10"},
+    {"name": "Gargoyle", "role": "race (origin)", "mechanic": "none in client beyond character creation", "progression": "none", "ref": "src/ClassicUO.Client/Game/Data/RaceType.cs:5-10"},
+    {"name": "Professions (from Prof.txt)", "role": "starting profession", "mechanic": "list read at run time; file not in repo (not read)", "progression": "unknown", "ref": "src/ClassicUO.Assets/ProfessionLoader.cs:65"}
+  ],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [
+    {"name": "Weather: rain", "type": "environment state", "technique": "blue 2 px streaks, drop speed from scale ratio, offset capped at 5 px", "ref": "src/ClassicUO.Client/Game/Weather.cs:345,421"},
+    {"name": "Weather: storm approach", "type": "environment state", "technique": "streaks whose angle sways with a sine", "ref": "src/ClassicUO.Client/Game/Weather.cs:396"},
+    {"name": "Weather: snow", "type": "environment state", "technique": "white squares with sideways drift (branch read in part)", "ref": "src/ClassicUO.Client/Game/Weather.cs"},
+    {"name": "Weather: storm brewing", "type": "environment state", "technique": "particles move (speed set, wind-driven) but the draw switch has no case for this type; thunder cue only", "ref": "src/ClassicUO.Client/Game/Weather.cs:16,351"},
+    {"name": "Season: Desolation", "type": "season state", "technique": "ignored for a dead player", "ref": "src/ClassicUO.Client/Network/PacketHandlers.cs:4094"}
+  ],
+  "looks": [
+    {"label": "Spectral ghost dissolve", "technique": "one shader mode; alpha = 1 - red x 1.5; colour forced to black", "ref": "src/ClassicUO.Renderer/shaders/IsometricWorld.fx:8,151-156"},
+    {"label": "Shadow as a named mode", "technique": "separate shader branch with fixed alpha", "ref": "src/ClassicUO.Renderer/shaders/IsometricWorld.fx:158"},
+    {"label": "Hue strip recolour", "technique": "grey base sampled against a 1024-row by 16-column hue table", "ref": "src/ClassicUO.Renderer/shaders/IsometricWorld.fx:48-58"},
+    {"label": "See-through circle around hero", "technique": "radius capped at 200 in client units", "ref": "src/ClassicUO.Client/Game/Constants.cs:72"},
+    {"label": "Death hold", "technique": "'You are dead' text for 1.5 s while the death timer runs", "ref": "src/ClassicUO.Client/Game/Constants.cs:86; src/ClassicUO.Client/Game/Scenes/GameScene.cs:1232"},
+    {"label": "Lightning flicker", "technique": "ten frames at a 400 ms interval, then destroy", "ref": "src/ClassicUO.Client/Game/GameObjects/LightningEffect.cs:10,31"},
+    {"label": "Effect blend set", "technique": "eight named blend modes, including a blue shadow edge", "ref": "src/ClassicUO.Client/Game/Data/GraphicEffectBlendMode.cs:5-15"},
+    {"label": "Pixel-art 2x upscaler", "technique": "colour-difference edge tests (body not read)", "ref": "src/ClassicUO.Renderer/shaders/xBR.fx:5"}
+  ],
+  "originals": [
+    {"name": "Wraith dissolve", "idea": "a ghost mode in which a channel drives alpha and the silhouette goes dark", "keep": "one mode switch; alpha from a channel; dark silhouette", "change": "our tint; scanline dissolve; edge glow instead of stock blue"},
+    {"name": "Metal ramp recolour", "idea": "one grey sprite base, a lookup strip per draw, separate metal and cloth ramps", "keep": "grey base plus lookup strip", "change": "normal-driven sheen so tiers read as sheen, not hue only"},
+    {"name": "Storm streaks", "idea": "a capped pool of rain streaks that sway on storm approach", "keep": "pool cap of 70; sine sway", "change": "our sprite; our wind curve; faster rain on storm approach"},
+    {"name": "Lightning telegraph", "idea": "a short fixed-frame flicker as a boss tell", "keep": "ten frames at 400 ms", "change": "our bolt shape; sound cue on first frame"},
+    {"name": "Respawn hold", "idea": "a short fixed hold with a message before the respawn choice", "keep": "1.5 s fixed hold", "change": "our wording; a fade that is not text only"},
+    {"name": "Hero window", "idea": "a see-through band around the hero when behind cover", "keep": "radius cap", "change": "hard-edged band scaled for 375 wide"},
+    {"name": "Four effect modes", "idea": "a small named set of effect blend modes", "keep": "small named set", "change": "normal, add, shadow, red tint"}
+  ],
+  "licence_note": "Code BSD 2-Clause (LICENSE.md line 1), SPDX headers in source; README line 68 says BSD 4 (conflict). README line 68 also says no copyrighted game assets are distributed. Shapes and techniques only; nothing copied.",
+  "not_read": [
+    "ModernUO server half (/mnt/frankendom-donors/ModernUO) - not read by DC012, outside donor list",
+    "Prof.txt and UO data files - not in repo",
+    "src/ClassicUO.Client Mobile.cs, MobileAnimation.cs, PartyManager.cs, RaceChangeGump.cs",
+    "LightColors.cs table body (496 lines)",
+    "AuraManager.cs body",
+    "Weather.cs snow and rain branches read in part only (lines 343-421)",
+    "IsometricWorld.fx circle-of-transparency block; xBR.fx body",
+    "sound: no audio files in repo; no cue lines read"
+  ]
+}

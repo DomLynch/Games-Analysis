@@ -1,0 +1,39 @@
+{
+  "donor": "ptklatt-Utinni",
+  "code_licence": "MIT. LICENSE: 'Copyright (c) 2020 Philip Klatt'. Third-party libraries listed in licenses.txt (CppSharp, dearImgui, ImGuizmo, LeksysINI, spdlog); DetourXS has no licence file and is not in licenses.txt.",
+  "asset_licence": "No separate asset licence. The repo LICENSE covers the Software and its documentation; the icons are not listed per file (coverage inferred). NVIDIA NVAPI files carry a licence-to-use line (nvapi.h line 10) whose full text was not read.",
+  "rights_holder_status": "Author copyright on the tool (MIT, 2020). README names Star Wars Galaxies and SWGEmu as targets but the files name no game rights holder and the repo ships no game data.",
+  "best_class": "A",
+  "half_read": "Client-side tool only (UtinniCore, UtINI, Launcher, UtinniCoreDotNet). Server half (SWGEmu) not in the box. Data pack: data/ut.ini and data/utinni.cfg read (settings only).",
+  "asset_groups": [
+    {"kind": "ui_icons_png", "path": "data/Icons/ and UtinniCoreDotNet/Resources/", "count_hint": "18 PNG in repo", "licence": "repo MIT (inferred, not listed per file)", "class": "A", "note": "toolbar icons (undo, redo, min, max, close, cog, maximize). Tool UI, not game art. Pixel size not measured."},
+    {"kind": "tool_icon_ico", "path": "data/Icons/TJT.ico and UtinniCoreDotNet/Resources/TJT.ico", "count_hint": "4 ICO in repo", "licence": "repo MIT (inferred)", "class": "A", "note": "tool icon"},
+    {"kind": "config_text", "path": "data/ut.ini, data/utinni.cfg", "count_hint": "2 files", "licence": "repo MIT", "class": "A", "note": "settings; utinni.cfg holds path strings for game content but no game files"},
+    {"kind": "game_content", "path": "none in box", "count_hint": "0", "licence": "n/a", "class": "D", "note": "no art, models, audio, maps or string tables in the repo"},
+    {"kind": "third_party_sdk", "path": "external/nvapi/*, external/**/*.dll", "count_hint": "8 DLL binaries plus NVAPI SDK files", "licence": "NVAPI licence-to-use line (nvapi.h line 10); full text not read. DetourXS: no licence file.", "class": "C", "note": "unclear or third-party; not opened beyond headers"}
+  ],
+  "inspiration": [
+    "Hotkeys as named, rebindable actions with one editor page (README.md line 11). Pattern: every action has a name, a default and a rebind screen.",
+    "Undo and redo as a shared command framework (README.md line 10). Pattern: every edit is a reversible command, which suits zone-data editing.",
+    "Transform handles drawn on the selected object via ImGuizmo (README.md line 7). Pattern: direct manipulation of a placed object in the scene.",
+    "Free-look camera that hides the avatar only while detached (README.md line 18). Pattern: an inspection camera separate from the play camera.",
+    "Offline scene mode (README.md line 15). Pattern: authoring without the live server, which suits zone authoring.",
+    "Small flat one-glyph icons for each command (data/Icons). Pattern: readable at 375 wide; pixel sizes not measured."
+  ],
+  "briefs": [
+    {"label": "on-object move handles", "why": "a placed object is edited where it sits, with handles on the selection", "keep": "one handle set per selected object; drag to move; every drag is undoable", "change": "our own handle shapes (rings and pillars) in our palette, not default axis colours", "ref": "/mnt/frankendom-donors/ptklatt-Utinni/README.md line 7"},
+    {"label": "remap-everything page", "why": "every action is a named binding on one page", "keep": "named actions with rebind and reset", "change": "touch first: long-press an action to rebind; preset layouts for thumb play", "ref": "/mnt/frankendom-donors/ptklatt-Utinni/README.md line 11"},
+    {"label": "detached inspection camera", "why": "free look that hides the avatar only while the camera is detached", "keep": "avatar hidden only in this mode; the play camera returns on exit", "change": "our version is a slow replay dolly for the fight record, not free fly", "ref": "/mnt/frankendom-donors/ptklatt-Utinni/README.md line 18"},
+    {"label": "edit history for zone data", "why": "every edit is a reversible command", "keep": "a command stack with undo and redo", "change": "each command is a zone-data diff shown as a preview before it applies", "ref": "/mnt/frankendom-donors/ptklatt-Utinni/README.md line 10"}
+  ],
+  "cross_link": "Camera: free-look idea (README line 18) is worth a look for the replay camera. HUD/UI: flat icons and an editor UI, worth a look for the editor only. Sound, music, zones, spawns, loot, VFX and animation: nothing in this donor.",
+  "not_read": [
+    "UtinniCore C++ and C# sources (listed, not opened)",
+    "UtinniCoreDotNet/UI/Theme/ThemeUtility.cs beyond its licence header; Colors.cs",
+    "external/spdlog/LICENSE, external/LeksysINI/LICENSE, external/ImGuizmo/LICENSE.txt",
+    "licenses.txt entries for LeksysINI and spdlog",
+    "NVIDIA licence text beyond nvapi.h line 10; NVAPI PDF and CHM (binary); the 8 DLL binaries",
+    "sdk/ templates and examples",
+    "Icon pixel sizes and palettes (PNG files not opened)"
+  ]
+}

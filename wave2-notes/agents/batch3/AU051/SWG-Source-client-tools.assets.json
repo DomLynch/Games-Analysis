@@ -1,0 +1,33 @@
+{
+  "donor": "SWG-Source-client-tools",
+  "code_licence": "None stated. _RESTRICTED-NOTE.txt line 1: 'leaked official SWG (Sony Online/Disney) source, proprietary, no licence'. README.md line 2 describes the repo as SWG Client source and tools; no licence section.",
+  "asset_licence": "None stated. Same restricted note. Treated as no licence.",
+  "rights_holder_status": "leaked / restricted (per _RESTRICTED-NOTE.txt): official SWG source, proprietary. Study shape and idea only; no copying of code, constants or text.",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "game art, audio, models, fonts (usable formats)", "path": "(none found)", "count_hint": "0 files for .dds, .msh, .wav, .mp3, .ogg, .tga, .iff, .stf, .ttf, .fbx", "licence": "none stated", "class": "D", "note": "Name search across the tree."},
+    {"kind": "publish manifests (asset path lists, binary and text)", "path": "publish/", "count_hint": "48 files: client_data_tree_files.mft (26 MB binary, magic header only); data_texture_00 (1,608 lines), data_skeletal_mesh_00 (5,739), data_animation_00 (5,987), data_static_mesh_00 (483 KB), data_music_00 (144), data_sku1_00 to _07, data_other_00 (2.4 MB), patch_00 to _08", "licence": "none stated", "class": "C", "note": "Leaked asset path lists. Contents not reproduced; line counts only."},
+    {"kind": "editor UI images (png, bmp, ico, cur)", "path": "src/engine/client/application/{ClientEffectEditor,UiBuilder,AnimationEditor,BugTool,QuestEditor,NpcEditor,TerrainEditor}", "count_hint": "ClientEffectEditor 82, UiBuilder 37, AnimationEditor 37, BugTool 33, QuestEditor 16, NpcEditor 15, TerrainEditor 35", "licence": "none stated", "class": "C", "note": "Tool art, not game art. Not opened."},
+    {"kind": "UI layout files (.ui)", "path": "src/engine/client/application/ShipComponentEditor/ui, src/game/client/application/SwgGodClient/src/shared/ui, src/engine/client/application/ParticleEditor/ui", "count_hint": "89 .ui files in total", "licence": "none stated", "class": "C", "note": "Not opened."},
+    {"kind": "tool executables, installers, plugin", "path": "tools/, deps/, plugin/win32/", "count_hint": "tools about 14 exe/dll; deps 4 installers (67 MB, 18 MB and smaller); plugin 1 folder", "licence": "none stated", "class": "D", "note": "Not run, not opened. Not assets."},
+    {"kind": "sound, particle, HUD source (code)", "path": "src/game/client, src/engine/client", "count_hint": "sound 78 files; particle 135; HUD 40", "licence": "none stated", "class": "C", "note": "Code, not assets. Radar and HUD pages under src/game/client/library/swgClientUserInterface/src/shared/page."}
+  ],
+  "inspiration": [
+    "Ground radar with role-coded blips: one routine draws each nearby object with a shape chosen by role (target bracket, difficulty ring, group marker, waypoint arrow, corpse marker) (SwgCuiGroundRadar_BlipPane.cpp lines 329, 588, 600, 612). Idea: radar as the main readability tool at 375 wide.",
+    "Radar range from a data table, not hard-coded (SwgCuiGroundRadar.cpp line 95). Idea: radar range as zone data on one runtime.",
+    "Effect authoring as separate tools: particles, swoosh trails, lightning arcs, client effects and sound each have an editor (src/engine/client/application/ParticleEditor, SwooshEditor, LightningEditor, ClientEffectEditor, SoundEditor). Idea: each effect family gets its own small parameter set so trails and hit flashes can be tuned without code.",
+    "Animation and skeletal manifests as indexed catalogues (data_animation_00 and data_skeletal_mesh_00 line counts). Idea: animation clips as a catalogue for row 7 creature clips."
+  ],
+  "briefs": [
+    {"label": "Role-coded radar blips (own label)", "why": "At 375 wide, a radar that shows target, threat and waypoint by shape reads at a glance.", "keep": "One blip language per role; a waypoint arrow.", "change": "Our own glyph shapes and colour logic; a corpse marker that fades; no copy of the donor's blip art. Sound: none in donor, ours to design. Recreate as a distinct original, not a copy.", "ref": "src/game/client/library/swgClientUserInterface/src/shared/page/SwgCuiGroundRadar_BlipPane.cpp lines 329, 588, 600, 612"},
+    {"label": "Weapon trail authored in a tool (own label)", "why": "A swoosh trail artists can tune in a dedicated editor keeps weapon feel adjustable without code.", "keep": "A separate authoring tool for trails.", "change": "Our own trail shape and fade, tied to our hitstop. Recreate as a distinct original, not a copy.", "ref": "src/engine/client/application/SwooshEditor/ (directory; files not read)"},
+    {"label": "Lightning arc effect (own label)", "why": "An arc that jumps between two points reads as magic at a glance.", "keep": "A dedicated editor for arcs.", "change": "Our own jitter and colour, shown only on the caster's target. Recreate as a distinct original, not a copy.", "ref": "src/engine/client/application/LightningEditor/ (directory; files not read)"}
+  ],
+  "not_read": [
+    "All executables, installers, deps/, tools/, plugin/: not run, not opened",
+    "publish/client_data_tree_files.mft and all publish/*.txt contents beyond line counts (leaked path lists, not reproduced)",
+    "All image and .ui files: counted only",
+    "SwooshEditor, LightningEditor, ParticleEditor, ClientEffectEditor, SoundEditor source: directories listed, files not read",
+    "Radar pages beyond the lines cited"
+  ]
+}

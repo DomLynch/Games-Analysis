@@ -1,0 +1,137 @@
+{
+  "donor": "Reinisch-Warcraft-Arena-Unity",
+  "code_licence": "Unlicense (public domain dedication): LICENSE line 1 'This is free and unencumbered software released into the public domain.' Bundled Zenject under MIT (Assets/Plugins/Zenject/LICENSE.txt line 1).",
+  "asset_licence": "No asset licence file. README.md lines 152-158 'License & Attribution': character models, textures and sounds are copyrighted by Blizzard Entertainment (c)2004 per the README; WoW and Warcraft named as Blizzard trademarks; Path of Exile and Sirus named as Grinding Gear Games trademarks; project described as non-commercial educational fan project.",
+  "rights_holder_status": "Fan project per README (non-commercial, educational, not affiliated with or endorsed by Blizzard or Grinding Gear Games). README names Blizzard as copyright holder of character models, textures and sounds. Owner of UI art, VFX, Balance data and Localization tables is not stated in the files read.",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "3D character models, animations and materials",
+      "path": "Assets/Rendering/Characters/ (Human/Mage, Dummy, Druid Cat, Super Zombie, Sheep, Steam Tank, Ragnaros)",
+      "count_hint": "under Assets: 15 .fbx, 16 .obj, 113 .anim, 146 .mat, 24 .controller, 95 .prefab",
+      "licence": "README 'License & Attribution': character models copyrighted by Blizzard (c)2004",
+      "class": "C",
+      "note": "binary, not opened; named folders only. Ragnaros.fbx at Assets/Rendering/Characters/Ragnaros/Models/Ragnaros.fbx; Steam Tank.fbx at Assets/Rendering/Characters/Steam Tank/Models/Steam Tank.fbx"
+    },
+    {
+      "kind": "2D textures, UI sprites, particle textures",
+      "path": "Assets/Rendering (Maps, UI, Particles, Spell Visuals, Skybox, Projectors); Assets/Rendering/UI/Sprites/Lobby/Map Frames/",
+      "count_hint": "814 .png + 208 .PNG under Assets",
+      "licence": "README statement covers textures (Blizzard); UI sprites not separately licensed in files read",
+      "class": "C",
+      "note": "not opened. Lobby map frame art named Lordaeron_Sirus_Background.png at Assets/Rendering/UI/Sprites/Lobby/Map Frames/"
+    },
+    {
+      "kind": "Audio: music, spell sounds, UI sounds, character voice",
+      "path": "Assets/Audio (Spells, UI, Characters); Assets/Audio/Characters/Sirus/ (about 35 files incl. a German subfolder)",
+      "count_hint": "192 audio files under Assets/Audio: 126 .wav, 63 .ogg, 3 .mp3",
+      "licence": "README statement covers sounds (Blizzard)",
+      "class": "C",
+      "note": "not opened. Sirus folder file names suggest phase-tagged callouts (Phase1, Phase2, Phase3) and German takes; voice ownership not stated"
+    },
+    {
+      "kind": "Balance data (ScriptableObject YAML: spells, auras, classes, maps, boss spells)",
+      "path": "Assets/Settings/Balance/ (Classes/, Spells/, Spells/Boss/, Spells/Scripted/, Maps/)",
+      "count_hint": "166 .asset files: 99 spell records, 12 class-info records, 7 Lordaeron map definitions, Default Balance.asset",
+      "licence": "none stated for the data files; repo LICENSE (Unlicense) does not say whether it covers data",
+      "class": "C",
+      "note": "DATA TABLE. Class Info - Mage.asset lists its spells as GUID references (line 13 is m_Name). Spell names follow the WoW kit (README line 75). Boss records are named for Ragnaros (Spells/Boss/), not Sirus, although README calls Sirus the featured boss"
+    },
+    {
+      "kind": "Sound data and sound kits",
+      "path": "Assets/Settings/Sound/ (Sound Entries, Sound Groups, Sound Kits, Spell Sound Infos)",
+      "count_hint": "228 files",
+      "licence": "none stated",
+      "class": "C",
+      "note": "DATA TABLE (not opened beyond the folder listing). Maps spells and characters to sound entries"
+    },
+    {
+      "kind": "Localization tables (audio clip tables)",
+      "path": "Assets/Localization/GameAudio_en.asset, GameAudio_de.asset, GameAudio_es.asset, GameAudio_it.asset, GameAudio Shared Data.asset",
+      "count_hint": "6 files; grep finds 27 key/id lines in GameAudio_en.asset (grep count, not a full parse)",
+      "licence": "none stated",
+      "class": "C",
+      "note": "DATA TABLE. Four locales present (en, de, es, it). Content not read beyond the name header"
+    },
+    {
+      "kind": "Visual effect sets (spell visuals, projectiles, auras)",
+      "path": "Assets/Rendering/Spell Visuals/ (Amber, Beam, Cone of Cold, Deep Freeze, Frost Bolt, Frost Nova, Frost Nova State, Ice Barrier, Ice Block, Ice Lance, Living Bomb Area, Pyroblast and more); Assets/Rendering/Particles/",
+      "count_hint": "folder list only; 17 .shader and 7 .shadergraph files under Assets",
+      "licence": "README statement covers textures (Blizzard); VFX ownership otherwise not stated",
+      "class": "C",
+      "note": "not opened; folder names only"
+    },
+    {
+      "kind": "Scripted hazard ring lists (spell records that spawn ring or corridor effects)",
+      "path": "Assets/Settings/Balance/Spells/Scripted/ (MeteorMaze_LvL 1-3, MeteorCorridor_LvL 1-3)",
+      "count_hint": "6 records",
+      "licence": "none stated",
+      "class": "C",
+      "note": "MeteorMaze_LvL 1.asset line 15 'MazeRingEffects:' is a list of ring effect references; only the first 60 lines read"
+    },
+    {
+      "kind": "Code (C#, not content): Scripts plus bundled Zenject",
+      "path": "Assets/Scripts/ (756 .cs), Assets/Plugins/Zenject/ (MIT)",
+      "count_hint": "756 .cs under Assets/Scripts; 1012 .cs under Assets",
+      "licence": "Unlicense (scripts, via repo LICENSE); MIT for Zenject (LICENSE.txt line 1)",
+      "class": "A",
+      "note": "listed for completeness; code can be read under its own licence. Not opened beyond the asmdef names"
+    }
+  ],
+  "inspiration": [
+    "Arena hazard telegraphs: a data list of ring effects (MeteorMaze_LvL 1.asset, line 15) draws the whole hazard pattern. Recreate as a telegraph layer driven by a list of floor markers, with a maze or spiral shape of our own.",
+    "Three-beat ground slam boss: the boss slam is split into a slam, an arrival impact and a shockwave record (Settings/Balance/Spells/Boss/, file names only). Recreate as three chained data records so each beat can be tuned and read separately.",
+    "Freeze as a persistent state, not a one-shot effect: Rendering/Spell Visuals has separate Frost Nova State, Ice Block and Ice Barrier folders. Recreate as a held overlay that stays on the unit while the status lasts.",
+    "Model-swap status: a target turns into a harmless critter for a short time (Rendering/Characters/Sheep, Settings/Balance/Spells/Polymorph Spell.asset). Recreate as a short model-swap status with our own critter and tint.",
+    "Phase-tagged boss callouts: Audio/Characters/Sirus has files named by phase, so each phase change has its own voice cue. Recreate as a phase-change audio cue with our own lines, never copies.",
+    "Class as a data record: a class-info asset holds a list of spell references and a power type (Class Info - Mage.asset line 13 onward). Recreate the pattern with our own class names and spell list."
+  ],
+  "briefs": [
+    {
+      "label": "ring-telegraph hazard maze (own label)",
+      "why": "Readable at 375 wide: floor rings and a safe lane form one silhouette; one signature behaviour (timed impacts open a lane); one signature sound (a low warning tick). Could be ours at 20-30 percent resemblance.",
+      "keep": "data list of floor markers that the designer edits; impacts timed in beats",
+      "change": "a spiral or hex-grid shape, different telegraph colour, our own impact sound. Recreate as a clearly distinct original, never a copy",
+      "ref": "Assets/Settings/Balance/Spells/Scripted/MeteorMaze_LvL 1.asset (line 15 MazeRingEffects); MeteorCorridor_LvL 1.asset"
+    },
+    {
+      "label": "three-beat ground slam (own label)",
+      "why": "Readable silhouette at 375 wide: a rising windup, a single arrival hit, then an expanding ring. One signature behaviour: the ring expands from the impact point. Could be ours at 20-30 percent resemblance.",
+      "keep": "three chained beats as separate data records, so each can be tuned",
+      "change": "a different beat count or timing, a ground crack instead of a ring, our own impact sound. Recreate as a clearly distinct original, never a copy",
+      "ref": "Assets/Settings/Balance/Spells/Boss/Ragnaros Slam Spell.asset; Ragnaros Slam Shockwave Arrival Spell.asset; Ragnaros Slam Shockwave Spell.asset (file names only)"
+    },
+    {
+      "label": "held frost overlay state (own label)",
+      "why": "A persistent state visual reads at a glance: the unit is held and its outline changes. One signature effect: a frost rim on the silhouette. Could be ours at 20-30 percent resemblance.",
+      "keep": "a separate state overlay that lasts while the status lasts, not a one-shot burst",
+      "change": "crystal shards instead of a frost rim, a different tint, a shorter lifetime. Recreate as a clearly distinct original, never a copy",
+      "ref": "Assets/Rendering/Spell Visuals/Frost Nova State/ and Assets/Rendering/Spell Visuals/Ice Block/ (folder names; not opened)"
+    },
+    {
+      "label": "model-swap critter status (own label)",
+      "why": "Comic and readable: a foe becomes a harmless critter for a few seconds. One signature behaviour: the target walks like a critter. Could be ours at 20-30 percent resemblance.",
+      "keep": "a short model-swap status that disables the foe's attacks",
+      "change": "a different critter, a tinted coat instead of a fleece, a different duration rule. Recreate as a clearly distinct original, never a copy",
+      "ref": "Assets/Rendering/Characters/Sheep/ (folder, not opened); Assets/Settings/Balance/Spells/Polymorph Spell.asset"
+    },
+    {
+      "label": "phase-change boss callout (own label)",
+      "why": "A voice cue at each phase change gives a readable beat at 375 wide and needs no HUD space. One signature sound: a short low callout on each phase. Could be ours at 20-30 percent resemblance.",
+      "keep": "one callout per boss phase, tied to the phase number",
+      "change": "our own lines and voice, a different phase count, a sting before the callout. Recreate as a clearly distinct original, never a copy",
+      "ref": "Assets/Audio/Characters/Sirus/ (Sirus_Phase1.ogg, Sirus_Phase2.ogg, Sirus_Phase3.ogg; file names only, not opened)"
+    }
+  ],
+  "not_read": [
+    "Server half: Assets/Scripts/Server/ (only Game.Server.asmdef line 2 read); no server code opened",
+    "Client half: Assets/Scripts/Client/ (only the asmdef folder present; not opened)",
+    "Core: Assets/Scripts/Core/ (asmdef present; not opened)",
+    "All binary art (png, fbx, obj, ogg, wav, mp3): names and counts only, no file opened",
+    "Scenes folder and Prefabs folder contents",
+    "Sirus boss scripts: a grep for Sirus in Assets/Scripts returned no matches; the Sirus boss scene and behaviour graphs were not located",
+    "Localization tables beyond a grep count; Settings/Sound entries beyond folder listing",
+    "Sheep, Steam Tank, Ragnaros, Super Zombie models: names and paths only",
+    "Packages/manifest.json and ProjectSettings: not opened"
+  ]
+}

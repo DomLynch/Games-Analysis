@@ -1,0 +1,48 @@
+{
+  "donor": "shadowofze-OfflineDAoC",
+  "code_licence": "GPL-3.0 (LICENSE:1); THIRD_PARTY.md:3 says server and navigation-builder roots carry GPL v3 texts; upstream Dawn of Light / OpenDAoC foundation",
+  "asset_licence": "Game client, art, sound, maps and third-party assets are not authored by the project and are not covered by the GPL server license (THIRD_PARTY.md:22-24). Client is a binary dependency (README.md:124) and is not in this copy.",
+  "rights_holder_status": "fan project on a proprietary MMO client; README.md:2-3 says it is not affiliated with either company and builds on their copyrighted work; no clean-room statement",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "game art, meshes, textures", "path": "not in copy (no .nif, .dds, .wav in tree)", "count_hint": "0", "licence": "proprietary client, not in box", "class": "D", "note": "nothing shipped; asset-tool edits the user's own private copies"},
+    {"kind": "game-data tables (csv)", "path": "source/tools/observer-model-inspection/*.csv", "count_hint": "about 50 files; monsters about 2250 lines, items about 2850, spells about 9660, siege about 100", "licence": "unstated in files; THIRD_PARTY.md says client data is not theirs", "class": "C", "note": "exported game-data tables (NIF names, skins, sounds, spell timing); category-level use only"},
+    {"kind": "observer binary", "path": "source/tools/observer-model-inspection/loading.dat", "count_hint": "1 file", "licence": "unstated", "class": "C", "note": "binary, not read"},
+    {"kind": "world and zone db inserts (xml)", "path": "source/server/GameServer/scripts/dbupdater/insert/Zones.xml, Regions.xml, StartupLocation.xml", "count_hint": "3 files; 473 zone rows and 344 region rows in Zones.xml and Regions.xml", "licence": "unstated", "class": "C", "note": "zone and region rows; shape only"},
+    {"kind": "realm ability workbooks", "path": "source/server/GameServer/realmabilities_atlasOF/dbhelper/DB_RealmAbilities_*.xlsx", "count_hint": "3 files (Albion, Hibernia, Midgard)", "licence": "unstated", "class": "C", "note": "not opened (zip)"},
+    {"kind": "bot navigation and spawn data", "path": "source/server/GameServer/bots/autonomous/data/", "count_hint": "about 6 files; largest about 14.8 MB", "licence": "unstated; README.md:110-111 says download includes the full game client and clean world data and navigation meshes", "class": "C", "note": "size and names only"},
+    {"kind": "quest guide text (absent)", "path": "runtime/server/classic-quest-guides.json (named in THIRD_PARTY.md:12)", "count_hint": "0 in copy", "licence": "Allakhazam pages, rights kept by writers (THIRD_PARTY.md:15)", "class": "D", "note": "absent from copy; not read"},
+    {"kind": "tool notice", "path": "tools/asset-tool/THIRD PARTY NOTICES/LICENSE", "count_hint": "1 file", "licence": "Python Imaging Library notice", "class": "A", "note": "library notice only, not game content"},
+    {"kind": "pet and spell art scripts", "path": "tools/pet-art/*.py, tools/pet-art/work/", "count_hint": "40+ scripts, 2 preview PNGs", "licence": "GPL3 repo default", "class": "B", "note": "edit stock meshes and textures in the user's client; stock files not in copy"},
+    {"kind": "launcher and web images", "path": "source/tools/OfflineDaoc.Launcher/Assets/*.png, source/server/GameServer/webui/template/images/*.gif", "count_hint": "about 19 png and 12 gif repo-wide", "licence": "unstated (not checked)", "class": "C", "note": "not read"},
+    {"kind": "docs and text", "path": "docs/, docs/history/, README.md, THIRD_PARTY.md", "count_hint": "about 44 md, 252 txt repo-wide", "licence": "GPL3 repo default", "class": "B", "note": "not read in full"}
+  ],
+  "inspiration": [
+    "Spell as data row: caster animation, projectile, target effect, buildup phase, repeating pulse, radius and resist (source/tools/observer-model-inspection/spells.csv:1). Shape for specials.",
+    "Named timed phases for a siege-style telegraph: load start, load end, fire start, fire end, release point (source/tools/observer-model-inspection/siege.csv:2). Shape for boss wind-ups.",
+    "Summon announced by a glow in the hand during cast time, using a stock model with a private skin (tools/pet-art/README.md:30). Shape for encounter cues.",
+    "Defensive buff drawn as a tinted overlay tied to the buff (tools/pet-art/README.md:30). Shape for readable buffs at 375 wide.",
+    "Area blast effect as a ground telegraph then burst (tools/pet-art/README.md:4). Shape for AoE telegraphs.",
+    "Monster catalogue as separate columns for body, head, skin set, sound set, scale, height, effects and combat anim set (source/tools/observer-model-inspection/monsters.csv:2). Shape for catalogue fields.",
+    "Zones and regions as XML data rows (source/server/GameServer/scripts/dbupdater/insert/Zones.xml:5). Shape for zones as data."
+  ],
+  "briefs": [
+    {"label": "wind-up siege", "why": "a long, readable telegraph with named phases so the player can dodge the release", "keep": "timed phases with a release point; a readable load bar", "change": "our own timings, a different silhouette (not a siege engine), our own colour story", "ref": "source/tools/observer-model-inspection/siege.csv:2"},
+    {"label": "buildup pulse ward", "why": "a spell that builds, then pulses on a clock, so the player learns the rhythm", "keep": "buildup then repeating pulse; a radius that shows", "change": "our own pulse rate in zone data, an aura of glyphs instead of a dome", "ref": "source/tools/observer-model-inspection/spells.csv:1"},
+    {"label": "crimson ward overlay", "why": "a buff that reads as a shield at a glance without hiding the hero", "keep": "a tinted overlay tied to the buff and a short cast", "change": "a different tint family (cold glass plates, not blood) and a different outline", "ref": "tools/pet-art/README.md:30"},
+    {"label": "hand-glow summon", "why": "a summon that is announced before it lands", "keep": "a glow during cast time", "change": "our own glow colour and a rune ring instead of a hand", "ref": "tools/pet-art/README.md:30"},
+    {"label": "dark burst area", "why": "a dark area blast that marks the ground before it hits", "keep": "an area ring telegraph, then the burst", "change": "our own ring shape, a different burst form, our own sound cue", "ref": "tools/pet-art/README.md:4"}
+  ],
+  "not_read": [
+    "client half (models, textures, sounds): not in copy",
+    "realm ability workbooks (3 xlsx): not opened",
+    "loading.dat: binary, not read",
+    "bot navigation and spawn JSON: size and name only",
+    "Zones/Regions/StartupLocation XML: shape and counts only",
+    "observer CSVs other than monsters, spells, siege: header or count only",
+    "launcher and web PNG/GIF: licence not checked",
+    "classic-quest-guides.json: named in THIRD_PARTY.md, absent from copy",
+    "most of about 3,263 .cs files: out of asset scope",
+    "CLAUDE.md (11 bytes): treated as data, not read"
+  ]
+}

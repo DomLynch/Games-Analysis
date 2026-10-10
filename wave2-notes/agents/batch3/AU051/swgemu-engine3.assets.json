@@ -1,0 +1,24 @@
+{
+  "donor": "swgemu-engine3",
+  "code_licence": "GNU AGPL v3 per README.md licence section (line 17) and COPYING (line 1). Source headers say 'See file COPYING for copying conditions' (sample TaskManagerImpl.h line 3). Third-party code under MMOEngine/external/ carries its own licences; those texts were not read.",
+  "asset_licence": "Not applicable: no art, audio, models, fonts, maps or game text in this donor.",
+  "rights_holder_status": "fan project (SWGEmu), engine code only. No game data in this donor.",
+  "best_class": "D",
+  "asset_groups": [
+    {"kind": "art, audio, models, fonts, maps, game text", "path": "(none in tree)", "count_hint": "0", "licence": "n/a", "class": "D", "note": "File-type survey across the tree found none."},
+    {"kind": "binary libraries", "path": "MMOEngine/lib", "count_hint": "22 MB (unix and win32)", "licence": "not read", "class": "D", "note": "Compiled code, not assets. Not read."},
+    {"kind": "third-party source", "path": "MMOEngine/external", "count_hint": "2.4 MB; ptmalloc3, db-5.0.32, zlib, hoard, pthreads-w32, multimmap, dlmalloc", "licence": "per-folder; only external/ptmalloc3/README found as licence-like; not read", "class": "D", "note": "Code, not assets."},
+    {"kind": "config and doc", "path": "MMOEngine/conf, MMOEngine/doc", "count_hint": "conf: 2 files (engine3.pc empty, filter 160 bytes); doc: Doxyfile", "licence": "none stated", "class": "D", "note": "Not read."}
+  ],
+  "inspiration": [
+    "Timed task queue: a priority queue of tasks keyed by a due time, with add(task, time) (MMOEngine/src/engine/core/TimedTaskQueue.h lines 20 and 36). Idea: a timer wheel for respawn, despawn and grace timers (Frankendom row 23). Recreate in our own code.",
+    "Named task queues with their own worker counts, and a flag that blocks during a save event (MMOEngine/src/engine/core/TaskManagerImpl.h line 62). Idea: keep slow I/O on its own queue so it never stalls the fight tick.",
+    "Scheduler plus worker split: scheduler threads decide when, worker threads do the work (TaskManagerImpl.h lines 27 to 30). Recreate only if we need the split."
+  ],
+  "briefs": [],
+  "not_read": [
+    "lib/ binaries; external/ third-party code and its licence texts; doc/Doxyfile; conf/filter; build/win32/UpgradeLog.XML",
+    "Most of MMOEngine/src (567 files): counted only; TaskManagerImpl.h and TimedTaskQueue.h read in part",
+    "TaskScheduler, TaskWorkerThread and TaskQueue bodies"
+  ]
+}

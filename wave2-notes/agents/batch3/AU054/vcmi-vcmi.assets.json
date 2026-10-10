@@ -1,0 +1,47 @@
+{
+  "donor": "vcmi-vcmi",
+  "code_licence": "GPL version 2 or later (CONTRIBUTING.md:140; docs/Readme.md:109); license.txt is the GPL v2 text (license.txt:2)",
+  "asset_licence": "project assets (graphics and sounds) CC-BY-SA 4.0 (CONTRIBUTING.md:142; docs/Readme.md:110); no per-folder licence files found for Mods/vcmi/Content or config/; Heroes 3 game data not in the repo and supplied by the user (docs/players/Installation_Linux.md:130)",
+  "rights_holder_status": "mixed: project code and assets by the VCMI Team (docs/Readme.md:112); Heroes 3 game data is proprietary, supplied by the user, not in the repo (docs/modders/Readme.md:124 refers to H3 objects); no clean-room statement found in files read",
+  "best_class": "B",
+  "half_read": "data half: config/ JSON (battleEffects, ambientSounds, biomes, creatures/castle.json one block), Mods/vcmi and Mods/roe-demo manifests and folder listings; code half not read; Heroes 3 data absent from the box",
+  "asset_groups": [
+    {"kind": "UI art (PNG)", "path": "Mods/vcmi/Content/Sprites4x (also Sprites2x, Sprites3x, Sprites)", "count_hint": "260 PNG across Mods/vcmi/Content", "licence": "CC-BY-SA 4.0 by the project statement (CONTRIBUTING.md:142)", "class": "B", "note": "stat icons (attack, defence, health, mana, speed, shots, level, growth, AI), hero window, battle, lobby, settings icons; names only, not opened"},
+    {"kind": "tutorial video (WebM)", "path": "Mods/vcmi/Content/Video/tutorial", "count_hint": "7 files", "licence": "not named in the statement; unclear", "class": "C", "note": "one clip per mechanic (radial wheel, map zoom and pan, battle direction, abort spell, right click); names only"},
+    {"kind": "sound (WAV)", "path": "Mods/vcmi/Content/Sounds/we5.wav", "count_hint": "1", "licence": "CC-BY-SA 4.0 by the project statement (sounds named in CONTRIBUTING.md:142)", "class": "B", "note": "not opened"},
+    {"kind": "fonts and scripts", "path": "Mods/vcmi/Content/Data (NotoSans-Medium.ttf, NotoSerif-Bold/Black/Medium.ttf, s/std.verm, s/testy.erm)", "count_hint": "4 fonts, 2 scripts", "licence": "no font licence file in the repo", "class": "C", "note": "fonts unclear; scripts not read"},
+    {"kind": "mod data (JSON)", "path": "Mods/vcmi/Content/config (spells.json, towerCreature.json, towerFactions.json, wikiGlossary.json, translations)", "count_hint": "many JSON files including translations", "licence": "no separate statement; project asset statement is general", "class": "C", "note": "read via Mods/vcmi/mod.json (head) only"},
+    {"kind": "game data definitions (JSON)", "path": "config/ (creatures, heroes, factions, spells, objects, battleEffects.json, ambientSounds.json, biomes.json, widgets)", "count_hint": "203 JSON files across config/ including schemas", "licence": "no licence statement found in files read", "class": "C", "note": "refers to Heroes 3 names and file names (config/creatures/castle.json:19, :25, :27); mechanics written as data"},
+    {"kind": "palette and SQL", "path": "config/NEUTRAL.PAL; config/lobby.sql", "count_hint": "1 each", "licence": "not stated", "class": "C", "note": "not opened"},
+    {"kind": "demo mod content", "path": "Mods/roe-demo/content (Music/default.mp3, Sprites/null.png, config)", "count_hint": "small", "licence": "not stated in the files read", "class": "C", "note": "names only; mod.json marks it as a Demo (Mods/roe-demo/mod.json:6)"},
+    {"kind": "Heroes 3 game data", "path": "not in repo", "count_hint": "0", "licence": "proprietary, user-supplied", "class": "D", "note": "required to run; not usable by Frankendom"}
+  ],
+  "inspiration": [
+    "A status effect as a colour timeline: a unit's look is driven by time-keyed steps, each with an optional grey overlay and an alpha value, with smooth transitions, and the last step sticks for the spell's duration (config/battleEffects.json:2, :8, :13, :22). Keep the sticky final step; change the tint to a cold crystal tone with a rim.",
+    "Creation and status are separate systems: a summon fade-in is its own effect, not part of the colour timeline (config/battleEffects.json:35). Keep the split: spawn is an alpha ramp, status is a tint.",
+    "Five cue slots per unit: attack, defend, killed, move and wince (config/creatures/castle.json:21-27). The separate flinch cue lets a light hit read as sound without death. Keep the flinch slot; our own voice sets.",
+    "Ambient falloff by distance band: ambient volume follows a four-step table over Chebyshev distance, with the ambient ceiling set well below the effects volume (config/ambientSounds.json:4-9). Keep the banded falloff and the lower ceiling; our bands follow our fight distances.",
+    "Decor pools per biome: each terrain plus object type holds a random set of template objects, so decor varies from one data row (config/biomes.json:14).",
+    "Stat icons in a row: one small icon per stat in a PNG set (Sprites4x/stackWindow, names only). Keep one clear icon per stat for readability at a small size; change the iconography.",
+    "Short mechanic clips: seven tutorial WebM clips, one per mechanic (Mods/vcmi/Content/Video/tutorial). Keep the one-clip-per-mechanic onboarding idea; use our own footage."
+  ],
+  "briefs": [
+    {"label": "Stone-grey status tint", "why": "the tint step reads at 375 wide as a silhouette change, and the sticky final state tells the player the effect is still on", "keep": "time-keyed steps; final state sticks for the duration", "change": "a cold crystal tone with a rim light instead of flat grey", "ref": "config/battleEffects.json:22 (step list) and config/battleEffects.json:2 (timeline container)"},
+    {"label": "Summon fade-in", "why": "units arrive by an alpha ramp rather than a pop-in, so the new unit reads without a jump", "keep": "alpha ramp on spawn", "change": "a ground rune glow and a dust puff instead of a plain fade", "ref": "config/battleEffects.json:35"},
+    {"label": "Five-slot unit voice", "why": "a flinch cue separate from death lets a light hit read as sound", "keep": "a wince slot for light hits", "change": "our own voice sets per unit type, with pitch and variant choice", "ref": "config/creatures/castle.json:21-27"},
+    {"label": "Distance-banded ambience", "why": "a short distance table keeps ambience from fighting the effects", "keep": "four-step banded falloff; ceiling below effects", "change": "bands tied to our camera and fight distance", "ref": "config/ambientSounds.json:4-9"},
+    {"label": "Decor pools per biome", "why": "random picks from a small pool per biome give variety from one data row", "keep": "data-driven pools", "change": "our own props and biome names", "ref": "config/biomes.json:14"}
+  ],
+  "cross_link": "vfx: colour timeline and summon fade; sound: five-slot unit voice and ambient falloff; hud-ui: stat icons and mechanic clips; animation: per-unit animation file reference and map-attack sides (config/creatures/castle.json:17, :19), as pattern only; walk density, spawns and loot: not read (config/objects and config/heroes not opened)",
+  "not_read": [
+    "code half (src/, client/, server/)",
+    "Heroes 3 data (absent from the box)",
+    "PNG, WebM, WAV and font bodies (names and counts only)",
+    "config/NEUTRAL.PAL and config/lobby.sql",
+    "config/objects, config/heroes and config/ai",
+    "translation JSON bodies",
+    "roe-demo files beyond the manifest head",
+    "AGENTS.md and docs/AGENTS.md (treated as data, not followed)",
+    "client/filters/xBRZ/License.txt"
+  ]
+}

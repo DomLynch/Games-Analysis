@@ -1,0 +1,37 @@
+{
+  "donor": "ValveSoftware-halflife",
+  "code_licence": "Half-Life 1 SDK LICENSE (LICENSE): modify and use for a modified Valve game; distribution of the modified game only for free (LICENSE:13); commercial use: contact Valve (LICENSE:38). Valve's own text, not a named open-source licence",
+  "asset_licence": "no separate asset licence; same LICENSE covers the SDK as shipped; game models, sounds, textures and maps are not in the box",
+  "rights_holder_status": "original company: Half Life 1 SDK Copyright(c) Valve Corp. (LICENSE:4)",
+  "best_class": "C",
+  "half_read": "code half: dlls/headcrab.cpp, dlls/barnacle.cpp, dlls/schedule.h; data half: game/ folder (two .fgd files, header only); retail game data not in the box",
+  "asset_groups": [
+    {"kind": "tool sprite samples (binary)", "path": "utils/sprgen/s_light.spr, s_explod.spr, s_bubble.spr", "count_hint": "3", "licence": "Valve SDK LICENSE as shipped", "class": "C", "note": "binary, not opened"},
+    {"kind": "entity definition text", "path": "game/dmc/dmc.fgd, game/ricochet/ricochet.fgd", "count_hint": "2", "licence": "Valve SDK LICENSE as shipped", "class": "C", "note": "header of dmc.fgd read (dmc.fgd:2); entity names and properties not copied"},
+    {"kind": "collision hull text and tool docs", "path": "utils/qcsg/hulls.txt, utils/qrad/qrad.txt", "count_hint": "hulls.txt is four text rows", "licence": "Valve SDK LICENSE as shipped", "class": "C", "note": "hull rows are plain text box pairs; values not copied here"},
+    {"kind": "game models, textures, sounds, maps", "path": "none in box", "count_hint": "0 .mdl, 0 .wav, 0 .mp3, 0 .bsp, 0 .tga, 0 .bmp", "licence": "n/a", "class": "D", "note": "behaviour and look are in code, not in data files"}
+  ],
+  "inspiration": [
+    "Leaping parasite: a small crawler solves its jump speed from the height gap and gravity, then scales its sideways speed so it lands on the target height at the top of the arc (dlls/headcrab.cpp:236-244). Hits only while airborne (dlls/headcrab.cpp:356) and clears its contact after one hit (dlls/headcrab.cpp:363). Keep the solved arc and the single airborne hit; make the body plan our own.",
+    "Defect to fix, keep the idea: the distance cap scales the whole jump vector including the vertical part (dlls/headcrab.cpp:251), so the arc no longer lands on the target height. Fix: cap only the sideways part, or lengthen the flight time to match.",
+    "Idle hop with no target: with no enemy the crawler does a short forward hop (dlls/headcrab.cpp:256), a cheap idle beat.",
+    "Idle chatter in combat: a low random chance each think to make a small sound while in the combat state (dlls/headcrab.cpp:371). Life in the fight without new animation.",
+    "Ceiling or floor ambush plant: a fixed creature extends a tongue, pulls prey up at a fixed step per think (dlls/barnacle.cpp:184), then runs a kill timer. Defect: the file defines a kill delay (dlls/barnacle.cpp:27) and the code sets a different one (dlls/barnacle.cpp:196). Fix: one data field read by both.",
+    "Named schedule vocabulary: about 42 SCHED_ states (dlls/schedule.h:34-45 region) covering idle, alert, flinch, investigate-sound, combat and a fail state. A short named set that posture alone can read.",
+    "Fail fallback: when every schedule fails the crawler tries to jump (dlls/headcrab.cpp:542). Unpredictability at no asset cost."
+  ],
+  "briefs": [
+    {"label": "Leaping parasite", "why": "a low fast hop telegraphed by the arc itself; the hit only counts on the way down", "keep": "solved arc to the target height; airborne-only hit; one contact then off", "change": "different body plan (not a crab); a crouch tell before the leap; a glow at the peak", "ref": "dlls/headcrab.cpp:218-265 and dlls/headcrab.cpp:356-363"},
+    {"label": "Ceiling ambush plant", "why": "a fixed trap that reads from far away and pulls prey up over several seconds", "keep": "fixed position; steady pull per think; one kill timer that ends the pull", "change": "vine or root look; a bloom cue as it pulls; a clear silhouette for the lifted target", "ref": "dlls/barnacle.cpp:145-220"},
+    {"label": "Named schedule set", "why": "a small set of states the player reads from posture alone", "keep": "idle, alert, flinch, investigate-sound, combat, fail", "change": "our own state names and combat states written for our attacker cap", "ref": "dlls/schedule.h:34-45"},
+    {"label": "Combat chatter", "why": "a rare random sound keeps a fight feeling alive", "keep": "low chance per think while in combat", "change": "our own vocal set per creature type", "ref": "dlls/headcrab.cpp:371"}
+  ],
+  "cross_link": "animation: leap and idle hop; sound: combat chatter; spawns, loot, HUD and camera: nothing in this box (cl_dll read by directory listing only)",
+  "not_read": [
+    "retail game data (not in the box)",
+    "utils/sprgen sprite binaries",
+    "most of dlls/ (monster bodies other than headcrab and barnacle)",
+    "full .fgd files",
+    "utils/qrad docs"
+  ]
+}

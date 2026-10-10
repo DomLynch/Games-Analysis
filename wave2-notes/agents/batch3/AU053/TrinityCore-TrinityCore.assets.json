@@ -1,0 +1,80 @@
+{
+  "donor": "TrinityCore-TrinityCore",
+  "code_licence": "GNU GPL v2.0 (COPYING, full text; README.md line 82 'License: GPL 2.0'). AUTHORS lines 4-6 say all code is GPL 2.0 except third-party libraries, which keep their own licences.",
+  "asset_licence": "no separate asset licence file. All repo content (including sql/) falls under the GPL 2.0 statement in COPYING and AUTHORS. Game-derived strings and data inside sql/ are not identified in the files, so they are class C.",
+  "rights_holder_status": "unknown from repo files. TrinityCore project contributors (AUTHORS). README has no mention of Blizzard, World of Warcraft or an emulation claim (grep found none). No _RESTRICTED or leak note in the repo root. The files do not say which commercial game's data the sql rows came from.",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "world, auth, characters and hotfix SQL data (schema and rows)",
+      "path": "sql/ (base/dev/world_database.sql, base/auth_database.sql, base/characters_database.sql, updates/, custom/world, custom/hotfixes, old/, create/)",
+      "count_hint": "about 20,299 files under sql/ (find count, not opened individually)",
+      "licence": "GPL 2.0 (repo-wide statement in COPYING and AUTHORS)",
+      "class": "C",
+      "note": "Schema and table definitions are code-like and GPL. Row contents (creature and quest text, spawn positions) are game-derived and their origin is not stated, so class C. creature_template is defined at sql/base/dev/world_database.sql line 961. Rows not read."
+    },
+    {
+      "kind": "third-party libraries",
+      "path": "dep/",
+      "count_hint": "folder present; entry count not checked",
+      "licence": "each library keeps its own licence per AUTHORS (not read)",
+      "class": "C",
+      "note": "Unclear per library until each licence file is read. Not opened."
+    },
+    {
+      "kind": "art, models, textures, audio, fonts, client data (DBC/DB2)",
+      "path": "none found within depth 4 of the donor (searched for png, jpg, blp, m2, wmo, dbc, db2, ogg, mp3, wav, ttf, tga)",
+      "count_hint": "0 within depth 4; deeper folders not searched",
+      "licence": "n/a",
+      "class": "D",
+      "note": "Server-side repo: no client art or audio in the box. Client data would have to come from the user's own install, which is outside this repo."
+    }
+  ],
+  "inspiration": [
+    "Threat is applied in one ordered pass: spell-attribute gate, then threat modifiers, then redirect share, then combat check, then add to an existing entry or create one, then victim update (ThreatManager.cpp lines 382-476). Use this order as the hate-list step for row 4: gate, modify, split, check, apply, update target.",
+    "Threat by school is multiplied by the defender's own school modifiers, not the attacker's (CalculateModifiedThreat, ThreatManager.cpp lines 677-714; the normal-school line is 696). This is the closest thing in the box to 'threat scales with protection': a defender with more protection in one school draws more or less hate from hits in that school. Recreate with our own schools and numbers.",
+    "Entries go offline when the target can no longer be seen, attacked or fought (ShouldBeOffline, ThreatManager.cpp lines 99-109). They come back when the target is visible again. Use this for row 4 leash and aggro: lost sight drops the target off the hate list, sight re-adds it.",
+    "Suppression is a separate state from offline: an immune, confused or stunned target is suppressed, and a taunting target is never suppressed (ShouldBeSuppressed, lines 110-121; taunt check line 112).",
+    "Victim re-evaluation runs on a fixed one-second timer (ThreatManager::Update lines 215-231; THREAT_UPDATE_INTERVAL = 1000u at ThreatManager.h line 86), and a brand-new entry triggers an immediate victim update (end of AddThreat). Use for the server tick budget (post-K item 3): cheap timer check each tick, immediate update only when the list changes.",
+    "Spawn data is per row: each spawn has a respawn time in seconds and a pool id, and each spawn group has flags for dynamic spawn rate and despawn on condition failure (SpawnData.h lines 53-61 and 133-142). Map straight onto row 23: cap through pool, respawn seconds per row, despawn when a condition fails."
+  ],
+  "briefs": [
+    {
+      "label": "Hate Ward (own label)",
+      "why": "A defender whose school state changes how much hate its hits generate creates a readable tank-or-glass choice without any new combat rule. The player sees the change as a ring colour, not a number.",
+      "keep": "threat multiplied by the defender's school state; hits in a school the defender is warded against draw different hate",
+      "change": "our state is an armour stance or a shield tier, not a school table; the ward is shown as a band of colour on the defender; the numbers are our own zone data",
+      "ref": "src/server/game/Combat/ThreatManager.cpp lines 677-714 (CalculateModifiedThreat)"
+    },
+    {
+      "label": "Ambush Pocket (own label)",
+      "why": "A spawn group that despawns when its condition fails (for example, the player leaves the pocket) keeps a zone from filling up with stale enemies, and a dynamic spawn rate lets a quiet zone wake up.",
+      "keep": "a spawn group as one unit with flags; despawn on condition failure; spawn rate that changes with activity",
+      "change": "our group is named and gated by our own zone triggers; the rate curve and cap are zone data fields; no copy of the donor's flag names",
+      "ref": "src/server/game/Maps/SpawnData.h lines 53-61 (SpawnGroupFlags) and 133-142 (SpawnData)"
+    }
+  ],
+  "cross_link": {
+    "camera": "none in this repo (server side)",
+    "zones": "spawn groups and pools are zone-scale data (see Ambush Pocket brief)",
+    "spawns": "SpawnData rows: respawn seconds, pool id, spawn groups with flags (rows 23)",
+    "loot": "none read",
+    "hud-ui": "threat list is server state; client update path not read",
+    "vfx": "none in box",
+    "animation": "none in box",
+    "sound": "none in box"
+  },
+  "halves": {
+    "read": "server half: src/server/game/Combat/ThreatManager.cpp, ThreatManager.h (partial), src/server/game/Maps/SpawnData.h",
+    "server_half_in_box": "this donor is the server half",
+    "data_half_in_box": "sql/ (schema and rows, not read beyond creature_template line and file count); the paired client data (DBC/DB2) is not in the box within depth 4"
+  },
+  "not_read": [
+    "sql row contents (creature_template rows, spawn rows, quest text)",
+    "dep/ third-party licence files",
+    "ThreatManager.h beyond line 86",
+    "Map and spawn runtime code that consumes SpawnData (only the struct file read)",
+    "src/server/game/Combat/ThreatManager.cpp lines 62-98 (UpdateOffline) apart from the online state change at line 70",
+    "client-side or non-src folders beyond the top-level listing"
+  ]
+}

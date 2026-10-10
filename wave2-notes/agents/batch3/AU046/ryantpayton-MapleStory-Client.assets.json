@@ -1,0 +1,44 @@
+{
+  "donor": "ryantpayton-MapleStory-Client",
+  "code_licence": "GNU AGPL v3 (LICENSE line 1; Data/ItemData.cpp header names AGPL v3). README line 118: free and open-source.",
+  "asset_licence": "No asset licence stated in the box. Repo ships no game art, sound, maps or text tables; game data is user-supplied NX files (README lines 46, 71). Fonts and Icon have no licence file beside them.",
+  "rights_holder_status": "Client code: header of Data/ItemData.cpp names Daniel Allendorf and Ryan Payton (2015-2019); README calls it a made-from-scratch client. Game content: not in repo; user supplies it from the official client; owner not stated in repo (README names Nexon only in a donation note).",
+  "best_class": "C",
+  "halves_read": "client (C++ sources, README, LICENSE, includes, fonts). Server half not in repo and no matching folder found in the box (Elem8100-MapleNecrocer exists, not opened). Data half (NX) absent.",
+  "asset_groups": [
+    {"kind": "game art, sprites, tiles, maps, mobs, NPCs, items, string tables (NX, user-supplied)", "path": "not in repo; named in Util/NxFiles.h lines 39-66", "count_hint": "0 files in box", "licence": "none in box; user-supplied official client data", "class": "D", "note": "Absent. Using it would mean taking the commercial game's content. Not ours to take."},
+    {"kind": "font", "path": "fonts/Arial/Arial.ttf, fonts/Arial/Arial-Bold.ttf", "count_hint": "2 files", "licence": "not stated in box", "class": "C", "note": "Not opened (file only)."},
+    {"kind": "icon", "path": "Icon.png, Icon.ico", "count_hint": "2 files", "licence": "not stated in box", "class": "C", "note": "Application icon."},
+    {"kind": "documentation images", "path": "includes/glfw-3.3.2.bin.WIN32/docs/html/*.png, includes/glfw-3.3.2.bin.WIN64/docs/html/*.png, includes/glew-2.1.0/doc/*.png", "count_hint": "50 png", "licence": "third-party library terms; not read per file", "class": "C", "note": "Doxygen and library doc icons. Not opened."},
+    {"kind": "audio", "path": "Audio/Audio.cpp, Audio/Audio.h", "count_hint": "0 audio files", "licence": "n/a", "class": "D", "note": "Code only; sounds are loaded from NX UI.img (Audio/Audio.cpp line 77)."},
+    {"kind": "data tables (item, skill, job, equip, weapon, bullet)", "path": "Data/*.cpp, Data/*.h", "count_hint": "12 files", "licence": "AGPL (code)", "class": "B", "note": "Code, not tables. Values come from NX at runtime. Share-alike applies to copying code."},
+    {"kind": "gameplay and character code", "path": "Gameplay/, Character/", "count_hint": "152 files", "licence": "AGPL (code)", "class": "B", "note": "Code only. Shape only for us (rule for AGPL)."}
+  ],
+  "inspiration": [
+    "Floating damage digits are laid out glyph by glyph with each advance averaged against its neighbour, then centred by half the total width (Gameplay/Combat/DamageNumber.cpp lines 26-82, centring at line 68).",
+    "Critical hits use a taller stacking row (36 vs 30 px, DamageNumber.cpp line 189). Several hits on one target stack upward from the head position (Gameplay/Combat/Combat.cpp lines 385-398).",
+    "Float-and-fade: numbers rise at a fixed speed, start above full opacity and lose a fixed step per update (DamageNumber.cpp lines 78-79, 181-182; Constants.h line 29; DamageNumber.h line 53). About 94 updates to fade, roughly 0.75 s at an 8 ms step (derived by me).",
+    "Death: the mob plays its die clip, the dead flag is set only when that clip ends (Gameplay/MapleMap/Mob.cpp line 153), then the sprite fades down by a fixed step per update (Mob.cpp line 158).",
+    "Ground patrol: a non-flying mob turns once at each footing edge; a hit-stunned mob that turns drops out of the hit clip (Mob.cpp lines 197-198).",
+    "Afterimage trail: the frame at which the trail starts is read from data (Character/Look/Afterimage.cpp line 47) and the trail draws only from that frame on (lines 65-66). A frame gate, not a timer.",
+    "Named UI sound table: UI sounds are fetched by name from one group and played by name (Audio/Audio.cpp lines 77-79). Shape worth copying for HUD feedback.",
+    "Stance-as-clip: a creature is a set of named clips (stand, move, jump, hit1, die1) picked by a stance value (Mob.cpp lines 62-73). Clean shape for our creature actor."
+  ],
+  "briefs": [
+    {"label": "Stacked float digits (damage feed)", "why": "Readable at 375 wide, one signature effect: numbers pop, stack upward and fade. Critical rows are visibly taller, so a crit reads without a sound.", "keep": "KEPT: stacking upward per hit line; taller row for critical; centred number; fixed rise and fade.", "change": "CHANGED: our own glyph set and tint per source (self, incoming, other); a short bounce on crits; a different row height and fade curve, so it is not the donor's look.", "ref": "Gameplay/Combat/DamageNumber.cpp lines 26-82, 177-190; Gameplay/Combat/Combat.cpp lines 385-398"},
+    {"label": "Edge-turning ground critter", "why": "Readable silhouette, one signature behaviour (walks, turns at a ledge, a hit makes it stop turning and flinch). Works in a fast fight as a simple patrol.", "keep": "KEPT: turn once per edge; a hit clip ends the hit when the critter turns; clip-named stance states.", "change": "CHANGED: a different body plan (low, wide, armoured with a visible tail), a turn pause with a head-look, and our own clip names and timing; never the donor's sprite.", "ref": "Gameplay/MapleMap/Mob.cpp lines 62-73, 153-158, 190-198"},
+    {"label": "Sinking fade on death", "why": "Death is bearable: the body plays its clip, then sinks and fades rather than blinking out. One signature presentation.", "keep": "KEPT: die clip must finish before the fade starts; a fixed fade step per update.", "change": "CHANGED: a dust or ember sink instead of an opacity fade; a short hold before the sink; a different fade time.", "ref": "Gameplay/MapleMap/Mob.cpp lines 153, 158, 406"},
+    {"label": "Frame-gated afterimage trail", "why": "A skill trail that reads as motion without particles: the trail begins at a set point in the attack, not at a timer.", "keep": "KEPT: trail starts at a data-set frame of the caster's animation and draws only from there.", "change": "CHANGED: our trail is a ribbon of three ghost poses in a cool palette; the start frame is per skill, in our own data table.", "ref": "Character/Look/Afterimage.cpp lines 39, 47, 63-66"}
+  ],
+  "not_read": [
+    "Net/ packet code (64 files)",
+    "IO/ UI code (142 files)",
+    "Gameplay/Physics and most of Gameplay/MapleMap beyond Mob.cpp",
+    "Character/Look and Character/Inventory logic beyond Afterimage.cpp",
+    "Graphics/ (file list only)",
+    "includes/NoLifeNx, includes/bass24 (bass.txt licence text), includes/freetype LICENSE.TXT full text",
+    "Any NX data file (absent from the box)",
+    "Data/*.cpp bodies beyond the ItemData.cpp header",
+    "Elem8100-MapleNecrocer (sibling folder, not opened)"
+  ]
+}

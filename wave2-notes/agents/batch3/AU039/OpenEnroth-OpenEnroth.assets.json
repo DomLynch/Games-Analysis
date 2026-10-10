@@ -1,0 +1,43 @@
+{
+  "donor": "OpenEnroth-OpenEnroth",
+  "code_licence": "LGPL-3.0 text with additional permissions (LICENSE; the file's own section headings are 'Additional Definitions' and 'Exception to Section 3 of the GNU GPL')",
+  "asset_licence": "No asset licence file in the box. The only licence file is LICENSE (LGPL-3.0 text), which does not name any asset folder. Original Might and Magic VII game data is required and is not in the box (README.md:7, README.md:39).",
+  "rights_holder_status": "fan project that uses original game data (README.md:7); the rights holder of the original game is not named in the repo files; no copyright line for the project's own assets found (unknown)",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "original game data (MM7 text tables, LOD archives: ANIMS, DATA, MUSIC, SOUNDS)", "path": "not in box (README.md:39 lists the directories the user must supply)", "count_hint": "0 in box (searched for items.txt, monsters.txt, *.lod: none found)", "licence": "none in box; user supplies from their own copy", "class": "C", "note": "Proprietary game data. Loaders in src/Engine/Tables and src/Engine/Objects name the text tables, but the tables themselves are not here. Inspiration only."},
+    {"kind": "2D project icons (PNG)", "path": "resources/images/OpenEnroth.png; distribution/linux/io.github.openenroth.openenroth.png; android/openenroth/src/main/ic_launcher-playstore.png; android/openenroth/src/main/res/mipmap-*/ic_launcher*.png", "count_hint": "about 13 PNG files", "licence": "no licence line for images; repo LICENSE is the only licence file (not stated to cover images)", "class": "C", "note": "Unclear licence for images. Not opened beyond file listing. Do not reuse without a yes from Dom."},
+    {"kind": "GLSL shaders (code)", "path": "resources/shaders/*.frag, *.vert (e.g. glbspshader.frag, gldecalshader.frag, lighting.glsl, fog.glsl)", "count_hint": "about 21 files, names only (not read)", "licence": "repo LICENSE (code)", "class": "A", "note": "Code, not art. Named here for the vfx and decal topic only. Not read."},
+    {"kind": "Lua scripts (dev console, code)", "path": "resources/scripts/*.lua, resources/scripts/dev/, resources/scripts/core/", "count_hint": "about 13 files (listing only, not read beyond names)", "licence": "repo LICENSE (code)", "class": "A", "note": "Developer tooling, not game content."},
+    {"kind": "JSON table", "path": "resources/data/resource_mask_table.json", "count_hint": "1 file, 3156 bytes", "licence": "repo LICENSE (data, not stated)", "class": "C", "note": "Not read. Probably a resource mask table for loader use; check before reuse."},
+    {"kind": "save/regression fixtures", "path": "test/Data/ (.mm7 and .json files named issue_*.mm7, issue_*.json, pr_*.json)", "count_hint": "about 439 entries (listing only, not read)", "licence": "repo LICENSE (not stated for fixtures)", "class": "C", "note": "Test fixtures, likely saves from game state. Not opened (binary). Do not copy."},
+    {"kind": "audio", "path": "src/Media/Audio/ (code only)", "count_hint": "0 audio files in the box (find for .wav, .ogg, .mp3 returned none)", "licence": "n/a", "class": "D", "note": "Code for OpenAL playback; no sound files here."},
+    {"kind": "fonts, models, textures, maps", "path": "none found", "count_hint": "0 (find for .ttf, .fnt, .lod, .bmp, .pcx returned none; no 3D model files seen)", "licence": "n/a", "class": "D", "note": "Map and sprite data live in the original game data, not here."}
+  ],
+  "inspiration": [
+    "Loot as a weighted tier table: each item carries six per-tier weights, the sum per tier is cached once so a roll is a single draw; equipment and weapons pull enchantments from different tables (src/Engine/Tables/ItemTable.cpp:204-233). Recreate: our rarity table as zone data with a cached sum.",
+    "Faction hostility as a grid between monster groups, filled from a flat table and defaulting to friendly (src/Engine/Tables/HostilityTable.cpp:14-22). This is the data source for many-vs-one target choice and the hate list, and it fits MAX_ATTACKERS = 3.",
+    "Each map row sets its own reverb preset and its own music track (src/Engine/Tables/MapTable.cpp:21 and :90). Recreate as zone ambience beds: one reverb and one bed per zone, switched on border crossing.",
+    "Monster descriptor card: body height, collision radius, to-hit radius, movement speed, a tint colour, a sound id per action slot, and one sprite name per animation state (src/Engine/Objects/Monsters.h:94-101). This is the shape for row 7 (creature actor and clips): one card per creature, animation states as keys.",
+    "Pivot offsets per prop type (src/Engine/Tables/ChestTable.cpp:5-8): a small table of x/y anchor, width and height per chest type, so eight prop types sit on the same spot whatever the sprite. Use it for any prop set that must read at 375 wide.",
+    "Text-file tables with a column comment above each loader (items.txt, monsters.txt, mapstats.txt, hostile.txt, placemon.txt, rnditems.txt; src/Engine/Objects/Monsters.cpp:244 and :255, src/Engine/Tables/MapTable.cpp:19). Pattern for our catalogue as runtime source (row 20 and 21): one table per concept, column order in the comment.",
+    "Shader file names suggest a decal pass (gldecalshader), a separate fog and lighting include (fog.glsl, lighting.glsl) and a billboard pass (glbillbshader). Names only, not read: a decal pass for blood and wounds (row 8) is a shader idea to look at, not to copy."
+  ],
+  "briefs": [
+    {"label": "Tiered loot chest set", "why": "Eight prop types share one footprint and each has its own anchor, so a chest reads the same as the one next to it; the silhouette carries the tier.", "keep": "one anchor and footprint per prop type; a tier read from silhouette before colour; same placement rule for every chest", "change": "our own banded iron and hasp designs, not the donor's chest look; a rarity colour ring we add; our own footprint sizes tuned to 375 wide", "ref": "src/Engine/Tables/ChestTable.cpp:5-8 (per-type offset, width and height arrays; the art itself is in the original game data and was not read)"},
+    {"label": "Monster temperament tiers", "why": "A handful of temperaments (suicidal, timid, normal, aggressive) and movement ranges (stationary, short, medium, long, global, free) give readable behaviour from data alone.", "keep": "four temperaments as data; movement range as a named class; the tier is set per creature in the table, not in code", "change": "our own temperament names and ranges tied to leash and aggro row 4; add a threat-scaled-by-protection term; our own numbers", "ref": "src/Engine/Objects/Monsters.cpp:255 (table comment lists the ai and movement fields; the maps for each value sit just below it, lines not exact, not fully read)"},
+    {"label": "Cave zone ambience bed", "why": "One reverb preset and one music track per map gives a zone its mood before any art is seen, and it costs no assets.", "keep": "reverb and music set as one row per zone; switch on zone border; cave-type preset used for underground", "change": "our own reverb preset values and a bespoke drone bed; add a per-zone filter on the bed, not on the reverb", "ref": "src/Engine/Tables/MapTable.cpp:21 and :90 (preset map and music id per map row)"},
+    {"label": "Weighted treasure roll with enchant split", "why": "One cached weight sum per tier makes a loot roll a single draw; splitting enchantments between equipment and weapons keeps the two lists separate and easy to tune.", "keep": "six tier weights per item; cached sum; separate enchant tables for gear and weapons", "change": "our own rarity colours and drop sound per tier; a drop ceremony at 375 wide; our own weights and tier names", "ref": "src/Engine/Tables/ItemTable.cpp:204-233 (random item chance and enchantment chance loaders)"}
+  ],
+  "not_read": [
+    "resources/shaders/*.frag and *.vert (names only; not opened)",
+    "resources/scripts/*.lua (names only)",
+    "resources/data/resource_mask_table.json (not opened)",
+    "test/Data/ (about 439 files listed; not opened, binary saves)",
+    "thirdparty/ (imgui, glad, luajit, sol2 and others; each has its own licence, not read)",
+    "src/GUI and src/Engine/Graphics (HUD and render code; not read for this audit)",
+    "MM7 game data (not in box; cannot be read)",
+    "ICON PNG contents (listed, not opened)",
+    "distribution/, android/ (packaging; not read beyond icon names)"
+  ]
+}

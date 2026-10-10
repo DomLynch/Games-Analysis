@@ -1,0 +1,96 @@
+{
+  "donor": "mangoszero-server",
+  "code_licence": "GNU GPL version 3 (LICENSE is the GPL v3 text; README.md lines 151-165 say 'either version 3 of the License, or (at your option) any later version'). Code headers read 'Copyright (C) 2005-2026 MaNGOS' (src/game/References/ThreatManager.cpp line 7). GPL: clean-room, shape only for us.",
+  "asset_licence": "No separate asset licence. README.md line 180 says World of Warcraft and all related art, images and lore are copyright Blizzard Entertainment, Inc. No art, models, audio or maps are in the repo.",
+  "rights_holder_status": "Server code for Blizzard's World of Warcraft (vanilla 1.12, README.md line 20 'MangosZero - Vanilla WoW server'). Game art, images and lore: Blizzard Entertainment, Inc. (README.md line 180). Code: MaNGOS project copyright lines. Whether Blizzard licenses this project: the files do not say. Community server project; the game client and world data are not in this box.",
+  "best_class": "D",
+  "asset_groups": [
+    {
+      "kind": "client game data (art, models, maps, audio, DBC tables)",
+      "path": "(none in repo; README.md line 85 says Stormlib reads the client's data files, and line 84 says Recast builds navigation from the client's map files; neither the client nor those files are in the box)",
+      "count_hint": "0 files",
+      "licence": "n/a (Blizzard, README.md line 180)",
+      "class": "D",
+      "note": "Nothing usable shipped. The extractor needs the user's own client, which is not here."
+    },
+    {
+      "kind": "world and game database content (SQL)",
+      "path": "(not in checkout; README.md line 24 says game data is stored in MySQL or MariaDB; .gitmodules lists dep, src/realmd, src/modules/SD3, src/modules/Eluna, win; those folders are empty)",
+      "count_hint": "0 files",
+      "licence": "n/a",
+      "class": "D",
+      "note": "The creature, item and loot tables that code loads from the database are not in the box. Data half: absent. Do not write absent for the server half; the server code is read below."
+    },
+    {
+      "kind": "documentation and scripting guides (text)",
+      "path": "extra/doc/EventAI.md (965 lines), extra/doc/ScriptCommands.md (216), extra/doc/SD3_SQL_guide.md (222), extra/doc/Spell.md (21), extra/doc/SD3_Text-tables.md, extra/doc/ChangeLog.md, plus 21 .md files in total",
+      "count_hint": "21 .md files; about 1,500 lines in the four read",
+      "licence": "none stated separately; repo LICENSE is GPL-3",
+      "class": "C",
+      "note": "Ambiguous: the files do not say whether GPL covers the docs. Treat as C. EventAI.md read in part (intro only)."
+    },
+    {
+      "kind": "tool data lists (text)",
+      "path": "src/tools/extractor/vessels.txt (20 lines), src/tools/extractor/offmesh.txt (1 line)",
+      "count_hint": "21 lines in total",
+      "licence": "repo GPL-3 (no separate licence)",
+      "class": "C",
+      "note": "Lists used by the client-data extractor. Coordinate-like content: values not recorded here. Not read beyond line counts."
+    },
+    {
+      "kind": "images and icons",
+      "path": "src/tools/extractor/mangos-tools.jpg (23.5 KB), src/mangosd/mangosd.ico (92 KB), src/tools/extractor/mangos-extractor.ico (92 KB)",
+      "count_hint": "3 files",
+      "licence": "none stated separately",
+      "class": "C",
+      "note": "Project tool images. Not opened (file sizes from ls only). Licence unclear: class C."
+    },
+    {
+      "kind": "server code (GPL-3, shape only)",
+      "path": "src/game/References/ThreatManager.cpp, src/game/References/ThreatManager.h (526 lines), src/game/Object/UnitThreat.cpp, src/game/Object/LootMgr.cpp, src/game/Object/CreatureEventAI.cpp, src/game/Object/CreatureEventAIMgr.cpp",
+      "count_hint": "about 765 .cpp, 670 .h, 39 .hpp in the repo",
+      "licence": "GPL-3",
+      "class": "B",
+      "note": "Share-alike code. For us: clean-room, shape only; no copy of code, constants or text. Read: ThreatManager.cpp in part (lines 73-100, 410-470, 723-732), UnitThreat.cpp line 164, LootMgr.cpp line 368 and 1209 (names and signatures only)."
+    }
+  ],
+  "inspiration": [
+    "Aggro is a sorted list of threat values per creature, sorted high to low, and the creature picks the top entry that is not a second-choice target. Keep the order-then-filter pick; add our own dodge and guard threat rules. Refs: src/game/References/ThreatManager.cpp lines 410-413, 440-470.",
+    "A hit's threat is a flat base value scaled by spell threat mods, a crit multiplier and then the target's total threat modifier, applied in a fixed order. Keep the fixed order and the flat-first rule; add guard and parry as multipliers. Ref: ThreatManager.cpp lines 73-99.",
+    "Taunt copies the current leader's threat onto the taunter, but only when the taunter is below it, and it is a temporary value that fades. A cheap way to swap aggro that never overshoots. Ref: ThreatManager.cpp lines 723-732; UnitThreat.cpp line 164 (stunned or dead units cannot taunt).",
+    "Loot is a store of entries; a group entry picks one winner by roll, and each entry has its own roll. Keep the one-of-N group pick. Refs: src/game/Object/LootMgr.cpp lines 368 and 1209.",
+    "Creature behaviour is written as event rows in a table (on hit, on health band, on timer) rather than in code; the doc describes the event parameters and actions. Good for our boss phases if the rows stay in zone data. Ref: extra/doc/EventAI.md (intro at line 5; event tables from line 127).",
+    "Scripts and text tables are documented as separate guides (SD3 text tables, SQL guide), so the data author has a short format contract. Good template for our catalogue fields. Ref: extra/doc/SD3_Text-tables.md, extra/doc/SD3_SQL_guide.md (not read beyond names)."
+  ],
+  "briefs": [
+    {
+      "label": "Pull-the-aggro swap (enemy target choice)",
+      "why": "A boss that shifts target to the most threatening fighter, with a visible tell, makes many-on-one fights readable. Works at 375 wide with a single ring on the new target.",
+      "keep": "a sorted threat list; the top non-second-choice target wins; taunt copies the leader value and fades",
+      "change": "a 3-attacker cap (our MAX_ATTACKERS); a swap tell (ring and sound) when the target changes; guard and parry feed threat",
+      "ref": "src/game/References/ThreatManager.cpp lines 410-470, 723-732"
+    },
+    {
+      "label": "Group loot pick (drop ceremony)",
+      "why": "One-of-N group entries give a drop moment with a clear winner; the reveal can be the loot beat for a fight.",
+      "keep": "a group entry picks one winner; each entry carries its own roll",
+      "change": "a visible roll reveal with rarity sound; our own item groups; a 'contested' beat when two players want the same item",
+      "ref": "src/game/Object/LootMgr.cpp lines 368 and 1209"
+    },
+    {
+      "label": "Boss phase rows (creature behaviour as data)",
+      "why": "Behaviour written as event rows lets a designer add a phase without code. Phases with a visible bar work at 375 wide.",
+      "keep": "behaviour as rows of event, condition and action; a timer event and a health-band event",
+      "change": "our event names and phase bar; a finisher beat on the last phase; no SQL, the rows live in our zone data",
+      "ref": "extra/doc/EventAI.md (line 5 onward)"
+    }
+  ],
+  "not_read": [
+    "No client data, no database content, no art or audio exists in the box.",
+    "Server half read in part: ThreatManager.cpp (73-100, 410-470, 723-732, headers), UnitThreat.cpp line 164, LootMgr.cpp (signatures and two lines), CreatureEventAI files (names only).",
+    "ThreatManager.h, IsSecondChoiceTarget (Unit), LootMgr.cpp bodies, CreatureEventAI.cpp bodies: not read.",
+    "Doc files: EventAI.md intro only; ScriptCommands.md, SD3 guides, Spell.md, ChangeLog.md: names only.",
+    "The two extractor lists: line counts only. The jpg and ico files: sizes only.",
+    "Data half (SQL) absent from the checkout: the src/modules and dep submodules are empty folders."
+  ]
+}

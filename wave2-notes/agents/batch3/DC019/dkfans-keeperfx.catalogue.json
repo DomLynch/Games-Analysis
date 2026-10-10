@@ -1,0 +1,248 @@
+{
+  "donor": "dkfans-keeperfx",
+  "counts": {
+    "creatures": 36,
+    "classes": 29,
+    "weapons": 41,
+    "gear_sets": 0,
+    "zones": 219
+  },
+  "count_notes": {
+    "creatures": "36 kinds, one per config/creatrs/*.cfg file",
+    "classes": "29 distinct kinds on ADD_TO_PARTY lines across levels/*/ (one malformed token ignored)",
+    "weapons": "41 shot kinds (42 [shot] sections minus NOSHOT) in config/fxdata/magic.cfg; also 32 spells, 30 powers, 14 specials",
+    "gear_sets": "0 gear sets in the config; armour is a stat",
+    "zones": "219 map scripts: 55 in levels/ (classic 10, deepdngn 15, standard 16, lostlvls 14) and 164 in campgns/ across 13 campaigns; 80 terrain slab types are counted separately"
+  },
+  "half_read": "DATA half: config/creatrs, config/fxdata, level and campaign scripts (counted and sampled), lang/ (counted). CODE half: only src/lvl_script_commands.c:6222, src/config_rules.c:169 and config/fxdata/rules.cfg:182-185. Paired original-game data is not in the box. miki151-keeperrl is in the box but is not a pair and was not read.",
+  "creature_families": [
+    "Evil brutes and heavies: dragon, bile_demon, hell_hound, horny, giant, troll, orc, tentacle",
+    "Lords (LORD flag): knight, avatar (avatar is also ONE_OF_KIND)",
+    "Undead and skeletal: skeleton, vampire, ghost, floating_spirit (spectator kind)",
+    "Arachnids and insects: spider, spiderling, maiden (summons spiderlings), bug, fly",
+    "Flyers: bird, fly, ghost, fairy",
+    "Diggers and utility: imp (SPECIAL_DIGGER), tunneller (DIGGING_CREATURE)",
+    "Adventurer-type casters and fighters, also the hero side of parties: wizard, sorceror, witch, druid, time_mage, dark_mistress, monk, samurai, barbarian, archer, thief, dwarfa",
+    "Tiers: 10 levels per kind, 9 LevelsTrainValues thresholds (config/creatrs/dragon.cfg:91, imp.cfg:286); powers unlock by PowersLevelRequired",
+    "Evolution: GrowUp names a new kind and level (demonspawn to DRAGON at level 5; thief to KNIGHT at level 3; config/creatrs/demonspawn.cfg:92, thief.cfg:92)",
+    "Sleep-for-experience on terrain: dragon on LAVA 500, sorceror on GOLD and DENSE_GOLD 200, tentacle on WATER 400"
+  ],
+  "top_creatures": [
+    {
+      "label": "Slag Wyrm",
+      "why": "Tallest clipbox in the set (Size 200 740) and joint-slowest base speed (32, shared by six others). Reads as a tower at 375 wide. Rests on lava to recover.",
+      "keep": "Tall slow silhouette; resting on a hazard tile to recover",
+      "change": "Telegraphed fan breath with a glow-up, not a straight flame line; no lair object; our own sigil",
+      "ref": "config/creatrs/dragon.cfg:22, :25, :89, :93"
+    },
+    {
+      "label": "Gall Brute",
+      "why": "Fat, trembling body; area gas spell at level 4; immune to poison cloud and wind",
+      "keep": "Area-denial gas as a readable zone of danger",
+      "change": "Slow puddle with its own colour and sound; not a bodily-function gag",
+      "ref": "config/creatrs/bile_demon.cfg:35, :36, :90"
+    },
+    {
+      "label": "Iron Knight",
+      "why": "LORD with armour 100 and dexterity 150; reflects spells at level 4 and heals at level 7",
+      "keep": "Reflect stance as a counter",
+      "change": "Visible reflect ring with a short timing window, not a spell list",
+      "ref": "config/creatrs/knight.cfg:89"
+    },
+    {
+      "label": "Grave Warden",
+      "why": "Immune to poison cloud and fear; armour at 5; lightning at 10",
+      "keep": "Immunity as a counter the player must read",
+      "change": "Immunity shown as a rune on the body, readable at 375 wide; no lightning",
+      "ref": "config/creatrs/skeleton.cfg:35, :90"
+    },
+    {
+      "label": "Ember Hound",
+      "why": "Base speed 96 (fast) with flame breath at level 5",
+      "keep": "Fast pack pursuit with a breath cone",
+      "change": "Pack size held to MAX_ATTACKERS = 3; no crude name-linked behaviour",
+      "ref": "config/creatrs/hell_hound.cfg:89"
+    },
+    {
+      "label": "Evolving Hatchling",
+      "why": "Grows into a new kind at a threshold (demonspawn at level 5; thief at level 3)",
+      "keep": "A threshold where the creature becomes a new kind",
+      "change": "Trigger is zone milestones verified by the server, not training points alone",
+      "ref": "config/creatrs/demonspawn.cfg:92, config/creatrs/thief.cfg:92"
+    },
+    {
+      "label": "Shaft Sprite",
+      "why": "75 health, base speed 96, digs from level 1, teleports at level 10; pay 0 and lair size 0",
+      "keep": "A cheap scout that digs its own route",
+      "change": "Digs a shortcut into zone data and leaves a fading dust trail",
+      "ref": "config/creatrs/imp.cfg:282, :286, :287, :290-294"
+    },
+    {
+      "label": "Lord of the Hall",
+      "why": "One-of-a-kind LORD with 3000 health, dexterity 160 and nine powers across levels 1 to 10",
+      "keep": "A single boss with a power ladder",
+      "change": "The ladder is three phases, not ten levels; obeys MAX_ATTACKERS = 3",
+      "ref": "config/creatrs/avatar.cfg:36, :90"
+    }
+  ],
+  "classes": [
+    "Archer: ranged; fire arrow 1, navigating missile 4, speed 6, slow 8 (archer.cfg:89)",
+    "Samurai: melee; sight 5, lightning 6, speed 7, freeze 9 (samurai.cfg:89)",
+    "Barbarian: melee; armour 6 (barbarian.cfg:89)",
+    "Dwarfa: melee; armour 4, rebound 7",
+    "Knight: LORD melee; rebound 4, heal 7 (knight.cfg:89)",
+    "Thief: steals; speed 4, invisibility 7, rebound 10; grows to knight at 3 (thief.cfg:89)",
+    "Wizard: caster; missile 1, fireball 3, rebound 5, heal 5, freeze 6, hailstorm 7, drain 8, slow 9, fire bomb 10 (wizard.cfg:90)",
+    "Witch: caster; poison cloud 3, rebound 4, wind 5, lightning 7, heal 8, hailstorm 10 (witch.cfg:90)",
+    "Monk: healer-fighter; heal 2, armour 3, slow 4, hailstorm 9, word of power 10 (monk.cfg:89)",
+    "Fairy: flyer; drain 3, lightning 4, heal 5, invisibility 6, navigating missile 7, rebound 8, fire bomb 9, freeze 10 (fairy.cfg:89)",
+    "Druid: familiar bird 2, hailstorm 5, drain 7, freeze 9, word of power 10 (druid.cfg:89)",
+    "Maiden: slow 2, summons spiderlings 4, armour 5, drain 7, fear 9 (maiden.cfg:88)",
+    "Time mage: teleport 3, slow 7, fly 9, chicken 10 (time_mage.cfg:89)",
+    "Sorceror: fireball 2, heal 3, fire bomb 4, invisibility 5, navigating missile 6, sight 7, wind 8, word of power 9 (sorceror.cfg:89)",
+    "Avatar: LORD, one of a kind, nine powers, 1 to 10 (avatar.cfg:90)",
+    "Races: none; factions are keeper-side EVIL kinds against hero parties; map scripts branch on PLAYER_GOOD"
+  ],
+  "weapon_families": [
+    "Melee swings: SWING_WEAPON_SWORD and SWING_WEAPON_FIST (config/fxdata/creature.cfg instance1, instance2)",
+    "Arrows and navigating missiles: SHOT_ARROW; SHOT_NAVI_MISSILE 40 damage (config/fxdata/magic.cfg:681)",
+    "Elemental bolts: SHOT_FIREBALL 30 damage with explosion (magic.cfg:537, :556); SHOT_LIGHTNING 20; SHOT_LIGHTNING_BALL 150 (magic.cfg:1177); SHOT_HAILSTORM 5",
+    "Area bombs: SHOT_FIREBOMB 50 damage; SHOT_GRENADE hits creatures and objects; SHOT_TIME_BOMB 300 damage, speed 40 (magic.cfg:1272, :1283)",
+    "Ballistic heavies: SHOT_BOULDER 5000 damage, speed 64 (magic.cfg:925); SHOT_SOLID_BOULDER; SHOT_SPIKE",
+    "Status-only: SHOT_FREEZE 0 damage, FREEZE flag Duration 125 (magic.cfg:598, :109); slow, fear, chicken, disease, cripple (magic.cfg:1494)",
+    "Gas: poison cloud; crazy gas (area gas used by the bile brute)",
+    "Traps: boulder, alarm, poison gas (trapdoor.cfg:360), lightning, word of power (trapdoor.cfg:438), lava, TNT (SHOT_TRAP_TNT magic.cfg:1360)"
+  ],
+  "gear_tiers": [
+    "No gear sets or equipment slots in the config",
+    "Armour is a stat on a 0 to 200 scale; 200 is 80 percent absorption; protect spell adds 25 percent (config/creatrs/imp.cfg:26-27)",
+    "Armour spell: SpellFlags ARMOUR, Duration 250, self-cast (config/fxdata/magic.cfg:119)",
+    "Creature tiers by level: 10 levels, 9 training thresholds (config/creatrs/dragon.cfg:91)",
+    "Treasure objects in five sizes: GOLD_HOARD_1 to GOLD_HOARD_5 (config/fxdata/objects.cfg:1341 to :1437)"
+  ],
+  "zones": [
+    "Lava: wavy liquid, FillStyle 1 (config/fxdata/terrain.cfg:240-250); hurts most kinds by 2 (HurtByLava), druid 8, spiderling 4, dragon and demonspawn 0",
+    "Water: wavy liquid, FillStyle 2 (config/fxdata/terrain.cfg:258-268); tentacle sleeps in water for experience (tentacle.cfg:93)",
+    "Gold and gems: GOLD (terrain.cfg:41), DENSE_GOLD (terrain.cfg:1073), GEMS; gold door DOOR_MIDAS; sorceror sleeps on gold (sorceror.cfg:93)",
+    "Room floors and rooms: treasury, library, prison, torture, training, workshop, temple pool, graveyard, hatchery, lair, barracks, garden, guard post (terrain.cfg slab names)",
+    "Doors: wood, braced, steel, magic, secret, midas (config/fxdata/trapdoor.cfg, 17 sections in all)",
+    "Trap corridor: seven trap kinds (config/fxdata/trapdoor.cfg:282, :360, :438)",
+    "Hero entrance: default generation interval 350 turns (config/fxdata/rules.cfg:183); per-player SET_GENERATE_SPEED applied at src/lvl_script_commands.c:6222; cap 200 at entrance (rules.cfg:185)",
+    "Campaign and level sets: classic, deepdngn, standard, lostlvls (levels/), 13 campaigns (campgns/)"
+  ],
+  "looks": [
+    {
+      "label": "Liquid wibble",
+      "technique": "Lava and water set Wibble 2 for a wavy liquid surface",
+      "ref": "config/fxdata/terrain.cfg:250, :268"
+    },
+    {
+      "label": "Eight-frame liquid loops",
+      "technique": "Short frame lists for water and lava cycles",
+      "ref": "config/fxdata/textureanim.toml:14, :18, :21"
+    },
+    {
+      "label": "Gold glint with uneven hold",
+      "technique": "Repeated frames in the cycle give an uneven shimmer; gold-near-lava variants use shifted cycles",
+      "ref": "config/fxdata/textureanim.toml:26"
+    },
+    {
+      "label": "Six-tile ring props",
+      "technique": "Each tile on its own 8-frame cycle with paired frames; magic mirror and furnace rings",
+      "ref": "config/fxdata/textureanim.toml:53"
+    },
+    {
+      "label": "Explosion light",
+      "technique": "Explosion effects carry a light radius from 2 to 16 with intensity around 45",
+      "ref": "config/fxdata/effects.toml (EFFECT_EXPLOSION_1 to _8)"
+    },
+    {
+      "label": "Word of power glow",
+      "technique": "Effect with light radius 10 and intensity 52",
+      "ref": "config/fxdata/effects.toml:276"
+    },
+    {
+      "label": "Fear circle",
+      "technique": "Effect that marks fear in an area",
+      "ref": "config/fxdata/effects.toml:1464"
+    },
+    {
+      "label": "Projectile light triple",
+      "technique": "Each shot carries radius, intensity and flags for its light (fireball 7 52 1)",
+      "ref": "config/fxdata/magic.cfg:537 block"
+    },
+    {
+      "label": "Lens post effects",
+      "technique": "15 lens sections: wibble, fisheye, compound, and several mist layers",
+      "ref": "config/fxdata/lenses.cfg:11, :23"
+    },
+    {
+      "label": "Team colour palette swap",
+      "technique": "One base sprite set plus per-team palettes; the file lists Red, Blue, Green, Yellow, White, Neutral, Purple, Black and Orange",
+      "ref": "config/fxdata/spritecolors.toml:2, :6"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Slag Wyrm (boss)",
+      "idea": "A tall, slow lair brute that rests on a hot tile to recover between phases; its fan breath is telegraphed",
+      "keep": "Tall slow silhouette; hot-tile rest",
+      "change": "Telegraphed fan breath; our sigil; rest tile is a zone data flag; obeys MAX_ATTACKERS = 3"
+    },
+    {
+      "name": "Gall Brute (zone hazard)",
+      "idea": "A heavy kind whose area gas denies a zone for a few seconds",
+      "keep": "Area denial as a readable zone",
+      "change": "Slow puddle with a sound; no bodily-function gag"
+    },
+    {
+      "name": "Iron Knight (lord duellist)",
+      "idea": "A lord that gains a reflect stance at its fourth rank",
+      "keep": "Reflect as a counter",
+      "change": "Visible reflect ring with a timing window (guard and parry row)"
+    },
+    {
+      "name": "Grave Warden (immunity counter)",
+      "idea": "Immune to poison and fear, so the player must bring a different tool",
+      "keep": "Immunity as a readable counter",
+      "change": "Rune shows the immunity; no lightning"
+    },
+    {
+      "name": "Evolving Hatchling (tier-up creature)",
+      "idea": "Reaches a new kind at a threshold",
+      "keep": "Threshold where the creature becomes a new kind",
+      "change": "Trigger is zone milestones verified by the server (kill and XP rule)"
+    },
+    {
+      "name": "Shaft Sprite (digger scout)",
+      "idea": "A cheap, fast scout that digs its own shortcut",
+      "keep": "A scout that digs",
+      "change": "Edits zone data and leaves a dust trail that fades"
+    },
+    {
+      "name": "Gilded Vault (zone)",
+      "idea": "A treasure zone where resting on gold gives experience, with five visual tiers",
+      "keep": "Rest-to-grow on a resource tile; five visual tiers",
+      "change": "Our own ore tiles and a bronze ramp"
+    },
+    {
+      "name": "Ember Ring (prop look)",
+      "idea": "A six-tile ring prop with staggered 8-frame loops so the ring never blinks in step",
+      "keep": "Staggered phases on a ring",
+      "change": "Our palette and ring size; a pulse on hit"
+    }
+  ],
+  "licence_note": "Code is GPL v2 (LICENSE; README.md:103). 82 map and campaign files carry a GPL v2 header. Original game art, sound and data are not in the box. Creature configs, translations and credits have no stated licence: design shape only, nothing copied.",
+  "not_read": [
+    "src/ (about 253 .c files) apart from src/lvl_script_commands.c:6222 and src/config_rules.c:169",
+    "config/fxdata/slabset.toml (8633 lines, counted only)",
+    "config/fxdata/cubes.cfg (539 entries, not read)",
+    "lang/*.po and lang/*.pot (24 translations plus 2 templates; lang/gtext_eng.pot has 1124 msgid entries, counted only)",
+    "campgns/* maps and credits (headers and counts only)",
+    "config/fxdata/lua (46 files; names only; classes folder has 10 wrappers)",
+    "config/fxdata/sounds.cfg (3 sections, counted only)",
+    "config/mods and keeperfx.cfg",
+    "levels/* beyond the party and generate-speed lines",
+    "miki151-keeperrl (another keeper-genre donor in the box, not a pair, not read)"
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "donor": "daeken-OpenEQ",
+  "counts": {
+    "creatures": 0,
+    "classes": 16,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 620
+  },
+  "creature_families": [
+    {"kind": "note", "text": "No creature or NPC table in the client half (no NPC, spawn or item table under crates/). Two docs name server-side tables (docs/SERVER_SETUP.md, docs/QUEST_HANDIN_PLAN.md); found by grep only, not read."}
+  ],
+  "top_creatures": [],
+  "classes": [
+    "16 playable class names in one lookup (crates/openeq/src/account_ui.rs:1633): Warrior, Cleric, Paladin, Ranger, Shadowknight, Druid, Monk, Bard, Rogue, Shaman, Necromancer, Wizard, Magician, Enchanter, Beastlord, Berserker. Index 0 is Unknown.",
+    "16 named races plus a fallback 'Race N' (crates/openeq/src/account_ui/creation.rs:669): Human, Barbarian, Erudite, Wood Elf, High Elf, Dark Elf, Half Elf, Dwarf, Troll, Ogre, Halfling, Gnome, Iksar, Vah Shir, Froglok, Drakkin.",
+    "Progression, skills and faction data: not in the client half (not read beyond the name tables)."
+  ],
+  "weapon_families": [
+    {"kind": "note", "text": "No weapon table in the client half. Gear arrives from the server; the client loads equipment scenes by numeric code (see gear_tiers)."}
+  ],
+  "gear_tiers": [
+    {"kind": "mechanism", "text": "Equipment is loaded per numeric code: fn equipment_id (crates/openeq-assets/src/character/equipment.rs:223) and load_equipment_scene (equipment.rs:11) pull an EQG equipment scene at runtime. Character model modules include Luclin, modern and modern-Drakkin variants (crates/openeq-assets/src/character/)."},
+    {"kind": "note", "text": "No material ladder, tier names or set bonuses are in the client half. Tier visuals are not established from this donor."}
+  ],
+  "zones": [
+    {"kind": "table", "text": "crates/openeq-assets/data/peq-zone-environment.txt: 620 zone rows, 31 columns. Header (line 3) lists short_name, version, zone_id, four fog sets of red, green, blue, fog start and fog end, then fog_density, minclip, maxclip, sky, ztype, time_type, castoutdoor, timezone. Source is a third-party EQEmu database dump with no licence line (class C). Values not copied."},
+    {"kind": "table", "text": "Categorical columns, counted by me: ztype 255 (407 rows), 0 (158), 1 (55). time_type 2 (226), 0 (188), 1 (177), 5 (16), 3 (9), 4 (4). sky 0 (317), 1 (279), 2 (21), 255 (2), 8 (1). Meanings not read beyond the header."},
+    {"kind": "hazard", "text": "Liquid regions: crates/openeq-assets/src/liquid_regions.rs (file name only, not read); docs/LIQUID_REGIONS.md (not read)."},
+    {"kind": "hazard", "text": "Lava regions use a per-region colour expression and a two-layer lava material (crates/openeq-render/src/shaders/lava.wgsl, see looks)."},
+    {"kind": "hazard", "text": "Waterfall curtains are authored surfaces with an independent scroll (docs/EQG_WATERFALL_RENDERING.md, see looks)."},
+    {"kind": "hazard", "text": "Anguish basin: an authored water box that does not fill the central room; the traversed route is dry (docs/ANGUISH_BASIN_ROUTE.md, opening lines read). A registered volume and the visible surface can disagree, which is a design trap to avoid."}
+  ],
+  "looks": [
+    {
+      "label": "Two-layer molten pool",
+      "technique": "One atlas sampled twice with two scroll offsets. The bottom layer is doubled in brightness; the top layer is lit and blended in by its own alpha; the result is opaque and fogged.",
+      "ref": "/mnt/frankendom-donors/daeken-OpenEQ/crates/openeq-render/src/shaders/lava.wgsl:15-19"
+    },
+    {
+      "label": "Falling sheet (waterfall)",
+      "technique": "Colour and opacity come from one diffuse texture, but opacity scrolls on its own, with source-alpha blending and a filtered alpha cutoff.",
+      "ref": "/mnt/frankendom-donors/daeken-OpenEQ/docs/EQG_WATERFALL_RENDERING.md:4 and :67"
+    },
+    {
+      "label": "Caster hand glow",
+      "technique": "Spell visuals follow skeletal hand sockets for classic, Luclin and modern characters (up to six socket indices per model); first-person casting uses a camera-relative hand location because the player's body is not rendered in that view; unknown attachment codes fall back to the body anchor.",
+      "ref": "/mnt/frankendom-donors/daeken-OpenEQ/docs/SPELL_EFFECT_RENDERING.md:8-10 and /mnt/frankendom-donors/daeken-OpenEQ/crates/openeq-render/src/actors.rs:128"
+    },
+    {
+      "label": "Time-of-day ambient light",
+      "technique": "Environment light comes from a reserved colour-map column sampled by the sky's time slot, so ambient colour follows a day cycle from a table.",
+      "ref": "/mnt/frankendom-donors/daeken-OpenEQ/docs/SKY_LIGHT_COLOR_INPUTS.md:4"
+    },
+    {
+      "label": "Data-bound HUD frame",
+      "technique": "A UI document is parsed into named widgets with texture atlases, timed animations and an explicit frame index; gauges are bound as a 0 to 1 fraction (for example HP at 0.73) and the layout is recomputed from bindings. State variants (pressed, hovered, disabled) are named in the asset audit, not in the lines read.",
+      "ref": "/mnt/frankendom-donors/daeken-OpenEQ/crates/openeq-ui/README.md:14"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Molten pool",
+      "idea": "A lava or slag pool drawn from one atlas with two offset layers, blended by a top alpha.",
+      "keep": "Two scroll offsets on one texture; top-alpha blend; opaque result with fog.",
+      "change": "Our own crust pattern and a cooler violet tint."
+    },
+    {
+      "name": "Falling curtain",
+      "idea": "A waterfall sheet whose colour and opacity scroll independently.",
+      "keep": "Independent opacity scroll with an alpha cutoff.",
+      "change": "A wider top, a frayed base and a foam strip of our own."
+    },
+    {
+      "name": "Caster hand glow",
+      "idea": "A spell glow anchored to the hand socket, with a camera-relative fallback in first person.",
+      "keep": "Socket anchoring with a fallback when the body is not drawn.",
+      "change": "School colours and a curling arc of our own."
+    },
+    {
+      "name": "Hanging lantern",
+      "idea": "A fixed-mount light that swings on a chain instead of spinning (idea from the asset audit; docs/WLD_LAMP_ANIMATION.md not read).",
+      "keep": "A fixed mount with motion on one axis only.",
+      "change": "Warm ember light and a brass cage of our own."
+    },
+    {
+      "name": "Zone atmosphere record",
+      "idea": "One flat row per zone holding fog, clip, sky and time columns.",
+      "keep": "One row per zone, one table for all zones.",
+      "change": "Our own fields and values; none copied from the donor table (row 20 catalogue fields, row 23 zone data)."
+    },
+    {
+      "name": "Day-cycle ambient",
+      "idea": "Ambient light sampled from a colour table at fixed times of day.",
+      "keep": "Fixed sample times on one table; colour follows the day.",
+      "change": "Our own palette table, not the donor's sample values (row 16 colour grade)."
+    },
+    {
+      "name": "Bind-return death",
+      "idea": "The donor's own plan names forced return to bind as the first death target; hover recovery is a separate server mode, not a prerequisite.",
+      "keep": "One default recovery path, with other modes as explicit settings.",
+      "change": "Our own penalty and presentation (row 17 death and respawn)."
+    },
+    {
+      "name": "Data-bound HUD",
+      "idea": "HUD layout built from named widgets and bindings, with gauges as fractions of 0 to 1 (state variants per the asset audit; not verified in the lines read).",
+      "keep": "Named widgets, bindings in, one layout pass out.",
+      "change": "Our own frame art and states (row 14 HUD)."
+    }
+  ],
+  "licence_note": "Code: MIT OR Apache-2.0 (crates Cargo.toml line 14, inherited by every crate). No LICENSE file in the tree. No original client assets are distributed (README line 331); the client needs the user's own EverQuest install (crates/openeq-ui/README.md line 5). The zone environment table is a third-party EQEmu dump with no licence line (class C). Audit class overall D: rights unclear. Inspiration is shader technique and category-level only.",
+  "not_read": [
+    "Server half: the donor has only server patches (tools/eqemu-patches/*.patch), read by name only. The paired EQEmu server tree is in the box at /mnt/frankendom-donors/EQEmu (named in audit AU018); not read by me.",
+    "Data-pack half: the user's own EverQuest install; not in the box.",
+    "Binary blobs native_witness.bin and native_controls.bin (class C): not opened.",
+    "Bodies of the zone environment table and the sky colour sample table (headers and counts only).",
+    "Docs beyond the ones cited (titles or opening lines only), including WLD lamp animation, layered colour, XMI plan and server setup docs.",
+    "Shaders other than lava.wgsl; Cargo.lock; tools/ bodies; third-party dependency licences (not in the tree).",
+    "Liquid region code body (name only)."
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "donor": "XProger-OpenLara",
+  "code_licence": "BSD 2-Clause (LICENSE line 1 'BSD 2-Clause License'; copyright 2018 Timur XProger Gagiev)",
+  "asset_licence": "No licence covers the data. The only licence text in the tree is LICENSE (code). The PKD, AD4, bmp, png, rom, language and icon files carry no licence in the tree. bin/openvr_api.dll has no licence file in the tree.",
+  "rights_holder_status": "unknown: README line 2 says 'Classic Tomb Raider open-source engine'; the repo does not say who owns the level, music and art data or where it came from; the PC build reads the user's own DATA files (gameflow.h lines 1049-1085)",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "level_and_music_pack", "path": "src/platform/gba/data/TITLE.PKD, LEVEL1.PKD, LEVEL2.PKD, GYM.PKD, TRACKS.AD4; src/platform/32x/data/LEVEL1.PKD, LEVEL2.PKD, GYM.PKD", "count_hint": "8 files, 0.9 MB to 3.0 MB each (ls)", "licence": "none in tree", "class": "C", "note": "Original-format level and music packs in console packings; names match the level table in src/gameflow.h. Binary not opened."},
+    {"kind": "3do_cd_bundle", "path": "src/platform/3do/CD/ (System/Drivers/cport*.rom x4, System/Drivers/languages/*.language x8, Kanji16.4 font, signatures); src/platform/3do/banner.bmp", "count_hint": "about 15 files, font 925 KB, signatures 336 KB", "licence": "none in tree", "class": "C", "note": "Platform system and font files. Not opened."},
+    {"kind": "language_strings_and_glyphs", "path": "src/lang/*.h (16 language headers, 5 glyph headers); src/lang/glyph_cn.bmp, glyph_ja.bmp, glyph_ko.bmp, glyph_gr.bmp, glyph_ru.png", "count_hint": "21 headers, 5 glyph bitmaps", "licence": "none in tree (en.h line 4 holds a credit comment)", "class": "C", "note": "Text tables and bitmap glyph packs for each language. Text not quoted. Licence for the text is not stated."},
+    {"kind": "platform_art_png_bmp", "path": "about 27 PNG and 6 BMP files across src/platform (icons, store banners, launch screens), plus src/platform/gba/IMGS/O/P/OPLA.bmp and gba/labels.png", "count_hint": "about 33 image files", "licence": "BSD tree notice only; not stated for art", "class": "C", "note": "Icons and banners for each platform. Not opened."},
+    {"kind": "shader_sources", "path": "src/shaders (glsl, hlsl, pica) and src/platform shader files", "count_hint": "about 41 files", "licence": "BSD 2-Clause (repo)", "class": "A", "note": "Code, not assets. Keep the BSD notice if reused."},
+    {"kind": "binaries", "path": "bin/OpenLara (ELF, 985,664 B); bin/openvr_api.dll (486,176 B); src/platform/gba/packer/tracks/cygwin1.dll (2,992,181 B)", "count_hint": "3 files", "licence": "none in tree", "class": "C", "note": "Only the ELF magic of bin/OpenLara was checked. Not read."},
+    {"kind": "game_data_runtime", "path": "the user's own DATA folder (gameflow.h lines 1049-1085: DATA/<stem>.PHD, .TR2, .SAT, .PSX)", "count_hint": "0 in box", "licence": "none in repo", "class": "D", "note": "Read at runtime from the user's install. Not in the box."}
+  ],
+  "inspiration": [
+    "Predator mood machine: four moods (sleep, stalk, attack, escape) in src/enemy.h lines 41-54 and 299-330. A wound pushes a hunter to escape unless a bravery roll passes; the roll is likely while hunting and unlikely while fleeing, and needs the target in the same zone. Fixed-AI and random-AI variants share one state set.",
+    "Patrol inside the shared footprint of two navigation boxes (enemy.h lines 29-41). Each leg is a random point inside the overlap of two consecutive boxes, inset from the edges, so animals never walk along a wall.",
+    "Fixed-rate think separate from frame rate (enemy.h lines 333-336). Defect: one think per call, so after a long frame it lags instead of catching up. Fix: loop while a full step is held, with a cap. Idea kept; defect fixed in ours.",
+    "Flier that circles, dives and returns (enemy.h lines 1555-1600): awake, fly, attack, circling and death states. An attack that loses reach drops back to sleep (line 1591).",
+    "Level table as flat rows (src/gameflow.h lines 260-266): file stem, string id and music track per level. Data-first; our zone rows can take the same flat shape.",
+    "Bitmap glyph packs for non-Latin scripts (src/lang/glyph_*.bmp; 21 language and glyph headers). Relevant if the fight HUD adds languages.",
+    "Per-platform repacking of the same level data (src/platform/32x/data and gba/data). A size-budget lesson, not art to copy."
+  ],
+  "briefs": [
+    {"label": "Wheeling night flier", "why": "A small, fast hover that circles the player, dives, then returns. Readable at distance as a moving silhouette. Sound and effects: not read.", "keep": ["wheel then dive rhythm", "return to idle when the target leaves reach", "wide wings on a small body"], "change": ["an ember moth with a figure-eight flight path and a short light trail", "different wing and body proportions", "recreated from scratch as an original, never a copy of the donor's creature"], "ref": "src/enemy.h lines 1555-1600 (Bat struct; state names at line 1566)"},
+    {"label": "Four-mood stalker", "why": "One creature moves from idle to stalking to striking, and bolts when hurt; a bravery roll lets some hurt ones fight on, which gives drama. Silhouette: low quadruped (category level).", "keep": ["sleep, stalk, attack, escape moods", "a wound leads to escape with a chance of resolve", "mood re-chosen on the fixed think step"], "change": ["a quadruped with a visible mood cue in head or tail posture", "resolve comes from a per-enemy stat in zone data, not a random roll", "distinct silhouette and palette; recreated as our own"], "ref": "src/enemy.h lines 41-54 and 299-330 (Enemy base mood enum and selection)"},
+    {"label": "Patrol through a shared corridor", "why": "Wandering looks purposeful when each leg is a random point in the overlap of two areas, inset from the edges.", "keep": ["random leg target inside the shared area", "inset from edges so nothing hugs a wall"], "change": ["grid cells with a leash radius and a pause at each point", "no level boxes; patrol comes from our zone data"], "ref": "src/enemy.h lines 29-41 (Path::getNextPoint)"}
+  ],
+  "not_read": [
+    "Every PKD, AD4, bmp, png, rom and language binary (binary, not opened)",
+    "bin/OpenLara, bin/openvr_api.dll, src/platform/gba/packer/tracks/cygwin1.dll (only the ELF magic of bin/OpenLara was checked)",
+    "camera.h, level.h, lara.h, sound.h, ui.h, animation.h, objects.h bodies (names only)",
+    "Shader bodies and per-platform build files",
+    "Half: engine read; data half listed by name and size only; the original game files are not in the box"
+  ]
+}

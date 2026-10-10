@@ -1,0 +1,66 @@
+{
+  "donor": "SWG-Source-src",
+  "half_read": "server (game/server, game/shared, engine/server, engine/shared); client game code absent (engine/client holds only the Miff tool, names only); paired donor SWG-Source-swg-main has empty submodules; dsrc data pack absent in both",
+  "code_licence": "CONFLICT: LICENSE.md contains LGPL-3.0 text; _RESTRICTED-NOTE.txt says leaked proprietary SWG source with no licence. Treated as class C.",
+  "asset_licence": "No asset files in the box. Database and combat data files fall under the same conflict.",
+  "rights_holder_status": "leaked proprietary source (per _RESTRICTED-NOTE.txt); copyright line in combat.def names Sony Online Entertainment (2001); README credits an earlier public fork",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "2D sprites, tilesets, UI art, fonts", "path": "none in box", "count_hint": "0", "licence": "n/a", "class": "D", "note": "no image or font files found in the tree"},
+    {"kind": "3D models, textures", "path": "none in box", "count_hint": "0", "licence": "n/a", "class": "D", "note": "no mesh or texture files found"},
+    {"kind": "audio, music", "path": "none in box", "count_hint": "0", "licence": "n/a", "class": "D", "note": "no audio files found"},
+    {"kind": "maps, levels, text tables", "path": "none in box (dsrc absent; no .stf, .iff or .msg found)", "count_hint": "0", "licence": "n/a", "class": "D", "note": "string and object data live in the absent dsrc pack"},
+    {"kind": "database schema tables", "path": "game/server/database/schema/*.tab", "count_hint": "67 files", "licence": "conflict (see code_licence)", "class": "C", "note": "creature_objects.tab and object_templates.tab name the creature stat and template columns; values not recorded"},
+    {"kind": "database scripts and migrations", "path": "game/server/database/queries, updates, shared_schema", "count_hint": "388 .sql in tree", "licence": "conflict", "class": "C", "note": "npc_weapon_loot.sql holds NPC weapon rows; values not recorded"},
+    {"kind": "combat definitions", "path": "game/server/application/SwgGameServer/src/shared/combat/combat.def", "count_hint": "1 file, 32 lines", "licence": "conflict; file carries Sony Online Entertainment copyright line", "class": "C", "note": "hit-location bone enum"},
+    {"kind": "profile binaries", "path": "SwgGameServer.profdata, SwgDatabaseServer.profdata", "count_hint": "2 files (not opened)", "licence": "conflict", "class": "C", "note": "not read"},
+    {"kind": "code generation templates", "path": "game/server/application/SwgDatabaseServer/src/shared/generated/*.template", "count_hint": "8 in tree", "licence": "conflict", "class": "C", "note": "database object encoders; not read"}
+  ],
+  "inspiration": [
+    "Hit location as a skeleton profile: a creature has a bone set and each bone has its own attack modifier table; non-creature targets always use the default location. Frankendom: per-creature regions with their own armour mods, not six bones.",
+    "Damage as a list of typed attribute modifiers: one hit becomes a list of mods, health loss is one mod with a direct-damage flag and pool decay. Frankendom: lets sustain, decay and armour stack later.",
+    "Attacks as queued actions: the attack command is queued on the creature with the weapon and mode, and aim is its own queued entry. Frankendom: aim and strike as ordered entries the server checks.",
+    "Per-AI threat table: each AI keeps target to hate values, the highest current value becomes the target, and pets pass hate to their owner with a zero entry.",
+    "Target expiry and leash: the primary target clears after a period with no activity; leash time and forced target are exposed (bodies not read).",
+    "Designer-tunable threat through a script bridge: add hate, add hate over time, aggro immunity per player and reset timer are callable from data."
+  ],
+  "briefs": [
+    {
+      "label": "Threat ladder (aggro ledger)",
+      "why": "a boss reads its target from a visible value and the top slot changes as players fight, which gives the fight a story",
+      "keep": ["top target re-picks from the table over time", "pet or summon feeds the owner with a zero entry", "target clears after silence"],
+      "change": ["cap the table at MAX_ATTACKERS of 3", "show threat as a ring colour on the enemy, not a number", "a taunt that moves one slot up"],
+      "ref": "engine/server/library/serverGame/src/shared/ai/HateList.cpp (addHate line 97, findNewTarget line 450)"
+    },
+    {
+      "label": "Segmented hit regions",
+      "why": "a hit on a shield arm feels different from a hit on the head because the region picks the armour that answers",
+      "keep": ["hit region index passed into damage", "regions that do not exist on a target fall back to a default", "default region for objects"],
+      "change": ["per-creature regions such as crest, shield arm and tail instead of six bones", "region flashes on the silhouette", "torso as default"],
+      "ref": "game/server/application/SwgGameServer/src/shared/combat/CombatEngine.cpp (damage line 405, computeCreatureDamage line 602)"
+    },
+    {
+      "label": "Aim then strike queue",
+      "why": "a readable wind-up that the server checks in order makes ranged fights feel deliberate",
+      "keep": ["aim is a queued action before the attack", "attack carries weapon and mode"],
+      "change": ["aim is a stance that builds a charge shown on the lock-on ring", "typed payload instead of packed string"],
+      "ref": "game/server/application/SwgGameServer/src/shared/combat/CombatEngine.cpp (addAttackAction line 144)"
+    },
+    {
+      "label": "Typed damage mod list",
+      "why": "a hit that becomes named modifiers can be shown, undone or decayed without rewriting hit code",
+      "keep": ["one hit yields a list of mods with a tag and decay style"],
+      "change": ["mods drive hitstop and the finisher window directly", "our own tag names"],
+      "ref": "game/server/application/SwgGameServer/src/shared/combat/CombatEngine.cpp (computeCreatureDamage line 602)"
+    }
+  ],
+  "not_read": [
+    "HateList setLeashTime and forceHateTarget bodies",
+    "ScriptMethodsHateList bodies beyond declarations",
+    "ConfigCombatEngine.cpp and its hit-location data",
+    "all .tab and .sql bodies beyond headers and one loot file head",
+    "profile binaries",
+    "client half (absent)",
+    "ScriptMethodsSpawner spawn cap logic (only the script bridge name was seen)"
+  ]
+}

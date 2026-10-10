@@ -1,0 +1,54 @@
+{
+  "donor": "crossuo-crossuo",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "count_notes": {
+    "creatures": "not in repo; UO creature data is read from the UO folder at run time",
+    "classes": "not in repo; professions read from prof.txt in the UO folder (src/Managers/ProfessionManager.cpp 381)",
+    "weapons": "not in repo",
+    "gear_sets": "not in repo",
+    "zones": "not in repo; maps are UO data",
+    "reference_only": "183 spell rows in src/Spells.cpp (seven school tokens); 54 gump files in src/Gumps"
+  },
+  "half_read": "client only; the server half is not in this donor. Named in the box, not read: ModernUO (server), ClassicUO, xrip-uo-client, ZaneDubya-UltimaXNA",
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [
+    "No race or class data in the repo. Profession tree loader: src/Profession.cpp (CProfessionCategory, CProfession).",
+    "Skill groups exist in the client (src/SkillGroup.cpp, src/Gumps/GumpSkills.cpp); not read in depth.",
+    "Spell schools as tokens in src/Spells.cpp: magery, mastery, necromancy, mysticism, ninjitsu, bushido, chivalry; 183 table rows."
+  ],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [],
+  "looks": [
+    {"label": "Palette shader", "technique": "one fragment body for colour, partial hue, text, land and spectral modes; red channel of the sprite is a 32-entry palette index; partial hue recolours only pure-grey pixels; spectral and shadow modes are a grey ramp at 1.5x, 0.5x or fixed 0.6", "ref": "src/ShaderData.h 56, 65, 76-87"},
+    {"label": "See-through circle around the player", "technique": "circle sprite with alpha falling off linearly with radius (cap 200); draw pass writes alpha only and sets a stencil marker; compositing pass not read", "ref": "src/GLEngine/GLTextureCircleOfTransparency.cpp 27, 47, 78"},
+    {"label": "Bearing pointer", "technique": "screen-space arrow with eight directional frames chosen from the bearing to the goal; iso projection with a step of 22 units; clamped to the window edges; colorizer flash for about 120 ms, re-armed one second ahead", "ref": "src/QuestArrow.cpp 31, 38, 61, 63, 66"},
+    {"label": "Gusting weather layer", "technique": "particle count from window area divided by 7500 plus a base; size ratio per particle from its id; wind re-rolled every 7-13 s; sign cannot flip directly (passes through zero)", "ref": "src/Weather.cpp 51, 113, 117, 124; src/WeatherEffect.cpp 10"},
+    {"label": "Colorizer flash as a HUD cue", "technique": "a recolour pass used as a short periodic flash on a HUD element, not on the world", "ref": "src/QuestArrow.cpp 66"}
+  ],
+  "originals": [
+    {"name": "Halo Sight", "idea": "a see-through halo at the hero so occluders fade near the hero", "keep": "radial alpha falloff, radius cap, alpha-only write", "change": "elliptical iso falloff, our fade time, a mobile-width radius"},
+    {"name": "Bearing Pin", "idea": "a HUD pointer to the next objective with eight bearing frames", "keep": "eight bearing frames, clamped to the HUD edge, a short colour flash on a one-second rhythm", "change": "our ribbon shape, palette, a flash rule that never blocks input"},
+    {"name": "Palette Dye", "idea": "one shader that maps the red channel to a 32-entry palette with grey-only hue and a spectral ramp", "keep": "the mechanism", "change": "our palette and ghost colours"},
+    {"name": "Gust Layer", "idea": "zone weather with area-scaled particles and a wind re-roll that cannot flip sign", "keep": "particle count from area, random size per particle, wind timer 7-13 s, passes through zero", "change": "zone-specific wind, pixel-cell particles"},
+    {"name": "Bulletin Pin", "idea": "a notice-board window of posted notes", "keep": "list, post action, per-item window", "change": "pinned cards, wood frame, drag-to-pin"}
+  ],
+  "licence_note": "New files AGPL-3.0-or-later (LICENSE); LICENSE.old says some files are MIT and many src files carry MIT SPDX headers (src/QuestArrow.cpp line 1); resources/* AGPL per .reuse/dep5; external/LICENSE.stb MIT. Game data not in repo. Rights holder unknown. Mechanics as shape only.",
+  "not_read": [
+    "src/Wisp/ subsystem (names only: connection and packet layer)",
+    "most gump files (names and line counts only); minimap and world-map logic",
+    "party, walker and pathing, macros, GLFrameBuffer post-process",
+    "compositing pass that uses the circle of transparency",
+    "shader bodies for land-lighting and font modes beyond the cited lines",
+    "death presentation path (which code draws spectral mode, and when)",
+    "readability at 375 wide (mobile layout not searched)",
+    "sound: none in repo (deps holds five demo WAVs of the SDL library, not game sound)"
+  ]
+}

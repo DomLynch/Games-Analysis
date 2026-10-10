@@ -1,0 +1,154 @@
+{
+  "donor": "clockworklabs-SpacetimeDB",
+  "counts": {
+    "creatures": 2,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 1
+  },
+  "creature_families": [
+    {
+      "label": "Player body",
+      "note": "per-player entity with direction, speed, last split time; up to 16 per player",
+      "ref": "/mnt/frankendom-donors/clockworklabs-SpacetimeDB/demo/Blackholio/server-rust/src/lib.rs:24"
+    },
+    {
+      "label": "Food pellet",
+      "note": "mass 2 to 4, target 600 on the map, refilled by timer",
+      "ref": "/mnt/frankendom-donors/clockworklabs-SpacetimeDB/demo/Blackholio/server-rust/src/lib.rs:20"
+    }
+  ],
+  "top_creatures": [
+    {
+      "label": "Split-and-rejoin body cluster",
+      "why": "one player becomes many bodies that pull back together; readable many-from-one ring at 375 wide",
+      "keep": "split cap, half-mass split, gravity ramp for the last 2 s before merge, 5 s delay",
+      "change": "bodies become short-lived attack-capable shards; merge is a fight beat with hit-stop, not a mass add",
+      "ref": "server-rust/src/lib.rs:24,25,362,384,495-520,596-607"
+    },
+    {
+      "label": "Heavy slow body",
+      "why": "size makes movement slower, a clear weight read",
+      "keep": "speed falls with the square root of mass",
+      "change": "use our weight class table, not the raw formula",
+      "ref": "server-rust/src/lib.rs:308-309"
+    },
+    {
+      "label": "Pulsing pellet",
+      "why": "small pickups pulse faster than large bodies (rate 5.0 against 2.2), so size reads at a glance",
+      "keep": "pulse-rate tiers by size",
+      "change": "pulse ties to loot rarity, not size",
+      "ref": "client-godot/Circle2D.cs:68,88"
+    },
+    {
+      "label": "Wobbling outline",
+      "why": "seven-lobe sine wobble on the rim makes a still shape look alive",
+      "keep": "low-amplitude rim wobble",
+      "change": "lobe count and amplitude are ours",
+      "ref": "client-godot/Circle2D.cs:74-82"
+    },
+    {
+      "label": "Decaying giant",
+      "why": "big bodies lose 1 percent of mass every 5 s down to base mass: a quiet pressure to keep moving",
+      "keep": "floor at base mass; slow timer",
+      "change": "apply to a meter we own (focus); keep float state so the integer cast does not truncate",
+      "ref": "server-rust/src/lib.rs:137,571-582"
+    }
+  ],
+  "classes": [],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [
+    {
+      "label": "Open square arena",
+      "note": "world size 1000 from the config row; border and backdrop are client art (not read here)",
+      "ref": "server-rust/src/lib.rs:133"
+    }
+  ],
+  "looks": [
+    {
+      "label": "Layered halo disc",
+      "technique": "outer halo at low alpha, body disc, inner core, offset highlight; halo radius pulses with time",
+      "ref": "client-godot/Circle2D.cs:68-72"
+    },
+    {
+      "label": "Consumed pickup slides into eater and shrinks",
+      "technique": "tween toward target over 0.2 s, scale to zero, draw-order bump so it renders above the eater, then destroy",
+      "ref": "client-unity/Assets/Scripts/EntityController.cs:52-60; client-ts/src/game/EntityController.ts:48-56"
+    },
+    {
+      "label": "Position interpolation between server updates",
+      "technique": "lerp to last server position over 100 ms",
+      "ref": "client-ts/src/game/EntityController.ts:5,64; client-unity/Assets/Scripts/EntityController.cs:11"
+    },
+    {
+      "label": "Palette by player index",
+      "technique": "index modulo palette length; values not copied",
+      "ref": "client-unity/Assets/Scripts/CircleController.cs:9,35"
+    },
+    {
+      "label": "Rim wobble polyline",
+      "technique": "about 72-point polyline with sine offset per point",
+      "ref": "client-godot/Circle2D.cs:74-82"
+    },
+    {
+      "label": "Layered starfield with twinkle",
+      "technique": "three low-alpha nebula discs plus per-star sine twinkle",
+      "ref": "client-godot/StarfieldBackground.cs:30,36"
+    },
+    {
+      "label": "Mass-capped camera zoom-out",
+      "technique": "size = 50 + min(50, mass/5) + 30 when more than one body; zoom eased per second",
+      "ref": "client-ts/src/game/math.ts:18-19; client-ts/src/game/CameraController.ts:32-34"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Mirror Shards",
+      "idea": "a time-limited hero ability that splits into a few half-strength shards which pull back together in the last two seconds",
+      "keep": "time-limited split, half strength, pull-back before merge",
+      "change": "shards attack, cap at 3, merge is a fight beat with hit-stop; server-verified like any engage (rows 4 and 9)"
+    },
+    {
+      "name": "Heavy Tide",
+      "idea": "an elite whose weight slows it on a square-root curve and that absorbs only smaller fallen minions",
+      "keep": "square-root speed falloff; absorb only below 0.85 size ratio",
+      "change": "absorbing heals or extends reach; no player bodies are absorbed (rows 7 and 18)"
+    },
+    {
+      "name": "Ember Motes",
+      "idea": "loot pickups that pulse faster when small and slide into the collector over 0.2 s",
+      "keep": "pulse by size; slide and shrink into collector with draw-order bump",
+      "change": "rarity sets colour and sound per tier; phone inspect flow per loot ruling (rows 18 and 12)"
+    },
+    {
+      "name": "Fading Focus",
+      "idea": "a hero resource that decays on a slow timer and stops at a base floor",
+      "keep": "slow timed decay; floor",
+      "change": "focus meter, 1 percent every 5 s above base, kept as float (rows 3 and 14)"
+    },
+    {
+      "name": "Breathing Camera",
+      "idea": "zoom-out capped by mass and by extra bodies",
+      "keep": "capped zoom-out, eased per second",
+      "change": "cap tied to hero weight class and combo count (row 11)"
+    },
+    {
+      "name": "Shore Arena",
+      "idea": "one bounded arena with a layered starfield backdrop",
+      "keep": "single bounded arena; layered backdrop",
+      "change": "fight arena with a corner hazard instead of open pickups; arena as zone data record (row 23)"
+    }
+  ],
+  "licence_note": "demo/Blackholio LICENSE is Apache License 2.0 (line 2 read). Repo LICENSE.txt is BSL 1.1 per AU010 (not re-read). Apache allows adapting with notice; ideas here are mood and mechanism only, no code copied.",
+  "not_read": [
+    "server-csharp, server-cpp, server-ts, client-unreal (folder names only)",
+    "client-ts: BlackholioScene.ts, input.ts, leaderboard.ts, GameManager.ts, PlayerController.ts, DeathScreen.ts, StatusHud.ts (names only)",
+    "client-godot: GameManager.cs, Instantiator.cs, CameraController.cs, PlayerController.cs, module bindings",
+    "server-rust/src/math.rs body (function names only)",
+    "crates/ database engine (not game content; out of scope)",
+    "art, shader graphs and prefabs (covered by AU010, not re-read)",
+    "no runtime test; Blackholio never run"
+  ]
+}

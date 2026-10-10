@@ -1,0 +1,43 @@
+{
+  "donor": "miki151-keeperrl",
+  "code_licence": "GPL-2.0 (LICENSE and COPYING.txt carry the GNU GPL v2 text)",
+  "asset_licence": "split per COPYING-MEDIA.txt: data/ (official binary only; NOT in box); data_free/ CC BY-SA 2.0 (file links the licence); Lato-Bol.ttf SIL OFL (file); Symbola.ttf public domain (file); icons.png derivative of work by Lorc, no licence named; credits name a 16-bit set by oryxdesignlab.com with no licence file in box (unclear)",
+  "rights_holder_status": "named authors in credits.txt (design and programming, music, graphics, intro film, font); third-party art credited; per-asset status for third-party art not stated in box",
+  "best_class": "B",
+  "halves_read": "client and shared C++ (3 files, cited lines); data half = data_free/ (content tables read); official data/ half NOT in box (checked); server half = PHP highscore helpers (2 lines read)",
+  "asset_groups": [
+    {"kind": "content tables (text)", "path": "data_free/game_config/*.txt", "count_hint": "about 41 files; creatures.txt 5659 lines, names.txt 14191, enemies.txt 2959, furniture.txt 2682, items.txt 2201, tiles.txt 1027, spells.txt 1056", "licence": "CC BY-SA 2.0 (COPYING-MEDIA.txt line 3)", "class": "B", "note": "creature, item, tile, spell, body-material and biome tables; key-value blocks with ids"},
+    {"kind": "translation string table", "path": "data_free/game_config/translations/english.txt; polish.txt", "count_hint": "english.txt 4224 lines", "licence": "CC BY-SA 2.0", "class": "B", "note": "flat KEY and quoted text pairs; text not copied"},
+    {"kind": "2D UI images", "path": "data_free/images/ (incl. images/ui/)", "count_hint": "47 PNG", "licence": "CC BY-SA 2.0 for folder; icons.png derivative of Lorc work with no licence named", "class": "B", "note": "menu_core 480 px wide, spells 80 px wide per header; icons.png class C"},
+    {"kind": "UI and effect-related images", "path": "data_free/ui/", "count_hint": "several PNG plus text screens", "licence": "CC BY-SA 2.0", "class": "B", "note": "deck, damage, capture, steeds, buildings, guard zones"},
+    {"kind": "third-party 16-bit art set (credited, not in box)", "path": "credits.txt line 10; no license.txt in data_free", "count_hint": "unknown", "licence": "unclear: credits point to license.txt which is absent", "class": "C", "note": "treat as unclear"},
+    {"kind": "map layout images", "path": "data_free/game_config/map_layouts/ (7 folders)", "count_hint": "8 PNG", "licence": "CC BY-SA 2.0", "class": "B", "note": "adoxie_vault, adoxie_temple, castle1, wizard_tower, city, satan, death; loader not read"},
+    {"kind": "fonts", "path": "data_contrib/Lato-Bol.ttf; Symbola.ttf; SIL_Open_Font_License.txt", "count_hint": "2 fonts, 1 licence text", "licence": "Lato SIL OFL (file); Symbola public domain (file)", "class": "A", "note": "Symbola A; Lato B (licence travels with font)"},
+    {"kind": "controller and steam manifests", "path": "data_free/*.vdf", "count_hint": "3", "licence": "CC BY-SA 2.0", "class": "D", "note": "input config; not read"},
+    {"kind": "source art file", "path": "data_free/*.xcf", "count_hint": "1", "licence": "CC BY-SA 2.0", "class": "B", "note": "GIMP source; not opened"},
+    {"kind": "official game data (sprites, tile sheets, FX sheets, sound, music, intro film)", "path": "data/ (absent from box)", "count_hint": "0 in box", "licence": "COPYING-MEDIA: only with official binary distribution", "class": "C", "note": "not present; the creature and FX sheet names are cited in code and tables"},
+    {"kind": "music", "path": "none in box (credits name composers)", "count_hint": "0", "licence": "n/a", "class": "D", "note": "no audio files in data_free"}
+  ],
+  "inspiration": [
+    "One record per creature: a huge four-legged body, two wings, a burning bite, a scale drop and a permanent-effect set in one block. Ref data_free/game_config/creatures.txt lines 1294-1330.",
+    "Harvest-to-unlock: a dropped body part grants a named breath ability. Loot as ability with a clear reward moment. Ref creatures.txt lines 1315 and 1206.",
+    "Keeper look ladder: view upgrades at every five tech levels, four steps. Ref creatures.txt line 9 and tiles.txt lines 14-22.",
+    "Symbol and colour fallback per view id (ASCII glyph plus colour) for small-screen readability. Ref tiles.txt line 277.",
+    "Additive flipbook effects: flames, sparks, flashes, teleport and missile cores as 4x4, 4x2 and 2x2 sheets with additive blend. Ref fx_texture_factory.cpp lines 29 and 54 (sheets not in box).",
+    "Body material as an immunity set: undead flesh is sunlight-vulnerable and immune to poison, plague and bleeding. Ref data_free/game_config/body_materials.txt (UNDEAD_FLESH block)."
+  ],
+  "briefs": [
+    {"label": "Ember wyrm", "why": "a huge four-legged silhouette with wings reads as a boss at 375 wide; the burning bite is a clear signature", "keep": "four-legged huge body, two wing parts, harvest that unlocks a breath ability", "change": "Recreate as a distinct original, never a copy: crested horned head, teal and bronze palette, folded wings, cold breath instead of fire", "ref": "data_free/game_config/creatures.txt lines 1294-1330; tiles.txt line 277"},
+    {"label": "Warden rank ladder", "why": "a visible rank change every few levels reads at a glance", "keep": "four stepped looks at fixed intervals", "change": "Recreate as a distinct original, never a copy: each step adds a crest or pauldron ornament rather than only a recolour", "ref": "data_free/game_config/creatures.txt line 9; tiles.txt lines 14-21"},
+    {"label": "Flame flipbook", "why": "a 4x4 additive flipbook reads as fire without per-frame art", "keep": "additive blend and a 4x4 frame grid", "change": "Recreate as a distinct original, never a copy: cooler ember with a smoke sheet and fewer frames", "ref": "fx_texture_factory.cpp lines 29 and 54 (sheets not in box)"},
+    {"label": "Undead flesh tag", "why": "one material tag sets weakness and immunities, so a whole enemy class plays differently", "keep": "sunlight vulnerability and bleed immunity on one material record", "change": "Recreate as a distinct original, never a copy: our own tag names and a weakness to a different element", "ref": "data_free/game_config/body_materials.txt (UNDEAD_FLESH block)"}
+  ],
+  "not_read": [
+    "binary image and font pixel content (header bytes of three PNGs only)",
+    "data_contrib font files, XCF, VDF (names only)",
+    "most creature records; items.txt, names.txt, enemies.txt, furniture.txt beyond line counts",
+    "top-level C++ beyond the three cited files; map_layouts loader",
+    "server/*.php beyond two lines",
+    "CLAUDE.md and AGENTS.md: not present in this donor"
+  ]
+}

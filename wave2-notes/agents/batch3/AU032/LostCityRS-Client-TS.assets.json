@@ -1,0 +1,103 @@
+{
+  "donor": "LostCityRS-Client-TS",
+  "code_licence": "MIT License, Copyright (c) 2023-2026 Lost City (LICENSE lines 1 and 3; README.md says MIT). Third-party: src/3rdparty/audio.js header says MIT license (iOS audio-context fix credited to Blake Kus, audio.js line 1).",
+  "asset_licence": "None in the repo. No sprite, model, sound, map or font files. The client loads its art from the runtime cache, which is not in the box.",
+  "rights_holder_status": "Lost City holds the MIT copyright line (LICENSE line 3). The README gives the build date as September 7, 2004 (README.md line 2). The Engine-TS README calls this client a human-driven port of the original code to modern browsers (LostCityRS-Engine-TS README.md line 41). The UI copy names RuneScape (src/client/Client.ts line 1505). The original owner is not named in this folder. Treat the non-code content as restricted.",
+  "best_class": "D",
+  "asset_groups": [
+    {
+      "kind": "game art, models, sounds, maps (not in box)",
+      "path": "none in this folder (runtime cache)",
+      "count_hint": "0 files",
+      "licence": "unknown; not in box",
+      "class": "D",
+      "note": "No non-code content in the folder. Runtime art is referenced by the code (for example the title-fire rune sprites in src/client/TitleFlames.ts) but none ships here."
+    },
+    {
+      "kind": "UI copy as string literals",
+      "path": "src/client/Client.ts (login, error and status messages as literals, e.g. line 1505)",
+      "count_hint": "many literals; not counted",
+      "licence": "follows the repo MIT as far as the file says; the copy names RuneScape",
+      "class": "C",
+      "note": "Protected-looking game copy. Do not reuse the strings; write our own. Only the call sites were read."
+    },
+    {
+      "kind": "third-party JS (audio helper)",
+      "path": "src/3rdparty/audio.js (66 lines)",
+      "count_hint": "1 file",
+      "licence": "MIT (file header says so)",
+      "class": "A",
+      "note": "Keep the notice if the code is used. Not a content asset."
+    },
+    {
+      "kind": "third-party MIDI player (JS and wasm)",
+      "path": "src/3rdparty/tinymidipcm.js (361 lines); src/3rdparty/tinymidipcm/tinymidipcm.mjs and tinymidipcm.wasm",
+      "count_hint": "3 files",
+      "licence": "not stated in the box; .gitmodules points to an upstream repo (not checked)",
+      "class": "C",
+      "note": "Code, not content. Licence unclear from the box, so class C for any reuse."
+    },
+    {
+      "kind": "empty submodule folders",
+      "path": "3rdparty/emsdk and 3rdparty/tinymidipcm (top-level), 3rdparty/bzip2-wasm (in .gitmodules only)",
+      "count_hint": "0 files",
+      "licence": "not in box",
+      "class": "D",
+      "note": "Listed as submodules in .gitmodules (lines 1 to 9); the directories are empty in the box."
+    }
+  ],
+  "inspiration": [
+    "Title-screen ember fire (src/client/TitleFlames.ts): each frame seeds random hot pixels in the bottom rows (updateFlames), then every cell takes the average of its four neighbours (line 162). A cooling map value, at one fifth of its size, is subtracted from each cell (line 175). The cooling map is regenerated from a randomly picked rune sprite each time its cycle wraps (line 169). The look is a burn-through logo. Frankendom use: a title or pit-entrance ember with our own sigil as the burn-through pattern.",
+    "Palette ramp for the fire is built from four 64-step bands, from dark through red and yellow to white (for example line 53). A 256-entry table is cheap and reads as heat at a glance.",
+    "Breathing palette: two alternative palettes are cross-faded with counters that count down by four per update, and a new pulse starts only when both counters are zero, with a random draw each update that starts one palette on two of 2000 values (src/client/TitleFlames.ts lines 194 and 195, doBlend). Use for rune glow or zone light.",
+    "Wind as three summed sines, one term per frequency, feeding the top line of the fire (line 184). A cheap sway for banners, capes or flames.",
+    "Touch keyboard press feedback: a canvas keyboard with four modes (Regular, Shift, Symbols, SymbolsExtra, src/client/MobileKeyboard.ts line 59) and a timed press box (animateBoxIndex and animateBoxTimeout, lines 174 and 175). Relevant to touch UX (hud-ui fold-in): a press flash that expires on its own.",
+    "Animation transitions as named policies (src/config/SeqType.ts lines 6 to 16): PreanimMove (DELAYMOVE, DELAYANIM, MERGE), PostanimMove (DELAYMOVE, ABORTANIM, MERGE), RestartMode (RESET, RESETLOOP). Each animation-to-move hand-off has a stated rule. Relevant to parity rows 6 and 7 (strike wind-up and recovery).",
+    "Zoomable world map (src/mapview/MapView.ts): zoom defaults to 4 (line 126), the view is centred on a focus point and divided by the zoom, and an overview box with border colours sits in the corner. Relevant to the minimap and world map fold-in."
+  ],
+  "briefs": [
+    {
+      "label": "Ember title fire (burn-through seal)",
+      "why": "Four-neighbour diffusion with a cooling map reads as heat at title size and needs no art beyond one seal.",
+      "keep": "four-neighbour averaging; a cooling map drawn from a sprite; a 256-entry black-red-yellow-white ramp",
+      "change": "our burn-through pattern is our own sigil; the ramp is cold blue to white; a slider for ember rate",
+      "ref": "LostCityRS-Client-TS/src/client/TitleFlames.ts (lines 53, 162, 169, 175)"
+    },
+    {
+      "label": "Breathing rune glow",
+      "why": "A rare palette pulse makes an idle screen feel alive without motion cost.",
+      "keep": "two palettes cross-faded by counters; a rare random trigger",
+      "change": "our hue pair; a slow sine in place of the counters; the pulse drives a rune, not the fire",
+      "ref": "LostCityRS-Client-TS/src/client/TitleFlames.ts (lines 194 and 195)"
+    },
+    {
+      "label": "Strike wind-up and recovery policy",
+      "why": "Named rules for how an animation hands off to a move make attacks feel deliberate, with no combat-genre copy needed.",
+      "keep": "the three-way choice per transition: delay the move, delay the animation, or merge; an abort option",
+      "change": "our names and our own choice list, for example cancel on hit or cancel on dodge",
+      "ref": "LostCityRS-Client-TS/src/config/SeqType.ts (lines 6 to 16)"
+    },
+    {
+      "label": "Press flash on touch controls",
+      "why": "A timed press flash on each touch control confirms the input without a text label.",
+      "keep": "a timed press box that expires on its own; modes switch the layout",
+      "change": "our attack-button layout and thumb reach; a ring flash instead of a box; no keyboard copy",
+      "ref": "LostCityRS-Client-TS/src/client/MobileKeyboard.ts (line 59; animate fields lines 174 and 175)"
+    },
+    {
+      "label": "Zoomable map with overview box",
+      "why": "A zoom with a corner overview gives orientation at a glance on a phone.",
+      "keep": "zoom as a number with a sensible default; the overview box in a corner",
+      "change": "our map style and pins; the default zoom set for our zone size",
+      "ref": "LostCityRS-Client-TS/src/mapview/MapView.ts (line 126)"
+    }
+  ],
+  "not_read": [
+    "Runtime cache and art (not in the box)",
+    "Most of src/client, src/dash3d and src/io (only the cited files were opened)",
+    "src/3rdparty/tinymidipcm.js and the wasm (listed, not opened)",
+    "bundle.ts and identifier.js (listed, not opened)",
+    "Submodule folders emsdk and bzip2-wasm (empty in the box)",
+    "Halves: client half (this folder) read in part. Server half LostCityRS-Engine-TS is in the box and read in part. Data pack (Content repository) is NOT in the box."
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "donor": "Jameskmonger-317refactor",
+  "code_licence": "conflicting: LICENSE is MIT (copyright 2014 Jameskmonger); README says the base is Jagex's RuneScape client revision 317, which it calls Jagex IP, and warns about legal risk. Treated as unclear, class C.",
+  "asset_licence": "none shipped; no sprites, models, audio, maps, fonts or cache archives in the tree. Data pack is fetched by the client from its host and is not in the box.",
+  "rights_holder_status": "Jagex Ltd named in README as owner of the revision 317 client (restricted, Jagex-derived). Repo states the project is educational. No further rights statement.",
+  "best_class": "D",
+  "asset_groups": [
+    {"kind": "game data (cache archives, definitions)", "path": "not in box; loader code in src/com/jagex/runescape/sign/signlink.java, FileCache.java, Archive.java; definition readers in definition/", "count_hint": "0 in box", "licence": "Jagex IP per README", "class": "C", "note": "Restricted. Shape and idea only."},
+    {"kind": "procedural sound definitions", "path": "src/com/jagex/runescape/audio/ (Instrument.java, Envelope.java, SoundFilter.java, Effect.java)", "count_hint": "4 files, about 700 lines", "licence": "Jagex-derived code; MIT wording on LICENSE does not settle it", "class": "C", "note": "No sample files. Synth shape only."},
+    {"kind": "tile and region records", "path": "src/com/jagex/runescape/scene/tile/ and Region.java", "count_hint": "2 tile classes plus region arrays", "licence": "unclear", "class": "C", "note": "Corner blend and path tile shape only."},
+    {"kind": "doc (prose)", "path": "docs/tile_rendering.md", "count_hint": "1 file", "licence": "repo MIT wording vs README Jagex IP statement: unclear", "class": "C", "note": "Derived description of the tile renderer."},
+    {"kind": "restricted note and README", "path": "_RESTRICTED-NOTE.txt, README.md", "count_hint": "2 text files", "licence": "not game content", "class": "C", "note": "Rules for this donor and Jagex IP statement; not usable as game content."},
+    {"kind": "sound, music, sprites, models, maps, fonts", "path": "none in box", "count_hint": "0", "licence": "n/a", "class": "D", "note": "Not present in the donor tree."}
+  ],
+  "inspiration": [
+    "Title-screen flame curtain: a heat-indexed palette with occasional whole-palette cross-fades. Keep the heat palette and the occasional cross-fade; use a zone-tinted ember ramp with timers in seconds. Known defect: timers step per frame, so speed follows frame rate.",
+    "Procedural instruments: each instrument is a small set of envelopes, vibrato, gate and filter, plus a delay, synthesised when played. Keep the parameter-set idea so sound variety is data; ours uses oscillator presets in data for the browser.",
+    "Piecewise envelope: a list of levels and ramp times with linear ramps and a held last level. Keep the list shape for attack, hold and decay. Known defect: a zero-length segment keeps the old slope; fix by zeroing the slope.",
+    "Corner-blended ground: four corner colours per plain tile, blended from neighbours, with a separate shaped record for paths. Keep the corner blend and the path overlay; ours is a textured ground with paths as decals.",
+    "Heading minimap: the minimap turns with camera heading and shows dot classes and a capped list of hint icons. Keep heading rotation and dot classes; add a north-up toggle and larger touch targets.",
+    "Per-kind definitions: one definition reader per content kind, reading its own fields. Keep one definition class per kind; ours are JSON rows.",
+    "Whitelist before block: a whitelist is checked before a word filter blocks a name. Keep the rule for player names; use our own list."
+  ],
+  "briefs": [
+    {"label": "Ember curtain (our own label; category: animated backdrop)", "why": "a moving heat-palette backdrop is cheap and reads at 375 wide without text over it", "keep": ["heat-indexed palette", "occasional cross-fade between palettes", "slow drift"], "change": ["palette per zone", "timers in seconds not frames", "no text over the flames"], "ref": "/mnt/frankendom-donors/Jameskmonger-317refactor/src/com/jagex/runescape/screen/title/FlameColours.java lines 67-124"},
+    {"label": "Path decal (our own label; category: ground overlay)", "why": "a shaped route reads as a path without a separate model", "keep": ["corner-blended ground", "path as overlay shape"], "change": ["decal not a tile type", "path tint from zone data", "fades at the edge of the cull range"], "ref": "/mnt/frankendom-donors/Jameskmonger-317refactor/docs/tile_rendering.md lines 13-15"},
+    {"label": "Layered synth stinger (our own label; category: reward sound)", "why": "a short rising chime with vibrato and a short delay is recognisable in a fight and cheap", "keep": ["attack-hold-decay envelope", "vibrato", "delay feedback"], "change": ["two layers only", "our own note set", "signature sound per reward tier"], "ref": "/mnt/frankendom-donors/Jameskmonger-317refactor/src/com/jagex/runescape/audio/Instrument.java lines 36-54; audio/Envelope.java lines 54-65"},
+    {"label": "Heading minimap (our own label; category: HUD minimap)", "why": "a minimap that turns with the camera keeps the player oriented in a fight", "keep": ["rotation with camera heading", "dot classes", "capped hint icons"], "change": ["north-up toggle", "touch-size targets", "markers from zone data"], "ref": "/mnt/frankendom-donors/Jameskmonger-317refactor/src/com/jagex/runescape/screen/game/Minimap.java lines 283, 288, 456"}
+  ],
+  "not_read": ["cache archives and data pack (not in box)", "most of the 48 files in the runescape package (listed, not opened)", "out/production class metadata (binary, not opened)", "Censor word lists (identifier only)", "server half (not in box)"]
+}

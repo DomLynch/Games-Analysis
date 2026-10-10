@@ -1,0 +1,38 @@
+{
+  "donor": "inkjs",
+  "half_read": "runtime (src/engine, partial) and compiler (names and one enum); template data (compiled story JSON). The ink source stories (.ink) are not in the box: none found in templates/ or docs/.",
+  "code_licence": "MIT (LICENSE.md; package.json line 56)",
+  "asset_licence": "MIT covers the repo; no separate licence line for the logo or the sample stories in the files read",
+  "rights_holder_status": "open-source MIT port of inkle's ink; LICENSE.md names inkle Ltd. and inkjs contributors; AUTHORS.md credits inkle Ltd. as original source owner",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "runtime and compiler code", "path": "src/** (524 files), script/inkjs-compiler.ts", "count_hint": "524 files under src", "licence": "MIT", "class": "A", "note": "code; partly read"},
+    {"kind": "bundled browser builds", "path": "templates/browser_serverless/ink.js, templates/browser_with_server/ink.js, ink.js.map", "count_hint": "2 ink.js, 2 maps", "licence": "MIT (repo)", "class": "A", "note": "minified builds; not read"},
+    {"kind": "developer docs", "path": "docs/compiler-differences.md, docs/working-with-typescript-and-webpack.md", "count_hint": "2 files", "licence": "MIT (repo)", "class": "A", "note": "docs"},
+    {"kind": "template HTML, CSS and JS", "path": "templates/*/index.html, style.css, main.js, nodejs/index.js, typescript_*/src/index.ts", "count_hint": "about 12 files", "licence": "MIT (repo)", "class": "A", "note": "not read"},
+    {"kind": "project logo", "path": "media/inkjs.png", "count_hint": "54574 bytes", "licence": "no separate licence line in the files read", "class": "C", "note": "treat as unclear; not opened"},
+    {"kind": "sample compiled stories", "path": "templates/browser_serverless/story.js, templates/browser_with_server/story.json, templates/typescript_player/src/story.json, templates/nodejs/intercept.ink.json", "count_hint": "4 files, about 154 KB each; inkVersion 20", "licence": "MIT covers the repo; sample text authorship not stated in the files read", "class": "C", "note": "story text not read; inspiration at the mechanic level only"}
+  ],
+  "inspiration": [
+    "Sequence selectors on one line: stopping (default), cycle, shuffle, once (src/compiler/Parser/ParsedHierarchy/Sequence/SequenceType.ts lines 1-6). Keep the four modes; use cycle and shuffle for idle barks and once for first-time lines.",
+    "Tags on a line as a side channel that does not change the printed text (src/engine/Tag.ts line 5). Keep tags as cue carriers for sound and emote cues on the fight bus; use our own cue names.",
+    "Seedable PRNG because the platform has none (src/engine/PRNG.ts lines 2-7). Keep one seed that reproduces a sequence; store the seed in the fight record for replay (row 19).",
+    "Budgeted step: the story runs for a millisecond budget and resumes on the next call (src/engine/Story.ts lines 349-355). Use the same shape as a per-tick NPC budget (row 18 sub-line).",
+    "Unbudgeted counterpart ContinueMaximally (src/engine/Story.ts line 607; body not read). Keep both modes: budgeted for live play, unbudgeted for tests.",
+    "Save and load files exist in src/engine (StoryState.ts, JsonSerialisation.ts, StatePatch.ts, VariablesState.ts; names only). Check before reuse for row 19 snapshot shape.",
+    "Single JSON bundle of all project files for browser compiles (docs/compiler-differences.md line 7). Relevant to a catalogue bundle, not to art."
+  ],
+  "briefs": [
+    {"label": "cycling barker line (own label, mechanic)", "why": "one line can cycle, shuffle or fire once", "keep": "stopping, cycle, shuffle and once selectable per line", "change": "barks keyed to fight events and enemy class; our own lines", "ref": "/mnt/frankendom-donors/inkjs/src/compiler/Parser/ParsedHierarchy/Sequence/SequenceType.ts lines 1-6"},
+    {"label": "cue tag channel (own label, effect)", "why": "per-line tags drive cues without changing the printed line", "keep": "tags carry sound and emote cues; printed text unchanged", "change": "our cue names, routed to the fight sound bus", "ref": "/mnt/frankendom-donors/inkjs/src/engine/Tag.ts line 5"},
+    {"label": "seeded replay shuffle (own label, mechanic)", "why": "one seed reproduces a whole random sequence", "keep": "a single seed fixes the sequence", "change": "the seed lives in the fight record next to the inputs; no second RNG", "ref": "/mnt/frankendom-donors/inkjs/src/engine/PRNG.ts lines 2-7"},
+    {"label": "budgeted story step (own label, mechanic)", "why": "a long step stops at a time budget and resumes on the next tick", "keep": "stop after a budget and resume next tick", "change": "a per-tick NPC budget in our engine (row 18)", "ref": "/mnt/frankendom-donors/inkjs/src/engine/Story.ts lines 349-355"}
+  ],
+  "cross_link": "sound-music: tags as cue channel; no audio in the box. progression, loot, spawns, hud-ui, camera, zones: none (narrative runtime only). Death and respawn presentation, boss intro, idle animation vocabulary: none (no art or animation data). Readability at 375 wide: not applicable.",
+  "not_read": [
+    "sample story text in all compiled stories (only names and inkVersion header read)",
+    "media/inkjs.png",
+    "template HTML, CSS and JS (names only)",
+    "StoryState.ts, JsonSerialisation.ts, StatePatch.ts, VariablesState.ts, ContinueMaximally body, compiler parser (names only)"
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "donor": "Card-Forge-forge",
+  "reader": "DC010",
+  "halves_read": ["data: forge-gui/res/adventure/common/world JSON", "client: forge-gui-mobile/src/forge/adventure (stage, character, data, scene, world, util) and forge/util/Shaders.java"],
+  "counts": {"creatures": 464, "classes": 16, "weapons": 23, "gear_sets": 5, "zones": 8},
+  "count_basis": {
+    "creatures": "enemy entries in enemies.json",
+    "classes": "hero race/avatar sets in heroes.json (no class stat table)",
+    "weapons": "items matched by weapon name or icon word (approximate)",
+    "gear_sets": "three-piece material sets (body, boots, shield): iron, steel, mithril, gold, dark",
+    "zones": "zone archetypes in points_of_interest.json over 263 typed points"
+  },
+  "creature_families": [
+    "humanoid 163", "beast 72", "aberration 45", "undead 41", "monstrosity 28", "fiend 27",
+    "elemental 20", "construct 18", "giant 12", "plant 10", "celestial 9", "fey 9", "dragon 8", "ooze 2"
+  ],
+  "top_creatures": [
+    {"label": "Three-Match Sky Warden", "why": "one of the largest boss silhouettes; flying; three games per encounter plus an intro line make it an event", "keep": "multi-game boss, intro line, flying", "change": "one fight per visit with our own rhythm; our own relic", "ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui/res/adventure/common/world/enemies.json:697 (entry), :766 (gamesPerMatch), :753 (equipment)"},
+    {"label": "Rimescale Wyrm", "why": "a big flying dragon with low life; the size promises power and the life total breaks it", "keep": "large scale with low life", "change": "our own wing and head shape and our own weak point", "ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui/res/adventure/common/world/enemies.json:965"},
+    {"label": "Void Tide Colossus", "why": "highest life in the data (100) on a flying boss with a relic reward", "keep": "highest life as a boss tier", "change": "our own colour and shape; relic becomes an original", "ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui/res/adventure/common/world/enemies.json:10249"},
+    {"label": "Hive Anchor", "why": "a boss that barely moves (speed 1, likely near-stationary); reads as a landmark to approach", "keep": "near-fixed boss in a zone", "change": "our own minion spawns while it stands", "ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui/res/adventure/common/world/enemies.json:26500"},
+    {"label": "Stoneback Hulk", "why": "largest scale among boss entries (3.5) on a near-fixed body; a large target to read at 375 wide", "keep": "large scale on a slow body", "change": "our own plating and a visible glow on the weak point", "ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui/res/adventure/common/world/enemies.json:19790"},
+    {"label": "Brass Sentinel", "why": "big body (scale 2.5) with low life (25); size and fragility contrast reads at a glance", "keep": "big body with low life", "change": "a visible weak point and our own material", "ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui/res/adventure/common/world/enemies.json:21659"},
+    {"label": "Splintered Stalker", "why": "a weakened variant (life 28, no speed value) of a family, showing one sprite family can give several enemies", "keep": "variant rows that reuse one family", "change": "our own name, stats and damage cue", "ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui/res/adventure/common/world/enemies.json:31177"},
+    {"label": "Pit Marauder", "why": "mid-tier fiend whose loot shape (probability, count, rarity gate) is the point", "keep": "per-creature reward rows with rarity gates", "change": "our own loot table and rarity names", "ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui/res/adventure/common/world/enemies.json:3 (entry), :9 (spawnRate), :10 (difficulty)"}
+  ],
+  "classes": [
+    "Hero avatars: 16 race/avatar sets with male and female sprite atlases (heroes.json); five are dragon-kin sets; cosmetic, no mechanical role in the data",
+    "Colour identity: the deck colours the player brings; enemies carry identity tags (black 160, green 136, red 128, blue 98, white 87 entries)",
+    "Faction-like tags on enemies: Territorial 93, Wild 63, Leader 34, Undead 33 (quest code not read)",
+    "Progression gate: player rank (wins) sets which creatures can spawn (BiomeData.java:106-109); no talent tree or level table seen"
+  ],
+  "weapon_families": [
+    "Swords (bronze, steel, flame), axe, bow, sling, dagger, and staffs including one per colour (white, black, blue, red, green)",
+    "Weapons carry no damage fields in items.json; effects are card or life bonuses (startBattleWithCard 75, lifeModifier 43, startBattleWithCardInCommandZone 26, moveSpeed 10, changeStartCards 7, cardRewardBonus 3, goldModifier 1, colorView 1 across item effects)",
+    "No set-bonus key among the item effect keys"
+  ],
+  "gear_tiers": [
+    "Material ladder by icon: wood (Wood Bow 1000), bronze (Bronze Sword 2500), iron (Iron Armor 3000, Iron Boots 2000, Iron Shield 6500), steel (Steel Armor 5000, Steel Boots 4500, Steel Shield 6500), mithril (Mithril Armor 15000, Mithril Boots 10000, Mithril Shield 6500), gold (Gold Armor 15000, Gold Boots 10000, Gold Shield 13000); dark set exists",
+    "Price does not follow tier cleanly: iron and mithril shields are both 6500; gold shield 13000",
+    "Gear slots: body 10, boots 13, neck 25, left 35, right 37 (includes shields), ability1 5, ability2 6; 69 items have no slot"
+  ],
+  "zones": [
+    "Overworld biomes by colour: white, blue, black, red, green and colourless waste; each with its own music playlist (GameHUD.java updateBGM)",
+    "Archetypes (points_of_interest.json): cave 105, dungeon 103, town 25, side-boss moderate 9, side-boss easy 6, castle 6, capital 6, side-boss hard 3",
+    "Dungeon maps (names): aerie, barbariancamp, catlair, demontower, djinnpalace, factory, fort, graveyard_crypt, hostiletown, lavaforge, magetower, main_story",
+    "Cave maps (names): cave, cave_multilevel 1-3, evilgrove, grove, merfolkpool, nest, skullcave",
+    "Dungeon rule effect applied to every duel from a map unless the enemy has ignoreDungeonEffect (MapStage.java:1210-1211; source of the effect not read)",
+    "Road tiles (no biome index): no encounters and 1.5x move speed (WorldStage.java:291-292)",
+    "Off-road encounter density: one spawn attempt every 4-8 s of walking (WorldStage.java:45, :301); 2.5-5 attempts per 20 s",
+    "Biome placement: noise-warped blobs around anchors with overlap by bit mask (World.java:372-412)"
+  ],
+  "looks": [
+    {"label": "Foil sheen on rare reward cards", "technique": "fragment shader: tilt uniform drives streak lines and a hue spread; fixed strength 0.85 mixes the sheen in; low-luminance pixels desaturated first; applied only to loaded foil rewards", "ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/util/Shaders.java:197-297 (uniform :217, strength :220); /mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/util/RewardActor.java:1285-1314"},
+    {"label": "Rounded card mask", "technique": "edge test with an edge radius computed from image aspect ratio when the UI mask is Full", "ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/util/Shaders.java:187-190; RewardActor.java:1285-1300"},
+    {"label": "Particle emitter library (bursts, trails, glows)", "technique": "separate .p emitter files layered over sprites, so one sprite can take a burst without new frames; CC BY 4.0 for the Particle Park set", "ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui/res/adventure/common/particle_effects/ (listing only)"},
+    {"label": "Encounter contact beat", "technique": "block sound, haptic pulse (200 ms, 400 ms for boss), freeze, pause for the longer attack animation, mana-burn sound, then a transition made from a screenshot with both avatar names", "ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/stage/MapStage.java:1182-1211 (beginDuel) (haptic :1191)"},
+    {"label": "Death beat", "technique": "death animation with blood effect for 0.5 s, defeat badge dialog, cover-screen transition to spawn point, autosave", "ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/stage/GameStage.java resetPlayerLocation; boss variant :733-743"},
+    {"label": "Boss intro and insult dialog", "technique": "intro line before a boss duel; insult line on boss loss; strings from the locale file (about 35 intro and 44 insult lines by grep)", "ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/scene/DuelScene.java:561-582, :195-227; /mnt/frankendom-donors/Card-Forge-forge/forge-gui/res/languages/en-US.properties (AdvBossIntro, AdvBossInsult keys)"},
+    {"label": "Scale variation per creature", "technique": "sprite width and height multiplied by a per-entry scale (0.5 to 3.5 in the data)", "ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/character/EnemySprite.java:108-112, :133-137"},
+    {"label": "Minimap player marker", "technique": "small player icon on the minimap", "ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/stage/GameHUD.java:139"}
+  ],
+  "originals": [
+    {"name": "Walk Watch", "idea": "an encounter director: one creature may appear about every 4-8 s of off-road walking, drawn by weight after a rank gate; it leaves after 20 s or more of walking time", "keep": "walking-time clock, weighted draw behind a gate, walking-time despawn", "change": "zone population cap and a grace timer on empty zones (row 23); the ignored-parameter bug is fixed"},
+    {"name": "Warden Duel", "idea": "a best-of-three boss fight with an intro line, a boss music swap and a relic on the last game", "keep": "three games, intro line, boss music", "change": "each game server-verified; our own relic; no deck-building dependency"},
+    {"name": "Shrine Rules", "idea": "a dungeon applies one rule change to every duel inside it (extra starting life, faster movement, one card in the command area)", "keep": "zone as rule data; per-enemy opt-out flag", "change": "visible rule readout and caps on stacking"},
+    {"name": "Glint Card", "idea": "rare drops show a sheen whose streaks and hue follow a tilt value", "keep": "tilt-driven streaks and hue spread; sheen only on rare drops", "change": "our own ember glint; reveal under 0.4 s on phones"},
+    {"name": "Six-Metal Ladder", "idea": "wood, bronze, iron, steel, mithril and gold as gear tiers in three-piece sets; the tier read from the icon", "keep": "material names as the tier language; three-piece sets", "change": "prices that rise with tier; our own metals and colours"},
+    {"name": "Road Breath", "idea": "road tiles have no encounters and a speed bonus", "keep": "a safe lane for travel", "change": "a visible ribbon with its own ambience bed; speed bonus as zone data"},
+    {"name": "Blob Biomes", "idea": "noise-warped blobs around anchor points decide the biome; a second noise field sets terrain bands", "keep": "noise plus distance blob placement", "change": "one biome per tile with a crossfade band at borders, instead of overlapping bits"},
+    {"name": "Hold Still", "idea": "after a loss the enemy freezes until the player is far enough away, so the player is not re-engaged at once", "keep": "the hold-still rule after a loss", "change": "a visible grace indicator and a time limit"},
+    {"name": "Contact Beat", "idea": "encounter start as a short beat: block sound, haptic, pause, then a transition showing both names", "keep": "the beat order", "change": "our own sounds and haptic pattern; threat readout at 375 wide"}
+  ],
+  "licence_note": "Code is GPL v3 (LICENSE at repo root; forge-gui/LICENSE.txt). Assets mixed per repo credit files: Kevin MacLeod music CC BY 3.0; Particle Park effects CC BY 4.0; dock-bar icons CC BY 3.0 per docs; sprites and tiles per-artist licences not in repo; card art not in repo; sounds, fonts and skins have no licence line. Mechanisms used as shape only, clean-room. Not a legal opinion.",
+  "not_read": [
+    "duel engine (forge-game, forge-ai) and forge-gui/src",
+    "quests.json, shops.json, cardprices.txt, effect description code",
+    "map .tmx files beyond names; sprite pixels; particle emitter bodies; sound and music files",
+    "touch UX, input buffer, lock-on (grep found no relevant code)",
+    "Shandalar, Amonkhet and other world sets (only the common set was read)",
+    "biome placement is read from the client code; the skin backgrounds were taken from AU008"
+  ]
+}

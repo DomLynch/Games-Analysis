@@ -1,0 +1,62 @@
+{
+  "donor": "Danjb1-rsc-remastered",
+  "topic": "onboarding-first-30min",
+  "depth": "thin",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/Danjb1-rsc-remastered/_RESTRICTED-NOTE.txt",
+    "/mnt/frankendom-donors/Danjb1-rsc-remastered/rsc-client/src/client/RuneClient.java",
+    "/mnt/frankendom-donors/Danjb1-rsc-remastered/rsc-client/src/client/loading/LoadingScreen.java",
+    "/mnt/frankendom-donors/Danjb1-rsc-remastered/rsc-client/src/client/login/LoginScreen.java",
+    "/mnt/frankendom-donors/Danjb1-rsc-remastered/rsc-client/src/client/game/Game.java",
+    "/mnt/frankendom-donors/Danjb1-rsc-remastered/docs/ideas.md",
+    "/mnt/frankendom-donors/Danjb1-rsc-remastered/rsc-client/res/data/NPCs.xml.gz (tag counts only)",
+    "/mnt/frankendom-donors/Danjb1-rsc-remastered/rsc-client/res/data/Items.xml.gz (tag counts only)",
+    "/mnt/frankendom-donors/Danjb1-rsc-remastered/rsc-client/res/data/Objects.xml.gz (tag counts only)",
+    "/mnt/frankendom-donors/Danjb1-rsc-remastered/rsc-client/res/data/Prayers.xml.gz (tag counts only)"
+  ],
+  "counts": {
+    "loading_stages_named": 7,
+    "loading_progress_steps": 7,
+    "login_fields": 0,
+    "login_click_to_connect": 1,
+    "tutorial_hits_in_xml_data": 0,
+    "starter_hits_in_xml_data": 0,
+    "intro_hits_in_xml_data": 0,
+    "npc_blocks_proxy_itemdropdef_tags": 1979,
+    "item_blocks_proxy_wieldable_tags": 1314,
+    "object_blocks_proxy_width_tags": 1189,
+    "prayer_definitions_proxy": 14,
+    "sound_cues_named_by_audit": 37,
+    "docs_qol_features_listed": 13
+  },
+  "rule": "A loading sequence names each stage and sets a progress percentage before doing the stage's work. Login is one click with no account step. The logged-in hook places the player on a fixed sector and tile. No onboarding is present: no tutorial, no welcome, no first task.",
+  "data_fields": [
+    {"name": "loading_stage_label", "unit": "text per stage", "donor_value_or_null": null},
+    {"name": "loading_stage_percent", "unit": "percent", "donor_value_or_null": null},
+    {"name": "spawn_sector", "unit": "zone id", "donor_value_or_null": null},
+    {"name": "spawn_tile", "unit": "tile coordinates", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "named loading stages on a bar (a slow load reads as progress)",
+    "one quick entry path for demo or preview mode",
+    "a fixed first zone defined as data"
+  ],
+  "change": [
+    "login is a TODO: keep authentication on the server, never in the client",
+    "no onboarding present: use the ModernUO-shaped first-30-minute design instead",
+    "docs list number-key dialogue and on-screen XP as planned features; not in the code read"
+  ],
+  "look_test": "On the existing scene at 375 wide: loading screen with one spinner versus seven named stages on a bar; then click-to-enter with no name versus a two-second one-line card naming the first zone. Judge which reads as progress and which reads as a stub.",
+  "licence_note": "RESTRICTED: no licence, derived from the RuneScape Classic client (_RESTRICTED-NOTE.txt line 1). Category-level inspiration only. No coordinates, constants, colour codes, copied text or code. Data read as names and tag counts only; nothing decompressed into output.",
+  "tags": ["new:loading-stage", "new:click-to-enter", "new:fixed-spawn", "new:no-onboarding", "new:xp-readout-planned", "new:dialogue-number-keys-planned", "new:sound-cue-pairs"],
+  "not_read": [
+    "server half (not in tree; client connects to localhost)",
+    "tutorial, intro and welcome text (none present in code or XML data)",
+    "start-sector world and NPC spawns",
+    "sound cue bodies (WAV, names only from AU013)",
+    "combat first-hit feedback code",
+    "XML data bodies beyond tag counts",
+    "walk density, idle animation, death and respawn presentation, loot reveal, boss staging"
+  ]
+}

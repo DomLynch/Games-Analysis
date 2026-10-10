@@ -1,0 +1,46 @@
+{
+  "donor": "shlomif-PySolFC",
+  "code_licence": "GPL-3.0 (COPYING:1, html-src/license.html); some changes by one maintainer under Expat (html-src/credits.html:8)",
+  "asset_licence": "Per-folder and per-file: CC0 for 5 tiles and one progression image; conditional (not sold as-is) for 4 tiles; LGPL 2.1 (Nuvola), Apache 2.0 (Material icons), CC-BY-SA (Human icons); Crystal and most other art, sound and themes unstated; card faces and music not in repo (separate downloads, README.md:101, :209)",
+  "rights_holder_status": "open-source maintenance project descended from PySol (AUTHORS.md; credits.html); asset credits per folder; no clean-room statement; card faces and music are separate downloads",
+  "best_class": "A",
+  "asset_groups": [
+    {"kind": "card back art", "path": "data/images/cards/bottoms/<set>/", "count_hint": "11 sets", "licence": "unstated in box", "class": "C", "note": "french bottom02-n.png is 162x160 px; read by size only"},
+    {"kind": "finder and card marker art", "path": "data/images/cards/finder/<set>/", "count_hint": "9 sets", "licence": "unstated in box", "class": "C", "note": "names only"},
+    {"kind": "toolbar icons", "path": "data/images/toolbar/", "count_hint": "397 files", "licence": "mixed: LGPL 2.1 (nuvola/info.txt:1), Apache 2.0 (material/COPYING:2), CC-BY-SA (human/info.txt:3), crystal and others unstated", "class": "B", "note": "crystal folder class C; light/ subfolder for dark UI"},
+    {"kind": "table tiles", "path": "data/tiles/", "count_hint": "53 files incl. stretch/ and save-aspect/ subfolders", "licence": "CC0 for Leaf, Mountains, Night Forest, Pink Hearts, Vortex (COPYRIGHT:1-6); conditional for Cosmos, Dark Forest, Purple Mosaic, Stone Wall (COPYRIGHT:8-12); rest unstated", "class": "A", "note": "CC0 five are class A; conditional four class B; unlisted class C"},
+    {"kind": "progression image", "path": "data/images/stats/imagecredit.txt", "count_hint": "1 image plus credit file", "licence": "CC0 for new image (imagecredit.txt:2); old image source unknown (:4)", "class": "A", "note": "old image class C"},
+    {"kind": "sound effects", "path": "data/sound/*.wav, data/sound/extra/", "count_hint": "29 files", "licence": "unstated; credits.html:27 credits music only", "class": "C", "note": "cue names are the data; not played"},
+    {"kind": "themes", "path": "data/themes/blue/, data/themes/clearlooks/", "count_hint": "120 files", "licence": "unstated; blue.tcl:1 copyright line only", "class": "C", "note": "Tcl/Tk theme code and assets"},
+    {"kind": "UI images", "path": "data/images/ (buttons, tree, dialog, demo, pause, redealicons, logos, icons, htmlviewer)", "count_hint": "about 130 files", "licence": "unstated; logo designer credited (credits.html:28-29), Trueno font under OFL", "class": "C", "note": "names only"},
+    {"kind": "translations", "path": "po/*.po, po/games.pot, locale/", "count_hint": "14 po files; de_games.po 1849 msgids", "licence": "unstated", "class": "C", "note": "string tables; counts only"},
+    {"kind": "card faces and music", "path": "not in repo", "count_hint": "0", "licence": "separate download (README.md:101, :209); licence not in box", "class": "D", "note": "absent from box"},
+    {"kind": "game code", "path": "pysollib/, pysollib/games/", "count_hint": "about 42 py at top level, 80 game modules", "licence": "GPL-3.0 (COPYING:1)", "class": "B", "note": "code, not assets; win and loss sound path read"}
+  ],
+  "inspiration": [
+    "Outcome stinger ladder: separate end states for perfect, won, finished and lost, each with its own sample and dialog (pysollib/game/__init__.py:2476, 2492, 2506, 2512). Shape for sound-music stingers.",
+    "Priority-gated sound: a stinger plays at high priority and a looping sample blocks lower-priority cues (pysollib/pysolaudio.py:94). Shape for ambience-vs-stinger mixing.",
+    "Loss note that names the help used rather than only the failure (pysollib/game/__init__.py:2513). Shape for death presentation without a penalty screen.",
+    "Short reject cue for an illegal action (data/sound/nomove.wav). Shape for combat input feedback.",
+    "Several art families for one card back shape (data/images/cards/bottoms, 11 sets). Shape for cosmetic variety with one silhouette.",
+    "Light and dark icon variants in one folder (data/images/toolbar/material/info.txt:3). Shape for dark-UI legibility.",
+    "Translation tables holding game names and UI text in separate files (po/de_games.po, po/de_pysol.po). Shape for string tables."
+  ],
+  "briefs": [
+    {"label": "perfect flourish", "why": "a rare top-tier end state with its own stinger, animation and dialog", "keep": "a separate top stinger, a flourish, a dialog that states the cost", "change": "ours tie to a clean run in the zone, our own sound", "ref": "pysollib/game/__init__.py:2476"},
+    {"label": "reject tick", "why": "a very short cue that says no without a dialog", "keep": "short, dry, distinct from success", "change": "our own sound, a tiny screen shake instead of a dialog", "ref": "data/sound/nomove.wav"},
+    {"label": "lost with a note", "why": "a loss that lists what helped instead of only the failure", "keep": "the loss line names the aids used", "change": "ours names the player's own choices and a next step, not a score", "ref": "pysollib/game/__init__.py:2513"},
+    {"label": "back-art families", "why": "one card back shape with many art sets", "keep": "several art families sharing one silhouette and frame", "change": "our palette, ornament and frame, not the donor's sets", "ref": "data/images/cards/bottoms/french/"},
+    {"label": "dark-ui icon pair", "why": "each UI icon has a light and a dark variant in one folder", "keep": "a light/dark pair per icon, same shape", "change": "our icon style and stroke weight", "ref": "data/images/toolbar/material/info.txt:3"}
+  ],
+  "not_read": [
+    "card faces and music: not in repo",
+    "29 wav files: names and folder only, not played",
+    "sound effect licence: no licence file found in data/sound (listing only)",
+    "themes (120 files): blue.tcl copyright line only",
+    "most of data/images (about 1300 files): folder counts only",
+    "pysollib/game/__init__.py beyond 2466-2520 and pysolaudio.py beyond 90-94",
+    "po tables: counts only",
+    "logo font: credited, not checked in box"
+  ]
+}

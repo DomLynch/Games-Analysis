@@ -1,0 +1,25 @@
+{
+  "donor": "SWG-Source-swg-main",
+  "half_read": "orchestration only (root scripts, tools/, utils/, .gitmodules, README); submodules dsrc, src, serverdata, stationapi and exe are empty in the box; paired server code is SWG-Source-src",
+  "code_licence": "none in this folder (no LICENSE file); _RESTRICTED-NOTE.txt says proprietary, no licence",
+  "asset_licence": "none in box; submodule repositories named in .gitmodules are not present and their licences were not read",
+  "rights_holder_status": "leaked proprietary source (per _RESTRICTED-NOTE.txt); README calls it the base of the SWG Source project; no copyright line seen in README.md, build.xml, build.properties or exec.sh",
+  "best_class": "D",
+  "asset_groups": [
+    {"kind": "art, models, audio, UI, fonts", "path": "none (submodules empty)", "count_hint": "0", "licence": "n/a", "class": "D", "note": "absent from box"},
+    {"kind": "maps, text, string tables", "path": "none (dsrc empty)", "count_hint": "0", "licence": "n/a", "class": "D", "note": "the data pack is not in the box"},
+    {"kind": "tool binaries and data dumps", "path": "tools/ (exe, dll, dat files)", "count_hint": "about 247 files at depth 2", "licence": "unknown", "class": "D", "note": "not opened"},
+    {"kind": "table build scripts", "path": "tools/buildCrcStringTable.pl, tools/buildQuestCrcStringTables.pl, utils/build_*_crc_string_tables.py", "count_hint": "several", "licence": "unknown (no licence file)", "class": "D", "note": "names only; show data compiled to CRC-keyed string tables"}
+  ],
+  "inspiration": [
+    "Data compiled into CRC-keyed string tables by build scripts: a named catalogue of rows built into a runtime lookup. Same shape as Frankendom row 20 (catalogue as runtime source). Names only, not read.",
+    "Code and designer data split by submodule and build step: keep designer data in its own folder with its own build. Name level only."
+  ],
+  "briefs": [],
+  "not_read": [
+    "all scripts in tools/ and utils/ beyond their names",
+    "tool binaries",
+    "submodule contents (absent)",
+    "client half (absent)"
+  ]
+}

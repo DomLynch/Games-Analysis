@@ -1,0 +1,81 @@
+{
+  "donor": "OpenXcom-OpenXcom",
+  "brief_rule": "Recreate every idea as a clearly distinct original, never a copy. Each brief names the trait KEPT and the trait CHANGED. Class C/D content stays at category level.",
+  "code_licence": "GPL: LICENSE.txt:2 is GPL v3; install/debian/copyright:8 says GPL-3.0+; SDL_gfx modified code is LGPL with permission (README.md:13)",
+  "asset_licence": "mixed: CC BY-SA 4.0 for weapon artwork (bin/standard/xcom2/Resources/Weapons/license.txt:4; bin/standard/xcom1/Resources/Weapons/license.txt:4); original X-COM sprites, maps, units and sounds not in repo (README.md:17; bin/UFO/README.txt; bin/TFTD/README.txt); other PNGs have no per-file licence line; shaders mixed (GPL, public domain, none)",
+  "rights_holder_status": "open-source clone (README.md:6-8); files name Microprose as author of the original game (bin/standard/xcom2/metadata.yml:7); current original owner not stated in files (unknown); original data not included",
+  "best_class": "B",
+  "asset_groups": [
+    {"kind": "weapon artwork (TFTD set)", "path": "bin/standard/xcom2/Resources/Weapons/Terror.png", "count_hint": "1 PNG, 288 x 48 px", "licence": "CC BY-SA 4.0 (bin/standard/xcom2/Resources/Weapons/license.txt:4)", "class": "B", "note": "share-alike condition; artist Riccardo Gasperi per license.txt:1"},
+    {"kind": "weapon artwork (UFO set)", "path": "bin/standard/xcom1/Resources/Weapons/Terror.png, Zombie.png", "count_hint": "2 PNG, sizes not read", "licence": "CC BY-SA 4.0 (bin/standard/xcom1/Resources/Weapons/license.txt:4)", "class": "B", "note": "artists Niklas Jansson and Riccardo Gasperi per license.txt:1"},
+    {"kind": "projectile strips (TFTD)", "path": "bin/standard/xcom2/Resources/BulletSprites/TFTD-LAND.png, TFTD-UNDERWATER.png", "count_hint": "2 PNG, 110 x 33 px each", "licence": "no per-file line; no licence file in folder", "class": "C", "note": "environment variants of one projectile"},
+    {"kind": "projectile strip (UFO)", "path": "bin/standard/xcom1/Resources/BulletSprites/BulletSprites.png", "count_hint": "1 PNG, size not read", "licence": "no per-file line", "class": "C", "note": ""},
+    {"kind": "UI sprites (TFTD)", "path": "bin/standard/xcom2/Resources/UI/", "count_hint": "5 PNG, 32 x 22 px and 27 x 3 px (globe)", "licence": "no per-file line", "class": "C", "note": "inventory copy/paste icons and a globe marker"},
+    {"kind": "UI sprites (UFO)", "path": "bin/standard/xcom1/Resources/UI/", "count_hint": "7 PNG", "licence": "no per-file line", "class": "C", "note": "inventory, reserve and kneel buttons, globe"},
+    {"kind": "placeholder sprite", "path": "bin/standard/xcom2/Resources/Sprite/missing_arm.png", "count_hint": "1 PNG, 32 x 40 px", "licence": "no per-file line", "class": "C", "note": "missing-part placeholder"},
+    {"kind": "bitmap fonts and font data", "path": "common/Language/Font.dat (127 KB), FontBig/FontSmall/FontGeo*.png and ko/jp/zh-TW variants", "count_hint": "one .dat plus PNG sheets (count not taken)", "licence": "no per-file line", "class": "C", "note": "Font.dat contents not read"},
+    {"kind": "engine icons", "path": "common/openxcom.png, res/ (11 files, 268 KB)", "count_hint": "11 files in res/", "licence": "no per-file line", "class": "C", "note": "mac, windows, linux icon sets"},
+    {"kind": "pathfinding sprite", "path": "common/Resources/Pathfinding/Pathfinding.png", "count_hint": "1 PNG", "licence": "no per-file line", "class": "C", "note": ""},
+    {"kind": "screen-filter shaders", "path": "bin/common/Shaders/*.OpenGL.shader", "count_hint": "24 GLSL files", "licence": "per file: GPL (CRT.OpenGL.shader:7); public domain (CRT-Lottes.OpenGL.shader:2, dot_n_bloom.OpenGL.shader:4, Phosphor-simple); others no licence line found", "class": "B", "note": "use only the public-domain or GPL ones with their terms; others C"},
+    {"kind": "unit stat tables (YAML)", "path": "bin/standard/xcom2/units.rul (TFTD), bin/standard/xcom1/units.rul (UFO)", "count_hint": "34 unit types in TFTD set", "licence": "GPL (repo code)", "class": "B", "note": "11-field stat block, race, rank, armour reference, stand and kneel heights (units.rul:46-63); origin of numbers not stated in files"},
+    {"kind": "armour tables (YAML)", "path": "bin/standard/xcom2/armors.rul", "count_hint": "24 armour rows", "licence": "GPL (repo code) for values; sprite refs point to original .PCK files", "class": "B", "note": "front/side/rear/under values (armors.rul:7-10), 10-entry damage modifier list; spriteSheet TDXCOM_0.PCK (armors.rul:3) is not in the box"},
+    {"kind": "soldier name lists (YAML)", "path": "common/SoldierName/*.nam", "count_hint": "34 files by nationality", "licence": "GPL (repo code); origin of name lists not stated", "class": "B", "note": "weighted look groups per list (lookWeights at Bulgarian.nam:1)"},
+    {"kind": "string tables (YAML)", "path": "bin/standard/xcom2/Language/en-US.yml, en-GB.yml", "count_hint": "1231 lines each, about 1184 key lines (en-US)", "licence": "GPL (repo code); text itself originates from the original games", "class": "B", "note": "lore and UFOpaedia-style text not reproduced"},
+    {"kind": "map and route binaries", "path": "bin/standard/xcom2/MAPS/*.MAP (2 x 803 bytes), ROUTES/*.RMP (48 and 72 bytes); bin/standard/xcom1 has 2 MAP and 2 RMP", "count_hint": "8 small binaries", "licence": "not stated in files", "class": "C", "note": "not opened beyond sizes"},
+    {"kind": "rulesets (all YAML)", "path": "bin/standard, bin/common, bin/UFO, bin/TFTD", "count_hint": "105 .rul, 49 .yml, 3.1 MB under bin/", "licence": "GPL (repo code)", "class": "B", "note": "most files not read"},
+    {"kind": "audio", "path": "none in box", "count_hint": "0 audio files", "licence": "n/a", "class": "D", "note": "README.md:17 and the UFO/TFTD READMEs say audio comes from the user's original game"}
+  ],
+  "inspiration": [
+    "Reaction fire is an interrupt chain: when a unit acts, enemies that can see it are asked to shoot first. The best-scoring reactor goes first; if it cannot react it is dropped and the next is tried, until the actor is reached (src/Battlescape/TileEngine.cpp:836-861). Fits guard, parry and overwatch in a many-vs-one fight.",
+    "A reaction costs the same action points as the matching action and sends a hostile unit into an aggro state (src/Battlescape/TileEngine.cpp:1055 and 1061). An interrupt that also flips the enemy's state is readable to the player.",
+    "Reactions only trigger on actions of the side whose turn it is (src/Battlescape/TileEngine.cpp:830-831). A simple gate that keeps the interrupt chain from firing on the wrong turn.",
+    "Damage is scaled by the armour's per-damage-type multiplier before anything else (src/Savegame/BattleUnit.cpp:1106). Each armour row has a 10-entry multiplier list (bin/standard/xcom2/armors.rul, damageModifier block of the first row). A creature with a damage-type matrix, not one armour number.",
+    "Armour has four facings (front, side, rear, under) with separate values (bin/standard/xcom2/armors.rul:7-10). Armour depends on where the hit comes from, which suits a fight camera that shows facing.",
+    "Each unit row has 11 stats plus rank and race, and a stand and a kneel height (bin/standard/xcom2/units.rul:46-63). A two-pose silhouette gives a clear low-profile read.",
+    "Projectile art comes as a strip per environment, the same 110 x 33 px size for land and underwater (bin/standard/xcom2/Resources/BulletSprites/TFTD-LAND.png, TFTD-UNDERWATER.png). Projectile variants by zone with one shared size.",
+    "Soldier names come from weighted look lists per nationality (common/SoldierName/*.nam, weights at Bulgarian.nam:1). Look-weighted name and face variety for NPCs.",
+    "A menu of screen-filter shaders (bin/common/Shaders/) gives a choice of CRT, scanline and bloom looks. Useful for the colour-grade row, but only public-domain or GPL-terms ones."
+  ],
+  "briefs": [
+    {
+      "label": "watch-interrupt flash",
+      "why": "A reaction shot is a readable interrupt: a brief cue tells the player an enemy has struck first. Silhouette-level read at 375 px: one tick and one flash, not a full effect.",
+      "keep": ["an interrupt before the actor's action resolves", "best-scoring responder goes first, with fall-through to the next", "a state flip (aggro) that the player can read"],
+      "change": ["cue is a short colour tick on the enemy's weapon hand, not a shot", "interrupt picks the nearest guard, not a score list", "one signature sound of our own"],
+      "ref": "src/Battlescape/TileEngine.cpp:828-861, 1036-1061"
+    },
+    {
+      "label": "tide-and-land projectile set",
+      "why": "The same projectile strip per environment, same size, so zones change the look of a hit without new code. Works as a zone-variant effect.",
+      "keep": ["one shared projectile size for every zone", "one strip per environment", "projectile reads at 33 px tall"],
+      "change": ["variant set by zone tint and trail, not a bubble trail", "frame count per zone chosen by us", "no donor art; we draw from scratch"],
+      "ref": "bin/standard/xcom2/Resources/BulletSprites/TFTD-LAND.png, TFTD-UNDERWATER.png (110 x 33 px each)"
+    },
+    {
+      "label": "plated armour by facing",
+      "why": "Armour that changes with the direction of the hit gives the player a reason to move around the enemy. The table gives four facing values per armour row.",
+      "keep": ["four facing values per armour", "in the first armour row the front value is above side and rear (armors.rul:7-9)", "damage-type multiplier applied after facing"],
+      "change": ["facing values per creature, not per suit", "a shield-like front that ramps with stance", "no donor numbers; ours tuned on our own curve"],
+      "ref": "bin/standard/xcom2/armors.rul:7-10, src/Savegame/BattleUnit.cpp:1106"
+    },
+    {
+      "label": "low-profile crouch silhouette",
+      "why": "Two body heights, one for stand and one for kneel, give a crouch that lowers the hit area. Simple, readable at 375 px, and cheap to draw.",
+      "keep": ["stand and kneel heights in the unit row", "a crouch that changes the hit silhouette", "same stat block for both poses"],
+      "change": ["crouch is a dodge pose with a short stagger, not a kneel shot", "heights scaled to our creature proportions", "no donor body shape; ours is a different build"],
+      "ref": "bin/standard/xcom2/units.rul:62-63"
+    }
+  ],
+  "not_read": [
+    "all PNG pixel content",
+    "common/Language/Font.dat",
+    ".MAP and .RMP binaries beyond sizes",
+    "bin/standard/xcom2/alienDeployments.rul and mapScripts.rul",
+    "most of the 105 .rul files (units.rul and armors.rul partly)",
+    "bin/standard/xcom2/Language/en-GB.yml (line count only)",
+    "name lists beyond the first lines of Bulgarian.nam and German.nam (34 files in total)",
+    "src/Battlescape beyond TileEngine.cpp lines 828-861 and 1036-1061",
+    "getReactor() scoring in TileEngine.cpp (not read)",
+    "the .PCK sprite files (absent from the box)"
+  ]
+}

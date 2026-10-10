@@ -1,0 +1,64 @@
+{
+  "donor": "id-Software-Quake-2",
+  "code_licence": "GNU GPL (readme.txt line 6 says all code is GPL; gnu.txt is GPL version 2 text); per-file headers not checked",
+  "asset_licence": "Game data is not in the box. readme.txt lines 19-20 say the Q2 data files remain copyrighted under original terms and cannot be redistributed. Help GIFs and icons have no separate licence in the tree.",
+  "rights_holder_status": "original company: id Software (readme.txt signed by John Carmack, Id Software); engine and game code in box, data pack absent; not clean-room, not a fan project",
+  "best_class": "D",
+  "asset_groups": [
+    {"kind": "game_data_pack", "path": "not in box (baseq2/ holds config.cfg and save/ only)", "count_hint": "0 art, model, map or sound files", "licence": "copyrighted, original terms (readme.txt lines 19-20)", "class": "D", "note": "absent"},
+    {"kind": "monster_frame_tables", "path": "game/m_*.c (21 monster files with mframe_t arrays)", "count_hint": "about 21 files; 24 mframe_t lines in m_soldier.c", "licence": "GPL (readme.txt line 6)", "class": "C", "note": "animation chains; shape only"},
+    {"kind": "item_table", "path": "game/g_items.c (itemlist, line 1134)", "count_hint": "about 32 item classname strings", "licence": "GPL (readme.txt line 6)", "class": "C", "note": "data table in C"},
+    {"kind": "ctf_help_images", "path": "ctf/docs/*.gif", "count_hint": "9 GIF files (15 files in ctf/docs)", "licence": "not stated in tree", "class": "C", "note": "help screenshots; not read"},
+    {"kind": "icons", "path": "win32/q2.ico, win32/qe3.ico", "count_hint": "2 icons", "licence": "not stated; brand marks", "class": "C", "note": "not read"},
+    {"kind": "layout_text", "path": "ctf/layout.txt", "count_hint": "fixed-width scoreboard template", "licence": "not stated (GPL tree)", "class": "C", "note": "text template"},
+    {"kind": "config_text", "path": "baseq2/config.cfg", "count_hint": "3162 bytes, key bindings", "licence": "not stated", "class": "C", "note": "not art; first line read"}
+  ],
+  "inspiration": [
+    "Latch-and-drain creature: the parasite has drain, break-free and death frame groups (game/m_parasite.c lines 366, 390, 459). A creature that attaches makes the threat a state as well as damage. Keep the latched state; change the silhouette and the drain cue.",
+    "Hover-to-land creature: takeoff, land, forward and backward chains, three pain variants and a death chain (game/m_hover.c lines 127, 226, 232, 352). An airborne enemy that lands for close attacks is readable. Keep the takeoff-land switch; change the hull.",
+    "Defensive stance telegraph: the brain has a defense group and a duck group before its attacks (game/m_brain.c lines 244, 339). A visible guard pose is a telegraph the player can read. Keep the telegraph; change the posture.",
+    "Gib threshold per creature: a hit below the gib value plays a gib death with bone, meat and a head; a normal hit plays the ordinary death (game/m_parasite.c lines 475-478; game/m_brain.c lines 586-590). Keep the threshold as zone or creature data; change the gib pieces to armour plates and sparks.",
+    "Death clears status: brain_die clears its effects flag and power-armour type first (game/m_brain.c lines 586-591). A death resets active buffs so a corpse does not keep a glow.",
+    "Data-first item table: one row per item with a classname and a reserved index 0 (game/g_items.c lines 1134-1147, 1499).",
+    "Fixed-width scoreboard columns keep numbers aligned in a text table (ctf/layout.txt line 3). Keep the column idea; change to icon columns at 375 wide."
+  ],
+  "briefs": [
+    {
+      "label": "Latch-and-drain leech (creature)",
+      "why": "A creature that latches on turns the fight into a state the player must break, not only a damage number.",
+      "keep": "a latch or drain frame group; a break-free group; a death chain; the latched state is visible on the player",
+      "change": "a crab-like shell silhouette instead of a worm; a bruised violet colour; drain shown as a rim glow on the player, not a sprite on the creature",
+      "ref": "game/m_parasite.c lines 366 (drain), 390 (break), 459 (death)"
+    },
+    {
+      "label": "Hover craft that lands (creature)",
+      "why": "An airborne enemy that drops to land for close attacks is readable at phone width because the height change is the signal.",
+      "keep": "takeoff and land chains; forward and backward movement; a short death chain",
+      "change": "a different hull and thruster glow; a ground-shadow cue before landing; no craft-shaped body",
+      "ref": "game/m_hover.c lines 127 (takeoff), 226 (land), 352 (death1)"
+    },
+    {
+      "label": "Guard stance telegraph (creature)",
+      "why": "A visible guard pose before attacks gives the player a window to react, which is the readability goal at 375 wide.",
+      "keep": "a defense group and a duck group before the attack; three pain variants",
+      "change": "our own posture and a shield flash instead of a brain-shaped head; a different guard colour",
+      "ref": "game/m_brain.c lines 244 (defense), 339 (duck)"
+    },
+    {
+      "label": "Gib-threshold death (death presentation)",
+      "why": "Big hits get a different death, so the player feels the damage size; the threshold is per creature.",
+      "keep": "a per-creature gib threshold; a gib burst on big hits; the normal death otherwise",
+      "change": "armour plates and sparks instead of bone and meat; the threshold stored as zone or creature data",
+      "ref": "game/m_parasite.c lines 475-478; game/m_brain.c lines 586-590"
+    }
+  ],
+  "not_read": [
+    "Game data (absent from box)",
+    "CTF help GIF contents and icons",
+    "ctf/layout.txt beyond the first lines",
+    "Monster files beyond the excerpts listed (m_parasite.c 366-478; m_hover.c frame lines; m_brain.c 244, 339, 586-591; m_supertank.c 311)",
+    "Renderers (ref_gl, ref_soft), client, server, qcommon, platform code",
+    "game/g_spawn.c, game/g_combat.c, game/g_items.c beyond line 1147",
+    "config.cfg beyond line 1"
+  ]
+}

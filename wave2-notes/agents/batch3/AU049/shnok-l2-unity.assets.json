@@ -1,0 +1,43 @@
+{
+  "donor": "shnok-l2-unity",
+  "code_licence": "none stated: no LICENSE/COPYING/NOTICE file in the donor tree outside plugin folders; README.md has no licence section",
+  "asset_licence": "none stated for game content; README says the project is a Lineage2 demo and imports Lineage2's world; plugin licences: Animancer (Unity Asset Store EULA, examples under public licences per License.txt), FMOD EULA, NuGet MIT (Newtonsoft.Json package)",
+  "rights_holder_status": "uses original game data (README names Lineage2 and says it imports the game's world); rights holder not named in the repo",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "world maps and geodata", "path": "/mnt/frankendom-donors/shnok-l2-unity/l2-unity/Assets/Resources/Data/Maps and StreamingAssets/Data/Maps", "count_hint": "200 files 882M + 4 geodata files 13M", "licence": "none stated; game data per README", "class": "C", "note": "region folders 16_24, 16_25, 17_24, 17_25 with Meta JSON/TXT; binaries not read"},
+    {"kind": "animations (characters, monsters, NPCs, weapons)", "path": "/mnt/frankendom-donors/shnok-l2-unity/l2-unity/Assets/Resources/Data/Animations", "count_hint": "2533 files 1.3G; LineageMonsters 144 files; LineageNPCs4 85; LineageWeapons 147", "licence": "none stated; game data per README", "class": "C", "note": "binary FBX/anim, not opened"},
+    {"kind": "textures, static meshes, effects, UI, shaders", "path": "/mnt/frankendom-donors/shnok-l2-unity/l2-unity/Assets/Resources/Data/{Textures,StaticMeshes,SysTextures,UI,Effects,Shaders}", "count_hint": "Textures 3148; StaticMeshes 573; SysTextures 8654 (510M); UI 1080; Effects 319; Shaders 32", "licence": "none stated; game data per README", "class": "C", "note": "only folder names and sample entries read; SysTextures not opened"},
+    {"kind": "data tables (text key=value records)", "path": "/mnt/frankendom-donors/shnok-l2-unity/l2-unity/Assets/StreamingAssets/Data/Meta", "count_hint": "20 files 87M; Npcgrp 5660 records; ItemName 11350 records; Armorgrp 4463; Weapongrp 1677; Skillgrp about 34.7k lines", "licence": "none stated; game text/data per README", "class": "C", "note": "loader is Scripts/Datatable (ItemTable.cs); strings not quoted"},
+    {"kind": "skill effect specs (JSON)", "path": "/mnt/frankendom-donors/shnok-l2-unity/l2-unity/Assets/StreamingAssets/Data/LineageEffects", "count_hint": "31 JSON files, 252K", "licence": "none stated; game data per README", "class": "C", "note": "cast, shot and explosion phase lists per skill id"},
+    {"kind": "audio banks and FMOD project", "path": "/mnt/frankendom-donors/shnok-l2-unity/l2-unity/Assets/StreamingAssets/*.bank and /mnt/frankendom-donors/shnok-l2-unity/l2-unity-fmod/Assets", "count_hint": "Music.bank 11M, AmbSound.bank 6.2M, InterfaceSound.bank 656K; FMOD MonSound 87 entries", "licence": "FMOD EULA covers the tool and engine; content origin not stated in repo", "class": "C", "note": "README lists these as game sounds; banks binary, not opened"},
+    {"kind": "external PBR ground textures", "path": "/mnt/frankendom-donors/shnok-l2-unity/l2-unity/Assets/Resources/Data/External/Textures", "count_hint": "9 texture sets, 90 files, 73M", "licence": "no licence or source key in the per-set JSON files (grep found none)", "class": "C", "note": "unclear origin, class C per rule"},
+    {"kind": "plugin art and example assets", "path": "/mnt/frankendom-donors/shnok-l2-unity/l2-unity/Assets/Plugins (Animancer, Beautify, Nature, StylisedWater, Simple Water Shader, URP-WaterShaders, ProBuilder)", "count_hint": "not counted", "licence": "Animancer: Unity Asset Store EULA plus example-asset licences listed in License.txt (details not read); others not read", "class": "C", "note": "unclear until plugin folders are read"}
+  ],
+  "inspiration": [
+    "A three-phase skill effect spec per skill id: cast on a hand bone, a trailing shot that can hit several targets, and an explosion list (empty for skill 3). Keep the phase split as data. Ref: /mnt/frankendom-donors/shnok-l2-unity/l2-unity/Assets/StreamingAssets/Data/LineageEffects/3.json",
+    "Layered hit sounds keyed on what the monster is made of: a defense list (wet, normal, bone) and a separate damage list, one picked per hit. Ref: /mnt/frankendom-donors/shnok-l2-unity/l2-unity/Assets/StreamingAssets/Data/Meta/Npcgrp_Classic.txt line 1",
+    "Monster families share one class name across many spawn ids (zombie, skeleton, virud_lizardman, spider types recur), so a family is one mesh set plus many stat rows. Ref: Npcgrp_Classic.txt lines 1-60",
+    "Skill records as flat rows: cast range, cast style, hit time, cool time, reuse delay, mp and hp cost, an animation key and a visual id on one line. Ref: Skillgrp_Classic.txt line 1",
+    "Drop data per item: drop animation type, drop radius and a drop texture or mesh key, so each loot drop has its own motion and footprint. Ref: Armorgrp_Classic.txt line 1 (loot drop ceremony topic)",
+    "Ambient sound per map region as a JSON list, with music and ambience split into separate banks (Music.bank, AmbSound.bank) and placed by zone. Ref: /mnt/frankendom-donors/shnok-l2-unity/l2-unity/Assets/Resources/Data/Maps/16_24/Meta/16_24_AmbientSounds.json (sound-music topic: ambience beds per biome)",
+    "One spell with several named element variants (el_wind_strike with suffixes _ca, _fl, _pr, _ta). Names from folder listing only; look not read. Ref: /mnt/frankendom-donors/shnok-l2-unity/l2-unity/Assets/Resources/Data/Effects/el_wind_strike_fl"
+  ],
+  "briefs": [
+    {"label": "Bolt-and-burst spell", "why": "cast, flight and blast are three separate data slots, so a spell can be cast only, flight only, or all three", "keep": "a cast bound to the hand; a trailing flight that may hit several targets; an optional blast list", "change": "attach at the staff tip not the hand; a different trail style; a shockwave ring instead of a blast mesh. Recreate as a clearly distinct original, never a copy", "ref": "/mnt/frankendom-donors/shnok-l2-unity/l2-unity/Assets/StreamingAssets/Data/LineageEffects/3.json"},
+    {"label": "Gremlin-type skirmisher", "why": "the hit sound is chosen from a list keyed on body material, so one monster sounds wet, normal or bony", "keep": "small quick monster; material-keyed hit list", "change": "key the list on armour type instead of body material; different body proportions; a bright rim tint instead of a plain tone. Recreate as a distinct original", "ref": "/mnt/frankendom-donors/shnok-l2-unity/l2-unity/Assets/StreamingAssets/Data/Meta/Npcgrp_Classic.txt line 1"},
+    {"label": "Web-spinner brood", "why": "two spider variants share a family name but differ in mesh and stats (giant and poison rows)", "keep": "one family in several sizes", "change": "different leg and abdomen proportions; a glowing venom sac instead of a palette swap; a web-spit attack instead of the bite. Recreate as a distinct original", "ref": "Npcgrp_Classic.txt rows class_name=[LineageMonster.giant_spider] and [LineageMonster.poison_spider]; mesh folder /mnt/frankendom-donors/shnok-l2-unity/l2-unity/Assets/Resources/Data/Animations/LineageMonsters/giant_spider_m00 (look not read)"},
+    {"label": "Watcher orb", "why": "a single-eye floater is a readable silhouette at distance", "keep": "a hovering, eye-led silhouette", "change": "a ring of three smaller eyes; a slow spin telegraph; no beam. Recreate as a distinct original", "ref": "Npcgrp_Classic.txt row class_name=[LineageMonster.monster_eye] (look not read)"},
+    {"label": "Plated boulder brute", "why": "a slow massive silhouette reads at 375 wide and carries one signature sound", "keep": "slow heavy tank; stone-type hit list", "change": "moss and crystal inlays instead of plain stone; a different stomp sound; a ground-crack telegraph. Recreate as a distinct original", "ref": "Npcgrp_Classic.txt row class_name=[LineageMonster.stone_golem] (look not read)"}
+  ],
+  "not_read": [
+    "Resources/Data/SysTextures (8654 files) and Textures/StaticMeshes contents: binary",
+    "Resources/Data/Animations FBX and anim bodies: binary",
+    "Maps geodata and TerrainData binaries",
+    "Audio bank contents: only sizes read",
+    "Plugin folders beyond licence files (Animancer examples, Beautify, Nature, StylisedWater, Simple Water Shader, URP-WaterShaders, ProBuilder, TextMesh Pro, ParrelSync)",
+    "Server half (gameserver and loginserver): separate repos linked in README, not in this box",
+    "Scripts beyond the ItemTable.cs loader line and NpcSpawner.cs path listing",
+    "Item and NPC name strings: counted only, not quoted"
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "donor": "OpenDAoC-OpenDAoC-Core",
+  "code_licence": "GNU GPL v3 per LICENSE and README.md (README.md:41 'licensed under the GNU General Public License (GPL)'). Conflict in the files: root gpl.txt is the GPL v2 text (gpl.txt:2 'Version 2, June 1991'), and the standard source header says 'either version 2 ... or (at your option) any later version' (gplheader.txt:6). The files do not resolve which applies.",
+  "asset_licence": "No separate asset licence file. The box holds no DAoC client art, sprites, models, textures, music, sound or fonts (extension scan: only 2 png favicons, 12 gif web-UI tiles, 1 ico, plus XML/xlsx/txt data). Data files (zone, region and startup XML, realm-ability xlsx, locale .txt, navmesh .nav) carry no licence of their own, and no file names where the game data came from.",
+  "rights_holder_status": "unknown for the Dark Age of Camelot game data: no file in the box names its owner. README.md:6 says the project is an emulator for DAoC servers, originally a fork of DOLSharp. The code is community GPL work; the game data origin is not stated.",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "zone, region and startup seed tables (XML data rows)",
+      "path": "GameServer/scripts/dbupdater/insert/Zones.xml; GameServer/scripts/dbupdater/insert/Regions.xml; GameServer/scripts/dbupdater/insert/StartupLocation.xml",
+      "count_hint": "Zones.xml 473 <Zones> rows (238,446 bytes); Regions.xml 154,804 bytes (DBRegions rows, not counted); StartupLocation.xml 136 <StartupLocation> rows (52,322 bytes)",
+      "licence": "none stated; repo GPL",
+      "class": "C",
+      "note": "This is the data half of the world: one row per zone with region id, grid offset and size, water level, realm and reward fields; one row per region with flags such as diving and housing. Head of Zones.xml and Regions.xml read. Origin of the values is not stated."
+    },
+    {
+      "kind": "localisation string tables (plain text, dotted keys)",
+      "path": "GameServer/language/EN/ (75 .txt, 5,929 lines incl. 24 quest files, 482 lines); also DE, FR, IT, ES, CZ, NL folders (234 .txt across all locales)",
+      "count_hint": "234 .txt files across 7 locale folders; EN is the only locale counted reliably (space-named files broke the other line counts)",
+      "licence": "none stated; repo GPL",
+      "class": "C",
+      "note": "Item, NPC, quest and realm text is likely game text owned by the original publisher. Nothing quoted. Read: GameNPC.txt (key shape and placeholder grammar), Language-EN.txt head."
+    },
+    {
+      "kind": "realm-ability spreadsheets (binary xlsx) and their C# companion",
+      "path": "GameServer/realmabilities_atlasOF/dbhelper/DB_RealmAbilities_Albion.xlsx, _Midgard.xlsx, _Hibernia.xlsx; GameServer/realmabilities_atlasOF/dbhelper/DB_RealmAbilities_Scripts.cs",
+      "count_hint": "3 xlsx (80 to 90 KB each); 1 cs (262,290 bytes)",
+      "licence": "none stated; repo GPL for the .cs",
+      "class": "C",
+      "note": "Ability tables per realm. The xlsx files are zip containers and were not opened. The .cs file was not read."
+    },
+    {
+      "kind": "navigation mesh (binary test data)",
+      "path": "Pathing/Detour/Test/zone078.nav",
+      "count_hint": "1 file, 602,560 bytes",
+      "licence": "none stated",
+      "class": "C",
+      "note": "Walk mesh for one zone. Origin not stated. Not opened beyond size."
+    },
+    {
+      "kind": "creature and quest rules written as C# (content-as-code)",
+      "path": "GameServer/scripts/namedmobs/ (199 files); GameServer/scripts/mobs/ (62 files); GameServer/scripts/quests/ (91 files)",
+      "count_hint": "352 files",
+      "licence": "repo GPL (code); creature names and quest text not separately licensed",
+      "class": "C",
+      "note": "Boss stats, damage gates, aura timers and day/night rosters live here. Read: namedmobs/Fomor/Krackenschtein.cs, mobs/ShiveringPresence.cs, mobs/TimeDependentSpawnNpc.cs. Names are game content; not reproduced."
+    },
+    {
+      "kind": "web-admin UI images",
+      "path": "GameServer/webui/template/images/*.gif",
+      "count_hint": "12 gif, 43 to 8,949 bytes",
+      "licence": "none stated; repo GPL",
+      "class": "C",
+      "note": "Border and banner tiles for the admin web page. Not opened."
+    },
+    {
+      "kind": "third-party web bundle (Swagger UI), not game content",
+      "path": "GameServer/API/docs/",
+      "count_hint": "swagger-ui source maps (about 0.3 to 1.5 MB each), swagger.json 26.9 KB, 2 png favicons",
+      "licence": "not read (third-party licence not checked)",
+      "class": "D",
+      "note": "Not game content. Listed so it is not mistaken for art."
+    },
+    {
+      "kind": "server icon",
+      "path": "CoreServer/icon.ico",
+      "count_hint": "1 file, 10,806 bytes",
+      "licence": "none stated",
+      "class": "C",
+      "note": "Not opened."
+    }
+  ],
+  "inspiration": [
+    "Zone as one data row: each zone is a table row holding a region id, a grid box (offset plus width and height), a water level, realm and reward fields (Zones.xml rows; head read). Recreate our zones as data rows with the same kind of fields so one runtime loads every zone. Maps to parity row 23 (zone population) and the 'zones are data' ruling.",
+    "Day and night roster swap: DaySpawn and NightSpawn are the same creature brain with a visibility check on the region's night flag (TimeDependentSpawnNpc.cs:33 and :43). Recreate as one creature brain with two rosters per zone, switched by a zone clock or by a phase of the fight, with different silhouettes for each roster.",
+    "Pulse aura on a jittered timer: the shiver aura sends one spell-effect animation to every player in visibility range, then waits a random 6 to 20 seconds (ShiveringPresence.cs:55-61). The random gap stops it reading as a metronome. Recreate as a ground pulse with a low sound stinger, same jitter idea, different look.",
+    "Distance-gated boss: the named boss's damage handler zeroes hits from attackers outside a set radius and only applies damage inside it (Krackenschtein.cs:44-54). Recreate as a boss that ignores hits from outside a ring, with the ring drawn on the ground, so the fight is about positioning. Telegraph is the part to keep.",
+    "Damage-type split: the boss gives a different resist for physical damage types than for the rest (GetResist, Krackenschtein.cs:21). Recreate as an armour stance: blades and blunt weapons bounce off, elemental damage gets through. Show the split with the icon colour, not a number.",
+    "Boss respawn as a server property: the boss respawn interval is read from a server-wide property and multiplied into milliseconds (Krackenschtein.cs:83; GameNPC.cs:2909 'RespawnInterval'). Recreate as zone tuning data rather than a constant, which fits row 23 respawn and despawn fields.",
+    "Message template with numbered placeholders: the examine line is one template string with slots for the name, an adjective and an article (GameNPC.txt:4). Recreate as the inspect line on our loot phone flow, with per-locale keys in one folder per language.",
+    "Boss as an override class: a named boss subclasses one generic boss base and overrides a handful of hooks (max health, armour, melee range, immunity flags, damage gate). Recreate as one brain with a table of overrides per boss, so a boss is data plus a few hooks rather than a new file of logic."
+  ],
+  "briefs": [
+    {
+      "label": "Ring-guarded colossus",
+      "why": "The safe ring turns the arena into a positioning puzzle. Read at 375 wide: a wide, low, heavy silhouette with a ground ring that is visible even when the boss is still.",
+      "keep": "Hits from outside a set ring do nothing. The ring is painted on the ground before it matters. Heavy, slow body with armour that changes by damage type.",
+      "change": "No ring as a damage clamp: use pillars that block the line of hit instead. Serpent coil body rather than a quadruped. Ash and rust palette, not blue-grey. Recreate as a clearly distinct original, never a copy.",
+      "ref": "GameServer/scripts/namedmobs/Fomor/Krackenschtein.cs (damage gate at lines 44-54; resist at line 21)"
+    },
+    {
+      "label": "Pale shiver aura",
+      "why": "A tell that comes before a threat, carried by sound and light rather than text. One signature effect that every nearby player sees at once.",
+      "keep": "One visual pulse to everyone within range. A jittered gap, 6 to 20 seconds, so it does not beat like a metronome.",
+      "change": "A rising hum with a frost ring, violet glow, not a spell flash. The pulse is tied to the creature's stance, not a timer alone. No engine spell id. Recreate as a clearly distinct original, never a copy.",
+      "ref": "GameServer/scripts/mobs/ShiveringPresence.cs (timer at lines 55-61; effect send at line 58)"
+    },
+    {
+      "label": "Dusk roster",
+      "why": "A zone that swaps its roster by time makes a return visit feel new without new maps. Two silhouette sets from one brain keeps the art cost low.",
+      "keep": "One creature brain, two rosters, a visibility check on a zone clock.",
+      "change": "The clock is the tide or the weather, not day and night. The two rosters have clearly different silhouettes and palettes. Recreate as a clearly distinct original, never a copy.",
+      "ref": "GameServer/scripts/mobs/TimeDependentSpawnNpc.cs (DaySpawn at line 27, NightSpawn at line 37, visibility at lines 33 and 43)"
+    },
+    {
+      "label": "Drowned shelf zone",
+      "why": "A water line stored as zone data gives a vertical layer, a shelf you can dive from, with no new engine code.",
+      "keep": "Water level as a zone field. A diving flag per region.",
+      "change": "Tidal water that moves over time, not a fixed line. Coral shelves rather than lake shores. Water gives no reward multiplier. Recreate as a clearly distinct original, never a copy.",
+      "ref": "GameServer/scripts/dbupdater/insert/Zones.xml (WaterLevel at line 10); GameServer/scripts/dbupdater/insert/Regions.xml (DivingEnabled at line 12)"
+    }
+  ],
+  "not_read": [
+    "Zones.xml and Regions.xml beyond the head; StartupLocation.xml beyond the head (row counts are from grep -c)",
+    "DB_RealmAbilities_Albion/Midgard/Hibernia.xlsx (binary zip, not opened); DB_RealmAbilities_Scripts.cs (not read)",
+    "Pathing/Detour/Test/zone078.nav (binary, size only)",
+    "GameServer/API/docs/* (not read; swagger bundles not checked for their own licences)",
+    "CoreServer/icon.ico, GameServer/webui/template/images/*.gif (size list only)",
+    "Locale files other than EN GameNPC.txt and EN Language-EN.txt head; quest files (counted, not read)",
+    "named-mob and mob scripts other than Krackenschtein.cs, ShiveringPresence.cs, TimeDependentSpawnNpc.cs",
+    "CoreBase/MPK/MpkFile.cs (class names only, via grep)",
+    "Halves: read the server half (GameServer, CoreServer, CoreBase, CoreDatabase, Pathing). Not in the box: the DAoC client game files, and the companion data repo OpenDAoC-Database v1.65 named in README.md. No paired donor in this box."
+  ]
+}

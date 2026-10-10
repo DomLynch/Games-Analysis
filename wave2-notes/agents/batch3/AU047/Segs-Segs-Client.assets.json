@@ -1,0 +1,100 @@
+{
+  "donor": "Segs-Segs-Client",
+  "code_licence": "BSD 3-Clause (LICENSE line 1; copyright 2019, SEGS, line 3).",
+  "asset_licence": "No separate asset licence and no credits file. The BSD text speaks of source and binary forms and does not name art, audio or fonts. Fonts: Cantarell, DejaVu, CuppaJoe families match names in the server donor (licence files there; name match only).",
+  "rights_holder_status": "SEGS project per the BSD copyright line. Origin of HUD, launcher art and sounds not stated in the box: unknown. Game client not in the box (README line 5).",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "HUD power tray (SVG source)",
+      "path": "AssetSource/Ingame/UI/HUD/",
+      "count_hint": "6 SVG; 1200x180 tray down to 100x100 power icon",
+      "licence": "none stated",
+      "class": "C",
+      "note": "origin not stated; BSD wording ambiguous for art"
+    },
+    {
+      "kind": "HUD power tray (PNG renders)",
+      "path": "ProcessedAssets/Ingame/UI/HUD/",
+      "count_hint": "6 PNG, same pixel sizes as SVG",
+      "licence": "none stated",
+      "class": "C",
+      "note": "1:1 render of the SVG source"
+    },
+    {
+      "kind": "launcher images",
+      "path": "SEGSLauncher/Resources/Images/",
+      "count_hint": "6 PNG, 162x41 to 2178x3366",
+      "licence": "none stated",
+      "class": "C",
+      "note": "ms_metal.png and bluestreak.png are large; not viewed"
+    },
+    {
+      "kind": "launcher icons",
+      "path": "SEGSLauncher/Resources/Icons/",
+      "count_hint": "7 SVG and 1 GIF",
+      "licence": "none stated; app-icon.svg carries Inkscape 0.92.3 metadata",
+      "class": "C",
+      "note": "not opened beyond the metadata line"
+    },
+    {
+      "kind": "launcher audio",
+      "path": "SEGSLauncher/Resources/Audio/",
+      "count_hint": "2 WAV (1.27 MB and 0.69 MB)",
+      "licence": "none stated",
+      "class": "C",
+      "note": "not played"
+    },
+    {
+      "kind": "fonts",
+      "path": "SEGSLauncher/Resources/Fonts/",
+      "count_hint": "5 TTF",
+      "licence": "Cantarell OFL 1.1 and CuppaJoe assumed OFL per server donor files (name match only)",
+      "class": "B",
+      "note": "Cantarell B; CuppaJoe C (licence assumed by repo)"
+    },
+    {
+      "kind": "launcher code (C++, QML)",
+      "path": "SEGSLauncher/",
+      "count_hint": "20 cpp, 23 h, 5 qml",
+      "licence": "BSD 3-Clause",
+      "class": "A",
+      "note": "launcher only; no game logic"
+    }
+  ],
+  "inspiration": [
+    "Bottom power tray built from a plate, a row of empty-state slot plates, and an icon overlay per filled slot (AssetSource/Ingame/UI/HUD/Tray_Empty.svg 1200x180; Tray_Power_Icon_Empty.svg 100x100). Reads at a glance.",
+    "Status glyphs in pairs, one green and one red per state, plus a globe pair for server lists (SEGSLauncher/Resources/Icons/server_green.svg, server_red.svg, globe_green.svg, globe_red.svg). Online or offline without text.",
+    "Metal plate backdrop with a logo plate on top (SEGSLauncher/Resources/Images/ms_metal.png 1518x2150; segs-logo.png 655x639; not viewed). Worn-metal mood for a menu.",
+    "SVG source folder and PNG render folder kept apart (AssetSource to ProcessedAssets, 6 pairs, same pixel sizes): a clean asset pipeline to copy.",
+    "Per-player launcher options in a platform config file, managed from inside the launcher (README describes SEGSLauncher.conf locations). A pattern for client settings, not an asset."
+  ],
+  "briefs": [
+    {
+      "label": "Power tray",
+      "why": "A bottom bar with a plate, empty slots and filled icon overlays reads at a glance during a fight.",
+      "keep": "plate plus empty-slot row plus icon overlay per slot",
+      "change": "our slot count and proportions for 375 wide; our palette; bigger touch targets; a cooldown ring in place of an empty plate",
+      "ref": "AssetSource/Ingame/UI/HUD/Tray_Empty.svg; Tray_Power_Icon_Empty.svg (not opened as images)"
+    },
+    {
+      "label": "Status glyph pair",
+      "why": "Green and red dots with a globe read as online or offline with no text.",
+      "keep": "a pair of glyphs per state, one colour each",
+      "change": "our colours, plus shapes that work for colour-blind players; a pulse for connecting",
+      "ref": "SEGSLauncher/Resources/Icons/server_green.svg, server_red.svg (not opened)"
+    },
+    {
+      "label": "Metal plate backdrop",
+      "why": "A dark metal plate behind a logo gives the menu a worn, heavy mood.",
+      "keep": "one large plate texture with a logo plate on top",
+      "change": "our own texture and palette; a material that matches our armour look; a different edge treatment",
+      "ref": "SEGSLauncher/Resources/Images/ms_metal.png (not viewed)"
+    }
+  ],
+  "not_read": [
+    "All PNG, SVG bodies, GIF, WAV and TTF content (sizes and names only; SVG width/height and the Inkscape line read)",
+    "SEGSLauncher C++ and QML bodies beyond the file list; CMakeLists.txt beyond the asset grep (no asset references found)",
+    "3rd_party/jcon-cpp (listing only); no game client present (README line 5)"
+  ]
+}

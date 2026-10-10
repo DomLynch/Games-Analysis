@@ -1,0 +1,217 @@
+{
+  "donor": "djhenry-eqoxide",
+  "counts": {
+    "creatures": 154,
+    "classes": 16,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 18
+  },
+  "count_notes": {
+    "creatures": "154 NPC race ids (13 to 468, excluding 3 playable extras) mapped to 19 archetype model families in crates/eqoxide-core/src/race_class.rs. No creature stats in the box.",
+    "classes": "16 classes from class_name (race_class.rs:15-21)",
+    "weapons": "0 weapon families in the box; held weapons are per-item models whose list is not in the repo",
+    "gear_sets": "0 sets in the box; the client has 9 equipment slots",
+    "zones": "18 zone short names with at least one mention, from a search of 18 names (not an exhaustive census)"
+  },
+  "half_read": "CLIENT half read: crates/eqoxide-core, eqoxide-assets, eqoxide-renderer (parts), eqoxide-zone-geometry (headers), README and docs (cited lines). SERVER half not read: EQEmu is in the box at /mnt/frankendom-donors/EQEmu and was named only. Asset server (eqoxide_asset_server) and EverQuest art are not in the box.",
+  "creature_families": [
+    "Serpent family (SNA, 13 ids): snakes, drakes and dragon-class NPCs share one model",
+    "Floater and crawler family (SPI, 13 ids): spiders, floating eyes, blobs and a mimic share one model",
+    "Pack humanoid family (GNL, 10 ids)",
+    "Quadruped family (WOL, 9 ids): wolves, big cats and similar",
+    "Undead (SKE 7 ids, ZOM 4 ids)",
+    "Flyers (BRD, 5 ids)",
+    "Large slow family (BEA, 4 ids)",
+    "Catch-all humanoid (HUM, 63 ids, default for any unmapped id; race_class.rs:207)",
+    "Other archetypes: FIS 6, FRG 5, ELF 4, RAT 4, WSP 3, IKS 2, DWF 2, WRM 1, VAH 1, BAT 1"
+  ],
+  "top_creatures": [
+    {
+      "label": "Serpent Drake family",
+      "why": "One model stands for snakes and dragon-class NPCs; reads cheaply at 375 wide",
+      "keep": "One silhouette stands for several threats",
+      "change": "Our own dragon silhouette; no model reuse",
+      "ref": "crates/eqoxide-core/src/race_class.rs:55, :85"
+    },
+    {
+      "label": "Floater family",
+      "why": "Floating eyes, spiders, blobs and a mimic share one archetype",
+      "keep": "One archetype for floating and crawling threats",
+      "change": "Floaters get a glow pass and a different idle",
+      "ref": "crates/eqoxide-core/src/race_class.rs (SPI entries)"
+    },
+    {
+      "label": "Pack humanoid family",
+      "why": "Ten NPC ids share one model (goblin, kobold and orc style)",
+      "keep": "A shared family for packs",
+      "change": "Our own colours and armour trims",
+      "ref": "crates/eqoxide-core/src/race_class.rs (GNL entries)"
+    },
+    {
+      "label": "Quadruped family",
+      "why": "Nine ids share one fast-body model",
+      "keep": "A fast quadruped read",
+      "change": "Our silhouettes, not reused",
+      "ref": "crates/eqoxide-core/src/race_class.rs (WOL entries)"
+    },
+    {
+      "label": "Undead family",
+      "why": "Skeleton and zombie archetypes (SKE 7, ZOM 4)",
+      "keep": "Two undead reads",
+      "change": "Our undead carry a rune, not a bone-colour swap",
+      "ref": "crates/eqoxide-core/src/race_class.rs (SKE and ZOM entries)"
+    },
+    {
+      "label": "Flyer family",
+      "why": "Flying NPCs share one bird model (BRD 5)",
+      "keep": "Flyers as one family",
+      "change": "Our flyers ride a glide cycle",
+      "ref": "crates/eqoxide-core/src/race_class.rs (BRD entries)"
+    },
+    {
+      "label": "Large slow family",
+      "why": "Bear-like and mammoth-like NPCs share one large slow model (BEA 4)",
+      "keep": "A large slow silhouette for heavies",
+      "change": "Our heavies telegraph their hits",
+      "ref": "crates/eqoxide-core/src/race_class.rs (BEA entries)"
+    },
+    {
+      "label": "Best-fit fallback",
+      "why": "Any unmapped id still renders as the catch-all humanoid",
+      "keep": "A fallback family so nothing is blank",
+      "change": "Our fallback is a visible placeholder flagged in debug",
+      "ref": "crates/eqoxide-core/src/race_class.rs:46, :207"
+    }
+  ],
+  "classes": [
+    "Warrior: STA+25 or STR+7 and STA+18 (docs/specs/2026-06-26-pregame-screens-design.md:452-459)",
+    "Cleric: WIS+25 and STA+5",
+    "Paladin: STA+20 (spec:455)",
+    "Ranger: DEX+20",
+    "Shadow Knight: STA+20",
+    "Druid: WIS+25 and STA+5",
+    "Monk: AGI+20",
+    "Bard: CHA+25",
+    "Rogue: STR+25 and DEX+5",
+    "Shaman: WIS+25 and STA+5",
+    "Necromancer: INT+25 and STA+5",
+    "Wizard: INT+25 and STA+5",
+    "Magician: INT+25 and STA+5",
+    "Enchanter: CHA+25 and INT+5",
+    "Beastlord: even +5 across STA, AGI, DEX and WIS",
+    "Berserker: STR+25, or STR+10 and STA+15"
+  ],
+  "weapon_families": [
+    "None in the box. Held weapons are per-item models drawn at a hand bone (crates/eqoxide-renderer/src/gpu.rs:49); swing animation verified on one race (README.md:41)"
+  ],
+  "gear_tiers": [
+    "Nine equipment slots, each with a material id (u32) and an RGB tint (docs/equipment-textures-findings.md:100-101)",
+    "Tint is an RGB multiplier on the texture (docs/equipment-textures-findings.md:82)",
+    "WearChange updates material and tint per slot at runtime (docs/equipment-textures-findings.md:105; docs/equipment_texture_plan.md:212-233)",
+    "Region-variant armour pieces (from AU016; docs/equipment-textures-findings.md material name section, not re-read)",
+    "Hair tint table, 24 entries, gated to a race and gender subset (crates/eqoxide-renderer/src/head.rs:16-19, :31-33)",
+    "Helms, hair and head armour not built (README.md:46)",
+    "Material tiers (cloth to plate) and mythic metals: not in the client; item database is server-side and not in the box"
+  ],
+  "zones": [
+    "Moat with ladders: wall about 10 units, five authored ladder objects around the ring (crates/eqoxide-zone-geometry/src/climb.rs:6-9)",
+    "Water volumes: sparse water-span grid instead of a full 3D voxel grid; Slice 1 additive only (crates/eqoxide-zone-geometry/src/water_grid.rs:1-9)",
+    "Multi-level dungeons: floor selection survives a stale start z (docs/collision-system.md:91; docs/autonomous-play.md:213)",
+    "Outdoor vertical offset: some outdoor zones render terrain with a Z offset (README rendering table; known defect)",
+    "Weather field: server-driven precipitation particles (crates/eqoxide-core/src/weather.rs:56, :60)",
+    "Zone short names found in the repo (mention counts): qcat 237, qeynos 131, neriakc 82, gfaydark 67, freportw 47, blackburrow 45, akanon 40, crushbone 34, everfrost 32, qeytoqrg 19, permafrost 11, tox 8, oasis 6, kedge 4, ecommons 2, crescent 2, paineel 1, freportn 1"
+  ],
+  "looks": [
+    {
+      "label": "Additive glow surfaces",
+      "technique": "A material flagged eqAdditive blends by pure addition, so black texels vanish; for torches, forges and magic",
+      "ref": "crates/eqoxide-assets/src/lib.rs:22, :30; crates/eqoxide-renderer/src/pipeline.rs:114-118"
+    },
+    {
+      "label": "Animated material",
+      "technique": "A millisecond interval and a frame list from extras.eqAnim, for flicker and water",
+      "ref": "crates/eqoxide-assets/src/lib.rs:37, :41"
+    },
+    {
+      "label": "Foliage cutout with corner key",
+      "technique": "Alpha test at 128 of 255, plus a corner-colour key-out fallback at bake time",
+      "ref": "crates/eqoxide-assets/src/lib.rs:58, :88"
+    },
+    {
+      "label": "Precipitation field",
+      "technique": "Rain as thin streaks, snow as small camera-facing drifting flakes; camera-centred wrap; cap 4000 at full intensity, floor 1200 for any active weather",
+      "ref": "crates/eqoxide-renderer/src/shaders/weather.wgsl:43-49, :63-68; crates/eqoxide-core/src/weather.rs:56, :60"
+    },
+    {
+      "label": "Held weapon at hand bone",
+      "technique": "Held item is a separate model cached per item and drawn at a hand bone, not baked into the body",
+      "ref": "crates/eqoxide-renderer/src/gpu.rs:49"
+    },
+    {
+      "label": "Per-clip grounding (from AU016, not re-read)",
+      "technique": "Skinned humanoid scaled to a target height and re-grounded from the current clip bounds",
+      "ref": "docs/character-models.md, Normalization section"
+    },
+    {
+      "label": "Gated hair tint",
+      "technique": "24-entry tint table applied only to a race and gender subset that the native client tints",
+      "ref": "crates/eqoxide-renderer/src/head.rs:16-19, :31-33"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Moat-Ladder Keep (zone)",
+      "idea": "A moat whose wall needs an authored climb object to cross",
+      "keep": "Authored climb anchors; a wall too high to step",
+      "change": "Anchors are breakable grapples in zone data"
+    },
+    {
+      "name": "Lantern Hall (look)",
+      "idea": "Torches and braziers on an additive glow pass with a short frame list",
+      "keep": "Additive pass plus frame list",
+      "change": "Cooler ember ramp and a three-frame cycle"
+    },
+    {
+      "name": "Squall Field (weather)",
+      "idea": "A camera-centred precipitation field with a particle cap and a floor",
+      "keep": "Camera wrap; rain and snow kinds",
+      "change": "Add a sleet band; caps tuned to our frame budget"
+    },
+    {
+      "name": "Best-Fit Roster (creature families)",
+      "idea": "Every unknown NPC id maps to a family so nothing renders blank",
+      "keep": "Family fallback",
+      "change": "Our six families and a visible placeholder tag; no NPC names carried"
+    },
+    {
+      "name": "Class Spine (classes)",
+      "idea": "One primary stat bonus (+20 or +25 in the spec) and an optional secondary (+5) per class",
+      "keep": "Primary plus optional secondary pattern",
+      "change": "Our four archetypes (Duelist, Guard, Caster, Beastcaller) with our own numbers"
+    },
+    {
+      "name": "Relic Hilt (weapon look)",
+      "idea": "A held weapon as its own model at the hand bone, with a glowing hilt at top tier only",
+      "keep": "Separate held model at the bone",
+      "change": "Our hilt designs; glow reserved for the top tier"
+    },
+    {
+      "name": "Tint-Slot Armour (gear look)",
+      "idea": "Nine slots, each with a material and an RGB tint, updated live on equip",
+      "keep": "Slot plus tint scheme",
+      "change": "Our metal ramps (bronze, gold-plate) and region pieces with our silhouettes"
+    }
+  ],
+  "licence_note": "No LICENSE, COPYING or NOTICE file and no licence field in Cargo.toml. Code is shape only. Art is EverQuest client data from the user's install, treated as proprietary (class C). No art reproduced.",
+  "not_read": [
+    "EQEmu server half (in the box at /mnt/frankendom-donors/EQEmu; named only)",
+    "eqoxide_asset_server and EverQuest .s3d art and derived GLB models (not in the box)",
+    "crates/eqoxide-net, eqoxide-protocol, eqoxide-ui, eqoxide-nav, eqoxide-http (not read beyond name)",
+    "Most of crates/eqoxide-renderer and the wgsl shaders apart from weather.wgsl header lines",
+    "mock_eq_server.py (names only)",
+    "src/, tests/, tools/ (not read)",
+    "docs/ apart from the cited lines",
+    "LanternEQ-LanternExtractor, LanternEQ-LanternUnityTools, eq-p99-tools-eq-client (in the box; extractor and client-data tools; not read, not used)"
+  ]
+}

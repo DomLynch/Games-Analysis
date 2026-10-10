@@ -1,0 +1,128 @@
+{
+  "donor": "mattyx14-TheForgottenTibiaClient",
+  "code_licence": "MIT. LICENSE line 1: 'OTClient is made available under the MIT License', copyright 2010-2017 OTClient (edubart/otclient). README.md line 59 repeats the MIT grant. Code: C++11 framework (src/) and Lua modules (modules/).",
+  "asset_licence": "No separate asset licence. The MIT grant in LICENSE covers the repo as written; the files do not list the origin or licence of the PNG art, fonts, cursors or the startup sound. Tibia's game sprites and data (spr/dat) are not in the box; README.md line 20 says the user downloads them.",
+  "rights_holder_status": "Community client for the Tibia MMO (README.md line 5: 'alternative Tibia client for usage with otserv'). Code: OTClient copyright lines (LICENSE). Tibia-related identifiers in code: a CipSoft RSA constant and the hosts '.tibia.com' and '.cipsoft.com' (modules/gamelib/game.lua lines 20-21). The files do not state who owns the UI art or fonts, and no licence from CipSoft is shown. Unknown beyond that.",
+  "best_class": "A",
+  "asset_groups": [
+    {
+      "kind": "Tibia game sprites and data (spr/dat)",
+      "path": "data/things/ (empty except .gitignore)",
+      "count_hint": "0 files",
+      "licence": "n/a (user supplies; README.md line 20)",
+      "class": "D",
+      "note": "Nothing usable shipped. Creature, item and tile art would have to come from the user's copy of the game."
+    },
+    {
+      "kind": "UI images (PNG)",
+      "path": "data/images/ (flags, optionstab, topbuttons, game/battle, game/shields, game/slots, game/emblems, ui, background.png)",
+      "count_hint": "199 PNG files under data/images",
+      "licence": "MIT repo grant only; origin not stated in the files",
+      "class": "C",
+      "note": "Icons include game-specific marks (shields, emblems, slots, dangerous). The files do not say who drew them. Class C until origin is confirmed. Not opened beyond names."
+    },
+    {
+      "kind": "bitmap font sheets and descriptors",
+      "path": "data/fonts/ (sans-bold-16px, terminus-10px, terminus-14px-bold, verdana-11px antialised / monochrome / rounded; cp1250 and cp1252 variants)",
+      "count_hint": "9 PNG sheets, 6 .otfont descriptors",
+      "licence": "none stated separately; repo MIT",
+      "class": "C",
+      "note": "Two named families (Verdana, Terminus) appear in file names; the files do not state the source or licence of the rendered sheets. Not opened beyond sizes and names."
+    },
+    {
+      "kind": "cursors (PNG and OTML)",
+      "path": "data/cursors/ (horizontal, vertical, target, text cursor PNG; cursors.otml)",
+      "count_hint": "4 PNG, 1 OTML",
+      "licence": "MIT repo grant only",
+      "class": "C",
+      "note": "Desktop cursor art; origin not stated. Not opened."
+    },
+    {
+      "kind": "particle definitions and texture (data-as-text)",
+      "path": "data/particles/particles.otps (716 bytes, text), data/particles/particle.png (1.5 KB)",
+      "count_hint": "2 files",
+      "licence": "MIT repo grant only",
+      "class": "C",
+      "note": "particles.otps is a readable emitter definition (group cooldown effect). Class C for the texture (origin not stated); the .otps text is code-like under MIT, class A with attribution."
+    },
+    {
+      "kind": "sound",
+      "path": "data/sounds/startup.ogg",
+      "count_hint": "1 file",
+      "licence": "MIT repo grant only",
+      "class": "C",
+      "note": "Start-up sound. Not opened (binary). Origin not stated."
+    },
+    {
+      "kind": "locale and UI layout text (OTUI, OTML, Lua)",
+      "path": "data/locales/ (en, de, es, pl, pt, sv .lua), modules/*/ (*.otui, *.otmod, *.lua for about 45 modules), data/styles/ (empty)",
+      "count_hint": "6 locale files; 25 .otui files under data/; 45 module folders",
+      "licence": "MIT (repo LICENSE line 1)",
+      "class": "A",
+      "note": "Code-like text under MIT; keeps the notice when copied. en.lua has an empty translation table (line 10 comment). UI strings are in the module code, not in a string table."
+    },
+    {
+      "kind": "tools (scripts, generators, patch)",
+      "path": "tools/gen_lang_template.sh, tools/gen_needed_translations.sh, tools/gimp-bitmap-generator, tools/katepart-syntax, tools/lua-binding-generator, tools/make_snapshot.sh, tools/tfs_extendedopcode.patch",
+      "count_hint": "7 entries",
+      "licence": "MIT repo grant only",
+      "class": "A",
+      "note": "Code and text under MIT. The gimp bitmap generator is a font-sheet tool. The .patch is a server-side patch for a Tibia server (the server itself is not in the box)."
+    },
+    {
+      "kind": "client code and UI modules (MIT, code)",
+      "path": "src/ (client, framework, main.cpp), modules/game_battle, modules/game_playerdeath, modules/game_combatcontrols, modules/game_minimap, modules/game_cooldown, modules/game_healthinfo, modules/game_hotkeys, modules/game_textmessage",
+      "count_hint": "about 45 module folders",
+      "licence": "MIT",
+      "class": "A",
+      "note": "Code, usable with the MIT notice. Read in part (see not_read). Game logic relevant to our topics is in modules/."
+    }
+  ],
+  "inspiration": [
+    "Battle list as a live target strip: filters by type (players, NPCs, monsters, skulls, party), sorts by distance, type or health, and re-sorts when the player moves. For a 375-wide touch UI, a short filtered list with distance ordering is the useful part. Ref: modules/game_battle/battle.lua lines 237-262 (filter), 281-290 (distance sort on move).",
+    "Death presentation: a plain window states the penalty, and a partial penalty gets a different sentence from a full one, plus a short centre-screen line. Keeps a loss readable and fair-feeling. Ref: modules/game_playerdeath/playerdeath.lua lines 30-57.",
+    "Fight stance as a three-step selector (offensive, balanced, defensive) plus a chase toggle and a safe-fight toggle, each sent to the engine on change. A small readable stance switch for the fight. Ref: modules/game_combatcontrols/combatcontrols.lua lines 204-229.",
+    "Cooldown effect as data: a short burst of particles with an attraction affector that pulls them back to the centre, so a ready cooldown reads as a collapse rather than a flash. Keep the burst-then-collapse shape; use our own motion. Ref: data/particles/particles.otps (effect name at line 2 and the effect block below it).",
+    "Minimap: a saved map file is loaded and saved through loadMap and saveMap, a camera marker is updated by updateCameraPosition, and a full-map toggle opens the larger view; the full map is a user-supplied file (FULL MINIMAP Installation ReadMe.txt). For us: a zone map baked at build time, same toggle. Ref: modules/game_minimap/minimap.lua lines 98-131 (loadMap, saveMap, updateCameraPosition) and 144 (toggleFullMap). The per-floor detail was not read.",
+    "Font set with monochrome, antialiased and rounded variants per size: crisp small text for dense HUD labels. Ref: data/fonts/*.otfont (names only; sheets not opened)."
+  ],
+  "briefs": [
+    {
+      "label": "Target strip with distance order (hud-ui)",
+      "why": "A short, filtered list of nearby foes, always sorted by distance, lets a phone player pick a target without reading a long list.",
+      "keep": "filter chips by type; distance sort that re-sorts on each move; a party flag",
+      "change": "a three-slot touch strip with a threat shape instead of text rows; colour secondary; party marked by a ring not a shield",
+      "ref": "modules/game_battle/battle.lua lines 237-262, 281-290"
+    },
+    {
+      "label": "Cooldown collapse burst (vfx)",
+      "why": "A ready cooldown that pulls its sparks inward reads as a click; the same motion can mark a finisher ready.",
+      "keep": "a short burst followed by an attraction pull to the centre",
+      "change": "a ring that collapses on our own axis; a soft sound cue on the collapse; no straight-out burst",
+      "ref": "data/particles/particles.otps (effect block; name at line 2)"
+    },
+    {
+      "label": "Penalty window wording (death and respawn)",
+      "why": "A loss that states its exact cost in plain words is easier to accept than a vague one, and a partial penalty reads differently from a full one.",
+      "keep": "one plain window; a partial-penalty sentence; a short centre line",
+      "change": "a respawn countdown instead of a close button; our own sentences; a grey-out, not a flash",
+      "ref": "modules/game_playerdeath/playerdeath.lua lines 30-57"
+    },
+    {
+      "label": "Stance selector (fight modes)",
+      "why": "Three stances as a segmented control make the risk dial visible during a fight.",
+      "keep": "three steps (offensive, balanced, defensive); a chase toggle; a safe-fight toggle",
+      "change": "a ring selector around the fighter instead of a toolbar; a lock icon for chase; our own stance names",
+      "ref": "modules/game_combatcontrols/combatcontrols.lua lines 204-229"
+    }
+  ],
+  "not_read": [
+    "No spr/dat game data in the box; no creature, item or tile art opened.",
+    "PNG art (199 UI images, cursors, font sheets, particle texture) opened by name and count only.",
+    "startup.ogg: binary, not opened.",
+    "src/ C++ framework: names only.",
+    "Modules read in part: battle.lua (filters and distance sort), playerdeath.lua (display and openWindow), combatcontrols.lua (fight mode handlers), minimap.lua (function index and two functions). Other modules (game_cooldown, game_healthinfo, game_hotkeys, game_textmessage, game_inventory, etc.): names only.",
+    "Locale files de/es/pl/pt/sv: names only; en.lua header read.",
+    "Server half: the TFS patch is present; the Tibia server itself (The Forgotten Server) is not in the box. Client half read in part. Data half (spr/dat) absent by design."
+  ]
+}

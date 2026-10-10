@@ -1,0 +1,33 @@
+{
+  "donor": "kcopelandmgmt-Shadowbane",
+  "code_licence": "MIT (LICENSE lines 9-11; plain MIT text, no extra clause in this copy)",
+  "asset_licence": "none: the repo has no art, audio, maps, fonts or text tables to license",
+  "rights_holder_status": "fan emulator project, Magicbane Team (LICENSE header); README line 13 says it emulates a Ubisoft MMO; the rights holder of the original game is not stated in the files: unknown",
+  "best_class": "D",
+  "asset_groups": [
+    {"kind": "non-code content", "path": "(whole repo)", "count_hint": "827 files: 824 .java, README.md, LICENSE, .gitignore", "licence": "MIT for the code", "class": "D", "note": "no art, audio, maps, fonts or text tables in the tree"},
+    {"kind": "game data (database)", "path": "DbManager.LootQueries, called from src/engine/gameManager/LootManager.java lines 53-56", "count_hint": "n/a (loaded at startup)", "licence": "not in box", "class": "D", "note": "loot tables are read from a database; no SQL dump in the tree"}
+  ],
+  "inspiration": [
+    "Three-stage loot pick: a d100 gen-table row names an item table, a d320 roll (level-scaled for mobs) picks the item, then prefix and suffix mod tables each roll again (LootManager.java lines 138-200 and 202-265). Keep the base-plus-two-modifier shape; change the mod families and names.",
+    "Level-scaled roll window: the bottom of the window rises with mob level, the level is capped at 65 and the window tops out at 319 (TableRoll, LootManager.java lines 266-286). Keep the sliding window; change the curve. See the defect below.",
+    "Hot-zone bonus roll once per booty set: a normal roll, then one extra roll on the next table ID in a hot zone (RunBootySet, LootManager.java lines 98-136, line 125). Keep one bonus bite per encounter; change the +1 table convention to an explicit field.",
+    "Respawn gate per zone: one respawn per zone per 100 ms from a queue (MobRespawnThread.java lines 36-58; lines 42 and 51). Keep the rate limit; change the gate length and add a zone cap (row 23).",
+    "Race-filtered aggro: a mob skips player races on its not-enemy list, needs an enemy race when one is set, then checks range (MobAI.java lines 703-760). Keep the per-mob faction filter; change it to our factions, kept inside the engine.",
+    "Gold drop as chance then amount: a d100 check against a drop chance, then a random amount between two bounds (LootManager.java lines 289-302, grep-read only). Keep the two-number row shape; change the numbers.",
+    "DEFECT (keep the idea, fix the defect): at mob level 60 and above in a hot zone, the lower bound (LootManager.java line 276, plus the level from line 282) passes the 319 cap (lines 273-274), so nextInt(min, max + 1) gets an origin at or above its bound. Java's nextInt throws in that case (Java API behaviour, derived from the arithmetic, not executed). Fix: clamp min to max before the roll."
+  ],
+  "briefs": [
+    {"label": "Hot-zone bonus draw", "why": "risky zones pay one extra chance without changing normal odds", "keep": "one bonus draw per encounter in a hot zone; the normal draw stays", "change": "an explicit bonus-table field; our own number; a zone-based name. Dom rule: a distinct original, never a copy", "ref": "/mnt/frankendom-donors/kcopelandmgmt-Shadowbane/src/engine/gameManager/LootManager.java (lines 98-136)"},
+    {"label": "Mod-stacked item", "why": "the same base item looks different across drops, so drops feel personal", "keep": "independent prefix and suffix tables rolled on top of a base item", "change": "our naming and our mod families. Dom rule: a distinct original, never a copy", "ref": "/mnt/frankendom-donors/kcopelandmgmt-Shadowbane/src/engine/gameManager/LootManager.java (lines 202-265)"},
+    {"label": "Zone respawn gate", "why": "a wiped zone refills at a readable pace instead of all at once", "keep": "one queue per zone and one spawn per gate interval", "change": "our gate length and a cap per zone type (row 23). Dom rule: a distinct original, never a copy", "ref": "/mnt/frankendom-donors/kcopelandmgmt-Shadowbane/src/engine/mobileAI/Threads/MobRespawnThread.java (lines 36-58)"},
+    {"label": "Level-window drop", "why": "higher-level enemies reward better items on a clear curve", "keep": "a roll window that slides up with level and is capped", "change": "a bounded shift and our own curve. Dom rule: a distinct original, never a copy", "ref": "/mnt/frankendom-donors/kcopelandmgmt-Shadowbane/src/engine/gameManager/LootManager.java (lines 266-286)"},
+    {"label": "Race-filtered aggro", "why": "enemies ignore some kinds of player, so the world feels factional", "keep": "enemy and not-enemy lists per mob, checked before range", "change": "our factions and our hate list rules. Dom rule: a distinct original, never a copy", "ref": "/mnt/frankendom-donors/kcopelandmgmt-Shadowbane/src/engine/mobileAI/MobAI.java (lines 703-760)"}
+  ],
+  "not_read": [
+    "Most of the 824 .java files: only the loot, respawn, aggro and damage-shield files were opened",
+    "CombatManager.java (1,441 lines), MobAI.java beyond CheckForAggro, PowersManager.java, NPCManager.java (grep only), src/discord/",
+    "Client half: not in the box (src/ holds only discord/ and engine/)",
+    "Data half: database content is not in the box"
+  ]
+}

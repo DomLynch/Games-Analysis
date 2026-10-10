@@ -1,0 +1,45 @@
+{
+  "donor": "simutrans-simutrans",
+  "code_licence": "Artistic License version 1.0 (README.md line 180; LICENSE.txt holds the licence text; build_themes.sh header says the same)",
+  "asset_licence": "conflicting: simutrans/license.txt says the artistic license covers the documentation, images, .dat files, midi files and fonts (except m+10r.bdf, from the M+ font project); simutrans/copyright.txt says the game 'may not be sold or modified in any way without written permission'. themes.src/pak192comic/pak192comic.tab says its graphics are under CC-BY-SA 3.0. Squirrel library: license_squirrel.txt MIT-style text. Paksets: separate licence, not in the box (README line 182)",
+  "rights_holder_status": "original author plus open-source team: Hj. Malthaner (copyright 1997-2004) and The Simutrans Team (since 2005) per simutrans/license.txt and copyright.txt; theme authors named in files (prissi; FrankP); paksets third party and not in the box",
+  "best_class": "B",
+  "asset_groups": [
+    {"kind": "paksets (vehicle, building, tile graphics)", "path": "not in this tree (README.md line 182)", "count_hint": "0 in box", "licence": "own licence per README, not included", "class": "D", "note": "absent from the source distribution"},
+    {"kind": "theme source (skin PNG parts, .dat, .tab)", "path": "/mnt/frankendom-donors/simutrans-simutrans/themes.src", "count_hint": "9 entries; 134 PNG", "licence": "pak192comic: CC-BY-SA 3.0 (pak192comic.tab line 4); standard and pak64german: no own licence line; covered by conflicting license.txt statement", "class": "B for pak192comic; C for the rest", "note": "standard.dat header and pak192comic theme.dat author lines read"},
+    {"kind": "compiled themes (.pak and .tab)", "path": "/mnt/frankendom-donors/simutrans-simutrans/simutrans/themes", "count_hint": "26 entries", "licence": "menu.pak192comic.pak matches the CC-BY-SA source by name only; others conflicting statement", "class": "B by name for menu.pak192comic.pak; C for the rest", "note": "not opened"},
+    {"kind": "music (midi)", "path": "/mnt/frankendom-donors/simutrans-simutrans/simutrans/music", "count_hint": "55 .mid files", "licence": "covered by the license.txt Artistic statement; conflicts with copyright.txt", "class": "C", "note": "titles read from file names; not played"},
+    {"kind": "fonts (bdf)", "path": "/mnt/frankendom-donors/simutrans-simutrans/simutrans/font", "count_hint": "3 files (cyr, Prop-Latin1, Prop-Latin2)", "licence": "license.txt names the fonts under the Artistic statement; m+10r.bdf (M+ font project) named but not in the box", "class": "C", "note": "bitmap font files; not opened"},
+    {"kind": "translations and UI strings (tab)", "path": "/mnt/frankendom-donors/simutrans-simutrans/simutrans/text", "count_hint": "63 entries; en.tab 1687 lines", "licence": "license.txt says translations come from translator.simutrans.com; conflicting statement", "class": "C", "note": "text not reused"},
+    {"kind": "Squirrel scripts (nut)", "path": "/mnt/frankendom-donors/simutrans-simutrans/simutrans/script", "count_hint": "24 .nut files", "licence": "Squirrel library licence text MIT-style (license_squirrel.txt); per-file licence not stated", "class": "not classed (code)", "note": "names read; content not read"},
+    {"kind": "sound effects", "path": "not in this tree", "count_hint": "0 wav, 0 ogg, 0 mp3", "licence": "n/a", "class": "D", "note": "absent"},
+    {"kind": "documentation and palette images", "path": "/mnt/frankendom-donors/simutrans-simutrans/documentation", "count_hint": "palette .pal and PNG files named", "licence": "license.txt says documentation and images under the Artistic statement; conflicting", "class": "C", "note": "not opened"}
+  ],
+  "inspiration": [
+    "A skin marker in the image name decides whether a panel scales: fixed chrome stays crisp, stretchable panels grow. Ref: /mnt/frankendom-donors/simutrans-simutrans/themes.src/standard/standard.dat line 5. Use for touch UI scaling at 375 wide.",
+    "Every skin ships a large twin with the same element names (high-contrast-large, flat-skin-large, classic-large, modern-large): accessibility as a parallel set, not a broken layout. Ref: /mnt/frankendom-donors/simutrans-simutrans/simutrans/themes/high-contrast-large.tab",
+    "Theme source is data (.dat and .tab) compiled into a shipped .pak by a build script, a clean split between source and shipped asset. Ref: /mnt/frankendom-donors/simutrans-simutrans/themes.src/build_themes.sh",
+    "The language table selects the font with a key (PROP_FONT_FILE names the bitmap font for English). A language can change its font without code. Ref: /mnt/frankendom-donors/simutrans-simutrans/simutrans/text/en.tab lines 2-3",
+    "Music named by mood and role (main theme, B theme, boring afternoon, busy day at the depot, transport chaos): a small set of role cues covers the game state. Ref: /mnt/frankendom-donors/simutrans-simutrans/simutrans/music/ (01-Simutrans-Main-Theme.mid, 05-Boring-afternoon.mid, 07-Transport-chaos.mid)",
+    "Scenarios as small scripts on a shared base (scenario_base.nut, script_base.nut, new_scenario_template.nut). Ref: /mnt/frankendom-donors/simutrans-simutrans/simutrans/script/ (names only)",
+    "One layout with several skins (comic, high contrast, flat, aero, modern, classic): the skin changes the look, not the layout. Ref: /mnt/frankendom-donors/simutrans-simutrans/simutrans/themes/*.tab"
+  ],
+  "briefs": [
+    {"label": "Large-type skin", "why": "a parallel large set keeps every layout intact when type and touch targets grow", "keep": "the same element names in a large twin; a per-element scaling marker", "change": "our own palette and corner ornament; scaling by a touch-size rule instead of a fixed factor. Recreate as a clearly distinct original, never a copy", "ref": "/mnt/frankendom-donors/simutrans-simutrans/simutrans/themes/high-contrast-large.tab"},
+    {"label": "Ink-outline skin", "why": "a bold outline makes small panels readable on a phone", "keep": "a heavy outline on panels", "change": "the source is CC-BY-SA 3.0, so do NOT reuse its art; build an outline style from scratch with our own accent colour and no speech-bubble shapes. Inspiration only", "ref": "/mnt/frankendom-donors/simutrans-simutrans/themes.src/pak192comic/pak192comic.tab line 4"},
+    {"label": "Jam sting", "why": "an uptempo cue for traffic jams tells the player something is wrong without a text box", "keep": "one cue per problem state; fast tempo", "change": "our own cue for a three-attacker pressure state; a metallic tick rather than a brass line. Recreate from scratch", "ref": "/mnt/frankendom-donors/simutrans-simutrans/simutrans/music/07-Transport-chaos.mid (title read; not played)"},
+    {"label": "Quiet ground loop", "why": "a slow idle loop tells the player nothing is happening and lets the player rest", "keep": "a slow tempo for idle zones", "change": "a biome-keyed ambient bed with a crossfade at borders, not a melody. Recreate from scratch", "ref": "/mnt/frankendom-donors/simutrans-simutrans/simutrans/music/05-Boring-afternoon.mid (title read; not played)"},
+    {"label": "Mission script on a base", "why": "missions as small scripts on a shared base class keep mission logic short", "keep": "a base script plus per-mission scripts", "change": "our zone data as JSON with an optional hook; no scripting language. Recreate as a distinct original", "ref": "/mnt/frankendom-donors/simutrans-simutrans/simutrans/script/scenario_base.nut (name read; content not read)"}
+  ],
+  "not_read": [
+    "Paksets: not in this tree",
+    "The 55 .mid files: titles only, not played",
+    "The .bdf font files: names only",
+    "The PNG skin parts and compiled .pak files: names only",
+    "The 24 .nut scripts: names only",
+    "en.tab beyond the first lines and the line count; other 62 language entries",
+    "documentation/ folder contents (palette files named only)",
+    "C++ code (licence statement read only)",
+    "m+10r.bdf font: named in license.txt, not in the box"
+  ]
+}
