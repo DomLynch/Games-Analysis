@@ -1,0 +1,156 @@
+{
+ "donor": "elberacasa-Lineage2Elbera",
+ "code_licence": "MIT for the project's own code. LICENSE line 3: 'Copyright (c) 2026 Elbera contributors'. README.md line 489: 'The project's own code is covered by the MIT license, subject to its scope and third-party notices.' Vendored three.js r160 is MIT (SPDX header in editor/world/vendor/three.module.min.js).",
+ "asset_licence": "No licence granted for game content. README.md line 491-492: the original content belongs to its owners and the source licence does not grant rights to game content. docs/img/README.md line 31: screenshots are 'not redistributable asset packs'. External components keep their own licences (README line 490).",
+ "rights_holder_status": "uses original game data (then proprietary). README line 494 calls the project an independent fan and research project, unaffiliated with NCSoft. docs/ground-truth.md line 8 says the tools read actual retail meshes, textures and animations. No _RESTRICTED-NOTE.txt found in the tree. Treated as proprietary-derived.",
+ "best_class": "C",
+ "asset_groups": [
+  {
+   "kind": "screenshots of retail-derived views",
+   "path": "docs/img/*.jpg and docs/img/*.png (including docs/img/history/)",
+   "count_hint": "35 JPG and 5 PNG across the repo; the history folder holds 2026-08-08 copies",
+   "licence": "no licence granted; docs/img/README.md line 31 says not redistributable asset packs",
+   "class": "C",
+   "note": "Captures of development output showing game-derived content (retail UI, Giran and Talking Island views, creature and hero captures). Not opened; captions read from docs/img/README.md and docs/SHOWCASE.md."
+  },
+  {
+   "kind": "original game data (ukx, utx, dat, xdat, u)",
+   "path": "not in repo (find for those extensions returned none)",
+   "count_hint": "0",
+   "licence": "not in repo",
+   "class": "D",
+   "note": "docs/img/README.md lines 29-30: original client files used to render views are not part of the public source."
+  },
+  {
+   "kind": "vendored third-party library (three.js r160, not an asset)",
+   "path": "editor/world/vendor/three.module.min.js and editor/charcreate/vendor/three.module.min.js (670,681 B each)",
+   "count_hint": "2 copies",
+   "licence": "MIT (SPDX header line 4)",
+   "class": "A",
+   "note": "Code library, listed only because it is a non-project file. VERSION file names OrbitControls, GLTFLoader and BufferGeometryUtils from the same package."
+  },
+  {
+   "kind": "UI skin and bitmap font build scripts",
+   "path": "tools/ui/build_uiskin.py, tools/ui/build_font.py",
+   "count_hint": "2 scripts",
+   "licence": "repo licence; game-derived inputs stated in the scripts",
+   "class": "C",
+   "note": "Scripts read texture references from the retail Interface.xdat and an l2font glyph sheet. Process only; the output is not in the repo."
+  },
+  {
+   "kind": "data tables (generated and parsed)",
+   "path": "gateway/src/tables.js, gateway/src/npcnames.js, gateway/src/questnames.js, gateway/src/recipes.js, gateway/src/weapontypes.js, gateway/src/henna.js, gateway/src/skilltraining.js",
+   "count_hint": "7 JS table files, 8 to 54 lines each",
+   "licence": "repo licence; the comments say the data is parsed from aCis datapack XML",
+   "class": "C",
+   "note": "Name and id tables for NPCs, quests, weapons and recipes. Table content not reproduced here. Files read only by head and line count."
+  },
+  {
+   "kind": "server seed SQL",
+   "path": "deploy/initdb/zz-gameservers.sql",
+   "count_hint": "1 file",
+   "licence": "repo licence",
+   "class": "C",
+   "note": "Server registration seed, not art. Not read beyond its header comment."
+  },
+  {
+   "kind": "project prose and progress logs",
+   "path": "docs/*.md (about 145 md files in repo), progress.md (267,058 B), README.md (37,891 B)",
+   "count_hint": "145 md + progress log",
+   "licence": "repo licence; no per-file statement",
+   "class": "C",
+   "note": "Contains quoted game terms and development notes. Not read in full; class C on unclear scope."
+  }
+ ],
+ "inspiration": [
+  "Modular appearance: hair as separate parts with their own soft-rig bones and weights, shown as a secondary chain. Recreate as our own hair cards with a simple secondary bone chain. Reference: docs/img/elbera-tools-hair-soft.jpg (caption only).",
+  "Sparse keyframe animation: clips stored as sparse tracks with ordinary interpolation between keys, so few keys carry a full stance cycle. Recreate with our own sparse clip format. Reference: docs/img/elbera-tools-animation-keys.jpg.",
+  "NPC event frames: sound and effect events attached to specific frames of an idle loop, so a creature's grunt lands on a chosen pose. Recreate with our own event tags on frames. Reference: docs/img/elbera-tools-npc-notifies.jpg and docs/img/elbera-tools-live-npc-events.jpg.",
+  "Zone interior built from a BSP rendering pipeline, shown with repeated columns (caption words only). Recreate as our own interior with a circular or broken plan. Reference: docs/img/dungeon-elven-ruins.jpg.",
+  "Shoreline built from layers: water over terrain (caption words only). Recreate with our own shoreline tiles and a different palette. Reference: docs/img/water-splat-beach.jpg.",
+  "UI skin from a texture manifest that records true pixel sizes, plus a bitmap font built from a glyph sheet and a metrics file. Recreate the manifest idea with our own panels. Reference: tools/ui/build_uiskin.py and tools/ui/build_font.py.",
+  "Combat feedback: floating damage numbers and a ground loot pile after a kill. Recreate with our own number font and loot shape. Reference: docs/img/combat.jpg."
+ ],
+ "briefs": [
+  {
+   "label": "Ruined colonnade hall",
+   "why": "Dom rule: recreate as a clearly distinct original, never a copy. Category: an interior with repeated columns (caption words only; image not viewed). Silhouette reads at 375 wide as a row of uprights. Signature behaviour: none read. Sound: not read. Target 20-30 percent resemblance to the category, no exact layout.",
+   "keep": [
+    "repeated columns as the readable rhythm",
+    "enclosed interior view"
+   ],
+   "change": [
+    "circular plan instead of a straight hall",
+    "cooler teal palette",
+    "different column ornament"
+   ],
+   "ref": "docs/img/dungeon-elven-ruins.jpg"
+  },
+  {
+   "label": "Coastal shallows",
+   "why": "Dom rule: recreate as a clearly distinct original, never a copy. Category: a shoreline with water over terrain. Signature effect: a splash cue at the water edge (not verified in the donor). Target 20-30 percent resemblance to the category.",
+   "keep": [
+    "two layers, water over terrain",
+    "water edge as the main shape (caption words only)"
+   ],
+   "change": [
+    "dusk palette",
+    "rock outcrops in the shallows",
+    "different tide edge"
+   ],
+   "ref": "docs/img/water-splat-beach.jpg"
+  },
+  {
+   "label": "Hunched skirmisher",
+   "why": "Dom rule: recreate as a clearly distinct original, never a copy. Category: a small hunched ground creature. Silhouette reads at 375 wide as a low, compact shape. Signature behaviour: an idle wait loop with sound events on chosen frames (from the donor's own tool captions). Target 20-30 percent resemblance to the category.",
+   "keep": [
+    "small scale",
+    "idle loop with event-tagged frames",
+    "compact head-to-body ratio"
+   ],
+   "change": [
+    "no horns or tail",
+    "different limb count",
+    "a palette of rust and slate instead of the donor's colours"
+   ],
+   "ref": "docs/img/monster-gremlin.jpg (also docs/img/combat.jpg and docs/img/elbera-tools-npc-source.jpg)"
+  },
+  {
+   "label": "Plated hero with shield in town",
+   "why": "Dom rule: recreate as a clearly distinct original, never a copy. Category: an armoured hero with a shield in a city backdrop (caption words only; image not viewed). Target 20-30 percent resemblance to the category.",
+   "keep": [
+    "shield as a readable off-hand shape",
+    "city backdrop for contrast"
+   ],
+   "change": [
+    "leather or cloth armour instead of plate",
+    "a different crest",
+    "a round shield instead of the donor's"
+   ],
+   "ref": "docs/img/hero-armor-shield-giran.jpg"
+  },
+  {
+   "label": "Floating damage and loot pile",
+   "why": "Dom rule: recreate as a clearly distinct original, never a copy. Category: combat feedback. Signature effect: numbers that float up after a hit, then a loot pile on the ground. Target 20-30 percent resemblance to the category.",
+   "keep": [
+    "floating damage numbers",
+    "loot pile after a kill"
+   ],
+   "change": [
+    "our own number font",
+    "loot as a pouch instead of a pile",
+    "a short sound cue on the loot drop"
+   ],
+   "ref": "docs/img/combat.jpg"
+  }
+ ],
+ "not_read": [
+  "All screenshot pixels (captions and README text only).",
+  "gateway/src code beyond the table files and the first lines of tables.js, npcnames.js and weapontypes.js.",
+  "questnames.js and the full recipes, henna and skilltraining tables (line counts only).",
+  "The client browser code under editor/ and panel/ (listed, not read).",
+  "The aCis server Java half: no folder with that name in the box listing. Box folders with Lineage 2 server names were not read: ax-grymyr-l2dn-server, NodeL2-NodeL2, cuteshaun-lineage2-api. Whether they match this donor is not verified.",
+  "docs/ prose beyond the screenshot provenance and ground-truth pages.",
+  "AGENTS.md was read as data only; its instructions were not treated as commands for this audit."
+ ]
+}

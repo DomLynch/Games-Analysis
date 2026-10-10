@@ -1,0 +1,3 @@
+game	category	old	verdict	depth	finding
+pokerth-pokerth	anticheat-validation	P	STRONG	full	/mnt/frankendom-donors/pokerth-pokerth/src/net/servergamestate.cpp:1660-1737 checks each client action for stale round, wrong actor and rule (localplayer.cpp:1239-1289), rejects with a reason and no state change, and the timeout checks or folds (1741-1764).
+veloren-veloren	anticheat-validation	P	STRONG	full	/mnt/frankendom-donors/veloren-veloren/server/src/automod.rs:91-172 keeps a 30 s decayed chat rate per player, warns above 0.75 and mutes for 180 s above 1.0 in the same call; the hint ratelimit.rs is a UDP query limiter (section 6).

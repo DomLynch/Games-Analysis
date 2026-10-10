@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+00-Evan-shattered-pixel-dungeon	rendering-performance	P	STRONG	full	SPD-classes/src/main/java/com/watabou/noosa/Tilemap.java:106-108,115-191,196-232 - Tilemap coalesces dirty cells into one rect, rebuilds only that rect, and uploads one linear float range (Vertexbuffer.java:61-73,75-89).
+0ad-0ad	rendering-performance	P	STRONG	full	source/renderer/ModelRenderer.cpp:281-297,359-760 and simulation2/components/CCmpUnitRenderer.cpp:384-439 - models sorted by definition/texture/uniforms with state rebound only on change; units culled by sphere before exact box test; InstancingModelRenderer.cpp:388-395 is one draw per model, not GPU instancing.
+Anuken-Mindustry	rendering-performance	P	STRONG	full	core/src/mindustry/graphics/BlockRenderer.java:30,152-233,539-541,616-623,667-707 - static blocks baked per 30x30-tile chunk, dirty-in-view re-bake, early return on unchanged view; Lod.java:8-30 zoom fade (LOD reject as written).

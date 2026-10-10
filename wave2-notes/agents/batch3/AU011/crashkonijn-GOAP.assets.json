@@ -1,0 +1,43 @@
+{
+  "donor": "crashkonijn-GOAP",
+  "code_licence": "Apache License 2.0 (LICENSE line 2; appendix placeholder at line 189 names no copyright holder)",
+  "asset_licence": "No repo-wide asset licence. LiberationSans font under SIL OFL 1.1 (font file line 6). EmojiOne sample refers to vendor terms (not read). Sprites, Unity shaders and project data have no licence line",
+  "rights_holder_status": "individual-author Unity library (GitHub crashkonijn/GOAP per README); also on Unity Asset Store per README; demo-art origin not stated",
+  "best_class": "B",
+  "asset_groups": [
+    {"kind": "creature sprite strips", "path": "Demo/Assets/CrashKonijn/GOAP/Demos/Sprites/00-creature-sheet-front.png, 00/01/02 front and back", "count_hint": "6 files, each 96x24 RGBA", "licence": "none stated", "class": "C", "note": "4-cell strip inferred from width; not viewed"},
+    {"kind": "demo sprite sheets", "path": "Demo/Assets/CrashKonijn/GOAP/Demos/Sprites/ (hexagonObjects_sheet, sheet, treeGreen_large, dungeon_tilemap_packed)", "count_hint": "4 files: 1024x512 RGBA, 980x490 RGBA, 64x64 RGBA, 192x176 8-bit palette", "licence": "none stated", "class": "C", "note": "origin not stated; not viewed"},
+    {"kind": "emoji sprite sheet", "path": "Demo/Assets/TextMesh Pro/Sprites/EmojiOne.png, EmojiOne.json, EmojiOne Attribution.txt", "count_hint": "3 files", "licence": "vendor terms per attribution text (line 3); terms not read", "class": "C", "note": "points to vendor site; not followed"},
+    {"kind": "font", "path": "Demo/Assets/TextMesh Pro/Fonts/LiberationSans.ttf and LiberationSans - OFL.txt", "count_hint": "1 TTF plus licence file", "licence": "SIL OFL 1.1 (line 6 of licence file)", "class": "B", "note": "OFL conditions per licence body (body not read); keep the licence text with the font"},
+    {"kind": "unity shaders and text", "path": "Demo/Assets/TextMesh Pro/Shaders/, Resources/ line-breaking text", "count_hint": "about 20 files", "licence": "none stated", "class": "C", "note": "TextMesh Pro package code; origin not in repo"},
+    {"kind": "unity project data", "path": "Demo/Assets/ scenes, prefabs, materials, anim, controller, asset files", "count_hint": "5 scenes, 16 prefabs, 7 mats, 2 anim, 3 controller, 41 asset", "licence": "none stated", "class": "C", "note": "5 scene files; seen by name EmptyScene.unity and TurnBased.unity; not opened"},
+    {"kind": "pdf docs", "path": "Demo/Assets/CrashKonijn/GOAP/README.pdf; Demo/Assets/TextMesh Pro/Documentation/TextMesh Pro User Guide 2016.pdf", "count_hint": "2 PDFs", "licence": "none stated", "class": "C", "note": "not opened"},
+    {"kind": "package doc images", "path": "Package/Documentation/images/", "count_hint": "about 50 PNG and 7 GIF", "licence": "repo Apache only; origin not stated", "class": "C", "note": "screenshots of the library; names only"},
+    {"kind": "text docs", "path": "Package/Documentation/**/*.md", "count_hint": "about 37 md files", "licence": "repo Apache", "class": "A", "note": "prose only"}
+  ],
+  "inspiration": [
+    "Creature strips come as a front and back pair, each a single short row of frames; a cheap way to make a creature read from both sides.",
+    "Trees use a flat canopy with fruit as a separate material, so the pickup can be recoloured without touching the tree.",
+    "The dungeon sheet is an indexed-palette tile set; a limited-colour dungeon look built from one tight palette.",
+    "The hex sheet is a modular tile set for grid play; study the seams and edges more than the fill.",
+    "The complex demo gives four readable job roles (woodcutter, miner, cleaner, smith) sharing one small world.",
+    "The graph viewer draws the decision graph as nodes; a debugger UI idea for our AI tools.",
+    "A GIF of thousands of tiny agents conveys swarm scale."
+  ],
+  "briefs": [
+    {"label": "Lumber pine (own label)", "why": "a simple, readable resource node", "keep": "flat canopy silhouette; fruit as a separate pass", "change": "taller two-tone trunk; asymmetric canopy; seasonal palette", "ref": "Demo/Assets/CrashKonijn/GOAP/Demos/Sprites/treeGreen_large.png (not viewed)"},
+    {"label": "Turnip walker (own label)", "why": "a tiny creature with a short walk strip per facing", "keep": "compact walk strip; front and back views; low frame count", "change": "different head and body shape; a visible tool or sack; our palette", "ref": "Demo/Assets/CrashKonijn/GOAP/Demos/Sprites/00-creature-sheet-front.png (not viewed)"},
+    {"label": "Hex hamlet tiles (own label)", "why": "a modular hex set that snaps together", "keep": "one sheet of interchangeable hex pieces", "change": "distinct seams and edges; a colour grade per biome", "ref": "Demo/Assets/CrashKonijn/GOAP/Demos/Sprites/hexagonObjects_sheet.png (not viewed)"},
+    {"label": "Low-colour crypt (own label)", "why": "a small fixed palette gives strong mood cheaply", "keep": "one tight palette; high contrast; a single sheet", "change": "a different palette family; our own wall motifs", "ref": "Demo/Assets/CrashKonijn/GOAP/Demos/Sprites/dungeon_tilemap_packed.png (palette not read)"}
+  ],
+  "not_read": [
+    "no sprite image pixels viewed; sizes and colour types from PNG headers only",
+    "EmojiOne.png and EmojiOne.json; vendor licence terms not followed",
+    "LiberationSans - OFL.txt body beyond lines 6 and 10",
+    "Unity .unity scenes, .prefab, .mat, .anim, .controller, .asset files",
+    "TextMesh Pro shaders and .cginc files; line-break text files",
+    "README.pdf and TextMesh Pro User Guide PDF",
+    "Package/Documentation images (names only) and markdown bodies",
+    "all .cs code (out of scope)"
+  ]
+}

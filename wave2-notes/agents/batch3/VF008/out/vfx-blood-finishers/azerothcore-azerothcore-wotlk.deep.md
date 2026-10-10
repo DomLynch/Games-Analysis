@@ -18,7 +18,7 @@ Armour formula, when it applies (`CalcArmorReducedDamage`, 2229-2299):
 
 Bleeding state (`SpellInfo.cpp` 2037-2039): a spell's aura state is `AURA_STATE_BLEEDING` when any of its effects carries the bleed mechanic (the state is derived from the spell data). The target's `HasAuraState(AURA_STATE_BLEEDING)` is then the check used by the next two rules; how the state is set on the target when the aura lands was not read.
 
-Finisher bonus on bleeding targets (`SpellTakenCritChance`, 9088-9092): the donor's comment is "Rend and Tear - bonus crit chance for Ferocious Bite on bleeding targets". The branch needs the druid family flag `0x00800000`, the icon id 1680 and the target bleeding (9089). It adds `rendAndTear->GetAmount()` from the caster's dummy aura 2859 effect 1 (9091-9092). The amount is database data, not in code.
+Finisher bonus on bleeding targets (`SpellTakenCritChance`, 9088-9092): the donor's comment is "Rend and Tear - bonus crit chance for Ferocious Bite on bleeding targets". The branch needs the druid family flag `0x00800000`, the icon id 1680 and the target bleeding (9089). It adds `rendAndTear->GetAmount()` from the caster's dummy aura 2859 effect 1 (9091-9092). The amount is database data, not in code. Ferocious Bite is a finishing move in the game's design, but the donor code does not show that (combo-point use was not read), so "finisher" here means the spell the donor names.
 
 Mechanic damage-taken multiplier (`MeleeDamageBonusTaken`, 10144-10155): the spell's mechanic mask is built from its effects. Druid spells with family flags `0x00008800` get the bleed bit added (10147-10149; the code comment says Shred and Maul). Then `TakenTotalMod` is multiplied by `GetTotalAuraMultiplier(SPELL_AURA_MOD_MECHANIC_DAMAGE_TAKEN_PERCENT, ...)` over the victim's auras whose misc value is in that mask (10153-10155). The helper groups auras of the same spell group and keeps the highest amount (6004 comment; body read only in part).
 
@@ -122,10 +122,8 @@ function mechanicMultiplier(auras: MechanicAura[], spellMechanics: Set<string>):
 - Not read: the penetration block, `SpellDamageBonusTaken`, the taken-crit branches outside the druid case, the aura-application path that sets the bleeding state on the target, and the database amounts.
 
 Best transferable idea: A bleed tick skips armour while a direct physical hit does not, so bleeding counters heavy armour, and a finisher gets a bonus crit against a bleeding target.
-
-Decision (proposed): adapt. Take the bleed-ignores-armour rule and the bleeding state as data flags on the engine's wound status, and the finisher bonus on a bleeding target as catalogue data. Do not take WoW's armour formula, its level term or its spell-family bit tests. Why: the armour exemption is a clear, testable rule for a gladiator game (heavy armour stops being a full answer to a bleed), and it links the wound to the finisher, but Frankendom has no armour model or level term to copy the formula onto.
-
-Acceptance: Server test with armour 500 and attacker level 60: a 100-damage physical direct hit lands at 93 (formula as in section 3), and the same 100 as a bleed tick lands at 100. A finisher flagged in the catalogue gets its bonus crit only when the target is bleeding; the same finisher on a clean target does not. The client shows the bleed tint only when the server state says so.
+Decision (proposed): adapt - take the bleed-ignores-armour rule and the bleeding state as data flags on the wound status, and the finisher bonus as catalogue data; drop WoW's armour formula, level term and spell-family bit tests, since Frankendom has no armour model or level term to copy them onto.
+Acceptance: Server test with armour 500 and attacker level 60: a 100-damage physical direct hit lands at 93 and the same 100 as a bleed tick lands at 100; a catalogue-flagged finisher gets its bonus crit only against a bleeding target; the client tint follows the server bleed state only.
 
 Reuse tag: rewrite-from-idea (GPL-2; clean-room only)
 Brief rule served: 1 (one engine: the armour exemption and the bleed state are one rule in src/fight; clients draw them)

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+00-Evan-shattered-pixel-dungeon	inventory-bank-equipment	P	STRONG	full	Item.java:206-280 collect admission order; Bag.java:193-206 canHold; EquipableItem.java:126-131 cursed refusal
+0ad-0ad	inventory-bank-equipment	P	STRONG	full	ResourceGatherer.js:251-289 PerformGather tick; ResourceGatherer.js:396-409 CommitResources; ResourceDropsite.js:45-58; GarrisonHolder.js:157-167 (partial)
+2004Scape-Server	inventory-bank-equipment	P	STRONG	full	Inventory.ts:158-241 add and 243-323 remove; Player.ts:1596-1656 move wrappers; InvOps.ts:503-535 INV_MOVEITEM overflow (over-count, by reading); InvOps.ts:591-599 uncert loss (by reading)

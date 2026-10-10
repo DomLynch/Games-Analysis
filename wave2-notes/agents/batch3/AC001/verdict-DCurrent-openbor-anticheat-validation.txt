@@ -1,0 +1,19 @@
+DCurrent-openbor | anticheat-validation (cell 6) | verdict NONE | depth thin | camera_scope: not a camera cell
+
+Donor: /mnt/frankendom-donors/DCurrent-openbor/ (root LICENSE read: BSD-style, three conditions and a no-endorsement clause, LICENSE line 11). C engine for side-scrolling beat-'em-ups.
+Hint: INFERRED (no hint file given). Search terms: cheat, anticheat, checksum, crc, md5, hash, replay, validat, blacklist, ban, netcode, socket, netplay, network, packet.
+
+Files opened (read by excerpt):
+1. engine/openbor.c 14921-14936 (cheat option loader, global_config.cheats reset then OR-ed from the config line), 22018-22031 (models.txt "nocheats" branch clears CHEAT_OPTIONS_MASTER_MENU), 55686-55706 (menu_options_cheats: Implacable March, Infinite Credits, Infinite Energy, Infinite Health, Infinite Lives...).
+2. engine/source/openborscript/global_config.c 36-56 (the cheats property accessor, line 49).
+3. engine/source/openborscript/constants.c 581-584 (cheat constants exposed to scripts).
+4. engine/source/openborscript/commands.c 89-92, 114-117 (the "global_config_cheats" and "nocheats" command names).
+5. engine/source/gamelib/packfile.c (searched for encrypt, xor, key, password, decrypt: only author names matched; no key or integrity code).
+6. engine/source/scriptlib/List.c (searched for checksum/hash: only string-hash buckets for list lookup, not integrity).
+Grep only (not opened in full): openbor.c cheat gates at 31576, 31793, 32419, 33279, 38852, 43913, 44386, 45425, 45675, 47810, 50191, 53416, 53488, 53633, 25762.
+Searched and found nothing: no socket, netplay or packet code under engine/source (excluding webmlib, sdl, vpx, ogg, tremor, nestegg, android include trees).
+
+Why NONE: the only cheat code is a single-player option menu. Its flags (infinite health, lives, energy, credits, multihit, implacable, time of day) are set locally in the same process that plays the game, and nothing checks them against a server or another player. There is no client-input validation, no rate limit, no replay or desync check, no hit verification and no ban pipeline in this tree.
+
+Best transferable idea: a per-model data flag (models.txt "nocheats" removes the cheat master menu) shows how a designer can switch developer toggles off as data, which is data-driven config rather than anticheat.
+Decision (proposed): reject - the donor's cheats are client-side single-player toggles that Frankendom's server-authoritative rule forbids, so there is no anticheat mechanism to take; the per-model idea is data-driven config, not anticheat, and does not fit the topic.

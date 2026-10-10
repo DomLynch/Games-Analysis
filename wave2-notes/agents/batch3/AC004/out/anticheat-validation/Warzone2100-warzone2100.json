@@ -1,0 +1,68 @@
+{
+ "game": "Warzone2100-warzone2100",
+ "category": "anticheat-validation",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/Warzone2100-warzone2100/lib/netplay/netplay.cpp",
+ "licence": "GPL-2.0-or-later (netplay.cpp header 'either version 2 of the License, or (at your option) any later version'; README SPDX GPL-2.0-or-later)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/intake.ts",
+ "parity_row": 5,
+ "pattern_tags": [
+  "new:access-table",
+  "new:identity-stamp",
+  "new:auto-kick-on-invalid",
+  "new:strike-ledger",
+  "new:expiring-ban"
+ ],
+ "data_fields": [
+  {
+   "name": "strike_window",
+   "donor_constant": "1800 s default (4 s for two sites)",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "lib/netplay/netplay.cpp:3527"
+  },
+  {
+   "name": "permanent_ban_attempts",
+   "donor_constant": "100 attempts in one window",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "lib/netplay/netplay.cpp:3551"
+  },
+  {
+   "name": "permanent_ban_list_cap",
+   "donor_constant": "MAX_BANS 1024",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "lib/netplay/netpermissions.h:37"
+  },
+  {
+   "name": "temp_bad_ip_cache_size",
+   "donor_constant": "512 entries",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "lib/netplay/netplay.cpp:324"
+  },
+  {
+   "name": "pending_sockets_per_ip_reject",
+   "donor_constant": "more than 1 pending",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "lib/netplay/netplay.cpp:3572"
+  },
+  {
+   "name": "join_challenge_length",
+   "donor_constant": "32 to 88 characters",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "lib/netplay/netlobby.cpp:1586"
+  }
+ ],
+ "best_idea": "Gate every relayed client message on its sender matching the connection, a per-message-type access table (who may send or be addressed), and a strike ledger that counts refused attempts in a window, extends the window on each strike, and escalates to a permanent ban at a count.",
+ "decision": "adapt",
+ "decision_why": "Take the access table, the sender-equals-connection rule and the strike shape. Key strikes by account or session with IP secondary (the donor is IP-only, which catches shared NAT); keep the broadcast relay out, since Frankendom's server sends state.",
+ "decision_status": "proposed",
+ "acceptance": "A client sending a server-only verdict (kill or loot grant) is closed with the world unchanged; a message naming another character is refused with no state change; 100 refused connects in the window from one key add a permanent entry; a single bad-version probe gives a 30-minute refusal and nothing more."
+}

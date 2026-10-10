@@ -141,10 +141,8 @@ function regenPercent(f: Fighter, basePercent: number): number {
 - Not written as a note: the bloodlust mechanic was also read. A kill adds 10 to bloodlust (mon-util.c 1114-1115). Damage gets +bloodlust/2 and blows get +bloodlust/20 (player-calcs.c 2208-2209). Bloodlust decrements by the default 1 per step (game-world.c 285-287). Over-exertion side effects grow as the value falls under 10 (game-world.c 544-549). This is a candidate for a separate finisher-rage note.
 
 Best transferable idea: A landed hit that reaches 95% of its maximum roll adds a graded, decaying wound pool that blocks regeneration, and the grade (not the raw number) decides what the player sees.
-
-Decision (proposed): adapt. Take the graded pool, the severity-by-grade bleed and the regen block as an engine status on the fighter, with every number as data. Do not take the donor's scale (up to 10000 points) or its non-decaying Mortal Wound as they are. Why: a visible, graded wound that stops regen rewards a clean finisher without adding a new combat number, and it fits one ledger; but the donor's numbers would end a three-minute duel unless we cap the pool and add a cure rule.
-
-Acceptance: A server test: a 20-damage blow on a 20-maximum blow (a perfect roll) with a cut flag adds a tier-4 wound of 51 to 100 points plus any super-charge tiers; a 10-damage blow on the same blow adds nothing; a wounded fighter loses 1 HP per step at Graze grade and gets no natural regen while the pool is above zero. On the hero at 375 px wide, the tint changes when the grade changes from Graze to Severe Cut.
+Decision (proposed): adapt - take the graded pool, severity-by-grade bleed and regen block as an engine status with data numbers; drop the donor's 10000-point scale and non-decaying Mortal Wound, which would end a short duel unless capped and given a cure rule.
+Acceptance: A server test: a 20-damage blow on a 20-maximum blow with a cut flag adds 51-100 points (tier 4) plus any super-charge tiers, a 10-damage blow adds nothing, and a wounded fighter loses 1 HP per step at Graze with no natural regen; on the hero at 375 px the tint changes from Graze to Severe Cut.
 
 Reuse tag: rewrite-from-idea (GPL-2 or Angband licence; clean-room only)
 Brief rule served: 1 (one engine: wound state lives in src/fight, clients only draw it)

@@ -1,0 +1,120 @@
+{
+  "donor": "dereth-network-dereth",
+  "code_licence": "MIT for everything outside empyrean/ (LICENSE; README line 215). empyrean/ is AGPL-3.0-only (empyrean/LICENSE).",
+  "asset_licence": "No separate licence file for assets. The repo-wide statement that everything outside empyrean/ is MIT covers the art there. Launcher paintings have no creator line. Fonts are under SIL OFL 1.1 (launcher and classic-fonts). No retail game data ships in the repo (README line 15).",
+  "rights_holder_status": "independent project. README line 5 calls it a from-scratch reimplementation and line 219 disclaims affiliation with Microsoft, Turbine or any current rights holder. Launcher paintings: creator not named in the files.",
+  "best_class": "A",
+  "asset_groups": [
+    {
+      "kind": "UI pixel atlases and glyph pages (Horizon interface)",
+      "path": "dereth/client/crates/horizon/pieces/",
+      "count_hint": "9 PNG (3 atlases at 2048 and 4096 px square, 6 glyph pages at 2048 px square) plus manifest.json and fonts.json",
+      "licence": "MIT (repo-wide line, README line 215); horizon/README.md line 13 says the interface draws its own art",
+      "class": "A",
+      "note": "Own art. manifest.json names pieces (window corners, edges, fills) at three integer scales. Glyph pages are bitmap fonts packed with a table."
+    },
+    {
+      "kind": "launcher background paintings",
+      "path": "dereth/launcher/assets/background/",
+      "count_hint": "10 PNG, each about 1867 x 842 px, 2.2 to 2.9 MB each",
+      "licence": "MIT by the repo-wide line (README line 215). No creator or licence line in the launcher folder or README.",
+      "class": "C",
+      "note": "Provenance unclear: the repo says MIT for everything outside empyrean/, but no artist is named and the file names refer to Asheron's Call locales and creatures. Treat as unclear until a human checks."
+    },
+    {
+      "kind": "classic-portal pictures (paper doll slots, journal, sigils, pack layer)",
+      "path": "core/client-runtime/assets/classic-portal/",
+      "count_hint": "7 PNG at 32 x 32 px plus 2 at 34 x 27 px, plus layer.dat and pack.tsv",
+      "licence": "MIT (repo-wide line). pack.tsv line 1 says these are Dereth's own records.",
+      "class": "A",
+      "note": "Small indexed icons. pack.tsv maps each picture to the later file id it replaces. layer.dat is the packed container built from them (binary, not opened)."
+    },
+    {
+      "kind": "fonts",
+      "path": "dereth/launcher/assets/fonts/ and dereth/client/crates/classic-fonts/fonts/",
+      "count_hint": "Cinzel and EB Garamond variable TTF (launcher); 5 Liberation TTF (classic-fonts)",
+      "licence": "SIL OFL 1.1 (OFL-Cinzel.txt line 3; classic-fonts SOURCES.txt line 1 says Liberation 2.1.5, unmodified). The EB Garamond OFL text file is present but its body was not read.",
+      "class": "A",
+      "note": "Use with the OFL notice kept with the font files."
+    },
+    {
+      "kind": "app icons",
+      "path": "dereth/client/assets/ and empyrean/server/assets/",
+      "count_hint": "dereth-256.png, Dereth.icon, dereth.ico, empyrean-256.png, Empyrean.icon, empyrean.ico",
+      "licence": "dereth/client falls under the repo-wide MIT line. empyrean/ falls under AGPL-3.0-only (empyrean/LICENSE line 1).",
+      "class": "B",
+      "note": "Client icon is class A. The server icon is copyleft under AGPL (share-alike style, a condition)."
+    },
+    {
+      "kind": "recorded traffic fixtures (packet captures and message corpus)",
+      "path": "fixtures/packet-captures/ and fixtures/message-corpus/",
+      "count_hint": "not counted",
+      "licence": "Repo-wide MIT line applies by location. fixtures/README.md line 3 says they are built from traffic recorded between the retail client and a local ACE server.",
+      "class": "C",
+      "note": "Test data recorded from a commercial client, pseudonymised in place. Not art. Not useful as an asset; any reuse is a licence question for a human."
+    },
+    {
+      "kind": "game data (retail DAT files)",
+      "path": "not in repo",
+      "count_hint": "0",
+      "licence": "README line 15: no retail data files ship with this repository.",
+      "class": "D",
+      "note": "Nothing to take. The client and server read the user's own copy."
+    }
+  ],
+  "inspiration": [
+    "Launcher look: a wide painted vista (about 2.2:1) sits behind dark translucent glass panels with a thin gold rule and rounded corners, and the painting is shown at a pixelated scale. Keep the calm, painted backdrop and the quiet panels. Ref: dereth/launcher/README.md lines 174 to 181.",
+    "Two-register UI: chunky pixel-grid frames for buttons and the main action plate, set against plain serif type for headings and body text. The contrast makes controls read as game and text read as text. Ref: dereth/launcher/README.md line 176.",
+    "Window frame kit packed at integer scales: named corner, edge and fill pieces are authored once and packed at 1x, 2x and 3x so frames stay crisp. Ref: dereth/client/crates/horizon/pieces/manifest.json (entries such as window.tl and window.top).",
+    "Slot icons on one flat ground: 32 x 32 pictures sit on a single dark ground so any transparent pixel reads as the empty slot. A small manifest tells the packer which picture goes where. Ref: core/client-runtime/assets/classic-portal/pack.tsv and cloak.png.",
+    "Lit and unlit pairs: a small book-style icon comes in a normal and a lit version (journal.png and journal-lit.png) for a state change. Simple, cheap, readable at small size. Ref: core/client-runtime/assets/classic-portal/journal-lit.png.",
+    "Three-hue sigil set: three 32 x 32 charms in different hues (red, blue, yellow) mark distinct categories at a glance. Ref: core/client-runtime/assets/classic-portal/sigil-red.png, sigil-blue.png, sigil-yellow.png.",
+    "Nameplate colour key in the Horizon HUD: people, fightable creatures and players get three hues, so the nearby crowd reads at a glance. Ref: dereth/client/crates/horizon/README.md, table 'How the game's concepts are drawn'."
+  ],
+  "briefs": [
+    {
+      "label": "Three-hue sigil charm set",
+      "why": "A 32 px badge in three hues tells categories apart at a glance, and a lit and unlit pair shows state with no extra art.",
+      "keep": "Small 32 px badge silhouettes; one hue per category; a lit and unlit pair for each.",
+      "change": "Our own emblem shape (not a plain round badge); our own palette; our own glyph inside.",
+      "ref": "core/client-runtime/assets/classic-portal/sigil-red.png (also sigil-blue.png, sigil-yellow.png, journal-lit.png)"
+    },
+    {
+      "label": "Wide painted vista behind glass panels",
+      "why": "A wide, calm painting lets the panels and buttons sit over open space instead of over a busy scene.",
+      "keep": "Wide letterbox painting; dark translucent panels with a thin gold rule; pixelated scaling.",
+      "change": "Our own subject with one dominant landmark; our own palette; no locale or creature names in the file names.",
+      "ref": "dereth/launcher/assets/background/wilderness.png (file present, not viewed; class C, inspiration only)"
+    },
+    {
+      "label": "Three-scale window frame kit",
+      "why": "Corners and edges reused everywhere give one consistent frame family that stays crisp at each scale.",
+      "keep": "Corner, edge and fill pieces; integer scales 1x, 2x, 3x; a named manifest.",
+      "change": "Our own bevel and corner radius; a different corner ornament; our own palette.",
+      "ref": "dereth/client/crates/horizon/pieces/manifest.json and atlas-1-0.png"
+    },
+    {
+      "label": "Three-hue nameplate key",
+      "why": "Friend, foe and player colours read at a glance in a crowded scene.",
+      "keep": "Three hues mapped to three roles; a clear key in the HUD.",
+      "change": "Hues away from the green, yellow and blue trio; add a shape cue so the key works for colour-blind players.",
+      "ref": "dereth/client/crates/horizon/README.md (table 'How the game's concepts are drawn')"
+    }
+  ],
+  "cross_links": [
+    "hud-ui: Horizon atlases, classic-portal icons, nameplate key, paper-doll slots.",
+    "camera: none found in the art (the Horizon camera is code).",
+    "zones, spawns, loot, vfx, animation, sound: no art or audio files in this donor; no audio files found in the tree.",
+    "No creature, item or armour models in this donor (no 3D files found)."
+  ],
+  "not_read": [
+    "Rust sources (core/assets, core/client-runtime and others): only the file names and folder layout were checked.",
+    "Binary PNG content: only dimensions and sizes were read from headers; no image was viewed.",
+    "empyrean/THIRD-PARTY-LICENSES.html and the empyrean/licenses folder beyond the MIT notice file.",
+    "EB Garamond OFL text body and the Cinzel font body (only the OFL header line of Cinzel was read).",
+    "fixtures contents: file counts not measured; only the README was read.",
+    "dereth/web, tools/ and docs/: not read beyond the README licence lines.",
+    "Any text content in core/text (shared strings): not read.",
+    "No _RESTRICTED-NOTE.txt found in this donor."
+  ]
+}

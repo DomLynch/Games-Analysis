@@ -1,0 +1,147 @@
+{
+  "donor": "CleverRaven-Cataclysm-DDA",
+  "code_licence": "CC BY-SA 3.0 Unported, per LICENSE.txt line 1 (stated for the whole project). README line 64 summarises code and content as free to use under CC BY-SA 3.0. README line 65 says some bundled code is under other software licences (e.g. src/third-party/*, each with its own licence file).",
+  "asset_licence": "Project-wide CC BY-SA 3.0 for art and content (LICENSE.txt line 1; README line 64). doc/TILESET.md line 687 says all tileset art must be CC BY-SA 3.0 or compatible for inclusion. Fonts carry their own licences: unifont.ttf is SIL OFL 1.1 and GPL v2+ with font embedding exception (LICENSE.txt line 5); terminus.ttf is SIL OFL (LICENSE.txt line 9, LICENSE-OFL-Terminus-Font.txt). LICENSE-Apache-Robot-Font.txt is the Apache 2.0 text; no file read names Roboto-Medium.ttf as the font it covers (inference from the file name only). Mod art in data/mods has no per-mod licence file found, except hunvre/credits.txt.",
+  "rights_holder_status": "Community open-source project. README line 64 says the content comes from over 1000 volunteers; no single rights holder for the art is named in the files read. Third-party items name their own holders (font copyright lines in LICENSE-OFL-Terminus-Font.txt; a Hubble image and a font credited in data/mods/hunvre/credits.txt).",
+  "best_class": "B",
+  "asset_groups": [
+    {
+      "kind": "2D tileset: ASCII glyph atlas",
+      "path": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/gfx/ASCIITileset",
+      "count_hint": "4 files: ASCIITiles.png (160x50 px, 10x10 cells), fallback.png (33 KB), tile_config.json (6 KB), tileset.txt",
+      "licence": "Project CC BY-SA 3.0 (LICENSE.txt line 1). tileset.txt has no licence line of its own.",
+      "class": "B",
+      "note": "Retro glyph atlas. tile_config.json maps game ids to glyph cells and foreground colour indices, and carries paired lighting_* light and dark tile ids (line 11). Pixel dimensions from PNG header, not by viewing."
+    },
+    {
+      "kind": "2D tileset: overmap map sheets",
+      "path": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/gfx/Larwick_Overmap",
+      "count_hint": "5 files: overmap.png (256x416 px), overmap_tall.png (493 B), fallback.png (96 KB), tile_config.json (210 KB), tileset.txt",
+      "licence": "Project CC BY-SA 3.0 (LICENSE.txt line 1). No per-folder licence or credit file.",
+      "class": "B",
+      "note": "Region-map tile sheets for the overmap view, with a separate tall sheet and a fallback sheet. Art not viewed."
+    },
+    {
+      "kind": "Full-screen loading art (illustrations)",
+      "path": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/gfx/loading_screens and data/mods/*/loading_images, data/mods/*/json/loading_screens (about 19 PNG across mods)",
+      "count_hint": "2 core PNG (1365x1024, 1920x1460; about 2.5 MB together) plus about 19 PNG in mods",
+      "licence": "Core images: project CC BY-SA 3.0 (LICENSE.txt line 1). Mod images: no per-mod licence file found by name search; hunvre/credits.txt credits only a Hubble image and a font.",
+      "class": "B for core images; C for mod images (licence not stated in their folders)",
+      "note": "Painted or illustrated scenes; artists not named in the files read. Not viewed."
+    },
+    {
+      "kind": "Fonts (OFL and GPL-with-exception)",
+      "path": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/font (unifont.ttf, Terminus.ttf, VecTerminus12Medium.otf)",
+      "count_hint": "3 font files",
+      "licence": "unifont.ttf: SIL OFL 1.1 and GPL v2+ with font embedding exception (LICENSE.txt line 5). Terminus: SIL OFL (LICENSE.txt line 9; LICENSE-OFL-Terminus-Font.txt). VecTerminus: copyright line in LICENSE-OFL-Terminus-Font.txt names tisimst.",
+      "class": "B",
+      "note": "Use requires keeping the licence and the font-name restrictions the OFL text sets; the OFL text itself was not read in full."
+    },
+    {
+      "kind": "Font without a stated licence in the files read",
+      "path": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/font/Roboto-Medium.ttf",
+      "count_hint": "1 file",
+      "licence": "Not stated in the files read. LICENSE-Apache-Robot-Font.txt is Apache 2.0 text but does not name this file.",
+      "class": "C",
+      "note": "Unclear, so inspiration-only until the licence is confirmed."
+    },
+    {
+      "kind": "Map font sheets (PNG)",
+      "path": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/font/map_font_LARWICK.png and map_font_LARWICK_Colored.png",
+      "count_hint": "2 PNG",
+      "licence": "Project CC BY-SA 3.0 (LICENSE.txt line 1).",
+      "class": "B",
+      "note": "Bitmap glyph fonts for the map. Not viewed."
+    },
+    {
+      "kind": "Sound effects (UI blips)",
+      "path": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/sound/Menu_Sound_Test",
+      "count_hint": "2 OGG (menu_move.ogg 6.5 KB, menu_error.ogg 7.4 KB), soundset.json, musicset.json, soundpack.txt",
+      "licence": "Project CC BY-SA 3.0 (LICENSE.txt line 1). soundpack.txt names the pack but has no licence line.",
+      "class": "B",
+      "note": "Two menu sounds only. musicset.json holds an empty playlist, so the pack ships no music. OGG audio not played."
+    },
+    {
+      "kind": "Monster, item, NPC and dialogue text (JSON)",
+      "path": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/json (about 3,320 JSON files), data/json/speech.json (4,071 lines), data/json/dreams.json (948 lines), data/names/*.json (en.json about 32,472 lines of name lists)",
+      "count_hint": "3,320 JSON files under data/json",
+      "licence": "Project CC BY-SA 3.0 (LICENSE.txt line 1).",
+      "class": "B",
+      "note": "Game text. Summarise and do not copy long passages. Only fungus_zombie.json and mi-go.json were read, by grep."
+    },
+    {
+      "kind": "Title, credits and holiday screen text",
+      "path": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/title and data/credits/en.credits",
+      "count_hint": "about 16 title variants (en, zh_CN, ru) and 1 credits file",
+      "licence": "Project CC BY-SA 3.0 (LICENSE.txt line 1).",
+      "class": "B",
+      "note": "Seasonal title strings and the credits roll. Not read in full."
+    },
+    {
+      "kind": "Colour theme and style data (JSON)",
+      "path": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/raw/color_themes and data/raw/imgui_styles",
+      "count_hint": "about 25 colour theme JSON files plus 2 imgui style files",
+      "licence": "Project CC BY-SA 3.0 (LICENSE.txt line 1).",
+      "class": "B",
+      "note": "Named UI palettes such as vintage, sun, blood moon and high-contrast. Palette values not copied."
+    },
+    {
+      "kind": "Screenshots and showcase images",
+      "path": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/screenshots (game.png, menu.png, credits.png, ultica-showcase-sep-2021.png)",
+      "count_hint": "4 PNG (ultica showcase 1.8 MB)",
+      "licence": "Project CC BY-SA 3.0 for the project screenshots (LICENSE.txt line 1). The Ultica tileset shown in the showcase is not in this repo and its licence was not read.",
+      "class": "B for project screenshots; C for the Ultica showcase until its tileset licence is checked",
+      "note": "Not viewed."
+    }
+  ],
+  "inspiration": [
+    "Creature progression by text: fungus_zombie.json gives several description variants for one undead as it changes, from dusted, to a stalk out of the skull, to a swollen balloon-like body (lines 6, 20, 37, 79). Recreate as one fungal walker with three visual stages.",
+    "One glyph per creature family: the mi-go entries use a fixed glyph and colour per variant (pink for the base type, red for a surgeon variant; mi-go.json lines 15-16, 67-68, 125-126). A strong silhouette can carry identity when the art is tiny.",
+    "Cheap lighting with paired tiles: tile_config.json lists lighting_*_light and lighting_*_dark tile ids (line 11). An atlas of two-tone tiles gives light and shadow without a shader. Recreate with a shader multiply pass instead of duplicated art if we want fewer tiles.",
+    "Fallback sheets: each tileset ships a fallback.png and a tall or alternate sheet for regions (gfx/ASCIITileset/fallback.png, gfx/Larwick_Overmap/overmap_tall.png). Good practice for missing art.",
+    "Whole-UI palettes as one file: data/raw/color_themes holds about 25 named themes (vintage, sun, blood moon, high-contrast and others), so the UI palette swaps in one step. Recreate with our own names and values.",
+    "Minimal UI sound set: two blips (move and error) mapped by id in soundset.json (data/sound/Menu_Sound_Test). A two-sound feedback pair covers navigation and rejection.",
+    "Credits as a file: data/mods/hunvre/credits.txt lists each third-party item with its licence (a CC BY 2.0 image, an OFL font). A model for our own credits file, whatever art we end up with.",
+    "Overmap region sheets: a separate tile sheet for the regional map view, distinct from the local map tiles. Relevant to our zone and world-map design."
+  ],
+  "briefs": [
+    {
+      "label": "Stalk-crowned fungal walker",
+      "why": "A slow undead that changes over time reads as dread without gore. The growth stages tell the player how long the creature has been there.",
+      "keep": "Three visual stages from dusted to overgrown; a fungal stalk growing from the head; a grey dust base colour.",
+      "change": "A quadruped crawler instead of a shambling humanoid; crystal spore growths in our own colour; a different head silhouette.",
+      "ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/json/monsters/fungus_zombie.json (lines 6, 20, 79)"
+    },
+    {
+      "label": "Single-glyph horror",
+      "why": "A creature identified by one symbol and a colour family stays readable at tiny sizes and in ASCII-style views.",
+      "keep": "One fixed symbol per creature family; colour by variant (base, elite, surgeon-type); a strong silhouette at small size.",
+      "change": "Our own symbol family (not the ampersand); a different colour story; a larger-scale silhouette for close-up art.",
+      "ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/json/monsters/mi-go.json (lines 15-16, 67-68, 125-126)"
+    },
+    {
+      "label": "Lit-tile twin ladder",
+      "why": "Paired light and dark tiles give a lit look for almost no cost, which suits a sprite sheet on a low budget.",
+      "keep": "A light and dark twin for each entity; lighting handled by tile swap.",
+      "change": "A shader multiply or per-sprite normal lighting instead of duplicated art; our own tone steps.",
+      "ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/gfx/ASCIITileset/tile_config.json (line 11)"
+    },
+    {
+      "label": "Region-map twin sheets",
+      "why": "A separate tall sheet for the regional map, with a fallback sheet, handles many terrain types without one huge atlas.",
+      "keep": "A normal and a tall sheet; a fallback sheet for missing art.",
+      "change": "Our own terrain set and a hatch-pattern fallback instead of plain placeholder art.",
+      "ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/gfx/Larwick_Overmap/overmap_tall.png and fallback.png"
+    }
+  ],
+  "not_read": [
+    "No PNG, OGG or TTF/OTF opened. Only the PNG header dimensions were read with a short script on the VPS.",
+    "Font licence texts LICENSE-OFL-Terminus-Font.txt and LICENSE-Apache-Robot-Font.txt read only at the first lines; the full OFL and Apache texts were not read.",
+    "Mod art and mod folders: found by file name only, not opened. Only hunvre/credits.txt was read.",
+    "Only fungus_zombie.json and mi-go.json were read (by grep and head) out of about 3,320 JSON files.",
+    "data/credits/en.credits, data/title/*, data/names/* and speech/dreams text: named and sized only, not read.",
+    "The Ultica showcase image and its tileset: not read, licence unknown.",
+    "src/third-party licence files: names only (imgui/LICENSE.txt, zstd README). Not read.",
+    "Not verified: whether any art in this repo was drawn by a named person other than the credits lines read."
+  ]
+}

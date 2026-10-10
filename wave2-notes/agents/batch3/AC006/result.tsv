@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+clockworklabs-SpacetimeDB	anticheat-validation	P	STRONG	full	tools/xtask-llm-benchmark/src/benchmarks/auth/t_045_rate_limit/answers/rust.rs:20-41 per-identity 1 s window, rejects by panic; failed-status rollback at crates/core/src/subscription/module_subscription_actor.rs:2067-2068 (hint file tools/ci/commands/update-flow/src/main.rs is the wrong file)
+colyseus-colyseus	anticheat-validation	P	STRONG	full	packages/core/src/input/RoomInput.ts:227-244 capture: clamp, seq dedupe, bounded push; packages/core/src/input/InputBuffer.ts:272-285 overflow counted as acked (hint file packages/admin/src-backend/index.ts is the wrong file)
+crashkonijn-GOAP	anticheat-validation	P	STRONG	full	Package/Runtime/CrashKonijn.Agent.Runtime/ActionRunner.cs:19-53 re-checks a queued action every frame before it acts; Package/Runtime/CrashKonijn.Goap.Runtime/Behaviours/GoapActionBase.cs:103-141 conditions, target, own rule (hint INFERRED)

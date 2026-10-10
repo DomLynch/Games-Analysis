@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+coding-horror-basic-computer-games	vfx-blood-finishers	P	STRONG	full	csharp/AttackStrategy.cs 5-45 and OpponentAttackStrategy.cs 21-111: per-round damage ledger, KO over 35 checked after each landed punch, KO clears the round; blood is only a text roll (OpponentAttackStrategy.cs 99-103).
+crawl-crawl	vfx-blood-finishers	P	STRONG	full	crawl-ref/source/bloodspatter.cc 122-161 and 212-283, attack.cc 95-114, fineff.cc 672-684 and 2129-2137: blood decal chance = damage/20 per square, neighbours damage/15, same-tile blood jobs merge and fire at turn end.
+daggerfall-unity	vfx-blood-finishers	P	STRONG	full	Assets/Scripts/Game/EnemyBlood.cs 26-39 with WeaponManager.cs 561-573, EnemyAttack.cs 320-333 and Internal/DaggerfallBillboard.cs 115-165: one-shot 10 fps blood sprite at the hit point, shown only when damage > 0, frame from the creature's BloodIndex.

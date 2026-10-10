@@ -1,0 +1,121 @@
+{
+  "donor": "flareteam-flare-game",
+  "code_licence": "no code of its own beyond a Blender Python helper (art_src/characters/render8dirs.py) and CMake files. README.md says the engine is GPL v3 or later. LICENSE.txt is CC-BY-SA 3.0 legal code and covers the art and data.",
+  "asset_licence": "README.md: all of the art and data files for Flare: Empyrean Campaign are released under CC-BY-SA 3.0, later versions permitted. Fonts: Liberation, Bona Nova SC, Noto and Marck Script under SIL OFL 1.1. Audio is not named in the README. Per-file attribution is pointed to an online wiki and is not in the repo.",
+  "rights_holder_status": "community open-source game. README.md: copyright 2010-2013 Clint Bellanger; contributors retain copyrights to their own contributions. CREDITS.txt names artists per area and says per-file attribution is online. Not a commercial game; no leak or clean-room claim in the repo.",
+  "best_class": "B",
+  "asset_groups": [
+    {
+      "kind": "character, enemy, NPC and item sprite sheets",
+      "path": "mods/fantasycore/images/ (enemies, npcs, avatar, loot, powers, portraits, tilesets, cursors, menus, icons), mods/empyrean_campaign/images/",
+      "count_hint": "378 png under mods/fantasycore/images; 36 png under mods/empyrean_campaign/images",
+      "licence": "CC-BY-SA 3.0 for art and data (README.md, LICENSE.txt). Attribution by name in CREDITS.txt; per-file credits online.",
+      "class": "B",
+      "note": "Large sheets, sizes from PNG headers: enemies/skeleton.png 3886x2154, enemies/goblin.png 1316x3185, enemies/wyvern/wyvern_run.png 1402x2769, enemies/wyvern_fire/wyvern_fire_stance.png 1731x2004, enemies/minotaur/minotaur_run.png 1917x1654. Frames are cut by coordinate lists in the animation .txt files (for example 129x209 cells in the wyvern fire stance)."
+    },
+    {
+      "kind": "source art (Blender, GIMP, PNG, JPG)",
+      "path": "art_src/ (spells, characters, enemies, items, loot, tilesets, textures, interface, animation_defs)",
+      "count_hint": "357 png, 280 .blend, 14 .xcf, 35 jpg, 89 txt",
+      "licence": "CC-BY-SA 3.0 (blanket statement for art); art_src/README.md calls it a historical reference",
+      "class": "B",
+      "note": "Blender files need Blender 2.7 or earlier per art_src/README.md. The newer HD source is in another repo named in that README (not read)."
+    },
+    {
+      "kind": "tilesets and Tiled maps",
+      "path": "tiled/ (160 .tmx, 28 tilesheets, 15 stamps), mods/*/maps/",
+      "count_hint": "160 .tmx; 137 map text files in empyrean_campaign",
+      "licence": "CC-BY-SA 3.0 for art and data (README.md). tiled/README.md gives the Tiled workflow.",
+      "class": "B",
+      "note": "Biome templates: grassland, dungeon, cave, snowplains, ruins, iron_labyrinth, alpha_demo, devlab. Tiled sources are not loaded by the game; exported text maps are."
+    },
+    {
+      "kind": "music",
+      "path": "mods/fantasycore/music/*.ogg (12 tracks: title, town, overworld, forest, cave, dungeon, magical, unrest, battle, boss, safe room, wind ambient)",
+      "count_hint": "12 ogg",
+      "licence": "not named in README.md (which covers art and data). No per-file author in the repo; per-file credits are online.",
+      "class": "C",
+      "note": "The blanket CC-BY-SA statement does not name audio, and the author of each track is not in the repo. Class C until the per-file credit is checked."
+    },
+    {
+      "kind": "sound effects",
+      "path": "mods/fantasycore/soundfx/ (112 ogg, incl. enemies, environment, inventory), mods/empyrean_campaign/soundfx/ (4 ogg: environment and powers)",
+      "count_hint": "116 ogg",
+      "licence": "same as music: not named in README.md; per-file author not in repo",
+      "class": "C",
+      "note": "Door, hit, die, melee attack, heartbeat, level-up and no-mana clips by file name, plus environment folders. Not listened to."
+    },
+    {
+      "kind": "fonts",
+      "path": "mods/fantasycore/fonts/ (10 ttf), mods/empyrean_campaign/fonts/MarckScript-Regular.ttf",
+      "count_hint": "11 ttf",
+      "licence": "SIL OFL 1.1 as named in README.md for Liberation, Bona Nova SC, Noto and Marck Script",
+      "class": "B",
+      "note": "Open-font conditions (OFL notice). Noto script variants for several languages."
+    },
+    {
+      "kind": "quests, books, cutscenes, dialogue (text)",
+      "path": "mods/empyrean_campaign/quests/ (12 files), mods/empyrean_campaign/books/, mods/empyrean_campaign/cutscenes/, mods/*/npcs/",
+      "count_hint": "645 txt under mods/empyrean_campaign; 39 in quests and books",
+      "licence": "CC-BY-SA 3.0 (blanket, art and data)",
+      "class": "B",
+      "note": "Lore, quests and in-world books. Story text is the donor's own. Only titles and premises summarised here; nothing reproduced."
+    },
+    {
+      "kind": "animation definitions (text)",
+      "path": "mods/fantasycore/animations/ (enemies, npcs), mods/minicore_alpha/animations/",
+      "count_hint": "about 20 enemy and NPC files in fantasycore; 597 frame lines in wyvern.txt alone",
+      "licence": "CC-BY-SA 3.0 (blanket, data)",
+      "class": "B",
+      "note": "Coordinate lists into sprite sheets. Good template for our animation data."
+    }
+  ],
+  "inspiration": [
+    "One creature in several elements: the wyvern appears as fire, water and air variants under mods/fantasycore, and art_src keeps per-element diffuse maps (fire, water, air, earth) next to the base model. Recreate with our own base body and four colour passes (ember, tide, storm, stone), not separate sheets.",
+    "Eight-direction sprites from a turntable: render8dirs.py rotates a platform 45 degrees per step and renders each pass. For our characters, one turntable and one fixed camera give eight consistent facings.",
+    "A fixed action set per creature: stance, run, swing, cast, dash attack, hit and die for the wyvern. Copy the checklist, not the moves: every enemy gets the same states so combat code can treat them alike.",
+    "Behaviour sheets for a flying enemy: the montage notes name hover, fly, sting, breathe, ram and hit as separate sheets. Good for planning an aerial boss in our own moves.",
+    "Elemental statue guardians: three statue variants (wind, fire, ice) are defined as animations under a shared template in the minicore_alpha mod. A cheap family of three from one body.",
+    "Biome sets with a template per area: grassland, dungeon, cave, snowplains, ruins, iron labyrinth, each with a tile sheet and a Tiled template. Copy the template-per-biome habit for our zones.",
+    "A state-to-track table for music: title, town, overworld, forest, cave, dungeon, magical, unrest, battle, boss and safe room, plus a wind ambient bed. Use the idea (one track per game state) with our own music.",
+    "Mood and content note: the README says the game has violence, blood and mild gore. A dark palette with bruise tints and a limited red fits that tone without copying any art."
+  ],
+  "briefs": [
+    {
+      "label": "Four-element winged beast",
+      "why": "one creature in several colourways reads as a family and costs one body",
+      "keep": ["one base body with an element colour pass", "one shared action set", "a clear ember or frost hue per element"],
+      "change": ["a different body plan (not a winged lizard)", "our own palette ramps", "armour plates or bone ornament instead of wings"],
+      "ref": "mods/fantasycore/images/enemies/wyvern_fire/wyvern_fire_stance.png; art_src/characters/wyvern/montage.txt; art_src/characters/wyvern/wyvern_diffuse_fire.png (not viewed)"
+    },
+    {
+      "label": "Statue guardian trio",
+      "why": "three elemental statues from one template make a shrine or gate feel guarded by different powers",
+      "keep": ["one template, three element colour passes", "a stone body type", "a looped idle"],
+      "change": ["our own statue design", "our own element set", "a site-specific carving style"],
+      "ref": "mods/minicore_alpha/animations/npcs/statue_guardian_fire.txt; statue_guardian_wind.txt; statue_guardian_ice.txt (animation names only, not viewed)"
+    },
+    {
+      "label": "Undead core with role variants",
+      "why": "one skeleton core with an archer and a mage version and a weaker tier gives a readable enemy ladder",
+      "keep": ["one core body with role variants", "a smaller weak tier", "role shown by prop or pose"],
+      "change": ["our own undead design, not bones", "our own prop set", "a different tier ladder"],
+      "ref": "mods/fantasycore/images/enemies/skeleton.png; skeleton_archer.png; skeleton_mage.png; skeleton_weak.png (not viewed)"
+    },
+    {
+      "label": "Cave tile sheet",
+      "why": "a single large tile sheet per biome keeps a zone's look in one place",
+      "keep": ["one tile sheet per biome", "a Tiled template per biome", "tiles for walls, floor and water edges"],
+      "change": ["our own colour story for caves", "our own edge and wall rules", "a different scale"],
+      "ref": "mods/fantasycore/images/tilesets/tileset_cave.png (2057x3037 by PNG header; not viewed); art_src/tilesets/"
+    }
+  ],
+  "not_read": [
+    "Visual content of any PNG (sizes from headers only; nothing viewed by eye)",
+    "Audio files (names and counts only, no listening)",
+    "Per-file credits online (CREDITS.txt points to a wiki; not visited, not read)",
+    "art_src/*.blend files (binary, not opened)",
+    "Quest, book and cutscene text beyond file names and the lines cited",
+    "The newer HD art source repo named in art_src/README.md (not in this donor tree)"
+  ]
+}

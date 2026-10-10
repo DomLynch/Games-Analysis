@@ -1,0 +1,88 @@
+{
+  "donor": "Elem8100-MapleNecrocer",
+  "code_licence": "MIT (LICENSE: 'The MIT License (MIT)', Copyright 2023 Elem8100)",
+  "asset_licence": "No game art or game data in the repo. The only licence file is the repo-level MIT LICENSE. Small UI icons are in MapleNecrocer/Resources and one .ico; their origin is not stated (one file name looks like a game-data dump, Aha-Soft icon origin not stated). Shaders sit in the WzComparerR2 subtree, credited to Kagamia in README; no licence text for that subtree was found. Reference/*.dll third-party binaries have no licence text in the repo.",
+  "rights_holder_status": "Fan / unofficial C# viewer for MapleStory GM-client data (README: 'C# version of MapleStory GM Client'). The repo ships no WZ data files; the code reads WZ nodes that must come from elsewhere. Game data owner is not named in the repo files. Treated as original game data that is not in the repo (proprietary by the brief's rule).",
+  "best_class": "D",
+  "asset_groups": [
+    {
+      "kind": "game data (MapleStory WZ archives)",
+      "path": "not in repo; code paths such as UI/UIToolTip.img/Item/Frame2 (MapleNecrocer/Client/ToolTip.cs)",
+      "count_hint": "0 WZ files in repo",
+      "licence": "none in repo",
+      "class": "D",
+      "note": "The tool reads user-supplied game data. Nothing to reuse from this repo. Do not seek the data."
+    },
+    {
+      "kind": "UI icons (PNG)",
+      "path": "MapleNecrocer/Resources/*.png",
+      "count_hint": "4 files, each under 5 KB",
+      "licence": "MIT per repo LICENSE; origin of Aha-Soft-Hardware-Floppy.32.png not stated",
+      "class": "C",
+      "note": "Small tool icons. 01050088.img.info.iconRaw.png has a WZ-style name, so it is probably game-derived but the repo does not say. Pixels not inspected (not read)."
+    },
+    {
+      "kind": "app icon (ICO)",
+      "path": "MapleNecrocer/MapleStoryGM_Icon.ico",
+      "count_hint": "1 file, 38 KB",
+      "licence": "MIT per repo LICENSE; provenance not stated",
+      "class": "C",
+      "note": "Icon named after MapleStory. Not opened."
+    },
+    {
+      "kind": "shader source (HLSL-style .fx, macros, compiled .mgfxo)",
+      "path": "WzComparerR2.Common/Rendering/Effect/PngEffect.fx, Macros.fxh, PngEffect.mgfxo",
+      "count_hint": "3 files",
+      "licence": "No separate licence file; WzComparerR2 credited in README (Kagamia's WzComparerR2)",
+      "class": "C",
+      "note": "Tiny sprite-tint effect shader (mixedColor, clipAlpha). Provenance is credit-only in README. Not read beyond the first lines."
+    },
+    {
+      "kind": "third-party binaries",
+      "path": "Reference/*.dll (20 files, e.g. spine-monogame.dll, CharaSimResource.dll, MonoGame.Framework.dll)",
+      "count_hint": "20 files, roughly 0.1 to 5.5 MB each",
+      "licence": "No licence text in repo; referenced through MapleNecrocer.csproj HintPath entries",
+      "class": "C",
+      "note": "Binary libraries, not opened. CharaSimResource.dll mentions Kagamia in its strings; treat as unclear."
+    }
+  ],
+  "inspiration": [
+    "The tool's viewers are one form per content type (mob, NPC, pet, mount, chair, effect ring, soul effect, damage skin, cash effect). That is a useful pattern for our own asset browser: one small viewer per asset family, with the same frame and playback controls.",
+    "Map scenery is animated with a skeleton runtime (Spine) and a particle system. Our own version could drive ambient props with a skeleton and add a small particle layer for dust, embers or spores. Use our own rig and art.",
+    "The particle emitter randomises start and end colour, size, spin, position and angle inside variance ranges. This is a clean, data-driven emitter layout to recreate with our own numbers and colours.",
+    "Floating damage numbers are picked from named 'skins' (style packs), and the viewer swaps them at runtime. Recreate as skinnable number styles with our own typography and colour logic.",
+    "Tooltip panels are built from separate corner and edge pieces (nw, n, ne, s, sw, se and others) rather than one bitmap. This is a nine-slice style frame worth recreating with our own ornament and palette.",
+    "A frame-list drawer (FrameListDraw.cs, name only, not opened) suggests the viewers step through frame lists per sprite set. Keeping the frame-list idea is fine; the sprites themselves are not usable here."
+  ],
+  "briefs": [
+    {
+      "label": "Segmented panel frame",
+      "why": "A framed panel that scales to any size without stretching its ornament. Keeps menus readable and gives a consistent look across windows.",
+      "keep": "Corners and edges as separate pieces; muted parchment-style base; thin inner rule",
+      "change": "Our own ornament (asymmetric corner caps); a different palette; a notched border instead of a plain edge",
+      "ref": "MapleNecrocer/Client/ToolTip.cs (around lines 26-30 and 64-83); read only, not opened further"
+    },
+    {
+      "label": "Drifting ambient motes",
+      "why": "Cheap living backdrop that makes a map feel lived in. Random variance on size and spin keeps it from looking repeated.",
+      "keep": "Start and end colour ranges; slow fall with variance; short life per particle",
+      "change": "Our own motion curve (sway or orbit instead of straight fall); our own colours and shapes; per-zone palette",
+      "ref": "MapleNecrocer/Client/Particle/ParticleEmitter.cs (lines 10-40 read)"
+    },
+    {
+      "label": "Skinnable hit numbers",
+      "why": "Players read damage at a glance and enjoy swapping styles. A named style list keeps the feature data-driven.",
+      "keep": "Named style packs chosen at runtime; one loader for all styles",
+      "change": "Our own typography and colour rules (crit and miss shapes); per-class number themes",
+      "ref": "MapleNecrocer/DamageSkinForm.cs (line 29, CellClick path read)"
+    }
+  ],
+  "not_read": [
+    "All other *.cs UI forms and Designer files, beyond names and sizes",
+    "All DLLs under Reference/ (binary, not opened)",
+    "The PNG and ICO files (sizes and names only; no pixels viewed)",
+    "WzComparerR2.WzLib, WzComparerR2.Common and WzComparerR2.PluginBase bodies beyond the licence and copyright lines",
+    "Spine skeleton assets (none shipped in the repo)",
+    "Any WZ data (none in repo; not sought)"
+  ]
+}

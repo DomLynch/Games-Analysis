@@ -1,0 +1,110 @@
+{
+  "donor": "eriknihlen-OpenAC",
+  "code_licence": "MIT (LICENSE: 'Copyright (c) 2026 Erik Nihlén and OpenAC contributors'). NOTICE.md lists bundled third-party code: MIT (WorldBuilder/Chorizite copied renderer and dat helpers), Apache-2.0 (Arch, Serilog, MoltenVK, Vulkan-Loader), Zlib (DotRecast), MIT OR Unlicense (BCnEncoder.Net, StbImageSharp), public domain (StbImageWriteSharp), LGPL-2.1 (OpenAL Soft, dynamically linked native library).",
+  "asset_licence": "README 'Trademarks and game assets': Asheron's Call names, art and data are property of their owners and the project distributes no game assets; the user supplies client_portal.dat, client_cell_1.dat, client_highres.dat, client_local_English.dat. The only non-code asset the repo ships is Noto Sans Regular under SIL OFL 1.1 (assets/fonts/NotoSans/OFL.txt). The icon PNG/ICO files have no separate licence line in the files read.",
+  "rights_holder_status": "fan / community reimplementation. README says 'a from-scratch client ... that reproduces the observable behavior of the original client'. Game art and data are named as owned by their respective owners and are not in the repo, so the runtime depends on the user's own proprietary data files. Clean-room process is not described beyond that sentence.",
+  "best_class": "A",
+  "halves": {
+    "client_read": "yes (AcDream = the client). Read: shader headers and bodies named in inspiration, NOTICE.md, README.md, LICENSE. C# under src/ was only grepped, not read in full.",
+    "server_half": "not in box. NOTICE.md says ACEmulator (AGPL-3.0) was used only to verify behaviour and no code is included. Not read.",
+    "data_pack": "not in box. client_portal.dat and the other three DAT files are user-supplied (README 'You will need'). Not read, not present."
+  },
+  "asset_groups": [
+    {
+      "kind": "font",
+      "path": "assets/fonts/NotoSans/NotoSans-Regular.ttf (+ OFL.txt, README.md)",
+      "count_hint": "1 TTF, unmodified hinted Noto Sans Regular (not opened)",
+      "licence": "SIL OFL 1.1; NOTICE.md 'Noto Sans': 'Licensed under SIL Open Font License 1.1.' and says a licence copy ships in client distributions",
+      "class": "A",
+      "note": "Usable as is with the OFL licence text shipped alongside. Only font in the repo."
+    },
+    {
+      "kind": "UI/app icons (raster + ico)",
+      "path": "assets/icons/ (acdream-client-*.png and acdream-launcher-*.png at 16 to 1024 px, plus acdream-client.ico and acdream-launcher.ico)",
+      "count_hint": "18 PNG + 2 ICO (filenames only; not opened)",
+      "licence": "no per-file licence line found; repo-wide MIT LICENSE is the only licence statement",
+      "class": "C",
+      "note": "Own-project app icons, but the files do not say so. Treat as unclear. Not game art."
+    },
+    {
+      "kind": "shaders (GLSL source)",
+      "path": "src/AcDream.App/Rendering/Shaders/ (.vert, .frag, .glsl)",
+      "count_hint": "51 source files (find count); includes sky, atmospheric_* (sun rays, bloom, filmic, volumetric), terrain_*, mesh_*, directional_shadow_*, foliage_wind.glsl, retail_detail_material.glsl, particle*, ui_text",
+      "licence": "repo MIT LICENSE (code)",
+      "class": "A",
+      "note": "Code, MIT. Read headers only for sky.frag, atmospheric_common.glsl, foliage_wind.glsl, retail_detail_material.glsl."
+    },
+    {
+      "kind": "compiled shaders (SPIR-V binaries)",
+      "path": "src/AcDream.App/Rendering/Shaders/spv/",
+      "count_hint": "47 files (find count)",
+      "licence": "repo MIT LICENSE (build output of the GLSL above)",
+      "class": "A",
+      "note": "Binary build output. Not opened."
+    },
+    {
+      "kind": "game data (DAT archives)",
+      "path": "not in repo: client_portal.dat, client_cell_1.dat, client_highres.dat, client_local_English.dat (user-supplied per README 'You will need')",
+      "count_hint": "n/a (not in box)",
+      "licence": "Asheron's Call data, property of its owners (README 'Trademarks and game assets')",
+      "class": "C",
+      "note": "Holds the meshes, textures, terrain, UI art, sound and creature/item names. Not read. Proprietary: inspiration only."
+    },
+    {
+      "kind": "name and string tables (loader code, not data)",
+      "path": "src/AcDream.Content/CreatureDisplayNames.cs (56 lines), src/AcDream.Content/CharacterTitleResolver.cs (71 lines), src/AcDream.Content/RetailStringEscapes.cs",
+      "count_hint": "3 source files; the names come from DAT via IDatReaderWriter at run time",
+      "licence": "repo MIT LICENSE (loader code); the strings themselves are in the user's DAT data",
+      "class": "C",
+      "note": "Loader only. Grep of class and method lines in CreatureDisplayNames.cs (resolver loads from IDatReaderWriter). Strings not in repo; not read."
+    }
+  ],
+  "inspiration": [
+    "Sun shafts: a post pass reads a shared uniform block that carries the sun's screen position, sun colour, weather kind and time/wind values; a comment in the block says the sun-ray pass takes an occlusion-mask size from its parameter block. Recreate it from scratch with a different ray count and a dusk tint. Reference: src/AcDream.App/Rendering/Shaders/atmospheric_sun_rays.frag with atmospheric_common.glsl (ray-pass body not read; the description is from the block's comments).",
+    "Foliage wind: one shared clock plus a wind vector (mean, gust, direction) drives sway for every instance, and per-batch flag bits decide which batches move at all. Recreate the sway with our own gust wave that travels across a field. Reference: src/AcDream.App/Rendering/Shaders/foliage_wind.glsl, lines 1-20 read.",
+    "Sky: a full-screen sky shader with a bindless texture index and a per-draw parameter block, separate from the mesh path. Recreate with an original gradient and cloud layer. Reference: src/AcDream.App/Rendering/Shaders/sky.frag (header read; body not read).",
+    "Detail-texture blend: a small helper weights a detail texture's RGB by the material alpha times the detail's own alpha, mixing it over a base colour. Recreate this as a 'grime or wear' layer on armour and terrain with our own detail maps. Reference: src/AcDream.App/Rendering/Shaders/retail_detail_material.glsl (short file, read in full).",
+    "Bloom chain: separate downsample and blur passes (atmospheric_bloom_downsample.frag, atmospheric_bloom_blur.frag) plus a filmic tonemap pass. Useful as a reference structure for a glow pass on fire, magic and metal highlights. Shader bodies not read.",
+    "Atmosphere as one shared uniform block for all post effects (sun screen position, colour, weather, policy factors, inverse view-projection). Idea to copy as structure: one place to tune time-of-day and weather for every effect pass. Reference: src/AcDream.App/Rendering/Shaders/atmospheric_common.glsl lines 1-20."
+  ],
+  "briefs": [
+    {
+      "label": "Dusk shaft curtain",
+      "why": "A warm low sun behind a tree line reads well at 375 wide: a few broad beams with a soft falloff give a mood without any sprites. One signature effect: light shafts that follow the sun's screen point.",
+      "keep": "kept: a single sun-screen-position uniform drives the shaft pass; shafts are masked by occlusion, not drawn everywhere.",
+      "change": "changed: our own tint (dusk amber, not noon white), our own ray count and falloff, and shafts that break up with a drifting dust layer. Recreate as a clearly distinct original, never a copy. (Ray-pass body not read; the 'keep' trait comes from the block's comments.)",
+      "ref": "/mnt/frankendom-donors/eriknihlen-OpenAC/src/AcDream.App/Rendering/Shaders/atmospheric_sun_rays.frag (body not read); /mnt/frankendom-donors/eriknihlen-OpenAC/src/AcDream.App/Rendering/Shaders/atmospheric_common.glsl"
+    },
+    {
+      "label": "Gust-wave grass field",
+      "why": "A field where the whole crop bends in one slow wave reads at 375 wide and gives a signature motion that is cheap to draw. Only flagged plants sway, so rocks and walls stay still.",
+      "keep": "kept: one shared clock and wind vector for every instance; per-batch flag bits as the opt-in for sway.",
+      "change": "changed: our own motion curve (a wave that travels across the field instead of an even sway), our own flag layout, and a different plant silhouette. Recreate as a clearly distinct original, never a copy.",
+      "ref": "/mnt/frankendom-donors/eriknihlen-OpenAC/src/AcDream.App/Rendering/Shaders/foliage_wind.glsl"
+    },
+    {
+      "label": "Worn-metal detail layer",
+      "why": "A detail map that only shows up where the base colour is strong gives a worn, used look to armour and terrain at no extra draw cost. One signature material: scuffs that read as wear, not as paint.",
+      "keep": "kept: a detail RGB weighted by material alpha times the detail's own alpha, mixed over the base colour.",
+      "change": "changed: our own detail textures (scratches and wear, not noise), our own weighting curve, and a metal tint instead of a stone one. Recreate as a clearly distinct original, never a copy.",
+      "ref": "/mnt/frankendom-donors/eriknihlen-OpenAC/src/AcDream.App/Rendering/Shaders/retail_detail_material.glsl"
+    },
+    {
+      "label": "Two-pass glow bloom",
+      "why": "A downsample-then-blur bloom gives fire, magic and polished metal a halo on a low-end GPU. Signature effect: a soft halo that only appears on the brightest pixels.",
+      "keep": "kept: downsample pass then blur pass, feeding a final composite.",
+      "change": "changed: our own threshold ramp, a colour-shifted halo (cool blue for magic, warm for fire), and a different number of mip levels. Recreate as a clearly distinct original, never a copy.",
+      "ref": "/mnt/frankendom-donors/eriknihlen-OpenAC/src/AcDream.App/Rendering/Shaders/atmospheric_bloom_downsample.frag; /mnt/frankendom-donors/eriknihlen-OpenAC/src/AcDream.App/Rendering/Shaders/atmospheric_bloom_blur.frag (bodies not read)"
+    }
+  ],
+  "not_read": [
+    "assets/fonts/NotoSans/NotoSans-Regular.ttf (binary, not opened)",
+    "assets/icons/*.png and *.ico (names and sizes from filenames only; not opened)",
+    "src/AcDream.App/Rendering/Shaders/spv/ (47 binary SPIR-V files, not opened)",
+    "Bodies of atmospheric_sun_rays.frag, atmospheric_bloom_*.frag, atmospheric_filmic.frag, atmospheric_volumetric.frag, mesh_*.frag, terrain_*.frag, directional_shadow_*: file names only",
+    "OpenAC-improvements.md (44 KB), docs/*.md, CONTRIBUTING.md: not read",
+    "samples/ (RenderPack plugin samples) and tools/ (names only)",
+    "src/AcDream.Content/CreatureDisplayNames.cs, CharacterTitleResolver.cs, RetailStringEscapes.cs: grep of class lines only",
+    "The server half (ACEmulator, AGPL-3.0) and the DAT data pack: not in box"
+  ]
+}

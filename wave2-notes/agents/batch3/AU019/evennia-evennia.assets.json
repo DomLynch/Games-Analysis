@@ -1,0 +1,127 @@
+{
+  "donor": "evennia-evennia",
+  "code_licence": "BSD 3-Clause (LICENSE.txt: 'Copyright 2012- Griatch (griatch <AT> gmail <DOT> com), Gregory Taylor'). docs/LICENSE.txt: BSD 3-Clause, 'Copyright (c) 2019-, Evennia'. docs/source/Licensing.md: contributions in evennia/contrib are 'considered to be released under the same license' as Evennia unless the contributor says otherwise. Bundled third-party: evennia/utils/verb_conjugation/LICENSE.txt is the GNU GPL Version 2 text; evennia/utils/idmapper/LICENSE.md is a BSD-style notice ('Copyright (c) 2009, David Cramer').",
+  "asset_licence": "Mixed. Logo: evennia/web/static/website/images/LICENCE says the logo 'is released with the same licence as Evennia itself (look in evennia/LICENCE)'; no evennia/LICENCE file exists in the tree, the root LICENSE.txt is the BSD text. Knave-derived tables: evennia/contrib/tutorials/evadventure/README.md says the Knave ruleset by Ben Milton is 'released under the Creative Commons Attribution (all uses, including commercial are allowed as long as attribution is given)'. No licence line found for the DejaVu webfont, the notification sound, or the docs screenshot (only the docs-wide BSD notice).",
+  "rights_holder_status": "original open-source project (Griatch and the Evennia contributors, BSD). Knave-derived rules and tables are credited in the README to Ben Milton under the stated CC Attribution terms, which the README states; not verified against Knave itself. No proprietary game assets in the box.",
+  "best_class": "A",
+  "halves": {
+    "server_half": "read: LICENSE.txt, docs/source/Licensing.md, evennia/contrib/tutorials/evadventure/ (README, dungeon.py docstring, equipment.py, objects.py grep, random_tables.py header and table names), evennia/contrib/tutorials/tutorial_world/ (README, build.ev head, rooms.py and mob.py class lines and one docstring).",
+    "client_half": "the web client is in the repo: evennia/web/static/webclient/. Read: DejaVuSansMono.css (font declaration line only) and file names from find and grep. The client JavaScript (21 .js files) and CSS bodies not read beyond grep for the font name.",
+    "data_half": "the game content is the tutorial and evadventure text and tables inside the repo; no separate data pack. Read as described above."
+  },
+  "asset_groups": [
+    {
+      "kind": "logo and favicons (raster)",
+      "path": "evennia/web/static/website/images/evennia_logo.png (17938 bytes), evennia_logo_festive.png (21167 bytes), evennia/web/static/website/images/favicon.ico (1406 bytes); docs/source/_static/images/evennia_logo.png (17938 bytes), fork_button.png (3095 bytes), favicon.ico",
+    "count_hint": "6 PNG and 4 ICO across the repo (extension census)",
+    "licence": "logo: 'same licence as Evennia itself' per images/LICENCE, pointing at a missing evennia/LICENCE; BSD 3-Clause text at root LICENSE.txt",
+    "class": "A",
+    "note": "Usable with BSD attribution (keep the notice). The LICENCE pointer target does not exist in the tree; record that as found. Not opened (sizes from ls)."
+  },
+  {
+    "kind": "docs screenshot (raster)",
+    "path": "docs/source/_static/images/starting_tutorial/Dungeon_Merchant_Camp.jpg (2452889 bytes)",
+    "count_hint": "1 JPG, about 2.4 MB, used in a tutorial page (docs/source/Howtos/Beginner-Tutorial/Part2/Beginner-Tutorial-Planning-The-Tutorial-Game.md)",
+    "licence": "no licence line for this image; docs/LICENSE.txt is BSD 3-Clause with 'Copyright (c) 2019-, Evennia' for the docs",
+    "class": "C",
+    "note": "Unclear whether the BSD docs notice covers this image. Treat as C until clarified. Not opened."
+  },
+  {
+    "kind": "webclient font (webfont)",
+    "path": "evennia/web/static/webclient/fonts/DejaVuSansMono-webfont.woff (22208 bytes); declared in fonts/DejaVuSansMono.css",
+    "count_hint": "1 WOFF",
+    "licence": "no licence file in the repo; DejaVu is named only in CSS and JS references (grep)",
+    "class": "C",
+    "note": "The licence is not in the box. Not opened."
+  },
+  {
+    "kind": "webclient notification sound",
+    "path": "evennia/web/static/webclient/media/notification.wav (3624 bytes)",
+    "count_hint": "1 WAV (only audio file in the repo)",
+    "licence": "no licence line found",
+    "class": "C",
+    "note": "The only audio in the repo. Not played or opened; size from ls."
+  },
+  {
+    "kind": "builder batch scripts and tutorial world text (.ev, .py text)",
+    "path": "evennia/contrib/tutorials/tutorial_world/build.ev (50297 bytes), evennia/contrib/tutorials/batchprocessor/*.ev, evennia/contrib/tutorials/evadventure/batchscripts/twitch_combat_demo.ev",
+    "count_hint": "4 .ev files (extension census); build.ev has 15 create lines (grep count)",
+    "licence": "BSD 3-Clause via docs/source/Licensing.md contributions rule",
+    "class": "A",
+    "note": "Text that builds the tutorial rooms, mobs and objects. Usable with BSD attribution. Only grep and head read."
+  },
+  {
+    "kind": "Knave-derived rules text and random tables",
+    "path": "evennia/contrib/tutorials/evadventure/random_tables.py (chargen_tables dict at line 8, reactions, initiative and death_and_dismemberment lists at lines 604, 612, 618), evennia/contrib/tutorials/evadventure/chargen.py, equipment.py, objects.py, combat_*.py",
+    "count_hint": "tables: chargen_tables plus 3 lists (line numbers from grep); name tables not counted",
+    "licence": "README: Knave by Ben Milton, Creative Commons Attribution (all uses, including commercial, as long as attribution is given). Stated in the README; not checked against Knave's own licence.",
+    "class": "A",
+    "note": "Usable with the stated attribution (credit Ben Milton / Knave). Name lists exist in random_tables.py; do not copy them. Table bodies not read."
+  },
+  {
+    "kind": "GPL-bundled verb list",
+    "path": "evennia/utils/verb_conjugation/verbs.txt, conjugate.py, pronouns.py, tests.py; licence in verb_conjugation/LICENSE.txt",
+    "count_hint": "verbs.txt not counted",
+    "licence": "LICENSE.txt in that folder is the GNU GPL version 2 text (line 2: 'Version 2, June 1991')",
+    "class": "B",
+    "note": "GPL-2.0 is a copyleft condition for this folder. Not read beyond the licence header and the file list."
+  },
+  {
+    "kind": "documentation prose",
+    "path": "docs/source/**/*.md (803 md files by extension census), docs/source/Licensing.md",
+    "count_hint": "803 md files",
+    "licence": "docs/LICENSE.txt BSD 3-Clause, 'Copyright (c) 2019-, Evennia'",
+    "class": "A",
+    "note": "Text; BSD attribution. Only Licensing.md read in full."
+  }
+  ],
+  "inspiration": [
+    "Procedural dungeon by time window: the dungeon module makes rooms lazily, only when a player walks through a new exit, and tags each room with an instance id tied to a time window, so people who go the same way within the window share a branch. Recreate with our own theme and rules; the docstring says the way back to the start room becomes a one-way exit, a rule we may change. Reference: evennia/contrib/tutorials/evadventure/dungeon.py (module docstring, lines 1-12).",
+    "Rune-stone spells as items: each magic effect is a consumable stone item with its own base class, so casting is a use-item action with stored charges. Recreate with our own spell carriers (carved glyph, tattoo, brand) and different use rules. Reference: evennia/contrib/tutorials/evadventure/objects.py line 287 (base class docstring).",
+    "Inventory as slots: the inventory has slots, and filling them changes how well a character does things, which gives a light weight system with no arithmetic. Recreate with weight by stance or by hands used, not by slot count. Reference: evennia/contrib/tutorials/evadventure/equipment.py line 2 (module docstring).",
+    "Builder detail keywords on rooms: a builder can attach a description to a keyword on a room, so examine returns extra text without new objects. Recreate with auto-generated details from room tags, plus our own keyword rules. Reference: evennia/contrib/tutorials/tutorial_world/rooms.py lines 94-125 (CmdTutorialSetDetail).",
+    "Character creation from tables: a chargen table set rolls a virtue, a vice, an alignment and start gear from lists, so a sheet is generated and then edited. Recreate with our own tables and no names from the source tables. Reference: evennia/contrib/tutorials/evadventure/random_tables.py line 8 (chargen_tables) and chargen.py.",
+    "Two combat modes on one ruleset: a turn-based module and a twitch module sit beside a shared combat base module, so a game can pick either. Recreate with our own timing rules. Reference: evennia/contrib/tutorials/evadventure/combat_turnbased.py and combat_twitch.py (names only; bodies not read; the shared base is combat_base.py)."
+  ],
+  "briefs": [
+    {
+      "label": "Time-window branch dungeon",
+      "why": "Players who take the same door within a short window share one dungeon branch and end up together, which makes group play feel shared without a lobby. One signature behaviour: a door that spawns a new branch on a timer.",
+      "keep": "kept: rooms generated only when first walked into; an instance tag per time window; shared branches for the people who go the same way.",
+      "change": "changed: our own theme and room grammar, a different window rule (per party, not per door), and the return path rule. Rule: recreate as a clearly distinct original, never a copy.",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/dungeon.py (module docstring)"
+    },
+    {
+      "label": "Stone-glyph spell item",
+      "why": "A spell that is a physical item with charges is easy to read at 375 wide in an inventory list and gives players something to trade or lose. One signature effect: casting uses up the item.",
+      "keep": "kept: a magic effect as a consumable item with its own base class and charges.",
+      "change": "changed: our own carrier (carved glyph, tattoo, brand), our own use rules (cooldown per carrier, not a stack), and a new name set. Rule: recreate as a clearly distinct original, never a copy.",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/objects.py line 287"
+    },
+    {
+      "label": "Slot-weighted pack",
+      "why": "A pack where filling slots makes a character worse at things is a visible, low-maths way to show load. One signature behaviour: a near-full pack changes the character's stance in the text.",
+      "keep": "kept: inventory slots that change how well the character does things.",
+      "change": "changed: our own penalty (by hands used or stance), a different slot count, and a readout that uses our own words. Rule: recreate as a clearly distinct original, never a copy.",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/equipment.py line 2"
+    },
+    {
+      "label": "Keyword detail on a room",
+      "why": "Examine text on a few hidden keywords makes a room feel dense without extra objects. One signature behaviour: a hidden keyword reveals a line when examined.",
+      "keep": "kept: builder-set keyword details on a room, with aliases.",
+      "change": "changed: details generated from our own room tags, and a reveal that depends on time or light. Rule: recreate as a clearly distinct original, never a copy.",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/tutorial_world/rooms.py lines 94-125"
+    }
+  ],
+  "not_read": [
+    "evennia/web/static/webclient/js/** (21 JS files) and CSS bodies: not read beyond the font grep",
+    "docs/source/**/*.md (803 files): only docs/source/Licensing.md read",
+    "docs/source/_static/images/starting_tutorial/Dungeon_Merchant_Camp.jpg (2.4 MB): not opened",
+    "evennia/web/static/webclient/fonts/DejaVuSansMono-webfont.woff and media/notification.wav: not opened",
+    "evennia/utils/verb_conjugation/verbs.txt: not read",
+    "evennia/contrib/tutorials/evadventure/random_tables.py table bodies: header and table-name grep only; name lists not read in full and not reproduced",
+    "evennia/contrib/tutorials/tutorial_world/rooms.py, mob.py, objects.py bodies: class lines and one docstring only",
+    "evennia/LICENCE (named by the logo licence note): not present in the tree",
+    "Knave's own rules text: not in the box; the CC claim is the README's, not verified"
+  ]
+}

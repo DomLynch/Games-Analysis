@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+exult-exult	vfx-blood-finishers	P	STRONG	full	actors.cc:2855-2904 (bleed pools), 2977-2983 (bleed roll), npctime.cc:504-534 (bleed timer): a bleed is a timed client decal that grows one stage per drip, one pool per tile, capped at two pools in the 3x3 area, with no HP effect.
+flareteam-flare-engine	vfx-blood-finishers	P	STRONG	full	src/Entity.cpp:475-493 (crit roll, crit damage, crit shake), StatBlock.cpp:879-933 (kill decides CRITDEAD vs DEAD after rewards), EntityBehavior.cpp:943-960 (critdie clip, death power at second-last frame, corpse): a crit kill uses a finisher state only when the foe has a finisher clip.
+freeciv-freeciv	vfx-blood-finishers	P	STRONG	full	client/mapview_common.c:2529-2661 and 289-399 (HP drain tween over max-loss steps, death burst queued after it), packhand.c:602-612 (server HP packet drives it): the client replays the server's damage numbers over 10 ms steps.

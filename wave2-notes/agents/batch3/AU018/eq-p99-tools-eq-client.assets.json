@@ -1,0 +1,32 @@
+{
+  "donor": "eq-p99-tools-eq-client",
+  "code_licence": "MIT (LICENSE: 'MIT License', Copyright (c) 2026 eq-p99-tools contributors)",
+  "asset_licence": "None in the repo. README states the repository and its build artifacts 'do not contain or redistribute EverQuest assets'. The client loads game data from a user-supplied EverQuest install (archives such as S3D/WLD, read at run time).",
+  "rights_holder_status": "Experimental native client that reads a user's own EverQuest installation. README gives an example install path under 'Sony\\EverQuest' (line 43). The repo files name no owner for the game data beyond that path. Game data is original and proprietary; not in the repo.",
+  "best_class": "D",
+  "asset_groups": [
+    {"kind": "runtime game data (user-supplied EverQuest archives)", "path": "not in repo; read from the user's --eq-dir at run time (README)", "count_hint": "0 files in repo", "licence": "none in repo; original game data", "class": "D", "note": "Client reads terrain, models, textures, strings and spell icons from the user's install. Not redistributed; do not seek it."},
+    {"kind": "documentation text", "path": "README.md (73 KB), ARCHITECTURE.md (4 KB), SUPPORT.md", "count_hint": "3 md files", "licence": "MIT (repo LICENSE)", "class": "A", "note": "Text docs for the client. Permissive; attribution to the repo is the only condition the MIT text sets."},
+    {"kind": "non-code config", "path": "Cargo.toml, crates/*/Cargo.toml, apps/eq-client/Cargo.toml, rustfmt.toml, .github/*.yml", "count_hint": "7 toml, 1 yml", "licence": "MIT (repo LICENSE)", "class": "A", "note": "Build config only. Not art."},
+    {"kind": "art, audio, fonts, shaders, maps in repo", "path": "none found by extension (no png, wav, ogg, ttf, wgsl, glsl, s3d or bin files)", "count_hint": "0", "licence": "n/a", "class": "D", "note": "Code is 172 .rs files. Nothing visual or audio is shipped."}
+  ],
+  "inspiration": [
+    "Armour is shown by swapping one material texture per body part to a tier (leather, chain, plate), chosen from the slot the server reports, then tinting it. Recreate as tier swaps per body part with our own palettes and armour names.",
+    "Coordinate conversion is kept in one crate (eq-client-axes), so every position, rotation and triangle converts from one definition. Keep that boundary idea for our camera and world maths; this is cross-link camera.",
+    "Terrain is loaded as three kinds of material: repeating ground, transparent cut-outs and static props (trees, buildings). Recreate the three material classes with our own art.",
+    "Water and lava are zone regions, not meshes: a region type fills part of the zone. Recreate as data-driven fill regions with our own water look and animation.",
+    "Appearance updates from the network drive a model's posture for known characters. Recreate as a mapping from an appearance or stance state to a pose, with our own pose set.",
+    "The HUD keeps a spell-gem bar and a memorised-spell list fed from typed events. Recreate the hotbar pattern with our own icons; this is the hud-ui cross-link."
+  ],
+  "briefs": [
+    {"label": "Tiered body armour swap", "why": "One base body can show progression by changing the material set per body part, which is cheap and readable at a distance.", "keep": "One texture per body part; tiers as named material sets; tint on top", "change": "Our own tiers (cloth, scale, crystal, or similar); per-faction tint; our own proportions and ornament", "ref": "eq-p99-tools-eq-client README.md line 200 (armour texture per body part); text only, code not opened"},
+    {"label": "Fill regions for water and lava", "why": "Liquids defined as zone regions are easy to author and reuse across the map.", "keep": "Region type decides the fill; the region is a data record, not a mesh", "change": "Our own liquid look and motion; a lava or ice variant with our own rules", "ref": "crates/eq-client-assets/src/regions.rs lines 2 and 35 (module comment only; body not opened)"},
+    {"label": "Stance from appearance state", "why": "A small state-to-pose map gives characters life without a full animation set.", "keep": "Appearance or stance state picks a pose; poses reused across characters", "change": "Our own pose names and set; our own state list (guard, cast, idle)", "ref": "eq-p99-tools-eq-client README.md lines 532-538 (posture from appearance updates)"}
+  ],
+  "not_read": [
+    "All .rs bodies beyond the listed lines (names and a few grep hits only)",
+    "Any EverQuest data (none in repo; not sought)",
+    "ARCHITECTURE.md and SUPPORT.md bodies (names only)",
+    "The Cargo.lock (dependency lock, not read)"
+  ]
+}

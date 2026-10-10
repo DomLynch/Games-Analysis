@@ -1,0 +1,130 @@
+{
+  "donor": "clockworklabs-SpacetimeDB",
+  "code_licence": "Business Source License 1.1 (LICENSE.txt). Licensor Clockwork Laboratories, Inc.; Licensed Work SpacetimeDB 2.12.0 (lines 7-8); Additional Use Grant allows use in an application or service with no more than one production instance and no Database Service (lines 12-15); Change Date 2031-10-08 (line 24); Change License GNU Affero General Public License v3.0 with a linking exception (line 26). README line 256 says the chosen open-source licence is GPLv3 with linking exception, which conflicts with the AGPL v3.0 named in LICENSE.txt line 26. Apache 2.0 text is in licenses/apache2.txt (for the demo).",
+  "asset_licence": "No separate asset licence at repo root; LICENSE.txt (BSL 1.1) is the only root licence, and the files read do not say whether docs or images are covered separately. demo/Blackholio is Apache License 2.0 (demo/Blackholio/README.md line 94; demo/Blackholio/LICENSE). Third-party items: EmojiOne sprite sheet (attribution file names EmojiOne and points to its website for licensing; no licence text in repo); LiberationSans font with OFL text file (Google copyright line); Inter and Source Code Pro web fonts in docs (licence not read).",
+  "rights_holder_status": "Company project. LICENSE.txt line 10 says the work is (c) 2023 Clockwork Laboratories, Inc. Third-party items name their own holders (Google for the Liberation-family font; EmojiOne named as the sprite source). Trademark status of logo files in docs/static is not stated in the files read.",
+  "best_class": "A for Blackholio demo art (Apache 2.0 per the demo's own files); C for the rest (unclear or third-party)",
+  "asset_groups": [
+    {
+      "kind": "2D background and UI textures (Unity client)",
+      "path": "/mnt/frankendom-donors/clockworklabs-SpacetimeDB/demo/Blackholio/client-unity/Assets (RepeatingBackground.png 128x128, StarBackground.png 2048x2048, UIUsernamePanel.png 455x200)",
+      "count_hint": "3 PNG",
+      "licence": "Apache License 2.0 for the Blackholio project (demo/Blackholio/README.md line 94; demo/Blackholio/LICENSE line 2).",
+      "class": "A",
+      "note": "Tiling star texture, a large starfield, and a username panel. Pixel sizes from PNG header; not viewed."
+    },
+    {
+      "kind": "Shader graphs, materials and prefabs (Unity)",
+      "path": "/mnt/frankendom-donors/clockworklabs-SpacetimeDB/demo/Blackholio/client-unity/Assets (CircleShader.shadergraph about 106 KB, WavyOutline.shadersubgraph, CircleMaterial.mat, FoodMaterial.mat, ArenaBorderMaterial.mat, CirclePrefab, FoodPrefab, PlayerPrefab, LeaderboardRow.prefab)",
+      "count_hint": "about 10 shader, material and prefab files",
+      "licence": "Apache License 2.0 (demo/Blackholio/LICENSE).",
+      "class": "A",
+      "note": "Not raster art. The shader graph exposes BorderSize and CircleColor properties and uses Length, Comparison, Branch and HSV-to-RGB custom function nodes (names read from the file)."
+    },
+    {
+      "kind": "Icon and vector art (Godot client)",
+      "path": "/mnt/frankendom-donors/clockworklabs-SpacetimeDB/demo/Blackholio/client-godot/icon.svg",
+      "count_hint": "1 SVG (128x128)",
+      "licence": "Apache License 2.0 (demo/Blackholio/LICENSE).",
+      "class": "A",
+      "note": "Flat app icon. Not viewed beyond its SVG header."
+    },
+    {
+      "kind": "Third-party sprite sheet (emoji)",
+      "path": "/mnt/frankendom-donors/clockworklabs-SpacetimeDB/demo/Blackholio/client-unity/Assets/TextMesh Pro/Sprites (EmojiOne.png 512x512, EmojiOne.json, EmojiOne Attribution.txt)",
+      "count_hint": "3 files",
+      "licence": "Attribution file says the sample is provided by EmojiOne and asks the reader to review their licensing terms on the EmojiOne website. No licence text in repo.",
+      "class": "C",
+      "note": "Licence deferred to an external site, so not usable as is from these files. Not viewed."
+    },
+    {
+      "kind": "Font (OFL text with Google copyright)",
+      "path": "/mnt/frankendom-donors/clockworklabs-SpacetimeDB/demo/Blackholio/client-unity/Assets/TextMesh Pro/Fonts (LiberationSans.ttf, LiberationSans - OFL.txt)",
+      "count_hint": "2 files",
+      "licence": "The OFL text file starts with the Google copyright line for Arimo, Tinos and Cousine (line 1). The rest of the OFL text was not read.",
+      "class": "B",
+      "note": "Open font licence with conditions the OFL sets (licence kept, reserved names). Font binary not opened."
+    },
+    {
+      "kind": "Web fonts in docs",
+      "path": "/mnt/frankendom-donors/clockworklabs-SpacetimeDB/docs/static/fonts (inter-latin-wght-normal.woff2, source-code-pro-latin-wght-normal.woff2)",
+      "count_hint": "2 files",
+      "licence": "Not read; no licence file found in the folder by name.",
+      "class": "C",
+      "note": "Unclear, so inspiration-only until confirmed."
+    },
+    {
+      "kind": "Docs, brand and marketing images",
+      "path": "/mnt/frankendom-donors/clockworklabs-SpacetimeDB/docs/static (about 118 PNG, SVG and JPG, including docs/static/images/logos), /mnt/frankendom-donors/clockworklabs-SpacetimeDB/images (basic-architecture-diagram.png, light and dark sets, social set), templates/ (about 5 images)",
+      "count_hint": "about 130 images across docs, images and templates",
+      "licence": "Repo LICENSE.txt (BSL 1.1) is the only root licence; the files read do not say whether these images are covered or how trademarked logos are treated.",
+      "class": "C",
+      "note": "Logos and marketing art: unclear. Architecture diagram is a concept diagram; not viewed."
+    },
+    {
+      "kind": "Text: docs, skills and templates",
+      "path": "/mnt/frankendom-donors/clockworklabs-SpacetimeDB/docs (STYLE.md about 31 KB, DEEP_DATABASE_STYLE.md about 17 KB, DEVELOP.md about 11 KB), skills/, templates/",
+      "count_hint": "several hundred Markdown and template files",
+      "licence": "Repo LICENSE.txt (BSL 1.1). Not stated separately.",
+      "class": "C",
+      "note": "Engineering docs, not game text. Not read beyond names and sizes."
+    },
+    {
+      "kind": "Test fixture binary",
+      "path": "/mnt/frankendom-donors/clockworklabs-SpacetimeDB/crates/smoketests/fixtures/upgrade_old_module_v1.wasm",
+      "count_hint": "1 file",
+      "licence": "Repo LICENSE.txt (BSL 1.1).",
+      "class": "C",
+      "note": "Module fixture for upgrade tests; not opened. Not game content."
+    }
+  ],
+  "inspiration": [
+    "Circle as a shader, not a sprite: CircleShader.shadergraph exposes a border width and a body colour; its node names (Length, Comparison, Branch) suggest the disc is built from a distance test. Recreate with our own signed-distance disc and a soft band at the rim.",
+    "Wavy rim as its own sub-graph: WavyOutline.shadersubgraph keeps the ripple separate from the disc (file name only read), so the same rim can sit on any blob. Recreate with a time-driven noise rim that pulses with activity.",
+    "Hue-shifted shading: the shader graph uses RGB-to-HSV and HSV-to-RGB custom functions, which suggests shading by shifting hue and value rather than mixing toward black. Worth a try for a colourful, non-muddy body.",
+    "Layered procedural starfield: StarfieldBackground.cs draws a flat base, several large low-alpha discs for nebula patches, and generated stars, and redraws each frame (line 30 is one such disc). Recreate with seeded stars and soft nebula discs at different alphas for depth.",
+    "Palette by index, one colour per player: CircleController.cs and FoodController.cs each keep a static colour array (line 6). A small curated palette gives each avatar an identity without a colour picker.",
+    "Timed spawn and decay as data: the generated bindings list timer tables such as SpawnFoodTimer, CircleDecayTimer and CircleRecombineTimer (for example module_bindings/Types/SpawnFoodTimer.g.cs line 14). Pickups that spawn, decay and recombine on timers keep an arena moving.",
+    "Tiling parallax (names read only): RepeatingBackground.png (128x128) and a ParallaxBackground.cs script sit side by side in the Unity client, which suggests a cheap tiled-depth backdrop. The script body was not read."
+  ],
+  "briefs": [
+    {
+      "label": "Rim-pulse orb",
+      "why": "A soft blob whose rim ripples reads as alive, and the pulse can signal activity without extra UI.",
+      "keep": "Disc body with a separate wavy rim; hue-shifted shading; a border width that can change with state.",
+      "change": "Noise-driven rim rather than a regular wave; an asymmetric inner core; our own palette and an inner highlight.",
+      "ref": "/mnt/frankendom-donors/clockworklabs-SpacetimeDB/demo/Blackholio/client-unity/Assets/CircleShader.shadergraph (BorderSize at line 3294) and WavyOutline.shadersubgraph"
+    },
+    {
+      "label": "Drifting nebula backdrop",
+      "why": "Big faint discs and seeded stars give a deep-space backdrop with depth for little cost.",
+      "keep": "Low-alpha large discs; generated stars; redraw each frame.",
+      "change": "A dim cloud band instead of centred discs; our own colour story; a parallax layer for the stars.",
+      "ref": "/mnt/frankendom-donors/clockworklabs-SpacetimeDB/demo/Blackholio/client-godot/StarfieldBackground.cs (line 30)"
+    },
+    {
+      "label": "Timed mote pickups",
+      "why": "Pickups that appear, fade and recombine on timers keep a play area busy and readable.",
+      "keep": "Spawn and decay timers as data; small tinted pickups that merge.",
+      "change": "Our pickups are drifting shards rather than static dots; their timing is tied to the map event cycle.",
+      "ref": "/mnt/frankendom-donors/clockworklabs-SpacetimeDB/demo/Blackholio/client-godot/module_bindings/Types/SpawnFoodTimer.g.cs (line 14)"
+    },
+    {
+      "label": "Palette-seeded avatar",
+      "why": "Each player shows a distinct colour from a small palette, which makes crowded scenes readable.",
+      "keep": "A curated palette indexed per player.",
+      "change": "Derive the index from a hash of the player name instead of a fixed list; add a value shift for depth.",
+      "ref": "/mnt/frankendom-donors/clockworklabs-SpacetimeDB/demo/Blackholio/client-godot/CircleController.cs (line 6)"
+    }
+  ],
+  "not_read": [
+    "No PNG, SVG, WOFF2, TTF or WASM opened. Dimensions taken from PNG headers only.",
+    "The shader graph was read only for node and property names; the full graph was not read.",
+    "The palette values in CircleController.cs and FoodController.cs were deliberately not copied.",
+    "LICENSE.txt read only to the Additional Use Grant and Change License parameters; the full BSL text and licenses/BSL.txt were not read.",
+    "demo/Blackholio README and game design were read only in part (licence section and setup lines).",
+    "EmojiOne.json and the EmojiOne sprite content were not read.",
+    "docs/static images and templates/ images: counted and named, not viewed.",
+    "The architecture diagram and social images: not viewed."
+  ]
+}

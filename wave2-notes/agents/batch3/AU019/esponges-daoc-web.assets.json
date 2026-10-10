@@ -1,0 +1,100 @@
+{
+  "donor": "esponges-daoc-web",
+  "code_licence": "MIT (LICENSE: 'Copyright (c) 2026 Fernando González Tostado'). README 'Licensing': 'The converter and viewer are original work, MIT licensed'.",
+  "asset_licence": "No game data in the repo (README 'Licensing': 'no game data is in this repository'; web/data/ is gitignored and generated from the user's own install). README says the game assets they read 'are copyright Electronic Arts / Broadsword Online Games' and that redistributing the converted output is not allowed ('converted output is not, so'). Repo-owned data (web/spawns/zone100.json) has only the repo MIT LICENSE; its own comment says its placements are the project's own.",
+  "rights_holder_status": "fan / reverse-engineering proof of concept. README: 'A proof of concept: extract Dark Age of Camelot's shipped assets and render them in a browser.' The game assets are named as copyright Electronic Arts / Broadsword Online Games. The tool reads the user's own install and says nothing touches the live servers or network protocol. Uses original proprietary game data at run time, not in the repo.",
+  "best_class": "C",
+  "halves": {
+    "client_read": "yes, via README and file names (the converter and viewer: cmd/*, internal/*, web/*.js named; web/index.html not read). Viewer code is code, MIT.",
+    "data_pack": "not in box. The DAoC install (zones/*.mpk, zones/Nifs/*.npk, figures/*.nif, gamedata.mpk, items.csv, monsters.csv, pskins.csv, zones.dat, sky.mpk and similar) is named in README but not present. Not read. docs/census/README.md (counts only) read at the summary tables.",
+    "server_half": "none in the repo. README: 'Nothing here touches the live game servers or its network protocol.' Not applicable."
+  },
+  "asset_groups": [
+    {
+      "kind": "game art and models (zones, terrain textures, NIF scenery, race figures, skins, item models)",
+      "path": "not in repo; described in README.md 'What it does' pipeline (zones/zone100/*.mpk, zones/Nifs/*.npk, figures/NTrollM.NIF, figures/skins/*.mpk, items/)",
+      "count_hint": "per docs/census/README.md summary table (census of the user's install, not verified by us), totals: scenery 1924 (1918 read), dungeon pieces 1386, city blocks 174, figures 633, animations 4032, textures 6742",
+      "licence": "README 'Licensing': copyright Electronic Arts / Broadsword Online Games; redistribution of converted output not allowed per README wording",
+      "class": "C",
+      "note": "Proprietary game data. Inspiration at category level only (see inspiration). Do not copy meshes, skins or textures."
+    },
+    {
+      "kind": "game audio and music",
+      "path": "not in repo. README region data names music per region (zones/zones.mpk -> zones.dat, [region100] entries)",
+      "count_hint": "not counted; no audio files in the repo",
+      "licence": "as game data (README 'Licensing')",
+      "class": "C",
+      "note": "Named in README only. Nothing in the box to listen to; not read."
+    },
+    {
+      "kind": "project spawn placements (JSON)",
+      "path": "web/spawns/zone100.json",
+      "count_hint": "1481 bytes; one zone (Vale of Mularn) of hand-written placements (not all of the file read)",
+      "licence": "repo MIT LICENSE; the file's own _comment says the placements and fight numbers are this project's own, and that the client ships no spawn data",
+      "class": "A",
+      "note": "Project-authored data. Usable under repo MIT. Only the first part of the header comment was read; the placement entries were not read."
+    },
+    {
+      "kind": "census output (generated docs)",
+      "path": "docs/census/census.json (59593 bytes), docs/census/README.md (19830 bytes)",
+      "count_hint": "census.json not opened; README read at its summary tables",
+      "licence": "repo MIT LICENSE; README header says it holds 'file names, counts and causes only'",
+      "class": "C",
+      "note": "Holds file names taken from the game install. Treated as C until the json is read. Not opened."
+    },
+    {
+      "kind": "code (viewer and converters)",
+      "path": "web/*.js (grass, particles, sky, lighting, animator, skeleton, props, npc, combat, character, viewer and test files), cmd/*, internal/*, go.mod",
+      "count_hint": "19 entries directly in web/ (ls); Go sources under cmd/ and internal/ not counted",
+      "licence": "repo MIT LICENSE",
+      "class": "A",
+      "note": "Code, not assets. Named by listing only; grass.js reference read through README line 451."
+    }
+  ],
+  "inspiration": [
+    "Sky dome built from several layers: a canopy colour ramp from the zenith to the horizon that changes for dawn, day and dusk, two cloud decks projected onto a flat ceiling so they crowd toward the horizon, and a sun disc with a glow placed where the shadow direction says. Recreate with our own palette and cloud shapes. Reference: README.md lines 386-412.",
+    "Armour as tiers: each equipment slot has a ladder from light cloth to heavy plate, and the silhouette and the material texture are chosen as a pair, so a heavy tier can never look like cloth. Recreate with our own tier names and a fresh silhouette per tier. Reference: README.md lines 705-716 (character section).",
+    "Flame cards: crossed flat cards with a flame texture scrolling up over time, a soft additive halo, and a slow scale pulse where each copy starts at its own point in the cycle, so a row of braziers does not flicker in step. Recreate with an ember palette and a split-tongue silhouette. Reference: README.md lines 652-668 (glows and flame cards).",
+    "Smoke that is authored too faint to read: the file's own opacity curve is so low that a column of puffs vanishes, so the viewer boosts the opacity deliberately. Lesson to copy: author smoke alpha for the screen, not for the data. Reference: README.md lines 693-700 (particles section).",
+    "Biome-keyed scatter: a sprite table grouped by biome (meadow, scrub, reeds, rocks, ferns and so on), a density map that keeps plants off snow and steers them to shorelines, and cell-seeded generation so each cell's plants are the same every time. Recreate with our own plant families. Reference: README.md lines 414-456 and web/grass.js (line 451 quoted in the README).",
+    "Instanced slot particles: each emitter is a fixed set of slots reborn on a clock with a hash for position and direction, so the vertex shader places every particle from time and slot number with no simulation. Recreate with our own rebirth pattern. Reference: README.md lines 671-700 (particles section)."
+  ],
+  "briefs": [
+    {
+      "label": "Layered-armour tier ladder",
+      "why": "Each tier must read at 375 wide as a different silhouette, not only a different colour. One signature behaviour: a heavier tier visibly changes the outline, not only the shade.",
+      "keep": "kept: a per-slot ladder of tiers where the tier sets the silhouette and the material sets the look, chosen together.",
+      "change": "changed: our own tier names and materials, a different outline per tier (shoulder plates, skirt length, gauntlet shape), and our own species. Rule: recreate as a clearly distinct original, never a copy. Category-level only: 'a heavy hide warrior in tiers'.",
+      "ref": "/mnt/frankendom-donors/esponges-daoc-web/README.md lines 703-716 (characters section)"
+    },
+    {
+      "label": "Brazier flame cards",
+      "why": "A brazier that flickers out of step with its neighbours makes a camp feel alive from across a clearing. One signature effect: a flame that visibly moves on a clock, offset per copy.",
+      "keep": "kept: crossed flat flame cards with a scrolling flame texture and an additive halo; each copy offset in the cycle.",
+      "change": "changed: our own ember palette, a split-tongue flame silhouette, and a halo tinted to match our light colour. Rule: recreate as a clearly distinct original, never a copy. Category-level only: 'a camp brazier'.",
+      "ref": "/mnt/frankendom-donors/esponges-daoc-web/README.md lines 652-668 (glows and flame cards)"
+    },
+    {
+      "label": "Canopy dome at dusk",
+      "why": "A canopy that changes colour across the day and clouds that crowd the horizon give a readable sense of time at any screen width. One signature: clouds read as a flat deck pressed toward the horizon.",
+      "keep": "kept: a ring-based canopy colour ramp and two cloud decks projected onto a flat ceiling; the sun placed from the shadow direction.",
+      "change": "changed: our own palette and cloud shapes, the sun placed from our own light vector, and a dawn-to-dusk ramp of our own. Rule: recreate as a clearly distinct original, never a copy. Category-level only: 'a sky dome with cloud decks'.",
+      "ref": "/mnt/frankendom-donors/esponges-daoc-web/README.md lines 386-412 (sky section); /mnt/frankendom-donors/esponges-daoc-web/web/sky.js"
+    },
+    {
+      "label": "Biome scatter sprites",
+      "why": "Plants that thin out on snow and bunch on shorelines give a zone its ground character for almost no draw cost. One signature behaviour: a density map steers the scatter, so the same plant table reads differently in each zone.",
+      "keep": "kept: a sprite table grouped by biome, a density map, cell-seeded generation.",
+      "change": "changed: our own plant families and card shapes, and our own density rules (wet ground, not snow). Rule: recreate as a clearly distinct original, never a copy. Category-level only: 'low ground plants by biome'.",
+      "ref": "/mnt/frankendom-donors/esponges-daoc-web/README.md lines 414-456; /mnt/frankendom-donors/esponges-daoc-web/web/grass.js"
+    }
+  ],
+  "not_read": [
+    "zones/, figures/, anims/, items/, gamedata.mpk and every other game data file: not in box (user's install only); described from README",
+    "web/spawns/zone100.json: first part of the header comment read (first 500 bytes); the placement entries were not read",
+    "docs/census/census.json (59 KB): not opened; docs/census/README.md read at the summary table only",
+    "web/*.js, web/index.html and web/*.test.mjs bodies: names only, except grass.js referenced from README line 451",
+    "cmd/*, internal/* Go sources: names only",
+    "README sections beyond the lines quoted (including the Go tool usage and the character-screen notes)"
+  ]
+}

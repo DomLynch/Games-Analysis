@@ -1,0 +1,33 @@
+{
+  "donor": "CombatPathingRevolution",
+  "code_licence": "MIT (LICENSE line 3: Copyright (c) 2022 max-su-2019; README: MIT)",
+  "asset_licence": "No separate asset licence; repo MIT is the only licence file. Behaviour data origin (Skyrim Havok XML) not stated; credited third-party source parts (Fenix, Dtry) have no stated licence in repo",
+  "rights_holder_status": "fan/mod plugin for Skyrim per README; copyright line max-su-2019; game data not in repo; third-party credited source parts not licensed in repo",
+  "best_class": "D",
+  "asset_groups": [
+    {"kind": "behaviour data", "path": "Nemesis_Engine/mod/mscpr/0_master/#0106.txt, #0107.txt, #0108.txt", "count_hint": "3 XML files: 69 KB, 18 KB, 154 KB", "licence": "MIT (repo-level only)", "class": "C", "note": "Havok behaviour-variable tables for Skyrim tooling; origin not stated; not art; only #0107 head read"},
+    {"kind": "mod metadata", "path": "Nemesis_Engine/mod/mscpr/info.ini", "count_hint": "4 lines", "licence": "MIT (repo-level)", "class": "A", "note": "name, author, site, auto fields"},
+    {"kind": "config data", "path": "BehaviorDataInjector/MaxsuCPR_BDI.json", "count_hint": "2.7 KB list of named variables", "licence": "MIT (repo-level)", "class": "A", "note": "radius variables CPR_InnerRadiusMin/Mid/Max and enable flag; Skyrim-specific names"},
+    {"kind": "debug symbols", "path": "CombatPathingRevolution.pdb", "count_hint": "36 MB binary", "licence": "MIT (repo-level)", "class": "D", "note": "build artefact; not opened; no usable content"},
+    {"kind": "text docs", "path": "doc/en/Developers Guidelines of CPR.md, README.md", "count_hint": "2 files", "licence": "MIT (repo-level)", "class": "A", "note": "developer guide for animation authors"}
+  ],
+  "inspiration": [
+    "Combat spacing as three nested distance bands plus an optional advance band; recreate as a readable ground ring for our melee enemies rather than hidden numbers.",
+    "Four named movement moods (circle, back off, advance, fallback) chosen by distance; a small, rebuildable spacing brain for melee AI.",
+    "An in-game debug readout that names the AI's current choice; copy the idea for our AI debugging overlay.",
+    "Tone is reactive melee circling rather than scripted choreography; a mood note for our combat-feel doc."
+  ],
+  "briefs": [
+    {"label": "Engagement ring (own label)", "why": "makes spacing readable at a glance; the player can see who is in range", "keep": "three nested distance bands; a toggle that adds a fourth advance band; the ring tracks its target", "change": "draw as ground decals in our palette instead of debug text; uneven band widths; per-enemy ring colour", "ref": "BehaviorDataInjector/MaxsuCPR_BDI.json line 17 (radius variable block)"},
+    {"label": "Four-mode spacing brain (own label)", "why": "a small set of readable movement moods that switch on distance", "keep": "a fallback state; mode switching by distance; readable state names", "change": "our own state names and timing; bias toward flanking; per-archetype mode weights", "ref": "src/Circling_Hook.cpp, src/Backoff_Hook.cpp, src/Advance_Hook.cpp, src/Fallback_Hook.cpp (names only, not read)"}
+  ],
+  "not_read": [
+    "Nemesis_Engine #0106.txt and #0108.txt contents",
+    "Nemesis_Engine #0107.txt beyond the first lines",
+    "CombatPathingRevolution.pdb (binary, not opened)",
+    "src/*.cpp and src/*.h hook implementations (names only)",
+    "doc/en guide beyond the first lines and its Debugging section",
+    "BehaviorDataInjector JSON beyond ~20 lines",
+    "!Update.ps1, CMake files"
+  ]
+}

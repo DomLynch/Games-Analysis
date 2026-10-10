@@ -1,0 +1,126 @@
+{
+  "donor": "crossuo-crossuo",
+  "code_licence": "AGPL-3.0-or-later for new files (LICENSE.old, README); MIT for files that carry an MIT SPDX header (LICENSE.old says some files remain MIT)",
+  "asset_licence": "resources/* is AGPL-3.0-or-later per .reuse/dep5 (dep5 lines 6-8). deps/sdl-2.0.10 files are Zlib or Libpng per dep5 lines 205-207. Ultima Online client data is not in the repo and must be supplied by the user (docs/CONTRIBUTING/Compiling.md line 44).",
+  "rights_holder_status": "unknown: the repo has copyright lines for Danny Angelo Carminati Grein (2020) on new files, but nothing says official, fan, clean-room or leak. The client needs the original UO data files, which are not in this tree.",
+  "best_class": "B",
+  "asset_groups": [
+    {
+      "kind": "logos and app icons",
+      "path": "/mnt/frankendom-donors/crossuo-crossuo/resources/ (logo.png, launcher.png, launcher-icon.png, client.ico, launcher.ico, crossuo.icns, cursor.cur; plus icon_client.h and icon_launcher.h as embedded headers)",
+      "count_hint": "7 binary art files and 14 entries in resources/ in total",
+      "licence": "AGPL-3.0-or-later per .reuse/dep5 Files: resources/*",
+      "class": "B",
+      "note": "Share-alike style copyleft (AGPL). Pixel sizes not read (no file tool on the VPS). src/cursor1.cur is also listed under the same dep5 entry."
+    },
+    {
+      "kind": "third-party demo media (SDL 2.0.10 tree)",
+      "path": "/mnt/frankendom-donors/crossuo-crossuo/deps/sdl-2.0.10-c1be3add38/ (e.g. Xcode-iOS/Demos/data/drums/*.wav, test/sample.wav)",
+      "count_hint": "81 png/bmp files and 5 wav files under deps/ (find counts; deps/ holds 3115 files in total)",
+      "licence": "Zlib or Libpng per .reuse/dep5 Files: deps/sdl-2.0.10-c1be3add38/* (line 205 and 207)",
+      "class": "A",
+      "note": "Permissive; zlib and libpng notice conditions apply per the dep5 wildcard. Not game content. Individual demo file headers were not opened, so per-file licences are not checked."
+    },
+    {
+      "kind": "UI fonts and other UI art inside the client",
+      "path": "not in repo (the client loads them from the UO data directory; see src/Managers/ProfessionManager.cpp line 381)",
+      "count_hint": "0 in repo",
+      "licence": "n/a (user-supplied original data)",
+      "class": "D",
+      "note": "Nothing from UO ships in this repo. Any gump or font art would have to be supplied by the user and is not licensed to Frankendom."
+    },
+    {
+      "kind": "game world data (maps, tiles, animations, sounds)",
+      "path": "not in repo (read by xuocore/uodata.cpp, xuocore/uop.cpp and xuocore/mappedfile.cpp from the UO data files)",
+      "count_hint": "0 in repo",
+      "licence": "n/a",
+      "class": "D",
+      "note": "The loaders exist, but the files they read are not present. Class D for the repo; any reuse of UO data would be C (proprietary)."
+    }
+  ],
+  "inspiration": [
+    "The HUD is built from many small composable windows (gumps) in src/Gumps/: book, bulletin board, combat book, buff panel, custom house. Copy the modular pattern of one window per function, not the art.",
+    "The quest pointer is a screen-space arrow that points from the player to the objective, computed from the player position each frame (src/QuestArrow.cpp). It is a guide with no minimap needed.",
+    "Weather is a particle layer where each particle gets a random size from its ID (src/WeatherEffect.cpp). Cheap variety with no texture sheet.",
+    "The launcher uses one logo plus one icon set in several platform formats (client.ico, launcher.ico, crossuo.icns, launcher-icon.png). The same mark is shipped at every size.",
+    "A custom house builder shows a multi-tile preview object before placement (src/GUI/CustomHouseMultiObject.cpp). Its exact visuals were not read.",
+    "The custom cursor (resources/cursor.cur) is a small identity cue. Cheap to make, easy to recognise."
+  ],
+  "briefs": [
+    {
+      "label": "Quest pointer chevron",
+      "why": "A direction-only marker tells the player where to go without a map and stays readable against the scene.",
+      "keep": [
+        "single screen-space pointer",
+        "direction computed from player to goal",
+        "drawn above the world layer"
+      ],
+      "change": [
+        "chevron ribbon instead of a plain arrow",
+        "tinted from our own palette",
+        "anchored to a HUD edge rather than floating over the world"
+      ],
+      "ref": "/mnt/frankendom-donors/crossuo-crossuo/src/QuestArrow.cpp (Draw(), direction from GetFacing at line 29)",
+      "rule": "Recreate as a clearly distinct original, never a copy. keep = trait kept, change = trait changed."
+    },
+    {
+      "label": "Notice board window",
+      "why": "A diegetic list of posted notes lets players read messages in the world instead of in a menu.",
+      "keep": [
+        "list of posted items",
+        "post-new-note action",
+        "per-item sub window"
+      ],
+      "change": [
+        "pinned paper cards of varied sizes",
+        "wood-frame palette",
+        "drag-to-pin interaction"
+      ],
+      "ref": "/mnt/frankendom-donors/crossuo-crossuo/src/Gumps/GumpBulletinBoard.cpp and GumpBulletinBoardItem.cpp (structure read from the enum and header lines only)",
+      "rule": "Recreate as a clearly distinct original, never a copy. keep = trait kept, change = trait changed."
+    },
+    {
+      "label": "Drifting weather layer",
+      "why": "A sparse particle layer adds life to an outdoor scene for almost no memory cost.",
+      "keep": [
+        "per-particle random scale seeded from an ID",
+        "sparse drifting particles"
+      ],
+      "change": [
+        "pixel-cell particles instead of soft sprites",
+        "tint by region or season",
+        "wind direction per zone"
+      ],
+      "ref": "/mnt/frankendom-donors/crossuo-crossuo/src/WeatherEffect.cpp (ScaleRatio line 10)",
+      "rule": "Recreate as a clearly distinct original, never a copy. keep = trait kept, change = trait changed."
+    },
+    {
+      "label": "Two-page reading panel",
+      "why": "A book window shows a longer text object with pages, which suits lore notes.",
+      "keep": [
+        "two-page spread",
+        "page turning"
+      ],
+      "change": [
+        "bound page edges with a bookmark ribbon",
+        "our own typography"
+      ],
+      "ref": "/mnt/frankendom-donors/crossuo-crossuo/src/Gumps/GumpBook.cpp (name and header only; not read in detail)",
+      "rule": "Recreate as a clearly distinct original, never a copy. keep = trait kept, change = trait changed."
+    }
+  ],
+  "not_read": [
+    "src/Gumps/GumpBook.cpp internals and src/GUI/CustomHouse*.cpp internals (names and headers only)",
+    "deps/sdl-2.0.10 demo wav and png contents, and the per-file licence headers of those demos",
+    "resources/*.png, *.ico, *.icns pixel contents and sizes (no file tool on the VPS; binary files not opened)",
+    "deps/ third-party trees other than the SDL list (cmcurl, glm) were not inventoried",
+    "external/gfx and external/imgui contents beyond the licence files (code only)",
+    "docs/CLA.md and docs/CONTRIBUTING licence text beyond the grep hits"
+  ],
+  "half_read": "Client half only: src/, xuocore/, external/, resources/, LICENSE files. The server half is not part of this donor. Ultima Online data files are not in the tree.",
+  "other_halves_in_box": [
+    "ModernUO (Ultima Online server; name only, not read)",
+    "ClassicUO, xrip-uo-client, ZaneDubya-UltimaXNA (other Ultima Online clients by name; not read)"
+  ],
+  "criteria_note": "Only the small AGPL logo set is art in this repo, so the briefs draw on UI and effect code structure, read by file name and header only."
+}

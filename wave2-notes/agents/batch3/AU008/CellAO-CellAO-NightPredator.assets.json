@@ -1,0 +1,161 @@
+{
+  "donor": "CellAO-CellAO-NightPredator",
+  "code_licence": "No LICENSE or COPYING file in the tree. About 542 .cs files contain a BSD-style clause ('Redistributions of source code must retain the above copyright notice'), and about 520 carry 'Copyright (c) 2005-2014, CellAO Team'. Licence therefore unclear: class C for reuse.",
+  "asset_licence": "None stated for the game-data files (CellAO/Datafiles), the logos, the icons, the diagrams or the SQL schemas. Generated docs carry a MarkDownDocumentator footer naming the CellAO Team.",
+  "rights_holder_status": "unknown from the repo. README: an open-source emulator for Anarchy Online, a Funcom game, and thanks Funcom for giving the team the game. No file states who owns the data files. Inference only, not stated in the repo: the data files look extracted from a game client (Extractor Serializer tool; version string 18.8.11_EP2 at the start of the binary). Treat as game-derived.",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "game-derived data files (binary)",
+      "path": "CellAO/Datafiles/items.dat (2.35 MB), nanos.dat (388 KB), playfields.dat (545 KB)",
+      "count_hint": "3 binary files",
+      "licence": "none stated",
+      "class": "C",
+      "note": "Header string read with strings only. Not parsed or opened further. Do not import."
+    },
+    {
+      "kind": "game-derived relation table (text)",
+      "path": "CellAO/Datafiles/itemrelations.txt (852 KB)",
+      "count_hint": "1 file, one numeric id per line in the first lines",
+      "licence": "none stated",
+      "class": "C",
+      "note": "First three lines read. Not reproduced."
+    },
+    {
+      "kind": "SQL schemas",
+      "path": "CellAO/Libraries/Source/CellAO.Database/SqlTables/",
+      "count_hint": "31 .sql files",
+      "licence": "code licence applies (unclear, see above)",
+      "class": "C",
+      "note": "Table definitions. Not read."
+    },
+    {
+      "kind": "project logos",
+      "path": "CellAO Logo.png (256x256), CellAO Logo small.png (48x42)",
+      "count_hint": "2 PNG",
+      "licence": "none stated",
+      "class": "C",
+      "note": "Dimensions read from PNG header only; pixels not opened."
+    },
+    {
+      "kind": "documentation diagrams",
+      "path": "CellAO/Documentation/Playfield.png (1075x991), CellAO/Documentation/Character.png (1138x1261)",
+      "count_hint": "2 PNG",
+      "licence": "none stated",
+      "class": "C",
+      "note": "Dimensions from PNG header only; not opened."
+    },
+    {
+      "kind": "service icons",
+      "path": "CellAO/Server/ZoneEngine/zone.ico (43 KB), CellAO/Server/ChatEngine/chat.ico (46 KB), CellAO/Server/LoginEngine/login.ico (44 KB)",
+      "count_hint": "3 .ico in total (one per server engine)",
+      "licence": "none stated",
+      "class": "C",
+      "note": "One icon per server role. Not opened."
+    },
+    {
+      "kind": "generated documentation (text)",
+      "path": "CellAO/Documentation/*.md",
+      "count_hint": "15 .md in CellAO/Documentation (enum and list pages such as ArmorSlots.md, Stats.md, ImplantSlots.md)",
+      "licence": "footer: 'Created by MarkDownDocumentator Version 1.4.2.3368'; Copyright footer in ArmorSlots.md names CellAO Team",
+      "class": "C",
+      "note": "ArmorSlots.md read in full (15 numbered slots). Stats.md head read. Others not read."
+    },
+    {
+      "kind": "class diagrams",
+      "path": "CellAO/Libraries/Source/CellAO.Core/ClassDiagrams/Character.cd, CellAO/Server/ZoneEngine/ClassDiagrams/Playfield.cd, CellAO/Server/WebEngine/ClassDiagram1.cd",
+      "count_hint": "3 .cd XML files",
+      "licence": "code licence applies",
+      "class": "D",
+      "note": "Tool-generated class diagram XML. Not content."
+    },
+    {
+      "kind": "source code (C#)",
+      "path": "CellAO/**/*.cs, Tools/**/*.cs",
+      "count_hint": "598 .cs files",
+      "licence": "unclear (see code_licence)",
+      "class": "C",
+      "note": "Code, listed for the licence picture. Not reviewed beyond headers."
+    }
+  ],
+  "inspiration": [
+    "Equipment slot model: a fixed numbered list of body slots with symmetric pairs (shoulders, arms, wrists, fingers). Useful for a paper-doll screen where the same slot pattern repeats left and right.",
+    "Generated documentation from code: enum and list pages are made by a tool and kept next to the source. A model for an in-game help or stats page that updates when the data updates.",
+    "One icon per server role in a single family (zone, chat, login). A consistent set makes a service status panel easy to read.",
+    "Plan-view playfield diagram in the docs, drawn to explain how a zone is laid out. A designer-facing diagram style worth recreating for our own zone plans.",
+    "Separate data layers for items, nanos (abilities) and playfields, each its own file, with a text relation table tying them together. A clean way to keep item, ability and zone data apart in our own schema.",
+    "Character diagram in the docs shows how a character's systems connect. A model for an onboarding diagram, not for art."
+  ],
+  "briefs": [
+    {
+      "label": "Paper-doll slot grid",
+      "why": "A symmetric slot layout around a central body lets a player see gear in place at a glance.",
+      "keep": [
+        "symmetric pairs for arms, shoulders, wrists and fingers",
+        "fixed slot order",
+        "central head and chest slots"
+      ],
+      "change": [
+        "our own body silhouette, not a generic doll",
+        "slots drawn as the armour piece itself, not labels",
+        "a jewellery row separate from armour"
+      ],
+      "ref": "CellAO/Documentation/ArmorSlots.md (read in full: 15 numbered slots)"
+    },
+    {
+      "label": "Server-role icon family",
+      "why": "Three icons in one frame make a status panel readable without text.",
+      "keep": [
+        "same frame and size per role",
+        "one glyph per role",
+        "a shared colour scheme"
+      ],
+      "change": [
+        "our own glyph set",
+        "status colour on the frame edge",
+        "animated pulse when a service is down"
+      ],
+      "ref": "CellAO/Server/ZoneEngine/zone.ico (not opened; file name and size only)"
+    },
+    {
+      "label": "Small mark at 48 px",
+      "why": "A simple small emblem reads at tab and toolbar sizes.",
+      "keep": [
+        "one simple shape",
+        "works at 48 px wide",
+        "no fine detail"
+      ],
+      "change": [
+        "our own mark, not this one",
+        "a monochrome version for dark mode",
+        "a shape tied to our game name"
+      ],
+      "ref": "CellAO Logo small.png (48x42, header dims only; pixels not opened)"
+    },
+    {
+      "label": "Plan-view zone diagram",
+      "why": "A top-down plan with labels explains a zone to designers faster than text.",
+      "keep": [
+        "plan view with labels",
+        "one diagram per zone",
+        "clear legend"
+      ],
+      "change": [
+        "our own zone shapes and palette",
+        "markers for spawns and camps",
+        "a phone-sized version"
+      ],
+      "ref": "CellAO/Documentation/Playfield.png (1075x991, not opened)"
+    }
+  ],
+  "not_read": [
+    "items.dat, nanos.dat, playfields.dat (size and header string only; not parsed)",
+    "itemrelations.txt beyond its first three lines",
+    "All 31 .sql schemas",
+    "All .cs source beyond licence headers (grep counts only)",
+    "All PNG and ICO pixel content (dimensions from header only, or not opened)",
+    "The .cd class diagram XML",
+    "Documentation .md except ArmorSlots.md (read) and the head of Stats.md",
+    "Config/*.xml beyond the first lines (not reproduced)"
+  ]
+}

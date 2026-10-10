@@ -1,0 +1,130 @@
+{
+  "donor": "BehaviorTree-BehaviorTree.CPP",
+  "code_licence": "MIT (LICENSE line 1 'The MIT License (MIT)'; copyright lines in LICENSE (2015-2018 Michele Colledanchise) and README (2019-2026 Davide Faconti; 2018-2019 Davide Faconti, Eurecat; 2014-2018 Michele Colledanchise)). Bundled libraries: minicoro (public domain or MIT, choice), minitrace (MIT, Henrik Rydgard 2014), tinyxml2 (zlib-style header, full text not read).",
+  "asset_licence": "No separate asset licence file found. Non-code files fall under the repo's MIT licence by location (no per-file notice). MOOD2Be_final_report.pdf has no licence or author statement and is not referenced in any repo file. The Groot screenshot depicts a separate tool (README line 46 links Groot2); the file does not state its own licence.",
+  "rights_holder_status": "Open-source C++ library. Copyright holders named in LICENSE and README: Michele Colledanchise, Davide Faconti, Eurecat. Contributors list: three names (contributors.txt). No game content in repo. Report PDF author not stated in repo files.",
+  "best_class": "A",
+  "asset_groups": [
+    {
+      "kind": "project logo (SVG and PNG)",
+      "path": "btcpp_logo.svg, btcpp_logo.png, animated.svg",
+      "count_hint": "3 files (animated.svg 19.6K, btcpp_logo.svg 7.5K, btcpp_logo.png 10K)",
+      "licence": "Repo MIT by location; no separate note",
+      "class": "A (with repo MIT)",
+      "note": "animated.svg is an inline SVG with one CSS keyframe animation; embedded in README line 10."
+    },
+    {
+      "kind": "screenshot of a third-party tool",
+      "path": "docs/groot-screenshot.png",
+      "count_hint": "1 PNG, 62.8K",
+      "licence": "Not stated for this file; README line 48 embeds it; README line 46 links Groot2 as a separate tool",
+      "class": "C",
+      "note": "Not viewed: the file cannot be opened without copying it off the VPS, which the brief forbids."
+    },
+    {
+      "kind": "project report (PDF)",
+      "path": "MOOD2Be_final_report.pdf",
+      "count_hint": "1 PDF, 425K",
+      "licence": "Not stated; no reference in any repo file",
+      "class": "C",
+      "note": "Metadata shows a TeX producer and a 2019 creation date. No author or title field found in the first metadata grep. Not read beyond metadata."
+    },
+    {
+      "kind": "behaviour-tree XML examples and samples",
+      "path": "examples/test_files/*.xml, sample_nodes/ (7 files), examples/*.cpp",
+      "count_hint": "19 XML files donor-wide; 7 sample node files; about 30 example .cpp",
+      "licence": "Repo MIT by location",
+      "class": "A",
+      "note": "Code and XML examples. Only t15 and ex03 sqlite headers read."
+    },
+    {
+      "kind": "bundled third-party code (not game content)",
+      "path": "3rdparty/minicoro, 3rdparty/minitrace, 3rdparty/tinyxml2, 3rdparty/flatbuffers",
+      "count_hint": "4 libraries",
+      "licence": "minicoro: public domain or MIT (choice of 2); minitrace: MIT; tinyxml2: zlib-style header",
+      "class": "A",
+      "note": "Library code. Full licence texts for tinyxml2 and flatbuffers not read."
+    },
+    {
+      "kind": "docs markdown and diagrams",
+      "path": "docs/*.md, README.md, CONTRIBUTORS_GUIDE.md",
+      "count_hint": "14 md files donor-wide",
+      "licence": "Repo MIT by location",
+      "class": "A",
+      "note": "Prose documentation. Not read beyond the file list."
+    },
+    {
+      "kind": "game art, models, audio, fonts, maps",
+      "path": "whole donor",
+      "count_hint": "0 files of game type",
+      "licence": "n/a",
+      "class": "D",
+      "note": "No game content at all. Library and tooling only."
+    }
+  ],
+  "inspiration": [
+    "The logo is an inline SVG where the shapes reveal themselves with a one-shot CSS keyframe animation. Cheap way to make a title or splash reveal in our HUD with no video. Recreate with our own mark.",
+    "Behaviour trees are authored as XML with named node types, typed ports and reusable subtrees. Use the same split: creature brains as data files, code only for the leaf actions.",
+    "The node-mocking example runs a tree against stand-in nodes inside a test, to check flow without a game. Pattern for testing creature AI headless.",
+    "A SQLite logger records each tick of a tree for later replay (examples/ex03_sqlite_log.cpp). A scrubbable decision timeline for our debug overlay would follow this idea.",
+    "Ports are typed and remapped at the call site (file names t12 default ports, t13 access by reference, t19 polymorphic ports; not opened). One behaviour can then serve many creatures with different parameters.",
+    "A terminal manual-selector example (ex03_ncurses_manual_selector.cpp; name only, not opened) shows a hand-driven decision mode for debugging AI."
+  ],
+  "briefs": [
+    {
+      "label": "Self-drawing title mark (own label)",
+      "why": "A mark that draws itself on load, one shot, reads as a clean splash. Works without any video.",
+      "keep": [
+        "outline reveal, one shot",
+        "single-pass CSS keyframes",
+        "mark stays after the reveal"
+      ],
+      "change": [
+        "our own mark, not this logo",
+        "reveal from the centre out",
+        "a gold-leaf or ember trace instead of a plain line"
+      ],
+      "ref": "animated.svg (logo, not a game asset; look only)"
+    },
+    {
+      "label": "Decision graph view (own label)",
+      "why": "A node graph shows the state of a creature brain at a glance. The README caption is the only source here; the image was not viewed, so this brief is low confidence.",
+      "keep": [
+        "nodes in a flow with edges",
+        "a node shows its current state",
+        "the graph follows the running brain"
+      ],
+      "change": [
+        "our own node shapes (runes or sigils, not boxes)",
+        "colour from our palette, not the tool's",
+        "a radial layout for small brains"
+      ],
+      "ref": "docs/groot-screenshot.png (not viewed; caption only)"
+    },
+    {
+      "label": "Decision replay timeline (own label)",
+      "why": "A recorded log of each tick lets a designer scrub back through what a creature decided and why.",
+      "keep": [
+        "tick-by-tick record",
+        "replay from a stored log",
+        "log written to a single database file"
+      ],
+      "change": [
+        "our own timeline UI with scrub bar and markers",
+        "per-creature colour tags",
+        "replay shown as an in-world ghost trail"
+      ],
+      "ref": "examples/ex03_sqlite_log.cpp"
+    }
+  ],
+  "not_read": [
+    "docs/groot-screenshot.png (not viewed; copying off the VPS is forbidden)",
+    "MOOD2Be_final_report.pdf body text (metadata grep only)",
+    "btcpp_logo.svg and btcpp_logo.png contents (names and sizes only)",
+    "examples other than t15 and ex03 sqlite headers; test_files XML contents",
+    "sample_nodes source",
+    "tinyxml2, minitrace and flatbuffers full licence texts",
+    "docs markdown content",
+    "all src/ and tests"
+  ]
+}

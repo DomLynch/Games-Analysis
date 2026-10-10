@@ -1,0 +1,79 @@
+{
+  "donor": "coding-horror-basic-computer-games",
+  "code_licence": "The Unlicense: root LICENSE line 1 says the software is released into the public domain. No other licence file was found by name search (only LICENSE). Each port in the language folders is covered by the repo LICENSE as far as the file states; the files do not say per port. The original BASIC source is not licensed in the repo.",
+  "asset_licence": "No binary assets in the repo: 0 PNG, JPG, GIF, SVG, WAV, MP3, OGG, TTF or ICO files found. Non-code content is text only: per-game README.md files, root README.md, HOW_TO_RUN_THE_GAMES.md, index.html, and the original BASIC source (.bas, 213 files). The root LICENSE says 'this software' is public domain; the files do not say whether the README prose or the original book text is covered by it.",
+  "rights_holder_status": "Mixed. Original programs are credited to named authors in the READMEs and code (for example Bill Palmby for Acey Ducey, README line 7; bunny.bas line 4 credits the 'BASIC COMPUTER GAMES' book by Ahl). The book is linked (README line 5) but the files read do not state its rights holder. The repo's own ports and wrapper text are maintained by the repo owner, under the Unlicense.",
+  "best_class": "A for repo-authored ports and wrapper text (Unlicense, per the root LICENSE); C for the original 1978-book BASIC source and book-derived README prose (no licence stated in the repo)",
+  "asset_groups": [
+    {
+      "kind": "Original BASIC source (converted for Vintage BASIC)",
+      "path": "/mnt/frankendom-donors/coding-horror-basic-computer-games/<NN_Game>/<game>.bas (for example 01_Acey_Ducey/aceyducey.bas, 16_Bug/bug.bas, 19_Bunny/bunny.bas)",
+      "count_hint": "213 .bas files",
+      "licence": "No licence in the repo for the original source. README.md (root) line 14 says the source was moved from vintage-basic.net, which normalised it; the files read do not state an original licence.",
+      "class": "C",
+      "note": "Original 1970s programs with their prompts and messages. Use as reference only; not copied into our code."
+    },
+    {
+      "kind": "Per-game README text (history, rules, known bugs, porting notes)",
+      "path": "/mnt/frankendom-donors/coding-horror-basic-computer-games/<NN_Game>/README.md (99 game folders) and the root README.md",
+      "count_hint": "99 game READMEs plus the root README",
+      "licence": "Repo LICENSE (Unlicense) for maintainer notes. Historical sections cite the 1978 book, with a 'Downloaded from Vintage Basic' note (for example 01_Acey_Ducey/README.md line 15 and 19_Bunny/README.md line 7). Book-derived prose has no stated licence.",
+      "class": "C (mixed: A for maintainer notes, C for book-derived descriptions; not checked line by line)",
+      "note": "Clear rules and gameplay descriptions. Summarise; do not reproduce. The Acey Ducey README has Known Bugs and Porting Notes sections; the other READMEs were not checked for that pattern."
+    },
+    {
+      "kind": "Web page and run instructions",
+      "path": "/mnt/frankendom-donors/coding-horror-basic-computer-games/index.html (7.8 KB), HOW_TO_RUN_THE_GAMES.md (5.4 KB)",
+      "count_hint": "2 files",
+      "licence": "Repo LICENSE (Unlicense).",
+      "class": "A",
+      "note": "Index page and run guide. Not opened in full."
+    }
+  ],
+  "inspiration": [
+    "A creature built part by part, with dependencies: 16_Bug/README.md line 5 describes a bug drawn part by part from die rolls, where each part needs the one before (body, then neck, then head). The reveal order is the idea: a creature that assembles in a fixed sequence builds anticipation.",
+    "A shy creature in a tiny arena: 51_Hurkle/README.md line 5 hides a creature on a 10 by 10 grid, with homebase in a corner, and the player finds it with hints. A small hidden beast in a bounded map is a good mood for a side quest.",
+    "A guesser that learns: 03_Animal/README.md line 3 describes a game where the computer asks questions and, after a miss, asks the player for a new question to add to its tree. An NPC that grows its own question list from player answers is a clear design lift.",
+    "A yearly ledger screen: 43_Hammurabi/README.md line 3 frames a city-management game where each year trades land, grain and population. The turn report reads as a compact status screen, a good HUD model for a settlement view.",
+    "Centred title plus publisher line: the programs open with a centred title and a credit line (19_Bunny/bunny.bas lines 1-2 use TAB to centre the title and a publisher line). A simple title card with a credit line works for any retro menu.",
+    "Known Bugs and Porting Notes sections: the Acey Ducey README (01_Acey_Ducey/README.md) records known defects and port differences next to the game. Useful as a template for our own content docs."
+  ],
+  "briefs": [
+    {
+      "label": "Part-by-part beast",
+      "why": "A creature that is assembled in a fixed order builds anticipation and shows its anatomy as it appears.",
+      "keep": "Ordered dependencies (base, then joint, then head); a pace set by a dice-like roll; each part visibly locks in.",
+      "change": "A bulky crawler whose armour plates gate its parts, not a bug; ornaments come first; a glow that grows as parts lock in.",
+      "ref": "/mnt/frankendom-donors/coding-horror-basic-computer-games/16_Bug/README.md (line 5)"
+    },
+    {
+      "label": "Hidden grid beast",
+      "why": "A small, odd creature hidden in a bounded area gives a clear search loop and a memorable find.",
+      "keep": "A shy creature hiding in a tiny arena; hints that narrow the search; a home corner.",
+      "change": "A glowing pack animal with a call sound; a real map instead of a numbered grid; a silhouette that gives hints by shape.",
+      "ref": "/mnt/frankendom-donors/coding-horror-basic-computer-games/51_Hurkle/README.md (lines 3, 5)"
+    },
+    {
+      "label": "Learning riddle spirit",
+      "why": "A guesser that grows its own question list makes an NPC feel like it remembers the player.",
+      "keep": "A question tree that gains a new question after a miss; a tone of gentle guessing.",
+      "change": "A spirit made of drifting motes that remembers answers per player; the questions come from the world, not a fixed list.",
+      "ref": "/mnt/frankendom-donors/coding-horror-basic-computer-games/03_Animal/README.md (line 3)"
+    },
+    {
+      "label": "Yearly ledger screen",
+      "why": "A short turn report with a few numbers and a choice each turn gives a clear management loop.",
+      "keep": "Turn-based yearly report; trade-offs between land, food and people.",
+      "change": "A visual ledger on a village map instead of text; our own resource set and themes.",
+      "ref": "/mnt/frankendom-donors/coding-horror-basic-computer-games/43_Hammurabi/README.md (line 3)"
+    }
+  ],
+  "not_read": [
+    "No original .bas source read beyond the first lines of bunny.bas (title and credit lines, and line 100's credit comment).",
+    "Game READMEs: only the sections cited by line were read (01, 03, 16, 19, 43, 51, 84 history line); the other 90-odd READMEs were named only.",
+    "index.html and HOW_TO_RUN_THE_GAMES.md: names and sizes only.",
+    "Port source code in cs, java, rs, py, js, rb, go and others: counted by extension, not read. Code is not in scope for this audit beyond its licence.",
+    "The book itself: not opened; the files do not state its rights holder.",
+    "84_Super_Star_Trek: only the README history line was read. Its gameplay and UI were not read, so no UI brief from it."
+  ]
+}

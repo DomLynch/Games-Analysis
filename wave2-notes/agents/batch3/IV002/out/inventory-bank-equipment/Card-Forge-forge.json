@@ -1,0 +1,69 @@
+{
+ "game": "Card-Forge-forge",
+ "category": "inventory-bank-equipment",
+ "cell": 9,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/player/AdventurePlayer.java",
+ "licence": "GPL-3.0 (as read: LICENSE lines 1-2, GNU GENERAL PUBLIC LICENSE, Version 3, 29 June 2007; AdventurePlayer.java has no licence header)",
+ "licence_class": "copyleft",
+ "target_module": "origins/gear/equipment-slots.ts",
+ "parity_row": 15,
+ "pattern_tags": [
+  "new:slot-doll",
+  "new:toggle-equip",
+  "new:loadout-by-deck",
+  "stale-state",
+  "new:instance-id-no-stack",
+  "new:penalty-random-worn-piece"
+ ],
+ "data_fields": [
+  {
+   "name": "crackable_slots_easy_normal",
+   "donor_constant": "Boots, Body, Neck",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/player/AdventurePlayer.java:1200"
+  },
+  {
+   "name": "crackable_slots_hard_insane",
+   "donor_constant": "every worn slot",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/player/AdventurePlayer.java:1195"
+  },
+  {
+   "name": "pieces_cracked_per_defeat",
+   "donor_constant": "1 (items.random())",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/player/AdventurePlayer.java:1204"
+  },
+  {
+   "name": "bind_loadouts_to_decks",
+   "donor_constant": "setting, default not read",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/player/AdventurePlayer.java:216"
+  },
+  {
+   "name": "disable_cracked_items",
+   "donor_constant": "setting, default not read",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/util/Current.java:40"
+  },
+  {
+   "name": "item_instance_id",
+   "donor_constant": "random 64-bit (UUID most significant bits)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/data/ItemData.java:96"
+  }
+ ],
+ "best_idea": "Store worn gear as a map from slot name to one item-instance id, make equip a toggle, and save and restore that map per deck by id, so a loadout is a few ids and not copies of items.",
+ "decision": "adapt",
+ "decision_why": "The slot map and by-id loadouts fit gear dressing (row 15) and the one-ledger ruling; we keep the toggle and the per-deck loadouts, but a missing id becomes a logged refusal, the displaced item's flag is cleared, and the random defeat crack is not ported as a default.",
+ "decision_status": "proposed",
+ "acceptance": "A player taps a worn Body item, which comes off; taps a second Body item, and the first returns to the bag; a server test asserts that after a deck switch with bound loadouts each slot holds the id saved for that deck, and a saved id that no longer exists is reported in the log, not skipped silently."
+}

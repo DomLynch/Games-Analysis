@@ -1,0 +1,103 @@
+{
+  "donor": "DFHack-dfhack",
+  "code_licence": "Zlib for the core, plugins, scripts and other DFHack code unless noted (LICENSE.rst line 7). Some components are MIT or BSD. The JSON.lua component is CC-BY-SA 3.0 (LICENSE.rst line 63).",
+  "asset_licence": "Not separately licensed. LICENSE.rst lines 15 to 16 say some graphic assets are derived from vanilla Dwarf Fortress assets and used with permission from Bay12. The repo does not state the scope or terms of that permission. The data/blueprints, docs/images and data/stockpiles folders have no licence line of their own.",
+  "rights_holder_status": "third-party tool for Dwarf Fortress (README line 8 describes it as a Dwarf Fortress memory access library). Graphics are derived from Dwarf Fortress art with permission from Bay12 (LICENSE.rst line 15). Otherwise unknown.",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "UI chrome and icons",
+      "path": "data/art/",
+      "count_hint": "23 PNG; border frames 56 x 36 px (bold, medium, thin, panel, window); pins 16 x 24 px; icon strip 40 x 24 px; glyph sheet 416 x 64 px; tile sheet 128 x 144 px; toolbars 64 px wide",
+      "licence": "LICENSE.rst lines 15 to 16: derived from vanilla DF assets, used with permission from Bay12. Scope not stated.",
+      "class": "C",
+      "note": "Sizes read from PNG headers only. These are the tiles and frames DFHack draws its own windows with. Inspiration only unless the Bay12 permission is confirmed in writing."
+    },
+    {
+      "kind": "documentation screenshots and Stonesense sample sprites",
+      "path": "docs/images/",
+      "count_hint": "30 files (PNG, most are screenshots; stonesense-sprite-template.png, stonesense-sprite-sample.png and stonesense-indexed-sprites.png are the sprite references)",
+      "licence": "No licence line in the folder. The repo LICENSE covers DFHack code; the screenshots are not stated.",
+      "class": "C",
+      "note": "Screenshots of Dwarf Fortress UI and Stonesense sprite diagrams. Look at them; do not copy them."
+    },
+    {
+      "kind": "community blueprint layouts (quickfort)",
+      "path": "data/blueprints/",
+      "count_hint": "50 CSV and 2 XLSX (XLSX files are under data/blueprints/test/quickfort/list/)",
+      "licence": "Not stated in the folder. The blueprint README (data/dfhack-config/blueprints/README.md) only points to online Quickfort documentation. No per-file author or licence line was found in the tombs folder, the only one searched.",
+      "class": "C",
+      "note": "Text grids of cells (mining, crypts, houses). Not art. Layout inspiration only until the source of each file is known."
+    },
+    {
+      "kind": "stockpile presets",
+      "path": "data/stockpiles/",
+      "count_hint": "100 .dfstock files",
+      "licence": "Not stated.",
+      "class": "D",
+      "note": "Binary stockpile settings, not art; not opened beyond the header bytes."
+    },
+    {
+      "kind": "Stonesense art guide (text)",
+      "path": "docs/guides/stonesense-art-guide.rst",
+      "count_hint": "71 lines of prose",
+      "licence": "Not stated; the Stonesense project is named as an external project (its sprites are not in this tree).",
+      "class": "C",
+      "note": "Describes sprite rules: 32 x 32 sprites, floors on their own 32 x 20 sheet, magenta treated as transparent, isometric footprint. Use the rules, not the text."
+    }
+  ],
+  "inspiration": [
+    "Isometric footprint sprite: each object is a 32 by 32 sprite whose solid floor footprint sits on a 2:1 diagonal grid, with a dotted volume above it for one storey. Recreate with our own tile size and footprint; the rule is a clear diamond base plus a tall column. Ref: docs/images/stonesense-sprite-template.png and docs/guides/stonesense-art-guide.rst line 36.",
+    "Floors on their own sheet: floor tiles live on a separate 32 by 20 sheet instead of the object sheets, so ground and objects layer cleanly. Ref: docs/guides/stonesense-art-guide.rst line 21 and the floors sheet note near its end.",
+    "Sheet indexing with a hard row width: sprites are addressed by one index across a sheet with a fixed number of columns per row, which keeps atlas lookup simple. Ref: docs/images/stonesense-indexed-sprites.png.",
+    "One frame family in three weights: bold, medium and thin 56 x 36 frames share a shape, so line weight alone gives hierarchy. Ref: data/art/border-bold.png, border-medium.png, border-thin.png.",
+    "Two-colour map pins: small 16 x 24 pins in two colours mark states on the map (red and green sets). Quick to read and cheap to draw. Ref: data/art/red-pin.png and data/art/green-pin.png.",
+    "Packed glyph sheet: a 416 x 64 sheet holds a small letter set in one texture, which keeps a text UI to one draw source. Ref: data/art/curses-small-letters_top-left.png.",
+    "Layouts as text grids: a dungeon floor or crypt is written as a text grid of cells and reused as a plan (quickfort blueprints). A character plan is easy to tune and to version. Ref: data/blueprints/tombs/ (the CSV files in that folder)."
+  ],
+  "briefs": [
+    {
+      "label": "Isometric footprint sprite kit",
+      "why": "A diamond footprint with a tall column above it reads as a three-dimensional room from a flat sheet of 32 px tiles.",
+      "keep": "Square tile with a clear footprint and volume outline; floors on their own sheet; one storey per sprite.",
+      "change": "A different tile size and proportion; our own wall ornament; a different diagonal ratio so it is not the same grid.",
+      "ref": "docs/images/stonesense-sprite-template.png and docs/guides/stonesense-art-guide.rst"
+    },
+    {
+      "label": "Two-colour map pin",
+      "why": "A tiny pin in two colours reads as a state marker at any zoom with almost no art.",
+      "keep": "Small teardrop silhouette; two colours for two states.",
+      "change": "A diamond or flag shape instead of a teardrop; a third colour for a third state; a shadow tuned to our palette.",
+      "ref": "data/art/red-pin.png and data/art/green-pin.png"
+    },
+    {
+      "label": "Weighted frame family",
+      "why": "One frame shape in three line weights gives hierarchy between windows, panels and buttons without new shapes.",
+      "keep": "Same outer size for the family; bold, medium and thin weights; a window and panel variant.",
+      "change": "Our own corner ornament; a different outer size; our own palette.",
+      "ref": "data/art/border-bold.png, border-medium.png, border-thin.png, border-window.png"
+    },
+    {
+      "label": "Crypt plan as a text grid",
+      "why": "A whole crypt is a grid of characters that a designer can edit in a spreadsheet and that a tool can stamp into the world.",
+      "keep": "Cell-per-character plan; rooms as blocks; a file per room type.",
+      "change": "Our own room shapes and our own room names; our own spacing rules.",
+      "ref": "data/blueprints/tombs/ (CSV files in that folder)"
+    }
+  ],
+  "cross_links": [
+    "camera: the isometric sprite rule (footprint on a 2:1 diagonal) is a camera-projection choice; compare with our camera notes.",
+    "zones and spawns: the crypt and mining plans are zone-like layouts defined as cell grids.",
+    "hud-ui: the frame family, pins and glyph sheet are UI chrome.",
+    "animation, vfx, loot, sound: no animation files, effects, loot tables or audio in this donor."
+  ],
+  "not_read": [
+    "Binary PNG content: only sizes from headers; no image was viewed.",
+    "The two XLSX blueprint test files and the 100 .dfstock files: not opened beyond headers.",
+    "docs/images content: only names and count checked, not viewed.",
+    "The vendored depends/ folder: only the licence table in LICENSE.rst was read, not each package's own licence.",
+    "The 156 .rst documentation pages except the Stonesense art guide and the README.",
+    "The 50 blueprint CSV files: only the folder structure and one file path were checked; no contents were read in full, and no per-file author lines were looked for beyond a grep of the tombs folder.",
+    "No _RESTRICTED-NOTE.txt found in this donor."
+  ]
+}

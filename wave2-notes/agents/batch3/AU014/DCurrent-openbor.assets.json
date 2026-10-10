@@ -1,0 +1,44 @@
+{
+  "donor": "DCurrent-openbor",
+  "code_licence": "3-clause BSD-style licence text in LICENSE (copyright Senile Team 2003 and OpenBOR Team 2004); engine/LICENSE carries the same text",
+  "asset_licence": "None stated for art or data. The BSD-style text speaks of source and binary redistribution and does not name art. No separate licence for the PNG, GIF or ICO files was found in the files read. Unclear, so class C.",
+  "rights_holder_status": "Mixed per repo text. OpenBOR is an open engine (Senile Team and OpenBOR Team copyright lines). README history says the original Beats of Rage used assets from SNK Playmore's King of Fighters series; the repo does not say whether any of those assets remain in this tree. No game modules are included.",
+  "best_class": "C",
+  "half_read": "ENGINE half (runtime, engine/ and root README and LICENSE). The DATA PACK half (game modules: sprites, scripts, sounds) is not in this repo. No module or data-pack folder matching this engine was identified in the box by folder name (not opened).",
+  "data_tables": [
+    "/mnt/frankendom-donors/DCurrent-openbor/engine/translation.txt (gettext-style msgid list for engine strings; header read only)",
+    "none found for names or looks: no XML or JSON game-data tables in the repo (only devcontainer, vscode and CMake config JSON or XML)"
+  ],
+  "asset_groups": [
+    {"kind": "engine title and menu art (PNG)", "path": "/mnt/frankendom-donors/DCurrent-openbor/engine/resources", "count_hint": "logo and menu PNGs at 320x240 and 480x272 (plus Sony and Link variants), about 35 PNG across the engine tree", "licence": "none stated", "class": "C", "note": "Logo, menu and icon art in several sizes, for console-sized screens. Art licence not stated in the repo. Not opened."},
+    {"kind": "app icons (ICO, ICNS, Android launcher PNGs)", "path": "/mnt/frankendom-donors/DCurrent-openbor/engine/resources and /mnt/frankendom-donors/DCurrent-openbor/engine/android/app/src/main/res", "count_hint": "2 ICO, 1 ICNS, 16 Android mipmap PNGs (foreground, background, monochrome, round)", "licence": "none stated", "class": "C", "note": "Launcher icon set with separate foreground, background and monochrome layers. Not opened."},
+    {"kind": "bitmap menu font sheets (GIF)", "path": "/mnt/frankendom-donors/DCurrent-openbor/engine/resources", "count_hint": "3 GIF files (BOR_Menu_Font_1, _2, _3), each 3278 bytes", "licence": "none stated", "class": "C", "note": "Small bitmap font sheets named after Beats of Rage. Equal sizes; not compared or opened."},
+    {"kind": "Android background drawable (PNG)", "path": "/mnt/frankendom-donors/DCurrent-openbor/engine/android/app/src/main/res/drawable/background.png", "count_hint": "1 file", "licence": "none stated", "class": "C", "note": "Single background image for the Android port. Not opened."},
+    {"kind": "module content (sprites, music, maps)", "path": "/mnt/frankendom-donors/DCurrent-openbor/media", "count_hint": "0 content files; only _DUMMY (empty placeholder)", "licence": "not applicable", "class": "D", "note": "No sprites, sounds or maps are shipped. OpenBOR is an engine; games are made as modules by authors."},
+    {"kind": "bundled third-party tools (binaries and licence files)", "path": "/mnt/frankendom-donors/DCurrent-openbor/tools", "count_hint": "7-Zip (license.txt and readme.txt present), devkitpro, bin, borpak; repo-wide 18 EXE and 5 DLL", "licence": "7-Zip folder has its own license.txt (not read); others not read", "class": "D", "note": "Build and packing tools, not game assets. Do not run the binaries from this donor."},
+    {"kind": "pack tool source (borpak)", "path": "/mnt/frankendom-donors/DCurrent-openbor/tools/borpak", "count_hint": "README.txt, README.linux, source and scripts folders", "licence": "credits list original authors (Auriemma, SX, Hill); public-domain note for one file", "class": "C", "note": "Packs and unpacks module files into one archive. Code idea for our asset bundles; licence per the README credits, not fully read."},
+    {"kind": "translation template", "path": "/mnt/frankendom-donors/DCurrent-openbor/engine/translation.txt", "count_hint": "1 file", "licence": "none stated", "class": "C", "note": "gettext-style msgid list for translating engine text. Structure only; not read beyond header."}
+  ],
+  "inspiration": [
+    "Make title and menu art once and export it at two sizes (a 320x240 console-style screen and a 480x272 wide screen). A good plan for our own title art.",
+    "A bitmap menu font delivered as a small set of GIF sheets. For us: one pixel-font sheet drawn from scratch, at a fixed cell size.",
+    "Launcher icons split into foreground, background and monochrome layers. A good Android practice to follow with our own art.",
+    "A side-scrolling beat-em-up lane layout is the engine's home genre (per README). We can use the lane idea with our own characters and stages.",
+    "A pack tool that bundles module files into one archive. A useful asset-bundle idea; we would write our own format.",
+    "The repo ships no sprites, so the creature, armour and effect look is for us to create. Nothing here is directly visual to copy."
+  ],
+  "briefs": [
+    {"label": "Title logo plate (ours)", "why": "a logo sized for two screens: one plate that reads at a small console size and at a wider one; the key is a clean, high-contrast mark that survives downscaling.", "keep": "one master mark at two sizes; high contrast; a clear centre focus", "change": "our own wordmark and palette; a different plate shape and glow; no copy of the existing logo", "criteria": "silhouette at 375 wide: not verified (not viewed); signature behaviour: none (static); signature sound: none in repo", "rule": "Recreate as a clearly distinct original, never a copy.", "ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/resources/OpenBOR_Logo_480x272.png (not viewed; name and size only)"},
+    {"label": "Bitmap menu font sheet (ours)", "why": "a small bitmap font gives an arcade menu feel without a vector font; sheets make it easy to draw and swap.", "keep": "fixed cell grid; one sheet per weight; drawn at native pixel size", "change": "our own letterforms and cell size; a different weight set; our own accent glyphs", "criteria": "silhouette at 375 wide: not applicable (UI); signature behaviour: none; signature sound: none in repo", "rule": "Recreate as a clearly distinct original, never a copy.", "ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/resources/BOR_Menu_Font_1.gif (not viewed; name and size only)"}
+  ],
+  "not_read": [
+    "all PNG, GIF, ICO and ICNS bodies (binary; names and sizes only)",
+    "the Android mipmap PNGs (names only)",
+    "tools/7-Zip licence text and all bundled binaries (not run, not read)",
+    "tools/devkitpro, tools/bin and tools/win-sdk contents",
+    "engine/source C code (only the root README, engine README and LICENSE were read for claims)",
+    "tests/test_invariant_borpak.c",
+    "the README sections on compiling and contributing",
+    "the DATA PACK half (game modules), which is not in the repo"
+  ]
+}

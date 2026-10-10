@@ -1,0 +1,103 @@
+{
+ "game": "CleverRaven-Cataclysm-DDA",
+ "category": "inventory-bank-equipment",
+ "cell": 9,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/character.cpp",
+ "licence": "CC-BY-SA 3.0 (as read: LICENSE.txt line 1, Creative Commons Attribution-ShareAlike 3.0 Unported)",
+ "licence_class": "copyleft",
+ "target_module": "origins/inventory/weight.ts",
+ "parity_row": 21,
+ "pattern_tags": [
+  "new:capacity-from-stat",
+  "new:weight-tiers",
+  "new:speed-penalty-linear-excess",
+  "new:lifting-assist-exclusion",
+  "stale-state"
+ ],
+ "data_fields": [
+  {
+   "name": "base_carry",
+   "donor_constant": "13 kg",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/creature.cpp:3312"
+  },
+  {
+   "name": "size_factor_tiny",
+   "donor_constant": "1/4",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/creature.cpp:3315"
+  },
+  {
+   "name": "size_factor_small",
+   "donor_constant": "1/2",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/creature.cpp:3318"
+  },
+  {
+   "name": "size_factor_large",
+   "donor_constant": "2",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/creature.cpp:3324"
+  },
+  {
+   "name": "size_factor_huge",
+   "donor_constant": "4",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/creature.cpp:3327"
+  },
+  {
+   "name": "carry_per_strength_point",
+   "donor_constant": "4 kg",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/character.cpp:2864"
+  },
+  {
+   "name": "overburdened_threshold",
+   "donor_constant": "1x capacity",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/suffer.cpp:467"
+  },
+  {
+   "name": "downed_threshold",
+   "donor_constant": "4x capacity",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/character.cpp:2883"
+  },
+  {
+   "name": "speed_penalty_scale",
+   "donor_constant": "25 x excess / capacity, truncated",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/character.cpp:7697"
+  },
+  {
+   "name": "glide_weight_limit",
+   "donor_constant": "50 percent of capacity",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/character.cpp:8004"
+  },
+  {
+   "name": "burden_effect_duration",
+   "donor_constant": "2 turns when new, 1 turn when active",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/suffer.cpp:465"
+  }
+ ],
+ "best_idea": "Derive a carry capacity from size and strength, judge the load against it in two tiers (over capacity, and over four times capacity), and take speed off linearly with the excess; the checks run each turn after the effects step.",
+ "decision": "adapt",
+ "decision_why": "The capacity formula and the tiers become data (size factors and per-strength carry as catalogue fields) computed on the server each tick; the speed penalty applies in the world only, because a second rule in the fight would break the one-engine ruling.",
+ "decision_status": "proposed",
+ "acceptance": "A player with a heavy load sees Overburdened in the bag panel once carried weight passes capacity, and sees a movement speed drop in the world; a server test asserts that the same load in a duel applies no movement penalty, and that capacity equals 13 kg times the size factor plus 4 kg per strength point."
+}

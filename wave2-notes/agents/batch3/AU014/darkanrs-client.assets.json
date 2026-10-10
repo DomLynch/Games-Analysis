@@ -1,0 +1,38 @@
+{
+  "donor": "darkanrs-client",
+  "code_licence": "GNU GPL v3 (LICENSE file is the GPLv3 text; README does not name a licence)",
+  "asset_licence": "None stated. The repo holds no art, audio, model or map files. _RESTRICTED-NOTE.txt says the client is Jagex-derived: study shape/idea only, never copy code or constants.",
+  "rights_holder_status": "Jagex-derived: README says it refactors an obfuscated RuneScape client build #727; _RESTRICTED-NOTE.txt says Jagex-derived RuneScape client. Treat as restricted.",
+  "best_class": "D",
+  "half_read": "CLIENT half only (src/main/java and client.jar listing). The matching SERVER half is not in this repo. Folder names in the box that may pair with it (by name only, not opened): LostCityRS-Engine-TS, Open-RSC-Core-Framework.",
+  "data_tables": [
+    "/mnt/frankendom-donors/darkanrs-client/src/main/java/com/rs/Loader.java line 76 (a parameter string used as a config table for loading-bar parts and font; read as a table, not as loader logic)",
+    "none in repo for item, NPC or map data: that data is in the server-supplied cache (references only, Engine.java lines 350-353)"
+  ],
+  "asset_groups": [
+    {"kind": "no art/audio/model/map files in repo", "path": "/mnt/frankendom-donors/darkanrs-client/src/main/java", "count_hint": "1060 .java files", "licence": "GPL v3 (code only, per LICENSE)", "class": "D", "note": "Only Java sources in src/. Game art, audio and maps are not in the repo; the client expects them from a server-side cache at runtime."},
+    {"kind": "client.jar (compiled classes)", "path": "/mnt/frankendom-donors/darkanrs-client/client.jar", "count_hint": "1078 entries (1058 .class, 1 MANIFEST.MF, directories); 2.9 MB", "licence": "none stated", "class": "D", "note": "Listed with unzip -l only; not extracted, not run. Contains no image or audio entries."},
+    {"kind": "runtime cache file names (references only)", "path": "/mnt/frankendom-donors/darkanrs-client/src/main/java/com/rs/jagex/Engine.java", "count_hint": "2 cache index names referenced (lines 350 and 353)", "licence": "none stated", "class": "C", "note": "Client reads an indexed cache (a main_file_cache index plus per-index data files). The cache files themselves are not in the repo. Naming pattern only."},
+    {"kind": "external splash image URL", "path": "/mnt/frankendom-donors/darkanrs-client/src/main/java/com/rs/Loader.java", "count_hint": "1 URL (line 59)", "licence": "none stated", "class": "C", "note": "Splash image is fetched from a third-party website, not shipped. Do not reuse the URL or the image."},
+    {"kind": "loading-bar parameter string (filenames only)", "path": "/mnt/frankendom-donors/darkanrs-client/src/main/java/com/rs/Loader.java", "count_hint": "1 parameter string (line 76)", "licence": "none stated", "class": "C", "note": "Names several bar image parts (middle, back, outline pieces, fill) and a font. Shows the loading bar is built from separate image slices. Filenames only; no image files in repo."},
+    {"kind": "item icon naming convention (references only)", "path": "/mnt/frankendom-donors/darkanrs-client/src/main/java/com/rs/jagex/RouteFinder.java", "count_hint": "1 reference (line 212)", "licence": "none stated", "class": "C", "note": "Client looks for ./items/<numeric id>.png at runtime. The PNGs are not in the repo."},
+    {"kind": "legacy third-party class stubs in lib", "path": "/mnt/frankendom-donors/darkanrs-client/lib/clientlibs.jar", "count_hint": "36 entries, 15 KB", "licence": "not stated in repo", "class": "C", "note": "Listed only (netscape/security and com/ms stub classes). Not read; licence unknown."}
+  ],
+  "inspiration": [
+    "Build a loading bar from separate slices (left cap, middle, right cap, outline pieces, fill). Our own palette and pixel-art slices would give the same modular look without copying anything.",
+    "Keep art in a packed, indexed cache (one index file plus data per group) that the client streams at start-up. This is an architecture idea for our asset pipeline, not a visual to copy.",
+    "Name item icons by numeric id in one folder (items/<id>.png). Simple lookup, easy to batch-generate our own icons.",
+    "The splash screen comes from a remote URL. For us, ship the splash and loading art locally, with our own look.",
+    "This donor has no creature, armour, zone or effect art in the repo, so there is nothing visual to emulate. Its useful lessons are the loading and cache structure only.",
+    "Keep the restricted note in mind: study the shape of the loader and cache, never copy constants or code."
+  ],
+  "briefs": [],
+  "not_read": [
+    "client.jar class bodies (not extracted or decompiled, by rule)",
+    "lib/clientlibs.jar contents beyond the listing",
+    "gradle/wrapper/gradle-wrapper.jar",
+    "Java method bodies (only grep hits for asset and cache names were read)",
+    "build.gradle.kts and .gitlab-ci.yml (grep for licence/asset/cache terms only)",
+    "any binary file body (only listings were taken)"
+  ]
+}

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+OpenDAoC-OpenDAoC-Core	anticheat-validation	P	STRONG	full	GameServer/gameutils/PlayerMovementMonitor.cs:51-159,184-191,193-220 (+ PlayerMovementComponent.cs:50-109, GamePlayer.cs:7854-7910); server speed-budget check with hit window, rollback to last accepted sample, kick after repeated rollbacks, and a pause after forced moves.
+OpenRA-OpenRA	anticheat-validation	P	STRONG	full	OpenRA.Mods.Common/Traits/World/ValidateOrder.cs:23-48 (+ OpenRA.Game/Network/UnitOrders.cs:417-424, RejectsOrders.cs:50-69); the sender must own the subject (or its bot controller), then the subject's own accept list decides; dead or missing subjects are dropped first.
+OpenRCT2-OpenRCT2	anticheat-validation	P	STRONG	full	src/openrct2/network/NetworkBase.cpp:3074-3090 and 219-230, 480-486, 540-558 (+ GameAction.hpp:157-163); per-player per-command cooldown refused on the server, not extended by refusals, decayed by real elapsed time, host exempt.

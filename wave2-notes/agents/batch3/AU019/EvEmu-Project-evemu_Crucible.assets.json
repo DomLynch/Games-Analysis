@@ -1,0 +1,92 @@
+{
+  "donor": "EvEmu-Project-evemu_Crucible",
+  "code_licence": "README LICENSE block: 'GNU Lesser General Public License ... either version 3' (README.md line 71). Conflicting file headers: src/eve-core/eve-compat.h says 'either version 2 of the License, or (at your option) any later version'; dep/gangsta/GaTypes.h says LGPL 'version 2.1'; dep/utils/Base64.h says 'made available under the terms of the GNU GPL' with no version. Code licence is therefore stated differently across files; recorded as found.",
+  "asset_licence": "Not stated. The repo has no licence line for sql/base/*.sql.gz (284 gzipped table dumps, about 54 MB), the sql/dungeons example, or the res:/ art path strings inside the dumps. No image, audio, model or font files were found in the tree (extension census: no png, jpg, wav, ogg, dds, fbx, obj files).",
+  "rights_holder_status": "unknown for the data tables. The repo calls itself an emulator for EVE Online and an 'educational project' (README 'Disclaimer'). A developer note refers to a 'ccp history dump' (doc/code_and_design_notes/Alasiya_TODO line 426), so the source of some data is named by a CCP-related note, not by a licence. Clean-room status is not stated. Treat the data as restricted until its origin is confirmed.",
+  "best_class": "C",
+  "halves": {
+    "server_half": "read: README, CMakeLists, sql/README.md, sql/dump.sh (the table list), sql/migrations names and two migration headers, sql/dungeons example (first line), src/eve-core headers, dep/ headers. src/ C++ (414 .h, 349 .cpp by extension count) not read beyond the headers.",
+    "data_half": "read in part: sql/base/*.sql.gz headers only (eveIcons, graphics, trnTranslations) plus one grep count of mapSolarSystems INSERT lines. The row count for invTypes returned no output and was not recovered.",
+    "client_half": "not in box. The EVE Online client is not part of the repo. Not read."
+  },
+  "asset_groups": [
+    {
+      "kind": "static game data tables (gzipped SQL dumps)",
+      "path": "sql/base/*.sql.gz (284 files, about 54 MB by du). Examples by name: invTypes, invGroups, invCategories, mapSolarSystems, mapDenormalize, dgmTypeAttributes, dgmEffects, agtAgents, agtMissions, eveIcons, graphics, icons, trnTranslations",
+    "count_hint": "284 files (ls count); row counts not recovered",
+    "licence": "not stated in repo (sql/README.md: base tables 'should NEVER be updated/modified'; no source or licence line)",
+    "class": "C",
+    "note": "Carries item, system, attribute and mission-table structure plus res:/ art path strings and translation text. Provenance unclear. Read headers only. Do not copy names or text."
+  },
+  {
+    "kind": "dungeon example data (JSON)",
+    "path": "sql/dungeons/01_example_dungeon.json (one line of JSON); also sql/dungeons/delete_character.sql and tutorialsvc_connections.sql",
+    "count_hint": "1 example dungeon, 2 rooms (read from the first line)",
+    "licence": "repo LGPL (README LICENSE block); no separate licence for the file",
+    "class": "B",
+    "note": "Project example. Structure is the useful part: rooms list objects with type id, position, rotation and a radius."
+  },
+  {
+    "kind": "schema migrations (SQL)",
+    "path": "sql/migrations/ (19 entries by ls including .gitkeep)",
+    "count_hint": "19 entries",
+    "licence": "repo LGPL (README LICENSE block)",
+    "class": "B",
+    "note": "Code/schema under LGPL, a copyleft condition. Two headers read: sov and outposts."
+  },
+  {
+    "kind": "developer notes and docs (text)",
+    "path": "doc/ChangeLog.md, doc/code_and_design_notes/ (several notes), doc/EvEmu_Class_Descriptions.txt, doc/tutorials/",
+    "count_hint": "not counted",
+    "licence": "repo LGPL (README LICENSE block); no separate licence",
+    "class": "B",
+    "note": "Only grep read. Contains design notes that mention CCP-derived dumps (Alasiya_TODO)."
+  },
+  {
+    "kind": "images, audio, models, fonts",
+    "path": "none found in the tree",
+    "count_hint": "0 (extension census)",
+    "licence": "n/a",
+    "class": "D",
+    "note": "Nothing visual or audible in the box. Art lives only in the client and as path strings in the dumps."
+  }
+  ],
+  "inspiration": [
+    "Modular dungeon as data: a dungeon is a list of rooms, each room a list of placed objects with a type, a position, a three-axis rotation and a bounding radius. Recreate with our own room grammar, our own object types and a theme field. Category-level: 'a room kit of placed props'. Reference: sql/dungeons/01_example_dungeon.json (structure only).",
+    "Factory chain on a planet: the planetary-industry tables hold pins (extractors and processors), links, routes and a planet record, so a colony is a graph of production nodes joined by routes. Recreate as a node graph with our own resource tiers and a flow map. Category-level: 'a colony production graph'. Reference: sql/dump.sh line 23 (table list) and the table names in sql/base (not read).",
+    "Claimable space with sovereignty: a migration adds the sovereignty tables and a later migration adds outposts, so claims and their holders are first-class data. Recreate with our own claim rules and upkeep costs. Category-level: 'a claimable outpost'. Reference: sql/migrations/20210409120025-sov.sql, sql/migrations/20211021144025-outpost.sql.",
+    "Agent and mission scaffolding: agent, offer and mission tables plus a skill-level table gate which missions an agent offers. Recreate as a mission board gated by our own skill tiers. Category-level only. Reference: sql/base agtAgents, agtOffers, agtMissions, agtSkillLevel (table names only; contents not read).",
+    "Character origin as data: ancestry, bloodline, career and background tables pick a start for a character. Recreate with our own origin set and no real-world ethnic or cultural names. Category-level only. Reference: sql/base chrAncestries, careers, chrBackgrounds (table names only).",
+    "Market history and orders: separate order, transaction and history tables feed a price view, and a dev note mentions the history dump needing a date fix. Recreate the loop (orders, history, price) with our own goods and our own date rules. Category-level only. Reference: doc/code_and_design_notes/Alasiya_TODO line 426 (note only)."
+  ],
+  "briefs": [
+    {
+      "label": "Room-kit dungeon",
+      "why": "A dungeon built from a few room templates with placed props reads quickly on a phone and is cheap to author. Signature structure: each room is a flat list of placed objects with a radius, so collision and spawns are simple.",
+      "keep": "kept: a room is a list of placed objects with type, position, rotation and radius; rooms are the unit of authoring.",
+      "change": "changed: our own room grammar (corridor, hall, vault), a theme field on each room, and door and exit nodes rather than bare objects. Rule: recreate as a clearly distinct original, never a copy. Note: no visual asset in the box; the 375-wide silhouette test applies to the props we add later.",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/sql/dungeons/01_example_dungeon.json"
+    },
+    {
+      "label": "Colony production graph",
+      "why": "A colony that is a visible chain (extract, process, route, deliver) gives players a reason to come back and a readable map. One signature behaviour: a route that carries goods between nodes on a clock.",
+      "keep": "kept: a node graph of pins (extractors and processors) joined by links and routes.",
+      "change": "changed: our own resource tiers and names, a map that shows flow as lanes rather than a table, and a timed delivery instead of a fixed launch. Rule: recreate as a clearly distinct original, never a copy.",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/sql/dump.sh line 23 (planetary table list)"
+    },
+    {
+      "label": "Claimed outpost",
+      "why": "A claimable structure that a group holds and must defend or pay for creates a visible territory on the map. One signature mechanic: an upkeep timer that a claim holder must refresh.",
+      "keep": "kept: claim data as first-class tables (holder, claim, upkeep), plus a separate outpost layer added later.",
+      "change": "changed: our own claim rules (kill-based, not payment-based), our own upkeep rhythm, and a structure silhouette of our own. Rule: recreate as a clearly distinct original, never a copy.",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/sql/migrations/20210409120025-sov.sql; /mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/sql/migrations/20211021144025-outpost.sql"
+    }
+  ],
+  "not_read": [
+    "sql/base/*.sql.gz bodies (284 files, about 54 MB): headers of three files only; invTypes row count not recovered; no item, system or translation strings copied",
+    "sql/seed_and_clean/, sql/old_data/, sql/dungeons/delete_character.sql, sql/dungeons/tutorialsvc_connections.sql: names only",
+    "src/ (about 414 headers and 349 .cpp by extension count): headers of eve-core and dep only",
+    "doc/ text bodies: only grep matches",
+    "EVE Online client half: not in box"
+  ]
+}

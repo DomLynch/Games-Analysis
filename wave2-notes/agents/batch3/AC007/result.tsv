@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+dkfans-keeperfx	anticheat-validation	P	STRONG	full	src/net_checksums.c:41-42, 205-247, 275-396; src/packets.c:126-127, 279-301, 1713-1718, 1765-1766, 1834-1838 - per-turn integer state digest, host-reference compare, resync gate capped at 5 then one per 5 min (note: out/anticheat-validation/dkfans-keeperfx.deep.md)
+evennia-evennia	anticheat-validation	P	STRONG	full	evennia/server/portal/portalsessionhandler.py:396-452; settings_default.py:277-290 - per-session fixed one-second window, 80 commands, refused input dropped with a warning, length cap first (note: out/anticheat-validation/evennia-evennia.deep.md)
+exult-exult	anticheat-validation	P	PARTIAL	thin	server/servemsg.cc:97-112; cheat_screen.cc:549-562; cheat.cc:304-305, 340 - Studio-only frame check and typed-value range validator; no server anticheat, cheat flag is local config (verdict-exult-exult-anticheat-validation.txt)

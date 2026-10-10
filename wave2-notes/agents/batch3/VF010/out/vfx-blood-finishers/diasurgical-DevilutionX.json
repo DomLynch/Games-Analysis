@@ -1,0 +1,36 @@
+{
+  "game": "diasurgical-DevilutionX",
+  "category": "vfx-blood-finishers",
+  "cell": 13,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/monster.cpp",
+  "licence": "Sustainable Use License 1.0 (repo root LICENSE.md): internal business or non-commercial use only; not an open-source licence",
+  "licence_class": "restricted",
+  "target_module": "src/fight/hit-impact.ts",
+  "parity_row": 10,
+  "pattern_tags": [
+    "new:hard-hit-gate",
+    "new:stagger-state",
+    "new:knockback-one-tile",
+    "new:killing-blow-skips-reaction",
+    "new:item-recovery-tiers",
+    "new:fixed-point-damage",
+    "new:corpse-tile-record"
+  ],
+  "data_fields": [
+    {"name": "hard_hit_margin", "donor_constant": "level + 3", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/monster.cpp:995"},
+    {"name": "player_flinch_threshold", "donor_constant": "level; barbarian level + level/4", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/player.cpp:2655"},
+    {"name": "recovery_skip_frames", "donor_constant": "3 / 2 / 1 by item tier", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/player.cpp:2663"},
+    {"name": "hit_chance_clamp", "donor_constant": "5 to 95 percent", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/player.cpp:548"},
+    {"name": "min_incoming_hit", "donor_constant": "64 fixed point = 1 point", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/monster.cpp:1219"},
+    {"name": "min_monster_hit_by_level", "donor_constant": "15 / 20 / 25 / 30 by dungeon level band", "unit": "count", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/monster.cpp:1162"},
+    {"name": "knockback_tiles", "donor_constant": "1 tile per knockback", "unit": "count", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/monster.cpp:3958"},
+    {"name": "corpse_pool_cap", "donor_constant": "31", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/dead.h:17"}
+  ],
+  "best_idea": "Gate the flinch on the size of the hit, not on every hit: a hit flinches only when its whole-point damage reaches the target's level plus a margin (or the target is on a fixed always-hard list), and a killing blow skips the flinch entirely.",
+  "decision": "adapt",
+  "decision_why": "Take the gate and the stagger as a state change (the monster stops, plays the got-hit clip, then returns to stand), which fits engage-is-a-state-change. Do not take the donor's client-applied damage path (player.cpp 629-643) or its unlimited re-stagger: they conflict with server-verified kills and MAX_ATTACKERS = 3.",
+  "decision_status": "proposed",
+  "acceptance": "In the Pit, a 9-point hit on a level-3 gladiator (threshold 6) moves it into the got-hit state for the clip length and holds its position, while a 4-point hit plays only the hit sound and the gladiator keeps its move; a server test asserts both outcomes on the monster state, and a Frankendom rule (not in donor) caps re-staggers inside a cooldown so three attackers cannot lock one gladiator in the got-hit clip."
+}

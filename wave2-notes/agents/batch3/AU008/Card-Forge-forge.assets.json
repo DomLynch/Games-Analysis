@@ -1,0 +1,217 @@
+{
+  "donor": "Card-Forge-forge",
+  "code_licence": "GPL v3 (LICENSE at repo root; forge-gui/LICENSE.txt). README calls it an open-source Rules Engine for Magic: The Gathering. Bundled libraries carry their own licences in forge-gui/res/licenses (multiline-label, tinylog, xpp3, xstream).",
+  "asset_licence": "Mixed by group, per the repo's own credit files. Kevin MacLeod music: CC BY 3.0 (forge-gui/res/music/Credit.txt). Particle Park effects: CC BY 4.0 (particle_effects/Particle Park License.txt). Dock-bar icons: CC BY 3.0 per docs/Credit-and-Thanks.md. Adventure sprites and tiles: each artist's own licence, which is not in the repo. Other music, sound effects, fonts and skins: no licence line in the repo. Card art is not in the repo; the FAQ points to in-app downloaders.",
+  "rights_holder_status": "mixed and partly unknown. Fan/community open-source rules engine for Magic: The Gathering; README and forge-installer/ReadMeForge.txt both say it is not related to or affiliated with Wizards of the Coast. Card names and card rules scripts are in the repo with no ownership statement. Adventure sprites credited to individual artists, one credited to a Reddit user for 'iconic MTG characters'. Rights to those characters are not stated in the repo.",
+  "best_class": "A",
+  "asset_groups": [
+    {
+      "kind": "music, CC BY 3.0 tracks (Kevin MacLeod)",
+      "path": "forge-gui/res/music/ (match/, menus/ and the Credit.txt in the root)",
+      "count_hint": "about 8 mp3 in match/ and menus/; 17 MB music folder",
+      "licence": "Credit.txt: 'Licensed under Creative Commons: By Attribution 3.0'",
+      "class": "A",
+      "note": "Credit.txt says 'Music contained within this folder is credited to' Kevin MacLeod under CC BY 3.0, so the file covers res/music/ as a whole. The adventure soundtrack list in docs names other artists; those tracks are in the C group below."
+    },
+    {
+      "kind": "music, other named artists, no licence line",
+      "path": "forge-gui/res/adventure/**/music (see docs/Credit-and-Thanks.md Soundtrack section)",
+      "count_hint": "adventure soundtrack list of about 30 tracks",
+      "licence": "Credit-and-Thanks.md names Derek Fiechter, Brandon Fiechter, Logan Epic Canto, Vindsvept and Juhani Junkala with no licence line (Junkala is linked to an opengameart page, not stated in the repo)",
+      "class": "C",
+      "note": "Names only; tracks not played or opened."
+    },
+    {
+      "kind": "particle effects, CC BY 4.0 (Particle Park)",
+      "path": "forge-gui/res/adventure/common/particle_effects/ (about 51 .p emitter files and 34 .png)",
+      "count_hint": "51 .p files in total (Particle Park set plus blood.p, fly.p, heal.p, hide.p, kill.p, killed.p)",
+      "licence": "Particle Park License.txt: CC BY 4.0 text, copyright Raymond Buckley",
+      "class": "A",
+      "note": "A applies to the Particle Park files. The other .p files and circle*.png have no licence line in this folder and are C."
+    },
+    {
+      "kind": "dock-bar icons, CC BY 3.0 (game-icons.net)",
+      "path": "not located in this read; docs/Credit-and-Thanks.md 'Dock-bar icons' line",
+      "count_hint": "unknown",
+      "licence": "Credit-and-Thanks.md: CC BY 3.0 by Lorc, Delapouite and Skoll",
+      "class": "A",
+      "note": "Attribution required. The repo path was not found in this read."
+    },
+    {
+      "kind": "adventure character sprites (heroes, enemies)",
+      "path": "forge-gui/res/adventure/common/sprites/heroes/, sprites/enemy/{undead,monstrosity,fiend,humanoid,elemental,...}/",
+      "count_hint": "heroes 28 png + 28 atlas; undead 37+37; monstrosity 30+30; fiend 29+29; elemental 25+25; human wizard 28+28",
+      "licence": "Credit-and-Thanks.md: external artists, 'may be used only under the conditions laid out in their respective licence'; no per-file licence in the repo",
+      "class": "C",
+      "note": "Atlas files are text (RGBA8888, Nearest filter, 16 px frames). Pixel content not opened."
+    },
+    {
+      "kind": "adventure tilemaps and tilesets",
+      "path": "forge-gui/res/adventure/**/maps/map/*.tmx (about 1033 .tmx across the repo), tilesets (*.tsx, 34)",
+      "count_hint": "1033 .tmx, 34 .tsx",
+      "licence": "Credit-and-Thanks.md: tiles from named pixel artists and opengameart; the file says more creditation for the tiles is given further down, and the line is cut off in this read",
+      "class": "C",
+      "note": "forest_town_generic.tmx is 30x17 tiles at 16 px (header read). Other maps not opened."
+    },
+    {
+      "kind": "adventure structures and world models",
+      "path": "forge-gui/res/adventure/common/world/structures/models/ (26 png), Realm of Legends and Shandalar Old Border equivalents",
+      "count_hint": "26+ png per set",
+      "licence": "per-artist, as above",
+      "class": "C",
+      "note": "Not opened."
+    },
+    {
+      "kind": "custom card pictures",
+      "path": "forge-gui/res/adventure/common/custom_card_pics/",
+      "count_hint": "66 entries (64 .jpg, 2 png), named after card names with a fullborder suffix",
+      "licence": "none stated in the repo",
+      "class": "C",
+      "note": "Card names are used as file names. FAQ points to in-app downloaders for card images. Not opened."
+    },
+    {
+      "kind": "UI skin backgrounds and art",
+      "path": "forge-gui/res/skins/default/ (90 png/jpg, adv_bg_* biome backgrounds), forge-gui/res/adventure/common/ui/ (40 png)",
+      "count_hint": "18 MB skins folder; 40 ui png in adventure",
+      "licence": "none stated",
+      "class": "C",
+      "note": "Biome names read from file list only (cave, castle, dungeon, forest, island, mountain, plains, swamp, waste, match)."
+    },
+    {
+      "kind": "sound effects",
+      "path": "forge-gui/res/sound/",
+      "count_hint": "39 mp3, about 1.1 MB",
+      "licence": "Credit-and-Thanks.md: 'Thanks to ... freesound ... for providing some sound files'; no per-file licence",
+      "class": "C",
+      "note": "Freesound licences vary by file and are not in the repo."
+    },
+    {
+      "kind": "fonts",
+      "path": "forge-gui/res/fonts/",
+      "count_hint": "about 172 KB",
+      "licence": "none stated",
+      "class": "C",
+      "note": "Not opened."
+    },
+    {
+      "kind": "card scripts and card-name text",
+      "path": "forge-gui/res/cardsfolder/ (about 134 MB, txt card scripts), forge-gui/res/languages/cardnames-*.txt (63 MB languages folder)",
+      "count_hint": "about 37520 .txt in repo; 14077 .dck deck files in repo",
+      "licence": "none stated for card text; repo code is GPL v3",
+      "class": "C",
+      "note": "Game rules data and card names. Not reproduced. Use only as a structure example for our own card schema."
+    },
+    {
+      "kind": "set lists, formats and decks",
+      "path": "forge-gui/res/editions/, formats/, draft/, cube/, sealed/, deckgendecks/, lists/",
+      "count_hint": "several MB of text",
+      "licence": "none stated",
+      "class": "C",
+      "note": "Set and format lists. Not read in full."
+    },
+    {
+      "kind": "third-party library licences",
+      "path": "forge-gui/res/licenses/ (4 files)",
+      "count_hint": "4 files",
+      "licence": "each file is its own licence text",
+      "class": "A",
+      "note": "Code libraries, not art. Listed for completeness."
+    }
+  ],
+  "inspiration": [
+    "Colour-family hero sprites: the dragonplayer sheets come in five suffixed variants (b, g, r, u, w). One silhouette, five palette swaps, each in a 16 px frame with nearest-neighbour filtering. A clear way to give each faction its own look without redrawing the figure.",
+    "Creature families in separate folders (undead, fiend, monstrosity, elemental, humanoid), each with a sheet and a text atlas. A tidy bestiary structure: a family sets the silhouette rules, and a single creature is one more row in the atlas.",
+    "Particle library organised as short bursts and trails (blood, fireball, burnout, pentagram, rain, smoke trail, starlight). Recreate the timing and the burst-plus-trail pairing with our own palette and sprite shapes.",
+    "Compact town and cave maps: 30x17-tile rooms at 16 px, with named encounter maps per region (cave, evilgrove, merfolkpool, towns). A simple room grammar that keeps each encounter small.",
+    "One full-screen backdrop per biome (cave, swamp, waste, island, castle, forest) behind menus and encounters, drawn in a low-saturation palette. A cheap way to tell the player where they are.",
+    "Effects are separate .p emitter files (bursts, trails, glows) layered over sprites, so one sprite can get a burst or a glow without new frames.",
+    "Sprite sheets are small and fixed-grid (16 px frames in atlas rows), which keeps the animation work manageable for one artist."
+  ],
+  "briefs": [
+    {
+      "label": "Five-colour hero recolour set",
+      "why": "One silhouette with five palette swaps reads as a faction family at phone size and costs one drawing.",
+      "keep": [
+        "one base silhouette",
+        "five palette swaps, one per faction",
+        "16 px frames with nearest filtering"
+      ],
+      "change": [
+        "use our clan palette, not the colour-wheel set",
+        "add a per-faction ornament (horns, wings, cloak) so the swaps are not only colour",
+        "a different idle pose per faction"
+      ],
+      "ref": "forge-gui/res/adventure/common/sprites/heroes/dragonplayer_r.atlas (text atlas read; PNG not opened); the b, g, u, w sheets alongside"
+    },
+    {
+      "label": "Creature family sheet",
+      "why": "Grouped families (undead, fiend, monstrosity, elemental) share a silhouette rule, so a bestiary grows by adding rows.",
+      "keep": [
+        "creature family as a folder",
+        "one sheet plus atlas per creature",
+        "tall 16 px frames stacked by action"
+      ],
+      "change": [
+        "our own families and proportions (not the same names)",
+        "a boss tier at twice the frame size",
+        "a distinct head and limb shape per family"
+      ],
+      "ref": "forge-gui/res/adventure/common/sprites/enemy/monstrosity/basilisk.atlas (text read; PNG not opened)"
+    },
+    {
+      "label": "Burst-and-trail effect pair",
+      "why": "A short burst followed by a trail reads as a hit or a cast in a fraction of a second.",
+      "keep": [
+        "burst then trail timing",
+        "a ring-shaped summon effect",
+        "rain or snow presets for weather"
+      ],
+      "change": [
+        "our own palette per school of magic",
+        "a different trail shape (rune lines, not smoke)",
+        "keep the effect under 0.5 s on phones"
+      ],
+      "ref": "forge-gui/res/adventure/common/particle_effects/Particle Park Fireball.p (name only read; file not opened). CC BY 4.0 applies to the set, so recreate, do not copy."
+    },
+    {
+      "label": "Biome encounter room",
+      "why": "A 30x17 tile room with a named encounter per biome gives a repeatable arena shape.",
+      "keep": [
+        "small room size",
+        "named encounter per biome",
+        "building and terrain tilesets kept separate"
+      ],
+      "change": [
+        "our tile set and layout grammar",
+        "a different room size for mobile",
+        "add one hazard tile per room"
+      ],
+      "ref": "forge-gui/res/adventure/common/maps/map/towns/forest_town_generic.tmx (header read: 30x17 tiles of 16 px; body not opened)"
+    },
+    {
+      "label": "Biome backdrop set",
+      "why": "One backdrop per biome tells the player where they are before any tile is shown.",
+      "keep": [
+        "one backdrop per biome",
+        "low-saturation palette",
+        "cave, swamp and waste as distinct moods"
+      ],
+      "change": [
+        "our palette and framing",
+        "animated parallax layer",
+        "a lighter variant for daytime"
+      ],
+      "ref": "forge-gui/res/skins/default/adv_bg_cave.jpg (file name only read; image not opened)"
+    }
+  ],
+  "not_read": [
+    "Most of the 583 MB tree (only folder sizes and file counts)",
+    "All PNG, JPG and atlas pixel contents (sizes and atlas text headers only)",
+    "All .mp3 music and sound effects (names and credit lines only)",
+    "All .p particle emitter bodies (file names only)",
+    "All .tmx maps beyond the header of one file",
+    "cardsfolder card scripts and languages (names and counts only; not reproduced)",
+    "The dock-bar icon and XMage targeting arrow files (credits read; files not located)",
+    "docs/ beyond Credit-and-Thanks.md, Frequently-Asked-Questions.md and Home.md lines cited"
+  ]
+}

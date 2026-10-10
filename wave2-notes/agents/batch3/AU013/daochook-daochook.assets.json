@@ -1,0 +1,44 @@
+{
+  "donor": "daochook-daochook",
+  "code_licence": "GNU AGPL v3. LICENSE line 1 'GNU AFFERO GENERAL PUBLIC LICENSE', version 3 (19 November 2007). README.md line 69 '**daochook** is licensed under GNU AGPL v3'. The README also says 'This is AGPL, not standard GPL.'",
+  "asset_licence": "No separate asset licence. The only non-code image is repo/daochook.png (20 KB, the project logo); no licence line names it separately, so the README AGPL line is the only statement. Treat as unclear (class C). No game art, audio, models or maps are in the tree.",
+  "rights_holder_status": "Third-party add-on for a commercial MMORPG (Dark Age of Camelot). README line 52: 'does not claim ownership of any material(s) related to DAoC.' README line 55 quotes 'Dark Age of Camelot is copyright © 2021 Electronic Arts Inc.' README line 59 says the reverse engineering is 'clean room' and done against private servers. Status per the files: third-party modding tool, no game material shipped. Rights holder of DAoC is named by the README as EA.",
+  "best_class": "D",
+  "halves_read": "Client-side half read in part: addons/ (Lua add-ons and libs, layout and names), README, LICENSE. Binaries NOT READ: daochook.exe, hook.dll, addons/libs/socket/ssl.dll. Server half: NOT READ and not in the box (README line 59 says the work targets private servers; no server code in the listing). Data-pack half: the user's own DAoC client (the README says it is not included); not in the box.",
+  "data_tables": [
+    {"path": "config/pointers/1127101_1409.ini, config/pointers/1127101_1411.ini (about 8.6 KB each), config/pointers/11130_0.ini (8.7 KB)", "holds": "per-client-build pointer tables keyed by build id in the file name. NOT opened. Reverse-engineering data: do not describe or copy any value.", "class": "C"},
+    {"path": "addons/libs/daoc/1127101_1409/*.lua and addons/libs/daoc/11130_0/*.lua (items, states, data, entities, buffs, party, chat, player, game, main)", "holds": "per-build Lua modules for items, buffs, entities and chat. Names only; the data tables inside were NOT read.", "class": "C"},
+    {"path": "config/boot/example.ini", "holds": "launcher boot settings example. NOT read.", "class": "D"}
+  ],
+  "asset_groups": [
+    {"kind": "project logo (png)", "path": "repo/daochook.png", "count_hint": "1 file, 20444 bytes", "licence": "no separate line; README AGPL line only", "class": "C", "note": "Not opened. Small logo image. Unclear whether the AGPL covers the image itself; the files do not say."},
+    {"kind": "pointer tables per client build (ini)", "path": "config/pointers/*.ini", "count_hint": "3 files, about 8.6 KB each", "licence": "AGPL (code/config, as the README states)", "class": "C", "note": "Reverse-engineering data for specific client builds. Not opened. Do not copy values."},
+    {"kind": "Lua add-on code and per-build modules", "path": "addons/*.lua, addons/libs/*.lua, addons/libs/daoc/**/*.lua (59 lua files)", "count_hint": "59 lua", "licence": "AGPL (code, as the README states)", "class": "A", "note": "Code, not assets. AGPL conditions apply to reuse as the LICENSE states. Only addons/find/find.lua lines 139-170 were read."},
+    {"kind": "native binaries", "path": "daochook.exe (416 KB), hook.dll (5.8 MB), addons/libs/socket/ssl.dll", "count_hint": "3 binaries", "licence": "AGPL (per README)", "class": "D", "note": "Not art. Not opened."},
+    {"kind": "bundled third-party Lua libs", "path": "addons/libs/json.lua, socket/*.lua, sugar/*.lua, imgui.lua, mime.lua", "count_hint": "about 20 files", "licence": "not in the tree beyond the AGPL line", "class": "C", "note": "The README lists the third-party projects (Detours, ImGui, MoonJIT, lstruct, luasocket, luasec, openssl, sol3) but their licence files are not in this tree. Not read."},
+    {"kind": "example add-ons", "path": "addons/example/example.lua, addons/example_packets/example_packets.lua, addons/packetlogger/packetlogger.lua", "count_hint": "3 lua", "licence": "AGPL (code)", "class": "A", "note": "Sample code only. Only names read; packetlogger body not read."}
+  ],
+  "inspiration": [
+    "Search window with a compact four-column item table, row-level tooltips showing slot and level, and a name filter (addons/find/find.lua lines 139-170; the filter input is on line 140). A clean pattern for an item or monster finder in our HUD.",
+    "Immediate-mode tool windows built with imgui calls (addons/find/find.lua, addons/libs/imgui.lua): a dev-only overlay style for our debug panel, kept out of the player HUD.",
+    "Per-build pointer tables stored as ini files named by build id (config/pointers/). The technique is to keep version-specific values in data files so one code base can support several builds. Not the values themselves.",
+    "Version-scoped module folders (addons/libs/daoc/<build>/): one set of modules per build with a shared core library. A layout we can reuse for per-content-pack modules.",
+    "A live packet or event logger shown as a scrolling window (addons/packetlogger/packetlogger.lua, name read only). Idea: an in-game event feed for playtests.",
+    "Sample add-on scripts (addons/example/example.lua, addons/example_packets/example_packets.lua) as a starter kit for community content. Idea: ship a minimal template with every new feature."
+  ],
+  "briefs": [
+    {"label": "Searchable finder panel", "why": "A searchable table with hover detail finds any item quickly, and the same pattern works for any list of things in the world.", "keep": "a name filter; a compact table; hover detail", "change": "our own column set and icons; on a 375-wide phone, a card list instead of a table; a warm theme", "ref": "addons/find/find.lua lines 139-170 (read)", "fit": "silhouette at 375 wide: card list works; signature behaviour: filter then hover; signature sound: none in donor. There is no creature, item or armour art in this donor, so the brief is UI-level only. Rule: recreate as a clearly distinct original, never a copy. Category-level only (class D donor)."},
+    {"label": "Debug event feed", "why": "A scrolling feed of recent events lets a tester see what happened without leaving the game.", "keep": "a scrolling log window; newest entry at the bottom", "change": "a dev-only toggle; our own styling; event filters by category", "ref": "addons/packetlogger/packetlogger.lua (name read; body not read)", "fit": "silhouette: n/a (panel); signature behaviour: live scroll; signature sound: none in donor. Rule: recreate as a clearly distinct original, never a copy. Category-level only (class D donor)."},
+    {"label": "Per-build config split", "why": "One code base that loads per-version data files survives game updates without a code change.", "keep": "a config file per build id; code reads it at start", "change": "our own file naming and schema; content packs instead of client builds", "ref": "config/pointers/1127101_1409.ini (name read; body not read)", "fit": "silhouette: n/a (data); signature behaviour: load-by-id at start; signature sound: none. Rule: recreate as a clearly distinct original, never a copy. Category-level only (class D donor)."}
+  ],
+  "not_read": [
+    "config/pointers/*.ini bodies (reverse-engineering data; names only)",
+    "addons/libs/daoc/**/*.lua data bodies (items, data, entities, chat and others: names only)",
+    "daochook.exe, hook.dll, addons/libs/socket/ssl.dll (binaries; no file tool; not opened)",
+    "repo/daochook.png (not opened)",
+    "Third-party library licence texts (not in tree)",
+    "addons/packetlogger/packetlogger.lua, addons/example/example.lua bodies (names only)",
+    "Server half and data-pack half (not in the box)",
+    "README sections beyond the features, legal, licence and credits parts (documentation site not read; no web fetch)"
+  ]
+}

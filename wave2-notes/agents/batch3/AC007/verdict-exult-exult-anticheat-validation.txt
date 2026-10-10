@@ -1,0 +1,18 @@
+VERDICT: PARTIAL | exult-exult | anticheat-validation | cell 3 | depth: thin | camera_scope: not applicable
+Donor: /mnt/frankendom-donors/exult-exult | Licence: GPL-2.0-or-later (cheat.cc header: "either version 2 of the License, or (at your option) any later version"; COPYING is the GPL v2 text) | C++
+
+Hint file: cheat.cc (1584 lines) is the single-player debug cheat system, not a server anticheat. Checked the hint file first, then searched for checksum, crc, anticheat, validate, verify, desync, replay, network and ban across the donor (outside tests/tools).
+
+Files opened (ranges read):
+1. /mnt/frankendom-donors/exult-exult/cheat.cc: 1-80, 296-350, 1570-1584
+2. /mnt/frankendom-donors/exult-exult/server/servemsg.cc: 78-122 (the Studio frame reader). Lines 55-70 and 130-136 seen in grep only.
+3. /mnt/frankendom-donors/exult-exult/cheat_screen.cc: 522-566 (typed integer parse and validator hook)
+Seen by grep only (not opened): cheat_screen.h (validate hook declared at 396-425), cheat.h, server/servewin32.cc (Windows socket), server/objserial.cc (Studio object save), audio/midi_drivers/LowLevelMidiDriver.cpp 1719-1731 and XMidiFile.cpp 1273-1285 (MIDI sysex checksum, a MIDI wire-format checksum, not game integrity).
+
+Why PARTIAL: the two real checkable mechanisms are a short frame check on an ExultStudio-only socket (servemsg.cc 97-112, compiled only under USE_EXULTSTUDIO at line 85) and a range-plus-hook validator for typed cheat-console numbers (cheat_screen.cc 549-562); neither touches game state, kills, movement, rate or a ledger, and the cheat gate is a local config value (cheat.cc 304-305, 340) with no server behind it, so the whole donor is a thin fragment rather than an anticheat.
+
+Best transferable idea: Validate every client-supplied number against a min and max range, allow one named special value, run an optional custom check, and reply with the reason on failure, before the value is applied.
+
+Decision (proposed): adapt - apply the range, special-value and custom-check parse to every field of the fight intake (target id, ability id, stance) at the server (parity row 5, controls and input), so an out-of-range id is refused with a reason and changes no duel state. Reject the local cheat flag and the Studio socket: a browser MMO has no local console or Studio channel to protect.
+
+Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only if any code is written)

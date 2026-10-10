@@ -1,0 +1,38 @@
+{
+  "donor": "djhenry-eqoxide",
+  "code_licence": "none stated (no LICENSE/COPYING/NOTICE at root; no licence field in Cargo.toml)",
+  "asset_licence": "none stated in repo; repo ships no game art; art comes from the user's own EQ client data and an external asset server",
+  "rights_holder_status": "not named in repo files; uses original EQ game data from user's own install (README.md:15 says EQEmu servers only); treat as proprietary",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "EQ character/zone/equipment art", "path": "not in repo (user install, config.yaml:2 assets_path ~/eq_assets/EQ_Files)", "count_hint": "n/a", "licence": "none stated", "class": "C", "note": "original game data, inspiration only"},
+    {"kind": "derived GLB models, textures, maps", "path": "external eqoxide_asset_server (not in repo)", "count_hint": "n/a", "licence": "none stated", "class": "C", "note": "not read; server not in this tree"},
+    {"kind": "shaders (WGSL, code)", "path": "crates/eqoxide-renderer/src/shaders/*.wgsl", "count_hint": "11 files, 34-139 lines", "licence": "none stated", "class": "D", "note": "code, not art; technique reference"},
+    {"kind": "test manifests (JSON)", "path": "tests/fixtures/manifest-v1.json, tests/fixtures/manifest-reader2.json", "count_hint": "2 files, 809 bytes each", "licence": "none stated", "class": "D", "note": "test data only"}
+  ],
+  "inspiration": [
+    "Additive glow surfaces: fire and glow materials are flagged additive and blended with pure add so black texels vanish (crates/eqoxide-assets/src/lib.rs:22; crates/eqoxide-renderer/src/pipeline.rs:507). Recreate as additive passes for torches, forges and magic.",
+    "Animated surfaces: a material carries a millisecond interval and a frame list (eqAnim, crates/eqoxide-assets/src/lib.rs:37). Good for flicker, water and portal shimmer without custom shader code.",
+    "Foliage cutout: alpha test at half alpha (MASK_ALPHA_CUTOFF_U8 = 128, lib.rs:58) plus a corner-colour key fallback for textures baked without one (lib.rs:64-67, 92). Make the background-key step explicit in our texture pipeline.",
+    "Armour as region variants: material names encode region, material and variant (docs/equipment-textures-findings.md, GLB primitive and material name sections). Full body is covered by disjoint pieces, not overlapping alternates.",
+    "Held weapons are separate per-item models drawn at a hand bone rather than baked into the body (crates/eqoxide-renderer/src/gpu.rs:49).",
+    "Per-clip grounding: a skinned humanoid is scaled to a target height and re-grounded from the current animation clip bounds (docs/character-models.md, Normalization section).",
+    "Race size by a height rule, not by eye (README.md:39 relative race sizes). Use our own size table when designing size classes."
+  ],
+  "briefs": [
+    {"label": "Torch and forge glow (own label)", "why": "a warm pulse that reads as light without a real light source; additive so dark pixels vanish", "keep": "additive glow layer; short 3-4 frame flicker; soft edge falloff", "change": "our own cooler ember ramp; different frame count; halo instead of flat sprite", "ref": "crates/eqoxide-assets/src/lib.rs:22, :37; crates/eqoxide-renderer/src/pipeline.rs:507"},
+    {"label": "Half-alpha foliage card (own label)", "why": "masked leaves read as cut-out silhouettes at low cost", "keep": "alpha-test cutout at 0.5; corner-key background removal at bake time", "change": "our own leaf shape language; two-colour ramp per tree; sway on the top only", "ref": "crates/eqoxide-assets/src/lib.rs:55-67"},
+    {"label": "Region-variant armour kit (own label)", "why": "disjoint region pieces with variant numbers let one body take many looks", "keep": "region + material + variant naming; pieces that do not overlap", "change": "our own trim and ornament; different shoulder and gauntlet silhouettes; our own gold-plate ramp", "ref": "docs/equipment-textures-findings.md (GLB primitive structure, material name section)"},
+    {"label": "Per-clip grounded humanoid (own label)", "why": "feet stay planted through very different attack and idle poses", "keep": "recentre and ground per clip; target height per archetype", "change": "our own rig proportions and head-limb ratio; our own clip set", "ref": "docs/character-models.md (Normalization: scale + position)"},
+    {"label": "Additive fire veil (own label)", "why": "a large soft glow mesh over a fire or spell that adds colour without hard edges", "keep": "additive blend; animated frame list", "change": "a rising plume shape rather than a flat fan; two-tone colour", "ref": "crates/eqoxide-renderer/src/pipeline.rs:507"}
+  ],
+  "not_read": [
+    "No LICENSE or NOTICE file exists in the tree (checked by find depth 3 and grep); absence recorded, not inferred from a web source",
+    "crates/eqoxide-renderer/src/shaders/*.wgsl bodies (only line counts taken)",
+    "tools/import_models.sh and tools/regen_models.sh (only grep hits read)",
+    "src/hud.rs and other UI code (not read for asset content)",
+    "docs/specs/*, docs/designs/* (listed only)",
+    "External eqoxide_asset_server and the EQ .s3d archives (not in this tree)",
+    "Cargo.lock and crate sources other than eqoxide-assets/lib.rs and eqoxide-renderer gpu.rs and pipeline.rs (grep hits only)"
+  ]
+}

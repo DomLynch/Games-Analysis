@@ -1,0 +1,45 @@
+{
+  "donor": "dkfans-keeperfx",
+  "code_licence": "GNU GPL v2 (LICENSE line 1; README.md:103); third-party files carry their own licences (dr_mp3.h:2 public domain or MIT-0; binser.lua:4 Copyright notice; inspect.lua:23 MIT block)",
+  "asset_licence": "no separate asset licence file; original Dungeon Keeper sprites, sounds and data are not in the repo (docs/files_required_from_original_dk.txt:1); map files carry GPL v2 copying headers (82 files); repo icons have no per-file licence",
+  "rights_holder_status": "fan project / open-source remake (src/player_compchecks.c:2); uses original game data from the user's own copy (README.md:18), proprietary-origin; original team named in credits (campgns/keeporig_lnd/dkcredts.txt:10 Bullfrog Productions Ltd.); current owner not stated",
+  "best_class": "B",
+  "asset_groups": [
+    {"kind": "original DK sprites, sounds, music, data", "path": "not in repo (user supplies from original CD)", "count_hint": "n/a", "licence": "original game files, not licensed here", "class": "C", "note": "not present; do not take"},
+    {"kind": "repo icons and banner (PNG)", "path": "res/keeperfx_icon016-512 PNG (8), docs/assets/readme-banner.png", "count_hint": "9 PNG", "licence": "no per-file licence; project GPL v2 (inferred)", "class": "B", "note": "treat as GPL v2 share-alike if reused"},
+    {"kind": "CUnit XPM icons (third party)", "path": "deps/CUnit-2.1-3/CUnit/Sources/wxWidget/*.xpm", "count_hint": "8 XPM", "licence": "deps/CUnit-2.1-3/COPYING exists (not read)", "class": "C", "note": "third-party; not read"},
+    {"kind": "maps with GPL v2 copying header", "path": "levels/* and campgns/* (82 files, e.g. campgns/twinkprs/map00207.txt)", "count_hint": "82 text files", "licence": "GPL v2 (header text)", "class": "B", "note": "keep header if reused; some based on Bullfrog script (campgns/keeporig/map00001.txt:6)"},
+    {"kind": "maps without GPL header", "path": "other .txt in levels/ and campgns/", "count_hint": "155 text files", "licence": "not stated (not read)", "class": "C", "note": "unclear"},
+    {"kind": "credits text", "path": "campgns/*_lnd/*credts.txt", "count_hint": "several", "licence": "not stated", "class": "C", "note": "lists original team names; do not reproduce"},
+    {"kind": "translation catalogues", "path": "lang/*.po, lang/*.pot", "count_hint": "136 po, 24 pot", "licence": "not stated (not read)", "class": "C", "note": "game text, unclear origin"},
+    {"kind": "creature and rule configs", "path": "config/creatrs/*.cfg, config/fxdata/*.cfg|toml", "count_hint": "36 creature cfg, about 20 fxdata files", "licence": "not stated", "class": "C", "note": "numeric values; design pattern only"},
+    {"kind": "lua scripts", "path": "config/fxdata/lua/**", "count_hint": "about 46 .lua", "licence": "GPL v2 for project; binser, inspect, base64 third-party", "class": "B", "note": "code"}
+  ],
+  "inspiration": [
+    "Palette-style texture animation: water, lava, gold and dirt tiles each use a frame list of about eight frames, with repeats to vary hold time so a seam glints unevenly (config/fxdata/textureanim.toml:13-30).",
+    "Team recolour from one base sprite: one base set plus per-player colour variants keeps the art budget small (config/fxdata/spritecolors.toml:2-3).",
+    "Creatures as readable stat sheets with named fields for health, armour, fear, hunger, lair size and base speed (config/creatrs/dragon.cfg:1-25).",
+    "Clipbox as a first-class value: body box plus a tall Z value (config/creatrs/dragon.cfg:24-25), useful for collision and framing.",
+    "Campaign override folders: each campaign ships its own creature configs in a sibling *_crtr folder (campgns/dzjr06lv_crtr).",
+    "Text maps with REM headers for author and version: plain-text levels that are easy to diff and hand-author (levels/classic/map00206.txt:1-10).",
+    "Lua hooks expose rules for triggers and classes (config/fxdata/lua/classes, config/fxdata/lua/triggers)."
+  ],
+  "briefs": [
+    {"label": "Gold glint seam (own label)", "why": "a bright metal seam that shimmers unevenly reads as precious without extra geometry", "keep": "short frame loop; repeated frames to vary hold time", "change": "our own warm bronze ramp; different loop length; specular sweep instead of frame swaps", "ref": "config/fxdata/textureanim.toml:25-30"},
+    {"label": "Team-colour kit (own label)", "why": "one master sprite set serves every team", "keep": "base set plus palette variants per team", "change": "our own team hues and trim motifs; add a shape badge so colour is not the only cue", "ref": "config/fxdata/spritecolors.toml:2-3"},
+    {"label": "Armoured brute (own label)", "why": "very high health, high armour and low movement read as a boss threat", "keep": "high health, low base speed, tall clipbox", "change": "our own horned silhouette without wings; different fear and hunger profile; our own palette", "ref": "config/creatrs/dragon.cfg:10, :22, :24-25"},
+    {"label": "Eight-frame lava loop (own label)", "why": "a hot floor that cycles reads as moving without costly effects", "keep": "short loop with a glow edge", "change": "our own ember ramp and crust pattern; light pulse on nearby walls", "ref": "config/fxdata/textureanim.toml:17"},
+    {"label": "Stat-sheet creature template (own label)", "why": "named numeric fields make creatures easy to tune and compare", "keep": "attribute block per creature with a clipbox line", "change": "our own field names and ranges; add sound and colour cue fields", "ref": "config/creatrs/dragon.cfg:1-25"}
+  ],
+  "not_read": [
+    "Original game sprite, sound and data files (not in repo)",
+    "lang/*.po and *.pot translation catalogues (names only)",
+    "campgns/*credts.txt credit lists (structure only; names not reproduced)",
+    "Most of levels/ and campgns/ map files (header sampling only; 82 with GPL header counted by grep)",
+    "config/fxdata/sounds.cfg, config/fxdata/terrain.cfg, config/fxdata/effects.toml (listed only)",
+    "deps/CUnit-2.1-3/COPYING, deps/centitoml/README.md, deps/glad (listed only)",
+    "config/fxdata/lua/external/base64.lua full licence text (end of file not read)",
+    "The 8 CUnit XPM icons (listed only)",
+    "src/*.c beyond the header of src/player_compchecks.c"
+  ]
+}

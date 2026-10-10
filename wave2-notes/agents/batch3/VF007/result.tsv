@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+afritz1-OpenTESArena	vfx-blood-finishers	P	STRONG	full	Combat/CombatLogic.cpp:420-451 and 453-488 queue a one-shot blood VFX on each landed physical hit (kills included) and play Clank when the target survives; EntityChunkManager.cpp:1965-1967 removes it when its clip ends.
+alexbatalov-fallout1-ce	vfx-blood-finishers	P	STRONG	full	game/actions.cc:192-225 (pick_death) picks a severity death by damage (15/45) and damage type with an art-missing fallback, check_death at 229-252 keeps it only if the art exists; game/map.cc:1134-1211 turns corpses into blood-pool objects after six game days.
+alexbatalov-fallout2-ce	vfx-blood-finishers	P	STRONG	full	src/actions.cc:185-204 overrides the 15/45 thresholds per weapon or perk (molotov 5/15, pyromaniac 1, flameboy /3) before the tier choice at 239-246; src/worldmap.cc:2834-2836 gates corpse aging per map.

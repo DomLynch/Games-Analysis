@@ -1,0 +1,36 @@
+{
+ "donor": "electronicarts-CnC_Remastered_Collection",
+ "code_licence": "GPL v3 with additional terms. LICENSE.md line 1: 'Electronic Arts Inc. released only TiberianDawn.dll, RedAlert.dll and' the map editor and source 'under the GPL V3 below, with additional terms at the bottom' (line 3). Additional terms (line 603): 'No trademark or publicity rights are granted.' Conflict: TIBERIANDAWN/License.txt line 1 names only TiberianDawn.dll and RedAlert.dll, not the map editor.",
+ "asset_licence": "No game art, audio, maps or mission data in the repo. The only non-code binaries are in CnCTDRAMapEditor/Resources (an icon and a preview PNG); README.md line 35 says the repo and its contents are GPL v3 with additional terms, but the two licence texts disagree on the editor's scope. Class C on that conflict.",
+ "rights_holder_status": "original company release for the code: LICENSE.md line 1 and SCRIPTS/tgautil.py line 2 ('Copyright 2020 Electronic Arts Inc.'). Game content is not in the repo; README line 16 says you must own the game to use the compiled binaries. Game content rights: not in repo.",
+ "best_class": "C",
+ "asset_groups": [
+  {"kind": "application icon", "path": "CnCTDRAMapEditor/Resources/GameIcon00.ico", "count_hint": "1 file, 393,230 bytes", "licence": "repo statement (GPL v3 with additional terms); editor scope conflicts across the two licence texts", "class": "C", "note": "Icon file, not opened. Additional terms withhold trademark rights in Command & Conquer and EA marks, so use of any game mark needs a separate decision."},
+  {"kind": "custom mission preview placeholder (PNG)", "path": "CnCTDRAMapEditor/Resources/UI_CustomMissionPreviewDefault.png", "count_hint": "1 file, 6,916,684 bytes, 512 x 512 (IHDR bytes read with od)", "licence": "repo statement as for the icon", "class": "C", "note": "Placeholder image shown for missions without a custom preview. Pixel content not viewed."},
+  {"kind": "dialog and control resource files (XML)", "path": "CnCTDRAMapEditor/Controls/*.resx, CnCTDRAMapEditor/Dialogs/*.resx, CnCTDRAMapEditor/Tools/Dialogs/ResourcesToolDialog.resx (22 .resx in total)", "count_hint": "22 files", "licence": "repo statement as for the icon", "class": "C", "note": "XML holding UI layout and some string resources (for example BriefingSettings, ObjectProperties, TerrainProperties, PlayerSettings). Not opened in content."},
+  {"kind": "Win32 resource scripts", "path": "TIBERIANDAWN/RESOURCE/TiberianDawn.rc, REDALERT/RESOURCE/RedAlert.rc, resource.h files", "count_hint": "2 .rc and 2 resource.h", "licence": "repo statement as for the icon", "class": "C", "note": "Resource script text; no bitmap or icon references found by a grep for BITMAP and ICON. Not otherwise read."},
+  {"kind": "redistributable binary (not art)", "path": "CnCTDRAMapEditor/Steamworks.NET/redist/steam_api64.dll", "count_hint": "1 file, 289,568 bytes", "licence": "no licence file for this binary in the repo", "class": "C", "note": "Third-party runtime binary. Listed for completeness; not an asset. Licence not stated in the repo."},
+  {"kind": "game data (maps, art, audio, mission data)", "path": "not in repo", "count_hint": "0 (no .mix, .shp, .aud, .vqa, .ini, .map files in the tree)", "licence": "not in repo", "class": "D", "note": "README line 16 says the user must own the game. The map editor's game-format support is code, not data."}
+ ],
+ "inspiration": [
+  "Mission editor as one property panel per selected object type (object, terrain, player, briefing). Recreate as our own inspector pane with a tab per object family. Reference: CnCTDRAMapEditor/Controls/ObjectProperties.resx and TerrainProperties.resx (category level; not opened).",
+  "A default preview card for a mission that has no custom picture: a square placeholder shown in the browser list. Recreate as a square placeholder card with our own flat art. Reference: CnCTDRAMapEditor/Resources/UI_CustomMissionPreviewDefault.png (not viewed).",
+  "Briefing as its own settings panel, separate from the map itself. Recreate as a short briefing tab with a preview slot. Reference: CnCTDRAMapEditor/Controls/BriefingSettings.resx.",
+  "A publish-to-workshop dialog wired to a platform client library. Recreate as our own publish flow with the same steps (name, preview, confirm) and no platform branding. Reference: CnCTDRAMapEditor/Dialogs/SteamDialog.cs and SteamDialog.resx (code and XML, not opened).",
+  "A small archive tool that zips and unzips a folder of frame images. Recreate as our own frame-pack step for sprite sheets. Reference: SCRIPTS/tgautil.py (argparse lines 147-159 read)."
+ ],
+ "briefs": [
+  {"label": "Square mission preview card", "why": "Dom rule: recreate as a clearly distinct original, never a copy. Category: a square placeholder thumbnail for an untitled mission. Readable at 375 wide as a thumbnail. Signature behaviour: a fallback swap when no custom picture exists. Target 20-30 percent resemblance to the category. Image not viewed.", "keep": ["square frame", "flat placeholder art", "fallback when no picture exists"], "change": ["colour story", "ornament (ours, not the donor's crest)", "frame corners"], "ref": "CnCTDRAMapEditor/Resources/UI_CustomMissionPreviewDefault.png"},
+  {"label": "Per-object property inspector", "why": "Dom rule: recreate as a clearly distinct original, never a copy. Category: one inspector tab per selected object family. Readable at 375 wide as a stacked tab bar. Signature behaviour: the inspector changes with the selection. Target 20-30 percent resemblance to the category.", "keep": ["one panel per object family", "tabbed sections", "inspector follows the selection"], "change": ["card layout instead of a form", "icons on the tabs", "a different section order"], "ref": "CnCTDRAMapEditor/Controls/ObjectProperties.resx"},
+  {"label": "Mission briefing panel", "why": "Dom rule: recreate as a clearly distinct original, never a copy. Category: a short briefing tab with a preview slot. Signature behaviour: briefing is editable separately from the map. Target 20-30 percent resemblance to the category.", "keep": ["short text plus preview", "separate briefing tab"], "change": ["layout (a strip instead of a column)", "our own preview frame", "a voice cue slot instead of a music cue"], "ref": "CnCTDRAMapEditor/Controls/BriefingSettings.resx"},
+  {"label": "Multi-size tool icon", "why": "Dom rule: recreate as a clearly distinct original, never a copy. Category: an application icon for a small tool. Readable at 16 px only if the silhouette is bold. Target 20-30 percent resemblance to the category. Icon not viewed.", "keep": ["bold silhouette at small size", "one emblem"], "change": ["our own palette", "a different emblem", "no trademark marks"], "ref": "CnCTDRAMapEditor/Resources/GameIcon00.ico"}
+ ],
+ "not_read": [
+  "Pixel content of the icon and the preview PNG (only file size and IHDR dimensions read).",
+  "The 22 .resx files (names only; no content read).",
+  "SteamDialog.cs and the other editor code beyond the file list.",
+  "TIBERIANDAWN/ and REDALERT/ engine source (C++ and asm listed, not read).",
+  "steam_api64.dll contents (binary, not opened).",
+  "No creature, item or zone art is in the repo, so no creature or item briefs are given."
+ ]
+}

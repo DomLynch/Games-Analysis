@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+gawric-Unity-Client-for-L2J	anticheat-validation	P	STRONG	full	PositionValidationController.cs:47-120 and 195-220: server correction band (0.15 floor, 3.743 walk/snap trigger) applied per frame; client-side correction, not a server validator
+heroiclabs-nakama	anticheat-validation	P	STRONG	full	server/login_attempt_cache.go:121-175: sliding-window account lockout (5 failures in 1 min locks 1 min, gate checks only the lock); scope is admin console only, IP path commented out (160-173)
+id-Software-DOOM	anticheat-validation	P	STRONG	full	linuxdoom-1.10/g_game.c:654-695 and d_net.c:636-767: lockstep lagged per-player state checksum (player x, 16-bit, 12-slot ring) compared each tic, mismatch halts via I_Error; m_cheat.c hint is the cheat-code matcher and was not used

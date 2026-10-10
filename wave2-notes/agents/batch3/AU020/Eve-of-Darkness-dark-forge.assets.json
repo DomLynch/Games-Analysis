@@ -1,0 +1,38 @@
+{
+  "donor": "Eve-of-Darkness-dark-forge",
+  "code_licence": "not stated (no LICENSE, COPYING or licence header found in the tree; Cargo.toml has no license key)",
+  "asset_licence": "not stated (no licence file; the only non-code file is one archive sample)",
+  "rights_holder_status": "unknown (mpak/src/main.rs describes the format as used by the Dark Age of Camelot game client; the repo names no owner and no licence)",
+  "best_class": "D",
+  "asset_groups": [
+    {
+      "kind": "game archive sample (MPAK)",
+      "path": "mpak/samples/csv001.mpk",
+      "count_hint": "1 file, 19,840 bytes",
+      "licence": "not stated",
+      "class": "C",
+      "note": "Header read with od: MPAK magic, then zlib-style entry headers. Entries not decompressed. The repo's own tool text says it is a game-client file; no licence in the repo. Do not use."
+    },
+    {
+      "kind": "art, audio, maps, text",
+      "path": "-",
+      "count_hint": "0",
+      "licence": "n/a",
+      "class": "D",
+      "note": "None in the tree. The 14 files are Rust sources, manifests, lock files, .gitignore and the one sample."
+    }
+  ],
+  "inspiration": [
+    "Tooling, not visuals: one archive file holds many named entries, with a directory table giving each entry's name and offset, and each entry compressed on its own. If we ever need a pack format for our own assets, this layout is a clean reference for the idea (we write our own code).",
+    "The command-line shape is simple: one archive argument plus subcommands to list entries and stream one out, so an asset can be checked without unpacking the whole pack. Worth copying for our own asset tools.",
+    "The reader is a library crate and the command-line tool is a separate crate that depends on it, so other tools can reuse the reader. A workspace layout to copy for our tooling.",
+    "There is no art, sound, map or creature here to recreate. The sample archive is game data with no licence and should not be used as a reference for the look of anything."
+  ],
+  "briefs": [],
+  "not_read": [
+    "mpak/samples/csv001.mpk entry contents (compressed; header bytes only, not decompressed)",
+    "dark_forge/src/mpk/file_info.rs (not opened)",
+    "dark_forge/src/mpk/mpak.rs and mpak/src/main.rs (first 600-800 bytes only)",
+    "Cargo.lock files and dark_forge/.gitignore (not opened)"
+  ]
+}

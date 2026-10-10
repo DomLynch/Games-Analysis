@@ -1,0 +1,37 @@
+{
+  "donor": "dol-leodagan-DaocClientLib",
+  "code_licence": "MIT (LICENSE:1, copyright dol-leodagan 2015 at LICENSE:3; source files repeat the MIT header, e.g. DaocClientLib/Tree/TreeReplacementMap.cs:4)",
+  "asset_licence": "none stated; repo holds no Dark Age of Camelot data (README.md:2, :4); data comes from the user's own DAoC install (README.md:16)",
+  "rights_holder_status": "client-side library for DAoC resources; needs the user's own DAoC install (proprietary-origin data, class C); DAoC rights holder not named in repo files; library code MIT by dol-leodagan",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "DAoC game resources (MPK, PCX, NIF, zone data)", "path": "user's DAoC install; parsed at runtime only", "count_hint": "n/a", "licence": "none stated (user's own install)", "class": "C", "note": "not in repo; code parses MPK, PCX, NIF formats"},
+    {"kind": "demo UI skin (PNG)", "path": "DaocClientLib.Demo/GwenSkin.png", "count_hint": "1 PNG", "licence": "not stated; gwen-donet submodule empty here", "class": "C", "note": "not opened"},
+    {"kind": "resource template (XML resx)", "path": "DaocClientLib.Test/Properties/testpcxressources.resx", "count_hint": "1 file, 465 lines", "licence": "project MIT (code file)", "class": "D", "note": "placeholder entries only (testpcxressources.resx:23)"},
+    {"kind": "third-party SharpNav binary and XML docs", "path": "Dependencies/SharpNav.dll, Dependencies/SharpNav.XML", "count_hint": "2 files", "licence": "not stated in tree", "class": "C", "note": "binary not opened"},
+    {"kind": "submodules (niflib.net, gwen-donet)", "path": "niflib.net/, gwen-donet/ (empty)", "count_hint": "0 files", "licence": "not checked out", "class": "D", "note": ".gitmodules line 1 lists niflib.net"}
+  ],
+  "inspiration": [
+    "Placed props drawn as instanced meshes with a world matrix per placement (DaocClientLib.Drawing/DungeonRenderer.cs:55).",
+    "Hand-tuned overrides on procedural placement: per-tree offsets in a replacement map (DaocClientLib/Tree/TreeReplacementMap.cs:35).",
+    "Rivers and lava as one typed band record with banks and a type field (DaocClientLib/Zone/RiverGeometry.cs:34-52).",
+    "Terrain height kept apart from zone renderers (DaocClientLib/Zone/TerrainHeightCalculator.cs; Drawing/TerrainRenderer.cs).",
+    "Crafting recipe as a record with an ingredient collection (DaocClientLib/Craft/CraftDataRecipe.cs:33-72).",
+    "Zone jump points as their own data records (DaocClientLib/Zone/ZoneJump.cs, JumpPoint.cs).",
+    "A demo UI built from one skin PNG (DaocClientLib.Demo/GwenSkin.png)."
+  ],
+  "briefs": [
+    {"label": "Lava river band (own label)", "why": "a glowing lava channel with stone banks reads as danger at a distance and follows a path", "keep": "banked band defined as data with a liquid type field; one shape for water and lava", "change": "our own cracked bank stones; ember glow and heat shimmer instead of water texture; different width profile", "ref": "DaocClientLib/Zone/RiverGeometry.cs:34-52"},
+    {"label": "Hand-tuned tree offsets (own label)", "why": "a procedural forest keeps a few trees where a designer needs them", "keep": "override list keyed by tree, offset applied on match", "change": "per-cell offsets rather than per-tree; a tree-type swap as well as offset", "ref": "DaocClientLib/Tree/TreeReplacementMap.cs:35"},
+    {"label": "Instanced dungeon props (own label)", "why": "many repeated props (pillars, braziers) draw cheaply with per-placement transforms", "keep": "one mesh, many transforms", "change": "our own prop designs; per-prop tint variation", "ref": "DaocClientLib.Drawing/DungeonRenderer.cs:55"},
+    {"label": "Craft recipe card (own label)", "why": "a recipe with a visible ingredient list reads at a glance", "keep": "recipe record with an ingredient collection", "change": "our own ingredient icons and result preview; grouping by station", "ref": "DaocClientLib/Craft/CraftDataRecipe.cs:33-72"}
+  ],
+  "not_read": [
+    "Dependencies/SharpNav.dll (binary, not opened) and SharpNav.XML (listed only)",
+    "DaocClientLib.Demo/GwenSkin.png (not opened; no image tool used)",
+    "Empty submodules niflib.net and gwen-donet (not checked out in this tree; cannot verify their licences)",
+    "PCXDecoder.cs, TinyMPK.cs, TinyMPKFile.cs, ZoneData.cs, TerrainHeightCalculator.cs, CityRenderer.cs (listed; bodies not read)",
+    "DaocClientLib.Test fixtures named in code (validmpktest.mpk, zones.dat etc.) are not in the tree",
+    "README build instructions beyond the first lines"
+  ]
+}

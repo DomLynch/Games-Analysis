@@ -1,0 +1,51 @@
+{
+  "donor": "Dawn-of-Light-DOLSharp",
+  "code_licence": "GNU GPL v2 (LICENSE is the GPLv2 text). gplheader.txt gives the source-file header: GPL v2 or any later version.",
+  "asset_licence": "None stated for the data. The only licence file is the root GPLv2 text; no file says it covers the language, web UI, XML or navmesh data. Unclear, so class C.",
+  "rights_holder_status": "Unknown from repo files. README calls it a Dark Age of Camelot server emulator written by the Dawn of Light community. The repo names no owner of the original game data. It carries DAoC-world names and coordinates in its data files.",
+  "best_class": "C",
+  "half_read": "SERVER half (GameServer, GameServerScripts, DOLBase, data XML and language text). The CLIENT half is not in this repo. Matching client halves in the box by folder name only (not opened): BifrostTitan-DAoC-Client-Lib, dol-leodagan-DaocClientLib. Other DAoC server folders: OpenDAoC-OpenDAoC-Core, daochook-daochook.",
+  "data_tables": [
+    "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServerScripts/dbupdater/insert/Zones.xml (zone rows: ID, region, name, water and lava flags)",
+    "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServerScripts/dbupdater/insert/Regions.xml (region rows)",
+    "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServerScripts/dbupdater/insert/StartupLocation.xml (start points)",
+    "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServerScripts/quests/Hibernia/BaseAddrirPathPoints.xml (escort path points, with X, Y, Z and max speed)",
+    "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/language/EN/*.txt (about 76 text tables: zones, spells, NPCs, keeps)",
+    "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/config/invalidnames.txt (blocked name segments)"
+  ],
+  "asset_groups": [
+    {"kind": "localisation text packs", "path": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/language", "count_hint": "237 text files in 7 language folders (CZ, DE, EN, ES, FR, IT, NL); EN has 76", "licence": "none stated (GPL v2 root LICENSE only)", "class": "C", "note": "Strings for zones, spells, NPCs, quests, keeps and commands. Some of it is game-world text. Do not reproduce; use as a structure example only. Only the EN zone line and a filter-list header were read."},
+    {"kind": "web admin UI art", "path": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/webui/template/images", "count_hint": "12 GIF files (border/corner pieces, empty spacers, banner, title)", "licence": "none stated", "class": "C", "note": "Small GIFs for a retro frameset-style status page. Two sampled sizes: banner dol_banner_small.gif 8949 bytes, dol_title.gif 1546 bytes. Not opened."},
+    {"kind": "world data XML (zones, regions, startup locations)", "path": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServerScripts/dbupdater/insert", "count_hint": "3 XML files (Regions.xml, Zones.xml, StartupLocation.xml)", "licence": "none stated", "class": "C", "note": "Zone rows with IDs, region IDs, names and water/lava flags. Game-world data names; treat as third-party unless proven otherwise. Zones.xml header only read."},
+    {"kind": "escort/patrol path points (XML)", "path": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServerScripts/quests/Hibernia", "count_hint": "XML path-point files per realm (e.g. BaseAddrirPathPoints.xml; an Albion equivalent also exists)", "licence": "none stated", "class": "C", "note": "Ordered waypoints with X, Y, Z and max speed. Coordinates from the game world; do not copy the coordinates."},
+    {"kind": "navigation mesh (binary)", "path": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/Pathing/Detour/Test/zone078.nav", "count_hint": "1 file, 602560 bytes", "licence": "none stated", "class": "C", "note": "A single zone navmesh used by the Detour test. README says navmeshes come from third-party tools or a third-party download with some zones missing. Not opened; not fetched."},
+    {"kind": "Detour / Recast source (code)", "path": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/Pathing/Detour", "count_hint": "about 25 C/C++/header files", "licence": "copyright line only in files read (Mikko Mononen 2009-2010); licence text not located", "class": "C", "note": "Pathing library source. Licence text not read in full, so unclear."},
+    {"kind": "config text (name filter list)", "path": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/config/invalidnames.txt", "count_hint": "1 file", "licence": "none stated", "class": "C", "note": "A list of blocked name segments. Only the header was read."},
+    {"kind": "example web status page (PHP and text)", "path": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServerScripts/web/OnlineStatusUpdateServerFiles", "count_hint": "2 PHP, 1 TXT", "licence": "none stated", "class": "D", "note": "Code and sample text, not art. Not read."}
+  ],
+  "inspiration": [
+    "Zones as plain rows (ID, region, name, water level, lava or diving flags). A clean zone-table design we can rebuild in our own schema with our own zone names.",
+    "One navmesh tile set per zone that the server streams in and out. The technique suits big maps; generate our own navmeshes from our own meshes.",
+    "Escort and patrol routes as ordered waypoints, each with its own max speed. Good authoring format for guards and escorts; write our own route data.",
+    "One folder per language with a text file per system (zones, spells, quests, keeps). A simple localisation layout we can copy in structure, with our own strings.",
+    "A retro frameset-style status page built from small bordered-frame GIF pieces. We could keep the nostalgic bordered-panel idea with a cleaner, original look.",
+    "A name filter that rejects any player name containing a blocked segment. A simple moderation rule to reuse as a concept, with our own list.",
+    "Many quests and features are separate script files that the server loads. The modular feature layout is worth a look; the content itself is not ours to copy."
+  ],
+  "briefs": [
+    {"label": "Bordered status panel (ours)", "why": "a small framed panel with corner pieces makes a server status window feel like an old-school tool; the frame is the hook, not the content.", "keep": "beveled corner pieces; tiled edge strips; a single banner strip at the top", "change": "our own pixel-art corners in our palette; a different font and layout; a dark or neon frame instead of grey", "criteria": "silhouette at 375 wide: not applicable (UI); signature behaviour: none (static panel); signature sound: none in repo", "rule": "Recreate as a clearly distinct original, never a copy.", "ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/webui/template/images/tborder_lt.gif (not viewed; name and size only)"},
+    {"label": "Zone navmesh tile set (ours)", "why": "a zone split into streamed tiles keeps huge maps light; the player never sees it, but NPC movement is better for it.", "keep": "one walkable-surface file per zone; tiles loaded by distance; regenerate a tile when geometry changes", "change": "our own zone shapes and tile size; our own generator; a debug overlay in our own colours", "criteria": "silhouette at 375 wide: not applicable (data); signature behaviour: NPCs path around obstacles; signature sound: none in repo", "rule": "Recreate as a clearly distinct original, never a copy.", "ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/Pathing/Detour/Test/zone078.nav (not opened; file size only)"},
+    {"label": "Escort route with speed per step (ours)", "why": "a guard who walks a set route at varied speed reads as alive; the route data is the whole trick.", "keep": "ordered waypoints; per-step speed; one route per named escort", "change": "our own route names and layouts; a different pacing curve; our own waypoint format", "criteria": "silhouette at 375 wide: not applicable (data); signature behaviour: speed changes per waypoint (MaxSpeed field); signature sound: none in repo", "rule": "Recreate as a clearly distinct original, never a copy.", "ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServerScripts/quests/Hibernia/BaseAddrirPathPoints.xml (route name on line 5 only; coordinates not copied)"}
+  ],
+  "not_read": [
+    "all GIF bodies (binary; sizes and names only)",
+    "zone078.nav body (binary; size only)",
+    "all language text bodies beyond the EN zone line and a filter-list header (game text, not reproduced)",
+    "Regions.xml and StartupLocation.xml bodies",
+    "the dbupdater .cs loaders (data-table readers; not read beyond names)",
+    "Detour licence text (copyright lines only)",
+    "the GameServerScripts/web PHP files",
+    "Tests/ folder contents",
+    "the DAoC client halves named above (folder names only; not opened)"
+  ]
+}

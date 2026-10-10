@@ -1,0 +1,83 @@
+{
+ "game": "Anuken-Mindustry",
+ "category": "inventory-bank-equipment",
+ "cell": 9,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/world/blocks/storage/CoreBlock.java",
+ "licence": "GPL-3.0 (as read: LICENSE lines 1-2, GNU GENERAL PUBLIC LICENSE, Version 3, 29 June 2007)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/bank.ts",
+ "parity_row": 21,
+ "pattern_tags": [
+  "clamp-and-report",
+  "new:shared-ledger",
+  "new:proportional-split-on-unlink",
+  "new:carrier-single-stack",
+  "new:cap-per-item-kind",
+  "new:server-validated-move"
+ ],
+ "data_fields": [
+  {
+   "name": "core_shard_cap",
+   "donor_constant": "4000",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/content/Blocks.java:3152"
+  },
+  {
+   "name": "container_cap",
+   "donor_constant": "300",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/content/Blocks.java:3246"
+  },
+  {
+   "name": "vault_cap",
+   "donor_constant": "1000",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/content/Blocks.java:3253"
+  },
+  {
+   "name": "carrier_cap",
+   "donor_constant": "max(round(hitSize*4, 10), 10) when unset",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/type/UnitType.java:962"
+  },
+  {
+   "name": "transfer_range",
+   "donor_constant": "220",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/Vars.java:123"
+  },
+  {
+   "name": "deposit_cooldown",
+   "donor_constant": "0.5",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/game/Rules.java:137"
+  },
+  {
+   "name": "deposit_window_count",
+   "donor_constant": "window cooldown*1000*2 ms, count 2",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/input/InputHandler.java:527"
+  },
+  {
+   "name": "split_share",
+   "donor_constant": "items * slot_cap / total_cap, clamped to slot_cap",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/world/blocks/storage/CoreBlock.java:863"
+  }
+ ],
+ "best_idea": "Keep the bank as one shared ledger object that the core and each linked storage slot reference, recompute the cap from what is linked, and clamp every item when the cap changes.",
+ "decision": "adapt",
+ "decision_why": "The shared ledger and the recomputed cap fit the one-ledger ruling; we keep the shape but not the silent clamp loss (every dropped item must be logged) and not the team-wide sharing of all cores.",
+ "decision_status": "proposed",
+ "acceptance": "A server test links a second storage slot (cap 300) to an account's bank and asserts the cap rises to the sum with each item at or under it; unlinking, then removing the core, splits items in proportion to slot caps, and every move appears in the ledger log with its amount."
+}

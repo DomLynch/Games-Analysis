@@ -1,0 +1,51 @@
+{
+  "donor": "crawl-crawl",
+  "code_licence": "GPL version 2 or later (LICENSE; README line 96: Crawl is licensed as GPLv2+)",
+  "asset_licence": "Mixed, per LICENSE: majority of tiles and artwork CC0 (line 24); most tiles public domain or CC0 (line 14); older pieces may be complex (line 27); rltiles/license.txt: partly RLTiles public domain, some modified. Fonts: no licence text in repo. Dat text: general GPLv2+ only. No audio in tree",
+  "rights_holder_status": "community open-source roguelike; LICENSE copyright line names Linley Henzell, the dev team and contributors; README says it descends from Linley's Dungeon Crawl; per-tile authors not listed in repo",
+  "best_class": "A",
+  "asset_groups": [
+    {"kind": "monster tiles", "path": "crawl-ref/source/rltiles/mon/", "count_hint": "1600 PNG; 397 of 400 sampled at 32x32; unique/ has 30 at 32x48", "licence": "CC0 majority / RLTiles PD (LICENSE line 24; rltiles/license.txt)", "class": "A", "note": "per-tile licence not in repo; check older pieces (LICENSE line 27)"},
+    {"kind": "player tiles", "path": "crawl-ref/source/rltiles/player/", "count_hint": "1220 PNG; 399 of 400 sampled at 32x32", "licence": "as above", "class": "A", "note": "per-tile check"},
+    {"kind": "dungeon tiles", "path": "crawl-ref/source/rltiles/dngn/ (incl. vaults/)", "count_hint": "2311 PNG (136 in vaults/); 399 of 400 sampled at 32x32", "licence": "as above", "class": "A", "note": "per-tile check"},
+    {"kind": "item tiles", "path": "crawl-ref/source/rltiles/item/ (armour/ has 80 files)", "count_hint": "1133 PNG; 400 of 400 sampled at 32x32", "licence": "as above", "class": "A", "note": "armour plain and art pairs"},
+    {"kind": "gui tiles", "path": "crawl-ref/source/rltiles/gui/", "count_hint": "1025 PNG; 395 of 400 sampled at 32x32", "licence": "as above", "class": "A", "note": "HUD-relevant"},
+    {"kind": "effect tiles", "path": "crawl-ref/source/rltiles/effect/", "count_hint": "511 PNG, all 32x32; 8-frame sets", "licence": "as above", "class": "A", "note": "vfx-relevant"},
+    {"kind": "misc tiles", "path": "crawl-ref/source/rltiles/misc/", "count_hint": "347 PNG", "licence": "as above", "class": "A", "note": "per-tile check"},
+    {"kind": "unused tiles", "path": "crawl-ref/source/rltiles/UNUSED/", "count_hint": "595 PNG", "licence": "as above; folder named UNUSED", "class": "C", "note": "not in active use per folder name; not viewed"},
+    {"kind": "title art", "path": "crawl-ref/source/dat/tiles/title_*.png", "count_hint": "41 PNG", "licence": "none stated in repo", "class": "C", "note": "filenames carry contributor names; origin unclear"},
+    {"kind": "logos and icons", "path": "crawl-ref/source/dat/tiles/logo*.png, stone_soup_icon*", "count_hint": "about 10 seen", "licence": "none stated", "class": "C", "note": "project brand"},
+    {"kind": "fonts", "path": "crawl-ref/source/webserver/static/fonts/DejaVuSans*.woff, .woff2", "count_hint": "4 files", "licence": "no licence text found in repo", "class": "C", "note": "grep for licence text found nothing"},
+    {"kind": "vault maps (text)", "path": "crawl-ref/source/dat/des/", "count_hint": "147 files; about 200k lines", "licence": "GPLv2+ general statement (README line 96)", "class": "B", "note": "ASCII vault maps; share-alike via GPL"},
+    {"kind": "descriptions (text)", "path": "crawl-ref/source/dat/descript/", "count_hint": "280 files; about 25700 lines", "licence": "GPLv2+ general statement", "class": "B", "note": "item and monster flavour text; do not copy protected wording"},
+    {"kind": "monster and species data (text)", "path": "crawl-ref/source/dat/mons/ and dat/species/", "count_hint": "about 13000 lines of monster yaml", "licence": "GPLv2+ general statement", "class": "B", "note": "game data definitions"},
+    {"kind": "licence texts", "path": "crawl-ref/docs/license/", "count_hint": "6 text files", "licence": "the licence texts", "class": "A", "note": "text only"},
+    {"kind": "audio", "path": "none in tree", "count_hint": "0 files", "licence": "n/a", "class": "D", "note": "no music or sound effects"}
+  ],
+  "inspiration": [
+    "One 32x32 base grid for everything, with taller 32x48 frames reserved for bosses so they read as bigger.",
+    "Monsters built from a base skin set crossed with job overlays; many distinct looks from few pieces.",
+    "Elemental dragons: one silhouette per element with a distinct hue, wing or body shape, plus a portal effect.",
+    "Projectiles drawn in eight directional frames at 32x32, so arrows read correctly in top-down play.",
+    "Armour pieces come in a plain and an ornate art variant: plain for play, ornate for display.",
+    "Vault layouts stored as ASCII glyph stamps with doors and symmetric corridors (per simple.des); a cheap zone-design method.",
+    "Splash-art portraits for characters and monsters (41 title files); style not viewed."
+  ],
+  "briefs": [
+    {"label": "Lizard knight kit (own label)", "why": "many looks from one body plus a job overlay", "keep": "base body with a job overlay; shared proportions", "change": "different limb and crest shapes; clan palettes; our own job names", "ref": "crawl-ref/source/rltiles/mon/draco/draco-job-knight.png (not viewed)"},
+    {"label": "Element drakes (own label)", "why": "one silhouette per element reads at a glance", "keep": "one wing or body shape per element; element hue plus glow or trail", "change": "our own element names and wing counts; different heads; no copied shapes", "ref": "crawl-ref/source/rltiles/mon/dragons/ice_dragon.png and fire_dragon.png (not viewed)"},
+    {"label": "Red-fletched bolt (own label)", "why": "eight directional frames keep projectiles readable top-down", "keep": "8 frames; clear tip and fletching", "change": "our fletching and trail colour; add a spark", "ref": "crawl-ref/source/rltiles/effect/blood_arrow0.png to blood_arrow7.png (not viewed)"},
+    {"label": "Plated barding with crest (own label)", "why": "plain and ornate versions of one armour piece", "keep": "plain plus ornate pair", "change": "our own crest and trim; metal ramp in our palette", "ref": "crawl-ref/source/rltiles/item/armour/acid_dragon_armour_art.png (not viewed)"},
+    {"label": "Tall unique knight (own label)", "why": "a taller frame makes a boss read as a boss", "keep": "32x48 boss frame", "change": "different shoulders and helm; our silhouette", "ref": "crawl-ref/source/rltiles/mon/unique/ (30 files at 32x48; not viewed)"}
+  ],
+  "not_read": [
+    "no tile pixels viewed; sizes and colour types from PNG headers on samples of about 400 files per folder",
+    "rltiles/UNUSED contents",
+    "dat/tiles title art and icons (names and counts only)",
+    "DejaVu font files (not opened)",
+    "docs/license/ texts beyond listing; LICENSE line 28 external page not followed",
+    "dat/des, dat/descript, dat/mons content (counts and headers only)",
+    "rltiles/tool C++ tile tool and webserver code",
+    "CREDITS.txt beyond the section headers; no per-tile artist section found (grep for tile, artwork, graphic returned none)"
+  ]
+}

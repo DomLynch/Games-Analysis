@@ -1,0 +1,61 @@
+{
+ "game": "OpenTTD-OpenTTD",
+ "category": "anticheat-validation",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/OpenTTD-OpenTTD/src/network/network_server.cpp",
+ "licence": "GPL-2.0 (src headers version 2; COPYING.md GPL v2 with exception for some 3rd-party modules)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/intake.ts",
+ "parity_row": 5,
+ "pattern_tags": [
+  "new:identity-stamp",
+  "new:test-then-commit",
+  "compute-budget",
+  "new:bounded-backlog",
+  "lockstep"
+ ],
+ "data_fields": [
+  {
+   "name": "input_backlog_max",
+   "donor_constant": "16 (max_commands_in_queue)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "src/table/settings/network_settings.ini:88"
+  },
+  {
+   "name": "client_budget_per_drain",
+   "donor_constant": "2 (commands_per_frame)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "src/table/settings/network_settings.ini:70"
+  },
+  {
+   "name": "server_budget_per_drain",
+   "donor_constant": "16 (commands_per_frame_server)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "src/table/settings/network_settings.ini:79"
+  },
+  {
+   "name": "drain_window",
+   "donor_constant": "frame_freq def 0 (every tick by arithmetic, not run)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "src/table/settings/network_settings.ini:61"
+  },
+  {
+   "name": "server_own_command_delay",
+   "donor_constant": "1 tick",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "src/network/network_command.cpp:224"
+  }
+ ],
+ "best_idea": "Route every client command through one gate that overwrites the actor with the session's bound character, refuses server-only verbs, dry-runs the command, and drains a fixed per-client budget from a capped FIFO backlog.",
+ "decision": "adapt",
+ "decision_why": "Take the identity stamp, the server-only refusal, dry-run-before-commit and the per-client budget with a capped backlog. Reject the lockstep distribution, because Frankendom's server sends state and kills are server-verified.",
+ "decision_status": "proposed",
+ "acceptance": "A server test sends a fight packet naming another character's id and gets refused with the world unchanged; five engage packets in one tick run two and carry three to the next tick in order; the seventeenth queued packet is refused as backlog full."
+}

@@ -1,0 +1,39 @@
+{
+ "game": "0ad-0ad",
+ "category": "quests-dialogue",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/maps/scripts/Tutorial.js",
+ "licence": "GPL version 2 or later (LICENSE.txt line 18, binaries/data/ rule; maps/ pointer to a LICENSE.txt not in snapshot)",
+ "licence_class": "copyleft",
+ "target_module": "origins/quests/goal-runner.ts",
+ "parity_row": 21,
+ "pattern_tags": [
+  "wait-gate",
+  "stale-state",
+  "new:goal-chain",
+  "new:restore-replay"
+ ],
+ "data_fields": [
+  {
+   "name": "goal.delay",
+   "donor_constant": "number; >0 one-shot timer, -1 Ready button (Tutorial.js:61 comment, 63-66)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/maps/scripts/Tutorial.js:65"
+  },
+  {
+   "name": "goal.readySentinel",
+   "donor_constant": "-1 (Ready button; timer unit not read)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/maps/scripts/Tutorial.js:61"
+  }
+ ],
+ "best_idea": "Quest steps as an ordered list where each step listens only to its own server-emitted events, advances only when its guard holds, and restores from the step index without re-running setup.",
+ "decision": "adapt",
+ "decision_why": "Take the ordered step list, per-step guards and restore rule, but change the advance source: in Frankendom only server-emitted events (confirmed kill, ledger write, zone entry) move a step, and a client ready answer only counts while the server has the step waiting.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: a three-kill quest advances only after three server-confirmed kill events; a client ready sent while the step is not waiting is refused and the step is unchanged; after reload the player sees each finished step's text once and the current step's init does not run again."
+}

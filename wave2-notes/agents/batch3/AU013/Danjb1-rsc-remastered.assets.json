@@ -1,0 +1,44 @@
+{
+  "donor": "Danjb1-rsc-remastered",
+  "code_licence": "None stated. No LICENSE, COPYING or licence line in the tree. _RESTRICTED-NOTE.txt line 1 says 'RESTRICTED: no licence; derived from RuneScape Classic client.'",
+  "asset_licence": "None stated. The same restricted note covers the whole repo, including res/data (sprites, landscape, audio, XML definitions).",
+  "rights_holder_status": "Unknown from the repo files. The restricted note and docs/about.md line 3 say the project targets the RuneScape Classic client. No copyright or owner line appears in any repo file (a licence and copyright grep matched only the note). Treat as restricted: no copying, study shape and idea only.",
+  "best_class": "C",
+  "halves_read": "Client half: partly read (rsc-client/src/client/** class and file listings, plus class-level names in SoftwareRenderer.java, SpriteEntity.java and game/ui/*.java). Data-pack half (rsc-client/res/data/*.xml.gz, Sprites.zip, Landscape.zip, audio/*.wav): listed by name and size only, NOT opened. Server half: NOT READ. The docs mention a single-player launcher with a built-in server (docs/ideas.md line 9), but no server source was read.",
+  "data_tables": [
+    {"path": "rsc-client/res/data/Items.xml.gz (31233 bytes), NPCs.xml.gz (44271), Objects.xml.gz (21727), Spells.xml.gz (1848), Prayers.xml.gz (479), Doors.xml.gz (2168), Animations.xml.gz (1800), Textures.xml.gz (454), Tiles.xml.gz (256), Elevation.xml.gz (132)", "holds": "gzipped XML definitions for items, NPCs, objects, spells, prayers, doors, animations, textures, tiles and elevation. Names and values are inside. NOT opened; gzip not read.", "class": "C"},
+    {"path": "rsc-client/res/data/Sprites.zip (1035361 bytes), Landscape.zip (906874 bytes)", "holds": "sprite sheets and landscape map archives. NOT opened.", "class": "C"},
+    {"path": "rsc-client/src/client/entityhandling/defs/*.java (12 files)", "holds": "class definitions that map the XML fields (ItemDef, NpcDef, GameObjectDef, SpellDef and so on). Listed only.", "class": "C"}
+  ],
+  "asset_groups": [
+    {"kind": "sound effects (WAV)", "path": "rsc-client/res/data/audio/*.wav", "count_hint": "37 files (names: click, opendoor, closedoor, anvil, coins, cooking, eat, fish, mine, victory, death, underattack, spellok, spellfail, combat variants and others)", "licence": "none stated (restricted note)", "class": "C", "note": "Names only, not opened. Use the names as category hints (one cue per verb), never the audio."},
+    {"kind": "sprite sheets (archive)", "path": "rsc-client/res/data/Sprites.zip", "count_hint": "1 archive, 1.0 MB", "licence": "none stated", "class": "C", "note": "Not opened. Do not extract."},
+    {"kind": "landscape map data (archive)", "path": "rsc-client/res/data/Landscape.zip", "count_hint": "1 archive, 0.9 MB", "licence": "none stated", "class": "C", "note": "Not opened. Do not extract."},
+    {"kind": "XML definition data (gzipped)", "path": "rsc-client/res/data/*.xml.gz", "count_hint": "10 files, 0.1 to 44 KB each", "licence": "none stated", "class": "C", "note": "Not opened. Holds item, NPC, object and spell definitions. Do not reproduce any entries."},
+    {"kind": "icon and screenshot images", "path": "rsc-client/res/data/icon.png (23 KB), docs/screenshot.png", "count_hint": "2 png", "licence": "none stated", "class": "C", "note": "Not opened."},
+    {"kind": "third-party Java jars", "path": "rsc-client/libs/joml-1.9.19.jar, xpp3.jar, xstream.jar", "count_hint": "3 jar", "licence": "not in repo", "class": "C", "note": "Binary libraries. Their licences are not in the tree. Not opened."},
+    {"kind": "Java source (code, not asset)", "path": "rsc-client/src/client/** (78 .java files)", "count_hint": "78", "licence": "none stated", "class": "C", "note": "Code. Restricted note says never copy code or constants. Used for class and file names only."}
+  ],
+  "inspiration": [
+    "2.5D overworld: a software renderer draws the scene with sprite entities on top (rsc-client/src/client/game/render/SoftwareRenderer.java; rsc-client/src/client/game/scene/SpriteEntity.java). Category: a software-rendered map with sprite figures placed in it. Recreate with our own palette, lighting and sprite design.",
+    "Tabbed side column: inventory, magic, friends, stats, map and settings each have their own panel and renderer (rsc-client/src/client/game/ui/*.java, 7 files). Category: a compact tabbed panel that holds many systems. On a 375-wide phone, make it a bottom sheet with our own icons.",
+    "One short sound cue per verb, with a success and a failure pair for spells and actions (rsc-client/res/data/audio/, names only). Category: every action has a short, percussive cue, and failures sound different from successes. Recreate with our own synthesised cues.",
+    "Content lives in data files that the client loads at start (rsc-client/res/data/*.xml.gz, names only). Category: definitions for items, NPCs, objects and spells are data, not code. A good layout for our own content tables.",
+    "View reset to north listed as an original feature (docs/ideas.md line 7). Category: a one-command reset of the view heading. Keep the reset idea; the look is ours.",
+    "Loading screen before the world appears (rsc-client/src/client/loading/LoadingScreen.java, listed only). Category: a loading state that is visible while the world is built."
+  ],
+  "briefs": [
+    {"label": "Tabbed side column", "why": "One column with tabs holds many systems without taking the view away from the player.", "keep": "a tab strip; one panel per tab; a fixed column width", "change": "our own tab icons and colour scheme; a bottom sheet on a 375-wide phone instead of a side column; our own tab order", "ref": "rsc-client/src/client/game/ui/Menu.java and InventoryMenu.java, MagicMenu.java (class and file names read)", "fit": "silhouette at 375 wide: yes as a bottom sheet; signature behaviour: tab switch; signature sound: one click cue; resemblance target 20-30 percent. Rule: recreate as a clearly distinct original, never a copy. Category-level only (restricted donor)."},
+    {"label": "Hill with figures", "why": "A software-rendered overworld with sprite figures on top keeps the scene readable on weak hardware.", "keep": "a sprite entity with its own position, size and layer; a simple ground layer", "change": "our own palette; lighting that follows the slope; figures at our own size and proportions", "ref": "rsc-client/src/client/game/render/SoftwareRenderer.java; rsc-client/src/client/game/scene/SpriteEntity.java", "fit": "silhouette at 375 wide: yes (a figure on a hill); signature behaviour: figure sits on the terrain; signature sound: none read. Rule: recreate as a clearly distinct original, never a copy. Category-level only (restricted donor)."},
+    {"label": "Cue per verb", "why": "Each action has its own short sound, so the player knows what happened without looking.", "keep": "a short cue per verb; a separate failure cue", "change": "our own synthesised cues in one instrument family; a pitch set of our own; longer tails on success", "ref": "rsc-client/res/data/audio/ (filenames only; audio not opened)", "fit": "silhouette: n/a; signature sound: one cue per verb with a failure pair; resemblance target 20-30 percent. Rule: recreate as a clearly distinct original, never a copy. Category-level only (restricted donor)."}
+  ],
+  "not_read": [
+    "rsc-client/res/data/*.xml.gz, Sprites.zip, Landscape.zip, and the 37 .wav files (names and sizes only; no extraction, no decompression)",
+    "icon.png, docs/screenshot.png (not opened)",
+    "rsc-client/libs/*.jar (binary; licences not in repo)",
+    "rsc-client/src/client/** bodies beyond the class-level names used for the briefs (no constants, no code copied)",
+    "Server half (not read; docs/ideas.md line 9 mentions a built-in server as an idea/feature only)",
+    "docs/*.md other than about.md, ideas.md and links.md (names only); docs/versions.md, TODO.md, CONTRIBUTING.md not read",
+    "build.bat and run.bat bodies (build commands only)"
+  ]
+}

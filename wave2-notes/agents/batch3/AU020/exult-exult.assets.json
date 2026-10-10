@@ -1,0 +1,118 @@
+{
+  "donor": "exult-exult",
+  "code_licence": "GNU GPL v2 (COPYING is the GPL v2 text; README.md badge reads GPL v2)",
+  "asset_licence": "no single asset licence. README.md says the user must own the original Ultima VII games for their data, so the game data is not shipped. The shipped data/ and content/ files have only per-folder notes: data/README credits sound effects to one contributor with no terms; data/credits.txt says MIDI tracks were used with permission; docs/art.txt credits custom art to named artists with no terms; content/sifixes says its own code is GPL. Overall: unclear, class C.",
+  "rights_holder_status": "fan engine project (Exult Team, per AUTHORS and credits). The game it needs is named in README.md as Ultima VII (copyright 1993) and is not in this repo (filename search for original DOS data names found none). Shipped replacement art and audio have credited authors but no licence text.",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "replacement UI and font shapes",
+      "path": "data/fonts/*.shp, data/*.shp (for example data/hp_bar.shp, data/checkmark_background.shp, data/sb_backpack.shp, data/sb_food.shp)",
+      "count_hint": "about 484 .shp files across data/ and content/",
+      "licence": "none stated; data/fonts/Readme.txt says these fonts and shapes replace shapes in the original files",
+      "class": "C",
+      "note": "Binary, pixel sizes not read. Font set covers a serif set, small black, tiny black and white, wood-runic, metal-runic and gold-runic families, plus SI-only ophidian variants (data/fonts/Readme.txt). Authorship per file not stated."
+    },
+    {
+      "kind": "custom item and paperdoll art",
+      "path": "data/bg/*.shp (for example data/bg/caddellite_helmet.shp, data/bg/firesword.shp, data/bg/death_scythe.shp) and docs/art.txt",
+      "count_hint": "dozens of shapes; docs/art.txt lists shape numbers, frames and artists per item and NPC",
+      "licence": "none stated; docs/art.txt names artists but gives no terms",
+      "class": "C",
+      "note": "Credited to named artists in docs/art.txt. Visual look not viewed. Class C until each artist's terms are found in the repo or from the artists."
+    },
+    {
+      "kind": "sound effects",
+      "path": "data/bg/intro_*.wav and other .wav files in data/ and content/",
+      "count_hint": "24 .wav files",
+      "licence": "data/README: contributed by one named person; no terms in the file",
+      "class": "C",
+      "note": "File names suggest intro clips (static, monitor, shot, moongate, guardian). Not listened to; durations not measured."
+    },
+    {
+      "kind": "music (MIDI)",
+      "path": "data/marketpl.mid, data/meditown.mid, data/mtgm.mid",
+      "count_hint": "3 .mid files",
+      "licence": "data/credits.txt: the author gave permission to use his MIDI tracks; no terms stated",
+      "class": "C",
+      "note": "Permission only, no licence text in repo. Class C."
+    },
+    {
+      "kind": "game data tables and sprite containers (flex, dat, vga, flc)",
+      "path": "data/si/, data/bg/, data/estudio/new/, data/midisfx.flx, content/*/",
+      "count_hint": "data/ tallies: 118 .shp, 7 .flc, 6 .vga, 5 .dat, 4 .flx, 10 .in; content/ has 366 .shp, 32 .dat, 12 .pal",
+      "licence": "none stated",
+      "class": "C",
+      "note": "Whether each file is original game data or Exult-made is not stated in the repo. Not opened."
+    },
+    {
+      "kind": "text: UI strings, quotes, credits, readmes",
+      "path": "data/exultmsg*.txt, data/quotes.txt, data/credits.txt, content/*/Readme*",
+      "count_hint": "27 .txt in data/; 22 .txt in content/",
+      "licence": "none stated for the text files as a set",
+      "class": "C",
+      "note": "Localised UI strings in several languages (exultmsg_de/es/fr). quotes.txt holds short team in-jokes. Not reproduced here."
+    },
+    {
+      "kind": "patch and demo content",
+      "path": "content/demo/static/, content/bgkeyring/data/, content/sifixes/, content/islefaq/",
+      "count_hint": "see tallies above; many .uc usecode files",
+      "licence": "content/README: publicly available patches and ExultStudio games; content/sifixes/Readme.txt says the SI Fixes code is GPL",
+      "class": "C",
+      "note": "Mixed. Only the README lines were read."
+    },
+    {
+      "kind": "docs images and app icons",
+      "path": "docs/images/*.png, docs/images/*.gif, ios/Media.xcassets/",
+      "count_hint": "24 png, 2 gif, 1 svg in docs/images; 3 png and 2 json in ios assets",
+      "licence": "none stated",
+      "class": "C",
+      "note": "Editor screenshots and app icons. Not opened."
+    }
+  ],
+  "inspiration": [
+    "Font families as material variants: one serif and one tiny set, then the same glyph shapes re-coloured as wood, metal, gold and serpent-theme. For our HUD titles, use one set of our own letterforms and three palettes, each with a dark rim and one bright top-edge highlight.",
+    "Paperdoll layering: equipped items are separate shape layers that follow body frames, so a helmet or cloak swaps without redrawing the figure. For our armour, use one layer per slot with anchor points, and keep each item's palette on its own layer.",
+    "A status-bar icon band: one small pictogram per function (backpack, food, combat, keyring, disk, a jawbone) on a fixed grid. For our HUD, one icon grammar, one lit edge, one pixel grid, and our own function list.",
+    "Retro intro texture: the intro is built from short static bursts, a monitor slap and a shot over quiet gaps (per file names; not listened to). Recreate the idea with our own noise bursts over a low hum and a few tonal stings, with our own sound design.",
+    "Menu and slider art as small pieces: checkmark background, slider, scrollbar and a hp bar as separate small shapes that a UI draws from. For our menus, build a small shared kit of pieces at fixed sizes rather than one large image per screen.",
+    "Localisation as keyed text files: UI strings sit in one file per language with keys, and a short quotes file for the team. The structure is worth copying; the strings are not."
+  ],
+  "briefs": [
+    {
+      "label": "Engraved title font set",
+      "why": "one glyph set in three material looks reads as a carved title on stone, wood or gold; the material does the work, not new letters",
+      "keep": ["one glyph set re-coloured per material", "titles that name a material (wood, metal, gold)", "a serif and a plain sans pair for body and headings"],
+      "change": ["our own letterforms, not runic ones", "faction palettes instead of wood, metal and gold", "a wear or scratch pattern on top of the colour"],
+      "ref": "data/fonts/Readme.txt; data/fonts/1_wood_runic.shp; data/fonts/3_metal_runic.shp; data/fonts/6_gold_runic.shp (not viewed)"
+    },
+    {
+      "label": "Slot-layered armour",
+      "why": "each equipped item is its own layer keyed to the body frame, so the character can change look without a new full sprite",
+      "keep": ["one layer per slot with anchor frames", "items keep their own palette", "frame-indexed variants for facing"],
+      "change": ["our own body proportions", "our own slot names and layer order", "a clear silhouette per armour tier"],
+      "ref": "docs/art.txt (slot list and artists); data/bg/caddellite_helmet.shp (not viewed)"
+    },
+    {
+      "label": "Broken-monitor intro sound",
+      "why": "static bursts over silence make an intro read as a broken screen, and a short shot gives an edge",
+      "keep": ["short noise bursts over a quiet hum", "single stings in the silent gaps", "a sudden hard hit to close a beat"],
+      "change": ["original sound design, not these clips", "a different theme than an old monitor", "our own mix and loudness"],
+      "ref": "data/bg/intro_sb_static1.wav; data/bg/intro_mt_static1.wav (names only, not listened to)"
+    },
+    {
+      "label": "Pictogram status band",
+      "why": "one small icon per function, on one grid, reads at a glance during play",
+      "keep": ["one icon per function", "a fixed small grid", "simple pictogram shapes"],
+      "change": ["our own pictogram language", "larger or animated icons for key stats", "our own function list"],
+      "ref": "data/sb_backpack.shp; data/sb_food.shp; data/hp_bar.shp (not viewed)"
+    }
+  ],
+  "not_read": [
+    "Binary .shp, .flx, .dat, .vga, .wav and .mid contents (sizes, palettes and frames not read; file names only)",
+    "docs/images and ios/Media.xcassets images (not opened)",
+    "data/credits.txt beyond the lines cited",
+    "content/*/ subfolders other than the README lines cited",
+    "Source files under src/ and tools/ (code, not assets)"
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "donor": "flareteam-flare-engine",
+  "code_licence": "GNU GPL v3 or later (COPYING is GPL v3; README.engine.md says source is GPL v3 and later versions are permitted)",
+  "asset_licence": "default mod: README.engine.md says it is released under GNU GPL v3 and CC-BY-SA 3.0, with no per-file split. Liberation Sans is SIL OFL 1.1. GNU Unifont is GPL v2 with a font-embedding exception. Art credits in credits_engine.txt name artists and the OpenGameArt community. Dual statement with no per-file split: class B, but treat as C if a strict reading is needed.",
+  "rights_holder_status": "community open-source project. README.engine.md: most of Flare is copyright 2010-2013 Clint Bellanger; contributors retain copyrights to their own contributions. Not a commercial game. No clean-room or leak claim in the repo.",
+  "best_class": "B",
+  "asset_groups": [
+    {
+      "kind": "UI kit art (menus, buttons, tabs, compass, dev console)",
+      "path": "mods/default/images/menus/*.png and mods/default/images/menus/buttons/*.png",
+      "count_hint": "28 png under mods/default/images",
+      "licence": "dual GPL v3 and CC-BY-SA 3.0 (README.engine.md), no per-file split",
+      "class": "B (ambiguous split; treat as C if strict)",
+      "note": "Sizes from PNG headers: button_default.png 142x112, slider_default.png 209x72, listbox_default.png 145x84, tab_active.png 128x32, compass_iso.png 24x24, dev_console.png 640x176. Nine-slice style pieces (button, listbox, slider, scrollbar, checkbox)."
+    },
+    {
+      "kind": "logo and credits badges",
+      "path": "mods/default/images/logo/icon.png, mods/default/images/credits/*.png (flare_default, oga, tiled)",
+      "count_hint": "4 png",
+      "licence": "not stated for the badges; they are third-party logos or project marks",
+      "class": "C",
+      "note": "oga.png and tiled.png look like third-party project marks. Not licensed in the repo. Do not reuse as art."
+    },
+    {
+      "kind": "fonts",
+      "path": "mods/default/fonts/LiberationSans-Regular.ttf, mods/default/fonts/unifont-10.0.06.ttf",
+      "count_hint": "2 ttf",
+      "licence": "Liberation Sans: SIL OFL 1.1 (README.engine.md). GNU Unifont: GPL v2 with font-embedding exception.",
+      "class": "B",
+      "note": "Open licences with conditions (OFL notice; GPL v2 for Unifont). Share as stated in the licence text."
+    },
+    {
+      "kind": "translations and game text",
+      "path": "mods/default/languages/*.po, mods/default/cutscenes/*.txt, mods/default/menus/*.txt, mods/default/engine/*.txt",
+      "count_hint": "64 .po in the repo; 45 .txt files in the repo",
+      "licence": "dual GPL v3 and CC-BY-SA 3.0 as above",
+      "class": "B (ambiguous split; treat as C if strict)",
+      "note": "Config-style text: stat names, damage types, combat text colours, font colour table. Not reproduced."
+    },
+    {
+      "kind": "music and sound",
+      "path": "none in this repo",
+      "count_hint": "0 .ogg, .wav or .mp3 files found in this repo",
+      "licence": "n/a",
+      "class": "D",
+      "note": "Audio lives in the game repo (flareteam-flare-game). Its licence is covered in that donor's file."
+    }
+  ],
+  "inspiration": [
+    "A nine-slice UI kit: button, listbox, slider, scrollbar, checkbox and tab pieces are small fixed-size pieces that stretch to fit. Recreate with our own corner ornament and bevel: one frame grammar, fixed corner sizes, and pieces that scale to any screen.",
+    "Active and inactive tab pair: each tab has two small images for the selected and idle states, so state reads by swapping one piece. A cheap, clear pattern for our menu tabs.",
+    "Damage colour language: combat text and the font colour table are defined in plain text files, so each damage type has one colour across all floating numbers. Copy the idea with our own damage-type set and palette.",
+    "Two compass projections: one compass for orthogonal maps and one for isometric maps (compass_ortho and compass_iso). For our camera, a direction marker that matches the camera projection, drawn in our style.",
+    "Text-driven menus and cutscenes: menus and intro or credits are text definitions that point at images and timings, so layout changes do not need code. Worth copying for our menu and cutscene data."
+  ],
+  "briefs": [
+    {
+      "label": "Nine-slice button frame",
+      "why": "one frame that stretches to any label length keeps every button in a menu consistent",
+      "keep": ["fixed corner pieces", "a bright bevel on the top edge", "one label plate on a flat field"],
+      "change": ["our own corner ornament", "angular corners instead of rounded", "a different palette per faction"],
+      "ref": "mods/default/images/menus/buttons/button_default.png (not viewed)"
+    },
+    {
+      "label": "Two-projection compass",
+      "why": "a small direction marker that matches the camera projection reads at a glance",
+      "keep": ["one arrow per projection", "a tinted neutral dial", "a small fixed read size"],
+      "change": ["a marker tied to our camera angle", "a more in-world object (a relic or rune)", "our own palette"],
+      "ref": "mods/default/images/menus/compass_ortho.png; mods/default/images/menus/compass_iso.png (not viewed)"
+    },
+    {
+      "label": "Damage-coloured floating numbers",
+      "why": "one colour per damage type lets a player read a fight without reading numbers",
+      "keep": ["one colour per damage type", "a short float-up", "a single colour table in one file"],
+      "change": ["our own damage-type set", "an outline style instead of plain fill", "emphasis for critical hits by size, not only colour"],
+      "ref": "mods/default/engine/combat_text.txt; mods/default/engine/font_colors.txt"
+    }
+  ],
+  "not_read": [
+    "Contents of mods/default/languages/*.po (structure only)",
+    "Images viewed by eye (none: sizes read from PNG headers only)",
+    "mods/gcw0_defaults settings files",
+    "Flare engine src/ code (code, not assets)",
+    "Android and iOS project folders (not opened)"
+  ]
+}

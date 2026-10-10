@@ -15,7 +15,7 @@ function armourApplies(e: Effect): boolean {
   return true;
 }
 
-// Mitigation from armour (Unit.cpp 2287-2299). Armour penetration (2236-2270) is not modelled.
+// Mitigation from armour (Unit.cpp 2287-2299). Armour penetration (not read) is not modelled.
 function armourReduce(damage: number, armour: number, attackerLevel: number): number {
   const lvl = attackerLevel > 59 ? attackerLevel + 4.5 * (attackerLevel - 59) : attackerLevel;
   let f = (0.1 * Math.max(armour, 0)) / (8.5 * lvl + 40);
@@ -36,7 +36,6 @@ function finisherCrit(baseCrit: number, targetBleeding: boolean, isFinisherSpell
 }
 
 // Damage taken multiplier from mechanic auras on the target (Unit.cpp 10144-10155).
-// Shred/Maul-style spells count as bleed for this check (10147-10149).
 interface MechanicAura { mechanic: string; percent: number; }
 function mechanicMultiplier(auras: MechanicAura[], spellMechanics: Set<string>): number {
   let m = 1;

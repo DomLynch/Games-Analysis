@@ -160,11 +160,9 @@ Typecheck: `work/cubyz-particles.ts` plus `export {}`, copied to `/tmp/vf005-cub
 - Reuse tag: rewrite-from-idea (GPL-3.0; clean-room only)
 - Brief rule served: 1 (one combat core, two clients: the effect pool is client state and the engine owns the hit); rules 7-9 n/a
 
-Decision (proposed): adapt. The data shape (per-effect count, speed and life ranges, drag, density, collides flag), the hard capacity with drop, and the swap-remove pool are worth taking. The donor's way of triggering effects (a server packet that says "spawn this emitter at this position") is not: in Frankendom the client should derive sparks from the server-verified hit event, not from a separate effects packet.
-
-Acceptance: On each landed hit a player sees a short burst of sparks at the contact point that fades within the effect's life. A client test asserts the pool never exceeds its cap in a three-attacker fight and that every mote is removed once its life is spent.
-
-Best transferable idea: Describe each hit-spark or dust effect as a small data record (count, speed and life ranges, drag, density, collides) and run all of them in one pool with a hard cap that drops a new burst when full and removes dead entries by swapping in the last one.
+Best transferable idea: Describe each hit-spark or dust effect as a small data record (count, speed and life ranges, drag, density, collides) and run them in one pool with a hard cap that drops new bursts when full and removes dead entries by swapping in the last one.
+Decision (proposed): adapt. Take the effect-record shape, the hard cap with drop, and the swap-remove pool; reject the donor's server packet that spawns an emitter, because Frankendom derives sparks from the server-verified hit event on the client.
+Acceptance: On each landed hit a player sees a short spark burst at the contact point that fades within the effect's life; a client test asserts the pool never exceeds its cap in a three-attacker fight and every mote is removed once its life is spent.
 
 ## 6. Gaps and risks
 

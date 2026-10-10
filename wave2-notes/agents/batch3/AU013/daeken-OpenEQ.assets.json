@@ -1,0 +1,48 @@
+{
+  "donor": "daeken-OpenEQ",
+  "code_licence": "MIT OR Apache-2.0 (workspace Cargo.toml line 14 and license.workspace in each crate). No LICENSE or COPYING file in the tree.",
+  "asset_licence": "None stated. README.md line 331 says no original client assets are distributed. No asset licence file exists in the tree.",
+  "rights_holder_status": "Unclear, original-data dependent. The client reads the user's own EverQuest install (README.md line 4). Docs and a native sample file are derived from reverse engineering of the original client DLL (crates/openeq-assets/src/environment/native_color_map_samples.txt line 1). No copyright holder for the game is named in the repo files.",
+  "best_class": "D",
+  "halves_read": "Client half read (crates/openeq*, Rust, Bevy and wgpu). Server half: NOT READ. No EQEmu server source is in the listing; only EQEmu server patches (tools/eqemu-patches/*.patch) are present, and those were not read beyond their names. The client speaks the EQEmu RoF2 protocol. The data pack half (the user's own EverQuest install) is not in the box.",
+  "data_tables": [
+    {"path": "crates/openeq-assets/data/peq-zone-environment.txt", "holds": "per-zone fog, clip, sky and time-band values (68 KB, header read)", "class": "C"},
+    {"path": "crates/openeq-assets/src/environment/native_color_map_samples.txt", "holds": "sampled sky colour-set checksums and samples (header read)", "class": "C"},
+    {"path": "(names and looks)", "holds": "No item, monster, NPC or zone name or look table is shipped. Those come from the user's own install and the server.", "class": "D"}
+  ],
+  "asset_groups": [
+    {"kind": "shipped game art, models, audio, maps", "path": "(none in tree)", "count_hint": "0 png/dds/wav/glb/mid/ttf files found by extension scan", "licence": "n/a", "class": "D", "note": "No original client assets are shipped (README.md line 331)."},
+    {"kind": "WGSL shaders (code, not art)", "path": "crates/openeq-render/src/shaders/*.wgsl", "count_hint": "14 files", "licence": "workspace MIT OR Apache-2.0 (code)", "class": "A", "note": "Shader source only. Reusable under the code licence the repo states."},
+    {"kind": "zone atmosphere table (text data)", "path": "crates/openeq-assets/data/peq-zone-environment.txt", "count_hint": "1 file, 68107 bytes", "licence": "not stated in file", "class": "C", "note": "Header says it is a snapshot of a third-party EQEmu database dump (line 2). No licence line. Treat as unclear. Describe the schema only."},
+    {"kind": "sky colour sample table (text data)", "path": "crates/openeq-assets/src/environment/native_color_map_samples.txt", "count_hint": "1 file, 9179 bytes", "licence": "not stated; header says derived from original EQGraphicsDX9.dll", "class": "C", "note": "Derived from the original client binary. Checksums and sampled values, no texture bytes (line 4). Do not copy values."},
+    {"kind": "binary witness/control blobs", "path": "crates/openeq-render/src/wld_particles/native_witness.bin (37788 bytes), native_controls.bin (10088 bytes)", "count_hint": "2 files", "licence": "not stated", "class": "C", "note": "Not opened (binary rule). Origin unknown beyond the name. Treat as unclear."},
+    {"kind": "material and texture names referenced in docs", "path": "docs/EQG_MATERIAL_SURVEY.md, docs/EQG_WATERFALL_RENDERING.md, docs/EQG_LAVA_RENDERING.md", "count_hint": "names only, no image bytes", "licence": "n/a", "class": "D", "note": "Filenames of original .dds textures are cited as evidence. The textures are not in this tree."},
+    {"kind": "server patches and test probes (code)", "path": "tools/eqemu-patches/*.patch (6), tools/eqemu-tests/cursor_persistence_probe.cpp, tools/audit_zones.py", "count_hint": "8 files", "licence": "workspace MIT OR Apache-2.0 (code)", "class": "A", "note": "Code, not assets. The patches target EQEmu server code; that project's licence is not in this tree."}
+  ],
+  "inspiration": [
+    "Two-layer lava surface: one atlas is sampled twice with two different scroll offsets and blended, so molten rock moves without flipbook frames (crates/openeq-render/src/shaders/lava.wgsl, line 15). Recreate with our own lava texture pair and our own scroll speeds.",
+    "Waterfall curtains: colour and opacity scroll independently from one diffuse texture, cut out at a low alpha threshold, drawn with alpha blend and depth test but no depth write (docs/EQG_WATERFALL_RENDERING.md). A model for falling sheets of water or magic curtains.",
+    "Detail tint layer: a second colour texture on its own UV scale is multiplied over the base terrain colour (docs/EQG_TER_LAYERED_COLOR.md). Recreate as a cheap per-biome grime or moss layer on our own UVs.",
+    "Fixture-only animation: a hanging lamp rotates on one axis while its mount stays fixed, on a short authored loop (docs/WLD_LAMP_ANIMATION.md). Useful for chandeliers, signs and hanging lanterns.",
+    "Spell effects anchor to hand sockets on the skeleton. In first person, where the body is not drawn, they use camera-relative hand positions (docs/SPELL_EFFECT_RENDERING.md). A clear rule for casting visuals in our own rigs.",
+    "Ambient light from a time-of-day colour table sampled at fixed ticks, with the sky's reserved colour column feeding environment light (docs/SKY_LIGHT_COLOR_INPUTS.md). Recreate as our own day-cycle ramp per zone.",
+    "Per-zone fog and clip data kept in a flat table with separate fog sets per time band (crates/openeq-assets/data/peq-zone-environment.txt, header). A good data layout for zone mood in our own content.",
+    "XML-defined UI: buttons and gauges use state art (normal, pressed, hovered, disabled) and gauge fills are clipped to a fraction (crates/openeq-ui/README.md). Useful for our HUD bars and inventory frames."
+  ],
+  "briefs": [
+    {"label": "Molten pool", "why": "A glowing surface that reads as hot from far away; the motion comes from two slow scrolls, not frame animation.", "keep": "two offset layers; bright seams; scroll speeds that differ", "change": "a cracked crust in our own pattern; a cooler violet tint; rim glow only on the edge", "ref": "crates/openeq-render/src/shaders/lava.wgsl", "fit": "silhouette at 375 wide: yes (a flat pool with a bright rim); signature behaviour: two-layer scroll; signature sound: none in donor; resemblance target 20-30 percent. Rule: recreate as a clearly distinct original, never a copy."},
+    {"label": "Falling sheet", "why": "A waterfall reads as moving from one textured curtain with alpha scrolling, so it is cheap and still reads well at distance.", "keep": "independent colour and opacity scroll; alpha cutoff; no depth write", "change": "our own sheet shape (wider at the top, frayed bottom); a foam strip at the base; a different noise pattern", "ref": "docs/EQG_WATERFALL_RENDERING.md", "fit": "silhouette at 375 wide: yes (tall vertical band); signature behaviour: scroll; signature sound: none in donor. Rule: recreate as a clearly distinct original, never a copy."},
+    {"label": "Hanging lantern", "why": "A small moving light on a still mount gives a room life without a physics cost.", "keep": "one-axis rotation on the head only; fixed mount; short loop", "change": "swing on a chain instead of a spin; a warm ember colour; a brass cage ornament", "ref": "docs/WLD_LAMP_ANIMATION.md", "fit": "silhouette at 375 wide: small, weak; signature behaviour: swing; signature sound: none in donor. Rule: recreate as a clearly distinct original, never a copy."},
+    {"label": "Casting hand glow", "why": "Spell visuals stick to the hands, and first person gets its own camera-relative anchor, so casting always reads.", "keep": "socket anchoring; camera-relative fallback for first person", "change": "our own socket names and rune shapes; a colour per school; a motion arc that curls up", "ref": "docs/SPELL_EFFECT_RENDERING.md", "fit": "silhouette at 375 wide: hand-sized, weak; signature behaviour: anchored cast; signature sound: none in donor. Rule: recreate as a clearly distinct original, never a copy."}
+  ],
+  "not_read": [
+    "crates/openeq-render/src/wld_particles/native_witness.bin and native_controls.bin (binary, not opened)",
+    "crates/openeq-assets/data/peq-zone-environment.txt body (only header read)",
+    "crates/openeq-assets/src/environment/native_color_map_samples.txt body (only header read)",
+    "The other docs/*.md files (165 .md files repo-wide; only titles and first lines of the cited ones were read)",
+    "crates/openeq-render/src/shaders/*.wgsl other than lava.wgsl (not read)",
+    "Cargo.lock, tools/eqemu-patches body, tools/audit_zones.py body (not read)",
+    "Any licence text for third-party crates (dependency licences are not in the tree)",
+    "The server half (not in the box) and the data-pack half (user's own install, not in the box)"
+  ]
+}

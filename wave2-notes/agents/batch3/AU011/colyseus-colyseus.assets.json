@@ -1,0 +1,32 @@
+{
+  "donor": "colyseus-colyseus",
+  "code_licence": "MIT (LICENSE: Copyright (c) 2015-2026 Endel Dreyer; README: MIT licensed, even for commercial games)",
+  "asset_licence": "No separate asset licence; repo MIT is the only licence file. One third-party exception: geoip test fixture mmdb under Apache-2.0 per NOTICE.md (test-only, excluded from published builds)",
+  "rights_holder_status": "open-source networking framework; copyright line Endel Dreyer; logo ownership not stated",
+  "best_class": "D",
+  "asset_groups": [
+    {"kind": "brand logo", "path": "media/", "count_hint": "3 files: logo.svg 7.9 KB, logo-cloud.svg 9.9 KB, header.png 36 KB", "licence": "none stated", "class": "C", "note": "project brand marks; no licence line; do not reuse as our logo"},
+    {"kind": "icon", "path": "packages/playground/public/ and packages/playground/src/favicon.svg", "count_hint": "4 files", "licence": "none stated", "class": "C", "note": "dashboard favicon and 192/512 logos; origin not stated"},
+    {"kind": "third-party logo", "path": "packages/sdk/media/browserstack-logo.png", "count_hint": "1 file", "licence": "none stated", "class": "C", "note": "third-party mark inside repo; no licence line"},
+    {"kind": "screenshot", "path": "packages/loadtest/screenshot.png", "count_hint": "1 file", "licence": "none stated", "class": "C", "note": "not opened"},
+    {"kind": "test fixture data", "path": "packages/room-plugins/geoip/test/fixtures/GeoLite2-Country-Test.mmdb", "count_hint": "1 binary", "licence": "Apache-2.0 per NOTICE.md", "class": "A", "note": "test-only; keep Apache notice if reused; not game content; not opened"},
+    {"kind": "text docs", "path": "README.md, PORTING.md, PREDICTION.md, BACKERS.md, AGENTS.md, CLAUDE.md, package READMEs", "count_hint": "44 .md/.txt files in tree", "licence": "MIT (repo-level)", "class": "A", "note": "prose only; no game text"}
+  ],
+  "inspiration": [
+    "PREDICTION.md states the feature promise in plain words, then puts the server half and the client half side by side with the key rules listed first. Copy the doc layout for our own netcode or feel notes.",
+    "Each mechanic in that guide is tied to a tiny runnable reference. The references are named but not present in this tree. Pattern to copy: one small playable proof per mechanic.",
+    "The one-line hit-feel promise (what you see is what you hit) is a crisp design target to reuse as a mood line in our combat-feel doc.",
+    "The playground dashboard is an operator tool with its own favicon and logos. Not a game UI; layout not inspected."
+  ],
+  "briefs": [],
+  "not_read": [
+    "PREDICTION.md body beyond the first ~30 lines",
+    "PORTING.md, BACKERS.md, AGENTS.md, CLAUDE.md, .all-contributorsrc",
+    "media/*.svg and media/header.png (sizes from listing only, not viewed)",
+    "packages/loadtest/screenshot.png (not viewed)",
+    "packages/playground/public/* and src/favicon.svg (not viewed)",
+    "packages/room-plugins/geoip GeoLite2-Country-Test.mmdb (binary, not opened)",
+    "packages/*/src source code (out of scope)",
+    "13 package.json licence fields checked by grep only"
+  ]
+}

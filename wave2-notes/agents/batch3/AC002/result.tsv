@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+EQEmu	anticheat-validation	P	STRONG	full	zone/cheat_manager.cpp:233-316 - client-reported position checked against server run speed over a windowed average, with a log-only tier and a hard tier; exemptions judged before they are set (note: out/anticheat-validation/EQEmu.deep.md)
+LostCityRS-Engine-TS	anticheat-validation	P	STRONG	full	src/engine/entity/NetworkPlayer.ts:55-153 and MoveClickHandler.ts:11-57 and PathingEntity.ts:206-252 - per-tick intake budget by category with leftover kept for next tick, move-click bounds, and a collision-checked single step per tick (note: out/anticheat-validation/LostCityRS-Engine-TS.deep.md)
+ModernUO	anticheat-validation	P	STRONG	full	Projects/Server/Network/MovementThrottle.cs:119-235 and 781-1021 - credit-and-queue movement clock plus rolling cost-over-interval ratio and sustained counter; the verdict notifies staff only (note: out/anticheat-validation/ModernUO.deep.md)

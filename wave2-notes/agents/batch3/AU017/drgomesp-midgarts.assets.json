@@ -1,0 +1,32 @@
+{
+ "donor": "drgomesp-midgarts",
+ "code_licence": "Conflicting. LICENSE file is the GNU GPL v3 full text with no copyright line. README.md line 165 says 'This project is licensed under the MIT License'. Class C on the conflict.",
+ "asset_licence": "No asset licence stated in the repo. assets/fonts/FreeSans.ttf name-table text says use is granted subject to the GNU General Public License (binary line 2283). The GRF fixtures state nothing.",
+ "rights_holder_status": "uses original game data: README line 106 says the client needs a GRF named by GRF_FILE_PATH. The repo does not name the game owner, so the owner is unknown.",
+ "best_class": "B",
+ "asset_groups": [
+  {"kind": "font (TrueType)", "path": "assets/fonts/FreeSans.ttf", "count_hint": "1 file, 568,896 bytes", "licence": "font name-table text: use granted subject to GNU General Public License", "class": "B", "note": "GPL condition as stated in the font metadata. The same font is embedded as generated bindata in examples/3d/bindata.go (header lists assets/FreeSans.ttf). Only the name-table line was read; the full font licence text was not checked."},
+  {"kind": "game data archive test fixtures (GRF)", "path": "assets/grf/*.grf", "count_hint": "5 files: custom.grf 936,658 B; with-files.grf 655 B; not-grf.grf 57 B; incorrect-version.grf 46 B; corrupted.grf 0 B", "licence": "none stated", "class": "C", "note": "Header of custom.grf starts with the 'Master of Magic' GRF signature (od, first 16 bytes). Used as parser test fixtures (grf_test.go). Contents not opened; origin unknown."},
+  {"kind": "game sprites, actions and maps (not in repo)", "path": "user supplied via GRF_FILE_PATH", "count_hint": "0 in repo", "licence": "not in repo", "class": "D", "note": "Client code asks the GRF for .act and .spr pairs and for the map entry data/izlude.gat (grf_file.go line 129; sdlclient main.go line 107). The box copy carries no sprites or maps."}
+ ],
+ "inspiration": [
+  "Paper-doll character: four stacked attachment layers (shadow, body, head, shield) with a fixed draw order. Worth recreating as our own layered sprite with a ground shadow under the body and a swappable off-hand layer. Reference: internal/character/attachments.go.",
+  "Eight facing directions in a fixed table, with a remap that lets a set of drawn facings cover all eight by mirroring. Recreate the remap idea with our own facing count (six, for example) rather than copying the order. Reference: internal/character/directiontype/statetype.go.",
+  "Action blocks: each action owns a block of eight direction rows in one atlas (idle, walk, attack and so on start at fixed offsets). Recreate as our own atlas layout with per-action frame counts. Reference: internal/character/actionindex/actionindex.go.",
+  "Palette-indexed sprites packed with run-length rows, which gives a crisp retro edge and small files. Recreate with our own 16-colour ramps per character class, not the donor's format. Reference: internal/fileformat/spr/spr_file.go.",
+  "Hard-edged sprite cut: fragments below alpha 0.1 are discarded, then the texture is multiplied by a per-vertex tint. Use the tint as a hit flash or faction colour, implemented as our own shader. Reference: internal/system/opengl/shaders/sprite.frag.",
+  "Sprite-pair data model: each action file is matched to its sprite sheet by name, so a character is a manifest of pairs rather than hard-coded art. Worth a similar manifest for our own asset packs. Reference: internal/fileformat/grf/grf_file.go."
+ ],
+ "briefs": [
+  {"label": "Paper-doll hero", "why": "Dom rule: recreate as a clearly distinct original, never a copy. Silhouette reads at 375 wide when the head layer and off-hand layer add two clear shapes. Signature behaviour: a one-frame hit flash by tint. Signature effect: a soft shadow layer under the body. Target 20-30 percent resemblance to the donor's layered idea.", "keep": ["stacked layers with a ground shadow", "swappable off-hand layer", "tint-based hit flash"], "change": ["a shoulder mantle as the top layer instead of a head layer", "palette-ramp tints instead of multiply", "six facings instead of eight"], "ref": "internal/character/attachments.go"},
+  {"label": "Eight-facing action atlas", "why": "Dom rule: recreate as a clearly distinct original, never a copy. Signature behaviour: a direction-locked walk cycle, readable from the south view. Signature sound: none in the repo (not read). Target 20-30 percent resemblance to the donor's block layout.", "keep": ["one block per action", "mirror remap so fewer drawn sets cover all facings", "shared frame count per action"], "change": ["different row order", "six facings", "per-action frame counts instead of a fixed eight"], "ref": "internal/character/directiontype/statetype.go and internal/character/actionindex/actionindex.go"},
+  {"label": "Packed indexed sprite", "why": "Dom rule: recreate as a clearly distinct original, never a copy. Crisp retro edges and small files. Signature effect: palette swap for variants. Target 20-30 percent resemblance to the donor's packed format idea.", "keep": ["8-bit indexed sprites", "run-length packed rows", "hard alpha cut"], "change": ["16-colour ramps per character class", "our own packing format", "non-square cells"], "ref": "internal/fileformat/spr/spr_file.go"}
+ ],
+ "not_read": [
+  "The five GRF fixture contents (custom.grf etc.) were not opened beyond the header of custom.grf.",
+  "FreeSans.ttf glyph data and the full font licence text (only the name-table line was read).",
+  "examples/3d/bindata.go body (only the header lines were read).",
+  "cmd/ programs, most of internal/ and pkg/ Go code, go.mod and go.sum.",
+  "Shader sources other than sprite.frag and box.frag (not opened)."
+ ]
+}

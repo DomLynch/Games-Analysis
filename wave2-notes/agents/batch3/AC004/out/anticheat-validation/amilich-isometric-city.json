@@ -1,0 +1,73 @@
+{
+ "game": "amilich-isometric-city",
+ "category": "anticheat-validation",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/amilich-isometric-city/src/context/GameContext.tsx",
+ "licence": "MIT (LICENSE: MIT License, Copyright (c) 2025 amilich)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/intake.ts",
+ "parity_row": 5,
+ "pattern_tags": [
+  "clamp-and-report",
+  "new:one-rule-set-both-paths",
+  "new:full-state-refused"
+ ],
+ "data_fields": [
+  {
+   "name": "tax_rate_min",
+   "donor_constant": "0",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/context/GameContext.tsx:849"
+  },
+  {
+   "name": "tax_rate_max",
+   "donor_constant": "100",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/context/GameContext.tsx:849"
+  },
+  {
+   "name": "budget_funding_max",
+   "donor_constant": "100 (min 0)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/context/GameContext.tsx:861"
+  },
+  {
+   "name": "place_cost",
+   "donor_constant": "TOOL_INFO[tool].cost (not read in detail)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/context/GameContext.tsx:887"
+  },
+  {
+   "name": "db_save_throttle",
+   "donor_constant": "3000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "src/lib/multiplayer/supabaseProvider.ts:31"
+  },
+  {
+   "name": "state_push_throttle",
+   "donor_constant": "2000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "src/hooks/useMultiplayerSync.ts:275"
+  },
+  {
+   "name": "city_save_size_cap",
+   "donor_constant": "20 * 1024 * 1024 bytes",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/lib/multiplayer/database.ts:49"
+  }
+ ],
+ "best_idea": "Run every client intent, local or remote, through one rule set: bounds by lookup, affordability on the receiver's ledger, no-op refusals, clamps on percentage settings, and whole-state messages refused.",
+ "decision": "adapt",
+ "decision_why": "Take the single rule set and run it only on the server, where the one ledger lives. Reject the peer broadcast and the first-state-wins sync, because Frankendom's server holds state and clients never overwrite it.",
+ "decision_status": "proposed",
+ "acceptance": "A server test sends a place intent outside the grid and one the player cannot afford; both are refused with the world unchanged. A tax-rate intent of 250 is stored as 100. A fullState intent is refused and logged."
+}

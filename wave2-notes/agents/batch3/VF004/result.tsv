@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+OpenRCT2-OpenRCT2	vfx-blood-finishers	P	STRONG	full	src/openrct2/entity/Particle.cpp:59-148 and Vehicle.Crash.cpp:129-133,409-412,474-481,508-516: crash debris chips with random launch, gravity, drag, one bounce and a water splash; the donor has no blood or gore code.
+OpenTTD-OpenTTD	vfx-blood-finishers	P	STRONG	full	src/effectvehicle.cpp:342-470 and 485-539: bubble effect is a beat script with end codes (remove, chance or height branch, one event); the donor has no blood or finisher code, and its smoke and spark effects are plain sprite timers.
+OpenXcom-OpenXcom	vfx-blood-finishers	P	STRONG	full	src/Savegame/BattleUnit.cpp:1096-1213, 1548-1571, 1686-1696, 2350-2366, 3132, 3148: per-body-part fatal wounds from hits that get through armour, a per-round bleed, accuracy and recovery penalties; the hint file src/Battlescape/Explosion.cpp:24-61 is only a frame timer.

@@ -1,0 +1,45 @@
+{
+  "donor": "Doddler-RagnarokRebuildTcp",
+  "code_licence": "custom license.txt: free to use, fork and modify, but not for commercial use (includes servers or services that take donations or payments for in-game rewards); credit requested but not required (license.txt:1, :5)",
+  "asset_licence": "no asset licence stated for project art; README.md:5 says the repo has no Ragnarok Online assets; README.md:43 says contributed assets are granted to the project; README.md:47 asks no AI art; 3rdParty LeanTween and Color picker are MIT (per package file)",
+  "rights_holder_status": "fan project for a Ragnarok Online-like server and client (README.md:3); uses original game data from the user's own data.grf (README.md:18), proprietary-origin; license.txt:3 names Ragnarok Online and Gravity Entertainment IP as not covered; origin of project art not stated",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "project textures, UI, icons", "path": "RebuildClient/Assets/Textures (incl. UI/, CustomIcons/, Explosion/, Particles/)", "count_hint": "750 files incl. .meta (about 206 MB)", "licence": "none stated", "class": "C", "note": "provenance not stated; some icon names look like RO skill/item names (CustomIcons/Skills/al_teleport2.bmp); human check"},
+    {"kind": "models", "path": "RebuildClient/Assets/Models/fbx", "count_hint": "30 files", "licence": "none stated", "class": "C", "note": "guild flag and empelium FBX; provenance not stated"},
+    {"kind": "effects (OGG and PNG)", "path": "RebuildClient/Assets/Effects", "count_hint": "305 files (2 OGG)", "licence": "none stated", "class": "C", "note": "puff.ogg, puff2.ogg; provenance not stated"},
+    {"kind": "item, card and job data text", "path": "RebuildClient/Assets/Data/*.txt", "count_hint": "3 files, about 1450 lines", "licence": "none stated", "class": "C", "note": "RO-style identifiers; text only"},
+    {"kind": "third-party MIT packages", "path": "RebuildClient/Assets/3rdParty/LeanTween, 3rdParty/Color picker", "count_hint": "2 packages", "licence": "MIT (LeanTween License.txt; Color picker LICENSE)", "class": "A", "note": "code packages; keep notice; not art"},
+    {"kind": "other third-party assets (TextMesh Pro fonts etc.)", "path": "RebuildClient/Assets/3rdParty", "count_hint": "about 37 MB", "licence": "not checked", "class": "C", "note": "not read"},
+    {"kind": "unity scenes, prefabs, materials", "path": "RebuildClient/Assets/Scenes, Prefabs, Materials", "count_hint": "7 scenes, 93 prefabs", "licence": "none stated", "class": "C", "note": "Unity YAML; depends on Textures"}
+  ],
+  "inspiration": [
+    "Frame-strip effects with timing in the file name (Textures/Explosion/frame_01_delay-0.1s.png): timing is visible to artists.",
+    "Effect atlas imported by a menu command (README.md:30): one packed sheet for many small effects.",
+    "Casting circle with rising motes (Textures/CastCircle.mat, Casting.mat, Firefly.mat): a channel read without a long animation.",
+    "Modular window frame kit with transparent and no-bottom variants and corner and bottom handles (Textures/UI).",
+    "Rising damage numbers kept in a FlyingText data folder (RebuildClient/Assets/Data/FlyingText).",
+    "Card-to-art list in plain text (Data/cardillustrations.txt): art swaps without code change.",
+    "Custom content kept in its own ID band starting at 6000 (README.md:35), away from imported content.",
+    "Minimaps generated after the lighting bake (README.md:24): an automated build step."
+  ],
+  "briefs": [
+    {"label": "Ember rune ring (own label)", "why": "a casting circle with motes rising reads as channelling without a long animation", "keep": "ring that brightens over the cast; motes lifting from it", "change": "our own rune language; cooler colour; motes that orbit before they rise", "ref": "RebuildClient/Assets/Textures/CastCircle.mat, Casting.mat, Firefly.mat"},
+    {"label": "Frame-strip burst with timing in name (own label)", "why": "a short burst that stays readable at small size, timing visible to artists", "keep": "per-frame delay in file name; short strip", "change": "our own shard-fan burst instead of radial; two-tone palette", "ref": "RebuildClient/Assets/Textures/Explosion/frame_01_delay-0.1s.png"},
+    {"label": "Modular window frame kit (own label)", "why": "corner, bottom and transparent variants let one frame style cover many windows", "keep": "transparent and no-bottom variants; corner and bottom handles", "change": "our own bevel and rivet ornament; different corner radius; our own palette", "ref": "RebuildClient/Assets/Textures/UI/basewin_bg2-transparent-nobottom.png; corner_handle.psd"},
+    {"label": "Rising damage number (own label)", "why": "numbers that arc up and fade read clearly in combat", "keep": "short arc and fade; colour by damage type", "change": "our own font and arc; weight change on crits", "ref": "RebuildClient/Assets/Data/FlyingText"},
+    {"label": "Placeholder creature slot (own label)", "why": "a creature with no sprite should still read; avoids the default sprite trap", "keep": "reserved ID band for custom content", "change": "our own placeholder silhouette per creature type", "ref": "README.md:35"}
+  ],
+  "not_read": [
+    "license.txt beyond lines 1-5 (file is five lines)",
+    "3rdParty packages other than LeanTween and Color picker (TextMesh Pro fonts, Lidgren, Websocket, BakeManager, and others)",
+    "Textures and UI image contents (names and counts only; no image opened)",
+    "Models/fbx FBX contents and Effects PNG contents (names only)",
+    "Data/cardillustrations.txt and SharedItemIcons.txt contents (line counts and one line each only)",
+    "Scenes and prefab YAML contents",
+    "RoRebuildServer/ServerData and Monsters.csv (named only)",
+    "Other/RoWikiGenerator pages and xlsx spreadsheets (listed only)",
+    "RoServerScript grammar and Scripts/ C# (not read for asset content)",
+    "Docs/MINIMAL_DEVELOPMENT.md beyond the first lines"
+  ]
+}

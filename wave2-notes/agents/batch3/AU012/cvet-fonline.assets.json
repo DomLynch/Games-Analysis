@@ -1,0 +1,140 @@
+{
+  "donor": "cvet-fonline",
+  "code_licence": "MIT (LICENSE; Copyright (c) 2006 - 2026, Anton Tsvetinskiy aka cvet; README line 155 'License: MIT')",
+  "asset_licence": "Examples/ContentShowcase assets: CC0-1.0 per ASSET_LICENSE.md line 3 and assets/provenance.json (13 entries, all CC0-1.0, source project-original). Engine Resources/Core and Resources/Embedded art, fonts, Docs screenshots and ContentShowcase captures: no separate asset licence line was found; the repo MIT licence is the only one stated.",
+  "rights_holder_status": "Engine code: copyright holder named in LICENSE (Anton Tsvetinskiy aka cvet). Showcase art, sound and particle files: declared project-original in provenance.json. The repo ships no commercial game content; the README says the user brings their own game content (README line 13). The engine can import Fallout FRM and Arcanum ART (README line 57), but no such files are in this tree.",
+  "best_class": "A",
+  "asset_groups": [
+    {
+      "kind": "ContentShowcase generated sprites and tiles (TGA)",
+      "path": "/mnt/frankendom-donors/cvet-fonline/Examples/ContentShowcase/ShowcaseAssets/Showcase/Sprites/ and Tiles/ (Beacon_0..5.tga, ShowcasePanel.tga, ShowcaseFloor.tga, ShowcaseSpark.tga)",
+      "count_hint": "9 TGA files",
+      "licence": "CC0-1.0 (ASSET_LICENSE.md line 3; provenance.json)",
+      "class": "A",
+      "note": "Produced by generate_assets.py from pixel functions and pinned by SHA-256. Beacon_0.tga is 49170 bytes, which equals an 18-byte TGA header plus 128x96x4 bytes (inference from size, not from opening the file)."
+    },
+    {
+      "kind": "ContentShowcase sound",
+      "path": "/mnt/frankendom-donors/cvet-fonline/Examples/ContentShowcase/ShowcaseAssets/Showcase/Audio/ShowcaseChime.wav",
+      "count_hint": "1 WAV",
+      "licence": "CC0-1.0 (provenance.json)",
+      "class": "A",
+      "note": "Generated chime; contents not opened."
+    },
+    {
+      "kind": "ContentShowcase descriptors and effects (text)",
+      "path": "/mnt/frankendom-donors/cvet-fonline/Examples/ContentShowcase/ShowcaseAssets/Showcase/ (Sprites/Beacon.fofrm, Particles/Showcase.spark, Effects/ShowcaseParticle.fofx) and Maps/ShowcaseMap.fomap",
+      "count_hint": "4 text asset files",
+      "licence": "CC0-1.0 (provenance.json lists the .fofrm, .spark and .fofx entries)",
+      "class": "A",
+      "note": "Declarative formats: animation frame list with root motion, bounded particle system, additive effect. Good structural references."
+    },
+    {
+      "kind": "engine core sprites and stubs",
+      "path": "/mnt/frankendom-donors/cvet-fonline/Resources/Core/ (MiniArrowUp.png, MiniArrowDown.png, CritterStub.png, ItemStub.png) and Resources/Radiation.png, Radiation.ico",
+      "count_hint": "4 PNG in Core, 1 PNG and 1 ICO at Resources root",
+      "licence": "none stated beyond the repo MIT",
+      "class": "C",
+      "note": "Placeholder stubs and small UI arrows. Pixel content not opened."
+    },
+    {
+      "kind": "bitmap fonts (PNG atlas plus .fnt, .fofnt, .bmfc descriptors)",
+      "path": "/mnt/frankendom-donors/cvet-fonline/Resources/Core/Fonts/ and Resources/Embedded/Fonts/",
+      "count_hint": "22 files in Core/Fonts and 2 in Embedded/Fonts",
+      "licence": "none stated; Courier New named in CourierNewSmall.bmfc line 5; Docs font-format index line 54 lists font licensing and redistribution as an open question",
+      "class": "C",
+      "note": "Bitmap fonts rasterised from named fonts (Courier New, DejaVu Sans Mono in Settings.bmfc). Font licence not read. The .fofnt files give per-glyph X, Y, width, height and advance on one atlas."
+    },
+    {
+      "kind": "documentation diagrams and screenshots",
+      "path": "/mnt/frankendom-donors/cvet-fonline/Docs/assets/diagrams/ (6) and Docs/assets/screenshots/ (2); Examples/ContentShowcase/captures/ (3 PNG)",
+      "count_hint": "11 PNG",
+      "licence": "none stated beyond repo MIT",
+      "class": "C",
+      "note": "Not opened. The capture PNGs are renders of the engine's own showcase."
+    }
+  ],
+  "inspiration": [
+    "Beacon is a six-frame loop at 8 frames per second with an anchor offset and root-motion table (NextX/NextY) that moves the sprite as it cycles. Lamp or waypoint markers can use the same metadata shape.",
+    "The spark effect is a bounded additive particle system: capacity 32, lifetime 0.9 to 1.4 seconds, and a short texture. A cheap impact burst that stays inside a fixed budget.",
+    "generate_assets.py writes each TGA frame from a pixel function, then checks SHA-256 hashes before baking. Placeholder art can be deterministic and reproducible, and it stays auditable.",
+    "The bitmap font is one PNG atlas plus a glyph table (x, y, width, height, advance) per character. A small fixed glyph cell gives a crisp retro UI text.",
+    "Stub sprites (ItemStub, CritterStub) make missing content visibly unfinished, so gaps are easy to spot in play.",
+    "Effects are text files with a blend declaration at the top and shader sections below, so a designer can read the blend mode without opening the shader."
+  ],
+  "briefs": [
+    {
+      "label": "Pulsing waypoint lamp",
+      "why": "A small looping light marks a spot in the world without text.",
+      "keep": [
+        "six-frame loop at a low frame rate",
+        "bright core with a soft halo",
+        "anchor offset so the base sits on the tile"
+      ],
+      "change": [
+        "lamp on a pole instead of a dome",
+        "a different hue from our palette",
+        "a different frame count and loop shape"
+      ],
+      "ref": "/mnt/frankendom-donors/cvet-fonline/Examples/ContentShowcase/ShowcaseAssets/Showcase/Sprites/Beacon.fofrm and Beacon_0.tga..Beacon_5.tga",
+      "rule": "Recreate as a clearly distinct original, never a copy. keep = trait kept, change = trait changed."
+    },
+    {
+      "label": "Ember burst",
+      "why": "A short burst of sparks sells an impact cheaply.",
+      "keep": [
+        "fixed particle cap",
+        "short lifetime",
+        "additive blend"
+      ],
+      "change": [
+        "streak particles instead of dots",
+        "our own colour ramp"
+      ],
+      "ref": "/mnt/frankendom-donors/cvet-fonline/Examples/ContentShowcase/ShowcaseAssets/Showcase/Particles/Showcase.spark and ShowcaseSpark.tga",
+      "rule": "Recreate as a clearly distinct original, never a copy. keep = trait kept, change = trait changed."
+    },
+    {
+      "label": "Missing-content placeholder",
+      "why": "A placeholder that looks obviously unfinished makes gaps visible during play and review.",
+      "keep": [
+        "clearly unfinished look",
+        "one placeholder per object type"
+      ],
+      "change": [
+        "labelled template with a loud colour",
+        "a different silhouette for each type"
+      ],
+      "ref": "/mnt/frankendom-donors/cvet-fonline/Resources/Core/ItemStub.png and CritterStub.png",
+      "rule": "Recreate as a clearly distinct original, never a copy. keep = trait kept, change = trait changed."
+    },
+    {
+      "label": "Pixel-cell retro font",
+      "why": "A small fixed glyph cell gives crisp text at low resolution.",
+      "keep": [
+        "one atlas with per-glyph metadata",
+        "small fixed cell size"
+      ],
+      "change": [
+        "letterforms drawn by hand, not traced from any font",
+        "different cell size and spacing"
+      ],
+      "ref": "/mnt/frankendom-donors/cvet-fonline/Resources/Core/Fonts/Fallout.fofnt (glyph table)",
+      "rule": "Recreate as a clearly distinct original, never a copy. keep = trait kept, change = trait changed."
+    }
+  ],
+  "not_read": [
+    "all PNG and TGA pixel content (binary; not opened)",
+    "ShowcaseChime.wav audio content",
+    "Resources/Core/Fonts licence terms, including Courier New and DejaVu Sans Mono (not in the tree as licence files)",
+    "Examples/NativeExtensionSample/assets (only provenance.json seen; it lists zero assets)",
+    "Docs/assets diagrams and screenshots contents",
+    "ThirdParty/ licence files (vendored libraries; out of scope for asset classing)",
+    "BuildTools/ binaries (android-project, angelscript-debugger dist)"
+  ],
+  "half_read": "Content half: Resources/, Examples/ContentShowcase and Examples/NativeExtensionSample assets, plus the sample project text. The C++ engine source under Source/ and ThirdParty/ was not read.",
+  "other_halves_in_box": [
+    "alexbatalov-fallout1-ce and alexbatalov-fallout2-ce (name only; Fallout-related, not read)"
+  ],
+  "criteria_note": "Engine plus sample content. The showcase and descriptor files are the most reusable content, so briefs focus there."
+}

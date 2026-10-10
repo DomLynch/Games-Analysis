@@ -1,0 +1,164 @@
+{
+  "donor": "00-Evan-shattered-pixel-dungeon",
+  "counts": {
+    "creatures": 71,
+    "classes": 6,
+    "weapons": 32,
+    "gear_sets": 11,
+    "zones": 5
+  },
+  "creature_families": [
+    "vermin and small beasts",
+    "slimes (including a boss slime)",
+    "gnoll raiders",
+    "undead (skeleton, ghoul, wraith, necromancer and kin)",
+    "demons and imps (including DM-series constructs)",
+    "crystal caves (guardian, mimic, spire, wisp)",
+    "fungal creatures",
+    "mimics (plain, golden, ebony, crystal)",
+    "elementals and constructs (golem, statues)",
+    "humans and casters (bandit, thief, monk, shaman, dwarf king, tengu, eye)",
+    "final-boss family (multi-phase demon lord with helper forms; class names only, not read)"
+  ],
+  "top_creatures": [
+    {
+      "label": "Gel Warden",
+      "why": "Big slime boss with a particle-burst spray attack",
+      "keep": "telegraphed burst attack; slime body mass",
+      "change": "crowned dome silhouette, palette, no spit",
+      "ref": "core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/Goo.java:54"
+    },
+    {
+      "label": "Clockwork Brute",
+      "why": "Heavy construct that charges sparks and resets its HP to a threshold at phase change",
+      "keep": "charge-up spark telegraph; phase reset at threshold",
+      "change": "head and limb design, rivets, colour",
+      "ref": "core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/DM300.java:84-86,504"
+    },
+    {
+      "label": "Fallen Sovereign",
+      "why": "Final boss whose HP floor drops 300 per phase",
+      "keep": "phased floors; multi-phase final boss",
+      "change": "chained concept instead of hanging form; helper forms",
+      "ref": "core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/YogDzewa.java:72,400"
+    },
+    {
+      "label": "Second-Wind Warlord",
+      "why": "Dwarf-king boss that returns to a low HP value at half health",
+      "keep": "one second life at a threshold",
+      "change": "armour break scene, mantle, throne",
+      "ref": "core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/DwarfKing.java:85,496"
+    },
+    {
+      "label": "Mask Trickster",
+      "why": "Ambusher with bracketed HP that relocates on a bracket change",
+      "keep": "bracketed HP trigger for an ambush move",
+      "change": "mask and silhouette",
+      "ref": "core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/Tengu.java:90,148"
+    },
+    {
+      "label": "Bone Shepherd",
+      "why": "Summoner that heals its own minion by a fifth of max HP",
+      "keep": "summoner heals its minion",
+      "change": "minion type, staff, cloak",
+      "ref": "core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/Necromancer.java:180"
+    },
+    {
+      "label": "Crystal Keeper",
+      "why": "Crystal guardian with steady regeneration of 5 HP per tick",
+      "keep": "steady regen construct",
+      "change": "floating shard ring instead of a body",
+      "ref": "core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/CrystalGuardian.java:78"
+    },
+    {
+      "label": "Coin Lurker",
+      "why": "Mimic family whose HP scales with depth as (1 + level) * 6",
+      "keep": "depth-scaled HP formula",
+      "change": "lantern or coffer disguise, reveal animation",
+      "ref": "core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/Mimic.java:265"
+    }
+  ],
+  "classes": [
+    {"name": "Warrior", "subclasses": ["Berserker", "Gladiator"], "mechanic": "not read", "progression": "subclass pick; unlock level not read"},
+    {"name": "Mage", "subclasses": ["Battlemage", "Warlock"], "mechanic": "not read", "progression": "subclass pick; unlock level not read"},
+    {"name": "Rogue", "subclasses": ["Assassin", "Freerunner"], "mechanic": "not read", "progression": "subclass pick; unlock level not read"},
+    {"name": "Huntress", "subclasses": ["Sniper", "Warden"], "mechanic": "not read", "progression": "subclass pick; unlock level not read"},
+    {"name": "Duelist", "subclasses": ["Champion", "Monk"], "mechanic": "not read", "progression": "subclass pick; unlock level not read"},
+    {"name": "Cleric", "subclasses": ["Priest", "Paladin"], "mechanic": "not read", "progression": "subclass pick; unlock level not read"}
+  ],
+  "weapon_families": [
+    "blades (sword, longsword, rapier, katana, scimitar, shortsword, dagger, dirk, sai, sickle)",
+    "blunt (mace, war hammer, cudgel, flail, quarterstaff)",
+    "heavy (greataxe, greatsword, battle axe, war scythe)",
+    "shields (round, greatshield)",
+    "gauntlets and gloves",
+    "mage staff",
+    "ranged (crossbow, spirit bow, 17 missile files)"
+  ],
+  "gear_tiers": [
+    "armour tiers 1 (cloth) to 5 (plate); tier number set in each armour class",
+    "class armours (six) at tier 5",
+    "weapon tier field 1 to 5 (Dagger 1, Sword 3, Greatsword 5, War Hammer 5)",
+    "17 runic weapon enchantments (glow per enchant)",
+    "13 armour glyphs, each with its own glow",
+    "8 curses shown with a dark glow",
+    "hero avatar shows armour tier as one frame per tier in a single sheet"
+  ],
+  "zones": [
+    "sewers (depths 1-4, boss at 5)",
+    "prison (depths 6-9, boss at 10)",
+    "caves (depths 11-14, boss at 15)",
+    "city (depths 16-19, boss at 20)",
+    "halls (depths 21-24, boss at 25)",
+    "last level at depth 26; side branches: mining, vault, dead end, last shop"
+  ],
+  "looks": [
+    {
+      "label": "Item glow pulse",
+      "technique": "tint eased down to about 0.4, then additive glow colour scaled by phase, one period per item",
+      "ref": "core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/sprites/ItemSprite.java:365-385"
+    },
+    {
+      "label": "Enchant reveal overlay",
+      "technique": "one-shot sprite overlay: fade-in 0.2 s, hold 1.0 s, fade-out 0.4 s, alpha 0.6",
+      "ref": "core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/effects/Enchanting.java:35-39"
+    },
+    {
+      "label": "Boss tint wave",
+      "technique": "sprite tint wobbles on a cosine once per second",
+      "ref": "core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/effects/GlowBlock.java:42"
+    },
+    {
+      "label": "Stepped-crack blade glow",
+      "technique": "three glow states at different pulse periods (crystal enchant)",
+      "ref": "core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/items/weapon/enchantments/Crystal.java:46-48"
+    },
+    {
+      "label": "Boss particle bursts",
+      "technique": "particle emitters on boss sprites for spray and charge sparks (per asset audit, not re-read)",
+      "ref": "core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/sprites/GooSprite.java; sprites/DM300Sprite.java"
+    }
+  ],
+  "originals": [
+    {"name": "Tide Warden", "idea": "phased slime boss with a telegraphed spray burst", "keep": "telegraph and phased HP", "change": "crowned dome silhouette, palette, no spit"},
+    {"name": "Lantern Lurker", "idea": "container monster whose HP scales with depth", "keep": "(1 + level) * base HP rule", "change": "lantern disguise and reveal pop"},
+    {"name": "Bone Shepherd", "idea": "summoner that heals its minion by a fraction of max HP", "keep": "heal-a-fraction per cast", "change": "minion type, staff, cloak"},
+    {"name": "Crystal Keeper", "idea": "regen construct made of floating shards", "keep": "steady regen per tick", "change": "shard ring instead of a body"},
+    {"name": "Second-Wind Warlord", "idea": "boss that reverts to a low HP value once at half health", "keep": "one threshold reset", "change": "armour break, mantle, throne"},
+    {"name": "Masked Trickster", "idea": "bracketed-HP ambusher that relocates on each bracket", "keep": "bracket trigger", "change": "mask and silhouette"},
+    {"name": "Stepped-crack blade", "idea": "item glow that changes state as it wears", "keep": "three stepped glow states", "change": "colour and crystal form"},
+    {"name": "Pulse-glow armour", "idea": "one glow colour per armour effect", "keep": "one glow per effect", "change": "our own palette"}
+  ],
+  "licence_note": "Code GPL v3 (LICENSE.txt). Art, music and sounds credited by name in AboutScene.java; no asset licence file in the repo (per AU001). Inspiration only.",
+  "not_read": [
+    "image files (no image opened, per AU001 rule)",
+    "actors/hero/abilities/* (subclass logic)",
+    "levels/traps, levels/features, levels/painters",
+    "messages/*.properties (protected text; not copied)",
+    "SewerBossLevel, CavesBossLevel, CityBossLevel, HallsBossLevel, MiningLevel bodies",
+    "fifth top weapon (other enchant files besides Crystal, Shocking, Vorpal, Blazing)",
+    "subclass unlock levels",
+    "final-boss helper form logic beyond the HP floor lines",
+    "PhantomPiranhaSprite shimmer (grep match only)"
+  ]
+}

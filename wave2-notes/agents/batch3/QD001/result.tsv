@@ -1,0 +1,3 @@
+game	category	old	verdict	depth	finding
+0ad-0ad	quests-dialogue	P	STRONG	full	binaries/data/mods/public/maps/scripts/Tutorial.js:1-113 (NextGoal 31-80, OnDeserializedTrigger 104-113) with the goal list in maps/tutorials/introductory_tutorial.js:1-445; one sentence per the note
+2004Scape-Server	quests-dialogue	P	STRONG	full	data/src/scripts/quests/quest_cook/scripts/quest_cook.rs2:42-91 (pull check, removal, queued reward) with general/scripts/quests.rs2:50-66 (derived points) and src/engine/entity/Player.ts:847-884 (queue pass)

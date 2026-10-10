@@ -1,0 +1,44 @@
+{
+  "donor": "deregtd-AC2D",
+  "code_licence": "GNU GPL v2 (LICENSE is the GPLv2 text). ChecksumXorGenerator.cpp header says GPL v2 or later. zlib headers carry zlib copyright lines (licence text not read).",
+  "asset_licence": "None stated. No licence or credits file for the website screenshots, icons or terrain.zip. The site page text credits the author by name (Akilla).",
+  "rights_holder_status": "Reverse-engineering project. website/index.php says the final purpose is to reverse-engineer the game's file formats and network protocol for an alternate client to the normal Turbine client. The terrain viewer installs into the user's own game directory (AC:ToD), so game data is not in the repo. Original game content is proprietary by that text.",
+  "best_class": "C",
+  "half_read": "CLIENT half (the alternate client and terrain viewer sources: cPortal, cTurbineFile, cInterface, cNetwork, WindowLib). The SERVER half matching Asheron's Call is not in this repo. Matching server folder in the box by folder name only (not opened): ACEmulator-ACE. A client reverse-engineering folder by name, also not opened: Mag-nus-acclient-AI-RE.",
+  "data_tables": [
+    "none in repo: the viewer reads portal and landblock data from the user's own game install (cPortal.h, cTurbineFile.h)",
+    "/mnt/frankendom-donors/deregtd-AC2D/website/index.php (page text only; not a data table)"
+  ],
+  "asset_groups": [
+    {"kind": "website screenshot gallery (JPG)", "path": "/mnt/frankendom-donors/deregtd-AC2D/website/pics", "count_hint": "67 files (full-size shots plus _sm thumbnails); 103 JPG in the whole repo", "licence": "none stated", "class": "C", "note": "Development screenshots of the client and viewer. They likely show game-derived art (terrain, buildings, spells), so treat as proprietary-derived. Not opened."},
+    {"kind": "website loose JPG images", "path": "/mnt/frankendom-donors/deregtd-AC2D/website", "count_hint": "about 36 JPG at the top of the website folder", "licence": "none stated", "class": "C", "note": "Extra shots with names for spells, UI and terrain (for example spellbars, frostwall, boom, robes, mansion). Not opened; names only."},
+    {"kind": "window and client icons (ICO)", "path": "/mnt/frankendom-donors/deregtd-AC2D (AC2DTest.ico, client.ico, small.ico) and WindowLib (WindowLib.ico, small.ico)", "count_hint": "5 ICO files; sizes 23558, 4710 bytes (sampled)", "licence": "none stated", "class": "C", "note": "App icons. Origin not stated. Not opened."},
+    {"kind": "terrain viewer archive (contains an executable)", "path": "/mnt/frankendom-donors/deregtd-AC2D/website/terrain.zip", "count_hint": "1 archive, 197328 bytes; holds 1 file, terrain.exe (458752 bytes)", "licence": "none stated", "class": "D", "note": "Downloadable executable. Not extracted, not run, not used. Listed with unzip -l only."},
+    {"kind": "zlib third-party library files", "path": "/mnt/frankendom-donors/deregtd-AC2D/zlib", "count_hint": "zlib.h, zconf.h, ioapi.h and zlibstat.lib", "licence": "zlib copyright lines in headers; licence text not read", "class": "C", "note": "Bundled library headers and a static lib. Licence text not read in full."},
+    {"kind": "OpenGL extension header", "path": "/mnt/frankendom-donors/deregtd-AC2D/gl/glext.h", "count_hint": "1 file, 284470 bytes", "licence": "not stated (header not read)", "class": "C", "note": "Third-party header; not read."},
+    {"kind": "in-game content (terrain, models, textures, portal data)", "path": "not in repo", "count_hint": "0 files", "licence": "not applicable", "class": "D", "note": "The viewer reads the user's own game install; no game data is shipped."}
+  ],
+  "inspiration": [
+    "A terrain flyer built from landblock cells, with blocky textured ground and a grid whose draw radius you can step up or down. The look is open and chunky, readable from height; recreate it with our own terrain.",
+    "A minimap you can click to jump the camera to that spot. Simple, readable navigation for a big world.",
+    "A plain dark gallery page: black background, thumbnails linking to full-size shots, and a single accent rule. Cheap format for our devlog or screenshot page.",
+    "The screenshot names show what a developer wants to show off: a spell bar UI, a frost wall effect, an explosion, a robes clothing set, a mansion interior. These are categories to recreate from scratch.",
+    "The site says the aim was an alternate client to the normal Turbine one, not only a viewer. Lesson: a readable HUD with clear spell bars is worth building early.",
+    "Look and effect details (colours, shapes, animation) cannot be checked here because no image was opened. Treat the names as a checklist, then build the visuals fresh."
+  ],
+  "briefs": [
+    {"label": "Ice barrier spell (ours)", "why": "a freezing wall that blocks the path makes a readable tactical moment; the silhouette does the work.", "keep": "a translucent slab with frost edges; shards on impact; a short fade-in", "change": "our own shape and colour (not white-blue frost); a crystal or spore wall instead of ice; our own particle timing", "criteria": "silhouette at 375 wide: not verified (not viewed); signature behaviour: wall blocks movement; signature sound: none in repo", "rule": "Recreate as a clearly distinct original, never a copy.", "ref": "/mnt/frankendom-donors/deregtd-AC2D/website/pics/frostwall.jpg (not viewed; name only)"},
+    {"label": "Spell bar HUD (ours)", "why": "a clear row of spell slots with timers keeps the player in the fight; the bar layout is the idea.", "keep": "a fixed row of slots; a cooldown fill on each; a short label per slot", "change": "our own frame, icons and colours; a radial or split bar; different slot count", "criteria": "silhouette at 375 wide: a single row fits a phone; signature behaviour: cooldown sweep; signature sound: none in repo", "rule": "Recreate as a clearly distinct original, never a copy.", "ref": "/mnt/frankendom-donors/deregtd-AC2D/website/spellbars1.jpg (not viewed; name only)"},
+    {"label": "Area blast effect (ours)", "why": "a short burst that reads at a glance; the timing and the ring are what sell it.", "keep": "a bright core, an expanding ring, a brief shockwave; a fast fade", "change": "our own element and palette; a different ring shape; a dust or spark style instead of fire", "criteria": "silhouette at 375 wide: a ring burst reads at small size; signature behaviour: expand then fade; signature sound: none in repo", "rule": "Recreate as a clearly distinct original, never a copy.", "ref": "/mnt/frankendom-donors/deregtd-AC2D/website/pics/boom.jpg (not viewed; name only)"}
+  ],
+  "not_read": [
+    "all JPG and ICO bodies (names, counts and sizes only)",
+    "terrain.zip contents beyond the listing (the executable was not extracted or run, by rule)",
+    "zlib licence text and zlib library binary (headers only grepped)",
+    "gl/glext.h body",
+    "the bulk of the C++ client sources (only the GPL header lines, the cPortal.h declaration and the website text were read)",
+    "website/index.php bodies beyond the lines used for claims",
+    "WindowLib and Interfaces source bodies",
+    "the matching server halves named above (folder names only; not opened)"
+  ]
+}

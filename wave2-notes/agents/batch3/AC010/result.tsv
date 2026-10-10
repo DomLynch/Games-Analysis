@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+luanti-org-luanti	anticheat-validation	P	STRONG	full	src/server/player_sao.cpp:638-745 (checkMovementCheat) with src/server/player_sao.h:20-53 (LagPool): each position claim is paid from a movement-time pool and rewound when it overruns; flag only after the teleport grace.
+otland-forgottenserver	anticheat-validation	P	STRONG	full	src/creature.cpp:177-215 (onWalk) and 1279-1340 (getStepDuration): the server takes each step on its own timer from speed and ground cost, and early item actions wait on a shared action clock.
+pmbstyle-L2Solo	anticheat-validation	P	STRONG	thin	src/GameServer/Actor/Attack.js:101-278 and src/GameServer/Automation.js:256-423: the server re-checks melee range at scheduling, swing start and impact, and a position report can only shorten an approach; PvP and participant gates were not read, and the reports are trusted.

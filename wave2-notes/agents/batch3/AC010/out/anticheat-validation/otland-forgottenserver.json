@@ -1,0 +1,111 @@
+{
+ "game": "otland-forgottenserver",
+ "category": "anticheat-validation",
+ "cell": 6,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/otland-forgottenserver/src/creature.cpp",
+ "licence": "GPL-2.0 (LICENSE GPL v2 text; no or-later grant read)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/clock.ts",
+ "parity_row": 5,
+ "pattern_tags": [
+  "fixed-step",
+  "wait-gate",
+  "stale-state",
+  "debt-carry",
+  "new:server-owned-clock",
+  "new:one-slot-parked-action"
+ ],
+ "data_fields": [
+  {
+   "name": "speed_curve_a",
+   "donor_constant": "857.36",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/creature.cpp:17"
+  },
+  {
+   "name": "speed_curve_b",
+   "donor_constant": "261.29",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/creature.cpp:18"
+  },
+  {
+   "name": "speed_curve_c",
+   "donor_constant": "-4795.01",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/creature.cpp:19"
+  },
+  {
+   "name": "ground_step_cost_default",
+   "donor_constant": "150 (when no ground item or zero)",
+   "unit": "ms",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/creature.cpp:1312"
+  },
+  {
+   "name": "step_round_to",
+   "donor_constant": "50",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/creature.cpp:1319"
+  },
+  {
+   "name": "monster_target_near_step_multiplier",
+   "donor_constant": "2",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/creature.cpp:1323"
+  },
+  {
+   "name": "diagonal_step_multiplier",
+   "donor_constant": "3",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/creature.cpp:1283"
+  },
+  {
+   "name": "floor_change_walk_cost_multiplier",
+   "donor_constant": "2",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/creature.cpp:382"
+  },
+  {
+   "name": "diagonal_walk_cost_multiplier",
+   "donor_constant": "3",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/creature.cpp:385"
+  },
+  {
+   "name": "scheduler_min_wait",
+   "donor_constant": "50",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/scheduler.h:10"
+  },
+  {
+   "name": "move_creature_wait",
+   "donor_constant": "1000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/game.h:50"
+  },
+  {
+   "name": "range_move_creature_wait",
+   "donor_constant": "1500",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/game.h:51"
+  }
+ ],
+ "best_idea": "Let the server own the clock: the client sends a direction or a path, the server takes each step on its own timer with the step time computed from speed and ground, and an item action that comes early is parked on one shared action clock rather than trusted or dropped.",
+ "decision": "adapt",
+ "decision_why": "Take the shared action clock and the one-slot parked action for the duel input buffer in src/fight, not the per-tile walk timer; the donor's parked slot replaces the older request silently, so the duel needs an explicit buffer rule.",
+ "decision_status": "proposed",
+ "acceptance": "A player presses attack 100 ms before recovery ends and gets exactly one swing at recovery; a second press during the wait replaces the parked one; a client sending 2x input gets no more swings than the server clock allows (server test asserts swing count per second)."
+}

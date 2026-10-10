@@ -1,0 +1,102 @@
+{
+ "game": "luanti-org-luanti",
+ "category": "anticheat-validation",
+ "cell": 6,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/luanti-org-luanti/src/server/player_sao.cpp",
+ "licence": "LGPL-2.1-or-later (SPDX header player_sao.cpp:2; repo ships COPYING.LESSER)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/move-check.ts",
+ "parity_row": 5,
+ "pattern_tags": [
+  "debt-carry",
+  "grace-timer",
+  "clamp-and-report",
+  "new:rewind-to-last-good"
+ ],
+ "data_fields": [
+  {
+   "name": "move_pool_floor",
+   "donor_constant": "5.0",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/luanti-org-luanti/src/server/player_sao.cpp:246"
+  },
+  {
+   "name": "move_pool_lag_factor",
+   "donor_constant": "2.0 x max lag estimate",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/luanti-org-luanti/src/server/player_sao.cpp:247"
+  },
+  {
+   "name": "lag_estimate_start",
+   "donor_constant": "0.1",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/luanti-org-luanti/src/serverenvironment.h:412"
+  },
+  {
+   "name": "lag_estimate_decay_factor",
+   "donor_constant": "0.99425 per 0.5 s step (about halves per minute)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/luanti-org-luanti/src/server.cpp:716"
+  },
+  {
+   "name": "movement_tolerance",
+   "donor_constant": "1.0 (minimum 1.0)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/luanti-org-luanti/src/defaultsettings.cpp:465"
+  },
+  {
+   "name": "walk_speed",
+   "donor_constant": "4",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/luanti-org-luanti/src/defaultsettings.cpp:517"
+  },
+  {
+   "name": "fast_speed",
+   "donor_constant": "20 (fast privilege only)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/luanti-org-luanti/src/defaultsettings.cpp:519"
+  },
+  {
+   "name": "jump_speed",
+   "donor_constant": "6.5 (doubled for the cap)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/luanti-org-luanti/src/defaultsettings.cpp:521"
+  },
+  {
+   "name": "dig_long_threshold",
+   "donor_constant": "2.0",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/luanti-org-luanti/src/network/serverpackethandler.cpp:1111"
+  },
+  {
+   "name": "dig_slack_factor",
+   "donor_constant": "1.2",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/luanti-org-luanti/src/network/serverpackethandler.cpp:1111"
+  },
+  {
+   "name": "interact_range_slack",
+   "donor_constant": "2.6 x BS over tool range",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/luanti-org-luanti/src/network/serverpackethandler.cpp:864"
+  }
+ ],
+ "best_idea": "Accept a client position claim only while a server-side pool of movement time (cost of the move in seconds at top speed, drained by real time, capped by measured lag) has room, and otherwise rewind to the last accepted point, flagging only outside a teleport grace window.",
+ "decision": "adapt",
+ "decision_why": "Take the pool-and-rewind shape for zone movement reports in origins/server, where the client sends positions; the duel owns position in src/fight and verifies hits; the default burst allowance (up to 5 s) is far too loose for a fight, so only the shape transfers.",
+ "decision_status": "proposed",
+ "acceptance": "A server test idles a player 5 s, then streams claims at 2x walk speed: about 5 s accepted, then each claim rewound to the last accepted point with a correction sent; a walker at walk speed with ordinary packet jitter is never rewound."
+}

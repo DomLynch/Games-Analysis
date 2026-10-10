@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+angband-angband	anticheat-validation	P	STRONG	full	src/score.c:272-304 and src/option.c:156-187: the score is refused for a run with any cheat switch or a sticky wizard/debug/borg mark; the cheat switch sets a sticky score twin in the same write.
+azerothcore-azerothcore-wotlk	anticheat-validation	P	STRONG	full	src/server/game/Handlers/MovementHandler.cpp:531-612 and 614-626: client movement is checked in a fixed order, failed rules kick, and immobile movers keep the server position; the donor ships these hooks with an empty pass-all default.
+beyond-all-reason-Beyond-All-Reason	anticheat-validation	P	STRONG	full	luarules/gadgets/game_disable_assist_ally.lua:93-195: per-order filter on every issue, end-of-frame sweep removes disallowed commands by tag, and a build-step guard armed only on sampled frames (seed re-drawn 1-119).

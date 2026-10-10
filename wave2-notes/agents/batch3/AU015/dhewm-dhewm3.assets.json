@@ -1,0 +1,103 @@
+{
+  "donor": "dhewm-dhewm3",
+  "code_licence": "GNU GPL (COPYING.txt line 1), plus the Doom 3 GPL Source Code additional terms (README line 225) and an EXCLUDED CODE clause (README line 227). Dear ImGui and other third-party parts keep their own licences (README lines 229 to 235 and onward).",
+  "asset_licence": "No game data in this release (README line 48). Non-code files have no licence line of their own: docs/img, neo/tools/Help images, Windows icons and bitmaps under neo/sys/win32/rc/res, and the Linux installer image. The installer folder holds the Doom 3 limited use EULA (neo/sys/linux/setup/image/License.txt line 1). Licences for the ImGui fonts were not read.",
+  "rights_holder_status": "derived from id Software's Doom 3 GPL source release (README line 3). Game data is proprietary under its EULA (README line 48). The EULA in the installer folder names Id Software and Activision; the repo does not confirm rights beyond that.",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "game data (Doom 3 models, textures, sounds, maps, GUIs)",
+      "path": "not in repo (base/ holds only config files)",
+      "count_hint": "0 game assets; base/ has 3 .cfg files (default.cfg, gamepad.cfg, gamepad-d3xp.cfg); no .md5mesh, .tga, .wav, .ogg, .pk4 or .gui files found",
+      "licence": "README line 48: the source release does not contain game data; the user must patch the game from their own copy.",
+      "class": "D",
+      "note": "Nothing to take. The user supplies the Doom 3 data from their own copy."
+    },
+    {
+      "kind": "GUI layout reference images and vector diagrams",
+      "path": "docs/img/",
+      "count_hint": "20 files (PNG and SVG): d3gui-cst-* anchor layouts at high, wide, 4:3 and letterbox sizes, plus d3gui-example images",
+      "licence": "No licence line in the folder or in docs/GUIs.md.",
+      "class": "C",
+      "note": "Diagrams of how custom windows are anchored at different screen shapes. Useful as a reference for layout ideas, not to copy."
+    },
+    {
+      "kind": "editor help images and help pages",
+      "path": "neo/tools/Help/ (images/ and the .htm pages)",
+      "count_hint": "30 files in total, including .htm pages and PNG images (view-mode and toolbar icons such as diffuse, specular, showbones, showtris); image count not separately measured",
+      "licence": "No licence line found in the Help pages' text I checked.",
+      "class": "C",
+      "note": "Old editor help for the Doom 3 tools. The icons are small and show the tool's view modes."
+    },
+    {
+      "kind": "Windows icons and bitmaps (editor and game icons)",
+      "path": "neo/sys/win32/rc/res/",
+      "count_hint": "25 .ico files, 17 lower-case .bmp and 12 upper-case .BMP files",
+      "licence": "No licence line in the folder.",
+      "class": "C",
+      "note": "Editor toolbar icons (Radiant, material editor, GUI editor, debugger). doom.ico is the game icon. Pairs such as me_on_icon and me_off_icon show on and off states."
+    },
+    {
+      "kind": "Linux installer art and EULA",
+      "path": "neo/sys/linux/setup/image/ and image-demo/",
+      "count_hint": "doom3.png plus License.txt (binary-flagged) and a demo README",
+      "licence": "neo/sys/linux/setup/image/License.txt line 1 is the Doom 3 limited use EULA. Its licensor is named inside the text as Id Software and Activision.",
+      "class": "C",
+      "note": "Third-party EULA text and the game logo. Not dhewm3's own licence. Do not reuse the logo."
+    },
+    {
+      "kind": "third-party fonts (Dear ImGui)",
+      "path": "neo/libs/imgui/misc/fonts/",
+      "count_hint": "6 TTF (Cousine, DroidSans, Karla, ProggyClean, ProggyTiny, Roboto-Medium)",
+      "licence": "Dear ImGui is MIT (README line 229 to 235 section). The per-font licences were not read.",
+      "class": "C",
+      "note": "Not checked per font. Treat as unknown until each font's own licence is read."
+    }
+  ],
+  "inspiration": [
+    "Doom 3 GUI scripting: menus, the PDA, the HUD and in-world screens are written in a small GUI script language, not in code. A layout can be changed by a designer without a rebuild. Ref: docs/GUIs.md line 3.",
+    "Anchor sets per screen shape: custom windows are pinned to top-left, top, centre or a side, with separate variants for 4:3, wide, high and letterboxed screens, so the HUD holds its place on every shape. Ref: docs/img/d3gui-cst-tl-wide.png, d3gui-cst-top-43.png, d3gui-example-16_9-letterbox.png.",
+    "Vector source for layouts: the same anchor layouts also come as .svg files (for example d3gui-cst-tl-wide.svg, d3gui-cst-bl-high.svg), so the diagrams can be edited and rescaled. Ref: docs/img/*.svg.",
+    "On and off icon pairs in the editor toolbar: a state is shown by a pair of icons that differ in fill or outline, not by text. Ref: neo/sys/win32/rc/res/me_on_icon.ico and me_off_icon.ico.",
+    "View-mode toolbar: a row of simple icons switches the viewer between diffuse, specular, normals, skeleton, triangle and overdraw views, the way an artist checks a model. Ref: neo/tools/Help/images/diffuse.png, specular.png, showbones.png, showtris.png.",
+    "Depth-fail stencil shadows: the README describes the depth-fail method, restored in dhewm3 1.5.1, as a crisp shadow-volume look. This is an effect technique, not art. Ref: README.md lines 204 to 210 (code, no image)."
+  ],
+  "briefs": [
+    {
+      "label": "Anchored HUD layout kit",
+      "why": "Windows pinned to fixed anchors keep their place when the screen shape changes, so one layout works at wide, high and letterboxed sizes.",
+      "keep": "Anchor set (top-left, top, centre, side); a separate variant per screen shape; a letterbox test case.",
+      "change": "Our own grid and anchor points (for example bottom-anchored panels); our own proportions; our own panel corner.",
+      "ref": "docs/img/d3gui-cst-tl-wide.png and docs/img/d3gui-example-16_9-letterbox.png"
+    },
+    {
+      "label": "On and off toolbar icon pair",
+      "why": "A pair of icons that differ only in fill tells the state at a glance in a dense toolbar.",
+      "keep": "Two-state icon pairs; simple shapes; the same size for both states.",
+      "change": "Our own icon metaphors; a different state cue (colour or a small badge) instead of fill alone.",
+      "ref": "neo/sys/win32/rc/res/me_on_icon.ico and me_off_icon.ico"
+    },
+    {
+      "label": "Artist view-mode strip",
+      "why": "A strip of view-mode icons lets an artist check a model in several passes with one click each.",
+      "keep": "Row of view-mode icons; one icon per pass (diffuse, specular, skeleton, triangles).",
+      "change": "Our own pass names and icons; add a normals pass with its own glyph.",
+      "ref": "neo/tools/Help/images/diffuse.png, specular.png, showbones.png, showtris.png"
+    }
+  ],
+  "cross_links": [
+    "hud-ui: the anchored layout kit and the GUI scripting idea are HUD topics.",
+    "camera: none in the art (the stencil shadow item is a rendering topic, not a camera one).",
+    "vfx: the depth-fail stencil shadow method is a shadow-rendering technique (code only).",
+    "zones, spawns, loot, animation, sound: no assets in this release; the game data they would need is not in the repo."
+  ],
+  "not_read": [
+    "PNG, ICO and BMP contents: file names and counts only; no image was viewed.",
+    "The Doom 3 EULA full text: only its first line was read.",
+    "neo/tools/Help .htm pages: only page titles were read.",
+    "Per-font licences for the ImGui fonts.",
+    "The Maya importer and renderer code (code, out of scope).",
+    "The dist/ packaging files and the .mo locale files (checked by name only).",
+    "No _RESTRICTED-NOTE.txt found in this donor."
+  ]
+}

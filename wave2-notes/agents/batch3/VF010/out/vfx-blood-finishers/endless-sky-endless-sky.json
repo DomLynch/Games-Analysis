@@ -1,0 +1,35 @@
+{
+  "game": "endless-sky-endless-sky",
+  "category": "vfx-blood-finishers",
+  "cell": 13,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Ship.cpp",
+  "licence": "GPL-3.0-or-later (license.txt Version 3; source/Effect.cpp header 'either version 3 of the License, or (at your option) any later version')",
+  "licence_class": "copyleft",
+  "target_module": "src/fight/finisher.ts",
+  "parity_row": 9,
+  "pattern_tags": [
+    "new:knockout-line",
+    "new:downed-state-event",
+    "new:ramped-death-sequence",
+    "new:final-burst",
+    "new:weighted-burst-pick",
+    "new:outline-rejection-sample",
+    "new:recovery-to-line-multiple"
+  ],
+  "data_fields": [
+    {"name": "knockout_percent", "donor_constant": "0.5 small hull to 0.1 very large hull (curve 1/(1+0.0005*max hull))", "unit": "ratio", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Ship.cpp:4659"},
+    {"name": "knockout_flat_bonus", "donor_constant": "hull threshold attribute, added before floor", "unit": "count", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Ship.cpp:4660"},
+    {"name": "recovery_hull_multiple", "donor_constant": "1.5 x knockout line", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Ship.cpp:5047"},
+    {"name": "burst_chance_scale", "donor_constant": "rate / 1024, rate +1 per step", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Ship.cpp:4847"},
+    {"name": "burst_count_total", "donor_constant": "sum of explode data counts", "unit": "count", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Ship.cpp:809"},
+    {"name": "burst_placement_tries", "donor_constant": "10", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Ship.cpp:5757"},
+    {"name": "burst_spread_fraction", "donor_constant": "0.04 of width plus height", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Ship.cpp:5775"}
+  ],
+  "best_idea": "Turn a kill into a timed sequence: a per-step spawn chance that rises by one each step until a fixed count is reached, then one final burst, with a downed state before death whose line is a formula of max hull.",
+  "decision": "adapt",
+  "decision_why": "Take the downed state (one DISABLE event on crossing the line, the unit stops fighting) and the ramped death sequence as client presentation driven by one server death event. Do not take the wreck cargo and flotsam drop (loot, parity row 18), the physics debris, or the self-destruct that starts at full rate.",
+  "decision_status": "proposed",
+  "acceptance": "In the Pit, a gladiator that crosses its knockout line fires exactly one DISABLE event on the server and stays downed until a finishing blow; that blow sends exactly one death event, and each client plays the burst ramp from it (a server test asserts one event in each case)."
+}

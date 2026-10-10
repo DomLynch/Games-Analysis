@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+OpenEnroth-OpenEnroth	vfx-blood-finishers	P	STRONG	full	DecalBuilder.cpp:17-40,179,206-236; Indoor.cpp:793-801; Outdoor.cpp:1597-1605 - a dead or dying monster with the blood flag leaves one floor splat when it lands, baked into a 1024-decal pool; water and shore decals fade over 30 real seconds, others stay.
+OpenGothic	vfx-blood-finishers	P	STRONG	full	pfxbucket.cpp:13-25,41-42,379-396,446-490,518-533 - data-driven particle emitter: emission counts are absolute-time floor differences, the pool is sized from lifetime times rate, new particles fill only free slots (overflow dropped), and emission is gated by distance to the viewer.
+OpenRA-OpenRA	vfx-blood-finishers	P	STRONG	full	ScreenShaker.cs:44-88; ShakeOnDeath.cs:22-41; ShakeScreenWarhead.cs:22-32 - screen shake as an additive view offset: summed distance-weighted intensity capped at 10, fixed sine/cosine pattern, effects expire after a set number of world ticks.

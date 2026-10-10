@@ -1,0 +1,81 @@
+{
+ "game": "pmbstyle-L2Solo",
+ "category": "anticheat-validation",
+ "cell": 6,
+ "verdict": "STRONG",
+ "depth": "thin",
+ "donor_path": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Actor/Attack.js",
+ "licence": "Apache-2.0 (LICENSE Apache 2.0 text; no NOTICE file)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/strike.ts",
+ "parity_row": 1,
+ "pattern_tags": [
+  "hit-aggregation",
+  "stale-state",
+  "new:three-point-range-recheck",
+  "new:earlier-only-deadline"
+ ],
+ "data_fields": [
+  {
+   "name": "melee_range",
+   "donor_constant": "40",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Actor/AttackRange.js:6"
+  },
+  {
+   "name": "polearm_range",
+   "donor_constant": "66",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Actor/AttackRange.js:7"
+  },
+  {
+   "name": "bow_range",
+   "donor_constant": "700 plus effect add",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Actor/AttackRange.js:5"
+  },
+  {
+   "name": "stop_margin_max",
+   "donor_constant": "10 (margin = min(10, range/4))",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Automation.js:287"
+  },
+  {
+   "name": "stop_margin_ratio",
+   "donor_constant": "0.25 of range",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Automation.js:287"
+  },
+  {
+   "name": "draw_fraction",
+   "donor_constant": "0.644 of swing cycle",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Actor/Attack.js:155"
+  },
+  {
+   "name": "swing_cycle",
+   "donor_constant": "Formulas.calcMeleeAtkTime(attackSpeed) (formula not read)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Actor/Attack.js:156"
+  },
+  {
+   "name": "secondary_target_damage",
+   "donor_constant": "0.85 then /1.15 per further target",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Actor/Attack.js:163"
+  }
+ ],
+ "best_idea": "Decide a hit on the server at three moments (when the approach is scheduled, when the swing starts, and at impact after the draw time), and let a client position report only finish an approach early or shorten its deadline, never extend it; the range checks guard the target's movement, not the actor's own reported position.",
+ "decision": "adapt",
+ "decision_why": "Take the three-point range re-check and the earlier-only approach deadline for the duel's strike step; the donor's ctrl hard-code and trusted position reports must not be copied, and the range checks do not protect against a false actor position.",
+ "decision_status": "proposed",
+ "acceptance": "A server test swings from a 40-range melee, lets the target walk out of range during the draw, and expects no damage at impact and the next swing to re-schedule the approach; a second position report during an approach cannot push the arrival later than the first."
+}

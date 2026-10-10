@@ -1,0 +1,145 @@
+{
+  "donor": "diasurgical-DevilutionX",
+  "code_licence": "Sustainable Use License 1.0 (LICENSE.md line 1). Source is for non-commercial use only (README line 84). Use is limited to internal business or non-commercial or personal use (LICENSE.md line 15). This is not an OSI open-source licence.",
+  "asset_licence": "No separate asset licence file found. README line 82 says the whole project is released under the Sustainable Use License, which covers assets/ and mods/ by location. README line 86 gives a Diablo copyright notice from Blizzard Entertainment. The files do not say whether assets/ is extracted from the original game or is new work. README line 31 says the user must copy DIABDAT.MPQ from their own copy of the game. CMakeLists.txt line 204 says assets are packed into devilutionx.mpq at build.",
+  "rights_holder_status": "port of Blizzard's Diablo. README lines 86 and 88 give the Blizzard copyright and trademark notice and a non-affiliation disclaimer. Origin of the in-tree assets is not stated. mods/hf/manifest.ini line 4 names Synergistic Software as the author of the Hellfire mod. README line 76 credits Nikolay Popov for UI and graphics.",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "cutscene stills and pause and colour tables",
+      "path": "assets/gendata/",
+      "count_hint": "10 files, about 1.9 MB (CLX cutscene and portrait frames, and one TRN table for pause)",
+      "licence": "Repo-wide SUL (README line 82). Diablo copyright notice (README line 86). Origin not stated.",
+      "class": "C",
+      "note": "Binary sprite and table files. Not opened beyond their names and sizes."
+    },
+    {
+      "kind": "UI panels, buttons and bars",
+      "path": "assets/data/ (with inv/ subfolder)",
+      "count_hint": "24 files, about 340 KB (CLX panels, buttons, bars, tab buttons, hint boxes, and a separate inv/ folder with widths text)",
+      "licence": "Repo-wide SUL. Origin not stated.",
+      "class": "C",
+      "note": "UI chrome. Variant names suggest normal and alternate states (not opened)."
+    },
+    {
+      "kind": "UI art (menus, screens, credits, palette)",
+      "path": "assets/ui_art/",
+      "count_hint": "11 files, about 568 KB (CLX screens and menus, 5 PNG, diablo.pal palette)",
+      "licence": "Repo-wide SUL. README line 76 credits the UI and graphics author. No separate licence on the files.",
+      "class": "C",
+      "note": "Credited author, but no licence on the file itself; treat as class C until the author's terms are read."
+    },
+    {
+      "kind": "fonts (glyph sheets and colour tables)",
+      "path": "assets/fonts/",
+      "count_hint": "80 files, about 2.3 MB (CLX glyph sheets at several sizes, TRN colour tables, and a tr folder)",
+      "licence": "Repo-wide SUL. Origin not stated.",
+      "class": "C",
+      "note": "Bitmap font sheets. Not opened."
+    },
+    {
+      "kind": "dungeon and town maps, automap sound",
+      "path": "assets/levels/ and assets/arena/",
+      "count_hint": "levels: 3 DUN map files and 1 AMP file (automap); arena: 3 DUN files",
+      "licence": "Repo-wide SUL. Origin not stated.",
+      "class": "C",
+      "note": "Tile-index map files per floor. These carry the level layout; they are data, not art. Not opened."
+    },
+    {
+      "kind": "game text tables (monsters, items, quests, spells, missiles, sound, text)",
+      "path": "assets/txtdata/",
+      "count_hint": "51 files, about 500 KB; monstdat.tsv 113 lines, itemdat.tsv 169, item_prefixes.tsv 84, item_suffixes.tsv 96, questdat.tsv 25, spelldat.tsv 37, textdat.tsv 339 lines",
+      "licence": "Repo-wide SUL. assets/txtdata/Readme.md line 1 says the format is based on Diablo 2's tab format. Origin of the content not stated.",
+      "class": "C",
+      "note": "Stats and names in tables, plus long dialogue lines in textdat.tsv (protected text; not reproduced). Structure is useful; the words are not."
+    },
+    {
+      "kind": "player class sprite recolour tables",
+      "path": "assets/plrgfx/warrior/whu/",
+      "count_hint": "3 TRN files (whufm, whulm, whuqm); assets/plrgfx has 3 files in total",
+      "licence": "Repo-wide SUL. Origin not stated.",
+      "class": "C",
+      "note": "Colour-remap tables for one player body. Technique is useful; the tables are not."
+    },
+    {
+      "kind": "Hellfire mod (add-on content)",
+      "path": "mods/hf/",
+      "count_hint": "25 files in total (manifest.ini, nlevels DUN and CLX, data text, ui_art CLX and palette)",
+      "licence": "Repo-wide SUL. mods/hf/manifest.ini line 4 names Synergistic Software as the mod author.",
+      "class": "C",
+      "note": "Add-on content for the Hellfire expansion. Structure (manifest plus overrides) is the useful part."
+    },
+    {
+      "kind": "Lua helper library and sample mods",
+      "path": "assets/lua/ (inspect.lua, repl_prelude.lua, devilutionx/, mods/)",
+      "count_hint": "8 Lua files in assets/ (the mods folder holds several sample mods, each with init.lua)",
+      "licence": "inspect.lua carries its own MIT licence block (assets/lua/inspect.lua line 23; copyright line 26). The repo SUL also applies to the file by location (README line 82).",
+      "class": "A",
+      "note": "inspect.lua is a permissive library, class A with its MIT notice kept. Because the SUL also covers the file by location, a reuse needs both notices read. Sample mods have no licence line that I found."
+    },
+    {
+      "kind": "audio",
+      "path": "not in repo as audio files; the one audio item is assets/levels/towndata/automap.amp",
+      "count_hint": "0 WAV, OGG or MP3 files; 1 AMP file; sound is named in assets/txtdata/sound/effects.tsv (not read)",
+      "licence": "Repo-wide SUL. Origin not stated.",
+      "class": "D",
+      "note": "No usable audio in the tree that I could confirm."
+    }
+  ],
+  "inspiration": [
+    "Palette remap tables: one sprite set is recoloured for variants and for effects such as a dimmed pause screen by swapping colour indexes through a table, not by repainting. Ref: assets/plrgfx/warrior/whu/whulm.trn and assets/gendata/pause.trn (names only; not opened).",
+    "Indexed run-length sprites with one shared palette: sprites are stored as compact indexed frames, so transparent areas cost almost nothing. Ref: assets/gendata/cutl1dw.clx (not opened).",
+    "Animation as a data table: each creature row gives a sprite width, an image name and six animation slots, each with a frame count and a frame rate. Animation is tuned in a spreadsheet, not in code. Ref: assets/txtdata/monsters/monstdat.tsv (header line and row structure).",
+    "Loot by prefix and suffix: item names and stats are built from a prefix table and a suffix table, with unique items kept in a separate table. Lots of variety from little art. Ref: assets/txtdata/items/item_prefixes.tsv, item_suffixes.tsv and unique_itemdat.tsv.",
+    "One dungeon per floor as a tile-index file: each floor is a separate map file and the town is its own file, which keeps floors easy to swap. Ref: assets/levels/l1data/ and assets/levels/towndata/automap.dun.",
+    "Storyboard stills with portrait frames: a short run of wide stills and cropped portrait frames carries a cutscene with very little animation. Ref: assets/gendata/cutportrw.clx and cutstartw.clx (names only; not opened).",
+    "Hellfire as an add-on folder: the expansion lives in mods/hf with its own manifest and overrides for maps, art and text, so a mod can ship new content without changing the base game. Ref: mods/hf/manifest.ini."
+  ],
+  "briefs": [
+    {
+      "label": "Armour-tint hero set",
+      "why": "One body animation with several colour tables gives many armour looks for the cost of one set of frames.",
+      "keep": "Shared frames; one colour-remap table per armour variant; a clear base body.",
+      "change": "Our own silhouette and shoulder ornament; our own tints (no metal names); a different head and crest design.",
+      "ref": "assets/plrgfx/warrior/whu/whulm.trn and whufm.trn (names only; not opened)"
+    },
+    {
+      "label": "Ruined chapel dungeon",
+      "why": "A single large chapel room gives a strong focal point for a dungeon floor.",
+      "keep": "One dominant room with a clear plan; a tile-index map file.",
+      "change": "Our own architecture (no church motifs); a different lighting mood; our own room count.",
+      "ref": "assets/arena/church.dun (name only; not opened)"
+    },
+    {
+      "label": "Creature sheet by table",
+      "why": "Animation timing set in a table can be tuned fast and copied between creatures.",
+      "keep": "Per-creature frame counts and frame rates for each animation state; a row per creature.",
+      "change": "Our own state names and frame counts; a different number of states.",
+      "ref": "assets/txtdata/monsters/monstdat.tsv (header and row structure)"
+    },
+    {
+      "label": "Storyboard still strip",
+      "why": "A few wide stills plus cropped portrait frames can carry a short cutscene cheaply.",
+      "keep": "Wide still for the scene; cropped portrait frames for the speaker; a fixed frame size.",
+      "change": "Our own composition and aspect ratio; our own portrait framing.",
+      "ref": "assets/gendata/cutportrw.clx and cutstartw.clx (names only; not opened)"
+    }
+  ],
+  "cross_links": [
+    "spawns and animation: monstdat.tsv is a spawn-and-animation data table; compare with our spawn notes.",
+    "zones: the dun files are per-floor tile maps; the arena files are small set-piece floors.",
+    "loot: the prefix, suffix and unique tables are the loot-variety mechanism.",
+    "vfx: the palette remap tables are the cheap colour-effect technique.",
+    "sound: effects.tsv names sounds but the tree has no audio files to listen to (sound table not read).",
+    "hud-ui: the UI panels and buttons in assets/data and assets/ui_art."
+  ],
+  "not_read": [
+    "All CLX, TRN, DUN, PAL, PNG and AMP binary content: names, folder counts and sizes only.",
+    "txtdata text contents: only headers and line counts. One dialogue line was seen in textdat.tsv while checking the format; it is not reproduced here.",
+    "sound/effects.tsv and other table bodies beyond the header of monstdat.tsv.",
+    "The Lua mod bodies (only inspect.lua's licence block was read).",
+    "The C++ Source/ tree and tests (code, out of scope).",
+    "The external devilutionx-assets repository, which the README links to; not looked for, as the rules require.",
+    "No _RESTRICTED-NOTE.txt found in this donor."
+  ]
+}

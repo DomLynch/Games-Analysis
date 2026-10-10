@@ -1,0 +1,160 @@
+{
+  "donor": "CytopiaTeam-Cytopia",
+  "code_licence": "GPL-3.0-only (data/setup/net.cytopia.Cytopia.metainfo.xml project_license; license.txt is the GPL v3 text)",
+  "asset_licence": "Not stated for the art (907 PNG under data/resources/images), music (13 OGG), sound effects (35 OGG), TileData/UI JSON or languages. metainfo.xml line 7 declares metadata_license CC0-1.0 with no stated scope. Fonts: SIL OFL 1.1 for Press Start 2P (data/resources/fonts/Licenses/PressStart2P.txt line 2); the other font licence files are short notes with author or source lines.",
+  "rights_holder_status": "unknown for art and music. credits.txt names the artists, composers and translators, but states no copyright holder or licence. Fonts are third-party (1001fonts source list, data/resources/fonts/Licenses/sources.txt). No copyright lines were found in src/ or tests/.",
+  "best_class": "B",
+  "asset_groups": [
+    {
+      "kind": "building sprites",
+      "path": "/mnt/frankendom-donors/CytopiaTeam-Cytopia/data/resources/images/buildings/",
+      "count_hint": "625 PNG",
+      "licence": "not stated (credits name the artists; TileData.json author fields name them per tile)",
+      "class": "C",
+      "note": "Authors in TileData.json include RockFort (399 entries) and Kingtut 101 (276 entries) (grep counts). No licence line."
+    },
+    {
+      "kind": "flora and decoration sprites",
+      "path": "/mnt/frankendom-donors/CytopiaTeam-Cytopia/data/resources/images/flora/ (81 PNG) and images/decoration/ (80 PNG)",
+      "count_hint": "161 PNG",
+      "licence": "not stated",
+      "class": "C",
+      "note": "Flora covers bushes, flora, trees and waterFlora sub-folders. Decoration covers buildings, ground, nature and rocks sub-folders."
+    },
+    {
+      "kind": "terrain, shoreline and road tiles",
+      "path": "/mnt/frankendom-donors/CytopiaTeam-Cytopia/data/resources/images/terrain/ (21 PNG incl. blueprint/), images/terrain_shorelines/ (17 PNG), images/roads/ (16 PNG)",
+      "count_hint": "54 PNG",
+      "licence": "not stated",
+      "class": "C",
+      "note": "Terrain includes grass, dirt, burned and basalt variants. Shorelines are edge sets for water boundaries."
+    },
+    {
+      "kind": "UI art, zone icons, selection and app icons",
+      "path": "/mnt/frankendom-donors/CytopiaTeam-Cytopia/data/resources/images/ui/ (47), zones/ (10), selection/ (3), app_icons/ (7), underground/ (1)",
+      "count_hint": "68 PNG",
+      "licence": "not stated",
+      "class": "C",
+      "note": "zones/ holds res1-3, comm1-3, ind1-3 and farm. Buttons use separate default, clicked and pressed textures (UIData.json)."
+    },
+    {
+      "kind": "music",
+      "path": "/mnt/frankendom-donors/CytopiaTeam-Cytopia/data/resources/audio/music/",
+      "count_hint": "13 OGG (several have _mono copies)",
+      "licence": "not stated; credits.txt names MB22 (OST) and sqwdmusic (OST)",
+      "class": "C",
+      "note": "Credits attribute the tracks; no licence line found. Treat as unclear."
+    },
+    {
+      "kind": "sound effects",
+      "path": "/mnt/frankendom-donors/CytopiaTeam-Cytopia/data/resources/audio/sound effects/ (menu/, terrain/, game/)",
+      "count_hint": "35 OGG (menu 20, terrain 14, game 1; several with _mono copies)",
+      "licence": "not stated",
+      "class": "C",
+      "note": "Menu set covers up, down, positive, negative, bad and major select sounds. Terrain set has seven numbered variants."
+    },
+    {
+      "kind": "fonts (TTF plus licence notes)",
+      "path": "/mnt/frankendom-donors/CytopiaTeam-Cytopia/data/resources/fonts/ (14 TTF) and fonts/Licenses/ (per-font text files and sources.txt)",
+      "count_hint": "14 TTF",
+      "licence": "Press Start 2P: SIL OFL 1.1 (PressStart2P.txt line 2) with Reserved Font Name; the Johste font has OFL in license.txt; Alpha Beta and Edit Undo credit Brian Kent; pixelFJ8pt1 is a downloaded font with a note; the rest have per-font notes (not read in full)",
+      "class": "B",
+      "note": "OFL-style conditions (reserved font name, no selling the font alone). Other fonts: class C until each note is read in full."
+    },
+    {
+      "kind": "tile, UI and terrain data (JSON) and game text",
+      "path": "/mnt/frankendom-donors/CytopiaTeam-Cytopia/data/resources/data/TileData.json (about 827 id lines; tile names, categories, descriptions, authors), UIData.json, UILayout.json, TerrainGen.json, settings.json",
+      "count_hint": "5 JSON files",
+      "licence": "not stated",
+      "class": "C",
+      "note": "Tile descriptions are flavour text. Summarised only in this note; no text quoted beyond names."
+    },
+    {
+      "kind": "translations (PO files)",
+      "path": "/mnt/frankendom-donors/CytopiaTeam-Cytopia/data/languages/*/Cytopia.po and languages/Cytopia.pot",
+      "count_hint": "23 PO files and 1 POT",
+      "licence": "not stated",
+      "class": "C",
+      "note": "Community translations (credits.txt names translators). Not opened."
+    }
+  ],
+  "inspiration": [
+    "Each zone type has three density tiers as separate sprites (res1-3, comm1-3, ind1-3 in images/zones/). The tier ladder reads at a glance and makes growth visible.",
+    "Forest is generated from three density bands (light, medium, dense) with four species each (TerrainGen.json, Showcase block). A layered procedural planting rule with no hand-placed trees.",
+    "Shoreline edge sets (images/terrain_shorelines/, 17 PNG) give water boundaries their own tile family, separate from the land terrain.",
+    "The menu sound family pairs one short positive and one short negative sound with several variants and mono copies (sound effects/menu/). A small consistent UI sound palette.",
+    "Buttons have default, clicked and pressed textures set in UIData.json. A clear three-state button with data-driven textures.",
+    "A decoration tile describes an abandoned woodland ruin with unknown builders (TileData.json, id BD_1x1_AbandonedBuildings). A short premise we can rewrite in our own words."
+  ],
+  "briefs": [
+    {
+      "label": "Three-tier neighbourhood block",
+      "why": "Three density tiers of one zone type read at a glance as the city grows.",
+      "keep": [
+        "three tiers per zone type",
+        "one palette per zone"
+      ],
+      "change": [
+        "our own roof shapes and colours",
+        "a different tier naming and silhouette steps"
+      ],
+      "ref": "/mnt/frankendom-donors/CytopiaTeam-Cytopia/data/resources/images/zones/res1.png, res2.png, res3.png (filenames only; images not opened)",
+      "rule": "Recreate as a clearly distinct original, never a copy. keep = trait kept, change = trait changed."
+    },
+    {
+      "label": "Forest density band",
+      "why": "Three bands of light, medium and dense planting give variety from one rule.",
+      "keep": [
+        "three density bands",
+        "a short species list per band"
+      ],
+      "change": [
+        "our own species and silhouettes",
+        "band thresholds chosen for our map sizes"
+      ],
+      "ref": "/mnt/frankendom-donors/CytopiaTeam-Cytopia/data/resources/data/TerrainGen.json (tree_pine_light line 5 and the medium and dense lists)",
+      "rule": "Recreate as a clearly distinct original, never a copy. keep = trait kept, change = trait changed."
+    },
+    {
+      "label": "Shoreline edge set",
+      "why": "A dedicated edge family makes water boundaries read cleanly.",
+      "keep": [
+        "separate edge tiles for water boundaries"
+      ],
+      "change": [
+        "our own palette and bevel",
+        "a different number of edge variants"
+      ],
+      "ref": "/mnt/frankendom-donors/CytopiaTeam-Cytopia/data/resources/images/terrain_shorelines/ (filenames only)",
+      "rule": "Recreate as a clearly distinct original, never a copy. keep = trait kept, change = trait changed."
+    },
+    {
+      "label": "Positive and negative select pair",
+      "why": "A short confirm and a short deny sound give clear feedback in menus.",
+      "keep": [
+        "one positive and one negative sound",
+        "mono copies for spatial use"
+      ],
+      "change": [
+        "our own instrument and pitch",
+        "a different sound design source"
+      ],
+      "ref": "/mnt/frankendom-donors/CytopiaTeam-Cytopia/data/resources/audio/sound effects/menu/Positive Select.ogg and Negative Select.ogg (filenames only; audio not opened)",
+      "rule": "Recreate as a clearly distinct original, never a copy. keep = trait kept, change = trait changed."
+    }
+  ],
+  "not_read": [
+    "all PNG pixel contents and sizes (binary; not opened)",
+    "all OGG audio contents",
+    "TTF font glyphs and the full text of each per-font licence file (only the lines in receipts were read)",
+    "data/languages/*.po contents (translations)",
+    "data/resources/data/UIData.json, UILayout.json, settings.json contents beyond the sample lines",
+    "data/images/wiki and data/images screenshots",
+    "ReleaseNotes.txt beyond the lines that mention MB22 and sound",
+    "src/ tile-size and render constants (grep found none for TILE_WIDTH or tileWidth)",
+    "data/resources/fonts/Licenses/lilliput steps.pdf (licence PDF not read)"
+  ],
+  "half_read": "Client half (the whole game in one project). No server half in this donor; no other matching name found in the top-level box listing.",
+  "other_halves_in_box": [],
+  "criteria_note": "Art and music are unlicensed in the repo, so briefs stay category-level."
+}

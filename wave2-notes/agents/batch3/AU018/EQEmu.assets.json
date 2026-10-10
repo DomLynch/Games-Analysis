@@ -1,0 +1,87 @@
+{
+  "donor": "EQEmu",
+  "code_licence": "GPL-3.0 (LICENSE.md, 'Version 3, 29 June 2007')",
+  "asset_licence": "No separate asset licence file. README says the project 'do[es] not claim ownership of the original game or its assets'. The SQL content (utils/sql, 16 MB) and the bundled utility binaries have no licence text of their own in the repo.",
+  "rights_holder_status": "Server emulator for a commercial MMO. README names Daybreak Game Company and the original creators as owners of the original game and its assets. The README also says the content database includes ProjectEQ world data; that claim was not confirmed in the tree (no world dump found). Treat game-derived data as proprietary.",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "game-derived database content (SQL)",
+      "path": "utils/sql/ (svn 261 files, git/optional 84 files, bots, merc, AA table files)",
+      "count_hint": "362 .sql files; 170 contain INSERT INTO; 33 mention npc_types; 0 insert into an items table",
+      "licence": "none stated for the SQL content; repo GPL-3.0 only by default",
+      "class": "C",
+      "note": "Mostly schema migrations and rule toggles (rule_values inserts). Some NPC and spell rows, including Mercenary and bot spell lists. Not a full world dump in this tree."
+    },
+    {
+      "kind": "utility binaries (third-party DLL and EXE)",
+      "path": "utils/EQExtractor2/EQExtractor2/*.dll (SharpPcap, log4net, PacketDotNet, zlib.net), utils/xmltojson/*.exe, utils/scripts/build/should-release/should-release.exe",
+      "count_hint": "4 DLL, 3 EXE",
+      "licence": "no licence text in repo for these binaries",
+      "class": "C",
+      "note": "Not opened. The folder name EQExtractor2 suggests an archive extractor; not verified. Any use would depend on the user supplying their own game copy."
+    },
+    {
+      "kind": "game art, models, textures, sound, maps",
+      "path": "none found (no .s3d, .eqg, .wld, .pak, .bmp, .dds, .png, .mp3, .wav, .ogg in tree); utils/defaults/Maps is empty",
+      "count_hint": "0",
+      "licence": "n/a",
+      "class": "D",
+      "note": "No non-code art or audio in this repo."
+    },
+    {
+      "kind": "server config and rules defaults",
+      "path": "utils/defaults/ (log.ini, mime.types, plugin.pl, quests/, shared/)",
+      "count_hint": "not counted",
+      "licence": "GPL-3.0 by repo default",
+      "class": "B",
+      "note": "Config and plugin code. Not art."
+    },
+    {
+      "kind": "lua mod scripts",
+      "path": "utils/mods/*.lua (name search found 4 .lua files in the tree)",
+      "count_hint": "4 files",
+      "licence": "GPL-3.0 by repo default",
+      "class": "B",
+      "note": "Code, e.g. legacy_combat.lua and classic_wow_experience.lua (names only)."
+    }
+  ],
+  "inspiration": [
+    "The repo has no art. Its value is the data design: NPC, spawn, loot and rules tables kept as SQL, with named rule toggles (e.g. charm and augment enforcement). Build our own tuning as named toggles with notes.",
+    "Companion characters (mercenaries and bots) get their own spell lists per class and proficiency. Idea to recreate: a hireable companion with its own spells and stances, with our names and roles.",
+    "A salvage recipe path exists where items break into components; an update later cleans up the salvage entries. Idea: a salvage loop that turns unwanted gear into our own materials.",
+    "Augment rules (slot restriction and usability enforcement) show a socketed-gear idea: add-ons that a slot must accept. Recreate with our own socket shapes and our own rules.",
+    "Bard-style out-of-combat songs are set as spell entries on bot NPCs. Idea: an out-of-combat buff loop for companions, with our own audio and names.",
+    "The server is split into separate world, zone, login and query services in their own folders. This is an architecture idea for our own service boundaries, not an asset."
+  ],
+  "briefs": [
+    {
+      "label": "Hireable companion",
+      "why": "A companion with its own spell list and gear makes a party feel bigger without extra players.",
+      "keep": "Per-class spell list; stance per companion; companion gear slots",
+      "change": "Our own roles, names and abilities; a different hire model; our own companion silhouettes",
+      "ref": "utils/sql/git/optional/2013_02_18_Merc_Spells.sql (merc_spell_list_entries, read as data)"
+    },
+    {
+      "label": "Salvage loop",
+      "why": "Gives unwanted gear a second use and gives crafting a sink.",
+      "keep": "Gear that breaks into components; cleanup of salvage recipes",
+      "change": "Our own material types and salvage rules; a different breakdown result per item class",
+      "ref": "utils/sql/git/optional/2013_04_09_SalvageCleanOld.sql (tradeskill_recipe_entries, salvagecount)"
+    },
+    {
+      "label": "Socketed add-on gear",
+      "why": "Slot-based add-ons give loot a build decision without new items.",
+      "keep": "Slot restriction; usability check; named rule toggle",
+      "change": "Our own socket shapes and add-on types; our own enforcement rules",
+      "ref": "utils/sql/git/optional/2014_03_17_EnforceAugmentRules.sql (Inventory:EnforceAugmentRestriction)"
+    }
+  ],
+  "not_read": [
+    "Bulk of the 362 SQL files beyond their first lines (grep counts and the first two lines only)",
+    "The utility binaries (.exe, .dll), not opened",
+    "utils/mods lua bodies (names only)",
+    "README bodies beyond the licence, data and PEQ lines",
+    "Whether a full ProjectEQ world dump is in the tree (searched by name and by INSERT counts; none found for items)"
+  ]
+}

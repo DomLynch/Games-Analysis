@@ -1,0 +1,89 @@
+{
+  "donor": "cmangos-mangos-classic",
+  "code_licence": "GNU GPL v2 (LICENSE, 'Version 2, June 1991'; README line 65). README line 79 says the full licence text is in a COPYING file, but no COPYING file is in the repo root (only LICENSE). README lines 96-103 say third-party libraries under dep/ have other licences and must be obeyed.",
+  "asset_licence": "The repo ships no client art, audio, models or map files. Its own COPYRIGHT.md (line 7) says World of Warcraft content and trademarks belong to Blizzard Entertainment, Inc.; it says the project is not affiliated with Blizzard (line 28) and frames any use of that material as fair use for non-commercial demo content and as a record of the game (lines 15-16). Game-derived data sits in SQL: sql/base/dbc/original_data (six MySQL dumps, Spell.sql about 8.5 MB) and sql/base/mangos.sql (527 KB). Anti-cheat binaries: src/game/Anticheat/module/warden_modules (73 .bin files); the files read do not state their origin. Recast demo assets: contrib/recastdemomod/dep/font/DroidSans.ttf and 4 PNG screenshots; dep/recastnavigation/License.txt begins with a 2009 Mikko Mononen copyright line.",
+  "rights_holder_status": "Educational, non-commercial, non-profit fan emulator project (COPYRIGHT.md). The repo's own COPYRIGHT.md states that the game content is Blizzard's copyright and trademark and that the project is not affiliated. Origin of the SQL dumps and the warden .bin modules is not stated in the files read. No clean-room claim is made in the repo. No leak claim is made in the files read either; do not treat the donor as clean-room.",
+  "best_class": "C (the only game-derived content is Blizzard-owned per the repo's own COPYRIGHT.md; no class A or B asset verified; there is no art to class)",
+  "asset_groups": [
+    {
+      "kind": "Game database content (SQL): creatures, quests, items, spells, text tables",
+      "path": "/mnt/frankendom-donors/cmangos-mangos-classic/sql (about 25 MB; 1,515 .sql files), including sql/base/mangos.sql (527 KB), sql/base/characters.sql (52 KB), sql/base/realmd.sql (15 KB)",
+      "count_hint": "1,515 .sql files under sql/",
+      "licence": "COPYRIGHT.md line 7 (Blizzard copyright and trademark); COPYRIGHT.md lines 15-16 (the project's fair-use framing for non-commercial demo content). No separate licence for the data.",
+      "class": "C",
+      "note": "Gameplay data as SQL. Mechanics only as concept; never copy names, quest text or stat values from it."
+    },
+    {
+      "kind": "Client-derived table dumps (DBC-style)",
+      "path": "/mnt/frankendom-donors/cmangos-mangos-classic/sql/base/dbc/original_data (Spell.sql about 8.5 MB, WorldStateExpression.sql about 453 KB, DungeonEncounter.sql about 62 KB, UnitCondition.sql, CombatCondition.sql, SpellCone.sql)",
+      "count_hint": "6 .sql files",
+      "licence": "Same as above (COPYRIGHT.md line 7). The dump header (Spell.sql line 1) names a MySQL 8.0.34 dump; it does not name the client build.",
+      "class": "C",
+      "note": "Table shapes are the useful part: a spell-shape table, a dungeon-encounter table, and condition tables. Contents not summarised beyond table shape."
+    },
+    {
+      "kind": "Anti-cheat binary modules",
+      "path": "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Anticheat/module/warden_modules (73 .bin files)",
+      "count_hint": "73 .bin files",
+      "licence": "Not stated in the files read. The repo's COPYRIGHT.md covers copyrighted material generally, but does not name these files.",
+      "class": "C",
+      "note": "Binary modules; not opened. Origin unknown from the repo, so do not reuse."
+    },
+    {
+      "kind": "Font and screenshots (navigation demo, third-party)",
+      "path": "/mnt/frankendom-donors/cmangos-mangos-classic/contrib/recastdemomod/dep/font/DroidSans.ttf; /mnt/frankendom-donors/cmangos-mangos-classic/contrib/recastdemomod/screenshot.png; /mnt/frankendom-donors/cmangos-mangos-classic/dep/recastnavigation/Docs/Images (screenshot.png, recast_intro.png); /mnt/frankendom-donors/cmangos-mangos-classic/dep/recastnavigation/RecastDemo/screenshot.png",
+      "count_hint": "1 font, 4 PNG",
+      "licence": "dep/recastnavigation/License.txt line 1 gives a 2009 Mikko Mononen copyright; the full licence text was not read. No licence read for DroidSans.ttf.",
+      "class": "C",
+      "note": "Demo screenshots of a navigation library and its font. Not viewed; licence not confirmed for the font."
+    },
+    {
+      "kind": "Documentation and text (GPL repo)",
+      "path": "/mnt/frankendom-donors/cmangos-mangos-classic (README.md, ChangeLog.md 41 KB, NEWS.md, CONTRIBUTING.md, AUTHORS.md, doc/*.txt, WARNING, README_PLAYERBOT.txt)",
+      "count_hint": "about 15 docs at repo level, plus doc/ folder",
+      "licence": "GPL v2 for the repo (LICENSE). Docs are not separately licensed in the files read.",
+      "class": "B (copyleft, under the repo licence)",
+      "note": "Design notes on bots, the auction house, scripting and commands. Not read in full."
+    }
+  ],
+  "inspiration": [
+    "Cone-shaped area effects: SpellCone.sql pairs spell ids with one shape value (line 38 shows the table form only). The idea is a fan-shaped sweep defined as data, which gives a readable telegraph for breath or sweeping attacks. Recreate with our own shape rules and numbers.",
+    "Encounters as a table: DungeonEncounter.sql (line 60) keeps boss encounters as rows of ids and flags rather than hand-written scripts. Recreate boss phases as a readable phase table that designers can edit.",
+    "Conditions as reusable rules: CombatCondition.sql (line 24) gates effects on self, target, friend and enemy conditions with logic fields, and UnitCondition.sql does the same per unit. A small rule table can gate our abilities without new code.",
+    "Pre-baked navigation per zone: contrib/mmap (with mmap_extract.py, name only read) and the dep/recastnavigation library suggest navmeshes built offline from map data so monsters path cheaply at run time. A pipeline idea for our zones; the actual mapping was not read.",
+    "Companion bots limited to learned skills: README_PLAYERBOT.txt line 8 says bots only use abilities the character has learned. A companion AI that is bounded by a skill tree, not by a cheat list, is a good design rule for our allies.",
+    "A market that moves on its own: doc/AuctionHouseBot.txt line 1 describes a bot that fills auction houses with items, so the economy feels active when players are few. Recreate as an NPC merchant that restocks on a timer."
+  ],
+  "briefs": [
+    {
+      "label": "Fan-cut breath",
+      "why": "A fan-shaped sweep is easy to read and easy to dodge, so it works as a telegraphed hazard.",
+      "keep": "Shape defined by a cone angle and a length as data; a short wind-up that shows the cone.",
+      "change": "A curved arc with a telegraph ring; our own angle and length rules; a cooldown that ties into the creature's stance.",
+      "ref": "/mnt/frankendom-donors/cmangos-mangos-classic/sql/base/dbc/original_data/SpellCone.sql (table shape only)"
+    },
+    {
+      "label": "Phased guardian encounter",
+      "why": "Readable phases make a boss feel like it changes shape and tactics, without a long script.",
+      "keep": "Encounter phases as a table; each phase changes the attack set.",
+      "change": "Phases tied to the arena (a surface that breaks, a light that moves); our own phase names and count.",
+      "ref": "/mnt/frankendom-donors/cmangos-mangos-classic/sql/base/dbc/original_data/DungeonEncounter.sql (table shape only)"
+    },
+    {
+      "label": "Learned-skills companion",
+      "why": "An ally that only uses what the player has trained keeps companions honest and easy to balance.",
+      "keep": "The ally's kit is bounded by a learned skill set.",
+      "change": "The ally has its own tree and a visible skill bar; the player teaches it moves in the field.",
+      "ref": "/mnt/frankendom-donors/cmangos-mangos-classic/README_PLAYERBOT.txt (line 8)"
+    }
+  ],
+  "not_read": [
+    "No binary opened: the 73 warden .bin modules, DroidSans.ttf and all PNG images were not opened.",
+    "SQL files: only table-level grep lines were read (SpellCone, DungeonEncounter, CombatCondition); row content was deliberately not summarised.",
+    "contrib/mmap/mmap_extract.py and contrib/mmap readme: names only, not read.",
+    "dep/recastnavigation/License.txt: first line only.",
+    "COPYING file referenced by README line 79: not present in the repo root; not found by name search (only LICENSE).",
+    "ChangeLog.md, NEWS.md, CONTRIBUTING.md, AUTHORS.md and doc/*.txt: names and sizes only, except doc/AuctionHouseBot.txt lines 1-2.",
+    "Not verified: whether any SQL row carries text or names from the commercial game beyond the file header; treated as game-derived by the repo's own COPYRIGHT.md."
+  ]
+}

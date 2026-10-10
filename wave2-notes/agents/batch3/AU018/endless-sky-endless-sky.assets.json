@@ -1,0 +1,152 @@
+{
+  "donor": "endless-sky-endless-sky",
+  "code_licence": "GPL-3.0-or-later per copyright file ('Files: *' stanza, License: GPL-3+); license.txt is the GPL v3 text",
+  "asset_licence": "Mixed, set per path by the copyright file: images/* default CC-BY-SA-4.0; many subsets CC0, public-domain (morguefile photos), CC-BY-SA-3.0, CC-BY-4.0, CC-BY-3.0 and an Unsplash licence stanza; sounds/* default public-domain with CC-BY-SA-3.0, CC-BY-SA-4.0 and CC-BY-3.0 exceptions. Ambient mp3 music has no specific stanza.",
+  "rights_holder_status": "Original open-source game. Copyright lines name Michael Zahniser and 'endless-sky contributors' (copyright, credits.txt). Third-party photos and sounds are credited per file in the copyright file. No proprietary game data in the repo.",
+  "best_class": "A",
+  "asset_groups": [
+    {
+      "kind": "ship sprites",
+      "path": "images/ship/ (399 png files)",
+      "count_hint": "399 files",
+      "licence": "CC-BY-SA-4.0 by images/* default; some stanzas are CC-BY-SA-4.0 by named authors (e.g. Maximilian Korber, 'hai?solifuge', 'hai?violin?spider')",
+      "class": "B",
+      "note": "Share-alike with attribution. Ship sets are grouped by culture in names: avgi (35), gegno (30), hai (17), aberrant (13), heliarch (9), quarg (6), others. Pixel size not read."
+    },
+    {
+      "kind": "outfit (equipment) sprites",
+      "path": "images/outfit/ (697 files)",
+      "count_hint": "697 files",
+      "licence": "CC-BY-SA-4.0 by images/* default; 'harvested yottrite' and some bullet files CC-BY-SA-3.0 (Becca Tommaso) or CC-BY-SA-4.0 (Maximilian Korber)",
+      "class": "B",
+      "note": "Share-alike with attribution."
+    },
+    {
+      "kind": "effect sprites (frame strips)",
+      "path": "images/effect/ (899 files)",
+      "count_hint": "899 files",
+      "licence": "CC-BY-SA-4.0 by images/* default; 'flotsam yottrite' CC-BY-SA-3.0 (Becca Tommaso)",
+      "class": "B",
+      "note": "Frame strips named with ^0..^4 or +0..+2 suffixes."
+    },
+    {
+      "kind": "planet sprites",
+      "path": "images/planet/ (420 files)",
+      "count_hint": "420 files",
+      "licence": "CC-BY-SA-4.0 by images/* default; subset stanzas not checked one by one",
+      "class": "B",
+      "note": "Not individually checked. Treat as B until checked."
+    },
+    {
+      "kind": "asteroid, star, label, hardpoint, map, ui, icon, thumbnail sprites",
+      "path": "images/asteroid, images/star, images/label, images/hardpoint, images/map, images/ui, images/icon, images/thumbnail",
+      "count_hint": "not counted",
+      "licence": "CC-BY-SA-4.0 by images/* default",
+      "class": "B",
+      "note": "Listed only; not opened."
+    },
+    {
+      "kind": "landscape and space photo backgrounds",
+      "path": "images/land/ and images/scene/",
+      "count_hint": "not counted per folder",
+      "licence": "CC0 for many (e.g. images/land/haze0*, badlands*, city*, sea5*), public-domain (morguefile) for the default images/land/* and images/scene/* stanzas, CC-BY-SA-3.0 for Wikimedia photos (bwerner, myrabella, dmottl, mfield), CC-BY-4.0 for images/scene/eso*, Unsplash for about 40 listed land and scene files",
+      "class": "A for CC0, public-domain and CC-BY-4.0 (with attribution); B for CC-BY-SA-3.0; C for Unsplash",
+      "note": "Unsplash stanza says the Unsplash licence applies and also says the 'sale of unaltered copies' is restricted; treat as C."
+    },
+    {
+      "kind": "bitmap font sheets",
+      "path": "images/font/ubuntu14r.png, images/font/ubuntu18r.png",
+      "count_hint": "2 files",
+      "licence": "No specific stanza; images/* default CC-BY-SA-4.0 would apply by wildcard, but the copyright file does not name the typeface or its licence",
+      "class": "C",
+      "note": "Name suggests the Ubuntu typeface. The file does not say; class C (unclear)."
+    },
+    {
+      "kind": "sound effects (wav)",
+      "path": "sounds/ (244 wav files)",
+      "count_hint": "244 files",
+      "licence": "public-domain by sounds/* default; CC-BY-SA-3.0 (heavy rocket hit, explosion huge, meteor); CC-BY-3.0 (asteroid crunch large); CC-BY-SA-4.0 (thrasher, point defense, bounce*, clink*, fusion torch*, optical laser*, speckle*, atomic*); dragonflame* stanza exists but its licence line was not read",
+      "class": "A for public-domain and CC-BY; B for share-alike",
+      "note": "Several files also have @3x variants on disk (e.g. archonteleport@3x.wav); not checked whether the stanzas cover them."
+    },
+    {
+      "kind": "ambient music (mp3)",
+      "path": "sounds/ambient/ (machinery.mp3, rulei planet.mp3, rulei space.mp3)",
+      "count_hint": "3 files",
+      "licence": "No specific stanza. The sounds/* stanza says 'Based on public domain sounds taken from freesound.org', which does not clearly name these tracks",
+      "class": "C",
+      "note": "Unclear. Do not reuse without a fresh check."
+    },
+    {
+      "kind": "GLSL shaders",
+      "path": "shaders/ (batch, fill, fog, font, line, outline, pointer, renderBuffer, ring, sprite, starfield; .vert/.frag)",
+      "count_hint": "22 files",
+      "licence": "GPL-3+ by default",
+      "class": "B",
+      "note": "Code, not art. Copyleft licence for the code."
+    },
+    {
+      "kind": "game data text",
+      "path": "data/ (204 .txt files, about 50k lines by wc)",
+      "count_hint": "204 files; line total not reliable (wc with spaces in names)",
+      "licence": "GPL-3+ by default ('Files: *')",
+      "class": "B",
+      "note": "Story, faction, ship and mission text under GPL-3+. Do not copy text; use only the structure ideas."
+    }
+  ],
+  "inspiration": [
+    "Effects are frame strips with a numbered suffix (e.g. hit sparks ^0 to ^4). A simple convention to copy for our hit and burst effects, with our own art.",
+    "Thruster glow comes as a three-frame set (+0, +1, +2). A short loop like this is a cheap engine effect; recreate the timing with our own colours.",
+    "Hulls are grouped by culture in their names, so each faction has a family of silhouettes (avgi, gegno, hai, aberrant, heliarch, quarg). Keep the idea that a faction reads by family shape, not the designs.",
+    "Backgrounds are layered photo plates (CC0 land plates, painted scenes). Recreate as layered plates with our own painted or generated art and our own tint per zone.",
+    "The content lives in plain text data files (factions, ships, outfits, missions, dialogue phrases). A data-first layout for our own content tables is the technique to take, not the text.",
+    "Ambient music is sparse drone with a machine or planet mood. Keep the mood brief; compose our own track.",
+    "Explosions and hits are short layered WAVs with separate small and large variants (asteroid crunch small, medium, large). Use the size-tier idea with our own sounds."
+  ],
+  "briefs": [
+    {
+      "label": "Culture-family hull set",
+      "why": "A faction can be read from silhouette alone when its hulls share one shape language. Name counts suggest this is a deliberate family design (e.g. 35 avgi-prefixed sprites), but the sprites were not viewed.",
+      "keep": "Shared shape language per faction; a family of hull variants; faction palette per family",
+      "change": "Our own silhouettes and proportions; different palette and ornament; our own faction names",
+      "ref": "images/ship/ (prefix groups avgi*, gegno*, hai*, aberrant*); not viewed, names only"
+    },
+    {
+      "label": "Layered hit-spark strip",
+      "why": "A short numbered strip reads as impact without heavy compositing.",
+      "keep": "Five frames with a fast decay; numbered frame naming",
+      "change": "Our own spark shape and colour; a different number of frames; a shard or bloom look",
+      "ref": "images/effect/acuit hit^0.png to acuit hit^4.png; names only"
+    },
+    {
+      "label": "Three-frame thruster glow",
+      "why": "A tiny loop that makes engines feel alive on a small sprite.",
+      "keep": "Three-frame loop; glow grows and fades",
+      "change": "Our own colour ramp; a flame or plasma shape; a different loop length",
+      "ref": "images/effect/afterburner+0.png to afterburner+2.png; names only"
+    },
+    {
+      "label": "Layered backdrop plates",
+      "why": "Several slightly offset plates give depth to a flat space scene.",
+      "keep": "Multiple background layers; soft haze over hard shapes",
+      "change": "Our own painted or generated plates; our own tint per zone",
+      "ref": "images/land/haze0* (CC0 plate, read via copyright file only)"
+    },
+    {
+      "label": "Sparse ambient drone",
+      "why": "A low drone supports exploration without fatigue.",
+      "keep": "Sparse texture; long repeat; mood per planet or space",
+      "change": "Our own composition and instrumentation; a different key per zone",
+      "ref": "sounds/ambient/machinery.mp3 (listed only; not played; licence unclear, C)"
+    }
+  ],
+  "not_read": [
+    "Image pixel sizes and palettes (binary; not opened)",
+    "Audio contents (binary; not played)",
+    "Full data/*.txt text (only headers and structure via ls and wc; no quotes beyond the licence header)",
+    "The 22 shader files (names only)",
+    "License and copyright bodies beyond the stanzas quoted in receipts",
+    "Subset stanzas of images/planet and images/ui etc. (not checked one by one)",
+    "changelog (530 KB), credits.txt body beyond the first 30 lines"
+  ]
+}
