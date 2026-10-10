@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+OpenGothic	7	zones-world	/mnt/frankendom-donors/OpenGothic/common/world/world.cpp	3
+OpenRA-OpenRA	7	zones-world	/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Game/Map/Map.cs	3
+OpenRCT2-OpenRCT2	7	zones-world	/mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2/world/SurfaceData.cpp	3

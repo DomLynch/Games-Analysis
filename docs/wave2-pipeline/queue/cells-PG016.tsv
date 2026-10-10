@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+veloren-veloren	18	parties-guilds-chat	/mnt/frankendom-donors/veloren-veloren/voxygen/src/hud/group.rs	3
+wesnoth-wesnoth	18	parties-guilds-chat	/mnt/frankendom-donors/wesnoth-wesnoth/src/server/wesnothd/server.cpp	3
+xoreos-xoreos	18	parties-guilds-chat	/mnt/frankendom-donors/xoreos-xoreos/src/engines/kotorbase/partycontroller.h	3

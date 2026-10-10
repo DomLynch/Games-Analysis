@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+CleverRaven-Cataclysm-DDA	11	economy-trade	/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/npctrade.cpp	3
+DCurrent-openbor	11	economy-trade	INFERRED	3
+Dawn-of-Light-DOLSharp	11	economy-trade	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/Finance/Currency.cs	3

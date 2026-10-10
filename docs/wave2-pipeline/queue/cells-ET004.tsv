@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+OpenDAoC-OpenDAoC-Core	11	economy-trade	/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameobjects/GameMerchant.cs	3
+OpenEnroth-OpenEnroth	11	economy-trade	/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/GUI/UI/Houses/Shops.cpp	3
+OpenRA-OpenRA	11	economy-trade	/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Traits/Player/PlayerResources.cs	3

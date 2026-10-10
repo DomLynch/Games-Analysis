@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+ioquake-ioq3	7	zones-world	/mnt/frankendom-donors/ioquake-ioq3/code/server/sv_world.c	3
+keldaanCommunity-pokemonAutoChess	7	zones-world	/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/gen/generate-maps.ts	3
+l1j-en-classic	7	zones-world	/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/command/executor/L1MapInfo.java	3

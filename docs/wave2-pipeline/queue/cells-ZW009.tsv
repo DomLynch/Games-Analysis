@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+amilich-isometric-city	7	zones-world	/mnt/frankendom-donors/amilich-isometric-city/src/games/isocity/types/zones.ts	3
+angband-angband	7	zones-world	INFERRED	3
+ax-grymyr-l2dn-server	7	zones-world	/mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer.StaticData.Xml/Zones/XmlZoneStatName.cs	3

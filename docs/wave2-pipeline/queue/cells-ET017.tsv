@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+opentibiabr-otclient	11	economy-trade	/mnt/frankendom-donors/opentibiabr-otclient/modules/game_market/t_market.lua	3
+otland-forgottenserver	11	economy-trade	/mnt/frankendom-donors/otland-forgottenserver/src/game.cpp	3
+pmbstyle-L2Solo	11	economy-trade	/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Bot/Economy/BotMarketPricing.js	3

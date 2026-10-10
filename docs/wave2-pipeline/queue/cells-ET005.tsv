@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+OpenRCT2-OpenRCT2	11	economy-trade	/mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2/management/Finance.cpp	3
+OpenTTD-OpenTTD	11	economy-trade	/mnt/frankendom-donors/OpenTTD-OpenTTD/src/economy.cpp	3
+OpenXcom-OpenXcom	11	economy-trade	/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Basescape/PurchaseState.cpp	3

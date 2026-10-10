@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+EQEmu	11	economy-trade	/mnt/frankendom-donors/EQEmu/utils/sql/svn/2004_charges_alt_currency.sql	3
+LostCityRS-Engine-TS	11	economy-trade	/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/script/handlers/InvOps.ts	3
+ModernUO	11	economy-trade	/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/Vendors/SBInfo/SBMapmaker.cs	3

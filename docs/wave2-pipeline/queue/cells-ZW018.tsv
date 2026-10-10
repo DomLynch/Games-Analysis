@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+levy-street-world-of-claudecraft	7	zones-world	/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/content/realm.ts	3
+lincity-ng-lincity-ng	7	zones-world	/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/world.cpp	3
+openmw	7	zones-world	/mnt/frankendom-donors/openmw/apps/openmw/mwworld/positioncellgrid.cpp	3

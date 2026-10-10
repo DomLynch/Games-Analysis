@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+exult-exult	7	zones-world	/mnt/frankendom-donors/exult-exult/objs/mappatch.cc	3
+flareteam-flare-engine	7	zones-world	/mnt/frankendom-donors/flareteam-flare-engine/src/MapRenderer.cpp	3
+flareteam-flare-game	7	zones-world	/mnt/frankendom-donors/flareteam-flare-game/tiled/empyrean_campaign/underworld_stronghold_1.tmx	3

@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+OpenRA-OpenRA	18	parties-guilds-chat	/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Commands/ChatCommands.cs	3
+OpenRCT2-OpenRCT2	18	parties-guilds-chat	/mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2-ui/interface/Chat.cpp	3
+OpenTTD-OpenTTD	18	parties-guilds-chat	/mnt/frankendom-donors/OpenTTD-OpenTTD/src/network/network_chat_gui.cpp	3

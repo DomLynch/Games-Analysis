@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+smogon-pokemon-showdown	11	economy-trade	/mnt/frankendom-donors/smogon-pokemon-showdown/server/chat-plugins/auction.ts	3
+veloren-veloren	11	economy-trade	/mnt/frankendom-donors/veloren-veloren/world/src/site/economy/mod.rs	3
+widelands-widelands	11	economy-trade	/mnt/frankendom-donors/widelands-widelands/data/campaigns/tutorial04_economy.wmf/scripting/mission_thread.lua	3

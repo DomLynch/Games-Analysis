@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+opentibiabr-otclient	18	parties-guilds-chat	/mnt/frankendom-donors/opentibiabr-otclient/modules/game_console/console.lua	3
+otland-forgottenserver	18	parties-guilds-chat	/mnt/frankendom-donors/otland-forgottenserver/src/party.cpp	3
+pmbstyle-L2Solo	18	parties-guilds-chat	/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Clan/ClanActionService.js	3

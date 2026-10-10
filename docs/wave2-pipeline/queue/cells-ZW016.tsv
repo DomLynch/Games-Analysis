@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+id-Software-Quake	7	zones-world	/mnt/frankendom-donors/id-Software-Quake/WinQuake/world.c	3
+id-Software-Quake-2	7	zones-world	/mnt/frankendom-donors/id-Software-Quake-2/server/sv_world.c	3
+ihhub-fheroes2	7	zones-world	/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/world/world_regions.h	3

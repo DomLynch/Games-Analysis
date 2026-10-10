@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+otland-forgottenserver	7	zones-world	/mnt/frankendom-donors/otland-forgottenserver/src/tile.h	3
+pmbstyle-L2Solo	7	zones-world	/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/WorldAreaCatalog.js	3
+vcmi-vcmi	7	zones-world	/mnt/frankendom-donors/vcmi-vcmi/lib/rmg/CRmgTemplate.cpp	3

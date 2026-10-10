@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+pshenok-server-survival	11	economy-trade	/mnt/frankendom-donors/pshenok-server-survival/src/core/economy.js	3
+rathena-rathena	11	economy-trade	INFERRED	3
+scummvm-scummvm	11	economy-trade	/mnt/frankendom-donors/scummvm-scummvm/devtools/create_ultima/files/ultima4/conf/vendorScript.xml	3

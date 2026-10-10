@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+Dawn-of-Light-DOLSharp	7	zones-world	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/world/Zone.cs	3
+EQEmu	7	zones-world	/mnt/frankendom-donors/EQEmu/eqlaunch/zone_launch.cpp	3
+FWGS-xash3d-fwgs	7	zones-world	/mnt/frankendom-donors/FWGS-xash3d-fwgs/engine/server/sv_world.c	3

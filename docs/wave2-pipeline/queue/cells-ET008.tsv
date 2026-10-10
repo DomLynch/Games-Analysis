@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+angband-angband	11	economy-trade	INFERRED	3
+ax-grymyr-l2dn-server	11	economy-trade	/mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/Tools/BuildDataPackDb/Services/ClientDataService.cs	3
+azerothcore-azerothcore-wotlk	11	economy-trade	/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/e2e/suites/social/trade/trade_e2e_test.go	3

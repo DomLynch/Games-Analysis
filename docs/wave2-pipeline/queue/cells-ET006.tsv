@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+TurningWheel-Barony	11	economy-trade	/mnt/frankendom-donors/TurningWheel-Barony/src/monster_shopkeeper.cpp	3
+ValveSoftware-source-sdk-2013	11	economy-trade	/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/client/econ/econ_trading.cpp	3
+afritz1-OpenTESArena	11	economy-trade	/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/EntityChunkManager.cpp	3
