@@ -1,0 +1,87 @@
+{
+ "game": "latentcollapse-RustDAoC",
+ "category": "hud-ui",
+ "cell": 16,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/combat.rs",
+ "licence": "GPL-3.0-or-later (LICENSE file read; caer-render inherits workspace licence)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/combat-text.ts",
+ "parity_row": 14,
+ "pattern_tags": [
+  "new:floating-text",
+  "new:bounded-log-window",
+  "new:jitter-slots"
+ ],
+ "data_fields": [
+  {
+   "name": "floater_lifetime",
+   "donor_constant": "1.5",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/combat.rs:260"
+  },
+  {
+   "name": "floater_rise",
+   "donor_constant": "48",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/combat.rs:262"
+  },
+  {
+   "name": "fade_start",
+   "donor_constant": "0.5 (opacity 1 until half of life, then linear to 0)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/combat.rs:384"
+  },
+  {
+   "name": "size_critical",
+   "donor_constant": "21",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/combat.rs:398"
+  },
+  {
+   "name": "size_incoming",
+   "donor_constant": "18",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/combat.rs:399"
+  },
+  {
+   "name": "size_outgoing",
+   "donor_constant": "16",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/combat.rs:400"
+  },
+  {
+   "name": "jitter_offset",
+   "donor_constant": "22 (three slots: -22, 0, +22)",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/bin/rustdaoc.rs:5693"
+  },
+  {
+   "name": "log_capacity",
+   "donor_constant": "200",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/combat.rs:170"
+  },
+  {
+   "name": "log_visible",
+   "donor_constant": "8",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/combat.rs:172"
+  }
+ ],
+ "best_idea": "Show each hit as its own short-lived number that rises a fixed distance over 1.5 s, stays opaque for half its life, then fades, with crits larger and marked, so a flurry reads as separate hits.",
+ "decision": "adapt",
+ "decision_why": "Keep the lifetime, rise, half-life fade, crit size and mark, and the bounded log, but reject text scraping (we have structured hit events) and replace the three-slot jitter with a per-target slot allocator, because three x-offsets stack a many-on-one flurry at one height.",
+ "decision_status": "proposed",
+ "acceptance": "A server test asserts a floater is spawned only from an authoritative hit event, never from log text; a browser check shows five hits on one target in one second as five numbers, each rising 48 px and gone after 1.5 s, crits larger with a '!', and a 250-line log keeping 200 lines with 8 shown."
+}

@@ -1,0 +1,59 @@
+{
+ "game": "latentcollapse-RustDAoC",
+ "category": "zones-world",
+ "cell": 7,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-world/src/zones.rs",
+ "licence": "GPL-3.0-or-later",
+ "licence_class": "copyleft",
+ "target_module": "origins/zones/zone-frame.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "new:zone-frame-offset",
+  "new:overlap-nearest-centre",
+  "new:id-lut"
+ ],
+ "data_fields": [
+  {
+   "name": "zone_cell_size",
+   "donor_constant": "8192 world units per grid cell",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "caer-world/src/zones.rs:18"
+  },
+  {
+   "name": "zone_local_span",
+   "donor_constant": "65536 (u16 local range), zone membership square",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "caer-world/src/zones.rs:95"
+  },
+  {
+   "name": "zone_grid_offset_xy",
+   "donor_constant": "per-zone grid offset rows, e.g. zone 0 = 67/59 (table of 476 rows)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "caer-world/src/zone_offsets.rs:10"
+  },
+  {
+   "name": "zone_id_bits",
+   "donor_constant": "9 bits, LUT of 512 slots",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "caer-world/src/zones.rs:20"
+  },
+  {
+   "name": "zone_count",
+   "donor_constant": "476 zones",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "caer-world/src/zones.rs:136"
+  }
+ ],
+ "best_idea": "Store each zone as one row (id, region, grid offset) and place every entity by adding its zone-local coordinates to the zone's offset times a fixed cell size, so one world frame serves all zones and a zone lookup is O(1).",
+ "decision": "adapt",
+ "decision_why": "Adopt the frame and the table (zone-local plus cell offset gives the world; O(1) id lookup), since zones as data on one runtime is our ruling; adapt the overlap rule into an explicit tested rule, and reject the donor's silent id masking, which returns zone 0 for id 512.",
+ "decision_status": "proposed",
+ "acceptance": "A server test loads the zone table and asserts that zone 0 (Camelot Hills, offset 67/59) with zone-local (12511, 26346) gives world (561375, 509674); that an id of 512 or more resolves to no zone; and that a point inside two overlapping zones resolves to the zone with the nearer centre."
+}

@@ -26,3 +26,6 @@ Rulings: one engine (src/fight is the whole fight; the Pit and zones are clients
 - Typecheck each sketch: ts block + `export {}` in a file, scp to the VPS /tmp, `npx -p typescript tsc --noEmit --strict --target es2020 <file>` there. A `simplified:` line must sit directly above the code block saying honestly what the sketch omits or reorders.
 - Note format: copy /private/tmp/p2/out/combat-sim/id-Software-Quake.deep.md exactly (header `# <game> (<category>, cell N)`, Donor/Licence line, Checked line, sections 1-6, Reuse tag, Brief rule served).
 - Output only under your assigned folder (given in your task). Never touch other folders.
+
+## Rule added 2026-10-10 (Dom): keep the idea, fix the defect
+Old donors (10-20 years) often had a sound design but a flawed implementation (overshoot, no delta-time, inverted lookup, integer division). Do NOT reject a mechanism for a defect alone. In the note: keep the idea, list each defect with "fix: <how>", and set Decision to adapt (idea) with the defect fixed in the sketch. Reject only when the idea itself is wrong or conflicts with the Frankendom rulings.

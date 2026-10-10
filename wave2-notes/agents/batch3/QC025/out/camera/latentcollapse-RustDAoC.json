@@ -1,0 +1,118 @@
+{
+ "game": "latentcollapse-RustDAoC",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/bin/rustdaoc.rs",
+ "licence": "GPL-3.0-or-later (Cargo.toml license field; LICENSE file is GPL v3; no per-file header in rustdaoc.rs)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "variable-step",
+  "new:spherical-orbit",
+  "new:pinned-turn-compensation",
+  "new:snapback-behind"
+ ],
+ "data_fields": [
+  {
+   "name": "look_at_height",
+   "donor_constant": "60",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "rustdaoc.rs:450"
+  },
+  {
+   "name": "start_distance",
+   "donor_constant": "500 (client ini distance=500.00; fallback CAM_DIST 500)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "rustdaoc.rs:446"
+  },
+  {
+   "name": "distance_min",
+   "donor_constant": "50",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "rustdaoc.rs:3444"
+  },
+  {
+   "name": "distance_max",
+   "donor_constant": "3000",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "rustdaoc.rs:3444"
+  },
+  {
+   "name": "zoom_per_notch",
+   "donor_constant": "1.1 multiplicative per notch",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "rustdaoc.rs:3444"
+  },
+  {
+   "name": "pitch_min",
+   "donor_constant": "-0.11 rad",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "rustdaoc.rs:467"
+  },
+  {
+   "name": "pitch_max",
+   "donor_constant": "1.30 rad",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "rustdaoc.rs:468"
+  },
+  {
+   "name": "pitch_start",
+   "donor_constant": "0.267 rad (client tilt 174 turn units; fallback CAM_PITCH_START)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "rustdaoc.rs:454"
+  },
+  {
+   "name": "look_pitch_rate",
+   "donor_constant": "0.9 rad per second",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "rustdaoc.rs:478"
+  },
+  {
+   "name": "keyboard_turn_rate",
+   "donor_constant": "1024 heading units per second (4096 per turn)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "rustdaoc.rs:813"
+  },
+  {
+   "name": "mouse_sens",
+   "donor_constant": "0.005 rad per pixel",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "rustdaoc.rs:7954"
+  },
+  {
+   "name": "max_frame_dt",
+   "donor_constant": "0.1 seconds cap",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "rustdaoc.rs:4848"
+  },
+  {
+   "name": "snapback_default",
+   "donor_constant": "true",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "rustdaoc.rs:2196"
+  }
+ ],
+ "best_idea": "Place the eye on a sphere around a chest-height look-at point, with yaw from the character's facing plus a free orbit offset, so the camera sits behind by default and a drag swings it without moving the character.",
+ "decision": "adapt",
+ "decision_why": "The orbit geometry, pinned-turn compensation and wheel-set distance fit our world camera, but the donor has no collision, no damping and no shoulder offset, so those must be added before it beats the current over-the-shoulder view.",
+ "decision_status": "proposed",
+ "acceptance": "In an open zone a player running along a wall or up a slope sees the camera pull in to the wall instead of showing inside geometry; a client unit test asserts the eye stays at the set distance at every pitch and above the feet at the pitch floor on flat ground.",
+ "camera_scope": "world"
+}

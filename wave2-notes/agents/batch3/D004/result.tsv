@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+latentcollapse-RustDAoC	animation-rigs	P	STRONG	full	caer-render/src/lib.rs:973-987 clip_sample_time with the rate split (caer-assets/src/anims.rs:121-147, entities.rs:900-909 load_clip, entities.rs:842-858 tick_anim): one clock per clip from table rate, speed-over-stride for walking, 0.2 s cross-fade.
+latentcollapse-RustDAoC	combat-sim	P	PARTIAL	thin	caer-render/src/combat.rs:113-149 and caer-protocol/src/combat_anim.rs:36-48: the client only parses server damage text and an outcome code; no hit, crit or knockback resolution exists in this donor.
+latentcollapse-RustDAoC	zones-world	P	STRONG	full	caer-world/src/zones.rs:91-128 zone_at and world_from_local: world = zone grid offset times 8192 plus zone-local, one zone row per id, nearest-centre rule for overlapping zones (also grid.rs 111-138 exists, not written up here).

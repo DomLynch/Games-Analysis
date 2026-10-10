@@ -1,0 +1,30 @@
+verdict: PARTIAL
+cell: 1 (combat-sim, category_no 1 in cells file) for latentcollapse-RustDAoC
+donor: /mnt/frankendom-donors/latentcollapse-RustDAoC  (licence: GPL-3.0-or-later per Cargo.toml [workspace.package] and LICENSE text; clean-room only)
+depth: thin
+
+Files opened (6 candidates, read in the parts named):
+- /mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/combat.rs (module header 1-112, parse_damage 113-149, CombatLog from 163, FLOAT constants 260-262, FloatingTexts from 266 with tick at 309-313, draw_floating from 379)
+- /mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-protocol/src/combat_anim.rs (1-126: CombatResult enum, labels, is_hit, CombatAnimation wire form)
+- /mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-protocol/src/session.rs (target 1320-1331, attack 1361-1366, the hit-selection packets)
+- /mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/bin/rustdaoc.rs (cycle_target from 4518 with sort at 4532 and wrap at 4543, set_target, travel_speed, cycle_target_filtered from 4571 with wrap at 4595, toggle_attack from 4703)
+- /mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-world/src/presentation.rs (CombatResultView from 157, ConBand enum 182-190, from_levels 196-216, label 219)
+- /mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-world/src/lib.rs (con_of from 957)
+Searches run (grep -rn on the donor): damage/hit/crit/knock/stagger/hitstop/shake/impulse/resist/parry/dodge; "hp -=", "health -=", "damage -=", "apply_damage", "take_damage". Result: no damage, crit, knockback, hit-stop or camera-shake arithmetic exists in the client. Only text parsing and the wire result code.
+
+Why PARTIAL, one sentence: The client does not resolve a single hit, crit or knockback; it parses the server's chat line for a damage number (combat.rs 113-149) and maps a 14-byte outcome code to a label (combat_anim.rs 36-48 enum, labels 83-87), and the server that computes results is not in this repository (README points to CamelotCore), so the real combat-sim is absent here.
+
+Notes on what is real:
+- Outcome vocabulary: one swing gives one outcome from a fixed set: Missed 0, Parried 1, Blocked 2, Evaded 3, Fumbled 4, HitUnstyled 10, HitStyle 11 (combat_anim.rs 36-48; labels at 83-87).
+- Crit as a separate follow-up line: the server sends "for an additional N damage!" as its own message, and the parser sets critical from that phrasing (combat.rs 121-124). The comment says it was validated across the captures: without it 2 of 60 damage messages failed to parse (combat.rs 121-122).
+- Floating numbers: lifetime 1.5 s (combat.rs 260), rise 48 px (262), fade over the back half (384), retired when age reaches lifetime (313).
+- Target: nearest-first ring, sorted by distance then object id, wrapping, range 3000 (rustdaoc.rs 56, 4532, 4543). Selection is client-only; its doc says it is mirrored to the server (rustdaoc.rs 4515-4517), and set_target (rustdaoc.rs 4552) sends LiveCommand::Target. The Target packet builder is session.rs 1320-1331, which says the server does not acknowledge it.
+- Attack mode: toggling sends a start/stop packet (session.rs 1361-1366) and does NOT refuse without a target; it logs "attack mode on (no target selected)" (rustdaoc.rs 4715). The doc comment at 4701 says it requires a target, so the code and its doc disagree.
+- The doc comment at rustdaoc.rs 4515 says Tab targets NPCs only, but the filter at cycle_target excludes only the player's own entity (Kind::Self_), so the code and the doc disagree there too.
+
+Not used for the combat-sim cell, but worth a note for another cell: presentation.rs 182-216 has the con (consider) band: constep = max(1, (level+9)/10), con = -(viewer - target) / constep, bands at -2.5, -1.5, -0.5, 0.5, 1.5, 2.5 (receipts written, in receipts.tsv). It is a level-gap difficulty readout, which fits a progression or ai-aggro cell better than damage resolution.
+
+Best transferable idea: One swing resolves to exactly one outcome from a fixed enum (miss, parry, block, evade, fumble, hit), and a critical is reported as its own follow-up result rather than folded into the damage number.
+Decision (proposed): adapt - take the one-outcome-per-swing enum as the shape of the engine's hit result (Frankendom's duel step should return one outcome, parry/block/evade/miss/hit, from the engine, with crit as a separate event); there is no damage math here to copy, and the server-side resolution must come from our engine, not from this client parser.
+
+Receipts: written to /private/tmp/p2/wave2-haiku/batch3/D004/receipts.tsv (cell 1 and cell 2 rows); verifier passed 63 of 63 at the time of writing.

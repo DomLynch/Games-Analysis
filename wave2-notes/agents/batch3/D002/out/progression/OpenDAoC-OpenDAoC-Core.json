@@ -1,0 +1,84 @@
+{
+ "game": "OpenDAoC-OpenDAoC-Core",
+ "category": "progression",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/serverrules/PlayerKillRewardProcessor.cs",
+ "licence": "GPL-3.0 per repo LICENSE (Version 3); processor file has no header",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/kill-rewards.ts (new file)",
+ "parity_row": 18,
+ "pattern_tags": [
+  "xp-share",
+  "level-gap",
+  "hit-aggregation",
+  "presence-gated",
+  "clamp-and-report",
+  "new:worth-timer",
+  "new:rank-ladder"
+ ],
+ "data_fields": [
+  {
+   "name": "worthSeconds",
+   "donor_constant": "300 (RP_WORTH_SECONDS)",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "serverproperty/ServerProperties.cs:850"
+  },
+  {
+   "name": "partyCapFactor",
+   "donor_constant": "2 (awardee value times 2)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "serverrules/PlayerKillRewardProcessor.cs:93"
+  },
+  {
+   "name": "levelGapDivisor",
+   "donor_constant": "900 realm levels per 2x gap step (1 + 2*gap/900)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "serverrules/PlayerKillRewardProcessor.cs:118"
+  },
+  {
+   "name": "partyStep",
+   "donor_constant": "0.125 per extra in-range member",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "serverrules/PlayerKillRewardProcessor.cs:133"
+  },
+  {
+   "name": "rateModifier",
+   "donor_constant": "1.0 (RP_RATE)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "serverproperty/ServerProperties.cs:760"
+  },
+  {
+   "name": "victimValueLevelOffset",
+   "donor_constant": "20 (value = max(1,(level-20)^2) + realm level)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "gameobjects/GamePlayer.cs:4024"
+  },
+  {
+   "name": "rankEveryLevels",
+   "donor_constant": "10 realm levels per rank",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "gameobjects/GamePlayer.cs:3684"
+  },
+  {
+   "name": "realmPointsForLevel",
+   "donor_constant": "cumulative table, 0..130 (0, 0, 25, 125, 350, 750, 1375, ... 187917143)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "gameobjects/GamePlayer.cs:3842"
+  }
+ ],
+ "best_idea": "Kill credit is a per-attacker damage ledger, not a last-hit flag: each attacker's share is their damage over all damage taken, split across the party members who were in range, capped at twice the awardee's own value, and a victim who died less than a set time ago is worth nothing.",
+ "decision": "adapt",
+ "decision_why": "The damage-share split, range gate and worth timer fit server-verified kills with MAX_ATTACKERS = 3; the donor's party bonus can pay more than the victim is worth and conflicts with one ledger, so drop it unless Strategy wants it, and keep the level-gap factor as an option.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: three ungrouped attackers dealing 60, 30 and 10 of 100 damage on a victim worth 100 (same realm level, cap not binding) are awarded 60, 30 and 10, one ledger entry each; a re-kill of the same player inside the worth window awards 0; a party case asserts the total the decision chooses."
+}

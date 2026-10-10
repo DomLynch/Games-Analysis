@@ -1,0 +1,133 @@
+{
+ "game": "Dawn-of-Light-DOLSharp",
+ "category": "progression",
+ "cell": 10,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs",
+ "licence": "GPL-2.0-or-later (AbstractServerRules.cs and GamePlayer.cs headers lines 5-8: version 2 or any later version)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/rewards.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "xp-share",
+  "level-gap",
+  "hit-aggregation",
+  "clamp-and-report",
+  "grace-timer",
+  "new:rank-threshold-ladder",
+  "new:spend-from-total"
+ ],
+ "data_fields": [
+  {
+   "name": "worth_window",
+   "donor_constant": "300 s play time after a death (RP_WORTH_SECONDS default)",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverproperty/ServerProperties.cs:979"
+  },
+  {
+   "name": "max_award_range",
+   "donor_constant": "16384 (MAX_EXPFORKILL_DISTANCE)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/world/WorldMgr.cs:59"
+  },
+  {
+   "name": "dead_attacker_share",
+   "donor_constant": "0.25",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs:1566"
+  },
+  {
+   "name": "cap_multiple_of_own_worth",
+   "donor_constant": "2",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs:1569"
+  },
+  {
+   "name": "rank_gap_coefficient",
+   "donor_constant": "2 (factor 1 + 2 x gap / 900)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs:1581"
+  },
+  {
+   "name": "rank_gap_scale",
+   "donor_constant": "900 levels",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs:1581"
+  },
+  {
+   "name": "group_step_per_member",
+   "donor_constant": "0.125",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs:1592"
+  },
+  {
+   "name": "worth_level_offset",
+   "donor_constant": "20 (worth uses max(0, level - 20) squared)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GamePlayer.cs:4567"
+  },
+  {
+   "name": "worth_rank_offset",
+   "donor_constant": "10 (rank + 10)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GamePlayer.cs:4571"
+  },
+  {
+   "name": "worth_rank_weight",
+   "donor_constant": "5 per (rank + 10)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GamePlayer.cs:4571"
+  },
+  {
+   "name": "rank_thresholds",
+   "donor_constant": "131-entry table, levels 0-130 (values as read at 4389-4517)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GamePlayer.cs:4385"
+  },
+  {
+   "name": "specialty_budget_floor",
+   "donor_constant": "1 from character level 20 (budget = rank level minus spent cost)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs:1846"
+  },
+  {
+   "name": "active_ability_cost_ladder",
+   "donor_constant": "5,5,5,7,8 then 1000 (new scaling); (level + 1) x 5 (legacy)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/realmabilities/handlers/RealmAbility.cs:88"
+  },
+  {
+   "name": "passive_ability_cost_ladder",
+   "donor_constant": "1,1,2,3,3,5,5,7,7 then 1000 (new); 1,3,6,10,14 (legacy)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/realmabilities/handlers/RealmAbility.cs:343"
+  },
+  {
+   "name": "top_rank_ability_requirement",
+   "donor_constant": "realm level 40 (rank 5)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/realmabilities/handlers/RealmAbility.cs:415"
+  }
+ ],
+ "best_idea": "A kill award split by recorded damage share, quartered for attackers who died before the kill, capped at twice the recipient's own worth, with no award when the victim was killed again inside a play-time window.",
+ "decision": "adapt",
+ "decision_why": "The damage-share split, dead-attacker quarter, cap and death window fit many-on-one awards posted to the one ledger; the realm-point currency, rank ladder and battleground rule are a second currency Frankendom has not ruled on.",
+ "decision_status": "proposed",
+ "acceptance": "In a fight with three recorded attackers the kill award is split by damage share and posted to the one ledger; an attacker dead at the kill gets a quarter of their share; a victim killed again within 300 s of its own play time since the last death awards nothing; no attacker is credited above twice its own worth."
+}

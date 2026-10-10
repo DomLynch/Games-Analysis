@@ -1,0 +1,59 @@
+{
+ "game": "Dawn-of-Light-DOLSharp",
+ "category": "parties-guilds-chat",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/Group.cs",
+ "licence": "GPL-2.0 per repo LICENSE (Version 2); file headers GPL-2.0-or-later",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/party.ts (new file)",
+ "parity_row": 18,
+ "pattern_tags": [
+  "new:party-roster",
+  "new:leader-succession",
+  "new:dissolve-at-one"
+ ],
+ "data_fields": [
+  {
+   "name": "maxMembers",
+   "donor_constant": "8 (GROUP_MAX_MEMBER)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "serverproperty/ServerProperties.cs:532"
+  },
+  {
+   "name": "rosterHardCeiling",
+   "donor_constant": "254 (byte.MaxValue - 1)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "gameutils/Group.cs:183"
+  },
+  {
+   "name": "dissolveAtRemaining",
+   "donor_constant": "1 member left dissolves",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "gameutils/Group.cs:245"
+  },
+  {
+   "name": "battlegroupMaxMembers",
+   "donor_constant": "64 (BATTLEGROUP_MAX_MEMBER), declared, not enforced by grep",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "serverproperty/ServerProperties.cs:526"
+  },
+  {
+   "name": "battlegroupLootThreshold",
+   "donor_constant": "0 to 50 range, out of range sets 0",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "gameutils/BattleGroup.cs:124"
+  }
+ ],
+ "best_idea": "A party is a join-ordered roster with a hard size cap, invites only from its leader, and when one member would be left the party dissolves with that member, while a leader who leaves hands leadership to the first remaining player in join order.",
+ "decision": "adapt",
+ "decision_why": "The join-order roster, leader succession and dissolve-at-one rule are simple server state that Frankendom can use, but the party cap (8) must stay separate from the fight cap MAX_ATTACKERS = 3, and the battlegroup loot rule is unread, so port only the roster.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: in a party of three the leader leaving makes the earliest-joined remaining player leader and keeps the party; in a party of two either member leaving removes both and deletes the party; joining a party at its cap is refused with full; accepting an invite in PvE combat is refused."
+}

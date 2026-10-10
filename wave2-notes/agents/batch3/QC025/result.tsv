@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+latentcollapse-RustDAoC	camera	P	STRONG	full	crates/caer-render/src/bin/rustdaoc.rs:4343-4367 follow_camera builds a chest-high spherical orbit behind facing; no collision, no damping, no shoulder offset
+esponges-daoc-web	camera	P	STRONG	full	web/viewer.js:956-998 chase camera: eye on a sphere around a 0.62-height look-at point, upward-only floor lift, recentre only while moving; no pull-in, no shoulder offset
+BifrostTitan-DAoC-Client-Lib	camera	P	PARTIAL	thin	src/terrain_height_map.cpp:69-109 ground-height sampler only (two-triangle split, throws outside map); no camera code, zero camera hits in src/include/tests/tools

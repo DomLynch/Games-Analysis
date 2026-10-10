@@ -1,3 +1,4 @@
 game	category	old	verdict	depth	finding
 eriknihlen-OpenAC	camera	P	STRONG	full	src/AcDream.App/Rendering/RetailChaseCamera.cs:93-180 (damped third-person chase eye, wall sphere-sweep pull-in, near-wall fade, single lock-on target); no shoulder offset in the donor, MIT
 Sziadan-open-midgard	camera	P	STRONG	full	src/gamemode/View.cpp:758-804 and 806-828 (destination/drawn orbit camera, zone limits, eye ground floor); GPL-3.0 clean-room shape only; frame-based 0.1 step, floor sign unsettled
+nmeylan-nostalro-client	camera	P	STRONG	full	lib/renderer/src/camera.rs:294-326 and 211-288 (fixed-step band camera, zone bands, ground floor, shake in effect/holder.rs 49-82); Apache-2.0; distance divisors 0.6 and 1.0 and inverted indoor pitch band noted

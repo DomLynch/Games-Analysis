@@ -1,0 +1,21 @@
+Cell: BifrostTitan-DAoC-Client-Lib, category camera (cell 14), list 12
+Verdict: PARTIAL, depth thin. camera_scope: world camera (no camera code in this donor; the one fragment is for a world floor check).
+Donor: /mnt/frankendom-donors/BifrostTitan-DAoC-Client-Lib | Licence: "MIT License", Copyright (c) 2026 Nathan Martell (LICENSE, read). Code may be adapted with the notice kept.
+
+Files opened (candidates, read by me):
+1. include/daoc_client_lib/terrain_height_map.h (whole file)
+2. src/terrain_height_map.cpp (lines 1-110, whole file)
+3. tests/terrain_height_map_tests.cpp (whole file)
+4. include/daoc_client_lib/jump_point.h (whole file; a zone-jump record, not a camera)
+5. include/daoc_client_lib/zone_geometry.h (lines 1-50; zone geometry API)
+6. README.md and LICENSE (whole files)
+
+Search: grep -rn -i for camera, zoom, orbit, follow, look-at, shoulder, yaw, pitch, fov, chase, third, eye, view, player, cam, ray, line-of-sight, collision, clip, intersect across src, include, tests and tools. Zero camera hits in every file. The only pattern hits were the height sampler and text parsing.
+
+Why PARTIAL and not NONE: nothing in the donor moves or aims a camera, so the camera topic is absent. The one related piece is a ground-height sampler (TerrainHeightMap::height_at, src/terrain_height_map.cpp 69-109) that a camera floor check would have to call. It is a fragment, not a mechanism, so PARTIAL with depth thin is the honest call. Borderline: a stricter reader would file this NONE.
+
+What the sampler does (read): converts game units to sample units with unit_factor = 255/65536 (header line 15; about 257 game units per sample, my arithmetic); splits each cell into two triangles by comparing the fractional parts (line 97); interpolates inside the chosen triangle (line 108); throws std::out_of_range outside the map (line 80) instead of clamping.
+
+Best transferable idea: A camera floor check can take the ground height under the eye from this two-triangle sampler, but it must clamp at the map edge rather than throw.
+Decision (proposed): reject for the camera cell. This port adds no camera mechanism. If our camera pull-in needs a ground query, take the idea from the esponges-daoc-web note (adapt), which clamps at the edge of its own grid rather than throwing.
+Not verified: no build or test run of the C++ (tests/terrain_height_map_tests.cpp was read, not run).

@@ -1,0 +1,131 @@
+{
+ "game": "OpenDAoC-OpenDAoC-Core",
+ "category": "combat-sim",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameobjects/GameSiegeWeapon.cs",
+ "licence": "GPL-3.0 (repo LICENSE, Version 3, 29 June 2007); siege files read have no per-file header; gamesiegetrebuchet.cs header says version 2 or any later version",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/emplacement.ts",
+ "parity_row": 1,
+ "pattern_tags": [
+  "wait-gate",
+  "new:emplacement-cycle",
+  "new:target-class-multiplier",
+  "new:splash-radius",
+  "hit-aggregation"
+ ],
+ "data_fields": [
+  {
+   "name": "aim_time",
+   "donor_constant": "5000 (all types)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameobjects/SiegeWeapon/gamesiegecatapult.cs:22"
+  },
+  {
+   "name": "arm_time",
+   "donor_constant": "10000 ballista/catapult; 15000 trebuchet; ram from reload formula",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameobjects/SiegeWeapon/gamesiegetrebuchet.cs:43"
+  },
+  {
+   "name": "fire_base_delay",
+   "donor_constant": "0 ballista/catapult; 1000 trebuchet; 1100 ram",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameobjects/SiegeWeapon/gamesiegetrebuchet.cs:45"
+  },
+  {
+   "name": "fire_distance_delay",
+   "donor_constant": "1 ms per world unit to ground target",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameobjects/GameSiegeWeapon.cs:522"
+  },
+  {
+   "name": "base_damage",
+   "donor_constant": "75 ballista; 100 catapult; 100 trebuchet",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameobjects/SiegeWeapon/gamesiegeballista.cs:44"
+  },
+  {
+   "name": "min_range",
+   "donor_constant": "50 ballista; 1000 catapult; 2000 trebuchet",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameobjects/SiegeWeapon/gamesiegeballista.cs:45"
+  },
+  {
+   "name": "max_range",
+   "donor_constant": "4000 ballista; 3000 catapult; 5000 trebuchet",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameobjects/SiegeWeapon/gamesiegeballista.cs:46"
+  },
+  {
+   "name": "splash_radius",
+   "donor_constant": "150 catapult and trebuchet; ballista single target",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameobjects/SiegeWeapon/gamesiegecatapult.cs:30"
+  },
+  {
+   "name": "multiplier_siege_player_npc_ballista",
+   "donor_constant": "3",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameobjects/SiegeWeapon/gamesiegeballista.cs:138"
+  },
+  {
+   "name": "multiplier_player_npc_catapult",
+   "donor_constant": "2",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameobjects/SiegeWeapon/gamesiegecatapult.cs:193"
+  },
+  {
+   "name": "multiplier_door_trebuchet",
+   "donor_constant": "3",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameobjects/SiegeWeapon/gamesiegetrebuchet.cs:60"
+  },
+  {
+   "name": "impact_spread_max",
+   "donor_constant": "50 (Util.Random inclusive, 0 to 50)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameutils/Util.cs:21"
+  },
+  {
+   "name": "decay_threshold",
+   "donor_constant": "3 x (MaxHealth / 10) = 30 percent",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameobjects/GameSiegeWeapon.cs:167"
+  },
+  {
+   "name": "banner_delay_factor",
+   "donor_constant": "0.06 per effectiveness point",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameobjects/GameSiegeWeapon.cs:530"
+  },
+  {
+   "name": "ram_max_rams_per_target",
+   "donor_constant": "2",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameobjects/SiegeWeapon/GameSiegeRam.cs:30"
+  }
+ ],
+ "best_idea": "A fixed emplacement that needs two server-timed states (aimed and armed) before a shot, lands after a delay that grows with distance, and multiplies damage by the class of target it hits.",
+ "decision": "adapt",
+ "decision_why": "Aim, arm and distance-scaled fire delay plus a per-class multiplier table fit one emplacement type as data; the ram rider scaling and unbounded splash would add attackers outside the MAX_ATTACKERS = 3 rule, so they are not taken.",
+ "decision_status": "proposed",
+ "acceptance": "A ballista-type emplacement 1000 units from its target can be aimed only after 5 s and armed only after 10 s; a fire lands 1 s later; a player hit takes 225 to 275 (75 x 3 plus a server-side spread of 0 to 50); a shot inside 50 units is refused; the server test asserts timing and damage range."
+}

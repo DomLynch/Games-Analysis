@@ -1,0 +1,167 @@
+{
+ "game": "esponges-daoc-web",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/esponges-daoc-web/web/viewer.js",
+ "licence": "MIT (LICENSE: MIT License, Copyright (c) 2026 Fernando González Tostado)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "variable-step",
+  "target-score",
+  "new:recentre-while-moving",
+  "new:floor-lift-only"
+ ],
+ "data_fields": [
+  {
+   "name": "look_at_fraction",
+   "donor_constant": "0.62 of model height",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "viewer.js:963"
+  },
+  {
+   "name": "start_distance",
+   "donor_constant": "320",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "viewer.js:668"
+  },
+  {
+   "name": "dist_min",
+   "donor_constant": "90",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "viewer.js:806"
+  },
+  {
+   "name": "dist_max",
+   "donor_constant": "4000",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "viewer.js:806"
+  },
+  {
+   "name": "zoom_out_ratio",
+   "donor_constant": "1.12 per wheel step",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "viewer.js:806"
+  },
+  {
+   "name": "zoom_in_ratio",
+   "donor_constant": "0.89 per wheel step",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "viewer.js:806"
+  },
+  {
+   "name": "pitch_min",
+   "donor_constant": "-0.35 rad",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "viewer.js:798"
+  },
+  {
+   "name": "pitch_max",
+   "donor_constant": "1.25 rad",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "viewer.js:798"
+  },
+  {
+   "name": "pitch_start",
+   "donor_constant": "0.30 rad",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "viewer.js:668"
+  },
+  {
+   "name": "floor_clearance",
+   "donor_constant": "40 units above groundAt under the eye",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "viewer.js:970"
+  },
+  {
+   "name": "recentre_rate",
+   "donor_constant": "3 per second (per-frame factor 1 - rate*dt while moving)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "viewer.js:65"
+  },
+  {
+   "name": "turn_rate",
+   "donor_constant": "2.8 rad per second",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "viewer.js:61"
+  },
+  {
+   "name": "mouse_yaw_sens",
+   "donor_constant": "0.005 rad per pixel",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "viewer.js:797"
+  },
+  {
+   "name": "mouse_tilt_sens",
+   "donor_constant": "0.004 rad per pixel",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "viewer.js:798"
+  },
+  {
+   "name": "fov_vertical",
+   "donor_constant": "pi/3 rad",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "viewer.js:57"
+  },
+  {
+   "name": "near_follow",
+   "donor_constant": "15",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "viewer.js:996"
+  },
+  {
+   "name": "far",
+   "donor_constant": "160000",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "viewer.js:995"
+  },
+  {
+   "name": "max_frame_dt",
+   "donor_constant": "0.1 seconds cap",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "viewer.js:865"
+  },
+  {
+   "name": "tab_target_range",
+   "donor_constant": "3000",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "combat.js:45"
+  },
+  {
+   "name": "tab_behind_penalty",
+   "donor_constant": "x4 beyond 90 degrees off camera yaw",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "combat.js:85"
+  }
+ ],
+ "best_idea": "Keep the eye on a sphere around a look-at point at a fixed fraction of character height, lift it only upward when it would sink into the ground, and let a swung camera ease back behind only while the character moves.",
+ "decision": "adapt",
+ "decision_why": "The sphere geometry, look-at height and recentre-while-moving rule fit our world camera, but the donor's floor lift is not a pull-in toward the character, so we replace it with a sight-line pull-in before adopting the rest.",
+ "decision_status": "proposed",
+ "acceptance": "Standing still after a right-drag keeps the swung view; walking forward it is back within 5 percent of behind in about one second; on a slope or behind a wall the eye is pulled in toward the character and a unit test asserts it never ends below ground plus clearance.",
+ "camera_scope": "world"
+}

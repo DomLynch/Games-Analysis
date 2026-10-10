@@ -1,0 +1,46 @@
+{
+ "game": "latentcollapse-RustDAoC",
+ "category": "rendering-performance",
+ "cell": 17,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/lib.rs",
+ "licence": "GPL-3.0-or-later (LICENSE file read; caer-render inherits workspace licence)",
+ "licence_class": "copyleft",
+ "target_module": "origins/client/creature-palette-cache.ts",
+ "parity_row": 7,
+ "pattern_tags": [
+  "variable-step",
+  "new:quantised-pose-cache",
+  "new:entity-phase-offset",
+  "new:blend-no-cache"
+ ],
+ "data_fields": [
+  {
+   "name": "pose_bucket_rate",
+   "donor_constant": "30 (per second)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/lib.rs:692"
+  },
+  {
+   "name": "entity_phase_offset_fraction",
+   "donor_constant": "0.618034 (golden-ratio step on object id)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/lib.rs:559"
+  },
+  {
+   "name": "parallel_job_floor",
+   "donor_constant": "8",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/anim_skin.rs:27"
+  }
+ ],
+ "best_idea": "Quantise each creature's clip time to a fixed rate and cache one pose per (state, quantised time) per model, so poses to build are bounded by clip length rather than by how many creatures are on screen.",
+ "decision": "adapt",
+ "decision_why": "Keep the bounded per-model cache keyed by (state, quantised time) with a stable per-entity phase offset to avoid lockstep, and skip cross-fades. Reject the parallel build and GPU fold for now: at most 3 attackers per target (MAX_ATTACKERS = 3), so the win is small until zone population (row 23) puts many creatures on screen.",
+ "decision_status": "proposed",
+ "acceptance": "A test asserts 40 idle creatures of one model produce at most ceil(30 * clip duration) palette jobs, and a browser frame-time check shows no pose rebuild for creatures in the same bucket; a cross-fading creature gets its own pose."
+}

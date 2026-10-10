@@ -1,0 +1,169 @@
+{
+ "game": "nmeylan-nostalro-client",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/nmeylan-nostalro-client/lib/renderer/src/camera.rs",
+ "licence": "Apache-2.0 (LICENSE.md line 1 Apache License; line 2 Version 2.0, January 2004)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "camera_scope": "world",
+ "pattern_tags": [
+  "follow-point",
+  "fixed-step",
+  "new:band-follow",
+  "new:zone-camera-bands",
+  "new:ground-floor-eye",
+  "new:shake-stack",
+  "new:indoor-yaw-lock"
+ ],
+ "data_fields": [
+  {
+   "name": "outdoor_distance_range",
+   "donor_constant": "50 to 1500; default 200",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "lib/renderer/src/camera.rs:47"
+  },
+  {
+   "name": "indoor_distance_range",
+   "donor_constant": "150 to 300",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "lib/renderer/src/camera.rs:45"
+  },
+  {
+   "name": "pitch_band_centre",
+   "donor_constant": "45 degrees",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "lib/renderer/src/camera.rs:54"
+  },
+  {
+   "name": "outdoor_pitch_half_width",
+   "donor_constant": "20 degrees",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "lib/renderer/src/camera.rs:55"
+  },
+  {
+   "name": "indoor_pitch_half_width",
+   "donor_constant": "10 degrees (indoor pitch band is inverted without Ctrl; see note)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "lib/renderer/src/camera.rs:56"
+  },
+  {
+   "name": "indoor_yaw_fixed_and_half_width",
+   "donor_constant": "-45 degrees, half-width 20",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "lib/renderer/src/camera.rs:52"
+  },
+  {
+   "name": "interpolation_step",
+   "donor_constant": "1/60 s, rounded step count clamped 1..4",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "lib/renderer/src/camera.rs:72"
+  },
+  {
+   "name": "distance_big_threshold",
+   "donor_constant": "5",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "lib/renderer/src/camera.rs:79"
+  },
+  {
+   "name": "distance_small_threshold",
+   "donor_constant": "0.04",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "lib/renderer/src/camera.rs:80"
+  },
+  {
+   "name": "distance_big_divisor",
+   "donor_constant": "1.0 (donor); 9 in sketch",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "lib/renderer/src/camera.rs:81"
+  },
+  {
+   "name": "distance_small_divisor",
+   "donor_constant": "0.6 (donor, rings); 4 in sketch",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "lib/renderer/src/camera.rs:82"
+  },
+  {
+   "name": "angle_big_threshold",
+   "donor_constant": "5.5 degrees, divisor 10",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "lib/renderer/src/camera.rs:75"
+  },
+  {
+   "name": "angle_small_threshold",
+   "donor_constant": "0.06 degrees, divisor 4",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "lib/renderer/src/camera.rs:76"
+  },
+  {
+   "name": "target_big_threshold",
+   "donor_constant": "5, divisor 9",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "lib/renderer/src/camera.rs:83"
+  },
+  {
+   "name": "target_small_threshold",
+   "donor_constant": "0.08, divisor 4",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "lib/renderer/src/camera.rs:84"
+  },
+  {
+   "name": "wheel_distance_step",
+   "donor_constant": "24.3 per notch",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "lib/renderer/src/camera.rs:62"
+  },
+  {
+   "name": "drag_yaw_per_px",
+   "donor_constant": "1 degree per pixel",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "lib/renderer/src/camera.rs:59"
+  },
+  {
+   "name": "shake_screen_quake",
+   "donor_constant": "amplitude 1.5 for 1667 ms, linear decay",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "lib/effects/src/table.rs:934"
+  },
+  {
+   "name": "shake_earthquake",
+   "donor_constant": "amplitude 2.2 for 1300 ms",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "lib/effects/src/table.rs:935"
+  },
+  {
+   "name": "shake_hit_default",
+   "donor_constant": "amplitude 1.0 for 650 ms (six hit effects)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "lib/effects/src/table.rs:936"
+  }
+ ],
+ "best_idea": "Move the drawn camera by fixed 60 Hz steps with a band rule that divides big errors hard, medium errors softly and snaps tiny ones, and shake it with a linearly decaying offset that keeps the larger of the old and new amplitudes.",
+ "decision": "adapt",
+ "decision_why": "The band rule, ground floor and shake stacking fit a fixed world camera, and the zone bands are zone data; but the donor's rounded step count makes speed frame-rate dependent (it runs at 60 steps per second above 120 fps), its distance divisors pop (1.0) or ring (0.6), and its indoor pitch band is inverted without Ctrl, so each is changed or left out.",
+ "decision_status": "proposed",
+ "acceptance": "A client test asserts that a 24.3-unit wheel notch takes at least 5 camera steps to arrive, that a 4-unit distance change converges monotonically within 20 steps, and that one simulated second at 60 fps and at 144 fps ends within 1 percent of the same camera position; a shake test asserts a ScreenQuake offset of 1.5 units at trigger that decays to zero within 1.667 s."
+}

@@ -1,0 +1,103 @@
+{
+ "game": "Dawn-of-Light-DOLSharp",
+ "category": "city-map-design",
+ "cell": 20,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/keeps/AbstractGameKeep.cs",
+ "licence": "GPL-2.0-or-later (AbstractGameKeep.cs header lines 5-7: version 2 or any later version)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-objectives.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "presence-gated",
+  "grace-timer",
+  "new:objective-claim",
+  "new:periodic-accrual",
+  "fixed-step"
+ ],
+ "data_fields": [
+  {
+   "name": "claim_num",
+   "donor_constant": "8 (CLAIM_NUM default; towers half)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverproperty/ServerProperties.cs:1491"
+  },
+  {
+   "name": "claim_limit_per_team",
+   "donor_constant": "1 (GUILDS_CLAIM_LIMIT default; 0 = claiming off)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverproperty/ServerProperties.cs:2329"
+  },
+  {
+   "name": "quiet_window",
+   "donor_constant": "5 * 60 * 1000 ms",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/keeps/AbstractGameKeep.cs:118"
+  },
+  {
+   "name": "accrue_interval",
+   "donor_constant": "60 * 60 * 1000 ms",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/keeps/AbstractGameKeep.cs:66"
+  },
+  {
+   "name": "points_per_difficulty_per_accrual",
+   "donor_constant": "1000 (KEEP_RP_CLAIM_MULTIPLIER default); towers 100",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverproperty/ServerProperties.cs:1587"
+  },
+  {
+   "name": "objective_difficulty",
+   "donor_constant": "per-realm DB value (values not read)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/keeps/AbstractGameKeep.cs:224"
+  },
+  {
+   "name": "claim_level",
+   "donor_constant": "5 (STARTING_KEEP_CLAIM_LEVEL default)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverproperty/ServerProperties.cs:1533"
+  },
+  {
+   "name": "unclaimed_level",
+   "donor_constant": "4 (STARTING_KEEP_LEVEL default)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverproperty/ServerProperties.cs:1527"
+  },
+  {
+   "name": "claimable_base_level",
+   "donor_constant": "50 (must equal)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/keeps/AbstractGameKeep.cs:605"
+  },
+  {
+   "name": "capture_value_base",
+   "donor_constant": "KEEP_RP_BASE default 4500 (capture path, callers not read)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverproperty/ServerProperties.cs:1599"
+  },
+  {
+   "name": "capture_value_per_level_above_50",
+   "donor_constant": "KEEP_RP_MULTIPLIER default 50",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverproperty/ServerProperties.cs:1617"
+  }
+ ],
+ "best_idea": "A capture point that cannot change owner during a quiet window after the last hit, needs a presence count of teammates on the server, and pays a difficulty-scaled amount to the owner on a fixed interval.",
+ "decision": "adapt",
+ "decision_why": "Gate shape (quiet window, server presence count, one objective per team) and periodic accrual fit zones as data and the one ledger; the guild, realm and keep model has no Frankendom ruling and is not taken.",
+ "decision_status": "proposed",
+ "acceptance": "In a zone with a claimable objective, a claim within 300 s of a hit is refused as under attack; with 8 group members in range counted on the server the claim succeeds; the owning team's ledger gains 1000 x difficulty every 3600 s; a release inside the quiet window is refused."
+}

@@ -1,0 +1,74 @@
+{
+ "game": "OpenDAoC-OpenDAoC-Core",
+ "category": "city-map-design",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/keeps/AbstractGameKeep.cs",
+ "licence": "GPL-3.0 per repo LICENSE (Version 3); GameTower.cs header GPL-2.0-or-later",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/zone-capture.ts (new file)",
+ "parity_row": 23,
+ "pattern_tags": [
+  "presence-gated",
+  "new:level-ramp",
+  "new:owner-reset",
+  "new:realm-flip"
+ ],
+ "data_fields": [
+  {
+   "name": "groupMinimum",
+   "donor_constant": "8 (CLAIM_NUM); half for towers",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "serverproperty/ServerProperties.cs:1397"
+  },
+  {
+   "name": "startLevelOwned",
+   "donor_constant": "5 (STARTING_KEEP_CLAIM_LEVEL)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "serverproperty/ServerProperties.cs:1439"
+  },
+  {
+   "name": "startLevelUnowned",
+   "donor_constant": "4 (STARTING_KEEP_LEVEL)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "serverproperty/ServerProperties.cs:1433"
+  },
+  {
+   "name": "maxLevelOwned",
+   "donor_constant": "5 (MAX_KEEP_LEVEL)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "serverproperty/ServerProperties.cs:1445"
+  },
+  {
+   "name": "rampEnabled",
+   "donor_constant": "false (ENABLE_KEEP_UPGRADE_TIMER)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "serverproperty/ServerProperties.cs:1451"
+  },
+  {
+   "name": "waitMsToReach",
+   "donor_constant": "table 12, 12, 12, 12, 12, 24, 60, 120, 240, 480, 960 minutes, index = level reached",
+   "unit": "ms",
+   "where": "zone data",
+   "donor_ref": "keeps/GameKeep.cs:38"
+  },
+  {
+   "name": "guildClaimLimit",
+   "donor_constant": "1 (GUILDS_CLAIM_LIMIT); 0 disables",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "serverproperty/ServerProperties.cs:2264"
+  }
+ ],
+ "best_idea": "A capture point is claimed only when enough group members are physically inside its area, is refused during combat, then ramps one level per timer; a lord kill flips the owner's realm to the killer's group leader's realm and resets the level.",
+ "decision": "adapt",
+ "decision_why": "The claim gate and the owner reset fit capturable zone points as zone data with server-verified claims; the donor's ramp is off by default and its restart arithmetic is odd, and Frankendom has no guild model, so port the shape only.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: a claim with fewer group members inside the point radius than groupMinimum is refused with a reason; a complete claim sets owner and level to startLevelOwned; a lord kill by group G sets realm to G's leader's realm and level to startLevelUnowned."
+}
