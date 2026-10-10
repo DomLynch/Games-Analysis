@@ -1,0 +1,28 @@
+SCAR (hud-ui, cell 16) - verdict PARTIAL (depth thin, confidence medium-high)
+
+Hint file: /mnt/frankendom-donors/SCAR/src/TrueHUD/TrueHUDAPI.h (411 lines, read in full). Licence: MIT (LICENSE line 1 "MIT License", Copyright (c) 2023 max-su-2019): code may be adapted.
+Camera: not a camera cell, so no camera_scope tag.
+
+Files opened (at least 3, all read on the VPS):
+1. /mnt/frankendom-donors/SCAR/src/TrueHUD/TrueHUDAPI.h - the TrueHUD API contract (read 1-411): result codes, removal modes, owner-based target control, boss queue, flash events, special-resource callbacks, widget task queue, RequestPluginAPI.
+2. /mnt/frankendom-donors/SCAR/src/Function.cpp - the only HUD-like drawing SCAR does: in-arc test (100-111) and DrawOverlay (113-143); lines 1-40 and 100-145 read, CheckPathing body (41-99) not read.
+3. /mnt/frankendom-donors/SCAR/src/DataHandler.cpp - API request at construction (18-23); 14-30 read.
+4. /mnt/frankendom-donors/SCAR/src/LoadGame.cpp - optional-overlay fallback (18-40).
+5. /mnt/frankendom-donors/SCAR/src/DebugAPI/DebugAPI.h - own debug line class and API (1-40 read; rest by grep).
+6. /mnt/frankendom-donors/SCAR/src/DebugAPI/DebugAPI.cpp - Update loop (40-60 read; 514 lines total).
+7. extern/ (CommonLibSSE, DKUtil) and the rest of the tree searched with grep for "TrueHUD", "boss", "lock", "soft target", "health", "stamina": no TrueHUD implementation anywhere in the box.
+
+Why PARTIAL, one sentence: the donor contains only the TrueHUD interface header (a contract with documented result codes) and not its implementation, so the target frame, boss bars and fade timing cannot be explained from code, while SCAR's own HUD use is a developer debug overlay.
+
+What the contract says (read in TrueHUDAPI.h): target control is requested once and granted to one plugin at a time (RequestTargetControl, results OK / AlreadyGiven / AlreadyTaken, lines 170-175); while granted, the holder may set the target and soft target, and everyone else gets NotOwner (171, 190, 197); bar removal has three modes, Immediate, Normal fade, and Delayed fade "normally used on dead targets" (53-63); boss bars go through a queue (213-216); a flash event is sent to a value bar (226-231); bar colours are overridden per colour type (75-80, 324-353); calls from the wrong thread get BadThread (49, 30-34 say not to touch a resource after a refusal).
+
+Best transferable idea: Give each HUD resource (target frame, special bar) exactly one named writer at a time, answer every other writer with an explicit refusal code, and give removal three modes (instant, fade, delayed fade for dead targets).
+Decision (proposed): adapt - keep the one-writer rule for the target frame and the explicit refusal codes (Frankendom's one-ledger rule is the same idea), drop the plugin bridge and the version handshake (Frankendom has no plugin boundary; the HUD is client-only and reads server-sent state).
+
+Aside for Strategy routing (outside this cell's topic, not scored here): Function.cpp 100-110 has a real attack gate: the target is in range when its distance from the attacker's origin is inside [min, max] and its bearing in the attacker's local frame is inside a start-end angle window that may wrap (the wrap test is at 108). That belongs to combat-sim / ai-aggro and was only partly read (CheckPathing 41-99 not read).
+
+Aside, risk for Frankendom if the debug-line idea is used: DebugAPI::Update (DebugAPI.cpp 41-60) clears and redraws every live line each update, draws a line before it checks expiry (53-55), and expires lines against GetTickCount64 (wall-clock milliseconds, not the simulation tick), so lines expire while the game is paused or slowed. fix: expire on the fixed-step tick and test expiry before drawing.
+
+Localisation / string table: none. SCAR has no UI string table. docs/EN holds 3 Markdown files and docs/CN holds 1 (a moveset tutorial). Those are documentation, not game strings. Grammar: not applicable. Entries counted: 0.
+
+Not verified: TrueHUD's own behaviour (not in the box); whether SCAR's debug overlay has been run.

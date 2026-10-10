@@ -1,0 +1,144 @@
+{
+  "donor": "2004Scape-Server",
+  "counts": {
+    "creatures": 362,
+    "classes": 15,
+    "weapons": 193,
+    "gear_sets": 9,
+    "zones": 32
+  },
+  "creature_families": [
+    {"family": "Dragons", "tiers": "baby, adult by colour, and a king boss", "refs": ["data/src/scripts/_unpack/all.npc [babydragon] [red_dragon] [blue_dragon] [green_dragon] [black_dragon]", "data/src/scripts/areas/area_wilderness/configs/king_dragon.npc [king_dragon]", "data/src/scripts/drop tables/scripts/red_dragon.rs2"]},
+    {"family": "Demons", "tiers": "three-step ladder: lesser, greater, black", "refs": ["data/src/scripts/_unpack/all.npc [lesser_demon] [greater_demon] [black_demon]"]},
+    {"family": "Undead", "tiers": "skeleton (unarmed, armed, giant, mage); zombie (unarmed, second, armed, summoned); ghosts; mummy", "refs": ["data/src/scripts/_unpack/all.npc [skeleton_unarmed] [skeleton_armed] [giantskeleton] [skeletonmage] [zombie_unarmed] [zombie_armed] [summonedzombie] [ghost]", "data/src/scripts/drop tables/scripts/skeleton.rs2", "data/src/scripts/drop tables/scripts/zombie.rs2"]},
+    {"family": "Giants", "tiers": "giant, moss, ice, fire, plus cyclops and jogre", "refs": ["data/src/scripts/_unpack/all.npc [giant] [mossgiant] [icegiant] [firegiant] [cyclops] [jogre]"]},
+    {"family": "Spiders", "tiers": "five or more region and level variants of one body", "refs": ["data/src/scripts/_unpack/all.npc [spider] [giantspider1] [giantspider2] [jungle_spider] [deadly_red_spider] [ice_spider] [shadow_spider] [dungeonspider]"]},
+    {"family": "Scorpions", "tiers": "scorpion, poison, pit, king; more scorpion names in area files", "refs": ["data/src/scripts/_unpack/all.npc [scorpion] [poison_scorpion] [smallscorpion] [kingscorpion]"]},
+    {"family": "Canines", "tiers": "wolf, big wolf, white wolf, guard dog, hellhound", "refs": ["data/src/scripts/_unpack/all.npc [wolf] [wolfpack_leader_whiter] [pack_wolf_whiter] [whitewolf] [guarddog] [hellhound]"]},
+    {"family": "Bears", "tiers": "brown and dark", "refs": ["data/src/scripts/_unpack/all.npc [brownbear] [darkbear]"]},
+    {"family": "Unicorns", "tiers": "unicorn and black unicorn", "refs": ["data/src/scripts/_unpack/all.npc [unicorn] [black_unicorn]"]},
+    {"family": "Vermin", "tiers": "rat, giant rat (two), dungeon rat", "refs": ["data/src/scripts/_unpack/all.npc [rat] [giantrat] [giantrat1] [dungeon_rat]"]},
+    {"family": "Flyers and birds", "tiers": "giant bat, oomlie bird, sea birds", "refs": ["data/src/scripts/_unpack/all.npc [bat] [oomlie_bird] [seabird1]"]},
+    {"family": "Constructs", "tiers": "golem, suit of armour, magic axe", "refs": ["data/src/scripts/_unpack/all.npc [golem] [suit_of_armour] [magicaxe]"]},
+    {"family": "Ice warriors", "tiers": "ice warrior and an ice-queen elite", "refs": ["data/src/scripts/_unpack/all.npc [icewarrior] [icewarrior_queen] [ice_queen]"]},
+    {"family": "Humanoid factions", "tiers": "goblins and hobgoblins, orcs, Zamorak monks, pirates, black knights, dark wizards, barbarians, guards", "refs": ["data/src/scripts/_unpack/all.npc [goblin] [hobgoblin_armed] [orc] [chaosmonk1] [pirate1] [black_knight] [young_dark_wizard] [barbarian]"]},
+    {"family": "Critters and livestock", "tiers": "chicken, duck, cow, penguin, monkey, snake, yeti, mammoth", "refs": ["data/src/scripts/_unpack/all.npc [chicken] [duck] [cow] [penguin] [monkey] [snake] [yeti] [mammoth]"]}
+  ],
+  "top_creatures": [
+    {
+      "label": "Dusk-scaled wyrm king (boss)",
+      "why": "Set apart by data: a size field of 5 and a 160 resize on both axes (the only such pair checked; not compared across all NPCs). Its breath branch is chosen from the target's quadrant (script branches for south-west, south-east, north-east, north-west). On-screen read not viewed.",
+      "keep": "Oversized scale from the size and resize fields; breath direction chosen by where the target stands; a random pick among attack options each tick.",
+      "change": "Palette and wing silhouette (not the donor look); add a visible wind-up before breath; name and drop table of our own.",
+      "ref": "data/src/scripts/areas/area_wilderness/configs/king_dragon.npc [king_dragon]; data/src/scripts/areas/area_wilderness/scripts/king_black_dragon.rs2 lines 112-141"
+    },
+    {
+      "label": "Ember hound (single high-tier hound)",
+      "why": "A high-tier hound (name and level field only; model, speed and animations not viewed or read). The name alone sets a fire mood.",
+      "keep": "Quadruped silhouette; fire mood; high-tier placement.",
+      "change": "Bony plating and a split tail instead of the donor body; our own sound kit. Pack behaviour not read, so do not copy it.",
+      "ref": "data/src/scripts/_unpack/all.npc [hellhound]"
+    },
+    {
+      "label": "Rift stalker (three tiers)",
+      "why": "Three demon tiers in one ladder (the level field steps up across the three blocks), with a portal effect in the effects table. Escalation by level is in the data; the visual step between tiers was not viewed.",
+      "keep": "Three-tier ladder by level; portal arrival effect.",
+      "change": "Crystal shards instead of horns; a portal colour of our own; the size step to be designed by us.",
+      "ref": "data/src/scripts/_unpack/all.npc [lesser_demon] [greater_demon] [black_demon]; data/src/scripts/_unpack/all.spotanim [portal] (line 21)"
+    },
+    {
+      "label": "Region-dyed spider brood",
+      "why": "Several spider blocks share one family name in different tiers and regions (names and level fields; the models were not checked to be shared). Cheap variety if the body is reused.",
+      "keep": "Family of named variants by region and level; poison and ice variants as separate tiers.",
+      "change": "Silk strands as a traversal hazard; a different leg count; palettes of our own.",
+      "ref": "data/src/scripts/_unpack/all.npc [spider] [jungle_spider] [deadly_red_spider] [ice_spider] [shadow_spider]"
+    },
+    {
+      "label": "Bone guard (armed ladder)",
+      "why": "Undead blocks in four states by name: unarmed, armed, giant and mage. The armed state is a separate block, so the weapon read is in the data; the silhouette itself was not viewed.",
+      "keep": "Armed versus unarmed as separate states; a giant step; a caster variant.",
+      "change": "The mage version carries a floating orb, not a staff; its own bone palette.",
+      "ref": "data/src/scripts/_unpack/all.npc [skeleton_unarmed] [skeleton_armed] [giantskeleton] [skeletonmage]; data/src/scripts/drop tables/scripts/skeleton.rs2"
+    },
+    {
+      "label": "Desert scorpion king",
+      "why": "Four named tiers from small to king by level field (names and levels only; the body shape was not viewed).",
+      "keep": "Ladder of named tiers from small to king; poison tier as a separate variant.",
+      "change": "Tail shape and claw count; an original palette, not the donor's.",
+      "ref": "data/src/scripts/_unpack/all.npc [scorpion] [poison_scorpion] [smallscorpion] [kingscorpion]"
+    },
+    {
+      "label": "Frost queen (elite)",
+      "why": "A named ice-tier elite on top of a warrior tier; the frost look carries the boss read.",
+      "keep": "Named elite on a warrior base; frost mood.",
+      "change": "Crown or cape silhouette of our own; a different frost palette.",
+      "ref": "data/src/scripts/_unpack/all.npc [icewarrior_queen] [ice_queen]"
+    },
+    {
+      "label": "Grave caller (summoner)",
+      "why": "A caster that brings in a zombie ally. A summon is easy to read and gives a tell before the fight.",
+      "keep": "Summon-an-ally pattern; a caster with a named summoned creature.",
+      "change": "Summoned creature type and summon cue; a different hood and staff.",
+      "ref": "data/src/scripts/_unpack/all.npc [necromancer] [invrigar_the_necromancer] [summonedzombie]. Summon logic not read: the necromancer script was not opened."
+    }
+  ],
+  "classes": [
+    {"name": "Skill tracks (15)", "role": "No character classes in the data. These are the 15 skill folders: agility, combat, cooking, crafting, firemaking, fishing, fletching, herblore, magic, mining, prayer, runecraft, smithing, thieving, woodcutting.", "mechanic": "Each skill has its own configs and scripts folder.", "progression": "Levels gate items and actions (levelrequire folder)."},
+    {"name": "Combat styles", "role": "Six damage types and nine stances.", "mechanic": "Damage types: stab, slash, crush, ranged, magic, melee. Stances: accurate, aggressive, defensive, controlled for melee; rapid and long-range for ranged; normal and defensive for magic.", "progression": "Chosen per weapon through the combat style table.", "ref": "data/src/scripts/skill_combat/configs/combat_damagetypes.constant; combat_damagestyles.constant; combat.dbtable"},
+    {"name": "Prayers (15)", "role": "Buff and protection set.", "mechanic": "Strength and reflex boosts, rapid restore and heal, item protection, and protection from magic, missiles and melee.", "progression": "Unlocked by prayer level.", "ref": "data/src/scripts/skill_prayer/configs/prayers.constant"},
+    {"name": "Races and factions (from NPC categories)", "role": "Human citizens, guards, barbarians, pirates, Zamorak monks, black knights, dark wizards, ice warriors, chaos dwarves, gnomes and ogres (names only).", "mechanic": "Faction read from NPC category and palette, not from class rules.", "progression": "Not read.", "ref": "data/src/scripts/_unpack/all.npc category= lines; data/src/scripts/areas/area_gnome/"}
+  ],
+  "weapon_families": [
+    {"family": "Melee blades and blunt", "members": "2h sword, longsword, scimitar, dagger (plus poisoned variant), mace, battleaxe, spear", "ref": "data/src/scripts/skill_combat/configs/melee/*.obj"},
+    {"family": "Shields and helms", "members": "wooden shield, square shield, kiteshield, dragonfire shield; full helm, medium helm", "ref": "data/src/scripts/skill_combat/configs/melee/shields.obj, kiteshields.obj, fullhelms.obj, medhelms.obj"},
+    {"family": "Bows and crossbows", "members": "longbow and shortbow in oak, willow, maple, yew and magic tiers; ogre bow; crossbow", "ref": "data/src/scripts/skill_combat/configs/ranged/bows.obj; crossbows.obj"},
+    {"family": "Ammunition and throwing", "members": "arrows (bronze to rune, plus fire arrows), bolts, darts, javelins, knives, thrown axes", "ref": "data/src/scripts/skill_combat/configs/ranged/*.obj"},
+    {"family": "Elemental staves", "members": "fire, water, air and earth battlestaves; mystic staves; plain staves", "ref": "data/src/scripts/skill_combat/configs/magic/battlestaves.obj; mysticstaves.obj; staves.obj"}
+  ],
+  "gear_tiers": [
+    {"tier": "Metal ladder", "order": "bronze, iron, steel, black, mithril, adamant, rune, dragon (dragon on a few slots only)", "ref": "data/src/scripts/skill_combat/configs/melee/*.obj"},
+    {"tier": "Trim and gold-trim variants", "order": "black, adamant and rune trail sets each come in a trim variant and a gold-trim variant (desc field says so)", "ref": "data/src/scripts/skill_combat/configs/melee/trails.obj (names 'Black platebody (t)' and 'Black platebody (g)'; desc 'with trim' and 'with gold trim')"},
+    {"tier": "Faction-coloured sets", "order": "three four-piece sets (one per faction) built on a rune-tier shape with palette swaps and a 'colours of' description", "ref": "data/src/scripts/skill_combat/configs/melee/trails.obj"},
+    {"tier": "Robes", "order": "druid, monk, black robe", "ref": "data/src/scripts/skill_prayer/configs/robes.obj"},
+    {"tier": "Leather", "order": "leather gear in a crafting set (22 item blocks)", "ref": "data/src/scripts/skill_crafting/configs/leather/leather_gear.obj"}
+  ],
+  "zones": [
+    {"zone": "Wilderness depth bands", "type": "Danger by depth: a new level every 8 tiles below a start line; a separate underground warning line.", "ref": "data/src/scripts/areas/area_wilderness/scripts/wilderness_levels.rs2 lines 2-4; configs/wilderness_levels.constant; configs/wilderness_zones.dbrow"},
+    {"zone": "Lava maze", "type": "Maze dungeon with a locked chest that needs its own key item; the chest pays out a set of gear and runes.", "ref": "data/src/scripts/areas/area_wilderness/scripts/lava_maze.rs2"},
+    {"zone": "Trail routes (easy, medium, hard)", "type": "Tiered route through a minigame; each tier has its own item list.", "ref": "data/src/scripts/minigames/game_trail/configs/trail_easy.obj; trail_medium.obj; trail_hard.obj"},
+    {"zone": "Ice cave props", "type": "Frost props: ice throne, ice column, ice light. Area not verified.", "ref": "data/src/scripts/_unpack/all.loc (names only)"},
+    {"zone": "Rockslide hazard", "type": "Rockslide location object, 24 instances in the location dump. Script not read.", "ref": "data/src/scripts/_unpack/all.loc (names only)"}
+  ],
+  "looks": [
+    {"label": "Tiered projectile effect pairs", "technique": "Each ammo tier has its own travel and launch effect, so the arrow trail reads by tier. Fire, ice and ogre arrows have their own pairs.", "ref": "data/src/scripts/_unpack/all.spotanim [bronze_arrow_travel] [iron_arrow_launch] [fire_arrow_travel] [ogre_arrow_travel] (block names)"},
+    {"label": "Palette-swapped effects on one model", "technique": "One effect model is reused in several colourways through palette pairs (source and destination entries). Used for shooting star and book of binding.", "ref": "data/src/scripts/_unpack/all.spotanim [shooting_star] [bookofbinding_effect] [lavasplash]"},
+    {"label": "Scaled effects", "technique": "An effect is stretched on both axes through resize fields: a huge smoke puff and a tall flame wall.", "ref": "data/src/scripts/_unpack/all.spotanim [smokepuff_huge] [nezik_flamestrike]"},
+    {"label": "Per-effect lighting override", "technique": "Ambient and contrast fields set the lighting on one effect, for example the enchant ring and stunned effects.", "ref": "data/src/scripts/_unpack/all.spotanim [enchant_ring] [stunned]"},
+    {"label": "Breath effects with named animation", "technique": "Dragon breath effects are separate model and animation pairs: single fire, triple fire, ice and acid.", "ref": "data/src/scripts/_unpack/all.spotanim [firebreath_attack] [triple_firebreath_attack] [icebreath_attack] [acidbreath_attack]"},
+    {"label": "Portal and whirlpool", "technique": "Portal and portal-end effects, plus a whirlpool location effect; each is an alpha-blended model and animation pair.", "ref": "data/src/scripts/_unpack/all.spotanim [portal] [portalend] [whirlpool]"},
+    {"label": "Glowing elemental orbs", "technique": "Fire, water and air orbs are described as magic glowing orbs. The glow itself is not in the item fields read; check the model and effect pair before recreating.", "ref": "data/src/scripts/skill_magic/configs/orbs.obj [fire_orb] (line 18)"},
+    {"label": "Trim and gold-trim variants", "technique": "Gold trim is a variant tag on the item (desc says gold trim), not a shader. Reproduce as a tier variant with a rim highlight.", "ref": "data/src/scripts/skill_combat/configs/melee/trails.obj"}
+  ],
+  "originals": [
+    {"name": "Cinder Tyrant", "idea": "A boss a head taller than the rest of the zone. Its breath turns toward whoever is closest on its side, and a clear wind-up tells the player where it will fire.", "keep": "Oversized silhouette; breath chosen by quadrant; random pick between melee and breath.", "change": "Palette (ember and slate, not the donor look); wing shape; a wind-up tell; our own name and drop table."},
+    {"name": "Rift Stalkers", "idea": "Three demon tiers that step out of one portal, each tier larger and more armoured.", "keep": "Three-tier ladder; portal arrival; size escalation.", "change": "Crystal shards instead of horns; a portal colour of our own."},
+    {"name": "Region-dyed brood", "idea": "One spider body in five region palettes; silk strands become a traversal hazard.", "keep": "One body, many palettes; poison and ice tiers.", "change": "Silk as a hazard instead of a plain enemy; leg count; palettes of our own."},
+    {"name": "Bone guard ladder", "idea": "An undead body in four states, where the armed state changes the silhouette most.", "keep": "Armed versus unarmed silhouette; giant step; mage variant.", "change": "The mage carries a floating orb, not a staff; a bone palette of our own."},
+    {"name": "Oath plate", "idea": "Three faction-coloured four-piece plate sets from one rune-tier shape.", "keep": "One shape, palette swapped per faction; four pieces per set.", "change": "Faction names and colours of our own; add a shoulder mark instead of a full recolour."},
+    {"name": "Gilded trim ladder", "idea": "Each metal tier has a trim variant and a gold-trim variant, so the top tiers gain a rim highlight.", "keep": "Two variants per tier (trim and gold trim).", "change": "The gold trim is a rim-light shader, not a palette swap."},
+    {"name": "Tier trails", "idea": "Ammo tiers each have their own launch and travel effect pair, so the trail itself tells the tier.", "keep": "Per-tier launch and travel pair.", "change": "Effect colour, sound cue and trail length of our own."},
+    {"name": "Frontier depth bands", "idea": "Danger rises one band every eight tiles from a start line, with a warning line before the first band.", "keep": "Depth banding with a warning line.", "change": "Band names, perks and the step size of our own."}
+  ],
+  "licence_note": "Code: MIT, 'Copyright (c) 2023-2025 Lost City' (LICENSE; README.md line 62). Assets: no asset licence in the repo. Game-derived models, maps, songs, sprites and scripts have no stated source or licence (AU002, class C). Soundfont public/client/SCC1_Florestan.sf2 has ICOP 'Public Domain' in its metadata only (class A, not independently verified). Several donor files carry comments that name a leak, or cite an external dump, for their names and values. Those comments were observed as data and were not followed.",
+  "not_read": [
+    "Client half: public/client/*.js and *.wasm not read. A matching client by name is LostCityRS-Client-TS in the box; not verified as the matching half.",
+    "Binary assets: data/src/models (about 11,071 files), maps (.jm2), songs (.mid), jingles, synth (.synth), sprite and texture PNG pixels, fonts. Formats and counts only.",
+    "Script files not opened one by one: 1,159 .rs2 files. Read only red_dragon.rs2, shared_droptables.rs2, skeleton.rs2 (head), zombie.rs2 (head) and king_black_dragon.rs2 lines 1-141.",
+    "necromancer.rs2, the ice-queen logic, the mage-arena scripts and most area scripts were not opened.",
+    "Item model and recolour fields across all item blocks: only sampled (trails.obj, daggers, shields, bows, staves).",
+    "warhammers.obj and most quest item files: names not read.",
+    "data/config/private.pem and public.pem: existence only; deliberately not opened (AU002 flags them for human review).",
+    "1 soundfont metadata beyond the ICOP and INAM fields: not read.",
+    "Counts are block counts, not de-duplicated. _unpack/all.npc (179 NPC blocks) may overlap the per-area .npc files; overlap not checked. Creature count 362 = attackable NPC blocks across all 116 .npc files; weapons 193 = name lines in melee/*.obj (includes armour and variants)."
+  ]
+}

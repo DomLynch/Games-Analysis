@@ -1,0 +1,195 @@
+{
+  "donor": "SWG-Source-dsrc",
+  "counts": {
+    "creatures": 6711,
+    "classes": 12,
+    "weapons": 691,
+    "gear_sets": 97,
+    "zones": 21
+  },
+  "creature_families": [
+    "Tiers on enemy rows: NORMAL 5486, ELITE 964, BOSS 261 (mob/creatures.tab)",
+    "Level table 1 to 500 with separate Elite and Boss column groups (mob/stat_balance.tab)",
+    "Tamable beasts: 28 named families plus one test family, 197 rows (beast/beasts.tab)",
+    "Beast attribute classes: DAMAGE 46, DODGE 42, DEFENSE 40, NINJA 35, ARMOR_BREAK 24, BLOCK 10",
+    "Beast abilities: 110 rows, 98 combat, 10 noncombat, 2 innate, 35 skill lines (beast/beast_specials.tab)",
+    "Wild creature ability lists: 81 with per-list chance (pet/wild_ability.tab)",
+    "Enemy social groups: 715 distinct (mob/creatures.tab column socialGroup)",
+    "Lair and herd tables: 1829 files, name tags boss 150, pack 181, herd 93, lair 467 (npc_lair/)",
+    "Theatre formation table: 39 rows, header read (uberlair/imperial_uber_lair_01.tab)"
+  ],
+  "top_creatures": [
+    {
+      "label": "Plated charger beast",
+      "why": "Wide low silhouette reads at 375 wide; defence-class bonus makes it feel like a tank",
+      "keep": "Defence bonus; charge as the signature move",
+      "change": "Our silhouette, colour, name and sound",
+      "ref": "sku.0/sys.server/compiled/game/datatables/beast/beasts.tab (bull rows); beast/beast_specials.tab (charge lines)"
+    },
+    {
+      "label": "Stalking cat",
+      "why": "A crouch-then-pounce loop is one readable behaviour",
+      "keep": "Stalk-then-pounce cadence",
+      "change": "Our animation timing and our own sound",
+      "ref": "sku.0/sys.server/compiled/game/datatables/beast/beasts.tab (predatory_cat rows)"
+    },
+    {
+      "label": "Web spinner",
+      "why": "Dodge-class beasts are fast and hard to pin, which suits a duel",
+      "keep": "Dodge bonus; slowing ability",
+      "change": "Our web visual and our own name",
+      "ref": "sku.0/sys.server/compiled/game/datatables/beast/beasts.tab (spider rows)"
+    },
+    {
+      "label": "Pack raptor",
+      "why": "Many small fast units read well against one player (many-vs-one)",
+      "keep": "Group charge pattern",
+      "change": "Our pack size, spacing and silhouette",
+      "ref": "sku.0/sys.server/compiled/game/datatables/beast/beasts.tab (raptor rows); beast/beast_specials.tab"
+    },
+    {
+      "label": "Capped late boss",
+      "why": "A boss whose HP stops rising at a fixed ceiling keeps late fights finishable",
+      "keep": "The HP ceiling and the boss-only curve",
+      "change": "Our curve and our numbers (zone data, row 23)",
+      "ref": "sku.0/sys.server/compiled/game/datatables/mob/stat_balance.tab (Boss columns); mob/creatures.tab (BOSS rows)"
+    },
+    {
+      "label": "Elite that fades to normal HP",
+      "why": "An HP multiplier at low levels that disappears by level 100 makes elite HP a phase; elite damage does not fade the same way in the data",
+      "keep": "The HP fade-out",
+      "change": "Our fade curve and tier names",
+      "ref": "sku.0/sys.server/compiled/game/datatables/mob/stat_balance.tab (Elite columns)"
+    },
+    {
+      "label": "Lair with boss and pack",
+      "why": "One landmark with a roster and a boss is a clear destination on a map",
+      "keep": "One table per lair: boss plus pack",
+      "change": "Our layouts and rosters",
+      "ref": "sku.0/sys.server/compiled/game/datatables/npc_lair/ (boss-tagged and pack-tagged files; contents not opened)"
+    },
+    {
+      "label": "Theatre formation of many mobs",
+      "why": "A formation of many mobs over an overload region is a mass-encounter pattern",
+      "keep": "Formation list plus region difficulty range",
+      "change": "Our formation rules and numbers",
+      "ref": "sku.0/sys.server/compiled/game/datatables/uberlair/imperial_uber_lair_01.tab (header read; rows not opened)"
+    }
+  ],
+  "classes": [
+    "12 profession families, each with four phases (sys.shared/compiled/game/datatables/skill/skills.tab): bounty hunter, commando, domestics, engineering, entertainer, force sensitive, medic, munitions, officer, smuggler, spy, structures. Roles inferred from names only",
+    "Force sensitive: separate light and dark rank graphs (skills.tab)",
+    "Base template branches into 2a and 2b specialisations (sys.shared/compiled/game/datatables/skill_template/skill_template.tab, 38 rows); trader has an eight-row tier",
+    "Species: 10 (sys.shared/compiled/game/datatables/creation/racial_mods.tab), each with nine stat modifiers"
+  ],
+  "weapon_families": [
+    "Melee 376 templates: 2h sword, axe, baton, knife, polearm, sword, unarmed, special, base (sys.shared/compiled/game/object/weapon/melee/)",
+    "Ranged 305 templates: carbine, pistol, rifle, heavy, grenade, droid, turret, vehicle, base (sys.shared/compiled/game/object/weapon/ranged/)",
+    "Mine 4, trap 1, creature 1",
+    "Special properties by class (sys.server/compiled/game/datatables/magic_item/weapon/): accuracy and speed per class, damage for unarmed, ranged defence for carbine, pistol and rifle, shared slope-movement modifier. Data only; the code that applies them was not read",
+    "Material variants by name only: naktra crystal (knife, rifle), metal (pistol, staff). Binary .tpf visuals not read"
+  ],
+  "gear_tiers": [
+    "Armour sets: 34 folders, 554 files (sys.shared/compiled/game/object/tangible/wearables/armor/). Largest rebel assault 40, stormtrooper 35",
+    "Material-named sets: bone 10, chitin 18, composite 9, padded 10 (names only for the textures)",
+    "Item set bonuses: 97 sets, piece counts 2 to 11 (most at 3 to 5), 29 sets with a third tier effect (sys.server/compiled/game/datatables/item/item_sets.tab)",
+    "Set effects are per role (commando, smuggler, spy, medic, officer, jedi, bounty hunter, trader) with dps or utility splits",
+    "Armour modifiers: 12 entries (defence per weapon class, resistances bleeding, poison, disease, fire) (magic_item/armor/armor.tab)",
+    "Modifier cost caps: 32 rows (magic_item/mod_cost.tab)",
+    "Tier visuals not read in this half"
+  ],
+  "zones": [
+    "Planets: 21 rows with bounding boxes (sys.server/compiled/game/datatables/region/planets.tab)",
+    "Regions: 23 tables, 2523 rows; rectangle or circle; biome enum of 28 types (desert to overload); PvP types normal, truce, PvP battlefield, PvE battlefield, PvP advanced; difficulty range; spawn type (off, on, mission, default, difficulty)",
+    "Environment flags: forced daytime, forced nighttime, spooky zone (region/region_environment_flags.tab; flag effects not read)",
+    "POI: 846 tables, most on Tatooine 171, Corellia 131, Naboo 122, Lok 84 (poi/)",
+    "Dungeon archetypes (dungeon/): space dungeon, fort, platform boss, timed wave hall (death_watch, 11 wave tables), five-event trial set (mustafar_trials), power-cell puzzle (myyydril), camp command bunker (trando_slave_camp)",
+    "Loot per dungeon: 64 tables; five loot levels per dungeon (loot/dungeon/tables.txt line 4)",
+    "Spawn types: 716 files in 14 region folders (spawning/ground_spawning/types/)"
+  ],
+  "looks": [
+    {
+      "label": "Three-slot palette recolour",
+      "technique": "Each beast template takes three colour slots from a 52-entry palette; 184 rows",
+      "ref": "sku.0/sys.server/compiled/game/datatables/beast/beast_master_color_chances.tab; beast/beasts.tab (palette_length)"
+    },
+    {
+      "label": "Named colour table",
+      "technique": "138 named RGB entries for palette lookup (values not reproduced)",
+      "ref": "sku.0/sys.server/compiled/game/datatables/color/rgb.tab"
+    },
+    {
+      "label": "Feature palette swatches",
+      "technique": "32 palette images keyed by feature: skin 15, eye 9, hair 4, lips 2, horns 1, tattoo 1; images not opened",
+      "ref": "sku.0/sys.shared/built/game/palette/"
+    },
+    {
+      "label": "Crystal material tier",
+      "technique": "Crystal-named weapon models as a material tier; visuals not read",
+      "ref": "sku.0/sys.shared/compiled/game/object/draft_schematic/weapon/shared_knife_naktra_crystal.tpf; shared_rifle_naktra_crystal.tpf"
+    },
+    {
+      "label": "Gold-plated droid variant",
+      "technique": "Gold-named variant of a shared droid model; visuals not read",
+      "ref": "sku.0/sys.shared/compiled/game/object/static/creature/shared_droids_protocol_droid_gold.tpf"
+    },
+    {
+      "label": "Glow particles and gold light",
+      "technique": "Particle glow (volcano, glowing light), glowstick dance props, gold streetlamp light; names only",
+      "ref": "sku.0/sys.shared/compiled/game/object/static/particle/ (shared_particle_volcano_glow_1.tpf, shared_pt_frn_all_glowing_light_s3.tpf, shared_pt_light_streetlamp_gold.tpf); object/draft_schematic/dance_prop/shared_prop_glowstick_*.tpf"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Bond beast roster",
+      "idea": "Each tamed beast has one family and one attribute class (defence, damage, dodge, block, ninja, armour break)",
+      "keep": "Family plus attribute class per beast; the six-class split",
+      "change": "Our own families, names, silhouettes and sounds"
+    },
+    {
+      "name": "Fading elite",
+      "idea": "Elites start at a clear HP multiple of normal and converge to normal HP by a set level, while keeping a sharper damage edge",
+      "keep": "The HP multiplier that fades out",
+      "change": "Our curve, tier names and numbers (zone data, row 23)"
+    },
+    {
+      "name": "Capped warden",
+      "idea": "Boss HP climbs, then stops at a fixed ceiling so late fights end",
+      "keep": "The ceiling",
+      "change": "Our curve and boss designs"
+    },
+    {
+      "name": "Five-rung cache",
+      "idea": "Each dungeon has five loot tiers: tier 1 for early content, tiers 2 to 4 for middle difficulty",
+      "keep": "Five tiers per dungeon",
+      "change": "Our tier names, rarity colour and drop rules"
+    },
+    {
+      "name": "Camp with a warlord",
+      "idea": "A camp is one landmark with a small roster and a boss",
+      "keep": "One table per camp",
+      "change": "Our layouts and rosters"
+    },
+    {
+      "name": "Role kit",
+      "idea": "A gear set with three bonus steps that grow with pieces worn, one set per role",
+      "keep": "Three thresholds",
+      "change": "Our roles, effects and set names"
+    },
+    {
+      "name": "Rising tide hall",
+      "idea": "A timed hazard that escalates in waves through a room",
+      "keep": "Timed wave escalation",
+      "change": "Our hazard, timing and visuals"
+    }
+  ],
+  "licence_note": "LICENSE.md line 1 is the GNU Lesser General Public License v3 text; _RESTRICTED-NOTE.txt line 1 says leaked official SWG (Sony Online/Disney) source, proprietary, no licence. The two conflict; class C; clean-room, shape only; not a legal opinion",
+  "not_read": [
+    "All .java scripts (counted by audit, not opened)",
+    "Binary files: .tpf (about 63,454 by audit), .mif, .me, .tdf, .xls, .cfg, .pl, .yml, .xml, .tga palettes, armour and weapon visuals",
+    "Table contents beyond headers and aggregates: npc_lair contents, poi contents, spawn type contents (one header read), uberlair rows, dungeon event files (names only), loot other than tables.txt lines 1 to 8",
+    "sku.0/sys.shared/compiled/game/misc/planet_crc_string_table.txt: 47 single-column entries counted, not quoted",
+    "Server-code half (swgemu-Core3 in the box) not read by this cell",
+    "Client-half paired donor SWG-Source-client-tools catalogued separately"
+  ]
+}

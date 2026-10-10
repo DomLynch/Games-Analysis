@@ -1,0 +1,27 @@
+{
+  "game": "OpenTTD-OpenTTD",
+  "category": "quests-dialogue",
+  "cell": 12,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/OpenTTD-OpenTTD/src/goal.cpp",
+  "licence": "GPL-2.0 (goal.cpp header line 3: GNU General Public License, version 2; COPYING.md: Version 2, June 1991)",
+  "licence_class": "copyleft",
+  "target_module": "origins/server/dialogue.ts",
+  "parity_row": 18,
+  "pattern_tags": ["wait-gate", "new:parked-question", "new:answer-once", "new:addressee-check"],
+  "data_fields": [
+    {"name": "maxChoices", "donor_constant": "3 (buttons per question)", "unit": "count", "where": "engine constant", "donor_ref": "goal.cpp:262"},
+    {"name": "minChoicesQuestion", "donor_constant": "1 for the question kind; 0 for information, warning, error", "unit": "count", "where": "engine constant", "donor_ref": "goal.cpp:260"},
+    {"name": "questionIdRange", "donor_constant": "0..65535 (uint16 id)", "unit": "count", "where": "engine constant", "donor_ref": "script_goal.cpp:138"},
+    {"name": "choiceLabelCount", "donor_constant": "18 button kinds, Cancel first", "unit": "count", "where": "engine constant", "donor_ref": "goal_type.h:25"},
+    {"name": "buttonRowPadding", "donor_constant": "85 (one button), 65 (two), 25 (three); widget units", "unit": "units", "where": "engine constant", "donor_ref": "goal_gui.cpp:407"},
+    {"name": "questionMinWidth", "donor_constant": "300; widget units", "unit": "units", "where": "engine constant", "donor_ref": "goal_gui.cpp:405"},
+    {"name": "answerTimeout", "donor_constant": "none in donor (no timeout found in goal.cpp, goal_gui.cpp, script_goal.cpp); proposed field", "unit": "s", "where": "zone data", "donor_ref": "goal.cpp:285"}
+  ],
+  "best_idea": "Model a dialogue as a parked record keyed by an id: the server stores the addressee and the offered choices, accepts one answer from the addressee, and resumes the quest script with one event.",
+  "decision": "adapt",
+  "decision_why": "The id-keyed parked question with one answer event is the right shape for server-decided quest dialogue, but the donor has no pending, addressee, once or close checks, so Frankendom adds them on the server and keeps the window client-only.",
+  "decision_status": "proposed",
+  "acceptance": "Server test: an Accept/Decline offer addressed to player A rejects B's answer; A's Accept emits one event and pays the reward once; a second Accept is rejected; closing the box emits one cancel event and no reward; a two-choice and a three-choice offer both render at 375 wide without overlap."
+}

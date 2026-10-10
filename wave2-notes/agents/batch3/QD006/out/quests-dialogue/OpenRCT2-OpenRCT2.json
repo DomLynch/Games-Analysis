@@ -1,0 +1,28 @@
+{
+  "game": "OpenRCT2-OpenRCT2",
+  "category": "quests-dialogue",
+  "cell": 12,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2/scenario/ScenarioObjective.cpp",
+  "licence": "GPL-3.0 (ScenarioObjective.cpp header line 7: licensed under the GNU General Public License version 3; licence.txt is the GPL v3 text)",
+  "licence_class": "copyleft",
+  "target_module": "origins/server/quests.ts",
+  "parity_row": 18,
+  "pattern_tags": ["grace-timer", "wait-gate", "new:tri-state-objective", "new:write-once-ledger"],
+  "data_fields": [
+    {"name": "minRating", "donor_constant": "600 for the deadline kind (guestsBy); 700 for the streak kind (kLowParkRatingThreshold)", "unit": "units", "where": "zone data", "donor_ref": "ScenarioObjective.cpp:30"},
+    {"name": "minGuests", "donor_constant": "NumGuests (per scenario; not a literal in this file)", "unit": "count", "where": "zone data", "donor_ref": "ScenarioObjective.cpp:30"},
+    {"name": "deadlineMonth", "donor_constant": "MONTH_COUNT * Year (final month of the scenario)", "unit": "count", "where": "zone data", "donor_ref": "ScenarioObjective.cpp:28"},
+    {"name": "failAfterLowDays", "donor_constant": "29 (tested with ==; sketch uses >=)", "unit": "count", "where": "zone data", "donor_ref": "ScenarioObjective.cpp:108"},
+    {"name": "streakStartMonth", "donor_constant": "monthsElapsed >= 1 before the low-rating counter starts", "unit": "count", "where": "engine constant", "donor_ref": "Scenario.cpp:265"},
+    {"name": "allowEarly", "donor_constant": "AllowEarlyCompletion(): config option, or a value replicated from the server in client mode", "unit": "none", "where": "engine constant", "donor_ref": "Scenario.cpp:630"},
+    {"name": "coastersRequired", "donor_constant": "10 (ten coasters); 5 (finish five)", "unit": "count", "where": "zone data", "donor_ref": "ScenarioObjective.cpp:91"},
+    {"name": "rideExcitementThreshold", "donor_constant": "6.00 (ten coasters, RideRating::make(6, 00)); 7.00 (length variant)", "unit": "units", "where": "zone data", "donor_ref": "ScenarioObjective.cpp:77"}
+  ],
+  "best_idea": "Store a quest's outcome in one field that holds running, a score, or a failed sentinel, written once by a settle step, with success tested before failure in each check.",
+  "decision": "adapt",
+  "decision_why": "The tri-state check, the terminal-once ledger and the deadline-with-early-success shape fit the one ledger and server-decided completion; the park predicates (rating, coasters) do not, so Frankendom swaps in fight and quest predicates and fixes the == 29 failure test.",
+  "decision_status": "proposed",
+  "acceptance": "Server test on a deadline quest with early completion off: at the deadline with the objective unmet, the ledger records 'failed' once with no reward; a second deadline tick writes nothing; with early completion on, the first tick that meets the objective records the score once and pays the reward once."
+}

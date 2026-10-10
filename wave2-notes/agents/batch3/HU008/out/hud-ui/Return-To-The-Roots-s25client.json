@@ -1,0 +1,30 @@
+{
+  "game": "Return-To-The-Roots-s25client",
+  "category": "hud-ui",
+  "cell": 16,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/Return-To-The-Roots-s25client/libs/s25main/IngameMinimap.cpp",
+  "licence": "GPL-2.0-or-later (SPDX in IngameMinimap.cpp line 3 and Minimap.cpp line 3; LICENSE file is GPL v2)",
+  "licence_class": "copyleft",
+  "target_module": "src/fight/hud-minimap.ts",
+  "parity_row": 14,
+  "pattern_tags": ["new:layered-cell-paint", "new:dirty-cell-flush", "per-player-view", "presence-gated", "new:layer-toggle"],
+  "data_fields": [
+    {"name": "minimap_small_px", "donor_constant": "170", "unit": "px", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/Return-To-The-Roots-s25client/libs/s25main/ingameWindows/iwMinimap.cpp:15"},
+    {"name": "minimap_large_px", "donor_constant": "370", "unit": "px", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/Return-To-The-Roots-s25client/libs/s25main/ingameWindows/iwMinimap.cpp:17"},
+    {"name": "minimap_scale_x", "donor_constant": "1.1547", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/Return-To-The-Roots-s25client/libs/s25main/gameData/MinimapConsts.h:22"},
+    {"name": "full_rebuild_divisor", "donor_constant": "2 (rebuild when dirty >= cells / 2)", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/Return-To-The-Roots-s25client/libs/s25main/IngameMinimap.cpp:206"},
+    {"name": "fog_darken_divisor", "donor_constant": "2 (each channel)", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/Return-To-The-Roots-s25client/libs/s25main/IngameMinimap.cpp:121"},
+    {"name": "shade_bias", "donor_constant": "0x40", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/Return-To-The-Roots-s25client/libs/s25main/IngameMinimap.cpp:139"},
+    {"name": "tree_colour", "donor_constant": "0xFF003c14", "unit": "none", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/Return-To-The-Roots-s25client/libs/s25main/gameData/MinimapConsts.h:8"},
+    {"name": "tree_brightness_variation", "donor_constant": "20", "unit": "none", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/Return-To-The-Roots-s25client/libs/s25main/gameData/MinimapConsts.h:10"},
+    {"name": "granite_colour", "donor_constant": "0xFFA2A2A2", "unit": "none", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/Return-To-The-Roots-s25client/libs/s25main/gameData/MinimapConsts.h:12"},
+    {"name": "terrain_minimap_colour", "donor_constant": "per terrain type (world description, read by name, not in this checkout)", "unit": "none", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/Return-To-The-Roots-s25client/libs/s25main/IngameMinimap.cpp:135"}
+  ],
+  "best_idea": "Repaint a minimap only for the cells that changed, colour each cell from one fixed priority chain (hidden, cover, owner layers, terrain), and show fogged cells from the most recent remembered record, darkened, with each layer switchable without a full rebuild.",
+  "decision": "adapt",
+  "decision_why": "The dirty-cell flush and the layer chain fit a zone map on a 375-px phone; the donor's random brightness is replaced by a fixed per-cell value, and fog memory stays client-side (the server still decides what a player may know).",
+  "decision_status": "proposed",
+  "acceptance": "On a 375-px phone the zone minimap repaints only the cells named in the last server update (a client test counts repaints), and toggling the territory layer leaves every tree shade byte-identical before and after."
+}

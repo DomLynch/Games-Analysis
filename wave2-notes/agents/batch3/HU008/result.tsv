@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+PixelGuys-Cubyz	hud-ui	P	STRONG	full	src/gui/GuiWindow.zig:426-478 and src/gui/gui.zig:562-574 (anchored HUD panels re-solved to a fixpoint, no pass cap); src/gui/windows/healthbar.zig:45-80 (half-heart cells, 8 per row)
+Return-To-The-Roots-s25client	hud-ui	P	STRONG	full	libs/s25main/IngameMinimap.cpp:22-265 (per-cell layer chain, fog memory, dirty-cell flush at half the map); libs/s25main/ingameWindows/iwMinimap.cpp:28-98 and controls/ctrlIngameMinimap.cpp:22-93 (window, layer toggles, click-to-pan); world/GameWorldViewer.cpp:318-349 (youngest fog record)
+SCAR	hud-ui	P	PARTIAL	thin	src/TrueHUD/TrueHUDAPI.h:1-411 (TrueHUD interface contract only, implementation absent); src/Function.cpp:113-143 (debug overlay of attack arc, developer tool); src/DebugAPI/DebugAPI.cpp:41-60 (timed debug lines on wall-clock)

@@ -1,3 +1,5 @@
+**=== RESUME HERE (latest): read docs/HANDOVER-2026-10-11-v2.md FIRST. It has the exact counts, the 18 agents left running, launch recipes for every topic, the quality loop still owed, open items for Dom/Strategy/Lead, and the backup recipe. The "RESUME HERE v2" block below is older. ===**
+
 **=== RESUME HERE v2 (state saved 2026-10-11 late; supersedes the older block below) ===**
 Say "pick up the donor-library handoff". Read docs/HANDOVER-2026-10-11.md, then this block.
 **Live counts at save (groups with result.tsv / total):** AU 60/60 DONE; DC 32/64; CG 8/10; HF 7/10; WE 7/10; WF 7/10; SE 6/10; EN 6/10; OB 15/15 DONE (onboarding widened to first 30 min, OB006-015 added, see docs/wave2-pipeline/ONBOARDING-FOCUS.md); HU 5/28; QD 5/21; IV 3/20; ID 1/5; VF 11/19; RP 1/18; SM 0/23; CM 0/23; AC 11/11; AR 20/20. Not yet made: WL OB-later PR BS groups exist as donors files (WL 0/5, PR 0/5, BS 0/5).

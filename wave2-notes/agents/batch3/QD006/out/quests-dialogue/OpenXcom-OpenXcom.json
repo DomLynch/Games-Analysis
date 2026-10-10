@@ -1,0 +1,29 @@
+{
+  "game": "OpenXcom-OpenXcom",
+  "category": "quests-dialogue",
+  "cell": 12,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Savegame/AlienMission.cpp",
+  "licence": "GPL-3.0-or-later (AlienMission.cpp header: either version 3 of the License, or any later version)",
+  "licence_class": "copyleft",
+  "target_module": "origins/server/quests.ts",
+  "parity_row": 18,
+  "pattern_tags": ["timer-wheel", "wait-gate", "new:finish-when-clear", "new:pay-on-objective-event"],
+  "data_fields": [
+    {"name": "stepMinutes", "donor_constant": "30 (countdown step, one call per geoscape half hour)", "unit": "units", "where": "engine constant", "donor_ref": "AlienMission.cpp:168"},
+    {"name": "spacingLowRatio", "donor_constant": "0.5 of the wave timer (T/2 with T = spawnTimer/30 in integer half hours)", "unit": "ratio", "where": "engine constant", "donor_ref": "AlienMission.cpp:261"},
+    {"name": "spacingHighRatio", "donor_constant": "1.5 of the wave timer (T/2 + RNG(0,T) half hours)", "unit": "ratio", "where": "engine constant", "donor_ref": "AlienMission.cpp:261"},
+    {"name": "waveSpacingMin", "donor_constant": "spawnTimer per wave, minutes (ruleset)", "unit": "units", "where": "zone data", "donor_ref": "RuleAlienMission.h:52"},
+    {"name": "shotDownDelayMin", "donor_constant": "30 * (RNG(0,400) + 48) minutes added, i.e. 24 h to 224 h; skipped on the last wave", "unit": "units", "where": "zone data", "donor_ref": "AlienMission.cpp:551"},
+    {"name": "reachBaseResetMin", "donor_constant": "30 * (RNG(0,400) + 48) minutes assigned, i.e. 24 h to 224 h", "unit": "units", "where": "zone data", "donor_ref": "GeoscapeState.cpp:737"},
+    {"name": "missionPoints", "donor_constant": "ruleset points per mission; no literal default beyond 0", "unit": "count", "where": "zone data", "donor_ref": "RuleAlienMission.cpp:78"},
+    {"name": "missionScorePerUfo", "donor_constant": "1 by default per UFO rule (RuleUfo.cpp _missionScore(1))", "unit": "count", "where": "zone data", "donor_ref": "GeoscapeState.cpp:1281"},
+    {"name": "landedPressureMultiplier", "donor_constant": "2 (landed UFO)", "unit": "ratio", "where": "engine constant", "donor_ref": "GeoscapeState.cpp:1285"}
+  ],
+  "best_idea": "Make a mission's finish a pure state test (no waves left and no live enemies), pay each objective on its own event (site on landing, base on completion, other objectives on lifting), and let a kill push the next wave back by a rolled delay.",
+  "decision": "adapt",
+  "decision_why": "The finish test and the pay-by-objective rule fit quest and event objectives on the server; the spacing needs the rounding and documentation fixes, and the reward sign is inverted (the donor pays the enemy), so Frankendom takes it as a zone threat meter instead.",
+  "decision_status": "proposed",
+  "acceptance": "Server test: a two-wave site event is over only after the last wave is out and every UFO is gone; a landed UFO pays the zone meter once on lifting; a base objective pays only when the base is placed; a shot-down UFO delays the next wave by a rolled amount within the documented range; a 45-minute spacing rolls between about 23 and 68 minutes, not 0 or 30."
+}

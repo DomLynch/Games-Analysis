@@ -1,0 +1,30 @@
+{
+  "game": "PixelGuys-Cubyz",
+  "category": "hud-ui",
+  "cell": 16,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/gui/GuiWindow.zig",
+  "licence": "GPL-3.0 (LICENSE line 2: Version 3, 29 June 2007)",
+  "licence_class": "copyleft",
+  "target_module": "src/fight/hud.ts",
+  "parity_row": 14,
+  "pattern_tags": ["new:anchored-layout", "status-meter", "new:wrap-rows"],
+  "data_fields": [
+    {"name": "hud_cell_px", "donor_constant": "20", "unit": "px", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/gui/windows/healthbar.zig:72"},
+    {"name": "hud_row_width_px", "donor_constant": "160", "unit": "px", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/gui/windows/healthbar.zig:21"},
+    {"name": "hud_health_scale", "donor_constant": "0.5", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/gui/windows/healthbar.zig:16"},
+    {"name": "hud_hotbar_scale", "donor_constant": "0.75", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/gui/windows/hotbar.zig:27"},
+    {"name": "hud_snap_distance_px", "donor_constant": "3", "unit": "px", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/gui/GuiWindow.zig:41"},
+    {"name": "hud_solver_pass_cap", "donor_constant": "none (no cap in donor; sketch uses 8)", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/gui/gui.zig:564"},
+    {"name": "hud_move_threshold_sq", "donor_constant": "1e-3", "unit": "none", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/gui/gui.zig:570"},
+    {"name": "health_half_units_per_heart", "donor_constant": "2 (ceil(health*2))", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/gui/windows/healthbar.zig:49"},
+    {"name": "player_max_health_default", "donor_constant": "8", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/server/Entity.zig:15"},
+    {"name": "energy_half_threshold", "donor_constant": "0.5", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/gui/windows/energybar.zig:59"}
+  ],
+  "best_idea": "Anchor every HUD panel to the frame edge or to a sibling panel's edge with three attach points, re-solve all panels until none moves (with a pass cap), and show health as whole and half cells that wrap at a fixed row width.",
+  "decision": "adapt",
+  "decision_why": "The anchor solver fits a 375-px phone HUD where the health frames hang off the hotbar; the donor's uncapped loop and its two rounding rules (health ceil versus energy thresholds) are fixed in the sketch: one rule, one cap.",
+  "decision_status": "proposed",
+  "acceptance": "At 375 px wide the health frames sit right-aligned above the hotbar and wrap to a second row after 8 cells; a client test asserts the layout converges within 8 passes and that no panel moves after the last pass."
+}

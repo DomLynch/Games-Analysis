@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+OpenRCT2-OpenRCT2	hud-ui	P	STRONG	full	src/openrct2-ui/windows/Map.cpp:365-395,783-845 - the minimap raster is rebuilt 16 rows per update with a wrapping line pointer, and the hint Finances.cpp was the wrong file
+OpenTTD-OpenTTD	hud-ui	P	STRONG	full	src/smallmap_gui.cpp:1218-1260,850-878,1705-1718 - zoom keeps the tile under the cursor fixed on a discrete step table, the pan clamp keeps part of the map in the widget centre, and a map click cancels the main view follow (viewport.cpp:2562)
+OpenXcom-OpenXcom	hud-ui	P	STRONG	full	src/Battlescape/MiniMapView.cpp:184-274,282-378 - a map drag is a click unless the pointer moves past 10 px or holds past 300 ms, the camera offset is accumulated motion over four with a per-axis rollback at the edge, and the rollback branches drop the window scale (lines 343 and 348)

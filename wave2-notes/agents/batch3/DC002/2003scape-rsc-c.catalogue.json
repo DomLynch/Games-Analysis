@@ -1,0 +1,58 @@
+{
+  "donor": "2003scape-rsc-c",
+  "counts": {
+    "creatures": null,
+    "classes": null,
+    "weapons": null,
+    "gear_sets": null,
+    "zones": null
+  },
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [],
+  "looks": [
+    {
+      "label": "Torchlit flicker on the underground plane",
+      "technique": "Each frame, when the player is on plane index 3 and the flicker option is on, the scene light is reset with a small random jitter on ambient and diffuse values. Reads as unstable torch light with no new art.",
+      "ref": "src/mudclient.c lines 4718-4724; option default at src/options.c line 90"
+    },
+    {
+      "label": "Cycling sprite frames for fire, lightning and spell-charge objects",
+      "technique": "A global counter steps three, four and five state cycles. Each object whose id matches a fire, lightning, fire-spell or spell-charge id gets its numbered animation frame swapped in when the cycle changes.",
+      "ref": "src/mudclient.c lines 3548-3555 (counters) and 4451-4476 (per-object frame swap)"
+    },
+    {
+      "label": "Fog-of-war veil with a distance-driven fog plane",
+      "technique": "Fog distance is set from the camera clip range, pulled in when fog-of-war is on and pushed out when it is off. Fog-of-war toggles with camera zoom state. Gives a soft veil around the player without per-object effects.",
+      "ref": "src/mudclient.c lines 2637, 4687-4701, 4731-4775; src/options.c line 91"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Torch Depths",
+      "idea": "Underground floors get a light that breathes: a slow random wobble on the ambient level, with a faint warm shift on the diffuse level. Mood only, no new models.",
+      "keep": "A per-floor light override that jitters each frame on the lowest floor.",
+      "change": "Our own palette and rhythm (a slow pulse, not a random flicker); tie the pulse to a single torch or crystal source."
+    },
+    {
+      "name": "Veil of Mist",
+      "idea": "Fog-of-war as a player-toggled veil: near the player the fog thins, and far terrain drops into haze when the veil is on.",
+      "keep": "A toggle that changes only the fog distance, so it costs almost nothing at runtime.",
+      "change": "Veil shape (a round reveal around the hero, not the camera plane); add a short fade when the toggle flips."
+    }
+  ],
+  "licence_note": "Code: GNU AGPL v3 (COPYING line 1; README.md lines 352-365, 'Copyright 2024 2003Scape Team'). Game data in cache/ (*.jag, *.mem, models36.jag.backup) has no licence in the repo and is treated as proprietary. No _RESTRICTED-NOTE.txt is present, but the donor is treated as restricted because it ships original game archives (AU001). Derived atlases in cache/textures/ and gfx/ are treated as derived from those archives.",
+  "not_read": [
+    "Client half only. This donor is the client; the matching server half is not in this donor folder. Box name matches only, not verified as the matching half: Open-RSC-Core-Framework and Danjb1-rsc-remastered.",
+    "Game data archives cache/*.jag and cache/*.mem (entity24, entity8, models36, media58/59, config85, sounds1). Binary; names and sizes only, not decoded. So NO creature names, item names, zone names or tier lists come from this donor.",
+    "Shader files cache/*.fs and *.vs (GLSL) not read.",
+    "3ds/, wii/, switch/, web/, win/ platform PNGs and 3ds-cia.png not opened.",
+    "src/ files read only where cited: game-data.h (struct layout lines 42-116), game-data.c (loader order at its top and object loop), mudclient.c and options.c at the lines cited.",
+    "src/ui/, src/gl/, src/pica/, and other platform .c files not read.",
+    "The one .wav file not identified.",
+    "Counts: not produced. Names live inside the binary archives, so creatures, classes, weapons, gear_sets and zones are all null rather than guessed."
+  ]
+}

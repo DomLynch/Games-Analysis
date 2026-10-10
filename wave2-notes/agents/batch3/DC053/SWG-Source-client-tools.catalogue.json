@@ -1,0 +1,79 @@
+{
+  "donor": "SWG-Source-client-tools",
+  "counts": {
+    "creatures": null,
+    "classes": null,
+    "weapons": null,
+    "gear_sets": null,
+    "zones": null
+  },
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [
+    "Ground radar range: read from a radar range table referenced by path (datatables/radar/radar_range.iff) in SwgCuiGroundRadar.cpp; the table itself is not in the data half (searched sku.0 by name)",
+    "Radar hue table in the data half: buff_data/radar_hue.tab, 9 rows (header read; values not reproduced)",
+    "No zone or dungeon files in this half; the radar is the nearest match to a map; minimap not found in the paths searched"
+  ],
+  "looks": [
+    {
+      "label": "Role-coded radar blips",
+      "technique": "One image per role (standard, corpse, waypoint arrow, structure, group, ring, target bracket, entrance). Blip width comes from the pixel-to-world ratio with a role-specific floor and ceiling; bracket and ring add a fixed pad so overlays stay centred",
+      "ref": "src/game/client/library/swgClientUserInterface/src/shared/page/SwgCuiGroundRadar_BlipPane.cpp (renderToCanvas lines 168 to 200; constructor 221 to 256; renderBlip 329)"
+    },
+    {
+      "label": "Timed group loot claim window",
+      "technique": "Three buttons (none, selection, all); draining timer bar from remaining time fraction; automatic send of the current selection on timeout; closes on send or when the container is gone. Defect from reading: no one-shot guard, so a duplicate send is possible on the frame before close (not run). Fix: a sent flag checked before send",
+      "ref": "src/game/client/library/swgClientUserInterface/src/shared/page/SwgCuiGroupLootLottery.cpp (update lines 469 onward; timeout test line 473; delta time line 471; closeNextFrame line 445)"
+    },
+    {
+      "label": "Per-family effect authoring tools",
+      "technique": "Separate editors for particles, weapon swooshes, lightning arcs, client effects, shaders and sound (directory names only; files not read)",
+      "ref": "src/engine/client/application/ParticleEditor; SwooshEditor; LightningEditor; ClientEffectEditor; ShaderBuilder; SoundEditor"
+    },
+    {
+      "label": "Sound-option ambient settings",
+      "technique": "The sound-option page mentions ambient settings (grep only). No biome ambience bed or border crossfade code found in the searched paths",
+      "ref": "src/game/client/library/swgClientUserInterface/src/shared/page/SwgCuiOptSound.cpp"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Glyph radar",
+      "idea": "One glyph per role on the radar: waypoint as an arrow, target as a bracket, group and structure with their own shapes",
+      "keep": "Role-coded glyphs and a zoom-scaled size clamp",
+      "change": "Our glyph shapes, colour logic and overlay pads"
+    },
+    {
+      "name": "Claim clock",
+      "idea": "A timed loot-claim window with a draining bar that auto-resolves to the default choice",
+      "keep": "The draining bar and the auto default",
+      "change": "Add a one-shot sent flag to fix the duplicate send; make the window length zone data; our own layout"
+    },
+    {
+      "name": "Trail bench",
+      "idea": "A separate tuning tool for weapon trails and arcs so feel can be tuned without code",
+      "keep": "One authoring tool per effect family",
+      "change": "Our trail shape and fade, tied to hitstop (row 10)"
+    },
+    {
+      "name": "Zone-scaled blip clamp",
+      "idea": "Blip size from the zoom ratio, clamped to a floor and ceiling that differ by role, so waypoints stay readable at range",
+      "keep": "The clamp and the role-specific range",
+      "change": "Our numbers and our role set"
+    }
+  ],
+  "licence_note": "_RESTRICTED-NOTE.txt line 1 says leaked official SWG (Sony Online/Disney) source, proprietary, no licence. README has no licence section. Class C for source; class D for executables and installers (never run). Clean-room, shape only; not a legal opinion",
+  "not_read": [
+    "Counts for creatures, classes, weapons, gear and zones are not counted in this half; see SWG-Source-dsrc.catalogue.md (data half)",
+    "All executables, installers and plugins in tools/, deps/ (including 67 MB and 18 MB installers) and plugin/win32/: not run, not opened",
+    "publish/client_data_tree_files.mft (binary, 26 MB): header only, by audit; not reproduced",
+    "publish list contents: line counts only",
+    "All .ui layout files and editor images: counted by audit, not opened",
+    "Editor source beyond directory names: SwooshEditor, LightningEditor, ParticleEditor, ClientEffectEditor, SoundEditor",
+    "SwgCuiLootBox.cpp beyond its size; SwgCuiGroundRadar.cpp beyond the range-table loader and declarations",
+    "Death and respawn presentation, boss intro and finisher staging, touch UX, max enemies per frame: not read"
+  ]
+}
