@@ -1,0 +1,27 @@
+jynew-jynew (instancing-dungeons, cell 2) - verdict PARTIAL
+
+Hint "INFERRED" is not a path. Located by grep -rn for SubMap, LevelMaster, MapTeleportor, LevelLoader and entrance-condition words under /mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts (narrow, not a whole-tree scan). The donor's "dungeon" is a map scene (sub-map); there is no instancing concept.
+
+Files opened (candidates, at least 3):
+- /mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameMaps/MapTeleportor.cs (176 lines; read 1-176: trigger, CheckCanEnterMap gate, DoTransport)
+- /mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameMaps/LevelLoader.cs (78 lines, full)
+- /mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameMaps/LevelMaster.cs (lines 24-110 and 524-540; grep for loadPara, SubMapData, LastGameMap)
+- /mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameSave/WorldMapSaveData.cs (35 lines, full)
+- /mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameSave/GameRuntimeData.cs (lines 692-730, the entrance-condition getter and setter)
+- /mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameCore/StoryEngine.cs (lines 62-100, load path)
+- /mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/UI/LoadingPanel.cs (lines 40-80)
+- /mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/ResourceManagement/ResLoader.cs (lines 205-235)
+- /mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/LuaCore/Jyx2LuaBridge.cs (grep hits 296 and 2131-2136 only; not read in full)
+
+Not read: LevelMaster.cs 110-523 (scene start, player spawn, Transport), GameEventManager.cs, LevelMasterBooster.cs. Unity's default LoadSceneAsync mode (Single) is assumed from the call at ResLoader.cs 224, not read in the donor.
+
+Why PARTIAL: the donor has no instance concept. Each map is one shared Unity scene for every player, there is no per-party copy, no party-keyed state, and no idle or empty collapse. What is real and readable is a zone entry gate and a save/restore of the current scene and position. The gate is code 0 (open), 1 (closed until a story flag sets it to 0), or 2 (a team member with Qinggong 75 or more is needed), and it is evaluated in the client trigger (MapTeleportor.cs 75-103), not on a server. That is a thin fragment of the lifecycle, not the instancing mechanism.
+
+Licence: the root LICENSE (line 5, Chinese) says the project grants no public permission and does not allow use of its resources and code. The header of MapTeleportor.cs (lines 5-6) says the code is MIT and that in-game resources and plugins must be checked against the LICENSE. These conflict, so treat as unclear: clean-room shape only, no code.
+
+Best transferable idea: an entry gate that is an OR over the whole party (any member meets a stat threshold), with the gate code kept in save state and a default taken from the zone table.
+
+Decision (proposed): adapt - the any-member gate shape fits zones as data (a required stat checked when the server accepts a zone-enter request); reject the per-save key-value storage and the hard-coded map ids in Jyx2LuaBridge.cs 2131-2136, which conflict with zones as data. The donor's gate is client-side, so it is not server-verified.
+
+Checked: confidence high on the gate codes and the save/restore path (read); medium on the scene-replacement cleanup (default load mode assumed, not read).
+Camera scope: not applicable.

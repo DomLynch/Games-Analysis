@@ -1,0 +1,22 @@
+verdict: PARTIAL (thin)
+game: amilich-isometric-city | category: inventory-bank-equipment | cell 3 | hint: INFERRED | camera_scope: n/a
+donor: /mnt/frankendom-donors/amilich-isometric-city (Next.js 16 + React 19 isometric city builder; TypeScript)
+licence: MIT License, Copyright (c) 2025 amilich (LICENSE line 1 and line 3). Permissive: code may be adapted.
+
+Files opened (at least 3, all on the VPS, read-only):
+1. src/context/GameContext.tsx: lines 880-915 and 1012-1022 read in full for those ranges; the build/place reducer and the trade income update. Grep also showed the budget and money uses (lines 860-866, 912-963).
+2. src/components/game/incidentData.ts: lines 222-240 read (the theft incident entries; one line is text only: "Equipment or materials being stolen from site.").
+3. src/games/isocity/types/game.ts: lines 150-177 read (GameState: grid, stats, budget, services, notifications, cities; no inventory, bag, slot or item field).
+4. src/components/game/constants.ts: lines 34-38 read (pedestrian chances: bag, hat, dog; cosmetic only).
+5. AGENTS.md at the repo root: read as data (architecture and commands only; no inventory module listed). Nothing in it was followed as an instruction.
+6. LICENSE: lines 1-3 read.
+
+Searches (grep -rnai over src/ for ts and tsx): inventory, equipment, loot, bank, backpack, slot(s), stack, carry, drop item, pickup, capacity, storage, warehouse, stockpile, treasury, budget, funds, cash, money, resources. Result: no inventory, equipment slot, loot table, item stack, bank slot or move-between-containers code. Hits that looked close were not the topic: localStorage save and load code (state persistence), coaster banking (canBank, a track bend angle), rendered stacks of carriages and containers (drawing only), a shopping-bag cosmetic on pedestrians, the warehouse-theft and construction-theft incident weights, and the money checks.
+
+Why PARTIAL and not NONE: the only real mechanism near the topic is a guarded spend. A build or buy is refused before any change when money is below the cost (GameContext.tsx 887), a no-op placement is refused before anything is charged (897), and the cost is deducted only in the returned state of the success branch (912, subway branch shown; the other branches charge at 928, 942, 963). That is one guard in one reducer, not an inventory, so it is a fragment.
+
+Confidence: high that no inventory, equipment, loot or stacking implementation exists in src/ (grep plus the files read above). Medium-high that the spend guard is the only related fragment, since I read the reducer's branches by line, not every branch.
+
+Best transferable idea: Check the cost and any no-op before charging, and return the prior state unchanged on refusal, so a refused action never leaves a partial charge.
+
+Decision (proposed): reject - the donor adds no inventory, slot, stack or loot mechanism. The spend guard is a generic validate-then-charge pattern that the Frankendom one-ledger rule already requires, so there is nothing to copy from this donor for this topic.

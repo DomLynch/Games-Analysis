@@ -1,0 +1,37 @@
+cuteshaun-lineage2-api (quests-dialogue, cell 1): PARTIAL, depth thin
+Donor: /mnt/frankendom-donors/cuteshaun-lineage2-api/ | Licence: MIT License (Copyright 2026 Andrii Tsapko), read from LICENSE | TypeScript (Next.js web API over a build-time parser)
+camera_scope: not applicable (quests topic)
+
+Checked (files opened, read in full or in the cited ranges):
+1. /mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/api/dto/quest.ts (hint file, read in full, 375 lines): response DTOs and toQuestDetailDto. Reward policy and journal mapping are here; no quest state, no objectives runtime.
+2. /mnt/frankendom-donors/cuteshaun-lineage2-api/scripts/parse-quests.ts (read in full, 404 lines): the only place rewards, levelMin, repeatable, and restrictions are derived. Reads Java quest scripts text; the scripts themselves are not in the donor.
+3. /mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/types.ts (read the Quest interface and QuestNameRecord, about lines 335-385 and 489-538).
+4. /mnt/frankendom-donors/cuteshaun-lineage2-api/scripts/parse-questname.ts (read lines 1-60 only; the rest of the binary DAT walk is not read).
+Grep-only (searched, not opened in full): src/lib/data/indexes.ts (getQuestNameById, line 1477-1481), scripts/chronicle-sources.ts (quest script path config), and a donor-wide grep for STATE_, htmltext, dialog, objective in scripts/ and src/lib/. Result: no quest state machine, objective tracker, dialogue tree or parked-script runner exists in the donor; STATE_ appears only in a doc comment (types.ts 355).
+
+What the donor is: a static catalogue. It parses aCis Java quest scripts at build time into quests.json (metadata and reward totals), and joins a client DAT (questname-e.dat) for journal text. Nothing here executes a quest.
+
+Mechanism that is real (order of operations as the code runs):
+- parseQuestFile (parse-quests.ts 112): header id/name, constants, setItemsIds (first match only, line 135), start/talk/kill NPC ids, repeatable from the first exitQuest (156-157), levelMin = smallest getLevel() < N in the whole file (161-165), race and class gates, then extractRewards.
+- extractRewards (228): if the file has no exitQuest, returns empty items and null adena/exp/sp (233-235). Otherwise a reward call counts if its line is within 20 lines before or 5 lines after ANY exitQuest call (PROXIMITY_BACK 20 / PROXIMITY_FORWARD 5, lines 22-23, window test 251). Item rewards are summed per item id (273), adena summed separately (57), exp and sp summed from rewardExpAndSp (285).
+- Then transient quest items (from setItemsIds) are filtered out of the reward list (200-206): the comment says the engine wipes them on exitQuest, so they are not final rewards.
+- DTO (quest.ts 300-311): rewards.items always present (possibly empty); adena, exp, sp are copied only when not null, so absent is kept distinct from zero (37, 304, 311).
+
+Numbers: reward window back 20 / forward 5 lines (parse-quests.ts 22-23); ADENA_ITEM_ID 57 (line 12). No runtime timers, no combat numbers.
+
+Defects found (keep the idea, fix each):
+- levelMin is documented as "inferred from getLevel() < N checks in STATE_CREATED" (types.ts 355) but the code scans the whole file (161-165). fix: scope the level gate to the start-state block, or store the gate per state.
+- Reward window ignores branches. Any reward call within 20/5 lines of any exitQuest is summed (251, 273). Two alternative branches that each give the same item would double-count it. fix: tag each reward with its state or branch and grant only the branch that actually reaches the terminal exit.
+- repeatable is taken from the first exitQuest match only (156-157). fix: one explicit repeatable flag in the quest data, not inferred from the first exit call.
+- setItemsIds is read from the first match only (135). fix: collect every call (global match) if a quest declares more than one.
+
+Confidence: high on what the donor does (read the whole mechanism); medium that there is no other quest runtime in the box (searched donor-wide for the topic words and found none, but did not search the other donors for this cell).
+
+Best transferable idea: quest-tracked transient items are removed from the reward list at exit, so only items the player keeps reach the ledger.
+
+Decision (proposed): adapt - take the rule that quest-scoped items are wiped at exit and the reward ledger receives only explicit reward entries (one ledger), and reject the lexical proximity heuristic: Frankendom quests are authored data, so rewards should be explicit fields, not inferred from script text.
+
+Frankendom target and row (for the adapt): a quest reward grant in the quest data feeding the one ledger; parity row 18 (loot roll and XP award). Acceptance if built: a server test asserts that a quest-tracked item is removed on completion and the ledger gains exactly the declared reward entries and nothing else.
+
+Receipts: /private/tmp/p2/wave2-haiku/batch3/QD011/receipts.tsv, 20 rows, verify_receipts.py: 20 ok, 0 failed.
+Typecheck: not applicable (PARTIAL, no sketch).

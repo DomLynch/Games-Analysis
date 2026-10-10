@@ -1,0 +1,3 @@
+game	category	old	verdict	depth	finding
+veloren-veloren	instancing-dungeons	P	STRONG	full	server/src/sys/teleporter.rs:14-141 and server/src/events/entity_manipulation.rs:3358-3398: a portal is a timed channel that is cancelled by range, no-aggro or state failure, and on firing moves the owner and nearby owned entities together; no instancing found (dungeons are sites in the shared world, world/src/site/mod.rs:146).
+xu4-engine-u4	instancing-dungeons	P	STRONG	full	src/combat.cpp:49-55,109-164,232-302 with src/game.cpp:421-512: a dungeon room is a combat location stacked over the saved parent position, placed on the entry side, with foes respawned from room data on each entry and reset on exit.

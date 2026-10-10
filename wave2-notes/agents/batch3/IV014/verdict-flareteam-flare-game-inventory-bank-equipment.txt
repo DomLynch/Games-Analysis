@@ -1,0 +1,27 @@
+flareteam-flare-game | inventory-bank-equipment | cell 9 | verdict PARTIAL | depth thin | old P
+Donor: /mnt/frankendom-donors/flareteam-flare-game/ | Licence: Creative Commons Attribution-ShareAlike 3.0 Unported (LICENSE.txt, read; the donor is art and data, no source code) | clean-room, data shape only
+
+Hint file (art_src/interface/game_slots.xcf) is a binary GIMP image with no logic: wrong file, not used for the verdict.
+
+Files opened (at least 3 candidates):
+1. mods/fantasycore/menus/inventory.txt (equipment slots, carried grid, sort flag, two equipment sets)
+2. mods/minicore/menus/inventory.txt (second layout: 8x5 carried grid, named slots)
+3. mods/fantasycore/menus/stash.txt (bank/stash grid 8x10, sort flag)
+4. mods/empyrean_campaign/items/categories/crafting.txt and quest.txt (max_quantity, no_stash=shared / no_stash=all)
+5. mods/fantasycore/engine/loot.txt and equip_flags.txt (loot settings, equipment flags)
+6. mods/empyrean_campaign/loot/chest_common.txt and chest_level_10.txt (loot line form, guaranteed gold, INCLUDE)
+7. mods/empyrean_campaign/items/qualities.txt (rarity colour and sort_order)
+8. mods/empyrean_campaign/items/sets.txt (4 sets, bonus lines by piece count)
+9. mods/empyrean_campaign/items/random/mastite_weapon.txt (affix options by chance, bonus_count, base and item_level ranges)
+10. mods/empyrean_campaign/languages/readme.txt (engine string extraction points at ../../../src/*.cpp)
+A search of the donor for *.cpp, *.h and *.c returned nothing: the engine source is not in this box.
+
+Why PARTIAL: the donor ships the data half only (menus, item categories, loot tables, set and affix tables, 1350 msgid lines in the empyrean .pot). The code that moves items between bag, bank and equipment slots, merges stacks, applies set bonuses and rolls affixes is not in the box, so the order of operations for atomic moves cannot be read, and I cannot say how a set piece count or a stack merge is applied.
+
+Numbers read (data only): carried grid 5 columns by 11 rows (fantasycore inventory.txt 37-39); stash grid 8 by 10 (stash.txt 11-13); crafting max_quantity 999 and tools 1 (crafting.txt 9, 44); guaranteed gold roll weight 100 for 200-220 (chest_level_10.txt 2); sets with bonus lines at 2, 3, 4 ... 7 pieces (sets.txt, 6 lines at 2, 10 at 3, 1 at 4, 1 at 5, 2 at 6, 4 at 7); affix chance 100, 5, 0.5 with bonus_count 1-1, 1-2, 2-2 (mastite_weapon.txt 2-16).
+Field meaning that I could not confirm in code: the first number on a bonus line is read as the piece count, and the 4-field loot line as id,weight,min,max. Both are inferred from names and layout (engine not in box).
+
+Best transferable idea: Keep bag, bank and equipment as per-menu grid and slot data, with a per-category stack cap and a shared-versus-bound flag, and key set bonuses to piece counts (2, 3, 4 ... 7) in the catalogue.
+Decision (proposed): adapt - take the data shape (per-category max stack, bound flag, set bonus by piece count, sort_order list for rarity) as catalogue fields in Frankendom's item data (row 21 catalogue fields); the move, merge and set-apply logic is not in this donor, so there is nothing to copy for atomic moves.
+Parity row: 21 (catalogue fields) and 15 (gear dressing) for the set bonus; row 18 for the loot roll is not covered here (the roll code is absent).
+Reuse tag: data-shape only (CC BY-SA 3.0 art and data: do not copy the item text or art).

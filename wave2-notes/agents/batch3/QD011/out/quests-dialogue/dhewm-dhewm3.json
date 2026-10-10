@@ -1,0 +1,33 @@
+{
+  "game": "dhewm-dhewm3",
+  "category": "quests-dialogue",
+  "cell": 3,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/script/Script_Thread.cpp",
+  "licence": "GNU GPL version 3 or later (Script_Thread.cpp header), with id Software additional terms cited in the header (line 22; terms text not in the box, not read)",
+  "licence_class": "copyleft",
+  "target_module": "origins/quests/parked-scripts.ts",
+  "parity_row": 18,
+  "pattern_tags": [
+    "wait-gate",
+    "clamp-and-report",
+    "new:parked-script",
+    "new:one-wake-per-park",
+    "new:entity-done-wake",
+    "new:thread-end-wake",
+    "new:statement-budget"
+  ],
+  "data_fields": [
+    {"name": "statements_per_resume_budget", "donor_constant": "5000000", "unit": "count", "where": "engine constant", "donor_ref": "Script_Interpreter.cpp:1013"},
+    {"name": "wait_seconds_to_ms", "donor_constant": "SEC2MS(time)", "unit": "s", "where": "engine constant", "donor_ref": "Script_Thread.cpp:899"},
+    {"name": "one_frame_wait_ms", "donor_constant": "gameLocal.msecPrecise", "unit": "ms", "where": "engine constant", "donor_ref": "Script_Thread.cpp:913"},
+    {"name": "multi_frame_repost_ms", "donor_constant": "gameLocal.msec", "unit": "ms", "where": "engine constant", "donor_ref": "Script_Thread.cpp:672"},
+    {"name": "entity_wake_delay_ms", "donor_constant": "DelayedStart(0)", "unit": "ms", "where": "engine constant", "donor_ref": "Script_Thread.cpp:756"}
+  ],
+  "best_idea": "A parked script holds exactly one wake condition (a time, an entity's done notice, or another script's end), and each wake cancels the pending resume before posting a new one, so a script runs once per wake.",
+  "decision": "adapt",
+  "decision_why": "Keep one wake per park and the cancel-then-repost rule on the server; store waiters per entity, yield and count over-budget resumes instead of stopping the server, and make a zero-length wait due at once. Reject the idThread and interpreter code (copyleft, clean-room only) and the objective list as written (keys by display title, no ids).",
+  "decision_status": "proposed",
+  "acceptance": "A server test runs a quest step 'wait 2 s, then wait for door 7': the step resumes at 2 s and again when door 7 reports done; two scripts waiting on door 7 both resume; a script that spends its budget yields and continues on the next advance; no script runs twice for one wake."
+}

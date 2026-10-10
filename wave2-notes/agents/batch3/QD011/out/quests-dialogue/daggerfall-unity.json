@@ -1,0 +1,40 @@
+{
+  "game": "daggerfall-unity",
+  "category": "quests-dialogue",
+  "cell": 2,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Questing/Task.cs",
+  "licence": "MIT License (LICENSE file: Copyright (c) 2009-2023 Daggerfall Workshop; .cs headers say MIT License)",
+  "licence_class": "permissive",
+  "target_module": "origins/quests/task-runner.ts",
+  "parity_row": 18,
+  "pattern_tags": [
+    "fixed-step",
+    "accumulator",
+    "stale-state",
+    "wait-gate",
+    "new:trigger-task-graph",
+    "new:primary-secondary-trigger",
+    "new:persist-until",
+    "new:yield-tick"
+  ],
+  "data_fields": [
+    {"name": "quest_tick_per_s", "donor_constant": "10", "unit": "ticks", "where": "engine constant", "donor_ref": "QuestMachine.cs:45"},
+    {"name": "quest_startup_delay_s", "donor_constant": "0", "unit": "s", "where": "engine constant", "donor_ref": "QuestMachine.cs:44"},
+    {"name": "tombstone_s", "donor_constant": "SecondsPerWeek (one in-game week)", "unit": "s", "where": "engine constant", "donor_ref": "QuestMachine.cs:497"},
+    {"name": "foe_spawn_count_max", "donor_constant": "8", "unit": "count", "where": "engine constant", "donor_ref": "Foe.cs:36"},
+    {"name": "kills_required", "donor_constant": "per quest script (ParseInt of kills group)", "unit": "count", "where": "zone data", "donor_ref": "Actions/KilledFoe.cs:47"},
+    {"name": "clock_random_min_s", "donor_constant": "GetTimeInSeconds(0, 0, 1) = 60", "unit": "s", "where": "engine constant", "donor_ref": "Clock.cs:194"},
+    {"name": "clock_random_max_s", "donor_constant": "GetTimeInSeconds(7, 0, 0) = 604800", "unit": "s", "where": "engine constant", "donor_ref": "Clock.cs:195"},
+    {"name": "reward_hour_min", "donor_constant": "7", "unit": "none", "where": "zone data", "donor_ref": "Actions/GivePc.cs:71"},
+    {"name": "reward_hour_max", "donor_constant": "18", "unit": "none", "where": "zone data", "donor_ref": "Actions/GivePc.cs:72"},
+    {"name": "reward_delay_min_ticks", "donor_constant": "40", "unit": "ticks", "where": "zone data", "donor_ref": "Actions/GivePc.cs:73"},
+    {"name": "reward_delay_max_ticks", "donor_constant": "500", "unit": "ticks", "where": "zone data", "donor_ref": "Actions/GivePc.cs:74"}
+  ],
+  "best_idea": "A quest task is a list of triggers and effects with a lifetime: one primary always-on trigger can arm or disarm it, disarming rearms every effect, and a parked task rearms its effects each tick until its target is armed.",
+  "decision": "adapt",
+  "decision_why": "Keep the arm, disarm, rearm and parked shape as zone data on the server; fix the stale prevTriggered after a yield, the yield that skips a whole tick, and the accumulator reset to zero; reject the Unity runtime, the QBN text parser, and the display-name dialogue keys.",
+  "decision_status": "proposed",
+  "acceptance": "A server test runs a quest with 'kill 3 imp' then a reward: the reward is granted exactly once; a yield on the arming tick does not init the spawn counter twice; disarming rearms the one-shot effects and a second arm grants them again."
+}

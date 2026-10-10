@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+cuteshaun-lineage2-api	quests-dialogue	P	PARTIAL	thin	scripts/parse-quests.ts:198-210 and 228-299: rewards are a build-time parse of Java quest scripts within 20/5 lines of exitQuest, quest-tracked items are subtracted at 200-206, and no runtime quest state, objectives or dialogue tree exists in the donor (verdict-cuteshaun-lineage2-api-quests-dialogue.txt).
+daggerfall-unity	quests-dialogue	P	STRONG	full	Questing/Task.cs:194-282 is the trigger, arm, rearm and parked-task runner, ticked from Quest.cs:290-347 and QuestMachine.cs:441-470 at 10 ticks/s (out/quests-dialogue/daggerfall-unity.deep.md, MIT).
+dhewm-dhewm3	quests-dialogue	P	STRONG	full	neo/game/script/Script_Thread.cpp:649-679 with the wake paths at 688-774 is the parked-script mechanism (one wake per park, cancel-then-repost resume); copyleft, clean-room only (out/quests-dialogue/dhewm-dhewm3.deep.md).
