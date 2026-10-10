@@ -1,0 +1,12 @@
+{
+  "commands": [
+    ["python3", "-m", "py_compile", "gate/gate.py", "gate/verify_receipts.py"],
+    ["sh", "-c", "! git ls-files | grep -E 'receipts.*[.]tsv'"],
+    ["python3", "-c", "import glob,json,sys; [json.load(open(f)) for f in glob.glob('wave2-notes/**/*.json', recursive=True)]"]
+  ],
+  "manual": [
+    "Run gate/verify_receipts.py from the Mac on the private receipts files (it reads donor files over ssh to the VPS)",
+    "Receipts never go in the public repo; keep them in ~/Developer/Games-Analysis-receipts"
+  ],
+  "timeout_seconds": 60
+}
