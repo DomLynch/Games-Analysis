@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+lichess-org-lila	progression	P	STRONG	thin	/mnt/frankendom-donors/lichess-org-lila/modules/rating/src/main/Perf.scala:16-34 and Glicko.scala:69, RatingRegulator.scala:9-44, PerfsUpdater.scala:21-56: per-game +-700 clamp, reset-to-default on insane result, gain damping and bot halving are read; Glicko-2 core is outside this donor (not read)
+OpenDiablo2-OpenDiablo2	progression	P	PARTIAL	thin	/mnt/frankendom-donors/OpenDiablo2-OpenDiablo2/d2core/d2records/experience_loader.go:34-77 and d2core/d2hero/hero_stats_state.go:9-56: XP breakpoint table, per-level lookup and HUD bar are real, but no kill-XP award or level-up write exists in the donor
+daggerfall-unity	progression	P	STRONG	full	/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs:1243-1501 and Formulas/FormulaHelper.cs:319-354: use tally, rest/travel-gated skill rise, level from the advanced-skill sum, and level-up apply are read end to end

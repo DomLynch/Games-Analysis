@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+cvet-fonline	server-tick-netcode	P	STRONG	full	/mnt/frankendom-donors/cvet-fonline/Source/Server/WorkerPool.cpp:115-192,378-533 keyed job queue with self-reschedule, wake-on-data and per-pass cap via Server.cpp:922,920,2302-2306,925-956; see out/server-tick-netcode/cvet-fonline.deep.md
+TurningWheel-Barony	server-tick-netcode	P	STRONG	full	/mnt/frankendom-donors/TurningWheel-Barony/src/game.cpp:4098-4140,5309-5314,2781-2800 fixed 50 Hz logic clock with a 5-step cap that drops excess, and a 6-tick dirty-entity push gate; see out/server-tick-netcode/TurningWheel-Barony.deep.md
+dkfans-keeperfx	server-tick-netcode	P	STRONG	full	/mnt/frankendom-donors/dkfans-keeperfx/src/net_exchange_gameplay.c:84-132,220-241 client turn-clock nudge (position sample plus half ping, extrapolated, error/64 clamped to 1 ms, 750 ms staleness); lockstep wait at 467-519 rejected; see out/server-tick-netcode/dkfans-keeperfx.deep.md

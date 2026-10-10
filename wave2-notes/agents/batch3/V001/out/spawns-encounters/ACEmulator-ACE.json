@@ -1,0 +1,103 @@
+{
+ "game": "ACEmulator-ACE",
+ "category": "spawns-encounters",
+ "cell": 4,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/WorldObjects/WorldObject_Generators.cs",
+ "licence": "AGPL-3.0 (LICENSE: GNU AFFERO GENERAL PUBLIC LICENSE Version 3)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "director",
+  "population-cap",
+  "respawn-queue",
+  "presence-gated",
+  "timer-wheel"
+ ],
+ "data_fields": [
+  {
+   "name": "profile_probability_threshold",
+   "donor_constant": "biota Probability, cumulative; -1 = every select",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "WorldObject_Generators.cs:120"
+  },
+  {
+   "name": "profile_init_count",
+   "donor_constant": "biota InitCreate; -1 counts as 1",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "WorldObject_Generators.cs:292"
+  },
+  {
+   "name": "profile_max_count",
+   "donor_constant": "biota MaxCreate; -1 = unlimited",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "GeneratorProfile.cs:205"
+  },
+  {
+   "name": "spawner_max_count",
+   "donor_constant": "MaxGeneratedObjects (set to InitGeneratedObjects if lower)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "WorldObject_Generators.cs:61"
+  },
+  {
+   "name": "respawn_delay",
+   "donor_constant": "biota Delay, seconds, applied after removal",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "GeneratorProfile.cs:563"
+  },
+  {
+   "name": "encounter_delay_override",
+   "donor_constant": "server property encounter_delay",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "Landblock.cs:322"
+  },
+  {
+   "name": "encounter_regen_override",
+   "donor_constant": "server property encounter_regen_interval",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "Landblock.cs:303"
+  },
+  {
+   "name": "encounter_cell_size",
+   "donor_constant": "cell x 24 units, clamp 0.5 to 191.5",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "Landblock.cs:282"
+  },
+  {
+   "name": "dormant_after_inactivity",
+   "donor_constant": "1 minute",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "Landblock.cs:113"
+  },
+  {
+   "name": "unload_after_inactivity",
+   "donor_constant": "5 minutes",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "Landblock.cs:118"
+  },
+  {
+   "name": "power_up_selection_cap",
+   "donor_constant": "1000 selections",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "WorldObject_Generators.cs:670"
+  }
+ ],
+ "best_idea": "Give each zone spawn profile its own cap, a cumulative chance roll (one roll per tick queues at most one profile), and a respawn cooldown that starts when the spawn is removed, so population is data and respawns cannot stampede.",
+ "decision": "adapt",
+ "decision_why": "Take the per-profile cap, the single weighted roll and the removal-started cooldown as zone data; do not copy the parent-spawner destruction or the 1000-iteration loop, and add the creature despawn-on-empty grace timer that the donor does not have.",
+ "decision_status": "proposed",
+ "acceptance": "A server test with a seeded RNG asserts that a profile with cap 3 never has more than 3 live or queued objects, and that after one of its objects dies no new spawn from that profile appears for the configured respawn time (60 s in the test)."
+}

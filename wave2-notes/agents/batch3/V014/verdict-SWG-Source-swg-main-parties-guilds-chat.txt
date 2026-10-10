@@ -1,0 +1,19 @@
+game: SWG-Source-swg-main
+category: parties-guilds-chat (category_no 18, cell 18)
+verdict: NONE
+depth: thin
+camera_scope: not applicable
+licence: none stated; the donor's restricted note says "proprietary, no licence" (clean-room only; nothing here is copied)
+
+Why NONE: there is no party, guild, friend, whisper, channel or chat logic in this donor. The search covered every non-data file for party, guild, chat, friend, whisper, channel, roster, invite, squad, clan, social and raid. The matches were build and kill lines for a chat process, a commented-out test check, and asset or template names (guild halls, guild banners, a guild object template in tools/gold_export/templates.dat). The chat server is a separate "station API" that the build compiles from a submodule (build.xml), and that submodule is an empty directory in this copy, so the chat implementation is not in the donor.
+
+Files opened (candidates, at least 3):
+1. /mnt/frankendom-donors/SWG-Source-swg-main/tools/stopServer.pl (all 14 lines). Kills server processes by name on shutdown; the chat process is one of them (line 9).
+2. /mnt/frankendom-donors/SWG-Source-swg-main/tools/autotest/autotest.pl (all 40 lines). Test sequence: login, cluster, central, database, planet. The chat readiness check is commented out (line 31); no helper defines it anywhere in the donor.
+3. /mnt/frankendom-donors/SWG-Source-swg-main/build.xml (lines 289-291 read; grep elsewhere). The chat compile target runs cmake on the station API submodule.
+4. /mnt/frankendom-donors/SWG-Source-swg-main/tools/test_build_linux.pl (lines 220-230 read). Shutdown kills the chat process by name (line 226).
+5. /mnt/frankendom-donors/SWG-Source-swg-main/tools/gold_export/templates.dat (grep only, guild template names). Data, not code.
+
+Best transferable idea: Nothing for parties, guilds or chat here; the closest is the test harness starting services in dependency order and checking each is running before the next step, which is a server-test pattern rather than a social mechanism.
+Decision (proposed): reject for parties-guilds-chat. There is no social mechanism to take, and the chat server is a separate process outside Frankendom's one-engine ruling. Look in another donor for party or guild rules (many-on-one group targets, shared loot rules).
+Checked: receipts for the kill, test-sequence and build lines are in receipts.tsv (verifier passed; 31 of 31 across all cells at the time of writing).

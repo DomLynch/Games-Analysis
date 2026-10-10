@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+SWG-Source-swg-main	loot-drops	P	NONE	thin	tools/gold_export/templates.dat:10909 and tools/gold_export/templates.pl:42; no drop roll or drop table in any text file; game-server submodules empty
+SWG-Source-swg-main	progression	P	STRONG	thin	tools/figureOfMeritCombatSimulator.pl:361-418 (swing clock = base swing time x blend factor of one speed skill mod; sweep at 410-417); live server rule not in donor
+SWG-Source-swg-main	economy-trade	P	PARTIAL	thin	tools/MoneyNamedAccountToFrom.pl:61-79,100-146,263-338 and tools/MoneyCheckActivity.pl:221-258; per-counterparty money-flow roll-up for log analysis only, no trade code in donor

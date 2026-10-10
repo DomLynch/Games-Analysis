@@ -1,0 +1,89 @@
+{
+ "game": "Dawn-of-Light-DOLSharp",
+ "category": "spawns-encounters",
+ "cell": 4,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameNPC.cs",
+ "licence": "GNU GPL, version 2 or any later version (GameNPC.cs header lines 6-7; LICENSE is GPL-2.0)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "respawn-scaling",
+  "respawn-queue",
+  "timer-wheel",
+  "new:tiered-respawn-band",
+  "new:resync-redraw"
+ ],
+ "data_fields": [
+  {
+   "name": "respawn_base_min_minutes",
+   "donor_constant": "NPC_MIN_RESPAWN_INTERVAL, default 5 (minutes or game minutes, see note)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "GameServer/gameobjects/GameNPC.cs:4226"
+  },
+  {
+   "name": "respawn_spread_minutes",
+   "donor_constant": "5 (Util.Random(min, min + 5)) (minutes or game minutes, see note)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "GameServer/gameobjects/GameNPC.cs:4226"
+  },
+  {
+   "name": "respawn_named_bonus_minutes",
+   "donor_constant": "5 when name has a capital letter (minutes or game minutes, see note)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "GameServer/gameobjects/GameNPC.cs:4230"
+  },
+  {
+   "name": "respawn_realm_min_ms",
+   "donor_constant": "5 * 60000 (minutes or game minutes, see note)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "GameServer/gameobjects/GameNPC.cs:4240"
+  },
+  {
+   "name": "respawn_realm_max_ms",
+   "donor_constant": "10 * 60000 (minutes or game minutes, see note)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "GameServer/gameobjects/GameNPC.cs:4240"
+  },
+  {
+   "name": "respawn_level_cap",
+   "donor_constant": "65",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "GameServer/gameobjects/GameNPC.cs:4233"
+  },
+  {
+   "name": "respawn_level_add_per_level",
+   "donor_constant": "(Level - 65) + NPC_MIN_RESPAWN_INTERVAL, in minutes (minutes or game minutes, see note)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "GameServer/gameobjects/GameNPC.cs:4244"
+  },
+  {
+   "name": "respawn_explicit_value",
+   "donor_constant": "stored seconds x 1000; -1 = default; negative = never (minutes or game minutes, see note)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "GameServer/gameobjects/GameNPC.cs:1858"
+  },
+  {
+   "name": "timer_wheel_bucket_bits",
+   "donor_constant": "4 (16 ms buckets)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "GameServer/gameutils/GameTimer.cs:205"
+  }
+ ],
+ "best_idea": "A dead mob's respawn is a per-mob timer whose delay is drawn from a tiered band (named mobs get extra minutes, realm mobs a fixed short band, higher levels a level add-on) and held in a region-wide pending registry; the spawn refuses to run if the mob is alive.",
+ "decision": "adapt",
+ "decision_why": "Tiered respawn bands and a pending registry fit zone respawn as data on the server, but the donor has no population cap, despawn or grace timer and re-draws delays on resync, so Frankendom must store the due time and take caps from row 23.",
+ "decision_status": "proposed",
+ "acceptance": "A server test kills a seeded mob and asserts its respawn delay falls in the zone's band for its tier (named plus 5 minutes, realm 5 to 10 minutes), that a resync re-arms each pending respawn with its remaining time, and that a spawn call on a live mob is refused; in play a killed zone mob returns at its spawn point after the tier delay at full health."
+}

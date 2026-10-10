@@ -1,0 +1,81 @@
+{
+ "game": "ModernUO",
+ "category": "progression",
+ "cell": 10,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/ConPVP/Ladder.cs",
+ "licence": "GPL-3.0 (as read: LICENSE, GNU GPL Version 3)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/ladder.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "level-gap",
+  "new:loss-scaled-by-own-level",
+  "new:paired-settle-snapshot",
+  "new:level-bands-from-xp"
+ ],
+ "data_fields": [
+  {
+   "name": "level_gap_limit",
+   "donor_constant": "6 levels either way; beyond it the exchange is 0",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/ConPVP/Ladder.cs:214"
+  },
+  {
+   "name": "offset_scalar_table",
+   "donor_constant": "13 rows (gap -6..+6), win/loss pairs from [175,25] to [40,160]; 100/100 at gap 0",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/ConPVP/Ladder.cs:102"
+  },
+  {
+   "name": "exchange_base",
+   "donor_constant": "25 x scalar, then /100",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/ConPVP/Ladder.cs:241"
+  },
+  {
+   "name": "min_exchange",
+   "donor_constant": "1 when the result rounds to 0 or less",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/ConPVP/Ladder.cs:252"
+  },
+  {
+   "name": "loss_factor_by_level",
+   "donor_constant": "10,11,11,25,25,43,43,67,67 for levels 1-9; 100 from level 10",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/ConPVP/Ladder.cs:93"
+  },
+  {
+   "name": "level_xp_bands",
+   "donor_constant": "short table 0-2499 XP in 100s; then 500 XP per level from 2500; level 50 at 22500",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/ConPVP/Ladder.cs:173"
+  },
+  {
+   "name": "tournament_win_multiplier",
+   "donor_constant": "5",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/ConPVP/DuelContext.cs:874"
+  },
+  {
+   "name": "tournament_loss_multiplier",
+   "donor_constant": "2",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/ConPVP/DuelContext.cs:874"
+  }
+ ],
+ "best_idea": "Rank a duel by one XP that moves by an outcome-by-level-gap table, gated at six levels apart, with a loser's loss scaled by the loser's own level, and settle both sides from the same pre-match XP.",
+ "decision": "adapt",
+ "decision_why": "The ladder shape fits ranked 1v1 duels; the numbers are a ruleset to be data, and the donor's Find and award order defects must not be copied.",
+ "decision_status": "proposed",
+ "acceptance": "A server test duels a 650-XP level-5 player against a 450-XP level-4 player: the winner gains 22 XP and the loser drops to 445 (-5), both computed from pre-match XP; a pair six or more levels apart exchanges no XP; a new player gets an entry and a returning player keeps their XP after a duel."
+}

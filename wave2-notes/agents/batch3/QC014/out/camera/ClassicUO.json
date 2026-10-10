@@ -1,0 +1,96 @@
+{
+ "game": "ClassicUO",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "thin",
+ "donor_path": "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Renderer/Camera.cs",
+ "licence": "as read: BSD-2-Clause (LICENSE.md)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "new:cursor-lean-offset",
+  "new:zoom-invariant-clamp",
+  "variable-step"
+ ],
+ "data_fields": [
+  {
+   "name": "max_lean_px",
+   "donor_constant": "250",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "Camera.cs:12"
+  },
+  {
+   "name": "lean_ease_span",
+   "donor_constant": "half view height (Bounds.Height >> 1)",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "Camera.cs:208"
+  },
+  {
+   "name": "approach_time_factor",
+   "donor_constant": "5",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Camera.cs:14"
+  },
+  {
+   "name": "approach_min_speed",
+   "donor_constant": "0.01 per frame",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Camera.cs:13"
+  },
+  {
+   "name": "snap_distance",
+   "donor_constant": "1",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "Camera.cs:215"
+  },
+  {
+   "name": "zoom_min",
+   "donor_constant": "0.5",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Scene.cs:15"
+  },
+  {
+   "name": "zoom_max",
+   "donor_constant": "2.5",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Scene.cs:15"
+  },
+  {
+   "name": "zoom_step",
+   "donor_constant": "0.1",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Scene.cs:15"
+  },
+  {
+   "name": "default_zoom",
+   "donor_constant": "1.0",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Profile.cs:130"
+  },
+  {
+   "name": "lean_ease_curve",
+   "donor_constant": "rule: OutQuad on distance fraction; OutQuart on approach distance",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "Camera.cs:209"
+  }
+ ],
+ "best_idea": "While a look key is held, the camera leans toward the cursor by an ease-out amount with a fixed cap, and releasing the key eases it back to centre without a snap.",
+ "decision": "adapt",
+ "decision_why": "The hold-to-look, capped and eased lean fits a world camera that needs look-ahead; it must be rebuilt in ground-plane world units for a third-person camera, kept off the frozen Pit camera, and kept out of target selection, since the engine and server never read the camera.",
+ "decision_status": "proposed",
+ "acceptance": "Client test in a world zone: with the look key held and the cursor 300 px right of centre the view moves right by no more than the cap; release returns the view to centre with no overshoot; the tile under the cursor when hit-tested matches the tile drawn there.",
+ "camera_scope": "world"
+}

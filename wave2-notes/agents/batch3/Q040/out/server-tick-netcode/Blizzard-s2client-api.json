@@ -1,0 +1,45 @@
+{
+ "game": "Blizzard-s2client-api",
+ "category": "server-tick-netcode",
+ "cell": 5,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/Blizzard-s2client-api/src/sc2api/sc2_coordinator.cc",
+ "licence": "MIT (as read: Copyright (c) 2017 Blizzard Entertainment, MIT permission text)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/tick.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "lockstep",
+  "fixed-step",
+  "stale-state"
+ ],
+ "data_fields": [
+  {
+   "name": "step_size",
+   "donor_constant": "1 game loop (default)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Blizzard-s2client-api/src/sc2api/sc2_coordinator.cc:195"
+  },
+  {
+   "name": "fight_step_timeout",
+   "donor_constant": "120000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Blizzard-s2client-api/include/sc2api/sc2_proto_interface.h:13"
+  },
+  {
+   "name": "realtime",
+   "donor_constant": "false (default)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Blizzard-s2client-api/src/sc2api/sc2_coordinator.cc:195"
+  }
+ ],
+ "best_idea": "Run every live fight to the same tick in one barrier, time out each fight on its own, and derive the event feed by diffing snapshots gated on the tick counter having moved.",
+ "decision": "adapt",
+ "decision_why": "Take the barrier, the per-fight timeout and the diff-gated events for a headless duel runner and fight replay; reject the client-driven live clock, because our server owns the step.",
+ "decision_status": "proposed",
+ "acceptance": "A server test steps a seeded duel 600 ticks through the barrier; each step raises the tick count by exactly 1; the event list equals the diff of consecutive snapshots; a fight whose step times out is marked aborted while the others continue."
+}

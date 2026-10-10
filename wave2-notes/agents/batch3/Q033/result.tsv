@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+hedgewars-hw	server-tick-netcode	P	STRONG	thin	/mnt/frankendom-donors/hedgewars-hw/rust/hedgewars-server/src/handlers/inroom.rs:411-436 - engine batches are checked by type and hedgehog owner, valid ones are relayed, non-empty ones are logged; the server has no tick loop.
+NodeL2-NodeL2	server-tick-netcode	P	STRONG	thin	/mnt/frankendom-donors/NodeL2-NodeL2/src/GameServer/Npc/Npc.js:45-153 with Automation.js:81-105 - per-NPC 100 ms timers schedule arrival (100 ms plus distance over speed) and resolve melee at 0.644 of attack time, re-checking death only.
+heroiclabs-nakama	server-tick-netcode	P	STRONG	full	/mnt/frankendom-donors/heroiclabs-nakama/server/match_handler.go:282-334 - one fixed-rate loop per match drains a bounded input queue each tick and counts join and idle limits in ticks; call-queue overflow stops the match.

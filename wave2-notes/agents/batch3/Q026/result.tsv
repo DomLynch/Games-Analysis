@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+00-Evan-shattered-pixel-dungeon	ai-aggro	P	STRONG	full	Mob.java:289-301, 357-524, 1219-1445 and 843-878 (act, chooseEnemy, Sleeping/Wandering/Hunting/Fleeing, hit aggro): sticky hunting target, attackable-then-nearest pick, distance-scaled notice roll, recent-hitter swap.
+flareteam-flare-engine	ai-aggro	P	STRONG	full	src/EntityBehavior.cpp:136-367 and 443-710 (findTarget, checkMove, stance and move states): two-radius engage and leave with a line-of-sight timer, stealth-scaled engage range, per-call chance_flee band with cooldown, chance_pursue chase; defaults in src/StatBlock.cpp:799-807, 870-871.
+EQEmu	ai-aggro	P	STRONG	full	zone/hate_list.cpp:205-253, 348-554, 854-897 with zone/attack.cpp:3054-3182 and zone/aggro.cpp:370-560: per-hit hate table, smart percent-bonus top pick, 500 ms target refresh (zone/mob_ai.cpp:770-772, 1065-1082), two-pass leash cleanup, first-aggro gate.

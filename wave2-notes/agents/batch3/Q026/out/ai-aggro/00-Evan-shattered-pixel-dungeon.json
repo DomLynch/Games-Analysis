@@ -1,0 +1,68 @@
+{
+ "game": "00-Evan-shattered-pixel-dungeon",
+ "category": "ai-aggro",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/Mob.java",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/ai.ts",
+ "parity_row": 2,
+ "pattern_tags": [
+  "presence-gated",
+  "target-score",
+  "hate-table",
+  "hysteresis",
+  "new:escape-roll"
+ ],
+ "data_fields": [
+  {
+   "name": "wander_notice_divisor",
+   "donor_constant": "2 (chance 1/(distance/2 + stealth))",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Mob.java:1320"
+  },
+  {
+   "name": "sleep_notice_chance",
+   "donor_constant": "1/(distance + stealth)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Mob.java:1282"
+  },
+  {
+   "name": "stealth",
+   "donor_constant": "0 by default; Obfuscation glyph boost otherwise",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "Char.java:1284"
+  },
+  {
+   "name": "melee_reach",
+   "donor_constant": "1 tile (adjacent); ChampionEnemy extra reach not read",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "Mob.java:560"
+  },
+  {
+   "name": "escape_threshold",
+   "donor_constant": "6 on 1 + Random.Int(distance)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "Mob.java:1482"
+  },
+  {
+   "name": "wake_time",
+   "donor_constant": "1f",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "Mob.java:141"
+  }
+ ],
+ "best_idea": "A hunting creature keeps its target until it dies or leaves view, and swaps to whoever hit it last only if that attacker can be hit now or is nearer, which gives many-on-one fights one explainable target rule.",
+ "decision": "adapt",
+ "decision_why": "Keep the sticky target, attackable-first pick and hitter swap in the engine; drop the per-tick stealth roll for duels because an engage is a state change.",
+ "decision_status": "proposed",
+ "acceptance": "In a 3-vs-1 server test, a creature in reach that hit the hero last becomes the target on the next tick, a farther creature that never hit is not chosen, and the same seed gives the same target sequence on replay."
+}

@@ -1,0 +1,13 @@
+SWG-Source-swg-main | spawns-encounters (cell 4) | verdict: PARTIAL | depth: thin | licence: none stated; donor root _RESTRICTED-NOTE.txt says proprietary, no licence (restricted, clean-room only)
+
+Why PARTIAL: the donor has zone population data, exported as static placements and split into fixed tiles, but no spawn logic at all: no population cap, no spawn chance, no respawn timer, no despawn or grace timer, no encounter or wave trigger. The server-side spawn director is not in this donor (the game-server source folders are empty on the VPS).
+
+Files opened (at least 3):
+1. /mnt/frankendom-donors/SWG-Source-swg-main/tools/gold_export/divide.pl (read 1-140): splits exported placements into 8 by 8 tiles over a 16384-unit square, takes tile-local coordinates with a 2048 modulus for top-level objects, and writes one server and one client file per tile. Data layout only, no timing or caps.
+2. /mnt/frankendom-donors/SWG-Source-swg-main/tools/gold_export/export.pl (read 1-25 and 26-190): database query that exports non-player top-level objects per scene, ordered by scene and tile index, with each object's template, cell, transform and object variables. Contains a database login line, not reproduced here. Export only, no spawn rule.
+3. /mnt/frankendom-donors/SWG-Source-swg-main/tools/ClientBuildoutGenerator.java (read 1-12, 145-175, 598-608): builds client placement rows, looking up each template's update radius. Visibility data, not a spawn rule.
+4. /mnt/frankendom-donors/SWG-Source-swg-main/tools/gold_export/planets_with_buildout.txt (read in full, 12 zone names): the list of zones that have buildout data.
+Searches: grep for respawn, spawn_, spawner, encounter, wave, population and cap across .pl, .java, .py, .sh and .xml files. The only hits are unrelated (a child-process message, a string-size calculation, a loop error message).
+
+Best transferable idea: Store each zone's static population as fixed-size tiles with tile-local coordinates, so the server loads only the tiles near the players; the donor offers no spawn caps, respawn or despawn logic to copy.
+Decision (proposed): adapt - take the tiled zone-data layout for row 23 zone data (origins/server/world-spawns.ts, numbers as zone-data fields), but write the population cap, respawn, despawn and grace-timer rules ourselves from our rulings, since the donor has none.

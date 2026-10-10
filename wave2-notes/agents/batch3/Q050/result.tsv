@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+0ad-0ad	progression	P	STRONG	full	binaries/data/mods/public/simulation/components/Promotion.js:57-99 and Health.js:196-197: per-hit XP share (loot XP x health removed / max health) credited via Attack.js:342-344 climbs tiers with carry-over in IncreaseXp; the 1000 ms trickle timer (Promotion.js:124) is the part I would reject.
+alexbatalov-fallout2-ce	progression	P	STRONG	full	src/stat.cc:662-674 and 731-799: closed-form level table, Swift Learner bonus and immediate level-up HP grant; kill XP per attack at actions.cc:1746-1797, with a possible double credit via combat.cc:4862-4870 that I did not test.
+flutter-team-archive-pinball	progression	P	STRONG	full	lib/game/bloc/game_bloc.dart:29-65 with ramp_multiplier_behavior.dart:17-25: multiplier steps every fifth ramp hit to a cap of 6, and raw round points are multiplied once and banked on round loss; topic fit is medium because the donor has no XP or levels.

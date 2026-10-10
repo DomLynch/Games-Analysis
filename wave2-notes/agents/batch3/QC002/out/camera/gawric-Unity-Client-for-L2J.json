@@ -1,0 +1,125 @@
+{
+ "game": "gawric-Unity-Client-for-L2J",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Camera/CameraController.cs",
+ "licence": "as read: Apache License 2.0 (repo LICENSE)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "new:orbit-look-at",
+  "new:sphere-cast-pull-in",
+  "new:lerped-look-at",
+  "new:fixed-horizontal-fov"
+ ],
+ "data_fields": [
+  {
+   "name": "pull_in_radius",
+   "donor_constant": "0.1 m x WorldScale (0.53125) = 0.0531 m derived",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "Assets/Scripts/Camera/CameraController.cs:11"
+  },
+  {
+   "name": "pull_in_extra_length",
+   "donor_constant": "0.3 m x WorldScale = 0.1594 m derived",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "Assets/Scripts/Camera/CameraController.cs:12"
+  },
+  {
+   "name": "pull_in_min_distance",
+   "donor_constant": "0.05 m",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "Assets/Scripts/Camera/CameraCollisionDetection.cs:61"
+  },
+  {
+   "name": "follow_distance_default",
+   "donor_constant": "2.3 m x WorldScale + 0.5 = 1.7219 m derived",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "Assets/Scripts/Camera/CameraController.cs:43"
+  },
+  {
+   "name": "zoom_min",
+   "donor_constant": "1 m x WorldScale = 0.5313 m derived",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "Assets/Scripts/Camera/CameraController.cs:40"
+  },
+  {
+   "name": "zoom_max",
+   "donor_constant": "8 m (serialized default; L2 constant 6 unused)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "Assets/Scripts/Camera/CameraController.cs:41"
+  },
+  {
+   "name": "zoom_per_scroll_frame",
+   "donor_constant": "zoomSpeed 5 x 0.1 = 0.5 m per unit of scroll per frame",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "Assets/Scripts/Camera/CameraController.cs:212"
+  },
+  {
+   "name": "look_height_above_top_scaled",
+   "donor_constant": "0.2 m x WorldScale = 0.10625 m",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "Assets/Scripts/Camera/CameraController.cs:277"
+  },
+  {
+   "name": "look_height_adjust",
+   "donor_constant": "-0.3 m, not scaled",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "Assets/Scripts/Camera/CameraController.cs:32"
+  },
+  {
+   "name": "look_smoothness",
+   "donor_constant": "8 per second (times Time.deltaTime)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "Assets/Scripts/Camera/CameraController.cs:33"
+  },
+  {
+   "name": "mouse_orbit_gain",
+   "donor_constant": "3 degrees per unit of mouse axis per frame",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Assets/Scripts/Camera/CameraController.cs:34"
+  },
+  {
+   "name": "pitch_limit",
+   "donor_constant": "+/-80 degrees",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "Assets/Scripts/Camera/CameraController.cs:201"
+  },
+  {
+   "name": "horizontal_fov",
+   "donor_constant": "90 degrees, vertical derived from aspect",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "Assets/Scripts/Camera/CameraController.cs:8"
+  },
+  {
+   "name": "initial_pitch",
+   "donor_constant": "2700 x 360 / 65536 = about 14.83 degrees (derived from comment)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "Assets/Scripts/Camera/CameraController.cs:7"
+  }
+ ],
+ "best_idea": "Pull the camera in on a sphere cast from the look-at point toward the desired camera spot, and lerp the look-at point rather than the camera, so the camera follows the character with lag but never sits inside level geometry.",
+ "decision": "adapt",
+ "decision_why": "It is the only donor here with a real collision pull-in and a smoothed look-at, and Apache 2.0 allows adaptation with the notice kept; but it snaps the distance, has no shoulder offset (its offset is world-space and zero), never follows the character's facing, and uses a fixed 90-degree horizontal FOV that becomes very wide on a portrait phone, so Frankendom must ease the pull-in, add a camera-space shoulder offset, add auto-follow, and cap the vertical FOV.",
+ "decision_status": "proposed",
+ "acceptance": "With a wall about 1 m behind the character, a client test asserts that the camera distance is no more than the wall distance and no less than 0.05 m, and that the camera distance eases back out (no snap) when the wall is removed; a 375x812 portrait window keeps the vertical FOV under a set cap.",
+ "camera_scope": "world"
+}

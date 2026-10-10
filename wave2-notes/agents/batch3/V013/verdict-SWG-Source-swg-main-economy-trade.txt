@@ -1,0 +1,23 @@
+SWG-Source-swg-main | economy-trade | category_no 11 | verdict PARTIAL | depth thin | licence_class restricted
+Donor: /mnt/frankendom-donors/SWG-Source-swg-main (no licence file; _RESTRICTED-NOTE.txt says proprietary leaked official SWG source, no licence; read for shape only)
+
+Files opened (4, at least 3 required):
+1. /mnt/frankendom-donors/SWG-Source-swg-main/tools/MoneyNamedAccountToFrom.pl (whole file, 339 lines)
+2. /mnt/frankendom-donors/SWG-Source-swg-main/tools/MoneyCheckActivity.pl (lines 60-130, 185-262, 326-363 of 363; the rest not read)
+3. /mnt/frankendom-donors/SWG-Source-swg-main/tools/gold_export/export.pl (lines 1-150 of 190; a world-object dump, no trade rule)
+4. /mnt/frankendom-donors/SWG-Source-swg-main/tools/figureOfMeritCombatSimulator.pl (grep only for money and trade words: none)
+
+Search: grep -rniw over all text files (binaries and the tools/lint folder excluded) for trade, vendor, auction, bank, money, economy, credits, schematic, craft. Hits are the two money-log scripts above, a store-title special case in the first one (line 230), and vendor creature names in tools/gold_export/templates.dat (names only). No server-side trade, vendor, auction or bank code exists in the donor.
+
+What the donor does have: two log-analysis scripts that roll money-transfer log lines up per named account (MoneyNamedAccountToFrom.pl) or per player (MoneyCheckActivity.pl). Each keeps, per counterparty, a count, an amount total and the latest time (MoneyNamedAccountToFrom.pl lines 61-79: the record routine; lines 100-146: chart rows and thresholds; lines 263-338: output with a per-account delta). The first script records a transfer under a named account on each side it touches (lines 219-245), skips bank lines (line 197), and stops on any unknown line (line 253). The second records bank deposits and withdrawals per player (MoneyCheckActivity.pl lines 221-258).
+
+Why PARTIAL and not STRONG: the mechanism is real and checkable, but it is an offline report, not a runtime trade rule. Nothing in the donor shows how a trade, vendor sale or bank transfer is executed, so the economy itself is not read. The game server that would hold it is one of the empty submodules.
+
+Defects seen while reading (read, not executed):
+- MoneyCheckActivity.pl line 254 tests the player field for the word "from" (`if($to eq "from"...`), so the withdrawal branch cannot match; deposits are counted (line 248), withdrawals appear not to be. Not run; from reading lines 232-233 and 248-257.
+- MoneyNamedAccountToFrom.pl detailed totals are labelled the other way round from the per-account rows (lines 328-329 against the per-account labels at 297-315). The numbers agree with the abridged columns; the labels do not.
+- Amounts are summed as native numbers per counterparty (line 74) and as big integers in the totals (line 126). Dates are compared as strings (line 75), so the log date format must sort as text.
+
+Best transferable idea: Roll each named account's trade and bank transfers up into per-counterparty count, total and latest time, with a signed net per account, and stop the run on any log line the parser does not recognise.
+Decision (proposed): adapt - Frankendom's one ledger can produce this as a read-only report from the server's transfer records (never in the fight path), with the withdrawal and label defects fixed and tested.
+Receipts: receipts.tsv rows for economy-trade (see the rows citing tools/MoneyNamedAccountToFrom.pl and tools/MoneyCheckActivity.pl); verifier passed (receipts ok 41 failed 0 for the whole file).

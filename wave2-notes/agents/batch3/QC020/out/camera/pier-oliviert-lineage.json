@@ -1,0 +1,45 @@
+{
+ "game": "pier-oliviert-lineage",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/pier-oliviert-lineage/src/components/camera.coffee",
+ "licence": "none found (unclear)",
+ "licence_class": "restricted",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "new:snap-on-packet"
+ ],
+ "data_fields": [
+  {
+   "name": "tilePx",
+   "donor_constant": "32",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pier-oliviert-lineage/src/components/camera.coffee:10"
+  },
+  {
+   "name": "viewportW",
+   "donor_constant": "1024",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pier-oliviert-lineage/src/controllers/game_controller.coffee:6"
+  },
+  {
+   "name": "viewportH",
+   "donor_constant": "768",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pier-oliviert-lineage/src/controllers/game_controller.coffee:6"
+  }
+ ],
+ "best_idea": "Pin the local player at the screen centre and draw every other entity at centre plus its tile offset times the tile size, so the view keeps no state beyond the viewport centre.",
+ "decision": "reject",
+ "decision_why": "The donor camera snaps every packet and leaves the floor static, and nothing in it answers the owner's shoulder, smoothing, collision or framing asks; its one useful rule (the view is client-only) is already our ruling.",
+ "decision_status": "proposed",
+ "acceptance": "A still of the world camera taken mid-run at 375 wide shows the floor moving under the hero, and a remote hero glides between packets instead of jumping one tile.",
+ "camera_scope": "world"
+}

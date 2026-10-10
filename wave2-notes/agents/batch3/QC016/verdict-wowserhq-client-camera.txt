@@ -1,0 +1,18 @@
+wowserhq-client (camera, cell 14): NONE, depth thin
+camera_scope: world camera (the default; not applicable here because the donor has no 3D camera at all)
+Licence: MIT ("MIT License", Copyright (c) 2019-2024 Wowser Contributors; LICENSE at the donor root)
+
+Files opened (6):
+1. src/ui/components/simple/Model.script.ts: lines 1-60 read in full; every function there is a stub returning 0, including SetCamera at 33-35. Lines 61-95 not read.
+2. src/ui/components/simple/Model.ts: read in full (14 lines); a Frame subclass that only merges the script functions.
+3. src/ui/components/singletons/ModelFFX.ts: read in full (6 lines); an empty subclass of Model.
+4. src/ui/components/UIRoot.ts: read lines 115-145; onLayerRender has a TODO for camera setup at line 130.
+5. src/gfx/Screen.ts: read lines 80-100; a layer flag chooses a full viewport or the visible rect (81-88), and the orthographic projection is a TODO at 90-92.
+6. src/Client.ts: read in full (43 lines); it sets up the device, screen, textures and UI only, with no camera.
+
+Grep across src, vendor and public for camera, orbit, zoom, look-at, follow, third, shoulder, fov, perspective, yaw, pitch, ortho, projection, viewMatrix and lookAt: only the three hits above (Model.script.ts:33, UIRoot.ts:130, Screen.ts:91) and unrelated "THIRD" enum values in src/utils/types.test.ts.
+
+Why NONE: the README says the client has "Extremely primitive scene rendering using WebGL 2 (frames and textures mostly)", and the camera code is a stub, a TODO, and a TODO for an orthographic projection, so there is no camera mechanism to read.
+
+Best transferable idea: Nothing camera-specific transfers; the only reusable pattern is the per-layer flag that picks a full-viewport or a visible-rect viewport (Screen.ts 81-88), which is UI layering, not a follow camera.
+Decision (proposed): reject - there is no camera mechanism here to adopt or adapt for the world camera; use the other two camera donors.

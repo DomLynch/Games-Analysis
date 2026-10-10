@@ -1,0 +1,75 @@
+{
+ "game": "ax-grymyr-l2dn-server",
+ "category": "loot-drops",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer.Model/Model/Actor/Templates/NpcTemplate.cs",
+ "licence": "MIT License (LICENSE.txt)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/loot.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "drop-filter",
+  "level-gap",
+  "hit-aggregation",
+  "new:occurrence-cap",
+  "loot-cumulative-roll"
+ ],
+ "data_fields": [
+  {
+   "name": "maxLimitedDrops",
+   "donor_constant": "2 (normal) / 7 (raid), parser defaults",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer.StaticData/Configuration/Config.Rates.cs:165"
+  },
+  {
+   "name": "levelGapMax",
+   "donor_constant": "14 (items; adena has its own config, default 14)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer.StaticData/Configuration/Config.Rates.cs:168"
+  },
+  {
+   "name": "chanceMult",
+   "donor_constant": "1 (DeathDropChanceMultiplier), percent chance scale",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer.StaticData/Configuration/Config.Rates.cs:159"
+  },
+  {
+   "name": "amountMult",
+   "donor_constant": "1 (DeathDropAmountMultiplier)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer.StaticData/Configuration/Config.Rates.cs:155"
+  },
+  {
+   "name": "entry.chance",
+   "donor_constant": "per entry, percent 0-100 (table data)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer.Model/Model/Actor/Templates/NpcTemplate.cs:1182"
+  },
+  {
+   "name": "entry.min_max",
+   "donor_constant": "per entry; Rnd.get(min,max) with exclusive max (table data)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer.Model/Model/Actor/Templates/NpcTemplate.cs:1240"
+  },
+  {
+   "name": "recipientRange",
+   "donor_constant": "1500 (AltPartyRange); units not read",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer.StaticData/Configuration/Config.Character.cs:421"
+  }
+ ],
+ "best_idea": "Give each kill a fixed number of rare-drop slots and gate the whole table by a killer-to-victim level gap, so rare loot is capped per kill and a killer far above the mob gets nothing.",
+ "decision": "adapt",
+ "decision_why": "Keep the per-kill rare cap (zone data), the level-gap filter (engine constant) and the top-dealer recipient rule; drop the eviction displacement, the group running-total roll and the dead party branch, which make drop odds depend on table order and do not give the stated chances.",
+ "decision_status": "proposed",
+ "acceptance": "Server test with a seeded RNG: a 20/30/50 group over 100k kills lands within 1 point of each stated chance; a killer 15 levels above a level-3 mob never gets a rare drop; a raid zone with cap 7 never yields more than 7 rare drops per kill; among at most three attackers the top dealer gets the drop when online, else the last attacker."
+}

@@ -1,0 +1,24 @@
+# flareteam-flare-game (loot-drops, cell 2): PARTIAL (old P, depth thin)
+
+Hint file: art_src/loot/loot_maul.blend. This is a binary Blender model of a maul (art); not read, and not where the drop logic lives.
+
+Donor: /mnt/frankendom-donors/flareteam-flare-game (data and art only; no engine source in this snapshot)
+Licence (as read): README.md 19: "The Flare engine is released under GPL version 3 or later." README.md 21: art and data are "released under CC-BY-SA 3.0". LICENSE.txt is the CC BY-SA 3.0 text. The engine is not in this repo.
+
+Files opened (at least 3):
+1. README.md (full read of the licence and the engine pointer)
+2. mods/empyrean_campaign/loot/level_1.txt (lines 1-40)
+3. mods/empyrean_campaign/loot/chest_common.txt (lines 1-40)
+4. mods/empyrean_campaign/enemies/lvl13_goblin_thief.txt (grep of loot lines, lines 29-37)
+5. mods/empyrean_campaign/enemies/lvl7_skeleton_basher.txt (grep, line 31)
+6. CMakeLists.txt (grep for src, add_executable, subdirectory: no engine sources; 30 lines)
+
+Searched: find for *.cpp and *.h returned nothing. grep -rIil "loot|drop" over the repo: 702 files. They are mods/*/loot and enemy and item data, mods/*/languages (.po, .pot), tiled object templates (.tx), tiled maps (.tmx), and one art SVG (text match). None is code, so no drop logic exists in this snapshot. The only .py and .sh are art_src/characters/render8dirs.py and distribution/create_release_tarball.sh (by filename, not read).
+
+Why PARTIAL: the donor has real loot data but not the mechanism. Enemy files reference a table file (receipt: enemies/lvl13_goblin_thief.txt line 29, "loot=loot/level_13.txt"), and table lines are id, rate and an optional quantity range (level_1.txt line 2, "loot=currency,50,5,15"; chest_common.txt line 2, "loot=750,20,1,2"). The author's comment calls a 50 a "drop rate" (lvl13_goblin_thief.txt line 32). What the rate means in the engine (independent per line, or weighted across a table), what loot_count (lvl13_goblin_thief.txt line 30, "loot_count=1,2") does, and how the quantity range is rolled are all in the flare-engine repo, which is not here (not read). So I cannot explain the order of operations or the numbers, and this is not STRONG.
+
+Best transferable idea: keep each encounter's loot as its own plain-data table file, referenced from the enemy definition, with one line per item giving a rate and a quantity range, so designers tune drops without code.
+
+Decision (proposed): adapt. Take the separate table file per encounter (it matches zones as data), but write the rate semantics explicitly in our own format and test them, since this donor does not define them. Parity-checklist row 18 (loot roll), target src/fight/loot.ts. Do not copy the Flare data files (CC-BY-SA 3.0 copyleft; data-shape only).
+
+Confidence: high that the donor holds data only, with no roll code; high on the quoted line formats. Medium that the rate is a per-line chance, because only the author's comment says "drop rate"; the engine would settle it, and it is not here.

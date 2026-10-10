@@ -1,0 +1,73 @@
+{
+ "game": "id-Software-Quake",
+ "category": "ai-aggro",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "thin",
+ "donor_path": "/mnt/frankendom-donors/id-Software-Quake/WinQuake/sv_move.c",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/ai-chase.ts",
+ "parity_row": 4,
+ "pattern_tags": [
+  "new:blocked-step-fallback",
+  "new:heading-try-order",
+  "new:dead-zone"
+ ],
+ "data_fields": [
+  {
+   "name": "chase_dead_zone",
+   "donor_constant": "10",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake/WinQuake/sv_move.c:295"
+  },
+  {
+   "name": "re_chase_roll",
+   "donor_constant": "1 in 4",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake/WinQuake/sv_move.c:421"
+  },
+  {
+   "name": "axis_swap_roll",
+   "donor_constant": "1 in 2 (or longer axis y)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake/WinQuake/sv_move.c:321"
+  },
+  {
+   "name": "sweep_direction_roll",
+   "donor_constant": "1 in 2",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake/WinQuake/sv_move.c:341"
+  },
+  {
+   "name": "turn_gate",
+   "donor_constant": "45 degrees",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake/WinQuake/sv_move.c:250"
+  },
+  {
+   "name": "yaw_speed",
+   "donor_constant": "per monster, set in QuakeC (not read)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake/WinQuake/pr_cmds.c:1420"
+  },
+  {
+   "name": "step_distance",
+   "donor_constant": "per call, set in QuakeC (not read)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake/WinQuake/sv_move.c:403"
+  }
+ ],
+ "best_idea": "When a creature's direct step is blocked, try the diagonal, then the axes, then its current heading, then a sweep, and reverse last, so it slides around an obstacle instead of turning straight back.",
+ "decision": "adapt",
+ "decision_why": "The try order and the no-reversal rule fit a zone where creatures crowd and get stuck, but the donor steers on eight 1996 grid headings with rand() and a 215 diagonal quirk, so Frankendom should keep the order, use a steering vector on its own arena or navmesh query, and draw the rolls from the seeded fight RNG.",
+ "decision_status": "proposed",
+ "acceptance": "A player sees a creature blocked by a pillar slide around it within a few steps rather than standing still or turning straight back; a server test on a fixed blocked map asserts the try order and that the same seed gives the same path."
+}

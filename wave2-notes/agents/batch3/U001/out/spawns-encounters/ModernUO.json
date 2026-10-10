@@ -1,0 +1,97 @@
+{
+ "game": "ModernUO",
+ "category": "spawns-encounters",
+ "cell": 4,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/Spawners/BaseSpawner.cs",
+ "licence": "GPL-3.0 (repo LICENSE, GNU GPL version 3)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "population-cap",
+  "respawn-scaling",
+  "presence-gated",
+  "grace-timer",
+  "timer-wheel",
+  "director"
+ ],
+ "data_fields": [
+  {
+   "name": "zone_spawn_cap",
+   "donor_constant": "count, default 1 (BaseSpawner ctor)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/Spawners/BaseSpawner.cs:261"
+  },
+  {
+   "name": "entry_max_alive",
+   "donor_constant": "per-entry cap, default 1",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/Spawners/SpawnerEntry.cs:91"
+  },
+  {
+   "name": "entry_weight",
+   "donor_constant": "SpawnedProbability, roll 1..sum of enabled open entries",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/Spawners/BaseSpawner.cs:876"
+  },
+  {
+   "name": "respawn_min_s",
+   "donor_constant": "5 minutes (DefaultMinDelay)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/Spawners/BaseSpawner.cs:49"
+  },
+  {
+   "name": "respawn_max_s",
+   "donor_constant": "10 minutes (DefaultMaxDelay)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/Spawners/BaseSpawner.cs:50"
+  },
+  {
+   "name": "placement_attempts",
+   "donor_constant": "10 (DefaultMaxSpawnAttempts)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/Spawners/BaseSpawner.cs:148"
+  },
+  {
+   "name": "trigger_range",
+   "donor_constant": "TriggerRange set from constructor argument (default not read)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/Spawners/ProximitySpawner.cs:60"
+  },
+  {
+   "name": "return_home_grace_min_s",
+   "donor_constant": "15 s (Utility.Random(45) + 15)",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs:4190"
+  },
+  {
+   "name": "return_home_grace_max_s",
+   "donor_constant": "59 s (Random(45) gives 0 to 44, plus 15)",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs:4190"
+  },
+  {
+   "name": "home_return_margin",
+   "donor_constant": "RangeHome + 5 tiles before a creature counts as displaced",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs:4188"
+  }
+ ],
+ "best_idea": "A zone population rule with a zone-wide cap, a per-type cap, one spawn per random respawn timer fire, a presence trigger that spawns one when a player enters an empty zone, and a 15 to 59 second grace before a displaced creature goes home.",
+ "decision": "adapt",
+ "decision_why": "Take the caps, the one-per-fire timer with a random min-max delay, the restart-on-death rule and the presence trigger as zone data for row 23. Do not take the grace as a despawn: the donor sends the creature home and does not delete it, so despawn-on-empty needs its own decision.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: zone cap 3 never holds more than 3 live spawns; one spawn per respawn fire; a death restarts a stopped timer; a player entering an empty zone whose timer is due gets exactly one spawn now; a creature displaced by an empty sector returns home 15 to 59 s later."
+}

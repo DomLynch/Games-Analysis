@@ -1,0 +1,88 @@
+{
+ "game": "TrinityCore-TrinityCore",
+ "category": "loot-drops",
+ "cell": 8,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Loot/LootMgr.cpp",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/loot.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "loot-cumulative-roll",
+  "drop-filter",
+  "new:stack-split-cap",
+  "new:need-over-greed"
+ ],
+ "data_fields": [
+  {
+   "name": "explicit drop chance (per entry)",
+   "donor_constant": "percent 0-100, one draw in [0,100) walked across the group",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "LootMgr.cpp:454"
+  },
+  {
+   "name": "equal-chance entry marker",
+   "donor_constant": "chance 0 = uniform equal-chance pool",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "LootMgr.cpp:462"
+  },
+  {
+   "name": "quality drop rate (ungrouped entries only)",
+   "donor_constant": "config rate, default 1",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "LootMgr.cpp:261"
+  },
+  {
+   "name": "referenced table repeat multiplier",
+   "donor_constant": "Rate.Drop.Item.ReferencedAmount default 1",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "LootMgr.cpp:681"
+  },
+  {
+   "name": "stack count range",
+   "donor_constant": "uniform urand(min,max) per entry",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "Loot.cpp:939"
+  },
+  {
+   "name": "max loot slots per corpse",
+   "donor_constant": "MAX_NR_LOOT_ITEMS = 18",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "Loot.h:86"
+  },
+  {
+   "name": "group roll window",
+   "donor_constant": "LOOT_ROLL_TIMEOUT = 1 minute",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "Loot.h:34"
+  },
+  {
+   "name": "group vote roll range",
+   "donor_constant": "urand(1, 100)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "Loot.cpp:531"
+  },
+  {
+   "name": "group loot threshold quality",
+   "donor_constant": "items below group threshold quality skip the roll",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "Loot.cpp:901"
+  }
+ ],
+ "best_idea": "One draw walks the cumulative chances of mutually exclusive drops, with a uniform equal-chance pool for the rest, and filtering is stated as a rule rather than left to renormalise.",
+ "decision": "adapt",
+ "decision_why": "The one-draw table is simple, server-side and checkable, so take the shape; do not copy the donor's group/quality inconsistency or silent overflow, and defer the Need/Greed party UI until a party rule exists.",
+ "decision_status": "proposed",
+ "acceptance": "A server test over 100k seeded rolls on one zone table (explicit chances 10 and 25, plus an equal-chance item) lands each within 0.5 points of its chance; a kill payload carries one pick per group and never more than 18 stacks, with overflow written to the ledger."
+}

@@ -1,17 +1,97 @@
-{"game":"00-Evan-shattered-pixel-dungeon","category":"spawns-encounters","cell":4,"verdict":"STRONG","depth":"full","donor_path":"/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/MobSpawner.java","licence":"GPL-3.0-or-later (as read: LICENSE.txt is GNU GPL Version 3; MobSpawner.java header: either version 3 of the License, or (at your option) any later version)","licence_class":"copyleft","target_module":"origins/server/world-spawns.ts","parity_row":23,"pattern_tags":["director","population-cap","respawn-scaling","presence-gated","new:weighted-population-count","new:rotation-deck"],"data_fields":[
-{"name":"cap_base","donor_constant":"3 + depth % 5 + Random.Int(3), re-rolled on every read","unit":"count","where":"zone data","donor_ref":"levels/RegularLevel.java:212"},
-{"name":"cap_large_ratio","donor_constant":"1.33, rounded up (ceil)","unit":"ratio","where":"zone data","donor_ref":"levels/RegularLevel.java:214"},
-{"name":"cap_before_amulet_depth1","donor_constant":"0 (10 with amulet)","unit":"count","where":"zone data","donor_ref":"levels/RegularLevel.java:207"},
-{"name":"cap_mining_offset","donor_constant":"-1","unit":"count","where":"zone data","donor_ref":"levels/MiningLevel.java:155"},
-{"name":"min_place_distance","donor_constant":"12 (caller-chosen; 4 in SacrificialFire)","unit":"units","where":"zone data","donor_ref":"actors/mobs/MobSpawner.java:43"},
-{"name":"place_tries","donor_constant":"30 outer tries, each up to 30 random cells","unit":"count","where":"engine constant","donor_ref":"levels/Level.java:777"},
-{"name":"retry_after_failure","donor_constant":"TICK = 1 turn","unit":"ticks","where":"engine constant","donor_ref":"actors/mobs/MobSpawner.java:47"},
-{"name":"respawn_base","donor_constant":"TIME_TO_RESPAWN = 50 turns","unit":"ticks","where":"zone data","donor_ref":"levels/Level.java:765"},
-{"name":"respawn_dark_ratio","donor_constant":"2/3 of base when feeling DARK","unit":"ratio","where":"zone data","donor_ref":"levels/Level.java:763"},
-{"name":"respawn_mining_ratio","donor_constant":"3 x base on the mining level","unit":"ratio","where":"zone data","donor_ref":"levels/MiningLevel.java:175"},
-{"name":"time_multiplier_day","donor_constant":"0.95 - 0.05 x level (cooldown divided by it)","unit":"ratio","where":"engine constant","donor_ref":"items/trinkets/DimensionalSundial.java:84"},
-{"name":"time_multiplier_night","donor_constant":"1.25 + 0.25 x level, hours 20 to 7","unit":"ratio","where":"engine constant","donor_ref":"items/trinkets/DimensionalSundial.java:96"},
-{"name":"rare_extra_chance","donor_constant":"0.025 at depths 4, 9, 14, 19","unit":"ratio","where":"zone data","donor_ref":"actors/mobs/MobSpawner.java:223"},
-{"name":"alt_chance_per_entry","donor_constant":"1/50 x RatSkull multiplier","unit":"ratio","where":"engine constant","donor_ref":"actors/mobs/MobSpawner.java:245"},
-{"name":"spawn_weight_default","donor_constant":"1 per mob (Ghoul overrides to 0.5, Mimic to 0)","unit":"count","where":"engine constant","donor_ref":"actors/mobs/Mob.java:1169"}
-],"best_idea":"A per-zone director that on each timer step counts live enemies (weighted), compares with a cap, places at most one new enemy at a distance from the players and outside their view, and reschedules itself: a short retry on failure, a longer cooldown on success.","decision":"adapt","decision_why":"The cap, check, place, reschedule shape fits zone population (row 23), but the donor is single-hero, turn-based and never despawns, so we take the shape only: cap and timings become zone data, the cap is rolled once per respawn cycle (the donor re-rolls it on every read), and a failed placement does not consume the next kind.","decision_status":"proposed","acceptance":"A server test with two players in a zone with cap 6 and respawn 50 s: with 6 enemies alive nothing spawns; with 5 alive, one spawn occurs after the cooldown, at path distance of at least 12 tiles from both players and outside each player's line of sight; a failed placement retries after 1 s and leaves the zone's next kind unused."}
+{
+ "game": "00-Evan-shattered-pixel-dungeon",
+ "category": "spawns-encounters",
+ "cell": 4,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/MobSpawner.java",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "director",
+  "population-cap",
+  "presence-gated",
+  "timer-wheel",
+  "group-refill",
+  "respawn-scaling"
+ ],
+ "data_fields": [
+  {
+   "name": "population_cap",
+   "donor_constant": "3 + depth%5 + Random.Int(3) per check; x1.33 on LARGE; 0 on depth 1 without amulet",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/levels/RegularLevel.java:212"
+  },
+  {
+   "name": "spawn_weight_per_kind",
+   "donor_constant": "1 default; 0 for some kinds (e.g. Wraith)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/Mob.java:1169"
+  },
+  {
+   "name": "respawn_cooldown_s",
+   "donor_constant": "50 game turns (TIME_TO_RESPAWN)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/levels/Level.java:765"
+  },
+  {
+   "name": "dark_zone_cooldown_factor",
+   "donor_constant": "2/3 of base cooldown",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/levels/Level.java:763"
+  },
+  {
+   "name": "retry_after_failed_placement_s",
+   "donor_constant": "1 game turn (TICK = 1f)",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/MobSpawner.java:47"
+  },
+  {
+   "name": "min_spawn_path_distance",
+   "donor_constant": "12 walking cells from hero (spawner); 4 from sacrificial fire",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/MobSpawner.java:43"
+  },
+  {
+   "name": "placement_outer_tries",
+   "donor_constant": "30",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/levels/Level.java:777"
+  },
+  {
+   "name": "placement_inner_draws",
+   "donor_constant": "30 random cells per outer try",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/levels/Level.java:799"
+  },
+  {
+   "name": "rare_kind_chance",
+   "donor_constant": "0.025 on depths 4, 9, 14, 19",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/MobSpawner.java:223"
+  },
+  {
+   "name": "alt_kind_chance",
+   "donor_constant": "1/50 per rotation entry (times trinket multiplier)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/MobSpawner.java:245"
+  }
+ ],
+ "best_idea": "A zone spawner timer: each fire checks a weighted enemy cap, places one enemy at least 12 walking steps from the player and out of sight, then sleeps a cooldown, with a short retry on failure.",
+ "decision": "adapt",
+ "decision_why": "The shape (cap check, cooldown wheel, out-of-sight and minimum-distance placement, bag of kinds) fits row 23; numbers become zone data, the cap is stored not re-rolled, the kind is popped only on success, timing is in seconds, and no donor despawn exists.",
+ "decision_status": "proposed",
+ "acceptance": "Server test with zone cap 6 and 20 s cooldown: after kills drop population from 6 to 4, no spawn within 20 s of a success, population never exceeds 6, and every spawn is at walking distance >= 12 and outside the player's line of sight on the server map."
+}

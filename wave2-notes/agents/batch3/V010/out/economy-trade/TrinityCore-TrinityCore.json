@@ -1,0 +1,66 @@
+{
+ "game": "TrinityCore-TrinityCore",
+ "category": "economy-trade",
+ "cell": 11,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/trade.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "stale-state",
+  "new:accept-reset-on-change",
+  "new:precheck-then-commit"
+ ],
+ "data_fields": [
+  {
+   "name": "trade range",
+   "donor_constant": "11.11 units (TRADE_DISTANCE)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "ObjectDefines.h:27"
+  },
+  {
+   "name": "trade level requirement",
+   "donor_constant": "LevelReq.Trade default 1",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "World.cpp:713"
+  },
+  {
+   "name": "cross-faction trade switch",
+   "donor_constant": "AllowTwoSide.Trade default 0",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "worldserver.conf.dist:1684"
+  },
+  {
+   "name": "traded slots per side",
+   "donor_constant": "6 (TRADE_SLOT_TRADED_COUNT), plus one non-traded slot",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "TradeData.h:26"
+  },
+  {
+   "name": "gold cap",
+   "donor_constant": "99999999999 (MAX_MONEY_AMOUNT)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "Player.h:1028"
+  },
+  {
+   "name": "offer state index width",
+   "donor_constant": "32-bit random (rand32)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "TradeData.cpp:152"
+  }
+ ],
+ "best_idea": "Any change to either offer clears both accepts and re-rolls only the changed side's index, and an accept must quote the partner's current index, so a stale offer can never complete.",
+ "decision": "adapt",
+ "decision_why": "The stale-offer rule and the check-both-sides-then-move order are worth keeping; adapt the commit into one ledger transaction (the donor's two-phase move with rollback is not a model for us) and use a deterministic counter instead of a random index.",
+ "decision_status": "proposed",
+ "acceptance": "A server test: A offers a sword, B offers 50 gold; A accepts; B raises the gold to 60, which clears A's accept; A's accept with the old index is rejected as state-changed; when both accept on current indices the swap commits in one transaction, and a full inventory on either side aborts the whole trade with no item lost or duplicated."
+}

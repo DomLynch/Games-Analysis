@@ -1,0 +1,3 @@
+game	category	old	verdict	depth	finding
+electronicarts-CnC_Remastered_Collection	ai-aggro	P	STRONG	full	/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/TIBERIANDAWN/TECHNO.CPP:1333-1505 and 1584-1807 (plus FOOT.CPP:661-738, TECHNO.CPP:4179-4205): one threat score (worth plus kills, enemy boost, distance falloff), random tie-break and keep-while-active targeting; the ring-scan branch never raises its best value.
+OpenDAoC-OpenDAoC-Core	ai-aggro	P	STRONG	full	/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameutils/AggroTable.cs:245-299 with GameServer/ai/brain/StandardMob/StandardMobBrain.cs:1349-1420 and 303-358: per-monster hate table, distance decay past 250 units, keep-current pick, protect share, budgeted LOS scan.

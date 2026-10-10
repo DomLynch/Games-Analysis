@@ -1,0 +1,47 @@
+{
+ "game": "ZaneDubya-UltimaXNA",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/World/WorldViews/IsometricView.cs",
+ "licence": "as read: GPL-3.0 (License.txt); most headers GPL-3.0-or-later, some GPL-2.0-or-later",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/worldCamera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "variable-step",
+  "new:drawn-position-target",
+  "new:snap-on-arrival"
+ ],
+ "camera_scope": "world",
+ "data_fields": [
+  {
+   "name": "walk_step_ms",
+   "donor_constant": "400 (8/20 s on foot)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/World/Entities/Mobiles/MovementSpeed.cs:16"
+  },
+  {
+   "name": "run_step_ms",
+   "donor_constant": "200 (4/20 s on foot)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/World/Entities/Mobiles/MovementSpeed.cs:17"
+  },
+  {
+   "name": "iso_tile_px",
+   "donor_constant": "44",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ZaneDubya-UltimaXNA/dev/Ultima/World/WorldViews/IsometricView.cs:29"
+  }
+ ],
+ "best_idea": "The camera target is the mover's drawn position (last whole cell plus the fraction of the current step, advanced by frame time), so the view glides continuously across a step.",
+ "decision": "adapt",
+ "decision_why": "The drawn-position target and frame-time progress fit a 3D follow camera; the isometric projection (44 px tiles, 4 px per Z, altitude rows) does not, and the donor drops leftover time at a step end, which we should carry.",
+ "decision_status": "proposed",
+ "acceptance": "Client test samples the camera target every 16 ms across a 400 ms walk step and asserts it equals the hero drawn position each sample, with no jump larger than one frame's share; in play there is no stutter at cell edges."
+}

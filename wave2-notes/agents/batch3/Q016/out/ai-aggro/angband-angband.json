@@ -1,0 +1,160 @@
+{
+ "game": "angband-angband",
+ "category": "ai-aggro",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/angband-angband/src/mon-move.c",
+ "licence": "dual: GNU GPL v2 or the Angband licence (src/mon-move.c header lines 12-19); we take GPL terms, clean-room",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/brain.ts",
+ "parity_row": 2,
+ "pattern_tags": [
+  "presence-gated",
+  "threat-falloff",
+  "fixed-step",
+  "stale-state",
+  "new:fight-or-flee-ratio",
+  "new:pack-rouse"
+ ],
+ "data_fields": [
+  {
+   "name": "monster_hearing",
+   "donor_constant": "race.hearing (monster.txt, not read) minus stealth/3",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-move.c:107"
+  },
+  {
+   "name": "monster_smell",
+   "donor_constant": "race.smell (monster.txt, not read)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-move.c:122"
+  },
+  {
+   "name": "sight_range",
+   "donor_constant": "max-sight 20",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/lib/gamedata/constants.txt:195"
+  },
+  {
+   "name": "flee_range_extra",
+   "donor_constant": "flee-range 5 (flee range = max-sight + 5)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/lib/gamedata/constants.txt:58"
+  },
+  {
+   "name": "turn_range",
+   "donor_constant": "5",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/lib/gamedata/constants.txt:62"
+  },
+  {
+   "name": "weak_margin",
+   "donor_constant": "3 levels (m_lev + 3 < p_lev)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-move.c:244"
+  },
+  {
+   "name": "fight_margin",
+   "donor_constant": "5 levels (m_lev - 5 < p_lev)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-move.c:246"
+  },
+  {
+   "name": "hp_fraction_weight",
+   "donor_constant": "4 (p_chp << 2)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-move.c:257"
+  },
+  {
+   "name": "level_morale_offset",
+   "donor_constant": "25 (plus a 0-or-8 bit from midx)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-move.c:241"
+  },
+  {
+   "name": "sleep_notice_roll",
+   "donor_constant": "randint0(1024), cubed, against 2^(30 - stealth)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-move.c:1733"
+  },
+  {
+   "name": "sleep_drain_numerator",
+   "donor_constant": "100 / noise",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-move.c:1760"
+  },
+  {
+   "name": "sleep_drain_noise_window",
+   "donor_constant": "noise 1..49",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-move.c:1759"
+  },
+  {
+   "name": "aware_on_active_turn",
+   "donor_constant": "one in 10 per turn",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-move.c:1795"
+  },
+  {
+   "name": "pack_rouse_per_distance",
+   "donor_constant": "one in (distance x 20)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-group.c:423"
+  },
+  {
+   "name": "pack_wake_chance",
+   "donor_constant": "50 percent",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-group.c:424"
+  },
+  {
+   "name": "ambush_open_grids",
+   "donor_constant": "fewer than 5 open neighbours, and player above half HP",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-move.c:905"
+  },
+  {
+   "name": "hide_min_distance",
+   "donor_constant": "distance x 3/4 + 2",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-move.c:620"
+  },
+  {
+   "name": "noise_step_cost",
+   "donor_constant": "1 (4 under covert tracks)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/game-world.c:1174"
+  },
+  {
+   "name": "noise_cap",
+   "donor_constant": "z_info max_hearing (largest race hearing)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/game-world.c:1204"
+  }
+ ],
+ "best_idea": "Let an NPC take a turn only when it can hear, smell or see the player (or is hurt), and decide fight or flee by comparing level plus HP fraction, so the server spends its per-tick NPC budget only on fights that can happen.",
+ "decision": "adapt",
+ "decision_why": "Keep the activity gate and the level-plus-HP fight-or-flee test as the brain's cheap first checks (they give a per-tick NPC budget rule and a readable flee rule); drop the stealth-dice wake and the roaming scent trail for a duel, which has one known opponent.",
+ "decision_status": "proposed",
+ "acceptance": "A server test shows an NPC out of hearing and out of view, at full HP, runs no brain step on that tick; a player entering view makes it act on the same tick; an NPC whose level plus 4 x HP fraction is below the player's moves to flee range once 5 or more units away."
+}

@@ -1,0 +1,81 @@
+{
+ "game": "heroiclabs-nakama",
+ "category": "progression",
+ "cell": 10,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/heroiclabs-nakama/server/core_leaderboard.go",
+ "licence": "Apache License 2.0 (LICENSE file; source headers Copyright 2018 The Nakama Authors)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/progression.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "new:score-operator-set",
+  "new:no-op-write-filter",
+  "new:attempt-cap-rollback",
+  "new:counted-submissions"
+ ],
+ "data_fields": [
+  {
+   "name": "board_operator",
+   "donor_constant": "best | set | incr | decr (board default, override per write)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/heroiclabs-nakama/server/core_leaderboard.go:430"
+  },
+  {
+   "name": "decrement_floor",
+   "donor_constant": "0 (GREATEST(score - delta, 0))",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/heroiclabs-nakama/server/core_leaderboard.go:461"
+  },
+  {
+   "name": "zero_delta_write",
+   "donor_constant": "no write when score and subscore delta are both 0",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/heroiclabs-nakama/server/core_leaderboard.go:455"
+  },
+  {
+   "name": "tiebreak_subscore",
+   "donor_constant": "subscore moves with score; better if either field is better",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/heroiclabs-nakama/server/core_leaderboard.go:484"
+  },
+  {
+   "name": "attempt_cap",
+   "donor_constant": "max_num_score default 1000000; 0 = unlimited",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/heroiclabs-nakama/migrate/sql/20180805174141-tournaments.sql:25"
+  },
+  {
+   "name": "attempt_top_up",
+   "donor_constant": "count added to the cap while the window is open",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/heroiclabs-nakama/server/core_tournament.go:101"
+  },
+  {
+   "name": "board_max_size",
+   "donor_constant": "max_size; 0 = unlimited; new rows take a slot",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/heroiclabs-nakama/server/core_tournament.go:574"
+  },
+  {
+   "name": "period_reset",
+   "donor_constant": "cron schedule; expiry = ResetSchedule.Next(now)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/heroiclabs-nakama/server/core_leaderboard.go:427"
+  }
+ ],
+ "best_idea": "A single conditional server write per submission that changes the stored value only when it is a real change, counts accepted attempts, and refuses over-cap submissions inside the same transaction so nothing is kept.",
+ "decision": "adapt",
+ "decision_why": "Keep the no-op filters, the best/set/incr/decr split and the attempt cap with its in-transaction refusal for a server-verified per-period board; reject the Postgres-specific SQL and the silent join-path skip, which must return an explicit error.",
+ "decision_status": "proposed",
+ "acceptance": "A server test submits best-of scores 10, 7 and 12 to a daily board and asserts the stored best is 12 and the count is 3; a fourth submission against a cap of 3 is refused with an error and leaves the stored score and count unchanged."
+}

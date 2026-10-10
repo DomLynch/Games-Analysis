@@ -1,2 +1,3 @@
 game	category	old	verdict	depth	finding
 MovingBlocks-Terasology	spawns-encounters	P	STRONG	full	/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/logic/players/PlayerSystem.java:70-96,205-255 - respawn queue held until chunk ready, widened view while waiting; no encounter director in this checkout (modules/ empty)
+l1j-en-classic	spawns-encounters	P	STRONG	full	/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/L1Spawn.java:298-346,356-523 - per-slot refill timer (linger 50 s from altsettings + min..max draw), 50-try placement, 3 s presence hold; hint L1SpawnCmd.java is a GM command only

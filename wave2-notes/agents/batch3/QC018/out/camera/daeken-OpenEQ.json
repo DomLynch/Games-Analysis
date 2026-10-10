@@ -1,0 +1,81 @@
+{
+ "game": "daeken-OpenEQ",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/daeken-OpenEQ/crates/openeq/src/main.rs",
+ "licence": "as read: MIT OR Apache-2.0 (workspace Cargo.toml line 14; no LICENSE file in tree)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/worldCamera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "new:collision-pull-in",
+  "new:orbit-yaw-pitch"
+ ],
+ "camera_scope": "world",
+ "data_fields": [
+  {
+   "name": "orbit_distance",
+   "donor_constant": "18",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/daeken-OpenEQ/crates/openeq/src/main.rs:2340"
+  },
+  {
+   "name": "collision_clearance",
+   "donor_constant": "0.35",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daeken-OpenEQ/crates/openeq/src/main.rs:2347"
+  },
+  {
+   "name": "focus_offset_from_eye",
+   "donor_constant": "0 (focus = eye position)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daeken-OpenEQ/crates/openeq/src/main.rs:2344"
+  },
+  {
+   "name": "mouse_look_sensitivity",
+   "donor_constant": "0.0035 rad per mouse unit",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daeken-OpenEQ/crates/openeq/src/main.rs:33"
+  },
+  {
+   "name": "pitch_limit",
+   "donor_constant": "pi/2 - 0.01 rad (both ends)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daeken-OpenEQ/crates/openeq/src/main.rs:547"
+  },
+  {
+   "name": "own_body_below_eye",
+   "donor_constant": "3",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daeken-OpenEQ/crates/openeq/src/live.rs:2117"
+  },
+  {
+   "name": "eye_above_feet",
+   "donor_constant": "6",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daeken-OpenEQ/crates/openeq/src/main.rs:610"
+  },
+  {
+   "name": "default_fov_y",
+   "donor_constant": "70 degrees",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daeken-OpenEQ/crates/openeq-render/src/scene.rs:832"
+  }
+ ],
+ "best_idea": "The view camera is the eye point pushed back along the movement look vector, then pulled in to the nearest solid hit on that segment with a fixed clearance.",
+ "decision": "adapt",
+ "decision_why": "The pull-in is the missing piece for the world camera, but the donor has no shoulder offset and no damping, so Frankendom must add both as client-only data.",
+ "decision_status": "proposed",
+ "acceptance": "Client unit test: with a wall 5 units behind the hero, the view point stops at least the clearance short of the first hit; in play the wall is never drawn between hero and camera, and the view does not jump as the wall crosses the line (damping is our addition)."
+}

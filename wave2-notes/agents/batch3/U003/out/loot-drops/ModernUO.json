@@ -1,0 +1,89 @@
+{
+ "game": "ModernUO",
+ "category": "loot-drops",
+ "cell": 8,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Misc/LootPack.cs",
+ "licence": "GPL-3.0 (as read: LICENSE, GNU GPL Version 3)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/loot.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "drop-filter",
+  "loot-cumulative-roll",
+  "hit-aggregation",
+  "new:damage-share-rights",
+  "new:spawn-time-preroll"
+ ],
+ "data_fields": [
+  {
+   "name": "entry_chance",
+   "donor_constant": "percent x 100, roll 0..9999 (e.g. 100.00 -> 10000, 5.00 -> 500)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Misc/LootPack.cs:586"
+  },
+  {
+   "name": "luck_rerolls_per_pack",
+   "donor_constant": "1 re-roll on the first miss (AOS only)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Misc/LootPack.cs:135"
+  },
+  {
+   "name": "luck_cap",
+   "donor_constant": "1200 outside SE",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Misc/LootPack.cs:84"
+  },
+  {
+   "name": "luck_exponent",
+   "donor_constant": "1/1.8 (x100)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Misc/LootPack.cs:89"
+  },
+  {
+   "name": "max_bonus_props",
+   "donor_constant": "MaxProps per entry, e.g. 4 for AosAverage type 1 entry",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Misc/LootPack.cs:357"
+  },
+  {
+   "name": "bonus_weights_by_max_props",
+   "donor_constant": "MaxProps 2 gives 6/3/1 (k=0,1,2); MaxProps 5 gives 30/25/20/15/9/1",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Misc/LootPack.cs:841"
+  },
+  {
+   "name": "dice_quantity",
+   "donor_constant": "XdY+Z string, e.g. 5d10+50 for gold in AosAverage",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Misc/LootPack.cs:356"
+  },
+  {
+   "name": "first_hitter_multiplier",
+   "donor_constant": "1.25",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs:3428"
+  },
+  {
+   "name": "rights_threshold_divisor",
+   "donor_constant": "16 at HitsMax >= 3000; 8 at >= 1000; 4 at >= 200; 2 below",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs:3440"
+  }
+ ],
+ "best_idea": "A per-entry chance table with one weighted pick per drop, and damage-share looting rights measured against the top hitter, is a small server-side loot step for many-on-one kills.",
+ "decision": "adapt",
+ "decision_why": "The shape fits server-verified kills and MAX_ATTACKERS = 3, but the luck stat and the 2007 first-hitter 1.25x rule are UO-specific; they become data fields with defaults or are dropped.",
+ "decision_status": "proposed",
+ "acceptance": "A server test kills a boss with three attackers under a seeded RNG, asserts the same drop list twice, asserts the first hitter's damage is weighted 1.25x for the rights check, and asserts a third attacker below top/8 at HitsMax >= 1000 gets no drop roll."
+}

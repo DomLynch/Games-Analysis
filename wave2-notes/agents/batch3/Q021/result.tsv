@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+keldaanCommunity-pokemonAutoChess	ai-aggro	P	STRONG	full	app/core/attacking-state.ts:19-111; moving-state.ts:19-153; pokemon-state.ts:1091-1181 - sticky target, nearest-in-range, merciless lowest-HP pick, Manhattan sight chase with A* ring step
+gemrb-gemrb	ai-aggro	P	STRONG	full	gemrb/core/PathFinder.cpp:137-164 with Map.cpp:2684-2692 and GameScript/GSUtils.cpp:2613-2675 - run-away point by stepping an away-vector to a speed-scaled path budget; Actor.cpp:827-860 morale panic and recovery
+azerothcore-azerothcore-wotlk	ai-aggro	P	STRONG	full	src/server/game/Combat/ThreatManager.cpp:617-706 - victim kept unless challenger above 110 percent; above 130 percent takes over; melee-range rule; online then taunt then threat order

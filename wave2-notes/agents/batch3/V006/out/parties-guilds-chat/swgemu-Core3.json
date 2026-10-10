@@ -1,0 +1,19 @@
+{"game":"swgemu-Core3","category":"parties-guilds-chat","cell":18,"verdict":"STRONG","depth":"full",
+ "donor_path":"/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/group/GroupObjectImplementation.cpp",
+ "licence":"AGPL-3.0","licence_class":"copyleft",
+ "target_module":"origins/server/world-spawns.ts","parity_row":23,
+ "pattern_tags":["new:party-level-aggregate","level-gap","stale-state"],
+ "data_fields":[
+  {"name":"other_member_fraction","donor_constant":"1/5 of level for other players (level / 5.f)","unit":"ratio","where":"engine constant","donor_ref":"GroupObjectImplementation.cpp:611"},
+  {"name":"pet_fraction","donor_constant":"1/5 of level for pets (level / 5.f)","unit":"ratio","where":"engine constant","donor_ref":"GroupObjectImplementation.cpp:605"},
+  {"name":"highest_member_weight","donor_constant":"full level for the highest player (level - highest + highest/5 on a new maximum)","unit":"ratio","where":"engine constant","donor_ref":"GroupObjectImplementation.cpp:608"},
+  {"name":"party_level_rounding","donor_constant":"round to nearest, once, at the end","unit":"none","where":"engine constant","donor_ref":"GroupObjectImplementation.cpp:624"},
+  {"name":"lair_building_band_thresholds","donor_constant":"player/lair ratio < 0.25, 0.5, 0.75, 1.0 gives building level 1, 2, 3, 4; otherwise 5","unit":"ratio","where":"zone data","donor_ref":"SpawnAreaImplementation.cpp:305"},
+  {"name":"lair_building_default_level","donor_constant":"5","unit":"count","where":"zone data","donor_ref":"SpawnAreaImplementation.cpp:303"}
+ ],
+ "best_idea":"A party's encounter level is the highest member's level in full plus one fifth of every other player and pet level, rounded once, computed on the server from the member list, so the result does not depend on join order.",
+ "decision":"adapt",
+ "decision_why":"The order-independent rule is a small, testable way to pick a zone encounter level from a party, which fits zones as data and one engine; but the donor applies it only to spawn difficulty, and Frankendom's MAX_ATTACKERS = 3 many-on-one fights must not get stronger enemies from party size without a separate ruling, so take the shape for encounter choice only and keep the band thresholds as zone data.",
+ "decision_status":"proposed",
+ "acceptance":"A server test: a party of levels 10, 8 and 6 gets encounter level 13 in every member order, a solo player gets their own level, and a zone encounter at lair level 40 for a player at level 13 picks building level 2; no fight damage or hit number changes with party size."
+}

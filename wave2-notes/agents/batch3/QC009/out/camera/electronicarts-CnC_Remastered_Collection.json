@@ -1,0 +1,68 @@
+{
+ "game": "electronicarts-CnC_Remastered_Collection",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/REDALERT/DISPLAY.CPP",
+ "licence": "GPL-3.0 (Version 3, 29 June 2007; LICENSE.md line 8) with EA ADDITIONAL TERMS per GNU GPL Section 7 (LICENSE.md 601-617: no trademark or publicity rights, no misrepresentation of origin, indemnity for assumed contractual liability)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "clamp-and-report",
+  "fixed-step",
+  "new:group-centroid-framing",
+  "new:snap-to-desired"
+ ],
+ "data_fields": [
+  {
+   "name": "group_frame_rule",
+   "donor_constant": "mean of selected objects' Center_Coord()",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/REDALERT/DISPLAY.CPP:4557"
+  },
+  {
+   "name": "frame_half_view",
+   "donor_constant": "TacLeptonWidth/2, TacLeptonHeight/2",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/REDALERT/DISPLAY.CPP:4571"
+  },
+  {
+   "name": "map_clamp_bounds",
+   "donor_constant": "map cell bounds plus GlyphX sidebar width (leptons)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/REDALERT/DISPLAY.CPP:4251"
+  },
+  {
+   "name": "clamp_shift_report",
+   "donor_constant": "Confine_Rect nonzero return",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/REDALERT/DISPLAY.CPP:1228"
+  },
+  {
+   "name": "keyboard_step",
+   "donor_constant": "CELL_LEPTON_W (one cell; value not read)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/REDALERT/CONQUER.CPP:863"
+  },
+  {
+   "name": "redraw_apply_delay",
+   "donor_constant": "0 (applied at redraw, no easing)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/REDALERT/DISPLAY.CPP:2023"
+  }
+ ],
+ "best_idea": "Frame a group by the mean of their positions, offset by half the view, then clamp the view into the level bounds and report whether the clamp moved it.",
+ "decision": "adapt",
+ "decision_why": "The mean-then-clamp group framing and the clamp-reports-shift flag are the shape the fight camera needs for hero plus up to three attackers (MAX_ATTACKERS = 3); the donor is top-down 2D, its keyboard and edge scroll are not transferable (edge scroll is not live), and its instant snap must be replaced by easing.",
+ "decision_status": "proposed",
+ "acceptance": "In a 1-on-3 fight the view centres on the mean of the four positions, clamped to the zone edge, and eases to it with a configured half-life; a client test asserts the framed centre equals the four-point mean when unclamped and the origin stays inside the zone when clamped.",
+ "camera_scope": "world"
+}

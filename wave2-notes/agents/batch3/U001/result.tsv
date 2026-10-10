@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ModernUO	combat-sim	P	STRONG	full	BaseWeapon.cs 1208-1337 (CheckHit ratio hit chance), 1732-2060 (OnHit pipeline), 2519-2586 (ScaleDamageAOS); AOS.cs 37-241 (AOS.Damage resist split, min 1); not read: leech block and Consecrated branch
+ModernUO	ai-aggro	P	STRONG	full	BaseAI.cs 853-910 (AcquireFocusMob timer gate and re-arm), 993-1043 (candidate ranking, strict max); BaseCreature.cs 1321-1360 (approach pull clamps the scan deadline), 2731-2745 (Closest/Weakest/Strongest ranking); flee CheckFlee body in BaseCreature.cs not read
+ModernUO	spawns-encounters	P	STRONG	full	BaseSpawner.cs 829-895 (tick, weighted entry pick, one spawn per fire), 391-412 and 1169-1213 (death re-arm, random min-max timer, stops when full); ProximitySpawner.cs 96-120 (presence trigger); BaseCreature.cs 4186-4212 (15-59 s return-home grace); placement past the attempt loop and Spawner.cs not read

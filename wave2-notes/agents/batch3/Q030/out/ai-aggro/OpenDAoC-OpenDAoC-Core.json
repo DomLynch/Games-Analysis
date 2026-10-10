@@ -1,0 +1,105 @@
+{
+ "game": "OpenDAoC-OpenDAoC-Core",
+ "category": "ai-aggro",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameutils/AggroTable.cs",
+ "licence": "GPL-3.0 (LICENSE line 2 'Version 3, 29 June 2007'; README.md line 41 'licensed under the [GNU General Public License (GPL)] v3')",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/hate.ts",
+ "parity_row": 4,
+ "pattern_tags": [
+  "hate-table",
+  "threat-falloff",
+  "hysteresis",
+  "protect-soak",
+  "compute-budget",
+  "grace-timer",
+  "new:melee-reach-switch"
+ ],
+ "data_fields": [
+  {
+   "name": "falloff_start",
+   "donor_constant": "250",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "StandardMobBrain.cs:1351"
+  },
+  {
+   "name": "falloff_full",
+   "donor_constant": "1500 (one third of base at this distance)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "StandardMobBrain.cs:1352"
+  },
+  {
+   "name": "falloff_fraction_at_full",
+   "donor_constant": "1/3 (ln(1/3) exponent)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "StandardMobBrain.cs:1352"
+  },
+  {
+   "name": "ignore_beyond",
+   "donor_constant": "6000",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "StandardMobBrain.cs:1417"
+  },
+  {
+   "name": "protect_range",
+   "donor_constant": "1000",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "ProtectAbilityHandler.cs:12"
+  },
+  {
+   "name": "protect_share_per_level",
+   "donor_constant": "0.1 (comment calls it guessed)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "StandardMobBrain.cs:331"
+  },
+  {
+   "name": "pet_owner_tag",
+   "donor_constant": "0.3",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "StandardMobBrain.cs:569"
+  },
+  {
+   "name": "los_player_checks_per_call",
+   "donor_constant": "5",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "StandardMobBrain.cs:61"
+  },
+  {
+   "name": "los_npc_checks_per_call",
+   "donor_constant": "3",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "StandardMobBrain.cs:62"
+  },
+  {
+   "name": "leave_combat_timeout",
+   "donor_constant": "25000 (game loop time, assumed ms)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "StandardMobState.cs:86"
+  },
+  {
+   "name": "first_contact_min_aggro",
+   "donor_constant": "1",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "AggroTable.cs:332"
+  }
+ ],
+ "best_idea": "A per-monster hate table where threat decays with distance past a threshold and the current target is kept unless another threat is strictly higher, with protect as a distance-gated share of new threat.",
+ "decision": "adapt",
+ "decision_why": "The table, the decay curve and the keep-current pick fit the engine-owned hate list for MAX_ATTACKERS = 3; drop the client-side LOS round trip (Frankendom checks on the server) and make the threshold, falloff and protect share data instead of the donor's values.",
+ "decision_status": "proposed",
+ "acceptance": "A server test asserts that a base of 100 at 1500 units gives effective 34 (ceiling of 33.3), that the current target stays while its effective aggro is not below the best, that an entry beyond 6000 units is not a candidate but stays in the table, and that a protector within 1000 units takes 10% per level of a new threat."
+}

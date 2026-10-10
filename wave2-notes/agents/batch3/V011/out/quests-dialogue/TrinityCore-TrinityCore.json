@@ -1,0 +1,67 @@
+{
+ "game": "TrinityCore-TrinityCore",
+ "category": "quests-dialogue",
+ "cell": 12,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/Player.cpp",
+ "licence": "GPL-2.0-or-later (QuestDef.cpp header: either version 2 or any later version; root COPYING is GPL v2 text)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/quest-objectives.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "clamp-and-report",
+  "drop-filter",
+  "wait-gate",
+  "new:event-fanout-index"
+ ],
+ "data_fields": [
+  {
+   "name": "objective_amount",
+   "donor_constant": "Amount, default 0 (quest template data)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Quests/QuestDef.h:483"
+  },
+  {
+   "name": "credit_per_kill",
+   "donor_constant": "1 (fixed argument in KilledMonsterCredit)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/Player.cpp:16661"
+  },
+  {
+   "name": "proxy_credit_slots_per_creature",
+   "donor_constant": "MAX_KILL_CREDIT = 2",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Creature/CreatureData.h:426"
+  },
+  {
+   "name": "progress_floor",
+   "donor_constant": "0 (clamp lower bound)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/Player.cpp:16776"
+  },
+  {
+   "name": "no_proxy_credit",
+   "donor_constant": "quest flag bit 0x00004000 (rule: MONSTER objective with no victim is skipped)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Quests/QuestDef.h:266"
+  },
+  {
+   "name": "sequenced_objective",
+   "donor_constant": "objective flag bit 0x0002 (counts after earlier objectives)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Quests/QuestDef.h:384"
+  }
+ ],
+ "best_idea": "One index from a target id to every active objective that counts it, credited exactly once per server kill, clamped to the target, and ignored once finished, with the quest completing only when every required objective is done.",
+ "decision": "adapt",
+ "decision_why": "The fan-out index, the clamp and the finished-skip are the shape Frankendom needs for zone contracts on one ledger with server-verified kills; drop the WoW raid, proxy and quest-log-slot parts unless zones need them, and write Frankendom's own attacker-credit rule.",
+ "decision_status": "proposed",
+ "acceptance": "In a zone contract 'clear 3 boars' the tracker reads 2/3 after the second boar dies and the contract completes on the server at the third kill; a fourth boar kill leaves it at 3/3 (a server test asserts progress never passes the target and a finished objective takes no more credit)."
+}

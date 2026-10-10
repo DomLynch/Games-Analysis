@@ -1,0 +1,89 @@
+{
+ "game": "ModernUO",
+ "category": "loot-drops",
+ "cell": 8,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Misc/LootPack.cs",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/loot.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "loot-cumulative-roll",
+  "new:damage-share-rights",
+  "new:one-luck-rescue-per-pack",
+  "new:weighted-pick-with-gate",
+  "hit-aggregation"
+ ],
+ "data_fields": [
+  {
+   "name": "rights_minimum_divisor",
+   "donor_constant": "16 at max HP 3000+, 8 at 1000+, 4 at 200+, 2 below",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Projects/UOContent/Mobiles/BaseCreature.cs:3440"
+  },
+  {
+   "name": "first_hit_bump",
+   "donor_constant": "x1.25 truncated on the earliest credited damager",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Projects/UOContent/Mobiles/BaseCreature.cs:3428"
+  },
+  {
+   "name": "killer_luck_curve",
+   "donor_constant": "luck^(1/1.8) x 100, out of 10000",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Projects/UOContent/Misc/LootPack.cs:89"
+  },
+  {
+   "name": "killer_luck_cap",
+   "donor_constant": "1200 outside SE",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "Projects/UOContent/Misc/LootPack.cs:84"
+  },
+  {
+   "name": "entry_chance_per_10000",
+   "donor_constant": "(int)(100 x percent), out of 10000",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "Projects/UOContent/Misc/LootPack.cs:586"
+  },
+  {
+   "name": "luck_rescue_per_pack",
+   "donor_constant": "one rescue, on the first miss",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "Projects/UOContent/Misc/LootPack.cs:135"
+  },
+  {
+   "name": "bonus_property_weights",
+   "donor_constant": "max 1: 3,1; max 3: 10,6,3,1; max 5: 30,25,20,15,9,1",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "Projects/UOContent/Misc/LootPack.cs:865"
+  },
+  {
+   "name": "property_cap",
+   "donor_constant": "1 + bonus, capped at max props",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "Projects/UOContent/Misc/LootPack.cs:715"
+  },
+  {
+   "name": "fire_horn_swap",
+   "donor_constant": "1 in 100 weapon swap",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Projects/UOContent/Misc/LootPack.cs:696"
+  }
+ ],
+ "best_idea": "Decide loot rights from the server's damage ledger (a share of the top damage, scaled by the monster's max HP), then roll each drop with one luck rescue per drop table.",
+ "decision": "adapt",
+ "decision_why": "Take the rights rule as the loot-ownership rule for the 3-attacker fight, drop the historical first-hit bump unless playtests want it, and keep the luck rescue as a named zone field.",
+ "decision_status": "proposed",
+ "acceptance": "A server test with a 3000-HP monster and hits A 60, B 30, C 3 (A first): A has 75 after the bump, the minimum is 4, A and B have rights, C does not, and the killer luck is A's."
+}

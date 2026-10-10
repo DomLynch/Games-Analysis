@@ -1,0 +1,190 @@
+{
+ "game": "TurningWheel-Barony",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/TurningWheel-Barony/src/actplayer.cpp",
+ "licence": "BSD 2-Clause (LICENSE.txt line 3: licensed under the BSD 2-Clause License)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "fixed-step",
+  "accumulator",
+  "follow-point",
+  "new:setpoint-rate-limit",
+  "new:camera-pullback",
+  "new:shake-decay",
+  "new:render-alpha-blend"
+ ],
+ "data_fields": [
+  {
+   "name": "logic_hz",
+   "donor_constant": "50",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/game.hpp:389"
+  },
+  {
+   "name": "render_step_s",
+   "donor_constant": "1/60",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/game.cpp:285"
+  },
+  {
+   "name": "max_steps_per_frame",
+   "donor_constant": "5",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/game.cpp:4136"
+  },
+  {
+   "name": "camera_gain",
+   "donor_constant": "30 (default), max(1, fps-2) below 32 fps",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/game.cpp:292"
+  },
+  {
+   "name": "eye_offset_z",
+   "donor_constant": "-2.5 (z*2 - 2.5)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/actplayer.cpp:4919"
+  },
+  {
+   "name": "eye_swim_offset_z",
+   "donor_constant": "+1 when swimming",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/actplayer.cpp:4919"
+  },
+  {
+   "name": "eye_rate_min",
+   "donor_constant": "0.3",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/actplayer.cpp:4979"
+  },
+  {
+   "name": "eye_rate_max",
+   "donor_constant": "2.0",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/actplayer.cpp:4979"
+  },
+  {
+   "name": "eye_rate_fraction",
+   "donor_constant": "0.5 of error",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/actplayer.cpp:4979"
+  },
+  {
+   "name": "eye_snap_tolerance",
+   "donor_constant": "0.01",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/actplayer.cpp:5004"
+  },
+  {
+   "name": "bob_move_limit_land",
+   "donor_constant": "0.1",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/actplayer.cpp:4221"
+  },
+  {
+   "name": "bob_move_limit_swim",
+   "donor_constant": "0.3",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/actplayer.cpp:4234"
+  },
+  {
+   "name": "pullback_distance",
+   "donor_constant": "1.5 (map tiles, camx = x/16)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/actplayer.cpp:2528"
+  },
+  {
+   "name": "pullback_height_drop",
+   "donor_constant": "16 x sin(pitch)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/actplayer.cpp:2530"
+  },
+  {
+   "name": "pullback_ease",
+   "donor_constant": "cos((1 - p) x PI/2)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/actplayer.cpp:2526"
+  },
+  {
+   "name": "ghost_pitch_limit",
+   "donor_constant": "PI/3 (radians)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/actplayer.cpp:2061"
+  },
+  {
+   "name": "shake_max",
+   "donor_constant": "15 (cvar /shake_max)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/game.cpp:1044"
+  },
+  {
+   "name": "shake_lowpass_yaw",
+   "donor_constant": "0.8",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/game.cpp:1048"
+  },
+  {
+   "name": "shake_lowpass_pitch",
+   "donor_constant": "0.9",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/game.cpp:1049"
+  },
+  {
+   "name": "shake_decay_yaw",
+   "donor_constant": "0.01 per step",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/game.cpp:1059"
+  },
+  {
+   "name": "shake_decay_pitch",
+   "donor_constant": "1 per step",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/game.cpp:1076"
+  },
+  {
+   "name": "shake_hit_yaw",
+   "donor_constant": "0.1 per source hit",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/actgeneral.cpp:6107"
+  },
+  {
+   "name": "shake_hit_pitch",
+   "donor_constant": "10 per source hit",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/actgeneral.cpp:6108"
+  }
+ ],
+ "best_idea": "Aim each camera axis at its target on the logic step (velocity = gain x error), integrate at a fixed render step with an accumulator, blend by alpha, rate-limit the eye height to a setpoint with bob held until it settles, and use a view-direction pull-back for a third-person camera.",
+ "decision": "adapt",
+ "decision_why": "The donor's living camera is first-person and its only third-person mode (ghost camera) has no collision, so the fixed-step aim, render blend, rate-limited eye setpoint and view-direction pull-back shape transfer to a world third-person camera, but the wall pull-in and framing must be added and the constants moved to client data.",
+ "decision_status": "proposed",
+ "acceptance": "In a zone the camera height eases over a fraction of a second on a step with no snap, the view pulls in when a wall is behind the character and never clips, and a headless test asserts the camera converges to its target within N render steps with bob at zero while the eye height is moving.",
+ "camera_scope": "world"
+}

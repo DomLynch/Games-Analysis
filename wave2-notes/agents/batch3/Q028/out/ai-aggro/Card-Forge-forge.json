@@ -1,0 +1,82 @@
+{
+ "game": "Card-Forge-forge",
+ "category": "ai-aggro",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/Card-Forge-forge/forge-ai/src/main/java/forge/ai/AiAttackController.java",
+ "licence": "GPL-3.0 (LICENSE read: GNU GPL Version 3, 29 June 2007)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/ai.ts",
+ "parity_row": 2,
+ "pattern_tags": [
+  "director",
+  "compute-budget",
+  "new:group-aggression-level",
+  "new:lethal-assault-check",
+  "new:attack-cap"
+ ],
+ "data_fields": [
+  {
+   "name": "attack_cap",
+   "donor_constant": "attackMax from the combat restriction (no literal in this file)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "AiAttackController.java:844"
+  },
+  {
+   "name": "chance_to_attack_into_trade",
+   "donor_constant": "40 (percent, AI profile default)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "AiProps.java:44"
+  },
+  {
+   "name": "lower_life_pressure_only",
+   "donor_constant": "true (AI profile default)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "AiProps.java:45"
+  },
+  {
+   "name": "attack_into_trade_when_tapped_out",
+   "donor_constant": "false (AI profile default)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "AiProps.java:46"
+  },
+  {
+   "name": "chance_to_attack_when_opp_has_mana",
+   "donor_constant": "0 (percent, AI profile default)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "AiProps.java:47"
+  },
+  {
+   "name": "level4_ratio_threshold",
+   "donor_constant": "ratioDiff >= 1 and humanRatio < 2 or outNumber > 0",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "AiAttackController.java:1241"
+  },
+  {
+   "name": "attritional_round_cap",
+   "donor_constant": "99 rounds",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "AiAttackController.java:1169"
+  },
+  {
+   "name": "exalted_bonus_threshold",
+   "donor_constant": "countExaltedBonus(ai) > 2",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "AiAttackController.java:1016"
+  }
+ ],
+ "best_idea": "Pick one group aggression level for the enemy pack from its force ratio and damage-to-life ratio, let each enemy commit only if its gate passes at that level, and override to all-in when the unblocked damage would kill.",
+ "decision": "adapt",
+ "decision_why": "The level ladder and lethal all-in check fit Frankendom's AI brain (row 2) and the attack cap of 3; the card-value terms, the random roll and the wall-clock thread pool do not fit replay, one engine or a fixed tick.",
+ "decision_status": "proposed",
+ "acceptance": "At low player health with three enemies whose unblocked damage would kill, all three attack (level 5); in a healthy 1-vs-3 fight only unblockable attackers commit and never more than 3 at once (server test, fixed seed)."
+}

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ClassicUO	zones-world	P	STRONG	full	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/World.cs 255-394 (throttled cull, deferred removal) with Map.cs 247-268 (age-gated chunk eviction, cap 50); client-only render cache, note out/zones-world/ClassicUO.deep.md
+ClassicUO	inventory-bank-equipment	P	STRONG	full	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameActions.cs 439-549 and Network/PacketHandlers.cs 1584-1745 (pick-up snapshot, drop/equip request, accept clears flags, deny restores origin); note out/inventory-bank-equipment/ClassicUO.deep.md
+ClassicUO	vfx-blood-finishers	P	PARTIAL	thin	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/WorldTextManager.cs 104-112 (damage number stack only; no blood or finisher code); verdict-ClassicUO-vfx-blood-finishers.txt

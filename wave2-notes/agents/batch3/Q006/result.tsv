@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+EQEmu	spawns-encounters	P	STRONG	full	/mnt/frankendom-donors/EQEmu/zone/spawn2.cpp:152-353 (timer 118-133, ForceDespawn 407-450); a spawn point owns one timer and at most one NPC, with variance draws, weighted group pick under caps, and despawn modes 0-4
+2004Scape-Server	spawns-encounters	P	STRONG	full	/mnt/frankendom-donors/2004Scape-Server/src/engine/World.ts:1330-1351 and 1773-1776, /mnt/frankendom-donors/2004Scape-Server/src/engine/entity/Npc.ts:121-135; a dead NPC keeps its slot and counts down its respawn in 600 ms ticks, duration fixed at death and scaled by player count (half at 2000)
+ioquake-ioq3	spawns-encounters	P	STRONG	full	/mnt/frankendom-donors/ioquake-ioq3/code/game/g_client.c:183-260 with g_combat.c:606-608 and g_active.c:997-1012; respawn picks among the furthest-half spots from the player's last position, skipping blocked spots, after a 1.7 s lock with a forced-respawn window

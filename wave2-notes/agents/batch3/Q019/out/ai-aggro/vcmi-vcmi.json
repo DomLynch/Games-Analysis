@@ -1,0 +1,80 @@
+{
+ "game": "vcmi-vcmi",
+ "category": "ai-aggro",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/vcmi-vcmi/lib/mapObjects/CGCreature.cpp",
+ "licence": "GPL-2.0-or-later (file header: License: GNU General Public License v2.0 or later)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/ai.ts",
+ "parity_row": 2,
+ "pattern_tags": [
+  "new:strength-ratio-bands",
+  "new:engage-threshold",
+  "new:flee-or-fight"
+ ],
+ "data_fields": [
+  {
+   "name": "aggression",
+   "donor_constant": "per tier: COMPLIANT -4; FRIENDLY 1..7; AGGRESSIVE 1..10; HOSTILE 4..10; SAVAGE 10 (inclusive random roll at init)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/vcmi-vcmi/lib/mapObjects/CGCreature.cpp:287-299"
+  },
+  {
+   "name": "power_band_thresholds",
+   "donor_constant": "ratio >=7 gives 11; >=1 gives trunc(2*(ratio-1)); >=0.5 gives -1; >=0.333 gives -2; else -3",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vcmi-vcmi/lib/mapObjects/CGCreature.cpp:356-368"
+  },
+  {
+   "name": "diplomacy_cap",
+   "donor_constant": "3",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vcmi-vcmi/lib/mapObjects/CGCreature.cpp:392"
+  },
+  {
+   "name": "sympathy_points",
+   "donor_constant": "+1 if any similar unit; +1 if similar units x2 > total units",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vcmi-vcmi/lib/mapObjects/CGCreature.cpp:384-388"
+  },
+  {
+   "name": "free_join_test",
+   "donor_constant": "diplomacy + sympathy + 1 >= aggression (and setting or COMPLIANT, and not gold-only)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vcmi-vcmi/lib/mapObjects/CGCreature.cpp:401"
+  },
+  {
+   "name": "gold_join_test",
+   "donor_constant": "diplomacy x 2 + sympathy + 1 >= aggression; price = recruit cost x first-stack count",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vcmi-vcmi/lib/mapObjects/CGCreature.cpp:404-408"
+  },
+  {
+   "name": "hero_value_skill_factor",
+   "donor_constant": "0.05 per attack and per defence point; hero value = sqrt((1+0.05a)(1+0.05d)) x army strength",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vcmi-vcmi/lib/mapObjects/CGHeroInstance.cpp:791-796"
+  },
+  {
+   "name": "never_flees_flag",
+   "donor_constant": "boolean per group; blocks FLEE",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/vcmi-vcmi/lib/mapObjects/CGCreature.cpp:414"
+  }
+ ],
+ "best_idea": "Decide what a group does on contact (engage, back off, or join) from one banded power ratio plus a per-group aggression threshold, so each outcome is one testable state change.",
+ "decision": "adapt",
+ "decision_why": "The contact decision and the flee-without-pursue outcome fit engage-as-state-change in src/fight; the visit dialogs and the gold recruit offer are adventure-map features that do not fit a real-time zone, so take the shape only.",
+ "decision_status": "proposed",
+ "acceptance": "A server test asserts the decision table for fixed inputs (band factor, sympathy, diplomacy cap 3, FIGHT/FLEE/JOIN); in play a group the hero outmatches 7x never fights, and a group that outmatches the hero (hero value under a third of the group's value) fights when its aggression is 4 or more."
+}

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+00-Evan-shattered-pixel-dungeon	spawns-encounters	P	STRONG	full	/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/MobSpawner.java:39-55 (+Level.java:714-810, RegularLevel.java:206-218); cap, cooldown, placement gate; out/spawns-encounters/00-Evan-shattered-pixel-dungeon.deep.md
+lincity-ng-lincity-ng	spawns-encounters	P	STRONG	full	/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/shanty.cpp:116-150 (+simulate.cpp:107-110, engine.cpp:280-291); monthly pool-driven director with hysteresis
+angband-angband	spawns-encounters	P	STRONG	thin	/mnt/frankendom-donors/angband-angband/src/game-world.c:506-509 and mon-make.c:1483-1520, 221-300 (trickle roll, far gate, tier re-roll); group expansion not read

@@ -1,0 +1,80 @@
+{
+ "game": "gawric-Unity-Client-for-L2J",
+ "category": "loot-drops",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/Item/ItemDropPresentationService.cs",
+ "licence": "as read",
+ "licence_class": "permissive",
+ "target_module": "src/fight/loot.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "variable-step",
+  "timer-wheel",
+  "new:drop-arc"
+ ],
+ "data_fields": [
+  {
+   "name": "drop_arc_seconds",
+   "donor_constant": "0.35",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/Item/ItemDropPresentationIds.cs:32"
+  },
+  {
+   "name": "weapon_arc_seconds",
+   "donor_constant": "0.55",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/Item/ItemDropPresentationIds.cs:40"
+  },
+  {
+   "name": "drop_arc_height",
+   "donor_constant": "0.45",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/Item/ItemDropPresentationIds.cs:33"
+  },
+  {
+   "name": "weapon_arc_height_min",
+   "donor_constant": "0.45",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/Item/ItemDropPose.cs:52"
+  },
+  {
+   "name": "weapon_arc_height_max",
+   "donor_constant": "2.4",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/Item/ItemDropPose.cs:52"
+  },
+  {
+   "name": "min_throw_duration",
+   "donor_constant": "0.05",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/Item/ItemDropPresentationService.cs:194"
+  },
+  {
+   "name": "ground_glow_seconds",
+   "donor_constant": "18",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/Item/ItemDropPresentationIds.cs:29"
+  },
+  {
+   "name": "coin_reveal_delay",
+   "donor_constant": "0.7",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/Item/ItemDropPresentationIds.cs:52"
+  }
+ ],
+ "best_idea": "A drop flies out on a fixed-time arc (lerp plus sine lift) and its glow and reveal timers start at landing, while the server alone decides the drop and its pickup.",
+ "decision": "adapt",
+ "decision_why": "The arc shape and landing-based timers give Frankendom a clear drop feel, but the donor has no roll, table or owner, so the server must keep all loot decisions (row 18).",
+ "decision_status": "proposed",
+ "acceptance": "A player kills a creature and a drop rises in a 0.35 s arc with visible lift, then lands and glows; a server test asserts that only a server pickup event removes the drop record."
+}

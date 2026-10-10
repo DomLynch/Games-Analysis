@@ -1,0 +1,18 @@
+cuteshaun-lineage2-api | loot-drops | cell 1 | verdict PARTIAL | depth thin
+Donor: /mnt/frankendom-donors/cuteshaun-lineage2-api/ (TypeScript, Next.js read-only JSON API for Lineage 2 Interlude data). Licence: MIT License, Copyright (c) 2026 Andrii Tsapko (read from LICENSE): code may be adapted.
+
+Files opened (candidates):
+1. /mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/api/drops.ts (whole file, 118 lines)
+2. /mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/api/dto/drops.ts (1-100)
+3. /mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/data/cleaned-npcs.ts (169-216, aggregateDrops)
+4. /mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/data/indexes.ts (376-412, reverse item index)
+5. /mnt/frankendom-donors/cuteshaun-lineage2-api/scripts/parse-drops.ts (40-75, XML to drop rows)
+Grep on src, scripts and tests for roll, random, Math.random, crypto.random, rollDrop: no hits that roll a drop. Only rollCount, which counts repeated rows.
+
+Why PARTIAL: the repo serves drop tables as data and never performs a drop roll, awards loot, or tracks ownership; the only mechanism is table presentation (merge, dedup, percent and rare-odds display), so it is thin for a loot engine.
+
+What is real and checkable: drop rows are merged across merged NPC ids and deduplicated per category on (itemId, min, max, chance) (cleaned-npcs.ts 193-196); the DTO collapses rows that match on (itemId, min, max, chance) ignoring category and reports rollCount (dto/drops.ts 70-73); chance is stored as a raw integer and shown as raw / 10000 percent, with a 1 in X string below 0.01 percent (dto/drops.ts 22, 31).
+
+Best transferable idea: Keep drop tables as zone or monster data and show a "1 in X" odds label for rare drops in the loot panel, so players see the odds without the server exposing a roll.
+Decision (proposed): adapt - only the odds display and the dedup-with-count rule are worth taking; nothing here rolls, awards or owns loot, so Frankendom's server-side loot roll and ledger must come from another source.
+Checked: confidence high that no drop roll exists in this repo (grep plus the files above). Not read: the Lineage 2 game server (not in this repo), scripts/build-data.ts (not read), dto/drops.ts beyond line 100 (not read).

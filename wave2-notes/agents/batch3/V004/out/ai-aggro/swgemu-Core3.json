@@ -1,0 +1,131 @@
+{
+ "game": "swgemu-Core3",
+ "category": "ai-aggro",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.cpp",
+ "licence": "GNU AGPL-3.0 (COPYING, Version 3)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/threat.ts",
+ "parity_row": 4,
+ "pattern_tags": [
+  "hate-table",
+  "target-score",
+  "hysteresis",
+  "new:threat-pool-lottery",
+  "new:pack-aggro"
+ ],
+ "data_fields": [
+  {
+   "name": "target_reeval_ms",
+   "donor_constant": "24000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.h:166"
+  },
+  {
+   "name": "target_range",
+   "donor_constant": "128",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.cpp:572"
+  },
+  {
+   "name": "aggro_per_hit",
+   "donor_constant": "1",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.cpp:103"
+  },
+  {
+   "name": "aggro_per_defender_adopt",
+   "donor_constant": "1",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp:2134"
+  },
+  {
+   "name": "pool_top_damage_slots",
+   "donor_constant": "2",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMatrix.cpp:91"
+  },
+  {
+   "name": "pool_random_damage_slots",
+   "donor_constant": "1",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMatrix.cpp:93"
+  },
+  {
+   "name": "pool_top_aggro_slots",
+   "donor_constant": "2",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMatrix.cpp:97"
+  },
+  {
+   "name": "pool_top_heal_slots",
+   "donor_constant": "1",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMatrix.cpp:103"
+  },
+  {
+   "name": "pack_range_base",
+   "donor_constant": "20",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp:4092"
+  },
+  {
+   "name": "pack_range_per_100_levels",
+   "donor_constant": "1 per 100 levels (level / 100)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp:4092"
+  },
+  {
+   "name": "pack_range_aggressive_bonus",
+   "donor_constant": "5",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp:4095"
+  },
+  {
+   "name": "pack_throttle_ms",
+   "donor_constant": "30000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp:4059"
+  },
+  {
+   "name": "ai_tick_combat_ms",
+   "donor_constant": "400",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgent.idl:215"
+  },
+  {
+   "name": "ai_tick_watch_ms",
+   "donor_constant": "700",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgent.idl:216"
+  },
+  {
+   "name": "ai_tick_idle_ms",
+   "donor_constant": "1000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgent.idl:217"
+  }
+ ],
+ "best_idea": "A per-attacker hate table keeps damage, aggro and heal apart, holds the last pick until it dies or a timer runs out, and lets taunt or focus flags override the pick at once.",
+ "decision": "adapt",
+ "decision_why": "Frankendom needs a server-chosen target for many-on-one fights (MAX_ATTACKERS = 3). The hate table, taunt/focus override and re-evaluate-on-state-change fit; the donor's random weighted pool and 24 s hold do not give replayable, server-verified fights.",
+ "decision_status": "proposed",
+ "acceptance": "In a 3-on-1 server test, when a second attacker's damage passes the boss's current target, the boss's target changes on the next server tick (not after a 24 s hold); a taunt flag changes it at once; the test fails if the target is unchanged after two ticks with no taunt."
+}

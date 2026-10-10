@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+daeken-OpenEQ	camera	P	STRONG	full	crates/openeq/src/main.rs:2336-2356 view_camera: eye moved 18 units back along the look vector, pulled in by clip_camera (crates/openeq-assets/src/collision.rs:249-270) with 0.35 clearance; world camera
+LanternEQ-LanternUnityTools	camera	P	PARTIAL	thin	Assets/Scripts/Lantern/EQ/Environment/SkyController.cs:162-171 sky dome placed at camera plus offset, no per-frame caller in the tree; no camera controller exists (EqConstants.cs:48-50 unused camera constants)
+ZaneDubya-UltimaXNA	camera	P	STRONG	full	dev/Ultima/World/WorldViews/IsometricView.cs:245-283 view centred on the drawn player position, fed by dev/Ultima/World/Entities/Mobiles/MobileMovement.cs:199-236 frame-time step progress; fixed isometric, no third-person rig

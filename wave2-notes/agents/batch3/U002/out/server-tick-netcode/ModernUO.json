@@ -1,0 +1,68 @@
+{
+ "game": "ModernUO",
+ "category": "server-tick-netcode",
+ "cell": 5,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ModernUO/Projects/Server/Main.cs",
+ "licence": "GPL-3.0-or-later (file headers 'either version 3 ... or any later version'; LICENSE file GPLv3)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/tick.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "timer-wheel",
+  "fixed-step",
+  "accumulator",
+  "compute-budget",
+  "new:dirty-flag-drain"
+ ],
+ "data_fields": [
+  {
+   "name": "tick_ms",
+   "donor_constant": "8",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/Server/Timer/Timer.TimerWheel.cs:34"
+  },
+  {
+   "name": "wheel_ring_slots",
+   "donor_constant": "4096",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/Server/Timer/Timer.TimerWheel.cs:31"
+  },
+  {
+   "name": "wheel_layers",
+   "donor_constant": "3",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/Server/Timer/Timer.TimerWheel.cs:32"
+  },
+  {
+   "name": "idle_wait_ms",
+   "donor_constant": "2",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/Server/Main.cs:50"
+  },
+  {
+   "name": "late_wake_percent",
+   "donor_constant": "10",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/Server/Main.cs:97"
+  },
+  {
+   "name": "dirty_drain_bound",
+   "donor_constant": "queue count sampled on entry (rule)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/Server/Mobiles/Mobile.cs:7873"
+  }
+ ],
+ "best_idea": "One fixed 8 ms timer turn with catch-up, plus a dirty-flag queue drained only up to the count seen on entry, so each tick has bounded state-sync work and timers fire on server time even after a stall.",
+ "decision": "adapt",
+ "decision_why": "Keep the fixed step with catch-up and the bounded drain; do not port the three-ring 4096-slot wheel, since a flat timer list is enough for a fight engine until timer counts are measured.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: with the loop stalled for 50 ms, a 100 ms timer scheduled at t=0 fires on the first 8 ms turn at or after 100 ms (104 ms), and a dirty drain given three entities marked during its own pass leaves exactly those three for the next pass."
+}

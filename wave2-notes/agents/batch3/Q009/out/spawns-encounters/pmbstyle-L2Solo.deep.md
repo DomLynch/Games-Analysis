@@ -1,165 +1,182 @@
-# pmbstyle-L2Solo (spawns-encounters, cell 6)
+# pmbstyle-L2Solo (spawns-encounters, cell 1)
 
-Donor: `/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/Generics/SpawnNpcs.js` (with `RemoveNpc.js`, `DayNightSpawnManager.js`, `Npc/NpcAggro.js`, `Actor/Generics/NpcDied.js`) | Licence: Apache-2.0 (LICENSE file read: "Apache License Version 2.0, January 2004") | JavaScript (Node, `invoke` loader) | symbol `spawnNpcs`
+Donor: `/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/Generics/SpawnNpcs.js` (with `RemoveNpc.js`, `DayNightSpawnManager.js`, `Generics/NpcDecay.js`, `GameTime.js`) | Licence: Apache-2.0 (repo `LICENSE`, "Apache License Version 2.0, January 2004"; package.json says "SEE LICENSE IN LICENSE") | JavaScript (server) | symbols `spawnNpcs`, `spawnNpc`, `removeNpc`, `changeMode`, `respawnDelayMs`
 
-Checked: `spawnNpcs` is at SpawnNpcs.js 235-275 (whole file read, 301 lines). The kill-to-respawn path is RemoveNpc.js 12-60 (whole file read). Day/night is DayNightSpawnManager.js 34-65 (whole file read). Spawn grace is NpcAggro.js 4 and 77-80. Confidence high for the non-raid path. Not read: the `Npc` class, NpcDecay.js beyond `schedule()`, `RaidBoss/RespawnPolicy` (raid delay), `GameTime.msUntilTransition`, the `DataCache.npcSpawns` loader, and NpcDied.js above line 160. Listed hint file (BackgroundResolver.js) is a bot-simulation resolver, not zone spawns; it was opened and set aside (its bot death-recovery delay is 90000 ms, or 1000 ms for PvP recovery, `resolveDeathRecovery` line 316; not spawn data).
+Checked: The list's hint file `BackgroundResolver.js` is NOT the spawn logic: it is the bot combat and rest resolver (its only death timer is `resolveDeathRecovery` (316: a bot's own 90 s, or 1 s in PvP)). Real mechanism found by grep for spawn/respawn and read end to end: `SpawnNpcs.js` (whole file, 1-301), `RemoveNpc.js` (whole, 1-63), `DayNightSpawnManager.js` (whole, 1-92), `Generics/NpcDecay.js` (whole, 1-252), `GameTime.js` (1-57), `World.js` init (128-152), `SpoilSweep.js` (15, 183-186), `NpcAggro.js` (4, 77-81). Other candidates opened and not used: `PopulationDirector.js` (1-120 of 212; a bot level-histogram director, not NPC spawns). Not read: `RaidBossState.js`, `RaidBoss/RespawnPolicy.js` (raid bosses only), `RaidBossMinionManager`, `npcRewards`, the grid code, `tickLiveActors` (only `armSpawnGrace` read), the spawn data rows (the real respawn, bias and total values were not sampled). Confidence: high on the ordinary NPC row, death, respawn, day/night and corpse paths. Camera: not applicable.
 
-Best transferable idea: a per-death respawn timer per spawn slot, with a jitter band (respawn plus or minus bias seconds), that re-checks a period revision before placing the replacement.
+Best transferable idea: a fixed count per spawn row, refilled by a timer started at each death (respawn seconds plus or minus a bias), with the timer dropped if a period revision has changed, and the corpse on its own timer.
 
-Decision (proposed): adapt - take the death-to-respawn timer with jitter and the 10 s spawn aggro grace; add what the donor lacks, a zone population cap and despawn-on-empty with a grace timer (row 23). The donor has no cap and no idle despawn, so adopting this alone would not satisfy row 23.
+Decision (proposed): adapt. Frankendom needs per-row totals and respawn-from-death with jitter plus a stale-timer guard, which this donor has; it has no zone cap, no empty-zone despawn and no presence gate, and its ordinary respawn does not retry, so we take the shape and add those.
 
-Acceptance: a server test spawns one wolf in a zone row with respawn 40 and bias 0, kills it at t=0, and asserts no replacement at 39.9 s and exactly one replacement at 40 s, placed at one of the row's listed points; and a new wolf does not engage a player in range until 10 s have passed.
+Acceptance: Server test: kill 1 of 3 members of a row with respawn 60 s and bias 10 s; a replacement appears between 50 s and 70 s after the death, and if the first spawn call fails the row is full again within 1 s more; switching a day-only row to night with a respawn pending spawns nothing from that old timer.
 
 ## 1. Mechanism
 
-- Boot. `spawnNpcs()` (SpawnNpcs.js 235-275) walks every spawn row. A row with no explicit coords places `spawn.total` copies, each at a random point (`randomCoords`, 66-81, which uses the listed coords when present and a polygon otherwise). A row with explicit coords runs the `total` loop around a `coords.forEach` (244-247), so it places `total` copies at EACH listed coord, that is total x coords.length. Periodic rows are also pushed to `periodDefinitions` for later day/night refills.
-- Kill. The ordinary kill path calls `World.removeNpc(session, npc)` (NpcDied.js:172). That is the only call site found by grep; the branch above line 160 was not read. `removeNpc` (RemoveNpc.js 12-60) first schedules corpse decay (24), clears quest timers (26), then, when `spawn.respawn > 0` (SpawnNpcs.js 290), computes the delay once (32). The respawn is a `setTimeout` (40-48) that checks `canRespawnDefinition` (42) and calls `this.spawnNpc(this, definition)` (43). Net effect: one replacement per death, not a refill to a count. Rewards run after (52-59), inside their own try block.
-- Delay. `respawnDelayMs` (SpawnNpcs.js 292-296): seconds = max(0, respawn); bias = max(0, bias); delay = seconds - bias + random x 2 x bias, in seconds, rounded to ms. With bias 0 the delay is exactly `respawn` seconds. With bias B it is spread over [respawn - B, respawn + B].
-- Placement. `spawnNpc` (154-166) refuses an inactive period (155), picks a point (156), and announces the new NPC to nearby sessions (164). It does NOT check whether any player is near the point. The comment at 161-163 says the announce is there so a new mob cannot aggro a player before that player's next movement refresh.
-- Period. `normalizePeriod` (53-55) maps `period` to day, night or always. A day/night change (DayNightSpawnManager.js `changeMode`, 34-65): sets the new mode (39), bumps `periodRevision` (40), stops NPCs whose period is now inactive and decays them (42-47), then respawns each active periodic definition that is not present (54-60). A respawn timer for a periodic row is dropped at fire time if the revision differs or the period is inactive (RemoveNpc.js 42). Non-periodic respawns always go ahead (7).
-- Grace. `createNpc` calls `NpcAggro.armSpawnGrace` (SpawnNpcs.js 38), which sets `aggroEligibleAt = now + 10000` (NpcAggro.js 79; constant at line 4). The comment at NpcAggro.js 1-3 says this mirrors Lineage 2 global aggro of -10, decremented once per second. The aggro check that reads `aggroEligibleAt` (`canEngage`) was not read.
-- Timing. No tick loop. Respawns are one `setTimeout` per death. The day/night clock is `schedule()` (DayNightSpawnManager.js 67-76), which waits `GameTime.msUntilTransition(now)` and then calls `changeMode`. Timing runs on wall-clock timers, not on a fixed server step.
-- Absent: no population cap at respawn (the non-raid path checks only the period, RemoveNpc.js 42), no idle despawn for empty zones, no grace before despawn. A grep for "despawn" over `src` finds only quest-NPC paths (`despawnQuestNpc`, SpawnNpcs.js 205-206 and 220, and the quest files). Corpse removal is separate (NpcDecay.js, `schedule()` read only). The one "cap" in the spawn path is `spawn.total`, a fixed per-row count used at boot.
+- Startup (World.js 128-152): `World.spawnNpcs()` runs before the reaper and the day/night manager start (145, 148, 149). For each row and each spawn entry, the loop runs `spawn.total` times (SpawnNpcs.js 244). A row with explicit coords spawns once per coords entry on each of those passes (246-249), so total x coords-count NPCs; a row with random bounds spawns one per pass (267). Rows with a period are also pushed to `npc.periodDefinitions` (251, 266) for later refill. The mode is set at init (World.js 138).
+- Spawn (SpawnNpcs.js 154-166): `spawnNpc` refuses if the row is inactive in the current period (155), picks random coords from the row (156), creates the NPC (`spawnDefinition`, 134-152, which re-checks the period at 135), arms the spawn aggro grace (38, which sets `aggroEligibleAt = now + 10000` ms in NpcAggro.js 77-81), pushes it to `world.npc.spawns` (39), and announces it to sessions within `VISIBILITY_RADIUS` = 6000 (9, 164). No player-presence check happens anywhere on this path.
+- Death (RemoveNpc.js 12-53), in this order: (a) the corpse decay is scheduled first with `SpoilSweep.corpseTime` (17, 24); (b) if the row has `respawn > 0` (31; `shouldRespawn` 290), the delay is `respawn` seconds plus or minus `bias` seconds, drawn uniformly, in ms (32; 293-295); the comment at 28-29 says the respawn is measured from the death, not from corpse removal; (c) a plain `setTimeout` (40, no handle kept, no `unref`) fires after the delay, and if `canRespawnDefinition` (6-10) says no, it returns (42), else it calls `this.spawnNpc(this, definition)` (43); a failure is logged once and not retried (45-47); (d) rewards run last, inside a try (52-53). Raid bosses take a different branch (34-38) and are not covered here.
+- Day/night (DayNightSpawnManager.js 34-84): one game day is 4 real hours from local midnight (GameTime 1), one game minute is 10 s real time (2), sunrise is game minute 360 (4), and "night" is any game minute below 360 (32). From the constants, night is 1 real hour of each 4-hour cycle and day is 3 hours (computed, not measured). `schedule` sets a timeout to the next transition (67-76; `msUntilTransition` at 73, computed in GameTime 39-44). `changeMode` returns early if the mode is unchanged (37), otherwise bumps `periodRevision` (40), stops every inactive periodic NPC (46), removes them with `decayMany` (47), then spawns one NPC for each periodic definition that is active in the new mode and has no live NPC (presentDefinitions identity check, 51-56), then broadcasts sunrise or sunset. `start` reconciles the mode at boot (78-84).
+- Corpse (NpcDecay.js 24-109, 187-243): each corpse gets `corpseDecayAt = now + delay` (32) and a one-shot timer (34). A 1000 ms `setInterval` reaper (3, 221-237) sweeps expired corpses (187-219, test at 197). After 3 failed sweeps (4, 213) a corpse is discarded. Spoiled, sweepable corpses last at least 30000 ms (SpoilSweep.js 15, 185).
+- Tick: no fixed-step loop. The respawn is a timeout per death, the corpse is a timeout plus a 1 s interval reaper, and day/night is a timeout chain on the wall clock.
 
 ## 2. Key functions
 
-- `spawnNpcs()`: `/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/Generics/SpawnNpcs.js` 235-275. Boot placement: total copies per row, times coords when explicit (244-267).
-- `spawnNpc()`: `/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/Generics/SpawnNpcs.js` 154-166. Period gate (155), random point (156), announce (164).
-- `respawnDelayMs()`: `/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/Generics/SpawnNpcs.js` 292-296. The jitter formula (295).
-- `removeNpc()`: `/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/Generics/RemoveNpc.js` 12-60. Death path; respawn timer 31-50.
-- `canRespawnDefinition()`: `/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/Generics/RemoveNpc.js` 6-10.
-- `changeMode()`: `/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/DayNightSpawnManager.js` 34-65. Revision bump, removal, refill.
-- `armSpawnGrace()`: `/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Npc/NpcAggro.js` 77-80. Sets the 10 s eligibility time.
+- `spawnNpcs`: `/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/Generics/SpawnNpcs.js` 235-275. Fills every row at startup (count loop 244).
+- `spawnNpc` and `spawnDefinition`: same file, 154-166 and 134-152. Period gate, coords, creation, grace, grid, announce.
+- `respawnDelayMs` and `shouldRespawn`: same file, 289-296. Respawn seconds plus or minus bias, uniform, in ms.
+- `removeNpc` (the death handler): `/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/Generics/RemoveNpc.js` 12-60. Corpse schedule, respawn timer, rewards. `canRespawnDefinition` 6-10.
+- `changeMode`: `/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/DayNightSpawnManager.js` 34-65. Revision bump, removal of inactive periodic NPCs, refill of active periodic rows. `schedule` 67-76, `start` 78-84.
+- `sweepExpired`, `schedule`, `decay`: `/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/Generics/NpcDecay.js` 187-219, 24-48, 50-109.
 
 ## 3. Numbers vs mechanism
 
-| Reusable algorithm | Game-specific constants |
+| Reusable algorithm | Donor constants and data |
 |---|---|
-| Replacement after death: delay = respawn seconds, jittered by plus or minus bias seconds, uniform | `respawn` and `bias` are per-row integers in seconds in the datapack (`data/Npcs/Spawns/*.json`). Rows read: c4_garden_of_beasts.json lines 77-79 show total 1, respawn 40, bias 0. c4_catacomb_of_dark_omen.json line 114 shows respawn 120 (its bias not read). Formula theirs (SpawnNpcs.js 295). |
-| Respawn switched off by a zero or missing respawn | `respawn > 0` (SpawnNpcs.js 290) |
-| Replacement at a random listed point | Points from the row's `coords` list (SpawnNpcs.js 69); bounds polygon via `random-point-in-shape` otherwise (78-79) |
-| Day/night presence swap with a revision counter | `period` enum always, day or night (SpawnNpcs.js 53-55); revision bump (DayNightSpawnManager.js 40) |
-| Spawn aggro grace | 10000 ms, `SPAWN_AGGRO_DELAY_MS` (NpcAggro.js 4), an engine constant |
-| Fixed per-row count at boot | `total` (integer, per row; SpawnNpcs.js 244). Not a cap: it is never checked again after boot. |
+| A row holds a fixed count and refills one slot per death | `spawn.total` per row (zone data; the count is the loop bound, SpawnNpcs.js 244) |
+| Respawn delay = base +/- uniform jitter, from the death | `spawn.respawn` seconds (zone data; 0 = never, 290) and `spawn.bias` seconds (zone data; default 0, 293-295) |
+| A stale respawn timer is dropped after a period flip | `periodRevision` integer, +1 per real mode change (engine, DayNightSpawnManager.js 40) |
+| Periodic rows are removed at the flip and refilled at the next | `period` `always` / `day` / `night` per row (zone data; SpawnNpcs.js 63) |
+| Corpse leaves on its own clock, independent of respawn | corpse time from the model (not read); spoiled minimum 30000 ms (engine, SpoilSweep.js 15) |
+| Reaper sweep interval and retry cap | 1000 ms interval (engine, NpcDecay.js 3); 3 failed sweeps (engine, 4) |
+| Day length and sunrise | 4 h day (engine, GameTime.js 1); 10 s per game minute (engine, 2); sunrise at game minute 360 (engine, 4) |
+| Spawn aggro grace | 10000 ms (engine, NpcAggro.js 4) |
+| Announce radius | 6000 units (engine, SpawnNpcs.js 9) |
 
 ## 4. TypeScript sketch
 
-simplified: the sketch uses a due list polled by `tick(now)` instead of one `setTimeout` per death, so it runs on a fixed step; the donor is wall-clock. It models only the random-points branch of boot (total copies per row), so the explicit-coords multiplication (total at each listed coord) is omitted. It omits the bounds polygon, the raid-boss branch, corpse decay, rewards, quest NPCs, child and minion spawns, the `notifyNearby` packets, and the donor's identity-based refill (one spawn per missing periodic definition object). Order kept: a death schedules one respawn with its delay computed at death; at fire time a periodic respawn is dropped if the revision changed or the period is inactive; a mode change bumps the revision, removes inactive periodic mobs, and refills each active slot to `total`.
+simplified: keeps a count per row instead of NPC objects; drops the corpse timer, the reaper, the grid, the packets, the rewards and the raid-boss path. `fill()` tops a row up to its total in one pass, where the donor spawns one NPC per periodic definition. The 1000 ms retry on a failed spawn is a Frankendom addition: the donor's ordinary respawn only logs the failure (RemoveNpc.js 45-47), while its raid-boss path does retry (SpawnNpcs.js 125-127). The jitter formula has the donor's shape, clamped at zero. The stale-timer rule is applied to periodic rows only, as the donor's `canRespawnDefinition` does. Timers are injected through `Host`, so the file has no clock.
 
 ```ts
-// Donor licence: Apache-2.0 (LICENSE read). Clean-room sketch written from the mechanism read in
-// SpawnNpcs.js, RemoveNpc.js, DayNightSpawnManager.js and NpcAggro.js, not a translation.
+// Licence: Apache-2.0 (donor LICENSE). Clean-room sketch written from the described mechanism, not a translation of the donor lines.
 type Period = 'always' | 'day' | 'night';
 type Mode = 'day' | 'night';
 
-interface Point { x: number; y: number; }
-
-interface SpawnSlot {
-  total: number;      // copies placed at boot and refilled after a period change
-  points: Point[];    // listed points; each copy picks one at random
-  respawnS: number;   // seconds from death to replacement (0 = no respawn)
-  biasS: number;      // +/- jitter in seconds
+interface SpawnRow {
+  id: number;
+  total: number;      // members the row keeps alive in the zone (count)
+  respawnS: number;   // seconds after a death before a member returns; 0 = never (s)
+  biasS: number;      // uniform jitter, +/- seconds (s)
   period: Period;
 }
 
-interface Mob {
-  slot: SpawnSlot;
-  at: Point;
-  aggroEligibleAt: number;
+interface Host {
+  after(ms: number, fn: () => void): void; // timer
+  spawnOne(rowId: number): boolean;        // false = the spawn failed, no member made
+  rand(): number;                          // uniform in [0, 1)
 }
 
-interface DueRespawn { at: number; slot: SpawnSlot; revisionAtDeath: number; }
-
-const SPAWN_AGGRO_DELAY_MS = 10000;
-
-function isActive(period: Period, mode: Mode): boolean {
-  return period === 'always' || period === mode;
-}
-
-function respawnDelayMs(slot: SpawnSlot, random: () => number): number {
-  const seconds = Math.max(0, slot.respawnS);
-  const bias = Math.max(0, slot.biasS);
-  return Math.round((seconds - bias + random() * bias * 2) * 1000);
-}
-
-export class ZoneSpawner {
+class ZonePopulation {
   private mode: Mode = 'day';
   private revision = 0;
-  private mobs: Mob[] = [];
-  private due: DueRespawn[] = [];
+  private alive = new Map<number, number>();
+  private rows = new Map<number, SpawnRow>();
 
-  constructor(private readonly slots: SpawnSlot[], private readonly random: () => number = Math.random) {}
+  constructor(rows: SpawnRow[], private host: Host) {
+    for (const r of rows) {
+      this.rows.set(r.id, r);
+      this.alive.set(r.id, 0);
+    }
+    for (const r of rows) this.fill(r, this.revision);
+  }
 
-  boot(now: number): void {
-    for (const slot of this.slots) {
-      for (let i = 0; i < slot.total; i++) this.spawn(slot, now);
+  private isActive(row: SpawnRow): boolean {
+    return row.period === 'always' || row.period === this.mode;
+  }
+
+  private count(id: number): number {
+    return this.alive.get(id) ?? 0;
+  }
+
+  private delayMs(row: SpawnRow): number {
+    const seconds = Math.max(0, row.respawnS);
+    const bias = Math.max(0, row.biasS);
+    return Math.max(0, Math.round((seconds - bias + this.host.rand() * bias * 2) * 1000));
+  }
+
+  // Tops a row up to its total. A failed spawn is retried after 1 s (a Frankendom addition;
+  // the donor's ordinary respawn only logs the failure).
+  private fill(row: SpawnRow, rev: number): void {
+    while (this.isActive(row) && this.count(row.id) < row.total) {
+      if (!this.host.spawnOne(row.id)) {
+        this.host.after(1000, () => {
+          if (rev === this.revision) this.fill(row, rev);
+        });
+        return;
+      }
+      this.alive.set(row.id, this.count(row.id) + 1);
     }
   }
 
-  private spawn(slot: SpawnSlot, now: number): Mob | null {
-    if (!isActive(slot.period, this.mode)) return null;
-    const pick = slot.points[Math.floor(this.random() * slot.points.length)];
-    const mob: Mob = { slot, at: { x: pick.x, y: pick.y }, aggroEligibleAt: now + SPAWN_AGGRO_DELAY_MS };
-    this.mobs.push(mob);
-    return mob;
+  onDeath(rowId: number): void {
+    const row = this.rows.get(rowId);
+    if (!row) throw new Error(`unknown row ${rowId}`);
+    this.alive.set(rowId, Math.max(0, this.count(rowId) - 1));
+    if (row.respawnS <= 0) return; // respawn 0 = this row never respawns
+    const rev = this.revision;
+    this.host.after(this.delayMs(row), () => {
+      // a periodic row's timer from an older period revision is dropped
+      if (row.period !== 'always' && rev !== this.revision) return;
+      if (!this.isActive(row)) return;
+      this.fill(row, rev);
+    });
   }
 
-  kill(mob: Mob, now: number): void {
-    const index = this.mobs.indexOf(mob);
-    if (index < 0) return;
-    this.mobs.splice(index, 1);
-    if (mob.slot.respawnS > 0) {
-      this.due.push({ at: now + respawnDelayMs(mob.slot, this.random), slot: mob.slot, revisionAtDeath: this.revision });
-    }
-  }
-
-  // The donor uses one setTimeout per death; this sketch polls a due list once per server tick.
-  tick(now: number): void {
-    const ready = this.due.filter((d) => d.at <= now);
-    this.due = this.due.filter((d) => d.at > now);
-    for (const d of ready) {
-      const periodic = d.slot.period !== 'always';
-      if (periodic && (d.revisionAtDeath !== this.revision || !isActive(d.slot.period, this.mode))) continue;
-      this.spawn(d.slot, now);
-    }
-  }
-
-  setMode(next: Mode, now: number): void {
-    if (next === this.mode) return;
+  // Day/night flip: bump the revision (invalidates pending periodic timers),
+  // remove inactive periodic members, then refill every active row.
+  flip(next: Mode): { removed: number; spawned: number } {
+    if (next === this.mode) return { removed: 0, spawned: 0 };
     this.mode = next;
     this.revision += 1;
-    this.mobs = this.mobs.filter((m) => m.slot.period === 'always' || isActive(m.slot.period, next));
-    for (const slot of this.slots) {
-      if (!isActive(slot.period, next)) continue;
-      let present = this.mobs.filter((m) => m.slot === slot).length;
-      while (present < slot.total) {
-        this.spawn(slot, now);
-        present += 1;
+    let removed = 0;
+    for (const row of this.rows.values()) {
+      if (row.period !== 'always' && !this.isActive(row)) {
+        removed += this.count(row.id);
+        this.alive.set(row.id, 0);
       }
     }
+    let spawned = 0;
+    for (const row of this.rows.values()) {
+      const before = this.count(row.id);
+      this.fill(row, this.revision);
+      spawned += this.count(row.id) - before;
+    }
+    return { removed, spawned };
+  }
+
+  aliveCount(rowId: number): number {
+    return this.count(rowId);
   }
 }
 
-export {};
+// Usage with a fake host, so the file exercises the types.
+const pending: Array<() => void> = [];
+const zone = new ZonePopulation(
+  [
+    { id: 1, total: 3, respawnS: 60, biasS: 10, period: 'always' },
+    { id: 2, total: 2, respawnS: 120, biasS: 0, period: 'night' },
+  ],
+  { after: (_ms, fn) => { pending.push(fn); }, spawnOne: () => true, rand: () => 0.5 },
+);
+zone.onDeath(1);
+zone.flip('night');
 ```
+
+Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS, with `export {}` appended in the checked copy (`/tmp/pmbstyle-L2Solo-spawn-population.ts`): exit 0.
 
 ## 5. Lands in
 
-- TARGET `origins/server/world-spawns.ts` (the zone-population engine file named in the addendum for row 23; the Frankendom file was not read, so "today" is not stated). Parity row 23 (zone population: spawn caps, respawn, despawn on empty with grace timer). The donor covers the respawn-after-death timer and the spawn grace for row 23; it does NOT cover the cap or the despawn parts.
-- Server tick sub-line (addendum): the donor's respawn is event-driven (setTimeout). Frankendom should run these timers on the fixed server step ("server tick: fixed step, input intake, per-tick NPC budget").
-- Reuse tag: adapt (Apache-2.0: code may be adapted, keep the NOTICE if any code is copied; the sketch above is clean-room in any case)
-- Brief rule served: zones as data on one engine (the numbers respawn, bias, total and period are zone data; the respawn logic is engine code); rules 7-9 n/a
+- TARGET `origins/server/world-spawns.ts` (zone population: per-row totals, respawn timers, day/night flip, stale-timer guard). Parity-checklist row 23 (zone population: spawn caps, respawn, despawn). The server tick sub-line does not apply here: the donor uses timeouts and a 1 s reaper, not a tick loop.
+- Reuse tag: adapt (Apache-2.0: the code may be adapted; this sketch is written from the mechanism, not copied)
+- Brief rule served: zones as data (per-row fields `total`, `respawn`, `bias`, `period` live in zone data); one engine (the timer and the refill are engine logic); Apache-2.0 permits the adapted shape.
 
 ## 6. Gaps and risks
 
-- Row 23 gap: the donor has no population cap and no despawn on empty. `total` is a boot count that is never enforced again, so a row can grow past it only through other paths (quest or child spawns, not read). Frankendom must add the cap and the empty-zone despawn with a grace timer itself.
-- No presence check: `spawnNpc` (SpawnNpcs.js 154-166) places a replacement without checking nearby players. The donor only announces it. Frankendom zones need a rule for not spawning in view of a player; the donor does not have one.
-- Two meanings of `total`: with explicit coords it means copies per coord (total x coords.length, SpawnNpcs.js 244-247); with random points it means copies per row. A zone-data field needs one meaning.
-- Wall-clock timers: one `setTimeout` per death and one for the day/night clock. Under load the respawn drifts from the server step, which breaks any test that expects exact ticks. Use the fixed step instead.
-- Day/night is clock-driven (`GameTime` not read). Frankendom would need a clock source for `period` on zones; whether Frankendom wants day/night zones is a Lead call (not read).
-- The 10 s spawn grace is read from the constant and its comment. The aggro check that uses `aggroEligibleAt` (`canEngage`, NpcAggro.js) was not read, so "does not engage until 10 s" is the intended meaning, not verified behaviour.
-- Raid bosses take a separate path (`RaidBossState`, RespawnPolicy). Not read. Frankendom should not port that path from this donor.
-- Bot population (`Bot/Population/PopulationSeedPlanner.js`, a `maxPopulation` hard cap of 1700 default and regional targets) is a separate population cap for bot characters. Only grepped, not read. It is a candidate for a later row 23 check, not part of this note.
-
-Reuse tag: adapt (Apache-2.0; permissive)
-Brief rule served: zones as data on one engine; rules 7-9 n/a
+- No zone cap and no despawn on empty. Row 23 asks for caps, respawn and despawn on an empty zone with a grace timer. This donor keeps each row at its fixed total forever and refills on each death. It has no zone-wide cap, no empty-zone despawn and no grace timer. Frankendom must write that rule itself.
+- No presence gate. `spawnNpc` (SpawnNpcs.js 154-166) never checks for players. A respawn fires after its delay whether or not anyone is near; the player-facing effects on this path are the announce packet to sessions within 6000 units (9, 164) and the 10 s aggro grace (NpcAggro.js 4, 79). Frankendom has to decide whether an empty zone refills.
+- The ordinary respawn does not retry. A failed spawn is logged once (RemoveNpc.js 45-47) and the row stays short. Only periodic rows get a backstop, at the next flip. Non-periodic rows get none. The sketch retries after 1 s; a server test must show the row refills.
+- The respawn timers are untracked. They are plain `setTimeout` calls with no handle and no `unref` (RemoveNpc.js 40-48), and `World.init` (128-152) rebuilds `npc` but does not clear them. Frankendom's one engine should own them in a wheel or list with cancel.
+- Explicit-coords rows multiply. The count loop (SpawnNpcs.js 244) and the coords loop (246) together spawn total x coords-count NPCs. This was read from the code, not checked against any data row. Do not port this shape without a check.
+- Clock, not tick. Day and night switch on a wall-clock timeout (DayNightSpawnManager.js 67-76), not on the server tick. Frankendom's server tick should drive the flip so tests can step it.
+- Kills and rewards are not decided here. `npcRewards` (RemoveNpc.js 53) ran but was not read; the module does not verify kills. Frankendom's rulings (server-verified kills, one ledger) must come from the engine, not this function.
+- Corpse and respawn are separate timers (RemoveNpc.js 28-29, 24, 40), so a respawn can appear while the corpse is still visible. That is the intended shape here; Frankendom's Pit client must not assume a corpse is gone when the replacement appears.
+- The one clear rule to take is the stale-timer guard: a respawn timer captures the period revision at death and is dropped if the revision has changed (RemoveNpc.js 33, 42; DayNightSpawnManager.js 40).

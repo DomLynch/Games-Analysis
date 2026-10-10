@@ -1,0 +1,97 @@
+{
+ "game": "pmbstyle-L2Solo",
+ "category": "server-tick-netcode",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Bot/Population/BackgroundJobRegistry.js",
+ "licence": "as read",
+ "licence_class": "permissive",
+ "target_module": "src/fight/tick.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "fixed-step",
+  "compute-budget",
+  "clamp-and-report",
+  "presence-gated",
+  "new:lag-gate-admission",
+  "new:window-budget-lease"
+ ],
+ "data_fields": [
+  {
+   "name": "tick_interval_ms",
+   "donor_constant": "250 default, floor 50",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Bot/Population/PopulationConfig.js:65"
+  },
+  {
+   "name": "job_interval_ms",
+   "donor_constant": "max(tick, max(100, window or 1000))",
+   "unit": "ms",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Bot/Population/PopulationService.js:1579"
+  },
+  {
+   "name": "job_offset_ms",
+   "donor_constant": "min(5000, max(tick, goalInterval/4)) plus tick multiples",
+   "unit": "ms",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Bot/Population/PopulationService.js:1583"
+  },
+  {
+   "name": "budget_window_ms",
+   "donor_constant": "1000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Bot/Population/PopulationConfig.js:66"
+  },
+  {
+   "name": "budget_cap_idle_ms",
+   "donor_constant": "250 per window",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Bot/Population/PopulationConfig.js:67"
+  },
+  {
+   "name": "budget_cap_protected_ms",
+   "donor_constant": "50 per window (player protected)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Bot/Population/PopulationConfig.js:68"
+  },
+  {
+   "name": "lag_abort_ms",
+   "donor_constant": "120",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Bot/Population/PopulationConfig.js:71"
+  },
+  {
+   "name": "pass_request_idle_ms",
+   "donor_constant": "80 (code fallback)",
+   "unit": "ms",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Bot/Population/PopulationService.js:1636"
+  },
+  {
+   "name": "pass_request_protected_ms",
+   "donor_constant": "20 (code fallback, capped at idle request)",
+   "unit": "ms",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Bot/Population/PopulationService.js:1637"
+  },
+  {
+   "name": "pass_minimum_ms",
+   "donor_constant": "min(10, requested)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Bot/Population/PopulationService.js:1643"
+  }
+ ],
+ "best_idea": "Let background work take a leased slice of a per-second millisecond budget, cut the slice while a player is in a fight, charge the measured time when the work ends, and never let a job overlap itself.",
+ "decision": "adapt",
+ "decision_why": "The shape (no-overlap fixed-interval jobs that catch up in one run, and a budget that yields to the protected player) fits the per-tick NPC budget; the donor numbers, the DB and SQLite gates, and the bot job names do not transfer.",
+ "decision_status": "proposed",
+ "acceptance": "A server test in which a 90 ms zone NPC pass is charged 90 ms, a second pass in the same 1000 ms window is deferred as budget_exhausted while a fight is protected (50 ms cap), and the fight step still runs on its fixed tick while the lag gate is closed."
+}

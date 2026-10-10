@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+TrinityCore-TrinityCore	combat-sim	P	STRONG	full	Unit.cpp:1689-1778 armour mitigation min(a/(a+K),0.85) with penetration cap; callers Unit.cpp:1213 and 1399
+TrinityCore-TrinityCore	ai-aggro	P	STRONG	full	ThreatManager.cpp:596-649 victim hysteresis (110% keep, 130% switch, melee override) driven by ThreatManager.cpp:215-231 timer
+TrinityCore-TrinityCore	spawns-encounters	P	STRONG	full	PoolMgr.cpp:277-342 pool max_limit refill with trigger, one chance roll, random fill; Map.cpp:2236-2285 respawn queue; Map.cpp:2287-2329 dynamic respawn scaling

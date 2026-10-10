@@ -1,0 +1,20 @@
+{"game":"AAEmu-AAEmu","category":"combat-sim","cell":1,"verdict":"STRONG","depth":"full",
+ "donor_path":"/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/Skills/Effects/DamageEffect.cs",
+ "licence":"LGPL-3.0 (README; LICENSE.GPL and LICENSE.MIT also present; per-file licence not established)","licence_class":"copyleft",
+ "target_module":"src/fight/hit.ts","parity_row":1,
+ "pattern_tags":["new:dice-cascade","new:armour-soak","clamp-and-report"],
+ "data_fields":[
+  {"name":"armour_softcap_K","donor_constant":"5300 (armour / (armour + 5300))","unit":"units","where":"engine constant","donor_ref":"DamageEffect.cs:326"},
+  {"name":"pvp_toughness_K","donor_constant":"8000 (BattleResist / (8000 + BattleResist), PvP only)","unit":"units","where":"engine constant","donor_ref":"DamageEffect.cs:298"},
+  {"name":"bulls_eye_defence_penalty","donor_constant":"BullsEye / 1000 x 3 / 100 subtracted from each defence rate","unit":"ratio","where":"engine constant","donor_ref":"Skill.cs:1472"},
+  {"name":"flexibility_crit_penalty","donor_constant":"trunc(Flexibility / 1000) x 3 percent points off crit chance (integer division)","unit":"ratio","where":"engine constant","donor_ref":"DamageEffect.cs:125"},
+  {"name":"defence_rates_dodge_block_parry","donor_constant":"percent 0-100 per unit (DodgeRate, BlockRate, MeleeParryRate, RangedParryRate)","unit":"ratio","where":"zone data","donor_ref":"Unit.cs:172"},
+  {"name":"accuracy_default","donor_constant":"100 percent","unit":"ratio","where":"engine constant","donor_ref":"Unit.cs:134"},
+  {"name":"cast_factor_fallback","donor_constant":"1000 ms for casts of 1000 ms or less; else cast time in ms","unit":"ms","where":"engine constant","donor_ref":"DamageEffect.cs:197"},
+  {"name":"health_steal_ratio","donor_constant":"HealthStealRatio / 100 of value (ability data)","unit":"ratio","where":"zone data","donor_ref":"DamageEffect.cs:346"}
+ ],
+ "best_idea":"Resolve one hit as an ordered cascade of named results (immune, stored miss, front-only dodge, block, parry, accuracy, then crit) and reduce damage by one armour curve, armour / (armour + 5300), returning value and absorbed so the client can show both.",
+ "decision":"adapt",
+ "decision_why":"The ordered cascade and the armour curve are clean, testable and server-side, so take their shape for one duel-step resolver; but the donor's stat names, cast-time-times-dps base and integer divisions are quirks not to copy, and guard, stamina and hit impact belong to rows 3 and 10.",
+ "decision_status":"proposed",
+ "acceptance":"A server test with a scripted random source: a front-facing defender that rolls dodge, block and parry returns exactly one of them in that order; accuracy 100 never misses; armour 1000 on a 100-damage hit gives value 84 and absorbed 15; a melee crit multiplies before the armour curve."}

@@ -1,0 +1,18 @@
+{"game":"LostCityRS-Client-TS","category":"camera","cell":14,"verdict":"STRONG","depth":"full","donor_path":"/mnt/frankendom-donors/LostCityRS-Client-TS/src/client/Client.ts","licence":"MIT License","licence_class":"permissive","target_module":"src/fight/worldCamera.ts","parity_row":11,"pattern_tags":["follow-point","fixed-step","accumulator","hysteresis","new:orbit-velocity-impulse","new:terrain-pitch-floor"],"data_fields":[
+{"name":"follow_divisor","donor_constant":"16 (gap closed per tick = 1/16)","unit":"ratio","where":"engine constant","donor_ref":"src/client/Client.ts:3236"},
+{"name":"follow_snap_gap","donor_constant":"500","unit":"units","where":"engine constant","donor_ref":"src/client/Client.ts:3230"},
+{"name":"yaw_speed_target","donor_constant":"24","unit":"units","where":"engine constant","donor_ref":"src/client/Client.ts:3244"},
+{"name":"pitch_speed_target","donor_constant":"12","unit":"units","where":"engine constant","donor_ref":"src/client/Client.ts:3252"},
+{"name":"pitch_min","donor_constant":"128 (about 22.5 degrees)","unit":"units","where":"engine constant","donor_ref":"src/client/Client.ts:3262"},
+{"name":"pitch_max","donor_constant":"383 (about 67.3 degrees)","unit":"units","where":"engine constant","donor_ref":"src/client/Client.ts:3264"},
+{"name":"distance_base","donor_constant":"600","unit":"units","where":"zone data","donor_ref":"src/client/Client.ts:4194"},
+{"name":"distance_per_pitch","donor_constant":"3","unit":"ratio","where":"zone data","donor_ref":"src/client/Client.ts:4194"},
+{"name":"terrain_window_radius","donor_constant":"4 (9x9 tiles)","unit":"count","where":"engine constant","donor_ref":"src/client/Client.ts:3275"},
+{"name":"terrain_clamp_factor","donor_constant":"192 per unit of rise","unit":"ratio","where":"engine constant","donor_ref":"src/client/Client.ts:3291"},
+{"name":"terrain_floor_rise_divisor","donor_constant":"24 (1/24 per tick)","unit":"ratio","where":"engine constant","donor_ref":"src/client/Client.ts:3299"},
+{"name":"terrain_floor_fall_divisor","donor_constant":"80 (1/80 per tick)","unit":"ratio","where":"engine constant","donor_ref":"src/client/Client.ts:3301"},
+{"name":"tick_ms","donor_constant":"20","unit":"ms","where":"engine constant","donor_ref":"src/client/GameShell.ts:11"},
+{"name":"aim_height_above_ground","donor_constant":"50","unit":"units","where":"engine constant","donor_ref":"src/client/Client.ts:4194"},
+{"name":"shake_amp_ran_rate","donor_constant":"packet bytes (no fixed value)","unit":"units","where":"zone data","donor_ref":"src/client/Client.ts:6356"},
+{"name":"shoulder_offset","donor_constant":"not in donor (sketch value 0)","unit":"units","where":"zone data","donor_ref":"not in donor (ADDED in sketch)"}
+],"best_idea":"A third-person camera can run as two rates: the focus eases toward the hero on each fixed tick, yaw and pitch are velocities that ease in while a key or drag is held and halve on release, and the pitch floor rises fast and falls slowly with the terrain while the distance grows with pitch.","decision":"adapt","decision_why":"Centred orbit with no shoulder offset, no wall pull-in and no recentring, so it does not solve over-the-shoulder alone; the tick-stepped follow, the velocity input and the asymmetric terrain pitch floor are cheap shapes to take into the world camera, with the truncation fixed and a shoulder offset and wall pull-in added by us.","decision_status":"proposed","acceptance":"After a run up a slope the camera lifts over about 0.5 s and settles back over about 1.6 s with no jitter; a test feeding the same 1 s of input at 50 Hz and 144 Hz asserts the same camera pose within 1 unit.","camera_scope":"world"}

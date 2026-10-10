@@ -1,0 +1,21 @@
+{"game":"exult-exult", "category":"camera", "cell":14, "verdict":"STRONG", "depth":"full", "camera_scope":"world",
+ "donor_path":"/mnt/frankendom-donors/exult-exult/gamewin.cc", "licence":"GPL-2.0-or-later (gamewin.cc header: either version 2 of the License, or any later version; COPYING is GPLv2 text)", "licence_class":"copyleft",
+ "target_module":"src/fight/camera.ts", "parity_row":11,
+ "pattern_tags":["follow-point","hysteresis","variable-step","new:snap-on-far-jump","new:stop-settle","new:screen-shake"],
+ "data_fields":[
+  {"name":"dead_box_tiles","donor_constant":"2 (2x2 box centred in the view)","unit":"count","where":"engine constant","donor_ref":"gamewin.cc:1090"},
+  {"name":"snap_threshold_tiles","donor_constant":"4 (glide only when the change is fewer than 4 tiles)","unit":"count","where":"engine constant","donor_ref":"gamerend.cc:466"},
+  {"name":"frame_delay_ms","donor_constant":"1000 / fps, fps default 5 (200 ms)","unit":"ms","where":"engine constant","donor_ref":"gamewin.cc:624"},
+  {"name":"glide_percent_of_step","donor_constant":"0 by default (glide off); glide = step time x percent / 100","unit":"ratio","where":"engine constant","donor_ref":"gamewin.cc:387"},
+  {"name":"glide_window_multiple","donor_constant":"2 x glide duration","unit":"ratio","where":"engine constant","donor_ref":"exult.cc:1497"},
+  {"name":"slow_walk_threshold","donor_constant":"frame time >= 1.5 x std_delay (no glide)","unit":"ratio","where":"engine constant","donor_ref":"exult.cc:1450"},
+  {"name":"shake_offset_px","donor_constant":"-4..+4 per axis (rand % 9 - 4)","unit":"px","where":"engine constant","donor_ref":"effects.cc:1846"},
+  {"name":"shake_pass_interval_ms","donor_constant":"100","unit":"ms","where":"engine constant","donor_ref":"effects.cc:1868"},
+  {"name":"shake_first_delay_ms","donor_constant":"10","unit":"ms","where":"engine constant","donor_ref":"usecode/intrinsics.cc:2072"},
+  {"name":"shake_passes","donor_constant":"len from the usecode call (2 in one other caller)","unit":"count","where":"zone data","donor_ref":"usecode/intrinsics.cc:2072"}
+ ],
+ "best_idea":"Keep the world camera still while the hero stays inside a centred dead box, move it one step only when the hero leaves that box, and glide the move without crossing a jump larger than a few tiles.",
+ "decision":"adapt",
+ "decision_why":"The dead box, look-ahead on the destination tile, snap threshold and stop-settle are the parts a 3D third-person follow camera can keep; the donor is a 2D tile scroll, so pixel offsets and map wrap are rejected.",
+ "decision_status":"proposed",
+ "acceptance":"The camera holds still while the hero moves inside the centre box, follows within one step time after the hero leaves it with no overshoot, and snaps for a jump at or above the snap distance; a client test asserts the position is unchanged for moves inside the box and reaches the target within one glide length."}

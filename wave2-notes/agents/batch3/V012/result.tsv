@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+SWG-Source-swg-main	combat-sim	P	STRONG	full	tools/figureOfMeritCombatSimulator.pl:77-168 hit band ladder and damage draw; 365-412 loop; offline sim, live source absent from donor
+SWG-Source-swg-main	ai-aggro	P	NONE	thin	tools/ClientBuildoutGenerator.java:149,604 update radius only; no aggro/threat/chase code anywhere in donor; tools/gold_export/templates.dat:7753 name only
+SWG-Source-swg-main	spawns-encounters	P	PARTIAL	thin	tools/gold_export/divide.pl:66-140 tiled static placement only (8x8 tiles, 2048 local); no population cap, respawn, despawn or encounter logic in donor

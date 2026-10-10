@@ -1,0 +1,45 @@
+{
+ "game": "swgemu-Core3",
+ "category": "quests-dialogue",
+ "cell": 12,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/conversation/ConversationObserverImplementation.cpp",
+ "licence": "AGPL-3.0",
+ "licence_class": "copyleft",
+ "target_module": "origins/dialogue/conversation.ts",
+ "parity_row": 20,
+ "pattern_tags": [
+  "new:talk-graph",
+  "new:state-gated-line",
+  "new:range-leash"
+ ],
+ "data_fields": [
+  {
+   "name": "talk_range",
+   "donor_constant": "7",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "CreatureObject.idl:240"
+  },
+  {
+   "name": "deliver_states",
+   "donor_constant": "0 init, 1 picked up, 2 delivered",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "DeliverMissionObjective.idl:25"
+  },
+  {
+   "name": "no_mission_line_variants",
+   "donor_constant": "5 (System.random(4) + 1)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "DeliverMissionScreenHandler.cpp:128"
+  }
+ ],
+ "best_idea": "Run NPC dialogue as a server-side graph of screens whose text is chosen from the same quest state the talk changes, with a range leash that ends the talk when the player walks away.",
+ "decision": "adapt",
+ "decision_why": "Take the data-driven screen graph, per-talk session with a range leash, and state-gated lines; add a hop limit to the handler chain, use one fixed line per state instead of random lines, and decide the lost-item rule before building.",
+ "decision_status": "proposed",
+ "acceptance": "Talking to the pickup NPC once gives one item and sets picked up; a second talk says already picked up; a destination talk without the item says give-item and leaves the state; with the item it delivers, removes the item and sets delivered; walking 8 units away ends the talk."
+}

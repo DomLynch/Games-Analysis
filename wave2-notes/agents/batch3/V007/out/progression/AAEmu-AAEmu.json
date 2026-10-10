@@ -1,0 +1,124 @@
+{
+ "game": "AAEmu-AAEmu",
+ "category": "progression",
+ "cell": 10,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/NPChar/Npc.cs",
+ "licence": "as read: LICENSE.GPL (GPL-3.0 full text); README 'Licensing information' header text is LGPL-3.0; LICENSE.MIT (MIT, Rain0Ash 2019) present, scope unclear",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/xp.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "xp-share",
+  "level-gap",
+  "new:group-share-factor",
+  "new:death-xp-loss",
+  "new:level-table-overflow"
+ ],
+ "data_fields": [
+  {
+   "name": "zero_band_levels",
+   "donor_constant": "10 (no XP at a gap of +10 or more, or -10 or less)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "AAEmu.Game/Models/Game/NPChar/Npc.cs:950"
+  },
+  {
+   "name": "level_gap_step",
+   "donor_constant": "0.1 per level of gap",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "AAEmu.Game/Models/Game/NPChar/Npc.cs:962"
+  },
+  {
+   "name": "group_factor_two_players",
+   "donor_constant": "0.90 (player line 932; pet line 933)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "AAEmu.Game/Models/Game/NPChar/Npc.cs:932"
+  },
+  {
+   "name": "group_factor_three_players",
+   "donor_constant": "0.875",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "AAEmu.Game/Models/Game/NPChar/Npc.cs:937"
+  },
+  {
+   "name": "group_factor_full_party",
+   "donor_constant": "0.66 when team has more than three members",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "AAEmu.Game/Models/Game/NPChar/Npc.cs:923"
+  },
+  {
+   "name": "team_size_threshold",
+   "donor_constant": "3 (full party when larger)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "AAEmu.Game/Models/Game/NPChar/Npc.cs:902"
+  },
+  {
+   "name": "raid_factor",
+   "donor_constant": "0.33 player, 0.66 pets (not used by Frankendom rule)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "AAEmu.Game/Models/Game/NPChar/Npc.cs:917"
+  },
+  {
+   "name": "npc_exp_multiplier",
+   "donor_constant": "NPC template ExpMultiplier (value per NPC)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "AAEmu.Game/Models/Game/NPChar/Npc.cs:824"
+  },
+  {
+   "name": "npc_exp_adder",
+   "donor_constant": "NPC template ExpAdder (value per NPC)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "AAEmu.Game/Models/Game/NPChar/Npc.cs:825"
+  },
+  {
+   "name": "server_exp_rate",
+   "donor_constant": "1.0 default",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "AAEmu.Game/Models/Game/Configurations.cs:48"
+  },
+  {
+   "name": "player_level_cap",
+   "donor_constant": "55",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "AAEmu.Game/Core/Managers/ExperienceManager.cs:23"
+  },
+  {
+   "name": "death_loss_rate",
+   "donor_constant": "0.05 of this level's span",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "AAEmu.Game/Models/Game/Configurations.cs:161"
+  },
+  {
+   "name": "death_loss_min_level",
+   "donor_constant": "10",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "AAEmu.Game/Models/Game/Configurations.cs:176"
+  },
+  {
+   "name": "death_recoverable_share",
+   "donor_constant": "0.80",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "AAEmu.Game/Models/Game/Char/CharacterCombat.cs:78"
+  }
+ ],
+ "best_idea": "Share one kill's XP across the eligible contributors with a group factor and a level-gap factor that falls 0.1 per level above the monster and rises 0.1 per level below, with no XP at a gap of 10 or more.",
+ "decision": "adapt",
+ "decision_why": "Take the group factor times level factor with the 10-level zero band and truncation; reject the raid and full-party factors (no raids in our rules) and the solo fallback that skips the level factor.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: with MAX_ATTACKERS = 3 and a level-20 monster, three contributors (levels 20, 21, 25) and a 1000 base award about 875, 787, 437 XP; a level-30 contributor gets 0 and still counts for loot rights."
+}

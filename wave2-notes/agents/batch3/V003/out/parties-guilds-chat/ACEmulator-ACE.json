@@ -1,0 +1,82 @@
+{
+ "game": "ACEmulator-ACE",
+ "category": "parties-guilds-chat",
+ "cell": 18,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Entity/Fellowship.cs",
+ "licence": "AGPL-3.0 (as read: LICENSE header GNU AFFERO GENERAL PUBLIC LICENSE Version 3)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/party-xp.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "xp-share",
+  "level-gap",
+  "stale-state",
+  "new:share-table-by-size",
+  "new:distance-falloff"
+ ],
+ "data_fields": [
+  {
+   "name": "evenShareLevel",
+   "donor_constant": "fellowship_even_share_level default 50 (all members >= this share evenly)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Managers/PropertyManager.cs:624"
+  },
+  {
+   "name": "evenShareLevelGap",
+   "donor_constant": "5 levels: even share when max leader-member gap <= 5",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Entity/Fellowship.cs:479"
+  },
+  {
+   "name": "proportionalLevelGap",
+   "donor_constant": "10 levels: proportional share when gap <= 10",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Entity/Fellowship.cs:484"
+  },
+  {
+   "name": "sizeShareTable",
+   "donor_constant": "1.0, .75, .6, .55, .5, .45, .4, .35, .3 for 1-9 members (read; receipts on function header and TODO line)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Entity/Fellowship.cs:604"
+  },
+  {
+   "name": "maxParty",
+   "donor_constant": "MaxFellows = 9",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Entity/Fellowship.cs:26"
+  },
+  {
+   "name": "fullShareRadius",
+   "donor_constant": "MaxDistance = 600 (full share inside)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Entity/Fellowship.cs:633"
+  },
+  {
+   "name": "zeroShareRadius",
+   "donor_constant": "2 x MaxDistance = 1200 (zero share at or beyond; linear between)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Entity/Fellowship.cs:659"
+  },
+  {
+   "name": "xpModifier",
+   "donor_constant": "xp_modifier default 1.0",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Managers/PropertyManager.cs:672"
+  }
+ ],
+ "best_idea": "A party's kill XP is a size-indexed share, scaled per member by distance, and the mode is picked from the level gap, so the rule can be a few zone-data numbers and one server function.",
+ "decision": "adapt",
+ "decision_why": "Take the share-by-size table (capped at MAX_ATTACKERS = 3), the distance falloff and the level-gap band as one server function; drop the indoor/landblock rules and the 9-member table, and keep the group total explicit in the ledger (the table makes the group total exceed the kill XP).",
+ "decision_status": "proposed",
+ "acceptance": "Server test: 3-member party, two members within 600 units and one at 900 units, all within 10 levels of the leader: a 1000 XP kill grants 600, 600 and 300 (total 1500), the ledger records each grant with its reason, and a member beyond 1200 units gets 0."
+}

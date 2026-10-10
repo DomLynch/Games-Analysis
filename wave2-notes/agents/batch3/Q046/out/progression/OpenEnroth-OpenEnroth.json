@@ -1,0 +1,88 @@
+{
+ "game": "OpenEnroth-OpenEnroth",
+ "category": "progression",
+ "cell": 10,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/Engine/Party.cpp",
+ "licence": "LGPL-3.0 (LICENSE, Version 3, 29 June 2007)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/progression.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "xp-share",
+  "new:gated-level-up",
+  "new:per-zone-level-cap",
+  "new:learning-bonus"
+ ],
+ "data_fields": [
+  {
+   "name": "kill_xp_per_monster",
+   "donor_constant": "per-monster exp value (table not read)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/Engine/Objects/Actor.cpp:3165"
+  },
+  {
+   "name": "learning_bonus_hireling",
+   "donor_constant": "teacher 10, instructor 15, scholar 5 (added)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/Engine/Objects/Character.cpp:714"
+  },
+  {
+   "name": "learning_mastery_multiplier",
+   "donor_constant": "novice 1, expert 2, master 3, grandmaster 5",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/Engine/Objects/Character.cpp:721"
+  },
+  {
+   "name": "learning_flat_bonus_when_skilled",
+   "donor_constant": "9",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/Engine/Objects/Character.cpp:723"
+  },
+  {
+   "name": "hall_level_cap",
+   "donor_constant": "Emerald Island 5, Harmondale 15, Erathia 25, Tularean Forest 25, Celeste 200, Pit 200, Mount Nighon no limit, Tatalia 50, Avlee 50, Stone City 100",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/GUI/UI/Houses/Training.cpp:19"
+  },
+  {
+   "name": "xp_gate_per_level",
+   "donor_constant": "1000 * L * (L+1) / 2 for current level L",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/GUI/UI/Houses/Training.cpp:66"
+  },
+  {
+   "name": "price_floor_fraction",
+   "donor_constant": "1/3 of base price",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/Engine/PriceCalculator.cpp:223"
+  },
+  {
+   "name": "skill_points_on_train",
+   "donor_constant": "new level / 10 + 5",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/GUI/UI/Houses/Training.cpp:71"
+  },
+  {
+   "name": "rest_after_new_party_high",
+   "donor_constant": "dawn + 4 h (+12 h Pit or Mount Nighon) + 7 days",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/GUI/UI/Houses/Training.cpp:82"
+  }
+ ],
+ "best_idea": "Split each kill's XP across the members still standing, scale each share by a learning bonus, and make level-up a trainer step gated by XP and a per-zone cap, all on one XP ledger.",
+ "decision": "adapt",
+ "decision_why": "Take the active-only split and the trainer gate on one XP ledger, because they fit many-on-one kills and zone caps as data; drop the 7-day rest and the gold price unless Frankendom has a gold economy.",
+ "decision_status": "proposed",
+ "acceptance": "With three members and two down, a 100 XP kill credits only the standing member (100 plus bonus) and a server test asserts the down members' ledger XP is unchanged; a zone with cap 15 refuses a level-16 train."
+}

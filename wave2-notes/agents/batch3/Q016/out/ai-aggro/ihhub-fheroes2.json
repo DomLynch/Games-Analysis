@@ -1,0 +1,117 @@
+{
+ "game": "ihhub-fheroes2",
+ "category": "ai-aggro",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/ai/ai_battle.cpp",
+ "licence": "GNU GPL v2 or later (ai_battle.cpp header line 6); repo LICENSE GPL v2",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/aggro.ts",
+ "parity_row": 4,
+ "pattern_tags": [
+  "target-score",
+  "threat-falloff",
+  "new:counter-discounted-threat",
+  "new:two-pass-target-pick",
+  "new:attack-slot-value"
+ ],
+ "data_fields": [
+  {
+   "name": "attack_range_extra",
+   "donor_constant": "speed + 1 (no distance cut inside this range)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/battle/battle_troop.cpp:1027"
+  },
+  {
+   "name": "walk_distance_factor",
+   "donor_constant": "1.5 x distance / speed",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/battle/battle_troop.cpp:1036"
+  },
+  {
+   "name": "counter_discount",
+   "donor_constant": "threat x (1 - min(counter / HP, 1)) on a double attack with counter",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/battle/battle_troop.cpp:1070"
+  },
+  {
+   "name": "double_attack_no_counter_factor",
+   "donor_constant": "2",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/battle/battle_troop.cpp:1074"
+  },
+  {
+   "name": "enemy_halving_factor",
+   "donor_constant": "2",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/battle/battle_troop.cpp:1079"
+  },
+  {
+   "name": "soul_eater_factor",
+   "donor_constant": "3",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/battle/battle_troop.cpp:1083"
+  },
+  {
+   "name": "hp_drain_factor",
+   "donor_constant": "1.3",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/battle/battle_troop.cpp:1087"
+  },
+  {
+   "name": "position_tie_epsilon",
+   "donor_constant": "0.001",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/ai/ai_battle.cpp:85"
+  },
+  {
+   "name": "overpower_ratio_walkers",
+   "donor_constant": "10",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/ai/ai_battle.cpp:1178"
+  },
+  {
+   "name": "overpower_ratio_flyers",
+   "donor_constant": "6",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/ai/ai_battle.cpp:1178"
+  },
+  {
+   "name": "shooter_ratio_floor",
+   "donor_constant": "0.15",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/ai/ai_battle.cpp:1212"
+  },
+  {
+   "name": "enemy_shooter_ratio_ceiling",
+   "donor_constant": "0.66",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/ai/ai_battle.cpp:1202"
+  },
+  {
+   "name": "unit_speed",
+   "donor_constant": "GetSpeed per unit (unit data not read)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/ai/ai_battle.cpp:1716"
+  }
+ ],
+ "best_idea": "Score each enemy by the damage it can do to you, cut by the distance it must walk and discounted when it draws a counter; attack the highest-scoring enemy you can already hit, and when none is in reach, walk toward the one with the most threat per step.",
+ "decision": "adapt",
+ "decision_why": "Keep the threat score as the one formula that the target pick, the slot pick and the walk-to pick share, since it gives the engine an explicit rule for many-on-one; drop the turn-based cell distance (use ticks to reach) and the archer-blocking sum, since Frankendom is real-time with MAX_ATTACKERS = 3 and has no cell grid in a duel.",
+ "decision_status": "proposed",
+ "acceptance": "A server test with three attackers and one free slot gives the slot to the attacker with the highest threat; an enemy that cannot evade (archer, immovable, or slower walker) is chosen before a flyer with a higher threat; a double-attacking enemy with a counter scores below the same enemy without one."
+}

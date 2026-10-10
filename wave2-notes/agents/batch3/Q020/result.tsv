@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+freeorion-freeorion	ai-aggro	P	STRONG	thin	/mnt/frankendom-donors/freeorion-freeorion/default/python/AI/MilitaryAI.py:281-304 and 622-852 (Allocator.allocate; three-pass threat allocation per AI turn), with AIstate.py:612-657 (threat memory 0.98 and visible threat); enemy sensing 437-529 and fleet ratings not read
+dhewm-dhewm3	ai-aggro	P	STRONG	full	/mnt/frankendom-donors/dhewm-dhewm3/neo/d3xp/ai/AI.cpp:3869-3925 (UpdateEnemyPosition: per-frame tracked point, sight, hearing fallback within 2048), with AI_events.cpp:380-409 (nearest visible target) and Actor.cpp:1505-1527 (CanSee/CheckFOV); monster scripts not read
+OpenGothic	ai-aggro	P	STRONG	full	/mnt/frankendom-donors/OpenGothic/common/world/objects/npc.cpp:2161-2183 (updateNearestEnemy: sticky nearest hostile) with 4188-4229 (perceptionProcess: per-NPC perception clock and range drop); attack decision in scripts not read

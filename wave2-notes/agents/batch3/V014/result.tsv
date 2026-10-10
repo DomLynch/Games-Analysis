@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+SWG-Source-swg-main	quests-dialogue	P	STRONG	full	tools/ScanScript.pl:92-141: a build-time check that expands ranged dialogue references and diffs them against the string table (range bound read as one digit at line 103); runtime dialogue not in donor
+SWG-Source-swg-main	camera	P	NONE	thin	tools/ClientBuildoutGenerator.java:149-218,604: relevance radius and player-view flag for client world data, not camera; no camera code anywhere in donor (grep)
+SWG-Source-swg-main	parties-guilds-chat	P	NONE	thin	tools/stopServer.pl:9 and build.xml:289-291: chat is only a kill-by-name and a cmake build of an empty submodule; no party, guild or chat logic in donor

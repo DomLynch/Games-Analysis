@@ -1,0 +1,108 @@
+{
+ "game": "angband-angband",
+ "category": "loot-drops",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/angband-angband/src/mon-make.c",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/loot.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "drop-filter",
+  "new:spawn-time-roll",
+  "new:carry-until-death"
+ ],
+ "data_fields": [
+  {
+   "name": "drop_flag_20_chance",
+   "donor_constant": "20 percent, +1 item",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-make.c:721"
+  },
+  {
+   "name": "drop_flag_40_chance",
+   "donor_constant": "40 percent, +1 item",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-make.c:722"
+  },
+  {
+   "name": "drop_flag_60_chance",
+   "donor_constant": "60 percent, +1 item",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-make.c:723"
+  },
+  {
+   "name": "drop_4_count_max",
+   "donor_constant": "6 (random 2..6)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-make.c:704"
+  },
+  {
+   "name": "drop_3_count_max",
+   "donor_constant": "4 (random 2..4)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-make.c:705"
+  },
+  {
+   "name": "drop_2_count_max",
+   "donor_constant": "3 (random 1..3)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-make.c:706"
+  },
+  {
+   "name": "entry_chance",
+   "donor_constant": "percent_chance per specific entry",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-make.c:831"
+  },
+  {
+   "name": "entry_count_range",
+   "donor_constant": "randint0(max-min)+min, upper bound excluded",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-make.c:731"
+  },
+  {
+   "name": "unique_level_bonus",
+   "donor_constant": "min(level+15, level*2)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-make.c:785"
+  },
+  {
+   "name": "drop_level_cap",
+   "donor_constant": "100",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-make.c:792"
+  },
+  {
+   "name": "gold_share_when_both_allowed",
+   "donor_constant": "50 percent",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-make.c:868"
+  },
+  {
+   "name": "good_item_level_boost",
+   "donor_constant": "+10 levels",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/obj-make.c:1182"
+  }
+ ],
+ "best_idea": "Roll a monster's drop list once when it is created on the server, carry it on the creature, and release exactly that list on death so a kill cannot re-roll the loot.",
+ "decision": "adapt",
+ "decision_why": "The spawn-time roll stops a client re-rolling by dying and fits server-verified kills, but the Angband item economy numbers (50/50 gold, artifact odds) are not Frankendom's and stay out.",
+ "decision_status": "proposed",
+ "acceptance": "A server test spawns a creature with a percent entry, kills it, and asserts the dropped list equals the list rolled at spawn with no second roll; a player sees the pile where the creature fell."
+}

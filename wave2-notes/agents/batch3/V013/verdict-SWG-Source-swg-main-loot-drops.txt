@@ -1,0 +1,17 @@
+SWG-Source-swg-main | loot-drops | category_no 8 | verdict NONE | depth thin | licence_class restricted
+Donor: /mnt/frankendom-donors/SWG-Source-swg-main (no licence file in the root; _RESTRICTED-NOTE.txt says proprietary leaked official SWG source, no licence; read for shape only)
+
+Files opened (5):
+1. /mnt/frankendom-donors/SWG-Source-swg-main/tools/gold_export/templates.dat (head, and the loot rows at 10909-10917)
+2. /mnt/frankendom-donors/SWG-Source-swg-main/tools/gold_export/templates.pl (whole file, 58 lines)
+3. /mnt/frankendom-donors/SWG-Source-swg-main/tools/gold_export/export.pl (lines 1-150 of 190)
+4. /mnt/frankendom-donors/SWG-Source-swg-main/tools/figureOfMeritCombatSimulator.pl (lines 77-135: the only random draws on a hit)
+5. /mnt/frankendom-donors/SWG-Source-swg-main/tools/SwgExcelDataTableExport.bas (whole file, 41 lines)
+
+Search: grep -rniw over all text files (binaries and the tools/lint folder excluded) for loot, drop, corpse, reward, experience, money, trade, vendor, auction, economy, schematic, rand, chance, roll. "loot" and "corpse" appear only as object template path names (tools/gold_export/templates.dat, e.g. the player corpse row at line 10875). "drop" appears only in a comment about dropping a database (build.properties line 4). No drop table, drop roll, chance check or ownership rule exists in any text file.
+
+Why NONE and not PARTIAL: the donor has no game-server source for loot. The folders src, dsrc, serverdata, stationapi and exe are empty submodule mounts (listed in .gitmodules, nothing inside). tools/swgautobuild.tar is an autotools and distcc toolchain (listed, not extracted). The loot-named rows are container template names; the number beside each is an update radius (templates.pl line 42), not a drop rate. Binary tools (*.exe, ELF files) were not read.
+
+Best transferable idea: none for loot from this donor; the loot roll itself is absent, so the nearest idea is keeping container and drop-source templates as one data catalogue, which Frankendom already does.
+Decision (proposed): reject - there is no loot mechanism here to adopt; Frankendom's loot roll (checklist row 18) must be written from our own rules, and this donor should not be waited on for it.
+Receipts: receipts.tsv rows for loot (6), verifier passed (receipts ok 6 failed 0).

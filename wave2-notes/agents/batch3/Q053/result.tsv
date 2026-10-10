@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+azerothcore-azerothcore-wotlk	progression	P	STRONG	full	src/server/game/Entities/Player/KillRewarder.cpp:84-190 and 289-314, Miscellaneous/Formulas.cpp:27-136: one kill's XP is split by level share, party-size rate, grey-victim halving and a higher-level-attacker halving guard
+2004Scape-Server	progression	P	STRONG	full	src/engine/entity/Player.ts:77-99 and 1732-1806: skill XP stored as one number, level derived from a fixed threshold table, and a drained level replenishes by the levels gained on level-up
+electronicarts-CnC_Remastered_Collection	progression	P	STRONG	full	TIBERIANDAWN/SCORE.CPP:643-697 and 870-914 with COORDA.ASM:69-129: end-of-scenario rating from survival and retention shares with weights 40/14 over base 4600, times scenario+1, into a 7-place table (no XP or levels exist in this donor; topic fit medium confidence)

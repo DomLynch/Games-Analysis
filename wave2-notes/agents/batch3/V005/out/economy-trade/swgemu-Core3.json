@@ -1,0 +1,80 @@
+{
+ "game": "swgemu-Core3",
+ "category": "economy-trade",
+ "cell": 11,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/auction/AuctionManagerImplementation.cpp",
+ "licence": "AGPL-3.0",
+ "licence_class": "copyleft",
+ "target_module": "origins/economy/auction.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "new:proxy-bid",
+  "new:leader-debit-refund",
+  "new:listing-fee-multiplier"
+ ],
+ "data_fields": [
+  {
+   "name": "listing_fee",
+   "donor_constant": "20 credits (SALESFEE)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "AuctionManager.idl:38"
+  },
+  {
+   "name": "premium_listing_multiplier",
+   "donor_constant": "5",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "AuctionManagerImplementation.cpp:753"
+  },
+  {
+   "name": "merchant_fee_discount_01",
+   "donor_constant": "0.80",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "AuctionManagerImplementation.cpp:745"
+  },
+  {
+   "name": "merchant_fee_discount_03",
+   "donor_constant": "0.60",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "AuctionManagerImplementation.cpp:749"
+  },
+  {
+   "name": "city_sales_tax_rate",
+   "donor_constant": "getSalesTax() percent, per city",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "CityRegion.idl:759"
+  },
+  {
+   "name": "max_bazaar_price",
+   "donor_constant": "20000",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "AuctionManager.idl:36"
+  },
+  {
+   "name": "vendor_listing_expiry",
+   "donor_constant": "2592000",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "AuctionManager.idl:44"
+  },
+  {
+   "name": "commodity_listing_expiry",
+   "donor_constant": "604800",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "AuctionManager.idl:45"
+  }
+ ],
+ "best_idea": "A hidden-maximum (proxy) bid where the leader pays only the rise above the challenger's maximum, with the takeover refund set to the leader's own recorded debit.",
+ "decision": "reject",
+ "decision_why": "Frankendom's rulings have no market and the parity checklist has no row for one, so the mechanism has no slot yet; if a market or bid-for-drop feature is approved, adopt the proxy rule and the leaderPaid refund, not the donor's refund.",
+ "decision_status": "proposed",
+ "acceptance": "If built: a lot at 100, leader max 500; challenger offers 150 with max 300, price becomes 350, leader debit 250 (total 350), challenger not debited; then a bidder offers 400 with max 600 and the old leader is refunded 350, not 400."
+}

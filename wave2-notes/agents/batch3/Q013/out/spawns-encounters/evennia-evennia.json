@@ -1,0 +1,60 @@
+{
+  "game": "evennia-evennia",
+  "category": "spawns-encounters",
+  "cell": 8,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/evennia-evennia/evennia/scripts/ondemandhandler.py",
+  "licence": "BSD 3-Clause License (as read: repo LICENSE.txt line 1)",
+  "licence_class": "permissive",
+  "target_module": "origins/server/world-spawns.ts",
+  "parity_row": 23,
+  "pattern_tags": [
+    "timer-wheel",
+    "stale-state",
+    "new:lazy-observe-timer",
+    "new:cycle-count-on-observe"
+  ],
+  "data_fields": [
+    {
+      "name": "stage_at_s",
+      "donor_constant": "stage table keyed by seconds; caller data; test table 0, 50, 150, 300, 400 (tests.py 554-558), no production values in donor",
+      "unit": "s",
+      "where": "zone data",
+      "donor_ref": "/mnt/frankendom-donors/evennia-evennia/evennia/scripts/ondemandhandler.py:230"
+    },
+    {
+      "name": "cycle_s",
+      "donor_constant": "rule: max(stage keys) - min(stage keys)",
+      "unit": "s",
+      "where": "zone data",
+      "donor_ref": "/mnt/frankendom-donors/evennia-evennia/evennia/scripts/ondemandhandler.py:127"
+    },
+    {
+      "name": "cycle_loop",
+      "donor_constant": "rule: loop enabled by attaching stagefunc_loop to the last stage",
+      "unit": "none",
+      "where": "zone data",
+      "donor_ref": "/mnt/frankendom-donors/evennia-evennia/evennia/scripts/ondemandhandler.py:106"
+    },
+    {
+      "name": "spawn_cap_per_batch",
+      "donor_constant": "none in donor; wrapped cycles are counted without a limit",
+      "unit": "count",
+      "where": "zone data",
+      "donor_ref": "/mnt/frankendom-donors/evennia-evennia/evennia/scripts/ondemandhandler.py:130"
+    },
+    {
+      "name": "grace_s",
+      "donor_constant": "none in donor; check() has no occupancy input",
+      "unit": "s",
+      "where": "zone data",
+      "donor_ref": "/mnt/frankendom-donors/evennia-evennia/evennia/scripts/ondemandhandler.py:246"
+    }
+  ],
+  "best_idea": "Keep one start time and a stage table per spawn group, and work out respawn state only when someone looks, counting the cycles that wrapped since the last look, instead of running a ticker per zone.",
+  "decision": "adapt",
+  "decision_why": "Same shape as zone respawn timing (cycle length plus stage thresholds evaluated on observation), but the donor's wrap label, unbounded catch-up count and pickled-callback store clash with server-verified state and the one ledger, so take the shape and change those three things.",
+  "decision_status": "proposed",
+  "acceptance": "A server test observes a zone after 20 unseen cycles and asserts newCycles is 20, spawns are capped at the zone spawn cap, and the first observation on the wrap moment returns the post-wrap stage, never a loop label."
+}

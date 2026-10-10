@@ -1,113 +1,109 @@
-# open-duelyst-duelyst (spawns-encounters, cell 1)
+# open-duelyst-duelyst (spawns-encounters, cell 4)
 
-Donor: `/mnt/frankendom-donors/open-duelyst-duelyst/app/sdk/playerModifiers/playerModifierEndTurnRespawnEntityAnywhere.coffee` | Licence: CC0-1.0 (root LICENSE file is CC0 1.0 Universal; package.json line 3 `"license": "CC0-1.0"`) | CoffeeScript | symbol `PlayerModifierEndTurnRespawnEntityAnywhere.onEndTurn`
+Donor: `/mnt/frankendom-donors/open-duelyst-duelyst/app/sdk/playerModifiers/playerModifierEndTurnRespawnEntityAnywhere.coffee` | Licence: CC0-1.0 (LICENSE and COPYING line 3 read; package.json "license": "CC0-1.0") | CoffeeScript | symbol `PlayerModifierEndTurnRespawnEntityAnywhere.onEndTurn`
 
-Checked: The hint file is read in full (32 lines). The spell that queues it, `app/sdk/spells/spellDeathIncoming.coffee`, is read in full (22 lines). The tile picker `UtilsGameSession.getSmartSpawnPositionsFromPattern` (97-108) and `getRandomSmartSpawnPositionsFromPattern` (120-139) are read. The turn-end dispatch (gameSession.coffee 1326, 1843-1849) and the modifier duration code (modifier.coffee 2111-2131, 2215-2218) are read. Confidence: high on the order of steps and the numbers. Not read: how the `end_turn` event is routed to a card-attached modifier, so it is not checked whether the respawn fires on the owner's own turn end or on either player's turn end (the hook has no turn check in this file); the obstruction test body `getObstructionAtPositionForEntity`; the `KillAction` path; the board size constants `BOARDCOL` and `BOARDROW` (values not read). Callers: `createContextObject` has one caller in the code, the spell (spellDeathIncoming.coffee:13); `modifierFactory.coffee:2141` only rebuilds the class on deserialize.
+Checked: Symbol `PlayerModifierEndTurnRespawnEntityAnywhere.onEndTurn` at playerModifierEndTurnRespawnEntityAnywhere.coffee 20-30 (read in full). Also read: utils_game_session.coffee 97-108 (`getSmartSpawnPositionsFromPattern`, body read), gameSession.coffee 1326, 1845-1849, 1881-1885, 2431-2435, 837-838; modifier.coffee 2111-2132, 2215-2219; spells/spellDeathIncoming.coffee 8-22 (whole file); cards/factory/unity/faction4.coffee 84-91; app/common/config.js 1106-1114. camera_scope: not applicable. Callers: `getSmartSpawnPositionsFromPattern` has more than 20 callers (grep, output truncated at 30 lines); I read only the respawn caller and describe the function body, not every caller. Not read: PlayCardSilentlyAction, `getObstructionAtPositionForEntity`, the client side that replays authoritative sub-actions, and the card's in-game text. Confidence: high on what the code does per end turn; medium on the exact interleaving of the spawn and the duration phase (read from event push order, not run).
 
 ## 1. Mechanism
 
-- Trigger: a non-General unit is targeted by the Death Incoming spell. The spell first queues a player-level respawn modifier on the owner's General (lines 13-14) and only then executes a kill action on the unit (lines 17-20). The queue step records the unit's card data (`target.createNewCardData()`), so the copy is made from the unit as it was at death.
-- Waiting: the modifier has `durationEndTurn: 1` (line 12). It does nothing until the next end-turn event reaches its `onEndTurn` hook (line 20). The hook is gated on `cachedIsActive` in the base class (modifier.coffee 2216-2218).
-- Firing (authoritative side only, line 23): build the candidate list from the whole-board pattern centred on (0,0) (line 25, `CONFIG.PATTERN_WHOLE_BOARD`, config.js 1106-1114). Each offset is kept only if it is on the board and the tile is not obstructed for that card type (utils_game_session.coffee 104-106).
-- Pick: if the list is empty, nothing happens (line 26). Otherwise one random index is drawn over the list length (line 27) and a silent play-card action places a copy of the unit on that tile (line 28, executed at line 30).
-- Expiry: the end-turn duration tick runs in the end-turn phase, after the `end_turn` event (gameSession.coffee 1843-1849: "this must always be the last thing in the end turn phase"). The modifier is removed when its end-turn count reaches 1 (modifier.coffee 2124-2126). So the respawn hook runs before the tick removes the modifier.
-- Result: a unit killed by the spell comes back once, on a random free tile, at the next end-turn event the modifier receives while it is active. If the modifier is not active, the inactive branch of the duration tick removes it without calling the hook (modifier.coffee 2128-2132). If no tile is free at that moment, the respawn is dropped with no retry.
+- The effect is "a unit dies now and comes back at the next end turn on a random free cell". It is a two-part effect: a death, then a queued respawn.
+- Order of steps when the card resolves (`spellDeathIncoming.coffee` 8-20): (a) if the target is a unit and not a General, build a respawn modifier from a snapshot of the unit's card data taken before the kill (13); (b) apply that modifier to the caster's General (14); (c) then execute the kill (17-20). The General is never respawned: line 12 skips it.
+- The respawn modifier has `durationEndTurn: 1` (`playerModifierEndTurnRespawnEntityAnywhere.coffee` 12). The only hook it overrides is `onEndTurn` (20-30).
+- At each end turn, `onEndTurn` (20-30) does, only on the authoritative session (23): (a) resolve the cached card from the snapshot (24); (b) collect candidate cells with `getSmartSpawnPositionsFromPattern` over `CONFIG.PATTERN_WHOLE_BOARD` from `{x:0,y:0}` (25); (c) if the list is non-empty (26), pick one index uniformly with `getRandomIntegerForExecution` (27); (d) play the card there as a silent play action owned by the modifier's player (28-30).
+- If the candidate list is empty, nothing is placed (26 has no else branch). The modifier still expires (see below), so the unit is lost for good. This is the donor's behaviour, not a feature.
+- Candidate filter (`utils_game_session.coffee` 97-108): for each pattern offset, add it to the source cell (104), keep the cell if it is on the board and `getObstructionAtPositionForEntity` is empty for this card (105). Nothing else is checked here.
+- Expiry: the end-turn event is pushed when the turn ends (gameSession 1326, with `executeAuthoritativeSubActions: !@getIsRunningAsAuthoritative()`). The duration counter moves later, in a `modifier_end_turn_duration_change` event that is pushed only once the action queue is empty (1845-1849, and 1881-1885 on the other branch). That handler increments `numEndTurnsElapsed` (modifier.coffee 2117) and removes the modifier when it reaches `durationEndTurn` (2124-2126 for active modifiers; 2131-2132 for inactive ones).
+- Tick: no per-frame loop. It runs once per end-turn event. Not a timer in seconds.
 
 ## 2. Key functions
 
-- `PlayerModifierEndTurnRespawnEntityAnywhere.onEndTurn`: `/mnt/frankendom-donors/open-duelyst-duelyst/app/sdk/playerModifiers/playerModifierEndTurnRespawnEntityAnywhere.coffee` 20-30. Gate, candidate list, random pick, silent play.
-- `SpellDeathIncoming.onApplyEffectToBoardTile`: `/mnt/frankendom-donors/open-duelyst-duelyst/app/sdk/spells/spellDeathIncoming.coffee` 8-20. Queue the respawn on the General, then kill the unit.
-- `UtilsGameSession.getSmartSpawnPositionsFromPattern`: `/mnt/frankendom-donors/open-duelyst-duelyst/app/common/utils/utils_game_session.coffee` 97-108. Pattern offsets filtered by board and obstruction.
-- `UtilsGameSession.getRandomSmartSpawnPositionsFromPattern`: `/mnt/frankendom-donors/open-duelyst-duelyst/app/common/utils/utils_game_session.coffee` 120-139. Same filter, then `spawnCount` random picks without replacement (splice at 135). Used by other modifiers, not by this hook (read for comparison).
-- `GameSession.getRandomIntegerForExecution`: `/mnt/frankendom-donors/open-duelyst-duelyst/app/sdk/gameSession.coffee` 2431-2434. Random integer from `Math.random`, and it flags the executing action as random.
+- `PlayerModifierEndTurnRespawnEntityAnywhere.onEndTurn`: `/mnt/frankendom-donors/open-duelyst-duelyst/app/sdk/playerModifiers/playerModifierEndTurnRespawnEntityAnywhere.coffee` 20-30. The whole respawn: authoritative gate, candidate list, random pick, silent play.
+- `UtilsGameSession.getSmartSpawnPositionsFromPattern`: `/mnt/frankendom-donors/open-duelyst-duelyst/app/common/utils/utils_game_session.coffee` 97-108. Pattern offsets, on-board and unobstructed filter. Returns the list (not a random pick).
+- `SpellDeathIncoming.onApplyEffectToBoardTile`: `/mnt/frankendom-donors/open-duelyst-duelyst/app/sdk/spells/spellDeathIncoming.coffee` 8-20. Queues the snapshot, then kills.
+- `GameSession.getRandomIntegerForExecution`: `/mnt/frankendom-donors/open-duelyst-duelyst/app/sdk/gameSession.coffee` 2431-2435. `min + Math.floor(Math.random() * (max - min))`, and marks the executing action as having randomness.
+- `Modifier._onEndTurnDurationChange`: `/mnt/frankendom-donors/open-duelyst-duelyst/app/sdk/modifiers/modifier.coffee` 2111-2132. Counts end turns, expires the modifier.
 
 ## 3. Numbers vs mechanism
 
 | Reusable algorithm | Game-specific constants |
 |---|---|
-| Queue the respawn before the death is applied, so the copy uses the unit's data at death | None (ordering) |
-| Respawn lasts one boundary, then expires | `durationEndTurn: 1` (theirs, playerModifierEndTurnRespawnEntityAnywhere.coffee 12) |
-| Candidate tiles = pattern offsets from an origin, kept if on board and unobstructed | Origin (0,0) and whole-board pattern (theirs, playerModifierEndTurnRespawnEntityAnywhere.coffee 25; config.js 1108-1110 builds the offsets from -BOARDCOL/-BOARDROW up to the board size) |
-| Pick one candidate uniformly at random | Count 1 (theirs, playerModifierEndTurnRespawnEntityAnywhere.coffee 27) |
-| No free tile means no respawn, no retry | Silent drop (theirs, playerModifierEndTurnRespawnEntityAnywhere.coffee 26) |
-| Random draw is not seeded: it is `Math.random` and the action is flagged | Flag set at gameSession.coffee 2432-2433 |
+| Snapshot the unit before it dies, queue it, place it later | None (ordering in spellDeathIncoming.coffee 13 then 20) |
+| Candidate cells = whole board, filtered by on-board and unobstructed | Whole board: offsets from -BOARDCOL to BOARDCOL-1 and -BOARDROW to BOARDROW-1 (config.js 1108-1109, theirs) |
+| Uniform random pick among the free candidates | `Math.random` via getRandomIntegerForExecution (gameSession.coffee 2432, theirs) |
+| Respawn happens once, on the next end-turn event | `durationEndTurn: 1` (playerModifierEndTurnRespawnEntityAnywhere.coffee 12, theirs) |
+| Empty candidate list means the respawn is dropped | None (no else branch, line 26) |
+| Respawn is decided only on the authoritative side | `getIsRunningAsAuthoritative()` gate (line 23, theirs) |
+| Card cost of the effect | `card.manaCost = 3` (faction4.coffee 91, theirs; not a respawn rule) |
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order (queue, then on a boundary event build candidates, pick one, spawn, then expire the entry). It omits the authoritative-only gate (the server runs it; the sketch is server code by assumption), the card-type obstruction rule (any occupied tile blocks here), the cached active-state check, the `createNewCardData` copy (the sketch stores only the kind), the silent-play flag, and the bonus-turn duration change. It also fires for every queued entry at any boundary, with no owner or active-state check, which the donor does have (the hook is gated on `cachedIsActive`). It does not reorder anything: the donor spawns before the duration tick removes the entry, and so does the sketch. It also keeps the donor's silent drop when no tile is free, as the donor does.
+simplified: the sketch merges the donor's two phases (spawn in the end-turn event, counting in the later duration-change event) into one loop, and scans cells x-outer from 0 instead of the donor's pattern order (x from -BOARDCOL), so the same random number can pick a different cell. It omits the cached-card lookup, the silent play action and its effects on other units, the source attribution, the owner check on the General, the authoritative sub-action replay, the randomness flag used for replay, and the multi-source conflict resolver (not used by this modifier).
 
 ```ts
-// clean-room sketch from the described mechanism; not a translation of the donor
-type Cell = { x: number; y: number };
+// Licence: CC0-1.0 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
+interface Pos { x: number; y: number; }
+
+interface PendingRespawn {
+  ownerId: number;
+  unitData: unknown;        // snapshot taken before the unit died
+  endTurnsElapsed: number;
+  durationEndTurns: number; // donor: 1
+}
 
 interface Board {
   cols: number;
   rows: number;
-  occupied(c: Cell): boolean; // true when a unit or blocker sits on the tile
+  isFree(p: Pos): boolean;  // on board and unoccupied (donor: isOnBoard + obstruction check)
+  place(p: Pos, ownerId: number, unitData: unknown): void;
 }
 
-interface PendingRespawn {
-  owner: number;
-  kind: string;
-  boundariesLeft: number; // donor: durationEndTurn = 1, so one boundary
+// Called at the moment a unit is killed by the respawn effect: the snapshot is queued, not placed.
+function queueRespawn(pending: PendingRespawn[], ownerId: number, unitData: unknown): void {
+  pending.push({ ownerId, unitData, endTurnsElapsed: 0, durationEndTurns: 1 });
 }
 
-// Called when a unit dies. The donor queues the respawn before the kill is applied.
-function queueRespawn(pending: PendingRespawn[], owner: number, kind: string): void {
-  pending.push({ owner, kind, boundariesLeft: 1 });
-}
-
-// Candidate tiles: pattern offsets from an origin, kept only if on the board and free.
-function candidateTiles(board: Board, origin: Cell, pattern: Cell[]): Cell[] {
-  const out: Cell[] = [];
-  for (const o of pattern) {
-    const c = { x: origin.x + o.x, y: origin.y + o.y };
-    if (c.x < 0 || c.y < 0 || c.x >= board.cols || c.y >= board.rows) continue;
-    if (board.occupied(c)) continue;
-    out.push(c);
+// Called once per end turn. Only the authoritative side chooses a cell; non-authoritative sessions do not (donor flag, replay not read).
+function onEndTurn(pending: PendingRespawn[], board: Board, isAuthoritative: boolean, rng: () => number): void {
+  for (const r of pending) {
+    if (isAuthoritative) {
+      const free: Pos[] = [];
+      for (let x = 0; x < board.cols; x++) {
+        for (let y = 0; y < board.rows; y++) {
+          if (board.isFree({ x, y })) free.push({ x, y });
+        }
+      }
+      if (free.length > 0) {
+        const pick = free[Math.floor(rng() * free.length)];
+        board.place(pick, r.ownerId, r.unitData);
+      }
+      // no free cell: nothing is placed and the entry is still removed below (donor behaviour)
+    }
   }
-  return out;
-}
 
-// Called at each boundary event. Spawns at most one unit per queued entry, then expires it.
-function onBoundary(
-  pending: PendingRespawn[],
-  board: Board,
-  pattern: Cell[],
-  rand: (n: number) => number, // server-side integer in [0, n)
-  spawn: (owner: number, kind: string, at: Cell) => void,
-): PendingRespawn[] {
-  const keep: PendingRespawn[] = [];
-  for (const p of pending) {
-    const free = candidateTiles(board, { x: 0, y: 0 }, pattern);
-    if (free.length > 0) spawn(p.owner, p.kind, free[rand(free.length)]);
-    p.boundariesLeft -= 1;
-    if (p.boundariesLeft > 0) keep.push(p);
+  // duration phase, after the queue drains: count the end turn, expire entries at their duration
+  for (const r of pending) r.endTurnsElapsed += 1;
+  for (let i = pending.length - 1; i >= 0; i--) {
+    if (pending[i].endTurnsElapsed >= pending[i].durationEndTurns) pending.splice(i, 1);
   }
-  return keep;
 }
 ```
 
-Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS exits 0 (file `/tmp/q002-tc/q002-open-duelyst-respawn.ts`).
-
 ## 5. Lands in
 
-- TARGET `origins/server/world-spawns.ts`: the server-side respawn of a dead zone unit onto a free tile inside the zone's coverage. Parity-checklist row 23 (zone population: spawn caps, respawn, despawn). Respawn timing is a real-time timer there, not an end-turn boundary (see section 6).
-- Reuse tag: adapt-allowed (CC0-1.0: code may be adapted; the sketch above is written from the mechanism).
-- Brief rule served: 1 (one engine; zones as data).
+- TARGET `origins/server/world-spawns.ts` (zone population, engine logic; numbers as zone data). Parity-checklist row 23 (zone population: spawn caps, respawn, despawn). Server-verified: the spawn decision only runs on the server.
+- Reuse tag: rewrite-from-idea (CC0-1.0 is permissive; code may be adapted, but the card rule itself is not a Frankendom rule)
+- Brief rule served: 1 (the server decides the spawn; clients do not choose it); zones as data for the spawn numbers.
+Best transferable idea: when a creature dies, queue a snapshot with a timer, and when the timer fires the server places it on a random free spawn cell and (our change, the donor drops it) keeps it queued if none is free.
+Decision (proposed): adapt — the queue-then-place-on-the-server shape fits row 23 respawn, but the donor drops the unit when no cell is free and uses a card-turn timer; Frankendom should use a seconds timer from zone data and keep the entry queued while the zone is full.
+Acceptance: a server test where a creature killed in zone Z with respawn_s = R reappears at one free spawn anchor after R seconds, only on the server tick; with every anchor occupied or the cap reached, no spawn occurs and the entry stays queued until a slot frees.
 
 ## 6. Gaps and risks
 
-- Turn boundary vs real time: the donor's trigger is the owner's end turn (or, as far as this file shows, any end-turn event). Frankendom has no turn; the trigger has to be a timer (respawn s) on the zone. The donor does not give a timer value; the one-boundary rule is the only timing.
-- Zones as data: the donor hard-codes `durationEndTurn: 1` and a whole-board pattern in the class. In Frankendom both belong to zone data: respawn seconds and coverage (a radius or a patch, not the whole board).
-- Server-verified: the donor gates the spawn on `getIsRunningAsAuthoritative()` (line 23), so the client never places the unit. The random draw itself is `Math.random` (gameSession.coffee 2432); the donor only flags the action as random (2433). Frankendom must draw on the server and send the chosen tile; a client must not be able to re-roll it.
-- Silent drop: if the candidate list is empty the respawn is lost (line 26). For a zone that is a player-visible bug (the mob never comes back). Frankendom should decide explicitly: retry each tick until a tile is free, or cap the wait.
-- Whose turn: this hook has no turn check, and how the event reaches a card-attached modifier was not read. Do not copy a turn rule from it.
-- Duelyst's obstruction test is per card type (passed as `cardToSpawn`); a Frankendom zone needs the same test per creature size (not read in the donor).
-- Count is fixed at one. Multi-spawn with conflicts between several sources is in the donor (`getRandomNonConflictingSmartSpawnPositionsFromPatterns`, utils_game_session.coffee 151-305, read but not traced end to end). That is a sibling mechanism, not part of this cell.
-
-Reuse tag: adapt-allowed (CC0-1.0). Brief rule served: 1 (one engine; zones as data).
-
-Best transferable idea: queue a dead unit's respawn before its death is applied, then on the next boundary pick one free tile from a coverage pattern and spawn it there, dropping nothing silently.
-Decision (proposed): adapt — the free-tile pick inside a zone's coverage fits row 23 respawn, but the turn trigger does not fit real time, and the server must draw the tile itself.
-Acceptance: when a zone creature dies with respawn set to N seconds, a creature of that kind appears on a free tile inside the zone coverage within N seconds, chosen on the server; a server test asserts the tile is free and inside coverage, and that a full zone retries instead of dropping the respawn.
+- The donor's rule is a card returning to the board at the next end turn, not a zone respawn. The timer is one end turn, not seconds. Frankendom's row 23 needs seconds from zone data.
+- Donor drops the respawn when no cell is free (line 26 has no else; the modifier expires at 2124-2126 or 2131-2132 either way). Frankendom must choose: keep queued, or drop with a logged reason. The donor's silent drop is a defect for a fast zone, not a feature to copy.
+- Donor picks any free cell on the whole board. Frankendom's zones need spawn anchors and coverage as data. The whole-board pattern (config.js 1106-1114) is the donor's choice, not a rule to port.
+- Randomness: `getRandomIntegerForExecution` uses `Math.random` (gameSession.coffee 2432). The donor flags the action as random (2433-2434) so replays know it was random; it does not make the result reproducible. Frankendom wants a seeded server RNG so a fight record can be replayed exactly (row 19).
+- The respawn is owned by the caster's player (`getPlayer().getPlayerId()`, line 28) and the modifier sits on the General. Zones have no owner. Frankendom's respawn must not copy the owner rule.
+- The respawn fires on the next end-turn event the modifier receives; the onEndTurn body does not check whose turn ended (lines 20-23). Whether an inactive General's modifier receives end-turn events was not verified.
+- The snapshot is taken before the kill (spellDeathIncoming.coffee 13, then the kill at 17-20). Frankendom must take the snapshot and apply the kill in one server-side step so one ledger records both.
+- Licence CC0-1.0 is a public-domain dedication. It is not in the MIT/Apache/BSD/ISC list, so `licence_class` is recorded as permissive here, with that caveat.

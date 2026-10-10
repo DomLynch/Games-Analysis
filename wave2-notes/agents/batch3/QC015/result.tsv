@@ -1,0 +1,2 @@
+game	category	old	verdict	depth	finding
+XProger-OpenLara	camera	P	STRONG	full	src/camera.h:356-632 (Camera::update), 330-354 (move), 248-288 (traceClip), 211-246 (clipSlide): third-person orbit follow, rate-based eye lerp, wall pull-in, per-state presets, shake; world camera

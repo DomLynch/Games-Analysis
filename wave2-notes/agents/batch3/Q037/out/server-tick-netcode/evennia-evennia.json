@@ -1,0 +1,46 @@
+{
+ "game": "evennia-evennia",
+ "category": "server-tick-netcode",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "thin",
+ "donor_path": "/mnt/frankendom-donors/evennia-evennia/evennia/scripts/tickerhandler.py",
+ "licence": "as read",
+ "licence_class": "permissive",
+ "target_module": "origins/server/timers.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "timer-wheel",
+  "new:shared-interval-group",
+  "new:deferred-mutation-during-pass",
+  "new:phase-preserving-restart"
+ ],
+ "data_fields": [
+  {
+   "name": "timer_interval_s",
+   "donor_constant": "60 default at subscribe (no per-timer rule beyond the minimum)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/evennia-evennia/evennia/scripts/tickerhandler.py:489"
+  },
+  {
+   "name": "timer_min_interval_s",
+   "donor_constant": "1 (interval truncated to integer seconds)",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/evennia-evennia/evennia/scripts/tickerhandler.py:390"
+  },
+  {
+   "name": "restart_next_pass_s",
+   "donor_constant": "saved time to next pass, restored as start delay",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/evennia-evennia/evennia/scripts/tickerhandler.py:410"
+  }
+ ],
+ "best_idea": "One timer per interval value, shared by every subscriber on that interval, with changes made during a pass applied after it, and a saved time-to-next-pass so a restart keeps the same phase.",
+ "decision": "adapt",
+ "decision_why": "The shape fits zone timers (respawn, grace expiry, cooldowns) under row 23; the whole-second interval, the database storage and the object-based callbacks do not fit the fight.",
+ "decision_status": "proposed",
+ "acceptance": "A server test in which a respawn timer subscribed during a pass first fires on its own interval and not in that pass, a throwing timer does not stop the others in its group, and a restart with 4 s left to the next pass fires that pass 4 s after restart."
+}

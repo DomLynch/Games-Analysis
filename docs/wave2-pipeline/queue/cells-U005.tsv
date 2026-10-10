@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+ModernUO	19	instancing-dungeons	/mnt/frankendom-donors/ModernUO/Projects/UOContent (game rules, skills, spawners, vendors, housing) and Projects/Server (tick, network, maps)	9
+ModernUO	20	city-map-design	/mnt/frankendom-donors/ModernUO/Projects/UOContent (game rules, skills, spawners, vendors, housing) and Projects/Server (tick, network, maps)	9
+ClassicUO	1	combat-sim	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client (Game/, Network/, Game/UI/Gumps, Game/Scenes) and ClassicUO.Renderer	9

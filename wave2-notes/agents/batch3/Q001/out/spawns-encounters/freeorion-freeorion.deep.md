@@ -1,131 +1,111 @@
-# freeorion-freeorion (spawns-encounters, cell 4)
+# freeorion-freeorion (spawns-encounters, cell 1)
 
-Donor: `/mnt/frankendom-donors/freeorion-freeorion/default/python/universe_generation/monsters.py` (universe pass, `generate_monsters`), `/mnt/frankendom-donors/freeorion-freeorion/default/python/turn_events/turn_events.py` (turn pass, `execute_turn_events`), plan data `/mnt/frankendom-donors/freeorion-freeorion/default/scripting/monster_fleets.inf` | Licence: GPL-2.0 for the code and dual GPL-2.0 / CC-BY-SA-3.0 for game content scripts (`default/COPYING`; `README.md` lines 145-151). `default/python` is not stated as content or code in the file, so treat it as copyleft | Python + FOCS data | symbol `generate_monsters`, `execute_turn_events`
+Donor: `/mnt/frankendom-donors/freeorion-freeorion/default/python/turn_events/turn_events.py` (per-turn spawner) with `/mnt/frankendom-donors/freeorion-freeorion/default/python/universe_generation/monsters.py` (game-start director) | Licence: GPL v2 for source (README.md 148-150); game content scripts under GPL v2 and CC-BY-SA-3.0 (default/COPYING 6); turn_events.py and monsters.py carry no header, so as read: GPL v2 / CC-BY-SA-3.0, clean-room only | Python (FOCS for the experimentor schedule) | symbol `execute_turn_events`
 
-Checked: `generate_monsters` (monsters.py 84-230) and `execute_turn_events` (turn_events.py 14-65) were both read in full. Also opened: universe_tables.py (`MONSTER_FREQUENCY`, 120-129), monster_fleets.inf (lines 1-120 and 100-113 read; 121-217 not read), universe_generator.py (call site, 175-185), ServerApp.cpp (1614), ServerFramework.cpp (321-328), named_values.focs.py (66), game_rules.focs.py (172-182), monsters.py `StarlaneAlteringMonsters` (17-63, read). A grep for `respawn|despawn` across `.py`, `.cpp` and `.h` (excluding msvc) found no matches. Not read: the FOCS location-condition evaluator, the server code behind `create_monster_fleet` and `create_monster`, the seed handling inside `seed_rng`, the Krill hull. Confidence: high on both spawn paths as written. Medium on how often the turn pass fires in play, since that depends on the galaxy setup value at runtime.
+Checked: `execute_turn_events` is defined at turn_events.py 14-65 (read in full). `generate_monsters` is at monsters.py 84-222 (read in full; `populate_monster_fleet` 65-81 read in full; its game-start caller was not traced). `MONSTER_FREQUENCY` at universe_tables.py 120-129 (read). Caller chain read: ServerFramework.cpp 321-329, ServerApp.cpp 1610-1614 and 4546; the function that contains line 4546 was not read. `EXPERIMENTOR_OUTPOST.focs.py` read lines 1-220 of 301 (221-301 not read; it has more `Random(` rolls at 235, 258 and 281 that were not read). The FOCS evaluation semantics (how effects groups are scheduled each turn) were not read. Confidence: high for the per-turn spawner and the game-start director; medium for the experimentor schedule. camera_scope: n/a (spawns).
+
+Best transferable idea: one chance roll per tick for a zone, where the chance scales with the zone's spawn-point count times a frequency value, the spawn lands only on an empty point, and at most one monster is placed per roll.
+
+Decision (proposed): adapt - take the per-tick roll and the empty-point filter, but roll once per server tick per zone with the zone frequency as data and a per-kind cap as data; the donor live path has no cap (the game-start director does), and its kind is hard-coded to Krill, which Frankendom should not copy.
+Acceptance: a server test with a seeded RNG: over 10,000 ticks in a zone with 4 empty points and frequency 0.03, the spawn count is within the expected value (about 12) and never exceeds the zone cap, and no spawn lands within the exclusion radius of a player.
 
 ## 1. Mechanism
 
-Two spawn paths, one for universe creation and one for each server turn.
+Three spawn paths sit in the donor's Python and FOCS layer. The live one during play is the per-turn spawner; the other two are a game-start director and a timed escalation schedule.
 
-**Universe pass** (`generate_monsters`, monsters.py 84-230). Called once at universe creation (universe_generator.py:181).
-- The galaxy's monster frequency maps to a base chance through a table (monsters.py:91). A base chance of 0 returns at once (93-94).
-- Each plan with spawn rate > 0, spawn limit > 0 and at least one ship design gets a counter set to its spawn limit (108-112). The counter is local to this call and is shared by all systems in the pass.
-- The systems list is shuffled once (166). For each system, in that order (167 onward):
-  - Eligible plans are those whose location set includes this system (177), whose counter is above zero (178), and, for hulls that can alter starlanes, which pass the connectivity check (179).
-  - If none is eligible, the system is skipped (182-183).
-  - Otherwise the expectation tally grows (187-189), one eligible plan is picked uniformly (190), and one roll decides the spawn: it fails when `random > base chance x plan spawn rate` (193-199).
-  - On success the fleet is populated (210) and the counter drops by one (212). A `MapGenerationError` is reported and skips the decrement (214-216).
-- The roll is per system, not per plan. A system gets at most one fleet per pass.
+(a) Per-turn spawner (turn_events.py 14-65). The server calls `execute_turn_events` once per turn, inside turn processing: ServerApp.cpp 4546 calls `ExecuteScriptedTurnEvents` (defined at 1610-1614, which calls `PythonServer::ExecuteTurnEvents` at 1614), and that wrapper calls the Python function (ServerFramework.cpp 321-329). Order of steps as the code runs:
+- (1) Field roll (22-32) runs first. It is unrelated to monsters and is not described further.
+- (2) Monster roll: `monster_freq` is looked up from the galaxy setup value (36). The chance is `len(systems) * monster_freq * 0.01` (39). A pass means at most one spawn this turn.
+- (3) Kind: `if random() < 1:` is always true (41), so the kind is `SM_KRILL_1` (42). The `SM_FLOATER` else-branch (44) can never run.
+- (4) Candidates: systems with no planets and no fleets (47). If there are none, the code prints an error and stops (48-49).
+- (5) One candidate is chosen uniformly (51). An empty fleet is created there (55), then one monster is created in it (61). If monster creation fails, the code reports it (62-63) and does not remove the empty fleet it already created (no cleanup seen in those lines).
 
-**Turn pass** (`execute_turn_events`, turn_events.py 14-65). Called once per server turn from `ServerApp::ExecuteScriptedTurnEvents` (ServerApp.cpp:1614, which wraps `ExecuteTurnEvents` at ServerFramework.cpp:321-328).
-- The monster part reads only the galaxy's monster frequency (36) and the list of systems (18).
-- One roll per turn: `random() < systems x freq x 0.01` (39). This is one roll for the whole galaxy, not one per system. The value is not clamped, so when it is at or above 1 a spawn happens every turn.
-- Candidates are systems with no planets and no fleets (47). One is picked uniformly (51). A fleet and a monster are created (55, 61).
-- The monster type is hard-coded to `SM_KRILL_1` (41-42). The Floater branch (43-44) cannot run, because `random() < 1` is always true (41).
-- The turn pass does not read `monster_fleets.inf`. It never reads a spawn limit and never counts live monsters. There is no population cap on this path.
+Numbers. Table values: extremelyLow 0.002, low 0.03, high 0.2, extremelyHigh 0.999 (universe_tables.py 122-128; none is 0.0 at 121). Expected spawns per turn = systems x f x 0.01. Low with 150 systems gives 0.045 per turn. High with 150 systems gives 0.3. With extremelyHigh and 150 systems the chance is above 1, so a spawn happens every turn. The donor comment (37-38) gives the low case as 150 / 30 * 0.01 = 0.05, which uses 1/30 for low; the table value 0.03 gives 0.045. The table is what runs. Nothing in this path caps how many monsters exist; in this file the only brakes are the rate and the empty-system filter.
 
-**Plan data** (monster_fleets.inf, per plan: `spawnrate`, `spawnlimit`, and a location condition).
-- Krill (`SM_KRILL_1`): spawnrate 0.5 (6), spawnlimit 9999 (7). Location: no monster in the system, and not within `max(2, MIN_MONSTER_DISTANCE)` jumps of a system that holds an empire-owned planet (8-13).
-- Floater: spawnrate 0.7 (74), spawnlimit 50 (75).
-- Kraken: spawnrate 0.8 (104), spawnlimit 100 (105), and a gas-giant requirement (108).
-- Drone factory: `max(3, ...)` jumps (44). Dragon: `max(4, ...)` jumps (93).
-- `MIN_MONSTER_DISTANCE` is the game rule `RULE_MINIMUM_MONSTER_DISTANCE_CAPITAL` minus 1 (named_values.focs.py:66).
+(b) Game-start director (monsters.py 84-222, one pass when the universe is generated). Per-plan counters start at each plan's spawn limit for plans with spawn rate > 0, limit > 0 and at least one design (108-112). The systems are shuffled once (166). For each system: the suitable plans are those whose location test accepts the system and whose counter is above 0 (174-180). One plan is picked uniformly (190). The roll is `basic_chance * spawn_rate` (193). A failed roll means the system gets nothing this pass, even if other plans were suitable. On success the fleet is populated (210) and the plan's counter drops by one (212). The per-plan data is in `monster_fleets.inf`: SM_KRILL_1 spawnrate 0.5 and spawnlimit 9999 (6-7); SM_FLOATER spawnrate 0.7 and spawnlimit 50 (74-75). The location tests are FOCS conditions (for Krill: no monster present, and not within max(2, MIN_MONSTER_DISTANCE) starlane jumps of an empire-owned planet, lines 8-13, read). The live spawner in (a) does not read these plans. It hard-codes Krill, so the two spawn systems share no data.
 
-**No respawn and no despawn.** The grep found no code that removes a monster on a timer or re-places one after it dies. Combat deaths are handled elsewhere (not read).
+(c) Timed escalation (EXPERIMENTOR_OUTPOST.focs.py, lines 1-220 read). Start turn: `CALC_A` = a base-turn game rule + 50 x (5 - max AI aggression) + 1000 when aggression is 2 or less (62-64; the base value comes from RULE_EXPERIMENTORS_SPAWN_BASE_TURN at line 56, value not read). Start = CALC_A x (1.2 - planet density / 10) x max(1, galaxy size / 200)^0.4 (68-70). Factor F = (1 + aggression) / 5 (54). Four effects groups, each with its own per-turn roll on the outpost:
+- Start to start+35: roll 0.2F, spawns 2 Black Krakens (142-147).
+- From start+36: roll 0.1F, spawns 2 Black Krakens (165-170).
+- Start+36 to start+70: roll 0.2F, spawns 2 Bloated Juggernauts (188-193).
+- From start+71: roll 0.1F, spawns 2 Bloated Juggernauts (211-216).
+Groups 2 and 3 overlap from start+36 to start+70, so two independent rolls can fire on the same turn.
 
 ## 2. Key functions
 
-- `generate_monsters`: `/mnt/frankendom-donors/freeorion-freeorion/default/python/universe_generation/monsters.py` 84-230. The whole universe pass: base chance, per-plan counters, per-system eligibility, one roll, decrement.
-- `StarlaneAlteringMonsters.can_place_at`: same file, 17-51. Keeps a map-altering fleet from splitting the galaxy. Read in full.
-- `populate_monster_fleet`: same file, 65-81. Creates the fleet and its monsters. Read in full.
-- `execute_turn_events`: `/mnt/frankendom-donors/freeorion-freeorion/default/python/turn_events/turn_events.py` 14-65. The per-turn trickle spawn. Read in full.
-- `MONSTER_FREQUENCY`: `/mnt/frankendom-donors/freeorion-freeorion/default/python/universe_generation/universe_tables.py` 120-129. The frequency to base-chance table.
+- `execute_turn_events`: `/mnt/frankendom-donors/freeorion-freeorion/default/python/turn_events/turn_events.py` 14-65 (whole file, read).
+- `PythonServer::ExecuteTurnEvents`: `/mnt/frankendom-donors/freeorion-freeorion/server/ServerFramework.cpp` 321-329 (the call at 323; caller at `/mnt/frankendom-donors/freeorion-freeorion/server/ServerApp.cpp` 1614 and 4546).
+- `generate_monsters`: `/mnt/frankendom-donors/freeorion-freeorion/default/python/universe_generation/monsters.py` 84-222 (game-start director, read in full).
+- `populate_monster_fleet`: `/mnt/frankendom-donors/freeorion-freeorion/default/python/universe_generation/monsters.py` 65-81.
+- `MONSTER_FREQUENCY` table: `/mnt/frankendom-donors/freeorion-freeorion/default/python/universe_generation/universe_tables.py` 120-129.
+- Experimentor start turn and tiers: `/mnt/frankendom-donors/freeorion-freeorion/default/scripting/buildings/EXPERIMENTOR_OUTPOST.focs.py` 54-70 and 142-216.
 
 ## 3. Numbers vs mechanism
 
 | Reusable algorithm | Game-specific constants |
 |---|---|
-| Base chance x plan weight is the roll for one spawn point | Frequency table (theirs, universe_tables.py 121-128): none 0.0, extremelyLow 0.002, veryLow 0.01, low 0.03, medium 0.08, high 0.2, veryHigh 0.5, extremelyHigh 0.999 |
-| Per-plan cap counter, checked before the roll, decremented on each placed spawn | Krill cap 9999, Floater cap 50, Kraken cap 100 (theirs, monster_fleets.inf 7, 75, 105) |
-| Plan weight | Krill 0.5, Floater 0.7, Kraken 0.8 (theirs, monster_fleets.inf 6, 74, 104) |
-| Presence gate: keep N jumps from owned planets | `max(2 \| 3 \| 4, MIN_MONSTER_DISTANCE)` per plan (theirs, monster_fleets.inf 10, 44, 93). The rule default is 3 (game_rules.focs.py:178), so MIN is 2 by default. The rule default is not receipted: the line is under 15 characters |
-| Turn-pass density roll | `systems x freq x 0.01` per turn (theirs, turn_events.py 39) |
-
-Worked numbers, computed from the table and the plan data: at frequency `high` (0.2), a Krill plan is rolled at 0.2 x 0.5 = 0.10 per eligible system visited in the universe pass. On the turn pass at `high` with 100 systems, the roll is 100 x 0.2 x 0.01 = 0.2 per turn.
+| Per-tick chance = candidate count x frequency x fixed scale, one roll, one spawn at most | Scale 0.01 (theirs, turn_events.py 39); frequency table 0.002 / 0.03 / 0.2 / 0.999 (theirs, universe_tables.py 122-128) |
+| Spawn only on a point with nothing on it | Empty means no planets and no fleets (theirs, turn_events.py 47) |
+| Pick one candidate uniformly | `choice` over the candidates (theirs, turn_events.py 51) |
+| Per-kind counter that drops on each spawn and stops at zero | Spawn limits 9999 (Krill), 50 (Floater) in the game-start plans (theirs, monster_fleets.inf 7, 75). The live path has no counter |
+| Timed tiers gated by a start turn and a per-turn roll | Start turn formula, windows 0-35 / 36-70 / 71+ and roll factors 0.2 and 0.1 times F (theirs, EXPERIMENTOR_OUTPOST.focs.py 62-70, 142-212) |
+| Start turn scales with difficulty and map | +50 per aggression tier below 5, +1000 for low aggression, density and size factors (theirs, EXPERIMENTOR_OUTPOST.focs.py 63, 69) |
 
 ## 4. TypeScript sketch
 
-simplified: one director pass in the same order as the universe pass: shuffle the points, filter eligible plans by their counter and a zone predicate, pick one plan uniformly, roll base chance x weight, place, then decrement. It omits the expectation tally, the starlane-altering connectivity guard, the per-plan report counters, the `MapGenerationError` path (the donor skips the decrement on error; the sketch has no error path), the turn-pass density roll and its single-kind krill rule, the seeded RNG, and the jump-distance rule (the `allows` callback stands in for the location condition). It does not reorder anything relative to the universe pass.
+simplified: this is the per-turn spawner (turn_events.py 36-61) with a per-kind cap taken from the game-start director (monsters.py 108-112, 212), which the donor's live path does not have. It omits the field roll, the galaxy setup lookup, the sitrep, and the game-start pass and the experimentor schedule. The kind is a parameter, not hard-coded Krill. Order differs from the donor in one place: the cap check runs before the roll (the donor has no cap here). The roll still comes before the empty-point filter, as in the donor (39 then 47).
 
 ```ts
-// Licence: GPL-2.0 (code) and CC-BY-SA-3.0 (game content scripts), per donor default/COPYING. clean-room sketch of the mechanism, not a translation.
-export interface SpawnPlan {
-  name: string;
-  weight: number;   // share of the base chance this plan takes (donor: spawn_rate)
-  cap: number;      // spawns allowed for the whole zone set (donor: spawn_limit)
-}
-
-export interface SpawnPoint {
+// Licence: donor GPL v2 (source) and GPL v2 + CC-BY-SA-3.0 (content scripts). Clean-room sketch from the described mechanism, not a translation.
+// clean-room
+interface SpawnPoint {
   id: number;
-  // presence and distance gate: true if this plan may appear at this point (zone data predicate)
-  allows: (plan: SpawnPlan) => boolean;
+  occupied: boolean; // donor: any planet or any fleet present (turn_events.py 47)
 }
 
-// One director pass over all points. Returns how many spawns were placed.
-export function runDirector(
-  points: SpawnPoint[],
-  plans: SpawnPlan[],
-  baseChance: number,              // zone frequency, e.g. 0.2 for "high"
-  rnd: () => number,
-  place: (pt: SpawnPoint, plan: SpawnPlan) => void,
-): number {
-  const remaining = new Map<string, number>(plans.map((p) => [p.name, p.cap] as const));
-  let placed = 0;
-
-  // visit points in random order (Fisher-Yates)
-  for (let i = points.length - 1; i > 0; i--) {
-    const j = Math.floor(rnd() * (i + 1));
-    [points[i], points[j]] = [points[j], points[i]];
-  }
-
-  for (const pt of points) {
-    const open = plans.filter((p) => (remaining.get(p.name) ?? 0) > 0 && pt.allows(p));
-    if (open.length === 0) continue;
-    const plan = open[Math.floor(rnd() * open.length)];
-    if (rnd() > baseChance * plan.weight) continue; // roll failed at this point
-    place(pt, plan);
-    remaining.set(plan.name, (remaining.get(plan.name) ?? 0) - 1);
-    placed++;
-  }
-  return placed;
+interface ZoneSpawnData {
+  freq: number; // zone data: ratio from the frequency table (donor: 0.002 .. 0.999)
+  cap: number;  // zone data: max live monsters of this kind (donor per-turn path has none)
+  kind: string; // monster kind to place
 }
+
+interface SpawnRoll {
+  spawned: boolean;
+  pointId: number | null;
+  kind: string | null;
+}
+
+const PER_POINT_SCALE = 0.01; // engine constant: donor turn_events.py 39 uses * 0.01
+
+// One roll for one zone, called once per server tick. rand() returns a value in [0, 1).
+export function spawnTick(points: SpawnPoint[], zone: ZoneSpawnData, live: number, rand: () => number): SpawnRoll {
+  const none: SpawnRoll = { spawned: false, pointId: null, kind: null };
+  if (zone.freq <= 0 || live >= zone.cap) return none;
+  const chance = points.length * zone.freq * PER_POINT_SCALE;
+  if (rand() >= chance) return none;
+  const free = points.filter((p) => !p.occupied);
+  if (free.length === 0) return none;
+  const pick = free[Math.floor(rand() * free.length)];
+  return { spawned: true, pointId: pick.id, kind: zone.kind };
+}
+export {};
 ```
 
-Typecheck: `npx -y -p typescript@5.6.3 tsc --noEmit --strict --target es2020` on the VPS, with `export {}` appended, exit 0.
+Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS, exit 0.
 
 ## 5. Lands in
 
-- TARGET `origins/server/world-spawns.ts` (zone population director, server side; engine logic with the numbers as zone data). Named in the addendum as the Lead ruling target. Not checked in the Frankendom repo (not read).
-- Parity-checklist row 23 (zone population: spawn caps, respawn, despawn on empty with a grace timer). Spawn caps and the director pass cite row 23.
-- Reuse tag: rewrite-from-idea (GPL-2.0 and CC-BY-SA-3.0 dual; clean-room only)
-- Brief rule served: zones as data (numbers per zone); server-verified spawns; licence rule (task rule 7) applied as clean-room
+- TARGET `origins/server/world-spawns.ts` (zone spawn director, server side; the donor roll becomes one call per zone per server tick). Parity-checklist row 23 (zone population: spawn caps, respawn, despawn). The per-tick roll also touches the server-tick sub-line "per-tick NPC budget" (post-K item 3), but the row is 23.
+- today: not checked in this pass (the Frankendom repo was not opened); the target is a proposal.
+- Reuse tag: rewrite-from-idea (GPL v2 source and CC-BY-SA-3.0 content; clean-room, shape only)
+- Brief rule served: 1 (one engine, zones as data); row 23 spawn caps
 
 ## 6. Gaps and risks
 
-- Copyleft: clean-room only. The sketch is written from the mechanism. No line of the donor is carried over.
-- No respawn, no despawn, no grace timer in this donor. Row 23 needs all three. This donor gives only the roll and the caps. Build respawn and despawn-on-empty ourselves, and do not cite this donor for them.
-- The turn pass has no cap and no live count (turn_events.py reads neither). Do not copy it. A zone spawn must count the live monsters of each plan in that zone against the cap, and the cap is a zone field.
-- The counter exists only inside the universe pass (monsters.py 108, local to the call). The code read does not persist it. In Frankendom the cap must sit in zone state on the one ledger, so a restart cannot exceed it.
-- Randomness: the universe pass seeds the RNG before the call (universe_generator.py:180-181). The turn pass uses the global `random` with no seed in the code read (turn_events.py:9). Frankendom's server spawns should use a seeded RNG per zone so a test can replay the spawns.
-- The density roll is not clamped (turn_events.py:39). In Frankendom, validate each zone spawn chance into [0, 1] at load time.
-- The Floater branch is unreachable (turn_events.py:41). Do not copy that pattern. Zone data should list each spawn kind explicitly.
-- The presence gate is about empire-owned planets within N jumps. The Frankendom analogue would be distance from the player's hub or spawn point. Define it per zone as a plain number, not as a condition language.
-- MAX_ATTACKERS = 3 is a fight rule (row 4). The zone cap is a separate number. Keep them apart so the two are not conflated.
-
-Reuse tag: rewrite-from-idea (GPL-2.0 and CC-BY-SA-3.0 dual; clean-room only)
-Brief rule served: zones as data; server-verified spawns; licence rule (task rule 7) applied as clean-room
-
-Best transferable idea: Give each spawn plan a counter set to its zone cap, check it before the roll and decrement it on each placed spawn, so the cap holds however many spawn points there are.
-Decision (proposed): adapt - take the roll x per-plan cap x eligibility pass for zone population (row 23), but add respawn and despawn-on-empty with a grace timer, which this donor lacks, and keep the cap on the server ledger; do not copy the turn-pass trickle, which has no cap.
-Acceptance: A server test seeds a zone with a Krill cap of 2 and 200 eligible points; after 500 director passes exactly 2 Krill are alive, and no spawn is placed within the minimum jump distance of a player-held point.
+- Licence is copyleft (GPL v2 and CC-BY-SA-3.0). Clean-room only: the sketch is written from the mechanism, not translated from the Python.
+- Zones as data: the donor's chance uses the whole galaxy's system count and one galaxy setting. Frankendom needs the frequency and cap per zone, read from zone data, not from a global table.
+- Server-verified: the donor filters on planets and fleets. Frankendom's "empty" must be defined by the server (for example no player within an exclusion radius), and the donor does not show how that is checked.
+- One ledger: the live path keeps no counter. The per-kind cap has to be a server-side count in the one ledger, and the game-start director's counter is the shape to copy, not its code.
+- MAX_ATTACKERS = 3: turn_events.py has no check for a fight in progress (read in full), so in the donor a spawn can land in an active fight. Frankendom must gate spawns against live fights and the attacker cap.
+- The donor's Krill-only kind choice, the unreachable Floater branch (turn_events.py 41-44), the stale comment (37-38) and the split between the plan file and the live spawner are not to be copied. Their data is not shared.
+- The experimentor schedule is a timed escalation tied to a difficulty value. It fits a boss-wave or encounter director in zone data, but only the start-turn formula and the four tiers (lines 1-220) were read; lines 221-301 (more rolls) were not read.

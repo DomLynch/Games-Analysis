@@ -1,0 +1,22 @@
+# LostCityRS-Engine-TS (camera, cell 14): verdict PARTIAL (camera_scope: world)
+
+Donor: /mnt/frankendom-donors/LostCityRS-Engine-TS | Licence: MIT (LICENSE line 1 "MIT License", line 3 "Copyright (c) 2023-2026 Lost City", read in full)
+Hint file (CameraInfo.ts) read: it is a plain data class (type, camX, camZ, height, rotationSpeed, rotationMultiplier) and nothing more.
+
+Files opened (candidates, all read at the lines named):
+1. src/engine/entity/CameraInfo.ts (whole file)
+2. src/engine/script/handlers/PlayerOps.ts 195-232 (CAM_LOOKAT, CAM_MOVETO, CAM_SHAKE, CAM_RESET handlers)
+3. src/engine/entity/NetworkPlayer.ts 228-252 (updateMap: the camera queue flush)
+4. src/engine/World.ts 1096-1112 (processClientsOut calls player.updateMap() for each connected player)
+5. src/engine/entity/Player.ts 348 and 449-461 (camera queue field; cleanup clears it)
+6. src/network/game/server/codec/CamMoveToEncoder.ts and CamShakeEncoder.ts (wire format)
+7. src/engine/entity/tracking/InputTracking.ts 45-62 and src/network/game/client/codec/EventCameraPositionDecoder.ts (client pitch and yaw reports)
+8. view/client.ejs and a repo-wide grep for rotationMultiplier, CamMoveTo, CamShake, pitch, yaw (grep only, no client camera code found in this repo)
+
+Why PARTIAL: the donor has a real server-side camera cue outbox, but the motion itself (how rate, rate2 and height move the camera, how look-at tracks, how shake is applied) is client code that is not in this repo, so the mechanism that matters for a camera is not in the donor. The file's own comment says the queue is sent "after rebuild", but updateMap runs for every connected player in each client-output pass (World.ts 1108), so the flush is a per-pass outbox, not a replay on rebuild.
+
+What the donor does, as read: CAM_LOOKAT and CAM_MOVETO are queued per player as CameraInfo (types 1 and 0, with a speed and a second rate), sent once by updateMap as CamLookAt or CamMoveTo, and then unlinked; CAM_SHAKE and CAM_RESET are written at once and are never queued; a player cleanup clears the queue (Player.ts 459). The client reports pitch and yaw back as two-byte values into input tracking (InputTracking.ts 58).
+
+Best transferable idea: Keep server camera cues as data with a speed per move and send shake and reset immediately, but only once the client-side motion they drive is read, since that motion is what a camera needs.
+Decision (proposed): reject - Frankendom's ruling keeps the camera client-only and the engine never reads it, and a server-sent cutscene cue has no place in the fight engine; if a zone needs an intro shot it can be zone data read by the client, which this donor does not show.
+Not read: the client camera code (not in this repo), how often processClientsOut runs, the body of CamLookAt and CamMoveTo models.

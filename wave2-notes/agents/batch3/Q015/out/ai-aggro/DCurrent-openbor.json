@@ -1,0 +1,125 @@
+{
+ "game": "DCurrent-openbor",
+ "category": "ai-aggro",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c",
+ "licence": "BSD-3-Clause (3-clause BSD, read: /mnt/frankendom-donors/DCurrent-openbor/LICENSE)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/ai.ts",
+ "parity_row": 2,
+ "pattern_tags": [
+  "target-score",
+  "wait-gate",
+  "new:cooldown-relief-by-target-state",
+  "new:victim-cooldown-reset",
+  "new:spacing-step-back",
+  "new:attack-throttle-roll"
+ ],
+ "data_fields": [
+  {
+   "name": "attack_throttle",
+   "donor_constant": "attackthrottle per model; chance *= (1 - attackthrottle)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c:39642"
+  },
+  {
+   "name": "attack_throttle_time",
+   "donor_constant": "attackthrottletime per model; nextattack = _time + randf(attackthrottletime)",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c:39704"
+  },
+  {
+   "name": "aggression",
+   "donor_constant": "int per model; wait = randf(max(1, game_speed*3/4 - aggression))",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c:39709"
+  },
+  {
+   "name": "offscreen_noatk_factor",
+   "donor_constant": "global 0.5, per-model override; chance *= (1 - factor) when off screen",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c:284"
+  },
+  {
+   "name": "offscreen_margin",
+   "donor_constant": "10 (screen x +/- 10)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c:39644"
+  },
+  {
+   "name": "target_window_max",
+   "donor_constant": "9999 (distance window upper bound; lower bound 0 exclusive)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c:35569"
+  },
+  {
+   "name": "run_gap",
+   "donor_constant": "150 (run when x gap > 150 and run animation exists)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c:41572"
+  },
+  {
+   "name": "chase_range_cap",
+   "donor_constant": "videomodes.hRes / 4 (chase range cap; fallback grabdistance)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c:41550"
+  },
+  {
+   "name": "cooldown_relief_attacking",
+   "donor_constant": "4 when target attacking and cooldown > 4",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c:39663"
+  },
+  {
+   "name": "cooldown_relief_jumping",
+   "donor_constant": "16 when target jumping and cooldown > 16",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c:39667"
+  },
+  {
+   "name": "back_off_gap",
+   "donor_constant": "80 (step back only when opponent within 80; cap at target +/- 80)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c:40673"
+  },
+  {
+   "name": "back_off_step",
+   "donor_constant": "40",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c:40676"
+  },
+  {
+   "name": "back_off_chance",
+   "donor_constant": "(rand32() & 3) non-zero, i.e. 3 in 4 if low bits uniform",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c:40673"
+  },
+  {
+   "name": "game_speed",
+   "donor_constant": "GAME_SPEED_DEFAULT 200",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.h:80"
+  }
+ ],
+ "best_idea": "A victim's hit clears its own attack cooldown, and an attacker's cooldown is cleared when its target blocks and cut while its target attacks or jumps, so fights stay fast without a separate aggro table.",
+ "decision": "adapt",
+ "decision_why": "Take the target rule (nearest in front; a non-vulnerable pick is replaced by any later candidate), the cooldown relief and the victim reset. Do not port the crowd term: it is dead for normal, upper and duck attacks because the clamp forces chance to 1, and MAX_ATTACKERS = 3 must be an engine rule, not a donor chance term.",
+ "decision_status": "proposed",
+ "acceptance": "A server test with one player and five hostile enemies at x = 100..300 asserts the picked target is the nearest enemy in front, that a non-vulnerable pick is replaced by a later candidate, that a landed hit sets the victim's nextAttack to 0 on that tick, and that no more than 3 enemies hold ATTACKING at once."
+}

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ihhub-fheroes2	progression	P	STRONG	full	heroes/heroes.cpp:1482-1499 IncreaseExperience runs one level-up per level crossed; heroes/skill.cpp:782-850 FindSkillsForLevelUp builds the seeded secondary-skill offer
+cuteshaun-lineage2-api	progression	P	PARTIAL	thin	src/lib/api/dto/class.ts:137-167 is a read-only skill-learn table; the only rule is the spellbook on the lowest row, and the repo has no XP or level-up code
+Dawn-of-Light-DOLSharp	progression	P	STRONG	full	GameServer/serverrules/AbstractServerRules.cs:1042-1326 OnNPCKilled splits kill XP by damage share with a cap and camp bonus; GameServer/gameobjects/GamePlayer.cs:4864-4998 GainExperience applies rates, hard cap, level floor and a one-step level-up

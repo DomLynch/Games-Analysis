@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+gawric-Unity-Client-for-L2J	progression	P	STRONG	thin	/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/CharacterInterlude/Appearance/MaxLevelExp.cs:96-141 - a cumulative XP-to-reach table with a level lookup and next-level remainder; the XP award itself is not in this client.
+OpenEnroth-OpenEnroth	progression	P	STRONG	full	/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/Engine/Party.cpp:837-856 - kill XP is split among standing members with a learning bonus, and level-up is a trainer step gated by XP and per-hall caps (GUI/UI/Houses/Training.cpp:56-90).
+angband-angband	progression	P	STRONG	full	/mnt/frankendom-donors/angband-angband/src/player.c:208-294 - a high-water XP mark, percent-scaled level thresholds in both directions, and kill XP with a 1/65536 remainder carry (src/mon-util.c:1072-1087).

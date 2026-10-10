@@ -1,0 +1,97 @@
+{
+ "game": "ModernUO",
+ "category": "anticheat-validation",
+ "cell": 6,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ModernUO/Projects/Server/Network/MovementThrottle.cs",
+ "licence": "GPL-3.0-or-later (file headers 'either version 3 ... or any later version'; LICENSE file GPLv3)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/intake.ts",
+ "parity_row": 5,
+ "pattern_tags": [
+  "debt-carry",
+  "wait-gate",
+  "clamp-and-report",
+  "stale-state",
+  "new:queue-or-reject-overflow",
+  "new:staff-signal-only"
+ ],
+ "data_fields": [
+  {
+   "name": "base_credit_ms",
+   "donor_constant": "200",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/Server/Network/MovementThrottle.cs:34"
+  },
+  {
+   "name": "rtt_credit_bonus_max_ms",
+   "donor_constant": "150 (bonus = min(avgRtt/2, 150))",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/Server/Network/MovementThrottle.cs:35"
+  },
+  {
+   "name": "hard_queue_limit",
+   "donor_constant": "10",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/Server/Network/MovementThrottle.cs:36"
+  },
+  {
+   "name": "drift_cap_ms",
+   "donor_constant": "200",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/Server/Mobiles/Mobile.cs:4363"
+  },
+  {
+   "name": "walk_foot_delay_ms",
+   "donor_constant": "400",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/Server/Mobiles/Movement.cs:33"
+  },
+  {
+   "name": "run_foot_delay_ms",
+   "donor_constant": "200",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/Server/Mobiles/Movement.cs:34"
+  },
+  {
+   "name": "rate_threshold_definite",
+   "donor_constant": "1.10 (also 1.20 alone is definite)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/Server/Network/MovementThrottle.cs:43"
+  },
+  {
+   "name": "rate_window_entries",
+   "donor_constant": "20",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/Server/Network/MovementThrottle.cs:39"
+  },
+  {
+   "name": "staff_notice_sustained_likely",
+   "donor_constant": "10 (counter +2 per 2 s check)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/Server/Network/MovementThrottle.cs:998"
+  },
+  {
+   "name": "staff_notice_cooldown_ms",
+   "donor_constant": "300000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/Server/Network/MovementThrottle.cs:44"
+  }
+ ],
+ "best_idea": "Accept early timed inputs against a credit that can go into debt up to a latency-scaled limit, queue the rest in order, reject and reset only at a hard queue limit, and keep rate-based cheat suspicion as a staff signal rather than a gate.",
+ "decision": "adapt",
+ "decision_why": "Keep the credit-debt gate, the bounded queue with reject-on-overflow and the drift clamp for timed inputs; do not port the rate verdict as an enforcer (it only notifies staff in the donor) and do not port the RTT probe.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: an input 60 ms early with 200 ms of credit executes at once; with credit spent, 10 inputs queue in order and the 11th is rejected with a reject packet and the queue cleared; a sustained rate above 1.20 raises a HIGH staff signal and changes no executed input."
+}

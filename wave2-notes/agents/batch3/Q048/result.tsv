@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+lichess-org-mobile	progression	P	STRONG	full	/mnt/frankendom-donors/lichess-org-mobile/lib/src/model/learn/learn_score.dart:18-50 and learn_progress.dart:55-65 - par-tiered move bonus (500/300/100) and 1-3 star thresholds; learn_progress.dart:113 saves only strictly better scores.
+beyond-all-reason-Beyond-All-Reason	progression	P	STRONG	full	/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/unit_xp_range_bonus.lua:32-37 - XP bonus 3x/(1+3x) toward a per-unit cap, written under one named source (include/unit_attributes_control.lua:812-841 replace rule).
+pmbstyle-L2Solo	progression	P	STRONG	full	/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Progression/DeathExperience.js:108-141 and 59-75 - death XP loss with a pending record, one penalty per death, and a capped restore on revive.

@@ -1,0 +1,14 @@
+SWG-Source-swg-main | ai-aggro (cell 2) | verdict: NONE | depth: thin | licence: none stated; donor root _RESTRICTED-NOTE.txt says proprietary, no licence (restricted, clean-room only)
+
+Why NONE: this donor is a build and tooling snapshot. The game-server source folders (src, dsrc, serverdata, stationapi, exe) are empty on the VPS, and no file in the donor implements enemy target selection, aggro or threat, chase, flee, or leash.
+
+Files opened (at least 3, read in full or in the relevant range):
+1. /mnt/frankendom-donors/SWG-Source-swg-main/tools/figureOfMeritCombatSimulator.pl (read 1-434): offline combat sim, no target choice or behaviour.
+2. /mnt/frankendom-donors/SWG-Source-swg-main/tools/checkCreatureStrings.pl (read 1-54): checks that creature names have localised strings; no behaviour.
+3. /mnt/frankendom-donors/SWG-Source-swg-main/tools/ClientBuildoutGenerator.java (grep plus read of 1-12, 145-175, 598-608): writes placement rows; reads each template's update radius; not AI.
+4. /mnt/frankendom-donors/SWG-Source-swg-main/tools/checkChunkLoading.pl (read 1-28): log check for chunk loads; no behaviour.
+5. /mnt/frankendom-donors/SWG-Source-swg-main/tools/autotest/autotest.pl (read 1-40): test harness that starts servers; no behaviour.
+Searches: grep -rIin over all text files for brain, pathfind, chase, flee, wander, patrol, npc, enemy, monster, ai; and grep for aggro, threat, hate, respawn across the donor. The only "aggro" hits are asset and template names, e.g. object/mobile/uwari_beetle_aggro.tpf in tools/gold_export/templates.dat line 7753 (a name in a list, not behaviour).
+
+Best transferable idea: Nothing in this donor transfers to aggro; the closest usable idea is a per-template update radius read from template data, which could bound which enemies a client needs to hear about, but that is visibility and streaming, not aggro.
+Decision (proposed): reject - no aggro mechanism here to adopt; the update-radius idea belongs to the spawns-zones cell if it is used at all, and the Frankendom aggro rule (hate list, MAX_ATTACKERS = 3) must come from our own engine.

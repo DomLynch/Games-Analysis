@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ModernUO	server-tick-netcode	P	STRONG	full	/mnt/frankendom-donors/ModernUO/Projects/Server/Main.cs:705-795 (loop phases, idle sleep 757-785); Timer/Timer.TimerWheel.cs:59-70 (8 ms catch-up); Mobiles/Mobile.cs:7871-7900 (bounded dirty drain); note out/server-tick-netcode/ModernUO.deep.md
+ModernUO	anticheat-validation	P	STRONG	full	/mnt/frankendom-donors/ModernUO/Projects/Server/Network/MovementThrottle.cs:119-235 (credit-debt gate, queue, reject at 10); Mobiles/Mobile.cs:4363-4380 (drift clamp 200 ms); note out/anticheat-validation/ModernUO.deep.md
+ModernUO	zones-world	P	STRONG	full	/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/Spawners/BaseSpawner.cs:829-895 (tick, cap, weighted entry pick), 1169-1213 (random respawn timer), 391-404 (re-arm on removal); note out/zones-world/ModernUO.deep.md

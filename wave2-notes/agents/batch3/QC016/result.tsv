@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+vthibault-roBrowser	camera	P	STRONG	full	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js:292-341 (Camera.update: lerp from ms, goal ease, orbit matrix); clamps 230-269 and 277-284; GPL-3.0 so clean-room
+MrAntares-roBrowserLegacy	camera	P	STRONG	full	/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:436-483 (three-state rig from zoom goal, per-state pitch band, FOV and zoom step) and Renderer/Map/OccluderFade.js 136-266 with GLSL 26-53 (wall fade between eye and hero); GPL-3.0 so clean-room
+wowserhq-client	camera	P	NONE	thin	/mnt/frankendom-donors/wowserhq-client/src/ui/components/simple/Model.script.ts:33-35 (SetCamera stub) and src/ui/components/UIRoot.ts:130 and src/gfx/Screen.ts:91 (TODOs); no camera mechanism in the donor, MIT

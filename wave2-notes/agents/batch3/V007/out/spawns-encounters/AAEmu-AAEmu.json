@@ -1,0 +1,118 @@
+{
+ "game": "AAEmu-AAEmu",
+ "category": "spawns-encounters",
+ "cell": 4,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/NPChar/NpcSpawner.cs",
+ "licence": "as read: LICENSE.GPL (GPL-3.0 full text); README 'Licensing information' header text is LGPL-3.0; LICENSE.MIT (MIT, Rain0Ash 2019) present, scope unclear",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "population-cap",
+  "presence-gated",
+  "respawn-queue",
+  "new:corpse-gate",
+  "new:presence-cache",
+  "new:player-scaled-cap"
+ ],
+ "data_fields": [
+  {
+   "name": "max_population",
+   "donor_constant": "1 default; per spawner from npc_spawners.maxPopulation",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "AAEmu.Game/Models/Game/NPChar/NpcSpawnerTemplate.cs:9"
+  },
+  {
+   "name": "test_radius_npc",
+   "donor_constant": "3 default; player count radius = value x 50",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "AAEmu.Game/Models/Game/NPChar/NpcSpawner.cs:532"
+  },
+  {
+   "name": "test_radius_pc",
+   "donor_constant": "0 default (falls back to test_radius_npc); presence radius = value x 50, squared",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "AAEmu.Game/Models/Game/NPChar/NpcSpawner.cs:458"
+  },
+  {
+   "name": "suspend_spawn_count",
+   "donor_constant": "0 (off)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "AAEmu.Game/Models/Game/NPChar/NpcSpawner.cs:405"
+  },
+  {
+   "name": "min_population",
+   "donor_constant": "0, treated as 1; no effect on the cap for valid data (reading)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "AAEmu.Game/Models/Game/NPChar/NpcSpawner.cs:396"
+  },
+  {
+   "name": "spawn_delay_min",
+   "donor_constant": "5 default; never enforced (reading)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "AAEmu.Game/Models/Game/NPChar/NpcSpawnerTemplate.cs:13"
+  },
+  {
+   "name": "spawn_delay_max",
+   "donor_constant": "10 default",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "AAEmu.Game/Models/Game/NPChar/NpcSpawnerTemplate.cs:20"
+  },
+  {
+   "name": "respawn_timer",
+   "donor_constant": "random integer draw from spawn_delay_min to spawn_delay_max at each spawn",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "AAEmu.Game/Models/Game/NPChar/NpcSpawnerNpc.cs:123"
+  },
+  {
+   "name": "corpse_hold",
+   "donor_constant": "20",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "AAEmu.Game/Models/Game/World/Spawner.cs:14"
+  },
+  {
+   "name": "loot_hold_extension",
+   "donor_constant": "300",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "AAEmu.Game/Models/Game/Items/Containers/LootingContainer.cs:42"
+  },
+  {
+   "name": "presence_cache",
+   "donor_constant": "10",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "AAEmu.Game/Models/Game/NPChar/NpcSpawner.cs:463"
+  },
+  {
+   "name": "tick_interval",
+   "donor_constant": "1",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "AAEmu.Game/Core/Managers/World/WorldManager.cs:365"
+  },
+  {
+   "name": "player_radius_scale",
+   "donor_constant": "50 (applied to every radius)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "AAEmu.Game/Models/Game/NPChar/NpcSpawner.cs:458"
+  }
+ ],
+ "best_idea": "Scale a spawn point's population to the players standing near it (one per player, at least one, never above the zone cap), and hold replacement until the old body has left the world.",
+ "decision": "adapt",
+ "decision_why": "The player-scaled cap and corpse-gated replacement fit row 23 and zones-as-data; the donor's spawn flag and its despawn-on-empty branch (reads as unreachable) must not be copied.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: zone max 2 with three players in radius holds two members; after one dies there is no replacement until its corpse is removed at 20 s, and a fourth nearby player never lifts the count above 2."
+}

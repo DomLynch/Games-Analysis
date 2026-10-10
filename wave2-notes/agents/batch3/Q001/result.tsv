@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+freeorion-freeorion	spawns-encounters	P	STRONG	full	turn_events.py:14-65 per-turn spawner (chance = systems x freq x 0.01, one spawn per roll, empty-system filter); monsters.py:84-222 game-start director with per-plan spawn limits; EXPERIMENTOR_OUTPOST.focs.py:54-216 timed escalation (lines 1-220 read)
+afritz1-OpenTESArena	spawns-encounters	P	STRONG	full	ArenaEntityUtils.cpp:1043-1161 encounter chance by environment; 1175-1228 level fold, reroll and row pick; 1231-1276 offset sampler with widening; GameState.cpp:1305-1322 trigger on clock change
+openmw	spawns-encounters	P	STRONG	full	mwmechanics/levelledlist.cpp:18-80 level-gated pick with none-chance and nested tables; mwworld/worldimp.cpp:3606-3623 spawn count and placement; mwgui/waitdialog.cpp:189-224 rest interrupt; mwworld/cellstore.cpp:1223-1290 and mwclass/creature.cpp:801-834 respawn gates

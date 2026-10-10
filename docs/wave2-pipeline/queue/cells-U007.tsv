@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+ClassicUO	7	zones-world	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client (Game/, Network/, Game/UI/Gumps, Game/Scenes) and ClassicUO.Renderer	9
+ClassicUO	9	inventory-bank-equipment	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client (Game/, Network/, Game/UI/Gumps, Game/Scenes) and ClassicUO.Renderer	9
+ClassicUO	13	vfx-blood-finishers	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client (Game/, Network/, Game/UI/Gumps, Game/Scenes) and ClassicUO.Renderer	9

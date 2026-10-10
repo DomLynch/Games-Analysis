@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+clockworklabs-SpacetimeDB	loot-drops	P	PARTIAL	thin	/mnt/frankendom-donors/clockworklabs-SpacetimeDB/demo/Blackholio/server-rust/src/lib.rs:540-568 pickup pool refilled to 600 on a 500 ms timer (no loot table or drop roll exists in the donor); see verdict-clockworklabs-SpacetimeDB-loot-drops.txt
+gawric-Unity-Client-for-L2J	loot-drops	P	STRONG	full	/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/Item/ItemDropPresentationService.cs:121-147 drop arc (lerp plus sine lift, 0.35 s / 0.55 s flight, 18 s glow from landing); no roll, table or owner in this donor, client presentation only
+angband-angband	loot-drops	P	STRONG	full	/mnt/frankendom-donors/angband-angband/src/mon-make.c:751-893 mon_create_drop rolls drops once at spawn (flags count, percent entries, gold/item split); monster_death (mon-util.c:952-1009) drops the carried list

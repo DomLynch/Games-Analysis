@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+Kelsidavis-WoWee	camera	P	STRONG	full	/mnt/frankendom-donors/Kelsidavis-WoWee/src/rendering/camera_controller.cpp:1986-2440 (updateOrbitCamera): centred orbit with WMO raycast plus terrain march, asymmetric pull-in and zoom debt, 14-degree step-around; decision adapt
+Clancey-wowrust	camera	P	STRONG	full	/mnt/frankendom-donors/Clancey-wowrust/crates/wow-render/src/camera.rs:78-93 (ThirdPersonCamera::update): plain spherical orbit with gated rotation and 80-degree pitch clamp, no collision or smoothing (dt unused); decision reject
+samwhosung-benilla	camera	P	STRONG	full	/mnt/frankendom-donors/samwhosung-benilla/crates/benilla-app/src/player/camera_dynamics.rs:188-244 (SmartPivot): clip-gated one-sided look bias while the head-origin sphere sweep pins the eye, eased home at 90 deg/s over a cosine channel; decision adapt

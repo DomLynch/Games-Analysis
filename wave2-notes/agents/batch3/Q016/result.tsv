@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+beyond-all-reason-Beyond-All-Reason	ai-aggro	P	STRONG	full	luarules/gadgets/ai_zombies.lua:1123-1136 (power-ratio director gate), 503-566 (least-loaded split by power), 365-399 and 744-829 (nearest-enemy pick and half-range engage point), 1154-1206 (stuck check and capped no-go discs); GPL v2 or later, clean-room
+angband-angband	ai-aggro	P	STRONG	full	src/mon-move.c:1693-1719 (activity gate), 1729-1780 (stealth sleep roll), 212-308 (fight-or-flee range), 836-967 (movement order), 675-731 (flee scoring); GPL v2 or Angband licence, clean-room
+ihhub-fheroes2	ai-aggro	P	STRONG	full	src/fheroes2/ai/ai_battle.cpp:1620-1758 (in-reach pick then two-pass distant pick), battle/battle_troop.cpp:1007-1088 (threat formula); GPL v2 or later, clean-room

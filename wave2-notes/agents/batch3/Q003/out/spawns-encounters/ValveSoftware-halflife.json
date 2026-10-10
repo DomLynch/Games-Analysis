@@ -1,0 +1,74 @@
+{
+ "game": "ValveSoftware-halflife",
+ "category": "spawns-encounters",
+ "cell": 4,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ValveSoftware-halflife/dlls/monstermaker.cpp",
+ "licence": "Valve LLC header restricts use, distribution and modification to non-commercial enhancements of Valve products; Half Life 1 SDK LICENSE at repo root allows free use and distribution only",
+ "licence_class": "restricted",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "population-cap",
+  "director",
+  "new:interval-attempt",
+  "new:spot-occupancy"
+ ],
+ "data_fields": [
+  {
+   "name": "respawn_interval",
+   "donor_constant": "delay key -> m_flDelay (default not read)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "subs.cpp:147"
+  },
+  {
+   "name": "live_cap",
+   "donor_constant": "m_iMaxLiveChildren from m_imaxlivechildren; 0 = no cap",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "monstermaker.cpp:166"
+  },
+  {
+   "name": "total_budget",
+   "donor_constant": "m_cNumMonsters from monstercount; disables at exactly 0",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "monstermaker.cpp:229"
+  },
+  {
+   "name": "spot_half_width",
+   "donor_constant": "34 (box half-width around maker origin)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "monstermaker.cpp:180"
+  },
+  {
+   "name": "spot_entity_limit",
+   "donor_constant": "2 (UTIL_EntitiesInBox list size)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "monstermaker.cpp:186"
+  },
+  {
+   "name": "ground_trace_depth",
+   "donor_constant": "2048",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "monstermaker.cpp:176"
+  },
+  {
+   "name": "fade_budget_threshold",
+   "donor_constant": "1 (fade flag off when budget is 1; only controls owner-link clearing at death)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "monstermaker.cpp:141"
+  }
+ ],
+ "best_idea": "A spawner that re-arms its timer before every attempt, so a refused attempt (at the live cap, or with a player or monster in the spot) waits a full interval, and counts its live children down through a death notice.",
+ "decision": "adapt",
+ "decision_why": "The fixed-interval attempt, the live cap and the death-notice decrement map onto row 23 population directly; the ground trace, the owner pointer and the Valve licence mean only the shape is taken, with the spot check written as a server-side occupancy test in our own spawn code.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: 10-second interval, live cap 3 and budget 6 never allow more than 3 live children, an attempt into a spot holding a player is skipped and retried only after the next interval, and the maker stops after 6 spawns."
+}

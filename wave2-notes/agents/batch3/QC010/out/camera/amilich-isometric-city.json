@@ -1,0 +1,97 @@
+{
+ "game": "amilich-isometric-city",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/amilich-isometric-city/src/components/game/CanvasIsometricGrid.tsx",
+ "licence": "MIT (LICENSE: MIT License, Copyright (c) 2025 amilich)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "new:view-bounds-clamp",
+  "new:cursor-anchored-zoom",
+  "new:proportional-zoom-step",
+  "new:drag-threshold"
+ ],
+ "data_fields": [
+  {
+   "name": "scroll_margin",
+   "donor_constant": "100 (screen px kept over the map edge)",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/components/game/CanvasIsometricGrid.tsx:2606"
+  },
+  {
+   "name": "tile_width",
+   "donor_constant": "64",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/components/game/types.ts:6"
+  },
+  {
+   "name": "tile_height_ratio",
+   "donor_constant": "0.60 (TILE_HEIGHT = 38.4)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/components/game/types.ts:7"
+  },
+  {
+   "name": "zoom_min",
+   "donor_constant": "0.3",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/components/game/constants.ts:62"
+  },
+  {
+   "name": "zoom_max",
+   "donor_constant": "5",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/components/game/constants.ts:63"
+  },
+  {
+   "name": "wheel_zoom_step",
+   "donor_constant": "0.05 x max(0.5, zoom) per wheel event",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/components/game/CanvasIsometricGrid.tsx:2864"
+  },
+  {
+   "name": "drag_threshold",
+   "donor_constant": "6",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/components/game/CanvasIsometricGrid.tsx:305"
+  },
+  {
+   "name": "key_pan_speed",
+   "donor_constant": "520 (screen px per second)",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/components/game/types.ts:9"
+  },
+  {
+   "name": "key_pan_frame_cap",
+   "donor_constant": "0.05",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/components/game/CanvasIsometricGrid.tsx:631"
+  },
+  {
+   "name": "wheel_idle_clear",
+   "donor_constant": "150",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/components/game/CanvasIsometricGrid.tsx:2882"
+  }
+ ],
+ "best_idea": "Keep the camera's scroll limits as a function of the current zoom and the map size, and when the zoom changes keep the point under the cursor fixed before clamping, so the view can never leave the level.",
+ "decision": "adapt",
+ "decision_why": "The donor is a 2D pan and zoom, so only two rules transfer: zoom-aware bounds that come from zone size, and zoom anchored at a chosen point. Reject the screen-pixel keyboard pan, whose world speed changes with zoom, because a 3D camera should pan in world units. The donor has no third-person pitch, yaw, shoulder offset, lock-on or collision.",
+ "decision_status": "proposed",
+ "acceptance": "A client test asserts that after a wheel zoom the anchor stays within 1 px of its screen position before the clamp, and that at every zoom the look point stays inside the zone bounds plus a 100 px margin; in play, zooming toward a fighter keeps that fighter at the same screen point.",
+ "camera_scope": "world"
+}

@@ -1,0 +1,20 @@
+game: SWG-Source-swg-main
+category: camera (category_no 14, cell 14)
+verdict: NONE
+depth: thin
+camera_scope: world camera (third-person follow in open zones). The donor has no camera code, so nothing transfers to either camera.
+licence: none stated; the donor's restricted note says "proprietary, no licence" (clean-room only; nothing here is copied)
+
+Why NONE: this copy is a build and tooling wrapper. The game source submodules (src, dsrc, serverdata) are empty directories, so the client camera (the engine's own camera code) is not in the donor and was not read. A grep over every non-data donor file for camera terms found no camera code: pitch, yaw, zoom, FOV, look-at, third-person, chase, viewport, frustum, eye position, over-the-shoulder. The only hit was the word "pitcher" in an item list (false positive).
+
+Files opened (candidates, at least 3):
+1. /mnt/frankendom-donors/SWG-Source-swg-main/tools/ClientBuildoutGenerator.java (lines 1-40, 145-152, 196-220, 344-352, 598-608 read; grep elsewhere). The only Java file in the donor. It builds client-side world entries; it reads each template's far update radius and a player-visible flag. Not a camera.
+2. /mnt/frankendom-donors/SWG-Source-swg-main/tools/gold_export/templates.dat (grep for "camera": three item templates, lines 8762, 13560, 14305). Item data, not code.
+3. /mnt/frankendom-donors/SWG-Source-swg-main/tools/custinfo-raw.dat (grep for "camera": mesh and shader asset lines, e.g. 40587, 76443). Asset manifest, not code.
+4. /mnt/frankendom-donors/SWG-Source-swg-main/tools/ExtractProfileInfo.cpp (lines 1-25). A profiler log filter, not game code.
+
+Camera values: the camera is client-only (the engine never reads it), and the donor has no camera values to tune, so no tunable data fields apply.
+
+Best transferable idea: No camera idea is in this donor. The nearest real idea is that each world object carries a far update radius and a player-visible flag, and only objects with both are written into the client world data; that is relevance (what a client is sent), not camera control.
+Decision (proposed): reject for the camera. The relevance radius may matter later for zone population or streaming (parity row 23, zone population), but it does not help the world camera, which needs shoulder offset, lag, collision pull-in and framing. Look for the camera in another donor.
+Checked: the receipts for the radius and view-flag lines are in receipts.tsv (verifier passed, 31 of 31 across all cells at the time of writing). The grep results are not quoted in receipts because they are absence claims.

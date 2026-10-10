@@ -1,0 +1,28 @@
+{
+  "game": "2004Scape-Server",
+  "category": "ai-aggro",
+  "cell": 2,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/2004Scape-Server/src/engine/entity/Npc.ts",
+  "licence": "MIT License, Copyright (c) 2023-2025 Lost City (LICENSE lines 1-3)",
+  "licence_class": "permissive",
+  "target_module": "src/fight/aggro.ts",
+  "parity_row": 4,
+  "pattern_tags": ["presence-gated", "grace-timer", "fixed-step", "compute-budget", "new:hunt-filter-chain"],
+  "data_fields": [
+    {"name": "hunt_range", "donor_constant": "huntrange per NPC type (Npc.ts 102; scan radius = 1 + distance/8 zones, ScriptIterators.ts 56)", "unit": "units", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/2004Scape-Server/src/engine/entity/Npc.ts:102"},
+    {"name": "hunt_rate_warmup", "donor_constant": "rate, default 1; scan waits while huntClock < rate - 1", "unit": "ticks", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/2004Scape-Server/src/engine/entity/Npc.ts:253"},
+    {"name": "recent_combat_grace", "donor_constant": "8 ticks", "unit": "ticks", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/2004Scape-Server/src/engine/entity/Npc.ts:935"},
+    {"name": "too_strong_level_factor", "donor_constant": "vislevel * 2 (combat level, outside wilderness)", "unit": "count", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/2004Scape-Server/src/engine/entity/Npc.ts:931"},
+    {"name": "keep_hunting", "donor_constant": "findKeepHunting flag (off by default)", "unit": "none", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/2004Scape-Server/src/engine/entity/Npc.ts:907"},
+    {"name": "not_busy_check", "donor_constant": "checkNotBusy flag (off by default)", "unit": "none", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/2004Scape-Server/src/cache/config/HuntType.ts:91"},
+    {"name": "afk_check", "donor_constant": "checkAfk default true", "unit": "none", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/2004Scape-Server/src/cache/config/HuntType.ts:97"},
+    {"name": "nobody_near_pause", "donor_constant": "nobodyNear PAUSEHUNT flag", "unit": "none", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/2004Scape-Server/src/cache/config/HuntType.ts:123"}
+  ],
+  "best_idea": "An NPC aggro scan is a named filter chain (range, vision, not busy, not afk, not too strong, not recently in combat, the NPC's own recent combat), then a random pick among the survivors, with a clock that gates the scan and resets on a find.",
+  "decision": "adapt",
+  "decision_why": "The filter chain and its data fields (range, vision, grace, keep-hunting) are the reusable shape for Frankendom's aggro scan in the fight loop; the engage must be a state change rather than a script interaction, and engaged attackers need the MAX_ATTACKERS = 3 cap the donor lacks.",
+  "decision_status": "proposed",
+  "acceptance": "Server test: an NPC with huntrange 8 and rate 3 with one eligible player in range does not engage on its first two turns and engages on the third; a player whose last combat was within 8 ticks is never engaged by the scan; with two eligible players one is engaged by a seeded random pick and the NPC returns to idle unless keepHunting is set."
+}

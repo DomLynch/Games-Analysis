@@ -1,0 +1,26 @@
+cvet-fonline (ai-aggro, cell 2) - verdict PARTIAL, depth thin
+Licence: MIT License (repo LICENSE: "Copyright (c) 2006 - 2026, Anton Tsvetinskiy aka cvet"). Permissive: code may be adapted.
+Hint: the list's hint was INFERRED (no file given), so the search started from grep.
+
+Files opened (at least 3 candidates, as required):
+- /mnt/frankendom-donors/cvet-fonline/Source/Server/MapManager.cpp 1310-1440 (look step: ProcessCritterLook, sight check at 1370, distance at 1412, tier-1 enter/leave at 1418-1433) and 1493-1505 (IsCritterSeeCritter, which calls the sight hook).
+- /mnt/frankendom-donors/cvet-fonline/Source/Server/Critter.h 175-195 (tier event declarations, Dist1/2/3).
+- /mnt/frankendom-donors/cvet-fonline/Source/Server/Critter.cpp 808-845 (visibility mode storage, AddVisibleCritter).
+- /mnt/frankendom-donors/cvet-fonline/Source/Scripting/ServerMapScriptMethods.cpp 845-870 (script query of critters whose look distance covers a hex).
+- /mnt/frankendom-donors/cvet-fonline/Examples/MinimalProject/StarterServerExtension.cpp 28-36 (example sight hook: within look distance means full sight).
+- Searched and not opened in full: Source/Server/Map.cpp 1157 (grep only), Source/Common/PathFinding.cpp (header only), Examples/MinimalMultiplayer/SourceExt/ServerExtension.cpp (grep only).
+- Donor-wide search for aggro, threat, hostile, flee, chase outside ThirdParty: the only threat code named is AiThreatControl (Docs/SyncCoverAnalysis.md 433 and 783, Source/Tests/Test_AngelScriptBytecode.cpp 1615), and no AiThreatControl source file exists in the donor (find returned none). The donor's examples contain no NPC target choice, flee or chase.
+
+Honest sentence why: the donor has a real awareness mechanism (sight check, look distance, three ring tiers that fire enter and leave events), but it is only the presence trigger for aggro; the target choice, threat, chase and flee that the topic asks about are not in this donor (they live in project scripts such as AiThreatControl, which is not included).
+
+Checked: confidence high on the sight and tier mechanism (read in full for tier 1; tiers 2 and 3 declared in Critter.h but their MapManager code was not read). Confidence high that target choice, threat, chase and flee are absent from the donor's engine code. camera_scope not applicable.
+
+What the donor actually does (as read):
+- Each pair of critters on a map is looked at both ways inside one loop (MapManager.cpp 1310-1313; the function that calls this loop and how often it runs was not read). A critter is seen when the sight hook returns a non-None mode (1370, 1493-1505). The default example hook returns Full when the hex distance is within the observer's look distance, otherwise None (StarterServerExtension.cpp 33).
+- Tier 1: the distance from the observer to the other critter (1412) is compared with ShowCritterDist1 using one test for both enter and leave (1418: `show_cr_dist1 >= dist && is_see`). Enter adds the critter to the group and fires OnCritterAppearedDist1 (1422). The else branch removes it and fires OnCritterDisappearedDist1 (1433). The single threshold means there is no hysteresis band as read: a critter that jitters on the ring boundary can produce enter and leave events on alternate steps (not run).
+
+Best transferable idea: use concentric awareness rings per monster that fire enter and leave events, so that aggro is a tiered presence trigger instead of a per-tick scan of every foe.
+Decision (proposed): adapt - the tiered enter and leave events fit a zone-level aggro trigger (a monster notices a player inside its ring and loses it outside), but the donor gives no target choice, threat or flee, so those must be built in Frankendom's engine, and a hysteresis band must be added to the single threshold.
+Acceptance: a server test where a player walks across a monster's ring boundary in small steps asserts that exactly one enter event and one leave event fire (no chatter), and that the monster's target does not change while the player stays inside the ring.
+
+Parity row: 2 (AI brain) for the target file src/fight/ai.ts; zone population/spawn caps are row 23, not this cell.

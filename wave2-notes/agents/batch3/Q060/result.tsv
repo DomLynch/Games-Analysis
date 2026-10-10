@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+cuteshaun-lineage2-api	loot-drops	P	PARTIAL	thin	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/data/cleaned-npcs.ts:193-196 merges and dedups drop rows per category; no drop roll anywhere in the repo, only table data and display
+exult-exult	loot-drops	P	STRONG	full	/mnt/frankendom-donors/exult-exult/actors.cc:4309-4464 Actor::die moves the victim inventory into a corpse body or onto the floor (okay_to_take); delete_contents at 4464 then removes spells and unplaceable items
+id-Software-Quake	loot-drops	P	STRONG	full	/mnt/frankendom-donors/id-Software-Quake/qw-qc/items.qc:1636-1683 DropBackpack and player.qc:572-613 PlayerDie: timed quad/ring drops keep time left, victim ammo goes to a 120 s backpack, pickup clamps to caps

@@ -1,0 +1,125 @@
+{
+ "game": "daggerfall-unity",
+ "category": "progression",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs",
+ "licence": "MIT (repo LICENSE: Copyright (c) 2009-2023 Daggerfall Workshop)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/progression.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "new:skill-use-tally",
+  "new:skill-threshold-scaling",
+  "new:level-from-skill-sum",
+  "wait-gate",
+  "clamp-and-report",
+  "new:settle-at-rest"
+ ],
+ "data_fields": [
+  {
+   "name": "tally_cap",
+   "donor_constant": "20000",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs:1250"
+  },
+  {
+   "name": "check_gap",
+   "donor_constant": "360 classic minutes (6 game hours)",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs:1367"
+  },
+  {
+   "name": "skill_mastery",
+   "donor_constant": "100",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs:1384"
+  },
+  {
+   "name": "mastery_gate",
+   "donor_constant": "95",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs:1384"
+  },
+  {
+   "name": "uses_level_growth",
+   "donor_constant": "1.04 per level",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:325"
+  },
+  {
+   "name": "uses_scale",
+   "donor_constant": "2/5 then +1",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:326"
+  },
+  {
+   "name": "skill_advancement_multiplier",
+   "donor_constant": "per skill, e.g. Medical 12, Jumping 5, Lockpicking 2, Dodging 4 (table partly read)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/DaggerfallSkills.cs:485"
+  },
+  {
+   "name": "class_advancement_multiplier",
+   "donor_constant": "per class (custom formula 0.3 + 2.7 x (points + 12) / 52)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/UserInterfaceWindows/CreateCharCustomClass.cs:498"
+  },
+  {
+   "name": "reflexes_step",
+   "donor_constant": "8192 of 65536 per point from reflexes 2 (0.125)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs:1377"
+  },
+  {
+   "name": "level_base",
+   "donor_constant": "28",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:336"
+  },
+  {
+   "name": "level_step",
+   "donor_constant": "15",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:336"
+  },
+  {
+   "name": "bonus_pool_min",
+   "donor_constant": "4",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:146"
+  },
+  {
+   "name": "bonus_pool_max",
+   "donor_constant": "6",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:147"
+  },
+  {
+   "name": "hp_roll_range",
+   "donor_constant": "HitPointsPerLevel / 2 to HitPointsPerLevel, plus endurance, floor 1",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:346"
+  }
+ ],
+ "best_idea": "Count each skill use into a per-skill tally, settle the tally into a skill rise only at a gated checkpoint (rest or travel), and derive the character level from the sum of advanced skills rather than from kills.",
+ "decision": "adapt",
+ "decision_why": "Keep the tally, the threshold scaled by value and level, and the level-from-sum rule, but tally only server-verified fight events and settle at a zone rest point rather than on a 6-hour clock that does not fit fast duels.",
+ "decision_status": "proposed",
+ "acceptance": "A server test asserts that after 10 verified parries the parry tally rises by 10, that a skill rises by one only when the tally passes the threshold and then resets, that the level increases exactly when the sum of advanced skills passes 15 points above the starting sum, and that a second settlement inside the same rest does nothing."
+}

@@ -1,0 +1,138 @@
+{
+ "game": "swgemu-Core3",
+ "category": "combat-sim",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/combat/CombatManager.cpp",
+ "licence": "AGPL-3.0 (as read: COPYING lines 1-2, GNU AFFERO GENERAL PUBLIC LICENSE Version 3)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/hit-resolve.ts",
+ "parity_row": 1,
+ "pattern_tags": [
+  "new:hit-ladder",
+  "new:two-roll-evade",
+  "new:armour-pierce-exponent",
+  "new:multiplier-chain",
+  "clamp-and-report"
+ ],
+ "data_fields": [
+  {
+   "name": "toHitScale",
+   "donor_constant": "50 (accuracy minus defense points per roll unit)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/combat/CombatManager.h:73"
+  },
+  {
+   "name": "toHitBase",
+   "donor_constant": "75 (percent to hit at parity)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/combat/CombatManager.h:74"
+  },
+  {
+   "name": "toHitStep",
+   "donor_constant": "25 (percent per ladder step; 3 steps)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/combat/CombatManager.h:75"
+  },
+  {
+   "name": "toHitMax",
+   "donor_constant": "100 (percent cap)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/combat/CombatManager.h:77"
+  },
+  {
+   "name": "toHitMin",
+   "donor_constant": "0 (percent floor)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/combat/CombatManager.h:78"
+  },
+  {
+   "name": "defenseCap",
+   "donor_constant": "125 (primary and secondary defense hard cap)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/combat/CombatManager.cpp:2026"
+  },
+  {
+   "name": "unskilledAccuracy",
+   "donor_constant": "-15 (TODO in donor: may be -50 or -125)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/combat/CombatManager.cpp:1980"
+  },
+  {
+   "name": "evadeAttackRollMax",
+   "donor_constant": "500 (attack roll 1..500)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/combat/CombatManager.cpp:2170"
+  },
+  {
+   "name": "evadeDefendRollMax",
+   "donor_constant": "200 (defend roll 1..200)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/combat/CombatManager.cpp:2171"
+  },
+  {
+   "name": "playerDamageMult",
+   "donor_constant": "1.5 (player attacker, non-force)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/combat/CombatManager.cpp:1144"
+  },
+  {
+   "name": "meleeDamageMult",
+   "donor_constant": "1.25 (melee attack)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/combat/CombatManager.cpp:1148"
+  },
+  {
+   "name": "blockDamageMult",
+   "donor_constant": "0.5 (BLOCK result)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/combat/CombatManager.cpp:457"
+  },
+  {
+   "name": "pvpDamageMult",
+   "donor_constant": "0.25 (player vs player, non-force)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/combat/CombatManager.cpp:1175"
+  },
+  {
+   "name": "damageFloor",
+   "donor_constant": "1 (minimum damage on a computed hit)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/combat/CombatManager.cpp:1177"
+  },
+  {
+   "name": "armourPierceUp",
+   "donor_constant": "1.25 (per point piercing above rating)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/combat/CombatManager.cpp:2670"
+  },
+  {
+   "name": "armourPierceDown",
+   "donor_constant": "0.5 (per point rating above piercing)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/combat/CombatManager.cpp:2672"
+  }
+ ],
+ "best_idea": "A fight's hit chance is a clamped piecewise curve of accuracy minus defense, with a roll after it, so a duel's odds can be read off one table and tuned as data.",
+ "decision": "adapt",
+ "decision_why": "Take the hit ladder (scale, base, step, clamp, defense cap) and the order hit-then-damage; drop the three-pool split, spill-over and food mitigation (one ledger), the TOHIT debug output to clients, and the armour piercing exponent unless it is bounded.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: accuracy 0 vs defense 0 gives 75% hit; accuracy 50 above defense gives 100%; 50 below gives 50%; 100 below gives 37.5%; a MISS deals no damage and a BLOCK halves the damage; the duel log records the roll and the chance but the client receives only the result."
+}

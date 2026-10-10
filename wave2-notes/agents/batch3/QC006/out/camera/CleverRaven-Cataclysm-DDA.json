@@ -1,0 +1,89 @@
+{
+ "game": "CleverRaven-Cataclysm-DDA",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/game.cpp",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "origins/client/world-camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "new:speed-scaled-lookahead",
+  "new:glide-then-snap",
+  "new:margin-clamp"
+ ],
+ "data_fields": [
+  {
+   "name": "dead_zone_speed",
+   "donor_constant": "400 units (1 tile of vehicle speed)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/game.cpp:1382"
+  },
+  {
+   "name": "tile_speed_unit",
+   "donor_constant": "400 vehicle speed units per tile",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/vehicle.h:88"
+  },
+  {
+   "name": "top_speed_lead",
+   "donor_constant": "smaller maximum offset x 400 (full lead)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/game.cpp:1384"
+  },
+  {
+   "name": "border_margin",
+   "donor_constant": "2 tiles, plus 1 (window half minus border)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/game.cpp:1377"
+  },
+  {
+   "name": "max_lead",
+   "donor_constant": "window half minus border (derived from window size)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "src/game.cpp:1378"
+  },
+  {
+   "name": "squeeze_threshold",
+   "donor_constant": "0.2",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "src/game.cpp:1401"
+  },
+  {
+   "name": "glide_step",
+   "donor_constant": "1 tile per call (per turn or per move)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/game.cpp:1448"
+  },
+  {
+   "name": "snap_distance",
+   "donor_constant": "1 tile",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/game.cpp:1451"
+  },
+  {
+   "name": "cruise_match_window",
+   "donor_constant": "7 tiles of speed (7 x 400 units)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/game.cpp:1389"
+  }
+ ],
+ "best_idea": "Lead the camera along the travel direction by an amount that scales with speed between a dead zone and full speed, clamp it to a safe margin, glide toward it at a fixed rate and snap when close.",
+ "decision": "adapt",
+ "decision_why": "Take the speed-scaled, margin-clamped look-ahead and the glide-then-snap for the world camera; drop the integer tile steps, the per-turn timing and the unclamped factor; zero lead in fights and in the Pit camera.",
+ "decision_status": "proposed",
+ "acceptance": "While the hero runs at full speed the world camera leads along the travel direction by up to a data lead (about a third of the frame), and while stopped it sits centred; the lead never pushes the hero outside the safe margin; a client test asserts lead = 0 at speed <= min, lead = max at speed >= max, monotone between, and that the glide reaches the target within the snap distance.",
+ "camera_scope": "world"
+}

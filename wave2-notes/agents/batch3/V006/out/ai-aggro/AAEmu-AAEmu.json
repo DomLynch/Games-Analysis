@@ -1,0 +1,22 @@
+{"game":"AAEmu-AAEmu","category":"ai-aggro","cell":2,"verdict":"STRONG","depth":"full",
+ "donor_path":"/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/Units/Unit.cs",
+ "licence":"LGPL-3.0 (README; LICENSE.GPL and LICENSE.MIT also present; per-file licence not established)","licence_class":"copyleft",
+ "target_module":"src/fight/aggro.ts","parity_row":2,
+ "pattern_tags":["hate-table","target-score","presence-gated","new:heal-share-60","new:aggro-link-seed","new:leash-return"],
+ "data_fields":[
+  {"name":"heal_threat_share","donor_constant":"0.6 of healed amount (truncated)","unit":"ratio","where":"engine constant","donor_ref":"Aggro.cs:53"},
+  {"name":"attacker_aggro_percent","donor_constant":"AggroMul, percent, default 100","unit":"ratio","where":"zone data","donor_ref":"Unit.cs:209"},
+  {"name":"incoming_aggro_percent","donor_constant":"IncomingAggroMul, percent, default 100","unit":"ratio","where":"zone data","donor_ref":"Unit.cs:217"},
+  {"name":"ai_tick_interval","donor_constant":"100 ms","unit":"ms","where":"engine constant","donor_ref":"AIManager.cs:23"},
+  {"name":"return_distance","donor_constant":"50 (template ReturnDistance overrides)","unit":"units","where":"zone data","donor_ref":"BaseCombatBehavior.cs:254"},
+  {"name":"absolute_return_distance","donor_constant":"200 (template AbsoluteReturnDistance overrides)","unit":"units","where":"zone data","donor_ref":"BaseCombatBehavior.cs:255"},
+  {"name":"empty_table_return_distance","donor_constant":"4","unit":"units","where":"engine constant","donor_ref":"Npc.cs:1087"},
+  {"name":"aggro_link_helper_seed","donor_constant":"1 point of damage aggro","unit":"count","where":"engine constant","donor_ref":"Behavior.cs:391"},
+  {"name":"aggro_link_radius","donor_constant":"200 x AttackStartRangeScale","unit":"units","where":"zone data","donor_ref":"Behavior.cs:350"},
+  {"name":"attack_skill_gate","donor_constant":"150 ms","unit":"ms","where":"engine constant","donor_ref":"AttackBehavior.cs:49"}
+ ],
+ "best_idea":"Keep one hate table per NPC where a damage row adds the attacker-scaled, NPC-scaled damage and a healer's row gets 60 percent of heal threat, then re-pick the target every 100 ms as the highest-total row that is visible and alive, dropping failing rows on the way.",
+ "decision":"adapt",
+ "decision_why":"The engine-owned hate table and the every-tick pick fit one engine and server-verified fights; but the donor has one target and no attacker cap, no hysteresis and undefined ties, so Frankendom must add MAX_ATTACKERS = 3 slots, a switch margin or sticky target, and a stable tie-break.",
+ "decision_status":"proposed",
+ "acceptance":"A server test with five attackers on one boss keeps three active slots (top three by total, visible and alive); a heal of 100 by a row adds 60 to that healer's row; a tie goes to the earlier first hit; a boss leashed past 50 units with an empty table returns, and beyond 200 units from its idle spot it does not."}

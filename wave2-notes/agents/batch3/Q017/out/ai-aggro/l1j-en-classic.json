@@ -1,0 +1,89 @@
+{
+ "game": "l1j-en-classic",
+ "category": "ai-aggro",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/L1HateList.java",
+ "licence": "GPL-2.0-or-later (COPYING is GPL v2; source headers: version 2 or any later version)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/aggro.ts",
+ "parity_row": 4,
+ "pattern_tags": [
+  "hate-table",
+  "stale-state",
+  "new:first-hit-bonus",
+  "new:family-link",
+  "new:seed-on-sight"
+ ],
+ "data_fields": [
+  {
+   "name": "firstHitDivisor",
+   "donor_constant": "maxHp / 10 added to the first non-zero hit",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "L1NpcInstance.java:357-360"
+  },
+  {
+   "name": "seedHate",
+   "donor_constant": "0 for aggro-on-sight and pack-link seeds",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "L1MonsterInstance.java:201"
+  },
+  {
+   "name": "aiSleepMs",
+   "donor_constant": "300 ms between AI passes",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "L1NpcInstance.java:294"
+  },
+  {
+   "name": "aiParalysedSleepMs",
+   "donor_constant": "200 ms while paralysed or asleep",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "L1NpcInstance.java:261"
+  },
+  {
+   "name": "staleGroundItemSleepMs",
+   "donor_constant": "1000 ms after a stale ground-item target",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "L1NpcInstance.java:321"
+  },
+  {
+   "name": "autoAggroMapIds",
+   "donor_constant": "maps 88, 98, 92, 91, 95: first visible non-invisible player targeted",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "L1MonsterInstance.java:132-138"
+  },
+  {
+   "name": "lawfulAggroThreshold",
+   "donor_constant": "-1000 (non-aggro monsters target a player below it)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "L1MonsterInstance.java:161"
+  },
+  {
+   "name": "packAgroFamily",
+   "donor_constant": "template agrofamily: 1 = same family only; more than 1 = any family linked",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "L1NpcInstance.java:378-386"
+  },
+  {
+   "name": "packMobGroup",
+   "donor_constant": "same non-zero mob group is always linked",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "L1NpcInstance.java:389-391"
+  }
+ ],
+ "best_idea": "Keep one hate table per NPC that accumulates damage per attacker, pick the strict maximum with a stable tie-break, and on every pick validate the top and drop it if it is dead, off-map or gone, before taking the next one.",
+ "decision": "adapt",
+ "decision_why": "The accumulate, max-pick and validate-drop loop is the right shape for many-on-one aggro under MAX_ATTACKERS = 3; take the shape, add a deterministic tie-break and a cap at the point of entry, purge stale entries on leave, and do not take the per-NPC thread or the sight-order target.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: attacker A hits for 30 first on an NPC with maxHp 200 (hate 50), attacker B hits for 40 (hate 40), so A is the target; when A is dead the next pick is B with no exception; a seed of hate 0 does not consume the first-hit bonus; equal hate picks the lower id on every run."
+}

@@ -1,0 +1,27 @@
+SCAR (camera, cell 14) - verdict PARTIAL, depth thin, camera_scope: world camera
+Donor: /mnt/frankendom-donors/SCAR (SKSE plugin for Skyrim; src/DebugAPI is the relevant folder)
+Licence: MIT ("MIT License", LICENSE lines 1 and 3: "Copyright (c) 2023 max-su-2019"). Code may be adapted with attribution.
+
+Hint file is the wrong file. Nemesis_Engine/mod/scar/1hm_behavior/#0085.txt is a Havok behaviour-graph event-name table (line 2: <hkparam name="eventNames" numelements="461">). Its "Camera..." entries (lines 111, 155, 462-463, 545-547) are animation event names, not camera code. README.md (top) says the repo is an SKSE plugin that brings the combo attack AI into Skyrim.
+
+Files opened (at least 3):
+1. src/DebugAPI/Util.cpp lines 805-842 (GetCameraPos, GetCameraRot, IsPosBehindPlayerCamera)
+2. src/DebugAPI/DebugAPI.cpp lines 205-225 (DrawLine3D) and 322-340 (WorldToScreenLoc)
+3. src/DebugAPI/FocusObject.h (all 60 lines)
+4. src/DebugAPI/FocusObject.cpp (all 60 lines)
+5. src/DebugAPI/ObjectBound.h (all 28 lines)
+6. Nemesis_Engine/mod/scar/1hm_behavior/#0085.txt (head, and the camera lines by grep)
+Search: grep over all of src for camera, PlayerCamera, NiCamera, focus, Priority, angle and sort. The only camera hits are in DebugAPI. The two sort calls (src/Hook_AttackCombo.cpp:22, src/Hook_AttackStart.cpp:23) sort action data by weight, not camera; they were grep hits only and were not opened.
+
+Why PARTIAL: the donor reads the Skyrim player camera for debug drawing and has one real camera predicate. The focus-scoring idea (distance times camera-angle difference, lower preferred) appears only in a comment (FocusObject.h:50-53). Priority is assigned in the constructor (FocusObject.cpp:7), and nothing in the repo constructs a FocusObject or sorts by it, so the scoring is not implemented here. The one real piece is a fragment.
+
+What is real (read):
+- Util.cpp:807-825: camera position from the PlayerCamera singleton; camera rotation from its current state.
+- Util.cpp:827-839: the behind-camera test. Both vectors are normalised; the chord length |to - forward| is compared with sqrt(2) (glm::root_two). A chord above sqrt(2) means an angle above 90 degrees, so the test is true when the target is behind the camera's forward direction. The code's own comment (line 837) says this.
+- DebugAPI.cpp:216-217: a debug line is skipped only when both ends are behind the camera. A segment that straddles the camera plane is projected without clipping (DebugAPI.cpp:219-220).
+
+Best transferable idea: For lock-on candidate selection, skip any enemy whose direction from the camera makes more than 90 degrees with the camera's forward vector (a dot product below zero), before any distance or priority score is applied.
+
+Decision (proposed): adapt - use the 90-degree behind-camera test as a lock-on candidate filter in src/fight/camera.ts (parity row 11, many-on-one framing); do not port the unimplemented priority score as code; if Frankendom wants the score, write it from the FocusObject comment and test it on its own.
+
+Confidence: high on the predicate and the both-ends cull (read end to end). Medium that the repo has no other camera mechanism (based on grep and the files listed). Not read: the Skyrim PlayerCamera API (the engine, not in this repo), DebugAPI.cpp draw bodies beyond the lines cited, and Util.cpp 391-554 (focus-object search helpers, not camera).

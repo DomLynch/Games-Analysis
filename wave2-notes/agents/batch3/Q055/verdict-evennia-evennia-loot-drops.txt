@@ -1,0 +1,23 @@
+evennia-evennia | loot-drops | cell 8 | verdict PARTIAL | depth thin | old P
+Donor: /mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/ | Licence: BSD 3-Clause (LICENSE.txt, "BSD 3-Clause License") | Python
+
+Hint file (tb_items.py) checked and rejected: /mnt/frankendom-donors/evennia-evennia/evennia/contrib/game_systems/turnbattle/tb_items.py is the turn-battle item-USE module (heal, add_condition, cure_condition, attack items; lines 394-489). It has no loot, no drops, no reward.
+
+Files opened (read by sed/grep on the VPS):
+1. evennia/contrib/tutorials/evadventure/characters.py (lines 20-160 and 230-300): LivingMixin.at_pay (94-100), at_looted (103-114), pre_loot/at_do_loot/post_loot (122-150), at_defeat/at_death (79-85), PC at_defeat (252-259), at_pre_loot/at_looted (274-281).
+2. evennia/contrib/tutorials/evadventure/npcs.py (lines 1-140 and 300-356): coins default 1 (57), NPC at_defeat that skips death-table rolls (351-356).
+3. evennia/contrib/tutorials/evadventure/rules.py (lines 20-68 and a grep of roll_death, death_map, roll_random_table).
+4. evennia/contrib/game_systems/turnbattle/combat_turnbased.py (lines 300-345, check_stop_combat at 325-328).
+5. evennia/contrib/tutorials/evadventure/objects.py (lines 118-140, EvAdventureTreasure: value 100, 'mainly useful to sell for coin').
+6. evennia/contrib/tutorials/evadventure/quests.py (grep only: 'reward' appears in a docstring, no reward code).
+7. Repo-wide grep -rn for loot|drop|reward|treasure over *.py: the only loot code is in evadventure.
+
+What the donor has: one loot action. On a defeated NPC, looting steals coins: max_steal = 1d10 (characters.py 111), capped at the coins the corpse carries (at_pay, 99-100), moved to the looter (114), with a room message. An NPC carries 1 coin by default (npcs.py 57).
+What it does NOT have: no drop table, no item drop roll, no ownership rule for items, no XP or reward on loot. The loot hooks pre_loot, at_do_loot, post_loot and at_pre_loot are defined but nothing in the donor calls them (grep for pre_loot|at_do_loot|post_loot|at_pre_loot over evennia/**/*.py finds only their definitions; at_do_loot calls at_looted at characters.py 143, but no caller of at_do_loot exists). So the looting path is not wired to a command in this donor.
+
+Why PARTIAL and not STRONG: the only real mechanism is a 2-line coin steal from a corpse with no table and no trigger in the donor. I read all of it end to end (depth could be called full for the steal), but it is a fragment of the loot topic, not a loot system. I was torn; the steal is simple and real, so if Strategy wants it as a STRONG clamp-and-report note, it is a small note with a 1d10 roll capped at the carried amount. Confidence in PARTIAL: moderate-high.
+
+Best transferable idea: When a corpse is looted, roll a small die, then clamp the payout to what the corpse actually holds, so the ledger can never go negative.
+Decision (proposed): reject - Frankendom's loot must be server-verified items and XP on one ledger, and this donor has no item drop, table or trigger to adopt; the clamp is a one-line rule we can write ourselves.
+
+Receipts: /private/tmp/p2/wave2-haiku/batch3/Q055/receipts.tsv (10 rows, verifier ok 10 / failed 0).

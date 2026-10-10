@@ -1,0 +1,44 @@
+{
+ "game": "SWG-Source-swg-main",
+ "category": "quests-dialogue",
+ "cell": 12,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/SWG-Source-swg-main/tools/ScanScript.pl",
+ "licence": "as read",
+ "licence_class": "restricted",
+ "target_module": "origins/content/dialogue-refs.ts",
+ "parity_row": 20,
+ "pattern_tags": [
+  "new:content-ref-check",
+  "new:variant-range"
+ ],
+ "data_fields": [
+  {
+   "name": "variant_range_low",
+   "donor_constant": "rule: inclusive lower bound of a numbered variant range (one digit as written, line 103)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/SWG-Source-swg-main/tools/ScanScript.pl:103"
+  },
+  {
+   "name": "variant_range_high",
+   "donor_constant": "rule: inclusive upper bound; expansion runs while n <= high",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/SWG-Source-swg-main/tools/ScanScript.pl:109"
+  },
+  {
+   "name": "missing_line_policy",
+   "donor_constant": "rule: report missing lines only, no failing status",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/SWG-Source-swg-main/tools/ScanScript.pl:74"
+  }
+ ],
+ "best_idea": "Before a zone ships, expand each ranged bark or dialogue reference into explicit line ids and fail the test if any id is missing from the locale table.",
+ "decision": "adapt",
+ "decision_why": "Take the expand-and-diff check as a zone-data test; reject the version-control lookup and Windows tooling, which do not fit Frankendom. Dialogue is client text, so this guards content, not outcomes.",
+ "decision_status": "proposed",
+ "acceptance": "A server test loads every zone's NPC line sets; a reference bark_guard_1..4 with bark_guard_4 missing from the locale table fails the test and names bark_guard_4."
+}

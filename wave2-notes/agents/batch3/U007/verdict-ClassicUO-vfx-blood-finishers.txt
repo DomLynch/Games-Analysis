@@ -1,0 +1,20 @@
+ClassicUO | cell 13 | vfx-blood-finishers | verdict PARTIAL | depth thin | old P
+Scope read: topic = blood, wounds, decals and finishers. The list hint pointed at the client's Game/, Network/, Game/UI/Gumps and Game/Scenes trees; the real matches are below.
+
+Files opened (read in the ranges given):
+1. /mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/WorldTextManager.cs 100-125 (AddDamage, Clear)
+2. /mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/EntityTextContainer.cs 50-150 (OverheadDamage: Add, Update)
+3. /mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/GameObject.cs 78-100 (AddDamage, GetCurrentDPS)
+4. /mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/PacketHandlers.cs 463-482 (Damage packet handler)
+
+Searched (grep -rn over ClassicUO/src, not opened in full):
+- blood, gore, splatter, finisher, execut, particle: matches are reagent names (SpellsMysticism.cs, SpellsMastery.cs, SpellDefinition.cs), a mount colour name (Mounts.cs:37), the ability names "Blood Blade" (Ability.cs:267) and "Executioner Axes" (Ability.cs:127), and the spell "Honorable Execution" (SpellsBushido.cs:21). No gore, wound, blood-decal or finisher code exists.
+- finisher, fatality, execution: only the spell and ability names above.
+- ClassicUO.Renderer (the hint's other tree): grep for blood, gore, splatter, decal, particle, finisher returned no matches.
+- Candidates matched on other words and not opened: Game/Managers/EffectManager.cs (class at line 10), Game/GameObjects/MovingEffect.cs, Game/GameObjects/FixedEffect.cs, Game/GameObjects/Mobile.cs, Game/GameObjects/Item.cs. The effect classes are spell and moving graphics from the art files; I did not read them, so they are not claimed here.
+
+Why PARTIAL (thin): the client has no blood, wound, decal or finisher mechanism. The only real combat-feedback mechanism is the per-target damage number stack: WorldTextManager.AddDamage (WorldTextManager.cs 104-112) keeps one OverheadDamage stack per target serial (line 109); each number is set to live 1500 ms (EntityTextContainer.cs 90), the stack is capped at 10 entries (94), each number drifts up one unit per 25 ms (51, 117) and is removed when expired (121); GameObject.AddDamage (GameObject.cs 81-83) feeds a 15 s DPS average. It is hit text, not blood or a finisher, so it fits the nearest Frankendom row only loosely.
+
+Best transferable idea: a per-target damage stack that caps visible numbers at 10, lets each one expire after 1.5 s, and shows a 15 s DPS beside the total, so many hits on many enemies stay readable.
+Decision (proposed): adapt - row 10 (hit impact and hitstop) is the only fit: a capped, expiring per-target number list is cheap readable hit feedback for the many-vs-one fight; do not take it as blood, wounds or finishers, which this donor does not have.
+Confidence: high that the client has no blood or finisher code; medium on the damage stack's transfer (it is a presentation rule, client-only, and the server still owns the damage).

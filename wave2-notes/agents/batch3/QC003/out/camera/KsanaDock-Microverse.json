@@ -1,0 +1,89 @@
+{
+ "game": "KsanaDock-Microverse",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/KsanaDock-Microverse/script/CameraController.gd",
+ "licence": "MIT (LICENSE file: MIT License, Copyright (c) 2025 KsanaDock)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "variable-step",
+  "new:mode-memory-zoom",
+  "new:hold-focus-restore"
+ ],
+ "data_fields": [
+  {
+   "name": "followRate",
+   "donor_constant": "5.0",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "CameraController.gd:3"
+  },
+  {
+   "name": "dragSpeed",
+   "donor_constant": "1.0",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "CameraController.gd:6"
+  },
+  {
+   "name": "followZoom",
+   "donor_constant": "1.5",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "CameraController.gd:5"
+  },
+  {
+   "name": "mapZoom",
+   "donor_constant": "0.8",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "CameraController.gd:4"
+  },
+  {
+   "name": "freeZoomStart",
+   "donor_constant": "0.8",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "CameraController.gd:18"
+  },
+  {
+   "name": "zoomStep",
+   "donor_constant": "0.1",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "CameraController.gd:7"
+  },
+  {
+   "name": "zoomMin",
+   "donor_constant": "0.5",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "CameraController.gd:8"
+  },
+  {
+   "name": "zoomMax",
+   "donor_constant": "2.0",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "CameraController.gd:9"
+  },
+  {
+   "name": "mapCentre",
+   "donor_constant": "(576, 320)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "CameraController.gd:22"
+  }
+ ],
+ "best_idea": "Keep one remembered distance per camera mode, let a held look override the follow target, and bring it back with one restore key.",
+ "decision": "adapt",
+ "decision_why": "The per-mode distance memory, hold-to-look override and single restore key are a small free-look for a world camera. Adapt them; reject the 2D screen pan and fixed map centre, which do not fit a third-person camera or the owner's over-the-shoulder ask.",
+ "decision_status": "proposed",
+ "acceptance": "In a zone, holding the look key and moving the mouse turns the view; releasing and pressing restore eases back behind the hero within about half a second, the distance returns to the follow value, and a unit test shows the follow weight is clamped to 1 at a 0.5-second frame.",
+ "camera_scope": "world"
+}

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+orbitersim-orbiter	camera	P	STRONG	full	Src/Orbiter/Camera.cpp:1022-1023 (chase orbit placed from target and rdist), 1093-1096 (drag settle over dragT=3 s), 1159-1170 (rate caps vmax/amax, near-limit slowdown); Orbiter.cpp:2103-2105 (keyboard ramp counted in frames).
+alexbatalov-fallout2-ce	camera	P	STRONG	full	src/tile.cc:543-575 (leash box 480/400 px, scroll-blocker and border refusal in tileSetCenter), 1956-1976 (_tile_scroll_to step-walk with all-or-nothing revert); src/map.cc:605 (33 ms pan throttle). Tile-based 2D, so only the rule transfers.
+LostCityRS-Engine-TS	camera	P	PARTIAL	thin	src/engine/script/handlers/PlayerOps.ts:211-228 and src/engine/entity/NetworkPlayer.ts:239-248 (server camera-cue queue and flush); the camera motion itself is client code not in this repo.

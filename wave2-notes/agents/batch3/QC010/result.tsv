@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+PixelGuys-Cubyz	camera	P	STRONG	full	/mnt/frankendom-donors/PixelGuys-Cubyz/src/physics.zig:420-512 closed-form damped eye spring, step-up and landing kicks; drive loop game.zig:762-830; first-person eye, adapt to a third-person follow point
+amilich-isometric-city	camera	P	STRONG	full	/mnt/frankendom-donors/amilich-isometric-city/src/components/game/CanvasIsometricGrid.tsx:2604-2629 zoom-aware scroll bounds and clamp; 2852-2899 cursor-anchored wheel zoom; 2D pan and zoom, only bounds and anchored zoom transfer
+SCAR	camera	P	PARTIAL	thin	/mnt/frankendom-donors/SCAR/src/DebugAPI/Util.cpp:827-839 behind-camera 90-degree test (only camera mechanism); hint file #0085.txt is an animation event-name table, camera code absent

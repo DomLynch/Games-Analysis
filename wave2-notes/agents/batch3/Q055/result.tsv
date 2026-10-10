@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+evennia-evennia	loot-drops	P	PARTIAL	thin	characters.py:103-114 looting steals a 1d10 roll capped at the corpse coins (coins only); no drop table; loot hooks defined but never called (grep)
+daggerfall-unity	loot-drops	P	STRONG	full	LootTables.cs:176-256 per-key chance matrix: gold range x PC level, category repeat rolls halving per success (205), P1/P2/C1/C2 level-scaled; Dice100.cs:17; spawn-time roll EnemyEntity.cs:330; corpse transfer EnemyDeath.cs:123
+Dawn-of-Light-DOLSharp	loot-drops	P	STRONG	full	LootGeneratorScroll.cs:44-110 zone-keyed artifact pool gated by mob level 45+ and 25 percent (ServerProperties 1939); dungeon widen 1.5x; LootMgr.cs:431-442 dispatch; LootList.cs:60 fixed drop

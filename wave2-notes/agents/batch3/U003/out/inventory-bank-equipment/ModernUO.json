@@ -1,0 +1,95 @@
+{
+ "game": "ModernUO",
+ "category": "inventory-bank-equipment",
+ "cell": 9,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ModernUO/Projects/Server/Items/Container.cs",
+ "licence": "GPL-3.0 (as read: LICENSE, GNU GPL Version 3)",
+ "licence_class": "copyleft",
+ "target_module": "origins/inventory/pack.ts",
+ "parity_row": 15,
+ "pattern_tags": [
+  "new:cached-total-delta",
+  "new:container-chain-cap",
+  "new:overweight-drain",
+  "new:virtual-storage"
+ ],
+ "data_fields": [
+  {
+   "name": "container_max_items",
+   "donor_constant": "125 default (GlobalMaxItems); 0 = no limit",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/Server/Items/Container.cs:177"
+  },
+  {
+   "name": "container_max_weight",
+   "donor_constant": "400 default (GlobalMaxWeight); 0 = no limit",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/Server/Items/Container.cs:179"
+  },
+  {
+   "name": "carry_base",
+   "donor_constant": "40 (100 for ML humans)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/PlayerMobile.cs:232"
+  },
+  {
+   "name": "carry_per_strength",
+   "donor_constant": "3.5 per point of strength (truncated)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/PlayerMobile.cs:232"
+  },
+  {
+   "name": "body_weight",
+   "donor_constant": "11",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/Server/Mobiles/Mobile.cs:1703"
+  },
+  {
+   "name": "overweight_allowance",
+   "donor_constant": "4 (config default stamina.stonesOverweightAllowance)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Misc/StaminaSystem.cs:48"
+  },
+  {
+   "name": "stones_per_overweight_loss",
+   "donor_constant": "25 (config default; integer division)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Misc/StaminaSystem.cs:47"
+  },
+  {
+   "name": "base_overweight_loss",
+   "donor_constant": "5 stamina per step (config default)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Misc/StaminaSystem.cs:49"
+  },
+  {
+   "name": "running_multiplier",
+   "donor_constant": "2",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Misc/StaminaSystem.cs:427"
+  },
+  {
+   "name": "mounted_divisor",
+   "donor_constant": "3",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Misc/StaminaSystem.cs:422"
+  }
+ ],
+ "best_idea": "Keep one cached total per container, adjusted by add and remove deltas and climbed up the parent chain, with one hold check that tests every enclosing container's caps.",
+ "decision": "adapt",
+ "decision_why": "The one-ledger shape fits Frankendom, but the carry weight and overweight drain are RPG choices, so they become zone data defaulting to off.",
+ "decision_status": "proposed",
+ "acceptance": "A server test fills a backpack to its item or stone cap, asserts the next add is refused as full-items or full-weight with totals unchanged, and asserts a carrier 10 stones over the allowance loses 5 stamina per walking step and 10 when running."
+}

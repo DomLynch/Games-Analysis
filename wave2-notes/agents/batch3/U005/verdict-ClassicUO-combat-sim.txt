@@ -1,0 +1,28 @@
+ClassicUO (combat-sim, cell 1): PARTIAL, depth thin. Old rating P.
+
+Donor root: /mnt/frankendom-donors/ClassicUO (client only; no server in this donor)
+Licence: BSD 2-Clause (read /mnt/frankendom-donors/ClassicUO/LICENSE.md line 1 "BSD 2-Clause License"; per-file SPDX in src/ClassicUO.Client/Game/Data/Ability.cs line 1). Permissive: code may be adapted.
+camera_scope: not a camera cell.
+
+Files opened (at least 3 candidates):
+1. src/ClassicUO.Client/Network/PacketHandlers.cs: handler table 194 and 214; Damage 463-481; Swing 1866-1915; AttackCharacter 3495-3509; damage-related resistance and hit-chance reads 541, 649-675.
+2. src/ClassicUO.Client/Game/Managers/WorldTextManager.cs: AddDamage 104-113; Update 40-101.
+3. src/ClassicUO.Client/Game/GameObjects/EntityTextContainer.cs: OverheadDamage 50-150 (Add 72-98, Update 100-137).
+4. src/ClassicUO.Client/Game/GameObjects/GameObject.cs: AddDamage and DPS 81-94.
+5. src/ClassicUO.Client/Game/GameActions.cs: Attack 262-292.
+6. src/ClassicUO.Client/Game/Data/Ability.cs: enum 8-40 and table entry 61.
+7. Whole-repo grep for critical, crit, hit chance, knockback, resist, damage formula, CalculateDamage, ComputeDamage: no resolution code found. Only HUD labels and packet reads of resistance and hit-chance values.
+
+Why PARTIAL (one sentence): ClassicUO is a client, so the server computes damage, hit chance, crits and knockback and this donor only shows the result (the 0x0B damage packet is read into a number, not resolved), which leaves the topic's resolution absent and only presentation and one facing rule to read.
+
+What is real and was read in full:
+- Damage packet 0x0B (PacketHandlers.cs 194, 463-481): reads the target serial and a 16-bit amount; a positive amount is passed to WorldTextManager.AddDamage (478).
+- Overhead numbers (WorldTextManager.cs 104-113; EntityTextContainer.cs 72-98, 100-137): one list per target serial; each number lives 1500 ms (90); at most 10 numbers per target (94); each rises one pixel per 25 ms (51, and OffsetY step in Update); colour 0x0034 for the player and 0x0021 for others (85).
+- Rolling damage average for DPS: GameObject.cs 83 uses a 15-second window; DPS text is optional (EntityTextContainer.cs 80). AverageOverTime itself was not read.
+- Swing turn (PacketHandlers.cs 1866-1915): on server swing 0x2F, if the swing defender is the last attack target (1887), the player is in war mode (1888), the last step request is more than 2000 ms old (1884, 1889) and no steps are queued (1890), the client issues one Walk call in the target's direction (1913) when the player is not already facing it (1910) and the next tile passes CanWalk (1909). The donor does not check the distance to the target, and Walk itself was not read, so whether it only turns or also moves one tile is not confirmed.
+- Attack request (GameActions.cs 262-291): optional criminal-action confirm, then sets LastAttack and sends the attack request (291).
+
+Best transferable idea: Stack one target's incoming damage numbers into a short, capped overhead list (at most 10 entries, 1.5 s each, rising 1 px per 25 ms) with an optional rolling 15-second DPS, so many-on-one hits stay readable.
+Decision (proposed): adapt - take the overhead stack shape and the 15 s rolling DPS as client-only HUD in the Pit and zones (rule: the camera, HUD and sound are client-only; kills stay server-verified). Reject any idea of client-side damage resolution: the server owns kills and this donor shows no resolution to copy. The swing rule (one Walk toward the target after a swing, unless the player requested a step in the last 2 s) is a facing and input rule, not a camera rule; it could inform the fight facing in row 5 (controls/input), but it is not a camera mechanism and the camera code was not read here.
+
+Not read: AverageOverTime, Time.Ticks, the full WorldTextManager draw path, MobileView.cs hit animation (line 139 only grep-seen), Walker and Pathfinder internals, the server side (not in this donor).

@@ -1,0 +1,21 @@
+game: EQEmu | category: camera (cell 14) | verdict: PARTIAL | depth: thin
+Donor: /mnt/frankendom-donors/EQEmu | Licence: GPL-3.0-or-later (LICENSE.md is GPL v3; zone/gm_commands/camerashake.cpp header: "version 3 of the License, or (at your option) any later version")
+
+Hint file read: /mnt/frankendom-donors/EQEmu/zone/gm_commands/camerashake.cpp 1-50. It is the wrong place: the GM command only packs a duration and an intensity and sends them to world (lines 31-38).
+
+Files opened (candidates, at least 3):
+1. /mnt/frankendom-donors/EQEmu/zone/mob.cpp 4337-4359 (Mob::CameraEffect: global path to world, or a per-client OP_CameraEffect packet)
+2. /mnt/frankendom-donors/EQEmu/zone/worldserver.cpp 1994-2002 (ServerOP_CameraShake handler: calls entity_list.CameraEffect)
+3. /mnt/frankendom-donors/EQEmu/world/zoneserver.cpp 1366-1378 (world relays ServerOP_CameraShake to the zones)
+4. /mnt/frankendom-donors/EQEmu/zone/entity.cpp 5461-5469 (EntityList::CameraEffect: one packet queued to all clients)
+5. /mnt/frankendom-donors/EQEmu/common/servertalk.h 1337-1341 and common/eq_packet_structs.h 2442-2446 (structs: duration ms, intensity float)
+6. /mnt/frankendom-donors/EQEmu/zone/perl_mob.cpp 2188-2190 (script wrapper, default intensity 0.03125f)
+7. /mnt/frankendom-donors/EQEmu/zone/command.cpp 110 (command registration; usage text says intensity 1-10 but the code does not clamp it)
+
+Why PARTIAL: the server side is a real but small event relay (a duration in ms and an intensity float, sent globally to every client through world), and the shake itself (decay, offset, how intensity maps to motion) lives in the closed EQ client, which is not in this donor (not read).
+
+Best transferable idea: a one-shot camera effect is a plain event with two numbers (duration in ms, intensity); the client picks the motion from its own tunable table, and the server only says that something happened.
+
+Decision (proposed): adapt - take the duration and intensity event shape for a client-chosen hit shake (row 10 hit impact, with the shake tuned in the client's data), and reject the server broadcast to every client (no zone or distance scope, and the camera is client-only, so the server must not drive it).
+
+Not read: the EQ client shake code (not in the donor); the Lua wrapper (zone/lua_mob.cpp 1905-1917, only its signatures were seen).

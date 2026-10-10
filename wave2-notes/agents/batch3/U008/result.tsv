@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ClassicUO	sound-music	P	STRONG	full	ClassicUO.Client/Game/Managers/AudioManager.cs:113-159 and ClassicUO.IO/Audio/Sound.cs:121-159: distance-attenuated cues (Chebyshev distance, linear falloff to silence at view range, per-clip retrigger lockout) plus war and peace music slots.
+ClassicUO	hud-ui	P	STRONG	full	ClassicUO.Client/Game/UI/Gumps/HealthBarGump.cs:152-169 and 369-688: health bar percent to width, tone chosen by poison, yellow-hits or normal flags with edge-triggered updates (priority inversion traced by hand, not run).
+ClassicUO	rendering-performance	P	STRONG	full	ClassicUO.Client/GameController.cs:208-237 and 381-446, 556-558: logic runs each loop tick, draw paced by an accumulator with remainder carry, 12-250 fps clamp, 217 ms unfocused interval; sprite batch read in part (Renderer/Batcher2D.cs:1279-1320).

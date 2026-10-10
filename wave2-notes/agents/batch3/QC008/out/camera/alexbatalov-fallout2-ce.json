@@ -1,0 +1,67 @@
+{
+ "game": "alexbatalov-fallout2-ce",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/tile.cc",
+ "licence": "Sustainable Use License 1.0 (as read: LICENSE.md; internal and non-commercial use only)",
+ "licence_class": "restricted",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "new:camera-leash",
+  "new:step-walk-revert",
+  "clamp-and-report"
+ ],
+ "data_fields": [
+  {
+   "name": "leash_box_x",
+   "donor_constant": "480 px",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/tile.cc:558"
+  },
+  {
+   "name": "leash_box_y",
+   "donor_constant": "400 px",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/tile.cc:558"
+  },
+  {
+   "name": "pan_min_interval",
+   "donor_constant": "33 ms",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/map.cc:605"
+  },
+  {
+   "name": "pan_step",
+   "donor_constant": "32 px x, 24 px y per call",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/map.cc:611"
+  },
+  {
+   "name": "scroll_blocker_object",
+   "donor_constant": "object id 0x500000C",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/object.cc:2572"
+  },
+  {
+   "name": "path_capacity",
+   "donor_constant": "200 tiles",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/tile.cc:1956"
+  }
+ ],
+ "best_idea": "Let the camera walk toward its wanted position one step at a time, refuse any step that both pans farther from the player past a leash box or lands on a blocker, and stop at the last clear step (or revert the whole move when the caller asks), so a third-person camera pulls in at walls instead of clipping.",
+ "decision": "adapt",
+ "decision_why": "The donor's tile maths and jumps do not fit, but the step-walk with a leash box and blocker refusal is the pull-in rule the world camera lacks; implement it in 3D with a cast per step.",
+ "decision_status": "proposed",
+ "acceptance": "Client test: a third-person camera moving toward a wanted position behind a wall stops at the last clear step and never ends inside geometry; it never ends farther than the leash from the player; with the revert flag set, a blocked move returns to where it started.",
+ "camera_scope": "world"
+}

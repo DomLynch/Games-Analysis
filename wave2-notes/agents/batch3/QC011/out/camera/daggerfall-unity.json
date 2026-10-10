@@ -1,0 +1,18 @@
+{"game":"daggerfall-unity", "category":"camera", "cell":14, "verdict":"STRONG", "depth":"full", "camera_scope":"world",
+ "donor_path":"/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Player/CameraRecoiler.cs", "licence":"MIT License (CameraRecoiler.cs header: License: MIT License; repo LICENSE: MIT License, Copyright 2009-2023 Daggerfall Workshop)", "licence_class":"permissive",
+ "target_module":"src/fight/camera.ts", "parity_row":11,
+ "pattern_tags":["new:impact-sway","hit-aggregation","variable-step"],
+ "data_fields":[
+  {"name":"min_hit_fraction","donor_constant":"0.02 of max health (sway starts above this)","unit":"ratio","where":"engine constant","donor_ref":"Game/Player/CameraRecoiler.cs:77"},
+  {"name":"base_amplitude_deg","donor_constant":"50 (full setting, before the setting scale)","unit":"units","where":"engine constant","donor_ref":"Game/Player/CameraRecoiler.cs:45"},
+  {"name":"setting_scale","donor_constant":"Off 0, Low 0.25, Medium 0.5, High 0.75, VeryHigh 1","unit":"ratio","where":"engine constant","donor_ref":"Game/Player/CameraRecoiler.cs:143"},
+  {"name":"duration_steps_per_fraction","donor_constant":"piScalar = 5 + floor(fraction x 5); duration = piScalar / 2 seconds (2.5 s to 5 s)","unit":"s","where":"engine constant","donor_ref":"Game/Player/CameraRecoiler.cs:133"},
+  {"name":"timer_rate_rad_per_s","donor_constant":"2 * pi (one cycle per second)","unit":"units","where":"engine constant","donor_ref":"Game/Player/CameraRecoiler.cs:99"},
+  {"name":"severity_per_health_point","donor_constant":"0.015 per point, floor 0.015, cap 1 (about 67 points saturate)","unit":"ratio","where":"engine constant","donor_ref":"Game/Player/CameraRecoiler.cs:156"},
+  {"name":"proposed_sway_duration_s","donor_constant":"not in donor; proposed 0.4 to 1.0 s for a fast duel (to be tuned)","unit":"s","where":"zone data","donor_ref":"Game/Player/CameraRecoiler.cs:133"}
+ ],
+ "best_idea":"On a hit above a small fraction of max health, start a short decaying camera wobble in a random direction whose size is fixed by that hit, and compute it from elapsed time so it does not change with frame rate.",
+ "decision":"adapt",
+ "decision_why":"The threshold, the hit-sized duration and the decaying wobble are a cheap impact cue for the world camera; the donor's per-frame Rotate accumulator, its 2.5-5 s duration and its first-person Euler rotation do not fit a fast duel or a third-person camera, and its severity is lost after the first frame.",
+ "decision_status":"proposed",
+ "acceptance":"On a hit above 2 percent of max health the camera wobbles in a random direction and returns to rest within the hit's duration; a bigger hit gives a bigger wobble for its whole duration; a server test asserts the wobble never changes the hit result; a client test asserts the angle at a given time after the hit is the same at 30 and 120 fps."}

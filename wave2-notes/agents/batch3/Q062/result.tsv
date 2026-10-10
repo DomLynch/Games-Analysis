@@ -1,0 +1,2 @@
+game	category	old	verdict	depth	finding
+PixelGuys-Cubyz	loot-drops	P	STRONG	full	src/server/BlockDrop.zig:17-36,124-137 and src/sync.zig:1609-1672: server-only block-break roll with per-entry chance and tool-tag filter, 1 roll per block type change; pile lifetime and pickup in src/itemdrop.zig:205-231,372-395.

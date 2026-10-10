@@ -1,0 +1,73 @@
+{
+ "game": "TrinityCore-TrinityCore",
+ "category": "parties-guilds-chat",
+ "cell": 18,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/KillRewarder.cpp",
+ "licence": "GPL-2.0-or-later (KillRewarder.cpp header: either version 2 of the License, or (at your option) any later version; root COPYING is GPL version 2 text)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/xp-share.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "presence-gated",
+  "level-gap",
+  "new:pool-bonus-split"
+ ],
+ "data_fields": [
+  {
+   "name": "group_bonus_1_2_members",
+   "donor_constant": "1.0 for 0 to 2 counted members",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Miscellaneous/Formulas.h:238"
+  },
+  {
+   "name": "group_bonus_3_members",
+   "donor_constant": "1.166",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Miscellaneous/Formulas.h:241"
+  },
+  {
+   "name": "group_bonus_4_members",
+   "donor_constant": "1.3",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Miscellaneous/Formulas.h:244"
+  },
+  {
+   "name": "group_bonus_5_or_more_members",
+   "donor_constant": "1.4",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Miscellaneous/Formulas.h:248"
+  },
+  {
+   "name": "raid_group_bonus",
+   "donor_constant": "0.99 (flat for raid groups; donor FIXME says raid-size decrease not applied)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Miscellaneous/Formulas.h:229"
+  },
+  {
+   "name": "half_share_when_top_member_sees_grey",
+   "donor_constant": "xp * rate / 2 + 1",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/KillRewarder.cpp:152"
+  },
+  {
+   "name": "level_cutoff_vs_top_non_grey_member",
+   "donor_constant": "rule: member level above the top non-grey member's level gets 0 XP",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/KillRewarder.cpp:148"
+  }
+ ],
+ "best_idea": "Split one party kill's XP as a pool: base XP times a bonus that rises with the number of counted members (1.0 for one or two, 1.166 for three), shared by level weight among alive attackers, with dead or over-levelled members at zero.",
+ "decision": "adapt",
+ "decision_why": "The pool, the count-based bonus and the level-weighted split are the shape Frankendom's row 18 needs for up to three attackers on one ledger; drop the raid row, the reward-distance rule (replace with attacker in the fight), the rested and recruit bonuses, and the level cutoff unless zones carry levels.",
+ "decision_status": "proposed",
+ "acceptance": "Two alive level-10 attackers kill a target with base XP B: each ledger entry gets about 0.5B (total 1.0B, as for one attacker); with three alive attackers each gets about 0.389B (total 1.166B); a third attacker who dies before the kill is left out of the split (a server test asserts the shares sum to base times the bonus for the counted attackers and the dead one gets 0)."
+}

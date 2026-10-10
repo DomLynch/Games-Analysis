@@ -1,0 +1,23 @@
+# OTCv8-otclientv8 (camera, cell 14): verdict PARTIAL (thin)
+Checked: camera_scope: world camera. Licence (read, LICENSE line 1): "OTClientV8 is made available under the MIT License". Donor is a 2D tile client. The map renderer, follow smoothing and any shake are in the compiled binaries; the donor has no .cpp or .h files (count 0), so the game camera logic was not read.
+
+Files opened (read in part or in full):
+1. /mnt/frankendom-donors/OTCv8-otclientv8/modules/game_interface/gameinterface.lua (lines 128-150 and 960-1035: follow call, zoom and visible range set-up, updateSize).
+2. /mnt/frankendom-donors/OTCv8-otclientv8/modules/corelib/ui/uiimageview.lua (lines 1-100, full: zoom about a point, clamp, drag).
+3. /mnt/frankendom-donors/OTCv8-otclientv8/modules/game_minimap/minimap.lua (lines 128-165: minimap camera follows the player unless dragging).
+4. /mnt/frankendom-donors/OTCv8-otclientv8/modules/gamelib/ui/uiminimap.lua (lines 180-260: move, drag, reset, wheel).
+5. /mnt/frankendom-donors/OTCv8-otclientv8/modules/game_interface/widgets/uigamemap.lua (lines 1-12: 15 x 11 visible dimension).
+Searched: grep -rniE "camera|followCreature|zoom|lockCamera|setCameraPosition|shake|orbit|shoulder" over the donor. The only "shake" hit is the spell name Groundshaker (modules/gamelib/spells.lua). No shoulder, orbit, lock-on or collision code exists in the readable files.
+
+Why PARTIAL: the game map camera (the thing the cell asks about) is a single call to the compiled engine, `gameMapPanel:followCreature(...)` (gameinterface.lua:137). The follow, smoothing and clamping are not in the donor. What is readable is real but thin: fixed view size (15 x 11 tiles, gameinterface.lua:963 and uigamemap.lua:6), zoom presets (15 desktop, 11 mobile; max zoom-out 513, or 15 when limited, gameinterface.lua:144-147 and 973-990), and the 2D zoom-about-cursor and minimap drag code.
+
+Facts that transfer to a 3D third-person camera:
+- Zoom about a point keeps that point under the pointer: read `local posX, posY = self:getImagePosition(x, y)` before `self.zoom` changes, then `local offsetX = centerX - x * self.zoom` (uiimageview.lua 28-29 area and 72). Ordering: read the anchor in old-zoom coordinates, change zoom, then re-offset.
+- Auto-follow pauses while the user drags: `if not minimapWidget:isDragging() then` (minimap.lua) gates the follow; the drag stores its start (`self.dragCameraReference = self:getCameraPosition()`) and reset returns to the player cross (`self:setCameraPosition(self.cross.pos)`, uiminimap.lua). This is the input-versus-auto-follow blend the owner asked about, in 2D.
+- Mobile zoom preset is lower than desktop (11 vs 15): a per-platform data value.
+
+Not transferable: 2D tile counts, the 1.1 zoom factor as a 3D dolly rule (not tested against a 3D camera), and the minimap cross, which is a separate 2D widget.
+
+Best transferable idea: When the player drags or orbits the camera by hand, pause auto-follow of the hero; a reset action returns the camera to the hero, and the drag starts from the camera position stored at drag start.
+Decision (proposed): adapt - the world camera's manual look (if any) should suspend auto-follow and recentre on the hero on reset; the 2D zoom and the minimap are not used. Acceptance: client test: a drag of the world camera holds the camera still while the hero walks, and a reset returns the target to behind the hero within one frame of the reset.
+Confidence: medium on the input-blend rule (read, 2D only); low on anything about the 3D follow (not in donor).

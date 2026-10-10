@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ACEmulator-ACE	quests-dialogue	P	STRONG	full	QuestManager.cs:266-365 (CanSolve, GetNextSolveTime: catalogue cooldown and max-solves gate), EmoteManager.cs:1512-1553 and 1607 (quest branch selection and loop guard); the cooldown gate is the mechanism, the dialogue VM only partly read
+ACEmulator-ACE	parties-guilds-chat	P	STRONG	full	Fellowship.cs:453-564 (CalculateXPSharing level-gap modes and SplitXp even/proportional/quest split), 604-668 (size share table, distance falloff); guild chain and chat not read
+swgemu-Core3	combat-sim	P	STRONG	full	CombatManager.cpp:2072-2259 (getHitChance, hit ladder, evade contest), 423-520 (creature attack order), 1109-1177 (calculateDamage), 1401-1622 (pools, spill, applyDamage), 2442-2598 and 2647-2675 (armour, piercing); force attacks, DoT and attack speed not read

@@ -1,0 +1,89 @@
+{
+ "game": "flareteam-flare-engine",
+ "category": "ai-aggro",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/flareteam-flare-engine/src/EntityBehavior.cpp",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/aggro.ts",
+ "parity_row": 4,
+ "pattern_tags": [
+  "presence-gated",
+  "grace-timer",
+  "hysteresis",
+  "new:two-radius-engage",
+  "new:flee-band"
+ ],
+ "data_fields": [
+  {
+   "name": "threat_range",
+   "donor_constant": "creature data; default 0 (first value of threat_range)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "StatBlock.cpp:801"
+  },
+  {
+   "name": "threat_range_far",
+   "donor_constant": "default 2 x threat_range",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "StatBlock.cpp:807"
+  },
+  {
+   "name": "flee_range",
+   "donor_constant": "default threat_range / 2",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "StatBlock.cpp:871"
+  },
+  {
+   "name": "melee_range",
+   "donor_constant": "1.0 default",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "StatBlock.cpp:145"
+  },
+  {
+   "name": "chance_pursue",
+   "donor_constant": "0 default, percent rolled per call from stance",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "StatBlock.cpp:139"
+  },
+  {
+   "name": "chance_flee",
+   "donor_constant": "0 default, percent rolled per call",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "StatBlock.cpp:140"
+  },
+  {
+   "name": "cooldown_los",
+   "donor_constant": "creature data duration (Parse::toDuration; unit not read)",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "StatBlock.cpp:848"
+  },
+  {
+   "name": "flee_cooldown",
+   "donor_constant": "default settings->max_frames_per_sec (frames)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "StatBlock.cpp:159"
+  },
+  {
+   "name": "hero_stealth",
+   "donor_constant": "percent 0 to 100 copied from hero stat, capped at 100 upstream",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "GameStatePlay.cpp:891"
+  }
+ ],
+ "best_idea": "Engage and leave use two radii (a shorter one to start combat, about twice that to stop it), and a creature drops combat only after it has lost line of sight for a set time, which gives zone creatures a stable aggro band that does not flicker.",
+ "decision": "adapt",
+ "decision_why": "Take the two-radius engage and leave rule and the sight-loss timer for zone creatures, keep the flee band as data, and run every roll as a seeded server rule per tick instead of a per-frame client roll.",
+ "decision_status": "proposed",
+ "acceptance": "A zone server test: a creature starts combat when the hero enters its engage radius with line of sight, stays in combat until the hero is beyond the stop radius or sight has been gone for the cooldown, and the same seed gives the same engage tick on replay."
+}

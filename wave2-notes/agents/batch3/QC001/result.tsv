@@ -1,0 +1,3 @@
+game	category	old	verdict	depth	finding
+OpenXcom-OpenXcom	camera	P	STRONG	thin	/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Battlescape/Camera.cpp:1-622 and Map.cpp:546-600; projectile follow latch (still in view, lock once it leaves, release at impact) is the only transferable shape; isometric edge scroll and paging are not.
+EQEmu	camera	P	PARTIAL	thin	/mnt/frankendom-donors/EQEmu/zone/mob.cpp:4337-4359 and entity.cpp:5461-5469; server relays a shake event (duration ms, float intensity) to all clients; the shake itself is client-side and not in the donor. Hint file camerashake.cpp is the GM command only.

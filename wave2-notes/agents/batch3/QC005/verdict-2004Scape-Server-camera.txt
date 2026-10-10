@@ -1,0 +1,31 @@
+# 2004Scape-Server (camera, cell 14)
+Donor: /mnt/frankendom-donors/2004Scape-Server | Licence: MIT ("MIT License", "Copyright (c) 2023-2025 Lost City", LICENSE lines 1 and 3) | TypeScript | symbols: CAM_LOOKAT / CAM_MOVETO handlers, NetworkPlayer.updateMap
+Verdict: PARTIAL, depth thin. camera_scope: world camera (the queue is global; the duel-arena script is one fixed-arena example, and the gnomeball script is a scripted shot).
+Checked: The list hint (ServerProt244.ts) is only the opcode table. I opened the real mechanism: the server-side camera command queue (PlayerOps.ts 150-185, NetworkPlayer.ts 245-300, CameraInfo.ts whole file, Player.ts 363 and 433-443, World.ts 120, 369-437, 1105-1125, 1626-1640) and the packet encoders (rs244 CamMoveToEncoder.ts, CamShakeEncoder.ts, ServerProt244.ts 30-40). Confidence in what the server does: high (read in full). Confidence that the donor holds the camera itself: none, because the client camera is not in this repo.
+
+Files opened (at least 3 candidates):
+1. src/engine/script/handlers/PlayerOps.ts 150-185 (CAM_LOOKAT, CAM_MOVETO, CAM_SHAKE, CAM_RESET handlers)
+2. src/engine/entity/NetworkPlayer.ts 245-300 (updateMap drains the queue)
+3. src/engine/entity/CameraInfo.ts (whole file)
+4. src/engine/entity/Player.ts 363, 410-443 (queue field; cleanup() clears it)
+5. src/engine/World.ts 120, 369-437, 1105-1125, 1626-1640 (600 ms tick, processClientsOut, removePlayer -> cleanup)
+6. src/network/game/server/codec/rs244/CamMoveToEncoder.ts, CamShakeEncoder.ts, ServerProt244.ts 30-40
+7. src/network/game/client/model/EventCameraPosition.ts (an empty class, lines 4-6; the only client camera class in the repo)
+8. data/src/scripts/minigames/game_duelarena/scripts/duel_arena_lean.rs2 1-70 (camera anchors and offsets)
+9. data/src/scripts/minigames/game_gnomeball/scripts/gnomeball_shoot.rs2 25-75 (scripted shot)
+
+What the donor does (order of operations, as read):
+- A script calls cam_moveto or cam_lookat with (coord, height, speed, multiplier). The handler pops the four ints and appends a CameraInfo (type 0 for move, 1 for look) to the player's cameraPackets list (PlayerOps.ts 163-174).
+- cam_shake and cam_reset are NOT queued: they are written to the client at once (PlayerOps.ts 177-184).
+- Each server tick (TICKRATE 600 ms, World.ts 120), cycle() calls processClientsOut (World.ts 437), which calls player.updateMap() for every connected player (World.ts 1117).
+- updateMap walks the whole queue from head with no condition in that block (NetworkPlayer.ts 258). It turns each absolute camX/camZ into zone-local values by subtracting the zone origin (259-260), writes CamMoveTo (type 0, 262) or CamLookAt (type 1, 264), and unlinks the entry. The source comment says "update the camera after rebuild", but the drain itself is not guarded by a rebuild check (the block was read in full).
+- removePlayer -> cleanup() clears the queue on removal (Player.ts 443; World.ts 1640).
+- Wire format: CAM_MOVETO / CAM_LOOKAT send x, z as one byte each, height as two bytes, speed and multiplier as one byte each (rs244 encoders). CAM_SHAKE sends type, jitter, amplitude, frequency; the author marks the first field "direction?" (CamShakeEncoder.ts 10).
+- Script numbers (duel_arena_lean.rs2 48-49, gnomeball_shoot.rs2 33): a move is (offset from the nearest anchor, height 1926, speed 0, multiplier 100) and a look-at is (offset, height 1276, speed 0, multiplier 100). The duel script picks the nearest of duel_arena_camera_coords with ~closest_enum_coord_and_index (line 22), then one of eight offset types (lines 46-70).
+
+Why PARTIAL: the donor is the server half of the camera only. It queues scripted move/look commands and sends them with parameters the client interprets. The client camera (interpolation, follow, collision, input blending, the meaning of speed and multiplier) is not in this repo, and the one client camera class here is empty. Nothing in the donor is a follow camera, lock-on framing, collision pull-in or shake response.
+
+Best transferable idea: Keep scripted camera moves as per-player queued data in world coordinates and convert them to zone-local values only when they are flushed to the client, so a zone change cannot leave a camera command pointing at the wrong place.
+Decision (proposed): reject for the world follow camera; the queue only serves scripted shots (login, duel intro, goal celebration), and a Pit shot is frozen by the owner's ruling. Revisit only if Frankendom needs server-timed cutscenes.
+Acceptance (only if built): a server test asserts a queued move survives a zone change and arrives with zone-local coordinates. Not applicable to the world follow camera.
+Target if ever built: src/fight/camera-commands.ts (client-only), parity row 11 (fight camera).

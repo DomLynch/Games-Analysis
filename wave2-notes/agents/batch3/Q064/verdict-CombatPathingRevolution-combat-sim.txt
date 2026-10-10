@@ -1,0 +1,15 @@
+CombatPathingRevolution (combat-sim, cell 1) - verdict NONE, depth thin, camera_scope: not applicable
+Donor: /mnt/frankendom-donors/CombatPathingRevolution | Licence: MIT License (LICENSE line 1: "MIT License", Copyright (c) 2022 max-su-2019) | C++ SKSE plugin for Skyrim SE/AE/VR
+
+Files opened (hint file first; search was grep -rn for damage|knock|crit|stagger|hitstop|poise|health|armor|block|hit over src and the whole repo, excluding extern/):
+1. /mnt/frankendom-donors/CombatPathingRevolution/src/RE/CombatBehaviorController.h (1-18, whole file): the hint. A layout struct (control trees, actorHandle, targetHandle). No damage math.
+2. /mnt/frankendom-donors/CombatPathingRevolution/src/PayloadInterpreter/Dtry_Utils.cpp (95-110): the only damage code in the repo, damageav, a one-line call to the engine RestoreActorValue with kDamage and -val.
+3. /mnt/frankendom-donors/CombatPathingRevolution/src/Backoff_Hook.cpp (1-47, whole): backoff distance and chance read from graph variables with game-setting fallbacks.
+4. /mnt/frankendom-donors/CombatPathingRevolution/src/Fallback_Hook.cpp (1-74, whole): fallback distance and wait time from graph variables and the combat style.
+5. /mnt/frankendom-donors/CombatPathingRevolution/src/Advance_Hook.h (1-80 of 97): advance-radius hook, byte patches (not read past line 80).
+Other hits from the grep: Nemesis_Engine/mod/mscpr/0_master/#0106.txt holds animation event names (staggerStart, blockHitStop, TG05_KnockOut). These are behaviour-graph labels, not resolution rules (not read in full).
+
+Why NONE: the donor is a movement and pathing AI mod (README line 3). Nothing in it computes hit, damage, crit or knockback. The one damage line hands the value to the engine, so there is no resolution order to copy.
+
+Best transferable idea: a per-actor data override read at call time with a global default when the override is missing (Backoff_Hook.cpp 8-19), which is the shape of a zone-data field with an engine default.
+Decision (proposed): reject for combat-sim - Frankendom resolves damage in src/fight and this donor has no resolution rule to adopt; the override-with-default shape is already covered by the zones-as-data ruling, so there is nothing new to take from this cell.

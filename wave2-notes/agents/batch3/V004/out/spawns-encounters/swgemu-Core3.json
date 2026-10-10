@@ -1,0 +1,142 @@
+{
+ "game": "swgemu-Core3",
+ "category": "spawns-encounters",
+ "cell": 4,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/region/SpawnAreaImplementation.cpp",
+ "licence": "GNU AGPL-3.0 (COPYING, Version 3)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "director",
+  "population-cap",
+  "presence-gated",
+  "grace-timer",
+  "respawn-scaling",
+  "respawn-queue",
+  "group-refill",
+  "new:lives-counter",
+  "new:no-spawn-bubble"
+ ],
+ "data_fields": [
+  {
+   "name": "area_total_cap",
+   "donor_constant": "maxSpawnLimit from region data (value not read)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/region/SpawnAreaImplementation.cpp:197"
+  },
+  {
+   "name": "template_cap",
+   "donor_constant": "LairSpawn.spawnLimit; -1 = none",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/region/SpawnAreaImplementation.cpp:236"
+  },
+  {
+   "name": "template_weight",
+   "donor_constant": "LairSpawn weighting (values not read)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/region/SpawnAreaImplementation.cpp:105"
+  },
+  {
+   "name": "min_spawn_interval_ms",
+   "donor_constant": "5000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/conf/ConfigManager.h:742"
+  },
+  {
+   "name": "spawn_check_range",
+   "donor_constant": "64",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/conf/ConfigManager.h:794"
+  },
+  {
+   "name": "group_size_per_lair_template",
+   "donor_constant": "LairTemplate.spawnLimit / 3 (integer)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/DynamicSpawnObserverImplementation.cpp:92"
+  },
+  {
+   "name": "group_size_difficulty_term",
+   "donor_constant": "(difficulty - 2) / 2 (integer)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/DynamicSpawnObserverImplementation.cpp:90"
+  },
+  {
+   "name": "group_size_min",
+   "donor_constant": "1",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/DynamicSpawnObserverImplementation.cpp:97"
+  },
+  {
+   "name": "lives_after_respawns",
+   "donor_constant": "3 (retire when respawnCounter > 2)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/DynamicSpawnObserverImplementation.cpp:30"
+  },
+  {
+   "name": "respawn_base_s",
+   "donor_constant": "60",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/DynamicSpawnObserverImplementation.cpp:74"
+  },
+  {
+   "name": "respawn_per_level_s",
+   "donor_constant": "2",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/DynamicSpawnObserverImplementation.cpp:74"
+  },
+  {
+   "name": "empty_group_despawn_s",
+   "donor_constant": "60",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/DynamicSpawnObserverImplementation.cpp:53"
+  },
+  {
+   "name": "creature_grace_s",
+   "donor_constant": "30",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp:1830"
+  },
+  {
+   "name": "group_home_grace_s",
+   "donor_constant": "300",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/intangible/TheaterObject.idl:69"
+  },
+  {
+   "name": "no_spawn_bubble_s",
+   "donor_constant": "30",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/region/SpawnAreaImplementation.cpp:174"
+  },
+  {
+   "name": "placement_offset",
+   "donor_constant": "lair size (zone data) on each axis",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/DynamicSpawnObserverImplementation.cpp:129"
+  }
+ ],
+ "best_idea": "A zone director spawns only while players are present, checks a total cap and then a per-entry cap before a weighted pick, holds a fixed group that respawns on a lives counter, and despawns on empty only after a grace timer that re-checks the count when it fires.",
+ "decision": "adapt",
+ "decision_why": "Frankendom's zone population needs caps, presence gating, lives and grace timers, all as zone data. The donor's counter-based presence and building-level math do not fit; presence should be recomputed on the server from zone membership.",
+ "decision_status": "proposed",
+ "acceptance": "Zone test with total cap 3 and one template capped at 1: with a player present the zone never holds more than 3 spawns or more than 1 of that template; after the player leaves the population is still there at 29 s, gone by 31 s, and still there if the player returns at 20 s."
+}

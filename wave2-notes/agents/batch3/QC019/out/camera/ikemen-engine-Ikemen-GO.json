@@ -1,0 +1,112 @@
+{
+ "game": "ikemen-engine-Ikemen-GO",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go",
+ "licence": "MIT (LICENCE.txt: Copyright (c) 2016 Suehiro, MIT License)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "fixed-step",
+  "accumulator",
+  "new:dead-zone-framing",
+  "new:tracked-extremes",
+  "new:leader-speed-floor",
+  "new:zoom-hold"
+ ],
+ "data_fields": [
+  {
+   "name": "framing_tension_margin",
+   "donor_constant": "50 at 320 wide, times gameWidth/320",
+   "unit": "px",
+   "where": "zone data",
+   "donor_ref": "src/camera.go:85"
+  },
+  {
+   "name": "edge_smooth_fraction",
+   "donor_constant": "0.05 per tick (times logicScale and tensionvel)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "src/camera.go:551"
+  },
+  {
+   "name": "tension_velocity",
+   "donor_constant": "1 default, clamped 0..20",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "src/camera.go:167"
+  },
+  {
+   "name": "edge_snap_step",
+   "donor_constant": "gameWidth / 3200 per tick (times logicScale and tensionvel)",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "src/camera.go:556"
+  },
+  {
+   "name": "logic_rate_base",
+   "donor_constant": "60 + GameSpeed * GameSpeedStep",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "src/system.go:4460"
+  },
+  {
+   "name": "zoom_in_hold_ticks",
+   "donor_constant": "0 default",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "src/camera.go:89"
+  },
+  {
+   "name": "zoom_in_speed",
+   "donor_constant": "1 default (1 = off)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "src/camera.go:89"
+  },
+  {
+   "name": "zoom_out_speed",
+   "donor_constant": "1 default (1 = off)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "src/camera.go:89"
+  },
+  {
+   "name": "zoom_in_limit",
+   "donor_constant": "1 default",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "src/camera.go:88"
+  },
+  {
+   "name": "y_mix_toward_target",
+   "donor_constant": "0.85 / 0.15, 3 iterations",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "src/camera.go:487"
+  },
+  {
+   "name": "z_blend_per_tick",
+   "donor_constant": "0.05 * ztensionvel, clamped 0..1",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "src/camera.go:595"
+  },
+  {
+   "name": "vertical_follow",
+   "donor_constant": "0.2 default",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "src/camera.go:81"
+  }
+ ],
+ "best_idea": "Frame the world camera on the extremes of all tracked enemies and the hero (a dead zone of a fixed margin on each side, so the view moves only when someone reaches the margin), and normalise its smoothing by the tick rate.",
+ "decision": "adapt",
+ "decision_why": "Take the dead-zone framing over every tracked fighter for the world camera's many-on-one case and keep tick-normalised smoothing; reject the side-on edge and zoom rules and do not change the frozen Pit camera.",
+ "decision_status": "proposed",
+ "acceptance": "Client unit test on the world camera: with the hero and three enemies in a zone, after 60 ticks the view contains every tracked fighter inside the margin; a fighter inside the dead zone does not move the view; the Pit camera output is unchanged (frozen-snapshot test).",
+ "camera_scope": "pit"
+}

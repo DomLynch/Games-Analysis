@@ -1,0 +1,81 @@
+{
+ "game": "rathena-rathena",
+ "category": "server-tick-netcode",
+ "cell": 5,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/rathena-rathena/src/common/timer.cpp",
+ "licence": "GPL-3.0 (as read: LICENSE is GNU GPL Version 3; core.cpp line 1 says Licensed under GNU GPL)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/tick.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "timer-wheel",
+  "variable-step",
+  "presence-gated",
+  "grace-timer"
+ ],
+ "data_fields": [
+  {
+   "name": "hot_think_interval",
+   "donor_constant": "100",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/map/mob.hpp:35"
+  },
+  {
+   "name": "cold_think_interval",
+   "donor_constant": "1000 (MIN_MOBTHINKTIME*10)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/map/mob.cpp:7364"
+  },
+  {
+   "name": "recent_think_guard",
+   "donor_constant": "200 (MIN_MOBTHINKTIME*2)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/map/mob.cpp:2403"
+  },
+  {
+   "name": "hot_radius",
+   "donor_constant": "area_size 14 + active range 4 (squares)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/map/battle.cpp:8553"
+  },
+  {
+   "name": "active_window",
+   "donor_constant": "5000 code default; 0 in shipped monster.conf (off)",
+   "unit": "ms",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/map/battle.cpp:8622"
+  },
+  {
+   "name": "timer_min_slice",
+   "donor_constant": "20",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/common/timer.cpp:24"
+  },
+  {
+   "name": "timer_max_slice",
+   "donor_constant": "1000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/common/timer.cpp:25"
+  },
+  {
+   "name": "late_timer_threshold",
+   "donor_constant": "1000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/common/timer.cpp:376"
+  }
+ ],
+ "best_idea": "Think NPCs near a player often and far NPCs rarely, and keep a recently-near NPC on the slow schedule for a short window so it does not drop out at the first step.",
+ "decision": "adapt",
+ "decision_why": "Take the hot and cold cadence and the active window, with radius and window as zone data; reject the variable-step timer heap as our fight clock, because the fixed step must own the fight.",
+ "decision_status": "proposed",
+ "acceptance": "A zone test with 40 NPCs and one player walking through them: each NPC thinks at most 11 times per second; NPCs more than 18 squares away think only at 1 Hz; a recently-near NPC stays on the 1 Hz schedule for up to the window after the player leaves, then stops; the test asserts the think counter."
+}

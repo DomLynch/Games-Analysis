@@ -1,0 +1,118 @@
+{
+ "game": "ModernUO",
+ "category": "combat-sim",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Items/Weapons/BaseWeapon.cs",
+ "licence": "GPL-3.0 (repo LICENSE, GNU GPL version 3)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/damage.ts",
+ "parity_row": 1,
+ "pattern_tags": [
+  "protect-soak",
+  "named-source-stack",
+  "clamp-and-report",
+  "status-meter",
+  "new:ratio-hit-roll",
+  "new:resist-split"
+ ],
+ "data_fields": [
+  {
+   "name": "hit_skill_offset",
+   "donor_constant": "20 added to both skills in the hit ratio",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Items/Weapons/BaseWeapon.cs:1272"
+  },
+  {
+   "name": "hit_bonus_cap",
+   "donor_constant": "45 percentage points, attacker accuracy and defender defence",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Items/Weapons/BaseWeapon.cs:1267"
+  },
+  {
+   "name": "hit_chance_floor",
+   "donor_constant": "0.02 (AOS only)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Items/Weapons/BaseWeapon.cs:1335"
+  },
+  {
+   "name": "parry_chance_divisor_aos",
+   "donor_constant": "parry skill / 800 for the AOS roll",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Items/Weapons/BaseWeapon.cs:1542"
+  },
+  {
+   "name": "strength_damage_bonus",
+   "donor_constant": "scalar 0.300 per point, threshold 100, offset 5.00, divided by 100",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Items/Weapons/BaseWeapon.cs:2540"
+  },
+  {
+   "name": "anatomy_damage_bonus",
+   "donor_constant": "scalar 0.500 per point, threshold 100, offset 5.00, divided by 100",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Items/Weapons/BaseWeapon.cs:2541"
+  },
+  {
+   "name": "tactics_damage_bonus",
+   "donor_constant": "scalar 0.625 per point, threshold 100, offset 6.25, divided by 100",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Items/Weapons/BaseWeapon.cs:2542"
+  },
+  {
+   "name": "weapon_damage_pct_cap",
+   "donor_constant": "100 percentage points",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Items/Weapons/BaseWeapon.cs:2578"
+  },
+  {
+   "name": "damage_pct_stack_cap",
+   "donor_constant": "300 percentage points (sum of named sources)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Items/Weapons/BaseWeapon.cs:1861"
+  },
+  {
+   "name": "slayer_damage_pct",
+   "donor_constant": "100 percentage points",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Items/Weapons/BaseWeapon.cs:1797"
+  },
+  {
+   "name": "double_strike_malus_pct",
+   "donor_constant": "10 percentage points",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Items/Weapons/BaseWeapon.cs:1832"
+  },
+  {
+   "name": "resist_divisor",
+   "donor_constant": "10000 (damage x element share x (100 - resist), summed)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Misc/AOS.cs:132"
+  },
+  {
+   "name": "min_damage_after_resist",
+   "donor_constant": "1 (unless armour ignored)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Misc/AOS.cs:144"
+  }
+ ],
+ "best_idea": "A hit chance as a ratio of attacker to defender skill with a fixed offset and capped bonuses, plus a resist-weighted damage split with a minimum of one, both as pure functions the server runs once per swing.",
+ "decision": "adapt",
+ "decision_why": "Take the ratio hit roll and the resist split, which give a testable server roll with explicit caps. Do not take the strength/anatomy/tactics damage ladder (no ruling covers stat-driven damage) or the percent-source stack as it stands; keep the parry and guard gates in row 3.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: equal skills and no bonuses give hit chance 0.5; attacker skill 120 against defender 100 gives 0.583; a bonus above 45 counts as 45; a landed hit never does less than 1 damage unless armour is ignored."
+}

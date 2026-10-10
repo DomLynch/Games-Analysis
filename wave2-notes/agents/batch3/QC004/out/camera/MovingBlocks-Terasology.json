@@ -1,0 +1,111 @@
+{
+ "game": "MovingBlocks-Terasology",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/rendering/cameras/PerspectiveCamera.java",
+ "licence": "Apache-2.0 (as read: LICENSE file; SPDX header in PerspectiveCamera.java)",
+ "licence_class": "permissive",
+ "target_module": "origins/client/world-camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "zoom-pulse",
+  "new:frame-history-smoothing",
+  "new:mode-keyed-fov",
+  "new:footstep-phase-bob",
+  "new:rate-limited-fov-ease"
+ ],
+ "camera_scope": "world",
+ "data_fields": [
+  {
+   "name": "smoothing_frames_normal",
+   "donor_constant": "1 frame (no smoothing)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/rendering/nui/layers/mainMenu/videoSettings/CameraSetting.java:6"
+  },
+  {
+   "name": "smoothing_frames_smooth",
+   "donor_constant": "5 frames",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/rendering/nui/layers/mainMenu/videoSettings/CameraSetting.java:7"
+  },
+  {
+   "name": "smoothing_frames_cinematic",
+   "donor_constant": "60 frames",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/rendering/nui/layers/mainMenu/videoSettings/CameraSetting.java:8"
+  },
+  {
+   "name": "smoothing_decay",
+   "donor_constant": "0.9 per sample index",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/rendering/cameras/PerspectiveCamera.java:30"
+  },
+  {
+   "name": "fov_ease_rate",
+   "donor_constant": "50 degrees per second of delta",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/rendering/cameras/Camera.java:89"
+  },
+  {
+   "name": "fov_snap_threshold",
+   "donor_constant": "1 degree",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/rendering/cameras/Camera.java:84"
+  },
+  {
+   "name": "ghost_fov_extension",
+   "donor_constant": "24 degrees",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/logic/players/LocalPlayerSystem.java:425"
+  },
+  {
+   "name": "look_pitch_limit",
+   "donor_constant": "89 degrees (both ways)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/logic/players/LocalPlayerSystem.java:156"
+  },
+  {
+   "name": "bob_roll_amplitude",
+   "donor_constant": "0.01",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/logic/players/LocalPlayerSystem.java:416"
+  },
+  {
+   "name": "bob_roll_frequency",
+   "donor_constant": "2.5",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/logic/players/LocalPlayerSystem.java:416"
+  },
+  {
+   "name": "bob_vertical_amplitude",
+   "donor_constant": "0.025",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/logic/players/LocalPlayerSystem.java:417"
+  },
+  {
+   "name": "bob_vertical_frequency",
+   "donor_constant": "3",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/logic/players/LocalPlayerSystem.java:417"
+  }
+ ],
+ "best_idea": "Smooth the third-person camera by averaging its recent positions with decaying weights, ease the FOV toward a mode-keyed target at a fixed rate, and tie the view bob to footstep progress so it stops when the character stands still.",
+ "decision": "adapt",
+ "decision_why": "Take the decaying-average smoothing, the rate-limited FOV ease with a mode-keyed extension, and the footstep-phase bob; change the smoothing from a frame count to a time constant, since the donor's lag depends on frame rate.",
+ "decision_status": "proposed",
+ "acceptance": "At 30 fps and at 144 fps the camera's lag behind a hero running at a fixed speed is the same within 5 percent, and a fight start widens the FOV by 12 degrees in about 0.24 s and the end restores it; a client unit test with a fixed-step clock asserts both."
+}

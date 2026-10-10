@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ModernUO	progression	P	STRONG	full	SkillCheck.cs 108-159 (success ramp, gain gate, gain roll); 236-310 (step, drain, clamp, Pub45 stat roll); 444-504 (stat cooldown, atrophy)
+endless-sky-endless-sky	progression	P	STRONG	full	Politics.cpp 111-150 (attitude-weighted offense spread, 5 percent cut-off, clamp); 417-434 (SetReputation clamp, ResetDaily); 185-217 (standing gate for landing and services); AI.cpp 677 (one charge per event per ship)
+open-duelyst-duelyst	progression	P	STRONG	full	rift.coffee 540-554 (capped damage points, win bonus, levels crossed to upgrades), 565-580 (rating step), 862-884 (gap band delta and zero floor); riftHelper.coffee 6-15 (level table); worker 79-82 (damage floor)

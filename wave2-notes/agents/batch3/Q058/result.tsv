@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+OpenXcom-OpenXcom	loot-drops	P	STRONG	full	/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Battlescape/BattlescapeGenerator.cpp:193-402 and DebriefingState.cpp:1328-1467 - stage-end drops sorted into guaranteed/conditional/carry by owner, clean-clear and place; recovery at debrief gated on abort and survivors. Hint UnitDieBState.cpp moves no items.
+vcmi-vcmi	loot-drops	P	STRONG	full	/mnt/frankendom-donors/vcmi-vcmi/lib/rewardable/Info.cpp:395-457 and CRewardableObject.cpp:83-95 - per-chest 0-99 band roll stored once and re-rolled on reset; loot granted only on attacker win. Hint creatureBanks.json is data only.
+rathena-rathena	loot-drops	P	STRONG	full	/mnt/frankendom-donors/rathena-rathena/src/map/mob.cpp:2934-3062 (owners: first, second, third by damage with a 30 percent first-attacker bonus) and 2818-2890 and 3323-3336 (per-drop permyriad rate, cap rule, roll). Hint "INFERRED" was not a file.

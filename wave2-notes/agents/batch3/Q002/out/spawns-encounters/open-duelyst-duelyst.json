@@ -1,51 +1,66 @@
 {
  "game": "open-duelyst-duelyst",
  "category": "spawns-encounters",
- "cell": 1,
+ "cell": 4,
  "verdict": "STRONG",
  "depth": "full",
  "donor_path": "/mnt/frankendom-donors/open-duelyst-duelyst/app/sdk/playerModifiers/playerModifierEndTurnRespawnEntityAnywhere.coffee",
- "licence": "CC0-1.0 (LICENSE: CC0 1.0 Universal; package.json license field CC0-1.0)",
+ "licence": "CC0-1.0 (LICENSE and COPYING; package.json)",
  "licence_class": "permissive",
  "target_module": "origins/server/world-spawns.ts",
  "parity_row": 23,
  "pattern_tags": [
   "respawn-queue",
-  "new:free-tile-pick"
+  "new:random-free-slot",
+  "new:authoritative-only-spawn"
  ],
  "data_fields": [
   {
-   "name": "respawn_wait",
-   "donor_constant": "durationEndTurn: 1 (one boundary)",
+   "name": "respawn_delay",
+   "donor_constant": "durationEndTurn: 1 (one end turn, not seconds)",
    "unit": "count",
    "where": "zone data",
-   "donor_ref": "/mnt/frankendom-donors/open-duelyst-duelyst/app/sdk/playerModifiers/playerModifierEndTurnRespawnEntityAnywhere.coffee:12"
+   "donor_ref": "app/sdk/playerModifiers/playerModifierEndTurnRespawnEntityAnywhere.coffee:12"
   },
   {
-   "name": "respawn_count_per_death",
-   "donor_constant": "1 (one random pick)",
-   "unit": "count",
-   "where": "engine constant",
-   "donor_ref": "/mnt/frankendom-donors/open-duelyst-duelyst/app/sdk/playerModifiers/playerModifierEndTurnRespawnEntityAnywhere.coffee:27"
-  },
-  {
-   "name": "respawn_tile_pattern",
-   "donor_constant": "whole board: offsets from -BOARDCOL..BOARDCOL-1 by -BOARDROW..BOARDROW-1, origin (0,0)",
+   "name": "spawn_coverage",
+   "donor_constant": "PATTERN_WHOLE_BOARD: every board cell",
    "unit": "units",
    "where": "zone data",
-   "donor_ref": "/mnt/frankendom-donors/open-duelyst-duelyst/app/common/config.js:1108"
+   "donor_ref": "app/common/config.js:1106"
   },
   {
-   "name": "no_free_tile_retry",
-   "donor_constant": "none: respawn dropped silently when no tile is free",
+   "name": "spawn_pick",
+   "donor_constant": "uniform random index among free candidate cells",
    "unit": "none",
    "where": "engine constant",
-   "donor_ref": "/mnt/frankendom-donors/open-duelyst-duelyst/app/sdk/playerModifiers/playerModifierEndTurnRespawnEntityAnywhere.coffee:26"
+   "donor_ref": "app/sdk/playerModifiers/playerModifierEndTurnRespawnEntityAnywhere.coffee:27"
+  },
+  {
+   "name": "no_free_cell_rule",
+   "donor_constant": "entry dropped (no else branch, expires anyway)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "app/sdk/playerModifiers/playerModifierEndTurnRespawnEntityAnywhere.coffee:26"
+  },
+  {
+   "name": "spawn_authority",
+   "donor_constant": "spawn only when getIsRunningAsAuthoritative()",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "app/sdk/playerModifiers/playerModifierEndTurnRespawnEntityAnywhere.coffee:23"
+  },
+  {
+   "name": "snapshot_before_kill",
+   "donor_constant": "unit data snapshot taken before the kill",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "app/sdk/spells/spellDeathIncoming.coffee:13"
   }
  ],
- "best_idea": "Queue a dead unit's respawn before its death is applied, then on the next boundary pick one free tile from a coverage pattern and spawn it there, never dropping it silently.",
+ "best_idea": "When a creature dies, queue a snapshot with a timer; when the timer fires the server places it on a random free spawn cell, and (our change) keeps it queued if none is free.",
  "decision": "adapt",
- "decision_why": "The free-tile pick inside a zone's coverage fits row 23 respawn, but the end-turn trigger does not fit real time and the server must draw the tile itself (donor uses Math.random and only flags the action).",
+ "decision_why": "The queue-then-place-on-the-server shape fits zone respawn (row 23), but the donor uses a one-card-turn timer and silently drops the unit when no cell is free; Frankendom needs seconds from zone data and a retry.",
  "decision_status": "proposed",
- "acceptance": "When a zone creature dies with respawn set to N seconds, a creature of that kind appears on a free tile inside the zone coverage within N seconds, chosen on the server; a server test asserts the tile is free and inside coverage, and that a full zone retries rather than dropping the respawn."
+ "acceptance": "A server test: a creature killed in zone Z with respawn_s = R reappears at one free spawn anchor after R seconds, only on the server tick; with every anchor occupied or the cap reached, no spawn occurs and the entry stays queued until a slot frees."
 }

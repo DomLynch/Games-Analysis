@@ -1,0 +1,159 @@
+{
+ "game": "beyond-all-reason-Beyond-All-Reason",
+ "category": "ai-aggro",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/ai_zombies.lua",
+ "licence": "GNU GPL, v2 or later (file header); repo LICENSE.md line 2: GPL v2",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/aggro.ts",
+ "parity_row": 4,
+ "pattern_tags": [
+  "director",
+  "target-score",
+  "timer-wheel",
+  "fixed-step",
+  "new:power-ratio-gate"
+ ],
+ "data_fields": [
+  {
+   "name": "swarm_power_ratio",
+   "donor_constant": "0.1",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/ai_zombies.lua:54"
+  },
+  {
+   "name": "director_check_interval",
+   "donor_constant": "30 x Game.gameSpeed frames",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/ai_zombies.lua:35"
+  },
+  {
+   "name": "aggro_hold_after_manual_call",
+   "donor_constant": "60 x Game.gameSpeed frames",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/ai_zombies.lua:36"
+  },
+  {
+   "name": "director_start_delay",
+   "donor_constant": "15 x 60 x Game.gameSpeed frames",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/ai_zombies.lua:37"
+  },
+  {
+   "name": "reached_distance",
+   "donor_constant": "200",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/ai_zombies.lua:45"
+  },
+  {
+   "name": "target_search_radius",
+   "donor_constant": "1000",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/ai_zombies.lua:43"
+  },
+  {
+   "name": "engage_range_ratio",
+   "donor_constant": "0.5 x weapon range",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/ai_zombies.lua:55"
+  },
+  {
+   "name": "orbit_angle",
+   "donor_constant": "45 degrees",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/ai_zombies.lua:59"
+  },
+  {
+   "name": "combat_move_refresh_distance",
+   "donor_constant": "100",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/ai_zombies.lua:47"
+  },
+  {
+   "name": "stuck_check_interval",
+   "donor_constant": "12 x Game.gameSpeed frames",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/ai_zombies.lua:34"
+  },
+  {
+   "name": "stuck_distance",
+   "donor_constant": "50",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/ai_zombies.lua:39"
+  },
+  {
+   "name": "nogo_radius",
+   "donor_constant": "600",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/ai_zombies.lua:41"
+  },
+  {
+   "name": "nogo_max_discs",
+   "donor_constant": "10",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/ai_zombies.lua:53"
+  },
+  {
+   "name": "aim_variance_aggro",
+   "donor_constant": "22.5 degrees",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/ai_zombies.lua:58"
+  },
+  {
+   "name": "aim_variance_normal",
+   "donor_constant": "90 degrees",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/ai_zombies.lua:57"
+  },
+  {
+   "name": "order_step_cap",
+   "donor_constant": "1600",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/ai_zombies.lua:44"
+  },
+  {
+   "name": "order_attempts",
+   "donor_constant": "10",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/ai_zombies.lua:51"
+  },
+  {
+   "name": "order_check_interval",
+   "donor_constant": "3 x Game.gameSpeed frames",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/ai_zombies.lua:33"
+  },
+  {
+   "name": "unit_power",
+   "donor_constant": "UnitDefs[].power (unit def field; value not read)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/ai_zombies.lua:989"
+  }
+ ],
+ "best_idea": "Re-check a wandering group against a power ratio on a fixed cadence; when it passes, hand the group to the least-loaded player, strongest members first, and keep each assignment only while its target is alive and out of reach.",
+ "decision": "adapt",
+ "decision_why": "Keep the gate and the least-loaded split as a zone director that decides which player a pack pressures (zones are data, the engine owns target choice); drop the uncapped swarm because MAX_ATTACKERS = 3 caps attackers per target and this donor has no cap.",
+ "decision_status": "proposed",
+ "acceptance": "A server test with player power 100 and pack power 5 gives no aggro; with pack power 50 the pack is split across two players by power (strongest first, least-loaded player next), and no player has more than 3 attackers at once."
+}

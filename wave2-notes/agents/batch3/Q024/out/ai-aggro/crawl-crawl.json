@@ -1,0 +1,74 @@
+{
+ "game": "crawl-crawl",
+ "category": "ai-aggro",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/mon-behv.cc",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/ai.ts",
+ "parity_row": 2,
+ "pattern_tags": [
+  "presence-gated",
+  "grace-timer",
+  "stale-state",
+  "new:shake-off-clamp"
+ ],
+ "data_fields": [
+  {
+   "name": "memory_human",
+   "donor_constant": "450-1000",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/mon-behv.cc:727"
+  },
+  {
+   "name": "memory_animal",
+   "donor_constant": "250-550",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/mon-behv.cc:730"
+  },
+  {
+   "name": "memory_brainless",
+   "donor_constant": "100-300",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/mon-behv.cc:733"
+  },
+  {
+   "name": "refind_chance_per_stealth",
+   "donor_constant": "50 / stealth",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/mon-behv.cc:672"
+  },
+  {
+   "name": "scan_roll_without_player_in_view",
+   "donor_constant": "1 in 3",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/mon-behv.cc:431"
+  },
+  {
+   "name": "switch_to_player_when_fighting_monster",
+   "donor_constant": "2 in 3",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/mon-behv.cc:474"
+  },
+  {
+   "name": "memory_cap_when_shaken_off",
+   "donor_constant": "50",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/mon-behv.cc:1502"
+  }
+ ],
+ "best_idea": "A lost foe is chased to its last seen cell on a memory timer that is refilled while the foe is seen, and the chaser re-finds the target there with a stealth-scaled roll, so pursuit fades in a readable way.",
+ "decision": "adapt",
+ "decision_why": "The engine owns targeting and the hate list (MAX_ATTACKERS = 3), so take the memory timer and last-seen walk but drive the timer by server ticks and roll re-finds in the seeded fight RNG; the donor's nearest-visible rule does not fit a group cap.",
+ "decision_status": "proposed",
+ "acceptance": "A player sees a creature walk to the cell the hero last stood in and then wander when its memory runs out; a server test asserts memory is set in the species range on sight, drops by one per server tick out of sight, and is capped at 50 when the foe teleports away."
+}

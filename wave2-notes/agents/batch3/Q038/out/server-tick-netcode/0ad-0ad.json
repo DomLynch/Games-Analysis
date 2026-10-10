@@ -1,0 +1,61 @@
+{
+ "game": "0ad-0ad",
+ "category": "server-tick-netcode",
+ "cell": 5,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/0ad-0ad/source/simulation2/system/TurnManager.cpp",
+ "licence": "GPL-2.0-or-later (headers: version 2 or any later version; LICENSE.txt: GPL version 2 (or later))",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/tick.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "fixed-step",
+  "accumulator",
+  "debt-carry",
+  "lockstep",
+  "wait-gate"
+ ],
+ "data_fields": [
+  {
+   "name": "tick_length",
+   "donor_constant": "200",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/0ad-0ad/source/simulation2/system/TurnManager.h:55"
+  },
+  {
+   "name": "input_lead_ticks",
+   "donor_constant": "4",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/0ad-0ad/source/simulation2/system/TurnManager.h:74"
+  },
+  {
+   "name": "debt_clamp",
+   "donor_constant": "2 tick lengths",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/0ad-0ad/source/simulation2/system/TurnManager.cpp:75"
+  },
+  {
+   "name": "full_hash_interval",
+   "donor_constant": "20",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/0ad-0ad/source/simulation2/system/TurnManager.cpp:253"
+  },
+  {
+   "name": "observer_max_lag",
+   "donor_constant": "-1 (no limit)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/0ad-0ad/source/network/NetServerTurnManager.cpp:77"
+  }
+ ],
+ "best_idea": "Stamp each input for a tick a fixed number ahead, store it in a per-tick batch keyed by a stable player id, and run that batch in sorted order on a fixed tick, so every tick is applied the same way however messages arrive.",
+ "decision": "adapt",
+ "decision_why": "Keep the fixed step, the debt clamp, the stamped input with late rejection and the stable per-tick order; drop the lockstep wait and client hash check, because kills are server-verified and one slow connection must not freeze a fight with up to MAX_ATTACKERS = 3.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: two inputs for the same tick arrive in both orders and run in the same player-id order; an input for an already-run tick is rejected and counted in the fight record; a client that sends nothing for tick T does not stop tick T+1 from running."
+}

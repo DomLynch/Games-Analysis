@@ -1,0 +1,3 @@
+game	category	old	verdict	depth	finding
+ClassicUO	parties-guilds-chat	P	STRONG	full	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/PartyManager.cs:32-191 roster rebuild, leader and dissolve rules; WorldMapEntityManager.cs:200-236 presence-gated 250 ms position poll, one party query per poll; chat read thin (ChatManager.cs whole file, MessageManager.cs:119-121 name match)
+ClassicUO	city-map-design	P	STRONG	full	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Scenes/GameSceneDrawingSorting.cs:57-213 overhead roof cut (14/16 height windows, +1,+1 roof scan, flood-filled ground, cap never below player z+16) and Map.cs:164-219 CalculateNearZ flood fill; confidence medium on stacked-object order (Chunk.cs sort not read)

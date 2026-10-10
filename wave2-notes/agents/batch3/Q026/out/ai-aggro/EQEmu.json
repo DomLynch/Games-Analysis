@@ -1,0 +1,96 @@
+{
+ "game": "EQEmu",
+ "category": "ai-aggro",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/EQEmu/zone/hate_list.cpp",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/hate.ts",
+ "parity_row": 2,
+ "pattern_tags": [
+  "hate-table",
+  "target-score",
+  "wait-gate",
+  "hit-aggregation",
+  "new:leash-two-pass"
+ ],
+ "data_fields": [
+  {
+   "name": "initial_aggro_bonus",
+   "donor_constant": "100 hate added to a new entry",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "common/ruletypes.h:732"
+  },
+  {
+   "name": "melee_range_bonus",
+   "donor_constant": "10 (percent)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "common/ruletypes.h:714"
+  },
+  {
+   "name": "current_target_bonus",
+   "donor_constant": "0 (percent), default no bonus",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "common/ruletypes.h:715"
+  },
+  {
+   "name": "critical_hp_threshold",
+   "donor_constant": "20 (percent of max HP)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "zone/hate_list.cpp:464"
+  },
+  {
+   "name": "critical_bonus",
+   "donor_constant": "100 (percent)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "common/ruletypes.h:716"
+  },
+  {
+   "name": "target_refresh",
+   "donor_constant": "500",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "common/features.h:150"
+  },
+  {
+   "name": "cleanup_interval",
+   "donor_constant": "6000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "zone/mob.cpp:129"
+  },
+  {
+   "name": "stale_time",
+   "donor_constant": "600000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "zone/mob_ai.cpp:1052"
+  },
+  {
+   "name": "leash_distance",
+   "donor_constant": "zone npc_aggro_max_dist (zone data)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "zone/mob_ai.cpp:1052"
+  },
+  {
+   "name": "leash_passes",
+   "donor_constant": "2 consecutive out-of-range passes",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "zone/hate_list.cpp:873"
+  }
+ ],
+ "best_idea": "Keep a per-creature hate table that accumulates each hit, re-picks the target on a short timer with percent bonuses for melee range, near-death and sitting targets, and drops entries that go stale or stray out of leash, which is the engine shape for many-on-one with MAX_ATTACKERS = 3.",
+ "decision": "adapt",
+ "decision_why": "Take the hate table, the damage-credit cap at HP left, the melee-range and near-death bonuses, and the two-pass leash and stale cleanup; drop sitting and tunnel vision, which Frankendom does not need.",
+ "decision_status": "proposed",
+ "acceptance": "A 3-on-1 zone server test: a creature in melee range with equal hate beats one out of melee range on the next re-pick, a near-death creature in melee range takes the target on the next re-pick, a creature more than two cleanup passes outside the leash is removed, and the same seed gives the same target sequence on replay."
+}

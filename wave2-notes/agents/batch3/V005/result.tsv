@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+swgemu-Core3	progression	P	STRONG	full	PlayerObjectImplementation.cpp:728-785 and PlayerManagerImplementation.cpp:2601-2630 (ledger write, cap clamp, award multiplier chain) with SkillManager.cpp:788-836 (cap rebuild), read in full
+swgemu-Core3	economy-trade	P	STRONG	full	AuctionManagerImplementation.cpp:1212-1327 (proxy bid and takeover refund; read in full, refund reading not run) with 1008-1201 (instant buy tax split)
+swgemu-Core3	quests-dialogue	P	STRONG	full	ConversationObserverImplementation.cpp:16-145, 180-236 (talk graph, handler chain, leash) with DeliverMissionObjectiveImplementation.cpp:169-225 (three-state objective), read in full

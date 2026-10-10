@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+flareteam-flare-engine	progression	P	STRONG	full	src/StatBlock.cpp:879-940 kill XP via takeDamage; CampaignManager.cpp:207-221 rewardXP fraction carry; XPScaling.cpp:136-178 level-gap curves; EngineSettings.cpp:1342-1364 level from total; MenuInventory.cpp:309-334 death penalty
+freeorion-freeorion	progression	P	STRONG	full	Empire/ResearchQueue.cpp:21-80 priority queue with per-turn cap and one partial item; Empire/Empire.cpp:2262-2378 progress as fraction and cheapest-first leftover auto-fill
+CleverRaven-Cataclysm-DDA	progression	P	STRONG	full	src/skill.cpp:350-402 two-track practical and theory XP with level-gap catch-up; src/character.cpp:2543-2606 practice modifiers; src/skill.cpp:444-487 daily rust accumulator

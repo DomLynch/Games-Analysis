@@ -1,0 +1,75 @@
+{
+ "game": "ClassicUO",
+ "category": "zones-world",
+ "cell": 7,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/World.cs",
+ "licence": "BSD 2-Clause License (LICENSE.md; SPDX-License-Identifier: BSD-2-Clause in each file; Copyright (c) 2025, andreakarasho)",
+ "licence_class": "permissive",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "grace-timer",
+  "new:throttled-sweep",
+  "new:deferred-removal",
+  "per-player-view",
+  "variable-step"
+ ],
+ "data_fields": [
+  {
+   "name": "cull_pass_interval",
+   "donor_constant": "50",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "World.cs:298"
+  },
+  {
+   "name": "view_range_default",
+   "donor_constant": "24",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "Constants.cs:81"
+  },
+  {
+   "name": "view_range_min",
+   "donor_constant": "5",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "Constants.cs:80"
+  },
+  {
+   "name": "distance_rule",
+   "donor_constant": "Chebyshev max(|dx|,|dy|) greater than range",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "GameObject.cs:61"
+  },
+  {
+   "name": "despawn_grace",
+   "donor_constant": "3000 (donor engine constant; proposed as zone data)",
+   "unit": "ms",
+   "where": "zone data",
+   "donor_ref": "Constants.cs:32"
+  },
+  {
+   "name": "sweep_cadence",
+   "donor_constant": "500",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "GameScene.cs:727"
+  },
+  {
+   "name": "despawn_cap_per_pass",
+   "donor_constant": "50",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "Constants.cs:37"
+  }
+ ],
+ "best_idea": "Sweep for despawn on a throttled timer, collect destroyed entries and remove them after the walk, and evict only after a grace period with a per-pass cap.",
+ "decision": "adapt",
+ "decision_why": "The grace-and-cap sweep fits the server's zone despawn-on-empty step (row 23); the donor's distance cull is client-only and must never delete server-known state (one ledger).",
+ "decision_status": "proposed",
+ "acceptance": "Server test: a zone with no players for its grace period despawns its idle creatures, at most N per sweep, and a creature whose zone regains a player within the grace is kept; client: an entity 25 tiles away leaves the draw list within 50 ms and returns from server state on re-entry."
+}

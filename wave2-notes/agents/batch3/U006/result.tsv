@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ClassicUO	animation-rigs	P	STRONG	full	Mobile.cs:571-693 frame clock with repeat and server interval (Mobile.cs:610, 641-646), step progress Mobile.cs:718-776, MovementSpeed.cs:9-30; BSD-2-Clause; sprite-only renderer, no skeleton
+ClassicUO	server-tick-netcode	P	STRONG	full	GameController.cs:381-397 frame order; NetClient.cs:158-218 intake/flush; WalkerManager.cs:108-198 confirm/deny; PlayerMobile.cs:523-690 walk window; client only, no server in donor
+ClassicUO	anticheat-validation	P	STRONG	full	WalkerManager.cs:42-83 token pool; PlayerMobile.cs:523-690 gate and spend; PacketHandlers.cs:4125-4150, 6332-6350 snaps; client half only (no server in donor), confidence medium

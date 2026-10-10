@@ -1,0 +1,3 @@
+game	category	old	verdict	depth	finding
+dkfans-keeperfx	camera	P	STRONG	full	local_camera.c:661-683 step_local_possession_camera: per-turn follow (zoom x100/85, yaw turn capped at 170 units, focus move capped at 128) toward a look-ahead along yaw; no wall pull-in in any camera path (engine_camera.c:109-130 is used by firing code only)
+alexbatalov-fallout1-ce	camera	P	STRONG	full	tile.cc:496-570 tile_set_center leash (480 by 400 box, outward refused, return allowed), 975-1008 flags, 1943-1978 tile_scroll_to sample-and-stop with all-or-nothing; map.cc:713-736 33 ms throttle and 32x24 pan step; camera recentres on hero by events only (map.cc:1293, game.cc:685-687, object.cc:1471-1473)

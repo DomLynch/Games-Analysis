@@ -1,0 +1,52 @@
+{
+ "game": "colyseus-colyseus",
+ "category": "server-tick-netcode",
+ "cell": 5,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/colyseus-colyseus/packages/core/src/Room.ts",
+ "licence": "MIT (as read: Copyright (c) 2015-2026 Endel Dreyer, MIT License text)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/tick.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "fixed-step",
+  "accumulator",
+  "debt-carry"
+ ],
+ "data_fields": [
+  {
+   "name": "tick_rate",
+   "donor_constant": "60 ticks per second (default)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/colyseus-colyseus/packages/core/src/Room.ts:1021"
+  },
+  {
+   "name": "max_catchup_steps",
+   "donor_constant": "5",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/colyseus-colyseus/packages/core/src/Room.ts:1051"
+  },
+  {
+   "name": "patch_interval",
+   "donor_constant": "50 (1000 / 20)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/colyseus-colyseus/packages/core/src/Room.ts:57"
+  },
+  {
+   "name": "sub_steps",
+   "donor_constant": "1 (default)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/colyseus-colyseus/packages/core/src/Room.ts:1028"
+  }
+ ],
+ "best_idea": "The wall-clock delta only decides how many fixed steps run, each step gets the same dt, and a hitch runs at most five steps and then drops the rest, so a slow frame can never spiral.",
+ "decision": "adopt",
+ "decision_why": "The accumulator, fixed dt, cap of 5 and backlog drop are exactly the server-tick rule we want, and no Frankendom ruling conflicts with them.",
+ "decision_status": "proposed",
+ "acceptance": "A server test feeds a 250 ms stall to a 60 Hz loop: exactly 5 steps run, the tick counter rises by 5 and the accumulator reads 0 afterwards; every step receives dt = 1/60 s."
+}

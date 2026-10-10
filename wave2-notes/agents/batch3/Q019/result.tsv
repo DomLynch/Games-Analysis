@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+vcmi-vcmi	ai-aggro	P	STRONG	full	/mnt/frankendom-donors/vcmi-vcmi/lib/mapObjects/CGCreature.cpp:350-418 - takenAction picks fight, flee or join from a banded hero-to-group power ratio plus a per-group aggression threshold.
+KsanaDock-Microverse	ai-aggro	P	NONE	thin	/mnt/frankendom-donors/KsanaDock-Microverse/script/ui/GodUI.gd:455-482 - the only relation data is a designer-typed signed standing shown to an LLM prompt; there is no aggro, threat, chase or flee logic.
+scummvm-scummvm	ai-aggro	P	STRONG	full	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp:115-226 - each tick scores attack, cover and flee from weighted terms and picks one; hit chance and margin-scaled damage are at 228-298 and 524-595.

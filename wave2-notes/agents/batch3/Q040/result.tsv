@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+Blizzard-s2client-api	server-tick-netcode	P	STRONG	full	src/sc2api/sc2_coordinator.cc:285-330 (StepAgents) and 766-773 (Update): every live agent steps by the same count, all are waited on, then they act; client-side step loop only, engine not in donor.
+colyseus-colyseus	server-tick-netcode	P	STRONG	full	packages/core/src/Room.ts:1021-1067 (setFixedTimestep): fixed dt from tickRate, accumulator, catch-up cap of 5 steps, backlog dropped on the cap.
+rathena-rathena	server-tick-netcode	P	STRONG	full	src/common/timer.cpp:357-412 (do_timer) with core.cpp:388-391 and socket.cpp:919-923: variable-step min-heap timers, select sleeps to the next timer clamped to 20-1000 ms; mob.cpp:2468-2476 and 2359-2404: hot AI 100 ms near players, cold 1000 ms, active window.

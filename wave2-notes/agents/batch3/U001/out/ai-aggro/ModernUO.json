@@ -1,0 +1,97 @@
+{
+ "game": "ModernUO",
+ "category": "ai-aggro",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/BaseAI.cs",
+ "licence": "GPL-3.0 (repo LICENSE, GNU GPL version 3)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/ai.ts",
+ "parity_row": 2,
+ "pattern_tags": [
+  "wait-gate",
+  "target-score",
+  "new:approach-pull-deadline",
+  "new:leash-drop",
+  "new:flee-hp-roll",
+  "new:speed-paced-think"
+ ],
+ "data_fields": [
+  {
+   "name": "perception_range",
+   "donor_constant": "16 tiles (DefaultRangePerception)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs:171"
+  },
+  {
+   "name": "leash_multiplier",
+   "donor_constant": "2 x perception (ChaseLeashRange)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs:1094"
+  },
+  {
+   "name": "reacquire_period",
+   "donor_constant": "10 s (ReacquireDelay)",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs:1321"
+  },
+  {
+   "name": "approach_delay",
+   "donor_constant": "2 s (0 for paragons)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs:1326"
+  },
+  {
+   "name": "approach_range",
+   "donor_constant": "10 tiles (AcquireOnApproachRange)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs:1330"
+  },
+  {
+   "name": "flee_health_threshold",
+   "donor_constant": "0.2 (melee; default 0.0 in base)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/AI/MeleeAI.cs:11"
+  },
+  {
+   "name": "flee_chance",
+   "donor_constant": "0.1 (melee)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/AI/MeleeAI.cs:12"
+  },
+  {
+   "name": "flee_duration_min",
+   "donor_constant": "10 s (Utility.Random(10, 30))",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/BaseAI.cs:780"
+  },
+  {
+   "name": "flee_duration_max",
+   "donor_constant": "30 s",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/BaseAI.cs:780"
+  },
+  {
+   "name": "think_jitter_fraction",
+   "donor_constant": "period >> 3 (one eighth) for idle creatures",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/AITimer.cs:164"
+  }
+ ],
+ "best_idea": "A target scan that runs only when a timer gate has run down, where an enemy entering a short approach range can only pull the next scan earlier, so aggro reacts fast without scanning every tick.",
+ "decision": "adapt",
+ "decision_why": "Keep the reacquire gate, the approach pull with its clamp, the leash drop and the flee roll. Drop the strength-based Strongest rank (no ruling covers stat-driven targeting) and let MAX_ATTACKERS = 3 be enforced by the engine when a focus is granted, not by each brain.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: an enemy stepping within 10 tiles of an idle creature gets a target within 2 s; a creature with no enemy re-scans every 10 s; a combatant beyond twice perception is dropped after a failed rescan; at most 3 creatures hold a focus on one player."
+}

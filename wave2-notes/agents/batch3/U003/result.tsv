@@ -1,0 +1,3 @@
+game	category	old	verdict	depth	finding
+ModernUO	loot-drops	P	STRONG	full	UOContent/Misc/LootPack.cs:118-158 (Generate roll, luck re-roll, drop); Mobiles/BaseCreature.cs:3344-3454 (looting rights, 1.25x first hitter, top/N threshold)
+ModernUO	inventory-bank-equipment	P	STRONG	full	Server/Items/Container.cs:224-276 and 426-445 (hold check up the chain, stack-first drop); Server/Items/Item.cs:3335-3350 and Server/Mobiles/Mobile.cs:4002-4030 (cached totals by delta); UOContent/Misc/StaminaSystem.cs:410-430 (overweight step loss)

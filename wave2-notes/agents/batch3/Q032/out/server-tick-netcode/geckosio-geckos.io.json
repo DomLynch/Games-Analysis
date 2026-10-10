@@ -1,0 +1,59 @@
+{
+ "game": "geckosio-geckos.io",
+ "category": "server-tick-netcode",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/geckosio-geckos.io/packages/common/src/reliableMessage.ts",
+ "licence": "BSD 3-Clause License (as read: LICENSE line 1; Copyright (c) 2021, Yannick Deubel)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/net-events.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "new:reliable-resend",
+  "new:id-dedupe-window",
+  "new:unreliable-congestion-drop"
+ ],
+ "data_fields": [
+  {
+   "name": "reliable_interval_ms",
+   "donor_constant": "150",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "packages/common/src/reliableMessage.ts:5"
+  },
+  {
+   "name": "reliable_runs",
+   "donor_constant": "10",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "packages/common/src/reliableMessage.ts:5"
+  },
+  {
+   "name": "dedupe_window_ms",
+   "donor_constant": "15000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "packages/server/src/geckos/channel.ts:259"
+  },
+  {
+   "name": "message_id_length",
+   "donor_constant": "24",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "packages/common/src/reliableMessage.ts:6"
+  },
+  {
+   "name": "unreliable_drop_when_queued_bytes",
+   "donor_constant": "bufferedAmount > 0",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "packages/server/src/geckos/channel.ts:208"
+  }
+ ],
+ "best_idea": "Send a reliable event with one random id and deliver only the first copy the receiver sees (id kept for a window); skip unreliable inputs while the outbound queue is non-empty and count the drop.",
+ "decision": "adapt",
+ "decision_why": "The first-copy-only id receive fits the one-ledger ruling (a kill credited once), but the 10-copy resend storm only helps on a lossy link and the Frankendom transport was not read; ledger dedupe must be stored with the ledger entry, not in a 15 s window.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: the same kill-report id arriving three times over the link credits the ledger once, even after a reconnect; and an unreliable input frame is counted as a drop while the outbound queue is non-empty, while a kill report still sends."
+}

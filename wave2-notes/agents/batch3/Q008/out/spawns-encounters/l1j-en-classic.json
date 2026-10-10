@@ -1,0 +1,83 @@
+{
+  "game": "l1j-en-classic",
+  "category": "spawns-encounters",
+  "cell": 2,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/L1Spawn.java",
+  "licence": "GPL-2.0-or-later (COPYING is GPL version 2, June 1991; source headers: 'either version 2, or (at your option) any later version')",
+  "licence_class": "copyleft",
+  "target_module": "origins/server/world-spawns.ts",
+  "parity_row": 23,
+  "pattern_tags": ["population-cap", "presence-gated", "grace-timer", "new:slot-respawn"],
+  "data_fields": [
+    {
+      "name": "slot_count",
+      "donor_constant": "amount column per spawn row (DB)",
+      "unit": "count",
+      "where": "zone data",
+      "donor_ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/L1Spawn.java:341"
+    },
+    {
+      "name": "respawn_min_s",
+      "donor_constant": "min_respawn_delay per spawn row (DB)",
+      "unit": "s",
+      "where": "zone data",
+      "donor_ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/L1Spawn.java:299"
+    },
+    {
+      "name": "respawn_max_s",
+      "donor_constant": "max_respawn_delay per spawn row (DB); drawn delay is in [min, max)",
+      "unit": "s",
+      "where": "zone data",
+      "donor_ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/L1Spawn.java:301"
+    },
+    {
+      "name": "corpse_linger_s",
+      "donor_constant": "NpcDeletionTime = 50",
+      "unit": "s",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/l1j-en-classic/config/altsettings.properties:138"
+    },
+    {
+      "name": "presence_retry_ms",
+      "donor_constant": "3000",
+      "unit": "ms",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/L1Spawn.java:463"
+    },
+    {
+      "name": "placement_tries",
+      "donor_constant": "50 (loop runs while tryCount <= 50)",
+      "unit": "count",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/L1Spawn.java:386"
+    },
+    {
+      "name": "presence_inner_tiles",
+      "donor_constant": "13 (a player within 13 tiles always counts as seeing the spot)",
+      "unit": "units",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/types/Point.java:143"
+    },
+    {
+      "name": "presence_outer_tiles",
+      "donor_constant": "17 (beyond 17 tiles never counts; 13 to 17 uses a second test, partly read)",
+      "unit": "units",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/types/Point.java:141"
+    },
+    {
+      "name": "player_near_spawn_tiles",
+      "donor_constant": "PC_AROUND_DISTANCE = 30",
+      "unit": "units",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/L1Spawn.java:535"
+    }
+  ],
+  "best_idea": "Refill each empty spawn slot on its own timer after its mob has been gone for a linger plus a random delay, and hold the refill while any player can see the chosen tile.",
+  "decision": "adapt",
+  "decision_why": "The slot-based population cap and the not-in-view hold are the parts to take; the screen-based view test cannot run on the server, since the camera is client-only, so Frankendom needs a per-zone server distance rule and a retry cap instead.",
+  "decision_status": "proposed",
+  "acceptance": "A server test with a two-slot zone kills one mob and asserts the slot stays empty for the linger plus a delay in [min, max) seconds; the refill is never within the zone's no-spawn distance of a hero; with a hero on the chosen tile the placement retries every 3 s and, after the retry cap, the mob is placed at the home tile."
+}

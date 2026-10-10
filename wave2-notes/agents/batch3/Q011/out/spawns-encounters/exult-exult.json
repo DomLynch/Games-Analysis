@@ -1,0 +1,75 @@
+{
+ "game": "exult-exult",
+ "category": "spawns-encounters",
+ "cell": 4,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/exult-exult/objs/egg.cc",
+ "licence": "GNU GPL, version 2 or any later version (egg.cc header lines 7-8; COPYING is GPL-2.0)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "presence-gated",
+  "new:edge-trigger-entry",
+  "new:once-or-rearm",
+  "new:group-count-roll",
+  "new:ring-placement"
+ ],
+ "data_fields": [
+  {
+   "name": "trigger_radius_tiles",
+   "donor_constant": "distance field (5-bit record field), square of 2*distance+1 tiles",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "objs/egg.cc:679"
+  },
+  {
+   "name": "chance_pct",
+   "donor_constant": "probability 0-100, roll 1 + rand()%100 <= probability",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "objs/egg.cc:1334"
+  },
+  {
+   "name": "night_window",
+   "donor_constant": "nocturnal: blocked for hour 5 to 20, active for 21 to 4",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "objs/egg.cc:843"
+  },
+  {
+   "name": "group_max",
+   "donor_constant": "cnt = (d1 & 0xff) >> 2; group 1 + rand()%cnt when cnt > 1",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "objs/egg.cc:314"
+  },
+  {
+   "name": "once",
+   "donor_constant": "once flag: removed after a successful hatch",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "objs/egg.cc:1345"
+  },
+  {
+   "name": "rearm_auto_reset",
+   "donor_constant": "auto_reset flag: hatched gate ignored, re-rolls on each entry",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "objs/egg.cc:837"
+  },
+  {
+   "name": "place_radius_tiles",
+   "donor_constant": "5",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "objs/egg.cc:300"
+  }
+ ],
+ "best_idea": "A spawn point is zone data: an edge-triggered tile square, one percentage roll per entry, a group size, a once or re-arm flag, a night window, and a placement search from the spawn tile outward.",
+ "decision": "adapt",
+ "decision_why": "The spawn point as zone data (square, chance, group, once or re-arm, night window) fits a server zone director; the donor is GPL so we keep only the shape, and the trigger must be evaluated by the server from the authoritative tile, not the client.",
+ "decision_status": "proposed",
+ "acceptance": "A server test walks a seeded player into a spawn square and asserts one edge trigger per entry, no trigger in the night-blocked hours for a night-only point, and at most group_max foes placed at free tiles within place_radius; in play the group appears around the spawn tile, not on the player."
+}

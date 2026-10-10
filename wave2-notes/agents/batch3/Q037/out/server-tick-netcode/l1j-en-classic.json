@@ -1,0 +1,88 @@
+{
+ "game": "l1j-en-classic",
+ "category": "server-tick-netcode",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/Instance/L1NpcInstance.java",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/tick.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "new:per-creature-next-act",
+  "new:speed-state-scaling",
+  "wait-gate",
+  "new:shared-scheduler-pool"
+ ],
+ "data_fields": [
+  {
+   "name": "npc_pass_default_ms",
+   "donor_constant": "300",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/Instance/L1NpcInstance.java:294"
+  },
+  {
+   "name": "npc_item_gone_idle_ms",
+   "donor_constant": "1000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/Instance/L1NpcInstance.java:321"
+  },
+  {
+   "name": "paralysis_poll_ms",
+   "donor_constant": "200",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/Instance/L1NpcInstance.java:222"
+  },
+  {
+   "name": "speed_state1_ratio",
+   "donor_constant": "0.75 (25 percent off)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/Instance/L1NpcInstance.java:2037"
+  },
+  {
+   "name": "speed_state2_ratio",
+   "donor_constant": "2 (doubled)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/Instance/L1NpcInstance.java:2040"
+  },
+  {
+   "name": "brave_ratio",
+   "donor_constant": "0.75 (25 percent off)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/Instance/L1NpcInstance.java:2044"
+  },
+  {
+   "name": "wind_shackle_ratio_attack_magic",
+   "donor_constant": "1.25 (25 percent on)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/Instance/L1NpcInstance.java:2048"
+  },
+  {
+   "name": "creature_base_attack_ms",
+   "donor_constant": "template value (getAtkspeed, not read)",
+   "unit": "ms",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/Instance/L1NpcInstance.java:566"
+  },
+  {
+   "name": "npc_scheduler_threads",
+   "donor_constant": "10",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/GeneralThreadPool.java:38"
+  }
+ ],
+ "best_idea": "Each creature keeps its own next-act time, set from the speed-scaled length of the action it just took (speed state, brave and wind-shackle modifiers), so cadence is per-creature data rather than one global tick.",
+ "decision": "adapt",
+ "decision_why": "The per-creature next-act time and the speed scaling fit enemy attack cadence in the fight, but the fight must run on one fixed step with a per-tick budget and a due-list (row 18), not a timer or thread per creature.",
+ "decision_status": "proposed",
+ "acceptance": "A server test in which an enemy with base attack 1000 ms acts again after 750 ms in speed state 1 and after 1250 ms under wind shackle, and in which no more than three enemies are scheduled to attack one player at once."
+}

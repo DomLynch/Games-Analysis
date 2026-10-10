@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ioquake-ioq3	camera	P	STRONG	full	/mnt/frankendom-donors/ioquake-ioq3/code/cgame/cg_view.c:226-295 third-person offset (focus aim, back-off, one collision pull-in with lift, aim pitch); also 470-557 zoom FOV lerp, 804-805 third-person choice, 1001 client serverTime
+lincity-ng-lincity-ng	camera	P	STRONG	full	/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity-ng/GameView.cpp:507-598 timed scroll with zoom-scaled speed, clamp of view centre to map with remembered debt; 269-297 zoom about the cursor point
+diasurgical-DevilutionX	camera	P	STRONG	full	/mnt/frankendom-donors/diasurgical-DevilutionX/Source/engine/render/scrollrt.cpp:1575-1592 walk-glide camera offset, 1178-1221 first tile position; player.cpp:403-431 commit and 2581-2601 snap of view to committed tile

@@ -1,0 +1,145 @@
+{
+ "game": "vthibault-roBrowser",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js",
+ "licence": "GPL-3.0 (LICENSE file, Version 3; no licence header in Camera.js)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "variable-step",
+  "new:orbit-goal-ease",
+  "new:double-click-recentre"
+ ],
+ "data_fields": [
+  {
+   "name": "pitchMin",
+   "donor_constant": "190 (degrees)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js:235"
+  },
+  {
+   "name": "pitchMax",
+   "donor_constant": "270 (degrees)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js:236"
+  },
+  {
+   "name": "pitchDragPerScreenHeight",
+   "donor_constant": "300 degrees per full screen height",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js:234"
+  },
+  {
+   "name": "zoomMin",
+   "donor_constant": "2.0",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js:281"
+  },
+  {
+   "name": "zoomMax",
+   "donor_constant": "150 (= altitude span 15 x MAX_ZOOM 10)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js:280"
+  },
+  {
+   "name": "zoomDragPerScreenHeight",
+   "donor_constant": "150 units per full screen height",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js:241"
+  },
+  {
+   "name": "wheelStep",
+   "donor_constant": "15 per wheel notch",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js:279"
+  },
+  {
+   "name": "yawDragPerScreenWidth",
+   "donor_constant": "720 degrees per full screen width",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js:248"
+  },
+  {
+   "name": "yawLimit",
+   "donor_constant": "-360 to 360 (degrees)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js:109"
+  },
+  {
+   "name": "lerpPerMs",
+   "donor_constant": "0.006 per ms, capped at 1",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js:294"
+  },
+  {
+   "name": "easeGain",
+   "donor_constant": "2.0 times lerp",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js:315"
+  },
+  {
+   "name": "doubleClickWindow",
+   "donor_constant": "500",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js:204"
+  },
+  {
+   "name": "doubleClickRadius",
+   "donor_constant": "10 (pixels)",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js:205"
+  },
+  {
+   "name": "defaultPitch",
+   "donor_constant": "240 (degrees)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js:154"
+  },
+  {
+   "name": "defaultZoom",
+   "donor_constant": "50.0 (Preferences)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/Preferences/Camera.js:20"
+  },
+  {
+   "name": "zoomSaveDelay",
+   "donor_constant": "3000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js:181"
+  },
+  {
+   "name": "spriteFacingSectors",
+   "donor_constant": "8 sectors of 45 degrees, offset 22.5",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js:324"
+  }
+ ],
+ "best_idea": "Let input write a goal (pitch, yaw, zoom) with clamps applied at the write, and ease the drawn camera toward that goal each frame, so drags and wheel steps never jerk the view.",
+ "decision": "adapt",
+ "decision_why": "The goal-and-ease split and clamp-at-write are right for the world camera, but the orbit centre must become an over-the-shoulder offset with collision pull-in, which this donor does not have.",
+ "decision_status": "proposed",
+ "acceptance": "In a zone, a right-drag (or two-finger drag) turns the view, the pitch stays inside its band, the wheel changes distance in fixed steps, and a double-click recentres yaw behind the hero; a client unit test asserts that a 16 ms step moves the yaw about 19 percent of its gap to the goal and that no goal leaves its clamp.",
+ "camera_scope": "world"
+}

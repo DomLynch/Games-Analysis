@@ -1,0 +1,160 @@
+{
+ "game": "id-Software-Quake-2",
+ "category": "ai-aggro",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/id-Software-Quake-2/game/g_ai.c",
+ "licence": "GPL version 2 or any later version (as read: g_ai.c header; readme.txt)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/ai.ts",
+ "parity_row": 4,
+ "pattern_tags": [
+  "presence-gated",
+  "stale-state",
+  "new:distance-bands",
+  "new:front-test",
+  "new:search-memory",
+  "new:band-chance-roll"
+ ],
+ "data_fields": [
+  {
+   "name": "melee_band_radius",
+   "donor_constant": "MELEE_DISTANCE 80",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/g_local.h:80"
+  },
+  {
+   "name": "near_band_radius",
+   "donor_constant": "500",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/g_ai.c:273"
+  },
+  {
+   "name": "mid_band_radius",
+   "donor_constant": "1000 (beyond is far, never seen)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/g_ai.c:275"
+  },
+  {
+   "name": "front_dot_threshold",
+   "donor_constant": "0.3",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/g_ai.c:323"
+  },
+  {
+   "name": "light_min_seen",
+   "donor_constant": "light level above 5 to be seen",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/g_ai.c:499"
+  },
+  {
+   "name": "show_window",
+   "donor_constant": "1 s after a sighting or attack",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/g_ai.c:357"
+  },
+  {
+   "name": "hear_radius",
+   "donor_constant": "1000",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/g_ai.c:556"
+  },
+  {
+   "name": "sound_stand_radius",
+   "donor_constant": "64",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/g_ai.c:937"
+  },
+  {
+   "name": "first_attack_delay",
+   "donor_constant": "1 s after hunt starts (not stand-ground)",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/g_ai.c:344"
+  },
+  {
+   "name": "missile_chance_stand_ground",
+   "donor_constant": "0.4",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/g_ai.c:653"
+  },
+  {
+   "name": "missile_chance_near",
+   "donor_constant": "0.1",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/g_ai.c:659"
+  },
+  {
+   "name": "missile_chance_mid",
+   "donor_constant": "0.02",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/g_ai.c:663"
+  },
+  {
+   "name": "skill_easy_factor",
+   "donor_constant": "0.5 on skill 0",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/g_ai.c:672"
+  },
+  {
+   "name": "skill_hard_factor",
+   "donor_constant": "2 on skill 2 or more",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/g_ai.c:674"
+  },
+  {
+   "name": "missile_cooldown",
+   "donor_constant": "2 x random() seconds after a missile",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/g_ai.c:680"
+  },
+  {
+   "name": "melee_skip_easy",
+   "donor_constant": "3 in 4 melee chances skipped on skill 0",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/g_ai.c:632"
+  },
+  {
+   "name": "search_refresh",
+   "donor_constant": "search time set to now + 5 on sight or at a waypoint",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/g_ai.c:869"
+  },
+  {
+   "name": "search_give_up",
+   "donor_constant": "stop searching when time exceeds search time + 20",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/g_ai.c:977"
+  },
+  {
+   "name": "think_step",
+   "donor_constant": "FRAMETIME 0.1",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/g_local.h:73"
+  }
+ ],
+ "best_idea": "A monster notices a target through distance bands (far never, near only if already noticed or in front, mid only in front), keeps a search memory that refreshes on sight and gives up after a fixed timeout, and rolls an attack chance that falls with distance and rises with difficulty.",
+ "decision": "adapt",
+ "decision_why": "Take the bands, the front test, the search memory and the per-band chance table as engine data; replace the global rand with a seeded stream and the seconds with ticks; drop the one-sight-client-per-frame budget for duels; add MAX_ATTACKERS = 3 as a separate engine gate; do not copy the dead 0.2 melee-band chance.",
+ "decision_status": "proposed",
+ "acceptance": "A server test asserts that a foe 600 units away and out of the player's front is not noticed, that it is noticed at 300 units when the player is in front, and that after the player leaves sight the foe searches until 25 s after the last sighting, then stops."
+}

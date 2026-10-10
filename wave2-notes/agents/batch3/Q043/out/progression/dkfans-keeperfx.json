@@ -1,0 +1,89 @@
+{
+ "game": "dkfans-keeperfx",
+ "category": "progression",
+ "cell": 10,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/dkfans-keeperfx/src/creature_states.c",
+ "licence": "GPL-2.0-or-later (source headers: 'either version 2 of the License, or (at your option) any later version'; LICENSE file is GPL v2 text)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/progression.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "new:spend-to-level-cost-table",
+  "new:target-level-scaled-award",
+  "new:linear-percent-per-level",
+  "new:one-step-per-update",
+  "new:health-fraction-kept"
+ ],
+ "data_fields": [
+  {
+   "name": "gain_pct_per_level",
+   "donor_constant": "35 (default; per stat and model in config)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/dkfans-keeperfx/src/config_creature.h:41"
+  },
+  {
+   "name": "hit_exp_factor",
+   "donor_constant": "target exp_for_hitting (per model)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/dkfans-keeperfx/src/thing_shots.c:776"
+  },
+  {
+   "name": "shot_exp_value",
+   "donor_constant": "shot experience_given_to_shooter (per shot model)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/dkfans-keeperfx/src/thing_shots.c:761"
+  },
+  {
+   "name": "level_cost_table",
+   "donor_constant": "to_level[level] x 256 points (table from LEVELSTRAINVALUES)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/dkfans-keeperfx/src/creature_states.c:4904"
+  },
+  {
+   "name": "owner_max_level",
+   "donor_constant": "creature_max_level per dungeon",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/dkfans-keeperfx/src/creature_control.c:347"
+  },
+  {
+   "name": "absolute_max_level",
+   "donor_constant": "10 (levels 0..9)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dkfans-keeperfx/src/thing_stats.h:29"
+  },
+  {
+   "name": "stat_top_index_clamp",
+   "donor_constant": "9 (CREATURE_MAX_LEVEL-1)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dkfans-keeperfx/src/thing_stats.c:362"
+  },
+  {
+   "name": "levels_per_update",
+   "donor_constant": "1 level step per update",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dkfans-keeperfx/src/thing_creature.c:6433"
+  },
+  {
+   "name": "health_fraction_kept",
+   "donor_constant": "new max x old permil / 1000",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dkfans-keeperfx/src/thing_stats.c:931"
+  }
+ ],
+ "best_idea": "A hit's experience scales with the target's level, the level-up cost is taken from the points against a per-level table, and stats grow linearly by percent per level up to a fixed top index.",
+ "decision": "adapt",
+ "decision_why": "Keep the target-level gain, the spend-from-points cost table and the capped linear percent per level as per-model catalogue data; reject the lair, digging and training experience sources (no Frankendom counterpart) and the classic-bug overflow flag. Copyleft: shape only.",
+ "decision_status": "proposed",
+ "acceptance": "A server test: a hit by a creature on a level-4 target with exp_for_hitting 100 and shot value 1 adds exactly 240 points; base health 100 at level 4 gives max 240 and keeps the same health fraction after a level step; at most one level step happens per update."
+}

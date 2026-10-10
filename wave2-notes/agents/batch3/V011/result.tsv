@@ -1,0 +1,3 @@
+game	category	old	verdict	depth	finding
+TrinityCore-TrinityCore	quests-dialogue	P	STRONG	full	Player.cpp:16704-16920 (kill entry KillRewarder.cpp:177-187, index fill Player.cpp:14785-14811): one (type,id) index fans each kill to every active objective, clamps progress to Amount, skips finished objectives, reopens a quest on negative change.
+TrinityCore-TrinityCore	parties-guilds-chat	P	STRONG	full	KillRewarder.cpp:89-168 and 220-248 (rate from Formulas.h:221-254): one party XP pool is base times a count bonus (1.0 for 1-2, 1.166 for 3, 1.3 for 4, 1.4 for 5+; raid 0.99), split by level weight among alive in-range counted members; dead and over-levelled members get zero. Guild and chat not examined.

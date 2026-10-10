@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ACEmulator-ACE	combat-sim	P	STRONG	full	Entity/DamageEvent.cs:149-370 (DoCalculateDamage pipeline: evade, crit, rating combine, armour, shield, resist); WorldObjects/SkillFormula.cs:16-37 (armour curve K/(AL+K)); Creature_Rating.cs:192-200 (additive combine)
+ACEmulator-ACE	ai-aggro	P	STRONG	full	WorldObjects/Monster_Awareness.cs:134-233 (FindNextTarget), 296-324 (distance-weighted pick), 248-254 (18 acquire / 96 keep hysteresis); Monster_Navigation.cs:239-253 (leash), 448-499 (home radius); Monster_Tick.cs:19-174
+ACEmulator-ACE	spawns-encounters	P	STRONG	full	WorldObjects/WorldObject_Generators.cs:108-178 (one-roll profile director), 281-314 (count after slot caps), 562-584 (notify and parent destruction); Entity/GeneratorProfile.cs:190-229 (queue), 526-564 (removal-started respawn cooldown); Entity/Landblock.cs:269-330 (encounter placement), 113-118 and 534-549 (dormant and unload timers)

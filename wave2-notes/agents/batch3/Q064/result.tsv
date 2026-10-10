@@ -1,0 +1,2 @@
+game	category	old	verdict	depth	finding
+CombatPathingRevolution	combat-sim	P	NONE	thin	src/PayloadInterpreter/Dtry_Utils.cpp:98-101 is the only damage code (one engine call, RestoreActorValue kDamage); src/RE/CombatBehaviorController.h:1-18 is a layout struct; the mod is movement/pathing AI (README.md:3), no hit/damage/crit/knockback resolution in the repo

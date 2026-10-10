@@ -1,0 +1,103 @@
+{
+ "game": "opentibiabr-otclient",
+ "category": "server-tick-netcode",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "thin",
+ "donor_path": "/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp",
+ "licence": "MIT (LICENSE line 1: OTClient is made available under the MIT License)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/tick.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "fixed-step",
+  "wait-gate",
+  "stale-state",
+  "grace-timer",
+  "new:step-prediction-queue"
+ ],
+ "data_fields": [
+  {
+   "name": "server_beat_ms",
+   "donor_constant": "50 default; sent by server at login",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/opentibiabr-otclient/src/client/game.h:523"
+  },
+  {
+   "name": "tile_ground_speed_fallback",
+   "donor_constant": "150 when tile has none",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp:1129"
+  },
+  {
+   "name": "walk_max_steps",
+   "donor_constant": "1 (queue gate is size > value)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/opentibiabr-otclient/src/client/game.h:521"
+  },
+  {
+   "name": "walk_lock_default_ms",
+   "donor_constant": "250",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/opentibiabr-otclient/src/client/localplayer.h:32"
+  },
+  {
+   "name": "auto_walk_stop_lock_extra_ms",
+   "donor_constant": "step duration + 50",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/opentibiabr-otclient/modules/game_walk/walk.lua:96"
+  },
+  {
+   "name": "adjust_timeout_extra_ms",
+   "donor_constant": "max(step, ping) + 100, capped at 1000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/opentibiabr-otclient/src/client/localplayer.cpp:112"
+  },
+  {
+   "name": "ping_interval_ms",
+   "donor_constant": "1000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/opentibiabr-otclient/src/client/game.h:524"
+  },
+  {
+   "name": "connection_stale_ms",
+   "donor_constant": "5000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/opentibiabr-otclient/src/client/game.cpp:1691"
+  },
+  {
+   "name": "step_time_beat_rounding",
+   "donor_constant": "round step UP to whole beats (client version 860 or newer)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp:1141"
+  },
+  {
+   "name": "camera_pad_per_queued_step_ms",
+   "donor_constant": "10",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp:1158"
+  },
+  {
+   "name": "auto_walk_retry_limit",
+   "donor_constant": "3 (check is <= 3)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/opentibiabr-otclient/src/client/localplayer.cpp:129"
+  }
+ ],
+ "best_idea": "Round every movement step up to a whole server beat so steps end on one tick grid, and let the client predict only movement, dropping its queue whenever the server's next step disagrees.",
+ "decision": "adapt",
+ "decision_why": "The beat-rounded step time gives movement one tick grid, but Frankendom's kills, damage and guard stay server-verified, so only the movement queue is adopted and never a predicted hit.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: with beat 50 ms every movement step duration is a multiple of 50 ms. Client test: a refused move (server cancel) snaps the avatar back to the confirmed tile at once and blocks new steps for 250 ms."
+}

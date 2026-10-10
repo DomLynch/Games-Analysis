@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+alexbatalov-fallout2-ce	ai-aggro	P	STRONG	full	/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/combat_ai.cc:1529-1708 - _ai_danger_source keeps a living hitter with no range check, then takes the dead hitter's side, three fighting-me categories, a distance sort and the first unit that is seen and reachable or shootable.
+STJr-SRB2	ai-aggro	P	STRONG	full	/mnt/frankendom-donors/STJr-SRB2/src/p_enemy.c:447-520 - P_LookForPlayers uses a persisted round-robin cursor and examines at most two in-game players per call, with cone, range and sight filters.
+diasurgical-DevilutionX	ai-aggro	P	STRONG	full	/mnt/frankendom-donors/diasurgical-DevilutionX/Source/monster.cpp:679-752 - UpdateEnemy picks a same-room hero before a closer hero in another room, and ProcessMonsters:4313-4317 keeps an aggro countdown of 255 ticks while the monster is unseen.

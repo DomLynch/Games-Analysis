@@ -1,0 +1,82 @@
+{
+ "game": "clockworklabs-SpacetimeDB",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/clockworklabs-SpacetimeDB/demo/Blackholio/client-godot/CameraController.cs",
+ "licence": "as read",
+ "licence_class": "permissive",
+ "target_module": "origins/client/world-camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "new:group-centroid-framing",
+  "new:group-size-zoom",
+  "variable-step"
+ ],
+ "data_fields": [
+  {
+   "name": "base_radius",
+   "donor_constant": "50 (visible radius; zoom = 50 / size)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "client-godot/CameraController.cs:6"
+  },
+  {
+   "name": "size_base",
+   "donor_constant": "10",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "client-godot/CameraController.cs:46"
+  },
+  {
+   "name": "group_step",
+   "donor_constant": "30 once 2 or more pieces (per attacker for us, capped at 3)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "client-godot/CameraController.cs:48"
+  },
+  {
+   "name": "mass_term_cap",
+   "donor_constant": "10 (mass / 5); rejected for Frankendom",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "client-godot/CameraController.cs:47"
+  },
+  {
+   "name": "zoom_floor",
+   "donor_constant": "1 (size floor)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "client-godot/CameraController.cs:42"
+  },
+  {
+   "name": "follow_rate",
+   "donor_constant": "8.0 per second (fraction = delta x 8, unclamped in donor)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "client-godot/CameraController.cs:9"
+  },
+  {
+   "name": "zoom_rate",
+   "donor_constant": "2.0 per second (fraction = delta x 2, unclamped in donor)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "client-godot/CameraController.cs:12"
+  },
+  {
+   "name": "input_send_rate",
+   "donor_constant": "20 per second",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "client-godot/PlayerController.cs:8"
+  }
+ ],
+ "best_idea": "Frame a player's group by the mass-weighted centre of its pieces and widen the view from the group's size (one fixed step once it has more than one piece), so the camera tracks a many-part fight without a fixed zoom.",
+ "decision": "adapt",
+ "decision_why": "Take the group centroid framing and the size-driven zoom with a fixed step per attacker (cap 3); reject the mass term (no mass in Frankendom) and the unclamped lerp; the donor frames its own pieces, so the enemy term is ours to design.",
+ "decision_status": "proposed",
+ "acceptance": "In a zone fight the camera holds one rest framing for the hero alone; with one, two and three attackers engaged the frame widens by a fixed step per attacker, the centre moves to the weighted middle of hero and attackers, and a client test asserts zoom is monotone in attacker count and every follow or zoom fraction is clamped to 1.",
+ "camera_scope": "world"
+}

@@ -1,0 +1,73 @@
+{
+ "game": "keldaanCommunity-pokemonAutoChess",
+ "category": "ai-aggro",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/attacking-state.ts",
+ "licence": "as read: LICENSE file GNU GPL v3; package.json BSD-3-Clause (conflict)",
+ "licence_class": "restricted",
+ "target_module": "src/fight/ai-target.ts (new)",
+ "parity_row": 2,
+ "pattern_tags": [
+  "target-score",
+  "hysteresis",
+  "variable-step"
+ ],
+ "data_fields": [
+  {
+   "name": "move_cooldown_base",
+   "donor_constant": "500",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/moving-state.ts:22"
+  },
+  {
+   "name": "attack_cooldown_base",
+   "donor_constant": "1000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/attacking-state.ts:24"
+  },
+  {
+   "name": "move_speed_factor",
+   "donor_constant": "0.5 + speed/100",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/move-speed.ts:8"
+  },
+  {
+   "name": "attack_speed_factor",
+   "donor_constant": "0.4 + speed*0.007",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/pokemon-entity.ts:321"
+  },
+  {
+   "name": "merciless_hp_threshold",
+   "donor_constant": "10",
+   "unit": "hp",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/pokemon-entity.ts:286"
+  },
+  {
+   "name": "confusion_bypass_chance",
+   "donor_constant": "0.5",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/pokemon-state.ts:1293"
+  },
+  {
+   "name": "tick_dt_clamp",
+   "donor_constant": "50",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/config/server/network.ts:12"
+  }
+ ],
+ "best_idea": "Keep the current target while it is still targettable and in range, and re-pick the nearest in-range enemy only when it dies, goes untargettable, or leaves range; break ties with an item flag before a random pick.",
+ "decision": "adapt",
+ "decision_why": "Keep the sticky-target and nearest-in-range rules for duels and many-on-one, but add the MAX_ATTACKERS = 3 slot cap, an engine-side hate list and a seeded RNG; the donor has none of these.",
+ "decision_status": "proposed",
+ "acceptance": "In a 3-on-1 server test the lead attacker keeps its target while in range, switches within one attack cycle after the target dies or leaves range, and the same seed gives the same target sequence."
+}

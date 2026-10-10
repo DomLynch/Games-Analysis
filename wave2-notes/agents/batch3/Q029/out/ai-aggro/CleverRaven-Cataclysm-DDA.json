@@ -1,0 +1,139 @@
+{
+ "game": "CleverRaven-Cataclysm-DDA",
+ "category": "ai-aggro",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/monmove.cpp",
+ "licence": "CC-BY-SA 3.0 (as read: LICENSE.txt)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/aggro.ts",
+ "parity_row": 4,
+ "pattern_tags": [
+  "target-score",
+  "status-meter",
+  "stale-state",
+  "new:threshold-gated-gain",
+  "new:wounded-target-provocation",
+  "new:aggro-latch"
+ ],
+ "data_fields": [
+  {
+   "name": "baseline_anger",
+   "donor_constant": "type field agro, chance will attack [-100,100]",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/mtype.h:491"
+  },
+  {
+   "name": "near_radius",
+   "donor_constant": "5 (rating at most 5)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/monmove.cpp:586"
+  },
+  {
+   "name": "near_anger_gain",
+   "donor_constant": "5, only for HOSTILE_CLOSE types",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/monmove.cpp:450"
+  },
+  {
+   "name": "seen_anger_gain_max",
+   "donor_constant": "rng 0..2 per call, only for HOSTILE_SEEN types",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/monmove.cpp:451"
+  },
+  {
+   "name": "seen_gain_gate_anger",
+   "donor_constant": "20",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/monmove.cpp:580"
+  },
+  {
+   "name": "near_gain_gate_anger",
+   "donor_constant": "30",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/monmove.cpp:587"
+  },
+  {
+   "name": "wounded_gain_gate_anger",
+   "donor_constant": "40",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/monmove.cpp:874"
+  },
+  {
+   "name": "wounded_hp_threshold",
+   "donor_constant": "70 (percent of target hp)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/monmove.cpp:873"
+  },
+  {
+   "name": "wounded_anger_gain",
+   "donor_constant": "10 minus hp_pct/10 (+3 to +10)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/monmove.cpp:875"
+  },
+  {
+   "name": "attack_threshold_anger",
+   "donor_constant": "10",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/monster.cpp:1912"
+  },
+  {
+   "name": "flee_hp_fraction_at_zero_anger",
+   "donor_constant": "0.6 of max hp",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/monster.cpp:1905"
+  },
+  {
+   "name": "decay_chance_per_action",
+   "donor_constant": "1 in 4",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/monster.cpp:1973"
+  },
+  {
+   "name": "decay_always_band",
+   "donor_constant": "15 (beyond it, step always; else 1 in 2)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/monster.cpp:1974"
+  },
+  {
+   "name": "reload_catchup_ticks_per_step_far",
+   "donor_constant": "4 turns per step beyond the 15 band",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/monster.cpp:4277"
+  },
+  {
+   "name": "reload_catchup_ticks_per_step_near",
+   "donor_constant": "8 turns per step",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/monster.cpp:4291"
+  },
+  {
+   "name": "scan_throttle_calls",
+   "donor_constant": "1800 calls to saturate; skip interval 600",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/monmove.cpp:675"
+  }
+ ],
+ "best_idea": "An enemy keeps a bounded anger meter with threshold gates, decays toward its resting value, and the engine picks the lowest-rated visible target with a uniform reservoir tie-break.",
+ "decision": "adapt",
+ "decision_why": "Take the anger meter, the gates, the 10 attack line and the reservoir pick, which give a readable per-enemy aggro state the engine can test; drop the global random rolls (use a seeded stream) and the per-call scan throttle (a few enemies per fight), and add MAX_ATTACKERS = 3 as a separate engine gate after attitude, since the donor has no cap.",
+ "decision_status": "proposed",
+ "acceptance": "A server test with decay disabled asserts that a foe at anger 0 facing a player at 60 percent hp gains 4 per action and attacks on the third action (anger 12), while a foe facing a player at full hp gains nothing."
+}

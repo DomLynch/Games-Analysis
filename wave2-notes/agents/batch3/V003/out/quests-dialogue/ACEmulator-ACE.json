@@ -1,0 +1,46 @@
+{
+ "game": "ACEmulator-ACE",
+ "category": "quests-dialogue",
+ "cell": 12,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Managers/QuestManager.cs",
+ "licence": "AGPL-3.0 (as read: LICENSE header GNU AFFERO GENERAL PUBLIC LICENSE Version 3)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/quest-cooldown.ts",
+ "parity_row": 20,
+ "pattern_tags": [
+  "wait-gate",
+  "clamp-and-report",
+  "new:max-solves-cap",
+  "new:silent-refuse-at-max"
+ ],
+ "data_fields": [
+  {
+   "name": "minDeltaS",
+   "donor_constant": "MinDelta, seconds between completions (Quest.cs 24; unit inferred from unix-second arithmetic at QuestManager.cs 353-357)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Database/Models/World/Quest.cs:24"
+  },
+  {
+   "name": "maxSolves",
+   "donor_constant": "MaxSolves, -1 = unlimited (Quest.cs 29)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Database/Models/World/Quest.cs:29"
+  },
+  {
+   "name": "cooldownScale",
+   "donor_constant": "quest_mindelta_rate, default 1.0, scales every MinDelta except ColoArena* names",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Managers/PropertyManager.cs:662"
+  }
+ ],
+ "best_idea": "A quest solve is one server-side gate with a per-character record and a catalogue cooldown and max-solves cap, which a zone can declare as data.",
+ "decision": "adapt",
+ "decision_why": "Take the gate shape (catalogue cooldown and max solves, one record, one gate function) for zone quests and chest/item gates; drop the bit-field reuse and the emote-branch dialogue engine, which would be a second rule engine against one engine.",
+ "decision_status": "proposed",
+ "acceptance": "Server test with rule {minDelta 3600 s, maxSolves 2}: first solve succeeds; at +60 s refused with 3540 s remaining; at +3600 s succeeds; at +10000 s refused as max-solves; the quest chest reply shows the remaining time, not a silent fail."
+}

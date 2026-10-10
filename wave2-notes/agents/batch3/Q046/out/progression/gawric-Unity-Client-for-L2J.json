@@ -1,0 +1,45 @@
+{
+ "game": "gawric-Unity-Client-for-L2J",
+ "category": "progression",
+ "cell": 10,
+ "verdict": "STRONG",
+ "depth": "thin",
+ "donor_path": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/CharacterInterlude/Appearance/MaxLevelExp.cs",
+ "licence": "Apache-2.0 (LICENSE, Version 2.0)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/progression.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "new:xp-threshold-table",
+  "new:level-from-total-xp",
+  "status-meter"
+ ],
+ "data_fields": [
+  {
+   "name": "max_level",
+   "donor_constant": "81",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/CharacterInterlude/Appearance/MaxLevelExp.cs:8"
+  },
+  {
+   "name": "xp_to_reach_level",
+   "donor_constant": "cumulative table, e.g. level 10 = 48229, level 80 = 4200000000, level 81 = 6299994999",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/CharacterInterlude/Appearance/MaxLevelExp.cs:10-94"
+  },
+  {
+   "name": "remaining_xp_clamp",
+   "donor_constant": "0 (remaining clamped at 0; 0 at the cap)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/CharacterInterlude/Appearance/MaxLevelExp.cs:130-141"
+  }
+ ],
+ "best_idea": "Keep one number (total XP on the ledger) and derive the level from a cumulative threshold table, so the level can never disagree with the XP.",
+ "decision": "adapt",
+ "decision_why": "Take the cumulative table and level lookup as data, but compute the XP bar within the current level and keep the XP award on the server; the donor's bar is total over the next cumulative threshold and falls back about 30% at each level-up.",
+ "decision_status": "proposed",
+ "acceptance": "At 48229 total XP the XP bar reads 0% of level 10, not about 68%; a server test asserts levelFromTotalXp(71200) = 10 and levelFromTotalXp(71201) = 11."
+}

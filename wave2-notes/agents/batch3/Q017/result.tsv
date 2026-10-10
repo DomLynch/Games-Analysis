@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+CombatPathingRevolution	ai-aggro	P	STRONG	thin	Circling_Hook.cpp:18-80 band gate and one roll; :42-51 out-of-band floor 0.1; Fallback_Hook.cpp:10-57 retreat/wait rescale; engine consumer not read
+l1j-en-classic	ai-aggro	P	STRONG	full	L1HateList.java:45-87 hate add and strict max; L1NpcInstance.java:355-368 setHate, 342-353 checkTarget; L1MonsterInstance.java:114-204 sight aggro, 207-212 setLink
+graememcc-micropolisJS	ai-aggro	P	STRONG	full	copterSprite.js:42-100 delay, priority-then-home, landing, turn; monsterSprite.js:61-172 arrival and random re-heading; game.js:687 frame-based timing

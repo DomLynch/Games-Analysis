@@ -1,0 +1,83 @@
+{
+ "game": "ACEmulator-ACE",
+ "category": "ai-aggro",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/WorldObjects/Monster_Awareness.cs",
+ "licence": "AGPL-3.0 (LICENSE: GNU AFFERO GENERAL PUBLIC LICENSE Version 3)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/aggro.ts",
+ "parity_row": 4,
+ "pattern_tags": [
+  "hysteresis",
+  "target-score",
+  "wait-gate",
+  "presence-gated",
+  "new:distance-weighted-pick",
+  "new:alert-cooldown"
+ ],
+ "data_fields": [
+  {
+   "name": "awareness_range",
+   "donor_constant": "18.0 (times mob_awareness_range server multiplier)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "Monster_Awareness.cs:377"
+  },
+  {
+   "name": "chase_range",
+   "donor_constant": "96.0",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "Monster_Navigation.cs:21"
+  },
+  {
+   "name": "home_radius",
+   "donor_constant": "192.0 (default; per mob property HomeRadius)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "Monster_Navigation.cs:430"
+  },
+  {
+   "name": "retarget_interval",
+   "donor_constant": "5.0 (random 5-10 commented out)",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "Monster_Awareness.cs:129"
+  },
+  {
+   "name": "think_interval",
+   "donor_constant": "0.2",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "Monster_Tick.cs:10"
+  },
+  {
+   "name": "walk_home_cancel",
+   "donor_constant": "5.0",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "Monster_Navigation.cs:485"
+  },
+  {
+   "name": "alert_cooldown_per_target",
+   "donor_constant": "2 minutes",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "Monster_Awareness.cs:434"
+  },
+  {
+   "name": "spawn_scan_delay",
+   "donor_constant": "0.75",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "Monster_Awareness.cs:341"
+  }
+ ],
+ "best_idea": "Let a mob acquire a target only inside a short awareness radius but keep its current target out to a longer chase radius, and pick among several foes by a distance-weighted roll, so many-on-one aggro does not flicker.",
+ "decision": "adapt",
+ "decision_why": "Take the acquire-small/keep-large hysteresis and the distance-weighted pick, but drive them from the engine tick rather than the donor's 5 s timer, which is too slow for a fast duel; no threat multiplier was found in the lines read to copy for a hate list.",
+ "decision_status": "proposed",
+ "acceptance": "A server test asserts that an AI with awareness 18 does not acquire a foe at 20 units, keeps a current target at 90 units, drops it at 96, and that over 10,000 seeded rolls with foes at 1 and 3 units the near one is chosen about 75 percent of the time."
+}

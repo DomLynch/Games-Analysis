@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+geckosio-geckos.io	server-tick-netcode	P	STRONG	full	packages/common/src/reliableMessage.ts:4-10; packages/server/src/geckos/channel.ts:188-221,252-288 - reliable resend with one id and first-copy dedupe, and unreliable drop while buffered; the donor has no game tick
+STJr-SRB2	server-tick-netcode	P	STRONG	full	src/i_time.c:56-84; src/d_main.c:792-856; src/netcode/d_clisrv.c:1252-1343 and 1552-1655; src/netcode/tic_command.c:438-470 - fixed-step accumulator, stall skip to one tic, repeat last input for missing input
+freeciv-freeciv	server-tick-netcode	P	STRONG	full	server/gamehand.c:988-1050; server/srv_main.c:1423-1428 and 3046-3067; server/sernet.c:682-743 - escalating turn timer and extend-only phase deadline on enemy activity; a turn timer, not a fixed tick (moderate confidence)

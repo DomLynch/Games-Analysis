@@ -1,0 +1,60 @@
+{
+ "game": "AAEmu-AAEmu",
+ "category": "economy-trade",
+ "cell": 11,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Core/Managers/AuctionManager.cs",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/auction.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "new:listing-fee-by-tier",
+  "new:buy-now-ends-lot",
+  "new:expiry-sweep-settle",
+  "new:debit-without-check"
+ ],
+ "data_fields": [
+  {
+   "name": "listing_fee_rate_by_tier",
+   "donor_constant": "buyout x 0.01 x (tier+1): 1%, 2%, 3%, 4%",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "AuctionManager.cs:619"
+  },
+  {
+   "name": "listing_fee_cap",
+   "donor_constant": "1000000 (copper units per donor comment)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "AuctionManager.cs:29"
+  },
+  {
+   "name": "lot_duration_tiers",
+   "donor_constant": "6, 12, 24, 48 hours",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "AuctionManager.cs:303-313"
+  },
+  {
+   "name": "seller_share_of_sale",
+   "donor_constant": "0.9 (rest is tax, not credited)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "AuctionManager.cs:38"
+  },
+  {
+   "name": "expiry_sweep_period",
+   "donor_constant": "5 s first run, 5 s period",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "AuctionManager.cs:388"
+  }
+ ],
+ "best_idea": "A listing fee that scales with listing duration and a buy-now that ends the lot at once, both settled server-side by one ledger with the balance check the donor skips.",
+ "decision": "adapt",
+ "decision_why": "The fee-by-duration and buy-now shape are plain server rules that fit one ledger, but the mail settlement, the missing balance check and the untaxed remainder must not be copied.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: a 12-hour lot with a 500,000-copper buyout charges 10,000 copper; a 1,000-copper bid from a 500-copper balance is rejected and the balance stays 500; a 15-copper sale credits 13 and the remaining 2 go to a named tax entry."
+}

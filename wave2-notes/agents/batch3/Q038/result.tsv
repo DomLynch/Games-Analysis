@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+0ad-0ad	server-tick-netcode	P	STRONG	full	simulation2/system/TurnManager.cpp:65-155 (client turn loop: debt clamp to two turns, wait gate, sorted per-turn command batch) and network/NetServerTurnManager.cpp:75-105 (server releases each turn only when every counted client is ready)
+diasurgical-DevilutionX	server-tick-netcode	P	STRONG	full	nthread.cpp:214-244 (due-time tick clock, catch-up reset only when alone) and diablo.cpp:3490-3507 (game_loop runs at most 3 ticks per call); msg.cpp is the message layer, the tick clock is nthread.cpp
+dhewm-dhewm3	server-tick-netcode	P	STRONG	full	neo/framework/async/AsyncServer.cpp:2352-2453 (RunFrame residual clock with uncapped frame loop) and AsyncNetwork.cpp:254-273 (stale command repeated up to 25 frames, then attack cleared and move axes halved)

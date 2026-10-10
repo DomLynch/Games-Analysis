@@ -5,148 +5,120 @@
  "verdict": "STRONG",
  "depth": "full",
  "donor_path": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs",
- "licence": "MIT (LICENSE line 3; FoeSpawner.cs line 4)",
+ "licence": "MIT License (LICENSE file; header line 4 of Utility/RandomEncounters.cs)",
  "licence_class": "permissive",
  "target_module": "origins/server/world-spawns.ts",
  "parity_row": 23,
  "pattern_tags": [
   "director",
+  "wait-gate",
   "presence-gated",
-  "timer-wheel",
-  "accumulator",
-  "per-player-view"
+  "new:level-band-pick",
+  "new:catch-up-batch"
  ],
  "data_fields": [
   {
-   "name": "window_period",
-   "donor_constant": "144 game minutes (window opens when ((Minutes / 12) % 12) == 0)",
-   "unit": "ticks",
+   "name": "window_minutes",
+   "donor_constant": "12 of every 144 minutes (minutes or game minutes, see note)",
+   "unit": "none",
    "where": "engine constant",
-   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs:559"
+   "donor_ref": "Game/Entities/PlayerEntity.cs:559"
   },
   {
-   "name": "window_length",
-   "donor_constant": "12 game minutes; each minute is one roll",
-   "unit": "ticks",
-   "where": "engine constant",
-   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs:559"
-  },
-  {
-   "name": "location_night_one_in",
-   "donor_constant": "24 (Random.Range(0, 24) == 0)",
-   "unit": "ratio",
+   "name": "one_in_n_night_location",
+   "donor_constant": "24",
+   "unit": "count",
    "where": "zone data",
-   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:1771"
+   "donor_ref": "Game/Formulas/FormulaHelper.cs:1771"
   },
   {
-   "name": "wilderness_day_one_in",
-   "donor_constant": "36 (Random.Range(0, 36) != 0 returns no spawn)",
-   "unit": "ratio",
+   "name": "one_in_n_wilderness_day",
+   "donor_constant": "36",
+   "unit": "count",
    "where": "zone data",
-   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:1784"
+   "donor_ref": "Game/Formulas/FormulaHelper.cs:1784"
   },
   {
-   "name": "wilderness_night_one_in",
-   "donor_constant": "24 (Random.Range(0, 24) == 0)",
-   "unit": "ratio",
+   "name": "one_in_n_wilderness_night",
+   "donor_constant": "24",
+   "unit": "count",
    "where": "zone data",
-   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:1797"
+   "donor_ref": "Game/Formulas/FormulaHelper.cs:1797"
   },
   {
-   "name": "dungeon_alert_one_in",
-   "donor_constant": "36, only while resting and enemy alert active",
-   "unit": "ratio",
+   "name": "one_in_n_dungeon_rest_alerted",
+   "donor_constant": "36",
+   "unit": "count",
    "where": "zone data",
-   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:1810"
+   "donor_ref": "Game/Formulas/FormulaHelper.cs:1810"
   },
   {
    "name": "min_distance_location",
    "donor_constant": "10",
    "unit": "units",
    "where": "zone data",
-   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs:551"
+   "donor_ref": "Game/Entities/PlayerEntity.cs:551"
   },
   {
    "name": "min_distance_wilderness",
    "donor_constant": "10",
    "unit": "units",
    "where": "zone data",
-   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs:552"
+   "donor_ref": "Game/Entities/PlayerEntity.cs:552"
   },
   {
    "name": "min_distance_dungeon",
    "donor_constant": "8",
    "unit": "units",
    "where": "zone data",
-   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs:550"
+   "donor_ref": "Game/Entities/PlayerEntity.cs:550"
   },
   {
    "name": "max_distance",
-   "donor_constant": "20 (default in the spawner; every call site uses it)",
+   "donor_constant": "20",
    "unit": "units",
-   "where": "engine constant",
-   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Utility/FoeSpawner.cs:37"
-  },
-  {
-   "name": "spawn_count_per_pass",
-   "donor_constant": "1 (every call site passes 1)",
-   "unit": "count",
-   "where": "engine constant",
-   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs:574"
-  },
-  {
-   "name": "placement_separation",
-   "donor_constant": "1.25",
-   "unit": "units",
-   "where": "engine constant",
-   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Utility/FoeSpawner.cs:122"
-  },
-  {
-   "name": "placement_floor_distance",
-   "donor_constant": "4 (max floor ray length)",
-   "unit": "units",
-   "where": "engine constant",
-   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Utility/FoeSpawner.cs:123"
-  },
-  {
-   "name": "placement_clearance_sphere",
-   "donor_constant": "0.65 (overlap sphere radius)",
-   "unit": "units",
-   "where": "engine constant",
-   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Utility/FoeSpawner.cs:121"
-  },
-  {
-   "name": "view_edge_jitter",
-   "donor_constant": "0 to 4 degrees added to the field of view",
-   "unit": "units",
-   "where": "engine constant",
-   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Utility/FoeSpawner.cs:146"
-  },
-  {
-   "name": "foe_level_window",
-   "donor_constant": "level-3 to level+3; roll 81-95 gives 0 to level+1; roll 96-100 gives 0 to level+2 (0-19 above level 5)",
-   "unit": "count",
    "where": "zone data",
-   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Utility/RandomEncounters.cs:1500"
+   "donor_ref": "Game/Utility/FoeSpawner.cs:37"
+  },
+  {
+   "name": "day_start_minute",
+   "donor_constant": "360 (06:00) (minutes or game minutes, see note)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "Game/Entities/PlayerEntity.cs:569"
+  },
+  {
+   "name": "day_end_minute",
+   "donor_constant": "1080 (18:00) (minutes or game minutes, see note)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "Game/Entities/PlayerEntity.cs:569"
+  },
+  {
+   "name": "band_roll_threshold_d100",
+   "donor_constant": "roll > 80 (d100, 1 to 100)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "Utility/RandomEncounters.cs:1477"
+  },
+  {
+   "name": "band_width_around_level",
+   "donor_constant": "level minus 3 to level plus 3",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "Utility/RandomEncounters.cs:1500"
   },
   {
    "name": "alert_decay",
-   "donor_constant": "8 * DaggerfallDateTime.MinutesPerHour game minutes (constant value not read)",
-   "unit": "ticks",
-   "where": "engine constant",
-   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs:382"
-  },
-  {
-   "name": "rest_block_radius",
-   "donor_constant": "1024 * MeshReader.GlobalScale",
-   "unit": "units",
-   "where": "engine constant",
-   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/GameManager.cs:686"
+   "donor_constant": "8 * DaggerfallDateTime.MinutesPerHour (8 game hours) (minutes or game minutes, see note)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "Game/Entities/PlayerEntity.cs:382"
   }
  ],
- "best_idea": "A zone spawn rate as a per-zone-kind 1-in-N roll on each clock step, inside a fixed 12-of-144 window, gated by presence (outdoor, dungeon while resting and alerted), with a server-side rule and no per-frame randomness.",
+ "best_idea": "A timed encounter director: a fixed slice of each period rolls a zone-specific 1-in-N chance per in-game minute, the first success ends that catch-up batch, and the monster is picked from a level band of zone data.",
  "decision": "adapt",
- "decision_why": "The window shape and per-zone odds fit zones as data, but the donor has no population cap and its per-frame catch-up drops rolls after a spawn, so we take the window and odds and rebuild the cap and the step on the fixed server tick.",
+ "decision_why": "The window gate, per-zone 1-in-N odds and level-band pick fit a server zone director with zone data; the FOV raycast placement is client-only, and the donor's unseeded UnityEngine.Random cannot back server-verified encounters, so the server needs a seeded RNG and a spawn-point list.",
  "decision_status": "proposed",
- "acceptance": "Server test with a seeded RNG and a night rule of 1 in 24: advance a zone clock 1440 steps one minute at a time; every spawn falls inside a 12-minute window of a 144-minute period, no two spawns share a minute, and the live spawn count never exceeds the zone cap (row 23)."
+ "acceptance": "A server test (seeded RNG, 144 x 1000 simulated in-game minutes) asserts spawns occur only on window minutes and the observed rate per zone kind is within 5% of its one_in_n; in play a player in an open zone sees the new foe appear 10-20 units away, outside their view cone."
 }

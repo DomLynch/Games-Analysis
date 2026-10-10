@@ -1,0 +1,17 @@
+# CombatPathingRevolution (camera, cell 14) - verdict NONE
+Camera scope: world camera (the donor has no camera code at all; this is the default tag, not a pit camera).
+Licence: MIT (/mnt/frankendom-donors/CombatPathingRevolution/LICENSE, "MIT License", Copyright (c) 2022 max-su-2019). Donor is a Skyrim SKSE/VR combat-AI mod (C++).
+
+Files opened (5):
+1. /mnt/frankendom-donors/CombatPathingRevolution/src/Circling_Hook.cpp (lines 1-60 and 140-160): NPC circling and a view-cone heading test (CircleViewConeHook::WithinHeadingAngle). This is the NPC's heading toward its target, not a camera.
+2. /mnt/frankendom-donors/CombatPathingRevolution/src/Util.cpp (lines 1-40): IsMeleeOnly and GetEquippementRange, weapon-range helpers.
+3. /mnt/frankendom-donors/CombatPathingRevolution/src/Advance_Hook.cpp (lines 1-30): advance radius rescaling for melee NPCs.
+4. /mnt/frankendom-donors/CombatPathingRevolution/src/Fallback_Hook.cpp (lines 1-30): fallback distance and graph-variable reads.
+5. /mnt/frankendom-donors/CombatPathingRevolution/Nemesis_Engine/mod/mscpr/0_master/#0106.txt (grep hits at 474-477 and 1064-1090): the only "Camera" strings in the donor. They are Havok behaviour event names (CameraOverrideStart, StartAnimatedCamera) inside a string table, not camera logic.
+
+Grep for camera, yaw, pitch, zoom, lock-on, shoulder, follow, third-person over src/ and doc/ returned no camera control. The only camera words are event names and "view cone" for NPC heading.
+
+Why NONE: the donor drives NPC movement and combat distance, not a player camera. The engine owns the camera; the mod only sets NPC graph variables. Nothing here sets a camera offset, distance, pitch or yaw, or smooths a follow.
+
+Best transferable idea: gate a close-range framing mode (for example lock-on strafe) on a view-cone test whose angle is per-actor data, as Circling_Hook.cpp 145-154 does for NPC circling.
+Decision (proposed): reject - the donor has no camera, and the view cone is an NPC heading check that does not transfer to the world camera; keep the idea only as a data-gated test for lock-on eligibility, decided by the camera lane.

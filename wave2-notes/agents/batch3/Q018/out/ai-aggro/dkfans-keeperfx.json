@@ -1,0 +1,105 @@
+{
+ "game": "dkfans-keeperfx",
+ "category": "ai-aggro",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/dkfans-keeperfx/src/creature_states_combt.c",
+ "licence": "GPL-2.0-or-later (per creature_states_combt.c header; repo LICENSE is GPL v2)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/ai.ts",
+ "parity_row": 2,
+ "pattern_tags": [
+  "target-score",
+  "new:attacker-slot-queue",
+  "hysteresis",
+  "stale-state",
+  "compute-budget",
+  "presence-gated",
+  "new:flee-timer-reset"
+ ],
+ "data_fields": [
+  {
+   "name": "attacker_cap_melee",
+   "donor_constant": "4",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dkfans-keeperfx/src/creature_control.h:44"
+  },
+  {
+   "name": "attacker_cap_ranged",
+   "donor_constant": "4",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dkfans-keeperfx/src/creature_control.h:46"
+  },
+  {
+   "name": "free_slot_points",
+   "donor_constant": "258 per free slot",
+   "unit": "points",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dkfans-keeperfx/src/creature_states_combt.c:1546"
+  },
+  {
+   "name": "distance_cap_for_score",
+   "donor_constant": "5376",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dkfans-keeperfx/src/creature_states_combt.c:1553"
+  },
+  {
+   "name": "switch_margin",
+   "donor_constant": "258",
+   "unit": "points",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/dkfans-keeperfx/src/creature_states_combt.c:1750"
+  },
+  {
+   "name": "battle_check_interval",
+   "donor_constant": "8",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dkfans-keeperfx/src/creature_states_combt.h:36"
+  },
+  {
+   "name": "enemy_search_refresh",
+   "donor_constant": "64",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dkfans-keeperfx/src/creature_states.c:4609"
+  },
+  {
+   "name": "creature_hearing",
+   "donor_constant": "crconf->hearing (per creature model, subtiles)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/dkfans-keeperfx/src/creature_states.c:4687"
+  },
+  {
+   "name": "taunt_range",
+   "donor_constant": "2304",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dkfans-keeperfx/src/creature_states.c:4762"
+  },
+  {
+   "name": "game_turns_in_flee",
+   "donor_constant": "200 (config default)",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/dkfans-keeperfx/src/config_rules.c:131"
+  },
+  {
+   "name": "flee_escape_min",
+   "donor_constant": "50 (minimum of turns>>2)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dkfans-keeperfx/src/creature_states_combt.c:1399"
+  }
+ ],
+ "best_idea": "score a target by free attack slots first and distance second, switch only when the alternative beats the current one by a fixed margin, and queue the attackers that do not fit.",
+ "decision": "adapt",
+ "decision_why": "the slot-first score, the switch margin and the queue fit a many-on-one fight with a cap of 3, but the cap, the margin and the distance unit must be Frankendom's own data values.",
+ "decision_status": "proposed",
+ "acceptance": "a server test with one player and four hostile creatures in range asserts that at most 3 attack at once, the fourth is queued, and the monster keeps its current target when a new candidate beats it by less than the margin; a second test asserts that a monster's target switches to a candidate with a free slot once its current target is at the cap."
+}

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+daggerfall-unity	spawns-encounters	P	STRONG	full	Game/Entities/PlayerEntity.cs:547-618 (timed 12-of-144-minute window, 1-in-N zone rolls), Utility/RandomEncounters.cs:1334-1527 (d100 level-band pick), Game/Utility/FoeSpawner.cs:119-207 (placement just outside view).
+exult-exult	spawns-encounters	P	STRONG	full	objs/egg.cc:829-896 and 1296-1352 (edge-triggered spawn point, chance roll, once and auto-reset flags, nocturnal gate), objs/egg.cc:294-352 (group size and monster creation), objs/chunks.cc:1265-1317 (ring placement from the spawn tile).
+Dawn-of-Light-DOLSharp	spawns-encounters	P	STRONG	full	GameServer/gameobjects/GameNPC.cs:4219-4246 (tiered random respawn delay), 4284-4316 and 2907-2927 (per-mob respawn timer, pending registry, alive guard), GameServer/gameutils/RegionTimersResync.cs:224-229 (resync re-draws delays); no population cap found.

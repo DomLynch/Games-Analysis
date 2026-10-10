@@ -1,0 +1,294 @@
+{
+ "game": "MrAntares-roBrowserLegacy",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js",
+ "licence": "GPL-3.0 (LICENSE file, Version 3; camera files carry no licence header)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "new:camera-state-rig",
+  "new:zoom-band-per-state",
+  "new:occluder-fade",
+  "new:screen-quake",
+  "follow-point",
+  "variable-step"
+ ],
+ "data_fields": [
+  {
+   "name": "zoomSpan",
+   "donor_constant": "altitudeTo - altitudeFrom = -65 (abs 65) after init",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:118"
+  },
+  {
+   "name": "thirdPersonThreshold",
+   "donor_constant": "1 x span",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:32"
+  },
+  {
+   "name": "zoomFloorIso",
+   "donor_constant": "1 x span",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:291"
+  },
+  {
+   "name": "zoomFloorThird",
+   "donor_constant": "0.2 x span",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:289"
+  },
+  {
+   "name": "zoomFloorFirst",
+   "donor_constant": "0 x span",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:287"
+  },
+  {
+   "name": "zoomCeilingOutdoor",
+   "donor_constant": "5 x span (config CameraMaxZoomOut)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:27"
+  },
+  {
+   "name": "zoomCeilingIndoor",
+   "donor_constant": "2.5 x span",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:139"
+  },
+  {
+   "name": "pitchBandIso",
+   "donor_constant": "190 to 270 (degrees)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:29"
+  },
+  {
+   "name": "pitchBandThird",
+   "donor_constant": "175 to 270 (degrees)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:33"
+  },
+  {
+   "name": "pitchBandFirst",
+   "donor_constant": "90 to 270 (degrees)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:36"
+  },
+  {
+   "name": "fovIso",
+   "donor_constant": "15 (vertical, degrees)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:478"
+  },
+  {
+   "name": "fovThird",
+   "donor_constant": "30 (vertical, degrees)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:464"
+  },
+  {
+   "name": "fovFirst",
+   "donor_constant": "50 (vertical, degrees)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:447"
+  },
+  {
+   "name": "zoomStep",
+   "donor_constant": "15 per notch",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:123"
+  },
+  {
+   "name": "zoomStepMultThird",
+   "donor_constant": "0.3",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:458"
+  },
+  {
+   "name": "focusLiftThird",
+   "donor_constant": "1.5 units while close",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:523"
+  },
+  {
+   "name": "focusLiftFirst",
+   "donor_constant": "2 units",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:518"
+  },
+  {
+   "name": "yawDragPerScreenWidth",
+   "donor_constant": "720 degrees",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:384"
+  },
+  {
+   "name": "pitchDragPerScreenHeight",
+   "donor_constant": "300 degrees",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:361"
+  },
+  {
+   "name": "easeRatePerMs",
+   "donor_constant": "0.006 per ms, capped at 1",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:491"
+  },
+  {
+   "name": "easeGain",
+   "donor_constant": "2.0 times lerp",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:514"
+  },
+  {
+   "name": "quakeMultiplier",
+   "donor_constant": "0.1",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:39"
+  },
+  {
+   "name": "quakeDurationDefault",
+   "donor_constant": "650",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:215"
+  },
+  {
+   "name": "quakeDurationEffect",
+   "donor_constant": "200 (one skill effect)",
+   "unit": "ms",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/DB/Effects/EffectTable.js:3020"
+  },
+  {
+   "name": "quakeSideAmount",
+   "donor_constant": "1.0",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:216"
+  },
+  {
+   "name": "quakePitchAmount",
+   "donor_constant": "0.2",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:217"
+  },
+  {
+   "name": "quakeZoomAmount",
+   "donor_constant": "0.24",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:218"
+  },
+  {
+   "name": "doubleClickWindow",
+   "donor_constant": "500",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:324"
+  },
+  {
+   "name": "doubleClickRadius",
+   "donor_constant": "10 (pixels)",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:325"
+  },
+  {
+   "name": "defaultZoomGoal",
+   "donor_constant": "125 (fallback and double-click)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:303"
+  },
+  {
+   "name": "fadeInMs",
+   "donor_constant": "150",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Map/OccluderFade.js:63"
+  },
+  {
+   "name": "fadeOutMs",
+   "donor_constant": "300",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Map/OccluderFade.js:64"
+  },
+  {
+   "name": "fadeFrameGapCap",
+   "donor_constant": "100",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Map/OccluderFade.js:142"
+  },
+  {
+   "name": "fadeRadius",
+   "donor_constant": "5.0 cells (player option)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Preferences/Graphics.js:84"
+  },
+  {
+   "name": "fadeOpacity",
+   "donor_constant": "0.25 (player option)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Preferences/Graphics.js:83"
+  },
+  {
+   "name": "fadeEndBeforeFocus",
+   "donor_constant": "0.5 cells",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Effects/Shaders/GLSL/OccluderFade.glsl:29"
+  },
+  {
+   "name": "queryCapsuleRadius",
+   "donor_constant": "0.7 cells",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Map/OccluderFade.js:58"
+  },
+  {
+   "name": "saveDelay",
+   "donor_constant": "3000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Renderer/Camera.js:180"
+  }
+ ],
+ "best_idea": "Use one zoom-to-state rule with explicit per-state bands (pitch, FOV, zoom step), and fade geometry that sits between the eye and the hero instead of pulling the camera past walls.",
+ "decision": "adapt",
+ "decision_why": "The three-state rig and the between-eye-and-hero fade fit a world third-person camera, but Frankendom must add hysteresis, an eased FOV and a wall pull-in, which this donor does not have.",
+ "decision_status": "proposed",
+ "acceptance": "In a zone, zooming past the third-person line changes the view without a flicker at the line (a band, not a single threshold), the FOV eases over 0.3 s instead of snapping, and a wall between the camera and the hero fades to 25 percent opacity within 150 ms while the hero stays visible; a client test asserts no state flip while the zoom goal moves inside the band.",
+ "camera_scope": "world"
+}

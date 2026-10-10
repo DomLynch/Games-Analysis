@@ -1,0 +1,31 @@
+{
+ "game": "ClassicUO",
+ "category": "inventory-bank-equipment",
+ "cell": 9,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/ItemHold.cs",
+ "licence": "BSD 2-Clause License (LICENSE.md; SPDX-License-Identifier: BSD-2-Clause in each file; Copyright (c) 2025, andreakarasho)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/equip.ts",
+ "parity_row": 15,
+ "pattern_tags": [
+  "new:optimistic-hold-rollback",
+  "new:server-confirm",
+  "per-player-view"
+ ],
+ "data_fields": [
+  {
+   "name": "bank_layer",
+   "donor_constant": "0x1D (Layer.Bank)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "Layers.cs:36"
+  }
+ ],
+ "best_idea": "Take the item into the hand as an optimistic removal with a snapshot of its origin, and on the server's deny restore that snapshot instead of guessing where it belongs.",
+ "decision": "adapt",
+ "decision_why": "Keep the snapshot-and-rollback shape for equip and loot moves, but use explicit held/sent/placed states keyed by a request id instead of two boolean flags, and let only the server's update clear a sent move.",
+ "decision_status": "proposed",
+ "acceptance": "A player drags a helmet onto an empty helm slot; it shows as in hand, then equips when the server confirms; if the server denies (slot taken by a race), the helmet returns to the bag slot it came from within one frame, and a server test asserts exactly one copy of the item at every step."
+}

@@ -1,0 +1,2 @@
+game	category	old	verdict	depth	finding
+open-duelyst-duelyst	server-tick-netcode	P	STRONG	full	server/game.coffee:465-523 (intake), 767-851 (1 Hz turn clock, wall-clock deadline, 2 s hidden grace, 90/15 s allowances), 979-1061 (broadcast); app/sdk/gameSession.coffee:1514-1621 (authoritative executeAction) and 742-830 (followup snapshot, rollback). Turn-based donor, no fixed-step tick. Adapt intake and deadline shape only.

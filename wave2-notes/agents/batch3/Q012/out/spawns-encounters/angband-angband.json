@@ -1,0 +1,75 @@
+{
+ "game": "angband-angband",
+ "category": "spawns-encounters",
+ "cell": 4,
+ "verdict": "STRONG",
+ "depth": "thin",
+ "donor_path": "/mnt/frankendom-donors/angband-angband/src/mon-make.c",
+ "licence": "as read",
+ "licence_class": "restricted",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "director",
+  "presence-gated",
+  "timer-wheel",
+  "new:encounter-tier-reroll",
+  "new:trickle-roll"
+ ],
+ "data_fields": [
+  {
+   "name": "trickle_one_in_n",
+   "donor_constant": "1 in 500 per 10 game turns",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/lib/gamedata/constants.txt:18"
+  },
+  {
+   "name": "min_spawn_distance",
+   "donor_constant": "max_sight + 5 = 25 (max_sight 20)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/src/game-world.c:508"
+  },
+  {
+   "name": "placement_tries",
+   "donor_constant": "10000 random grid draws",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/src/mon-make.c:1487"
+  },
+  {
+   "name": "ood_one_in_n",
+   "donor_constant": "1 in 25",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/lib/gamedata/constants.txt:33"
+  },
+  {
+   "name": "ood_amount_cap",
+   "donor_constant": "min(level/4 + 2, 10)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/lib/gamedata/constants.txt:36"
+  },
+  {
+   "name": "tier_reroll_chance",
+   "donor_constant": "60% one re-roll, 10% second re-roll (keep deeper)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/src/mon-make.c:280"
+  },
+  {
+   "name": "population_cap",
+   "donor_constant": "none in spawner; level array 1024",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/lib/gamedata/constants.txt:11"
+  }
+ ],
+ "best_idea": "A per-check trickle roll (one in N, every 10 ticks) places one enemy on free floor farther than a set distance from the player, with a tier pick that re-rolls with a 60% and 10% chance and keeps the harder result.",
+ "decision": "adapt",
+ "decision_why": "The roll and far-from-player gate are the simple rate row 23 needs; the population cap must come from Frankendom, and the tier re-roll becomes an explicit zone difficulty knob with default off. Dual licence: clean-room only.",
+ "decision_status": "proposed",
+ "acceptance": "Server test on a zone with 1-in-500 per 10 ticks and a 25-cell gate: over 10,000 ticks the spawn count is within sampling error of 2, every spawn is on free floor more than 25 approximate cells from the player, and no spawn happens at the zone population cap."
+}

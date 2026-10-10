@@ -1,0 +1,21 @@
+cuteshaun-lineage2-api (progression, cell 10): verdict PARTIAL, depth thin
+
+Donor: /mnt/frankendom-donors/cuteshaun-lineage2-api | Licence: MIT License (LICENSE file: "Copyright (c) 2026 Andrii Tsapko"), permissive | TypeScript | no symbol: the hint file (src/lib/api/dto/skill.ts) is a DTO, and the rows come from XML via scripts/parse-classes.ts
+
+Files opened (candidates, 5):
+1. src/lib/api/dto/skill.ts (1-60, the hint file): a skill summary DTO and a description helper for DRAIN skills. No level, XP or learn rule.
+2. src/lib/api/dto/class.ts (40-100 and 125-185): the class skill-learn DTO (minPlayerLevel, spCost, mpConsume, optional spellbook) and the rule that only the lowest-skillLevel row per skill carries the spellbook (137-167).
+3. src/lib/types.ts (282-320): ClassRecord and ClassSkillLearn, the stored shape of a learn row.
+4. src/lib/data/indexes.ts (1318-1335): spellbook item <-> skill lookups.
+5. scripts/parse-classes.ts (160-190): reads the minLvl and cost attributes from the XML.
+
+Search: grep -rn over src, scripts, apps, data and tests for experience, exp, levelup, level_up, skillpoint, progression, canLearn, eligib, affordable, spCost and minLevel. Found no XP table, no level-up function, no learn check and no SP-spending code. The only progression rules are numeric fields read from the game's XML.
+
+Why PARTIAL: this repo is a read-only API over Lineage 2 Interlude data; its skill-learn rows (minimum level, SP cost, MP cost, a one-time spellbook on the first rank) are catalogue fields, and the one rule it computes (the spellbook sits on the lowest-level row) is a presentation choice, not a progression mechanism that runs.
+
+Receipts: 11 rows written to receipts.tsv (note cuteshaun-lineage2-api); verifier passed.
+
+Checked: confidence high that the donor has no runtime progression to re-express. Not read: the full parse-classes.ts, and item.ts 650-740 (grep only).
+
+Best transferable idea: Describe a skill ladder as rows (skill, rank, minimum level, cost, and a one-time item gate on rank 1) so designers can edit the ladder as data.
+Decision (proposed): adapt - take the row shape as catalogue fields for Frankendom's rows 20-21 (catalogue as runtime source), not as an engine rule; reject the omit-when-null policy for fields the engine must always have.

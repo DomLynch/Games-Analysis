@@ -1,0 +1,190 @@
+{
+ "game": "openmw",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/openmw/apps/openmw/mwrender/camera.cpp",
+ "licence": "GPL-3.0 (LICENSE file: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "variable-step",
+  "new:shoulder-switch-rays",
+  "new:focal-offset-transition",
+  "new:sphere-pullin",
+  "new:speed-zoom-out",
+  "new:combat-focal-raise"
+ ],
+ "data_fields": [
+  {
+   "name": "baseDistance",
+   "donor_constant": "192",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "third_person.lua:16"
+  },
+  {
+   "name": "minDistance",
+   "donor_constant": "30",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "camera.lua:137"
+  },
+  {
+   "name": "maxDistance",
+   "donor_constant": "800 default (user setting, min 30, max 2400)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "settings.lua:43"
+  },
+  {
+   "name": "shoulderOffsetX",
+   "donor_constant": "30 (sign picks the shoulder)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "settings.lua:45"
+  },
+  {
+   "name": "shoulderOffsetY",
+   "donor_constant": "-10",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "settings.lua:46"
+  },
+  {
+   "name": "switchAt",
+   "donor_constant": "120",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "third_person.lua:59"
+  },
+  {
+   "name": "switchBackAt",
+   "donor_constant": "300",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "third_person.lua:60"
+  },
+  {
+   "name": "sideRayAngles",
+   "donor_constant": "90 and 30 degrees from yaw",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "third_person.lua:63"
+  },
+  {
+   "name": "combatOffsetY",
+   "donor_constant": "15",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "third_person.lua:27"
+  },
+  {
+   "name": "transitionSpeedCombat",
+   "donor_constant": "5.0",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "third_person.lua:114"
+  },
+  {
+   "name": "transitionSpeedDefault",
+   "donor_constant": "1.0",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "third_person.lua:116"
+  },
+  {
+   "name": "transitionSpeedVanity",
+   "donor_constant": "0.2",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "third_person.lua:110"
+  },
+  {
+   "name": "closerFasterFactor",
+   "donor_constant": "1 + 5/len",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "camera.cpp:283"
+  },
+  {
+   "name": "focalSphereRadius",
+   "donor_constant": "10",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "camera.cpp:173"
+  },
+  {
+   "name": "cameraSphereRadius",
+   "donor_constant": "5",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "camera.cpp:172"
+  },
+  {
+   "name": "focalCeilingLift",
+   "donor_constant": "10",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "camera.cpp:180"
+  },
+  {
+   "name": "trackedHeight",
+   "donor_constant": "124 (times node scale)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "camera.cpp:63"
+  },
+  {
+   "name": "pitchTerm",
+   "donor_constant": "50 per unit of positive pitch",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "third_person.lua:82"
+  },
+  {
+   "name": "zoomOutWhenMoveCoef",
+   "donor_constant": "20",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "settings.lua:48"
+  },
+  {
+   "name": "speedSoftCap",
+   "donor_constant": "500 (speed / (1 + speed/500))",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "camera.lua:132"
+  },
+  {
+   "name": "speedApproachRate",
+   "donor_constant": "300 per second",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "camera.lua:133"
+  },
+  {
+   "name": "speedScale",
+   "donor_constant": "300",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "third_person.lua:83"
+  },
+  {
+   "name": "distanceRiseRate",
+   "donor_constant": "100 + base per second",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "third_person.lua:158"
+  }
+ ],
+ "best_idea": "An over-the-shoulder focal point that eases between shoulders chosen by side-ray probes, pulls the camera in on a sphere cast, and raises the focal point in combat, all in dt-based steps.",
+ "decision": "adapt",
+ "decision_why": "It is the over-the-shoulder shape the owner asked for: a focal offset with shoulder switching by side probes and a sphere pull-in. Adapt because the offsets and thresholds must be retuned for a 375 px phone view and the donor's Lua policy layer is not copied as is; it stays client-only.",
+ "decision_status": "proposed",
+ "acceptance": "At 375 px wide in a zone with a wall within 120 units on the right, the view moves to the left shoulder over about one second; a headless probe test shows the camera never inside a wall (radius 5 sphere); in combat the focal point rises 15 units and eases over about 0.2 seconds.",
+ "camera_scope": "world"
+}

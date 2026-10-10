@@ -1,0 +1,16 @@
+KsanaDock-Microverse | ai-aggro (cell 2) | Verdict: NONE | depth: thin
+Donor: /mnt/frankendom-donors/KsanaDock-Microverse (Godot GDScript, LLM-driven office social sim) | Licence: MIT (LICENSE: "Copyright (c) 2025 KsanaDock")
+
+Search: grep -rn over all .gd and .tscn for aggro, threat, hate, chase, flee, pursue, enemy, attack, fight, hostile, avoid, escape, target, detect. The only hits are obstacle avoidance (CharacterController.gd 97-170, steering around walls; grep hits only, not read in full), camera follow (CameraController.gd; grep hits only), dialog bubbles, and a designer-set "relations" dictionary. There is no enemy, no damage, no threat value and no pursuit.
+
+Files opened (at least 3):
+- script/ui/GodUI.gd 455-548: the only writer of "relations". Reads a type and an int strength from the god-UI popup (471) and stores {type, strength} (478). Nothing computes it during play.
+- script/ai/AIAgent.gd 282-305 and 1433-1464 and 1635-1650: the relations block of the prompt, the partner pick by name match (1438), and a random target picker (_choose_random_target at 1635). The partner is picked by name match against chosen_name (where chosen_name comes from was not traced) or by random target choice; neither uses a standing or threat value.
+- script/ai/DialogManager.gd 155-168: nearest NPC by distance for dialog. No standing involved.
+- script/CharacterController.gd 54-70: move_to, navigation path only, no chase or flee.
+- script/ai/ConversationManager.gd 283-296: relations go into the prompt text only.
+
+Checked: the topic words above across the repo; the relation strength is a signed int that the designer sets (the UI label reads "(x/10)"; the slider's minimum was not read). The wording bands at -5, 0 and +5 (AIAgent.gd 294-303) only choose adjectives in the prompt.
+
+Best transferable idea: A signed per-pair standing on the entity with three wording bands (-5, 0, +5) is the only reusable piece, and it is a social label, not an aggro or threat mechanism.
+Decision (proposed): reject - nothing here decides who attacks, chases or flees, and the standing is typed by a designer rather than earned in play, so it does not fit the server-verified fight.

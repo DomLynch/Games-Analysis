@@ -1,0 +1,26 @@
+cuteshaun-lineage2-api (spawns-encounters, cell 4) | verdict: PARTIAL | depth: thin | licence: MIT (LICENSE line 3 "Copyright (c) 2026 Andrii Tsapko")
+
+Hint file: /mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/data/cleaned-npcs.ts (read 30-45 and 222-247; it only merges and dedups spawn rows, it does not decide any spawn).
+
+Files opened (candidates, all read on the VPS):
+1. /mnt/frankendom-donors/cuteshaun-lineage2-api/scripts/parse-spawns.ts (read 1-184: the schema comment, the three parsers, the hours-to-seconds conversion at 169-180)
+2. /mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/data/cleaned-npcs.ts (read 30-45 and 222-247)
+3. /mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/api/dto/spawn.ts (read 1-116; passes the fields through, computes a primary region by mode, no timing)
+4. /mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/types.ts (read 194-212; the Spawn record)
+5. Repo-wide grep for respawnDelay, respawnRandom and periodOfDay across src, scripts and tests (hits are schema, DTO, schemas, parser and tests only)
+6. /mnt/frankendom-donors/cuteshaun-lineage2-api/README.md (line 54: "Community project. Not affiliated with NCSoft.") and LICENSE
+
+Why PARTIAL, in one sentence: the repo is a read-only HTTP API over Lineage 2 data, so it stores spawn rows (position, heading, respawn delay and random spread in seconds, a period-of-day code) but makes no spawn, respawn or encounter decision, and its own parser comment says the respawn timing lives in engine code outside this repo (parse-spawns.ts 21-24).
+
+Checked: depth thin. The whole mechanism that matters for us (what happens when an NPC dies and when it returns) is not in this donor, so nothing here was read end to end as a mechanism. Not read: the aCis engine code the parser comment points to (parse-spawns.ts 21-24; I did not search the donor for it), the SQL source files the parser reads (not checked in this donor), and the random_spawn*.sql and spawnlist_4s.sql files the parser leaves out (parse-spawns.ts 28-30 says so).
+
+Data caution: the repo is MIT, but the data files are derived from Lineage 2 game data and the README says the project is not affiliated with NCSoft. The licence of the data files is not stated in what I read. Do not copy the data files into Frankendom.
+
+Best transferable idea: store every zone spawn as one row of position, heading, respawn delay and random spread in seconds, plus a period-of-day code, and convert the source's unit once at import, not at each use.
+
+Decision (proposed): adapt — use the row shape as the zone-data layout for the row 23 respawn fields (respawn_s, respawn_spread_s, period code) in origins/server/world-spawns.ts; take no runtime logic from this donor, because it has none.
+
+Parity row: 23 (zone population: spawn caps, respawn, despawn), target origins/server/world-spawns.ts.
+
+Receipts: 11 rows in receipts.tsv (note = cuteshaun-lineage2-api), verifier passed (71 of 71 across all cells in this folder).
+Camera: not applicable.

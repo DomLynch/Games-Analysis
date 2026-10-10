@@ -1,0 +1,2 @@
+game	category	old	verdict	depth	finding
+ClassicUO	camera	P	STRONG	thin	Camera.cs:189-224 (CalculatePeek) with 153-180 (UpdateMatrices): the look-to-cursor lean is capped at 250/Zoom px, eased by OutQuad over half the view height, approached at OutQuart(dist/250)*dt*5 with a 0.01 per-frame floor, and snapped inside 1 px; this is a 2D isometric fragment, so depth is thin for a third-person camera.

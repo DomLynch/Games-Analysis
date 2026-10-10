@@ -1,0 +1,99 @@
+{
+ "game": "dhewm-dhewm3",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/Player.cpp",
+ "licence": "GPL-3.0-or-later (as read: Player.cpp header; root COPYING.txt GPL v3)",
+ "licence_class": "copyleft",
+ "target_module": "origins/client/world-camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "new:orbit-counter-yaw",
+  "new:clip-pull-in",
+  "new:lift-on-hit",
+  "new:half-pitch-offset",
+  "new:focus-aim",
+  "new:look-down-clamp"
+ ],
+ "camera_scope": "world",
+ "data_fields": [
+  {
+   "name": "orbit_range",
+   "donor_constant": "pm_thirdPersonRange = 80",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/gamesys/SysCvar.cpp:265"
+  },
+  {
+   "name": "height",
+   "donor_constant": "pm_thirdPersonHeight = 0",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/gamesys/SysCvar.cpp:266"
+  },
+  {
+   "name": "orbit_angle_deg",
+   "donor_constant": "pm_thirdPersonAngle = 0 (0 = behind)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/gamesys/SysCvar.cpp:267"
+  },
+  {
+   "name": "clip_enabled",
+   "donor_constant": "pm_thirdPersonClip = 1",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/gamesys/SysCvar.cpp:268"
+  },
+  {
+   "name": "eye_lift",
+   "donor_constant": "8 units added to the origin for the camera spot",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/Player.cpp:7195"
+  },
+  {
+   "name": "focus_distance",
+   "donor_constant": "512",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/Player.h:61"
+  },
+  {
+   "name": "pitch_max_deg",
+   "donor_constant": "45 degrees (look-down clamp)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/Player.cpp:7189"
+  },
+  {
+   "name": "clip_probe_half_size",
+   "donor_constant": "4 (8 x 8 x 8 box)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/Player.cpp:7207"
+  },
+  {
+   "name": "clip_lift",
+   "donor_constant": "32 x (1 - fraction)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/Player.cpp:7211"
+  },
+  {
+   "name": "aim_min_horizontal_distance",
+   "donor_constant": "1",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/Player.cpp:7224"
+  }
+ ],
+ "best_idea": "Place a third-person camera on a circle behind the player, sweep from the player to that spot so the camera is pulled in to the wall with a small lift, and aim at a point ahead of the player.",
+ "decision": "adapt",
+ "decision_why": "Take the orbit spot, the wall pull-in with lift, the look-down clamp and the aim point; add frame-rate-independent smoothing (the donor has none) and use Frankendom's own up axis instead of the donor's gravity axis.",
+ "decision_status": "proposed",
+ "acceptance": "With a wall 20 units behind the hero and the camera set 40 units behind, a client unit test with a stub sweep that returns fraction 0.5 asserts that the spot is the hit point raised by 16 units, that it is swept again from the hero, and that the aim points at the focus point 512 units ahead."
+}

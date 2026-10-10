@@ -1,0 +1,113 @@
+{
+ "game": "Dawn-of-Light-DOLSharp",
+ "category": "progression",
+ "cell": 10,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs",
+ "licence": "GPL-2.0 (repo LICENSE: GNU GPL version 2 text; per-file headers not read)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/xp-award.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "xp-share",
+  "hit-aggregation",
+  "clamp-and-report",
+  "respawn-scaling",
+  "level-gap",
+  "new:camp-decay-per-gainer",
+  "new:level-floor",
+  "new:one-step-level-up"
+ ],
+ "data_fields": [
+  {
+   "name": "damage_share_split",
+   "donor_constant": "solo gainer base = floor(NPC value x damage / total damage); grouped gainer base = full NPC value",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs:1187"
+  },
+  {
+   "name": "xp_cap_percent_solo",
+   "donor_constant": "125 (percent of monster XP value for the gainer's level)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs:1200"
+  },
+  {
+   "name": "xp_cap_percent_group",
+   "donor_constant": "125",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs:1209"
+  },
+  {
+   "name": "group_bonus_per_member",
+   "donor_constant": "0.125 x base XP per in-range group member",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs:1310"
+  },
+  {
+   "name": "camp_full_bonus",
+   "donor_constant": "0.55 (MAX_CAMP_BONUS)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverproperty/ServerProperties.cs:1944"
+  },
+  {
+   "name": "camp_full_window",
+   "donor_constant": "1800000 ms since spawn tick",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs:1249"
+  },
+  {
+   "name": "camp_decay_step",
+   "donor_constant": "0.05 per gainer (counter reset to 0.95)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs:1257"
+  },
+  {
+   "name": "camp_dungeon_multiplier",
+   "donor_constant": "1.20",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs:1263"
+  },
+  {
+   "name": "dead_gainer_fraction",
+   "donor_constant": "0.25",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs:1320"
+  },
+  {
+   "name": "hard_cap_percent",
+   "donor_constant": "500 (percent of the level's monster XP value, applied to the rate-multiplied base)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GamePlayer.cs:4902"
+  },
+  {
+   "name": "kill_radius",
+   "donor_constant": "16384",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/world/WorldMgr.cs:59"
+  },
+  {
+   "name": "max_level",
+   "donor_constant": "50 (XP table sentinel above it)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GamePlayer.cs:4673"
+  }
+ ],
+ "best_idea": "Split a kill's XP by damage share, cap each award at a percent of the monster's level value, and give a camp bonus that decays with repeat kills of the same spawn and resets after a quiet period; grant XP through one function that applies rates to the base only and keeps XP at or above the level floor.",
+ "decision": "adapt",
+ "decision_why": "The damage-share split, cap and timed camp bonus fit server-verified kills (the server holds the damage ledger and awards once), but the camp counter must step once per kill (the donor steps it once per gainer) and the grouped full-value rule is rejected unless designed on purpose.",
+ "decision_status": "proposed",
+ "acceptance": "A server test kills one NPC with four in-range group members who each dealt damage and asserts the NPC's camp counter drops by exactly one 0.05 step and each award equals base + camp + 12.5% x 4 with base capped at 125% of that member's table value."
+}

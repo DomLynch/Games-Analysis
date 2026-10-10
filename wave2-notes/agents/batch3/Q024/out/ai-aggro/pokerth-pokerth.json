@@ -1,0 +1,158 @@
+{
+ "game": "pokerth-pokerth",
+ "category": "ai-aggro",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/pokerth-pokerth/src/engine/local_engine/aiengine4.cpp",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/ai-stance.ts",
+ "parity_row": 2,
+ "pattern_tags": [
+  "target-score",
+  "presence-gated",
+  "new:fair-share-threshold",
+  "new:personality-multiplier"
+ ],
+ "data_fields": [
+  {
+   "name": "fair_share",
+   "donor_constant": "1 / (opponents + 1)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pokerth-pokerth/src/engine/local_engine/aiengine4.cpp:378"
+  },
+  {
+   "name": "press_threshold_over_fair",
+   "donor_constant": "1.5 / looseness",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pokerth-pokerth/src/engine/local_engine/aiengine4.cpp:381"
+  },
+  {
+   "name": "press_big_threshold_over_fair",
+   "donor_constant": "2.2",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pokerth-pokerth/src/engine/local_engine/aiengine4.cpp:383"
+  },
+  {
+   "name": "press_size_big",
+   "donor_constant": "0.75 of pot",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pokerth-pokerth/src/engine/local_engine/aiengine4.cpp:383"
+  },
+  {
+   "name": "press_size_small",
+   "donor_constant": "0.55 of pot",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pokerth-pokerth/src/engine/local_engine/aiengine4.cpp:383"
+  },
+  {
+   "name": "call_margin_before_last_round",
+   "donor_constant": "0.03 (0 on the last round)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pokerth-pokerth/src/engine/local_engine/aiengine4.cpp:402"
+  },
+  {
+   "name": "call_margin_floor",
+   "donor_constant": "-0.02",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pokerth-pokerth/src/engine/local_engine/aiengine4.cpp:412"
+  },
+  {
+   "name": "foe_aggression_shift_divisor",
+   "donor_constant": "(aggression - 40) / 1000, clamped to +/-0.03",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pokerth-pokerth/src/engine/local_engine/aiengine4.cpp:409"
+  },
+  {
+   "name": "clearly_ahead_over_fair",
+   "donor_constant": "1.9",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pokerth-pokerth/src/engine/local_engine/aiengine4.cpp:416"
+  },
+  {
+   "name": "escalation_cap",
+   "donor_constant": "3",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pokerth-pokerth/src/engine/local_engine/aiengine4.cpp:418"
+  },
+  {
+   "name": "push_size",
+   "donor_constant": "0.7 of pot",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pokerth-pokerth/src/engine/local_engine/aiengine4.cpp:419"
+  },
+  {
+   "name": "bluff_chance_free_to_wait",
+   "donor_constant": "18 percent x bluffRate",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pokerth-pokerth/src/engine/local_engine/aiengine4.cpp:390"
+  },
+  {
+   "name": "bluff_chance_semi",
+   "donor_constant": "12 percent x bluffRate",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pokerth-pokerth/src/engine/local_engine/aiengine4.cpp:429"
+  },
+  {
+   "name": "semi_bluff_min_equity",
+   "donor_constant": "0.25",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pokerth-pokerth/src/engine/local_engine/aiengine4.cpp:428"
+  },
+  {
+   "name": "temperament_looseness",
+   "donor_constant": "1 + d4/40, d4 in -7..7",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pokerth-pokerth/src/engine/local_engine/localplayer.cpp:1228"
+  },
+  {
+   "name": "temperament_aggression",
+   "donor_constant": "1 + (d-4)/8, d in 3..5",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pokerth-pokerth/src/engine/local_engine/localplayer.cpp:1229"
+  },
+  {
+   "name": "temperament_bluff",
+   "donor_constant": "1 + d4/30",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pokerth-pokerth/src/engine/local_engine/localplayer.cpp:1230"
+  },
+  {
+   "name": "min_observations_entry",
+   "donor_constant": "12",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pokerth-pokerth/src/engine/local_engine/localplayer.cpp:1210"
+  },
+  {
+   "name": "min_observations_aggression",
+   "donor_constant": "15",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pokerth-pokerth/src/engine/local_engine/localplayer.cpp:1215"
+  }
+ ],
+ "best_idea": "Decide a fight stance by comparing the estimated chance to win the exchange with a fair share of it (1 over foes plus one), press when clearly ahead, hold when it covers the cost, back off otherwise, and scale all of it by per-creature temperament multipliers near 1.0.",
+ "decision": "adapt",
+ "decision_why": "The stance rule (press/hold/wait/back-off against many foes with a fair-share reference) fits many-on-one fights, but the donor's equity is a Monte Carlo sample too costly per server tick, so Frankendom needs a cheap estimate and re-tuned thresholds, and temperament must live in catalogue data.",
+ "decision_status": "proposed",
+ "acceptance": "A player sees a creature hold back when it is outnumbered and only press when clearly ahead; a server test asserts the same fight state gives the same stance on replay from the seeded RNG, and that a creature with a higher aggression value presses more often over a fixed set of states."
+}

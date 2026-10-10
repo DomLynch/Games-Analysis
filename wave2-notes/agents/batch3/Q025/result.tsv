@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+cuteshaun-lineage2-api	ai-aggro	P	PARTIAL	thin	/mnt/frankendom-donors/cuteshaun-lineage2-api/scripts/parse-npcs.ts:174-220 and src/lib/api/dto/npc.ts:355-366; data-only aggro and assist radii, no runtime AI in this repo
+wesnoth-wesnoth	ai-aggro	P	STRONG	full	/mnt/frankendom-donors/wesnoth-wesnoth/src/ai/default/attack.cpp:268-331 (rating), 42-251 (analyze), ca.cpp:163-262 (choose and commit); score = chance_to_kill*value - (1-aggression)*expected loss, engage only if best > 0
+gawric-Unity-Client-for-L2J	ai-aggro	P	STRONG	thin	/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/Manager/MonsterManager/Move/MoveAllCharacters.cs:116-208 and EntityActionMove.cs:79-140; player pursuit: live target re-read per FixedUpdate, stop at server distance, finish when blocked (not enemy AI)

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ACEmulator-ACE	loot-drops	P	STRONG	full	/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Factories/LootGenerationFactory.cs:37-98 (with Creature_Death.cs:646-709 and Corpse.cs:152-200): three category gates, inclusive count ranges, weighted tables, and a killer-first then HalfLife-window corpse loot rule.
+ACEmulator-ACE	progression	P	STRONG	full	/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/WorldObjects/Creature_Death.cs:167-196 (kill XP by damage share), Player_Xp.cs:22-70 (modifier once, then GrantXP), and Entity/Fellowship.cs:453-564 (level-band fellowship split with distance scalar).
+ACEmulator-ACE	economy-trade	P	STRONG	full	/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/WorldObjects/Player_Trade.cs:116-283 (offer change clears both acceptances; commit re-checks busy, ownership and room) with Container.cs:433-460 for the room check.

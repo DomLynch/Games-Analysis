@@ -1,0 +1,117 @@
+{
+ "game": "electronicarts-CnC_Remastered_Collection",
+ "category": "ai-aggro",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/TIBERIANDAWN/TECHNO.CPP",
+ "licence": "GPL-3.0-or-later with EA section 7 additional terms (TECHNO.CPP header lines 1-12; LICENSE.md section 7 terms)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/ai-target.ts",
+ "parity_row": 2,
+ "pattern_tags": [
+  "target-score",
+  "threat-falloff",
+  "hysteresis",
+  "new:random-tie-break",
+  "new:snap-out-roll"
+ ],
+ "data_fields": [
+  {
+   "name": "score_scale",
+   "donor_constant": "32000",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "TECHNO.CPP:1490"
+  },
+  {
+   "name": "distance_cell_leptons",
+   "donor_constant": "256 leptons per cell (ICON_LEPTON_W)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "DISPLAY.H:44"
+  },
+  {
+   "name": "enemy_bonus",
+   "donor_constant": "500",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "TECHNO.CPP:1458"
+  },
+  {
+   "name": "enemy_multiplier",
+   "donor_constant": "3",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "TECHNO.CPP:1459"
+  },
+  {
+   "name": "worth_floor",
+   "donor_constant": "2",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "TECHNO.CPP:1501"
+  },
+  {
+   "name": "max_tied_candidates",
+   "donor_constant": "128",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "TECHNO.CPP:1604"
+  },
+  {
+   "name": "threat_range_multiplier",
+   "donor_constant": "2 x max weapon range",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "TECHNO.CPP:3707"
+  },
+  {
+   "name": "threat_range_cap",
+   "donor_constant": "0x0A00 (2560 leptons = 10 cells)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "TECHNO.CPP:3708"
+  },
+  {
+   "name": "retarget_ticks",
+   "donor_constant": "TICKS_PER_SECOND+5 = 20",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "FOOT.CPP:673"
+  },
+  {
+   "name": "ticks_per_second",
+   "donor_constant": "15",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "DEFINES.H:2146"
+  },
+  {
+   "name": "timed_hunt_retry_ticks",
+   "donor_constant": "TICKS_PER_SECOND + Random_Pick(0,4) = 15 to 19",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "FOOT.CPP:736"
+  },
+  {
+   "name": "snapout_unit_fraction",
+   "donor_constant": "4/5 of MaxUnit (loses more than 1/5)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "FOOT.CPP:706"
+  },
+  {
+   "name": "snapout_roll_denominator",
+   "donor_constant": "rndmax 5000 with MP bases, 1000 otherwise (roll IRandom(0,rndmax)==1)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "FOOT.CPP:717"
+  }
+ ],
+ "best_idea": "A single threat score (worth plus kills, a declared-enemy boost, divided by one plus whole cells away) with a capped random tie-break and keep-while-active hysteresis, all in the engine rather than the client.",
+ "decision": "adapt",
+ "decision_why": "The shape fits choosing among up to MAX_ATTACKERS = 3 attackers with the score and pick in the engine; the donor ring scan is defective (bestval never raised) and must not be copied, and the 500, x3 and 32000 constants become data fields.",
+ "decision_status": "proposed",
+ "acceptance": "In a 3-on-1 server test with a seeded RNG, the monster keeps its current target while that attacker is alive and active, a closer attacker with equal worth beats a farther one, and an exact tie resolves the same way on every run with the same seed (table-driven test)."
+}

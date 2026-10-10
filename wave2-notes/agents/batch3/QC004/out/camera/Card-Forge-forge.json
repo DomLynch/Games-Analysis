@@ -1,0 +1,82 @@
+{
+ "game": "Card-Forge-forge",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "thin",
+ "donor_path": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/stage/GameStage.java",
+ "licence": "GPL-3.0 (as read: LICENSE file)",
+ "licence_class": "copyleft",
+ "target_module": "origins/client/world-camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "new:bounds-clamp",
+  "new:pause-hold",
+  "new:wheel-zoom-clamp"
+ ],
+ "camera_scope": "world",
+ "data_fields": [
+  {
+   "name": "zone_width_px",
+   "donor_constant": "map width x tile width (width * tileWidth)",
+   "unit": "px",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/stage/MapStage.java:245"
+  },
+  {
+   "name": "zone_height_px",
+   "donor_constant": "map height x tile height (height * tileHeight)",
+   "unit": "px",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/stage/MapStage.java:245"
+  },
+  {
+   "name": "view_half_width_px",
+   "donor_constant": "intended width / 2 (screen config, landscape)",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/scene/Scene.java:78"
+  },
+  {
+   "name": "view_half_height_px",
+   "donor_constant": "intended height / 2 (screen config, landscape)",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/scene/Scene.java:82"
+  },
+  {
+   "name": "zoom_min",
+   "donor_constant": "0.3",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/stage/GameStage.java:79"
+  },
+  {
+   "name": "zoom_max",
+   "donor_constant": "1.5",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/stage/GameStage.java:78"
+  },
+  {
+   "name": "zoom_step_per_wheel_unit",
+   "donor_constant": "0.03",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/stage/GameStage.java:551"
+  },
+  {
+   "name": "pause_seconds",
+   "donor_constant": "argument of startPause (value per scripted event, not read)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/stage/GameStage.java:313"
+  }
+ ],
+ "best_idea": "Clamp the world camera's look-at point to the zone bounds every frame, hold it still during scripted pauses, and clamp wheel zoom to a fixed range.",
+ "decision": "adapt",
+ "decision_why": "Take the zone-bounds clamp and the pause hold for the world camera; leave out the snap follow, which a third-person camera must replace with frame-rate-independent smoothing and collision.",
+ "decision_status": "proposed",
+ "acceptance": "In an open zone the world camera's look-at point stops at the zone edge: a client test with a 2000 px wide zone and the player at x = 2000 asserts camera x = 2000 - half view width, and the camera does not move during a scripted pause."
+}

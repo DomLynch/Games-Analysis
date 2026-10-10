@@ -1,0 +1,75 @@
+{
+ "game": "hedgewars-hw",
+ "category": "spawns-encounters",
+ "cell": 4,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas",
+ "licence": "GNU GPL version 2 ('version 2 of the License' in uGearsUtils.pas header; COPYING 'Version 2, June 1991'; no 'or later' wording)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "director",
+  "population-cap",
+  "loot-cumulative-roll",
+  "new:per-round-roll",
+  "new:two-level-split"
+ ],
+ "data_fields": [
+  {
+   "name": "drop_every_n",
+   "donor_constant": "cCaseFactor = 5 (1 in 5 per turn-end pass); 0 disables",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "uVariables.pas:2983"
+  },
+  {
+   "name": "live_drop_cap",
+   "donor_constant": "cMaxCaseDrops = 5",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "uVariables.pas:2984"
+  },
+  {
+   "name": "health_share",
+   "donor_constant": "cHealthCaseProb = 35 (percent; times 100 out of 10000); 0 when invulnerable",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "uVariables.pas:2974"
+  },
+  {
+   "name": "health_amount",
+   "donor_constant": "cHealthCaseAmount = 25",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "uVariables.pas:2975"
+  },
+  {
+   "name": "item_weight_levels",
+   "donor_constant": "probabilityLevels 0,20,30,60,100,200,400,600,800 (per scheme letter)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "uConsts.pas:377"
+  },
+  {
+   "name": "collect_roll_delay",
+   "donor_constant": "GetRandom(125)+25 at collection",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "uGearsHedgehog.pas:831"
+  },
+  {
+   "name": "drop_gap",
+   "donor_constant": "delayFinal = 100 after each drop",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "uGears.pas:79"
+  }
+ ],
+ "best_idea": "A two-level drop roll: a 1-in-N gate with a live cap, then a fixed share for the health class and a weighted split of the rest, with the item rolled only at collection.",
+ "decision": "adapt",
+ "decision_why": "Keep the 1-in-N gate with a live cap, the fixed health share with its invulnerable exception and the collection-time item roll; move the cadence from a turn-end pass to a server round boundary and fail closed when every weight is zero instead of dropping health.",
+ "decision_status": "proposed",
+ "acceptance": "Server test on a zone with 1-in-5 drops and a live cap of 5: a sixth live box never appears under a fixed seed; boxes are health about 35% of the time when not invulnerable and never health when invulnerable; the item is chosen only at collection; a zone with no item weights rejects the drop."
+}

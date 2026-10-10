@@ -1,0 +1,79 @@
+{
+ "game": "swgemu-Core3",
+ "category": "progression",
+ "cell": 10,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/player/PlayerObjectImplementation.cpp",
+ "licence": "AGPL-3.0",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/xp-ledger.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "clamp-and-report",
+  "named-source-stack"
+ ],
+ "data_fields": [
+  {
+   "name": "default_xp_cap",
+   "donor_constant": "2000",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "PlayerObjectImplementation.cpp:763"
+  },
+  {
+   "name": "track_cap",
+   "donor_constant": "per skill box xpCap; max over owned boxes",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "SkillManager.cpp:811"
+  },
+  {
+   "name": "species_xp_bonus_percent",
+   "donor_constant": "(100 + bonus) / 100, fallback 'all', unset = 1.0",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "PlayerManagerImplementation.cpp:7111"
+  },
+  {
+   "name": "buff_xp_increase_percent",
+   "donor_constant": "skill mod xp_increase / 100",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "PlayerManagerImplementation.cpp:2618"
+  },
+  {
+   "name": "local_xp_multiplier_combat",
+   "donor_constant": "0.1",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "PlayerManagerImplementation.cpp:2182"
+  },
+  {
+   "name": "skill_points_cost",
+   "donor_constant": "per box pointsRequired",
+   "unit": "points",
+   "where": "zone data",
+   "donor_ref": "SkillManager.cpp:364"
+  },
+  {
+   "name": "skill_xp_cost",
+   "donor_constant": "per box xpCost",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "SkillManager.cpp:370"
+  },
+  {
+   "name": "jedi_xp_floor",
+   "donor_constant": "-10000000",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "PlayerObjectImplementation.cpp:751"
+  }
+ ],
+ "best_idea": "Keep one XP ledger per track, cap each track by what the player has unlocked, and clamp (not delete) when an unlock is removed.",
+ "decision": "adapt",
+ "decision_why": "Take the one-ledger add-then-clamp and the purchase order; make caps data on the unlock tree rather than a 2000 default; reject the Lua-callable award path since kills must be server-verified.",
+ "decision_status": "proposed",
+ "acceptance": "A track capped at 2000 with 1800 XP, awarding 500, stores 2000 and reports 200; removing the unlock that gave cap 3000 clamps the track to 2000 and sends a cap-hit message."
+}

@@ -1,0 +1,32 @@
+# SCAR (combat-sim, cell 1): verdict PARTIAL, depth thin
+
+Donor: /mnt/frankendom-donors/SCAR | Licence: MIT (LICENSE line 1 "MIT License", line 3 "Copyright (c) 2023 max-su-2019") | C++ (Skyrim SKSE plugin) | permissive
+Hint file: /mnt/frankendom-donors/SCAR/Nemesis_Engine/mod/scar/1hm_behavior/#0085.txt is a Havok behaviour-graph string table (eventNames list, 584 lines; first 200 read). It holds no combat logic.
+
+Files opened (candidates, all read to the end unless stated):
+- src/Hook_AttackStart.cpp (46 lines)
+- src/Hook_AttackCombo.cpp (63 lines)
+- src/SCARActionData.cpp (301 lines)
+- src/SCARActionData.h (71 lines)
+- src/DataHandler.cpp (120 lines)
+- src/Function.cpp (145 lines)
+- src/Hook_AttackStart.h, src/Function.h, src/Hook_AttackCombo.h, LICENSE, README.md (first 60 lines)
+- src/PrecisionAPI/PrecisionAPI.h (grep hits only: a vendored API header that declares PreHit damage modifiers; the implementation is not in this repo)
+
+Search: grep -rli "damage|knockback|critical|hitframe" over the whole repo, excluding SCAR.pdb and Nemesis_Engine, matched only src/PrecisionAPI/PrecisionAPI.h and LICENSE. No damage, hit, crit or knockback resolution exists in this donor.
+
+Why PARTIAL: SCAR is a Skyrim plugin that decides which melee attack or idle an NPC starts (distance and angle window, chance roll, cooldown, authored priority). It does not compute damage, crits or knockback, so the combat-sim topic (damage/hit resolution) is not met; the mechanism belongs to the attack-choice topic (ai-aggro / src/fight AI brain).
+
+What the mechanism is (read, for the record; not written as a note):
+- Priority: each SCAR action's annotation time in the clip is its sort key (DataHandler.cpp:55; SCARActionData.cpp:299, descending). Actions are tried in that order; the first success returns (Hook_AttackStart.cpp:25).
+- Gate per action (SCARActionData.cpp:191-212): clip-time window, attack-type match, then the chance roll (chance >= random 0..100, rolled before the range test), then the range test (Function.cpp:110: distance within min and max and inside the angle window; max gets the target bound radius, Function.cpp:61).
+- Cooldown: checked per alias or per attack (SCARActionData.cpp:101); on success the timer is set from coolDownTime or the attack's recoveryTime (SCARActionData.cpp:112).
+- Combo continuation: payload integer compared with a random 0..100 roll; empty payload always continues (Hook_AttackCombo.cpp:7-12).
+- Pathing delay: if the attacker is pathing within fCombatAttackAnimationDrivenDelayTime (default 1.5, Hook_AttackStart.cpp:14) no SCAR attack starts.
+- Caveat: when the clip carries SCAR data, StartAttack returns the PerformSCARAttack result and does not call the vanilla start (Hook_AttackStart.cpp:39-40). Game-side callers of StartAttack were not read.
+
+Numbers: chance default 100, clamped -180..180 on load (SCARActionData.h:28, SCARActionData.cpp:32); maxDistance default 150 (h:22); angle default -60..60 (h:24, h:26). Those are data fields per attack entry, not engine constants.
+
+Best transferable idea: For an enemy's attack choice, sort the authored attack entries by a time key, roll each entry's chance, require the target to sit inside a distance-and-angle window (with bound radii), skip entries on cooldown, and let the first passing entry start the attack.
+Decision (proposed): adapt - reuse the gate order (chance, window, cooldown, first success) as per-attack data in the AI brain; it belongs to ai-aggro, not combat-sim. Reject the Skyrim animation-event hooks and the vanilla-suppression behaviour (it would hide a failed attack from the engine).
+Lands in: src/fight/ai (row 2, AI brain) if adopted. If the lead wants this counted, it reads as STRONG under ai-aggro; I did not write that cell.

@@ -1,0 +1,75 @@
+{
+ "game": "diasurgical-DevilutionX",
+ "category": "server-tick-netcode",
+ "cell": 5,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/nthread.cpp",
+ "licence": "Sustainable Use License 1.0 (repo LICENSE.md); nthread.cpp has no per-file licence header",
+ "licence_class": "restricted",
+ "target_module": "src/fight/tick.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "fixed-step",
+  "wait-gate",
+  "lockstep",
+  "compute-budget",
+  "new:due-time-clock"
+ ],
+ "data_fields": [
+  {
+   "name": "tick_ms",
+   "donor_constant": "1000 / nTickRate; default 50 (slider 20-50 ticks/s)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/diablo.cpp:146"
+  },
+  {
+   "name": "max_ticks_per_call",
+   "donor_constant": "3",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/diablo.cpp:3492"
+  },
+  {
+   "name": "startup_ticks_per_call",
+   "donor_constant": "3 x nTickRate",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/diablo.cpp:3492"
+  },
+  {
+   "name": "catchup_reset_after",
+   "donor_constant": "10",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/nthread.cpp:219"
+  },
+  {
+   "name": "silence_drop_after",
+   "donor_constant": "10000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/multi.cpp:348"
+  },
+  {
+   "name": "silence_end_after",
+   "donor_constant": "20000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/multi.cpp:344"
+  },
+  {
+   "name": "full_exchange_every_polls",
+   "donor_constant": "4",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/nthread.cpp:132"
+  }
+ ],
+ "best_idea": "Advance the tick clock by one fixed step per tick, not to the current time, and cap ticks per loop call; when far behind with nobody else connected, drop the backlog instead of bursting.",
+ "decision": "adapt",
+ "decision_why": "Keep the due-time clock, the per-call cap, the bounded catch-up and the render fraction; reject the stop-the-world wait and the end-of-game on silence, because one slow fighter must not freeze a fight with up to MAX_ATTACKERS = 3 and a silent fighter should be marked absent through the ledger.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: with 24 ticks of backlog (1.2 s at 50 ms) and a second fighter connected, one call runs exactly three ticks and the rest drain over later calls; with the other fighter gone, the next call runs exactly one tick and the backlog is not replayed."
+}

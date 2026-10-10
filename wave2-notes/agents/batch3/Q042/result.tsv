@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+alexbatalov-fallout1-ce	progression	P	STRONG	full	/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/stat.cc:575-617 and combat.cc:3628-3639 and 1830-1834; XP pool paid at fight end, level loop with cumulative table (stat.cc:495-524)
+miki151-keeperrl	progression	P	STRONG	full	/mnt/frankendom-donors/miki151-keeperrl/creature.cpp:1250-1269 and 1210-1221 and collective.cpp:497-512; per-kill gain clamped on attack-peak gap (0.02 to 3.0), team value and cap (creature.cpp:1253-1258)
+Anuken-Mindustry	progression	P	STRONG	full	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/ui/dialogs/ResearchDialog.java:567-606 and 551-565 and 608-625; progress paid in instalments from stock, unlock only when all requirements met (TechTree.java:194-200 saves to client settings)

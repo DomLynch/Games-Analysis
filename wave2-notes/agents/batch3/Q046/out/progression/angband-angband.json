@@ -1,0 +1,81 @@
+{
+ "game": "angband-angband",
+ "category": "progression",
+ "cell": 10,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/angband-angband/src/player.c",
+ "licence": "dual: GPL-2.0 (version 2) or the Angband licence (not-for-profit, educational, research); read src/player.c 7-17",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/progression.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "new:threshold-table-percent",
+  "new:high-water-mark",
+  "new:fractional-carry",
+  "level-gap"
+ ],
+ "data_fields": [
+  {
+   "name": "max_level",
+   "donor_constant": "50",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/player.h:81"
+  },
+  {
+   "name": "max_exp_cap",
+   "donor_constant": "99999999",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/player.h:79"
+  },
+  {
+   "name": "xp_threshold_for_level",
+   "donor_constant": "base table of 50 entries: 10, 25, 45, 70 ... 4500000 used (5000000 unused); threshold = base x expfact / 100",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/player.c:48"
+  },
+  {
+   "name": "expfact_percent",
+   "donor_constant": "race exp + class exp (Human race 100; class part not set in active class file)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/player-birth.c:996"
+  },
+  {
+   "name": "monster_base_xp",
+   "donor_constant": "monster mexp (per monster, table not read)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-util.c:1075"
+  },
+  {
+   "name": "kill_xp_level_divisor",
+   "donor_constant": "player level (kill XP = mexp x monster level / player level)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-util.c:1075"
+  },
+  {
+   "name": "carry_scale",
+   "donor_constant": "65536 (1/65536 steps)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/mon-util.c:1078"
+  },
+  {
+   "name": "high_water_gain_fraction",
+   "donor_constant": "1/10 of each gain while behind the mark",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/angband-angband/src/player.c:270"
+  }
+ ],
+ "best_idea": "Keep a high-water XP mark so a drain lowers current XP but not the mark, and while behind the mark each gain raises the mark by a tenth; and carry the fraction of each kill's XP so small rewards are never lost to rounding.",
+ "decision": "adapt",
+ "decision_why": "Take the fractional carry and the level-gap kill formula now; the high-water mark adds a second XP number to the one ledger, so it waits for a row 17 death-penalty decision.",
+ "decision_status": "proposed",
+ "acceptance": "After +1000 XP and a non-permanent -500 drain the mark stays 1000; +100 then gives 600 XP and mark 1010; two kills of base 10 at monster level 5 by a level 3 character credit 16 then 17 XP."
+}

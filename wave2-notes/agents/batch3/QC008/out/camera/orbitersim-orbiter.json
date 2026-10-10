@@ -1,0 +1,89 @@
+{
+ "game": "orbitersim-orbiter",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/orbitersim-orbiter/Src/Orbiter/Camera.cpp",
+ "licence": "MIT (as read: LICENSE, Copyright (c) 2000-2026 Martin Schweiger)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "new:look-rate-cap",
+  "new:drag-offset-ease",
+  "new:zoom-clearance-scaled"
+ ],
+ "data_fields": [
+  {
+   "name": "look_rate_cap",
+   "donor_constant": "2.0 rad/s (vmax)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/orbitersim-orbiter/Src/Orbiter/Camera.cpp:41"
+  },
+  {
+   "name": "look_accel_cap",
+   "donor_constant": "8.0 rad/s^2 (amax)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/orbitersim-orbiter/Src/Orbiter/Camera.cpp:42"
+  },
+  {
+   "name": "near_limit_slowdown",
+   "donor_constant": "2*amax/vmax = 8 (dfac)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/orbitersim-orbiter/Src/Orbiter/Camera.cpp:1109"
+  },
+  {
+   "name": "drag_settle_time",
+   "donor_constant": "3.0 s (dragT)",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/orbitersim-orbiter/Src/Orbiter/Camera.cpp:40"
+  },
+  {
+   "name": "follow_distance_default",
+   "donor_constant": "4.0 target radii (rdist)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/orbitersim-orbiter/Src/Orbiter/Camera.cpp:52"
+  },
+  {
+   "name": "min_follow_distance",
+   "donor_constant": "1 target radius (inward factor floor)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/orbitersim-orbiter/Src/Orbiter/Camera.cpp:528"
+  },
+  {
+   "name": "wheel_zoom_step",
+   "donor_constant": "-zDelta*0.001 per wheel delta",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/orbitersim-orbiter/Src/Orbiter/Camera.cpp:125"
+  },
+  {
+   "name": "mouse_yaw_per_px",
+   "donor_constant": "0.005 rad/px, halved by AddPhi (0.0025 net)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/orbitersim-orbiter/Src/Orbiter/Camera.cpp:160"
+  },
+  {
+   "name": "keyboard_ramp_frames",
+   "donor_constant": "1/0.02 = 50 frames (cam_acc)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/orbitersim-orbiter/Src/Orbiter/Orbiter.cpp:2103"
+  }
+ ],
+ "best_idea": "Cap how fast the look rate can change (8 rad/s^2) and slow it as it nears a limit (remaining angle x 8), and ease any drag or pull-back offset to zero with a 3 s smoothstep, so camera moves ease in and out instead of snapping, all driven by the frame's real dt.",
+ "decision": "adapt",
+ "decision_why": "The donor's chase orbit is instant (no lag, no collision), so Frankendom's world camera should keep only the rate caps, the slow-down near a limit, and the smoothstep settle; the orbit and lag must be designed for us.",
+ "decision_status": "proposed",
+ "acceptance": "Client unit test with variable dt: a full-rate look held 0.1 s then released gives a yaw rate that never exceeds 2 rad/s, changes by at most 8 rad/s^2 x dt per frame, and never changes sign after release; in play, a flick of the look stick eases to a stop with no snap.",
+ "camera_scope": "world"
+}

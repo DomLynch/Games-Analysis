@@ -1,0 +1,102 @@
+{
+ "game": "OpenXcom-OpenXcom",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "thin",
+ "donor_path": "/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Battlescape/Camera.cpp",
+ "licence": "GPL-3.0-or-later (as read: Camera.cpp header and LICENSE.txt)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "new:latch-follow",
+  "fixed-step"
+ ],
+ "data_fields": [
+  {
+   "name": "edge_band_px",
+   "donor_constant": "5",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Battlescape/Camera.h:47"
+  },
+  {
+   "name": "corner_zone_px",
+   "donor_constant": "60",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Battlescape/Camera.h:48"
+  },
+  {
+   "name": "diagonal_step_ratio",
+   "donor_constant": "0.5 (scrollSpeed/2)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Battlescape/Camera.cpp:140"
+  },
+  {
+   "name": "scroll_interval_ms",
+   "donor_constant": "15",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Battlescape/Map.h:47"
+  },
+  {
+   "name": "scroll_step_px",
+   "donor_constant": "8 (battleScrollSpeed default)",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Engine/Options.cpp:102"
+  },
+  {
+   "name": "latch_margin_px",
+   "donor_constant": "1",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Battlescape/Map.cpp:560"
+  },
+  {
+   "name": "lock_target_ratio",
+   "donor_constant": "0.5 (half of view width and visible height)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Battlescape/Map.cpp:568"
+  },
+  {
+   "name": "recentre_half_life_ms",
+   "donor_constant": "none (donor locks at once; value is Frankendom's)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Battlescape/Map.cpp:568"
+  },
+  {
+   "name": "level_shift_ratio",
+   "donor_constant": "3/5 of sprite height",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Battlescape/Camera.cpp:372"
+  },
+  {
+   "name": "map_clamp_margin_tiles",
+   "donor_constant": "1 (centre clamped to -1 .. map size)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Battlescape/Camera.cpp:410"
+  },
+  {
+   "name": "draw_fps_cap",
+   "donor_constant": "15 (FPS option default)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Engine/Options.cpp:288"
+  }
+ ],
+ "best_idea": "A follow camera that stays still while a shot is in frame, latches onto it once it leaves the view, and releases at impact.",
+ "decision": "adapt",
+ "decision_why": "Keep the shot-follow shape (still while in frame, follow once it leaves, release at impact) but ease instead of the donor's hard lock; reject the isometric edge scroll, paging jump and fixed-step scroll for a third-person camera.",
+ "decision_status": "proposed",
+ "acceptance": "In an open zone a fired or thrown shot leaves the camera still while on screen; once it leaves the frame the camera eases it back toward centre (about 0.12 s half-life) and releases at impact. Client browser test only.",
+ "camera_scope": "world"
+}

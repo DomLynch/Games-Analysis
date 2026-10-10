@@ -1,0 +1,25 @@
+OpenDiablo2-OpenDiablo2 (progression, cell 2): verdict PARTIAL, depth thin
+Donor: /mnt/frankendom-donors/OpenDiablo2-OpenDiablo2 | Licence: GPL-3.0 (LICENSE line 1: "GNU GENERAL PUBLIC LICENSE", Version 3, 29 June 2007) | copyleft, clean-room only
+
+Hint file (monster_stats_record.go) opened, lines 1-80: it defines the monster-stat fields and does not hold XP or level logic, so it is the wrong file for this topic.
+
+Files opened (candidates, at least 3):
+1. d2core/d2records/experience_loader.go (1-77, whole): loads experience.txt into per-level, per-class breakpoints and the ExpRatio column; max levels from the second row.
+2. d2core/d2records/experience_record.go (1-18, whole): the breakpoint record types.
+3. d2core/d2hero/hero_stats_state.go (1-56, whole): hero Level, Experience, StatsPoints, SkillPoints; NextLevelExp not saved (json "-"), set at creation from the breakpoint table.
+4. d2core/d2records/monster_levels_record.go (1-60, whole): reads the XP column per difficulty and ladder from monlvl.txt into records.
+5. d2core/d2records/monster_levels_loader.go (1-49): types and the comment stating the XP formula (MonLvl XP * Monstats Exp) / 100.
+6. d2game/d2player/hero_stats_panel.go (232-253, partial): spending a stat point decrements StatsPoints.
+7. d2game/d2player/game_controls.go (1070-1095, partial): spending a skill point increments SkillPoints.
+8. d2game/d2player/hud.go (529, grep-read): experience bar fraction is Experience over NextLevelExp.
+9. d2core/d2map/d2mapentity/factory.go (85, grep-read): NextLevelExp refreshed from the breakpoint table.
+10. d2core/d2records/record_manager.go (212, 332-333; grep-read for the lookup).
+
+What I searched: grep -rn over all .go files for Experience, AddExperience, GainExp, NextLevelExp, GetExperienceBreakpoint, StatsPoints, SkillPoints, LevelUp, levelup, ExpRatio, MonsterLevel, and a case-insensitive exp/xp pattern; scripts/ and d2script/ searched for experience, levelup and nextlevelexp (no hits). Result: the donor reads the XP table and the monster XP values, shows progress, and lets the player spend points. No code writes Stats.Experience or Stats.Level, and no code awards XP on a kill. The kill-XP award and the level-up step are not in this donor.
+
+Why PARTIAL: the table, the lookup, the bar and the point spending are real and checkable, but the award and the level-up (the core of progression) are absent, so I cannot describe the whole mechanism. Confidence high that no award or level-up write exists in the Go code and scripts searched; the award could exist in a file type I did not search.
+
+Best transferable idea: Keep the XP needed for each level as a per-class breakpoint table in data, read the next-level threshold by lookup, and show the bar as experience over the next-level threshold.
+Decision (proposed): adapt - take only the data shape (per-class breakpoint table, per-level lookup, bar fraction) as zone or engine data for a progression ledger entry; write the award and level-up logic fresh, since the donor does not have it. Target would be src/fight/progression.ts (new), parity row 18 (loot roll and XP award), with an acceptance that a server-verified kill adds the monster's XP once and a level-up fires exactly at the table threshold.
+
+Receipts: 23 rows written to receipts.tsv (note OpenDiablo2-OpenDiablo2); verifier passed with the rest of the batch.

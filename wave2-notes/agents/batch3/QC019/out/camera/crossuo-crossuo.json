@@ -1,0 +1,110 @@
+{
+ "game": "crossuo-crossuo",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "thin",
+ "donor_path": "/mnt/frankendom-donors/crossuo-crossuo/src/ScreenStages/GameScreen.cpp",
+ "licence": "AGPL-3.0 (top-level LICENSE); per-file SPDX mixed (GameScreen.cpp MIT, GameWorld.cpp AGPL-3.0-or-later); treated as copyleft, clean-room only",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "variable-step",
+  "new:screen-shake-timer",
+  "new:step-interpolation"
+ ],
+ "data_fields": [
+  {
+   "name": "walk_step_ms",
+   "donor_constant": "400",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "src/Constants.h:128"
+  },
+  {
+   "name": "run_step_ms",
+   "donor_constant": "200",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "src/Constants.h:126"
+  },
+  {
+   "name": "mounted_walk_step_ms",
+   "donor_constant": "200",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "src/Constants.h:124"
+  },
+  {
+   "name": "mounted_run_step_ms",
+   "donor_constant": "100",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "src/Constants.h:122"
+  },
+  {
+   "name": "step_margin_ms",
+   "donor_constant": "15",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "src/GameObjects/GameCharacter.cpp:1337"
+  },
+  {
+   "name": "tile_shift_cardinal_px",
+   "donor_constant": "22",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "src/Walker/WalkData.cpp:10"
+  },
+  {
+   "name": "tile_shift_diagonal_px",
+   "donor_constant": "44",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "src/Walker/WalkData.cpp:9"
+  },
+  {
+   "name": "lift_per_height_unit",
+   "donor_constant": "4",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "src/ScreenStages/GameScreen.cpp:1088"
+  },
+  {
+   "name": "shake_duration_s",
+   "donor_constant": "3",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "src/Managers/PacketManager.cpp:2297"
+  },
+  {
+   "name": "shake_magnitude",
+   "donor_constant": "1",
+   "unit": "px",
+   "where": "zone data",
+   "donor_ref": "src/Managers/PacketManager.cpp:2297"
+  },
+  {
+   "name": "shake_jitter_span",
+   "donor_constant": "rand() % (3 * magnitude), one-sided",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "src/ScreenStages/GameScreen.cpp:1092"
+  },
+  {
+   "name": "render_frame_delay_active",
+   "donor_constant": "30",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "src/Constants.h:38"
+  }
+ ],
+ "best_idea": "Drive the world camera from the character's visual position (logical tile plus the fraction of the walk step already done), so it glides with the walk and does not snap at tile boundaries, and lift it by a fixed amount per height unit.",
+ "decision": "adapt",
+ "decision_why": "Frankendom's over-the-shoulder world camera should follow the hero's interpolated position and lift with height; the 2D projection, the 22/44 px constants and the one-sided shake do not transfer.",
+ "decision_status": "proposed",
+ "acceptance": "Client test: in a zone a one-tile hero step moves the camera target across the step duration with no jump at the tile boundary (per-frame change no larger than the hero's per-frame visual change plus one frame), and a raised tile lifts the target by the zone's lift value per height unit.",
+ "camera_scope": "world"
+}

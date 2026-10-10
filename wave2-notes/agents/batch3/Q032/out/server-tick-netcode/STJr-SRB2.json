@@ -1,0 +1,81 @@
+{
+ "game": "STJr-SRB2",
+ "category": "server-tick-netcode",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/STJr-SRB2/src/netcode/d_clisrv.c",
+ "licence": "GPL-2.0 (as read: LICENSE line 2 'Version 2, June 1991'; i_time.c line 8 'version 2')",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/tick.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "fixed-step",
+  "accumulator",
+  "new:stall-skip-no-burst",
+  "new:repeat-last-input"
+ ],
+ "data_fields": [
+  {
+   "name": "tick_rate_per_s",
+   "donor_constant": "35",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "doomdef.h:464"
+  },
+  {
+   "name": "frame_cap_tics",
+   "donor_constant": "8 (code); comment says 10",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "d_main.c:852"
+  },
+  {
+   "name": "server_stall_skip_threshold",
+   "donor_constant": "5",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "netcode/d_clisrv.c:1564"
+  },
+  {
+   "name": "server_tics_on_stall",
+   "donor_constant": "1",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "netcode/d_clisrv.c:1567"
+  },
+  {
+   "name": "client_tics_on_stall",
+   "donor_constant": "5",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "netcode/d_clisrv.c:1569"
+  },
+  {
+   "name": "send_window_ahead_of_ack",
+   "donor_constant": "32",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "netcode/d_clisrv.h:25"
+  },
+  {
+   "name": "client_input_lead",
+   "donor_constant": "1 (range 0-3)",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "netcode/d_clisrv.c:106"
+  },
+  {
+   "name": "backup_window",
+   "donor_constant": "1024",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "netcode/protocol.h:37"
+  }
+ ],
+ "best_idea": "Run a fixed-step tick from an accumulator; when the server falls more than 5 ticks behind make one tick and forget the lost time (no burst), and repeat each player's last input for a tick whose input did not arrive, marked not received.",
+ "decision": "adapt",
+ "decision_why": "Stall-skip and repeat-last-input fix the two tick problems under load (bursts and gaps) for a server-authoritative fight; the client lockstep, checksum and netticbuffer are rejected because only the server runs the fight and kills are server-verified.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: a 20-tick stall produces exactly one tick for that update and no catch-up burst; a player with no input for 3 ticks gets its last input repeated with received=false; a quitting player moves zero and keeps its aim."
+}

@@ -1,0 +1,109 @@
+{
+ "game": "amilich-isometric-city",
+ "category": "progression",
+ "cell": 10,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts",
+ "licence": "MIT (LICENSE: MIT License, Copyright (c) 2025 amilich)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/progression.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "new:level-step-toward-target",
+  "new:upgrade-cost-doubling",
+  "new:linear-range-per-level",
+  "new:age-driven-growth"
+ ],
+ "data_fields": [
+  {
+   "name": "max_level",
+   "donor_constant": "5",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:1250"
+  },
+  {
+   "name": "upgrade_cost_base",
+   "donor_constant": "2 (price = base x 2^level)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:1252"
+  },
+  {
+   "name": "base_price",
+   "donor_constant": "catalogue cost per building type (TOOL_INFO[type].cost)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:1373"
+  },
+  {
+   "name": "range_per_level",
+   "donor_constant": "0.2 (range = base x (1 + 0.2 x (level-1)))",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:1251"
+  },
+  {
+   "name": "target_land_divisor",
+   "donor_constant": "24",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:1669"
+  },
+  {
+   "name": "target_coverage_divisor",
+   "donor_constant": "28 (coverage 0-100 average)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:1669"
+  },
+  {
+   "name": "target_age_divisor",
+   "donor_constant": "60",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:1669"
+  },
+  {
+   "name": "demand_boost_threshold_scale_max",
+   "donor_constant": "threshold 30, scale 70, max 0.7",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:1666"
+  },
+  {
+   "name": "level_cap_target",
+   "donor_constant": "clamp 1..5",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:1668"
+  },
+  {
+   "name": "default_land_value",
+   "donor_constant": "50 (60 on lake tiles)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:758"
+  },
+  {
+   "name": "abandon_chance_cap",
+   "donor_constant": "0.02 when demand < -20 and age > 30",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:1626"
+  },
+  {
+   "name": "tick_period_desktop",
+   "donor_constant": "500 / 300 / 200 (speed 1/2/3)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/context/GameContext.tsx:812"
+  }
+ ],
+ "best_idea": "A paid level-up with a hard cap, a price that doubles per level and a linear per-level multiplier, all as catalogue data, with the refusal order fixed (cap, build state, funds) and the debit and level change in one step.",
+ "decision": "adapt",
+ "decision_why": "Keep the cap, the doubling price and the linear per-level multiplier as catalogue data for a paid upgrade; reject the city growth formula (land value, age, demand) because a fight has no counterpart for those inputs.",
+ "decision_status": "proposed",
+ "acceptance": "A server test buys level 2 of an upgradeable item for base x 2, refuses a buy at level 5, refuses a buy when money is short, and asserts the debit and the level change land in one ledger step."
+}

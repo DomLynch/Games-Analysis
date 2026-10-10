@@ -1,0 +1,173 @@
+{
+ "game": "daggerfall-unity",
+ "category": "combat-sim",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs",
+ "licence": "MIT License, Copyright (c) 2009-2023 Daggerfall Workshop (as read)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/hit.ts",
+ "parity_row": 1,
+ "pattern_tags": [
+  "clamp-and-report",
+  "hit-aggregation",
+  "accumulator",
+  "fixed-step",
+  "new:weight-scaled-knockback"
+ ],
+ "data_fields": [
+  {
+   "name": "hit_clamp_min",
+   "donor_constant": "3",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:825"
+  },
+  {
+   "name": "hit_clamp_max",
+   "donor_constant": "97",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:825"
+  },
+  {
+   "name": "monster_target_hit_bonus",
+   "donor_constant": "+40 when the target is a monster and not the player",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:1244"
+  },
+  {
+   "name": "final_hit_offset",
+   "donor_constant": "-50",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:1248"
+  },
+  {
+   "name": "dodge_divisor",
+   "donor_constant": "target dodging / 4",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:1213"
+  },
+  {
+   "name": "crit_hit_divisor",
+   "donor_constant": "CriticalStrike skill / 10 added on a successful crit roll (to-hit only)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:1218"
+  },
+  {
+   "name": "adrenaline_rush_hit_mod",
+   "donor_constant": "5 (8 when improved)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:1169"
+  },
+  {
+   "name": "adrenaline_rush_threshold",
+   "donor_constant": "current health < max health / 8",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:1173"
+  },
+  {
+   "name": "backstab_damage_mult",
+   "donor_constant": "3 when level > 1 and Dice100(level) succeeds",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:986"
+  },
+  {
+   "name": "knockback_min_classic",
+   "donor_constant": "15 classic units (floor on the knockback speed)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/WeaponManager.cs:590"
+  },
+  {
+   "name": "knockback_stored_cap_classic",
+   "donor_constant": "40 classic units",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/EnemyMotor.cs:277"
+  },
+  {
+   "name": "knockback_motion_cap_classic",
+   "donor_constant": "25 classic units",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/EnemyMotor.cs:290"
+  },
+  {
+   "name": "knockback_decay_per_classic_update",
+   "donor_constant": "5 classic units",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/EnemyMotor.cs:303"
+  },
+  {
+   "name": "knockback_hurt_threshold",
+   "donor_constant": "5 classic units (above it the state becomes Hurt)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/EnemyMotor.cs:282"
+  },
+  {
+   "name": "knockback_reanalyse_threshold",
+   "donor_constant": "10 classic units (above it EvaluateMoveInForAttack runs)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/EnemyMotor.cs:312"
+  },
+  {
+   "name": "enemy_weight_female_base",
+   "donor_constant": "240 (non-monster female enemy class)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:2893"
+  },
+  {
+   "name": "enemy_weight_male_base",
+   "donor_constant": "350 (non-monster male enemy class)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:2895"
+  },
+  {
+   "name": "enemy_weight_item_multiplier",
+   "donor_constant": "4 x item weight",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:2887"
+  },
+  {
+   "name": "monster_attack_slots",
+   "donor_constant": "3 attack slots per monster attack",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:636"
+  },
+  {
+   "name": "monster_reflex_base_pct",
+   "donor_constant": "50 - 10 x (Reflexes - 2) percent (player Reflexes read)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:654"
+  },
+  {
+   "name": "classic_update_interval",
+   "donor_constant": "0.0625",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/GameManager.cs:42"
+  }
+ ],
+ "best_idea": "Build the to-hit as one named sum clamped to 3..97 and roll it once on the server, and treat a weight-scaled knockback (40 x d^2 / (W + 10 d), floored at 15 classic units) that decays per tick as a client-only push.",
+ "decision": "adapt",
+ "decision_why": "The server takes the to-hit as a clamped named sum rolled once, which makes hits and kills server-verifiable; the knockback stays a client-only push because the donor applies it to the physics controller and our rulings keep state changes on the server.",
+ "decision_status": "proposed",
+ "acceptance": "A server test with a fixed seed asserts that a 10-damage hit on a 100-weight target gives a 20-unit classic push that ends after 4 classic updates, and that a chance of 60 hits on roll 59 and misses on roll 60."
+}

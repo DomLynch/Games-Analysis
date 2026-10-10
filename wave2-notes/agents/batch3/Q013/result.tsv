@@ -1,0 +1,2 @@
+game	category	old	verdict	depth	finding
+evennia-evennia	spawns-encounters	P	STRONG	full	scripts/ondemandhandler.py:246-308 and 106-134 (under /mnt/frankendom-donors/evennia-evennia/evennia/): lazy respawn timer; state is worked out only when observed, wrapped cycles counted by elapsed // cycle, no ticker.

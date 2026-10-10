@@ -1,0 +1,118 @@
+{
+ "game": "ValveSoftware-halflife",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ValveSoftware-halflife/cl_dll/in_camera.cpp",
+ "licence": "as read: Half Life 1 SDK LICENSE (Valve)",
+ "licence_class": "restricted",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "new:eased-angle-follow",
+  "new:persistent-manual-offset",
+  "new:orbit-look-at",
+  "new:zoom-reset-to-behind"
+ ],
+ "data_fields": [
+  {
+   "name": "ideal_yaw_offset",
+   "donor_constant": "90 degrees default",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "cl_dll/in_camera.cpp:494"
+  },
+  {
+   "name": "ideal_pitch_offset",
+   "donor_constant": "0 degrees default",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "cl_dll/in_camera.cpp:495"
+  },
+  {
+   "name": "ideal_distance",
+   "donor_constant": "64 units default",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "cl_dll/in_camera.cpp:496"
+  },
+  {
+   "name": "min_distance",
+   "donor_constant": "30 units (CAM_MIN_DIST)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "cl_dll/in_camera.cpp:31"
+  },
+  {
+   "name": "max_distance",
+   "donor_constant": "200 units (c_maxdistance cvar)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "cl_dll/in_camera.cpp:503"
+  },
+  {
+   "name": "mouse_yaw_limit",
+   "donor_constant": "+/-135 degrees (YAW_MAX/YAW_MIN, mouse only)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "cl_dll/in_camera.cpp:36"
+  },
+  {
+   "name": "pitch_limit",
+   "donor_constant": "0 to 90 degrees (mouse only)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "cl_dll/in_camera.cpp:34"
+  },
+  {
+   "name": "ease_per_tick",
+   "donor_constant": "quarter of the gap per call",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "cl_dll/in_camera.cpp:113"
+  },
+  {
+   "name": "angle_snap_window",
+   "donor_constant": "1 degree",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "cl_dll/in_camera.cpp:112"
+  },
+  {
+   "name": "distance_snap_window",
+   "donor_constant": "2 units",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "cl_dll/in_camera.cpp:386"
+  },
+  {
+   "name": "keyboard_orbit_step",
+   "donor_constant": "2.5 degrees per call while held",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "cl_dll/in_camera.cpp:29"
+  },
+  {
+   "name": "keyboard_zoom_step",
+   "donor_constant": "1.0 units per call while held",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "cl_dll/in_camera.cpp:28"
+  },
+  {
+   "name": "mouse_orbit_gain",
+   "donor_constant": "0.25 degrees per pixel per call (0.5 x offset / 2)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "cl_dll/in_camera.cpp:216"
+  }
+ ],
+ "best_idea": "Keep the camera as data (ideal yaw, pitch and distance per zone) that player input writes and a per-frame ease chases toward ideal plus the character's facing, with a yaw clamp that keeps the camera out of the character's front and a zoom-in reset to directly behind.",
+ "decision": "adapt",
+ "decision_why": "It is the only real third-person mechanism in this donor set and its ideal-plus-ease split with a rear-half clamp is what the world camera lacks; but it orbits to look at the character rather than framing over the shoulder, has no wall pull-in (its collision code is compiled out), and steps per frame, so Frankendom must add a shoulder offset, a real pull-in and dt-based easing before adopting it.",
+ "decision_status": "proposed",
+ "acceptance": "In a zone with the default preset, a 90-degree turn of the character is trailed by the camera and settled to within 1 degree in under half a second, and releasing the look key leaves the camera where the player left it (client test).",
+ "camera_scope": "world"
+}

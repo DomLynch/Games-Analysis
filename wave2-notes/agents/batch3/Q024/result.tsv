@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+crawl-crawl	ai-aggro	P	STRONG	full	crawl-ref/source/mon-behv.cc:1004-1040 (nearest foe), 1153-1184 (hit retargets, retreat/seek), 727-733 and 1864-1865 (memory chase), 1484-1505 (shake-off); see out/ai-aggro/crawl-crawl.deep.md
+pokerth-pokerth	ai-aggro	P	STRONG	full	src/engine/local_engine/aiengine4.cpp:378-434 (fair-share stance rule), 439-449 (decide split), 184-234 (equity, sampler not read); caller localplayer.cpp:1190-1232; see out/ai-aggro/pokerth-pokerth.deep.md
+id-Software-Quake	ai-aggro	P	STRONG	thin	WinQuake/sv_move.c:284-356 (SV_NewChaseDir try order), 393-426 (SV_MoveToGoal 1-in-4 re-chase), 233-260 (step and turn gate); aggro block commented out at qw-qc/combat.qc:248-264; see out/ai-aggro/id-Software-Quake.deep.md

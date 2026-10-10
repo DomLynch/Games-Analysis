@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+exult-exult	camera	P	STRONG	full	gamewin.cc:1165-1190 dead-box follow; gamerend.cc:427-514 glide and snap; exult.cc:1443-1510 driver; effects.cc:1829-1870 shake (hint was INFERRED, no file)
+daggerfall-unity	camera	P	STRONG	full	CameraRecoiler.cs:64-170 damage-triggered view wobble (amplitude is lost after the hit frame, see note section 6); PlayerMouseLook.cs:144,154-166 pitch clamp and frame-rate smoothing (secondary); NoFogCamera.cs was the hint and is not a camera control
+OpenDiablo2-OpenDiablo2	camera	P	STRONG	full	d2core/d2map/d2maprenderer/camera.go:48-58 pull (0.85 per call); d2game/d2gamescreen/game.go:273-277 follow target, one-frame delay; game_controls.go:316-325 free-look pan

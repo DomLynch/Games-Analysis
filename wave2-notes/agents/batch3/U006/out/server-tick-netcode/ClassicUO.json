@@ -1,0 +1,74 @@
+{
+ "game": "ClassicUO",
+ "category": "server-tick-netcode",
+ "cell": 5,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/GameController.cs",
+ "licence": "BSD 2-Clause License, Copyright (c) 2025, andreakarasho (LICENSE.md)",
+ "licence_class": "permissive",
+ "target_module": "origins/server/tick.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "variable-step",
+  "compute-budget",
+  "new:sequenced-intent-window",
+  "new:confirm-or-deny-snap"
+ ],
+ "data_fields": [
+  {
+   "name": "intents_in_flight",
+   "donor_constant": "5",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Constants.cs:16"
+  },
+  {
+   "name": "turn_gate_ms",
+   "donor_constant": "80",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Constants.cs:17"
+  },
+  {
+   "name": "walk_gate_ms",
+   "donor_constant": "400 (run 200)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Data/MovementSpeed.cs:12"
+  },
+  {
+   "name": "intake_cap_bytes_per_frame",
+   "donor_constant": "4096",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/NetClient.cs:18"
+  },
+  {
+   "name": "ping_interval_ms",
+   "donor_constant": "1000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Scenes/GameScene.cs:749"
+  },
+  {
+   "name": "ping_slots",
+   "donor_constant": "5",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/NetStatistics.cs:13"
+  },
+  {
+   "name": "turn_coalesce_unconfirmed",
+   "donor_constant": "3",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/PlayerMobile.cs:621"
+  }
+ ],
+ "best_idea": "Let the server accept a small fixed window of sequenced move or attack intents per tick, confirm or deny each by sequence, and move the player only on a deny.",
+ "decision": "adapt",
+ "decision_why": "Keep the sequenced window and confirm/deny order as the server tick's intake shape; reject the donor's per-frame 4096-byte read cap and variable-step loop because row 18 needs a fixed server step and a per-tick budget.",
+ "decision_status": "proposed",
+ "acceptance": "A server test sends 6 intents in one tick: 5 enter the window and the 6th waits for a confirm; an unknown-sequence confirm returns one resync and no further intents until reset; a deny moves the fighter to the server tile and clears the window."
+}

@@ -1,0 +1,126 @@
+{
+ "game": "STJr-SRB2",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/STJr-SRB2/src/p_user.c",
+ "licence": "GPL-2.0 (LICENSE file: GNU GPL Version 2, June 1991; p_user.c header: version 2)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "fixed-step",
+  "new:ceiling-pull-down",
+  "new:sight-reset-snap",
+  "new:speed-fov-widen",
+  "new:shake-distance-falloff"
+ ],
+ "data_fields": [
+  {
+   "name": "dist",
+   "donor_constant": "192 standard (live cvar starts 160)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "p_user.c:9855"
+  },
+  {
+   "name": "height",
+   "donor_constant": "40 standard",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "p_user.c:9866"
+  },
+  {
+   "name": "speed",
+   "donor_constant": "0.3 fraction of gap per tic",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "p_user.c:9836"
+  },
+  {
+   "name": "camHeight",
+   "donor_constant": "16 (scaled by mo.scale)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "p_user.c:9939"
+  },
+  {
+   "name": "ceilPad",
+   "donor_constant": "11 (scaled by mo.scale)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "p_user.c:10460"
+  },
+  {
+   "name": "lookAhead",
+   "donor_constant": "64 (scaled by mo.scale)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "p_user.c:10506"
+  },
+  {
+   "name": "aimEase",
+   "donor_constant": "1/8 of gap per tic (dist>>3)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "p_user.c:10577"
+  },
+  {
+   "name": "pitchClamp",
+   "donor_constant": "ANGLE_90 - 1",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "g_game.c:843"
+  },
+  {
+   "name": "resetSettleTries",
+   "donor_constant": "2*TICRATE (TICRATE 35)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "p_user.c:9941"
+  },
+  {
+   "name": "playerFadeRadius",
+   "donor_constant": "48 (single player only, scaled)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "p_user.c:10594"
+  },
+  {
+   "name": "hitShakeIntensity",
+   "donor_constant": "8 (scaled by inflictor)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "p_user.c:9236"
+  },
+  {
+   "name": "hitShakeTime",
+   "donor_constant": "8",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "p_user.c:9237"
+  },
+  {
+   "name": "shakeBaseRatio",
+   "donor_constant": "intensity>>1 (half)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "r_main.c:1151"
+  },
+  {
+   "name": "speedFovThreshold",
+   "donor_constant": "20 (donor speed units, only if fovchange on)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "p_user.c:8869"
+  }
+ ],
+ "best_idea": "A chase camera that closes a fraction of the gap to an ideal spot behind the hero each tick, applies that velocity on the next tick, pulls under ceilings, and snaps behind the hero when blocked with no line of sight.",
+ "decision": "adapt",
+ "decision_why": "Take the ease, ceiling pull and sight-reset shape into a client-only world camera, but not the donor's placement inside the tic loop (the server holds camera state there) and not its centred-behind framing, which gives no over-the-shoulder offset; the lateral offset must be added on purpose.",
+ "decision_status": "proposed",
+ "acceptance": "In a headless test the hero walks past a wall: the world camera never sits inside wall bounds on any tick, eases behind the hero (about 97 percent of the gap closed after 10 ticks at speed 0.3), and snaps behind when it has no line of sight to the hero.",
+ "camera_scope": "world"
+}

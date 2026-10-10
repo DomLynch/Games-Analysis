@@ -1,0 +1,110 @@
+{
+ "game": "TrinityCore-TrinityCore",
+ "category": "progression",
+ "cell": 10,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/KillRewarder.cpp",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/xp.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "xp-share",
+  "level-gap",
+  "rested-xp",
+  "new:group-rate-table",
+  "new:level-carry"
+ ],
+ "data_fields": [
+  {
+   "name": "group XP multiplier by attackers in reach",
+   "donor_constant": "count 0-2: 1.0; 3: 1.166; 4: 1.3; 5+: 1.4",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "Formulas.h:241"
+  },
+  {
+   "name": "raid group XP multiplier",
+   "donor_constant": "flat 0.99",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "Formulas.h:229"
+  },
+  {
+   "name": "share for members below the top level",
+   "donor_constant": "half of the share, plus 1",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "KillRewarder.cpp:152"
+  },
+  {
+   "name": "XP bonus per level the mob is above the player",
+   "donor_constant": "0.05 per level",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Formulas.h:156"
+  },
+  {
+   "name": "cap on the above-level bonus",
+   "donor_constant": "4 levels",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "Formulas.h:153"
+  },
+  {
+   "name": "elite XP multiplier",
+   "donor_constant": "x2.0 world, x2.75 dungeon",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "Formulas.h:202"
+  },
+  {
+   "name": "kill XP rate",
+   "donor_constant": "Rate.XP.Kill default 1",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "worldserver.conf.dist:2478"
+  },
+  {
+   "name": "rested bank cap",
+   "donor_constant": "0.75 of next-level XP",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "RestMgr.cpp:58"
+  },
+  {
+   "name": "rest accrual bubble in game",
+   "donor_constant": "0.125 times Rate.Rest.InGame (default 1)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "RestMgr.cpp:145"
+  },
+  {
+   "name": "rest accrual gate",
+   "donor_constant": "3% roll per update (rejected in decision)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "RestMgr.cpp:138"
+  },
+  {
+   "name": "minimum elapsed rest before accrual",
+   "donor_constant": "10 s",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "RestMgr.cpp:141"
+  },
+  {
+   "name": "gray level rule",
+   "donor_constant": "below 7: 0; below 35: (pl-7)-(count-1); 35 and up: pl-10",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "Formulas.h:70"
+  }
+ ],
+ "best_idea": "Split one base XP per kill across the attackers in reach by level share, multiplied by a count table, with a half share for members below the top level and zero for dead or above-cut members.",
+ "decision": "adapt",
+ "decision_why": "The one-base split is simple, server-computable and fits many-on-one kills up to MAX_ATTACKERS = 3, so take the shape with the group table as zone data; reject the random rested-XP gate (not deterministic) and keep any rest bank only as a deterministic elapsed-time rule.",
+ "decision_status": "proposed",
+ "acceptance": "A server test: three living attackers at levels 10, 12 and 12 kill a level-11 mob; the two level-12 attackers share the same award, the total is the base times 1.166 within rounding, a dead attacker gets 0, and a level-up carry grants every level passed in one event without exceeding max level."
+}

@@ -1,0 +1,144 @@
+{
+ "game": "CombatPathingRevolution",
+ "category": "ai-aggro",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "thin",
+ "donor_path": "/mnt/frankendom-donors/CombatPathingRevolution/src/Circling_Hook.cpp",
+ "licence": "MIT (LICENSE: MIT License, Copyright (c) 2022 max-su-2019)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/ai-spacing.ts",
+ "parity_row": 2,
+ "pattern_tags": [
+  "wait-gate",
+  "new:band-gate-single-roll",
+  "new:style-mult-rescale",
+  "new:out-of-band-floor"
+ ],
+ "data_fields": [
+  {
+   "name": "circleMin",
+   "donor_constant": "graph var CPR_CirclingDistMin; min bound raised by optimal weapon range only if > 0 (no default)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "Circling_Hook.cpp:26-30"
+  },
+  {
+   "name": "circleMax",
+   "donor_constant": "graph var CPR_CirclingDistMax; max bound always raised by max weapon range (no default)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "Circling_Hook.cpp:26-31"
+  },
+  {
+   "name": "circleFloor",
+   "donor_constant": "0.1 (std::max(0.1f, a_minChance))",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Circling_Hook.cpp:48"
+  },
+  {
+   "name": "circleAngleMinDefault",
+   "donor_constant": "30 degrees when game setting fCombatCircleAngleMin absent",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "Circling_Hook.cpp:120"
+  },
+  {
+   "name": "circleAngleMaxDefault",
+   "donor_constant": "90 degrees when game setting fCombatCircleAngleMax absent",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "Circling_Hook.cpp:142"
+  },
+  {
+   "name": "viewConeAngle",
+   "donor_constant": "graph var CPR_CirclingViewConeAngle, degrees converted by 0.017453292",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "Circling_Hook.cpp:151-153"
+  },
+  {
+   "name": "fallbackDistMin",
+   "donor_constant": "graph var CPR_FallbackDistMin; min + fallbackMult*(max-min)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "Fallback_Hook.cpp:16-18"
+  },
+  {
+   "name": "fallbackDistMax",
+   "donor_constant": "graph var CPR_FallbackDistMax; max distance used as-is when set",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "Fallback_Hook.cpp:16-18,33-34"
+  },
+  {
+   "name": "fallbackDiameterFloor",
+   "donor_constant": "2 x bound radius (lower bound on retreat distance)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Fallback_Hook.cpp:19-21"
+  },
+  {
+   "name": "fallbackMaxDefault",
+   "donor_constant": "256 when game setting fCombatFallbackDistanceMax absent",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "Fallback_Hook.cpp:41"
+  },
+  {
+   "name": "fallbackWaitMin",
+   "donor_constant": "graph var CPR_FallbackWaitTimeMin; min + fallbackMult*(max-min), no floor",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "Fallback_Hook.cpp:50-52"
+  },
+  {
+   "name": "fallbackWaitMax",
+   "donor_constant": "graph var CPR_FallbackWaitTimeMax",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "Fallback_Hook.cpp:50-52"
+  },
+  {
+   "name": "fallbackWaitMinDefault",
+   "donor_constant": "0.75 s when game setting fCombatFallbackWaitTimeMin absent",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "Fallback_Hook.cpp:72"
+  },
+  {
+   "name": "backoffChanceDefault",
+   "donor_constant": "0.25 when game setting fCombatBackoffChance absent; graph var CPR_BackoffChance overrides",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "Backoff_Hook.cpp:27-32"
+  },
+  {
+   "name": "backoffMinDistMultDefault",
+   "donor_constant": "0.75 when game setting absent; graph var CPR_BackoffMinDistMult overrides",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "Backoff_Hook.cpp:13-18"
+  },
+  {
+   "name": "advanceRadiusInnerMinMidMax",
+   "donor_constant": "graph vars CPR_InnerRadiusMin/Mid/Max; delta<=0 maps min..mid, delta>0 maps mid..max, unclamped",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "Advance_Hook.cpp:12,29"
+  },
+  {
+   "name": "advanceRadiusOuterMinMidMax",
+   "donor_constant": "graph vars CPR_OuterRadiusMin/Mid/Max; same rescale rule",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "Advance_Hook.cpp:12,30"
+  }
+ ],
+ "best_idea": "Gate a spacing band (centre distance minus target radius, widened by weapon ranges) first, then make one seeded roll against a chance that never drops below a small floor outside the band; rescale the retreat distance and wait by one per-style multiplier, floored at the actor's diameter.",
+ "decision": "adapt",
+ "decision_why": "The band-plus-one-roll gate and the style-scaled retreat are the right shape for 1-vs-1 spacing and the fallback step; take the shape, make every number catalogue or zone data, seed the roll on the server, and do not take the Skyrim hook layer or the per-frame roll.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: with optimalRange 2.0, maxRange 3.0, circleMin 1.0, circleMax 1.0 (band 3.0 to 4.0), a gap of 3.5 with engine chance 0.5 circles on roll 0.2 and not on roll 0.9; a gap of 5.0 never circles and its chance is max(0.1, minChance)."
+}

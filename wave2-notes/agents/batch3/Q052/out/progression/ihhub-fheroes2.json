@@ -1,0 +1,74 @@
+{
+ "game": "ihhub-fheroes2",
+ "category": "progression",
+ "cell": 10,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/heroes/heroes.cpp",
+ "licence": "GPL-2.0 (LICENSE file: GNU GPL version 2; source headers: either version 2 or any later version)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/progression.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "new:seeded-level-up-roll",
+  "new:xp-threshold-table",
+  "new:multi-level-catch-up",
+  "new:stat-seeded-offer"
+ ],
+ "data_fields": [
+  {
+   "name": "xp_threshold_table",
+   "donor_constant": "1000,2000,3200,4500,6000,7700,9000,11000,13200,15500,18500,22100,26400,31600,37800,45300,54200,65000,78000,93600,112300,134700,161600,193900,232700,279300,335200,402300,482800,579400,695300,834400,1001300,1201600,1442000,1730500,2076700,2492100,2990600 (levels 1-39)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/heroes/heroes.cpp:1512"
+  },
+  {
+   "name": "xp_growth_ratio_above_table",
+   "donor_constant": "1.2 times the last step, rounded to 100",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/heroes/heroes.cpp:1601"
+  },
+  {
+   "name": "max_secondary_skills",
+   "donor_constant": "8",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/heroes/heroes.h:85"
+  },
+  {
+   "name": "wisdom_cadence_total_levels",
+   "donor_constant": "3 (forced for magic races when total secondary level is a multiple of 3)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/heroes/skill.cpp:813"
+  },
+  {
+   "name": "primary_low_level_boundary",
+   "donor_constant": "10 (all six factions)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/game/game_static.cpp:41"
+  },
+  {
+   "name": "primary_low_weights_knight",
+   "donor_constant": "attack 35, defense 45, power 10, knowledge 10",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/game/game_static.cpp:42"
+  },
+  {
+   "name": "secondary_weights_knight",
+   "donor_constant": "2,4,3,1,3,5,3,1,1,2,0,3,2,2 in struct order archery..wisdom",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/game/game_static.cpp:44"
+  }
+ ],
+ "best_idea": "Make a level-up a pure, replayable function of (world seed, hero id, stats, XP before and after): the offer is a seeded weighted pick with a blacklist, and multi-level XP gains run one level-up per level crossed.",
+ "decision": "adapt",
+ "decision_why": "The level-up log can be derived from XP and a seed, so the server re-derives every level-up with no second stored record (one ledger); Frankendom needs its own portable hash and PRNG (donor uses std::hash and PCG32) and must check any human pick against the offer the server sent.",
+ "decision_status": "proposed",
+ "acceptance": "A server test grants 2500 XP to a level-1 hero in one call and in 100-XP steps (autoselect on, same world seed) and both produce the same ordered level-up log (level, primary stat, offer, pick)."
+}

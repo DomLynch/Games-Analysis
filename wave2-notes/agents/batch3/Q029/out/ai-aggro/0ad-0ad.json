@@ -1,0 +1,61 @@
+{
+ "game": "0ad-0ad",
+ "category": "ai-aggro",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/simulation/components/UnitAI.js",
+ "licence": "GPL version 2 or later (as read: LICENSE.txt binaries/data/)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/ai.ts",
+ "parity_row": 4,
+ "pattern_tags": [
+  "target-score",
+  "new:stance-flags",
+  "new:preference-rank-groups",
+  "new:chase-leash-check",
+  "new:melee-only-redirect"
+ ],
+ "data_fields": [
+  {
+   "name": "chase_check_interval",
+   "donor_constant": "1000 ms repeating timer while chasing",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/simulation/components/UnitAI.js:2306"
+  },
+  {
+   "name": "flee_distance",
+   "donor_constant": "current distance to target plus template FleeDistance (default not read)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/simulation/components/UnitAI.js:1989"
+  },
+  {
+   "name": "chase_query_range",
+   "donor_constant": "unit vision range (chase looks out to full vision)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/simulation/components/UnitAI.js:6107"
+  },
+  {
+   "name": "hold_query_range",
+   "donor_constant": "min(range + vision / 2, vision)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/simulation/components/UnitAI.js:6113"
+  },
+  {
+   "name": "preference_rank_count",
+   "donor_constant": "index in PreferredClasses list, rank 0 attacked at once",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/simulation/components/Attack.js:321"
+  }
+ ],
+ "best_idea": "A unit's aggression is a named stance row of booleans (who to target, whether to chase, how far to leash), and it picks its target by a ranked class list, taking a rank-0 match at once.",
+ "decision": "adapt",
+ "decision_why": "Take the stance rows as enemy profile data and the ranked class list as the many-on-one target rule; replace the 1000 ms wall-time chase check with a server-tick count and add MAX_ATTACKERS = 3 as a separate engine gate, which the donor does not have.",
+ "decision_status": "proposed",
+ "acceptance": "A server test asserts that a defensive foe with hold radius 6 attacks a player who steps within 6 tiles and ignores one at 7 tiles, and that a violent foe keeps chasing a player until the player is out of its vision at one check."
+}

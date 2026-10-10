@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+STJr-SRB2	camera	P	STRONG	full	/mnt/frankendom-donors/STJr-SRB2/src/p_user.c:9944-10627 and p_mobj.c:3501-3575: per-tic chase camera eases a fraction of the gap to a spot behind the player, pulls under ceilings, and snaps behind when blocked with no sight (note: out/camera/STJr-SRB2.deep.md)
+openmw	camera	P	STRONG	full	/mnt/frankendom-donors/openmw/apps/openmw/mwrender/camera.cpp:132-208 and 254-294, with files/data/scripts/omw/camera/third_person.lua:129-162: over-the-shoulder focal offset with side-ray shoulder switch, sphere pull-in, and dt-eased focal transition (note: out/camera/openmw.deep.md)
+KsanaDock-Microverse	camera	P	STRONG	full	/mnt/frankendom-donors/KsanaDock-Microverse/script/CameraController.gd:30-112: three camera modes (follow, map, held drag-look) each keep their own zoom, with a clamped wheel step and one restore key (note: out/camera/KsanaDock-Microverse.deep.md; 2D donor, medium confidence)

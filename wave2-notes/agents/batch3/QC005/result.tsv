@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+2004Scape-Server	camera	P	PARTIAL	thin	src/engine/entity/NetworkPlayer.ts:256-266 and PlayerOps.ts:163-184: server camera queue drained each 600 ms tick (World.ts:120,437); client camera not in donor
+opentibiabr-otclient	camera	P	STRONG	full	src/client/mapview.cpp:1034,737-765,836-838; creature.cpp:727-739,808-830,1135-1158; localplayer.cpp:38-113; world-camera glide mechanism read end to end (2D tile donor)
+Anuken-Mindustry	camera	P	STRONG	full	core/src/mindustry/core/Renderer.java:85-89,152-227; entities/Effect.java:195-208; input/DesktopInput.java:236-300,983-988 (GPL-3.0, clean-room)

@@ -1,0 +1,87 @@
+{
+ "game": "scummvm-scummvm",
+ "category": "ai-aggro",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp",
+ "licence": "GPL-3.0-or-later (file header: either version 3 of the License, or any later version)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/ai.ts",
+ "parity_row": 4,
+ "pattern_tags": [
+  "new:weighted-stance-ratios",
+  "new:margin-damage",
+  "variable-step"
+ ],
+ "data_fields": [
+  {
+   "name": "stance_weights_attack",
+   "donor_constant": "distance 0.20, angle 0.10, enemy-in-combat 0.10, enemy HP loss 0.15, own HP 0.15, own aggression 0.30 (melee); ranged 0.25/0.05/0.20/0.10/0.40",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp:606-622"
+  },
+  {
+   "name": "stance_weights_cover_flee",
+   "donor_constant": "cover melee 0.25/0.20/0.05/0.10/0.50, ranged 0.40/0.05/0.15/0.50; flee 0.2/0.4/0.4",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp:638-672"
+  },
+  {
+   "name": "close_reach",
+   "donor_constant": "36",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp:178"
+  },
+  {
+   "name": "ranged_range",
+   "donor_constant": "300 default, or the script argument",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp:67-69"
+  },
+  {
+   "name": "default_aggression",
+   "donor_constant": "50 (range 0..100)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor.cpp:115"
+  },
+  {
+   "name": "hit_chance_base_by_speed",
+   "donor_constant": "close 11 running / 22 moving / 33 still; ranged 10 / 20 / 30",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp:536-540"
+  },
+  {
+   "name": "aggression_divisor_close_ranged",
+   "donor_constant": "close aggression/3; ranged aggression/5",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp:543"
+  },
+  {
+   "name": "hit_angle_cutoff_and_divisor",
+   "donor_constant": "no hit above 128; add abs(angle-128)/3.7",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp:547-551"
+  },
+  {
+   "name": "damage_margin_scale",
+   "donor_constant": "margin capped at 30; damage = (min(margin,30)*100/60 + 50)% of weapon damage (50%..100%)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp:584"
+  }
+ ],
+ "best_idea": "Each tick the attacker scores attack, cover and flee from weighted terms on distance, angle, both HP and aggression, takes the highest with fixed tie rules, and a landed hit scales its damage by the margin under the hit chance.",
+ "decision": "adapt",
+ "decision_why": "The weighted stance chooser and the margin-scaled damage fit a per-tick AI brain in src/fight and give readable, testable numbers; the frame-keyed hit roll, the walk-to-waypoint cover and flee, and the single enemy id do not fit a fixed-step server with MAX_ATTACKERS = 3, so keep the scoring and drop the coupling.",
+ "decision_status": "proposed",
+ "acceptance": "A server test asserts that a fixed input table (distance, angle, both HP, aggression, speed, cover and flee availability) gives the donor's stance, hit chance and damage; in play a wounded, low-aggression group member takes cover or flees when a cover or flee point exists, and a healthy one stays on the attack."
+}

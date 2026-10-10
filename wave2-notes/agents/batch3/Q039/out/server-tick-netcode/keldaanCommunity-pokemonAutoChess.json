@@ -1,0 +1,103 @@
+{
+ "game": "keldaanCommunity-pokemonAutoChess",
+ "category": "server-tick-netcode",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/rooms/game-room.ts",
+ "licence": "GPL-3.0 (LICENSE line 1: GNU GENERAL PUBLIC LICENSE, Version 3)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/tick.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "variable-step",
+  "fixed-step",
+  "timer-wheel",
+  "grace-timer",
+  "new:dt-clamp"
+ ],
+ "data_fields": [
+  {
+   "name": "max_sim_dt_ms",
+   "donor_constant": "50",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/config/server/network.ts:12"
+  },
+  {
+   "name": "fight_clock_ms",
+   "donor_constant": "45000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/config/game/stages.ts:16"
+  },
+  {
+   "name": "victory_wait_ms",
+   "donor_constant": "3000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/rooms/commands/game-commands.ts:1178"
+  },
+  {
+   "name": "storm_lightning_interval_ms",
+   "donor_constant": "random 2000 to 6000",
+   "unit": "ms",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/simulation.ts:1355"
+  },
+  {
+   "name": "tidal_wave_interval_ms",
+   "donor_constant": "7000",
+   "unit": "ms",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/simulation.ts:1408"
+  },
+  {
+   "name": "tidal_wave_max_without_surfer",
+   "donor_constant": "2 (counter below 2 resets timer)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/simulation.ts:1406"
+  },
+  {
+   "name": "grass_heal_interval_ms",
+   "donor_constant": "2000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/pokemon-state.ts:899"
+  },
+  {
+   "name": "sandstorm_tick_ms",
+   "donor_constant": "1000",
+   "unit": "ms",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/pokemon-state.ts:909"
+  },
+  {
+   "name": "sandstorm_base_damage",
+   "donor_constant": "5",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/pokemon-state.ts:910"
+  },
+  {
+   "name": "one_second_cadence_ms",
+   "donor_constant": "1000 (fire, reset to 1000, countdown floored at 0)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/pokemon-state.ts:934"
+  },
+  {
+   "name": "pending_command_warn_count",
+   "donor_constant": "100 (log only)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/pokemon-state.ts:855"
+  }
+ ],
+ "best_idea": "Clamp each server tick's elapsed time to 50 ms so a lag spike slows the fight rather than skipping it, and when the fight clock runs out do not step the units on that tick.",
+ "decision": "adapt",
+ "decision_why": "The clamp and the clock-first timeout rule fit Frankendom's one-engine tick, but the donor's fixed blue-then-red step order would give one side an edge in duels, so only the clock rules are taken.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: a 200 ms stall advances the fight clock and the units by at most 50 ms, and a fight with no kill ends at time zero with no unit step on that tick. Duel test: simultaneous hits resolve in one tested order that does not depend on which side is listed first."
+}

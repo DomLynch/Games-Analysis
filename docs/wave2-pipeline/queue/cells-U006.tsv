@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+ClassicUO	3	animation-rigs	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client (Game/, Network/, Game/UI/Gumps, Game/Scenes) and ClassicUO.Renderer	9
+ClassicUO	5	server-tick-netcode	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client (Game/, Network/, Game/UI/Gumps, Game/Scenes) and ClassicUO.Renderer	9
+ClassicUO	6	anticheat-validation	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client (Game/, Network/, Game/UI/Gumps, Game/Scenes) and ClassicUO.Renderer	9

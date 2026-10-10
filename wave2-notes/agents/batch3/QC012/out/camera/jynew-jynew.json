@@ -1,0 +1,175 @@
+{
+ "game": "jynew-jynew",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameMaps/CameraControls/CameraHelper.cs",
+ "licence": "unclear: README line 290 says MIT with the community asset licence overriding parts; LICENSE line 8 forbids use of code or resources without authorisation; CinemachineTriggerActionHelper.cs line 5 says all code is MIT",
+ "licence_class": "restricted",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "new:camera-pivot",
+  "new:role-focus-switch",
+  "new:bounded-zoom-undo",
+  "new:guarded-ramp",
+  "new:timed-effect"
+ ],
+ "data_fields": [
+  {
+   "name": "follow_smoothing",
+   "donor_constant": "3 (smoothing; weight smoothing x dt in battle)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameMaps/CameraControls/CameraHelper.cs:27"
+  },
+  {
+   "name": "orbit_speed",
+   "donor_constant": "120 deg/s",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameMaps/CameraControls/CameraHelper.cs:26"
+  },
+  {
+   "name": "orbit_battle_multiplier",
+   "donor_constant": "2",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameMaps/CameraControls/CameraHelper.cs:54"
+  },
+  {
+   "name": "zoom_speed",
+   "donor_constant": "3 per wheel unit",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameMaps/CameraControls/CameraHelper.cs:28"
+  },
+  {
+   "name": "zoom_min_height",
+   "donor_constant": "3",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameMaps/CameraControls/CameraHelper.cs:30"
+  },
+  {
+   "name": "zoom_max_height",
+   "donor_constant": "20",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameMaps/CameraControls/CameraHelper.cs:31"
+  },
+  {
+   "name": "touch_zoom_min_height",
+   "donor_constant": "5",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameMaps/CameraControls/CameraHelper.cs:128"
+  },
+  {
+   "name": "touch_zoom_max_height",
+   "donor_constant": "10",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameMaps/CameraControls/CameraHelper.cs:128"
+  },
+  {
+   "name": "pan_speed",
+   "donor_constant": "30 units/s",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameMaps/CameraControls/CameraHelper.cs:179"
+  },
+  {
+   "name": "battle_fov_min",
+   "donor_constant": "20",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameMaps/CameraControls/CameraHelper.cs:332"
+  },
+  {
+   "name": "battle_fov_max",
+   "donor_constant": "70",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameMaps/CameraControls/CameraHelper.cs:332"
+  },
+  {
+   "name": "reset_fov",
+   "donor_constant": "60",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameMaps/CameraControls/CameraHelper.cs:348"
+  },
+  {
+   "name": "ramp_steps_per_second",
+   "donor_constant": "60 (duration x 60)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameMaps/CameraControls/CameraHelper.cs:298"
+  },
+  {
+   "name": "ramp_timer_padding",
+   "donor_constant": "60 fixed steps (frame + 60)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameMaps/CameraControls/CameraHelper.cs:308"
+  },
+  {
+   "name": "shake_duration",
+   "donor_constant": "per call (duration x 60 frames)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameMaps/CameraControls/CameraHelper.cs:284"
+  },
+  {
+   "name": "shake_amplitude",
+   "donor_constant": "per call",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameMaps/CameraControls/CameraHelper.cs:282"
+  },
+  {
+   "name": "shake_frequency",
+   "donor_constant": "per call",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameMaps/CameraControls/CameraHelper.cs:283"
+  },
+  {
+   "name": "prefab_fov",
+   "donor_constant": "50",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Prefabs/GameViewport/GameViewport_FollowCamera.prefab:56"
+  },
+  {
+   "name": "prefab_shoulder_offset",
+   "donor_constant": "(-0.52, 2.39, -4.53)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Prefabs/GameViewport/GameViewport_FollowCamera.prefab:155"
+  },
+  {
+   "name": "prefab_collision_radius",
+   "donor_constant": "0.001",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Prefabs/GameViewport/GameViewport_FollowCamera.prefab:163"
+  },
+  {
+   "name": "prefab_collision_mask",
+   "donor_constant": "262144",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Prefabs/GameViewport/GameViewport_FollowCamera.prefab:161"
+  }
+ ],
+ "best_idea": "A pivot that follows the acting character with a per-second lerp weight in combat and snaps while exploring, with bounded orbit, zoom and pan on top, and every timed camera move written as a fixed-step ramp with its own guard.",
+ "decision": "adapt",
+ "decision_why": "The donor shows a working per-turn pivot follow with bounded zoom-with-undo, which fits a world camera, but its guards are one-way, its smoothing is frame-rate dependent and its third-person collision is in Cinemachine code not shipped here, so the shape transfers and the maths must be rewritten.",
+ "decision_status": "proposed",
+ "acceptance": "When the acting character changes, the camera glides to it over a fraction of a second without a jump; wheel zoom stops at its height limits without sliding sideways; a headless test asserts a ramp moves in both directions and reaches its target within duration x 60 steps.",
+ "camera_scope": "world"
+}

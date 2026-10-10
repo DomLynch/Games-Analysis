@@ -1,2 +1,3 @@
 game	category	old	verdict	depth	finding
 veloren-veloren	spawns-encounters	P	STRONG	full	/mnt/frankendom-donors/veloren-veloren/rtsim/src/rule/architect.rs:55-252 architect_tick: budget, refill, drain, requeue; plus spawn_npc 421-615 and data/architect.rs ledger
+freeciv-freeciv	spawns-encounters	P	STRONG	full	/mnt/frankendom-donors/freeciv-freeciv/server/barbarian.c:533-760 try_summon_barbarians gates and count, summon_barbarians cadence (animals.c read and rejected as one-shot)

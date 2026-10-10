@@ -1,0 +1,138 @@
+{
+ "game": "supertuxkart-stk-code",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/supertuxkart-stk-code/src/graphics/camera/camera_normal.cpp",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "origins/client/world-camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "new:speed-scaled-pullback",
+  "new:dt-over-smooth-lerp",
+  "variable-step"
+ ],
+ "data_fields": [
+  {
+   "name": "rest_distance",
+   "donor_constant": "1.0 (standard preset; user_config.hpp 1036, 1086)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "src/config/user_config.hpp:1086"
+  },
+  {
+   "name": "pullback_min_factor",
+   "donor_constant": "2 x rest_distance (floor)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "src/graphics/camera/camera_normal.cpp:119"
+  },
+  {
+   "name": "pullback_base",
+   "donor_constant": "2.8 (behind = (2.8 + 5.6 x ratio) x sqrt(smooth))",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/graphics/camera/camera_normal.cpp:117"
+  },
+  {
+   "name": "pullback_speed_slope",
+   "donor_constant": "5.6 per unit speed ratio",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "src/graphics/camera/camera_normal.cpp:117"
+  },
+  {
+   "name": "reverse_speed_floor",
+   "donor_constant": "-0.12",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "src/graphics/camera/camera_normal.cpp:114"
+  },
+  {
+   "name": "height_base",
+   "donor_constant": "0.85 (height = 0.85 + ratio / 2.5)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/graphics/camera/camera_normal.cpp:128"
+  },
+  {
+   "name": "height_speed_slope",
+   "donor_constant": "1 / 2.5 per unit speed ratio",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "src/graphics/camera/camera_normal.cpp:128"
+  },
+  {
+   "name": "position_smooth_time",
+   "donor_constant": "0.2 (standard preset)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "src/config/user_config.hpp:1096"
+  },
+  {
+   "name": "rotation_smooth_time",
+   "donor_constant": "0.125 (standard preset)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "src/config/user_config.hpp:1101"
+  },
+  {
+   "name": "look_at_height",
+   "donor_constant": "0.5 above kart origin",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/graphics/camera/camera_normal.cpp:154"
+  },
+  {
+   "name": "frame_dt_cap",
+   "donor_constant": "3 x (1/60) s = 50 ms (not when networked)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "src/main_loop.cpp:306"
+  },
+  {
+   "name": "up_vector_blend",
+   "donor_constant": "0.04 per frame",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "src/graphics/camera/camera_normal.cpp:509"
+  },
+  {
+   "name": "flying_follow_back",
+   "donor_constant": "4.0 back, 0.5 up, no easing",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/graphics/camera/camera_normal.cpp:94"
+  },
+  {
+   "name": "start_offset_back",
+   "donor_constant": "-33 x sqrt(position smooth)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/graphics/camera/camera_normal.cpp:188"
+  },
+  {
+   "name": "fov_deg",
+   "donor_constant": "80 degrees (user config)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "src/config/user_config.hpp:1066"
+  },
+  {
+   "name": "drone_preset_distance",
+   "donor_constant": "2.6 (drone preset, no smoothing)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "src/config/user_config.hpp:1132"
+  }
+ ],
+ "best_idea": "Pull a third-person follow camera back as speed rises, floored at twice its rest distance, and ease its offset with a per-frame fraction dt / max(dt, T) so the lag is close to frame-rate independent.",
+ "decision": "adapt",
+ "decision_why": "Take the speed-scaled pull-back, the 2x distance floor and the dt/T easing for Frankendom's world camera; STK's camera is behind-centre with no shoulder offset and no wall collision, so we must add those ourselves; the drone preset is not a default; the dead steering side term is not ported.",
+ "decision_status": "proposed",
+ "acceptance": "At rest the world camera sits 2.0 m behind and 0.85 m up and never closer; at sprint it eases to about 3.75 m and 1.25 m up over about 0.2 s with no snap on a 50 ms hitch; a client test asserts distance >= 2 x rest distance at speed 0 and that offsets after 1 s at 60 Hz and 30 Hz differ by less than 5% of the gap.",
+ "camera_scope": "world"
+}

@@ -1,0 +1,20 @@
+{"game":"ClassicUO","category":"parties-guilds-chat","cell":18,"verdict":"STRONG","depth":"full",
+ "donor_path":"/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/PartyManager.cs",
+ "licence":"BSD 2-Clause License (LICENSE.md line 1; Copyright (c) 2025 andreakarasho)","licence_class":"permissive",
+ "target_module":"origins/server/party.ts","parity_row":18,
+ "pattern_tags":["presence-gated","stale-state","per-player-view","compute-budget","new:roster-rebuild","new:leader-by-slot"],
+ "data_fields":[
+  {"name":"party_capacity","donor_constant":"10","unit":"count","where":"engine constant","donor_ref":"/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/PartyManager.cs:16"},
+  {"name":"position_poll_interval","donor_constant":"250","unit":"ms","where":"engine constant","donor_ref":"/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/WorldMapEntityManager.cs:211"},
+  {"name":"party_position_queries_per_poll","donor_constant":"1 (break after first out-of-view member)","unit":"count","where":"engine constant","donor_ref":"/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/WorldMapEntityManager.cs:232"},
+  {"name":"trust_window_after_server_packet","donor_constant":"10000","unit":"ms","where":"engine constant","donor_ref":"/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/WorldMapEntityManager.cs:105"},
+  {"name":"marker_sweep_period","donor_constant":"1000","unit":"ms","where":"engine constant","donor_ref":"/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/WorldMapEntityManager.cs:170"},
+  {"name":"marker_expiry_after_last_update","donor_constant":"about 2000 (derived: LastUpdate = now + 1000 at 132/146; removed when LastUpdate < now - 1000 at 176)","unit":"ms","where":"engine constant","donor_ref":"/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/WorldMapEntityManager.cs:176"},
+  {"name":"out_of_view_range","donor_constant":"ClientViewRange (value not read; default Constants.MAX_VIEW_RANGE)","unit":"units","where":"engine constant","donor_ref":"/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/World.cs:109"}
+ ],
+ "best_idea":"The server sends the whole party roster and the client rebuilds from it, and a teammate's map marker is queried only when that teammate is out of sight, at most one query per 250 ms poll, and disappears about 2 s after its last update.",
+ "decision":"adapt",
+ "decision_why":"Frankendom's one-ledger, server-verified rule fits the roster mirror and the one-query-per-poll budget, but the client must never write the leader locally before the server confirms it, and the 10 s trust window that accepts local guesses must not be copied.",
+ "decision_status":"proposed",
+ "acceptance":"A server test sends a 3-member roster and then a removal of slot 0 and asserts the client view is empty; a poll test with two teammates out of view asserts exactly one party-position query per 250 ms; a marker not refreshed for 2 s is gone from the map."
+}

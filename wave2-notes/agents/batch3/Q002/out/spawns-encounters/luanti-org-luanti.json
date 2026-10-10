@@ -1,0 +1,74 @@
+{
+ "game": "luanti-org-luanti",
+ "category": "spawns-encounters",
+ "cell": 4,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/luanti-org-luanti/src/server/blockmodifier.cpp",
+ "licence": "LGPL-2.1-or-later (SPDX in source; LICENSE.txt 114-122)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "accumulator",
+  "compute-budget",
+  "new:density-signal",
+  "new:per-node-chance-roll"
+ ],
+ "data_fields": [
+  {
+   "name": "pass_interval",
+   "donor_constant": "abm_interval 1.0 (setting range 0.1-30)",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "src/defaultsettings.cpp:498"
+  },
+  {
+   "name": "pass_time_budget",
+   "donor_constant": "abm_time_budget 0.2 (ratio of pass interval)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "src/defaultsettings.cpp:499"
+  },
+  {
+   "name": "rule_interval",
+   "donor_constant": "Lua interval default 10",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "src/script/cpp_api/s_env.cpp:227"
+  },
+  {
+   "name": "rule_chance",
+   "donor_constant": "Lua chance default 50 (1 in N per matching node per run)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "src/script/cpp_api/s_env.cpp:230"
+  },
+  {
+   "name": "rule_y_band",
+   "donor_constant": "min_y default INT16_MIN, max_y default INT16_MAX",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "src/script/cpp_api/s_env.cpp:236"
+  },
+  {
+   "name": "density_neighbourhood",
+   "donor_constant": "3x3x3 blocks, unloaded parts extrapolated",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "src/server/blockmodifier.cpp:128"
+  },
+  {
+   "name": "phase_jitter",
+   "donor_constant": "random start within about +-0.51 x interval, clamped +-60 s, int-truncated",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "src/server/blockmodifier.cpp:23"
+  }
+ ],
+ "best_idea": "Run spawn rules on a fixed server pass with per-rule timers, shuffled order, a density count handed to each rule, and a time budget that defers the rest of the zones to the next pass.",
+ "decision": "adapt",
+ "decision_why": "Cadence, per-rule timer and time budget fit a per-tick NPC budget (row 18 sub-line) and zone population (row 23); the per-node 1-in-N roll would scale spawn density with anchor count, and the donor catch-up is a no-op, so both are rejected.",
+ "decision_status": "proposed",
+ "acceptance": "A server test: a zone rule with interval 10 s runs at most once per 10 s of server time; with a 200 ms budget, a pass over N zones stops early and unvisited zones run on the next pass; the rule receives zone and neighbourhood counts so it can refuse a spawn over the cap."
+}

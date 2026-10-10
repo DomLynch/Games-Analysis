@@ -1,0 +1,68 @@
+{
+ "game": "AAEmu-AAEmu",
+ "category": "quests-dialogue",
+ "cell": 12,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/Quests/NewQuestCode.cs",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/quests.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "new:objective-ladder",
+  "new:early-turn-in",
+  "new:dirty-flag-queue",
+  "new:client-asserted-talk",
+  "clamp-and-report"
+ ],
+ "data_fields": [
+  {
+   "name": "objective_max_factor_letitdone",
+   "donor_constant": "ceil(Count x 1.5) when LetItDone (donor ceil; status checks use integer division)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Models/Game/Quests/Templates/QuestActTemplate.cs:111"
+  },
+  {
+   "name": "early_turn_in_fraction",
+   "donor_constant": "Count x 1/2 (integer division in status check)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Models/Game/Quests/NewQuestCode.cs:271"
+  },
+  {
+   "name": "reward_ratio_can_early_complete",
+   "donor_constant": "0.3",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "Models/Game/Quests/Quest.cs:359"
+  },
+  {
+   "name": "reward_ratio_overachieved",
+   "donor_constant": "1.2",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "Models/Game/Quests/Quest.cs:368"
+  },
+  {
+   "name": "reward_ratio_complete_and_extra",
+   "donor_constant": "1.0 (NotReady 0)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "Models/Game/Quests/Quest.cs:356-372"
+  },
+  {
+   "name": "count_per_objective",
+   "donor_constant": "per-act Count from quest data",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "Models/Game/Quests/Templates/QuestActTemplate.cs:28"
+  }
+ ],
+ "best_idea": "A contract with an early turn-in (30% at half progress), a full payout at target, and a 120% overachieved bonus, all computed as a pure function of the objective counters and paid through one ledger.",
+ "decision": "adapt",
+ "decision_why": "The status ladder and ratios are plain numbers that fit bounties and contracts, but the integer-division quirk, the client-asserted talk and the untested early turn-in must not be copied.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: a count-2 LetItDone contract refuses turn-in at 0 of 2 kills, pays 30% of the pool at 1 of 2, 100% at 2 of 2, and 120% at 3 kills; a turn-in request from a player beyond the NPC's range is refused."
+}

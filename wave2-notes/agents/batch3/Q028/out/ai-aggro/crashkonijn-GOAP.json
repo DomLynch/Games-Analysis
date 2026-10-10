@@ -1,0 +1,60 @@
+{
+ "game": "crashkonijn-GOAP",
+ "category": "ai-aggro",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/crashkonijn-GOAP/Package/Runtime/CrashKonijn.Goap.Resolver/GraphResolverJob.cs",
+ "licence": "Apache-2.0 (LICENSE read: Apache License Version 2.0, January 2004)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/ai.ts",
+ "parity_row": 2,
+ "pattern_tags": [
+  "target-score",
+  "new:goal-cost-planner",
+  "new:exclusive-claim",
+  "new:interval-sense"
+ ],
+ "data_fields": [
+  {
+   "name": "goal_start_cost",
+   "donor_constant": "per-goal Costs[i] as set by config (value not read)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "GraphResolverJob.cs:103"
+  },
+  {
+   "name": "action_cost",
+   "donor_constant": "per-action Costs[i] as set by config (value not read)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "GraphResolverJob.cs:212"
+  },
+  {
+   "name": "distance_multiplier",
+   "donor_constant": "1f / speed; default 1f",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "GoapActionProvider.cs:380"
+  },
+  {
+   "name": "sense_interval",
+   "donor_constant": "caller-supplied float, no default in donor (unit not read)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "SensorTimer.cs:46"
+  },
+  {
+   "name": "slot_owner_count",
+   "donor_constant": "1 owner per item (donor), Frankendom needs up to 3 holders",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "ItemBase.cs:40"
+  }
+ ],
+ "best_idea": "Choose an enemy action as a cost race (action cost plus travel time to the target, goal priority as the starting cost) and take the first executable plan popped.",
+ "decision": "adapt",
+ "decision_why": "Frankendom's AI brain (row 2) needs a cost-ranked choice between attack, approach and hold plus a slot claim, but a general graph planner per enemy per tick is too heavy for MAX_ATTACKERS = 3; keep the cost race and travel-time term, drop the Burst graph and the non-admissible sum.",
+ "decision_status": "proposed",
+ "acceptance": "In a 1-vs-3 fight the three attackers each hold a distinct attack slot (server test: no slot held twice, slot released on cancel); a fourth enemy chooses hold until a slot frees."
+}

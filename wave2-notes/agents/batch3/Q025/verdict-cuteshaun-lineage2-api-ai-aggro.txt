@@ -1,0 +1,21 @@
+cuteshaun-lineage2-api | ai-aggro (cell 1) | PARTIAL | depth thin | licence MIT (LICENSE: "MIT License", Copyright (c) 2026 Andrii Tsapko)
+camera_scope: not applicable (ai-aggro)
+
+Hint file opened: src/lib/types.ts (lines 140-168). It is a data type: aiAggro, aiClanRange, aiClan fields copied from the XML.
+
+Files opened (at least 3):
+- src/lib/types.ts (140-168): NPC record fields for <ai> attributes; clan-assist doc comment (153-165).
+- src/lib/api/dto/npc.ts (60-96, 355-366): NpcBehaviorDto doc comments and the mapper that builds the optional behavior group.
+- scripts/parse-npcs.ts (174-220): parseAi reads @_aggro, @_clanRange, @_clan from the XML <ai> node.
+- docs/api-contract.md (lines 565-566, grep read only): public field table for behavior.aggroRange and behavior.assistRange.
+- README.md (head): confirms the repo is "a public, read-only HTTP API" for Lineage 2 Interlude data.
+Repo-wide grep (assist, sight, passive, chase, flee, target, aggro, hate, threat) found no runtime NPC AI: no target selection, no chase, no flee, no hate or threat list. The only aggro and assist logic is the data mapping above.
+
+Checked: the donor is a read-only data API (README.md). It stores and serves two radii per NPC: sight-aggro (aggroRange, 0 = passive) and clan-assist (assistRange, present only when the NPC has clanRange). The whole mechanism in the donor is these two numbers, documented as "I see a player and attack" versus "a clan member was attacked, I help". I could not find the code that acts on them (not in this repo). So this is real but thin: a data shape, not a behaviour.
+
+Best transferable idea: give each creature two zone-data radii, a sight radius where 0 means passive and a separate group-assist radius that pulls same-group creatures into a fight when one of them is attacked.
+
+Decision (proposed): adapt - the two-radius data shape fits zones as data and the many-on-one rule (MAX_ATTACKERS = 3 caps how many join); we must write the chase, leash and assist behaviour ourselves in the engine because the donor has none to copy.
+
+Donor sources cited in receipts.tsv: scripts/parse-npcs.ts 207, 215; src/lib/api/dto/npc.ts 70, 76, 360-362; src/lib/types.ts 154.
+Unread: any runtime that consumes behavior.aggroRange or assistRange (not in this donor).

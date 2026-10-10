@@ -1,0 +1,17 @@
+VERDICT: NONE
+cell: 2 ai-aggro (game flutter-team-archive-pinball, list 8)
+Donor: /mnt/frankendom-donors/flutter-team-archive-pinball | Licence: MIT License, Copyright (c) 2021 Very Good Ventures (LICENSE line 1) | Dart (Flame + Forge2D pinball)
+Checked: Donor is a Flutter pinball game with no enemies, targets, or AI. Confidence high that no enemy-AI mechanism exists in the repo: grep for aggro|threat|target|chase|flee|hate|enemy|seek|steer|pursu|homing|towards|nearest|closest over packages/*/lib and lib returned only fixture targeting (contact_behavior.dart), Firebase defaultTargetPlatform, a kicker doc comment, and a ball turbo-charge flame sprite orientation (ball_turbo_charging_behavior.dart:51, visual only). The hint file (contact_behavior.dart) is a collision-callback helper, not AI.
+
+Files opened (at least 3 candidates):
+1. /mnt/frankendom-donors/flutter-team-archive-pinball/packages/pinball_flame/lib/src/behaviors/contact_behavior.dart (full file read): generic contact-callback wrapper; fixture targeting by userData, not AI.
+2. /mnt/frankendom-donors/flutter-team-archive-pinball/packages/pinball_components/lib/src/components/bumping_behavior.dart (full): bounce impulse on contact along the world manifold normal; a physics reaction, not a target choice.
+3. /mnt/frankendom-donors/flutter-team-archive-pinball/packages/pinball_components/lib/src/components/chrome_dino/behaviors/chrome_dino_spitting_behavior.dart (full): fires a spit on a mouth-open state edge after a 0.4 s TimerComponent; scripted animatronic, no target chosen.
+4. /mnt/frankendom-donors/flutter-team-archive-pinball/packages/pinball_components/lib/src/components/sparky_computer/behaviors/sparky_computer_sensor_ball_contact_behavior.dart (full): stops the ball on sensor entry, waits 1.5 s via TimerComponent, then applies a fixed impulse Vector2(40, 110); scripted, no choice.
+5. /mnt/frankendom-donors/flutter-team-archive-pinball/packages/pinball_components/lib/src/components/ball/behaviors/ball_turbo_charging_behavior.dart (full read of the first 70 lines): sets a fixed linearVelocity impulse for a 5 s TimerComponent; line 51 only orients the flame sprite from the negated velocity (visual, not a chase).
+
+Why NONE: the only behaviour that reacts to a moving object is physics bounce and scripted timers; nothing selects a target, tracks aggro or threat, chases, or flees.
+
+Best transferable idea: Telegraphed scripted actions (a state-edge trigger plus a fixed-delay TimerComponent, as in the Chrome dino spit) could drive a boss wind-up in a many-on-one fight without any AI.
+
+Decision (proposed): reject for ai-aggro. The pattern is a scripted timer, not target selection; Frankendom's hate list and target choice live in the engine (src/fight), and this donor gives nothing to put there.

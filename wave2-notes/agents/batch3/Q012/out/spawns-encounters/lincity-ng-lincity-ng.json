@@ -1,0 +1,90 @@
+{
+ "game": "lincity-ng-lincity-ng",
+ "category": "spawns-encounters",
+ "cell": 4,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/shanty.cpp",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "director",
+  "hysteresis",
+  "population-cap",
+  "timer-wheel",
+  "new:resource-pool-drain",
+  "new:batch-catch-up"
+ ],
+ "data_fields": [
+  {
+   "name": "feed_pool_drain_per_spawn",
+   "donor_constant": "5 per shanty per update",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/shanty.cpp:123"
+  },
+  {
+   "name": "reserve_per_commune",
+   "donor_constant": "5 per commune",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/commune.hpp:49"
+  },
+  {
+   "name": "min_pool_before_first_spawn",
+   "donor_constant": "150 (SHANTY_MIN_PP)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/shanty.hpp:49"
+  },
+  {
+   "name": "pool_per_additional_spawn",
+   "donor_constant": "50 (SHANTY_POP)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/shanty.hpp:50"
+  },
+  {
+   "name": "batch_divisor",
+   "donor_constant": "1 + deficit/10 spawns per update",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/shanty.cpp:132"
+  },
+  {
+   "name": "removal_hysteresis",
+   "donor_constant": "remove only when target < count - 1",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/shanty.cpp:135"
+  },
+  {
+   "name": "update_period",
+   "donor_constant": "100 game days (NUMOF_DAYS_IN_MONTH), offset 15",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/simulate.cpp:107"
+  },
+  {
+   "name": "placement_near_existing_chance",
+   "donor_constant": "7 in 8 near existing shanty, 1 in 8 near market",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/shanty.cpp:78"
+  },
+  {
+   "name": "placement_footprint",
+   "donor_constant": "2x2 bare area",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/shanty.cpp:86"
+  }
+ ],
+ "best_idea": "A periodic director: a zone's pressure pool is drained by each live spawn, the target count is the pool surplus above a reserve in fixed steps, spawns come in batches, and removal starts only when the count is more than one above target.",
+ "decision": "adapt",
+ "decision_why": "Row 23 needs despawn with a grace timer; the drain-by-live-count feedback and one-spare hysteresis fit it. The monthly cadence, economic pool source, burn-down removal and city placement are not adopted.",
+ "decision_status": "proposed",
+ "acceptance": "Server test on zone data (reserve 0, minimum 150, step 50): 5 live spawns and pool 375 before the update removes nothing (target 4); pool 325 removes exactly one (target 3); 0 spawns and pool 500 adds exactly one per update."
+}

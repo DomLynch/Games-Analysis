@@ -1,0 +1,90 @@
+{
+ "game": "open-duelyst-duelyst",
+ "category": "server-tick-netcode",
+ "cell": 8,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/open-duelyst-duelyst/server/game.coffee",
+ "licence": "CC0-1.0 (LICENSE, COPYING, package.json)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/net-tick.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "grace-timer",
+  "clamp-and-report",
+  "per-player-view",
+  "new:authoritative-command-intake",
+  "new:wall-clock-deadline",
+  "new:idle-turn-allowance"
+ ],
+ "data_fields": [
+  {
+   "name": "turn_limit_active",
+   "donor_constant": "90.0 (CONFIG.TURN_DURATION)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/open-duelyst-duelyst/app/common/config.js:525"
+  },
+  {
+   "name": "turn_limit_idle",
+   "donor_constant": "15.0 (CONFIG.TURN_DURATION_INACTIVE)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/open-duelyst-duelyst/app/common/config.js:526"
+  },
+  {
+   "name": "grace_hidden",
+   "donor_constant": "2.0 (CONFIG.TURN_DURATION_LATENCY_BUFFER)",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/open-duelyst-duelyst/app/common/config.js:527"
+  },
+  {
+   "name": "idle_rule_min_turns",
+   "donor_constant": "more than 2 ended turns",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/open-duelyst-duelyst/server/game.coffee:803"
+  },
+  {
+   "name": "auto_step_bonus",
+   "donor_constant": "2000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/open-duelyst-duelyst/server/game.coffee:1238"
+  },
+  {
+   "name": "clock_heartbeat",
+   "donor_constant": "1000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/open-duelyst-duelyst/server/game.coffee:773"
+  },
+  {
+   "name": "absent_player_grace",
+   "donor_constant": "60000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/open-duelyst-duelyst/server/game.coffee:720"
+  },
+  {
+   "name": "spectator_delay",
+   "donor_constant": "30000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/open-duelyst-duelyst/server/game.coffee:1083"
+  },
+  {
+   "name": "spectator_flush",
+   "donor_constant": "500",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/open-duelyst-duelyst/server/game.coffee:862"
+  }
+ ],
+ "best_idea": "The server takes only the explicit command from the client, drops the client's implied effects, re-runs the command itself and stamps the result with its own clock, and runs the turn deadline from wall-clock time with a hidden grace the viewer never sees.",
+ "decision": "adapt",
+ "decision_why": "The explicit-command intake fits our server-verified kills; the deadline clock is a shape only because the donor is turn-based and we are real-time. The followup snapshot-and-rollback and the held opponent view are rejected: they need a hidden pending choice and a second copy of state.",
+ "decision_status": "proposed",
+ "acceptance": "A server test sends an explicit attack with an injected implied damage effect; the server drops the injected effect, applies its own damage value, stamps the step with server time, and the client timer shows the server limit minus 2 s."
+}

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+levy-street-world-of-claudecraft	server-tick-netcode	P	STRONG	full	server/game.ts:2541-2663 (fixed-step accumulator, 0.5 s dt clamp at 2560, one sim.tick per step at 2594, snapshots once per callback at 2636); sim.ts:6057 idle-mob skip and tick_rate_meter.ts:35-102 achieved-rate meter
+EQEmu	server-tick-netcode	P	STRONG	full	zone/main.cpp:512-638 (32 ms repeating loop, raw unclamped frame_time at 520); mob_movement_manager.cpp:221 variable-step move with heartbeats at 197/346/466 and engaged FixZ at 252; common/timer.cpp:82-94 accurate-vs-reset timers; entity.cpp:471-522 idle-zone gate
+veloren-veloren	server-tick-netcode	P	STRONG	thin	common/src/clock.rs:97-179 (averages, sleep to target, game-time nudge 0.05 and 0.2 s cap); server-cli/src/main.rs:323-325 and 436-437 one server tick per loop with game dt; server/src/lib.rs:877-916 (sync and world tick read in part)

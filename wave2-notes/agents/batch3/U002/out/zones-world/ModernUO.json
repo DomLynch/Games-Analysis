@@ -1,0 +1,89 @@
+{
+ "game": "ModernUO",
+ "category": "zones-world",
+ "cell": 7,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/Spawners/BaseSpawner.cs",
+ "licence": "GPL-3.0 (repo LICENSE GPLv3; ProximitySpawner.cs header 'either version 3 ... or any later version'; BaseSpawner.cs has no per-file header)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "director",
+  "population-cap",
+  "group-refill",
+  "presence-gated",
+  "wait-gate"
+ ],
+ "data_fields": [
+  {
+   "name": "zone_cap",
+   "donor_constant": "1 (default count)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/Spawners/BaseSpawner.cs:261"
+  },
+  {
+   "name": "entry_weight",
+   "donor_constant": "100 (default probability; relative weight, not a percent)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/Spawners/SpawnerEntry.cs:90"
+  },
+  {
+   "name": "entry_cap",
+   "donor_constant": "1 (default per-entry max count)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/Spawners/SpawnerEntry.cs:91"
+  },
+  {
+   "name": "respawn_min_ms",
+   "donor_constant": "300000 (5 min)",
+   "unit": "ms",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/Spawners/BaseSpawner.cs:49"
+  },
+  {
+   "name": "respawn_max_ms",
+   "donor_constant": "600000 (10 min)",
+   "unit": "ms",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/Spawners/BaseSpawner.cs:50"
+  },
+  {
+   "name": "proximity_trigger_range",
+   "donor_constant": "0 (constructor parameter default; field default not read)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/Spawners/ProximitySpawner.cs:27"
+  },
+  {
+   "name": "despawn_grace_s",
+   "donor_constant": "none (no grace timer in donor)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "none"
+  },
+  {
+   "name": "position_attempts",
+   "donor_constant": "10",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/Spawners/BaseSpawner.cs:148"
+  },
+  {
+   "name": "spiral_rings_per_call",
+   "donor_constant": "3 at ring 0, then 1",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/Spawners/BaseSpawner.cs:536"
+  }
+ ],
+ "best_idea": "One zone timer with a random respawn delay drawn fresh on each arm, a cap that blocks refill when full, weighted entries whose full members leave the pool, and a removal that re-arms the timer only when it is idle and the zone has room.",
+ "decision": "adapt",
+ "decision_why": "Take the cap, the one-timer re-arm rule, the weighted entry pick with per-entry caps and the presence-gated trigger; the donor has no despawn on empty, so the grace despawn is ours to build and test.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: a zone with cap 6 and respawn 90-180 s schedules exactly one respawn timer in [90, 180] s after a kill and does not arm a second on a further kill while armed; a group zone with two survivors at timer fire spawns nothing; after the last player leaves, spawns persist for the grace seconds and despawn on expiry, and a re-entry inside the grace cancels the despawn."
+}

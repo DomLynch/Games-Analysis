@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ModernUO	loot-drops	P	STRONG	full	/mnt/frankendom-donors/ModernUO/Projects/UOContent/Misc/LootPack.cs:118-158 (per-entry chance roll, one luck re-roll, weighted pick) and Mobiles/BaseCreature.cs:3344-3454 (damage-share looting rights with 1.25x first hitter and top-divided threshold).
+ModernUO	inventory-bank-equipment	P	STRONG	full	/mnt/frankendom-donors/ModernUO/Projects/Server/Items/Container.cs:224-276 and 426-445 (one hold check up the container chain, stack-first drop); Server/Items/Item.cs:3335-3350 and Server/Mobiles/Mobile.cs:4002-4030 (cached totals by delta); UOContent/Misc/StaminaSystem.cs:410-430 (overweight step loss).
+ModernUO	progression	P	STRONG	full	/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/ConPVP/Ladder.cs:171-256 (level bands, win/loss offset table gated at six levels, loss factor by own level) and DuelContext.cs:848-890 (award path; Find defect at Ladder.cs:289-299).

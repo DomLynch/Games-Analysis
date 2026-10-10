@@ -1,0 +1,108 @@
+{
+ "game": "wesnoth-wesnoth",
+ "category": "ai-aggro",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/wesnoth-wesnoth/src/ai/default/attack.cpp",
+ "licence": "GPL-2.0-or-later, as read in attack.cpp header lines 7-8 (version 2 or any later version); COPYING is GPL v2",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/ai-target.ts",
+ "parity_row": 2,
+ "pattern_tags": [
+  "target-score",
+  "new:loss-aversion-knob",
+  "new:engage-only-if-positive"
+ ],
+ "data_fields": [
+  {
+   "name": "aggression",
+   "donor_constant": "0.4",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/ai/utils/default_config.cfg:44"
+  },
+  {
+   "name": "leaderAggression",
+   "donor_constant": "-4.0",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/ai/utils/default_config.cfg:60"
+  },
+  {
+   "name": "caution",
+   "donor_constant": "0.25",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/ai/utils/default_config.cfg:58"
+  },
+  {
+   "name": "leaderThreatAggression",
+   "donor_constant": "1.0 (overrides aggression)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/wesnoth-wesnoth/src/ai/default/attack.cpp:271"
+  },
+  {
+   "name": "leaderThreatMultiplier",
+   "donor_constant": "5.0",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/wesnoth-wesnoth/src/ai/default/attack.cpp:318"
+  },
+  {
+   "name": "vetoVulnerability",
+   "donor_constant": "50.0",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/wesnoth-wesnoth/src/ai/default/attack.cpp:304"
+  },
+  {
+   "name": "vetoSupportRatio",
+   "donor_constant": "2.0 (vulnerability > 2 x support)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/wesnoth-wesnoth/src/ai/default/attack.cpp:304"
+  },
+  {
+   "name": "vetoKillChance",
+   "donor_constant": "0.02",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/wesnoth-wesnoth/src/ai/default/attack.cpp:305"
+  },
+  {
+   "name": "vetoAggressionCeiling",
+   "donor_constant": "0.75",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/wesnoth-wesnoth/src/ai/default/attack.cpp:305"
+  },
+  {
+   "name": "maxAttackers",
+   "donor_constant": "5 (Frankendom ruling: 3)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/wesnoth-wesnoth/src/ai/default/aspect_attacks.cpp:142"
+  },
+  {
+   "name": "commitThreshold",
+   "donor_constant": "rating must be > 0",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/wesnoth-wesnoth/src/ai/default/ca.cpp:230"
+  },
+  {
+   "name": "targetValueXpBonus",
+   "donor_constant": "cost x (1 + xp / max xp)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/wesnoth-wesnoth/src/ai/default/attack.cpp:65"
+  }
+ ],
+ "best_idea": "Score every (target, attacker-set) option as chance to kill times target value, minus expected own loss weighted by (1 - aggression), divided by resources spent, and engage only when the best score is above zero.",
+ "decision": "adapt",
+ "decision_why": "The one-scalar score, one aggression knob and engage-only-above-zero gate fit the engine's many-on-one target choice, but Frankendom needs its own chance-to-kill and expected-loss estimator from the duel step (row 1) and a 3-attacker cap; Wesnoth's turn-based simulation and tile support terms do not port.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: one hero, three creatures in reach, aggression 0.4. The creature the score ranks highest is the one that attacks, no more than 3 creatures are assigned to one target, and when every option scores at or below zero no creature engages."
+}

@@ -1,0 +1,92 @@
+{
+ "game": "rathena-rathena",
+ "category": "ai-aggro",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/rathena-rathena/src/map/mob.cpp",
+ "licence": "GPL-3.0 (read: /mnt/frankendom-donors/rathena-rathena/LICENSE, GNU GENERAL PUBLIC LICENSE Version 3)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/ai.ts",
+ "parity_row": 2,
+ "pattern_tags": [
+  "target-score",
+  "presence-gated",
+  "grace-timer",
+  "hysteresis",
+  "new:retarget-on-hit-gate",
+  "new:rude-attack-counter",
+  "new:chase-refresh-cells",
+  "new:lazy-far-think"
+ ],
+ "data_fields": [
+  {
+   "name": "presence_radius",
+   "donor_constant": "AREA_SIZE (14, client.conf) + ACTIVE_AI_RANGE (4) cells: hard AI within this of a player",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/map/mob.cpp:2351"
+  },
+  {
+   "name": "hard_think_ms",
+   "donor_constant": "MIN_MOBTHINKTIME 100 ms timer",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/map/mob.cpp:7363"
+  },
+  {
+   "name": "lazy_think_ms",
+   "donor_constant": "MIN_MOBTHINKTIME*10 = 1000 ms timer",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/map/mob.cpp:7364"
+  },
+  {
+   "name": "unlock_ms",
+   "donor_constant": "mob_unlock_time 2000 (conf)",
+   "unit": "ms",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/conf/battle/monster.conf:338"
+  },
+  {
+   "name": "chase_refresh_cells",
+   "donor_constant": "monster_chase_refresh default 32",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/map/battle.cpp:8748"
+  },
+  {
+   "name": "rude_attack_threshold",
+   "donor_constant": "RUDE_ATTACKED_COUNT 1",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/map/mob.cpp:49"
+  },
+  {
+   "name": "weak_target_level_gap",
+   "donor_constant": "level >= mob level - 5 is skipped (MD_TARGETWEAK)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/map/mob.cpp:1330"
+  },
+  {
+   "name": "skill_interval_ms",
+   "donor_constant": "MOB_SKILL_INTERVAL 1000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/map/mob.hpp:42"
+  },
+  {
+   "name": "random_walk_delay_ms",
+   "donor_constant": "MIN_RANDOMWALKTIME 4000 + rnd()%1000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/map/mob.hpp:39"
+  }
+ ],
+ "best_idea": "A mob only switches to the player who hit it when that player is in view and reachable, so a distant or unreachable hitter counts as a rude attack and does not pull aggro.",
+ "decision": "adapt",
+ "decision_why": "Take the retarget-on-hit gate (in view and reachable, otherwise a counted rude attack) and the presence route (hard AI near, lazy pass far) with its numbers as data. Reject the damage log as a threat table (it only feeds rewards; targeting does not read it) and the monster_ai bit switches (defaults are 0; Frankendom needs one rule set). No attacker cap exists in the donor, so MAX_ATTACKERS = 3 must be engine-enforced.",
+ "decision_status": "proposed",
+ "acceptance": "A server test with a mob and a player 10 cells away at weapon range 2 that cannot be reached asserts the hit leaves the target unchanged and raises the rude count to 1; and a mob 19 cells from every player is routed lazy, not hard."
+}

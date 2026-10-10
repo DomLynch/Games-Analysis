@@ -1,0 +1,81 @@
+{
+ "game": "gawric-Unity-Client-for-L2J",
+ "category": "ai-aggro",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "thin",
+ "donor_path": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/Manager/MonsterManager/Move/MoveAllCharacters.cs",
+ "licence": "Apache-2.0, as read: repo root LICENSE header 'Apache License, Version 2.0, January 2004'",
+ "licence_class": "permissive",
+ "target_module": "src/fight/chase.ts",
+ "parity_row": 4,
+ "pattern_tags": [
+  "follow-point",
+  "stale-state",
+  "new:live-target-chase",
+  "new:blocked-finish"
+ ],
+ "data_fields": [
+  {
+   "name": "stopDistance",
+   "donor_constant": "server-sent Distance; 0.1 when absent or <= 0.01",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Controller/EntityAction/EntityActionMove.cs:98"
+  },
+  {
+   "name": "reachedTolerance",
+   "donor_constant": "0.12 added to stop distance",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Controller/EntityAction/L2PawnRange.cs:67"
+  },
+  {
+   "name": "collisionIgnoreDistance",
+   "donor_constant": "0.15",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Controller/EntityAction/L2PawnRange.cs:50"
+  },
+  {
+   "name": "snapSkipDistance",
+   "donor_constant": "200 L2 units",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Controller/EntityAction/L2PawnRange.cs:10"
+  },
+  {
+   "name": "stopMessageNearWindow",
+   "donor_constant": "0.35",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/WorldApply/UserWorldApply.cs:72"
+  },
+  {
+   "name": "stopMessageDestWindow",
+   "donor_constant": "0.5",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/WorldApply/UserWorldApply.cs:73"
+  },
+  {
+   "name": "moveTargetTolerance",
+   "donor_constant": "0.1",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Controller/EntityAction/EntityActionMove.cs:70"
+  },
+  {
+   "name": "blockedSpeedFloor",
+   "donor_constant": "speed > 0.001 for the blocked check",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/Manager/MonsterManager/Move/MoveAllCharacters.cs:188"
+  }
+ ],
+ "best_idea": "A chaser re-reads the live target every fixed step, walks toward it until it is inside the server-sent stop distance, and finishes in place when a step makes no progress.",
+ "decision": "adapt",
+ "decision_why": "Take the live re-read, the stop distance as data and the blocked-finish for the approach; reject the client-side patches that ignore late stop messages, because one engine means the server state wins and the client must not replay a stop it disagrees with. This is the player's chase, not enemy AI.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: a hero is sent a chase on a creature that moves 5 units during the chase. The hero ends within the server-sent stop distance (plus one step) of the creature's final position, and the chase ends at the first step where the hero does not move (blocked by a wall), not on a stored point."
+}

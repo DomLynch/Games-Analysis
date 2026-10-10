@@ -1,0 +1,21 @@
+{"game":"ClassicUO","category":"city-map-design","cell":20,"verdict":"STRONG","depth":"full",
+ "donor_path":"/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Scenes/GameSceneDrawingSorting.cs",
+ "licence":"BSD 2-Clause License (LICENSE.md line 1; Copyright (c) 2025 andreakarasho)","licence_class":"permissive",
+ "target_module":"origins/client/roof-cut.ts","parity_row":11,
+ "pattern_tags":["stale-state","new:ceiling-window","new:roof-flood-ground","new:occluder-fade"],
+ "data_fields":[
+  {"name":"ceiling_search_start_above_player","donor_constant":"14","unit":"units","where":"engine constant","donor_ref":"/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Scenes/GameSceneDrawingSorting.cs:87"},
+  {"name":"draw_cap_floor_above_player","donor_constant":"16","unit":"units","where":"engine constant","donor_ref":"/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Scenes/GameSceneDrawingSorting.cs:88"},
+  {"name":"no_ceiling_sentinel","donor_constant":"127","unit":"units","where":"engine constant","donor_ref":"/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Scenes/GameSceneDrawingSorting.cs:74"},
+  {"name":"roof_link_height_window","donor_constant":"6","unit":"units","where":"engine constant","donor_ref":"/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Map/Map.cs:192"},
+  {"name":"flood_fill_visited_slots","donor_constant":"64 x 64 = 4096 (mask 0x3F per axis)","unit":"count","where":"engine constant","donor_ref":"/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Map/Map.cs:14"},
+  {"name":"fade_step_per_tick","donor_constant":"25","unit":"units","where":"engine constant","donor_ref":"/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Scenes/GameSceneDrawingSorting.cs:416"},
+  {"name":"fade_tick_interval","donor_constant":"20","unit":"ms","where":"engine constant","donor_ref":"/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Constants.cs:42"},
+  {"name":"translucent_target_alpha","donor_constant":"178","unit":"units","where":"engine constant","donor_ref":"/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Scenes/GameSceneDrawingSorting.cs:373"}
+ ],
+ "best_idea":"Find the overhead roof nearest the player, flood-fill the connected roof tiles within 6 height units to get the lowest connected roof, cap the draw there but never below the player's height plus 16, and fade the roofs above the cap out over a few ticks instead of cutting them.",
+ "decision":"adapt",
+ "decision_why":"The height window and flood-filled ground height fit a town-building occlusion rule for the world client, but it is client-only draw logic: it must not decide anything the server verifies, and the diagonal scan offset and the unbounded flood fill must not be copied.",
+ "decision_status":"proposed",
+ "acceptance":"Walking under a town roof, the roof tiles above the player fade out within a few frames and the player stays visible; a headless test of the cut asserts a draw cap of player height plus 16 for an eave 15 units up and the lowest connected roof height for a roof 18 units up."
+}

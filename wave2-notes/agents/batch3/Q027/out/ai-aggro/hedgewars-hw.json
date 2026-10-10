@@ -1,0 +1,31 @@
+{
+  "game": "hedgewars-hw",
+  "category": "ai-aggro",
+  "cell": 1,
+  "verdict": "STRONG",
+  "depth": "thin",
+  "donor_path": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uAIMisc.pas",
+  "licence": "GPL version 2 (header: 'version 2 of the License'; COPYING is GPL v2)",
+  "licence_class": "copyleft",
+  "target_module": "src/fight/ai-target.ts",
+  "parity_row": 2,
+  "pattern_tags": ["target-score", "hysteresis", "hit-aggregation", "new:friendly-fire-count-scale"],
+  "data_fields": [
+    {"name": "kill_bonus", "donor_constant": "200 points (KillScore)", "unit": "points", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uAIMisc.pas:106"},
+    {"name": "rate_per_damage_point", "donor_constant": "1024 rate units per point (literal 1024)", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uAIMisc.pas:676"},
+    {"name": "friendly_base_pct", "donor_constant": "300 percent", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uAIMisc.pas:108"},
+    {"name": "friendly_pct_per_extra_enemy", "donor_constant": "30 percent per enemy above allies", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uAIMisc.pas:199"},
+    {"name": "friendly_slope_pct", "donor_constant": "80 percent per ally, divided by enemies", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uAIMisc.pas:200"},
+    {"name": "friendly_floor_pct", "donor_constant": "30 percent", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uAIMisc.pas:200"},
+    {"name": "switch_margin_per_bot_level", "donor_constant": "(BotLevel - 1) * 2048", "unit": "units", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uAI.pas:151"},
+    {"name": "damage_modifier", "donor_constant": "0.01 * cDamageModifier * cDamagePercent (source constants not read)", "unit": "ratio", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uAI.pas:494"},
+    {"name": "give_up_threshold", "donor_constant": "-1023", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uAI.pas:547"},
+    {"name": "bad_turn", "donor_constant": "Low(LongInt) div 4", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uAIMisc.pas:32"},
+    {"name": "target_cap", "donor_constant": "255 entries", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uAIMisc.pas:151"}
+  ],
+  "best_idea": "Score every candidate action by summing per-target values, where ally hits subtract value scaled by a weight that depends on how many allies and enemies are still alive, then keep the best candidate only if it beats the current one by a margin.",
+  "decision": "adapt",
+  "decision_why": "The rating shape (enemy value positive, ally harm weighted by living-count ratio, kill bonus, margin before switching) is reusable for choosing an attack or AoE option in a many-on-one fight; the artillery trajectory tracing and per-weapon ammo tests do not fit a fast duel.",
+  "decision_status": "proposed",
+  "acceptance": "If an area action exists in src/fight/ai-target.ts, a server test with one AI fighter, two living enemies and one living ally inside the blast asserts the action rates negative and is not chosen, that with the ally removed the same action is chosen, and that a kill-shot outranks an equal-damage non-kill shot."
+}

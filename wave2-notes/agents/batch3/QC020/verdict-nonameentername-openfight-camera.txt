@@ -1,0 +1,21 @@
+nonameentername-openfight (camera, cell 14) | VERDICT: PARTIAL | depth: thin | camera_scope: pit camera
+Donor: /mnt/frankendom-donors/nonameentername-openfight | Licence: GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007 (LICENSE file read) -> copyleft, clean-room, shape only | C++ (SDL and Godot backends)
+
+Checked: Files opened (all read on the VPS): (1) src/libopenfight/camera.h, full; (2) src/libopenfight/camera.cpp, full; (3) src/libopenfight/graphics.cpp, full; (4) src/libopenfight/graphicsCore.cpp, full; (5) src/platform/godot/godotRenderBackend.cpp, lines 100-140 (the sprite and collision-box draw paths); (6) src/platform/sdl/sdlGlRenderBackend.cpp, lines 155-170 and grep of line 216; (7) main.tscn, full; (8) src/platform/sdl/main.cpp, the fixed-step loop and render call, seen through grep -n only (lines 55-57, 88-90, 96-98; the surrounding code was not read); (9) src/libopenfight/player.cpp, lines 215-250 (movement). Searched for camera motion with grep over src/ for move(, setPosition(, setZoom(, follow, scroll, viewport, Perspective, lookAt, and for any .gd file (none exists). Result: the only callers of Camera::move, setZoom and setPosition are their own definitions; no code moves the camera. Confidence high that the camera never moves in this donor.
+
+Why PARTIAL: the donor has a real camera object, but it is a static 2D offset that is applied at draw time and never driven, so there is no follow, shoulder, zoom, shake or collision logic to read. Only the plumbing transfers, and that is thin.
+
+What the donor does (read):
+- Camera holds an x/y/z offset (camera.h 4-20). move adds deltas (camera.cpp 11-15), setZoom overwrites z (17-19), setPosition sets all three (21-25). Nothing calls them.
+- The camera offset is added to the local position in the draw paths: Godot sprite draws (godotRenderBackend.cpp 110-111, 119) and Godot hitbox draws (131-132); the SDL GL sprite draw (sdlGlRenderBackend.cpp 163, glTranslatef with x, y and z). The SDL 2D backend also reads the camera (sdlRenderBackend.cpp 142-156, grep only, not read).
+- The Godot scene has a static Camera2D at position (198, 208) with zoom 1.5 (main.tscn 8-10). This node is a fixed view, not scripted.
+- Loop: sdl main.cpp 55-57 fixed_step_ms 10.0, max_frame_ms 100.0 clamp, max 5 updates per frame; the accumulator loop is at 88-90; render runs once per frame at 98. (Incidental, not the camera: this is a client-side fixed-step loop.)
+- Bug in the donor (read): Camera::Camera (camera.cpp 3-6) sets x_pos and y_pos only, so z_pos is not initialised; getZposition is used in sdlGlRenderBackend.cpp 163. No caller sets z before that read was found, so the value is indeterminate. (Confidence: high from the code, not run.)
+- Camera scope: pit camera. This is a fixed side-on arena (one Camera2D, no movement). Nothing here is a third-person world camera.
+
+What transfers to a 3D third-person camera: nothing mechanical. The donor shows only that the camera is a client-only transform applied at the render boundary and never read by gameplay code. That is the separation Frankendom already rules (camera is client-only).
+What does not transfer: follow, shoulder offset, pitch and yaw limits, smoothing, collision pull-in, lock-on framing, zoom or shake. None are present (not read because absent).
+Tunable data: the Camera2D position and zoom in main.tscn are the only camera values; they are scene data, not engine rules.
+
+Best transferable idea: Keep the camera as one client-side transform applied only when drawing, so the gameplay state and hit boxes never read it.
+Decision (proposed): reject - the donor camera never moves, so it cannot inform a follow camera; its only useful rule (camera is client-only) is already our ruling.

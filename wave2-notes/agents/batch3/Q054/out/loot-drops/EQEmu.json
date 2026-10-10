@@ -1,0 +1,95 @@
+{
+ "game": "EQEmu",
+ "category": "loot-drops",
+ "cell": 8,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/EQEmu/zone/loot.cpp",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/loot.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "loot-cumulative-roll",
+  "drop-filter",
+  "new:weighted-pick-with-gate",
+  "new:mean-matched-range-roll"
+ ],
+ "data_fields": [
+  {
+   "name": "drop_limit",
+   "donor_constant": "drop limit per group; 0 with minimum 0 means scan-once mode",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "zone/loot.cpp:173"
+  },
+  {
+   "name": "minimum_drop",
+   "donor_constant": "guaranteed picks before the gate",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "zone/loot.cpp:215"
+  },
+  {
+   "name": "entry_chance",
+   "donor_constant": "percent per item entry (weight in weighted mode)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "zone/loot.cpp:225"
+  },
+  {
+   "name": "entry_copies",
+   "donor_constant": "multiplier; extra copies roll their own chance",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "zone/loot.cpp:234"
+  },
+  {
+   "name": "table_repeat_multiplier",
+   "donor_constant": "multiplier x GlobalLootMultiplier repeats per table entry",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "zone/loot.cpp:116"
+  },
+  {
+   "name": "bypass_chance",
+   "donor_constant": "100 or more in any eligible entry passes the gate for the group",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "zone/loot.cpp:191"
+  },
+  {
+   "name": "large_list_threshold",
+   "donor_constant": "more than 100 entries with limit 0",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "zone/loot.cpp:173"
+  },
+  {
+   "name": "large_list_default_limit",
+   "donor_constant": "10",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "zone/loot.cpp:174"
+  },
+  {
+   "name": "cash_min_max_avg",
+   "donor_constant": "mincash, maxcash, avgcoin (coins)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "zone/loot.cpp:92"
+  },
+  {
+   "name": "npc_level_band",
+   "donor_constant": "npc_min_level / npc_max_level per entry (0 means no bound)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "zone/loot.cpp:254"
+  }
+ ],
+ "best_idea": "Make a drop table a set of data rows with a per-table gate, a weighted pick, a guaranteed minimum and a per-copy roll, rolled on the server when a kill is verified.",
+ "decision": "adapt",
+ "decision_why": "Take the table shape as zone data, but roll at the verified kill on the server, not at NPC spawn as the donor does.",
+ "decision_status": "proposed",
+ "acceptance": "10,000 seeded kills on a table of three items (chances 60, 30, 10; drop limit 1; minimum 0): about 74.8% of kills drop one item and of those about 60/30/10 percent are the three items."
+}

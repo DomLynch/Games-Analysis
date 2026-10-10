@@ -1,0 +1,26 @@
+LanternEQ-LanternUnityTools (camera, cell 14) | VERDICT: PARTIAL | depth: thin | camera_scope: world camera (no camera controller exists in this donor)
+Licence: MIT License, Copyright (c) 2024 LanternEQ (LICENSE in repo root, read). Permissive: code may be adapted with the notice kept.
+Donor root: /mnt/frankendom-donors/LanternEQ-LanternUnityTools
+
+Checked (files opened, all on the VPS, read-only):
+1. /mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Scripts/Lantern/EQ/Data/EqConstants.cs 40-56 (camera constants)
+2. /mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Scripts/Lantern/EQ/Environment/SkyController.cs lines 1-185 (sky follow, read in full)
+3. /mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Scripts/Lantern/EQ/Environment/SkyLayer.cs lines 1-40 and 57-69 (partial: fields and UpdateTimeLate only)
+4. /mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Scripts/Lantern/EQ/Helpers/RaycastHelper.cs 196-209 (TryGetGroundHeight; read only this function)
+5. /mnt/frankendom-donors/LanternEQ-LanternUnityTools/ProjectSettings/InputManager.asset 133-140
+Searches (grep -rn over Assets and ProjectSettings): camera, Camera, Cinemachine, follow, orbit, zoom, shoulder, ScrollWheel, mouse wheel, SetActiveCameraTransform, UpdateSkyPosition. Every .cs hit is listed above or is a false match (for example "following" in a comment, or "EQ" in a namespace).
+
+What the donor has:
+- No camera controller. No script moves, rotates or aims a camera from input. No yaw, pitch, orbit, zoom, collision, smoothing or lock-on code.
+- EqConstants.cs 48-50 defines CameraHeightIncrement 1.24, MainCameraFov 110 and InventoryCameraFov 86. Nothing in the .cs tree reads these names except their definitions (grep).
+- SkyController.cs 170-171: the sky dome is placed at the camera transform plus a serialized offset (line 21) and its rotation is reset to the start rotation, so the sky never rotates with the view. This is real, but UpdateSkyPosition is called only from SetActiveCameraTransform on the instant path (SkyController.cs 52). I found no per-frame caller in the .cs tree, so per-frame follow is not shown to be wired in this donor.
+- InputManager.asset 137 defines a "Mouse ScrollWheel" axis, but no .cs file reads it (grep). Wheel zoom is not implemented here.
+
+Why PARTIAL: the only mechanism is a sky dome anchored to a camera with a fixed offset, a render detail, and it is not wired per frame in the donor; nothing here answers the third-person follow, pull-in, or framing questions.
+
+Best transferable idea: a far sky or backdrop that is re-centred on the camera every frame with a fixed offset and a locked rotation, so it never parallaxes against the world.
+Decision (proposed): reject for the world camera work - the donor has no camera control to copy, and the sky anchor is a render detail that was not checked against Frankendom's sky.
+Acceptance (only if adopted later): a client test asserts the sky centre moves with the camera and its rotation does not change while the view turns.
+
+depth: thin (a fragment of a render detail; the camera topic has no implementation in this donor).
+Not read: the scene and prefab files for camera components (grep found no camera script names there), SkyLayer.cs outside lines 1-40 and 57-69, the rest of RaycastHelper.cs.

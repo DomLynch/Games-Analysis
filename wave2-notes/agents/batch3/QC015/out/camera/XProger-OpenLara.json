@@ -1,0 +1,209 @@
+{
+ "game": "XProger-OpenLara",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/XProger-OpenLara/src/camera.h",
+ "licence": "BSD 2-Clause License (LICENSE, read; Copyright (c) 2018, Timur \"XProger\" Gagiev)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "camera_scope": "world",
+ "pattern_tags": [
+  "follow-point",
+  "fixed-step",
+  "new:wall-pull-in",
+  "new:state-preset-angle",
+  "new:per-tick-request"
+ ],
+ "data_fields": [
+  {
+   "name": "offset_follow",
+   "donor_constant": "1536 units",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/camera.h:20"
+  },
+  {
+   "name": "offset_combat",
+   "donor_constant": "2048 units (follow + 512)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/camera.h:25"
+  },
+  {
+   "name": "offset_look",
+   "donor_constant": "512 units",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/camera.h:28"
+  },
+  {
+   "name": "eye_speed_follow",
+   "donor_constant": "12 (eye rate 30/12 per s = 2.5/s)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/camera.h:9"
+  },
+  {
+   "name": "eye_speed_combat",
+   "donor_constant": "8 (eye rate 30/8 per s = 3.75/s)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/camera.h:10"
+  },
+  {
+   "name": "look_mode_eye_rate",
+   "donor_constant": "20 per s (20*dt)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/camera.h:333"
+  },
+  {
+   "name": "look_offset_recentre_rate",
+   "donor_constant": "10 per s (10*dt)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/camera.h:441"
+  },
+  {
+   "name": "look_point_y_rate",
+   "donor_constant": "5 per s (5*dt)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/camera.h:514"
+  },
+  {
+   "name": "pitch_clamp",
+   "donor_constant": "85 deg",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/camera.h:465"
+  },
+  {
+   "name": "stick_pitch_max",
+   "donor_constant": "PI*0.375 rad (67.5 deg)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/camera.h:453"
+  },
+  {
+   "name": "stick_yaw_max",
+   "donor_constant": "PI*0.5 rad (90 deg)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/camera.h:454"
+  },
+  {
+   "name": "look_pitch_range",
+   "donor_constant": "-75 to +55 deg",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/camera.h:31"
+  },
+  {
+   "name": "look_yaw_range",
+   "donor_constant": "+-80 deg",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/camera.h:33"
+  },
+  {
+   "name": "wall_inset",
+   "donor_constant": "256 units (expand -256)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/camera.h:262"
+  },
+  {
+   "name": "eye_headroom",
+   "donor_constant": "256 units above ceiling and below floor",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/camera.h:340"
+  },
+  {
+   "name": "look_point_height_fraction",
+   "donor_constant": "3/4 of box height from bottom, minus 256",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/camera.h:156"
+  },
+  {
+   "name": "shake_decay",
+   "donor_constant": "1 per s (shake -= dt)",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/camera.h:358"
+  },
+  {
+   "name": "shake_amplitude",
+   "donor_constant": "48 units * shake",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/camera.h:642"
+  },
+  {
+   "name": "shake_phase",
+   "donor_constant": "7*PI per unit of shake",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/camera.h:642"
+  },
+  {
+   "name": "fov_third_person",
+   "donor_constant": "65 deg",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/camera.h:717"
+  },
+  {
+   "name": "look_at_front_cone",
+   "donor_constant": "dot > 0.1 (about 84 deg)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/camera.h:473"
+  },
+  {
+   "name": "preset_hang_pitch",
+   "donor_constant": "-60 deg",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/lara.h:2977"
+  },
+  {
+   "name": "preset_reach_yaw",
+   "donor_constant": "85 deg",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/lara.h:2958"
+  },
+  {
+   "name": "substep_cap",
+   "donor_constant": "1/30 s",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/game.h:321"
+  },
+  {
+   "name": "frame_dt_clamp",
+   "donor_constant": "0.2 s",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/game.h:318"
+  },
+  {
+   "name": "floor_shake_radius",
+   "donor_constant": "15 sectors (15*1024 units)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/XProger-OpenLara/src/level.h:714"
+  }
+ ],
+ "best_idea": "Keep the orbit distance fixed, pull the eye in to the wall with a clip that slides along the wall on a circle of the same radius, and ease the eye at a frame-rate-independent rate (30/speed per second) so the view never clips through geometry.",
+ "decision": "adapt",
+ "decision_why": "Take the shape (orbit from a focus point, pitch clamp, wall pull-in that keeps the offset distance, rate-based eye follow, per-state orbit presets). Do not take the 1024-unit tile-grid collision or the look-only head aim. The donor has no over-the-shoulder offset, so we must add a lateral term ourselves.",
+ "decision_status": "proposed",
+ "acceptance": "A player with a wall about one sector behind sees the camera slide along the wall and never pass through it; the eye catches up within about 0.4 s after a fast turn while the view angle turns at once; the camera stays behind the character's facing in follow and combat."
+}

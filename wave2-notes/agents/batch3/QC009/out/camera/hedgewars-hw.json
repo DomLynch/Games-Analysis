@@ -1,0 +1,120 @@
+{
+ "game": "hedgewars-hw",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uWorld.pas",
+ "licence": "GPL-2.0 (version 2 of the License, as stated in uWorld.pas and hwengine.pas headers; COPYING is GPL version 2)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "new:dead-zone-push",
+  "new:look-ahead",
+  "new:manual-input-handover",
+  "variable-step",
+  "clamp-and-report",
+  "new:shake-decay"
+ ],
+ "data_fields": [
+  {
+   "name": "lead_px",
+   "donor_constant": "200 (z = round(200/zoom))",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uWorld.pas:1951"
+  },
+  {
+   "name": "follow_blend_kept",
+   "donor_constant": "7 kept per pass, divisor 8",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uWorld.pas:1975"
+  },
+  {
+   "name": "edge_dead_zone",
+   "donor_constant": "min(2 * cScreenHeight div 5, 2 * cScreenWidth div 5)",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uWorld.pas:259"
+  },
+  {
+   "name": "manual_break_px",
+   "donor_constant": "4 (manhattan, per pass)",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uWorld.pas:1954"
+  },
+  {
+   "name": "manual_cursor_edge_px",
+   "donor_constant": "100",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uWorld.pas:135"
+  },
+  {
+   "name": "vertical_lead_threshold",
+   "donor_constant": "|dY * z| >= 10 (_10)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uWorld.pas:1978"
+  },
+  {
+   "name": "zoom_ease_per_ms",
+   "donor_constant": "0.002 per ms",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uWorld.pas:922"
+  },
+  {
+   "name": "zoom_default",
+   "donor_constant": "2.0",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uConsts.pas:225"
+  },
+  {
+   "name": "cam_limit_x",
+   "donor_constant": "1920",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uConsts.pas:228"
+  },
+  {
+   "name": "cam_limit_y",
+   "donor_constant": "2048",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uConsts.pas:230"
+  },
+  {
+   "name": "loop_min_step_ms",
+   "donor_constant": "8",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uVariables.pas:2732"
+  },
+  {
+   "name": "shake_start_amount",
+   "donor_constant": "13 - (Timer*15) div 250, min 1",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uVisualGearsHandlers.pas:853"
+  },
+  {
+   "name": "shake_lifetime",
+   "donor_constant": "250",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uVisualGearsHandlers.pas:857"
+  }
+ ],
+ "best_idea": "Keep a look-ahead point a fixed on-screen distance ahead of the hero, ease it toward its target by a fixed share each update, move the view only when that point leaves an edge dead zone, and let a manual pan above a small threshold hand control back to the player.",
+ "decision": "adapt",
+ "decision_why": "The dead zone, fixed-distance look-ahead and manual-input hand-over are the shape a third-person follow camera needs and the owner's world camera lacks; the donor is 2D with per-pass smoothing, so smoothing must be time-based and yaw, pitch and wall pull-in must be added.",
+ "decision_status": "proposed",
+ "acceptance": "A player walks a hero across a zone: the view holds still inside the middle band, then eases so the hero sits about 200 px ahead of their facing side, and a manual drag above 4 px per frame turns auto-follow off until it is turned back on (client test on a fixed input trace).",
+ "camera_scope": "world"
+}

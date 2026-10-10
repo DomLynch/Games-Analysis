@@ -1,0 +1,74 @@
+{
+ "game": "afritz1-OpenTESArena",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Game/Game.cpp",
+ "licence": "as read: MIT (LICENSE.txt)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "new:post-physics-camera",
+  "new:aspect-normalised-look"
+ ],
+ "data_fields": [
+  {
+   "name": "look_sensitivity_h",
+   "donor_constant": "option default 2.5, range 0.50-12.0, x100 to degrees",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Game/Game.cpp:883"
+  },
+  {
+   "name": "look_sensitivity_v",
+   "donor_constant": "option default 2.5, range 0.50-12.0, x100 to degrees",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Game/Game.cpp:884"
+  },
+  {
+   "name": "pitch_limit",
+   "donor_constant": "90 degrees default, range 0-90",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "Game/Game.cpp:887"
+  },
+  {
+   "name": "swim_turn_scale",
+   "donor_constant": "2/3 when swimming, 1.0 on foot",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Player/PlayerLogic.cpp:935"
+  },
+  {
+   "name": "eye_offset_above_collider_centre",
+   "donor_constant": "(60 - 61/2) / 128 = 29.5/128 about 0.2305 units",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "Player/Player.cpp:635"
+  },
+  {
+   "name": "collider_radius",
+   "donor_constant": "0.20 units",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "Player/Player.h:33"
+  },
+  {
+   "name": "vertical_fov",
+   "donor_constant": "60 degrees default, range 40-120",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "options/options-default.txt:29"
+  }
+ ],
+ "best_idea": "Derive the camera from the character's post-physics position in the same tick, with turn input applied before the physics step and pitch clamped to a player-set limit, and normalise mouse look by the smaller screen side.",
+ "decision": "adapt",
+ "decision_why": "Frankendom's world camera needs the same update order and aspect-independent look, but this donor is first-person with no shoulder offset or collision pull-in, so the over-the-shoulder rig must be designed on top of these rules; the Pit camera stays frozen and does not need it.",
+ "decision_status": "proposed",
+ "acceptance": "A client test asserts that after one physics step the camera eye equals the collider centre plus the eye offset (within 1e-6), that pitch never exceeds the limit, and that a mouse move of the same pixel length gives the same yaw on a 1600x900 and a 1200x900 window.",
+ "camera_scope": "world"
+}

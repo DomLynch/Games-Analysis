@@ -1,0 +1,81 @@
+{
+ "game": "graememcc-micropolisJS",
+ "category": "ai-aggro",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/graememcc-micropolisJS/src/copterSprite.js",
+ "licence": "GPL-3.0 (COPYING: Version 3, 29 June 2007) with additional terms stated in each source header",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/chase.ts",
+ "parity_row": 4,
+ "pattern_tags": [
+  "wait-gate",
+  "new:priority-fallback-home",
+  "new:home-leash-land",
+  "variable-step"
+ ],
+ "data_fields": [
+  {
+   "name": "engageDelayTicks",
+   "donor_constant": "count = 1500 animation frames before the chase branch runs",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "copterSprite.js:28-49"
+  },
+  {
+   "name": "landRadius",
+   "donor_constant": "30 px Manhattan distance to home lands the sprite",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "copterSprite.js:70-71"
+  },
+  {
+   "name": "speed",
+   "donor_constant": "3 or 5 px per animation frame along 8 directions (table)",
+   "unit": "px",
+   "where": "zone data",
+   "donor_ref": "copterSprite.js:39-40,98-99"
+  },
+  {
+   "name": "maxTurnPerTick",
+   "donor_constant": "one 45-degree step per heading refresh; refresh every 4th sprite cycle (mask 3)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "copterSprite.js:92-94; spriteUtils.js:28-36"
+  },
+  {
+   "name": "wanderPoint",
+   "donor_constant": "random point on the map at spawn, plus 8 px offset",
+   "unit": "px",
+   "where": "zone data",
+   "donor_ref": "copterSprite.js:29-30"
+  },
+  {
+   "name": "monsterCount",
+   "donor_constant": "count = 1000 moves; river rule under 500",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "monsterSprite.js:42,145-151"
+  },
+  {
+   "name": "monsterArrivalRadius",
+   "donor_constant": "60 px Manhattan; first arrival sends it home, second ends it",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "monsterSprite.js:86-96"
+  },
+  {
+   "name": "monsterTurnChance",
+   "donor_constant": "Random.getChance(10): bit mask test, about 1 in 4 (computed)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "monsterSprite.js:104; random.ts:25"
+  }
+ ],
+ "best_idea": "Give a chaser an engage delay counted in server ticks, a priority list with a fallback to home, and a landing radius around home, so it leashes back to its anchor when there is no valid target.",
+ "decision": "adapt",
+ "decision_why": "The delay, the priority-then-home destination and the landing radius are the right leash shape for a single fast chaser or boss; take it with server ticks and plain probability fields, pick targets from the engine's hate table, and do not take the frame counter, the 8-way quantised movement, or the first-in-list choice.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: chaser with engageDelayTicks 10 and home at (0, 0), starting at (200, 0) with wander point (200, 200): for 10 ticks it steers toward the wander point and not toward a player at (50, 0); after the delay with a live primary it steers toward the primary; with no primary and a live secondary it steers toward the secondary; once within landRadius 30 (Manhattan) of home it lands and does not move again."
+}

@@ -1,0 +1,75 @@
+{
+ "game": "dhewm-dhewm3",
+ "category": "server-tick-netcode",
+ "cell": 5,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/dhewm-dhewm3/neo/framework/async/AsyncServer.cpp",
+ "licence": "GPL-3.0-or-later (header: version 3 or any later version; COPYING.txt GPL v3)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/tick.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "fixed-step",
+  "accumulator",
+  "stale-state",
+  "compute-budget",
+  "new:stale-input-decay"
+ ],
+ "data_fields": [
+  {
+   "name": "frame_ms",
+   "donor_constant": "16 (integer 1000 / 60)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dhewm-dhewm3/neo/framework/UsercmdGen.h:41"
+  },
+  {
+   "name": "stale_repeat_limit",
+   "donor_constant": "25",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dhewm-dhewm3/neo/framework/BuildDefines.h:114"
+  },
+  {
+   "name": "clock_clamp_per_update",
+   "donor_constant": "100",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dhewm-dhewm3/neo/framework/async/AsyncServer.cpp:2361"
+  },
+  {
+   "name": "snapshot_delay",
+   "donor_constant": "50",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dhewm-dhewm3/neo/framework/async/AsyncNetwork.cpp:49"
+  },
+  {
+   "name": "usercmd_relay_max",
+   "donor_constant": "5 (max 10)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dhewm-dhewm3/neo/framework/async/AsyncNetwork.cpp:52"
+  },
+  {
+   "name": "zombie_timeout",
+   "donor_constant": "5",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dhewm-dhewm3/neo/framework/async/AsyncNetwork.cpp:53"
+  },
+  {
+   "name": "client_timeout",
+   "donor_constant": "40",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/dhewm-dhewm3/neo/framework/async/AsyncNetwork.cpp:54"
+  }
+ ],
+ "best_idea": "When a client's command is late, repeat the last command for a counted window, then drop the attack and shrink large move axes frame by frame, so a stalled connection cannot keep swinging.",
+ "decision": "adapt",
+ "decision_why": "Take the repeat-then-decay rule and the residual clock with a clamp, with the repeat window as tuned data (the donor's 25 frames is about 400 ms, too long for a duel); reject the uncapped frame loop and the integer 16 ms step, because one tick length from one constant is needed and per-tick work must be capped.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: an attack sent on frame 10 and then no input repeats as stale through frame 35, and from frame 36 no attack is applied and move axes shrink to at most 2 within a few frames; a fresh command resets the count to zero."
+}

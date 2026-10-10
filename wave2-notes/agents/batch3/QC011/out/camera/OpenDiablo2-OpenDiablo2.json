@@ -1,0 +1,60 @@
+{
+ "game": "OpenDiablo2-OpenDiablo2",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "camera_scope": "world",
+ "donor_path": "/mnt/frankendom-donors/OpenDiablo2-OpenDiablo2/d2core/d2map/d2maprenderer/camera.go",
+ "licence": "GPL-3.0 (LICENSE file is GPLv3 text; README badge GPL v3; no per-file 'or later' header found)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "pattern_tags": [
+  "follow-point",
+  "new:free-look-override",
+  "variable-step"
+ ],
+ "data_fields": [
+  {
+   "name": "follow_gain_per_call",
+   "donor_constant": "0.85 of the gap per call (frame-rate dependent; not copied)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "d2core/d2map/d2maprenderer/camera.go:55"
+  },
+  {
+   "name": "follow_half_life_s",
+   "donor_constant": "not in donor; proposed 0.08 s, time-based ease",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "d2core/d2map/d2maprenderer/camera.go:55"
+  },
+  {
+   "name": "free_look_pan_step_units",
+   "donor_constant": "8 per key repeat",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "d2game/d2player/game_controls.go:318"
+  },
+  {
+   "name": "free_look_pan_step_shift_units",
+   "donor_constant": "16 with Shift (8 x 2)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "d2game/d2player/game_controls.go:320"
+  },
+  {
+   "name": "free_look_return_s",
+   "donor_constant": "not in donor; proposed 0.5 s to return to the hero",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "d2game/d2gamescreen/game.go:273"
+  }
+ ],
+ "best_idea": "Keep one camera target that the hero writes each frame unless free look is on, let free look pan that same target, and always ease the camera toward it.",
+ "decision": "adapt",
+ "decision_why": "The shared target, the free-look gate and the pan-the-target rule give manual look and auto-follow one code path for the world camera; the per-call 0.85 gain is frame-rate dependent and the one-frame target delay adds lag, so both are rejected.",
+ "decision_status": "proposed",
+ "acceptance": "With the hero walking at a steady speed the camera trails by the same distance at 30 and 60 fps; holding the free-look key pans the view and releasing it returns to the hero within 0.5 s; the pan never changes the hero's position. A client test asserts the trailing distance agrees at 30 and 60 fps and that the pan leaves server state unchanged."
+}

@@ -1,0 +1,103 @@
+{
+ "game": "AAEmu-AAEmu",
+ "category": "loot-drops",
+ "cell": 8,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/Items/Loots/LootPack.cs",
+ "licence": "as read: LICENSE.GPL (GPL-3.0 full text); README 'Licensing information' header text is LGPL-3.0; LICENSE.MIT (MIT, Rain0Ash 2019) present, scope unclear",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/loot.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "loot-cumulative-roll",
+  "drop-filter",
+  "new:group-chance",
+  "new:guaranteed-drop",
+  "new:quest-gate"
+ ],
+ "data_fields": [
+  {
+   "name": "item_chance_or_weight",
+   "donor_constant": "drop_rate; 10,000,000 = 100 percent; values of 1 or less become 10,000,000",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "AAEmu.Game/GameData/LootGameData.cs:40"
+  },
+  {
+   "name": "always_drop",
+   "donor_constant": "boolean; guaranteed in the independent list",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "AAEmu.Game/GameData/LootGameData.cs:40"
+  },
+  {
+   "name": "group_chance",
+   "donor_constant": "loot_groups.drop_rate; group chance = value / 10,000,000 x luck",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "AAEmu.Game/GameData/LootGameData.cs:73"
+  },
+  {
+   "name": "min_amount",
+   "donor_constant": "inclusive lower bound of the amount roll",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "AAEmu.Game/GameData/LootGameData.cs:53"
+  },
+  {
+   "name": "max_amount",
+   "donor_constant": "inclusive upper bound of the amount roll",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "AAEmu.Game/GameData/LootGameData.cs:54"
+  },
+  {
+   "name": "grade_distribution_weights",
+   "donor_constant": "12 weights (Weight0 to Weight11) summing to a roll over 0-99",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "AAEmu.Game/Models/Game/Items/Loots/LootPack.cs:582"
+  },
+  {
+   "name": "player_drop_multiplier",
+   "donor_constant": "(100 + DropRateMul) / 100, best eligible player",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "AAEmu.Game/Models/Game/Items/Containers/LootingContainer.cs:171"
+  },
+  {
+   "name": "server_loot_rate",
+   "donor_constant": "1.0 default",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "AAEmu.Game/Models/Game/Configurations.cs:68"
+  },
+  {
+   "name": "gold_loot_multiplier",
+   "donor_constant": "1.0 default",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "AAEmu.Game/Models/Game/Configurations.cs:73"
+  },
+  {
+   "name": "loot_range",
+   "donor_constant": "200",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "AAEmu.Game/Models/Game/Items/Containers/LootingContainer.cs:32"
+  },
+  {
+   "name": "make_public_after",
+   "donor_constant": "180",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "AAEmu.Game/Models/Game/Items/Containers/LootingContainer.cs:37"
+  }
+ ],
+ "best_idea": "A loot pack is a list of guaranteed or independently rolled items plus groups that each roll once and yield at most one item by weight, so a drop table reads as data with no script.",
+ "decision": "adapt",
+ "decision_why": "Take the group-then-one-pick shape and the data-driven chances; reject the luck multiplier on the pick (it biases the pick, as read) and the ownership roll winner rule (reads as wrong).",
+ "decision_status": "proposed",
+ "acceptance": "Server test: a pack with one guaranteed item and one 50 percent group of two entries weighted 3:1 gives the guaranteed item on every kill over 10,000 kills, the group drops about half the time, and when it drops the entries split about 3:1 (within 2 points) at luck 1.0 and at luck 1.5."
+}

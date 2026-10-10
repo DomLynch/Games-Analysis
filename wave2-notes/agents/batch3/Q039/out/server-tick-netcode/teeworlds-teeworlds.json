@@ -1,0 +1,90 @@
+{
+ "game": "teeworlds-teeworlds",
+ "category": "server-tick-netcode",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/teeworlds-teeworlds/src/engine/server/server.cpp",
+ "licence": "zlib-style grant (license.txt line 7 and conditions 11-17); data and datasrc CC-BY-SA 3.0 (line 21) not used",
+ "licence_class": "permissive",
+ "target_module": "src/fight/tick.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "fixed-step",
+  "wait-gate",
+  "new:anchored-clock",
+  "new:input-by-tick",
+  "stale-state",
+  "new:catchup-cap"
+ ],
+ "data_fields": [
+  {
+   "name": "server_ticks_per_second",
+   "donor_constant": "50",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/teeworlds-teeworlds/src/engine/shared/protocol.h:81"
+  },
+  {
+   "name": "wait_clamp_max_ms",
+   "donor_constant": "1000/50/2 = 10",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/teeworlds-teeworlds/src/engine/server/server.cpp:1425"
+  },
+  {
+   "name": "input_ring_slots",
+   "donor_constant": "200",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/teeworlds-teeworlds/src/engine/server/server.cpp:958"
+  },
+  {
+   "name": "client_ping_correction_max_ms",
+   "donor_constant": "50 (clamped 0..50)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/teeworlds-teeworlds/src/engine/server/server.cpp:948"
+  },
+  {
+   "name": "snapshot_full_every_ticks",
+   "donor_constant": "2 (even ticks)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/teeworlds-teeworlds/src/engine/server/server.cpp:1387"
+  },
+  {
+   "name": "snapshot_init_every_ticks",
+   "donor_constant": "10",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/teeworlds-teeworlds/src/engine/server/server.cpp:533"
+  },
+  {
+   "name": "snapshot_recover_every_ticks",
+   "donor_constant": "50 (SERVER_TICK_SPEED)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/teeworlds-teeworlds/src/engine/server/server.cpp:529"
+  },
+  {
+   "name": "snapshot_purge_window_ticks",
+   "donor_constant": "150 ticks (SERVER_TICK_SPEED*3)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/teeworlds-teeworlds/src/engine/server/server.cpp:559"
+  },
+  {
+   "name": "catchup_cap_ticks_per_pass",
+   "donor_constant": "none in donor (our sketch uses 5)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/teeworlds-teeworlds/src/engine/server/server.cpp:1383"
+  }
+ ],
+ "best_idea": "Anchor the server tick to the server start time so tick numbers never drift, and key each client's input to the tick it is meant for, moving a past tick to the next one.",
+ "decision": "adapt",
+ "decision_why": "The anchored clock and tick-keyed input fit our one-engine server tick, but the donor's uncapped catch-up loop would replay a stall in one burst, so we take the clock and cap the catch-up; latency rewind is rejected because kills stay server-verified.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: after a simulated 500 ms stall one loop pass runs at most the cap of ticks and the remainder runs on the following passes, and an input whose intended tick has passed is applied on the next tick and never dropped. No test may use a latency estimate to decide a kill."
+}

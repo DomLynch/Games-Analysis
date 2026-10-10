@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+supertuxkart-stk-code	camera	P	STRONG	full	src/graphics/camera/camera_normal.cpp:323-370,87-174,380-524 - third-person chase camera: speed pull-back with 2x floor, dt/T easing, look-at 0.5 (hint camera_debug.cpp was the debug camera)
+clockworklabs-SpacetimeDB	camera	P	STRONG	full	demo/Blackholio/client-godot/CameraController.cs:21-48 - 2D follow camera: mass-weighted centre of owned pieces, zoom = 50/size with a step at 2+ pieces (unclamped lerps; zero-piece zoom state derived)
+CleverRaven-Cataclysm-DDA	camera	P	STRONG	full	src/game.cpp:1363-1466 - look-ahead camera for driving: speed-scaled lead along travel direction, margin clamp, glide-then-snap (unclamped inverse lerp; per-turn tile steps)

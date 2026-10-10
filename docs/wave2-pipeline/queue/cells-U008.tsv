@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+ClassicUO	15	sound-music	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client (Game/, Network/, Game/UI/Gumps, Game/Scenes) and ClassicUO.Renderer	9
+ClassicUO	16	hud-ui	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client (Game/, Network/, Game/UI/Gumps, Game/Scenes) and ClassicUO.Renderer	9
+ClassicUO	17	rendering-performance	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client (Game/, Network/, Game/UI/Gumps, Game/Scenes) and ClassicUO.Renderer	9

@@ -1,0 +1,66 @@
+{
+ "game": "ClassicUO",
+ "category": "animation-rigs",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs",
+ "licence": "BSD 2-Clause License, Copyright (c) 2025, andreakarasho (LICENSE.md)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/actor-clips.ts",
+ "parity_row": 7,
+ "pattern_tags": [
+  "variable-step",
+  "new:clip-clock-no-catchup",
+  "new:step-progress-offset"
+ ],
+ "data_fields": [
+  {
+   "name": "base_frame_ms",
+   "donor_constant": "80",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Constants.cs:13"
+  },
+  {
+   "name": "server_clip_interval",
+   "donor_constant": "frame ms = 80 x (interval + 2)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs:610"
+  },
+  {
+   "name": "clip_repeat_count",
+   "donor_constant": "0 = loop forever; n = play n times then end (or hold)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs:641"
+  },
+  {
+   "name": "step_walk_ms",
+   "donor_constant": "400",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Data/MovementSpeed.cs:12"
+  },
+  {
+   "name": "step_run_ms",
+   "donor_constant": "200",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Data/MovementSpeed.cs:11"
+  },
+  {
+   "name": "moving_hold_ms",
+   "donor_constant": "150 (WALKING_DELAY)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Constants.cs:19"
+  }
+ ],
+ "best_idea": "Drive clip frames from elapsed time against a per-clip frame duration with the repeat count as data, and make a step's visual progress elapsed/duration so a late update neither skips nor stretches a move.",
+ "decision": "adapt",
+ "decision_why": "Frankendom actors are 3D and the engine owns time: take the elapsed-time frame clock and progress fraction; reject the sprite mirror and pixel offsets; do not copy the one-frame-per-call behaviour.",
+ "decision_status": "proposed",
+ "acceptance": "A unit test drives a 3-frame 80 ms clip with 16 ms updates and one 250 ms gap; the frame at 250 ms is floor(250/80) mod 3, and a 20 fps player sees the same swing frame at the same time as 60 fps."
+}

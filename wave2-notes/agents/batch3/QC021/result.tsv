@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+LostCityRS-Client-TS	camera	P	STRONG	full	src/client/Client.ts:3222-3303 followCamera (focus 1/16 per tick, yaw/pitch velocity, terrain pitch floor 1/24 up and 1/80 down) and 4182-4196 + 4432-4465 draw placement at distance 600+3*pitch, all driven by the 50 Hz tick in GameShell.ts:140-205; MIT
+runelite-runelite	camera	P	STRONG	thin	runelite-api/src/main/java/net/runelite/api/Perspective.java:214-244 localToCanvasCpu, world-to-screen with a near-plane reject at z1 below 50; no camera follow or easing exists in this repo (the game client is outside it); BSD-2
+Open-RSC-Core-Framework	camera	P	STRONG	full	Client_Base/src/orsc/mudclient.java:11989-12046 follow divisor (zoom-500)/15+16 and ceil-ramped turn, 1482-1563 autoRotateCamera/cameraColliding compass-heading avoidance, 2930-2971 Scene.setCamera fixed pitch 912 orbit; AGPL-3.0, shape only

@@ -1,0 +1,2 @@
+game	category	old	verdict	depth	finding
+SCAR	combat-sim	P	PARTIAL	thin	src/Hook_AttackStart.cpp:8-44 and src/SCARActionData.cpp:182-300 choose and start melee attacks by weight, chance, range and cooldown; no damage, hit, crit or knockback code exists (grep over repo), see verdict-SCAR-combat-sim.txt

@@ -1,0 +1,74 @@
+{
+ "game": "ACEmulator-ACE",
+ "category": "combat-sim",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Entity/DamageEvent.cs",
+ "licence": "AGPL-3.0 (LICENSE: GNU AFFERO GENERAL PUBLIC LICENSE Version 3)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/damage.ts",
+ "parity_row": 1,
+ "pattern_tags": [
+  "protect-soak",
+  "clamp-and-report",
+  "new:rating-additive-combine",
+  "new:logistic-skill-check"
+ ],
+ "data_fields": [
+  {
+   "name": "armour_curve_k",
+   "donor_constant": "200/3 (about 66.67)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "SkillFormula.cs:16"
+  },
+  {
+   "name": "skill_logistic_factor",
+   "donor_constant": "0.03",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "SkillCheck.cs:7"
+  },
+  {
+   "name": "rating_scale",
+   "donor_constant": "100 (rating r gives (100+r)/100)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "Creature_Rating.cs:34"
+  },
+  {
+   "name": "base_damage_min_max",
+   "donor_constant": "integer roll in [MinDamage, MaxDamage)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "DamageEvent.cs:447"
+  },
+  {
+   "name": "crit_uses_max_damage",
+   "donor_constant": "rule: crit replaces base roll with MaxDamage",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "DamageEvent.cs:287"
+  },
+  {
+   "name": "crit_defence_factor_vs_non_player_attacker",
+   "donor_constant": "0.25 (0.05 when attacker is a player)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "DamageEvent.cs:263"
+  },
+  {
+   "name": "monster_health_rounding",
+   "donor_constant": "round to whole points, death at <= 0",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "Monster_Combat.cs:377"
+  }
+ ],
+ "best_idea": "Use one armour curve K/(AL+K) and one additive combiner for damage multipliers (sum as ratings, convert back) so stacked buffs cannot multiply past what a designer tuned.",
+ "decision": "adapt",
+ "decision_why": "The armour curve and additive combine give a diminishing, auditable stack that fits one damage step in src/fight; the 20-factor product and the per-hit cloak and lifestone branches do not fit, so take the shape only.",
+ "decision_status": "proposed",
+ "acceptance": "A server test asserts that a 100-damage hit against armour level 66.67 deals 50 health, and that two +50 damage-rating buffs give x2.0 (not x2.25)."
+}

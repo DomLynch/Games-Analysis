@@ -1,0 +1,32 @@
+{
+  "game": "daggerfall-unity",
+  "category": "ai-aggro",
+  "cell": 3,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/EnemySenses.cs",
+  "licence": "MIT License, Copyright (c) 2009-2023 Daggerfall Workshop (LICENSE line 3)",
+  "licence_class": "permissive",
+  "target_module": "src/fight/aggro.ts",
+  "parity_row": 4,
+  "pattern_tags": ["target-score", "grace-timer", "fixed-step", "accumulator", "presence-gated"],
+  "data_fields": [
+    {"name": "sight_radius", "donor_constant": "4096 * GlobalScale, plus per-creature SightModifier", "unit": "units", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/EnemySenses.cs:30"},
+    {"name": "field_of_view", "donor_constant": "180 degrees (cone is half on each side)", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/EnemySenses.cs:32"},
+    {"name": "hearing_radius", "donor_constant": "25 plus per-creature HearingModifier, blocked by static geometry", "unit": "units", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/EnemySenses.cs:31"},
+    {"name": "stealth_range", "donor_constant": "1024 * GlobalScale", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/EnemySenses.cs:626"},
+    {"name": "stealth_chance_formula", "donor_constant": "2 * ((dist / GlobalScale) * skill >> 10)", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:288"},
+    {"name": "retarget_period", "donor_constant": "accumulator above 5 with divisor 0.0549254 (14 fixed steps at 0.02 s)", "unit": "ticks", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/EnemySenses.cs:388"},
+    {"name": "classic_flag_interval", "donor_constant": "0.0625 s accumulator (fires every 4th 0.02 s step, zeroed on fire)", "unit": "s", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/GameManager.cs:42"},
+    {"name": "give_up_start", "donor_constant": "200 classic flag ticks (about 16 s at the 0.02 s step)", "unit": "ticks", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/EnemyMotor.cs:420"},
+    {"name": "priority_seen_bonus", "donor_constant": "10 points if seen", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/EnemySenses.cs:834"},
+    {"name": "priority_free_monster_bonus", "donor_constant": "5 points if a monster candidate has no target (monsters only)", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/EnemySenses.cs:831"},
+    {"name": "priority_distance_base", "donor_constant": "30 minus distance, clamped at 0", "unit": "units", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/EnemySenses.cs:837"},
+    {"name": "attacked_retarget_distance", "donor_constant": "2 units (retarget to attacker when current target is farther)", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/EnemyMotor.cs:194"}
+  ],
+  "best_idea": "A monster re-picks its target on a fixed cadence by scoring each candidate (+10 if seen, 30 minus distance clamped at zero, +5 for a free monster), and keeps a give-up countdown that refreshes on detection and drops it to idle at zero.",
+  "decision": "adapt",
+  "decision_why": "The scoring and the refresh-on-detect give-up timer give Frankendom a concrete aggro and leash rule for row 4; the +5 free-target bonus applies only to monster candidates, so the MAX_ATTACKERS = 3 spread against players must be new work, and the stealth roll and physics sight are rejected.",
+  "decision_status": "proposed",
+  "acceptance": "Server test: with hero A seen at 8 units and hero B unseen at 4 units, the monster targets A (score 32 against 26); after B hits the monster it retargets to B; after 200 undetected give-up ticks the monster returns to idle, and any detection resets the count to 200."
+}

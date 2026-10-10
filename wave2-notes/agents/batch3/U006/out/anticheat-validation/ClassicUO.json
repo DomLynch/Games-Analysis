@@ -1,0 +1,59 @@
+{
+ "game": "ClassicUO",
+ "category": "anticheat-validation",
+ "cell": 6,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/WalkerManager.cs",
+ "licence": "BSD 2-Clause License, Copyright (c) 2025, andreakarasho (LICENSE.md)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/intent-gate.ts",
+ "parity_row": 5,
+ "pattern_tags": [
+  "new:token-spend-window",
+  "clamp-and-report",
+  "new:overflow-snap"
+ ],
+ "data_fields": [
+  {
+   "name": "token_pool_size",
+   "donor_constant": "5",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Constants.cs:39"
+  },
+  {
+   "name": "intents_in_flight",
+   "donor_constant": "5",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Constants.cs:16"
+  },
+  {
+   "name": "walk_gate_ms",
+   "donor_constant": "400 (run 200)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Data/MovementSpeed.cs:12"
+  },
+  {
+   "name": "run_stamina_floor",
+   "donor_constant": "Stamina <= 1 disables run",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/PlayerMobile.cs:532"
+  },
+  {
+   "name": "step_adjacency_tiles",
+   "donor_constant": "1 (|dx| or |dy| > 1 is bad)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs:757"
+  }
+ ],
+ "best_idea": "Bound the in-flight window, spend one server-issued token per intent, and treat a window overflow as a snap to the server's state rather than a silent drop.",
+ "decision": "adapt",
+ "decision_why": "Keep the bounded window and the overflow snap as client behaviour; reject the client-held tokens as protection (a modified client skips them), so the server checks every token and cap.",
+ "decision_status": "proposed",
+ "acceptance": "A server test: an intent with an unissued token and one with a spent token are both refused; a sixth intent in one tick is refused and the server tile is echoed so the client snaps once."
+}

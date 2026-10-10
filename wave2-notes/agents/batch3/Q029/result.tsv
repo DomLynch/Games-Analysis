@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+CleverRaven-Cataclysm-DDA	ai-aggro	P	STRONG	full	monmove.cpp:558-923 (plan) with monster.cpp:1753-1922 (attitude) and 1934-1991 (process_triggers): a per-monster anger meter with threshold gates, attack at anger 10, decay toward a type baseline, and a rated target pick with reservoir tie-break.
+0ad-0ad	ai-aggro	P	STRONG	full	binaries/data/mods/public/simulation/components/UnitAI.js:80-166 (g_Stances), 5997-6080 (FindWalkAndFightTargets), 5105-5133 (ShouldAbandonChase) and 6410-6467 (AttackEntitiesByPreference): stance flag rows, class-preference rank targeting, and a 1000 ms chase leash check (GPL-2.0-or-later).
+id-Software-Quake-2	ai-aggro	P	STRONG	full	game/g_ai.c:407-583 (FindTarget), 607-693 (M_CheckAttack) and 914-1060 (ai_run): distance-band awareness with a front test, a 5 s search refresh with a 20 s give-up, and a band-scaled attack roll (GPL-2.0-or-later; the 0.2 melee-band chance is dead code).

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+DCurrent-openbor	ai-aggro	P	STRONG	full	engine/openbor.c:35497-35600 (normal_find_target: nearest hostile in front, replace rules) with 41525-41636 (common_try_chase), 39655-39720 (cooldown relief and attack gate), 39618-39651 (check_attack_chance: crowd term dead for normal attacks)
+rathena-rathena	ai-aggro	P	STRONG	full	src/map/mob.cpp:1841-2226 (mob_ai_sub_hard: target validity, retarget on hit, aggressive search, chase, unlock), 1314-1366 (activesearch nearest-wins), 2257-2305 (retarget on hit), 2332-2458 (per-player hard AI and lazy pass)
+freeciv-freeciv	ai-aggro	P	STRONG	full	ai/default/daiunit.c:341-348 (kill_desire) and 1600-1672 (unit-target want: travel penalty, amortize, fuzzy pick); daitools.c:117-131 and server/advisors/advtools.c:29-37 (amortize)
