@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+supertuxkart-stk-code	17	rendering-performance	/mnt/frankendom-donors/supertuxkart-stk-code/lib/graphics_engine/src/ge_vulkan_draw_call.cpp	3
+vcmi-vcmi	17	rendering-performance	/mnt/frankendom-donors/vcmi-vcmi/clientsdl2/render/CBitmapFont.cpp	3
+veloren-veloren	17	rendering-performance	/mnt/frankendom-donors/veloren-veloren/voxygen/src/mesh/greedy.rs	3

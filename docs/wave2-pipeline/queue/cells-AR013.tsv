@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+gemrb-gemrb	3	animation-rigs	/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/AnimationFactory.h	3
+graememcc-micropolisJS	3	animation-rigs	/mnt/frankendom-donors/graememcc-micropolisJS/src/spriteManager.js	3
+hedgewars-hw	3	animation-rigs	/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Scripts/Animate.lua	3

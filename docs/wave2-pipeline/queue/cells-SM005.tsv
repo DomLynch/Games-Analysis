@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+OpenDiablo2-OpenDiablo2	15	sound-music	/mnt/frankendom-donors/OpenDiablo2-OpenDiablo2/d2common/d2interface/audio_provider.go	3
+OpenGothic	15	sound-music	/mnt/frankendom-donors/OpenGothic/common/gamemusic.h	3
+OpenRA-OpenRA	15	sound-music	/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Game/Sound/Sound.cs	3

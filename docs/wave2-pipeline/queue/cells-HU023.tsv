@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+lichess-org-lila	16	hud-ui	/mnt/frankendom-donors/lichess-org-lila/ui/round/src/ctrl.ts	3
+lichess-org-mobile	16	hud-ui	/mnt/frankendom-donors/lichess-org-mobile/lib/src/view/game/game_screen.dart	3
+lincity-ng-lincity-ng	16	hud-ui	/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity-ng/EconomyGraph.cpp	3

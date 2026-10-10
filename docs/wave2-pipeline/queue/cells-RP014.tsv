@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+lincity-ng-lincity-ng	17	rendering-performance	/mnt/frankendom-donors/lincity-ng-lincity-ng/src/gui/PainterGL/TextureManagerGL.cpp	3
+nkzw-tech-athena-crisis	17	rendering-performance	/mnt/frankendom-donors/nkzw-tech-athena-crisis/hera/render/renderTile.tsx	3
+open-duelyst-duelyst	17	rendering-performance	/mnt/frankendom-donors/open-duelyst-duelyst/app/view/layers/game/TileLayer.js	3

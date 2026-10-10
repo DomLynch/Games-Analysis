@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+CleverRaven-Cataclysm-DDA	17	rendering-performance	/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/cata_tiles.h	3
+DCurrent-openbor	17	rendering-performance	/mnt/frankendom-donors/DCurrent-openbor/engine/sdl/loadgl.c	3
+DFHack-dfhack	17	rendering-performance	INFERRED	3

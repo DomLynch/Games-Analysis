@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+heroiclabs-nakama	16	hud-ui	/mnt/frankendom-donors/heroiclabs-nakama/console/ui/dist/index.html.gz	3
+id-Software-DOOM	16	hud-ui	/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/m_menu.c	3
+id-Software-Quake	16	hud-ui	/mnt/frankendom-donors/id-Software-Quake/WinQuake/menu.c	3

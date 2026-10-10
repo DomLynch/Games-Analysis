@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+id-Software-Quake	3	animation-rigs	/mnt/frankendom-donors/id-Software-Quake/WinQuake/spritegn.h	3
+id-Software-Quake-2	3	animation-rigs	INFERRED	3
+ihhub-fheroes2	3	animation-rigs	/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/monster/monster_anim.cpp	3

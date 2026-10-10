@@ -1,0 +1,3 @@
+game	category_no	category	evidence_hint	list
+veloren-veloren	16	hud-ui	/mnt/frankendom-donors/veloren-veloren/voxygen/src/hud/mod.rs	3
+xoreos-xoreos	16	hud-ui	/mnt/frankendom-donors/xoreos-xoreos/src/engines/kotorbase/gui/hud.cpp	3

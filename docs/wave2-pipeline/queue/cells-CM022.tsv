@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+vcmi-vcmi	20	city-map-design	/mnt/frankendom-donors/vcmi-vcmi/client/adventureMap/CMinimap.cpp	3
+veloren-veloren	20	city-map-design	/mnt/frankendom-donors/veloren-veloren/voxygen/src/hud/minimap.rs	3
+wesnoth-wesnoth	20	city-map-design	/mnt/frankendom-donors/wesnoth-wesnoth/src/minimap.cpp	3

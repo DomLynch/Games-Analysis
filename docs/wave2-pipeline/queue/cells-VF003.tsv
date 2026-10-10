@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+OpenEnroth-OpenEnroth	13	vfx-blood-finishers	/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/Engine/SpellFxRenderer.cpp	3
+OpenGothic	13	vfx-blood-finishers	/mnt/frankendom-donors/OpenGothic/common/graphics/pfx/particlefx.cpp	3
+OpenRA-OpenRA	13	vfx-blood-finishers	/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Traits/ExplosionOnDamageTransition.cs	3

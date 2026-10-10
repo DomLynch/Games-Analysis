@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+LostCityRS-Engine-TS	3	animation-rigs	/mnt/frankendom-donors/LostCityRS-Engine-TS/src/network/game/server/model/IfSetAnim.ts	3
+ModernUO	3	animation-rigs	/mnt/frankendom-donors/ModernUO/Projects/Server/Mobiles/Mobile.cs	3
+OpenGothic	3	animation-rigs	/mnt/frankendom-donors/OpenGothic/common/graphics/mesh/animation.cpp	3

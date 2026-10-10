@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+EQEmu	3	animation-rigs	/mnt/frankendom-donors/EQEmu/zone/gm_commands/set/set_animation.cpp	3
+FWGS-xash3d-fwgs	3	animation-rigs	/mnt/frankendom-donors/FWGS-xash3d-fwgs/engine/client/cl_sprite.c	3
+FunkinCrew-Funkin	3	animation-rigs	/mnt/frankendom-donors/FunkinCrew-Funkin/source/funkin/ui/freeplay/dj/AnimateAtlasFreeplayDJ.hx	3

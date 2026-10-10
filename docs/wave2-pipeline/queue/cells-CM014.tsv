@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+exult-exult	20	city-map-design	/mnt/frankendom-donors/exult-exult/content/islefaq/patch/minimaps.vga	3
+flareteam-flare-engine	20	city-map-design	/mnt/frankendom-donors/flareteam-flare-engine/src/MenuMiniMap.cpp	3
+flareteam-flare-game	20	city-map-design	/mnt/frankendom-donors/flareteam-flare-game/tiled/empyrean_campaign/black_oak_city.tmx	3

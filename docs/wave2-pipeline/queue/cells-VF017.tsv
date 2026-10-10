@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+otland-forgottenserver	13	vfx-blood-finishers	/mnt/frankendom-donors/otland-forgottenserver/src/const.h	3
+pmbstyle-L2Solo	13	vfx-blood-finishers	/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Effects/EffectTicker.js	3
+scummvm-scummvm	13	vfx-blood-finishers	/mnt/frankendom-donors/scummvm-scummvm/engines/sword25/gfx/renderobject.h	3

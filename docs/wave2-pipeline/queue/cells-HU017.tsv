@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+flutter-team-archive-pinball	16	hud-ui	/mnt/frankendom-donors/flutter-team-archive-pinball/packages/pinball_ui/lib/pinball_ui.dart	3
+freeciv-freeciv	16	hud-ui	/mnt/frankendom-donors/freeciv-freeciv/client/gui-sdl3/diplodlg.c	3
+freeorion-freeorion	16	hud-ui	/mnt/frankendom-donors/freeorion-freeorion/GG/GG/GUI.h	3

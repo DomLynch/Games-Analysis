@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+scummvm-scummvm	20	city-map-design	/mnt/frankendom-donors/scummvm-scummvm/engines/hdb/ai-waypoint.cpp	3
+supertuxkart-stk-code	20	city-map-design	/mnt/frankendom-donors/supertuxkart-stk-code/src/tracks/track.cpp	3
+tmewett-BrogueCE	20	city-map-design	/mnt/frankendom-donors/tmewett-BrogueCE/src/brogue/Architect.c	3

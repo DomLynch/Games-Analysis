@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+openmw	17	rendering-performance	/mnt/frankendom-donors/openmw/apps/openmw/mwrender/groundcover.cpp	3
+opentibiabr-otclient	17	rendering-performance	/mnt/frankendom-donors/opentibiabr-otclient/src/framework/graphics/drawpool.h	3
+orbitersim-orbiter	17	rendering-performance	/mnt/frankendom-donors/orbitersim-orbiter/OVP/D3D9Client/Scene.cpp	3

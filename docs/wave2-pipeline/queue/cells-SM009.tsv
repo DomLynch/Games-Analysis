@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+alexbatalov-fallout1-ce	15	sound-music	/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/int/support/intextra.cc	3
+alexbatalov-fallout2-ce	15	sound-music	/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/audio.cc	3
+angband-angband	15	sound-music	/mnt/frankendom-donors/angband-angband/src/sound-core.c	3

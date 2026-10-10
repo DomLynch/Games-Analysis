@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+inkjs	16	hud-ui	/mnt/frankendom-donors/inkjs/templates/browser_serverless/main.js	3
+ioquake-ioq3	16	hud-ui	/mnt/frankendom-donors/ioquake-ioq3/ui/menudef.h	3
+jynew-jynew	16	hud-ui	/mnt/frankendom-donors/jynew-jynew/jyx2/TapSdkFiles/TapTap/Common/UI/Resources/Toast.prefab	3

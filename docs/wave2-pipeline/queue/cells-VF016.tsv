@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+openmw	13	vfx-blood-finishers	/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/combat.cpp	3
+opentibiabr-otclient	13	vfx-blood-finishers	/mnt/frankendom-donors/opentibiabr-otclient/src/client/attachedeffect.cpp	3
+orbitersim-orbiter	13	vfx-blood-finishers	/mnt/frankendom-donors/orbitersim-orbiter/OVP/D3D9Client/VVessel.cpp	3

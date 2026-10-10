@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+OpenRA-OpenRA	20	city-map-design	/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.D2k/Traits/World/D2kMapGenerator.cs	3
+OpenRCT2-OpenRCT2	20	city-map-design	/mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2/world/map_generator/PngTerrainGenerator.cpp	3
+OpenTTD-OpenTTD	20	city-map-design	/mnt/frankendom-donors/OpenTTD-OpenTTD/src/genworld.cpp	3

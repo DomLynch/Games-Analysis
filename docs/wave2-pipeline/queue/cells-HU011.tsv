@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+afritz1-OpenTESArena	16	hud-ui	/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Interface/GameWorldUiMVC.cpp	3
+alexbatalov-fallout1-ce	16	hud-ui	/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/int/intlib.cc	3
+alexbatalov-fallout2-ce	16	hud-ui	INFERRED	3

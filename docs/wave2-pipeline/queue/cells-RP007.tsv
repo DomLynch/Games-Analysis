@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+STJr-SRB2	17	rendering-performance	/mnt/frankendom-donors/STJr-SRB2/src/hardware/hw_batching.c	3
+ValveSoftware-source-sdk-2013	17	rendering-performance	/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/client/clientshadowmgr.cpp	3
+Warzone2100-warzone2100	17	rendering-performance	/mnt/frankendom-donors/Warzone2100-warzone2100/lib/ivis_opengl/piedraw.cpp	3

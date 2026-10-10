@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+xoreos-xoreos	17	rendering-performance	/mnt/frankendom-donors/xoreos-xoreos/src/aurora/textureatlasfile.cpp	3
+xu4-engine-u4	17	rendering-performance	/mnt/frankendom-donors/xu4-engine-u4/src/imagemgr.cpp	3
+yairm210-Unciv	17	rendering-performance	/mnt/frankendom-donors/yairm210-Unciv/core/src/com/unciv/ui/screens/basescreen/TextureArraySpriteBatch.java	3

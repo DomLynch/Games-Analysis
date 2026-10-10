@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+OpenRA-OpenRA	3	animation-rigs	/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Traits/Render/WithChargeSpriteBody.cs	3
+OpenRCT2-OpenRCT2	3	animation-rigs	/mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2/peep/PeepAnimations.cpp	3
+OpenTTD-OpenTTD	3	animation-rigs	/mnt/frankendom-donors/OpenTTD-OpenTTD/src/industry_cmd.cpp	3

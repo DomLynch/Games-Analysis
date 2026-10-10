@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+openmw	3	animation-rigs	/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/character.cpp	3
+opentibiabr-otclient	3	animation-rigs	/mnt/frankendom-donors/opentibiabr-otclient/src/client/animator.h	3
+orbitersim-orbiter	3	animation-rigs	/mnt/frankendom-donors/orbitersim-orbiter/Src/Vessel/ShuttlePB/ShuttlePB.cpp	3

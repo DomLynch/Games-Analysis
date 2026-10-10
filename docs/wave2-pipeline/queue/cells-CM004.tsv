@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+ModernUO	20	city-map-design	/mnt/frankendom-donors/ModernUO/Projects/UOContent/Items/Maps/WorldMap.cs	3
+OpenDUNE-OpenDUNE	20	city-map-design	/mnt/frankendom-donors/OpenDUNE-OpenDUNE/src/map.h	3
+OpenEnroth-OpenEnroth	20	city-map-design	/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/Engine/Data/MapData.h	3

@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+OpenXcom-OpenXcom	17	rendering-performance	/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Engine/Surface.cpp	3
+PixelGuys-Cubyz	17	rendering-performance	/mnt/frankendom-donors/PixelGuys-Cubyz/src/graphics.zig	3
+SFTtech-openage	17	rendering-performance	/mnt/frankendom-donors/SFTtech-openage/libopenage/renderer/font/glyph_atlas.h	3

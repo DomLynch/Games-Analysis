@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+OpenDiablo2-OpenDiablo2	16	hud-ui	/mnt/frankendom-donors/OpenDiablo2-OpenDiablo2/d2game/d2player/hud.go	3
+OpenEnroth-OpenEnroth	16	hud-ui	/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/GUI/UI/UIPopup.cpp	3
+OpenRA-OpenRA	16	hud-ui	/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Widgets/Logic/Ingame/IngameMenuLogic.cs	3

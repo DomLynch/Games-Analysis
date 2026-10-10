@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+OpenXcom-OpenXcom	20	city-map-design	/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Battlescape/BattlescapeGenerator.cpp	3
+PixelGuys-Cubyz	20	city-map-design	/mnt/frankendom-donors/PixelGuys-Cubyz/src/server/world.zig	3
+SFTtech-openage	20	city-map-design	/mnt/frankendom-donors/SFTtech-openage/libopenage/pathfinding/pathfinder.cpp	3

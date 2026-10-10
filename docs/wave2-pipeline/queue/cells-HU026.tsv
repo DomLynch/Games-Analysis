@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+pokerth-pokerth	16	hud-ui	/mnt/frankendom-donors/pokerth-pokerth/src/gui/qt/guiwrapper.cpp	3
+pshenok-server-survival	16	hud-ui	/mnt/frankendom-donors/pshenok-server-survival/game.js	3
+ryzom-ryzomcore	16	hud-ui	/mnt/frankendom-donors/ryzom-ryzomcore/ryzom/client/data/gamedev/interfaces_v3/config.xml	3

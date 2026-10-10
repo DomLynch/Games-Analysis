@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+amilich-isometric-city	16	hud-ui	/mnt/frankendom-donors/amilich-isometric-city/src/components/game/MiniMap.tsx	3
+angband-angband	16	hud-ui	INFERRED	3
+beyond-all-reason-Beyond-All-Reason	16	hud-ui	/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/unit_healthbars_widget_forwarding.lua	3

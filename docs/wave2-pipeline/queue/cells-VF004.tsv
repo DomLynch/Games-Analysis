@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+OpenRCT2-OpenRCT2	13	vfx-blood-finishers	/mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2/ride/Vehicle.Crash.cpp	3
+OpenTTD-OpenTTD	13	vfx-blood-finishers	/mnt/frankendom-donors/OpenTTD-OpenTTD/src/effectvehicle.cpp	3
+OpenXcom-OpenXcom	13	vfx-blood-finishers	/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Battlescape/Explosion.cpp	3

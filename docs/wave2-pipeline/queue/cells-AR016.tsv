@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+lichess-org-lila	3	animation-rigs	/mnt/frankendom-donors/lichess-org-lila/ui/lib/src/puz/view/chessground.ts	3
+lichess-org-mobile	3	animation-rigs	/mnt/frankendom-donors/lichess-org-mobile/lib/src/widgets/board_thumbnail.dart	3
+lincity-ng-lincity-ng	3	animation-rigs	/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/fire.cpp	3

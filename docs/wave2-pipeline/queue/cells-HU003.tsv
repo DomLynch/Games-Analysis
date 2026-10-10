@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+DCurrent-openbor	16	hud-ui	/mnt/frankendom-donors/DCurrent-openbor/engine/source/openborscript/spawn_hud.c	3
+FWGS-xash3d-fwgs	16	hud-ui	/mnt/frankendom-donors/FWGS-xash3d-fwgs/engine/client/vgui/vgui_draw.c	3
+FunkinCrew-Funkin	16	hud-ui	/mnt/frankendom-donors/FunkinCrew-Funkin/source/funkin/ui/AtlasText.hx	3

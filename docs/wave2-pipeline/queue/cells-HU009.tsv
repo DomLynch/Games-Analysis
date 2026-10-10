@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+SFTtech-openage	16	hud-ui	/mnt/frankendom-donors/SFTtech-openage/libopenage/input/controller/hud/controller.h	3
+STJr-SRB2	16	hud-ui	/mnt/frankendom-donors/STJr-SRB2/src/st_stuff.c	3
+TurningWheel-Barony	16	hud-ui	/mnt/frankendom-donors/TurningWheel-Barony/src/ui/GameUI.cpp	3

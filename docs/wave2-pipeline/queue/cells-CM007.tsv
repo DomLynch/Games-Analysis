@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+STJr-SRB2	20	city-map-design	/mnt/frankendom-donors/STJr-SRB2/src/p_setup.c	3
+SimHacker-micropolis	20	city-map-design	/mnt/frankendom-donors/SimHacker-micropolis/MicropolisCore/src/MicropolisEngine/src/map_type.h	3
+TurningWheel-Barony	20	city-map-design	/mnt/frankendom-donors/TurningWheel-Barony/src/interface/drawminimap.cpp	3

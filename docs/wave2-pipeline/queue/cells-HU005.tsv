@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+OpenBW-openbw	16	hud-ui	/mnt/frankendom-donors/OpenBW-openbw/ui/ui.h	3
+OpenDAoC-OpenDAoC-Core	16	hud-ui	/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/language/CZ/CZ - General.txt	3
+OpenDUNE-OpenDUNE	16	hud-ui	/mnt/frankendom-donors/OpenDUNE-OpenDUNE/src/gui/gui.c	3

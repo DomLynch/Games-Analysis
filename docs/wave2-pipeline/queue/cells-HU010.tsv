@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+ValveSoftware-halflife	16	hud-ui	/mnt/frankendom-donors/ValveSoftware-halflife/cl_dll/ammohistory.cpp	3
+ValveSoftware-source-sdk-2013	16	hud-ui	/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/game/mod_hl2mp/scripts/HudAnimations.txt	3
+Warzone2100-warzone2100	16	hud-ui	/mnt/frankendom-donors/Warzone2100-warzone2100/src/display3d.cpp	3

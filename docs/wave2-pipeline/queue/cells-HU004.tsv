@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+KsanaDock-Microverse	16	hud-ui	/mnt/frankendom-donors/KsanaDock-Microverse/script/ui/SaveLoadUIManager.gd	3
+LostCityRS-Engine-TS	16	hud-ui	/mnt/frankendom-donors/LostCityRS-Engine-TS/src/network/game/server/model/IfOpenMain.ts	3
+MovingBlocks-Terasology	16	hud-ui	/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/core/modes/StateIngame.java	3

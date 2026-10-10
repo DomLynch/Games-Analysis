@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+luanti-org-luanti	16	hud-ui	/mnt/frankendom-donors/luanti-org-luanti/builtin/game/hud.lua	3
+miki151-keeperrl	16	hud-ui	/mnt/frankendom-donors/miki151-keeperrl/window_view.cpp	3
+nkzw-tech-athena-crisis	16	hud-ui	/mnt/frankendom-donors/nkzw-tech-athena-crisis/hera/ui/ErrorOverlay.tsx	3

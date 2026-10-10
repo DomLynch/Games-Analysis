@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+opentibiabr-otclient	16	hud-ui	/mnt/frankendom-donors/opentibiabr-otclient/modules/client_bottommenu/bottommenu.lua	3
+orbitersim-orbiter	16	hud-ui	/mnt/frankendom-donors/orbitersim-orbiter/Src/Orbiter/Pane.cpp	3
+pmbstyle-L2Solo	16	hud-ui	/mnt/frankendom-donors/pmbstyle-L2Solo/src/WorldObserver/public/index.html	3

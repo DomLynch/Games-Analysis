@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+teeworlds-teeworlds	3	animation-rigs	/mnt/frankendom-donors/teeworlds-teeworlds/src/game/client/animstate.cpp	3
+veloren-veloren	3	animation-rigs	/mnt/frankendom-donors/veloren-veloren/voxygen/anim/src/biped_large/mod.rs	3
+wesnoth-wesnoth	3	animation-rigs	/mnt/frankendom-donors/wesnoth-wesnoth/data/core/units/undead/Skeleton.cfg	3

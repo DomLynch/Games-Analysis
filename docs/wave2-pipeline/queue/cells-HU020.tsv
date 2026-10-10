@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+id-Software-Quake-2	16	hud-ui	/mnt/frankendom-donors/id-Software-Quake-2/client/menu.c	3
+id-Software-wolf3d	16	hud-ui	/mnt/frankendom-donors/id-Software-wolf3d/WOLFSRC/WL_MENU.C	3
+ihhub-fheroes2	16	hud-ui	/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/game/game_mainmenu_ui.cpp	3

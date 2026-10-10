@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+openmw	20	city-map-design	/mnt/frankendom-donors/openmw/apps/openmw/mwworld/scene.cpp	3
+opentibiabr-otclient	20	city-map-design	/mnt/frankendom-donors/opentibiabr-otclient/src/client/mapio.cpp	3
+otland-forgottenserver	20	city-map-design	/mnt/frankendom-donors/otland-forgottenserver/src/iomap.cpp	3

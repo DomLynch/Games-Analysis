@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+OpenRCT2-OpenRCT2	16	hud-ui	/mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2-ui/windows/Finances.cpp	3
+OpenTTD-OpenTTD	16	hud-ui	/mnt/frankendom-donors/OpenTTD-OpenTTD/src/smallmap_gui.cpp	3
+OpenXcom-OpenXcom	16	hud-ui	/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Battlescape/MiniMapView.h	3

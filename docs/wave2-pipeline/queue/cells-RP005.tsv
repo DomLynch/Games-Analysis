@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+OpenRA-OpenRA	17	rendering-performance	/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Platforms.Default/OpenGL.cs	3
+OpenRCT2-OpenRCT2	17	rendering-performance	/mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2/drawing/X8DrawingEngine.cpp	3
+OpenTTD-OpenTTD	17	rendering-performance	/mnt/frankendom-donors/OpenTTD-OpenTTD/src/gfx.cpp	3

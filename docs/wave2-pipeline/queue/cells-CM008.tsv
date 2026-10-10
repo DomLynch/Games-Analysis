@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+Warzone2100-warzone2100	20	city-map-design	/mnt/frankendom-donors/Warzone2100-warzone2100/lib/wzmaplib/src/map.cpp	3
+ZenKit	20	city-map-design	/mnt/frankendom-donors/ZenKit/src/world/WayNet.cc	3
+afritz1-OpenTESArena	20	city-map-design	/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Interface/WorldMapUiState.cpp	3

@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+MovingBlocks-Terasology	17	rendering-performance	/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/core/subsystem/lwjgl/LwjglGraphicsManager.java	3
+NetHack-NetHack	17	rendering-performance	/mnt/frankendom-donors/NetHack-NetHack/include/display.h	3
+OpenGothic	17	rendering-performance	/mnt/frankendom-donors/OpenGothic/common/graphics/renderer.cpp	3

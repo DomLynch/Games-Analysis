@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+ValveSoftware-halflife	13	vfx-blood-finishers	/mnt/frankendom-donors/ValveSoftware-halflife/cl_dll/ev_hldm.cpp	3
+ValveSoftware-source-sdk-2013	13	vfx-blood-finishers	/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/client/c_impact_effects.cpp	3
+Warzone2100-warzone2100	13	vfx-blood-finishers	/mnt/frankendom-donors/Warzone2100-warzone2100/src/terrain.cpp	3

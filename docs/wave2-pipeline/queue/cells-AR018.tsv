@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+ryzom-ryzomcore	3	animation-rigs	/mnt/frankendom-donors/ryzom-ryzomcore/nel/include/nel/3d/animation_playlist.h	3
+scummvm-scummvm	3	animation-rigs	/mnt/frankendom-donors/scummvm-scummvm/engines/hpl1/engine/scene/MeshEntity.cpp	3
+supertuxkart-stk-code	3	animation-rigs	/mnt/frankendom-donors/supertuxkart-stk-code/lib/graphics_engine/include/ge_animation.hpp	3

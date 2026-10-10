@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+00-Evan-shattered-pixel-dungeon	17	rendering-performance	/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/SPD-classes/src/main/java/com/watabou/gltextures/Atlas.java	3
+0ad-0ad	17	rendering-performance	/mnt/frankendom-donors/0ad-0ad/source/renderer/InstancingModelRenderer.cpp	3
+Anuken-Mindustry	17	rendering-performance	/mnt/frankendom-donors/Anuken-Mindustry/annotations/src/main/java/mindustry/annotations/impl/AssetsProcess.java	3

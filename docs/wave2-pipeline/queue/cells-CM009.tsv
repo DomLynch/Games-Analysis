@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+alexbatalov-fallout1-ce	20	city-map-design	/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/int/support/intextra.cc	3
+alexbatalov-fallout2-ce	20	city-map-design	/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/worldmap.h	3
+amilich-isometric-city	20	city-map-design	/mnt/frankendom-donors/amilich-isometric-city/src/components/game/MiniMap.tsx	3

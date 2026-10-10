@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+TurningWheel-Barony	3	animation-rigs	/mnt/frankendom-donors/TurningWheel-Barony/src/entity.cpp	3
+ValveSoftware-halflife	3	animation-rigs	/mnt/frankendom-donors/ValveSoftware-halflife/cl_dll/GameStudioModelRenderer_Sample.cpp	3
+ValveSoftware-source-sdk-2013	3	animation-rigs	/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/client/c_baseanimating.cpp	3
