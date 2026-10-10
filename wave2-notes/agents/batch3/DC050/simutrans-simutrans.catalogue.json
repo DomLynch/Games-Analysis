@@ -1,0 +1,55 @@
+{
+  "donor": "simutrans-simutrans",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 8
+  },
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [
+    {"name": "Water climate", "evidence": "climate enum, band at the bottom of the scale", "ref": "/mnt/frankendom-donors/simutrans-simutrans/src/simutrans/simtypes.h"},
+    {"name": "Desert climate", "evidence": "climate enum; default for sea-level heights no band claims", "ref": "/mnt/frankendom-donors/simutrans-simutrans/src/simutrans/world/surface.cc"},
+    {"name": "Tropic climate", "evidence": "climate enum", "ref": "/mnt/frankendom-donors/simutrans-simutrans/src/simutrans/simtypes.h"},
+    {"name": "Mediterranean climate", "evidence": "climate enum", "ref": "/mnt/frankendom-donors/simutrans-simutrans/src/simutrans/simtypes.h"},
+    {"name": "Temperate climate", "evidence": "climate enum; default fallback for gap heights", "ref": "/mnt/frankendom-donors/simutrans-simutrans/src/simutrans/world/surface.cc"},
+    {"name": "Tundra climate", "evidence": "climate enum", "ref": "/mnt/frankendom-donors/simutrans-simutrans/src/simutrans/simtypes.h"},
+    {"name": "Rocky climate", "evidence": "climate enum", "ref": "/mnt/frankendom-donors/simutrans-simutrans/src/simutrans/simtypes.h"},
+    {"name": "Arctic climate", "evidence": "climate enum; open top band; fallback above the top band", "ref": "/mnt/frankendom-donors/simutrans-simutrans/src/simutrans/world/surface.cc"}
+  ],
+  "looks": [
+    {"label": "Day-night curve", "technique": "48-slot table of darkness levels over the in-game day, plus a user offset; forced dark underground", "ref": "/mnt/frankendom-donors/simutrans-simutrans/src/simutrans/display/simview.cc"},
+    {"label": "Walker animation by step count", "technique": "animated frame list when steps_per_frame is above zero, otherwise one static image per direction", "ref": "/mnt/frankendom-donors/simutrans-simutrans/src/simutrans/descriptor/pedestrian_desc.h"},
+    {"label": "Separation offset on spawn", "technique": "each new walker moves along by an amount tied to the object count on its tile", "ref": "/mnt/frankendom-donors/simutrans-simutrans/src/simutrans/vehicle/pedestrian.cc"},
+    {"label": "Large-type twin skin", "technique": "each UI skin ships a large set with the same element names", "ref": "/mnt/frankendom-donors/simutrans-simutrans/simutrans/themes/high-contrast-large.tab"},
+    {"label": "Per-language font key", "technique": "the language table names the font file, so a language can change font without code", "ref": "/mnt/frankendom-donors/simutrans-simutrans/simutrans/text/en.tab"}
+  ],
+  "originals": [
+    {"name": "Ambient walker crowd", "idea": "a passenger-like event spawns a small crowd of walkers near the event, with a budget, a per-tile cap, a lifetime and a despawn when the road is gone", "keep": "budget per event, four per tile per call, object cap per tile, random lifetime, despawn on empty", "change": "spawn events from our town and loot events; budget and lifetime as zone data in seconds; add the grace timer the donor does not have"},
+    {"name": "Biome by height band with explicit precedence", "idea": "zone biome is set by height bands in data, with a stated fallback", "keep": "ordered bands and a fallback", "change": "state one precedence rule in the data; our fallback is temperate"},
+    {"name": "Shore placement rule", "idea": "a coastal feature is valid only next to water", "keep": "a neighbour test for water", "change": "our own coastal rule for our zone features"},
+    {"name": "Night clock table", "idea": "darkness is a 48-slot table over the day, plus a user offset, forced dark underground", "keep": "the table, the offset and forced dark underground", "change": "a per-zone curve and an ember glow for our night"},
+    {"name": "Playlist shuffle without repeat", "idea": "a random track that never repeats the one just played, with a sequential fallback", "keep": "exclude the current track", "change": "biome-keyed ambience beds with a crossfade at borders, not a melody"},
+    {"name": "Large-type twin skin", "idea": "every UI skin has a large twin with the same element names", "keep": "same names in the large set, one layout", "change": "our own palette and a touch-size rule instead of a fixed scale"},
+    {"name": "Animated or static by step count", "idea": "a walker is animated only when its descriptor sets a step count", "keep": "one data field decides animation", "change": "our own idle loops for NPCs"},
+    {"name": "Per-category sound toggles", "idea": "the player turns each sound category on or off", "keep": "per-category toggles", "change": "our categories: footsteps, hit impacts, ambience, stingers"}
+  ],
+  "licence_note": "Code: Artistic License 1.0 (LICENSE.txt line 36). Not on the brief's adapt list, so shape only. Assets conflict: license.txt says Artistic covers images, data, midi and fonts; copyright.txt line 6 forbids modification or sale without permission. Treated as class C. pak192comic theme is CC-BY-SA 3.0 (class B; inspiration only). Paksets absent from the box (README.md line 182). No music, font, skin or code copied.",
+  "not_read": [
+    "Paksets (absent): walker images, vehicle and building graphics",
+    "The 55 .mid files (titles only; content not played)",
+    "The .bdf fonts (names only); .png skin parts and compiled .pak files (names only)",
+    "The 24 .nut scripts (names only)",
+    "en.tab beyond the header and the entry-shape check; the other 62 language files",
+    "documentation/ folder",
+    "C++ code beyond the cited functions: sound backends, display code except simview.cc, script API, most of world/",
+    "simgraph0 light colour bodies (declaration only)",
+    "Walker lifetime table (strecke) contents",
+    "surface.cc square_is_free lines 104-110 (partly read)"
+  ]
+}

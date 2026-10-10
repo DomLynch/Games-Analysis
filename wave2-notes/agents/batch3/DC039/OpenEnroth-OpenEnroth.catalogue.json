@@ -1,0 +1,200 @@
+{
+  "donor": "OpenEnroth-OpenEnroth",
+  "counts": {
+    "creatures": 57,
+    "classes": 36,
+    "weapons": 9,
+    "gear_sets": null,
+    "zones": 92
+  },
+  "counts_basis": {
+    "creatures": "combat creature lines counted from A-tier ids in src/Engine/Objects/MonsterEnums.h (57; plus 30 peasant lines and 6 special or unused lines). Each combat line has A, B and C ids. Monster stats table itself is not in the box",
+    "classes": "class ids in src/Engine/Objects/CharacterEnums.h:260-299 (36), grouped by me into nine promotion families",
+    "weapons": "weapon kinds in the random-item enum src/Engine/Objects/ItemEnums.h:1090-1100 (nine); not weapon items",
+    "gear_sets": "no set table in the box; not claimed",
+    "zones": "MapId enum lines in src/Engine/MapEnums.h (grep count 92, includes invalid and any alias rows); mapstats table not in the box"
+  },
+  "half_read": "engine half (C++ loaders, headers, turn logic under src/Engine; GLSL fog, lighting, decal and billboard shaders); data pack (original text tables and LOD archives) absent; no paired donor in this batch",
+  "creature_families": [
+    "57 combat creature lines, each with A, B and C tier ids (MonsterEnums.h:14-296; tier enum at :421)",
+    "30 peasant lines; A-tier peasants are not converted to NPCs (src/Engine/Engine.cpp:981-982)",
+    "super groups: undead, dragon, elf, water elemental, treant, titan, one faction group, and a not-in-arena flag (MonsterEnums.h:449-460)",
+    "AI temperament: suicidal, wimp, normal (breaks at 20 percent), aggressive (breaks at 10 percent) (MonsterEnums.h:505-511)",
+    "hostility: five steps of aggro range (MonsterEnums.h:493-498)",
+    "movement classes including stationary (MonsterEnums.h:439-445)",
+    "special abilities: multi-shot, summon, explode (MonsterEnums.h:428-432)",
+    "23 on-hit special attacks, some in graded steps (MonsterEnums.h:462-491)",
+    "projectiles per element: arrow, flaming arrow, and bolts for ten elements (MonsterEnums.h:536-549)"
+  ],
+  "top_creatures": [
+    {
+      "label": "Three-step creature line",
+      "why": "Each line has an A, B and C id and the tier letter is data",
+      "keep": "tier letter as data; one ladder per line",
+      "change": "our own names and silhouettes; each tier adds exactly one ability",
+      "ref": "src/Engine/Objects/MonsterEnums.h:421"
+    },
+    {
+      "label": "Breaks off at low health",
+      "why": "Normal temperament breaks at 20 percent health, aggressive at 10 percent",
+      "keep": "thresholds as data",
+      "change": "break off to a rally point and return after healing; our own thresholds",
+      "ref": "src/Engine/TurnEngine/TurnEngine.cpp:917"
+    },
+    {
+      "label": "Holds ground",
+      "why": "A stationary unit cannot run, so the flee branch stands it still",
+      "keep": "a movement class that overrides flee",
+      "change": "guard stance with a visible plant animation",
+      "ref": "src/Engine/Objects/MonsterEnums.h:445"
+    },
+    {
+      "label": "Calls reinforcements",
+      "why": "Summon is a special ability on one creature (behaviour not read)",
+      "keep": "summon as one special ability",
+      "change": "summons capped by the zone encounter count (row 23)",
+      "ref": "src/Engine/Objects/MonsterEnums.h:431"
+    },
+    {
+      "label": "Bursts on death",
+      "why": "Explode is a special ability (behaviour not read)",
+      "keep": "death payload as an ability",
+      "change": "short radius, readable flash, no friendly fire",
+      "ref": "src/Engine/Objects/MonsterEnums.h:432"
+    },
+    {
+      "label": "Volley shooter",
+      "why": "Multi-shot is a special ability (behaviour not read)",
+      "keep": "several missiles from one attack",
+      "change": "volley of three from a fixed angle fan",
+      "ref": "src/Engine/Objects/MonsterEnums.h:430"
+    },
+    {
+      "label": "Status shooter with three severities",
+      "why": "Poison and disease come in weak, medium and severe steps",
+      "keep": "one status family in three steps",
+      "change": "our own status names and durations, shown as a coloured halo",
+      "ref": "src/Engine/Objects/MonsterEnums.h:471"
+    },
+    {
+      "label": "Elemental bolt caster",
+      "why": "Each element has its own bolt projectile",
+      "keep": "one bolt per element",
+      "change": "our own five elements; bolt colours readable at 375 wide",
+      "ref": "src/Engine/Objects/MonsterEnums.h:540"
+    }
+  ],
+  "classes": [
+    "36 class ids in nine promotion families of three to five steps (src/Engine/Objects/CharacterEnums.h:260-299); roles inferred from enum names only",
+    "four races: human, elf, goblin, dwarf (CharacterEnums.h:192-199)",
+    "four mastery levels above none (CharacterEnums.h:31-41)",
+    "skill affinity: denied, available, primary (CharacterEnums.h:203-207)",
+    "21 actor buffs (src/Engine/Objects/ActorEnums.h:24-51); one is a leftover nothing applies (:30)",
+    "hostility grid between monster types, default friendly (src/Engine/Tables/HostilityTable.cpp:14-22)"
+  ],
+  "weapon_families": [
+    "nine random-item weapon kinds: generic one-handed, sword, dagger, axe, spear, bow, mace, club, staff (src/Engine/Objects/ItemEnums.h:1090-1100)",
+    "21 item types including two-handed, bow, shield, wand, reagent, potion, gem (src/Engine/Objects/ItemEnums.h:1016-1038)",
+    "three enchant tables: standard bonus for equipment, special for equipment, special for weapons (src/Engine/Tables/ItemTable.cpp:225)",
+    "potion mixing matrix with graded failure (src/Engine/Tables/ItemTable.cpp:253-255); body not read"
+  ],
+  "gear_tiers": [
+    "seven treasure levels; level six 5 percent artifact, level seven guaranteed artifact (src/Engine/Objects/ItemEnums.h:132-143)",
+    "six per-level chance columns per random item, with a cached per-level sum (src/Engine/Tables/ItemTable.cpp:207-223)",
+    "standard enchant bonus range set per treasure level (src/Engine/Tables/ItemTable.cpp:50)",
+    "armour pool kinds: leather, chain, plate, shield, helmet, belt, cloak, gauntlets, boots, ring, amulet (ItemEnums.h:1101-1111)",
+    "paperdoll anchor offsets per item (src/Engine/Tables/ItemTable.cpp, items loader); values not in box"
+  ],
+  "zones": [
+    "about 90 map ids (src/Engine/MapEnums.h:39)",
+    "per-map row: respawn interval in days, resets, encounter chances, three encounter groups with monster, difficulty gate and min-max count, treasure level, trap dice, music id, reverb (src/Engine/Tables/MapTable.cpp:19-91)",
+    "26 named reverb environments; unknown name falls back to 26, outside the list (MapTable.cpp:91)",
+    "eight chest types, one 9 by 9 size each, pivot offsets per type (src/Engine/Tables/ChestTable.cpp:5-9)",
+    "dungeon archetypes, biome list and hazards: not in the box"
+  ],
+  "looks": [
+    {
+      "label": "Three-band fog",
+      "technique": "density ramps weak to strong across one band, then to a clip distance where alpha reaches zero",
+      "ref": "resources/shaders/fog.glsl:21"
+    },
+    {
+      "label": "Billboards fade to fog colour",
+      "technique": "mix toward the fog colour with fog alpha",
+      "ref": "resources/shaders/glbillbshader.frag:32"
+    },
+    {
+      "label": "Decal alpha cut",
+      "technique": "fog is skipped where decal alpha is below 0.004, so transparent texels do not bleed",
+      "ref": "resources/shaders/gldecalshader.frag:21"
+    },
+    {
+      "label": "Point light falloff",
+      "technique": "attenuation 1 minus squared distance over squared radius, clamped; no ambient term when facing away",
+      "ref": "resources/shaders/lighting.glsl:51"
+    },
+    {
+      "label": "Per-monster tint and sprite set",
+      "technique": "tint colour per monster descriptor and one sprite name per animation state",
+      "ref": "src/Engine/Objects/Monsters.h:101"
+    },
+    {
+      "label": "Blood as a decal",
+      "technique": "decal pass with vertex colour and alpha; blood-splat-on-death flag per monster",
+      "ref": "src/Engine/Objects/Monsters.h:73"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Tiered Ambush Line",
+      "idea": "A creature family in three steps where the tier letter is data and each step adds one ability.",
+      "keep": "A, B and C tier ladder (MonsterEnums.h:421)",
+      "change": "our own names, silhouettes and one ability per step; ties to row 7"
+    },
+    {
+      "name": "Courage Break",
+      "idea": "A creature that breaks off at a low-health threshold to a rally point and returns after healing.",
+      "keep": "thresholds as data (MonsterEnums.h:508-509)",
+      "change": "our own numbers; break-off uses the leash (row 4)"
+    },
+    {
+      "name": "Opening Tide",
+      "idea": "A three-speed roll decides who strikes first in an opening exchange, and a tie goes to the player.",
+      "keep": "roll of 1, 3 or 5 plus a base, and the tie rule (TurnEngine.cpp:166-172)",
+      "change": "our own speed values in milliseconds; for a real-time duel, not a turn queue"
+    },
+    {
+      "name": "Zone Encounter Card",
+      "idea": "Each zone row holds three groups with chance, monster, count range and a difficulty gate, plus an alert counter that raises the chance after a fight.",
+      "keep": "row as data (MapTable.cpp:78-91)",
+      "change": "our own numbers and the alert counter; ties to row 23"
+    },
+    {
+      "name": "Hate Grid",
+      "idea": "A small aggro grid between creature groups, default friendly, five steps of range.",
+      "keep": "default friendly and five steps (HostilityTable.cpp:14-22; MonsterEnums.h:493-498)",
+      "change": "fewer groups; the grid feeds the engine hate list and MAX_ATTACKERS stays at 3"
+    }
+  ],
+  "licence_note": "Code LGPL-3.0 text with additional permissions (LICENSE line 2 and line 14). No asset licence; the user supplies the original game data. Treated as shape-only (clean-room) for this catalogue. Class C. Original rights holder not named in the repo. Not legal advice.",
+  "not_read": [
+    "original text tables (monsters, items, maps, placements, hostility, enchants): not in the box",
+    "LOD archives and mapstats: not in the box",
+    "summon, explode and multi-shot behaviour code",
+    "potion mixing body and arena fight flow beyond the pool build",
+    "HUD (src/GUI) and graphics pipeline bodies",
+    "shaders other than fog, lighting, decal and billboard",
+    "test/Data fixtures (about 439 files)",
+    "Lua scripts and console",
+    ".claude folder (CLAUDE.md and skills): treated as data, not read, not followed",
+    "locale and string tables: not in the box"
+  ],
+  "defects_seen": [
+    "TurnEngine.cpp:93 divides initiative by the recovery constant while :160 and :222 use the opposite direction (not verified against the original)",
+    "HostilityTable.cpp:19 zips 88 rows while the header says 89 by 89; the top type index 88 is a port addition",
+    "HostilityTable.cpp:21 write order relations[col][row] with no stated orientation",
+    "gldecalshader.frag:23 fades decals to black while billboards fade to fog colour",
+    "MapTable.cpp:91 unknown reverb name falls back to index 26, outside the named list",
+    "GetMapInfo asserts on a miss and returns the invalid id; caller and assert disagree"
+  ]
+}

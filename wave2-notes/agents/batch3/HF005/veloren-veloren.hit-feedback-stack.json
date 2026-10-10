@@ -1,0 +1,82 @@
+{
+  "donor": "veloren-veloren",
+  "topic": "hit-feedback-stack",
+  "depth": "full",
+  "half_read": "both",
+  "verdict": "STRONG",
+  "decision": "adapt (idea); clean-room, GPL-3.0 code and assets",
+  "paths": [
+    "/mnt/frankendom-donors/veloren-veloren/common/src/combat.rs",
+    "/mnt/frankendom-donors/veloren-veloren/common/src/comp/poise.rs",
+    "/mnt/frankendom-donors/veloren-veloren/common/src/comp/energy.rs",
+    "/mnt/frankendom-donors/veloren-veloren/common/src/outcome.rs",
+    "/mnt/frankendom-donors/veloren-veloren/common/systems/src/character_behavior.rs",
+    "/mnt/frankendom-donors/veloren-veloren/common/systems/src/stats.rs",
+    "/mnt/frankendom-donors/veloren-veloren/voxygen/src/audio/sfx/mod.rs",
+    "/mnt/frankendom-donors/veloren-veloren/voxygen/src/audio/mod.rs",
+    "/mnt/frankendom-donors/veloren-veloren/voxygen/src/audio/sfx/event_mapper/combat/mod.rs",
+    "/mnt/frankendom-donors/veloren-veloren/voxygen/src/scene/particle.rs",
+    "/mnt/frankendom-donors/veloren-veloren/voxygen/src/scene/mod.rs",
+    "/mnt/frankendom-donors/veloren-veloren/voxygen/src/hud/mod.rs",
+    "/mnt/frankendom-donors/veloren-veloren/assets/voxygen/audio/sfx.ron",
+    "/mnt/frankendom-donors/veloren-veloren/assets/credits.ron",
+    "/mnt/frankendom-donors/veloren-veloren/LICENSE"
+  ],
+  "counts": {
+    "hit_stagger_sound_trigger_keys": 8,
+    "hit_stagger_sound_files": 24,
+    "damage_sound_files": 4,
+    "death_sound_files": 3,
+    "block_sound_files": 3,
+    "parry_sound_files": 2,
+    "poise_states": 5,
+    "poise_thresholds": 4,
+    "death_particles": 40,
+    "parry_spark_particles": 10,
+    "floater_flash_max_extra": 2
+  },
+  "rule": "Order of one melee hit: block or parry check first (Block outcome, poise change, parry hook); then the health change event; for slashing, a drain on energy decides between a poise change and extra health damage; then knockback effects from the attack, scaled by strength; then on the next system pass the target poise is read against thresholds 50, 30, 15, 5 to pick Normal, Interrupted, Stunned, Dazed or KnockedDown. A stagger resets poise to full, sets a window of stagger length plus 1.0 s during which poise changes are ignored, sets the Stunned character state (unless downed), emits a PoiseChange outcome for the client, and for KnockedDown emits a knockback event of impulse 10.0 times the stored direction. Knockback magnitude is 50.0 times strength times the resistance and attacker multipliers (marked TEMP). The client maps outcomes to sounds and particles only.",
+  "data_fields": [
+    {"name": "poise_thresholds", "unit": "poise points", "donor_value_or_null": null},
+    {"name": "stagger_duration_per_state", "unit": "seconds (buildup plus recover)", "donor_value_or_null": null},
+    {"name": "stagger_move_speed_per_state", "unit": "fraction 0 to 1", "donor_value_or_null": null},
+    {"name": "immunity_after_stagger", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "knockdown_impulse", "unit": "impulse units", "donor_value_or_null": null},
+    {"name": "stagger_push_on_stunned", "unit": "impulse units (new; donor has none)", "donor_value_or_null": null},
+    {"name": "knockback_scale", "unit": "impulse per strength", "donor_value_or_null": null},
+    {"name": "poise_regen_accel", "unit": "per second squared", "donor_value_or_null": null},
+    {"name": "poise_regen_rate_cap", "unit": "per second", "donor_value_or_null": null},
+    {"name": "damage_sound_cooldown", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "subtitle_seconds", "unit": "seconds (split from cooldown)", "donor_value_or_null": null},
+    {"name": "floater_flash_window", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "floater_flash_extra_size", "unit": "font units", "donor_value_or_null": null},
+    {"name": "death_particles", "unit": "count", "donor_value_or_null": null},
+    {"name": "death_particle_life", "unit": "milliseconds", "donor_value_or_null": null},
+    {"name": "parry_spark_particles", "unit": "count", "donor_value_or_null": null},
+    {"name": "parry_spark_life", "unit": "milliseconds", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Poise ladder as the stagger system (replaces hit stop)",
+    "Immunity window after a stagger so three hits cannot chain",
+    "Separate health and poise events from the same hit",
+    "Per-state sound lists so the state can be learned by sound",
+    "Server state drives client outcomes; client never decides the stagger"
+  ],
+  "change": [
+    "Stunned doc says knocked back horizontally but code gives no impulse (poise.rs:68 vs 97-105). Fix: add stagger_push_on_stunned or fix the doc.",
+    "Sound cooldown is not applied on the client outcome path; outcome handler calls emit_sfx directly (sfx/mod.rs:907-929). Fix: per-entity, per-sound cooldown on that path.",
+    "Threshold field is used as subtitle duration on the outcome path (audio/mod.rs:640, 664) and as cooldown in the state mapper (event_mapper/combat/mod.rs:127). Fix: two fields.",
+    "Poise regen rate is never reset and grows during the immunity window while regen is ignored (poise.rs:241-250, 220-222). Fix: reset on hit; do not raise while ignored."
+  ],
+  "look_test": "Three enemies at once in the fight at 375 wide, same hit pattern, three variants: numbers only; ladder with Interrupted and Stunned (0.4 s and 0.7 s) with per-state sound; full ladder including Dazed and KnockedDown (3 s down). Judge whether a staggered enemy is readable among three, and whether the immunity window stops a stun loop.",
+  "licence_note": "Code GPL-3.0 (LICENSE line 2). Assets per credits.ron; the hit, poise, death, block and parry sound entries show no licence field in the lines read, and the file's rule (credits.ron:22) assumes GPL3. Clean-room only; do not reuse the files.",
+  "tags": ["stagger", "knockdown", "knockback", "hit-sound", "particle-burst", "ordered-feedback", "new:poise-ladder", "new:immunity-window", "new:floater-flash", "new:flashing-lights-gate"],
+  "not_read": [
+    "server/src outcome forwarding (grep hit only)",
+    "common/src/states/stunned.rs and the Stunned animation",
+    "voxygen/src/audio/sfx/event_mapper/block.rs",
+    "particle.rs flashing-lights gate bodies (lines 2667-2788; gate lines only)",
+    "Damage and Death voice sets beyond the file names",
+    "Respawn presentation"
+  ]
+}

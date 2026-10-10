@@ -1,0 +1,233 @@
+{
+  "donor": "keldaanCommunity-pokemonAutoChess",
+  "counts": {
+    "creatures": 1175,
+    "classes": 31,
+    "weapons": 16,
+    "gear_sets": 0,
+    "zones": 143
+  },
+  "counts_note": "creatures = species rows in pokemons-data.csv; classes = synergy (type) names; weapons = wand items; gear_sets = 0 because the box has no armour sets (item families are in gear_tiers); zones = dungeon map entries in Dungeon.ts (11 scripted PvE stages and 13 weather states are listed separately in zones).",
+  "creature_families": [
+    "Rarity ladder of nine categories sets the shop cost (config/game/shop.ts line 20).",
+    "Evolution lines of 1 to 4 stages; most are 3-stage lines (671 rows at 3 stages, 429 at 2, 40 at 4, 35 at 1).",
+    "Types: 31 distinct, largest psychic (151), normal (148), water (132), field (131), flying (124); smallest baby (22), fossil (48).",
+    "532 distinct families in the Family column of app/models/precomputed/pokemons-data.csv (names not reproduced).",
+    "Boss pattern: scripted PvE stages in app/models/pve-stages.ts (11 stages): two-unit opener, three-unit row boss with HP +100 boost (line 192), four-unit finale with one unit on another row and stat boosts plus four held-item slots (line 333)."
+  ],
+  "top_creatures": [
+    {
+      "label": "Trio vanguard encounter",
+      "why": "A three-unit row boss with a shared stat boost; should read as one group at a glance (judgement, not measured at 375 wide).",
+      "keep": "Fixed row line-up plus boss stat table as data.",
+      "change": "Our creatures, our names, a different formation.",
+      "ref": "app/models/pve-stages.ts lines 192-200"
+    },
+    {
+      "label": "Four-unit finale with an off-row leader",
+      "why": "The unit on the second row makes the finale read as a leader.",
+      "keep": "Leader placed on a separate row.",
+      "change": "Our layout and stat numbers.",
+      "ref": "app/models/pve-stages.ts lines 333-357"
+    },
+    {
+      "label": "Ember stacker",
+      "why": "Attack climbs on every landed hit, so a fight visibly escalates.",
+      "keep": "Per-hit stacking by tier.",
+      "change": "Add a cap; the class body read has none. Use our heat-ribbon look.",
+      "ref": "app/core/effects/synergies.ts lines 137-153 (addAttack at line 148)"
+    },
+    {
+      "label": "Kill-growth beast",
+      "why": "Each kill grows attack and ability power by tier; the class also tracks a boosted-HP amount.",
+      "keep": "Growth on kill.",
+      "change": "Cap it per fight and tie it to our hate list.",
+      "ref": "app/core/effects/synergies.ts lines 78-103"
+    },
+    {
+      "label": "Last-stand surge",
+      "why": "One-shot surge below 30 per cent HP (+40 speed, +40 per cent base attack, +30 shield), reverted after 3000 ms by a delayed command.",
+      "keep": "One-shot threshold trigger and a timed revert.",
+      "change": "The revert block undoes speed and attack but not the shield; treat that as a defect and decay the shield too.",
+      "ref": "app/core/effects/synergies.ts lines 453-476 (addShield line 458, revert delay line 471)"
+    },
+    {
+      "label": "Focus lifesteal healer",
+      "why": "Lifesteal fraction set by which self-buff is present (25, 35 or 50 per cent, checked in code order); skips retaliation and self-damage.",
+      "keep": "Gating lifesteal by a self-buff; the retaliation exclusion.",
+      "change": "Our buff names and numbers.",
+      "ref": "app/core/effects/synergies.ts lines 249-265 (retaliation check line 251, rate line 255)"
+    },
+    {
+      "label": "Three-copy merge evolver",
+      "why": "A line grows into its next stage when enough copies stand on the board; a held item blocks one copy from counting.",
+      "keep": "Merge-by-count evolution and the held-item blocker.",
+      "change": "Our item name and our count.",
+      "ref": "app/core/evolution-logic/count-evolution-handler.ts lines 29-37 (copies line 37; blocker line 35)"
+    },
+    {
+      "label": "Shiny variant creature",
+      "why": "The shiny flag picks a separate animation set per tint, with a per-species opt-out (shinyUnavailable).",
+      "keep": "Flag-selected art set and a per-species opt-out.",
+      "change": "Our variant is a shader glow on the same art, not a second art set.",
+      "ref": "app/public/src/game/animation-manager.ts lines 65-80; app/public/src/game/components/board-manager.ts line 1100"
+    }
+  ],
+  "classes": [
+    {
+      "label": "Fire trait (ember ladder)",
+      "role": "Attack scaling on the front line",
+      "mechanic": "Attack climbs on each landed hit, by tier.",
+      "progression": "Ladder 2/4/6/8 units on the board.",
+      "ref": "app/core/effects/synergies.ts lines 137-153; app/config/game/synergies.ts lines 19-23, 182-183 (thresholds)"
+    },
+    {
+      "label": "Human trait (focus ladder)",
+      "role": "Sustain",
+      "mechanic": "Lifesteal gated by a self-buff; no lifesteal on retaliation or self-damage.",
+      "progression": "Ladder 2/4/6.",
+      "ref": "app/core/effects/synergies.ts lines 249-265"
+    },
+    {
+      "label": "Wild trait (surge ladder)",
+      "role": "Burst at low health",
+      "mechanic": "One-shot surge below 30 per cent HP.",
+      "progression": "Ladder 2/4/6/9.",
+      "ref": "app/core/effects/synergies.ts lines 453-476"
+    },
+    {
+      "label": "Monster trait (kill ladder)",
+      "role": "Snowball",
+      "mechanic": "Kill-growth in attack and ability power by tier.",
+      "progression": "Ladder 2/4/6/8.",
+      "ref": "app/core/effects/synergies.ts lines 78-103"
+    },
+    {
+      "label": "Flying trait (protection ladder)",
+      "role": "Damage reduction",
+      "mechanic": "Incoming-hit reduction in two levels, set by which effect is active.",
+      "progression": "Ladder 2/4/6/8.",
+      "ref": "app/core/effects/synergies.ts lines 289-300"
+    },
+    {
+      "label": "Water trait",
+      "role": "Not read",
+      "mechanic": "Ladder 3/6/9 only; effect body not read.",
+      "progression": "Ladder 3/6/9.",
+      "ref": "app/config/game/synergies.ts line 183"
+    },
+    {
+      "label": "Other 25 traits",
+      "role": "Not read",
+      "mechanic": "Ladders read in the threshold table; effect bodies not read.",
+      "progression": "Ladders of 3 or 4 steps (15 traits with 3 steps, 16 with 4).",
+      "ref": "app/config/game/synergies.ts lines 179-210"
+    }
+  ],
+  "weapon_families": [
+    "Wands: 16 items, each a distinct on-hit or on-cast effect (app/types/enum/Item.ts lines 926-944); one slot, many effects.",
+    "Pounce wand: on a crit or a 10 per cent chance, a splash of 30 per cent of the incoming hit, then a cooldown field set to 250 (unit not checked) (app/core/effects/synergies.ts lines 795-812; the first 18 lines read, splash target not read)."
+  ],
+  "gear_tiers": [
+    "Metal ladder of technical items: bronze, silver, gold, four each (app/types/enum/Item.ts lines 952-972).",
+    "Shiny (gold-themed) held items: 12 (ShinyItems, Item.ts line 645); a separate item-cell class (item-container.ts line 76).",
+    "Synergy gems (30; Item.ts lines 712-745), memory discs (26; lines 367-395), keyed to traits.",
+    "Crafted stones from two base components: 55 recipe keys (ItemRecipe, Item.ts lines 507-564).",
+    "Dishes (46) and berries (24) as consumable families (Item.ts lines 571-600, 994-1042)."
+  ],
+  "zones": [
+    "Dungeon map catalogue: 143 entries in one enum (app/types/enum/Dungeon.ts lines 160-305), music enum at line 1; loading skips the town map (app/public/src/game/components/loading-manager.ts line 122).",
+    "Procedural terrain: fractal noise into three cells, wall above 0.66, ground above 0.33, water below (app/core/design.ts lines 84-101). Defect: the seed is not passed to Terrain (app/core/terrain.ts lines 31-33; seed read at line 180), so maps are not reproducible; fix by passing a zone seed.",
+    "Weather: 13 states (app/types/enum/Weather.ts line 6); trait-to-weather map (lines 50-66); weather-to-passive map (lines 37-48).",
+    "Expeditions: 4 types by 6 ranks (app/types/enum/Expedition.ts lines 7-20); offer hash deterministic per player and count (line 26).",
+    "Scripted PvE stage table: 11 stages (app/models/pve-stages.ts lines 42-360)."
+  ],
+  "looks": [
+    {
+      "label": "Shiny art set per tint",
+      "technique": "A separate animation set chosen by one boolean, with a per-species opt-out.",
+      "ref": "app/public/src/game/animation-manager.ts lines 65, 78; app/public/src/game/components/board-manager.ts line 1100"
+    },
+    {
+      "label": "Shine sparkle on reward drop",
+      "technique": "A looping sparkle sprite plus a tween that rises 48 px and spreads items 70 px apart (layout values).",
+      "ref": "app/public/src/game/components/board-manager.ts lines 1588-1600"
+    },
+    {
+      "label": "Two animation frame rates",
+      "technique": "Character animation at 36 fps and effects at 20 fps, as separate constants.",
+      "ref": "app/public/src/game/animation-manager.ts lines 26-27"
+    },
+    {
+      "label": "Region tint with colour-blind switch",
+      "technique": "A per-region tint applied to board sprites, with an accessibility option.",
+      "ref": "app/public/src/game/components/board-manager.ts lines 357, 468, 482"
+    },
+    {
+      "label": "Status and emotion vocabulary",
+      "technique": "29 status values for icons and 20 emotions for idle and pose variety.",
+      "ref": "app/types/enum/Status.ts line 1; app/types/enum/Emotion.ts line 1"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Last Ember Surge",
+      "idea": "A once-per-fight burst below 30 per cent HP: speed, attack and a shield, reverting after a set time.",
+      "keep": "One-shot threshold trigger and a timed revert.",
+      "change": "The shield also decays; our numbers; an ember aura shader, not any donor visual."
+    },
+    {
+      "name": "Trio Vanguard boss",
+      "idea": "Three units on a row sharing one boss stat table, with a leader on a second row.",
+      "keep": "Data-driven boss board.",
+      "change": "Our creatures, formation and names; no species."
+    },
+    {
+      "name": "Kill Ledger beast",
+      "idea": "Each kill raises attack and max HP, capped per fight.",
+      "keep": "Growth on kill.",
+      "change": "A hard cap and a visible tally."
+    },
+    {
+      "name": "Brood Line evolution",
+      "idea": "Three copies merge into the next stage carrying permanent stats; an anchor item blocks one copy.",
+      "keep": "Merge-by-count and the blocker item.",
+      "change": "Our item and our lines."
+    },
+    {
+      "name": "Focus Drinker lifesteal",
+      "idea": "Lifesteal of 25, 35 or 50 per cent set by a self-buff; retaliation and self-damage excluded.",
+      "keep": "Gating and exclusions.",
+      "change": "Our buff names and numbers."
+    },
+    {
+      "name": "Trait Weather Pairs",
+      "idea": "Each trait is paired with a weather state that also adds a passive.",
+      "keep": "Pairing as data.",
+      "change": "Our traits and our weather set."
+    },
+    {
+      "name": "Seeded Cut Terrain",
+      "idea": "Three cell types from one noise field with thresholds, reproducible from a zone seed.",
+      "keep": "Thresholds as zone data.",
+      "change": "Fix the seed plumbing (the donor defect); our biome names."
+    },
+    {
+      "name": "Shine Drop",
+      "idea": "A reward rises with a sparkle and a tween on the reward ceremony step.",
+      "keep": "Rise plus sparkle.",
+      "change": "Our glow shader and loot-row timing."
+    }
+  ],
+  "licence_note": "GNU GPL v3 code (LICENSE line 2): clean-room, shape only. Art, sprites, portraits, icons, sounds and species names: the files state all rights to The Pokemon Company (README line 5; policy.md line 14); class C, do not reproduce. Music not in the box (README line 22). Credit records (credits.json) name individuals; not reproduced. Not a legal opinion.",
+  "not_read": [
+    "Synergy effect bodies beyond the ones named (app/core/effects/synergies.ts lines 1-1040 read only at the lines named).",
+    "Wand effects beyond the pounce wand (first 18 lines).",
+    "Ability files under app/core/abilities/ (about 535 files; not opened).",
+    "app/models/precomputed/precomputed-pokemons.ts loader (not read).",
+    "Rooms, matchmaking, services (listed only).",
+    "Client pages and components beyond grep matches.",
+    "Image contents of sprites, portraits and tilesets; sound and video contents.",
+    "Locale strings (14 folders; count only)."
+  ]
+}

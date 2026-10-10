@@ -4,7 +4,7 @@
   "code_licence": "GPL-2.0-or-later. README.md line 300 states the project is free software under GPL; COPYING.README line 14 says 'Everything included (source code and data)' is GPL version 2 or later, except the music and video not included. Third-party code under 3rdparty/ has its own licences (MIT, BSD, Boost, MPL 2.0, ISC, CC0 for expected; see COPYING.NONGPL).",
   "asset_licence": "Mixed, file by file. COPYING.README line 14 and line 15 sets the default as GPL-2 or later for included data. COPYING.NONGPL lists the exceptions: CC0 (some maps and images), CC BY-SA 3.0 (some textures, wheel models, a campaign banner, one multiplayer map), CC BY 4.0 (Font Awesome replay icons), MIT (flag images and Bootstrap UI icons, AMD FSR and SMAA shaders), OFL 1.1 (a CJK font, not in box). Music and video are not in the box (COPYING.README line 15; README.md line 38; data/music is an empty submodule).",
   "rights_holder_status": "Original game released by Eidos with Pumpkin Studios (README.md lines 34 and 37 name Pumpkin Studios and Eidos). COPYING.README line 43 grants permission to use the name, logos, stories and texts. Individual artists are credited in COPYING.NONGPL for listed files. The rights position for the remaining game art, audio and music is not stated beyond the GPL default and the per-file list. Treat as released-source, not clean-room.",
-  "best_class": "B",
+  "best_class": "A",
   "asset_groups": [
     {
       "kind": "3D models (PIE text meshes)",

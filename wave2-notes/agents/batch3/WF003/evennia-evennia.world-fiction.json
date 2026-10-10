@@ -1,0 +1,72 @@
+{
+  "donor": "evennia-evennia",
+  "topic": "world-fiction",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/tutorial_world/build.ev",
+    "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/tutorial_world/objects.py",
+    "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/tutorial_world/rooms.py",
+    "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/random_tables.py",
+    "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/talking_npc/talking_npc.py",
+    "/mnt/frankendom-donors/evennia-evennia/LICENSE.txt",
+    "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/README.md"
+  ],
+  "counts": {
+    "obelisk_clue_descriptions": 5,
+    "tomb_doors": 5,
+    "tomb_door_values": [0, 1, 2, 3, 4],
+    "tomb_source_lines": {"blue_bird": 1, "crowned_queen": 3, "horse": 4, "shield": 4, "hero": 5},
+    "numbered_tutorial_rooms": 16,
+    "dig_lines_in_build_ev": 22,
+    "chargen_trait_slots": 10,
+    "chargen_entries_per_trait_slot": 20,
+    "chargen_band_tables": 4,
+    "given_name_list_entries": 282,
+    "reaction_bands": 5,
+    "talking_npc_menu_nodes": 5
+  },
+  "rule": "A landmark picks one of N clue scenes at random on each look, writes the picked index onto the viewer, and a later gate compares that stored index with its own fixed value by equality. Match opens the reward route; mismatch goes to a fixed fail place. Death sends the player to the same fail place with a second text state for the ghost.",
+  "data_fields": [
+    {"name": "clue_count", "unit": "scenes", "donor_value_or_null": 5},
+    {"name": "clue_pick", "unit": "uniform random index on each look", "donor_value_or_null": null},
+    {"name": "clue_store", "unit": "per-character last-look key", "donor_value_or_null": null},
+    {"name": "door_value", "unit": "index 0..N-1 (one per door)", "donor_value_or_null": "0 to 4"},
+    {"name": "gate_rule", "unit": "equality of stored key and door value", "donor_value_or_null": "equality"},
+    {"name": "success_zone", "unit": "zone id", "donor_value_or_null": "tut#15"},
+    {"name": "failure_zone", "unit": "zone id", "donor_value_or_null": "tut#08"},
+    {"name": "death_zone", "unit": "zone id", "donor_value_or_null": "tut#08"},
+    {"name": "trait_slots", "unit": "slots per character card", "donor_value_or_null": 10},
+    {"name": "trait_entries_per_slot", "unit": "entries", "donor_value_or_null": 20},
+    {"name": "reaction_bands", "unit": "bands", "donor_value_or_null": 5},
+    {"name": "readable_text_lines", "unit": "lines per card (design cap)", "donor_value_or_null": "1 to 5 (murals)"}
+  ],
+  "keep": [
+    "One card per clue, shown at random on each look.",
+    "Stored last-look key on the character, not on the object.",
+    "Equality gate with one fixed value per door.",
+    "Fail place that is readable and not a hard death.",
+    "Second text state for a defeated or dead creature (alive long, dead short).",
+    "Two-voice sign: an authority title plus a rough second line from another hand.",
+    "One figure recurring across several doors, so the set reads as one story."
+  ],
+  "change": [
+    "Their fail route is a teleport to a dark cell; ours should cost something legible (a 3-attacker fight at the door, or a lost turn).",
+    "Their clue reroll runs in the client (return_appearance); ours must roll on the server, seeded per character, zone and day, so a refresh cannot reroll.",
+    "Their murals are one-off prose; ours are catalogue fields per zone (700 zones as data) with a short card length cap.",
+    "Their trait tables are for chargen; ours would feed NPC one-line cards for the 100 Pit characters, not new names."
+  ],
+  "look_test": "Build one wall with five door cards in one zone. Look, step back, look again: the clue card changes. Compare 1-line cards against 4-to-5-line cards on a 375-wide phone; time how long a card takes to read and pick a door. Judge whether a wrong door feels fair (a message, not a death). Second compare: the two-voice sign with and without the rough second line.",
+  "licence_note": "Code BSD 3-Clause (LICENSE.txt line 3). Contributions under the same licence (docs/source/Licensing.md). Knave-derived EvAdventure tables credited in evadventure/README.md (line 21) as Creative Commons Attribution, stated by the README and not checked against Knave. Recreate murals, clues and card text as our own; do not copy tomb texts, the name list or the trait words.",
+  "tags": ["new:clue-gate", "new:seen-key", "new:recurring-figure", "signage", "rumour", "new:two-voice-sign", "naming-grammar", "new:trait-card", "faction-map", "new:reaction-roll", "new:death-state-text"],
+  "not_read": [
+    "evennia/web/static/webclient/js/** (21 JS files) and CSS bodies",
+    "docs/source/**/*.md (803 files): only docs/source/Licensing.md read",
+    "tutorials/evadventure/combat_base.py, combat_turnbased.py, combat_twitch.py bodies",
+    "tutorials/evadventure/chargen.py, shops.py, npcs.py bodies; quests.py read for its module docstring only",
+    "tutorials/tutorial_world/mob.py bodies, tests.py, intro_menu.py",
+    "tutorials/evadventure/random_tables.py name list values (counted, not read or reproduced) and the gear list values",
+    "tutorials/mirror, tutorials/red_button, tutorials/bodyfunctions",
+    "evennia/utils/verb_conjugation/verbs.txt (GPL-2.0 folder)"
+  ]
+}

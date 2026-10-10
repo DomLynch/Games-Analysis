@@ -1,0 +1,119 @@
+{
+  "donor": "STJr-SRB2",
+  "code_licence": "GNU GPL version 2. LICENSE line 2 'Version 2, June 1991'. assets/README.txt line 9: 'The source code for SRB2 is licensed under the GNU General Public License, Version 2.' Source headers (e.g. src/sounds.c) say GPL version 2.",
+  "asset_licence": "No separate asset licence file. assets/LICENSE.txt is the GPL-2 text itself. assets/README.txt line 39 says 'Design and content in Sonic Robo Blast 2 is copyright 1998-2025 by Sonic Team Jr.' and line 41 says original material is copyrighted by respective owners. The game data packs (srb2.pk3, zones.pk3, characters.pk3, patch.pk3, music.pk3, models.dat; assets/CMakeLists.txt line 28 onward) are NOT in the box. The engine expects them next to the binary and checks MD5s (src/d_main.c lines 1206 and 1482). Licence for those packs: not in the box.",
+  "rights_holder_status": "Sonic Team Jr. per README and assets/README.txt for design and content; the README disclaimer says the project is not affiliated with SEGA and claims no ownership of SEGA intellectual property (README line 22; assets/README.txt line 41). The engine code header says copyright 1993-1996 id Software and 1998-2000 DooM Legacy team, then 1999-2023 Sonic Team Junior (src/sounds.c header). Mixed; SEGA IP named as not owned. Not a clean-room claim: README line 8 says it is a modified version of Doom Legacy.",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "game data packs (sprites, levels, music, characters, models)",
+      "path": "not in box. Named in assets/CMakeLists.txt line 28 as srb2.pk3, characters.pk3, zones.pk3, patch.pk3, music.pk3, models.dat",
+      "count_hint": "0 pk3, wad, dta, lmp, mus, soc or lua files found by extension search of the whole box",
+      "licence": "not in box",
+      "class": "C",
+      "note": "The engine loads these at start and checks MD5s (src/d_main.c 1482-1484). Do not hunt for them. Their contents are the actual art, levels and music and are not available to us. Nothing to use."
+    },
+    {
+      "kind": "logo and banner images",
+      "path": "srb2.png (about 25 KB), srb2banner.png (about 157 KB), android/res/drawable-*/ launcher icons",
+      "count_hint": "2 root PNG, several Android drawable PNGs (not counted)",
+      "licence": "covered by the README copyright line (assets/README.txt line 39) as design and content of STJr; no per-file licence",
+      "class": "C",
+      "note": "Not opened. Treat as STJr branding. Do not reuse."
+    },
+    {
+      "kind": "UI and HUD code (patch names, chat, rankings, co-op overlay)",
+      "path": "src/hu_stuff.c (2757 lines; patch globals around line 72-89; overlay functions declared around line 116-118)",
+      "count_hint": "names only read",
+      "licence": "GPL-2 (src header)",
+      "class": "B",
+      "note": "Code under GPL-2. Any copied code or text keeps GPL-2. Use shape only (clean-room): a HUD layout idea, not the code."
+    },
+    {
+      "kind": "data tables in C (monster catalogue, state chains, sound table)",
+      "path": "src/info.c (22167 lines; mobjinfo table from line 4042; state table around line 848), src/info.h (state and mobj enums; S_NULL at line 1196, MT_NULL at line 4429), src/sounds.c (sound table with caption column, 736 entries by grep)",
+      "count_hint": "662 MT_ enum entries; 2656 S_ enum entries; about 402 SPR_ sprite enum entries; 736 sound entries (grep counts)",
+      "licence": "GPL-2 (src header)",
+      "class": "B",
+      "note": "Data is code. Under GPL-2, reuse of the table values is share-alike. For us: the field list is the catalogue shape (row 21); numbers and names are not copied. Clean-room."
+    },
+    {
+      "kind": "localisation strings",
+      "path": "src/locale/en.po (73 KB; about 822 msgid entries by grep), src/locale/srb2.pot (77 KB)",
+      "count_hint": "822 msgid entries (grep count)",
+      "licence": "GPL-2 under src (no per-file licence read)",
+      "class": "B",
+      "note": "Gettext format strings with the game's own wording. Do not copy wording. Read for the grammar only."
+    },
+    {
+      "kind": "third-party test audio and images in libraries",
+      "path": "libs/SDL2/test/sample.wav, libs/SDL2/test/*.bmp, libs/libpng-src/*.png (about 189 PNG under libpng contrib)",
+      "count_hint": "1 WAV, 57 BMP, about 200 PNG by extension search (mostly libpng test images)",
+      "licence": "third-party; README line lists SDL and libraries; LICENSE-3RD-PARTY.txt (assets/) holds their licence text (not read beyond the MiniUPnPc and curl headers)",
+      "class": "C",
+      "note": "Test media from SDL and libpng. Not game content. Not read."
+    },
+    {
+      "kind": "maps, levels, dialogue, scripts",
+      "path": "none in box (0 .lua, 0 .soc files; levels are in zones.pk3, not in box)",
+      "count_hint": "0",
+      "licence": "not applicable",
+      "class": "D",
+      "note": "Lua scripting exists in the engine (src/lua_*.c, src/blua/) but no Lua content files are in the box."
+    }
+  ],
+  "inspiration": [
+    "Each monster is one row of fields: spawn state, see state, pain chance, death state, sound slots, speed, size in fixed point, mass, damage, and a flags word for enemy, special and shootable (src/info.c 4206-4232). This is a clean catalogue-as-data shape for row 21: one row per creature, the engine reads it at runtime.",
+    "Animation is a state chain: each state is a frame number, a tick count, an action, and the next state (src/info.c 848-854). An idle loop holds for five ticks and the chase loop steps every three ticks across six frames. Gives a plain vocabulary for idle and walk timing.",
+    "Death is a short chain of flicker frames that repeats a fixed number of times, then hands over to one shared explosion state (src/info.c 1077 and the same pattern at 1106 and 3885). A loss reads clearly in a crowd because every enemy ends the same way.",
+    "A one-hit enemy is flagged as an enemy, special and shootable, with the speed kept low (src/info.c 4209, 4222, 4229). The crowd feel comes from many one-hit bodies, not from tough ones.",
+    "The sound table has a caption column. An empty caption shows the sound id instead, and a closed-caption cvar switches the captions on (src/sounds.c 36 and 41; src/s_sound.c 88). This is the accessibility rule to copy: every combat cue has a readable caption that can be turned on.",
+    "The engine tables are in one file per family (monsters, states, sounds), with an enum for each kind (src/info.h 1196 and 4429). This matches the catalogue-as-runtime-source rule."
+  ],
+  "briefs": [
+    {
+      "label": "One-hit walker with a look-and-chase loop",
+      "why": "A low-risk ground enemy that reads at a glance and comes in groups. The walk loop is short, so a crowd feels busy without many frames.",
+      "keep": "one hit point; a six-frame chase loop stepping every three ticks; a shared death puff at the end",
+      "change": "give it a low, wide crawling silhouette with a glowing seam along the back, not a human-like figure; add a short ember trail on death; use our own palette and tick timing",
+      "ref": "src/info.c 4206-4232 (crawla row), src/info.c 848-854 (look and chase states). Recreate as an original crawler; do not copy the figure or the names."
+    },
+    {
+      "label": "Flicker-then-puff death",
+      "why": "A short repeat flicker followed by one shared explosion makes every kill read the same way, even in a crowd.",
+      "keep": "a fixed small repeat count before the shared end state; one explosion state reused by many enemies",
+      "change": "our puff uses our own VFX palette and ends with a hold for hit-stop; the repeat count is zone data, not a constant in code",
+      "ref": "src/info.c 1077 (flicker chain), 1106 and 3885 (same end state reused). Recreate as an original death effect."
+    },
+    {
+      "label": "Every combat cue has a caption",
+      "why": "Players with sound off or hearing needs can still read the fight. Captions also teach the cues.",
+      "keep": "a caption column next to each sound; an empty caption falls back to the cue id; a single on/off setting",
+      "change": "captions name the cue in plain action words (parry, heavy hit, guard break) and show on the HUD bottom edge, not as subtitles; list them in the catalogue",
+      "ref": "src/sounds.c 36, 41 and 182; src/s_sound.c 88. Recreate as an original caption set."
+    },
+    {
+      "label": "Many one-hit bodies flagged shootable",
+      "why": "A crowd of fragile enemies gives pressure without making each fight long, which suits a many-vs-one duel.",
+      "keep": "one hit point; enemy, special and shootable flags together; low speed",
+      "change": "give each a one or two hit body with a different guard rule; add a short wind-up tell before the hit",
+      "ref": "src/info.c 4209 and 4229 (crawla row). Recreate as original fodder enemies."
+    },
+    {
+      "label": "Fixed-tick state chain for idle and walk",
+      "why": "Animation timing lives in one table of frame, ticks, action and next state. Easy to tune without touching code.",
+      "keep": "frame, tick count, action, next state in one row; a null state at the end",
+      "change": "drive the chain from our 60 Hz fight tick; add a flagged guard-window frame the engine reads; keep the table as zone data",
+      "ref": "src/info.c 848-854 (state rows), src/info.h 1196 (S_NULL). Recreate as an original state table."
+    }
+  ],
+  "not_read": [
+    "game data packs (not in box; checked by extension only)",
+    "src/*.c bodies beyond the cited ranges (g_game.c, p_mobj.c, f_finale.c, deh_tables.c, hu_stuff.c beyond names)",
+    "src/blua and lua_*.c bodies (Lua runtime; no content files)",
+    "srb2.png, srb2banner.png, android drawables (not opened)",
+    "libs/ third-party trees (232 MB; only extension counts)",
+    "assets/LICENSE-3RD-PARTY.txt beyond the first lines (MiniUPnPc and curl blocks seen)",
+    "the rest of the sound table and the music definitions (no music definitions found in sounds.c by grep for mus_)"
+  ]
+}

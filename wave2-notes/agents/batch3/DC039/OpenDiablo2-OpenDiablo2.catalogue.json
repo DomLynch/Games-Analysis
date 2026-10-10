@@ -1,0 +1,214 @@
+{
+  "donor": "OpenDiablo2-OpenDiablo2",
+  "counts": {
+    "creatures": null,
+    "classes": 7,
+    "weapons": 14,
+    "gear_sets": null,
+    "zones": null
+  },
+  "counts_basis": {
+    "creatures": "monstats.txt and sibling tables are not in the box; no family count claimed",
+    "classes": "enum entries in d2common/d2enum/hero.go (seven, excluding the none value)",
+    "weapons": "weapon attack-shape classes in d2common/d2enum/weapon_class.go (14); not weapon items",
+    "gear_sets": "Sets.txt and SetItems.txt are not in the box",
+    "zones": "Levels.txt is not in the box; code has one generated act-1 overworld and a preset loader"
+  },
+  "half_read": "client engine (Go) and data loaders; no server half in this repo; data pack (user's game tables) absent",
+  "creature_families": [
+    "super-group per monster row (MonType) with a NextInClass chain for area-level picks (monster_stats_record.go:38)",
+    "difficulty columns per level: Normal, Nightmare, Hell (level_details_record.go:22-33)",
+    "champion and unique slots per level (level_details_record.go:64)",
+    "client-only critter slots (level_details_record.go:77-78)",
+    "12 element tags on attacks (monster_stats_record.go:149-166)",
+    "16 animation modes including neutral idle and knockback (monster_animation_mode.go:10-25)",
+    "super-unique bosses with a fixed index and 43 documented modifiers (monster_super_unique_record.go:26-83)"
+  ],
+  "top_creatures": [
+    {
+      "label": "Stone-hide bruiser",
+      "why": "Heavy body that takes much less physical damage and gets more defence",
+      "keep": "modifier stack on one body, visible when active",
+      "change": "resistance only while standing guard, ends after a short move; not a flat stat",
+      "ref": "d2core/d2records/monster_super_unique_record.go:69"
+    },
+    {
+      "label": "Blink-and-mend",
+      "why": "Warps away when hit and heals while away",
+      "keep": "warp then heal as one rule",
+      "change": "one blink per 20 s; healing shown as a breakable wisp orb",
+      "ref": "d2core/d2records/monster_super_unique_record.go:67"
+    },
+    {
+      "label": "Leash-linked brood",
+      "why": "All minions die when the leader dies",
+      "keep": "death link on a group",
+      "change": "minions stagger and fall apart over 1.5 s; one spawn slot kept free",
+      "ref": "d2core/d2records/monster_super_unique_record.go:56"
+    },
+    {
+      "label": "Shard burst",
+      "why": "No corpse; body shatters into ice pieces on death",
+      "keep": "no-corpse death with a burst",
+      "change": "short cone of shards, 1.5 s slow, own sound",
+      "ref": "d2core/d2records/monster_super_unique_record.go:76"
+    },
+    {
+      "label": "Chill blast",
+      "why": "Explodes on death and chills nearby fighters",
+      "keep": "death explosion that slows",
+      "change": "slow only in a small ring, not the whole zone",
+      "ref": "d2core/d2records/monster_super_unique_record.go:74"
+    },
+    {
+      "label": "Charged-bolt spitter",
+      "why": "Releases bolts when struck",
+      "keep": "counter-fire on being hit",
+      "change": "bolts on every third hit only, so the duel stays readable",
+      "ref": "d2core/d2records/monster_super_unique_record.go:61"
+    },
+    {
+      "label": "Aura bearer",
+      "why": "Gets a random offensive aura at spawn",
+      "keep": "random aura from a list at spawn",
+      "change": "aura from our three duel auras, shown as a ring under the feet",
+      "ref": "d2core/d2records/monster_super_unique_record.go:71"
+    },
+    {
+      "label": "Mana thief",
+      "why": "Steals mana on hit and heals itself",
+      "keep": "drain that heals the drainer",
+      "change": "drains stamina, not mana; heals a fixed share",
+      "ref": "d2core/d2records/monster_super_unique_record.go:66"
+    }
+  ],
+  "classes": [
+    "seven hero classes (d2common/d2enum/hero.go:8); roles not verified because skills.txt is absent",
+    "per-class start stats, per-level growth, mana regen seconds, block factor, run stamina drain (d2core/d2records/charstats_record.go:13-55)",
+    "10 base skill slots and 3 skill tabs per class (charstats_record.go:44, :48)",
+    "monster alignment: enemy, friend, neutral; neutral for critters (d2common/d2enum/monster_alignment_type.go:8-16)",
+    "monster combat type: melee or ranged only (d2common/d2enum/monster_combat_type.go:8-11)"
+  ],
+  "weapon_families": [
+    "14 weapon attack-shape classes: hand-to-hand, bow, crossbow, staff, one- and two-handed swing and thrust, combo pairs (d2common/d2enum/weapon_class.go:14)",
+    "per-weapon hit-effect class for sound and graphics (d2core/d2records/item_common_record.go:21)",
+    "gem sockets and gem upgrade chain (item_common_record.go:17, :67)",
+    "ordered runeword rune lists (d2core/d2records/runeword_record.go:20)"
+  ],
+  "gear_tiers": [
+    "nine quality levels in order: low, normal, superior, magic, set, rare, unique, crafted, tempered (d2common/d2enum/item_quality.go:8-16)",
+    "set bonus in three tiers: partial A, partial B, full (d2core/d2records/set_record.go:25-27)",
+    "unique items with up to 12 fixed properties and drop-once, single-copy flags (unique_items_record.go:8, :33, :36)",
+    "name colour by tier: unique gold, set green, rare yellow, magic blue, crafted orange (d2core/d2ui/color_tokens.go:31-35)",
+    "rare versus magic chosen by affix count (d2core/d2item/diablo2item/item.go:146-152)",
+    "drop weight base 1024 with per-tier frequencies (d2core/d2item/diablo2item/item_factory.go:21, :163-188)"
+  ],
+  "zones": [
+    "act-1 overworld: town stamp on one edge, fence borders with three variants per edge, den near centre, 25 fill stamps by rejection (d2core/d2map/d2mapgen/act1_overworld.go:54-329)",
+    "fill families: grass, stone (two), cottages (six variants), fallen camp (four), pond, swamp (two) (act1_overworld.go:294-315)",
+    "border families: tree, wall, water, bridges, underground passage entrances (d2core/d2map/d2mapgen/d2wilderness/wilderness_tile_types.go:6-30)",
+    "preset map flags: populate, logicals, outdoors, animate, kill edge, fill blanks, automap, scan (d2core/d2records/level_presets_record.go:8-27)",
+    "level rows: act, quest gate, automap layer, size per difficulty, world offsets (d2core/d2records/level_details_record.go:101-131)",
+    "zone sound rows: song, day and night ambience, events, reverb (d2core/d2records/sound_environment_record.go:7)",
+    "shrines: type, duration in frames, reset minutes, rarity (d2core/d2records/shrine_record.go:7-15)"
+  ],
+  "looks": [
+    {
+      "label": "Palette transform bank",
+      "technique": "one base palette plus precomputed remap tables: light levels, inventory variations, three alpha tiers, additive and multiplicative blends, hue variations",
+      "ref": "d2common/d2fileformats/d2pl2/pl2.go:13-22"
+    },
+    {
+      "label": "Unique sprite tint",
+      "technique": "palette-shift index per unique, applied to held and ground sprite",
+      "ref": "d2core/d2records/unique_items_record.go:14-15"
+    },
+    {
+      "label": "Status tint with priority",
+      "technique": "colour priority 0-255, palette-shift index and light colour per state; highest priority wins",
+      "ref": "d2core/d2records/states_record.go:67-74"
+    },
+    {
+      "label": "Transparency ladder and modulate",
+      "technique": "25, 50, 75 percent alpha offset; modulate uses the lighter composite; burn and modulate-2x are empty cases",
+      "ref": "d2core/d2render/ebiten/ebiten_surface.go:200-215"
+    },
+    {
+      "label": "Hover brightness",
+      "technique": "brightness push of 2 while hovered or selected",
+      "ref": "d2core/d2map/d2mapentity/animated_entity.go:29, :47"
+    },
+    {
+      "label": "Missile flicker",
+      "technique": "flicker and diameter fields plus a transparency mode per missile",
+      "ref": "d2core/d2records/missiles_record.go:25-26, :138"
+    },
+    {
+      "label": "Sound fade envelope",
+      "technique": "fade-in and fade-out per sound in frames, converted to a per-second volume ramp",
+      "ref": "d2core/d2audio/sound_engine.go:80-98"
+    },
+    {
+      "label": "Ambient random pan",
+      "technique": "one-shot ambient events pick a random stereo pan from -1 to 1",
+      "ref": "d2core/d2audio/sound_environment.go:65"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Tidewall Guard",
+      "idea": "An elite that is hard to dent while it holds its ground and loses the cover the moment it steps.",
+      "keep": "stance-linked damage reduction (super unique modifier 28)",
+      "change": "reduction comes from a visible guard pose and ends after 0.5 s of movement; ties to parity row 3"
+    },
+    {
+      "name": "Lantern Wisp Mender",
+      "idea": "A caster that blinks a short hop when struck low and heals only while its orb is intact.",
+      "keep": "blink then heal (modifier 26)",
+      "change": "one blink per 20 s; the orb sits on the ground and a hit can break it"
+    },
+    {
+      "name": "Brood Tether",
+      "idea": "A leader whose minions stagger apart when it falls and keep one spawn slot free.",
+      "keep": "death link on a group (modifier 15)",
+      "change": "no instant vanish; minions fall over 1.5 s; ties to row 23 spawn caps"
+    },
+    {
+      "name": "Glacier Husk",
+      "idea": "Dies with no corpse and bursts into shards that slow a small ring.",
+      "keep": "no-corpse death and chill burst (modifiers 33 and 35)",
+      "change": "slow is local, 1.5 s, with its own sound cue"
+    },
+    {
+      "name": "Gilt Relic",
+      "idea": "Unique gear with one palette-shifted copy and an animated sheen; rarity by affix count.",
+      "keep": "one tint per unique and count-based rarity (item.go:146)",
+      "change": "our own ramp and thresholds, a drop sound per tier; ties to row 15"
+    }
+  ],
+  "licence_note": "Code GNU GPL v3 (LICENSE line 1; README badge). No asset licence in the box; README line 29 says game content is not shipped and the user must own the commercial game. Class C: clean-room, shape only. Not legal advice.",
+  "not_read": [
+    "all numeric game tables (monstats, levels, sets, uniques, treasure classes, states, shrines): not in the box",
+    "server half and successor project: not in the box",
+    "locale string tables: referenced by path only, not in the box",
+    "d2game menus and HUD beyond names: partly read",
+    "d2networking, d2script, d2term, tests: not read",
+    "test fixtures AnimData.d2 and BadData.d2: not parsed",
+    "rh.exe at the repo root (Windows binary): not read, not run",
+    "docs/diablo.woff and screenshots: not opened",
+    "talent and skill tree code (d2game/d2player/skilltree.go): present, not read",
+    "hazards, overlays and state tables: not in the box"
+  ],
+  "defects_seen": [
+    "item.go:357 suffix table taken from the prefix table",
+    "item_factory.go:332 affix pool built by iterating a Go map, so picks differ between runs for one seed",
+    "item.go:359-373 affix cap gate reads codes not yet written; loop bound is the only real limit",
+    "act1_overworld.go:319 unbounded placement loop with no attempt cap",
+    "map_generator.go:55-56 inclusive loop over exclusive Bottom and Right edges",
+    "sound_environment_loader.go:16-18 night ambience and night event loaded but never read",
+    "ebiten_surface.go:211-214 empty draw-effect cases for burn and modulate-2x variants",
+    "draw_effect.go:29 and :33 repeat the same colormap range for three effects",
+    "item_factory.go:265 treasure class recursion without a depth limit",
+    "monster_animation_mode.go:23 knockback shares the get-hit token"
+  ]
+}

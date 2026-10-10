@@ -1,0 +1,101 @@
+{
+  "donor": "xoreos-xoreos",
+  "counts": {
+    "creatures": 3,
+    "classes": 29,
+    "weapons": 45,
+    "gear_sets": 0,
+    "zones": 5
+  },
+  "counts_note": "creatures = 3 summon beast archives named in code (no creature table in the box). classes = 17 KotOR-family class enum entries + 12 NWN2 CClass entries; 6 races listed separately. weapons = approximate count of weapon-like names by name pattern among 109 nwn2 ItemType entries (includes ammunition and creature natural weapons; not hand-split). gear_sets = 0 named sets (no set-bonus data found). zones = 5 area archetypes inferred from field and object-type names, not read from area data.",
+  "half_read": "engine (enum and type headers, model and shader code, sound bank headers, aurora field tables, sonic area minimap). Data half (the user's game archives) not in the box; no paired donor in the box.",
+  "creature_families": [
+    {"label": "caster-bound beast summon (wolf-type)", "evidence": "archive name only", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/dragonage/dragonage.cpp:230"},
+    {"label": "caster-bound beast summon (spider-type)", "evidence": "archive name only", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/dragonage/dragonage.cpp:232"},
+    {"label": "caster-bound beast summon (bear-type)", "evidence": "archive name only", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/dragonage/dragonage.cpp:233"}
+  ],
+  "top_creatures": [
+    {
+      "label": "Caster-bound pack runner",
+      "why": "A companion owned by its caster and removed by a call, so the summon is a tool. Silhouette and sound not read (art is in the game archives); listed for the behaviour only.",
+      "keep": "caster-owned associate slot; remove call on expiry or dismissal",
+      "change": "our beast is a fast pack runner with its own silhouette and its own sound; not a copy of any beast in the donor",
+      "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/dragonage/dragonage.cpp:230; /mnt/frankendom-donors/xoreos-xoreos/src/engines/nwn/types.h:245"
+    },
+    {
+      "label": "Web skitter companion",
+      "why": "Same summon mechanism with a different body plan, so the summon family reads as varied. Silhouette and sound not read.",
+      "keep": "one archive per beast; one summon slot per caster",
+      "change": "a skitter with a web-line attack, designed from scratch",
+      "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/dragonage/dragonage.cpp:232"
+    },
+    {
+      "label": "Slow brute companion",
+      "why": "A heavy companion next to the fast one gives a size contrast at 375 wide. Silhouette not read.",
+      "keep": "one companion slot per caster",
+      "change": "a short-lived brute with a telegraphed slam; the slam is ours",
+      "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/dragonage/dragonage.cpp:233"
+    }
+  ],
+  "classes": [
+    {"group": "KotOR-family base entries (9)", "count": 9, "role": "from enum names only: three melee or ranged base types, three force-user paths, two droid types, one minion type", "mechanic": "not in the box (rules live in 2DA tables)", "progression": "not in the box", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/kotorbase/types.h:127-135"},
+    {"group": "KotOR-family later entries (8)", "count": 8, "role": "from enum names only: a tech specialist, a bounty-hunter type, three light-side force specialists, three dark-side paths", "mechanic": "not in the box", "progression": "not in the box", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/kotorbase/types.h:138-145"},
+    {"group": "NWN2 classes.2da entries (12)", "count": 12, "role": "from enum names only: heavy melee, support caster, healer caster, nature caster, martial generalist, unarmed monk-type, holy-knight type, ranged skirmisher, rogue, spontaneous arcane, study arcane, pact caster", "mechanic": "not in the box", "progression": "not in the box", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/nwn2/types.h:329-340"},
+    {"group": "races (6 base + sentinels)", "count": 6, "role": "elf-type, gnome-type, halfling-type, half-elf-type, droid, human; sub-race: one", "mechanic": "not in the box", "progression": "n/a", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/kotorbase/types.h:150-165"},
+    {"group": "factions (19 + invalid sentinel)", "count": 19, "role": "hostile, friendly and neutral sides; predator, prey, rancor-type, surrender and planet-specific groups", "mechanic": "ReputationType: friend, enemy, neutral (types.h:281)", "progression": "n/a", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/kotorbase/types.h:167-191"}
+  ],
+  "weapon_families": [
+    {"family": "one-handed and two-handed blades", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/nwn2/types.h:107-231"},
+    {"family": "axes (hand, battle, great, throwing)", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/nwn2/types.h:107-231"},
+    {"family": "hammers, maces, flails", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/nwn2/types.h:107-231"},
+    {"family": "polearms", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/nwn2/types.h:107-231"},
+    {"family": "bows and crossbows with ammunition", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/nwn2/types.h:107-231"},
+    {"family": "thrown and sling weapons", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/nwn2/types.h:107-231"},
+    {"family": "staves and wands", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/nwn2/types.h:107-231"},
+    {"family": "creature natural weapons (slash, pierce, bludgeon, slash-pierce)", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/nwn2/types.h:69-72"},
+    {"family": "giant-scale blades and axes; two demon-themed blades; one racial waraxe", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/nwn2/types.h:108-117"},
+    {"family": "item properties: extra melee damage type, extra ranged damage type, on-hit cast spell, damage reduction, life-steal type regeneration, bonus hit points, spell resistance, school immunity (about 92 property entries)", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/nwn2/types.h:344-438"}
+  ],
+  "gear_tiers": [
+    {"tier": "modular armour schema", "detail": "19 armour parts: head, neck, torso, pelvis, belt, both feet, both shins, both thighs, both forearms, both biceps, both shoulders, both hands", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/nwn/item.h:73-92"},
+    {"tier": "material colour channels", "detail": "6 channels: metal 1-2, leather 1-2, cloth 1-2; how they apply per part is not read", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/nwn/item.h:42-50"},
+    {"tier": "equip slots", "detail": "15 named slots: head, body, hands, two weapon, two arm, implant, belt, three creature-weapon, creature armour, two second-weapon", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/kotorbase/types.h:215-232"},
+    {"tier": "named gear sets", "detail": "0 in the box", "ref": "none found by grep in kotorbase, nwn, nwn2, dragonage, witcher"}
+  ],
+  "zones": [
+    {"zone": "sunlit outdoor area", "detail": "environment settings, sunlight enabled, sunlight colour and direction, skydome model, local and global wind lists", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/aurora/gff4fields.h:104, 117-118, 264"},
+    {"zone": "interior with roof cutoff", "detail": "cutoff height, cutoff system switch, force character lighting", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/aurora/gff4fields.h:244, 251, 259"},
+    {"zone": "gridded room interior", "detail": "area grid with rooms, links, cell size, clearance and abstract sectors for pathfinding", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/aurora/gff4fields.h:175-236"},
+    {"zone": "chunked terrain", "detail": "chunk row and column counts, chunk width and height", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/aurora/gff4fields.h:237-243"},
+    {"zone": "placed object types (by name only)", "detail": "trigger, area-of-effect, encounter (spawn-area by name), sound, door, waypoint, placeable, store; behaviour not read", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/kotorbase/types.h:33-43"}
+  ],
+  "looks": [
+    {"label": "gilt env pass, under mode", "technique": "reflective environment map drawn first, then the same mesh drawn with the diffuse texture on top", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/graphics/aurora/modelnode.cpp:699-725 (receipts 700, 708)"},
+    {"label": "gilt env pass, over mode", "technique": "diffuse drawn first, then an environment-map-only pass; per the comment the diffuse colour modulates the reflection", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/graphics/aurora/modelnode.cpp:726-760"},
+    {"label": "reflection sweep", "technique": "cube reflection UV and sphere reflection UV computed in the shader, not baked", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/graphics/shader/shaderbuilder.cpp:361, 375"},
+    {"label": "glow mask", "technique": "glow map read per mesh; self-light without a light source", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/graphics/aurora/model_nwn2.cpp:222"},
+    {"label": "specular highlight", "technique": "specular power and value read per mesh", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/graphics/aurora/model_nwn2.cpp:229-234"},
+    {"label": "music transitions", "technique": "crossfade, fade into a transitional sound, fade from it; per-event volume and pitch fades", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/sound/xactsoundbank.h:146-174, 216-232; xactsoundbank_ascii.cpp:476"},
+    {"label": "per-area minimap card", "technique": "one image per area name, shown or hidden", "ref": "/mnt/frankendom-donors/xoreos-xoreos/src/engines/sonic/areaminimap.cpp:44-68"}
+  ],
+  "originals": [
+    {"name": "Gilt plate pass", "idea": "Rare plated armour draws its reflection under the diffuse so it reads as metal (row 15 gear dressing).", "keep": "reflection drawn under the diffuse layer", "change": "reflection comes from a per-zone sky gradient; gilt tone is our own palette"},
+    {"name": "Glow-mask rune", "idea": "A per-part glow mask that pulses without a light source, for rare gear or a boss weapon (row 16 colour grade, row 15).", "keep": "per-part glow mask", "change": "mask lives in the sprite atlas with our own slow pulse curve"},
+    {"name": "Caster-bound beast trio", "idea": "One caster-owned companion slot with a remove call, and three beasts with distinct roles: pack runner, web skitter, slow brute (rows 2 and 13 specials).", "keep": "caster-owned slot; remove call", "change": "our three beasts, each with its own silhouette and sound"},
+    {"name": "Modular armour parts with material channels", "idea": "Gear tiers shown by which of 12 of our parts are upgraded, with two shades per material (row 15 gear dressing).", "keep": "per-part slots; two shades per material", "change": "12 slots of ours; palette of gilded metal, bone and oiled cloth instead of a generic metal set"},
+    {"name": "On-hit and elemental weapon affixes", "idea": "Loot affixes as rows: on-hit spark, extra damage type, damage reduction (row 18 loot roll).", "keep": "affixes as property rows", "change": "three elements of ours; a spark arc on hit; no named spells"},
+    {"name": "Transition stinger", "idea": "Boss intro and zone border crossfade into a short transitional sound (row 12 combat sound cues).", "keep": "crossfade and fade-into a transitional sound", "change": "our stinger is a short sound sting with a ducked music bed"},
+    {"name": "Per-zone minimap card", "idea": "One card per zone, chosen by name, shown or hidden (row 14 HUD).", "keep": "one card per zone; show and hide", "change": "fog-of-war reveal from zone geometry; touch corner toggle"}
+  ],
+  "licence_note": "Code: GPL-3.0-or-later (COPYING line 1; dists/debian/copyright 'Files: *'). Embedded font: Bitstream Vera and Arev licence texts in doc/ (src/common/systemfonts.cpp lines 33-35). Icon dists/win32/xoreos.ico: CC-BY-SA-3.0 per the packaging file. Icon dists/macosx/xoreos.icns: no licence line found. No game data in the box. Frankendom use is idea-only, clean-room, no code copied.",
+  "not_read": [
+    "embedded font bytes (src/common/systemfonts.cpp from line 38) and both icon binaries",
+    "src/aurora archive loaders (keyfile, biffile, erffile, rimfile) and bodies",
+    "per-game engine bodies beyond enum and type headers (dragonage, nwn, nwn2, witcher, jade, kotor, creature and area code)",
+    "nwn and nwn2 script function tables beyond the summon names",
+    "frame-buffer effects and skydome shaders; sound decoders beyond the bank headers",
+    "sonic area minimap beyond the constructor and loader (lines 40-90 read; no further body)",
+    "doc/, tests/, external/ libraries, dists/ beyond the copyright file",
+    "game data (user archives): not in the box, paired donor none"
+  ]
+}

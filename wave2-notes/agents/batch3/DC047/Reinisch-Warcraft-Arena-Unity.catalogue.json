@@ -1,0 +1,180 @@
+{
+  "donor": "Reinisch-Warcraft-Arena-Unity",
+  "counts": {
+    "creatures": 4,
+    "classes": 12,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 12
+  },
+  "creature_families": [
+    "Boss: one giant creature record (Ragnaros) with HP-gated phases at 75, 50 and 25 percent, per-phase weak points and a timed attack set (Settings/AI/Unit/Behaviour Graphs/Ragnaros Bossfight - Behaviour Graph.asset)",
+    "Summoned copies: die beam clones that use the boss kit (Scripts/Client/Scenario/Behavior Graph/Actions/Bossfight/DieBeamCloneAction.cs)",
+    "Scripted hazards (not creatures): meteor maze rings, meteor corridor, rain of stars, die beam",
+    "Vehicle: Steam Tank, one vehicle record with four seats (Settings/Balance/Units/Vehicles/Steam Tank/)",
+    "Creature records without a read body: Super Zombie, Wooden Dummy",
+    "Transform forms from spells: Sheep (polymorph), Druid Cat (Cat Form); model-only, Rendering/Characters/",
+    "Naming mismatch: README features a Sirus boss; no Sirus creature record exists; the graph is for the other boss"
+  ],
+  "top_creatures": [
+    {
+      "label": "Ember Colossus",
+      "why": "A readable giant with a phase ladder and weak points that open per phase; the name plate is scaled up (nameplateSizeModifier 3).",
+      "keep": "HP-gated phases, telegraph-then-strike cadence, per-phase weak-point windows.",
+      "change": "Body, palette and element; not a lava-giant silhouette.",
+      "ref": "Settings/AI/Unit/Behaviour Graphs/Ragnaros Bossfight - Behaviour Graph.asset line 257; Settings/Balance/Units/Creatures/Creature Info - Ragnaros.asset line 21"
+    },
+    {
+      "label": "Ring Snare",
+      "why": "A floor trap that states its escape rule before it fires.",
+      "keep": "Rings appear one at a time with a sound each; escape timer; a meteor on failure.",
+      "change": "Rising tide lines and a dune marker as the escape goal, not a meteor.",
+      "ref": "Scripts/Client/Scenario/Behavior Graph/Actions/Bossfight/MeteorMazeAction.cs line 127"
+    },
+    {
+      "label": "Echo Doubles",
+      "why": "Copies that read as threats before they fire, with a turn-to-face warning.",
+      "keep": "Spawn in a band around the target; turn during the warning; shared fire.",
+      "change": "At most two echoes; staggered fire; they fade in.",
+      "ref": "Scripts/Client/Scenario/Behavior Graph/Actions/Bossfight/DieBeamCloneAction.cs lines 102 and 150"
+    },
+    {
+      "label": "Starfall Scatter",
+      "why": "A ring-shaped scatter that gives a clear outer-then-inner read.",
+      "keep": "Radial rings around the nearest player; near impacts first.",
+      "change": "Slow glyph pulses with a lock delay; no falling meteors; no fire.",
+      "ref": "Scripts/Client/Scenario/Behavior Graph/Actions/Bossfight/RainOfStarsAction.cs lines 104 and 119"
+    },
+    {
+      "label": "Three-Beat Slam",
+      "why": "One attack that reads as three beats, each tunable alone.",
+      "keep": "Three chained spell records (slam, arrival impact, shockwave).",
+      "change": "Our own wind-up, stomp and ripple; no fire.",
+      "ref": "Settings/Balance/Spells/Boss/Ragnaros Slam Spell.asset; Ragnaros Slam Shockwave Spell.asset; Ragnaros Slam Shockwave Arrival Spell.asset (names only)"
+    },
+    {
+      "label": "Siege Tank",
+      "why": "A vehicle with four named seat roles is a big, clear silhouette at 375 wide.",
+      "keep": "Seat roles: driver, gunner, passengers.",
+      "change": "Our own mount with one gunner seat and one passenger seat.",
+      "ref": "Settings/Balance/Units/Vehicles/Steam Tank/Vehicle Info - Steam Tank.asset; Vehicle Seat Info files (names only)"
+    },
+    {
+      "label": "Critter Shift",
+      "why": "A model swap as a status makes a dangerous target small and harmless for a moment.",
+      "keep": "Timed model swap as a status.",
+      "change": "Our own critter and tint; a visible timer on the health bar.",
+      "ref": "Settings/Balance/Spells/Polymorph Spell.asset (record exists, body not read); Rendering/Characters/Sheep"
+    },
+    {
+      "label": "Weak-Point Shell",
+      "why": "Plates that light up in a random subset read as a puzzle during the fight.",
+      "keep": "Random subset per phase; damage limit and multiplier on open plates.",
+      "change": "A visible glow pattern; plates that close again.",
+      "ref": "Scripts/Client/Scenario/Behavior Graph/Actions/Bossfight/ActivateRandomWeakPoint.cs line 48"
+    }
+  ],
+  "classes": [
+    "Mage: power types present; spell list present (about 40 references by grep, not parsed); held ice states (Frost Nova state, Ice Block) plus a proc (Hot Streak); no progression records found",
+    "Druid: power types present; spell list present (about 40 references, not parsed); shape-shift form (Cat Form) and finisher spells (Ferocious Bite, Rip) with a per-resource-consumed modifier; resource type by file name only",
+    "Warrior: power type present; spell list EMPTY in the data (Class Info - Warrior.asset line 21); incomplete in this box",
+    "Death Knight, Demon Hunter, Hunter, Monk, Paladin, Priest, Rogue, Shaman, Warlock: record present; power list empty; spell list not read",
+    "Power types (4): Mana, Rage, Energy, Combo Points; each has a base range and a total cap",
+    "Factions (4): Horde, Alliance, Neutrals, Friends. Race records: none in the box",
+    "Progression shape: none found in the box"
+  ],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [
+    "12 scenario definitions: Arena 1v1, 2v2, 3v3, 5v5; Boss; Sandbox; six TestDummy rigs (2 to 7) (Settings/AI/Map Scenario/Definitions/)",
+    "7 map-definition records (Settings/Balance/Maps/), all named Lordaeron; lobby and footprint data, one biome in the box",
+    "Dungeon archetypes: scripted boss arena with timed hazards; arena duel; sandbox; test-dummy rig",
+    "Hazards: meteor maze, meteor corridor, rain of stars, die beam and clones, flame strike, slam",
+    "Top striking: boss arena (phase ladder plus rotating hazards); ring snare arena (anchor, rings, escape band); corridor run (escape band with forward test, camera look-at); echo ring arena (band placement); training rig (one rig per hazard)"
+  ],
+  "looks": [
+    {
+      "label": "Held frost overlay vs one-shot burst",
+      "technique": "Held state drawn as an overlay on the silhouette, separate from a burst effect (separate folders for Frost Nova State and Frost Nova).",
+      "ref": "Rendering/Spell Visuals/Frost Nova State; Rendering/Spell Visuals/Frost Nova"
+    },
+    {
+      "label": "Ring telegraph list",
+      "technique": "A data list of ring effects, each placed at the anchor with a random yaw, sets the whole hazard pattern.",
+      "ref": "Settings/Balance/Spells/Scripted/MeteorMaze_LvL 1.asset line 15; Scripts/Client/Scenario/Behavior Graph/Actions/Bossfight/MeteorMazeActionSettings.cs"
+    },
+    {
+      "label": "Spell visual folders",
+      "technique": "12 effect folders for spell visuals (Amber, Beam, Cone of Cold, Deep Freeze, Frost Bolt, Frost Nova, Frost Nova State, Ice Barrier, Ice Block, Ice Lance, Living Bomb Area, Pyroblast).",
+      "ref": "Rendering/Spell Visuals/"
+    },
+    {
+      "label": "Weak-point activation",
+      "technique": "Random plates activate with a damage limit and multiplier; the visual glow was not read.",
+      "ref": "Scripts/Client/Scenario/Behavior Graph/Actions/Bossfight/ActivateRandomWeakPoint.cs"
+    },
+    {
+      "label": "Camera set piece",
+      "technique": "The camera looks at the anchor for the corridor run, one pull per run.",
+      "ref": "Scripts/Client/Scenario/Behavior Graph/Actions/Bossfight/MeteorCorridorAction.cs"
+    },
+    {
+      "label": "Boss sound set",
+      "technique": "74 spell sound records, including boss maze, flame strike, pyroblast and explosion pairs; three Sirus phase lines.",
+      "ref": "Settings/Sound/Spell Sound Infos/; Audio/Characters/Sirus/"
+    },
+    {
+      "label": "Shader set",
+      "technique": "17 .shader and 7 .shadergraph files; bodies not read.",
+      "ref": "Assets (counted on the VPS; Rendering/Shaders and Rendering/Particles/Shaders)"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Tide Ring Snare",
+      "idea": "A floor trap of rings that appear one by one with a sound each, then a timed escape.",
+      "keep": "Telegraph before it fires; one escape rule per ring set; row 13 specials, row 23 zone set piece.",
+      "change": "Rising tide lines; escape by reaching a dune marker; no meteor."
+    },
+    {
+      "name": "Starfall Scatter",
+      "idea": "Radial rings of slow glyph pulses around the nearest player, near impacts first.",
+      "keep": "The ring read and the near-first order; row 13 specials.",
+      "change": "A lock delay; glyphs, not meteors; no fire."
+    },
+    {
+      "name": "Echo Doubles",
+      "idea": "Up to two copies placed in a band around the target, turning to face it during the warning, then firing staggered.",
+      "keep": "Placement band; turn-during-warning; shared fire; row 7 creature actor, row 13.",
+      "change": "Copies fade in; staggered fire."
+    },
+    {
+      "name": "Ward Phases",
+      "idea": "A giant with phase gates at three HP thresholds and weak-point plates that open per phase with a damage cap.",
+      "keep": "The gate ladder and the per-phase weak-point window; row 4 fight loop, row 13.",
+      "change": "Gates on ward stones as well as HP; our own body."
+    },
+    {
+      "name": "Critter Shift",
+      "idea": "A timed model swap as a held status, with a timer on the health bar.",
+      "keep": "The swap as a held state; row 7 creature actor, row 13.",
+      "change": "Our own critter and tint."
+    },
+    {
+      "name": "Corridor Pull",
+      "idea": "A directed run with an escape band (forward test plus min and max distance) and one camera look-at on the anchor.",
+      "keep": "The escape band and the single camera pull; row 11 fight camera, row 23.",
+      "change": "Side walls; no repeated pulls."
+    }
+  ],
+  "licence_note": "Code: Unlicense (LICENSE line 1); Zenject under MIT (per AU045). Assets: README line 154 says models, textures and sounds are copyrighted by Blizzard Entertainment; the README calls the project a non-commercial, educational fan project. Owner of UI art, VFX, balance data and localisation is not stated. Class C: category-level inspiration only. Not legal advice.",
+  "not_read": [
+    "Server scripts (5 files), most Client and Core scripts (Core/AI, Core/Scenario, Client UI, Effects, Sound, Input, Net)",
+    "MeteorMazeActionSettings, MeteorCorridorActionSettings and PlayUnitSound bodies",
+    "Spell record bodies (names and counts only); polymorph duration",
+    "Animation (113 .anim per AU045) and localisation bodies; no strings read",
+    "Shader bodies, particle prefabs, ring effect prefabs, audio, binary art, Packages, ProjectSettings",
+    "Self Resurrecting Player AI and state machine (death and respawn presentation): file names only",
+    "Spawn walk density, minimap and world map, touch UX, stingers and biome beds: not covered"
+  ]
+}

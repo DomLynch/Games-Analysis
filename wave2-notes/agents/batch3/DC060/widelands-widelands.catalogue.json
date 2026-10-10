@@ -1,0 +1,136 @@
+{
+  "donor": "widelands-widelands",
+  "donor_folder": "/mnt/frankendom-donors/widelands-widelands/",
+  "halves_read": "data pack (data/tribes soldier, training sites, wares; data/world critters and terrains; data/music LICENSE; debian/copyright) plus engine slice (src/logic/map_objects/tribes/soldier.cc line 228; src/logic/map_objects/world/critter.cc lines 103-127; src/logic/map.cc lines 104-105). Server and network half in src/ not read. No paired donor.",
+  "counts": {
+    "creatures": 16,
+    "classes": 5,
+    "weapons": 22,
+    "gear_sets": 25,
+    "zones": 69
+  },
+  "count_notes": {
+    "creatures": "16 critter types, all wildlife; no hostile creature families in the data read",
+    "classes": "5 soldier types, one per tribe: barbarians, empire, atlanteans, amazons, frisians",
+    "weapons": "22 weapon wares in four families: ax 6, sword 4, spear 7, trident 5",
+    "gear_sets": "25 gear wares (not sets): armour 5, helmet 5, shield 2, tabard 2, fur garment 4, boots 3, padded or cloth 4",
+    "zones": "69 terrain types across four world sets: desert 17, summer 18, wasteland 17, winter 17"
+  },
+  "creature_families": [
+    {"family": "carnivore-flagged critters", "count": 6, "members": "badger, brownbear, fox, lynx, marten, wolf", "note": "carnivore = true in init.lua"},
+    {"family": "other critters", "count": 10, "members": "bunny, chamois, deer, duck, moose, reindeer, sheep, stag, wildboar, wisent", "note": "no carnivore flag; bunny and duck have no appetite field"}
+  ],
+  "top_creatures": [
+    {
+      "label": "pack hunter (wolf)",
+      "why": "highest appetite among carnivores (100), reproduction 80; idle has its own sound effect at priority 3 percent",
+      "keep": "food-web numbers as a balance dial",
+      "change": "no bark; a low warning call and a stalking walk",
+      "ref": "/mnt/frankendom-donors/widelands-widelands/data/world/critters/wolf/init.lua lines 14-16, 20-23"
+    },
+    {
+      "label": "den bear (brownbear)",
+      "why": "size 10, carnivore, appetite 90; large silhouette at 375 px",
+      "keep": "size as a silhouette cue",
+      "change": "a den in the terrain instead of roaming",
+      "ref": "/mnt/frankendom-donors/widelands-widelands/data/world/critters/brownbear/init.lua (fields from grep, lines not individually verified)"
+    },
+    {
+      "label": "shaggy plains bison (wisent)",
+      "why": "size 10 with reproduction 20: rare large grazer",
+      "keep": "rarity from low reproduction",
+      "change": "herds move as a group of three",
+      "ref": "/mnt/frankendom-donors/widelands-widelands/data/world/critters/wisent/init.lua (fields from grep, lines not individually verified)"
+    },
+    {
+      "label": "tusk boar (wildboar)",
+      "why": "size 8, reproduction 10, appetite 20: rarest large animal in the set",
+      "keep": "low reproduction as a scarcity signal",
+      "change": "boars charge when approached, after a short telegraph",
+      "ref": "/mnt/frankendom-donors/widelands-widelands/data/world/critters/wildboar/init.lua line 14"
+    },
+    {
+      "label": "antler stag (stag)",
+      "why": "size 7, reproduction 30, appetite 30: mid-size grazer with a clear silhouette",
+      "keep": "mid size with low appetite",
+      "change": "a short antler clash sound when two meet",
+      "ref": "/mnt/frankendom-donors/widelands-widelands/data/world/critters/stag/init.lua (fields from grep, lines not individually verified)"
+    },
+    {
+      "label": "great moose (moose)",
+      "why": "size 10, reproduction 30, appetite 50: second largest body in the set",
+      "keep": "size tier for large grazers",
+      "change": "a frost-breath idle instead of a plain idle",
+      "ref": "/mnt/frankendom-donors/widelands-widelands/data/world/critters/moose/init.lua (fields from grep, lines not individually verified)"
+    },
+    {
+      "label": "small hunter (lynx)",
+      "why": "size 2, carnivore, appetite 10: a predator that rarely eats",
+      "keep": "predator with low appetite as a light balance",
+      "change": "short ambush walk into cover",
+      "ref": "/mnt/frankendom-donors/widelands-widelands/data/world/critters/lynx/init.lua (fields from grep, lines not individually verified)"
+    },
+    {
+      "label": "field badger (badger)",
+      "why": "size 4, reproduction 70, appetite 50, carnivore: mid-size predator with fast breeding",
+      "keep": "predator that breeds fast enough to be seen often",
+      "change": "digs a burrow the player can see from the walk path",
+      "ref": "/mnt/frankendom-donors/widelands-widelands/data/world/critters/badger/init.lua (fields from grep, lines not individually verified)"
+    }
+  ],
+  "classes": [
+    {"tribe": "barbarians", "soldier_max_levels": {"health": 3, "attack": 5, "defense": 0, "evade": 2}, "signature": "attack-heavy; no defense training", "progression": "training camp (attack, health); battle arena (evade)", "ref": "/mnt/frankendom-donors/widelands-widelands/data/tribes/workers/barbarians/soldier/init.lua lines 116-137"},
+    {"tribe": "empire", "soldier_max_levels": {"health": 4, "attack": 4, "defense": 0, "evade": 2}, "signature": "most health levels of any tribe", "progression": "training camp (attack, health); arena and colosseum (evade)", "ref": "/mnt/frankendom-donors/widelands-widelands/data/tribes/workers/empire/soldier/init.lua lines 116-137"},
+    {"tribe": "atlanteans", "soldier_max_levels": {"health": 1, "attack": 4, "defense": 2, "evade": 2}, "signature": "one health level; trident attack line; shield defense line", "progression": "labyrinth (defense, health, evade); dungeon (attack via tridents)", "ref": "/mnt/frankendom-donors/widelands-widelands/data/tribes/workers/atlanteans/soldier/init.lua lines 483-504"},
+    {"tribe": "amazons", "soldier_max_levels": {"health": 3, "attack": 2, "defense": 2, "evade": 3}, "signature": "most evade levels; boots ladder", "progression": "training glade (evade); warriors' gathering (attack)", "ref": "/mnt/frankendom-donors/widelands-widelands/data/tribes/workers/amazons/soldier/init.lua lines 11-47"},
+    {"tribe": "frisians", "soldier_max_levels": {"health": 2, "attack": 6, "defense": 2, "evade": 0}, "signature": "most attack levels; no evade training", "progression": "training camp (attack, health); training arena (attack, defense)", "ref": "/mnt/frankendom-donors/widelands-widelands/data/tribes/workers/frisians/soldier/init.lua lines 636-657"}
+  ],
+  "weapon_families": [
+    {"family": "ax", "wares": 6, "chain": "ax_sharp, ax_broad, ax_bronze, ax_battle, ax_warriors", "used_by": "barbarians attack levels 1 to 5", "ref": "/mnt/frankendom-donors/widelands-widelands/data/tribes/buildings/trainingsites/barbarians/trainingcamp/init.lua lines 96, 110, 124, 138, 152"},
+    {"family": "sword", "wares": 4, "chain": "sword_long, sword_broad, sword_double (sword_short listed, use not traced)", "used_by": "frisians attack levels 1 to 6", "ref": "/mnt/frankendom-donors/widelands-widelands/data/tribes/buildings/trainingsites/frisians/training_camp/init.lua lines 102, 119, 136; training_arena/init.lua lines 104, 120, 138"},
+    {"family": "spear", "wares": 7, "chain": "spear, spear_advanced, spear_heavy, spear_war (empire); spear_stone_tipped, spear_hardened (amazons)", "used_by": "empire attack levels 1 to 4; amazons attack levels 1 to 2", "ref": "/mnt/frankendom-donors/widelands-widelands/data/tribes/buildings/trainingsites/empire/trainingcamp/init.lua lines 85, 99, 113, 127"},
+    {"family": "trident", "wares": 5, "chain": "trident_long, trident_steel, trident_double, trident_heavy_double", "used_by": "atlanteans dungeon attack steps in order", "ref": "/mnt/frankendom-donors/widelands-widelands/data/tribes/buildings/trainingsites/atlanteans/dungeon/init.lua lines 237, 251, 265, 279"}
+  ],
+  "gear_tiers": [
+    {"family": "health (barbarians)", "chain": "helmet, helmet_mask, helmet_warhelm", "ref": "/mnt/frankendom-donors/widelands-widelands/data/tribes/buildings/trainingsites/barbarians/trainingcamp/init.lua lines 165, 179, 193"},
+    {"family": "health (empire)", "chain": "armor_helmet, armor, armor_chain, armor_gilded", "ref": "/mnt/frankendom-donors/widelands-widelands/data/tribes/buildings/trainingsites/empire/trainingcamp/init.lua lines 140, 154, 168, 182"},
+    {"family": "defense (atlanteans)", "chain": "shield_steel, shield_advanced; health uses tabard_golden", "ref": "/mnt/frankendom-donors/widelands-widelands/data/tribes/buildings/trainingsites/atlanteans/labyrinth/init.lua lines 78, 92, 105"},
+    {"family": "evade (amazons)", "chain": "boots_sturdy, boots_swift, boots_hero", "ref": "/mnt/frankendom-donors/widelands-widelands/data/tribes/buildings/trainingsites/amazons/training_glade/init.lua lines 93, 107, 122"},
+    {"family": "defense (frisians)", "chain": "fur_garment_golden at a defense step", "ref": "/mnt/frankendom-donors/widelands-widelands/data/tribes/buildings/trainingsites/frisians/training_arena/init.lua line 155"}
+  ],
+  "zones": [
+    {"zone": "lava field (summer)", "note": "unreachable; temperature 1273; six textures at fps 4; dither layer 30", "ref": "/mnt/frankendom-donors/widelands-widelands/data/world/terrains/summer/lava/init.lua lines 6, 10-13"},
+    {"zone": "hard lava (wasteland)", "note": "arable volcanic ground; lava_stone1 and lava_stone2 unreachable", "ref": "/mnt/frankendom-donors/widelands-widelands/data/world/terrains/wasteland/hardlava/init.lua line 4"},
+    {"zone": "ice and floes (winter)", "note": "ice walkable; ice_floes and ice_floes2 are water", "ref": "/mnt/frankendom-donors/widelands-widelands/data/world/terrains/winter/ice/init.lua line 6; ice_floes/init.lua line 6"},
+    {"zone": "summer swamp", "note": "unwalkable marsh", "ref": "/mnt/frankendom-donors/widelands-widelands/data/world/terrains/summer/swamp/ (is class, lines not individually verified)"},
+    {"zone": "mineable mountains", "note": "mountain1 to mountain4 and forested mountains are mineable in all four sets", "ref": "/mnt/frankendom-donors/widelands-widelands/data/world/terrains/*/mountain1..4 (is class via grep)"}
+  ],
+  "looks": [
+    {"label": "player-colour twin frames", "technique": "each soldier frame has a _pc.png twin for player tint", "ref": "/mnt/frankendom-donors/widelands-widelands/data/tribes/workers/barbarians/soldier/ (idle_1_pc.png, atk_ok_w_1_pc.png)"},
+    {"label": "result-specific battle clips", "technique": "separate success and failure clips per direction for attack and evade, plus die clips; clip picked by logic random among those matching the level", "ref": "/mnt/frankendom-donors/widelands-widelands/data/tribes/workers/barbarians/soldier/init.lua lines 142-170; src/logic/map_objects/tribes/soldier.cc line 228"},
+    {"label": "level ladder icons", "technique": "one icon per level for health (0-3) and attack (0-5), loaded by pattern", "ref": "/mnt/frankendom-donors/widelands-widelands/data/tribes/workers/barbarians/soldier/init.lua lines 119, 126"},
+    {"label": "lava texture cycle", "technique": "six frames at 4 fps with a dither layer blend at the rim", "ref": "/mnt/frankendom-donors/widelands-widelands/data/world/terrains/summer/lava/init.lua lines 10-12"},
+    {"label": "critter animation set", "technique": "idle at 10 fps, directional walk at 20 fps with six directions, menu icon", "ref": "/mnt/frankendom-donors/widelands-widelands/data/world/critters/wolf/init.lua lines 20-44"},
+    {"label": "critter idle sound with play chance", "technique": "sound_effect with priority 3 percent on idle", "ref": "/mnt/frankendom-donors/widelands-widelands/data/world/critters/wolf/init.lua lines 20-23"},
+    {"label": "golden-tier gear", "technique": "top gear tiers are golden or gilded named wares, each with an idle.png", "ref": "/mnt/frankendom-donors/widelands-widelands/data/tribes/wares/armor_gilded/init.lua line 8"}
+  ],
+  "originals": [
+    {"name": "Four-Track Veteran", "idea": "soldier with four tracks, each a base, a per-level step and an icon ladder", "keep": "four tracks and icon ladders above the unit", "change": "tracks are guard, stamina, crit and reach; rune-ladder icons and a glow rim for veterans"},
+    {"name": "Gear-Fed Training", "idea": "each level consumes one gear piece plus food at a training site", "keep": "one gear piece and food per level", "change": "gear comes from loot drops, not a workshop chain"},
+    {"name": "Gilded Top Tier", "idea": "top gear step costs double food", "keep": "top tier costs double", "change": "gold shows as an edge glow and a short stinger, not a metal colour"},
+    {"name": "Result Clip", "idea": "separate success and failure clips per direction so the result reads without a number", "keep": "result readable from the clip", "change": "one clip with a result glyph, hitstop on the hit frame, dust curl on a miss"},
+    {"name": "Food-Web Critters", "idea": "size, reproduction and appetite numbers plus a carnivore flag define predator and prey", "keep": "numeric food web", "change": "predators raid field edges, not herds"},
+    {"name": "Lava Rim", "idea": "unreachable lava ring with a six-frame glow and dither blend", "keep": "dither blend and slow cycle", "change": "heat shimmer distortion instead of a flat cycle"},
+    {"name": "Scarred Ground", "idea": "volcanic ground that is arable beside lava stone", "keep": "lava-derived ground that can be used", "change": "lower yield but fire-hardened, a distinct biome"},
+    {"name": "Track Subsets", "idea": "each class trains a different subset of tracks", "keep": "class identity from which tracks a class trains", "change": "every class gets one unique track no other class has"}
+  ],
+  "licence_note": "code GPL v2 (COPYING); README line 16 says GPL v2+ with some assets under Creative Commons per folder; music LICENSE.txt tags three tracks CC-BY-SA 3.0 and one CC-BY 4.0 (AU057 lines 3-6); tribe PNGs GPL-2+ per debian/copyright lines 206-208. README line 173 (per AU057) states an AI-content policy. Not a legal reading. Ideas are clean-room shapes from the data; do not reuse names, art or sound.",
+  "not_read": [
+    "src/ battle roll resolution and server/network half",
+    "data/campaigns (672 files) and data/maps (661 files): listed only",
+    "data/i18n (1,803 files; 53 locale entries per AU057): not opened, no string grammar described",
+    "critter Lua for all 16 except wolf and duck fields; other critter fields from grep only",
+    "sprite and sound files (114 OGG); sound csv rows tallied by AU057, not read one by one",
+    "non-combat worker Lua; data/scripting, templates, shaders, AI scripts"
+  ]
+}

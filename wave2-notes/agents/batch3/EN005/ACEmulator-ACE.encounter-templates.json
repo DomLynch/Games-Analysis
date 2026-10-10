@@ -1,0 +1,67 @@
+{
+  "donor": "ACEmulator-ACE",
+  "topic": "encounter-templates",
+  "depth": "thin",
+  "half_read": "server",
+  "paths": [
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Entity/Landblock.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/WorldObjects/WorldObject_Generators.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Entity/GeneratorProfile.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Managers/PropertyManager.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Database/Models/World/Encounter.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Factories/Enum/WeenieClassName.cs"
+  ],
+  "counts": {
+    "weenie_class_names": 41884,
+    "names_ending_gen": 1605,
+    "names_ending_campgen": 438,
+    "names_ending_campgen_xp": 58,
+    "names_ending_patrolgen": 3,
+    "names_ending_ambushgen": 4,
+    "names_ending_patrolcampgen_xp": 1,
+    "names_ending_lairgen": 0,
+    "names_ending_escortgen": 0,
+    "encounter_rows_in_box": 0,
+    "generator_profile_rows_in_box": 0,
+    "method": "python3 regex over WeenieClassName.cs enum lines; encounter and profile rows absent from the box"
+  },
+  "rule": "Landblock load places one weenie per encounter row at cell_x*24, cell_y*24 (clamped 0.5..191.5), destroys it if the cell has a building. Generator tick rolls one profile by cumulative probability (-1 = always) among profiles not maxed and available, queues the spawn, spawns on the next heartbeat. A member removed by the profile's WhenCreate event makes that profile unavailable for Delay seconds (chest = 0; else profile delay, falling back to profile 0). When the count reaches zero and automatic destruction is set, the generator destroys itself, with no grace timer. Global override (off by default) flattens every profile's regen interval and delay.",
+  "data_fields": [
+    {"name": "cell_size_m", "unit": "m", "donor_value_or_null": null},
+    {"name": "spawn_cell_x", "unit": "cell index 0..7 (grid per landblock)", "donor_value_or_null": null},
+    {"name": "no_spawn_flag", "unit": "bool per cell (replaces runtime building check)", "donor_value_or_null": null},
+    {"name": "profile_probability", "unit": "cumulative threshold 0..1, or -1 = always", "donor_value_or_null": null},
+    {"name": "init_create", "unit": "count", "donor_value_or_null": null},
+    {"name": "max_create", "unit": "count (-1 = unlimited)", "donor_value_or_null": null},
+    {"name": "profile_delay_s", "unit": "s", "donor_value_or_null": null},
+    {"name": "regen_interval_s", "unit": "s", "donor_value_or_null": null},
+    {"name": "generator_radius_m", "unit": "m", "donor_value_or_null": null},
+    {"name": "destroy_when_empty", "unit": "bool", "donor_value_or_null": null},
+    {"name": "grace_s", "unit": "s (new: our addition, ACE has none)", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Fixed spawn cell per point; refill from the same cell.",
+    "Cumulative probability roll with a guaranteed (-1) profile.",
+    "Slot freed by death or pickup starts a per-profile delay; chest-style delay of 0.",
+    "Site self-destructs when its last member is gone (automatic destruction flag).",
+    "Global override of timing as a tunable for a whole zone set."
+  ],
+  "change": [
+    "Building check becomes zone data (no_spawn_flag per cell), not a runtime lookup at load (Landblock.cs 295).",
+    "Spawn runs on the zone activation tick, not a background Task (Landblock.cs 269-272).",
+    "Destruction gets a grace timer before removal (WorldObject_Generators.cs 572-576 has none).",
+    "Global override flattens per-point data (Landblock.cs 301-322); make it per-zone, not global.",
+    "Attacker cap is ours (MAX_ATTACKERS = 3); ACE has none."
+  ],
+  "look_test": "Sandbox zone with three camp points (three members, one leader), two patrol points, one self-destructing camp. Respawn 60 s and grace 10 s first, then 300 s. Dom walks it for five minutes at 375 wide: does a camp read as one group; does a cleared camp show a visible gap not a pop; does an emptied camp leave cleanly. Our values, not donor values.",
+  "licence_note": "GNU AGPLv3 code (LICENSE lines 1-2). Content SQL and icons carry no licence line. Client DAT files not in the box. Class C: clean-room, shape only; no weenie names copied.",
+  "tags": ["encounter-camp", "encounter-patrol", "encounter-ambush", "naming-grammar", "walk-density", "scheduler", "duration-rule", "new:cumulative-profile-roll", "new:destroy-when-empty", "new:cell-grid-spawn"],
+  "not_read": [
+    "encounter rows and generator profile rows (not in the box)",
+    "Database/Base/WorldBase.sql encounter table (schema only per DC003; not re-read)",
+    "VerifyWalkableSlope and placement in Spawn (GeneratorProfile.cs 236-320, 438-462)",
+    "EmoteManager idle emotes",
+    "corpse decay, loot reveal, sound and effects",
+    "creature families and creature rows"
+  ]
+}

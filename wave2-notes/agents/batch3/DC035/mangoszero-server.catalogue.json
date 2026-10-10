@@ -1,0 +1,173 @@
+{
+  "donor": "mangoszero-server",
+  "counts": {
+    "creatures": 0,
+    "classes": 9,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 7
+  },
+  "creature_families": [
+    "animal-like (17): wolf, cat, spider, bear, boar, crocolisk, carrion bird, crab, gorilla, horse-like, raptor, tallstrider, scorpid, turtle, bat, hyena, owl",
+    "demon group (5): felhunter, voidwalker, succubus, doomguard, imp",
+    "serpent (1): wind serpent",
+    "mechanical (1): remote control",
+    "creature types (11 entries): beast, dragonkin, demon, elemental, giant, undead, humanoid, critter, mechanical, not-specified, totem; type masks group humanoid-or-undead and mechanical-or-elemental for spell targeting (SharedDefines.h 1712-1728)",
+    "elite ranks (5 real): normal, elite, rare elite, world boss, rare (SharedDefines.h 1794-1801)",
+    "EventAI: 33 event types (CreatureEventAI.h 44-80), 51 action types (82-138); HP-band event row at line 48"
+  ],
+  "top_creatures": [
+    {
+      "label": "Threat-swap guardian",
+      "why": "The boss keeps its target until a challenger has 1.1x threat in melee or 1.3x at range, so the fight has a readable switch rule. Behaviour checked in code; silhouette not in box.",
+      "keep": "Sticky target; the two thresholds; sorted threat list.",
+      "change": "3-attacker cap; visible swap tell (ring and sound); guard and parry feed threat.",
+      "ref": "src/game/References/ThreatManager.cpp lines 413, 510, 517, 732"
+    },
+    {
+      "label": "Stacked-rank warden",
+      "why": "Elite and world-boss ranks scale health and damage through separate config rates, so one template reads as five tiers.",
+      "keep": "Five-step rank ladder with separate HP and damage multipliers.",
+      "change": "Rank bands are zone data fields (cap, respawn, grace), only three steps; our own names.",
+      "ref": "src/game/Object/CreatureLevel.cpp lines 139, 190, 215; src/game/Server/SharedDefines.h lines 1794-1801"
+    },
+    {
+      "label": "Phase-band tyrant",
+      "why": "An HP-band row fires once the boss crosses a percent band, with a repeat range; phases are rows, not code.",
+      "keep": "HP band plus timer as data rows.",
+      "change": "Our event names; phase bar at 375 wide; finisher beat on the last band.",
+      "ref": "src/game/Object/CreatureEventAI.h lines 46-48"
+    },
+    {
+      "label": "Plated crawler",
+      "why": "Scorpid family gives a low, plated, wide read; silhouette is a guess from the family name, to be judged.",
+      "keep": "The low plated read at range.",
+      "change": "Our own anatomy and palette; behaviour not read so none copied.",
+      "ref": "src/game/Server/SharedDefines.h line 1749"
+    },
+    {
+      "label": "Long-stride runner",
+      "why": "Tallstrider family implies a tall, long-legged read; silhouette and behaviour not read.",
+      "keep": "Height and leg length as the read at range.",
+      "change": "No bird shape; our own build.",
+      "ref": "src/game/Server/SharedDefines.h line 1744"
+    },
+    {
+      "label": "Flying coil",
+      "why": "Wind serpent family implies a long aerial body; silhouette and behaviour not read.",
+      "keep": "The long-body read.",
+      "change": "Our own wings or none.",
+      "ref": "src/game/Server/SharedDefines.h line 1755"
+    },
+    {
+      "label": "Gear brute",
+      "why": "Mechanical family is grouped with elementals in one spell-targeting mask, so one spell hits both groups; a clean group-mask idea.",
+      "keep": "The group mask idea (one bitmask per spell target group).",
+      "change": "Our group names and a sound cue; no mechanical look copied.",
+      "ref": "src/game/Server/SharedDefines.h lines 1722, 1728, 1756"
+    },
+    {
+      "label": "Demon bruiser",
+      "why": "Doomguard sits in the demon family group of five; heavy build implied by name only.",
+      "keep": "Heavy build inside the demon group.",
+      "change": "Our own horns and colour; behaviour not read.",
+      "ref": "src/game/Server/SharedDefines.h line 1748"
+    }
+  ],
+  "classes": [
+    "warrior, paladin, hunter, rogue, priest, shaman, mage, warlock, druid (SharedDefines.h 76-90): role and signature mechanic NOT read (class spell lists are data, not in box)",
+    "power types: mana, rage, focus, energy, happiness (SharedDefines.h 151-160): which class uses which power is data, not read",
+    "races: nine entries, eight playable (RACEMASK_ALL_PLAYABLE line 61); faction split by race masks (lines 67 onward); no race mechanic read",
+    "progression: kill XP by level gap, grey-out level, elite doubled (src/game/Object/Formulas.h 372-421); talents file exists (PlayerTalent.cpp), not read",
+    "living-world factions: settlement guards classed by faction masks and waypoint movement, service NPCs excluded (src/game/Object/LivingWorldAnchorPolicy.h 39-127)"
+  ],
+  "weapon_families": [
+    "none read: item subclass and weapon rows are data (SQL), absent from the box",
+    "special triggers (ItemPrototype.h 46-51): on use, on equip, chance on hit, soulstone",
+    "stat modifier types: seven (ItemPrototype.h 33-45)"
+  ],
+  "gear_tiers": [
+    "seven quality tiers, named by colour words in comments: poor, normal, uncommon, rare, epic, legendary, artifact (SharedDefines.h 254-260); no visuals on the server",
+    "gear set bonus: per-set counter, threshold spells in eight slots; equip path src/game/Object/Item.cpp 45-108; unequip path 154-210; set record deleted at zero (line 210)",
+    "defect (by reading, not run): equip returns before counting when the set has a skill gate (Item.cpp line 58), unequip has no skill check and decrements (line 183); fix: count every equipped piece and gate only the bonus spells, or keep a per-item counted flag"
+  ],
+  "zones": [
+    "map kinds: common continent, instance (party), raid, battleground (src/game/Server/DBCEnums.h 78-84)",
+    "outdoor PvP: Silithus (resource race) and Eastern Plaguelands (tower capture); seven zone IDs (src/game/OutdoorPvP/OutdoorPvPMgr.h 56-68)",
+    "battlegrounds: Warsong Gulch (flag), Arathi Basin, Alterac Valley (src/game/BattleGround/BattleGround.h line 39 and BattleGround*.cpp files; only names and one line read)",
+    "living-world anchors: world boss or leader, flight master, settlement defender; continent-only (LivingWorldAnchorPolicy.h 39-52, 109-127)",
+    "biome list and hazards: NOT read (zone and area rows are data, absent)"
+  ],
+  "looks": [
+    {
+      "label": "Con colour ladder",
+      "technique": "Five colour bands from the level gap between player and mob: red at +5 or more, orange at +3, yellow near even, green above grey, grey when trivial. Readability technique; use with a non-colour icon too.",
+      "ref": "src/game/Object/Formulas.h lines 299-321 (band test at line 301)"
+    },
+    {
+      "label": "Seven-step quality ladder",
+      "technique": "Fixed tier steps, one colour word each in the comments; the server sends the tier, the client draws it. Make our own palette.",
+      "ref": "src/game/Server/SharedDefines.h lines 254-260"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Threat Pivot",
+      "idea": "Boss swaps target only when a challenger clearly beats the current one; the swap is telegraphed.",
+      "keep": "Sorted threat list; sticky victim; 1.1x melee and 1.3x ranged switch rule.",
+      "change": "3-attacker cap; visible swap ring and sound; guard and parry feed threat."
+    },
+    {
+      "name": "Con Read",
+      "idea": "Five colour bands on each enemy nameplate by power gap, so the player reads danger before the fight.",
+      "keep": "Five bands by gap; the gap is the only input.",
+      "change": "Bands on our power gap; icon as well as colour for colour-blind players; 375-wide nameplates."
+    },
+    {
+      "name": "Elite Roll Reveal",
+      "idea": "Elite kills pay out a roll reveal with a rarity sound, on top of the extra XP.",
+      "keep": "Elite kill pays more.",
+      "change": "The extra is a roll reveal, not only XP; our own sound."
+    },
+    {
+      "name": "Rank Ladder",
+      "idea": "Mobs come in ranks with separate HP and damage rates, set in zone data.",
+      "keep": "Separate HP and damage rates per rank.",
+      "change": "Three steps; rates are zone data fields (cap, respawn, grace), not config."
+    },
+    {
+      "name": "Settlement Guards",
+      "idea": "Guard NPCs on continents are classed by a rule (faction masks, waypoint movement, not a service NPC), not placed by hand.",
+      "keep": "Rule-based classing of guards.",
+      "change": "Guards answer a call for help within a fixed radius; our own rule text."
+    },
+    {
+      "name": "Gather Race Zone",
+      "idea": "Both sides collect tokens; the first to the number takes the zone and a team buff.",
+      "keep": "First to the number takes the zone.",
+      "change": "Decay on the other side and a contest window; no hard reset."
+    },
+    {
+      "name": "Threshold Set Stack",
+      "idea": "Each extra matching piece unlocks the next bonus; removing a piece steps the bonus down.",
+      "keep": "Count-and-threshold ladder with symmetric removal.",
+      "change": "Fix the skill-gate count mismatch; show the next threshold on a 375-wide badge."
+    },
+    {
+      "name": "Boss Phase Rows",
+      "idea": "Boss phases are data rows: HP band plus timer triggers an action.",
+      "keep": "HP-band and timer rows.",
+      "change": "Our event names; phase bar; finisher beat on the last band."
+    }
+  ],
+  "licence_note": "GPL. LICENSE and README.md line 155 say version 3 or later; some file headers (for example src/game/Object/LivingWorldAnchorPolicy.h line 9) say version 2 or later. The two differ. Clean-room, shape only. Content: README.md line 180 says the related art, images and lore are copyright Blizzard Entertainment; category-level inspiration only.",
+  "not_read": [
+    "data half (SQL creature, item, loot, zone, text rows): absent from the box",
+    "client half: absent from the box",
+    "creature AI bodies beyond the selector; EventAI action bodies",
+    "PlayerTalent.cpp, class spell lists, group XP rate body",
+    "config rate values for HP and damage per rank",
+    "hazards, biome list, sounds (IDs only in BattleGround.h 87-91), looks",
+    "donor CLAUDE.md (treated as data, not followed)"
+  ]
+}

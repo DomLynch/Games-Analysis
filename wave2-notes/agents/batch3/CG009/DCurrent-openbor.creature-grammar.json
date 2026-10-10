@@ -1,0 +1,53 @@
+{
+  "donor": "DCurrent-openbor",
+  "topic": "creature-grammar",
+  "depth": "thin",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/pixelformat.c",
+    "/mnt/frankendom-donors/DCurrent-openbor/engine/source/openborscript/drawmethod.c",
+    "/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/transform.c",
+    "/mnt/frankendom-donors/DCurrent-openbor/LICENSE",
+    "/mnt/frankendom-donors/DCurrent-openbor/README.md",
+    "/mnt/frankendom-donors/DCurrent-openbor/engine/source/defense_fields.def"
+  ],
+  "counts": {
+    "creatures": 0,
+    "families": 0,
+    "blend_functions": 6,
+    "defence_fields_listed": 16,
+    "receipts_verified": 10,
+    "receipts_failed": 0
+  },
+  "rule": "The engine has no creature data. The transferable mechanism is a per-actor draw record: alpha selects one of six named blend functions from a fixed table; when a tint mode is set, the blend becomes a tint routine that combines the tint's own blend with the alpha blend. Palettes can be allocated blank or loaded from a path per actor, so one sprite can have recoloured variants. The per-row sine shimmer divides by a script-set wavelength with no zero check.",
+  "data_fields": [
+    {"name": "blend_mode_index", "unit": "index 1 to 6", "donor_value_or_null": null},
+    {"name": "tint_mode_index", "unit": "index 1 to 6", "donor_value_or_null": null},
+    {"name": "tint_colour_channels", "unit": "0 to 255 per channel", "donor_value_or_null": null},
+    {"name": "palette_path", "unit": "file key", "donor_value_or_null": null},
+    {"name": "shimmer_amplitude", "unit": "pixels", "donor_value_or_null": null},
+    {"name": "shimmer_wavelength", "unit": "rows (must be above zero)", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "One body per actor with a palette pass per variant (colour pass, not a separate sheet).",
+    "A single tint record per actor combining tint colour, tint mode and alpha.",
+    "Short tint pulse on hit, tied to hitstop rather than a fixed time."
+  ],
+  "change": [
+    "Defect: transform.c:1517 divides by a script-set wavelength with no zero check. Fix: clamp to at least 1 when the script sets it, or reject zero in the script command.",
+    "Colour must never be the only element cue: pair the tint with a projectile or shape change for colour-blind players and at 375 wide.",
+    "Palettes come from our catalogue element and tier rows, not from any art shipped in this donor (none is shipped)."
+  ],
+  "look_test": "In the fight scene behind a look flag: one walker with a plain look and a tinted look, plus a short tint pulse on hit. Then keep only the projectile change and remove the tint. Dom checks at 375 wide whether the element reads from the tint alone and whether the pulse reads as a hit. If the tint alone fails, keep the projectile cue.",
+  "licence_note": "Code under 3-clause BSD-style licence (LICENSE:1-2). No art, sound or map shipped (media/ holds a dummy file). README.md:21 names King of Fighters assets used by the original Beats of Rage; no art from that lineage may be used. Shape only; no code copied. No legal conclusions.",
+  "tags": ["recolour-tier", "flash", "new:draw-record", "new:shimmer"],
+  "not_read": [
+    "Palette body (drawmethod.c palette functions beyond the signatures)",
+    "Engine code that applies the 16 defence fields (not located)",
+    "PNG, GIF, ICO and ICNS files (names and sizes only, from AU014)",
+    "tools/ and binaries",
+    "tests",
+    "translation file (177 entries counted, not quoted)",
+    "data pack (not in the box; no paired donor found)"
+  ]
+}

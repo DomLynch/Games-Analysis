@@ -1,0 +1,24 @@
+{
+  "donor": "vps-archive",
+  "code_licence": "unknown: no LICENSE, COPYING or NOTICE file found at depth 3 under armagedom/, dev-jobs/, work/. The only README copies found are project READMEs (e.g. the FRONTIERDOM README).",
+  "asset_licence": "unknown: no licence file found. The folder holds job outputs (request.json, result.json, run.log, src/ copies, *.conf files), not third-party game assets as far as the read portion shows.",
+  "rights_holder_status": "unknown from repo files. The folder is the team's own job archive, not a donor game. dev-jobs/frontierdom-0ebb6a75ffd8/src/README.md describes FRONTIERDOM, a mobile web trading and management game using PlayCanvas. Other folder names (armagedom, air, dv, editor-seam, release-check) do not identify a third-party game in the files read.",
+  "best_class": "D (no usable third-party non-code content identified in the read portion).",
+  "asset_groups": [
+    {"kind": "job-archive-armagedom", "path": "armagedom/ (90 entries at depth 1; before-three-001 to before-three-20261005-050-official etc.)", "count_hint": "about 1.5 GB; 79 playarmagedom.conf and 79 playarmagedom-preview.conf copies; 9 degree-choice conf copies", "licence": "unknown (no licence file found)", "class": "D", "note": "Site and job config files and run folders. No third-party art, audio or models read."},
+    {"kind": "job-archive-dev-jobs", "path": "dev-jobs/ (58 entries at depth 1, e.g. 20261008-1047, frontierdom-*, air-*, dv-*, editor-seam-job-*, release-check-*)", "count_hint": "about 19 GB", "licence": "unknown (no licence file found at depth 3)", "class": "D", "note": "Each job folder holds request.json, result.json, run.log and a src/ copy of a project. The FRONTIERDOM src/README.md is the project's own README. Not a donor game."},
+    {"kind": "job-archive-work", "path": "work/ (char-ham-out6 with dwarf and pitborn subfolders; end-out with before and after; web-o3-out)", "count_hint": "56 KB, 3 folders", "licence": "unknown", "class": "D", "note": "Small output folders. Subfolder names only; not read."}
+  ],
+  "inspiration": [
+    "No third-party game content was found in vps-archive, so no creature, item, zone or effect is taken from it.",
+    "The dev-jobs folders show a job pattern worth keeping in mind: each job has request.json, result.json and run.log next to its src copy. That is process, not a game asset.",
+    "The FRONTIERDOM README (dev-jobs/frontierdom-0ebb6a75ffd8/src/README.md) is the project's own game brief; it is not a donor, so it is out of scope for this audit."
+  ],
+  "briefs": [],
+  "not_read": [
+    "all of armagedom/ and dev-jobs/ except the file names of one job folder each and the FRONTIERDOM README line 3 (sizes read by du only)",
+    "work/char-ham-out6 dwarf and pitborn contents (names only)",
+    "any binary, image, audio or model file (none opened)",
+    "any licence check beyond depth 3 (narrow search only, per the no-whole-tree rule)"
+  ]
+}

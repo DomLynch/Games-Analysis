@@ -1,0 +1,178 @@
+{
+  "donor": "pmbstyle-L2Solo",
+  "counts": {
+    "creatures": 3119,
+    "classes": 89,
+    "weapons": 861,
+    "gear_sets": 809,
+    "zones": 41
+  },
+  "creature_families": [
+    "Monster rows by race trait: humanoid 904, undead 576, beast 256, construct 247, demonic 222, insect 205, animal 202, divine 92, spirit 87, plant 53, fairy 51, dragon 37, giant 14; 1400 rows carry no race trait. (data/Npcs/*.json, traits.race)",
+    "Escalation by 10-level band, median max HP of Monster rows: band 0-9 about 90, 10-19 about 302, 20-29 about 592, 30-39 about 1109, 40-49 about 1660, 50-59 about 1829, 60-69 about 3626, 70-79 about 4229, 80-89 about 4663. Median physical attack rises about 180x from the first band (12) to the last (2148). Shape only, no stat blocks copied.",
+    "Raid bosses: 179 raid-flagged rows, levels 20 to 67, in data/Npcs/c4_raid_bosses.json and data/Npcs/c4_low_level_raid_bosses.json. Each boss has a linked minion list (284 rows, bossId field) in data/Npcs/Minions/c4_raid_bosses.json.",
+    "Summoned servants: 194 Summon rows. data/Npcs/PHANTOM_SUMMONS.md describes three summoner families across 50 skill levels, with their own behaviours (absorb, corpse burst, poison ticks).",
+    "Role tags as data: data/Npcs/ai.json maps every NPC id to FIGHTER, ARCHER or BALANCED (one line, read)."
+  ],
+  "top_creatures": [
+    {
+      "label": "Corpse-burst husk",
+      "why": "A summoned servant (the Soulless family in the doc) whose signature is a burst centred on a corpse it consumes, plus a toxic smoke cloud. One clear behaviour; the burst ring is the cue that would read at 375 wide. Sound and art not read (no audio or art in the donor).",
+      "keep": "Corpse as a combat object; area burst from the body; one gimmick per summon family.",
+      "change": "Our own burst ring, art, name and sound; the smoke becomes our own status field.",
+      "ref": "data/Npcs/PHANTOM_SUMMONS.md line 27 (Soulless: corpse burst, toxic smoke) and line 33 (corpse-centred area damage with corpse consumption)"
+    },
+    {
+      "label": "Blood-drinking shade",
+      "why": "A summoner servant family (Silhouette in the doc) whose Steal Blood heals it on hit; the doc's runtime checks list 20% steal-blood absorption and 15% melee absorption. Heal-on-hit gives a readable tell (a drain tendril) without a new brain.",
+      "keep": "Heal-on-hit as the signature; absorb numbers as data, not code.",
+      "change": "Our shade silhouette and the drain visual; absorb values set per zone.",
+      "ref": "data/Npcs/PHANTOM_SUMMONS.md line 27 (Silhouette: Steal Blood) and line 32 (absorb checks)"
+    },
+    {
+      "label": "Warband warden",
+      "why": "A raid boss that brings its own linked minion list. A boss plus a wave of minions gives a readable phase at a glance (boss height plus a ring of smaller figures). Raid bosses number 179 across levels 20-67.",
+      "keep": "Boss plus a separate minion list keyed by boss id; minions load as data; the cold-fight code reads the same list.",
+      "change": "Our boss silhouette and palette; our minion roster; our wave timing.",
+      "ref": "data/Npcs/Minions/c4_raid_bosses.json line 3 (bossId); src/GameServer/Bot/Population/ColdCombatProfile.js line 12 and line 702"
+    },
+    {
+      "label": "Great wyrm tier",
+      "why": "Dragon-race rows sit at the top of the level range (dragon rows run levels 34 to 85). Scarce, late and large: a readable boss-tier silhouette if the wing span is the cue.",
+      "keep": "Dragons only in the top bands; a few per zone; one large-collision body.",
+      "change": "Our own wyrm silhouette, element and sound; no shared name or shape.",
+      "ref": "data/Npcs/c4_forge_of_the_gods.json line 1096 (dragon race trait, level 85 rows); data/Npcs/c4_legacy_monsters.json (10 dragon rows)"
+    },
+    {
+      "label": "Colossus band",
+      "why": "Giant-race rows (14) sit alone in levels 61-65, a small late set. Scale alone reads at 375 wide, which suits a big-body beast in our roster.",
+      "keep": "Few giants, one band, large collision radius.",
+      "change": "Our own giant body, pose and attack; no copied silhouette.",
+      "ref": "data/Npcs/npcs.json line 7822 (giant race trait row); data/Npcs/c4_legacy_monsters.json (giant rows also present)"
+    },
+    {
+      "label": "Hive swarm",
+      "why": "Insect-race rows (205) spread across levels 15-81 and sit in dungeon-type files. A large insect family gives a swarm shape that reads as a crowd, not a single boss.",
+      "keep": "Insect family across many bands; many small bodies per encounter.",
+      "change": "Our own insect shapes, sounds and a swarm cap set per zone.",
+      "ref": "data/Npcs/c4_catacomb_of_the_witch.json, data/Npcs/c4_devastated_castle.json, data/Npcs/c4_devils_isle.json (insect race rows)"
+    },
+    {
+      "label": "Restless dead",
+      "why": "Undead-race rows (576) are the largest family and cover levels 1-82. A large family across the whole curve gives a clear first-to-last progression for a single creature theme.",
+      "keep": "One theme across all bands, with a tier per band.",
+      "change": "Our own dead silhouettes and tier cues; no shared name.",
+      "ref": "undead race trait rows in data/Npcs/c4_catacomb_of_*.json, data/Npcs/c4_devastated_castle.json, data/Npcs/c4_devils_isle.json, data/Npcs/c4_fields_of_silence_and_whispers.json (and others)"
+    },
+    {
+      "label": "Sprite trickster",
+      "why": "Fairy-race rows (51) sit across levels 1-78 and include the lowest-level monsters. A light, fast family reads well as a contrast to heavy bosses.",
+      "keep": "Fast small body; trickster movement; many at the low bands.",
+      "change": "Our own sprite silhouette, colour and sound.",
+      "ref": "data/Npcs/npcs.json line 4 (fairy race trait, first template in the file)"
+    }
+  ],
+  "classes": [
+    "Root tier (9 root class ids, no parent): each carries a skill tree of 9-37 skills in data/Skills/Tree/tree.json. Role: not stated in the data. Progression: first promotion.",
+    "First-profession tier (18 ids): children of the roots, 1-3 per root (firstProfMap, src/GameServer/ClassProgression.js line 35). Mechanic: a new skill set on promotion.",
+    "Second-profession tier (31 ids): children of the first tier (secondProfMap, line 47). Mechanic: a second promotion with its own skills.",
+    "Third-class tier (31 ids, ids 88-118): each has a base combat-point cap and a per-level add (base about 1049 to 2756; per-level add about 21 to 57, one shared modifier of 0.22). Progression: combat points grow per level; the lineage walk (line 94) finds the parent chain.",
+    "NPC roles (not classes): FIGHTER, ARCHER or BALANCED per NPC id in data/Npcs/ai.json. The cold-combat class policy requires a BotRoles module (src/GameServer/Bot/Population/ColdClassPolicy.js line 3); that module was not read, so whether it reads ai.json is not checked."
+  ],
+  "weapon_families": [
+    "Weapon kinds (861 rows in data/Items/Weapons): blunt 210, sword 136, dual 117, knife 95, pole 76, bow 64, dual-fist 52, misc 42, great sword 30, pet 30, fist 9.",
+    "Rank tiers on weapons: none 136, d 122, c 304, b 146, a 100, s 53 (data/Items/Weapons/weapons.json etc., field etc.rank).",
+    "Special abilities: data/Items/weapon_sa.json lists 443 weapons with conditional stat blocks and 36 proc definitions. Proc families: drain 7, poison 3, bleed 3, stun 2, silence 2, root 1, slow 1, others 17 (buffs, curses, magic holds).",
+    "Conditional bonuses: 79 conditional stat entries in weapon_sa.json; the one read example is gated by minEnchantLevel 4. The test notes cover a +4 dual case (WEAPON_SA.md line 124). Gate types other than enchant were not counted.",
+    "Pole and bow ranges: explicit pole range and angle preserved in the SA generator (WEAPON_SA.md line 13)."
+  ],
+  "gear_tiers": [
+    "Armour kinds (809 rows in data/Items/Armors): wear 366, jewel 113, fabric 87, shield 76, chain 71, leather 66, pet 30.",
+    "Rank tiers: none 142, d 103, c 103, b 279, a 134, s 48.",
+    "Sealed and unsealed grades: c4_sealed_a_grade 23 rows, c4_unsealed 38 rows, c4_a_grade 9, c4_b_grade 24, c4_s_grade 20. An exchange recipe list (data/Items/c4_unseal.json) turns sealed pieces into unsealed ones, a state reveal rather than a visual swap.",
+    "Soul-crystal ladder for weapons: 3 colours, stages 0-13, 42 intact crystals plus broken remains (data/Items/SOUL_CRYSTALS.md line 3). Stage 13 is terminal (SOUL_CRYSTALS.md line 26). Install needs the weapon and the exact colour and stage of crystal (WEAPON_SA.md lines 63-68).",
+    "How tiers show: rank letters in data, sealed or unsealed state, and the crystal stage. Client rendering not read (no client in donor)."
+  ],
+  "zones": [
+    "Catacomb-type dungeons: 6 files (data/Npcs/c4_catacomb_of_*.json), each with its own spawn set and reward table in data/Npcs/Rewards/.",
+    "Necropolis chain: 8 files (data/Npcs/c4_necropolis_of_*.json), a themed graveyard series.",
+    "Field and island zones: alligator island, swamp of screams, fields of silence, garden of beasts, hot springs, valley of saints, wall of argos, maille lizardmen, and others (about 25 files in data/Npcs/c4_*.json).",
+    "Raid lairs: c4_raid_bosses.json (174 rows) and c4_low_level_raid_bosses.json (5 rows) with minion lists.",
+    "Town and service zones: town NPC files, guild and clan-hall files (ClanHallManager rows 50 across the Npcs files), teleport table of 34 entries (data/Teleports/teleports.json).",
+    "World spawn file: data/Npcs/Spawns/spawns.json holds 13,465 spawn groups covering 26,945 mobs; respawn median 95 s, with common values 15, 60, 240 and 10800 s. The bias field takes 0, 15, 50, 120 and 180 (meaning not read). Some respawn values are -1 or 950400 (sentinels, not explained in the read files).",
+    "Hazards: not read as a table (no trap table in the donor; the donor's own README was read for tiers only)."
+  ],
+  "looks": [
+    {
+      "label": "Pixel crest badges",
+      "technique": "Indexed-colour bitmap badges at fixed small sizes (8 x 12 for ally crests, 16 x 12 for clan crests), 485 files in total. Pixel art reads well at small size on a phone.",
+      "ref": "data/crests/ally and data/crests/clan; data/crests/README.md line 6 (16 x 12 size)"
+    },
+    {
+      "label": "Sealed-to-open reveal",
+      "technique": "A state change on an item (sealed to unsealed by recipe) rather than a shader. Reveal moment as a gameplay step.",
+      "ref": "data/Items/c4_unseal.json (exchange recipe list, 38 armour rows in data/Items/Armors/c4_unsealed.json)"
+    },
+    {
+      "label": "Summon corpse ring",
+      "technique": "Area burst centred on a corpse, with a smoke effect. Effect art not read (no client); described from the server doc only.",
+      "ref": "data/Npcs/PHANTOM_SUMMONS.md line 33"
+    },
+    {
+      "label": "Proc name effects",
+      "technique": "Critical procs show as named special abilities (poison, bleed, drain, stun). The visual per proc is not in the server half.",
+      "ref": "data/Items/weapon_sa.json lines 4612 and 4647 (proc names)"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Corpse Reliquary",
+      "idea": "A summoner's servant that drains the fallen: it spends a corpse to burst outward in a ring, then leaves a short smoke field.",
+      "keep": "Corpse as a combat resource; a single burst ring as the signature; a smoke field as the after-effect.",
+      "change": "Our own silhouette, element, ring art and sound; poison becomes our own status with its own duration."
+    },
+    {
+      "name": "Warband Standard",
+      "idea": "A boss that plants its standard and calls a linked wave of smaller fighters, keyed by the boss id.",
+      "keep": "Boss plus a separate minion list keyed by boss id; a timed wave.",
+      "change": "Our boss body and palette; our minion roster; wave timing and a visible standard on the boss."
+    },
+    {
+      "name": "Tidewake Shade",
+      "idea": "A drain-type servant: each landed hit returns a share of damage as healing to its summoner.",
+      "keep": "Heal-on-hit as the signature; absorb numbers live in data.",
+      "change": "Our own shade silhouette, drain tendril visual, and absorb caps per zone."
+    },
+    {
+      "name": "Ember Proc Blade",
+      "idea": "A weapon whose critical hits roll a damage-over-time proc (poison or bleed), separate from the target's resist roll.",
+      "keep": "Procs on critical only; proc chance separate from resist; no proc on skills or misses.",
+      "change": "Our own proc names and effects; a distinct glow per proc family."
+    },
+    {
+      "name": "Stage Ladder Relic",
+      "idea": "A gear item that grows one stage at a time when fed a matching crystal, with a small chance to break and a terminal top stage.",
+      "keep": "Exact colour and stage match; growth and break odds; a terminal stage that cannot grow.",
+      "change": "Our own odds (the donor's numbers are a compatibility baseline, not verified); our own stage names and colours."
+    },
+    {
+      "name": "Band Warden Pack",
+      "idea": "A zone population where a few top-band bosses hold the far zone and cheap background actors fill the rest, promoted to full detail on approach.",
+      "keep": "Three tiers by distance; promotion on approach; a background loop that keeps goals; budgets that tighten when a player is near.",
+      "change": "Our tier names and distances; a fight-only tier that is always full. Maps to parity row 23 (zone population) and row 18 (per-tick NPC budget)."
+    }
+  ],
+  "licence_note": "Code: Apache-2.0 per LICENSE (Apache 2.0 text) and README line 290. Data: no separate licence; data/ does not state its source. Crest BMPs come from a third-party gallery whose licence is not stated (data/crests/README.md line 3). Rights holder: unknown from the files; README names the game it emulates. Treated as class C: category-level inspiration only.",
+  "not_read": [
+    "data/Npcs/*.json beyond block names and selected rows (most template values and the race-level tables were summarised by counts only)",
+    "data/Npcs/Spawns/*.json beyond spawns.json summary counts; bias meaning not read",
+    "data/Items beyond counts, rank fields and the weapon_sa proc summary; Others/ folder and Armors/c4_s_grade.json rows",
+    "data/Skills beyond counts (active 648, passive 86, switch 23) and the class tree shape; skill effects not read",
+    "data/Html (337 files), data/KnowledgeBase, data/Templates, data/Pets, data/Henna, data/ClanHalls, data/Admin, data/clan-names.json, data/ExtractableItems",
+    "data/crests: one BMP header only; manifest.json not opened; l2solo-logo.png not opened",
+    "src/GameServer/Bot: BotAI.js, BotRoles, BotRaidSafety and most Population services not read in full; ColdCombatProfile.js only at lines 12 and 702",
+    "src/GameServer/ClassProgression.js: the formula that uses CP values was not read; only the data literals and lineage function",
+    "database/sql (3 files), tests/, scripts/, data/Geodata (not in the box; README line 187 describes a download)",
+    "NodeL2-NodeL2 (the upstream fork named in README line 288) not opened"
+  ]
+}

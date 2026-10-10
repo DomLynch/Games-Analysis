@@ -1,0 +1,148 @@
+{
+  "donor": "sven-n-MuMain",
+  "counts": {
+    "creatures": 344,
+    "classes": 7,
+    "weapons": 135,
+    "gear_sets": 356,
+    "zones": 47
+  },
+  "creature_families": [
+    "Not determined. src/bin/Data/Monster/ holds 947 asset files: 344 .bmd models, 489 .OZJ and 112 .OZT textures, 2 .ozj. Folder is mixed (some gear-like names). Monster-to-file mapping and creature behaviour not verified; monster stats are binary (Local/Eng/MonsterSkill.bmd, not parsed).",
+    "Restricted donor: no creature names recorded; no family tiers stated."
+  ],
+  "top_creatures": [],
+  "classes": [
+    "Seven class-requirement flags across item definitions (Items/Group*.json, classRequirements block on 772 items; each flag on 235 to 376 items). Names not recorded (restricted). Category level: each class has its own gear line; pieces can be locked to one or more classes.",
+    "Class character models in src/bin/Data/Player/ (873 files, binary, not parsed). No factions or races found in text."
+  ],
+  "weapon_families": [
+    "Six hand-weapon families (135 items): family sizes 36, 9, 20, 12, 26, 32 (group files 00 to 05).",
+    "Shield family: 24 items (group 06), all with a block rate.",
+    "Two-hand flag on 62 items. Attack type integer on 370 items. Element resistances on 11 items (17 entries).",
+    "Off-hand slot used by 15 bow-family items, 4 staff-family items and 24 shields (one parse). Set bonus table not in the JSON (binary, not parsed)."
+  ],
+  "gear_tiers": [
+    "Armour pieces (not sets): helm 66, armour 74, pants 74, gloves 68, boots 74 = 356 across groups 07 to 11; level fields climb to roughly 127 to 147 per piece group.",
+    "Wing tiers: four named values (small, first, second, third) on 24 wing items; the wing formulas depend on the tier (docs/item-data.md line 81).",
+    "Upgrade glow: colour from +7, shine from +11, excellent glow flagged per mesh, ancient colour for sets (docs/item-data.md lines 288 and 290). Set and ancient tables are binary (not parsed).",
+    "Helpers (group 13): 137 items, levels to 300. Potions (group 14): 162. Miscellaneous (group 15): 36. Cash-shop tag on 108 items (not a design target).",
+    "Sockets: 39 items with socket tags; gems and jewels 13 items."
+  ],
+  "zones": [
+    "Zone folders: src/bin/Data/World1 to World40 (47 folders). Terrain layer (.map, 86 files) and attribute layer (.att, 117 files), counted at the top level of each folder. The audit had 90 and 123; this count is the one made here.",
+    "Object (prop) folders: 48. NPC folder: 326 files (binary).",
+    "Locale: Local/ has three language folders (Eng, Por, Spn). Map name folder (34 entries) and minimap folder (20 entries) in Local/Eng. NpcName_Eng.txt is text with 678 lines (not quoted).",
+    "Dungeon archetypes (category level): kill-quota gate across three enemy kinds (docs/in-game-tests.md line 335); flight-gated area (docs/item-data.md lines 131-132); timed event area with its own item set (named in docs/item-data.md line 287; name not recorded).",
+    "Biomes and hazards: not read (terrain and attributes are binary)."
+  ],
+  "looks": [
+    {
+      "label": "Upgrade glow ladder",
+      "technique": "Glow colour from +7, shine from +11, ancient colour for sets, excellent glow flagged per mesh; the game chooses the glow from level. Item model glow usage: 889 model entries, 420 with a glow object.",
+      "ref": "/mnt/frankendom-donors/sven-n-MuMain/docs/item-data.md:276 and :287-290; /mnt/frankendom-donors/sven-n-MuMain/src/bin/Data/Items/Models/Group00_Sword.json"
+    },
+    {
+      "label": "Named glow palette",
+      "technique": "One shared list of 45 named colours (values not copied); names are letters and digits; start is refused when default names are missing.",
+      "ref": "/mnt/frankendom-donors/sven-n-MuMain/src/bin/Data/Effects/GlowColors.json; /mnt/frankendom-donors/sven-n-MuMain/docs/item-data.md:305"
+    },
+    {
+      "label": "Per-mesh glow",
+      "technique": "Glow and shine limited to named meshes, or all but one hidden mesh.",
+      "ref": "/mnt/frankendom-donors/sven-n-MuMain/docs/item-data.md:288-296"
+    },
+    {
+      "label": "Inventory idle spin",
+      "technique": "Every item turns while hovered; gamble items turn slowly all the time.",
+      "ref": "/mnt/frankendom-donors/sven-n-MuMain/docs/item-data.md:269"
+    },
+    {
+      "label": "Four effect kinds",
+      "technique": "Object, particle, joint, sprite; each kind has its own create function and its own type names (646 named types in all: 464 object, 98 particle, 31 joint, 53 sprite).",
+      "ref": "/mnt/frankendom-donors/sven-n-MuMain/docs/effect-data.md:21-24; /mnt/frankendom-donors/sven-n-MuMain/src/bin/Data/Effects/EffectTypes.json:3"
+    },
+    {
+      "label": "Joint tether that follows the nearest target",
+      "technique": "Joint effect links two points; its target is a copy of the nearest monster or NPC that it follows while the slot holds it, and re-acquires the nearest when gone.",
+      "ref": "/mnt/frankendom-donors/sven-n-MuMain/docs/effect-data.md:23 and :393-395; /mnt/frankendom-donors/sven-n-MuMain/src/bin/Data/Effects/JointTypes.json"
+    },
+    {
+      "label": "Target bar only for the selected target",
+      "technique": "Bar drawn under the selected name only, and only when the status is not zero (single predicate function).",
+      "ref": "/mnt/frankendom-donors/sven-n-MuMain/src/source/UI/Combat/MonsterHealthBar.cpp:3; /mnt/frankendom-donors/sven-n-MuMain/src/source/UI/NewUI/Character/NewUINameWindow.cpp:210"
+    },
+    {
+      "label": "Target bar after attack",
+      "technique": "Health bar added after the first attack (changelog).",
+      "ref": "/mnt/frankendom-donors/sven-n-MuMain/README.md:43"
+    },
+    {
+      "label": "Reduce-effects toggle",
+      "technique": "Options checkbox that cuts effects to raise frame rate.",
+      "ref": "/mnt/frankendom-donors/sven-n-MuMain/README.md:14"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Upgrade Glow Ladder",
+      "idea": "Gear shows its upgrade through a glow that starts at a middle step and a shine that starts at a higher step.",
+      "keep": "Stepped glow by upgrade; one colour list.",
+      "change": "Three steps with a pulse pattern so the tier reads without colour (accessibility). Rows 15 and 16."
+    },
+    {
+      "name": "Named Glow Palette",
+      "idea": "One shared list of named colours for all gear, refused at start if the defaults are missing.",
+      "keep": "The single list and the start-time check.",
+      "change": "Our palette and a contrast check at 375 px. Rows 15 and 16."
+    },
+    {
+      "name": "Tether Line",
+      "idea": "A dotted line in team colour that links two fighters, follows a copy of the nearest target and re-acquires when the target is gone.",
+      "keep": "The joint kind, the follow, and the re-acquire.",
+      "change": "Breaks past the leash; no lightning look. Rows 8 and 4."
+    },
+    {
+      "name": "Target Bar After Hit",
+      "idea": "A bar shows only for the selected target, is hidden at zero, and appears after the first hit.",
+      "keep": "Selected-only, hidden at zero, shown after an attack.",
+      "change": "Segmented bar that fades after a few quiet seconds; half-point tick for 375 px. Row 14."
+    },
+    {
+      "name": "Four Effect Kinds",
+      "idea": "Hit burst, aura, tether, marker and ground decal, each with its own create path and names in data.",
+      "keep": "The kinds and their separate create paths.",
+      "change": "Kinds named by gameplay role. Row 8."
+    },
+    {
+      "name": "Wing Tiers Flight",
+      "idea": "Four named wing tiers change flight height and landing; flight is an entry gate in data.",
+      "keep": "Tiers as named steps; the entry gate.",
+      "change": "Landing ring; flight ends on a hit. Row 22."
+    },
+    {
+      "name": "Kill-Quota Gate",
+      "idea": "An area opens after a quota of kills across three enemy kinds, counted by the server ledger.",
+      "keep": "Quota per enemy kind as data.",
+      "change": "Our own enemy kinds and a visible progress ring. Rows 18 and 23."
+    },
+    {
+      "name": "Inventory Idle Spin",
+      "idea": "Gear turns while hovered; rare gear keeps a slow spin when idle.",
+      "keep": "The hover turn and the slow idle spin for rare items.",
+      "change": "Tilt-and-shimmer instead of a full turn, so the phone view stays calm. Row 15."
+    }
+  ],
+  "licence_note": "No licence in the box: no LICENSE at the root, README has no licence section, _RESTRICTED-NOTE.txt line 1 says 'leaked Webzen MU Online client source (community-maintained), no licence. Study shape/idea only; never copy code, constants or text.' One bundled font (NotoSansTC) is OFL per its licence file line 1; other font licences read only to the header. Class C/D: category level, shape and mood only.",
+  "not_read": [
+    "Server half: not in box (README names an external compatible server; not fetched).",
+    "Binary game data: .bmd, .OZJ, .OZT, .OZB, .map, .att, Effect/ (320 entries), Monster/ models and textures, Player/, NPC/, Skill/ (366 files), Local/ binary tables (ItemSetOption, MonsterSkill, MasterSkillTree and others).",
+    "Shop archives in InGameShopScript/ (not opened, not extracted).",
+    "Item group bodies beyond the parsed fields; Items/Models/SharedModels.json beyond the count (34 models).",
+    "src/source/ beyond the health bar file and its call site.",
+    "CHANGELOG.md, tests/, tools/, ClientLibrary/.",
+    "Font licences beyond the first lines.",
+    "docs/ other than the item, effect and in-game test docs.",
+    "CLAUDE.md and AGENTS.md at donor root: read as data only; instructions not followed."
+  ]
+}

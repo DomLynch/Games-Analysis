@@ -1,0 +1,83 @@
+{
+  "donor": "AAEmu-AAEmu",
+  "topic": "status-effects",
+  "depth": "full",
+  "half_read": "server",
+  "paths": [
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/Units/Buffs.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/Skills/Buffs/BuffTolerance.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/Skills/Buffs/BuffToleranceStep.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/Skills/Buffs/BuffToleranceCounter.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/Skills/Buffs/BuffStackRule.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/Skills/Buff.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/Skills/Templates/BuffTemplate.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/Skills/BuffConstants.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/GameData/BuffGameData.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/NPChar/Npc.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/Char/CharacterCombat.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/Skills/Effects/DamageEffect.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/SQL/aaemu_game.sql",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.UnitTests/Game/Models/Game/Skills/BuffTests.cs"
+  ],
+  "counts": {
+    "stack_rules": 6,
+    "control_flags": 7,
+    "death_penalty_or_status_constants": 3,
+    "tolerance_rows_in_box": 0,
+    "buff_template_rows_in_box": 0,
+    "character_active_buffs_columns": 11,
+    "defects_listed": 10,
+    "tolerance_steps_hit_chance_used": 0
+  },
+  "rule": "Per buff tag, a tolerance counter steps down on each repeat application inside a sliding window measured from the last application (step reductions 1..n as percent of duration). When the next step is not stronger, or the ladder has no next step, the target gets an immune buff and the ladder restarts. Duration = template base + level duration x ability level, then caster and owner modifiers, then the current step's reduction, then a PvP-only character reduction, then any forced duration. Stack rule per buff (refresh drops a weaker new application; default branch replaces a shorter instance at MaxStack). Control flags (stun, root, sleep, silence, cripled, knockdown, fastened) gate NPC movement and AI and interrupt skills; a Character whose CC is on a victim at death gets assist credit. Real-time buffs keep ticking offline; paused buffs do not.",
+  "data_fields": [
+    {"name": "tolerance_window", "unit": "s, from last application", "donor_value_or_null": null},
+    {"name": "tolerance_step_reduction", "unit": "percent of duration, per step, steps ordered by id", "donor_value_or_null": null},
+    {"name": "tolerance_step_hit_chance", "unit": "percent (loaded, unused in code read)", "donor_value_or_null": null},
+    {"name": "tolerance_immune_buff_id", "unit": "buff id", "donor_value_or_null": null},
+    {"name": "tolerance_pvp_reduction", "unit": "percent, character versus character only", "donor_value_or_null": null},
+    {"name": "buff_duration", "unit": "ms", "donor_value_or_null": null},
+    {"name": "buff_level_duration", "unit": "ms per ability level", "donor_value_or_null": null},
+    {"name": "max_stack", "unit": "count (0 = no cap)", "donor_value_or_null": null},
+    {"name": "stack_rule", "unit": "enum 1 to 6", "donor_value_or_null": null},
+    {"name": "init_min_charge", "unit": "count", "donor_value_or_null": null},
+    {"name": "init_max_charge", "unit": "count", "donor_value_or_null": null},
+    {"name": "max_charge", "unit": "count", "donor_value_or_null": null},
+    {"name": "real_time", "unit": "bool: ticks offline (true) or pauses (false)", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "per-tag ladder with an explicit immune step at the end",
+    "sliding window measured from the last application",
+    "stack-rule enum (refresh, charge, extend, multiple, independent)",
+    "real-time versus paused offline timer as a per-buff flag",
+    "timed status on death (death penalty, respawn cooldown) instead of a silent respawn",
+    "CC assist credit to the caster still on the victim at death"
+  ],
+  "change": [
+    "fix D1: GetStepAfter throws at the last step (use FirstOrDefault; no next step = ladder end)",
+    "fix D2: duplicate Dictionary Add when the immune buff is active (do not step while immune is active)",
+    "fix D3: MaxStack overflow when no instance has less time left",
+    "fix D4: replacement target is the last qualifying instance, not the shortest",
+    "fix D5: permanent (-1) application loses to any timed copy in Refresh",
+    "fix D6: stack_count saved as constant 1",
+    "fix D7: caster lost on restore (caster_id read but unused)",
+    "fix D8: login restore counts as a new application (probable; skip the ladder step on restore)",
+    "fix D9: hit_chance loaded but unused",
+    "fix D10: save key cannot hold two instances of one buff from different casters",
+    "per-group ladders (stun, root, knockdown families) instead of one per tag",
+    "bosses and elites only for the ladder (many-vs-one chain-stun cap)"
+  ],
+  "look_test": "Phone 375 wide, one enemy in a three-attacker fight. (A) flat 1.5 s stun each hit; (B) ladder 0, 50, 75 percent reduction then an immune beat, three-pip indicator under the enemy bar, short resists flash on the immune step; (C) B without pips. Judge whether B reads as tougher rather than broken, whether the pip row is legible at 375 wide, and whether the immune flash lands in time.",
+  "licence_note": "Code licence conflicting in the repo: README names LGPL v3, LICENSE.GPL is GPL v3, LICENSE.MIT is MIT. Treated as GPL-or-unclear: clean-room, shape only; sketch written from the rule, not copied. Game data files carry no licence line (class C); no values taken. Unofficial server, not affiliated with XLGames (README). Inspiration is category-level only.",
+  "tags": ["new:tolerance-ladder", "status-stack", "duration-rule", "knockdown", "new:stun-root", "new:assist-credit", "new:buff-persistence", "new:death-penalty-buff", "bleed"],
+  "not_read": [
+    "buff_templates, buff_tolerances, buff_tolerance_steps, buff_modifiers rows (compact.sqlite3, not in the box)",
+    "client, animation, effect and sound files (not in the box)",
+    "BuffTriggersHandler.cs and most trigger classes (only DamagedBuffTrigger.cs read)",
+    "TimeoutBuffTrigger.cs",
+    "DOT tick path in Buff.cs",
+    "CheckDamageImmune body beyond the first switch",
+    "server-side player movement gate for stun or root (not found in grep; not verified)",
+    "unit tests not run; no runtime"
+  ]
+}

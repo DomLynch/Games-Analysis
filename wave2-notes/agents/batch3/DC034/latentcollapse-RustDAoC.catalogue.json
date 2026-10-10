@@ -1,0 +1,171 @@
+{
+  "donor": "latentcollapse-RustDAoC",
+  "counts": {
+    "creatures": null,
+    "classes": 62,
+    "weapons": null,
+    "gear_sets": null,
+    "zones": 316
+  },
+  "count_notes": {
+    "creatures": "gamedata CSVs (monsters, anims, skins) not in the box; not countable",
+    "classes": "62 CLASS_CAREERS rows (ids 1-62); 21 playable races",
+    "weapons": "no weapon table in the client half",
+    "gear_sets": "no set table; gear is four per-slot armour tiers (body, arms, legs, boots)",
+    "zones": "316 distinct names from 473 name arms in zone_names.rs; 476 offset rows"
+  },
+  "creature_families": [
+    "Skeleton class (example model 26, giant or large skeleton) - shares the humanoid idle clip",
+    "Flying small creature (Dragonfly-type) - has a fly action slot and a per-creature scale correction",
+    "Humanoid NPC (guards, merchants) - one body with ten skin slots"
+  ],
+  "top_creatures": [
+    {
+      "label": "Bone-guard giant",
+      "why": "Tall skeleton whose authored mesh needed a percentage scale to read at the right height",
+      "keep": "Tall silhouette; one shared humanoid idle clip",
+      "change": "Our own silhouette (ribbed chest, different head); slower breathing idle to mark it as big",
+      "ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-assets/src/monsters.rs lines 11-12 and 63"
+    },
+    {
+      "label": "Dragonfly-type flier",
+      "why": "Authored mesh about 1694 units across; needed Scale 10 to avoid filling the screen",
+      "keep": "Separate fly action slot; scale field as a per-creature correction",
+      "change": "Our own wings and flight loop; a size band that fits the 375-wide fight frame",
+      "ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-assets/src/monsters.rs lines 61-62; /mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-assets/src/anims.rs line 32"
+    },
+    {
+      "label": "Multi-skin humanoid NPC",
+      "why": "One body mesh with ten skin slots so the face never takes the torso texture",
+      "keep": "Slot-by-slot skin binding; the face as its own slot",
+      "change": "Fewer slots, helm-first rig; a readable face at 375 wide",
+      "ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-assets/src/monsters.rs line 81 (enum SkinSlot)"
+    }
+  ],
+  "classes": [
+    "Armsman (Albion): melee tank line; auto-trains Slash and Thrust; trainable Crush, Polearm, Shields, Two Handed, Parry, Crossbows; ref crates/caer-protocol/src/class_catalog.rs lines 289-318",
+    "Mauler (one name, three realms): hybrid; separate career key set per realm; ref crates/caer-protocol/src/career.rs lines 725-760",
+    "Necromancer and Bonedancer (pet classes): pet rules recorded as UNKNOWN in code; ref crates/caer-world/src/cfx/pets.rs lines 4 and 16",
+    "Realms: Albion 22 rows, Midgard 19, Hibernia 21 (62 total); ref crates/caer-protocol/src/career.rs lines 14-16 and CLASS_CAREERS",
+    "Stat curve: 1 point per stat point up to +10, 2 from +11 to +15, 3 beyond; budget exactly 30; ref crates/caer-protocol/src/starting_stats.rs lines 14-15 and 35; crates/caer-protocol/src/charcreate.rs line 694"
+  ],
+  "weapon_families": [],
+  "gear_tiers": [
+    "Armour tier is the extension byte on torso, arms, legs and feet; tier 0 read as 1; each tier is a numbered mesh part (BodyN, ArmsN, LegsN, BootsN); ref crates/caer-render/src/entities.rs lines 2755-2760",
+    "Figure and monster meshes carry no internal texture, only a material colour; ref crates/caer-assets/src/monsters.rs line 19",
+    "No metallic, gold or crystal shading in the static model shader crates/caer-render/src/mesh.wgsl (grep found no specular or rim term; skinned.wgsl not read)"
+  ],
+  "zones": [
+    "Barrows, tombs and crypts (Cursed Barrow, Burial Tomb, Sundered Tombs, Hidden Crypt)",
+    "Caves and caverns (Dark Cavern, Damp Cavern, Accursed Caves, Koalinth Caverns)",
+    "Mines (Forgotten Mines, Unused Mine, Tepok's Mine, Abandoned Mines)",
+    "Lairs and pits (Cetus' Pit, Pit of Despair, Lair of Doom, Master's Lair)",
+    "Sanctuaries (Keeper Iraeda's and Keeper Garran's Sanctuary)",
+    "Sea and sound zones (Oceanus Notos, Hesperos, Boreal, Anatole; Lamfhota's Sound)",
+    "Ruins and islands (Ruins of Atlantis, Ashen Isles, Isle of Glass)",
+    "Mountain and marsh (Snowdonia, Pennine Mountains, Avalon Marsh)",
+    "Dungeon class: 281 dungeon zones, 96 surface, 17 skycity, 5 interior (author constants, not recounted); ref crates/caer-world/src/dungeon_zones.rs line 27"
+  ],
+  "looks": [
+    {
+      "label": "Translucent water surface",
+      "technique": "Flat alpha 0.62 surface drawn last with a lighting floor of 0.15; depth write is ON in the pipeline (the shader header says OFF, which is stale)",
+      "ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/water.wgsl line 40; /mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/gpu.rs lines 1414-1420"
+    },
+    {
+      "label": "Soft additive effect sprite",
+      "technique": "Camera-facing quad, premultiplied soft blob, additive blend; placeholder texture, not game art",
+      "ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/particle_billboard.wgsl line 2; /mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/particles.rs"
+    },
+    {
+      "label": "Two-sided diffuse shade",
+      "technique": "Absolute value of normal dot light, times texture, plus ambient and dynamic light from atmosphere tables",
+      "ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/mesh.wgsl line 95"
+    },
+    {
+      "label": "Sky gradient per time of day",
+      "technique": "Two colours per time of day: zenith and horizon fog (fog doubles as horizon)",
+      "ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-assets/src/sky.rs line 8"
+    },
+    {
+      "label": "Glow effect id on items (decoded, not drawn)",
+      "technique": "Per-item effect id parsed from EquipmentUpdate; stored on the world item; no renderer read",
+      "ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-protocol/src/equipment.rs line 61; /mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-world/src/lib.rs line 671"
+    },
+    {
+      "label": "Split spell sounds",
+      "technique": "Cast bed on the cast packet, land hit on the effect packet; land suppressed on failure or no-sound",
+      "ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/event_audio/spell.rs"
+    },
+    {
+      "label": "Region ambience scheduler",
+      "technique": "Region shapes, HHMM time window, weather gate, fixed or ranged spacing one-shots; ranged spacing is a counter in code, not random",
+      "ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/audio_bus.rs lines 684 and 702-703; /mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-assets/src/zonesounds.rs line 46"
+    },
+    {
+      "label": "Corpse stays, living draw skips",
+      "technique": "is_dead flag decides the living draw; corpses drawn from a separate id list",
+      "ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/death.rs lines 17-29"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Slot-tier armour",
+      "idea": "A per-slot tier byte picks which numbered mesh variant shows; tier 0 reads as base",
+      "keep": "Per-slot byte; base-layer fallback",
+      "change": "Our own tier rows in data; a crest only on the top tier"
+    },
+    {
+      "name": "Visual scale row",
+      "idea": "Every creature has a percentage scale (100 = as authored) fixed in data, not code",
+      "keep": "The percentage field and its default of 100",
+      "change": "A QA check that fails any creature wider than the 375-wide fight frame"
+    },
+    {
+      "name": "Region ambience scheduler",
+      "idea": "Each region has a shape, a time window, a weather gate and a spacing for one-shots",
+      "keep": "Shape plus window plus weather plus spacing",
+      "change": "Seeded random interval per sound (donor counter is not random); our own sound names; cross-fade at borders"
+    },
+    {
+      "name": "Palette dungeon",
+      "idea": "A dungeon is a palette of pieces plus placement rows; empty rows means an empty zone and fails a check",
+      "keep": "Palette, placement rows, empty-zone check",
+      "change": "Ring arenas with our own pieces; hit radius per placement"
+    },
+    {
+      "name": "Rising stat-point cost",
+      "idea": "Stat points cost more as they stack (1 up to +10, 2 to +15, 3 beyond) and the budget must be spent exactly",
+      "keep": "Marginal cost rising at two thresholds; exact-spend rule",
+      "change": "Our own thresholds and budget for hero creation; live cost readout on the stat bar"
+    },
+    {
+      "name": "Water pool drawn last",
+      "idea": "A translucent flat surface drawn after everything else, one blend layer, depth write on",
+      "keep": "Drawn last; one layer; depth write on (code is right, header is wrong)",
+      "change": "Darker rim, ripple from the hit point, six-second fade for a blood pool"
+    },
+    {
+      "name": "Corpse stays, living draw skips",
+      "idea": "A dead entity stays as a corpse; the living draw skips it on a flag, not on zero health",
+      "keep": "The flag as the single switch",
+      "change": "Our own fade; a ghost pose later"
+    },
+    {
+      "name": "Glow slot on items",
+      "idea": "An item record carries an effect id a glow shader reads",
+      "keep": "Per-item effect field",
+      "change": "Our own rim-and-pulse glow for rare tiers only, shown in the phone inspect view"
+    }
+  ],
+  "licence_note": "Code GPL-3.0-or-later (Cargo.toml line 16). README line 7: no retail assets in repo. README line 76: no code recovered by decompiling the retail client. data/client_tables/key_names.tsv line 1 says its names were extracted from the retail client string table (class C, not reused). Clean-room shape only for us.",
+  "not_read": [
+    "gamedata CSVs (monsters, anims, skins, fig3 tables): not in the box",
+    "Most caer-protocol and caer-world bodies (headers and selected bodies only)",
+    "caer-render goldens (five PNGs, class C, not opened)",
+    "crates/caer-world/tests/fixtures/rustdaoc_login_20260714.bin (not opened)",
+    "skinned.wgsl and shader.wgsl bodies",
+    "Server half (CamelotCore) not in box; paired in-box servers OpenDAoC-OpenDAoC-Core and Dawn-of-Light-DOLSharp not read",
+    "Hazard data: none found in client half"
+  ]
+}

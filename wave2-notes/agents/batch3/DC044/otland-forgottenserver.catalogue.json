@@ -1,0 +1,223 @@
+{
+  "donor": "otland-forgottenserver",
+  "counts": {
+    "creatures": 1166,
+    "classes": 8,
+    "weapons": 524,
+    "gear_sets": 3,
+    "zones": 0
+  },
+  "creature_families": [
+    "blood race: 633 files (largest bucket; not checked file by file)",
+    "undead race: 253 files",
+    "venom race: 135 files",
+    "fire race: 75 files",
+    "energy race: 44 files",
+    "ink race: 16 files (book, squid and library theme)",
+    "no race attribute: 10 files",
+    "boss-flagged (isboss=1): 294 files; 79 files carry isboss=0 explicitly",
+    "health bands: under 100 = 143; 100-999 = 328; 1,000-4,999 = 322; 5,000-19,999 = 206; 20,000-99,999 = 106; 100,000 and up = 61",
+    "boss pattern: boss flag plus timed rolls (self-heal, self-haste, invisibility, outfit transform, radius speed-steal, capped summon pool, re-target); 5 to 12 attack lines per boss",
+    "creature voice barks in 651 files; 164 summon lines across the folder"
+  ],
+  "top_creatures": [
+    {
+      "label": "Hellfire Summoner",
+      "why": "Fire boss that keeps a capped pool of summons topped up on a one-second roll and hastes itself for a few seconds; a readable call-then-run tell.",
+      "keep": "Capped summon pool (cap four) and the self-haste as the telegraph.",
+      "change": "Silhouette, summon names, element, and a sound before the haste so the tell is heard as well as seen.",
+      "ref": "data/monster/monsters/infernatil.xml lines 52 and 67"
+    },
+    {
+      "label": "Veil Colossus",
+      "why": "Giant energy-race boss (800,000 health) that drops out of sight in two short windows; invisibility is the timing puzzle.",
+      "keep": "Short invisible windows as the tell.",
+      "change": "Its own shimmer and sound per window; cut twelve attack lines to about five for a 375 px screen.",
+      "ref": "data/monster/monsters/the_scourge_of_oblivion.xml lines 3 and 60"
+    },
+    {
+      "label": "Elder Wyrm",
+      "why": "Blood-race dragon whose radius speed-steal turns the ground around it into a slow zone for about ten seconds.",
+      "keep": "Radius slow as a shaped, readable threat.",
+      "change": "Element, silhouette, and a shorter slow of a few seconds.",
+      "ref": "data/monster/monsters/the_first_dragon.xml line 28"
+    },
+    {
+      "label": "Shifting Beast",
+      "why": "Two-phase boss: a mid-fight outfit transform into a beast form plus a self-haste.",
+      "keep": "Mid-fight form change as a second phase.",
+      "change": "Our own beast form and a stinger on the change.",
+      "ref": "data/monster/monsters/feroxa_werewolf.xml line 39; data/monster/monsters/feroxa_killable_werewolf.xml (not opened)"
+    },
+    {
+      "label": "Twin Minion Lord",
+      "why": "Largest experience value among the 294 boss-flagged files; two minion species, each capped at three, summoned on separate rolls.",
+      "keep": "Two separate summon pools with separate caps.",
+      "change": "Our minion species; the engine caps attackers at three (MAX_ATTACKERS = 3), so pools need an engine-side cap.",
+      "ref": "data/monster/monsters/gaz'haragoth.xml lines 54 and 55 (line 54 checked by grep; apostrophe in filename, not in receipts.tsv)"
+    },
+    {
+      "label": "Gilded Sentinel",
+      "why": "Low-health gold-tinted construct that barks idle lines on a timer, so idle creatures are never silent.",
+      "keep": "Idle barks on an interval with a low chance.",
+      "change": "Silhouette, palette, and our own barks.",
+      "ref": "data/monster/monsters/golden_servant.xml line 47"
+    },
+    {
+      "label": "Animated Tome Pack",
+      "why": "Cheap pack of animated books with one healer that has a radius-four heal aura; a family themed on library objects.",
+      "keep": "One healer among cheap attackers.",
+      "change": "Silhouette, damage types, and names.",
+      "ref": "data/monster/monsters/flying_book.xml line 2; data/monster/monsters/librarian.xml (not opened line by line)"
+    },
+    {
+      "label": "Emperor's Revenant",
+      "why": "Undead boss with a twenty-second area slow and a summon cap of two, in a three-file family.",
+      "keep": "The long slow as a rhythm of quiet and loud periods.",
+      "change": "Shorten the slow to a few seconds for mobile play; change the summon.",
+      "ref": "data/monster/monsters/spite_of_the_emperor.xml (siblings fury_of_the_emperor.xml and scorn_of_the_emperor.xml not opened)"
+    }
+  ],
+  "classes": [
+    "Knight (vocation id 4): melee; highest carry and health gain in the base rows; promotes to Elite Knight (id 8)",
+    "Paladin (vocation id 3): mixed (role from the name; Lua not read); promotes to Royal Paladin (id 7)",
+    "Sorcerer (vocation id 1): magic with magic shield flag; promotes to Master Sorcerer (id 5)",
+    "Druid (vocation id 2): magic with magic shield flag; promotes to Elder Druid (id 6)",
+    "Promotion shape: promoted rows double soul cap (200 against 100), cut soul regen tick (15 against 120), double per-tick health and mana gain (10 against 5)",
+    "Creature races act as the monster world's factions: the six race buckets in creature_families",
+    "Account groups (player, tutor, senior tutor, gamemaster, community manager, god) are staff tiers, not gameplay factions",
+    "Cosmetics: 220 outfit entries with premium and unlocked flags; 209 mount entries",
+    "Stages table (multipliers 7/6/5/4/5 by level band) is switched off in the shipped config; config rateExp = 5 applies"
+  ],
+  "weapon_families": [
+    "weaponType item counts: sword 111, club 108, axe 97, shield 87, distance 54, wand 38, ammunition 24, quiver 5 (524 items with a weaponType)",
+    "Elemental family: 15 base weapons in four element copies (fire, ice, earth, energy) = 60 items; fire ids 7744-7758, ice ids 7763-7777; fire and ice copies share attack, defence and weight",
+    "Element values per base 4 to 9; base attack 20 (spike sword) to 39 (war axe); defence 10 to 28; weight 3500 (mystic blade) to 8500 (war hammer)",
+    "Elemental arrows (flash, shiver, flaming, earth) at element value 14",
+    "Charged mace: fiery crystal mace (id 7755) carries 1000 charges and decays into the plain crystal mace (id 2445)",
+    "Glass-cannon rapier: ice rapier (id 2396) attack 42, defence 1, weight 1500, element ice 18",
+    "Set bonuses: not searched beyond the top 60 attribute keys"
+  ],
+  "gear_tiers": [
+    "Armour value range in items.xml: 4 to 18; 36 armour items at 14 or more",
+    "14: golden armor (id 2466, gold-plated, weight 8000); skullcracker armor (id 8889)",
+    "15: dragon scale mail (id 2492); elite draken mail; fireborn, earthborn, windborn, oceanborn armours (ids 8881-8884); prismatic armor; master archer's armour; mind raiment x4",
+    "16: demon armor (id 2494); yalahari armor; royal draken mail; ornate chestplate; depth lorica",
+    "17: magic plate armor (id 2472, weight 8500)",
+    "18: heart series (12 items: cuirass, hauberk, platemail in four elements, ids 25174-25185) and soul tabard x4 (ids 25186-25189)",
+    "Heart series paired resistance: fire version gives +8 absorb fire and -8 absorb ice (items.xml lines 35538-35541)",
+    "Mind raiment x4 (armour 15): paired absorb plus magic-level bonus of 4 (fire version id 25190)",
+    "Material names (substring counts, rough): crystal 250, dragon 211, gold 179, golden 138, magic 83, demon 83, glowing 48; no mythic metal tier found in armour names read",
+    "How the game shows tiers: not in the server data; client not read"
+  ],
+  "zones": [
+    "Named zones: 0 (map is a binary OTBM, 3.4 MB, not read)",
+    "Spawn blocks: 362 (radius 5 on 322, radius 1 on 35), each a centre, radius and member list (649 monster lines, 14 NPC lines)",
+    "Ground band, floors 2-7: 228 spawn blocks (floor 7 alone 138); pack: dragon, wolf, orc spearman, rabbit, orc berserker, elf scout",
+    "Underground band, floors 8-15: 134 spawn blocks; pack: troll, swamp troll, rat, ghoul, rotworm, skeleton",
+    "Respawn: 60 s on 652 of 662 spawn-time attributes; rateSpawn = 1 in config",
+    "Hazards: creature-cast field attacks (fire field 39 lines, poison field 15, energy field 5) and drown attacks (25 lines, plus 4 choking fear drown lines); hazards cast by creatures, not terrain, in the data read",
+    "World type pvp (config.lua.dist line 3)",
+    "Houses file (forgotten-house.xml, 12 KB) not opened; biome list not readable from the binary map",
+    "Walk density: not computable from the files read"
+  ],
+  "looks": [
+    {
+      "label": "Shared aura for two different tells",
+      "technique": "blueshimmer is the top area effect (511 lines); the same blue aura marks self-heal (lines 40, 43) and invisibility (line 46) in one boss. Give each defence its own aura and sound.",
+      "ref": "data/monster/monsters/abyssador.xml lines 40, 43, 46"
+    },
+    {
+      "label": "Outfit transform mid-fight",
+      "technique": "Timed model swap through the outfit defence and attack (59 attack lines use outfit).",
+      "ref": "data/monster/monsters/feroxa_werewolf.xml line 39"
+    },
+    {
+      "label": "Status wobble",
+      "technique": "Drunk attack (75 lines), for example radius five for nine seconds on the colossus; client effect not read.",
+      "ref": "data/monster/monsters/the_scourge_of_oblivion.xml (drunk attack line, not receipted)"
+    },
+    {
+      "label": "Speed tell with signed change",
+      "technique": "Speed attack and defence lines (210 lines); a slow or haste with a visible aura.",
+      "ref": "data/monster/monsters/the_first_dragon.xml line 28"
+    },
+    {
+      "label": "Idle barks on a timer",
+      "technique": "Voices block with interval and chance; present in 651 files.",
+      "ref": "data/monster/monsters/golden_servant.xml line 47"
+    },
+    {
+      "label": "Element on the weapon, not a recolour",
+      "technique": "Element attribute (4 to 9) on one base shape; four element copies with identical stats. Client look per item id not read.",
+      "ref": "data/items/items.xml lines 13846 (fiery crystal mace) and 13946 (icy dragon slayer)"
+    },
+    {
+      "label": "Glow in names only",
+      "technique": "Item names carry glowing (48) and crystal (250); no glow attribute in items.xml; the glow is a client job (not read).",
+      "ref": "data/items/items.xml (name strings)"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Ember Tyrant",
+      "idea": "Fire boss that calls a capped pool of four summons on a one-second roll and hastes itself for a few seconds before a charge.",
+      "keep": "Capped summon pool; self-haste telegraph.",
+      "change": "Silhouette, element name, and a sound before the haste."
+    },
+    {
+      "name": "Veil Colossus",
+      "idea": "Giant with two short invisibility windows as its timing puzzle.",
+      "keep": "Invisibility windows as the tell.",
+      "change": "Own shimmer and sound; about five attacks, not twelve."
+    },
+    {
+      "name": "Gilded Sentinel",
+      "idea": "Gold-tinted construct that barks idle lines on a timer.",
+      "keep": "Barks on a timer with a low chance.",
+      "change": "Silhouette, palette, and our own barks."
+    },
+    {
+      "name": "Stacked Crypt",
+      "idea": "Dungeon of stacked floors with a pack set by depth.",
+      "keep": "Floor-band spawns as zone data.",
+      "change": "Our zone names, hazard tiles, and pack types."
+    },
+    {
+      "name": "Four-Element Blade",
+      "idea": "One blade shape in four element skins with identical stats.",
+      "keep": "One base, four elements.",
+      "change": "Element shown by glow and sound, not recolour."
+    },
+    {
+      "name": "Charged Mace",
+      "idea": "Charged elemental weapon that decays into a dull base form when spent.",
+      "keep": "Charges and decay.",
+      "change": "Our names and visible wear states."
+    },
+    {
+      "name": "Paired-Resist Plate",
+      "idea": "Top-band armour with +8 absorb to one element and -8 to its opposite.",
+      "keep": "The paired trade-off.",
+      "change": "Our element names and numbers."
+    },
+    {
+      "name": "Promoted Vocation",
+      "idea": "Second rank that doubles soul cap and per-tick gains, with a visible change at promotion.",
+      "keep": "Promotion doubles caps.",
+      "change": "Our names and the promotion visual."
+    }
+  ],
+  "licence_note": "Code is GPL-2.0 (root LICENSE). Data files (data/ XML, Lua, OTBM) have no separate licence statement; treated as unclear (class C). Rights holder for data unknown from the files. Clean-room shape only; no file copied. Not legal advice.",
+  "not_read": [
+    "Client half (sprites, sounds, UI, look-ID mapping): not in this donor; named pair in box, not opened: mattyx14-TheForgottenTibiaClient, edubart-otclient, opentibiabr-otclient, OTCv8-otclientv8",
+    "Lua: 601 .lua files under data/ (names and one count only)",
+    "data/world/forgotten.otbm (binary map, size only); data/items/items.otb (binary)",
+    "data/world/forgotten-house.xml; data/events/events.xml (40 entries counted, not read)",
+    "src/ (C++ engine) beyond the licence header; schema.sql",
+    "Monster files beyond those named; fury_of_the_emperor.xml and scorn_of_the_emperor.xml not opened",
+    "Set bonuses in items.xml; metal names other than blacksteel",
+    "Silhouettes and sounds (no sprites or audio in this donor)",
+    "Gaz boss receipt not in receipts.tsv (apostrophe in filename breaks verify_receipts.py); checked by grep -n instead"
+  ]
+}

@@ -1,0 +1,140 @@
+{
+  "donor": "tmewett-BrogueCE",
+  "counts": {
+    "creatures": 67,
+    "classes": 0,
+    "weapons": 15,
+    "gear_sets": 6,
+    "zones": 71
+  },
+  "creature_families": [
+    {"family": "abomination", "max_depth": -1, "members_note": "bog monster, underworm, kraken, tentacle horror"},
+    {"family": "dar", "max_depth": 22, "members_note": "three caster and blade types"},
+    {"family": "animal", "max_depth": 10, "members_note": "rat, monkey, jackal, eel, toad, vampire bat, centipede, spider"},
+    {"family": "goblin", "max_depth": 10, "members_note": "goblin family; line cut in my read, not counted in full"},
+    {"family": "ogre", "max_depth": 16, "members_note": "ogre, shaman, totem"},
+    {"family": "dragon", "max_depth": -1, "members_note": "dragon"},
+    {"family": "undead", "max_depth": -1, "members_note": "zombie, wraith, vampire, phantom, lich, revenant"},
+    {"family": "jelly", "max_depth": 15, "members_note": "pink, black, acidic"},
+    {"family": "turret", "max_depth": 18, "members_note": "arrow, spark, dart, flame"},
+    {"family": "infernal", "max_depth": -1, "members_note": "flamedancer, imp, revenant, fury, phantom, ifrit"},
+    {"family": "mage", "max_depth": -1, "members_note": "casters across families; line cut in my read"},
+    {"family": "waterborne", "max_depth": 17, "members_note": "eel, naga, kraken"},
+    {"family": "airborne", "max_depth": 15, "members_note": "vampire bat, will-o-the-wisp, pixie, phantom, fury, ifrit, phoenix"},
+    {"family": "fireborne", "max_depth": 12, "members_note": "will-o-the-wisp, salamander, flamedancer, phoenix"},
+    {"family": "troll", "max_depth": 15, "members_note": "troll"}
+  ],
+  "top_creatures": [
+    {
+      "label": "Splitting Ooze",
+      "why": "one hit makes two bodies that read as a growing cluster at 375 wide",
+      "keep": "split on hit, halving HP; the clone does not inherit learned abilities",
+      "change": "exact HP conservation (defect D3 fixed); our own silhouette and splitting sound; engaged pieces capped at three",
+      "ref": "src/brogue/Globals.c line 1049 (pink jelly), 1092 (acidic), 1129 (black); src/brogue/Combat.c line 273; src/brogue/Monsters.c line 564"
+    },
+    {
+      "label": "Gas Bladder",
+      "why": "slow kamikaze that drifts erratically and bursts into a hazard when it dies or reaches you",
+      "keep": "erratic drift; death-burst feature",
+      "change": "the burst is a server-verified zone hazard, not a local effect",
+      "ref": "src/brogue/Globals.c line 1037 (bloat), 1084 (explosive bloat)"
+    },
+    {
+      "label": "Reed Lurker",
+      "why": "lives only in water, submerges, and surfaces to strike",
+      "keep": "liquid-only restriction; submerge then strike",
+      "change": "a surface ripple as a 0.5 s tell before the strike, for 375-wide readability",
+      "ref": "src/brogue/Globals.c line 1033"
+    },
+    {
+      "label": "Pilfering Imp",
+      "why": "hits to steal, then flees with the item; the item comes back when it dies",
+      "keep": "steal on hit, flee, drop on death",
+      "change": "steals a consumable from a fight pool, never from the one character ledger",
+      "ref": "src/brogue/Globals.c lines 1035 (monkey), 1114 (imp); src/brogue/Monsters.c line 1791"
+    },
+    {
+      "label": "Waking Guardian",
+      "why": "a near-indestructible guardian that moves only when the player acts",
+      "keep": "turn-on-activation: moves when the player moves",
+      "change": "activation is a zone-data trigger on the server step count; our own glyph silhouette",
+      "ref": "src/brogue/Globals.c line 1141"
+    },
+    {
+      "label": "Soul Vessel Lich",
+      "why": "a caster with a separate vessel object that is summoned into and can be destroyed",
+      "keep": "a second object that must die, placed by the zone",
+      "change": "a destructible shrine object placed by zone data; one server-verified kill rule. Link between lich death and vessel not read",
+      "ref": "src/brogue/Globals.c lines 1104 (lich), 1106 (vessel)"
+    },
+    {
+      "label": "Warlord Chanter",
+      "why": "a boss that keeps distance, summons escort, and attacks with penetrating reach",
+      "keep": "distance keeping plus summon",
+      "change": "summon count capped by a many-on-one rule plus a falling chance per minion",
+      "ref": "src/brogue/Globals.c line 1127; src/brogue/Monsters.c lines 2442-2450"
+    },
+    {
+      "label": "Dread Wyrm",
+      "why": "apex creature with ranged breath, an all-adjacent sweep and a guaranteed drop",
+      "keep": "ranged breath, sweep, guaranteed drop",
+      "change": "breath as a telegraphed cone, readable at 375 wide",
+      "ref": "src/brogue/Globals.c line 1123"
+    }
+  ],
+  "classes": [],
+  "weapon_families": [
+    {"label": "light blades", "kinds": ["dagger", "sword", "broadsword", "rapier", "whip"], "note": "dagger sneak bonus; rapier quick and lunge; whip extends", "ref": "src/brogue/Globals.c lines 1582-1603; src/brogue/Items.c lines 210-221"},
+    {"label": "heavy blunt", "kinds": ["mace", "war hammer", "flail"], "note": "mace and hammer stagger; flail passes attacks", "ref": "src/brogue/Items.c lines 213-225"},
+    {"label": "reach", "kinds": ["spear", "war pike"], "note": "penetrates", "ref": "src/brogue/Items.c lines 226-229"},
+    {"label": "sweep", "kinds": ["axe", "war axe"], "note": "hits every adjacent foe", "ref": "src/brogue/Items.c line 232"},
+    {"label": "thrown", "kinds": ["dart", "incendiary dart", "javelin"], "note": "thrown kinds", "ref": "src/brogue/Globals.c lines 1582-1603"}
+  ],
+  "gear_tiers": [
+    {"label": "armour ladder", "items": ["leather", "scale", "chain", "banded", "splint", "plate"], "technique": "six bases with rising strength and armour value; tier shows by base name", "ref": "src/brogue/Globals.c lines 1605-1612"},
+    {"label": "weapon enchant roll", "technique": "40 percent enchant roll of 1-3; half cursed; a third of cursed get a bad runic; good runic gated by base damage", "ref": "src/brogue/Items.c lines 238-262"},
+    {"label": "runics", "technique": "10 weapon runics (8 good, 2 bad); 11 armour runics (8 good, 3 bad)", "ref": "src/brogue/Globals.c lines 1614-1640; src/brogue/Rogue.h lines 843, 868"},
+    {"label": "unknown appearance", "technique": "flavour names shuffled each game; unidentified titles from a phoneme table", "ref": "src/brogue/Items.c lines 7963, 8037; src/brogue/Globals.c line 1455"},
+    {"label": "lumenstone by depth", "technique": "14 depth-banded counts for a late-game collectible", "ref": "src/variants/GlobalsBrogue.c line 105"}
+  ],
+  "zones": [
+    {"label": "Sentinel sanctuary", "technique": "support turrets that heal and shock their neighbours; one support type per room", "ref": "src/variants/GlobalsBrogue.c line 275; src/brogue/Globals.c line 1098"},
+    {"label": "Statuary", "technique": "statues crack and burst into monsters when the key is taken or the player comes near", "ref": "src/variants/GlobalsBrogue.c lines 289, 460"},
+    {"label": "Flood room with eel pools", "technique": "taking the key floods the room so eels reach you", "ref": "src/variants/GlobalsBrogue.c line 377"},
+    {"label": "Haunted house", "technique": "room darkens, ectoplasm covers everything, phantoms appear", "ref": "src/variants/GlobalsBrogue.c line 531"},
+    {"label": "Chasm catwalk and lake walk", "technique": "narrow bridge under turret fire", "ref": "src/variants/GlobalsBrogue.c line 595"}
+  ],
+  "looks": [
+    {"label": "Creature light per monster", "technique": "each creature has a light radius with a fade percent; palette ours", "ref": "src/brogue/Globals.c lines 955-1022 (light table); monster rows light column in lines 1025-1166"},
+    {"label": "Item event flares", "technique": "a short large-radius flash keyed to an item event (enchanting, strength, quietus, slaying, explosion)", "ref": "src/brogue/Globals.c lines 980-992"},
+    {"label": "Glowing terrain", "technique": "each terrain element has its own light: torches, lava, fungus, algae, embers, fire, gas", "ref": "src/brogue/Globals.c lines 993-1019"},
+    {"label": "Glyph dim and bright", "technique": "the same element at two intensities for two states", "ref": "src/brogue/Globals.c lines 1016-1017"},
+    {"label": "Death blood per creature", "technique": "per-creature blood kind drives a death decal colour", "ref": "src/brogue/Globals.c monster rows lines 1025-1166 (blood column)"},
+    {"label": "Flitting idle motion", "technique": "erratic move flag on eels, bats, bloats, pixies, phantoms, wisps as the idle read", "ref": "src/brogue/Globals.c monster rows lines 1025-1166 (behaviour flags)"},
+    {"label": "Graded attack verbs", "technique": "verb scales with the damage percentile of the attacker range", "ref": "src/brogue/Combat.c lines 788-804, 1198-1199; src/brogue/Globals.c line 1167 (monster text)"},
+    {"label": "Off-screen fight cue", "technique": "one line when the fight is unseen", "ref": "src/brogue/Combat.c lines 1204, 1264"}
+  ],
+  "originals": [
+    {"name": "Splitting Ooze", "idea": "split on hit with shared HP, engaged pieces capped", "keep": "split on hit; halving HP", "change": "exact HP conservation (defect D3); cap at three engaged, as MAX_ATTACKERS requires. Parity rows 2 and 4"},
+    {"name": "Wandering Warband", "idea": "periodic wandering group on a random fuse; spawns exclude captive, summoned and machine-only groups", "keep": "random fuse reset of 125-175 environment updates; exclusion filter", "change": "zone spawn cap with grace timer before despawn; flat-ground siting. Parity row 23"},
+    {"name": "Two-Sense Aggro", "idea": "a monster notices by sight at a probability per tick; loses track at a lower probability beyond awareness; hard drop at three times awareness", "keep": "25 percent notice, 3 percent loss, hard drop", "change": "no scent map; a server trail of the last seen position per zone. Parity rows 2 and 4"},
+    {"name": "Captive Guard Camp", "idea": "a captive leader with guards around it; rescue turns it into an ally", "keep": "captive leader guarded by followers", "change": "rescued captive joins after one engage state change; no per-guard reward. Parity rows 4 and 23"},
+    {"name": "Key Altar Trap Room", "idea": "the key is the reward and taking it springs a room trap", "keep": "key as reward; trap as consequence", "change": "one server-verified trigger; our own trap set (flood, gas, statues, crypt). Parity rows 20 and 23"},
+    {"name": "One-Pick Cage Library", "idea": "take one reward; the rest lock; swap back allowed", "keep": "one pick, others lock", "change": "choice is server-side after a Pit win; swap-back has a cooldown. Parity row 18"},
+    {"name": "Flee-to-Regroup", "idea": "flee at or under a quarter HP; return at three quarters HP", "keep": "the hysteresis band", "change": "a rally banner and a sound cue on return. Parity rows 2 and 4"},
+    {"name": "Turn-on-Step Guardian", "idea": "a guardian that moves only when the player acts", "keep": "moves only on player action", "change": "trigger is the server step count of the player zone tile; our silhouette. Parity rows 4 and 23"},
+    {"name": "Item Event Flare", "idea": "one short light flash keyed to an item event", "keep": "one flash, one event", "change": "our tint and length. Parity rows 9 and 13"}
+  ],
+  "licence_note": "LICENSE.txt is GNU AGPL v3 (line 1). Source headers also read All rights reserved (src/brogue/Light.c line 6, per the asset audit): conflicting, so AGPL shape-only, clean-room. bin/assets/tiles.png is CC BY-SA 4.0 (bin/assets/LICENSE.txt line 5): not used. icon.png and tiles.bin have no licence line: not used.",
+  "not_read": [
+    "bin/assets/tiles.png and icon.png pixel content; tiles.bin format (asset audit: not opened)",
+    "monsterText flavour and verb text beyond structure (src/brogue/Globals.c line 1167 onward)",
+    "src/brogue/Monsters.c beyond awareness, state, spawn and summon code; Movement.c; Dijkstra.c; Architect.c room placement; PowerTables.c; Light.c body; Wizard.c; IO.c; MainMenu.c",
+    "src/brogue/Items.c beyond the weapon roll and flavour functions",
+    "Recordings.c (asset audit only: 36-byte header, input log)",
+    "monster rows beyond the fields named; goblin and mage family lines (cut in my read)",
+    "dungeon feature catalog (src/brogue/Globals.c line 603 onward)",
+    "src/variants/GlobalsBulletBrogue.c and GlobalsRapidBrogue.c: depth constants only",
+    "changes/ folder (13 entries listed, not read); platform/, BUILD.md, CHANGELOG.md"
+  ]
+}

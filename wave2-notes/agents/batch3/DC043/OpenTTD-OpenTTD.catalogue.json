@@ -1,0 +1,116 @@
+{
+  "donor": "OpenTTD-OpenTTD",
+  "counts": {
+    "creatures": 0,
+    "classes": 4,
+    "weapons": 0,
+    "gear_sets": 4,
+    "zones": 4
+  },
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [
+    "Vehicle classes (4): rail, road, ship, air; each has its own engine-row block in src/table/engines.h (MT, MM, MW for rail; MR road; MS ship; MA air)",
+    "Factions: companies, each with a colour (src/company_func.h:39); AI-run companies in src/ai (not read)",
+    "Progression: vehicle rows gated by introduction date (base in days since 1920, src/table/engines.h:18), life length and decay (macro fields, engines.h:26)",
+    "Cargo rows (35): label, colour, weight and cargo-class list (src/table/cargo_const.h:58)"
+  ],
+  "weapon_families": [],
+  "gear_tiers": [
+    "Introduction generations, not materials: 256 engine and wagon rows (rail 116, road 88, ship 11, air 41) gated by date and climate bitmask (src/table/engines.h)",
+    "Reliability drains on every breakdown check and resets at the depot (src/vehicle.cpp:189-203, 1333)",
+    "No metallic, gold or glow tiers; liveries use company colours (src/company_func.h:39)"
+  ],
+  "zones": [
+    "Four climates: temperate, arctic (snow line), tropic, toyland (src/table/engines.h:91-97; snow line pointer at src/landscape.cpp:108)",
+    "No dungeon archetypes; open maps with towns and industries (layouts not read)",
+    "Disaster hazard actors (not creatures): zeppelin (crashes at an airport, src/disaster_vehicle.cpp:228), small UFO (hunts a road vehicle), airplane (attacks an oil refinery), helicopter (attacks a factory), big UFO and big UFO destroyer, small and big submarine, coal-mine event (table at src/disaster_vehicle.cpp:940-950)",
+    "Scheduler: daily timer, delay of 730 days plus up to 511 more, uniform pick among the events whose year window is open (src/disaster_vehicle.cpp:964, 970, 974, 980)",
+    "Flood: tile-by-tile spread; a train or road vehicle below the flood level crashes; a flooded road vehicle gets a crash timer of 2000 against 1 normally (src/water_cmd.cpp:1098-1122, 1209; src/roadveh_cmd.cpp:558)"
+  ],
+  "looks": [
+    {
+      "label": "Blinking threat",
+      "technique": "The small UFO flips to a darker sprite on tick bit 3, so a hover reads as alive.",
+      "ref": "src/disaster_vehicle.cpp:330"
+    },
+    {
+      "label": "Ground shadow for flyers",
+      "technique": "Each flying hazard has a shadow subtype drawn on the ground under it, so height reads at any zoom.",
+      "ref": "src/disaster_vehicle.h:19-21"
+    },
+    {
+      "label": "Breakdown smoke with an engine off-flag",
+      "technique": "An engine flag decides whether the breakdown smoke plays.",
+      "ref": "src/vehicle.cpp:1407"
+    },
+    {
+      "label": "Animated tile list",
+      "technique": "A list of animated tiles advanced each tick; tiles that stop animating are removed from the list.",
+      "ref": "src/animated_tile.cpp:75 and 98"
+    },
+    {
+      "label": "Owner colour",
+      "technique": "A colour table per owner used on vehicles and station signs.",
+      "ref": "src/company_func.h:39; src/viewport.cpp:1418"
+    },
+    {
+      "label": "Flood as a tile change",
+      "technique": "Plain rail tiles are flooded in place with a halftile water state.",
+      "ref": "src/water_cmd.cpp:1209"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Timed Visitor",
+      "idea": "A threat timer with jitter, a window of allowed threats, and a uniform pick.",
+      "keep": "Jittered timer and uniform pick (src/disaster_vehicle.cpp:964, 970).",
+      "change": "Windows keyed to zone tier and time spent in the zone, not calendar years."
+    },
+    {
+      "name": "Hunter Scout",
+      "idea": "A roaming enemy wanders six waypoints, then locks on to a live target, skipping targets already taken.",
+      "keep": "The lock rule and leave-if-no-target rule (src/disaster_vehicle.cpp:342-363).",
+      "change": "Targets are player carts or mounts; a ground shadow shows the approach (src/disaster_vehicle.h:21)."
+    },
+    {
+      "name": "Pity Meter",
+      "idea": "Each check adds one to a hidden chance; a rare roll adds 25 more; the counter resets when the event fires.",
+      "keep": "The streak breaker and the table lookup by reliability bits (src/vehicle.cpp:1352-1366).",
+      "change": "A visible pressure meter instead of a hidden number. No defect found in the lines read; the clamp at vehicle.cpp:1363 covers the ship and reduced-setting bonuses."
+    },
+    {
+      "name": "Rising Tide",
+      "idea": "A flood that spreads tile by tile and disables anything it catches for a long time.",
+      "keep": "The spread and the long disable (src/water_cmd.cpp:1209; src/roadveh_cmd.cpp:558).",
+      "change": "A timed tide with a warning ring that the reader sees before it arrives."
+    },
+    {
+      "name": "Shrine Grace",
+      "idea": "Service at a safe point resets wear and quarters the breakdown chance.",
+      "keep": "The post-reset grace (src/vehicle.cpp:200, breakdown_chance /= 4).",
+      "change": "The shrine shows a shield aura for the grace time; no reduced-mode switch."
+    },
+    {
+      "name": "Climate Roster",
+      "idea": "Each gear row lists the zones it can appear in, as a bitmask.",
+      "keep": "The bitmask per row (src/table/engines.h:91-97 and the macro field).",
+      "change": "The bitmask gates loot tables and spawn lists, not vehicles."
+    },
+    {
+      "name": "Idle List",
+      "idea": "A list of animated props; each tick advances the ones still active and removes the rest.",
+      "keep": "The list with removal (src/animated_tile.cpp:75-98).",
+      "change": "Only props near the player are on the list."
+    }
+  ],
+  "licence_note": "Repo GPL v2 with third-party exceptions (README.md:26; COPYING.md). Base-set sprite sources GPL v2 by nfo header; fonts GPL-2.0 (media/baseset/OpenTTD-font.md:4), per AU041. Original Transport Tycoon Deluxe files not in the repo (README.md:88); owner not stated. Nothing copied; all labels are ours.",
+  "not_read": [
+    "src/table: industry_land.h, town_land.h, townname.h word lists, sprites.h, train_sprites.h; engines.h rows other than 0 to 3 and 105 (row counts by grep only)",
+    "Media: base-set GRF binaries and sprite sources (media/baseset), title data",
+    "The 66 language files; src/lang/english.txt (count from AU041 only)",
+    "src/ai (AI scripts), src/news_gui.cpp, src/town_cmd.cpp, src/industry_cmd.cpp",
+    "Vehicle code beyond the depot and breakdown functions",
+    "Paired donor: none in the box (OpenGFX absent); not checked against any other donor"
+  ]
+}

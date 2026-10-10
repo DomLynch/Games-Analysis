@@ -1,0 +1,231 @@
+{
+  "donor": "gawric-Unity-Client-for-L2J",
+  "catalogue_id": "DC027",
+  "half_read": "client (Unity project l2-unity) plus the matching data pack (StreamingAssets/Data/Meta, Resources/Data); server half not in box",
+  "counts": {
+    "creatures": 609,
+    "classes": 58,
+    "weapons": 1313,
+    "gear_sets": null,
+    "zones": 20
+  },
+  "count_notes": {
+    "creatures": "distinct LineageMonster class_name values in Npcgrp_Classic.txt; 5,652 NPC rows in total",
+    "classes": "CharacterClass enum values (CharacterClass.cs); only 9 class templates registered client-side",
+    "weapons": "rows in Weapongrp_interlude.txt (Weapongrp_Classic.txt not decoded)",
+    "gear_sets": "null: set_ids and set_bonus columns present in Itemname-e_interlude.txt but not decoded; no client code applies set bonuses",
+    "zones": "ambience families in TalkingIslandAmbientSounds.json, not zone records; no zone table read"
+  },
+  "creature_families": [
+    "LineageMonster base class series: 2,849 NPC rows",
+    "Numbered LineageMonster series 2 to 13 by class prefix: 771 NPC rows in total (inferred add-on sets)",
+    "Word families by class name: giant 22, skeleton 18, golem 10, zombie 9, drake 9, bear 9, wolf 7, ghost 5, spider 4, basilisk 2, undead 1, elemental 1",
+    "Level bands (monster_normal, 10 levels each): 97, 193, 182, 152, 191, 122, 112, 103, 10 rows from band 1 to band 81",
+    "HP curve: median org_hp about 132 (1-10), 347 (11-20), 578 (21-30), 977 (31-40), 1,499 (41-50), 2,138 (51-60), 2,448 (61-70), 3,638 (71-80); band 81-82 has 10 rows, median about 102,844 (small n)",
+    "Nick tiers: Raid Boss 242 rows, Raid Fighter 339, Quest Monster 271, Guard 99",
+    "Raid-boss halo deco on 25 rows (23 halo_a, 2 halo_b), halo scale multipliers 0.5 to 2.0",
+    "Creature race taxonomy: InterludeRace enum has 18 non-playable values (animal, beast, bug, construct, demonic, divine, dragon, elemental, fairy, giant, humanoid, mercenary, plant, siege weapon, undead, etc, castle guard, none); per-NPC race not in the client tables read",
+    "Signature behaviour: not in client data (attack_effect is the same generic effect on 5,651 of 5,652 rows; server AI not in box)"
+  ],
+  "top_creatures": [
+    {
+      "label": "Halo-marked raid tier",
+      "why": "A bone-anchored halo marks the top tier and reads at distance; scale is set per creature in data",
+      "keep": "Halo only on the top tier, bone anchor, per-creature scale in data",
+      "change": "Our own sigil ring and palette",
+      "ref": "Npcgrp_Classic.txt:1581 (halo_a), Npcgrp_Classic.txt:1853 (halo_b), NpcName_Classic-eu.txt:1581 (raid tag)"
+    },
+    {
+      "label": "Winged serpent boss (fastest row in the halo set, npc_speed about 2.86)",
+      "why": "Speed is a readable threat cue on a raid boss",
+      "keep": "A fast flying boss read",
+      "change": "Wing and body design; behaviour not read",
+      "ref": "Npcgrp_Classic.txt:1770 (npc_speed field); NpcName_Classic-eu.txt:1770 (raid tag)"
+    },
+    {
+      "label": "Stone golem line",
+      "why": "Heavy, slow silhouette family with 10 class variants",
+      "keep": "Large body read with low speed",
+      "change": "Our own rock forms and gait",
+      "ref": "Npcgrp_Classic.txt:16, Npcgrp_Classic.txt:83"
+    },
+    {
+      "label": "Skeleton line",
+      "why": "18 class variants, the largest undead sub-family in the monster table",
+      "keep": "Many variants on one skeleton base",
+      "change": "Our own undead design and sound",
+      "ref": "Npcgrp_Classic.txt:22, Npcgrp_Classic.txt:35"
+    },
+    {
+      "label": "Friendly helper with buff aura",
+      "why": "Friend and foe read apart: a friendly aura never looks like a boss halo",
+      "keep": "Friendly aura distinct from the enemy halo",
+      "change": "Palette and shape",
+      "ref": "Npcgrp_Classic.txt:2599 (u_npc_id_buff deco); NpcName_Classic-eu.txt:2599 (helper name row)"
+    },
+    {
+      "label": "Seasonal snow-decorated NPC",
+      "why": "Event decoration swaps per event on an NPC row",
+      "keep": "A deco slot on the NPC row that an event can fill",
+      "change": "Our own event decor",
+      "ref": "Npcgrp_Classic.txt:5311 (u_event_snow deco)"
+    },
+    {
+      "label": "Elite raider tier",
+      "why": "Middle tier between normal and boss, which makes the escalation readable",
+      "keep": "Three-tier read: normal, elite, boss",
+      "change": "Colours and marker",
+      "ref": "NpcName_Classic-eu.txt:1548 (Raid Fighter tag, 339 rows overall)"
+    },
+    {
+      "label": "Quest-marked monster",
+      "why": "Tells the player which monsters matter",
+      "keep": "Visible quest mark on the row",
+      "change": "Our own marker shape",
+      "ref": "NpcName_Classic-eu.txt:1143 (Quest Monster tag, 271 rows overall)"
+    }
+  ],
+  "classes": [
+    "Races (CharacterRace.cs:5-12): Human, Elf, Dark Elf, Orc, Dwarf, Monster; 7 base character models x 2 sexes in chargrp.txt (14 rows)",
+    "Classes (CharacterClass.cs:6-71): 58 values, grouped by race in enum order: human 0x00-0x11, elf 0x12-0x1E, dark elf 0x1F-0x2B, orc 0x2C-0x34, dwarf 0x35-0x39",
+    "Client registrations (MapClassId.cs:22-40): 9 active: fighter and mage for human, elf, dark elf, orc; fighter-only dwarf",
+    "Mage flag (MapClassId.cs:24) marks the caster branch; combat is physical attack only per README.md:41",
+    "Progression shape: base class then promotion steps (inferred from names; tree data not in client)"
+  ],
+  "weapon_families": [
+    "Blades: sword, bastard sword, katana, shamshir, saber, raid sword, sword of delusion",
+    "Staves and spellbook focuses: apprentice staff (15 rows), apprentice spellbook (27)",
+    "Bows: carnium bow (9), long bow (7), short bow",
+    "Daggers: knife, hell knife, fist blade",
+    "Blunt and axe: war axe, poleaxe, hammer",
+    "Shields: knight shield (11), composite shield (7)",
+    "Type codes (weapon_type, 0-8): 2=329, 1=293, 8=134, 3=126, 0=107, 4=103, 6=93, 5=75; enum names do not map cleanly (spellbook row carries code 7)",
+    "Special effect slot on 4 rows (Weapongrp_interlude.txt:405, :545, :781, :964)"
+  ],
+  "gear_tiers": [
+    "Grade (crystal_type 0-5, ItemGrade.cs:2-9): weapons none 224, D 189, C 384, B 241, A 207, S 68; armour none 292, D 119, C 109, B 254, A 191, S 49",
+    "Grade badge in tooltip (AbstractServerItem.cs:164-190); no badge for none; tier read by grade, not by material colour",
+    "Armour type (armor_type, ArmorType.cs:1-7): none 691, light 130, magic 105, heavy 88",
+    "Material codes (numeric; inferred names by ItemMaterial enum order for 0-22, not confirmed): armour 19 scale of dragon 350 rows, 17 chrysolite 154, 13 bone 101, 4 bronze 74, 2 fine steel 66, 3 blood steel 46; weapons 8 oriharukon 204, 13 bone 110, 1 steel 100, 14 horn 56, 2 fine steel 51, 6 gold 39, 19 scale of dragon 23; codes 47-51 not decoded",
+    "Armour families: fighter body sets drop_mfighter_m001 to m012 with texture variants; mage body sets (m006, m009); cloth jacket and trousers; accessories (rings 41, necklaces 40, earrings 40, hairpin, clan crest cap, jewel box)",
+    "Set bonus: data columns present, not decoded, no client logic"
+  ],
+  "zones": [
+    "Talking-island ambience: 4,158 emitters, 210 sound names, types AST1_Day 1,547, AST1_Night 1,440, AST1_Always 1,171",
+    "Ambience families (emitter counts): insect day 1,064; insect night 989; waves 402; animal night 380; animal day 378; harbour 234; ship 221; wind 123; neutral zone 115; stream 72; dragon valley 43; fire 39; dungeon 36; town 20; speaking-island village 18; floran village 8; Cruma dungeon 3; magic school 3; dark elf dungeon 2",
+    "Emitter radius mostly 80 (3,047 emitters), others 70 to 300; random re-trigger 0 to 80",
+    "Time-of-day tables: L2WorldAmbientLUT.csv (288), L2HazeLUT.csv (287), L2CloudLUT.csv (288), L2ActorLightLUT.csv (288), L2TerrainIntensityLUT.csv (146)",
+    "Map tiles 16_24, 16_25, 17_24, 17_25 with Geodata; only squares near the local player are loaded (README.md:17)",
+    "Hazards: no hazard table in the client; fire and dragon valley ambience only"
+  ],
+  "looks": [
+    {
+      "label": "Gilt loot ground drop",
+      "technique": "Drop mesh shader clips dark texels (clip below a low threshold) so only gilt pixels read on the ground",
+      "ref": "Assets/Resources/Data/Shaders/Items/L2DropMeshMasked.shader:1-4, :73"
+    },
+    {
+      "label": "Raid-boss halo",
+      "technique": "Bone-anchored deco emitter, scale per row, halo_a and halo_b variants",
+      "ref": "Npcgrp_Classic.txt:1581; Assets/Resources/Data/Effects/deco/README.txt:1-16"
+    },
+    {
+      "label": "Feet glow or head ring",
+      "technique": "One height field on the deco actor: feet ground glow or head ring; bone attach else root",
+      "ref": "Assets/Resources/Data/Effects/deco/README.txt:3-4"
+    },
+    {
+      "label": "Despawn fade",
+      "technique": "Alpha modifier from 255 to 0 over 2 s on despawn, no shader change",
+      "ref": "Assets/Resources/Data/Shaders/Actor/L2ActorFade.shader:2, :87"
+    },
+    {
+      "label": "Crystal reflection on ice effects",
+      "technique": "Environment cube plus specular mask on ice effect shaders",
+      "ref": "L2_Shader_Property_Catalog.md:43-45"
+    },
+    {
+      "label": "Batched nameplates",
+      "technique": "All nicknames drawn in one overlay queue, one draw call",
+      "ref": "README.md:19; Assets/Scripts/Rendering/L2FxCompositor/L2NameplateOverlayQueue.cs:54-61"
+    },
+    {
+      "label": "Weapon effect slot and sword glow",
+      "technique": "Weapon row effect field (NSpear) on 4 rows; sword-sharpening glow as example effect",
+      "ref": "Weapongrp_interlude.txt:405, :781; README.md:60, README.md:73"
+    },
+    {
+      "label": "Fire and glow skill effect",
+      "technique": "Glow textures and haze material on a fire effect folder",
+      "ref": "Assets/Resources/Data/Effects/de_fire/ (de_fire_glow.png, LIGHT_GLOW01.png, de_fire_haze.mat)"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Rank halo boss tier",
+      "idea": "A bone-anchored ring that marks only the top tier, scale set per creature in data (parity row 7)",
+      "keep": "Bone anchor, per-creature scale, top tier only",
+      "change": "Our own sigil and palette"
+    },
+    {
+      "name": "Gilt loot ground",
+      "idea": "A loot mesh whose dark texels are clipped so only gilt pixels read on the ground (parity row 18)",
+      "keep": "The clip rule",
+      "change": "Our glint and colour"
+    },
+    {
+      "name": "Dissolve on despawn",
+      "idea": "A 2-second alpha fade when a creature despawns on an empty zone (parity row 23)",
+      "keep": "The 2-second fade",
+      "change": "Our dissolve motif"
+    },
+    {
+      "name": "Hour-of-day zone mood table",
+      "idea": "Per-zone table of 288 samples for haze, cloud and light, read by the renderer (parity row 16)",
+      "keep": "5-minute sampling, one table per zone",
+      "change": "Our palette"
+    },
+    {
+      "name": "Three-type zone emitters",
+      "idea": "Day, night and always emitters with a radius and a random re-trigger (sound-music fold-in)",
+      "keep": "Three-way split and random re-trigger",
+      "change": "Our sound set"
+    },
+    {
+      "name": "Feet-or-head NPC deco",
+      "idea": "A deco that sits at the feet as a ground glow or at the head as a ring, chosen by one height field (parity rows 7 and 8)",
+      "keep": "The height split",
+      "change": "Shapes"
+    },
+    {
+      "name": "Friend aura versus enemy halo",
+      "idea": "A friendly helper gets an aura that never looks like a boss halo (parity row 14)",
+      "keep": "The distinct read",
+      "change": "Colour"
+    },
+    {
+      "name": "Grade badge only when graded",
+      "idea": "A D-to-S badge in the tooltip, none shows no badge (parity row 15)",
+      "keep": "No badge for ungraded gear",
+      "change": "Our badge shapes"
+    },
+    {
+      "name": "Level HP curve",
+      "idea": "HP rises about 27x from the first band to the 71-80 band (parity rows 21 and 18)",
+      "keep": "A steady climb per band",
+      "change": "Our own curve"
+    }
+  ],
+  "licence_note": "Code: Apache License 2.0 (LICENSE:2, :191). Art and armour: no licence file; convert-armor/README.md:3 says textures and meshes are imported from a Lineage 2 Interlude client. FMOD EULA and MIT (NuGet, Newtonsoft) on plugins. Class C for all asset groups: category-level inspiration only.",
+  "not_read": [
+    "Assets/Scripts C# (only the named files were read)",
+    "Server half (L2J Acis or Mobius) - not in box",
+    "Docs/Ui.md and Docs/Ui_Interface.md (named only)",
+    "Armorgrp_Classic.txt (4,462 rows) and Weapongrp_Classic.txt (1,675 rows): counted, not decoded",
+    "Skillgrp_Classic.txt (15 MB) and SkillName tables: not decoded",
+    "Npc_deco_effects.csv (479 rows): header only",
+    "Binary and art files (PNG, TGA, FBX, meshes, FMOD banks, Unity scenes and prefabs): counted or listed, not opened",
+    "Monster behaviour and skill lists (server side)",
+    "Map tile contents under Resources/Data/Maps/16_24 etc.: counts only"
+  ]
+}

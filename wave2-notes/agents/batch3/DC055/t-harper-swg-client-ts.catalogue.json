@@ -1,0 +1,147 @@
+{
+  "donor": "t-harper-swg-client-ts",
+  "counts": {
+    "creatures": 0,
+    "classes": 6,
+    "weapons": 6,
+    "gear_sets": 0,
+    "zones": 12
+  },
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [
+    {
+      "label": "Saber duelist (melee with ranged pulls)",
+      "role": "melee with ranged pulls and a gap-closer",
+      "signature_mechanic": "melee flurry plus ranged force pulls; sprint to close distance",
+      "progression": "heal shares a cooldown group with another slot; the rotation drops that slot by hand",
+      "ref": "src/client/script/combat/profession/jedi.ts lines 15-16, 23-90"
+    },
+    {
+      "label": "Heavy AoE",
+      "role": "heavy-weapon area damage",
+      "signature_mechanic": "armour-break opener, delayed AoE, heavy-weapon crit only when that weapon is equipped",
+      "progression": "falls back to ranged-weapon variants when no heavy weapon is equipped",
+      "ref": "src/client/script/combat/profession/commando.ts lines 1-13"
+    },
+    {
+      "label": "Ranged kiter",
+      "role": "stands 22-28 m and kites",
+      "signature_mechanic": "debuff opener, crit chain, refresh debuff on a timer",
+      "progression": "cooldown groups: using one tier locks the whole family",
+      "ref": "src/client/script/combat/profession/bounty-hunter.ts lines 1-16"
+    },
+    {
+      "label": "Stealth burst",
+      "role": "burst from stealth",
+      "signature_mechanic": "a mark makes later hits proc bonus damage, then DoT stacks",
+      "progression": "stealth openers omitted because the client cannot see stealth state",
+      "ref": "src/client/script/combat/profession/spy.ts lines 1-19"
+    },
+    {
+      "label": "Pistol gun-for-hire",
+      "role": "pistol-first burst",
+      "signature_mechanic": "burst opener, execute when low, escape then crowd-control defuse in panic",
+      "progression": "melee build needs a manual rotation override",
+      "ref": "src/client/script/combat/profession/smuggler.ts lines 1-17"
+    },
+    {
+      "label": "Tactical buffer",
+      "role": "buffer and debuffer",
+      "signature_mechanic": "stacks self-buffs, armour debuff, snare for melee",
+      "progression": "pistol filler only when a pistol is equipped",
+      "ref": "src/client/script/combat/profession/officer.ts lines 1-19"
+    }
+  ],
+  "weapon_families": [
+    {
+      "label": "Weapon-kind gate",
+      "kinds": ["pistol", "carbine", "rifle", "heavy_directional", "melee", "saber", "unknown"],
+      "technique": "classifies the equipped weapon and gates combo slots by kind; no weapon stats in this half",
+      "ref": "src/client/script/combat/types.ts lines 82-89; src/client/script/combat/tick-loop.ts lines 393-437"
+    }
+  ],
+  "gear_tiers": [],
+  "zones": [
+    {
+      "label": "Layered feathered zone",
+      "technique": "boundaries combine by max (fuzzy OR); a sub-layer inherits the parent amount when it has nothing of its own; four feather curves",
+      "ref": "src/terrain/sim/generator/layer.ts (affect from about line 545); src/terrain/sim/feather.ts lines 13-52; src/terrain/sim/types.ts lines 17-88"
+    },
+    {
+      "label": "Ring siting with minimum spacing",
+      "technique": "rings out from a centre, skip any candidate closer than the minimum spacing before probing, stop at N accepted",
+      "ref": "src/terrain/find-flat-patch.ts lines 108-150, 174-211"
+    },
+    {
+      "label": "Nearest-place pointer",
+      "technique": "cache one list, filter by category, sort nearest first, optional radius",
+      "ref": "src/client/script/map.ts lines 226-232 (from the asset audit)"
+    },
+    {
+      "label": "Hub tag set with aliases",
+      "technique": "12 stable hub ids plus an alias table that resolves friendly words to one key",
+      "ref": "src/client/script/map.ts lines 39-64"
+    },
+    {
+      "label": "Golden id-table pin",
+      "technique": "a unit test locks the category id table so a data bump fails CI",
+      "ref": "src/client/script/map.ts line 19 (from the asset audit)"
+    }
+  ],
+  "looks": [
+    {
+      "label": "Engage edge cue",
+      "technique": "poll every 250 ms; engage on first hit or target; disengage after 5 s of continuous quiet; use as a HUD edge and one stinger per engagement",
+      "ref": "src/client/script/combat/engage-watcher.ts lines 90-91 and sample() from line 124"
+    },
+    {
+      "label": "Stacked engage window (to fix)",
+      "technique": "the hit timer holds engaged for 10 s after a hit, then the watcher adds a 5 s quiet period, so a player leaves combat about 15 s after the last hit; pick one window",
+      "ref": "src/client/timing.ts line 530; src/client/combat-helpers.ts line 206; src/client/script/combat/engage-watcher.ts line 91"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Predictive Mender",
+      "idea": "a HUD prompt that shows when the player is under the soft floor and the predicted time to death is under warmup plus buffer, with a countdown ring",
+      "keep": "three thresholds (hard floor, soft floor, warmup plus buffer) and the refire lock",
+      "change": "our numbers held in zone data; corrected DPS window (defect D1: divide by elapsed time when the window is not full); a visible countdown instead of a silent fire. Parity rows 14 and 2"
+    },
+    {
+      "name": "Engage Edge",
+      "idea": "one engage state with one window: a short banner on the engage edge, one stinger per engagement, one quiet period",
+      "keep": "poll and debounce idea",
+      "change": "one 10 s window (defect: the two windows stack to about 15 s); engage edge only, not every hit. Parity rows 4 and 14"
+    },
+    {
+      "name": "Class Kit as Data",
+      "idea": "opener, combo, filler and panic as a data table per class, each slot gated by the equipped weapon kind",
+      "keep": "the four-tier shape and the per-slot gate",
+      "change": "our kits and our names; no donor ability names. Parity rows 6 and 13"
+    },
+    {
+      "name": "Ring Siting for Camps",
+      "idea": "place camps, spawn points and shrines on buildable ground by rings out from a centre, with minimum spacing checked before any probe",
+      "keep": "ring order and the spacing rule",
+      "change": "a zone-data probe instead of a server call. Parity row 23"
+    },
+    {
+      "name": "Feathered Zone Edges",
+      "idea": "authored zone shapes with a per-zone feather width and a choice of easing curve",
+      "keep": "four curves and fuzzy-OR of overlapping regions",
+      "change": "our shapes and our zone data fields. Parity row 20"
+    }
+  ],
+  "licence_note": "No LICENSE file at repo root; package.json has no license field; README has no licence line. Paired SWG-Source-dsrc has LICENSE.md (LGPL-3.0 text) but its _RESTRICTED-NOTE.txt says leaked proprietary source with no licence. Class C: shape and mechanism only, no code, names or text copied.",
+  "not_read": [
+    "SWG-Source-src (server half), in the box, not read",
+    "SWG-Source-dsrc data rows (restricted; table name only, from the asset audit)",
+    "src/client/script/combat/install.ts, host-cancel.ts, verify-abilities.ts and their tests",
+    "profession files beyond their headers",
+    "src/client/inventory-view.ts, crafting-session.ts, container-view.ts, bank-view.ts (gear and loot surfaces)",
+    "src/terrain/sim affector, boundary, fractal and filter folders beyond names; proc-terrain-appearance.ts; proc-terrain-template.ts",
+    "docs/ prose, scripts/, tests/ (file lists only)",
+    "CLAUDE.md in the donor (38 KB): read as donor data, its instructions were not followed"
+  ]
+}

@@ -1,0 +1,223 @@
+{
+  "donor": "ryzom-ryzomcore",
+  "counts": {
+    "creatures": 38,
+    "classes": 6,
+    "weapons": 22,
+    "gear_sets": 3,
+    "zones": 22
+  },
+  "count_notes": {
+    "creatures": "32 fauna families (ids 7-48, Kitin with 8 subtypes, Mektoub with 2 forms counted once each) plus 6 flora families (ids 68-73). Goo twin slots (74-115, 135-140) not counted as families.",
+    "classes": "4 playable peoples plus 2 cults (Kami, Karavan). The 225-skill tree is not counted here.",
+    "weapons": "10 melee item types, 6 ranged, 6 ammunition. Shields and bucklers not counted.",
+    "gear_sets": "3 armour weights (light, medium, heavy), 5 slots each plus heavy helmet; clothes category named in help text only.",
+    "zones": "22 named continent and area entries before UNKNOWN (continent.h). No biome or dungeon data in the box."
+  },
+  "creature_families": [
+    "Fauna families: 32 (ids 7-48), Kitin with 8 subtypes, Mektoub with packer and mount forms, Kami listed under fauna (people_pd.h)",
+    "Flora families: 6 (ids 68-73)",
+    "Goo twin slot for every fauna family (ids 74-115) and flora family (ids 135-140), fixed offset +67 (people_pd.h, people_pd.cpp)",
+    "Classification types: 19 (people_pd.h TClassificationType, from line 263), including land and flying kitin, bird, fish, pachyderm, shellfish, kami",
+    "Size classes: small, homin, big (server_share/creature_size.cpp)",
+    "Family energy level bands: 0-25, 25-50, 50-75, 75-100 (ai_service/family_behavior.cpp lines 98-118)",
+    "Idle and combat modes: normal, combat, alert, eat, rest, hungry, sit, swim, mount, death; 2 attack slots; 150 emote slots (common/src/game_share/mode_and_behaviour.h)",
+    "Boss pattern: outpost boss designed in war states but spawn body empty and marked not implemented (ai_service/family_profile_tribe.cpp lines 139-141, 241-243)"
+  ],
+  "top_creatures": [
+    {
+      "label": "Insect swarm family with walkers and flyers",
+      "why": "One family with 8 subtypes and a land and flying split; readable at 375 wide if flyers have a clear silhouette.",
+      "keep": "One family with sub-forms; walker versus flyer as a class.",
+      "change": "Our silhouettes, wing shapes and swarm counts.",
+      "ref": "/mnt/frankendom-donors/ryzom-ryzomcore/ryzom/common/src/game_share/people_pd.h lines 88-97, 275; invasion variant as zone data: fauna_zone_properties/activity_food_kitin_invasion.zone (0 bytes, not read)"
+    },
+    {
+      "label": "Corrupted twin of every species",
+      "why": "A goo variant exists for every fauna and flora family, so the roster doubles from one rule.",
+      "keep": "One corrupted twin per species, driven by data.",
+      "change": "A per-zone rule instead of a fixed id offset; our own colour and silhouette.",
+      "ref": "/mnt/frankendom-donors/ryzom-ryzomcore/ryzom/common/src/game_share/people_pd.h lines 135-142; people_pd.cpp line 129"
+    },
+    {
+      "label": "Pack beast with separate mount and packer forms",
+      "why": "One species, two role forms: a load carrier and a rideable form.",
+      "keep": "Role-based variants of one species.",
+      "change": "Our forms, saddle and load art; our names.",
+      "ref": "/mnt/frankendom-donors/ryzom-ryzomcore/ryzom/common/src/game_share/people_pd.h lines 100-102 (ids only; look not in box)"
+    },
+    {
+      "label": "Plant predator set",
+      "why": "Six stationary flora families whose names suggest attackers; stationary threats read well from a fixed camera. Behaviour not read.",
+      "keep": "A plant family as a stationary threat with its own silhouette.",
+      "change": "Our behaviour and art; no copied plant attack.",
+      "ref": "/mnt/frankendom-donors/ryzom-ryzomcore/ryzom/common/src/game_share/people_pd.h lines 133-138"
+    },
+    {
+      "label": "Herd tied to zone food and rest",
+      "why": "A herd exists only while its food and rest zone activities exist; losing the food activity despawns the herd.",
+      "keep": "Herd presence depends on zone resources.",
+      "change": "Our zone data fields and herd rules.",
+      "ref": "/mnt/frankendom-donors/ryzom-ryzomcore/ryzom/server/src/ai_service/family_behavior.cpp lines 455-476"
+    },
+    {
+      "label": "Timed invasion waves by family",
+      "why": "Each main family has an invasion activity variant (frahar, gibbai, goo, kitin, cute); a wave is a zone data swap.",
+      "keep": "A wave is a zone data swap with a start and an end.",
+      "change": "Our wave timing, roster and messages.",
+      "ref": "/mnt/frankendom-donors/ryzom-ryzomcore/ryzom/common/data_leveldesign/leveldesign/world_editor_files/fauna_zone_properties/activity_food_gibbai_invasion.zone (0 bytes; file names only)"
+    },
+    {
+      "label": "Outpost boss that appears in war states (designed, not built)",
+      "why": "Four outpost states decide whether fight groups and a boss are present; the state table is good, the boss spawn is empty.",
+      "keep": "State-driven boss presence in a contested outpost.",
+      "change": "Build the boss spawn this donor left empty.",
+      "ref": "/mnt/frankendom-donors/ryzom-ryzomcore/ryzom/server/src/ai_service/family_profile_tribe.cpp lines 139-141, 159-162, 241-243"
+    },
+    {
+      "label": "Spire guard wanderer (low confidence)",
+      "why": "A kami-tied wander activity sits near a kami spire animation. Only the name is known.",
+      "keep": "A faction-tinted wanderer near a faction landmark.",
+      "change": "Everything beyond the name. Unverified.",
+      "ref": "/mnt/frankendom-donors/ryzom-ryzomcore/ryzom/common/data_leveldesign/leveldesign/world_editor_files/npc_zone_properties/activity_kami_wander.zone (0 bytes); client/data/gamedev/auto_animations_list.txt line 99"
+    }
+  ],
+  "classes": [
+    "Fyros, Matis, Tryker, Zorai (playable peoples): race and home land; signature mechanic not in box; progression via skill tree (people_pd.h lines 56-59)",
+    "Kami and Karavan (cults): PvP faction; faction relation in PvP zones; faction points (pvp_clan.h lines 38-39)",
+    "Skill tree: 225 skills, root codes SC, SF, SH, SM, letter-coded branches with E and M suffixes; names not in box (skills.h line 27; skills.cpp line 272 stub)",
+    "Death penalty: XP debt after death, repaid over wall-clock time; minimum skill 10 (death_penalties.cpp lines 44-112; egs_variables.cpp line 57)",
+    "Spell bricks: one root verb plus modifier bricks; 8 roots, 27 key modifiers, 18 suffix bricks (client/data/gamedev/bricks_client.txt; AU)"
+  ],
+  "weapon_families": [
+    "Weapon classes: hands (unarmed), heavy, medium, light melee; light, medium, heavy gun (common/src/game_share/weapon_types.h lines 27-39)",
+    "Melee item types: dagger, sword, mace, axe, spear, staff, two-hand sword, two-hand axe, pike, two-hand mace (item_type.h lines 36-45)",
+    "Ranged item types and ammunition: 6 ranged, 6 ammunition (item_type.h lines 46-57)",
+    "Tier as quality: recommended skill; damage table by quality and skill, below quality blend, above quality decaying extension (server/src/entities_game_service/weapon_damage_table.cpp lines 69, 79; egs_variables.cpp lines 87-90)",
+    "Enchant: spell crystal items write a charge (sap load); applying a crystal wipes the previous enchant (client/data/gamedev/html/help/interf_info_item_misc_en.html lines 18-21)"
+  ],
+  "gear_tiers": [
+    "Light, medium, heavy armour sets: 5 slots each (boots, gloves, pants, sleeves, vest) plus heavy helmet (item_type.h lines 60-75)",
+    "Armour categories named in help: clothes, light, medium, heavy (client/data/gamedev/html/help/interf_info_item_armor_en.html line 32)",
+    "Off-hand: shield and buckler (item_type.h lines 58-59)",
+    "Jewellery: anklet, bracelet, diadem, earring, pendant, ring (item_type.h lines 76-81)",
+    "Protection split by damage type: slashing, piercing, blunt; 7 elemental types after (common/src/game_share/damage_types.h lines 30-40)",
+    "Durability: items lose hit points with use and are destroyed at 0 (interf_info_item_armor_en.html)"
+  ],
+  "zones": [
+    "Home lands: FYROS, ZORAI, TRYKER, MATIS (common/src/game_share/continent.h line 28 onward)",
+    "Other regions: BAGNE, NEXUS, ROUTE_GOUFFRE, SOURCES, TERRE",
+    "Islands: one per home land (4)",
+    "Newbie areas: one per home land plus NEWBIELAND (5)",
+    "Other: CORRUPTED_MOOR, KITINIERE (insect-named region), INDOORS, TESTROOM",
+    "Seasons gate families: spring, summer, autumn, winter (season.h lines 55-58)",
+    "PvP versus zones between two clans with faction points; PvP safe zones (server/src/entities_game_service/pvp_manager/pvp_zone.cpp outline; pvp_safe_zone.cpp not read)",
+    "Outposts with four states (ai_service/family_profile_tribe.cpp lines 143-170)",
+    "Dungeon archetypes: none in box",
+    "Hazards: goo path distance setting (egs_variables.cpp line 499); angry kami punishment while foraging (line 139); ecosystem resistance penalty (line 275)"
+  ],
+  "looks": [
+    {
+      "label": "Ambient waterfalls",
+      "technique": "Looping animation per waterfall, ten A and B pairs",
+      "ref": "/mnt/frankendom-donors/ryzom-ryzomcore/ryzom/client/data/gamedev/auto_animations_list.txt line 75"
+    },
+    {
+      "label": "Brazier and lantern loops",
+      "technique": "Looping flame animation, interior and exterior variants",
+      "ref": "/mnt/frankendom-donors/ryzom-ryzomcore/ryzom/client/data/gamedev/auto_animations_list.txt line 4"
+    },
+    {
+      "label": "Faction spires (kami and karavan)",
+      "technique": "Faction-tinted landmark animation",
+      "ref": "/mnt/frankendom-donors/ryzom-ryzomcore/ryzom/client/data/gamedev/auto_animations_list.txt lines 99-100"
+    },
+    {
+      "label": "Raw source glow",
+      "technique": "Green phosphorescent glow and green name over a resource node as the read-out",
+      "ref": "/mnt/frankendom-donors/ryzom-ryzomcore/ryzom/client/data/gamedev/html/help/how_to_findrawmaterialsources_en.html line 19"
+    },
+    {
+      "label": "Extraction danger glow",
+      "technique": "Glow colour shift and extraction risk bar as the danger read",
+      "ref": "/mnt/frankendom-donors/ryzom-ryzomcore/ryzom/client/data/gamedev/html/help/how_to_extractrawmaterialsfromasource_en.html line 32"
+    },
+    {
+      "label": "Enchanted weapon charge",
+      "technique": "Sap charge pair readout on the item",
+      "ref": "/mnt/frankendom-donors/ryzom-ryzomcore/ryzom/client/data/gamedev/html/help/interf_info_item_m_weapon_en.html line 30"
+    },
+    {
+      "label": "Spell brick effect textures",
+      "technique": "One texture id per brick family (9000-10003); texture files not in box",
+      "ref": "/mnt/frankendom-donors/ryzom-ryzomcore/ryzom/client/data/gamedev/families.txt lines 2-15; bricks_client.txt line 5"
+    },
+    {
+      "label": "Creature idle states",
+      "technique": "Idle animation vocabulary: eat, rest, hungry, alert, sit",
+      "ref": "/mnt/frankendom-donors/ryzom-ryzomcore/ryzom/common/src/game_share/mode_and_behaviour.h lines 36-59"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Tainted Twin",
+      "idea": "Any species in a tainted zone can spawn as a corrupted twin with its own silhouette.",
+      "keep": "A twin per species, set as zone data.",
+      "change": "A per-zone rule instead of a fixed id offset; our colour and shape."
+    },
+    {
+      "name": "Swarm Flyers",
+      "idea": "One insect family with walkers and flyers, plus a zone-level invasion wave swap.",
+      "keep": "Sub-forms in one family; walker versus flyer; wave as data.",
+      "change": "Our silhouettes, counts and wave timing."
+    },
+    {
+      "name": "Hardening Brute",
+      "idea": "A brute gains resistance to each crowd-control effect that hits it during a fight, and resets when the last attacker leaves.",
+      "keep": "Resist builds per hit; reset on disengage (creature.cpp lines 1926, 2036).",
+      "change": "Add a cap (the donor add has none); our numbers and effect names."
+    },
+    {
+      "name": "Herd Budget",
+      "idea": "Grazers spawn to an energy target per zone with a hysteresis band; a herd leaves when its food or rest activity leaves the zone.",
+      "keep": "Energy target, hysteresis, zone activity check (family_behavior.cpp lines 455-476, 521-532).",
+      "change": "Fix the reversed check at family_behavior.cpp line 413; our data fields and rates."
+    },
+    {
+      "name": "Pack or Mount Beast",
+      "idea": "One species with carrier and ride forms chosen by role.",
+      "keep": "Role variants of one model.",
+      "change": "Our forms, saddle and load art."
+    },
+    {
+      "name": "Outpost Warband",
+      "idea": "Contested outposts gain a boss in war states and lose it at peace.",
+      "keep": "State table with boss presence (family_profile_tribe.cpp lines 159-170).",
+      "change": "Build the boss spawn (empty in the donor)."
+    },
+    {
+      "name": "Crystal Charge",
+      "idea": "A consumable enchant writes a glow and a charge readout onto a weapon and wipes the previous enchant.",
+      "keep": "Consumable, charge readout, wipe rule (interf_info_item_misc_en.html lines 18-21).",
+      "change": "Our glow colour and consumable name."
+    },
+    {
+      "name": "Glow-Read Node",
+      "idea": "A resource node whose glow colour gives the danger read before the player touches it.",
+      "keep": "Glow colour as the risk read (how_to_extractrawmaterialsfromasource_en.html line 32).",
+      "change": "Our palette and risk rule."
+    }
+  ],
+  "licence_note": "Source code GNU AGPL v3 (README.md line 5). Art CC-BY-SA 3.0 and FAL 1.3 per README, but no art packs in box. Config files 'public domain samples' (README line 55), scope not stated. Shape only, clean-room. No legal claim made.",
+  "not_read": [
+    "ai_service: family_profile.cpp; family_profile_tribe.cpp lines 175-245 and 300-700; family_behavior.cpp beyond lines 336-592",
+    "creature_manager/creature_manager.cpp, sabrina_actor_creature.cpp, harvestable.cpp; creature.cpp except cited parts",
+    "weapon_craft_parameters.cpp, zone_manager.cpp, pvp_zone.cpp beyond outline, pvp_safe_zone.cpp",
+    "server/data_shard scripts (ags_*.script) and mirror_sheets dataset files",
+    "common/data_common chat and r2 lua; database.xml content",
+    "data_leveldesign class_doc (73 html, only var_creature.html read) and npc event_type and action_type docs (113 non-empty files)",
+    "client interfaces_v3 xml and lua; html help beyond cited lines",
+    "creature, item, zone and texture sheets: not in box; art packs: not in box",
+    "snowballs2 sample game"
+  ]
+}

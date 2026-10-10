@@ -1,0 +1,92 @@
+{
+  "donor": "pier-oliviert-lineage",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [
+    "No class or race field in any packet read. player.js carries spriteId (int16, line 19), an appearance index, not a class.",
+    "Factions: charinfo.js line 13 carries a pledge string (clan tag) next to name; chat.html line 11 has a Clan tab. The only faction-like data.",
+    "Progression: none in the client files."
+  ],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [
+    "None. tiles.js draws a grid of tile sprites at tileSize 32 (game_controller.js line 22; tiles.js line 42); no zone, biome or spawn data in the donor."
+  ],
+  "looks": [
+    {
+      "label": "Hover texture swap on a tile",
+      "technique": "Pointer-over state by changing a sprite's texture between normal and hover textures; no animation needed.",
+      "ref": "lib/components/tiles.js lines 62-70"
+    },
+    {
+      "label": "One tile unit shared by camera and tiles",
+      "technique": "A 32 px grid constant: sprite placed at centre plus tile offset times 32.",
+      "ref": "lib/components/camera.js line 18; lib/controllers/game_controller.js line 22"
+    },
+    {
+      "label": "Hover-to-identify",
+      "technique": "Mouseover handler on a character sprite writes the name to the console; no visible panel in the client read.",
+      "ref": "lib/components/characters.js line 17"
+    },
+    {
+      "label": "Render loop only",
+      "technique": "requestAnimationFrame is the only loop found; no idle animation, sound, death, respawn, boss or loot code in the client read.",
+      "ref": "lib/controllers/game_controller.js lines 31 and 74"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Fight Camera",
+      "idea": "Fixed hero at screen centre with the world offset per tile; widens its frame toward a foe in range.",
+      "keep": "Fixed hero and offset world (parity row 11).",
+      "change": "Add smoothing (the move hook is an empty stub) and a fight framing."
+    },
+    {
+      "name": "Screen Stack",
+      "idea": "One stack of screens for login, character select and world, with push, current and a working pop.",
+      "keep": "One stack with push and current.",
+      "change": "Working pop using splice; our screens; a fade between them."
+    },
+    {
+      "name": "Clan-Tag Chat",
+      "idea": "Chat with a default tab and per-tab history, plus a read-only fight-log tab.",
+      "keep": "Default tab and per-tab history.",
+      "change": "Our channel names, colour tags, and the fight log."
+    },
+    {
+      "name": "Pledge Tag",
+      "idea": "A short clan string shown on the character card.",
+      "keep": "A short clan string on the character info.",
+      "change": "Our tag rules and its look."
+    },
+    {
+      "name": "Ready Gate",
+      "idea": "Asset loading that reports ready when the pending list empties.",
+      "keep": "Ready when the pending list is empty.",
+      "change": "Guard unknown items: return false when the index is below zero (the donor's splice(-1, 1) removes the last item)."
+    },
+    {
+      "name": "Compact Move Record",
+      "idea": "One short fixed-field record per moving actor for many-on-one sync (parity row 18, post-K item 3).",
+      "keep": "Short fixed-field record per actor, one per move.",
+      "change": "Our field set and a rate limit."
+    }
+  ],
+  "licence_note": "No LICENSE, NOTICE or CREDITS file; manifest.json has no licence field. Treated as restricted (class C): category-level inspiration only. jquery.js states MIT in its header (line 9; class A as a library). pixi.js has no licence text found (class C). Not claimed as leaked; the files do not say. Not legal advice.",
+  "not_read": [
+    "Server half: not in the box under a Lineage 1 name. Lineage 2 donors (cuteshaun-lineage2-api, elberacasa-Lineage2Elbera, realratchet-Lineage2JS) are a different title and were not opened.",
+    "src/ CoffeeScript mirror of lib/ (not read)",
+    "pixi.js body; assets/textures/bunny.png (not opened; excluded by .gitignore)",
+    "lib/socket/* (encryption, decryption, framing); packet classes beyond player, move and charinfo",
+    "templates/game.html and templates/login.html bodies (key lines only); CSS beyond the audit's heads",
+    "README (packet-encryption walk-through with sample key material; deliberately not reproduced)",
+    "Silhouettes, readability at 375 px, and sound (no sprites or audio in this donor)"
+  ]
+}

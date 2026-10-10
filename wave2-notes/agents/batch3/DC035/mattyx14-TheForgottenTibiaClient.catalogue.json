@@ -1,0 +1,101 @@
+{
+  "donor": "mattyx14-TheForgottenTibiaClient",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [
+    "vocations: named by the server; the client filters by them (modules/game_market/market.lua line 116; neededtranslations.lua line 147). No vocation table in the box.",
+    "fight stances: offensive, balanced, defensive (modules/game_combatcontrols/combatcontrols.lua lines 204-215)",
+    "chase toggle and safe-fight toggle (combatcontrols.lua 218-229; checkbox checked means safe fight OFF, line 114)",
+    "PvP mode radio group (combatcontrols.lua line 53, handler line 232)",
+    "mounts: toggle with mount and dismount (modules/game_playermount/playermount.lua 29-43)",
+    "outfits: picker with random and next or previous steps (modules/game_outfit/outfit.lua 53-231; names only, not read in depth)"
+  ],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [
+    "no zone or dungeon table in the client; the minimap is floor-based (modules/game_minimap/minimap.lua 98-128)",
+    "full-map toggle swaps one widget between the corner and a full-screen parent (minimap.lua around line 144)",
+    "biome list and hazards: not in the client half"
+  ],
+  "looks": [
+    {
+      "label": "Battle list as a target strip",
+      "technique": "Type filters (players, NPCs, monsters, skulls, party); sort by name, distance, age or health; distance order re-sorts on each local move; health order re-sorts on health change.",
+      "ref": "modules/game_battle/battle.lua lines 55-58, 250-262, 272, 281, 286-300"
+    },
+    {
+      "label": "Cooldown ring",
+      "technique": "Progress fills in steps of 10000/duration per 100 ms tick. Defect: increment-based (no delta-time), so jitter accumulates and the ring finishes late. Fix: percent from the start timestamp and now.",
+      "ref": "modules/game_cooldown/cooldown.lua lines 141-153 (step at 142)"
+    },
+    {
+      "label": "Cooldown collapse burst (defined, not played)",
+      "technique": "Emitter with an attraction affector gives an inward pull. The spawn on cooldown end is commented out (hack until onEffectEnd), so the effect is not shown today. Fix: re-enable with an effect-end callback and a setting.",
+      "ref": "data/particles/particles.otps lines 25 (emitter), 33 (attraction affector); modules/game_cooldown/cooldown.lua lines 124-126 (commented block)"
+    },
+    {
+      "label": "Penalty window wording",
+      "technique": "One plain window; the sentence is chosen by whether the penalty is 100; a short centre-screen line says the player is dead.",
+      "ref": "modules/game_playerdeath/playerdeath.lua lines 39, 52-57"
+    },
+    {
+      "label": "Stance ring",
+      "technique": "Three fight steps, chase toggle and safe-fight toggle; each sent to the engine on change. Checkbox state is inverted from its icon name (checked means unsafe).",
+      "ref": "modules/game_combatcontrols/combatcontrols.lua lines 114, 204-229"
+    },
+    {
+      "label": "Per-version map memory",
+      "technique": "Map file name carries the client version; save on exit, load on start; .otmm mode when set.",
+      "ref": "modules/game_minimap/minimap.lua lines 111, 120-128"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Target Strip",
+      "idea": "A short touch strip of the nearest threats, filtered by kind, re-sorted as the player moves.",
+      "keep": "Type filters; distance sort that re-sorts on move.",
+      "change": "Three slots; threat shapes instead of text; party ring; no list."
+    },
+    {
+      "name": "Ready Ring",
+      "idea": "A ring that fills while a skill recharges and reads as ready at the end.",
+      "keep": "Ring fill that ends in a clear ready state.",
+      "change": "Wall-clock progress (fixes the increment defect); our own burst and sound on ready."
+    },
+    {
+      "name": "Fallen Window",
+      "idea": "After a loss, one plain window says the penalty in one sentence and counts down to respawn.",
+      "keep": "One window; a partial-penalty sentence; short centre line.",
+      "change": "Respawn countdown instead of a close button; grey-out instead of a flash; our own wording."
+    },
+    {
+      "name": "Stance Ring",
+      "idea": "A ring of three fight stances around the fighter, with a lock for chase.",
+      "keep": "Three steps; chase toggle.",
+      "change": "Ring selector; lock icon; a checkbox whose checked state matches its label."
+    },
+    {
+      "name": "Map Memory",
+      "idea": "The map remembers its state between sessions and swaps between corner and full screen on one widget.",
+      "keep": "Save on exit, load on start; one widget, two homes.",
+      "change": "Our own file keys; heading arrow on the camera marker."
+    }
+  ],
+  "licence_note": "Code: MIT (LICENSE line 1). Assets: no separate licence, origin not stated (class C). Tibia is a proprietary MMO; CipSoft host and key constants appear in modules/gamelib/game.lua lines 20-22. Category-level inspiration for looks only.",
+  "not_read": [
+    "data half (spr/dat sprites and item data): absent by design (README.md line 20)",
+    "server half: TFS server absent from this box; otland-forgottenserver is the paired donor (named only)",
+    "outfit, skills, spell list, containers, market, other client modules: names and line counts only",
+    "PNG art, cursors, fonts, start-up sound: names and counts only; origins not stated",
+    "locales other than en: counted by key lines (de 362, pl 406, pt 398; es and sv not counted), not read for text",
+    "penalty meaning: decided by the server, not in this client file",
+    "donor AUTHORS, ISSUE_TEMPLATE, FULL MINIMAP ReadMe: names only"
+  ]
+}

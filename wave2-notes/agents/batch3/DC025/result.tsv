@@ -1,0 +1,3 @@
+donor	status	creatures	classes	weapons	gear_sets	zones	top_highlights	unverified
+exult-exult	done (engine half read; data pack absent)	27 (grep hits, bgitems)	0	32 (grep hits, bgitems)	19 (grep hits, bgitems)	0 records (terrain names listed)	splitting slime blob (monsters.cc:565-640); winged stone warrior and dragon age ladders (docs/bgitems.txt, docs/siitems.txt); weapon power-budget and returning throw axe (weaponinf.cc, weaponinf.h)	counts are grep line hits, not verified distinct records; monster.dat, weapons.dat, armor.dat and map data absent; server/ half listed only; no receipts.tsv produced (optional)
+Eve-of-Darkness-dark-forge	done (no game content)	0	0	0	0	0	none	game-content grep zero hits; Rust source bodies not opened, description from audit AU020

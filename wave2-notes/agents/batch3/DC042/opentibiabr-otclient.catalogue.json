@@ -1,0 +1,224 @@
+{
+  "donor": "opentibiabr-otclient",
+  "donor_path": "/mnt/frankendom-donors/opentibiabr-otclient/",
+  "halves_read": "client half (modules Lua, GLSL shaders, particle definitions, asset and locale listings); server half not at top level of donor folder, not read; C++ src/ not read",
+  "counts": {
+    "creatures": 0,
+    "classes": 1,
+    "weapons": 8,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [
+    {
+      "name": "Monk",
+      "role": "vocation with its own HUD",
+      "mechanic": "five harmony pips round the health ring (clamped 0 to 5) plus a serene ring driven by a binary state",
+      "progression": "not read beyond the HUD file (game_healthcircle_monk.lua, 241 lines)"
+    },
+    {
+      "name": "Weapon profession types (regular, knight, crossbow)",
+      "role": "XP curve per profession for weapon proficiency",
+      "mechanic": "same level number costs different XP per profession column",
+      "progression": "play level capped at 7; mastery levels 8 and 9 visual only"
+    }
+  ],
+  "weapon_families": [
+    {
+      "family": "Keyword families (sword, axe, club, bow, throw, fist, wand, rod)",
+      "source": "modules/game_proficiency/proficiency_data.lua line 41 onward",
+      "note": "item assigned to a family by name keyword"
+    },
+    {
+      "family": "Named tier branches (inferniarch 4 patterns, eldritch 2, umbral 3, sanguine 2, plus nine single-word tiers; 20 patterns total)",
+      "source": "modules/game_proficiency/proficiency_data.lua line 12 onward",
+      "note": "matched by item name, most specific first"
+    },
+    {
+      "family": "Perk types (32 ids, 0 to 31)",
+      "source": "modules/game_proficiency/const.lua lines 11 to 42",
+      "note": "weapon attack and defence, shield defence, bestiary damage, critical chance and damage by type, leech, on-hit and on-kill, perfect shot, hit chance, range, armour penetration, pierce, damage vs full or low health"
+    },
+    {
+      "family": "Element masks (11 seen)",
+      "source": "modules/game_proficiency/const.lua line 69 onward",
+      "note": "physical, fire, earth, energy, ice, holy, death, healing, drown, lifedrain, manadrain"
+    }
+  ],
+  "gear_tiers": [
+    {
+      "tier_system": "Forge tier badges",
+      "detail": "ten badges in one strip, index clamped to 1 to 10, 9 px step (modules/gamelib/items.lua lines 148 to 156)",
+      "look": "tier shown as an indexed badge; forge result tints success green and failure red (shaders.lua lines 82 and 86)"
+    },
+    {
+      "tier_system": "Task ring icons",
+      "detail": "eight icons in two families: bounty ring (damage against monsters, double bestiary chance, life leech, more loot) and task ring (bonus damage, bonus loot, damage mitigation, double bestiary chance)",
+      "look": "icon per ring type; names from asset listing (game_taskboard/assets/images)"
+    },
+    {
+      "tier_system": "Task backdrops",
+      "detail": "normal, silver and gold task backdrops",
+      "look": "static backdrop per tier (game_taskboard/assets/images)"
+    },
+    {
+      "tier_system": "Imbuing",
+      "detail": "game_imbuing has new_design and old_design; items carry a tier into the imbuing view (old_design/imbuing.lua line 421 onward)",
+      "look": "tier values and costs not read"
+    },
+    {
+      "tier_system": "Status icons",
+      "detail": "49 condition icons on the health ring (game_healthcircle/images/conditions)",
+      "look": "icon per condition"
+    }
+  ],
+  "zones": [
+    {
+      "zone": "none in box",
+      "detail": "no map, zone or dungeon data in the client; world data comes from the external asset repository (not fetched)"
+    },
+    {
+      "zone": "Map marker vocabulary",
+      "detail": "house (with status), improved respawn, NPC, passage (idle and selected), player, point of interest: 8 icons, 7 types (game_cyclopedia/images)"
+    },
+    {
+      "zone": "Per-map atmosphere presets",
+      "detail": "14 map shader presets: default, fog, rain, snow, grey scale, bloom, sepia, pulse, old TV, party, radial blur, zomg, heat, noise (game_shaders/shaders.lua lines 3 to 48)"
+    },
+    {
+      "zone": "Weekly difficulty tiers",
+      "detail": "Beginner from level 8, Adept from 30, Expert from 150, Master from 300; points per kill task 25, 50, 100, 200 (game_taskboard/const/const_tab_weekly.lua lines 14 to 18)"
+    }
+  ],
+  "looks": [
+    {
+      "label": "Walking fog",
+      "technique": "fog texture added over background; sample position = texture coordinate + walk offset + time drift",
+      "ref": "modules/game_shaders/shaders/fragment/fog.frag lines 5 and 14"
+    },
+    {
+      "label": "Pulse ripple",
+      "technique": "radial sine warp of texture coordinates; brightness falls off with 1/length",
+      "ref": "modules/game_shaders/shaders/fragment/pulse.frag lines 16 and 17"
+    },
+    {
+      "label": "Heat crystal shimmer",
+      "technique": "five layered cosine steps; used for jelly outfit and heat map preset",
+      "ref": "modules/game_shaders/shaders/fragment/heat.frag line 14; modules/game_shaders/shaders.lua lines 45 and 63"
+    },
+    {
+      "label": "Ghost outfit",
+      "technique": "radial blur with colour switched off",
+      "ref": "modules/game_shaders/shaders.lua lines 59 and 61"
+    },
+    {
+      "label": "Fragmented outfit",
+      "technique": "wired to noise.frag; shader body not read",
+      "ref": "modules/game_shaders/shaders.lua outfit list; modules/game_shaders/shaders/fragment/noise.frag"
+    },
+    {
+      "label": "Forge tint flash",
+      "technique": "flat green (success) or red (failure) silhouette keeping the sprite alpha",
+      "ref": "modules/game_shaders/shaders/fragment/forge_success.frag line 9; forge_failed.frag line 10"
+    },
+    {
+      "label": "Gold text outline",
+      "technique": "eight-sample ring around the glyph for an outline, text shader list",
+      "ref": "modules/game_shaders/shaders/fragment/text_golden_shadow_bold_fragment.frag line 24; modules/game_shaders/shaders.lua text list"
+    },
+    {
+      "label": "Outline pulse",
+      "technique": "time-driven alpha pulse on the outline",
+      "ref": "modules/game_shaders/shaders/fragment/outline.frag line 17"
+    },
+    {
+      "label": "Bloom",
+      "technique": "nine by nine sample grid added to the base colour (81 taps per pixel)",
+      "ref": "modules/game_shaders/shaders/fragment/bloom.frag line 9"
+    },
+    {
+      "label": "Creature burst particle",
+      "technique": "0.9 second particle, radius up to 30, velocity band 30 to 55 degrees; emitter burst-rate 25 and burst-count 1",
+      "ref": "data/particles/creature-particles.otps lines 1 to 27 (colors-stops line 11; particle-type line 27)"
+    },
+    {
+      "label": "Group cooldown burst",
+      "technique": "50 particles per burst with an attraction affector",
+      "ref": "data/particles/particles.otps line 30 (burst-count 50) and the affector below it"
+    },
+    {
+      "label": "Death window with reconnect",
+      "technique": "one window with death type and penalty; reconnect scheduled if auto-reconnect is on",
+      "ref": "modules/game_playerdeath/playerdeath.lua lines 41 to 44 (display), 56 (openWindow), 96 onward (scheduleReconnect)"
+    },
+    {
+      "label": "Monk harmony pips",
+      "technique": "five pip widgets round the health ring, opacity and fill from harmony value; serene ring opacity from binary state",
+      "ref": "modules/game_healthcircle/game_healthcircle_monk.lua lines 40, 47 to 49, 67 to 74"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Tier Badge Strip",
+      "idea": "One strip of ten tier badges indexed by tier, clamped at both ends.",
+      "keep": "one strip, index by tier",
+      "change": "each tier adds a glow ramp so top tiers read at 375 wide"
+    },
+    {
+      "name": "Mastery Bloom",
+      "idea": "Visual-only levels beyond the play cap, shown on the weapon sprite and never changing the numbers.",
+      "keep": "the cap and the visual-only tier",
+      "change": "a short rim pulse, not a colour overlay"
+    },
+    {
+      "name": "Verdict Tint",
+      "idea": "Green or red silhouette flash on a craft or upgrade result.",
+      "keep": "the flat tint",
+      "change": "a 0.4 second hold and a sting"
+    },
+    {
+      "name": "Walking Mist",
+      "idea": "Fog texture that drifts with the walk offset and speed.",
+      "keep": "walk-linked drift",
+      "change": "tint per zone; drift scaled by speed"
+    },
+    {
+      "name": "Harmony Pips",
+      "idea": "Five pips round the health ring as a class resource, plus a binary serene ring.",
+      "keep": "fixed pip count and a binary state",
+      "change": "pips fill on hit and drain on a dodge"
+    },
+    {
+      "name": "Death Card Without Reconnect",
+      "idea": "One death window with type and penalty, then a shrine respawn.",
+      "keep": "one window, one action",
+      "change": "no reconnect step; respawn at a shrine"
+    },
+    {
+      "name": "Ghost Blur",
+      "idea": "Radial blur with colour removed, for spirit enemies.",
+      "keep": "the blur-only look",
+      "change": "its own spirit palette and a sound cue"
+    },
+    {
+      "name": "Task Ring Trio",
+      "idea": "Accessory rings in four types, each with one effect (damage, loot, life leech, bestiary chance).",
+      "keep": "four types, one effect each",
+      "change": "our effect names and rarity bands"
+    }
+  ],
+  "licence_note": "Project code MIT (LICENSE line 1). modules/game_wheel has a proprietary EULA (modules/game_wheel/LICENSE line 1): class C, category level only, no code or art reuse. No licence for art, fonts or JSON.",
+  "not_read": [
+    "server half (not at top level of donor folder)",
+    "C++ client source in src/",
+    "most Lua modules, including game_wheel code (EULA, not read for reuse), game_imbuing tier logic, game_forge beyond the tier clip, game_cyclopedia code, game_taskboard controllers, game_prey, game_store, game_shop",
+    "every PNG, PSD and font body; 52 font files; data/json/SkillwheelStringsJsonLibrary.json (top keys only)",
+    "data/locales (en.lua not opened; other locales not read)",
+    "external asset repository referenced by client_assets (not fetched)",
+    "browser/, android/, mods/, tests/, tools/, docs/, records/",
+    "AGENTS.md at donor root (treated as data, not followed)",
+    "per-creature sound and effect (no creature data in the box)"
+  ]
+}

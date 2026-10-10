@@ -1,0 +1,211 @@
+{
+  "donor": "id-Software-Quake-2",
+  "counts": {
+    "creatures": 22,
+    "classes": 0,
+    "weapons": 11,
+    "gear_sets": 6,
+    "zones": 0
+  },
+  "creature_families": [
+    "Grunt line: infantry (100 HP, gib -40), gunner (175, gib -70), soldier trio light 20 / soldier 30 / SS 40 HP (gib -30 each, one model with skins 0, 2, 4) - game/m_soldier.c 1200-1299, game/m_infantry.c 585-586, game/m_gunner.c 606-607",
+    "Heavy and brawler: gladiator (400, gib -175), berserk (240, gib -60), mutant (300, gib -120), medic (300, gib -130) - game/m_gladiator.c 365-366, game/m_berserk.c 435-436, game/m_mutant.c 639-640, game/m_medic.c 745-746",
+    "Armour walkers: tank (750, gib -200), tank commander (1000, gib -225; same class, skin 2) - game/m_tank.c 823-831; supertank (1500, gib -500) - game/m_supertank.c 696-697",
+    "Flyers and hovers: flyer (50 HP, no gib set), flipper (50, gib -30), floater (200, gib -80), hover (240, gib -100) - game/m_flyer.c 606-607, game/m_flipper.c 384-385, game/m_float.c 637-638, game/m_hover.c 599-600",
+    "Strogg organics: chick (175, gib -70), parasite (175, gib -50), brain (300, gib -150), insane (100, gib -50, misc_insane only) - game/m_chick.c 656-657, game/m_parasite.c 532-533, game/m_brain.c 650-651, game/m_insane.c 650-651",
+    "Bosses: boss2 (2000, gib -200) game/m_boss2.c 658-659; jorg (3000, gib -2000) game/m_boss31.c 728-729; makron (3000, gib -2000) game/m_boss32.c 846-847",
+    "Escalation: soldier tier by HP and skin; skill changes dodge choice (duck only at skill 0; 67/33 at 1; 34/66 at 2 and 3) - game/m_soldier.c 828-868",
+    "Count note: 22 distinct monster spawns from 23 monster_ names (tank_commander is an alias). boss3_stand and commander_body are not roaming creatures by name and were not read beyond the spawn row, so roaming types = 20 (unverified split)"
+  ],
+  "top_creatures": [
+    {
+      "label": "Corpse-tether healer",
+      "why": "Revives a fallen enemy by tethering the corpse; the threat returns, which is a state change, not only damage.",
+      "keep": "Frame-gated channel, 256-unit reach limit, 45-degree pitch gate, revive flag set on the target (game/m_medic.c 576-628, ED_CallSpawn at 621)",
+      "change": "Revive comes back at partial HP after a visible wind-up, with a rope of light instead of a cable",
+      "ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/m_medic.c 576-628"
+    },
+    {
+      "label": "Latch leech",
+      "why": "Holds the player and drains, so the threat is a state as well as damage.",
+      "keep": "Latch state and frame-gated drain ticks (5 on drain03, 2 on drain04)",
+      "change": "Silhouette and drain cue (a crystal hum)",
+      "ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/m_parasite.c 316-345, 476, 532-533"
+    },
+    {
+      "label": "Guard-stance brute",
+      "why": "A visible guard pose before attacks is a readable telegraph.",
+      "keep": "Duck telegraph and dodge pause of time-to-impact plus 0.5 s",
+      "change": "The guard flashes a shield rather than a head shape",
+      "ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/m_brain.c 352-360, 660"
+    },
+    {
+      "label": "Three-tier grunt",
+      "why": "Three tiers from one model and skin, with HP steps of 20, 30 and 40.",
+      "keep": "Tier as skin variant and HP step; shared gib threshold of -30; skill-driven response",
+      "change": "Tier shows as an armour plate tint and a different sidearm",
+      "ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/m_soldier.c 1238-1299, 845-868"
+    },
+    {
+      "label": "Halo colossus",
+      "why": "A 3000 HP boss with a BFG and firebullet bursts.",
+      "keep": "BFG as a big slow shot; boss gib threshold far below zero so it dies by finisher",
+      "change": "Ranged signature is a sweep of arcs, not a plain volley",
+      "ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/m_boss31.c 696-729 (jorgBFG, jorg_firebullet)"
+    },
+    {
+      "label": "Twin-gun warlord",
+      "why": "A visible railgun wind-up followed by a BFG.",
+      "keep": "Wind-up as telegraph; -2000 gib finisher",
+      "change": "No respawn call; a stance change at half HP",
+      "ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/m_boss32.c 830-847 (makron_prerailgun, MakronRailgun, makronBFG, MakronSpawn)"
+    },
+    {
+      "label": "Armoured walker pair",
+      "why": "An elite is the same model with a different skin and more HP (1000 against 750).",
+      "keep": "Elite as data change: HP, gib threshold and skin",
+      "change": "A shield plate and a colour-coded readability ring",
+      "ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/m_tank.c 792-849"
+    },
+    {
+      "label": "Leaping brute",
+      "why": "A take-off then a touch-jump is a readable telegraph.",
+      "keep": "Take-off then jump-touch chain",
+      "change": "Landing shockwave in place of the claw attack",
+      "ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/m_mutant.c (mutant_jump_takeoff, mutant_jump_touch; line numbers not receipted)"
+    }
+  ],
+  "classes": [
+    "No player classes in the code read (game/p_client.c, game/p_weapon.c): one player class, no races",
+    "Factions: enemy Strogg monsters against the player",
+    "CTF teams: red and blue (ctf/ module, two teams)",
+    "Max-health growth: adrenaline +1 (game/g_items.c 197-209), ancient head +2 (game/g_items.c 211-219)",
+    "Ammo caps: bandolier raises to 250 bullets, 150 shells, 250 cells, 75 slugs (game/g_items.c 221-235)"
+  ],
+  "weapon_families": [
+    "Hand grenade: 125 damage, radius 165 (game/p_weapon.c 551-566)",
+    "Grenade launcher: 120 damage (game/p_weapon.c 714-728)",
+    "Rocket launcher: 100 plus 0-19 random, radius damage 120 (game/p_weapon.c 764-783)",
+    "Blaster: 15 deathmatch, 10 otherwise (game/p_weapon.c 852-855); hyperblaster 15 deathmatch, 20 otherwise (904-907)",
+    "Machinegun: 8 (game/p_weapon.c 959); chaingun 6 deathmatch, 8 otherwise (1059-1061)",
+    "Shotgun: 4 per pellet (game/p_weapon.c 1189-1215); super shotgun: 6 per pellet (1245-1269)",
+    "Railgun: 150 (100 deathmatch), kick 250 (200), pierces monsters and players, stops at walls, passes liquid (game/p_weapon.c 1312-1317; game/g_weapon.c 658-718)",
+    "BFG: 200 deathmatch, 500 otherwise, radius 1000; after impact a per-tick laser sweep at targets within 256 units, 10 per tick (5 deathmatch) (game/p_weapon.c 1372-1377; game/g_weapon.c 804-881)",
+    "Quad damage multiplies damage by 4 at fire time (game/p_weapon.c 558, 719)"
+  ],
+  "gear_tiers": [
+    "Jacket armour: base 25, max 50, 30 percent normal, 0 percent energy (game/g_items.c 39)",
+    "Combat armour: base 50, max 100, 60 percent normal, 30 percent energy (game/g_items.c 40)",
+    "Body armour: base 100, max 200, 80 percent normal, 60 percent energy (game/g_items.c 41); each tier has its own pickup model with EF_ROTATE (game/g_items.c 1153)",
+    "Armour shard: small armour pickup (game/g_items.c, item_armor_shard)",
+    "Power screen: front arc only (dot above 0.3), absorbs damage/3, one cell per point (game/g_combat.c 223-243)",
+    "Power shield: all directions, two cells per point, absorbs two thirds of damage (game/g_combat.c 232-237)",
+    "Quad damage: 4x per shot; picking up another quad adds time (game/g_items.c 355-360)",
+    "Invulnerability: blocks damage, sound throttle 2 s on the protected target (game/g_combat.c T_Damage)"
+  ],
+  "zones": [
+    "No maps in the box. Entity vocabulary from game/g_spawn.c 149-266: 108 spawn rows by grep, 107 accounted for by category",
+    "func_ (17): plat, button, door, rotating, train, water, conveyor, clock, explosive, killbox, areaportal and others (names only)",
+    "trigger_ (11): hurt, push, key, counter, elevator, gravity, monsterjump and others (names only)",
+    "target_ (18): earthquake, lightramp, laser, spawner, secret, goal and others (names only)",
+    "misc_ (19): blackhole, viper, bigviper, strogg_ship, teleporter, satellite_dish, banner and others (names only)",
+    "turret_ (3): breach, base, driver (names only)",
+    "Liquid and lava: the railgun uses a mask that passes slime and lava (game/g_weapon.c 658-690)"
+  ],
+  "looks": [
+    {
+      "label": "BFG laser sweep",
+      "technique": "Per-tick traces from the ball to each target in radius; temp-entity laser per trace with sparks on walls",
+      "ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/g_weapon.c 804-881"
+    },
+    {
+      "label": "Railgun trail with liquid double",
+      "technique": "One trail from the muzzle to the end; a second trail is sent when the beam crossed water or lava",
+      "ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/g_weapon.c 694-713"
+    },
+    {
+      "label": "Power armour sparks",
+      "technique": "Separate spark temp-entities for screen (1 cell per point) and shield (2 cells per point)",
+      "ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/g_combat.c 223-237"
+    },
+    {
+      "label": "Medic cable",
+      "technique": "Temp-entity beam from the medic to the corpse, sent on each cable frame",
+      "ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/m_medic.c 576-628"
+    },
+    {
+      "label": "Parasite drain beam",
+      "technique": "Temp-entity beam on the drain frame; damage applied only when the trace hits the target",
+      "ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/m_parasite.c 316-365"
+    },
+    {
+      "label": "Pickup spin",
+      "technique": "EF_ROTATE on every pickup model",
+      "ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/g_items.c 1153"
+    },
+    {
+      "label": "Obituary variety",
+      "technique": "40 obituary strings chosen by means of death, including a dodge kill line",
+      "ref": "/mnt/frankendom-donors/id-Software-Quake-2/game/p_client.c 231-383"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Halo bombard",
+      "idea": "A slow orb that, each tick, lays a short laser sweep at every target within a radius and pierces through the first target.",
+      "keep": "Per-tick pulse, radius gate and pierce (game/g_weapon.c 804-881)",
+      "change": "A fan of arcs and a charge-up sound"
+    },
+    {
+      "name": "Front-arc shield",
+      "idea": "Blocks hits only from the front arc and costs one charge per point.",
+      "keep": "The arc test by dot product and the charge cost (game/g_combat.c 223-237)",
+      "change": "Cost shown as a shield meter and the arc drawn in the HUD"
+    },
+    {
+      "name": "Revival tether",
+      "idea": "A support enemy channels a revive on a fallen ally within reach and a pitch gate.",
+      "keep": "Frame-gated channel, reach limit and pitch gate (game/m_medic.c 576-628)",
+      "change": "Revive at 40 percent HP after a 4 second wind-up"
+    },
+    {
+      "name": "Latch leech",
+      "idea": "A small enemy holds the player and drains on fixed ticks.",
+      "keep": "Latch state and frame-gated drain (game/m_parasite.c 316-345)",
+      "change": "Silhouette and a crystal hum"
+    },
+    {
+      "name": "Guard-stance brute",
+      "idea": "A visible guard before its attacks, with a dodge pause sized to the incoming projectile.",
+      "keep": "Telegraph and time-to-impact pause (game/m_brain.c 352-360)",
+      "change": "The guard is a flashing shield"
+    },
+    {
+      "name": "Gib threshold as data",
+      "idea": "Each creature stores its overkill value; bosses sit far below zero, so they die by finisher.",
+      "keep": "Threshold as a field per creature (game/m_soldier.c 1256, game/m_boss31.c 729)",
+      "change": "Gibs become armour plates and sparks"
+    },
+    {
+      "name": "Dodge by time-to-impact",
+      "idea": "A 25 percent roll, then a pause sized to the projectile and a choice of duck or counter by difficulty.",
+      "keep": "Time-to-impact pause and difficulty-driven choice (game/g_weapon.c 32-52; game/m_soldier.c 828-868)",
+      "change": "A sidestep, and the choice weighted more toward counter"
+    },
+    {
+      "name": "Three-tier grunt",
+      "idea": "One model with three skins and HP steps of 20, 30 and 40.",
+      "keep": "Tier as skin variant and HP step (game/m_soldier.c 1238-1299)",
+      "change": "Tier shows as an armour plate tint"
+    }
+  ],
+  "licence_note": "GPL (readme.txt line 6: 'The code is all licensed under the terms of the GPL'); Q2 data copyrighted and not redistributable (readme.txt line 19). Shape and mechanism only.",
+  "not_read": [
+    "Data pack absent: maps, models, sounds, textures, help GIF contents",
+    "Client, server, qcommon, renderers (ref_gl, ref_soft) and platform folders",
+    "Full frame tables of each monster; only functions and values named above",
+    "Hover and mutant line numbers (hover cited via AU025 only; mutant names only)",
+    "misc_blackhole, misc_viper, target_earthquake, func_water, func_conveyor, trigger_gravity, trigger_elevator logic (names only)",
+    "ctf/g_ctf.c effect bodies and rune-to-function mapping"
+  ]
+}

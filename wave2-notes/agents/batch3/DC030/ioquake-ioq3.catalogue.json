@@ -1,0 +1,165 @@
+{
+  "donor": "ioquake-ioq3",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 13,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "count_notes": {
+    "weapons": "13 weapon rows in code/game/bg_misc.c (10 base, 3 inside the MISSIONPACK block at lines 657-917). Item rows total 51 (35 base, 16 mission-pack). Armour tiers: 3. Health tiers: 4.",
+    "creatures": "0 creature records in the box. No monster table; the only AI opponents are bots (code/game/g_bot.c, ai_*.c)."
+  },
+  "creature_families": [
+    "No monster families in the box. The bot AI (code/game/g_bot.c, ai_main.c, ai_dmq3.c) drives player-like opponents, not beasts.",
+    "Bot difficulty ladder: skill clamped to 1-5 (g_bot.c line 778); handicap 50 for skill in [1,2) at line 671, 70 for [2,3), 90 for [3,4) (g_bot.c lines 670-677)."
+  ],
+  "top_creatures": [
+    {
+      "label": "Skill-banded bot (analogue, not a creature)",
+      "why": "A single 1-5 number sets an opponent's handicap in bands, so difficulty reads as one dial.",
+      "keep": "One difficulty number per opponent, mapped to a small set of bands.",
+      "change": "Our bands are data on the enemy row, and the handicap maps to aim and reaction, not a single value.",
+      "ref": "/mnt/frankendom-donors/ioquake-ioq3/code/game/g_bot.c lines 670-677 and 778"
+    }
+  ],
+  "classes": [
+    "No character classes or races in the box. Player models are pk3 data (not read).",
+    "No XP or class progression in the box.",
+    "Team flags only: red and blue flag items (code/game/bg_misc.c team_CTF_redflag and team_CTF_blueflag rows, lines 627-660).",
+    "Game modes (code/game/bg_public.h lines 103-114): free-for-all, one-on-one tournament, single-player FFA, team deathmatch, CTF, and mission-pack modes (one-flag CTF, obelisk, harvester). Modes are not zones."
+  ],
+  "weapon_families": [
+    "Melee: gauntlet (bg_misc.c line 193).",
+    "Hitscan: machinegun (225), shotgun (209), railgun (289), lightning gun (273).",
+    "Projectile: grenade launcher (241), rocket launcher (257), plasma gun (305), BFG10K (321).",
+    "Utility: grappling hook (337).",
+    "Mission-pack only (inside the MISSIONPACK block, 657-917): nailgun (868), proximity launcher (884), chaingun (905).",
+    "Weapon rows give first-pickup ammo: railgun 10 (line 295), plasma gun 50 (line 311), BFG 20 (line 327). No elemental or set properties.",
+    "Visual tiers: none. Weapons are slots, not tiers. Always picked up (bg_misc.c line 1053)."
+  ],
+  "gear_tiers": [
+    "Armour: shard 5 (bg_misc.c line 68 row; icon row 73), combat armour 50 (row 85; icon row 89), heavy armour 100 (row 101; icon row 105). Tier shown by icon colour and model name.",
+    "Armour and mega health can overflow max: armour cap is 2x max health (bg_misc.c line 1079; g_items.c Pickup_Armor).",
+    "Health: 5, 25, 50 and mega 100 (rows 120-185). Respawn: armour 25 s, health 35 s, mega health 35 s (g_items.c RESPAWN_ARMOR, RESPAWN_HEALTH, RESPAWN_MEGAHEALTH defines, lines 39-44).",
+    "Mission-pack persistent power-ups (scout, guard, doubler, ammo regen; bg_misc.c rows 765-816) can be held one at a time (IT_PERSISTANT_POWERUP, bg_misc.c around line 1108).",
+    "Material looks (metal, gold, crystal): not in the box; they live in pk3 MD3 models (not read)."
+  ],
+  "zones": [
+    "No zone, dungeon or biome records in the box. Maps are pk3 data (not read).",
+    "Hazards: none as data in the box. code/game/g_trigger.c, g_mover.c, g_target.c present, not read.",
+    "Game modes are the only arena-like list in the box (bg_public.h lines 103-114). g_arenas.c present, not read."
+  ],
+  "looks": [
+    {
+      "label": "Quad dynamic light",
+      "technique": "A blue dynamic light at the player with radius 200 plus a random 0-31 each frame (cg_players.c line 1852), plus a quad overlay shader (lines 2168-2174).",
+      "ref": "/mnt/frankendom-donors/ioquake-ioq3/code/cgame/cg_players.c lines 1841-1870, 1852, 2150-2185"
+    },
+    {
+      "label": "Regeneration flicker",
+      "technique": "The overlay shows only in one 100 ms slice of each second, from (cg.time / 100) % 10 == 1 (cg_players.c line 2177).",
+      "ref": "/mnt/frankendom-donors/ioquake-ioq3/code/cgame/cg_players.c line 2177"
+    },
+    {
+      "label": "Invisibility swap",
+      "technique": "The body is drawn with an invisibility shader instead of the normal shader, and no shadow is drawn while invisible (cg_players.c lines 2016-2017 and 2153).",
+      "ref": "/mnt/frankendom-donors/ioquake-ioq3/code/cgame/cg_players.c lines 2016-2017, 2153"
+    },
+    {
+      "label": "Power-up expiry warning",
+      "technique": "A wear-off sound plays at each blink window before a timer ends (cg_view.c CG_PowerupTimerSounds, lines 702-720; sound at line 716). POWERUP_BLINKS and POWERUP_BLINK_TIME are used at 712-715 but their definitions were not found under code/ (grep).",
+      "ref": "/mnt/frankendom-donors/ioquake-ioq3/code/cgame/cg_view.c lines 702-720"
+    },
+    {
+      "label": "Railgun spiral trail",
+      "technique": "A stack of rings (radius 4, rotation 1, spacing 5 defines at cg_weapons.c lines 223-225) along the shot, in the shooter's colour (line 244), fading by a time-based lifetime (lines 215-262).",
+      "ref": "/mnt/frankendom-donors/ioquake-ioq3/code/cgame/cg_weapons.c lines 215-262"
+    },
+    {
+      "label": "Lightning beam from muzzle",
+      "technique": "A beam from a computed muzzle point to the first hit, built each frame (cg_weapons.c CG_LightningBolt, from line 1062; muzzle setup read only).",
+      "ref": "/mnt/frankendom-donors/ioquake-ioq3/code/cgame/cg_weapons.c lines 1062-1080"
+    },
+    {
+      "label": "Screen-space damage blob",
+      "technique": "A camera-facing sprite on the view, alpha falling from 200 across DAMAGE_TIME (500 ms, cg_local.h line 41; alpha at cg_view.c line 601), off when blood is disabled.",
+      "ref": "/mnt/frankendom-donors/ioquake-ioq3/code/cgame/cg_view.c lines 559-612; /mnt/frankendom-donors/ioquake-ioq3/code/cgame/cg_local.h line 41"
+    },
+    {
+      "label": "Gib burst with upward kick",
+      "technique": "Gib parts launch with random horizontal velocity (250) and an upward jump (250) (cg_effects.c defines at lines 562-563; launch at line 574).",
+      "ref": "/mnt/frankendom-donors/ioquake-ioq3/code/cgame/cg_effects.c lines 529-600"
+    },
+    {
+      "label": "Blood sprite, hidden on own view",
+      "technique": "A blood explosion sprite lasting 500 ms (cg_effects.c line 507), random rotation, flagged third-person when it is the player's own blood.",
+      "ref": "/mnt/frankendom-donors/ioquake-ioq3/code/cgame/cg_effects.c lines 496-527"
+    },
+    {
+      "label": "Hovering pickups",
+      "technique": "Armour and power-up rows carry the suspended flag, so they hover above the ground (bg_misc.c line 65 for armour, line 521 for power-ups).",
+      "ref": "/mnt/frankendom-donors/ioquake-ioq3/code/game/bg_misc.c lines 65, 521"
+    },
+    {
+      "label": "Power-up stacking timer",
+      "technique": "A new pickup adds quantity times 1000 ms to the existing timer; a first pickup starts the timer on a whole second so timers stay in step (g_items.c lines 54-58 and 67).",
+      "ref": "/mnt/frankendom-donors/ioquake-ioq3/code/game/g_items.c lines 54-67"
+    },
+    {
+      "label": "Rival-grab denial",
+      "technique": "A power-up pickup flags nearby players who are within 192 units (line 96), in front (dot 0.4 or more, line 102) and in line of sight (trace line 107) with the denied-reward player event (line 113). Client side not read.",
+      "ref": "/mnt/frankendom-donors/ioquake-ioq3/code/game/g_items.c lines 69-115"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Rival-grab denial cue",
+      "idea": "When a hero takes a buff pickup, nearby players who face it and can see it get a short denial cue.",
+      "keep": "The three gates: range, facing, and line of sight.",
+      "change": "Our cue is a distinct sound and a HUD ring; the gate is server-verified (parity row 18)."
+    },
+    {
+      "name": "Stacking buff clock",
+      "idea": "A second buff adds to the timer instead of resetting it, and timers start on whole seconds.",
+      "keep": "Stacking and whole-second alignment.",
+      "change": "Buffs and their durations are data fields on the item row."
+    },
+    {
+      "name": "Expiry blink warning",
+      "idea": "A buff gives a warning window with a sound before it ends.",
+      "keep": "The warning window before expiry.",
+      "change": "Window length is set per buff."
+    },
+    {
+      "name": "Shooter-colour spiral trail",
+      "idea": "A ranged shot draws rings in its owner's colour that fade.",
+      "keep": "Owner colour and the fade.",
+      "change": "Our beam is a ribbon; the rings are off on the low quality tier."
+    },
+    {
+      "name": "Hover pickup with overflow glow",
+      "idea": "Pickups hover; armour and health can overflow their max and the overflow glow fades.",
+      "keep": "Hover and overflow.",
+      "change": "A ring of light, not a box; the overflow sits in the thumb-zone HUD."
+    },
+    {
+      "name": "Death burst with upward kick",
+      "idea": "A death throws parts up at random from a fixed velocity.",
+      "keep": "Random horizontal spread with a fixed upward kick.",
+      "change": "Our kick and part list are per creature (parity row 17)."
+    }
+  ],
+  "licence_note": "Code GPL-2 (COPYING.txt line 2; metainfo GPL-2.0-or-later). Game data (pk3) not in the box and described as commercial in the README. Art licence unclear. Clean-room: shape only, no copied code or assets.",
+  "not_read": [
+    "Game data (pk3 maps, models, sounds, textures): not in the box.",
+    "Shaders, icons and images (misc/*.png, *.icns, *.ico, quake3.svg): listed only.",
+    "ui/menus.txt, ui/ingame.txt, ui/menudef.h: listed only.",
+    "code/game/ai_chat.c and ai_dmq3.c: line counts only.",
+    "CG_GrappleTrail, CG_PlasmaTrail, CG_RocketTrail, CG_GrenadeTrail, CG_BFG bodies: header or start only.",
+    "code/game/g_trigger.c, g_mover.c, g_target.c, g_arenas.c: not read.",
+    "Client side of the denied-reward event: not read.",
+    "libs/pak/unzip.cpp: not in the box."
+  ]
+}

@@ -1,0 +1,145 @@
+{
+  "donor": "OpenDAoC-OpenDAoC-Core",
+  "counts": {
+    "creatures": 261,
+    "classes": 62,
+    "weapons": 27,
+    "gear_sets": 7,
+    "zones": 473
+  },
+  "count_notes": {
+    "creatures": "62 files under GameServer/scripts/mobs plus 199 files under GameServer/scripts/namedmobs (167 files declare a GameEpicBoss class)",
+    "classes": "62 class files under GameServer/playerclasses (15 base, 47 advanced by realm); eCharacterClass has 63 entries including Unknown",
+    "weapons": "27 weapon object types in GameServer/Enums/eObjectType.cs (types, not item rows; item rows are in the companion database, not in the box)",
+    "gear_sets": "7 armour object types (cloth, leather, studded, chain, plate, reinforced, scale) in eObjectType.cs; 5 materials in eMaterial.cs; not a set count",
+    "zones": "rows in GameServer/scripts/dbupdater/insert/Zones.xml (regions 344 and startup locations 136 are separate)"
+  },
+  "creature_families": [
+    {"family": "ice giants and icelords", "files": 16, "note": "TuscarianGlacier folder; council bosses; falling-ice hazard"},
+    {"family": "undead and spectral courts", "files": 12, "note": "CaerSidi folder; names suggest crypt, lich and spectral types"},
+    {"family": "dark princes and high lords", "files": 10, "note": "DarknessFalls folder; rank hierarchy by name"},
+    {"family": "spirit masters and rune-casters", "files": 10, "note": "Dodens folder; AI/ArosBrain state machine (idle, aggro, return to spawn)"},
+    {"family": "primal elementals and machines", "files": 12, "note": "Galladoria folder; four primal adds, earthmender pair, stationary machine boss, spider broodmother, fungal cluster by name"},
+    {"family": "guard officers", "files": 12, "note": "HallOfTheCorrupt folder; captains, lieutenants, sergeants, lord and lady by name"},
+    {"family": "paired bosses", "files": 12, "note": "approximate; file names with 'X and Y' in one file; pairing by name"},
+    {"family": "wolf-named bosses", "files": 11, "note": "IarnvidiurLair folder; two named after wolves"},
+    {"family": "summoners", "files": 4, "note": "SummonersHall folder; summoner cabal"},
+    {"family": "fomor giants", "files": 4, "note": "Fomor folder"},
+    {"family": "dragons", "files": 3, "note": "Dragons folder"},
+    {"family": "realm regular mobs", "files": 52, "note": "AlbionMobs 21, HiberniaMobs 17, MidgardMobs 9, custom 5; families from file names only"}
+  ],
+  "top_creatures": [
+    {
+      "label": "Ring-gated colossus",
+      "why": "Hits from outside a 300-unit ring do nothing (line 48); resist depends on damage type (line 21)",
+      "keep": "the ring rule and the damage-type split",
+      "change": "pillars that block the line of hit instead of a ring clamp; serpent-coil body; ash and rust palette",
+      "ref": "OpenDAoC-OpenDAoC-Core/GameServer/scripts/namedmobs/Fomor/Krackenschtein.cs"
+    },
+    {
+      "label": "Shard-split brute",
+      "why": "Splits at half health; each split costs two levels and five size points with floors (min split level 45, min size 20)",
+      "keep": "the half-health fork and the shrinking copy",
+      "change": "the fork takes a different damage style; the parent does not refill to full (the code refills it, making each split a free heal)",
+      "ref": "OpenDAoC-OpenDAoC-Core/GameServer/scripts/mobs/custom/SplitMob.cs"
+    },
+    {
+      "label": "Four-warden council",
+      "why": "Four elemental adds spawn at fixed anchors, each bound to the boss, plus two healers",
+      "keep": "one anchor per element and the healers",
+      "change": "adds come in staggered rounds; each warden sets its own ground hazard",
+      "ref": "OpenDAoC-OpenDAoC-Core/GameServer/scripts/namedmobs/Galladoria/OlcasgeanAndPrimals.cs (lines 138 to 192)"
+    },
+    {
+      "label": "Fairy-warden reset",
+      "why": "Fairy adds spawn on a 10 to 20 second timer while the boss is below full health; a reset heals the boss and clears the fairies",
+      "keep": "adds that appear only while hurt, and a clean reset",
+      "change": "adds spawn only in view; the reset is shown as a visible beat",
+      "ref": "OpenDAoC-OpenDAoC-Core/GameServer/scripts/namedmobs/Evern.cs (lines 174, 184, 199)"
+    },
+    {
+      "label": "Pale shiver aura",
+      "why": "One visual pulse (effect 152) to every player in view on a jittered gap of 6 to 20 seconds",
+      "keep": "the single broadcast and the jitter",
+      "change": "a rising hum and a violet frost ring; the pulse tied to the creature's stance",
+      "ref": "OpenDAoC-OpenDAoC-Core/GameServer/scripts/mobs/ShiveringPresence.cs (lines 58, 61)"
+    },
+    {
+      "label": "Dusk and tide rosters",
+      "why": "A day roster and a night roster share one brain and show or hide on the region's night flag",
+      "keep": "one brain, two rosters, one zone clock",
+      "change": "the clock is tide or weather; the rosters have different silhouettes",
+      "ref": "OpenDAoC-OpenDAoC-Core/GameServer/scripts/mobs/TimeDependentSpawnNpc.cs (lines 33, 43)"
+    },
+    {
+      "label": "Stationary type-dial machine",
+      "why": "Never walks (StartAttack override); physical resist 40, other types 70; absorb cap 85 percent in a comment",
+      "keep": "a stationary boss with a split resist table",
+      "change": "a readable damage-type dial in the HUD and visible vents instead of a plain bar",
+      "ref": "OpenDAoC-OpenDAoC-Core/GameServer/scripts/namedmobs/Galladoria/Organic-EnergyMechanism.cs (lines 29 to 35, 45)"
+    },
+    {
+      "label": "Ambient idle creature",
+      "why": "Ambient-effect brain with one fixed effect id (5206); a plain creature with a constant idle effect",
+      "keep": "a constant idle effect as the creature's identity",
+      "change": "our own looping haze with a colour and rhythm",
+      "ref": "OpenDAoC-OpenDAoC-Core/GameServer/scripts/mobs/Strangler.cs (line 26)"
+    }
+  ],
+  "classes": [
+    {"class": "base classes (15)", "realm": "all", "grouping_by_name": "caster: mage, magician, elementalist, seer; melee: fighter, guardian, viking; stealth: albion rogue, midgard rogue, stalker; support and nature: acolyte, disciple, mystic, forester, naturalist", "progression": "base class unlocks an advanced class (HasAdvancedFromBaseClass); titles by level; specialisation multiplier 10 in five files sampled", "ref": "OpenDAoC-OpenDAoC-Core/GameServer/playerclasses/base/"},
+    {"class": "advanced classes (47)", "realm": "albion 16, hibernia 16, midgard 15", "progression": "one folder per realm; mechanics not read beyond the title rule", "ref": "OpenDAoC-OpenDAoC-Core/GameServer/playerclasses/"}
+  ],
+  "weapon_families": [
+    {"family": "physical melee", "types": "crushing, slashing, thrusting, two-handed, polearm, staff, sword, hammer, axe, spear, blades, blunt, piercing, large weapons, celtic spear, scythe, flexible, hand-to-hand, fist wraps, mauler staff, left axe, thrown", "ref": "OpenDAoC-OpenDAoC-Core/GameServer/Enums/eObjectType.cs"},
+    {"family": "ranged", "types": "fired, longbow, crossbow, composite bow, recurved bow", "ref": "OpenDAoC-OpenDAoC-Core/GameServer/Enums/eObjectType.cs"},
+    {"family": "damage types", "types": "physical (crush, slash, thrust, natural); elemental (body, cold, energy, heat, matter, spirit)", "ref": "OpenDAoC-OpenDAoC-Core/GameServer/Enums/eDamageType.cs; eWeaponDamageType.cs"}
+  ],
+  "gear_tiers": [
+    {"tier": "materials", "values": "cloth, leather, leather-and-metal, metal, wood", "ref": "OpenDAoC-OpenDAoC-Core/GameServer/Enums/eMaterial.cs:27 to 31"},
+    {"tier": "armour types", "values": "cloth 32, leather 33, studded 34, chain 35, plate 36, reinforced 37, scale 38 (enum order, not weight order)", "ref": "OpenDAoC-OpenDAoC-Core/GameServer/Enums/eObjectType.cs:32 to 38"},
+    {"tier": "armour slots", "values": "head, hands, feet, torso, legs, arms", "ref": "OpenDAoC-OpenDAoC-Core/GameServer/Enums/eArmorSlot.cs"},
+    {"tier": "shown in game", "values": "not in the box (item rows in the companion database)", "ref": ""}
+  ],
+  "zones": [
+    {"zone": "lava strip rows", "note": "7 zone rows with IsLava true (first at Zones.xml line 710); 8 by 8 grid on every row", "ref": "OpenDAoC-OpenDAoC-Core/GameServer/scripts/dbupdater/insert/Zones.xml"},
+    {"zone": "diving regions", "note": "27 regions with DivingEnabled; 17 with non-zero water level (for example line 139, 7970)", "ref": "OpenDAoC-OpenDAoC-Core/GameServer/scripts/dbupdater/insert/Regions.xml"},
+    {"zone": "glacier with falling ice", "note": "TuscarianGlacier folder (16 files); FallingIce cold burst of 400 damage, radius 450, scheduled by timers", "ref": "OpenDAoC-OpenDAoC-Core/GameServer/scripts/namedmobs/TuscarianGlacier/FallingIce.cs"},
+    {"zone": "crypt and spectral court", "note": "CaerSidi folder (12 files)", "ref": "OpenDAoC-OpenDAoC-Core/GameServer/scripts/namedmobs/CaerSidi/"},
+    {"zone": "dark-realm hierarchy", "note": "DarknessFalls folder (10 files)", "ref": "OpenDAoC-OpenDAoC-Core/GameServer/scripts/namedmobs/DarknessFalls/"},
+    {"zone": "primal plane", "note": "Galladoria folder (12 files)", "ref": "OpenDAoC-OpenDAoC-Core/GameServer/scripts/namedmobs/Galladoria/"},
+    {"zone": "siege, keeps, housing", "note": "scripts/siege 4 files; keeps 47 files; housing 8 files; siege object types 80 to 84", "ref": "OpenDAoC-OpenDAoC-Core/GameServer/keeps/; GameServer/housing/"}
+  ],
+  "looks": [
+    {"label": "Pulse aura broadcast", "technique": "one effect (id 152) to every player in view on a jittered timer, so the pulse reads as a heartbeat", "ref": "OpenDAoC-OpenDAoC-Core/GameServer/scripts/mobs/ShiveringPresence.cs:58"},
+    {"label": "Ambient idle effect", "technique": "constant idle effect with fixed id 5206 marks a creature with no action", "ref": "OpenDAoC-OpenDAoC-Core/GameServer/scripts/mobs/Strangler.cs:26"},
+    {"label": "Repeating pulse spell", "technique": "next tick set from a pulse frequency; one active pulse per spell type, cleared when the owner stops it", "ref": "OpenDAoC-OpenDAoC-Core/GameServer/ECS-Effects/ECSPulseEffect.cs:20, :26"},
+    {"label": "Shade model swap", "technique": "player model replaced by a shade model as a state (not a new actor)", "ref": "OpenDAoC-OpenDAoC-Core/GameServer/ECS-Effects/ShadeECSEffect.cs:26"},
+    {"label": "Timed area burst", "technique": "delayed area burst scheduled by timers; the visible tell is not in the code read", "ref": "OpenDAoC-OpenDAoC-Core/GameServer/scripts/namedmobs/TuscarianGlacier/FallingIce.cs:106, :114, :138 to 146"},
+    {"label": "Per-style animation id", "technique": "each style returns an animation id, a per-style hook", "ref": "OpenDAoC-OpenDAoC-Core/GameServer/styles/StyleProcessor.cs:288"},
+    {"label": "Material tag per armour", "technique": "material enum as the hook for a shader or texture choice", "ref": "OpenDAoC-OpenDAoC-Core/GameServer/Enums/eMaterial.cs:27 to 31"}
+  ],
+  "originals": [
+    {"name": "Ring-reach colossus", "idea": "a boss that claims space with pillars that block the line of hit", "keep": "the ring rule and the damage-type split", "change": "ring clamp replaced by pillars; serpent-coil body; ash and rust palette"},
+    {"name": "Shard-split brute", "idea": "a brute that splits at half health into smaller copies with a damage-style difference", "keep": "half-health fork; shrinking copy with floors", "change": "partial or no refill on split; the fork's damage style differs"},
+    {"name": "Four-warden council", "idea": "four bound wardens on fixed anchors, plus healers, in staggered rounds", "keep": "one anchor per element; healers", "change": "staggered rounds; a ground hazard per warden"},
+    {"name": "Fairy-warden reset", "idea": "adds that appear only while the boss is hurt, cleared on a reset", "keep": "adds only while hurt; clean reset", "change": "adds spawn only in view; reset as a visible beat"},
+    {"name": "Pale shiver aura", "idea": "a single visual pulse to all nearby on a jittered gap", "keep": "single broadcast; jitter", "change": "rising hum and violet frost ring; pulse tied to stance"},
+    {"name": "Dusk and tide rosters", "idea": "one brain with two rosters swapped by a world clock", "keep": "one brain; two rosters; one clock", "change": "tide or weather clock; rosters with different silhouettes"},
+    {"name": "Stationary type-dial machine", "idea": "a boss that never moves and resists by damage type", "keep": "split resist table; no walking", "change": "readable dial in the HUD; visible vents"},
+    {"name": "Positional chain strike", "idea": "a style chain with front, side and back windows and a counter-style after a block, evade or parry", "keep": "window angles; counter after block; chain opener", "change": "window angles per weapon family; chain timing; guard the growth-rate divisor first"}
+  ],
+  "licence_note": "Code: GNU GPL v3 per LICENSE and README.md:41. Conflict in the files: root gpl.txt is GPL v2 text (gpl.txt:2) and the source header says version 2 or any later version (gplheader.txt:6); the files do not settle which applies. Data files: no separate licence; they inherit the repo licence by default. Rights-holder status of the DAoC game data: unknown; README.md:6 says the project emulates DAoC servers and was once a fork of DOLSharp.",
+  "not_read": [
+    "client half (DAoC game files) and companion database OpenDAoC-Database (not in box)",
+    "named-mob scripts beyond about 10 read in part (about 190 not opened)",
+    "scripts/mobs: 58 of 62 files not opened",
+    "player class mechanics beyond the specialisation line and title rule",
+    "realmabilities (157 files), spells (198 files), most ECS effects (2 read), behaviour framework (folder names only), ai/brain (names only)",
+    "zone and region rows beyond aggregated fields; StartupLocation counted only",
+    "locale files: key and line counts only, nothing quoted",
+    "realmabilities_atlasOF xlsx (3), Pathing/Detour zone078.nav, swagger bundles, icon.ico",
+    "siege, keeps, housing and relics: named and counted only",
+    "death and respawn presentation; boss intro and finisher staging; readability at 375 wide"
+  ]
+}

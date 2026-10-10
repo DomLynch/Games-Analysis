@@ -1,0 +1,179 @@
+{
+  "donor": "smogon-pokemon-showdown",
+  "counts": {
+    "creatures": 1518,
+    "classes": 10,
+    "weapons": 0,
+    "gear_sets": 583,
+    "zones": 0
+  },
+  "creature_families": [
+    "Keyed species and form entries in data/pokedex.ts: 1518 top-level keys, 397 lines with a baseSpecies pointer (forms), 92 Mega-style forme lines, 34 with a single extra-form flag.",
+    "Legendary-style tier tags (data/tags.ts): Sub-Legendary 46, Restricted 27, Mythical 26, Paradox 16, Ultra Beast 11 (grep counts over tags arrays).",
+    "Element families from data/typechart.ts line 1: 18 types plus Stellar (19 keys). Most common by one parse: Water, Grass, Normal, Flying.",
+    "Base-stat totals (one parse, approximate): under 300 about 161; 300-399 about 300; 400-499 about 421; 500-599 about 406; 600-699 about 146; 700 and up about 47; one entry above 1100.",
+    "Level per species in random-battle sets: 64 to 100 (data/random-battles/gen9/sets.json, 509 species keys)."
+  ],
+  "top_creatures": [
+    {
+      "label": "Temper Titan (top-tier phase)",
+      "why": "A separate entry with a stat total far above the rest of the table (about 1125; HP 255, defence 250). One form dwarfs the roster.",
+      "keep": "A temporary top-tier phase stored as its own data entry with a pointer to the base creature.",
+      "change": "Our phase starts at a HP threshold, lasts a fixed turn count, and has a ground-shake tell. It is never an unobtainable permanent entry.",
+      "ref": "/mnt/frankendom-donors/smogon-pokemon-showdown/data/pokedex.ts:17252-17264"
+    },
+    {
+      "label": "Variant-form swap",
+      "why": "Each base creature can have a variant entry with its own stats and a forme tag (92 lines). The transformation is one table entry.",
+      "keep": "Form as an entry plus a base pointer.",
+      "change": "Swap is a state change in the middle of a fight, once per fight, and costs a turn.",
+      "ref": "/mnt/frankendom-donors/smogon-pokemon-showdown/data/pokedex.ts:51"
+    },
+    {
+      "label": "Single-field extra form",
+      "why": "One field on the base entry unlocks an extra visual form and a signature move (34 entries).",
+      "keep": "One flag gives a form.",
+      "change": "Our flag is a fight-meter threshold and the signature is a ground slam.",
+      "ref": "/mnt/frankendom-donors/smogon-pokemon-showdown/data/pokedex.ts:45"
+    },
+    {
+      "label": "Sub-tier badge",
+      "why": "46 species carry one tier tag that drives filters and presentation.",
+      "keep": "Tier as a tag on the species.",
+      "change": "Tier sets spawn cap and reward in zone data (rows 23 and 18), with our own labels.",
+      "ref": "/mnt/frankendom-donors/smogon-pokemon-showdown/data/tags.ts:42"
+    },
+    {
+      "label": "Void family",
+      "why": "11 entries share one group tag, a small alien-looking family with its own tier.",
+      "keep": "A group tag for a small family.",
+      "change": "Our void family, own silhouette and palette.",
+      "ref": "/mnt/frankendom-donors/smogon-pokemon-showdown/data/pokedex.ts:15302; /mnt/frankendom-donors/smogon-pokemon-showdown/data/tags.ts:50"
+    },
+    {
+      "label": "Past and future pair",
+      "why": "16 entries share a family and differ by era tag (Paradox tag at data/pokedex.ts 18869 and 18882).",
+      "keep": "A pair that shares a family.",
+      "change": "One creature with two modes picked at engage, one use per duel.",
+      "ref": "/mnt/frankendom-donors/smogon-pokemon-showdown/data/pokedex.ts:18869"
+    },
+    {
+      "label": "Role card per creature",
+      "why": "Each species has 1 to 3 role cards with a move pool (10 roles, 879 role entries). A creature's behaviour is a short list of named stances.",
+      "keep": "Role lists per creature.",
+      "change": "Our stance names, shown as a telegraph before the stance changes (rows 2 and 7).",
+      "ref": "/mnt/frankendom-donors/smogon-pokemon-showdown/data/random-battles/gen9/sets.json:6"
+    },
+    {
+      "label": "One item, one forme",
+      "why": "A held item maps one base species to one variant forme through a single table.",
+      "keep": "The item-to-forme table.",
+      "change": "A gear socket with a charge rather than a permanent swap.",
+      "ref": "/mnt/frankendom-donors/smogon-pokemon-showdown/data/items.ts:25"
+    }
+  ],
+  "classes": [
+    "No classes, races or factions in the box. Nearest analogue, battle roles (10): Bulky Attacker 134, Fast Attacker 133, Setup Sweeper 128, Bulky Setup 118, Bulky Support 109, Wallbreaker 83, Fast Support 58, Fast Bulky Setup 43, Tera Blast user 38, AV Pivot 35 (role name picks the move pool; ref data/random-battles/gen9/sets.json:6).",
+    "Element matchup table: one damage-taken table per defending type (data/typechart.ts:1); fixed, no progression."
+  ],
+  "weapon_families": [],
+  "gear_tiers": [
+    "No weapon table and no power ladder. Items are grouped by purpose: Mega-stone-style 93 (data/items.ts megaStone field), Z-crystal-style 35 (zMove field), plate 34 (onPlate), memory 17 (onMemory), drive 4 (onDrive), berry 77 (isBerry), poke ball 28 (isPokeball). 282 items carry a fling field.",
+    "No rarity, set bonus or visual tier found in the box. Art is in the client repo, which is not in the box."
+  ],
+  "zones": [
+    "No maps, biomes or dungeons in the box.",
+    "Rule overlays (data/mods/, 47 folders) are the nearest structure: one folder overrides scripts and conditions over a shared base.",
+    "Random-battle format folders (data/random-battles/, 20 folders, gen1 to gen9 plus themed sets).",
+    "Random-roulette overlay picks a generation at battle start (data/mods/randomroulette/scripts.ts:9).",
+    "Monkey's Paw overlay: status timer rolled between a minimum and 6 unless a luck flag is set (data/mods/monkeyspaw/conditions.ts:3 and :18)."
+  ],
+  "looks": [
+    {
+      "label": "Variant form as data",
+      "technique": "Separate entry with a base pointer; art lives in the client repo (not in box).",
+      "ref": "/mnt/frankendom-donors/smogon-pokemon-showdown/data/pokedex.ts:51"
+    },
+    {
+      "label": "Form flag on base entry",
+      "technique": "One field on the base entry switches to an extra form.",
+      "ref": "/mnt/frankendom-donors/smogon-pokemon-showdown/data/pokedex.ts:45"
+    },
+    {
+      "label": "Battle text placeholders",
+      "technique": "Bracket placeholders with grammar modifiers; one template per message, so the log restyles per language without logic changes.",
+      "ref": "/mnt/frankendom-donors/smogon-pokemon-showdown/data/text/README.md:38"
+    },
+    {
+      "label": "Element tint from one table",
+      "technique": "One damage-taken table per type; a tint per type is one lookup.",
+      "ref": "/mnt/frankendom-donors/smogon-pokemon-showdown/data/typechart.ts:1"
+    },
+    {
+      "label": "Charge socket",
+      "technique": "Item-to-form map; no per-creature code.",
+      "ref": "/mnt/frankendom-donors/smogon-pokemon-showdown/data/items.ts:25"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Temper Titan",
+      "idea": "A boss enters a temporary maximum-stat phase at a HP threshold, with a ground-shake tell.",
+      "keep": "Separate form entry with a base pointer; the stat ceiling.",
+      "change": "Fixed turn count; fight-only form, never a permanent entry."
+    },
+    {
+      "name": "Two-Era Twin",
+      "idea": "One fighter with two modes sharing a body, chosen once at engage.",
+      "keep": "The paired family tag.",
+      "change": "Silhouettes that differ at 375 px; one use per duel."
+    },
+    {
+      "name": "Stone Socket",
+      "idea": "A held gear socket where one item unlocks one form for the fight.",
+      "keep": "The item-to-form map.",
+      "change": "A charge cost and a visible socket in the gear dressing."
+    },
+    {
+      "name": "Duel Tie Shuffle",
+      "idea": "Action queue sorted by order, then priority, then speed, with a seeded random tie among equal actions.",
+      "keep": "The sort order and the seeded tie.",
+      "change": "Tie keyed to a latency bucket, shown as a tell in the fight replay."
+    },
+    {
+      "name": "Narrow Damage Band",
+      "idea": "A random band from 85 to 100 percent, applied after crit and before type.",
+      "keep": "The order of steps and the narrow band.",
+      "change": "Band per weapon class; a faint bar on the hit impact instead of a hidden roll."
+    },
+    {
+      "name": "Role Card Boss",
+      "idea": "Each enemy has two to three named stance cards chosen at spawn.",
+      "keep": "The role list per creature.",
+      "change": "Our own stance names, shown as a telegraph before the stance changes."
+    },
+    {
+      "name": "Tier Badge Spawns",
+      "idea": "A tier tag controls spawn cap and grace timer in zone data.",
+      "keep": "The tag-to-tier mapping.",
+      "change": "Our tier names and numbers (row 23)."
+    },
+    {
+      "name": "Fixed-point Modifier Stack",
+      "idea": "Named multipliers in integer steps with one rounding per step, in a fixed event order.",
+      "keep": "Integer maths and one rounding per step.",
+      "change": "1000ths scale and a cap of three entries for the 375 px readout (row 18)."
+    }
+  ],
+  "licence_note": "Code: MIT, LICENSE line 1 'The MIT License (MIT)', copyright line 3. Species names, stats, move and item names and text: no licence in the box; text README says 'official where possible' and cites PokeAPI for translations (PokeAPI licence not in box). Class C: shape and mood only, never names or copied data. MIT code may be adapted with the notice kept.",
+  "not_read": [
+    "Server half (folder names only).",
+    "Client repo (linked in README, absent from box): no sprites, sound, shaders or camera code.",
+    "sim/dex-conditions.ts and most of data/conditions.ts (names only).",
+    "Translation bodies in data/text/*/ and translations/*/ (folder counts only).",
+    "Random-battle set bodies beyond the first entries and role counts.",
+    "Learnset and move bodies.",
+    "Mod folders other than monkeyspaw, randomroulette and sharingiscaring (biomechmons and passiveaggressive by folder listing only).",
+    "config/ and databases/ (names only)."
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "donor": "xrip-uo-client",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "counts_note": "All counts are 0 by absence: the box holds client code and headers only, no creature, class, item, gear or zone rows (README line 403: no MUL game data distributed). Terrain and hazard tags are listed under zones but are not zone archetypes (30 tile flags, include/uo/tiledata.h lines 30-60).",
+  "half_read": "client (include/uo headers for the MUL formats, src/render Renderer.cpp, Minimap.cpp, RadarColors.cpp loader, src/mul loader names, README rendering sections). Server half external and not in the box. Data half (MUL art, anim, hues, tiledata, radar colours, map files) not in the box.",
+  "restricted": "_RESTRICTED-NOTE.txt line 1: rebuilt from decompilation of the original client; study shape and idea only; never copy code, constants or text. Category-level ideas only.",
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [],
+  "weapon_families": [],
+  "gear_tiers": [
+    {"tier": "dye ramp on a greyscale body", "detail": "a whole sprite is remapped through a fixed-length ramp indexed by one channel of each source pixel", "ref": "/mnt/frankendom-donors/xrip-uo-client/include/uo/hues.h:17"},
+    {"tier": "equipment layers over the body", "detail": "equipment drawn over the body at the same action and frame", "ref": "/mnt/frankendom-donors/xrip-uo-client/README.md:354"}
+  ],
+  "zones": [
+    {"zone": "no zone archetypes in the box", "detail": "map data is Britannia map 0 only and the map files are not present", "ref": "/mnt/frankendom-donors/xrip-uo-client/README.md:410, 592"},
+    {"zone": "tag: damaging", "detail": "terrain hazard flag, by name", "ref": "/mnt/frankendom-donors/xrip-uo-client/include/uo/tiledata.h:35"},
+    {"zone": "tag: animated", "detail": "animated tiles such as traps, ovens and piers", "ref": "/mnt/frankendom-donors/xrip-uo-client/include/uo/tiledata.h:52"},
+    {"zone": "tag: roof", "detail": "roof and canopy pieces; roofs also cut light", "ref": "/mnt/frankendom-donors/xrip-uo-client/include/uo/tiledata.h:57; src/render/Renderer.cpp:258-274"},
+    {"zone": "tag: foliage", "detail": "leaf canopy drawn last so the crown sits over the trunk", "ref": "/mnt/frankendom-donors/xrip-uo-client/include/uo/tiledata.h:23"},
+    {"zone": "tag: sloped ground", "detail": "sloped tiles stretched across four corners with a separate texture source", "ref": "/mnt/frankendom-donors/xrip-uo-client/src/render/Renderer.cpp:61; README.md:348"}
+  ],
+  "looks": [
+    {"label": "light pool", "technique": "per-pixel darkness map seeded from the ambient level; each light carves a soft radial pool with quadratic falloff and a colour weight per light class; composite darkens each channel by the map", "ref": "/mnt/frankendom-donors/xrip-uo-client/src/render/Renderer.cpp:706-770; README.md:363-364"},
+    {"label": "carried light pool", "technique": "a carried torch or lantern casts a moving pool", "ref": "/mnt/frankendom-donors/xrip-uo-client/src/render/Renderer.cpp:504-505; README.md:365"},
+    {"label": "roof cut", "technique": "a light is cancelled when a wall, impassable or roof static sits above it in the diagonal cell", "ref": "/mnt/frankendom-donors/xrip-uo-client/src/render/Renderer.cpp:258-274"},
+    {"label": "dye ramp", "technique": "one channel of each source pixel indexes a fixed-length ramp for whole-sprite recolour", "ref": "/mnt/frankendom-donors/xrip-uo-client/include/uo/hues.h:17"},
+    {"label": "target cue on every layer", "technique": "one highlight hue applied to every draw entry of the targeted mobile, equipment included", "ref": "/mnt/frankendom-donors/xrip-uo-client/src/render/Renderer.cpp:22, 497, 519"},
+    {"label": "shared-phase statics", "technique": "one frame phase per static graphic id; every object of that graphic shares it", "ref": "/mnt/frankendom-donors/xrip-uo-client/include/uo/animdata.h:9-10; README.md:362"},
+    {"label": "walk cadence with sub-cell slide", "technique": "body animation runs in step with a sub-cell slide; local avatar stays centred and the world scrolls", "ref": "/mnt/frankendom-donors/xrip-uo-client/README.md:356; include/uo/animinfo.h:9-11"},
+    {"label": "minimap route panel", "technique": "panel rotated to the world projection, route polyline and goal marker, redraw skipped when the signature is unchanged", "ref": "/mnt/frankendom-donors/xrip-uo-client/src/render/Minimap.cpp:118-135"}
+  ],
+  "originals": [
+    {"name": "Hearth light pools", "idea": "Soft radial light pools with a colour weight per light class over a darkness map, with a roof cut so interiors stay dark from outside (row 16 colour grade, zone ambience).", "keep": "radial pool per light; colour weight per light class; roof cut", "change": "computed in our fragment shader, not per pixel on the CPU; our own palette; the cut uses a zone interior flag instead of tile heights"},
+    {"name": "Shared-phase brazier", "idea": "Every instance of one prop kind moves in one phase, so a row of braziers moves together (zone props; nearest parity row is 16 colour grade and zone ambience).", "keep": "one phase per prop kind", "change": "each zone sets its own phase offset so neighbouring zones do not sync"},
+    {"name": "Dye-ramp gear tiers", "idea": "One greyscale body with a fixed ramp per dye, chosen by one channel (row 15 gear dressing).", "keep": "one body; ramp chosen by one channel", "change": "a rarity palette in the shader, plus an accent ring so colour is never the only tier cue"},
+    {"name": "Target rim pulse", "idea": "One cue on every layer of the target, equipment included (rows 11 fight camera and 14 HUD).", "keep": "one cue on every layer", "change": "an outline rim with a slow pulse, in a colour that never matches blood or the hit flash"},
+    {"name": "Route radar panel", "idea": "A panel rotated to the world projection with the route and a goal marker, redrawn only when the route or player moves (row 14 HUD).", "keep": "rotated to the world projection; route; goal marker; redraw on signature change", "change": "fog-of-war reveal from zone geometry; touch corner toggle"},
+    {"name": "Hazard tile tags", "idea": "A per-tile tag set for damaging, roof, surface and animated tiles (row 23 zone population).", "keep": "per-tile tags for hazard, roof, surface and animated tiles", "change": "named zone fields rather than bit flags; a trap telegraph before the hazard fires"}
+  ],
+  "licence_note": "Custom non-commercial MIT-style licence (LICENSE line 4 permits non-commercial use; line 11 bars commercial use or monetisation without written permission). Author name spelled two ways across LICENSE line 1 and README line 618-619 (recorded as-is). No assets shipped (README line 403). RESTRICTED per _RESTRICTED-NOTE.txt line 1: shape and idea only, category level.",
+  "not_read": [
+    "pol_packets.md (151 KB; size only), BT.md, bot-client.md, JS-BIBLE.md, AGENTS.md beyond line 1",
+    "AGENTS.md line 1 holds a directive about reply language: donor text, treated as data, ignored",
+    "src/mul loaders (ArtLoader, AnimLoader, AnimDataLoader, TileDataLoader, HuesLoader, Map, World, Verdata, TexmapLoader): names only",
+    "src/render/Minimap.cpp beyond lines 11-135; RadarColors.cpp loader only (table not in the box)",
+    "include/uo/tiledata.h beyond the flag block; anim.h, art.h, map.h, world.h not opened",
+    "src/navigation, src/bot, src/js, src/net, src/client: not read (out of catalogue scope)",
+    "scripts/js/* (bot automation; out of catalogue scope), tests/*, .idea/*",
+    "include/win32/MiniFB.h beyond the header; no licence line in its first six lines",
+    "server half: external, not in the box",
+    "data half (MUL art, anim, hues, tiledata, radar colours, map files): not in the box"
+  ]
+}

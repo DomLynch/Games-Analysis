@@ -1,0 +1,163 @@
+{
+  "donor": "esponges-daoc-web",
+  "counts": {
+    "creatures": "4 kinds in the spawn file (19 placed individuals in one zone); install figure count is 633 (census, not in box)",
+    "classes": 0,
+    "weapons": "2 (one-handed hammer, shield; bare hands not counted)",
+    "gear_sets": 3,
+    "zones": "486 declared, all types (172 outdoor, 4 city, 291 dungeon, 19 other; census)"
+  },
+  "creature_families": [
+    "large pack hunter (aggro, pack assist, leash)",
+    "small pack hunter (fights back only, joins packmates)",
+    "burrowing mammal (low silhouette, skips a mislabeled back clip)",
+    "village folk (non-aggressive, fights when struck)"
+  ],
+  "top_creatures": [
+    {
+      "label": "Large pack hunter",
+      "why": "One hit pulls the whole group and aggro gives a distant pull; a group that moves as one reads at 375 wide.",
+      "keep": "Group-scoped assist inside a set distance; leash-home with heal.",
+      "change": "Our own silhouette and species; assist radius as zone data; our own pack cue.",
+      "ref": "/mnt/frankendom-donors/esponges-daoc-web/web/combat.js:158; /mnt/frankendom-donors/esponges-daoc-web/web/combat.js:264; /mnt/frankendom-donors/esponges-daoc-web/web/spawns/zone100.json:5-6"
+    },
+    {
+      "label": "Small pack hunter",
+      "why": "A lighter pack member that never starts a fight but joins when a packmate is hit.",
+      "keep": "Pack join when a packmate is struck.",
+      "change": "Skittish, flees at low health, rather than a second fighter.",
+      "ref": "/mnt/frankendom-donors/esponges-daoc-web/web/spawns/zone100.json:7-8"
+    },
+    {
+      "label": "Burrowing mammal",
+      "why": "Low profile that stays readable on the ground; the README records a mislabeled back clip column, a lesson to validate table columns against clips.",
+      "keep": "Low silhouette and idle range.",
+      "change": "Species, gait and sound.",
+      "ref": "/mnt/frankendom-donors/esponges-daoc-web/web/spawns/zone100.json:9-10; /mnt/frankendom-donors/esponges-daoc-web/README.md (Stepping back and sideways, line 1098)"
+    },
+    {
+      "label": "Village folk",
+      "why": "Townsfolk that become fighters only when struck, nine of them in two groups.",
+      "keep": "Fight-back-only rule.",
+      "change": "Our townsfolk and their idle habits.",
+      "ref": "/mnt/frankendom-donors/esponges-daoc-web/web/spawns/zone100.json:11-13; /mnt/frankendom-donors/esponges-daoc-web/web/combat.js:259"
+    }
+  ],
+  "classes": [],
+  "weapon_families": [
+    "one-handed hammer (harder hit, slower swing than bare hands)",
+    "bare hands (lighter, faster)",
+    "shield (front-arc block, upper-body block clip)"
+  ],
+  "gear_tiers": [
+    "body tiers 1-5, cloth to plate, with outline change per tier",
+    "legs 1-4, boots 1-5, gloves 1-3, ten heads",
+    "shape and material chosen as a pair; last tier is plate",
+    "material categories: cloth, leather, studded, scale, chain, plate (162 plate and 111 chain textures in the skin archives)",
+    "no metallic, gold or glow shader found in web/"
+  ],
+  "zones": [
+    "outdoor, city, dungeon and other zone types (486 declared; 172 outdoor, 4 city, 291 dungeon, 19 other per census)",
+    "biomes from grass table: meadow, scrub, tall grass with flowers, waterside plants, reeds, rocks, ferns, pine saplings, snow, lake shore, village square",
+    "dungeon archetype: room and corridor piece library (1386 declared, census)",
+    "hazards: no damage terrain; lake water avoided by spawns; leash bounds chasing"
+  ],
+  "looks": [
+    {
+      "label": "Flame card",
+      "technique": "Crossed flat cards, additive halo, flame texture scrolled on the clock, per-copy phase from position.",
+      "ref": "/mnt/frankendom-donors/esponges-daoc-web/web/props.js:78; /mnt/frankendom-donors/esponges-daoc-web/README.md (Scenery, lines 647-669)"
+    },
+    {
+      "label": "Breathing glow",
+      "technique": "Glow billboard scale keys pulse over one second and loop, per-copy phase.",
+      "ref": "/mnt/frankendom-donors/esponges-daoc-web/web/props.js:69"
+    },
+    {
+      "label": "Clock-reborn slot particles",
+      "technique": "Fixed slots reborn on a clock with a hash for position and direction; the vertex shader places every particle, no simulation.",
+      "ref": "/mnt/frankendom-donors/esponges-daoc-web/web/particles.js:74-75"
+    },
+    {
+      "label": "Screen-authored smoke",
+      "technique": "Blended smoke drawn at eight times its file opacity so it reads on screen.",
+      "ref": "/mnt/frankendom-donors/esponges-daoc-web/web/particles.js:151; /mnt/frankendom-donors/esponges-daoc-web/README.md (line 696)"
+    },
+    {
+      "label": "Glows after solids",
+      "technique": "Additive glow cards drawn after solid scenery, depth-tested but not writing depth.",
+      "ref": "/mnt/frankendom-donors/esponges-daoc-web/README.md (Scenery, line 647 onward)"
+    },
+    {
+      "label": "Grass with alpha-to-coverage and sway",
+      "technique": "Cell-seeded plant generator, alpha-to-coverage edges, tip sway, fade over the last part of the draw range.",
+      "ref": "/mnt/frankendom-donors/esponges-daoc-web/web/grass.js:19; /mnt/frankendom-donors/esponges-daoc-web/README.md (Grass, lines 414-462)"
+    },
+    {
+      "label": "Threat-coloured target ring",
+      "technique": "Ring colour states selected versus in a fight, readable at small width.",
+      "ref": "/mnt/frankendom-donors/esponges-daoc-web/web/viewer.js:1086"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Ember camp",
+      "idea": "Crossed additive flame cards on a clock with a per-copy phase, so a row of braziers never flickers in step.",
+      "keep": "Crossed additive cards, clock scroll, per-copy phase.",
+      "change": "Ember palette, split-tongue silhouette, our own halo colour."
+    },
+    {
+      "name": "Pack pull",
+      "idea": "A hit on one pack hunter assists its group inside a set distance; a chaser walks home and heals past a leash.",
+      "keep": "Group-scoped assist and leash (parity row 4; row 23 spawn groups).",
+      "change": "Assist radius as zone data; our own pack cue; no villager fight."
+    },
+    {
+      "name": "Corpse then return",
+      "idea": "Staged timers: the body lies, vanishes, then the spawn returns at home after a second timer.",
+      "keep": "Two timers (parity row 17 death and respawn).",
+      "change": "The second timer becomes a grace period tied to the zone despawn rule (row 23)."
+    },
+    {
+      "name": "Facing shield",
+      "idea": "A block that works only against blows from the front arc, on the upper body only, so the legs keep moving.",
+      "keep": "Front-arc gate and upper-body layer (parity row 3; row 6).",
+      "change": "A stamina cost instead of a flat chance."
+    },
+    {
+      "name": "Tiered silhouette armour",
+      "idea": "Five body tiers whose outline changes, with a per-slot coverage check.",
+      "keep": "Shape and material chosen together (parity row 15 gear dressing).",
+      "change": "Our tier names and outlines."
+    },
+    {
+      "name": "Density-steered scatter",
+      "idea": "A biome table of plant families plus a density map that keeps plants off snow and roads, cell-seeded.",
+      "keep": "Density map and seeded cells.",
+      "change": "Our wetness rule and plant families."
+    },
+    {
+      "name": "Authored-for-screen smoke",
+      "idea": "Write particle alpha for the screen, not for the data.",
+      "keep": "The boost idea (parity row 16 colour grade and quality).",
+      "change": "Our particle set and boost factor."
+    },
+    {
+      "name": "Threat ring",
+      "idea": "A target ring whose colour states selected or in a fight, readable at 375 wide.",
+      "keep": "Colour carries state (parity row 14 HUD).",
+      "change": "Our palette and ring shape."
+    }
+  ],
+  "licence_note": "Code MIT (repo LICENSE; README Licensing). Game assets are copyright per README and are not in the repo (no game data in repo). Spawn file is repo MIT with project-authored placements (zone100.json line 2). Asset class C: category-level inspiration only.",
+  "not_read": [
+    "Install data pack not in box: zones/, figures/, anims/, items/, gamedata.mpk, monsters.csv, monnifs.csv, anims.csv, animnifs.csv, skins.csv, items.csv, pskins.csv (named in README only)",
+    "Server half: none in repo (README line 1228)",
+    "web/sky.js, web/lighting.js, web/character.js, web/animator.js: names only",
+    "web/index.html and *.test.mjs: not read",
+    "cmd/* and internal/* Go sources: names only",
+    "docs/census/census.json (59 KB): not opened; docs/census/README.md read at summary and zones tables only",
+    "README not read: lines 60-152 (running and verifying), 200-385 (file formats), 470-592 (NIF models), 812-936 (animation), 1141-1216 (Known limitations)",
+    "No audio code in web/ (no sound or music file names in the listing)"
+  ]
+}

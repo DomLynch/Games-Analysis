@@ -1,0 +1,198 @@
+{
+  "donor": "kcopelandmgmt-Shadowbane",
+  "counts": {
+    "creatures": 0,
+    "classes": 4,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "count_notes": {
+    "creatures": "0 creature records in the box (mob data is in the database, not read). 35 monster tags (Enum.java lines 80-118), 31 mob behaviour types (lines 2823-2878).",
+    "classes": "4 base classes (ClassType, Enum.java line 1449). Also 23 promotion-shrine class names (ShrineType, lines 1492-1572) and 26 race rows over 14 race families (RaceType, lines 126-205).",
+    "weapons": "0 weapon records. ItemType has one WEAPON value (Enum.java lines 567-575). Weapon-side modifiers are in ModType.",
+    "gear_sets": "0 set records. 68 modifier kinds (ModType, lines 1173-1257). Gear is typed modifiers, not tiers.",
+    "zones": "0 zone records. Zone shape only (Zone.java). Vocabularies: 8 named ruins (Enum.java 430-484), 6 guard post kinds (485-540), 9 portal kinds (541-566), 21 spire types (630-697), 34 shrine kinds (1492-1572), 36 minion kinds (2643-2714)."
+  },
+  "creature_families": [
+    "Monster tags (MonsterType, Enum.java lines 80-118, 35 tags): Aelfborn, All, Animal, Aracoix, Celestial, Centaur, Construct, CSR, Dragon, Dwarf, Elf, Giant, Goblin, Grave, HalfGiant, Human, Infernal, Insect, Irekei, Minotaur, Monster, NecroPet, NPC, Pet, Plant, Rat, Reptile, Shade, Siege, Summoned, Troll, Undead, Nephilim, Vampire, SiegeEngineer. Tags only; stats are database rows, not read.",
+    "Mob behaviour types (MobBehaviourType, Enum.java lines 2823-2878, 31 types): five flags each (wimpy, aggressive, can roam, calls for help, responds to a call) plus a helper type. Bases: Power, Aggro, Spell; variants Helpee, Wimpy, Grouper, Epic. Independent: SimpleStandingGuard, Pet1, Simple, Helpee, HelpeeWimpy, GuardCaptain, GuardMinion, GuardWallArcher, Wanderer, HamletGuard, AggroWanderer.",
+    "Escalation with level: not in the box. Zone level band (Zone.java lines 49-50) and DB level data are not read."
+  ],
+  "top_creatures": [
+    {
+      "label": "Pack-call guardian",
+      "why": "A mob in combat calls same-type pack mobs in its zone, and they take its target. As written the call never starts (see defect 1).",
+      "keep": "Only same-type mobs answer; the responders take the caller's target; a cooldown after a response.",
+      "change": "Responders need a radius and line-of-sight check (MobAI.java line 567 has none); fix the cooldown check; log the call to the zone, not the chat.",
+      "ref": "/mnt/frankendom-donors/kcopelandmgmt-Shadowbane/src/engine/mobileAI/MobAI.java lines 99, 554-576"
+    },
+    {
+      "label": "Race-scaled humanoid",
+      "why": "The same humanoid reads at different sizes by race: Elf male 1.4, Dwarf male 0.8, CSR female 0.66.",
+      "keep": "A size per race row and a size per sex.",
+      "change": "Our scale range is fixed for 375-wide readability.",
+      "ref": "/mnt/frankendom-donors/kcopelandmgmt-Shadowbane/src/engine/Enum.java lines 126-205 (ELFMALE line 137); PlayerCharacter.java line 5393"
+    },
+    {
+      "label": "Fast brute",
+      "why": "A heavy creature whose speed row (MINOTAUR, first two values 6.63 and 15.95) is above the standard row (6.19 and 13.97).",
+      "keep": "A speed row per body type.",
+      "change": "Our brute gets a readable wind-up, not only speed.",
+      "ref": "/mnt/frankendom-donors/kcopelandmgmt-Shadowbane/src/engine/Enum.java lines 206-258"
+    },
+    {
+      "label": "Leader-follower guard",
+      "why": "Guard minions declare a captain type as their helper type, so a captain and its followers are one unit.",
+      "keep": "The follower is declared by its leader type.",
+      "change": "The follow and target rule is ours (the code was not read).",
+      "ref": "/mnt/frankendom-donors/kcopelandmgmt-Shadowbane/src/engine/Enum.java lines 2823-2878 (GuardMinion), 2643-2714 (MinionType)"
+    },
+    {
+      "label": "Wall archer",
+      "why": "A static ranged post that does not roam but is aggressive (GuardWallArcher: can roam false, aggressive true).",
+      "keep": "A post that never moves and shoots.",
+      "change": "Its line of fire is drawn on the ground so a phone player can read it.",
+      "ref": "/mnt/frankendom-donors/kcopelandmgmt-Shadowbane/src/engine/Enum.java lines 2823-2878"
+    },
+    {
+      "label": "Wimpy support",
+      "why": "A wimpy mob skips the attack step, so it is a support role (MobAI.java line 1153).",
+      "keep": "A no-attack helper role.",
+      "change": "Our support gives a heal or buff, not only a call.",
+      "ref": "/mnt/frankendom-donors/kcopelandmgmt-Shadowbane/src/engine/mobileAI/MobAI.java line 1153"
+    },
+    {
+      "label": "Epic caster that answers calls",
+      "why": "SpellAggroHelpeeEpic responds to calls and is a caster; it joins a pack fight when called.",
+      "keep": "Caster plus responder as one type.",
+      "change": "The response is a cast with a windup and a sound.",
+      "ref": "/mnt/frankendom-donors/kcopelandmgmt-Shadowbane/src/engine/Enum.java lines 2823-2878"
+    },
+    {
+      "label": "Shade (tag only)",
+      "why": "A shadow-kin tag used for race rows (SHADEMALE and SHADEFEMALE, scale 1). Tag only; no stats or looks were read.",
+      "keep": "The tag as a faction label.",
+      "change": "Our shade look is our own design, not a copy of any look.",
+      "ref": "/mnt/frankendom-donors/kcopelandmgmt-Shadowbane/src/engine/Enum.java lines 126-205, 80-118"
+    }
+  ],
+  "classes": [
+    "Base classes: FIGHTER, HEALER, ROGUE, MAGE (ClassType, Enum.java line 1449). Four roles.",
+    "Promotion classes: DB rows with name, description, token, and health, mana and stamina multipliers (PromotionClass.java lines 87-92). Progression is by promotion.",
+    "Promotion-shrine class names (ShrineType, lines 1492-1572, 23 classes): Assassin, Barbarian, Bard, Channeler, Confessor, Crusader, Doomsayer, Druid, Fury, Huntress, Prelate, Priest, Ranger, Scout, Sentinel, Templar, Thief, Warlock, Warrior, Wizard, Nightstalker, Necromancer, Vampire. Titles only.",
+    "Races: 14 families, 26 rows (RaceType, lines 126-205): Aelfborn, Aracoix, Centaur, Dwarf, Elf, Half-giant (male, old male, female), Human, Irekei, Minotaur, Nephilim, Shade, Archon (Celestial), CSR, Vampire. Each row has a rune id, a monster-tag group, a run-speed group, a sex and a scale.",
+    "Shrine kinds: 11 race shrines and 23 class shrines (ShrineType, lines 1492-1572).",
+    "Factions: cities and realms (Zone.java line 57 isPlayerCity; Realm.java and Nation.java present, not read). Guild types at Enum.java line 2320 onward, not read."
+  ],
+  "weapon_families": [
+    "No weapon records in the box. ItemType WEAPON is one value (Enum.java lines 567-575).",
+    "Weapon-side modifiers (ModType, lines 1173-1257): WeaponProc, WeaponRange, WeaponSpeed, ArmorPiercing, Slay, Ambidexterity, ConstrainedAmbidexterity, AttackDelay, BladeTrails (line 1182), MinDamage, MaxDamage, DamageCap, ExclusiveDamageCap, IgnoreDamageCap, AdjustAboveDmgCap.",
+    "Modifier behaviour words are inferred from names; the code that applies them was not read.",
+    "Elemental flavour comes from spire types (section of zones), not from weapons.",
+    "Tiers: none in the box. Damage caps are item modifiers, not tiers."
+  ],
+  "gear_tiers": [
+    "Gear is typed modifiers (ModType, 68 kinds). The loot code adds prefix and suffix mod tables on a base item (per AU028, LootManager.java lines 138-234, not re-read).",
+    "Visual modifiers in the same enum (names only, not read): ScaleHeight, ScaleWidth, AnimOverride, Invisible, BlackMantle, BladeTrails (ModType lines 1173-1257).",
+    "Gear sets: no set records in the box. Runes (RuneBase, CharacterRune, RuneBaseEffect in objects/) present, not read.",
+    "Material looks (metal, gold, crystal): none in the box (no art)."
+  ],
+  "zones": [
+    "Zone shape (Zone.java lines 31-63, constructor line 67): parent and child zone nodes, a level band (minLvl, maxLvl, lines 49-50), a safe-zone flag, city owner, NPC-city and player-city flags (lines 56-57), altitude and sea level, map icons (Icon1-3, lines 43-45), and a hot-zone flag (line 51).",
+    "Zone kinds: sea floor is special and excluded from hot zones (ZoneManager.java line 258). Named ruins: 8 (Ruins enum, lines 430-484). Guard posts: 6 (Guards enum, 485-540; human and undead, each archer, guard and mage). Portals: 9 kinds with a 2D offset and a bit flag (PortalType, 541-566).",
+    "Siege sites: Bane (Bane.java) with a live date; phases derived from it (lines 355-365).",
+    "Hazards: no hazard data in the box. Spires (21 types, lines 630-697): most rows carry a bit flag."
+  ],
+  "looks": [
+    {
+      "label": "Siege phase clock",
+      "technique": "One timestamp derives three phases: challenge if there is no live date, war after it, standoff between (Bane.java lines 355-365). ERRANT and CEASEFIRE are defined but not referenced.",
+      "ref": "/mnt/frankendom-donors/kcopelandmgmt-Shadowbane/src/engine/objects/Bane.java lines 355-365; /mnt/frankendom-donors/kcopelandmgmt-Shadowbane/src/engine/Enum.java lines 408-415"
+    },
+    {
+      "label": "Hot zone rotation",
+      "technique": "One bonus zone at a time; set flag (ZoneManager.java line 161); eligible zones have a node list, are not sea floor, have not been hot this cycle (line 263), and meet a level floor (line 268); a reset clears the flags (lines 132-133).",
+      "ref": "/mnt/frankendom-donors/kcopelandmgmt-Shadowbane/src/engine/gameManager/ZoneManager.java lines 132-133, 154-170, 255-268"
+    },
+    {
+      "label": "Spire cap per tree rank",
+      "technique": "Maximum spires by rank: 0 for ranks 0-2, 1 for 3-4, 2 for 5-6, 3 for 7-8 (Blueprint.java lines 96-112).",
+      "ref": "/mnt/frankendom-donors/kcopelandmgmt-Shadowbane/src/engine/objects/Blueprint.java lines 89-112"
+    },
+    {
+      "label": "Spire removal on demotion",
+      "technique": "Excess spires are disabled and their rank set to -1 (Building.java lines 664-675). The comment says random; the code takes list item 0 (line 669).",
+      "ref": "/mnt/frankendom-donors/kcopelandmgmt-Shadowbane/src/engine/objects/Building.java lines 664-675"
+    },
+    {
+      "label": "Race scale on the body",
+      "technique": "A race scale multiplies a computed body scale (PlayerCharacter.java lines 5390-5394).",
+      "ref": "/mnt/frankendom-donors/kcopelandmgmt-Shadowbane/src/engine/objects/PlayerCharacter.java lines 5390-5394"
+    },
+    {
+      "label": "Corpse cleanup job",
+      "technique": "A corpse schedules a removal job at creation with a 15-minute timer (Corpse.java makeCorpse lines 88-100; MBServerStatics.java line 329).",
+      "ref": "/mnt/frankendom-donors/kcopelandmgmt-Shadowbane/src/engine/objects/Corpse.java lines 88-100; /mnt/frankendom-donors/kcopelandmgmt-Shadowbane/src/engine/server/MBServerStatics.java line 329"
+    },
+    {
+      "label": "Shrine and spire kinds as looks",
+      "technique": "Shrines (34 kinds) and spires (21 kinds) are typed rows with numeric ids and flags; their visual meaning was not read.",
+      "ref": "/mnt/frankendom-donors/kcopelandmgmt-Shadowbane/src/engine/Enum.java lines 630-697, 1492-1572"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Pack Call",
+      "idea": "A mob in combat calls same-type pack members in its zone, and they join its target.",
+      "keep": "Same-type answer and one call per cooldown.",
+      "change": "Radius and line-of-sight check; fixed cooldown; engine-owned (hate list, parity row 4)."
+    },
+    {
+      "name": "Siege Clock",
+      "idea": "One timestamp gives challenge, standoff and war phases for a zone event.",
+      "keep": "Phase derived from one time.",
+      "change": "Each phase has a rules table; the two unused phases are used or dropped."
+    },
+    {
+      "name": "Rank Cap Towers",
+      "idea": "A city rank caps the towers it may hold; demotion removes the excess.",
+      "keep": "The cap per rank and removal of the excess.",
+      "change": "The removal rule is chosen on purpose (newest or oldest) and the owner is told."
+    },
+    {
+      "name": "Rotating Bonus Zone",
+      "idea": "One bonus zone at a time, with a level floor and no repeat within a cycle.",
+      "keep": "Single zone, level floor, no repeat.",
+      "change": "Rotation runs on the server tick and feeds zone population (parity row 23)."
+    },
+    {
+      "name": "Race Scale Row",
+      "idea": "Each race row sets a size and a speed group for the body.",
+      "keep": "A row per race with scale and speed.",
+      "change": "Our hero scales are data and limited for 375-wide readability."
+    },
+    {
+      "name": "Captain and Minions",
+      "idea": "A captain with class-mixed followers (melee, archer, mage), each follower declaring its leader.",
+      "keep": "Leader-follower with a class mix.",
+      "change": "Minions take the captain's target only when it is in range."
+    }
+  ],
+  "defects": [
+    "Call for help never starts (MobAI.java lines 554-557): the stored time is set to now when zero, and line 557 returns when the stored time is below now, so the first call returns. Only a response (line 576) moves the stored time forward, and after it passes nothing resets it. Fix: return only while the cooldown runs, start at zero, set now plus 60 s on a response.",
+    "Responders have no range check (MobAI.java line 566-567 loops over the whole zone set). Fix: radius and line-of-sight check.",
+    "No null check on the zone (MobAI.java line 564). Fix: check and return.",
+    "Spire removal takes list item 0 while the comment says random (Building.java lines 669-670). Fix: pick the rule on purpose.",
+    "ERRANT and CEASEFIRE siege phases have no reference outside the enum (grep). Fix: use or drop.",
+    "Other defect reported by AU028 (not re-read): hot-zone roll bound in LootManager.java lines 266-286 can pass its cap at high level. Fix: clamp min to max before the roll."
+  ],
+  "licence_note": "Code MIT (LICENSE lines 9-11; header names the Magicbane Emulator Project 2013-2022). Keep the MIT notice if any code is adapted. Original game data and art are not in the box; rights status unknown. Shape-first; no copied code or constants.",
+  "not_read": [
+    "The other ~800 Java files (CombatManager.java, PowersManager.java, NPCManager.java beyond grep, DamageShield.java beyond listing, discord/).",
+    "Database content: not in the box.",
+    "Heraldry.java, Corpse.java beyond creation, RuneBase, CharacterRune, Guild, Realm, Nation.",
+    "Client half and data half: not in this donor. Paired donors blinkdog-ShadowbaneCacheExporter and shoff-ShadowbaneCacheViewer exist in the box; not read.",
+    "MobAI.java CheckForAggro and LootManager roll functions: cited from AU028, not re-read by me."
+  ]
+}

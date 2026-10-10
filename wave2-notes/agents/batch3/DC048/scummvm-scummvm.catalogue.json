@@ -1,0 +1,192 @@
+{
+  "donor": "scummvm-scummvm",
+  "counts": {
+    "creatures": 87,
+    "classes": 28,
+    "weapons": 21,
+    "gear_sets": 13,
+    "zones": 16
+  },
+  "count_notes": {
+    "creatures": "27 Dungeon Master creature types (engines/dm/group.h) plus 60 Ultima IV creature entries (conf/creatures.xml). MM1 monster table (195) not counted: its file is not in the box.",
+    "classes": "6 MM1 classes, 10 Xeen classes, 8 Ultima IV town class NPCs, 4 DM champion schools. Overlapping concepts across engines, not merged.",
+    "weapons": "16 Ultima IV weapon entries plus 5 DM weapon class bands.",
+    "gear_sets": "8 Ultima IV armour tiers plus 5 DM armour types.",
+    "zones": "9 Ultima IV map kinds (world, city, combat, dungeon, shrine, castle, town, village, ruins) plus 7 DM square types."
+  },
+  "creature_families": [
+    "DM creature types: 27 (ids 0-26): insect and vermin, slimes and rats, eyes, golems and rockpiles, undead, animated armour, elementals, demons, red dragon, three lord types (engines/dm/group.h lines 41-67)",
+    "Ultima IV creature table: 60 entries: 2 horse entries, town class NPCs (8), town creatures (8), water creatures (5), forces of nature (2, passive: wontattack, 255 HP), main creatures (28), non-standard entries (7) (conf/creatures.xml lines 12-80)",
+    "Ultima IV attributes: encounterSize (35 entries), leader (27), ranged (21), resists (10), movement (10), ambushes (8), swims (6), flies (5), undead (4), nochest (4), divides (at least 2)",
+    "MM1 monster table: 195 entries, loaded from monsters.txt (not in box); loader engines/mm/mm1/data/monsters.cpp line 49"
+  ],
+  "top_creatures": [
+    {
+      "label": "Splitting slime swarm",
+      "why": "Encounter of 15 with ambushes and a split-on-hit flag; reads as a moving crowd at 375 wide.",
+      "keep": "Split on hit; ambush from a tile.",
+      "change": "Our split rule (not a copy), our crowd shape and sound.",
+      "ref": "/mnt/frankendom-donors/scummvm-scummvm/devtools/create_ultima/files/ultima4/conf/creatures.xml line 48"
+    },
+    {
+      "label": "Fire-field phantom",
+      "why": "Splits, has a leader, moves onto other creatures and the party, resists fire, fires a random ranged tile.",
+      "keep": "A hazard body that walks across other bodies.",
+      "change": "Our fire look and our leader rule.",
+      "ref": "/mnt/frankendom-donors/scummvm-scummvm/devtools/create_ultima/files/ultima4/conf/creatures.xml line 80"
+    },
+    {
+      "label": "Leader-bound undead band",
+      "why": "Undead, leader-bound, ambushes, resists sleep: a band that reads as one threat.",
+      "keep": "Leader-follower band with an undead tag.",
+      "change": "Our band size and resist type.",
+      "ref": "/mnt/frankendom-donors/scummvm-scummvm/devtools/create_ultima/files/ultima4/conf/creatures.xml line 57"
+    },
+    {
+      "label": "Four-flyer ranged encounter",
+      "why": "Flies, ranged, encounter size 4: a many-vs-one test in the air.",
+      "keep": "Small flying group with ranged attacks.",
+      "change": "Our flyers and range numbers.",
+      "ref": "/mnt/frankendom-donors/scummvm-scummvm/devtools/create_ultima/files/ultima4/conf/creatures.xml line 70"
+    },
+    {
+      "label": "Walking armour",
+      "why": "A whole armour set as a creature: one silhouette that reads as a knight.",
+      "keep": "Armour as the body.",
+      "change": "Our armour shapes and colours.",
+      "ref": "/mnt/frankendom-donors/scummvm-scummvm/engines/dm/group.h line 59"
+    },
+    {
+      "label": "Floating eye",
+      "why": "A flyer type that reads as its own family at 375 wide.",
+      "keep": "Floating-eye silhouette idea.",
+      "change": "Our eye art and our attack.",
+      "ref": "/mnt/frankendom-donors/scummvm-scummvm/engines/dm/group.h line 44"
+    },
+    {
+      "label": "Three-lord top tier",
+      "why": "Three lord types at the end of the list suggest a top tier with a shared visual language.",
+      "keep": "A three-type top tier.",
+      "change": "Our tier names and looks.",
+      "ref": "/mnt/frankendom-donors/scummvm-scummvm/engines/dm/group.h lines 64-67"
+    },
+    {
+      "label": "Stone golem",
+      "why": "A heavy slow body with the classic golem silhouette, readable at distance.",
+      "keep": "Slow heavy body.",
+      "change": "Our stone look and rhythm.",
+      "ref": "/mnt/frankendom-donors/scummvm-scummvm/engines/dm/group.h line 50"
+    }
+  ],
+  "classes": [
+    "Xeen races: 5 (human, elf, dwarf, gnome, half-orc) (engines/mm/xeen/character.h line 52)",
+    "Xeen classes: 10 (knight, paladin, archer, cleric, sorcerer, robber, ninja, barbarian, druid, ranger) (character.h line 56); progression not read",
+    "MM1 classes: 6 (engines/mm/mm1/data/character.h line 38); races 5; alignments 3 (good, neutral, evil)",
+    "DM champion schools: 4 (fighter, ninja, priest, wizard) and 16 action skills, the last four being elements (engines/dm/champion.h lines 227-246)",
+    "Ultima IV town class NPCs: 8 (mage, bard, fighter, druid, tinker, paladin, ranger, shepherd) (conf/creatures.xml lines 12-20); they gate armour and weapons"
+  ],
+  "weapon_families": [
+    "DM weapon class bands: swing (0); throw (dagger and axes 2; bow ammunition 10; sling ammunition 11; poison dart 12); shoot bow (16-31); shoot sling (32-47); magic and special (112 upward) (engines/dm/dungeonman.h lines 84-100)",
+    "Ultima IV weapons: 16 entries, range from melee to ranged, flags for consumed-on-throw, returning throw, lobbed item, object-piercing reach, magic tier; damage 8 to 255 (conf/weapons.xml); 30 class constraint tags",
+    "Xeen item categories: weapon, armour, accessory, misc (engines/mm/xeen/item.h lines 39-43)",
+    "Xeen special attacks: 23 values from none through stone (engines/mm/xeen/combat.h lines 47-53)",
+    "Xeen damage types: 19 (engines/mm/xeen/combat.h lines 38-46)"
+  ],
+  "gear_tiers": [
+    "Ultima IV armour ladder: 8 tiers, defence 96 to 248, class constraints on the 144, 160, 176, 192, 208 tiers (conf/armors.xml lines 11-37)",
+    "DM armour types: wooden shield, armet, torso plate, leg plate, foot plate (engines/dm/dungeonman.h lines 179-185)",
+    "Xeen enchant types: element, attribute bonus, material, usable (engines/mm/xeen/item.h lines 55-59); six elements (lines 50-54)",
+    "Xeen attribute categories: 10 (engines/mm/xeen/item.h lines 44-49)"
+  ],
+  "zones": [
+    "Ultima IV map kinds (conf/maps.xml): world 1, city 17 (castle 5, town 7, village 4, ruins 1 as city sub-types), combat 23, dungeon 8 (8 by 8, 8 levels; line 242), shrine 8",
+    "DM dungeon square types: wall, corridor, pit, stairs, door, teleporter, fake wall (engines/dm/dungeonman.h lines 47-62)",
+    "DM floor sensors: 9 types (party, creature, object, group generator, stairs, possession, version checker); wall sensors: 18 types including click ornaments, AND and OR gates, countdown walls (line 149), single and double projectile launchers, object exchanger, end game; champion portrait (127) (dungeonman.h lines 133-160)",
+    "Moongate: keyed to two moon phases; the destination is the gate for the second moon's phase (engines/ultima/ultima4/game/moongate.cpp lines 46-72)",
+    "Freescape: 3D areas with render depth layers and per-area condition code (engines/freescape/area.h); game data not read",
+    "Dungeon Master dungeon: a grid of squares with sensors (AU047)"
+  ],
+  "looks": [
+    {
+      "label": "Effect tiles on ranged hits",
+      "technique": "Per-entry tile names for ranged hit and miss (magic flash, hit flash, fire field)",
+      "ref": "/mnt/frankendom-donors/scummvm-scummvm/devtools/create_ultima/files/ultima4/conf/creatures.xml lines 13, 70, 80"
+    },
+    {
+      "label": "Aura types",
+      "technique": "One aura per character, each with its own look: horn, jinx, negate, protection, quickness",
+      "ref": "/mnt/frankendom-donors/scummvm-scummvm/engines/ultima/ultima4/game/aura.h lines 35-44"
+    },
+    {
+      "label": "Projectile impact and explosion",
+      "technique": "Separate module for projectile and explosion effects, apart from melee",
+      "ref": "/mnt/frankendom-donors/scummvm-scummvm/engines/dm/projexpl.h lines 41-43 (AU047)"
+    },
+    {
+      "label": "Hazard body walking over others",
+      "technique": "Body moves onto other bodies and the party; fire-resistant",
+      "ref": "/mnt/frankendom-donors/scummvm-scummvm/devtools/create_ultima/files/ultima4/conf/creatures.xml line 80"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Splitting Gel",
+      "idea": "A body that splits into a smaller body on a hit that does not kill it.",
+      "keep": "Split-on-hit as an event.",
+      "change": "Our split share, cooldown and look."
+    },
+    {
+      "name": "Ember Field Hazard",
+      "idea": "A hazard body that walks over other bodies and burns what it touches.",
+      "keep": "Body-over-body movement.",
+      "change": "Our fire look and rules."
+    },
+    {
+      "name": "Leader Band",
+      "idea": "A band that follows one leader and attacks as one.",
+      "keep": "Leader-follower.",
+      "change": "Our band size and leader rules."
+    },
+    {
+      "name": "Two-Clock Gate",
+      "idea": "A portal that opens only when two zone clocks agree.",
+      "keep": "Two cycles; destination set by the second clock (moongate.cpp line 61).",
+      "change": "Our clocks, visuals and sound."
+    },
+    {
+      "name": "Class-Gated Armour Ladder",
+      "idea": "A tier ladder where some classes cannot wear middle tiers.",
+      "keep": "Gating by class.",
+      "change": "Our tiers and numbers."
+    },
+    {
+      "name": "Returning Throw",
+      "idea": "A thrown weapon that comes back on a return arc.",
+      "keep": "Return arc.",
+      "change": "Our arc, sound and tier."
+    },
+    {
+      "name": "Timer Wall",
+      "idea": "A dungeon wall that opens on a timer after a trigger.",
+      "keep": "Timer trigger (dungeonman.h line 149 countdown sensor).",
+      "change": "Our timer and look."
+    },
+    {
+      "name": "Status Set as Icons",
+      "idea": "A fixed set of named afflictions, each with its own icon and sound.",
+      "keep": "Named status set (combat.h lines 47-53).",
+      "change": "Our statuses, icons and names."
+    }
+  ],
+  "licence_note": "Code: GNU GPL v3 or later (COPYING; source headers). README has no licence section. Game-derived data from original executables (Ultima IV tables under devtools/create_ultima/files/ultima4/conf, data packs in dists/engine-data): no licence stated, class C; category-level inspiration only.",
+  "not_read": [
+    "engines/dm: timeline.cpp, group.cpp, champion.cpp, movesens.cpp, loadsave.cpp (enums and cited headers only)",
+    "engines/ultima/ultima8, ultima0 and other ultima sub-engines",
+    "engines/mm/xeen: monster data (not in box), spells.cpp, locations.cpp",
+    "engines/mm/mm1 game logic (game/*.cpp) and monsters.txt (not in box)",
+    "engines/freescape game data (games/castle, dark, driller, eclipse)",
+    "dists/engine-data binary data packs (ultima.dat, mm.dat and others): binary, not opened",
+    "devtools/create_ultima/files/ultima4 text, graphics, sound; ultima6 files",
+    "gui/themes, po/ translations, LICENSES texts"
+  ]
+}

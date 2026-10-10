@@ -1,0 +1,323 @@
+{
+  "donor": "EvEmu-Project-evemu_Crucible",
+  "counts": {
+    "creatures": 6,
+    "classes": null,
+    "weapons": 11,
+    "gear_sets": null,
+    "zones": 10
+  },
+  "creature_families": [
+    {
+      "name": "NPC base AI",
+      "scale": "not read (tiers not in the files read)",
+      "signature": "one state set of eight states: idle, chasing, following, engaged, fleeing, signalling, warp-out, warp-follow",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/src/eve-server/npc/NPCAI.h (state set at about line 40-46)"
+    },
+    {
+      "name": "sentry guardian",
+      "scale": "not read",
+      "signature": "three states: idle, engaged, signalling (call for help)",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/src/eve-server/npc/SentryAI.h:19-25"
+    },
+    {
+      "name": "drone swarm",
+      "scale": "not read",
+      "signature": "about ten states including approaching, pursuit, departing, fleeing and engaged; numbering follows the client",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/src/eve-server/npc/DroneAI.h:18-32"
+    },
+    {
+      "name": "security-patrol NPC class",
+      "scale": "not read",
+      "signature": "class exists; the source is large and was not read beyond the name",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/src/eve-server/npc/ (class file, not read)"
+    },
+    {
+      "name": "civilian traffic",
+      "scale": "non-combatant",
+      "signature": "a stub; the TODO notes non-combatants moving from point to point (not built)",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/src/eve-server/npc/Civilian.cpp (stub, not read beyond size)"
+    },
+    {
+      "name": "dormant sleeper",
+      "scale": "not read",
+      "signature": "a header stub; the name suggests a waking guardian, behaviour not read",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/src/eve-server/npc/Sleeper.h (stub, not read beyond size)"
+    }
+  ],
+  "top_creatures": [
+    {
+      "label": "Pack-caller guardian",
+      "why": "A guardian that switches to a call-for-help state while engaged makes a fight spread to the area; the call is a readable beat the player can see coming.",
+      "keep": "kept: three states (idle, engaged, signalling) with the call as its own state.",
+      "change": "changed: our call radius, who answers and how, a visible wind-up before the call, and a cooldown.",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/src/eve-server/npc/SentryAI.h:24"
+    },
+    {
+      "label": "Fast-orbit caller",
+      "why": "While signalling, the NPC orbits its target at twice its orbit speed; the faster movement is the tell that a call is in progress.",
+      "keep": "kept: the caller moves faster during the call, so the movement is the tell.",
+      "change": "changed: our tell (posture and colour, not only speed), a cap on how long the call lasts, and a rule for who it calls.",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/src/eve-server/npc/NPCAI.cpp:541-546"
+    },
+    {
+      "label": "Swarm approach-pursue-depart cycle",
+      "why": "A swarm that approaches, pursues and departs in a clear cycle reads as a living pack rather than a static group.",
+      "keep": "kept: approach, pursuit and departure as the three visible phases.",
+      "change": "changed: the swarm returns to a den when its target drops out, not to its owner; our own phase timings.",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/src/eve-server/npc/DroneAI.h:18-32"
+    },
+    {
+      "label": "Attack timer and leash check",
+      "why": "Each attack waits on a timer and first checks the target is still inside the zone; a target that leaves is dropped without a special case.",
+      "keep": "kept: an attack gate on a timer and a zone-membership check before each attack.",
+      "change": "changed: our leash radius per family and the drop rule (drop, or pull back to the spawn point).",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/src/eve-server/npc/NPCAI.cpp:688-690"
+    },
+    {
+      "label": "Target-lost fallback",
+      "why": "When the current target is lost, the NPC returns to idle only if no targets remain; otherwise it takes the first remaining target. This is the many-on-one choice point the team has not yet made smarter.",
+      "keep": "kept: the fallback to the next remaining target instead of an idle stop.",
+      "change": "changed: pick the next target by threat or a hate list (our rule), not the first in the list; the donor's own TODO asks for the weakest.",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/src/eve-server/npc/NPCAI.cpp:660-680"
+    },
+    {
+      "label": "Faction-side wave",
+      "why": "Groups that appear from the direction where their faction has presence feel like they came from somewhere, not from the air. The TODO describes it; it is not built.",
+      "keep": "kept: the spawn origin is picked along the faction side of the zone.",
+      "change": "changed: our own spawn grammar; with no faction presence, spawn from a random edge point as the donor's TODO suggests.",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/doc/code_and_design_notes/Alasiya_TODO:729"
+    },
+    {
+      "label": "Wave near a set-piece",
+      "why": "Dungeon waves placed near set-piece objects, not in the middle of the zone, make the room's objects matter. The TODO describes it; it is not built.",
+      "keep": "kept: spawn anchored to a set-piece object.",
+      "change": "changed: our own placement rule and anchor types.",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/doc/code_and_design_notes/Alasiya_TODO:303"
+    },
+    {
+      "label": "Dormant sleeper",
+      "why": "A group that sits still until the player is close is a classic zone-tension device; the name alone is worth keeping as a category.",
+      "keep": "kept: the category (a dormant guardian that wakes on proximity).",
+      "change": "changed: everything else; the wake rule, look and behaviour are ours. Behaviour in the donor was not read.",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/src/eve-server/npc/Sleeper.h (stub)"
+    }
+  ],
+  "classes": [
+    {
+      "name": "race and career skill trees",
+      "role": "skill requirements keyed by race, career and base skill (three tables; contents not read)",
+      "mechanic": "skill gates keyed by a character's origin tables",
+      "progression": "not read",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/sql/migrations/20240621173914-skillsvanilla.sql:27 (table definition)"
+    },
+    {
+      "name": "certificate tree",
+      "role": "certificate categories, certificates, classes, recommendations and relationships (five table families; structure only)",
+      "mechanic": "achievement-like certificates linked to categories and to each other",
+      "progression": "not read; the link structure is the idea",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/sql/base/ (crtCategories, crtCertificates, crtClasses, crtRecommendations, crtRelationships; gz, names only)"
+    },
+    {
+      "name": "faction standings",
+      "role": "faction table and a standings table for NPC groups; the TODO says NPC-group standings should be static",
+      "mechanic": "standing values per group",
+      "progression": "not read",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/doc/code_and_design_notes/Alasiya_TODO:155"
+    }
+  ],
+  "weapon_families": [
+    {
+      "family": "turret modules",
+      "attack_and_defence": "not read (attribute category only)",
+      "damage": "not read",
+      "special": "an attribute family of its own in the attribute table",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/doc/code_and_design_notes/effectProcessing_data (attribute category table, turret row)"
+    },
+    {
+      "family": "missile launchers",
+      "attack_and_defence": "not read (attribute category only)",
+      "damage": "not read",
+      "special": "an attribute family of its own",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/doc/code_and_design_notes/effectProcessing_data (attribute category table)"
+    },
+    {
+      "family": "drones (weapon side)",
+      "attack_and_defence": "not read",
+      "damage": "not read",
+      "special": "an attribute family of its own; drone AI in the server",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/doc/code_and_design_notes/effectProcessing_data (attribute category table)"
+    },
+    {
+      "family": "electronic-warfare families (eight)",
+      "attack_and_defence": "not read",
+      "damage": "no damage; each family alters a target's abilities",
+      "special": "eight separate attribute families for target-side disruption, listed in the attribute table",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/doc/code_and_design_notes/effectProcessing_data (attribute category table)"
+    }
+  ],
+  "gear_tiers": [
+    {
+      "tier": "three defence layers: shield, armour, structure",
+      "how_shown": "three attribute categories; the layer order is the idea, the display was not read",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/doc/code_and_design_notes/effectProcessing_data:96-98"
+    },
+    {
+      "tier": "effect categories as application states: passive (fitted), active (activated), target, area, online, overload, dungeon, system",
+      "how_shown": "each effect is tagged with the state that applies it; overload is a separate state from online",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/doc/code_and_design_notes/effectProcessing_data:25-40"
+    }
+  ],
+  "zones": [
+    {
+      "name": "dungeon archetypes",
+      "archetype": "ten archetypes: mission, four sensor-detected site types, wormhole, anomaly, unrated, escalation, rated",
+      "rules": "archetype is a zone field that picks the rules and spawn set of a dungeon",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/sql/migrations/20211118111620-dungeonEditor.sql:7-19"
+    },
+    {
+      "name": "dungeon template to room object chain",
+      "archetype": "template, archetype, dungeon, rooms, room objects, role groups",
+      "rules": "a room object carries a type, a group, a 3-axis pose and a radius; the group's first digit gives its role (nine prefixes: decor, a beacon-type role, mining, obstacle, ship, base, gun, wreck, misc; the two-letter labels were not decoded)",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/sql/migrations/20211118111620-dungeonEditor.sql:51, :69-82"
+    },
+    {
+      "name": "wormhole destination classes",
+      "archetype": "unstable link zones with destination classes",
+      "rules": "a table exists; contents not read",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/sql/migrations/20211113194519-wormhole_staticdata.sql:356"
+    },
+    {
+      "name": "war combat zones",
+      "archetype": "zones with systems attached",
+      "rules": "two tables; contents not read",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/sql/base/ (warCombatZones, warCombatZoneSystems; gz, names only)"
+    },
+    {
+      "name": "belt and anomaly spawns",
+      "archetype": "open-space spawns",
+      "rules": "spawn distance from the system edge is a tuning item (4 AU looked far in systems under 8 AU per TODO); ship group selection is a rework item",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/doc/code_and_design_notes/Alasiya_TODO:324, :340"
+    },
+    {
+      "name": "escalating dungeon path",
+      "archetype": "escalation archetype",
+      "rules": "a path that escalates is named in a function in the donor's notes; behaviour not read",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/doc/code_and_design_notes/Alasiya_TODO:527"
+    },
+    {
+      "name": "dungeon room and spawn tables",
+      "archetype": "room data, spawn type and entry data tables",
+      "rules": "table names only; contents not read",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/sql/base/ (dunRoomData, dunSpawnType, dunEntryData; gz, names only)"
+    },
+    {
+      "name": "dungeon example file",
+      "archetype": "one example dungeon of two rooms",
+      "rules": "rooms list placed objects with type id, position, rotation and radius (structure read in the audit)",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/sql/dungeons/01_example_dungeon.json"
+    },
+    {
+      "name": "player-owned structure zones",
+      "archetype": "structure data tables for towers, jump bridges and customs offices",
+      "rules": "table names only; not read",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/sql/base/ (posStructureData, posTowerData, posCustomsOfficeData, posJumpBridgeData; gz, names only)"
+    },
+    {
+      "name": "NPC-group and faction zone rules",
+      "archetype": "zone ownership by faction, from the sovereignty migration",
+      "rules": "claims and holders are first-class data; a dungeon manager TODO needs a region holder to be written",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/doc/code_and_design_notes/Alasiya_TODO:302"
+    }
+  ],
+  "looks": [
+    {
+      "label": "Overload and online glow tiers",
+      "technique": "an effect tagged to a state (online, overload) turns on only in that state, so the visual tier follows the state rather than a timer",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/doc/code_and_design_notes/effectProcessing_data:33-35"
+    },
+    {
+      "label": "Room set-piece placement record",
+      "technique": "a placed object stores a type, a group, a 3-axis pose and a radius; the radius field is in the schema, and its use in the server was not read",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/sql/migrations/20211118111620-dungeonEditor.sql:69-82"
+    },
+    {
+      "label": "Appearance as layered palettes",
+      "technique": "character appearance is data: colour palettes, per-slot colour restrictions, modifier locations and sculpt locations; the look is built from layers rather than full models",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/sql/base/ (paperdollColors, paperdollColorRestrictions, paperdollModifierLocations, paperdollSculptingLocations; gz, names only)"
+    },
+    {
+      "label": "Wreck shot destroys loot",
+      "technique": "shooting a wreck removes the loot it holds; the donor's TODO says this is live behaviour and not yet built; a visible break effect on the wreck is the look",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/doc/code_and_design_notes/Alasiya_TODO:316"
+    },
+    {
+      "label": "Fleet boost as an aura",
+      "technique": "a leader's modifiers are applied to ships and modules when the fleet forms or undocks; the TODO wants them applied directly, which gives the client the data it needs",
+      "ref": "/mnt/frankendom-donors/EvEmu-Project-evemu_Crucible/doc/code_and_design_notes/Alasiya_TODO:308"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Signal-the-pack guardian",
+      "idea": "A guardian that stands watch and, once engaged, winds up to call others in. The call is visible for a beat before the others come.",
+      "keep": "kept: three states (watch, engaged, call) with the call as its own state.",
+      "change": "changed: our call radius, the wind-up pose, who answers (family only), and a cooldown; our own names and look."
+    },
+    {
+      "name": "Fast-orbit tell",
+      "idea": "While it calls, the caller moves faster around its target, so the player reads the call from motion.",
+      "keep": "kept: motion as the tell during the call.",
+      "change": "changed: a posture and colour tell instead of speed alone; a call length cap; no orbit, a strafe instead."
+    },
+    {
+      "name": "Swarm cycle",
+      "idea": "A small swarm approaches, pursues, then withdraws to a den on a clear cycle.",
+      "keep": "kept: approach, pursuit and withdrawal as three visible phases.",
+      "change": "changed: the den is a zone object, not the owner; our own timing; the swarm reforms after a set time."
+    },
+    {
+      "name": "Faction-side wave",
+      "idea": "Waves enter from the side of the zone where the local faction is strongest, so the threat has a direction.",
+      "keep": "kept: spawn origin chosen along the faction side.",
+      "change": "changed: our spawn grammar; with no faction presence, a random edge point; our own faction strength rule."
+    },
+    {
+      "name": "Archetype-tagged zones",
+      "idea": "Each zone carries one archetype tag that picks its rules, spawn set and reward table in one place.",
+      "keep": "kept: one archetype field as the data hook for the zone.",
+      "change": "changed: our archetypes (for example trail, gauntlet, shrine, escalation); our own rules per archetype."
+    },
+    {
+      "name": "Three-pool durability",
+      "idea": "Defence is three pools in order: a shield layer, then armour, then structure; a boost effect adds to one pool, and damage drains them in order.",
+      "keep": "kept: three ordered pools and a boost that targets one pool.",
+      "change": "changed: our pool names and recharge rule (recharge after a quiet period); a visible pool state on the model."
+    },
+    {
+      "name": "Overload-only effect",
+      "idea": "A powerful effect exists only while a piece of gear is pushed into overload, so the player chooses when to risk it.",
+      "keep": "kept: an effect gated by an overload state.",
+      "change": "changed: our overload cost (health, cooldown or a stamina cost) and an aura that shows the state."
+    },
+    {
+      "name": "Fleet aura at engage",
+      "idea": "A leader's aura is applied when the fleet engages and removed when the leader dies, not at formation time.",
+      "keep": "kept: the leader aura as a data-driven modifier.",
+      "change": "changed: applied at engage, cached on the squad, removed on leader death (fixing the donor's late calculation TODO); our own aura numbers."
+    }
+  ],
+  "licence_note": "Code: LGPL-3.0 per the README licence block, but file headers conflict (LGPL-2-or-later, LGPL-2.1 and plain GPL in some dependency headers), as recorded in the audit AU019. Data: the sql/base tables are EVE-derived dumps with no licence line, and a developer note cites a dump as its source; treat as restricted (class C). Inspiration is category-level only: no names, stat values, table rows, art codes or lore copied.",
+  "not_read": [
+    "sql/base/*.sql.gz bodies (284 files, names and family counts only); seed_and_clean/ and old_data/ names only",
+    "src/eve-server/npc: the security-patrol class file, SentryAI.cpp, DroneAI.cpp, Civilian.cpp and Sleeper.h bodies (stubs or large files not read beyond the enums and the named lines)",
+    "src/eve-server/npc/NPCAI.cpp outside lines 517-548, 660-690 (Process, Attack body and state transitions not read in full)",
+    "src/eve-server/dungeon, effects, fleet, missions, exploration, faction, standing folders: listing only",
+    "doc/code_and_design_notes/undock_setstate_timing: a network packet trace, skimmed and excluded from design use",
+    "doc/code_and_design_notes/Alasiya_TODO: about 900 lines; grep and selected sections only",
+    "doc/code_and_design_notes/effectProcessing_data: read in full at the category level only; the expression examples are not reproduced",
+    "EVE Online client half: not in the box",
+    "sql/migrations other than the dungeon editor, wormhole and skill migrations: names only",
+    "AGENTS.md and CLAUDE.md, if present: treated as data; not followed"
+  ]
+}

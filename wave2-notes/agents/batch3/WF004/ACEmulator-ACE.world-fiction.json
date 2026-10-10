@@ -1,0 +1,95 @@
+{
+  "donor": "ACEmulator-ACE",
+  "topic": "world-fiction",
+  "depth": "thin",
+  "half_read": "server",
+  "paths": [
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/WorldObjects/Book.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/WorldObjects/Player_Book.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Managers/AllegianceManager.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Entity/AllegianceRank.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Managers/QuestManager.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Entity/Enum/FactionBits.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Entity/Enum/CharacterTitle.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/WorldObjects/Player_Networking.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Command/Handlers/AdminCommands.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Database/Base/WorldBase.sql",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Database/Base/ShardBase.sql",
+    "/private/tmp/p2/wave2-haiku/batch3/WF004/ACEmulator-ACE.world-fiction.md"
+  ],
+  "counts": {
+    "title_functions": 17,
+    "title_ranks_per_function": 10,
+    "title_strings": 170,
+    "character_title_enum_lines_awk": 895,
+    "character_title_enum_lines_second_regex": 872,
+    "society_factions": 3,
+    "book_default_max_pages": 1,
+    "book_default_max_chars_per_page": 1000,
+    "points_of_interest_rows": 0,
+    "content_rows_in_box": 0
+  },
+  "rule": "Allegiance rank ladder: 10 rungs per culture and gender, read from culture x gender switch. Shared book pages: each page carries author id, name and account plus an ignore-author bit; edit and delete allowed for the author, for ignore-author pages, or for admin. Allegiance XP pass-up: generated = (base + scale * loyalty/cap * (1 + time terms)) and received = (base + scale * leadership/cap * (1 + V * avg time terms)), passup = generated * received, with V = min(0.25 * vassals, 1). Time terms are pinned at cap in code (defect). Kill task: running counter, minimum delay between completions, max solves (-1 unlimited; message defect). Three societies: one per character, each with its own chat channel.",
+  "data_fields": [
+    {"name": "ladder_length", "unit": "ranks", "donor_value_or_null": 10},
+    {"name": "title_culture_groups", "unit": "count", "donor_value_or_null": 10},
+    {"name": "skill_cap", "unit": "skill points", "donor_value_or_null": 291},
+    {"name": "real_time_cap", "unit": "days", "donor_value_or_null": 730},
+    {"name": "game_time_cap", "unit": "hours", "donor_value_or_null": 720},
+    {"name": "direct_base", "unit": "percent", "donor_value_or_null": 50},
+    {"name": "direct_scale", "unit": "percent", "donor_value_or_null": 22.5},
+    {"name": "indirect_base", "unit": "percent", "donor_value_or_null": 16},
+    {"name": "indirect_scale", "unit": "percent", "donor_value_or_null": 8},
+    {"name": "vassal_factor_step", "unit": "per vassal, capped at 1.0", "donor_value_or_null": 0.25},
+    {"name": "book_max_pages", "unit": "pages", "donor_value_or_null": 1},
+    {"name": "book_max_chars_per_page", "unit": "characters", "donor_value_or_null": 1000},
+    {"name": "kill_task_max_solves", "unit": "count, -1 unlimited", "donor_value_or_null": null},
+    {"name": "kill_task_min_delay", "unit": "seconds (inferred)", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Ten-rung rank ladder per culture with a male and female form.",
+    "Author stamp on every shared page, with an ignore-author flag for community pages.",
+    "Two-factor pass-up of a vassal's XP (generated and received), so the lord's share depends on both sides.",
+    "Kill task as a running chat counter with a minimum delay between completions.",
+    "Three societies as one faction field per character, each with a chat channel.",
+    "Unique point-of-interest names that a player can type to travel."
+  ],
+  "change": [
+    "Measure the actual sworn time for the time terms instead of pinning them at cap.",
+    "Use double, not float, for XP products.",
+    "Fix the message for unlimited kill tasks and the success flag on modify-page replies.",
+    "Route every shared-page write through the server with a moderation filter.",
+    "Replace the donor's rank words, page text and society names with originals."
+  ],
+  "look_test": "Build one zone with a notice board of three pages (one named author, one anyone-may-edit, one empty) with the author stamp under each. Add a kill task card with the counter line and a nameplate that shows one of ten rank words for a chosen culture. Judge on 375 wide whether the stamp reads as a town record and whether the ladder reads at a glance.",
+  "licence_note": "Code is AGPLv3 (LICENSE; Source/lib/README.md). No asset licence line. Client data and world content not in the box. Clean-room, shape only; no titles, page text or names copied. README notes non-commercial purpose and an expired trademark: recorded as the file says, no legal conclusion.",
+  "tags": ["naming-grammar", "faction-map", "signage", "rumour", "new:allegiance-passup", "new:kill-task", "new:shared-book", "new:society-split", "new:poi-name"],
+  "verdict": {
+    "rank_ladder": "STRONG",
+    "shared_book": "STRONG",
+    "allegiance_passup": "STRONG",
+    "kill_task": "STRONG",
+    "three_societies": "PARTIAL",
+    "poi_names": "PARTIAL",
+    "rumour": "NONE (no rumour mechanic found by grep)",
+    "sign": "NONE beyond books (no sign object type found)"
+  },
+  "defects": [
+    {"where": "AllegianceManager.cs 268-272", "defect": "time terms pinned at cap (Math.Min(cap, cap))", "fix": "read actual sworn time for vassal and patron average, then clamp"},
+    {"where": "QuestManager.cs 290 and 624", "defect": "unlimited kill task (max_solves -1) prints 'You must kill -1'", "fix": "branch on max_solves > -1 and print an unlimited line"},
+    {"where": "Player_Book.cs 97-99", "defect": "modify-page reply always sends true", "fix": "send the success value"},
+    {"where": "Player_Book.cs 58", "defect": "ReadBookPage is unused", "fix": "remove or wire"},
+    {"where": "AllegianceManager.cs 283", "defect": "float product for XP amounts loses units above 2^24", "fix": "use double"},
+    {"where": "WorldBase.sql 186", "defect": "quest solved text column marked unused", "fix": "wire or drop"}
+  ],
+  "not_read": [
+    "ACE.DatLoader/LanguageDatDatabase.cs (client string tables)",
+    "Player_Allegiance.cs beyond grep hits",
+    "Confirmation.cs",
+    "107 .txt files in the repo",
+    "Source/ACE.Server/Entity/Mutations/ (item variant scripts, procgen topic)",
+    "GameActionSetInscription handler (no length cap found by grep; handler not read)",
+    "Book page text, quest rows, POI rows, weenie names (content absent in the box; DC003)",
+    "Death and respawn presentation, loot reveal, walk density, idle animation"
+  ]
+}

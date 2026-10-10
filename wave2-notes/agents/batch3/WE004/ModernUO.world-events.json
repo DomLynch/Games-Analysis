@@ -1,0 +1,102 @@
+{
+  "donor": "ModernUO",
+  "topic": "world-events",
+  "depth": "full",
+  "half_read": "server",
+  "verdict": "STRONG",
+  "decision": "adapt (idea); defects fixed in sketch",
+  "paths": [
+    "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/CannedEvil/ChampionSpawn.cs",
+    "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/CannedEvil/ChampionSpawnInfo.cs",
+    "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/CannedEvil/CannedEvilTimer.cs",
+    "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/CannedEvil/ChampionSkullPlatform.cs",
+    "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/CannedEvil/ChampionSkullBrazier.cs",
+    "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/Special/Harrower.cs",
+    "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/Events/EventScheduler.cs",
+    "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/Events/BaseScheduledEvent.cs",
+    "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/Events/CommonRecurrencePatterns.cs"
+  ],
+  "counts": {
+    "champion_active_types": 9,
+    "champion_commented_types": 4,
+    "champion_kill_tiers": 5,
+    "champion_spawn_cap_base": 250,
+    "champion_spawn_cap_drop_per_sublevel": 40,
+    "champion_max_level_roll_range": 3,
+    "harrower_spawn_locations": 15,
+    "harrower_tentacle_angles": 9,
+    "engines_cannedevil_files": 19
+  },
+  "rule": "Champion ladder: each kill counts toward a kill target that depends on the level band (256, 128, 64, 32, 16). A white skull is placed per 20 percent of the target; at 99 percent the level advances and the expiry clock resets. At the rolled max level the champion spawns. On expiry with no skull the level drops one step (stop at zero if not always-active); otherwise skulls clear and the level holds. Spawn cap is 250 minus 40 per sub-level. A daily timer makes one random idle spawn per group ready. Harrower: a summoned boss with a 30000 first form; death is intercepted and it morphs to 65000 with nine tentacles in a ring; a teleport-pull every five seconds at a 25 percent roll; a gold spill at its true-form death with random per-pile delays. One Harrower at a time.",
+  "data_fields": [
+    {"name": "champion.kill_tiers", "unit": "kills by level band", "donor_value_or_null": null},
+    {"name": "champion.skull_step_pct", "unit": "percent", "donor_value_or_null": null},
+    {"name": "champion.advance_pct", "unit": "percent", "donor_value_or_null": null},
+    {"name": "champion.max_level_roll", "unit": "level range", "donor_value_or_null": null},
+    {"name": "champion.expire_min", "unit": "minutes", "donor_value_or_null": null},
+    {"name": "champion.restart_min", "unit": "minutes", "donor_value_or_null": null},
+    {"name": "champion.spawn_cap_base", "unit": "creatures", "donor_value_or_null": null},
+    {"name": "champion.cap_drop_per_sublevel", "unit": "creatures", "donor_value_or_null": null},
+    {"name": "champion.idle_clear_min", "unit": "minutes", "donor_value_or_null": null},
+    {"name": "champion.proximity_people", "unit": "count of sessions", "donor_value_or_null": null},
+    {"name": "champion.proximity_cooldown_h", "unit": "hours", "donor_value_or_null": null},
+    {"name": "schedule.rotation_per_day", "unit": "count per group", "donor_value_or_null": null},
+    {"name": "harrower.hp_phase1", "unit": "HP", "donor_value_or_null": null},
+    {"name": "harrower.hp_phase2", "unit": "HP", "donor_value_or_null": null},
+    {"name": "harrower.tentacles", "unit": "count", "donor_value_or_null": null},
+    {"name": "harrower.tentacle_ring_radius", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "harrower.pull_period_s", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "harrower.pull_chance_pct", "unit": "percent", "donor_value_or_null": null},
+    {"name": "harrower.pull_range_tiles", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "harrower.gold_spill_radius", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "harrower.gold_pile_delay_max_s", "unit": "seconds", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "twenty-percent skull row as the visible step ladder",
+    "fail-down step when the window closes with no skull",
+    "summon that needs every brazier and one boss at a time",
+    "phase flip at death instead of death, with a line and a larger bar",
+    "gold spill with random per-pile delays",
+    "daily random pick of one idle spawn per group"
+  ],
+  "change": [
+    "spawn cap of 250 is far above 375-wide readability; cap attackers at three and count kills, not creatures",
+    "proximity gate uses unique IP addresses; use session counts instead (privacy)",
+    "teleport-pull takes the first player in range; take the nearest and telegraph it with a one-second warning",
+    "daily pick needs a recorded seed in the ledger",
+    "rotation count is hard-coded; make it a zone data field"
+  ],
+  "defects": [
+    {"where": "Engines/Events/EventScheduler.cs 74-75", "defect": "YearlyAt passes the monthly day pattern, so a yearly event repeats monthly (latent, no caller found)", "fix": "use the yearly rule (line 37): day of month -1, interval 12 months; sketch constant YEARLY_RULE"},
+    {"where": "ChampionSpawn.cs 307 vs 853 (Level1 at 845)", "defect": "kill tier of 128 starts at level 4 while the sub-level band puts level 4 in the first band (off by one, minor)", "fix": "align both boundaries to one level"}
+  ],
+  "look_test": "Two 30-second phone clips. Clip one: five-step skull row filling in twenty-percent steps with one sound per step and the region dimming one step per level, against no dimming; then an expiry that drops one step. Clip two: a boss at zero health refills to a larger bar with a one-line true-form caption, nine tentacles pop in a ring, one player pulled in with a one-second warning, against an instant pull.",
+  "licence_note": "Code GPL-3.0 (LICENSE; header in CannedEvilTimer.cs says or later): clean-room shape only. No asset or content licence stated; champion, Harrower and skull concepts and names belong to a commercial game's content; inspiration is category-level only.",
+  "lands_in": "origins/server/world-spawns.ts (parity row 23, zone population). Harrower phase flip: src/fight/ death handling (row 17).",
+  "tags": [
+    "world-event",
+    "timed-event",
+    "scheduler",
+    "roaming-boss",
+    "boss-elite-pattern",
+    "boss-intro",
+    "hit-sound",
+    "duration-rule",
+    "new:skull-ladder",
+    "new:fail-down-step",
+    "new:light-escalation",
+    "new:phase-flip-death",
+    "new:gold-spill"
+  ],
+  "not_read": [
+    "ChampionSpawnRegion light numbers (donor guesstimate)",
+    "ChampionTitleSystem.cs",
+    "GenChamps.cs (world-start placement)",
+    "DungeonChampionSpawn.cs and LLChampionSpawn.cs beyond the rotation hook",
+    "Harrower ring placement math (offsets not checked against the grid)",
+    "shared gold-pile code",
+    "Projects/Server and spawner persistence",
+    "Distribution/Data spawn JSON (data half, not used for this topic)",
+    "client half (not in box)"
+  ]
+}

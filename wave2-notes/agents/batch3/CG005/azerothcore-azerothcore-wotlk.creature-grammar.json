@@ -1,0 +1,66 @@
+{
+  "donor": "azerothcore-azerothcore-wotlk",
+  "topic": "creature-grammar",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Creature/Creature.cpp",
+    "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Creature/CreatureData.h",
+    "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Globals/ObjectMgr.cpp",
+    "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/StatSystem.cpp",
+    "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/data/sql/base/db_world/creature_template.sql",
+    "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/data/sql/base/db_world/creature_template_model.sql"
+  ],
+  "counts": {
+    "creature_template_rows": 29947,
+    "creature_template_model_rows": 40213,
+    "creatures_with_two_or_more_looks": 5588,
+    "rows_in_multi_look_creatures": 15854,
+    "zero_weight_rows_in_multi_look_creatures": 121,
+    "zero_weight_rows_total": 211,
+    "scale_not_1_rows": 177,
+    "scale_above_1_rows": 154,
+    "scale_below_1_rows": 23,
+    "templates_with_difficulty_sibling": 1804,
+    "distinct_weight_values_in_multi_look_rows": 4
+  },
+  "rule": "One creature_template row per family with up to four looks (display id, scale, weight). One look ignores weight; several looks roll by weight; a spawn row can pin a display id and skip the roll. Health = base by expansion times template ModHealth times rank health rate (level function). Damage = template DamageModifier with the rank damage rate folded in once at load (CheckCreatureTemplate, called once after load; the value is overwritten from the database first, so no compounding on reload). Easy and hard tiers are sibling links and may share one display id.",
+  "data_fields": [
+    {"name": "look_weight", "unit": "relative weight, unitless", "donor_value_or_null": null},
+    {"name": "look_scale", "unit": "multiplier x", "donor_value_or_null": null},
+    {"name": "spawn_pin", "unit": "display id", "donor_value_or_null": null},
+    {"name": "tier_health_mod", "unit": "multiplier x", "donor_value_or_null": null},
+    {"name": "tier_damage_mod", "unit": "multiplier x", "donor_value_or_null": null},
+    {"name": "rank_health_rate", "unit": "multiplier x per rank", "donor_value_or_null": null},
+    {"name": "rank_damage_rate", "unit": "multiplier x per rank", "donor_value_or_null": null},
+    {"name": "tier_sibling_slots", "unit": "count, max 3", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "one family template with a weighted look list",
+    "scale per look",
+    "hard tier that reuses the easy tier's look (shared display id)",
+    "separate health and damage tier multipliers",
+    "spawn-level display pin that skips the roll"
+  ],
+  "change": [
+    "keep the rank damage rate as its own runtime multiplier; the donor folds it into DamageModifier at load (ObjectMgr.cpp 1216)",
+    "warn on zero-weight looks and refuse an all-zero list; the donor does not warn in the code read (Creature.cpp 130-140)",
+    "cap looks at two or three on a phone so the silhouette stays readable; the donor allows four",
+    "name every look, tier mark and number ourselves"
+  ],
+  "look_test": "One family silhouette at 375 wide in three looks (weights 2, 1, 1; scales 1.0, 1.0, 1.25) and one hard tier that reuses the first look with a glow and a 1.15 scale step. Dom checks: same family across looks, and the hard tier readable without size alone.",
+  "licence_note": "Code GPL v2 (LICENSE, per AU005; not re-read). Data is game-derived SQL with no stated licence; owner not named; class C. Repo states it is not an official product and not endorsed (README line 88, per AU005). Category-level inspiration only; no row names, ids or donor numbers reused. No legal conclusion.",
+  "tags": ["creature-family", "recolour-tier", "scale-tier", "boss-elite-pattern", "new:model-weight-pick", "new:spawn-pin", "new:load-time-fold", "new:tier-sibling"],
+  "not_read": [
+    "most of the 309 db_world SQL files (creature tables counted and sampled, not read in full)",
+    "archive, updates and old SQL folders",
+    "rank rate values in config",
+    "DB2 display tables (absent)",
+    "client half: models, idle animations, death and respawn presentation, loot reveal, readability at 375 wide",
+    "CreatureGroups and spawn consumers beyond the struct",
+    "GetModelWithDisplayId body",
+    "src/server/scripts (names only via ScriptName)",
+    "CLAUDE.md and AGENTS.md at donor root (treated as data, not needed)",
+    "dep/ and modules/ beyond readmes"
+  ]
+}

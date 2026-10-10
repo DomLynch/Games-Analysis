@@ -1,0 +1,68 @@
+{
+  "donor": "shoff-ShadowbaneCacheViewer",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 6
+  },
+  "creature_families": [
+    {"name": "Undead", "evidence": "Mobile.cs line 93 comment; sbviewer.cpp lines 583-584 ground theme; cobjects_564600.txt record title (category only)", "records_parsed": 0, "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/src/Shadowbane.Models/Mobile.cs"},
+    {"name": "Bats (flying)", "evidence": "Mobile.cs line 93 comment, hover height 4.0", "records_parsed": 0, "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/src/Shadowbane.Models/Mobile.cs"},
+    {"name": "Lizard-folk", "evidence": "record titles in cobjects_64000.txt and cobjects_64014.txt; Exports/Lizardman Totem.mtl (0 bytes)", "records_parsed": 0, "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/Documents/CObjects_Text_Views/cobjects_64014.txt"},
+    {"name": "Minotaur-type", "evidence": "record title in cobjects_814000.txt (category only)", "records_parsed": 0, "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/Documents/CObjects_Text_Views/cobjects_814000.txt"}
+  ],
+  "top_creatures": [
+    {"label": "Hover swarm", "why": "a flying group reads at range; the height is one number per family", "keep": "one hover-height field per family as data; the group flies high", "change": "our own wing silhouette and flock motion; our own flap cadence", "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/src/Shadowbane.Models/Mobile.cs"},
+    {"label": "Grave wraith", "why": "an undead zone changes the ground and pairs with a low hover", "keep": "undead ground plus a low hover height", "change": "our own ghost form, not a robed skeleton; our palette only", "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/Native/sbviewer.cpp"},
+    {"label": "Lizard-folk camp", "why": "walls, a tall centrepiece and a totem read as one camp from far off", "keep": "a camp of wall, centrepiece and tall totem as one prop set", "change": "our own totem head, banner and ornament set; our palette", "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/Documents/CObjects_Text_Views/cobjects_64014.txt"},
+    {"label": "Single-keep elite site", "why": "one very large keep marks an elite place on the map", "keep": "one large keep as the elite arena", "change": "our own layout and boss entrance; no copy of the keep plan", "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/Documents/CObjects_Text_Views/cobjects_814000.txt"}
+  ],
+  "classes": [
+    {"name": "Race gate", "role": "entry restriction", "signature_mechanic": "requires or prohibits list, one toggle per gate", "progression": "none", "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/src/Shadowbane.Models/Mobile.cs"},
+    {"name": "Class gate", "role": "entry restriction", "signature_mechanic": "same toggle for a class set", "progression": "class and profession runes count upward (comment, line 588)", "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/src/Shadowbane.Models/Mobile.cs"},
+    {"name": "Level and skill gate", "role": "minimum level and skill pairs", "signature_mechanic": "MinRequiredLevel then skill and level pairs", "progression": "level gate values not read", "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/src/Shadowbane.Models/Mobile.cs"},
+    {"name": "Rune stack", "role": "rune economy", "signature_mechanic": "cost, stack rank and training power bonus per rune", "progression": "none read", "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/src/Shadowbane.Models/Mobile.cs"}
+  ],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [
+    {"name": "Undead ground", "evidence": "menu entry and load call", "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/Native/sbviewer.cpp"},
+    {"name": "Volcanic ground", "evidence": "menu entry and load call", "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/Native/sbviewer.cpp"},
+    {"name": "Desert ground", "evidence": "menu entry and load call", "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/Native/sbviewer.cpp"},
+    {"name": "Grass ground", "evidence": "menu entry and load call", "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/Native/sbviewer.cpp"},
+    {"name": "Snow (loads no model; defect)", "evidence": "snow entry calls LoadGround(0); canvas.cpp creates a model only for non-zero ids", "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/Native/canvas.cpp"},
+    {"name": "Checker fallback plane", "evidence": "drawn when no ground model is loaded", "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/Native/canvas.cpp"}
+  ],
+  "looks": [
+    {"label": "Hover height per family", "technique": "one float per family in the record; data, not a shader", "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/src/Shadowbane.Models/Mobile.cs"},
+    {"label": "Three-view item identity", "technique": "one record gives a world id, an inventory icon id and a minimap icon id", "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/src/Shadowbane.Models/Equipment.cs"},
+    {"label": "Ground plane per zone with checker fallback", "technique": "a model replaces the default plane when loaded; otherwise a checker plane draws", "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/Native/canvas.cpp"},
+    {"label": "Effect as a single id", "technique": "a particle record is one render id; no effect parameters read", "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/src/Shadowbane.Models/Particle.cs"},
+    {"label": "Material block shape", "technique": "named material with diffuse, specular, transparency and shine terms; values not recorded", "ref": "/mnt/frankendom-donors/shoff-ShadowbaneCacheViewer/Documents/ExportedFromMaya/head.mtl"}
+  ],
+  "originals": [
+    {"name": "Land claim stake", "idea": "one claim shows in the world, the bag and the minimap with one identity", "keep": "one record, three icon ids, one claimable plot", "change": "a stake with a pennant instead of a deed sheet; zone colour as palette key"},
+    {"name": "Hover height per family", "idea": "a flying family hovers at a height set in data", "keep": "one hover field per family (low for undead, high for bats)", "change": "our own flight profile and flock motion; numbers in zone data"},
+    {"name": "Zone ground that really loads", "idea": "each zone picks its own ground plane by id; the fallback never draws the wrong one", "keep": "one plane per zone theme", "change": "fix snow so it loads its own plane; our palette"},
+    {"name": "Lizard-folk camp prop set", "idea": "a camp is one set of walls, a centre pyramid and a tall totem", "keep": "the wall, centrepiece and totem camp as one prop set", "change": "our own totem and banner; no shared shapes"},
+    {"name": "Single-keep elite site", "idea": "one large keep marks the elite place", "keep": "one big set piece per elite site", "change": "our own arena layout and entrance"},
+    {"name": "Three-view loot card", "idea": "a drop has a world icon, an inventory icon and a minimap icon as one identity", "keep": "three icon ids on one item", "change": "a phone inspect card with our rarity colours and sound"},
+    {"name": "Level and skill gate with requires or prohibits toggle", "idea": "an item or rune is gated by minimum level and skills, with one toggle", "keep": "the toggle and the level gate", "change": "no race or class lists; one character and one ledger"}
+  ],
+  "licence_note": "No LICENSE, COPYING or NOTICE file in the repository root, src/ or Native/. README.md lines 4-5: cache files are the property of the owner of the Shadowbane IP and are not included. Bundled jQuery and Bootstrap are MIT per their files. Treated as shape only; no code or asset copied.",
+  "not_read": [
+    "The .cache game data (absent; README excludes it)",
+    "Documents/Framework 2012-05-21.7z (not in the earlier audit; not opened)",
+    "Documents/CacheObjectIndexes.rar (not opened)",
+    "Documents/duplicate_render_ids.xlsx (not opened)",
+    "Documents PDFs (not opened)",
+    "uv_map.png and Maya PNG textures (binary)",
+    "Mobile.cs lines 241-359, 431-559, 641-735",
+    "Native/objects.cpp bodies for types 3, 5 and 15; animation, skeleton, model, texture code",
+    "Sound.cs and SoundCache.cs (no sound data in the box)",
+    "Shadowbane.Web pages, tests, 010 templates (names only)",
+    "Text dumps beyond their record headers"
+  ]
+}

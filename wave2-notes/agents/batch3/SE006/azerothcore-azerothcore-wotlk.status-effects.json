@@ -1,0 +1,75 @@
+{
+  "donor": "azerothcore-azerothcore-wotlk",
+  "topic": "status-effects",
+  "depth": "full",
+  "half_read": "both",
+  "decision": "adapt (idea)",
+  "paths": [
+    "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.h",
+    "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+    "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Spells/SpellMgr.cpp",
+    "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Spells/SpellMgr.h",
+    "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Spells/Spell.cpp",
+    "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Spells/Auras/SpellAuras.cpp",
+    "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Spells/Auras/SpellAuraEffects.cpp",
+    "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Creature/CreatureData.h",
+    "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/shared/SharedDefines.h",
+    "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/data/sql/base/db_world/spell_group.sql",
+    "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/data/sql/base/db_world/spell_group_stack_rules.sql",
+    "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/scripts/Northrend/CrusadersColiseum/TrialOfTheCrusader/boss_northrend_beasts.cpp"
+  ],
+  "counts": {
+    "diminishing_groups_named": 20,
+    "diminishing_groups_with_none": 21,
+    "player_ladder_levels": 4,
+    "taunt_ladder_levels": 5,
+    "default_pvp_limit_s": 10,
+    "family_limit_values_s": [6, 12, 40, 120],
+    "dr_reset_window_s": 15,
+    "stack_rule_enum_values": 5,
+    "spell_group_stack_rule_rows": 69,
+    "stack_rule_rows_by_value": {"0": 2, "1": 19, "2": 3, "3": 20, "4": 25},
+    "spell_group_membership_rows": 532,
+    "spell_groups_distinct": 113
+  },
+  "rule": "Per target, per control group, a diminishing ladder. Player-type ladder: full, 0.5, 0.25, then immune; taunt on flagged creatures: 1, 0.65, 0.4225, 0.274625, then 0. The level is read on the hit and moves up on the hit only when the caster is player-owned or player-charmed (world-boss casters skip the ladder entirely). The duration is capped at 10 s (or a per-family value of 6, 12, 40 or 120 s) when both sides are players. The reset comes 15 s after the last aura of the group ends. Controls are one state each (stun, confuse, fear, root) with counts; the client shows one primary state by priority stun over confuse over fear, root locks the feet only without a stun, and a control hidden under a higher one is re-resolved when the higher one ends. Stacking is a separate rule switch on spell-group rules (exclusive, exclusive from same caster, exclusive same effect, exclusive highest, default) plus per-aura-type exclusions.",
+  "data_fields": [
+    {"name": "dr.player_ladder", "unit": "multiplier per level (levels 0-3)", "donor_value_or_null": null},
+    {"name": "dr.taunt_ladder", "unit": "multiplier per level (levels 0-4)", "donor_value_or_null": null},
+    {"name": "dr.limit_default", "unit": "seconds when both sides are players", "donor_value_or_null": null},
+    {"name": "dr.limit_family", "unit": "seconds per spell family (table: 6, 12, 40, 120)", "donor_value_or_null": null},
+    {"name": "dr.reset_window", "unit": "seconds with no active aura", "donor_value_or_null": null},
+    {"name": "dr.count_source", "unit": "player-only (donor) or any source (our proposal)", "donor_value_or_null": null},
+    {"name": "ctrl.priority", "unit": "ordered list: stun, confuse, fear; root shown separately", "donor_value_or_null": null},
+    {"name": "stack.rule", "unit": "default | exclusive | exclusive_from_same_caster | exclusive_same_effect | exclusive_highest", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "control priority with re-resolve on removal, so a hidden control comes back when the higher one ends",
+    "one primary state shown to the player at a time",
+    "15 s reset counted from the last aura end",
+    "taunt curve as a data field (geometric falloff) for a future hate-list taunt",
+    "immune as a miss result with no effect",
+    "the player-facing split of PvP cap versus PvE duration"
+  ],
+  "change": [
+    "who moves the ladder: any source, not only player-sourced hits, because our attackers are mobs (the donor would let three mobs chain stuns with no ladder)",
+    "fixed-step ticks instead of wall time (defect D1)",
+    "the per-family limit table is dropped; keep one PvP cap as data",
+    "compute the control view from counts on every change, not split between apply and remove (defect D3)",
+    "all numbers, names and art are ours; no spell names or IDs in our content"
+  ],
+  "look_test": "Dummy target at 375 wide with one primary-state chip under its health bar. Test one: a stun, then a fear started during the stun; when the stun ends, the fear should start at once. Test two: three mob attackers chain stuns on one hero, once with the ladder counting mob hits and once without. Dom judges: does the hand-off read as the fear coming back rather than a glitch, and does the third mob stun feel shorter rather than broken. Style flag only, no release rows.",
+  "licence_note": "Code is GPL-2.0 (LICENSE, Version 2 June 1991); clean-room only, shape taken from the described mechanism, no donor lines translated. README says the project is not an official Blizzard product; the owner of the game-derived data is not stated; class C for data. Inspiration is category-level; no spell names, IDs or stat blocks in our notes.",
+  "tags": ["status-stack", "fear", "knockdown", "stagger", "duration-rule", "new:diminishing-returns", "new:control-priority", "new:stack-rule-table"],
+  "not_read": [
+    "periodic-damage (DoT) handler",
+    "Aura::CanStackWith after line 2110",
+    "Unit::AddAura internals beyond the stack-removal part",
+    "fear movement in the AI",
+    "spell table (spell_dbc.sql, 4,491 rows per catalogue DC007, not read here)",
+    "SpellMgr.cpp 107-291 group assignment (read in part)",
+    "threat-suppression helper body (EvaluateSuppressed)",
+    "boss scripts beyond the one stagger encounter",
+    "client half (not in the box; WoWdot is the paired client donor in this batch, not read here)"
+  ]
+}

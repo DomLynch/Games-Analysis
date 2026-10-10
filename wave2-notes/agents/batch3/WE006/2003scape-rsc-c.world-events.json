@@ -1,0 +1,65 @@
+{
+  "donor": "2003scape-rsc-c",
+  "topic": "world-events",
+  "depth": "thin",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/2003scape-rsc-c/src/mudclient.c",
+    "/mnt/frankendom-donors/2003scape-rsc-c/src/packet-handler.c",
+    "/mnt/frankendom-donors/2003scape-rsc-c/src/game-character.c",
+    "/mnt/frankendom-donors/2003scape-rsc-c/src/game-character.h",
+    "/mnt/frankendom-donors/2003scape-rsc-c/src/server-opcodes177.h",
+    "/mnt/frankendom-donors/2003scape-rsc-c/src/server-opcodes204.h",
+    "/mnt/frankendom-donors/2003scape-rsc-c/src/utility.c"
+  ],
+  "counts": {
+    "server_countdown_packets": 1,
+    "per_step_counters": 5,
+    "per_step_counters_on_characters": 3,
+    "per_step_counters_on_client": 2,
+    "hit_timer_start_steps": 200,
+    "death_timer_steps": 250,
+    "message_bubble_timer_steps": 150,
+    "wilderness_formula_constants": 2,
+    "server_sound_packets": 1,
+    "not_counted": "event, boss, invasion and schedule tables (none in client; cache archives not decoded)"
+  },
+  "rule": "Server sends one countdown value; client stores it (value times 32), decrements one per game step while above 1, and draws it as m:ss while non-zero. Hit visibility is one per-character counter set to 200 steps on hit; the health bar draws while above 0 and the damage number while above 150. Death sets a 250-step screen timer that fades the screen and clears mouse input until it runs out. Step target is 20 ms (set to 50 per second).",
+  "data_fields": [
+    {"name": "countdown_step_rate", "unit": "steps per s", "donor_value_or_null": null},
+    {"name": "countdown_server_quantum", "unit": "units", "donor_value_or_null": null},
+    {"name": "countdown_hide_at", "unit": "units", "donor_value_or_null": null},
+    {"name": "hit_bar_steps", "unit": "steps", "donor_value_or_null": null},
+    {"name": "hit_number_steps", "unit": "steps", "donor_value_or_null": null},
+    {"name": "death_screen_steps", "unit": "steps", "donor_value_or_null": null},
+    {"name": "message_bubble_steps", "unit": "steps", "donor_value_or_null": null},
+    {"name": "threat_origin_y", "unit": "world tiles", "donor_value_or_null": null},
+    {"name": "threat_safe_x", "unit": "world tiles", "donor_value_or_null": null},
+    {"name": "threat_depth_scale", "unit": "tiles per level", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Server owns the number; client counts down and draws it only",
+    "One per-character hit counter with thresholds picks the health bar and the damage number",
+    "Death as a short fade with input held, then two plain messages",
+    "Countdown as one bottom-centre HUD line in a readable bold face"
+  ],
+  "change": [
+    "Server sends an end-time (steps or ms), not a value the client decrements, so late packets self-correct",
+    "Banner hides at or below one unit and on zone change (fixes D1)",
+    "Send the 32-unit quantum only on the wire; display at the real step rate (fixes D2, D4)",
+    "Danger band (2203, 2640) moves from client constants to zone data (fixes D3)",
+    "Death durations come from zone or Pit data, not one constant"
+  ],
+  "look_test": "On a 375-wide phone in a duel, show 'Event in 0:12' bottom-centre counting down. Version A stays at 0:00 (donor). Version B hides at zero with a short stinger. Judge readability at arm's length, whether it steals the fight, and whether hiding at zero reads as the event ending. Then try a 3 s and a 5 s death fade and pick one.",
+  "licence_note": "Code: GNU AGPL v3 (COPYING line 1; README.md 352-365). Shape only, clean-room; no code adapted. Game data in cache/ is proprietary per AU001: no names, creatures, items or zone data used. No legal conclusion.",
+  "tags": ["timed-event", "duration-rule", "world-event", "scheduler", "death-respawn-presentation", "hit-stop", "mood-preset", "new:server-countdown-banner", "new:threat-gradient", "new:server-sound-cue", "new:death-screen"],
+  "not_read": [
+    "server half (Open-RSC-Core-Framework name match only; not in donor list, not read)",
+    "cache/*.jag and cache/*.mem (binary archives; spawn, event and NPC tables not decoded)",
+    "src/ui/*, src/gl/*, src/pica/*",
+    "177 build branches beyond the REVISION_177 guards cited",
+    "idle animation vocabulary beyond the flicker note in DC002",
+    "loot reveal ceremony (no code read)",
+    "readability at 375 wide (not measured)"
+  ]
+}

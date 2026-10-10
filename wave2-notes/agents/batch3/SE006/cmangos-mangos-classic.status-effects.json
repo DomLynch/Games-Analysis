@@ -1,0 +1,73 @@
+{
+  "donor": "cmangos-mangos-classic",
+  "topic": "status-effects",
+  "depth": "full",
+  "half_read": "both",
+  "decision": "adapt (idea)",
+  "paths": [
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Entities/Unit.h",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Entities/Unit.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Globals/SharedDefines.h",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Spells/SpellMgr.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Spells/SpellStacking.h",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Spells/SpellStacking.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Spells/SpellAuras.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Spells/Spell.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/AI/ScriptDevAI/scripts/eastern_kingdoms/zulgurub/zulgurubScripts.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/sql/updates/mangos/z2828_01_mangos_spell_groups.sql",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/sql/base/mangos.sql"
+  ],
+  "counts": {
+    "diminishing_groups_named": 18,
+    "diminishing_groups_with_none": 19,
+    "diminishing_ladder_levels": 4,
+    "spell_groups": 19,
+    "spell_group_memberships": 325,
+    "spell_groups_rule_unique": 12,
+    "spell_groups_rule_unique_per_caster": 7,
+    "dr_reset_window_s": 15,
+    "dr_pvp_cap_s_declared_not_called": 10,
+    "soulflayer_cc_pair": 2,
+    "soulflayer_cc_first_window_s": "2-5",
+    "soulflayer_cc_cadence_s": "8-10"
+  },
+  "rule": "Per target, per control group, a diminishing ladder of 1, 0.5, 0.25, then immune (0). The level is read before a hit (duration scaled by it), the level moves up after the hit lands, and it resets after 15 s with no aura of the group active. Three types decide whether the ladder applies: ALL (stuns, a blind, a charm and one rogue opener) on any target; PLAYER (roots, fear and most other controls) only when both sides are players; NONE for limit-only groups. A new aura in the same group replaces the old one unless the old one is judged stronger. Stacking is a separate table: spell groups with UNIQUE or UNIQUE_PER_CASTER rules and a per-aura-type switch. A DoT fixes its caster-side bonus at landing and re-reads the target-side bonus on every tick. Fear and stun are independent flags with no priority between them.",
+  "data_fields": [
+    {"name": "dr.ladder", "unit": "multiplier per level (levels 0-3)", "donor_value_or_null": null},
+    {"name": "dr.reset_window", "unit": "seconds with no active aura", "donor_value_or_null": null},
+    {"name": "dr.pvp_cap", "unit": "seconds when both sides are players", "donor_value_or_null": null},
+    {"name": "dr.kind", "unit": "all | pvp | none per control group", "donor_value_or_null": null},
+    {"name": "stack.rule", "unit": "unique | unique_per_caster | max", "donor_value_or_null": null},
+    {"name": "cc.first_window", "unit": "seconds before the first control (script)", "donor_value_or_null": null},
+    {"name": "cc.cadence", "unit": "seconds between controls (script)", "donor_value_or_null": null},
+    {"name": "dot.snapshot", "unit": "caster bonus fixed at landing: yes | no", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "per-target ladder keyed by control group, not by caster (three attackers share one ladder)",
+    "reset counted from the last aura end, not from the first hit",
+    "immune as a visible miss with no effect",
+    "control groups as data with three types (all, pvp-only, none)",
+    "DoT split: caster bonus fixed at landing, target modifier live per tick",
+    "stacking rules as a small table per aura type plus spell-group rules"
+  ],
+  "change": [
+    "wire the 10 s PvP cap (declared in the enum comment and the limit function, never called: defect D1)",
+    "fixed-step ticks instead of wall time and a cached world tick (defect D2)",
+    "one control priority instead of independent fear and stun flags",
+    "pick the soulflayer-style CC in the constructor as well as on respawn (defect D3, not verified)",
+    "all numbers, names and art are ours; no spell names or IDs in our content"
+  ],
+  "look_test": "Dummy target with a 375-wide status strip under its health bar: chips for stun, fear, root and immune. Three attackers chain a stun and the chip reads 100, 50, 25, then immune. Then one fear and one root. Compare with a flat stun using the same timings and no ladder. Dom judges: can he name the state in one second, does the third stun read as earned rather than broken, and does a fear read as runs-off while a stun reads as frozen. Style flag only, no release rows.",
+  "licence_note": "Code is GPL-2.0 (LICENSE, Version 2 June 1991); clean-room only, shape taken from the described mechanism, no donor lines translated. Game content is named by COPYRIGHT.md as Blizzard Entertainment's; class C for data. Inspiration is category-level only; no spell names, IDs or stat blocks in our notes.",
+  "tags": ["status-stack", "fear", "knockdown", "bleed", "duration-rule", "new:diminishing-returns", "new:stack-rule-table"],
+  "not_read": [
+    "Spell.sql aura rows (counted by file size only, about 8.5 MB)",
+    "most of SpellAuras.cpp beyond stun, root, fear and periodic damage",
+    "MotionMaster (how fleeing movement is driven)",
+    "body of the threat-suppression helper",
+    "Warden modules",
+    "enclosing function of SpellAuras.cpp line 4558 (per-tick target bonus)",
+    "spawn order for the soulflayer AI (defect D3 unverified)",
+    "client half (not in the box)"
+  ]
+}

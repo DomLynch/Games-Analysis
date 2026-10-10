@@ -1,0 +1,114 @@
+{
+  "donor": "smogon-pokemon-showdown",
+  "code_licence": "MIT. LICENSE line 1 is 'The MIT License (MIT)'; line 3 copyright 'Guangcong Luo and other contributors'. README line 75 says the server is distributed under the MIT License.",
+  "asset_licence": "No separate asset licence file in the box. The root MIT LICENSE is the only licence file, and the repo has no sprites, audio, fonts or models (0 binary files found). The root MIT file is the only licence file; nothing in the box says the data or text tables are licensed separately. data/text/README.md says text is 'official where possible' (line 6) and that translated names and descriptions come from PokeAPI (line 12). No licence for PokeAPI or the game-series text is in the box.",
+  "rights_holder_status": "unknown. The files name Guangcong Luo and contributors as copyright holders of the code only. The Pokemon species, move and item names and descriptions are not attributed to any rights holder in the box, and the files do not say who owns them. Not guessed.",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "species, move, item, ability data (game-series names, stats, descriptions)",
+      "path": "data/pokedex.ts, data/moves.ts, data/items.ts, data/abilities.ts, data/learnsets.ts, data/typechart.ts",
+      "count_hint": "grep count of top-level keyed entries: pokedex 1518, moves 953, items 583, abilities 321, learnsets 1289; typechart 1 table; file sizes up to 3.7 MB (learnsets)",
+      "licence": "root MIT (no per-file licence line read in these files)",
+      "class": "C",
+      "note": "Game-series names and stats. Use the numbers only as a shape reference (what fields exist). Never copy names, descriptions or per-species values into Frankendom."
+    },
+    {
+      "kind": "localised and descriptive text tables (species, moves, items, abilities, default battle lines)",
+      "path": "data/text/*.ts (en), data/text/{de,es,fr,it,ja,ko,zh-cn,zh-tw}/*.ts, translations/en-template/*.ts",
+      "count_hint": "data/text/pokedex.ts 1559 keyed entries, data/text/moves.ts 952; about 12 translation folders under translations/ (not counted line by line)",
+      "licence": "root MIT for the code; data/text/README.md line 6 says text is official where possible; line 12 cites PokeAPI for translated names/descriptions (PokeAPI licence not in box)",
+      "class": "C",
+      "note": "Text is game-series wording. Read the schema (name, desc, shortDesc, placeholder lines) and never copy strings. Length budgets in data/text/README.md (lines 21-27) are reusable as a rule of thumb."
+    },
+    {
+      "kind": "random-battle and factory set templates (JSON)",
+      "path": "data/random-battles/*/sets.json and data/random-battles/*/data.json (about 40 files, e.g. data/random-battles/gen9/sets.json)",
+      "count_hint": "about 40 JSON files; gen9/sets.json about 267 KB (sized with ls, not opened)",
+      "licence": "root MIT as the tree shows; no per-folder licence file found",
+      "class": "C",
+      "note": "Generated or curated enemy/team sets keyed by species. Not read beyond file names and sizes. The shape (role, level, moveset) is a data idea only."
+    },
+    {
+      "kind": "rule-mod overlays (folders that override base tables)",
+      "path": "data/mods/<name>/ (47 folders, e.g. data/mods/gen1/)",
+      "count_hint": "47 folders; each holds conditions.ts, moves.ts, pokedex.ts, rulesets.ts, scripts.ts, typechart.ts or a subset",
+      "licence": "root MIT",
+      "class": "A for the mechanism (code under MIT; adaptable as code with attribution kept), C for their contents (game-series data)",
+      "note": "data/mods/gen1/README.md line 13 lists outside sources used for that mod. Only gen1 README and scripts.ts line 2 were read."
+    },
+    {
+      "kind": "config and schema data (CSV, SQL)",
+      "path": "config/hosts.csv, config/proxies.csv, databases/schemas/*.sql, databases/migrations/*/*.sql",
+      "count_hint": "2 CSV, about 20 SQL files",
+      "licence": "root MIT",
+      "class": "D",
+      "note": "Server operations data, not game content. Not read beyond names and sizes."
+    },
+    {
+      "kind": "art, audio, fonts, maps, models",
+      "path": "none in the box",
+      "count_hint": "0 image, audio, font or model files; a scan with grep -I found no binary file in the 1051-file tree",
+      "licence": "not applicable",
+      "class": "D",
+      "note": "The matching client repo (README line 5 links pokemon-showdown-client) holds the sprites and UI. It is not in the box. Nothing to use here for art or sound."
+    }
+  ],
+  "inspiration": [
+    "Turn order is a sorted action queue. Order key first, then priority, then speed, and only an exact tie is broken by a random insertion point (sim/battle-queue.ts lines 18-20 and 396-401; sim/battle.ts lines 408-414). For a server tick, the same shape gives a fixed step with a seeded tie break instead of list position.",
+    "Modifiers stack as a chain of fixed-point multipliers: each multiplier is turned into a 4096ths integer, multiplied with the running value, then rounded once with a half-step offset before shifting back (sim/battle.ts lines 2318-2334). This keeps long stacks of stat modifiers from drifting and is a clean model for a stat-modifier stack in a fast duel.",
+    "Damage has a small random band, a percentage from 85 to 100 (sim/battle.ts lines 2395-2397). In the damage path it runs after the crit step and before type and STAB effects (sim/battle-actions.ts lines 1741-1742). The useful part is the order of operations, not the numbers.",
+    "The RNG is seeded and can replay a battle from seed plus decisions (sim/prng.ts lines 5-10). That is the shape of Frankendom's fight record: store the seed and the inputs, then the same duel can be replayed.",
+    "Rule variants are folders that override base tables, one folder per variant (data/mods/, 47 folders; data/mods/gen1/README.md). The shape maps to zones as data on one runtime: a zone is an overlay, not a fork.",
+    "Text has hard length budgets so a line fits its row: about 55 Latin characters for a move's short description, about 85 for an item or ability (data/text/README.md lines 21 and 25-27). This is a good budget rule for a 375 px wide HUD line.",
+    "A missing translation is written as null and falls back to English (data/text/README.md line 32). Use the same layering for any text the HUD or combat log shows.",
+    "Battle lines are templates with bracket placeholders such as the Pokemon, move and item (data/text/README.md line 38). A combat log written as templates can be restyled per language without touching the logic."
+  ],
+  "briefs": [
+    {
+      "label": "Duel action queue with a seeded tie break",
+      "why": "Simultaneous actions resolve by a clear rule, so a faster attacker goes first and nobody wins by list position. Feels fair and is easy to read in replay.",
+      "keep": "order key first, then priority, then speed; a random tie break only on exact ties",
+      "change": "use the server tick's seeded RNG instead of a shared list shuffle; key the tie to character latency bucket; show the tie as a small visible tell in the replay, not hidden",
+      "ref": "sim/battle-queue.ts lines 18-20 and 396-401; sim/battle.ts lines 408-414. Recreate as an original server-tick ordering; do not copy the code."
+    },
+    {
+      "label": "Fixed-point modifier stack",
+      "why": "Several buffs and debuffs stack without a float drift and always resolve the same way on every machine. The stack reads as a list of named steps.",
+      "keep": "each multiplier converted to an integer in fixed units; one rounding per step with a half-step offset; order fixed by event",
+      "change": "use a 1000ths scale and name each stack by the buff it came from; cap the stack length at three entries for the 375 px readout; store the stack as zone data",
+      "ref": "sim/battle.ts lines 2318-2334. Recreate as a distinct original stat-stack module; do not copy."
+    },
+    {
+      "label": "Damage roll band after crit",
+      "why": "A narrow damage band keeps hits feeling different without making duels random. Applying it after crit and before type matters keeps the roll readable.",
+      "keep": "narrow percentage band; applied after crit and before type bonus; integer rounding each step",
+      "change": "use a band of our own width per weapon class; show the band as a faint number bar on the hit impact, not as a hidden roll; keep heavy hits at a tighter band",
+      "ref": "sim/battle.ts lines 2395-2397; sim/battle-actions.ts lines 1741-1742. Recreate as an original hit-roll; do not copy."
+    },
+    {
+      "label": "Replay from seed and input log",
+      "why": "A fight can be replayed exactly from one seed and the list of player decisions. Good for a fight record and for bug reports.",
+      "keep": "one seed; log of decisions; replay gives the same result",
+      "change": "store the log as a binary blob with a version byte; add a short human label per decision for the replay viewer; add a checksum at the end",
+      "ref": "sim/prng.ts lines 5-10. Recreate as the Frankendom fight record; do not copy the format."
+    },
+    {
+      "label": "Type matchup as a compact grid",
+      "why": "A single grid of attacker against defender type gives a readable matchup at a glance and needs no text on the screen.",
+      "keep": "one table keyed by defending type, one value per attacking type (damageTaken); a small set of effect levels",
+      "change": "use our own element names and palette; show each cell as a ring that gets thicker for stronger effect, not a number; keep it data-driven",
+      "ref": "data/typechart.ts lines 1-4 (schema only, not copied). Recreate as an original element chart; do not copy the table."
+    }
+  ],
+  "not_read": [
+    "sim/dex-conditions.ts and data/conditions.ts (only names seen)",
+    "server/ half in full (3.1 MB; chat plugins and rooms not read, only a grep for image extensions in code)",
+    "translations/*/main.ts bodies (only folder names)",
+    "data/random-battles/*/sets.json and data.json bodies (only sizes)",
+    "data/learnsets.ts and data/moves.ts bodies (only entry counts and one entry)",
+    "data/mods/* other than gen1 README and gen1 scripts.ts line 2",
+    "client repo (not in box; the matching art and UI half)",
+    "PokeAPI and po-devs data sources cited in mods and text READMEs (not in box, not checked)"
+  ]
+}

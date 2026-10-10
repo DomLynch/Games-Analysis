@@ -1,0 +1,73 @@
+{
+  "donor": "OpenGothic",
+  "topic": "hit-feedback-stack",
+  "depth": "thin",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/OpenGothic/common/world/objects/npc.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/game/fightalgo.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/world/world.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/game/movealgo.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/game/globaleffects.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/game/gamescript.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/game/gamesession.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/camera.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/graphics/mdlvisual.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/world/triggers/earthquake.cpp",
+    "/mnt/frankendom-donors/OpenGothic/LICENSE"
+  ],
+  "counts": {
+    "hit_path_functions_read": 8,
+    "impact_scheme_codes_in_code": 4,
+    "impact_fallback_suffixes": 3,
+    "script_screen_effect_types": 4,
+    "stumble_clips_selected": 2,
+    "fall_clips_selected": 2,
+    "hit_stop_found": 0,
+    "hit_flash_found_on_hit_path": 0,
+    "melee_camera_shake_found": 0,
+    "data_pack_files_in_box": 0
+  },
+  "rule": "One hit in order: down check; block or jump-back check; side from attacker bearing; perception and cancel of victim queued move (onTakeHit) with AI wait zero; damage value; impact sound and particle (before HP write); interrupt and stumble A/B unless FLY; FLY launches a fall with speed 0.75 and vertical share 0.5; HP written last; 50 percent victim voice; knockout sets HP to 1 and drops weapon, shield and torch. Script screen effects (time.slw, screenblend.scx, morph.fov, earthquake.eqk) are not on the hit path.",
+  "data_fields": [
+    {"name": "hit_sound_range", "unit": "world units", "donor_value_or_null": 2500},
+    {"name": "victim_voice_chance", "unit": "probability", "donor_value_or_null": 0.5},
+    {"name": "knockout_hp_left", "unit": "HP", "donor_value_or_null": 1},
+    {"name": "fall_knock_speed", "unit": "speed factor", "donor_value_or_null": 0.75},
+    {"name": "fall_vertical_share", "unit": "ratio", "donor_value_or_null": 0.5},
+    {"name": "quake_update_interval", "unit": "ms", "donor_value_or_null": 10},
+    {"name": "quake_amp_floor", "unit": "ratio", "donor_value_or_null": 0.25},
+    {"name": "morph_period_a", "unit": "ms", "donor_value_or_null": 5000},
+    {"name": "morph_period_b", "unit": "ms", "donor_value_or_null": 9000},
+    {"name": "morph_amp_scale", "unit": "ratio", "donor_value_or_null": 0.075},
+    {"name": "impact_hit_stop_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "impact_puff_cap_per_victim", "unit": "count", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Cancel the victim's queued move on hit, and zero its AI wait so it re-decides at once",
+    "Impact sound and particle from a keyed table with fallbacks (weapon material, armour material, scheme, then family default)",
+    "Stumble side from the attacker's bearing (two clips, A or B)",
+    "Fall vector from the blow with a fixed speed and a vertical share",
+    "HP is written last in the hit, after the feedback has been decided and started",
+    "Victim groan on a random share of hits, never when already down"
+  ],
+  "change": [
+    "No time scaling in the engine; any hit-stop is a client-only pose pause and the server tick never pauses",
+    "Screen blend and quake are client-only and use our own colours and clamps",
+    "Cap concurrent impact puffs per victim at 3 for many-vs-one",
+    "Keep the impact decision in src/fight and present it on the client"
+  ],
+  "look_test": "Style flag on the existing fight scene with light, blocked and heavy hits; stumble side from attacker bearing, cancelled counter, a 60 ms client-only pause on heavy only, 50 percent groan. Compare on a 375 wide phone with the flag off. Target src/fight/hit-impact.ts, row 10. No release rows, no lock; Deploy publishes to /preview/.",
+  "licence_note": "MIT (LICENSE line 1; copyright line 3). Adapt with notice kept. Gothic 2 content is not in the box and its rights holder is not named in the repo; keep inspiration category-level and name our own sound and particle keys.",
+  "tags": ["ordered-feedback", "hit-sound", "particle-burst", "knockback", "stagger", "flash", "screen-shake", "duration-rule"],
+  "not_read": [
+    "Daedalus scripts and the Gothic 2 data pack (absent from the box)",
+    "Sound and particle tables (absent)",
+    "Stumble and fall clips (absent)",
+    "DamageCalculator::damageValue (not read)",
+    "changeAttribute and the down handling inside it (not read)",
+    "Skeleton internals behind MdlVisual::interrupt (not read)",
+    "Tempest submodule (empty in the box; Vec3 default constructor not verified)",
+    "Shader bodies for screen blend draw path (read only the CPU side)"
+  ]
+}

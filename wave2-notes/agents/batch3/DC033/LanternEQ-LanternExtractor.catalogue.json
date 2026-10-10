@@ -1,0 +1,155 @@
+{
+  "donor": "LanternEQ-LanternExtractor",
+  "donor_path": "/mnt/frankendom-donors/LanternEQ-LanternExtractor/",
+  "half_read": "tool side: C# extractor source plus ClientData/animationsources.txt, settings.txt, EQ/Sound/EffSounds.cs, SoundConstants.cs",
+  "paired_donor": "LanternEQ-LanternUnityTools (consumer side; own catalogue in DC033)",
+  "counts": {
+    "creatures": 74,
+    "classes": 0,
+    "weapons": null,
+    "gear_sets": null,
+    "zones": null
+  },
+  "count_notes": "creatures = family headers in animationsources.txt (101 body-to-rig rows, 30 distinct rig codes in the Unity copy). classes = 0 class names found by grep in .cs files read. weapons, gear_sets, zones are not in this half, so null, not zero.",
+  "creature_families": [
+    "dragon-type families sharing one skeleton (4 families)",
+    "winged humanoid guardian with an imp family on the same rig",
+    "shelled crawler on a spider-type rig code",
+    "feline pack: 4 cat families on one rig",
+    "horned brute on a shared rig code",
+    "undead families reusing humanoid rigs",
+    "winged beasts (3 families) on one rig code",
+    "serpent and ghost dragon on one dragon rig code"
+  ],
+  "top_creatures": [
+    {
+      "label": "Dragon family on one skeleton",
+      "why": "Four dragon-type families share one skeleton, so one rig gives a whole family of silhouettes at 375 wide.",
+      "keep": "one skeleton for the whole dragon family",
+      "change": "silhouette from wing and crown meshes, not palette",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternExtractor/LanternExtractor/ClientData/animationsources.txt lines 225-226, 237-238, 243-244, 249-250"
+    },
+    {
+      "label": "Winged stone guardian",
+      "why": "Winged humanoid with a still idle; reads as a threat before it moves.",
+      "keep": "still winged idle",
+      "change": "jagged wings and an ember chest core",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternExtractor/LanternExtractor/ClientData/animationsources.txt lines 59-60, 68-69"
+    },
+    {
+      "label": "Shelled crawler",
+      "why": "Low wide silhouette with a quick scuttle; reads as a swarm at distance.",
+      "keep": "low scuttle",
+      "change": "spiked ridge and a burrow-up attack",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternExtractor/LanternExtractor/ClientData/animationsources.txt lines 50-51"
+    },
+    {
+      "label": "Feline pack",
+      "why": "Four cat families on one feline rig give four sizes from one animation set.",
+      "keep": "one feline rig",
+      "change": "markings and a pounce gap-closer",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternExtractor/LanternExtractor/ClientData/animationsources.txt lines 77-78, 95-96, 109-110, 161-162"
+    },
+    {
+      "label": "Horned brute",
+      "why": "Heavy stride and horned head read at distance.",
+      "keep": "heavy stride",
+      "change": "antler spread, chain belt, dust ring on stomp",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternExtractor/LanternExtractor/ClientData/animationsources.txt lines 80-81"
+    },
+    {
+      "label": "Undead on living rigs",
+      "why": "Undead reuse humanoid clips, so new undead cost no new animation.",
+      "keep": "shared humanoid rig with a different idle",
+      "change": "bone-gap silhouette and a rattle sound",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternExtractor/LanternExtractor/ClientData/animationsources.txt lines 62-63, 92-93, 101-103, 193-194"
+    },
+    {
+      "label": "Winged beasts on one rig code",
+      "why": "Three winged families share one rig code, so one animation set covers them.",
+      "keep": "one shared rig code",
+      "change": "wing shape and ground stance (flight is inferred from family names)",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternExtractor/LanternExtractor/ClientData/animationsources.txt lines 71-72, 125-126, 199-200"
+    },
+    {
+      "label": "Wyrm and ghost dragon",
+      "why": "A serpent and a spectre share one dragon rig code, so they read as one family.",
+      "keep": "shared dragon rig code",
+      "change": "ghost trail and a ground-coil idle",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternExtractor/LanternExtractor/ClientData/animationsources.txt lines 190-191, 246-247"
+    }
+  ],
+  "classes": [],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [],
+  "looks": [
+    {
+      "label": "Region-split zone mesh export",
+      "technique": "export option: one combined mesh, or one mesh per BSP region",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternExtractor/LanternExtractor/settings.txt lines 17-23"
+    },
+    {
+      "label": "Hidden geometry as collision-only boundaries",
+      "technique": "export switch for invisible boundary geometry",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternExtractor/LanternExtractor/settings.txt line 27"
+    },
+    {
+      "label": "Sound instances with emit and loop types",
+      "technique": "emitter type on a placed sound: one-shot emit or looping ambience",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternExtractor/LanternExtractor/EQ/Sound/SoundConstants.cs lines 5-6"
+    },
+    {
+      "label": "Fixed-length binary sound record",
+      "technique": "84-byte flat record with position, radius, type and sound ids; no header",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternExtractor/LanternExtractor/EQ/Sound/EffSounds.cs lines 12-16, 60-64"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Shared-rig dragon brood",
+      "idea": "One dragon skeleton, four silhouettes: a family of dragons from one animation set.",
+      "keep": "one rig for the family",
+      "change": "wing and crown silhouettes, own breath effect, no palette copy"
+    },
+    {
+      "name": "Ember-core guardian",
+      "idea": "A winged stone guardian that stays still until it sees a player, then unfolds jagged wings.",
+      "keep": "still winged idle",
+      "change": "jagged wings, ember chest core, stone sound"
+    },
+    {
+      "name": "Swarm crawler",
+      "idea": "A low shelled crawler that comes in packs and burrows up to attack.",
+      "keep": "low fast scuttle",
+      "change": "spiked ridge, burrow-up attack"
+    },
+    {
+      "name": "Feline pack",
+      "idea": "Four feline sizes from one rig, one pack leader with a pounce.",
+      "keep": "one feline rig",
+      "change": "markings and a pounce gap-closer"
+    },
+    {
+      "name": "Undead on living rigs",
+      "idea": "Undead reuse the humanoid rig and get a bone-gap silhouette and rattle.",
+      "keep": "shared humanoid clips",
+      "change": "bone-gap silhouette, rattle sound, own idle"
+    },
+    {
+      "name": "Region-streamed zones",
+      "idea": "Zones split into region meshes and streamed or culled by region.",
+      "keep": "split and cull by region",
+      "change": "region size set to our own tile grid"
+    }
+  ],
+  "licence_note": "Code MIT (LICENSE line 1 and line 3, copyright 2024 LanternEQ). README line 51: source code only, no assets shipped. animationsources.txt and settings.txt have no licence line and are EverQuest-derived: class C, category-level inspiration only. EverQuest is a Daybreak trademark; README line 52 says the project is not affiliated.",
+  "not_read": [
+    "EQ/Wld/* (zone, object, character and equipment parsers)",
+    "EQ/Archive/*",
+    "most of EQ/Sound/* (AudioInstance, MusicInstance, EffSndBnk, others)",
+    "Infrastructure/* except EffSounds",
+    ".sln and .csproj files",
+    "external wiki"
+  ]
+}

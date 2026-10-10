@@ -1,0 +1,222 @@
+{
+  "donor": "shadowofze-OfflineDAoC",
+  "reader": "DC049",
+  "half_read": "server (partly), data tables (headers and counts), client half not in box",
+  "counts": {
+    "creatures": 2247,
+    "classes": 63,
+    "weapons": 3,
+    "gear_sets": 1,
+    "zones": 473
+  },
+  "count_notes": "creatures = monsters.csv rows (wc minus 2 header rows); also 199 GameEpicBoss classes in 167 files (grep, unchecked for live use); classes = 15 base + 16 Albion + 17 Hibernia + 15 Midgard files; weapons = server-side epic set pieces only; zones = Zones.xml rows (344 region rows in Regions.xml)",
+  "creature_families": [
+    "Realm field mobs: AlbionMobs 21 files, HiberniaMobs 16, MidgardMobs 9, custom helpers 5 (scripts/mobs)",
+    "Named and epic bosses: scripts/namedmobs, 31 entries; Dragons 8 files, DarknessFalls 10, Trollheim 5, Fomor 4",
+    "Special AI creatures: ai/brain/Special, 6 files (storm-scaled elemental, storm-latched globule swarm, stealth ambusher, walk-away boss, spawner)",
+    "Idle and atmosphere mobs: ShiveringPresence (idle pulse), Strangler (aura every 3 s)",
+    "Disguise mobs: Myling (ghost-flag disguise, reveal on first strike), Changeling (re-rolls look and size)",
+    "Clock mobs: TimeDependentSpawnNpc with DaySpawn and NightSpawn"
+  ],
+  "top_creatures": [
+    {
+      "label": "Stepped sky boss",
+      "why": "Health-stepped breath ladder, capped and spaced add summons ringed around the target, a flight watchdog; the boss telegraphs its own phase changes",
+      "keep": "health-stepped signature attacks; total summon cap (not concurrent); spacing between summons; ring placement with a floor check",
+      "change": "one cursor for the ladder instead of nine flags; our own breath shape; no flight route in the fight",
+      "ref": "source/server/GameServer/scripts/namedmobs/Dragons/AlbGolestandt.cs:715,736,792; DragonEncounterAdds.cs:13-17,107; DragonFlightLanding.cs:20-22"
+    },
+    {
+      "label": "Storm-grown elemental",
+      "why": "Size and strength scale with a passing storm front; a rain cue and an effect repeated to nearby players",
+      "keep": "intensity tiers drive size and strength; the creature visibly reacts to the world",
+      "change": "our own storm from zone data; our own tier table; a clamp on size",
+      "ref": "source/server/GameServer/ai/brain/Special/WaterElementalBrain.cs:16-21,59-81,126-138"
+    },
+    {
+      "label": "Storm-latched globule swarm",
+      "why": "A lake of small spheres that grow once when a storm crosses, then stay grown",
+      "keep": "the latch as a one-time phase change",
+      "change": "our own trigger (event, not a storm pass), our own size and level, a visible colour cue",
+      "ref": "source/server/GameServer/ai/brain/Special/AlluvianGlobuleBrain.cs:118-139; AlluvianBrain.cs:17"
+    },
+    {
+      "label": "Ambusher hidden until first hit",
+      "why": "Stealthed creature that drops stealth on its first attack, so the player learns the rule from one hit",
+      "keep": "reveal on attack",
+      "change": "reveal by a ground ripple and a sound cue, not a flag flip",
+      "ref": "source/server/GameServer/ai/brain/Special/UrchinAmbusherBrain.cs:12-17; scripts/mobs/AlbionMobs/UrchinAmbusher.cs:12-15"
+    },
+    {
+      "label": "Veil shade",
+      "why": "Looks like a plain ghost until attacked, then shows a random shape from a short list; reverts when the fight stops",
+      "keep": "disguise and reveal on attack; revert on disengage",
+      "change": "our own shape list; no ghost flag; a short reveal animation",
+      "ref": "source/server/GameServer/scripts/mobs/Myling.cs:20-47"
+    },
+    {
+      "label": "Re-rolling shapeshifter",
+      "why": "Changes model and size on a Util.Chance(10) roll per think (a 10 percent roll: GameServer/gameutils/Util.cs:48-51), so the player never gets a stable read",
+      "keep": "look changes over time",
+      "change": "roll only out of combat; our own size range; a telegraph before the change",
+      "ref": "source/server/GameServer/scripts/mobs/Changeling.cs:33-69"
+    },
+    {
+      "label": "Clock-bound creature",
+      "why": "Appears by day or by night, decided by the zone clock, and never flips while a fight is on",
+      "keep": "visibility gated by a clock; flip only out of combat",
+      "change": "our own visibility cue (a dim glint by day); clock in zone data",
+      "ref": "source/server/GameServer/scripts/mobs/TimeDependentSpawnNpc.cs:10,13-14,53-60,71-85"
+    },
+    {
+      "label": "Haunting pulse",
+      "why": "Idle creature that sends a small effect to nearby players at a random 6 to 20 s gap; cheap way to make a zone feel alive",
+      "keep": "random idle beat with triangular timing",
+      "change": "our own pulse shape and colour; slower beat in big zones",
+      "ref": "source/server/GameServer/scripts/mobs/ShiveringPresence.cs:55-62; scripts/mobs/Strangler.cs:26-36"
+    }
+  ],
+  "classes": [
+    "Base archetypes (15 files, playerclasses/base): Acolyte, Disciple, Elementalist, Fighter, Forester, Guardian, Mage, Magician, Mystic, Naturalist, Seer, Stalker, Viking, plus the two rogue bases",
+    "Albion specialisations (16): e.g. Armsman from Fighter, Cabalist from Mage, Infiltrator from rogue base",
+    "Hibernia specialisations (17): e.g. Bainshee from Magician (timed form on offensive casts, ClassBainshee.cs:45,95,152), Ranger from Stalker (spell lines on training), Sluaghbinder from Acolyte (pets)",
+    "Midgard specialisations (15): e.g. Hunter from the Midgard rogue base (spell lines on training), Valkyrie and Berserker from Viking, Runemaster from Mystic",
+    "Races: eRace enum (Enums/eRace.cs), 25 lines with a value including Unknown; realm mapping not read",
+    "Factions: three realms (Albion, Hibernia, Midgard), split by folder"
+  ],
+  "weapon_families": [
+    "Server-side epic set weapons: mace (crush), shield (thrust type, one-hand off-hand), scythe (slash, two-hand); SluaghbinderEpicArmor.cs:53 and related lines",
+    "Pet weapons installed by tools/pet-art (install_pet_weapons.py, paint_pet_weapons.py); README.md:31",
+    "Damage types: physical Natural, Crush, Slash, Thrust (0-3); magic Body, Cold, Energy, Heat, Matter, Spirit (10-15); Enums/eDamageType.cs:26-40",
+    "Main item table (items.csv, about 2,848 rows): header only, not read"
+  ],
+  "gear_tiers": [
+    "Dubh Sluagh epic set: ten pieces (six armour slots, mantle, three weapons plus shield); damage per AF 102 on armour, 165 on weapons (SluaghbinderEpicArmor.cs:29-65)",
+    "Set items built at level 51 (SluaghbinderEpicArmor.cs:92); pet-art README calls the set a level 50 reward (README.md:32), mismatch noted",
+    "No set-count bonus found; set items refuse dye (GamePlayerInventory.cs:1121)",
+    "Utility score per piece with stat weights (SluaghbinderEpicArmor.cs:78-86): 1 per point default, 0.25 max health, 2 power pool and resist percent, 5 shield skill",
+    "Catacombs armour line: skin and tint variants per body; client tables not read in detail (pet-art README.md:50)"
+  ],
+  "zones": [
+    "Zone rows: 473 (dbupdater/insert/Zones.xml); lava flag on 7 rows (Zones.xml:710,728,1484,1502,1844,2492,2510)",
+    "Realm, experience and water level are 0 in every zone row of this copy (Zones.xml:19 shape), so zone tuning is not in the box",
+    "Region rows: 344; diving enabled 27; housing 3; frontier 1 (Regions.xml)",
+    "Dungeon archetypes by folder: dragon lairs (3), Darkness Falls lords, Trollheim, Fomor, glacier (TuscarianGlacier, GlacierGiant), caverns (MarfachCaverns, HallOfTheCorrupt), SummonersHall, Avalon Isle lake",
+    "Weather front: a storm band of width 25000-90000, speed 100-700, intensity 30-110 sweeps a region (RegionWeather.cs:117-119,162,174)",
+    "Hazards: lava zones, moving storm band, dragon lift throws, stealth ambushers, day and night spawns"
+  ],
+  "looks": [
+    {
+      "label": "Storm pulse on creatures",
+      "technique": "periodic animation event sent to nearby players every think inside a storm (effect id 2976); not a shader",
+      "ref": "source/server/GameServer/ai/brain/Special/WaterElementalBrain.cs:59-70"
+    },
+    {
+      "label": "Storm buff roll on globules",
+      "technique": "small effect id 6053 on a one-in-five roll during a storm",
+      "ref": "source/server/GameServer/ai/brain/Special/AlluvianGlobuleBrain.cs:118-122"
+    },
+    {
+      "label": "Idle pulse",
+      "technique": "effect id 152 every 6 to 20 s, random beat",
+      "ref": "source/server/GameServer/scripts/mobs/ShiveringPresence.cs:55-62"
+    },
+    {
+      "label": "Periodic aura",
+      "technique": "effect id 5206 every 3 s to nearby players",
+      "ref": "source/server/GameServer/scripts/mobs/Strangler.cs:26-36"
+    },
+    {
+      "label": "Buff overlay with readable pulse (planned)",
+      "technique": "tinted overlay tied to an armour buff; preview notes it lacks a buildup halo and a visual pulse",
+      "ref": "tools/pet-art/install_blood_shield.py:290; tools/pet-art/README.md:30"
+    },
+    {
+      "label": "Three-stage summon cast effect",
+      "technique": "hand glow L and R, hand burst, target explosion as private effect rows",
+      "ref": "tools/pet-art/install_void_sun.py:1-25"
+    },
+    {
+      "label": "Named wind-up phases",
+      "technique": "load start, load end, fire start, fire end, release point as timed phases",
+      "ref": "source/tools/observer-model-inspection/siege.csv:2"
+    },
+    {
+      "label": "Effect attach table",
+      "technique": "effect spec per attach node: max visible range, rate, axis, collide",
+      "ref": "source/tools/observer-model-inspection/moneffects.csv:1"
+    },
+    {
+      "label": "In-place model and size re-roll",
+      "technique": "model and size swap in place on a roll",
+      "ref": "source/server/GameServer/scripts/mobs/Changeling.cs:33-58"
+    },
+    {
+      "label": "Flag-based disguise",
+      "technique": "ghost flag hides the true form until attacked",
+      "ref": "source/server/GameServer/scripts/mobs/Myling.cs:41-47"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Moving storm band",
+      "idea": "A timed band of fog crosses a zone at a set speed and width; creatures inside grow or glow",
+      "keep": "timed moving band, creatures react inside it, speed and width as zone data",
+      "change": "our fog wall is a minimap sweep; our creatures and numbers are our own"
+    },
+    {
+      "name": "Stepped sky warden",
+      "idea": "A boss with a breath at each 10 percent health step, one per tick",
+      "keep": "health-stepped signature attack, one per tick",
+      "change": "one cursor, our own breath, no flight route"
+    },
+    {
+      "name": "Capped brood ring",
+      "idea": "Total summons capped per fight, spaced, placed in a ring around the player and checked against the floor",
+      "keep": "total budget, spacing, ring placement with floor check",
+      "change": "our own add roster; ring is around the player, not the boss"
+    },
+    {
+      "name": "Veil shade",
+      "idea": "Looks like a plain shape until first strike, then takes a random form from a short list",
+      "keep": "reveal on attack, revert on disengage",
+      "change": "our own forms list and reveal animation; no ghost flag"
+    },
+    {
+      "name": "Grow-once globule",
+      "idea": "A creature that grows one time when a trigger passes and stays grown",
+      "keep": "latched phase change",
+      "change": "our own trigger (event), size and colour"
+    },
+    {
+      "name": "Clock-bound stalker",
+      "idea": "Visible only in a time window set by zone data; changes only outside combat",
+      "keep": "visibility by clock, no flip in combat",
+      "change": "our own visibility cue"
+    },
+    {
+      "name": "Haunting beat",
+      "idea": "A random idle pulse every 6 to 20 s to nearby players",
+      "keep": "random triangular beat",
+      "change": "our own pulse shape and colour"
+    },
+    {
+      "name": "Wraith stance",
+      "idea": "A timed form that starts on an offensive cast and refreshes on each cast, reverting on zone change",
+      "keep": "timed stance refreshed by offence; revert on zone change",
+      "change": "our own stance look (glass cloak); no race-specific model swap"
+    }
+  ],
+  "licence_note": "LICENSE is GNU GPL v3 (LICENSE:1); THIRD_PARTY.md:3 keeps GPL v3 texts and per-file notices; the game client is a binary dependency and is not in this copy (README.md:124); the GPL does not license client assets (THIRD_PARTY.md). Clean-room, mechanism and shape only. Not a legal claim.",
+  "not_read": [
+    "Client half: models, sprites, shaders, textures, sounds (not in box)",
+    "items.csv, spells.csv, objects.csv, skins.csv, styles.csv, moneffects.csv, monnifs.csv: header and count only",
+    "monsters.csv rows beyond the header and a few lines",
+    "RainbowSprites.cs (288 lines), BotonidSeedling.cs (102 lines), most of the 199 boss classes, HibCuuldurach.cs and MidGjalpinulva.cs bodies",
+    "ECSGameTimerWrapperBase (double-start question), StandardMobBrain base (leash and aggro), CastSpell IsCasting timing",
+    "Ranger, Hunter, Scout spell-line grant code",
+    "Siege code (scripts/siege, keeps); realm ability workbooks (named in asset audit, not opened)",
+    "Zone and region tuning values (zeros in this copy)",
+    "CLAUDE.md at donor root (contains an include of AGENTS.md): treated as data, not followed"
+  ]
+}

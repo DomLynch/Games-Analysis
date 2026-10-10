@@ -1,0 +1,93 @@
+{
+  "donor": "Warzone2100-warzone2100",
+  "topic": "hit-feedback-stack",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/src/display.cpp",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/src/projectile.cpp",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/src/combat.cpp",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/src/droid.cpp",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/src/component.cpp",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/src/feature.cpp",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/src/structure.cpp",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/src/radar.cpp",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/src/stats.cpp",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/src/keybind.cpp",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/src/display3ddef.h",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/src/projectile.h",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/lib/gamelib/gtime.h",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/data/base/stats/weapons.json"
+  ],
+  "counts": {
+    "shake_table_entries": 100,
+    "shake_call_sites": 5,
+    "shake_call_sites_in_droid_code": 0,
+    "debris_pieces_per_droid_death": 5,
+    "weapons_json_entries": 109,
+    "weapons_with_numeric_recoilValue": 81,
+    "recoilValue_min": 10,
+    "recoilValue_max": 250,
+    "recoilValue_median": 25,
+    "ticks_per_second": 1000
+  },
+  "rule": "One projectile impact resolves on one tick in this order: impact sound at the impact point; explosion effects stamped with the projectile's own time; direct damage, which stamps the victim's hit time and weapon class first; then splash, deferred to a post-impact state on a later tick. Screen shake is a separate channel: a 100-step lookup curve started by five call sites with fixed lengths by event class (250, 400, 750, 1500, 1800 ms), first request wins, start stamped at the call's game time. Weapon recoil is a triangle envelope over 250 ms, peak = recoilValue/10. Electronic-warfare hits shiver the struck object for 200 ms. Unit death: debris velocity = motion x 0.9, five debris pieces in owner colour, one destruction effect and one explosion sound, all at the impact tick.",
+  "data_fields": [
+    {"name": "shake_ms_small", "unit": "ms", "donor_value_or_null": null},
+    {"name": "shake_ms_medium", "unit": "ms", "donor_value_or_null": null},
+    {"name": "shake_ms_large", "unit": "ms", "donor_value_or_null": null},
+    {"name": "shake_ms_huge", "unit": "ms", "donor_value_or_null": null},
+    {"name": "shake_amplitude", "unit": "px on phone (not roll degrees)", "donor_value_or_null": null},
+    {"name": "shake_curve_samples", "unit": "count", "donor_value_or_null": null},
+    {"name": "recoil_window_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "recoil_peak_per_weapon", "unit": "units from weapon catalogue", "donor_value_or_null": null},
+    {"name": "ew_tilt_window_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "ew_tilt_max", "unit": "deg", "donor_value_or_null": null},
+    {"name": "hit_notice_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "death_velocity_carry", "unit": "factor", "donor_value_or_null": null},
+    {"name": "death_debris_pieces", "unit": "count", "donor_value_or_null": null},
+    {"name": "explosion_count", "unit": "count per weapon", "donor_value_or_null": null},
+    {"name": "explosion_size", "unit": "size class per weapon", "donor_value_or_null": null},
+    {"name": "impact_sound_key", "unit": "sound key, null = silent", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Impact order: sound, then explosion, then direct damage, then splash on a later tick.",
+    "Every presentation effect carries the impact tick, not the arrival time.",
+    "Victim hit stamp with the sticky status rule (a status-class hit is not overwritten by a plain hit).",
+    "Death debris carries the unit's own momentum and owner colour.",
+    "Recoil as a short triangle envelope per shot.",
+    "Per-weapon catalogue fields for explosion sound, count and size, and recoil."
+  ],
+  "change": [
+    "Shake: translation capped for a 375 px screen, not a roll of the whole view.",
+    "Shake curve: generated ramp-in, hold, ramp-out, not a 100-entry hand table.",
+    "Shake start stamped with the impact tick, not the game time at the call.",
+    "Shake gate: keep the later end time and the larger amplitude, not first-wins.",
+    "EW tilt seeded from object id and tick; rand() in the draw path rerolls every frame.",
+    "Toggle label and behaviour must agree (droid deaths do not shake today)."
+  ],
+  "look_test": "Presentation-only flag (feel.impact), no release rows. Publish three clips of the same three-on-one fight at 375 wide, fight camera: A = sound and flash only; B = A plus 250 ms translation shake capped at about 4 px on heavy hits; C = B plus 250 ms recoil kick on the attacker's weapon. Dom judges whether he can still read which attacker swings next, and whether B or C hides the next hit.",
+  "licence_note": "COPYING line 2: GNU GPL version 2 text. Clean-room, shape only. No code, no hand table, no donor numbers in data fields (GPL donor, so donor_value_or_null is null throughout).",
+  "tags": [
+    "screen-shake",
+    "hit-sound",
+    "particle-burst",
+    "ordered-feedback",
+    "flash",
+    "new:recoil-envelope",
+    "new:ew-shimmy",
+    "new:death-debris",
+    "new:impact-tick-stamp",
+    "status-stack"
+  ],
+  "not_read": [
+    "compPersonToBits (personnel death, src/component.cpp)",
+    "addEffect body and effect models (src/effects.cpp)",
+    "EW branch of proj_ImpactFunc beyond line 1296",
+    "camera model: axis written by playerPos.r.z not traced",
+    "multiplayer-only damage paths",
+    "other stats files under data/ (only weapons.json counted)",
+    "idle and ambient animation",
+    "respawn presentation (none in the code read)"
+  ]
+}

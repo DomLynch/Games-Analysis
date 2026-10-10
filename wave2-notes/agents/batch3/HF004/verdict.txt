@@ -1,0 +1,16 @@
+donor: xoreos-xoreos
+topic: hit-feedback-stack
+verdict: PARTIAL (thin)
+reason: the only hit-time feedback in the code read is the swing-and-dodge beat, then damage at round end, then death presentation. No hit stop, shake, flash, knockback or particle reader found. The shake and impact entries are schema names only, and their values are game data not in the box.
+files opened (candidate list, per anti-strictness rule 1):
+- /mnt/frankendom-donors/xoreos-xoreos/src/engines/kotorbase/round.cpp (whole file)
+- /mnt/frankendom-donors/xoreos-xoreos/src/engines/kotorbase/module.cpp (lines 724-756, combat-round hooks)
+- /mnt/frankendom-donors/xoreos-xoreos/src/engines/kotorbase/creature.cpp (lines 738-900, attack, damage, death; 1025-1039 dice)
+- /mnt/frankendom-donors/xoreos-xoreos/src/engines/kotorbase/area.cpp (lines 815-832, death call)
+- /mnt/frankendom-donors/xoreos-xoreos/src/engines/dragonage/types.h (event ids)
+- /mnt/frankendom-donors/xoreos-xoreos/src/aurora/gff4fields.h (cutscene shake and VFX impact ids)
+- /mnt/frankendom-donors/xoreos-xoreos/src/aurora/gdaheaders.h and gdaheaders.cpp (GDA column-name hash table)
+- narrow greps over src for shake, impact, flash, knockback, hitstop and damage
+not read in full: dragonage/event.cpp (68 lines)
+Best transferable idea: show the wind-up on a beat and resolve damage on a later beat, with a minimum-HP floor flag that keeps a creature at 1 HP when set.
+Confidence: high on the round order and damage formula; medium on the impact schema (names only).

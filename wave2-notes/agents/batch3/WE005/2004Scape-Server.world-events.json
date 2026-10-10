@@ -1,0 +1,81 @@
+{
+  "donor": "2004Scape-Server",
+  "topic": "world-events",
+  "depth": "full",
+  "half_read": "data",
+  "paths": [
+    "/mnt/frankendom-donors/2004Scape-Server/data/src/scripts/macro events/scripts/macro_events.rs2",
+    "/mnt/frankendom-donors/2004Scape-Server/data/src/scripts/macro events/scripts/general/macro_event_mysterious_old_man.rs2",
+    "/mnt/frankendom-donors/2004Scape-Server/data/src/scripts/macro events/scripts/general/macro_event_swarm.rs2",
+    "/mnt/frankendom-donors/2004Scape-Server/data/src/scripts/macro events/scripts/prayer/macro_event_shade.rs2",
+    "/mnt/frankendom-donors/2004Scape-Server/data/src/scripts/macro events/configs/macro_events.constant",
+    "/mnt/frankendom-donors/2004Scape-Server/data/src/scripts/macro events/configs/macro_events.enum",
+    "/mnt/frankendom-donors/2004Scape-Server/data/src/scripts/areas/area_desert/scripts/desert_heat.rs2",
+    "/mnt/frankendom-donors/2004Scape-Server/data/src/scripts/general/scripts/flavour_text/sheep.rs2",
+    "/mnt/frankendom-donors/2004Scape-Server/data/src/scripts/general/scripts/flavour_text/ducks.rs2",
+    "/mnt/frankendom-donors/2004Scape-Server/data/src/scripts/general/scripts/flavour_text/cows.rs2",
+    "/mnt/frankendom-donors/2004Scape-Server/data/src/scripts/login_logout/login.rs2",
+    "/mnt/frankendom-donors/2004Scape-Server/src/engine/World.ts",
+    "/mnt/frankendom-donors/2004Scape-Server/src/engine/script/handlers/NpcOps.ts",
+    "/mnt/frankendom-donors/2004Scape-Server/src/engine/entity/Obj.ts",
+    "/mnt/frankendom-donors/2004Scape-Server/LICENSE",
+    "/mnt/frankendom-donors/2004Scape-Server/README.md"
+  ],
+  "counts": {
+    "macro_event_members": 5,
+    "macro_event_free": 4,
+    "macro_event_lock_count": 1,
+    "visitor_beats": 4,
+    "desert_countdown_base_ticks": 150,
+    "desert_exit_squares": 11,
+    "desert_gear_modifiers": 8,
+    "sheep_bleat_range_ticks": "20-39",
+    "duck_quack_range_ticks": "50-99",
+    "cow_moo_range_ticks": "15-34",
+    "cow_word_chance": "1 in 4",
+    "receipts_passed": 38
+  },
+  "rule": "Per-player 500-tick timer (about 300 s) draws a random event only in the skilling afk state, one at a time, outside excluded zones. A visitor spawns next to the player with a 1000-tick lifetime (donor-marked guess), is tethered (row or more than 15 tiles brings it back), and escalates through four beats (wave, think, angry, fail); fail teleports the player; a talk releases the lock and pays out. Desert heat is a 150-tick countdown re-armed each cycle, shortened by armour and lengthened by desert clothing; each cycle either drinks one water step or takes 1-10 damage with no water. Animals idle on timers (sheep 20-39, duck 50-99, cow 15-34 ticks). Defect D1: the lost path releases no lock, so no further random events until login (macro_events.rs2:67, :152; old man :17-21, :46-50, :73).",
+  "data_fields": [
+    {"name": "tick_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "event_timer_ticks", "unit": "ticks", "donor_value_or_null": null},
+    {"name": "event_lifetime_ticks", "unit": "ticks", "donor_value_or_null": null},
+    {"name": "tether_tiles", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "beats_before_leave", "unit": "count", "donor_value_or_null": null},
+    {"name": "members_event_count", "unit": "count", "donor_value_or_null": null},
+    {"name": "free_event_count", "unit": "count", "donor_value_or_null": null},
+    {"name": "desert_countdown_base_ticks", "unit": "ticks", "donor_value_or_null": null},
+    {"name": "desert_gear_modifier_ticks", "unit": "ticks, signed per slot", "donor_value_or_null": null},
+    {"name": "thirst_damage_range", "unit": "hp", "donor_value_or_null": null},
+    {"name": "idle_gap_range_ticks", "unit": "ticks, per species", "donor_value_or_null": null},
+    {"name": "idle_word_chance", "unit": "1 in N", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "One random event at a time per player (lock)",
+    "Area exclusions as zone data (duel arena, tutorial, minigame zones)",
+    "Visitor needs one reply, or leaves after four beats",
+    "Tether: visitor brought back when out of row or beyond range",
+    "Small hidden countdown that gear modifies (fits gear dressing as data)",
+    "Idle animal timers with a species-specific gap range",
+    "Measured idle gap recorded in the source (duck averages) as a design note"
+  ],
+  "change": [
+    "Release the lock on every exit path, including the lost path (D1; sketch endVisitor)",
+    "Measure the 1000-tick lifetime on a phone instead of trusting the donor guess (D2)",
+    "Decide whether a fail should teleport or just leave (D3, Dom call)",
+    "Write our own speech lines, names, desert and visitor looks"
+  ],
+  "look_test": "Target origins/server/world-spawns.ts (row 23). Look-test flag on one scene: a visitor beside the player with one speech line and one emote per beat, a puff on leave; run the four beats at donor pace and faster, then the fail teleport; compare with a plain scene; Dom judges whether he can read the beat without looking away, whether the fail feels fair, and whether the idle sounds at 20 s and 60 s gaps make the field feel alive.",
+  "licence_note": "Code MIT (LICENSE:1; README.md:62). Game-derived content (scripts, models, maps, songs) has no stated licence or provenance (AU002, class C): category-level only. Donor values shown as evidence, not copied. Video evidence cited in donor comments not checked.",
+  "tags": ["world-event", "timed-event", "scheduler", "encounter-ambush", "duration-rule", "new:random-event-lock", "new:fail-teleport", "new:environment-clock", "new:idle-ambient"],
+  "not_read": [
+    "Client half (public/client/, not read)",
+    "macro_event_drunken_dwarf.rs2, macro_event_genie.rs2, macro_event_triffid.rs2 (grep hits only)",
+    "poisonous-gas and watchman macro events",
+    "Engine ai_timer and macro_event_lost_hostile",
+    "Call site that arms the desert countdown",
+    "Code that sets the skilling afk flag",
+    "Engine Npc.setLifeCycle body beyond the lifecycleTick hint in Obj.ts",
+    "Other rs2 scripts beyond the listed ones (1,159 files in total)"
+  ]
+}

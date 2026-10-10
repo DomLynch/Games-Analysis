@@ -1,0 +1,90 @@
+{
+  "donor": "cmangos-mangos-classic",
+  "topic": "world-fiction",
+  "depth": "thin",
+  "half_read": "server",
+  "decision": "adapt (idea); rate limit fixed in sketch; scope and faction order listed as changes",
+  "paths": [
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Globals/ObjectMgr.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Entities/Relations.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Server/DBCStructure.h",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/AI/ScriptDevAI/base/guard_ai.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/AI/BaseAI/CreatureAI.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Entities/Creature.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/World/World.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Entities/GameObject.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Entities/QueryHandler.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/sql/base/mangos.sql",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/sql/archive/0.11/6265_mangos_pet_name_generation.sql",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/sql/scriptdev2/scriptdev2.sql",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/COPYRIGHT.md"
+  ],
+  "counts": {
+    "pet_name_rows_base": 260,
+    "pet_name_rows_archive_0_11": 260,
+    "pet_name_families": 5,
+    "pet_name_family_417_rows": 69,
+    "pet_name_family_416_rows": 65,
+    "pet_name_family_1860_rows": 62,
+    "pet_name_family_1863_rows": 54,
+    "pet_name_family_17252_rows": 10,
+    "pet_name_half0": 127,
+    "pet_name_half1": 133,
+    "base_insert_blocks_mangos_sql": 33,
+    "script_text_rows_approx": 2778,
+    "guard_bark_lines_per_switch": 3,
+    "text_object_interaction_yards": 5.55556
+  },
+  "rule": "Zone alarm: when a guard or civilian enters combat with a player, or a guard dies to a player, the server sends a zone-under-attack message with the zone id to every open-world player of the opposite team. No cooldown or rate limit in the path read. Guard barks: one of three lines chosen by a uniform roll, repeats possible, no per-instance memory. Pet names: one random first half and one random second half from per-family pools, family name as fallback. Faction reaction: group enemy first, then explicit enemy, then group friend, then explicit friend, then reverse checks, then neutral; reputation overrides for player-controlled units. Text objects: 5.55556 yards interaction; page query walks Next_Page in a loop with no cycle guard.",
+  "data_fields": [
+    {"name": "alarm_cooldown", "unit": "seconds (donor: none in the path read)", "donor_value_or_null": null},
+    {"name": "alarm_scope", "unit": "zone neighbourhood (donor: whole team, all open maps)", "donor_value_or_null": null},
+    {"name": "guard_bark_pool", "unit": "lines per guard type (donor: 3)", "donor_value_or_null": null},
+    {"name": "bark_no_repeat", "unit": "bool (donor: uniform, repeats possible)", "donor_value_or_null": null},
+    {"name": "pet_name_pool", "unit": "parts per family per half", "donor_value_or_null": null},
+    {"name": "name_gate_order", "unit": "ordered list of checks", "donor_value_or_null": null},
+    {"name": "interaction_radius", "unit": "yards (text object)", "donor_value_or_null": null},
+    {"name": "page_chain_cap", "unit": "pages per reply (donor: none)", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "zone alarm as a server event carrying the opposite side",
+    "short guard bark pool of three lines",
+    "two-half pet name pools with family fallback",
+    "text object reading radius of about 5.6 yards",
+    "explicit faction pairs and group masks as two layers"
+  ],
+  "change": [
+    "alarm scope: zone and neighbours, not the whole team (World.cpp 1870)",
+    "add a per-zone cooldown to the alarm (CreatureAI.cpp 58-62 has none)",
+    "explicit pairs before group enemy masks (Relations.cpp 107 precedes 119)",
+    "add a same-faction shortcut to the struct friendly check (DBCStructure.h 425)",
+    "bound the page walk with a visited set and a cap (QueryHandler.cpp 382, 412)",
+    "guard lines as a no-repeat cycle, our own lines only",
+    "port the three-letter and reserved-name steps into the name gate (not verified whether reserved names are checked elsewhere)"
+  ],
+  "look_test": "On a 375-wide phone: (1) a guard-engagement alert shown three times in a row, then once after 60 s, to judge news versus spam; (2) the alert scoped to one zone and neighbours versus a whole-team alert; (3) guard barks as plain random versus no-repeat, 12 engagements each. Dom picks which reads as news and which reads as a guard who remembers.",
+  "licence_note": "Code GPL v2 (LICENSE line 2): re-express rules clean-room, copy no code. COPYRIGHT.md names WoW content as Blizzard's (line 7), states no affiliation (line 28) and a no-commercial-use limit on copyrighted source material (line 19). Category-level only: no names, no script lines, no word pools reused.",
+  "tags": [
+    "naming-grammar",
+    "new:two-part-pool",
+    "new:name-gate",
+    "faction-map",
+    "new:group-first-precedence",
+    "new:same-faction-shortcut",
+    "rumour",
+    "world-event",
+    "new:zone-alarm",
+    "new:team-broadcast",
+    "signage",
+    "new:page-chain"
+  ],
+  "not_read": [
+    "world data beyond the 33 insert blocks in base mangos.sql (creature, npc_text, page_text, creature_text, faction)",
+    "faction template and DBC data (not in repo)",
+    "reserved and profanity name lists (schema only in base; archive copies not read)",
+    "guard types other than the one switch read",
+    "CreatureAI speech and DoScriptText callers beyond name search",
+    "contrib/, doc/ beyond names, warden binaries, font",
+    "AGENTS.md or CLAUDE.md if present (instruction-like text treated as data, not followed)"
+  ]
+}

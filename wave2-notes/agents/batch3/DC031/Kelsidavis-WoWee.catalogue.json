@@ -1,0 +1,200 @@
+{
+  "donor": "Kelsidavis-WoWee",
+  "counts": {
+    "creatures": 6,
+    "classes": 10,
+    "weapons": 5,
+    "gear_sets": 0,
+    "zones": 8
+  },
+  "counts_note": "creatures = creature behaviour kinds (schema only; the box has 0 creature rows); classes = class IDs in include/game/character.hpp (11 race IDs also listed, category-level only); weapons = ranged sub-types in weapon_type.hpp; gear_sets = 0 because the item set catalogue (wowee_item_sets.hpp) is schema only and no set rows are in the box; zones = ambient zone types in ambient_sound_manager.hpp.",
+  "creature_families": [
+    "Behaviour kinds (6): Melee, Caster, Tank, Healer, Pet, Beast (include/pipeline/wowee_creature_behavior.hpp lines 61-68).",
+    "Evade policies (4): reset to spawn, heal along the path, flee but stay attackable, no evade for bosses only (lines 70-79).",
+    "Family kinds (6): beast, demon, undead, elemental, not-pet, exotic; with a pet talent tree and a minimum level to tame (include/pipeline/wowee_creature_families.hpp lines 48-84).",
+    "Spawn group kinds (6): boss, mini-boss, rare elite, trash, add, world boss (include/pipeline/wowee_creature_difficulties.hpp line 53).",
+    "Creature rows: none in the box. The behaviour and template formats are schema only."
+  ],
+  "top_creatures": [
+    {
+      "label": "Permanent-leash boss",
+      "why": "A boss that never resets is a rule a player learns in one fight.",
+      "keep": "The no-evade policy for bosses only.",
+      "change": "Our leash and hate list (parity row 4); a visible warning before the leash snaps.",
+      "ref": "include/pipeline/wowee_creature_behavior.hpp line 77 (comment 'permanent leash')"
+    },
+    {
+      "label": "Flee-but-stay-targetable",
+      "why": "A creature retreats home but can still be hit on the way, so chasing stays a choice.",
+      "keep": "Flee-to-spawn policy.",
+      "change": "Our retreat speed and an exhaust pose.",
+      "ref": "include/pipeline/wowee_creature_behavior.hpp line 75"
+    },
+    {
+      "label": "Heal-on-the-way-home",
+      "why": "A creature that regenerates while it walks back makes a pull-and-reset loop readable.",
+      "keep": "Heal-at-path policy.",
+      "change": "The regen rate and where it stops.",
+      "ref": "include/pipeline/wowee_creature_behavior.hpp line 73"
+    },
+    {
+      "label": "Ability roll with cooldown in basis points",
+      "why": "Each special ability has a cooldown and a use chance written in basis points (0 to 10000), so the roll is exact.",
+      "keep": "Cooldown plus roll per ability.",
+      "change": "Our numbers and our ability names.",
+      "ref": "include/pipeline/wowee_creature_behavior.hpp lines 81-88 (useChancePct at line 84)"
+    },
+    {
+      "label": "Group-size variant boss",
+      "why": "A base creature maps to a stronger variant when a bigger group engages (normal-10, normal-25 and heroic variants).",
+      "keep": "Lookup by group size.",
+      "change": "Map it to our MAX_ATTACKERS = 3 and our own tiers.",
+      "ref": "include/pipeline/wowee_creature_difficulties.hpp lines 10-20 (header), line 53"
+    },
+    {
+      "label": "Taming gate by family",
+      "why": "Each family has a minimum level before it can be tamed, and a pet talent tree.",
+      "keep": "Family kind plus a minimum level gate.",
+      "change": "Our summons and our gates; no pets from the donor.",
+      "ref": "include/pipeline/wowee_creature_families.hpp lines 48-84"
+    },
+    {
+      "label": "Rare elite roaming spawn",
+      "why": "A rare elite is a separate spawn kind from trash, so it can appear in a zone without being a boss.",
+      "keep": "A separate rare kind.",
+      "change": "Our spawn caps and respawn (parity row 23).",
+      "ref": "include/pipeline/wowee_creature_difficulties.hpp lines 53-60"
+    },
+    {
+      "label": "Open-world boss with no variants",
+      "why": "An open-world boss has no difficulty variants, so it is one fixed rule for everyone.",
+      "keep": "One fixed rule for open-world bosses.",
+      "change": "Our open-world boss tuning.",
+      "ref": "include/pipeline/wowee_creature_difficulties.hpp lines 53-60 (world-boss kind)"
+    }
+  ],
+  "classes": [
+    {
+      "label": "Class IDs (10)",
+      "role": "Not in the box (game data); role grouping not checked against the enum.",
+      "mechanic": "Not in the box.",
+      "progression": "Not in the box; trainer and talent formats (WTRN, WTAL) listed in the editor format table.",
+      "ref": "include/game/character.hpp lines 30-40"
+    },
+    {
+      "label": "Race IDs (11)",
+      "role": "Category-level only; names not reproduced.",
+      "mechanic": "Not in the box.",
+      "progression": "Not in the box.",
+      "ref": "include/game/character.hpp lines 13-24"
+    }
+  ],
+  "weapon_families": [
+    "Ranged sub-types (5 plus none): bow, gun, crossbow, thrown, wand. A wand gets its own pose even though it shares the ranged inventory slot (include/rendering/animation/weapon_type.hpp lines 9-12).",
+    "Melee pose flags: two-hand loose (polearm or staff, line 25), fist, dagger, off-hand, shield (lines 24-35). The header describes a fixed bug where the off-hand swing borrowed the other hand's pose (lines 30-33)."
+  ],
+  "gear_tiers": [
+    "Item quality: 8 tiers from poor to heirloom (include/game/inventory.hpp lines 11-19).",
+    "Item material kinds: 12 (cloth to ethereal and hide), 3 weight categories, 6 flags (include/pipeline/wowee_item_materials.hpp lines 46-73). The magical flag comment says it glows (line 69); no runtime reader found.",
+    "Item sets (schema): up to 8 pieces, up to 4 bonus thresholds, the standard 2/4/6/8 pattern (include/pipeline/wowee_item_sets.hpp lines 19-21, 76). No set rows in the box; no runtime reader found.",
+    "Gems: 8 colours with secondary colours as mixes and a prismatic wildcard (include/pipeline/wowee_gems.hpp lines 53-61). Loader only."
+  ],
+  "zones": [
+    "Ambient zone types (8 plus none): forest normal, forest snow, beach, grasslands, jungle, marsh, desert canyon, desert plains (include/audio/ambient_sound_manager.hpp lines 34-44).",
+    "Precipitation weather (6 plus none): rain and snow, each light, medium and heavy (ambient_sound_manager.hpp line 29).",
+    "Zone lookup: tile to zone (include/game/zone_manager.hpp line 62, tileToZone), area to zone (line 36), outdoor PvP flag (line 46).",
+    "Dungeon archetypes: none in the box (instance data is the user's files)."
+  ],
+  "looks": [
+    {
+      "label": "Charge ribbon",
+      "technique": "A vertical ribbon whose colour blends base to top by height, with a heat tint and an alpha that fades from the base.",
+      "ref": "assets/shaders/charge_ribbon.frag.glsl line 14"
+    },
+    {
+      "label": "Lens-flare glow",
+      "technique": "A Gaussian glow multiplied by an edge fade; the file comment says the fade stops a bright square at the quad edge.",
+      "ref": "assets/shaders/lens_flare.frag.glsl lines 17-22"
+    },
+    {
+      "label": "Charge dust disc",
+      "technique": "A point-sprite disc that discards pixels past its radius and fades alpha to a low value.",
+      "ref": "assets/shaders/charge_dust.frag.glsl line 11"
+    },
+    {
+      "label": "Lightning bolt",
+      "technique": "One brightness value drives both colour mix and alpha.",
+      "ref": "assets/shaders/lightning_bolt.frag.glsl"
+    },
+    {
+      "label": "Lightning flash",
+      "technique": "One push-constant intensity sets a white flash.",
+      "ref": "assets/shaders/lightning_flash.frag.glsl"
+    },
+    {
+      "label": "Combat camera presets",
+      "technique": "Three presets: default (75 degree field of view, 12 m back, damping 10), wide ranged (90 degrees, 18 m, damping 15), tight melee shoulder (60 degrees, 5 m, 1 m shoulder offset, damping 8, tracks the chest).",
+      "ref": "src/pipeline/wowee_camera_presets.cpp lines 98-135; include/pipeline/wowee_camera_presets.hpp lines 67-68"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Leash Keeper boss",
+      "idea": "Four named leash-return policies per creature as data: reset home, heal along the path, flee but stay attackable, no leash for bosses only.",
+      "keep": "The four policies as data.",
+      "change": "Our leash and hate list; our names; no donor code."
+    },
+    {
+      "name": "Ability Dice",
+      "idea": "Each special ability has a cooldown and a use chance in basis points.",
+      "keep": "Cooldown plus roll per ability.",
+      "change": "Our numbers and our rolls."
+    },
+    {
+      "name": "Party-Size Variant Gate",
+      "idea": "A base creature maps to a stronger variant when three attackers engage.",
+      "keep": "Lookup by group size.",
+      "change": "Our tiers and our naming (no normal-25 or heroic labels)."
+    },
+    {
+      "name": "Combat Camera Trio",
+      "idea": "Three fight-camera presets (default, wide for many-vs-one, tight for a duel) with damping per purpose.",
+      "keep": "Per-playstyle field of view and damping.",
+      "change": "Our numbers and our shoulder offset."
+    },
+    {
+      "name": "Heat Ribbon Dash",
+      "idea": "A dash trail whose gradient and fade follow height.",
+      "keep": "Height gradient and base fade.",
+      "change": "Our palette and shape."
+    },
+    {
+      "name": "Soft Glow Sparkle",
+      "idea": "A Gaussian glow with an edge fade for hit flashes and auras.",
+      "keep": "The edge fade.",
+      "change": "Our glow radius and colours."
+    },
+    {
+      "name": "Material Impact Cues",
+      "idea": "Each material kind picks its impact sound; flags for magical, holy and cursed items.",
+      "keep": "Material to impact; flags as data.",
+      "change": "Our material set and sounds."
+    },
+    {
+      "name": "Set Bonus Ladder",
+      "idea": "A set with a bonus at each piece threshold (2, 4, 6, 8).",
+      "keep": "Thresholds as data.",
+      "change": "Our set names and bonuses."
+    }
+  ],
+  "licence_note": "Code: MIT with an additional restriction (LICENSE lines 1, 15-19): may not be used as the basis for, or a component of, any commercial video game without written permission; NOTICE line 13 dates the restriction to 2026-07-21, earlier code is plain MIT. Original music: all rights reserved (LICENSE lines 31-47), not used. WoW names and assets: Blizzard (NOTICE line 26), not named in Frankendom. Ideas here are shape-only; Dom to decide whether the restriction blocks any use. Not a legal opinion.",
+  "not_read": [
+    "src/game and src/ui beyond grep matches; src/network, src/rendering, src/core/entity_spawner.cpp (listed; pending-spawn retry grep-matched only).",
+    "Loader bodies of the behaviour, family, difficulty, material, set, gem and camera catalogues beyond the functions named (the camera generator was read).",
+    "Shader bodies beyond the five named files; the .spv binaries.",
+    "Lua addon scripts; extern/; tests/.",
+    "Data/ JSON contents beyond file names.",
+    "Creature template (.wcrt) and spawn rows: not in the box.",
+    "Server half and data half: not in the box."
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "donor": "FunkinCrew-Funkin",
+  "topic": "hit-feedback-stack",
+  "depth": "full",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/FunkinCrew-Funkin/source/funkin/play/PlayState.hx (goodNoteHit 3112-3163, onNoteMiss 3171-3193, ghost path 3235, popUpScore 3365-3380, stepHit 1834 onwards, camera bump 1217-1228 and 1851-1858)",
+    "/mnt/frankendom-donors/FunkinCrew-Funkin/source/funkin/play/notes/NoteSplash.hx (splash fps 10-11, play 56)",
+    "/mnt/frankendom-donors/FunkinCrew-Funkin/source/funkin/play/notes/NoteVibrationsHandler.hx (stack 59, clamp 64, hold reset 91)",
+    "/mnt/frankendom-donors/FunkinCrew-Funkin/source/funkin/play/notes/Strumline.hx (hitNote 952-984, playNoteSplash 1076, release idle 782)",
+    "/mnt/frankendom-donors/FunkinCrew-Funkin/source/funkin/play/components/PopUpStuff.hx (rating 31-70, combo 72 onwards)",
+    "/mnt/frankendom-donors/FunkinCrew-Funkin/source/funkin/play/character/BaseCharacter.hx (onNoteHit 550, onNoteMiss 605, miss hold 436)",
+    "/mnt/frankendom-donors/FunkinCrew-Funkin/source/funkin/play/scoring/Scoring.hx (PBOT1 thresholds 130-160)",
+    "/mnt/frankendom-donors/FunkinCrew-Funkin/source/funkin/util/Constants.hx (bop 241, zoom rate 246, haptic max 721, health 476 and 502, hit window 361)",
+    "/mnt/frankendom-donors/FunkinCrew-Funkin/LICENSE.md (line 3, Apache 2.0)"
+  ],
+  "counts": {
+    "hit_steps_in_order": 8,
+    "judgement_windows": 4,
+    "splash_fps_base": 24,
+    "splash_fps_variance": 2,
+    "miss_sound_pool": 3,
+    "combo_popup_min": 10,
+    "haptic_lanes_to_saturate_with_gain": 2
+  },
+  "rule": "On one note hit: read input with its timestamp and judge on the note time minus song position minus input latency; dispatch a cancellable event; play the strum confirm and remove the note; play the pooled splash (random variant, fps jitter); play the hold cover if any; restore the player voice stem; apply score and show the rating popup (rise, then fade one beat later); play the character pose by direction, and the spectator reacts to combo. On a miss: score penalty, health penalty, mute the player voice stem, play one random miss sound from a pool, and play the miss pose (double sing hold). Haptics: each confirmed lane adds a quarter of max amplitude, times 2.5, clamped. Camera bump is music-synced (every 4 beats), not hit-driven. No hit shake, flash, hit-stop or hit sound exists in play/.",
+  "data_fields": [
+    {"name": "judge_sick_ms", "unit": "ms", "donor_value_or_null": "45"},
+    {"name": "judge_good_ms", "unit": "ms", "donor_value_or_null": "90"},
+    {"name": "judge_bad_ms", "unit": "ms", "donor_value_or_null": "135"},
+    {"name": "judge_shit_ms", "unit": "ms", "donor_value_or_null": "160"},
+    {"name": "health_sick_pct_max", "unit": "percent of max health", "donor_value_or_null": "1.5"},
+    {"name": "health_miss_pct_max", "unit": "percent of max health", "donor_value_or_null": "-4"},
+    {"name": "splash_fps", "unit": "frames per second", "donor_value_or_null": "24"},
+    {"name": "splash_fps_variance", "unit": "frames per second", "donor_value_or_null": "2"},
+    {"name": "rating_rise_gravity", "unit": "px per s squared", "donor_value_or_null": "550"},
+    {"name": "rating_rise_speed", "unit": "px per s, range", "donor_value_or_null": "140 to 175"},
+    {"name": "rating_fade_s", "unit": "s", "donor_value_or_null": "0.2"},
+    {"name": "rating_delay", "unit": "beats", "donor_value_or_null": "1"},
+    {"name": "combo_popup_min", "unit": "hits", "donor_value_or_null": "10"},
+    {"name": "haptic_per_lane", "unit": "fraction of max amplitude", "donor_value_or_null": "0.25"},
+    {"name": "haptic_gain", "unit": "ratio", "donor_value_or_null": "2.5"},
+    {"name": "haptic_pulse_s", "unit": "s", "donor_value_or_null": "0.01"},
+    {"name": "camera_bop_intensity", "unit": "ratio", "donor_value_or_null": "1.015"},
+    {"name": "camera_bop_every_beats", "unit": "beats", "donor_value_or_null": "4"},
+    {"name": "miss_voice_mute", "unit": "volume", "donor_value_or_null": "0"},
+    {"name": "miss_sound_volume", "unit": "volume range", "donor_value_or_null": "0.5 to 0.6"}
+  ],
+  "keep": [
+    "Judgement from a latency-corrected time, with the cancellable event before any feedback",
+    "Pooled splash with direction variants and frame-rate jitter",
+    "Miss ducks the player voice stem; the next hit restores it",
+    "Rating popup rises, then fades one beat later",
+    "Spectator reacts by combo tier",
+    "Per-hit haptic add with a cap"
+  ],
+  "change": [
+    "Judgement for parry and guard belongs to row 3; the feedback is server-confirmed, the client only presents it",
+    "Haptic cap set so two hits do not already reach full amplitude",
+    "Popup placed above the target, not centre screen",
+    "Our own splash art, miss sound and popup shape; nothing from the donor art or audio",
+    "Add the hit flash and shake from the Mindustry note; the donor has none"
+  ],
+  "look_test": "Build a three-lane strum and a target at 375 wide. Compare A donor (popup, pooled splash, miss duck and sound, no shake); B add the duck and pool, drop the splash; C haptic stack at gain 2.5 vs gain set so four hits reach full; D triple hit from three attackers, stack capped vs uncapped. Dom judges whether the duck reads as a mistake without a shake, and whether the triple hit reads as one moment. Target src/fight/hit-feedback.ts, parity row 10.",
+  "licence_note": "Source Apache-2.0 (LICENSE.md line 3): adapt with the notice kept. Art, audio, fonts, charts and the title are proprietary per docs/COMPILING.md line 13 and not in the box; not used. Trademark on the name and logo (LICENSE.md line 6); not used.",
+  "tags": ["ordered-feedback", "particle-burst", "hit-sound", "stagger", "status-stack", "new:miss-duck-voice", "new:haptic-stack-cap", "new:latency-corrected-judgement", "new:pooled-splash-jitter", "new:rating-rise-fade"],
+  "not_read": [
+    "art/ and assets/ (empty submodules, upstream not in box)",
+    "Countdown beyond line 257",
+    "GameOverSubState beyond the sound lines",
+    "NoteHoldCover",
+    "NoteStyle beyond isNoteSplashEnabled",
+    "HapticUtil body beyond vibrate",
+    "non-PBOT1 scoring systems",
+    "PopUpStuff combo tween beyond line 118",
+    "Preferences options other than zoom and haptics"
+  ]
+}

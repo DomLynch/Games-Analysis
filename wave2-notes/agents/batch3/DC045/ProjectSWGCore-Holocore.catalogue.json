@@ -1,0 +1,210 @@
+{
+  "donor": "ProjectSWGCore-Holocore",
+  "counts": {
+    "creatures": 1279,
+    "classes": 7,
+    "weapons": 302,
+    "gear_sets": 1135,
+    "zones": 190
+  },
+  "creature_families": [
+    "NPC rows in serverdata/npc/npc_1.sdb to npc_5.sdb: 4,332 in total; niche humanoid 2811, creature 1279, droid 242. Creature rows use 309 social-group labels (column social_group). The largest creature groups are a 26-row menagerie group, 21 and 19-row mite groups, a 20-row lava beetle group and an 11-row lava flea group.",
+    "Size and colour come from the row: scale_min and scale_max (0.1 to 6.0 and 0.1 to 6.4 across rows; 136 distinct scale ranges among creature rows) and hue (15 distinct values). Attack speed is 2.0 on every row, so the data has no per-creature attack-speed variety.",
+    "Aggression and assist radii per row: aggressive_radius runs 6 to 64. 447 of 4,332 rows set death_blow.",
+    "Three loot slots per row (loot_table1 to loot_table3, each with a chance). A chance of zero or less means the table does not exist (LootGenerationService.kt line 125).",
+    "Tiers by table: serverdata/npc/npc_stats.sdb has 100 level rows, each with normal, elite and boss columns. Elite HP is about 1.5x normal at every level read (1, 10, 25, 50, 75, 100). Boss HP is about 2.1x to 2.5x normal. Boss damage at level 100 equals elite damage and sits below its own level-75 value (see defects in the md).",
+    "Combat profiles: serverdata/npc/combat_profiles.sdb has 62 rows: creature 38, humanoid 15, droid 7, mine 1, thrown 1. Creature profiles name one attack each; humanoid profiles list long semicolon-separated ability sets.",
+    "Dynamic encounters: serverdata/spawn/dynamic/dynamic_spawns.sdb has 960 rows. Group size L 546, M 362, S 34, XS 10, XL 8. Every row has an elite slot; 950 have a boss slot; normal slots 1 to 9 are filled on every row."
+  ],
+  "top_creatures": [
+    {
+      "label": "Pack-hunter beast",
+      "why": "A melee creature family built from one body with a wide size range (scale from about 0.1 to 6) and a long pull radius (aggression up to 64). Size alone can read at 375 wide. Silhouette and sound were not read (no art or audio in the donor).",
+      "keep": "Scale band from one body; separated aggressive and assist radii; a death-blow flag on a few rows.",
+      "change": "Our own limbs, head, palette and seams; our own pull distance numbers.",
+      "ref": "serverdata/npc/npc_1.sdb line 1 (columns scale_min, scale_max, aggressive_radius, assist_radius); creature rows in the same file"
+    },
+    {
+      "label": "Mite swarm",
+      "why": "Two small-creature groups of 21 and 19 rows read as swarms rather than single bosses. A swarm shape is cheap to draw and reads as a crowd at 375 wide.",
+      "keep": "Many small bodies per encounter, one family per group.",
+      "change": "Our own swarm art, sound and a per-zone cap.",
+      "ref": "serverdata/npc/npc_1.sdb to npc_5.sdb (social_group column; the mite groups are decay_mite and bark_mite)"
+    },
+    {
+      "label": "Great dragon, base and ancient",
+      "why": "A two-variant top creature: a base profile and an ancient profile share one family. The ancient variant as a second tier is a clear progression step.",
+      "keep": "Base and ancient variants in one family; the ancient one is the late tier.",
+      "change": "Our own name, element, silhouette and the variant gap.",
+      "ref": "serverdata/npc/combat_profiles.sdb line 17 (creature_krayt_dragon_ancient); the base profile is line 16 (creature_krayt_dragon)"
+    },
+    {
+      "label": "Colour-coded elemental beast",
+      "why": "Seven profile variants of one creature family differ by colour and element (beam, flame, green, lightning, red, toxic green, yellow). Colour as element is readable at small size.",
+      "keep": "Colour as the element cue; one family, many colours.",
+      "change": "Our own palette and element set; no shared colour map.",
+      "ref": "serverdata/npc/combat_profiles.sdb line 31 (creature_toxicgreen) and the other colour rows in the same file"
+    },
+    {
+      "label": "Commander droid with guard escort",
+      "why": "A battlefield droid family with a commander and an elite guard in the same profile set. A commander with escorts gives a readable boss-and-guard shape.",
+      "keep": "Commander plus guard in one profile family; ranged and melee guard roles.",
+      "change": "Our own robot silhouette and weapon set; the guard follows the commander by our own rule.",
+      "ref": "serverdata/npc/combat_profiles.sdb line 43 (droid_som_battlefield_commander); the elite guard and numbered battlefield units are other rows in the same file"
+    },
+    {
+      "label": "Lair escort",
+      "why": "A dynamic encounter that spawns an elite and a normal pack together, with a boss slot in the lair data. A readable boss-and-pack shape for a lair.",
+      "keep": "Elite plus pack spawned together; a boss slot in lair data.",
+      "change": "Spawn into a fixed arena with a wave timer; a round spawn area instead of the square one.",
+      "ref": "serverdata/spawn/dynamic/dynamic_spawns.sdb line 1 (npc_boss, npc_elite, npc_normal_9); src/main/java/com/projectswg/holocore/services/support/npc/spawn/DynamicSpawnService.kt lines 166-170"
+    },
+    {
+      "label": "Demolition ladder",
+      "why": "Six explosive charge tiers with the same shape: detonate range of 1 under a blast radius of 8 to 18 and damage rising from about 1,400 to 5,000. A ladder of one object reads as a progression at a glance.",
+      "keep": "Detonate range below blast radius; a tier ladder of one object; damage rises per tier.",
+      "change": "Our own charge art, sigils or runes instead of explosives; our own effect files.",
+      "ref": "serverdata/combat/mine_types.sdb line 15 (demolitionCharge_5) and line 4 (ApMine, detonate range 3 below blast radius 25)"
+    },
+    {
+      "label": "Lava beetle swarm",
+      "why": "A 20-row beetle group and an 11-row flea group in the creature niche. Many rows per group makes them a candidate for walk-density filler. Their size and behaviour were not read.",
+      "keep": "Small swarm creatures as walk-density filler.",
+      "change": "Our own beetle and flea forms, sounds and idle moves.",
+      "ref": "serverdata/npc/npc_1.sdb to npc_5.sdb (social_group column; lava_beetle and lava_flea)"
+    }
+  ],
+  "classes": [
+    "Profession (7 rows in serverdata/creation/profession_mods.sdb, line 6 is the marksman row): brawler, marksman, artisan, entertainer, medic, scout and jedi. Role labels are our reading of the names; the file does not state roles.",
+    "Skill graph (serverdata/skill/skills.sdb): 1,073 skill rows, 56 flagged as profession nodes, 124 god-only. Graph types 4 (1,040 rows), 5 (26) and 1 (7). Points required take 10 distinct values. Progression is a tree of nodes with prerequisite counts.",
+    "Species (10 rows in serverdata/creation/racial_mods.sdb): each gives a set of attribute modifiers for a male and a female template. Per-species looks are in serverdata/appearance/appearance_table.sdb (1,075 rows, male and female variants).",
+    "Jedi (profession row in profession_mods.sdb; a humanoid_jedi profile in serverdata/npc/combat_profiles.sdb): the force-user line. Force and saber ability sets are long lists in the humanoid profiles; which profile holds which list was not checked.",
+    "Factions (85 rows in serverdata/faction/faction_datatable.sdb): 81 aggressive, 4 not aggressive, 3 PvP-flagged. Enemies and allies are listed per faction.",
+    "Rank ladder (22 rows in serverdata/faction/rank.sdb): from entry rank to top rank, each with a cost and a delegate ratio range. Progression by cost."
+  ],
+  "weapon_families": [
+    "302 weapon rows in serverdata/items/items_weapon.sdb: ranged 189, melee 113. Types: pistol 63, rifle 48, carbine 41, one-hand melee 34, two-hand melee 31, heavy 26, polearm 26, unarmed 23, thrown 10.",
+    "Damage types: energy 152, kinetic 150. Elemental type on 50 rows (heat 18, electricity 17, cold 8, acid 7).",
+    "Proc effect on 10 rows (six share one proc name). Splash damage is set on one row. Sockets and isUnique are 0 on every row (possibly unused fields).",
+    "Tiers by required level: most rows sit at 65 (62 rows), 70 (40) and 54 (35). Name families: 209 prefixes, the largest a 22-row sword family and an 11-row pistol family.",
+    "Thrown and charge families sit in serverdata/combat/mine_types.sdb (13 rows: 7 mine types and a six-tier charge ladder)."
+  ],
+  "gear_tiers": [
+    "Armour rows (1,135 in serverdata/items/items_armor.sdb) in three kits: battle 387, assault 378, recon 370. Armour level basic 479, standard 294, advanced 362.",
+    "Stat-level bands in item names: lvl20 (189 rows), then lvl30 to lvl80 (135 rows each). Each kit has about nine pieces (helmet, chest, gloves, leggings, boots, bracers left and right, biceps left and right).",
+    "Quality multiplier on armour: 1.00 (309 rows), 0.89 (285), 0.88 (186), 0.73 (135), 0.67 (135), 0.65 (54).",
+    "Dye: index_color_0 is -1 (no dye) on 1,029 of 1,135 armour rows; 95 distinct dye pairs on the rest.",
+    "Crystal quality ladder (72 rows in serverdata/items/items_crystal.sdb): quality 0 to 6. Counts per quality: 36, 5, 5, 6, 7, 7, 6. Damage band rises from 0 to 5 at quality 0 to 18 to 23 at quality 6. Quality 0 carries the elemental variants (heat, acid).",
+    "Cybernetic implants (12 rows in serverdata/cybernetics/cybernetics.sdb): three carry a death-penalty trade-off (rows 3 to 5). The rest trade a stat for a stat (melee defence, range, accuracy).",
+    "Wearables (1,162 rows in serverdata/items/items_wearable.sdb): three client-effect references and two animations; no worn buffs set. Mostly cosmetic in the data."
+  ],
+  "zones": [
+    "Planet level bands (serverdata/spawn/dynamic/terrain_levels.sdb, 10 rows, 10-level bands): Tatooine 3-10, Corellia 11-20, Naboo 21-30, Lok 31-40, Rori 36-45, Talus 41-50, Dantooine 51-60, Yavin 4 56-65, Endor 61-70, Dathomir 71-80. Some bands overlap.",
+    "Spawn-set files (190): city 37, dungeon 25, poi 88, instance 16, outback 13, gcw 9, invasion 2 (serverdata/spawn/*/). One event file more (event_emperors_day.sdb).",
+    "Instance trios: Kashyyyk avatar and Mustafar jedi each have easy, medium and hard files (serverdata/spawn/instance/).",
+    "Dynamic lairs (590 rows) and scenes (5,700 rows) in serverdata/spawn/dynamic/dynamic_lairs.sdb and dynamic_scenes.sdb, each with an npc_spawn_radius.",
+    "No-spawn zones (217 data rows in serverdata/spawn/zones_nobuild_nospawn.sdb): a centre and a radius per entry (the first city row, line 3, has radius 700).",
+    "Hazards: 13 trap and charge types in serverdata/combat/mine_types.sdb. Where each trap is placed was not read."
+  ],
+  "looks": [
+    {
+      "label": "Crystal shader flag and colour slots",
+      "technique": "Each crystal row has a shader flag (set on 1 of 72 rows) and four index colour slots. The look is a per-item colour set with an optional shader on top.",
+      "ref": "serverdata/items/items_crystal.sdb line 1 (crystal_shader, index_color_0 to index_color_3 headers)"
+    },
+    {
+      "label": "Worn particle on heal and resist",
+      "technique": "Wearables reference particle files for heal and heal-resist states (three rows). A worn glow tied to a state, not a constant aura.",
+      "ref": "serverdata/items/items_wearable.sdb line 827 (appearance/pt_heal.prt); line 844 (ring row, same family)"
+    },
+    {
+      "label": "Per-charge explosion effect",
+      "technique": "Each mine and charge row names its own client effect file, so each tier can have its own blast look.",
+      "ref": "serverdata/combat/mine_types.sdb line 4 (clienteffect/exp_sonic_landmine.cef) and line 15 (demolitionCharge_5)"
+    },
+    {
+      "label": "Creature hue and scale band",
+      "technique": "Each NPC row sets a hue (15 values) and a scale range, so one body gives many looks without new art.",
+      "ref": "serverdata/npc/npc_1.sdb line 1 (hue, scale_min, scale_max headers)"
+    },
+    {
+      "label": "Dye slots on armour",
+      "technique": "Armour rows carry four index colour slots; 95 distinct pairs in use. The dye is a palette index, not a texture.",
+      "ref": "serverdata/items/items_armor.sdb line 663 (armor_battle_stat_lvl20_chest row); line 1 (index_color headers)"
+    },
+    {
+      "label": "Appearance variants by species",
+      "technique": "A table of male and female template variants for 10 species, 1,075 rows.",
+      "ref": "serverdata/appearance/appearance_table.sdb line 1 (male and female species columns)"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Brood Cluster",
+      "idea": "A swarm family that spawns as a cluster with a cap per zone, not per player, and a visible rising signal just before the cluster appears.",
+      "keep": "Many small bodies per encounter; a cap; a per-step roll for density.",
+      "change": "Round spawn area; zone cap; our own swarm forms and a rising signal instead of a silent pop."
+    },
+    {
+      "name": "Lair Warband",
+      "idea": "An elite and a normal pack spawn together from one lair line, with a boss slot held for the lair's end.",
+      "keep": "Elite plus pack from one row; boss slot in the lair data; the pack is not one fixed count.",
+      "change": "A fixed arena with a wave timer; our boss and pack silhouettes; pack size tied to the zone."
+    },
+    {
+      "name": "Proximity Sigil Ladder",
+      "idea": "A six-tier proximity charge where the detonate range is always below the blast radius, damage rising by tier.",
+      "keep": "Detonate range below blast radius; tier ladder; one trap family for every tier.",
+      "change": "Runes or sigils instead of explosives; our own effect files; no shared art."
+    },
+    {
+      "name": "Shard Ladder",
+      "idea": "A seven-quality crystal ladder where each quality raises the damage band and quality 0 carries an elemental variant.",
+      "keep": "Seven quality tiers; damage band per tier; elemental variant on the lowest tier only.",
+      "change": "Our own tier names and colours; our own elements."
+    },
+    {
+      "name": "Commander Escort",
+      "idea": "A commander unit that brings its own elite guard in the same profile family, so one profile covers the whole group.",
+      "keep": "Commander and guard in one family; ranged and melee guard roles.",
+      "change": "Our own robot silhouette; the guard follows by our own rule."
+    },
+    {
+      "name": "Trial Trio",
+      "idea": "One encounter in three difficulty files (easy, medium, hard) on the same map.",
+      "keep": "Three difficulty files for one map; the same map and different counts.",
+      "change": "Our own boss and mechanic per difficulty; not a copy of any donor trial."
+    },
+    {
+      "name": "Planet Danger Ramp",
+      "idea": "Each zone has a level band from zone data; the band sets spawn levels and loot levels for that zone.",
+      "keep": "Band per zone as data; spawn and loot read the same band.",
+      "change": "No overlapping bands by design (the donor's Rori and Lok bands overlap); our own zone names."
+    },
+    {
+      "name": "Safe Ring",
+      "idea": "A round no-spawn zone around each town, set by a radius in data.",
+      "keep": "Radius-based quiet zone around towns, read from data.",
+      "change": "Round edges by design (the check must be round, not square); our own radius values."
+    },
+    {
+      "name": "Death-Price Implant",
+      "idea": "An implant that gives a strong stat bonus and a death penalty.",
+      "keep": "Strong bonus paired with a death cost; the cost is visible on the item.",
+      "change": "Our own penalty, our own bonus and a visual that shows the cost."
+    }
+  ],
+  "licence_note": "Code: GNU AGPL v3 per LICENSE.txt (AGPL text, line 1) and build.gradle.kts and Kotlin headers. README.md line 3 badge says GPLv3; the files conflict and are not resolved. Read as AGPL-3.0-or-later. Data (serverdata/, 5,592 files): no licence file, no CREDITS or NOTICE found at the top level; rights status unknown. Treated as class C; category-level inspiration only.",
+  "not_read": [
+    "serverdata/strings/strings.sdb: 189,081 lines counted and about 3,282 distinct first-column values; values not read or quoted",
+    "serverdata/conversation/ (about 3,862 JSON files and 11 msdb) and serverdata/npc/npc_action.txt, npc_emotes.txt, npc_mood.txt: names only",
+    "serverdata/npc/npc_2 to npc_5 beyond counts and social groups; npc_weapon.sdb (574 rows, types only); npc_equipment.sdb; npc_standard_attack.sdb (26 rows, read as counts)",
+    "serverdata/items/items_crystal beyond the quality table; items_armor and items_wearable beyond counts and sampled name families; master_item.msdb",
+    "serverdata/loot/loot_table.sdb beyond headers and row counts (933 rows, 311 loot ids, three difficulty rows per id); rls_items.sdb (4 rows) not read",
+    "serverdata/spawn: city, dungeon, poi, instance, outback, gcw files beyond counts and file names; patrol files; common_mustafar.sdb only one row",
+    "serverdata/terrain (binary heightmaps and .trn), serverdata/appearance beyond the header",
+    "src/main/java: DynamicSpawnService.kt and LootGenerationService.kt read in the lines cited; ItemLootGenerator, CreditLootGenerator and NPCLootTable not read; the rest of the Java tree (about 600 files) not read",
+    "src/main/resources/namegen (name grammar; not read), security/Holocore.p12 (keystore, not opened), pswg-banner.png (not opened)",
+    "pswgcommon (empty submodule folder). Client half not in this donor."
+  ]
+}

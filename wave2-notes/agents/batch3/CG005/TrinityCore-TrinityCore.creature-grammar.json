@@ -1,0 +1,54 @@
+{
+  "donor": "TrinityCore-TrinityCore",
+  "topic": "creature-grammar",
+  "depth": "thin",
+  "half_read": "server",
+  "paths": [
+    "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Creature/Creature.cpp",
+    "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Creature/CreatureData.h",
+    "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Globals/ObjectMgr.cpp",
+    "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Unit/StatSystem.cpp",
+    "/mnt/frankendom-donors/TrinityCore-TrinityCore/sql/base/dev/world_database.sql",
+    "/mnt/frankendom-donors/TrinityCore-TrinityCore/sql/updates/world/master/"
+  ],
+  "counts": {
+    "creature_template_insert_rows_in_folders_checked": 0,
+    "world_database_sql_insert_lines": 0,
+    "updates_world_master_files": 55,
+    "updates_world_master_lines_mentioning_creature_template": 43,
+    "old_3_3_5a_files_with_creature_template_model_insert": 0
+  },
+  "rule": "One creature_template row per family. A look list (creature_template_model) of display id, scale and weight; a single-look list ignores weight; more than one look is a weighted random roll; a spawn row can pin a display and skip the roll. Health = base by level times difficulty HealthModifier times rank health rate. Damage = difficulty DamageModifier times rank damage rate, with the rank rate folded into the value at load (open TODO on that line).",
+  "data_fields": [
+    {"name": "display_weight", "unit": "relative weight, unitless", "donor_value_or_null": null},
+    {"name": "display_scale", "unit": "multiplier x", "donor_value_or_null": null},
+    {"name": "display_pin", "unit": "display id", "donor_value_or_null": null},
+    {"name": "tier_health_mod", "unit": "multiplier x", "donor_value_or_null": null},
+    {"name": "tier_damage_mod", "unit": "multiplier x", "donor_value_or_null": null},
+    {"name": "rank_health_rate", "unit": "multiplier x per rank", "donor_value_or_null": null},
+    {"name": "rank_damage_rate", "unit": "multiplier x per rank", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "one family template with a weighted look list",
+    "scale per look",
+    "separate health and damage tier multipliers",
+    "spawn-level display pin that skips the roll"
+  ],
+  "change": [
+    "keep the rank damage rate as its own runtime field; the donor folds it into DamageModifier at load (ObjectMgr.cpp 975-976)",
+    "warn on zero-weight looks and refuse an all-zero list; the donor does not warn in the code read",
+    "name every look, tier mark and number ourselves"
+  ],
+  "look_test": "One family silhouette at 375 wide in three looks (weights 2, 1, 1; scales 1.0, 1.0, 1.25) and one hard tier that reuses the first look with a glow and a 1.15 scale step. Dom checks: same family across looks, and the hard tier readable without size alone.",
+  "licence_note": "Code GPL 2.0 (COPYING line 1, per AU053; not re-read). sql/ rows are game-derived with no stated origin: class C. Category-level inspiration only; no row names, ids or donor numbers reused. No legal conclusion.",
+  "tags": ["creature-family", "recolour-tier", "scale-tier", "boss-elite-pattern", "new:model-weight-pick", "new:spawn-pin", "new:load-time-fold"],
+  "not_read": [
+    "creature rows in full (absent from this box; only recent update rows present)",
+    "rank rate values in config",
+    "DB2 display tables (absent)",
+    "client half: models, idle animations, death and respawn presentation, loot reveal, readability at 375 wide",
+    "CreatureGroups and spawn consumers beyond the struct",
+    "GetHealthMultiplierForTarget (level scaling) beyond its first line",
+    "dep/ third-party libraries"
+  ]
+}

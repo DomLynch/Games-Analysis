@@ -1,0 +1,123 @@
+{
+  "donor": "uglyoldbob-l1j-client",
+  "cell": "DC056",
+  "counts": {
+    "creatures": null,
+    "classes": 7,
+    "weapons": 8,
+    "gear_sets": null,
+    "zones": null
+  },
+  "counts_note": "classes: 7 entries in the client enum (src/globals.h lines 127-133). weapons: 8 named weapon stance groups in the action table (animation groups, not item rows); plus one empty-hand group. creatures, gear_sets and zones: row data not in the box, not counted.",
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [
+    "Royal (id 0), Knight (id 1), Elf (id 2), Wizard (id 3), Dark Elf (id 4), Dragon Knight (id 5), Illusionist (id 6). Source: src/globals.h lines 127-133 (receipts LG-R01, LG-R02, LG-R03).",
+    "Per-class stat values in a switch in src/global.cpp (Dragon Knight branch line 63, receipt LG-R04). Enclosing function not read.",
+    "Class-keyed level-up tables (src/resources/known.h lines 5-11, e.g. lvupdknight-e.tbl at line 6, receipt LG-R13).",
+    "Class-keyed character-creation texts: src/resources/known.h lines 20-31.",
+    "Engineer and thief tables are marked unused in src/resources/known.h lines 23-24 and are not counted."
+  ],
+  "weapon_families": [
+    "Sword stance group (walk, attack, hit, stand), draw_maint_sprites.cpp line 196 (receipt LG-R06)",
+    "Weapon 2 stance group: comment says axe for the royal class, claw for the dark elf class (line 198, receipt LG-R09). Mapping from the comment only.",
+    "Weapon 3 stance group: comment says bow and arrow for royal, crossbow for dark elf (line 201, receipt LG-R10)",
+    "Weapon 4 stance group: comment says poleaxe for royal (line 203)",
+    "Dagger stance group (line 207, receipt LG-R07)",
+    "Long sword stance group",
+    "Edoryu stance group",
+    "Claws stance group (line 210, receipt LG-R08)",
+    "Special properties, elemental effects, set bonuses: none in the client code. The weapon case in the sprite table reader is a stub (src/sdl_user.cpp line 436, receipt LG-R17)."
+  ],
+  "gear_tiers": [
+    "No gear tiers, set bonuses or rarity in the client code.",
+    "Clothing layering per sprite: a count and list of clothing ids (rust/src/sprites.rs lines 22-23, receipt LG-R20). Silhouette stays the same; many outfits read from one body."
+  ],
+  "zones": [
+    "Zone rectangle rows: text id, map id, start and end box (src/resources/known.h line 75, receipt LG-R14). Rows not in the box.",
+    "Zone names and colours tables: zone2-e.tbl, zone2.tbl, zone3.tbl (src/resources/known.h lines 62-65, receipt LG-R15). Names not read.",
+    "Two village tables with the same data, names only: telBook0.tbl and telBook1.tbl (src/resources/known.h lines 57-58).",
+    "Dungeon archetypes, biomes and hazards: not read."
+  ],
+  "looks": [
+    {
+      "label": "Frame-cued sound",
+      "technique": "Each action frame carries sprite id, sub-sprite id, sub-frame, length and an audio id, so the sound lands on a frame (receipt LG-R18).",
+      "ref": "rust/src/sprites.rs lines 8-14"
+    },
+    {
+      "label": "Action slots",
+      "technique": "72 action slots per sprite, each a list of frames (receipt LG-R19).",
+      "ref": "rust/src/sprites.rs line 17"
+    },
+    {
+      "label": "Layered gear on one body",
+      "technique": "A clothing count and clothing id list on the sprite record (receipt LG-R20).",
+      "ref": "rust/src/sprites.rs lines 22-23"
+    },
+    {
+      "label": "Ambient and emote vocabulary",
+      "technique": "Taunt, wave, victory, stand, fishing, picking up, wand use, casting. Used as the idle and emote set (receipt LG-R11).",
+      "ref": "src/drawmode/draw_maint_sprites.cpp lines 196-212"
+    },
+    {
+      "label": "Death presentation slot",
+      "technique": "A Dying action slot exists in the sword group row (receipt LG-R12). How and when it plays is not read.",
+      "ref": "src/drawmode/draw_maint_sprites.cpp line 196"
+    },
+    {
+      "label": "Eight facing directions",
+      "technique": "Eight heading labels precede the action table (receipt LG-R23).",
+      "ref": "src/drawmode/draw_maint_sprites.cpp lines 185-193"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Frame-cued swing",
+      "idea": "The impact sound lands on the frame where the blade meets the target.",
+      "keep": "A sound cue on a specific frame; a per-action slot.",
+      "change": "Our action names and timing in seconds, not numbered slots."
+    },
+    {
+      "name": "Layered gear on one body",
+      "idea": "A clothing list on one base body, so one silhouette reads as many outfits at 375 wide.",
+      "keep": "Base body plus a gear list.",
+      "change": "Our armour as rig plates, not sprite swaps."
+    },
+    {
+      "name": "Weapon stance sets",
+      "idea": "Each weapon family carries its own walk, attack, hit and stand group.",
+      "keep": "A stance set per family.",
+      "change": "Our families and timings."
+    },
+    {
+      "name": "Class-keyed level-up line",
+      "idea": "A short line per class at each level makes the moment personal.",
+      "keep": "Keyed by class.",
+      "change": "Our own voice and wording."
+    },
+    {
+      "name": "Zone as a rectangle row",
+      "idea": "Name, map and bounds in one row keep zones as data.",
+      "keep": "Rectangle rows.",
+      "change": "Ours carry spawn caps and biome fields (row 23 ruling)."
+    },
+    {
+      "name": "Ambient emote set",
+      "idea": "A small emote set (taunt, victory, wave) used as idle vocabulary.",
+      "keep": "A short emote set.",
+      "change": "Our own emotes."
+    }
+  ],
+  "licence_note": "Code is GPL-3.0 (COPYING line 1: GNU GENERAL PUBLIC LICENSE, Version 3). Game data is not in the repo; the client loads files from a separate Lineage install (AU054). Asset class C. Shape only if we want to avoid copyleft.",
+  "not_read": [
+    "Server half (not in the box; no server directory)",
+    "Data tables: text packs, zone.tbl rows, class tables, spell and item tables (only the names in known.h were read)",
+    "sprite_table.txt body (not decoded); sprite and tile pack contents",
+    "Monster and creature sprites and families (not identifiable from the client code read)",
+    "The three zip files, powerpc/ mirror beyond file types, update/ (names only), encryption code bodies",
+    "Rust mode files beyond sprites.rs (stringtable.rs was read in AU054, not re-read)",
+    "Sound files and music (loaded by number from the game install; src/resources/music.cpp per AU054)",
+    "How and when the Dying slot plays"
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "donor": "cmangos-mangos-classic",
+  "topic": "encounter-templates",
+  "depth": "full",
+  "half_read": "server",
+  "paths": [
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Maps/SpawnGroup.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Maps/SpawnGroupDefines.h",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Maps/SpawnManager.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Entities/CreatureLinkingMgr.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Entities/CreatureLinkingMgr.h",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Entities/Object.h",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/AI/ScriptDevAI/base/escort_ai.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/AI/ScriptDevAI/scripts/kalimdor/silithus.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/MotionGenerators/WaypointMovementGenerator.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Globals/ObjectMgr.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Chat/Level3.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/sql/base/mangos.sql"
+  ],
+  "counts": {
+    "creature_spawn_rows_in_box": 0,
+    "spawn_group_insert_rows_in_base_dump": 0,
+    "spawn_group_tables_schema_only": 5,
+    "creature_linking_insert_rows": 0,
+    "waypoint_path_insert_rows": 0,
+    "formation_shapes": 7,
+    "formation_option_flags": 2,
+    "linking_flags": 13,
+    "linking_events": 5,
+    "escort_range_yards": 66,
+    "escort_head_start_ms": 2500,
+    "escort_check_interval_ms": 1000,
+    "npc_escortai_script_files": 34,
+    "join_creature_group_calls": 1,
+    "spawn_group_script_grep_hits": 19,
+    "move_waypoint_ai_call_sites": 27,
+    "single_point_forced_wait_ms": 5000
+  },
+  "rule": "AMBUSH: a spawn group is enabled by default unless its member spawn mask is zero (ObjectMgr 1519); a script (area trigger, quest-gated) calls Spawn with forced true, which skips the enabled check. CAMP: a formation with one of seven shapes; spacing equals the model collision width times 3; each slot holds a target angle and distance and eases toward a random point in a band of pi/8 times model width; the group max-alive count caps spawns. LAIR: a link row gives each minion flags (aggro, evade, death, respawn, follow, despawn, can't-spawn-if-boss-dead 0x0400, can't-spawn-if-boss-alive 0x0800) and a search range; a map-wide link (range 0) reads the instance encounter state and the boss respawn readiness; a local link reads the master's alive state inside a squared range. ESCORT (npc_escortAI): refused in combat; starts after 2500 ms; checks every 1000 ms whether the player or group is within 66 yards; on failure the quest fails and the NPC respawns or despawns. PATROL: waypoint nodes carry a wait in ms; a single node with no wait is forced to 5000 ms; a script can change a node's wait.",
+  "data_fields": [
+    {"name": "formation_shape", "unit": "enum 0 to 6", "donor_value_or_null": null},
+    {"name": "formation_spread", "unit": "game distance (about yards)", "donor_value_or_null": null},
+    {"name": "spacing_factor", "unit": "multiple of model collision width", "donor_value_or_null": null},
+    {"name": "angle_wobble_max", "unit": "radians", "donor_value_or_null": null},
+    {"name": "ease_divisor", "unit": "frames", "donor_value_or_null": null},
+    {"name": "group_max_alive", "unit": "count", "donor_value_or_null": null},
+    {"name": "group_flags", "unit": "bitmask (aggro together 0x01, respawn together 0x02, evade together 0x04, mirror 0x10)", "donor_value_or_null": null},
+    {"name": "link_can_spawn_if_boss_dead", "unit": "flag 0x0400", "donor_value_or_null": null},
+    {"name": "link_can_spawn_if_boss_alive", "unit": "flag 0x0800", "donor_value_or_null": null},
+    {"name": "link_search_range", "unit": "game distance (0 means map-wide)", "donor_value_or_null": null},
+    {"name": "escort_range", "unit": "yards", "donor_value_or_null": null},
+    {"name": "escort_head_start", "unit": "ms", "donor_value_or_null": null},
+    {"name": "escort_check_interval", "unit": "ms", "donor_value_or_null": null},
+    {"name": "patrol_wait", "unit": "ms per point", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Seven formation shapes as a small enum (we need three).",
+    "Spacing from model collision width, so silhouettes scale with the creature.",
+    "Slot wobble as client presentation of a server-assigned slot.",
+    "Lair gate that re-queues or holds rather than dropping the minion.",
+    "Escort 2500 ms head start and 1000 ms check.",
+    "Group flags as one bitmask."
+  ],
+  "change": [
+    "Slot wobble only eases upward (SpawnGroup.cpp 1897); fix so it eases both ways.",
+    "Boss gate has two different rules (map-wide 725-728 versus local 743); pick one and state it.",
+    "IsRespawnReady to CanSpawn recursion has no visited set (CreatureLinkingMgr.cpp 666); add a visited set or a depth cap.",
+    "Spacing is zero when no member has a collision width (SpawnGroup.cpp 1548-1557); floor the width.",
+    "Escort fail is silent; show a warning and a return window.",
+    "The vicinity respawn is a GM command here (Level3.cpp 5434); do not use it as an automatic rule."
+  ],
+  "look_test": "Build one flag on the existing fight scene. Three attackers at 375 wide: A, a wedge (two behind, one in front) with wobble on; B, fanned out in front with wobble on; C, the same wedge with the donor's upward-only ease reproduced, to see whether a snap shows when the angle comes back down. Ask Dom which silhouette reads fastest and whether C snaps. Target src/fight/pack.ts, row 4.",
+  "licence_note": "Code GNU GPL v2 (LICENSE line 2; DC013). Game content is Blizzard copyright per COPYRIGHT.md line 7, so inspiration stays category-level. Shape only, no code copied, no names. Donor says it is not affiliated with Blizzard (COPYRIGHT.md line 28, per AU010). Not legal advice.",
+  "tags": ["encounter-ambush", "encounter-camp", "encounter-patrol", "encounter-lair", "encounter-escort", "walk-density", "scheduler", "new:formation-shape", "new:slot-wobble", "new:spawn-group-gate"],
+  "shape_verdicts": {
+    "ambush": "STRONG (trigger and gate read; data absent)",
+    "camp": "STRONG",
+    "patrol": "PARTIAL (delay rules read; path data absent; generator mostly unread)",
+    "lair": "STRONG (with a likely defect in the boss gate)",
+    "escort": "STRONG",
+    "walk_density": "NONE (no creature rows in the box)"
+  },
+  "frankendom_targets": {
+    "ambush": "origins/server/world-spawns.ts (row 23)",
+    "camp": "src/fight/pack.ts (row 4)",
+    "patrol": "src/fight/patrol.ts (row 2, proposed file)",
+    "lair_gate": "origins/server/world-spawns.ts (row 23)",
+    "lair_aggro_link": "src/fight/pack.ts (row 4)",
+    "escort": "src/fight/leash.ts (row 4, proposed file)"
+  },
+  "not_read": [
+    "Most of WaypointMovementGenerator.cpp",
+    "RandomMovementGenerator and IdleMovementGenerator (idle and roam behaviour)",
+    "Most of SpawnGroup.cpp (Despawn, spawn loop past line 235, group-to-group link near 556)",
+    "Spawn-group loader in full (ObjectMgr.cpp 1125-1398, read by query text only)",
+    "BossAI and most scripts (grep counts only)",
+    "Client half (absent from the box; no paired donor)",
+    "Death and respawn presentation, loot ceremony, sound",
+    "No sketch and no typecheck (not required for a feel note)"
+  ]
+}

@@ -1,0 +1,218 @@
+{
+  "donor": "veloren-veloren",
+  "counts": {
+    "creatures": 165,
+    "classes": 6,
+    "weapons": 43,
+    "gear_sets": 46,
+    "zones": 12
+  },
+  "creature_families": [
+    "winged great beasts (bird_large: cloud, flame, frost, sea, weald wyverns; phoenix, roc, cockatrice)",
+    "drakes (ice, lava, moss)",
+    "saurok (mighty, occult, sly)",
+    "trolls (cave, mountain, swamp)",
+    "legoom family (five colour variants)",
+    "snappers (reef, rock, root)",
+    "beetles (horn, stag) and weevil",
+    "spiders (black widow, cave spider, tarantula)",
+    "raptors (sand, snow, wood)",
+    "big cats and bears",
+    "goblins (chucker, ruffian, thug)",
+    "oni (blue, red)",
+    "undead and spirit (named only: bonerattler, dullahan, wendigo, werewolf)",
+    "world bosses (gigas_fire, gigas_frost) and dungeon elites",
+    "counts: 165 wild entity files (86 aggressive, 79 peaceful); 85 dungeon entity files in 11 folders; grouping by file name, bodies mostly not read"
+  ],
+  "top_creatures": [
+    {
+      "label": "Pitched-chest winged wyrm (frost wyvern)",
+      "why": "Forward-pitched chest, a head that glances to new targets on a stepped clock, a three-hit combo whose third strike has the longest buildup, and a 360-degree ice shockwave that applies a Frozen buff and can be jumped over. Should read as watchful at 375 wide (design claim, not tested).",
+      "keep": "forward chest; stepped head glance; three-hit combo with heavier finisher; full-circle shockwave with a jump window",
+      "change": "our wing count and shape, palette, element, head crest, names",
+      "ref": "assets/common/entity/wild/aggressive/frostwyvern.ron lines 4-6; assets/common/abilities/ability_set_manifest.ron lines 938-945; assets/common/abilities/custom/frostwyvern/iceshockwave.ron lines 9, 13, 16, 18; assets/common/abilities/custom/frostwyvern/triplestrike.ron line 68; voxygen/anim/src/bird_large/idle.rs lines 27, 69"
+    },
+    {
+      "label": "Wyvern family template (four elements)",
+      "why": "Flame, frost, cloud and sea wyverns share one ability-set shape: a bomb primary, the same three-hit combo as secondary, and a shockwave plus a spray in the extra list. Only the element and names change.",
+      "keep": "one set shape per family; element swap",
+      "change": "our element names and effects; per-family spawn weight as zone data",
+      "ref": "assets/common/abilities/ability_set_manifest.ron lines 930-959"
+    },
+    {
+      "label": "Storm wyrm (cloud wyvern)",
+      "why": "Lightning bomb, lightning shockwave and lightning spray in the same slot pattern; the element reads on screen from the first move.",
+      "keep": "one readable element per move; a bomb that opens the fight",
+      "change": "our element and shockwave shape",
+      "ref": "assets/common/abilities/ability_set_manifest.ron lines 946-951 (primary at line 947)"
+    },
+    {
+      "label": "Ink tide wyrm (sea wyvern)",
+      "why": "Ink bomb, ink shockwave and ink spray: a water-themed family with its own moves for a sea encounter.",
+      "keep": "family moves tuned to the terrain (water)",
+      "change": "our water hazard is our own, not ink",
+      "ref": "assets/common/abilities/ability_set_manifest.ron lines 954-959 (primary at line 955)"
+    },
+    {
+      "label": "Frost colossus (gigas frost world boss)",
+      "why": "A world boss whose ability set includes a frost summon of two NPCs placed five to ten units away with the boreal summon loadout, and whose drop is a lottery of an armour set or a crafting ingredient drawn as a 3-to-4 count range.",
+      "keep": "boss that calls escorts; lottery drop with a count range",
+      "change": "our escort count (capped at MAX_ATTACKERS = 3); our drop pool; names",
+      "ref": "assets/common/entity/world/world_bosses/gigas_frost.ron line 4; assets/common/abilities/ability_set_manifest.ron lines 982-989; assets/common/abilities/custom/gigas_frost/frost_summons.ron lines 1-15; assets/common/loot_tables/world/world_bosses/gigas_frost/boss.ron lines 2-3"
+    },
+    {
+      "label": "Cultist warlord (dungeon elite)",
+      "why": "An elite whose hand weapon is one of two at random (sword or hammer), with its own large loot table. One elite per dungeon that plays differently each run.",
+      "keep": "random weapon pick at spawn; dedicated large loot table",
+      "change": "our weapons and loot table",
+      "ref": "assets/common/entity/dungeon/cultist/warlord.ron lines 4-12"
+    },
+    {
+      "label": "Summoned boreal warrior (rank five escort)",
+      "why": "A summoned NPC that gets a random ranged or melee weapon with the rank-five full-skill preset; its ability set has a hammer branch (single strike, dash, leap) and a bow branch (double strike, shotgun, trap). Escalation by preset, not a level number.",
+      "keep": "preset rank as the escalation dial; random weapon pick; two-branch ability set",
+      "change": "our rank names and escort limit",
+      "ref": "assets/common/entity/world/world_bosses/summons/boreal_warrior.ron lines 4-17; assets/common/abilities/ability_set_manifest.ron lines 997-1007; assets/common/skillset/preset/rank5/"
+    }
+  ],
+  "classes": [
+    "Danari (playable species; signature mechanic not read)",
+    "Dwarf (playable species)",
+    "Elf (playable species)",
+    "Human (playable species)",
+    "Orc (playable species)",
+    "Draugr (playable species)",
+    "Weapon skill groups: Sword (26 entries, heavy, agile and defensive branches), Axe, Hammer, Bow, Staff, Sceptre; General group holds Climb and Swim (assets/common/skill_trees/skills_skill-groups_manifest.ron lines 3-8)",
+    "Progression: Any-of or All-of prerequisite rows per node (assets/common/skill_trees/skill_prerequisites.ron lines 2, 4)",
+    "NPC economy roles (not player classes): Banker, Cook, Lumberjack, Miner, Fisher, Hunter, Hunter2 (assets/common/professions.ron)"
+  ],
+  "weapon_families": [
+    "axe",
+    "bow",
+    "dagger",
+    "hammer",
+    "sceptre",
+    "shield",
+    "staff",
+    "sword",
+    "sword_1h",
+    "tool (golf club carries a custom ability_spec, assets/common/items/weapons/tool/golf_club.ron line 19)",
+    "43 item files; each has a kind (weapon kind and hand count), a stats block, a quality rung and an optional ability_spec",
+    "tiers: six ingots (bronze to orichalcum) and six woods, assets/common/material_stats_manifest.ron line 5 onward",
+    "striking: Caladbolg (Legendary two-handed sword, assets/common/items/weapons/sword/caladbolg.ron line 17): quick equip, slower swing, high power; Frost Cleaver (High, assets/common/items/weapons/sword/frost-0.ron line 2): freezing aura in its description, no ability set"
+  ],
+  "gear_tiers": [
+    "447 armour item files in 32 set folders (assets/common/items/armor)",
+    "quality counts over 447 files: Low 53, Common 79, Moderate 81, High 80, Epic 82, Legendary 70, Debug 2 (grep)",
+    "eight quality rungs: Low, Common, Moderate, High, Epic, Legendary (gold), Artifact, Debug (common/src/comp/inventory/item/mod.rs lines 74-83)",
+    "set stats split by slot weight: shoulder 2.0 (armor.rs line 252), chest 3.0 (line 253), back 0.5, belt 0.5, hand 1.0, pants 2.0, foot 1.0, head 0.0 (line 262) so head pieces carry Direct stats (assets/common/items/armor/ashen/head.ron line 6); multiplier at armor.rs line 268",
+    "46 distinct FromSet names",
+    "striking: Golemite set (Legendary, assets/common/items/armor/golemite/chest.ron line 8); Ashen set (head is the exception to the set rule); Boreal set (boss drop, assets/common/loot_tables/world/world_bosses/gigas_frost/boss.ron line 3)"
+  ],
+  "zones": [
+    "12 biome kinds: Void, Lake, Grassland, Ocean, Mountain, Snowland, Desert, Swamp, Jungle, Forest, Savannah, Taiga (common/src/terrain/biome.rs lines 7-21)",
+    "24 site kinds (world/src/site/mod.rs line 107 onward; about 22 names read): town types, chapel, dwarven mine, citadel, terracotta, giant tree, gnarling, bridges, adlet, haniwa, pirate hideout, jungle ruin, rock circle, troll cave, camp, cultist, sahagin, vampire castle",
+    "11 dungeon archetype folders, 85 entity files: adlet, cultist, dwarven_quarry, fallback, gnarling, haniwa, myrmidon, sahagin, sea_chapel, terracotta, vampire",
+    "wildlife spawn: 50 files in 8 climate folders, 71 Pack rules (spawn_mode Land 62, Water 6, Ice 3); each Pack has (weight, min, max, entity) groups and a day_period list; arctic/ocean.ron lines 5-22",
+    "striking: arctic ocean water and ice packs (assets/world/wildlife/spawn/arctic/ocean.ron lines 9, 18); cultist dungeon elite (assets/common/entity/dungeon/cultist/); gigas frost boss zone (assets/common/entity/world/world_bosses/gigas_frost.ron); sea chapel dungeon (folder only, not read); desert city site (named only)",
+    "hazards: not read"
+  ],
+  "looks": [
+    {
+      "label": "Emissive baked glow on figures",
+      "technique": "Per-model glow value raised to the third power, scaled, lit by a glow term and by how much the surface faces the glow direction, added to reflected light",
+      "ref": "assets/voxygen/shaders/figure-frag.glsl lines 188-193"
+    },
+    {
+      "label": "Flag-based glow on LOD objects",
+      "technique": "Warm tint added to the surface colour when a glow flag is set in the LOD object shader",
+      "ref": "assets/voxygen/shaders/lod-object-frag.glsl lines 98-100"
+    },
+    {
+      "label": "Quality ladder on loot and inventory slots",
+      "technique": "Eight rungs mapped to slot images, gold at Legendary, purple at Epic",
+      "ref": "voxygen/src/hud/loot_scroller.rs lines 336-342; common/src/comp/inventory/item/mod.rs lines 74-83"
+    },
+    {
+      "label": "Particle glow at night (comment only)",
+      "technique": "Comment says particles glow at night; code not read",
+      "ref": "assets/voxygen/shaders/particle-frag.glsl line 111"
+    },
+    {
+      "label": "Sparks flicker in a fixed rhythm (comment only)",
+      "technique": "Comment says sparks stop glowing for part of each cycle, four times a second; code not read",
+      "ref": "assets/voxygen/shaders/particle-vert.glsl line 871"
+    },
+    {
+      "label": "Stepped head glance (bird idle)",
+      "technique": "Target changes on a floored clock with pseudo-random offsets; correction to AU055: steps about every 2 s of global time, not a half-second clock",
+      "ref": "voxygen/anim/src/bird_large/idle.rs lines 26-34"
+    },
+    {
+      "label": "Wyvern chest pitch",
+      "technique": "Fixed forward rotation of the chest in the wyvern branch of the idle",
+      "ref": "voxygen/anim/src/bird_large/idle.rs line 69"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Wyrm family template",
+      "idea": "One ability-set template per family (bomb primary, three-hit combo, shockwave, spray) with element swaps, one family per spawn weight row.",
+      "keep": "the set shape and the element swap",
+      "change": "our names, effects, elements, and per-family spawn weight in zone data"
+    },
+    {
+      "name": "Frost colossus with escorts",
+      "idea": "A world boss that calls two escorts five to ten units away with a random weapon, capped at MAX_ATTACKERS (3).",
+      "keep": "escort summon, distance band, random weapon pick",
+      "change": "escort count, boss shape, names"
+    },
+    {
+      "name": "Glacier tithe drop",
+      "idea": "A boss drop that is a lottery of an armour set or a crafting material, drawn with a count range.",
+      "keep": "lottery drop and count range",
+      "change": "item pool and rarity roll"
+    },
+    {
+      "name": "Night-only water pack",
+      "idea": "Spawn rules as data: group weight, count range, entity, surface type (land, water, ice) and day periods.",
+      "keep": "the rule shape",
+      "change": "zone names and numbers; spawn caps belong to row 23 zone data"
+    },
+    {
+      "name": "Gold rung relic",
+      "idea": "Eight quality rungs, gold at the top, shown the same way on loot and inventory slots.",
+      "keep": "rung order and gold top rung",
+      "change": "palette and our quality names"
+    },
+    {
+      "name": "Crowd-weighted combat bed",
+      "idea": "Combat music from a sum over enemies inside a radius, each adding ceil(max HP / factor), with a dead player forcing explore music (voxygen/src/audio/music.rs lines 259-285).",
+      "keep": "weighted sum and death override",
+      "change": "weight from our hate list and MAX_ATTACKERS; a boss stinger on top"
+    },
+    {
+      "name": "Set-split armour",
+      "idea": "One stat total per armour set, split by slot weights, with the head as its own exception.",
+      "keep": "weighted split",
+      "change": "our weights and head rule"
+    },
+    {
+      "name": "Blade talent line",
+      "idea": "Talent prerequisites as Any-of or All-of rows in one data file (assets/common/skill_trees/skill_prerequisites.ron lines 2 and 4).",
+      "keep": "data-only graph",
+      "change": "node names, depth, fork placement"
+    }
+  ],
+  "licence_note": "Code GPL-3.0 (LICENSE; README line 100): shape only. Assets per entry in assets/credits.ron: music CC-BY-NC-SA 4.0 with an 'Added restrictions' note (no use in other games unless parody); 2 sounds CC BY 4.0; 16 sounds with no licence (GPL-3 by the file's default); fonts OFL, CC BY-SA, CC BY, Apache, MIT, GPL-2; 3 models CC-BY-NC-SA 4.0; most .vox, PNG, RON and .ftl files uncredited. No audio reuse; CC BY items need attribution if used.",
+  "not_read": [
+    "server half: server/, server-cli/ (spawn and AI consumers) and rtsim/",
+    "all .vox models (about 4,752) and PNG images; world .bin maps; assets/world beyond spawn files and folder listing",
+    "shaders beyond figure, lod-object and particle glow lines",
+    "most common/entity and common/items files (samples only); skill trees beyond group manifest and prerequisites",
+    "creature escalation numbers and per-body stat tables (common/src/comp/body/mod.rs)",
+    "death and respawn presentation; hazards; factions; ambient animation beyond the bird idle",
+    "i18n languages other than the English buff file; fonts (binary)",
+    "hydra body (eighth top creature not made)"
+  ]
+}

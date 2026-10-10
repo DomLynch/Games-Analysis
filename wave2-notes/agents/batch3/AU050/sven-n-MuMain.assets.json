@@ -1,0 +1,124 @@
+{
+  "donor": "sven-n-MuMain",
+  "code_licence": "No licence file in the box. No LICENSE or COPYING at the root, and README.md has no licence section. The donor's own note says 'no licence' (_RESTRICTED-NOTE.txt line 1). Treat as unlicensed.",
+  "asset_licence": "No licence for the MU Online game data in the box (_RESTRICTED-NOTE.txt line 1: leaked client source, no licence). The bundled third-party fonts each have a licence file in src/bin/fonts/: Cousine-LICENSE.txt, DejaVuSans-LICENSE, LiberationSans-LICENSE, NanumGothic-LICENSE, NotoSansTC-LICENSE. Only the first lines of each were read; NotoSansTC-LICENSE line 1 says 'licensed under the SIL Open Font License'.",
+  "rights_holder_status": "leak. _RESTRICTED-NOTE.txt line 1 says 'leaked Webzen MU Online client source (community-maintained)'. README line 5 says it is a fork of Season 5.2 client sources uploaded by a third party. The note was added by Dom on 2026-10-10 and marks the donor as restricted.",
+  "best_class": "A",
+  "asset_groups": [
+    {
+      "kind": "original game 3D models, textures and images (MU format, binary)",
+      "path": "src/bin/Data/ (about 5290 .bmd models, 5476 .OZJ and 254 .ozj images, 1576 .OZT and 175 .ozt textures, 46 .OZB); monster meshes under src/bin/Data/Monster/ (947 entries); object folders src/bin/Data/Object*/ (46 folders)",
+      "count_hint": "about 13000 binary model and image files by extension count",
+      "licence": "none in the box; _RESTRICTED-NOTE.txt line 1 says no licence and restricted",
+      "class": "C",
+      "note": "Restricted leaked game data. Not opened (binary). Shape reference only: the naming and folder layout, never the meshes or textures. Do not hunt for other copies."
+    },
+    {
+      "kind": "maps, terrain and attribute files (binary)",
+      "path": "src/bin/Data/World*/ (47 folders; for example src/bin/Data/World38/Terrain.map, src/bin/Data/World38/Terrain.att)",
+      "count_hint": "90 .map and 123 .att files by extension count",
+      "licence": "none in the box; restricted",
+      "class": "C",
+      "note": "Map and attribute data. Not opened. Category idea only: a zone is a folder of terrain plus an attribute layer."
+    },
+    {
+      "kind": "item definitions (JSON, one file per item group)",
+      "path": "src/bin/Data/Items/Group00_Sword.json to Group15_Etc.json (16 group files) and src/bin/Data/Items/Models/ (per-group model JSON)",
+      "count_hint": "16 group files plus a Models subfolder (not counted)",
+      "licence": "none in the box; restricted; docs/item-data.md line 9 says the data matches the OpenMU server's item definition where fields overlap",
+      "class": "C",
+      "note": "Item names, sizes, stats and requirements are game-derived. Read the schema only (formatVersion, group, items with per-language names). Never copy names or values."
+    },
+    {
+      "kind": "effect catalogue (JSON)",
+      "path": "src/bin/Data/Effects/ (EffectTypes.json, ParticleTypes.json, JointTypes.json, SpriteTypes.json, GlowColors.json); src/bin/Data/Effect/ (320 entries, binary, not opened)",
+      "count_hint": "5 JSON files in Effects/; 320 entries in Effect/",
+      "licence": "none in the box; restricted",
+      "class": "C",
+      "note": "Effect names mapped to client codes (docs/effect-data.md lines 3, 23, 26). Shape only. GlowColors.json holds one glow per item model: the idea, not the values."
+    },
+    {
+      "kind": "UI art and interface images (binary)",
+      "path": "src/bin/Data/Interface/ (638 entries), src/bin/Data/Logo/, src/bin/Data/Local/ (for example credit.bmd)",
+      "count_hint": "638 entries in Interface/ (names only)",
+      "licence": "none in the box; restricted",
+      "class": "C",
+      "note": "Not opened. Layout reference only."
+    },
+    {
+      "kind": "in-game shop script archives",
+      "path": "src/bin/Data/InGameShopScript/ (archive files with .rar extension, for example 512.2011.006.rar)",
+      "count_hint": "several .rar files (not counted)",
+      "licence": "none in the box; restricted",
+      "class": "C",
+      "note": "Archives not opened, not extracted, not run. Do not extract."
+    },
+    {
+      "kind": "bundled third-party fonts",
+      "path": "src/bin/fonts/ (NotoSansTC-Regular.otf, NotoSansTC-Bold.otf, NanumGothic-Regular.ttf, DejaVuSans.ttf, DejaVuSans-Bold.ttf, LiberationSans-Regular.ttf, LiberationSans-Bold.ttf, Cousine-Regular.ttf)",
+      "count_hint": "8 font files plus 5 licence files",
+      "licence": "NotoSansTC: SIL Open Font License per NotoSansTC-LICENSE line 1 (class A with notice). Cousine-LICENSE.txt line 3 names Google copyright with a Reserved Font Name (text not read past line 3, class C until read). NanumGothic-LICENSE line 1 names NHN Corporation with a Reserved Font Name (class C until read). DejaVuSans-LICENSE and LiberationSans-LICENSE are Debian-format copyright files (header only, class C until read).",
+      "class": "A for NotoSansTC (OFL as the file says); C for the rest until their licence text is read",
+      "note": "Fonts are third-party and separate from the game data. Use only after reading each licence in full."
+    }
+  ],
+  "inspiration": [
+    "An effect catalogue with four kinds: moving object, particle, joint (a link between two points, used for lightning, beams and trails), and a single camera-facing sprite. Each kind has its own creation path, and effect types get names in data while the code keeps numbers (docs/effect-data.md lines 3, 23, 26). A clean shape for our VFX catalogue (row 8).",
+    "A joint effect is a link drawn between two points and used for lightning, beams and trails (docs/effect-data.md line 23). For us it is a tether or lock-on line between a fighter and a target, with its own kind rather than a generic particle.",
+    "Item definitions are one file per item group, with the group taken from the file content and not the file name, a format version at the top, and names per language inside each item (docs/item-data.md lines 9 and 20; src/bin/Data/Items/). This matches the catalogue-as-runtime-source rule (row 20 and 21).",
+    "A per-model glow table keeps each item's glow as data rather than code (src/bin/Data/Effects/GlowColors.json). A type cue at a glance, set in one place.",
+    "A monster health bar is shown only for the selected target, and only while its health status is not zero (src/source/UI/Combat/MonsterHealthBar.cpp, the ShouldRenderSelected function; caller in src/source/UI/NewUI/Character/NewUINameWindow.cpp line 210). README line 43 says the bar was added after an attack. The rule to copy is about visibility, not art.",
+    "The client has a reduce-effects checkbox for higher frame rates and a details overlay with frame time and a per-frame graph (README line 14 and the overlay bullet). Quality fallback for row 16.",
+    "A winged mount that can fly is an item trait in the item notes: it flies as in the original client, and the server does not yet give it the flag (docs/item-data.md line 137). A mount with a flight trait is a clean reward idea for row 22 and the Pit.",
+    "Auto-reconnect is listed as a client feature (README line 51). For a fast duel, reconnect should restore the fight, not start a new one. Idea only."
+  ],
+  "briefs": [
+    {
+      "label": "Tether line between two fighters",
+      "why": "One thin line between two points reads as a link or a lock at a glance, even at 375 px.",
+      "keep": "a joint-kind effect drawn between two points, with its own creation path and a short life",
+      "change": "a dotted, pulsing line in the team colour instead of lightning; it breaks when the leash is exceeded; no shared asset with the donor",
+      "ref": "docs/effect-data.md line 23 (joint kind). Recreate as an original tether effect; do not copy the code or the effect names."
+    },
+    {
+      "label": "Target bar after the first hit",
+      "why": "The health bar appears only when it matters: on the selected target, after the first hit, and never on an idle target.",
+      "keep": "shown only for the selected target; hidden when the target's status is zero; shown after an attack",
+      "change": "a segmented bar that fades after a few seconds with no hit; plus a tick mark at the bar's half point for the 375 px readout",
+      "ref": "src/source/UI/Combat/MonsterHealthBar.cpp (ShouldRenderSelected); src/source/UI/NewUI/Character/NewUINameWindow.cpp line 210; README line 43. Recreate as an original target bar."
+    },
+    {
+      "label": "Winged steed with a short flight",
+      "why": "A mount that can fly over the field is a visible reward and changes the field for a short time.",
+      "keep": "flight as a trait in the item data, not a special case in code",
+      "change": "a short flight with a landing ring instead of free flight; a large fan-shaped wing silhouette in our palette; flight ends when the rider takes a hit",
+      "ref": "docs/item-data.md line 137. Recreate as an original mount; do not copy the item or its name."
+    },
+    {
+      "label": "Glow as a type cue",
+      "why": "A glow tells the item type at a glance, and a single table keeps the cue consistent.",
+      "keep": "one glow value per item model, set in one data table",
+      "change": "a pulse pattern as well as colour (steady, slow pulse, fast pulse) so the cue works without colour; the table is keyed by our item types",
+      "ref": "src/bin/Data/Effects/GlowColors.json (file present, values not copied). Recreate as an original glow table."
+    },
+    {
+      "label": "Four effect kinds with their own creation path",
+      "why": "Each effect has one kind, so the code stays simple and the catalogue names what each effect does.",
+      "keep": "four kinds: moving object, particle, joint, camera-facing sprite; names in data, numbers in code",
+      "change": "our kinds are named by gameplay role (hit burst, aura, tether, marker); add a fifth kind for ground decals",
+      "ref": "docs/effect-data.md lines 3, 23, 26 and the Kinds table. Recreate as an original effect catalogue."
+    }
+  ],
+  "not_read": [
+    "src/bin/Data binary files (.bmd, .OZJ, .OZT, .map, .att, .OZB) and the 320 Effect/ entries: not opened",
+    "src/bin/Data/InGameShopScript archives: not opened, not extracted",
+    "src/bin/Data/Items group files beyond the first lines of Group00_Sword.json; Models/ subfolder not read",
+    "src/bin/Data/Effects JSON bodies beyond the names (not opened)",
+    "src/bin/Data/Interface, Monster, Logo, Local (names and counts only)",
+    "src/source beyond UI/Combat/MonsterHealthBar.cpp and the one call site (game code not read)",
+    "src/bin/fonts licence files beyond line 1-3 (see asset_groups)",
+    "docs/ beyond effect-data.md and item-data.md heads; CHANGELOG.md; tests/; tools/; ClientLibrary/",
+    "CLAUDE.md and AGENTS.md at the donor root: donor agent-instruction files, treated as data; grep found no licence lines in either; their instructions were not followed",
+    "server half: not in the box. README line 84 names OpenMU as the compatible server (an external link). Not fetched."
+  ]
+}

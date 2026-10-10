@@ -1,0 +1,233 @@
+{
+  "donor": "shnok-l2-unity",
+  "reader": "DC049",
+  "half_read": "client (Unity scripts, read in part) plus data pack (StreamingAssets/Data/Meta, LineageEffects, map Meta headers and counts); server half NOT in box",
+  "counts": {
+    "creatures": 5660,
+    "classes": 17,
+    "weapons": 1677,
+    "gear_sets": 0,
+    "zones": 4
+  },
+  "count_notes": "creatures = Npcgrp_Classic npc_begin records (grep); classes = Lindvior character group records (Char_begin), Freya 17, Classic 15; weapons = Weapongrp_Classic item records; gear_sets = 0 (no set mechanism found in the data read; not searched exhaustively); zones = 4 map tiles with ambient data (16_24, 16_25, 17_24, 17_25)",
+  "creature_families": [
+    "Undead and grave: zombie, skeleton, skeleton archer, dark horror",
+    "Beasts and spiders: werewolf, giant spider, poison spider, wererat, grizzly, onyx beast",
+    "Constructs and elementals: stone golem, sylph, dryad, walking fungus",
+    "Lizard and insect families: virud lizardman (warrior variants), ant, ant larva, lesser basilisk",
+    "Floating and magical: monster eye, mana vampire, succubus",
+    "Orc and human fighters, archers and mages: orc family, orc archer, ol mahum with champion tier",
+    "NPC-class rows (LineageNPC prefixes) about 1,866; monster-class rows (LineageMonster prefixes) about 3,406 (prefix counts)"
+  ],
+  "top_creatures": [
+    {
+      "label": "Layered-hit brute",
+      "why": "Big, slow body whose record carries its own attack, defense and damage sound fields, so each monster sounds like its body",
+      "keep": "big slow silhouette; per-record hit sound fields",
+      "change": "our own sound set keyed to armour; moss and crystal body; ground-crack telegraph (not read in code)",
+      "ref": "l2-unity/Assets/StreamingAssets/Data/Meta/Npcgrp_Classic.txt:16"
+    },
+    {
+      "label": "Web-spinner brood",
+      "why": "Two spider rows share one family, giant and poison variants with separate stats",
+      "keep": "one family, several sizes and venoms",
+      "change": "glowing venom sac instead of a palette swap; web-spit instead of a bite",
+      "ref": "l2-unity/Assets/StreamingAssets/Data/Meta/Npcgrp_Classic.txt:28 and poison spider rows"
+    },
+    {
+      "label": "Watcher orb",
+      "why": "A floating single-eye silhouette is readable at distance",
+      "keep": "hovering, eye-led silhouette",
+      "change": "three smaller eyes in a ring; slow spin telegraph; no beam",
+      "ref": "l2-unity/Assets/StreamingAssets/Data/Meta/Npcgrp_Classic.txt:55"
+    },
+    {
+      "label": "Mana-drinking shade",
+      "why": "A drain monster with its own class family, so the drain reads as a family trait",
+      "keep": "drain as a family trait",
+      "change": "our own drain visual (a thread, not a glow); different body",
+      "ref": "l2-unity/Assets/StreamingAssets/Data/Meta/Npcgrp_Classic.txt:37"
+    },
+    {
+      "label": "Halo-marked boss",
+      "why": "A few rows carry a boss halo effect, so a boss reads at distance through the halo, not size alone",
+      "keep": "halo as the boss marker",
+      "change": "our own halo shape and colour, tied to phase",
+      "ref": "l2-unity/Assets/StreamingAssets/Data/Meta/Npcgrp_Classic.txt deco_effect rows with the boss halo effect (7 rows, grep)"
+    },
+    {
+      "label": "Crawling larva swarm",
+      "why": "A larva family with its own class name; a cheap way to fill a corner with small threats",
+      "keep": "small swarm family",
+      "change": "our own swarm cap and a burrow-out intro",
+      "ref": "l2-unity/Assets/StreamingAssets/Data/Meta/Npcgrp_Classic.txt:75"
+    },
+    {
+      "label": "Basilisk-type lizard",
+      "why": "A low, long silhouette with one class family for the type",
+      "keep": "low wide body",
+      "change": "our own head and tail; stare telegraph in place of a gaze",
+      "ref": "l2-unity/Assets/StreamingAssets/Data/Meta/Npcgrp_Classic.txt:70"
+    },
+    {
+      "label": "Gaunt tempter spirit",
+      "why": "A family that reads as a tempter, a different mood from the undead",
+      "keep": "distinct family silhouette",
+      "change": "our own look and voice line; no copied shape",
+      "ref": "l2-unity/Assets/StreamingAssets/Data/Meta/Npcgrp_Classic.txt:48"
+    }
+  ],
+  "classes": [
+    "Character group records: 15 Classic, 17 Freya, 17 Lindvior (Chargrp files); Lindvior carries class_id, class_type and race fields",
+    "Body-type columns in Armorgrp: eight race families with male and female columns, plus two later-race columns",
+    "Two playable races per README feature list (with a few armour sets each)",
+    "Skill progression: 34,679 skill records, 8,264 distinct skill ids, levels to 85, cast style and debuff fields",
+    "Factions: not in the client data"
+  ],
+  "weapon_families": [
+    "weapon_type: two-hand sword 442, sword 422, buster 177, dagger 174, staff 133, blunt 131, two-hand blunt 96, fist 77 (Weapongrp_Classic.txt)",
+    "materials: fine steel, steel, wood, oriharukon, bone, bronze, blood steel, adamantaite",
+    "augment (variation) effect codes 2 to 8 on some rows, -1 on 397; client drops augment ids (AbstractItemPacket.cs:37, PlayerInfoPacket.cs:97)",
+    "ensoul slots on 357 rows; magic weapons on 433 rows"
+  ],
+  "gear_tiers": [
+    "Armour material names: wood 893, gold 816, silver 781, leather 763, cloth 587, mithril 130, crystal 120, steel 113 (Armorgrp_Classic.txt)",
+    "Grade (crystal_type): none 3,444; b 311; c 242; a 218; d 208; s 34; r 4; s80 2",
+    "armor_type: none 3,704; heavy 306; light 225; magic 224; sigil 4",
+    "drop_anim_type: 3 on 2,924 rows, 0 on 1,432, 1 on 99 (drop ceremony code)",
+    "Hit defense sound not yet keyed to armour type (HumanoidAudioHandler.cs:55 TODO)"
+  ],
+  "zones": [
+    "Four map tiles with region data: 16_24, 16_25, 17_24, 17_25 (Talking Island)",
+    "Ambient rows 4,158: day 1,547, night 1,440, always 1,171; 33 distinct sound names in tile 16_24",
+    "Nine external PBR ground sets (grass, sand, swamp, slate and others) per the asset audit",
+    "Clock: full day 240 minutes by default; day window from a quarter to three quarters of the cycle (WorldClock.cs:7-8,32)",
+    "Global height-fog prefab in the map data; geodata layer about 13 MB",
+    "Hazards: none in the client data read"
+  ],
+  "looks": [
+    {
+      "label": "Skill effect as three data slots",
+      "technique": "Cast, shot and explosion lists per skill; each emitter has an attach node, multi-target and spawn-on-target flags, scale, and a simple variant class",
+      "ref": "l2-unity/Assets/StreamingAssets/Data/LineageEffects/3.json:3-5"
+    },
+    {
+      "label": "Homing bolt with ground miss",
+      "technique": "Lerp over wall-clock start and hit time, re-aimed at the live target each frame; a miss lands and skids with random spin; an arrow sticks into the root bone",
+      "ref": "l2-unity/Assets/Scripts/Game/Manager/Effect/ProjectileManager.cs:68,89,98-100,118"
+    },
+    {
+      "label": "Layered hit sound",
+      "technique": "Damage sound on every non-miss hit; crit and soulshot layers on top; defense sound only when plain",
+      "ref": "l2-unity/Assets/Scripts/Game/Combat/Combat.cs:101-120"
+    },
+    {
+      "label": "Hit particle tiers",
+      "technique": "Pool per soulshot grade and crit state; grade picks the colour tier",
+      "ref": "l2-unity/Assets/Scripts/Game/Manager/Effect/ParticleManager.cs:597"
+    },
+    {
+      "label": "Pawn light per effect",
+      "technique": "Optional light on a skill effect: type, effect type, colour string, radius, coordinate system",
+      "ref": "l2-unity/Assets/Scripts/Game/Skill/PawnLight/EffectPawnLightParam.cs:9-21"
+    },
+    {
+      "label": "Light LOD bands",
+      "technique": "Light enabled only inside squared-distance bands, shadows follow the band, refresh on a timer",
+      "ref": "l2-unity/Assets/Scripts/Rendering/LightLOD.cs:73,103"
+    },
+    {
+      "label": "Cursor affordance",
+      "technique": "Hover cursor changes for attack, talk and pickup",
+      "ref": "l2-unity/Assets/Scripts/Input/ClickManager.cs:93-106"
+    },
+    {
+      "label": "Two-state click marker",
+      "technique": "Base effect while travelling and reached effect on arrival, one marker",
+      "ref": "l2-unity/Assets/Scripts/Input/ClickManager.cs:40-45"
+    },
+    {
+      "label": "Boss halo",
+      "technique": "Halo deco effect on a few boss rows",
+      "ref": "l2-unity/Assets/StreamingAssets/Data/Meta/Npcgrp_Classic.txt deco_effect rows (7 rows, grep)"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Two-state waypoint",
+      "idea": "A destination marker with a travelling state and a reached state",
+      "keep": "two states on one marker",
+      "change": "our own marker shape and colour"
+    },
+    {
+      "name": "Layered hit",
+      "idea": "Base hit sound always; crit and soulshot layers stacked on top; a defence cue only on a plain hit",
+      "keep": "layers chosen from hit flags",
+      "change": "our own layers and sound set"
+    },
+    {
+      "name": "Homing bolt with ground miss",
+      "idea": "A bolt re-aims at the live target each frame; a miss lands and skids",
+      "keep": "live re-aim and miss skid",
+      "change": "our own flight curve and skid; server keeps the hit authoritative (the client resolves the hit on arrival here, which must not carry over)"
+    },
+    {
+      "name": "Three-stage spell",
+      "idea": "Cast on the hand, a shot with a trail, an optional blast, each a data slot with a low-detail variant",
+      "keep": "three slots and a low-detail variant",
+      "change": "our own attach nodes and blast ring"
+    },
+    {
+      "name": "Distance-banded light",
+      "idea": "A spell light enabled only inside distance bands, refreshed on a timer",
+      "keep": "squared-distance bands and timed refresh",
+      "change": "our own bands and lights"
+    },
+    {
+      "name": "Day-and-night ambience beds",
+      "idea": "Ambience beds per place split into day, night and always, with a distance cut and a random chance per loop",
+      "keep": "day, night and always split; distance cut",
+      "change": "our own clock from zone data and our own sound"
+    },
+    {
+      "name": "Augment shimmer",
+      "idea": "A weapon line carries augment codes, each a repeatable visual variant",
+      "keep": "a code per variant, a small set of variants",
+      "change": "our own codes, colours and shimmer on our own data"
+    },
+    {
+      "name": "Boss halo",
+      "idea": "A halo marks a boss row so it reads at distance",
+      "keep": "the halo as the marker",
+      "change": "our own halo tied to phase"
+    }
+  ],
+  "licence_note": "No LICENSE, COPYING or NOTICE outside plugin folders; README has no licence section; game content is described as Lineage2 world import with no rights holder named; plugins carry FMOD EULA, MIT (Newtonsoft.Json) and Animancer EULA. Treat code as all rights reserved; use shape only; not a legal claim.",
+  "defects": [
+    "Hit particles dropped: ParticleManager.cs:179-197 dequeues a hit effect and recycles it only when expired; young ones are lost from tracking (fix: re-queue unexpired effects)",
+    "Null log read: ParticleManager.cs:184 reads GameObject.name before the null check (fix: check first)",
+    "Null re-queue to wrong queue: ParticleManager.cs:195 (fix: re-queue to the hit queue or drop)",
+    "Degrees passed to Mathf.Tan: CameraCollisionDetection.cs:30 and :53 (fix: half angle in radians)",
+    "Collision object is last hit, not nearest: CameraCollisionDetection.cs:89 (fix: keep nearest)",
+    "Mouse look per frame with no delta time: CameraController.cs:146 (fix: multiply by Time.deltaTime)",
+    "Zoom pull-in overshoots above about 13 fps: CameraController.cs:169 (fix: exponential step or clamp)",
+    "Music slot not stopped on new track: MusicManager.cs:43 (fix: stop old event)",
+    "Area music stay handler flips between equal-priority areas: MusicAreaTrigger.cs:92-94 (fix: switch on enter only)",
+    "Ambient loop stop uses a new enumerator: AmbientSoundEmitter.cs:80,165 (fix: keep the Coroutine handle)",
+    "Night check true in first quarter of day: WorldClock.cs:107 (fix: nightRatio > 0 only)",
+    "Projectile speed comment says 16, constant is 20: WorldCombat.cs:10,487 (fix: one value and one comment)",
+    "Impact sound skipped when no explosion list: WorldCombat.cs:217-220; skill 3 has empty ExplosionActions (3.json:5) (fix: play impact before the explosion check)",
+    "Bad pawn-light radius throws: EffectPawnLightParam.cs:58 (fix: log and skip that field)",
+    "Armour type does not reach defense sound: HumanoidAudioHandler.cs:55 TODO (fix: pick list by armour_type)"
+  ],
+  "not_read": [
+    "Server half: not in the donor tree (README links separate gameserver and loginserver repos); authoritative combat, spawn and skill rules unknown",
+    "Client models, textures, shaders and audio banks (binary); file names and sizes only",
+    "Most of the 5,660 NPC rows, 1,677 weapon rows, 4,463 armour rows and 34,679 skill rows (headers and distributions only); Interlude NPC file (count 6,519 only)",
+    "ItemName, SkillName, SysString and SystemMsg tables (not read)",
+    "Networking except augment and enchant reads; PlayerController and PathFinderController; state machine; Tools/Terrain parsers beyond the ambient builder; DayNightCycle.cs (371 lines); NpcSpawner UpdateAction path; WorldSpawner grid logic; Combat gear dressing",
+    "Plugin folders beyond licence files (Animancer examples, Nature, Beautify, water shaders, ProBuilder, TextMesh Pro, ParrelSync)",
+    "Meaning of npc_type hide, Armorgrp color index, sound_random, class_type and handness (not read in code)",
+    "org_hp top end (about 2.24 million) unverified; may be a placeholder"
+  ]
+}

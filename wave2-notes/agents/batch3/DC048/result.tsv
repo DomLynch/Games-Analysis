@@ -1,0 +1,3 @@
+donor	cell	creatures	classes	weapons	gear_sets	zones	catalogue_md	catalogue_json	receipts_ok	receipts_failed	status	not_read_summary
+ryzom-ryzomcore	DC048	38	6	22	3	22	/private/tmp/p2/wave2-haiku/batch3/DC048/ryzom-ryzomcore.catalogue.md	/private/tmp/p2/wave2-haiku/batch3/DC048/ryzom-ryzomcore.catalogue.json	60	0	done-partial	server creature/zone logic partly read; creature, item, zone sheets and art not in box; zone and family files 0 bytes
+scummvm-scummvm	DC048	87	28	21	13	16	/private/tmp/p2/wave2-haiku/batch3/DC048/scummvm-scummvm.catalogue.md	/private/tmp/p2/wave2-haiku/batch3/DC048/scummvm-scummvm.catalogue.json	34	0	done-partial	binary data packs not opened; MM1 monsters.txt not in box; DM logic files not read (enums only); Xeen monster data not in box

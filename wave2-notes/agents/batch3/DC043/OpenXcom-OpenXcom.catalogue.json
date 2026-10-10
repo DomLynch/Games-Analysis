@@ -1,0 +1,209 @@
+{
+  "donor": "OpenXcom-OpenXcom",
+  "counts": {
+    "creatures": 55,
+    "classes": 19,
+    "weapons": 42,
+    "gear_sets": 52,
+    "zones": 32
+  },
+  "creature_families": [
+    "UFO set (xcom1): grey family, 6 rows (units.rul 151-261)",
+    "UFO set: floating family, 6 rows, floatHeight set (units.rul 311-431)",
+    "UFO set: snake-like family, 5 rows (units.rul 479-571)",
+    "UFO set: heavy armoured family, 3 rows (units.rul 619-665)",
+    "UFO set: tall family, 3 rows (units.rul 740-786)",
+    "UFO set: single-row living weapons: robotic disc (283), reaper (455), chryssalid (595), silacoid (688), celatid (714), sectopod (809), zombie (834)",
+    "TFTD set (xcom2): aquatoid 6 rows (from units.rul:2), gillman 4, tasoth 2, lobsterman 5 (from 266), deep one 1, triscene 1 (409), xarquid 1, calcinite 1, tentaculat 1 (484), hallucinoid 1, biodrone 1 (535), zombie 1",
+    "Each family is a ladder of roles; rank index chosen per deployment (alienDeployments.rul)",
+    "Escalation: race weights by months (alienMissions.rul:6, RuleMissionScript.cpp:321-326); item tier by month (alienItemLevels.rul:2, BattlescapeGenerator.cpp:1098); quantity by difficulty band plus RNG(0,dQty) (BattlescapeGenerator.cpp:1081-1089); outside-craft chance (BattlescapeGenerator.cpp:1093)"
+  ],
+  "top_creatures": [
+    {
+      "label": "Hive-walker",
+      "why": "Highest front armour of any creature row in the UFO set (armors.rul:243); a walking chassis that reads at 375 wide.",
+      "keep": "Heavy front, weaker rear and underside, so the flank matters.",
+      "change": "The plate that breaks off becomes a visible break; not a generic walker shell.",
+      "ref": "xcom1/units.rul:809; xcom1/armors.rul:243"
+    },
+    {
+      "label": "Bone-blade runner",
+      "why": "Melee only (firing skill zero), the largest time-unit pool of any UFO-set creature row (units.rul:595), and an infection chain: a zombie hit makes the victim rise as a zombie, and a zombie on death becomes this runner (units.rul:856; MeleeAttackBState.cpp:244-245; UnitDieBState.cpp:230).",
+      "keep": "A fast melee-only body and a one-step infection that shows on the victim.",
+      "change": "The infection has a visible timer and can be cured; the second form is ours, not a copy.",
+      "ref": "xcom1/units.rul:595, 834, 856; src/Battlescape/MeleeAttackBState.cpp:244-245; src/Battlescape/UnitDieBState.cpp:230"
+    },
+    {
+      "label": "Floating ladder",
+      "why": "Six-role family of hovering units, one readable ladder from soldier to commander, same hover height across the family.",
+      "keep": "One family, six roles; rank raises stats and armour.",
+      "change": "Each role gets its own silhouette, not one body with a palette swap.",
+      "ref": "xcom1/units.rul:311-431; xcom1/armors.rul (FLOATER_ARMOR0 to 2)"
+    },
+    {
+      "label": "Heavy brute",
+      "why": "High-health body with three armour tiers by rank; reads well at distance.",
+      "keep": "A tanky body with tiered armour per role.",
+      "change": "Armour plates are separate sprite layers that can be lost mid-fight.",
+      "ref": "xcom1/units.rul:619, 642, 665; xcom1/armors.rul (MUTON_ARMOR0 to 2)"
+    },
+    {
+      "label": "Mech dome",
+      "why": "A living weapon that explodes on death (specab 1, src/Mod/Unit.h:26); the player knows what a kill costs.",
+      "keep": "The punish on death.",
+      "change": "The death is a shock ring with a short warning, not a blast.",
+      "ref": "xcom1/units.rul:283 (row and specab at 308); src/Mod/Unit.h:26; src/Battlescape/BattlescapeGame.cpp:542"
+    },
+    {
+      "label": "Acid spitter",
+      "why": "Highest firing skill of any UFO-set creature row; built-in acid firearm row (items.rul CELATID_WEAPON, damage type 8).",
+      "keep": "Ranged acid as its own damage type.",
+      "change": "Acid leaves a pool on the floor the player can walk around.",
+      "ref": "xcom1/units.rul:714; xcom1/items.rul (CELATID_WEAPON); src/Mod/RuleItem.h:27"
+    },
+    {
+      "label": "Walking mother",
+      "why": "The body leaves a second body on death (zombieUnit field); the usual kill becomes the start of a second fight.",
+      "keep": "A death that spawns a follow-up.",
+      "change": "The follow-up is a different creature from the zombie, with its own silhouette.",
+      "ref": "xcom2/units.rul:484, 507, 564"
+    },
+    {
+      "label": "Burning spore pod",
+      "why": "Burns the floor and explodes on death (specab 3, src/Mod/Unit.h:26); fire and blast in one death.",
+      "keep": "The fire-plus-blast death.",
+      "change": "Fire stays on the tile where it dies; the warning is a glow on the ground before the blast.",
+      "ref": "xcom2/units.rul:535; src/Mod/Unit.h:26; src/Battlescape/Map.cpp:466"
+    }
+  ],
+  "classes": [
+    "Human soldier: one type (xcom2/soldiers.rul:2) with a rank ladder; sergeant to commander add value bonuses 1, 3, 6, 10 (src/Savegame/BattleUnit.cpp:113-116)",
+    "UFO-set alien lists: 6 (xcom1/alienRaces.rul), including a five-family mixed list (line 52)",
+    "TFTD-set alien lists: 12 (xcom2/alienRaces.rul from line 2), including underwater variants and mixed crews (line 90)",
+    "Rank index picks the role inside a list; commander first in each list (alienRaces.rul:4)",
+    "Progression shape: stronger families and stronger item tiers appear with months passed (alienMissions.rul, alienItemLevels.rul)"
+  ],
+  "weapon_families": [
+    "UFO plasma ladder: pistol, rifle, heavy (xcom1/items.rul:762, 722, 682), clips of damage type 5",
+    "UFO laser ladder: pistol, rifle, heavy (damage type 4)",
+    "UFO projectile ladder: pistol, rifle, heavy cannon, auto cannon, with AP, HE and incendiary ammo rows (damage types 1, 3, 2)",
+    "UFO rocket family: launcher with small, large and incendiary rockets (damage types 3 and 2)",
+    "TFTD gauss ladder: pistol (xcom2/items.rul:527), rifle (565), heavy (604); clips of damage type 4",
+    "TFTD torpedo swap: one launcher (447) with small (470), large (489), phosphorous (508) ammo rows",
+    "TFTD sonic family and thermal shok (978, 1001; damageType 6 at 1013 = stun)",
+    "Living weapons: creature bodies as weapons (melee type 7), no item",
+    "Special properties: 10 damage types (src/Mod/RuleItem.h:27); smoke converts to stun before damage (src/Savegame/BattleUnit.cpp:1108)"
+  ],
+  "gear_tiers": [
+    "Human tiers, 4 per set: none, light (personal armour / plastic aqua), heavy (power suit / ion), top (flying suit / magnetic ion) (xcom1/armors.rul:54; xcom2/armors.rul:84)",
+    "Armour rows carry four facing values (front, side, rear, under) and a 10-entry damage multiplier list (armors.rul)",
+    "Facing picked from the hit vector (src/Savegame/BattleUnit.cpp:1096-1178); armour wears by power/10 + 1 per hit (BattleUnit.cpp:1213)",
+    "Creature hide rows: 12 families per set; lobsterman tiers 0 to 2 rise with rank (xcom2/armors.rul:241)",
+    "Tier shown by sprite sheet (spriteSheet field) plus inventory sprite (spriteInv); layer order from drawingRoutine (src/Battlescape/UnitSprite.cpp)"
+  ],
+  "zones": [
+    "UFO set: 10 terrains (xcom1/terrains.rul:2 onward): farmland, desert, forest, jungle, mars, mountain, polar, underground base, urban, alien base",
+    "TFTD set: 22 terrains (xcom2/terrains.rul:2 onward): seabed, pipes, plane site, sunken and ruined sites, volcano, coral reef, port, island, cargo site, alien bases, level set, crypt",
+    "Dungeon-like archetype: alien base carves tunnels with digTunnel and swaps wall and floor tiles (xcom1/mapScripts.rul:74, 88)",
+    "Boss archetype: BOSSBATTLE map script (xcom1/mapScripts.rul:105) and Cydonia landing and final assault deployments (alienDeployments.rul:1168, 1246)",
+    "Mission-as-zone: terror (alienDeployments.rul:706), alien base assault (843), base defence (body not read)",
+    "Hazards: debris map sets (seabed); day or night as a shade value per deployment; always-day and always-night utility rulesets (bin/standard/XcomUtil_Always_Daytime, XcomUtil_Always_Nighttime)"
+  ],
+  "looks": [
+    {
+      "label": "Breathing bubbles (idle)",
+      "technique": "Armour row flag drawBubbles starts a breath frame; overlay drawn from the breath sheet with an offset for kneeling or short units.",
+      "ref": "src/Savegame/BattleUnit.cpp:102; src/Battlescape/Map.cpp:472; xcom2/armors.rul (11 rows)"
+    },
+    {
+      "label": "Fire overlay",
+      "technique": "A burning unit draws a frame from the smoke sheet, advancing with animation frame.",
+      "ref": "src/Battlescape/Map.cpp:466"
+    },
+    {
+      "label": "Per-unit recolour",
+      "technique": "Colour-replace shader recolours a unit layer at draw time; one sprite, many colour sets.",
+      "ref": "src/Battlescape/UnitSprite.cpp:149"
+    },
+    {
+      "label": "Shade per deployment",
+      "technique": "Shade value per deployment sets the map light; utility rulesets force day or night.",
+      "ref": "xcom1/alienDeployments.rul (shade fields, e.g. line 993); bin/standard/XcomUtil_Always_Nighttime"
+    },
+    {
+      "label": "Corpse variants",
+      "technique": "Four corpse rows per big unit type; death pose from data, one of four.",
+      "ref": "xcom1/items.rul (REAPER_CORPSE_1 to 4, SECTOPOD_CORPSE_1 to 4, CYBERDISC_CORPSE_1 to 4)"
+    },
+    {
+      "label": "Projectile strips per environment",
+      "technique": "Land and underwater projectile strips of the same size; the set changes with the environment.",
+      "ref": "xcom2 bullet sheets (TFTD-LAND, TFTD-UNDERWATER); xcom1 BulletSprites (per AU041, not re-read here)"
+    },
+    {
+      "label": "Screen filters",
+      "technique": "24 GLSL shader files as a menu of screen looks (scanline, CRT, bloom, pixel scalers); only public-domain ones are safe to read for ideas.",
+      "ref": "bin/common/Shaders/*.OpenGL.shader (per AU041)"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Campaign Tide",
+      "idea": "Enemy mix as a step table keyed to the player's progression stage, not months.",
+      "keep": "Step-function weights and the highest-key-not-above rule (RuleMissionScript.cpp:321-326).",
+      "change": "Keyed to zone tier and progression, not a calendar. Defect to fix before use: the while loop at RuleMissionScript.cpp:326 has no end check; fix by sorting keys on load and clamping below the first key."
+    },
+    {
+      "name": "Rot Chain",
+      "idea": "A melee hit marks the victim to rise, and the rising body becomes a second creature on its own death.",
+      "keep": "The two-stage death (MeleeAttackBState.cpp:244-245; UnitDieBState.cpp:230).",
+      "change": "A visible timer on the victim that a shrine can cancel; the second form is ours."
+    },
+    {
+      "name": "Four-Facing Shell",
+      "idea": "Armour per facing; the hit side is chosen from the hit vector; armour loses durability each hit.",
+      "keep": "The 8-way side mapping, side subtraction and the durability loss (BattleUnit.cpp:1096-1213).",
+      "change": "Lost durability shows as a crack; no random edge flip in fast duels."
+    },
+    {
+      "name": "Chain Guard",
+      "idea": "When an action happens, the best-scoring guard acts first; if it cannot, the next is tried.",
+      "keep": "Best-first chain with fall-through (TileEngine.cpp:828-861).",
+      "change": "Each guard pays stamina; the result is server-verified."
+    },
+    {
+      "name": "Stance Dial",
+      "idea": "A 0, 1, 2 aggression number changes odds and stance.",
+      "keep": "The three states and their odds multipliers (AIModule.cpp:1296-1310).",
+      "change": "Three named stances the player reads from the pose and a sound cue, not a hidden number."
+    },
+    {
+      "name": "Living Edge",
+      "idea": "Creatures whose body is the weapon; melee only; no separate item to drop.",
+      "keep": "No item to drop (living-weapon rows, units.rul 283, 455, 595).",
+      "change": "The body silhouette is the weapon; the kill shows what the creature was."
+    },
+    {
+      "name": "Burn Ground",
+      "idea": "A unit that burns the floor when it moves and explodes on death.",
+      "keep": "Fire that stays where it was walked (UnitWalkBState.cpp:181; Unit.h:26).",
+      "change": "The floor glow is a visible warning before the blast."
+    },
+    {
+      "name": "Thermal Stun",
+      "idea": "A stun-type damage type that knocks out and never kills.",
+      "keep": "A separate stun pool (RuleItem.h:27; xcom2/items.rul:1001 and 1013).",
+      "change": "A visible shock ring from the fight camera."
+    }
+  ],
+  "licence_note": "Code GPL-3.0+ (LICENSE.txt:2; install/debian/copyright:8). TFTD weapon art CC BY-SA 4.0 (xcom2/Resources/Weapons/license.txt:4); UFO weapon art CC BY-SA 4.0 per AU041 (not re-read). Original game sprites, maps and audio are not in the repo (README.md:17). Original rights holder named as Microprose (xcom2/metadata.yml:7); current owner not stated. Nothing copied; all labels are ours.",
+  "not_read": [
+    "PCK sprite sheets, MAP and ROUTES binaries (none in the repo for sprites; binaries not decoded)",
+    "Audio (none in the box)",
+    "66 other language files; en-US strings counted only",
+    "Most of the 105 rul files; alienDeployments.rul beyond the rows named; terror and base-defence deployment bodies",
+    "Shader files beyond the AU041 summary",
+    "src/Battlescape/BattlescapeGame.cpp (one grep hit at line 542 only); getReactor() scoring in TileEngine.cpp",
+    "Paired donor: none in the box (OpenGFX absent); not checked against any other donor"
+  ]
+}

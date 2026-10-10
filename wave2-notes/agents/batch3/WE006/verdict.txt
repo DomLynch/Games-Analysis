@@ -1,0 +1,9 @@
+WE006 verdict (topic world-events). Both donors: PARTIAL (real mechanisms read; no world-event system in either client).
+
+2003scape-rsc-c (client half read; server half not in donor list):
+Opened: src/mudclient.c, src/packet-handler.c, src/game-character.c, src/game-character.h, src/server-opcodes177.h, src/server-opcodes204.h, src/utility.c.
+Searched: grep -rniE for event, invasion, boss, roam, schedul, timer, respawn, spawn, wave, timed, rumour, raid across src/ (hits in mudclient.h, mudclient.c, packet-handler.c, game-character.c/.h, scene.c, utility.c, packet-stream.c; none is a world-event system).
+
+brendenbowers-SWGEmuClient (client half read; server halves in box, not read):
+Opened: SWGTerrainSubsystem.cpp, SWGTerrainSubsystem.h, ServerTimeMessage.h, ServerTimeMessage.cpp, SWGMessageOp.h, SWGCraftingSubsystem.h.
+Searched: grep -rniE over Plugins/ and Source/ for invasion, roaming, respawn, countdown, schedul, world boss, raid, rumour, wave, weather, day/night, time sync (hits: clock and weather in SWGTerrainSubsystem only; crafting delegate declared only).

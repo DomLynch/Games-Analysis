@@ -1,0 +1,83 @@
+{
+  "donor": "NetHack-NetHack",
+  "counts": {"creatures": 394, "classes": 13, "weapons": 59, "gear_sets": 17, "zones": 9},
+  "counts_note": "creatures = MON entries in include/monsters.h (394; includes player-role and quest-leader monsters; 58 symbol classes); classes = 13 roles (include/hack.h line 769; 5 races at line 774); weapons = WEAPON entries in include/objects.h (59); gear_sets = 17 ARMOR entries in include/objects.h (armour pieces, not sets); zones = dungeon branches named in dat/dungeon.lua (Dungeons of Doom, Gnomish Mines, Sokoban, The Quest, Fort Ludios, Gehennom, Elemental Planes, The Tutorial, Vlad's Tower). Also: 35 artifacts (include/artilist.h), 24 on-map trap kinds (include/trap.h), 22 DRGN_ARMR lines.",
+  "which_half_read": "data half (include/monsters.h, objects.h, artilist.h, hack.h, trap.h, dat/*.lua names and fill files, win/share tile headers as per AU036) and engine half for the cited mechanisms (include/monst.h macros, src/dungeon.c level_difficulty, src/allmain.c spawn roll, src/artifact.c glow and light code, src/role.c headers, src/u_init.c first skill table, include/skills.h). Single repo, so no separate paired half. Combat, AI, shops, prayer and death code not read.",
+  "creature_families": [
+    "Material-ladder golem: 11 golems, straw (level 3) to iron (level 18), no corpse (include/monsters.h lines 2509, 2530, 2586)",
+    "Colour-coded dragon family: 11 baby (level 12), 11 adult (level 15), Chromatic Dragon (16), Ixoth (15) (lines 1341, 1432)",
+    "Lich ladder: four rungs at levels 11, 14, 17, 25 (lines 1864, 1880, 1889)",
+    "Vortex set: six vortex types, fog (3) to fire (8) (line 1101)",
+    "Mimic ladder: small (7), large (8), giant (9) (line 670)",
+    "Angel ladder: couatl (8) to Archon (19) (line 1254)",
+    "Demon princes at levels 50 to 106, out of the normal band (line 3055)",
+    "Vampire tiers: vampire (10), vampire mage (20), Vlad the Impaler (28) (line 2313)"
+  ],
+  "top_creatures": [
+    {"label": "Material-ladder golem", "why": "each golem is a named material, so the ladder teaches itself; gold sits mid-ladder", "keep": "a material name per rung; no corpse", "change": "zone materials for our rungs; gold golem gets a gilt shimmer, not a flat yellow", "ref": "/mnt/frankendom-donors/NetHack-NetHack/include/monsters.h lines 2509-2510, 2530-2531, 2586-2587"},
+    {"label": "Colour-coded dragon", "why": "colour names the resistance, so the threat reads by colour", "keep": "colour equals resistance; baby and adult split by level", "change": "our six elements with a head crest", "ref": "include/objects.h lines 502-510; include/monsters.h lines 1341-1345, 1367, 1432-1433"},
+    {"label": "Lich ladder", "why": "four rungs with clear level jumps", "keep": "four rungs", "change": "a different crown silhouette per rung", "ref": "include/monsters.h lines 1864, 1880-1881, 1889-1890"},
+    {"label": "Vortex set", "why": "six vortex types escalate from mist to a fire-topped rung", "keep": "escalation from fog to fire", "change": "a column with a spiral, not a cloud", "ref": "include/monsters.h line 1101 (fire vortex)"},
+    {"label": "Mimic ladder", "why": "a disguise that scales by size", "keep": "disguise as an item, scaled by size", "change": "disguise as a loot shrine, not a chest", "ref": "include/monsters.h lines 670-671 (small mimic)"},
+    {"label": "Angel ladder", "why": "a lawful minion line with a staged jump to a large winged form", "keep": "the staged minion ladder", "change": "a different wing silhouette", "ref": "include/monsters.h line 1254 (Archon)"},
+    {"label": "Out-of-band demon princes", "why": "a boss tier that exists only beyond the normal level band", "keep": "out-of-band boss behind a zone key", "change": "the key is a zone item, not a level number", "ref": "include/monsters.h line 3055"},
+    {"label": "Three-rung vampire ladder", "why": "three rungs with a named top", "keep": "three rungs", "change": "the top rung is a new silhouette", "ref": "include/monsters.h line 2313"}
+  ],
+  "classes": [
+    "13 roles; each has a weapon-skill cap table (src/u_init.c Skill_A from line 257; first table only read)",
+    "5 races: human, elf, dwarf, gnome, orc (include/hack.h line 774; role.c lines 586, 607, 667 seen)",
+    "Progression: nine rank titles in the first role's entry (src/role.c line 31 onward)",
+    "Weapon skill ladder: unskilled, basic, skilled, expert, master, grand master; the last two for martial arts only (include/skills.h lines 92-103)"
+  ],
+  "weapon_families": [
+    "Plain iron (base), elven wood (lighter), dwarvish iron, orcish black iron, silver (include/objects.h lines 177 elven spear, 186 silver spear, 278 katana)",
+    "Artifacts with glow or light: Sting, Orcrist, Grimtooth warn glow; Sunsword light (include/artilist.h lines 123-140, 209; src/artifact.c line 2264)",
+    "Beheading artifact: Vorpal Blade (include/artilist.h line 191)"
+  ],
+  "gear_tiers": [
+    "Armour by material: leather, studded leather, ring, scale, chain, splint, banded, plate (iron, line 556), crystal plate (glass, line 559), bronze plate (copper, line 562), mithril coats (dwarvish line 571, elven line 574; weight 150 against 450 for plate)",
+    "Dragon scale mail: 11 colours as mail (resistance per colour); gold dragon scale mail is a light source (include/objects.h lines 502-510, comment line 504)",
+    "Rings and amulets: appearance is a material or gem name, colour follows the material (include/objects.h line 743 granite, line 810 gold)"
+  ],
+  "zones": [
+    "Dungeons of Doom (dat/dungeon.lua line 8); Gnomish Mines (line 16; filler minefill via line 176; towns and ends)",
+    "Sokoban (line 21; four floors, each with two layout files)",
+    "The Quest (line 27; per-role level sets)",
+    "Fort Ludios (line 34; knox level)",
+    "Gehennom (lines 40 and 89; filler hellfill via line 94; valley, juiblex, orcus, asmodeus, baalz, wizard levels, sanctum)",
+    "Elemental planes (line 46 and lines 285-314: air, fire, earth, water, astral)",
+    "Gehennom filler: shuffled monster class list, eight placements per fill level (dat/hellfill.lua lines 30-40)",
+    "Hazards: 24 on-map trap kinds (include/trap.h; trapped chest is part of an object)"
+  ],
+  "looks": [
+    {"label": "Artifact glow colour", "technique": "the glow colour is artifact data; glow colour read from that data", "ref": "include/artilist.h lines 126 (Grimtooth), 136 (Orcrist), 140 (Sting); src/artifact.c lines 2427-2430"},
+    {"label": "Warn glow by enemy count", "technique": "four strength tiers by enemy count (0, up to 4, up to 12, over 12) mapped to four verbs; message only on tier change; blind fallback word", "ref": "src/artifact.c lines 2436-2447 and 2464-2482"},
+    {"label": "Sunsword light", "technique": "artifact light radius when wielded", "ref": "src/artifact.c lines 2264-2274"},
+    {"label": "Gold dragon scale light", "technique": "light source as a property of the gold armour item", "ref": "include/objects.h line 504 (comment) and 505"},
+    {"label": "Tile art", "technique": "16 by 16 text-grid tiles with palette headers; a strange-object fallback tile; decal overlays", "ref": "win/share/objects.txt line 33; win/share/decals.txt line 2; per AU036 for the tile counts"},
+    {"label": "Baby dragon roar", "technique": "sound category on the baby dragon entry", "ref": "include/monsters.h line 1345"}
+  ],
+  "originals": [
+    {"name": "Material Ladder Golems", "idea": "golem family where the material name is the rung, with a gilt middle rung and no corpse", "keep": "material ladder; no corpse", "change": "zone materials for rungs; gilt shimmer shader instead of flat yellow"},
+    {"name": "Resistance-Coloured Drakes", "idea": "dragon family where colour names the resistance and baby and adult split at a level band", "keep": "colour equals resistance; baby and adult split", "change": "our six elements with a head crest"},
+    {"name": "Four-Rung Lich", "idea": "undead ladder of four rungs with clear level jumps", "keep": "four rungs", "change": "a crown silhouette per rung"},
+    {"name": "Escalating Vortex Column", "idea": "six vortex types from mist to fire with a fire-topped rung", "keep": "escalation from mist to fire", "change": "a column with a spiral, not a cloud"},
+    {"name": "Shrine Mimic Ladder", "idea": "disguise creatures that scale by size and copy a loot shrine", "keep": "disguise scaled by size", "change": "shrine disguise, not a chest"},
+    {"name": "Warn Glow Weapon", "idea": "weapon whose glow tier follows enemies in range, with a message only on tier change", "keep": "four tiers; change-only message", "change": "distance-weighted count (the donor's own stated gap)"},
+    {"name": "Shuffled Theme Fill", "idea": "each fill level shuffles a theme class list and places a fixed mix of eight", "keep": "shuffled theme; fixed count", "change": "theme equals the biome tag"},
+    {"name": "Level-Band Spawn Window", "idea": "monsters drawn from a band from depth divided by six up to (depth plus character level) divided by two", "keep": "band shape", "change": "our depth index and our level curve"}
+  ],
+  "licence_note": "NetHack General Public License (dat/license:1 NETHACK GENERAL PUBLIC LICENSE; paragraph 2b at dat/license:55 per AU036). Code and level scripts: NGPL, copyleft-like terms. Tile art: no per-file licence; win/share/tile.doc:6 credits the original tiles. Sounds: 9 CC0 and 5 CC-BY 4.0 with attribution (sound/wav/attributions.txt lines 9 and 21); old instrument samples unlicensed (sound/wav/README lines 36-37). Class: code and tiles C; CC0 and CC-BY sounds A with attribution.",
+  "defects": [
+    "Warn glow counts enemies only (src/artifact.c line 2447) while the donor's own comment (lines 2444-2446) says proximity should count; idea kept; fix: distance-weight each enemy",
+    "Spawn roll per turn with no zone cap or grace timer (src/allmain.c lines 158-161); fix (ours): per-zone cap and despawn grace timer (row 23)"
+  ],
+  "not_read": [
+    "combat (mhitu.c, uhitm.c), monster AI (monmove.c, dog.c), shops, prayer, death and end-game code",
+    "src/role.c beyond the first role and three race lines; src/u_init.c beyond the first skill table",
+    "win/share tile bodies (counts from AU036 only); sys/windows images; sound clip contents; dat/quest.lua; dat/tribute; dat/data.base beyond its header",
+    "dat/medusa-*.lua, dat/juiblex.lua, dat/castle.lua, dat/knox.lua, dat/minefill.lua beyond the lines cited",
+    "silver damage bonus and weapon.c; artifact glow code beyond line 2482",
+    "walk density; drop ceremony; death and respawn presentation; boss staging; idle animation; readability at 375 wide; minimap; touch UX"
+  ]
+}

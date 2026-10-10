@@ -1,0 +1,141 @@
+{
+  "donor": "wesnoth-wesnoth",
+  "donor_folder": "/mnt/frankendom-donors/wesnoth-wesnoth/",
+  "halves_read": "data pack only (data/core units, macros, terrain.cfg, items.cfg, po pot). Engine src/ and server half (src/server) not read in this pass.",
+  "counts": {
+    "creatures": 118,
+    "classes": 188,
+    "weapons": 17,
+    "gear_sets": 0,
+    "zones": 284
+  },
+  "count_notes": {
+    "creatures": "monsters 63, undead 27, drakes 17, wose 5, bats 3, gryphons 3 (unit_type records). Undead and drakes are also playable; counted once here.",
+    "classes": "playable races excluding undead and drakes: humans 52, dunefolk 31, elves 22, dwarves 18, merfolk 16, orcs 12, nagas 11, saurians 10, goblins 7, trolls 7, ogres 2. Boats 20 and fake 1 not counted.",
+    "weapons": "17 distinct weapon specials in data/core/macros/weapon_specials.cfg (18 #define lines including a typed plague variant)",
+    "gear_sets": "none in the data read",
+    "zones": "284 top-level [terrain_type] blocks in data/core/terrain.cfg"
+  },
+  "creature_families": [
+    {"family": "monsters", "records": 63, "levels": "0-5", "note": "beasts, insects, sea, spirits, dragons; HP 13 to 142"},
+    {"family": "undead", "records": 27, "levels": "0-4", "note": "four ladders: ghoul line, walking corpse to soulless, skeleton lines, spirit lines; plus human necromancer tree"},
+    {"family": "drakes", "records": 17, "levels": "1-4", "note": "fire line, fighter line, clasher line, sky line, Armageddon (L4, no advance)"},
+    {"family": "wose", "records": 5, "levels": "0-3", "note": "one growth ladder with ambush and regenerates_8 at every stage, plus a shaman (L2)"},
+    {"family": "bats", "records": 3, "levels": "unknown", "note": "listed only, not read"},
+    {"family": "gryphons", "records": 3, "levels": "unknown", "note": "listed only, not read"}
+  ],
+  "top_creatures": [
+    {
+      "label": "breath-and-bite great drake",
+      "why": "three attacks on one 101 HP body: ranged fire breath (4 x 14, marksman) plus melee bite and tail; rest idle with uneven frame timing",
+      "keep": "split melee and ranged attacks on one unit; uneven rest-idle timing",
+      "change": "breath is a cone over a line of tiles; battle-cry instead of leadership",
+      "ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/units/monsters/Fire_Dragon.cfg lines 38, 52, 83"
+    },
+    {
+      "label": "hatchling clutch",
+      "why": "0-move egg with 32 HP that acts by proximity: hatches when an enemy starts its turn adjacent, or when a neighbour egg breaks",
+      "keep": "eggs act by rule, not by timer; neighbour chain",
+      "change": "visible countdown on the tile before hatch; cap of 3 eggs",
+      "ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/units/monsters/Ant_Egg.cfg lines 84, 112, 123"
+    },
+    {
+      "label": "bone wyrm",
+      "why": "level 4 undead dragon, 98 HP; only the jaw carries drains (15 x 3), claws 27 x 2 plain",
+      "keep": "drain on one attack only, so the bite reads clearly",
+      "change": "drain becomes a bone-mark that wears off after a few turns",
+      "ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/units/monsters/Skeletal_Dragon.cfg lines 32-48"
+    },
+    {
+      "label": "ink-and-tentacle deep horror",
+      "why": "tentacle 10 x 5 with swarm (strike count falls with HP); ink ranged 3 x 8 with poison",
+      "keep": "swarm: strikes scale with HP fraction",
+      "change": "ink leaves a lingering cloud on tiles instead of a status",
+      "ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/units/monsters/Kraken.cfg lines 24-40"
+    },
+    {
+      "label": "ambush leaper",
+      "why": "level 3, 72 HP; hidden until adjacent (ambush); fangs 3 x 10 with drains",
+      "keep": "hidden until adjacent; drain on fangs",
+      "change": "leap from a ledge with a telegraph frame so it reads at 375 px",
+      "ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/units/monsters/Shadow_Jumping_Spider.cfg lines 29, 83-91"
+    },
+    {
+      "label": "sapling-to-ancient growth ladder",
+      "why": "four stages, one per level, all with the same ambush and regenerates_8 pair; the unit grows, it does not change identity",
+      "keep": "one growth ladder with a fixed ability set",
+      "change": "stage read by silhouette height and bark colour, not a new name per stage",
+      "ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/units/wose/Wose_Sapling.cfg line 17; also Wose.cfg, Elder.cfg, Ancient.cfg line 17"
+    },
+    {
+      "label": "burrowing beetle",
+      "why": "level 1, 36 HP, burrow ability; cheap early unit that hides in the ground",
+      "keep": "burrow as a hidden state on an early unit",
+      "change": "burrowing shows a dust burst and rumble, then emerges from the same tile",
+      "ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/units/monsters/Horned_Scarab.cfg lines 17, 37-53"
+    },
+    {
+      "label": "frost-fist giant",
+      "why": "level 4, 142 HP, largest HP in monsters/; fist 2 x 32 impact (values read from file, not receipted)",
+      "keep": "single big impact body the player must step around",
+      "change": "fist slam leaves a frost patch on tiles around the target",
+      "ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/units/monsters/Yeti.cfg lines 8, 35-42"
+    }
+  ],
+  "classes": [
+    {"race": "humans", "records": 52, "role": "loyalist, outlaw, mage, woodsman, peasant", "signature": "leadership on sergeant to general line; skirmisher on duelist and assassin; heal and cure on white mage line; concealment on fugitive", "progression": "L0 to L5 trees"},
+    {"race": "elves", "records": 22, "role": "archers, fighters, shamans, rangers", "signature": "ambush on ranger to avenger; leadership on captain and marshal", "progression": "L1 to L3, several L3 dead ends"},
+    {"race": "dwarves", "records": 18, "role": "fighters, thunderers, guardsmen, miners", "signature": "steadfast on guardsman to stalwart to sentinel", "progression": "L0 to L3"},
+    {"race": "orcs", "records": 12, "role": "grunts, archers, assassins, leaders", "signature": "leadership on leader to ruler to sovereign", "progression": "L1 to L3"},
+    {"race": "goblins", "records": 7, "role": "spearman, wolf rider, rouser", "signature": "leadership on rouser", "progression": "short ladders"},
+    {"race": "trolls", "records": 7, "role": "whelp, troll, warrior, great troll, shaman, rocklobber", "signature": "regenerates_8 on the whole line", "progression": "whelp L1 to troll L2 to warrior L3"},
+    {"race": "ogres", "records": 2, "role": "young ogre, ogre", "signature": "none listed", "progression": "L1 to L2"},
+    {"race": "saurians", "records": 10, "role": "skirmisher, ambusher, flanker, augur, oracle, prophet, soothsayer, seer", "signature": "skirmisher line; heals_4 healer line; heals_8 with cures top healer", "progression": "L1 to L3"},
+    {"race": "merfolk", "records": 16, "role": "citizen (L0) into many L1 to L3 branches", "signature": "steadfast on hoplite; illumination with heals on diviner", "progression": "wide branching"},
+    {"race": "nagas", "records": 11, "role": "fighter, guard, ophidian, myrmidon", "signature": "guard shield line", "progression": "L1 to L3"},
+    {"race": "dunefolk", "records": 31, "role": "largest playable race by records: captain, falconer, herbalist, apothecary, luminary, skirmishers", "signature": "leadership on captain; skirmisher and diversion on falconer and sky hunter; healer line ends in luminary with heals_8, cures and regenerates_4", "progression": "L1 to L4 wide tree"}
+  ],
+  "weapon_families": [
+    {"family": "unit attack records", "note": "name, type, range, damage, number, specials_list; damage types seen: blade, pierce, impact, fire"},
+    {"family": "weapon specials (17)", "note": "unwieldy, berserk, backstab, plague, slow, petrifies, marksman, magical, honed, swarm, charge, guard, drains, firststrike, poison, stun, arcane"}
+  ],
+  "gear_tiers": [],
+  "zones": [
+    {"zone": "lit mushroom grove", "note": "fungus_beam terrain, light 25 (terrain.cfg around line 1111, light at 1118)"},
+    {"zone": "lava field", "note": "lava unwalkable, light 25 / max 35 (lines 1317, 1322-1323); help text: lawful attack bonus, chaotic removed (line 1325)"},
+    {"zone": "lava chasm", "note": "same light values (lines 1304, 1309-1310)"},
+    {"zone": "cave village", "note": "underground_village (terrain.cfg line 2062)"},
+    {"zone": "oasis", "note": "oasis terrain, heals=8 (lines 352, 358)"},
+    {"zone": "kelp forest", "note": "sea_kelp, submerge 0.45 (line 133)"},
+    {"zone": "cave with cavewall variants", "note": "cave floor, earthy, path, cavewall types; cave-lit patches help text at line 3267"},
+    {"zone": "villages", "note": "about 29 village ids plus an overlay; ids include underground, drake, merfolk, dwarven"},
+    {"zone": "zone population (spawn caps, respawn, walk density)", "note": "NOT read: campaign and scenario files not read"}
+  ],
+  "looks": [
+    {"label": "per-tile glow light", "technique": "light 25 and max_light 35 on lava, lit mushroom grove; a light value per tile feeds a glow pass", "ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/terrain.cfg lines 1118, 1322-1323"},
+    {"label": "egg hatch flag", "technique": "hatch event plays animate_unit with flag=hatching before advancing the unit", "ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/units/monsters/Ant_Egg.cfg event from line 84"},
+    {"label": "lightning per direction", "technique": "macro generates one attack animation and sound per direction", "ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/macros/items.cfg lines 522-535"},
+    {"label": "recruit fade-in", "technique": "alpha 0 to 1 over 300 ms while dying frames play in reverse", "ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/units/undead/Skeleton.cfg lines 24-33"},
+    {"label": "uneven rest idle", "technique": "per-frame durations in a rest sequence (350, 300, 400...)", "ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/units/monsters/Fire_Dragon.cfg line 38"},
+    {"label": "per-unit death sound", "technique": "die_sound stored on the unit record", "ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/units/undead/Skeleton.cfg line 18"},
+    {"label": "team colour ramp", "technique": "four values per colour range; covered in AU057", "ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/team-colors.cfg"}
+  ],
+  "originals": [
+    {"name": "Clutch Nest", "idea": "zone-data nest of eggs that hatch when an enemy steps next to them, with neighbour chain", "keep": "proximity hatch and neighbour chain", "change": "visible countdown on the tile; cap of 3 eggs"},
+    {"name": "Breath Wyrm", "idea": "level 5 drake with a melee pair and a ranged breath, with a breathing idle", "keep": "melee and ranged split on one unit", "change": "breath is a cone; battle-cry replaces leadership"},
+    {"name": "Swarm Horror", "idea": "sea unit whose strike count falls as HP falls", "keep": "strikes scaled by HP fraction", "change": "ink becomes a lingering zone tile, not a status"},
+    {"name": "Growing Thicket", "idea": "four-stage plant ladder with one fixed ability set", "keep": "one ability set across the ladder", "change": "stage shown by silhouette height, no new name per stage"},
+    {"name": "Bone Mark", "idea": "undead drain on one attack only", "keep": "drain on one attack", "change": "drain becomes a mark that wears off in a few turns"},
+    {"name": "Lit Grove", "idea": "glowing mushroom terrain used as a light source", "keep": "per-tile light values", "change": "light helps both sides; no alignment split"},
+    {"name": "Storm Pickup", "idea": "race-locked pickup that adds a ranged attack", "keep": "race lock and attack added on pickup", "change": "attack chains to a second target"},
+    {"name": "Ambush Leap", "idea": "hidden predator that strikes from cover", "keep": "hidden until adjacent", "change": "visible leap telegraph for readability at 375 px"}
+  ],
+  "licence_note": "code GPL v2 or later (COPYING). Art and music mixed per AU057: copyrights.csv 396 rows: 343 GPL v2+, 48 CC BY-SA 4.0, 5 CC0; unit art has no registry rows. Ideas here are clean-room shapes from the data; do not reuse names, art or sound.",
+  "not_read": [
+    "engine src/ (attack resolution, server half src/server)",
+    "data/campaigns and maps (zone population, scenario bosses)",
+    "full text of undead and drake files beyond listed fields; bats and gryphons",
+    "sprite, sound and image files",
+    "locale strings beyond counts (po/wesnoth-units/wesnoth-units.pot has 895 msgid lines incl. header; po/ holds 38 entries)"
+  ]
+}

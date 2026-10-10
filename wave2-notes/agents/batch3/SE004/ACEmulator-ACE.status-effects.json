@@ -1,0 +1,69 @@
+{
+  "donor": "ACEmulator-ACE",
+  "topic": "status-effects",
+  "depth": "full",
+  "half_read": "server",
+  "verdict": "STRONG",
+  "decision": "adapt (idea); dispel-count mismatch is a question for Lead",
+  "best_transferable_idea": "One layered stat stack per category: strongest power shows, weaker copies wait in lower layers and surface when the top one expires; the death debt eases back through a level-scaled XP pool.",
+  "parity_row": "row 1 (duel step/sim) for the layered stack; death debt is a separate idea for row 17 (death/respawn)",
+  "target_file": "src/fight/status.ts (proposed)",
+  "paths": [
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/WorldObjects/Managers/EnchantmentManager.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Entity/AddEnchantmentResult.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Entity/Models/PropertiesEnchantmentRegistryExtensions.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/WorldObjects/Player_Xp.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/WorldObjects/Player_Death.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Managers/PropertyManager.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Common/ThreadSafeRandom.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Entity/Enum/MotionCommand.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Entity/Enum/Sound.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/LICENSE",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Database/Base (schema only; spell rows absent)"
+  ],
+  "counts": {
+    "stack_outcomes": 4,
+    "stack_enum_values": 5,
+    "top_layer_tiebreak_steps": 3,
+    "vitae_penalty_default": 0.05,
+    "vitae_penalty_max_default": 0.40,
+    "dispel_formula_candidates": 2,
+    "receipts_verified": 86
+  },
+  "rule": "Adding: entries in the same category are walked strongest first. Higher power surpasses; equal power with the same spell refreshes; equal power with a different spell: longer duration surpasses (permanent = infinite), equal duration falls back to spell id. A new layer is added above the top unless it refreshes; a refresh extends only when the new cast lasts longer than what remains. Top layer per category: highest power, then level-8 self-aura precedence, then newest start time. Clock: start time counts from 0 down to minus duration; heartbeat subtracts the interval; expiry when reached. DoT: top-layer entries tick each heartbeat; total is per-tick value times ceiling(duration over heartbeat). Dispel: filter by power, school and beneficial or harmful, exclude permanent, random count, shuffle, take. Vitae: death adds a 5 percent penalty value, floored at 40 percent, floor by level (level minus one, times 3, minimum 1); recovery pool costs (level^2.5 times 2.5 plus 20) times vitae^5 plus 0.5 XP per point; pool reset on death.",
+  "data_fields": [
+    {"name": "death.penalty_per_death", "unit": "fraction of 1", "donor_value_or_null": null},
+    {"name": "death.penalty_max", "unit": "fraction of 1", "donor_value_or_null": null},
+    {"name": "death.floor_per_level", "unit": "percent per level", "donor_value_or_null": null},
+    {"name": "death.recover_step", "unit": "fraction of 1", "donor_value_or_null": null},
+    {"name": "death.pool_power", "unit": "exponent", "donor_value_or_null": null},
+    {"name": "dot.tick_s", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "dispel.variance_formula", "unit": "choice of formula", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Layered category stack with a top-layer rule (strongest power, then newest)",
+    "Refresh extends only when the new cast lasts longer than what remains",
+    "Clock counts to minus duration; permanent entries never expire by the check",
+    "Death-debt floor as a function of level",
+    "XP-pool recovery that costs more near full"
+  ],
+  "change": [
+    "Dispel mix becomes one filter per status kind",
+    "Nether and aetheria DoT keys become one damage-type field",
+    "Recovery step moved to a property (not hard-coded 0.01)",
+    "Dispel count formula: pick the comment's reading or fix the comment (defect 1)",
+    "DoT same-category rule: decide whether two casters combine (defect 2)"
+  ],
+  "look_test": "Debug stack of three buffs in one category (weak long, strong short, medium). At 375 wide check: only the strongest shows; when it expires the next surfaces with a click; a longer recast of a different same-power spell replaces the shown one. Then a death-debt bar that eases on XP: first points quick, last points slow.",
+  "licence_note": "Code: GNU AGPL v3 (LICENSE; Source/lib/README.md line 1 per AU002). No asset licence for this topic (no assets). Clean-room, shape only. Donor numbers recorded as null donor values. Donor README statements recorded as the file says; no legal conclusion.",
+  "tags": ["status-stack", "duration-rule", "new:layered-stack", "new:dot-tick", "new:death-debt", "new:dispel"],
+  "not_read": [
+    "Where Spell.Power and Spell.Duration are loaded from (spell table absent from the box)",
+    "Expiry and removal path (Remove, EnchantmentManager.cs lines 315-357) and its messages",
+    "EnchantmentManagerWithCaching.cs",
+    "Stat-modifier arithmetic beyond the listed lines",
+    "Which stats the vitae penalty scales (set by the vitae spell row, absent)",
+    "Client half and sound (absent from the box)",
+    "Idle and ambient behaviour, loot ceremony, walk density (not for this topic)"
+  ]
+}

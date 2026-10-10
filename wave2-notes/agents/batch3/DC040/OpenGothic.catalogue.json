@@ -1,0 +1,130 @@
+{
+  "donor": "OpenGothic",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "creature_families": [],
+  "top_creatures": [
+    {
+      "label": "Reactive skirmisher (wolf-style jump-back)",
+      "why": "Short hop back that reads as a predator sizing up the player; a clear backward shape at 375 wide",
+      "keep": "hop only at close range and while facing the target (npc.cpp:1604)",
+      "change": "our own cone (donor uses 90 degrees, fightalgo.cpp:318), our cadence, our creature; no wolf model or name",
+      "ref": "common/world/objects/npc.cpp:1602-1604; common/game/fightalgo.cpp:318"
+    },
+    {
+      "label": "Counter-strafe after being hit",
+      "why": "A hit clears the planned moves and queues one counter-move, so the enemy looks reactive with no new animation",
+      "keep": "hit flag plus one counter-move from its own list",
+      "change": "our move names and the counter choice",
+      "ref": "common/game/fightalgo.cpp:37-41, 228-233"
+    }
+  ],
+  "classes": [
+    "No class or race records in box. Guild index selects per-guild fight ranges (fightalgo.cpp:239-258); guild table is script data, not read.",
+    "Weapon state selects the fight branch: fist, one-hand, two-hand, bow, crossbow, mage, unarmed (fightalgo.cpp:348-360, branch at :53-81). Progression: none in box."
+  ],
+  "weapon_families": [
+    "Damage flags named in code (8): barrier, blunt, edge, fire, fly, magic, point, fall (touchdamage.cpp:37-44); each weapon carries a damage-type mask (damagecalculator.cpp:189-193)",
+    "Talent split one-hand and two-hand (damagecalculator.cpp:143-146); weapon length added to attack range (fightalgo.cpp:345, 349-352)",
+    "Item records are script data, not in box; visual tiers not in box"
+  ],
+  "gear_tiers": [
+    "Protection per damage flag, subtracted and floored at zero; negative value means immune (damagecalculator.cpp:117-118)",
+    "Separate fall protection slot (damagecalculator.cpp:47, 51)",
+    "No armour sets, material tiers or colour tiers in box; tier display not read (common/ui not read)"
+  ],
+  "zones": [
+    "Biomes and dungeon archetypes: none in box (zone data in world files)",
+    "14 trigger types under common/world/triggers (zonetrigger, touchdamage, movetrigger, earthquake and others); only touchdamage.cpp read in full",
+    "Hazards: touch damage by flag with repeat delay (touchdamage.cpp:29-54); fall damage from speed and per-guild height table (damagecalculator.cpp:38-58)"
+  ],
+  "looks": [
+    {
+      "label": "Water swell with a floor",
+      "technique": "Directional Gerstner sum, phase from tick count, amplitude max(10, half of max amplitude)",
+      "ref": "shader/water/gerstner_wave.glsl:18-19, 32"
+    },
+    {
+      "label": "Two-by-three music tag grid",
+      "technique": "One daytime bit and three mode bits (standard, fight, threat) combine into a tag set; theme chosen by tag set",
+      "ref": "common/gamemusic.h:20-34"
+    },
+    {
+      "label": "Sky look-up table with multiple scattering",
+      "technique": "Precomputed look-up plus multiple-scattering term (audit cites :15 and :58; not re-read here)",
+      "ref": "shader/sky/sky_multi_scattering.frag"
+    },
+    {
+      "label": "Repeat-timed hazard tick",
+      "technique": "Zone hazard applies damage per flag on a repeat timer, not every frame",
+      "ref": "common/world/triggers/touchdamage.cpp:29-54"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Reactive skirmisher",
+      "idea": "An enemy that backs off with a short hop only when close and facing the player, so the move reads as calculated",
+      "keep": "close-range plus facing gate for the hop",
+      "change": "our cone, cadence and creature design"
+    },
+    {
+      "name": "Glancing blow tier",
+      "idea": "A failed hit roll becomes a graze, not a miss",
+      "keep": "the graze tier",
+      "change": "float maths with a floor of 1, our ratio, our roll name"
+    },
+    {
+      "name": "Counter-move after a hit",
+      "idea": "A hit clears the planned moves and queues one counter-move",
+      "keep": "clear-then-counter",
+      "change": "our move list and timing"
+    },
+    {
+      "name": "Three-tier range set, squared compare",
+      "idea": "Attack, close-up (0.75 of base) and walk ranges from base plus weapon reach, compared as squared distance",
+      "keep": "three tiers and squared compare",
+      "change": "our constants"
+    },
+    {
+      "name": "Protection with immune sign",
+      "idea": "Armour is one number per damage flag; a negative number means immune",
+      "keep": "sign means immune; floor at zero",
+      "change": "our damage-flag set"
+    },
+    {
+      "name": "Repeat-timed zone hazard",
+      "idea": "A zone hazard ticks on a repeat delay rather than every frame",
+      "keep": "repeat timer",
+      "change": "one hit per tick per target (donor applies one hit per flag)"
+    },
+    {
+      "name": "Water swell with a floor",
+      "idea": "A few directional waves, a tick phase, and a minimum amplitude so calm water still moves",
+      "keep": "the wave sum and the floor",
+      "change": "our wave directions, count and palette"
+    },
+    {
+      "name": "Two-by-three music grid",
+      "idea": "Time of day times fight mode gives six music tag sets",
+      "keep": "the grid",
+      "change": "our zone names and cue set"
+    }
+  ],
+  "licence_note": "Code MIT (LICENSE:1, copyright LICENSE:3); may be adapted with notice kept, but we recreate from shape only. Game assets and scripts not in box (README.md:25); asset class C, category-level inspiration only.",
+  "not_read": [
+    "Gothic 2 scripts and world data (absent from box)",
+    "lib/ZenKit (empty submodule dir)",
+    "common/game/definitions/* (fight AI and guild tables)",
+    "common/world/objects/item.cpp (weapon and armour fields)",
+    "common/world/objects/npc.cpp outside lines 1572-1632 and 1602-1604",
+    "common/world/triggers/earthquake.cpp and zonetrigger.cpp (names only)",
+    "common/ui and common/graphics (HUD, visuals)",
+    "common/sound (playback)",
+    "shader bodies other than shader/water/gerstner_wave.glsl; sky_multi_scattering.frag (audit only)"
+  ]
+}

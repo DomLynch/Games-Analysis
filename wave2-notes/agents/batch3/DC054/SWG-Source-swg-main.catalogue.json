@@ -1,0 +1,40 @@
+{
+  "donor": "SWG-Source-swg-main",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [],
+  "looks": [],
+  "originals": [
+    {
+      "name": "Designer rows compiled into a runtime lookup",
+      "idea": "a build step turns named catalogue rows into a lookup table the server reads at start",
+      "keep": "one row per named thing, compiled once",
+      "change": "our catalogue JSON as the source, checked by a gate; our own names instead of CRC keys"
+    },
+    {
+      "name": "Designer data in its own folder with its own build",
+      "idea": "designer data kept apart from code, with its own build command",
+      "keep": "clear split of data from code",
+      "change": "our data folder and build command; no submodule split"
+    }
+  ],
+  "licence_note": "No LICENSE file at this folder root; _RESTRICTED-NOTE.txt says leaked proprietary source with no licence; submodule licences not in box. Class C: category-level only. Not a legal opinion.",
+  "not_read": [
+    "all scripts in tools/ and utils/ beyond their names and the file-type count",
+    "tool binaries (.exe, .dat) under tools/",
+    "submodule contents: dsrc, src, serverdata, stationapi, exe (all empty, 0 entries each)",
+    "client half (absent)",
+    "copyright scan of tools/",
+    "data pack (absent)"
+  ]
+}

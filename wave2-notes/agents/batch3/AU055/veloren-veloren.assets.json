@@ -1,0 +1,73 @@
+{
+  "donor": "veloren-veloren",
+  "code_licence": "GPL-3.0 (root LICENSE, 'GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007'; README.md line 100 says the project is licensed under GPL v3.0 as a community project).",
+  "asset_licence": "Per entry, in assets/credits.ron (678 lines). The file's own rule (line 22): a licence field may be omitted and is then 'assumed to be GPL3'. Counts inside credits.ron: music 8 entries (all CC-BY-NC-SA 4.0, all 8 with an 'Added restrictions' note that says 'Should not be used in other games than Veloren unless it is parody.'); sounds 18 entries (2 CC BY 4.0, 16 with no licence field, so GPL3 by the file's rule); fonts 12 entries (3 OFL, 4 CC BY-SA 3.0, 2 CC BY 4.0, 1 Apache 2.0, 1 MIT, 1 GPL2); models 3 entries (CC-BY-NC-SA 4.0). Font licence texts are in assets/voxygen/font/*-license.txt and *-OFL.txt. Uncredited assets (e.g. most of the ~4,750 .vox files, the PNGs, the data .ron files, the i18n .ftl files): no licence stated in the files read.",
+  "rights_holder_status": "Community project (README.md line 100). No company named. Each asset carries author names in credits.ron; the file itself notes a TODO on distinguishing original authors from derivative authors (credits.ron line 16). Status: community, mixed authorship, per-asset licences. Not a clean-room or licensed-from-publisher project as far as the repo says.",
+  "best_class": "C overall (music and most models: restrictions or unclear). Per group: CC BY 4.0 items = A with attribution; OFL and CC BY-SA 3.0 fonts = B; GPL3-default sounds and GPL2 font = C (treat as code-like, shape only); CC-BY-NC-SA music and models = C (conflict between CC NC-SA and the added 'not in other games' note).",
+  "asset_groups": [
+    {"kind": "music", "path": "assets/voxygen/audio/soundtrack/{cave,combat,dungeon,overworld,town}/ and assets/voxygen/audio/soundtrack.ron", "count_hint": "83 files under soundtrack/ (ogg, incl. title tune); credits.ron music section lines 36-180 has 8 entries", "licence": "CC-BY-NC-SA 4.0 (all 8 entries); all 8 carry 'Added restrictions' (credits.ron line 51)", "class": "C", "note": "Conflict: the CC NC-SA licence and the added restriction on use in other games are both on the file. Recorded as stated. Not usable as is for a commercial or other-game build without a further read."},
+    {"kind": "sfx", "path": "assets/voxygen/audio/sfx/ and sfx.ron", "count_hint": "18 credits entries in sounds section (lines 181-515); about 639 .ogg files repo-wide", "licence": "2 entries CC BY 4.0; 16 entries with no licence field, so GPL3 by credits.ron line 22", "class": "C", "note": "The 16 GPL3-by-default entries: shape only, do not reuse the files. The 2 CC BY 4.0 entries: class A with attribution only (not identified per file)."},
+    {"kind": "ambience-and-transitions", "path": "assets/voxygen/audio/ambience/ (cave, leaves, rain, river_loud, river_quiet, thunder, wind .ogg) with ambience.ron; music_transition_manifest.ron; calendar/; null.ogg", "count_hint": "7 ambience loops; manifests 2 .ron", "licence": "not stated for these files in credits.ron (not listed) - C", "class": "C", "note": "ambience.ron (loop-point comments only read) and music_transition_manifest.ron (read) carry the mechanism. Audio files not played."},
+    {"kind": "fonts", "path": "assets/voxygen/font/ (13 .ttf files; licence texts *-license.txt, *-OFL.txt)", "count_hint": "13 font files; 12 credits entries (lines 516-607)", "licence": "per entry: OFL (3), CC BY-SA 3.0 (4), CC BY 4.0 (2), Apache 2.0 (1), MIT (1), GPL2 (1)", "class": "B (OFL, CC BY-SA 3.0), A (CC BY 4.0, Apache, MIT with notice), C (GPL2)", "note": "Sarabun-license.txt line 1 names The Sarabun Project Authors (OFL text follows). Fonts not opened (binary)."},
+    {"kind": "voxel-models", "path": "assets/voxygen/voxel/ (armour, figure, glider, ~4,752 .vox files across assets/; 50 *_manifest.ron body-plan files in voxygen/voxel)", "count_hint": "4,752 .vox files total; 3 credited models (lines 608-635); 50 manifests", "licence": "CC-BY-NC-SA 4.0 for the 3 credited models (vroom.vox line 612 etc.); other .vox files not credited in credits.ron, licence not stated - C", "class": "C", "note": "Most .vox files are not in credits.ron. The manifest files (read in part) map each body plan to central and lateral part files with offsets."},
+    {"kind": "item-and-loot-data", "path": "assets/common/items (1,312 files), assets/common/loot_tables (245), assets/common/entity (302), assets/common/abilities (612), assets/common/loadout (90), assets/common/skill_trees (3), assets/common/crafting (2), assets/common/economy (1)", "count_hint": "about 2,600 RON data files (data half)", "licence": "not stated per file; repo licence GPL-3.0 covers the repo; credits.ron does not list data files", "class": "C", "note": "Data half read as samples: frostwyvern entity, hydra entity, cave_troll entity, frostwyvern loot table, skill_prerequisites.ron, skill_max_levels.ron (named only). Paired server half in server/ (3 manifests) and server-cli/ not read beyond the folder list."},
+    {"kind": "creature-body-manifests", "path": "assets/voxygen/voxel/*_central_manifest.ron, *_lateral_manifest.ron (e.g. bird_large, arthropod, biped_large, biped_small, crustacean, dragon, fish, golem)", "count_hint": "50 manifest files", "licence": "not stated per file - C", "class": "C", "note": "Read: bird_large_lateral_manifest.ron line 425 (wing segment entry) and tarantula entries in arthropod_central_manifest.ron."},
+    {"kind": "textures-and-hud-elements", "path": "assets/voxygen/texture/noise.png; assets/voxygen/element/{animation,de_buffs,items,skills,ui,weapons}/, not_found.png, v_logo.png, v_logo.vox", "count_hint": "898 PNG repo-wide; HUD element folders listed only", "licence": "not stated (C)", "class": "C", "note": "Not opened. Folder names only."},
+    {"kind": "localisation", "path": "assets/voxygen/i18n/ (43 language folders plus README.md; en has 12 .ftl files, about 2,000 key lines by grep ' = ')", "count_hint": "44 entries in i18n folder", "licence": "not stated (C)", "class": "C", "note": "Fluent (.ftl) format. i18n README (line 3 onward) gives translation rules. en/buff.ftl line 2 read. Other languages not read."},
+    {"kind": "world-map-and-structures", "path": "assets/world/ (map, module, structure, tree, shrub, wildlife, style, manifests/; world/veloren_0_18_0_0.bin and older .bin versions)", "count_hint": "60 world manifests; several .bin map files", "licence": "not stated (C)", "class": "D", "note": "Binary world map. Not opened. Not a source of usable content for us without the code that reads it."},
+    {"kind": "shaders", "path": "assets/voxygen/shaders/ (48 files)", "count_hint": "48 files", "licence": "not stated separately; repo GPL-3.0 if treated as code", "class": "C", "note": "Not read."},
+    {"kind": "credits-register", "path": "assets/credits.ron", "count_hint": "678 lines; 23 asset entries (music 8, fonts 12, models 3); sounds entries are authors plus file lists; a contributors list starts at line 645 (not read)", "licence": "GPL3 by default per line 22 (repo-level rule)", "class": "A (as a process template; it is text, the donor's own scheme)", "note": "Attribution scheme: name, source link, authors, asset path, licence, licence link, notes. Good template for our own register."}
+  ],
+  "inspiration": [
+    "Large winged creature idle: the head glance picks a new target on a half-second floored clock (a hashed offset per step), with a slow cosine breath on the chest and beak. The chest is pitched forward by a fixed amount in the wyvern branch. This makes the creature feel alive without per-frame noise (voxygen/anim/src/bird_large/idle.rs lines 27, 38, 66).",
+    "Creatures built from parts: each body plan has central parts and lateral (left/right) parts with offsets, and a wyvern wing is split into inner, middle and outer segments in the manifest (bird_large_lateral_manifest.ron line 425). Our rig can use the same split for wings and tails at our own proportions.",
+    "Combat music is driven by a crowd-weighted sum: every hostile inside a radius adds ceil(max HP / health factor) to a total; a high threshold selects the strongest combat state, and a dead player forces explore music (voxygen/src/audio/music.rs lines 264-285). This maps onto our many-on-one threat budget (MAX_ATTACKERS, hate list) as a sound signal.",
+    "Asymmetric crossfades: the combat-to-explore fade is slow in (5 s in, 2 s out), explore to combat is quick (1.0 s out, 0.5 s in), and an interrupt delay of 5 s stops rapid flip-flopping (music_transition_manifest.ron lines 13 and 16). Good shape for stingers and biome beds.",
+    "Talent prerequisites in one flat data file: each node says Any-of or All-of earlier nodes, so a capstone needs all of one earlier node and a branch needs one of two (skill_prerequisites.ron lines 2 and 4). Clear, data-only progression graph.",
+    "Creature loot as one All-of bundle with min and max counts per item (for example a scale stack of 8 to 12). Each creature file names its loot table by path (frostwyvern.ron line 7). Gives a readable 'materials ceremony' after a kill.",
+    "Credits register as data: every asset has authors, source link, licence, licence link and free-text notes, and a missing licence defaults to a stated repo licence. Good template for our own asset provenance file, with the default-to-copyleft rule written out.",
+    "Fluent localisation with plural variants (a selector on a count with [1] and *[other] branches) for HUD text that shows numbers, such as heal durations."
+  ],
+  "briefs": [
+    {
+      "label": "Pitched-chest winged wyrm (bird_large, wyvern branch)",
+      "why": "A forward-pitched chest and a head that glances on a short beat make a winged monster read as watchful at 375 wide, even when it is still. The wing split into three segments gives a clear silhouette in motion.",
+      "keep": "forward-pitched chest; head glance on a stepped clock; wing split into inner, middle and outer segments",
+      "change": "our own wing count and shape (a sail, not a fore-wing and hind-wing pair); our palette, not the donor's ice motif; a crest or horn ornament in place of their head shape",
+      "ref": "voxygen/anim/src/bird_large/idle.rs lines 27, 38, 66; voxygen/voxel/bird_large_lateral_manifest.ron line 425; assets/common/entity/wild/aggressive/frostwyvern.ron line 4"
+    },
+    {
+      "label": "Crowd-weighted combat bed (sound-music)",
+      "why": "A threat sum that weights tougher enemies more and only counts those inside a radius is a simple, testable rule for when combat music starts. Asymmetric fades make the entry feel urgent and the exit feel earned.",
+      "keep": "threat weight from max HP; radius gate; interrupt delay; quick cut in, slow fade out",
+      "change": "weight from our hate list and MAX_ATTACKERS (not a radius sum); per-zone thresholds as data; a boss stinger on top of the bed rather than a second track",
+      "ref": "voxygen/src/audio/music.rs lines 264-285; assets/voxygen/audio/music_transition_manifest.ron lines 2-16"
+    },
+    {
+      "label": "Branching blade talent line (progression)",
+      "why": "A single flat table of Any-of and All-of prerequisites gives a readable talent tree with capstones and forks, and each rule is one line a designer can check.",
+      "keep": "capstone needs All of one earlier node; a fork needs Any of two nodes; prerequisites in data",
+      "change": "our node names and depth, costs per node, forks drawn across tiers rather than in one line; no copied node names",
+      "ref": "assets/common/skill_trees/skill_prerequisites.ron lines 2-4"
+    },
+    {
+      "label": "Material bundle drop (loot ceremony)",
+      "why": "A boss or large creature that drops a stack of one material with a count range (not one item) reads as a reward on the loot screen and gives crafting a clear input.",
+      "keep": "one bundle per creature; each entry a min and max count; All-of semantics",
+      "change": "our material names and count ranges; add a rare tier roll on top; different ordering and icon treatment",
+      "ref": "assets/common/loot_tables/creature/bird_large/frostwyvern.ron lines 1-10"
+    }
+  ],
+  "not_read": [
+    "all .vox models (about 4,752 files) and all PNG images",
+    "all .ogg audio content (only file names, credits and two manifests read)",
+    "world .bin map files and assets/world/* data (only the folder list)",
+    "assets/voxygen/shaders (48 files, not opened)",
+    "most common/*.ron data: 2,600+ files (only four entity files, one loot table, skill_prerequisites.ron read; skill_max_levels.ron named only)",
+    "i18n languages other than en/buff.ftl (only folder count and README read)",
+    "fonts (binary); font licence texts read only for the Sarabun header line",
+    "server half: server/ and server-cli/ Rust code and server/manifests (3 files) not read beyond the folder listing",
+    "voxygen/anim other creatures and most of voxygen/src (only bird_large idle, music.rs sections)",
+    "assets/voxygen/audio/ambience.ron body (only the tracks line and loop comments seen)"
+  ]
+}

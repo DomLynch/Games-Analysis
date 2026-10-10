@@ -1,0 +1,166 @@
+{
+  "donor": "endless-sky-endless-sky",
+  "class": "A for assets (mixed per path, credit needed); code GPL-3.0-or-later, clean-room shape only",
+  "halves_read": "data pack (data/*.txt) and engine source for mechanisms (source/Engine.cpp, Ship.cpp, Personality.cpp, System.cpp period lines); single-player, no server or client split in the box",
+  "counts": {
+    "creatures": 13,
+    "classes": 0,
+    "weapons": 173,
+    "gear_sets": 0,
+    "zones": 685
+  },
+  "counts_note": "creatures = 11 blocks tagged noun creature plus 2 tagged noun entity (grep). classes = 0 player classes; 19 culture folders read as factions. weapons = 82 unique Guns plus 91 unique Turrets names (overlap not checked). gear_sets = 0 verified; set bonuses not checked; tiers are shields 38, generators 57, engines 135 unique names. zones = 685 system entries (not biome types); 30 hazard definitions; 17 haze sprites.",
+  "creature_families": [
+    "Subsidurial, lumbering never-disabled beast (data/drak/indigenous.txt:14)",
+    "Void Sprite adult and infant pair (data/drak/indigenous.txt:62, :120)",
+    "Ember Waste family: Node, Embershade, Embersylph (data/drak/indigenous.txt:166, :223, :264)",
+    "Vyrmeid swarm, three tiers (data/vyrmeid/vyrmeid.txt:14, :73, :126)",
+    "Astral Cetacean, rare large body (data/vyrmeid/vyrmeid.txt:181)",
+    "vyu-Ir, entity, hull 49000 (data/rulei/rulei ships.txt:15, :27)",
+    "Quarg mythic-beast hull ladder: Guivre, Drake, Wardragon, Wyvern, Hydra, Lindwyrm (data/quarg/quarg ships.txt:15-275)",
+    "Aberrant Ka'het family, 13 named hulls (data/kahet/aberrant ships.txt)",
+    "Remnant, 17 base hulls, mostly bird names (data/remnant/remnant ships.txt)"
+  ],
+  "top_creatures": [
+    {
+      "label": "Slow wall beast",
+      "why": "Heavy body with three mouth guns and a blood leak; reads as a wall at 375 px.",
+      "keep": "Never disabled, so it must be destroyed; slow mass.",
+      "change": "Name; mouth guns become crystal crest spines; blood colour and death sequence are ours.",
+      "ref": "/mnt/frankendom-donors/endless-sky-endless-sky/data/drak/indigenous.txt:14 (hull at :21)"
+    },
+    {
+      "label": "Growth pair",
+      "why": "Juvenile hull 2800 against adult 9600, so growth is obvious at a glance.",
+      "keep": "Juvenile-to-adult silhouette jump; looping idle frames.",
+      "change": "Body shape and the growth trigger (tied to zone time, not a fixed value).",
+      "ref": "/mnt/frankendom-donors/endless-sky-endless-sky/data/drak/indigenous.txt:62, :72, :120, :129"
+    },
+    {
+      "label": "Cloaked guardian",
+      "why": "Largest creature; a dim cloak is a readable tell and it hides near smaller ones.",
+      "keep": "Cloak as a tell with a shield-heavy body.",
+      "change": "Reveal on hit instead of on a timer; shape and colour.",
+      "ref": "/mnt/frankendom-donors/endless-sky-endless-sky/data/drak/indigenous.txt:166, :175, :197"
+    },
+    {
+      "label": "Death-burst swarm member",
+      "why": "Docile swarm where one member bursts on death, a surprise for the attacker.",
+      "keep": "The explode-on-death surprise.",
+      "change": "Crystal shards instead of solar bodies; burst radius set by our rules.",
+      "ref": "/mnt/frankendom-donors/endless-sky-endless-sky/data/vyrmeid/vyrmeid.txt:126, :138, :167"
+    },
+    {
+      "label": "Spinning defender",
+      "why": "Constant rotation as a defence against small hits; clear silhouette.",
+      "keep": "Spin as the defence tell.",
+      "change": "Spin speed and what it blocks.",
+      "ref": "/mnt/frankendom-donors/endless-sky-endless-sky/data/vyrmeid/vyrmeid.txt:73, :85, :109"
+    },
+    {
+      "label": "Head-count ladder",
+      "why": "Tier steps add guns and turrets; Hydra has three culverin guns, two stratospear turrets and one ribault turret.",
+      "keep": "Light, medium, heavy ladder in one family look.",
+      "change": "Names and silhouette.",
+      "ref": "/mnt/frankendom-donors/endless-sky-endless-sky/data/quarg/quarg ships.txt:117, :222, :275"
+    },
+    {
+      "label": "Self-heating attacker",
+      "why": "Hurts itself when it runs hot, so a long fight has a cost on both sides.",
+      "keep": "Overheat damage with hysteresis: on at max heat, off below 90 percent (source/Ship.cpp:5068-5072).",
+      "change": "Our own heat meter and the glow tell.",
+      "ref": "/mnt/frankendom-donors/endless-sky-endless-sky/data/kahet/aberrant ships.txt:46; source/Ship.cpp:5070, :5072"
+    },
+    {
+      "label": "Rare long-hauler",
+      "why": "Rare, large body that travels where small ships cannot; rarity is the signal.",
+      "keep": "Rarity and size as the signal.",
+      "change": "Body, colours and sounds.",
+      "ref": "/mnt/frankendom-donors/endless-sky-endless-sky/data/vyrmeid/vyrmeid.txt:181, :193"
+    }
+  ],
+  "classes": [
+    {"name": "Ship categories (ladder)", "role": "player progression by hull", "signature_mechanic": "licences gate some gear (21 files)", "progression": "Interceptor, Light Warship, Medium Warship, Heavy Warship, Superheavy; ref data/categories.txt"},
+    {"name": "Human and Coalition", "role": "largest hull set (88 and 22 base hulls)", "signature_mechanic": "mission-heavy (not read)", "progression": "not read", "ref": "data/human/, data/coalition/"},
+    {"name": "Kahet and Ka'het", "role": "aberrant organo-metallic hulls (34)", "signature_mechanic": "never disabled; overheat damage", "progression": "not read", "ref": "data/kahet/aberrant ships.txt:20, :46"},
+    {"name": "Korath", "role": "fast beam hulls (33)", "signature_mechanic": "Husk-Slice burst beam", "progression": "not read", "ref": "data/korath/korath weapons.txt:756"},
+    {"name": "Gegno", "role": "mining hulls (25)", "signature_mechanic": "licensed drills", "progression": "not read", "ref": "data/gegno/gegno outfits.txt:900, :906"},
+    {"name": "Avgi", "role": "beam hulls (27)", "signature_mechanic": "power-beaming hazard", "progression": "not read", "ref": "data/hazards.txt (Avgi Beamed Power)"},
+    {"name": "Hai", "role": "hulls (17) with Unfettered sub-faction", "signature_mechanic": "not read", "progression": "not read", "ref": "data/hai/"},
+    {"name": "Remnant", "role": "ancient hulls (17), bird names", "signature_mechanic": "spatial rift hazards; remnant leak sparkle", "progression": "not read", "ref": "data/remnant/, data/effects.txt:145"},
+    {"name": "Quarg", "role": "mythic-beast hull ladder (6)", "signature_mechanic": "tier escalation by gun count", "progression": "Guivre to Hydra", "ref": "data/quarg/quarg ships.txt"},
+    {"name": "Drak", "role": "hulls (6) and indigenous creatures", "signature_mechanic": "organ turrets", "progression": "not read", "ref": "data/drak/indigenous.txt:306"},
+    {"name": "Vyrmeid", "role": "creature swarm (3 hull tiers)", "signature_mechanic": "explode on death; pull bite", "progression": "not read", "ref": "data/vyrmeid/vyrmeid.txt:241"},
+    {"name": "Bunrodea", "role": "hulls (8)", "signature_mechanic": "energy-hungry Mandible Cannon", "progression": "not read", "ref": "data/bunrodea/bunrodea weapons.txt:70"},
+    {"name": "Incipias, Pug, Sheragi, Rulei, Iije, Successors, Wanderers", "role": "hulls (6, 4, 3, 1, 2, 19, 14)", "signature_mechanic": "not read", "progression": "not read", "ref": "data/<culture>/"}
+  ],
+  "weapon_families": [
+    {"family": "Guns (projectile and beam)", "tiers": "82 unique names", "special": "status channels: slowing, corrosion, heat, ion, scrambling, fuel, disruption, energy, burn, discharge", "ref": "data/*/*weapons.txt"},
+    {"family": "Turrets", "tiers": "91 unique names", "special": "turret turn rate per weapon (Absorption Organ turn 4)", "ref": "data/drak/indigenous.txt:306"},
+    {"family": "Organ and mouth weapons", "tiers": "Absorption Organ, Astral Mouth, Plankton Mouth, Mandible Cannon, Burrower", "special": "beast-style weapons", "ref": "data/vyrmeid/vyrmeid.txt:241"}
+  ],
+  "gear_tiers": [
+    {"ladder": "Systems Core", "tiers": "Tiny, Small, Medium, Large", "how_shown": "size name", "ref": "outfit series Shields"},
+    {"ladder": "Generator class", "tiers": "Candle, Furnace, Inferno", "how_shown": "heat-named class", "ref": "outfit series Generators"},
+    {"ladder": "nGVF Fuel Cell", "tiers": "AA, BB, CC, DD, EE", "how_shown": "letter tier", "ref": "outfit series Fuel"},
+    {"ladder": "Numbered cells", "tiers": "C3 Scrap, C7 Brawl, C17 Warzone, C27 Campaign", "how_shown": "number and name", "ref": "outfit series Generators"},
+    {"ladder": "Death explosion sets by culture", "tiers": "tiny, small, medium, large, huge (quarg and pug); final explosion small, medium, large", "how_shown": "size of death burst", "ref": "data/effects.txt"}
+  ],
+  "zones": [
+    {"label": "Ember Waste", "type": "weather zone", "hazard": "base heat (weight 100) and base storm (weight 9000)", "ref": "/mnt/frankendom-donors/endless-sky-endless-sky/data/map systems.txt:2495, :2512; data/hazards.txt:14, :21"},
+    {"label": "Predecessor spatial rifts", "type": "timed system-wide rift", "hazard": "Intense: duration 300 to 1500, strength 1 to 3", "ref": "data/hazards.txt (Predecessors Spatial Rift Intense); Weak not read"},
+    {"label": "Accretion disk per star", "type": "ring falloff around a black hole", "hazard": "Chanai disk range 600, dropoff 120 to 400", "ref": "data/hazards.txt (Chanai Black Hole Accretion Disk)"},
+    {"label": "Avgi beamed power", "type": "beam field", "hazard": "range 300, energy damage -90 (sign not checked)", "ref": "data/hazards.txt (Avgi Beamed Power)"},
+    {"label": "Rulei gravity well", "type": "pull field", "hazard": "range 200, gravitational, hit force -7", "ref": "data/hazards.txt (Rulei Gravity Field)"},
+    {"label": "Biome haze and stars", "type": "system skins", "hazard": "17 haze sprites; star classes o to m plus giants", "ref": "data/map systems.txt; data/stars.txt"}
+  ],
+  "looks": [
+    {
+      "label": "One spark per status channel",
+      "technique": "Each status (ion, scramble, disruption, discharge, slowing, corrosion, burning, leakage) has its own sprite, frame rate, lifetime, spin and drift; corrosion lives 60 ticks and drifts backwards.",
+      "ref": "/mnt/frankendom-donors/endless-sky-endless-sky/data/effects.txt:30 (ion spark), :77 (corrosion spark)"
+    },
+    {
+      "label": "Shape-coded target rings",
+      "technique": "Outer ring (shields) is solid; inner (hull) and disabled rings are dashed; colour is set by relation and ring type. Shape carries the channel so it reads without colour.",
+      "ref": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Engine.cpp:1213, :1218"
+    },
+    {
+      "label": "Numbered frame strips",
+      "technique": "Hit sparks as ^0 to ^4 frames and thruster glow as +0 to +2 frames, so effects are cheap to swap.",
+      "ref": "images/effect/ (per AU018)"
+    },
+    {
+      "label": "Looping idle creatures",
+      "technique": "The rewind flag loops idle sprites for creatures that never stop moving.",
+      "ref": "/mnt/frankendom-donors/endless-sky-endless-sky/data/drak/indigenous.txt:67, :124, :170"
+    },
+    {
+      "label": "Fast-flung remnant sparkle",
+      "technique": "Short-lived (lifetime 7) with random velocity 12, a burst of debris.",
+      "ref": "/mnt/frankendom-donors/endless-sky-endless-sky/data/effects.txt:145"
+    }
+  ],
+  "originals": [
+    {"name": "Mythic-tier beast ladder", "idea": "One creature family with light, medium and heavy hulls that add guns per tier.", "keep": "Tier ladder inside one family look; more guns per tier.", "change": "Our names, silhouettes and tier steps. Rows 7."},
+    {"name": "Never-disabled brute", "idea": "A slow, heavy creature that cannot be disabled, only destroyed or staggered by a finisher.", "keep": "Must be destroyed; slow mass.", "change": "A stagger stance broken by a finisher, not a disable threshold. Rows 9 and 3."},
+    {"name": "Explode-on-death swarm", "idea": "A docile swarm where one member bursts on death.", "keep": "Death burst as the surprise.", "change": "Crystal shards and our own burst radius. Rows 8 and 10."},
+    {"name": "Juvenile-to-adult pair", "idea": "A creature that grows visibly from a juvenile silhouette.", "keep": "Silhouette jump and looping idle frames.", "change": "Growth trigger tied to zone time. Rows 7 and 23."},
+    {"name": "Overheat self-harm", "idea": "A creature takes hull damage when it runs too hot.", "keep": "Hysteresis: on at max heat, off below 90 percent.", "change": "Our own heat meter and clear glow tell. Rows 2 and 4."},
+    {"name": "Reinforcement cap by strength ratio", "idea": "No reinforcement when allies outnumber enemies by more than twice.", "keep": "The ratio gate (source/Engine.cpp:2043).", "change": "Map to MAX_ATTACKERS = 3 and zone population. Rows 4 and 23."},
+    {"name": "Weighted variant fleets", "idea": "Fleet compositions drawn from weights.", "keep": "Weighted table (weights 20, 20, 30, 20, 10, 5, 5, 5 in data/coalition/coalition.txt:29-31).", "change": "Our compositions and weights. Row 23."},
+    {"name": "Timed weather with rolled strength", "idea": "A hazard rolls its duration and strength when it triggers.", "keep": "Rolled duration (1 to 200 for heat) and strength (data/hazards.txt:15).", "change": "A readable warning colour and our biome. Rows 14 and 16."}
+  ],
+  "licence_note": "Code GPL-3.0-or-later (copyright file 'Files: *'). Data text GPL-3+ per AU018, not copied. Assets per path: CC0, public domain, CC-BY, CC-BY-SA, Unsplash; look only. Clean-room, shape only; recreate as a clearly distinct original.",
+  "not_read": [
+    "data/human/human missions.txt (741 KB), data/kahet/kahet missions.txt (453 KB) and all other mission, job, news, hail, dialog, persons, names and culture conversation files (listed by name only)",
+    "data/_deprecated and data/_ui (names only)",
+    "data/map planets.txt (counted, not read in full); data/map systems.txt (only the cited lines and grep counts)",
+    "images/ and sounds/ (AU018 audit counts only)",
+    "shaders/ GLSL bodies (names only)",
+    "source/: only the regions cited (Engine.cpp, Ship.cpp, Personality.cpp, System.cpp period lines); Fleet.cpp not read",
+    "Gun cost and damage ladder numbers (not extracted reliably)",
+    "Flags inscrutable, quantum keystone, gaslining (names only)",
+    "Weak spatial rift numbers"
+  ]
+}

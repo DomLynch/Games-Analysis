@@ -1,0 +1,132 @@
+{
+  "donor": "OpenRCT2-OpenRCT2",
+  "cell": "DC041",
+  "halves_read": "data half (data/language en-GB.txt counted and names only, data/shaders, data/scenario_patches names); code half by cited lines (src/openrct2 world/Weather.cpp and .h, entity/Staff.cpp and .h, rct12/RCT12.h, Date.h, object/ClimateObject.cpp). Paired objects.zip (park objects, climate pattern values) is NOT in the box.",
+  "counts": {
+    "creatures": 0,
+    "classes": 4,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 4
+  },
+  "counts_basis": {
+    "creatures": "no creature, beast or monster data in the box (grep of en-GB.txt and src entity, peep, world, object folders); the two locale hits are a circus animal show attraction and a monster-truck ride name",
+    "classes": "4 helper staff types (Staff.h:31-38); the guest visitor type is not counted as a class",
+    "weapons": "none in the box; weather hazards are not weapons",
+    "gear_sets": "none in the box; entertainer costumes exist only in the objects pack",
+    "zones": "4 climates (RCT12.h:45-51); nine weather states are hazards and moods, not zones"
+  },
+  "creature_families": [],
+  "top_creatures": [],
+  "creature_note": "None in the box. Visitors (guests) and helper staff are the living content; see classes.",
+  "classes": [
+    "Handyman: sweeps, waters, mows, empties bins (Staff.cpp:1037, :1085, :1147, :1227); path finding at :495",
+    "Mechanic: fixing state machine with enter-station, move-to-vehicle, fix restraints or doors, fix malfunction, station end and start, brakes, exit, finish fix or inspect (Staff.cpp:2003-2060); mid-job upgrade from inspect to fix at :2018-2019",
+    "Security guard: patrol area set by the player (Staff.cpp:265-293); alternate slow walk group when the patrol path is crowded (Staff.cpp:1718-1725)",
+    "Entertainer: nearby-visitor update (Staff.cpp:889, body not read); costume choice exists (STR_1946)",
+    "Visitor (guest): locale label STR_0767; guest code not read"
+  ],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [
+    "Climate zones (4): cool and wet, warm, hot and dry, cold (RCT12.h:45-51). Each has eight monthly patterns (Weather.h:39), a base temperature, a random bias and a 23-entry distribution of weather states (Weather.h:40). Pattern values are in the objects pack, not the box.",
+    "Weather states (9): sunny (+10), partly cloudy (+5), cloudy (0), rain (-2), heavy rain (-4), thunderstorm (+2), snow (-10), heavy snow (-15), blizzard (-20); temperature delta in brackets (Weather.cpp:48-58).",
+    "Hazards: thunder and lightning only under storm and blizzard effects; base thunder chance 0x1B4 (storm) and 0x6D (blizzard), shifted down by game speed (Weather.cpp:214-221).",
+    "Dungeon archetypes: none in the code read."
+  ],
+  "looks": [
+    {
+      "label": "Palette-index recolour",
+      "technique": "8-bit index texture read and looked up in a 256-entry palette uniform in the fragment stage",
+      "ref": "data/shaders/applypalette.frag:3, :12"
+    },
+    {
+      "label": "Gloom ladder",
+      "technique": "four named filter palettes (null, darken 1, darken 2, darken 3) keyed by gloom 0-3",
+      "ref": "src/openrct2/world/Weather.cpp:85-90, :312-321"
+    },
+    {
+      "label": "Lightning flash flag",
+      "technique": "random per-call roll sets a flash flag while a lightning timer runs; the renderer that clears it was not read",
+      "ref": "src/openrct2/world/Weather.cpp:459-461"
+    },
+    {
+      "label": "Weather sound ramp",
+      "technique": "rain bed rises in steps of 80 to a capped volume and fades in steps until below a floor, then stops",
+      "ref": "src/openrct2/world/Weather.cpp:388, :399"
+    },
+    {
+      "label": "Glass map palettes (audit only)",
+      "technique": "translucent map palettes for a dimmed overlay; folders named, not re-read",
+      "ref": "resources/palettes/map_glass/, resources/palettes/map_translucent/ (per AU040)"
+    },
+    {
+      "label": "Bitmap font size ladder (audit only)",
+      "technique": "one glyph set in bold, small and tiny sizes; names only",
+      "ref": "resources/fonts/latin/ (per AU040)"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Storm Front",
+      "idea": "each zone runs a weather state that steps one unit at a time toward a forecast, with a storm that flashes and a thunder timer",
+      "keep": "stepwise transitions on a fixed tick boundary; forecast timer; storm-only lightning; lightning rate that drops with game speed",
+      "change": "forecast belongs to the zone, not the server clock; lightning is a one-frame rim flash plus one thunder cue"
+    },
+    {
+      "name": "Gloom Ladder",
+      "idea": "four discrete darkening steps keyed by a gloom value that each weather or zone sets",
+      "keep": "discrete steps and a mapping table",
+      "change": "steps tuned to a threat level and a cool grade"
+    },
+    {
+      "name": "Rain Bed Ramp",
+      "idea": "an ambient bed that rises in fixed steps to a cap and fades out in steps until a floor",
+      "keep": "stepped ramp, cap and floor",
+      "change": "zone beds that crossfade at border tiles"
+    },
+    {
+      "name": "Responder Mid-Job Upgrade",
+      "idea": "a responder that begins by inspecting a downed object and switches to repairing when the fault shows",
+      "keep": "mid-job upgrade and the substate list",
+      "change": "revives a downed teammate in fight zones; no station and no brakes"
+    },
+    {
+      "name": "Crowd-Aware Warden",
+      "idea": "a patrol guard whose walk switches to a slow group when its path is crowded",
+      "keep": "crowd-aware walk switch; player-set patrol area",
+      "change": "slows near crowds, quickens on alarm, with a stance cue"
+    },
+    {
+      "name": "Helper Roles",
+      "idea": "four NPC helpers, each with one job loop",
+      "keep": "one role per helper with one signature job",
+      "change": "fight-zone roles: medic, fixer, warden, bard"
+    },
+    {
+      "name": "Palette-Index Zone Grade",
+      "idea": "one index texture per sprite set, looked up through a 256-entry palette per zone",
+      "keep": "index texture plus palette lookup",
+      "change": "zone grade only; no team or ride colours"
+    },
+    {
+      "name": "Climate per Zone",
+      "idea": "each zone has a climate with a month-by-month distribution of weather states",
+      "keep": "data-driven climate with a pattern per season",
+      "change": "seasons are match phases; a threat season changes the mix"
+    }
+  ],
+  "originals_note": "Frankendom row map: Storm Front rows 16, 12, 23; Gloom Ladder 16; Rain Bed Ramp sound fold-in; Responder rows 17, 18; Warden rows 7, 4; Helper Roles row 2; Palette-Index rows 16, 15; Climate row 23, 20.",
+  "licence_note": "Code GPL-3.0 or later (licence.txt line 1; readme section on licence). Re-implementation of a commercial game (readme.md line 11); the game needs the original files (readme.md line 74); clean-room status not stated. No asset licence in the box; separate downloads (objects, music, sound effects, title sequences, replays) have sha256 pins in assets.json, licences not in the box. Clean-room, shape only.",
+  "not_read": [
+    "objects.zip (park objects, rides, guests, costumes, climate pattern values): not in the box",
+    "openmusic.zip, opensound.zip, title-sequences.zip, replays.zip: not in the box",
+    "src/openrct2 peep and guest code, ride logic, the renderer that clears gLightningFlash",
+    "Staff.cpp wage function (:2645) and entertainer body (:889)",
+    "27 locale files other than en-GB (counted in the audit)",
+    "data/scenario_patches/*.parkpatch contents (142 files, names counted)",
+    "resources/mac/Assets.car and resources/mac/Archived (names only)",
+    "resources/palettes/map_glass and map_translucent contents (folder names only)",
+    "resources/fonts (names only)"
+  ]
+}

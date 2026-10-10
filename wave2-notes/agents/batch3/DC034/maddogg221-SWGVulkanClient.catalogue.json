@@ -1,0 +1,162 @@
+{
+  "donor": "maddogg221-SWGVulkanClient",
+  "counts": {
+    "creatures": 154,
+    "classes": null,
+    "weapons": 363,
+    "gear_sets": 21,
+    "zones": 7
+  },
+  "count_notes": {
+    "creatures": "154 lair species folders under object/tangible/lair (path-level, excluding base and structure); also 84 static creature and 156 pet template paths",
+    "classes": "no class or profession table in the client half; server side",
+    "weapons": "363 template paths: 260 melee, 103 ranged (path-level, not objects)",
+    "gear_sets": "21 armour set names under object/tangible/wearables/armor (path-level)",
+    "zones": "7 planet folders in the building template list; no .trn terrain files in the box"
+  },
+  "creature_families": [
+    "Lair species folders (154, path-level): nest and lair set pieces with light and dark variants; base 261 and structure 30 lair paths are not creatures",
+    "Static planet wildlife (84 templates, scenery, not targets)",
+    "Pet templates (156 paths) with colour-variant names (112 paths contain a hue marker)"
+  ],
+  "top_creatures": [
+    {
+      "label": "Nest-lair set pieces (home markers)",
+      "why": "Light and dark nest props mark a monster's home and read at a glance; 261 base and 30 structure lair templates",
+      "keep": "Home props with light and dark variants",
+      "change": "Our own nest silhouettes; a danger colour instead of the donor's palette",
+      "ref": "/mnt/frankendom-donors/maddogg221-SWGVulkanClient/libs/assets/data/object_template_candidates.txt line 5592 (object/tangible/lair/base/antpile_dark.iff)"
+    },
+    {
+      "label": "Colour-variant beasts (hue set)",
+      "why": "One shape in several colours reads as several threats; 112 template paths carry a hue marker",
+      "keep": "A small set of colour variants per beast",
+      "change": "A runtime tint on one mesh instead of separate templates",
+      "ref": "/mnt/frankendom-donors/maddogg221-SWGVulkanClient/libs/assets/data/object_template_candidates.txt (paths containing _hue; example object/intangible/pet/zucca_boar_hue.iff)"
+    },
+    {
+      "label": "Planet wildlife scenery",
+      "why": "Small planet-tagged wildlife placed as scenery gives the walk a sense of life; 84 static creature templates",
+      "keep": "Scenery creatures that are not targets",
+      "change": "Our own scenery critters, tagged per zone",
+      "ref": "/mnt/frankendom-donors/maddogg221-SWGVulkanClient/libs/assets/data/object_template_candidates.txt (object/static/creature block, e.g. object/static/creature/yavin4_tybis.iff)"
+    }
+  ],
+  "classes": [],
+  "weapon_families": [
+    "Melee: sword 115, two-handed sword 85, polearm 38, knife 9, baton 5, axe 3, unarmed 2, special 2, base 1",
+    "Ranged: pistol 25, rifle 21, creature-mounted 16, carbine 14, grenade 11, heavy 6, turret 5, droid 3, vehicle 1, base 1",
+    "Special properties (elemental, set bonus): not in box (server side)"
+  ],
+  "gear_tiers": [
+    "21 armour set names under object/tangible/wearables/armor (186 armour paths; 803 wearable paths overall)",
+    "Set names are category words: soft padded layer; organic plates (bone, chitin); layered composite; heavy alloy-type; plate; faction sets (stormtrooper, mandalorian, bounty hunter, marauder)",
+    "Piece counts in armour paths: chest 25, plate 20, leggings 18, helmet 17, boots 16",
+    "No metal, gold or glow term in the client model shader libs/renderer/shaders/Mesh.hlsl; tier display not visible in this half"
+  ],
+  "zones": [
+    "Planet folders (path-level): tatooine 55, naboo 46, corellia 44, endor 18, yavin 6, lok 3, dathomir 2 building paths",
+    "Terrain grading classes for 496 building templates: poi_medium 216, poi_large 135, poi_small 131, tatooine flora large 11, starport circle 1 (libs/assets/data/real_terrain_grading_map.txt)",
+    "Dungeon archetypes (path-level): corellian corvette interiors 27 paths; death-watch bunker 13 paths; 55 dungeon paths in total under object/tangible/dungeon",
+    "Terrain generator: six family groups (Family.h line 12); six filter tags (Filter.h line 10); four live boundary shapes (Boundary.h line 14); fifteen affector kinds (Affector.cpp, height terrace at line 129)",
+    "Hazards: not in box"
+  ],
+  "looks": [
+    {
+      "label": "Half-lambert shade with one fixed light",
+      "technique": "shade = 0.5 + 0.5 times saturate(N dot L) with a fixed light direction, times the texture; white fallback texture for untextured parts",
+      "ref": "/mnt/frankendom-donors/maddogg221-SWGVulkanClient/libs/renderer/shaders/Mesh.hlsl lines 54-55"
+    },
+    {
+      "label": "Portal-room visibility by breadth-first walk",
+      "technique": "Start cell visible; each portal tested as a bounding sphere (centroid plus farthest vertex); adjacent cell visible on pass; depth cap 8 by default",
+      "ref": "/mnt/frankendom-donors/maddogg221-SWGVulkanClient/libs/worldmodel/src/PortalVisibility.cpp lines 80-83; /mnt/frankendom-donors/maddogg221-SWGVulkanClient/libs/worldmodel/include/worldmodel/PortalVisibility.h line 49"
+    },
+    {
+      "label": "Status tint and icon groups from a 34-bit state word",
+      "technique": "Three groups: stances, crowd control (stunned, blinded, dizzy, intimidated, immobilized, frozen), damage over time (poisoned, bleeding, diseased, on fire)",
+      "ref": "/mnt/frankendom-donors/maddogg221-SWGVulkanClient/libs/creatureanim/include/creatureanim/CreatureState.h lines 21-56"
+    },
+    {
+      "label": "Floating status text with a category tag",
+      "technique": "Short text above the object for hit-location feedback or an NPC reaction, with a file and entry pair for localisation",
+      "ref": "/mnt/frankendom-donors/maddogg221-SWGVulkanClient/libs/swgproto/include/swgproto/ShowFlyText.h line 12"
+    },
+    {
+      "label": "Short idle gesture",
+      "technique": "A short performance gesture message; idle use is our idea, not the donor's",
+      "ref": "/mnt/frankendom-donors/maddogg221-SWGVulkanClient/libs/swgproto/include/swgproto/Flourish.h line 14"
+    },
+    {
+      "label": "Animation-state selection from posture and locomotion",
+      "technique": "One function maps context to a state name; hard cuts between states; weapon-specific idle is a known gap",
+      "ref": "/mnt/frankendom-donors/maddogg221-SWGVulkanClient/libs/creatureanim/include/creatureanim/AnimationStateSelection.h"
+    },
+    {
+      "label": "Pose-sheet capture (idea only)",
+      "technique": "Fixed-camera stills per pose, rest pose first; name only, not read",
+      "ref": "/mnt/frankendom-donors/maddogg221-SWGVulkanClient/tools/dummyclient/ScreenshotCapture.cpp (name only)"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Portal-room visibility",
+      "idea": "Dungeon rooms are cells joined by doorway portals; walk doorways breadth-first and show only rooms whose doorway is in view, capped at a small depth",
+      "keep": "Breadth-first walk; sphere test on the doorway; depth cap",
+      "change": "Ring-arena rooms with our own doorways; doorway sphere uses our hit radius"
+    },
+    {
+      "name": "Three-group status tints",
+      "idea": "Stance, crowd control and damage over time each get a tint family and an icon family",
+      "keep": "The three groups",
+      "change": "Our palette and icons; crowd control gets a pulsing ring"
+    },
+    {
+      "name": "Footprint pad classes",
+      "idea": "Each placed prop or building declares a footprint class (small, medium, large) that sets the flattened pad under it; a flag turns the pad off for player-built pieces",
+      "keep": "Three classes and the per-piece flag",
+      "change": "Our own pad sizes for the 375-wide frame"
+    },
+    {
+      "name": "Terrace step",
+      "idea": "Terrain height snaps to steps given a fraction and a step height",
+      "keep": "The two parameters",
+      "change": "Our own step curve for arena tiers"
+    },
+    {
+      "name": "Filter-stack zone rules",
+      "idea": "A zone is an ordered list of rules, each with a filter (height band, noise band, slope, facing), a shape (circle, rectangle, polygon, polyline) and an affector (height, colour, flora, road, river)",
+      "keep": "Ordered rules; filters; shapes",
+      "change": "Our own noise and shape set; zones as data on one runtime"
+    },
+    {
+      "name": "Cancellable idle flourish",
+      "idea": "A short gesture plays when nothing else is happening",
+      "keep": "The short gesture in the idle loop",
+      "change": "Cancels on any input and never plays during a live fight"
+    },
+    {
+      "name": "Runtime colour variant",
+      "idea": "One creature with a set of colour variants instead of separate colour templates",
+      "keep": "A few colour variants per beast",
+      "change": "A runtime tint on one mesh with our own hue ramp"
+    },
+    {
+      "name": "Category floating tag",
+      "idea": "A short text tag above the target with a category (hit location, NPC reaction)",
+      "keep": "Category tag and short lifetime",
+      "change": "Our own text and colours at 375 wide"
+    }
+  ],
+  "licence_note": "Custom personal non-commercial licence (LICENSE.md sections 1-2; section 5 says no copying of GPL or third-party source); no asset licence because no game assets are shipped. Conflict in the files: README says clean-room, but two code comments say ported code came from a leaked SOE source drop. Restricted: category-level only.",
+  "not_read": [
+    "Binary art, models and audio: none in the repo",
+    "libs/assets parsers, libs/soe, libs/clientcommon, libs/worldmodel beyond PortalVisibility",
+    "libs/swgproto message bodies (headers only); libs/creatureanim bodies (headers only)",
+    "libs/terrain sources other than Affector.cpp (headers only); MultiFractal and SkeletalPose bodies not used for design",
+    "libs/renderer sources beyond Mesh.hlsl lines 1-58; Terrain.hlsl, Label.hlsl and Wireframe.hlsl (line counts only)",
+    "tools/dummyclient, tools/swg_blender_toolkit and tools/pcapdecoder (names only)",
+    "Text lists read as counts and columns only",
+    "Server half (Core3) not in the box; paired in-box servers swgemu-Core3 and ProjectSWGCore-Holocore named, not read"
+  ]
+}

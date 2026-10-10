@@ -1,0 +1,157 @@
+{
+  "donor": "NodeL2-NodeL2",
+  "counts": {
+    "creatures": 1169,
+    "classes": 9,
+    "weapons": 473,
+    "gear_sets": 684,
+    "zones": 23
+  },
+  "count_notes": {
+    "creatures": "Monster 1154 plus Boss 15 records in data/Npcs/npcs.json; 72 Summon records are separate",
+    "classes": "9 class templates (5 races) in data/Templates/templates.json",
+    "weapons": "weapon records in data/Items/Weapons/weapons.json (10 kinds)",
+    "gear_sets": "armour records in data/Items/Armors/armors.json (7 kinds); no set-bonus table exists, so this is a record count, not a set count",
+    "zones": "teleport destinations in data/Teleports/teleports.json; spawn groups (3,934) are separate"
+  },
+  "creature_families": [
+    {"family": "undead", "approx_records": 76, "note": "name-keyword cluster, levels 1 to 65; skeleton line is the largest"},
+    {"family": "insect and arachnid", "approx_records": 85, "note": "name-keyword cluster; ant line 8 records, levels 29 to 36"},
+    {"family": "orc, goblin and humanoid", "approx_records": 207, "note": "largest cluster; name-keyword match"},
+    {"family": "demon and abyss", "approx_records": 49, "note": "name-keyword cluster"},
+    {"family": "beast and animal", "approx_records": 72, "note": "name-keyword cluster"},
+    {"family": "plant and fungus", "approx_records": 15, "note": "name-keyword cluster"},
+    {"family": "golem and elemental", "approx_records": 40, "note": "name-keyword cluster"},
+    {"family": "dragon and wyrm", "approx_records": 22, "note": "name-keyword cluster, levels 27 to 61"},
+    {"family": "summon variant lines", "approx_records": 72, "note": "Summon kind; lettered families A to I (Shadow, Silhouette, Cuti Cat, Cat The Cat), A to F (Unicorn Boxer), A to E (Mechanic Golem)"}
+  ],
+  "top_creatures": [
+    {
+      "label": "Scale tyrant",
+      "why": "Boss footprint (collision size 300) is about 2.4 times the next boss value (125); walk 50 then run 186 gives a charge at about 3.7 times walk speed",
+      "keep": "huge footprint and the walk-then-charge contrast",
+      "change": "own silhouette and sound; fight split across zones rather than one pad",
+      "ref": "NodeL2-NodeL2/data/Npcs/npcs.json selfId 12211"
+    },
+    {
+      "label": "Ring-reach colossus",
+      "why": "Widest reach of any boss in the file (radius 140, size 75, HP 90000, level 50)",
+      "keep": "wide reach as space control",
+      "change": "reach drawn as a ground ring telegraph (idea only; not in the data)",
+      "ref": "NodeL2-NodeL2/data/Npcs/npcs.json selfId 12052"
+    },
+    {
+      "label": "Armed boss",
+      "why": "Equipped weapon id 1472 and walk 100, the fastest walk of any boss; run 230",
+      "keep": "a boss whose attack is tied to a held weapon",
+      "change": "own weapon, shape and swing",
+      "ref": "NodeL2-NodeL2/data/Npcs/npcs.json selfId 12055; weapon id 1472 in data/Items/Weapons/weapons.json (not opened by row)"
+    },
+    {
+      "label": "Melee and ranged rank pair",
+      "why": "Same family, similar body HP (399 vs 429), ranged rank attack about 2.4 times the melee rank (25 vs 61)",
+      "keep": "same HP band, higher attack for the ranged rank",
+      "change": "different silhouette and projectile feedback",
+      "ref": "NodeL2-NodeL2/data/Npcs/npcs.json lines 1081 (Skeleton) and 1092 (Skeleton Archer)"
+    },
+    {
+      "label": "Stepped rank ladder",
+      "why": "Eight ranks: HP +28% and attack +76% from the first rank to the last; collision size steps from 12 to 17",
+      "keep": "rank names and size steps as visible progression",
+      "change": "add one visible trait per rank, since the stats alone are a shallow ramp",
+      "ref": "NodeL2-NodeL2/data/Npcs/npcs.json line 817 onward (Ant Larva to Ant Warrior Captain)"
+    },
+    {
+      "label": "Lettered pet line",
+      "why": "Nine-letter variant families (A to I) for several summon lines, so one template yields many looks",
+      "keep": "a letter-variant set per pet line",
+      "change": "name variants by role instead of by letter",
+      "ref": "NodeL2-NodeL2/data/Npcs/npcs.json (Summon kind records, name field)"
+    },
+    {
+      "label": "Pack sprinter",
+      "why": "Run speed 230 (the file's top run value) on mid-level records 12004 (level 37) and 12005 (level 39), and on the boss 12001",
+      "keep": "fast run speed as a flanker role",
+      "change": "telegraphed leap, not only speed",
+      "ref": "NodeL2-NodeL2/data/Npcs/npcs.json selfId 12004, 12005, 12001"
+    },
+    {
+      "label": "Lumbering queen",
+      "why": "Large HP pool (60000 at level 43) on a fast-running body (walk 80, run 230)",
+      "keep": "heavy HP with fast swarm speed",
+      "change": "brood spawns in rings (behaviour not read in this box)",
+      "ref": "NodeL2-NodeL2/data/Npcs/npcs.json selfId 12001"
+    }
+  ],
+  "classes": [
+    {"class": "Human Fighter", "classId": 0, "race": "human", "role": "strength and constitution", "signature_mechanic": "skill tree of 7 rows (smallest block read)", "progression": "80 experience levels; tree skills gated by level and spirit cost"},
+    {"class": "Human Mystic", "classId": 10, "race": "human", "role": "intelligence and men", "signature_mechanic": "skill tree of 19 rows", "progression": "same experience table"},
+    {"class": "Elven Fighter", "classId": 18, "race": "elf", "role": "balanced, dexterity", "signature_mechanic": "skill tree of 9 rows", "progression": "same experience table"},
+    {"class": "Elven Mystic", "classId": 25, "race": "elf", "role": "intelligence and men", "signature_mechanic": "skill tree of 18 rows", "progression": "same experience table"},
+    {"class": "Dark Elven Fighter", "classId": 31, "race": "dark elf", "role": "strength", "signature_mechanic": "skill tree of 10 rows", "progression": "same experience table"},
+    {"class": "Dark Elven Mystic", "classId": 38, "race": "dark elf", "role": "intelligence and men", "signature_mechanic": "skill tree of 19 rows", "progression": "same experience table"},
+    {"class": "Orc Fighter", "classId": 44, "race": "orc", "role": "constitution and strength", "signature_mechanic": "not read (tree block not counted)", "progression": "same experience table"},
+    {"class": "Orc Mystic", "classId": 49, "race": "orc", "role": "men", "signature_mechanic": "not read (tree block not counted)", "progression": "same experience table"},
+    {"class": "Dwarven Fighter", "classId": 53, "race": "dwarf", "role": "constitution; crafter flag set", "signature_mechanic": "not read (tree block not counted)", "progression": "same experience table"}
+  ],
+  "weapon_families": [
+    {"family": "dual", "records": 112, "note": "weapon kind in weapons.json"},
+    {"family": "blunt", "records": 92, "note": "weapon kind"},
+    {"family": "sword", "records": 67, "note": "weapon kind"},
+    {"family": "knife", "records": 45, "note": "weapon kind"},
+    {"family": "pole", "records": 33, "note": "weapon kind"},
+    {"family": "fist", "records": 29, "note": "weapon kind"},
+    {"family": "bow", "records": 26, "note": "weapon kind; holds the top physical attack values"},
+    {"family": "pet", "records": 19, "note": "weapon kind"},
+    {"family": "great sword", "records": 8, "note": "weapon kind"},
+    {"family": "misc", "records": 42, "note": "weapon kind (etc)"}
+  ],
+  "gear_tiers": [
+    {"tier": "none", "weapons": 125, "armour": 131, "note": "no rank letter"},
+    {"tier": "d", "weapons": 117, "armour": 103},
+    {"tier": "c", "weapons": 108, "armour": 103},
+    {"tier": "b", "weapons": 88, "armour": 255, "note": "armour b tops at 301 defence"},
+    {"tier": "a", "weapons": 27, "armour": 75, "note": "armour a tops at 293 defence"},
+    {"tier": "s", "weapons": 8, "armour": 17, "note": "armour s tops at 269 defence, below rank b"},
+    {"family": "armour kinds", "note": "wear 288, jewel 104, fabric 80, shield 72, chain 62, leather 59, pet 19"},
+    {"family": "weapon properties", "note": "soulshot grade 0 to 8 (most 1 to 3); spiritshot; mana field on 26 weapons; crystal field (meaning not verified)"}
+  ],
+  "zones": [
+    {"zone": "six hub clusters", "note": "spawn groups named by hub prefix (oren, gludio, aden, giran, rion, dion); siege groups per hub", "ref": "NodeL2-NodeL2/data/Npcs/Spawns/spawns.json"},
+    {"zone": "hub towns with field destinations", "note": "23 teleport destinations in five hub regions (talking island, elven, dark elven, orc, dwarven)", "ref": "NodeL2-NodeL2/data/Teleports/teleports.json"},
+    {"zone": "spider nest field", "note": "archetype only; teleport destination named in the file", "ref": "NodeL2-NodeL2/data/Teleports/teleports.json"},
+    {"zone": "frozen waterfall field", "note": "ice field archetype", "ref": "NodeL2-NodeL2/data/Teleports/teleports.json"},
+    {"zone": "mines and trial cave", "note": "cave and mine archetypes (coal and mithril mines; trial cave entrance)", "ref": "NodeL2-NodeL2/data/Teleports/teleports.json"},
+    {"zone": "depth-gated underwater tiles", "note": "23 map-tile conditions with a z threshold of -3790; 86-second breath bar", "ref": "NodeL2-NodeL2/src/GameServer/Actor/Generics/UnderwaterCheck.js"},
+    {"zone": "dungeon groups", "note": "groups with a dg prefix (154), probably dungeon spawns (inferred from prefix)", "ref": "NodeL2-NodeL2/data/Npcs/Spawns/spawns.json"}
+  ],
+  "looks": [
+    {"label": "Breath countdown bar", "technique": "a timed duration bar of 86 seconds that starts when the depth gate trips and clears on leaving", "ref": "NodeL2-NodeL2/src/GameServer/Actor/Generics/UnderwaterCheck.js:44"},
+    {"label": "Hit or miss flag", "technique": "one byte in the attack packet says hit or miss, so each outcome can play its own impact cue", "ref": "NodeL2-NodeL2/src/GameServer/Npc/Npc.js:134; NodeL2-NodeL2/src/GameServer/Actor/Attack.js:51"},
+    {"label": "Stand-up after revive", "technique": "a stand-up social action after a 2.5-second delay, so a death reads as a pause", "ref": "NodeL2-NodeL2/src/GameServer/Actor/Generics/Revive.js:9"},
+    {"label": "Corpse time", "technique": "a fixed corpse window (7,000 ms in the sampled records) before it clears", "ref": "NodeL2-NodeL2/data/Npcs/npcs.json vitals"},
+    {"label": "Skill wind-up per row", "technique": "hit time, reuse and buff time per active skill, so each attack has a visible beat", "ref": "NodeL2-NodeL2/data/Skills/Active/active.json"}
+  ],
+  "originals": [
+    {"name": "Scale tyrant", "idea": "a colossus whose footprint and charge are the fight, split into zones", "keep": "huge footprint; walk-then-charge contrast", "change": "silhouette, sound and arena layout"},
+    {"name": "Ring-reach colossus", "idea": "a boss that claims space with a wide ground ring and pillars", "keep": "wide reach as space control", "change": "ring plus pillars, not a single reach value"},
+    {"name": "Rank-ladder family", "idea": "one family of eight ranks that grows in size and gains one trait per rank", "keep": "rank names and collision-size steps", "change": "a trait per rank in place of stats alone"},
+    {"name": "Ranged rank pair", "idea": "a melee and an archer from one family with the same body band", "keep": "same HP band; ranged rank hits harder", "change": "silhouette and projectile"},
+    {"name": "Depth-gated drowning zone", "idea": "a depth gate that starts a breath bar and a shore refill", "keep": "depth gate and breath bar", "change": "bubbles instead of a bar; a shore refill point (fix the debug log first)"},
+    {"name": "Stand-up after defeat", "idea": "a short stand-up beat after a revive", "keep": "2.5-second beat", "change": "a short kneel instead of a stand"},
+    {"name": "Lettered pet variants", "idea": "a pet line with a family of role-named variants", "keep": "variant family per pet line", "change": "role names instead of letters"},
+    {"name": "Trial-cave gate", "idea": "a gated dungeon entered through an in-world puzzle", "keep": "gated dungeon archetype", "change": "puzzle gate instead of a plain lock"}
+  ],
+  "licence_note": "Code: Apache License 2.0 (LICENSE; README.md:47). Data under data/: no licence file or header; README.md:44 says half the datapack is unimplemented. Rights-holder status of the data: unknown; the README names the emulated game but not who owns its data.",
+  "not_read": [
+    "client half (not in box)",
+    "data/Skills/Passive, data/Skills/Switch and most of data/Skills/Tree (counted only)",
+    "data/Items beyond counts; data/Templates other than class templates, experience and spawns",
+    "data/Admin/Shop (one record); data/Html (11 files, not opened in this read)",
+    "src/AuthenticationServer; network layer; src/GameServer/Model; database/sql/database.sql",
+    "config/default.ini (credential-style settings; not recorded)",
+    "src/GameServer/Npc/Generics; boss brain (no brain beyond the combat loop read)",
+    "Sunset and Sunrise cycle timing (packet files listed only)",
+    "damage after the breath bar runs out (UnderwaterCheck.js beyond the bar)"
+  ]
+}

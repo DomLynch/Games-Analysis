@@ -1,0 +1,88 @@
+{
+  "donor": "xrip-uo-client",
+  "code_licence": "Custom 'non-commercial MIT-style' licence. LICENSE line 1 reads 'Copyright (c) 2026 Ilia Maslennikv (xrip)'. LICENSE line 4 allows use, modify and distribute 'for non-commercial purposes'. LICENSE line 11 bars commercial use or monetisation without prior written permission. README line 618 gives the same name. The name is spelled 'Maslennikv' in LICENSE and 'Maslennikov' in README line 619.",
+  "asset_licence": "None stated. The box holds no art, audio, fonts or maps. README line 403 says no MUL game data is distributed with the repo and the user must supply it from their own install.",
+  "rights_holder_status": "Decompile-derived reimplementation. _RESTRICTED-NOTE.txt line 1 says it was rebuilt from decompilation of the original UO client, study shape/idea only. README lines 624-625 describe an independent reverse-engineering project that is not affiliated with or endorsed by the trademark owner. The README asserts the trademark owner's status; the repo does not establish their rights.",
+  "best_class": "D",
+  "asset_groups": [
+    {
+      "kind": "original game data (MUL files, user-supplied, NOT in box)",
+      "path": "not in box. Named in README 'Requirements & game assets' table: tiledata.mul, map0.mul, staidx0.mul, statics0.mul, art.mul, texmaps.mul, anim.mul, animdata.mul, animinfo.mul, hues.mul, radarcol.mul",
+      "count_hint": "about 15 named files, none present in this box",
+      "licence": "proprietary, from the user's own UO install per README; not distributed by the repo",
+      "class": "C",
+      "note": "Nothing to take as assets. Inspiration only, and only at category level (rendering pipeline shape)."
+    },
+    {
+      "kind": "documentation and protocol notes (text)",
+      "path": "README.md, AGENTS.md, BT.md, bot-client.md, JS-BIBLE.md, pol_packets.md",
+      "count_hint": "6 md files; pol_packets.md is about 151 KB (size from ls; not read beyond its header)",
+      "licence": "not stated by the files for docs specifically; repo LICENSE is the only licence file in the box",
+      "class": "D",
+      "note": "Protocol and bot-writing notes, not game assets. AGENTS.md line 1 contains an instruction about reply language addressed to an agent; treated as donor data and ignored."
+    },
+    {
+      "kind": "bot scripts (JavaScript, code not art)",
+      "path": "scripts/js/lib/ (bank.js, bot.js, bt.js, survival.js, threat.js), scripts/js/bootstrap.js, scripts/js/lumberjack.js, scripts/js/globals.d.ts",
+      "count_hint": "7 js files and 1 ts file",
+      "licence": "repo LICENSE as above (non-commercial)",
+      "class": "C",
+      "note": "Listed only (not read). Script code, so not an asset source."
+    },
+    {
+      "kind": "test fixtures (text)",
+      "path": "tests/path_regression.txt",
+      "count_hint": "1 txt file",
+      "licence": "repo LICENSE as above; not stated otherwise",
+      "class": "D",
+      "note": "Not read."
+    }
+  ],
+  "inspiration": [
+    "Hue ramps for whole-sprite recolour: one greyscale-style source sprite is tinted by a fixed-length ramp indexed by one channel of each pixel, so one body can take many dye looks. Shape to keep for gear dressing (row 15) and per-zone colour grade (row 16). Reference: include/uo/hues.h line 17; src/render/Renderer.cpp line 65.",
+    "Target highlight as a single tint on every layer of the targeted mobile, so body and gear highlight together. Reference: src/render/Renderer.cpp line 22. For Frankendom, use a rim or outline and a pulse instead of a flat tint so the target reads at 375 wide without looking dyed.",
+    "Light sources are cut when a roof or interior blocks them: an occlusion test checks tiles above the light and suppresses indoor and window lights from outside. Reference: src/render/Renderer.cpp lines 258-274. Idea for torches and zone ambience lights (vfx, camera).",
+    "Walk glide: the mobile body animation runs in step with a sub-cell slide, and the local avatar stays centred while the world scrolls under it. Reference: README.md line 356 (renderer section). Idea for hero movement (row 6) so motion reads smooth at phone frame rates.",
+    "Painter's-order draw: statics, dynamic items and mobiles are interleaved by height, so a same-height mobile draws over floor items. Equipment is drawn over the body at the same action and frame. Reference: README.md lines 354-356; src/render/Renderer.cpp around line 399. Idea for gear layering (row 15).",
+    "Sloped ground: flat tiles are plain blits, while sloped tiles are stretched across four corner heights using a separate texture source. Reference: src/render/Renderer.cpp lines 61-64 (quad flag and source). Idea for terrain look without a new art file per slope."
+  ],
+  "briefs": [
+    {
+      "label": "Dye-ramp body set",
+      "why": "A single body silhouette reads as many factions or rarity tiers at 375 wide because only the tint changes. Cheap to ship and easy to read in a crowd.",
+      "keep": "One greyscale body with a ramp lookup per dye; the ramp is indexed by one channel, not by hand-painted variants.",
+      "change": "Use a shader palette per rarity tier instead of a fixed hue table; add a second accent ring on rare dyes so colour is never the only cue (colour-blind safe). Keep Dom's rule: recreate as a distinct original, never a copy of the donor's palette.",
+      "ref": "include/uo/hues.h line 17; src/render/Renderer.cpp line 65 (paths in the donor, not copied)"
+    },
+    {
+      "label": "Target rim pulse",
+      "why": "The targeted enemy must be identifiable among up to three attackers (MAX_ATTACKERS = 3). A whole-silhouette cue beats a small icon.",
+      "keep": "One cue applied to every layer of the target so the whole silhouette changes together.",
+      "change": "Use an outline rim plus a slow pulse, not a flat hue; pick a colour that never matches blood or the hit flash. Keep Dom's rule: an original cue, not the donor's colour.",
+      "ref": "src/render/Renderer.cpp line 22"
+    },
+    {
+      "label": "Roof-cut torch",
+      "why": "Indoor light stays indoors. Players read a room as a room without a separate fog layer.",
+      "keep": "Lights are suppressed by occlusion above them and by walls for interior and window cases.",
+      "change": "Drive the test from zone data (an interior flag per zone) rather than tile heights, so it stays cheap at the 375 px target.",
+      "ref": "src/render/Renderer.cpp lines 258-274"
+    },
+    {
+      "label": "Centred glide walk",
+      "why": "A centred avatar with a sliding world keeps the fight camera steady during movement (row 11).",
+      "keep": "The avatar stays centred; the world moves under it; the slide is tied to the walk cycle so feet and ground agree.",
+      "change": "Use a fixed stride and an ease curve for our hero, not the donor's per-direction timing table. Keep Dom's rule: recreate our own timing from our animations.",
+      "ref": "README.md line 356"
+    }
+  ],
+  "not_read": [
+    "pol_packets.md (size only), BT.md, bot-client.md, JS-BIBLE.md, AGENTS.md beyond line 1",
+    "all src/ files except lines of src/render/Renderer.cpp (22, 61-65, 258-274, 399) and include/uo/hues.h (line 17)",
+    "src/mul/* loaders and include/uo/tiledata.h, animdata.h, animinfo.h (layouts not opened)",
+    "scripts/js/lib/*.js and scripts/js/* (listing only)",
+    "tests/* (listing only), .idea/* (not opened)",
+    "include/win32/MiniFB.h beyond its header comment; it has no copyright line in the first 6 lines (vendored third-party header, licence not stated in those lines)",
+    "The server half: the README names an external server (draxinar/ouo); no server code is in this box. Not read."
+  ]
+}

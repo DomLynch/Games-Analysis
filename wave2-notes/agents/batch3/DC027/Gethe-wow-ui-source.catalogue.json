@@ -1,0 +1,116 @@
+{
+  "donor": "Gethe-wow-ui-source",
+  "catalogue_id": "DC027",
+  "restricted": true,
+  "half_read": "client UI half only (Interface/AddOns Lua, XML, TOC, UI.xsd, four talent-node PNG masks by name and header); game data pack and game server not in box (per AU023)",
+  "counts": {
+    "creatures": null,
+    "classes": null,
+    "weapons": null,
+    "gear_sets": null,
+    "zones": null
+  },
+  "count_notes": {
+    "creatures": "null: no creature data in this box",
+    "classes": "null: no class data; class UI folders named only",
+    "weapons": "null: no item data in this box",
+    "gear_sets": "null: no item data in this box",
+    "zones": "null: no zone data; map overlay code named only",
+    "ui_addon_folders": 348,
+    "talent_node_masks": 4
+  },
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [
+    "UI folders named only: Blizzard_ClassMenu, Blizzard_ClassTrial, Blizzard_ClassTrialSecure, Blizzard_AlliedRacesUI",
+    "Class colour applied to target names in boss warnings (Blizzard_EncounterWarnings/EncounterWarnings.lua around line 56)",
+    "Progression UI: Blizzard_TalentUI and Blizzard_SharedTalentUI; tree data not read"
+  ],
+  "weapon_families": [],
+  "gear_tiers": [
+    "None in box as data. Azerite and artifact UI folders named only (Blizzard_AzeriteUI, Blizzard_ArtifactUI, Blizzard_AzeriteEssenceUI, Blizzard_AzeriteRespecUI); not read",
+    "Talent-node masks: four faceted shapes (diamond, hexagon, octagon, half-octagon) at two sizes (Blizzard_SharedTalentUI, PNG files named and header-read)"
+  ],
+  "zones": [
+    "None in box as data",
+    "World map event overlay as a separate data provider (Blizzard_WorldMap/WM_EventOverlayDataProvider.lua; named, read by AU023)",
+    "Tutorial callouts with distance bands in one data table (Blizzard_BoostTutorial; named, read by AU023)",
+    "Flight map and adventure map folders named only"
+  ],
+  "looks": [
+    {
+      "label": "Faceted ability-tier nodes",
+      "technique": "Four faceted node masks at two sizes; the silhouette carries the tier",
+      "ref": "Blizzard_SharedTalentUI/talents-diamond-mask.png, talents-hexagon-mask.png, talents-octagon-mask.png, talents-octagon-mask-half.png"
+    },
+    {
+      "label": "Encounter timeline track view",
+      "technique": "Short, medium and long tracks; highlight time; queued-track dividers; intro and outro animation times (values not copied)",
+      "ref": "Blizzard_EncounterTimeline/EncounterTimelineTrackView.lua line 63 and line 80; EncounterTimelineConstants.lua"
+    },
+    {
+      "label": "Death recap icons by flag",
+      "technique": "Each recap entry carries caused-death, avoidable and deadly flags, each shown by its own icon",
+      "ref": "Blizzard_DeathRecap/Blizzard_DeathRecap.lua lines 11-19 and 220-222"
+    },
+    {
+      "label": "Combat text",
+      "technique": "Floating combat text in a shared module with mainline overrides (not read in detail)",
+      "ref": "Blizzard_CombatText/Shared/CombatText.lua; Blizzard_CombatText/Mainline/"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Faceted ability-tier nodes",
+      "idea": "Node shapes whose silhouette carries the ability tier, readable at 375 px (Frankendom HUD, row 14)",
+      "keep": "Faceted shapes that encode tier; two size steps",
+      "change": "Our own shapes and palette"
+    },
+    {
+      "name": "Boss warning card gated by combat",
+      "idea": "A warning shows only when it applies (severity match, user off-switch, combat-gated visibility) and clears on the boss's own clear event (Frankendom boss telegraph, rows 13 and 14). Ref: Blizzard_EncounterWarnings/EncounterWarnings.lua lines 10-11, 27-37, 38-66, 68-70",
+      "keep": "Severity match, user off-switch, combat-gated visibility, clear on the boss event",
+      "change": "Our card look and wording"
+    },
+    {
+      "name": "Death recap with avoidable and deadly labels",
+      "idea": "Each hit in the death recap is flagged avoidable or deadly, with its own icon, so a loss is readable (Frankendom death and respawn, row 17). Ref: Blizzard_DeathRecap/Blizzard_DeathRecap.lua lines 11-19, 220-222",
+      "keep": "Per-hit flags and one icon per flag",
+      "change": "Our recap format and icons"
+    },
+    {
+      "name": "Encounter timeline bands",
+      "idea": "Upcoming boss events in short, medium and long bands with a highlight line (Frankendom boss intro and finisher staging, rows 9 and 13). Ref: Blizzard_EncounterTimeline/EncounterTimelineTrackView.lua line 63, line 80; EncounterTimelineConstants.lua",
+      "keep": "Three bands and a highlight line",
+      "change": "Our bands and track shapes"
+    },
+    {
+      "name": "Per-category throttled combat audio",
+      "idea": "Combat audio alerts throttled per category (health, casts, resource), events registered only when a category is on, timers cancelled on refresh, voice per category (Frankendom sound layering and stingers). Ref: Blizzard_CombatAudioAlerts/Blizzard_CombatAudioAlertManager.lua lines 130-168, 169-210, 272",
+      "keep": "Per-category throttle; register events only when needed; cancel timers on refresh",
+      "change": "Our voices and cues"
+    },
+    {
+      "name": "Text-size floor",
+      "idea": "UI text scale with a minimum floor and font rebuild on change (Frankendom accessibility, hud-ui fold-in). Ref: Blizzard_AccessibilityTemplates/TextSizeManager.lua lines 52-80",
+      "keep": "A minimum scale and a font rebuild on change",
+      "change": "Our UI sizes"
+    },
+    {
+      "name": "Layered map overlay provider",
+      "idea": "An event layer on the base map as its own data provider (Frankendom zone map UI; no parity row, for Lead to place). Ref: Blizzard_WorldMap/WM_EventOverlayDataProvider.lua (named, read by AU023)",
+      "keep": "Overlay as its own provider",
+      "change": "Our zone heat or tint"
+    }
+  ],
+  "licence_note": "Restricted. Blizzard proprietary WoW UI code, no licence (_RESTRICTED-NOTE.txt line 1: study shape and idea only; never copy code, constants or text). The third-party middleclass library carries permission-notice wording and is outside the restriction. No LICENSE file in the tree. Audit class C; restricted, so category-level only.",
+  "not_read": [
+    "Localization.lua files (names only)",
+    "Most of the 348 AddOns folders (listed only)",
+    "Blizzard_APIDocumentationGenerated (names only)",
+    "Pixel content of the four PNG masks (header only, via AU023)",
+    "Game client data pack and game server (not in box)",
+    "Combat text, damage meter, nameplates and chat bubble internals (named only)",
+    "Idle and ambient animation vocabulary, max enemies per frame (no creature assets or counts in UI code)"
+  ]
+}

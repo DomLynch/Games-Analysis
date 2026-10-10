@@ -1,0 +1,94 @@
+{
+  "donor": "gtker-wow_messages",
+  "counts": {
+    "creatures": 40,
+    "classes": 10,
+    "weapons": 21,
+    "gear_sets": 509,
+    "zones": 135
+  },
+  "half_read": "data pack only: wowm definitions (enum blocks and a few header lines). Code halves examples/vanilla_client, vanilla_server, tbc_server, wrath_server present in the box, names only, not read. No DBC/CSV/SQL game tables in the box.",
+  "creature_families": [
+    {"group": "four-legged runners and brutes", "members_count": 13, "ref": "wow_message_parser/wowm/world/pet/pet_common.wowm:86-129"},
+    {"group": "arthropods, crawlers and serpents", "members_count": 9, "ref": "wow_message_parser/wowm/world/pet/pet_common.wowm:86-129"},
+    {"group": "fliers and gliders", "members_count": 9, "ref": "wow_message_parser/wowm/world/pet/pet_common.wowm:86-129"},
+    {"group": "demon and void summons", "members_count": 7, "ref": "wow_message_parser/wowm/world/pet/pet_common.wowm:86-129"},
+    {"group": "undead and constructs", "members_count": 2, "ref": "wow_message_parser/wowm/world/pet/pet_common.wowm:86-129"}
+  ],
+  "top_creatures": [
+    {"label": "Hive crawler", "why": "swarm insect suits many small units", "keep": "ground-hugging crawl and swarm count", "change": "own shell, legs, no hive lore", "ref": "wow_message_parser/wowm/world/pet/pet_common.wowm:122 (SILITHID)"},
+    {"label": "Ray glider", "why": "flat low silhouette should read at 375 px (not checked)", "keep": "low gliding pass over ground", "change": "own fins, colours, path", "ref": "wow_message_parser/wowm/world/pet/pet_common.wowm:116 (NETHER_RAY)"},
+    {"label": "Spore drifter", "why": "floating support creature", "keep": "slow drift and puff effects", "change": "own spore look", "ref": "wow_message_parser/wowm/world/pet/pet_common.wowm:115 (SPOREBAT)"},
+    {"label": "Multi-head beast", "why": "multi-part silhouette", "keep": "several heads on a wide body", "change": "own head count and shapes", "ref": "wow_message_parser/wowm/world/pet/pet_common.wowm:119 (CHIMAERA)"},
+    {"label": "Burrowing worm", "why": "ambush from the ground", "keep": "emerge-from-ground ambush", "change": "own emerge animation and sound", "ref": "wow_message_parser/wowm/world/pet/pet_common.wowm:123 (WORM)"},
+    {"label": "Tethered construct", "why": "player-controlled construct, so stance rules apply", "keep": "controllable construct with stance", "change": "own look and controls", "ref": "wow_message_parser/wowm/world/pet/pet_common.wowm:110 (REMOTE_CONTROL)"},
+    {"label": "Corpse shambler", "why": "slow undead family for a grind feel", "keep": "slow shamble", "change": "no shared look", "ref": "wow_message_parser/wowm/world/pet/pet_common.wowm:121 (GHOUL)"},
+    {"label": "Winged drake-hawk", "why": "flyer with mount-like silhouette", "keep": "fast aerial pass", "change": "own design entirely", "ref": "wow_message_parser/wowm/world/pet/pet_common.wowm:112 (DRAGONHAWK)"}
+  ],
+  "classes": [
+    {"name": "warrior", "kind": "class", "role": "not in box", "signature": "not in box", "progression": "talent ids (Talent enum, 3 version blocks)", "ref": "wow_message_parser/wowm/world/enums/class.wowm:16-30"},
+    {"name": "paladin", "kind": "class", "role": "not in box", "signature": "not in box", "progression": "talent ids", "ref": "wow_message_parser/wowm/world/enums/class.wowm:16-30"},
+    {"name": "hunter", "kind": "class", "role": "not in box", "signature": "not in box", "progression": "talent ids", "ref": "wow_message_parser/wowm/world/enums/class.wowm:16-30"},
+    {"name": "rogue", "kind": "class", "role": "not in box", "signature": "not in box", "progression": "talent ids", "ref": "wow_message_parser/wowm/world/enums/class.wowm:16-30"},
+    {"name": "priest", "kind": "class", "role": "not in box", "signature": "not in box", "progression": "talent ids", "ref": "wow_message_parser/wowm/world/enums/class.wowm:16-30"},
+    {"name": "death knight", "kind": "class", "role": "not in box", "signature": "not in box", "progression": "talent ids; added in latest block", "ref": "wow_message_parser/wowm/world/enums/class.wowm:22"},
+    {"name": "shaman", "kind": "class", "role": "not in box", "signature": "not in box", "progression": "talent ids", "ref": "wow_message_parser/wowm/world/enums/class.wowm:16-30"},
+    {"name": "mage", "kind": "class", "role": "not in box", "signature": "not in box", "progression": "talent ids", "ref": "wow_message_parser/wowm/world/enums/class.wowm:16-30"},
+    {"name": "warlock", "kind": "class", "role": "not in box", "signature": "not in box", "progression": "talent ids", "ref": "wow_message_parser/wowm/world/enums/class.wowm:16-30"},
+    {"name": "druid", "kind": "class", "role": "not in box", "signature": "not in box", "progression": "talent ids", "ref": "wow_message_parser/wowm/world/enums/class.wowm:16-30"},
+    {"name": "race list (21 values, latest block)", "kind": "race", "role": "not in box", "signature": "not in box", "progression": "none", "ref": "wow_message_parser/wowm/world/enums/race.wowm:54-75"}
+  ],
+  "weapon_families": [
+    {"family": "one-handed melee", "members": "axe, mace, sword, dagger, fist, exotic, miscellaneous", "special": "no element or proc in weapon enum", "tiers": "none in weapon enum; item quality applies", "ref": "wow_message_parser/wowm/world/enums/item_class_and_sub_class.wowm:197-320"},
+    {"family": "two-handed melee", "members": "axe, mace, sword, polearm, staff, exotic", "special": "as above", "tiers": "as above", "ref": "wow_message_parser/wowm/world/enums/item_class_and_sub_class.wowm:197-320"},
+    {"family": "ranged and thrown", "members": "bow, gun, crossbow, wand, thrown, spear", "special": "SpellSchool enum (7): normal, holy, fire, nature, frost, shadow, arcane", "tiers": "as above", "ref": "wow_message_parser/wowm/world/spell/spell_common.wowm:35"},
+    {"family": "tool-weapon", "members": "fishing pole (one obsolete value in the family list)", "special": "none", "tiers": "as above", "ref": "wow_message_parser/wowm/world/enums/item_class_and_sub_class.wowm:236"}
+  ],
+  "gear_tiers": [
+    {"tier": "quality tiers (8)", "values": "poor, normal, uncommon, rare, epic, legendary, artifact, heirloom", "colour": "not in box (client-side, not read)", "ref": "wow_message_parser/wowm/world/social/social_common_3_3_5.wowm:491"},
+    {"tier": "armour subclasses (11)", "values": "misc, cloth, leather, mail, plate, buckler (obsolete), shield, libram, idol, totem, sigil", "colour": "n/a", "ref": "wow_message_parser/wowm/world/enums/item_class_and_sub_class.wowm:246-256"},
+    {"tier": "item sets", "values": "172 named (1.12), 373 (2.4.3), 509 (3.3.5)", "colour": "n/a", "ref": "wow_message_parser/wowm/world/item/item_sets.wowm:1, 350, 1102"},
+    {"tier": "bind rules (6)", "values": "no bind, pick up, equip, use, quest (two values)", "colour": "n/a", "ref": "wow_message_parser/wowm/world/enums/bonding.wowm:1-19"},
+    {"tier": "inventory slots (29)", "values": "non-equip to relic", "colour": "n/a", "ref": "wow_message_parser/wowm/world/enums/inventory_type.wowm:3"}
+  ],
+  "zones": [
+    {"name": "world zone", "kind": "instance type", "traits": "default open world", "ref": "wow_message_parser/wowm/world/external/instance_type.wowm:7"},
+    {"name": "raid instance", "kind": "instance type", "traits": "large group encounter zone", "ref": "wow_message_parser/wowm/world/external/instance_type.wowm:5"},
+    {"name": "group instance (5-player)", "kind": "instance type", "traits": "small group dungeon", "ref": "wow_message_parser/wowm/world/external/instance_type.wowm:4"},
+    {"name": "battleground and arena types (8)", "kind": "battlefield type", "traits": "bounded PvP zones, arenas included", "ref": "wow_message_parser/wowm/world/battleground/smsg_battlefield_list.wowm:28"},
+    {"name": "sub-zone areas (about 2307)", "kind": "area", "traits": "granularity for ambience and music", "ref": "wow_message_parser/wowm/world/enums/area.wowm:8187"},
+    {"name": "weather (4 kinds)", "kind": "weather", "traits": "fine, rain, snow, storm", "ref": "wow_message_parser/wowm/world/world/smsg_weather.wowm:1"}
+  ],
+  "looks": [
+    {"label": "sheath sockets (8 slots)", "technique": "named socket per slot; weapon moves to socket on sheathe", "ref": "wow_message_parser/wowm/world/queries/smsg_item_query_single_response.wowm:1-10"},
+    {"label": "material sheath sounds (3 families)", "technique": "shield, metal weapon, wood weapon cue on sheath", "ref": "wow_message_parser/wowm/world/external/item_env_types.wowm:2-6"},
+    {"label": "aura state looks", "technique": "shapeshift, transform, scale, feign death: swap model or scale mesh while active", "ref": "wow_message_parser/wowm/world/spell/smsg_periodicauralog.wowm:70, 92, 97, 102"},
+    {"label": "hit result labels", "technique": "one popup label per result class (critical, glancing, crushing, absorb, resist, miss)", "ref": "wow_message_parser/wowm/world/combat/smsg_attackerstateupdate.wowm:1-21"},
+    {"label": "emote one-shot vs state loop", "technique": "one-shot plays and returns; state loops until cancelled (175 values in 3.3.5 block, 101 one-shot, 73 state by prefix)", "ref": "wow_message_parser/wowm/world/social/social_common_3_3_5.wowm:3"},
+    {"label": "sit and stand with chair heights", "technique": "seat-height offsets per chair class (10 states)", "ref": "wow_message_parser/wowm/world/social/social_common.wowm:453-460"},
+    {"label": "monster facing states", "technique": "turn-to-face states: spot, target, angle", "ref": "wow_message_parser/wowm/world/movement/smsg/smsg_monster_move.wowm:1-9"},
+    {"label": "loot roll ceremony", "technique": "one roll screen per group loot mode (5 modes)", "ref": "wow_message_parser/wowm/world/social/social_common.wowm:1-7"},
+    {"label": "sound category buses", "technique": "separate bus per category (26 values), zone music and zone ambience layered", "ref": "wow_message_parser/wowm/world/external/sound_type.wowm:2-28"}
+  ],
+  "originals": [
+    {"name": "Sheath socket rig", "idea": "weapons ride on named hip, back, off-hand and shield sockets when not in use", "keep": "one named socket per sheath slot; weapon moves on sheathe", "change": "our socket names, positions, fight-ready swap rule"},
+    {"name": "Material sheath clicks", "idea": "sheathing plays a cue set by the material of the item", "keep": "three material families (shield, metal, wood)", "change": "our cue sounds and count"},
+    {"name": "Summon stance panel", "idea": "summons take a small stance and a command", "keep": "passive, defensive, aggressive, plus stay, follow, attack", "change": "our names and a two-button layout for 375 px"},
+    {"name": "Idle emote library with loop split", "idea": "idle set split into one-shot and looping states", "keep": "one-shot versus looping state", "change": "our own 20-30 animations"},
+    {"name": "Bounded arena zone", "idea": "a small bounded zone type with its own rules, as zone data", "keep": "bounded arena type", "change": "our arena shape and rules; suits duels and many-on-one"},
+    {"name": "Loot mode picker", "idea": "group loot mode chosen per party", "keep": "need-before-greed, round robin, master loot", "change": "our labels and roll screen"},
+    {"name": "Hit result labels", "idea": "each hit outcome gets its own popup label", "keep": "critical, glancing, crushing, absorb, resist, miss as separate labels", "change": "our palette and wording"},
+    {"name": "Shapeshift status", "idea": "a timed status that swaps the model or scales it", "keep": "scale or shape swap as status", "change": "our effect and timing"}
+  ],
+  "licence_note": "Code: 'Licensed under either of' Apache-2.0 or MIT, at your option (README.md line 48); Cargo.toml line 14 'MIT OR Apache-2.0'. Protocol definitions describe a commercial game; rights-holder not stated in repo. Use shape and naming only; recreate as distinct originals.",
+  "not_read": [
+    "examples/vanilla_client, vanilla_server, tbc_server, wrath_server (code halves; names only)",
+    "wow_world_messages and wow_login_messages generated crates",
+    "ember_output/*.json",
+    "intermediate_representation.json (AU024: head only)",
+    "wowm_language docs",
+    "message bodies (only enum blocks and header lines read)",
+    "Skill, Faction and Area counts from awk block counts, not checked one by one",
+    "no visual data in box: silhouette, sound and behaviour not checked"
+  ]
+}

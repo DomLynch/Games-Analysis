@@ -1,0 +1,93 @@
+{
+  "donor": "MrAntares-roBrowserLegacy",
+  "counts": {"creatures": 2445, "classes": 79, "weapons": 23, "gear_sets": 0, "zones": 4},
+  "counts_note": "creatures = name entries in src/DB/Monsters/MonsterNameTable.js (grep); classes = class skill-tree views in src/DB/Skills/SkillTreeView.js (79); weapons = base weapon types in src/DB/Items/WeaponType.js (plus 6 dual-hand combinations); gear_sets = 0 because the client has no set table (view-id families only: 2402 hats, 204 robes, 4 shields); zones = world regions in src/DB/Map/WorldMap.js (202 map entries, 1105 display-named maps in MapTable.js).",
+  "which_half_read": "client and data tables (src/DB, src/Renderer/Effects, src/Audio, src/UI/Components/Enchant, src/Engine/MapEngine excerpts). Server half (rAthena) not in the box: rathena/ holds a placeholder file and tools/ only.",
+  "creature_families": [
+    "Variant triplet per base creature: fast, solid and leader roles (ids about 2603-2820; MonsterNameTable.js lines 1488-1490)",
+    "Reincarnating boss with escort court and element reincarnations (ids 1916-1925, 2998-3008, 3039-3041)",
+    "Gilt-carapace beetle family with horn variants, queen and eggs (ids 2161-2173; line 1116)",
+    "Water reskin family of twelve zone variants (ids 2174-2185; lines 1129-1140)",
+    "Four-minion court with a phantom (ids 1704-1712; lines 684-688)",
+    "Elder tier of ordinary creatures (ids 1297, 1305, 1699, 2019, 3193, 3196)",
+    "Nightmare-mode versions (for example ids 1061, 1379, 2353-2362, 2477-2485)",
+    "Race and size training dummies (ids 21064-21076; lines 2424-2436)",
+    "Juvenile baby forms and seasonal reskins"
+  ],
+  "top_creatures": [
+    {"label": "Gilt-horned beetle family", "why": "horn shape alone tells the variants apart; a queen and eggs give a nest feeling", "keep": "horn-variant silhouettes; queen plus egg stage", "change": "gold reads from a rim-light shader on a steel-blue carapace, not a recolour; new horn shapes", "ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/DB/Monsters/MonsterNameTable.js ids 2161-2173 (line 1116)"},
+    {"label": "Reincarnating boss", "why": "a boss that changes element and splits its court is a fight inside a fight", "keep": "named forms as separate monsters; escort court", "change": "forms triggered by health bands; one silhouette and one sound per form", "ref": "MonsterNameTable.js lines 896, 898, 902, 1882"},
+    {"label": "Pack-leader triplet", "why": "one base creature gives three roles, so pack variety costs little art", "keep": "fast, solid and leader roles", "change": "role cues are a banner, a horn or an aura, not names", "ref": "MonsterNameTable.js lines 1488-1490 and 1702"},
+    {"label": "Tidewater reskin family", "why": "a zone identity from a palette family of twelve", "keep": "one palette family per zone", "change": "each reskin gets one new behaviour, for example surfacing", "ref": "MonsterNameTable.js lines 1129-1140"},
+    {"label": "Four-minion court", "why": "four distinct minions plus a phantom give a readable pack around one boss", "keep": "four minions and one phantom", "change": "each minion has its own silhouette, not four palette swaps", "ref": "MonsterNameTable.js lines 684 and 688"},
+    {"label": "Elder tier", "why": "an age mark on a known creature reads as a tier without a new name", "keep": "the elder tag as a visual tier with extra ornament", "change": "age marks are our own motif", "ref": "MonsterNameTable.js lines 282 and 679"},
+    {"label": "Race and size training dummies", "why": "the race and size tags are a ready test set", "keep": "the 13 tags as training targets", "change": "labelled targets in our Pit with a readout of the active damage modifier", "ref": "MonsterNameTable.js lines 2424, 2435, 2436; tags in ItemRandomOptionTable.js file lines 98-117 and 168-173"},
+    {"label": "Seasonal reskin set", "why": "a holiday palette over the same silhouette is a cheap event", "keep": "silhouette unchanged; palette and one prop", "change": "our event gives one new silhouette per event", "ref": "MonsterNameTable.js line 231"}
+  ],
+  "classes": [
+    "Novice tier (id 0; JobPropertyTable.js line 60)",
+    "First class: about 25 entries (flag isFirstClass)",
+    "Second class: about 58 entries, each with a first-class base argument (line 68 example)",
+    "Rebirth (high) variants: about 39 entries (flag isRebirth; lines 30, 49, 95)",
+    "Third class: about 61 entries (flag isThirdClass; line 154 example with three bases); fourth class: about 15 (isFourthClass)",
+    "Baby variants with suffix _B (isBaby; line 119 example)",
+    "Mount forms: 27 base-to-mount pairs (MountTable.js line 17); mount look not described in this file"
+  ],
+  "weapon_families": [
+    "Short blade, sword, two-hand sword, spear, two-hand spear, axe, two-hand axe, mace, two-hand mace, rod, two-hand rod, bow, knuckle, instrument, whip, book, katar",
+    "Gun family: hand, rifle, gatling, shotgun, grenade (WeaponType.js lines 29-33)",
+    "Dual-hand combinations: six types (WeaponType.js line 40 and neighbours)",
+    "Sub-types: 72 named sub-types mapped to base types (WeaponTypeExpansion.js)"
+  ],
+  "gear_tiers": [
+    "No material tiers in client data; gear shown by view-id families (hats 2402, robes 204, shields 4)",
+    "Armour element tags: ten elements (ItemRandomOptionTable.js ids 76-85, file lines 87-96)",
+    "Race tags: defence and attack per race, ten races (ids 87-106, file lines 98-117)",
+    "Size tags: small, medium, large (ids 157-162, file lines 168-173)",
+    "Weapon element tags (ids 175-184, file lines 186-195); unique behaviour labels such as indestructible in battle (ids 185-186)",
+    "Enchant ceremony with three colour sets: enchant, upgrade, reset (Enchant.js lines 90-105, overlay line 108)"
+  ],
+  "zones": [
+    "Map types and flags: village, field, dungeon, arena, PK and PvP zones, guild war, agit, siege, turbo track, jail, monster track, battlefield (MapState.js; flag block lines 51-62)",
+    "Four world regions: home continent, eastern kingdoms, far lands, new world (WorldMap.js region comments lines 6, 1659, 1752, 1885)",
+    "Background classes: dungeon-style 360, field-style 229, village-style 67, siege 60 (MapTable.js grep counts)",
+    "Hazards and presets: PK warning (MapState.js line 18), lock-on disabled flag (line 56), weather presets rain, snow, sakura, cloud (src/Engine/MapEngine/Skill.js lines 41-45 and 93-117)"
+  ],
+  "looks": [
+    {"label": "Banded aura ring", "technique": "three bands, each with radius, tilt, sweep and spin; per-element height from a sine profile; spin from elapsed time over 25 ms", "ref": "src/Renderer/Effects/SwirlingAura.js lines 80-92 and 259-260; src/Renderer/Effects/SwirlingAura.fs; src/DB/Effects/EffectTable.js lines 4295-4299"},
+    {"label": "Level-tier sparkle bubble", "technique": "separate effect id that spawns camera-facing sparkles on the owner", "ref": "src/DB/Effects/EffectTable.js line 4334; src/Renderer/Effects/Level99Bubble.js"},
+    {"label": "Threshold-keyed glow ring", "technique": "keeps only bright texels (each channel above 0.5) and sets a fixed alpha; hard edge", "ref": "src/Renderer/Effects/MagicRing.fs lines 22-25; MagnumBreak.fs; PropertyGround.fs"},
+    {"label": "Ground aura", "technique": "alpha test then colour multiply", "ref": "src/Renderer/Effects/GroundAura.fs line 17"},
+    {"label": "Soft-knee bloom", "technique": "bright-pass threshold 0.88 with soft knee 0.45 before composite", "ref": "src/Renderer/Effects/Shaders/Bloom.js lines 60-61"},
+    {"label": "Cartoon edge pass", "technique": "edge from two colour differences, then a power curve and a power factor", "ref": "src/Renderer/Effects/Shaders/GLSL/Cartoon.fs line 23"},
+    {"label": "MVP minimap cross", "technique": "boss flag from packet marks the mob; MVP spawn puts a cross on the minimap", "ref": "src/Engine/MapEngine/Entity.js lines 248, 2657-2661"}
+  ],
+  "originals": [
+    {"name": "Gilt Carapace", "idea": "three-stage beetle family: horn-variant line, queen and eggs; gold reads as rim light", "keep": "horn-variant silhouettes; queen plus egg stage", "change": "our own horn shapes; steel-blue carapace; shader gold"},
+    {"name": "Shifting Warden", "idea": "boss sheds element forms at health bands and leaves an escort court", "keep": "forms as separate monsters; court", "change": "forms by health band; one silhouette and one sound per form"},
+    {"name": "Lead-Pack Triplet", "idea": "each base creature has a fast role, a solid role and a leader role", "keep": "the three roles", "change": "role cues are banner, horn or aura"},
+    {"name": "Tide Reskin Set", "idea": "a palette family for a water zone, each variant with one new behaviour", "keep": "one palette family per zone", "change": "each variant gets one new behaviour"},
+    {"name": "Race-Tagged Dummies", "idea": "labelled Pit training targets for each race and size tag with a live readout", "keep": "the 13 tags as the test set", "change": "readout of the active modifier; our own tag names"},
+    {"name": "Three-Colour Enchant Ceremony", "idea": "yellow enchant, blue upgrade, green reset, each with intro, result and a dimmed overlay", "keep": "colour-coded result sets and the intro-result rhythm", "change": "our palette and cue"},
+    {"name": "Three-Band Rank Halo", "idea": "three bands that spin and rise and fall with a sine profile, one set per rank tier", "keep": "banded ring with spin; time-based spin", "change": "our rank colours and band count"},
+    {"name": "Threshold Glow Ring", "idea": "a bright-only ring with a soft alpha ramp instead of a hard cut", "keep": "keyed bright ring", "change": "smoothstep edge; our ring shape"}
+  ],
+  "licence_note": "GPL-3.0 code (LICENSE line 1 GNU GENERAL PUBLIC LICENSE; package.json states GNU GPL V3). No asset licence in the repo; game art and data are user-supplied and not in the box. docs/CONTRIBUTING.md line 14: Do not bring copyrighted material into the project. src/DB game-derived tables: class C, category-level inspiration only.",
+  "defects": [
+    "Entity.js line 647 changes the received packet field in place (keep the bow lead idea; fix: separate lead value)",
+    "Entity.js line 638 leaves the motion factor at 1 with an open question; fix: name and derive the factor",
+    "Entity.js lines 641 and 646 use literal constants 24.0 and 8; fix: named constants with units",
+    "Fog depth in SwirlingAura.fs line 30, MagicRing.fs line 29 and Level99Bubble.fs is window depth times clip w, not view distance; fix: pass view distance (read from code, not run)",
+    "MagicRing.fs line 22 hard threshold gives aliased edges; fix: smoothstep alpha ramp",
+    "BGM.js lines 93-150 hard-switch tracks with no fade; keep the stale-load token and resume position; fix: short crossfade",
+    "EffectTable.js line 4299 comment says per frame; SwirlingAura.js uses elapsed time over 25 ms (comment only)"
+  ],
+  "not_read": [
+    "server half (rAthena) not in the box",
+    "Entity.js outside lines 248-249, 629-657, 2650-2690; the rest of src/Engine/MapEngine",
+    "WeaponAction.js, per-skill scripts, SkillInfo.js bodies beyond sample records, EffectTable.js beyond level-99 blocks",
+    "all binary and image files; 5 JSON and 5 TXT files; MobileUI text; PalNameTable.js; hat, robe and shield tables beyond counts",
+    "Bloom, Cartoon, CAS, FXAA, Vibrance GLSL bodies beyond the lines cited; Blind.js, GaussianBlur.js, Upsampling.js",
+    "death and respawn; boss intro and finisher staging; idle animation; readability at 375 wide; touch UX; lock-on forgiveness; drop ceremony; walk density; SoundManager.js in full"
+  ]
+}

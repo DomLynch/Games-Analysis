@@ -1,0 +1,114 @@
+{
+  "donor": "xu4-engine-u4",
+  "code_licence": "GNU GPL version 3. COPYING line 2 reads 'Version 3, 29 June 2007'. Project is an engine; the game content comes from the Ultima IV data pack.",
+  "asset_licence": "Mixed and mostly not stated. module/Ultima-IV/Credits line 1 says 'Some assets utilize copyrighted material, the use of which is hereby acknowledged.' Music (music/minstrel) is credited to Markus Brenner (MIDI, 1998) with no licence line. One sound (sound/stone_falling.ogg) is credited to freesound user bolkmar as CC BY 3.0. The U4-Upgrade art (image/vutne) is credited to Vanja Utne (KOA files, 2015) with no licence line. Ultima IV original data (shapes, text, maps) is not in the repo: README line 77 says a DOS copy must be present, and line 78 calls the original 'closed-source freeware'.",
+  "rights_holder_status": "Fan engine project. Original game data is not in the repo and must come from a user's copy of the original (proprietary per README lines 77-78). Asset credits name individual rights holders for music and art; the repo does not say whether the ega/ and vga/ images are original-derived conversions or new work (not stated).",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "game data tables (Boron-style config and maps, text)",
+      "path": "module/Ultima-IV/config.b (creatures table line 48; tile-rules line 132; ega-palette line 442; music line 461; sound line 474), module/Ultima-IV/maps.b, module/Ultima-IV/vendors.b, module/Ultima-IV/graphics.b, module/U4-Upgrade/*.b",
+      "count_hint": "about 35 creature rows in config.b; 9 .b files across the two modules",
+      "licence": "not stated by the file. Derived from the original game's data layout per README.",
+      "class": "C",
+      "note": "DATA FIRST: creatures, armours, weapons, tile rules, and a 16-entry palette table are here. Names and numbers are the original game's; use the rules shape only, never the values."
+    },
+    {
+      "kind": "tile sheets and UI art (PNG, Ultima IV EGA)",
+      "path": "module/Ultima-IV/image/ega/ (35 PNG, e.g. dung0ma.png, dungeonhall.png, ladderdown0.png, traps.png, hud.png)",
+      "count_hint": "35 PNG",
+      "licence": "not stated in module/Ultima-IV/Credits; Credits covers music and one sound only",
+      "class": "C",
+      "note": "Not opened (binary). Looked at by name only. Dungeon walls and doors come in level-indexed sets."
+    },
+    {
+      "kind": "U4-Upgrade art (PNG)",
+      "path": "module/U4-Upgrade/image/vutne/ (9 PNG), module/U4-Upgrade/image/vga/ (37 PNG)",
+      "count_hint": "46 PNG total",
+      "licence": "vutne: credited to Vanja Utne ('conversions of Vanja Utne's artwork from the Ultima IV Remastered project', KOA files (C) 2015) with no licence line. vga: no credit line found in the Credits file.",
+      "class": "C",
+      "note": "Not opened (binary). The vutne credit names a third-party project's artwork; licence not stated in the Credits."
+    },
+    {
+      "kind": "music (OGG)",
+      "path": "module/Ultima-IV/music/minstrel/ (castles, combat, dungeons, fanfare, merchants, rule_britannia, shrines, townes, wanderer; 9 OGG)",
+      "count_hint": "9 OGG",
+      "licence": "Credits: MIDI files (C) 1998 by Markus Brenner (Minstrel Dragon), OGG conversions via timidity; download link given. No licence line.",
+      "class": "C",
+      "note": "Not played. Track names describe context (place or state). Inspiration for music by context."
+    },
+    {
+      "kind": "sound effects (OGG and .rfx)",
+      "path": "module/Ultima-IV/sound/ (34 files, e.g. spell_precast_dos.ogg, spell_flash_dos.ogg, fizzle.rfx, pc_struck_dos.ogg, blocked_dos.ogg, fire_field_walking.ogg, stone_falling.ogg)",
+      "count_hint": "34 files",
+      "licence": "stone_falling.ogg: Credits says 'Wav file (C) 2020 by bolkmar', 'License: CC BY 3.0' (class A with credit). The other 33: not credited in Credits.",
+      "class": "C",
+      "note": "Only stone_falling.ogg is class A (use with credit). Rest are C. Not played."
+    },
+    {
+      "kind": "shaders and fonts (GLSL, PNG, TXF)",
+      "path": "module/render/shader/ (world.glsl, shadowcast.glsl, msdf.glsl, hq2x.glsl, noise_2d.png, hq2x.png, hq3x.png, hq4x.png, gui.png), module/render/font/ (cfont*.txf, cfont.png)",
+      "count_hint": "9 shader entries (world, shadowcast, msdf, 2 hq2x-named, hq3x, hq4x, gui, noise) and 8 font entries",
+      "licence": "not stated in the box",
+      "class": "C",
+      "note": "Code and rendering assets. Not read beyond the names. hq2x/hq3x/hq4x are standard upscaling names; licence unknown."
+    },
+    {
+      "kind": "documentation (text)",
+      "path": "doc/U4Spells.md, doc/FileFormats.md, doc/U4Notes.txt, doc/AmigaFileFormats.txt, doc/AppleFileFormats.txt, doc/avatarExepacked.txt, doc/modules.md, doc/build.md",
+      "count_hint": "about 14 files in doc/",
+      "licence": "not stated by these files",
+      "class": "C",
+      "note": "Spell and file-format notes on the original game. Not read beyond names and first lines."
+    }
+  ],
+  "inspiration": [
+    "Data-driven terrain rules (DATA FIRST: module/Ultima-IV/config.b line 132). Each terrain row sets walk, swim and sail flags, a speed class, and an optional status effect. One example slows and poisons; another is a slow-walk terrain. This is the shape to copy for zone-as-data (row 20 and 21) and terrain speed modifiers. Fit: row 21 catalogue fields.",
+    "Encounter groups on each creature row (config.b line 48 onward; line 73 has an encounter size of one for a sea vessel). Each row also carries a movement mode (fixed or wandering), whether it can step onto the player, and whether it refuses to attack. Shape for spawn data (row 23): size, movement mode, and attack flags kept as data fields.",
+    "Force-of-nature hazards: two roaming entries (config.b lines 80-81, a whirlpool and a twister). Their rows set wandering movement, a not-attack flag, and can-move-onto-avatar; the engine's attackability test is creature.cpp line 54 (it checks a non-attackable attribute; the mapping from these row flags was not read). Reads as weather, not an enemy. Idea for a telegraphed roaming hazard in a zone (vfx and threat readability).",
+    "Three named cast cues: precast, flash, and fizzle (module/Ultima-IV/sound/spell_precast_dos.ogg, spell_flash_dos.ogg, fizzle.rfx). Roles are inferred from the file names; the audio was not played. Fit for specials (row 13) and sound cues (row 12).",
+    "Context-named music (module/Ultima-IV/music/minstrel/). One bed per place or state: towns, castles, dungeons, shrines, merchants, combat, and a fanfare stinger. Fit for music layering by biome and border crossfades (sound-music topic).",
+    "Shadowcasting from occluder shapes. The GPU path accepts occluder shapes and a shadowcast shader (src/gpu_opengl.cpp line 1514; module/render/shader/shadowcast.glsl). Idea for 2D line-of-sight vision in dark zones or the Pit (camera, vfx).",
+    "Level-indexed dungeon dressing: wall and door sets per depth (module/Ultima-IV/image/ega/dung0ma.png, dung1ma_door.png, dung3ma_door.png, dungeonhall_door.png). Numbered sets 0 to 3 (depth inferred from the names). Idea for zone dressing variants (zones topic)."
+  ],
+  "briefs": [
+    {
+      "label": "Roaming storm ring",
+      "why": "A hazard that drifts through the arena reads as weather, so players dodge it instead of fighting it. Silhouette is a ring that is readable at 375 wide.",
+      "keep": "The hazard roams on its own path, is data-driven (wandering movement, a not-attack flag, can move onto the avatar), and can carry the player off line.",
+      "change": "Give it a telegraphed spinning ring with a ground shadow and a slow tick sound instead of a sprite swap; use a different hazard type (not water). Keep Dom's rule: an original storm, not the donor's sprite or sound.",
+      "ref": "module/Ultima-IV/config.b lines 80-81 (creature rows, names not copied here)"
+    },
+    {
+      "label": "Mire slows and stings",
+      "why": "A terrain that slows and adds a damage-over-time status makes route choice a real decision, and the status is visible on the feet.",
+      "keep": "One terrain row carries both a speed class and a status effect, so the terrain is data, not code.",
+      "change": "Show the poison as a green ring on the feet and a short drip sound, not text; use a different terrain name and palette. Keep Dom's rule: recreate as our own mire, not the donor's swamp.",
+      "ref": "module/Ultima-IV/config.b line 136"
+    },
+    {
+      "label": "Three-beat cast cue",
+      "why": "Three distinct cast sounds (start, hit, fizzle) make the cast readable without a HUD, which matters at 375 wide.",
+      "keep": "Separate audio for the cast start, a flash, and a failed cast (roles inferred from the file names).",
+      "change": "Choose length and pitch by spell school; add a visual tell for the failed cast. Keep Dom's rule: our own sounds, never the donor's files.",
+      "ref": "module/Ultima-IV/sound/spell_precast_dos.ogg; spell_flash_dos.ogg; fizzle.rfx"
+    },
+    {
+      "label": "Depth-keyed dressing",
+      "why": "Depth read by the art set lets players know the zone level without a label.",
+      "keep": "One dressing set per depth, selected by a level index.",
+      "change": "Use one tile set with a colour band per depth rather than separate art sets; change the band colour, not the wall shape. Keep Dom's rule: distinct original tiles.",
+      "ref": "module/Ultima-IV/image/ega/dung0ma.png (path only; not opened)"
+    }
+  ],
+  "not_read": [
+    "All PNG, OGG, WAV and RFX files: names and counts only. Nothing opened, played or sized beyond file names.",
+    "config.b beyond the lines cited (48, 73, 80-81, 132-136, 442, 461, 474) and the armour and weapon tables (lines 11-47).",
+    "maps.b, vendors.b, graphics.b bodies (headers only), U4-Upgrade .b files (listing only).",
+    "src/ (most files), creature.cpp beyond lines 54-62 (isAttackable) and the signature at line 304, gpu_opengl.cpp beyond line 1514.",
+    "doc/ text files beyond names (U4Spells.md not read).",
+    "module/render/shader/*.glsl and font files beyond names.",
+    "Ultima IV original data: not in the repo, so nothing to read.",
+    "Paired half: no separate server half is in the box. The repo is one engine plus data packs. Engine (src/) read only in part."
+  ]
+}

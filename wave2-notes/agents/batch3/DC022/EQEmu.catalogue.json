@@ -1,0 +1,146 @@
+{
+  "donor": "EQEmu",
+  "class": "C (game-derived SQL with unclear status; no art, audio or maps). Category-level inspiration only.",
+  "halves_read": "server half (common/ and zone/ code, rule toggles in utils/sql). Data pack absent from the tree (utils/defaults/Maps empty; SQL holds 3 npc_types inserts and no item inserts). Paired client candidates on the box not opened: daeken-OpenEQ, djhenry-eqoxide, eq-p99-tools-eq-client, knervous-eqsage, LanternEQ-LanternExtractor, wcassis-willeq.",
+  "counts": {
+    "creatures": 0,
+    "classes": 16,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 481
+  },
+  "counts_note": "creatures = 0 instances (no NPC rows in tree); 39 body-type categories in common/bodytypes.h. classes = 16 player classes (ids 1 to 16) plus 16 GM and 14 service class ids. weapons = 0 instances; item struct fields only. gear_sets = 0. zones = 481 zone-id constants in common/eq_constants.h (names not listed; no maps in tree).",
+  "creature_families": [
+    "39 body-type categories (common/bodytypes.h:25-63): Humanoid, Lycanthrope, Undead, Giant, Construct, Extraplanar, Magical, Summoned Undead, Raid Giant, Raid Coldain, Vampire, Animal, Insect, Monster, Summoned, Plant, Dragon family (26, 29, 30, 32), Familiar, Muramite, Swarm Pet, Monster Summon, Special",
+    "Scale tiers, not families: normal, named or rare, raid target (zone/npc_scale_manager.cpp:554-572)"
+  ],
+  "top_creatures": [
+    {
+      "label": "Named rare tier (category)",
+      "why": "A naming rule alone decides the boss tier.",
+      "keep": "The name decides the tier; no extra data needed.",
+      "change": "The naming rule and the tier numbers.",
+      "ref": "/mnt/frankendom-donors/EQEmu/zone/npc_scale_manager.cpp:562"
+    },
+    {
+      "label": "Raid target tier (category)",
+      "why": "A third, raid-scale tier beyond named.",
+      "keep": "A third tier for raid bosses.",
+      "change": "All numbers.",
+      "ref": "/mnt/frankendom-donors/EQEmu/zone/npc_scale_manager.cpp:558"
+    },
+    {
+      "label": "Dragon family (category)",
+      "why": "One family with several era tags.",
+      "keep": "One family, many tags.",
+      "change": "Visuals and tags.",
+      "ref": "/mnt/frankendom-donors/EQEmu/common/bodytypes.h:52, :55, :56, :58"
+    },
+    {
+      "label": "Swarm pet (category)",
+      "why": "A small-pet swarm tag; the source warns it is not for finding all swarm pets.",
+      "keep": "A swarm as its own class.",
+      "change": "Rules and look.",
+      "ref": "/mnt/frankendom-donors/EQEmu/common/bodytypes.h:62"
+    },
+    {
+      "label": "Undead and summoned undead (category)",
+      "why": "Two separate tags for one theme.",
+      "keep": "Summoned variant as its own tag.",
+      "change": "Look and rules.",
+      "ref": "/mnt/frankendom-donors/EQEmu/common/bodytypes.h:29, :34"
+    },
+    {
+      "label": "Raid giant (category)",
+      "why": "Era-specific raid giants as body types.",
+      "keep": "Era-tagged raid giants.",
+      "change": "Visuals.",
+      "ref": "/mnt/frankendom-donors/EQEmu/common/bodytypes.h:35, :36"
+    },
+    {
+      "label": "Plant (category)",
+      "why": "A stationary creature family by tag.",
+      "keep": "A plant family.",
+      "change": "The look.",
+      "ref": "/mnt/frankendom-donors/EQEmu/common/bodytypes.h:51"
+    },
+    {
+      "label": "Monster summon (category)",
+      "why": "Summoned monsters get their own tag.",
+      "keep": "A summon tag.",
+      "change": "Summon look and rules.",
+      "ref": "/mnt/frankendom-donors/EQEmu/common/bodytypes.h:63"
+    }
+  ],
+  "classes": [
+    {"name": "Warrior", "role": "player class id 1 (name only)", "signature_mechanic": "not read", "progression": "not read", "ref": "common/classes.h:28"},
+    {"name": "Cleric", "role": "player class id 2 (name only)", "signature_mechanic": "not read", "progression": "not read", "ref": "common/classes.h:29"},
+    {"name": "Paladin", "role": "player class id 3 (name only)", "signature_mechanic": "not read", "progression": "not read", "ref": "common/classes.h:30"},
+    {"name": "Ranger", "role": "player class id 4 (name only)", "signature_mechanic": "not read", "progression": "not read", "ref": "common/classes.h:31"},
+    {"name": "Shadow Knight", "role": "player class id 5 (name only)", "signature_mechanic": "not read", "progression": "not read", "ref": "common/classes.h:32"},
+    {"name": "Druid", "role": "player class id 6 (name only)", "signature_mechanic": "not read", "progression": "not read", "ref": "common/classes.h:33"},
+    {"name": "Monk", "role": "player class id 7 (name only)", "signature_mechanic": "not read", "progression": "not read", "ref": "common/classes.h:34"},
+    {"name": "Bard", "role": "player class id 8 (name only)", "signature_mechanic": "not read", "progression": "not read", "ref": "common/classes.h:35"},
+    {"name": "Rogue", "role": "player class id 9 (name only)", "signature_mechanic": "not read", "progression": "not read", "ref": "common/classes.h:36"},
+    {"name": "Shaman", "role": "player class id 10 (name only)", "signature_mechanic": "not read", "progression": "not read", "ref": "common/classes.h:37"},
+    {"name": "Necromancer", "role": "player class id 11 (name only)", "signature_mechanic": "not read", "progression": "not read", "ref": "common/classes.h:38"},
+    {"name": "Wizard", "role": "player class id 12 (name only)", "signature_mechanic": "not read", "progression": "not read", "ref": "common/classes.h:39"},
+    {"name": "Magician", "role": "player class id 13 (name only)", "signature_mechanic": "not read", "progression": "not read", "ref": "common/classes.h:40"},
+    {"name": "Enchanter", "role": "player class id 14 (name only)", "signature_mechanic": "not read", "progression": "not read", "ref": "common/classes.h:41"},
+    {"name": "Beastlord", "role": "player class id 15 (name only); pet-based by name", "signature_mechanic": "not read", "progression": "not read", "ref": "common/classes.h:42"},
+    {"name": "Berserker", "role": "player class id 16 (name only)", "signature_mechanic": "not read", "progression": "not read", "ref": "common/classes.h:43"},
+    {"name": "Companions (mercenaries and bots)", "role": "hireable companions with per-class spell lists", "signature_mechanic": "spell lists per class (SQL cited by AU018; not read)", "progression": "not read", "ref": "utils/sql/git/optional/2013_02_18_Merc_Spells.sql; zone/bot*.cpp (not read)"}
+  ],
+  "weapon_families": [
+    {"family": "One-hand and two-hand melee (slash, piercing, blunt)", "tiers": "structure only", "special": "bane by race, body type and amount (common/item_data.h:414-416); element type 1 magic, 2 fire (common/item_data.h:426)", "ref": "common/item_data.h:55-60"},
+    {"family": "Ranged and throwing", "tiers": "structure only", "special": "bow and large throwing item types (common/item_data.h:61-63)", "ref": "common/item_data.h:61-63"}
+  ],
+  "gear_tiers": [
+    {"ladder": "Armour class", "tiers": "cloth, leather, chain, plate (ids 1 to 4)", "how_shown": "armour type field", "ref": "common/classes.h:125-128"},
+    {"ladder": "Light level", "tiers": "unlit, candle, torch, small magic, red, blue, small lantern, magic lantern, large lantern, large magic, brilliant (11)", "how_shown": "glow radius tiers", "ref": "common/light_source.h:53-64"}
+  ],
+  "zones": [
+    {"label": "Hot zone", "type": "zone-wide XP event", "hazard": "bonus added to the XP multiplier (HotZoneBonus 0.75)", "ref": "common/ruletypes.h:370"},
+    {"label": "Dynamic zone types", "type": "instanced zone kinds", "hazard": "expedition, tutorial, task, mission (shared task), quest", "ref": "common/dynamic_zone_base.h:45-52"},
+    {"label": "Spawn-condition zone", "type": "population gate", "hazard": "spawn gated by zone state", "ref": "zone/spawn2.cpp:172; SpawnConditionManager at zone/spawn2.cpp:731"},
+    {"label": "Zone types", "type": "outdoors, dungeon, any", "hazard": "none (type flag)", "ref": "common/spdat.h:1646"}
+  ],
+  "looks": [
+    {
+      "label": "Light levels as glow tiers",
+      "technique": "Eleven ordered levels from unlit to brilliant; the active light is the highest of all slots (innate, equipment, spell, active).",
+      "ref": "common/light_source.h:25-30, :53-64"
+    },
+    {
+      "label": "Per-instance colour",
+      "technique": "Item instance carries an RGB colour value as it appears in the client.",
+      "ref": "common/item_data.h:430"
+    },
+    {
+      "label": "Elite material flag",
+      "technique": "A separate elite material field on items; meaning not read.",
+      "ref": "common/item_data.h:445"
+    }
+  ],
+  "originals": [
+    {"name": "Named and raid scale tiers", "idea": "Three tiers (normal, named, raid) decided by a name rule and a raid flag.", "keep": "The tier rule (zone/npc_scale_manager.cpp:554-572).", "change": "Tier names and numbers. Rows 7 and 23."},
+    {"name": "Weighted spawn group with per-type cap and retry", "idea": "Weighted roll, a cap check per type, and a five-second retry when capped.", "keep": "Weighted roll (zone/spawngroup.cpp:107), cap check (zone/spawn2.cpp:240), retry (zone/spawn2.cpp:234, :242).", "change": "Caps become zone data fields. Row 23."},
+    {"name": "Respawn with variance and persisted death time", "idea": "Respawn at plus or minus half a variance window, written to the database at death.", "keep": "Variance window (zone/spawn2.cpp:124) and the death write (zone/spawn2.cpp:469).", "change": "Storage moves to our ledger. Rows 23 and 17."},
+    {"name": "Ratio hate with two-strike out-of-range removal", "idea": "Hate as a ratio to the top entry, and removal after two out-of-range ticks.", "keep": "Clamp 1 to 999 (zone/hate_list.cpp:343); removal on second tick (zone/hate_list.cpp:871-873).", "change": "Our hate list lives in the engine. Row 4, MAX_ATTACKERS = 3."},
+    {"name": "Smart target preference as data", "idea": "Target preference rules as named numbers.", "keep": "Sitting +35 percent, critically wounded +100 percent, melee range +10 percent, tunnel vision 0.75 (common/ruletypes.h:712-719).", "change": "The numbers. Row 4."},
+    {"name": "Global loot filter", "idea": "A loot table filtered by level, raid, rare, race, class, body type and hot zone.", "keep": "AND across rule kinds, OR within one kind (zone/global_loot_manager.cpp:116-185).", "change": "The filter fields. Row 18."},
+    {"name": "Death tax with a level gate and corpse window", "idea": "Experience loss from a level gate, a corpse window, and a respawn countdown.", "keep": "Gate at level 10, multiplier 3 (3.5 percent), resurrection window 3 hours (common/ruletypes.h:45-56), respawn-from-hover 300 s (common/ruletypes.h:126-127).", "change": "Numbers and presentation. Row 17."},
+    {"name": "Light ladder as glow tiers", "idea": "Eleven named glow tiers with a highest-wins slot.", "keep": "The ladder and the precedence (common/light_source.h:25-64).", "change": "Names and colours; check the glow at 375 px. Rows 14 and 16."}
+  ],
+  "licence_note": "Code GPL-3.0 (LICENSE.md line 3). Game content: README names the original publisher as owner of the game and its assets; ProjectEQ world data claim not confirmed in the tree. Category-level inspiration only; clean-room shape.",
+  "not_read": [
+    "zone/mob_ai.cpp (2991 lines), zone/aggro.cpp (1729 lines), zone/npc.cpp, zone/corpse.cpp, zone/bot*.cpp, zone/lua_*.cpp, zone/perl_*.cpp (names only)",
+    "zone/zone_loot.cpp (structure only)",
+    "world/, loginserver/, queryserv/, client_files/, submodules/, shared_memory/, eqlaunch/, ucs/",
+    "common/races.cpp, common/faction.cpp, common/content/, common/item_data.cpp",
+    "utils/sql: counted only (362 files; 170 with INSERT INTO; 33 mention npc_types; 3 INSERT INTO npc_types); rule toggles read by grep, not in full",
+    "eq_constants zone names (count only); changelogs",
+    "Paired client candidates (none opened)",
+    "Item material enum (not located); Delay and Range fields (not pinned to a line)"
+  ]
+}

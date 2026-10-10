@@ -1,0 +1,81 @@
+{
+  "donor": "EQEmu",
+  "topic": "status-effects",
+  "depth": "full",
+  "half_read": "server",
+  "verdict": "STRONG",
+  "decision": "adapt (idea); defects fixed in sketch",
+  "best_transferable_idea": "One ordered stacking test (refuse, overwrite or coexist), a per-target resist percent, a six-second tic clock, and mez broken by the first non-lethal hit.",
+  "parity_row": "row 1 (duel step/sim)",
+  "target_file": "src/fight/status.ts (proposed)",
+  "paths": [
+    "/mnt/frankendom-donors/EQEmu/zone/spells.cpp",
+    "/mnt/frankendom-donors/EQEmu/zone/spell_effects.cpp",
+    "/mnt/frankendom-donors/EQEmu/zone/attack.cpp",
+    "/mnt/frankendom-donors/EQEmu/zone/mob.cpp",
+    "/mnt/frankendom-donors/EQEmu/zone/client_process.cpp",
+    "/mnt/frankendom-donors/EQEmu/zone/npc.cpp",
+    "/mnt/frankendom-donors/EQEmu/common/spdat.cpp",
+    "/mnt/frankendom-donors/EQEmu/common/spdat.h",
+    "/mnt/frankendom-donors/EQEmu/common/ruletypes.h",
+    "/mnt/frankendom-donors/EQEmu/LICENSE.md",
+    "/mnt/frankendom-donors/EQEmu/utils/sql (absence check for spell rows)"
+  ],
+  "counts": {
+    "stacking_test_steps": 7,
+    "formula_cases_read": 14,
+    "buff_tic_ms": 6000,
+    "root_break_bands": 3,
+    "stun_default_ms": 2000,
+    "fear_pc_max_tics": 4,
+    "bash_stun_threshold_of_100": 55,
+    "spell_rows_in_box": 0,
+    "receipts_verified": 86
+  },
+  "rule": "Stacking: resurrection effects stack; complete-heal blockers refuse; same spell refused at lower caster level, else overwrite; AlwaysStackSpells stack; bard song and beneficial stack; when effects differ, stacker ladder 446-449, overwrite command 149 and block command 148 apply (detrimental spells bypass block); per-slot arbitration with exclusions; detrimental DoTs of different spells stack. Duration: formula table gives tics; PvP detrimental uses its own formula; tic is 6 s. Stun: shorter never replaces longer; resist percent roll (lands when roll >= resist). Fear: flee point when pathing on, else stun for remaining tics; PC cap 4 tics. Mez: broken by any non-lethal hit with an attacker. Root: break chance 55 minus bonus, banded by level gap (x0.8 at gap 2, x0.6 at 3-20, x0.2 at 22+; gap 21 falls through). Bash stun: roll 0-100 inclusive, stun when roll > 55 minus bonus, 2000 ms. Gravity: |value|/100 per tick toward or away, none within 5 units.",
+  "data_fields": [
+    {"name": "status.tic_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "stun.default_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "stun.resist_pct", "unit": "percent", "donor_value_or_null": null},
+    {"name": "stun.immune_level", "unit": "level", "donor_value_or_null": null},
+    {"name": "fear.pc_max_tics", "unit": "tics", "donor_value_or_null": null},
+    {"name": "root.break_base_pct", "unit": "percent", "donor_value_or_null": null},
+    {"name": "root.break_mult_gap2", "unit": "ratio", "donor_value_or_null": null},
+    {"name": "root.break_mult_gap3_20", "unit": "ratio", "donor_value_or_null": null},
+    {"name": "root.break_mult_gap22_plus", "unit": "ratio", "donor_value_or_null": null},
+    {"name": "bash.stun_threshold", "unit": "percent of 100", "donor_value_or_null": null},
+    {"name": "gravity.units_per_tick_div", "unit": "divisor", "donor_value_or_null": null},
+    {"name": "gravity.dead_zone", "unit": "units", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Ordered stacking test: refuse, overwrite or coexist, decided by one list of checks",
+    "Per-target resist percent for stun",
+    "Mez breaks on the first non-lethal hit with an attacker",
+    "Fear as steps of a fixed tic with a player cap",
+    "Root breaks by damage, chance banded by level gap",
+    "Shorter stun never replaces a longer one"
+  ],
+  "change": [
+    "Fewer statuses: stun, fear, mez, root, gravity only; no bard songs",
+    "Stacker ladder and block command become one blocks-list field per status kind",
+    "Knockdown becomes a server event with a duration (donor knockdown is client-only)",
+    "Root band gap 21 joins the 80 percent band (defect 1)",
+    "Gravity sign taken per effect (defect 2)",
+    "Remove the redundant above-98 bash clause (defect 3)",
+    "Resurrection-block slot: first free, not last (defect 4)"
+  ],
+  "look_test": "Debug scene: one target, three attackers, four buttons (stun 2 s, fear 3 tics, mez, root). At 375 wide judge: stun reads as frozen pose with one timer ring; mez wakes on first hit with one flash; root shakes per hit with its odds as a ring; fear reads as six-second steps. Compare stun and mez with the current build.",
+  "licence_note": "GPL-3.0 (LICENSE.md line 3, Version 3). Clean-room, shape only. Donor numbers recorded as null donor values. Spell rows are not in the box, so no donor spell name or value is used.",
+  "tags": ["status-stack", "fear", "knockdown", "duration-rule", "new:mez-break-on-hit", "new:root-break-chance", "new:stun-resist", "new:dot-tick", "new:gravity-push"],
+  "not_read": [
+    "Fear pathing (CalculateNewFearpoint and flee code)",
+    "Charm, lull and blind handlers",
+    "Mez resist roll beyond base immunity",
+    "CheckStackConflict final value comparison after line 3340",
+    "CalcBuffDuration_formula cases above 14",
+    "AA and item stun bonuses beyond names",
+    "Spell rows (absent from the box)",
+    "Client UI and client half (absent from the box)",
+    "Death and respawn presentation, idle and ambient behaviour, loot ceremony, walk density (not for this topic)"
+  ]
+}

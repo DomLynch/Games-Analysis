@@ -1,0 +1,174 @@
+{
+  "donor": "TrinityCore-TrinityCore",
+  "cell": "DC056",
+  "counts": {
+    "creatures": null,
+    "classes": 15,
+    "weapons": null,
+    "gear_sets": null,
+    "zones": 68
+  },
+  "counts_note": "creatures: no creature row data in the box (sql/base/dev holds schema only); enums give 15 creature type ids and 86 family entries including id 0. classes: 15 non-zero Classes enum entries. weapons and gear_sets: row data not in the box, not counted. zones: 68 zone_*.cpp script files (not zone rows); about 91 expansion script subfolders not classified.",
+  "creature_families": [
+    "Beast-like: wolf 1, cat 2, spider 3, bear 4, boar 5, crocolisk 6, carrion bird 7, crab 8, gorilla 9, raptor 11, tallstrider 12, hyena 25, bird of prey 26, wind serpent 27, dragonhawk 30, ravager 31, warp stalker 32, spore bat 33, ray 34, serpent 35, moth 37, chimaera 38, devilsaur 39, worm 42, clefthoof 43, wasp 44, core hound 45, spirit beast 46, fox 50, monkey 51, hound 52, beetle 53, shale beast 55, hydra 68, basilisk 130, stone hound 128, mammoth 300, whiptail 315",
+    "Demonic: felhunter 15, voidwalker 16, succubus 17, doomguard 19, imp 23, felguard 29, felimp 100, voidlord 101, shivarra 102, observer 103, wrathguard 104, infernal 108, terrorguard 147, abyssal 148, incubus 302",
+    "Undead: ghoul 40, zombie 56, abomination 155, blood beast 296",
+    "Elemental: water 49, fire 116, earth 117, storm 145",
+    "Dragonkin-like: lesser dragonkin 303, pterrordax 290, lizard 288",
+    "Family 57 is labelled as a QA test entry in the enum; not a design source."
+  ],
+  "top_creatures": [
+    {
+      "label": "Brood Sky Matron (own label)",
+      "why": "A ground boss that lifts off at a health threshold and drops a capped swarm; the takeoff is a large silhouette change that reads at 375 wide.",
+      "keep": "Threshold lift; capped swarm per phase; a second threshold that ends the air phase.",
+      "change": "Our arena and names; a shorter-lived swarm; our own telegraphs.",
+      "ref": "src/server/scripts/Kalimdor/OnyxiasLair/boss_onyxia.cpp lines 324, 386, 246, 460 (receipts TC-R16, TC-R17, TC-R18, TC-R19)"
+    },
+    {
+      "label": "Sweep Warden (own label)",
+      "why": "The arena floor is the threat: a timed safe lane sweeps across sections on a timer, with a timed window.",
+      "keep": "A telegraphed safe lane that moves on a timer; a timed window every 90 s.",
+      "change": "Our tile shapes and telegraph colours; no teleport penalty (the TeleportCheaters body is not read).",
+      "ref": "src/server/scripts/Northrend/Naxxramas/boss_heigan.cpp lines 67, 113, 162, 195, 197 (receipts TC-R20 to TC-R24)"
+    },
+    {
+      "label": "Ice Wyrm Late Rise (own label)",
+      "why": "A second behaviour switch at 35 percent health gives a late-fight change of pace.",
+      "keep": "The threshold switch idea.",
+      "change": "Everything else; the body of the switch is not read.",
+      "ref": "src/server/scripts/Northrend/IcecrownCitadel/boss_sindragosa.cpp line 407 (receipt TC-R27, threshold only)"
+    },
+    {
+      "label": "Four-Element Brood (own label)",
+      "why": "Four elemental families give four distinct silhouette and palette groups.",
+      "keep": "One family per element.",
+      "change": "Our four elements, moves and sounds.",
+      "ref": "src/server/game/Miscellaneous/SharedDefines.h lines 5083 (water 49), 5098 (fire 116), 145 storm, 117 earth (receipts TC-R06, TC-R07). Identity only; behaviour not read."
+    },
+    {
+      "label": "Hydra-Kin (own label)",
+      "why": "A multi-head silhouette can be read at 375 wide.",
+      "keep": "The multi-head silhouette idea.",
+      "change": "Head count, colour and attack pattern.",
+      "ref": "src/server/game/Miscellaneous/SharedDefines.h line 5091 (hydra 68). Identity only; behaviour not read."
+    },
+    {
+      "label": "Felguard Warband (own label)",
+      "why": "A demonic group of mixed families that share one type mask.",
+      "keep": "Group composition from one type mask.",
+      "change": "Our names and roles.",
+      "ref": "src/server/game/Miscellaneous/SharedDefines.h lines 5066 (felguard 29) and 5035 (demon-or-undead mask) (receipts TC-R08, TC-R03). Identity only."
+    },
+    {
+      "label": "Crypt Ghoul (own label)",
+      "why": "A small undead family set that can scale in count.",
+      "keep": "A small family set per undead tier.",
+      "change": "Our look and moves.",
+      "ref": "src/server/game/Miscellaneous/SharedDefines.h line 5076 (ghoul 40) (receipt TC-R09). Identity only."
+    },
+    {
+      "label": "Wintergrasp Turret (own label)",
+      "why": "Siege guards are creatures tied to tower state.",
+      "keep": "Turrets tied to the objective state.",
+      "change": "Our faction and shapes. The source comment marks an open todo; behaviour not read.",
+      "ref": "src/server/scripts/Battlefield/BattlefieldWG.cpp line 221 (receipt TC-R38)"
+    }
+  ],
+  "classes": [
+    "Warrior (1), Paladin (2), Hunter (3), Rogue (4), Priest (5), Death Knight (6), Shaman (7), Mage (8), Warlock (9), Monk (10), Druid (11), Demon Hunter (12), Evoker (13), Adventurer (14), Traveler (15). Source: src/server/game/Miscellaneous/SharedDefines.h lines 156-170 (receipts TC-R10, TC-R11). Role, signature mechanic and progression shape: not read.",
+    "Races: 32 uncommented ids in src/server/game/Miscellaneous/RaceMask.h (for example Human 1, Dark Iron Dwarf 34 (TC-R12), Dracthyr 52 and 70). Racial mechanics: not read."
+  ],
+  "weapon_families": [],
+  "gear_tiers": [
+    "Quality ladder, src/server/game/Miscellaneous/SharedDefines.h lines 380-392: 0 poor, 1 normal, 2 uncommon, 3 rare, 4 epic (TC-R13), 5 legendary, 6 artifact, 7 heirloom (TC-R14), 8 wow token. Colour names appear only in comments; no art colour codes taken.",
+    "Sets: item_set table (sql/base/dev/hotfixes_database.sql line 5509, TC-R34) and item_set_spell (line 5571, TC-R39). Set rows not in the box; no set counts claimed.",
+    "Cosmetic and transmog tables (schema only, rows not read): item_appearance, item_modified_appearance, transmog_set, transmog_outfit_slot_info, artifact_appearance_set, artifact_tier (sql/base/dev/hotfixes_database.sql)."
+  ],
+  "zones": [
+    "Zone script files: 68 zone_*.cpp across expansion folders under src/server/scripts (e.g. Northrend/zone_wintergrasp.cpp, EasternKingdoms/zone_tol_barad.cpp, DragonIsles/zone_the_forbidden_reach.cpp, Maelstrom/zone_deepholm.cpp, BrokenIsles/zone_mardum.cpp, Draenor/zone_assault_on_the_dark_portal.cpp, Outland/zone_netherstorm.cpp, Pandaria/zone_the_wandering_isle.cpp).",
+    "Dungeon and raid archetypes: about 91 expansion subfolders (instances and zone sub-scripts; not classified). Examples: Kalimdor/OnyxiasLair, Northrend/Naxxramas, Northrend/IcecrownCitadel, Kalimdor/Firelands, Outland/BlackTemple, Outland/CoilfangReservoir.",
+    "Battlegrounds: 31 folders under src/server/scripts/Battlegrounds.",
+    "PvP zones: 5 outdoor PvP scripts (src/server/scripts/OutdoorPvP/OutdoorPvP{HP,NA,SI,TF,ZM}.cpp) and 2 battlefields (src/server/scripts/Battlefield/BattlefieldWG.cpp, BattlefieldTB.cpp).",
+    "Map types: 9 entries, src/server/game/DataStores/DBCEnums.h lines 1597-1607 (TC-R15).",
+    "Tower archetype: src/server/scripts/Shadowlands/Torghast/spell_torghast.cpp is the only file in that folder; layering not read."
+  ],
+  "looks": [
+    {
+      "label": "Floor-tile telegraph",
+      "technique": "Per-section game-object tiles; the erupt tick casts a trap spell on unsafe sections only (receipts TC-R25, TC-R41).",
+      "ref": "src/server/scripts/Northrend/Naxxramas/boss_heigan.cpp lines 180, 187"
+    },
+    {
+      "label": "Takeoff lift",
+      "technique": "Enable flight, then a move to a fixed hover point (TC-R18, TC-R40). Landing sequence not fully read.",
+      "ref": "src/server/scripts/Kalimdor/OnyxiasLair/boss_onyxia.cpp lines 241, 246, 116"
+    },
+    {
+      "label": "Quality ladder",
+      "technique": "Nine tiers in one enum (TC-R13, TC-R14). Visual mapping is in the client, not in the box.",
+      "ref": "src/server/game/Miscellaneous/SharedDefines.h lines 380-392"
+    },
+    {
+      "label": "Siege state counts",
+      "technique": "Destroyed and damaged tower counts drive the objective (TC-R30). UpdateDamagedTowerCount is at line 1233 but not re-read.",
+      "ref": "src/server/scripts/Battlefield/BattlefieldWG.cpp line 1152"
+    },
+    {
+      "label": "Spell visual tables",
+      "technique": "spell_visual, spell_visual_kit, spell_visual_missile, spell_visual_effect_name are in the hotfix schema. Row data not read; no glow or aura values taken.",
+      "ref": "sql/base/dev/hotfixes_database.sql (schema only)"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Brood Sky Matron",
+      "idea": "A ground boss lifts at 65 percent health, drops a capped swarm, and ends the air phase at 40 percent.",
+      "keep": "Threshold lift; capped swarm; second threshold.",
+      "change": "Our arena, names, and a shorter swarm."
+    },
+    {
+      "name": "Sweep Warden",
+      "idea": "A timed safe lane moves across a four-section floor; unsafe sections erupt; a dance window every 90 s.",
+      "keep": "Moving safe lane and timed window.",
+      "change": "Ring-shaped tiles, a readable telegraph, no teleport penalty."
+    },
+    {
+      "name": "Siege Towers zone",
+      "idea": "A timed siege where tower counts set the objective and the timer can end the battle.",
+      "keep": "Tower counts feed the objective; timer end.",
+      "change": "Our zone, factions, and end rules."
+    },
+    {
+      "name": "Four-Element Brood",
+      "idea": "Four elemental groups, each with its own silhouette.",
+      "keep": "One family per element.",
+      "change": "Our colours, moves and sounds."
+    },
+    {
+      "name": "Nine-step gear ladder",
+      "idea": "A stepped gear tier ladder with a heirloom step that scales with level.",
+      "keep": "Step count and the heirloom class.",
+      "change": "Our colours, glow and sounds per step."
+    },
+    {
+      "name": "Capture-point zone",
+      "idea": "Capture points are the zone objective.",
+      "keep": "One point class per point.",
+      "change": "Our points and sound."
+    }
+  ],
+  "licence_note": "GPL-2.0 for the code (COPYING line 1: GNU GENERAL PUBLIC LICENSE). Game data origin unstated in the repo; asset audit AU053 class C. Shape and category only; no instance-level looks.",
+  "not_read": [
+    "Row data for creature, item, quest, spawn and map tables (schema only in the box; base SQL has zero INSERT rows)",
+    "Creature rank/elite enum; creature template rows, loot and spawns",
+    "DB2 client data, art, models, audio, camera, sound (not in the box)",
+    "Class and race mechanics, talents, specs, progression",
+    "Weapon, armour, set and appearance rows",
+    "Sindragosa script body (threshold line only); Onyxia landing sequence; Heigan TeleportCheaters body",
+    "Battlefield WG functions beyond the three named; Outdoor PvP point logic",
+    "Torghast layering",
+    "dep/ third-party libraries (licences not read)",
+    "Threat and spawn logic in the server core: covered by AU053, not re-read"
+  ]
+}

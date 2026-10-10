@@ -4,7 +4,7 @@
   "code_licence": "GPL-2.0. COPYING line 2 reads 'Version 2, June 1991'. Lua scripts carry per-file copyright lines (for example scripts/ai.lua lines 13 and 14 list Lutz Sammer, Jimmy Salmon, cybermind and Kyran Jackson) and 'any later version' wording (line 19). Third-party tools listed in COPYING-3rd: cdda2wav (GPL, line 11) and ffmpeg (LGPL 2.1, line 22).",
   "asset_licence": "No separate asset licence found. The repo does not ship the original Warcraft II art, sound or music. The map and campaign files carry no licence line in the files read. The shader files (shaders/*.glsl) and contrib/*.png carry no licence text (grep for licence or copyright in the two shader files and the contrib folder found none).",
   "rights_holder_status": "unknown for the game content. README.md line 9 says the game data must come from the user's Warcraft II installer; the repo does not state who owns that data. Code copyright lines name the Wargus and Stratagus contributors (Lutz Sammer, Jimmy Salmon, Pali Rohár, Kyran Jackson).",
-  "best_class": "C",
+  "best_class": "B",
   "asset_groups": [
     {
       "kind": "original game data (art, sound, music, briefing screens and text)",

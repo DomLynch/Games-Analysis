@@ -1,0 +1,77 @@
+{
+  "donor": "id-Software-DOOM",
+  "topic": "hit-feedback-stack",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c",
+    "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_map.c",
+    "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_mobj.c",
+    "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_enemy.c",
+    "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_user.c",
+    "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_local.h",
+    "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/st_stuff.c",
+    "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/info.c",
+    "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/i_system.c",
+    "/mnt/frankendom-donors/id-Software-DOOM/LICENSE.TXT"
+  ],
+  "counts": {
+    "mobjinfo_entries_labelled": 137,
+    "player_painchance_roll_max": 256,
+    "flash_counter_cap": 100,
+    "flash_points_per_band": 8,
+    "flash_bands_capped": 7,
+    "blood_size_tiers": 3,
+    "pain_frame_ticks_player": 4,
+    "threat_lock_ticks": 100,
+    "armour_soak_fraction_tiers": 2,
+    "ticks_per_second": 35
+  },
+  "rule": "One damage call per hit, in this order: (1) blood or puff at the hit point, sized by raw damage; (2) knockback impulse = damage x scale / victim mass, applied even to an immune victim; (3) immunity gate returns before armour, health and flash (below 1000 damage); (4) armour soaks one third or one half until empty, health takes the rest; (5) flash counter += damage, capped at 100, drains one point per tick in life; (6) death at health <= 0, overkill gib when health is below minus the kind's spawn health; (7) pain roll: flinch and pain state when a 0-255 roll is below the kind's painchance, otherwise nothing visible; (8) threat: an unlocked victim takes the hitter as target and locks for 100 ticks. Client per tick: tint band = ceiling(counter / 8), capped at 7; pain voice is the action of the second pain frame, about 4 ticks after the hit.",
+  "data_fields": [
+    {"name": "kind.painChance", "unit": "roll out of 256 (0-256)", "donor_value_or_null": null},
+    {"name": "kind.mass", "unit": "mass units", "donor_value_or_null": null},
+    {"name": "kind.maxHp", "unit": "hp (overkill gib at minus this)", "donor_value_or_null": null},
+    {"name": "knockbackScale", "unit": "map units per tick per (damage / mass)", "donor_value_or_null": null},
+    {"name": "immunityIgnoreBelow", "unit": "hp of damage", "donor_value_or_null": null},
+    {"name": "armourSoakFraction", "unit": "fraction of hit per armour tier", "donor_value_or_null": null},
+    {"name": "flashCap", "unit": "points", "donor_value_or_null": null},
+    {"name": "flashPointsPerBand", "unit": "points per tint step", "donor_value_or_null": null},
+    {"name": "flashDrainPerTick", "unit": "points per tick", "donor_value_or_null": null},
+    {"name": "bloodTierBoundaries", "unit": "hp of raw damage (two thresholds)", "donor_value_or_null": null},
+    {"name": "painFrameTicks", "unit": "ticks before the pain voice", "donor_value_or_null": null},
+    {"name": "threatLockTicks", "unit": "ticks", "donor_value_or_null": null},
+    {"name": "ouchThreshold", "unit": "hp drop in one tick for the big-hit face", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Order of steps inside one hit: visual, knockback, immunity gate, armour, health, flash, death, flinch roll, threat lock",
+    "Per-kind flinch roll on the same call as the damage; a missed roll means no flinch",
+    "Pain voice tied to the flinch frame, so voice and stagger are one event",
+    "Banded and capped red tint, one band per fixed damage step",
+    "Three blood sizes by raw damage",
+    "Threat lock: the first hitter keeps the target for a fixed window (hate-list rule, row 4)",
+    "Death camera turns toward the killer and drops to a low height",
+    "Overkill gib threshold per kind, not one global number"
+  ],
+  "change": [
+    "Ouch face test is sign-inverted (st_stuff.c 807, 860 against st_oldhealth at 994): fix to previous minus now",
+    "Rumble call is a stub (p_inter.c 883 calls I_Tactile; i_system.c 55-61 does nothing): implement on client or drop",
+    "Voice is silent when the flinch roll misses: play a contact cue on every landed hit; voice stays a separate per-victim gated event",
+    "Immunity order: knockback applies but armour is not spent; decide once for the ledger (guard blocks knockback too, proposed)",
+    "Presentation: client-only; the flinch roll uses the fight's seeded RNG; the client never rolls",
+    "Frankendom target src/fight/hit-impact.ts, parity row 10"
+  ],
+  "look_test": "Three presets on a one-versus-three fight behind a debug flag: (A) current feel; (B) donor order with banded tint capped at 7 bands, per-kind flinch roll (near-always for light kinds, rare for the heaviest), ouch face fixed; (C) B plus a half-second voice gate and a kick toward the hitter. Dom plays ten hits per preset at 375 wide and judges: can you tell which of three hit you, does the tint hide the enemies, does a heavy foe look heavy without a flinch. Preview folder only, no release rows, no lock.",
+  "licence_note": "GNU GPL version 2 (/mnt/frankendom-donors/id-Software-DOOM/LICENSE.TXT). Clean-room only: sketch written from the described order, no code copied, no donor numeric values in data fields, no monster names, sprites or sounds used. Ideas kept at category level (order of steps, per-kind dice roll, banded tint, blood size tiers). No legal conclusion.",
+  "tags": ["flash", "hit-sound", "particle-burst", "ordered-feedback", "knockback", "stagger", "boss-elite-pattern", "new:hit-stop-absent-in-donor", "new:screen-shake-absent-in-donor", "new:flinch-roll-per-kind", "new:banded-tint", "new:ouch-face-defect", "new:rumble-stub", "new:silent-miss-defect"],
+  "not_read": [
+    "s_sound.c, i_sound.c, sndserv/ (sound output and mixing)",
+    "i_video.c I_SetPalette (palette application)",
+    "info.c state table beyond the pain states listed (lines 292-293, 324)",
+    "info.c mobjinfo rows: painchance and mass read by line only, not receipted (tab-aligned)",
+    "P_KillMobj beyond the overkill branch (p_inter.c 668-730 partly read)",
+    "P_LineAttack beyond line 1011 (p_map.c)",
+    "WAD assets and sprite frames",
+    "p_local.h line 61 BASETHRESHOLD: read by line, not receipted (tab-aligned)"
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "donor": "crawl-crawl",
+  "topic": "hit-feedback-stack",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/fineff.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/melee-attack.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/actor.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/attack.h",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/attack.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/view.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/view.h",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/player.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/initfile.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/spl-damage.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/defines.h"
+  ],
+  "counts": {
+    "final_effect_classes_in_fineff_cc": 37,
+    "knockback_call_lines_grep": 19,
+    "flash_call_site_lines_grep": 117
+  },
+  "rule": "One melee attack resolves damage; the damage message gets a punctuation tier from three cut points (weak, medium, strong), the top tier adding marks on a log scale. A trample-type attack pushes the defender one tile straight away from the attacker, stepping one tile at a time and stopping at walls, monsters, or constriction; a moved monster loses a few energy units so the push reads. After each attack, queued final effects fire: effects of the same kind merge when scheduled (blood and deferred damage add), and the queue fires from the back, removing each entry before it fires. Viewport shake is five blocking frames of random one-cell offsets at a fixed frame time, used only for big spell and god effects. Low-HP warning is a blocking red flash plus a message when HP crosses a percent of max. Every blocking delay is scaled by a view-delay option against a default constant.",
+  "data_fields": [
+    {"name": "tier_weak_frac", "unit": "fraction of victim max HP", "donor_value_or_null": null},
+    {"name": "tier_medium_frac", "unit": "fraction of victim max HP", "donor_value_or_null": null},
+    {"name": "tier_strong_frac", "unit": "fraction of victim max HP", "donor_value_or_null": null},
+    {"name": "punct_scale_max", "unit": "count of marks at top tier", "donor_value_or_null": null},
+    {"name": "shake_frames", "unit": "frames", "donor_value_or_null": null},
+    {"name": "shake_frame_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "shake_cells", "unit": "tiles per axis", "donor_value_or_null": null},
+    {"name": "flash_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "hp_warn_pct", "unit": "percent of max HP", "donor_value_or_null": null},
+    {"name": "push_tiles", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "push_stun_energy_min", "unit": "energy units", "donor_value_or_null": null},
+    {"name": "push_stun_energy_max", "unit": "energy units", "donor_value_or_null": null},
+    {"name": "merge_rule", "unit": "enum: same-kind merges into one entry", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Punctuation tier as a number-free damage read",
+    "Merge of same-kind feedback within one tick",
+    "Push stops at walls and monsters, no clipping through",
+    "Pushed creature loses its next beat (energy penalty)",
+    "Remove each queued entry before it fires, so nothing merges into a firing entry",
+    "Viewport jitter only for big effects, short and blocking"
+  ],
+  "change": [
+    "Fire the queue first-in first-out so the first of three hits lands first",
+    "Blocking flash only for low-HP warning and big effects, not normal hits",
+    "Shake is a tile jitter on the duel view, not a camera move",
+    "Donor blocking delays stay client-side; server tick keeps stepping",
+    "Low-HP warning threshold is our own data field"
+  ],
+  "look_test": "Ten-second clip, three attackers on one target, fight camera, 375 wide. Taps: A one merged beat per tick (shake, tier punctuation, push stops at walls); B each hit fires its own shake and flash; C text only, no shake (control). Dom judges which reads as one clear beat. Publish via the look-test /preview/ flag; no release rows.",
+  "licence_note": "Code GPL v2 or later (README line 96, per AU011). Tile art mostly CC0 with RLTiles public domain and some unstated items (AU011). Descriptions and yaml under the general GPL statement. Clean-room, shape only; no code, tile, text or donor number reused.",
+  "tags": ["screen-shake", "flash", "knockback", "stagger", "ordered-feedback", "new:punctuation-tier", "new:final-effect-queue"],
+  "not_read": [
+    "mon-death.cc (death and corpse presentation)",
+    "monster AI (mon-behv.cc, mon-act.cc)",
+    "spl-*.cc bolt effects",
+    "ouch.cc inflict_damage in full",
+    "actor::collide wall-collision path",
+    "tile PNGs (not viewed; sizes only in AU011)",
+    "dat/des vault files (counted only)",
+    "dat/mons yaml (counted; rule files only)",
+    "idle and ambient behaviour, loot reveal, walk density, boss staging (not this topic)"
+  ]
+}

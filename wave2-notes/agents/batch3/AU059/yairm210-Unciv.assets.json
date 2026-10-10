@@ -1,0 +1,114 @@
+{
+  "donor": "yairm210-Unciv",
+  "code_licence": "Mozilla Public License Version 2.0 (LICENSE line 1). LICENSE-TextureArraySpriteBatch is CC0 1.0 Universal (line 3) and covers the texture-array sprite batch file it sits next to.",
+  "asset_licence": "Mixed, per docs/Credits.md. The licence list at the top of that file (lines 5-10) names CC0, CC BY 3.0, CC BY 4.0, CC BY-SA 4.0 and public domain. CC BY 3.0 for the Noun Project icons (line 44: 'either licenced under CC BY 3.0 or released into the Public Domain'); CC BY 4.0 for the Unciv logo (line 26: 'licensed under CC BY 4.0') and the Fantasy Hex base tiles (line 40: 'licensed CC BY 4.0'); CC BY-SA 3.0 for android/assets/ExtraImages/banner.png (line 38: 'released under CC BY-SA 3.0'); CC BY-SA 4.0 for two flags (Bangladeshi and Rusyn, in the Icon Credits list). Sound credits (line 842 onward): 'most sounds are from FreeSound.org', licensed CC0/Public Domain, CC BY 3.0 or CC BY 4.0, 'with some exceptions'. docs/Modders/Making-a-new-Civilization.md line 80: 'Icons directly from the base game belong to Firaxis, so I'm not sure we're legally allowed to use them - please use other sources!'",
+  "rights_holder_status": "Fan project: an open-source remake of the Civ V game (README). docs/Modders/Making-a-new-Civilization.md line 80 says base-game icons belong to Firaxis and the author is unsure they can be used. The repo does not say which icons came from the base game. Per-asset credits are in docs/Credits.md. The rules data follows the Civ V model; the Units.json comment cites the Civilization Wiki (line 3) and a community site, and their licences are not checked here.",
+  "best_class": "A (credited CC0 / CC BY groups only); B for CC BY-SA groups; C for base-game-derived icons and any group without a credit line",
+  "asset_groups": [
+    {
+      "kind": "UI atlases (PNG + .atlas)",
+      "path": "android/assets/ (Icons.png, Skin.png, Tech.png, Tilesets.png, PolicyIcons.png, ReligionIcons.png, NationIcons.png, Flags.png, UnitPromotionIcons.png, AbsoluteUnits.png, ConstructionIcons.png, EasterEggs.png, and others; 13 .atlas files)",
+      "count_hint": "29 PNG in android/assets (census); 13 .atlas",
+      "licence": "Per docs/Credits.md: Noun Project stat and unit icons CC BY 3.0 or public domain (the Stat icons and Units sections list the authors); flags from Freepik CC BY 3.0 (Icon Credits), with two CC BY-SA 4.0 flags and several public-domain flags",
+      "class": "A for Noun Project and Freepik CC BY 3.0 icons (credit required); B for the CC BY-SA 4.0 flags; C for any icon the docs do not credit, including base-game-derived icons per docs line 80",
+      "note": "Not opened (binary). Which individual atlas region is which is not checked. Unit icons credited by unit name in docs/Credits.md ('### Units' section)."
+    },
+    {
+      "kind": "logo and extra images",
+      "path": "extraImages/ (repo root), android/assets/ExtraImages/ (banner.png, Icons/, Tutorials/, World_Screen.png)",
+      "count_hint": "18 files under android/assets/ExtraImages (all subfolders); plus banner and tutorials",
+      "licence": "Unciv logo: CC BY 4.0 (docs line 26); its gear, apple, gold, beaker, music, smiley and city icons are Noun Project CC BY 3.0 (listed under the logo in the Icon Credits); banner.png CC BY-SA 3.0 (docs line 38)",
+      "class": "A for the logo set (CC BY 4.0, credit); B for banner.png (CC BY-SA 3.0)",
+      "note": "Not opened. The logo is the project's own and is credited to yairm210 and u-ndefine."
+    },
+    {
+      "kind": "sounds (MP3 and OGG)",
+      "path": "android/assets/sounds/ (41 MP3, 10 OGG; e.g. click.mp3, cannon.mp3, cityAncient.ogg through cityFuture.ogg, nuke.mp3)",
+      "count_hint": "51 files",
+      "licence": "docs/Credits.md line 842 onward: most from FreeSound.org; each credited sound is CC0/Public Domain, CC BY 3.0 or CC BY 4.0, with exceptions listed. Only the first few credit lines were read (lines 844-846: CC0, CC BY 3.0).",
+      "class": "A for credited CC0 / CC BY sounds (with credit); C for any sound with no credit line (not checked one by one)",
+      "note": "Not played. Per-era city beds (cityAncient to cityFuture, plus cityInformation and cityAtomic) are a good structure to look at."
+    },
+    {
+      "kind": "game rules data (JSON, Civ V model)",
+      "path": "android/assets/jsons/Civ V - Vanilla/ (20 JSON: Units.json with 100 unit entries, Ruins.json, Difficulties.json, Terrains.json, Policies.json with 70 entries, Techs.json, Buildings.json, UnitPromotions.json and others); android/assets/jsons/Civ V - Gods & Kings/ (25 JSON)",
+      "count_hint": "45 JSON across the two rule sets",
+      "licence": "No licence line in the data files. Units.json line 3 cites 'Civilization Wiki' and a community site as the source of the info. The repo LICENSE is the only licence file for the code.",
+      "class": "C (licence unclear for the rule data and names)",
+      "note": "DATA FIRST: these are the data tables for the whole game. Used as shape and as a tuning reference only, never copied. Not read beyond the lines cited."
+    },
+    {
+      "kind": "tilesets (JSON, plus atlas)",
+      "path": "android/assets/jsons/TileSets/ (FantasyHex.json, HexaRealm.json, Minimal.json); android/assets/Tilesets.png",
+      "count_hint": "3 JSON tileset definitions",
+      "licence": "FantasyHex base tile icons: CC BY 4.0 by CuddlyClover with additions by contributors (docs line 40). HexaRealm and Minimal: no credit line seen in the parts read.",
+      "class": "A for FantasyHex base icons (credit required); C for HexaRealm and Minimal (not checked)",
+      "note": "FantasyHex.json line 2 sets useColorAsBaseTerrain and line 6 maps a composite terrain name to ordered tile variants."
+    },
+    {
+      "kind": "translations (properties, text)",
+      "path": "android/assets/jsons/translations/ (51 entries, e.g. Latin.properties with about 9,088 lines)",
+      "count_hint": "51 entries",
+      "licence": "No licence line in the files or in docs/Credits.md for translation text (not checked fully).",
+      "class": "C (licence unclear)",
+      "note": "Text strings only. Counted, not read. Grammar: key=value lines; not quoted here."
+    },
+    {
+      "kind": "effects and other binaries",
+      "path": "android/assets/effects/fireworks.p (1 file); keystore.jks (repo root, 2084 bytes); android/assets/ExcludedModAuthors.txt (text)",
+      "count_hint": "1 effect file, 1 keystore, 1 text",
+      "licence": "not stated",
+      "class": "C",
+      "note": "keystore.jks is a signing keystore committed in the repo root. Not opened (binary, and a credential). Flagged as unexpected; not to be used."
+    },
+    {
+      "kind": "code (not art): core, desktop, android java, server",
+      "path": "core/, desktop/, android/java/, server/ (server/src/com, server/build.gradle.kts line 4 'plugins {')",
+      "count_hint": "not counted",
+      "licence": "MPL 2.0 per LICENSE line 1 (file-level copyleft as the licence text describes; not interpreted further here)",
+      "class": "D for assets (code only); shape-only for our use by default",
+      "note": "Paired halves: client (core/, android/, desktop/) and server (server/) are both in the box. Server read only at the build file; not read further."
+    }
+  ],
+  "inspiration": [
+    "Ruins as discovery events: a short list of rewards (culture, a free worker, a free settler), each with a notification line, and some rewards are excluded on harder difficulties (Ruins.json; excludedDifficulties at line 12). The rule that picks a reward was not read. Fit for zone discovery and loot: one reward per ruin, and harder difficulties remove the easy ones (row 18, zones).",
+    "Difficulty as a data row: one table of scalars per difficulty for barbarian bonus, barbarian spawn delay, unit cost, research cost, and happiness base (Difficulties.json; barbarianSpawnDelay at line 14). Fit for spawn tuning as zone data: a delay before a new wave, and a per-difficulty bonus, both as numbers (row 23).",
+    "Era-keyed ambience: one looping city bed per era, from ancient to future, plus variants for information and atomic eras (android/assets/sounds/cityAncient.ogg through cityFuture.ogg). Fit for ambience beds per biome and crossfades at borders (sound-music topic).",
+    "Tile variant rules with a fallback: a rule-variant table maps composite terrain names (e.g. a grassland cell with a river) to an ordered list of tiles, with a fallback tileset and a flag to use the colour as the base terrain (TileSets/FantasyHex.json line 2 and line 6). Fit for zone art variants and a colour fallback for the minimap (hud-ui).",
+    "Unit roster as a 100-row data table: each unit has a type, movement, strength and ranged strength, cost, a required tech and an obsolete tech, plus text uniques (Units.json; rangedStrength at line 96). Fit for catalogue fields (row 21): role, reach, cost, unlock and retirement as separate fields.",
+    "Policy list as data (Policies.json, about 70 entries; only the count was checked, the structure was not read). If the entries form a tree, that is a shape to check before reuse. Fit for progression (build diversity) once read."
+  ],
+  "briefs": [
+    {
+      "label": "Ruin discovery chest",
+      "why": "A single found ruin that rolls one reward from a short list makes exploration pay without a shop screen. Readable as a 375 px pop-up with one line of text.",
+      "keep": "A short reward list per ruin; a one-line notification; a difficulty gate that removes the easy rewards. (The selection rule was not read.)",
+      "change": "Rewards are loot rolls tied to the zone (no free units); the reveal is a chest lid and a rarity sound, not a text line. Keep Dom's rule: our own reward list and our own ceremony.",
+      "ref": "android/assets/jsons/Civ V - Vanilla/Ruins.json line 12"
+    },
+    {
+      "label": "Era-bed biome ambience",
+      "why": "A bed per era gives instant place and time without any on-screen label, and a crossfade makes a border feel like a border.",
+      "keep": "One looping bed per context; crossfade when the context changes.",
+      "change": "Beds are per biome and per zone tag, with a short stinger on crossing a border instead of a long crossfade. Keep Dom's rule: our own music and sound, never these files.",
+      "ref": "android/assets/sounds/cityAncient.ogg through cityFuture.ogg (paths only; not played)"
+    },
+    {
+      "label": "Terrain variant with colour fallback",
+      "why": "A composite terrain (base plus feature) that falls back to a colour keeps the minimap readable when art is missing.",
+      "keep": "Ordered tile variants per composite terrain; a colour fallback flag.",
+      "change": "Variants keyed by our zone tag and our palette ramp (row 16); the minimap colour is our own. Keep Dom's rule: our own tile set.",
+      "ref": "android/assets/jsons/TileSets/FantasyHex.json lines 2 and 6"
+    }
+  ],
+  "not_read": [
+    "All PNG, MP3, OGG, atlas and .p files: names and counts only. Nothing opened, played or sized.",
+    "keystore.jks: not opened (binary; a signing key). Flagged, not used.",
+    "Rules JSON beyond the lines cited (Units.json lines 3 and 96; Ruins.json line 12; Difficulties.json line 14; Terrains.json line 4 as a listing only). Civ V - Gods & Kings folder: names only.",
+    "translations/*.properties: counted and sized; not read beyond the file count and line count.",
+    "HexaRealm.json and Minimal.json: names only.",
+    "docs/Credits.md beyond lines 10, 17-60, 26, 38, 40, 44, 842-846 (full sound credit list not read).",
+    "server/ source: only the build file's first lines (line 4) were checked; no server code read.",
+    "core/ and desktop/ source: not read."
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "donor": "Merec-DAoC-MapCreator",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 240
+  },
+  "count_notes": {
+    "creatures": "no creature data in the box",
+    "classes": "no character classes or races in the box",
+    "weapons": "no weapon data in the box",
+    "gear_sets": "no armour or gear data in the box",
+    "zones": "240 zone entries in MapCreator/data/Zones.xml (map zones, not dungeon archetypes): Outdoor 124, Dungeons 49, Indoor 27, Instances 26, Battlegrounds 11, Capitol 3; header lists Frontiers, which no entry uses"
+  },
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [
+    "zone types (header, MapCreator/data/Zones.xml line 6): Frontiers, Battlegrounds, Capitol, Outdoor, Indoor, Dungeons, Instances",
+    "Dungeons zone type: 49 entries; keep a dungeon as a tagged zone type on one table; change our archetypes and tiers",
+    "Instances zone type: 26 entries; keep the instanced zone as its own type; change to a lobby-and-gate entry",
+    "Battlegrounds zone type: 11 entries; keep a small set of contested zones under one tag",
+    "Capitol zone type: 3 entries; a hub zone as its own type",
+    "Indoor zone type: 27 entries; indoor areas as their own type for rendering and rules"
+  ],
+  "looks": [
+    {
+      "label": "Fixture render modes",
+      "technique": "a category table: each category has a renderer (none, shaded, flat or image), a light ramp by direction, a colour, a transparency and a shadow record",
+      "ref": "/mnt/frankendom-donors/Merec-DAoC-MapCreator/MapCreator/fixtures.xml line 3 (renderer list), line 38 (image renderer)"
+    },
+    {
+      "label": "River types as an enum with a separate lava class",
+      "technique": "river, lake, swamp and lava as enum members, so lava reads as a hazard and not as water",
+      "ref": "/mnt/frankendom-donors/Merec-DAoC-MapCreator/MapCreator/Classes/Constants.cs line 40 (enum RiverTypes), line 47 (lava member)"
+    },
+    {
+      "label": "Leaf-mask canopy",
+      "technique": "one leaf-mask texture gates a flat canopy card; not read in pixels",
+      "ref": "/mnt/frankendom-donors/Merec-DAoC-MapCreator/MapCreator/data/textures/tree_leaves.png and leaves_mask.png (file names only)"
+    },
+    {
+      "label": "Faction landmark variants",
+      "technique": "three landmark renders share one footprint and differ by ornament; not read in pixels",
+      "ref": "/mnt/frankendom-donors/Merec-DAoC-MapCreator/MapCreator/data/prerendered/objects/ (file names only)"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Terrain-first world map",
+      "idea": "A minimap and world map drawn from terrain height and water, not hand-placed shapes.",
+      "keep": "the map comes from terrain data",
+      "change": "our own colour key and a fog-of-war edge; the terrain-and-water claim comes from AU034 and is not re-checked here"
+    },
+    {
+      "name": "Landmark style table",
+      "idea": "One small table gives every map landmark a render mode, light ramp and shadow.",
+      "keep": "one table styles every landmark category",
+      "change": "our own categories (keep, shrine, gate, camp) and our own shadow values"
+    },
+    {
+      "name": "Lava band",
+      "idea": "Lava as its own hazard class of river, reading as danger rather than water.",
+      "keep": "a distinct hazard class in the river enum",
+      "change": "a slow glowing band with a crust and an audio tick; our own texture"
+    },
+    {
+      "name": "Faction keep landmark",
+      "idea": "One tall, centred landmark silhouette across factions; the faction shows by ornament and tint.",
+      "keep": "one silhouette across variants",
+      "change": "our own roof and arch; faction colour by tint only"
+    },
+    {
+      "name": "Leaf-mask canopy card",
+      "idea": "A mask texture on a flat card: cheap at scale and readable at distance.",
+      "keep": "the mask-on-a-card method",
+      "change": "our own leaf shape and a sway rule"
+    }
+  ],
+  "licence_note": "Code is GPL-2.0 (LICENSE line 2: Version 2, June 1991; source headers name the author). No separate asset licence. The game world and its art are not in the box and the README says they come from the game client. Shape and mechanism only, clean-room; no code, art or place names copied.",
+  "halves": {
+    "tool": "read: MapCreator/data/Zones.xml, MapCreator/fixtures.xml, MapCreator/Classes/Constants.cs (enum), README line 2",
+    "data_pack": "listed only: prerendered images, textures, schemas; image content not read",
+    "client": "not in the box; a DAoC client-library folder appears by name in the box listing (not read; not one of this reader's donors)"
+  },
+  "not_read": [
+    "image content of every PNG and DDS file",
+    "libs/*.dll and tools/filever.exe (binaries)",
+    "most .cs source files (listed by name)",
+    "NifUtil/ source (listed only)",
+    "changelog (listed only; AU034 reports its content)",
+    "CLAUDE.md and AGENTS.md: not present in this donor"
+  ]
+}

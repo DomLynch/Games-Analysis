@@ -1,0 +1,88 @@
+{
+  "donor": "rathena-rathena",
+  "halves": {
+    "data_pack": "read (db/re, db/import-tmpl header, npc/instances, npc/mapflag, npc/re spawn lines by count)",
+    "server": "partly read (src/map/mob.cpp condition lines 4361 and 6405 by grep; rest of src/ not read)",
+    "client": "not in box",
+    "paired_donor_in_box": "none"
+  },
+  "counts": {
+    "creatures": 2675,
+    "classes": 175,
+    "weapons": 2806,
+    "gear_sets": 8618,
+    "zones": 78
+  },
+  "count_notes": {
+    "creatures": "grep of '  - Id:' in db/re/mob_db.yml; includes 2 player-race rows and 4 rows with no race; 732 Class Boss; 190 MVP flag",
+    "classes": "distinct '  - Job:' names in db/re/skill_tree.yml",
+    "weapons": "'Type: Weapon' rows in db/re/item_db_equip.yml",
+    "gear_sets": "'- Combo:' rules in db/re/item_combos.yml; combos, not de-duplicated sets",
+    "zones": "instance definitions in db/re/instance_db.yml; db/map_index.txt (1,323 lines) not counted as zones"
+  },
+  "creature_families": [
+    {"family": "by race (entries / boss-class / MVP)", "values": "Formless 697/241/18; Demihuman 451/133/49; Demon 360/128/47; Brute 329/55/24; Insect 223/30/14; Plant 192/17/7; Undead 186/36/10; Fish 104/30/7; Angel 68/43/9; Dragon 59/17/5", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/mob_db.yml"},
+    {"family": "level bands (all entries)", "values": "1-19: 244; 20-39: 125; 40-59: 183; 60-79: 189; 80-99: 476; 100+: 1458", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/mob_db.yml"},
+    {"family": "boss-class by level", "values": "under 40: 44; 40-69: 33; 70-99: 124; 100+: 531", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/mob_db.yml"},
+    {"family": "skill table", "values": "14,514 rows across 1,941 mobs; 286 skill ids; states attack 7990, chase 3255, idle 2429; conditions always 10445, HP-at-or-below-% 1668, rudely attacked 673, slaves-at-or-below 499, monsters-nearby-greater 53, on-spawn 57", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/mob_skill_db.txt"},
+    {"family": "elemental MVP family (Insect, Large, Level 155, HP line 50,000,000)", "values": "IDs 2529 (Poison), 2532 (Fire), 2533 (Earth), 2534 (Water), 2535 (Wind)", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/mob_db.yml lines 61082, 61213, 61270, 61327, 61384"},
+    {"family": "water MVP family (Fish, Water, Large)", "values": "six MVP entries, levels 95 to 155 (IDs 2187, 2188, 2189, 2190, 2194, 2202)", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/mob_db.yml lines 49743, 50468"}
+  ],
+  "top_creatures": [
+    {"label": "Crown Revenant (undead boss with a guard ring)", "why": "Summons a guard set on spawn, re-summons when guards are at or below 3, power-up at 30 percent HP, and a heal on a damage-threshold condition. Silhouette and sound not in box.", "keep": "Refill threshold at 3 guards; on-spawn summon", "change": "Heal becomes a visible wind-up window; power-up becomes an aura with its own cue", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/mob_db.yml:1808 (flags 1840, 1842); /mnt/frankendom-donors/rathena-rathena/db/re/mob_skill_db.txt:166,179,180,182"},
+    {"label": "Ladder Wyrm (dark dragon with HP bands)", "why": "42 skill rows; a new move unlocks at HP bands of about 95, 75, 70, 60, 50, 40, 30, 28, 15 and 3 percent; on-spawn summon", "keep": "The HP band ladder; on-spawn summon", "change": "Four bands instead of ten; a roar cue per band; our own moves", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/mob_db.yml:43096; /mnt/frankendom-donors/rathena-rathena/db/re/mob_skill_db.txt:5656,5665,5667,5691"},
+    {"label": "Dragon that re-summons from zero", "why": "Summons minions only when none are left (slave count 0). HP line 6,005,000 (raw value, not interpreted).", "keep": "Zero-count summon as a clear beat after the adds are cleared", "change": "Visible call with a wing cue; capped to our 3-attacker rule", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/mob_db.yml:31175 (HP 31180); /mnt/frankendom-donors/rathena-rathena/db/re/mob_skill_db.txt:3800"},
+    {"label": "Five-colour beetle brood", "why": "One family, one size, one level (155), five elements, MVP flag on each; the quake skill appears on more than one member", "keep": "One shape, five elements, one level tier", "change": "Each element gets its own signature move, cue and palette", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/mob_db.yml:61082,61213,61270,61327,61384; /mnt/frankendom-donors/rathena-rathena/db/re/mob_skill_db.txt:8884,8911,8912"},
+    {"label": "Gilded thief beetle", "why": "Insect, Fire, Large, Level 65, MVP; teleports away when rudely attacked. The gold look is not in the box (name only).", "keep": "Flee on a hit, return later", "change": "Our own metallic gold ramp and a thief cue", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/mob_db.yml:4187 (class 4219); /mnt/frankendom-donors/rathena-rathena/db/re/mob_skill_db.txt:385,386"},
+    {"label": "Tidal kraken tiers", "why": "One water family across four level tiers (95, 100, 124, 155); storm skill on chase, wide curse, summon at 3 slaves", "keep": "Level tiers in one silhouette; storm as a telegraphed area", "change": "Storm ring fills from the edge; tiers shown by fin and scale colour", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/mob_db.yml:49743,50468; /mnt/frankendom-donors/rathena-rathena/db/re/mob_skill_db.txt:7075,7091,7098"},
+    {"label": "Crowd hopper (small pack beast)", "why": "Not a boss (no Class line); while chasing, uses its self-teleport when more than four monsters are in range (condition mobnearbygt 4)", "keep": "The crowd-count trigger", "change": "Count our hate-list members; cap at MAX_ATTACKERS = 3; it repositions the pack, not the player", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/mob_db.yml:100678 (HP 100682); /mnt/frankendom-donors/rathena-rathena/db/re/mob_skill_db.txt:13072"},
+    {"label": "Demon with a retinue", "why": "Demon, Dark, Large, Level 81, MVP; two summon rules (on spawn, and at 3 or fewer slaves); same pattern as the Crown Revenant on another race", "keep": "Both summon rules", "change": "Retinue is a visible group that breaks off when the boss is hit hard (design idea, not from data)", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/mob_db.yml:1868; /mnt/frankendom-donors/rathena-rathena/db/re/mob_skill_db.txt:202,204"}
+  ],
+  "classes": [
+    {"name": "Player race rows", "role": "2 rows: Player_Human, Player_Doram", "mechanic": "not read", "progression": "not read", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/mob_db.yml"},
+    {"name": "Job tree (175 names)", "role": "base, second and high tiers; 51 Baby_ variants; 15 numbered alternates; 17 _T transcend names; 83 other", "mechanic": "not read per job", "progression": "base -> second -> transcend (name pattern only); thresholds in job_exp.yml not read", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/skill_tree.yml:44"},
+    {"name": "Castles / guilds", "role": "44 castle entries", "mechanic": "not read", "progression": "guild_skill_tree.yml not read", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/castle_db.yml"}
+  ],
+  "weapon_families": [
+    {"family": "SubType counts (top 10)", "values": "Dagger 304, Staff 281, 1hSword 216, Bow 205, Mace 196, Book 166, 2hSword 140, Katar 132, 2hStaff 116, Whip 112", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/item_db_equip.yml:95"},
+    {"family": "weapon level tiers", "values": "WeaponLevel 1: 163; 2: 153; 3: 740; 4: 1171; 5: 579", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/item_db_equip.yml:116"},
+    {"family": "elemental and special random options", "values": "wind, water, undead, telekinesis attribute options; indestructible option; 249 option rows", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/item_randomopt_db.yml:737; /mnt/frankendom-donors/rathena-rathena/db/re/item_randomopt_group.yml:45"}
+  ],
+  "gear_tiers": [
+    {"tier": "refine groups", "values": "Armor (line 49), Weapon (663), Shadow_Armor, Shadow_Weapon (2478); per-level rates", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/refine.yml"},
+    {"tier": "refine material grades", "values": "Normal, HD (line 60), Enriched (line 64), each with its own rate and price", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/refine.yml:60,64"},
+    {"tier": "enchant grades", "values": "Armor and Weapon families; grades None, B, C, D; chances per refine level", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/enchantgrade.yml:58"},
+    {"tier": "armour rows", "values": "8,954 Type: Armor rows; shadow gear about 1,028 (two case variants); pet eggs and armour listed separately", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/item_db_equip.yml"},
+    {"tier": "combo rules", "values": "8,618 combo entries (not de-duplicated sets)", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/item_combos.yml:38,39"}
+  ],
+  "zones": [
+    {"zone": "Tower (101 floors)", "archetype": "floor ladder with per-floor warps", "hazard": "not read", "ref": "/mnt/frankendom-donors/rathena-rathena/npc/instances/EndlessTower.txt:12"},
+    {"zone": "Instance archetypes (78 definitions)", "archetype": "18 with a time limit, 19 multi-map; catacomb, nest, shrine and memorial scripts", "hazard": "time limit", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/instance_db.yml:46; /mnt/frankendom-donors/rathena-rathena/npc/instances/"},
+    {"zone": "Field spawns", "archetype": "3,563 monster spawn lines in npc/re (475 files); common minimum respawn 5 s (1606 lines), 3 min (629), 1 min (150), 30 min (104)", "hazard": "not read", "ref": "/mnt/frankendom-donors/rathena-rathena/npc/re/mobs/"},
+    {"zone": "Map flag zones (29 files)", "archetype": "nightmare, night, pvp, gvg, nopvp, nopenalty, nobranch, noskill, nowarp, nomemo, nosave, reset, town and others", "hazard": "nightmare death drop", "ref": "/mnt/frankendom-donors/rathena-rathena/npc/mapflag/nightmare.txt:4"}
+  ],
+  "looks": [
+    {"label": "Condition ladder for boss phases", "technique": "skill rows keyed by HP band, minion count and crowd count (data, not visual)", "ref": "/mnt/frankendom-donors/rathena-rathena/db/import-tmpl/mob_skill_db.txt:28,39,46"},
+    {"label": "Numbered hit-effect catalogue", "technique": "effect list with numbered ids (header only read in the audit; not read in this pass)", "ref": "/mnt/frankendom-donors/rathena-rathena/doc/effect_list.md"},
+    {"label": "EXP and drop curve by level gap", "technique": "table of rates keyed by level difference (34 rows); not a visual look", "ref": "/mnt/frankendom-donors/rathena-rathena/db/re/level_penalty.yml:26,38"}
+  ],
+  "originals": [
+    {"name": "Crown Revenant", "idea": "Undead boss that calls a guard when its guards fall to 3, with a visible wind-up before any heal", "keep": "Refill threshold at 3", "change": "Heal window instead of a free heal; our silhouette and cues"},
+    {"name": "Ladder Wyrm", "idea": "Dark dragon whose HP bands each unlock one new move, four bands with a roar per band", "keep": "The band ladder", "change": "Fewer bands, our moves, our silhouette"},
+    {"name": "Five-Colour Brood", "idea": "One beetle family, one size, five elements, one signature move per element", "keep": "Family and level tier", "change": "Moves, palette and cues"},
+    {"name": "Tidal Tiers", "idea": "One water family across four level tiers; storm ring fills from the edge", "keep": "Tiers inside one silhouette", "change": "Ring visual; tiers by fin colour"},
+    {"name": "Crowd Hopper", "idea": "Small pack beast that blinks its group when more than four enemies are near", "keep": "Crowd-count trigger", "change": "Count hate-list members; cap at 3 attackers"},
+    {"name": "Gilded Thief", "idea": "Gold-look thief that flees when hit and comes back", "keep": "Flee and return", "change": "Our own gold ramp and cue"},
+    {"name": "Death Ledger", "idea": "Level-gap EXP curve plus a capped death drop with a recovery window", "keep": "The gap curve", "change": "Curve values, drop cap and recovery rule"},
+    {"name": "Tower of Floors", "idea": "A shorter floor ladder with a clock and a per-floor warp", "keep": "Floor ladder and clock", "change": "Floor count and loot ceremony"}
+  ],
+  "licence_note": "Code: GNU GPL v3 (LICENSE line 1; README.md line 81). Data files carry a GPL v3 header; the game is not named in the files. Shape only, no values copied.",
+  "not_read": [
+    "src/ server code beyond mob.cpp condition lines 4361 and 6405",
+    "npc/ script bodies beyond spawn-line counts and instance and mapflag headers",
+    "db/re item bonus scripts, job_exp.yml, castle_db rows, guild_skill_tree.yml, achievement rows (361 counted), quest_db.yml, map_drops.yml, mob_summon.yml",
+    "doc/effect_list.md (header only, from the audit), doc/mob_db_mode_list.txt (Ai and mode decoding)",
+    "binary files db/GeoIP.dat, db/map_cache.dat, db/re/map_cache.dat",
+    "client half, art, sound, shader data: not in the box"
+  ]
+}

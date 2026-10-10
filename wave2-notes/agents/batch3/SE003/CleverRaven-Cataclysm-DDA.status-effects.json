@@ -1,0 +1,65 @@
+{
+  "donor": "CleverRaven-Cataclysm-DDA",
+  "topic": "status-effects",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/json/effects.json",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/creature.cpp",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/effect.cpp",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/effect.h",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/character.cpp"
+  ],
+  "counts": {
+    "effect_type_entries": 432,
+    "max_intensity_above_1": 124,
+    "rated_bad": 163,
+    "rated_good": 54,
+    "rated_neutral": 7,
+    "rated_mixed": 2,
+    "with_int_dur_factor": 40,
+    "with_int_add_val": 19,
+    "with_int_decay_tick": 9,
+    "with_explicit_max_duration": 96,
+    "with_chance_kill": 2,
+    "with_int_decay_remove": 3
+  },
+  "rule": "Each status has a duration and a level. Re-apply extends the duration (dur_add_perc, default 100 percent), then sets the level one of three ways: derived from duration (bleed: ceil(duration / int_dur_factor)), stepped by int_add_val and capped, or set explicitly by the caller. Per turn each effect decays its level every int_decay_tick turns (on the global clock, only while duration is below max), ends at duration 0, and rolls a kill check. The level floors at 1 unless int_decay_remove is set. Hits add stuns by size class (tiny x4, small x2, medium x1, large /2, huge /4) and knockdown on falls and tangles.",
+  "data_fields": [
+    {"name": "level_rule", "unit": "enum fromDuration|stepped|explicit", "donor_value_or_null": null},
+    {"name": "secondsPerLevel", "unit": "seconds of duration per level", "donor_value_or_null": null},
+    {"name": "maxDuration", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "maxLevel", "unit": "levels", "donor_value_or_null": null},
+    {"name": "addPerHit", "unit": "levels per re-apply", "donor_value_or_null": null},
+    {"name": "decayEvery", "unit": "seconds between decay steps (0 = none)", "donor_value_or_null": null},
+    {"name": "decayStep", "unit": "levels per decay step (negative)", "donor_value_or_null": null},
+    {"name": "decayRemove", "unit": "bool; level may reach 0 and end", "donor_value_or_null": null},
+    {"name": "durAddPercent", "unit": "percent of new duration added on re-apply", "donor_value_or_null": null},
+    {"name": "stun_size_multiplier", "unit": "ratio per size class (tiny, small, medium, large, huge)", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Time as severity: a derived level (bleed) means one number drives both the word and the damage",
+    "Stepped level on each re-apply with a cap, so repeated hits cannot exceed maxLevel",
+    "Word ladder per level, so the player reads severity from text",
+    "Decay runs before the death check in the same per-turn pass",
+    "Size classes scale stun time through one table, not per-creature code"
+  ],
+  "change": [
+    "Defect: decay phase is set by the global turn clock (effect.cpp 1056), so the first decay can come anywhere from one turn to a full tick after application. Fix: per-instance sinceDecay timer.",
+    "Defect: the level floor is implicit (set to 1 unless int_decay_remove), so decaying effects can sit at level 1 with no visible end. Fix: make the end explicit in the data (decayRemove) and show the floor in the word ladder.",
+    "Do not port item destruction from statuses; one-ledger rule means no status destroys items",
+    "Express all numbers as zone and creature data fields, never as constants in the engine"
+  ],
+  "look_test": "Phone, 375 wide, about 5 minutes: one duel against a single brute with three quick hits and one wall push. Style flag on the existing duel scene: ?statusLevel=time or ?statusLevel=hits. time = word and damage follow remaining time (donor rule); hits = level steps only on each hit. Compare a 20-second clip of the status line in each. Publish the flag to the preview folder with no release rows and no lock.",
+  "licence_note": "CC BY-SA 3.0 per LICENSE.txt line 1 (README line 64 also says free to use under the same licence). Share-alike content: clean-room, shape only; no donor values in our data (all donor_value_or_null are null). No legal conclusions.",
+  "tags": ["status-stack", "duration-rule", "bleed", "stagger", "knockdown", "knockback", "new:severity-from-time", "new:stepped-level", "new:decay-clock"],
+  "not_read": [
+    "Sidebar, render and colour code (rating colours not described)",
+    "data/json/effects_on_condition/ scripts",
+    "Creature::resists_effect and is_immune_effect bodies",
+    "kill_roll chance tables (key counted only)",
+    "Effect constructor (src/effect.h field defaults beyond those cited)",
+    "Most of the 432 effect entries (counted, nine read in full)",
+    "Message text for the 40 bleed descriptions (counted, not quoted)"
+  ]
+}

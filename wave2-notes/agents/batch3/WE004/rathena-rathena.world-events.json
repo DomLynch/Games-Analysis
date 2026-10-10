@@ -1,0 +1,93 @@
+{
+  "donor": "rathena-rathena",
+  "topic": "world-events",
+  "depth": "full",
+  "half_read": "both",
+  "verdict": "STRONG",
+  "decision": "adapt (idea)",
+  "paths": [
+    "/mnt/frankendom-donors/rathena-rathena/src/map/npc.cpp",
+    "/mnt/frankendom-donors/rathena-rathena/src/map/guild.cpp",
+    "/mnt/frankendom-donors/rathena-rathena/src/map/script.cpp",
+    "/mnt/frankendom-donors/rathena-rathena/src/map/mob.cpp",
+    "/mnt/frankendom-donors/rathena-rathena/npc/custom/woe_controller.txt",
+    "/mnt/frankendom-donors/rathena-rathena/npc/events/bossnia.txt",
+    "/mnt/frankendom-donors/rathena-rathena/npc/other/poring_war.txt",
+    "/mnt/frankendom-donors/rathena-rathena/conf/battle/monster.conf",
+    "/mnt/frankendom-donors/rathena-rathena/conf/battle/drops.conf"
+  ],
+  "counts": {
+    "bossnia_monster_rows": 160,
+    "bossnia_courses": 4,
+    "bossnia_rows_per_course": 40,
+    "bossnia_rows_without_respawn_field": 24,
+    "bossnia_rows_respawn_30min": 40,
+    "bossnia_rows_respawn_60min": 32,
+    "bossnia_rows_respawn_120min": 64,
+    "woe_castle_rows": 40,
+    "woe_castle_rows_regional": 30,
+    "woe_castle_rows_te": 10,
+    "poring_war_recruit_timer_labels": 11
+  },
+  "rule": "Server clock is a one-second timer that fires labels on minute, hour, weekday and day change. A siege session is a row (weekday, start hour inclusive, end hour exclusive, castle bitmask). Start order: announce, hold 1000 ms, set the server flag, then open the active zones and end the inactive ones. Respawn time = base + rnd() % variance, scaled by class percent (default 100), floored at 1000 ms. MVP = largest damage plus tanked among online, alive, same-map players; ties keep the earlier entry. Tomb appears after a fixed delay and names the killer and death time. Countdown = list of timed lines.",
+  "data_fields": [
+    {"name": "respawn.base_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "respawn.variance_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "respawn.scale_pct", "unit": "percent", "donor_value_or_null": null},
+    {"name": "respawn.floor_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "siege.weekday", "unit": "0-6", "donor_value_or_null": null},
+    {"name": "siege.start_hour", "unit": "hour, inclusive", "donor_value_or_null": null},
+    {"name": "siege.end_hour", "unit": "hour, exclusive", "donor_value_or_null": null},
+    {"name": "siege.zone_ids", "unit": "list of zone ids", "donor_value_or_null": null},
+    {"name": "countdown.lines", "unit": "list of (at_ms, line)", "donor_value_or_null": null},
+    {"name": "mvp.tomb_delay_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "mvp.loot_priority", "unit": "bool", "donor_value_or_null": null},
+    {"name": "boss.count", "unit": "count per row", "donor_value_or_null": null},
+    {"name": "boss.respawn_tier", "unit": "tier name", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "one-second hold between announce and open, in a fixed order",
+    "server-owned siege flag; schedule checked once a minute on the server",
+    "tomb that names the killer and the time of death, after a fixed pause",
+    "respawn as base plus variance, scaled and floored",
+    "countdown as a list of timed lines",
+    "MVP as a damage ledger with a stable tie rule"
+  ],
+  "change": [
+    "castle bitmask becomes a zone id list (700 zones)",
+    "sessions are zone data, not script globals",
+    "schedule runs on the server tick, not a minute NPC label",
+    "no per-castle NPC labels; the zone state is the server state",
+    "MVP pick lives in the engine (parity row 18), not the NPC layer",
+    "tomb delay, pulse rate and countdown are client presentation only"
+  ],
+  "look_test": "Build a 20-second phone clip in three versions: (A) boss death, tomb after nine seconds naming the killer; (B) tomb at once; (C) siege start with a one-second hold before the zones light, against no hold. Dom compares which beat reads at 375 wide.",
+  "licence_note": "Code GPL v3 (LICENSE line 1; README line 81): clean-room shape only. db/re/mob_db.yml carries a GPL v3 header. Event scripts have author headers and no content licence; monster names and event concepts come from a commercial game's content; inspiration is category-level only.",
+  "lands_in": "origins/server/world-spawns.ts (parity row 23, zone population). MVP pick: src/fight/ loot and XP award (row 18), not built here.",
+  "tags": [
+    "world-event",
+    "timed-event",
+    "scheduler",
+    "siege",
+    "boss-elite-pattern",
+    "hit-sound",
+    "respawn",
+    "new:siege-session",
+    "new:death-tomb",
+    "new:announce-timeline",
+    "ordered-feedback",
+    "duration-rule"
+  ],
+  "not_read": [
+    "src/map/instance.cpp",
+    "src/map/battleground.cpp",
+    "npc/events/gdevent_sch.txt",
+    "spawn loader (coordinate 0,0 convention)",
+    "default respawn for monster rows without delay field",
+    "weekday label names in script_config",
+    "agitcheck internals",
+    "castle end and breach handlers",
+    "Killed and clif_mvp_* packet functions",
+    "client half (not in box)"
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "donor": "diasurgical-DevilutionX",
+  "topic": "encounter-templates",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/monster.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/levels/themes.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/engine/random.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/options.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/monster.h",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/levels/gendung_defs.hpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/monsters/unique_monstdat.tsv",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/monsters/monstdat.tsv",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/LICENSE.md"
+  ],
+  "counts": {
+    "unique_rows": 100,
+    "unique_pack_none": 29,
+    "unique_pack_leashed": 70,
+    "unique_pack_independent": 1,
+    "monster_species_rows": 112,
+    "open_tiles_per_monster": 30,
+    "zone_monster_cap": 190,
+    "minion_hp_multiplier": 2,
+    "pack_members_unique": 8,
+    "wake_memory_updates": 255,
+    "default_tick_rate_per_s": 20
+  },
+  "rule": "Level population in order: budget = open tiles in the 80x80 window / 30 (x1.5 multiplayer, capped at 190). Scatter groups of 1 (first level or 50 percent) else 2-3 (second level, crypt) or 3-5. Groups walk from a free anchor on one transparency region. Theme rooms pick one species and fill each open tile with a one-in-f chance. Uniques with a pack bring 8 leashed bodyguards of their own type at 2x hit points; the leader steps only when all leashed members are in a 7x7 gate box (DirOK); a separated member reunites within walking distance 3 with a clear line (GroupUnity); pack members share the leader's wake timer (FollowTheLeader). Wake: seen sets 255, unseen counts down, zero is dormant. Defects: y-step uses deltaX (line 341); anchor loop uncapped (328-331); scatter fill uncapped (3728). Decision: adapt the idea, defects fixed in the sketch.",
+  "data_fields": [
+    {"name": "scatter_open_tiles_per_monster", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "mp_budget_bonus", "unit": "fraction", "donor_value_or_null": null},
+    {"name": "zone_monster_cap", "unit": "count", "donor_value_or_null": null},
+    {"name": "group_size_first_level", "unit": "count", "donor_value_or_null": null},
+    {"name": "group_single_chance", "unit": "fraction", "donor_value_or_null": null},
+    {"name": "group_size_low", "unit": "count range", "donor_value_or_null": null},
+    {"name": "group_size_default", "unit": "count range", "donor_value_or_null": null},
+    {"name": "theme_one_in_f", "unit": "1 in N per open tile", "donor_value_or_null": null},
+    {"name": "pack_leash_tiles", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "pack_gate_tiles", "unit": "tiles (half-width of gate box)", "donor_value_or_null": null},
+    {"name": "escort_hp_mult", "unit": "multiplier", "donor_value_or_null": null},
+    {"name": "wake_memory_updates", "unit": "monster updates", "donor_value_or_null": null},
+    {"name": "tick_rate", "unit": "updates per second", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Leashed pack: the leader waits for its bodyguards inside a gate box (DirOK, monster.cpp 4356-4381).",
+    "Separated bodyguard drops out of the pack count when a wall breaks the line, so the leader does not wait (GroupUnity 1696-1722).",
+    "Shared wake timer across the pack (FollowTheLeader 1674-1690).",
+    "One species per room picked once (themes.cpp 360) with a one-in-f fill per open tile (363-365).",
+    "Density as a number per open tile (monster.cpp 3713), with a cap."
+  ],
+  "change": [
+    "Group walk moves y by a second random deltaX (line 341); one direction must move both axes.",
+    "Anchor search (328-331) and scatter fill (3728) are uncapped; add caps and log the shortfall.",
+    "Diablo species, boss roster, names and sprites are not ours.",
+    "Hellfire and difficulty multipliers (3366-3377) become our own tuning fields.",
+    "Donor has no respawn or despawn (grep monster.cpp and levels/*.cpp); row 23 needs them from elsewhere."
+  ],
+  "look_test": "Target src/fight/pack.ts, row 4. Stub one portrait room at 375 wide: a boss with two same-species bodyguards with the gate on; the same four bodies roaming with the gate off; a one-species room at one-in-three then one-in-nine density. Dom judges whether the boss waiting reads as a squad or a bug, whether the room reads as one thing from the door, and at which density it stops feeling like one crowd. Then cap active attackers at 3 and judge the held bodies.",
+  "licence_note": "Code: Sustainable Use License 1.0 (LICENSE.md line 1), non-commercial only, not OSI. Clean-room shape only; no code, rows, names or art copied. Assets carry a Blizzard copyright notice (AU015, class C). No legal conclusions.",
+  "tags": [
+    "encounter-ambush",
+    "encounter-camp",
+    "encounter-patrol",
+    "encounter-lair",
+    "encounter-escort",
+    "walk-density",
+    "boss-elite-pattern",
+    "boss-intro",
+    "seed-discipline",
+    "new:leash-gate",
+    "new:wake-memory",
+    "new:theme-one-species",
+    "new:pack-wake-share"
+  ],
+  "not_read": [
+    "Source/mods/hf (Hellfire overrides)",
+    "Source/monster.cpp InitLevelMonsters type lists beyond the call names (3434-3515)",
+    "Source/lua/modules/dev/monsters.cpp beyond its two PLACE_SCATTER calls",
+    "Stand animation frame data",
+    "Boss talk texts",
+    "Death presentation",
+    "Multiplayer host command path beyond NetSendCmdSpawnMonster (monster.cpp 3805)",
+    "Readability at 375 wide (not measured; fixed desktop view)"
+  ]
+}

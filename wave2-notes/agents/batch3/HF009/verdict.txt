@@ -1,0 +1,11 @@
+HF009 verdicts, topic hit-feedback-stack (order: hit stop, shake, flash, sound, particles, knockback as one ordered system)
+
+openmw: STRONG (depth full, half read: client; Morrowind data half not in box)
+  Checked (opened or grep-read): files/data/scripts/omw/combat/interface_local.lua; files/data-mw/scripts/omw/combat/local.lua; files/data-mw/scripts/omw/combat/common.lua; apps/openmw/mwmechanics/character.cpp; apps/openmw/mwclass/npc.cpp; apps/openmw/mwclass/creature.cpp (entry point and Lua hand-off only); files/data/l10n/OMWCombat/en.yaml. Keyword search for hit stop, shake, flash: none in the named paths.
+  Confidence: high on the order and the rules; medium on "absent" (components/ and rest of apps/ not searched).
+  Best transferable idea: one ordered on-hit chain where sound, blood and stagger are separate steps, and a handler can stop the rest.
+
+SCAR: PARTIAL (depth thin, half read: data; no client feedback code, no server half, no paired donor)
+  Checked (opened): Nemesis_Engine/mod/scar/1hm_behavior/#0085.txt (header and event names at lines 2, 3, 5, 31, 39, 40, 48, 50, 53, 54, 88, 136; SoundPlay names counted); Nemesis_Engine/mod/scar/blockbehavior/#0076.txt (lines 1-25); Nemesis_Engine/mod/scar/0_master/#0106.txt (line 2 count); Nemesis_Engine/mod/scar/1hm_behavior/#scar$0.txt (trigger array, line 4); src/ (grep only: no feedback code); docs/ and README.md (grep only: no hit-frame semantics); AU047/SCAR.assets.md (earlier audit).
+  Why PARTIAL: event names only; timing of hit frames is not in the box, so the mechanism is a fragment.
+  Best transferable idea: put a named pre-hit cue on each attack, a fixed number of frames before its damage frame, and let the cue, not the damage, carry the telegraph.

@@ -1,0 +1,46 @@
+{
+  "donor": "wcassis-willeq",
+  "code_licence": "GPL-3.0. LICENSE text is GNU GPL Version 3; README says the project is licensed under GPL v3.0.",
+  "asset_licence": "No licence statement for game assets in the repo. README says a copy of the EverQuest Titanium client is required for zone geometry, textures, models and sound. data/1mgm.sf2 has no licence file in the repo.",
+  "rights_holder_status": "Fan/unofficial client that connects to EverQuest servers. README says EverQuest is a registered trademark of Daybreak Game Company LLC. No game art, model, texture or sound files are in the box; the repo files do not say the rights holder of the sf2 file.",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "game art, models, textures, sound (EQ S3D/WLD/MP3/WAV)", "path": "not in box (no .s3d, .wld, .mp3, .wav, .ogg, .png, .jpg, .bmp, .dds, .obj, .glb files found in the tree)", "count_hint": "0", "licence": "n/a; README requires the user's own EverQuest Titanium client copy", "class": "D", "note": "Absent. The client needs the user's own game files at runtime."},
+    {"kind": "sound font (SF2)", "path": "data/1mgm.sf2", "count_hint": "1 file, 1,090,280 bytes", "licence": "none in repo. The first 1.2 KB, read with strings(1), contains the text 'General MIDI' and 'Copyright (c) E-mu Systems, Inc., 1993' (binary; not receipt-checked).", "class": "C", "note": "Code prefers an SF2 from the EQ install path (audio_manager.cpp lines 59 and 65); the repo copy is a fallback GM soundfont for XMI/MIDI music. Unclear origin and terms: do not ship."},
+    {"kind": "zone data (JSON)", "path": "data/zone_lines/*.json", "count_hint": "117 files", "licence": "none stated in repo", "class": "C", "note": "Per-zone zone-line tables: zone key, long name, target zone, trigger coordinates, landing rule. Game-derived. Only kurn.json head read."},
+    {"kind": "zone data (JSON)", "path": "data/zone_points.json", "count_hint": "many records (not counted)", "licence": "none stated in repo", "class": "C", "note": "Zone-point table: source zone, number, source xyz, target zone id, target xyz, heading. Head only read (not read beyond first records)."},
+    {"kind": "item data (JSON)", "path": "data/item_models.json", "count_hint": "keys are item ids from 1000 upward (not counted)", "licence": "none stated in repo", "class": "C", "note": "Item id to model number table. Loaded by src/client/graphics/entity_renderer.cpp (search paths at lines 2339-2342). Head only read."},
+    {"kind": "reference dump (text)", "path": "docs/reference/s3d_contents_reference.md", "count_hint": "34,119,928 bytes; sections for global character files and zones", "licence": "none stated in repo", "class": "D", "note": "Header says it is a complete contents dump of pre-Luclin EverQuest S3D files. Treated as a listing of a proprietary archive: do not reuse or copy. Only the header lines and table of contents were read."},
+    {"kind": "reference text (audio catalogue)", "path": "docs/reference/eq_audio_assets_catalog.md", "count_hint": "summary table: 82 zone music XMI classic/kunark/velious; 78 MP3 later expansions", "licence": "none stated in repo", "class": "C", "note": "Catalogue of game music files. Not the audio. Only the overview and summary table were read (not read beyond)."},
+    {"kind": "reference text (texture name lists)", "path": "docs/reference/zone_textures/*.txt", "count_hint": "9 files", "licence": "none stated in repo", "class": "C", "note": "Texture-name lists per zone set (not read beyond the file listing)."},
+    {"kind": "third-party header libraries (code, not game assets)", "path": "third_party/miniaudio/miniaudio.h; third_party/dr_libs/dr_wav.h; third_party/minimp3/minimp3.h and minimp3_ex.h; third_party/TinySoundFont/tsf.h and tml.h", "count_hint": "6 headers", "licence": "miniaudio.h and dr_wav.h: 'Choice of public domain or MIT-0'. minimp3.h: public-domain dedication statement. tsf.h and tml.h: MIT (docs/reference/music.md line 12-13).", "class": "A", "note": "Libraries, not game assets. Permissive per the file text. Listed for completeness."}
+  ],
+  "inspiration": [
+    "Zone ambience as emitters: each source has a radius and a fade-out time; fade-in is half of that, capped at 5 s (zone_sound_emitter.cpp 160-166). Recreate the fade rule with our own sound beds.",
+    "Day and night variants of one ambience swap with a short crossfade (2 s constant in zone_audio_manager.cpp line 137) rather than a hard cut.",
+    "Music follows position, not zone: the music track is the closest music region that contains the listener (zone_audio_manager.cpp 247-268). One zone can hold several music beds, so a biome change is a region change.",
+    "Weather as a timed state machine: a check interval, a per-weather duration, 10 s transitions, and a rain chance summed over four slots out of a 400 roll, then split into storm, rain and light rain (weather_system.cpp 19-47, 168-238). The timer and blend logic is the transferable part; the particles are not.",
+    "Cast effects pick a visual preset by spell style: a spray cone for some casts, a glow for others. Colour comes from the spell and the particle lifetime is set to the cast time (spell_visual_fx.cpp 327-345). Our spell colour rule can reuse this shape.",
+    "Rain as a spell: a radius-scaled rain volume lasts exactly the spell duration (spell_visual_fx.cpp 633-650). Area-of-effect weather from a caster is a clear, cheap read at 375 wide.",
+    "Zone connections as data: each zone-line record has a trigger point, a landing rule and a target zone, kept as one JSON file per zone (data/zone_lines/*.json). This matches our rule that zones are data on one runtime.",
+    "Item to model lookup as a plain id-to-number table loaded from data (data/item_models.json), not hard-coded in the renderer. Simple and easy to audit."
+  ],
+  "briefs": [
+    {"label": "Cast-spray cone", "why": "A caster's school colour spreads outward in a cone or a steady glow, so the spell reads at a glance during a fight.", "keep": "colour taken from the spell; a spray style for some casts and a glow style for others; effect lifetime set to the cast time", "change": "a different cone shape and sprite; a gold and smoke palette instead of the donor's colour ramp; a short ring burst at the end instead of a fade", "ref": "src/client/graphics/spell_visual_fx.cpp lines 327-345"},
+    {"label": "Rolling storm front", "why": "Weather that changes on a timer and blends in over ten seconds gives a fight arena a sense of time passing.", "keep": "check interval plus per-weather duration; 10 s blend between states; a storm that lasts a set minute range", "change": "the effect is fog thickening and light dimming, not rain particles; the storm also changes enemy aggro radius visibly; a single forecast cue on the HUD", "ref": "src/client/graphics/weather_system.cpp lines 19-47 and 168-238"},
+    {"label": "Zone-line rift", "why": "A portal is a trigger volume plus a landing point; the data is clear and the player knows where they will arrive.", "keep": "trigger point and landing rule held in one per-zone data file; a target zone field", "change": "a torn ground seam with a low hum instead of a door; the landing is shown as a ring on the ground; no coordinates copied", "ref": "data/zone_lines/kurn.json (head only)"},
+    {"label": "Dual-state ambience bed", "why": "One ambience loop with a day and a night version, swapped with a crossfade, gives a zone two moods for little asset cost.", "keep": "two variants of one loop; crossfade on switch; the variant chosen by a single world flag", "change": "switch on combat state (idle versus engaged) rather than time of day; a third variant for low health; our own sound design", "ref": "src/client/audio/zone_audio_manager.cpp lines 110-148 and 137"},
+    {"label": "Nearest music region", "why": "Overlapping music regions are resolved by the nearest one, so walking between beds feels natural.", "keep": "a region is a point plus radius; the nearest containing region wins", "change": "blend the two music beds by weight instead of a hard switch; resolve overlaps by fight state, not by distance", "ref": "src/client/audio/zone_audio_manager.cpp lines 247-268"}
+  ],
+  "not_read": [
+    "Creature and character model art: none in the box. The S3D reference dump (docs/reference/s3d_contents_reference.md) was not read beyond its header; no creature brief from it.",
+    "Items and armour looks: no art in the box; item_models.json read at the head only.",
+    "src/client/audio/weather_audio.cpp (381 lines) and src/client/graphics/tree_wind_controller.cpp: not read.",
+    "Whether AudioManager::playMusic crossfades when the music region changes: not read (zone_audio_manager.cpp line 102-128 only).",
+    "Server half and common half (src/common): server is not in the box (src has client and common only); common not read.",
+    "UI and HUD (minimap, input, accessibility), loot and spawn code: not read.",
+    "CLAUDE.md (33 KB) at the donor root: treated as data; not read and no instructions taken from it.",
+    "docs/plans/*.md and docs/standards/*.md: not read.",
+    "Second Pathfinder and navmesh code: not read."
+  ]
+}

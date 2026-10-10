@@ -1,0 +1,324 @@
+{
+  "donor": "evennia-evennia",
+  "counts": {
+    "creatures": 2,
+    "classes": 0,
+    "weapons": 4,
+    "gear_sets": 0,
+    "zones": 8
+  },
+  "creature_families": [
+    {
+      "name": "hostile mob (EvAdventure)",
+      "scale": "one tier only; HP = 4 x hit dice; all six abilities equal the hit dice; fixed armour value; morale 7-9 set per NPC",
+      "signature": "per-tick intent table: hold 0, attack 0.85, stunt 0.05, item 0, flee 0.05",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/npcs.py"
+    },
+    {
+      "name": "state-machine mob (tutorial world)",
+      "scale": "one tier; health 20; no tier table in the repo",
+      "signature": "idle, patrol, hunt, attack and dead states on one ticker; paces 6 s patrol, 2 s attack, 1 s hunt, 100 s dead",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/tutorial_world/mob.py"
+    },
+    {
+      "name": "talkative NPC (immortal)",
+      "scale": "non-combat",
+      "signature": "dodges damage with a line and opens a menu on talk",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/npcs.py"
+    },
+    {
+      "name": "shopkeeper (immortal)",
+      "scale": "non-combat",
+      "signature": "brushes off hits; buys at miser factor 0.5 and sells at upsell factor 1.0 by default",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/npcs.py"
+    },
+    {
+      "name": "quest giver",
+      "scale": "non-combat",
+      "signature": "talkative NPC that dispenses quests through its menu",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/npcs.py"
+    }
+  ],
+  "top_creatures": [
+    {
+      "label": "Morale-gated mob",
+      "why": "A per-creature morale number and one 2d6 roll would decide whether the creature keeps fighting, a cheap readable fear beat. The donor defines the check but no caller in the contrib invokes it, so the behaviour is a designed idea, not a shipped one.",
+      "keep": "kept: morale as a per-creature number (7-9) and a single two-dice check against it.",
+      "change": "changed: wire the check to a real trigger (hurt or ally loss), our own dice, and a break result that sends the creature to a different corner, not just a flee step.",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/rules.py:271"
+    },
+    {
+      "label": "One-number stat block",
+      "why": "One hit-dice value sets HP, to-hit and every ability, so a creature is authored with one number and reads as tougher or weaker at a glance.",
+      "keep": "kept: one number drives HP (4 x value) and the defence bonus.",
+      "change": "changed: separate HP, damage and speed per creature family; no shared ability block.",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/npcs.py:89"
+    },
+    {
+      "label": "Four-state patrol mob",
+      "why": "Slow wandering, fast attacking and fastest hunting on one ticker reads as a creature mood, and each state is a separate pace value a designer can tune.",
+      "keep": "kept: one ticker per state, pace stored per state (patrol 6 s, attack 2 s, hunt 1 s, dead 100 s).",
+      "change": "changed: our own paces per family, and the hunt ticker must name the real method (the donor names do_hunt but defines do_hunting).",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/tutorial_world/mob.py:125-128"
+    },
+    {
+      "label": "Intent table as personality",
+      "why": "Each tick a creature rolls one intent from a weighted table, so the same species can feel aggressive or cautious just by changing weights.",
+      "keep": "kept: a weighted table of hold, attack, stunt, flee as the creature's personality.",
+      "change": "changed: intent sets per family (a pack creature stunts allies more); our own weights; the attack arm has to match the key (donor's arm is named combat).",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/npcs.py:261"
+    },
+    {
+      "label": "Look-around idle line",
+      "why": "A rare idle line (about 1 in 100 ticks) gives a standing creature life without any extra animation budget.",
+      "keep": "kept: rare idle text on a tick roll, only when nothing else happens.",
+      "change": "changed: idle clip variants per family instead of text, and a per-family rate.",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/tutorial_world/mob.py:307"
+    },
+    {
+      "label": "Flee away from the way you came",
+      "why": "A fleeing creature never doubles back into the room it just left, so the chase reads as running, not dancing.",
+      "keep": "kept: exclude the previous room from flee exits; fall back to roam in a dead end.",
+      "change": "changed: flee toward a home point or a safe zone rather than any exit; our own dead-end rule.",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/npcs.py (ai_flee)"
+    },
+    {
+      "label": "Magic gate on armour",
+      "why": "Ordinary weapons barely scratch a tough creature (damage divided by 100 unless the weapon is magic), so the player has to find the right tool; that is a clear, teachable gate.",
+      "keep": "kept: a damage gate per creature that a weapon class must pass.",
+      "change": "changed: resistance per family rather than one global number; a visible cue on a glancing hit.",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/tutorial_world/mob.py:122 and :407"
+    },
+    {
+      "label": "Timed return after death",
+      "why": "A mob's body stays on the ground for a fixed time, then the creature returns at full health; players get a pause and a reset rather than a lingering corpse.",
+      "keep": "kept: a death state with its own timer and a full-health return.",
+      "change": "changed: our own death presentation and return rule (for example a spawn point on a timer tied to the zone).",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/tutorial_world/mob.py:128 and :157"
+    }
+  ],
+  "classes": [
+    {
+      "name": "classless knave (the only character type)",
+      "role": "one character build; role comes from weapons, armour and spells chosen at creation",
+      "mechanic": "six abilities from the lowest of three d6; three rune-stone spells carried as items",
+      "progression": "XP threshold 1000 x level; level-up adds one to up to three abilities, capped at 10; HP re-roll on level-up has a defect (reads max_hp, which is not defined)",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/chargen.py:64, characters.py:304, :329"
+    },
+    {
+      "name": "races and named factions",
+      "role": "none in this contrib",
+      "mechanic": "NPC allegiance is a three-state value: hostile, neutral, friendly",
+      "progression": "none",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/enums.py"
+    }
+  ],
+  "weapon_families": [
+    {
+      "family": "melee weapon (base class)",
+      "attack_and_defence": "STR attack against armour",
+      "damage": "1d6 by default; a critical hit rolls the damage twice and adds",
+      "special": "critical miss costs one quality point; quality 0 means broken and unusable",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/objects.py:181-263"
+    },
+    {
+      "family": "throwable",
+      "attack_and_defence": "WIS attack against DEX",
+      "damage": "1d6, consumed on use",
+      "special": "is a weapon and a consumable at once (tag tuple)",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/objects.py:270-282"
+    },
+    {
+      "family": "rune stone (spell)",
+      "attack_and_defence": "INT attack against DEX",
+      "damage": "1d8, two-handed",
+      "special": "one use; refreshed by resting, not deleted after use",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/objects.py:285-309"
+    },
+    {
+      "family": "bare hands",
+      "attack_and_defence": "STR attack against armour",
+      "damage": "1d4",
+      "special": "singleton with quality None; never breaks",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/objects.py:345-373"
+    }
+  ],
+  "gear_tiers": [
+    {
+      "tier": "weapon quality 3 (normal)",
+      "how_shown": "no suffix on the name",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/objects.py:197-208"
+    },
+    {
+      "tier": "weapon quality 2 (chipped)",
+      "how_shown": "yellow '(chipped)' suffix",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/objects.py:205-206"
+    },
+    {
+      "tier": "weapon quality 1 (damaged)",
+      "how_shown": "yellow '(damaged)' suffix",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/objects.py:203-204"
+    },
+    {
+      "tier": "weapon quality 0 (broken)",
+      "how_shown": "red '(broken!)' suffix; refuses use",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/objects.py:202"
+    },
+    {
+      "tier": "armour: body base value, shield and helmet as bonuses",
+      "how_shown": "armour total in the text sheet only; no visual tier in the repo",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/equipment.py:129-153"
+    },
+    {
+      "tier": "treasure tag on a worn item (example: golden helmet = helmet plus treasure)",
+      "how_shown": "two type tags on one object: wear slot and sell value",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/objects.py:16-17 (docstring)"
+    }
+  ],
+  "zones": [
+    {
+      "name": "dungeon entrance hub",
+      "archetype": "start room whose exits each open a separate branch",
+      "rules": "each exit is re-armed with a 50 percent roll on a 5-minute tick; a branch collapses after a week without a new room",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/dungeon.py:443-489"
+    },
+    {
+      "name": "generated dungeon rooms",
+      "archetype": "grid rooms made on first entry; radial depth from the entrance picks a name tier from 1 to 10, deeper rooms fall back to dark rooms",
+      "rules": "a branch-wide budget: a new room opens up to two unexplored exits while fewer than two are open; the room stays blocked until a not_clear tag is removed",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/dungeon.py:162-347"
+    },
+    {
+      "name": "non-lethal PvP arena",
+      "archetype": "room flag set so players can fight without death",
+      "rules": "allow_pvp and allow_combat true; losers are knocked out, not killed",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/rooms.py:87-100"
+    },
+    {
+      "name": "weather outdoor room",
+      "archetype": "outdoor room with a ticker",
+      "rules": "tick every 50 to 70 seconds; a weather line on 20 percent of ticks",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/tutorial_world/rooms.py:360-400"
+    },
+    {
+      "name": "unsafe bridge",
+      "archetype": "one room that acts as five positions",
+      "rules": "steps move a counter from 0 to 4; a fall check on look at the west and centre positions only, 5 percent",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/tutorial_world/rooms.py:536, :637-683, :736"
+    },
+    {
+      "name": "dark room",
+      "archetype": "room with no light until a light source is carried",
+      "rules": "search up to four times, each try 90 percent nothing found, then the find branch runs",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/tutorial_world/rooms.py:898, :979-1001"
+    },
+    {
+      "name": "teleport room and intro and outro rooms",
+      "archetype": "scripted entry and exit rooms",
+      "rules": "class lines only read; behaviour not read",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/tutorial_world/rooms.py:448, :1105, :1176"
+    },
+    {
+      "name": "dungeon collapse",
+      "archetype": "forced return when a branch expires",
+      "rules": "every character in the branch is moved to the start room with a message; the branch and its rooms are deleted (room deletion is defective, see notes)",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/dungeon.py:251-274"
+    }
+  ],
+  "looks": [
+    {
+      "label": "Room mini-map from exits",
+      "technique": "a small grid built from the room's exits: a centre mark for the player, a symbol per cardinal exit, a second mark for a room beyond; non-cardinal exits show a different centre mark; hidden for screen-reader users",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/rooms.py:55-84"
+    },
+    {
+      "label": "Health as words",
+      "technique": "health percent is bucketed into eight coloured text labels from Perfect to Collapsed; readable at phone width without a bar",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/characters.py:27-47"
+    },
+    {
+      "label": "Blocked-path footer",
+      "technique": "a status line appended to the room text in red while an exit is locked, and removed when the room is cleared",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/dungeon.py:116-124"
+    },
+    {
+      "label": "Non-lethal PvP footer",
+      "technique": "a yellow footer that states the rule of the room in one line",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/rooms.py:96-100"
+    },
+    {
+      "label": "Dark room light gating",
+      "technique": "room lit flag plus a carried light source; without light the view and search are reduced to messages",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/tutorial_world/objects.py:316 (LightSource) and rooms.py:979-1010"
+    },
+    {
+      "label": "Ambient idle lines",
+      "technique": "rare text on a tick roll for creatures (1 in 100) and weather (1 in 5) so an empty room still moves",
+      "ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/tutorial_world/mob.py:307 and rooms.py:398"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Doorway branch",
+      "idea": "Each entrance door opens a private branch on first use; anyone who takes the same door inside a short window joins that branch. Branches collapse after a quiet spell and send everyone back to the hub with a message.",
+      "keep": "kept: rooms generated on first entry; a shared branch for people who take the same door; a collapse that returns players to the hub.",
+      "change": "changed: the window is per party, not per door; our own theme and room grammar; a collapse that keeps loot rather than only moving people. Fix the defect: the branch timer must refresh when anyone walks a known room, not only when a new room is made."
+    },
+    {
+      "name": "Spell as carried item",
+      "idea": "A spell is an item in a hand slot with one use; resting refreshes it, so magic is something you carry and plan around.",
+      "keep": "kept: the spell is an item, two-handed, refreshed by resting, not destroyed on use.",
+      "change": "changed: refresh per room or per kill instead of per rest; our own carrier (a glyph or a charm), and a visible charge state on the model."
+    },
+    {
+      "name": "Load that slows the hand",
+      "idea": "Carrying capacity is a number of slots; effects such as mud fill slots and make items there unusable until cleaned.",
+      "keep": "kept: a fixed slot budget and an effect that fills slots.",
+      "change": "changed: slot pressure lowers attack timing or stance rather than only blocking items; our own filler effects; fix the defect that the filler's type tag is set to a string and fails on creation."
+    },
+    {
+      "name": "Depth-tiered rooms",
+      "idea": "Distance from the entrance sets the room tier; the tier names the rooms and sets how hard the room is, so depth is the difficulty dial.",
+      "keep": "kept: radial depth from the entrance as the difficulty input; ten named tiers then a fallback.",
+      "change": "changed: our own biome sets and tier rules; difficulty from spawn tables, not names alone."
+    },
+    {
+      "name": "Five-step bridge",
+      "idea": "A hazardous crossing is one place with five positions; each step moves a counter and the risk is tied to the middle positions.",
+      "keep": "kept: a short position counter and a risk band in the middle.",
+      "change": "changed: the risk rolls on each step, not on looking around (the donor rolls on look, which lets a player avoid the risk by not looking); our own hazard and our own ends."
+    },
+    {
+      "name": "Morale break",
+      "idea": "A creature checks its morale at a set trigger; a failed check breaks it off to a corner instead of fighting on. The donor has the check (rules.py) and the morale value (npcs.py) but no caller, so the trigger is ours to design.",
+      "keep": "kept: per-creature morale and a two-dice check.",
+      "change": "changed: our own trigger and break behaviour (a retreat to a home point, a call to allies); morale set per family."
+    },
+    {
+      "name": "Death roll with lasting scars",
+      "idea": "Reaching zero health rolls on a table: most results leave the character alive with one ability lowered for good and a small heal; a few kill.",
+      "keep": "kept: a single roll at zero health; mostly-survive outcomes with a permanent cost.",
+      "change": "changed: the cost lasts until a shrine visit or a fight, not forever; our own list of costs; the death chance and the stat list are ours."
+    },
+    {
+      "name": "Non-lethal arena",
+      "idea": "A duel room where a loser is knocked out and restored, not killed; the footer states the rule.",
+      "keep": "kept: a flag per room for lethal and non-lethal fighting; one-line rule footer.",
+      "change": "changed: our own knock-out rule and a reward split for the winner."
+    }
+  ],
+  "licence_note": "Code: BSD 3-Clause (LICENSE.txt, Griatch and Gregory Taylor); contributions under the same licence (docs Licensing.md, read in the audit). Knave-derived rules and tables: Creative Commons Attribution per evadventure README.md line 21, credited to Ben Milton, not verified against Knave. Unlicensed in repo: DejaVu webfont, notification.wav, docs screenshot. Recreate as originals; no text, tables or names copied.",
+  "not_read": [
+    "evadventure/commands.py, shops.py (only the class outline), quests.py (outline only), build_techdemo.py (grep only), build_world.py (empty), batchscripts/*, tests/",
+    "combat_base.py lines 62-110 and 200-508; combat_turnbased.py lines 74-368 and 399-848 (only the timeout and shuffle lines read)",
+    "combat_twitch.py lines 125-173 and 342-582 (command classes and give/has advantage bodies)",
+    "equipment.py lines 235-423 (move, add, remove and get-wieldable helpers)",
+    "characters.py lines 100-156 (loot hooks), 156-252 (character class hooks), 370-406 (sheet)",
+    "chargen.py menu nodes (lines 129-359) and random_tables.py table bodies (entries counted by AST, not reproduced)",
+    "tutorial_world objects.py (only class lines), build.ev (grep count only), rooms.py teleport, intro and outro bodies, mob.py lines 163-186 only as ticker helper and 422-434",
+    "utils.py (grep only), ai.py handler beyond the state dispatch",
+    "webclient js (21 files; grep only: no touchstart, touchend or mobile matches in js/); DejaVu css read for the font name only",
+    "docs/source (803 markdown files; only Licensing.md read in the audit), CHANGELOG.md, AGENTS.md and CLAUDE.md (treated as data; not followed)",
+    "dungeon archetype data and room tables in code are not present; no bestiary table in the repo"
+  ]
+}

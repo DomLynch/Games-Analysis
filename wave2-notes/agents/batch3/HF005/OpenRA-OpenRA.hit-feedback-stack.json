@@ -1,0 +1,82 @@
+{
+  "donor": "OpenRA-OpenRA",
+  "topic": "hit-feedback-stack",
+  "depth": "full",
+  "half_read": "both",
+  "verdict": "STRONG",
+  "decision": "adapt (idea); clean-room, shape only (GPL-3.0 code, Westwood-era content)",
+  "paths": [
+    "/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Game/Traits/World/ScreenShaker.cs",
+    "/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Game/GameRules/WeaponInfo.cs",
+    "/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Game/Effects/DelayedImpact.cs",
+    "/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Game/Traits/TraitsInterfaces.cs",
+    "/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Warheads/ShakeScreenWarhead.cs",
+    "/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Warheads/FlashEffectWarhead.cs",
+    "/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Warheads/FlashTargetsInRadiusWarhead.cs",
+    "/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Warheads/CreateEffectWarhead.cs",
+    "/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Effects/FlashTarget.cs",
+    "/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Traits/PaletteEffects/FlashPostProcessEffect.cs",
+    "/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Traits/Armament.cs",
+    "/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Traits/ShakeOnDeath.cs",
+    "/mnt/frankendom-donors/OpenRA-OpenRA/mods/cnc/weapons/ballistics.yaml",
+    "/mnt/frankendom-donors/OpenRA-OpenRA/mods/cnc/weapons/superweapons.yaml",
+    "/mnt/frankendom-donors/OpenRA-OpenRA/mods/ts/weapons/superweapons.yaml",
+    "/mnt/frankendom-donors/OpenRA-OpenRA/mods/ts/weapons/healweapons.yaml",
+    "/mnt/frankendom-donors/OpenRA-OpenRA/mods/cnc/rules/vehicles.yaml",
+    "/mnt/frankendom-donors/OpenRA-OpenRA/mods/d2k/rules/vehicles.yaml"
+  ],
+  "counts": {
+    "ShakeScreen_warhead_lines": 6,
+    "ShakeScreen_warhead_files": 5,
+    "FlashEffect_warhead_lines": 10,
+    "FlashTargetsInRadius_warhead_lines": 4,
+    "ShakeOnDeath_lines": 12,
+    "Recoil_value_lines": 24,
+    "Warhead_key_lines_under_mods": 661,
+    "FlashTarget_default_blink_ticks": 4,
+    "FlashPostProcess_default_length_ticks": 20,
+    "RecoilRecovery_default_per_tick": 9
+  },
+  "rule": "One shot runs an ordered list of warheads from the weapon's YAML node order (no sort). Each warhead with Delay above zero is deferred by that many ticks. Damage and smudge run first in the ballistic example, then the explosion sprite and impact sound. A shake warhead adds a timed effect to the world ScreenShaker: offset is sine and cosine on tick count, multiplier clamped to plus or minus 3, intensity inverse-square from impact to view centre, capped at 10. A flash warhead queues a FlashTarget per victim that blinks on interval ticks; a new flash on the same actor replaces the old one. Recoil is set on fire and drains per tick by the recovery value. No hit stop and no unit knockback exist in the donor.",
+  "data_fields": [
+    {"name": "flash_blink_count", "unit": "flashes per hit", "donor_value_or_null": null},
+    {"name": "flash_blink_interval", "unit": "ticks", "donor_value_or_null": null},
+    {"name": "flash_alpha", "unit": "0 to 1", "donor_value_or_null": null},
+    {"name": "flash_colour", "unit": "named colour", "donor_value_or_null": null},
+    {"name": "screen_flash_length", "unit": "ticks", "donor_value_or_null": null},
+    {"name": "shake_duration", "unit": "ticks", "donor_value_or_null": null},
+    {"name": "shake_intensity", "unit": "game units, capped at 10", "donor_value_or_null": null},
+    {"name": "shake_axis_multiplier", "unit": "per axis, clamped to plus or minus 3", "donor_value_or_null": null},
+    {"name": "shake_falloff", "unit": "inverse square of distance from impact to view centre", "donor_value_or_null": null},
+    {"name": "recoil_kick", "unit": "WDist units", "donor_value_or_null": null},
+    {"name": "recoil_recovery_per_tick", "unit": "WDist units", "donor_value_or_null": null},
+    {"name": "warhead_delay", "unit": "ticks", "donor_value_or_null": null},
+    {"name": "impact_sound_chance", "unit": "percent", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Ordered warhead list per weapon as the whole feedback recipe",
+    "Flash replaces flash on the same actor (last hit wins, no stacking)",
+    "Shake intensity falls off with distance from the impact",
+    "Per-shot impact sound chance from a list",
+    "Client effects queued at frame end from sim events"
+  ],
+  "change": [
+    "Screen flash blend divides by the fixed Length, not the set duration: a 5-tick flash peaks at 0.2 (FlashPostProcessEffect.cs:57). Fix: store duration in Enable and blend = remaining / duration.",
+    "Screen flash blend is not set on Enable, so early frames show a stale value (FlashPostProcessEffect.cs:46-52). Fix: set blend to 1 inside Enable.",
+    "Shake switches off in one step at expiry (ScreenShaker.cs:46). Fix: scale intensity by remaining over duration over the tail.",
+    "No hit stop exists; if we want a freeze, do it on the client only, never in the server tick."
+  ],
+  "look_test": "On the phone at 375 wide in the fight camera, one test unit with three variants: blink only; blink plus a 20-tick shake at intensity 5 with the decay fix; blink plus a 10-tick death shake at intensity 1. Judge whether the enemy silhouette stays readable during the blink and shake, and whether the blink tells you which of three close enemies was hit.",
+  "licence_note": "Code GPL-3.0 (README.md:54; COPYING line 1). Clean-room, shape only. Content is Westwood-era sprites, sounds and maps with no asset licence stated; map files name Westwood Studios as author. Inspiration stays category-level; no sprites, sounds or names copied.",
+  "tags": ["screen-shake", "flash", "hit-sound", "particle-burst", "ordered-feedback", "new:warhead-chain", "new:recoil-kick", "new:death-shake", "new:flash-replaces-flash"],
+  "not_read": [
+    "DamageWarhead and SpreadDamageWarhead internals (damage maths)",
+    "SpriteEffect and the animation renderer",
+    "Bullet and projectile hit path",
+    "WithDamageOverlay body (header only)",
+    "Health.cs",
+    "SoundOnDamageTransition.cs",
+    "Client sound mixer and listener selection",
+    "Death and respawn presentation beyond ShakeOnDeath"
+  ]
+}

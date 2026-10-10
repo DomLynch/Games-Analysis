@@ -1,0 +1,64 @@
+{
+  "donor": "brendenbowers-SWGEmuClient",
+  "topic": "world-events",
+  "depth": "thin",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/brendenbowers-SWGEmuClient/Plugins/SWGGame/Source/SWGEmuClient/Private/Subsystems/SWGTerrainSubsystem.cpp",
+    "/mnt/frankendom-donors/brendenbowers-SWGEmuClient/Plugins/SWGGame/Source/SWGEmuClient/Public/Subsystems/SWGTerrainSubsystem.h",
+    "/mnt/frankendom-donors/brendenbowers-SWGEmuClient/Plugins/SWGEmu/Source/SWGEmu/Public/Network/Messages/Zone/ServerTimeMessage.h",
+    "/mnt/frankendom-donors/brendenbowers-SWGEmuClient/Plugins/SWGEmu/Source/SWGEmu/Private/Network/Messages/Zone/ServerTimeMessage.cpp",
+    "/mnt/frankendom-donors/brendenbowers-SWGEmuClient/Plugins/SWGEmu/Source/SWGEmu/Public/Network/Messages/SWGMessageOp.h",
+    "/mnt/frankendom-donors/brendenbowers-SWGEmuClient/Plugins/SWGGame/Source/SWGEmuClient/Public/Subsystems/SWGCraftingSubsystem.h"
+  ],
+  "counts": {
+    "clock_sync_messages": 2,
+    "clock_cvars": 5,
+    "weather_rows_selected_by_code": 1,
+    "weather_message_handlers": 0,
+    "crafting_countdown_broadcasts": 0,
+    "invasion_or_roaming_boss_code": 0,
+    "server_time_interval_s_per_donor_comment": 60,
+    "pre_sync_fallback_fraction": 0.25,
+    "cycle_fallback_s": 3600,
+    "table_weather_rows_total": "not counted (TRE not in repo)"
+  },
+  "rule": "Server sends absolute galactic time (ServerTime every 60 s by the donor's own doc, and at scene start). The client stores the time and the local clock at receipt. Each frame: now = stored time + (local clock minus stored local clock) times test scale; wrapped by planet cycle (header TimeCycle, else 3600 s); plus a phase offset; fraction 0..1 maps to an hour angle on two spans: night from sunset to sunrise (0.36 of cycle by default) and day for the rest (0.64). Sun direction, sky ramp and fog follow from that angle.",
+  "data_fields": [
+    {"name": "sync_interval", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "cycle_length", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "phase_offset", "unit": "fraction of cycle", "donor_value_or_null": null},
+    {"name": "sunset_fraction", "unit": "fraction of cycle", "donor_value_or_null": null},
+    {"name": "sunrise_fraction", "unit": "fraction of cycle", "donor_value_or_null": null},
+    {"name": "test_time_scale", "unit": "multiplier", "donor_value_or_null": null},
+    {"name": "ease_on_sync", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "weather_index", "unit": "row id", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Server owns absolute time; client extrapolates between syncs",
+    "Cycle wrap and a phase offset per zone",
+    "Two fractions (sunset, sunrise) set night and day lengths, so a long dusk is a data knob",
+    "Weather as a row per weather state from one table"
+  ],
+  "change": [
+    "Ease the re-anchor over about 2 s, or add half the round trip (E1)",
+    "Test scale 60 must not snap every sync (E1)",
+    "Help text and sphere agree: noon as computed, or phase offset moved (E2)",
+    "Fallback cycle as a named constant; comment corrected (E3)",
+    "Spawns and any timed event decided on the server from the same clock; the sky is client-only",
+    "Wire the weather message and select the row by state (W1)"
+  ],
+  "look_test": "One zone, day clock at test scale 60 for three minutes with the 60 s sync. Version A snaps back each minute (donor behaviour). Version B eases over 2 s. Dom watches the sunset on a phone and judges whether dusk reads as a warning for a night event, and whether the snap breaks it.",
+  "licence_note": "No code licence and no asset licence in the repo; README (Plugins/SWGEmu/README.md) says 'provided as-is for educational purposes related to SWG EMU'. Class C. Shape only, clean-room; no code, sky or texture copied. No legal conclusion.",
+  "tags": ["scheduler", "day-night", "weather-state", "timed-event", "world-event", "mood-preset", "new:clock-sync", "new:cycle-phase"],
+  "not_read": [
+    "server halves: ProjectSWGCore-Holocore, swgemu-Core3 (in box, not in donor list)",
+    "SWG-Source-dsrc data templates (in box, not in donor list)",
+    "TRE terrain header TimeCycle and environment table weather rows (TRE not in repo)",
+    "sky, cloud and star materials (names only, per AU007)",
+    "fog table values",
+    "most UI widgets",
+    "idle animation, death and respawn presentation, loot reveal, walk density (not in the read code)",
+    "readability at 375 wide (not measured)"
+  ]
+}

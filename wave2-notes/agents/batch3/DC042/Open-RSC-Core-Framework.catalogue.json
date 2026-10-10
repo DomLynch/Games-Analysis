@@ -1,0 +1,208 @@
+{
+  "donor": "Open-RSC-Core-Framework",
+  "donor_path": "/mnt/frankendom-donors/Open-RSC-Core-Framework/",
+  "halves_read": "data pack (server/conf/server/defs JSON, XML, extras, locs placement packs); client half: audio names and one line of mudclient.java (6362); server Java not read",
+  "counts": {
+    "creatures": 794,
+    "creatures_custom": 42,
+    "classes": 0,
+    "weapons": 8,
+    "gear_sets": 11,
+    "zones": 10
+  },
+  "creature_families": [
+    {"family": "dragons", "count": 6, "max_combat_level": 245},
+    {"family": "ogres", "count": 16, "max_combat_level": 100},
+    {"family": "giants", "count": 8, "max_combat_level": 109},
+    {"family": "goblins", "count": 6, "max_combat_level": 48},
+    {"family": "skeletons", "count": 8, "max_combat_level": 83},
+    {"family": "zombies", "count": 8, "max_combat_level": 83},
+    {"family": "ghosts", "count": 6, "max_combat_level": 83},
+    {"family": "demons", "count": 5, "max_combat_level": 175},
+    {"family": "spiders", "count": 10, "max_combat_level": 64},
+    {"family": "wolves", "count": 5, "max_combat_level": 64},
+    {"family": "scorpions", "count": 9, "max_combat_level": 46},
+    {"family": "warriors", "count": 9, "max_combat_level": 64},
+    {"family": "knights", "count": 7, "max_combat_level": 146},
+    {"family": "mages", "count": 6, "max_combat_level": 52},
+    {"family": "druids", "count": 3, "max_combat_level": 44},
+    {"family": "bears", "count": 3, "max_combat_level": 26},
+    {"family": "rats", "count": 7, "max_combat_level": 16},
+    {"family": "town guards (mostly non-combat, noise)", "count": 38, "max_combat_level": 96}
+  ],
+  "escalation_bands": {"0-9": 257, "10-19": 165, "20-29": 132, "30-39": 64, "40-49": 35, "50-59": 48, "60-69": 18, "70-79": 38, "80-89": 9, "90-99": 5, "100+": 23},
+  "top_creatures": [
+    {
+      "label": "Apex dragon",
+      "why": "Top base combat level (245) and the last step of the kill ladder; aggressive; shares its sprite slot with the black dragon",
+      "keep": "single aggressive apex at the top of the ladder; shared sprite slot across tiers",
+      "change": "own silhouette and palette; add a visible wind-up before the big attack; spawn gated by a zone grace timer",
+      "ref": "server/conf/server/defs/NpcDefs.json lines 18607 (name), 18619 (aggressive), 18620 (respawnTime), 18621 (sprites1)"
+    },
+    {
+      "label": "Glass-cannon demon",
+      "why": "Stat skew: very high attack with low hit points, a short fight that hurts",
+      "keep": "the attack-to-hits skew",
+      "change": "three-hit telegraph pattern and its own sound",
+      "ref": "server/conf/server/defs/NpcDefs.json lines 12289 (name), 12293 (attack 183), 12295 (hits 60), 12302 (respawnTime 75)"
+    },
+    {
+      "label": "Waiting boulder",
+      "why": "High-level creature that never starts a fight, so it reads as a landmark (level 150, all stats 150)",
+      "keep": "non-aggressive high-level stand-still",
+      "change": "wakes only when the player enters a marked circle in a gated room",
+      "ref": "server/conf/server/defs/NpcDefs.json lines 27500 (description), 27511 (aggressive 0)"
+    },
+    {
+      "label": "Gate titan",
+      "why": "Non-aggressive gatekeeper at level 146 that does not chase",
+      "keep": "does not chase; stands in the way",
+      "change": "opens by a condition (kill count or key item), not by standing still",
+      "ref": "server/conf/server/defs/NpcDefs.json line 15643"
+    },
+    {
+      "label": "Ancient demon",
+      "why": "Non-aggressive top-tier demon at level 172 with respawnTime 30",
+      "keep": "non-aggressive top-tier demon",
+      "change": "trigger is entering a sealed zone, not an attack",
+      "ref": "server/conf/server/defs/NpcDefs.json line 29995"
+    },
+    {
+      "label": "Two-tier demon",
+      "why": "One silhouette in two tiers, rarity set by respawn time (level 175 with respawnTime 30; level 156 with respawnTime 73)",
+      "keep": "same silhouette, rarity by respawn",
+      "change": "the higher tier gets a new ability, not a bigger number",
+      "ref": "server/conf/server/defs/NpcDefs.json lines 22156 (level 175 entry), 11314 (level 156 entry)"
+    },
+    {
+      "label": "Add-on boss",
+      "why": "Donor-added boss above the base ladder (level 217, aggressive, respawnTime 73)",
+      "keep": "custom top tier added above the base list",
+      "change": "silhouette, sound and ability",
+      "ref": "server/conf/server/defs/NpcDefsCustom.json line 604"
+    },
+    {
+      "label": "Dragon ladder",
+      "why": "One family in tiers that shares sprite slots across dragon tiers",
+      "keep": "tiered family with one shared sprite slot",
+      "change": "each tier gets its own element colour and a silhouette step",
+      "ref": "server/conf/server/defs/NpcDefs.json lines 7843 (Red Dragon), 11353 (Black Dragon)"
+    }
+  ],
+  "classes": [
+    {
+      "name": "Account modes (Standard, Ironman, Ultimate Ironman, Hardcore Ironman)",
+      "role": "self-imposed rule sets; not classes",
+      "mechanic": "mode-locked gear kits marked untradable (custom items; NPC entries 799 to 801 in NpcDefsCustom.json)",
+      "progression": "same material ladder, separate untradable kit"
+    },
+    {
+      "name": "Skin prayers",
+      "role": "defence and strength buff line",
+      "mechanic": "stepped buff tiers (Thick skin, Rock skin, Steel skin among 14 prayers)",
+      "progression": "PrayerDef.xml lines 5 and 59 show the first and a later tier"
+    },
+    {
+      "name": "Elemental spell ladders",
+      "role": "ranged magic per element",
+      "mechanic": "four rungs per element (strike, bolt, blast, wave); 48 spell entries in total",
+      "progression": "SpellDef.xml line 17 onward"
+    }
+  ],
+  "weapon_families": [
+    {
+      "family": "Material ladder (Bronze, Iron, Steel, Black, Mithril, Adamantite, Rune, Dragon)",
+      "level_gates": {"Bronze": 1, "Iron": 1, "Steel": 5, "Black": 10, "Mithril": 20, "Adamantite": 30, "Rune": 40, "Dragon": 60},
+      "long_sword_power": {"Bronze": 7, "Iron": 10, "Steel": 16, "Black": 16, "Mithril": 22, "Adamantite": 31, "Rune": 49},
+      "dragon_examples": "Dragon axe power 75 (ItemDefs.json line 13667); Dragon 2-handed Sword power 99 (ItemDefsCustom.json line 1293), the highest weapon power across both files",
+      "specials": "poisoned variant per metal; four battlestaves (fire, water, air, earth) with magic bonus 20 sharing one appearance id; dragonstone amulets with small magic and prayer bonuses"
+    }
+  ],
+  "gear_tiers": [
+    {"tier": "Bronze", "level_gate": 1, "long_sword_power": 7, "plate_armour": 14, "long_sword_appearance": 48, "plate_appearance": 28},
+    {"tier": "Iron", "level_gate": 1, "long_sword_power": 10, "plate_armour": 20, "long_sword_appearance": 49, "plate_appearance": 29},
+    {"tier": "Steel", "level_gate": 5, "long_sword_power": 16, "plate_armour": 31, "long_sword_appearance": 50, "plate_appearance": 30},
+    {"tier": "Black", "level_gate": 10, "long_sword_power": 16, "plate_armour": 40, "long_sword_appearance": 54, "plate_appearance": 33},
+    {"tier": "Mithril", "level_gate": 20, "long_sword_power": 22, "plate_armour": 44, "long_sword_appearance": 51, "plate_appearance": 31},
+    {"tier": "Adamantite", "level_gate": 30, "long_sword_power": 31, "plate_armour": 63, "long_sword_appearance": 52, "plate_appearance": 32},
+    {"tier": "Rune", "level_gate": 40, "long_sword_power": 49, "plate_armour": 80, "long_sword_appearance": 53, "plate_appearance": 34},
+    {"tier": "Dragon", "level_gate": 60, "long_sword_power": "71 (Dragon sword) / 99 (2-handed)", "plate_armour": 125, "long_sword_appearance": "163 (Dragon sword)", "plate_appearance": 296}
+  ],
+  "zones": [
+    {"zone": "NpcLocs placement packs (10 named)", "detail": "Auction, CustomQuest, Discontinued, Harvesting, Ironman, ModRoom, OpenPk, Other, PkBots, Runecraft (defs/locs)"},
+    {"zone": "Base placement counts", "detail": "NpcLocs.json 3608 NPC placements; SceneryLocs.json 26814 scenery; GroundItems.json 1019; BoundaryLocs.json 967 (counted by parsing)"},
+    {"zone": "Underground climb pairs", "detail": "extras/ObjectTelePoints.xml lines 1 to 10: surface point about y 110 links to underground about y 3368 (about 3258 tiles down)"},
+    {"zone": "Resource zones", "detail": "ObjectMining.xml (24 entries, about 13 ore labels), ObjectWoodcutting.xml, ObjectFishing.xml, ObjectRunecraft.xml"},
+    {"zone": "PK packs", "detail": "OpenPk and PkBots placement packs; zone bounds not read"},
+    {"zone": "Harvesting event pack", "detail": "10 NPC placements and 169 scenery placements (NpcLocsHarvesting, SceneryLocsHarvesting)"}
+  ],
+  "looks": [
+    {"label": "Sprite slots with palette fields", "technique": "up to 12 sprite slots and four colour fields per NPC: one art pool, many creatures", "ref": "server/conf/server/defs/NpcDefs.json (keys sprites1 to sprites12, hairColour, topColour, bottomColour, skinColour)"},
+    {"label": "Shared sprite slot across dragon tiers", "technique": "apex dragon and black dragon both use slot 165", "ref": "NpcDefs.json line 18621"},
+    {"label": "Paired hit sounds per tier", "technique": "combat1a/1b, 2a/2b, 3a/3b: two variants per tier to reduce repeats (names only; WAV not played)", "ref": "Client_Base/Cache/audio/"},
+    {"label": "Custom art band", "technique": "client branches on animation id 230 and up when custom sprites are on; keep added art in its own id range", "ref": "Client_Base/src/orsc/mudclient.java line 6362 (condition only)"},
+    {"label": "Glowing items by name", "technique": "glow carried by item name (glowing red crystal, glowing dark dagger); rendering not read", "ref": "server/conf/server/defs/ItemDefs.json lines 1231 and 1256"},
+    {"label": "Colourway masks", "technique": "wolf and unicorn masks in four colours, each its own appearance id (wolf set 291 to 294)", "ref": "server/conf/server/defs/ItemDefsCustom.json (wolf mask entries)"},
+    {"label": "Shared appearance id", "technique": "gold necklace and dragonstone necklace share appearance id 81", "ref": "server/conf/server/defs/ItemDefs.json (gold necklace and dragonstone necklace entries)"},
+    {"label": "Death, victory and under-attack cues", "technique": "one named cue per state (names only; WAV not played)", "ref": "Client_Base/Cache/audio/ (death.wav, victory.wav, underattack.wav)"}
+  ],
+  "originals": [
+    {
+      "name": "Warden's Ledger",
+      "idea": "A 14-step kill ladder inside one zone; each step a group of 1 to 7 creature kinds with a count, ending in one apex kill.",
+      "keep": "grouped tasks with rising counts and one top kill",
+      "change": "each step is bound to one biome and zone; each group gets two dialogue lines of its own"
+    },
+    {
+      "name": "Sentinel Stone",
+      "idea": "A high-level non-aggressive stone that does not chase and wakes only inside a marked circle.",
+      "keep": "non-aggressive high-level blocker",
+      "change": "wakes on entry; respawn is grace-timed, not a fixed timer"
+    },
+    {
+      "name": "Glass Warlock",
+      "idea": "A short caster fight with very high attack and low hit points.",
+      "keep": "the attack-to-hits skew",
+      "change": "a three-hit telegraph and a unique cast sound"
+    },
+    {
+      "name": "Ember Stalker",
+      "idea": "Same silhouette in a common tier and a rare tier; rarity set by respawn time.",
+      "keep": "one silhouette, two tiers, respawn as the rarity lever",
+      "change": "the rare tier gets one new ability"
+    },
+    {
+      "name": "Forge Ladder",
+      "idea": "Eight material steps with level gates 1, 1, 5, 10, 20, 30, 40, 60 and a power ramp.",
+      "keep": "the gates and the ramp",
+      "change": "each step changes silhouette, not just colour; all names are ours"
+    },
+    {
+      "name": "Mode Kit",
+      "idea": "A gear kit that cannot be traded and is chosen at character creation.",
+      "keep": "untradable and mode-locked",
+      "change": "earned by a mode choice, not a level"
+    },
+    {
+      "name": "Mastery Track",
+      "idea": "Three XP curves by weapon profession, a play cap at level 7, visual-only mastery above it. Idea seen in the sibling donor opentibiabr-otclient, not in this one.",
+      "keep": "the cap and visual mastery",
+      "change": "perk lanes per level differ per weapon"
+    },
+    {
+      "name": "Palette Family",
+      "idea": "One sprite slot shared by a tier family, with colour-only variants for rare drops.",
+      "keep": "slot reuse",
+      "change": "rare variants also step the silhouette by one"
+    }
+  ],
+  "licence_note": "Code: GNU AGPL-3.0 (LICENSE line 1). No asset licence in the box; all asset groups class C. Reuse is shape and mood only; clean-room.",
+  "not_read": [
+    "server/src and server/plugins Java (ability logic, DropTable, ring effects)",
+    "Client_Base/Cache binary packs (sprite, landscape, models, library, spritepacks) and map packs (land*.jag, content*)",
+    "WAV cues not played; most JSON entries (counts and sampled fields only); CombatOdyssey dialogue arrays",
+    "NpcDefsPatch18.json, ItemDefsPatch18.json, SpellDefRetro.xml, extras/retro",
+    "launchers, Android and PC client folders, Backups, Deployment_Scripts, third-party folders (Portable_Windows JDK, Ant, HeidiSQL)",
+    "per-creature sound and effect (not in the defs)"
+  ]
+}

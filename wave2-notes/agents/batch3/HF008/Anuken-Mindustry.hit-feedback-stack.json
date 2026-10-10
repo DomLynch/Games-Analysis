@@ -1,0 +1,69 @@
+{
+  "donor": "Anuken-Mindustry",
+  "topic": "hit-feedback-stack",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/entities/comp/BulletComp.java (collision, lines 133 and 143)",
+    "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/entities/bullet/BulletType.java (hit 563-566, hitEntity knockback 517, hitShake 207, hitSound 564)",
+    "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/entities/comp/PhysicsComp.java (mass 19, impulse 22-24)",
+    "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/entities/comp/HealthComp.java (hitDuration 9, update 26, damage 75, damage over time 92)",
+    "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/core/Renderer.java (shake 86, offset 210-211)",
+    "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/entities/Effect.java (shakeFalloff 21, shake 207)",
+    "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/content/Fx.java (hitBulletSmall 855)",
+    "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/type/UnitType.java (mech flash 1967)",
+    "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/content/UnitTypes.java (hitShake example 1007)",
+    "/mnt/frankendom-donors/Anuken-Mindustry/LICENSE (line 1)"
+  ],
+  "counts": {
+    "hit_steps_in_order": 8,
+    "collision_steps": 3,
+    "hit_flash_ticks": 9,
+    "dot_flash_gate_ticks": 18,
+    "shake_intensity_cap": 100,
+    "shake_falloff_constant": 10000,
+    "screenshake_settings": 9,
+    "hit_effect_ticks": 14
+  },
+  "rule": "On one bullet hit: (1) type.hit runs first: impact effect, click with random pitch, camera shake, then frags, puddles, fire, unit spawns, suppression; (2) the bullet is removed unless it pierces; (3) type.hitEntity applies damage, then knockback impulse divided by mass (size squared times pi), then status chance and the damage event. Flash: damage sets hitTime to 1, decaying by 1/9 per tick to show the white mix. Damage over time re-flashes only once hitTime is at -1 or lower (18 ticks), otherwise it restores the old value. Shake: intensity and duration are each max-merged, capped at 100, decay linearly, and are applied as a random offset scaled by the player setting; a distance falloff applies in world units.",
+  "data_fields": [
+    {"name": "hit_effect_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "hit_flash_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "dot_flash_gate_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "hit_shake_intensity", "unit": "px per hit, per bullet type", "donor_value_or_null": null},
+    {"name": "hit_shake_duration_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "shake_intensity_cap", "unit": "px", "donor_value_or_null": null},
+    {"name": "shake_falloff_scale", "unit": "world units", "donor_value_or_null": null},
+    {"name": "screenshake_setting", "unit": "multiplier, 0 to 2, default 1", "donor_value_or_null": null},
+    {"name": "hit_sound_pitch_jitter", "unit": "fraction of pitch", "donor_value_or_null": null},
+    {"name": "knockback_base", "unit": "px per impulse step", "donor_value_or_null": null},
+    {"name": "knockback_mass_rule", "unit": "mass from size squared times pi", "donor_value_or_null": null},
+    {"name": "knockback_multiplier", "unit": "ratio, 0 means immune", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Max-merge shake with a cap, not a sum, so three hits in one tick give one shake",
+    "Damage-over-time flash gate, so a continuous hazard does not flash every frame",
+    "Mass-scaled knockback with a per-unit immunity multiplier",
+    "Per-bullet hit effect field, so each weapon has its own burst",
+    "Random pitch on the click, so repeated hits do not sound identical"
+  ],
+  "change": [
+    "Fire the visual, click and shake from the server-confirmed hit event, not before damage (donor order is a defect for a server-verified game)",
+    "Divide shake falloff distance by camera zoom, so zoom does not change the feel",
+    "Flash as a rim on the creature outline, not a full mix, for readability at 375 wide",
+    "Own burst strokes and palette; no donor sprite or sound"
+  ],
+  "look_test": "Build one grey creature with a one-pixel rim and three attackers that can hit it in the same tick. Show four variants at 375 wide: A donor order (burst, click, 9-tick white flash, max-merge shake); B shake off; C flash gated to one per window; D rim flash instead of full white. Dom judges which hit landed and whether the triple hit reads as one moment or noise. Control: a two-frame hit-stop (not donor-backed). Target src/fight/hit-feedback.ts, parity row 10.",
+  "licence_note": "Code GPL-3.0 (LICENSE line 1). Clean-room: shape only, no donor code, no donor numeric values in data fields. Assets carry no licence statement (AU004); not used. Recreate with a distinct burst and palette, keeping the trait one-flash-per-window and max-merge shake.",
+  "tags": ["hit-stop", "screen-shake", "flash", "hit-sound", "particle-burst", "ordered-feedback", "knockback", "stagger", "duration-rule", "new:feedback-after-server-confirm", "new:dot-flash-gate", "new:mass-knockback"],
+  "not_read": [
+    "server/ module (other half in the box)",
+    "android, desktop, ios launchers",
+    "arc library Mathf.clamp and Vec2.nor (falloff clamp assumed 0 to 1)",
+    "bodies of Fx effects beyond the first lines",
+    "sound and sprite files",
+    "unit draw paths other than the mech path (UnitType 1957 to 1967)",
+    "Blocks.java despawnShake death path (only noted)",
+    "idle and ambient animation (out of this topic)"
+  ]
+}

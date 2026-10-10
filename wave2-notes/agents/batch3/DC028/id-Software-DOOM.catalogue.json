@@ -1,0 +1,85 @@
+{
+  "donor": "id-Software-DOOM",
+  "counts": {
+    "creatures": 20,
+    "classes": 1,
+    "weapons": 9,
+    "gear_sets": 2,
+    "zones": 0
+  },
+  "half_read": "engine data tables and the functions that use them (info.c/h, sounds.c/h, doomdef.h, d_items.c weapon table, excerpts of p_enemy.c, p_inter.c, p_lights.c, p_spec.c, p_mobj.c, r_things.c). WAD data pack not in the box (checked by ls of top level and linuxdoom-1.10/). No paired donor in the box for the data pack.",
+  "creature_families": [
+    {"group": "light grunts", "members": ["POSSESSED", "SHOTGUY", "CHAINGUY", "TROOP", "WOLFSS"], "health_band": "about 20 to 70 (parsed)", "ref": "linuxdoom-1.10/info.c:1106 on"},
+    {"group": "mid infantry", "members": ["SERGEANT", "SHADOWS", "UNDEAD"], "health_band": "150 to 300 (parsed)", "ref": "linuxdoom-1.10/info.c:1106 on"},
+    {"group": "floaters and heavies", "members": ["HEAD", "PAIN", "KNIGHT", "BABY", "FATSO", "VILE", "BRUISER"], "health_band": "400 to 1000 (parsed)", "ref": "linuxdoom-1.10/info.c:1106 on"},
+    {"group": "bosses", "members": ["SPIDER", "CYBORG", "BOSSBRAIN"], "health_band": "250 (boss brain), 3000 and 4000 (parsed)", "ref": "linuxdoom-1.10/info.c:1602, 1654, 1758"},
+    {"group": "specials", "members": ["SKULL", "KEEN", "BARREL"], "health_band": "20 to 100 (parsed)", "ref": "linuxdoom-1.10/info.c:1576 (MT_SKULL), flags of KEEN at 1754; MT_BARREL by name (entry not located)"}
+  ],
+  "top_creatures": [
+    {"label": "Floating eye disc", "why": "floating sphere that closes in; readable at 375 px (not checked)", "keep": "float with no gravity; close-in approach", "change": "own shell, eye and silhouette", "ref": "linuxdoom-1.10/info.c:1472 (MT_HEAD), flags 1494"},
+    {"label": "Ember skull dasher", "why": "flying ram; not kill-counted minion", "keep": "flying ram; minion that is not a counted kill", "change": "own look and ram path", "ref": "linuxdoom-1.10/info.c:1576 (MT_SKULL), flags 1598"},
+    {"label": "Soul-spawner floater", "why": "summoner that spawns minions", "keep": "summon under a cap; blocked summon dies at once", "change": "own look; fix the cap (off by one)", "ref": "linuxdoom-1.10/info.c:1680 (MT_PAIN), flags 1702; p_enemy.c:1478, 1499"},
+    {"label": "Resurrector caster", "why": "raises fallen allies; strong many-on-one threat", "keep": "corpse raise by scanning ahead of its move", "change": "own look, timing, cooldown", "ref": "linuxdoom-1.10/info.c:1186 (MT_VILE), flags 1208; p_enemy.c:1167-1182"},
+    {"label": "Shadow stalker", "why": "fuzzy target that makes ranged aim less accurate", "keep": "fuzzy aim penalty", "change": "own translucent shimmer; own jitter amount", "ref": "linuxdoom-1.10/info.c:1446 (MT_SHADOWS), flags 1468; r_things.c:578; p_mobj.c:909"},
+    {"label": "Armoured colossus", "why": "boss with rocket-style attacks and a low pain chance", "keep": "low flinch on a big body", "change": "own weapons and design", "ref": "linuxdoom-1.10/info.c:1654 (MT_CYBORG), flags 1676"},
+    {"label": "Multi-gun arachnid boss", "why": "3000-health boss with wide silhouette", "keep": "heavy mass; slow lumber", "change": "own design", "ref": "linuxdoom-1.10/info.c:1602 (MT_SPIDER), flags 1624"},
+    {"label": "Bone missile skeleton", "why": "skeleton with a homing missile type", "keep": "homing missile (tracer object type MT_TRACER, by name)", "change": "own skeleton look", "ref": "linuxdoom-1.10/info.c:1238 (MT_UNDEAD), flags 1260; MT_TRACER at 1264"}
+  ],
+  "classes": [
+    {"name": "player marine", "kind": "player", "role": "single player avatar (MT_PLAYER)", "signature": "extreme-death branch on hard hits", "progression": "none in this code", "ref": "linuxdoom-1.10/info.c:301; info.c:1110-1131"}
+  ],
+  "weapon_families": [
+    {"family": "fist", "sprite": "PUNG", "chain": "ready, lower, raise, fire, flash", "special": "none", "ref": "linuxdoom-1.10/info.c:138-141; d_items.c:47"},
+    {"family": "pistol", "sprite": "PISG", "chain": "ready, lower, raise, fire, flash", "special": "none", "ref": "linuxdoom-1.10/d_items.c:47; info.c:40"},
+    {"family": "shotgun", "sprite": "SHTG", "chain": "ready, lower, raise, fire, flash", "special": "none", "ref": "linuxdoom-1.10/d_items.c:47; info.c:40"},
+    {"family": "second shotgun", "sprite": "SHT2", "chain": "ready, lower, raise, fire, flash", "special": "none", "ref": "linuxdoom-1.10/info.c:40"},
+    {"family": "chaingun", "sprite": "CHGG", "chain": "ready, lower, raise, fire, flash", "special": "none", "ref": "linuxdoom-1.10/info.c:40"},
+    {"family": "rocket launcher", "sprite": "MISG", "chain": "ready, lower, raise, fire, flash", "special": "none", "ref": "linuxdoom-1.10/info.c:40"},
+    {"family": "chainsaw", "sprite": "SAWG", "chain": "ready, lower, raise, fire, flash", "special": "none", "ref": "linuxdoom-1.10/info.c:40"},
+    {"family": "plasma", "sprite": "PLSG", "chain": "ready, lower, raise, fire, flash", "special": "none", "ref": "linuxdoom-1.10/info.c:40"},
+    {"family": "BFG", "sprite": "BFGG", "chain": "ready, lower, raise, fire, flash", "special": "none", "ref": "linuxdoom-1.10/info.c:40"}
+  ],
+  "gear_tiers": [
+    {"tier": "green armour", "pool": 100, "absorb": "one third", "ref": "linuxdoom-1.10/p_inter.c:258, 371, 857"},
+    {"tier": "blue armour", "pool": 200, "absorb": "one half", "ref": "linuxdoom-1.10/p_inter.c:258, 377, 857-859"},
+    {"tier": "armour bonus", "pool": "adds 1, capped at 200", "absorb": "n/a", "ref": "linuxdoom-1.10/p_inter.c:392-396"},
+    {"tier": "powerups (six kinds)", "pool": "timed powers: invulnerability, berserk, invisibility, radiation suit, computer map, light amplification", "absorb": "n/a", "ref": "linuxdoom-1.10/p_inter.c:489-526"}
+  ],
+  "zones": [
+    {"name": "hellslime sector", "kind": "sector special 5", "traits": "10 damage every 32 tics; blocked by suit", "ref": "linuxdoom-1.10/p_spec.c:1025-1026"},
+    {"name": "nukage sector", "kind": "sector special 7", "traits": "5 damage every 32 tics; blocked by suit", "ref": "linuxdoom-1.10/p_spec.c:1032-1033"},
+    {"name": "strobe and super hellslime", "kind": "sector specials 4 and 16 (fall through)", "traits": "20 damage every 32 tics; suit leaves 5 in 256 chance", "ref": "linuxdoom-1.10/p_spec.c:1043-1044"},
+    {"name": "secret sector", "kind": "sector special 9", "traits": "counts a secret; clears the special", "ref": "linuxdoom-1.10/p_spec.c (case 9)"},
+    {"name": "exit super-damage", "kind": "sector special 11", "traits": "20 damage every 32 tics; exits when health 10 or less", "ref": "linuxdoom-1.10/p_spec.c (case 11)"},
+    {"name": "light effects (four)", "kind": "lighting thinkers", "traits": "fire flicker, light flash, strobe, glow", "ref": "linuxdoom-1.10/p_lights.c:46-160, 314-340; p_spec.h:176-179"}
+  ],
+  "looks": [
+    {"label": "full-bright first frame", "technique": "emissive frame flag (32768) for impacts and flashes", "ref": "linuxdoom-1.10/info.c:229; r_things.c:588"},
+    {"label": "fuzz for shadow monsters", "technique": "translucent shimmer plus aim jitter about 22 degrees at most", "ref": "linuxdoom-1.10/r_things.c:578; p_mobj.c:909"},
+    {"label": "colour translation", "technique": "one sprite, many palette-translated colour variants", "ref": "linuxdoom-1.10/r_things.c:417-421"},
+    {"label": "blood and puff chains", "technique": "short state chains per effect; blood three frames at 8 tics", "ref": "linuxdoom-1.10/info.c:226-231"},
+    {"label": "weapon four-state chain", "technique": "ready, lower, raise, fire, with a separate flash sprite", "ref": "linuxdoom-1.10/info.c:138-141; d_items.c:47"},
+    {"label": "flinch on random roll", "technique": "pain state only when a random roll passes painchance", "ref": "linuxdoom-1.10/p_inter.c:894-900"}
+  ],
+  "originals": [
+    {"name": "Corpse raiser that walks the field", "idea": "scan ahead of the move for corpses within a bounded radius, and raise one", "keep": "scan ahead; raise one corpse", "change": "our look, timing and cooldown; fix the scan to a bounded cell radius"},
+    {"name": "Capped summoner", "idea": "summon only under a cap; a summon blocked by a wall dies at once", "keep": "the cap and the blocked-summon rule", "change": "our look; live counter with >= instead of a full scan"},
+    {"name": "Fuzzy-target stalker", "idea": "shadow targets get an aim penalty", "keep": "aim penalty for shadow targets", "change": "our shimmer and a smaller jitter (for example 8 degrees)"},
+    {"name": "Per-monster flinch rate", "idea": "each monster has a pain chance; bosses flinch least", "keep": "per-monster flinch", "change": "our values"},
+    {"name": "Reverse-frame raise", "idea": "a raise chain that plays the death frames backwards", "keep": "reverse death frames for raise", "change": "our frames"},
+    {"name": "Suit-gated hazard tick", "idea": "a floor tick every 32 tics that a suit can block", "keep": "periodic tick gated by a suit", "change": "our numbers and suit name"},
+    {"name": "Armour pool with absorb fraction", "idea": "a pool absorbs one third (light) or one half (heavy) until it runs out", "keep": "pool plus fraction", "change": "our values"},
+    {"name": "Light modes as zone data", "idea": "flicker, flash, strobe and glow as data on a zone", "keep": "four light modes as zone data", "change": "our palette and rates; fix the flash mask (mask 64 gives only 1 or 65 tics)"},
+    {"name": "Priority-tagged cues", "idea": "each sound cue has a priority number so loud cues win", "keep": "priority per cue", "change": "our cue set"}
+  ],
+  "licence_note": "LICENSE.TXT is GPL v2. README.TXT: 'released for your non-profit use'. Source headers cite the DOOM Source Code License (not in tree). Copyright lines: id Software, and ZeniMax Media in README.TXT. Conflicting; class C: clean-room, shape only. No asset licence (no assets in box).",
+  "not_read": [
+    "WAD, sprites, sounds, maps (absent from the box)",
+    "d_englsh.h and dstrings.h text (counts only)",
+    "p_enemy.c beyond the lines cited; p_pspr.c; st_stuff.c; hu_stuff.c; r_* beyond r_things.c lines; p_doors.c; p_plats.c; p_ceilng.c",
+    "s_sound.c beyond the priority lines (s_sound.c:264-394 partly seen)",
+    "sndserv/, ipx/, sersrc/",
+    "DOOM Source Code License text (not in box)",
+    "mobjinfo numbers (health, pain chance, speed) parsed with awk, not receipted"
+  ]
+}

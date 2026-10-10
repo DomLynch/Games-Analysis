@@ -1,0 +1,3 @@
+donor	creatures	classes	weapons	gear_sets	zones	receipts_ok	receipts_failed	half_read	notes
+flareteam-flare-game	124	3	73	4	56	40	0	data pack (enemy, item, map, power, animation text)	beacon template id 132 is stale in fantasycore (id 161 in empyrean); XP level 16 reads 31768 not 32768 (unverified)
+flareteam-flare-engine	0	0	0	0	0	21	0	runtime (client engine src and default mod); no server half	engine has AI mechanisms (engage, pull, leash, rarity pool); no content; pool copies category vector each call; per-step chance rolls (unverified fixed-rate)

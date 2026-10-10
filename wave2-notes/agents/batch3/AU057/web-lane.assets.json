@@ -1,0 +1,23 @@
+{
+  "donor": "web-lane",
+  "code_licence": "not a donor game: no code licence applies. The folder holds a built web bundle; its NOTE.txt names the origin as the Frankendom web lane.",
+  "asset_licence": "not a donor: the only licence file is licenses/meshoptimizer.txt (MIT, third-party library). The 273 .glb and 75 .png in build/ are the Frankendom web build's own outputs per NOTE.txt; no licence file covers them.",
+  "rights_holder_status": "not a donor. NOTE.txt says the origin is ~/Developer/frankendom-web/artifacts/account (Web lane account-panel browser evidence, moved 2026-10-07). Frankendom's own build output, not a third-party game.",
+  "best_class": "N/A (not a donor)",
+  "asset_groups": [
+    {"kind": "Frankendom web build output (own content, not a donor)", "path": "artifacts-account-2026-10-01/build/ (assets, game, gear-ui, legends, looks, pit, shields, versus, weapons, herolook, index.html, privacy.html)", "count_hint": "730 files total in the folder; 273 .glb, 75 .png, 9 .js, 6 .m4a, 5 .ogg, 4 .woff2", "licence": "none stated by the folder; NOTE.txt gives origin and a delete-after date of 2026-11-07", "class": "N/A", "note": "Not a donor game. Listed so Strategy knows what the folder is. Do not audit as a third-party asset set."},
+    {"kind": "third-party library licence", "path": "artifacts-account-2026-10-01/build/licenses/meshoptimizer.txt", "count_hint": "1 file", "licence": "MIT (file line 1 'MIT License'; copyright line 3)", "class": "A", "note": "Code library licence only (meshoptimizer), not a game asset."}
+  ],
+  "inspiration": [
+    "No donor inspiration: this folder is Frankendom's own web build output (origin note in NOTE.txt). Nothing here comes from another game.",
+    "The folder's build/looks, build/gear-ui and build/shields names show our own look and gear tree, so any idea there is already ours; use it as a cross-check against the parity rows, not as a donor."
+  ],
+  "briefs": [],
+  "not_read": [
+    "browser-receipt.json: an account-panel browser evidence file; not opened (may hold account data).",
+    "desktop-menu.png, mobile-*.png, kill-link-*.png: screenshots of our own UI; not opened.",
+    "build/*.glb, build/*.png, build/*.js: not opened (binary or minified).",
+    "build/index.html and build/privacy.html: not read beyond a grep for licence lines (no matches).",
+    "No briefs written: there is no donor game to brief."
+  ]
+}

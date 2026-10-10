@@ -1,0 +1,71 @@
+{
+  "donor": "TrinityCore-TrinityCore",
+  "topic": "status-effects",
+  "depth": "full",
+  "half_read": "server",
+  "paths": [
+    "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Unit/Unit.cpp",
+    "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Unit/Unit.h",
+    "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Spells/Spell.cpp",
+    "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Spells/SpellInfo.cpp",
+    "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Spells/SpellInfo.h",
+    "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Spells/Auras/SpellAuras.cpp",
+    "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Spells/Auras/SpellAuraEffects.cpp",
+    "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Miscellaneous/SharedDefines.h"
+  ],
+  "counts": {
+    "dr_groups_named": 8,
+    "dr_group_values_including_none": 9,
+    "mechanics_values": 37,
+    "dr_levels_default_groups": 4,
+    "dr_levels_taunt_creature": 5,
+    "dr_levels_knockback": 2,
+    "dr_reset_seconds": 18,
+    "dr_default_pvp_cap_seconds": 8,
+    "defects_or_traps_listed": 4,
+    "client_spell_rows_in_box": 0
+  },
+  "rule": "Per crowd-control family (DR group), a hit reads the level, bumps it for the next hit (only for all-type groups or player-affected targets), then scales this hit's duration by the level read: default 100, 50, 25, then immune; knockback 100 then immune; taunt on creature targets 100, 65, 42.25, 27.46, then immune. Caster-player on player-affected target gets the group's PvP cap (default 8 s). The level resets 18 s after the last aura of the group is removed. A new aura in the same group is refused (bounce) when its post-diminish duration is shorter than the running one. Control states have priority stun > root > confuse > fear; stun also re-evaluates threat suppression. Damage removes interrupt-flagged auras before the absorb check. Stacks clamp to the cap, refresh timers when not lower, and merge same spell from the same caster.",
+  "data_fields": [
+    {"name": "dr_group", "unit": "enum: root, stun, incapacitate, disorient, silence, knockback, taunt, limit-only", "donor_value_or_null": null},
+    {"name": "dr_type", "unit": "enum: none, player-only, all", "donor_value_or_null": null},
+    {"name": "dr_levels", "unit": "percent array per group; last entry 0 = immune", "donor_value_or_null": null},
+    {"name": "dr_reset", "unit": "s after the last aura of the group ends", "donor_value_or_null": null},
+    {"name": "pvp_cap", "unit": "s (explicit per group; none by default in our data)", "donor_value_or_null": null},
+    {"name": "taunt_obeys_dr", "unit": "bool, creature targets only", "donor_value_or_null": null},
+    {"name": "aura_stack_cap", "unit": "count (0 = no cap)", "donor_value_or_null": null},
+    {"name": "control_priority", "unit": "ordered list: stun, root, confuse, fear", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "one diminishing bucket per crowd-control family",
+    "discrete level ladder (full, half, quarter, immune)",
+    "reset 18 s after the last aura of the bucket ends",
+    "bounce rule: a shorter new aura cannot overwrite a longer one in the same bucket",
+    "control priority stun > root > confuse > fear",
+    "damage removes interrupt-flagged auras before the absorb check"
+  ],
+  "change": [
+    "our families: stun, root, knockdown, fear, silence, taunt, knockback",
+    "bosses and elites only for the bucket (three attackers can chain a stun)",
+    "group is a field on each ability row, not a hand-written per-spell table (no silent NONE)",
+    "taunt gets its own four-step ladder, not the shared value 3 (T1)",
+    "PvP cap explicit per group, not a default 8 s on every grouped spell (T3)",
+    "bounce compares remaining with remaining (T4; Aura::GetDuration not read)"
+  ],
+  "look_test": "Phone 375 wide, one elite in a three-attacker fight. (A) flat 2 s stun from each attacker; (B) bucket 100, 50, 25 percent then an immune beat, three pips on the enemy bar, resists flash on the immune step. Judge whether B reads as the elite hardening rather than the stun breaking, whether three pips are legible beside the bar at 375 wide, and whether the flash is clear without a text line.",
+  "licence_note": "Code licence GPL 2.0 (COPYING line 1; README; AUTHORS: all code GPL 2.0 except bundled third-party libraries). Clean-room, shape only; sketch written from the rule, not copied. Row data in sql/ has no stated origin (class C); not used. Inspiration is category-level only.",
+  "tags": ["new:diminishing-returns", "new:control-priority", "status-stack", "duration-rule", "fear", "bleed", "new:stun-root", "new:damage-breaks-aura", "new:bounce-rule"],
+  "not_read": [
+    "client DB2 spell and aura option rows (not in the box)",
+    "sql/ spell rows (world and auth schema only in the box; spell rows not read)",
+    "Aura::GetDuration and Aura::Update bodies (T4 unverified)",
+    "SetStunned body beyond the root call",
+    "SetControlled removal branches for fear and confuse beyond the early-return lines",
+    "Player override of IsAffectedByDiminishingReturns (Unit default read at Unit.h line 698)",
+    "ClearDiminishings callers",
+    "CanStackWith body past line 1660",
+    "other CC handlers (fear, confuse, silence, root) beyond the stun handler",
+    "client, UI, animation and sound (not in the box; visuals and audio are inferred)",
+    "no build, no tests, no runtime"
+  ]
+}

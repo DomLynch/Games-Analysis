@@ -1,0 +1,73 @@
+{
+  "donor": "xoreos-xoreos",
+  "topic": "hit-feedback-stack",
+  "depth": "thin",
+  "half_read": "server",
+  "paths": [
+    "/mnt/frankendom-donors/xoreos-xoreos/src/engines/kotorbase/round.cpp",
+    "/mnt/frankendom-donors/xoreos-xoreos/src/engines/kotorbase/module.cpp",
+    "/mnt/frankendom-donors/xoreos-xoreos/src/engines/kotorbase/creature.cpp",
+    "/mnt/frankendom-donors/xoreos-xoreos/src/engines/kotorbase/area.cpp",
+    "/mnt/frankendom-donors/xoreos-xoreos/src/engines/dragonage/types.h",
+    "/mnt/frankendom-donors/xoreos-xoreos/src/aurora/gff4fields.h",
+    "/mnt/frankendom-donors/xoreos-xoreos/src/aurora/gdaheaders.h",
+    "/mnt/frankendom-donors/xoreos-xoreos/src/aurora/gdaheaders.cpp"
+  ],
+  "counts": {
+    "combat_round_phases": 2,
+    "combat_round_phase0_ms": 3000,
+    "combat_cycle_ms": 6000,
+    "attack_hooks_at_round_begin": 2,
+    "attack_resolve_calls_at_round_end": 1,
+    "cutscene_shake_field_ids": 10,
+    "gda_hash_name_rows": 2205,
+    "shake_or_impact_readers_in_src": 0
+  },
+  "rule": "A combat cycle has two phases: phase 0 lasts 3000 ms, then phase 1 runs until 6000 ms from cycle start, then the cycle repeats. At each phase boundary the end hook resolves damage for creatures that had a target, then the begin hook sets new targets and plays the attacker swing and the target dodge. Damage = sum of weapon dice plus ability modifier (both hands summed; unarmed = 1 + strength modifier), no hit roll, no range check at resolve. HP at or below a floor is clamped to the floor (1 when Min1HP is set) and combat is cancelled. Death: die animation once, then dead pose held, then user event 1007. Shake and impact fields exist only as schema names (cutscene shake ids, GDA column names); no reader in src.",
+  "data_fields": [
+    {"name": "combat_round_ms", "unit": "ms per wind-up window", "donor_value_or_null": null},
+    {"name": "resolve_beat", "unit": "rounds (damage lands at window end)", "donor_value_or_null": null},
+    {"name": "min_hp_floor_flag", "unit": "bool", "donor_value_or_null": null},
+    {"name": "attack_dice_per_weapon", "unit": "count and die size", "donor_value_or_null": null},
+    {"name": "unarmed_base_plus_mod", "unit": "int", "donor_value_or_null": null},
+    {"name": "shake_duration", "unit": "ms", "donor_value_or_null": null},
+    {"name": "shake_freq", "unit": "Hz", "donor_value_or_null": null},
+    {"name": "shake_delay", "unit": "ms", "donor_value_or_null": null},
+    {"name": "shake_ramp_in", "unit": "ms", "donor_value_or_null": null},
+    {"name": "shake_ramp_out", "unit": "ms", "donor_value_or_null": null},
+    {"name": "impact_timeout", "unit": "ms", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Telegraph before resolve: swing and dodge visible before damage lands.",
+    "Damage resolves on a beat the server can enforce.",
+    "Minimum-HP floor as a per-encounter flag (first-fight, onboarding).",
+    "Die once, then hold the dead pose."
+  ],
+  "change": [
+    "Beat length: fast duels need a fraction of a second, not three seconds; make it a data field.",
+    "Drive the beat from the server tick with a fixed step, not the engine clock.",
+    "Re-check range at resolve; the donor checks only at begin.",
+    "Add a real hit roll before damage; the dodge plays today with no roll.",
+    "Many-on-one: phase-offset the three attackers on one shared beat (idea to test; not in donor)."
+  ],
+  "look_test": "Presentation-only flag (feel.beat), no release rows. Publish two clips of the same three-on-one fight at 375 wide: A = each attacker on free timing; B = three attackers on one shared beat with a stagger. Dom judges which lets him read and dodge each incoming hit on a phone.",
+  "licence_note": "README lines 5-6 and COPYING line 1: GNU GPL version 3 or later. Clean-room, shape only. No code, animation names, schema or values copied. Donor numbers not in data fields (GPL donor).",
+  "tags": [
+    "ordered-feedback",
+    "timed-event",
+    "scheduler",
+    "new:beat-telegraph",
+    "new:min-hp-floor",
+    "new:die-then-hold"
+  ],
+  "not_read": [
+    "game data rows holding the values (not in the box)",
+    "dragonage/event.cpp (68 lines, not read in full)",
+    "cutscene shake consumer (none found in src)",
+    "creature idle and ambient animation",
+    "loot reveal",
+    "respawn presentation",
+    "walk density and readability at 375 wide",
+    "camera code"
+  ]
+}

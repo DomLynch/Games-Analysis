@@ -1,0 +1,137 @@
+{
+  "donor": "id-Software-Quake",
+  "counts": {
+    "creatures": 15,
+    "classes": 0,
+    "weapons": 8,
+    "gear_sets": 7,
+    "zones": 0
+  },
+  "creature_families": [
+    "15 monster classnames declared in qw-qc/server.qc 28-42 as remove-on-spawn stubs (names only): ogre, demon, shambler, knight, army, wizard, dog, zombie, boss, tarbaby, hell knight, fish, shalrath, enforcer, oldone",
+    "No monster AI, models, tiers or abilities in the box (data pack and single-player progs absent)"
+  ],
+  "top_creatures": [],
+  "classes": [
+    "None. One player model and one class (qw-qc/player.qc). No races or factions; teamplay is a friendly-fire setting in qw-qc/combat.qc"
+  ],
+  "weapon_families": [
+    "Axe (melee, no ammo, 0.5 s cooldown, four random swing frames) - qw-qc/weapons.qc 1023-1091",
+    "Shotgun and super shotgun (6 and 14 pellets, batched into one damage call per target) - qw-qc/weapons.qc 185-258, 290-373",
+    "Nailgun and super nailgun (spike damage 9 and 18) - qw-qc/weapons.qc 822, 869; cadence not read",
+    "Grenade launcher (bounce then detonate, 120 radius) - qw-qc/weapons.qc 618-655",
+    "Rocket launcher (speed 1000, 5 s self-remove, 120 radius) - qw-qc/weapons.qc 422, 444-483",
+    "Lightning gun (30 per trace per tick, three traces, 0.1 s cooldown, underwater explosion) - qw-qc/weapons.qc 485-616",
+    "Auto-switch order (lightning, super nailgun, super shotgun, nailgun, shotgun, axe; rockets commented out) - qw-qc/weapons.qc 963-989"
+  ],
+  "gear_tiers": [
+    "Armour green: absorbs 30 percent, pool 100 (qw-qc/items.qc 395-453)",
+    "Armour yellow: absorbs 60 percent, pool 150 (qw-qc/items.qc 395-453)",
+    "Armour red: absorbs 80 percent, pool 200 (qw-qc/items.qc 395-453); the three tiers share one model and differ by skin (items.qc 454-487)",
+    "Invulnerability artifact: 30 s, respawn 5 min, effect-flag glow (qw-qc/items.qc 1311-1400)",
+    "Environment suit artifact: 30 s, respawn 60 s (qw-qc/items.qc 1404-1420)",
+    "Invisibility artifact: 30 s, respawn 5 min (qw-qc/items.qc 1423-1440)",
+    "Quad damage artifact: 30 s, 4x damage, blue glow, respawn 60 s (qw-qc/items.qc 1443-1470; combat.qc 152-156 multiplier)"
+  ],
+  "zones": [
+    "No maps in the box. Entity vocabulary only (80 QUAKED headers in qw-qc)",
+    "Water: drowning after 12 s of air, damage ramp (qw-qc/client.qc 800-830)",
+    "Slime: 4 per water level per second (qw-qc/client.qc 854-860)",
+    "Lava: 10 per water level every 0.2 s, radiation suit slows it (qw-qc/client.qc 842-852)",
+    "Hurt triggers: default 5 damage (qw-qc/triggers.qc 587-597)",
+    "Traps: trap_shooter and trap_spikeshooter with a laser variant (qw-qc/misc.qc 380-449)",
+    "Lava balls: misc_fireball on a random 3-8 s clock (qw-qc/misc.qc 191-226)",
+    "Gated progress: sigils, gold and silver keys, episode gates, boss gate (qw-qc/misc.qc 623-650; items.qc 1166-1270)",
+    "Ambience entities: nine ambient_* beds (qw-qc/misc.qc 655-716)"
+  ],
+  "looks": [
+    {
+      "label": "Flag-driven glow with dim light",
+      "technique": "Effect flags set on the player entity while the buff runs, cleared on expiry (EF_BLUE, EF_RED plus EF_DIMLIGHT)",
+      "ref": "/mnt/frankendom-donors/id-Software-Quake/qw-qc/items.qc 1395, 1458; /mnt/frankendom-donors/id-Software-Quake/qw-qc/client.qc 1051-1057, 1102-1108"
+    },
+    {
+      "label": "Accelerating particle burst",
+      "technique": "Fixed particle pool, 8-step palette ramp advanced by frame time, velocity multiplied by a per-second factor so the burst accelerates outward",
+      "ref": "/mnt/frankendom-donors/id-Software-Quake/WinQuake/r_part.c 277-320, 682, 752-754"
+    },
+    {
+      "label": "Blob explosion with two particle types",
+      "technique": "1024 particles split between two types, life 1.0 to 1.4 s",
+      "ref": "/mnt/frankendom-donors/id-Software-Quake/WinQuake/r_part.c 355-399"
+    },
+    {
+      "label": "Teleport splash grid",
+      "technique": "Grid of about 896 short-lived particles pushed radially from the centre",
+      "ref": "/mnt/frankendom-donors/id-Software-Quake/WinQuake/r_part.c 501-536"
+    },
+    {
+      "label": "Three-trace beam width",
+      "technique": "Three parallel traces offset perpendicular to the beam; the offset formula is buggy (see defects)",
+      "ref": "/mnt/frankendom-donors/id-Software-Quake/qw-qc/weapons.qc 502-543 (offset at 509-510)"
+    },
+    {
+      "label": "Visible-only blood event",
+      "technique": "Temp-entity message multicast to clients that can see the spot",
+      "ref": "/mnt/frankendom-donors/id-Software-Quake/qw-qc/weapons.qc 151-158, 245"
+    },
+    {
+      "label": "Power-up warning flash",
+      "technique": "Last 3 s of quad: screen flash and sound once per second",
+      "ref": "/mnt/frankendom-donors/id-Software-Quake/qw-qc/client.qc 1078-1125"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Carry-the-clock buff",
+      "idea": "A buff dropped on death keeps the time it had left and vanishes when that time ends.",
+      "keep": "Carried timer and the matching despawn (qw-qc/items.qc 99-122; player.qc 580-600)",
+      "change": "The drop is a glowing shard that shows its countdown and sits on the ground instead of tossing"
+    },
+    {
+      "name": "Effective-strength gear swap",
+      "idea": "New armour replaces the old only when its absorb fraction times pool is higher.",
+      "keep": "The compare (qw-qc/items.qc 428) and the fraction-times-pool absorb (combat.qc 160-175)",
+      "change": "Three plate types with their own silhouettes, not green, yellow and red"
+    },
+    {
+      "name": "Three-strand arc gun",
+      "idea": "Three parallel traces give a beam its width.",
+      "keep": "The three-trace width trick (weapons.qc 502-543) with the offset fixed",
+      "change": "A branching arc that jumps to a second target, with a crackle sound"
+    },
+    {
+      "name": "Pellet bundle",
+      "idea": "Multi-pellet damage sums into one damage call per target.",
+      "keep": "The bundle (weapons.qc 185-258, 290-321)",
+      "change": "A double-barrel spread pattern and the per-target flush fixed"
+    },
+    {
+      "name": "Ember burst",
+      "idea": "Explosion from a colour ramp that accelerates outward, timed in seconds not frames.",
+      "keep": "Ramp and frame-rate-independent timing (WinQuake/r_part.c 277-320, 682)",
+      "change": "Our own palette and a shockwave ring"
+    },
+    {
+      "name": "Drowning clock",
+      "idea": "A breath counter, then rising damage that caps.",
+      "keep": "The countdown (qw-qc/client.qc 800-830)",
+      "change": "The cap instead of the reset to 10 at 16"
+    },
+    {
+      "name": "Lava lob",
+      "idea": "A vent throws a timed arc on a random 3 to 8 second clock.",
+      "keep": "The random clock (qw-qc/misc.qc 191-226)",
+      "change": "A fixed launch speed (the source never sets it) and a visible ember trail"
+    }
+  ],
+  "licence_note": "GPL (readme.txt line 16: 'The code is all licensed under the terms of the GPL'); data copyrighted and not redistributable (readme.txt line 38). Clean-room, shape only.",
+  "not_read": [
+    "Data pack absent: maps, models, sounds, textures",
+    "Monster AI absent: no creature frames, tiers or abilities",
+    "QW/server and QW/client C code; WinQuake engine files other than r_part.c",
+    "Nailgun cadence in animation frames",
+    "Rocket direct-hit damage in T_MissileTouch (partly read)",
+    "Player death animation bodies beyond the choice logic (player.qc 643-656)"
+  ]
+}

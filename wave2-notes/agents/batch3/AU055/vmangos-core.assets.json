@@ -1,0 +1,66 @@
+{
+  "donor": "vmangos-core",
+  "code_licence": "GPL-2.0 (root LICENSE, 'GNU GENERAL PUBLIC LICENSE Version 2, June 1991'). Dependency folders under dep/ (cpptrace, g3dlite, gsoap, libmpq, loadlib, recastnavigation, ...) carry their own licences; not read.",
+  "asset_licence": "No asset licence is stated in the repo. The repo does not ship original client data (find over the repo for .dbc, .mpq, .vmo, .mmap, .m2, .blp returned nothing). Game content lives as SQL: sql/migrations (1,168 entries, SQL plus merge.sh and README), sql/custom (30 files), sql/translations (ptBR and readme.txt). The files state no licence for this content. Class C.",
+  "rights_holder_status": "Not named in the repo. README.md line 5: 'an independent continuation of the Elysium / LightsHope codebases'. The README 'Currently supported builds' list (line 8 onward) names client build numbers, so the content is versioned against an original commercial client. No trademark or affiliation disclaimer found in README.md, CONTRIBUTING.md or LICENSE (grep). Status: derived from original game content; rights holder unknown from repo files. Treat as proprietary-derived.",
+  "best_class": "C overall (proprietary-derived game content; licence unstated). Code: GPL-2 share-alike (class B condition: copy only under GPL-2; we take shape only). No art, models or audio found in the repo: D for those groups.",
+  "asset_groups": [
+    {"kind": "world-content-sql", "path": "sql/migrations/*_world.sql (1,168 entries in migrations folder; creature_template in 287 files, gameobject_template in 100, quest_template in 92, pool_template in 280, creature_loot_template in 36, spell_template in 56, item_template in 33)", "count_hint": "1,168 migration entries (sql folder about 118 MB)", "licence": "not stated (C)", "class": "C", "note": "Creature, object, quest, item, pool and spell rows. Table names cited, row content not read. Quest and dialogue text is protected game text: not copied or summarised here."},
+    {"kind": "custom-event-sql", "path": "sql/custom/ (30 files, e.g. elysium_*, *_event.sql, resource_rates_*.sql, custom_quests.sql)", "count_hint": "30 files", "licence": "not stated (C)", "class": "C", "note": "README (sql/custom/README.md line 2): custom changes must run last and be re-runnable. The file names carry another project's prefix (Elysium). Not read beyond names and README."},
+    {"kind": "translations", "path": "sql/translations/ (ptBR folder, readme.txt)", "count_hint": "2 entries (1 folder, 1 readme)", "licence": "not stated (C)", "class": "C", "note": "readme.txt line 1 says it holds localisation for languages without an official vanilla client. Not read beyond the readme."},
+    {"kind": "schema-sql", "path": "sql/characters.sql, sql/logon.sql, sql/logs.sql, sql/make_migration.py, sql/touch_migration.sh", "count_hint": "3 schema dumps and tools", "licence": "GPL-2 with the repo (code-like)", "class": "B", "note": "Schemas and tools, not content. Shape only for us."},
+    {"kind": "server-source", "path": "src/game (Maps/Pool/PoolManager.cpp, Objects/Creature.cpp, ObjectMgr.cpp, Objects/GameObject.cpp), src/scripts, src/shared, src/framework, src/realmd, src/mangosd", "count_hint": "about 20 MB source", "licence": "GPL-2.0 (repo)", "class": "B", "note": "Code. Read: PoolManager.cpp (pool spawn count, branches, patch-window query) and Creature.cpp (respawn window, respawn check, corpse decay). Clean-room shape only for us."},
+    {"kind": "extractor-and-tools", "path": "contrib/extractor (dbcfile.h, dbcfile.cpp, README.linux), contrib/mmap, contrib/vmap_extractor, contrib/model_reader, contrib/vmap_assembler, contrib/RealmMerge", "count_hint": "about 700 KB contrib", "licence": "GPL-2.0 (repo)", "class": "B", "note": "Tools that read original client data formats. README.linux gives build steps only (cmake, make, run). The repo does not ship the data they read."},
+    {"kind": "third-party-deps", "path": "dep/ (recastnavigation, g3dlite, cpptrace, libmpq, gsoap, loadlib, include, src)", "count_hint": "about 38 MB", "licence": "not read per library", "class": "C", "note": "Each library has its own licence. Not read. libmpq is an archive reader; not used by us."},
+    {"kind": "art-audio-models", "path": "none found in the repo (no .dbc, .mpq, .vmo, .mmap, .m2, .blp files found)", "count_hint": "0", "licence": "n/a", "class": "D", "note": "The repo does not ship art, models, textures or audio. The client that uses them is not in the box."}
+  ],
+  "inspiration": [
+    "Capped spawn pools: a pool has a maximum count and a spawn-state count; it refills one slot at a time when a member despawns. Pool members are either chance-weighted or equal-weighted (PoolManager.cpp lines 360, 372-386). This is the spawn-cap idea for row 23 (zone population), not any specific numbers.",
+    "Randomised respawn window: each spawn record has a minimum and a maximum respawn time and draws one at random on death (Creature.cpp line 60). Prevents a whole pack from returning at once.",
+    "Two timers per dead creature: a corpse timer that decays the body, and a respawn timer that waits until the corpse has gone and any linked-spawn check passes (Creature.cpp lines 818 and 901). Gives the death presentation a clear sequence.",
+    "Patch-windowed data rows: each pool template row carries a minimum and maximum patch and is selected by the current build (PoolManager.cpp line 685). Good model for zone and content rows that must be tagged by season or release.",
+    "The README sets a rule that custom behaviour sits behind a config option and is off by default, and that content lives in data rather than hard-coded scripts (README.md lines 21-23). Useful as a rule for our zone data.",
+    "Custom content as re-runnable SQL applied last (sql/custom/README.md line 2). A simple way to keep balance patches separate from base content.",
+    "Pools include game objects as well as creatures (PoolGroup<GameObject> in PoolManager.cpp), so nodes and chests can share a cap with monsters. Category-level idea for walk density (what appears every 20 s of walking).",
+    "Loot and spell content are plain data tables keyed by creature or ability (creature_loot_template, spell_template in sql/migrations). Category-level only: a per-creature material table with counts."
+  ],
+  "briefs": [
+    {
+      "label": "Capped roaming pack (zone spawn director)",
+      "why": "A small pack that never exceeds a cap and refills one member at a time reads as a living population: you see a group, kill part of it, and the rest of the zone stays calm.",
+      "keep": "a cap per pool; one slot refills at a time; members are a named group, not free spawns; respawn drawn from a window",
+      "change": "our cap is zone data with a grace timer and a despawn when no player is near; packs stay at three attackers (our MAX_ATTACKERS ruling), and the cap is read from the zone file, not hard-coded",
+      "ref": "src/game/Maps/Pool/PoolManager.cpp lines 351-392 (SpawnObject); src/game/Objects/Creature.cpp line 60"
+    },
+    {
+      "label": "Patch-stamped zone row",
+      "why": "Every row carries a minimum and maximum version and the server selects only rows that match the build. A content season can change a zone without rewriting the base data.",
+      "keep": "version window on each row; selection by current build; base and override rows kept apart",
+      "change": "our window is a season or release tag per zone, not a game build number; no copied rows",
+      "ref": "src/game/Maps/Pool/PoolManager.cpp line 685; README.md line 23"
+    },
+    {
+      "label": "Corpse-then-return pair (death presentation)",
+      "why": "A body that stays for a while and then a separate return timer gives the player a beat to loot or leave, and stops the same spot refilling at once.",
+      "keep": "two timers: body decay, then respawn; respawn waits for the body to clear",
+      "change": "our corpse is a loot ceremony with a short shaped decay and a fade, not a plain timer; the return is a zone-data value",
+      "ref": "src/game/Objects/Creature.cpp lines 818 and 901"
+    },
+    {
+      "label": "Per-creature material table",
+      "why": "One table that lists which materials a creature class drops, with counts, lets a designer tune a whole family of creatures in one place and makes the crafting input visible.",
+      "keep": "one table keyed by creature class; item plus count per row; tuned as data",
+      "change": "our class names, our material set and count ranges; add a rare tier roll; no copied rows",
+      "ref": "sql/migrations (creature_loot_template appears in 36 files; example sql/migrations/20240105021338_world.sql, not read beyond name)"
+    }
+  ],
+  "not_read": [
+    "the content rows of sql/migrations (table names counted only; no row text read, quest and dialogue text not read on purpose)",
+    "sql/custom except the README and file names",
+    "sql/translations/ptBR contents",
+    "dep/ libraries (licences and code not read)",
+    "src/scripts (quest and AI scripts) and src/shared, src/framework, src/realmd, src/mangosd: only names seen",
+    "contrib/mmap, vmap and model_reader code: only names seen",
+    "PoolManager.cpp other than lines 351-392, 221, 360-386 and 685; Creature.cpp other than lines 58-60, 254, 818, 901"
+  ]
+}

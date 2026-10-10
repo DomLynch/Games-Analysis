@@ -1,0 +1,136 @@
+{
+  "donor": "supertuxkart-stk-code",
+  "code_licence": "GNU GPL version 3 or later. COPYING line 1: 'The SuperTuxKart code is free software; you can redistribute it'. src/items/rubber_band.cpp header line 7: 'as published by the Free Software Foundation; either version 3'. README.md line 24 says the software is GPL.",
+  "asset_licence": "Mixed, per file. COPYING line 3: the data files (textures, models, sounds, music, etc.) 'are released under a mixture of licenses including, but not limited to' GNU GPL, CC-BY (line 6), CC-BY-SA (line 7) and Public Domain (line 8). COPYING says 'See the licenses.txt files throughout the various data subdirectories' for each file's licence. Per-folder licence files found (16): data/gui/icons/licenses.txt (CC-BY-SA 3.0+ for icons, line 20 and 22), data/skins/*/licenses.txt or License.txt (CC-BY-SA 3.0 for several skin images; cartoon has OFL 1.1 for one font). No licence file at the data root (karts, tracks, XML data, gfx, challenges, replays). The 3D models, tracks, music and sounds that the XML refers to (for example items.xml names gift-box.spm) are NOT in the box (no .spm, .ogg, .mp3, .wav, .blend, .obj, .fbx files found by extension).",
+  "rights_holder_status": "unknown as a single owner. The files name a community project and per-file authors: 'SuperTuxKart dev team' (gui icons, licenses.txt lines 9 and 19), 'Dakal and/or Marianne Gagnon (Auria)' (skins/cartoon/licenses.txt line 11), Magne Djupvik and yeKcim for some skin art (skins/classic/License.txt line 1). Credits file (data/CREDITS) names developers. Not a company, not a clean-room, no leak. Per-file owners are only what the licences.txt files say.",
+  "best_class": "A",
+  "asset_groups": [
+    {
+      "kind": "UI fonts (OFL and GPL-font)",
+      "path": "data/ttf/ (14 font files by extension; for example data/ttf/SigmarOne.otf, data/ttf/NotoSans*-Regular.ttf, data/ttf/wqy-microhei.ttf, data/ttf/Cantarell-Regular.otf)",
+      "count_hint": "9 .ttf and 2 .otf in data/ttf/ (for example SigmarOne.otf, Cantarell-Regular.otf, NotoSans*-Regular.ttf, wqy-microhei.ttf), plus data/ttf/LICENSE",
+      "licence": "data/ttf/LICENSE line 1: wqyMicroHei is GPLv3 with font embedding exception and Apache-2.0. Line 6: Noto Sans Thai, Hebrew, Naskh Arabic UI and Color Emoji are SIL OFL 1.1. Line 10: Cantarell is SIL OFL 1.1. Line 12: SigmarOne is SIL OFL 1.1.",
+      "class": "A for the SIL OFL 1.1 fonts (keep the notice); B for wqyMicroHei (GPLv3 with font exception and Apache-2.0)",
+      "note": "The file names the licences. No use decided here. Fonts are the most reusable group in the box, with the notice kept."
+    },
+    {
+      "kind": "UI skin art (buttons, bubbles, icons, backgrounds, notification art)",
+      "path": "data/skins/ (13 skin folders: cartoon, cartoon-*, classic, classic-*, common; each has a licences.txt or License.txt), data/gui/icons/",
+      "count_hint": "about 778 PNG in data/ overall; skin and icon PNG not counted one by one",
+      "licence": "CC-BY-SA 3.0 per data/skins/classic/License.txt line 1 (friend, error, achievement art) and data/skins/common/License.txt line 1 (glass_section.png). data/gui/icons/licenses.txt line 20 says CC-BY-SA 3.0+ and line 22 says the icons come from Open Game Art. data/skins/cartoon/licenses.txt line 13 says some files have unclear authorship.",
+      "class": "B (CC-BY-SA, share-alike; attribution to the named author needed); C for the files the note says have unclear authorship",
+      "note": "Share-alike applies to the adapted art. Do not reuse as is. Use the layout and the colour logic as reference only."
+    },
+    {
+      "kind": "particle effect definitions (XML)",
+      "path": "data/gfx/*.xml (44 files; for example data/gfx/explosion.xml, fire.xml, confetti.xml, black_smoke.xml, gfx_bubble_a.xml)",
+      "count_hint": "44 XML files",
+      "licence": "no licences.txt in data/gfx; falls under COPYING line 3 mixture. Unclear per file.",
+      "class": "C",
+      "note": "Numbers and shapes of particle emitters. Read: explosion.xml (sphere emitter, rate, lifetime, size growth). Use as shape reference, not values."
+    },
+    {
+      "kind": "kart and item data (XML tables)",
+      "path": "data/kart_characteristics.xml (423 lines), data/official_karts.xml (18 karts with size fields), data/items.xml (item model and glow table), data/powerup.xml (item and rubber-ball tables, weights docs), data/stk_config.xml (global config)",
+      "count_hint": "18 karts in official_karts.xml; about 10 characteristic blocks (difficulty and kart-type) in kart_characteristics.xml; 7 entries in items.xml",
+      "licence": "no licences.txt at data root; COPYING line 3 mixture. Unclear per file.",
+      "class": "C",
+      "note": "Data tables are the best reference for the catalogue shape (fields, multipliers, weights by rank). Use shape and field names. Do not copy values."
+    },
+    {
+      "kind": "challenge, grand prix and replay data",
+      "path": "data/challenges/*.challenge (28 files), data/grandprix/ (4 files), data/replay/*.replay (51 files)",
+      "count_hint": "28 challenge, 4 grand-prix, 51 replay files",
+      "licence": "no licences.txt in these folders; COPYING line 3 mixture. Unclear.",
+      "class": "C",
+      "note": "Replays are recorded runs (binary or text, not opened). Challenge files list rules per track. Read only file names and sizes."
+    },
+    {
+      "kind": "translations (gettext .po)",
+      "path": "data/po/ (65 .po files by extension)",
+      "count_hint": "65 .po files",
+      "licence": "not read; COPYING line 3 mixture",
+      "class": "C",
+      "note": "String tables. Use the grammar only (placeholders), never the wording. Not read beyond names."
+    },
+    {
+      "kind": "3D models, textures for karts and tracks, music, sound effects",
+      "path": "not in box (no .spm, .ogg, .mp3, .wav, .blend, .obj, .fbx, .dae, .b3d, .mod, .xm, .it, .mid files found; data/ has no karts, tracks, models or music folders)",
+      "count_hint": "0 in box",
+      "licence": "not applicable in the box; COPYING says mixture, so per-file licence would be in the missing folders",
+      "class": "D",
+      "note": "The XML refers to them (for example items.xml names .spm models). They are not available here. Do not hunt for them."
+    },
+    {
+      "kind": "shader sources (GLSL)",
+      "path": "data/shaders/ (91 frag, 25 vert, 12 glsl, 9 comp, 4 vsh, 4 fsh by extension)",
+      "count_hint": "about 145 shader files",
+      "licence": "covered by the code licence GPL-3 as code (not separately read)",
+      "class": "B",
+      "note": "Shader code under GPL-3. Shape only, clean-room."
+    }
+  ],
+  "inspiration": [
+    "A homing ball chases its target at a speed that depends on distance: at 50 m or closer it adds a small offset to the target's max speed, at 250 m or farther it adds a larger one, and linear in between. The change of speed is limited to a 5-second slew, so a sudden shortcut does not make the ball jump (src/items/rubber_ball.cpp 304-307, 560-585). The data sets the near offset to 9.0 and the code clamps it to at least 10.0 after loading (data/powerup.xml line 78; src/items/rubber_ball.cpp 355-356). That is a real mismatch to note, not to copy.",
+    "Drops are chosen by finishing position: each rank has its own weight row, one random number is taken modulo the summed weights and walked cumulatively to pick the item (src/items/powerup_manager.cpp 415-448, 609; data/powerup.xml 101-120). The back of the pack gets a different table, which is catch-up without a visible rubber band.",
+    "Explosive drops are swapped for a harmless one for the first 15 seconds of a race (data/stk_config.xml 239; src/items/powerup_manager.cpp 623-624). It is an opening grace rule, cheap to copy as a zone field.",
+    "Difficulty is a row of multipliers on the base kart: easy takes 0.6 of max speed, medium 0.8, hard 0.92, and the best row is left unchanged (data/kart_characteristics.xml 348-361). A small stat-modifier table that a fast duel can use.",
+    "The data files accept relative values such as multiply by a factor or add then multiply, evaluated left to right with no operator precedence (data/kart_characteristics.xml comment lines 1-22). Useful as a rule for catalogue fields, with the precedence trap written down.",
+    "A particle burst is data: a sphere emitter with a wide spread, a high emission rate for a short life, a size that grows over time, and a single white colour range (data/gfx/explosion.xml 2-29). A good catalogue shape for VFX (row 8), with the numbers in data.",
+    "Each item kind has its own glow colour set in one table (data/items.xml). A visible rarity or type code at a glance, set as data rather than in code.",
+    "Kart size classes are light, medium and heavy, with width, height and length per kart in one list (data/official_karts.xml). A ready shape for a hero or creature size table that keeps silhouettes readable at 375 px."
+  ],
+  "briefs": [
+    {
+      "label": "Homing bouncer with distance-scaled speed",
+      "why": "A projectile that speeds up when far and eases off when close reads as a clear threat. The slow change keeps it honest when the target moves round a corner.",
+      "keep": "speed depends on distance to the target; the change is slew-limited so it cannot jump; a bounce arc gives it a visible path",
+      "change": "our projectile is a chain of glyphs, not a ball; the speed band is 0.8x to 1.3x of the target's walk speed; the slew takes 2 seconds, not 5",
+      "ref": "src/items/rubber_ball.cpp 552-598 (updateWeightedSpeed), data/powerup.xml 75-86 (item block). Recreate as an original projectile; do not copy the code or the item name."
+    },
+    {
+      "label": "Finishing-position drop table",
+      "why": "Every place has its own drop weights, so the back of the pack gets better odds without a visible catch-up rule.",
+      "keep": "one weight row per rank; one random number taken modulo the summed weights; cumulative walk to the pick",
+      "change": "the row is chosen by loss streak in a zone, not by rank; the drops are our own item set with no names from the donor; the weights are zone data",
+      "ref": "src/items/powerup_manager.cpp 415-448 (getRandomItem), 609; data/powerup.xml 101-120 (weight docs). Recreate as an original drop table."
+    },
+    {
+      "label": "Opening grace on explosive drops",
+      "why": "New arrivals in a zone are not hit by big bursts for the first few seconds, so the first minute is fair.",
+      "keep": "a timed rule swaps the explosive pick for a harmless one until the timer passes; the timer is data",
+      "change": "for us, the first 10 seconds of a zone visit swap to a stagger, shown as a grey tell so the player sees the swap",
+      "ref": "data/stk_config.xml 239 (timeout value); src/items/powerup_manager.cpp 623-624 (swap). Recreate as an original zone rule."
+    },
+    {
+      "label": "Difficulty as a multiplier table",
+      "why": "One base kart and a short list of multipliers gives easy, medium and hard without copies of the stats.",
+      "keep": "difficulty rows multiply the base; the top row is the base itself; fields are named once",
+      "change": "express the multipliers as zone fields with a clamp; name the rows by the zone's threat level, not easy/medium/hard; add a per-row hit-point multiplier",
+      "ref": "data/kart_characteristics.xml 348-361. Recreate as an original difficulty table."
+    },
+    {
+      "label": "Sphere burst that grows",
+      "why": "A burst that spreads and grows reads as an impact at a glance, even at 375 px wide.",
+      "keep": "sphere emitter, wide spread, high rate for a short life, a size that grows over the life",
+      "change": "a flat ring of sparks in our palette instead of a sphere; life of 0.4 seconds to fit the hit-stop; no white, use our own colour range",
+      "ref": "data/gfx/explosion.xml 2-29. Recreate as an original hit burst."
+    }
+  ],
+  "not_read": [
+    "src/ beyond the cited items/ files and one stk_config.cpp default (karts/, physics/, graphics/, network/ not read)",
+    "src/items/rubber_band.cpp body: the file named rubber band is the plunger's elastic cord, not the catch-up mechanic (only its header read)",
+    "data/kart_characteristics.xml beyond lines 1-30, 100 and 346-361",
+    "data/powerup.xml beyond lines 33-40, 75-86, 101-120 and the rubber-ball item block",
+    "data/stk_config.xml beyond line 239 (597 lines)",
+    "data/replay/*.replay bodies (51 files; only names)",
+    "data/challenges/*.challenge bodies (28 files; only names, one file line count)",
+    "data/po/*.po (65 files; not opened)",
+    "data/shaders bodies (names and counts only)",
+    "data/gfx XML other than explosion.xml (names only)",
+    "data/skins/*/ images (names and licences only; no image opened)",
+    "data/supertuxkart.git (one line of text read; a path pointer file)",
+    "lib/ (32 MB third-party tree) and src/ bulk, not read",
+    "models, textures for karts and tracks, music and sound: not in the box"
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "donor": "flareteam-flare-engine",
+  "topic": "hit-feedback-stack",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/flareteam-flare-engine/src/Entity.cpp",
+    "/mnt/frankendom-donors/flareteam-flare-engine/src/Camera.cpp",
+    "/mnt/frankendom-donors/flareteam-flare-engine/src/EffectManager.cpp",
+    "/mnt/frankendom-donors/flareteam-flare-engine/src/StatBlock.cpp",
+    "/mnt/frankendom-donors/flareteam-flare-engine/src/CombatText.cpp",
+    "/mnt/frankendom-donors/flareteam-flare-engine/src/EntityBehavior.cpp",
+    "/mnt/frankendom-donors/flareteam-flare-engine/src/EngineSettings.cpp",
+    "/mnt/frankendom-donors/flareteam-flare-engine/mods/default/engine/combat_text.txt",
+    "/mnt/frankendom-donors/flareteam-flare-game/mods/fantasycore/enemies/base/wyvern.txt",
+    "/mnt/frankendom-donors/flareteam-flare-game/mods/empyrean_campaign/powers/categories/enemy.txt",
+    "/mnt/frankendom-donors/flareteam-flare-game/mods/empyrean_campaign/maps/the_pit.txt"
+  ],
+  "counts": {
+    "enemy_stat_files_in_data_pack": 142,
+    "sfx_hit_lines_in_data_pack": 20,
+    "force_or_knockback_post_effect_lines": 13,
+    "shakycam_event_lines": 21,
+    "cooldown_hit_lines": 2,
+    "poise_lines_in_data_pack": 0
+  },
+  "rule": "Per hit, in order: filters and miss, absorb/block, crit roll (crit sets the camera jolt timer and rumble on non-hero targets), overhit and miss multipliers, floating number added before HP changes, HP applied, after-effects, then if damage > 0: hit sound gated by the per-creature hit cooldown, poise roll (crit bypasses poise), and the hit state entered only when the cooldown has ended and the creature is not stunned or poised. Knockback is a per-frame speed from a power post-effect, one active at a time, moving the target through the collision grid and blocking its own walking. The camera jolt is a random per-axis offset within a fixed strength for the timer's length.",
+  "data_fields": [
+    {"name": "crit_mult_min", "unit": "percent of base damage", "donor_value_or_null": null},
+    {"name": "crit_mult_max", "unit": "percent of base damage", "donor_value_or_null": null},
+    {"name": "crit_jolt_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "jolt_amp_tiles", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "crit_rumble_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "hit_cooldown_ms", "unit": "ms per creature", "donor_value_or_null": null},
+    {"name": "poise_pct", "unit": "percent chance", "donor_value_or_null": null},
+    {"name": "knockback_speed_tiles_s", "unit": "tiles per second", "donor_value_or_null": null},
+    {"name": "knockback_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "text_life_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "text_fade_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "text_rise_per_s", "unit": "tiles per second", "donor_value_or_null": null},
+    {"name": "corpse_timeout_s", "unit": "s", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Floating number is added before HP changes, so the number lands on the hit frame",
+    "Crit bypasses poise and always flinches",
+    "Camera jolt only when the target is an enemy, never on the player",
+    "Hit sound and hit state gated by a per-creature cooldown",
+    "Floating labels pushed up when they overlap",
+    "One knockback effect active at a time; a second one is dropped"
+  ],
+  "change": [
+    "Engine emits one ordered HitEvent; the client does the jolt, text, sound and animation",
+    "Knockback position is decided by the server; the client only tweens to it",
+    "Jolt randomness uses a seeded client RNG so the fight record does not drift",
+    "Knockback lock is per target window so three attackers give one push, not a stack",
+    "Knockback is one engine field, not a power post-effect plumbing"
+  ],
+  "look_test": "Ten-second clip, three attackers on one target at the fight camera, 375 wide. Three taps: A one jolt per tick with cooldown sound and one push per window; B no jolt (control); C a jolt and push on every hit. Dom judges which reads as one clear hit at a time. Publish via the look-test /preview/ flag; no release rows.",
+  "licence_note": "Code GPL v3 (COPYING; README.engine.md:33). Default-mod art and text stated GPL v3 and CC-BY-SA 3.0 (README.engine.md:35). Clean-room, shape only; no code, art, sound file or donor number reused.",
+  "tags": ["screen-shake", "hit-sound", "knockback", "stagger", "ordered-feedback", "new:floating-text", "new:hit-cooldown-gate"],
+  "not_read": [
+    "Timer class (unit inferred from use)",
+    "animation loader and per-animation hit durations",
+    "sound definitions beyond sfx_hit key",
+    "whether HUD is shaken",
+    "EntityBehavior death handling beyond the ENTITY_HIT entry",
+    "enemy stat files beyond counts (142)",
+    "idle and ambient behaviour, loot reveal, walk density, boss staging (not this topic)"
+  ]
+}

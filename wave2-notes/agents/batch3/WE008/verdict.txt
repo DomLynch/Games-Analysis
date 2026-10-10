@@ -1,0 +1,23 @@
+verdict.txt (WE008, world-events, ax-grymyr-l2dn-server)
+
+PARTIAL cell: A6 Balok boss-war ledger.
+Verdict: PARTIAL. The ranking, personal rank and reward packets are real, but no code in the donor writes the score, the war state, the stage, or the reward flag.
+
+Candidate files opened (at least 3 required):
+1. /mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer.Model/InstanceManagers/BattleWithBalokManager.cs (read in full: the points, rank and top-list methods, and the setters)
+2. /mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer.Model/Network/IncomingPackets/Balok/ExBalrogWarTeleportPacket.cs (read: teleport cost 50000 and the location guards)
+3. /mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer.Model/Network/OutgoingPackets/Balok/BalrogWarShowRankingPacket.cs (read in full: top 150 ranking packet)
+4. /mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer.Model/Network/IncomingPackets/Balok/ExBalrogWarGetRewardPacket.cs (read: reward count and flag clear)
+5. /mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer.Model/Network/OutgoingPackets/Balok/BalrogWarShowUiPacket.cs (grep hit only, not opened in full)
+
+Writer check (grep -rn over /mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn, --include=*.cs):
+- addPointsForPlayer( : no caller (only the declaration)
+- setInBattle(true : no caller
+- setGlobalStage( / setGlobalPoints( / setReward( : no caller (only declarations)
+- PlayerVariables.BALOK_AVAILABLE_REWARD : read in BalrogWarShowUiPacket.cs and ExBalrogWarGetRewardPacket.cs, cleared to -1 in ExBalrogWarGetRewardPacket.cs:35, never set to 1
+
+Best transferable idea: a personal rank and a capped top list over one shared score, kept as an event ledger, once the scoring and state writers exist.
+
+Not checked: the Balok war scripts (if any exist outside the L2Dn tree), the stage data, and the client half (not in the box).
+
+NONE cells: none in this batch.

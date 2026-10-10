@@ -1,0 +1,80 @@
+{
+  "donor": "cmangos-mangos-classic",
+  "topic": "creature-grammar",
+  "depth": "full",
+  "verdict": "STRONG",
+  "decision": "adapt (idea); clean-room shape only",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Entities/Creature.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/AI/BaseAI/UnitAI.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Entities/StatSystem.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/shared/Util/Util.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Globals/SharedDefines.h",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/Entities/Creature.h",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/src/game/AI/ScriptDevAI/scripts/eastern_kingdoms/zulgurub/boss_marli.cpp",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/sql/base/mangos.sql",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/sql/updates/mangos/z2780_01_mangos_creature_spell_lists.sql",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/sql/updates/mangos/z2810_01_mangos_spell_list_conditions.sql",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/LICENSE",
+    "/mnt/frankendom-donors/cmangos-mangos-classic/COPYRIGHT.md"
+  ],
+  "counts": {
+    "creature_template_columns": 99,
+    "creature_template_sample_rows_in_base_dump": 1,
+    "creature_model_info_rows": 17,
+    "display_model_slots_per_template": 4,
+    "creature_spell_list_rows_in_box": 0,
+    "creature_type_values": 11,
+    "creature_family_values": 24,
+    "elite_tier_values_plus_sentinel": 6,
+    "defects_found": 3,
+    "receipts_verified": 75
+  },
+  "rule": "A template row holds a few display models (up to four, integer weights), a scale, a rank tier, a type, a family, multipliers and an optional spell-list id. Each spawn rolls a display by weight, rolls a level inclusive, and keeps each ability row only if its per-spawn availability roll passes. Abilities are then picked by weight among eligible rows, with list order as priority when all weights are zero. Few models and multipliers give many creatures because variety comes from tier, scale, level and which rows survive. Scripts re-run the availability roll by calling SetSpellList on a phase change.",
+  "data_fields": [
+    {"name": "family.model_pool[].model_id", "unit": "model id", "donor_value_or_null": null},
+    {"name": "family.model_pool[].weight", "unit": "relative weight; 0 = never picked", "donor_value_or_null": null},
+    {"name": "variant.scale", "unit": "ratio, 1 = base", "donor_value_or_null": null},
+    {"name": "variant.tint_id", "unit": "palette index", "donor_value_or_null": null},
+    {"name": "tier.name", "unit": "enum normal|elite|rare|boss", "donor_value_or_null": null},
+    {"name": "tier.hp_mul", "unit": "ratio", "donor_value_or_null": null},
+    {"name": "tier.dmg_mul", "unit": "ratio", "donor_value_or_null": null},
+    {"name": "template.level_min", "unit": "level, inclusive", "donor_value_or_null": null},
+    {"name": "template.level_max", "unit": "level, inclusive", "donor_value_or_null": null},
+    {"name": "ability.rate", "unit": "chance per try, 0..1", "donor_value_or_null": null},
+    {"name": "ability.delay_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "ability.availability_pct", "unit": "percent kept per spawn, 0..100", "donor_value_or_null": null},
+    {"name": "ability.weight", "unit": "relative weight; all zero = list order", "donor_value_or_null": null},
+    {"name": "model.reach_m", "unit": "metres", "donor_value_or_null": null},
+    {"name": "model.speed_mps", "unit": "metres per second", "donor_value_or_null": null},
+    {"name": "tier.corpse_hold_s", "unit": "seconds", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Weighted display pool per template, few models many templates",
+    "Per-spawn availability roll on ability rows",
+    "Rank as a data tier, read by corpse hold and by multipliers",
+    "Per-model reach and speed as data, so a big model reads big",
+    "Ability list as its own table, not hard-coded in the AI"
+  ],
+  "change": [
+    "Family is a catalogue rig, not a display id",
+    "Availability and weights resolved server-side in the engine; client reads only the result",
+    "Tint and scale are data fields the client presents",
+    "D1: availability and gate rolls off by one (urand is inclusive): roll 1..100 and keep when roll <= pct; availability 0 must never appear",
+    "D2: dead modified* damage variables (Creature.cpp 1338-1346): delete; never reapply the multiplier to base damage (StatSystem 766-767 already applies it)",
+    "D3: a creature with no usable display borrows entry 1's model (Creature.cpp 698-700): reject at load, use a visibly wrong placeholder"
+  ],
+  "look_test": "Family card in the Pit: one rig in three sizes and tints, plus a large sibling with the same rig and one swapped wedge ability, shown idle then mid-fight at 375 wide. Dom checks: name the family at a glance, does size read as tier, does the wedge show before it lands. Second card: same tint and size, two spawns with and without the wedge row; if he cannot tell them apart in a few seconds, the swap is too quiet.",
+  "licence_note": "Code GPL-2.0 (LICENSE line 2): shape only, no code or values copied. Game content is named as Blizzard Entertainment copyright (COPYRIGHT.md line 7): category-level inspiration only, no names or numbers. Clean-room sketch.",
+  "tags": ["creature-family", "recolour-tier", "scale-tier", "swapped-ability", "boss-elite-pattern", "new:weighted-display-pool", "new:spawn-availability-roll"],
+  "not_read": [
+    "World creature_template and creature_spell_list rows (not in the box)",
+    "CombatCondition semantics",
+    "CreatureEventAI, Pools, most ObjectMgr loaders",
+    "ScriptDevAI creature scripts beyond one boss call",
+    "creature_equip_template",
+    "Spell.sql rows and the cone geometry in Spell.h",
+    "warden modules, client art, sound, models"
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "donor": "vmangos-core",
+  "counts": {
+    "creatures": 0,
+    "classes": 9,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "creature_families": [
+    "category only: creature family enum with 24 entries (src/game/Objects/CreatureDefines.h line 59 onward); names not copied",
+    "creature class tags: the code notes only four classes are known for creatures (CreatureDefines.h line 256)",
+    "creature rows not read: creature_template appears as 4,203 INSERT statements (grep of sql/migrations, statements not rows) plus 5 REPLACE"
+  ],
+  "top_creatures": [
+    {
+      "label": "Roaming pack with a cap (category: capped group)",
+      "why": "A pool holds a maximum count and refills one slot at a time when a member goes, so a pack never grows past its cap and does not return all at once.",
+      "keep": "cap per group; one-slot refill; named group rather than free spawns",
+      "change": "cap is zone data with a grace timer; packs cap at three attackers (MAX_ATTACKERS); no hard-coded counts",
+      "ref": "src/game/Maps/Pool/PoolManager.cpp lines 351-392; src/game/Objects/Creature.cpp line 60"
+    },
+    {
+      "label": "Mixed-member pool (category: shared cap)",
+      "why": "The pool code is templated over member type and treats game objects differently from creatures, so nodes or chests can share a cap with monsters and set the walk density.",
+      "keep": "one cap across member kinds",
+      "change": "our member kinds and numbers as zone data",
+      "ref": "src/game/Maps/Pool/PoolManager.cpp lines 351, 354"
+    },
+    {
+      "label": "Randomised respawn window (category)",
+      "why": "Each spawn record draws its respawn time between a minimum and a maximum, so a pack does not return on the same beat.",
+      "keep": "random window per spawn record",
+      "change": "window is zone data",
+      "ref": "src/game/Objects/Creature.cpp line 60"
+    }
+  ],
+  "classes": [
+    "race enum: 9 entries (src/game/SharedDefines.h line 56 onward); playable species; signature mechanic not read",
+    "class enum: 9 entries (src/game/SharedDefines.h line 87 onward); playable class tags; class kits and talent data not read",
+    "progression: patch-windowed content (see zones), not class trees; talent and skill data not read",
+    "factions: not read"
+  ],
+  "weapon_families": [
+    "ItemClass enum: 16 entries (src/game/Objects/ItemPrototype.h line 135 onward); names not copied",
+    "item rows: item_template appears as 718 INSERT statements (grep); rows not read",
+    "special properties (elemental, set bonus): not read"
+  ],
+  "gear_tiers": [
+    "quality ladder: 7 rungs (src/game/SharedDefines.h line 194 onward); rung order is the idea; colour words appear only in comments",
+    "material tiers: creature_loot_template (36 migration files) holds per-creature drop rows; rows not read",
+    "set bonuses and gear looks: not read; the repo ships no art"
+  ],
+  "zones": [
+    "pool_template appears as 1,931 INSERT statements (grep of sql/migrations); zone rows not read",
+    "patch windows: each pool row carries a minimum and maximum patch and is selected by the current build (src/game/Maps/Pool/PoolManager.cpp line 685)",
+    "custom content: re-runnable SQL applied last (sql/custom/README.md line 2; 30 files, names only)",
+    "biomes, dungeon archetypes and hazards: not read"
+  ],
+  "looks": [],
+  "originals": [
+    {
+      "name": "Capped roaming pack",
+      "idea": "A group with a cap that refills one slot at a time from a random window.",
+      "keep": "cap, one-slot refill, random window (PoolManager.cpp line 360; Creature.cpp line 60)",
+      "change": "zone-data cap, grace timer, three-attacker packs (MAX_ATTACKERS)"
+    },
+    {
+      "name": "Mixed walk-density pool",
+      "idea": "One cap shared by creatures, a chest, a shrine and a corpse.",
+      "keep": "one cap across member kinds (PoolManager.cpp line 354)",
+      "change": "our member kinds and numbers as zone data"
+    },
+    {
+      "name": "Patch-stamped zone row",
+      "idea": "Each zone row carries a version window; only rows for the current build load.",
+      "keep": "version window per row (PoolManager.cpp line 685)",
+      "change": "a season or release tag per zone, no copied rows"
+    },
+    {
+      "name": "Corpse-then-return pair",
+      "idea": "A body that decays on one timer and a respawn that waits for the body to clear.",
+      "keep": "two timers and the wait (Creature.cpp lines 818, 901)",
+      "change": "a loot ceremony with a shaped decay and fade, not a plain timer"
+    },
+    {
+      "name": "Config-gated custom behaviour",
+      "idea": "Custom behaviour sits behind a config option and is off by default.",
+      "keep": "off-by-default flag for every experiment (README.md line 21)",
+      "change": "our flags"
+    },
+    {
+      "name": "Last-applied overlay",
+      "idea": "Custom content as re-runnable SQL applied last.",
+      "keep": "re-runnable overlay that runs last (sql/custom/README.md line 2)",
+      "change": "our overlay format for zone data"
+    },
+    {
+      "name": "Per-class material table",
+      "idea": "One loot table per creature class with counts.",
+      "keep": "table per class with counts (category only)",
+      "change": "our material set, count ranges and a rare tier roll"
+    }
+  ],
+  "licence_note": "Code GPL-2.0 (LICENSE line 2): shape only, no code copied. Game content in sql/ has no licence stated in the files read; the repo ships no art, models, textures or audio (audit AU055 search; not re-run). Rights holder not named; README lists supported client builds, so content is versioned against an original commercial client. Treat as proprietary-derived: category-level inspiration only; no quest or dialogue text, names, numbers or coordinates taken.",
+  "not_read": [
+    "content rows of sql/migrations (table names and statement counts only; quest and dialogue text not read on purpose)",
+    "sql/custom beyond the README and file names; sql/translations contents",
+    "dep/ libraries (licences and code)",
+    "src/scripts, src/shared, src/framework, src/realmd, src/mangosd (names only); contrib/mmap, vmap and model reader code (names only)",
+    "PoolManager.cpp beyond lines 351-392 and 685; Creature.cpp beyond lines 58-60, 818, 901",
+    "client data: not in the box (no paired client)",
+    "creature, item and zone rows; biome, hazard, faction and class-kit data"
+  ]
+}

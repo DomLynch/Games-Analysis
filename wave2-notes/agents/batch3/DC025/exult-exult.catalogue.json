@@ -1,0 +1,202 @@
+{
+  "donor": "exult-exult",
+  "counts": {
+    "creatures": 27,
+    "classes": 0,
+    "weapons": 32,
+    "gear_sets": 19,
+    "zones": 0
+  },
+  "counts_basis": "Counts are grep line hits in docs/bgitems.txt (creatures 27, weapons 32, gear 19), not distinct verified records. docs/siitems.txt gave 28 creature-word and 32 armour-word hits. Creature and weapon data tables (monster.dat, weapons.dat, armor.dat) are absent from the box, so no record counts exist. Classes and zones: none read as records.",
+  "halves_read": "Engine/client half: combat.cc, actors.cc, monsters.cc, effects.cc, shapes/shapeinf/*.cc (loaders), docs/bgitems.txt and docs/siitems.txt (name tables), data/exultmsg.txt (grep count only). Server half (server/, 9 files) listed only. Data pack half absent.",
+  "creature_families": [
+    "Winged stone warrior family: worker, warrior, noble, flying variant, wingless variant (docs/bgitems.txt:476, :275, :474, :227; docs/siitems.txt:481, :884)",
+    "Dragon age ladder with undead variant: baby ice dragon, ice dragon, dragon, skeletal dragon (docs/siitems.txt:799, :878, :979, :461)",
+    "Splitting slime blob (monsters.cc:49, shape 529 at monsters.cc:243-244)",
+    "Mixed ambush group in a patch cutscene: troll, gargoyle, cyclops (content/bgkeyring/src/quests/keyring/cutscenes/mage_and_goons.uc)"
+  ],
+  "top_creatures": [
+    {
+      "label": "Splitting jelly",
+      "why": "A blob that divides when struck and joins its neighbours visually at the edges.",
+      "keep": "Split on a non-vulnerable hit with a 50 percent roll; neighbour-aware frame masks; bleed trail on move.",
+      "change": "Cap total splits per encounter (no cap seen in lines read); add a size tier so the split reads at 375 wide.",
+      "ref": "monsters.cc:49; monsters.cc:565-605; monsters.cc:618-640; actors.cc:3007-3010"
+    },
+    {
+      "label": "Winged stone warrior ladder",
+      "why": "Worker, warrior and noble read as tiers of one family; the flying variant adds a second axis.",
+      "keep": "Role-tier ladder with a flying variant.",
+      "change": "Our silhouette, names and palette.",
+      "ref": "docs/bgitems.txt:476, :275, :474, :227; docs/siitems.txt:481, :884"
+    },
+    {
+      "label": "Dragon age ladder with undead form",
+      "why": "Baby, adult and elder steps read at a glance; the skeletal form adds a second look.",
+      "keep": "Three age steps plus one undead variant.",
+      "change": "Our element (not ice) and our wing shape.",
+      "ref": "docs/siitems.txt:799, :878, :979, :461"
+    },
+    {
+      "label": "Teleporting caster",
+      "why": "One escape move per creature, gated by a per-creature flag.",
+      "keep": "Teleport only when the flag is set.",
+      "change": "Our telegraph and cooldown.",
+      "ref": "combat.cc:272; combat.cc:297-343"
+    },
+    {
+      "label": "Summoner",
+      "why": "One signature move that adds enemies to the fight.",
+      "keep": "Summon gated by a flag.",
+      "change": "Our summon count and our spawn cap (row 23 rules).",
+      "ref": "combat.cc:279; combat.cc:344-357"
+    },
+    {
+      "label": "Invisible stalker",
+      "why": "Starts unseen; only see-invisible NPCs can find it.",
+      "keep": "Start-invisible flag with a higher XP weight; a become-invisible move.",
+      "change": "Our reveal rule and tell (a shimmer).",
+      "ref": "combat.cc:286-296; combat.cc:358-370; shapes/shapeinf/monstinf.cc (get_base_xp_value)"
+    },
+    {
+      "label": "Mixed ambush group",
+      "why": "Three families arrive together as one scripted encounter.",
+      "keep": "A mixed group as one encounter.",
+      "change": "Our families and our order of arrival.",
+      "ref": "content/bgkeyring/src/quests/keyring/cutscenes/mage_and_goons.uc"
+    },
+    {
+      "label": "Per-creature trait card",
+      "why": "A short list of true/false traits per creature (sleep-safe, charm-safe, curse-safe, poison-safe, cannot-die, splits, summons, teleports, invisible, plus an attack mode).",
+      "keep": "Booleans per creature from a fixed list.",
+      "change": "Our trait names and a cap of three traits per creature for readability.",
+      "ref": "shapes/shapeinf/monstinf.cc:45 (Monster_info::read)"
+    }
+  ],
+  "classes": [],
+  "weapon_families": [
+    "Use tiers: melee, poor throw, good throw, missile-firing (shapes/shapeinf/weaponinf.h uses field)",
+    "Power flags: sleep, paralyse, charm, poison, curse, no-damage (shapes/shapeinf/weaponinf.cc get_base_strength, from line 63)",
+    "Behaviour flags: lucky, explodes, returns, autohit, no-blocking, delete-when-depleted, needs-target (shapes/shapeinf/weaponinf.h)",
+    "Strength is a point budget per power; autohit doubles it. Source calls its weights guesses (weaponinf.cc:64)"
+  ],
+  "gear_tiers": [
+    "Body ladder: leather, scale, chain, plate armour (docs/bgitems.txt:570, :571, :572, :574; docs/siitems.txt:570, :571, :572, :574)",
+    "Leggings ladder: leather, chain, plate (docs/siitems.txt:575, :576, :577)",
+    "Helms: great, crested, magic; chain coif, leather helm (docs/bgitems.txt:542, :543, :384; docs/siitems.txt:540, :1431)",
+    "Shields: wooden, kite, spiked, magic (docs/bgitems.txt:573, :610, :579, :664)",
+    "Named sets: Serpent Armour (docs/siitems.txt:639), suit of armour (docs/siitems.txt:551)",
+    "Armour strength: protection value plus immunity bitmask; immunity doubles the estimate (shapes/shapeinf/armorinf.cc, Armor_info::read from line 46)"
+  ],
+  "zones": [
+    "Floor and terrain names (shape-name table, not zone data): carpet, sidewalk, grass variants, cavefloor, sand, swamp, ford, muddy bank, dirt, cobblestone, planking, stone floor, tile, water, void, ether, ethereal void (docs/bgitems.txt:1-60)",
+    "Hazards and weather (engine code): fog with sparkle rain (effects.cc:1611-1620), lightning (effects.cc:1473), storm and snowstorm (effects.cc:1524, :1556), earthquake shake (effects.cc:1829), fire field with fixed tick life (effects.cc:1908), clouds (effects.cc:1785-1807)",
+    "Dungeon archetypes: not read (map data absent; formats at docs/u7tech.txt:69, :271)"
+  ],
+  "looks": [
+    {
+      "label": "Neighbour-joined blob edges",
+      "technique": "Each blob reads its four neighbours and sets bits in its frame index so edges join; a random low bit adds variety.",
+      "ref": "monsters.cc:565-605"
+    },
+    {
+      "label": "Probabilistic bleed trail",
+      "technique": "A 1-in-6 chance on move drops a blood decal on the old tile, using a fixed frame range.",
+      "ref": "monsters.cc:618-640"
+    },
+    {
+      "label": "Sparkle rain over fog",
+      "technique": "Particle class built on a shape, layered over a fog palette shift.",
+      "ref": "effects.cc:1254 (Particle); effects.cc:1611-1620"
+    },
+    {
+      "label": "Lightning flash",
+      "technique": "Timed weather-class flash effect.",
+      "ref": "effects.cc:1473"
+    },
+    {
+      "label": "Explosion sprite sequence",
+      "technique": "Frame sequence on a timed sprite effect.",
+      "ref": "effects.cc:500"
+    },
+    {
+      "label": "Engraved material title font",
+      "technique": "One glyph set re-coloured as wood, metal, gold and a serpent variant (names only, not viewed).",
+      "ref": "data/fonts/Readme.txt:16; data/fonts/1_wood_runic.shp; data/fonts/3_metal_runic.shp; data/fonts/6_gold_runic.shp; data/fonts/10_gold_ophidian.shp"
+    },
+    {
+      "label": "Paperdoll slot layers",
+      "technique": "One shape layer per equipment slot following body frames, so an item swaps without redrawing the body (names only).",
+      "ref": "docs/art.txt; data/bg/caddellite_helmet.shp"
+    },
+    {
+      "label": "Glowing self-lit item",
+      "technique": "Item with a glow look; technique not read (name only).",
+      "ref": "docs/siitems.txt:966 (glowing sphere); docs/siitems.txt:1338 (glowing cube)"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Splitting jelly with a fight budget",
+      "idea": "A jelly that splits when struck, with a fight-wide cap and a visible size tier.",
+      "keep": "Split-on-hit, neighbour-joined blob frames, bleed trail.",
+      "change": "Cap per fight tied to row 23 spawn caps, our size tiers, our sound."
+    },
+    {
+      "name": "Winged stone family",
+      "idea": "Worker, warrior and noble tiers plus a flying variant, one silhouette per tier.",
+      "keep": "Role-tier ladder and flying variant.",
+      "change": "Our names, wing shape and palette."
+    },
+    {
+      "name": "Drake age ladder with undead form",
+      "idea": "Baby, adult, elder and one skeletal variant.",
+      "keep": "Age ladder and undead variant.",
+      "change": "Our element and wing shape."
+    },
+    {
+      "name": "Creature trait card",
+      "idea": "Up to three traits per creature from a fixed list (cannot-die, splits, summons, teleports, invisible, plus a bias).",
+      "keep": "Boolean traits per creature.",
+      "change": "Our trait names and the three-trait cap."
+    },
+    {
+      "name": "Weapon power budget",
+      "idea": "A point budget per power; autohit and explosive as flags with costs.",
+      "keep": "Budget per power; autohit as a flag.",
+      "change": "Our numbers, tuned in our own data (the source calls its weights guesses)."
+    },
+    {
+      "name": "Returning throw axe",
+      "idea": "A thrown axe with a return flight and four use tiers (melee, poor throw, good throw, missile).",
+      "keep": "Return flight and the use tiers.",
+      "change": "Our arc and catch animation."
+    },
+    {
+      "name": "Fog with sparkle rain",
+      "idea": "A fog zone with a sparkle particle layer over a palette shift for one biome.",
+      "keep": "Palette shift plus particle layer.",
+      "change": "Colour and density."
+    },
+    {
+      "name": "Engraved title font",
+      "idea": "One glyph set in three material looks for HUD titles, each with a dark rim and one bright top highlight.",
+      "keep": "One glyph set, three materials.",
+      "change": "Our letterforms and palettes."
+    }
+  ],
+  "licence_note": "Code: GNU GPL v2 (COPYING). Original Ultima VII data is not shipped. Shipped art, audio and MIDI have credits but no licence terms (AU020 audit). Class C. Not a legal opinion.",
+  "not_read": [
+    "server/ half (9 files) beyond listing",
+    "Data pack loaders' values: monster.dat, weapons.dat, armor.dat, map and chunk data (absent from the box)",
+    "schedule.cc, actor class and race tables, NPC schedules",
+    "audio/ sound and music cue code",
+    "combat.cc target loops in full (mode switch and helpers only)",
+    "effects.cc in full (only the cited handlers)",
+    "monsters.cc create and equip paths in full",
+    "docs/bgitems.txt and docs/siitems.txt beyond cited lines (grep hits only)",
+    "data/exultmsg.txt string table (line and key count only; quoted nothing)",
+    "Binary .shp, .flx, .dat, .vga, .wav, .mid contents (names and counts only)",
+    "Creature idle animation, death and respawn presentation, boss intro and finisher staging"
+  ]
+}

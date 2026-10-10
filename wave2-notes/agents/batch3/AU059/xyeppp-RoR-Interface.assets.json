@@ -1,0 +1,120 @@
+{
+  "donor": "xyeppp-RoR-Interface",
+  "code_licence": "None stated. The box has no LICENSE file. README.md line 2 says 'This repository contains the latest Return of Reckoning user interface source code.' and gives no licence.",
+  "asset_licence": "None stated. No licence or credits file in the box covers the textures, fonts, XML, Lua, CSV or lore text. interface/interfacecore/source/creditswindow.lua and creditswindow.xml are the in-game credits windows; their text was not read in full.",
+  "rights_holder_status": "Publisher-authored UI, per the module headers. ea_mainmenuwindow.mod line 5 names the author as 'EAMythic'. The box does not say how the NO_DEHASH files were obtained. The folder name and the hash-style file names (e.g. 2081F142_84661D637CC985A8.xml) suggest exports from game archives, but the files do not say so, so this is unknown.",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "textures (DDS)",
+      "path": "interface/default/*/textures/ and interface/ (9895 DDS); NO_DEHASH/dds/ (24 DDS)",
+      "count_hint": "9919 DDS total",
+      "licence": "not stated",
+      "class": "C",
+      "note": "Publisher UI art. Not opened (binary). Window art by name (e.g. ea_death01_d5.dds under the death window)."
+    },
+    {
+      "kind": "UI markup and scripts (XML, Lua, .mod)",
+      "path": "interface/default/*/ (468 XML, 369 Lua, 111 .mod files); each window folder has source/ with its Lua and XML",
+      "count_hint": "369 Lua files across interface/ (350 under default/); 468 XML files in total (353 under default/); 111 .mod files",
+      "licence": "not stated; .mod headers name the author as EAMythic (ea_mainmenuwindow.mod line 5)",
+      "class": "C",
+      "note": "DATA FIRST for UI: the .mod and XML files define window layout; the Lua holds handlers. Read: DeathWindow, ScreenFlashWindow, EA_Window_ChooseOneLoot (see receipts). The rest not read."
+    },
+    {
+      "kind": "game data tables (CSV) and lore text",
+      "path": "interface/interfacecore/tome/ (193 CSV, 15 subfolders: achievements, bestiary, cards, gamefaq, gamemanual, historyandlore, liveevent, loadingscreens, noteworthypersons, oldworldarmory, sigils, tactics, titles, videoplayer, warjournal); interface/default/ror_mapextension/ror_mapextension.csv (1)",
+      "count_hint": "194 CSV in total; tome holds 466 files including images",
+      "licence": "not stated",
+      "class": "C",
+      "note": "DATA FIRST for catalogues. bestiary/species.csv (about 160 rows) carries a header with subtype, armour class and up to ten type/id pairs. Lore and manual text is protected text: summarised at category level only. Not read beyond headers."
+    },
+    {
+      "kind": "bestiary art (images)",
+      "path": "interface/interfacecore/tome/bestiary/images/",
+      "count_hint": "182 files",
+      "licence": "not stated",
+      "class": "C",
+      "note": "Creature portraits. Not opened."
+    },
+    {
+      "kind": "fonts (TTF)",
+      "path": "interface/interfacecore/fonts/ (about 14 TTF) and interface/internal/fonts/ (lucon.ttf)",
+      "count_hint": "15 TTF",
+      "licence": "not stated in the box; font names are the file names only",
+      "class": "C",
+      "note": "Not opened. Commercial font files are likely; do not reuse without a licence check."
+    },
+    {
+      "kind": "tga and png (UI art)",
+      "path": "interface/default/ (122 TGA; 2 PNG e.g. ror_sor/original/ic2.png, em2.png)",
+      "count_hint": "122 TGA, 2 PNG",
+      "licence": "not stated",
+      "class": "C",
+      "note": "Not opened."
+    },
+    {
+      "kind": "hash-named export folder (NO_DEHASH)",
+      "path": "NO_DEHASH/xml/ (6 XML), NO_DEHASH/dds/ (24 DDS), NO_DEHASH/ (2 TXT)",
+      "count_hint": "32 files",
+      "licence": "not stated; provenance not stated",
+      "class": "C",
+      "note": "XML sample is a zone and public-quest table (landmarks, quests, chapters, services, rank ranges, realm). Coordinates and names are game data: never reproduced. Only the field layout is cited."
+    },
+    {
+      "kind": "server half",
+      "path": "not in box (top-level listing shows interface/ only)",
+      "count_hint": "0 files found in the box",
+      "licence": "not applicable",
+      "class": "D",
+      "note": "The box holds the UI half only, as far as the top-level tree shows. Not read beyond that."
+    }
+  ],
+  "inspiration": [
+    "Respawn-choice death screen: on death the window shows respawn locations and an auto-respawn timer, and a killer line updates live (DeathWindow.OnPlayerDeath takes an auto-respawn time; OnKillerUpdated refreshes the killer). Fit for death and respawn presentation (row 17): a loss that stays readable and bearable. Reference: interface/default/ea_deathwindow/source/deathwindow.lua lines 83 and 122.",
+    "Screen flash driven by hit-point changes, with an on/off gate (ScreenFlashWindow.OnPlayerHitPointsUpdated and SetEnabled/IsEnabled). Reads as impact without blocking the view, and the player can turn it off. Fit for hud-ui accessibility and combat feedback (row 10). Reference: interface/default/ea_screenflashwindow/source/screenflashwindow.lua lines 80 and 102.",
+    "Choose-one loot window: hovering an item row shows its item tooltip (EA_Window_ChooseOneLoot.OnMouseOverItem; the pick action itself was not read). Fit for the loot drop ceremony (row 18): a short row where inspecting comes before choosing. Reference: interface/default/ea_lootwindow/source/chooseonelootwindow.lua line 60.",
+    "Bestiary card as catalogue data: each creature row has an ID, subtype, image reference, armour class, and up to ten type/id pairs (interface/interfacecore/tome/bestiary/species.csv line 1). Fit for catalogue fields (row 21): a card built from data rows, not hand-written text.",
+    "Window-per-system layout: each window is a separate module with its own Lua and XML, and an action-bar cluster manager and a layout editor let the player move bars (ea_actionbars, easystem_layouteditor). Fit for hud-ui: player-editable HUD layout on a phone-sized screen.",
+    "Minimap and map windows: an overhead map window and a world map window are separate modules (ea_overheadmapwindow, ea_worldmapwindow, ea_zonecontrolwindow). Fit for the minimap topic (hud-ui).",
+    "Cast and target readouts: a cast-timer window, a mouse-over target window and an objective tracker are separate small windows. Fit for threat and target readability (hud-ui, row 14)."
+  ],
+  "briefs": [
+    {
+      "label": "Respawn-choice death card",
+      "why": "A death that offers a clear next step and a timer is less punishing than a blank screen. The card is readable at 375 wide because it is short.",
+      "keep": "Respawn options listed on death, an auto-respawn timer, and a killer line that updates while the card is open.",
+      "change": "Use three abstract respawn choices (nearest shrine, last camp, here) with no place names; a timer ring instead of a text counter. Keep Dom's rule: distinct original, not the donor's layout or text.",
+      "ref": "interface/default/ea_deathwindow/source/deathwindow.lua line 83; line 122"
+    },
+    {
+      "label": "Hit flash with an off switch",
+      "why": "A hit read on screen helps players who miss the health bar, and a switch keeps it kind to players who find flashing unpleasant.",
+      "keep": "Flash driven by hit-point changes; an enable gate the player can flip.",
+      "change": "A rim vignette in a threat colour rather than a full-screen tint; a setting that also softens the flash length. Keep Dom's rule: our own effect, not the donor's flash.",
+      "ref": "interface/default/ea_screenflashwindow/source/screenflashwindow.lua lines 80 and 102"
+    },
+    {
+      "label": "Choose-one loot row",
+      "why": "A short row of rewards, where the player inspects before choosing, makes a loot drop feel like a decision.",
+      "keep": "Hover or tap to inspect, then take one; the rest are left behind.",
+      "change": "Three cards in a row at 375 wide with a rarity colour bar and a short sound on pick; a different ceremony (a lid lift). Keep Dom's rule: recreate as our own.",
+      "ref": "interface/default/ea_lootwindow/source/chooseonelootwindow.lua line 60"
+    },
+    {
+      "label": "Bestiary silhouette card",
+      "why": "A catalogue card with a silhouette and a short trait line makes a creature learnable before the fight.",
+      "keep": "Each creature is a data row with an image, an armour value and a short list of type/id pairs; the card is built from the row.",
+      "change": "Use three traits, a silhouette tile and a threat rating, not the donor's numeric fields; generate the card from our own catalogue (row 21). Keep Dom's rule: our own creatures and text.",
+      "ref": "interface/interfacecore/tome/bestiary/species.csv line 1 (header only)"
+    }
+  ],
+  "not_read": [
+    "All DDS, TGA, TTF and PNG files: names and counts only. Nothing opened.",
+    "Most of the 369 Lua and 468 XML files: only the DeathWindow, ScreenFlashWindow and ChooseOneLoot handlers were read (grep for function names, short reads of the death and loot bodies; the countdown and pick actions were not read).",
+    "interface/interfacecore/tome/* lore, manual, card and armoury text: not read beyond headers. Protected text: not reproduced.",
+    "NO_DEHASH/xml zone file: only the first lines of one file were read, for field layout. The other five XML files and the two TXT files are not read.",
+    "ror_mapextension.csv and the interfacecore credits CSVs: listed only.",
+    "Server half: not in box (none found at the top level)."
+  ]
+}

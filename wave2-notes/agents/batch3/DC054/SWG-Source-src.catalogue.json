@@ -1,0 +1,225 @@
+{
+  "donor": "SWG-Source-src",
+  "counts": {
+    "creatures": 0,
+    "classes": null,
+    "weapons": 16,
+    "gear_sets": 22,
+    "zones": 6
+  },
+  "creature_families": [],
+  "top_creatures": [
+    {
+      "label": "Threat-ladder brute",
+      "why": "A beast that steps through posture and colour from calm to frenzy; the silhouette change reads at 375 wide.",
+      "keep": "a fixed behaviour ladder driven by one meter",
+      "change": "four visible steps instead of seven; ring colour instead of a number; our own step names",
+      "ref": "/mnt/frankendom-donors/SWG-Source-src/game/shared/library/swgSharedUtility/src/shared/Behaviors.def (lines 16-23); /mnt/frankendom-donors/SWG-Source-src/engine/server/library/serverGame/src/shared/object/CreatureObject.cpp (line 5860, setMentalStateTowardClampBehavior)"
+    },
+    {
+      "label": "Three-stage fall",
+      "why": "A creature goes knocked down, then incapacitated, then dead, so a loss has a visible middle.",
+      "keep": "graded downed postures before death",
+      "change": "our finisher window in the middle stage; a readable downed pose",
+      "ref": "/mnt/frankendom-donors/SWG-Source-src/game/shared/library/swgSharedUtility/src/shared/Postures.def (lines 66-68)"
+    },
+    {
+      "label": "Bonded pet",
+      "why": "A companion that holds its owner's link, so the pet and owner read as one unit.",
+      "keep": "owner link stored on the companion record",
+      "change": "our companion silhouette and a leash ring; shared-threat rule per audit AU052, not re-read here",
+      "ref": "/mnt/frankendom-donors/SWG-Source-src/game/server/database/schema/creature_objects.tab (line 8, master_id)"
+    }
+  ],
+  "classes": [
+    {
+      "name": "Jedi (Force user) roster",
+      "role": "public target with a bounty and faction",
+      "signature_mechanic": "server roster with state, faction, location, bounty value and spent Jedi skill points",
+      "progression": "spend Jedi skill points (updateJediSpentJediSkillPoints)",
+      "ref": "/mnt/frankendom-donors/SWG-Source-src/game/server/application/SwgGameServer/src/shared/object/JediManagerObject.cpp (lines 197, 705, 750)"
+    },
+    {
+      "name": "Bounty hunter",
+      "role": "hunter who accepts bounties on Jedi",
+      "signature_mechanic": "per-hunter bounty count; PvP status switched on accept",
+      "progression": "bounty count rises on accept and is erased at zero",
+      "ref": "/mnt/frankendom-donors/SWG-Source-src/game/server/application/SwgGameServer/src/shared/object/JediManagerObject.cpp (lines 1211-1290, 1476-1490)"
+    },
+    {
+      "name": "Companion (pet)",
+      "role": "creature bound to a master",
+      "signature_mechanic": "master_id link on the creature record",
+      "progression": "not read",
+      "ref": "/mnt/frankendom-donors/SWG-Source-src/game/server/database/schema/creature_objects.tab (line 8)"
+    }
+  ],
+  "weapon_families": [
+    {
+      "name": "Crafted lightsaber generations",
+      "tiers": "one-handed gen1 to gen5; polearm and two-handed gen1 to gen4",
+      "special": "elemental type and value columns on the conversion table; set bonus not found",
+      "ref": "/mnt/frankendom-donors/SWG-Source-src/game/server/database/item_conversion/saber_conversion.txt (lines 6, 10, 11)"
+    },
+    {
+      "name": "Basic and advanced component twins",
+      "tiers": "12 advanced twins; advanced bands wider and higher in sampled rows",
+      "special": "damage type and elemental columns on the conversion table",
+      "ref": "/mnt/frankendom-donors/SWG-Source-src/game/server/database/item_conversion/weapon_conversion.txt (line 3)"
+    },
+    {
+      "name": "Melee sword and polearm families",
+      "tiers": "base families that the saber ladder sits on",
+      "special": "not found",
+      "ref": "/mnt/frankendom-donors/SWG-Source-src/game/server/database/item_conversion/saber_conversion.txt"
+    }
+  ],
+  "gear_tiers": [
+    {
+      "name": "Armour material ladder",
+      "tiers": "padded, chitin, bone, composite, marauder, ubese, ris, zam, mandalorian, bounty hunter, stormtrooper, clone trooper (folder names)",
+      "look": "not readable (client absent); gp_ prefix variants (9 paths) meaning unverified",
+      "ref": "/mnt/frankendom-donors/SWG-Source-src/game/server/database/item_conversion/armor_conversion.txt (lines 4, 13)"
+    },
+    {
+      "name": "Three-role armour family",
+      "tiers": "one species family split into three roles",
+      "look": "role variants; visual not read",
+      "ref": "armour template folders under object/tangible/wearables/armor (paths cited in armor_conversion.txt)"
+    },
+    {
+      "name": "Four-band effectiveness",
+      "tiers": "each piece has a four-band effectiveness scale with a matching four-band protection scale",
+      "look": "not read",
+      "ref": "/mnt/frankendom-donors/SWG-Source-src/game/server/database/item_conversion/armor_conversion.txt (header and rows)"
+    }
+  ],
+  "zones": [
+    {
+      "name": "Battlefield region with factions",
+      "type": "PvP region tracking faction per participant",
+      "hazard": "none in data",
+      "ref": "/mnt/frankendom-donors/SWG-Source-src/game/server/database/schema/battlefield_participants.tab (line 5); battlefield_marker_objects.tab"
+    },
+    {
+      "name": "Ordered location list with radius",
+      "type": "point sequence per scene with a radius",
+      "hazard": "none in data",
+      "ref": "/mnt/frankendom-donors/SWG-Source-src/game/server/database/schema/location_lists.tab (lines 1, 11-12)"
+    },
+    {
+      "name": "Tick-based installation",
+      "type": "camp or station that runs on a tick counter and power",
+      "hazard": "none in data",
+      "ref": "/mnt/frankendom-donors/SWG-Source-src/game/server/database/schema/installation_objects.tab (line 6)"
+    },
+    {
+      "name": "Nested interiors (planet, city, building, cell)",
+      "type": "zone hierarchy",
+      "hazard": "status states (poison, burn, fire) as vocabulary only",
+      "ref": "/mnt/frankendom-donors/SWG-Source-src/game/server/database/schema/planet_objects.tab (line 4); cell_objects.tab; building_objects.tab; city_objects.tab"
+    },
+    {
+      "name": "Dungeon interior NPC spawner (name only)",
+      "type": "dungeon interior spawner script",
+      "hazard": "not read",
+      "ref": "/mnt/frankendom-donors/SWG-Source-src/game/server/database/queries/publish_gold_db_update_20090604.sql (line 62)"
+    }
+  ],
+  "looks": [
+    {
+      "label": "Element-tinted burn state",
+      "technique": "one status state per element (electric, cold, acid, energy, kinetic); client visual not read",
+      "ref": "/mnt/frankendom-donors/SWG-Source-src/game/shared/library/swgSharedUtility/src/shared/States.def (lines 85-89)"
+    },
+    {
+      "label": "Glowing dead-Jedi state",
+      "technique": "glow status tied to a death condition; client visual not read",
+      "ref": "/mnt/frankendom-donors/SWG-Source-src/game/shared/library/swgSharedUtility/src/shared/States.def (line 70)"
+    },
+    {
+      "label": "Disguise shimmer",
+      "technique": "disguised status state; client visual not read",
+      "ref": "/mnt/frankendom-donors/SWG-Source-src/game/shared/library/swgSharedUtility/src/shared/States.def (line 84)"
+    },
+    {
+      "label": "Poison, bleed and fire overlays",
+      "technique": "status overlays; client visual not read",
+      "ref": "/mnt/frankendom-donors/SWG-Source-src/game/shared/library/swgSharedUtility/src/shared/States.def (lines 72, 73, 75)"
+    },
+    {
+      "label": "Per-creature hit regions",
+      "technique": "six body regions with a flash on the silhouette (our idea); enum read",
+      "ref": "/mnt/frankendom-donors/SWG-Source-src/game/server/application/SwgGameServer/src/shared/combat/combat.def (lines 21-25)"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Bounty board of fallen champions",
+      "idea": "a visible roster of hunted players with a bounty count and a capped hunter list",
+      "keep": "per-target hunter cap; one entry per hunter; server-side write",
+      "change": "cap at our MAX_ATTACKERS-style limit of 3; bounty as a ring, not a number; no callback-driven PvP switch"
+    },
+    {
+      "name": "Four-step threat beast",
+      "idea": "calm, warn, attack, frenzy read by colour ring and posture",
+      "keep": "a fixed ladder driven by one meter",
+      "change": "four steps not seven; no ceiling arithmetic; ring colour instead of a number"
+    },
+    {
+      "name": "Three-stage fall",
+      "idea": "knocked down, downed, then dead, with a finisher window in the middle",
+      "keep": "graded fall before death",
+      "change": "our finisher window and a readable downed pose"
+    },
+    {
+      "name": "Bonded companion",
+      "idea": "a companion that holds its owner's link and shares threat",
+      "keep": "owner link on the companion record",
+      "change": "our silhouette and a leash ring; our own threat rule"
+    },
+    {
+      "name": "Five-generation blade",
+      "idea": "one blade family with five generations, each stepping up glow and damage band",
+      "keep": "generation number and rising band",
+      "change": "our generation names and glow; our crafted-part pairing"
+    },
+    {
+      "name": "Basic and advanced twins",
+      "idea": "a crafted part with a basic and an advanced twin that shows as a seam",
+      "keep": "twin pair per part",
+      "change": "our seam look and part names"
+    },
+    {
+      "name": "Three-role armour family",
+      "idea": "one material with three roles, each with its own silhouette and colour",
+      "keep": "role variants per material",
+      "change": "role names and silhouettes"
+    },
+    {
+      "name": "Element-tinted status rim",
+      "idea": "one status state per element with its own rim tint and particle",
+      "keep": "one state per element",
+      "change": "our palette and particle shapes, not copied"
+    },
+    {
+      "name": "Capture region with factions",
+      "idea": "a region that tracks faction membership of participants",
+      "keep": "region plus participant table",
+      "change": "capture points with a timer and a faction ring"
+    }
+  ],
+  "licence_note": "LICENSE.md line 1 is LGPL text; _RESTRICTED-NOTE.txt says leaked proprietary source with no licence; shared enum headers carry a Sony Online Entertainment (2001) copyright line. Class C: category-level inspiration only. Not a legal opinion.",
+  "not_read": [
+    "client half (absent from the box)",
+    "dsrc data pack (absent)",
+    "creature, class and profession data tables (absent)",
+    "final write in setMentalStateTowardClampBehavior after the ceiling check (CreatureObject.cpp after line 5930)",
+    "HateList and ScriptMethodsHateList (covered by audit AU052; not re-read)",
+    "spawn caps and respawn logic (only a script name read)",
+    "profile binaries (.profdata)",
+    "SQL bodies beyond npc_weapon_loot.sql and one publish script line",
+    "biome list (no terrain data in box)",
+    "sound and music (none in box)"
+  ]
+}

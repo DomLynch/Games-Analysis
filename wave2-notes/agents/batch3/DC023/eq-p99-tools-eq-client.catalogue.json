@@ -1,0 +1,143 @@
+{
+  "donor": "eq-p99-tools-eq-client",
+  "counts": {
+    "creatures": "179 model entries, races and creatures mixed; not split",
+    "classes": 16,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": "0 in box (zone data lives in the install)"
+  },
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [
+    "16 numbered classes from a frontline melee class to a berserker (class_name, crates/eq-client-core/src/classes.rs:4-23); category-level roles only; role mechanics not in box",
+    "progression: class name below level 51, then title steps at 51, 55, 60 and 65 (classes.rs:29-31)",
+    "16 named races (crates/eq-client-core/src/races.rs:195-212); 179 model entries with male, female and neuter codes (races.rs:10-191)",
+    "three gender values pick a model; single-model creatures use it for every gender (races.rs:249-250)",
+    "deities are named (classes.rs:53); count not taken"
+  ],
+  "weapon_families": [
+    "none counted: held items are drawn by item model number in the hand (crates/eq-client-core/src/outfit.rs held_model, line 162)",
+    "shield point rule: classic shields and flat later models share one attachment point (outfit.rs on_shield_point line 174; test line 287)"
+  ],
+  "gear_tiers": [
+    "seven texture slots: head, chest, arms, wrist, hands, legs, feet (crates/eq-client-core/src/outfit.rs:99-110)",
+    "material numbers 1 to 4 are drawn (outfit.rs:13); README lines 200-201 name the leather, chain and plate textures the server reports",
+    "robe sets: six robed races take a robe body when chest material is 10 to 23 (outfit.rs:17 and 20); 14 robe material numbers",
+    "faces 0 to 9 swap the face texture (outfit.rs dressed, head branch)",
+    "per-slot tint; robes take chest tint; helms take head tint; faces never tinted (outfit.rs:145-147)",
+    "no metallic, gold or glow shader found in the box (grep over crates)"
+  ],
+  "zones": [
+    "zone data is in the user's install; none in box",
+    "region fill kinds by name prefix: water, lava, zone line, player-versus-player, slime, ice and VWA (crates/eq-client-assets/src/regions.rs:48-50)",
+    "water and lava are zone fill regions, not meshes (regions.rs header line 2)",
+    "terrain kinds: repeating and transparent materials, static trees and buildings (README, Status and remaining stages, first bullet)",
+    "hazard: water and lava block a walk; shallow water is waded (crates/eq-client-core/src/movement/liquids.rs header)",
+    "hazard: falls hurt by a quadratic curve past a harmless drop of 20 units, with a capped Safe Fall reduction (falls.rs:12-20; all values inferred in the file)",
+    "day and night: provisional dawn and dusk windows, night exposure, twilight colour (crates/eq-client-core/src/daylight.rs:36)"
+  ],
+  "looks": [
+    {
+      "label": "Slot material swap with tint",
+      "technique": "Each body part swaps its two material digits from the server slot value, then takes that slot's tint; faces are never tinted.",
+      "ref": "/mnt/frankendom-donors/eq-p99-tools-eq-client/crates/eq-client-core/src/outfit.rs:113-160; /mnt/frankendom-donors/eq-p99-tools-eq-client/crates/eq-client-render/src/outfit.rs (header, lines 1-4)"
+    },
+    {
+      "label": "Posture hold",
+      "technique": "Sit, crouch, kneel and lie transitions hold the final frame; crouch-walk clip while moving crouched; posture never moves the body.",
+      "ref": "/mnt/frankendom-donors/eq-p99-tools-eq-client/README.md:533-535"
+    },
+    {
+      "label": "Waiting pulse on the ability bar",
+      "technique": "A waiting state pulses its brightness with a sine on the clock between about 0.35 and 0.60.",
+      "ref": "/mnt/frankendom-donors/eq-p99-tools-eq-client/crates/eq-client-render/src/hud/action_bar.rs:320"
+    },
+    {
+      "label": "Depth-tested ground ring",
+      "technique": "Ring follows the selected entity on the ground, respects scene depth, and hides when the target is unavailable.",
+      "ref": "/mnt/frankendom-donors/eq-p99-tools-eq-client/crates/eq-client-render/src/target/marker.rs:1; /mnt/frankendom-donors/eq-p99-tools-eq-client/README.md:632-662"
+    },
+    {
+      "label": "Window fade on pointer leave",
+      "technique": "Window background holds its alpha, waits a delay, then fades to a second alpha over a duration.",
+      "ref": "/mnt/frankendom-donors/eq-p99-tools-eq-client/crates/eq-client-render/src/skinned/looks.rs:54"
+    },
+    {
+      "label": "Bag colour per storage slot",
+      "technique": "A tinted group per bag; colour belongs to the storage slot and not to the item, and lasts for the session.",
+      "ref": "/mnt/frankendom-donors/eq-p99-tools-eq-client/README.md:188-191"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Gear by swap and tint",
+      "idea": "Each body slot takes a material from the server slot value and a tint from the same slot; faces are never tinted.",
+      "keep": "Slot-coded swap, per-slot tint, face protection (parity row 15 gear dressing).",
+      "change": "Our own tiers and palette."
+    },
+    {
+      "name": "Posture from state, hold the last frame",
+      "idea": "Sit, crouch, kneel and lie hold their final frame, move with a crouch-walk clip, and never move the body.",
+      "keep": "The hold and the no-move rule (parity rows 6 and 7).",
+      "change": "Our states and poses."
+    },
+    {
+      "name": "Pending-cast pulse with manual retry",
+      "idea": "The ability bar pulses while the server has not confirmed a cast; no automatic resend; a fresh manual attempt after five seconds.",
+      "keep": "Never auto-resend; visible pending state (parity rows 13 and 14).",
+      "change": "Our ability bar and timers."
+    },
+    {
+      "name": "Ground ring by state",
+      "idea": "A depth-tested ring follows the selected body and hides when the target is not available.",
+      "keep": "Depth test and hide rule (parity row 14 HUD).",
+      "change": "Our ring shape and colours."
+    },
+    {
+      "name": "Stable target cycle",
+      "idea": "Tab cycles nearby entities in stable ID order, a key selects self, Escape clears.",
+      "keep": "Stable order (parity row 5 controls).",
+      "change": "A touch version for 375 wide."
+    },
+    {
+      "name": "Fall damage with a harmless band",
+      "idea": "No damage up to a harmless drop, then growth with the square of the drop, with a capped mitigation skill.",
+      "keep": "Harmless band and cap. Candidate movement rule; no parity row covers falls yet.",
+      "change": "Our constants."
+    },
+    {
+      "name": "Waterline wading",
+      "idea": "Shallow water is waded; deep water stops the walk.",
+      "keep": "The waterline rule. Candidate under zone data; row 23 covers spawns only.",
+      "change": "Our swim rule."
+    },
+    {
+      "name": "Window fade on pointer leave",
+      "idea": "Hold, then delay, then fade to a set alpha over a duration.",
+      "keep": "Delay then fade (parity row 14 HUD).",
+      "change": "Our HUD timings."
+    },
+    {
+      "name": "Resurrection confirm with a name",
+      "idea": "A dialog states who offers, with Yes and No.",
+      "keep": "An explicit accept step that names the caster (parity row 17).",
+      "change": "Our wording."
+    },
+    {
+      "name": "Draw budget at 375 wide",
+      "idea": "A default distance and a hard cap of 200 entities drawn.",
+      "keep": "Cap and default distance (parity row 11 camera and row 23 population).",
+      "change": "Our numbers."
+    }
+  ],
+  "licence_note": "Code MIT (LICENSE line 1). README lines 5-6: no EverQuest assets in the repo; the client reads the user's own install at run time. Online client talks to live-style servers through the separate eq-network crates, not in the box and not studied. Asset class D: category-level inspiration only.",
+  "not_read": [
+    "Install data not in box: S3D and WLD archives, spell and string tables, the user's EverQuest install (no archive or table files in the 186-file listing)",
+    "Server half: the eq-network crates are a separate repo, not in the box; the protocol and packet code in this repo were not studied",
+    "crates: combat, buffs and hotbar bodies, world/* (except names), movement path and route, characters and model bodies, items.rs, spells, strings, sidl, ui.rs bodies, skinned/* bodies, windows/*, chat, inventory, tests",
+    "README lines 29-188, 262-526 (except the parts cited), 580-632, 662-947, 947-end",
+    "Sound and music: no audio module in the file list; ui.rs line 892 has a Sound flag only (not read beyond the line)",
+    "Minimap and world map (crates/eq-client-render/src/map.rs exists; not read), touch UX (none found by file name), input buffer and lock-on forgiveness, accessibility, loot drop ceremony, spawn walk density"
+  ]
+}

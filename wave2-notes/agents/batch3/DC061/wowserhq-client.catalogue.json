@@ -1,0 +1,69 @@
+{
+  "donor": "wowserhq-client",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [],
+  "looks": [
+    {
+      "label": "three-layer loading card",
+      "technique": "full-bleed background layer declared at 1024x768 and anchored corner to corner; small emblem anchored to the bottom edge with a 10 px offset; small corner caption anchored bottom-left; all in one artwork layer",
+      "ref": "public/Wowser/WowserFrame.xml lines 7-39"
+    },
+    {
+      "label": "nine-piece engine backdrop",
+      "technique": "one tiled background piece plus four edge strips and four corner pieces, each its own texture with the UI image mode",
+      "ref": "src/ui/components/Backdrop.ts lines 147-273"
+    },
+    {
+      "label": "plain UI texture pass",
+      "technique": "fragment shader samples the texture and returns it unchanged; no tint, glow, fog or fresnel, so the look comes from art, not the shader",
+      "ref": "public/Shaders/pixel/glsles300/UI.frag line 11"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Tip card loading screen",
+      "idea": "a loading screen with a full-bleed backdrop, one low centred emblem, a rotating tip in the corner slot and a progress bar under it",
+      "keep": "three stacked layers, one low focal point, one small caption slot",
+      "change": "our own backdrop art and emblem, tip text instead of a version string, progress bar added; clean-room, never copied"
+    },
+    {
+      "name": "Nine-piece menu backdrop kit",
+      "idea": "one tiled background piece plus eight edge and corner pieces so one kit frames any panel",
+      "keep": "nine-slice construction from separate pieces",
+      "change": "our own corner ornament and our palette"
+    },
+    {
+      "name": "HUD layout as a data tree with script hooks",
+      "idea": "HUD anchors and sizes declared as data, behaviour attached by script",
+      "keep": "the anchor and size vocabulary, behaviour kept out of the layout",
+      "change": "a typed TypeScript or JSON tree for our HUD instead of XML; the catalogue becomes its runtime source"
+    },
+    {
+      "name": "Stub-first audio surface",
+      "idea": "every audio call exists so scripts run without crashing when sound is missing",
+      "keep": "the complete call surface",
+      "change": "stubs log once and return real handles, so a missing cue shows in the build instead of passing silently"
+    }
+  ],
+  "licence_note": "MIT for code, layout XML and shaders (LICENSE lines 1-3; README line 81 repo-wide blanket). Retail-style Interface art paths referenced by the XML are not in the box and are not used. Recreate as clearly distinct originals, never copies. Not legal advice.",
+  "not_read": [
+    "src/gfx/apis/webgpu (named only)",
+    "src/ui/components/* logic beyond names",
+    "shader bodies other than UI.frag (sizes only)",
+    "src/ui/scripting/vendor/bit.lua and compat.lua beyond headers",
+    "src/ui/scripting/globals/glue/character-create.ts lines 30-127",
+    "src/ui/scripting/globals/glue/character-select.ts",
+    "package-lock.json, vite config, .github CI"
+  ]
+}

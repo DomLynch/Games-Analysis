@@ -1,0 +1,144 @@
+{
+  "donor": "ryantpayton-MapleStory-Client",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 17,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "creature_families": [
+    "No creature records in the box (mob records are NX data, absent). Stance vocabulary from code: stand, move, jump, hit1, die1; flying mobs use a fly clip for stand and move (Gameplay/MapleMap/Mob.cpp lines 55-73)."
+  ],
+  "top_creatures": [
+    {
+      "label": "Edge Patroller",
+      "why": "A ground creature that walks a ledge and turns at each edge.",
+      "keep": "Edge turn gated once per edge (Mob.cpp line 192).",
+      "change": "A look-around beat at the edge before turning.",
+      "ref": "Gameplay/MapleMap/Mob.cpp lines 192-198"
+    },
+    {
+      "label": "Flinch-Threshold Brute",
+      "why": "Only a hit that clears the creature's pushed value makes it flinch; the stun counter is set on that path.",
+      "keep": "Threshold read from the creature's own data (line 44) and the gate at line 567.",
+      "change": "A tiered stagger list instead of one value; our own hit-stun clip.",
+      "ref": "Gameplay/MapleMap/Mob.cpp lines 44, 567, 570"
+    },
+    {
+      "label": "Fade-Out Shade",
+      "why": "A death mode that fades out instead of playing a die clip.",
+      "keep": "The kill mode is a per-kill choice (instant, die clip, fade).",
+      "change": "Our default is a dissolve with a respawn ring.",
+      "ref": "Gameplay/MapleMap/Mob.cpp lines 393-407 (case 1 at 400, case 2 at 405-406)"
+    },
+    {
+      "label": "Flying Drifter",
+      "why": "A flyer swaps its stand and move clips to a fly clip and skips the ground edge logic.",
+      "keep": "The clip swap for flyers; no edge turn for them.",
+      "change": "Flyers hover in a band rather than follow a ledge.",
+      "ref": "Gameplay/MapleMap/Mob.cpp lines 60-62 and line 192 (skipped when canfly)"
+    },
+    {
+      "label": "Touch Crawler",
+      "why": "A body-attack mob that hits by touch for 80 to 100 percent of its watk value.",
+      "keep": "Touch damage read from a per-creature flag and the creature's own value.",
+      "change": "Our touch has a telegraphed wind-up.",
+      "ref": "Gameplay/MapleMap/Mob.cpp line 47 (touchdamage flag), line 582 (minattack from watk)"
+    }
+  ],
+  "classes": [
+    "No named classes in the box (job names are NX data, absent).",
+    "Job tiers from code (Character/Job.h, Character/Job.cpp): BEGINNER, FIRST, SECOND, THIRD, FOURTH. Tier from the numeric job id: 0 is BEGINNER; ending in 00 is FIRST; ending in 0 is SECOND; ending in 1 is THIRD; else FOURTH (tests at Job.cpp lines 39 and 43).",
+    "Skill ownership: skill id divided by 10000 must match a sub-job id of the job (Job.cpp line 64).",
+    "Races and factions: none in the box."
+  ],
+  "weapon_families": [
+    "Weapon category enum, 17 entries (Character/Inventory/Weapon.h lines 26-45): sword 1H (130), axe 1H, mace 1H, dagger (133), wand (137), staff (138), sword 2H (140), axe 2H, mace 2H, spear (143), polearm (144), bow (145), crossbow (146), claw (147), knuckle (148), gun (149), cash (170).",
+    "Two-handed rule (Data/WeaponData.cpp line 30): staff, sword 2H to polearm (140 to 144), crossbow. Bow (145) is not in the rule (see possible defects).",
+    "Category code is the equip id divided by 10000 (WeaponData.cpp line 28). Item records and tiers are NX data (absent). Special properties: none in the box."
+  ],
+  "gear_tiers": [],
+  "zones": [],
+  "looks": [
+    {
+      "label": "Stacked damage numbers",
+      "technique": "Digits laid out with per-digit advances from a table; each digit after the first takes the average advance of itself and its neighbour; the string is centred by half its total width; every second digit sits 2 px off the baseline; critical rows 36 px tall, normal 30 px; multi-hit numbers stack upward from the head with a per-hit delay; the number rises at a fixed speed and fades by a fixed step from opacity 1.5.",
+      "ref": "Gameplay/Combat/DamageNumber.cpp lines 26-82, 84-123, 129-170, 177-189; Gameplay/Combat/DamageNumber.h line 53; Gameplay/Combat/Combat.cpp lines 369-397"
+    },
+    {
+      "label": "Frame-gated afterimage trail",
+      "technique": "A trail that draws only from a frame key read from the animation data, not from a timer.",
+      "ref": "Character/Look/Afterimage.cpp lines 45-53 (first-frame selection), line 65 (draw gate)"
+    },
+    {
+      "label": "Stance clips",
+      "technique": "A creature is a set of named clips (stand, move, jump, hit1, die1, and fly for flyers) selected by one stance value.",
+      "ref": "Gameplay/MapleMap/Mob.cpp lines 55-73"
+    },
+    {
+      "label": "Death by clip end",
+      "technique": "The dead flag is set only when the die clip ends; then the sprite fades by a fixed opacity step per update.",
+      "ref": "Gameplay/MapleMap/Mob.cpp lines 153, 158"
+    },
+    {
+      "label": "Named UI sound table",
+      "technique": "UI sounds are fetched by name from one UI group (22 registrations across UI, Game and Item groups).",
+      "ref": "Audio/Audio.cpp lines 77-79 onward"
+    },
+    {
+      "label": "Map display flags",
+      "technique": "Map data fields for minimap hiding, walls and borders from VR bounds, background music, cloud, field limit, swim, town, seats and ladders.",
+      "ref": "Gameplay/MapleMap/MapInfo.cpp lines 28-51"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Stacked Sparks",
+      "idea": "Damage digits laid out with averaged neighbour advances, a 2 px bob on alternate digits, critical rows taller, and multi-hit numbers stacked upward from the head.",
+      "keep": "The layout rule and the upward stack (row 14 HUD, row 10 hit impact).",
+      "change": "Our own font and crit colour; a 0.75 s rise and fade of our own tuning; stack steps by the next row's height."
+    },
+    {
+      "name": "Flinch Threshold",
+      "idea": "A hit makes the creature flinch only when it clears the creature's own pushed value; a turn at an edge cancels the flinch.",
+      "keep": "The threshold read from the creature's data (row 10 hit impact, row 4 fight loop).",
+      "change": "A tiered stagger list; our own hit-stun clip."
+    },
+    {
+      "name": "Edge Patroller",
+      "idea": "A ground creature turns once per edge; a stunned creature turning at an edge drops out of its flinch.",
+      "keep": "The once-per-edge gate and the flinch cancel (row 7 creature actor, row 23 spawn idle).",
+      "change": "A look-around beat at the edge."
+    },
+    {
+      "name": "Tier Gate by Id",
+      "idea": "A job tier comes from one numeric id, and skills are gated by an integer division of the skill id.",
+      "keep": "Id-encoded tiers and the id-prefix skill gate (row 21 catalogue fields, row 13 specials).",
+      "change": "An explicit tier table in our data instead of digit tricks; the ends-in-1 rule is fragile."
+    },
+    {
+      "name": "Three Deaths",
+      "idea": "The kill mode is chosen by a code: instant removal, die clip then a dead flag at clip end, or a fade.",
+      "keep": "A per-kill presentation choice, and the dead flag waits for the clip to end (row 17 death and respawn).",
+      "change": "Default is a dissolve with a respawn ring."
+    },
+    {
+      "name": "Frame-Gated Trail",
+      "idea": "A trail that starts drawing at a frame key from the animation data, not a timer.",
+      "keep": "The frame gate (row 6 hero actor, row 9 finishers).",
+      "change": "Take the lowest frame key as the start (see possible defects)."
+    }
+  ],
+  "licence_note": "Code: GNU AGPL v3 (LICENSE line 1); the Data/ItemData.cpp header repeats it. README says free and open-source (the AGPL governs). Game content is not in the repo; the user supplies NX files; no asset licence stated; owner of game data not stated. Code used as shape only (clean-room). Game content class D (absent). Category-level inspiration only. Not legal advice.",
+  "not_read": [
+    "Server half: not in the repo (README names HeavenMS; Elem8100-MapleNecrocer is a C# GM and WZ tool, not the server)",
+    "NX data files (String, Mob, Item, Map, Skill, Character, Sound, UI): absent from the box",
+    "Net/ (64 files) and IO/ (142 files), beyond the names",
+    "Gameplay/Physics bodies (listed only); most of MapleMap beyond Mob, MapMobs and MapInfo",
+    "Character/Look and Inventory logic beyond Afterimage and Weapon.h; Graphics/ bodies; EffectLayer, Text, SpecialText",
+    "includes/NoLifeNx; includes/bass24 licence text (bass.txt); includes/freetype full licence text",
+    "Spawn caps, respawn and despawn: server-side, not in this client (parity row 23 engine logic is not in the box)",
+    "Loot, drop ceremony, minimap and world map, touch UX, accessibility: not located (possible defects are listed in the md file, section 'Possible defects')"
+  ]
+}

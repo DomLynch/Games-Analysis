@@ -1,0 +1,241 @@
+{
+  "donor": "LanternEQ-LanternUnityTools",
+  "donor_path": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/",
+  "half_read": "consumer side: Unity importer and runtime .cs (about 25 of 189 files opened), EQ shader and HLSL files, and shipped data: Content/ClientData/animationsources.txt, music_tracks_used.txt, zone lists; StreamingAssets/ClientData/RaceSounds.csv and Music/music_tracks.txt",
+  "paired_donor": "LanternEQ-LanternExtractor (tool side; own catalogue in DC033)",
+  "counts": {
+    "creatures": 75,
+    "classes": 0,
+    "weapons": 14,
+    "gear_sets": 0,
+    "zones": 126
+  },
+  "count_notes": "creatures = family headers in animationsources.txt (102 body-to-rig rows, 30 rig codes). classes = 0 class names found by grep. weapons = 14 attack animation families (not named weapons). gear_sets = 0 named sets found; 7 armour slots, 5 held slots, 2 body types. zones = 126 zone descriptors (zone-list file lines sum to 147, not reconciled). Races: 13 playable entries, 16 race flags, 26 playable model codes, 184 distinct race IDs in RaceSounds.csv.",
+  "creature_families": [
+    "humanoid core rig shared by 21 + 16 body rows",
+    "dwarf-type rig shared by 10 rows",
+    "dragon-type rig shared by 4 families",
+    "feline rig shared by 4 cat families",
+    "undead families on humanoid clips",
+    "invisible collision-only family (Invisible Man)",
+    "posed tentacle-type object (pose keys pos and drf)",
+    "hidden-name monsters (2 race IDs in code)",
+    "oversized scale tier (3 giant kinds plus a ship and a floating-eye type)"
+  ],
+  "top_creatures": [
+    {
+      "label": "Ambush monster with hidden nameplate",
+      "why": "The player learns its name only when it moves; a hidden-name flag makes it a surprise.",
+      "keep": "hidden-name flag as data",
+      "change": "visible tell (shimmering chest) and reveal on first hit",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Scripts/Lantern/EQ/Helpers/RaceHelper.cs lines 171-182"
+    },
+    {
+      "label": "Oversized monster scale path",
+      "why": "Three giant kinds share one scale path with large height and scale numbers, plus a default for everything else.",
+      "keep": "scale as a per-kind data field with a default",
+      "change": "own silhouette and a ground-shake stomp",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Scripts/Lantern/EQ/Helpers/RaceHelper.cs lines 96-149"
+    },
+    {
+      "label": "Invisible-body attacker",
+      "why": "A collision-only attacker that is felt, not seen.",
+      "keep": "collision with no visible mesh",
+      "change": "heat shimmer or sound tell",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Content/ClientData/animationsources.txt lines 164-165; /mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Content/Shaders/EQ/EQInvisible.shader line 80"
+    },
+    {
+      "label": "Posed tentacle object",
+      "why": "An animated object that holds a pose instead of looping.",
+      "keep": "pose as a data key for objects",
+      "change": "own plant or cave form",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Scripts/Lantern/EQ/Animation/AnimationHelper.cs lines 176-177"
+    },
+    {
+      "label": "Dragon family on one skeleton",
+      "why": "Four dragon-type families share one skeleton, so one rig gives a family of silhouettes.",
+      "keep": "one skeleton for the family",
+      "change": "wing and crown silhouettes, own breath effect",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Content/ClientData/animationsources.txt lines 228-229, 240-241, 246-247, 252-253"
+    },
+    {
+      "label": "Humanoid core rig reuse",
+      "why": "Dozens of humanoid families share two humanoid rigs, so many bodies cost one animation set.",
+      "keep": "shared humanoid clips",
+      "change": "silhouettes and idles",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Content/ClientData/animationsources.txt (rig codes used 21 and 16 times)"
+    },
+    {
+      "label": "Feline pack on one rig",
+      "why": "Four cat families give four sizes from one animation set.",
+      "keep": "one feline rig",
+      "change": "markings and a pounce gap-closer",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Content/ClientData/animationsources.txt (four families on one rig code; see Extractor lines 77-78, 95-96, 109-110, 161-162)"
+    },
+    {
+      "label": "Undead on living clips",
+      "why": "Undead families reuse humanoid clips, so new undead need no new animation.",
+      "keep": "shared clip set",
+      "change": "bone-gap silhouette and rattle sound",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Content/ClientData/animationsources.txt (skeleton, zombie, ghoul and Iksar skeleton rows)"
+    }
+  ],
+  "classes": [
+    {
+      "name": "Playable races (13 entries)",
+      "role": "playable model with its own body rig; 26 playable model codes",
+      "signature_mechanic": "race-flag bitmask (16 flags) gates items and spells",
+      "progression": "none in this donor",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Scripts/Lantern/EQ/Data/PlayerRaceId.cs; .../Data/RaceIdDb.cs lines 9-24; .../Helpers/RaceHelper.cs lines 10-13, 15-49"
+    }
+  ],
+  "weapon_families": [
+    {
+      "family": "kicks and round kick (kick, round kick, flying kick)",
+      "note": "weapon-free attack families",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Scripts/Lantern/EQ/Animation/AnimationType.cs lines 7, 17, 51"
+    },
+    {
+      "family": "piercing, two-handed slash, two-handed blunt, one-handed slash, off-hand slash, bash",
+      "note": "melee weapon families by swing type",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Scripts/Lantern/EQ/Animation/AnimationType.cs lines 8-13"
+    },
+    {
+      "family": "hand-to-hand, rapid punches, heavy punch",
+      "note": "unarmed families",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Scripts/Lantern/EQ/Animation/AnimationType.cs lines 14, 52, 53"
+    },
+    {
+      "family": "archery and swim attack",
+      "note": "ranged and water-only families",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Scripts/Lantern/EQ/Animation/AnimationType.cs lines 15-16"
+    }
+  ],
+  "gear_tiers": [
+    {
+      "tier": "none in code",
+      "note": "no material tiers (cloth to plate, mythic metals, gold plating, crystal) in the read code; gold appears only as currency (EqConstants: 100 copper per gold)",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Scripts/Lantern/EQ/Data/EqConstants.cs line 87"
+    },
+    {
+      "tier": "armour slots: 7",
+      "note": "chest, leg, hand, upper arm, foot, forearm, head",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Scripts/Lantern/EQ/Equipment/Equipment2dSlot.cs lines 5-11"
+    },
+    {
+      "tier": "body types: 2",
+      "note": "normal and robe",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Scripts/Lantern/EQ/Equipment/BodyType.cs lines 5-6"
+    }
+  ],
+  "zones": [
+    {
+      "group": "8 continent or expansion groups, 126 descriptors",
+      "note": "Antonica 50, Kunark 26, Velious 17, Faydwer 14, Odus 9, Planes 5, Other 4, Custom 1; names not copied",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Scripts/Lantern/EQ/Zone/ZoneHelper.cs line 21 onwards"
+    },
+    {
+      "group": "boat and ship race IDs (4)",
+      "note": "moving traversal platforms with their own scale and height",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Scripts/Lantern/EQ/Helpers/RaceHelper.cs lines 51-63, 106-109"
+    },
+    {
+      "group": "hazard damage by clip",
+      "note": "trap damage and drowning or burning are animation-driven damage codes",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Scripts/Lantern/EQ/Animation/AnimationHelper.cs lines 26-27, 110-111"
+    }
+  ],
+  "looks": [
+    {
+      "label": "Day-night tint with a vision floor",
+      "technique": "light = clamp(directional x ambient + max(ambient x day-night tint, vision colour) + vertex light + realtime light + global ambient, 0, 1)",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Content/Shaders/EQ/EQSimpleLitForwardPass.hlsl lines 85-88"
+    },
+    {
+      "label": "Per-object sunlight value",
+      "technique": "single-colour objects take one ambient number instead of per-vertex colour (sentinel -1 means vertex-coloured)",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Content/Shaders/EQ/EQSimpleLitForwardPass.hlsl lines 77-83; /mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Scripts/Lantern/EQ/Lighting/VertexColorSetter.cs lines 63-68"
+    },
+    {
+      "label": "Vertex-colour bake applied on first visible",
+      "technique": "colours are applied in OnBecameVisible, so off-screen objects cost nothing",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Scripts/Lantern/EQ/Lighting/VertexColorSetter.cs lines 24-32, 104"
+    },
+    {
+      "label": "Invisible collision material",
+      "technique": "unlit pass returns a zero colour, so the mesh draws nothing; collision is separate",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Content/Shaders/EQ/EQInvisible.shader line 80"
+    },
+    {
+      "label": "Sky anchored to camera with day length as data",
+      "technique": "sky follows the camera with a fixed rotation; a 4 s clip plays at speed 4 divided by seconds per day",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Scripts/Lantern/EQ/Environment/SkyController.cs lines 154-156, 162-171"
+    },
+    {
+      "label": "Per-slot tint via property block",
+      "technique": "colour is set on every material that is not the base mesh material, without a new material",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Scripts/Lantern/EQ/Equipment/Equipment2dHandler.cs lines 438-460"
+    },
+    {
+      "label": "Baked 27-key volume rolloff",
+      "technique": "a fixed curve over normalised distance, one per sound class",
+      "ref": "/mnt/frankendom-donors/LanternEQ-LanternUnityTools/Assets/Scripts/Lantern/EQ/Audio/AudioHelper.cs lines 92-123"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Ambush mimic",
+      "idea": "A creature with a hidden nameplate until it hits, then a reveal.",
+      "keep": "hidden-name flag as data",
+      "change": "visual tell and reveal; own silhouette"
+    },
+    {
+      "name": "Oversized brute",
+      "idea": "A giant kind on a per-kind scale path with a ground-shake stomp.",
+      "keep": "per-kind scale with a default",
+      "change": "silhouette, stomp effect"
+    },
+    {
+      "name": "Border-crossfaded zone music",
+      "idea": "Zone music that crossfades at borders with a priority table (dungeon over hub over zone).",
+      "keep": "trigger-owned cue and the day and night split",
+      "change": "2 to 3 second crossfade driven by the fade data"
+    },
+    {
+      "name": "Race sound set with variant rows",
+      "idea": "A base sound row per race, copied variants keyed by gender, with a pool that avoids repeats.",
+      "keep": "base row plus copied variants",
+      "change": "own sound design and a no-repeat pool"
+    },
+    {
+      "name": "Vision-floor night",
+      "idea": "Night lighting with a floor so the scene never goes black.",
+      "keep": "the floor",
+      "change": "tint to our palette"
+    },
+    {
+      "name": "Boat platform",
+      "idea": "A moving boat as a traversal platform with its own scale.",
+      "keep": "moving platform with its own scale",
+      "change": "deck and rails"
+    },
+    {
+      "name": "Race-gated loot mask",
+      "idea": "Items restricted by a 16-flag bitmask, on one character ledger.",
+      "keep": "bitmask for restrictions",
+      "change": "our class and race mask"
+    }
+  ],
+  "licence_note": "Code MIT (LICENSE line 1 and line 3, copyright 2024 LanternEQ). Third-party code: DryWetMidi (MIT), MeltySynth (MIT per its LICENSE line 1). README line 40: source code only. Shipped data (RaceSounds.csv, zone and music lists, animation map, soundfont, sqlite database) has no licence line and is EverQuest-derived: class C, category-level inspiration only. EverQuest is a Daybreak trademark; README line 41 says the project is not affiliated.",
+  "not_read": [
+    "most of the 189 .cs files (about 25 opened)",
+    "shader bodies beyond EQSimpleLitForwardPass.hlsl and EQInvisible.shader (EQUnlit, EQSky, EQLighting not opened)",
+    "Database/lantern_server.db (76,374,016 bytes, not opened: class C server data)",
+    "soundfont synthusr_samplefix.sf2 (not opened)",
+    "plugin binaries and PDFs",
+    "EmojiOne sprites and terms",
+    "MusicImporter body",
+    "Skins.cs and SkinTextures.cs",
+    "IMusicInvoker implementer (none found in the repo; interface only)"
+  ]
+}

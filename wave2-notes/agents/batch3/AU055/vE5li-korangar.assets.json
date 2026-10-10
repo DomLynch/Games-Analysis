@@ -1,0 +1,80 @@
+{
+  "donor": "vE5li-korangar",
+  "code_licence": "MIT (root LICENSE.md: 'MIT License', 'Copyright (c) 2023 Lucas Pütz'); korangar-audio/LICENSE carries 'Copyright (c) 2025 Korangar authors' and 'Copyright (c) 2021 Andrew Minnich' under MIT-style permission text.",
+  "asset_licence": "No licence stated for the bundled archive/data pack as a whole. Only the font has its own licence: korangar/archive/data/font/OFL.txt (SIL Open Font License 1.1). The root MIT text names 'the Software' and does not mention assets. The original Ragnarok game data (data.grf, rdata.grf) is NOT in the repo; wiki/Running.md says to take it from the official kRO client.",
+  "rights_holder_status": "Client for Ragnarok Online written from scratch in Rust (README.md: 'a next-gen Ragnarok Online client written in Rust'). The repo does not name the rights holder of Ragnarok Online. Original game data: not included, user must supply it. Status of game data rights: unknown from repo files.",
+  "best_class": "C (overall). Per group: font = B (OFL 1.1 conditions); donor-made UI/marker/tile PNGs = C (licence unclear); original game data = not in box, C/D.",
+  "asset_groups": [
+    {"kind": "font", "path": "korangar/archive/data/font/NotoSans.ttf (+ OFL.txt, README.md)", "count_hint": "1 TTF plus licence and readme", "licence": "SIL OFL 1.1 (OFL.txt line 3)", "class": "B", "note": "OFL conditions apply; OFL.txt line 63 says a Modified Version may not use the Reserved Font Name. Font file itself not opened (binary)."},
+    {"kind": "ui-icons-sdf", "path": "korangar/archive/data/texture/*.png (arrow_left, arrow_right, collapsed_arrow, expanded_arrow, eye_open, eye_closed, filled_box, unfilled_box, trash_can)", "count_hint": "9 PNG; expanded_arrow.png is 32x32 by IHDR", "licence": "not stated (C)", "class": "C", "note": "texture/README.md describes making SDF icons: vector source, msdfgen-style tool, 32x32 for interface icons and 64x64 for overlay icons, base range 4. The guide is text and is class A as a how-to idea, not a licence."},
+    {"kind": "world-markers", "path": "korangar/archive/data/texture/marker_{effect,entity,light,object,particle,shadow,sound}.png", "count_hint": "7 PNG, 64x64 by IHDR (marker_light.png); marker_shadow.png is smaller (330 bytes)", "licence": "not stated (C)", "class": "C", "note": "Loaded as ImageType::Sdf in korangar/src/renderer/game_interface.rs lines 106-112. Content not viewed."},
+    {"kind": "pathing-overlay", "path": "korangar/archive/data/texture/pathing_{straight,diagonal,goal}.png", "count_hint": "3 PNG", "licence": "not stated (C)", "class": "C", "note": "Names loaded in korangar/src/lib.rs around line 587. Content not viewed."},
+    {"kind": "ground-tile-textures", "path": "korangar/archive/data/texture/tile_0.png .. tile_6.png", "count_hint": "7 PNG, 256x256 by IHDR (tile_0.png); ~270 KB each", "licence": "not stated (C)", "class": "C", "note": "Listed in korangar/src/lib.rs lines 596-602. Purpose and content not traced further (not read)."},
+    {"kind": "placeholder-models-sprites", "path": "korangar/archive/data/model/missing.rsm, korangar/archive/data/sprite/npc/missing.{spr,act}, korangar/archive/data/texture/missing.{png,jpg,bmp,tga}", "count_hint": "7 files, fallback placeholders", "licence": "not stated (C)", "class": "C", "note": "Fallback assets for missing content. Binary, not opened. Useful only as the idea of a visible 'missing' placeholder."},
+    {"kind": "text-localisation", "path": "korangar/archive/data/languages/en-US.ron, de-DE.ron, README.md", "count_hint": "2 RON string tables of about 70 lines each (en-US 69 key lines)", "licence": "not stated (C)", "class": "C", "note": "Data half read. RON tuple of snake_case keys ending in _text or _tooltip, one file per language. Strings not copied."},
+    {"kind": "data-scripts-lua", "path": "korangar/archive/data/lua-scaffolding/baby-job-lookup.lua, skill-tree-tab-for-job.lua, skill-tree-tab-name.lua", "count_hint": "3 Lua files", "licence": "not stated (C)", "class": "C", "note": "Game rules kept as Lua functions editable without recompiling. Read baby-job-lookup.lua (IS_BABY_JOB range logic). Other two not read."},
+    {"kind": "server-config", "path": "korangar/archive/data/sclientinfo.xml", "count_hint": "21 lines, 1 connection entry", "licence": "not stated (C)", "class": "D", "note": "Server list in EUC-KR XML pointing at a remote rAthena host. Not useful for Frankendom; not copied."},
+    {"kind": "app-icon-and-readme-art", "path": "korangar/archive/data/icon.png, .github/logo.png, .github/logo.svg, .github/logo_with_background.png, .github/preview.png, .github/geffen.png", "count_hint": "6 image files", "licence": "not stated (C)", "class": "C", "note": "Not opened. Logo and preview art, not for reuse."},
+    {"kind": "video-test-files", "path": "korangar-video/testfile/test-420-8.ivf, test-420-12.ivf", "count_hint": "2 IVF test clips", "licence": "not stated (C)", "class": "D", "note": "Codec test files, not game content. Not read."},
+    {"kind": "shaders-slang", "path": "korangar/shaders/modules/*.slang, korangar/shaders/passes/**/*.slang", "count_hint": "about 20+ slang files (shader source)", "licence": "MIT (repo root)", "class": "A", "note": "Shader source is code under the MIT root licence, so adaptable with notice. Read only the file names here; not read in depth (see inspiration)."},
+    {"kind": "game-data-grf", "path": "not in repo (data.grf, rdata.grf)", "count_hint": "absent", "licence": "original game data, not stated in repo", "class": "C", "note": "The client needs the official kRO data files, which the repo says to obtain from the official client. Not present in the box, so not read. Do not source them."}
+  ],
+  "inspiration": [
+    "Map markers as one small flat glyph per category (sound, light, effect, object, particle, shadow, entity), all in one set of 64x64 SDF images. For Frankendom: one glyph per spawn or loot category, readable at 375 wide.",
+    "Icons drawn as signed-distance images: author a simple vector shape, bake it to a distance field, then draw it at any size with a crisp edge. Interface icons are 32x32 and overlay icons 64x64. Useful for the HUD and minimap pins.",
+    "Pathing overlays are simple directional glyphs (straight, diagonal, goal), so a walk path reads as a set of arrows. Could show a lock-on or route hint without a full decal.",
+    "Localisation as data: one file per language, a fixed set of snake_case keys with _text and _tooltip suffixes, editable in a live inspector. Maps onto zones-as-data for names and tooltips.",
+    "Game rules that are hard to tie to data (job ranges, baby-job lookup) are kept as small Lua predicates with named constants instead of hard-coded branches. Good for progression tiers.",
+    "Fallback 'missing' placeholders for models, sprites and textures, so content gaps stay visible rather than crashing. A useful debug habit for zone and loot data.",
+    "Real-time lighting with drop shadows is the headline visual claim (README.md line 10). Shader passes for directional and point-light shadows and a bindless entity picker live under korangar/shaders/. Category-level only: shadow map style and entity picking, not any copyrighted look."
+  ],
+  "briefs": [
+    {
+      "label": "Ground-marker glyph set (our own pictograms)",
+      "why": "A row of tiny flat pictograms over the ground tells the player what is there (spawn, chest, shrine, sound source) before anything else. At 64 px and 375 wide it stays a readable blob, not a sprite fight.",
+      "keep": "one flat glyph per category; sits on the ground as a small badge; drawn as a signed-distance icon so it stays crisp",
+      "change": "our own pictogram shapes (not the donor's), a palette of our hue ramp, a different frame (ring or diamond, not the donor's badge)",
+      "ref": "korangar/archive/data/texture/marker_light.png, marker_sound.png, marker_effect.png (64x64 IHDR; content not viewed)"
+    },
+    {
+      "label": "Crisp SDF HUD glyph (eye and arrow family)",
+      "why": "A two-state glyph (open eye and closed eye, expanded and collapsed arrows) makes a toggle readable at a glance on a phone, and the distance-field approach keeps it sharp at any size.",
+      "keep": "two-state toggle glyphs as a pair; 32 px interface size; distance-field edge for crisp scaling",
+      "change": "our own silhouette for the toggle (not an eye), different state cue (fill plus tilt, not open/closed), tuned for thumb-size hit areas",
+      "ref": "korangar/archive/data/texture/eye_open.png, eye_closed.png, expanded_arrow.png (32x32 IHDR)"
+    },
+    {
+      "label": "Walk-path chevron set",
+      "why": "Three directional chevrons (straight, diagonal, goal) tell the player the next step on a route without a line that clutters the camera view.",
+      "keep": "a small directional chevron set; straight, diagonal and goal states as one family",
+      "change": "a goal state with a distinct shape (not a plain end-dot), a colour that matches our zone palette, chevrons that pulse only when the route changes",
+      "ref": "korangar/archive/data/texture/pathing_straight.png, pathing_diagonal.png, pathing_goal.png (not viewed); korangar/src/lib.rs line 587"
+    },
+    {
+      "label": "Per-job ID range predicate in Lua",
+      "why": "A single function that answers 'is this a baby tier job' from ID ranges keeps the tier logic in one readable place and lets a data author extend it without rebuilding the client.",
+      "keep": "one predicate per tier with nil-safe fallbacks; tier as a range of IDs; editable as data",
+      "change": "we use named tiers in zone or progression data (not job IDs), and no copied range numbers; our own tier names and rules",
+      "ref": "korangar/archive/data/lua-scaffolding/baby-job-lookup.lua lines 1-20 (IS_BABY_JOB)"
+    },
+    {
+      "label": "Missing-asset placeholder model",
+      "why": "A plain placeholder model shown when content is missing keeps gaps visible in play and in review, which speeds up content checks.",
+      "keep": "obviously-wrong placeholder shape; used for any missing model, sprite or texture",
+      "change": "our placeholder is a clear debug cube with a label, not a generic mesh; coloured by missing-kind",
+      "ref": "korangar/archive/data/model/missing.rsm, korangar/archive/data/sprite/npc/missing.spr (binary, not opened)"
+    }
+  ],
+  "not_read": [
+    "korangar/archive/data/font/NotoSans.ttf (binary font)",
+    "all PNG/JPG/BMP/TGA image content in archive/data/texture (only file names and IHDR size read)",
+    "missing.rsm, missing.spr, missing.act (binary model and sprite)",
+    "korangar/archive/data/icon.png and .github/*.png, logo.svg (images)",
+    "korangar-video/testfile/*.ivf (codec test clips)",
+    "korangar/archive/data/lua-scaffolding/skill-tree-tab-for-job.lua and skill-tree-tab-name.lua (only the file names seen)",
+    "de-DE.ron (German string table, only its size and line count seen)",
+    "korangar/shaders/**/*.slang (only file names listed; not read in depth)",
+    "server half: rAthena server is not in the box; wiki/Running.md names korangar-rathena, which is not in the donor tree",
+    "game data files data.grf and rdata.grf: absent from the box by design"
+  ]
+}

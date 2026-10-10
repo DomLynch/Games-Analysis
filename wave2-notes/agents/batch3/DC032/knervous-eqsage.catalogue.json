@@ -1,0 +1,132 @@
+{
+  "donor": "knervous-eqsage",
+  "class": "C",
+  "halves_read": "client tool and static data (zone table, item-name table, model-code table, exporter lineup, material and glow code, spawn-group chance check). Server half (Spire-driven zone/NPC/spawn database) not read; EQEmu in the box is the likely pair, not opened.",
+  "counts": {
+    "creatures": 216,
+    "classes": 15,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 610
+  },
+  "creature_families": [
+    {"family": "humanoid races", "count": 47, "basis": "keyword match on model display names, first match wins (approximate)", "ref": "/mnt/frankendom-donors/knervous-eqsage/sage/lib/model/constants.js lines 531-749"},
+    {"family": "undead", "count": 15, "basis": "keyword match (approximate)", "ref": "/mnt/frankendom-donors/knervous-eqsage/sage/lib/model/constants.js lines 531-749"},
+    {"family": "elementals", "count": 12, "basis": "keyword match (approximate)", "ref": "/mnt/frankendom-donors/knervous-eqsage/sage/lib/model/constants.js lines 531-749"},
+    {"family": "beasts", "count": 14, "basis": "keyword match (approximate)", "ref": "/mnt/frankendom-donors/knervous-eqsage/sage/lib/model/constants.js lines 531-749"},
+    {"family": "dragon-kin", "count": 10, "basis": "keyword match (approximate)", "ref": "/mnt/frankendom-donors/knervous-eqsage/sage/lib/model/constants.js lines 531-749"},
+    {"family": "insect and arachnid", "count": 8, "basis": "keyword match (approximate)", "ref": "/mnt/frankendom-donors/knervous-eqsage/sage/lib/model/constants.js lines 531-749"},
+    {"family": "construct or plant", "count": 6, "basis": "keyword match (approximate)", "ref": "/mnt/frankendom-donors/knervous-eqsage/sage/lib/model/constants.js lines 531-749"},
+    {"family": "aquatic", "count": 4, "basis": "keyword match (approximate)", "ref": "/mnt/frankendom-donors/knervous-eqsage/sage/lib/model/constants.js lines 531-749"},
+    {"family": "fae or spirit", "count": 3, "basis": "keyword match (approximate)", "ref": "/mnt/frankendom-donors/knervous-eqsage/sage/lib/model/constants.js lines 531-749"},
+    {"family": "unclassified by keyword", "count": 97, "basis": "no keyword matched", "ref": "/mnt/frankendom-donors/knervous-eqsage/sage/lib/model/constants.js lines 531-749"},
+    {"family": "robed variants", "count": 12, "basis": "robe list in the exporter; 13 model entries end in 01 (not reconciled)", "ref": "/mnt/frankendom-donors/knervous-eqsage/src/components/exporter/constants.js lines 82-98"}
+  ],
+  "top_creatures": [
+    {
+      "label": "Robe-swap caster body",
+      "why": "One body with a garment variant code. The viewer decides when to show the robe from a single list, so the silhouette changes without a new body.",
+      "keep": "One body, one swapped garment; the variant is a code, not a new asset tree.",
+      "change": "Our robe is a hood and sash silhouette, so a caster reads at 375 wide. Not a texture swap.",
+      "ref": "/mnt/frankendom-donors/knervous-eqsage/src/components/exporter/constants.js lines 82-98"
+    },
+    {
+      "label": "Lineup of figures in one model file",
+      "why": "Fifteen class figures and a default sit in one model file at fixed offsets, so one file serves a whole preview lineup.",
+      "keep": "One file, several figures placed by offsets; the lineup is data.",
+      "change": "Each figure gets its own silhouette and idle loop, and the lineup is a camera tour, not a grid.",
+      "ref": "/mnt/frankendom-donors/knervous-eqsage/src/components/exporter/constants.js lines 5-22"
+    },
+    {
+      "label": "Undead family (15 codes)",
+      "why": "A large family of model codes. The box has the names and the count only; no stats or behaviour were read.",
+      "keep": "A grouped family for spawn tags and pack alerts.",
+      "change": "Our undead get one signature mark a player can read at a glance, not a shared palette.",
+      "ref": "/mnt/frankendom-donors/knervous-eqsage/sage/lib/model/constants.js lines 531-749"
+    },
+    {
+      "label": "Elemental family (12 codes)",
+      "why": "A family that suits element-coded threat. The box holds names only; visuals not read.",
+      "keep": "Element as the family key for hit reactions.",
+      "change": "Colour-code by element with a shape cue too, so the code still reads without colour.",
+      "ref": "/mnt/frankendom-donors/knervous-eqsage/sage/lib/model/constants.js lines 531-749"
+    },
+    {
+      "label": "Dragon-kin family (10 codes)",
+      "why": "A small family of large bodies. Good for a few big silhouettes that carry a fight.",
+      "keep": "Few, large, distinct silhouettes in one family.",
+      "change": "Fewer heads and wings; our versions have one signature horn set.",
+      "ref": "/mnt/frankendom-donors/knervous-eqsage/sage/lib/model/constants.js lines 531-749"
+    },
+    {
+      "label": "Beast family (14 codes)",
+      "why": "Animal families are common and easy to read. The box holds names only.",
+      "keep": "Animal families as the everyday threat set.",
+      "change": "Different proportions and a different stance per beast; no shared rig pose.",
+      "ref": "/mnt/frankendom-donors/knervous-eqsage/sage/lib/model/constants.js lines 531-749"
+    },
+    {
+      "label": "Animated class icon loop",
+      "why": "Fifteen short looping icons, one per class. The loop makes a static menu feel alive.",
+      "keep": "A short loop per class icon.",
+      "change": "Our loop shows the role state (ready, charging) rather than a pose.",
+      "ref": "/mnt/frankendom-donors/knervous-eqsage/public/static/eqassets/animated"
+    },
+    {
+      "label": "Weapon-type attack slots",
+      "why": "The animation table gives each weapon type its own attack slot, so the rig knows which attack to play.",
+      "keep": "One attack slot per weapon family.",
+      "change": "Our families and our animation names; no copy of the donor's slot list.",
+      "ref": "/mnt/frankendom-donors/knervous-eqsage/src/components/exporter/constants.js lines 35-79"
+    }
+  ],
+  "classes": [
+    {"name": "class figure placements (15 plus default)", "role": "grouped by name only: melee-leaning, caster-leaning, one bard-type", "signature_mechanic": "not in the box", "progression": "not in the box", "ref": "/mnt/frankendom-donors/knervous-eqsage/src/components/exporter/constants.js lines 5-22"}
+  ],
+  "weapon_families": [
+    {"family": "attack-animation slots by weapon type", "count": 8, "note": "one-hand pierce, two-hand slash, two-hand blunt, one-hand slash, off-hand slash, bash, hand-to-hand, archery", "ref": "/mnt/frankendom-donors/knervous-eqsage/src/components/exporter/constants.js lines 35-79"},
+    {"family": "item names", "count": 0, "note": "items.json has names only; no weapon type field, so weapon families are not counted", "ref": "/mnt/frankendom-donors/knervous-eqsage/public/static/items.json"}
+  ],
+  "gear_tiers": [
+    {"tier": "armour weight ladder: cloth, leather, chain, plate", "count_hint": "name-string hits: 610, 2282, 2907, 3395", "ref": "/mnt/frankendom-donors/knervous-eqsage/public/static/items.json"},
+    {"tier": "metal ladder: bronze up to adamantite", "count_hint": "name-string hits per metal 82 to 1035", "ref": "/mnt/frankendom-donors/knervous-eqsage/public/static/items.json"},
+    {"tier": "gem apex: crystal, diamond, pearl, sunstone", "count_hint": "name-string hits 7 to 962", "ref": "/mnt/frankendom-donors/knervous-eqsage/public/static/items.json"},
+    {"tier": "glow and shimmer prefixes", "count_hint": "name-string hits 309 and 176", "ref": "/mnt/frankendom-donors/knervous-eqsage/public/static/items.json"},
+    {"tier": "dark materials: shadow, ebon, lava", "count_hint": "name-string hits 1083, 126, 105", "ref": "/mnt/frankendom-donors/knervous-eqsage/public/static/items.json"},
+    {"tier": "gear slots shown in the viewer", "count_hint": "7 slots: helm, chest, arms, wrists, hands, legs, feet", "ref": "/mnt/frankendom-donors/knervous-eqsage/src/components/exporter/pc/pc-config.jsx lines 237-249"}
+  ],
+  "zones": [
+    {"name": "zone record (610)", "note": "short name, safe point, graveyard, level band, sky mode (0 on 309, 1 on 278, 2 on 21), time-type (0 to 5), weather and fog stages", "ref": "/mnt/frankendom-donors/knervous-eqsage/public/static/zoneData.json"},
+    {"name": "four-stage timed fog", "note": "fog colour, near and far clip per stage; density 0.33 on 508 zones", "ref": "/mnt/frankendom-donors/knervous-eqsage/public/static/zoneData.json line 55"},
+    {"name": "weather stages", "note": "rain chance in some stage on 203 zones; snow on 76", "ref": "/mnt/frankendom-donors/knervous-eqsage/public/static/zoneData.json line 68"},
+    {"name": "experience multiplier per zone", "note": "1 on 263, 1.5 on 96, 0 on 41, 1.33 on 30, 2 on 25, 3 on 22", "ref": "/mnt/frankendom-donors/knervous-eqsage/public/static/zoneData.json line 32"},
+    {"name": "aggro radius per zone", "note": "600 on 604 zones; 750, 800, 1000 on the rest", "ref": "/mnt/frankendom-donors/knervous-eqsage/public/static/zoneData.json line 90"}
+  ],
+  "looks": [
+    {"label": "Glow include list", "technique": "Meshes join a glow pass only when added to an include list; blur kernel 10; intensity 0.7; intensity 0 turns it off.", "ref": "/mnt/frankendom-donors/knervous-eqsage/src/viewer/controllers/ZoneBuilderController.js lines 147-151 and 627-631"},
+    {"label": "Two-map water sheet", "technique": "Water shader takes a normal map and an environment map as a pair; fresnel bias 0.11, power 8; waterfall uses four slide values.", "ref": "/mnt/frankendom-donors/knervous-eqsage/src/components/builder/drawers/material-dialog.jsx lines 92-116; export-dialog.jsx lines 55-56"},
+    {"label": "Glow material shininess", "technique": "Glow-texture shader with a shininess value of 50.", "ref": "/mnt/frankendom-donors/knervous-eqsage/src/components/builder/drawers/material-dialog.jsx line 85"},
+    {"label": "Six-face cheap sky", "technique": "Six small JPG faces make the sky cube.", "ref": "/mnt/frankendom-donors/knervous-eqsage/public/static/skybox_px.jpg (and nx, ny, nz, py, pz)"},
+    {"label": "Animated class icon loops", "technique": "Fifteen looping GIFs, one per class icon.", "ref": "/mnt/frankendom-donors/knervous-eqsage/public/static/eqassets/animated"},
+    {"label": "Spawn marker level-of-detail swap", "technique": "A sphere replaces the model past a set distance, and the marker joins the glow include list.", "ref": "/mnt/frankendom-donors/knervous-eqsage/src/viewer/models/BabylonModel.js lines 240-256"}
+  ],
+  "originals": [
+    {"name": "Dusk Clock Zone", "idea": "Each zone holds four timed fog stages as data, keyed to one shared clock.", "keep": "fog as a data stage per zone", "change": "One shared dusk clock; fog never hides a telegraph."},
+    {"name": "Weather Stage Zone", "idea": "Rain and snow chance and duration per stage, as zone fields.", "keep": "the data shape of weather stages", "change": "Weather only changes sight range, never damage."},
+    {"name": "Threat Glow", "idea": "Targets join a glow pass only when they matter.", "keep": "the include list", "change": "Glow colour follows threat level and never hides a silhouette."},
+    {"name": "Weighted Spawn Group", "idea": "Spawn chances must total 100 before save.", "keep": "the total check at edit time", "change": "Weights feed the spawn director at runtime (row 23), not only the editor."},
+    {"name": "Lineup Tour", "idea": "One model file, several figures placed by offsets, shown as a camera tour.", "keep": "placement by offsets", "change": "Each figure has its own silhouette and idle loop."},
+    {"name": "Garment Swap Caster", "idea": "One body, one garment variant code.", "keep": "one body and one swap", "change": "Our swap changes the silhouette (hood, sash), not a texture."}
+  ],
+  "licence_note": "sage/ sub-package MIT (sage/package.json line 30). Root package.json has no licence field (zero matches). No LICENSE file in the box root. Asset licence not stated. Data is EverQuest-derived; the tool says it works with a local EverQuest install (about-dialog line 60); no rights line in the box. Class C: shape only, no asset copied.",
+  "not_read": [
+    "server half (Spire-driven zone, NPC and spawn database); EQEmu in the box not opened",
+    "quest editor (src/components/spire/dialogs/quest-dialog) and NPC dialog",
+    "spawn editor beyond the chance check (spawn-nav.jsx)",
+    "model files public/static/clz.glb and load2.glb",
+    "sprite and icon artwork beyond the animated icon count",
+    "sound files and soundfont stub",
+    "meaning of zone-type, lava and walk-speed fields",
+    "item type fields (none in items.json)"
+  ]
+}

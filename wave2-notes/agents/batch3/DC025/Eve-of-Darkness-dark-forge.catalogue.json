@@ -1,0 +1,26 @@
+{
+  "donor": "Eve-of-Darkness-dark-forge",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "counts_basis": "Zero by keyword grep (monster, weapon, armour, dungeon, zone, creature, sword, dragon) over dark_forge and mpak. Donor is an archive reader for a proprietary game-client format; no game content in the tree.",
+  "halves_read": "None of a game. Tree listing, wc line counts and one keyword grep only. Rust source bodies not opened in this pass; description taken from audit AU020.",
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [],
+  "looks": [],
+  "originals": [],
+  "licence_note": "No LICENSE, COPYING or licence header in the tree; Cargo.toml has no license key. Status not stated. Not a legal opinion.",
+  "not_read": [
+    "Rust source bodies: dark_forge/src/lib.rs, dark_forge/src/mpk/mpak.rs, dark_forge/src/mpk/mod.rs, dark_forge/src/mpk/file_info.rs, mpak/src/main.rs",
+    "Compressed contents of mpak/samples/csv001.mpk (not decompressed, by design)",
+    "Cargo.lock files"
+  ]
+}

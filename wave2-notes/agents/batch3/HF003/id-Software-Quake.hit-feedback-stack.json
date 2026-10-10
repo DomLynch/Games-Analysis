@@ -1,0 +1,77 @@
+{
+  "donor": "id-Software-Quake",
+  "topic": "hit-feedback-stack",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/id-Software-Quake/qw-qc/weapons.qc",
+    "/mnt/frankendom-donors/id-Software-Quake/qw-qc/combat.qc",
+    "/mnt/frankendom-donors/id-Software-Quake/qw-qc/player.qc",
+    "/mnt/frankendom-donors/id-Software-Quake/qw-qc/misc.qc",
+    "/mnt/frankendom-donors/id-Software-Quake/qw-qc/client.qc",
+    "/mnt/frankendom-donors/id-Software-Quake/qw-qc/server.qc",
+    "/mnt/frankendom-donors/id-Software-Quake/WinQuake/view.c",
+    "/mnt/frankendom-donors/id-Software-Quake/WinQuake/sv_main.c",
+    "/mnt/frankendom-donors/id-Software-Quake/WinQuake/r_part.c",
+    "/mnt/frankendom-donors/id-Software-Quake/QW/client/cl_tent.c",
+    "/mnt/frankendom-donors/id-Software-Quake/gnu.txt"
+  ],
+  "counts": {
+    "pellet_trace_per_volley": "per shot (shotcount parameter, value not read)",
+    "particles_per_hit_count": 20,
+    "pain_voice_clips": 6,
+    "pain_voice_gap_s": 0.5,
+    "face_hold_s": 0.2,
+    "flash_gain_per_count": 3,
+    "flash_count_floor": 10,
+    "flash_cap_percent": 150,
+    "flash_drain_per_s": 150,
+    "player_gib_below_health": -40
+  },
+  "rule": "Per volley: each pellet is traced; a body hit adds one to the blood count, sets the last hit point and adds damage to that victim's total; a wall hit adds one to the puff count. Each victim's total is applied once in one damage call. Inside the damage call: momentum push runs before the godmode check, armour soaks first (ceil), the client record is accumulated (armour, health damage, last attacker position), health is reduced, then the pain callback. Effects are sent once at the end of the volley: a gunshot record for puffs and a blood record for bodies, both at the last hit point. The server sends the client's accumulated record on the next update (armour byte, health byte, origin). The client: count = 0.5 x health taken + 0.5 x armour, floored at 10; face hold 0.2 s; flash += 3 x count, capped at 150, drains 150 per second; view kick roll = count x side x roll cvar, pitch = count x forward x pitch cvar, decays over the kick time. Pain voice: at most one per 0.5 s per player, one of six clips, flinch frame skipped while the weapon frame is busy.",
+  "data_fields": [
+    {"name": "flashGainPerCount", "unit": "percent of flash per count point", "donor_value_or_null": null},
+    {"name": "flashCountFloor", "unit": "count points", "donor_value_or_null": null},
+    {"name": "flashCap", "unit": "percent", "donor_value_or_null": null},
+    {"name": "flashDrainPerSecond", "unit": "percent per s", "donor_value_or_null": null},
+    {"name": "kickScale", "unit": "view degrees per count per unit facing", "donor_value_or_null": null},
+    {"name": "kickTimeSeconds", "unit": "s (donor cvar, default not read)", "donor_value_or_null": null},
+    {"name": "painVoiceGapSeconds", "unit": "s", "donor_value_or_null": null},
+    {"name": "faceHoldSeconds", "unit": "s", "donor_value_or_null": null},
+    {"name": "particlesPerHit", "unit": "particles per hit", "donor_value_or_null": null},
+    {"name": "overkillGibHp", "unit": "hp (player)", "donor_value_or_null": null},
+    {"name": "momentumPerDamage", "unit": "velocity units per damage point", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Per-victim aggregate: one damage call per victim per volley",
+    "Per-frame merge of the client's damage record across attackers (donor combat.qc 174-179)",
+    "Kick toward the attacker, sized by the damage count and fading over a short timer",
+    "Flash cap so stacked hits do not wash out the screen",
+    "Half-second voice gate per player",
+    "Face hold for the status-bar pain frame",
+    "No flinch while the weapon frame is busy (committed attack finishes its swing)",
+    "Gibs at an overkill threshold, velocity from the damage"
+  ],
+  "change": [
+    "Client record keeps only the last attacker's position: keep a summed or listed set of hitter directions, capped (main gap for max-3 attackers)",
+    "Blood count ignores the damage argument (qw-qc/weapons.qc 151-155 writes a constant 1): fix to a damage-scaled or hit-scaled count, or drop the parameter",
+    "Spray velocity computed and unused (qw-qc/weapons.qc 264-266): use it or delete it",
+    "Damage presented one network update late: present on the same server tick as the health change",
+    "No hit stop in the donor: any freeze is our own idea, not a donor one",
+    "Flinch cancels or not in a committed strike: decision for Lead (proposed: no)",
+    "Frankendom target src/fight/hit-impact.ts, parity row 10"
+  ],
+  "look_test": "Three presets on a three-attackers-on-one fight behind a debug flag: (A) current feel; (B) per-victim aggregate with flash cap and no kick; (C) B plus a kick toward the strongest hitter and a half-second voice gate. Dom takes ten hits per preset at 375 wide and judges: can you name the side of a hit from the kick alone, does the flash hide the three attackers, does a three-at-once hit sound like one grunt. Preview folder only, no release rows, no lock.",
+  "licence_note": "GPL-2.0-or-later (qw-qc/combat.qc lines 10-11; GPL text at /mnt/frankendom-donors/id-Software-Quake/gnu.txt). Clean-room only: sketch written from the described order, not a translation. Ideas kept at category level (per-victim aggregate, capped flash, directional kick, voice gate, face hold). No donor values in data fields, no clip names or colour indices used. No legal conclusion.",
+  "tags": ["flash", "screen-shake", "hit-sound", "particle-burst", "ordered-feedback", "knockback", "stagger", "new:per-victim-aggregate", "new:directional-kick", "new:voice-gate", "new:hit-stop-absent-in-donor", "new:blood-ignores-damage-defect", "new:dead-spray-velocity-defect", "new:last-attacker-only-defect", "new:one-update-late-defect"],
+  "not_read": [
+    "combat.qc Killed body beyond line 92",
+    "cvar defaults for the view kick roll, pitch and time (WinQuake view.c uses them; defaults not read)",
+    "V_UpdatePalette and the colour blend fed by the damage flash (WinQuake view.c, not read)",
+    "QW/server/sv_send.c damage record (grep only, lines 487-496)",
+    "monster QuakeC: not in the qw-qc listing, not read",
+    "TE_BLOOD and TE_GUNSHOT producers in the WinQuake engine (only the QW client handlers were read)",
+    "sound channels and attenuation (only the player pain call was read)",
+    "shotcount value used by FireBullets callers"
+  ]
+}

@@ -1,0 +1,235 @@
+{
+  "donor": "OpenRA-OpenRA",
+  "cell": "DC041",
+  "halves_read": "data half (mods/*/rules YAML, ra mission Lua ant-01 and ant-03, glsl shaders); code half by cited lines only (OpenRA.Mods.D2k, OpenRA.Mods.Common, OpenRA.Mods.Cnc). Engine render path and OpenRA.Server not read.",
+  "counts": {
+    "creatures": 10,
+    "classes": 24,
+    "weapons": 253,
+    "gear_sets": 0,
+    "zones": 11
+  },
+  "counts_basis": {
+    "creatures": "ra 5 (Zombie, Ant, ScoutAnt, FireAnt, WarriorAnt) + d2k 1 (sandworm) + ts 4 (DOGGIE, VISC_SML, VISC_LRG, JFISH); 3 more decorative interior critters (QUEE, LAR1, LAR2) not counted",
+    "classes": "24 infantry actor keys in ra/rules/infantry.yaml, including the SPY.England variant",
+    "weapons": "top-level weapon keys by grep: ra 82, cnc 58, d2k 48, ts 65",
+    "gear_sets": "none in the box; armour classes are the nearest analogue",
+    "zones": "tileset files: ra 4, cnc 4, d2k 1, ts 2"
+  },
+  "creature_families": [
+    "Ant brood (ra): Ant base (cost 300, speed 92), ScoutAnt (light, HP 8500), FireAnt (heavy, fireball, HP 7500), WarriorAnt (heavy, heavy mandible, HP 12500); last three not player-buildable, spawned by mission Lua",
+    "Shambler (ra): Zombie, bio-built, cost 100, HP 25000, speed 39, claw",
+    "Visceroid slime line (ts): VISC_SML small (HP 20000, merges on crush), VISC_LRG large (HP 50000, heavy, ranged slime)",
+    "Hover jelly (ts): JFISH, hover locomotor, HP 50000, speed 72",
+    "Hound (ts): DOGGIE, HP 25000, light, hides on tiberium when still, fire-death variant",
+    "Sand maw (d2k): sandworm, HP 100000, heavy, worm locomotor, speed 42, noise-hunting burrower",
+    "Decorative interior critters (ra): Queen Ant and larvae, no combat, interior tileset only"
+  ],
+  "top_creatures": [
+    {
+      "label": "Sand Maw",
+      "why": "burrowing beast that hunts by summed noise, telegraphs a bite from under the target cell, may leave after biting",
+      "keep": "noise-attraction pull, 3-cell instant-bite radius, burrow countdown before the bite, return delay, chance to leave after biting",
+      "change": "ground shadow and dust rise instead of a burrow sprite; bite picks the most-engaged fighter; fixed despawn timer with grace instead of a coin-flip",
+      "ref": "mods/d2k/rules/arrakis.yaml:72-132; OpenRA.Mods.D2k/Traits/Sandworm.cs:23-32, :75, :126, :137, :146; OpenRA.Mods.D2k/Traits/AttackSwallow.cs:27, :30; OpenRA.Mods.D2k/Activities/SwallowActor.cs:98, :118, :136, :147"
+    },
+    {
+      "label": "Merge-slime",
+      "why": "a small slime that runs over another turns into a large one; reads as a clear size pop at 375 px",
+      "keep": "crush-triggered transform into the large form; large form has a ranged slime every 80 ticks",
+      "change": "2-second stationary channel before merge; merged form capped at one size step; our own goo colour",
+      "ref": "mods/ts/rules/critters.yaml:60-91; OpenRA.Mods.Common/Traits/TransformCrusherOnCrush.cs:51, :56; mods/ts/weapons/otherweapons.yaml:95-96"
+    },
+    {
+      "label": "Hover Jelly",
+      "why": "large floating body on a hover locomotor, a silhouette no other beast in the box has",
+      "keep": "hover over water and land, 5-cell reveal radius, 50000 HP",
+      "change": "low pulsing hum and a body that rides above fog; no slime attack",
+      "ref": "mods/ts/rules/critters.yaml:113-125"
+    },
+    {
+      "label": "Shade Hound",
+      "why": "lies flat and vanishes into tiberium when still; comes up on movement or attack; burning death variant",
+      "keep": "hide only when still on a hazard terrain, show when moving or attacking, heal on that terrain",
+      "change": "spore-moss hazard terrain; burning death kept as a fire-death sequence, not a sprite",
+      "ref": "mods/ts/rules/critters.yaml:1-58 (hide terrain :44-45; hide condition :54)"
+    },
+    {
+      "label": "Warrior Brood",
+      "why": "heaviest ant, heavy armour, double-burst heavy mandible; the escalation tier after the scout",
+      "keep": "heavy armour, double-burst melee (damage 10000 per hit as written), slower walk than the scout, 12500 HP",
+      "change": "three-hit combo with a clear wind-up cue; boss-tier escort, no prerequisite gate",
+      "ref": "mods/ra/rules/infantry.yaml:839-852; mods/ra/weapons/other.yaml:193"
+    },
+    {
+      "label": "Fire Brood",
+      "why": "the only ranged ant; fires a fireball, heavy armour, capped by the wave director",
+      "keep": "ranged fire attack from a brood body; scarce count per wave",
+      "change": "slow ember arc with a ground smoulder instead of a fireball sprite",
+      "ref": "mods/ra/rules/infantry.yaml:809-823; mods/ra/weapons/other.yaml:208"
+    },
+    {
+      "label": "Scout Brood",
+      "why": "light fast ant with a wider scan radius (7 cells); the opening wave unit",
+      "keep": "light armour, scan radius 7, fast body (speed 92 from the Ant base)",
+      "change": "faster chirp on spotting; scan cut to 5 cells so it does not sweep the zone",
+      "ref": "mods/ra/rules/infantry.yaml:765-837"
+    },
+    {
+      "label": "Shambler",
+      "why": "cheap, very high-HP bio-built body that bites; reads as a slow wall at 375 px",
+      "keep": "slow tanky melee body, low cost, claw attack with a long idle",
+      "change": "fast-died swarm member with hit-stop instead of a 25000-HP wall",
+      "ref": "mods/ra/rules/infantry.yaml:730-764"
+    }
+  ],
+  "classes": [
+    "rifle (E1, carbine); grenadier (E2); rocket (E3, two weapons); flamethrower (E4); engineer (E6, cost 400, no weapon line found); commando (E7, HP 10000, cost 1800); spy (SPY, silenced pistol); medic (MEDI, heal); mechanic (MECH, repair); thief (THF, cloak after 120 ticks, detects cloaked units); shock trooper (SHOK, portable tesla); attack dog (DOG, jaw); heroes (EINSTEIN, DELPHI, CHAN, GNRL)",
+    "RA factions: allies and soviet families, with nation sub-factions (england, france, germany; russia, ukraine) in ra/rules/misc.yaml ValidFactions",
+    "TS factions: GDI and Nod unit files; mutants (civilian-infantry) and cyborgs (nod-infantry) not read in full",
+    "D2K houses: Atreides, Harkonnen, Ordos, each with a construction yard (d2k/rules/structures.yaml); thumper (deploys as a worm lure) and fremen (cloak with critical reveal)"
+  ],
+  "weapon_families": [
+    "Claw and mandible creature melee: Claw (reload 30), Mandible (burst 2), MandibleHeavy (burst 2, reload 15, damage 10000 as written)",
+    "Fire family: FireWeapon base (napalm effect, scorch smudge), Flamer (cone), FireballLauncher (two-shot), AntFireball",
+    "Tesla family: TeslaZap, PortaTesla (shock trooper), TTankZap",
+    "Worm jaw (d2k): WormJaw excludes structures and infantry, so it bites vehicles only",
+    "Slime (ts): SlimeAttack, damage 10000, reload 80, excludes walls and bridges",
+    "Deviator missile (d2k): damage 2000 in a 480 spread, ChangeOwner warhead for 405 ticks, zero vs invulnerable, half vs construction yards"
+  ],
+  "gear_tiers": [
+    "No gear sets or material tiers in the box.",
+    "Armour classes (Versus keys): none, wood, light, heavy, concrete, tree, invulnerable. Each weapon has a multiplier per class (claw: None 97, Wood 10, Light 30, Heavy 10, Concrete 10; mandible heavy: Light 90, Heavy 35).",
+    "Veterancy ladder: XP thresholds 200, 400, 800, 1600 each add a veteran level; level 4 unlocks elite (damage taken x75 percent, firepower up). ra/rules/defaults.yaml:47-80.",
+    "Iron curtain: timed invulnerability, zero damage multiplier, translucent overlay and a timed bar (ra/rules/defaults.yaml:166-176).",
+    "Husk wrecks: destroyed vehicles leave husk actors with owner kept (ra/rules/husks.yaml, 36 keys; d2k/rules/vehicles.yaml:592)."
+  ],
+  "zones": [
+    "Biomes (tilesets): temperate, snow, desert, interior (ra); temperate, snow, desert, winter (cnc); arrakis (d2k); snow, temperate (ts). Each biome has its own palette set.",
+    "Dungeon archetype: ant nest with hive killzones (ra/maps/ant-03/ant-03.lua:55-57; mission tileset not checked).",
+    "Spice field (d2k): spice bloom spawnpoints self-clear after 3000-3250 ticks while sand is clear; sandworms roam sand (arrakis.yaml:1-40).",
+    "Tiberium field (ts, cnc): tiberium heals ts beasts (-200 per 16 ticks) and hides hounds (ts/rules/defaults.yaml:1326-1330; critters.yaml:44-45).",
+    "Veins (ts): 500 bullet-type damage per 16 ticks on veins terrain (ts/rules/defaults.yaml:1334-1335).",
+    "Scorch smudge (ra): fire weapons leave ground marks (ra/weapons/other.yaml:18)."
+  ],
+  "looks": [
+    {
+      "label": "Chronoshift pulse",
+      "technique": "full-screen pass desaturating to mid-luminance; blend falls linearly from full to zero over 60 ticks",
+      "ref": "glsl/postprocess_chronoshift.frag:13-14; OpenRA.Mods.Cnc/Traits/PaletteEffects/ChronoshiftPostProcessEffect.cs:23, :53"
+    },
+    {
+      "label": "Colour flash",
+      "technique": "full-screen mix toward one colour by a blend value",
+      "ref": "glsl/postprocess_flash.frag:14"
+    },
+    {
+      "label": "Warp ring from displacement sheet",
+      "technique": "48 precomputed displacement frames in one sheet; displacement from encoded offset channels; ring cut off by an intensity channel; frames are map-package lookup files not in the box",
+      "ref": "OpenRA.Mods.Cnc/Traits/World/ChronoVortexRenderer.cs:45-50; glsl/postprocess_textured_vortex.frag:16-18"
+    },
+    {
+      "label": "Shock ring",
+      "technique": "screen offsets scaled by normalised radius, discarded outside the unit circle",
+      "ref": "glsl/postprocess_textured_sonic.frag:14-17"
+    },
+    {
+      "label": "Iron curtain tint",
+      "technique": "translucent colour overlay as a render modifier on a condition, plus timed bar",
+      "ref": "mods/ra/rules/defaults.yaml:166-176; OpenRA.Mods.Common/Traits/Modifiers/WithColoredOverlay.cs:23"
+    },
+    {
+      "label": "Owner-coloured projectile and blast",
+      "technique": "trail and explosion palette follow the owner",
+      "ref": "mods/d2k/weapons/missiles.yaml:138, :154-156"
+    },
+    {
+      "label": "Sand trail",
+      "technique": "trail image every 3 ticks while moving on sand terrains",
+      "ref": "mods/d2k/rules/arrakis.yaml:120-125"
+    },
+    {
+      "label": "Team colour remap (audit only)",
+      "technique": "16 reserved palette indices remapped from one player colour; not re-read in this pass",
+      "ref": "mods/ra/rules/palettes.yaml:47 (per AU039 audit)"
+    },
+    {
+      "label": "Fog of war states (audit only)",
+      "technique": "three source states with separate shroud and fog palettes; not re-read in this pass",
+      "ref": "OpenRA.Mods.Common/Traits/World/ShroudRenderer.cs:35, :57 (per AU039 audit)"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Sand Maw",
+      "idea": "a noise-hunting burrower that telegraphs its bite from the ground and bites the most-engaged fighter",
+      "keep": "noise pull toward the summed attraction; 3-cell instant radius; burrow countdown and return delay",
+      "change": "shadow ring and dust rise as the telegraph; fixed despawn timer replaces the chance-to-leave"
+    },
+    {
+      "name": "Brood Wave Director",
+      "idea": "scouts first, fire brood after a time gate, wave cap by difficulty, re-armed on a fixed interval",
+      "keep": "time-gated tier unlock, difficulty cap, fixed re-arm interval",
+      "change": "fix the off-by-one so the rolled amount is spawned, not one more; cap rises or holds flat; the normal-difficulty early warrior swap is dropped unless intended"
+    },
+    {
+      "name": "Merge Slime",
+      "idea": "two small slimes fuse into one large slime on contact",
+      "keep": "crush-transform trigger; large form has a ranged slime",
+      "change": "2-second stationary channel; single size step; our goo colour"
+    },
+    {
+      "name": "Shade Hound",
+      "idea": "a hound hidden on hazard terrain only while still, healing there",
+      "keep": "hide-when-still and heal-on-hazard",
+      "change": "spore-bloom hazard; reveals on sound"
+    },
+    {
+      "name": "Chrono Pulse",
+      "idea": "60-tick mid-luminance desaturation with linear blend-out for a special ability",
+      "keep": "mid-luminance desaturation; linear blend-out",
+      "change": "cool rim flash; local camera only"
+    },
+    {
+      "name": "Phase Scout",
+      "idea": "a scout that cloaks after a short delay and is forced visible at critical health",
+      "keep": "cloak delay; breaks on attack, damage and heal; forced reveal at critical",
+      "change": "our shimmer; forced reveal at 25 percent health"
+    },
+    {
+      "name": "Breakdown Responder",
+      "idea": "a responder that starts by inspecting a downed rig and switches to repair when the fault shows",
+      "keep": "mid-job upgrade from inspect to fix",
+      "change": "player-summoned revive of a downed teammate in the fight zone"
+    },
+    {
+      "name": "Veteran Ladder with Elite",
+      "idea": "four XP thresholds; at level four an elite cuts damage taken",
+      "keep": "thresholds 200/400/800/1600 and the level-four gate",
+      "change": "elite cuts 15 percent with a rank pip"
+    },
+    {
+      "name": "Armour-Class Table",
+      "idea": "each weapon has a multiplier per armour class, so each weapon has a hard counter",
+      "keep": "per-class multiplier table and hard counters",
+      "change": "cloth, leather, plate and crystal classes; fewer weapon entries"
+    },
+    {
+      "name": "Nest Killzone",
+      "idea": "a named nest with an entry footprint that punishes one enemy type on entry, so the nest is a trap as well as a spawn point",
+      "keep": "named nest per id; entry trigger on a footprint; objective to clear every nest",
+      "change": "timed shock that staggers instead of an instant kill; shrine lure draws the player in"
+    }
+  ],
+  "licence_note": "Code: GPL v3 (COPYING, first line 'GNU GENERAL PUBLIC LICENSE, Version 3'; README.md:52 copyright 'OpenRA Developers and Contributors'). Assets: no asset licence in the repo; INSTALL.md says the original game disks are needed; map files name Westwood Studios as author (per AU039). Clean-room, shape only, for code-derived mechanics; no art, audio or maps reproduced.",
+  "not_read": [
+    "Engine render path (OpenRA.Game/Graphics) and ShroudRenderer.cs beyond the AU039 citation",
+    "OpenRA.Server and the network tick",
+    "Westwood binary packs (.shp, .aud, .oramap, tile sets): listed by extension only",
+    "Lua mission logic beyond ant-01 and ant-03 (234 Lua files in the mods tree)",
+    "Fluent string values (counted only: ra 661, cnc 933, d2k 322, ts 420 key lines)",
+    "ts civilian-infantry (mutants) and nod-infantry (cyborgs) in full",
+    "Whether creatures inherit the veterancy ladder per actor",
+    "Mission tileset of ant-03"
+  ]
+}

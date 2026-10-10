@@ -1,0 +1,70 @@
+{
+  "donor": "veloren-veloren",
+  "topic": "world-events",
+  "depth": "full",
+  "half_read": "server",
+  "paths": [
+    "/mnt/frankendom-donors/veloren-veloren/rtsim/src/rule/npc_ai/mod.rs",
+    "/mnt/frankendom-donors/veloren-veloren/rtsim/src/rule/report.rs",
+    "/mnt/frankendom-donors/veloren-veloren/rtsim/src/rule/replenish_resources.rs",
+    "/mnt/frankendom-donors/veloren-veloren/rtsim/src/rule/npc_ai/airship_ai.rs",
+    "/mnt/frankendom-donors/veloren-veloren/rtsim/src/event.rs",
+    "/mnt/frankendom-donors/veloren-veloren/common/src/calendar.rs",
+    "/mnt/frankendom-donors/veloren-veloren/world/src/civ/airship_travel.rs",
+    "/mnt/frankendom-donors/veloren-veloren/rtsim/src/lib.rs"
+  ],
+  "counts": {
+    "calendar_events": 4,
+    "pirate_trigger_denominator": 1200,
+    "pirate_min_group_unhired": 3,
+    "death_witness_units": 32,
+    "theft_witness_units": 24,
+    "replenish_time_s": 3600,
+    "replenish_chunks_per_tick": 8192,
+    "airship_announce_first_range_s": "5-8",
+    "airship_announce_gap_range_s": "10-16"
+  },
+  "rule": "A pirate leader gathers unhired pirates until the group is large enough, marches out, holds, and returns (raid body is a placeholder); death and theft make local witness reports; calendar windows are checked by date; airship routes follow one world clock with irregular dock calls; regrowth touches a fixed number of chunks per tick. See the md note for the order of operations per cell.",
+  "data_fields": [
+    {"name": "pirate_trigger_per_eval", "unit": "probability per evaluation (1 in 1200)", "donor_value_or_null": null},
+    {"name": "pirate_min_unhired_group", "unit": "members", "donor_value_or_null": null},
+    {"name": "pirate_recruit_scale", "unit": "probability per hire above three (1 in 1200)", "donor_value_or_null": null},
+    {"name": "pirate_march_speed", "unit": "fraction", "donor_value_or_null": null},
+    {"name": "pirate_return_speed", "unit": "fraction", "donor_value_or_null": null},
+    {"name": "pirate_raid_s", "unit": "s (60 to 120)", "donor_value_or_null": null},
+    {"name": "pirate_target_range", "unit": "world units (comment says 10 km)", "donor_value_or_null": null},
+    {"name": "death_witness_units", "unit": "world units", "donor_value_or_null": null},
+    {"name": "theft_witness_units", "unit": "world units", "donor_value_or_null": null},
+    {"name": "calendar_christmas_window", "unit": "month-day", "donor_value_or_null": null},
+    {"name": "calendar_halloween_window", "unit": "month-day", "donor_value_or_null": null},
+    {"name": "calendar_easter_window (heuristic)", "unit": "month-day", "donor_value_or_null": null},
+    {"name": "airship_lateness_tolerance_s", "unit": "s", "donor_value_or_null": null},
+    {"name": "airship_first_call_s", "unit": "s (5 to 8)", "donor_value_or_null": null},
+    {"name": "airship_call_gap_s", "unit": "s (10 to 16)", "donor_value_or_null": null},
+    {"name": "airship_last_call_before_end_s", "unit": "s (10 to 12)", "donor_value_or_null": null},
+    {"name": "airship_min_dock_s", "unit": "s", "donor_value_or_null": null},
+    {"name": "regrowth_refill_s", "unit": "s", "donor_value_or_null": null},
+    {"name": "regrowth_chunks_per_tick", "unit": "chunks", "donor_value_or_null": null}
+  ],
+  "cells": [
+    {"id": "V1", "name": "NPC pirate raid: gather, hire, march, return", "verdict": "STRONG", "decision": "adapt (idea)", "target_file": "src/fight/raid-party.ts (proposed)", "row": 4, "best_transferable_idea": "A group that gathers before it marches, with recruiting that speeds up as the group grows.", "tags": ["invasion", "scheduler", "new:recruit-to-raid", "new:threshold-gate"], "defect": "raid body is a TODO (mod.rs:493); range comment says 10 km for 10000 units (mod.rs:386); 'once an hour' depends on an evaluation rate that was not read."},
+    {"id": "V2", "name": "Witness reports within a radius", "verdict": "STRONG", "decision": "adapt (idea)", "target_file": "src/fight/death-witness.ts (proposed)", "row": 17, "best_transferable_idea": "A death or theft is a report that only the people within a radius hear, and they act on it later.", "tags": ["rumour", "new:witness-radius"], "defect": "TODO: reports pushed to every NPC inbox (report.rs:35); the chunk structure the TODO asks for is the fix."},
+    {"id": "V3", "name": "Calendar windows by date", "verdict": "STRONG", "decision": "adapt (idea)", "target_file": "src/fight/calendar-window.ts (proposed)", "row": 21, "best_transferable_idea": "A seasonal window is a date range checked when asked, not a stored event.", "tags": ["timed-event", "scheduler", "world-event", "new:calendar-window"], "defect": "Easter is a hand-picked range (calendar.rs:53), not the date; the list may stay stale across midnight if built once."},
+    {"id": "V4", "name": "Airship timetable and dock countdown", "verdict": "STRONG", "decision": "adapt (idea)", "target_file": "src/fight/event-countdown.ts (proposed)", "row": 14, "best_transferable_idea": "A route on one world clock, with dock calls spaced irregularly so a wait feels like a countdown.", "tags": ["scheduler", "timed-event", "world-event", "signage", "new:route-clock", "new:dock-countdown"], "defect": "lateness beyond 10 s is only logged; no correction (airship_ai.rs:240, 253)."},
+    {"id": "V5", "name": "Regrowth clock with a per-tick budget", "verdict": "STRONG", "decision": "adapt (idea)", "target_file": "src/fight/tick-budget.ts (proposed)", "row": 18, "best_transferable_idea": "A slow regrowth clock that touches a fixed number of chunks each tick, so cost stays flat.", "tags": ["scheduler", "timed-event", "new:regrow-clock", "new:per-tick-budget"], "defect": "none found in the code read; refill is one global constant, not per zone."}
+  ],
+  "licence_note": "Code GPL-3.0 (LICENSE lines 1-2). Assets carry per-entry licences in assets/credits.ron (asset audit AU055). Copyleft: shape only. No code, names, dialogue, sounds or art reused. All donor values null.",
+  "tags": ["world-event", "invasion", "rumour", "scheduler", "timed-event", "signage"],
+  "not_read": [
+    "rtsim/src/rule/simulate_npcs.rs (symbols only)",
+    "rtsim/src/rule/npc_ai/movement.rs, dialogue.rs, quest.rs",
+    "rtsim/src/rule/npc_ai/airship_logger.rs and the release form of the debug macro",
+    "NpcMsg::RequestHire handler and the villager action",
+    "who calls CalendarEvent::from_tz and how often; consumers of CalendarEvent",
+    "consumers of reports and report lifetime",
+    "world/src/civ/airship_travel.rs route generation beyond the struct fields",
+    "rtsim/src/lib.rs line 112 is a design comment; no code traced",
+    "assets/world and assets/common (data half) for this topic",
+    "voxygen client half (sound, voice lines, announcements), not read"
+  ]
+}

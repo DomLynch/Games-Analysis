@@ -1,0 +1,101 @@
+{
+  "donor": "cmangos-mangos-classic",
+  "topic": "world-events",
+  "depth": "full",
+  "half_read": "both",
+  "half_read_note": "both = server code plus the data pack. The data pack has 0 game_event rows in the base dump, so no event counts. Client half absent from the box.",
+  "paired_donor": "azerothcore-azerothcore-wotlk",
+  "paths": [
+    "src/game/GameEvents/GameEventMgr.cpp",
+    "src/game/GameEvents/GameEventMgr.h",
+    "src/game/World/WorldState.cpp",
+    "src/game/World/World.cpp",
+    "src/game/AI/ScriptDevAI/scripts/world/scourge_invasion.cpp",
+    "src/game/Entities/Creature.cpp",
+    "sql/base/mangos.sql",
+    "sql/updates/mangos/z2745_01_mangos_game_event_split.sql",
+    "COPYRIGHT.md",
+    "LICENSE"
+  ],
+  "counts": {
+    "game_event_rows_in_box": 0,
+    "game_event_insert_blocks_in_box": 0,
+    "milestone_wins": [50, 100, 150],
+    "rare_roll_one_in": 217,
+    "siege_yell_window_s": [150, 3600],
+    "spawner_tick_s": 5
+  },
+  "rule": "Window engine: a window is active when start < now < end and (now - start) mod occurence is under length (GameEventMgr.cpp 36-40). Update skips occurence-0 events unless server-side (676). linkedTo: an event starts only while its linked event is active (684). Calendar rules (ComputeEventStartAndEndTime): Darkmoon Faire on the first whole week of the month on a three-month rotation with a seven-day window; building stages offset by a day or two; yearly dates moved to this year; lunar new year from a moon-phase routine with an eight-hour China offset and a 21-day window; Easter from the Gauss routine with a seven-day window. Recomputed on the weekly quest reset (World.cpp 2337). Scourge siege: zone-win lines not read (same shape as the AC donor); milestones hard-coded at 50, 100 and 150 wins; main event stopped at 150 (WorldState.cpp 1287-1299).",
+  "data_fields": [
+    {"name": "event_window_start", "unit": "timestamp", "donor_value_or_null": null},
+    {"name": "event_window_end", "unit": "timestamp", "donor_value_or_null": null},
+    {"name": "event_occurence_min", "unit": "minutes", "donor_value_or_null": null},
+    {"name": "event_length_min", "unit": "minutes", "donor_value_or_null": null},
+    {"name": "link_to_event", "unit": "event id (0 = none)", "donor_value_or_null": null},
+    {"name": "schedule_kind", "unit": "enum", "donor_value_or_null": null},
+    {"name": "calendar_window_days", "unit": "days", "donor_value_or_null": null},
+    {"name": "lunar_region_offset_h", "unit": "hours", "donor_value_or_null": null},
+    {"name": "siege_yell_min_s", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "siege_yell_max_s", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "siege_spawn_tick_s", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "rare_roll_one_in", "unit": "count", "donor_value_or_null": null},
+    {"name": "milestone_wins", "unit": "count list", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "window formula (start, end, occurence, length) as server data",
+    "first-Monday-of-quarter calendar rule as a schedule_kind, computed on the server",
+    "linkedTo chain gate: a later event runs only while its link is active",
+    "Mouth yell window as an ambient cadence field",
+    "milestone ladder keyed to total wins"
+  ],
+  "change": [
+    "fix the day-of-month rollover when the target month is shorter (DMF, GameEventMgr.cpp 1226-1239)",
+    "guard occurence 0 at load time as well as in the update loop",
+    "move the 50, 100 and 150 milestones into data and log the stop at 150",
+    "make the milestone start idempotent (check active first)",
+    "stop the 50, 100 and 150 milestone events when the main invasion stops",
+    "drop the 150-second minimum on the yell gap (chatter)",
+    "cap minions per camp (MAX_ATTACKERS = 3; row 23 spawn caps)"
+  ],
+  "look_test": "On a 375-wide phone: a first-Monday festival banner with a seven-day countdown, and a second stall locked until the first runs. Judge whether the lock is a reason to go find the first stall or a dead end. Second: a siege zone with a Mouth beacon, three camps and a visible win count, versus the same zone with no count. Judge whether the count changes how much the zone feels worth walking.",
+  "licence_note": "Code GPL v2 (LICENSE line 2; GameEventMgr.cpp header line 5). Game content is Blizzard copyright per COPYRIGHT.md line 7 and 19 (AU010 class C). Category-level inspiration only. No code, row, string or broadcast text copied. Donor value null for every field.",
+  "tags": [
+    "world-event",
+    "invasion",
+    "timed-event",
+    "scheduler",
+    "duration-rule",
+    "signage",
+    "rumour",
+    "encounter-camp",
+    "walk-density",
+    "boss-elite-pattern",
+    "new:calendar-window",
+    "new:link-chain-gate",
+    "new:milestone-ladder",
+    "new:dmf-rollover-defect",
+    "new:schema-unused-event-group"
+  ],
+  "defects": [
+    "DMF day-of-month rollover: tm_mday not reset to 1 before adding months (GameEventMgr.cpp 1226, 1232-1239); a recalc on 29-31 aimed at a shorter month rolls into the next month (example: 31 Jan to Feb 31 becomes 3 Mar); fix: set tm_mday = 1 first",
+    "milestone StartEvent has no active check on the 50 band (WorldState.cpp 1293); fix: check IsActiveEvent first",
+    "StopScourgeInvasion does not stop 50, 100 or 150 milestone events (WorldState.cpp 1168-1174); fix: stop them",
+    "milestones hard-coded and main event stopped at 150 without a log (WorldState.cpp 1287-1299); fix: data and a log line"
+  ],
+  "decision": "adapt (idea); calendar rule as data; DMF rollover fixed; design note only, no sketch typechecked",
+  "best_transferable_idea": "A festival window is computed on the server from a calendar rule (first Monday of a quarter, seven days), and a linked-event gate makes the second stall depend on the first.",
+  "not_read": [
+    "LoadFromDB body for game_event beyond links and validity",
+    "UpdateEventNPCFlags and GameEventSpawn detail",
+    "SendEventMails body (called at 729 and 762; name only)",
+    "Moon class body (moon.cpp)",
+    "OutdoorPvP folder (not traced for this topic)",
+    "world-boss respawn lines in Creature.cpp (296, 596)",
+    "Scourge zone-clear lines and zone table (not counted)",
+    "Pools (covered in catalogue DC013 section 5)",
+    "game_event data (absent from box: base dump block empty; no update inserts found)",
+    "EventGroup column: described as randomised daily/weekly groups; no reader in src",
+    "client half (absent from box)",
+    "donor AGENTS.md and CLAUDE.md, if any (treated as data, not followed)"
+  ]
+}

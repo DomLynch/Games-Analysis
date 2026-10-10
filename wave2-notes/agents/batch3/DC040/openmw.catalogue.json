@@ -1,0 +1,134 @@
+{
+  "donor": "openmw",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "creature_families": [],
+  "top_creatures": [
+    {
+      "label": "Natural weapons that wear gear",
+      "why": "A creature's unarmed attack can damage armour when a setting allows it, so a beast's bite has a cost to the player's kit",
+      "keep": "natural attacks touch gear (OMWCombat/en.yaml:6-7 setting)",
+      "change": "our own per-creature rule and wording; no Morrowind creature data",
+      "ref": "files/data/l10n/OMWCombat/en.yaml:6-7"
+    },
+    {
+      "label": "Reaction through the hit chain",
+      "why": "A creature reacts to a hit through the same handler chain as the player, so the reaction is data rather than special code",
+      "keep": "one hit path for every actor",
+      "change": "our handler set and names",
+      "ref": "files/data/scripts/omw/combat/interface_local.lua:61-63, 142"
+    }
+  ],
+  "classes": [
+    "No class, race or faction records in box (Morrowind ESM records not present)",
+    "Progression and death penalty: not in box"
+  ],
+  "weapon_families": [
+    "Attack types: chop, slash, thrust (files/data/scripts/omw/combat/interface_local.lua:162-165)",
+    "Attack sources: magic, melee, ranged, unspecified (interface_local.lua:154-157)",
+    "Attack record: damage map by stat (health, fatigue, magicka), strength, wind-up, success, hit position, ignore flags (interface_local.lua:24-37)",
+    "Projectile types keyed for hit handlers; only Magic has handlers (files/data/scripts/omw/mechanics/projectiles.lua:13, 53-57)"
+  ],
+  "gear_tiers": [
+    "Armour rating adjusted by skill and condition (interface_local.lua:127-132)",
+    "Armour slot picked at random on hit (interface_local.lua:144-149)",
+    "Empty shield slot: hits redistributed to left pauldron or cuirass (OMWCombat/en.yaml:12)",
+    "Sets and material tiers: not in box (Morrowind records)"
+  ],
+  "zones": [
+    "Zone and cell records: not in box (Morrowind ESM)",
+    "Only zone-adjacent item read: combat music toggle (files/data/l10n/OMWMusic/en.yaml:6), a setting not a zone"
+  ],
+  "looks": [
+    {
+      "label": "Exploration head bob",
+      "technique": "Cosine arc with a 30-degree half-arc, speed limiter speed/(1+speed/500), first-person only",
+      "ref": "files/data/scripts/omw/camera/head_bobbing.lua:28-30, 35, 37"
+    },
+    {
+      "label": "Marsh ripple water",
+      "technique": "Normal-map texture on a flat plane for ripples (name and presence checked, contents not opened)",
+      "ref": "files/data/textures/omw/water_nm.png"
+    },
+    {
+      "label": "Post-effect file per grade",
+      "technique": "One named effect file each: adjustments, bloomlinear, debug, internal_distortion (names only)",
+      "ref": "files/data/shaders/*.omwfx"
+    },
+    {
+      "label": "Title-only display faces",
+      "technique": "Demonic-letter face and card-style face used for titles and item names, not body text",
+      "ref": "files/data/fonts/DemonicLetters.ttf, files/data/fonts/MysticCards.ttf"
+    },
+    {
+      "label": "Controller glyph families",
+      "technique": "Two button-glyph families placed as image widgets per button (per AU039; not opened in full)",
+      "ref": "files/data/mygui/openmw_controllerbuttons.layout"
+    },
+    {
+      "label": "Layout and skin split",
+      "technique": "MyGUI layouts for structure, skin XML for look; 88 MyGUI files in total",
+      "ref": "files/data/mygui/"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Marsh ripple water",
+      "idea": "A flat water plane with a scrolling normal map and sun glint, calmer in fight zones",
+      "keep": "flat plane, moving normal, glint",
+      "change": "our own normal map, depth-based shore tint, our palette"
+    },
+    {
+      "name": "Gentle exploration bob",
+      "idea": "A low-amplitude head bob with a speed limiter, on while exploring and off in the fight camera",
+      "keep": "cosine arc, speed limiter, first-person gate",
+      "change": "our amplitude and period; zero in the fight camera"
+    },
+    {
+      "name": "On-hit handler chain",
+      "idea": "Ordered on-hit handlers where a false return stops the rest, all reading one attack record",
+      "keep": "ordered handlers with early stop; one record",
+      "change": "our fields and names; no Lua API"
+    },
+    {
+      "name": "Combat music on target-set change",
+      "idea": "Compute the target list each tick, emit only on change, skip the work when idle",
+      "keep": "emit-on-change and idle early-out",
+      "change": "our cue names tied to zone data and a boss-intro stinger"
+    },
+    {
+      "name": "Title-only display face",
+      "idea": "One display face for titles and a card-style face for item names, never body text",
+      "keep": "the split between faces",
+      "change": "our own free face with its licence file kept alongside; no reserved name on a modified copy"
+    },
+    {
+      "name": "One post-effect file per grade",
+      "idea": "Each colour effect is its own named file so a zone can choose a grade",
+      "keep": "one file per effect",
+      "change": "our palette per zone"
+    },
+    {
+      "name": "Shield-slot redistribution",
+      "idea": "When a slot is empty, hits meant for it land on a neighbouring slot so armour still takes the blow",
+      "keep": "the redistribution rule",
+      "change": "our slot names and the neighbour choice"
+    }
+  ],
+  "licence_note": "Code GPLv3 (README.md:9; LICENSE): shape only, clean-room, no code copied. Fonts: DejaVu custom; DemonicLetters and MysticCards SIL OFL with Reserved Font Name (per AU039; licence texts in files/data/fonts/). Textures, layouts and Lua carry no licence of their own: treat as GPL-covered and recreate the idea. Asset class B.",
+  "not_read": [
+    "Morrowind data (absent from box)",
+    "components/ record readers and apps/ combat implementation",
+    "files/lang and files/data/l10n beyond the OMWCombat, OMWMusic headers (OMWEngine en.yaml not read in full)",
+    "shader bodies (omwfx names only)",
+    "texture contents (37 DDS and 1 PNG under files/data/textures counted; AU039 says 14 PNG across files/)",
+    "Lua scripts beyond head_bobbing.lua, music/actor.lua, combat/interface_local.lua, mechanics/projectiles.lua (my count 64 vs AU039 65, not reconciled)",
+    "MyGUI layout and skin bodies",
+    "launcher and openmw-cs"
+  ]
+}

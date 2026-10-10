@@ -1,0 +1,63 @@
+{
+  "donor": "flareteam-flare-engine",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [
+    "No hero class definitions in this donor. mods/default/engine/classes.txt is a commented example (points must total no more than the max available points, line 3). Real classes are in flareteam-flare-game.",
+    "Engine stats: 4 primary stats (physical, mental, offense, defense; mods/default/engine/primary_stats.txt) and 3 damage types (melee, ranged, mental; mods/default/engine/damage_types.txt line 5)."
+  ],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [],
+  "looks": [],
+  "originals": [
+    {
+      "name": "Pull on first contact",
+      "idea": "When an enemy joins combat it emits a pull power that draws nearby allies in (src/EntityBehavior.cpp lines 243-245; src/Entity.cpp line 360).",
+      "keep": "A join-combat pull implemented as a data power, so it can be tuned per family.",
+      "change": "Pull only a fixed small number of allies; show a visual cue; add a cooldown. Rows: 4 (aggro and leash), 23 (zone population)."
+    },
+    {
+      "name": "Two-radius leash",
+      "idea": "An engage radius and a far radius (default twice the engage radius) so a chase ends (src/EntityBehavior.cpp line 261; src/StatBlock.cpp line 807).",
+      "keep": "Two radii, so the engage and the give-up distances differ.",
+      "change": "Reset the timer when the hero returns; show the leash on the minimap. Rows: 4."
+    },
+    {
+      "name": "Pool by rarity weight",
+      "idea": "Enemies in a category are added to a candidate list as many times as their rarity weight (common 6, uncommon 3, rare 1), then one is picked (src/EnemyGroupManager.cpp lines 96 and 121).",
+      "keep": "Rarity as candidate weight, and a level window per category.",
+      "change": "Precompute cumulative weights once at load; use a uniform random helper; return a reference instead of copying the category vector (line 80). Rows: 23 (zone population), 18 (loot and XP)."
+    },
+    {
+      "name": "Two-table XP multiplier",
+      "idea": "XP multiplier = absolute table by enemy level times relative table by enemy-minus-hero level, clamped at the table ends (src/XPScaling.cpp lines 136-178).",
+      "keep": "Relative-to-hero XP, with the tables as data.",
+      "change": "Check the level-16 value in the data pack (31768 where the pattern gives 32768). Rows: 18 (loot and XP award)."
+    },
+    {
+      "name": "Per-penalty death knobs",
+      "idea": "Each death penalty is a separate knob under a master toggle: currency percent, total-XP percent, XP since last level percent, random item, permadeath (mods/default/engine/death_penalty.txt).",
+      "keep": "One knob per penalty, all in data, with a master toggle.",
+      "change": "Our own defaults (the default here removes 50 percent of currency and no items); a visible respawn cue. Rows: 17 (death and respawn)."
+    }
+  ],
+  "licence_note": "Per the asset audit AU020: code is GNU GPL v3 (COPYING); contributors keep copyright on their contributions; the default mod is stated as GPL v3 and CC-BY-SA 3.0 with no per-file split. Treat as clean-room: shape and mechanism only, no code copied. Not legal advice.",
+  "not_read": [
+    "src/Hazard.cpp, src/LootManager.cpp, src/FogOfWar.cpp, src/MenuMiniMap.cpp, src/MenuTouchControls.cpp (not opened)",
+    "src/MapParallax.cpp and src/CombatText.cpp (not opened)",
+    "src/EnemyGroupManager.cpp lines 1-70 (summary only)",
+    "mods/default/engine combat text, font colours, combat.txt and other data (not opened)",
+    "mods/default images, menus, fonts and languages (counts only, nothing viewed)",
+    "docs folder (not opened)",
+    "Spawn caps and enemy respawn (not located in a narrow search; GameStatePlay.cpp respawn lines are the player's respawn point)",
+    "Creature, class, weapon, gear and zone content: none in this donor; see flareteam-flare-game"
+  ]
+}

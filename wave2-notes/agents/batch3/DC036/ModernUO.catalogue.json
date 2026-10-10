@@ -1,0 +1,197 @@
+{
+  "donor": "ModernUO",
+  "counts": {
+    "creatures": 245,
+    "classes": 0,
+    "weapons": 226,
+    "gear_sets": 2,
+    "zones": 33
+  },
+  "count_notes": {
+    "creatures": "grep count of class declarations deriving from BaseCreature under Projects/UOContent/Mobiles/Monsters; not checked for abstract or helper classes",
+    "classes": "0 = no character class or race table found; 27 skill files (Skills/) and 17 spell-school folders (Spells/) are listed as adjacent systems, not counted here",
+    "weapons": "226 .cs files under Items/Weapons (files, not weapon types)",
+    "gear_sets": "Items/Armor/Sets only (2 files); Items/Armor/Dragon (5 files) and Items/Armor/Artifacts (12 files) are not counted as sets",
+    "zones": "33 region classes in Regions/ (names read; region logic not read)"
+  },
+  "creature_families": [
+    "reptile and dragon family (Mobiles/Monsters/Reptile, 25 files; Magic subfolder)",
+    "humanoid family (77 files, not read in detail)",
+    "ML family (66 files, not read in detail)",
+    "elemental family (Mobiles/Monsters/Elemental, Magic and Melee subfolders) and summons (5 files)",
+    "ore elemental family (8 files, one per metal tier)",
+    "arachnid (8), ants (12), plant (7), SE (19), LBR (12), AOS (21), misc (16), mammal (2)",
+    "animal tree (Mobiles/Animals): bears, birds, canines, felines, reptiles, rodents, slimes, mounts, town animals, critters (not read in detail)",
+    "champion families: nine families in Engines/CannedEvil/ChampionSpawnInfo.cs, each a boss with four levels of two creature types",
+    "special bosses and guards (Mobiles/Special, 18 files): champion base, elite conversion, one-instance boss with minions, about ten named classes"
+  ],
+  "top_creatures": [
+    {
+      "label": "Winged fire-breather boss",
+      "why": "A flying, single-ability boss with a random body variant that changes scale colour; the silhouette reads at distance and the breath is one clear signature.",
+      "keep": "flying boss silhouette, one breath ability, body-variant colour",
+      "change": "our own wing shape, a telegraphed breath arc, and a distinct roar",
+      "ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/Monsters/Reptile/Magic/Dragon.cs lines 6, 11, 56, 59, 61"
+    },
+    {
+      "label": "Four-tier champion family",
+      "why": "Each family climbs four levels, each level with two creature types, so one zone visibly escalates.",
+      "keep": "four levels per family, two types per level, the family as a table row",
+      "change": "our own four tier names and our own creature types per family",
+      "ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/CannedEvil/ChampionSpawnInfo.cs lines 57, 62"
+    },
+    {
+      "label": "Kill-to-advance champion ritual",
+      "why": "The zone must be cleared to advance; the threshold falls as the level rises; progress shows as a count of markers.",
+      "keep": "kill threshold that falls by tier, markers in 20 percent steps, decay below 20 percent",
+      "change": "a glyph ring that brightens instead of skulls; our own pacing",
+      "ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/CannedEvil/ChampionSpawn.cs lines 298-308, 654-657, 918-922"
+    },
+    {
+      "label": "Elite wanderer (paragon roll)",
+      "why": "An ordinary creature becomes an elite with a chance tied to how notable it is; a fixed hue flags it on the field.",
+      "keep": "notability-based chance, fixed elite hue, multiplied hit points and flat damage",
+      "change": "a growing aura and one elite-only ability per creature",
+      "ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/Special/Paragon.cs lines 6, 38, 167, 191"
+    },
+    {
+      "label": "Gatekeeper boss with tentacle minions",
+      "why": "Only one instance may exist; a five-second tick decides whether it acts; it places tentacle minions around itself.",
+      "keep": "one-instance rule, the five-second tick, tentacle minions",
+      "change": "a telegraphed chain pull instead of a random teleport",
+      "ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/Special/Harrower.cs lines 105, 207, 528, 534"
+    },
+    {
+      "label": "Metal elemental ladder",
+      "why": "Each metal tier of the crafting ladder is also a creature, so the material and the monster read as one ladder.",
+      "keep": "one creature per metal tier",
+      "change": "our own elements and tints",
+      "ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/Monsters/Ore Elementals/ (8 files); /mnt/frankendom-donors/ModernUO/Projects/UOContent/Misc/ResourceInfo.cs line 6"
+    },
+    {
+      "label": "Plague bog family",
+      "why": "A swamp family whose top tier is a dissolving essence; the escalation goes from small swarmers to a large dissolving boss.",
+      "keep": "four-tier escalation in a swamp theme",
+      "change": "our own creatures and a poison bloom instead of a copied form",
+      "ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/CannedEvil/ChampionSpawnInfo.cs line 102 (family entry)"
+    },
+    {
+      "label": "Undead escalation ladder",
+      "why": "A four-tier undead family from shambling bodies up to a lich-class boss, one of the clearest tier ladders in the box.",
+      "keep": "four-tier undead ladder ending in one lich-class boss",
+      "change": "our own tier names and a bone-dust telegraph",
+      "ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/CannedEvil/ChampionSpawnInfo.cs line 78 (family entry)"
+    }
+  ],
+  "classes": [
+    "No character class or race table in the box.",
+    "Skills (Skills/, 27 files): not read in detail.",
+    "Spell schools (Spells/, 17 folders): not read in detail.",
+    "Virtues (Engines/Virtues, 13 files): the Justice level sets the chance that a champion kill gives a power scroll (Mobiles/Special/BaseChampion.cs lines 174-178).",
+    "Factions (Engines/Factions, 89 files): not read."
+  ],
+  "weapon_families": [
+    "swords, axes, maces, knives, pole arms, spears and forks, staves, throwing, ranged, wooden, fists (Items/Weapons subfolders)",
+    "Artifacts, ML and SE era folders (Items/Weapons)"
+  ],
+  "gear_tiers": [
+    "weapon quality: three levels (Items/Weapons/WeaponEnums.cs)",
+    "weapon damage level: six named tiers (WeaponEnums.cs line 22); damage bonus is the tier index in the older formula and 2x index minus 1 in the newer one (Items/Weapons/BaseWeapon.cs lines 2475, 2479)",
+    "weapon accuracy and durability: six named levels each",
+    "slayer groups: 27 named creature groups; a weapon can carry one (Items/Weapons/SlayerName.cs lines 3-33)",
+    "armour material: 13 named materials from cloth to stone (Items/Armor/ArmorEnums.cs line 41)",
+    "armour durability and protection: six named levels each (ArmorEnums.cs line 10 onwards)",
+    "armour body slots: seven (ArmorEnums.cs)",
+    "champion drop pools: unique, shared, decorative, chosen by one roll at 5, 10 and 15 percent (Mobiles/Special/BaseChampion.cs line 32)",
+    "material look: crafted items take a hue from their metal (Items/Weapons/BaseWeapon.cs lines 628, 798; Misc/ResourceInfo.cs line 6)"
+  ],
+  "zones": [
+    "dungeon archetypes: DungeonRegion, ExodusDungeonRegion, BlackthornDungeonRegion, TombOfKingsRegion, LostCityEntranceRegion (Regions/)",
+    "hazard names: UnderwaterRegion, IcyRiverRegion, AcidRiverRegion, PoisonedTreeRegion, PolisonedCemeteryRegion, CrystalFieldRegion, TwistedWealdDesertRegion, DoomGuardianRegion (names only; logic not read)",
+    "rule zones: GuardedRegion, NoHousingRegion, NoTravelSpellsAllowedRegion, TownRegion, BattleRegion, SeaMarketRegion",
+    "top 5 striking: UnderwaterRegion (Regions/UnderwaterRegion.cs line 6), IcyRiverRegion (Regions/IcyRiverRegion.cs line 6), PoisonedTreeRegion (Regions/PoisonedTreeRegion.cs line 6), CrystalFieldRegion (Regions/CrystalFieldRegion.cs), TombOfKingsRegion (Regions/TombOfKingsRegion.cs line 5)",
+    "spawn data (row 23): BaseSpawner population cap, respawn window, home and walk radius, weighted entries with caps (Engines/Spawners/BaseSpawner.cs lines 49, 292, 865; SpawnerEntry.cs line 162); no despawn-on-empty grace timer found in the parts read; the champion engine expires its creatures after ten minutes (Engines/CannedEvil/ChampionSpawn.cs line 418)"
+  ],
+  "looks": [
+    {
+      "label": "Metal hue per material",
+      "technique": "one item model, one hue per crafting metal, set at craft time",
+      "ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Items/Weapons/BaseWeapon.cs lines 628, 798"
+    },
+    {
+      "label": "Elite hue flag",
+      "technique": "a fixed hue set on the creature when it is converted to elite",
+      "ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/Special/Paragon.cs (Convert, around lines 48-110)"
+    },
+    {
+      "label": "Body-variant scale colour",
+      "technique": "a random body picked from a range; the scale colour follows the body value",
+      "ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/Monsters/Reptile/Magic/Dragon.cs lines 11, 56"
+    },
+    {
+      "label": "Progress marker with light and cue",
+      "technique": "each progress marker is a light-emitting item with a sound and a one-tile location effect when placed",
+      "ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/CannedEvil/ChampionSpawn.cs around lines 322-334 and 687-688"
+    },
+    {
+      "label": "Timed boss tick",
+      "technique": "a five-second timer with a probability gate; no per-frame check",
+      "ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/Special/Harrower.cs lines 507-534"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Ascent Shrine",
+      "idea": "A zone boss that players level up by clearing the zone; the kill threshold falls as the zone level rises; progress shows as glowing markers; a decay below 20 percent drops the level.",
+      "keep": "four-tier family, falling threshold by tier, decay below 20 percent",
+      "change": "a glyph ring that brightens instead of skulls; our own tier names; a telegraphed boss entrance"
+    },
+    {
+      "name": "Elite Wanderer",
+      "idea": "An ordinary monster becomes an elite with a chance tied to how notable it is.",
+      "keep": "notability-based chance, fixed elite hue, multiplied hit points",
+      "change": "a growing aura and one elite-only ability"
+    },
+    {
+      "name": "Gatekeeper",
+      "idea": "A boss that allows one instance at a time, with tentacle minions and a five-second tick.",
+      "keep": "one-instance rule and the tick",
+      "change": "a telegraphed chain pull instead of a random teleport"
+    },
+    {
+      "name": "Metal Elemental Ladder",
+      "idea": "Each metal tier of a crafting ladder is also a creature in the same family.",
+      "keep": "one creature per tier",
+      "change": "our own elements and tints"
+    },
+    {
+      "name": "Slayer Sigil",
+      "idea": "A weapon bonus against one creature group, shown as a sigil on hit.",
+      "keep": "a named group bonus",
+      "change": "a visible glow and a unique hit sound"
+    },
+    {
+      "name": "Swamp Plague Champion",
+      "idea": "A four-tier swamp family whose top tier dissolves.",
+      "keep": "four-tier escalation",
+      "change": "our own creatures and a poison bloom"
+    }
+  ],
+  "licence_note": "Code is GPL-3.0 (LICENSE header: Copyright 2019-2020 ModernUO Development Team). No asset licence; the emulated game's content has no stated origin in the box. Shape and mechanism only, clean-room; no code or names copied.",
+  "halves": {
+    "server": "partly read: Mobiles/Monsters (counts and the dragon class), Mobiles/Special (paragon, champion base, harrower in part), Engines/CannedEvil (champion table and progression), Engines/Spawners (spawner caps and picks), Items/Armor and Items/Weapons (enums and damage lines), Regions (file names and four class lines). Projects/Server not read.",
+    "data": "partly read: Distribution/Data/Spawns/shared/trammel/Reagents.json (structure), names.json (head). Others not read.",
+    "client": "none in the box; ClassicUO is present by name only and is a candidate paired client half, not read."
+  },
+  "not_read": [
+    "Projects/Server (whole folder)",
+    "most of Mobiles/Monsters and Mobiles/Animals (folder counts only)",
+    "Items/Weapons and Items/Armor beyond enums and damage lines",
+    "Skills, Spells, Engines/Factions, Engines/Virtues beyond counts and one switch",
+    "Regions logic (names only, four class lines checked)",
+    "Distribution/Data other spawn files (108 of 109), Locations, names.json beyond head, ItemBounds.bin",
+    "Migrations folders (counts only)",
+    "ClassicUO (name only)",
+    "CLAUDE.md, AGENTS.md, GEMINI.md: present in the donor, treated as data, not followed"
+  ]
+}

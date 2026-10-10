@@ -1,0 +1,145 @@
+{
+  "donor": "l1j-en-classic",
+  "class": "C",
+  "halves_read": "SERVER half: source (model, templates, datatables, classes), SQL dump (db/l1jdb_m10.sql), XML data (data/xml Cycle, Item, NpcActions), rates and config. CLIENT half not in this donor; paired client in the box is uglyoldbob-l1j-client (audit AU054), not opened by me. Audit AU029 says no pair exists; AU054 lists one; I follow AU054.",
+  "counts": {
+    "creatures": 2747,
+    "classes": 7,
+    "weapons": 331,
+    "gear_sets": 62,
+    "zones": 545
+  },
+  "creature_families": [
+    {"family": "monster-class NPC rows", "count": 1313, "note": "level 50 or higher: 264; level 70 or higher: 26", "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 20623 (npc inserts from line 20623)"},
+    {"family": "family tags on monsters", "count": 125, "note": "898 monsters tagged, 415 untagged; alert mode 1 on 725 monsters, mode 0 on 588", "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 1578 (family column)"},
+    {"family": "tamable monsters", "count": 234, "note": "tamable flag on monster rows", "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 1544 (npc table)"},
+    {"family": "undead-flagged monsters", "count": 307, "note": "undead value 1 to 5; meaning not read", "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 1544 (npc table)"},
+    {"family": "hard-flagged monsters", "count": 144, "note": "elite-like flag in data", "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 1544 (npc table)"},
+    {"family": "traps by type", "count": 52, "note": "monster-summon 34, teleport 7, skill 4, damage 3, poison 3, heal 1", "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 2016 (trap table)"},
+    {"family": "pet forms linked by evolution", "count": 29, "note": "pettypes rows with NpcIdForEvolving", "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 1705"}
+  ],
+  "top_creatures": [
+    {
+      "label": "Heavy late-tier brute",
+      "why": "The highest-level big-HP monster row in the table (level 99, HP 28,000, NPC row 81163). One large body for a late fight.",
+      "keep": "A single heavy silhouette with a long wind-up.",
+      "change": "Each swing telegraphs with a visible ground mark before it lands.",
+      "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 23188 (npc insert, id 81163)"
+    },
+    {
+      "label": "Gated caller",
+      "why": "A summoner whose ordered skill list is gated by random chance, HP ratio, lowest-companion HP, distance band and use count. First usable skill wins.",
+      "keep": "Ordered gates and first-usable-wins.",
+      "change": "A visible call-out before each summon, and the three defects fixed (section 7 of the md).",
+      "ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/L1MobSkillUse.java lines 405-465"
+    },
+    {
+      "label": "Kin-alert pack",
+      "why": "Family tags with a mode: mode 1 alerts the same family only; a group leader links its group.",
+      "keep": "Tag and mode as data.",
+      "change": "A hate list with the three-attacker cap (Frankendom ruling MAX_ATTACKERS = 3) and an alert ring on the ground.",
+      "ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/Instance/L1NpcInstance.java lines 370-392"
+    },
+    {
+      "label": "Window boss",
+      "why": "A world boss whose appearance is a random point inside a daily window (28 live cycle entries).",
+      "keep": "The daily window and the random appearance.",
+      "change": "A sighting hint and a daily jitter stored once per cycle; closed-form cycle search.",
+      "ref": "/mnt/frankendom-donors/l1j-en-classic/data/xml/Cycle/BossCycle.xml lines 12-13; /mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/L1BossCycle.java lines 215-258"
+    },
+    {
+      "label": "Hard-flag elite",
+      "why": "144 monsters carry a hard flag in data, so an elite is a data mark, not a special class.",
+      "keep": "A flag that marks elites in data.",
+      "change": "An elite ring that reads at 375 wide, not a stat number.",
+      "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 1544 (npc table)"
+    },
+    {
+      "label": "Tamable companion that evolves",
+      "why": "234 tamable monsters; 29 pet-type rows link each form to the next form through an evolution column.",
+      "keep": "Evolution as a data link.",
+      "change": "Each evolution shows as a silhouette change with its own idle loop.",
+      "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 1697 (pettypes table)"
+    },
+    {
+      "label": "Ambush trap creature",
+      "why": "34 of 52 traps summon monsters when triggered.",
+      "keep": "A trap that spawns its own threat.",
+      "change": "A telegraph on the floor before it fires.",
+      "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 2016 (trap table)"
+    },
+    {
+      "label": "Light-carrying creature",
+      "why": "1,399 NPC rows carry a light radius as data.",
+      "keep": "Light radius as data.",
+      "change": "Light colour per faction, readable at 375 wide.",
+      "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 1605 (light_size column)"
+    }
+  ],
+  "classes": [
+    {"name": "royal (id 0)", "role": "not read in depth", "signature_mechanic": "magic level min(2, level/10)", "progression": "evasion-type rating level/8; fixed Str 13, Cha 13", "ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/classes/L1RoyalClassFeature.java line 39"},
+    {"name": "knight (id 1)", "role": "not read in depth", "signature_mechanic": "magic level level/50, uncapped; melee bonus +2 at Str 18, +4 at Str 20", "progression": "fixed Str 16 (max 20); starting HP 16", "ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/classes/L1KnightClassFeature.java lines 34, 45, 107-108"},
+    {"name": "elf (id 2)", "role": "not read in depth", "signature_mechanic": "magic level min(6, level/8)", "progression": "fixed stats near 12 across Str, Dex, Con, Int", "ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/classes/L1ElfClassFeature.java line 39"},
+    {"name": "wizard (id 3)", "role": "not read in depth", "signature_mechanic": "magic level min(10, level/4), the highest magic ceiling", "progression": "fixed Int 12 (max 18); fixed Str 8", "ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/classes/L1WizardClassFeature.java line 39"},
+    {"name": "dark elf (id 4)", "role": "not read in depth", "signature_mechanic": "magic level min(2, level/12)", "progression": "fixed Dex 15, the highest base Dex; fixed Con 8", "ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/classes/L1DarkElfClassFeature.java line 39"},
+    {"name": "dragon knight (id 5)", "role": "not read in depth", "signature_mechanic": "magic level min(4, level/9)", "progression": "fixed Str 13, Con 14", "ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/classes/L1DragonKnightClassFeature.java line 39"},
+    {"name": "illusionist (id 6)", "role": "not read in depth", "signature_mechanic": "magic level min(6, level/8)", "progression": "fixed Int 12, Con 12", "ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/classes/L1IllusionistClassFeature.java line 39"}
+  ],
+  "weapon_families": [
+    {"family": "sword", "count": 76, "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 63702 (weapon table)"},
+    {"family": "bow", "count": 39, "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 63702 (weapon table)"},
+    {"family": "staff", "count": 31, "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 63702 (weapon table)"},
+    {"family": "two-hand sword", "count": 30, "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 63702 (weapon table)"},
+    {"family": "dagger", "count": 24, "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 63702 (weapon table)"},
+    {"family": "edoryu", "count": 23, "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 63702 (weapon table)"},
+    {"family": "claw", "count": 21, "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 63702 (weapon table)"},
+    {"family": "spear", "count": 19, "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 63702 (weapon table)"},
+    {"family": "single spear", "count": 16, "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 63702 (weapon table)"},
+    {"family": "blunt", "count": 15, "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 63702 (weapon table)"},
+    {"family": "two-hand blunt", "count": 15, "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 63702 (weapon table)"},
+    {"family": "two-hand staff", "count": 5, "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 63702 (weapon table)"},
+    {"family": "single bow", "count": 5, "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 63702 (weapon table)"},
+    {"family": "gauntlet", "count": 4, "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 63702 (weapon table)"},
+    {"family": "kiringku", "count": 4, "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 63702 (weapon table)"},
+    {"family": "chain sword", "count": 4, "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 63702 (weapon table)"}
+  ],
+  "gear_tiers": [
+    {"tier": "weapon materials", "note": "iron 100, steel 74, wood 49, black mithril 23, mithril 19, silver 16, oriharukon 14, bone 13, platinum 13, gold 6, gemstone 3, leather 1", "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 63702 (weapon table)"},
+    {"tier": "armour materials", "note": "leather 129, cloth 93, iron 89, gemstone 83, gold 70, bone 56, mithril 23, black mithril 17, silver 14, wood 13, dragonscale 11, steel 8, platinum 4, vegetation 3, copper 3, glass 3, paper 3, oriharukon 2", "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 63 (armor table, from CREATE at line 63)"},
+    {"tier": "armour sets by piece count", "note": "1 piece 32 sets, 2 pieces 12, 4 pieces 10, 3 pieces 3, 5 pieces 3, 6 pieces 1, 8 pieces 1; each set has four elemental defence values", "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 3469 (armor_set inserts)"},
+    {"tier": "safe enchant", "note": "safe-enchant column on armour and weapon rows; enchant success and fail logs", "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 63 (armor table)"}
+  ],
+  "zones": [
+    {"name": "map table (545 rows)", "note": "tower 101, dungeon 57, floor 49, cave 18, island 13, castle 13, ship 9, hidden 8, forest 8, temple 7, jail 3, hell 2, prison 1, town 1, battle 1, desert 1 (first keyword match, approximate); other 253", "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 19191 (mapids inserts)"},
+    {"name": "dungeon teleport graph", "note": "1,521 rows", "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 14924 (dungeon inserts)"},
+    {"name": "level-banded arenas", "note": "5 settings rows: bands 1-15, 10-20, 25-45, 30-48, 40-99; max 20 players; 1,114 arena spawn rows", "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql (ub_settings and spawnlist_ub tables)"},
+    {"name": "per-map rule flags", "note": "teleportable 138 of 545; penalty 536; escapable 528; resurrection 529; pets taken on 505; underwater 6", "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 19191 (mapids table)"},
+    {"name": "traps as hazards", "note": "52 rows across 6 trap types", "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 2016 (trap table)"}
+  ],
+  "looks": [
+    {"label": "Light radius per creature", "technique": "Point light per creature with a radius from data (light_size on 1,399 NPC rows).", "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 1605"},
+    {"label": "Aggro reaction graphic", "technique": "A reaction emote id on first aggro; set on only 5 rows.", "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 1580"},
+    {"label": "Shape change on transform", "technique": "Transform id set on 55 NPC rows; doppel flag on 4; a shape swap, not a new body.", "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 1544 (npc table)"},
+    {"label": "Skill cast effect ids", "technique": "37 distinct cast graphic ids; map each to our own cast effect.", "ref": "/mnt/frankendom-donors/l1j-en-classic/db/l1jdb_m10.sql line 1772 (skills table)"},
+    {"label": "Rest-zone regen multiplier", "technique": "Castle regen multiplier as data (RateHpCastle = 5); show a rest zone as a campfire glow, not a number.", "ref": "/mnt/frankendom-donors/l1j-en-classic/config/rates.properties line 10"}
+  ],
+  "originals": [
+    {"name": "Gated Caller", "idea": "An ordered skill list where each skill is gated by random chance, HP ratio, lowest-companion HP, distance band and use count; first usable skill wins.", "keep": "ordered gates and first-usable-wins", "change": "A visible call-out before each summon; the three defects fixed (random <=, no target mutation in a gate, summon cap falls through)."},
+    {"name": "Window Warden", "idea": "A world boss that appears at a random point inside a daily window, with a sighting hint.", "keep": "the daily window and the random appearance", "change": "A per-cycle jitter stored once; closed-form cycle search."},
+    {"name": "Kin Alarm", "idea": "Family tags with a mode: a pack alerts its family, and a group leader links its group.", "keep": "tag and mode as data", "change": "A three-attacker cap and an alert ring on the ground."},
+    {"name": "Weighted Strongbox", "idea": "A treasure box with random chances that sum to 100 (60 random boxes all sum to 100; 50 fixed-content boxes).", "keep": "the weighted table and the 100 check", "change": "A rarity colour and sound at the moment of the drop."},
+    {"name": "Tamer's Growing Companion", "idea": "A tamable creature with a data link to its next form.", "keep": "evolution as a data link", "change": "Each form has its own silhouette and idle loop."},
+    {"name": "Tower Stack", "idea": "Dungeon floors joined by teleport rows, one theme per level.", "keep": "stacked floors as data", "change": "A palette shift per floor and a cleared-floor marker."},
+    {"name": "Rest Ring Shrine", "idea": "A regen multiplier for rest zones shown as a campfire glow.", "keep": "the multiplier as zone data", "change": "A glow, never a number."}
+  ],
+  "licence_note": "Code GNU GPL version 2 (COPYING line 1; README.md line 115). Data under the same repo-wide GPL-2.0 statement; no separate asset licence found. README line 84 calls the server a clean-room implementation (project's own description, not verified). No rights holder is named for game data tables; audit AU029 class C. Paired client uglyoldbob-l1j-client is GPL-3.0 code with game data not in its repo (AU054).",
+  "not_read": [
+    "client half (art, sound, models) and the paired client uglyoldbob-l1j-client",
+    "db/archive/archive.tar.bz2, the connector zip, data/idstate.dat (binary)",
+    "map grid files maps/*.txt (counted only, 567 files)",
+    "monster AI subclasses beyond the link method; trap logic; pet evolution logic; polymorph logic",
+    "meaning of the undead value (1 to 5), the zone-type fields, and the 30,000-HP level-1 rows",
+    "full class roles and signature mechanics beyond the stat curves",
+    "item effect logic; craft recipes counted only (369 item-making and 117 single-item-making actions)"
+  ]
+}

@@ -1,0 +1,129 @@
+{
+  "donor": "wowserhq-wowser",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [],
+  "looks": [
+    {
+      "label": "blend-mode table",
+      "technique": "seven material blend modes (cases 0-6) each set as a source and destination factor pair; mode 4 is additive (source alpha, destination one)",
+      "ref": "src/lib/pipeline/m2/material/index.js lines 160-209"
+    },
+    {
+      "label": "alpha-key cutout",
+      "technique": "mode 1 discards pixels at or below half alpha in the fragment shader",
+      "ref": "src/lib/pipeline/m2/material/shader.frag line 32; src/lib/pipeline/m2/material/index.js line 150"
+    },
+    {
+      "label": "per-material render flags",
+      "technique": "bit 0x01 turns off lighting, 0x02 turns off fog, 0x04 turns off back-face culling, 0x10 turns off depth writes",
+      "ref": "src/lib/pipeline/m2/material/index.js lines 123-143"
+    },
+    {
+      "label": "effects fade into fog",
+      "technique": "blend modes 2 to 5 scale alpha by the fog factor so glows dissolve with distance",
+      "ref": "src/lib/pipeline/m2/material/shader.frag lines 116-119"
+    },
+    {
+      "label": "terrain layer paint",
+      "technique": "base texture plus up to three alpha-blended layers; each layer is lit before it blends",
+      "ref": "src/lib/pipeline/adt/chunk/shader.frag lines 2 and 81-110"
+    },
+    {
+      "label": "terrain fog clears alpha far away",
+      "technique": "beyond 1.5 times fog end the alpha is forced to opaque",
+      "ref": "src/lib/pipeline/adt/chunk/shader.frag lines 26-29"
+    },
+    {
+      "label": "nine-slice frame family",
+      "technique": "one texture per border weight (thin, thick, panel) plus a headless panel with a smaller top border; a near-opaque dark plate sits 3 px outside each frame on a lower layer",
+      "ref": "src/components/wowser/ui/frame/index.styl lines 10-19, 21-23, 42-44, 61-63"
+    },
+    {
+      "label": "unit plate with hanging icon",
+      "technique": "portrait background image; round icon at a small negative offset overlapping the plate edge; name right of the icon; level in the top-right corner; stacked bars at the bottom",
+      "ref": "src/components/game/portrait/index.styl lines 6-25"
+    },
+    {
+      "label": "conditional target plate",
+      "technique": "self plate always rendered; target plate rendered only when a target exists",
+      "ref": "src/components/game/hud/index.jsx lines 16-17"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Unit plate with a hanging icon",
+      "idea": "a plate with a round icon overlapping its edge, the name inline, the level in the corner",
+      "keep": "icon overlapping the edge, name inline, level in the corner",
+      "change": "tall chamfered plate, icon ring in our palette, threat shown as a bottom edge bar rather than name colour; readable at 375 wide"
+    },
+    {
+      "name": "Empty-until-needed target plate",
+      "idea": "a second plate that renders only when there is a target, so empty space is the default",
+      "keep": "conditional second plate",
+      "change": "on phones the target plate stacks above the self plate"
+    },
+    {
+      "name": "Nine-slice frame family",
+      "idea": "panels framed by one texture per weight, plus a headless variant for panels with no title bar",
+      "keep": "one texture per weight, headless variant",
+      "change": "chamfered corners and our own edge art"
+    },
+    {
+      "name": "Dark offset plate for contrast",
+      "idea": "a near-opaque plate offset behind each frame so panels read over bright scenes",
+      "keep": "offset dark plate on a lower layer",
+      "change": "our own radius and opacity, tested against bright and dark scenes at 375 wide"
+    },
+    {
+      "name": "Additive aura that dissolves into fog",
+      "idea": "additive glows whose alpha fades with fog distance, so they dissolve rather than pop",
+      "keep": "additive blending and fog-driven alpha fade",
+      "change": "colour per tier and a pulse timed to our combat sound cue. Defect to fix first: the opaque-at-fog-end test (shader.frag lines 110-114) applies to every mode while its comment names only certain modes; confirm in game, then restrict it"
+    },
+    {
+      "name": "Hard alpha cutout for cards and foliage",
+      "idea": "a hard cutout at half alpha, cheap on phones",
+      "keep": "cutout threshold approach",
+      "change": "our own alpha art and a mobile-first threshold"
+    },
+    {
+      "name": "Trickle loader for zone props",
+      "idea": "each tick loads a fraction of pending items (1/40, minimum 2) and yields so frames stay smooth",
+      "keep": "per-tick fractional budget with a minimum batch",
+      "change": "fix the idle loop: both timers re-arm every 1 ms even with nothing pending (doodad-manager.js lines 112 and 172). Re-arm only when work is pending, otherwise back off to about 100 ms. Row 18 sub-line 'per-tick budget' (client-side analogue)"
+    },
+    {
+      "name": "Numbered overlay zone patches",
+      "idea": "a base zone data set plus ordered overlays where a later overlay wins",
+      "keep": "base plus ordered overlays, later wins",
+      "change": "sort overlays by an explicit numeric index. Defect: archive.js passes the patch list to a glob with no sort (lines 27-31), so order inside one pattern depends on the glob library (globby ordering not read). Fix: sort by numeric patch index before applying. Row 20 and the zones-as-data ruling"
+    },
+    {
+      "name": "Terrain paint with a shared blend map",
+      "idea": "a base layer plus up to three alpha-blended layers, each lit before blending",
+      "keep": "alpha-map blend and per-layer lighting",
+      "change": "cap at three layers on phones and pack the blend maps into one texture to save fetches. Row 16"
+    }
+  ],
+  "licence_note": "Code MIT (LICENSE line 3; package.json license field). 10 PNG UI images have no licence file and the MIT text does not state it covers images (class C); their pixel content was not opened. Game data is read at runtime from the user's own client and is not in the box. Recreate as clearly distinct originals, never copies. Not legal advice.",
+  "not_read": [
+    "src/lib/server/cluster.js, config, index.js (only archive.js read)",
+    "src/lib/realms, src/lib/auth, src/lib/net socket, src/lib/pipeline/worker pool",
+    "src/lib/pipeline/m2 batch-manager, animation-manager, blueprint",
+    "src/lib/pipeline/adt and wmo loaders; wmo shaders beyond the fog function",
+    "src/components chat, stats and quests (quests is a placeholder per the audit)",
+    "PNG pixel content (binary, not opened)",
+    "package-lock.json, bin/serve"
+  ]
+}

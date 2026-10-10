@@ -1,0 +1,83 @@
+{
+  "donor": "EQEmu",
+  "topic": "world-fiction",
+  "depth": "full",
+  "half_read": "server and data (client not read; narrative text not in tree)",
+  "paths": [
+    "/mnt/frankendom-donors/EQEmu/common/faction.h",
+    "/mnt/frankendom-donors/EQEmu/common/faction.cpp",
+    "/mnt/frankendom-donors/EQEmu/common/ruletypes.h",
+    "/mnt/frankendom-donors/EQEmu/common/emu_constants.h",
+    "/mnt/frankendom-donors/EQEmu/common/strings_legacy.cpp",
+    "/mnt/frankendom-donors/EQEmu/common/database.cpp",
+    "/mnt/frankendom-donors/EQEmu/common/repositories/base/base_faction_association_repository.h",
+    "/mnt/frankendom-donors/EQEmu/zone/client.cpp",
+    "/mnt/frankendom-donors/EQEmu/zone/hate_list.cpp",
+    "/mnt/frankendom-donors/EQEmu/zone/npc.cpp",
+    "/mnt/frankendom-donors/EQEmu/zone/mob.cpp",
+    "/mnt/frankendom-donors/EQEmu/zone/zone_npc_factions.cpp",
+    "/mnt/frankendom-donors/EQEmu/zone/object.h",
+    "/mnt/frankendom-donors/EQEmu/utils/sql/git/optional/2019_04_13_restore_legacy_faction_thresholds.sql",
+    "/mnt/frankendom-donors/EQEmu/utils/sql/git/optional/2022_09_02_faction_association.sql",
+    "/mnt/frankendom-donors/EQEmu/utils/sql/git/optional/2023_12_21_update_faction_associations.sql",
+    "/mnt/frankendom-donors/EQEmu/utils/sql/svn/2142_emotes.sql"
+  ],
+  "counts": {
+    "standing_grades": 9,
+    "faction_association_rows": 371,
+    "association_slots_per_row": 10,
+    "association_rows_by_filled_slots": {"1": 122, "2": 87, "3": 84, "4": 62, "5": 7, "6": 5, "7": 3, "8": 1},
+    "association_zero_multiplier_slots": 1,
+    "faction_list_mod_rows": 9801,
+    "faction_list_mod_factions": 556,
+    "faction_list_mod_keys": 49,
+    "faction_list_mod_key_classes": {"class_c": 16, "race_r": 16, "deity_d": 17},
+    "emote_event_types": 9,
+    "emote_text_max_chars": 512,
+    "emote_seed_rows": 0,
+    "threshold_legacy_rows": 8,
+    "threshold_legacy_missing_commas": 3
+  },
+  "rule": "Standing is a point total read through a nine-step ladder (first minimum reached wins). One reward to a primary faction also moves up to ten linked factions by a multiplier times the reward; each linked change is truncated to a whole number, floored at one point, and keeps the sign of the product. Every participant on the NPC hate list gets the same reward. Emote lines are keyed by (emote id, event) and one is picked at random when several match (schema currently forbids more than one). Names are cleaned for display by turning underscores into spaces and dropping digits and punctuation.",
+  "data_fields": [
+    {"name": "ladder_grades", "unit": "grades", "donor_value_or_null": null},
+    {"name": "grade_min", "unit": "standing points", "donor_value_or_null": null},
+    {"name": "ripple_slots", "unit": "linked factions per source", "donor_value_or_null": null},
+    {"name": "ripple_multiplier", "unit": "float, times reward", "donor_value_or_null": null},
+    {"name": "ripple_min_step", "unit": "points (code floor is 1)", "donor_value_or_null": null},
+    {"name": "fanout_scope", "unit": "rule: every hate-list participant", "donor_value_or_null": null},
+    {"name": "emote_event_types", "unit": "events", "donor_value_or_null": null},
+    {"name": "emote_text_max", "unit": "characters", "donor_value_or_null": null},
+    {"name": "start_modifier_keys", "unit": "keys by race, class, deity", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Nine-word attitude ladder on the NPC or guard card.",
+    "One primary change plus a short linked list, each linked change sign-preserving.",
+    "Fan-out to every participant on the hate list, not only the killer.",
+    "Emote lines per combat event with name tokens (self, race, class, target).",
+    "Data names with underscores, cleaned for display at load or draw time.",
+    "Per-faction ripple table stored as zone data, so the rule is shared across zones."
+  ],
+  "change": [
+    "Zero multiplier still moves a linked faction by +1 (zone/client.cpp lines 9156 and 9169; data line 16 of the 2022 seed). Fix: skip a slot whose multiplier is exactly zero.",
+    "Emote variety is dead under the shipped schema: random pick in code (zone/npc.cpp line 2767) against a unique key on (emote id, event) (2142_emotes.sql line 8). Fix: key on a line id and keep the random pick with a seed.",
+    "Threshold restore SQL is malformed: misspelled kindly key (line 5) and three missing row commas (lines 7 to 9). Fix: correct the key and commas; keep the documented way to set the nine minimums.",
+    "Outlier multipliers to check with the data owner: a 341 multiplier (line 98, slot 3) and a stray 1522 in an unused slot (slot 4, id 0). Not changed here.",
+    "Floor of one point on every linked change: keep the idea, expose the floor as ripple_min_step so quiet rivals can be zero.",
+    "Else branch of the hate-list fan-out can run with a non-positive faction id (zone/hate_list.cpp lines 297-305). Fix: guard on a positive id."
+  ],
+  "look_test": "In one zone, put a ladder card on one Pit NPC. Run three kills with a group of three. After each kill, show the ripple toast: one primary row and two or three linked rows with sign and point change. Compare a one-point floor on every linked change against a zero floor for quiet rivals. On a 375-wide phone, judge whether the ladder words read at a glance and the toast fits without scrolling. Then compare one emote line per event with three random lines per event.",
+  "licence_note": "Code GPL-3.0 (LICENSE.md, Version 3, 29 June 2007). Data is game-derived; the README names the rights holders of the original game. Clean-room, shape only: no donor thresholds, multipliers, names, emote text or table rows are reused as values. Recreate with our own numbers, words and factions.",
+  "tags": ["faction-map", "new:standing-ladder", "new:faction-ripple", "new:hate-list-fanout", "rumour", "new:emote-event", "naming-grammar", "new:display-name-clean", "new:start-standing", "new:race-kinship", "signage"],
+  "not_read": [
+    "client_files (client half) and the client UI code",
+    "zone/zone_npc_factions.cpp load function bodies beyond names and line ranges",
+    "faction set function SetFactionLevel2 and SetFactionLevel bodies (zone/client.cpp lines 8243 and 8328)",
+    "the caller that fires DoFactionHits on NPC death",
+    "the faction_list and faction_list_mod seed rows (2023 file counted, not read in full; svn 304, 1404 and 2214 faction files not read beyond line counts)",
+    "the 2015 MyFaction stored procedure file and the 2020 drakkin faction data file (not read)",
+    "the race and class modifier key-to-field mapping in the struct",
+    "all quest scripts (no quest directory in this tree); NPC say-lines; zone story and description text; sign and readable text; the emote rows (none in the tree)",
+    "ProjectEQ world data named in the README, not in the tree"
+  ]
+}

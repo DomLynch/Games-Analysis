@@ -1,0 +1,225 @@
+{
+  "donor": "flareteam-flare-game",
+  "counts": {
+    "creatures": 124,
+    "classes": 3,
+    "weapons": 73,
+    "gear_sets": 4,
+    "zones": 56
+  },
+  "creature_families": [
+    "Skeletons: 25 files by filename keyword (archer, fire/ice/frost/blaze/shock mages, knight, guardian, protector, basher, assassin, sharpshooter); includes 1 player-summon and 1 spawn variant; HP 60 at level 1 to 410 at level 15. Ref: mods/empyrean_campaign/enemies/lvl*_skeleton*.txt",
+    "Zombies: 13 files by filename keyword (raised, rotting, brute, bloodthirsty, iceclaw, leecher, vomit, miner, frozen, vampiric); includes 1 player-summon; HP 30 at level 1 to 360 at level 13. Ref: mods/empyrean_campaign/enemies/lvl*_zombie*.txt",
+    "Goblins and hobgoblins: 22 files by filename keyword (runner, charger, spearman, hurler, vanguard, hunter, shaman, thief, sprinter, sonic, archer); chief elite 260 HP at level 2; hobgoblin 400 HP at level 15. Ref: mods/empyrean_campaign/enemies/lvl*_goblin*.txt",
+    "Antlions: 19 files by filename keyword (fire, ice, venom, burster, sprayer, spitter, slasher, freezer, firethorn, shivering, larva, hatchling, fossilized); labyrinth hatchling 20 HP; queen 840 HP at level 7. Ref: mods/empyrean_campaign/enemies/lvl*_antlion*.txt",
+    "Wyverns (flying): 9 files (base, fire, ice, air, tundra, ancient, labyrinth variants); 60 HP labyrinth, 210-220 HP at level 7, 260 tundra at level 9, 410 ancient at level 15. Ref: mods/fantasycore/enemies/base/wyvern*.txt, mods/empyrean_campaign/enemies/lvl*_wyvern*.txt",
+    "Minotaurs (heavy humanoids): 2 files (minotaur 305 HP, necromancer 385 HP, both level 10). Ref: mods/empyrean_campaign/enemies/lvl10_minotaur*.txt",
+    "Sentries (stationary turrets): 2 files, fire and ice, 600 HP at level 11. Ref: mods/empyrean_campaign/enemies/lvl11_sentry_fire.txt, lvl11_sentry_ice.txt",
+    "Graves and tombstones (stationary): cursed grave 200 HP at level 3; forgotten grave 1700 HP at level 16. Ref: mods/empyrean_campaign/enemies/lvl3_cursed_grave.txt, lvl16_forgotten_grave.txt",
+    "Boulders (catacomb set piece): 2 files, 700 HP, quest-tagged. Ref: mods/empyrean_campaign/enemies/catacomb_boulder_1.txt",
+    "Named elites and bosses: 28 files whose names match no family keyword; 25 files across the set carry a defeat or quest tag. Boss HP steps 830 (level 1), 2160 (level 4), 5040 (level 12), 13280 (level 16). Ref: mods/empyrean_campaign/enemies/il_boss_razu.txt, lvl4_seagate.txt, lvl12_metzger.txt, lvl16_lezaith.txt"
+  ],
+  "top_creatures": [
+    {
+      "label": "Ember-winged skyrider",
+      "why": "A flying body that reads as one family in several element colours; flying plus melee, ranged and cast gives several attack shapes from one template.",
+      "keep": "One base body with element passes; flying with a threat radius of 8; a shared hit sound.",
+      "change": "Our own body plan (not a winged lizard); armour plates in place of wings; our own palette.",
+      "ref": "mods/fantasycore/enemies/base/wyvern.txt (lines 1, 6, 14); mods/empyrean_campaign/enemies/lvl15_wyvern_ancient.txt (line 39)"
+    },
+    {
+      "label": "Ward-bearer beast",
+      "why": "A two-second window where it reflects projectiles, then a ring burst. Players can learn the tell.",
+      "keep": "Buff then burst; 100 percent reflect for 2 seconds; return damage for 2 seconds.",
+      "change": "Our own shield visual (not an orange ring); a half-second wind-up tell; a ring that does not push.",
+      "ref": "mods/empyrean_campaign/powers/categories/enemy.txt lines 518-546 (ids 197, 198), line 524 (reflect), line 534 (ring sprite)"
+    },
+    {
+      "label": "Radial turret",
+      "why": "A ring of twelve missiles is a clear shape at 375 wide; the ice volley slows the target.",
+      "keep": "Radial volley; slow on hit (50 percent for 2 seconds on the ice variant).",
+      "change": "Eight shots with one rotating gap, so the player can step through.",
+      "ref": "mods/empyrean_campaign/powers/categories/enemy.txt lines 633-657 (count 12, missile angle 30)"
+    },
+    {
+      "label": "Three-aspect warden",
+      "why": "Cycles elemental three-missile volleys and is immune to bleed and to slow or stun, which forces ability variety.",
+      "keep": "Element cycle of three-missile volleys; passive status immunities.",
+      "change": "Our own three aspects; immunity to one status family only; a visible telegraph before each volley.",
+      "ref": "mods/empyrean_campaign/enemies/lvl16_lezaith.txt (lines 9, 16-17); mods/empyrean_campaign/powers/categories/enemy.txt line 1011"
+    },
+    {
+      "label": "Brood-mound",
+      "why": "The parent births small children through spawn powers, with fire and ice versions; good for a swarm the player must thin out.",
+      "keep": "Spawn-on-threshold with small children (20-60 HP); two spawn power steps.",
+      "change": "Our own brood sprites; a cap on live children (Frankendom MAX_ATTACKERS is 3); a spawn cooldown.",
+      "ref": "mods/empyrean_campaign/powers/categories/enemy.txt lines 789, 802 (larva spawn 1 and 2); mods/empyrean_campaign/enemies/lvl13_antlion_larva.txt"
+    },
+    {
+      "label": "Leech walker",
+      "why": "A basic melee strike that heals the attacker makes a slow zombie a clear threat with a clear response.",
+      "keep": "Hit-point steal on a basic melee strike (hp_steal=50 on the strike power).",
+      "change": "A heal cap per fight; a visible drain link between the two actors.",
+      "ref": "mods/empyrean_campaign/powers/categories/enemy.txt line 344; mods/empyrean_campaign/enemies/lvl7_vampiric_zombie.txt"
+    },
+    {
+      "label": "Alarm-caller goblin",
+      "why": "First contact pulls the pack in; the engine emits the beacon on join-combat, so the pull is a data power.",
+      "keep": "Join-combat emits a radius-4 pull power.",
+      "change": "Pull only the two nearest; show a horn ring; add a cooldown.",
+      "ref": "mods/fantasycore/enemies/base/beacon.txt line 2 (id 132, see correction); mods/empyrean_campaign/enemies/base/beacon.txt line 2 (id 161); mods/empyrean_campaign/powers/categories/beacon.txt lines 4 and 12"
+    },
+    {
+      "label": "Pocket thief",
+      "why": "A timed theft is a distinct threat that is not damage; the steal is a melee hit with a 20-second cooldown plus an on-hit script.",
+      "keep": "20-second cooldown melee hit; on-hit script hook.",
+      "change": "Steal a consumable, not gear; return it on kill.",
+      "ref": "mods/empyrean_campaign/powers/categories/enemy.txt lines 774-788 (id 243), 1108-1119 (id 273; script scripts/powers/goblin_steal.txt not read)"
+    }
+  ],
+  "classes": [
+    "Melee brawler (donor label Brute): physical primary, 4 starting points plus 1 defense; tree tab with 13 nodes (swing, cleave, shield bash, war cry, quake, vampirism, rupture). Ref: mods/empyrean_campaign/engine/classes.txt line 7; mods/empyrean_campaign/powers/trees/default.txt",
+    "Precision ranged (donor label Scout): offense primary, 4 starting points; tree with 13 nodes (haste, piercing shot, multi-shot, rapid fire, caltrops, bear trap, poison shot, scavenger). Ref: mods/empyrean_campaign/engine/classes.txt; trees/default.txt",
+    "Caster (donor label Adept): mental primary; tree with 13 nodes (fireball, ice bolt, shock, burn, freeze, thunderstrike, energy flow, summon skeleton, barrier). Ref: mods/empyrean_campaign/powers/trees/default.txt",
+    "alpha_demo adds Keeper (defense primary) and Wanderer (no primary, custom). Ref: mods/alpha_demo/engine/classes.txt",
+    "Progression shape: tree nodes are gated by primary-attribute points (requires_primary lines 19, 27, 33 of trees/default.txt); 39 tree nodes total, 13 per class; each class starts with a preset action bar. Races: none found. Factions: named NPC factions not read."
+  ],
+  "weapon_families": [
+    "Melee: 14 base files (battle axe, club, dagger, greatsword, hand axe, infantry axe, longsword, mace, maul, reinforced club, shortsword, smith hammer, war hammer, zweihander); 27 item blocks. Ref: mods/fantasycore/items/base/weapons/melee/",
+    "Ranged: 5 base files (greatbow, longbow, shortbow, slingshot, ammo); 24 item blocks. Ref: mods/fantasycore/items/base/weapons/ranged/",
+    "Magic staff family: 4 base files (greatstaff, rod, staff, wand); equip flag mental; 22 item blocks. Ref: mods/fantasycore/items/base/weapons/magic/",
+    "Special properties: 9 bonus_power_level lines give extra levels to named powers; the unique bow adds +1 to powers 100 and 105; unique items carry resist and damage bonuses. Ref: mods/empyrean_campaign/items/categories/level_8_unique.txt lines 30-31",
+    "Tiers by item level across all categories: level 1 has 8 items; levels 2, 3, 4 have 26, 26, 32; level 5 has 14; levels 6 and 7 have 29; level 8 has 35; level 16 has 40."
+  ],
+  "gear_tiers": [
+    "Material tiers by slot: cloth (chest, feet, hands, legs); leather, chain and plate each add head. Ref: mods/fantasycore/items/base/armor/",
+    "Mage variants: mage, mage_alt1, mage_alt2, five slots each; accessories: belt and magic boots. Ref: mods/fantasycore/items/base/armor/mage*/",
+    "Quality ladder: normal, high, rare, epic, unique, mastite; empyrean item blocks: 113 rare, 113 epic, 113 high, 77 unique, 131 with no quality key, 4 crafting, 1 crafting tool (552 blocks across all categories). Ref: mods/empyrean_campaign/items/qualities.txt; items/categories/",
+    "Mythic top tier (donor term for a mythic metal): mastite category file has 63 item blocks. Ref: mods/empyrean_campaign/items/categories/mastite.txt",
+    "Sets (4): Underworld Armament has 9 pieces with bonuses at 3, 4, 5, 6 and 7 pieces (the 7-piece bonus is four elemental resists); temple guard set 3 pieces (ice resist, poise); wizard apparatus 3 pieces (mana regen at 3); St. Maria garb 3 pieces (return damage at 3). Ref: mods/empyrean_campaign/items/sets.txt lines 36, 44",
+    "Looks and sounds per material: plate uses a maille pickup cue and a steel loot animation; cloth uses a cloth cue; magic boots use a leather step cue. Ref: mods/fantasycore/items/base/armor/plate/chest.txt line 4; armor/cloth/chest.txt line 4; armor/magic_boots.txt"
+  ],
+  "zones": [
+    "Tilesets in map headers: dungeon 20 maps, grassland 14, cave 11, snow plains 4, ruins 4, cave and dungeon mix 2; one map file has no tileset line. Ref: mods/fantasycore/tilesetdefs/; mods/empyrean_campaign/tilesetdefs/tileset_ruins.txt",
+    "Music: 11 tracks in map headers (dungeon theme on 16 maps, cave on 12, forest on 6, overworld on 5, boss on 4, wind ambient on 3, unrest on 3, magical on 3, battle on 2, safe room on 1)",
+    "Ambient beds as looping environment events (line uses across maps): river 195, cave droplets 112, open fire 94, birds 53, owl 52, raven 47, cave wind 39, wind 16, rain 3. Ref: mods/empyrean_campaign/maps/abandoned_mines.txt line 387",
+    "Weather layers: parallax fog, rain, snow and space; fog has a fixed drift speed (other three not read). Ref: mods/empyrean_campaign/maps/parallax/fog.txt line 4",
+    "Dungeon archetypes from map names: mines and caves; sewers, catacombs and crypts; strongholds and forts; procedural labyrinth (iron labyrinth); endless halls (10 numbered floors in maps/halls_of_infinity/maplist.txt); a map named the pit (header only); marsh, lagoon and oasis maps",
+    "Procedural labyrinth rules: at most 2 doors, door spacing at least 2, main path 10 to 20 chunks, branch length 5 to 10, at most 2 branches per door level, 1000 attempts; chunk pool of 29 files (4 links, 1 key, 2 north-south doors, 2 east-west doors, 18 rooms, treasure, vendor). Ref: mods/empyrean_campaign/maps/procgen_rules/iron_labyrinth.txt lines 5, 9",
+    "Hazards: spike traps (ids 178 manual, 255 automatic), fireball turret trap (377), minecart explosion (200), tombstone destroy (177), mastite pillar mana regen (378); map-power spikes and shock turrets in mods/empyrean_campaign/enemies/map_powers/ (3 files). Ref: mods/empyrean_campaign/powers/categories/environment.txt",
+    "Walk density (counts, not timed): 745 enemy placement blocks over 56 maps (about 13 per map), each with a rectangle, category, level, count range and optional wander radius; 13 spawn= pre-set packs; 3 spawn_level lines (one is 1.25 on the labyrinth chasm map, line 707)"
+  ],
+  "looks": [
+    {
+      "label": "Element variants on one body",
+      "technique": "Swap the animation sheet per element on the same base body (fire, water and air animation files; ice template points at a water animation).",
+      "ref": "mods/fantasycore/animations/enemies/wyvern_fire.txt line 13; mods/fantasycore/enemies/base/wyvern_ice.txt line 3"
+    },
+    {
+      "label": "Idle loop",
+      "technique": "Eight-frame stance at 800 ms, looped, as the idle when nothing happens.",
+      "ref": "mods/fantasycore/animations/enemies/wyvern_fire.txt (stance section)"
+    },
+    {
+      "label": "Ring shield",
+      "technique": "Orange shield sprite on a radius-2 hazard that lasts two seconds.",
+      "ref": "mods/empyrean_campaign/powers/categories/enemy.txt line 534"
+    },
+    {
+      "label": "Sparkle sprite",
+      "technique": "Looped 20-frame sparkle at 1 second; use sites not checked.",
+      "ref": "mods/fantasycore/animations/powers/sparkle.txt"
+    },
+    {
+      "label": "Loot drop sheet",
+      "technique": "Six-frame sheet played once over 600 ms, one sheet per gear base (39 loot animation files).",
+      "ref": "mods/fantasycore/animations/loot/steel_armor.txt line 11"
+    },
+    {
+      "label": "Quality badge",
+      "technique": "A colour and an overlay icon per quality, with a fixed sort order.",
+      "ref": "mods/empyrean_campaign/items/qualities.txt line 22"
+    },
+    {
+      "label": "Status effect animations",
+      "technique": "38 effect blocks; bleeding uses a red spark loop, mage shield uses a shield animation.",
+      "ref": "mods/empyrean_campaign/powers/effects.txt"
+    },
+    {
+      "label": "Split death sounds",
+      "technique": "Normal death and critical death have separate sound cues.",
+      "ref": "mods/fantasycore/enemies/base/minotaur.txt; mods/fantasycore/enemies/base/wyvern.txt line 6"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Ember-winged skyrider",
+      "idea": "A flying elemental beast built on one base body with element passes.",
+      "keep": "One body with element passes; flying with a close threat radius.",
+      "change": "Body plan, wing shape and palette."
+    },
+    {
+      "name": "Ward-bearer",
+      "idea": "A buff-then-burst beast with a readable tell.",
+      "keep": "A two-second reflect window then a ring burst.",
+      "change": "A half-second wind-up tell; a ring that does not push."
+    },
+    {
+      "name": "Radial turret",
+      "idea": "A stationary turret that fires a ring volley.",
+      "keep": "Radial volley with a slow on hit.",
+      "change": "Eight shots with a rotating gap."
+    },
+    {
+      "name": "Three-aspect warden",
+      "idea": "A boss that cycles elemental volleys and resists some status effects.",
+      "keep": "The element cycle and the status immunities.",
+      "change": "Our own aspects; immunity to one status family; a telegraph before each volley."
+    },
+    {
+      "name": "Brood-mound",
+      "idea": "A spawner that births small children when it is hurt.",
+      "keep": "Spawn at a threshold; small children.",
+      "change": "A cap of 3 live children; our own sprites; a cooldown."
+    },
+    {
+      "name": "Leech walker",
+      "idea": "A slow zombie whose basic strike heals it.",
+      "keep": "Hit-point steal on a basic strike.",
+      "change": "A heal cap and a visible drain link."
+    },
+    {
+      "name": "Alarm-caller",
+      "idea": "First contact pulls nearby enemies in as a data-driven power.",
+      "keep": "A join-combat pull implemented as a power.",
+      "change": "Only the two nearest; a horn ring; a cooldown."
+    },
+    {
+      "name": "Pocket thief",
+      "idea": "A timed theft with an on-hit script.",
+      "keep": "A 20-second cooldown and the script hook.",
+      "change": "Steal a consumable and return it on kill."
+    },
+    {
+      "name": "Chunked labyrinth",
+      "idea": "A generated maze stitched from room chunks with a main path, branches and keyed doors.",
+      "keep": "The main-path and branch length windows and the branches-per-door cap.",
+      "change": "Our own chunks and seed rules."
+    }
+  ],
+  "licence_note": "README: art and data for Flare: Empyrean Campaign are CC-BY-SA 3.0 (later versions permitted); fonts SIL OFL 1.1; the Flare engine is GPL v3 or later. Audio is not named in the README and per-file attribution points to an online wiki, so audio is unclear (class C). Recreate as clearly distinct originals only. Not legal advice.",
+  "not_read": [
+    "PNG and sprite contents (sizes from headers only; nothing viewed)",
+    "Audio content (names and counts only)",
+    "scripts/ folder, including scripts/powers/goblin_steal.txt",
+    "Quest, book and cutscene text (13 quest files and 26 book files counted, not opened)",
+    "Locale files: 34 .po files in empyrean_campaign and 34 in fantasycore; sample has about 1,349 msgid entries; no strings quoted",
+    "alpha_demo enemy files (45 counted, not opened)",
+    "Minicore and minicore_alpha animation sets (names only)",
+    "Boss phase logic (none seen in the files read)",
+    "Hero layer and avatar dressing files (names only)",
+    "Weather layers rain, snow and space (names only)",
+    "The pit map body (header only)",
+    "Three of 39 talent-tree nodes have no name comment"
+  ]
+}

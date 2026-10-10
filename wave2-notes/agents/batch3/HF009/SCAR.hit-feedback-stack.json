@@ -1,0 +1,54 @@
+{
+  "donor": "SCAR",
+  "topic": "hit-feedback-stack",
+  "depth": "thin",
+  "half_read": "data",
+  "verdict": "PARTIAL",
+  "paths": [
+    "/mnt/frankendom-donors/SCAR/Nemesis_Engine/mod/scar/1hm_behavior/#0085.txt",
+    "/mnt/frankendom-donors/SCAR/Nemesis_Engine/mod/scar/blockbehavior/#0076.txt",
+    "/mnt/frankendom-donors/SCAR/Nemesis_Engine/mod/scar/0_master/#0106.txt",
+    "/mnt/frankendom-donors/SCAR/src/ (grep only, no feedback code)",
+    "/mnt/frankendom-donors/SCAR/LICENSE"
+  ],
+  "counts": {
+    "eventnames_declared_0085": 461,
+    "hkcstring_lines_0085_raw": 463,
+    "eventnames_declared_0106": 1217,
+    "eventnames_declared_0076": 39,
+    "hit_named_events_0085": 10,
+    "soundplay_events_0085": 61,
+    "clip_trigger_arrays_all": 4,
+    "clip_triggers_nonzero_localtime": 0,
+    "src_feedback_code_hits": 0
+  },
+  "rule": "Not shown in the box. Event-name tables list names only (table order is not timing). Hit-related names exist (preHitFrame, HitFrame, 2_HitFrame, recoilStart/Stop, staggerStart/Stop, blockHitStart/Stop). The four clip trigger arrays are placeholders at localTime 0.0 on SCAR_UpdateDummy, so hit-frame timing is not in the box.",
+  "data_fields": [
+    {"name": "hit_cue_offset", "unit": "frames before hit frame", "donor_value_or_null": null},
+    {"name": "hit_frame_index", "unit": "frame index on clip", "donor_value_or_null": null},
+    {"name": "second_hit_offset", "unit": "frames", "donor_value_or_null": null},
+    {"name": "sound_event_name", "unit": "event name", "donor_value_or_null": null},
+    {"name": "block_hit_stop_ms", "unit": "ms", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Named cue event on each attack, separate from damage",
+    "Cue fired a fixed number of frames before the damage frame"
+  ],
+  "change": [
+    "Use our own event names, not the donor's",
+    "Cue fires on our rig clip (parity rows 6 and 7)",
+    "Damage frame stays server-verified; cue is client only"
+  ],
+  "look_test": "Phone, 375 wide, one creature attack in one zone. A: no cue. B: 100 ms ground ring and short sound before the damage frame. Dom judges whether the strike reads and can be dodged before it lands, three attacks each.",
+  "licence_note": "MIT (LICENSE line 1). Keep notice if copied; no content copied.",
+  "target": "src/fight/hit-feedback.ts (parity row 10, hit impact and hit stop)",
+  "tags": ["ordered-feedback", "hit-sound", "stagger", "new:event-name-only"],
+  "not_read": [
+    "src/SCARActionData.h, src/Hook_AttackStart.h, src/main.cpp, src/LoadGame.cpp, src/DataHandler.h, src/Function.h",
+    "src/DebugAPI/*, src/TrueHUD/TrueHUDAPI.h body, src/PrecisionAPI/PrecisionAPI.h body, src/OpenAnimationReplacer/API/*",
+    "most of the 49 Nemesis template text files (only #0085, #0076, #0106 opened)",
+    "Animations and .hkx clip data (not in box)",
+    "docs/ hit-frame semantics (grep found none)",
+    "SCAR.pdb and docs screenshots (binary)"
+  ]
+}

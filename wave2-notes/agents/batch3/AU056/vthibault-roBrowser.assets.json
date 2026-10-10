@@ -4,7 +4,7 @@
   "code_licence": "GPL-3.0. LICENSE line 2 reads 'Version 3, 29 June 2007'. Vendored third-party files keep their own licences: src/Audio/mp3-player/license.txt says MPL 1.1 (line 1); src/Vendors/ and src/Utils/ carry their own headers (RequireJS, jQuery, gl-matrix, html2canvas; headers read, not all files read).",
   "asset_licence": "No game assets in the box. client/data, client/BGM and client/resources contain placeholder files only (client/data/add-data-folder-files-here.txt and client/BGM/add-bgm-here.txt are empty; client/resources holds a .htaccess). client/readme.md line 14 tells the user to add their own GRF files. The repo states no separate licence for any asset.",
   "rights_holder_status": "unknown for the game content. README.md line 3 calls roBrowser a web-based clone of Ragnarok Online and the setup needs the user's own client files. The repo files do not name the owner of the game content. No copyright line for game content found.",
-  "best_class": "D",
+  "best_class": "C",
   "asset_groups": [
     {
       "kind": "game client files (art, models, sprites, maps, audio)",

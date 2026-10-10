@@ -1,0 +1,75 @@
+{
+  "donor": "00-Evan-shattered-pixel-dungeon",
+  "topic": "status-effects",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/buffs/Buff.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/buffs/FlavourBuff.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/Actor.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/Char.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/Mob.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/buffs/Bleeding.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/buffs/Poison.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/buffs/Burning.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/buffs/Chill.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/buffs/Frost.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/buffs/Paralysis.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/buffs/Terror.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/buffs/Dread.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/buffs/Daze.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/items/wands/WandOfBlastWave.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/assets/messages/actors/actors.properties"
+  ],
+  "counts": {
+    "buff_classes_in_actors_buffs": 88,
+    "buff_string_keys_actors_buffs": 298,
+    "fear_duration_turns_terror_dread": 20,
+    "paralysis_duration_turns": 10,
+    "burning_duration_turns": 8,
+    "chill_duration_turns": 10,
+    "daze_duration_turns": 5,
+    "poison_tick_divisor": 3
+  },
+  "rule": "Adding time has two named verbs the donor uses without naming: affect and append spend the duration onto the buff (adds to the remaining time); prolong postpones, keeping the larger time. Every add is scaled by target.resist(class), which halves once per matching resist class. Speed multiplies per buff (Cripple /2, Dread x2, Haste x3, and others). Slow halves time spent; Chill's speed factor applies only when Slow is absent. Weakness multiplies outgoing damage before armour; Vulnerable multiplies incoming damage after armour. Paralysis is a build-up: each hit adds to it and a roll of build-up against HP decides a wake; the build-up decays by a tenth per free turn. Knockback distance is min(travel, power) with power halved (rounded up) for bosses; a collision deals rng(d, 2d) and stuns for 1 + d/2 turns. Fear (Terror, Dread) is one shared buff per target: a hit shortens it by five; Dread counts down and removes a far unseen mob; the mob flees while it lasts and turns to hunt on its end if its enemy is visible.",
+  "data_fields": [
+    {"name": "addPolicy", "unit": "enum additive|refresh", "donor_value_or_null": null},
+    {"name": "resistPerSource", "unit": "ratio per distinct resisting source", "donor_value_or_null": null},
+    {"name": "resistFloor", "unit": "ratio, lowest multiplier", "donor_value_or_null": null},
+    {"name": "wakeBuildDecay", "unit": "percent of build-up removed per free turn", "donor_value_or_null": null},
+    {"name": "knockbackBossPowerDivisor", "unit": "integer divisor for boss power", "donor_value_or_null": null},
+    {"name": "knockbackStunBase", "unit": "turns", "donor_value_or_null": null},
+    {"name": "knockbackStunPerDistance", "unit": "turns per cell", "donor_value_or_null": null},
+    {"name": "poisonTickDivisor", "unit": "turns of remaining time per extra damage point", "donor_value_or_null": null},
+    {"name": "chillSlowPerTurn", "unit": "percent per turn left", "donor_value_or_null": null},
+    {"name": "chillSlowCap", "unit": "percent", "donor_value_or_null": null},
+    {"name": "burnDurationTurns", "unit": "turns", "donor_value_or_null": null},
+    {"name": "burnTickDepthDivisor", "unit": "depth divisor on burn tick cap", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Two named add verbs (additive for stacking, refresh for keep-the-larger), chosen per caller",
+    "Wake-up build-up roll for a stun: hits raise the chance to wake, free turns lower it",
+    "Knockback distance resolved before damage and stun; stun scales with distance",
+    "Fear breaks into rage when it ends with a visible enemy; caster death ends the fear",
+    "Single shared fear per target with one owner, so a crowd cannot stack it"
+  ],
+  "change": [
+    "Defect: resist comment says resists do not stack, code halves once per matching class (Char.java 1359 vs 1372). Fix: one written rule (one halving per distinct source) with a floor at a quarter, held in data.",
+    "The two add verbs are picked per caller with no name at the call site (ElementalBlast.java 285 uses affect; Sunray.java 116 uses prolong). Fix: name them stack and refresh in our API.",
+    "Far unseen fear removal (Dread.java 63) is a despawn: move to zone population (row 23), not the status step",
+    "Item destruction from statuses (Frost potions, Burning scrolls) breaks the one-ledger rule; do not port",
+    "Halved experience on fear removal (Dread.java 65) is a reward rule; keep only if zone population sets the reward"
+  ],
+  "look_test": "Phone, 375 wide, about 5 minutes: one duel against a single heavy enemy. Style flag on the existing scene: ?addPolicy=additive or ?addPolicy=refresh. Cast fear, then a second cast before the first ends. additive makes the counter climb past its normal length; refresh holds it at the cap. Compare two 20-second clips for piling on versus topped up. Then one wall push on a paralysed enemy: does the stun number and the wake chance read clearly? Publish the flag to the preview folder with no release rows and no lock.",
+  "licence_note": "GPL v3 per source headers (for example FlavourBuff.java header) and AU001. Clean-room, shape only; no donor values in our data (all donor_value_or_null are null). No legal conclusions.",
+  "tags": ["status-stack", "duration-rule", "fear", "knockback", "bleed", "boss-elite-pattern", "new:additive-vs-refresh", "new:wake-build-up", "new:resist-once-per-source", "new:fear-breaks-into-rage"],
+  "not_read": [
+    "com/watabou/utils/Random.java: not in the donor tree, so NormalFloat and NormalIntRange semantics are inferred from call shape only",
+    "Charm, Amok, Blindness, Drowsy, Sleep, Corrosion, Degrade, Doom, Combo, Momentum bodies (hook lines only)",
+    "Frost item-freeze body (attach and detach read only)",
+    "Burning item-burn body (trigger rule read only)",
+    "Sprite, CharSprite.State, BuffIndicator and FloatingText render code (names only)",
+    "Icon art and sounds",
+    "Message text for the 298 buff keys (counted, not quoted)"
+  ]
+}

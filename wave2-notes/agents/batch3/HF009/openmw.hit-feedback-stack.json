@@ -1,0 +1,63 @@
+{
+  "donor": "openmw",
+  "topic": "hit-feedback-stack",
+  "depth": "full",
+  "half_read": "client",
+  "verdict": "STRONG",
+  "paths": [
+    "/mnt/frankendom-donors/openmw/files/data/scripts/omw/combat/interface_local.lua",
+    "/mnt/frankendom-donors/openmw/files/data-mw/scripts/omw/combat/local.lua",
+    "/mnt/frankendom-donors/openmw/files/data-mw/scripts/omw/combat/common.lua",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/character.cpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwclass/npc.cpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwclass/creature.cpp",
+    "/mnt/frankendom-donors/openmw/files/data/l10n/OMWCombat/en.yaml"
+  ],
+  "counts": {
+    "onhit_steps": 4,
+    "hit_sound_cues_in_local_lua": 6,
+    "blood_models": 3,
+    "stagger_outcomes": 2,
+    "omwcombat_yaml_keys": 9,
+    "hit_stop_shake_flash_hits": 0
+  },
+  "rule": "Order: wind-up swish (prepareHit) -> hit key -> C++ raw damage (min + (max-min)*strength) -> Lua onHit when successful: armour (damage, condition, skill, armour sound), difficulty, Health Damage sound, blood at hit position, stagger roll (agility term vs raw damage, plus 0-99 roll) -> knockdown or hit recovery. Victim lock lasts the hit animation clip (no timer). A handler returning false stops later handlers.",
+  "data_fields": [
+    {"name": "knockdown_agility_mult", "unit": "multiplier", "donor_value_or_null": null},
+    {"name": "knockdown_odds_base", "unit": "percent 0-100", "donor_value_or_null": null},
+    {"name": "knockdown_odds_mult", "unit": "per agility point (x0.01)", "donor_value_or_null": null},
+    {"name": "stagger_roll_range", "unit": "integer 0-99", "donor_value_or_null": null},
+    {"name": "blood_on_player", "unit": "boolean", "donor_value_or_null": false},
+    {"name": "blood_variants", "unit": "count", "donor_value_or_null": null},
+    {"name": "hit_stop_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "shake_px", "unit": "px at 375 wide", "donor_value_or_null": null},
+    {"name": "flash_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "pre_hit_cue_ms", "unit": "ms before hit frame", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Ordered on-hit chain: sound, blood, stagger as separate steps",
+    "Handler returning false stops later handlers",
+    "One attack record for every hit",
+    "Stagger as its own roll, separate from damage",
+    "Lock length tied to the hit clip"
+  ],
+  "change": [
+    "Move the stagger roll from the victim's local script to the engine (server-verified state)",
+    "Client presents knockdown or recovery from the event; never rolls it",
+    "Add hit stop, shake and flash (client only); donor has none",
+    "Lock length from data per family, not only the clip",
+    "Many-on-one: a hit runs the chain once; stagger must not stack a longer lock per hit"
+  ],
+  "look_test": "Phone, 375 wide, one hero vs one creature. Three builds behind a style flag: A donor-like (swish, hit sound, blood, recovery); B A plus server-decided knockdown; C B plus 60 ms freeze, 2 px shake, 80 ms white flash. Dom judges which reads as a landed hit without hiding the next attack, three fights each.",
+  "licence_note": "GPLv3 code (README.md:9; LICENSE). Assets mixed per AU039. Shape only, clean-room. No donor values recorded.",
+  "target": "src/fight/hit-feedback.ts (parity row 10, hit impact and hit stop)",
+  "tags": ["ordered-feedback", "hit-sound", "particle-burst", "stagger", "knockdown", "duration-rule", "new:miss-cue"],
+  "not_read": [
+    "components/ (record readers)",
+    "apps/ except character.cpp, npc.cpp and the creature.cpp entry point",
+    "global-side Lua scripts",
+    "body of Creature::hit",
+    "death handling in character.cpp (hitStateToDeathState)",
+    "Morrowind ESM values (GMST numbers, weapon ranges, hit clips, blood meshes): not in box"
+  ]
+}
