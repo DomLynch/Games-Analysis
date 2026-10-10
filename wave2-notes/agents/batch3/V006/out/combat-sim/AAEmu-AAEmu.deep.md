@@ -30,7 +30,7 @@ Two parts: the dice decide whether the hit lands; `Apply` computes what it does.
    - Damage per second part (171-195): `dpsInc` is picked by damage kind; `max += dpsInc x 0.001 x DpsIncMultiplier` (185); weapon dps terms are each multiplied by 0.001 (188-193); `max = DpsMultiplier x weaponDamage + max` (195).
    - Cast factor (197-203): starts at 1000. Line 201 is `minCastBonus = min > 0 ? min : minCastBonus`, but `min` is still 0 at that point (it is first set at 209 and 217), so for casts of 1000 ms or less the factor stays 1000. Longer casts use the cast time in ms (203).
    - `variableDamage = max x minCastBonus x 0.001` (205). So the dps part is multiplied by the cast length in seconds (or by 1 second for short casts).
-   - Slot split (207-219): with `WeaponSlotId < 0`, `min = variable + levelMin` (209) and `max = variable + levelMax`. Otherwise, only if a weapon is in that slot (214), `scaled = DamageScale x variable x 0.01` (216) and `min = levelMin + (variable - scaled)`, `max = levelMax + (variable + scaled)` (217). With the slot set and no weapon, min and max stay 0 (read, not tested).
+   - Slot split (207-219): with `WeaponSlotId < 0`, `min = variable + levelMin` (209) and `max = variable + levelMax`. Otherwise, only if a weapon is in that slot (214), `scaled = DamageScale x variable x 0.01` (216) and `min = levelMin + (variable - scaled)`, `max = levelMax + (variable + scaled)` (217). With the slot set and no weapon, the assignment is skipped (the block at 214-219 is guarded by `weapon != null`): min keeps its earlier value (0) and max keeps the raw dps part from 185-195, which was not multiplied by the cast factor, so the later roll is `Next(0, raw dps x multipliers)` (read, not tested).
 6. Skill multiplier (222): `min *= Multiplier`, and max the same.
 7. Damage-type multiplier (225-235): `MeleeDamageMul`, `SpellDamageMul` or `RangedDamageMul` (227 onward). Then `min = floor(min x m)` (234) and `max = ceil(max x m)` (235).
 8. Skill modifier stack (237-241): `SkillModifiersCache.ApplyModifiers(skill, Damage, min)` and the same for max.
@@ -83,7 +83,7 @@ Two parts: the dice decide whether the hit lands; `Apply` computes what it does.
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order (dice cascade, crit roll, damage draw, crit multiplier, armour soak, value and absorbed split) and the integer truncations. It omits: the dual-wield ranged-as-melee-parry case; the level-damage part; the separate weapon min and max split (`DamageScale`), so min and max come from one dps part; the skill modifier stack, the DOT scaling, the charged buffs, the target buff tag, and the fixed-damage override (kept in the signature only); the PvP toughness curve; the incoming damage multipliers; life steal; crime, aggro and event side effects; and the call to `ReduceCurrentHp`. It keeps the donor's draw order, including the defence rolls that run for magic and are then discarded.
+simplified: the sketch keeps the donor order (dice cascade, crit roll, damage draw, crit multiplier, armour soak, value and absorbed split) and the integer truncations. It omits: the dual-wield ranged-as-melee-parry case; the level-damage part; the separate weapon min and max split (`DamageScale`) and the no-weapon slot case (max keeps the raw dps part, min stays 0), so min and max come from one dps part; the siege kind (donor treats it as a ranged hit); the skill modifier stack, the DOT scaling, the charged buffs, the target buff tag, and the fixed-damage override (kept in the signature only); the PvP toughness curve; the incoming damage multipliers; life steal; crime, aggro and event side effects; and the call to `ReduceCurrentHp`. It keeps the donor's draw order, including the defence rolls that run for magic and are then discarded.
 
 ```ts
 // Licence: LGPL-3.0 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -172,3 +172,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Guard, stamina and parry are not in this resolver. Neither the dice nor `Apply` has a stamina term (read); Frankendom's guard/parry/stamina rule (row 3) is a separate system and must not be replaced by this roll.
 - The armour constant 5300 and the toughness constant 8000 are theirs; they should be engine constants in Frankendom, with unit rates as zone data for creatures.
 - Not read: `ReduceCurrentHp` (death handling is not in `Apply`), `CanAttack`, `CheckDamageImmune`, the proc and crime code, and the `Events` classes.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** 'With the slot set and no weapon, min and max stay 0' is wrong: DamageEffect.cs 207-220 only assigns min/max inside weapon!=null; otherwise min stays 0 but max still holds the raw dps part from 185/195 (not multiplied by the cast factor), so the roll is Next(0, rawDps*multipliers). Everything else verified: dice order 1479-1511, bull's-eye 1472, accuracy default 100 (Unit.cs 134/142/150), 5300 curve 326/331/336, 8000 toughness 298, Flexibility int (Unit.cs 184) int-division at 125/304-310, crit bonuses are float, cast factor min>0 dead branch 201, steps 1-27 line refs, armour 1000 -> 84/15, README LGPL lines, LICENSE.MIT Rain0Ash 2019.
+
+**Missed:** IsFront bearing detail OK; none major. Sketch omits Siege (RangedHit, 1530/147) as a kind.

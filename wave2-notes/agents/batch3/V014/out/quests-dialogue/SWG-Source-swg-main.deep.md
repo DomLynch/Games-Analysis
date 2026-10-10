@@ -112,3 +112,11 @@ export {};
 Best transferable idea: before a zone ships, expand each ranged bark or dialogue reference into explicit line ids and fail the test if any id is missing from the locale table.
 Decision (proposed): adapt — take the expand-and-diff check as a zone-data test; reject the version-control lookup and the Windows tooling, which do not fit Frankendom.
 Acceptance: a server test loads every zone's NPC line sets; a reference "bark_guard_1..4" with bark_guard_4 missing from the locale table fails the test and names bark_guard_4.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** None found. ScanScript.pl lines 23-28 usage, 30-78 testfile (p4 fstat 42, WordCountTool 55-60, diff 62-72, None missing 74), 84 usage guard, 92-122 parser (94 declaration, 96 reference, 101 keying, 103 range regex with (\d)+ capturing only the last digit so 12 -> 2, 109 inclusive loop, 118 paren strip), 126-134 print, 138-141 driver all match. _RESTRICTED-NOTE.txt text matches the licence line; src/dsrc empty. Sketch is honest about not carrying the one-digit bug.
+
+**Missed:** Minor: testfile converts dots in the table name to slashes before the p4 lookup (38), and the reference is 'prefix' + rand(a,b) in the script syntax, which the note summarises as a range.

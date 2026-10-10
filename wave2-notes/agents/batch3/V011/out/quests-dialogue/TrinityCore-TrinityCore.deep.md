@@ -12,14 +12,14 @@ Checked: Symbol `Player::UpdateQuestObjectiveProgress` starts at 16704. Read 167
 - `Player::UpdateQuestObjectiveProgress` (16704) runs per call, in this order for each matching objective:
   1. Find every objective registered under the key (objective type, object id) (16738). The registry is a multimap filled when a quest is added: `Player::AddQuest` (14785) inserts one entry per objective (14811). The same registry is rebuilt from the database on login (19639; not read in full). So one kill reaches every active quest that counts that creature.
   2. Raid rule: for types that cannot always progress in a raid (16745), skip when the player is in a raid group and the quest is not allowed in that raid (16746-16747). Which types are exempt was not read.
-  3. Skip the objective if `IsQuestObjectiveCompletable` is false (16751). That check holds the sequence rule (17118-17150): a sequenced objective is not completable until the objectives before it, back to the previous sequenced one, are complete or optional, and that previous sequenced objective is complete. A progress-bar objective is delegated to the bar (17100-17114).
+  3. Skip the objective if `IsQuestObjectiveCompletable` is false (16751). That check holds the sequence rule (17117-17155): walking back from the objective to the nearest earlier sequenced one, every objective in between must be complete, optional or part of a progress bar (17137). A sequenced objective is completable only when that nearest earlier sequenced objective is complete and the objectives between are satisfied (17144-17148). A NON-sequenced objective that follows an incomplete sequenced one is also gated: it is completable only if that earlier sequenced objective is itself completable (17149-17153). A progress-bar objective is delegated to the bar (17100-17114).
   4. Proxy rule: if the quest has `QUEST_FLAGS_EX_NO_CREDIT_FOR_PROXY` (16754), a MONSTER objective with an empty victim GUID is skipped (16755). So proxy kill-credit counts only on quests without the flag.
   5. If the objective was already complete and the change is non-negative, skip (16758-16759).
   6. Store: for a count objective (MONSTER is one), the new progress is `clamp(current + addCount, 0, Amount)` (16776), written to the quest-log slot (16777). The current value is only changed if it is below Amount for a positive change, or above 0 for a negative one (16774). A progress message is sent unless the objective hides it (16778; `SendQuestUpdateAddCredit` at 16788, body not read).
   7. Recompute completion: for MONSTER, complete means progress is at least Amount (16793 calls `IsQuestObjectiveComplete`, which for MONSTER returns false while progress is below Amount, 17189-17190).
   8. Effects: when the objective becomes complete and has a completion effect (16888), it may trigger a game event, a spell, a conversation, a phase update or a zone-aura update. Read in outline only.
   9. Quest state: if the objective is now complete and `CanCompleteQuest(questId, objective->ID)` is true, call `CompleteQuest` (16902-16905). Otherwise, if the objective is required (not optional) and the quest is in the complete state, call `IncompleteQuest` (16907-16908). So a negative change can take a finished quest back to incomplete.
-- Completion gate, `Player::CanCompleteQuest` (14515): a quest can complete only when every required objective (not optional, not progress-bar) is complete (14540-14545). The objective that was just changed is skipped in this check (14540) because it was just found complete. It also returns false when the quest needs an explore event that has not happened and when it has a time limit whose timer is 0 (14550-14554).
+- Completion gate, `Player::CanCompleteQuest` (14515): a quest can complete only when its status is INCOMPLETE (14536) and every required objective (not optional, not progress-bar) is complete (14540-14545). A turn-in quest that can be taken is auto-completed first (14527). The objective that was just changed is skipped in this check (14540) because it was just found complete. It also returns false when the quest needs an explore event that has not happened and when it has a time limit whose timer is 0 (14550-14554).
 - Other types also call `UpdateQuestObjectiveProgress`: learned spells (Player.cpp 3125), items (16589), kill labels and player kills (16643, 16667), and currency, reputation and money (16687-16701). Only the MONSTER path above was read end to end.
 - Tick: none. This is event-driven. Each server kill calls the chain once. There is no per-frame loop in this code.
 
@@ -50,7 +50,7 @@ Numbers in one place: per kill, the victim's own entry gets +1, each non-zero pr
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order: index lookup, completable (sequence) skip, proxy skip, finished skip, clamp and store, then complete or reopen. It is for ONE player (the donor stores progress per player in quest-log slots; the sketch keeps the count on the objective). It omits the raid skip, progress-bar objectives, spawn tracking, completion effects (spells, game events, conversations), the same-faction player-kill filter, the other objective kinds (items, currency, reputation, money, area triggers), the client progress message, the quest time-limit and explore checks in `CanCompleteQuest`, and the donor's walk back to the last sequenced objective (the sketch checks only the previous one in list order). The proxy rule is written for monster objectives only, which is all the index holds here.
+simplified: the sketch keeps the donor order: index lookup, completable (sequence) skip (16751), proxy skip (16754), finished skip, clamp and store, then complete or reopen. `sequenceOpen` follows the donor walk back to the nearest earlier sequenced objective (17117-17155), including the gate on a non-sequenced objective after an incomplete sequenced one (17149-17153), except for progress-bar objectives. `questCanComplete` also requires the quest to be incomplete (14536). It is for ONE player (the donor stores progress per player in quest-log slots; the sketch keeps the count on the objective). It omits the raid skip, progress-bar objectives, spawn tracking, completion effects (spells, game events, conversations), the same-faction player-kill filter, the other objective kinds (items, currency, reputation, money, area triggers), the client progress message, the quest time-limit and explore checks in `CanCompleteQuest`, the turn-in auto-complete at 14527, and the progress-bar delegation inside the sequence check. The proxy rule is written for monster objectives only, which is all the index holds here.
 
 ```ts
 // Licence: GPL-2.0-or-later (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -88,14 +88,30 @@ function acceptQuest(q: Quest): void {
   }
 }
 
+// donor IsQuestObjectiveCompletable (17117-17155), without the progress-bar delegation:
+// walk back to the nearest earlier sequenced objective; the objectives in between must be complete or optional.
 function sequenceOpen(q: Quest, obj: Obj): boolean {
   const i = q.objectives.indexOf(obj);
-  if (i === 0 || !obj.sequenced) return true;
-  const prev = q.objectives[i - 1];
-  return prev.optional || prev.progress >= prev.amount;
+  if (i === 0) return true;
+  let between = true;                 // everything between obj and the earlier sequenced one is complete or optional
+  let prevSeq = -1;
+  for (let p = i - 1; p >= 0; p--) {
+    const po = q.objectives[p];
+    if (po.sequenced) { prevSeq = p; break; }
+    if (between) between = po.optional || po.progress >= po.amount;
+  }
+  const prevDone = prevSeq !== -1 && q.objectives[prevSeq].progress >= q.objectives[prevSeq].amount;
+  if (obj.sequenced) {
+    if (prevSeq === -1) return between;
+    return prevDone && between;
+  }
+  // a non-sequenced objective after an incomplete sequenced one needs that sequenced objective to be completable itself
+  if (prevSeq !== -1 && !prevDone) return sequenceOpen(q, q.objectives[prevSeq]);
+  return true;
 }
 
 function questCanComplete(q: Quest, ignoredObjId: number): boolean {
+  if (q.complete) return false;       // donor: status must be INCOMPLETE (14536)
   return q.objectives.every(o => o.id === ignoredObjId || o.optional || o.progress >= o.amount);
 }
 
@@ -105,8 +121,8 @@ function report(_q: Quest, _o: Obj): void {
 
 function creditObjective(targetId: number, add: number, victimId: string | null): void {
   for (const { quest, obj } of index.get(targetId) ?? []) {
-    if (quest.noProxyCredit && victimId === null) continue;
-    if (!sequenceOpen(quest, obj)) continue;
+    if (!sequenceOpen(quest, obj)) continue;                // donor 16751 first
+    if (quest.noProxyCredit && victimId === null) continue; // then the proxy rule, 16754
     const wasDone = obj.progress >= obj.amount;
     if (wasDone && add >= 0) continue;                      // a finished objective takes no more credit
     obj.progress = Math.min(Math.max(obj.progress + add, 0), obj.amount); // clamp to [0, amount]
@@ -139,7 +155,7 @@ function onKill(ev: KillEvent): void {
 - Progress lives per player in quest-log slots. Frankendom has one character and one ledger, so the per-player map collapses to one count per objective. Do not copy the slot storage.
 - Who gets credit differs. The donor credits every party member at reward distance (KillRewarder.cpp 246) who passes the gate at 180, not only the attackers. Frankendom's rule is the attackers of the fight, capped at MAX_ATTACKERS = 3. The donor's distance and group rules must not be ported as they are. Frankendom needs its own rule for who is credited and a test for it.
 - Proxy credit (the two kill-credit slots, 16638-16641) only matters if a boss or summon can credit another entry. Leave it out unless zones need it; the flag is data.
-- Sequencing: the sketch checks only the previous objective in list order, while the donor walks back over the objectives to the last sequenced one (17118-17150, read in full). A zone contract with a sequence needs the full walk.
+- Sequencing: the sketch now walks back to the nearest earlier sequenced objective like the donor (17117-17155), without the progress-bar delegation. A zone contract with a sequence still needs that delegation if progress bars are used.
 - Not read: `CompleteQuest` (14893) and `IncompleteQuest` (14921) bodies, which is what a quest completion does to rewards and the log; `SendQuestUpdateAddCredit` (body); the spawn-tracking block (16840-16871, outline only); completion-effect side effects (16888 onward, outline only); `IsAtGroupRewardDistance` (definition); the list of objective types that can progress in a raid.
 - Credit source: in this path credit is written by the server kill reward (KillRewarder), not by a client packet. I did not check every path that calls `UpdateQuestObjectiveProgress`.
 - Dialogue was not examined for this note: the gossip menu code (`Entities/Creature/GossipDef.cpp`, `Handlers/NPCHandler.cpp`) and quest offer or request dialogue were not read. The note covers the objective ledger only.
@@ -150,3 +166,11 @@ Best transferable idea: One index from a target id to every active objective tha
 Decision (proposed): adapt — the fan-out index, the clamp and the finished-skip are the shape Frankendom needs for zone contracts (one ledger, server-verified kills); drop the WoW raid, proxy and quest-log-slot parts unless zones need them, and write Frankendom's own attacker-credit rule.
 
 Acceptance: In a zone contract "clear 3 boars", the tracker reads 2/3 after the second boar dies and the contract completes on the server at the third kill; a fourth boar kill leaves it at 3/3 (a server test asserts progress never passes the target and a finished objective takes no more credit).
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** 1) Sketch sequenceOpen returns true for any non-sequenced objective and only checks the adjacent previous objective; donor IsQuestObjectiveCompletable (Player.cpp 17117-17155) also gates a NON-sequenced objective that follows an incomplete sequenced one (17149-17153) and requires the objectives between to be complete/optional/progress-bar (17137). Note discloses only 'previous one in list order', not the non-sequenced gap. 2) Note says the sketch keeps donor order 'completable skip, proxy skip'; the sketch tests proxy first then sequence (equivalent outcome, order differs; donor 16751 then 16754). 3) CanCompleteQuest also requires status INCOMPLETE (14536) and auto-completes turn-in quests (14527); omitted. Verified: KilledMonster 16630-16644, KilledMonsterCredit 16646-16662 (+1 at 16661), UpdateQuestObjectiveProgress steps and lines 16738-16908, clamp 16776, 16774 condition, CanCompleteQuest ignore id 14540-14554, AddQuest 14785/14811, 19639, KillRewarder 180/246/256/279, QuestDef.h 266/384/483, CreatureData.h 426/492, callers 3125/16589/26368-26372, GPL-2.0+.
+
+**Missed:** Spawn-tracking branch (16712-16736, 16880) and the quest-bound-item `break` (16913) are only outlined; progress is written only when the stored value changed (16774), so objectiveIsNowComplete stays false otherwise.

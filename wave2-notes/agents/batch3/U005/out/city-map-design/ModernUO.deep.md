@@ -14,7 +14,7 @@ Acceptance: Server test: a point inside a town rectangle and inside a child farm
 - Rank: a child built with a parent takes the parent's priority (`Region.cs` 176); the default is 50 (126). Each region is registered into every 16x16-tile sector its rectangles touch (`Region.cs` 352-377 with `Map.cs` `SectorShift` = 4, line 58; sector size 16 at line 57). Each sector keeps its list sorted (`Map.cs` 1967). The sort, `CompareTo` (`Region.cs` 238-252): dynamic zones first; then higher priority; then deeper child level. So a farm inside Britain (same priority, deeper) ranks ahead of Britain.
 - Lookup `Find(Point3D)` (`Region.cs` 291-312): take the point's sector (298); return the first region whose `Contains` is true (305); otherwise the map's default region (311). `Contains` is an OR over the region's rectangles (419-432).
 - Guard flags on `GuardedRegion` (`GuardedRegion.cs`): `GuardsDisabled` (33) switches guards off for the zone, checked before any candidate logic (169-172, 188-191, 213-215, 230-233). `AllowReds` is `Core.AOS` (35). Towns forbid housing (151) and block spell casting unless `OnCastInTown` (140-149).
-- Candidate: a player becomes a guard candidate through four routes: entering a zone as a murderer when reds are not allowed (174-177); aggression by a criminal (203-205); helping a criminal or murderer (220-222); a criminal action (232). `IsGuardCandidate` (337-345): not a guard, alive, not an invulnerable creature, and (murderer when reds are not allowed) or criminal.
+- Candidate: a player becomes a guard candidate through four routes: entering a zone as a murderer when reds are not allowed (174-177); aggression by a criminal (203-205); helping a criminal or murderer (220-222); a criminal action (232). `IsGuardCandidate` (337-345): not a guard, alive, not staff (`AccessLevel > Player`), not `Blessed` (339), not an invulnerable creature, and (murderer when reds are not allowed) or criminal.
 - Call window (`CheckGuardCandidate`, 236-297): the first crime for a candidate starts a 15 s timer (352) and a message (249). Then it scans for a townsperson within 8 tiles (261): a `BaseCreature` that is `IsHumanInTown`, or a non-player human body inside this zone (263-264); it picks the nearest (269-275). If one is found it says a line (280), calls `BaseGuard.Spawn(fakeCall, m)` (282), and removes the candidate (284). A repeat crime while the window is open restarts the timer (292-296). When the timer ends the candidate is removed (359-365).
 - Shout call (`CallGuards`, 299-333): triggered by a speech keyword `*guards*` (`OnSpeech` 193-195) or by a `BaseCreature` path (`BaseCreature.cs` 3108-3113; its trigger was not read in full). It takes every mob within 14 tiles (303) that is a candidate and either is in the table (any region) or is always a candidate and in this zone (312). Each is removed from the table and given to `BaseGuard.Spawn(this, m)` (326).
 - Spawn (`BaseGuard.cs` 20-48): `amount` defaults to 1. It counts guards within 15 tiles of the target (30). An idle guard (`Focus == null`) is given to the target and counts against `amount` (32-37). A guard already focused on the target counts too, unless `onlyAdditional` (38-41). The rest are made by `region.MakeGuard(target)` (44-47) in the caller's region.
@@ -48,7 +48,7 @@ Acceptance: Server test: a point inside a town rectangle and inside a child farm
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order: the zone switch is checked first; a crime opens or renews the window; a nearby townsperson call spawns through the recruit rule; a shout call takes table members and in-zone murderers; the window expires per tick. It omits: `Rectangle3D.Contains` (half-open assumed); the sector index (the sketch sorts every zone on each call); the donor's nearest-townsperson loop (the caller passes it); the shout message and the per-candidate `GuardTimer` (the sketch expires all candidates in one tick function); `BaseRegion.MakeGuard` (the sketch takes a callback); the reinforcement waves (not in this sketch: see section 1); the distance shape of `GetMobilesInRange` (the sketch uses a Euclidean distance); housing and spell rules; serialization.
+simplified: the sketch keeps the donor order: the zone switch is checked first; a crime opens or renews the window; a nearby townsperson call spawns through the recruit rule; a shout call takes table members and in-zone murderers; the window expires per tick. It omits: `Rectangle3D.Contains` (half-open assumed); the sector index (the sketch sorts every zone on each call); the donor's nearest-townsperson loop (the caller passes it); the shout message and the per-candidate `GuardTimer` (the sketch expires all candidates in one tick function); `BaseRegion.MakeGuard` (the sketch takes a callback); the donor's `BaseGuard.Spawn` early return when the target is null or deleted (23-26); the guard-killed trigger and the `GuardAvengeTimer` object (the sketch has only the three tick times and one wave call, `reinforcementWave`, which passes `onlyAdditional` to the recruit rule); the distance shape of `GetMobilesInRange` (the sketch uses a Euclidean distance); housing and spell rules; serialization.
 
 ```ts
 // Licence: GPL-3.0 (donor, ModernUO). Clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -110,6 +110,8 @@ interface Mob {
   criminal: boolean;
   murderer: boolean;
   invulnerable: boolean;
+  staff: boolean; // donor: AccessLevel > Player is never a candidate
+  blessed: boolean; // donor: Blessed mobiles are never candidates
 }
 
 interface Npc {
@@ -130,14 +132,15 @@ interface Guard {
 }
 
 // donor BaseGuard.Spawn: recruit idle guards and guards already on the target first, then make the rest.
-function spawnGuards(target: Mob, targetX: number, targetY: number, guards: Guard[], amount: number, makeGuard: () => void): void {
+// onlyAdditional (reinforcement): guards already on the target do not count towards the amount.
+function spawnGuards(target: Mob, targetX: number, targetY: number, guards: Guard[], amount: number, makeGuard: () => void, onlyAdditional = false): void {
   let left = amount;
   for (const g of guards) {
     if (Math.hypot(g.x - targetX, g.y - targetY) > GUARD_RECRUIT_RANGE) continue;
     if (g.focus === null) {
       g.focus = target;
       left--;
-    } else if (g.focus === target) {
+    } else if (g.focus === target && !onlyAdditional) {
       left--;
     }
   }
@@ -147,13 +150,20 @@ function spawnGuards(target: Mob, targetX: number, targetY: number, guards: Guar
   }
 }
 
+// donor GuardAvengeTimer: after a guard dies with its focus alive, three ticks at 2.5 s, 3.5 s and 4.5 s each add one guard.
+const AVENGE_TICKS_MS = [2500, 3500, 4500];
+function reinforcementWave(focus: Mob, guards: Guard[], makeGuard: () => void): void {
+  spawnGuards(focus, focus.x, focus.y, guards, 1, makeGuard, true);
+}
+
 class TownGuardWindow {
   // mob id -> time the candidate status ends (ms)
   private readonly candidates = new Map<number, number>();
 
-  // donor IsGuardCandidate: not a guard, alive, not invulnerable, and criminal (murderers always, when reds are not allowed)
+  // donor IsGuardCandidate: not a guard (the Mob type here is never a guard), alive, not staff, not blessed, not invulnerable,
+  // and criminal (murderers always, when reds are not allowed)
   isCandidate(m: Mob, allowReds: boolean): boolean {
-    if (!m.alive || m.invulnerable) return false;
+    if (!m.alive || m.staff || m.blessed || m.invulnerable) return false;
     return (!allowReds && m.murderer) || m.criminal;
   }
 
@@ -218,3 +228,11 @@ class TownGuardWindow {
 
 Reuse tag: rewrite-from-idea (GPL-3.0; clean-room only)
 Brief rule served: one engine, zones as data, MAX_ATTACKERS = 3; parity row 23 zone population
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** Mechanism and numbers hold (CompareTo 231-253, Find 291-312, 15 s GuardTimer 352, 8-tile 261, 14-tile 303, 15-tile Spawn 30, avenge 2.5/1.0/3 at BaseGuard 216, regions.json counts 116/70/46/34/10/6, Britain six rects, CityMap formulas). Errors: (1) IsGuardCandidate (337-345) is described as 'not a guard, alive, not invulnerable creature, ...' but real test also excludes staff (AccessLevel > Player) and Blessed mobiles (339); sketch isCandidate omits both. (2) Sketch has no reinforcement (declared) although Best idea and Acceptance lean on it. (3) Sketch spawnGuards ignores onlyAdditional flag (38).
+
+**Missed:** Staff/Blessed exclusion in IsGuardCandidate; TownRegion ctor sets Dynamic=true at Region.cs 165 (rank-first rule), noted as unread by the note.

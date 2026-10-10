@@ -133,3 +133,11 @@ Best transferable idea: pick a target by a per-mode score over filtered, in-sigh
 - The retaliation rule that a visible closer aggressor takes over is one rule for pets and monsters. Frankendom's one-ledger rule needs one hate record; the donor keeps two lists (`Aggressors`, `Aggressed`) that are read by `IsAggressor` and `IsAggressed` (`BaseAI.cs:1094-1110`).
 - Line of sight (`Mobile.InLOS`) and the distance units are (not read).
 - Stand-down and friendly-fire rules are control-order rules (pets, guards). Frankendom has no command model in the duel, so only the gate and the scoring transfer.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** No false claim found. Verified: AcquireFocusMob 853-911 order (855-863, 865-880, 882-886, 888-891, 893-900, 904, 908), HandleAggressor 978-991, AcquireNewFocusMob 993-1043 incl. strict `>` and LOS (1029), GetFightModeRanking 2731-2744, ReacquireDelay 10 s (1321), faction guard 2 s (BaseFactionGuard.cs 81), approach range 10 / delay 2 s / paragon 0 (1326, 1330), clamp-only deadline (1339-1342), ForceReacquire (3061-3064), ChaseLeashRange = 2*RangePerception (1094), RangePerception 16 (171), MeleeAI leash 75-87, AITimer interval CurrentSpeed (35) and Random(256) start (54), filters 1045-1110, test file 62-63 and 80-81, GPL-3.0. Tiny: sketch scheduleOnApproach omits the Prod() think-now when delay is 0 (1344-1348) though the note describes it.
+
+**Missed:** ReacquireOnMovement=true path also calls ForceReacquire from OnMovement (3072-3075); initial gate on spawn is set at BaseCreature.cs 851; AggressiveAction also calls StopFlee() before ForceReacquire (2796-2798).

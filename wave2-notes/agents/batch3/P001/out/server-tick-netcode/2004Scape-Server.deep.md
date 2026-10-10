@@ -141,3 +141,11 @@ export {};
 - The phase order puts NPC turns before player processing (World.ts 396 before 407). Server-verified kills must be decided in one fixed place in the order; the sketch does not claim where the kill sits, because the donor's combat is not in this cell.
 - Not read, so not claimed: the bodies of `processLogins`, `processZones`, `processInfo` and `processCleanup`; the output encoders; the socket reads; `Npc.turn` beyond line 150.
 - Best transferable idea: one fixed-step loop with a drift-corrected sleep and an input intake that stops at a per-category tick budget and leaves the rest for the next tick.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** No false claim found. Verified TICKRATE 600 (120), nextTick 362, drift 372, phase order and lines 377/384/387/396/407/410/413/419/426/437/444, 532/533/537, processNpcs 714-725 with no budget, limits 20/5/2 at ClientProtCategory 5/6/8 and comment line 10, decodeIn 55-75 incl. 63/69/75, counting quirk 139-144, 1600 guard at 119 (only on the 2-byte length branch), timeouts 127/128/786/790, MIT licence lines 1,3. The drift analysis (drift only nonzero when a cycle starts over one full tick late, since nextTick is already one tick ahead) is correct.
+
+**Missed:** processLogouts also forces logout when this.shutdown (786) and tickRate is a mutable field set to 0 on shutdown (World.ts 154, 1244), so the cycle sleep is not always 600. processNpcs wraps turn() in try/catch and removes a throwing NPC (717-722); the cycle catch removes all players (544). None are in the note or sketch.

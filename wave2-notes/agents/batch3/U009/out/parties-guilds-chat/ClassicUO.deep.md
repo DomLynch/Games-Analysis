@@ -168,3 +168,11 @@ class MapMarkers {
 - The position feed depends on a non-standard 0xF0 sub-protocol (PacketHandlers.cs:5636) and an ack (5642). Encrypted sessions turn it off (the `Enabled` check at WorldMapEntityManager.cs:59; the warning is logged at line 81). Frankendom owns its server protocol, so define one budgeted query per poll ourselves.
 - The 10 s trust window accepts local guesses after any server packet (WorldMapEntityManager.cs:105-107). Do not copy this for anything that decides a kill or a fight state (server-verified kills).
 - Read gaps: the server side of the roster and the 0xF0 reply; the value of `Constants.MAX_VIEW_RANGE`; the metric in `Mobile.Distance` past GameObject.cs:52; the UI update loop; the guild gumps.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** All checked claims hold: PARTY_SIZE=10 (16); ParsePacket 32-191, count<=1 clear 47-78, Clear 80, to_remove 86, remove_all 91, loop 94-131 (slot=packet index 108, done 111, leader 114-117, slot-0 removal 99-102), post-loop dissolve 133-148, code 7 inviter 182-186; PartyInviteGump 61-80 optimistic Leader=Inviter at 66; Enabled 54-62; RequestServerPartyGuildInfo 200-236 (250 ms at 211, one party query then break 230-232, guild query sub-code 0x01 OutgoingPackets 2505, party 0x00 at 2537); AddOrUpdate trust 10 s (105-107), LastUpdate now+1000 (132,146); RemoveUnupdatedWEntity 163-180 (1 s sweep 170, now-1000 at 172, 176) => ~2 s (plus up to 1 s sweep granularity); 0xF0 handler 5636-5679; heal 50 ms (HealthBarGump 1883) and TargetCursor 367-371; World.cs 318/331/392; MessageManager 119-121 and 147-148; PartyGump 277-280; GameController 388. Sketch rules match.
+
+**Missed:** ParsePacket cases 3/4 (party chat message, 155-179, speaker resolved via roster serial) not covered and arguably is the party-chat path; marker expiry can be up to ~3 s given the 1 s sweep period

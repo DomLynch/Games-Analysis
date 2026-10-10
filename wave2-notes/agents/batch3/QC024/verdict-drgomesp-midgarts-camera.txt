@@ -1,0 +1,25 @@
+drgomesp-midgarts | camera (category 14, cell 14) | PARTIAL | depth: thin | camera_scope: world camera (the donor only has a fixed view, so nothing here is a pit camera)
+Donor: /mnt/frankendom-donors/drgomesp-midgarts | Licence: GPL-3.0 (LICENSE file, full GPL v3 text; no per-file header read) | copyleft, clean-room only, shape only
+
+Verdict reason: the only camera code is a fixed-position camera that looks along the +Z constant. Its yaw and pitch are computed in Rotate but never reach the view matrix, and the player is not followed, so the donor has no follow, orbit, shoulder, collision, lock-on or zoom mechanism to take.
+
+Files opened (all on the VPS, read-only):
+1. internal/camera/camera.go, 1-103 (whole file): constructor, view and projection, ResetAngleAndY, SetY, Rotate, UpdateVisibleZRange (the stub).
+2. internal/graphic/transform.go, 1-67: the Forward constant (line 10) and the Transform type.
+3. cmd/sdlclient/main.go, 116-124, 178-181, 262-300: camera construction and reset, keyboard moves (Z/X/C/V, 0.2 per pass), refresh period, and the frame loop where the frame delta is zero (line 285).
+4. examples/3d/main.go, 78-84 and 112-145: same camera, keyboard moves of 1.0 per pass.
+5. internal/system/opengl/render_system.go, 66-86 (view and projection uniforms; the view comes from ViewMatrix).
+6. internal/system/character_render.go, 24-30 and 86-94: sprite direction offset by a fixed camera direction entry.
+7. README.md (camera controls table, lines 140-146) and LICENSE (lines 1-12).
+Searches: grep -rn for camera, follow, zoom, orbit, look over the whole repo; the only camera logic is internal/camera/camera.go.
+
+Findings:
+- createViewMatrix (camera.go 53-65) uses graphic.Forward (transform.go 10, +Z), not c.front. So the yaw 270 and pitch -60 defaults (camera.go 18-19) and the front vector from Rotate (camera.go 89-93) do not change the picture.
+- distance (30.0) and altitude (50.0) are set at construction (camera.go 43-44) and never read.
+- UpdateVisibleZRange builds a view and discards it (camera.go 101-102).
+- The keyboard moves the camera by 0.2 per pass of the loop (sdlclient 273), with no time base; the frame delta passed to the world is always zero (sdlclient 285-287), so this is not a usable clock for a camera.
+- Sprite facing is computed against a fixed camera direction (character_render.go 28, 91), so sprites do not turn with a camera.
+
+Best transferable idea: a third-person base only works when every angle the rig computes reaches the view matrix, so add a test that changing the stated yaw or pitch changes the rendered view, and fail the build when it does not.
+Decision (proposed): reject — there is no follow mechanism here to adopt, the licence is copyleft (shape only), and the one lesson (dead angles and a discarded view) is covered by a test on our own camera, not by this code.
+Side note (not camera, timing): sdlclient main.go 285 computes the delta as frameStart.Sub(frameStart), so any world update in that loop gets dt 0.

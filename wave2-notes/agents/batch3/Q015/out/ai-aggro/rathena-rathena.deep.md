@@ -6,10 +6,10 @@ Checked: Read: `mob_ai_sub_hard` (1841-2226), with the loot branch read in outli
 
 ## 1. Mechanism
 
-- Two AI passes run from timers. `mob_ai_hard` fires every `MIN_MOBTHINKTIME` = 100 ms (7363) and, for each player, calls `mob_ai_sub_hard_timer` on every mob inside `AREA_SIZE + ACTIVE_AI_RANGE` = 14 + 4 cells of that player (2348-2351). Each such mob is recorded as spotted by that player (2337) and given the hard AI. `mob_ai_lazy` fires every 1000 ms (7364) and runs `mob_ai_sub_lazy` over all mobs (2461). The lazy pass skips a mob that had a hard run in the last 200 ms (2403), clears the spotted log (2399), unlocks its target (before the random walk) and, if the mob is spotted, random-walks it with `mob_nopc_move_rate` chance (2437-2442).
+- Two AI passes run from timers. `mob_ai_hard` fires every `MIN_MOBTHINKTIME` = 100 ms (7363) and, for each player, calls `mob_ai_sub_hard_timer` on every mob inside `AREA_SIZE + ACTIVE_AI_RANGE` = 14 + 4 cells of that player (2348-2351). Each such mob is recorded as spotted by that player (2337) and given the hard AI. `mob_ai_lazy` fires every 1000 ms (7364) and runs `mob_ai_sub_lazy` over all mobs (2461). The lazy pass first runs the hard AI again for a mob whose last player-near time is younger than `mob_active_time` (code default 5000 ms, battle.cpp:8622; boss mobs use `boss_active_time`, 8623; `conf/battle/monster.conf:89-90` ships both as 0, so the grace is off in the shipped config) (2378-2396), so a mob keeps full AI for that long after the last player left. Otherwise it skips a mob that had a hard run in the last 200 ms (2403), clears the spotted log (2399), unlocks its target (before the random walk) and, if the mob is spotted, random-walks it with `mob_nopc_move_rate` chance (2437-2442).
 - Hard AI gate and order, `mob_ai_sub_hard` (1841): returns if the mob has no map or is dead; returns if it is force-walked (early in the function). Then `if (DIFF_TICK(tick, md->next_thinktime) < 0) return false;` (1854-1855), then `md->next_thinktime = tick;` (1858). The 100 ms cadence therefore comes from the timer, not from the stored time (inferred; see gaps). A busy skill (`skilltimer`) returns (before the target check). Abnormal states clear the target ids (before the target check). A skill is used first if the walk timer is idle and `MOB_SKILL_INTERVAL` (1000 ms) has passed (1884). View range is `range2`, or 1 when blind (line 1894).
 - Target validity. If the current target is gone, on another map, not skill-usable, a gangster-paradise player, or invincible, the mob tries a warp chase, then keeps walking if it is already walking, else unlocks (read at the level of branch structure).
-- Retarget on being hit, `mob_ai_sub_hard` attacked block (the attacked block, ending at 1994). `attacked_id` is set by `mob_set_attacked_id` (2257): a pet's master, a mob's master (when `retaliate_to_master`), or the attacker itself (the switch on source type). That also clears `aggressive` (2297) and runs the hard AI at once (2301). In the hard AI the switch happens only if: the attacker is on the same map and within `AREA_SIZE` (1959), it is an enemy, the change rule allows it (`mob_can_changetarget`, 1955), and either the attacker is inside melee range or the mob can reach it within `range3` (the reach condition that follows). Otherwise the attack is "rude": the attacker is not the mob itself, and `++attacked_count > RUDE_ATTACKED_COUNT` (1 at mob.cpp:49) calls the rude-attacked skill (the rude branch); no switch. A successful switch sets `target_id = attacked_id` (1986) and lowers the count by one. Both ids are cleared after (1994).
+- Retarget on being hit, `mob_ai_sub_hard` attacked block (the attacked block, ending at 1994). `attacked_id` is set by `mob_set_attacked_id` (2257): a pet's master, a mob's master (when `retaliate_to_master`), or the attacker itself (the switch on source type). That also always clears `aggressive` (2298, whether or not the target later switches) and runs the hard AI at once (2301). In the hard AI the switch happens only if: the attacker is on the same map and within `AREA_SIZE` (1959), it is an enemy, the change rule allows it (`mob_can_changetarget`, 1955), and either the attacker is inside melee range or the mob can reach it within the path budget of distance plus `range3` (1969, `mob_can_reach(md, abl, dist+range3)`; the reach condition that follows). Otherwise the attack is "rude": the attacker is not the mob itself, and `++attacked_count > RUDE_ATTACKED_COUNT` (1 at mob.cpp:49) calls the rude-attacked skill (the rude branch); no switch. A successful switch sets `target_id = attacked_id` (1986) and lowers the count by one. Both ids are cleared after (1994).
 - Change rule, `mob_can_changetarget` (1229): by state. Idle, walk, loot, follow and angry always allow a change (the switch cases follow, angry, idle, walk and loot return 1). Rush allows only when the mode has `MD_CHANGETARGETCHASE` (1252). Berserk needs `MD_CHANGETARGETMELEE` (1242), then a normal-attack-id or range check. Default: no change.
 - Aggressive search, `mob_ai_sub_hard_activesearch` (1314-1366), run when there is no target (or the slave lost its target) and the mob is aggressive, or when it is in follow state (2024). It walks everyone in `view_range`. A candidate is skipped if: it is the current target (start of the function); the mob has `MD_TARGETWEAK` and the candidate's level is at least the mob's level minus 5 (1330); it is not an enemy (`battle_check_target`); it has gangster paradise (not read in detail, the check is at 1334-1338). Otherwise the candidate replaces the current pick only if there is no pick, or the pick is farther than the candidate (1346: `(*target) == nullptr || !check_distance_bl(md, *target, dist)`). The candidate must also be inside `range2` (1347). With `ACTIVEPATHSEARCH` (defined, mob.cpp:58) the walked path must be at most `range2` cells when standing, or `range3` cells when walking (1354).
 - Engage. If a new target was found and it is already inside weapon range, the mob drops aggressive and goes to rush (2030-2032). If the mob is in weapon range of its target it attacks (2141). Otherwise chase:
@@ -45,7 +45,7 @@ Checked: Read: `mob_ai_sub_hard` (1841-2226), with the loot branch read in outli
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor's nearest-in-view pick (with weak-target filter and path gate), the on-hit retarget with the reach and rude-count rule, the chase refresh gate, the lost-mobility unlock, and the near/far driver route. It omits: the skill checks (rude-attacked skill is a no-op hook), the warp chase, abnormal-state target clearing, the loot branch, slave and bg-ally branches, the idle state and the random walk, the change-rule modes (`MD_CHANGETARGETCHASE`, berserk), the `attacked_id == target_id` branch, and the per-player timers (the sketch routes each mob once, by distance to any player). The distance metric is a stand-in (not read).
+simplified: the sketch keeps the donor's nearest-in-view pick (with weak-target filter and path gate), the on-hit retarget with the reach and rude-count rule, the chase refresh gate, the lost-mobility unlock, and the near/far driver route. It omits: the `mob_ai&0x20` mode that runs every mob through the hard path while the map has users, the `provoke_flag` preamble of the change rule (1231-1238), the skill checks (rude-attacked skill is a no-op hook), the warp chase, abnormal-state target clearing, the loot branch, slave and bg-ally branches, the idle state and the random walk, the change-rule modes (`MD_CHANGETARGETCHASE`, berserk), the `attacked_id == target_id` branch, and the per-player timers (the sketch routes each mob once, by distance to any player, plus the `mob_active_time` grace window). The distance metric is a stand-in (not read).
 
 ```ts
 // Licence: GPL-3.0 (rAthena LICENSE, read: GNU GENERAL PUBLIC LICENSE, Version 3). Clean-room shape only, written from the mechanism; no donor lines are translated.
@@ -56,6 +56,7 @@ const SKILL_INTERVAL_MS = 1000;   // MOB_SKILL_INTERVAL
 const AREA_SIZE = 14;             // area_size (conf/battle/client.conf:39)
 const ACTIVE_AI_RANGE = 4;        // added to AREA_SIZE for the hard AI
 const RUDE_ATTACKED_COUNT = 1;    // rude attacks before the rude-attacked skill hook
+const ACTIVE_GRACE_MS = 5000;     // mob_active_time (code default battle.cpp:8622; shipped conf sets 0)
 const UNLOCK_MS = 2000;           // mob_unlock_time (conf/battle/monster.conf:338)
 const CHASE_REFRESH_CELLS = 32;   // monster_chase_refresh (default in battle.cpp)
 
@@ -76,6 +77,7 @@ interface Mob extends Point {
   walking: boolean;
   lastMoveMs: number;
   spotted: Set<number>;     // players that have seen this mob
+  lastPlayerNearMs: number; // donor last_pcneartime; 0 = none
   pathLen: (to: Player) => number;   // path length in cells
 }
 
@@ -108,6 +110,7 @@ function rudeAttackedHook(_m: Mob): void {
 
 // Retarget on being hit: switch only when the attacker is near and reachable; otherwise count a rude attack.
 function onAttacked(m: Mob, attacker: Player, changeAllowed: boolean, canReach: boolean): void {
+  m.aggressive = false;                               // donor mob_set_attacked_id: always leaves aggressive mode
   if (!changeAllowed) return;
   if (cellDist(m, attacker) > AREA_SIZE) return;     // outside the visual area
   const inMelee = cellDist(m, attacker) <= m.weaponRange;
@@ -118,7 +121,6 @@ function onAttacked(m: Mob, attacker: Player, changeAllowed: boolean, canReach: 
   }
   m.target = attacker;
   if (m.rudeCount > 0) m.rudeCount--;
-  m.aggressive = false;                               // being attacked leaves aggressive mode
 }
 
 // Chase refresh: a walking mob re-plans only after it has walked CHASE_REFRESH_CELLS cells.
@@ -132,14 +134,19 @@ function unlockIfStuck(m: Mob, nowMs: number, canMove: boolean): void {
   if (nowMs - m.lastMoveMs > UNLOCK_MS) m.target = null;
 }
 
-// Driver routing: a mob with a player inside AREA_SIZE + ACTIVE_AI_RANGE gets the hard AI; others get the lazy pass.
-function driverRoute(m: Mob, players: Player[]): "hard" | "lazy" {
+// Driver routing: a mob with a player inside AREA_SIZE + ACTIVE_AI_RANGE gets the hard AI; others get the lazy pass,
+// which keeps the hard AI for ACTIVE_GRACE_MS after the last player left.
+function driverRoute(m: Mob, players: Player[], nowMs: number): "hard" | "lazy" {
   for (const p of players) {
     if (cellDist(m, p) <= AREA_SIZE + ACTIVE_AI_RANGE) {
       m.spotted.add(p.id);
+      m.lastPlayerNearMs = nowMs;
       return "hard";
     }
   }
+  // Lazy pass still runs the hard AI inside the grace window after the last player left.
+  if (m.lastPlayerNearMs > 0 && nowMs - m.lastPlayerNearMs < ACTIVE_GRACE_MS) return "hard";
+  m.lastPlayerNearMs = 0;
   return "lazy";
 }
 ```
@@ -155,7 +162,7 @@ function driverRoute(m: Mob, players: Player[]): "hard" | "lazy" {
 Best transferable idea: a mob only switches to the player who hit it when that player is in view and reachable, so a distant or unreachable hitter counts as a rude attack and does not pull aggro.
 
 Decision (proposed): adapt - take the retarget-on-hit gate (in view, reachable, otherwise a counted rude attack) and the presence route (hard AI near, lazy pass far) as data; reject the damage log as a threat table, because here it only feeds rewards and is not read by targeting, and reject the `monster_ai` bit switches (defaults are 0, and Frankendom needs one rule set).
-Acceptance: a server test with a mob, a player 10 cells away and weapon range 2 that cannot be reached asserts that a hit leaves the target unchanged and raises the rude count to 1; and a mob 19 cells from every player is routed "lazy", not "hard".
+Acceptance: a server test with a mob, a player 10 cells away and weapon range 2 that cannot be reached asserts that a hit leaves the target unchanged and raises the rude count to 1; and a mob 19 cells from every player whose last-near time is older than 5000 ms is routed "lazy", while the same mob 2000 ms after the last player left is still routed "hard" (grace window).
 
 ## 6. Gaps and risks
 
@@ -166,3 +173,11 @@ Acceptance: a server test with a mob, a player 10 cells away and weapon range 2 
 - Same-tick repeat (inferred, not run). The hard gate sets `next_thinktime = tick` (1858) rather than `tick + interval`, and the driver runs once per player in range (2348-2351). A mob inside two players' view may therefore think twice in one pass. Test before copying the cadence.
 - Rude-attacked skill and warp chase are not modelled. The donor fires a skill hook (the rude branch) and a warp chase (warp chase function, gated by `mob_ai` 0x40, default 0 at battle.cpp:8580, so off by default). Frankendom should decide whether a rude attack does anything at all.
 - Not read: `mob_randomwalk`, `mob_warpchase` body, `mobskill_use`, `mob_add_spotted`/`mob_is_spotted`, `unit_can_reach_bl`, `distance_bl`, `check_distance_bl`, `battle_check_range`, `battle_check_target`, the loot-item branch, `unit_update_chase` body (grep only, `unit.cpp` 113-165 lines seen in grep).
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** Presence model incomplete: note says near-a-player = hard AI, far = lazy (and its Acceptance test says a mob 19 cells from every player is 'lazy'). In mob_ai_sub_lazy (mob.cpp:2378-2396) a mob whose last_pcneartime is within mob_active_time (default 5000 ms, battle.cpp ~8622, which the note lists as read) or boss_active_time still runs mob_ai_sub_hard from the lazy pass, so it keeps full AI for 5 s after the last player left. Sketch driverRoute omits that hysteresis. Also mob_set_attacked_id clears `aggressive` at 2298 (note says 2297, comment line) and always, whereas sketch clears aggressive only on a successful switch; reach check is `dist + range3` (1969), note says 'within range3'. All constants (100/1000/200 ms, 14+4, rude=1, 5-level weak filter, 32 refresh, 2000 unlock, 4000+rnd1000, 1000 skill interval) and cited lines verified.
+
+**Missed:** mob_active_time / boss_active_time grace window (mob.cpp:2378-2396); mob_ai&0x20 mode that runs all mobs through the lazy path; mob_can_changetarget provoke_flag preamble (1231-1238).

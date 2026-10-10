@@ -132,3 +132,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - One engine and server-verified kills: the donor's health check only suspends idle sleep (169); it never changes game results. Frankendom's kill decision stays in the engine, not in a timer callback.
 - MAX_ATTACKERS = 3, Pit-as-client: no effect from this loop. The Pit must not run its own loop with this wheel.
 - THREADGUARD: `Delta` checks the thread only under the THREADGUARD build flag (7840-7849). Frankendom's ledger needs its own single-writer guard.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** All checked: loop phase order (Main.cs:717,721,725,730,735,738,740-747,749-753,755), idle gate 702-703 and sleep 757-785 with 2 ms (50), health thresholds 96-97, 148, 156, 166-169; wheel 8 ms/4096/3 rings (TimerWheel.cs:31-35), Slice catch-up 59-70, Turn 75-144, promote 122-126, repeat re-add 169, ring0 max 2^15 (201); Mobile.Delta/ProcessDeltaQueue 7838-7900 bounded by entry count; MovementThrottle.ProcessAllQueues at NetState.Network.cs:735 (note says 735 inside the NetState.Slice bullet, correct but ambiguous with Main.cs 735). Acceptance example (100 ms timer fires at 104 ms) matches AddTimer arithmetic (slot = 12+1).
+
+**Missed:** (a) A late wake only counts if elapsed - requested >= 8 ms AND no gen-1 GC happened during the sleep (Main.cs:780), note omits the GC exclusion. (b) ProcessDeltaQueue wraps each ProcessDelta in try/catch so one bad entity does not abort the drain (7886-7893). (c) Timers in one slot are attached at the list head (LIFO), so same-slot order is reverse of insertion; relevant to determinism, not mentioned.

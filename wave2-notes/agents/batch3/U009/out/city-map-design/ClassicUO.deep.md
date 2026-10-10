@@ -162,3 +162,11 @@ function stepAlpha(current: number, target: number): number {
 - Aliasing. The visited mask repeats every 64 tiles (Map.cs:166), so a roof region longer than 64 tiles can end the fill early. Use a per-fill visited set.
 - Client-only. The server never sees roofs or alpha. If Frankendom ever lets roof cover hide a fighter or change a fight state, it becomes a gameplay rule and must go through the server (server-verified kills).
 - Read gaps: the order of objects in a cell (Chunk.cs sort), the GetViewPort body, the caller chain of FillGameObjectList, the draw loops past the cap tests (580-640, 799-845), and the use of the local ground value by ground-level checks.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** All checked: UpdateMaxDrawZ 57-213 three phases, 127 sentinel, pz14/pz16 (87-88), masks 0x20004 (129) and 0x204 (176), cap lowers only if higher (121), phase-3 raise (205-208), reset (211); CalculateNearZ 164-219, 64x64 mask (166, array 0x1000 at Map.cs:14), 6-unit link (192), lowest z (207-209), 4-neighbour recursion; ProcessAlpha 339-382, step 25 (416,427), ALPHA_TIME=20 (Constants.cs:42), alpha timer GameScene.cs:560-564; flags 0x4/0x200/0x20000/0x10000000. License BSD-2-Clause. Sketch order matches (Land AverageZ omission disclosed).
+
+**Missed:** Circle-of-transparency (GameScene.cs:567-578, GetGradientCotAlpha 385-396): a screen-space radius cutout around the player with a cubic gradient, a simpler occlusion rule in the same area that the note does not mention.

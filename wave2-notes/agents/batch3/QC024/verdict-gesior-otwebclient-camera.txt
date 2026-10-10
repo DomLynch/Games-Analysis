@@ -1,0 +1,26 @@
+gesior-otwebclient | camera (category 14, cell 14) | PARTIAL | depth: thin | camera_scope: world camera (2D tile window; does not transfer to a 3D third-person camera as it stands)
+Donor: /mnt/frankendom-donors/gesior-otwebclient | Licence: MIT as read in package.json line 10 ("license": "MIT"); the donor has no LICENSE file (checked the file list; README.md has no licence text) | permissive, adaptable with notice
+
+Verdict reason: the donor has no camera (no follow, zoom, orbit, shake or framing code; a grep over the whole donor, excluding node_modules, the .map files and the vendor bundle, found only a CSS zoom-disable rule, a viewport meta tag, a comment and unrelated package-lock text). The only view mechanism is a fixed 2D tile window around the player, defined by the aware range, and the drawing and the range setter are stubs, so only a fragment exists.
+
+Files opened (on the VPS, read-only; all under /mnt/frankendom-donors/gesior-otwebclient):
+1. modules/map.ts, 1-62 (whole file): AwareRange field, getAwareRange, setCentralPosition, stubbed setAwareRange (throws, line 17), getTile returns a new Tile (line 13), the singleton (line 61).
+2. modules/structures.ts, 12-30: class AwareRange, default margins top 6, right 9, bottom 7, left 8 (lines 15-18), horizontal() and vertical().
+3. modules/network/protocolgame.ts: imports (line 17, the map singleton); parseMapDescription region 824-838 (central position and full window); parseMapMoveNorth/East region 840-866 (one row or one column); parseChangeMapAwareRange 2073-2086; setMapDescription 2128-2147 and the floor bands; the underground floor path near 1816-1826.
+4. modules/game.ts, 1-40 (the g_map getter returns a new Map each time, line 34; the rest of the file has no drawing or camera code, checked by grep for draw, view, camera, screen).
+5. modules/localplayer.ts (whole, 8 lines): no camera.
+6. modules/constants/const.ts, 1-20 (floor constants, sea floor 7, underground floor range 2, max floor 15).
+7. modules/constants/proto.ts and modules/constants/const.ts (grep for the aware-range opcode; GameServerChangeMapAwareRange = 51 in proto.ts line 26).
+8. README.md (alpha status, lines 5-6), package.json (licence line 10).
+9. Searches: grep -rniE camera|zoom|follow|scroll|viewport|centre|center over the donor (excluding node_modules, .map, vendor.js, index.js, proto); grep for draw, Draw, render, canvas, getContext across modules/*.ts (no canvas or draw code in game.ts or map.ts).
+
+Findings:
+- The window: default margins 8 left, 9 right, 6 top, 7 bottom, so 18 by 14 tiles, with the player tile at column 8 and row 6 (structures.ts 15-21). The server can change it with a two-byte packet: left = x/2 - ((x+1) % 2), right = x/2, and the same for y (protocolgame.ts 2075-2082).
+- The change is then passed to the map setter, which throws "Method not implemented." (map.ts 16-17). protocolgame.ts imports the singleton from map.ts (line 17), so in this donor the server's range change throws and the margins stay at the defaults. This is a real defect in the donor, observed by reading, not run.
+- Each step sends only the entering strip: north is one row (protocolgame.ts 850), east is one column (864), and a full description uses the window at the central position minus the margins (831).
+- Floors: above the sea floor (7) the bands are z plus or minus 2, capped at 15; at or below it the bands run from 7 up to 0 (protocolgame.ts 2133-2141; const.ts 5-8).
+- Rendering: none. Map.getTile returns a new Tile (map.ts 13), Game.g_map returns a new Map on each access (game.ts 34). Nothing draws the window in this donor.
+- Not read: Tile, Thing and the setFloorDescription body (2150 onwards, beyond the signature); the rest of protocolgame.ts; the vendor bundle.
+
+Best transferable idea (camera): a visible window is a server-set size with margins derived from it, moved one row or column at a time so the client only receives what enters the view.
+Decision (proposed): reject — for the camera it is a 2D fixed window with no follow, orbit or collision, and its range setter throws, so nothing here helps the over-the-shoulder camera. Keep the strip-streaming idea as a candidate for the server-tick and area-of-interest topic (not this cell; Strategy may want to assign it).

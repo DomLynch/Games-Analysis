@@ -119,3 +119,11 @@ export {};
 - Player-sell refill is a dead hook (GenericBuy.cs 103 always false). Do not port it as a refill path; the resale rack is the donor's only sell-back route, priced at 1.90 times the sell price (GenericSell.cs 83). A 1.90 spread is an economic choice; decide it, do not inherit it.
 - Town tax: the `100 + ...?.Tax ?? 0` precedence (BaseVendor.cs 1353) gives scalar 0 and base price outside any town. Frankendom should make the tax an explicit zone field, not an accident of precedence.
 - Lazy trigger: a vendor nobody opens never restocks, and an open after a long gap restocks once. That suits a server with no restock tick; it does mean restock depends on a player's request, which the server must allow.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** No false claim found. Verified: OnRestock 105-137 exactly as described (sold-out x2 cap 999 at 107-109; 999+ -> 640 at 121-123; >20 halves at 125-127; drop only if m_Amount >= half at 130-133; refill 136), RestockDelay 1 h (BaseVendor.cs 130), lazy gate Core.Now - LastRestock > delay (866), Restock sets LastRestock before OnRestock (134-140), only callers VendorBuy 868 and Commands.cs 719, VendorBuy callers VendorAI 119/134 and BaseVendor 1432, ProcessSinglePurchase clamp/abort (1177-1198), order abort (189-191), decrement (1233), ConsumeTotal 254 and bank >=2000 (264-266), price (m_Price*scalar+50)/100 (GenericBuy.cs 79), scalar 100+tax precedence (1353), Restock hook always false (103), buy-back 1.90x (GenericSell.cs 83), iron ingot 5/16 (SBBlacksmith.cs 16 under SBInfo/), odd-ceiling rounding note (21 -> halves at 11 sold) is correct, acceptance numbers (40/25 -> 20, 40/15 -> 40, 16 sold out -> 32) correct, GPL-3.0.
+
+**Missed:** Price getter has a long-arithmetic branch for m_Price > 5,000,000 with int.MaxValue clamp (GenericBuy.cs 63-77); Amount setter clamps to >=0 (94). Minor, not needed for the sketch. Note's 'Restock 132-140' really ends at 142.

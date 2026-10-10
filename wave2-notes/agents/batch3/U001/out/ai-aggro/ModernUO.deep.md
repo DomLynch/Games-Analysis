@@ -14,7 +14,7 @@ Checked: Read in full: `BaseAI.AcquireFocusMob` (BaseAI.cs 853-910), `HandleAggr
 - Approach pull (BaseCreature.cs 1321-1360, 3066-3070): a creature with no combatant, not controlled or summoned, not `None` or `Aggressor` mode, sees an enemy step inside `AcquireOnApproachRange` = 10 (1330, 1358). Then `ScheduleAcquireOnApproach` (1334) sets the deadline to `now + AcquireOnApproachDelay` (2 s, 1326; zero for paragons). It only moves the gate earlier (`deadline - NextReacquireTime < 0`, 1339). A zero delay prods the think timer. So the ambient scan runs every 10 s (1321), and a nearby enemy pulls the next scan to within 2 s.
 - Aggression (`BaseCreature.AggressiveAction`, 2790-2800): the AI's `OnAggressiveAction` decides. If it returns false, the creature stops. Otherwise it stops flee, forces a reacquire (`ForceReacquire` sets the gate to now, 3061-3063), and marks the attacker. `OnAggressiveAction` (BaseAI.cs 138-172) returns false for a friendly-fire guard or a stand-down order. Otherwise `PreferCloserAggressor` (174-185) switches to a visible attacker closer than the current combatant, and a creature with no combatant takes the attacker.
 - Leash (MeleeAI `HandleOutOfRangeCombatant`, 75-97): with the combatant outside RangePerception, a rescan runs first (77). If it finds a focus, that becomes the combatant (79-80). Otherwise, if the combatant is beyond `ChaseLeashRange` = 2 x RangePerception (BaseCreature.cs 1094), the combatant is dropped (84-86) and the creature goes to Guard (92). Otherwise it keeps chasing.
-- Flee (`BaseAI.StartFlee`, 785-807; MeleeAI 11-12, 144): on each think the creature flees if its hit fraction is at or below `FleeHealthThreshold` (800) and a roll is below `FleeChance` (805). Melee uses threshold 0.2 and chance 0.1 (MeleeAI.cs 11-12). The flee lasts `Utility.Random(10, 30)` seconds (780). In MeleeAI `DoActionFlee` (142-144), the creature returns to combat when its hits go back above the threshold.
+- Flee (`BaseAI.StartFlee`, 785-807; MeleeAI 11-12, 144): on each think the creature flees if its hit fraction is at or below `FleeHealthThreshold` (800) and a roll is below `FleeChance` (805). Melee uses threshold 0.2 and chance 0.1 (MeleeAI.cs 11-12). Before the roll, `CheckFlee()` runs first (`Mobile.CheckFlee()` keeps an existing flee going, 766-778), and `StartFlee` returns false at once if `Mobile.CanFlee` is false (793). The flee lasts `Utility.Random(10, 30)` seconds (780); `Utility.Random(from, count)` is `from + Next(count)` (`BuiltInRng.cs` 34), so 10 to 39 s, not 10 to 30. In MeleeAI `DoActionFlee` (142-144), the creature returns to combat when its hits go back above the threshold.
 
 ## 2. Key functions
 
@@ -32,12 +32,12 @@ Checked: Read in full: `BaseAI.AcquireFocusMob` (BaseAI.cs 853-910), `HandleAggr
 | Enemy stepping within range pulls the next scan earlier, never later | Approach range 10 tiles (BaseCreature.cs 1330); approach delay 2 s (1326); paragon 0 (1326) |
 | Best-ranked visible hostile in range wins; first seen wins ties | Ranking: closest = negative distance (2742); weakest = negative hits (2741); strongest = tactics + strength (2740) |
 | Leash: drop a combatant that is too far after a failed rescan | Chase leash = 2 x perception (BaseCreature.cs 1094); perception 16 (BaseCreature.cs 171) |
-| Flee when hit fraction is at or below a threshold, on a roll | Melee threshold 0.2, chance 0.1 (MeleeAI.cs 11-12); flee 10 to 30 s (BaseAI.cs 780) |
+| Flee when hit fraction is at or below a threshold, on a roll | Melee threshold 0.2, chance 0.1 (MeleeAI.cs 11-12); flee 10 to 39 s (`Utility.Random(10, 30)` = 10 + Next(30); BaseAI.cs 780, BuiltInRng.cs 34) |
 | Think period from speed; idle creatures jitter by one eighth | Period = speed x 1000 ms (AITimer.cs 155); jitter = period >> 3 (AITimer.cs 164-165) |
 
 ## 4. TypeScript sketch
 
-simplified: the sketch follows the donor order for one creature: the aggressor-mode check, then the scan gate (blocked while the remaining time is in (0, period]), then the candidate filter with a strict-greater pick, then the gate re-armed after every scan. The approach pull only moves the gate earlier; zero means think now. The leash drop follows a failed rescan, as in the donor. It omits: the `Strongest` ranking (stat-based, rejected in the decision); the faction, ethic, summon, bard and control filters; the `GetMobilesInRange` box query (not read; the sketch uses Euclidean distance); the hidden-aggressor check in `PreferCloserAggressor`; `ForceReacquire` after an aggression; the Melee flee exit back to combat; the movement-blocked path; the think cadence; and the duration of a flee.
+simplified: the sketch follows the donor order for one creature: the aggressor-mode check, then the scan gate (blocked while the remaining time is in (0, period]), then the candidate filter with a strict-greater pick, then the gate re-armed after every scan. The approach pull only moves the gate earlier; zero means think now. The leash drop follows a failed rescan, as in the donor. It omits: the `Strongest` ranking (stat-based, rejected in the decision); the faction, ethic, summon, bard and control filters; the `GetMobilesInRange` box query (not read; the sketch uses Euclidean distance); the hidden-aggressor check in `PreferCloserAggressor`; `ForceReacquire` after an aggression; the Melee flee exit back to combat; the movement-blocked path; the think cadence; the `CanFlee` gate and the duration of a flee (10 to 39 s in the donor), and the approach pull's `ShouldAcquireOnApproach` exclusions of bard-pacified, summoned and controlled creatures (BaseCreature.cs 1354-1359; the sketch's `enemy` flag stands for `IsEnemy && CanBeHarmful`).
 
 ```ts
 // Licence: GPL-3.0 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -52,7 +52,8 @@ export interface Foe {
   hitsMax: number;
   alive: boolean;
   inLos: boolean;
-  hostile: boolean;   // combatant, aggressor or aggressed toward this creature
+  hostile: boolean;   // combatant, aggressor or aggressed toward this creature (used by the aggressor-mode filter)
+  enemy: boolean;     // donor IsEnemy(m) && CanBeHarmful(m, false); gates the approach pull (a stranger can qualify)
   tactics: number;
   str: number;
 }
@@ -108,7 +109,7 @@ export function scan(b: Brain, foes: Foe[], now: number, t: Tuning, hasAggressor
 // The deadline only moves earlier. Zero means "think now" (returned as true).
 export function onEnemyStep(b: Brain, foe: Foe, now: number, t: Tuning, approachMs: number): boolean {
   if (b.combatant !== null || b.mode === 'none' || b.mode === 'aggressor') return false;
-  if (!foe.hostile || dist(b.x, b.y, foe.x, foe.y) > t.approachRange) return false;
+  if (!foe.enemy || dist(b.x, b.y, foe.x, foe.y) > t.approachRange) return false;
   const deadline = now + approachMs;
   if (deadline < b.nextScanAt) b.nextScanAt = deadline;
   return approachMs <= 0;
@@ -132,7 +133,7 @@ export function keepCombatant(b: Brain, foes: Foe[], now: number, t: Tuning, has
   return 'chase';
 }
 
-// Flee check at each think: at or below the threshold, a roll against the chance. Duration 10 to 30 s (donor).
+// Flee check at each think: at or below the threshold, a roll against the chance. Duration 10 to 39 s in the donor (Utility.Random(10, 30) is 10 + Next(30)); not modelled here.
 export function shouldFlee(hits: number, hitsMax: number, threshold: number, chance: number, rand: () => number): boolean {
   if (hits / hitsMax > threshold) return false;
   return rand() < chance;
@@ -158,3 +159,11 @@ Acceptance: a server test shows that an enemy stepping within 10 tiles of an idl
 - The donor's creature-wide `ReacquireDelay` and approach numbers are per creature class. Under the zones-as-data ruling they belong on spawn or zone data (for example the approach range and the paragon zero), with the 10 s and 2 s defaults as engine constants.
 - Flee is per creature class and roll-based. Frankendom's guard, stance and stagger are in the duel step (rows 1 and 3); a flee roll should not replace the duel's own break rules. The flee path depends on `BaseCreature.CheckFlee` (not read).
 - Many-on-one: the donor lets many creatures focus one player with no shared cap in the scan. `MAX_ATTACKERS = 3` must be enforced by the engine when a focus is granted, not left to each creature.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** (1) Flee duration 'Utility.Random(10, 30) seconds = 10 to 30 s' (Mechanism, Numbers table, sketch comment) is WRONG: Utility.Random(from,count) = from + Next(count) (BuiltInRng.cs:34), so BaseAI.cs:780 yields 10..39 s. (2) Sketch onEnemyStep requires foe.hostile (combatant/aggressor/aggressed), but donor ShouldAcquireOnApproach (BaseCreature.cs 1354-1359) uses IsEnemy(m) && CanBeHarmful(m,false) - a stranger would trigger the approach pull in the donor but never in the sketch. (3) Flee description omits the Mobile.CanFlee gate (BaseAI.cs 793) and that CheckFlee() runs before StartFlee (766-778). Verified OK: AcquireFocusMob 853-910 and its order, gate 894-896, re-arm 908, HandleAggressor 978-991, AcquireNewFocusMob 993-1043 (strict > and LOS, summon fallbacks), filters 1045-1089, OnAggressiveAction 138-171, PreferCloserAggressor 174-188, ranking 2731-2745, 10 s 1321, 2 s/paragon 0 at 1326, range 10 at 1330, clamp 1339, DefaultRangePerception 16 (171), ChaseLeash 2x (1094), MeleeAI 11-12 (0.2/0.1), 16, 75-97, AITimer 137/155-156/164-165/Prod 60, AggressiveAction 2790-2800, ForceReacquire 3061-3063, GPL-3.
+
+**Missed:** ShouldAcquireOnApproach also excludes BardPacified and Summoned/Controlled (1354-1359); HandleControlled/guard targeting (930-963) not covered (out of scope).

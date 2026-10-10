@@ -134,3 +134,11 @@ Decision (proposed): adapt. Take the data-driven screen graph, the per-talk sess
 Acceptance: a server test: talking to the pickup NPC once gives one item and moves the state to picked up; a second talk says already picked up with no second item; a destination talk without the item says give-item and leaves the state; with the item it delivers, removes the item, and the state is delivered; walking 8 units away ends the talk.
 
 Reuse tag: rewrite-from-idea (AGPL-3.0, clean-room). Brief rule served: server-verified state changes; zones as data.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** All cited lines, 7-unit squared strict-less-than leash (CreatureObjectImplementation.cpp:4767-4771), states 0/1/2 (DeliverMissionObjective.idl:25-27), handler loop 212, random(4) at 128, licence all verified. Small gloss: leash cancels when sessionNpc==nullptr OR (agent AND out of range) (ConversationObserverImplementation.cpp:71), note states only the second; ship-agent branch 73-84 omitted but disclosed in sketch.
+
+**Missed:** STOPCONVERSATION also resets the NPC from CONVERSING to OBLIVIOUS/FOLLOWING (Observer 93-102) and sendTo fires STOPCONVERSATION to observers (ConversationScreen.h:222-223); an NPC freezes while talking. Not covered.

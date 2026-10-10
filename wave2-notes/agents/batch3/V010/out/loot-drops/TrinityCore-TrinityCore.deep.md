@@ -142,3 +142,11 @@ Brief rule served: one ledger, server-verified kills, zones as data (rule 1 one 
 Best transferable idea: One draw walks the cumulative chances of mutually exclusive drops, with a uniform equal-chance pool for the rest, and filtering is stated as a rule rather than left to renormalise.
 Decision (proposed): adapt — the one-draw table is simple, server-side and checkable, so take the shape; do not copy the donor's group/quality inconsistency or the silent overflow, and defer the Need/Greed party UI until a party rule exists.
 Acceptance: a server test over 100k seeded rolls on one zone table (explicit chances 10 and 25, plus an equal-chance item) lands each within 0.5 points of its chance; a kill payload carries one pick per group and never more than 18 stacks, with the overflow written to the ledger.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** All verified: QualityToRate 34-45, LootStoreItem::Roll 250-282 (100 check first, rate at 261), GroupInvalidSelector 61-79, Group::Roll 432-465 (draw 447, 451-452, 454-456, equal pool 460-462), Group::Process 519-521, Template::Process 641-696 (ref repeat 681-683), FillLoot 859-926, AddItem 939-946 (urand inclusive, 18 cap at 942, MAX_NR_LOOT_ITEMS 86), TryToStart 465-518 (timeout 509; LOOT_ROLL_TIMEOUT 1min Loot.h 34), PlayerVote urand(1,100) at 531, AllPlayerVoted 587-624, Finish 674-715, Loot::Update 1189-1196, conf.dist 2459/2467, Unit.cpp 11400/11426. Sketch matches donor ordering and tie rules.
+
+**Missed:** Reference entries also get the Rate.Drop.Item.Referenced chance multiplier (LootMgr.cpp 266; conf.dist 2459) - note only mentions the ReferencedAmount repeat count. TryToStart marks non-eligible looters NotValid (486) and builds m_voteMask (499-503): CAN_ONLY_ROLL_GREED removes Need, and disenchant is removed when skill too low. The 18-slot cap in AddItem guards only the Item type; currency/tracking-quest entries push without cap (955-970).

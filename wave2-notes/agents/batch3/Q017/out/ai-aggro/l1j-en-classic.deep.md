@@ -54,7 +54,7 @@ Dead and gone entries. `L1HateList.removeInvalidCharacter` (89-100) would purge 
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the accumulate, the first-hit bonus (once, skipped for zero seeds), the top-of-table pick with validate-drop-repick, and the pack link rule with the "only if the hate list is empty" check. It differs from the donor in four places: ties go to the lower id (the donor's tie-break is `HashMap` iteration order, which is not defined); `pickTarget` removes an invalid top as it finds it, where the donor removes it through `targetClear`; the pack list is an input (the donor walks the attacker's visible NPCs); and it omits the aggro-on-sight rules, the map and karma filters, the loot ledger, the invisibility clause, the AI thread and its sleeps, and the item path. The sketch does not add a cap on the table size, because the donor has none.
+simplified: the sketch keeps the accumulate, the first-hit bonus (once, skipped for zero seeds), the top-of-table pick with validate-drop-repick, and the pack link rule with the "only if the hate list is empty" check. It differs from the donor in four places: ties go to the lower id (the donor's tie-break is `HashMap` iteration order, which is not defined); `pickTarget` removes an invalid top as it finds it, where the donor removes it through `targetClear`; the pack list is an input (the donor walks the attacker's visible NPCs); and it omits the aggro-on-sight rules, the map and karma filters, the loot ledger, the invisibility clause, the AI thread and its sleeps, and the item path. The sketch does not add a cap on the table size, because the donor has none. Like the donor's `setHate`, `addHate` accepts any amount for a non-self attacker (including negative); only the caller `receiveDamage` guards damage >= 0 (`L1MonsterInstance.java` 288), so the caller must do the same.
 
 ```ts
 // Licence: GPL-2.0-or-later (donor header: "version 2, or (at your option) any later version"). Clean-room: shape only.
@@ -71,7 +71,7 @@ export interface Live {        // what the engine knows about a candidate right 
 
 // Hate from one hit. A zero amount seeds the entry (aggro on sight) without using the first-hit bonus.
 export function addHate(t: HateTable, selfId: string, attackerId: string, amount: number, maxHp: number, firstHitDivisor: number): void {
-  if (attackerId === selfId || amount < 0) return;
+  if (attackerId === selfId) return;   // donor setHate: any amount is accepted; only the damage caller guards damage >= 0 (L1MonsterInstance 288)
   let add = amount;
   if (!t.firstHitDone && amount !== 0) {
     add += Math.trunc(maxHp / firstHitDivisor);   // donor: maxHp / 10 (integer division)
@@ -133,3 +133,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 Best transferable idea: Keep one hate table per NPC that accumulates damage per attacker, pick the strict maximum with a stable tie-break, and on every pick validate the top and drop it if it is dead, off-map or gone, before taking the next one.
 Decision (proposed): adapt — the accumulate, max-pick and validate-drop loop is the right shape for many-on-one aggro under MAX_ATTACKERS = 3; we take the shape, add a deterministic tie-break and a cap at the point of entry, purge stale entries on leave, and do not take the per-NPC thread or the sight-order target.
 Acceptance: server test — attacker A hits for 30 first on an NPC with maxHp 200 (hate 50), attacker B hits for 40 (hate 40), so A is the target; when A is dead the next pick is B with no exception; a seed of hate 0 does not consume the first-hit bonus; equal hate picks the lower id on every run.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** Sketch addHate rejects amount<0 (donor setHate accepts any hate for non-null non-self; only receiveDamage guards damage>=0) - not in the sketch's 'four differences' list. Everything else verified: L1HateList 45-54/76-87/89-100, setHate 355-368, checkTarget 342-353, targetClear 746-752, AIProcess 293-, run loop 253-274, searchTarget 114-204, serchLink 373-395, setLink 207-212, L1Attack 1459, constants 300/200/1000 ms, maxHp/10, maps 88/98/92/91/95, -1000, GPL v2-or-later header, no caller of removeInvalidCharacter/totals, setFirstAttack never cleared.
+
+**Missed:** L1NpcInstance.appearOnGround (~1309-1330) also seeds hate 0 and sets _target when a hidden (sink/fly) monster surfaces; searchTarget has a special-case for npc id 45600 (141-147); receiveDamage removes FOG_OF_SLEEPING when damage>0 (295-297).

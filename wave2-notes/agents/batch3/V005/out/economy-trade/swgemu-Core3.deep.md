@@ -36,7 +36,7 @@ Checked: `doAuctionBid` 1212-1327 (read in full). `checkBidAuction` 992-1006 (re
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order for a bid (price and max check, funds check, challenger-below-leader path with the leader's debit for the rise, takeover path). It omits: the owner-cannot-bid check, the bank check on the leader in the takeover path, the MAXBAZAARPRICE cap, the mail and the chat messages, the TransactionLog entries, the `getPlayer` lookup and its offline case, and the instant-buy and expiry paths. It also adds a `leaderPaid` field the donor does not keep, and uses it for the refund, so the refund equals the leader's own debit. The donor refunds the new price instead (section 6). The sketch is a corrected version, not the donor's behaviour.
+simplified: the sketch keeps the donor order for a bid (price and max check, funds check, challenger-below-leader path with the leader's debit for the rise, takeover path). It omits: the owner-cannot-bid check, the takeover path's own funds check on the new bidder (1269-1270: bank must cover both the offer and the current price), which the sketch folds into its single upfront bidder check, the MAXBAZAARPRICE cap, the mail and the chat messages, the TransactionLog entries, the `getPlayer` lookup and its offline case, and the instant-buy and expiry paths. It also adds a `leaderPaid` field the donor does not keep, and uses it for the refund, so the refund equals the leader's own debit. The donor refunds the new price instead (section 6). The sketch is a corrected version, not the donor's behaviour.
 
 ```ts
 // Licence: AGPL-3.0 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -103,3 +103,11 @@ Decision (proposed): reject for now. Frankendom's rulings have no market, and th
 Acceptance: if built, a server test asserts this case: a lot at 100, leader max 500; a challenger offers 150 with max 300, so the price becomes 350 and the leader's debit is 250 (total 350) with the challenger not debited; then a bidder offers 400 with max 600, and the old leader is refunded 350, not 400.
 
 Reuse tag: rewrite-from-idea (AGPL-3.0, clean-room). Brief rule served: one ledger (refund equals debit).
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** Sketch header says it omits 'the bank check on the leader in the takeover path': the takeover check (1269-1270) is on the NEW bidder (player), and the sketch does include a bidder funds check; the leader's check (1244) is in the proxy path and is included. Mislabelled omission. Core claims verified: 1214, 1226, 1235, 1241 (fullPrice=proxyBid+increase-price), 1253, 1277, 1290, 1296, 1305 refund of new price (real overpay bug confirmed), offline-leader skip (1298), 1316-1321, doInstantBuy 1194/1201/1022, MAXBAZAARPRICE 20000, SALESFEE 20, fee multipliers 745/749/753-755, 689, expiry 790-791, IDL 44-45.
+
+**Missed:** expireAuction 2201-2213: no bidder, or winner offline (getPlayer null), routes to expireBidAuction (item treated as unsold) rather than SOLD - an offline winner loses the sale; not mentioned. Proxy path at 1235 also needs priorBidder online (non-null), else any bid falls to takeover path and overwrites the proxy.

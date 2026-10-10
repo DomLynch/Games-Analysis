@@ -136,3 +136,11 @@ export {};
 - Many-on-one: the donor has no slot cap, so every attacker in range can sit on the list. Frankendom's MAX_ATTACKERS = 3 rule must be added; this sketch does not enforce it.
 - Taunt ordering uses the most recent taunt aura (ThreatManager.cpp:530-534); the sketch uses a plain 0-2 value and does not model it.
 - Not read: the chase and leash code that moves the creature (the donor's movement, not this file), the spell side that calls `AddThreat`, and `EvaluateSuppressed`.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** All checked: 110%/130% in ReselectVictim (ThreatManager.cpp:657,660), melee branch 663 then walk 666-681, CompareReferencesLT order online/taunt/threat (699-706), 1000 ms interval (h:94), timer init (216), enums 269-270, GetThreat 274, comparator weight 1.0 (326-328), TauntUpdate 526-552, AddThreat 392-497 sequence, modifiers 708-762, melee range + leeway (Unit.cpp:799-802), call sites Creature.cpp:795 and UnitAI.cpp:549-550, GPL v2 or later. Sketch order matches donor, omissions disclosed.
+
+**Missed:** None significant. Tie order inside the fibonacci heap is unspecified (note says so).

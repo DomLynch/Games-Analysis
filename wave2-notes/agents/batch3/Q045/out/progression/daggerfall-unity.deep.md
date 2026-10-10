@@ -2,7 +2,7 @@
 
 Donor: `/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs` | Licence: MIT (repo LICENSE, "Copyright (c) 2009-2023 Daggerfall Workshop") | C# | symbol `PlayerEntity.RaiseSkills` / `TallySkill` / `CheckForLevelUp` (formulas in `FormulaHelper`)
 
-Checked: The hint was INFERRED (no file given), so I searched for the topic words (TallySkill, LevelUp, RaiseSkills, CalculatePlayerLevel, SkillUses) and found the mechanism in `PlayerEntity.cs` (not the hint). Read in full: `PlayerEntity.cs` 1240-1266 (TallySkill override), 1356-1415 (RaiseSkills), 1436-1501 (level sums, starting-sum estimate, CheckForLevelUp); `FormulaHelper.cs` 139-175 (bonus pool, RollMaxHealth), 316-354 (uses-to-advance, player level, hit-point roll); `DaggerfallDateTime.cs` 468-486 (classic minutes); `DaggerfallCharacterSheetWindow.cs` 366-392 (level-up apply) and 776-790 (progress label); `DaggerfallEntity.cs` 578-590 (base TallySkill, empty); `DaggerfallSkills.cs` 478-520 (advancement multipliers, partial: the table continues after 520, not read); `LICENSE` header. Callers (grep, lines only unless stated): RaiseSkills has 2 call sites, the rest window 731 and the travel popup 380 (grep-read, not opened in full); TallySkill has 33 matches including 2 definitions, and the 4 call sites checked are ClimbingMotor 828, EnemySenses 522 and 647, TalkManager 650 (grep-read); CheckForLevelUp has 1 call site, inside RaiseSkills (read); SetCurrentLevelUpSkillSum has 4 call sites (PlayerEntity 1388 read; StartGameBehaviour 425 and 578 and SerializablePlayer 297 grep-read); the ReadyToLevelUp setter in the Oghma effect is grep-read. Not read: the `PlayerReflexes` enum values, the career multiplier loader (`DFCareer.cs` 585, grep only), the rest of the multiplier table after 520, the stats rollout UI, the other TallySkill call sites. Notable: `EstimateStartingLevelUpSkillSum` has no caller in `Assets/` by grep (it may be dead code or called from a path not in this donor). Confidence: high on the order of steps and the constants (each has a receipt); medium-high on "one level per pass" (read from the single `Level++` and the boolean flag; not run). Depth full: the end-to-end path from tally to level-up was read. camera_scope: n/a.
+Checked: The hint was INFERRED (no file given), so I searched for the topic words (TallySkill, LevelUp, RaiseSkills, CalculatePlayerLevel, SkillUses) and found the mechanism in `PlayerEntity.cs` (not the hint). Read in full: `PlayerEntity.cs` 1240-1266 (TallySkill override), 1356-1415 (RaiseSkills), 1436-1501 (level sums, starting-sum estimate, CheckForLevelUp); `FormulaHelper.cs` 139-175 (bonus pool, RollMaxHealth), 316-354 (uses-to-advance, player level, hit-point roll); `DaggerfallDateTime.cs` 468-486 (classic minutes); `DaggerfallCharacterSheetWindow.cs` 366-392 (level-up apply) and 776-790 (progress label); `DaggerfallEntity.cs` 578-590 (base TallySkill, empty); `DaggerfallSkills.cs` 478-520 (advancement multipliers, partial: the table continues after 520, not read); `LICENSE` header. Callers (grep, lines only unless stated): RaiseSkills has 2 call sites, the rest window 731 and the travel popup 380 (grep-read, not opened in full); TallySkill has 33 matches including 2 definitions, and the 4 call sites checked are ClimbingMotor 828, EnemySenses 522 and 647, TalkManager 650 (grep-read); CheckForLevelUp has 1 call site, inside RaiseSkills (read); SetCurrentLevelUpSkillSum has 4 call sites (PlayerEntity 1388 read; StartGameBehaviour 425 and 578 and SerializablePlayer 297 grep-read); the ReadyToLevelUp setter in the Oghma effect is grep-read. Not read: the `PlayerReflexes` enum values, the career multiplier loader (`DFCareer.cs` 585, grep only), the rest of the multiplier table after 520, the stats rollout UI, the other TallySkill call sites. Notable: `EstimateStartingLevelUpSkillSum` has one caller in `Assets/`: `Serialization/SerializablePlayer.cs` 350, on load when `StartingLevelUpSkillSum` is 0 or less (found in the checker pass; the first-pass grep missed it). Confidence: high on the order of steps and the constants (each has a receipt); medium-high on "one level per pass" (read from the single `Level++` and the boolean flag; not run). Depth full: the end-to-end path from tally to level-up was read. camera_scope: n/a.
 
 Best transferable idea: Count each skill use into a per-skill tally, settle the tally into a skill rise only at a gated checkpoint (rest or travel), and derive the character level from the sum of advanced skills rather than from kills.
 Decision (proposed): adapt - take the tally, the threshold that scales with current value and level, and the level-from-sum rule, but tally only server-verified fight events (parries, dodges, blocks), and settle at a zone rest point, not on a timer. The 6-game-hour gap does not fit fast duels, so the gap becomes a rest-point rule.
@@ -20,7 +20,7 @@ Acceptance: A server test asserts that after 10 verified parries the parry tally
 - Level check (`CheckForLevelUp`, 1493-1501; called at 1413): `level = floor((current - starting + 28) / 15)` (`FormulaHelper.cs` 336). If level is below that, `readyToLevelUp` is set and the character sheet is posted to open (`PlayerEntity.cs` 1414).
 - Level-up apply (`DaggerfallCharacterSheetWindow.cs` 370-392): bonus pool rolled 4 to 6 (`FormulaHelper.cs` 146-152), `Level++` once (379), max health gains a hit-point roll (380), then the flag clears (392). The roll is from half of the class hit points to the full class value, plus an endurance modifier, floored at 1 (`FormulaHelper.cs` 346-353).
 - Oghma item effect sets `ReadyToLevelUp` directly (`OghmaInfiniumEffect.cs` 42). In the sheet, the Oghma branch uses its own bonus pool and skips `Level++` (`DaggerfallCharacterSheetWindow.cs` 376-383).
-- Starting sum: `EstimateStartingLevelUpSkillSum` (1480-1488) estimates from `level + 0.5`, but keeps the current sum when the stored start is ahead of it. No caller found in `Assets/` (grep).
+- Starting sum: `EstimateStartingLevelUpSkillSum` (1480-1488) estimates from `level + 0.5`, but keeps the current sum when the stored start is ahead of it. It is called on load, from `SerializablePlayer.cs` 350, when the stored starting sum is 0 or less.
 - Tick: none per frame. This is a settlement at rest or travel, with a time gate.
 
 ## 2. Key functions
@@ -47,7 +47,7 @@ Acceptance: A server test asserts that after 10 verified parries the parry tally
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order: the dying gate is left out, the gap check comes first, then per skill: threshold from value, multiplier and level, reflexes factor, reset of uses before the cap test (as in the donor), then the rise and the level-sum refresh, then the level check. It omits the dying gate, the popups and fanfare, the Oghma branch, the stats rollout, the override hooks, the other TallySkill sites, and the estimate function (no caller found). It takes the random bonus roll and hit-point gain as inputs (the donor seeds from frame count). The donor's C# integer division in the level formula is written with `Math.floor`, which matches it only for non-negative numerators.
+simplified: the sketch keeps the donor order: the dying gate is left out, the gap check comes first, then per skill: threshold from value, multiplier and level, reflexes factor, reset of uses before the cap test (as in the donor), then the rise and the level-sum refresh, then the level check. It omits the dying gate, the popups and fanfare, the Oghma branch, the stats rollout, the override hooks and the other TallySkill sites. It includes the starting-sum estimate (donor: run on load when the stored sum is 0 or less, SerializablePlayer.cs 350). The mastery test is evaluated per skill inside the loop, as the donor calls `AlreadyMasteredASkill()` for each skill (1384), so a primary skill that reaches 100 mid-pass blocks later skills at 95 or above in the same pass. The level sum is refreshed only when a skill rises (donor 1388), not again after the loop. It takes the random bonus roll and hit-point gain as inputs (the donor seeds from frame count). The donor's C# integer division in the level formula is written with `Math.floor`, which matches it only for non-negative numerators.
 
 ```ts
 // Licence: MIT (donor LICENSE). Written fresh from the described mechanism, not a line-by-line translation.
@@ -117,25 +117,28 @@ function checkForLevelUp(h: Hero): boolean {
   return up;
 }
 
+// Donor AlreadyMasteredASkill: true when any primary skill is at 100 right now (evaluated per skill, not once per pass).
+function alreadyMastered(h: Hero): boolean {
+  return h.primary.some(i => h.skills[i].value === MASTER);
+}
+
 // Settle skill advancement once per gated check (called at rest or travel, not per frame).
 function raiseSkills(h: Hero, nowMin: number, careerMult: number): boolean {
   if (nowMin - h.lastCheckMin <= CHECK_GAP_MIN) return false;
   h.lastCheckMin = nowMin;
-  const mastered = h.primary.some(i => h.skills[i].value === MASTER);
   for (let i = 0; i < h.skills.length; i++) {
     const s = h.skills[i];
     const need = usesNeeded(s.value, s.multiplier, careerMult, h.level);
     const scaled = Math.floor((s.uses * reflexesMod(h.reflexes)) / 65536);
     if (scaled >= need) {
       s.uses = 0;                       // reset happens before the cap check, as in the donor
-      if (s.value < MASTER && (s.value < MASTER_GATE || !mastered)) {
+      if (s.value < MASTER && (s.value < MASTER_GATE || !alreadyMastered(h))) {
         s.value += 1;
         h.currentSum = currentLevelSum(h);
       }
     }
   }
-  h.currentSum = currentLevelSum(h);
-  return checkForLevelUp(h);
+  return checkForLevelUp(h); // donor: the sum was refreshed at each rise
 }
 
 // On the level-up screen: one level, a bonus pool roll, and a hit point gain. The roll is passed in.
@@ -163,8 +166,16 @@ export {};
 - The bonus roll is seeded from `Time.frameCount` (`FormulaHelper.cs` 151): not deterministic, so it cannot be used on the server as is. The sketch takes the roll as an input.
 - The 6-game-hour gap is a world-clock rule. Fast duels have no such clock; the rest-point rule replaces it. The gap should be zone data, not an engine constant, if kept.
 - Mods can replace the formulas through `TryGetOverride`. Frankendom should keep the constants as data with defaults, not as hooks.
-- The estimate function has no caller in this donor. Do not port it as if it were live.
+- The estimate function is live in the donor: it runs on load when the stored starting sum is 0 or less (`SerializablePlayer.cs` 350). Frankendom should store the starting sum and not need an estimate; port it only if old saves must be repaired.
 - Lockpicking, stealth and other tallies are per-use. Frankendom's guard and parry rules (parity row 3) are the candidate tallies; the rest of Frankendom's skill list was not read here.
 
 Reuse tag: rewrite-from-idea (MIT; written fresh)
 Brief rule served: 1 (one engine, server-side progression); rules 7-9 n/a
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** (1) FALSE: 'EstimateStartingLevelUpSkillSum has no caller in Assets/' (stated in header, mechanism and Gaps 'do not port as if live'). It is called from Serialization/SerializablePlayer.cs:350 when StartingLevelUpSkillSum <= 0 on load. (2) Sketch raiseSkills computes `mastered` once before the loop; donor calls AlreadyMasteredASkill() per skill (1384), so a primary skill reaching 100 mid-pass blocks later >=95 skills in the donor but not in the sketch (undisclosed). (3) Sketch re-computes currentSum after the loop (donor only refreshes at 1388 inside the rise) - harmless but undisclosed. Verified OK: TallySkill 1243-1255 cap 20000/floor 0, RaiseSkills 1359-1415 order, 360-minute gate (ToClassicDaggerfallTime returns minutes, DaggerfallDateTime 475), uses formula 1.04^level *2/5 +1 (FormulaHelper 325-326), reflexes 0x10000-((r-2)<<13)>>16, 95/100 mastery gate, level sum 1439-1475, CheckForLevelUp 1493-1501, level=(cur-start+28)/15 (336), bonus pool 4-6 (146-152, frameCount seed), HP roll 346-353, sheet 370-392, multipliers 12/5/2/4 at DaggerfallSkills 490/495/507/520, RaiseSkills callers rest 731/travel 380, TallySkill amounts (ClimbingMotor 828, EnemySenses 522=3, 647, TalkManager 650), MIT licence.
+
+**Missed:** DaggerfallSkills table also has Running=50 and language skills=15 (very slow rise); SerializablePlayer.cs:350 shows the starting sum is re-estimated on load when missing.

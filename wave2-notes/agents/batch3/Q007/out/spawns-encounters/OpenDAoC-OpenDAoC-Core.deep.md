@@ -107,3 +107,11 @@ export {};
 - Realm branch draws a random value and then discards the named bonus (2916-2921 before 2927-2930). Harmless in the donor, but a Frankendom test should not depend on the number of random draws.
 - Despawn. Ick.cs (73-102) shows a timed lifetime with combat deferral (180 s, retry 30 s). It is not an empty-zone check with a grace timer, so it covers only part of row 23's despawn half. Look for an empty-zone despawn elsewhere.
 - Not read: the timer driver (ECSGameTimer), so the claim "the callback runs on the server game loop" is not verified. The Frankendom server tick rule (fixed step) is a requirement, not something this donor shows.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** No false claim found. Verified: RespawnInterval getter 2909-2937 (draw Random(min,min+5) first, +5 if name != lower, <=65 && realm 0 -> minutes*60000, realm !=0 -> Random(5,10 min), else (minutes + (Level-65)+min)*60000), default 5 (ServerProperties.cs 1177), DB -1 -> 0 and *1000 (1019-1022), field default -1 (2896), StartRespawn early return <=0 (2976), callback 2996-3026 (stop timer, alive/active return 0, LoadTemplate, full resources, spawn point, SpawnTick, stealth, AddToWorld), death calls Delete then StartRespawn (2790, 2792), Util.Random inclusive (Util.cs 22-30), Ick.cs 73-102 (180 s, 30 s retry, RespawnInterval=-1), README 41-42 GPL v3, no cap grep hit. Worked example 15-20 / 20-25 min is correct.
+
+**Missed:** StartRespawn evaluates the RespawnInterval getter TWICE (2976 for the <=0 test, 2987 for Start), so the random window is drawn twice and the first value is discarded; the note mentions draw count only in passing and the sketch draws once - harmless but a replay test must not assume one draw.

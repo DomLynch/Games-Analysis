@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+vE5li-korangar	camera	P	STRONG	full	/mnt/frankendom-donors/vE5li-korangar/korangar/src/world/cameras/player.rs:55-93 and smoothed.rs:21-29: fixed-elevation orbit with per-value dead-banded smoothing and clamped zoom; order in lib.rs 3082-3092.
+guilhermelhr-unityro	camera	P	STRONG	full	/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/Scripts/GameCamera/CharacterCamera.cs:55-139 and CameraControlProfile.cs:24-54: orbit with a 30-45 deg pitch band, distance band and linear release coast; no follow smoothing.
+greenboxal-fimbulclient	camera	P	PARTIAL	thin	/mnt/frankendom-donors/greenboxal-fimbulclient/src/ya3de/YA3DE/Scene/FpsCamera.cpp:73-97: free-fly test-client camera, no player follow, pitch unclamped at line 88.

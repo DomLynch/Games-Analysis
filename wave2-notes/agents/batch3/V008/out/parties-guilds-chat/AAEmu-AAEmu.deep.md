@@ -122,3 +122,11 @@ export {};
 Best transferable idea: party member state is pushed on a fixed cadence, but only when it changed (HP and MP exact, position within a tolerance) or after a long gap, with one batch per recipient.
 Decision (proposed): adapt — the change-only send with a tolerance and a forced resync is a good template for party HP in a fight; the 500 ms handler, the region skip and the missing acknowledgement must not be copied.
 Acceptance: server test: a teammate's HP change reaches the other member in the next sync pass; an unchanged teammate is not resent for 5 s; a teammate moved by less than 0.01 units is not resent; an offline teammate is skipped.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** All cites hold: 500 ms/5000 ms/5 min consts (31,33,40), Subscribe at 705 (useAsync false), UpdateAllTeams 732-786, TryClaimSnapshot 794-818, HasSameSnapshotAs 1000-1006, PositionEpsilon 0.01f (996), AreInRenderDistance 958-972, TickLoop sleep 20 ms (27), delta>rate (92), first run immediate (91), 2,450 comment (730), ClearSyncState callers 406/440/591/866, SetOffline 558-600, README LGPL v3-or-later at 36-38. Sketch order matches (one-sided claim per direction, batch per recipient).
+
+**Missed:** UpdateAtLogin resets AllOfflineSince to MinValue (TeamManager.cs 650), so a reconnect cancels the zombie timer; DisbandOfflineTeam (839-877) re-verifies MembersOnlineCount under Team.SyncLock and clears InParty + sync state before TryRemove - note says 'not read' (honest) but both are cheap, relevant details. Cache is keyed (recipientId, sourceId) so region-skipped pairs keep stale entries.

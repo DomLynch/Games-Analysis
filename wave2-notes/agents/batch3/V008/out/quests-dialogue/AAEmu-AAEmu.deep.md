@@ -122,3 +122,11 @@ export {};
 Best transferable idea: a contract with an early turn-in (30% at half progress), a full payout at target, and a 120% overachieved bonus, all computed as a pure function of the objective counters and paid through one ledger.
 Decision (proposed): adapt — the status ladder and the ratios are plain numbers that fit bounties and contracts, but the integer-division quirk, the client-asserted talk and the untested early turn-in must not be copied.
 Acceptance: server test: a count-2 LetItDone contract refuses turn-in at 0 of 2 kills, pays 30% of the pool at 1 of 2, 100% at 2 of 2, and 120% at 3 kills (ceil(2 x 1.5) = 3); a turn-in request from a player beyond the NPC's range is refused.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** All checked: status ladder (NewQuestCode.cs:258-274, integer division for non-score; score branch uses Ceiling 231-238), Count=1 quirk (Count*1/2 = 0 -> CanEarlyComplete at 0; Count*3/2 = 1 -> Overachieved at 1), Selective min/max 287-289, reward ratios 0/0.3/1/1/1.2 (Quest.cs:355-369) and Math.Round (388,397), MaxObjective (QuestActTemplate.cs:105-112), queue 139-169 with 1 ms task (150), dirty flag 164-177, 480-483, RunComponents 52-132, OR/AND rules (QuestComponent.cs:49-59), turn-in gates (QuestActConReportNpc 47-55, CharacterQuests 653), packet target check (23-29), talk TODO range (QuestActObjTalk.cs:72), aggro rank faults (Npc.cs:1360 ascending sort, 1375 fraction vs 1372 percent), GetQuestObjectivePercent unit mix (328, 348, 354). Licence wording matches README.
+
+**Missed:** Quest.cs:377 sets QuestRewardRatio=1f for non-LetItDone quests inside the level-based reward branch (344-383), which would overwrite the ratio the aggro-rank act wrote (QuestActObjAggro.cs:72-98) whenever that branch runs; interplay not noted. Also RunComponents calls DistributeRewards(true) on every evaluation (QuestStep.cs:125), so rewards are paid from inside the evaluation path, not only at turn-in.

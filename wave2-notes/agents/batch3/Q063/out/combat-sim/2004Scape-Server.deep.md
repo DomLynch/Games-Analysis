@@ -23,7 +23,7 @@ Player swings at the NPC (`player/player_melee.rs2`, with the roll in `player/pl
 
 Numbers as the code writes them. Effective level = level x max(100, prayer%) / 100 (combat.rs2:5). Player style term: +8 on the effective level plus the style bonus (player_combat_stat.rs2:70). The NPC term is +9 (npc_combat_melee.rs2:6, 18; npc_combat.rs2:273). Style bonus: accurate gives +3 attack, aggressive +3 strength, defensive +3 defence, controlled +1 to each (combat.rs2:52-55). Roll = effective x (bonus + 64) (combat.rs2:12). Max hit = (strength roll + 320) / 640 (combat.rs2:8).
 
-Worked example (the donor formulas, not a measured number): attacker level 60 on accurate with bonus 0 gives attack roll (60 + 8 + 3) x 64 = 4544. Defender level 60 with no style gives defence roll (60 + 8) x 64 = 4352. Under the uniform-draw model that is a hit chance of about 52.1 percent. Strength roll (60 + 8 + 3) x 64 = 4544 gives max hit (4544 + 320) / 640 = 7.6, which is 7 under floor rounding (calc() rounding not read).
+Worked example (the donor formulas, not a measured number): attacker level 60 on accurate with bonus 0 gives attack roll (60 + 8 + 3) x 64 = 4544. Defender level 60 with no style gives defence roll (60 + 8) x 64 = 4352. Under the uniform-draw model that is a hit chance of about 52.1 percent. Accurate gives the strength style bonus 0 (combat.rs2:52; player_combat_stat.rs2:71), so for a strength level of 60 the strength roll is (60 + 8 + 0) x 64 = 4352, and the max hit is (4352 + 320) / 640 = 7.3, which is 7 under floor rounding (calc() rounding not read).
 
 Tick: both sides gate their swings on the server tick counter `map_clock`, by comparing it with action-delay values (player_melee.rs2:8; npc_combat_melee.rs2:41). The combat lock is 8 ticks since the last combat on the player side (player_combat.rs2:85). I did not read the tick loop that advances `map_clock`, so the fixed-step claim is not checked.
 
@@ -46,7 +46,7 @@ Tick: both sides gate their swings on the server tick counter `map_clock`, by co
 | Style term added to the effective level | +8 player, +9 NPC (theirs, player_combat_stat.rs2:70; npc_combat_melee.rs2:18); style bonus +3 or +1 (theirs, combat.rs2:52-55) |
 | Max hit from the strength roll | (roll + 320) / 640 (theirs, combat.rs2:8) |
 | Damage is a uniform draw up to the max hit, only on a hit | Demonbane x 160/100 and garlic +1 are per-NPC or per-item cases (theirs, player_melee.rs2:21-26) |
-| Per-NPC cap on damage | `max_dealt` param, player side only (theirs, player_melee.rs2:28); values seen in config: 0 (yanille.npc:247), 3 (antimacro.npc:43), read only as config, not as behaviour |
+| Per-NPC cap on damage | `max_dealt` param, player side only (theirs, player_melee.rs2:28); default 1000 (combat.param 149-154), so the cap is normally inert; values seen in config: 0 (yanille.npc:247, which means zero player damage), 3 (antimacro.npc:43), read only as config, not as behaviour |
 | Swing timing | Unarmed 4 ticks (theirs, player_melee.rs2:54); weapon attackrate (theirs, player_melee.rs2:56); NPC attackrate per NPC, 5 in varrock.npc:622 (config) |
 | Flinch: the NPC's next swing waits half its attack rate after it retaliates | Divide by 2 (theirs, npc_combat.rs2:11) |
 | Ring of recoil | 10 percent plus 1, capped at attacker hp, members only (theirs, npc_combat.rs2:301-302) |
@@ -124,3 +124,11 @@ Acceptance: server test with a seeded RNG: 100,000 swings at attack roll 4544 an
 - Not read: `calc()` rounding, `pushInt` rounding, `damage_self` (the player-side hp change is not checked against `Player.ts`), and the protect-prayer check. The integer model in the sketch is my assumption until those are read.
 - Mechanism limits: the fixed step of the donor is not read (see section 1), so the sketch cannot promise a tick rate.
 
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** Worked example derivation wrong: accurate style gives strength style bonus 0 (combat.rs2:52, player_combat_stat.rs2:71), so strength roll = (60+8+0)*64 = 4352 and max hit (4352+320)/640 = 7.3 -> 7; note used (60+8+3)*64 = 4544 (7.6). Result 7 is the same, derivation is not. Hit chance 52.1% correct. All other cited lines verified (npc_combat_melee 12-50, player_melee 8-59, combat.rs2 5/8/12/52-55, +8/+9, 160/100, garlic +1, 1/4 poison, 4-tick unarmed, flinch /2 at npc_combat.rs2:11, recoil 301-302, max_dealt 0 yanille/3 antimacro, attackrate 5 varrock, NumberOps randominc 38 Math.random, MIT).
+
+**Missed:** max_dealt param default is 1000 (combat.param 149-153), so the cap is normally inert and max_dealt=0 (Yanille) means zero player damage; demonbane line 26 overwrites with scale(160,100,%com_maxhit), discarding the garlic +1; player attack styles/prayer inputs at player_combat_stat 62-75.

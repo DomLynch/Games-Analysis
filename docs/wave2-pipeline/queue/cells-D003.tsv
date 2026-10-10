@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+latentcollapse-RustDAoC	5	server-tick-netcode	/mnt/frankendom-donors/latentcollapse-RustDAoC client networking and packet handling	12
+latentcollapse-RustDAoC	16	hud-ui	/mnt/frankendom-donors/latentcollapse-RustDAoC client UI/HUD	12
+latentcollapse-RustDAoC	17	rendering-performance	/mnt/frankendom-donors/latentcollapse-RustDAoC client rendering	12

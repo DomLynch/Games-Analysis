@@ -9,7 +9,7 @@ Checked: `MovementThrottle.cs` read in full (1-1139): validation entry (119-235)
 - Entry: the only live movement packet is `0x02` (IncomingMovementPackets.cs 24) and it hands off to `ValidateAndQueueMovement` (97). The batched handler `NewMovementReq` is registered as a comment only (26), so it does not run.
 - Order of checks in `ValidateAndQueueMovement` (119-235): (a) bail if the mobile is gone (121); (b) staff, or speed-hack detection off by flag, executes at once (127-131); (c) a sequence mismatch resets (134-137); (d) bookkeeping: packet rate, RTT probe, the cost of this move (149) and the history record (152); (e) every 2 s the rate verdict runs and sets the probe frequency (155-162); (f) `delta = now - nextMovementTime` (165); (g) if the queue is non-empty, the input joins the queue to keep order (168-172); (h) early input (delta < 0): if credit covers it, it spends the credit and executes (185-202), otherwise it queues (214); (i) on-time or late input refills credit by delta, capped at the dynamic limit (222), and executes (234).
 - Credit and debt: credit can go negative down to `-dynamicCredit` (184-185), so a player may be early by up to the limit before any input waits. `dynamicCredit` = 200 ms + min(avgRtt / 2, 150) (77-78, 175), unless the link is stable and under 50 ms RTT (71-73), which keeps the base 200.
-- Execute: `Mobile.Move` does the move, sends the ack, and advances the clock (4357-4383). The clock is clamped first: if the clock is more than 200 ms behind now, it is set to `now - 200` (4374-4376), so lateness cannot be banked. Then `cost` is added (4380). A turn in place (cost 0) sets the clock to now (4365-4368). Sequence advances modulo 256 (264-269).
+- Execute: `Mobile.Move` does the move, sends the ack, and advances the clock (4357-4383). The clock is clamped first: if the clock is more than 200 ms behind now, it is set to `now - 200` (4374-4376), so lateness cannot be banked. Then `cost` is added (4380). A turn in place (cost 0) sets the clock to now (4365-4368). The sequence number wraps from 255 + 1 to 1, never 0 (265-268; `ResetMovementState` sets it to 0, `NetState.Movement.cs` 99).
 - Queue: a queued input is stored with its direction and sequence (289-293). At the hard limit of 10 (281-282) the input is rejected: `SendMovementRej` and `ResetMovementState` (284, 310-314), which clears the queue, credit (101), and the clock (100). Queues are drained from the network slice (`MovementThrottle.ProcessAllQueues`, 319-339, called by `NetState.Slice` before socket completions) by `ProcessMovementQueue` (344-422): an input runs only when `now - nextMovementTime >= 0` (366-370), and a failed move rejects and resets (384-396).
 - Verdict (`AnalyzeMovement` 781-951): rate = total target cost / total actual interval over up to 20 history entries, at least 8 samples (`CalculateMovementRate` 621-673, `_movementHistorySize`, `_minSamplesForRate`). Confidence adds: rate above 1.15 (+0.5), above 1.10 (+0.35), above 1.05 (+0.2), above 1.02 (+0.1); packet rate above 15/s (+0.15) or above 12/s (+0.1); queue above 4 (+0.5), equal to 4 (+0.25), 2 or 3 (+0.1); a stable low-RTT link with rate above 1.02 (+0.2); a link with RTT variance above 10000 or average RTT above 300 ms multiplies confidence by 0.6 (lines 863-866). A burst of 3 or more packets within 15 ms after a gap above 1000 ms is forgiven (x0.3); a burst with rate under 1.05 is halved (x0.5). Sample count below 10 multiplies by 0.7; 20 or more multiplies by 1.1, capped at 1. Verdict order: Definite if rate above 1.10 and confidence above 0.6, or rate above 1.20, or queue above 4 (909-913); Likely with queue 4 on a stable low-RTT link, or queue 3 on a stable link, or rate above 1.05 with confidence above 0.4 on a stable link; Possible for rate above 1.03 with confidence above 0.2, packet rate above 14, or queue 2 on a stable link; otherwise Normal (898-950).
 - Staff signal (`CheckAndNotifyStaff` 958-1022): every check (2 s) the sustained counter goes up by 2 for Likely or Definite, down by 1 otherwise (982-986). Definite notifies at once (HIGH). Likely notifies after the counter reaches 10 (MEDIUM). Possible after 30 (LOW) (993-1007). `NotifyStaff` logs and fires the event `OnSpeedHackDetected`, rate-limited to one notice per 300000 ms per player (1040-1076). The one subscriber (`MovementDebugCommands.cs` 14, 17-40) broadcasts a coloured line to Counselor and above.
@@ -43,7 +43,7 @@ Checked: `MovementThrottle.cs` read in full (1-1139): validation entry (119-235)
 
 ## 4. TypeScript sketch
 
-simplified: rate and queue only in `verdict`. The donor also gates the middle tiers on confidence (0.2 to 0.6), RTT under 100 ms for some tiers, packet rate and burst forgiveness; those are dropped here. The gate keeps the donor's order: queue-first, then early-with-credit, then on-time refill, with the drift clamp applied inside `execute`, and it omits the history buffer, the packet-rate window, the RTT probe, the sequence number, the ack and the staff event. `staffSignal` never rejects input, as in the donor.
+simplified: rate and queue only in `verdict` (it keeps the queue-3-on-a-stable-link `likely` tier and drops the extra under-100-ms RTT test the donor puts on the queue-4 tier, which the queue-3 tier makes redundant). The donor also gates the middle tiers on confidence (0.2 to 0.6), RTT under 100 ms for some tiers, packet rate and burst forgiveness; those are dropped here. The gate keeps the donor's order: queue-first, then early-with-credit, then on-time refill, with the drift clamp applied inside `execute`, and it omits the history buffer, the donor's `ExecuteMovement` reject-and-reset when `Mobile.Move` fails (the sketch models it only through the `moveOk` argument; the donor also calls the move before advancing the clock), the packet-rate window, the RTT probe, the sequence number, the ack and the staff event. `staffSignal` never rejects input, as in the donor.
 
 ```ts
 // Licence: GPL-3.0-or-later (donor). Clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -65,8 +65,18 @@ function creditLimit(avgRttMs: number): number {
   return MAX_CREDIT_MS + Math.min(Math.floor(avgRttMs / 2), MAX_RTT_BONUS_MS);
 }
 
+// Reject path shared by queue overflow and a failed move: clear the queue, credit and clock.
+function rejectAndReset(g: Gate, now: number): Decision {
+  g.queue = [];
+  g.credit = 0;
+  g.clockMs = now;
+  return 'rejected';
+}
+
 // Server-side move: advances the clock by the cost, clamping banked lateness first.
-function execute(g: Gate, now: number, costMs: number): Decision {
+// If the move itself fails (blocked, frozen), the donor rejects and resets instead of advancing.
+function execute(g: Gate, now: number, costMs: number, moveOk = true): Decision {
+  if (!moveOk) return rejectAndReset(g, now);
   if (costMs === 0) { g.clockMs = now; return 'execute'; } // turn in place resets the clock
   if (now - g.clockMs > MAX_DRIFT_MS) g.clockMs = now - MAX_DRIFT_MS;
   g.clockMs += costMs;
@@ -75,35 +85,30 @@ function execute(g: Gate, now: number, costMs: number): Decision {
 
 // Deferred input: reject and reset at the hard limit, otherwise queue.
 function enqueue(g: Gate, now: number, id: number): Decision {
-  if (g.queue.length >= HARD_QUEUE_LIMIT) {
-    g.queue = [];
-    g.credit = 0;
-    g.clockMs = now;
-    return 'rejected';
-  }
+  if (g.queue.length >= HARD_QUEUE_LIMIT) return rejectAndReset(g, now);
   g.queue.push(id);
   return 'queued';
 }
 
 // One input. Queue order is kept; early inputs spend credit; late inputs refill it.
-function admit(g: Gate, now: number, costMs: number, avgRttMs: number, id: number): Decision {
+function admit(g: Gate, now: number, costMs: number, avgRttMs: number, id: number, moveOk = true): Decision {
   if (g.queue.length > 0) return enqueue(g, now, id);
   const delta = now - g.clockMs; // > 0 on time or late, < 0 early
   const limit = creditLimit(avgRttMs);
   if (delta < 0) {
     const early = -delta;
-    if (g.credit - early >= -limit) { g.credit -= early; return execute(g, now, costMs); }
+    if (g.credit - early >= -limit) { g.credit -= early; return execute(g, now, costMs, moveOk); }
     return enqueue(g, now, id);
   }
   g.credit = Math.min(g.credit + delta, limit);
-  return execute(g, now, costMs);
+  return execute(g, now, costMs, moveOk);
 }
 
 // simplified: rate and queue only. Donor also gates on confidence (0.2 to 0.6), RTT (under 100 ms for some
 // tiers), packet rate and burst forgiveness; those are dropped here.
 function verdict(rate: number, queueDepth: number, stable: boolean): Verdict {
   if (rate > 1.20 || queueDepth > 4) return 'definite';
-  if (queueDepth >= 4 && stable) return 'likely';
+  if (queueDepth >= 3 && stable) return 'likely';  // donor: 4 on a stable link under 100 ms RTT, or 3 on a stable link
   if (rate > 1.05 && stable) return 'likely';
   if (rate > 1.03 || (queueDepth >= 2 && stable)) return 'possible';
   return 'normal';
@@ -144,3 +149,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - `NetState.Movement.cs` RTT response handling past line 260 was not read. The probe timing used by `CurrentMovementRate` and the RTT stability flag depends on it.
 - The `key` field read at `IncomingMovementPackets.cs` 94 is commented as unused (FastWalkStack).
 - Fight rulings: the donor has no duel, guard or attack-cadence rule. Its shape transfers to input timing (row 5); the guard and stamina rules (row 3) need their own design.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** Mechanism verified line by line (validation order 119-235, credit/debt 185, dynamic credit 60-79, Mobile.Move clamp 4361-4380, queue 275-295, reject/reset 310-314 + NetState.Movement ResetMovementState 96-106, drain 344-422, rate 621-673, AnalyzeMovement confidence weights and verdict tree 781-951, staff counter and cooldown 958-1077, probe intervals 158-161/185-193, packet 0x02 only, NewMovementReq dormant). Errors: (1) Sketch verdict() omits the donor tier 'queueDepth >= 3 && stable -> Likely' (925-928): the sketch only gives Likely at queue>=4, so queue 3 on a stable link comes out 'possible'; the note's own mechanism text lists the queue-3 rule, the sketch does not and does not declare it. (2) Sketch execute() always returns 'execute'; donor ExecuteMovement/queue drain reject+reset when Mobile.Move fails (242-251, 384-396); not in the omit list. (3) 'Sequence advances modulo 256' is really wrap 255+1 -> 1 (265-268). (4) ResetMovementState also sets Sequence=0 (99), unmentioned.
+
+**Missed:** Staff drain: ProcessMovementQueue drains instantly for staff (355-358). GetDynamicCredit returns base 200 when no RTT data yet (65-68).

@@ -102,7 +102,7 @@ export {};
 
 ## 6. Gaps and risks
 
-- Edge-triggered tone can show the wrong colour (traced by hand, not run). In the custom gump, if poison starts first and yellow-hits starts while poison is still on, the yellow edge sets the colour to Orange (614-618). Poison still runs, but the colour does not return to LimeGreen until a new poison edge happens, and it stays Orange until yellow ends. Branch 3 cannot reset it while poison is on (621). The default gump has the same structure (1796-1800, 1810). Frankendom must compute tone from state each frame, not from edges.
+- Edge-triggered tone can show the wrong colour (traced by hand, not run). In the custom gump, if poison starts first and yellow-hits starts while poison is still on, the yellow edge sets the colour to Orange (614-618). Poison still runs, but the colour does not return to LimeGreen until a new poison edge happens, and it stays Orange until both poison and yellow have ended, and only then goes DodgerBlue. Branch 3 needs neither flag on, so it cannot reset the colour while poison or yellow is on (621). The default gump has the same structure (1796-1800, 1810). Frankendom must compute tone from state each frame, not from edges.
 - The HUD sends a close-status request on out-of-range (413-416). Frankendom's HUD must not send commands; the server owns the target list. Drop this call on port.
 - Percent quirk: at width 100 (custom gump) the 0-or-1 quirk makes no visible difference, because maxValue x pct / 100 equals pct. At 96 px (default party bar) 1% draws 1 px instead of 0 px. Frankendom should use the formula for all values.
 - Colours are donor-chosen. Frankendom should take them from its HUD theme tokens, not hard-code them in the view function.
@@ -113,3 +113,11 @@ Decision (proposed): adapt — take the per-frame priority tone and the write-on
 Acceptance: A player who is poisoned and yellow-hit sees the poison colour until poison ends, and then the yellow colour until yellow ends (HUD test asserts tone = f(flags) for all four poison and yellow combinations), and the HUD sends no message when a target leaves range (test asserts zero outbound messages).
 Reuse tag: adaptable (BSD-2-Clause; clean-room sketch)
 Brief rule served: rule 1 (one engine; client-only view); rule 8 (target + row 14)
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** Section 6 says after yellow-hits starts during poison the bar 'stays Orange until yellow ends'. Real code: branch 3 (HealthBarGump.cs 621, default gump 1810) needs NOT poisoned AND NOT yellow, so it stays Orange until BOTH end, then goes blue. All line cites (152-169, 302, 311, 320-324, 369, 390, 413-415, 452, 607-636, 666, 1272, 1786/1800/1814, 1826-1828, Mobile.cs 125-128), SPDX BSD-2 line 1, the 0/1 pixel quirk, 96/109 widths and the tone state machine verified.
+
+**Missed:** Mana/stamina bars: CalculatePercents has no lower clamp (negative current returns negative); the note does say sketch clamps. Nothing important missed.

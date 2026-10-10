@@ -12,7 +12,7 @@ Checked: Opened in full AudioManager.cs (371 lines), Sound.cs (172), UOSound.cs 
   2. Distance is Chebyshev: `distance = max(|dx|, |dy|)` from the player (122).
   3. Base volume is `SoundVolume / 250` (125). Default SoundVolume is 100, so the base is 0.4 (Profile.cs 63).
   4. If distance >= 1, the per-tile step is `volume / (ClientViewRange + 1)` and the distance factor is `step x distance` (128-131).
-  5. If distance > ClientViewRange the volume is set to 0 (134-136).
+  5. If distance > ClientViewRange the volume is set to 0 (134-136). Then, if the base volume is below -1 or above 1 (a profile volume out of range), the function returns and the sound is silently dropped (139-142).
   6. Mute if the profile has sound off, or the window is inactive and background play is off (144-146).
   7. Call `sound.Play(now, volume, distanceFactor)` (151). If it returns true, the sound is added to the live list (155-157).
 - Inside `Sound.Volume` (Sound.cs 42-65): the instance volume is `max(volume - VolumeFactor, 0)` (58). So the effective gain is `V x (1 - d / (R + 1))` for d <= R, and 0 beyond R.
@@ -21,7 +21,7 @@ Checked: Opened in full AudioManager.cs (371 lines), Sound.cs (172), UOSound.cs 
 - `AudioManager.Update()` (313) runs once per game Update (called at GameController.cs 446, inside `Update` which starts at 381). It refreshes music volume for the two slots, then removes any sound whose `IsPlaying` is false (350).
 - War and peace music: two slots, slot 0 peace, slot 1 war (`_currentMusic`, AudioManager.cs 20; index chosen at 214). Turning war mode on calls `PlayMusic(38 + random 0..2, true)` (GameActions.cs 36). Turning it off calls `StopWarMusic`, which replays the stored peace index (294). `PlayMusic` (161-220) returns early if combat music is disabled for a war call (192). Before it assigns a new slot it calls `StopMusic()` (212), and `StopMusic` (279-290) stops and disposes both slots (286-287). Result as read: a new track in either slot stops whatever was in the other slot. The ducking lines (252 and 331) would only matter if both slots were set, and the code above never sets both.
 - Death: `PlayMusic(42, true)` on the death packet (PacketHandlers.cs 1754), which places the death track in the war slot.
-- Footsteps (Mobile.cs 527-569): gated by `LastStepSoundTime < Time.Ticks` (537). On foot the base delay is 400 ms (543). Mounted walk is 350 ms and mounted run is 150 ms (550, 555). Each delay is multiplied by 13/10 (559), so on foot the cadence is 520 ms. The run flag only changes the mounted branch.
+- Footsteps (Mobile.cs 527-569): gated by `LastStepSoundTime < Time.Ticks` (537). On foot the base delay is 400 ms (543). Mounted walk is 350 ms (555) and mounted run is 150 ms (550). Each delay is multiplied by 13/10 (559), so on foot the cadence is 520 ms. The run flag only changes the mounted branch.
 
 ## 2. Key functions
 
@@ -46,7 +46,7 @@ Checked: Opened in full AudioManager.cs (371 lines), Sound.cs (172), UOSound.cs 
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps only the falloff, the Chebyshev distance and the clip lockout. It omits the play and stop of the SoundInstance, the window-inactive mute, the sound-off profile check, the music slots and the war toggle, and the Update() cleanup of finished sounds. It uses a float for the clip length where the donor truncates to uint. The distance-0 guard is dropped; the formula gives the same result at 0.
+simplified: the sketch keeps only the falloff, the Chebyshev distance and the clip lockout. It omits the play and stop of the SoundInstance, the range guard that drops a sound whose base volume is outside -1..1 (139-142), the window-inactive mute, the sound-off profile check, the music slots and the war toggle, and the Update() cleanup of finished sounds. It uses a float for the clip length where the donor truncates to uint. The distance-0 guard is dropped; the formula gives the same result at 0.
 
 ```ts
 // Licence: BSD-2-Clause (donor ClassicUO). Clean-room sketch of the described mechanism, not a line-by-line translation.
@@ -106,3 +106,11 @@ Decision (proposed): adapt — take the falloff and the per-clip lockout as a cl
 Acceptance: With three attackers hitting the player, the player hears three distinct hit clips; a clip 6 tiles away is quieter than one at 1 tile and silent beyond the zone view range (client test asserts the gain order and that three keyed hits all start).
 Reuse tag: adaptable (BSD-2-Clause; clean-room sketch)
 Brief rule served: rule 1 (one engine; client-only cue layer); rule 8 (target + row 12)
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** 1) Mechanism text pairs 'Mounted walk 350 ms and mounted run 150 ms (550, 555)' in the wrong line order: Mobile.cs 550 is the run branch (150), 555 the walk branch (350); the Section 3 table has it right. 2) Step list omits the range guard `volume < -1 || volume > 1` that silently drops the sound (AudioManager.cs 139-142). Verified: PlaySoundWithDistance 113-159, Chebyshev 122, /250 at 16/125, factor 128-131, zero beyond range 134-136, mute 144-146, Sound.Volume 58, Play lockout 123-125/144/148-149, Delay UOSound.cs 14, commented recalculation 20-59, Update 313/350, GameController 446, war music 36/212/214/286-287/294, death 1754, footsteps 537/543/559, Profile 63, view range 24 (World.cs 109 default from Constants 81), BSD-2.
+
+**Missed:** Weather.cs 197-223 offsets the weather sound 10-18 tiles randomly from the player before the distance call; war music only starts if EnableMusic (GameActions.cs 34); StopWarMusic is also called from OpenStatusBar (GameActions.cs 100); footstep sound alternates two ids (Mobile.cs 541,563).

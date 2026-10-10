@@ -7,7 +7,7 @@ Checked: `PlayerObjectImplementation::addExperience` 728-785 (read in full). `Pl
 ## 1. Mechanism
 
 - One function writes every XP change: `addExperience`. It keeps one ledger per XP type (`experienceList`). Order of steps as the code runs: (a) a zero gain returns at once (near the top of the function, not line-cited); (b) if the type already exists and the new total is 0 or below, the type is removed entirely and the call returns 0 (744-748), except `jedi_general`, which may go negative to a floor of -10000000 (750-751); (c) the cap: `prestige_` types are uncapped (760-761), otherwise the cap-list entry is used, otherwise 2000 (762-763); (d) the total is clamped to the cap (765-767); (e) the stored total is set, and the return value is the gain actually added (784); when the total was clamped, that value is set at 767 as `xpCap - (xp - valueToAdd)`, i.e. cap minus the old total.
-- Award path (`PlayerManagerImplementation::awardExperience`, 2601): the raw amount is multiplied by the species modifier (only when the amount is positive), the buff multiplier (food `xp_increase` percent, not during a crafting session, 2617-2618), the local multiplier passed by the caller, and the global multiplier, then truncated to an int (2630). Species modifier is `(100 + bonus) / 100` for the species and XP type, falling back to the species' `all` entry, and to 1.0 when unset (7102-7111). The award calls `addExperience` (2630). A cap-hit message is sent when an award is positive and the type is now at its cap (2652).
+- Award path (`PlayerManagerImplementation::awardExperience`, 2601): when `applyModifiers` is true (2624-2633), the raw amount is multiplied by the species modifier (only when the amount is positive), the buff multiplier (food `xp_increase` percent, not during a crafting session, 2617-2618), the local multiplier passed by the caller, and the global multiplier, then truncated to an int (2630); when `applyModifiers` is false the raw amount is added unscaled (the Lua entry passes false and a local multiplier of 1.0, LuaCreatureObject.cpp 1026-1034). Species modifier is `(100 + bonus) / 100` for the species and XP type, falling back to the species' `all` entry, and to 1.0 when unset (7102-7111). The award calls `addExperience` (2630). A cap-hit message (`prose_hit_xp_cap`) is sent only from this wrapper, when `sendSystemMessage` is set, the award is positive and the type is now at its cap (2651).
 - Cap table, rebuilt by `SkillManager::updateXpLimits` (788): clear the cap list; for each owned skill box with a non-zero cap, put or raise the cap for its XP type to the max (811); then add the default caps loaded from the client file (822, loaded at 202-222) for any type not yet present; then, for each ledger entry above its cap, call `addExperience` with a negative delta to clamp it down (831-833). Callers seen: the load path (`CreatureObjectImplementation.cpp` 2476), and after a learn and a surrender (the calls at 403, 620 and 754 are in SkillManager).
 - Purchase, `SkillManager::awardSkill` (326): recursively awards required skills if asked; `canLearnSkill` (838) checks: not already owned (not line-cited), prerequisites via `fulfillsSkillPrerequisites` (species, required skills, jedi state, force-power gate), XP of the box's type at least `xpCost` (858, skipped when `noXpRequired`), and skill points at least `pointsRequired`. Then points are withdrawn (364), XP is withdrawn through `addExperience` with the negative cost (370), and the skill and its modifiers are added.
 - Surrender, `SkillManager::surrenderSkill` (500): refused if another owned skill requires this one; removes the skill and its modifiers; refunds the skill points (587). It does not refund XP: `addExperience` is called in SkillManager only at 370 (purchase debit) and 833 (cap clamp), by grep of the file.
@@ -34,7 +34,7 @@ Checked: `PlayerObjectImplementation::addExperience` 728-785 (read in full). `Pl
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order (zero check, drop rule, cap, clamp, return gain; points then XP then unlock on purchase; points refunded on surrender; clamp on cap rebuild). It omits: the species, buff and global multipliers (only one `scaled` multiplier is kept, as one product); the jedi_general floor and exception; the cap-hit message and the client delta message; the `noXpRequired` bypass; the prerequisite species, jedi and force gates; recursive award of required skills; the surrender dependency check; and the species fallback. Where the donor's behaviour for a type missing from the cap list depends on `VectorMap` (not read), the sketch uses the 2000 default in the clamp. That is a choice, not the donor's behaviour.
+simplified: the sketch keeps the donor order (zero check, drop rule, cap, clamp, return gain; points then XP then unlock on purchase; points refunded on surrender; clamp on cap rebuild). It omits: the species, buff and global multipliers as separate terms (they are passed in as one product, and `null` stands for the donor's `applyModifiers = false` raw path); the jedi_general floor and exception; the cap-hit message and the client delta message; the `noXpRequired` bypass; the prerequisite species, jedi and force gates; recursive award of required skills; the surrender dependency check; and the species fallback. Where the donor's behaviour for a type missing from the cap list depends on `VectorMap` (not read), the sketch uses the 2000 default in the clamp. That is a choice, not the donor's behaviour.
 
 ```ts
 // Licence: AGPL-3.0 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -92,9 +92,10 @@ function addExperience(ledger: XpLedger, caps: Map<string, number>, xpType: stri
   return total - before;
 }
 
-// Award: the raw amount is scaled by species, buff, local and global multipliers, then truncated, then capped.
-function awardExperience(ledger: XpLedger, caps: Map<string, number>, xpType: string, amount: number, m: Multipliers): number {
-  const scaled = Math.trunc(amount * m.species * m.buff * m.local * m.global);
+// Award: with modifiers, the raw amount is scaled by species, buff, local and global multipliers, then truncated, then capped.
+function awardExperience(ledger: XpLedger, caps: Map<string, number>, xpType: string, amount: number, m: Multipliers | null): number {
+  // m === null is the donor's applyModifiers=false path: the raw amount is added.
+  const scaled = m === null ? Math.trunc(amount) : Math.trunc(amount * m.species * m.buff * m.local * m.global);
   return addExperience(ledger, caps, xpType, scaled);
 }
 
@@ -154,6 +155,14 @@ export {};
 Best transferable idea: keep one XP ledger per track, cap each track by what the player has unlocked, and clamp (not delete) when an unlock is removed.
 
 Decision (proposed): adapt. Take the one-ledger add-then-clamp, the return-actual-gain rule and the purchase order (points, then XP, then unlock); make caps come from the unlock tree as data, not a 2000 default; reject the Lua-callable award path, because kills must be server-verified.
-Acceptance: a server test: a track capped at 2000 with 1800 XP, awarding 500, stores 2000 and reports 200; removing the unlock that gave a cap of 3000 clamps the track to 2000 and sends the client a cap-hit message.
+Acceptance: a server test: a track capped at 2000 with 1800 XP, awarding 500, stores 2000 and reports 200; removing the unlock that gave a cap of 3000 clamps the track to 2000 and sends the client an XP-change update (the clamp calls `addExperience` with the notify flag, SkillManager.cpp 833; the cap-hit text is sent only for a positive award, 2651).
 
 Reuse tag: rewrite-from-idea (AGPL-3.0, clean-room). Brief rule served: one ledger; server-verified kills.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** addExperience 728-785 verified line by line (zero return, drop at <=0 except jedi_general, -10M floor 750-751, prestige_ INT_MAX 760-761, default 2000 762-763, clamp and valueToAdd 766-769, return 784), updateXpLimits 788-836 (put/raise 810-814, defaults 822-823, clamp 831-833), canLearnSkill 838-870, awardSkill 326-375 (364 points, 370 XP), speciesModifier 7102-7111, local multiplier 0.1 at 2182, surrender refund 587, SQL combat_general 170000, AGPL. Errors: (1) Acceptance says removing the unlock clamps the track and 'sends the client a cap-hit message'; the clamp at SkillManager 833 only calls addExperience with notifyClient=true (a delta message). The cap-hit text (prose_hit_xp_cap) is sent only from PlayerManager awardExperience 2651-2655 for a positive award, so the acceptance line is not supported. (2) awardExperience multiplies only when applyModifiers is true (2624-2633); with applyModifiers=false the raw amount is added. Note states the multiplier chain unconditionally (the Lua path passes applyModifiers=false and localMultiplier 1.0 at LuaCreatureObject 1032). Cap-hit check line is 2651 (note: 2652).
+
+**Missed:** applyModifiers=false bypass (Lua awards skip species/buff/global multipliers); GainXP/notify paths; cap-hit message depends on hasCappedExperience (2651).

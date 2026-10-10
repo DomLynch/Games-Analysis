@@ -108,3 +108,11 @@ export {};
 - Distance 18 and clearance 0.35 are hard-coded. Frankendom should make the distance zone data (tight zones want a shorter boom) and keep clearance an engine constant.
 - The Pit camera is out of scope (this is the open-zone camera). The arena view should not change because of this.
 - Candidate lookup falls back to every triangle when the segment box is large (collision.rs 757). A big zone can make the camera clip cost O(triangles) per frame; measure before adopting.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** No errors found. Verified view_camera 2336-2356 (18 offset, 0.35 padding, door clip from focus to clipped point), clip_camera 249-270, segment_hit 144-160, candidates 752-764 (4096 at 757), update_camera pitch clamp 546-548 / 0.0035 (line 33) / feet=eye-6 (610), forward vector 595-597, schedule 328-342 (Update chain then Last render_frame), 1654-1658 order, live.rs 2012-2015 / 2117 / 2130, scene.rs fov 70deg 832, F9 1121-1122, reset 142, pick 2437, MIT OR Apache-2.0 Cargo.toml 14. Sketch matches donor math.
+
+**Missed:** None material.

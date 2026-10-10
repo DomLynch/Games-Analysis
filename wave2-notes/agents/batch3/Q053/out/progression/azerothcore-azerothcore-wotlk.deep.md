@@ -18,9 +18,9 @@ Acceptance: a server test where three attackers (levels 10, 10, 12) kill one cre
   Observed consequence (arithmetic from the formulas, not measured): the denominator `aliveSumLevel` includes living members who are then zeroed for being above the not-grey level, so a group pays out less than `groupRate * base` in total.
 - Step 5, power-level guard (KillRewarder.cpp 169-176). The victim records the highest player level that has damaged it (Creature.cpp 3941-3942), fed from Unit.cpp 1217-1230 and cleared by `ResetPlayerDamageReq` (Creature.cpp 3949). If that level is above the reference level (the group's top living level, or the player's own level solo) and the victim is grey to it, the share becomes `xp / 2 + 1` (174-175). The donor comment says this closes a power-levelling exploit.
 - Step 6, auras. The share is multiplied by the total XP-percent aura multiplier (181). Not read.
-- Step 7, award (Player.cpp 2401-2473). `GiveXP` drops xp below 1; dead players unless in battleground or LFG (2406); creatures with no loot recipient (2412); and anyone at the level cap (2435). The rested pool is spent on top of the share: `bonus_xp = GetXPRestBonus(xp)` (2448), which takes up to `xp` from the pool (9113-9116). Recruit-a-friend instead adds twice the gain (2446). Then `newXP = curXP + xp + bonus_xp` (2459). The loop runs while `newXP >= nextLvlXP` and below max level: subtract, level up (2461-2466). The remainder is written to `PLAYER_XP` (2472).
+- Step 7, award (Player.cpp 2401-2473). `GiveXP` drops xp below 1; dead players unless in battleground or LFG (2406); creatures with no loot recipient (2412); and anyone at the level cap (2435). It also returns for players flagged no-XP-gain or no-play-time (2409), applies a +5% favoured-zone bonus (2418-2425, Hellfire zones with the faction favour aura), lowers the cap for trial accounts (2430-2433) and halves the gain for partial-play-time players (2438-2439); the sketch omits these. The rested pool is spent on top of the share: `bonus_xp = GetXPRestBonus(xp)` (2448), which takes up to `xp` from the pool (9113-9116). Recruit-a-friend instead adds twice the gain (2446). Then `newXP = curXP + xp + bonus_xp` (2459). The loop runs while `newXP >= nextLvlXP` and below max level: subtract, level up (2461-2466). The remainder is written to `PLAYER_XP` (2472).
 - Pets get the share, half in a group and all solo (KillRewarder.cpp 186-188).
-- Rested pool accrual (PlayerUpdates.cpp 245-259). While logged in, after at least 10 s since `_restTime` (249), the pool grows by `elapsed * (nextLevelXP / 72000) * (0.125 * RATE_REST_INGAME)` (253-259). The outer condition is not read.
+- Rested pool accrual (PlayerUpdates.cpp 243-259). Only while `PLAYER_FLAGS_RESTING` is set (243: resting in an inn or city) and `now > lastTick` and `_restTime > 0` (245), after at least 10 s since `_restTime` (249), the pool grows by `elapsed * (nextLevelXP / 72000) * (0.125 * RATE_REST_INGAME)` (253-259). Merely being logged in does not accrue it.
 
 ## 2. Key functions
 
@@ -45,7 +45,7 @@ Acceptance: a server test where three attackers (levels 10, 10, 12) kill one cre
 | Power-level guard | `xp / 2 + 1` when a higher-level attacker is above the reference and the victim is grey to it (174-175) |
 | Pet share | 100% solo, 50% in a group (188) |
 | Rest pool spend | Up to the XP gained, from the pool (Player.cpp 9113-9116) |
-| Rest accrual | `nextLevelXP / 72000` per second times `0.125 * rate`, after at least 10 s (PlayerUpdates.cpp 249-259) |
+| Rest accrual | `nextLevelXP / 72000` per second times `0.125 * rate`, after at least 10 s, and only while flagged resting (PlayerUpdates.cpp 243-259) |
 | Worked by hand from the formula (not measured): player level 10, victim level 10, tier 45 | `((10*5+45) * 20 / 10 + 1) / 2` = 95 base XP |
 
 ## 4. TypeScript sketch
@@ -202,11 +202,19 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - GPL-2.0-or-later: clean-room only. The sketch is written from the described mechanism. The grey breakpoints in `grayLevel()` repeat the donor's six rules; replace them with a Frankendom table before shipping.
 - Attackers versus party (ruling gap). The donor splits among every living party member within reward distance, whether or not they hit the creature. Frankendom caps attackers at MAX_ATTACKERS = 3, so the caller must pass the attackers, not the party. The group rate table tops out at 5+, which has no meaning for a three-attacker cap. Frankendom needs a ruling on whether non-attacking party members get XP at all.
 - One ledger. The donor writes `PLAYER_XP` and levels directly (Player.cpp 2459-2472), and the rested pool is a separate field. Frankendom must route all XP through one ledger write; the rested pool should be decided separately (see next point).
-- Rested pool. The donor adds rested XP on top of the share (Player.cpp 2448, 2459) and accrues it while logged in (PlayerUpdates.cpp 249-259). That is a time-based bonus, not a fight reward. If Frankendom takes it at all, keep it out of the fight step.
+- Rested pool. The donor adds rested XP on top of the share (Player.cpp 2448, 2459) and accrues it only while the player is flagged resting (PlayerUpdates.cpp 243-259). That is a time-based bonus, not a fight reward. If Frankendom takes it at all, keep it out of the fight step.
 - Donor quirk. Because the denominator includes living members who are zeroed, a group pays out less than `groupRate * base` (section 1, step 4). Frankendom should decide whether that is intended before copying the formula.
 - Server-verified kills. The attacker-level record is written in the server's damage path (Unit.cpp 1217-1230), which fits the rule. But `ModHealth`, `ModExperience` and the elite flag come from creature templates, so they must be server data, not client-visible numbers.
 - Pit as client. The donor's battleground branch has different rates and no reputation (Player.cpp 13049, KillRewarder.cpp 132). The Pit has no XP ruling yet; the sketch covers PvE only.
-- Not read: the zone-to-tier lookup, the aura multiplier, the call sites that reset the attacker level, the rested bubble condition, and the offline rest accrual. Any claim about those is cut.
+- Not read: the zone-to-tier lookup, the aura multiplier, the call sites that reset the attacker level, the code that sets or clears the resting flag, and the offline rest accrual. Any claim about those is cut.
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 Brief rule served: one engine, server-verified kills, one ledger (rules 7-9 n/a)
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** Rest accrual: note says 'While logged in ... outer condition not read' but PlayerUpdates.cpp 243-245 shows the real gate: PLAYER_FLAGS_RESTING set and now > lastTick and _restTime > 0 (so rested XP accrues only while resting in inn/city, not merely logged in). Everything else verified: BaseGain 49-55/60-63, tier 45/235/580, grey breakpoints, ZD table, group rate 1.0/1.166/1.3/1.4, 157-163, power-level guard 169-176, GiveXP 2403-2472, GetXPRestBonus 9113-9116, 72000 divisor and 0.125 bubble, callers 13051/13694/1898/2724, worked example 95 XP.
+
+**Missed:** GiveXP also: favoured-zone +5% (2418-2425, hellfire zones), trial level cap 2430-2433, partial-play halving 2438-2439, PLAYER_FLAGS_NO_XP_GAIN 2409 (sketch lists some as omitted, mechanism step 7 does not). _RewardGroup pays honor/rep/kill credit to dead in-reach members too (264). Gain() scales XP by playerDamageReq (125-129) is listed as omitted in sketch only.

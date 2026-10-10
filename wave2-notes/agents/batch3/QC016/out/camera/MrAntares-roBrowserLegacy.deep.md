@@ -221,3 +221,11 @@ Brief rule served: camera is client-only (rule for camera/HUD/sound); the camera
 Best transferable idea: Use one zoom-to-state rule with explicit per-state bands (pitch, FOV, zoom step), and fade geometry that sits between the eye and the hero instead of pulling the camera past walls.
 Decision (proposed): adapt - the three-state rig and the between-eye-and-hero fade fit a world third-person camera, but Frankendom must add hysteresis, an eased FOV and a wall pull-in, which this donor does not have.
 Acceptance: In a zone, zooming past the third-person line changes the view without a flicker at the line (a band, not a single threshold), the FOV eases over 0.3 s instead of snapping, and a wall between the camera and the hero fades to 25 percent opacity within 150 ms while the hero stays visible; a client test asserts no state flip while the zoom goal moves inside the band.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** None found. Checked about 30 claims: all Camera.js state-machine lines (29-40, 117-139, 284-291, 322-346, 358-434, 436-483, 490-551), quake 212-263 and EffectTable 3020/3158, OccluderFade.js 58/63/64/97-99/136-160/250-266, GLSL 26-85, Graphics.js 82-84, MapRenderer 277/327, Renderer 307, license GPL-3. Part C order matches. Sketch constants and clamps match. Minor: Camera.init is also called from EffectViewer.js:72 (note lists only MapEngine 689 and MapViewer 187).
+
+**Missed:** Init also sets the default zoomFinal to Preferences.zoom||125 (Camera.js 299/303) and indoor start pitch 230/yaw -40 (300-301), and indoor pitch clamp 220-240 (MIN/MAX_ALTITUDE_INDOOR 144-149) which the shift-drag path uses instead of the state band; the note only says indoor was omitted.

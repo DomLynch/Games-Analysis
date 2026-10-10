@@ -44,14 +44,14 @@ Acceptance: a server test: a hero is sent a chase on a creature that moves 5 uni
 | Inside the stop distance: finish in place | Threshold is the stop distance itself (theirs, MoveAllCharacters.cs 175, 199-203) |
 | Blocked step (no movement) finishes the chase | Speed must be above 0.001 for the check (theirs, MoveAllCharacters.cs 188) |
 | Reached test with tolerance | Stop distance + 0.12 (theirs, L2PawnRange.cs 67; UserWorldApply.cs 67) |
-| Collision with the target is ignored when this close | 0.15 (theirs, L2PawnRange.cs 50) |
+| Skip a CharInfo position snap when the correction is this small (not a collision rule; the collision ignore is `IgnorePawnCollision`, L2PawnRange.cs 70, no number) | 0.15 m (theirs, L2PawnRange.cs 49-51, `ShouldSkipCharInfoPositionSnap`) |
 | Snap-skip for position corrections | 200 L2 units (theirs, L2PawnRange.cs 10) |
 | Stop message near the stop point | 0.35 window, 0.5 destination (theirs, UserWorldApply.cs 72-73) |
 | Movement target tolerance (move to a point) | 0.1 (theirs, EntityActionMove.cs 70) |
 
 ## 4. TypeScript sketch
 
-simplified: keeps the donor's per-step order (re-read target, stop check, direction, move, blocked check, finish in place) and the default 0.1 stop distance. It omits the speed and gait source (GetSpeed, Move, SyncUserGait, not read), the gravity and vertical velocity, ground snapping, the removal list, the stop-message keep-chase rules, the ring-point hint, and the collision ignore. The sketch treats the 2D distance as XZ (VectorUtils.Distance2D was not read).
+simplified: keeps the donor's per-step order (re-read target, stop check, direction, move, blocked check, finish in place) and the default 0.1 stop distance. Differences kept on purpose: the sketch checks arrival with `<` (the loop finishes on `< stopDistance`, 175/199), but the donor's start-in-range test uses `<=` (103), and the donor start aborts if the pawn is null or dead (84-91); the sketch has neither. It omits the speed and gait source (GetSpeed, Move, SyncUserGait, not read), the gravity and vertical velocity, ground snapping, the removal list, the stop-message keep-chase rules, the ring-point hint, and the collision ignore. The sketch treats the 2D distance as XZ (VectorUtils.Distance2D was not read).
 
 ```ts
 // Licence of donor: Apache-2.0 (root LICENSE). Clean-room sketch of the mechanism (shape only; not a line-by-line port).
@@ -78,9 +78,8 @@ function pursueStep(
     return me;
   }
   const len = Math.hypot(t.x - me.x, t.z - me.z);
-  if (len < 1e-9) {
-    p.done = true;
-    return me;
+  if (len * len <= 0.0001) {
+    return me;               // donor: squared length 0.0001 or less means no move and no finish (183)
   }
   const after = move(me, { x: (t.x - me.x) / len, z: (t.z - me.z) / len });
   if (after.x === me.x && after.z === me.z) {
@@ -114,3 +113,11 @@ Typecheck: `/tmp/gawric-chase-pursuit.ts` on the VPS, `npx -p typescript tsc --n
 - Unity fixed step, not a server tick. The server tick and per-tick NPC budget (row 18 sub-line) are not in this client; the sketch does not model them.
 - Blocked detection compares the position after the move with the last stored position. It finishes a chase when a wall stops the mover, which is right for a duel, but a fight that is blocked by another creature will also end the chase. Frankendom needs an explicit rule for that.
 - Apache-2.0 allows adaptation with notice; the note is clean-room, so no notice text is copied.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** Section 3 row 'Collision with the target is ignored when this close: 0.15 (L2PawnRange.cs 50)' is mislabelled: line 49-51 is ShouldSkipCharInfoPositionSnap, a skip of CharInfo position snaps when the correction is <=0.15 m, not collision ignoring (collision ignore is IgnorePawnCollision at 70). Everything else verified: FixedUpdate 116, MoveToPoint 148-208 incl. 175, 188, 199-203, 206; StartMoveToPawn 79-140 incl. 98, 103, 121, 136; MovementTarget 15-19/42-47; OnFinish 242-246; OnStopMove 0.12/0.35/0.5 at 67-73; AdjustSkipUu 200 at L2PawnRange 10; SNAP_ON_MOVE at EntityActionMachine 662; Aggressive only declared; Apache-2.0 header.
+
+**Missed:** Real loop also requires point.sqrMagnitude>0.0001 before Move (183), and the start aborts if pawn is null/dead (84-91); start-in-range uses <= while the loop finishes on < stopDistance. Sketch uses 1e-9 and sets done in that case, donor does not finish.

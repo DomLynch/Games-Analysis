@@ -10,21 +10,21 @@ Acceptance: A server test runs 1000 seeded parry attempts at a success chance of
 ## 1. Mechanism
 
 - Entry: a call site asks for a check with `CheckSkill(skill, min, max)` (a location or target variant). The `Mobile` wrappers forward it to the handler (`Mobile.cs` 8091-8092), which runs `CheckLocation` or `CheckTarget`.
-- Step 1, the success ramp. `value = skill.Value`. If `value < min`: fail, with no roll and no gain. If `value >= max` (or `min >= max`): succeed, with no roll and no gain (lines 62-67). Otherwise `chance = (value - min) / (max - min)` (line 70) and `success = chance >= random` (line 115).
+- Step 1, the success ramp. `value = skill.Value`. If `value < min`: fail, with no roll and no gain. If `value >= max` (or `min >= max`): succeed, with no roll and no gain (`CheckLocation`, lines 60-68; `CheckTarget` has the same ramp at 182-190). Otherwise `chance = (value - min) / (max - min)` (line 70) and `success = chance >= random` (line 115).
 - Step 2, the gain gate (lines 118-148). Only if the character is alive and `region.AllowGain` passes. Skills below 10.0 always try to gain (lines 120-122), still inside the alive and region gate. Otherwise `AllowGain` must also pass (line 124; for players it calls the anti-macro check, which was not read, and under AOS it refuses during faction skill loss, `SkillCheck.cs` 226-234), then the gain chance is:
   - `gc = ((cap - total) / cap + (skillCap - base) / skillCap) / 2` (lines 126-129): room in the character's total-skill budget and room in this skill, averaged;
   - `gc += (1 - chance) * (0.5 on success, 0.2 on failure)` (line 130), so a hard try earns more;
   - `gc /= 2`, `gc *= GainFactor` (line 133), floored at 0.01 (lines 135-137), doubled for a controlled pet (lines 140-141);
   - if `gc >= random`, `Gain()` runs (line 145-147).
 - Step 3, legacy stat gain (lines 151-154): if the Pub45 path is off and the check succeeded, `LegacyGain` rolls each stat with chance `statGain / 33.3 * multiplier` (line 19), and `GainStat` applies the per-stat cooldown.
-- `Gain()` (lines 236-310): called only from `CheckSkill` (lines 122 and 147, grep). It does the skill step only when `base < cap` and the skill lock is Up (line 248). The step is 1 tenth of a point, or 1 to 4 tenths when base <= 10.0 (line 254). A player whose total is at the budget may pay for it: with chance `total / cap` the first lock-down skill with enough points loses the step (lines 259-268). An accelerated skill multiplies the step by 2 to 5 (line 275). A player only gains while total < cap (line 278). The step is added and clamped to the skill cap (line 280).
-- Pub45 stat block (lines 284 to the end of `Gain` at 310; it sits inside `Gain`, so it runs only when `Gain` was called, not after every use): if an unlocked stat exists, a flat 5 percent roll (line 300), then the primary stat with 0.75 (line 303) or else the secondary, then `GainStat`.
-- `GainStat` (lines 444-504): a per-stat cooldown (10 minutes, 5 for pets; line 457 for Str, same shape for Dex and Int). Then `atrophy = rawTotal / statCap >= random` (line 501). `IncreaseStat` forces atrophy at or over the stat cap (line 374), lowers another stat by 1 when the lock allows, and raises this stat by 1 clamped to the stat max (line 394).
+- `Gain()` (lines 236-310): called only from `CheckSkill` (lines 122 and 147, grep). It returns early for a dead pet (238-241) and for the Focus skill on a creature (243-246), and does the skill step only when `base < cap` and the skill lock is Up (line 248). The step is 1 tenth of a point, or 1 to 4 tenths when base <= 10.0 (line 254). A player whose total is at the budget may pay for it: with chance `total / cap` the first lock-down skill with enough points loses the step (lines 259-268). An accelerated skill multiplies the step by 2 to 5 (line 275). A player only gains while total < cap (line 278). The step is added and clamped to the skill cap (line 280).
+- Pub45 stat block (lines 284 to the end of `Gain` at 310; it sits inside `Gain`, so it runs only when `Gain` was called, not after every use): if the skill lock is Up (284) and an unlocked stat exists, a flat 5 percent roll (line 300), then the primary stat with 0.75 (line 303) or else the secondary, then `GainStat`.
+- `GainStat` (lines 444-504): a per-stat cooldown (default 3 seconds on `Core.ML`, the Pub45 path, and 10 minutes on the legacy path, from `TimeSpan.FromMinutes(Core.ML ? 0.05 : 10)` at line 26; 5 minutes for pets; line 457 for Str, same shape for Dex and Int). Then `atrophy = rawTotal / statCap >= random` (line 501). `IncreaseStat` forces atrophy at or over the stat cap (line 374), lowers another stat by 1 when the lock allows, and raises this stat by 1 clamped to the stat max (line 394).
 
 ## 2. Key functions
 
 - `CheckSkill`: `/mnt/frankendom-donors/ModernUO/Projects/UOContent/Skills/SkillCheck.cs` 108-159. The success roll, the gain gate, the gain roll and the legacy stat call, in that order.
-- `CheckLocation` and `CheckTarget`: same file, 56-75 and 178-195 (checked for the ramp only: lines 62-70 and 184-192).
+- `CheckLocation` and `CheckTarget`: same file, 56-75 and 178-195 (checked for the ramp only: lines 60-70 and 182-192).
 - `Gain`: same file, 236-310 (skill step at 248-281, then the Pub45 stat roll at 284-310).
 - `GainStat` and `IncreaseStat`: same file, 372-504 (cooldown, atrophy, clamp).
 - `Titles.AwardFame` (second mechanism, from the hint file): `/mnt/frankendom-donors/ModernUO/Projects/UOContent/Misc/Titles.cs` 133-160. A fame award is reduced by current fame / 100 before it is clamped to 0 to 15000 (line 142 and 151). Fame does not grow linearly: the more fame, the less each award gives.
@@ -38,14 +38,14 @@ Acceptance: A server test runs 1000 seeded parry attempts at a success chance of
 | Shared budget: a player at the cap may pay for a gain by lowering a lock-down skill | Cap per character is set in the `Skills` constructor (`Skills.cs` 463, `Cap = 7000;`, not receipted: 11-character line) |
 | Step of 1 tenth, or 1 to 4 tenths below 10.0 | `Utility.Random(4) + 1` (`SkillCheck.cs` 254) |
 | Accelerated skill multiplies the step | 2 to 5 (`SkillCheck.cs` 275) |
-| Stat gain: per-stat cooldown and an atrophy chance that rises with the stat total | Cooldown 10 minutes (line 26, `Core.ML ? 0.05 : 10`), pets 5 minutes (line 27); stat max 100, 125 on LBR (line 23); primary stat 0.75 (line 25); Pub45 flat 0.05 (line 300); legacy `/33.3` (line 19); stat total cap default 225 (`Mobile.cs` 7826, not receipted: short line) |
+| Stat gain: per-stat cooldown and an atrophy chance that rises with the stat total | Cooldown 3 seconds on `Core.ML`, 10 minutes legacy (line 26, `Core.ML ? 0.05 : 10`), pets 5 minutes (line 27); stat max 100, 125 on LBR (line 23); primary stat 0.75 (line 25); Pub45 flat 0.05 (line 300); legacy `/33.3` (line 19); stat total cap default 225 (`Mobile.cs` 7826, not receipted: short line) |
 | Fame awards shrink as current fame grows | `fame / 100` subtracted from the award (`Titles.cs` 142); MaxFame 15000 (line 11) |
 
-Default stat path: `_usePub45StatGain` defaults to `Core.ML`, and `Core.ML` is `Expansion >= Expansion.ML` (`Main.cs` 336). So the stat path depends on the configured expansion. The comment "Gain one stat per 10 minutes" (line 28) describes the legacy path only; in the legacy path the stat roll also needs a success, and the cooldown is per stat.
+Default stat path: `_usePub45StatGain` defaults to `Core.ML`, and `Core.ML` is `Expansion >= Expansion.ML` (`Main.cs` 336). So the stat path depends on the configured expansion. The comment "Gain one stat per 10 minutes" (line 28) and the 10-minute delay describe the legacy path only; in the legacy path the stat roll also needs a success, and the cooldown is per stat.
 
 ## 4. TypeScript sketch
 
-simplified: the sketch covers the success ramp, the gain chance, the step with the shared budget and the lock-down drain, and the stat helpers (not called from `useSkill`). It uses the base points only where the donor uses `skill.Value` (base plus stat offset plus skill mods, `Skills.cs` 231-320). It omits: the alive and region and anti-macro gates (`AllowGain`), the AOS failure rule (uses the non-AOS 0.2), the pet doubling, the accelerated multiplier, the Pub45 stat roll, the cooldown and atrophy inside the stat helpers (they are standalone), the skill-cap-zero early return, and the stat-to-skill offset. It reorders nothing else: the order is ramp, gain roll, then step.
+simplified: the sketch covers the success ramp, the gain chance, the step with the shared budget and the lock-down drain, and the stat helpers (not called from `useSkill`). It uses the base points only where the donor uses `skill.Value` (base plus stat offset plus skill mods, `Skills.cs` 231-320). It omits: the alive and region and anti-macro gates (`AllowGain`), the AOS failure rule (uses the non-AOS 0.2), the pet doubling, the accelerated multiplier, the Pub45 stat roll, the cooldown and atrophy inside the stat helpers (they are standalone), the dead-pet and Focus-on-creature early returns in `Gain`, the skill-cap-zero early return, and the stat-to-skill offset. It reorders nothing else: the order is ramp, gain roll, then step.
 
 ```ts
 // Licence: GPL-3.0 (donor, ModernUO LICENSE). Clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -120,3 +120,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 Reuse tag: rewrite-from-idea (GPL-3.0; clean-room only)
 Brief rule served: 18 (progression and XP in one ledger, server roll)
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** (1) Step 1 ramp cited at SkillCheck.cs 62-67; real lines are CheckLocation 60-68 (and CheckTarget 182-190). (2) Mechanism says GainStat cooldown is 10 minutes, but the default path is Pub45 on Core.ML, where the delay is TimeSpan.FromMinutes(Core.ML ? 0.05 : 10) at line 26, i.e. 3 s; the 10 min figure is the legacy path only (the table cell shows the ternary but the bullet and 'Best idea' text do not). (3) Gain() early returns for dead pets (238-241) and Focus on creatures (243-246) not mentioned. All other numbers verified: 0.5/0.2/0 AOS, 0.01 floor, pet x2, Random(4)+1 at 254, 2-5 accel at 275, total/cap drain 259, 0.05 at 300, 0.75 at 303, /33.3 at 19, statMax 125/100 at 23, Cap=7000 Skills.cs:463, StatCap 225 Mobile.cs:7826, Titles fame/100 at 142/151, MaxFame 15000, JailRegion.cs:23, CorpseSkin 70, LockableContainer 22, 70 CheckSkill( lines in 40 files; sketch order matches donor.
+
+**Missed:** Gain() guards for dead pet and Focus; Pub45 gate also needs skill.Lock==Up (284)

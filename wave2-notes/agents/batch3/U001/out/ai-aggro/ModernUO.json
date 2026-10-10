@@ -76,7 +76,7 @@
   },
   {
    "name": "flee_duration_max",
-   "donor_constant": "30 s",
+   "donor_constant": "39 s (Utility.Random(10, 30) is 10 + Next(30), so the maximum is 39)",
    "unit": "s",
    "where": "engine constant",
    "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/BaseAI.cs:780"

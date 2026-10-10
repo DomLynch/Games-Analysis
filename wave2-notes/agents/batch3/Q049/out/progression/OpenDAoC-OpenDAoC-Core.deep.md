@@ -14,18 +14,18 @@ Acceptance: A server test: a level-3 player who dealt 10% of the damage to a lev
 - Order of steps inside `ProcessRewards` (NpcKillRewardProcessor.cs 63-94), as the code runs:
   (a) Base XP. Grouped players call `CalculateNpcExperienceModifiedByGroup` (65). With one contributor the base is the mob's ExperienceValue (156-157). If the highest-level contributor cons grey, the base is 0 (178-179). The "challenge" colour threshold is Yellow for 1-3 contributors, Orange for 4-7 and Red for 8 or more (187-192). If the highest contributor's con colour is at or above the threshold (195-196), or the receiver's own con to the NPC is at or below that colour (200-201), the base is `ceil(ExperienceValue / count)`. Otherwise the code searches for the NPC level whose con colour matches the highest contributor's, and the base is `ceil(XP of that level / count)` (208-242).
   (b) Cap. `xpCap` = XP for the receiver's own level x `XP_CAP_PERCENT` / 100 x `ExceedXPCapAmount` (252-253). Base = min(base, cap) (73-74). The comment at 79 gives the reason: capping must come before the damage share, or a low-level player could tag any high-level mob and hit the cap.
-  (c) Damage share. `damagePercent` = contributor (or group) damage / total NPC damage, clamped to 1.0 (98-106). Base = base x damagePercent (80).
-  (d) Zero check. Realm points and bounty points are awarded before this check (70-71). If base <= 0 the function returns with no XP (76-77).
+  (c) Zero check. `damagePercent` is computed first (67; contributor or group damage / total NPC damage, clamped to 1.0, 98-106) and realm and bounty points are awarded (70-71), before the cap. After the cap, if base <= 0 the function returns with no XP (76-77). This check runs BEFORE the damage share, so a share that truncates the base to 0 still reaches `GainExperience` with a zero base.
+  (d) Damage share. Base = base x damagePercent, truncated to a long (80), after the cap and the zero check.
   (e) Bonuses, all computed from the post-share base: camp (262-273), group `base x (contributors - 1) x 0.125` (284), guild `GUILD_BUFF_XP` percent when the guild bonus is XP (289-292), BAF `BafAddCount x 0.075` for standard mob brains (297-300), outpost (not read).
   (f) Hand-off to `GamePlayer.GainExperience` (4312). A gain is refused when `GainXP` is off (4316). Hardcore groups get 0 if any member is more than 5 levels above (4319-4328). With `AllowMultiply`, the zone bonus is a separate nested gain (4337-4347); the base is multiplied by `XP_RATE` (or `RvR_XP_RATE` in RvR zones) and by the XpPoints percent (4349-4357), but the camp, group, guild and BAF bonuses are not multiplied (4335, 4359).
   (g) Floor clamp. If the award would leave XP below the current level's threshold, it is raised to that threshold (4372-4375). Uses the second-stage threshold when `IsLevelSecondStage` is set (4365-4371).
-  (h) Level-up. At level 5 without class advancement, XP still accrues but the level is held and the player is told to see a trainer (4411-4417). At level 40-49, the half-way point (`ExperienceForCurrentLevelSecondStage`, 4246) sets the second stage and spec points `SpecPointsMultiplier x Level / 20` (4795). Otherwise `Level++` runs once per call when XP reaches the next threshold (4424-4426). The level setter fires `OnLevelUp`, which resets `DeathCount` (4747).
-- Death, for context (not the kill path): in `ProcessDeath` (5733), a PvE death removes `xpLossPercent` per-mille of the level span (`ExperienceForNextLevel - ExperienceForCurrentLevel`) (5970). The percent is `50 - Level` below level 40 and `10` at 40+ (5910-5917). The first death in a level divides it by 3 (5956-5961); the second multiplies by 2/3 (5963-5966). A death on a GST_Normal RvR server sets it to 0 (5926-5931). The stored amount is removed again at `Release` (1649), and the release-time loss goes to a gravestone (1652-1653).
+  (h) Level-up. At level 5 or above (`Level >= 5`) without class advancement, XP still accrues but the level is held and the player is told to see a trainer (4411-4417). At level 40-49, the half-way point (`ExperienceForCurrentLevelSecondStage`, 4246) sets the second stage and spec points `SpecPointsMultiplier x Level / 20` (4795). Otherwise `Level++` runs once per call when XP reaches the next threshold (4424-4426). The level setter fires `OnLevelUp`, which resets `DeathCount` (4747).
+- Death, for context (not the kill path): in `ProcessDeath` (5733), a PvE death removes `xpLossPercent` per-mille of the level span (`ExperienceForNextLevel - ExperienceForCurrentLevel`) (5970). The percent is `50 - Level` below level 40 and `10` at 40+ (5910-5917). The first death in a level divides it by 3 (5956-5961); the second multiplies by 2/3 (5963-5966). The loss is zeroed only on a PvP or enemy-realm death (killing blow by the enemy realm, in PvP combat, or killer of the same realm, 5919) on a GST_Normal server (5926-5931); an ordinary PvE death is not zeroed. The PvE loss is applied only when `Level >= PVE_EXP_LOSS_LEVEL` (default 6, ServerProperties.cs 1984; GamePlayer.cs 5952). The stored amount is removed again at `Release` (1649), and the release-time loss goes to a gravestone (1652-1653).
 - Tick: no tick. The award is synchronous: `OnNpcKilled` runs one `ProcessRewards` per contributor in a loop (1043-1049). Its caller was not read. The camp timer reads `GameLoop.GameLoopTime` against `SpawnTick` (265).
 
 ## 2. Key functions
 
-- `ProcessRewards`: `/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/serverrules/NpcKillRewardProcessor.cs` 63-94. Order: base, cap, damage share, zero check, bonuses, hand-off.
+- `ProcessRewards`: `/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/serverrules/NpcKillRewardProcessor.cs` 63-94. Order: base, damage percent, realm and bounty points, cap, zero check, damage share, bonuses, hand-off.
 - `CalculateNpcExperienceModifiedByGroup`: same file, 152-243. The con-colour challenge rule and the even split.
 - `CalculateXpCap`: same file, 245-254. Cap at `XP_CAP_PERCENT` percent of the receiver's own level XP, times `ExceedXPCapAmount`.
 - `CalculateCampBonus`: same file, 256-274. Full bonus after 30 minutes since spawn (265-269), otherwise full x the NPC's `CampBonus`.
@@ -52,7 +52,7 @@ Acceptance: A server test: a level-3 player who dealt 10% of the damage to a lev
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order for one receiver: even split among the receiver's group (or the receiver alone), cap on the receiver's own level, damage share after the cap, zero check, group bonus, `XP_RATE` on the base only, then the level floor and one level step per call. It omits the con-colour re-levelling of the base for mixed-level groups, the camp, guild, BAF and outpost bonuses, the realm and bounty points, the zone bonus, the hardcore rule, the XpPoints modifier, the level-5 trainer gate, the level-40 second stage and spec points, and the death and release losses. The donor applies the loss through the same `GainExperience` path; the sketch's `applyXp` does that for awards and losses.
+simplified: the sketch keeps the donor order for one receiver: even split among the receiver's group (or the receiver alone), cap on the receiver's own level, zero check, damage share after the cap, group bonus, `XP_RATE` on the base only, then the level floor and one level step per call. It omits the con-colour re-levelling of the base for mixed-level groups, the camp, guild, BAF and outpost bonuses, the realm and bounty points, the zone bonus, the hardcore rule, the XpPoints modifier, the level-5 trainer gate, the level-40 second stage and spec points, and the death and release losses. The donor applies the loss through the same `GainExperience` path; the sketch's `applyXp` does that for awards and losses.
 
 ```ts
 // Licence: GPL-3.0 (donor repo LICENSE). Clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -81,7 +81,7 @@ interface KillInput {
   maxLevel: number;                   // 50 in the donor
 }
 
-// Base XP for one receiver. Order: even split, cap on the receiver's own level, damage share, group bonus, rate.
+// Base XP for one receiver. Order: even split, cap on the receiver's own level, zero check, damage share, group bonus, rate.
 function killBaseXp(k: KillInput): number {
   const unit = k.receiver.groupId === null
     ? [k.receiver]
@@ -92,9 +92,9 @@ function killBaseXp(k: KillInput): number {
   let base = count > 1 ? Math.ceil(k.mobXp / count) : k.mobXp; // even split (donor also re-levels this for mixed groups; omitted)
   const cap = Math.floor(k.levelXp(k.receiver.level) * (k.capPercent / 100) * k.mobExceedCap);
   base = Math.min(base, cap);                                  // cap FIRST, against the receiver's own level
+  if (base <= 0) return 0;                                     // zero check BEFORE the share (donor 76-77)
   const share = Math.min(1, unitDamage / k.totalDamage);
-  base = Math.floor(base * share);                             // damage share AFTER the cap
-  if (base <= 0) return 0;
+  base = Math.floor(base * share);                             // damage share AFTER the cap; may reach 0, which still proceeds (donor)
 
   const groupBonus = Math.floor(base * Math.max(0, count - 1) * k.groupBonusPerExtra);
   return Math.floor(base * k.xpRate) + groupBonus;             // rate applies to the base only, not to the bonus
@@ -127,3 +127,11 @@ function applyXp(p: Player, delta: number, k: KillInput): void {
 - The donor's death loss is applied twice (at death and at release, 5970-5971 and 1649), and the release amount goes to a gravestone. Whether to copy that double penalty is a design decision for the owner; it is not in the sketch.
 - The donor's comments disagree with its code: the comment at 5908 says 5 percent and the comment at 5955 says half, but the code divides the first-death penalty by 3 (5960). Treat the code as the behaviour and the comments as stale.
 - `AddXPGainer` (GamePlayer 5719) and the outpost bonus (AbstractServerRules 1442-) were not read. Who may be an XP gainer, and the outpost rate, are therefore not described here.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** ORDER OF OPERATIONS WRONG in Mechanism steps (c)/(d), Key functions line and sketch. Real ProcessRewards (NpcKillRewardProcessor.cs:63-94): base (65) -> damagePercent computed (67) -> realm/bounty points (70-71) -> cap (73-74) -> zero check `if base<=0 return` (76-77) -> THEN damage share applied `base*damagePercent` (80) -> bonuses. Note says cap, damage share, zero check. Sketch zero-checks after the share; donor zero-checks before it (a share that truncates to 0 still reaches GainExperience in the donor). Also 'At level 5 without class advancement' is `Level >= 5` (GamePlayer.cs:4411); death-loss GST_Normal zeroing applies only on a PvP/enemy-realm death (5919-5931), not any death on an RvR server, and PvE loss is gated by PVE_EXP_LOSS_LEVEL (default 6, ServerProperties.cs:1984) which the note omits. All numeric constants (125, 1.0, 0.125, 1800000, 0.55/0.66, 5, 50-Level, /3, 2/3, -0.02, thresholds Yellow/Orange/Red) and most line numbers verified.
+
+**Missed:** Camp bonus has a side effect: after 30 min it also sets npc.CampBonus=0.98 (NpcKillRewardProcessor.cs:268) and each kill lowers it by 0.02 (AbstractServerRules.cs:1056-1057); note lists the -0.02 but not that the 30 min branch resets the stored value. PVE_EXP_LOSS_LEVEL gate (5952).

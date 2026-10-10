@@ -41,7 +41,7 @@ Acceptance: In a three-attacker kill (A 60 damage, B 30, C 10 but C is dead befo
 | Member weight is level squared over the party's level-squared sum | None (the weight; theirs at 311 and 499) |
 | Steal from a pet or summon to its master: `1 - rate` | Pet and summon steal rate defaults `1.0` (theirs, `Config.java` 808-810) |
 | Per-payout multipliers: penalty, rate, food, map | Penalty `1.0` below level 50 (theirs, `ExpTable.java` 84-85); table `1 / LVnn_EXP` (theirs, 88; LV50 default `1`, `Config.java` 1107; the rest not read); `RATE_XP` and `RATE_XP52` default `1.0` (theirs, `Config.java` 814-816), switch at level 52 (theirs, `CalcExp.java` 556); food `1.01` / `1.02` / `1.03` (theirs, 539-547); map 303 `0.5` (theirs, 552) |
-| Cumulative XP table, level by scan | 100-entry table starting `0, 125, 300` (theirs, `ExpTable.java` 95); `MAX_LEVEL = 99` (30); `MAX_EXP = 0x6ecf16da` (31) |
+| Cumulative XP table, level by scan | 99-entry table starting `0, 125, 300` (theirs, `ExpTable.java` 95-111); `MAX_LEVEL = 99` (30); `MAX_EXP = 0x6ecf16da` (31); `CalcExp.java` 49 defines a second `MAX_EXP = ExpTable.getExpByLevel(100) - 1`, which indexes one past the 99-entry array |
 
 ## 4. TypeScript sketch
 
@@ -103,7 +103,7 @@ export {};
 
 - GPL-2.0-or-later: clean-room only. Constants and the shape are cited; no code is carried over.
 - Party XP leak: the donor pools a party member's hate into `partyHate` (255) but pays only members the killer knows (381), so XP for unknown party members is dropped. Frankendom needs a ruling: pay every party member in the fight or none, and test it. Do not copy the leak.
-- Anchor rule: the party context is taken from the last attacker (510-521, 527), not from the attacker with the most damage. Frankendom must choose one rule and test it.
+- Anchor rule: the party context is taken from the last attacker (510-521, 527), not from the attacker with the most damage, except when the last attacker is an effect instance: then `L1MonsterInstance` 532-554 scans the hate list for the highest-hate attacker and uses that one as the anchor. Frankendom must choose one rule and test it.
 - Race in the donor: `toTargetArrayList` and `toHateArrayList` are two separate synchronized calls (524-525). A hit between them can give lists of different length, and `calcExp` then returns without paying (199-201). Frankendom must build both from one snapshot.
 - Death ordering: the monster is set dead (425) before the split (443), and the split drops dead acquisitors (211). Frankendom's server should define whether the killing blow's own attacker is always included, and should not rely on a dead flag to choose who is paid.
 - Hate is raw damage, with a one-time head start of max HP / 10 for the first hit (359). That favours the first attacker. Frankendom should make the head start a named data field if it keeps it, and test it against the fight's many-on-one balance.
@@ -111,3 +111,11 @@ export {};
 - Integer truncation happens at four points (260, 298, 307, 313). Frankendom should round once at the end and assert that the awards sum to at most the kill XP.
 - The map-303 halving (551-552) is a zone rule written as a map id check in code. Frankendom should carry it as zone data.
 - Not read: `L1Party` membership, the value `knownsObject` gives for the killer itself (this affects whether the killer counts itself in the party bonus), the `levelUp` body, and `AddExpPet` beyond 580.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** ExpTable cumulative table has 99 entries (parsed lines 95-111 of ExpTable.java), not 100 as stated in section 3; note then says MAX_LEVEL=99 which fits 99, but CalcExp.java 49 defines its own MAX_EXP = ExpTable.getExpByLevel(100) - 1 (index 99, out of range for a 99-entry array) - a second MAX_EXP that the note never mentions. Config RATE_XP52 spans 816-817 (cite 814-816 is fine). Wording 'calcExp closes at 481' etc all verified; royal 54 / member 55 ok. Pet/summon steal defaults 808-810 ok. Gaps section says party anchor is always the last attacker (510-521, 527) - not true for effect-instance kills: L1MonsterInstance 532-554 picks the max-hate attacker as anchor.
+
+**Missed:** calcExp early return at 203-206 (npc null / L1PetInstance / L1SummonInstance victim) and the NPE-prone cast at 185 before the null test; hometown contribution grant 226-230 (npc level/10) only listed as omitted; onChangeExp also calls levelDown(gap) for gap<0 (2196-2197); L1HateList is a HashMap so list order is arbitrary (matters for 'walk from the end').

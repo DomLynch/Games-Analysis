@@ -104,3 +104,11 @@ export {};
 - The cap rule (mob.cpp 2868) clips only when the base is below the cap. A designer might assume the cap always clips; state the rule in the zone data documentation.
 - Not read: the party share and the floor-drop path after `mob_item_drop` (2615 onward), the map-wide drops (3388-3418), the fixed drops (3308-3310), and the `dmglog` fill order (so "log order" is the order the donor's log holds, not confirmed as first-hit order).
 - Pit as client: the owner list and the roll are server-side. The Pit may show who has loot priority.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** No false claims. Verified mob_dead 2934, owner loop 2988-3062 (first eligible entry gets bonus 3052, sort 3055, top three 3058-3062), mob_getdroprate 2818-2890 incl. cap rule 2868, luck 2832-2834, VIP 2856-2861, clamp 2879, min 1 at 2886, roll 3335, mob_item_drop 2582-2616, MVP helper 2898-2928, conf values (first_attack_loot_bonus 30 @22, mvp_to_loot_priority no @27, drop_rate_cap(_vip) 9000 @209-210, drop_rate0item @137, mob_size_influence @286, vip_drop_increase 50 @236), GPL-3. Only nuance: line 3354 passes drop_rate when autoloot_adjust is on (default 0, drops.conf 174), else base rate; note states only the default.
+
+**Missed:** autoloot_adjust switch; MDLF_SELF entries count as exp tap (2993-2996); pet egg drops (3338) go to first_sd; the bonus goes to the first ELIGIBLE log entry, not necessarily the first attacker (note's sketch handles this correctly).

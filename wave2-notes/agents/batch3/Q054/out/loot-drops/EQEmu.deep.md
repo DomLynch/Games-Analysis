@@ -134,3 +134,11 @@ export function rollDropGroup(entries: DropEntry[], rule: DropGroupRule, rand: (
 - The cash mean-match holds only when the average is inside [min, max]. Outside it the donor draws uniformly over [min, max] (99), so the mean is not the average.
 - The donor's random sequence differs from the sketch (see section 4). Seeded tests in Frankendom must use Frankendom's order.
 - Not read: `AddLootDrop` internals, how the rolled list reaches the corpse, `global_loot_manager.cpp`. Global loot (CheckGlobalLootTables, zone.cpp path) is a second source and is not in this note.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** All claims hold: AddLootTable 31-141, cash branch (87-99: upper_chance, [avg,max], [min,avg], fallback) and mean=avg arithmetic correct, plat/gold/silver/copper split 103-114, multiplier*GlobalLootMultiplier loop 116-118, entry roll 123-129 (0 never fires, 100 always), AddLootDropTable 142-250 (scan-once 151-170 rolls percent BEFORE level check at 154 as the note says; >100 entries -> 10 at 173-174; limit>=min 177-178; roll_t 189; bypass 191; no_loot_prob 195; loop 214-215; roll 216; pick 225; subtract 242; extra copies 232-236), MeetsLootDropLevelRequirements 252-281 (254, 267), spawn2.cpp:299, attack.cpp corpse rights 2862-2915 (slot 0, group slots, raid loot types 2888-2906). Acceptance maths (0.748; 60/30/10) correct. Sketch matches including entryFires out-of-range behaviour. Nit: licence 'either version 3 ... or' quote is on loot.cpp line 7 with 'any later version' on line 8 (cited 3-7).
+
+**Missed:** AddLootTable early exits: GM spawn without npctype_id (34), zone-suspend resume (38-41), content-flag filtering (72), is_global skips cash (85); db_item existence required in weighted pass (187-188, 218-219)

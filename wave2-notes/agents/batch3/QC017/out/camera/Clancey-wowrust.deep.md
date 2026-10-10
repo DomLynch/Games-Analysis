@@ -11,13 +11,13 @@ Acceptance: not built. If it were, the camera would pass through walls when the 
 ## 1. Mechanism
 
 - State (camera.rs 12-22): target (player position), distance (default 10, line 28), yaw, pitch (radians), a fixed look height `height_offset` of 1.8 (line 31), FOV 60 degrees (line 32), near 0.1, far 5000.
-- Position (lines 40-49): the look point is `target + (0, 0, 1.8)`. The camera is that point plus a sphere offset: x = cos(yaw) x cos(pitch) x distance, y = sin(yaw) x cos(pitch) x distance, z = sin(pitch) x distance. So the camera is always directly behind the head along the yaw, centred, with no offset to either side.
+- Position (lines 40-49): the look point is `target + (0, 0, 1.8)`. The camera is that point plus a sphere offset: x = cos(yaw) x cos(pitch) x distance, y = sin(yaw) x cos(pitch) x distance, z = sin(pitch) x distance. So the camera is always centred on the head at distance, with no offset to either side. It sits on the +(cos yaw, sin yaw) side of the head and looks back at it (the view direction is the negative of that), so "behind" means behind the head as seen from the yaw direction, not behind it relative to movement_forward.
 - View (lines 52-58): `look_at_rh(camera_pos, look point, up = Z)`. The camera looks at the same head point it orbits.
 - Update (lines 78-93), in this order: (a) if `rotate_active` (right mouse held, from the MouseLook action, lib.rs 2879), yaw += yaw_delta x 0.002 and pitch += pitch_delta x 0.002 (lines 80-83); (b) pitch clamped to plus or minus 80 degrees (line 86); (c) distance = clamp(distance - scroll x 2.0, 2, 50) (line 89); (d) target = input target (line 92). `_dt` is not used, so nothing is frame-rate dependent except the input deltas themselves.
 - Caller (lib.rs 2843-2884, update at 2881): once per frame in the third-person branch, `target_position` = the local player's position (default zero if missing), `scroll_delta` = the input layer's scroll value for the frame (its source not read), `rotate_active` = MouseLook held, and `dt` is passed in but ignored by the camera.
 - Direct writes (lib.rs 1148, 2638): `target` is also set straight to a converted server position when the player is placed, so the orbit is not the only writer.
-- Movement (lib.rs 2163-2191): both branches of an `if` on the yaw/pitch deltas set the walk forward to `movement_forward()` (line 2178 and 2182), with the comment "For now, just use camera forward as a fallback" (line 2181). So walking is always camera-relative and the branch does nothing. Walk speed is 7 units per second (line 2167); the step is forward x input x speed x dt (line 2190).
-- Axes (lines 96-105): forward = (cos yaw, sin yaw, 0), right = (-sin yaw, cos yaw, 0), both normalised. These are the walk axes.
+- Movement (lib.rs 2163-2191): both branches of an `if` on the yaw/pitch deltas set the walk forward to `movement_forward()` (line 2178 and 2182), with the comment "For now, just use camera forward as a fallback" (line 2181). So the branch does nothing and walking always follows the yaw axes. Those axes are not the camera's look direction: `movement_forward` is +(cos yaw, sin yaw), which points from the head toward the camera, opposite to the view direction. Whether the input layer's forward sign compensates was not read, so this is either a latent donor bug or an unstated input-sign convention. Walk speed is 7 units per second (line 2167); the step is forward x input x speed x dt (line 2190).
+- Axes (lines 96-105): forward = (cos yaw, sin yaw, 0), right = (-sin yaw, cos yaw, 0), both normalised. These are the walk axes. Despite the doc comment "camera forward", forward points toward the camera, not along the view (see Position and Movement above).
 
 ## 2. Key functions
 
@@ -40,7 +40,7 @@ Acceptance: not built. If it were, the camera would pass through walls when the 
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the head-point orbit, the gated yaw and pitch step, the pitch clamp, the distance step and clamp, the target snap and the yaw-only walk axes. It omits the view and projection matrices, the free-fly camera, the FOV and near/far planes, the wheel-pixel conversion, the direct target writes in lib.rs (1148, 2638), and the walk-speed step. It reorders nothing: rotate, pitch clamp, distance, then target, as in the donor. `dt` is accepted and unused, as in the donor.
+simplified: the sketch keeps the head-point orbit, the gated yaw and pitch step, the pitch clamp, the distance step and clamp, the target snap and the yaw-only walk axes (with the donor's sign quirk flagged in a comment: the donor's forward points toward the camera, not where it looks, so the axes are not reusable as "camera forward" without a flip). It omits the view and projection matrices, the free-fly camera, the FOV and near/far planes, the wheel-pixel conversion, the direct target writes in lib.rs (1148, 2638), and the walk-speed step. It reorders nothing: rotate, pitch clamp, distance, then target, as in the donor. `dt` is accepted and unused, as in the donor.
 
 ```ts
 // Licence: restricted (Clancey-wowrust: no LICENSE file; README says "Private project. Not for distribution."). Clean-room sketch of the mechanism; not a translation.
@@ -64,6 +64,7 @@ const MIN_DIST = 2.0;
 const MAX_DIST = 50.0;
 
 // The look point and the camera: a point on a sphere around the head, no offset to either side.
+// The camera sits on the +yaw side of the head (head + (cos yaw, sin yaw) x distance) and looks back at it.
 export function orbitPosition(o: Orbit): Vec3 {
   const hx = o.target.x, hy = o.target.y, hz = o.target.z + HEAD_HEIGHT;
   return {
@@ -89,6 +90,9 @@ export function updateOrbit(
 }
 
 // Camera-relative walk axes on the ground plane, from yaw alone.
+// CAUTION (donor quirk, kept as is): the camera sits at head + (cos yaw, sin yaw) x distance and looks back at the head, so its
+// view direction is the NEGATIVE of this forward. The donor's `forward` points from the head toward the camera; whether the
+// input layer's forward sign compensates was not read. Do not reuse as "forward = where the camera looks" without flipping.
 export function walkAxes(yaw: number): { forward: Vec3; right: Vec3 } {
   return {
     forward: { x: Math.cos(yaw), y: Math.sin(yaw), z: 0 },
@@ -115,3 +119,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - No lock-on, no framing of several targets, no FOV change in combat. MAX_ATTACKERS = 3 has nothing to copy here.
 - Licence: private, no licence file. Clean-room, and do not copy.
 - The camera is client-only (the engine never reads it), so none of these values are zone data.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** All cited lines verified (camera.rs 12-22/25-37/40-49/52-58/78-93/96-105; lib.rs 1148, 1846-1851, 2163-2191, 2638, 2843-2884; unused _dt; update_third_person single non-test caller at lib.rs 2881; README 'Private project'). Weakness: note claims the camera sits 'directly behind the head along the yaw' and walks are camera-relative, but position() puts the camera at +(cos yaw, sin yaw) from the head looking back at it, while movement_forward() is +(cos yaw, sin yaw): walk-forward points TOWARD the camera, i.e. opposite to the view direction. The TypeScript walkAxes reproduces this without flagging it. Cross-references to a WoWee note (camera_controller.cpp 2119-2224, 2358-2359, 3726, hpp 584-585) are a different donor and were not verified.
+
+**Missed:** Sign inversion between the view direction (target - camera_pos = -(cos yaw cos pitch, sin yaw cos pitch)) and movement_forward (+cos yaw, +sin yaw); the doc comment on movement_forward says 'camera forward' so this looks like a latent bug or an unspoken input-sign convention; the note should have flagged it before offering walkAxes as reusable.

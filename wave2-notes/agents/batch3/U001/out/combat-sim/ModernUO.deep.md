@@ -141,3 +141,11 @@ Acceptance: a server test with equal skills and no bonuses gives a hit chance of
 - Per-weapon min and max damage is catalogue data (BaseWeapon `MinDamage`/`MaxDamage`), not zone data. Frankendom should keep it on the weapon catalogue.
 - Many-on-one: this resolves one attacker against one defender. The donor's multi-target handling (`WhirlwindAttack.cs` 74 calls `weapon.OnHit` per target; not read end to end) is a different caller and was not traced. MAX_ATTACKERS = 3 must be enforced by the caller, not the damage function.
 - Element types: the donor has five elements plus chaos and direct. Frankendom has no element model. Only the resist-split shape transfers unless Frankendom adds damage types.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** No false claims. Verified CheckHit 1208-1337 (20 offset 1272/1321, caps 45 at 1267/1316, ratio 1331, floor 0.02 at 1335), swing 888-894, OnHit 1732-2000 order (ComputeDamage 1763, percent sum 1769-1861 cap 300, Scale 1863, AbsorbDamage 1873, GetDamageTypes 1889, AOS.Damage 1993), Slayer +100 1797, double strike -10 1832, honour +25 1847, AbsorbDamageAOS 1576-1640 (parry 0 at 1587, armour roll 1622), CheckParry 1508/1542, ScaleDamageAOS bonuses 2540-2542 cap 2578, GetBonus 2486-2495, phys remainder 2364, AOS.cs resist 126-132 min 1 at 144-147, pre-AOS 62-64 and 1327, callers BaseRanged 78 / MysticArc 81 / Whirlwind 74, SkillCheck 93-100/115, GPL-3.
+
+**Missed:** ModifyHitChance hook (BaseWeapon.cs 1333) and ModifyDamage / AlterMeleeDamageTo/From (1864-1871) between the percent cap and parry; AbsorbDamageAOS only parries for players or human bodies (1580); AOS.Damage ML direct-damage add (AOS.cs 134-137) and the 35 cap for armour-ignoring player-vs-player hits (149-164); lumberjacking term in ScaleDamageAOS (2543).

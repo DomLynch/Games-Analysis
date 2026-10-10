@@ -6,7 +6,7 @@ Checked: The hint file (`L2WeaponPrefabBuilder.cs`) is an editor prefab tool and
 
 ## 1. Mechanism
 
-- Damage numbers come from the server. `AttackDto.ReadFrom` reads the damage and a flag byte per hit (crit, miss, shield, soulshot). `Hit.cs` 8-10 define the flag bits. The client does not add, subtract or scale them.
+- Damage numbers come from the server. `AttackDto.ReadFrom` reads the damage and a flag byte per hit (crit, miss, shield, soulshot). `Hit.cs` 7-10 define the flag bits. The client does not add, subtract or scale them.
 - Swing cycle: `CalcBaseParam.CalculateTimeL2j` returns max(100, 500000 / attackSpeed) ms (`CalcBaseParam.cs` 10). The attack speed comes from `ResolvePAtkSpd`: a null entity or null stats gives 333 (`AttackTimingHelper.cs` 55-56); otherwise it takes BasePAtkSpeed for a player if above 1, then PAtkSpd if above 1, then BasePAtkSpeed if above 1, else 333 (lines 58-67).
 - Bow only, and only when the target distance is known (above 0.01): the cycle has the arrow flight time subtracted and clamped to 0-1000 ms (`ResolveAttackCycleMs` 84-98 and `CalcBaseParam.cs` 21-26). Not traced further (flight time not read).
 - Animation pacing: `ComputeLinearPAtkSpeed` returns clip seconds x 1000 / cycle ms (`AttackTimingHelper.cs` 106). `PlayerStateJAtk.cs` 72 applies it at swing enter through `AnimationManager.ApplyLinearMeleePAtkSpeed` (`AnimationManager.cs` 665-685, read). So the whole swing clip plays across one server cycle.
@@ -14,7 +14,7 @@ Checked: The hint file (`L2WeaponPrefabBuilder.cs`) is an editor prefab tool and
 - Swing end: `PlayerStateJAtk` ends the swing when elapsed wall time reaches `_endTime`, the full cycle in seconds (`PlayerStateJAtk.cs` 66, 170-177). It then calls `EndAttack(entityId, _attackEpoch)` (246). `EndAttack` skips the removal when the stored epoch differs from the live one, for a non-zero epoch (`SwordCollisionManager.cs` 117-122).
 - Dead path, disabled: a wall-clock melee hit at cycle x hit fraction, fired from `LateUpdate`, is commented out (`SwordCollisionManager.cs` 246-263). The hit fraction is 0.5 for melee (`AttackTimingHelper.cs` 6, 113-122) and 0.82 for bow (119). In the lines read, `hitAtMs` is used only in log lines (`PlayerStateJAtk.cs` 95, 122, 133), and the context field `HitFraction` is written at line 78 and never read again (grep of the file).
 - Tick: none. The hit is driven by a Unity animation event; the swing end uses `Time.time`, so it is variable-step wall-clock.
-- Damage application, for context: `NewAttackIntention` sets only a preview (`SetDamage`: remaining = hp - damage, `Status.cs` 35). HP is reduced by `Entity.ApplyDamage` (`Entity.cs` 177), reached through `WorldCombat.InflictAttack` only when `World.InflictDamageTo` finds a null sender (`World.cs` 626-630; the visible-sender branch is commented out at 627). Which packet lowers HP for a visible attacker was not traced (not read).
+- Damage application, for context: `NewAttackIntention` sets only a preview (`SetDamage`: remaining = hp - damage, `Status.cs` 35). HP is reduced by `Entity.ApplyDamage` (`Entity.cs` declared at 171, HP write at 177), reached through `WorldCombat.InflictAttack` only when `World.InflictDamageTo` finds a null sender (`World.cs` 626-630; the visible-sender branch is commented out at 627). Which packet lowers HP for a visible attacker was not traced (not read).
 
 ## 2. Key functions
 
@@ -39,7 +39,7 @@ Checked: The hint file (`L2WeaponPrefabBuilder.cs`) is an editor prefab tool and
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the cycle formula (with the 100 ms floor), the clip-rate formula, the one-hit latch and the epoch check. It omits: the NO_CONTEXT path (the donor still emits a hit when no live swing exists; the sketch returns null), the animation clip lookup and the AttackShot event time, the bow flight subtraction, the sword and hit registries, the disabled wall-clock fallback, the 333 default, and the hit fraction (the donor uses it only for logs). It runs on wall-clock ms; Frankendom must count server ticks instead.
+simplified: the sketch keeps the cycle formula (with the 100 ms floor), the clip-rate formula, the one-hit latch and the epoch check. It omits: the NO_CONTEXT path (the donor still emits a hit when no live swing exists; the sketch returns null), the animation clip lookup and the AttackShot event time, the bow flight subtraction, the sword and hit registries, the disabled wall-clock fallback, the 333 default, and the hit fraction (the donor uses it only for logs). The stale-epoch guard keeps the donor's rule that epoch 0 is a wildcard (`epoch > 0 &&`, `SwordCollisionManager.cs` 117). It runs on wall-clock ms; Frankendom must count server ticks instead.
 
 ```ts
 // Licence: Apache-2.0 (donor repo LICENSE). Clean-room sketch of the mechanism; not a translation.
@@ -81,10 +81,12 @@ class SwingBook {
     return s.epoch;
   }
 
-  // An older swing cannot clear a newer one.
-  end(attackerId: number, epoch: number): void {
+  // An older swing cannot clear a newer one. Epoch 0 is a wildcard (clears whatever is live), as in the donor.
+  end(attackerId: number, epoch = 0): void {
     const s = this.live.get(attackerId);
-    if (s !== undefined && s.epoch === epoch) this.live.delete(attackerId);
+    if (s === undefined) return;
+    if (epoch > 0 && s.epoch !== epoch) return;
+    this.live.delete(attackerId);
   }
 }
 
@@ -94,7 +96,7 @@ const book = new SwingBook();
 const e1 = book.begin(7);
 const hit1 = book.onHitFrame(7);          // e1
 const hit2 = book.onHitFrame(7);          // null: already fired this swing
-book.end(7, e1 - 1);                      // stale epoch: no effect
+book.end(7, e1 + 1);                      // non-zero epoch that is not the live one: no effect
 export { cyc, rate, hit1, hit2 };
 ```
 
@@ -118,3 +120,11 @@ export { cyc, rate, hit1, hit2 };
 Best transferable idea: a swing's one hit is latched per swing and tied to the swing's epoch, so a stale or repeated hit cannot land, with the swing length derived from attack speed.
 Decision (proposed): adapt - the once-per-swing latch and epoch guard fit the duel step, but the hit must land on a server tick, not an animation event, and the cycle must be counted in ticks.
 Acceptance: a server test at attack speed 333 shows a swing cycle of about 1501.5 ms (about 90 ticks at 60 ticks/s, to be confirmed with the real tick rate); a second hit in the same swing deals no damage; a hit arriving after the swing has ended is dropped.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** (1) TS demo `book.end(7, e1-1)` is labelled 'stale epoch: no effect' but e1-1 = 0, and epoch 0 is the wildcard in the donor (SwordCollisionManager.cs:117 `epoch > 0 &&`), so the donor would REMOVE the context; sketch and donor diverge on this exact example. (2) Hit.cs flag bits are lines 7-10 (USESS 0x10 at 7), note says 8-10. (3) Entity.cs ApplyDamage is declared at 171, HP write at 177; note cites 177 as ApplyDamage. All numbers (500000, floor 100, 333, 0.5, 0.82, 1000, 0.88, 0-1000 clamp) and line ranges otherwise verified.
+
+**Missed:** Nothing important; the donor's per-swing hit only comes from the AttackShot animation event (confirmed), `UpdateAttackProgress` is dead state.

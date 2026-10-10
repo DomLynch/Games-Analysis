@@ -1,0 +1,113 @@
+{
+ "game": "Sziadan-open-midgard",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/Sziadan-open-midgard/src/gamemode/View.cpp",
+ "licence": "GPL-3.0 (LICENSE line 1: GNU GENERAL PUBLIC LICENSE; line 2: Version 3, 29 June 2007)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "camera_scope": "world",
+ "pattern_tags": [
+  "follow-point",
+  "fixed-step",
+  "new:dest-current-split",
+  "new:zone-camera-limits",
+  "new:saved-camera-per-zone",
+  "new:ground-floor-eye",
+  "new:lock-yaw-indoors"
+ ],
+ "data_fields": [
+  {
+   "name": "distance_min",
+   "donor_constant": "150",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "src/gamemode/GameMode.cpp:127"
+  },
+  {
+   "name": "distance_max_indoor",
+   "donor_constant": "420",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "src/gamemode/GameMode.cpp:128"
+  },
+  {
+   "name": "distance_max_outdoor",
+   "donor_constant": "700",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "src/gamemode/GameMode.cpp:130"
+  },
+  {
+   "name": "distance_default_outdoor",
+   "donor_constant": "500 (saved value replaces it per map)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "src/gamemode/GameMode.cpp:129"
+  },
+  {
+   "name": "latitude_range_indoor",
+   "donor_constant": "-55 to -35 degrees",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "src/gamemode/GameMode.cpp:131"
+  },
+  {
+   "name": "latitude_range_outdoor",
+   "donor_constant": "-65 to -25 degrees",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "src/gamemode/GameMode.cpp:133"
+  },
+  {
+   "name": "latitude_default",
+   "donor_constant": "-45 degrees",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "src/gamemode/GameMode.cpp:145"
+  },
+  {
+   "name": "yaw_locked_indoor",
+   "donor_constant": "45 degrees (locked when indoor)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "src/gamemode/GameMode.cpp:2638"
+  },
+  {
+   "name": "drag_yaw_per_px",
+   "donor_constant": "0.4 degrees per pixel",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/gamemode/View.cpp:16"
+  },
+  {
+   "name": "drag_pitch_per_px",
+   "donor_constant": "-0.3 degrees per pixel",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/gamemode/View.cpp:17"
+  },
+  {
+   "name": "wheel_distance_per_notch",
+   "donor_constant": "-60 per notch",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/gamemode/View.cpp:18"
+  },
+  {
+   "name": "catch_up_share",
+   "donor_constant": "0.1 per call (frame-based in donor; dt-corrected to 60 Hz in sketch)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "src/gamemode/View.cpp:24"
+  }
+ ],
+ "best_idea": "Keep the drawn camera and the wanted camera as two separate states, move the drawn one toward the wanted one by a fixed share each step, and put every zone's camera limits (distance, latitude, locked yaw) in a small data table.",
+ "decision": "adapt",
+ "decision_why": "The zone limit table and the wanted-versus-drawn split fit zones as data and the world camera, but the per-call 0.1 step makes the view frame-rate dependent and the terrain floor has no margin; keep the shape, change the step to dt-based and check the floor's axis sense first.",
+ "decision_status": "proposed",
+ "acceptance": "A client test runs the same orbit at 60 Hz and 30 Hz for one simulated second and asserts the eye positions agree within 1 percent; an indoor zone test asserts a drag leaves the yaw unchanged and a wheel step never takes the distance outside the zone's min and max."
+}

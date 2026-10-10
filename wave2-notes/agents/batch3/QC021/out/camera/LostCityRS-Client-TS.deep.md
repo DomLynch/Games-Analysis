@@ -164,3 +164,11 @@ function advance(dtMs: number, runTick: () => void): void {
 - Server reach. The pose is sent to the server (2175-2178); Frankendom must not let camera pose into hit checks (the rulings already make the camera client-only).
 - Scope. No FOV change, zoom or lock-on framing exists in this client (grep: the only zoom words are minimap zoom and item model zoom). Several-enemy framing for many-on-one fights is not in this donor.
 - Units. The donor uses 128 units per tile, 2048 per turn, and y-down heights. Frankendom's coordinate convention was not checked; the sketch is y-up.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** No factual errors found. Checked followCamera 3222-3303 (1/16 follow, snap 500, +-24/+-12 velocity targets, halve on release, pitch 128..383, 9x9 window, x192, clamp 32768..98048, rise /24, fall /80), gameDrawMain 4182-4196 (pitch*3+600, -50 aim), camFollow 4432-4465, shake packet mapping 6356-6365 (ran/amp/rate to Axis/Ran/Amp fields is correctly described), idle drift 2366-2400, GameShell 11/158-165/185-195, touch emulation, license MIT. Sketch order and geometry match donor. Only nit: acceptance 'settles over 1.6 s' is a 1/80-per-tick time constant, not full settle.
+
+**Missed:** Terrain-pitch window is skipped entirely (floor stays at minimum 128) when orbit tile is outside 4..99 (3274); groundh level also bumps +1 when MapFlag.VisBelow set (3278). Neither mentioned.

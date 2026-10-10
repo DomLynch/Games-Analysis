@@ -12,7 +12,7 @@ Acceptance: a server test with five attackers on one boss keeps three active slo
 
 **Storage (`Aggro.cs`).** Each NPC has `AggroTable`, a concurrent dictionary from attacker object id to an `Aggro` row (`Unit.cs` 272). A row keeps two counters, damage and heal, and `TotalAggro` is their sum (`Aggro.cs` 35-44). Heal aggro is stored at 60 percent: `_healAggro += (int)(amount * 0.6f)` (`Aggro.cs` 53). The damage counter is added as given (51). There is no decay and no caller of `RemoveAggro` (57; the only definition is in the repo).
 
-**Adding (`Unit.AddUnitAggro`, 1581).** Order of steps:
+**Adding (`Unit.AddUnitAggro`, 1581).** The existing-row branch sets `isNewAggro = true` (1616-1620), the inverse of its name; the return value was not traced. A dead attacker's row is also cleared by the abuser-died event handler (Unit.cs near 1708). Order of steps:
 1. Tags (1595): if the NPC or the attacker has the NoFight or Returning buff tag, the attacker's row is cleared and the call returns false.
 2. Tagging (1610-1611): damage also feeds the tagging list (not read).
 3. Scale (1613-1614): `amount = trunc(amount x attacker.AggroMul / 100)`, then `amount = trunc(amount x this.IncomingAggroMul / 100)`. Both multipliers are percents with a default of 100 (`Unit.cs` 209, 217).
@@ -26,9 +26,9 @@ Acceptance: a server test with five attackers on one boss keeps three active slo
 **Seeding.** `OnEnemySeen` adds one point of damage aggro to the target, then goes to combat (`Behavior.cs` 211-212).
 
 **Target pick (`BaseCombatBehavior.UpdateTarget`, 283).** Called by the attack behaviour on every AI tick (`AttackBehavior.cs` 34). Order:
-1. Stop if the NPC's current skill controller is running (fear, lift, pull, dash, leap), so the target is not changed mid-move (295-296).
+1. If the NPC's current skill controller is running (fear, lift, pull, dash, leap), return `CurrentTarget != null` without changing the target, so the target is not changed mid-move (295-296). `ShouldReturn` has its own guard that returns false while a skill controller runs (251-252).
 2. Sort the rows by `TotalAggro`, highest first (299-300).
-3. Walk the sorted list. The first row whose unit is visible and not dead becomes `CurrentAggroTarget` and the target, the aggro-link helpers are called for it, and the method returns true (323-333). Any row that fails the test is cleared from the table (336) as the walk passes it; rows below the chosen one are kept.
+3. Walk the sorted list. The first row whose unit is visible and not dead becomes `CurrentAggroTarget` and the target, the aggro-link helpers are called for it, and the method returns true (323-333). In the non-GeoData branch, a visible live unit that cannot be found in the world by its object id is skipped with `continue` (326-328) and is not cleared. A row whose unit is not visible or is dead is cleared from the table (336) as the walk passes it; rows below the chosen one are kept. The GeoData branch (306-320) picks the same way but was not traced.
 4. If nothing matches, clear the current target if it is not a unit, or if it is dead (340-346), and return false. The attack behaviour then calls `OnNoAggroTarget` (`AttackBehavior.cs` 36).
 - There is no hysteresis: the pick is recomputed each tick, so the target changes as soon as another row's total is higher. Ties are left to the order of the concurrent dictionary (not defined).
 
@@ -67,7 +67,7 @@ Acceptance: a server test with five attackers on one boss keeps three active slo
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the add order (attacker percent, then the NPC's incoming percent, then the 60 percent heal share), the total ranking, the walk that drops invisible or dead rows as it passes them, and the leash rule as the code writes it (including the false return beyond 200). It omits: the aggro-link helpers (the one-point seed), the NoFight and Returning buff tags, the tagging list, quest hooks, the first-hit packet, the GeoData path branch, the skill-controller guard on target changes, the 100 ms tick and the NpcAi pruning of rows that cannot be attacked, and the empty-table return. It does not reorder anything the donor does.
+simplified: the sketch keeps the add order (attacker percent, then the NPC's incoming percent, then the 60 percent heal share), the total ranking, the walk that drops invisible or dead rows as it passes them, and the leash rule as the code writes it (including the false return beyond 200). It omits: the aggro-link helpers (the one-point seed), the NoFight and Returning buff tags, the tagging list, quest hooks, the first-hit packet, the GeoData path branch, the skill-controller guards (`UpdateTarget` keeps the old target while one runs; `ShouldReturn` returns false), the check that a visible live foe is still found in the world (the donor skips such a row without clearing it; the sketch has no such state), the 100 ms tick and the NpcAi pruning of rows that cannot be attacked, and the empty-table return. It does not reorder anything the donor does.
 
 ```ts
 // Licence: LGPL-3.0 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -149,3 +149,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - The leash comment says a teleport happens beyond 200, but `ShouldReturn` returns false there. The teleport path was not read; do not copy the comment as a rule.
 - The aggro skill (`AggroEffect`) adds a random value with no check on the target's rows, so a taunt can raise threat above the damage rule. Frankendom should route taunts through the same table with a named source.
 - Not read: `CharacterTagging`, quest hooks on first aggro, the NpcGroup aggro rules, and the TickManager implementation.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** 1) Note says every row failing the visible/alive test is cleared during the walk; non-GeoData branch BaseCombatBehavior.cs 326-328 does `continue` (skip, NOT cleared) when the unit is not found in the world. GeoData branch (306-320) is untraced, so the claim is only half-checked. 2) Note says skill-controller guard at 295-296 just 'stops'; it returns CurrentTarget != null (keeps the old target). 3) ShouldReturn has its own skill-controller guard (251-252) returning false, not mentioned. 4) Unit.cs AddUnitAggro: existing-row branch returns isNewAggro=true (1616-1620), inverted naming, not noted. All other cited lines/constants verified: Aggro.cs 35-57 (0.6f at 53), Unit.cs 1581/1595/1610/1613-14/1651/1665/1705, 272, 209/217, AIManager 23/45, AttackBehavior 34/36/49, NpcAi 148-175, Npc.cs 1087, Behavior.cs 211/350/357-361/391, ShouldReturn 254-274, AggroEffect 69, README LGPL.
+
+**Missed:** OnAbuserDied (Unit.cs ~1708) clears the dead attacker's row via event subscription; AttackBehavior runs UpdateTarget first and ShouldReturn second in the same condition (34); not in note.

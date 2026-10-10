@@ -8,9 +8,9 @@ Checked: Fellowship = the party. Read `Fellowship.cs` 448-600 (CalculateXPSharin
 
 - One kill's XP enters at `Player.EarnXP` (`Player_Xp.cs` 22-44): XP modifier and enchantment are applied first (35), then `GrantXP`. `GrantXP` (53-70) sends the XP to `Fellowship.SplitXp` only if the fellowship has `ShareXP` on and the share flag is set (63-67). Otherwise the earner keeps all of it.
 - Mode is decided beforehand by `CalculateXPSharing` (453-486), which runs on join (160), removal (220), quit or disband (341, 373), level-up (701) and dropped-member cleanup (776). Leader reassignment itself (`AssignNewLeader`, 377) does not call it (checked by grep):
-  1. If every member is at or above `fellowship_even_share_level` (default 50, `PropertyManager.cs` 624), share evenly and stop (463-470). Level gap is not checked in this case.
+  1. If every member is at or above `fellowship_even_share_level` (default 50, `PropertyManager.cs` 624), set `ShareXP = DesiredShareXP` (the fellowship's own share toggle, so the share can still be off) with even share, and stop (463-470). Level gap is not checked in this case.
   2. If the leader is offline, return and keep the flags as they were (474-475). This is a stale-state path.
-  3. Level gap = max over members of |leader level - member level| (477). Gap <= 5: even share (479-482). Gap <= 10: proportional share (484-487). Otherwise `ShareXP = false` and the earner keeps all XP.
+  3. Level gap = max over members of |leader level - member level| (477). Gap <= 5: even share (479-482). Gap 6 to 10: proportional share (484-487). In both cases `ShareXP = DesiredShareXP` (481, 486). Otherwise `ShareXP = false` and the earner keeps all XP.
 - `SplitXp` (502-564), in order:
   1. Strip the Fellowship share flag from the share type so the recursive grants do not split again (508).
   2. Quest XP (flat): if the XP is quest XP and `fellow_quest_bonus` is off, each member gets `amount / member count` (511-513). The earner gets type Quest, the others type Fellowship. Quest XP ignores the distance rule.
@@ -42,7 +42,7 @@ Checked: Fellowship = the party. Read `Fellowship.cs` 448-600 (CalculateXPSharin
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor's order for the even and proportional splits (mode from level gap, then size-table share or level-weighted share, each times a distance scalar) and the donor's constants. It omits: the quest flat split and `fellow_quest_bonus`; the `fellow_even_share_level` all-members shortcut (the sketch does apply it, as written in `shareMode`); the stale-flags path when the leader is offline (the sketch takes the leader level as an argument); the indoor/outdoor and landblock zero rules in `GetDistanceScalar`; the online-session filter in `GetFellowshipMembers`; the XP-type labels (Kill, Quest, Fellowship); the `Math.Round` on ulong; the allegiance chain. The proportional branch reproduces the donor's loss: out-of-range shares are not redistributed. The sketch is clean-room (AGPL-3.0 donor).
+simplified: the sketch keeps the donor's order for the even and proportional splits (mode from level gap, then size-table share or level-weighted share, each times a distance scalar) and the donor's constants. It omits: the share toggle `DesiredShareXP` (the donor sets `ShareXP = DesiredShareXP` in the even and proportional modes, so a fellowship can opt out of sharing; the sketch always shares); the quest flat split and `fellow_quest_bonus`; the `fellow_even_share_level` all-members shortcut (the sketch does apply it, as written in `shareMode`); the stale-flags path when the leader is offline (the sketch takes the leader level as an argument); the indoor/outdoor and landblock zero rules in `GetDistanceScalar`; the online-session filter in `GetFellowshipMembers` (so the size table uses the online count); the XP-type labels (Kill, Quest, Fellowship); the `Math.Round` on ulong; the allegiance chain. The proportional branch reproduces the donor's loss: out-of-range shares are not redistributed. The sketch is clean-room (AGPL-3.0 donor).
 
 ```ts
 // Licence: AGPL-3.0 (donor). Clean-room sketch of the described mechanism (party XP split: size table, distance falloff, level-gap band), not a translation.
@@ -135,4 +135,12 @@ Brief rule served: rule 5 (callers of SplitXp, GetDistanceScalar and GetMemberSh
 Best transferable idea: A party's kill XP is a size-indexed share, scaled per member by distance, and the mode is picked from the level gap, so the rule can be a few zone-data numbers and one server function.
 
 Decision (proposed): adapt - take the share-by-size table (capped at MAX_ATTACKERS = 3), the distance falloff and the level-gap band as one server function; drop the indoor/landblock rules and the 9-member table, and keep the group total explicit in the ledger.
-Acceptance: A server test with a 3-member party where two members are within 600 units and one at 900 units, all within 10 levels of the leader: a 1000 XP kill grants 600, 600 and 300 XP (total 1500) and the ledger shows the 1500 with each grant's reason; a member beyond 1200 units gets 0.
+Acceptance: A server test with a 3-member party where two members are within 600 units and one at 900 units, all within 5 levels of the leader (even mode; at a gap of 6 to 10 the mode is proportional and, with equal XP-to-next, the same kill would grant about 333, 333 and 167): a 1000 XP kill grants 600, 600 and 300 XP (total 1500) and the ledger shows the 1500 with each grant's reason; a member beyond 1200 units gets 0.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** 1) Acceptance says 'all within 10 levels of the leader' yields 600/600/300 but that only holds for gap<=5 (even share, Fellowship.cs 479); a gap of 6-10 (and not all >=50) is proportional mode (484) giving ~333/333/167. 2) CalculateXPSharing sets ShareXP = DesiredShareXP (468,481,486), not true; the member opt-out flag is not mentioned. Everything else verified: 453/502/604/639, table 1/.75/.6/.55/.5/.45/.4/.35/.3, MaxFellows 26, MaxDistance 633, 659/662/665, calls at 160/220/341/373/701/776, AssignNewLeader (377) not calling it, GrantXP 63-67/72, EarnXP 35, PropertyManager 556/624/672, AGPL. Hand example 600/600/300 correct. Note title is parties-guilds-chat but covers only XP split (disclosed).
+
+**Missed:** DesiredShareXP toggle; GetFellowshipMembers is online-only so size table uses online count.

@@ -6,15 +6,15 @@ Checked: Read in full: `Creature::getStepDuration` (creature.cpp 1114-1162; 1116
 
 Best transferable idea: Round every movement step up to a whole server beat so steps end on one tick grid, and let the client predict only movement, dropping its queue whenever the server's next step disagrees.
 Decision (proposed): adapt — The beat-rounded step time gives movement one tick grid, but Frankendom's kills, damage and guard stay server-verified, so only the movement queue is adopted and never a predicted hit.
-Acceptance: Server test: with beat 50 ms every movement step duration is a multiple of 50 ms. Client test: a refused move (server cancel) snaps the avatar back to the confirmed tile at once and blocks new steps for 250 ms.
+Acceptance: Server test: with beat 50 ms the base tile step duration (before the diagonal factor and the camera-follow padding the donor adds afterwards) is a multiple of 50 ms. Client test: a refused move (server cancel) snaps the avatar back to the confirmed tile at once and blocks new steps for 250 ms.
 
 ## 1. Mechanism
 
 This is client-side movement prediction tied to a server beat. Five parts:
 
 - (a) Beat. The server sends a beat in ms at login (`parseLogin`, protocolgameparse.cpp 731, stored at 772). Default 50 ms before login (game.h 523).
-- (b) Step time. For a tile, `1000 * groundSpeed / speed` ms (creature.cpp 1135, 1138), where ground speed is the tile's value or 150 when the tile has none (1129). When the client is 860 or newer (or the forced-formula flag is set), that time is rounded UP to a whole number of beats (1140-1141). A tile step therefore always ends on a beat boundary.
-- (c) Input gate and prediction (`LocalPlayer::canWalk`, localplayer.cpp 38-63). In order: dead returns false (41-42); walk lock on returns false (45-46); predicted-step queue longer than `walkMaxSteps` returns false (50-51); with `walkMaxSteps` at 0 the client must match the server position (52-53); while walking, auto-walking allows (57) and pre-walking blocks (58); otherwise the step timer must have elapsed (62). The Lua side (walk.lua 81, 100, 115) checks the lock, then `canWalk()`, then calls `player:preWalk(dir)` and sends the walk to the server.
+- (b) Step time. For a tile, `1000 * groundSpeed / speed` ms (creature.cpp 1135, 1138), where ground speed is the tile's value or 150 when the tile has none (1129). When the client is 860 or newer (or the forced-formula flag is set), that time is rounded UP to a whole number of beats (1140-1141). The base tile step therefore lands on a beat boundary, but the value the client actually uses is not always a multiple of the beat. When `hasSpeedFormula()` is true (new speed law with all three coefficients set) the divisor is the cached `m_calculatedStepSpeed`, not `speed` (1136-1137). A speed below 1 returns 0 (1116-1117). A diagonal step is scaled by a diagonal factor after the rounding (1148-1151). For the camera-followed local player `+10 ms * max(1, pre-walk queue size)` is added after the rounding (1156-1159). The cache is recomputed only when speed or ground speed changes (1131), so a changed beat does not refresh cached durations.
+- (c) Input gate and prediction (`LocalPlayer::canWalk`, localplayer.cpp 38-63). In order: dead returns false (41-42); walk lock on returns false (45-46); predicted-step queue longer than `walkMaxSteps` returns false (50-51); with `walkMaxSteps` at 0 the client must match the server position (52-53); while walking, auto-walking allows (57) and pre-walking blocks (58); otherwise the step timer must have elapsed (62). The Lua side (walk.lua 81, 100, 115) checks the lock, then `canWalk()`; when `canWalk()` fails it stores the direction in `nextWalkDir` (100-102), which is the real input buffer. Prediction only happens when the feature `GameAllowPreWalk` is on and the target tile exists and is walkable (walk.lua 107-116); then it calls `player:preWalk(dir)`, and in all cases it sends the walk to the server.
 - (d) Reconciliation (`LocalPlayer::walk`, localplayer.cpp 65-79). When the server moves the player, if the new position equals the front of the predicted queue it pops that prediction (70). Otherwise it cancels the adjust timer, clears the queue (75) and runs the server step (78). The predicted position is the back of the queue, the confirmed position is the creature position.
 - (e) Timeouts. If the server never confirms, the adjust timer clears the queue after `min(max(stepDuration, ping) + 100, 1000)` ms (112; the callback at 109 clears the queue). A server cancel (`processWalkCancel`, protocolgameparse.cpp 3099) runs `cancelWalk` (146-166): drops the prediction, runs the adjust callback at once (155), locks walking 250 ms (default arg, header line 32; call at 158), retries an auto-walk while the retry counter is 3 or less (129), turns to the cancel direction and calls Lua. A server WalkWait (3105) sets the lock to the millis the server sends.
 
@@ -39,7 +39,7 @@ Tick: step timing is per beat (b). No fixed server tick loop was found in this r
 
 | Reusable algorithm | Game-specific constants |
 |---|---|
-| Step time = base cost x 1000 / speed, then rounded UP to whole server beats, so every step ends on a tick boundary | Beat 50 ms default (theirs, game.h 523; the real value is sent at login, protocolgameparse.cpp 731). Rounding applies from client version 860 (theirs, creature.cpp 1140). |
+| Step time = base cost x 1000 / speed, then rounded UP to whole server beats, so the base step lands on a tick boundary (diagonal factor and camera padding come after) | Beat 50 ms default (theirs, game.h 523; the real value is sent at login, protocolgameparse.cpp 731). Rounding applies from client version 860 (theirs, creature.cpp 1140). |
 | Tile base cost with a fallback | Fallback 150 when the tile has no ground speed (theirs, creature.cpp 1129). |
 | Predict up to a cap of queued moves, confirm on match, clear on mismatch | `walkMaxSteps` default 1 (theirs, game.h 521). The gate is `size > walkMaxSteps` (localplayer.cpp 50), so with the default the queue can hold 2 (derived from the code, not run). |
 | Lock input after a refusal; lock is only extended | Lock 250 ms default (theirs, localplayer.h 32). Lua lock after auto-walk stop = step + 50 ms (theirs, walk.lua 96). |
@@ -50,7 +50,7 @@ Tick: step timing is per beat (b). No fixed server tick loop was found in this r
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the step-time rounding, the queue gate order (lock, then queue cap, then step timer), confirm-or-clear on server step, the server refusal lock and the adjust timeout. It omits: the diagonal step cost, the speed guard (1116-1117), the auto-walk path and its retry counter, the Lua input buffering (`nextWalkDir`), the turn lock, the camera padding, the ping loop, the map-tile walking-creature checks (`onWalking`) and the Lua callbacks. It also reorders nothing except that `shown()` is a method here where the donor uses the queue back as the displayed position.
+simplified: the sketch keeps the step-time rounding, the queue gate order (lock, then queue cap, then step timer), confirm-or-clear on server step, the server refusal lock and the adjust timeout. It omits: the diagonal step cost, the speed guard (1116-1117), the speed-formula divisor `m_calculatedStepSpeed` (1136-1137), the diagonal factor (1148-1151), the `GameAllowPreWalk` feature and walkable-target gate (walk.lua 107-116), the dead and server-position checks of `canWalk`, the auto-walk path and its retry counter, the Lua input buffering (`nextWalkDir`), the turn lock, the camera padding (so the sketch's step durations are beat multiples, the donor's are not always), the ping loop, the map-tile walking-creature checks (`onWalking`) and the Lua callbacks. It also reorders nothing except that `shown()` is a method here where the donor uses the queue back as the displayed position.
 
 ```ts
 // Licence: MIT (donor LICENSE line 1). Clean-room shape of the donor mechanism, not a line translation.
@@ -84,10 +84,13 @@ export class PredictedWalk {
     this.lockUntil = Math.max(this.lockUntil, now + ms); // a lock can only be extended
   }
 
-  // Order of checks: lock, then queue cap, then step timer.
-  canPredict(now: number, walkMaxSteps: number): boolean {
+  // Order of checks: lock, then queue cap, then the mid-step branch, then step timer.
+  // walking: 'none' = no step in progress; 'auto' = auto-walk step (allowed); 'pre' = a predicted step (blocked).
+  canPredict(now: number, walkMaxSteps: number, walking: 'none' | 'auto' | 'pre' = 'none'): boolean {
     if (now < this.lockUntil) return false;
     if (this.queue.length > walkMaxSteps) return false;
+    if (walking === 'auto') return true;
+    if (walking === 'pre') return false;
     return now >= this.stepEndsAt;
   }
 
@@ -143,3 +146,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Ordering: the donor checks the lock before the queue cap and the queue cap before the step timer. Frankendom must pick one order and test it; a different order changes what a player feels after a refusal.
 - The adjust timeout and the server cancel are two separate recovery paths. Frankendom should keep one (server cancel) and drop the timeout unless a real case needs it.
 - Not read: the dispatcher loop (`g_dispatcher`), `Creature::terminateWalk` body, `retryAutoWalk` start (before line 130; only the counter check at 129 was grep'd), the speed guard (1116-1117), `Game::walk` callers beyond the Lua gate, and the server packet path into `map.cpp:203`.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** (1) Section 1(b) says a tile step 'always ends on a beat boundary' and Acceptance says every step duration is a multiple of the beat; getStepDuration also adds +10 ms * max(1,preWalkSize) for the camera-following local player (creature.cpp:1156-1159) and diagonal duration is scaled by a diagonal factor (1148-1151), and when hasSpeedFormula the divisor is m_calculatedStepSpeed not speed (1136-1137) which the note omits. (2) Prediction only happens when feature GameAllowPreWalk is on and the target tile is walkable (walk.lua:107-116), not mentioned. (3) Sketch canPredict drops the isWalking branch (auto-walk true / pre-walking false, localplayer.cpp:56-59), so it is not the same gate; the sketch header does not list it as omitted. Other claims verified: beat 50 default (game.h:523), parseLogin 731/772, 250 ms lock (localplayer.h:32), adjust timeout min(max(step,ping)+100,1000) (112), walkMaxSteps 1 and `>` gate (50), ping 1000 ms, 5000 ms ok, retries<=3 (129).
+
+**Missed:** Lua input buffering `nextWalkDir` when canWalk fails (walk.lua:100-102) is the real input queue; step cache only recomputes on speed/groundSpeed change (creature.cpp:1131), so a beat change would not refresh cached durations.

@@ -1,0 +1,67 @@
+{
+ "game": "latentcollapse-RustDAoC",
+ "category": "server-tick-netcode",
+ "cell": 5,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/motion.rs",
+ "licence": "GPL-3.0-or-later (LICENSE file read; workspace Cargo.toml license field)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/remote-motion.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "stale-state",
+  "variable-step",
+  "new:dead-reckoning",
+  "new:snap-or-ease"
+ ],
+ "data_fields": [
+  {
+   "name": "snap_distance",
+   "donor_constant": "2000",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/motion.rs:28"
+  },
+  {
+   "name": "correction_rate",
+   "donor_constant": "12 (per second, exponential ease)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/motion.rs:34"
+  },
+  {
+   "name": "max_predict_seconds",
+   "donor_constant": "1.5",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/motion.rs:41"
+  },
+  {
+   "name": "max_believable_speed",
+   "donor_constant": "400 (horizontal units/s; donor notes ~191 DAoC ceiling)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/motion.rs:47"
+  },
+  {
+   "name": "min_sample_change",
+   "donor_constant": "0.01 squared distance (about 0.1 units)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/motion.rs:103"
+  },
+  {
+   "name": "frame_dt_cap",
+   "donor_constant": "0.1",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/bin/rustdaoc.rs:4848"
+  }
+ ],
+ "best_idea": "Draw remote enemies by dead-reckoning their measured velocity from the last two server samples, cap extrapolation at about 1.5 s, and ease toward it with a frame-rate-independent rate, so a sparse feed looks continuous without deciding any hit.",
+ "decision": "adapt",
+ "decision_why": "Take the shape (measured velocity, capped prediction, snap over a big jump, exponential ease, speed from motion) for zone actors only; never use the predicted point for hits, because our kills are server-verified and the donor has no server authority.",
+ "decision_status": "proposed",
+ "acceptance": "A server test asserts hit and kill resolution reads only the authoritative sample; a browser check shows a mob sent every 500 ms at 100 units/s moving every frame at 60 fps, a jump over 2000 units drawn at once, and a mob with no update for 1.5 s standing idle."
+}

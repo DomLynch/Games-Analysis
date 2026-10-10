@@ -1,0 +1,111 @@
+{
+ "game": "guilhermelhr-unityro",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/Scripts/GameCamera/CharacterCamera.cs",
+ "licence": "as read: GNU Affero General Public License v3 (/mnt/frankendom-donors/guilhermelhr-unityro/LICENSE)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "camera_scope": "world",
+ "pattern_tags": [
+  "follow-point",
+  "variable-step",
+  "clamp-and-report",
+  "new:inertia-coast",
+  "new:orbit-camera"
+ ],
+ "data_fields": [
+  {
+   "name": "pitch_min_deg",
+   "donor_constant": "30 (PitchConstraint.x)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/Resources/Prefabs/Player/PlayerCameraController.prefab:59"
+  },
+  {
+   "name": "pitch_max_deg",
+   "donor_constant": "45 (PitchConstraint.y)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/Resources/Prefabs/Player/PlayerCameraController.prefab:59"
+  },
+  {
+   "name": "distance_default",
+   "donor_constant": "50 serialized (code default 30)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/Resources/Prefabs/Player/PlayerCameraController.prefab:57"
+  },
+  {
+   "name": "distance_min",
+   "donor_constant": "20 (ZoomConstraint.x)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/Resources/Prefabs/Player/PlayerCameraController.prefab:58"
+  },
+  {
+   "name": "distance_max",
+   "donor_constant": "50 (ZoomConstraint.y)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/Resources/Prefabs/Player/PlayerCameraController.prefab:58"
+  },
+  {
+   "name": "yaw_coast_s",
+   "donor_constant": "0.5 (YawControl.LerpTime)",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/Resources/Prefabs/Player/PlayerCameraController.prefab:51"
+  },
+  {
+   "name": "yaw_coast_threshold",
+   "donor_constant": "0.1 (YawControl.LerpThreshold)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/Resources/Prefabs/Player/PlayerCameraController.prefab:52"
+  },
+  {
+   "name": "zoom_coast_s",
+   "donor_constant": "0.2 (ZoomControl.LerpTime)",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/Resources/Prefabs/Player/PlayerCameraController.prefab:54"
+  },
+  {
+   "name": "zoom_coast_threshold",
+   "donor_constant": "0 (ZoomControl.LerpThreshold)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/Resources/Prefabs/Player/PlayerCameraController.prefab:55"
+  },
+  {
+   "name": "mouse_sensitivity_yaw",
+   "donor_constant": "10 (MouseSensitivity.x)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/Resources/Prefabs/Player/PlayerCameraController.prefab:47"
+  },
+  {
+   "name": "wheel_zoom_sensitivity",
+   "donor_constant": "50 per wheel unit (ScrollZoomSensitivity)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/Resources/Prefabs/Player/PlayerCameraController.prefab:49"
+  },
+  {
+   "name": "wheel_pitch_sensitivity",
+   "donor_constant": "10 (ScrollPitchSensitivity)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/Resources/Prefabs/Player/PlayerCameraController.prefab:48"
+  }
+ ],
+ "best_idea": "A release-coast for the world camera's yaw: a fast flick keeps turning for a fixed short time and then stops, a slow drag does not coast, and pitch and zoom are clamped bands that come from zone data.",
+ "decision": "adapt",
+ "decision_why": "Take the release coast with a threshold and the clamped pitch and distance bands; reject the per-frame mouse value times dt and the zero-lag LateUpdate follow, because our camera needs per-second rates and lag.",
+ "decision_status": "proposed",
+ "acceptance": "A drag above the threshold, released, turns the yaw for about 0.5 s then stops (a test asserts no yaw change after 0.5 s); a slower drag does not coast; 100 wheel notches never leave the distance outside its zone-data band."
+}

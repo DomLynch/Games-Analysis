@@ -158,3 +158,11 @@ export {};
 
 Reuse tag: rewrite-from-idea (GPL-3.0; clean-room only)
 Brief rule served: one engine, zones as data, server-verified kills (Frankendom rulings); parity row 23 zone population
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** All claims hold: PlayersPerSpawn=5 (18), HasCompleted 66-82 (empty never complete 70-73, Deleted test 79), State setter -> Update 108-158 (door key 123-127, CreateRegion 151, FullSpawn 153-155, 1 s timer 158), Stop 185-192 (ClearCreatures 187), ComputeTrapCount area/100 (215), ComputeSpawnCount 279-302 (Region.GetRegion walk 289 -> Region.cs 525-533, GetPlayerCount 601, fallback 297-299, ceil/floor 302), FullSpawn 315-334, Spawn 356-357, RecurseReset 366-376, Slice 379-406 order (top-up, HasCompleted, reset-if-next-completed, open next), GenGauntlet ring 96-110, regions.json 3565-3570 'Doom Gauntlet', trap 10 tries (254). Sketch order matches donor.
+
+**Missed:** Door.Link also locked/re-keyed (131-141); sp6 has no door (0,0) - trivial

@@ -145,3 +145,11 @@ export {};
 Best transferable idea: a listing fee that scales with listing duration and a buy-now that ends the lot at once, both settled server-side by one ledger with the balance check the donor skips.
 Decision (proposed): adapt — the fee-by-duration and buy-now shape are plain server rules and fit one ledger, but the mail settlement, the missing balance check and the untaxed remainder must not be copied.
 Acceptance: server test: a 12-hour lot with a 500,000-copper buyout charges 10,000 copper (2%); a 1,000-copper bid from a 500-copper balance is rejected and the balance stays 500; a 15-copper sale credits 13 and the test asserts the remaining 2 copper go to a named tax entry.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** All checked claims hold: fee formula and 1,000,000 cap (29, 619-624) with (int) cast (627), post order (fee, item to AuctionAttachments, AddAuctionLot 619-635), buy-now branch 146-157, bid branch 158-187 (refund mail then record then SubtractMoney), strict > top bid, expiry query 287 and 5 s timer 388, 90 percent share rounded (38,46) with tax figure (int)(soldAmount-moneyAfterFee) only in mail text (MailForAuction 104-124), cancel with no refund (115-117), fail mail attaches only item (175-178), ChangeMoney balance check only in the typeFrom switch (1508-1527) so SlotType.None callers skip it (1503, 1555), Money is long (107), StartMoney unused in bid path, durations 6/12/24/48 (303-313), README LGPL text at line 36, callers at CSAuctionPostPacket:21 and CSBidAuctionPacket:23. Sketch is a reasonable corrected shape and declares its reordering.
+
+**Missed:** CancelAuctionLot (91-123) never checks that the caller is the seller (player only used to send the cancel packet); RemoveAuctionLotFail has a redundant 'BidderName != empty' sold branch (65-69). Neither noted.

@@ -99,3 +99,11 @@ Acceptance: a server test asserts that with the same attacker, armour 0 leaves t
 - The mixed magic/physical branch keeps the smaller of resist and armour reduction. Frankendom has no resist stat in the duel, so that branch does not transfer.
 - The creature per-target multiplier (scalable levels) is a level-scaling rule. If Frankendom scales enemy armour, it should be zone data, not code inside this function.
 - Not read: `ApplySpellMod`, `CalculatePct`, `RollMeleeOutcomeAgainst`, the item-level curve values, and the DoT callers (grep only).
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** Every line cite, constant (0.85 cap, 400/85/4.5/3 pen, 100 bypass cap, 0.01 etc) and step order matches Unit.cpp 1689-1778. Nits only: IsDamageReducedByArmor is 1680-1687 (mechanism says 1680-1686); melee armour call is at Unit.cpp 1399 with the gate at 1396 (note says 1397-1399); RollMeleeOutcomeAgainst is exactly 1405 (ok); weapon-aura read starts at 1724/1725.
+
+**Missed:** DoT callers (SpellAuraEffects 5847, 5931) pass GetBase()->GetCasterLevel() as the attackerLevel param, which is why that param exists; not said. CleanDamage += damage - Damage at 1399-1400 (mitigated amount recorded) not mentioned. EvaluateExpectedStat returns 1.0 when no row found (DB2Stores.cpp 2518-2519).

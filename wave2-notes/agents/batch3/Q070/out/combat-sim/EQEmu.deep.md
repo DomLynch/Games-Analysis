@@ -8,8 +8,8 @@ Checked: The list's hint (`utils/combat-sim/index.html` and `app.js`) is a visua
 
 - One melee swing resolves in `Mob::DoAttack` (attack.cpp 1474-1563), in this order. The first step that succeeds decides the swing.
   - (a) Avoidance ladder, `other->AvoidDamage(this, hit)` (1488). `InFront` is computed from the attacker's position (417). The checks run in this order and stop at the first success (the comment block right after the function header states the same order): riposte (from 489; needs a weapon or fists, front, and no immunity), block, which also has a separate roll for blocking from the rear (531-534, gate at 536), parry (from 564; front and not ranged), dodge (from 591; front or monk), shield block (from 618), two-hand blunt block (from 630, read to 644). A success sets `damage_done` to a negative code and returns true.
-  - (a1) Strikethrough (1489-1501). If the attacker has a strikethrough bonus and it rolls, a message is shown and `damage_done = 1` (1499), which lets the swing continue to the hit test. A riposte result instead calls `DoRiposte` and returns (`DoRiposte` not read).
-  - (b) Hit test (1510-1511), only when `damage_done >= 0`. `CheckHitChance` (329-368): avoidance = `GetTotalDefense()` (349); accuracy = `hit.tohit` (353); an accuracy of -1 is an automatic hit (353-355, read). Otherwise `tohit_roll = Roll0(accuracy)` (360) and `avoid_roll = Roll0(avoidance)` (361); if they are equal, a coin flip `Roll(50)` (365-366); else hit if `tohit_roll > avoid_roll` (367). A miss sets damage to 0 (1544-1545).
+  - (a1) Strikethrough (1489-1501). If the attacker has a strikethrough bonus and it rolls, a message is shown and `damage_done = 1` (1499), which lets the swing continue to the hit test. If the strikethrough roll fails and the avoidance code is a riposte, `DoRiposte` runs and the swing returns (`DoRiposte` not read). A successful strikethrough overwrites the riposte code with 1 first, so the riposte is skipped.
+  - (b) Hit test (1510-1511), only when `damage_done >= 0`. `CheckHitChance` (329-368): avoidance = `GetTotalDefense()` (349); accuracy = `hit.tohit` (353); a defender that is a sitting client, bot or mercenary is always hit before any roll (345-347); an avoidance of -1 (auto avoid) returns a miss (349-351), checked before the accuracy test; an accuracy of -1 is an automatic hit (353-355, read). Otherwise `tohit_roll = Roll0(accuracy)` (360) and `avoid_roll = Roll0(avoidance)` (361); if they are equal, a coin flip `Roll(50)` (365-366); else hit if `tohit_roll > avoid_roll` (367). A miss sets damage to 0 (1544-1545).
   - (c) Stun from behind (from 1512, not read in full). An NPC behind a client with a level of at least 5 and a non-zero animation may stun, after `Roll(RuleI(Combat, StunChance))` and the stun resists.
   - (d) Mitigation, `other->MeleeMitigation(this, hit, opts)` (1536), in `Mob::MeleeMitigation` (1060-1108): if damage is negative or base is zero it returns (1071). `mitigation = GetMitigationAC()` (1075; cached total, source not read). Client against client: `mitigation * 80 / 100` (1076-1077). Armour penetration: `mitigation *= (1 - armor_pen_percent)` (1080) and `-= armor_pen_flat` (1081). Then `roll = RollD20(offense, mitigation)` (1084). Level gap: if the rule `LevelDifferenceRollCheck` is non-negative and `attacker level - defender level` is above it, `roll += LevelDifferenceRollBonus`, capped at 2.0 (1087-1096); below its negative, `roll -=` the bonus, floored at 0.1 (1098-1101). Damage is `max(int(roll * base + 0.5), 1)` (1107).
   - (e) Outgoing success (1537-1539): `ApplyDamageTable` and `CommonOutgoingHitSuccess` run only when damage is still positive.
@@ -48,7 +48,7 @@ Checked: The list's hint (`utils/combat-sim/index.html` and `app.js`) is a visua
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the order of `DoAttack` (avoidance ladder, hit test, mitigation ratio, crit die, minimum damage added last) and the numbers of the ratio roll, the hit test, the crit threshold and multiplier. It omits: the strikethrough override (a roll that lets an avoided swing reach the hit test), the riposte immunity rule and the riposte-from-riposte flag, the stun from behind, the parry's weapon-hand check, class, skill and stat inputs (the chances are passed in as final values; `avoidChance` is the formula helper, and the sketch does not call it), the level-gap roll bonus, the PvP 80 percent and armour penetration, slay undead, finishing blow and deadly strike, and the pet branch. The `roll` helper skips the draw when the chance is zero or below, where the donor always draws, so the random sequence differs but the probabilities do not. The sketch takes `max(1, x)` for the two `Roll0` arguments, where the donor returns 0 for values of 1 or less. The random source is a parameter, so a seeded run replays.
+simplified: the sketch keeps the order of `DoAttack` (avoidance ladder, hit test, mitigation ratio, crit die, minimum damage added last) and the numbers of the ratio roll, the hit test, the crit threshold and multiplier. It omits: shield block and two-hand blunt block (the last two rungs of the donor ladder, 618 and 630), the sitting-defender auto-hit (345-347), the strikethrough override (a roll that lets an avoided swing reach the hit test, and that also cancels a riposte), the riposte immunity rule and the riposte-from-riposte flag, the stun from behind, the parry's weapon-hand check, class, skill and stat inputs (the chances are passed in as final values; `avoidChance` is the formula helper, and the sketch does not call it), the level-gap roll bonus, the PvP 80 percent and armour penetration, slay undead, finishing blow and deadly strike, and the pet branch. The `roll` helper skips the draw when the chance is zero or below, where the donor always draws, so the random sequence differs but the probabilities do not. The crit die is rolled only when the swing has an innate crit or a non-zero crit-chance bonus (attack.cpp 5444), as in the donor. The sketch takes `max(1, x)` for the two `Roll0` arguments, where the donor returns 0 for values of 1 or less. The random source is a parameter, so a seeded run replays.
 
 ```ts
 // Licence: GPL-3.0-or-later (donor). Clean-room sketch written from the described mechanism; not a translation of the donor lines.
@@ -67,8 +67,9 @@ export function rollRatio(offense: number, mitigation: number, rng: Rng): number
   return (index + 1) / 10;
 }
 
-// Hit test: accuracy against avoidance, one roll each; a tie is a coin flip.
+// Hit test: accuracy against avoidance, one roll each; a tie is a coin flip. (Sitting-defender auto-hit not modelled.)
 export function hitLands(accuracy: number, avoidance: number, rng: Rng): boolean {
+  if (avoidance === -1) return false; // auto avoid, checked first (donor 349-351)
   if (accuracy === -1) return true;
   const t = rng(Math.max(1, accuracy));
   const a = rng(Math.max(1, avoidance));
@@ -95,6 +96,7 @@ export interface Defender {
 }
 
 // Avoidance ladder: the first success ends it. Order: riposte, block (front or rear), parry, dodge.
+// Shield block and two-hand blunt block (donor rungs after dodge) are not modelled.
 export function avoidLadder(d: Defender, rng: Rng): 'riposte' | 'block' | 'parry' | 'dodge' | null {
   if (d.canRiposte && d.inFront && roll(rng, d.riposteChance)) return 'riposte';
   const rearBlock = roll(rng, d.blockBehindChance);
@@ -106,6 +108,7 @@ export function avoidLadder(d: Defender, rng: Rng): 'riposte' | 'block' | 'parry
 
 // Critical: a die from 1..difficulty must fall under a DEX-based threshold.
 export function critLands(dex: number, critChanceBonus: number, innate: boolean, difficulty: number, rng: Rng): boolean {
+  if (!innate && !critChanceBonus) return false; // donor only rolls a crit with innate crit or a chance bonus (5444)
   const die = 1 + rng(difficulty);
   let dexBonus = dex > 255 ? 255 + Math.floor((dex - 255) / 5) : dex;
   dexBonus += 45;
@@ -152,3 +155,11 @@ Acceptance: a seeded server test runs 100,000 swings at equal offense and mitiga
 - Many inputs are EverQuest-specific: skill caps, special-ability ids, heroic stats, and the riposte immunity rule. None of these should be ported. The 80 percent PvP reduction is a rule for a live PvP mode we do not have; reject it unless the Pit needs it.
 - The 20-step table is a quantisation of the ratio. Frankendom should choose its own steps as zone data, and the test must check the table, not the donor's values.
 - Not read and therefore unclaimed: the source of `GetMitigationAC`, `compute_tohit`, `compute_defense`, `GetCriticalChanceBonus`, `GetCritDmgMod`, `ApplyDamageTable`, `DoRiposte`, the slay-undead body, finishing blow and deadly strike, the stun block, and the pet branch.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** (1) Sketch resolveSwing calls critLands for every swing; donor TryCriticalHit only rolls when innate_crit || crit_chance != 0 (attack.cpp 5444). Without that gate a normal character crits at 3/5*(dex+45) chance. The note describes the gate in section 1 but the sketch neither implements nor declares dropping it. (2) Sketch avoidLadder omits shield block (618) and two-hand blunt block (630) which section 1 lists, not declared as omitted. (3) Note says a riposte result calls DoRiposte, but if strikethrough rolls it overwrites damage_done with 1 (1499) first, so riposte is skipped. All other cites verified: DoAttack 1474-1563, AvoidDamage 370-643 incl. divisors 50/25/45/45 at 504/547/574/601 and DEX/25, AGI/25, CheckHitChance 329-368, RollD20 1036-1058, MeleeMitigation 1060-1108 (80 percent PvP 1077, +0.5 and min 1 at 1107), crit 5429-5492 (+45, 3/5, 170, +5), CommonOutgoingHitSuccess 6420-6427, random.h Roll/Roll0, GPL header lines 7-8.
+
+**Missed:** CheckHitChance 345-347: a sitting client/bot defender is always hit (before any roll), and 349-351 an avoidance of -1 returns a miss before the accuracy -1 test; neither is in the note or sketch. TryCriticalHit is also skipped for damage < 1.

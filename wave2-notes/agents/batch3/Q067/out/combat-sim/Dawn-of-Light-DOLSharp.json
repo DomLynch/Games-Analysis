@@ -130,7 +130,7 @@
  ],
  "best_idea": "Each defence (evade, parry, block) is a separate roll in a fixed order, and each is damped by how many enemies attack the defender, though the donor's damping is integer-divided and partly negligible.",
  "decision": "adapt",
- "decision_why": "Keep the fixed roll order and the per-defence damping as data, but set the values deliberately for MAX_ATTACKERS = 3 instead of copying the integer divisions, which make 2 and 3 attackers identical for parry and zero the block for small shields at 2 attackers.",
+ "decision_why": "Keep the fixed roll order and the per-defence damping as data, but set the values deliberately for MAX_ATTACKERS = 3 instead of copying the integer divisions, which make 2 and 3 attackers identical for parry and drop the block to the 1 percent floor for small shields at 2 attackers.",
  "decision_status": "proposed",
- "acceptance": "A server test with 3 attackers on one defender gives the designed parry and block values (not zero block for a small shield), and a swing resolves in the fixed order evade, parry, block, miss with one roll each."
+ "acceptance": "A server test with 3 attackers on one defender gives the designed parry and block values (not the 1 percent floor for a small shield), and a swing resolves in the fixed order evade, parry, block, miss with one roll each."
 }

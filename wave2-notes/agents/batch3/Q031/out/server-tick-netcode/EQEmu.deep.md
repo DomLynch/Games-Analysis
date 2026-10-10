@@ -10,10 +10,10 @@ Checked: The hint file `eqlaunch/worldserver.cpp` is the process launcher; only 
 - Each firing: `Timer::SetCurrentTime()` advances the cached legacy clock by the wall delta (main.cpp 514; common/timer.cpp 177-191). Then `frame_time` is set to the wall seconds since the previous firing (main.cpp 520), with no clamp.
 - Order when a zone is loaded (main.cpp 595-621): stream and client setup, then `worldserver.Process()` on a 1000 ms timer (474, 591-592), then `GroupProcess`, `DoorProcess`, `ObjectProcess`, `CorpseProcess`, `TrapProcess`, `RaidProcess`, `entity_list.Process()` (603), `entity_list.MobProcess()` (604), `BeaconProcess`, `EncounterProcess`, the zone event scheduler, `zone->Process()` (611), and the quest timers on a 100 ms timer (504, 617). `zone->Process()` calls `mMovementManager->Process()` (zone.cpp 1698).
 - Movement is variable-step. `MobMovementManager::Process` walks each mob's queue from the front: each command that returns true is popped and the next one runs in the same pass; the first command that returns false stops that mob's pass and stays at the front (mob_movement_manager.cpp 699-717). `MoveToCommand::Process` (148-261): (a) speed is run, walk or fear speed by mode; (b) on the first call it sets moving and heading, records total horizontal and vertical distance, and sends the command; (c) on a speed change it resets the ground-correction counter and sends; (d) every 5.0 s without a send it sends again (197); (e) `distance_moved = frame_time * current_speed * 0.4f * 1.45f` (221); if that is more than the remaining distance the mob is set exactly on the target and the command returns true (223-228); otherwise it moves a step along the line, interpolates z by the fraction of horizontal distance covered, and returns false (230-260).
-- Ground correction (`FixZ`) is counted in distance moved: every 1 unit while the mob is engaged, every 10 units otherwise (251-253).
+- Ground correction (`FixZ`) runs only when the rule `Map, FixZWhenPathing` is on (250). Then it is counted in distance moved: the correction fires once the distance since the last one is strictly greater than 1 unit while the mob is engaged, 10 units otherwise (251-253; the counter resets to 0 on a correction). `FixZ` is also called, under the same rule, on a speed change (185-187) and on the 5.0 s heartbeat (198-200), where the counter is also reset. `MoveToCommand::Process` also returns true at once for a zero-length move (213-215) and for a mob that is not AI-controlled (150-152).
 - Rotation: `td = rotate_to_speed * 19.0 * frame_time` (100); the turn snaps to the target heading when `td >= dist`.
 - Heartbeats differ by movement mode: move 5.0 s (197), fly 0.5 s (346), swim 1.5 s (466).
-- Per-mob AI cadence: the NPC think timer is built from `AIthink_duration = 50` ms (mob_ai.cpp 434; features.h 147), the movement timer from `AImovement_duration = 100` ms (438; features.h 146), and the target-check timer from 500 ms (features.h 150). `Mob::AI_Process` returns early unless the think timer fired or the attack timer is ready (969); `Check(false)` on the attack timer does not reset it.
+- Per-mob AI cadence: the NPC think timer is built from `AIthink_duration = 50` ms (mob_ai.cpp 434; `common/features.h` 147), the movement timer from `AImovement_duration = 100` ms (438; `common/features.h` 146), and the target-check timer from 500 ms (`common/features.h` 150). `Mob::AI_Process` returns early unless the think timer fired or the attack timer is ready (969); `Check(false)` on the attack timer does not reset it.
 - Legacy timer rule (common/timer.cpp 82-94): fire when `current_time - start_time > period`; if `reset` is set, an accurate timer advances `start_time` by one period (86-87), a non-accurate one sets `start_time` to now. The constructor default is non-accurate (common/timer.h 34; default `Check(bool iReset = true)`, 38). So the AI timers restart from the moment they fire.
 - Idle zones: `EntityList::MobProcess` (457-525). If the zone is idle-when-empty (471), a mob runs `Process()` only when clients are present, a quest override is set, its spawn is marked path-while-idle, or the settle timer is still running (514-518). Otherwise it only checks for depop (522). So an empty zone stops mob AI after a settle period.
 
@@ -33,14 +33,14 @@ Checked: The hint file `eqlaunch/worldserver.cpp` is the process launcher; only 
 | Per-frame move = raw frame time x speed x factor, snap when the step passes the target | Factor 0.4 x 1.45 (theirs, mob_movement_manager.cpp 221); the donor's speed units are not read |
 | Rotation rate per frame | 19.0 (theirs, 100) |
 | Sync heartbeat per movement mode | Move 5.0 s (197); fly 0.5 s (346); swim 1.5 s (466) |
-| Tighter ground correction while engaged | 1 unit engaged, 10 units idle (252) |
-| AI think, move and target cadence | 50 ms, 100 ms, 500 ms (features.h 147, 146, 150) |
+| Tighter ground correction while engaged (only if `FixZWhenPathing` is on) | strictly more than 1 unit engaged, more than 10 idle (250-252) |
+| AI think, move and target cadence | 50 ms, 100 ms, 500 ms (`common/features.h` 147, 146, 150) |
 | Loop period | 32 ms (main.cpp 636) |
 | Idle-zone settle | Seconds before idle is a zone value (entity.cpp 471; value not read) |
 
 ## 4. TypeScript sketch
 
-simplified: The sketch keeps the donor's move formula (raw frame time, speed, factor, snap when the step passes the target), the heartbeat rule and the engaged-versus-idle correction count. It omits: the run, walk and fear speed choice, the heading set on first call, the z interpolation, the `ProcessMove` call for NPCs, the `FixZ` calls themselves (the sketch returns the threshold, the caller does the correction), the fly and swim variants, the rotate command, and the command queue. It also drops the donor's `IsAIControlled` early return and the donor's use of the cached clock (the sketch takes times as arguments). The sketch does not clamp `frameTimeS`, which matches the donor and is the point the note rejects.
+simplified: The sketch keeps the donor's move formula (raw frame time, speed, factor, snap when the step passes the target), the heartbeat rule and the engaged-versus-idle correction count. It omits: the run, walk and fear speed choice, the heading set on first call, the z interpolation, the `ProcessMove` call for NPCs, the `FixZ` calls themselves (the sketch only says when one is due, `fixZDue`, and the caller does the correction), the other two `FixZ` call sites (speed change and heartbeat) and the counter reset, the fly and swim variants, the rotate command, and the command queue. It also drops the donor's `IsAIControlled` early return and the donor's use of the cached clock (the sketch takes times as arguments). The sketch does not clamp `frameTimeS`, which matches the donor and is the point the note rejects.
 
 ```ts
 // Licence: GPL-3.0-or-later (donor). Clean-room sketch of the mechanism; not a translation of the donor lines.
@@ -96,9 +96,11 @@ export function heartbeatDue(nowS: number, lastSentS: number, heartbeatS: number
   return nowS - lastSentS >= heartbeatS;
 }
 
-// Ground correction distance: every 1 unit while engaged, every 10 units otherwise.
-export function fixZEveryUnits(engaged: boolean): number {
-  return engaged ? 1 : 10;
+// Ground correction: only when the FixZWhenPathing rule is on; due once the distance moved since the last
+// correction is strictly greater than 1 unit while engaged, 10 units otherwise (the donor resets the counter on a correction).
+export function fixZDue(movedSinceCorrection: number, engaged: boolean, fixZWhenPathing: boolean): boolean {
+  if (!fixZWhenPathing) return false;
+  return movedSinceCorrection > (engaged ? 1 : 10);
 }
 
 export {};
@@ -113,7 +115,7 @@ export {};
 
 Best transferable idea: sync movement with a heartbeat that depends on movement mode, and a tighter ground correction while a mob is engaged than while idle, so a fight target is corrected more often than an idle one.
 Decision (proposed): adapt - the engaged-versus-idle sync cadence fits Frankendom's server-verified fights (a target in a duel is sent more often), but the unclamped variable-step move does not fit the server tick, so Frankendom keeps its fixed step and takes only the cadence split.
-Acceptance: server test: while a duel target is engaged, a position is sent at least every 1 unit of ground correction and on every speed change within one tick; an idle NPC is sent on a 10-unit correction or a 5 s heartbeat.
+Acceptance: server test: with the ground-correction rule on, while a duel target is engaged a correction is due once more than 1 unit has been moved since the last one, and a speed change sends within one tick; an idle NPC is corrected after more than 10 units and re-sent on a 5 s heartbeat.
 
 ## 6. Gaps and risks
 
@@ -124,3 +126,11 @@ Acceptance: server test: while a duel target is engaged, a position is sent at l
 - Idle-zone gate: the donor stops mob AI when a zone has been empty for its settle period, unless a spawn or quest says otherwise (entity.cpp 514-522). That overlaps row 23 (zone population and despawn with a grace timer). The settle value is per zone and was not read.
 - GPL-3.0-or-later: clean-room only. The sketch was written from the mechanism. Numbers are donor facts with receipts, not a copy of the code.
 - Not read: `EntityList::Process`, `Mob::Process`, the NPC AI body after its gate, the FlyTo and SwimTo bodies, the source of the settle value, the `EventLoop` class. Nothing is claimed about them.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** (1) Note and sketch state ground correction 'every 1 unit engaged, every 10 otherwise' unconditionally; real code (mob_movement_manager.cpp 250-256) only runs it inside `if (RuleB(Map, FixZWhenPathing))` and uses strict `>` not `>=`; sketch fixZEveryUnits drops both. (2) FixZ is also called on speed change (185-187) and on the 5.0 s heartbeat (198-200), not stated. (3) features.h is common/features.h (note gives bare name). Verified OK: 32 ms libuv repeat (main.cpp 635-636), frame_time unclamped (520), loop order and line numbers 595-621, 0.4f*1.45f at 221, 5.0/0.5/1.5 s heartbeats (197/346/466), rotation 19.0 at 100, AI timers 50/100/500 ms, Timer::Check semantics, MobMovementManager::Process pop loop, MobProcess idle gate 471-523, GPL header.
+
+**Missed:** Movement command also returns true immediately on len==0 (213-215) and IsAIControlled false (150-152); sketch notes the second only.

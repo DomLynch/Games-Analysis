@@ -91,3 +91,11 @@ export function levelProgress(totalXp: number): number {
 - Negative risk in `ExpPercent`: called with level 82 at the cap, `GetExp` returns -1, so `100 / -1 * Exp` is negative (arithmetic, not run). The UI guard at CharacterInfoWindow.cs 239 (`stats.MaxExp > 0`) hides it. Frankendom needs an explicit cap branch, not a guard in the view.
 - Licence: Apache-2.0 allows adaptation with a notice. The numbers are Lineage II game data; the shape transfers, the numbers should not.
 - `GetExpToNextLevel` is present but unused in this donor; it is a helper that nothing exercises. Frankendom must test it if adopted.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** None found. 82-entry LEVEL table in the sketch is byte-identical to MaxLevelExp.cs 12-93 (script compare), strictly increasing; GetLevelFromExp 116-128, GetExp 96-102, IsValidLevel 104-107, GetExpToNextLevel 130-141 (no callers outside), ExpPercent 74-91, bar 301-309 (doubles, so no int division), UserInfoDto 39-43, social action 15 at EntityActionVisual 161-162 and PlayerWorldApply 160-161, effect 99999, Apache-2.0 all verified.
+
+**Missed:** None.

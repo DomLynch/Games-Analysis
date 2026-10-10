@@ -112,3 +112,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - The shared Util RNG has no seed in this path. Frankendom needs a seeded stream logged in the fight record (parity row 19) so a drop can be replayed.
 - Scope: this generator is only the artifact-scroll drop; the donor's other generators (LootGeneratorRandom and others) were listed by grep but not read, so this note does not cover general loot tables.
 - The page thresholds (51 and 56) are fixed in code; zone data should carry them if zones differ in level band.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** Every number and branch verified in LootGeneratorScroll.cs: expansion gate 49, level>=45 and Chance(SCROLL_DROP_RATE) 51, dungeon roll (int)(rate*1.5)=37 at 55, zone switch 61-82, empty check 85, Util.Random(Count-1) 87, pages 93-104 (>55:3, >=51:2, else 1), Model 488/Level 35/AddFixed 106-110; ServerProperties default 25 at 1938-1939; Util.Chance 200-203 and Random 167-170; ArtifactMgr zone match 166; LootMgr loader 101/116 and GetLoot 431-445; class name only appears in its own file (grep across all text files); licence v2 and 'any later version' at line 7 OK; worked numbers (25%, 9.25%) correct. Tiny slips: LootList.GetLoot is at 93 not 96; ArtifactMgr.GetArtifacts(zone) spans 156-174 not 156-170; Gaps says thresholds '51 and 56' (equivalent to >55). Sketch order matches donor order (expansion, level+percent, dungeon roll, zone pool, empty, pick, page).
+
+**Missed:** loot.AllowAdd = false (line 91) not mentioned; the exclusive-priority generator behaviour in GetLootGenerators (488-505) is described correctly as 'partly read'. Nothing important missed.

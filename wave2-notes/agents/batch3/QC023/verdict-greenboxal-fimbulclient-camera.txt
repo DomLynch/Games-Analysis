@@ -1,0 +1,17 @@
+Cell: greenboxal-fimbulclient | camera (category 14) | list 11 | old rating P
+VERDICT: PARTIAL | depth: thin | camera_scope: world camera (the donor has no world or third-person camera)
+Licence: no LICENSE, COPYING or licence text in the donor root (find returned none; README.md has no licence statement). The ya3de sources carry the GNU GPL header "either version 3 of the License, or (at your option) any later version" (ya3de/YA3DE/Scene/FpsCamera.h lines 4-5). Class: restricted (unclear at repo level). Clean-room: nothing copied.
+
+Files opened (read by line range or in full):
+1. /mnt/frankendom-donors/greenboxal-fimbulclient/src/testclient/TestGameMode.cpp (lines 20-140: camera set-up at 30, scene camera at 57, WASD/arrow/mouse-look in Update 65-123)
+2. /mnt/frankendom-donors/greenboxal-fimbulclient/src/ya3de/YA3DE/Scene/FpsCamera.cpp (whole file: constructor 23-35, Update 37-45, MoveForward 57-63, AddYaw 73-84, AddPitch 86-97, Levitate 99-105, CalculateYawPitch 107-end)
+3. /mnt/frankendom-donors/greenboxal-fimbulclient/src/ya3de/YA3DE/Scene/FpsCamera.h (whole file)
+4. /mnt/frankendom-donors/greenboxal-fimbulclient/src/ya3de/YA3DE/Scene/Camera.h (whole file)
+Grep only (not read in full): /mnt/frankendom-donors/greenboxal-fimbulclient/src/ya3de/YA3DE/Scene/SceneManager.cpp (scene camera Update at 33-34), /mnt/frankendom-donors/greenboxal-fimbulclient/src/libragnarok/Ragnarok/Graphics/World.cpp (uses SceneCamera for matrices), and a donor-wide grep for camera, follow, orbit, lookAt, zoom, pitch and yaw. The only assignment of the scene camera is TestGameMode.cpp:57.
+
+What the donor has: FpsCamera is a free-fly camera. It stores position and target and rebuilds yaw and pitch from them (CalculateYawPitch 107-112). W/S and A/D move position and target together along the view direction and the right vector (TestGameMode.cpp 73-81; FpsCamera.cpp 57-71). Shift and Ctrl move it up and down (83-86). Yaw turns the target about the up axis and pitch turns it about the right vector (FpsCamera.cpp 73-97); pitch has no clamp (line 88 is `_Pitch += angle;`). Mouse look: while the left button is held (TestGameMode.cpp 98), the cursor is re-centred each frame (107) and yaw and pitch come from the offset from the centre divided by 100 times elapsed (104-105). Arrow keys add yaw and pitch at elapsed divided by 10 (88-96). Projection is 45 deg vertical (FpsCamera.cpp 33), near 1 and far 5000 (TestGameMode.cpp 30).
+
+Why PARTIAL, in one sentence: the only camera in the donor is a free-fly debug camera in the test client, with no player follow and no pitch clamp, so the mouse-look idea is real but it does not model a third-person world camera.
+
+Best transferable idea: Pointer-capture look with the cursor re-centred each frame gives unlimited turning, but this donor clamps nothing, so the pitch can pass over the top; a world camera would need the clamp this code lacks.
+Decision (proposed): reject - a free-fly debug camera with no follow and no pitch clamp does not fit the world camera; keep it only as a dev-only idea if a free-look debug view is ever wanted.

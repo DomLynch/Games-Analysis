@@ -142,3 +142,11 @@ Brief rule served: 1 (server owns the kill and the credit ledger); zones as data
 Best transferable idea: Award kill XP per attacker as the kill's XP budget times that attacker's share of total damage, computed once on the server at the death event, so a many-on-one fight splits the reward by work done.
 Decision (proposed): adapt - take the per-attacker credit-share award for the up-to-three attackers; leave the fellowship level-band split and distance scalar until Frankendom has a party system.
 Acceptance: a server test with a 100-XP kill and three attackers with credit 50/30/20 awards 50, 30, 20 XP (before the modifier), and after a heal of half the missing health every attacker's credit halves while the three XP shares stay 50/30/20.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** All claims hold: OnDeath_GrantXP 167-196 (total 0 returns 174, pet owner 183, damagePercent 191, XpOverride*percent 193, Round at 195), call at Creature_Death 51-52, DamageHistory TotalHealth 54, heal scalar 142-150, EarnXP 22-45 (modifier 28/35), GetXPAndLuminanceModifier 497-509 (0.05 per aug at 503), GrantXP 63-67, fellowship_even_share_level=50 (PropertyManager 624), CalculateXPSharing 453-494 thresholds 5/10, no leader keeps flags (473-475), SplitXp even 525-536 (total rounded then per member scalar), proportional 543-557, share table 604-631 and derived totals 1,1.5,1.8,2.2,2.5,2.7,2.8,2.8,2.7, MaxDistance 600 (633), scalar 639-668, UpdateXpAndLevel cap 97-101, CheckForLevelup loop 288, kill-task skip <=0 at 248/334. Order of operations matches.
+
+**Missed:** GetDistanceScalar returns 1.0 for XpType.Quest (644-645); OnDeath_GrantXP skips PKLite players (169); EarnXP applies quest_xp_modifier (27-30); GrantXP also requires ShareType.Fellowship flag (63)

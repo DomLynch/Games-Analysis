@@ -16,7 +16,7 @@ Collection pass (`createLootFromCollection`, 695-755). For each entry of the col
 
 - The entry's chance is read from the script. If it is 0, the default is `2000000 + 20000*level`, which is 20% plus 0.2% per level (LootGroupCollectionEntry.h 39-43). A chance of 0 or less skips the entry (708-709).
 - First roll: `roll = random(10000000)`. If `roll > chance` the entry does nothing (711-716). So the chance is out of 10,000,000.
-- Second roll, on its own: `roll = random(10000000)` (724). The entry's group list is walked in stored order with a running total (734). The first group whose running total reaches the roll wins (737-742). Groups are stored sorted by weight in descending order (LootGroupEntry.h 33-36; the comment is the only evidence here). If no group reaches the roll, nothing is created for that entry.
+- Second roll, on its own: `roll = random(10000000)` (724). The entry's group list is walked in stored order with a running total (734). The first group whose running total reaches the roll wins (737-742). Groups are stored sorted by weight in descending order (LootGroupEntry.h 33-36; the comment is the only evidence here). If no group reaches the roll, nothing is created for that entry. This collection-pass walk has no weight-above-zero test (729-743: it only skips a group while the running total is below the roll); the above-zero test exists only in the nested pick (LootGroupTemplate.h 55).
 - Winning group: `createLoot(container, groupName, level)` (740). Its result is stored in `objectID`, which is overwritten by each winning entry. The collection reports success if the last stored `objectID` is above zero (754), and logs "Did not win loot rolls" otherwise (750-752).
 
 Nested creation (`createLoot` by name, 757-813):
@@ -29,7 +29,7 @@ Ownership (`ThreatMap`):
 
 - `getHighestDamageGroupLeader` (308-396) counts loot damage per attacker. Loot damage is total damage minus DOT, using the key `dotDMG` (ThreatMap.cpp 321; ThreatMap.h 143-144). Damage from grouped players is summed per group ID (338-341). The group's leader becomes the owner when that group's sum is the largest so far (346-348). An ungrouped player's total is compared directly (387-389). A pet is credited to its owner: a grouped owner's damage is added to the group sum (360-364), but an ungrouped owner's pet is compared only as a single entry, not as the owner's sum (377-380).
 - The scan stops early at a group whose leader is missing or not a player: the check at 333-334 (and 357-358) ends the loop with `break`, so later attackers are ignored.
-- `getHighestDamagePlayer` (252-306) is not used for loot. It is used for faction standing (CreatureManagerImplementation.cpp 670). It uses total damage, which includes DOT (262), credits a pet to its owner (288-300), and keeps the first player to reach a strictly larger total (277).
+- `getHighestDamagePlayer` (252-306) is not used for loot. It is used for faction standing only when the kill was grouped (CreatureManagerImplementation.cpp 670); a solo kill awards standing to the loot owner (668). It uses total damage, which includes DOT (262), credits a pet to its owner (288-300), and keeps the first player to reach a strictly larger total (277).
 
 ## 2. Key functions
 
@@ -55,7 +55,7 @@ Ownership (`ThreatMap`):
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order: each collection entry rolls its own chance first, then a second roll picks one group in stored order, then nested groups are resolved with the depth cap, and ownership is the group or solo player with the most loot damage. It omits the overwrite of `objectID` (the sketch keeps each entry's result separately, which is the fix the note recommends), the early `break` on a bad group leader, the pet compare rule (the sketch sums per group and per solo player), the player-only check, the corpse container and its owner ID, item stats, the item transfer and its failure path, and the XP call. The random source is injected as `rng` in [0, 1) because `System::random` was not read. The default chance is written as a function of level, as the donor does at script read time.
+simplified: the sketch keeps the donor order: each collection entry rolls its own chance first, then a second roll picks one group in stored order, then nested groups are resolved with the depth cap, and ownership is the group or solo player with the most loot damage. It omits the overwrite of `objectID` (the sketch keeps each entry's result separately, which is the fix the note recommends), the early `break` on a bad group leader, the pet compare rule (the sketch sums per group and per solo player), the player-only check, the corpse container and its owner ID, item stats, the item transfer and its failure path, and the XP call. The random source is injected as `rng` in [0, 1) because `System::random` was not read. The default chance is written as a function of level, as the donor does at script read time. The weight-above-zero guard is applied only to the nested pick, as in the donor; the collection pass has none.
 
 ```ts
 // Licence: AGPL-3.0 (donor). Clean-room sketch of the mechanism shape, not a translation of the donor lines.
@@ -69,11 +69,12 @@ interface CollectionEntry { chance: number; groups: Option[]; }  // groups sorte
 function defaultChance(level: number): number { return 2000000 + level * 20000; }
 
 // First option whose running total reaches the roll; "" when the weights do not reach it (donor).
-function pickByWeight(options: Option[], roll: number): string {
+// requirePositive: the nested pick skips zero weights (donor LootGroupTemplate.h 55); the collection pass does not (729-743).
+function pickByWeight(options: Option[], roll: number, requirePositive: boolean): string {
   let total = 0;
   for (const o of options) {
     total += o.weight;
-    if (total >= roll && o.weight > 0) return o.name;
+    if (total >= roll && (!requirePositive || o.weight > 0)) return o.name;
   }
   return "";
 }
@@ -84,7 +85,7 @@ function rollCollection(entries: CollectionEntry[], rng: Rng): string[] {
   for (const e of entries) {
     if (e.chance <= 0) continue;
     if (Math.floor(rng() * SCALE) > e.chance) continue;     // the entry's own roll
-    const name = pickByWeight(e.groups, Math.floor(rng() * SCALE));
+    const name = pickByWeight(e.groups, Math.floor(rng() * SCALE), false);
     if (name !== "") won.push(name);
   }
   return won;
@@ -95,7 +96,7 @@ interface Table { groups: Map<string, Option[]>; items: Set<string>; }
 function resolveItem(t: Table, name: string, rng: Rng): string | null {
   let entry = name;
   for (let depth = 0; depth < 32 && t.groups.has(entry); depth++) {
-    entry = pickByWeight(t.groups.get(entry) ?? [], Math.floor(rng() * SCALE));
+    entry = pickByWeight(t.groups.get(entry) ?? [], Math.floor(rng() * SCALE), true);
   }
   return t.items.has(entry) ? entry : null;
 }
@@ -150,3 +151,11 @@ Acceptance: In a 3-player group server test with a fixed seed, replaying the sam
 
 Reuse tag: rewrite-from-idea (AGPL-3.0; clean-room only)
 Brief rule served: 1 (one engine; loot ownership and rolls live in the engine); server-verified kills (owner from the server's damage ledger)
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** Sketch rollCollection reuses pickByWeight with 'weight > 0' guard, but the donor collection pass (LootManagerImplementation.cpp 729-743) does NOT check weight>0 (only tempChance < roll continue); the weight>0 guard exists only in LootGroupTemplate.h 55 (nested pick). Faction standing: CreatureManagerImplementation 667-670 uses getHighestDamagePlayer only for grouped kills; solo kills use the loot owner (668); note says it is simply 'used for faction standing'. All other cites verified (656-671, 695-755 incl. 711/715/724/737/740/750-754, 761-764, 769, 775-778, 804-809, credits 302-305, 2000000+20000*level at CollectionEntry 42, ThreatMap 308-396 incl. break at 333-334/357-358, pet branch 360-364 vs 377-380, getLootDamage excludes dotDMG, maerzen.lua:43, coa2 weight 1666667 line 6).
+
+**Missed:** 'chances' vector in createLootFromCollection is declared but never filled (700, 746); lootGroupNames logs every group walked. Nested createLoot passes maxCondition and level into createLootObject (not read). Ship loot path (673-693) uses a float lootChance*10000000.

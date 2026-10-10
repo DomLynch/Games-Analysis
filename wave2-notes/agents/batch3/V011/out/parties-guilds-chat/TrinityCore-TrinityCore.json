@@ -69,5 +69,5 @@
  "decision": "adapt",
  "decision_why": "The pool, the count-based bonus and the level-weighted split are the shape Frankendom's row 18 needs for up to three attackers on one ledger; drop the raid row, the reward-distance rule (replace with attacker in the fight), the rested and recruit bonuses, and the level cutoff unless zones carry levels.",
  "decision_status": "proposed",
- "acceptance": "Two alive level-10 attackers kill a target with base XP B: each ledger entry gets about 0.5B (total 1.0B, as for one attacker); with three alive attackers each gets about 0.389B (total 1.166B); a third attacker who dies before the kill is left out of the split (a server test asserts the shares sum to base times the bonus for the counted attackers and the dead one gets 0)."
+ "acceptance": "Two alive level-10 attackers kill a target with base XP B: each ledger entry gets about 0.5B (total 1.0B, as for one attacker); with three alive attackers each gets about 0.389B (total 1.166B); a third attacker who is not the killer and dies before the kill is left out of the split (a server test asserts the shares sum to base times the bonus for the counted attackers and the dead one gets 0)."
 }

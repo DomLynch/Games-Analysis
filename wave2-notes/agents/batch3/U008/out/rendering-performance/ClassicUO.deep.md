@@ -6,7 +6,7 @@ Checked: Opened GameController.cs 208-237 (SetRefreshRate), 381-446 (Update: loo
 
 ## 1. Mechanism
 
-- Two loops share one thread. Game logic and UI update on every MonoGame `Update` call. Drawing is paced by a separate accumulator.
+- Two loops share one thread. Game logic and UI update on every MonoGame `Update` call; the loop tick is bounded by `TargetElapsedTime` = 1000/250 ms = 4 ms with `IsFixedTimeStep = false` (`GameController.cs` 61-62), which is what makes the draw accumulator meaningful. Drawing is paced by a separate accumulator.
 - `SetRefreshRate(rate)` (208): clamps the rate to 12..250 (Constants.cs 9-10). Rate 12 is special-cased to an 80 ms draw interval (224), treating 12 as 12.5 fps. Any other rate gives `1000 / rate` ms (228). The half-interval `FrameDelay[1]` is the draw interval truncated to whole ms, shifted right by one (231-232). The draw interval goes into `_intervalFixedUpdate[0]` (236). The unfocused interval is a fixed 217 ms, about 4.6 draws per second (237).
 - `Update` (381), in order:
   1. Set `Time.Ticks` and `Time.Delta` from game time (388-389); process packets; run `Scene.Update()` (404). This runs every loop tick, it is not gated by the accumulator.
@@ -34,7 +34,7 @@ Checked: Opened GameController.cs 208-237 (SetRefreshRate), 381-446 (Update: loo
 | Accumulator with remainder carry (`acc % interval`) | None (the modulo) |
 | Logic every tick, draw paced | Logic not gated (404); draw gated (430) |
 | Background throttle | 217 ms (about 4.6 draws per second) when inactive (GameController.cs 237) |
-| Animation and movement half-interval | Draw interval in whole ms, shifted right by one (GameController.cs 231-232; Mobile.cs 743) |
+| Movement half-interval (only movement uses it; the one animation use is commented out, `BoatMovingManager.cs` 234) | Draw interval in whole ms, shifted right by one (GameController.cs 231-232; Mobile.cs 743) |
 | Sprite batch chunk | 0x800 sprites (Batcher2D.cs 19) |
 
 ## 4. TypeScript sketch
@@ -101,3 +101,11 @@ Decision (proposed): adapt — take the remainder-carry draw cap as a client qua
 Acceptance: With the draw cap set to 30 fps, the client draws 30 frames in one second while input and the fight state advance on every loop tick (test counts ticks and draws over one second and asserts the fight step count is independent of the draw count).
 Reuse tag: adaptable (BSD-2-Clause; clean-room sketch)
 Brief rule served: rule 1 (one engine; the draw is a view and pacing never changes the engine step); rule 8 (target + row 16, nearest)
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** Table row 'Animation and movement half-interval' - only Mobile.cs:743 (movement) uses FrameDelay[1]; grep finds no animation use (BoatMovingManager.cs:234 has it commented out). Otherwise verified: SetRefreshRate 208-237 (clamp 12..250 at Constants 9-10, 12 -> 80 ms at 224, 1000/rate at 228, FrameDelay[1]=>>1 at 231-232, interval[0] 236, 217 at 237 whose comment says '5 FPS'; 4.6/s arithmetic is right), Update order 388-446 (Scene.Update 404, _totalElapsed 410, interval choice 421-427, > then %= at 430-432, SuppressDraw 436-437, Sleep(1) unless IsRunningSlowly 439-441, cursor/audio 445-446), ReduceFPSWhenInactive default true (Profile.cs 260), BeginDraw 556-558, Draw 464/489, IsFixedTimeStep=false at 61, Batcher MAX_SPRITES 0x800 (19), grow 1076/1133, Flush 1279-1321 (chunk 1292, 1313), BSD-2 SPDX on line 1. Demo claim '15 draws' reproduced (python re-run = 15).
+
+**Missed:** GameController.cs:62 TargetElapsedTime = 1000/250 ms (4 ms): the loop-tick rate that bounds logic frequency and makes the accumulator meaningful is never stated; it is the main number missing from the 'logic every tick' claim. UIManager.Update (408) and packet parse (393-397) are also in the unconditional part of Update.

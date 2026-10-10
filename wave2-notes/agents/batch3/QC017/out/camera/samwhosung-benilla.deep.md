@@ -195,3 +195,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - The donor's numbers come from the World of Warcraft client binary (its comments cite addresses such as `0x511010`). The code is MIT/Apache, but Frankendom should choose its own numbers, and not cite the binary.
 - The zoom glide (camera_zoom.rs:108-109) is a constant-speed glide at 8.33 yd/s, not an ease. Frankendom's zoom pulse in combat, if built, should not copy it without a reason.
 - Not read: the look session start and end, the water corridor (`camera_water.rs`), `camera_shake.rs`, and the FollowRig. A grep of the camera files for lock-on and target framing found none (the `target/lock.rs` module is the GameObject door-lock chain, not a camera lock).
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** Nits: view/arm pitch is clamp(cam.pitch + terrain_tilt.pitch()) (camera.rs 1165), note and sketch say clamp(pitch) (ground tilt omitted but disclosed); SmoothChannel.arm also requires matching delay and factor memo for 'already arming' (camera_channel.rs 143-146), duration = gap/rate*factor (162) and angular channels rewrap live (133-141) - not in mechanism/sketch. All constants (0.3, 6.0, 89 deg, 90 deg/s, 0.05, 0.0, 0.001, 1.2, 8.33, 1.0, 50, 15), routing/advance logic, call sites (camera.rs 915, 1110, 1250; controller.rs 271, 328, 723), licence verified.
+
+**Missed:** None important.

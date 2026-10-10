@@ -88,5 +88,5 @@
  "decision": "adapt",
  "decision_why": "Take the retarget-on-hit gate (in view and reachable, otherwise a counted rude attack) and the presence route (hard AI near, lazy pass far) with its numbers as data. Reject the damage log as a threat table (it only feeds rewards; targeting does not read it) and the monster_ai bit switches (defaults are 0; Frankendom needs one rule set). No attacker cap exists in the donor, so MAX_ATTACKERS = 3 must be engine-enforced.",
  "decision_status": "proposed",
- "acceptance": "A server test with a mob and a player 10 cells away at weapon range 2 that cannot be reached asserts the hit leaves the target unchanged and raises the rude count to 1; and a mob 19 cells from every player is routed lazy, not hard."
+ "acceptance": "A server test with a mob and a player 10 cells away at weapon range 2 that cannot be reached asserts the hit leaves the target unchanged and raises the rude count to 1; and a mob 19 cells from every player whose last-near time is older than 5000 ms is routed lazy, while 2000 ms after the last player left it is still routed hard (grace window)."
 }

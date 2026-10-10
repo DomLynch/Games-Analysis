@@ -23,7 +23,7 @@ Checked: `do_timer` (timer.cpp 357-412) read in full. The main loop in `Core::st
   (b) If `mob_active_time` is non-zero and the mob was last near a player (`last_pcneartime`), and it did not think at this exact tick, it calls the hard AI while `tick - last_pcneartime < mob_active_time` (2378-2384). Otherwise it clears `last_pcneartime` (2385). The boss equivalent follows at 2388-2396.
   (c) It cleans the spotted log (2399).
   (d) If the mob's hard AI ran within `MIN_MOBTHINKTIME*2` = 200 ms, it returns (2403-2404).
-  (e) Otherwise it unlocks the target, rolls a random walk with `mob_nopc_move_rate` (2435-2442) or an idle skill with `mob_nopc_idleskill_rate` (2444-2451). The rates' values were not read.
+  (e) Three more early returns follow before the rolls: a skill-check guard (`last_skillcheck` within `MOB_SKILL_INTERVAL` = 1000 ms, 2407-2408; mob.hpp 42), a warp-chase check when a target exists (2411-2415), and the whole slave branch (a mob with a master runs `mob_ai_sub_hard_slavemob` and returns, or returns at once when neither it nor its master was spotted and `slave_active_with_master` is 0; 2417-2429). Only then does it unlock the target, roll a random walk with `mob_nopc_move_rate` (2435-2442) or an idle skill with `mob_nopc_idleskill_rate` (2444-2451); bosses and status-immune mobs use a separate rate for each (2440-2441, 2449-2450). The rates' values were not read.
 - Net effect: a mob within 18 squares of a player (client.conf 38 describes `area_size` as "how many squares away from a player"; the range shape of `map_foreachinallrange` was not read) is offered the hard AI every 100 ms, once per player that has it in range (the donor has no dedupe across players that I could see). A mob outside that range is offered it once per second, and only while the active window (if enabled) keeps it hot.
 
 ## 2. Key functions
@@ -46,12 +46,12 @@ Checked: `do_timer` (timer.cpp 357-412) read in full. The main loop in `Core::st
 | Recent-think guard on the cold path | 200 ms (`MIN_MOBTHINKTIME*2`, mob.cpp 2403) |
 | Hot radius | `AREA_SIZE` + `ACTIVE_AI_RANGE` = area_size 14 (battle.cpp 8553; client.conf 39; the squares unit is stated at client.conf 38) + 4 (mob.cpp 46) |
 | Active window after last near a player | `mob_active_time`: code default 5000 ms (battle.cpp 8622); shipped monster.conf sets 0 (line 89), which turns the window OFF |
-| Boss active window | `boss_active_time` shipped 0 (monster.conf 90); code default not read |
+| Boss active window | `boss_active_time` shipped 0 (monster.conf 90); code default 5000 (battle.cpp 8623) |
 | AI mode bit | `mob_ai` default 0x0000 (battle.cpp 8580), so the 0x20 path is off by default |
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the 100 ms hot pass for NPCs within 14 + 4 cells of a player, the 1000 ms cold pass, the active window checked before the 200 ms guard (the donor's order in lazy), and the window expiry. It differs from the donor in three places: the hot pass runs each near NPC once per pass (the donor can run it once per player in range), the distance is a square (the donor's range shape was not read), and the random walk and idle-skill rolls for distant mobs are omitted. It also omits the spotted log, the slave and boss branches, the `mob_ai & 0x20` mode, and the timer heap itself.
+simplified: the sketch keeps the 100 ms hot pass for NPCs within 14 + 4 cells of a player, the 1000 ms cold pass, the active window checked before the 200 ms guard (the donor's order in lazy), and the window expiry. It differs from the donor in three places: the hot pass runs each near NPC once per pass (the donor can run it once per player in range), the distance is a square (the donor's range shape was not read), and the random walk and idle-skill rolls for distant mobs are omitted. It also omits the skill-interval guard, warp-chase and slave branch of the lazy pass (2407-2429), the spotted log, the slave and boss branches, the `mob_ai & 0x20` mode, and the timer heap itself.
 
 ```ts
 // Licence: GPL-3.0 (donor, rAthena). Clean-room: shape only, no line-by-line translation. Hot AI for NPCs near a player every 100 ms, cold pass every 1000 ms, with an active-time window after a player was last near.
@@ -122,5 +122,14 @@ export function coldPass(npcs: Npc[], now: number, think: Think): number {
 - The shipped `monster.conf` sets `mob_active_time` to 0 (line 89), so the active window is OFF in the shipped config, while the code default is 5000 (battle.cpp 8622). Frankendom must pick the value per zone as data and not inherit either default silently.
 - No explicit per-tick NPC budget was found. `grep` for budget, limit and per-tick terms in mob.cpp and map.cpp found nothing. The bound comes only from the radius and the cadence, so a zone with many NPCs in range has no cap. Frankendom needs an explicit cap if zones can hold large crowds.
 - The timer heap is variable-step: a late timer runs once at now (376-380, 401-402). A fight clock must not run on it.
+- After an attack or a finished cast, `mob_delay_event` sets `next_thinktime = max(tick + amotion, next_thinktime)` unless `mob_ai & 0x2000` is set (mob.cpp 4546-4548). An attacking mob therefore thinks on its attack-motion cadence, not every 100 ms; this is a more important timing rule than the active window, and the unread AI body may add more. The sketch does not model it.
 - Spawn, respawn and despawn (parity row 23) are not covered by this note.
 - The spotted log (`mob_add_spotted`, `mob_clean_spotted`) controls which NPCs count as active, and its bodies were not read.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** Order of operations in mob_ai_sub_lazy is incomplete: between the 200 ms guard (2403-2404) and the random-walk/idle-skill roll the donor has more early returns the note skips - MOB_SKILL_INTERVAL=1000 ms guard (2407-2408, mob.hpp:42), warp-chase (2411-2415), and the whole slave/master branch (2417-2429, with slave_active_with_master). Note says '(e) Otherwise it unlocks the target...' as if directly after (d). Also boss_active_time code default 5000 is at battle.cpp:8623 (note says 'code default not read'), and the boss/MD_STATUSIMMUNE split for nopc move/idleskill rates (2440-2441, 2449-2450) is not mentioned. Verified OK: do_timer 357-412 incl. diff<-1000 (376, 401), return clamp 20..1000 (24-25, 411), empty heap 1000 (359), core.cpp 388-391/429-434, do_sockets 905-912/919-923, timers 7363-7364, MIN_MOBTHINKTIME=100 (mob.hpp:35), ACTIVE_AI_RANGE 4 (mob.cpp:46), area_size 14 (battle.cpp 8553), mob_active_time 5000 default (8622) and 0 in monster.conf (89), monster_ai default 0 (8580), hard 2468-2476, foreachclient 2348-2354, hard_timer 2332-2343, hard guards 1847-1858, lazy active window 2378-2396, GPL v3. 'No dedupe' reading is correct (next_thinktime=tick at 1858 passes an equal tick).
+
+**Missed:** mob.cpp:4548 sets next_thinktime = max(tick+amotion, ...) after an attack, so attacking mobs think on their attack-motion cadence, not 100 ms - a more important timing rule than the active-time window and not covered (AI body unread).

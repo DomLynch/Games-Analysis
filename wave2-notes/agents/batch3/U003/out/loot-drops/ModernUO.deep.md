@@ -173,3 +173,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - The 1.25x first-hitter bonus is a 2007 UO rule cited in the donor comment. It is a design choice for Frankendom, not a fact about combat: make it a data field with default 1.0 unless Dom asks for it.
 - Packs are C# constant tables. Frankendom's rule is zones as data, so the pack tables become zone data (per zone, per enemy), and only the roll shape stays in the engine.
 - Not transferable as written: the Mondain, Stygian and Tokuno pool selection (`IsInTokuno`, `IsMondain`, `IsStygian`, `LootPack.cs` 605-623; the pools themselves in `Loot.cs` were not read), the pre-AOS level path (751-785), and anything in `BaseRunicTool.ApplyAttributesTo` (not read). The spawn-time pre-roll (`atSpawnTime`) is worth keeping as an idea, but it needs its own test because it changes what a creature carries before any player is near it.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** All checked claims hold: Generate 118-158 (roll 131, single luck re-roll 133-141 gated by Core.AOS, Construct 148), Construct 625-654 (spawn gate 627, weighted pick 639-651), Mutate fire horn 696, props 710-721, stackable 813-822, GetBonusProperties weights and walk 827-906, dice 1101-1111, luck curve 84-89 (100->~12.9 pct, 1200->~51 pct), GetLootingRights 3344-3454 (firstDamager x1.25 at 3428, divisors 16/8/4/2, sort, HasRight 3450), DamageStore 122-135, GenerateLoot 5320-5357, spawn call 864, death call 3287, Corpse 303-310, Utility.Random(from,count) semantics. Sketch order matches donor.
+
+**Missed:** Death-time GenerateLoot is guarded by !Summoned && !NoKillAwards && !_hasGeneratedLoot (3283), note names only the flag; AddLoot returns for Summoned (5373). GetLootingRights also credits pet/summon damage to the master and skips entries with damage <= 0 (3396); sketch lootRights has no master credit. The luck curve is a different path when UOR/SE flags differ (not important).

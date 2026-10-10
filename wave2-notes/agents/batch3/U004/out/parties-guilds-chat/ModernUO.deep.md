@@ -17,9 +17,10 @@ Acceptance: a server test where an invite to player B expires at 30 s and B leav
 - Add (Party.cs 188-220). A new member gets a `PartyMemberInfo` (197) and `m.Party = this` (198). The member list goes to everyone (208-209). Each existing member and the newcomer exchange their status and attributes (211-217).
 - Decline (`PartyCommands.OnDecline`, 133-148; `Party.OnDecline`, Party.cs 258-281). The leader and invitee get messages (261-263). The candidate is removed (265). If no candidates are left and only the leader remains (268), the party is cleared (273-280), so a lone leader with no pending invites is dissolved.
 - Removal. A leader's removal disbands the party (Party.cs 285-288). A member's removal takes them out (292-300) and sends messages. When one member is left, the party says the last person has left and disbands (318-322).
-- Logout and login. `EventSink_Logout` removes the player from the party at once (177-184). `OnLogin` (162-175): if the player is still in a party, a `RejoinTimer` starts (169), with a 1-second delay (RejoinTimer, 492). On tick it sends the member list and join lines to the other members (494-530).
+- Logout and login. `EventSink_Logout` removes the player from the party at once (177-184). `OnLogin` (162-175): if the player is still in a party, a `RejoinTimer` starts (169), with a 1-second delay (RejoinTimer, 492). On tick it sends the member list and join lines to the other members (494-530). It never restores a seat: logout has already removed the member and nulled `Party` (177-184), so the timer only fires if `Party` survived, and then it only resends the lists.
+- Death. A `PlayerDeathEvent` hook (Party.cs 138-160) sends the party a public line ("I killed myself", "I was killed" or "I was killed by <name>"). `Party.Active` is `Members.Count > 1` (28).
 - Chat. `PartyCommands.OnPublicMessage` and `OnPrivateMessage` reject text over 128 characters (51, 70) and require party membership (58, 75-80). Routing into `Party.SendPublicMessage` was not read.
-- Corpse loot flag. `PartyCommands.OnSetCanLoot` sets `CanLoot` on the member's roster entry (87-113). `Corpse.cs` reads it: the owner or a GM is never criminal (752-755); a party member whose owner set `CanLoot` returns false (757-767); otherwise the function returns the notoriety test (769). The meaning of that final test was not checked.
+- Corpse loot flag. `PartyCommands.OnSetCanLoot` sets `CanLoot` on the member's roster entry (87-113). `UOContent/Items/Misc/Corpses/Corpse.cs` reads it: the owner or a GM is never criminal (752-755); a party member whose owner set `CanLoot` returns false (757-767); otherwise the function returns the notoriety test (769). The meaning of that final test was not checked.
 - Stat broadcast. `IParty` has three methods: stamina, mana, and a stats query (Interfaces.cs 48-53). There is no hits callback. `Mobile.cs` 2859-2871 calls `OnManaChanged` and `OnStamChanged` on the mobile's party whenever a stamina or mana delta is processed. `Party.OnStamChanged` (Party.cs 53-68) sends the packet to each other member on the same map who is inside `Utility.InUpdateRange` and can see the player (63). `OnManaChanged` (70-85) does the same. `OnStatsQuery` (87-99) answers a member who asks, if they are in range.
 - Timing. A mobile's delta is queued (`Mobile.cs` 7858-7861). `RunEventLoop` (Main.cs 705-) flushes the mobile delta queue (717) at the start of each loop pass, before the timer slice (725).
 
@@ -44,14 +45,14 @@ Acceptance: a server test where an invite to player B expires at 30 s and B leav
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the capacity count that includes pending invites, the capacity check before an invite (the donor does it in the add command, so it also refuses a repeat invite at capacity), the 30 s expiry with reset on a repeat invite, the accept check that counts the accepting candidate, the lone-member cleanup, the in-range stamina and mana broadcast, and removal on logout at once. It omits the faction check on invite and accept, the packet sends and their order, the per-invitee DeclineTimer table (the sketch uses one sweep over candidates), the rejoin timer (REJOIN_MS is declared but not used), the visibility check (CanSee), the stats-query reply, the public and private chat, the 128-character cap, the corpse-loot flag, and the staff listeners. The tile-distance helper stands in for `InRange`, whose metric was not read.
+simplified: the sketch keeps the capacity count that includes pending invites, the capacity check before an invite (the donor does it in the add command, so it also refuses a repeat invite at capacity), the 30 s expiry with reset on a repeat invite, the accept check that counts the accepting candidate, the lone-member cleanup, the in-range stamina and mana broadcast, and removal on logout at once. It omits the faction check on invite and accept, the packet sends and their order, the per-invitee DeclineTimer table (the sketch uses one sweep over candidates), the rejoin timer (REJOIN_MS is declared but not used; the donor timer only resends the member list, it never restores a seat), the visibility check (CanSee), the stats-query reply, the public and private chat, the 128-character cap, the corpse-loot flag, and the staff listeners. Deviation from the donor: `accept` checks that the invite has not expired, which the donor does not do (it relies on the 30 s timer, so there is a race at the boundary, see Gaps); the sketch takes the safer rule on purpose. The tile-distance helper stands in for `InRange`, whose metric was not read.
 
 ```ts
 // Licence: GPL-3.0 (donor). Clean-room sketch written from the described mechanism, not a translation of the donor lines.
 const CAPACITY = 10;        // members plus pending invites
 const INVITE_MS = 30_000;   // a pending invite expires after 30 s
 const UPDATE_RANGE = 18;    // tiles, the server-wide update range
-const REJOIN_MS = 1_000;    // seat restored one second after login
+const REJOIN_MS = 1_000;    // donor RejoinTimer delay after login; it only resends the member list (no seat is restored); declared, unused
 
 interface Player { id: string; map: number; x: number; y: number; party: Party | null; }
 
@@ -81,7 +82,7 @@ function invite(p: Party, target: Player, now: number): boolean {
 // Accept: counts the accepting candidate, so members + candidates must still fit capacity.
 function accept(p: Party, from: Player, now: number): boolean {
   const expiry = p.candidates.get(from.id);
-  if (expiry === undefined || now >= expiry) return false;
+  if (expiry === undefined || now >= expiry) return false; // deviation: the donor has no expiry check here (race, see Gaps)
   if (p.count > CAPACITY) return false;
   p.candidates.delete(from.id);
   p.members.push(from);
@@ -107,7 +108,7 @@ function broadcastStam(p: Party, changed: Player, send: (to: Player) => void): v
   }
 }
 
-// Logout removes the member at once; login restores the seat after one second if still in a party.
+// Logout removes the member at once (donor 177-184). There is no seat hold; the donor's login RejoinTimer only resends the member list.
 function onLogout(p: Party, who: Player): void {
   p.members = p.members.filter(m => m !== who);
   who.party = null;
@@ -134,3 +135,11 @@ export {};
 - The corpse-loot flag is a per-member toggle on the roster (PartyCommands.cs 87-113) that the corpse code reads (Corpse.cs 757-767). Loot ownership must be decided on the server, not on the client's flag.
 - The final notoriety test in `Corpse.IsCriminalAction` (Corpse.cs 769) was not checked for its meaning; do not port the criminal rule from this read.
 - Guilds and chat channels were not read. Nothing in this note covers them.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** Verified: Capacity 10 (Party.cs 13); OnAdd check 18-21; Invite 341-384 incl. faction 346, new party 353-358, candidate add 360-363, Party=from at 381, DeclineTimer.Start 383; DeclineTimer 30 s (12), stop old (20-24), remove self (29), same-leader check (31), OnDecline (33); OnAccept 116-131 with <=10 at 127; Party.OnAccept 222-256; Add 188-220; OnDecline 258-281 with lone-leader clear at 268-280; Remove 283-323; Logout 177-184; Login 162-175; RejoinTimer 1 s at 492; stat broadcast 53-85 using InUpdateRange+CanSee at 63/80; IParty 48-53 (no hits); Mobile.cs 2859-2871; delta queue 7858-7861; Main.cs 717 before Timer.Slice 725; GlobalUpdateRange 18 (Main.cs 316) and InUpdateRange uses it (Utility.cs 536); chat cap 128 at 51/70; CanLoot 87-113; Corpse.cs 752-769; licence GPL-3 OK. Errors: (1) Sketch comment/onLogout: 'login restores the seat after one second if still in a party' is misleading - logout already removes the member and nulls Party (177-184), so in the donor RejoinTimer only fires if Party survived (e.g. no logout event); it never restores a seat, it only resends the member list/messages (494-530). The note's Gaps correctly says there is no seat hold, so sketch comment contradicts the note. (2) Sketch accept() adds an expiry check (now >= expiry) that the donor does not have; the note flags the race in Gaps but the sketch header claims to keep donor behaviour. (3) Corpse.cs path given without its folder (UOContent/Items/Misc/Corpses/Corpse.cs); cosmetic. (4) Chebyshev withinRange is an admitted stand-in; donor InRange body (Utility.cs ~530) not read.
+
+**Missed:** PlayerDeathEvent hook (Party.cs 138-160) broadcasts 'I was killed by X' to the party - not covered. DeclineTimer entry is not stopped when the invite is accepted or declined (it ticks and no-ops because Party no longer equals leader) - a quirk relevant to the 'expiry' design. Party.Active = Members.Count > 1 (28) is the notion of a real party.

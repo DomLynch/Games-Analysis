@@ -13,14 +13,14 @@ Two layers. A world **spawn area** puts lairs near players. A **dynamic lair** (
 - Lair level and building level (278-313). The player level is the group level when grouped, otherwise `calculatePlayerLevel` (SpawnArea 404-435). The lair level is `min(max, min + random(range))` (300). The ratio `playerLevel / lairLevel` picks a building level from 1 to 5 using thresholds 0.25, 0.5, 0.75 and 1.0 (301-313).
 - Bookkeeping on success (380-395): `lastSpawn` is reset, an observer is attached to the lair object for its removal (382-391), `totalSpawnCount` goes up (393) and the per-entry count goes up (395). On removal (`SpawnAreaImplementation::notifyObserverEvent`, 131-179) the counts go down (146-156). A lair object also leaves a no-spawn bubble of radius `spawnCheckRange` for 30 s (162-174).
 - Dynamic lair population (`spawnDynamicSpawn`, CreatureManagerImplementation.cpp 225-264). A theater object is created with `setDespawnOnNoPlayersInRange(true)` (246) and a `DynamicSpawnObserver` on `CREATUREDESPAWNED` and removal (255-256). Then `spawnInitialMobiles` runs (261).
-- Count. `totalNumberToSpawn = spawnLimit/3 + (difficulty - 2)/2`, with a minimum of 1 (DynamicSpawnObserverImplementation.cpp 90-98). `spawnLimit` is the lair template's value (LairTemplate.h 84; the example lair template sets `spawnLimit = 15`, which gives 5 + the difficulty term). Each slot picks a mobile template by a uniform index into the weighted mobile list (101), grouped by template (104-111).
+- Count. `totalNumberToSpawn = spawnLimit/3 + (difficulty - 2)/2` (C++ integer division, truncating), where `difficulty` is the lair building level 1-5 from the player-to-lair level ratio (SpawnAreaImplementation.cpp 301-313). `CreatureManagerImplementation::spawn` (70-84) routes by building type: LAIR goes to `spawnLair` and THEATER to `spawnTheater` (the older path), and only `LairTemplate::NONE` reaches `spawnDynamicSpawn` (81), which receives that building level as `difficulty` (225). The minimum is 1 (DynamicSpawnObserverImplementation.cpp 90-98). `spawnLimit` is the lair template's value (LairTemplate.h 84; the example lair template sets `spawnLimit = 15`, which gives 5 + the difficulty term). Each slot picks a mobile template by a uniform index into the weighted mobile list (101), grouped by template (104-111).
 - Placement and state. Each mob is placed at the building position plus `size - random(size*20)/10` on each axis (129-130), with its home set to the building (164), its despawn-on-empty flag set to false (160; the lair owns that), and its respawn timer zeroed (162). A herd template's first mob leads, and the rest follow it in FOLLOWING state (171-201).
 - Death. `AiAgentImplementation::notifyDespawn`, when the home has `CREATUREDESPAWNED` observers, notifies the home and returns (2294-2303). So the home lair owns the respawn. The observer then decides (DynamicSpawnObserverImplementation.cpp 11-77):
   - If `respawnCounter > 2` (30): the mob leaves the list and its home is cleared (31-35). If the list is then empty, the lair despawns 60 s later (49-53).
   - Otherwise a `RespawnCreatureTask` runs after `(60 + level*2)` seconds (66-74). Creatures use their adult level (66-71).
 - Respawn itself (`AiAgentImplementation::respawn`, 614-732). It fails if the agent is still in a zone (615-617). It reloads the template (689-691), resets HAM and wounds (699-707), moves the agent home (709-724), increments `respawnCounter` (727), and restarts the behaviour tick (731).
 - Lives. A mob gets its first life, then up to three respawns. The donor comment says "Each creature should spawn 4 times" (29). Counting the checks by hand: death 1, 2 and 3 each lead to a respawn (counter 0, 1, 2); death 4 meets counter 3 and the mob is removed.
-- Non-lair creatures with their own respawn timer respawn after `respawnTimer` seconds. With `randomRespawn` the delay is `System::random(r) + r/2` (AiAgentImplementation.cpp 2307-2315).
+- Non-lair creatures with their own respawn timer respawn after `respawnTimer` seconds. With `randomRespawn` the delay is `System::random(r) + r/2` with r in ms, so it lies in [r/2, 1.5r) (AiAgentImplementation.cpp 2307-2315).
 - Presence grace. When the last player leaves a creature (`notifyDissapear`, 2432-2451), a 30 s despawn event is scheduled (2448-2450), and `setDespawnOnNoPlayerInRange(true)` with nobody in range schedules the same 30 s (1824-1830). When the event fires (DespawnCreatureOnPlayerDissappear.h 34-56), it clears itself (42), returns if the flag was turned off (49), and destroys and notifies the agent only if the player count is still zero (52-54). The event is not cancelled when a player comes back (`notifyInsert`, 2177-2194, has no cancel), so the check at fire time decides.
 - Theater grace (the lair population's container). When the count reaches zero and the flag is set, the theater schedules a 300 s despawn (TheaterObjectImplementation.cpp 51-55; TheaterObject.idl 64-70, line 69). A player entering cancels it (TheaterObjectImplementation.cpp 29-30). When it fires it destroys the theater only if still empty (DespawnLairOnPlayerDisappear.cpp 53-61). Lair objects and POI buildings use the same 300 s (LairObject.idl 85; PoiBuilding.idl 85).
 - Tick gate. `activateAiBehavior` cancels the behaviour event when no players are in range, the agent has no follow object and it is not retreating (AiAgentImplementation.cpp 3903-3906), so idle mobs do not tick. A player entering reschedules it (notifyInsert calls `activateAiBehavior`, 2192).
@@ -54,7 +54,7 @@ Two layers. A world **spawn area** puts lairs near players. A **dynamic lair** (
 | No-spawn bubble after a lair object is removed | 30000 ms (SpawnAreaImplementation.cpp 174), radius = spawn check range |
 | Spawn check range (permit test and bubble) | Default 64 (ConfigManager.h 794), plus lair size |
 | Lair building level from the player/lair level ratio | Thresholds 0.25 / 0.5 / 0.75 / 1.0 for levels 1-4, else 5 (SpawnAreaImplementation.cpp 301-313) |
-| Creature own respawn | `respawnTimer` seconds; random mode `r + r/2` spread (AiAgentImplementation.cpp 2307-2315) |
+| Creature own respawn | `respawnTimer` seconds; random mode: a delay between r/2 and 1.5r (`random(r) + r/2` in ms, so [r/2, 1.5r)) (AiAgentImplementation.cpp 2307-2315) |
 
 ## 4. TypeScript sketch
 
@@ -107,7 +107,8 @@ const LIVES_AFTER_RESPAWNS = 3;   // a mob retires on the death that follows its
 interface LairMob { level: number; respawns: number; alive: boolean; retired: boolean; respawnAt: number | null; }
 interface Lair { mobs: LairMob[]; emptyAt: number | null; }
 
-// Donor: floor(spawnLimit / 3) + floor((difficulty - 2) / 2), at least 1 (C++ int division).
+// Donor: trunc(spawnLimit / 3) + trunc((difficulty - 2) / 2), at least 1 (C++ int division truncates toward zero).
+// `difficulty` is the donor's building level (1-5), not a mob level.
 function lairSize(spawnLimit: number, difficulty: number): number {
   return Math.max(1, Math.trunc(spawnLimit / 3) + Math.trunc((difficulty - 2) / 2));
 }
@@ -161,8 +162,16 @@ export {};
 - Units: spawn range 64 and placement offsets are donor units (unit not checked against Frankendom zone units).
 
 Best transferable idea: a zone director that only spawns while players are present, checks a total cap and then a per-entry cap before a weighted pick, holds a fixed lair group that respawns with a lives counter, and despawns on empty only after a grace timer that re-checks the count when it fires.
-Decision (proposed): adapt - take the gates, the caps, the lives counter, the respawn delay and the grace timer; drop the building-level and difficulty-ratio math and the donor's counter-based presence, which Frankendom should recompute from zone membership on the server. Put every cap, weight, delay and grace time in zone data with these donor values as defaults.
+Decision (proposed): adapt - take the gates, the caps, the lives counter, the respawn delay and the grace timer; drop the building-level and difficulty-ratio math (the lair-size formula still needs a building-level input from 1 to 5, which Frankendom takes from zone data) and the donor's counter-based presence, which Frankendom should recompute from zone membership on the server. Put every cap, weight, delay and grace time in zone data with these donor values as defaults.
 Acceptance: In a zone test with a total cap of 3 and one template capped at 1, a server simulation with a player present never holds more than 3 spawns and never more than one of that template; after the player leaves, the zone's population is still present at 29 s, gone by 31 s, and still present if the player returns at 20 s.
 
 Reuse tag: rewrite-from-idea (AGPL-3.0; clean-room only)
 Brief rule served: 1 (one engine; spawn logic in the engine, numbers as zone data)
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** Mechanism never says what `difficulty` is in totalNumberToSpawn: CreatureManagerImplementation.cpp 70-84 routes by building type and only LairTemplate::NONE reaches spawnDynamicSpawn (81), passing lairBuildingLevel (1-5, from the player/lair ratio, SpawnArea 301-313) as `difficulty`; LAIR and THEATER types go to spawnLair/spawnTheater (the older path). The Decision drops the building-level math but the count formula depends on it. Sketch comment says floor() but C++ truncates (code uses trunc, correct). Table row 'random mode r + r/2' is ambiguous: real range is [r/2, 1.5r) (2310-2311). All other numbers/lines verified (5000, 64, 30 s, 60 s, 300 s x3 idl, 60+2*level, >2 counter, spawnLimit/3+(d-2)/2, 0.25/0.5/0.75/1.0, AGPL v3).
+
+**Missed:** tryToSpawn rejects positions within 0.01 of (0,0) (254-260) and rewrites maxDifficulty>=500 to 5+min+random(5) (289-291); respawn() rolls a baby spawn (chance 500 for lairs, 627-686); notifyDissapear skips pets (2448); DynamicSpawnObserver OBJECTREMOVEDFROMZONE calls despawnSpawns (12-14).

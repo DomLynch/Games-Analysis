@@ -6,9 +6,9 @@ Checked: The hint file was INFERRED; the real code was found with grep on hate, 
 
 ## 1. Mechanism
 
-- Hate per hit (Mob::AddToHateList, attack.cpp 3054-3182). Some hits are rejected first: self, a zoning or disconnected client, a trap (3056-3069); held or stopped pets that are not engaged (3109-3116); familiars and aggro-immune flags (3126-3152); non-harmful spells and the owner (3142-3148).
-- The hit's hate is multiplied for an entry already on the list: hate x max(1, 100 + hatemod) / 100, where hatemod sums spell, item and AA bonuses (3088-3095). A new entry instead gets InitialAggroBonus added (3098-3100), with no hatemod.
-- Tunnel vision: when the mob has the ability and the hitter is not its current target, hate is multiplied by the ability's parameter, or by TunnelVisionAggroMod (0.75 by default) when the parameter is zero (3154-3166).
+- Hate per hit (Mob::AddToHateList, attack.cpp 3054-3182). Order in the code: first the hits rejected outright: self, a zoning or disconnected client, a trap (3056-3069); a negative damage sets hate to 1 (3071-3073); then the hatemod or new-entry bonus is applied to the hate (3088-3102, next bullet); only then the rejections that return without adding: held or stopped pets that are not engaged (3104-3116), familiars and aggro-immune flags (3126-3140), non-harmful spells and the owner (3142-3152). Since those later rejections return, the earlier arithmetic has no visible effect for them.
+- The hit's hate is multiplied for an entry already on the list: hate x max(1, 100 + hatemod) / 100, where hatemod sums spell, item and AA bonuses (3088-3095). A new entry instead gets InitialAggroBonus added (3100), with no hatemod; a charmed mob adds InitialPetAggroBonus instead (3097-3098; rule default 100, ruletypes.h 733).
+- Tunnel vision: when the mob has the ability and the hitter is not its current target, hate is multiplied by the ability's parameter divided by 100 (tv_mod / 100.0f, 3159-3161), or by TunnelVisionAggroMod (0.75 by default) when the parameter is zero (3154-3166).
 - Damage credit is capped at the HP the mob had left (3175-3176), so a finishing blow cannot take credit for the damage over the HP left. The stated reason is XP credit, not aggro.
 - The hit is handed to the hate list (3182). AddEntToHateList (205-253): an existing entry adds damage (never negative) and stored hate, sets the frenzy flag to this hit's value, and updates last_modified (219-224). A new entry starts with oor_count 0 and last_modified now (235-243).
 - Top pick (GetMobWithMostHateOnList, hate_list.cpp 348-554), smart branch on by default (366). The entries skipped are the skip entry, mezzed entries when asked, and entries outside the filter (388-405). Sanctuary sets a fallback with hate 1 (407-415); divine aura, mez or fear sets a fallback with hate 0 (417-425). A fallback is used only while hate is still -1, i.e. nothing better was found (408, 418).
@@ -42,13 +42,13 @@ Checked: The hint file was INFERRED; the real code was found with grep on hate, 
 | Leash with two passes | npc_aggro_max_dist is zone data (mob_ai.cpp 1052); two passes (hate_list.cpp 873) |
 | Cleanup cadence | 6000 ms (mob.cpp 129) |
 | Target refresh cadence | 500 ms (features.h 150) |
-| Tunnel vision | 0.75 (ruletypes.h 719); per-mob parameter overrides (attack.cpp 3159-3164) |
+| Tunnel vision | 0.75 (ruletypes.h 719); per-mob parameter overrides, divided by 100 (attack.cpp 3159-3164) |
 | First-aggro threatening roll | 32 of 128 (features.h 201), minus heroic CHA / 25 capped at 32 (aggro.cpp 498-500, 524) |
 | First-aggro level rule | MinAggroLevel 18 (ruletypes.h 723); IntAggroThreshold 75 (721); UseLevelAggro true (724) |
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order: new-entry bonus or hatemod, tunnel vision, damage credit capped at HP left, then the top pick with the melee, critical and sitting percent bonuses and the frenzy override, the two-pass leash and the stale time, and a period gate for the target refresh. It replaces the donor's fallbacks (sanctuary, aura, mez, fear) with an exclusion, which the donor does not do. It omits: the player-type preference (480-507), pets and aggro immunity, spell and taunt multipliers (3178-3180), the damage-under-zero rule (3071-3073), faction, quest and XP hooks, the bot owner entry, rampage, the rooted and blind closest-target rule, and the no-longer-engaged event. The per-mob tunnel-vision parameter is replaced by the rule value. Ties keep the first entry in list order, as the donor's strict comparison does. The sketch's Gate stands in for AI_target_check_timer; the donor Timer semantics were not read.
+simplified: the sketch keeps the donor order: new-entry bonus or hatemod, tunnel vision, damage credit capped at HP left, then the top pick with the melee, critical and sitting percent bonuses and the frenzy override, the two-pass leash and the stale time, and a period gate for the target refresh. It replaces the donor's fallbacks (sanctuary, aura, mez, fear) with an exclusion, which the donor does not do. It omits: the player-type preference (480-507), pets and aggro immunity, spell and taunt multipliers (3178-3180), the damage-under-zero rule (3071-3073), faction, quest and XP hooks, the bot owner entry, rampage, the rooted and blind closest-target rule, and the no-longer-engaged event. The per-mob tunnel-vision parameter (donor: parameter / 100) is replaced by the rule value, and the charmed-mob bonus (InitialPetAggroBonus) is not modelled. Ties keep the first entry in list order, as the donor's strict comparison does. The sketch's Gate stands in for AI_target_check_timer; the donor Timer semantics were not read.
 
 ```ts
 // Licence: GPL-3.0-or-later (donor). Clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -73,7 +73,7 @@ export interface Rules {
   currentTargetMod: number; // percent, default 0
   criticalMod: number;      // percent, applied when hpPct < 20
   initialBonus: number;     // hate added to a new entry
-  tunnelVision: number;     // multiplier on hate for a non-top hitter (ratio)
+  tunnelVision: number;     // multiplier on hate for a non-top hitter (ratio; donor: parameter / 100 or the rule)
   staleMs: number;          // forget after this long untouched
   maxRangeSq: number;       // squared leash distance
 }
@@ -97,7 +97,7 @@ export function addHate(list: Map<number, Entry>, hit: Hit, now: number, rules: 
     hate += rules.initialBonus;
   }
   if (hit.tunnelVision && topId !== null && topId !== hit.id) {
-    hate = Math.trunc(hate * rules.tunnelVision);
+    hate = Math.trunc(hate * rules.tunnelVision); // donor: ability parameter / 100 when set, else the rule (3159-3164)
   }
   // damage credit cannot exceed the HP the mob had left (guards against stealing a kill)
   const credit = Math.max(0, Math.min(hit.dmg, hit.hpLeft));
@@ -177,3 +177,11 @@ Decision (proposed): adapt - take the hate table, the damage-credit cap at HP le
 Acceptance: A 3-on-1 zone server test: a creature in melee range with equal hate beats one out of melee range on the next target re-pick, a near-death creature in melee range takes the target on the next re-pick, a creature more than two cleanup passes outside the leash is removed, and the same seed gives the same target sequence on replay.
 Reuse tag: rewrite-from-idea (GPL-3.0-or-later; clean-room only)
 Brief rule served: 1 (the hate table and target choice are engine logic, not client); MAX_ATTACKERS = 3 applied after the top pick; zones as data for the leash distance and stale time
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** (1) Tunnel vision: note says hate is multiplied 'by the ability's parameter'; real code divides it by 100 (tv_mod / 100.0f, attack.cpp 3160-3161). (2) New-entry bonus: note says InitialAggroBonus (3098-3100) only; a charmed mob (IsCharmed) gets InitialPetAggroBonus (3097-3098; rule 100, ruletypes.h 733). (3) Order: note lists the pet-hold, familiar, aggro-immune and owner rejections (3109-3152) as happening 'first', before the multiply; in the code hatemod/initial bonus (3088-3102) run before them (no output difference since they return). (4) Section 4 header says sketch keeps donor order 'grey/..' n/a. Verified: AddEntToHateList 205-253, top pick 348-554 incl. aggro mods 35/10/0/100 (ruletypes 713-716), strict > ties, frenzy override 472, plain branch 515-550, RemoveStaleEntries 854-897 (600000 ms, oor_count==2), cleanup timer 6000 (mob.cpp 129), AItarget_check_duration 500 (features.h 150), TunnelVision 0.75, CheckWillAggro 370-562 incl. MinAggroLevel 18, IntAggroThreshold 75, threatening roll 32-heroic CHA/25, GPL-3 or later header.
+
+**Missed:** On the target-check timer, a non-pet NPC with no swarm info and no NPC aggro wipes NPC entries from its hate list (WipeHateList(true), mob_ai.cpp 1066-1073). The in-melee client candidate (top_client_type_in_range, hate_list.cpp 443) is compared on RAW hate before aggro_mod is applied, so it can differ from the modded top; the note describes the preference but not that detail. Damage<0 sets hate=1 (3071-3073; noted only in omit list).

@@ -149,3 +149,11 @@ Reuse tag: reuse-idea (MIT; adaptable)
 Brief rule served: 1 (one combat core, two clients); rules 7-9 n/a
 
 Best transferable idea: Keep a capped, distance-sorted queue of claimable corpses per player, drop an entry when the server refuses the claim or its retry budget runs out, and make ownership a server answer instead of a client guess.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** Nit only: bottingStats spans analyzer.lua 1517-1533 (return at 1532), note cites 1517-1530. All constants (20 queue, 6 radius, 6 path, 30 tries, 40 range, 5 item tries, 100 stack, 200/300/500 ms, 5000 food, 760 client, maxDanger 10, minCap 100), order of process, items.lua 2-4 values, MIT licence verified.
+
+**Missed:** Sketch omits isMonster() gate (313) and TargetBot.isOn (312) though only isOn is declared; container-full -> open next bag logic (190-203) only mentioned as waits.

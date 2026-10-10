@@ -169,3 +169,11 @@ export function propertyCount(maxProps: number, luck10k: number, rand: (n: numbe
 - The rights are computed from damage entries that expire (the `Mobile.DamageEntries` getter prunes them; the expiry rule was not read). Frankendom's ledger needs an explicit window.
 - A 1 in 100 weapon swap to a fire horn (696-699) is a donor joke item. Do not copy silently.
 - Not read: `ApplyAttributesTo` (what the property count does to stats), `LootPackItem.Construct`, honour context, the non-AOS branch.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** None found. GetLootingRights 3344-3455 (newest-first 3349, sub-entries skip non-player 3360, damage<=0 skip 3396, firstDamager bump x1.25 at 3428, sort 3433, divisor 16/8/4/2 at 3440-3443, rights at 3450), GetLuckChance 84-89, GetLuckChanceForKiller 92-113, Generate 118-158 (131, 135, 137, 139), Chance=(int)(100*chance) at 586, Construct 625-650 (phase check 627 before weighted pick 639-647), Mutate fire horn 696-699, bonus 706-720, GetBonusProperties weights 835-870 and 877-905, GenerateLoot 5326/5356, AddLoot 5381, OnBeforeDeath 3287, MlRich 171-174, AosMagicItemsRichType1 161-166, GPLv3 LICENSE line 4 all match. Acceptance test (A 60 -> 75, min 4, C out) checks out.
+
+**Missed:** GetLuckChance returns 0 at once when !Core.AOS (66-69) and adds the honour-context bonus; note mentions honour bonus only as not read and omits the non-AOS zero. Sketch passes aos to generatePack but luckChance10k has no AOS gate.

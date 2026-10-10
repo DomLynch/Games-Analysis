@@ -6,7 +6,7 @@ Checked: `PhysicalAttack.cs` read in full (1-213). `Formulas.cs` read at 204-396
 
 Best transferable idea: A shield blocks only inside a 120-degree frontal arc around the defender's facing, and a block adds the shield's defence to the defender's defence before the hit is divided, which maps onto a guard that only works when the fighter faces the attacker.
 Decision (proposed): adapt — take the facing-arc gate and the shield-adds-to-defence model into the guard step (checklist row 3 idea, filed under row 1 here); reject the donor's perfect block as a 1-point hit, since a block should not deal damage, and reject the height crit bonus as written because it always evaluates to 1.
-Acceptance: A duel test asserts that a strike from outside the 120-degree frontal arc is never blocked by the shield, and a strike from inside that passes the block roll is reduced with the shield's defence added to the defender's pDef, with no 1-point perfect block.
+Acceptance: A duel test asserts, with the angle difference wrapped to 0..180 (the donor does not wrap), that a strike from outside the 120-degree frontal arc is never blocked by the shield, and a strike from inside that passes the block roll is reduced with the shield's defence added to the defender's pDef, with no 1-point perfect block.
 
 ## 1. Mechanism
 
@@ -21,7 +21,7 @@ Acceptance: A duel test asserts that a strike from outside the 120-degree fronta
   - Positional value: side 1.1 (line 317), back 1.3 (line 321), front 1, each times a position-type stat (read, not receipted).
   - Height value: `(int.Clamp(fromZ - targetZ, -25, 25) * 4 / 5 + 10) / 100 + 1` (line 332). Every operand is an int in C#, so `/ 100` is integer division. The bracket runs from -10 to 30, so it truncates to 0 and the function returns 1 for every height difference. If the division were floating point, the same expression would give 1.10 at equal height (arithmetic only, not run).
 - Crit damage, `Formulas.calcCritDamage` (Formulas.cs 341-389): skill path multiplies the attacker's physical skill crit-damage stat by the target's matching defence stat and a balance factor; auto-attack multiplies the crit-damage stat by a position-type value. Returns `2 * criticalDamage * defenceCriticalDamage * balanceMod` (line 389).
-- Shield, `Formulas.calcShldUse` (Formulas.cs 608-664). Rate = SHIELD_DEFENCE_RATE times the target's CON bonus (line 616). A ranged attacker multiplies it by 1.3 (line 621). Facing gate: the arc is 120 degrees (line 624), or 360 if the target has the all-direction flag. The block is void when the angle between the target's heading and the bearing to the attacker is more than half the arc, 60 degrees (line 625). Success if `shldRate > Rnd.get(100)` (line 633). Perfect block if `100 - 2 * CON bonus < Rnd.get(100)` (line 636). Non-armour secondary items and sigils return no block (line 611, read, not receipted).
+- Shield, `Formulas.calcShldUse` (Formulas.cs 608-664). Rate = SHIELD_DEFENCE_RATE times the target's CON bonus (line 616). A ranged attacker multiplies it by 1.3 (line 621). Facing gate: the arc is 120 degrees (line 624), or 360 if the target has the all-direction flag. The block is void when `Math.Abs(AngleDegreesTo(attacker) - ConvertHeadingToDegrees(heading))` is more than half the arc, 60 degrees (line 625); this is a raw difference with no wrap at 360, so a defender facing 350 degrees with the attacker at 10 degrees reads as 340 off and never blocks (a donor bug; our port wraps the difference to 0..180). `defence` is declared outside the repeat loop (line 94) and is not reset, so a perfect block (`-1`) carries into later repeats. Success if `shldRate > Rnd.get(100)` (line 633). Perfect block if `100 - 2 * CON bonus < Rnd.get(100)` (line 636). Non-armour secondary items and sigils return no block (line 611, read, not receipted).
 - Damage entry, `Creature.doAttack` (Creature.cs 4590): an immobile target applies IMMOBILE_DAMAGE_BONUS times `max(0.22, IMMOBILE_DAMAGE_RESIST)` (line 4611); an attacker behind the target applies REAR_DAMAGE_RATE (line 4619); counterattacks run before damage (line 4625); then `target.reduceCurrentHp(...)` (line 4675). Reflect and absorb run after (read, not sketched).
 - HP entry, `Creature.reduceCurrentHp` (Creature.cs 4719): damage-dealt and damage-received events; PvP or PvE damage-taken multiplier with a floor of -80 percent (read, not receipted); elemental spirit damage added (line 4787); DAMAGE_LIMIT caps the amount (lines 4792-4795). The HP write and death are (not read).
 
@@ -54,7 +54,7 @@ Acceptance: A duel test asserts that a strike from outside the 120-degree fronta
 
 ## 4. TypeScript sketch
 
-simplified: keeps the donor order for one physical skill hit (shield facing gate and roll, then the defence add or the perfect block, then the crit roll, then the weapon-constant formula with the crit multiplier) and the two crit chances. It omits the repeat rolls, defence-ignore stats, soulshot, abnormal, trait, weakness, attribute, PvP/PvE and random multipliers, race modifier, the immobile and rear multipliers, counterattack, reflect, absorb, the damage-taken multipliers and the DAMAGE_LIMIT cap, and the auto-attack damage formula (not read). Position stats, the CON bonus, the STR bonus and the height multiplier are passed in as numbers; the sketch does not copy the integer-division bug, so the caller sets `heightMul` to 1 to match what the donor computes.
+simplified: keeps the donor order for one physical skill hit (shield facing gate and roll, then the defence add or the perfect block, then the crit roll, then the weapon-constant formula with the crit multiplier) and the two crit chances. It omits the repeat rolls, defence-ignore stats, soulshot, abnormal, trait, weakness, attribute, PvP/PvE and random multipliers, race modifier, the immobile and rear multipliers, counterattack, reflect, absorb, the damage-taken multipliers and the DAMAGE_LIMIT cap, and the auto-attack damage formula (not read). Position stats, the CON bonus, the STR bonus and the height multiplier are passed in as numbers; the sketch wraps the facing angle (the donor does not), does not model `defence` carrying over between repeats, does not copy the integer-division bug, so the caller sets `heightMul` to 1 to match what the donor computes.
 
 ```ts
 // Licence: MIT (donor, LICENSE.txt at the donor root). Written as our own sketch from the described formulas; not a line-by-line translation.
@@ -87,7 +87,8 @@ function rnd100(rand: () => number): number {
   return Math.floor(rand() * 100);
 }
 
-// angleOffDeg = absolute difference between the defender's facing and the bearing to the attacker.
+// angleOffDeg = absolute difference between the defender's facing and the bearing to the attacker, wrapped to 0..180
+// (the donor takes a raw difference with no wrap, so it mis-blocks across 0/360).
 function rollShield(d: Defender, attackerRanged: boolean, angleOffDeg: number, rand: () => number): Block {
   if (!d.shieldArcAll && angleOffDeg > FRONT_ARC_DEG / 2) return "none";
   let rate = d.shieldRate * d.conMul;
@@ -150,3 +151,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - The damage formula multiplies many stats that are not read here (trait, weakness, attribute, PvP/PvE, random). Any port that copies only the formula will not match the donor's numbers; that is expected, but it must be stated in the test.
 - Counterattacks run before damage in `doAttack` (line 4625). Frankendom must decide the order of counter and hit in the one ledger; the donor order is one option, not a rule.
 - Not read: the auto-attack damage formula, the HP write and death in reduceCurrentHp, the defence-ignore and repeat logic, and the CON and STR bonus functions.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** Shield arc gate described as 'angle between heading and bearing > 60' but code is a raw absolute difference with no 360 wrap: Math.Abs(AngleDegreesTo(attacker) - ConvertHeadingToDegrees(heading)) > degreeside/2 (Formulas.cs:625). A defender facing 350 deg with attacker at 10 deg is treated as 340 off and never blocks. Sketch takes angleOffDeg as a ready, wrapped input so it silently fixes this while the Acceptance test (120 deg arc) is written as if the donor does it. All other lines/constants (77/70, 1.3, 120, perfect-block rule, 5-90/3-97 clamps, 1.1/1.3 position, height-bonus integer-division always 1, 0.22, DAMAGE_LIMIT) verified.
+
+**Missed:** (a) `defence` is declared outside the repeat loop and never reset (PhysicalAttack.cs:94 vs 98-201): a perfect block sets defence=-1 and stays -1 for later repeats, and a later shield success then adds shieldDef to -1. (b) No wrap in the facing arc test (above). (c) A magic-skill branch of calcCrit (Formulas.cs:212-239) runs before the physical skill branch; note's 'skill path' covers only physical.

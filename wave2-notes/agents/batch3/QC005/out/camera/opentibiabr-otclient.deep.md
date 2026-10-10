@@ -13,7 +13,7 @@ Checked: The list hint (`uimap.h`) is only a thin wrapper that forwards to MapVi
 - Viewport (aware-range) widening, `updateViewportDirectionCache` (mapview.cpp 991-1032). Each direction has its own rectangle. Walking North or South adds one tile to top and bottom (1003-1004); East or West adds one tile to right and left; a diagonal adds one on all four sides. The idle case (`InvalidDirection`, 1023-1026) takes one off left and right. The widening is symmetric about the walk axis, not forward-only. `updateViewport` (mapview.h 189) copies the chosen rectangle into `m_viewport`, which the tile visibility check uses.
 - Free-look. `MapView::move` (804-830) adds whole tiles to `m_customCameraPosition` (812) and keeps the sub-tile remainder in `m_moveOffset`. The remainder is drawn only when not following (mapview.cpp 837-838). Callers of `move` were not read.
 - Predicted steps (the input side the camera follows). `LocalPlayer::canWalk` (localplayer.cpp 38-63): if the server reports a walk-max-steps value above zero, new steps are refused once the predicted queue is larger than that value (49-50); otherwise the position must equal the server position. `preWalk` (81-89) appends a predicted step and starts it with `Creature::walk`. `LocalPlayer::walk` (65-79), the server confirmation: if the new server position equals the front of the predicted queue, that step is popped; otherwise the queue is cleared and a normal server walk starts. `registerAdjustInvalidPosEvent` (106-113) clears the queue after min(max(step duration, ping) + 100, 1000) ms if nothing confirms it.
-- Timing. The donor has no fixed simulation tick on the client. Step timing uses the walk timer's elapsed time (clock), and the followed creature is re-driven through the dispatcher rather than a timed schedule. The server beat only rounds the step duration (1140-1141). The followed local player gets +10 ms per queued predicted step, at least one (1156-1158), so even with an empty queue its step is 10 ms longer. The "+10" branch is inside `getStepDuration` (1114-1162), whose other callers were not all read.
+- Timing. The donor has no fixed simulation tick on the client. Step timing uses the walk timer's elapsed time (clock), and the followed creature is re-driven through the dispatcher rather than a timed schedule. The server beat only rounds the step duration (1140-1141). The followed local player gets +10 ms per queued predicted step, at least one (1156-1158), so even with an empty queue its step is 10 ms longer. The glide in `updateWalk` (810) reads `getStepDuration(true)`, which includes that term, so the camera glide of the followed local player is lengthened by it (and by the queue size). The "+10" branch is inside `getStepDuration` (1114-1162), whose other callers were not all read.
 
 ## 2. Key functions
 
@@ -28,7 +28,7 @@ Checked: The list hint (`uimap.h`) is only a thin wrapper that forwards to MapVi
 
 | Reusable algorithm | Game-specific constants |
 |---|---|
-| Step duration = 1000 x ground speed / creature speed (ms) | `1000` (theirs, creature.cpp 1135; division at 1138) |
+| Step duration = 1000 x ground speed / creature speed (ms); returns 0 when speed < 1 (1116-1117); with the new speed law (`hasSpeedFormula()`) the divisor is the cached calculated step speed instead of speed (1136-1137) | `1000` (theirs, creature.cpp 1135; division at 1138) |
 | Default ground speed when the tile has none | `150` (theirs, creature.cpp 1129) |
 | Round step duration up to the server beat | Only for client 860 or the forced formula (theirs, 1140-1141) |
 | Glide progress = elapsed time / ticks per pixel, capped at one tile | Tile size in pixels (`g_gameConfig.getSpriteSize()`, value not read) |
@@ -40,7 +40,7 @@ Checked: The list hint (`uimap.h`) is only a thin wrapper that forwards to MapVi
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the core shape: the camera's focus is the logical position, and it lags behind by the unfinished part of the step, measured by clock time. It omits the predicted-step queue and reconciliation, the 10 ms per queued step penalty, the server-beat rounding, the diagonal speed factor, the walk-direction viewport widening, the free-look custom position and the pixel grid. It also swaps the donor's pixel offset for a vector lerp on the ground plane (world units). The shoulder offset and the rig are not in the donor and are not in the sketch.
+simplified: the sketch keeps the core shape: the camera's focus is the logical position, and it lags behind by the unfinished part of the step, measured by clock time. It omits the predicted-step queue and reconciliation, the new-speed-law divisor (the sketch always divides by speed; the donor uses the cached calculated step speed when `hasSpeedFormula()` is true, 1136-1137), the 10 ms per queued step term that also lengthens the followed player's glide (1156-1159), the `canWalk` dead, walk-lock and step-rate checks, the 10 ms per queued step penalty, the server-beat rounding, the diagonal speed factor, the walk-direction viewport widening, the free-look custom position and the pixel grid. It also swaps the donor's pixel offset for a vector lerp on the ground plane (world units). The shoulder offset and the rig are not in the donor and are not in the sketch.
 ```ts
 // Licence: MIT (donor, OTClient). Clean-room sketch of the shape only: the camera target is the logical position, and the displayed focus lags it by the unfinished part of the step.
 interface Vec2 { x: number; z: number; }
@@ -52,8 +52,10 @@ interface Step {
   startedAtMs: number;  // clock time when the step started
 }
 
-// Step duration as in the donor: 1000 * groundSpeed / speed, with 150 used when the tile has no ground speed.
+// Step duration as in the donor for the old speed law: 1000 * groundSpeed / speed, with 150 used when the tile has no ground speed.
+// Donor guard: a speed below 1 gives 0. (With the new speed law the donor divides by a cached calculated speed instead; not modelled.)
 function stepDurationMs(speed: number, groundSpeed: number): number {
+  if (speed < 1) return 0;
   const g = groundSpeed === 0 ? 150 : groundSpeed;
   return (1000 * g) / speed;
 }
@@ -93,3 +95,11 @@ export {};
 
 Reuse tag: adapt-allowed (MIT)
 Brief rule served: 1 (client-only camera; engine never reads it); parity row 11
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** Step duration is stated and sketched as 1000*groundSpeed/speed, but Creature::getStepDuration 1136-1138 divides by m_calculatedStepSpeed instead when hasSpeedFormula() (new speed law), and returns 0 when speed<1 (1116-1117); the sketch ('as in the donor') divides by speed with no guard. Also the glide uses getStepDuration(true), which includes the +10ms*queued-steps term for the followed local player (1156-1159), so the glide is lengthened by it (note mentions +10 but not its effect on updateWalk 810). Verified: getCameraPosition 1034, followCreature 737-754, setCameraPosition 756-765, mapview.h:63 isFollowingCreature, nextWalkUpdate 805 addEvent vs scheduleEvent, updateWalk 808-830 (cap at sprite size 812, notificate 823-824), updateWalkOffset 727-739, terminateWalk offset reset 852, walk 512-540 (timer 527), viewport cache 991-1032 (N/S top+bottom, E/W left+right, diagonal all four, idle -1 left/right), onCameraMove 542-548, calcFramebufferSource 836-838, move 804-830, canWalk 38-63, walk 65-79, preWalk 81-89, adjust event 106-113 formula, 150 default (1129), FPS60=1000/60 (value not read by note), MIT line 1.
+
+**Missed:** LocalPlayer::canWalk also returns false when dead or walk-locked and finally rate-limits on m_walkTimer.ticksElapsed() >= getStepDuration() (62); pixel-quantised integer walkedPixels with max() for paralyze (815)

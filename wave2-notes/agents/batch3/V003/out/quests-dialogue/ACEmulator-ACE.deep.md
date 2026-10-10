@@ -126,3 +126,11 @@ Best transferable idea: A quest solve is one server-side gate with a per-charact
 
 Decision (proposed): adapt - take the gate shape (catalogue cooldown and max solves, one record, one gate function) for zone quests and chest/item gates, but drop the bit-field reuse and the emote-branch dialogue engine, which would be a second rule engine against "one engine".
 Acceptance: A server test with rule {minDelta 3600 s, maxSolves 2}: first solve succeeds; a solve at +60 s is refused with 3540 s remaining; a solve at +3600 s succeeds; a solve at +10000 s is refused as max-solves; the quest chest reply shows the remaining time, not a silent fail.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** None found. Verified GetNextSolveTime order (334-365), CanSolve 266-279, Update 172-218 (silent return at max, no cooldown check), Stamp 484-487, ColoArena prefix 325, quest_mindelta_rate 1.0 (PropertyManager 662), SetQuestCompletions clamp 226, SetQuestBits 666-685, HandleKillTask Stamp without CanSolve, UpdateQuest 1462-1486, GetEmoteSet 1512-1553, busy gate 1584, depth 75 at 1607, OnTalkDirect 2047, Chest.cs 154, Player_Inventory.cs 1254-1260, GameActionTalkDirect 50, 'verify' comment at EmoteManager 630, AGPL-3 licence. Sketch order matches donor.
+
+**Missed:** Minor: IsMaxSolves returns false for a quest absent from the catalogue, so Update on an unknown quest counts without a cap (donor quirk). GetEmoteSet for ReceiveTalkDirect/HearChat also admits sets with Quest==null (not only key==message).

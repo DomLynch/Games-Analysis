@@ -13,9 +13,9 @@ camera_scope: not applicable (combat cell).
 ## 1. Mechanism
 
 - Offline simulator. Each run resolves a sequence of attacks from one attacker against one defender, prints one row per attack (time, hit, damage, armour reduction, net damage, running DPS, running DPM, running hit rate, total damage), and can sweep one attribute across a range, writing a summary file.
-- Order of steps per attack (lines 374-387): (a) resolve the hit (hit roll first, then damage only on a hit); (b) read the weapon's rate and the attacker's speed modifier, then advance the clock (377-381); (c) compute the armour reduction on the damage (385); (d) add to the running totals and print the row (383-387). The hit is decided before the clock moves.
+- Order of steps per attack (lines 374-387): (a) resolve the hit (hit roll first, then damage only on a hit); (b) read the weapon's rate and the attacker's speed modifier, then advance the clock (377-381); (c) add to the running totals (383-384); (d) compute the armour reduction on the damage (385) and print the row (387). The printed time is the time before the interval was added, while DPS divides by the time after the advance (387). The hit is decided before the clock moves; the totals are added before the armour column is computed.
 - Hit chance (lines 92-125): gap = attacker attack value minus defender defence value, divided by a scale unit (92-94). The chance starts at a base value (106). The loop then walks up (or down, for a negative gap) in bands of a fixed chance step (108-120). Band k costs k gap units, so the k-th band needs more gap than the one before; reaching band k costs k(k+1)/2 units in total. Progress into the next band is linear (117). The loop bound is set by how far the base is from the minimum, in steps (107), so the step count is capped. Finally the chance is clamped to a min and a max (122-123). The roll is a near-uniform draw on a 1-100 scale compared with the chance (125).
-- Damage (lines 128-129, 137-168): drawn only on a hit. The centre is 0.5 plus the unscaled gap divided by a damage scale (128), clamped to a fixed range (145-146). The point at that centre within [min, max] is the midpoint (155). If the midpoint falls outside the range, the range slides so the midpoint sits on that edge (157-158). Then three nested uniform draws: one between the low end and the midpoint (160), one between the midpoint and the high end (161), and a final one between those two (163). The result clusters near the midpoint, so a large attack advantage moves the typical hit up the weapon's damage range. If min is greater than max, the draw is reflected (148-153, 165).
+- Damage (lines 128-129, 137-168): drawn only on a hit. The centre is 0.5 plus the unscaled gap divided by a damage scale (128), clamped to a fixed range (145-146). The point at that centre within [min, max] is the midpoint (155). If the midpoint falls outside the range, the range is shrunk on the far side by the overshoot (the high end is lowered, or the low end raised) and the midpoint is put on that edge; the window does not move as a whole (157-158). Then three nested uniform draws: one between the low end and the midpoint (160), one between the midpoint and the high end (161), and a final one between those two (163). The result clusters near the midpoint, so a large attack advantage moves the typical hit up the weapon's damage range. If min is greater than max, the draw is reflected (148-153, 165).
 - Armour (385): net damage = damage minus damage times an effectiveness value on a fixed-point scale. It is an output column only and does not change the hit roll.
 - Attack interval (361, 378-381): the interval is the weapon's rate multiplied by a factor. The factor is (decay^points + offset) / (offset + 1), where decay and offset are fixed constants (379-380). At zero speed points the factor is 1. More points shorten the interval with diminishing returns, approaching a floor of offset / (offset + 1). So it is a soft cap on attack speed.
 - Outputs (387, 397-399): DPS = total damage / elapsed time; DPM = DPS / 60; hit rate = hits so far / rounds so far.
@@ -24,7 +24,7 @@ camera_scope: not applicable (combat cell).
 ## 2. Key functions
 
 - Hit resolution, band loop and clamp: `/mnt/frankendom-donors/SWG-Source-swg-main/tools/figureOfMeritCombatSimulator.pl` 77-135.
-- Damage draw (nested uniform inside a window slid around a shifted midpoint): same file 137-168.
+- Damage draw (nested uniform inside a window shrunk around a shifted midpoint): same file 137-168.
 - Attack loop: same file 365-412 (rounds, interval, armour column, running totals, sweep).
 
 ## 3. Numbers vs mechanism
@@ -32,7 +32,7 @@ camera_scope: not applicable (combat cell).
 | Reusable algorithm | Game-specific constants |
 |---|---|
 | Hit chance climbs in fixed bands from a stat gap; the k-th band costs k gap units; clamped to [min, max] | Base, min and max chance; chance step per band; gap units per band (theirs, lines 60-65; values withheld, restricted) |
-| Damage centre moves with the advantage; window slides so the centre stays inside the range; nested draws cluster near the centre | Damage scale that converts the raw gap into a centre shift (theirs, line 65; value withheld); centre clamp range (lines 145-146, values withheld) |
+| Damage centre moves with the advantage; the window is shrunk so the centre stays inside the range; nested draws cluster near the centre | Damage scale that converts the raw gap into a centre shift (theirs, line 65; value withheld); centre clamp range (lines 145-146, values withheld) |
 | Armour reduces the hit as a fraction, output only | Effectiveness fixed-point scale (theirs, line 385; withheld) |
 | Attack interval with diminishing speed returns and a floor | Decay base and offset (theirs, lines 379-380; withheld) |
 | Running DPS, DPM and hit rate as totals | None (the arithmetic) |
@@ -84,8 +84,8 @@ function rollHit(gap: number, t: ChanceTuning, rng: Rng): boolean {
 }
 
 // Damage is drawn only on a hit. shift = raw gap / damage scale, so 0 means centred.
-// The midpoint of [lo, hi] moves with the shift. If it leaves the range, the range slides
-// so the midpoint stays on the edge. Then: a point between lo and mid, a point between mid
+// The midpoint of [lo, hi] moves with the shift. If it leaves the range, the range is shrunk
+// on the far side by the overshoot so the midpoint sits on the edge. Then: a point between lo and mid, a point between mid
 // and hi, and a final point between those two. That concentrates results near the midpoint.
 function rollDamage(lo0: number, hi0: number, shift: number, rng: Rng): number {
   let lo = Math.min(lo0, hi0);
@@ -131,3 +131,11 @@ void tune; void rollHit; void rollDamage; void armourSoak; void attackInterval;
 - Perl's documented behaviour (Perl docs, not read in this donor) is that rand(0) acts like rand(1). If the midpoint lands exactly on the top of the range, the top nested draw can step past the maximum by up to one unit. The sketch clamps instead. Not tested here.
 - MAX_ATTACKERS = 3: a many-on-one fight runs this resolution once per attacker per defender per tick, so the cap must be tested with the duel, not only one pair.
 - Weapon damage range, rate and armour values are per-item data; the band size and the damage scale are fixed engine rules. Keep those two apart so a zone or item edit cannot change the ladder.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** 1) Damage section says the window 'slides so the midpoint sits on that edge'; the code (lines 157-158) does not slide it, it shrinks the window by the overshoot on the far side (max reduced or min raised) and puts mid on the edge. The sketch code does this correctly; only the prose and sketch comment are wrong. 2) Order of steps: note lists armour (c) before totals/print (d); in the file the totals are added at 383-384, armour computed at 385, then print (387); the printed time is the pre-advance time. Harmless. Verified: whole file 434 lines, header blank, hit-chance band loop 106-123 (cost k per band, bound from base-min over step, partial linear at 117, loop cap), roll 125 giving (c-1)/99, damage dist and clamp 128/145-146, midpoint 155, three nested draws 160-163 with int-rounded midpoint, inversion 148-153/165, interval formula 379-381 (floor and closed form in sketch equal), armour 385 output only, sweep 406-412, summary, restricted note matches; src/dsrc/serverdata/stationapi are empty. My hand check finds the closed-form band loop in the sketch equals the donor loop including the loop-bound edge cases (base==min, cap on full bands).
+
+**Missed:** Printed row time is the time before the interval is added, while DPS divides by the time after (387).

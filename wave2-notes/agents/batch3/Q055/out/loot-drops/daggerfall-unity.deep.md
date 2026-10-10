@@ -116,5 +116,14 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Seed quality: the game does not choose the seed (the list's object hash, 191), so a bag cannot be replayed from a logged seed. Frankendom needs a logged seed to replay a bag.
 - Level scaling is not consistent in the donor's own comments (LootTables.cs 179-181 names groups differently from the code at 217-221). The code is the truth here; we follow the code and the named keys.
 - Gold and items are the only parts that map to Frankendom now. Ingredients, magic items, clothing, books and religious items need item types Frankendom does not have (ItemBuilder not read); leave those keys out of the first version.
-- Chance can reach 100 (key T, rows 100): the halving gives at most 7 successes per category, which is a real cap but a large one for weapons. Set a cap per category in zone data if the bag size matters.
+- The number of successes per category depends on the starting chance. An unscaled row of 100 (key T) gives at most 7 (100, 50, 25, 12, 6, 3, 1). A level-scaled group starts at base times PC level (217, 218, 220, 221), so it can start above 100: for example P1 10 at level 30 is 300 and gives up to 9 successes (300, 150, 75, 37, 18, 9, 4, 2, 1). The halving is a cap that grows with level, not a fixed 7. Set a cap per category in zone data if the bag size matters.
+- Classic divergence: the donor's own comment (184-186) says classic gives even a 0 percent category a 1 in 100 chance, but the donor code does not (chance 0 never succeeds). Interior keys J to O also add map, potion and recipe rolls (`GenerateLoot` 154-161; not sketched).
 - The donor's corpse transfer moves the whole entity inventory (123); the quest comment says quest rewards are stashed there too. For Frankendom that is a second ledger source; keep the bag as one ledger entry per roll.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** Gap 'halving gives at most 7 successes per category' is false for level-scaled groups: chance is base*PC level (LootTables.cs 217,218,220,221), so e.g. P1 10 at level 30 = 300 gives 9 successes (300,150,75,37,18,9,4,2,1). The 7 limit only holds for unscaled 100 rows (key T). Worked numbers (6 for key C L5 P1, 7 for T, gold 10-100) verified. Other claims verified: order 194-255, 0.5 factor, (int) casts, Random.InitState 191, Dice100 15-17, EnemyEntity 330/389-396 (3 and 2), EnemyDeath 54-56/96/123/161-167, callers, MIT header line 4.
+
+**Missed:** LootTables.GenerateLoot 154-161: interior keys J-O also get map (2,1,1,2,2,15), potion 4, recipe 2; code comment 184-186 says classic gives even 0% categories a 1/100 chance, donor code does not (never succeeds at 0) - useful divergence to note.

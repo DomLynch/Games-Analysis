@@ -97,3 +97,11 @@ console.log(swingMs(1000, 0, example), sweepSwing(1000, 0, 5, 20, example).lengt
 
 Reuse tag: rewrite-from-idea (restricted: proprietary leaked source; clean-room only)
 Brief rule served: 2 and 6 (see section 5)
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** None. Verified lines 345-418 loop, 361 tick=RateOfFire, 367 clock reset, 372 rounds loop, 374 roll, 378 default SpeedMod 0, 379-381 curve (0.985 and 1.1, correctly withheld), 384, 387, 397-398 (/60), 410-417 sweep, template 38 and 48-51, empty src/dsrc/serverdata/stationapi, RESTRICTED note. Floor blend/(blend+1)=0.524 matches 'roughly half'. No clamp exists.
+
+**Missed:** None relevant; calculateHit/damage helpers (60-168) are not progression. Note calls RateOfFire the 'base swing time' - donor names it a tick/rate-of-fire; fine.

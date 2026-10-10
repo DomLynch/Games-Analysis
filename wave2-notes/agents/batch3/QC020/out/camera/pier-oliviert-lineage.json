@@ -36,9 +36,9 @@
    "donor_ref": "/mnt/frankendom-donors/pier-oliviert-lineage/src/controllers/game_controller.coffee:6"
   }
  ],
- "best_idea": "Pin the local player at the screen centre and draw every other entity at centre plus its tile offset times the tile size, so the view keeps no state beyond the viewport centre.",
+ "best_idea": "Pin the local player at the screen centre and draw every other entity at centre plus its tile offset times the tile size, so the view keeps no state beyond the viewport centre (the donor applies this only to the packet sender).",
  "decision": "reject",
- "decision_why": "The donor camera snaps every packet and leaves the floor static, and nothing in it answers the owner's shoulder, smoothing, collision or framing asks; its one useful rule (the view is client-only) is already our ruling.",
+ "decision_why": "The donor camera snaps every packet, leaves the floor static and re-places only the packet sender's sprite, and nothing in it answers the owner's shoulder, smoothing, collision or framing asks; its one useful rule (the view is client-only) is already our ruling.",
  "decision_status": "proposed",
  "acceptance": "A still of the world camera taken mid-run at 375 wide shows the floor moving under the hero, and a remote hero glides between packets instead of jumping one tile.",
  "camera_scope": "world"

@@ -6,11 +6,11 @@ Checked: Opened and read `ItemDropPresentationService.cs` at 68-104 (PlayDrop), 
 
 ## 1. Mechanism
 
-- The server sends a DropItem packet (object id, item id, count, stackable, position, dropper id). The client spawns a ground item and plays a throw from the dropper's hand. Weapons and other items fly a 0.55 s (weapon) or 0.35 s (other) arc. Coins (Adena) skip the throw entirely and land at once.
-- Flight: each frame `u = clamp(elapsed / duration, 0, 1)`; position = lerp(from, to, u) plus `sin(u * pi) * arcHeight` on y. Drops use a fixed 0.45 m lift; weapons use a lift clamped to 0.45-2.4 m of horizontal distance.
+- The server sends a DropItem packet (object id, item id, count, stackable, position, dropper id). The client spawns a ground item and plays a throw from the dropper's hand. Only weapons that stick on landing (a stick weapon with drop type 0 to 4, `ItemDropPose.cs` 39-40) fly the 0.55 s arc; every other item, other weapons included, flies a 0.35 s arc (`BeginThrow` 183-185). Coins (Adena) skip the throw entirely and land at once.
+- Flight: each frame `u = clamp(elapsed / duration, 0, 1)`; position = lerp(from, to, u) plus `sin(u * pi) * arcHeight` on y. Ordinary drops use a fixed 0.45 m lift; stick-on-land weapons use a lift equal to the horizontal distance clamped to 0.45-2.4 m (`ItemDropPose.cs` 51-53).
 - Landing: the item snaps to the ground at the landing point. Non-coins sit on the ground and start an 18 s ground glow timer. Coins (Adena) hide their mesh and reveal it 0.7 s after landing, and start the glow the same way.
 - Pickup: the server sends GetItem. The world plays a pickup pose on the picker and removes the object. The client never removes a drop on its own.
-- Driver: `ItemDropPresentationRunner.Update` calls `Tick(Time.deltaTime)` every Unity frame. This is a variable step: each frame advances timers by that frame's delta, and every timer is measured from the time it started.
+- Driver: `ItemDropPresentationRunner.Update` calls `Tick(Time.deltaTime)` every Unity frame. This is a variable step: each frame advances the throw timers by that frame's delta. The glow end (268) and the coin reveal time (434) are different: they are absolute `Time.time` stamps set at landing, not advanced per frame.
 
 Order of operations for one drop, as the code runs:
 1. DropItem packet -> `World.SpawnOrUpdateGroundItem` (379). If the object exists it is updated in place; otherwise `ItemSpawner.Spawn` creates the object, attaches the visual, registers it and calls `PlayDrop`.
@@ -37,13 +37,13 @@ Order of operations for one drop, as the code runs:
 |---|---|
 | Arc = lerp along the ground + sine lift that peaks mid-flight | Drop lift 0.45 m (theirs, `ItemDropPresentationIds.cs:33`) |
 | Duration floor so a short throw still shows an arc | Floor 0.05 s (theirs, `ItemDropPresentationService.cs:194`) |
-| Flight time per item class | Drop 0.35 s (theirs, `ItemDropPresentationIds.cs:32`); weapon 0.55 s (theirs, `ItemDropPresentationIds.cs:40`) |
-| Weapon lift follows horizontal distance, clamped | Clamp 0.45 to 2.4 m (theirs, `ItemDropPose.cs:52`) |
+| Flight time per item class | Drop 0.35 s (theirs, `ItemDropPresentationIds.cs:32`), used for everything except stick-on-land weapons; stick weapon 0.55 s (theirs, `ItemDropPresentationIds.cs:40`; choice at `ItemDropPresentationService.cs` 183-185) |
+| Stick-weapon lift follows horizontal distance, clamped | Clamp 0.45 to 2.4 m (theirs, `ItemDropPose.cs:52`, only when the pose sticks on landing) |
 | Timers start at landing, not at the throw | Glow 18 s (theirs, `ItemDropPresentationIds.cs:29`); coin reveal 0.7 s (theirs, `ItemDropPresentationIds.cs:52`) |
 
 ## 4. TypeScript sketch
 
-simplified: omits the Unity transform and rotation, weapon stick and tumble, the blade alignment, the dropper's "drop" animation, the throw start point (hand or 0.28 m hover), ground snap, click-area refresh, fall and land effects, and all packet handling. It keeps the donor's timing: flight advances by dt, the position is lerp plus sine lift, and glow and coin-reveal timers start at landing. It does not implement the Adena no-throw branch as a separate path; a caller would skip `makeArc` and call `landedTimers` at once for coins. Nothing is reordered.
+simplified: omits the Unity transform and rotation, weapon stick and tumble, the blade alignment, the dropper's "drop" animation, the throw start point (hand or 0.28 m hover), ground snap, click-area refresh, fall and land effects, and all packet handling. It keeps the donor's timing: flight advances by dt, the position is lerp plus sine lift, and glow and coin-reveal timers start at landing. The caller picks `duration` and `arcHeight` (donor: 0.55 s and a clamped lift only for stick-on-land weapons, else 0.35 s and 0.45 m). It does not implement the Adena no-throw branch as a separate path; a caller would skip `makeArc` and call `landedTimers` at once for coins. Nothing is reordered.
 
 ```ts
 // Licence: Apache-2.0 (donor). Clean-room sketch written from the mechanism; no donor lines copied.
@@ -115,3 +115,11 @@ Acceptance: a player kills a creature and a drop rises in a 0.35 s arc with visi
 - Weapon landing depends on blade geometry in `ItemDropWeaponAligner` and `ItemDropPose` tumble helpers, which are not read.
 - Effect ids in `ItemDropPresentationIds.cs` are placeholders (`PickupBurstEffectId = 0`, `CoinSparkleEffectId = 0`) with comments about a prior visual bug. Frankendom must not copy those ids.
 - Licence is Apache 2.0, so adaptation is allowed. Per-file headers were not checked; the sketch is clean-room regardless.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** Mechanism says weapons fly 0.55 s with lift clamped 0.45-2.4 m and others 0.35 s / 0.45 m, but BeginThrow 183-185 and ItemDropPose.cs 39-40,51-53 apply these only when pose.StickOnLand (stickWeapon && dropType 0..4); other weapons get 0.35 s and 0.45 m. Also 'each frame advances timers by that frame's delta, every timer measured from start' is only true of throws; glow end (268) and coin reveal (434) use absolute Time.time. Constants 0.45, 0.35, 0.55, 0.05 floor, 18, 0.7, 0.28, line refs 68-104, 121-147, 166-202, 204-247, 249-270, 427-470, World.cs 379-418 verified; no roll in donor confirmed.
+
+**Missed:** PlayDrop plays a fall-trail effect (81-88) before the throw and the dropper animation; PickupGroundItem removes the object right after PlayPickup (World.cs 411-418).

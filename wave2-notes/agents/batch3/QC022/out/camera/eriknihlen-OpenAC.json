@@ -1,0 +1,148 @@
+{
+ "game": "eriknihlen-OpenAC",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/eriknihlen-OpenAC/src/AcDream.App/Rendering/RetailChaseCamera.cs",
+ "licence": "MIT License (as read in LICENSE line 1; grant text line 5)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "camera_scope": "world",
+ "pattern_tags": [
+  "follow-point",
+  "clamp-and-report",
+  "new:boom-sweep",
+  "new:translucency-fade",
+  "new:lock-on-framing",
+  "new:convergence-park",
+  "variable-step"
+ ],
+ "data_fields": [
+  {
+   "name": "boom_distance",
+   "donor_constant": "2.61 (default; rest of 2.5 back, 0.75 up)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "src/AcDream.App/Rendering/RetailChaseCamera.cs:48"
+  },
+  {
+   "name": "boom_pitch",
+   "donor_constant": "0.291 rad default",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/AcDream.App/Rendering/RetailChaseCamera.cs:50"
+  },
+  {
+   "name": "pivot_height",
+   "donor_constant": "1.5 above player position",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/AcDream.App/Rendering/RetailChaseCamera.cs:54"
+  },
+  {
+   "name": "translation_stiffness",
+   "donor_constant": "0.45; alpha = stiffness x dt x 10, clamped 0..1",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "src/AcDream.Core/Rendering/CameraDiagnostics.cs:18"
+  },
+  {
+   "name": "rotation_stiffness",
+   "donor_constant": "0.45; same alpha formula",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "src/AcDream.Core/Rendering/CameraDiagnostics.cs:20"
+  },
+  {
+   "name": "wall_sphere_radius",
+   "donor_constant": "0.3",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/AcDream.App/Rendering/PhysicsCameraCollisionProbe.cs:8"
+  },
+  {
+   "name": "fade_near",
+   "donor_constant": "0.20 (body fully translucent at or inside)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/AcDream.App/Rendering/RetailChaseCamera.cs:630"
+  },
+  {
+   "name": "fade_far",
+   "donor_constant": "0.45 (body fully opaque at or beyond)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/AcDream.App/Rendering/RetailChaseCamera.cs:629"
+  },
+  {
+   "name": "orbit_step_per_unit",
+   "donor_constant": "8 degrees (0.1396 rad) per adjustment unit",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/AcDream.App/Rendering/RetailChaseCamera.cs:24"
+  },
+  {
+   "name": "key_adjust_speed",
+   "donor_constant": "40 units per second",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/AcDream.Core/Rendering/CameraDiagnostics.cs:24"
+  },
+  {
+   "name": "wheel_zoom_per_tick",
+   "donor_constant": "0.8 units per tick (scale 1 + 0.2 x units)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "src/AcDream.App/Input/CameraPointerInputController.cs:288"
+  },
+  {
+   "name": "mouse_smoothing_window",
+   "donor_constant": "0.25",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "src/AcDream.Core/Rendering/CameraDiagnostics.cs:22"
+  },
+  {
+   "name": "min_shrink_distance",
+   "donor_constant": "0.5",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/AcDream.App/Rendering/RetailChaseCamera.cs:25"
+  },
+  {
+   "name": "max_horizontal_offset",
+   "donor_constant": "10 (|x| and |y| must be under it)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/AcDream.App/Rendering/RetailChaseCamera.cs:26"
+  },
+  {
+   "name": "vertical_offset_range",
+   "donor_constant": "-1.8 to 450",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/AcDream.App/Rendering/RetailChaseCamera.cs:27"
+  },
+  {
+   "name": "lock_on_height",
+   "donor_constant": "0.5 above entity position along its rotation",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/AcDream.App/Interaction/WorldSelectionQuery.cs:509"
+  },
+  {
+   "name": "slope_alignment_side_limit",
+   "donor_constant": "1 (horizontal x |sin yaw| at most 1)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/AcDream.App/Rendering/RetailChaseCamera.cs:473"
+  }
+ ],
+ "best_idea": "Damp the eye toward the wanted boom spot, but start each step from the wall-clamped eye, and fade the player's body when the eye is within 0.45 m of the pivot.",
+ "decision": "adapt",
+ "decision_why": "The donor centres the boom on the player with no shoulder offset, so the over-the-shoulder view must be added; keep the damped pull-in, the wall sweep and the near-wall fade, and do not copy its raw numbers or its Y-axis mouse filter.",
+ "decision_status": "proposed",
+ "acceptance": "In a zone the character walks into a wall and the camera stops at the wall while the wanted eye stays on the boom line; a client test asserts the published eye is closer to the pivot than the boom length and body translucency is 1 when the eye is within 0.20 m of the pivot."
+}

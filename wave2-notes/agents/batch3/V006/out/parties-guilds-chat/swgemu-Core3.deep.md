@@ -118,3 +118,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Band thresholds (0.25, 0.5, 0.75, 1.0) and the 1/5 fraction are hard-coded in the donor. Frankendom should make them zone data fields (see the JSON sidecar), with the 1/5 fraction an engine rule.
 - The solo branch uses `calculatePlayerLevel` (428), which was not read. The spawn caps (197, 236) and random placement (246-261) were not read in full and belong to parity row 23, not to this note.
 - Guild and chat code (`GuildManagerImplementation.cpp`, `ChatRoomImplementation.cpp`) in this category was not read. Nothing in this note covers them.
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** None found. calculateGroupLevel 562-625, reset lines 563-565, pet branch 598-605, new-highest 607-609, else 611, round at 624, legacy comment 571-582, hooks at 167/260/781 and CreatureObjectImplementation 652, IDL 34-35 and 115-119, getPlayerSpawnLevel 404-428 (group 415), tryToSpawn 278/301/303-312, notifyPositionUpdate 23-57, AGPL COPYING all match. Worked 10/8/6 = 12.8 -> 13 and closed form hold; faction int truncation matches sketch.
+
+**Missed:** None important. Spawn caps at 197/236 exist as the note says.

@@ -18,8 +18,8 @@ Acceptance: when the player stands with a wall about one sector behind, the came
   (c) Stick view offset, not stored: pitch -R.y x 67.5 deg, yaw R.x x 90 deg (453-455). It applies outside look mode (and not in spectator) and is gone the moment the stick is released.
   (d) Orbit angles: `targetAngle = owner.angle + lookAngle + viewAngle` (460). Pitch is clamped to +-85 deg (465). Yaw is not smoothed: it equals the actor's yaw.
   (e) Aim. `owner.lookAt(lookAt)` (481) turns Lara's head and chest toward the look target. The look target is Lara's own `viewTarget` if set (`updateTargets` picks the nearer of her two arm targets, or a tracked target if none, lara.h:1461-1470), otherwise the camera's `viewTarget` (set by trigger commands, lara.h:1985) if it is within the front cone (`dot > 0.1`, about 84 deg; camera.h:473). When Lara has a target, `Lara::lookAt` also sets the camera's preset angle from the direction head-to-target (lara.h:1318-1321, `getAngle` at 1288-1289). Derived, not run: the orbit then places the eye on the far side of Lara from the target, so the camera looks through Lara at the target.
-  (f) Preset. `targetAngle += angle` (488), in follow and combat only. `angle` is set each tick by Lara's state table (lara.h:2944-3006): reach yaw 85 deg, hang pitch -60 deg, slide pitch -45 deg, default (0,0). Combat with no target resets it to (0,0) (lara.h:1323-1324).
-  (g) Look point. x and z follow the actor exactly (511). y is 3/4 of the way from the bottom of the actor's box toward the top (156), minus 256 (161), and eases at rate 5 x dt when `smooth` is set (514). In look mode the point is the head joint, lowered by 128 (camera.h:150-153).
+  (f) Preset. `targetAngle += angle` (488), in follow and combat only. `angle` is written each tick only while the camera mode is FOLLOW (lara.h:2944), so in combat the last preset persists until `lookAt`/`setAngle(0,0)` resets it (1323-1324). The state table (lara.h:2949-3006), as (pitch, yaw) in degrees: reach (0,85), back-jump (0,135), surf states and wade (-22,0), slide (-45,0), hang (-60,0), push/pull block (-25,35), push-pull-ready (0,75), pick-up (-15,-130), switch (-25,80), key/puzzle (-25,-80), special (-25,170), default (0,0). Combat with no target resets it to (0,0) (lara.h:1323-1324).
+  (g) Look point. x and z follow the actor (511), except when `centerView` is set, which swaps in the box centre (144-147); Lara sets it in water-out, death, push/pull-block and special states (lara.h 2951-3000). y is 3/4 of the way from the bottom of the actor's box toward the top (156), minus 256 (161), and eases at rate 5 x dt when `smooth` is set (514). In look mode the point is the head joint with a `(0, -128, 0)` offset applied in joint space (camera.h:150-153; the sign of the lowering is not verified).
   (h) Ideal eye: `offset` behind the look point along the orbit direction (524-525). Offset is 1536 in follow, 2048 in combat (522), 512 in look mode. Lara sets combat every tick when her hands are not empty and she is alive, otherwise follow (lara.h:3318); look is set by the look input (3319-3320).
   (i) Wall pull-in (`traceClip`, 528). First, a grid ray is walked from the look point to the ideal eye, one 1024-unit cell at a time, and stops at the first blocked cell (`Controller::trace`, controller.h:1054-1068; `traceZ` stops at 1035-1038). Then the free box of the sector is taken (`clipBox`, 290-328) and inset by 256 (262). If the stopped point is outside the box's Z range, X and Z are swapped (270-275), and the point is left alone if its X is inside the box (277-278). Otherwise `clipSlide` (211-246) works in three cases: two corner cases and one side case. Its side case puts the eye on the circle of radius `offset` around the look point where that circle meets the wall line (226). A corner case falls back to the box corner when the circle does not reach the wall or passes the corner (222-233, 240-245).
   (j) Eye follow (`move`, 330-354). When `smooth` is set and speed > 0, the eye lerps toward the clipped point with factor 30/speed x dt, so 12 gives 2.5 per second and 8 gives 3.75 per second (331). Look mode uses 20 x dt (333). When not smooth the factor is 1 (snap). After the lerp, the eye's y is clamped between the sector ceiling plus 256 and the sector floor minus 256 (340-353). If the two cross, both collapse to the midpoint (349-350).
@@ -57,13 +57,13 @@ Acceptance: when the player stands with a wall about one sector behind, the came
 | Shake | Decays 1 per s (358); amplitude 48 (642); phase 7 x PI per unit (642); floor shake 0.5 within 15 sectors (level.h:714); explosion 1.0 (727) |
 | FOV | 65 deg third person, 90 deg first person (717) |
 | Look-at cone | dot > 0.1, about 84 deg (473) |
-| State presets | Reach yaw 85 (lara.h:2958), hang pitch -60 (2977), slide pitch -45 (2972) |
+| State presets | Reach yaw 85 (lara.h:2958), back-jump yaw 135 (2961), surf and wade pitch -22 (2968, 3003), slide pitch -45 (2972), hang pitch -60 (2977), push/pull (-25,35), push-pull-ready (0,75), pick-up (-15,-130), switch (-25,80), key/puzzle (-25,-80), special (-25,170) (lara.h:2949-3006) |
 
 Mechanism claims, no constant: the eye is always pulled in from the focus point, never pushed; the slide keeps the distance equal to the offset; the eye is kept off the floor and ceiling by 256.
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order: shake decay, look-offset recentre, orbit angles (pitch clamp, then preset), look point, ideal eye, wall pull-in, frame-rate-independent eye lerp, floor/ceiling clamp, then shake as a view-only offset. It omits: the look-mode stick integration (the caller sets `lookPitch`/`lookYaw`), the owner's own pitch and the yaw wrap (`clampAngle`), the underwater -256 exception, the head-joint look point in look mode, the second eye trace when the ideal eye is below the floor, sector and room tracking, the wall slide geometry (`pullIn` is injected and must be supplied by the engine's world query), the static, cutscene and first-person paths, and the aim and look-at logic (the caller supplies `preset`, from a state table or a target direction). Nothing else is reordered.
+simplified: the sketch keeps the donor order: shake decay, look-offset recentre, orbit angles (pitch clamp, then preset), look point, ideal eye, wall pull-in, frame-rate-independent eye lerp, floor/ceiling clamp, then shake as a view-only offset. It omits: the look-mode stick integration (the caller sets `lookPitch`/`lookYaw`), the owner's own pitch and the yaw wrap (`clampAngle`), the underwater -256 exception, the head-joint look point in look mode, the second eye trace when the ideal eye is below the floor, sector and room tracking, the wall slide geometry (`pullIn` is injected and must be supplied by the engine's world query), the static, cutscene and first-person paths, and the aim and look-at logic (the caller supplies `preset`, from a state table or a target direction), the `centerView` x/z swap to the box centre, and the second eye trace in `move` (342-346). The sketch's `PRESET` table lists the donor's full state table. Nothing else is reordered.
 
 ```ts
 // Licence: BSD-2-Clause (donor: XProger-OpenLara, LICENSE). Adapted shape, hand-written in TypeScript from the read mechanism.
@@ -102,12 +102,20 @@ export const DONOR_TUNE: Tune = {
   pitchMax: 85 * DEG,
 };
 
-// Per-state orbit presets (donor lara.h:2958-3006, in degrees there). Applied only in follow mode.
+// Per-state orbit presets (donor lara.h:2949-3006, in degrees there). The donor writes them only while the camera mode is follow.
 export const PRESET = {
-  none:  { pitch: 0 * DEG,   yaw: 0 * DEG },
-  reach: { pitch: 0 * DEG,   yaw: 85 * DEG },
-  hang:  { pitch: -60 * DEG, yaw: 0 * DEG },
-  slide: { pitch: -45 * DEG, yaw: 0 * DEG },
+  none:          { pitch: 0 * DEG,   yaw: 0 * DEG },
+  reach:         { pitch: 0 * DEG,   yaw: 85 * DEG },
+  backJump:      { pitch: 0 * DEG,   yaw: 135 * DEG },
+  surfWade:      { pitch: -22 * DEG, yaw: 0 * DEG },
+  slide:         { pitch: -45 * DEG, yaw: 0 * DEG },
+  hang:          { pitch: -60 * DEG, yaw: 0 * DEG },
+  pushPullBlock: { pitch: -25 * DEG, yaw: 35 * DEG },
+  pushPullReady: { pitch: 0 * DEG,   yaw: 75 * DEG },
+  pickUp:        { pitch: -15 * DEG, yaw: -130 * DEG },
+  switchUse:     { pitch: -25 * DEG, yaw: 80 * DEG },
+  keyPuzzle:     { pitch: -25 * DEG, yaw: -80 * DEG },
+  special:       { pitch: -25 * DEG, yaw: 170 * DEG },
 };
 
 export interface Actor { x: number; z: number; yaw: number; boxMinY: number; boxMaxY: number; }
@@ -203,3 +211,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 Reuse tag: adapt-shape (BSD-2-Clause; notice kept)
 Brief rule served: 11 (fight camera, client-only); rule 1 is not a fight rule here, so n/a
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** Mechanism (g) says look point x/z 'follow the actor exactly (511)'; getViewPoint 144-147 swaps in the box centre when centerView is set (death, water-out, push/pull block, special states per lara.h 2951-3000), so x/z are not always the actor position. Look-mode head offset is vec3(0,-128,0) in joint space (152): 'lowered by 128' is unverified given y-down; do not rely on direction. Preset list in (f)/sketch names only reach/hang/slide; the real state table (lara.h 2949-3006) also has back-jump yaw 135, surf/wade pitch -22, push/pull (-25,35), pick-up (-15,-130), switch (-25,80), key/puzzle (-25,-80), special (-25,170), push-pull-ready (0,75). Rest verified: 1536/2048/512, 12/8 speeds, 30/speed*dt, 20*dt look, 5*dt, 256 insets, 3/4 height, +-85, 67.5/90 stick, -75/+55/80 look, 10*dt recentre, 0.2/1/30 s timing, shake 48*sin(7 PI s) with sources 714/727/741, FOV 65/90, dot>0.1, traceClip/clipSlide/clipBox/move line ranges, vec3(lng,lat) at utils.h 431, BSD-2.
+
+**Missed:** centerView flag and the full per-state preset table; second eye trace in move() (342-346) is only listed as omitted in sketch, not in mechanism (j); presets are only written when camera->mode == FOLLOW (lara.h 2944), so in combat the last preset persists until lookAt/setAngle(0,0) at 1323.

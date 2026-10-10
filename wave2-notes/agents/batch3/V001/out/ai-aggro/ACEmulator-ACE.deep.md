@@ -171,3 +171,11 @@ Typecheck: the sketch file with `export {};` appended was run on the VPS with `n
 
 Reuse tag: rewrite-from-idea (AGPL-3.0; clean-room only)
 Brief rule served: 1 (one engine: target choice in the engine, not the client); rules 7-9 n/a
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** All cites and constants verified: 0.2 s think (Monster_Tick 10,34), Landblock 454-469, 5.0 s gate (129; random commented at 128), 18 awareness (377), 96 chase (Navigation 21), leash >=96 (244), home radius 192 (430), MoveToHome clears target (474-475) with 5 s cancel (485), tactic default Random|TopDamager (101), Next(1,Count-1) inclusive (ThreadSafeRandom 30), SelectWeightedDistance 296-324 (roll over n-1, weights 1-d/sum; 1 and 3 units gives 75%), Alert cooldown 2 min (434), 0.75 s (341), setter bug at 76, DamageHistory 44/62-66/82-94. Only wording nit: note says AlertMonster is called 'on the spawning monster' - code is closestTarget.AlertMonster(this).
+
+**Missed:** Monster_Tick 61-65: a monster in State.Return runs Movement() and returns before the lost-target check - the think order list omits this branch. Non-awake monsters still tick (36-45) and run FactionMob_CheckMonsters for faction/foe mobs. AlertFriendly skips already-awake creatures (457) and honours AlertExclude (460).

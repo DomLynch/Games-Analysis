@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+kivutar-goro	camera	P	STRONG	full	/mnt/frankendom-donors/kivutar-goro/game/camera.go:46-67 (follow and zoom easing, lerp 0.006 per ms, clamps, orbit eye in scene_projection.go:167-188, shake camera.go:179-192); no collision or lock-on.
+drgomesp-midgarts	camera	P	PARTIAL	thin	/mnt/frankendom-donors/drgomesp-midgarts/internal/camera/camera.go:53-103 (fixed-position camera; yaw and pitch never reach the view matrix, no follow code anywhere in the repo).
+gesior-otwebclient	camera	P	PARTIAL	thin	/mnt/frankendom-donors/gesior-otwebclient/modules/structures.ts:14-27 and modules/network/protocolgame.ts:2073-2086 (fixed 18x14 tile window; the range setter in modules/map.ts:16-17 throws, and there is no camera or drawing code).

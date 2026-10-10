@@ -1,0 +1,81 @@
+{
+ "game": "latentcollapse-RustDAoC",
+ "category": "animation-rigs",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/latentcollapse-RustDAoC/crates/caer-render/src/lib.rs",
+ "licence": "GPL-3.0-or-later",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/anim-clock.ts",
+ "parity_row": 6,
+ "pattern_tags": [
+  "new:clip-rate-split",
+  "new:stride-locomotion",
+  "new:crossfade-timer",
+  "variable-step"
+ ],
+ "data_fields": [
+  {
+   "name": "clip_frames",
+   "donor_constant": "30 (I_hm test row)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "caer-assets/src/anims.rs:400"
+  },
+  {
+   "name": "clip_authored_fps",
+   "donor_constant": "15 (I_hm test row)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "caer-assets/src/anims.rs:400"
+  },
+  {
+   "name": "clip_played_fps",
+   "donor_constant": "4 (I_hm test row)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "caer-assets/src/anims.rs:400"
+  },
+  {
+   "name": "stride_walk_run_back_strafe",
+   "donor_constant": "monnifs Stride column per model (value not read)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "caer-render/src/entities.rs:251"
+  },
+  {
+   "name": "run_speed_threshold",
+   "donor_constant": "100 wire speed",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "caer-render/src/entities.rs:284"
+  },
+  {
+   "name": "cross_fade_seconds",
+   "donor_constant": "0.2",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "caer-render/src/entities.rs:192"
+  },
+  {
+   "name": "stale_anim_prune_seconds",
+   "donor_constant": "5.0",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "caer-render/src/entities.rs:864"
+  },
+  {
+   "name": "phase_step",
+   "donor_constant": "0.618034 (golden ratio fract of object id)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "caer-render/src/lib.rs:559"
+  }
+ ],
+ "best_idea": "Drive a locomotion clip's cycle from ground speed divided by the stride length (with a per-clip playback rate for standing), and keep the authored key timeline separate from the played rate as data.",
+ "decision": "adapt",
+ "decision_why": "The stride match stops feet skating and the authored/played split is cheap data; we take the shape but make phase a cycle fraction and make the hold and blend lengths explicit, because the donor's phase offset is not a clean cycle fraction and its hold flag is not applied on the render path.",
+ "decision_status": "proposed",
+ "acceptance": "A walking hero or creature at speed S with a stride of L completes one walk cycle every L/S seconds, so a server-free client test asserts the cycle fraction equals (elapsed * S / L) mod 1 within 1e-3, and a 30-frame idle authored at 15 fps and played at 4 fps takes 7.5 s per cycle."
+}

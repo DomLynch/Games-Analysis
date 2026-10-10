@@ -1,0 +1,119 @@
+{
+ "game": "vE5li-korangar",
+ "category": "camera",
+ "cell": 14,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/vE5li-korangar/korangar/src/world/cameras/player.rs",
+ "licence": "as read: MIT License (/mnt/frankendom-donors/vE5li-korangar/LICENSE.md, Copyright (c) 2023 Lucas Pütz)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/camera.ts",
+ "parity_row": 11,
+ "camera_scope": "world",
+ "pattern_tags": [
+  "follow-point",
+  "variable-step",
+  "clamp-and-report",
+  "hysteresis",
+  "new:orbit-camera",
+  "new:smoothed-value"
+ ],
+ "data_fields": [
+  {
+   "name": "elevation_deg",
+   "donor_constant": "-55 deg pitch (CAMERA_PITCH); camera above focus",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/vE5li-korangar/korangar/src/world/cameras/player.rs:10"
+  },
+  {
+   "name": "distance_default",
+   "donor_constant": "400 (DEFAULT_DISTANCE)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/vE5li-korangar/korangar/src/world/cameras/player.rs:8"
+  },
+  {
+   "name": "distance_min",
+   "donor_constant": "150 (MINIMUM_CAMERA_DISTANCE)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/vE5li-korangar/korangar/src/world/cameras/mod.rs:25"
+  },
+  {
+   "name": "distance_max",
+   "donor_constant": "500 (MAXIMUM_CAMERA_DISTANCE)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/vE5li-korangar/korangar/src/world/cameras/mod.rs:24"
+  },
+  {
+   "name": "yaw_default_deg",
+   "donor_constant": "180 (DEFAULT_ANGLE)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vE5li-korangar/korangar/src/world/cameras/player.rs:9"
+  },
+  {
+   "name": "drag_yaw_per_px",
+   "donor_constant": "0.005 rad per px (ROTATION_SPEED)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vE5li-korangar/korangar/src/world/cameras/player.rs:7"
+  },
+  {
+   "name": "wheel_distance_per_unit",
+   "donor_constant": "1.0 (ZOOM_SPEED) times wheel delta",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vE5li-korangar/korangar/src/world/cameras/player.rs:6"
+  },
+  {
+   "name": "wheel_line_step",
+   "donor_constant": "30 per wheel line (MOUSE_SCOLL_MULTIPLIER)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vE5li-korangar/korangar/src/input/mod.rs:19"
+  },
+  {
+   "name": "focus_speed",
+   "donor_constant": "5.0 (linear step speed * dt)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vE5li-korangar/korangar/src/world/cameras/player.rs:32"
+  },
+  {
+   "name": "yaw_speed",
+   "donor_constant": "15.0",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vE5li-korangar/korangar/src/world/cameras/player.rs:35"
+  },
+  {
+   "name": "distance_speed",
+   "donor_constant": "5.0",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vE5li-korangar/korangar/src/world/cameras/player.rs:36"
+  },
+  {
+   "name": "dead_band",
+   "donor_constant": "0.01 (THRESHOLD, same for units and radians)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vE5li-korangar/korangar/src/world/cameras/player.rs:12"
+  },
+  {
+   "name": "vertical_fov_deg",
+   "donor_constant": "15.5 (VERTICAL_FOV)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vE5li-korangar/korangar/src/world/cameras/player.rs:11"
+  }
+ ],
+ "best_idea": "Give the world camera its own smoothed focus that trails the character with a dead band and an exact per-second step, and keep distance and yaw as clamped targets that input moves and a timer settles.",
+ "decision": "adapt",
+ "decision_why": "Take the decoupled, dead-banded focus smoothing and the clamped distance and yaw targets; change the step to the exact per-second fraction and add the shoulder offset, collision pull-in and target-first frame order, because the donor has none of them and the owner's complaint is the shoulder view.",
+ "decision_status": "proposed",
+ "acceptance": "After a 10-tile walk and a stop, the remaining focus gap is 0.67 percent of the start after 1 s at both 30 fps and 144 fps (unit test within 0.01 points), and 100 wheel notches never leave the distance inside its zone-data band."
+}

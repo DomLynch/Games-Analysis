@@ -119,5 +119,5 @@
  "decision": "adapt",
  "decision_why": "Take the facing-arc gate and the shield-adds-to-defence model into the guard step; reject the perfect block as a 1-point hit (a block should not deal damage) and the height crit bonus as written (it always evaluates to 1 because of integer division).",
  "decision_status": "proposed",
- "acceptance": "A duel test asserts that a strike from outside the 120-degree frontal arc is never blocked by the shield, and a strike from inside that passes the block roll is reduced with the shield's defence added to pDef, with no 1-point perfect block."
+ "acceptance": "A duel test asserts, with the angle difference wrapped to 0..180 (the donor does not wrap), that a strike from outside the 120-degree frontal arc is never blocked by the shield, and a strike from inside that passes the block roll is reduced with the shield's defence added to pDef, with no 1-point perfect block."
 }

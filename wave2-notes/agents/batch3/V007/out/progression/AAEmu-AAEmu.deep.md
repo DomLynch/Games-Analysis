@@ -8,10 +8,6 @@ Best transferable idea: Share one kill's XP across the eligible contributors wit
 Decision (proposed): adapt - take the group factor times level factor with the 10-level zero band and the truncation; reject the raid and full-party factors (no raids in our rules) and do not copy the solo fallback that skips the level factor.
 Acceptance: server test: with MAX_ATTACKERS = 3 and a level-20 monster, three contributors (levels 20, 21, 25) and a 1000 base award about 875, 787, 437 XP; a level-30 contributor gets 0 and is still counted as a contributor for loot rights.
 
-Best transferable idea: Share one kill's XP across the eligible contributors with a group factor (more contributors or a bigger team each get less) and a level-gap factor that falls 0.1 per level above the monster and rises 0.1 per level below, with no XP at a gap of 10 or more.
-Decision (proposed): adapt - take the group factor times level factor with the 10-level zero band and the truncation; reject the raid and full-party factors (no raids in our rules) and do not copy the solo fallback that skips the level factor.
-Acceptance: server test: with MAX_ATTACKERS = 3 and a level-20 monster, three contributors (levels 20, 21, 25) and a 1000 base award about 875, 787, 437 XP; a level-30 contributor gets 0 and is still counted as a contributor for loot rights.
-
 ## 1. Mechanism
 
 - Who shares. Team members within `MaxLootingRange` (200 units) are added when they hold tag rights (`Npc.cs` 854, 856). The tagger is added when the tag team is missing (861-864) or when there is no tag team (867-870). If nobody is eligible, the killer gets the full kill XP with no group or level factor (875-878).
@@ -19,7 +15,7 @@ Acceptance: server test: with MAX_ATTACKERS = 3 and a level-20 monster, three co
 - Level factor (`Npc.cs` 950-968). A player whose level is 10 or more above the monster, or 10 or more below, gets nothing (950-953). Otherwise `levDif = 1 - 0.1 x (playerLevel - npcLevel)` when the player is above (962), `1 + 0.1 x (npcLevel - playerLevel)` when below (967), and 1 when equal (956).
 - Award. Per eligible player, `(int)(KillExp x plMod x levDif)` (970), then `pl.AddExp(plKillXp, true)` (973). Pets get the same product with `mateMod` (971-980).
 - Kill XP base. `KillExp` (800-826) returns 0 for `NoExp`, otherwise evaluates a formula (806, not read) with level and stats, then multiplies by the NPC's `ExpMultiplier` (824) and adds `ExpAdder` (825).
-- Into the player. `Character.AddExp` multiplies a positive delta by the server `ExpRate` (`Character.cs` 1439; default 1.0 in `Configurations.cs` 48), finds the new level from the total-exp table by binary search (`ExperienceManager.cs` 108), trims the overflow above the cap (1447-1449; cap 55 at `ExperienceManager.cs` 23), and adds the same delta to the active profession's exp (`CharacterAbilities.cs` 50-55, capped at max-level exp). It then broadcasts a level change and fires level-up quest events.
+- Into the player. `Character.AddExp` multiplies a positive delta by the server `ExpRate` (`Character.cs` 1439; default 1.0 in `Configurations.cs` 48), finds the new level from the total-exp table by binary search (`ExperienceManager.cs` 108), trims the overflow above the cap (1447-1449; cap 55 at `ExperienceManager.cs` 23), and adds the same delta to the exp of each of the character's three equipped abilities (`AddActiveExp`, `CharacterAbilities.cs` 50-60: Ability1, Ability2 and Ability3, each capped at max-level exp). It then broadcasts a level change and fires level-up quest events.
 - Death loss (separate rule, not sketched). Below the minimum level (10) there is no loss, only a free resurrection (`CharacterCombat.cs` 72-86). At or above it, in the default world only (70), the loss is `floor(span of this level x 0.05)`, capped at the exp earned this level (`ExperienceManager.cs` 212-213; `CharacterCombat.cs` 74-77), and 80 percent of it is recoverable (78).
 
 ## 2. Key functions
@@ -109,7 +105,15 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Gap 5, the level step is linear and float. `1 - 0.1 x gap` is computed in single-precision floats and truncated (`Npc.cs` 962, 970). Frankendom should compute in integers (basis points) so that the same kill gives the same XP on server and test.
 - Gap 6, death loss is a separate rule. The loss is 5 percent of this level's span, 80 percent recoverable, and free below level 10 (`CharacterCombat.cs` 72-78, `Configurations.cs` 161, 176). It is not part of the kill split; if Frankendom wants it, it is its own row (17 death and respawn).
 - Gap 7, the level table is data and must be sorted. The loader rejects a table that is not sorted by total exp or misses a level (`SqliteExperienceLevelTemplateLoader.cs` 36-52). Frankendom's zone data should keep that check.
-- Gap 8, profession exp is capped at max-level exp per ability (`CharacterAbilities.cs` 55-59), and the same kill delta feeds it (`Character.cs` 1456). A kill therefore grows profession exp by the same amount as character exp. The addendum's rulings do not name a profession track, so this part does not transfer as it stands.
+- Gap 8, profession exp is added to all three equipped abilities, each capped at max-level exp (`CharacterAbilities.cs` 50-60), and the same kill delta feeds it (`Character.cs` 1456). A kill therefore grows each of the three ability exps by the same amount as character exp. The addendum's rulings do not name a profession track, so this part does not transfer as it stands.
 
 Reuse tag: rewrite-from-idea (GPL-3.0 / LGPL-3.0; clean-room only)
 Brief rule served: zones as data; server-verified kills; one ledger
+
+
+## Checker findings (Legend pass, Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code, stricter pass (8+ claims per note incl. sketch constants and order).
+
+**Errors / corrections:** (1) Note says AddExp adds the delta to 'the active profession's exp' (CharacterAbilities.cs 50-55); real AddActiveExp adds to all three of Ability1, Ability2 and Ability3, each capped at max-level exp (CharacterAbilities.cs 50-60). (2) Best/Decision/Acceptance block is duplicated in the file (cosmetic). All Npc.cs numbers (0.33/0.66, 0.66 for >3, 0.90, 0.875, 10-level zero band, 0.1 step, (int) cast at 970), Character.AddExp 1432-1473, ExperienceManager 23/108/212-213, death loss 0.05/10/0.80 (Configurations 161/176, CharacterCombat 72-78), loader sort check, licence (GPL file vs LGPL README) all verified. Acceptance arithmetic 875/787/437 holds with the float math.
+
+**Missed:** TagShareEnabled fan-out of monster-hunt quest events to all damage dealers (Npc.cs 990-1000+) is not covered; isFullTeam requires team.IsParty and MembersCount()>3 so a party of 4 with one member nearby still gets 0.66 (partly noted in gap 3).
