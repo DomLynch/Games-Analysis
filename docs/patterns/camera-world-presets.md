@@ -1,6 +1,6 @@
 # Camera presets to try on your phone
 
-We built five ways the world camera could feel. You pick on your phone by adding a flag to the preview link: `?cam=A`, `?cam=B`, `?cam=C`, `?cam=D` or `?cam=E`. Switching blends over under half a second, so you can compare in place. Only the world camera changes. The Pit camera stays exactly as it is, no matter which preset you pick. All numbers are our own starting guesses for a 375x812 portrait screen, and you can tune them.
+We designed five ways the world camera could feel (nothing is built in the game yet). Once the World lane builds them, you will pick one on your phone by adding a flag to the preview link: `?cam=A`, `?cam=B`, `?cam=C`, `?cam=D` or `?cam=E`. Switching is planned to blend over under half a second, so you can compare in place. Only the world camera changes. The Pit camera stays exactly as it is, no matter which preset you pick. All numbers are our own starting guesses for a 375x812 portrait screen, and you can tune them.
 
 ## The five presets
 
@@ -10,11 +10,11 @@ We built five ways the world camera could feel. You pick on your phone by adding
 - **D, Cinematic Lag.** Heavier and filmic. The camera trails behind with a visible spring, fades walls that get in the way, and settles slowly after you flick the view. Pretty, but might feel floaty.
 - **E, Tight Pocket.** For corridors and small rooms. Close and a bit high, hugs the hero, and avoids swinging around. Meant to be applied per zone rather than everywhere.
 
-## How to try it
+## How to try it (future: after the World lane builds it)
 
 1. Open the preview link on your iPhone with `?cam=A`.
 2. Play about ten minutes, then repeat with B to E.
-3. A debug overlay shows which camera parts are active and their numbers, so you can tell us what to change.
+3. A planned debug overlay will show which camera parts are active and their numbers, so you can tell us what to change.
 
 ## Six questions for you
 
