@@ -1,0 +1,142 @@
+{
+  "donor": "Anuken-Mindustry",
+  "code_licence": "GNU GPL version 3 (LICENSE, full FSF text, no copyright-holder line).",
+  "asset_licence": "Not stated. No asset-specific licence file or licence line exists in the repo (grep for licence, creative commons, CC0, public domain across core/assets, core/assets-raw, README, CONTRIBUTING and ISSUES found no asset licence statement). The only licence is the GPL-3.0 text for the repository.",
+  "rights_holder_status": "Original project by Anuken per the in-game credits string in core/assets/bundles/bundle.properties (line 1). The repo does not state a copyright holder for the assets. Contributor names are listed in core/assets/contributors (about 200 lines); not reproduced.",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "UI, planet and background sprites (engine-level)",
+      "path": "core/assets/sprites/ (caustics, clouds, fog, logo, noise, rays, space, planets/serpulo.png, planets/erekir.png and others)",
+      "count_hint": "13 files, about 1.7 MB; plus core/assets/cubemaps/stars",
+      "licence": "Not stated",
+      "class": "C",
+      "note": "Unclear; not opened."
+    },
+    {
+      "kind": "raw sprite sources (units, blocks, effects, ui, items, rubble, statuses, teams)",
+      "path": "core/assets-raw/sprites/",
+      "count_hint": "2302 PNG files across core/assets-raw; blocks 1665, units 290, ui 129, effects 52",
+      "licence": "Not stated",
+      "class": "C",
+      "note": "Source art for the packer (README: gradlew tools:pack). Not opened. Unit files come in families (base, leg, foot, joint-base, cell, heat overlay) by file name."
+    },
+    {
+      "kind": "music",
+      "path": "core/assets/music/*.ogg",
+      "count_hint": "16 ogg files, about 28 MB",
+      "licence": "Not stated",
+      "class": "C",
+      "note": "Track names by role (menu, editor, game1-game9, boss1-boss2, land, launch, fine). Not listened to."
+    },
+    {
+      "kind": "sound effects",
+      "path": "core/assets/sounds/ (charge, shoot, explosions, beams, environment, movement, ui, loops, block)",
+      "count_hint": "205 ogg files, about 7.2 MB",
+      "licence": "Not stated",
+      "class": "C",
+      "note": "Folders are sound families by role. Not listened to."
+    },
+    {
+      "kind": "fonts",
+      "path": "core/assets/fonts/ (icon.ttf, logic.ttf, tech.ttf, font.woff, font_jp.woff, monospace.woff)",
+      "count_hint": "6 files, about 6.8 MB",
+      "licence": "Not stated for these files",
+      "class": "C",
+      "note": "core/assets-raw/fontgen/config.json names icon sources: custom_icons 53 entries, fontawesome 46, typicons 27, zocial 3, entypo 2, elusive 2, iconic 2, plus one each brandico and mfglabs and modernpics. The licences of those sources are not in the repo."
+    },
+    {
+      "kind": "icon font build config and icon SVGs",
+      "path": "core/assets-raw/fontgen/config.json; core/assets-raw/fontgen/extra/*.svg (7 SVG)",
+      "count_hint": "1 config file; 7 SVG",
+      "licence": "Not stated",
+      "class": "C",
+      "note": "Config only lists sources; not a licence."
+    },
+    {
+      "kind": "maps (sector save files, binary)",
+      "path": "core/assets/maps/serpulo/, core/assets/maps/default/, core/assets/maps/erekir/",
+      "count_hint": "114 files (97 serpulo and default, 17 erekir), about 8 MB",
+      "licence": "Not stated",
+      "class": "C",
+      "note": "Binary .msav files; not opened."
+    },
+    {
+      "kind": "schematics (blueprint files)",
+      "path": "core/assets/baseparts/*.msch",
+      "count_hint": "210 files",
+      "licence": "Not stated",
+      "class": "C",
+      "note": "File names are timestamps; not opened."
+    },
+    {
+      "kind": "shaders (GLSL text)",
+      "path": "core/assets/shaders/ (33 files, about 136 KB)",
+      "count_hint": "33 files",
+      "licence": "Covered only by the GPL-3.0 repo LICENSE as source text; no separate statement",
+      "class": "B",
+      "note": "Treated as code. unitarmor.frag (21 lines) and shield.frag (41 lines) were read; the other shaders were only listed by name and line count was taken for slag.frag (42 lines)."
+    },
+    {
+      "kind": "localisation text",
+      "path": "core/assets/bundles/*.properties (36 files, including bundle.properties with about 3500 key lines)",
+      "count_hint": "36 files",
+      "licence": "Not stated",
+      "class": "C",
+      "note": "Translators are not named in the files apart from the contributors list. Strings not reproduced."
+    }
+  ],
+  "inspiration": [
+    "Armour as a timed reveal: unitarmor.frag keeps a sprite hidden except for moving horizontal bands whose spacing follows a sine wave of the sprite's height, and the progress value sets how much shows. Recreate: a build-in or armour-equip effect as a banded mask on the sprite, driven by one progress value.",
+    "Forcefield as an animated sparkle grid: shield.frag shifts the texture with a slow sine wobble, draws a diagonal sparkle pattern from modulo arithmetic on screen coordinates, and makes an edge glow by taking the maximum of four neighbour samples. Recreate: a shield or barrier shader with the same three parts (wobble, sparkle, edge) in our own pattern.",
+    "Modular unit sprites: sprite sources are split into base, leg, foot, joint-base, cell and heat-overlay files (for example atrax-leg, atrax-foot, anthicus-blade-heat, obviate-heat by name). Recreate: separate layers for walk parts and emissive heat, so one body can animate and glow without a new sheet.",
+    "Two separate planet images: serpulo and erekir are separate planet sprites (by file name), with planet and atmosphere vertex shaders (planet.vert, atmosphere.vert) and a star cubemap folder. Recreate: two world looks sharing one lighting and atmosphere rig; the palette contrast itself was not viewed.",
+    "Icon font mixed from many sources: one build config merges about 140 icons from several open icon sets with 53 custom glyphs. Recreate: one icon style guide and our own glyph set, rather than a patchwork.",
+    "Sound families by folder: ui, block, movement, explosions, beams, charge, shoot and loops, plus 16 music tracks named by role. Recreate: the same folder-by-role layout with our own audio, so the mixer can key on the folder.",
+    "Other animated surfaces exist as separate shaders by name (slag.frag, caustics.frag, fog.frag, mud.frag, cryofluid.frag); their contents were not read, so only the existence of a family of surface shaders is recorded here. A shared animated-surface shader with a palette input would be the natural recreation to check."
+  ],
+  "briefs": [
+    {
+      "label": "Legged siege walker (own label)",
+      "why": "A multi-leg walker is easy to read at small size and animates well with separate leg and foot parts. Taken from file names (atrax-leg.png, atrax-foot.png, atrax.png); the art was not opened.",
+      "keep": ["separate leg and foot layers for a walk cycle", "a silhouette that reads at small size (to confirm when viewed)", "emissive heat layer on the body (see the heat overlay brief)"],
+      "change": ["a different leg count and joint layout", "our own palette and armour plates", "a head design that is not the donor's"],
+      "ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/assets-raw/sprites/units/atrax.png (also atrax-leg.png, atrax-foot.png)"
+    },
+    {
+      "label": "Hex-field barrier (own label)",
+      "why": "A barrier that wobbles, sparkles and glows at its edge reads as a shield without any opaque art. Read from shield.frag.",
+      "keep": ["slow wobble of the texture", "diagonal sparkle pattern", "edge glow from neighbour sampling"],
+      "change": ["triangle or rune-cell pattern instead of a plain grid", "colour ramp from our palette", "a different wave direction and speed"],
+      "ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/assets/shaders/shield.frag"
+    },
+    {
+      "label": "Banded build-in reveal (own label)",
+      "why": "A unit that is revealed in moving bands during build or equip gives a clear progress cue. Read from unitarmor.frag.",
+      "keep": ["progress value controls the reveal", "moving bands rather than a plain fade", "sine-based band spacing"],
+      "change": ["diagonal or radial wipe instead of horizontal bands", "a bright leading edge", "our own timing curve"],
+      "ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/assets/shaders/unitarmor.frag"
+    },
+    {
+      "label": "Two-world planet pair (own label)",
+      "why": "Two planet images with one contrasting palette each make the campaign read as two regions. Based on file names and shader names only.",
+      "keep": ["two planets with clearly different palettes", "atmosphere ring as a separate pass", "star cubemap backdrop"],
+      "change": ["our own planet shapes and names", "different ring and cloud shapes", "a different star field style"],
+      "ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/assets/sprites/planets/serpulo.png and erekir.png; core/assets/shaders/atmosphere.vert"
+    },
+    {
+      "label": "Emissive heat overlay (own label)",
+      "why": "Glowing heat patches as a separate layer keep the base sprite cheap and let the glow pulse. Based on file names (anthicus-blade-heat.png, obviate-heat.png), not opened.",
+      "keep": ["emissive layer as its own sprite", "glow only on hot parts", "pulses with the unit's state"],
+      "change": ["our own heat colour", "patch shapes that follow our armour", "a different falloff"],
+      "ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/assets-raw/sprites/units/anthicus-blade-heat.png; obviate-heat.png"
+    }
+  ],
+  "not_read": [
+    "No PNG, OGG or MSAV file was opened. Visual claims about units and planets come from file names and shader code only.",
+    "core/assets/contributors and the bundles were not reproduced; only counts and a credits line were read.",
+    "The Java code under core/src, server and tests was not reviewed (code licence line taken from LICENSE).",
+    "The fontgen icon sources were not checked against any licence text (none in repo).",
+    "The 205 sounds and 16 music tracks were not listened to."
+  ]
+}

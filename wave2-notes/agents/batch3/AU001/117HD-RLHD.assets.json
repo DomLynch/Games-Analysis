@@ -1,0 +1,126 @@
+{
+  "donor": "117HD-RLHD",
+  "code_licence": "BSD 2-Clause License (LICENSE line 1); copyright 2021, 117 (line 3). NOTE line 29: repo contains third-party assets not covered by that licence.",
+  "asset_licence": "Per-texture entries in src/main/resources/rs117/hd/scene/textures/000_licenses.txt: CC0 1.0 (many), Pexels no-attribution, Unsplash licence link, BSD-2-Clause (some), custom or permission-only (SirFancyBacon, Infernal cape), and Jagex-derived textures under the Jagex Fan Content Policy (lines 116-118), revocable and excluded from BSD-2.",
+  "rights_holder_status": "Plugin author 117 (runelite-plugin.properties author=117; LICENSE line 3). Texture rights mixed: named CC0 and permissive sources, named individuals with permission, and a set the file says is Jagex-owned derivative work under fan policy.",
+  "best_class": "A for the CC0 texture groups; B for BSD-2 derived textures; C for Jagex-derived and permission-only textures",
+  "asset_groups": [
+    {
+      "kind": "textures CC0",
+      "path": "src/main/resources/rs117/hd/scene/textures/ (entries e.g. lines 4, 22, 28, 82, 111)",
+      "count_hint": "most of the 195 texture files",
+      "licence": "CC0 1.0 as stated per entry (AmbientCG, 3dtextures.me, TextureCan, cc0-textures, Katsugi, leenor_net)",
+      "class": "A",
+      "note": "Check the per-entry name against the file before reuse."
+    },
+    {
+      "kind": "textures Pexels and Unsplash",
+      "path": "src/main/resources/rs117/hd/scene/textures/ (WOOD_GRAIN_2; sand textures, licence lines 7-8)",
+      "count_hint": "a few",
+      "licence": "Pexels: no attribution required (file); Unsplash: licence link given (file)",
+      "class": "A (credit link for Unsplash)",
+      "note": "Sand textures derive from an Unsplash photo."
+    },
+    {
+      "kind": "textures BSD-2-Clause derived",
+      "path": "src/main/resources/rs117/hd/scene/textures/ (ROCK_1, ROCK_2, WOOD_GRAIN by j-meds)",
+      "count_hint": "a few",
+      "licence": "BSD-2-Clause as stated (000_licenses.txt line 14 ROCK_1, line 16 ROCK_2; WOOD_GRAIN entry names BSD-2-Clause)",
+      "class": "B",
+      "note": "Notice retention applies per the BSD text. STONE (line 25) has no licence named and is class C, see the next group."
+    },
+    {
+      "kind": "textures custom or permission-only",
+      "path": "src/main/resources/rs117/hd/scene/textures/ (HD_WOOD_PLANK_1, GROUND_WEB, infernal cape, STONE)",
+      "count_hint": "a few",
+      "licence": "HD_WOOD_PLANK_1: licensed to the 117HD project and any future forks (line 88); infernal cape: used with permission (line 1); 117 copyright (line 11)",
+      "class": "C",
+      "note": "STONE (line 25): sourced from a web blog, darkened, no licence named; class C with the custom group."
+    },
+    {
+      "kind": "textures Jagex-derived",
+      "path": "src/main/resources/rs117/hd/scene/textures/ (names on lines 121-130: HD_BRICK, MARBLE_4, WINTER/AUTUMN leaves, LEAVES_SIDE_ALT, FORTIS_ROADS, HD_IRON_BARS, HD_ROOF_BRICK_TILE, HD_SAND_BRICK, HD_STONE_PATTERN)",
+      "count_hint": "about 30 names (file-named variants)",
+      "licence": "Jagex Fan Content Policy; excluded from BSD-2; revocable at any time (lines 116-118)",
+      "class": "C",
+      "note": "Do not reuse. Recreate the look from scratch if wanted."
+    },
+    {
+      "kind": "shaders and scene data",
+      "path": "src/main/resources/rs117/hd/ (68 GLSL), scene/*.json (10 JSON)",
+      "count_hint": "68 GLSL; 10 JSON",
+      "licence": "BSD-2-Clause (repo)",
+      "class": "code, not an asset",
+      "note": "Includes lights.json, sky_presets.json, water_types.json, environments.json, gamevals.json (not read)."
+    },
+    {
+      "kind": "icon",
+      "path": "icon.png",
+      "count_hint": "1 PNG 48x72",
+      "licence": "repo licence unless otherwise stated (not stated)",
+      "class": "C",
+      "note": "Unclear; treat as unknown."
+    },
+    {
+      "kind": "3D models, audio, maps, fonts, text",
+      "path": "not present in repo",
+      "count_hint": "0",
+      "licence": "n/a",
+      "class": "D",
+      "note": "No meshes, audio or dialogue in this donor."
+    }
+  ],
+  "inspiration": [
+    "Texture sets are a colour, normal and height triple per material (name.jpg, name_n.png, name_d.png); the height map is greyscale (abyssal_d.png is colour type 0): a three-map PBR set gives bump and parallax depth to ground and walls.",
+    "Flow maps drive animated lava and caustics (lava_flow_map.png, caustics_map.jpg): a flow texture scrolled over a base is a cheap animated lava or water look.",
+    "Leaves come as one template with a colour family (orange, red, yellow tops and sides) and worn or willow variants: one leaf setup, several palettes and wear states.",
+    "Organic cave floor uses a dedicated organic set (abyssal_2_*, with normal and height maps): a tiled organic pattern is a clear alternative to rock tile floors.",
+    "Lighting is data-driven: lights.json, sky_presets.json and daylight_cycle per environment; a light list and sky preset per zone reuse one renderer.",
+    "Water is data-driven too (water_types.json, environments.json): one water shader serves many zones with different data.",
+    "Fur comes as a short-hair colour and normal set (fur.jpg, fur_n.png): a fur or shell layer on a base mesh is a common technique (technique only; no mesh in repo)."
+  ],
+  "briefs": [
+    {
+      "label": "Abyssal cave floor (our label)",
+      "why": "An organic tiled floor with a dedicated height map (abyssal_d.png greyscale) reads as alien ground; image not viewed, so the mood is inferred from the file names and formats.",
+      "keep": "organic tile pattern; height-driven bump; cool palette",
+      "change": "our own pattern shapes; different palette (warm or ash); our own edge treatment",
+      "ref": "src/main/resources/rs117/hd/scene/textures/abyssal_2_d.png; abyssal_d.png"
+    },
+    {
+      "label": "Lava flow surface (our label)",
+      "why": "Separate lava texture set plus a flow map (lava_flow_map.png) gives moving molten ground; image not viewed.",
+      "keep": "flow-map scroll over a base; glow on cracks; three lava tones",
+      "change": "our own crack pattern; different glow colour; a different flow direction rule",
+      "ref": "src/main/resources/rs117/hd/scene/textures/lava_flow_map.png; hd_lava_1.jpg"
+    },
+    {
+      "label": "Caustic water floor (our label)",
+      "why": "A caustic map texture gives light patterns on a water floor; the source is CC0 so it is class A. Image not viewed.",
+      "keep": "caustic light overlay; slow scroll; shallow water tint",
+      "change": "our own caustic shapes; different scale; warmer water colour",
+      "ref": "src/main/resources/rs117/hd/scene/textures/caustics_map.jpg"
+    },
+    {
+      "label": "Organic leaf canopy (our label)",
+      "why": "A leaf template with colour variants (orange, red, yellow) and a diseased variant gives seasonal and corrupted foliage; image not viewed.",
+      "keep": "one template, several palettes; a diseased variant with a sick colour",
+      "change": "our own leaf shape; different season palette; a different disease look",
+      "ref": "src/main/resources/rs117/hd/scene/textures/autumn_leaves_orange_top.png; autumn_leaves_red_top.png; autumn_leaves_yellow_top.png"
+    },
+    {
+      "label": "Shaggy hide (our label)",
+      "why": "A short-fur colour and normal set (fur.jpg, fur_n.png) suggests a hairy creature skin for a mob; image not viewed.",
+      "keep": "normal-mapped fur; a dark base with lighter tips",
+      "change": "our own fur length; different tip colour; a different hide pattern",
+      "ref": "src/main/resources/rs117/hd/scene/textures/fur.jpg; fur_n.png"
+    }
+  ],
+  "not_read": [
+    "No image viewed (no downloads). Texture notes are from file names, sizes and colour types only.",
+    "Individual JSON data files (materials, areas, lights, gamevals, model_overrides, environments) not opened beyond names.",
+    "GLSL and Java sources not read beyond file counts.",
+    "Jagex-derived textures not opened and must not be used.",
+    "icon.png not viewed; licence unclear."
+  ]
+}

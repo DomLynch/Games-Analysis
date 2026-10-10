@@ -1,0 +1,29 @@
+{
+  "game": "ZenKit",
+  "category": "animation-rigs",
+  "cell": 3,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/ZenKit/src/ModelAnimation.cc",
+  "licence": "MIT (license.md reads 'The MIT license'; SPDX MIT in ModelAnimation.cc line 2)",
+  "licence_class": "permissive",
+  "target_module": "src/fight/clip-pack.ts",
+  "parity_row": 6,
+  "pattern_tags": ["new:quantised-keyframes", "new:drop-w-rebuild"],
+  "data_fields": [
+    {"name": "rotation_range", "donor_constant": "65535 ((1 << 16) - 1)", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/ZenKit/src/ModelAnimation.cc:10"},
+    {"name": "rotation_mid", "donor_constant": "32767 ((1 << 15) - 1)", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/ZenKit/src/ModelAnimation.cc:16"},
+    {"name": "rotation_scale", "donor_constant": "2.1 / 65535 per step (theirs; reason not read)", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/ZenKit/src/ModelAnimation.cc:13"},
+    {"name": "rotation_overflow_rule", "donor_constant": "if xyz length squared is over 1: normalise xyz, w = 0; else w = sqrt(1 - len_q)", "unit": "none", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/ZenKit/src/ModelAnimation.cc:52-60"},
+    {"name": "sample_position_min", "donor_constant": "per-clip header float (test clip -9.0102)", "unit": "units", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/ZenKit/src/ModelAnimation.cc:90"},
+    {"name": "sample_position_scale", "donor_constant": "per-clip header float (test clip 0.00149)", "unit": "units", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/ZenKit/src/ModelAnimation.cc:91"},
+    {"name": "frame_count", "donor_constant": "per-clip header uint (test clip 20)", "unit": "count", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/ZenKit/src/ModelAnimation.cc:86"},
+    {"name": "node_count", "donor_constant": "per-clip header uint (test clip 25)", "unit": "count", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/ZenKit/src/ModelAnimation.cc:87"},
+    {"name": "bytes_per_sample", "donor_constant": "12 (six 16-bit fields: rotation then position)", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/ZenKit/src/ModelAnimation.cc:124-125"}
+  ],
+  "best_idea": "Store each unit-quaternion key as three 16-bit fields and rebuild w from the other three (w = sqrt(1 - |xyz|^2)), which is 12 bytes per key against 28 bytes for float32 Vec3 plus Quat, worth a measured test only if clip download size becomes a real problem.",
+  "decision": "reject",
+  "decision_why": "Frankendom does not load Gothic clip files, so this decoder adds a second clip format; the w convention is unresolved (the donor's own test expects w = 0.0 for a unit-length sample, TestModelAnimation.cc:16 and 55).",
+  "decision_status": "proposed",
+  "acceptance": "If built anyway: a client test decodes one packed clip and checks each bone rotation against the source clip within a stated angle bound; no server test, because animation never decides a kill."
+}

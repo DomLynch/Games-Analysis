@@ -1,0 +1,170 @@
+{
+ "game": "levy-street-world-of-claudecraft",
+ "category": "animation-rigs",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/render/locomotion.ts",
+ "licence": "MIT (LICENSE line 1 'MIT License'; line 3 'Copyright (c) 2026 Levy Street'); code may be adapted, keep the copyright line",
+ "licence_class": "permissive",
+ "target_module": "src/fight/actor-anim.ts",
+ "parity_row": 6,
+ "pattern_tags": [
+  "hysteresis",
+  "wait-gate",
+  "variable-step",
+  "new:locomotion-latch",
+  "new:base-state-ladder",
+  "new:gait-rate-clamp",
+  "new:water-aware-crossfade",
+  "new:pose-watchdog",
+  "new:hitstop-rig-clock"
+ ],
+ "data_fields": [
+  {
+   "name": "moving latch hold",
+   "donor_constant": "MOVE_HOLD_TIME 0.22 s",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/render/locomotion.ts:12"
+  },
+  {
+   "name": "moving enter speed",
+   "donor_constant": "MOVE_ENTER_SPEED 0.4",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/render/locomotion.ts:11"
+  },
+  {
+   "name": "teleport snap speed",
+   "donor_constant": "TELEPORT_SPEED 25",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/render/locomotion.ts:23"
+  },
+  {
+   "name": "cadence speed smoothing rate",
+   "donor_constant": "SPEED_SMOOTH_RATE 12 per second, step capped at 0.5",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/render/locomotion.ts:13"
+  },
+  {
+   "name": "run enter speed",
+   "donor_constant": "GAIT_RUN_ENTER 5.2 (per-rig override allowed)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/render/locomotion.ts:20"
+  },
+  {
+   "name": "run exit speed",
+   "donor_constant": "GAIT_RUN_EXIT 3.6 (per-rig override allowed)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/render/locomotion.ts:21"
+  },
+  {
+   "name": "gait dwell",
+   "donor_constant": "GAIT_HOLD_TIME 0.25 s",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/render/locomotion.ts:22"
+  },
+  {
+   "name": "backpedal dot threshold",
+   "donor_constant": "-0.3",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/render/locomotion.ts:116"
+  },
+  {
+   "name": "direction change frames",
+   "donor_constant": "3 consecutive frames",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/render/locomotion.ts:119"
+  },
+  {
+   "name": "walk reference speed",
+   "donor_constant": "DEFAULT_WALK_REF 2.2 (per-rig walkRef)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/render/characters/anim_state.ts:74"
+  },
+  {
+   "name": "run reference speed",
+   "donor_constant": "DEFAULT_RUN_REF 7 (per-rig runRef)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/render/characters/anim_state.ts:75"
+  },
+  {
+   "name": "walk playback rate ceiling",
+   "donor_constant": "DEFAULT_WALK_TIME_SCALE_MAX 1.8, floor 0.6",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/render/characters/anim_state.ts:526"
+  },
+  {
+   "name": "run playback rate ceiling",
+   "donor_constant": "DEFAULT_RUN_TIME_SCALE_MAX 1.6, floor 0.6",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/render/characters/anim_state.ts:534"
+  },
+  {
+   "name": "gait brake share of crossfade",
+   "donor_constant": "GAIT_WIND_DOWN_SETTLE 0.2",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/render/characters/anim_state.ts:475"
+  },
+  {
+   "name": "base crossfade",
+   "donor_constant": "FADE 0.22 s",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/render/characters/visual.ts:180"
+  },
+  {
+   "name": "water crossfade",
+   "donor_constant": "WATER_FADE 0.34 s",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/render/characters/visual.ts:340"
+  },
+  {
+   "name": "hitstop duration cap",
+   "donor_constant": "0.16 s",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/render/characters/visual.ts:1886"
+  },
+  {
+   "name": "hitstop scale floor",
+   "donor_constant": "0.02",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/render/characters/visual.ts:1889"
+  },
+  {
+   "name": "flinch cooldown",
+   "donor_constant": "HIT_REACT_COOLDOWN 0.9 s",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/render/characters/visual.ts:284"
+  },
+  {
+   "name": "hitstop refractory",
+   "donor_constant": "HOLD_REFRACTORY_S 0.25 s",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/render/characters/visual.ts:291"
+  }
+ ],
+ "best_idea": "Pick walk or run from hysteresis over a smoothed speed (enter 5.2, leave 3.6, 0.25 s dwell) and latch moving for 0.22 s after a speed dip, so noisy frames never flip the clip; then match each gait's playback rate to speed within clamps and crossfade with a length that depends on whether water is involved.",
+ "decision": "adapt",
+ "decision_why": "Frankendom's hero needs the same latch and walk/run dwell so its clips do not flicker; the thresholds and reference speeds are the donor's and must become per-hero data set from Frankendom's own speeds; the rig-only hitstop is a visual shape only and sits with row 10.",
+ "decision_status": "proposed",
+ "acceptance": "A test drives stepLocomotion at a steady speed and asserts the walk-to-run switch only when the smoothed speed reaches 5.2 units/s, the return only at or below 3.6, and no second switch within 0.25 s."
+}

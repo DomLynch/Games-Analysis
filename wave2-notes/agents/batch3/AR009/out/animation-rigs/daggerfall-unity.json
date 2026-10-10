@@ -1,0 +1,75 @@
+{
+ "game": "daggerfall-unity",
+ "category": "animation-rigs",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Internal/DaggerfallMobileUnit.cs",
+ "licence": "MIT (LICENSE: MIT License, Copyright (c) 2009-2023 Daggerfall Workshop)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/creature-attack.ts",
+ "parity_row": 7,
+ "pattern_tags": [
+  "new:frame-hit-marker",
+  "new:weighted-variant-buckets",
+  "new:oneshot-then-idle",
+  "new:speed-divisor-cadence",
+  "fixed-step"
+ ],
+ "data_fields": [
+  {
+   "name": "attack_variant_weight",
+   "donor_constant": "percent bucket width per variant (examples 50, 33, 20); remainder to the default sequence",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Internal/DaggerfallMobileUnit.cs:222"
+  },
+  {
+   "name": "attack_sequence_frames",
+   "donor_constant": "frame index list with hit marker -1 (example 0,1,2,-1,3,4,5)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Utility/EnemyBasics.cs:261"
+  },
+  {
+   "name": "hit_marker_value",
+   "donor_constant": "-1 (never shown; raises damage flag)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Internal/DaggerfallMobileUnit.cs:555"
+  },
+  {
+   "name": "clip_frames_per_second",
+   "donor_constant": "int FramePerSecond per animation record",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/DaggerfallUnityStructs.cs:165"
+  },
+  {
+   "name": "live_speed_floor",
+   "donor_constant": "8",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/EnemyAttack.cs:53"
+  },
+  {
+   "name": "slowed_fps_floor",
+   "donor_constant": "4 fps when divisor above 1",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Internal/DaggerfallMobileUnit.cs:533"
+  },
+  {
+   "name": "variant_roll_range",
+   "donor_constant": "1 to 100 inclusive",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Utility/Dice100.cs:12"
+  }
+ ],
+ "best_idea": "Put the damage moment in the attack's own frame list as a marker, so the hit lands on a named frame of the clip instead of a timer.",
+ "decision": "adapt",
+ "decision_why": "Creature attacks (row 7) need a named hit frame and a weighted attack variant; take both as clip data, but roll the variant and fire the hit on the server tick, because the donor rolls on the client and raises the damage flag on whichever Unity frame consumes it.",
+ "decision_status": "proposed",
+ "acceptance": "A creature's attack declares its hit frame as data; a server test asserts exactly one damage application per attack on the tick the marker is reached; a client test asserts the post-marker frame is drawn on that tick; and two clients show the same attack variant for the same server roll."
+}

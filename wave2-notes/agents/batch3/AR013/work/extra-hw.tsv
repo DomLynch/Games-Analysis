@@ -1,0 +1,2 @@
+hedgewars-hw	minigun hand offset numbers	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsRender.pas	1205	sx + 20 * sign, sy + 4, 0, sign, -18, -2, aangle);
+hedgewars-hw	baseball hand offset numbers	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsRender.pas	1203	sx + 9 * sign, sy + 2, 0, sign, -8, 1, aangle);

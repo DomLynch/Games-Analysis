@@ -1,0 +1,36 @@
+{
+  "donor": "Clancey-WowUnreal",
+  "code_licence": "unclear. README and SPEC link a LICENSE ('See [LICENSE](LICENSE) for details.'), but no root LICENSE file exists in the tree. The only licence file present is for Source/ThirdParty/StormLib (MIT, Copyright (c) 1999-2013 Ladislav Zezula).",
+  "asset_licence": "not stated for Content/. The repo says it ships no Blizzard assets; it says nothing about who made the Content/ packages or on what terms.",
+  "rights_holder_status": "reads original game data at runtime (user-supplied WoW 3.3.5a MPQ files, not in the repo). README calls WoW a Blizzard Entertainment trademark and says the project is not affiliated. It describes itself as an educational and research project covering protocol reverse engineering. No copyright holder is named for the project.",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "Unreal level-actor and object packages", "path": "Content/__ExternalActors__/ (Variant_Combat, Variant_Platforming, Variant_SideScrolling, ThirdPerson); Content/__ExternalObjects__/ (same four)", "count_hint": "508 .uasset files; Content/ totals about 6.3 MB", "licence": "not stated", "class": "C", "note": "Binary Unreal packages, not opened. Folder names match Unreal Engine template level names, but the repo does not say where these came from. No .umap of those names is in Content/Maps."},
+    {"kind": "materials", "path": "Content/Materials/M_WowCharacter.uasset; M_WowSimpleObject.uasset; M_WowTerrainRuntime.uasset", "count_hint": "3 .uasset files", "licence": "not stated", "class": "C", "note": "Named with a WoW prefix; origin not stated. Not opened."},
+    {"kind": "maps", "path": "Content/Maps/*.umap (StreamingTest, TerrainTest, NetworkTest, MobTest, UITest, ModelViewer, CharacterTest, WmoTest, WowWorld, AnimationTest)", "count_hint": "10 .umap files", "licence": "not stated", "class": "C", "note": "Test and viewer levels per their names. Binary, not opened."},
+    {"kind": "third-party library with own licence", "path": "Source/ThirdParty/StormLib/LICENSE", "count_hint": "1 licence file (library sources are code)", "licence": "MIT (Copyright (c) 1999-2013 Ladislav Zezula)", "class": "A", "note": "Conditions: keep the MIT notice. Covers the library only, not the Content/ folder."},
+    {"kind": "in-repo test scripts and configs", "path": "test_scrollframe.lua; tooltip_test.lua; Config/*.ini (5); Scripts/*.py (2)", "count_hint": "2 Lua, 5 INI, 2 Python", "licence": "unclear (repo code licence unclear)", "class": "C", "note": "Code, not art. Shown for completeness."},
+    {"kind": "game data", "path": "none in repo; README 'Data Source' row says original WoW MPQ files, user-supplied", "count_hint": "0 in repo", "licence": "not applicable to the repo", "class": "D", "note": "The repo says it does not ship Blizzard assets. Its own README admits the Content/Characters, Content/World and Content/UI folders it describes are not in the tree; only Content/Materials and Content/Maps exist."}
+  ],
+  "inspiration": [
+    "Armour as texture layers: one body texture per character, with equipment textures composited onto body regions (arms, torso, legs, hands, feet) by item type. Our version could use our own body paint and armour layers, with a region map per armour class.",
+    "Armour as mesh toggles: equipment shows or hides mesh sections (wristbands, trousers and so on) instead of adding separate meshes, so cloth and plate fit without clipping. Our version could toggle body sections per armour piece.",
+    "Water that fades at the shore: transparency depends on depth (shallow clear, deep dark blue), with a shore blend driven by a depth map. Recreate with a painted or computed depth mask and our own water hue.",
+    "Fog that matches the horizon: fog colour is set equal to the horizon colour so distance fades into the sky. Sun and moon discs are placed from the time of day. Our version could use per-biome colour sets.",
+    "Character composite: base skin, face and underwear are baked into one texture, and hair is laid onto the scalp region so it works under a helm. Our version could bake our own layers the same way.",
+    "UI from layout files: an XML-style layout parser builds a frame tree, with Lua hooks for behaviour. Our HUD could be described the same way (layout file plus scripts), with our own widget set."
+  ],
+  "briefs": [
+    {"label": "Layered plate chest", "why": "Armour reads as a real overlay on the body, so changing gear costs one texture rebuild.", "keep": "A region map per armour class; overlay textures composited onto a shared body; mesh sections toggled per piece.", "change": "Our own region set (for example separate pauldrons); a different silhouette through section toggles; our own trim motif.", "ref": "WOW_BODY_ARMOR_IMPLEMENTATION.md (region table, Part 2 and Part 3)"},
+    {"label": "Shore-fade lake", "why": "A depth-based fade makes water read as a body of water, not a flat sheet.", "keep": "Clear shallows and dark deep water; a shore fade driven by depth; an edge highlight.", "change": "Our own water hue and foam pattern; a different shallows colour per biome; wave pattern per zone.", "ref": "specs/water.md line 28"},
+    {"label": "Horizon-matched dusk", "why": "Fog that matches the horizon hides the seam between the world and the sky.", "keep": "Fog colour equal to the horizon colour; a sun disc placed by time of day; gradient bands.", "change": "A colour set per biome; a different moon and star layout; our own cloud shapes.", "ref": "specs/sky-atmosphere.md line 35"}
+  ],
+  "cross_link": "zones: terrain material and sky spec (specs/sky-atmosphere.md; specs/terrain-lod.md). vfx: water spec (specs/water.md). animation: M2 animation spec (specs/m2-animation.md). hud-ui: FrameXML spec (specs/ui-framexml.md). loot and equipment look: armour overlay doc. camera, spawns, sound: specs exist (specs/audio.md) but no non-code assets to look at in the repo.",
+  "not_read": [
+    "All 511 .uasset and 10 .umap binaries: only file names, folder counts and one magic-byte check were used; none opened in Unreal",
+    "The 32 .txt files, 22 .md files and 11 .sh files under Source/ and elsewhere: not read beyond the grep hits",
+    "specs/character.md, specs/terrain-lod.md, specs/m2-animation.md, specs/audio.md: named in the cross-link only, not read in detail",
+    "Source/ThirdParty/lua and pugixml: licence files not found in the tree; not read further",
+    "The .cpp and .h source (about 670 files): not read; grep for copyright and licence strings only"
+  ]
+}

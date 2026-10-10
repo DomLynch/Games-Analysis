@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+openmw	animation-rigs	P	STRONG	full	apps/openmw/mwrender/animation.cpp:1116-1160 picks one winning clip per body group by priority, and animblendcontroller.cpp:163-200 snapshots and eases to the new clip with a rule-table duration (the hint file character.cpp is the state machine only).
+opentibiabr-otclient	animation-rigs	P	STRONG	full	src/client/animator.cpp:122-151 advances a per-instance phase clock that carries overrun, loops or ping-pongs by count, and jitters phase durations (no skeleton in the donor; the hint animator.h is only the declarations; calculateSynchronous 225-243 has a double random draw).
+orbitersim-orbiter	animation-rigs	P	STRONG	full	OVP/D3D9Client/VVessel.cpp:1582-1603 evaluates one 0..1 state with windowed parts and reverse close, and Src/Orbiter/Vessel.cpp:1978-1998 clamps the control target and slews it at SimDT/delay before mapping to the rig state (the hint ShuttlePB.cpp is only the example rig).

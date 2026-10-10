@@ -1,0 +1,127 @@
+{
+  "donor": "angband-angband",
+  "code_licence": "Dual: GNU GPL version 2, or the 'Angband licence' (docs/copying.rst; header of src/z-file.c). The Angband licence allows copying for educational, research and not-for-profit purposes.",
+  "asset_licence": "Per group, stated in docs/copying.rst: Adam Bolt 16x16 tiles: any purpose, with or without modification. David Gervais 32x32 tiles: CC BY 3.0. Shockbolt 64x64 tiles: custom restrictive terms. Sounds: CC BY 4.0 (Dubtrain). Fonts: GPL (per the file). Other asset folders (old/nomad tiles, icons, screens, screenshots, gamedata text): no licence line names them.",
+  "rights_holder_status": "Open-source project. Copyright line names Ben Harrison, James E. Wilson and Robert A. Koeneke (1997) in docs/copying.rst; src/z-file.c lists further authors (1997-2007). Tile and sound authors are named in docs/copying.rst and docs/thanks.rst. The files do not say whether the game derives from any commercial title.",
+  "best_class": "A",
+  "asset_groups": [
+    {
+      "kind": "2D tileset 16x16 (Adam Bolt)",
+      "path": "lib/tiles/adam-bolt/16x16.png (+ graf-new.prf, flvr-new.prf, xtra-new.prf)",
+      "count_hint": "1 sheet, about 470 KB",
+      "licence": "docs/copying.rst: may be redistributed and used for any purpose, with or without modification",
+      "class": "A",
+      "note": "No attribution condition on that line. Not opened (binary)."
+    },
+    {
+      "kind": "2D tileset 32x32 (David Gervais)",
+      "path": "lib/tiles/gervais/32x32.png (+ graf-dvg.prf, flvr-dvg.prf, xtra-dvg.prf)",
+      "count_hint": "1 sheet, about 1.3 MB",
+      "licence": "docs/copying.rst: CC BY 3.0 (redistribute, modify, use)",
+      "class": "A",
+      "note": "CC BY: attribution to David Gervais required under the stated licence. Not opened."
+    },
+    {
+      "kind": "2D tileset 64x64 (Shockbolt)",
+      "path": "lib/tiles/shockbolt/64x64.png (+ graf-shb-dark.prf, graf-shb-light.prf, flvr-shb.prf, xtra-shb.prf)",
+      "count_hint": "1 sheet, about 17.6 MB",
+      "licence": "docs/copying.rst: use with Angband and redistribute with no fee; no modification without author permission; no use with other projects without permission; commercial games need a non-exclusive licence from the author",
+      "class": "C",
+      "note": "Conditions are explicit but restrictive. Classed C because the text says commercial use needs a separate licence. Some tiles were resized from the Gervais set (per the file)."
+    },
+    {
+      "kind": "2D tilesets 8x8 and 8x16 (old, nomad)",
+      "path": "lib/tiles/old/8x8.png; lib/tiles/nomad/8x16.png (+ prf files)",
+      "count_hint": "2 sheets, about 200 KB",
+      "licence": "Not stated: docs/copying.rst does not name these sets",
+      "class": "C",
+      "note": "Unclear licence; not opened."
+    },
+    {
+      "kind": "sound effects and ambience (mp3)",
+      "path": "lib/sounds/*.mp3 (name prefixes amb_, mco_, plc_, plm_, id_)",
+      "count_hint": "213 mp3 files plus a Makefile, about 3.3 MB",
+      "licence": "docs/copying.rst: CC BY 4.0, created by Dubtrain",
+      "class": "A",
+      "note": "Attribution to Dubtrain. Prefix grouping seen from file names only; mp3s not opened."
+    },
+    {
+      "kind": "bitmap fonts (.fon, one .woff)",
+      "path": "lib/fonts/",
+      "count_hint": "25 files, about 288 KB",
+      "licence": "docs/copying.rst: font authors agreed to release their Angband work under the GPL",
+      "class": "B",
+      "note": "GPL condition as stated in the file. Not opened."
+    },
+    {
+      "kind": "game data text templates (monsters, objects, artifacts, ego items, terrain, shapes, quests, history, vaults)",
+      "path": "lib/gamedata/*.txt",
+      "count_hint": "45 files, about 1.3 MB; name: entries monster.txt 624, object.txt 375, artifact.txt 138, ego_item.txt 107",
+      "licence": "Project dual licence (GPL-2.0 or Angband licence) per docs/copying.rst; file headers say other copyrights may also apply",
+      "class": "C",
+      "note": "Dual licence with a not-for-profit branch, and a stated 'other copyrights may also apply'. Some artifact names read as Tolkien-derived (artifact.txt line 108); not assessed. Text not reproduced here."
+    },
+    {
+      "kind": "screens and text (news, dead, crown, retire)",
+      "path": "lib/screens/*.txt (5 files incl. Makefile); lib/help/",
+      "count_hint": "5 files in screens; help folder not counted",
+      "licence": "Not stated beyond the project dual licence",
+      "class": "C",
+      "note": "news.txt is described in lib/readme.txt as site-specific. Not opened."
+    },
+    {
+      "kind": "icons and screenshots",
+      "path": "lib/icons/ (11 files, about 112 KB); screenshots/title.png; screenshots/game.png",
+      "count_hint": "11 icons plus 2 screenshots",
+      "licence": "Not stated",
+      "class": "C",
+      "note": "Not opened."
+    }
+  ],
+  "inspiration": [
+    "One world, several tile sizes: the same game ships 8x8, 8x16, 16x16, 32x32 and 64x64 tile sets, each in its own folder with a small mapping file that assigns tiles to game entities (lib/tiles/list.txt; lib/tiles/*/graf-*.prf). Recreate: a swappable art layer that maps entity ids to sprite cells, so a new style is a data change.",
+    "Palette by name: visuals.txt defines 28 named colour indices with a one-letter code, plus a legacy colour-cycle (flicker) that only monsters use. Recreate: a named palette with a small set of cycle rules for glowing or shimmering monsters, rather than per-sprite recolour.",
+    "Glyph plus colour as the readable base: terrain.txt pairs each terrain type with one symbol and one colour (for example a dot for floor, a plus for door). Recreate: keep a readable silhouette per tile type first, then add a colour code, so the map reads at a glance.",
+    "Monsters as short data rows: a monster entry is a glyph, a colour, speed, hit points, a bite or breath attack, a flag set and one line of flavour text (monster.txt around line 1886). Recreate: a compact creature card that the art team can draw from.",
+    "Sound by family prefix: file names group ambience (amb_), monster calls (mco_), player combat (plc_) and player misc such as coins, chests and doors (plm_). Recreate: the same prefix scheme with our own recordings, so the audio pack can be browsed by role.",
+    "Depth-tiered ambience: sound.prf maps the day, night and dungeon ambient slots to different loops (thunder, guitar chord, iron door and bells). Recreate: bells and gongs underground, rain and thunder above, using original recordings.",
+    "Player shapes: shape.txt describes form changes that modify combat, skills and resistances, plus their own effects and messages. Recreate: a transform system that is mainly a stat package and a visual swap, not a new character sheet."
+  ],
+  "briefs": [
+    {
+      "label": "Frost-drip swarm insect (own label)",
+      "why": "Small, fast, pale and cold-themed: reads as a nuisance that becomes a threat in numbers. Based on the file's name, colour code and one-line description, not on the sprite (not opened).",
+      "keep": ["small fast flyer", "pale white colour story", "cold-breath as its signature"],
+      "change": ["insect body with crystalline wings instead of plain wings", "different wing count and layout", "icy spine ornament and a different palette"],
+      "ref": "/mnt/frankendom-donors/angband-angband/lib/gamedata/monster.txt (line 1886, name entry; line 1902, desc line)"
+    },
+    {
+      "label": "Elemental dragon family (own label)",
+      "why": "A tiered family where each member shares a body plan and changes only by element colour. Read from the monster.txt entries, sprite not opened.",
+      "keep": ["one body plan across a family", "colour codes the element", "young and adult forms as separate rows"],
+      "change": ["different proportions and head shape", "scale pattern instead of plain plates", "our own element names and palette ramps"],
+      "ref": "/mnt/frankendom-donors/angband-angband/lib/gamedata/monster.txt (line 2623, baby dragon entry)"
+    },
+    {
+      "label": "Dark-fantasy 64px original tile set (own label)",
+      "why": "A large, high-detail tile set reads well at a bigger scale. The donor set itself is restrictive, so only the scale idea is taken; the art must be drawn from scratch.",
+      "keep": ["64px cell size for detail", "heavy dark outline for readability", "one sheet with a matching prf map"],
+      "change": ["our own palette and lighting", "original subjects, not the donor's tile list", "a new cell layout"],
+      "ref": "/mnt/frankendom-donors/angband-angband/lib/tiles/shockbolt/64x64.png (not opened; licence conditions in docs/copying.rst)"
+    },
+    {
+      "label": "Bell and gong underground ambience (own label)",
+      "why": "Metal bells and gongs over a dry echo set a mood without visuals. Taken from the sound file names and the ambient mapping, not listened to.",
+      "keep": ["metallic bell and gong loops for depth", "echo and wet-room ambience", "a single rare loud strike"],
+      "change": ["our own instruments", "different scale and tuning", "tied to our own zone table"],
+      "ref": "/mnt/frankendom-donors/angband-angband/lib/customize/sound.prf (line 39, ambient dungeon mapping); /mnt/frankendom-donors/angband-angband/lib/sounds/ (amb_bell_*, amb_gong_*)"
+    }
+  ],
+  "not_read": [
+    "No image (.png) or sound (.mp3) file was opened; all visual and audio descriptions come from file names, sizes and the text files.",
+    "lib/help/*, docs/*.rst beyond copying.rst, thanks.rst and the sound mapping lines were not read in full.",
+    "lib/gamedata/*.txt: only counts and a few entries were read; no full lore or item text was read or reproduced.",
+    "src/ C code was not reviewed (code licence line taken from copying.rst and file headers).",
+    "The Angband tree has many files; the 16x16 Adam Bolt sheet and Gervais sheet were only checked by size."
+  ]
+}

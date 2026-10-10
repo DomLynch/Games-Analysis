@@ -1,0 +1,61 @@
+{
+ "game": "crashkonijn-GOAP",
+ "category": "animation-rigs",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/crashkonijn-GOAP/Demo/Assets/CrashKonijn/GOAP/Demos/Shared/Behaviours/AnimationBehaviour.cs",
+ "licence": "Apache-2.0 (LICENSE: Apache License, Version 2.0, January 2004)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/creature-presentation.ts",
+ "parity_row": 7,
+ "pattern_tags": [
+  "new:state-mirror-anim",
+  "new:change-only-write",
+  "new:pause-freeze",
+  "new:facing-from-target",
+  "variable-step"
+ ],
+ "data_fields": [
+  {
+   "name": "walk_blend_time",
+   "donor_constant": "0 (TransitionDuration 0, both transitions)",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/crashkonijn-GOAP/Demo/Assets/CrashKonijn/GOAP/Demos/Animations/CharacterAnimationController.controller:153"
+  },
+  {
+   "name": "walk_speed",
+   "donor_constant": "1 unit per second (Time.deltaTime as max step)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/crashkonijn-GOAP/Demo/Assets/CrashKonijn/GOAP/Demos/Shared/Behaviours/AgentMoveBehaviour.cs:67"
+  },
+  {
+   "name": "idle_visual_y_jitter",
+   "donor_constant": "Random.Range(-0.1f, 0.1f) local y",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/crashkonijn-GOAP/Demo/Assets/CrashKonijn/GOAP/Demos/Shared/Behaviours/AnimationBehaviour.cs:23"
+  },
+  {
+   "name": "paused_clip_speed",
+   "donor_constant": "0 when paused, 1 otherwise",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/crashkonijn-GOAP/Demo/Assets/CrashKonijn/GOAP/Demos/Shared/Behaviours/AnimationBehaviour.cs:35"
+  },
+  {
+   "name": "facing_flip_scale_x",
+   "donor_constant": "-1 moving left, 1 otherwise",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/crashkonijn-GOAP/Demo/Assets/CrashKonijn/GOAP/Demos/Shared/Behaviours/AnimationBehaviour.cs:62"
+  }
+ ],
+ "best_idea": "Drive the clip from one event-set walk flag and write the animator only on change, freezing the clip while the fight is paused and turning to face the target only while walking.",
+ "decision": "adapt",
+ "decision_why": "Creature clips (row 7) need a walk/idle choice and a facing rule derived from engine state; take the change-only write, the pause freeze and the walk-only facing, but not the Unity Animator graph, and make the flag come from the replicated fight state so all clients agree.",
+ "decision_status": "proposed",
+ "acceptance": "A creature walks only while it has an approach target, its legs freeze the moment a fight pauses, it turns to face its target only while walking, and a client test asserts one clip change per state change and none per idle frame."
+}

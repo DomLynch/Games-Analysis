@@ -1,0 +1,36 @@
+{
+  "donor": "Clancey-wowrust",
+  "code_licence": "none stated. README ends 'Private project. Not for distribution.' There is no LICENSE file in the tree, and the root Cargo.toml has no licence line.",
+  "asset_licence": "none stated. The repo contains no game data. README says the user must supply their own WoW 3.3.5a data (18 MPQ archives, about 17GB).",
+  "rights_holder_status": "unknown from repo files. README calls it a private project; the repo names no copyright holder. Code handles Blizzard_ addon names and MPQ FrameXML paths, which points at the original game's data, supplied by the user.",
+  "best_class": "D",
+  "asset_groups": [
+    {"kind": "shaders (WGSL)", "path": "crates/wow-render/shaders/text.wgsl; crates/wow-render/shaders/ui.wgsl", "count_hint": "2 files, about 0.9 KB each", "licence": "none stated", "class": "C", "note": "Code, not art. Text and UI quad shaders for the overlay. No licence, so not usable as is."},
+    {"kind": "Lua test addon and saved variables", "path": "Interface/AddOns/TestAddon/TestAddon.lua and .toc; WTF/Account/WowTestUser/SavedVariables/TestAddon.lua; WTF/Account/WowTestUser/Realm0/Testhumanm/SavedVariables/TestAddon.lua", "count_hint": "4 files", "licence": "none stated", "class": "C", "note": "The author's own test addon that exercises SavedVariables. Not art, not content."},
+    {"kind": "config", "path": "config/default.toml; config/keybinds.toml", "count_hint": "2 files", "licence": "none stated", "class": "D", "note": "Settings only (server, data path, keybinds)."},
+    {"kind": "game data", "path": "none in repo (WOWRUST_DATA_PATH points at the user's install)", "count_hint": "0 in repo; README says 18 MPQ archives, about 17GB, supplied by the user", "licence": "not applicable to the repo", "class": "D", "note": "Original WoW data is not bundled. Any use of it falls under the user's own copy."},
+    {"kind": "images, audio, models, maps", "path": "none (the extension list has no png, jpg, wav, mp3, m2, wmo, blp, adt or dbc files)", "count_hint": "0", "licence": "not applicable", "class": "D", "note": "Nothing non-code is usable from this repo."}
+  ],
+  "inspiration": [
+    "Sky from lookup bands, not a painted gradient: each zone points at a parameter set with top, middle and horizon colours and fog, indexed by time of day. Our version could use our own band table per biome with a day-night curve, and set fog equal to the horizon colour so there is no seam.",
+    "Ground from four layers and paint masks: each terrain chunk blends four texture layers with alpha maps, at five level-of-detail steps. Recreate with our own biome materials and hand-painted masks, with noise breakup on the blend edges.",
+    "Water as a translucent pass: flat alpha-blended planes are drawn after opaque geometry, so the sort order does the work. Our water could use its own tint and wave normals on the same pass order.",
+    "Trails for motion: billboarded, additive particles plus ribbons (trails) show swings and spells at a glance. Our version could use original trail shapes and colour ramps per element.",
+    "Text and UI share one small shader pair: a glyph atlas drawn by a dedicated text shader, and textured quads for panels. The idea is cheap, legible UI.",
+    "Addon-like UI: the UI loads addon files from a table of contents and runs their scripts in a Lua VM, with system addons placed in a protected group. Our HUD could work the same way, with a protected core set of panels."
+  ],
+  "briefs": [
+    {"label": "Dusk sky dome", "why": "One gradient sets the mood of a whole zone; a horizon-matched fog hides where the sky meets the ground.", "keep": "A colour band per time of day; the horizon colour drives the fog; a sun disc placed from the clock.", "change": "Our own palette per biome; a moon in a different place; painted clouds in place of flat bands.", "ref": "crates/wow-formats/README_DBC_SKY.md; README.md line 89"},
+    {"label": "Layered painted ground", "why": "Four texture layers blended with paint masks read as real ground, not repeated tiles.", "keep": "A mask per chunk; four layers; level-of-detail steps with distance.", "change": "Our own biome materials; masks painted by hand; noise breakup on the blend edges.", "ref": "PLAN.md line 139"},
+    {"label": "Ribbon trail effect", "why": "A trail shows the motion of a swing or spell at a glance.", "keep": "Additive trail; billboarded to the camera; a fading tail.", "change": "Our own colour ramp per element; a jagged or flame edge; tail length tuned per ability.", "ref": "README.md line 95"}
+  ],
+  "cross_link": "zones: terrain splatting and sky lookup (PLAN.md line 139; README_DBC_SKY.md). vfx: particles and ribbons (README.md line 95). animation: M2 skeletal animation is described but no model files are in the repo. hud-ui: addon-style UI and glyph atlas text (wow-ui/src/lib.rs; text.wgsl). sound: marked not started in README; no audio files. spawns, loot, camera: no assets in the repo.",
+  "not_read": [
+    "crates/wow-ui/src/lib.rs: only grep matches read, not the whole file",
+    "PLAN.md and IMPLEMENTATION_PLAN.md: only the lines quoted were read",
+    "crates/wow-formats/README_DBC_SKY.md beyond its title and first section",
+    "Cargo.lock, the .rs source files and wow-*/README.md files beyond the grep hits",
+    "rust-toolchain.toml and scripts/*.sh: not read",
+    "No binary files exist in the repo, so none were opened"
+  ]
+}

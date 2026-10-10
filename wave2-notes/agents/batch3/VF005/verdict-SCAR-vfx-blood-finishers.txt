@@ -1,0 +1,29 @@
+Verdict: PARTIAL | game: SCAR | category: vfx-blood-finishers (cell 13) | depth: thin | licence: MIT (LICENSE line 1, "MIT License"; code may be adapted) | camera_scope: n/a
+
+Files opened on the VPS (read-only, donor at /mnt/frankendom-donors/SCAR):
+1. src/SCARActionData.cpp: lines 186-230 read in full; 274 and 297-299 read through grep.
+2. src/Hook_AttackStart.cpp: lines 1-46, whole file.
+3. src/Hook_AttackCombo.cpp: lines 1-63, whole file.
+4. src/Function.cpp: lines 56-80 (AttackRangeCheck::WithinAttackRange, first part).
+5. src/DataHandler.cpp: lines 45-60 (annotation loader, weight = annotation time).
+6. docs/EN/Developers Manual For SCAR 2.0+.md: lines 42-75 (field meanings and type list).
+7. A donor-wide grep (excluding extern, cmake and the vendored PrecisionAPI, TrueHUD, DebugAPI and OpenAnimationReplacer folders) for blood, gore, finish, execut, decal, spark, hitstop, slowmo, impact, particle, hit, visual, effect, shader, sound, vfx and damage. It found no blood, gore, decal, particle, spark, hitstop, screen-effect or finisher-animation code. The only "execute" hit is the attack call at SCARActionData.cpp:274 (combatAnim->Execute()).
+
+Why PARTIAL and not NONE: SCAR has no VFX at all, but its attack selection is a real, checkable finisher-style trigger rule (a weighted list of moves, each gated by an animation time window, a distance band, a facing arc and a percentage roll, with the first success taking the move). That rule decides when a move fires; it does not show blood, decals, sparks or a finisher.
+
+What the donor actually does (order of operations, as read):
+- The annotation text gives each action a time window (TriggerStartTime and TriggerEndTime, defaults 0 and float max; SCARActionData.cpp:35-38) and an action weight equal to the annotation time (DataHandler.cpp:55).
+- Actions are sorted by weight, highest first (Hook_AttackStart.cpp:23; SCARActionData.cpp:299).
+- For each action, in order: the clip must be inside its time window (SCARActionData.cpp:191); the action type must match the attack type (197); then one gate: roll chance >= random 0-100, and the target lies within distance band plus weapon reach and the yaw arc (212). A success plays the attack and returns true (Hook_AttackStart.cpp:25-26).
+- A cooldown from fCombatAttackAnimationDrivenDelayTime (default 1.5 in the call) applies only while the attacker is pathing (Hook_AttackStart.cpp:14).
+- Combo continuation: an empty payload always continues; otherwise the payload number is a percentage roll (Hook_AttackCombo.cpp:9-12).
+- Range math: the max distance is padded by the target's bound radius (Function.cpp:61); the min distance is padded by both bound radii when it is above zero (Function.cpp:62-63, read, not receipted).
+
+Checked gaps: the cooldown, combo and range code run on the game's AI (Skyrim-style RE:: calls); none of it is visible to the player except through the animation the attack plays. The attack animation and its events were not read.
+
+Best transferable idea: Gate a finisher with an ordered list of moves, each with a time window, a distance band, a facing arc and a percentage roll, sorted by weight, where the first move that passes wins.
+
+Decision (proposed): adapt. The gate shape fits Frankendom's fight rules as catalogue data (window, band, arc, roll), but it must be evaluated in the engine on the server with a server-side roll, and the finisher visuals come from Frankendom's own catalogue, not from SCAR. Belongs with the combat and AI cells (ai-aggro, combat-sim) rather than this one.
+
+Parity row: 9 (finishers) for the trigger rule; no VFX row applies to this donor.
+Target: src/fight/finisher-trigger.ts (proposed, engine side; not part of this topic's VFX).

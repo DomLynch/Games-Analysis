@@ -1,0 +1,28 @@
+{
+  "game": "alexbatalov-fallout2-ce",
+  "category": "animation-rigs",
+  "cell": 3,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/animation.cc",
+  "licence": "Sustainable Use License 1.0 (LICENSE.md: use limited to internal business or non-commercial or personal use; distribution free and non-commercial only)",
+  "licence_class": "restricted",
+  "target_module": "src/fight/chain.ts",
+  "parity_row": 6,
+  "pattern_tags": ["wait-gate", "compute-budget", "new:forced-effect-flush", "new:priority-lock"],
+  "data_fields": [
+    {"name": "chain_steps_max", "donor_constant": "55 steps per chain", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/animation.cc:41"},
+    {"name": "chain_slots", "donor_constant": "32 chains", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/animation.cc:40"},
+    {"name": "non_reserved_chain_cap", "donor_constant": "20 live or building non-reserved chains; reserved requests skip it", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/animation.cc:415"},
+    {"name": "frame_animator_budget", "donor_constant": "24 active frame animators", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/animation.cc:42"},
+    {"name": "ticks_per_frame", "donor_constant": "1000 / fps (milliseconds per frame, read as ms from the gate)", "unit": "ms", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/animation.cc:3308"},
+    {"name": "asset_fps", "donor_constant": "the art's own frames per second (per clip)", "unit": "ratio", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/animation.cc:3294"},
+    {"name": "fallback_fps", "donor_constant": "10 when the art cannot be locked", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/animation.cc:3297"},
+    {"name": "combat_speed_bonus", "donor_constant": "user setting added to walk fps in combat (settings.preferences.combat_speed)", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/animation.cc:3303"}
+  ],
+  "best_idea": "When an action chain is cut, its not-yet-started effects still run if they are marked forced and are dropped otherwise, and a prioritised chain cannot be cut at all, so an effect the rules already decided (a hit) lands even when the animation that carries it is cancelled.",
+  "decision": "adapt",
+  "decision_why": "Take the rules (forced effect = ledger effect, unforced = cosmetic, prioritised = not cuttable) with the server's ledger effects as the forced set; the licence is restricted so only the shape is recorded, and the forced-at-cut timing (a hit can land early) must be chosen explicitly.",
+  "decision_status": "proposed",
+  "acceptance": "A server test: a hit-reaction chain with a forced hit effect at step 2 still applies the hit when a new order cuts the chain at step 1; an unforced dust effect after the cut does not run; a prioritised chain refuses the cut and plays to its end."
+}

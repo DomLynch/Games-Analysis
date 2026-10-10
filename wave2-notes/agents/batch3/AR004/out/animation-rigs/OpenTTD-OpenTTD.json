@@ -1,0 +1,79 @@
+{
+ "game": "OpenTTD-OpenTTD",
+ "category": "animation-rigs",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/OpenTTD-OpenTTD/src/animated_tile.cpp",
+ "licence": "GPL-2.0 (file headers 'free software ... the GNU General Public License ... version 2'; no 'or later' stated)",
+ "licence_class": "copyleft",
+ "target_module": "origins/client/zone-props.ts (proposed path; not located)",
+ "parity_row": 7,
+ "pattern_tags": [
+  "fixed-step",
+  "wait-gate",
+  "lockstep",
+  "timer-wheel",
+  "new:lazy-active-list",
+  "new:speed-gate-power-of-two",
+  "new:play-once-clip",
+  "new:stateless-phase-window",
+  "new:chance-at-cycle-end"
+ ],
+ "data_fields": [
+  {
+   "name": "animSpeedExponent",
+   "donor_constant": "0-16 (step every 2^n ticks); clamped to 0..16",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "OpenTTD-OpenTTD/src/newgrf_animation_base.h:58"
+  },
+  {
+   "name": "playOnceFrames",
+   "donor_constant": "sieve 96; toffee 70; bubble 40; sparks 7 (frames 0-6)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "OpenTTD-OpenTTD/src/industry_cmd.cpp:566"
+  },
+  {
+   "name": "toyLoopCount",
+   "donor_constant": "50 frames x 8 loops",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "OpenTTD-OpenTTD/src/industry_cmd.cpp:629"
+  },
+  {
+   "name": "oilStopChance",
+   "donor_constant": "1 in 7 at each cycle end",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "OpenTTD-OpenTTD/src/industry_cmd.cpp:650"
+  },
+  {
+   "name": "phasePeriodTicks",
+   "donor_constant": "2048",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "OpenTTD-OpenTTD/src/industry_cmd.cpp:665"
+  },
+  {
+   "name": "phaseWindowStartTicks",
+   "donor_constant": "1024 (second half of the period)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "OpenTTD-OpenTTD/src/industry_cmd.cpp:667"
+  },
+  {
+   "name": "speedZeroMs",
+   "donor_constant": "30 ms (donor comment, not measured)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "OpenTTD-OpenTTD/src/newgrf_animation_base.h:69"
+  }
+ ],
+ "best_idea": "Ambient loops keyed off the shared game tick (a speed gate and phase windows, no per-prop timer), plus an active list that drops finished props lazily and cancels a pending drop when a prop is re-triggered.",
+ "decision": "adapt",
+ "decision_why": "Zone props and ambient loops are client cosmetics that should cost nothing when idle; the tick-gated cadence and lazy active list give that, but phase must come from the server tick, sound and gameplay side effects stay out, and there is no rig or blend code here, so it does not help the hero or creature rigs.",
+ "decision_status": "proposed",
+ "acceptance": "Two players at the same zone brazier see its flicker in the same phase, and it stays in phase after a reconnect (phase from the server tick); a one-shot spark burst is absent from the client's active list on the tick after it ends, and re-triggering it before that tick leaves one entry, not two."
+}

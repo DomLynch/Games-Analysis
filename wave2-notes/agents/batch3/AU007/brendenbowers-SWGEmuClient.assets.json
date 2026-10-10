@@ -1,0 +1,40 @@
+{
+"donor": "brendenbowers-SWGEmuClient",
+"code_licence": "none stated: no LICENSE, COPYING or NOTICE file in the tree; Plugins/SWGEmu/README.md License section says 'provided as-is for educational purposes related to SWG EMU'. Epic template headers ('Copyright Epic Games, Inc.') appear in engine target files.",
+"asset_licence": "none stated for the .uasset and .umap files, the CSV table, or the three gameplay GIFs. The README says the client needs the TRE data files from a retail client, so the game data is not in the repo.",
+"rights_holder_status": "unknown from repo files: the README says the plugin implements the Sony Online Entertainment UDP protocol for Star Wars Galaxies EMU and points to the SWGEmu server project; the repo does not state the copyright owner of the game or whether the work is clean-room.",
+"best_class": "C",
+"asset_groups": [
+{"kind":"materials","path":"Content/SWGEmu/Materials (19 .uasset)","count_hint":"19 files","licence":"not stated","class":"C","note":"names suggest sky (gradient, starfield, cloud, sprite), water, hologram, construction ghost, waypoint, terrain blend, survey; internals not opened"},
+{"kind":"UI blueprints: holo panels","path":"Plugins/SWGUIHolo/Content/UI/Hologram (7 .uasset) and Materials (1)","count_hint":"8 files","licence":"not stated","class":"C","note":"names: character sheet, map, inventory, detail card, meter line, attribute line, label; not opened"},
+{"kind":"UI blueprints: window and HUD","path":"Plugins/SWGUIWindow/Content/UI (19 .uasset) and Plugins/SWGUICore/Content/UI (13 .uasset) including HUD folder","count_hint":"32 files","licence":"not stated","class":"C","note":"names: login, galaxy and character select, inventory, crafting, datapad, travel, radial menu, action bar, command queue, floating text, target box; not opened"},
+{"kind":"input and touch assets","path":"Content/Input (IMC_Default, IMC_MouseLook, Actions 4, Touch 3)","count_hint":"9 files","licence":"not stated","class":"C","note":"input mapping and touch UI assets; not opened"},
+{"kind":"props and levels","path":"Content/SWGEmu/Props/SM_HoloDatapad.uasset; Content/SWGEmu/Levels/L_Startup.umap, SWGLevel.umap; SWGEmu.uasset, SWGPlayerController.uasset","count_hint":"5 files","licence":"not stated","class":"C","note":"one holo datapad prop, two maps; not opened"},
+{"kind":"data table","path":"Plugins/SWGEmu/Content/SWGFormTagMappings.csv (14 lines) and Content/SWGEmu/Data/DT_SWGFormTagMappings.uasset","count_hint":"14 lines","licence":"not stated","class":"C","note":"CSV read in part: a short table mapping four-letter template codes to actor classes, with notes; it is game-structure data, not art"},
+{"kind":"gameplay GIFs","path":"Docs/Login.gif, Docs/Buildings2.gif, Docs/UI-WithController.gif","count_hint":"3 files, 47 to 90 MB each","licence":"not stated","class":"C","note":"screenshots of the client; not opened"},
+{"kind":"C++ source","path":"Plugins/*/Source (691 files (sum of listing counts))","count_hint":"691 files (sum of listing counts)","licence":"not stated","class":"D","note":"code, not assets; Epic template headers in some files"}
+],
+"inspiration": [
+"Holographic UI language: the holo panels (character sheet, map, inventory, detail card, meter lines) and the hologram and holo-text materials suggest a translucent, projected look. Recreate with our own palette and frame shapes, using thin meter lines and translucent panels.",
+"Ghost placement preview: several construction materials (holo, translucent, textured and masked variants) show a building before it is placed. Recreate for our build mode, choosing the variant by device quality.",
+"Layered sky: a gradient sky, a starfield, a cloud layer and sky sprites are separate materials. Recreate as stacked layers with our own art so the sky reads as depth, not a single image.",
+"Radial command wheel: a radial menu widget sits in the HUD next to a command queue and an action bar with slots. Recreate as a ring menu with a visible queue for combat orders.",
+"Scan field overlay: a survey-field material suggests a ground overlay for resource scanning. Recreate as a soft tinted field that marks where a scan has been done.",
+"Template-code table: a short table maps object template codes to actor classes, with notes on what is data-only. Recreate the pattern as our own spawn type table with one row per object kind, not the same codes."
+],
+"briefs": [
+{"label":"Holo panel set","why":"translucent frames with thin meter lines read as a projected display rather than a flat menu","keep":"translucent panels; thin meter and attribute lines; a character sheet layout","change":"our palette (amber or ice), angular frames, our own typography and icons","ref":"/mnt/frankendom-donors/brendenbowers-SWGEmuClient/Plugins/SWGUIHolo/Content/UI/Hologram/WBP_HoloCharacterSheet.uasset (name only; not opened); Content/SWGEmu/Props/SM_HoloDatapad.uasset (name only)"},
+{"label":"Ghost build preview","why":"a translucent placement ghost tells the player what will be built before they commit","keep":"translucent ghost with textured and masked variants","change":"our grid snapping and colour states (valid, blocked); a small footprint outline","ref":"/mnt/frankendom-donors/brendenbowers-SWGEmuClient/Content/SWGEmu/Materials/M_SWGConstructionHolo.uasset (name only; not opened)"},
+{"label":"Layered star dome","why":"separate sky layers give depth without a large single sky image","keep":"gradient base, starfield, cloud layer and sprites on top","change":"our own sky colours, cloud shapes and star density per zone","ref":"/mnt/frankendom-donors/brendenbowers-SWGEmuClient/Content/SWGEmu/Materials/M_SWGStarField.uasset and M_SWGCloudLayer.uasset (names only)"},
+{"label":"Radial command ring","why":"a ring of commands near the cursor is quick to use in combat","keep":"ring menu with a visible command queue beside it","change":"our own command set, icons and ring size; touch-friendly spacing","ref":"/mnt/frankendom-donors/brendenbowers-SWGEmuClient/Plugins/SWGUICore/Content/UI/WBP_RadialMenu.uasset (name only; not opened)"},
+{"label":"Scan field overlay","why":"a tinted ground field shows what has been scanned without extra text","keep":"soft field overlay on the ground","change":"our own tint and edge treatment; a fade over time","ref":"/mnt/frankendom-donors/brendenbowers-SWGEmuClient/Plugins/SWGUIHolo/Content/Materials/M_SWGSurveyField.uasset (name only; not opened)"}
+],
+"not_read": [
+"All .uasset and .umap files (binary Unreal assets; names and counts only)",
+"The three GIFs (47 to 90 MB each; file sizes only)",
+"The full CSV table beyond the first lines (14 lines total)",
+"C++ source except the copyright lines of three files and the README",
+"Whether the holo, construction and sky materials are the work of the repo authors or from Epic or a game: not stated in files read",
+"Five briefs given from names only; no internal material setup was seen"
+]
+}

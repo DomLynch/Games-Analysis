@@ -1,0 +1,93 @@
+{
+ "game": "exult-exult",
+ "category": "animation-rigs",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/exult-exult/objs/animate.cc",
+ "licence": "GPL-2.0-or-later (objs/animate.cc lines 13-14; COPYING is GPL v2)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/attack-clip.ts",
+ "parity_row": 7,
+ "pattern_tags": [
+  "timer-wheel",
+  "wait-gate",
+  "fixed-step",
+  "new:clip-loop-tail",
+  "new:first-frame-hold-chance",
+  "new:timesynced-clip",
+  "new:windup-to-hit",
+  "new:hit-flash-timer",
+  "new:frame-count-hit-time"
+ ],
+ "data_fields": [
+  {
+   "name": "clip_frame_ms",
+   "donor_constant": "frame_delay x 100 ms (per clip)",
+   "unit": "ms",
+   "where": "zone data",
+   "donor_ref": "objs/animate.cc:436-440"
+  },
+  {
+   "name": "clip_start_hold_chance",
+   "donor_constant": "freeze_first percent, default 100",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "objs/animate.cc:407"
+  },
+  {
+   "name": "clip_tail_loop_frames",
+   "donor_constant": "recycle count (0 = whole clip)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "objs/animate.cc:410-413"
+  },
+  {
+   "name": "swing_windup_poses",
+   "donor_constant": "reach 2, raise 3, fast swing 3, slow swing 4 (one-handed); 2, 3, 3, 4 poses in two-handed tables",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "actors.cc:152-160"
+  },
+  {
+   "name": "windup_ms",
+   "donor_constant": "(poses + 1) x frame time, derived by reading the scheduler (not run)",
+   "unit": "ms",
+   "where": "zone data",
+   "donor_ref": "actions.cc:789-815; actors.cc:5209-5225; combat.cc:1610-1628"
+  },
+  {
+   "name": "hit_outline_ms",
+   "donor_constant": "200",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "actors.cc:2842"
+  },
+  {
+   "name": "clip_grid_ms",
+   "donor_constant": "100 (timer alignment)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "objs/animate.cc:436,481"
+  },
+  {
+   "name": "frame_delay_from_fps",
+   "donor_constant": "std_delay = 1000 / fps",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "gamewin.cc:624"
+  },
+  {
+   "name": "avatar_flash_threshold",
+   "donor_constant": "damage at least strength/3, or health below strength/4, or lightning",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "actors.cc:2956-2958"
+  }
+ ],
+ "best_idea": "Let the clip rules (first-frame hold chance, tail loop, time-synched crowd clip, hold on the last frame) and a swing's windup table be data, and derive the strike time from the windup data on the server, not from the client's animation timer.",
+ "decision": "adapt",
+ "decision_why": "The clip rules and windup table fit creature clips, but the donor lets the actor's own queue decide the strike, which cannot own a server-verified kill.",
+ "decision_status": "proposed",
+ "acceptance": "A creature's swing shows its windup poses at the data frame time and the server strike lands at swing start plus the data windup time for each of the four styles, asserted by a server test."
+}

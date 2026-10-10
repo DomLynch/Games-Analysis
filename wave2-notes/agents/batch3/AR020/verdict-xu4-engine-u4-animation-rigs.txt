@@ -1,0 +1,28 @@
+xu4-engine-u4 | animation-rigs | cell 2 | verdict PARTIAL | depth thin | licence GPL-3.0 (repo COPYING; anim.c and combat.cpp have no per-file licence header) | clean-room only if ever used
+
+Hint file: /mnt/frankendom-donors/xu4-engine-u4/src/support/anim.c (280 lines). It is a real but small value animator, not a rig.
+
+Files opened (read in the donor):
+1. /mnt/frankendom-donors/xu4-engine-u4/src/support/anim.c (all lines; the hint)
+2. /mnt/frankendom-donors/xu4-engine-u4/src/support/anim.h (all lines)
+3. /mnt/frankendom-donors/xu4-engine-u4/src/combat.cpp lines 515-552 (the attack effect that tweens a projectile; animateAttack at 527)
+4. /mnt/frankendom-donors/xu4-engine-u4/src/tile.cpp lines 250-262 (the tile frame cycler)
+5. /mnt/frankendom-donors/xu4-engine-u4/src/event.cpp lines 296-312 (wait_msecs body; read to the first loop only)
+Located by grep only (not read in full): src/tileview.cpp:312-316, src/map.cpp:371, src/location.cpp:544, src/gpu_opengl.cpp:1258, 1348, 1656, src/event.h:203, src/screen.cpp:894, src/event.cpp:47-48, src/xu4.cpp:514.
+
+Search for the topic: grep -rn over src/ for skelet, bone, skinning, ragdoll, inverse kin, blend, crossfade, attachment, flinch, hit reaction, keyframe. No rig, skin, skeleton, IK, or clip-blend code exists. The hits were GL blend state (image.h, dungeonview.cpp), GL framebuffer attachment constants (glad.h), a text line about ghosts and skeletons (game.cpp:2758), and a creature id named SKELETON_ID (creature.h:66).
+
+Why PARTIAL: anim.c is a fixed pool of up to N tweens. Each tween is either a random-chance frame cycle or a linear two-value lerp over a duration, with a loop count and a finish callback whose slots are released after the batch. It has no skeleton, no pose, no blending between clips, and only three states (free, playing, paused). It drives 2D tile frames and the position of a projectile or effect on the 2D map, so the rig topic does not start here; only the pool and the tween timing transfer.
+
+Checked (run):
+- Compiled anim.c with a small harness on the VPS (cc -std=c99, copy in /tmp/AR020-xu4). anim_init(..., 4) returns 4, but only three anim_startLinearF2 calls succeed (ids 0, 1, 2); the fourth and fifth return 65535. Cause: the free-list loop (anim.c:90, `for (i = 1; i < end; ++i)`, with end = avail - 1) and the terminator (anim.c:95) leave the last bank slot unlinked. Real bug: capacity is one less than the count reported (anim.c:64).
+
+Checked (read, not run):
+- anim_advance (anim.c:140-211): a completed cycle subtracts one duration from the timer (155, 159) and does not catch up if the step is more than one duration (one subtraction per call). A random-cycle value steps one frame per completed cycle when a percent roll passes (170). The linear value uses frac = ctime / duration (187).
+- Caller combat.cpp:539-543: the attack effect's duration is path length over screenAnimationFramesPerSecond; the caller then calls wait_msecs (543). wait_msecs (event.cpp:296) pumps input and timers in a loop with a base controller until the time passes, so combat code blocks for the effect. The function sits under #ifdef GPU_RENDER (combat.cpp:524).
+- Caller tile.cpp:255: frame cycle, 0.25 s per step, ANIM_FOREVER, chance from the tile (tile.cpp:250-258).
+
+Best transferable idea: A fixed-size pool of short tweens with deferred finish callbacks, plus a per-cycle percent chance that steps a looping frame, could give client-only fx and idle-prop timing without touching the engine.
+Decision (proposed): reject for the rig topic. There is no skeleton, blend or state machine to adopt; if Frankendom needs a client fx tween pool, write it fresh and take the capacity bug and the blocking wait as warnings, not as a model.
+
+Gaps for Frankendom if anyone copies the shape: the blocking wait (combat.cpp:543) would freeze the tick; the capacity bug (anim.c:90-95) loses a slot; a stale AnimId after release is not guarded (anim_setState at anim.c:262 writes state on any id; callers not read).

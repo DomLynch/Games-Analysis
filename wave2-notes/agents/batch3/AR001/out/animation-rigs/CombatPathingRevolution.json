@@ -1,0 +1,27 @@
+{
+  "game": "CombatPathingRevolution",
+  "category": "animation-rigs",
+  "cell": 3,
+  "verdict": "STRONG",
+  "depth": "thin",
+  "donor_path": "/mnt/frankendom-donors/CombatPathingRevolution/src/PayloadInterpreter/payloadManager.cpp",
+  "licence": "MIT (LICENSE line 1: MIT License, Copyright (c) 2022 max-su-2019)",
+  "licence_class": "permissive",
+  "target_module": "src/fight/clip-events.ts",
+  "parity_row": 7,
+  "pattern_tags": ["new:clip-event-window", "new:enable-then-params", "new:positional-payload", "new:interrupt-request-flag"],
+  "data_fields": [
+    {"name": "circling_dist_min", "donor_constant": "doc example 90 (author value, not a default); consumer widens it by optimal weapon range when positive", "unit": "units", "where": "zone data", "donor_ref": "src/Circling_Hook.cpp:26"},
+    {"name": "circling_dist_max", "donor_constant": "doc example 1200 (author value); consumer adds max weapon range", "unit": "units", "where": "zone data", "donor_ref": "src/Circling_Hook.cpp:31"},
+    {"name": "circling_chance_floor_outside_window", "donor_constant": "0.1", "unit": "ratio", "where": "engine constant", "donor_ref": "src/Circling_Hook.cpp:48"},
+    {"name": "backoff_chance", "donor_constant": "doc example 0.95 (author value, not a default)", "unit": "ratio", "where": "zone data", "donor_ref": "doc/en/Developers Guidelines of CPR.md:141"},
+    {"name": "backoff_min_dist_mult", "donor_constant": "doc example 0.85 (author value, not a default)", "unit": "ratio", "where": "zone data", "donor_ref": "doc/en/Developers Guidelines of CPR.md:139"},
+    {"name": "fallback_wait_time_min", "donor_constant": "doc example 2.0 (author value, not a default)", "unit": "s", "where": "zone data", "donor_ref": "doc/en/Developers Guidelines of CPR.md:177"},
+    {"name": "event_tag", "donor_constant": "CPR", "unit": "none", "where": "engine constant", "donor_ref": "src/PayloadInterpreter/hooks.h:22"}
+  ],
+  "best_idea": "Animation clips carry a tagged event whose payload names a gameplay parameter set, and the engine applies it as one enable flag plus positional floats, so a clip can switch a tuned window on or off at the exact frame it plays.",
+  "decision": "adapt",
+  "decision_why": "The tagged clip event that switches one named window on and off fits creature windup and hit windows, but free-text positional payloads half-apply on a bad field and the rulings keep tuning in zone and catalogue data with server-verified kills.",
+  "decision_status": "proposed",
+  "acceptance": "A server test for a creature's windup clip asserts a hit is accepted only while the window opened by that clip's event is open for the current attack id, and rejects hits before the open event or after the close event."
+}

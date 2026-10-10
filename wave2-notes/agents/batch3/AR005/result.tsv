@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+OpenXcom-OpenXcom	animation-rigs	P	STRONG	full	/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Savegame/BattleUnit.cpp:652-727 - one step counter (end 8 orthogonal, 16 diagonal) drives the gait frame, footstep cues and drawn offset; the logical tile is committed at mid-step; off-screen steps skip animation.
+Return-To-The-Roots-s25client	animation-rigs	P	STRONG	full	/mnt/frankendom-donors/Return-To-The-Roots-s25client/libs/s25main/animation/Animation.cpp:33-201 - wall-clock clip clock with frame-skip vs time-skip, repeat and ping-pong caps, and finish-now vs play-out; UI-element player only, no skeleton or blend.
+SCAR	animation-rigs	P	STRONG	full	/mnt/frankendom-donors/SCAR/src/SCARActionData.cpp:182-295 - attack options authored as clip annotations (window on clip time, weight, chance, cone, cooldown), first passing option wins; combo continuation by a percent on the SCAR_ComboStart event (Hook_AttackCombo.cpp:33-61).

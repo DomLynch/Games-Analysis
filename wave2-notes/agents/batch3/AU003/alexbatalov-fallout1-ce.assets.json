@@ -1,0 +1,34 @@
+{
+  "donor": "alexbatalov-fallout1-ce",
+  "code_licence": "Sustainable Use License 1.0 (LICENSE.md). Use only for internal business or non-commercial or personal use; distribution free of charge and for non-commercial purposes; no removing licensor notices; trademark use subject to applicable law. README line 115: 'The source code is this repository is available under the Sustainable Use License'.",
+  "asset_licence": "No game assets in the repo (README line 17: 'it contains data assets needed to play' refers to the user's Windows install). The only non-code content is launcher icons. No separate licence is stated for them; the SUL text is the only licence file in the repo.",
+  "rights_holder_status": "Fan community re-implementation of Fallout (README line 3: 'fully working re-implementation of Fallout'). The user must own the game (README line 9) and copy the original data files into place. The repo files I read do not name the original publisher.",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "launcher icons (PNG, Android mipmaps)", "path": "os/android/app/src/main/res/mipmap-*/ (15 PNG files)", "count_hint": "15 PNG, 48px to 432px square, plus round and foreground variants", "licence": "SUL 1.0 (repo, inferred)", "class": "C", "note": "Software icons. The files do not say whether the art carries Fallout marks or trademarks, so C by rule."},
+    {"kind": "launcher icon master (PNG)", "path": "os/ios/AppIcon.xcassets/AppIcon.appiconset/AppIcon.png", "count_hint": "1 PNG, 1024x1024, about 1.6 MB", "licence": "SUL 1.0 (repo, inferred)", "class": "C", "note": "Same question as above. Not opened beyond the header."},
+    {"kind": "desktop icons (ICO, ICNS)", "path": "os/windows/fallout-ce.ico, os/macos/fallout-ce.icns", "count_hint": "2 files", "licence": "SUL 1.0 (repo, inferred)", "class": "C", "note": "Not opened."},
+    {"kind": "original game data (art, sprites, maps, text, music, sound)", "path": "not in repo: master.dat, critter.dat, data/ and sound/music (README lines 67, 81, 87)", "count_hint": "not in repo", "licence": "proprietary per README (user must own the game)", "class": "D", "note": "The engine reads the user's own copy. Frankendom cannot take these files. Inspiration only."},
+    {"kind": "third-party licence files (text)", "path": "third_party/sdl2/LICENSE, third_party/fpattern/LICENSE", "count_hint": "2 files", "licence": "third-party (not read)", "class": "C", "note": "Names only. Not opened."}
+  ],
+  "inspiration": [
+    "Handheld tabbed terminal: one device screen opened for a stated reason (PipboyOpenIntent enum, pipboy.h line 11) and saved with the game (save_pipboy and load_pipboy in pipboy.h). Recreate as a bottom sheet with icon-first tabs and our own chrome.",
+    "Palette-ramp transitions: screens fade by moving the colour table (palette_fade_to, palette.h line 12) rather than by drawing an overlay. Recreate as a tint or colour-matrix tween on our own palette, so the same idea works on a phone without any original art.",
+    "Credits as a data-driven roll: one routine takes a data file path, a frame id and a style flag, so the same roll can run forward or in a reversed style (credits.h line 6). Recreate with a scrolled list driven by a JSON file and touch flick.",
+    "Several separate systems files (combat, combat AI, party, perk, skill, inventory) show that the game was built as small mechanical modules. Good for structure; do not copy gameplay numbers or text.",
+    "Icon-set discipline: Android icons come in five densities (mdpi to xxxhdpi) with round and foreground variants, and iOS takes one 1024 master. Recreate by producing one master and exporting the sizes from it."
+  ],
+  "briefs": [
+    {"label": "Handheld tabbed terminal", "why": "One device screen with tabs that opens for a reason and remembers its state fits a survival or RPG loop without a separate menu for every system.", "keep": ["open by intent", "tabbed sub-screens", "state saved with the save file"], "change": ["phone-width bottom sheet rather than a fixed box", "our own colour and chrome", "icon-first tabs with no period styling"], "ref": "alexbatalov-fallout1-ce src/game/pipboy.h line 11"},
+    {"label": "Palette-ramp screen fade", "why": "Fading the colour table gives a clean transition with no overlay art.", "keep": ["fade by colour table", "set a range of entries", "instant snap for hard cuts"], "change": ["colour-matrix tween in our own shader", "tint toward the location colour", "a different easing curve"], "ref": "alexbatalov-fallout1-ce src/game/palette.h line 12"},
+    {"label": "Data-driven credits roll", "why": "A credits roll that is a data file plus a style flag can be reused for endings, dev notes and patch notes.", "keep": ["data file path as input", "forward and reversed style", "frame or backdrop id"], "change": ["touch flick scrolling", "our own font and frame", "no fixed backdrop"], "ref": "alexbatalov-fallout1-ce src/game/credits.h line 6"}
+  ],
+  "not_read": [
+    "all source bodies (only the lines quoted in receipts plus header signatures)",
+    "all PNG and ICO/ICNS pixel content (dimensions and headers only)",
+    "third_party/sdl2/LICENSE and third_party/fpattern/LICENSE contents (names only)",
+    "README sections beyond the lines quoted (install and build steps)",
+    "original Fallout game data (not in repo; not fetched)",
+    "CMake and os/ build config beyond names"
+  ]
+}

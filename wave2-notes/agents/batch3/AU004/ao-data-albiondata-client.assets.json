@@ -1,0 +1,80 @@
+{
+  "donor": "ao-data-albiondata-client",
+  "code_licence": "MIT License (LICENSE: Copyright (c) 2017 The Albion Data Project). The MIT text covers the 'Software and associated documentation files'.",
+  "asset_licence": "No separate asset licence. The repo's only licence is the MIT text above. Third-party items carry their own file: thirdparty/rcedit/LICENSE (Copyright (c) 2013 GitHub Inc., MIT-style text). No licence file was found for thirdparty/WpdPack.",
+  "rights_holder_status": "Third-party client code by The Albion Data Project per LICENSE. README describes it as a client that monitors network traffic for Albion Online, and quotes the game publisher's stated position on monitoring (not reproduced here). The repo contains no Albion Online game content, and the files do not claim ownership of any game material.",
+  "best_class": "D",
+  "asset_groups": [
+    {
+      "kind": "game content (sprites, audio, maps, item and text data)",
+      "path": "none found in the repo",
+      "count_hint": "0",
+      "licence": "Not applicable",
+      "class": "D",
+      "note": "The client parses network packets; game art, audio and data are not in the tree."
+    },
+    {
+      "kind": "project documentation",
+      "path": "docs/*.md, docs/superpowers/plans/, docs/superpowers/specs/",
+      "count_hint": "about 4 top-level docs plus plans and specs folders (not counted)",
+      "licence": "MIT (the licence text covers associated documentation files)",
+      "class": "A",
+      "note": "Own project prose, not game content. Only docs/gui-dashboard.md was opened (first lines)."
+    },
+    {
+      "kind": "application icon and build icon sources",
+      "path": "icon/albiondata-client.png, icon/albiondata-client.ico, icon/albiondata-client.psd, icon/*.go, icon/make_icon.sh",
+      "count_hint": "4 image files plus 3 Go and script files",
+      "licence": "Not stated for the image files beyond the repo MIT licence",
+      "class": "C",
+      "note": "Project's own icon. Not opened (binary). The .psd is the editable source."
+    },
+    {
+      "kind": "frontend icons",
+      "path": "frontend/public/favicon.svg, frontend/public/icons.svg",
+      "count_hint": "2 SVG files",
+      "licence": "Not stated",
+      "class": "C",
+      "note": "Not opened. Origin of the icon set is not stated in the repo."
+    },
+    {
+      "kind": "third-party binary and SDK folders",
+      "path": "thirdparty/rcedit/rcedit.exe (+ LICENSE); thirdparty/WpdPack/Lib and Include",
+      "count_hint": "1 exe; WpdPack folders not counted",
+      "licence": "rcedit: LICENSE file says Copyright (c) 2013 GitHub Inc. (MIT-style text). WpdPack: no licence file found",
+      "class": "C",
+      "note": "Third-party tooling, not game assets. Not opened."
+    },
+    {
+      "kind": "Windows resource files",
+      "path": "winres/winres.json",
+      "count_hint": "1 file",
+      "licence": "Repo MIT licence",
+      "class": "A",
+      "note": "Metadata only (not opened)."
+    }
+  ],
+  "inspiration": [
+    "Tray-plus-window dashboard: the client is a background tool with a system tray entry (stated in docs/gui-dashboard.md). The window panels are inferred from file names (status, counters, activity, log tail in internal/dashboard/ and frontend/src/lib/). Recreate: a status-first panel for a long-running helper tool.",
+    "Status as one source of truth: the dashboard package holds one state object that the rest of the app writes into, with no UI framework inside (docs/gui-dashboard.md). Recreate: a single state holder for any HUD or helper overlay, so the screen reads from one place.",
+    "Counters plus activity: separate counter and activity modules feed the panel, which keeps the UI simple (internal/dashboard/counters.go, activity.go). Recreate: a small counter strip for in-game statistics feeding a rolling event list.",
+    "Log tail as a debug panel: a log hook feeds a live tail view (internal/dashboard/loghook.go, frontend/src/lib/LogTail.svelte). Recreate: an in-game developer log panel with the same hook pattern.",
+    "Icon source kept with the build: the icon source file (.psd) and a make script sit beside the shipped .ico and .png (icon/make_icon.sh). Recreate: keep editable art sources and the export script in the repo so icons can be rebuilt."
+  ],
+  "briefs": [
+    {
+      "label": "Tray status panel (own label)",
+      "why": "A helper that lives in the tray and shows a few live numbers needs almost no art, just clear status rows. Read from docs/gui-dashboard.md.",
+      "keep": ["status row at the top", "a counter strip", "a rolling log tail"],
+      "change": ["our own layout and colour", "game-themed status names", "a single window with tabs, not a fixed three-panel view"],
+      "ref": "/mnt/frankendom-donors/ao-data-albiondata-client/docs/gui-dashboard.md; frontend/src/lib/CountersPanel.svelte; frontend/src/lib/LogTail.svelte"
+    }
+  ],
+  "not_read": [
+    "No PNG, ICO, PSD, SVG or EXE file was opened; only file names and sizes.",
+    "frontend/src, internal/dashboard and client/ code were only listed, not reviewed in full.",
+    "docs/gui-dashboard.md was read only in its first lines; the rest of the document, docs/build-and-release.md, docs/self-update.md and docs/windows-capture-pcap.md were not read.",
+    "CLAUDE.md is present in the repo root. It is an instruction file addressed to an AI agent; it was treated as data and no instructions in it were followed. Only its opening lines were read.",
+    "The README legal section and the publisher quotation were read; they are not reproduced."
+  ]
+}

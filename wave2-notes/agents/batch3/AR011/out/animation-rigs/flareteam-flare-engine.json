@@ -1,0 +1,92 @@
+{
+ "game": "flareteam-flare-engine",
+ "category": "animation-rigs",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/flareteam-flare-engine/src/Animation.cpp",
+ "licence": "GPL-3.0-or-later (src/Animation.h lines 9-11; COPYING is GPL v3)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/creature-clip.ts",
+ "parity_row": 7,
+ "pattern_tags": [
+  "fixed-step",
+  "wait-gate",
+  "poise-hit-gate",
+  "new:active-frame-fire",
+  "new:hold-on-windup-frame",
+  "new:play-once-active-fallback",
+  "new:clip-restart-on-name-change",
+  "new:poise-percent-gate"
+ ],
+ "data_fields": [
+  {
+   "name": "clip_duration_ms",
+   "donor_constant": "animation.duration in ms or s, converted to logic frames at max fps (rounded, at least 1)",
+   "unit": "ms",
+   "where": "zone data",
+   "donor_ref": "src/UtilsParsing.cpp:253-261"
+  },
+  {
+   "name": "clip_frames",
+   "donor_constant": "animation.frames (frame count of the clip)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "src/Animation.cpp:89-101"
+  },
+  {
+   "name": "active_frames",
+   "donor_constant": "default middle frame; data list or 'all'",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "src/Animation.cpp:146; src/Animation.cpp:309-336"
+  },
+  {
+   "name": "attack_speed_pct",
+   "donor_constant": "(effect attack speed x power attack speed) / 100",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "src/EntityBehavior.cpp:820-821"
+  },
+  {
+   "name": "state_hold_frame",
+   "donor_constant": "power state_hold_frame (windup frame to hold on)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "src/EntityBehavior.cpp:839-846"
+  },
+  {
+   "name": "state_duration_ms",
+   "donor_constant": "power state_duration, set on the state timer at the first frame",
+   "unit": "ms",
+   "where": "zone data",
+   "donor_ref": "src/EntityBehavior.cpp:824-825"
+  },
+  {
+   "name": "poise_pct",
+   "donor_constant": "stats POISE, as percent of max HP in the HP style",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "src/Entity.cpp:689"
+  },
+  {
+   "name": "max_fps",
+   "donor_constant": "60 (default setting)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "src/Settings.cpp:84"
+  },
+  {
+   "name": "hit_cooldown",
+   "donor_constant": "stats cooldown_hit (duration set elsewhere, not read)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "src/Entity.cpp:661-696"
+  }
+ ],
+ "best_idea": "Fire an attack on a named active frame of its clip, fall back to the last frame if a play-once clip skipped it, and hold the clip on a windup frame while the state timer runs, so the telegraph is data and the strike is an animation event.",
+ "decision": "adapt",
+ "decision_why": "The active-frame event and the windup hold fit creature clips, but in Frankendom the server must fire the attack on its own tick and the clip must land its active frame on that tick, not the reverse.",
+ "decision_status": "proposed",
+ "acceptance": "A creature's attack holds on its windup frame for the data windup time and its active frame lands on the same tick the server records the fire event, asserted for every attack in the catalogue by a test."
+}

@@ -1,0 +1,72 @@
+{
+ "game": "OpenRCT2-OpenRCT2",
+ "category": "animation-rigs",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2/entity/Peep.cpp",
+ "licence": "GPL-3.0 (file header 'licensed under the GNU General Public License version 3'; or-later not stated; licence.txt is GPL v3)",
+ "licence_class": "copyleft",
+ "target_module": "origins/client/actor-clips.ts (proposed path; not located); strike timing in src/fight/ (duel step)",
+ "parity_row": 7,
+ "pattern_tags": [
+  "fixed-step",
+  "wait-gate",
+  "lockstep",
+  "hit-aggregation",
+  "new:action-clip-duration",
+  "new:frame-keyed-event",
+  "new:walk-cycle-by-distance",
+  "new:interruptable-gate",
+  "new:deferred-clip-switch"
+ ],
+ "data_fields": [
+  {
+   "name": "actionClipFrames",
+   "donor_constant": "sequence length from object JSON",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "OpenRCT2-OpenRCT2/src/openrct2/object/PeepAnimationsObject.cpp:141"
+  },
+  {
+   "name": "contactFrame",
+   "donor_constant": "15 (throw-up event)",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "OpenRCT2-OpenRCT2/src/openrct2/entity/Peep.cpp:488"
+  },
+  {
+   "name": "walkDestinationTolerance",
+   "donor_constant": "destinationTolerance (value not read)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "OpenRCT2-OpenRCT2/src/openrct2/entity/Peep.cpp:522"
+  },
+  {
+   "name": "walkStepOffset",
+   "donor_constant": "2 per step (kWalkingOffsetByDirection)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "OpenRCT2-OpenRCT2/src/openrct2/entity/Peep.cpp:432"
+  },
+  {
+   "name": "chanceEatFood",
+   "donor_constant": "1310 of 65536 (about 2 percent)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "OpenRCT2-OpenRCT2/src/openrct2/entity/Peep.cpp:264"
+  },
+  {
+   "name": "chanceWave2",
+   "donor_constant": "64 of 65536 (about 0.1 percent)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "OpenRCT2-OpenRCT2/src/openrct2/entity/Peep.cpp:271"
+  }
+ ],
+ "best_idea": "An action owns its clip and its length; it ends when the clip runs out, with a frame-keyed event at a chosen frame, so the strike's contact frame and the attack's end come from the same data.",
+ "decision": "adapt",
+ "decision_why": "The duration-from-clip and contact-frame event fit a hero or creature strike where the server resolves damage on the contact frame (row 7, with row 6 for the hero), but the server must own the frame counter and the donor's sprite model is not a rig.",
+ "decision_status": "proposed",
+ "acceptance": "A server test asserts the strike's damage entry is written on the strike start tick plus the contact-frame index, and the strike ends at the clip length with no separate timer; on the client a creature returns to its stance clip exactly when the clip's last frame plays."
+}

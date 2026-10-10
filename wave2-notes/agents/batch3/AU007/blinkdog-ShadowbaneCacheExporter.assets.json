@@ -1,0 +1,36 @@
+{
+"donor": "blinkdog-ShadowbaneCacheExporter",
+"code_licence": "GNU GPL v3 (LICENSE full text; README licence section and source headers say version 3 or any later version; copyright 2016 Patrick Meade)",
+"asset_licence": "None in repo: no game data is shipped. The exporter reads the user's own Shadowbane .cache files; the repo states no licence for that data.",
+"rights_holder_status": "unknown: README names Ubisoft as the distributor of the free client; the repo does not state who owns the cache data",
+"best_class": "D",
+"asset_groups": [
+{"kind":"repo files","path":"README.md, LICENSE, pom.xml, src/main/java (19 .java files)","count_hint":"23 files in repo","licence":"GPL v3 (code)","class":"D","note":"no art, audio, model or text data shipped"},
+{"kind":"mesh export (not in repo)","path":"Mesh.cache","count_hint":"24387 per README","licence":"not stated","class":"C","note":"README: exported as Blender Python scripts; mesh format not fully understood; not read"},
+{"kind":"sound export (not in repo)","path":"Sound.cache","count_hint":"1086 wav per README","licence":"not stated","class":"C","note":"README: WAVE files; not read"},
+{"kind":"texture export (not in repo)","path":"Textures.cache","count_hint":"9680 png per README","licence":"not stated","class":"C","note":"README: png files, stored upside down; not read"},
+{"kind":"terrain alpha masks (not in repo)","path":"TerrainAlpha.cache","count_hint":"20912 png per README; 128x128 greyscale per source","licence":"not stated","class":"C","note":"blend masks; not read"},
+{"kind":"other caches (not in repo)","path":"CObjects, CZone, Dungeon, Motion, Palette, Render, Skeleton, Tile, Visual .cache","count_hint":"not counted","licence":"not stated","class":"C","note":"README status 0% or partial; file names only; not read"},
+{"kind":"easter-egg content (not in repo)","path":"referenced in README (Interesting exports section)","count_hint":"not counted","licence":"not stated","class":"C","note":"README says messages and photographs exist in the data; not read, not reproduced"}
+],
+"inspiration": [
+"Terrain blended by mask: each terrain tile is a small greyscale mask (128 by 128) that decides how ground layers mix. Recreate with a few original ground textures plus our own painted or noise masks per tile, which gives many biome edges from few textures.",
+"Meshes as readable text: the exporter rebuilds vertices and triangles from a script that Blender can run. The same idea works for us: keep a human-readable mesh form (for example glTF JSON) so diffs and reviews are possible.",
+"Texture row order: the README notes the stored image is upside down, bottom row first. Worth a check on any import step so our textures and UVs do not come in flipped.",
+"Hidden keepsakes: the README describes messages and photographs inside the data that never showed in normal play. Idea: a few optional notes or photos placed off the main route in our zones, with all text and art written by us.",
+"Bundled archives: a small number of large archives, each with a directory header and then data, hold well over 100,000 resources. Idea: group our assets into a few bundles with an index so load and streaming stay simple."
+],
+"briefs": [
+{"label":"Mask-blended ground (originals only)","why":"one neutral mask per tile turns a few ground textures into many biome edges","keep":"greyscale mask per tile driving two or more layered textures; masks as separate art","change":"larger tile size; our own mask shapes (painted or noise); a palette per zone","ref":"/mnt/frankendom-donors/blinkdog-ShadowbaneCacheExporter/src/main/java/com/pmeade/shadowbane/terrain/TerrainAlphaResource.java"},
+{"label":"Readable mesh pack","why":"text-form meshes are easy to diff, review and repair by hand","keep":"explicit vertex list and triangle list in an editable file","change":"use glTF rather than a Blender script; add our own naming and LOD fields","ref":"/mnt/frankendom-donors/blinkdog-ShadowbaneCacheExporter/src/main/java/com/pmeade/shadowbane/mesh/MeshResource.java"},
+{"label":"Hidden keepsake","why":"a small found object off the main route rewards exploration without changing the quest path","keep":"optional item with a short note or photo, placed away from the route","change":"our own text and art; different item shapes; placed by zone designers","ref":"/mnt/frankendom-donors/blinkdog-ShadowbaneCacheExporter/README.md (section Interesting exports, line 60)"}
+],
+"not_read": [
+"All .cache files (not in repo; the repo has none)",
+"Exported output of any kind (none in repo); counts are README text only",
+"Java sources except the licence headers and the class comments of MeshResource and TerrainAlphaResource",
+"pom.xml beyond the first 40 lines",
+"README links to a download mirror and to store listings (not followed)",
+"No creature, zone, item or armour content exists in this repo, so no creature or armour briefs were possible"
+]
+}

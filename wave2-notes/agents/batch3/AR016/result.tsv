@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+lichess-org-lila	animation-rigs	P	STRONG	full	round/src/plugins/round.yeet.ts:65-127 integrates each piece per frame with gravity, edge reflection and 0.97 friction, and stops when all settle (lines 115-125); the hinted chessground file lines 51-53 only pass a duration.
+lichess-org-mobile	animation-rigs	P	STRONG	full	lib/src/view/puzzle/storm_clock.dart:34-163 (fade and rise popup restarted per event, 1500 ms; counter roll 500 ms from time minus bonus); hint board_thumbnail.dart is only a tap scale.
+lincity-ng-lincity-ng	animation-rigs	P	STRONG	full	src/lincity/modules/fire.cpp:138-152 (aftermath pose by progress, clamped; burning loop steps on a real-time deadline with a random 25-374 ms period snapped by lin-city.hpp:84-85); the hinted fire spread code is simulation, not animation.

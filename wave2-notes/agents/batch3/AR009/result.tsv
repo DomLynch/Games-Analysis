@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+crashkonijn-GOAP	animation-rigs	P	STRONG	full	AnimationBehaviour.cs:23-76 (Shared) + AgentMoveBehaviour.cs:34-68 + AgentBehaviour.cs:18-36,142-153 + CharacterAnimationController.controller:28-170; a bool-driven two-state locomotion clip, change-only writes, pause freeze, walk-only facing; no skeleton/IK/blend
+cvet-fonline	animation-rigs	P	STRONG	full	ModelAnimation.cpp:304-362 (timeline), 763-789 + 1316-1472 (two-slot body blend, movement select); ModelInstance.cpp:431-742 (PlayAnim slot crossfade), 1434-1500 (per-frame driver); MIT
+daggerfall-unity	animation-rigs	P	STRONG	full	DaggerfallMobileUnit.cs:214-310 (variant roll, entry hit marker), 521-592 (step, marker, one-shot exit, fps); EnemyAttack.cs:51-112 (divisor, damage flag consumer); billboard sprites, no rig; MIT

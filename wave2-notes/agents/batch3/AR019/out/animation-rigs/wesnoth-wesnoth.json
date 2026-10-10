@@ -1,0 +1,31 @@
+{
+  "game": "wesnoth-wesnoth",
+  "category": "animation-rigs",
+  "cell": 3,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/wesnoth-wesnoth/src/animated.tpp",
+  "licence": "GNU GPL version 2 or later per file headers (src/animated.hpp line 8, as read); COPYING is GPL-2.0 text",
+  "licence_class": "copyleft",
+  "target_module": "src/fight/anim-clips.ts",
+  "parity_row": 7,
+  "pattern_tags": ["new:impact-anchored-clip", "new:scored-clip-choice", "new:pause-shift-timeline", "new:cosmetic-drain", "new:progressive-ramp", "fixed-step"],
+  "data_fields": [
+    {"name": "attack_preroll", "donor_constant": "start_time=-450 (ms before impact)", "unit": "ms", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/macros/animation-utils2.cfg:40"},
+    {"name": "attack_frame_ms", "donor_constant": "100 ms per frame, 10 frames", "unit": "ms", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/macros/animation-utils2.cfg:45"},
+    {"name": "attack_sound_offset", "donor_constant": "-100 ms", "unit": "ms", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/macros/animation-utils2.cfg:41"},
+    {"name": "defend_preroll", "donor_constant": "start_time=-126 (ms before impact)", "unit": "ms", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/macros/animation-utils.cfg:158"},
+    {"name": "defend_reaction_ms", "donor_constant": "250 ms reaction frame between 1 ms base frames", "unit": "ms", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/macros/animation-utils.cfg:162"},
+    {"name": "defend_hit_sound_offset", "donor_constant": "-25 ms", "unit": "ms", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/macros/animation-utils.cfg:173"},
+    {"name": "recruit_preroll", "donor_constant": "start_time=-200 (ms)", "unit": "ms", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/units/undead/Skeleton.cfg:25"},
+    {"name": "recruit_fade_ms", "donor_constant": "alpha 0 to 1 over 300 ms", "unit": "ms", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/units/undead/Skeleton.cfg:28"},
+    {"name": "idle_frame_ms", "donor_constant": "100 ms per idle frame, 8 frames", "unit": "ms", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/wesnoth-wesnoth/data/core/units/undead/Skeleton.cfg:58"},
+    {"name": "hp_drain_slice_ms", "donor_constant": "50 ms", "unit": "ms", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/wesnoth-wesnoth/src/units/udisplay.cpp:753"},
+    {"name": "match_fail_score", "donor_constant": "MATCH_FAIL = -10", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/wesnoth-wesnoth/src/units/animation.hpp:32"}
+  ],
+  "best_idea": "Time zero is the server's resolution: each hit clip starts before the impact by its own pre-roll and the chooser picks the clip by a score of satisfied conditions, so the strike looks right and the display never decides the outcome.",
+  "decision": "adapt",
+  "decision_why": "Frankendom wants impact-anchored clips and a scored chooser for hit reactions, but the donor's silent no-clip case, random tie-break (not replayable) and sprite-only frames do not fit; keep the anchor, the score and the pause shift, add a fallback clip and derive the choice from server data.",
+  "decision_status": "proposed",
+  "acceptance": "Client test: a clip with a matching attack filter beats a generic clip by one point; hit and kill verdicts choose different defend clips when both exist; a missing clip falls back and logs rather than playing nothing; a 60 ms hitstop makes the clip end 60 ms later with no skipped frame; the HP bar drains in 50 ms steps and ends at the server's hit points."
+}

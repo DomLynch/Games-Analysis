@@ -1,0 +1,168 @@
+{
+  "donor": "0ad-0ad",
+  "code_licence": "GPL version 2 (or later) for source and binaries/data (LICENSE.txt lines 4, 18, 46, 64); libraries Various; binaries/system/dbghelp.dll Proprietary (line 39)",
+  "asset_licence": "CC BY-SA 3.0 for binaries/data/mods/*/art and */audio (LICENSE.txt line 22; art and audio LICENSE.txt). Maps: NASA public domain (maps/random LICENSE.txt line 3), OSM heightmaps ODbL and CC BY-SA (line 16). Fonts: per-font licence files.",
+  "rights_holder_status": "Wildfire Games (copyright 2009 and 2014 in art and audio LICENSE.txt). Some textures derived from CGTextures (third party, stated). No leak or decompile claimed in the repo.",
+  "best_class": "B (CC BY-SA 3.0 art and audio, attribution and share-alike); A for NASA public-domain map imagery; C for fonts",
+  "asset_groups": [
+    {
+      "kind": "meshes (COLLADA)",
+      "path": "binaries/data/mods/public/art/meshes/",
+      "count_hint": "4067 .dae, 610 MB",
+      "licence": "CC BY-SA 3.0 (art LICENSE.txt)",
+      "class": "B",
+      "note": "Share-alike applies to derived files per the art licence."
+    },
+    {
+      "kind": "animation (COLLADA)",
+      "path": "binaries/data/mods/public/art/animation/",
+      "count_hint": "1194 .dae, 1.2 GB",
+      "licence": "CC BY-SA 3.0",
+      "class": "B",
+      "note": "Not opened."
+    },
+    {
+      "kind": "textures",
+      "path": "binaries/data/mods/public/art/textures/",
+      "count_hint": "8334 files, 3.6 GB (7040 PNG, 1176 DDS)",
+      "licence": "CC BY-SA 3.0; CGTextures-derived textures per art LICENSE.txt line 21",
+      "class": "B",
+      "note": "ptol skin sample 256x256 RGBA; CGTextures originals keep their own terms."
+    },
+    {
+      "kind": "materials and shader setups",
+      "path": "binaries/data/mods/public/art/materials/",
+      "count_hint": "33 XML",
+      "licence": "CC BY-SA 3.0",
+      "class": "B",
+      "note": "Technique reference; player-colour and spec/normal setup."
+    },
+    {
+      "kind": "variants (shields, weapons)",
+      "path": "binaries/data/mods/public/art/variants/",
+      "count_hint": "1150 XML, 4.8 MB",
+      "licence": "CC BY-SA 3.0",
+      "class": "B",
+      "note": "Gold variants exist (e.g. sele_pelte_01_gold.xml)."
+    },
+    {
+      "kind": "actors (unit, prop, structure XML)",
+      "path": "binaries/data/mods/public/art/actors/",
+      "count_hint": "5387 XML",
+      "licence": "CC BY-SA 3.0",
+      "class": "B",
+      "note": "Templates; per-civ folders."
+    },
+    {
+      "kind": "particles",
+      "path": "binaries/data/mods/public/art/particles/",
+      "count_hint": "66 XML, 268 KB",
+      "licence": "CC BY-SA 3.0",
+      "class": "B",
+      "note": "Coin, dust, smoke, sand, snow, cloud."
+    },
+    {
+      "kind": "terrains and skeletons",
+      "path": "binaries/data/mods/public/art/terrains/, skeletons/",
+      "count_hint": "715 files in terrains (3 MB); 78 skeleton files",
+      "licence": "CC BY-SA 3.0",
+      "class": "B",
+      "note": "Not opened."
+    },
+    {
+      "kind": "music, sound, voice, ambient",
+      "path": "binaries/data/mods/public/audio/",
+      "count_hint": "1098 OGG, 274 MB; 361 XML; 183 OGG under audio/voice (all subfolders)",
+      "licence": "CC BY-SA 3.0 (audio LICENSE.txt)",
+      "class": "B",
+      "note": "Not opened."
+    },
+    {
+      "kind": "maps (scenario, skirmish, random)",
+      "path": "binaries/data/mods/public/maps/",
+      "count_hint": "590 files: 149 .pmp, 154 XML, 274 JSON/JS, 12 PNG",
+      "licence": "JSON/JS GPL-2+ (maps LICENSE.txt line 1); NASA topography public domain (line 3); OSM heightmaps ODbL and CC BY-SA (line 16)",
+      "class": "A for NASA imagery; B for OSM heightmaps; code GPL",
+      "note": "Map JS/JSON are code under GPL."
+    },
+    {
+      "kind": "fonts",
+      "path": "binaries/data/tools/fontbuilder/fonts/",
+      "count_hint": "18 font files",
+      "licence": "DejaVu (Bitstream Vera) line 1; FreeFont own file; GUST own file; LibBiolinum GPL (line 5)",
+      "class": "C",
+      "note": "Each font needs its own check before use."
+    },
+    {
+      "kind": "UI pages",
+      "path": "binaries/data/mods/public/gui/",
+      "count_hint": "many XML and JS pages",
+      "licence": "GPL-2+ / CC BY-SA per folder not stated in detail",
+      "class": "C",
+      "note": "Credits page 38 lines, not read in full."
+    },
+    {
+      "kind": "terms and disclaimers",
+      "path": "binaries/data/mods/public/gui/userreport/Terms_and_Conditions.txt; mod/gui/modio/Disclaimer.txt",
+      "count_hint": "2 text files",
+      "licence": "terms of service text (LICENSE.txt lines 98-100)",
+      "class": "D",
+      "note": "Not usable."
+    }
+  ],
+  "inspiration": [
+    "Player colour is a material switch (materials/player_trans_norm_spec.xml sets a player-colour define with spec and normal maps): one base texture with a spec and normal map gives a tintable, shiny armour look we can rebuild with our own shader.",
+    "Gold armour is a variant layer, not a new model: base texture plus gold texture plus spec texture (variants/shields/sele_pelte_01_gold.xml; skins/skeletal/ptol/cuirass_gold_01.png). A gold look is a palette and spec change.",
+    "Loot shimmer uses small particle presets (particles/coin.xml and coin_high.xml): a low-count sprite burst for normal drops and a higher-count variant for big drops.",
+    "Dust, sand, snow, smoke and cloud are reusable particle presets (particles/), so one preset set covers weather and destruction.",
+    "Units keep one template per civilisation with variant layers (actors/units per civ folder): a faction recolour and gear swap is cheaper than new models.",
+    "Ambient audio is layered by weather, time of day and water (audio/ambient/weather, dayscape, water): a layered ambient bed per zone is a clear pattern.",
+    "Maps use real-world heightmaps (NASA public-domain topography and OSM-derived heightmaps): for our zones, a heightmap from an image we own can drive terrain shape."
+  ],
+  "briefs": [
+    {
+      "label": "Gilded round shield (our label)",
+      "why": "A gold shield made by swapping textures in a variant file (not a new model). Visual not viewed; the idea comes from the variant XML and texture names.",
+      "keep": "one base shape with a gold texture and a spec texture; metal read from spec, not paint",
+      "change": "our own rim pattern; a different boss ornament; a different metal tone",
+      "ref": "binaries/data/mods/public/art/variants/shields/sele_pelte_01_gold.xml"
+    },
+    {
+      "label": "Gold cuirass skin (our label)",
+      "why": "A gold chest texture on a skeletal skin, 256x256 RGBA; suggests a metal skin layered over a base. Image not viewed.",
+      "keep": "gold skin on a shared base; spec map for shine",
+      "change": "different plate pattern; our own engraving; different tint",
+      "ref": "binaries/data/mods/public/art/textures/skins/skeletal/ptol/cuirass_gold_01.png"
+    },
+    {
+      "label": "Golden fleece relic (our label)",
+      "why": "A special gold item actor exists as its own XML; a single prized object with a distinct look and placement. XML not read.",
+      "keep": "single glowing trophy object; gold reads from a distance",
+      "change": "our own object shape; different glow colour; a different story role",
+      "ref": "binaries/data/mods/public/art/actors/special/golden_fleece.xml"
+    },
+    {
+      "label": "Coin burst (our label)",
+      "why": "Two particle presets (normal and high count) for loot feedback; the split is a clear loot-tier signal. Particle XML not read.",
+      "keep": "two tiers of coin burst; short life",
+      "change": "our own currency shape; different sparkle colour; different burst direction",
+      "ref": "binaries/data/mods/public/art/particles/coin.xml; coin_high.xml"
+    },
+    {
+      "label": "Dust storm (our label)",
+      "why": "Separate sand and dust presets (blowing sand, dust storm reddish) make a clear weather mood. Particle XML not read.",
+      "keep": "wind-driven dust layer; warm palette",
+      "change": "our own weather palette; different particle size; a different wind pattern",
+      "ref": "binaries/data/mods/public/art/particles/blowing_sand.xml; dust_storm_reddish.xml"
+    }
+  ],
+  "not_read": [
+    "No image opened or viewed (no downloads). Gold and skin notes are from file names and XML only.",
+    "No COLLADA mesh or animation opened; poly counts unknown.",
+    "Audio files not opened; voice content not checked.",
+    "Actor, particle, variant and terrain XML not read beyond names.",
+    "gui/credits/credits.xml not read beyond its length.",
+    "FreeFont and GUST font licence files not read beyond headers.",
+    "Map files (.pmp, JSON, JS) not read."
+  ]
+}

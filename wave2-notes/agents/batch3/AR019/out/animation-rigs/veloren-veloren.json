@@ -1,0 +1,31 @@
+{
+  "game": "veloren-veloren",
+  "category": "animation-rigs",
+  "cell": 2,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/veloren-veloren/voxygen/anim/src/biped_large/run.rs",
+  "licence": "GNU GPL version 3 (LICENSE lines 1-2, as read)",
+  "licence_class": "copyleft",
+  "target_module": "src/fight/anim-gait.ts",
+  "parity_row": 7,
+  "pattern_tags": ["accumulator", "new:accumulated-distance-phase", "new:pure-pose-function", "new:per-frame-pose-lerp", "new:attach-table"],
+  "data_fields": [
+    {"name": "phase_per_distance", "donor_constant": "lab = 0.65 * tempo", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/veloren-veloren/voxygen/anim/src/biped_large/run.rs:50"},
+    {"name": "tempo", "donor_constant": "per species; sample rows 0.9 and 0.8", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/veloren-veloren/voxygen/anim/src/biped_large/mod.rs:574"},
+    {"name": "step_speed_cap", "donor_constant": "speed.min(16.0)", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/veloren-veloren/voxygen/anim/src/biped_large/run.rs:51"},
+    {"name": "step_speed_full", "donor_constant": "/ 12.0", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/veloren-veloren/voxygen/anim/src/biped_large/run.rs:51"},
+    {"name": "moving_threshold", "donor_constant": "0.2 (squared in test)", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/veloren-veloren/voxygen/src/scene/figure/mod.rs:96"},
+    {"name": "blend_rate", "donor_constant": "min(15 * dt, 1)", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/veloren-veloren/voxygen/src/scene/figure/mod.rs:996"},
+    {"name": "velocity_smoothing_base", "donor_constant": "0.1 ^ dt", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/veloren-veloren/voxygen/src/scene/figure/mod.rs:8629"},
+    {"name": "lean_clamp", "donor_constant": "angle_between(...).min(0.2)", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/veloren-veloren/voxygen/anim/src/biped_large/run.rs:114"},
+    {"name": "body_scale_divisor", "donor_constant": "scaler / 8.0", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/veloren-veloren/voxygen/anim/src/biped_large/mod.rs:93"},
+    {"name": "mesh_bone_cap", "donor_constant": "MAX_BONE_COUNT = 16", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/veloren-veloren/voxygen/anim/src/lib.rs:113"},
+    {"name": "mount_offset_per_species", "donor_constant": "per-species table in code (values not copied)", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/veloren-veloren/voxygen/anim/src/biped_large/mod.rs:730"}
+  ],
+  "best_idea": "Step timing from distance travelled times a per-creature tempo (not from frame time), with one stored pose blended toward the target each frame, so a creature's legs stay in step with its speed and frame rate does not change the gait.",
+  "decision": "adapt",
+  "decision_why": "Frankendom's creatures need the distance phase and the one stored pose, but the donor's accumulator is unsigned (a back-step looks like a stride) and its per-frame blend snaps on long frames; we keep the shape, sign the phase, use exponential blending and move tempo and mount offsets into catalogue data.",
+  "decision_status": "proposed",
+  "acceptance": "A creature with tempo 0.9 walking at 6 units per second takes the same steps per metre on a 30 fps and a 144 fps client; on stopping the pose reaches 90 percent of the idle target in about 0.15 s with no snap on a 100 ms hitch; a rider keeps the same offset in the mount bone frame in a rig test."
+}

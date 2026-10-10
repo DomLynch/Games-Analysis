@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+TurningWheel-Barony	animation-rigs	P	STRONG	full	actmonster.cpp:10935-11107 limbAnimateToLimit snaps a joint onto its target when within one rate step and otherwise steps by rate; entity.cpp:21670-21676 chop windup, strike fires on the server when the counter reaches 9 ticks.
+ValveSoftware-halflife	animation-rigs	P	STRONG	full	cl_dll/GameStudioModelRenderer_Sample.cpp:289-440 gait cycle advances by distance covered and the strafe byte comes from facing minus travel (reverse past 120 degrees); 133-246 three-way blend and a 0.2 s cross-fade; the local-prediction path is off (79).
+ValveSoftware-source-sdk-2013	animation-rigs	P	STRONG	full	src/game/client/c_baseanimating.cpp:5464-5549 cycle advances by elapsed time over clip duration with loop wrap and clamp; 3550-3735 fires clip events on the update that crosses them, with loop rules (a wrap drops the head events of that update, confirmed by a mirror run).

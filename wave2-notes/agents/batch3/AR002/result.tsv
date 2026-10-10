@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+EQEmu	animation-rigs	P	STRONG	thin	zone/mob.cpp:3545-3561 Mob::DoAnim sends a one-shot animation cue gated by a 100 ms per-mob timer (mob.cpp:127), and the donor has no skeleton, blend or IK code.
+FWGS-xash3d-fwgs	animation-rigs	P	STRONG	full	engine/common/mod_studio.c:631-730 and ref/gl/gl_studio.c:561-905 evaluate studio sequences with 2 or 4 blends, controller mapping, a 0.2 s frozen-pose clip transition, root-motion stripping, attachment bones and name-matched gear merge.
+FunkinCrew-Funkin	animation-rigs	P	STRONG	full	source/funkin/play/character/BaseCharacter.hx:389-477 holds a sing clip with a hold timer that a sustain pre-charges (CharacterPlayer.hx:238) and releases to an -end pose or idle; the hint file is freeplay DJ UI, not the rig.

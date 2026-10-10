@@ -1,0 +1,78 @@
+{
+  "donor": "atom0s-craft_extract",
+  "code_licence": "GNU AGPL version 3 (LICENSE and README 'License' section: 'is licensed under GNU AGPL v3'). The README says it is AGPL, not standard GPL.",
+  "asset_licence": "No separate asset licence stated. The project logo (repo/daochook.png, res/daochook.ico) is not named in any licence line. The repo contains no Dark Age of Camelot game files; the README says the user supplies tdl.crf, which the tool reads.",
+  "rights_holder_status": "Tool by atom0s (copyright line in src/main.cpp, src/defines.hpp, src/v66.hpp, src/v67.hpp: Copyright (c) 2022). README states that Dark Age of Camelot is copyright 2021 Electronic Arts Inc., that the tool does not claim ownership of any game material, and that the reverse engineering is described as clean room. Those are the repo's own statements; no legal view is given here.",
+  "best_class": "D",
+  "asset_groups": [
+    {
+      "kind": "game content (craft files, textures, models, audio, text)",
+      "path": "none in the repo",
+      "count_hint": "0; README says the user supplies tdl.crf extracted from the game's craft archive",
+      "licence": "Not applicable",
+      "class": "D",
+      "note": "The tool parses a craft file the user already has; the file is not in the repo."
+    },
+    {
+      "kind": "project logo and Windows icon",
+      "path": "repo/daochook.png (about 20 KB); res/daochook.ico (about 152 KB); res/resources.rc and res/resources.h (resource script)",
+      "count_hint": "2 image files, 2 resource text files",
+      "licence": "Not stated for the image files; repo AGPL-3.0 licence covers the repo but no line names the art",
+      "class": "C",
+      "note": "Project's own art, origin not stated. Not opened (binary)."
+    },
+    {
+      "kind": "third-party header and source libraries",
+      "path": "ext/cxxopts/cxxopts.hpp; ext/nlohmann_json/json.hpp; ext/sqlitecpp/include and src; ext/sqlite3/include (sqlite3.h, sqlite3ext.h)",
+      "count_hint": "23 source and header files (24 files in ext/ including the .lib)",
+      "licence": "No licence file found under ext/. Licences of these libraries are not stated in the repo",
+      "class": "C",
+      "note": "Code, not assets. Listed because their licences are not in the tree."
+    },
+    {
+      "kind": "prebuilt library binary",
+      "path": "ext/sqlite3/lib/sqlite3.lib",
+      "count_hint": "1 binary",
+      "licence": "Not stated",
+      "class": "C",
+      "note": "Binary; not opened."
+    },
+    {
+      "kind": "format definition source (craft recipe structures)",
+      "path": "src/v66.hpp (661 lines); src/v67.hpp (663 lines); src/defines.hpp (63 lines)",
+      "count_hint": "3 source files",
+      "licence": "AGPL-3.0 (repo)",
+      "class": "B",
+      "note": "Code, not art. Listed here because it holds the recipe data model. Structures were read by name only."
+    }
+  ],
+  "inspiration": [
+    "Profession tree: the format defines professions, a profession list, categories, recipes and materials as nested structures (src/v67.hpp, struct names at lines 62-131). Recreate: a crafting browser that goes profession, then category, then recipe.",
+    "Material slots with levels: a recipe holds up to eight material slots, and each slot has a base material, a skill requirement and a material level (src/v67.hpp near lines 62-80). Recreate: a fixed slot count per recipe with level gates, so tiers are data, not new code.",
+    "Base material list: a named base-material list drives the material tiers (src/v67.hpp near line 39). Recreate: a short list of our own base materials with a level rank each, shared across all recipes.",
+    "Separate craft record and material entries: the format keeps a craft record (craft_t, line 131) apart from its material entries (craftmaterial_t, line 124). Recreate: a small record-plus-entries split for our own crafting data, if it suits our item system (struct names only were read).",
+    "Multiple output modes: one extract step can write CSV, JSON, SQLite or plain text (README; src/defines.hpp output_mode enum). Recreate: one recipe dump to several formats, so designers and tools can read the same data."
+  ],
+  "briefs": [
+    {
+      "label": "Profession and recipe browser (own label)",
+      "why": "A three-level tree of profession, category and recipe is a clear way to browse crafts without any art. Read from the struct names in src/v67.hpp.",
+      "keep": ["profession, then category, then recipe", "materials listed per recipe", "level or skill gate on each slot"],
+      "change": ["our own profession names and tree shape", "a fixed slot count of our own choice", "a graphic icon set of our own for each profession"],
+      "ref": "/mnt/frankendom-donors/atom0s-craft_extract/src/v67.hpp (structs at lines 62, 69, 83, 89, 97, 124, 131)"
+    },
+    {
+      "label": "Tiered material gate (own label)",
+      "why": "Materials that carry a level make tiers a data choice rather than separate content. Read from the material fields in src/v67.hpp.",
+      "keep": ["material level as a number", "one skill gate per slot", "shared base materials"],
+      "change": ["our own tier names", "different level ranges", "a visual tier colour set"],
+      "ref": "/mnt/frankendom-donors/atom0s-craft_extract/src/v67.hpp (material_t near line 62; fields near lines 66-80)"
+    }
+  ],
+  "not_read": [
+    "No PNG, ICO or LIB file was opened; only sizes from the listing.",
+    "src/main.cpp and the v66/v67 bodies were not read in full; only struct names and grep matches.",
+    "ext/ libraries were not reviewed. No licence file was found for them in the tree.",
+    "No Dark Age of Camelot game data was present to inspect."
+  ]
+}

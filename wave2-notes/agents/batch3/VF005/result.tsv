@@ -1,0 +1,3 @@
+game	category	old	verdict	depth	finding
+PixelGuys-Cubyz	vfx-blood-finishers	P	STRONG	full	src/particles.zig:210-306 (update) and 308-331, 536-545: generic data-driven emitter pool with swap-remove, density buoyancy, exp drag and a hard cap; no blood, wound, decal or finisher code in donor
+SCAR	vfx-blood-finishers	P	PARTIAL	thin	SCARActionData.cpp:186-230 and Hook_AttackStart.cpp:8-44: no blood, decal, particle, hitstop or finisher VFX in donor; only the attack-selection gate (time window, range, chance, weight order) is finisher-adjacent

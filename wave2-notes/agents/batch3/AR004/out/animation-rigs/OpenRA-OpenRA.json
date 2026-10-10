@@ -1,0 +1,78 @@
+{
+ "game": "OpenRA-OpenRA",
+ "category": "animation-rigs",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Traits/Render/WithSpriteBody.cs",
+ "licence": "GPL-3.0-or-later (file headers 'either version 3 ... any later version'; COPYING is GPL v3)",
+ "licence_class": "copyleft",
+ "target_module": "origins/client/actor-clips.ts (proposed path; not located)",
+ "parity_row": 7,
+ "pattern_tags": [
+  "fixed-step",
+  "accumulator",
+  "wait-gate",
+  "lockstep",
+  "new:one-slot-clip-return",
+  "new:damage-tier-variant",
+  "new:death-variant-by-damage-type",
+  "new:cosmetic-vs-sim-rng"
+ ],
+ "data_fields": [
+  {
+   "name": "simStepMs",
+   "donor_constant": "40 ms per sim tick",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "OpenRA.Game/Graphics/Animation.cs:220"
+  },
+  {
+   "name": "defaultFrameMs",
+   "donor_constant": "40 ms (25 fps)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "OpenRA.Game/Graphics/Animation.cs:129"
+  },
+  {
+   "name": "damageTierPrefixes",
+   "donor_constant": "critical-, damaged-, scratched-, scuffed- (worst first)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "OpenRA.Mods.Common/Traits/Render/RenderSprites.cs:87"
+  },
+  {
+   "name": "attackDelayTicks",
+   "donor_constant": "0 (default)",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "OpenRA.Mods.Common/Traits/Render/WithAttackAnimation.cs:27"
+  },
+  {
+   "name": "idleIntervalTicks",
+   "donor_constant": "750 (default, single value)",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "OpenRA.Mods.Common/Traits/Render/WithIdleAnimation.cs:26"
+  },
+  {
+   "name": "chargeLevelMax",
+   "donor_constant": "25",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "OpenRA.Mods.Common/Traits/Attack/AttackCharges.cs:20"
+  },
+  {
+   "name": "chargeRatePerTick",
+   "donor_constant": "1 up, 1 down",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "OpenRA.Mods.Common/Traits/Attack/AttackCharges.cs:23"
+  }
+ ],
+ "best_idea": "One clip slot per body that every gameplay event writes to, with a one-shot that returns to the current locomotion clip when it ends.",
+ "decision": "adapt",
+ "decision_why": "The shape fits a client creature/hero clip layer that reads engine events (row 7), but the donor's return-to-idle and move-override gaps must be fixed, and its sprite-frame model is not a rig.",
+ "decision_status": "proposed",
+ "acceptance": "In the Pit, a creature hit into the heavy damage tier plays its heavy hit variant; after a one-shot attack clip a walking creature resumes its walk clip, not idle; a server-verified kill plays one death variant chosen by damage type with the fight-record seed, and a replay of the same record shows the same variant."
+}

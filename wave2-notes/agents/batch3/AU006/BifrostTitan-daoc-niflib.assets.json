@@ -1,0 +1,29 @@
+{
+  "donor": "BifrostTitan-daoc-niflib",
+  "code_licence": "File headers say GPL-2.0-or-later (include/niflib/ni_string.h:1). No LICENSE file in repo root. Upstream niflib.net licence text not in repo.",
+  "asset_licence": "None. No asset files; 45 files, all code, build or docs.",
+  "rights_holder_status": "Unknown. Upstream is niflib.net maintained by dol-leodagan (README.md:3). No copyright line in files read.",
+  "best_class": "D",
+  "asset_groups": [
+    {"kind": "none (repo)", "path": ".", "count_hint": "0 asset files; 45 files total", "licence": "GPL-2.0-or-later per headers (code)", "class": "D", "note": "No non-code content."},
+    {"kind": "code", "path": "include/niflib/, src/, tests/", "count_hint": "21 h, 20 cpp", "licence": "GPL-2.0-or-later per header comments; no LICENSE file in root", "class": "C", "note": "GPL and unclear: clean-room, shape only."}
+  ],
+  "inspiration": [
+    "A particle emitter as a data record: start time, stop time, emit rate, speed with random spread, and lifetime in one controller (include/niflib/ni_particles.h:88-113). A blood spurt or spark burst as one small record.",
+    "Typed records looked up by name: a block factory builds 100 record types from their type names (README.md, Port Status). Use for effect and unit records looked up by name.",
+    "Fail loud on unknown data: unknown block types fail with an explicit error (README.md, Port Status). Our loaders can do the same for unknown effect or zone keys.",
+    "Skinning and morph targets are separate record files (ni_skinning.h, ni_morph.h). Morph targets could blend a creature pose without a full rig. File names only.",
+    "Collision and extra-data records are separate from geometry (ni_collision.h, ni_extra_data.h). Hit shapes as data on the model. File names only."
+  ],
+  "briefs": [
+    {"label": "Spark burst from a controller record", "why": "A short, dense burst reads as an impact. A data record lets us tune it without code.", "keep": "Start and stop window; emit rate; speed spread; lifetime", "change": "Our own shape and colour; no file-format tie; our own timing curve", "ref": "include/niflib/ni_particles.h:88 (NiParticleSystemController) and lines 101, 105, 113"},
+    {"label": "Pose blend by morph targets", "why": "Blending a few sculpted poses gives a creature weight without a full skeleton.", "keep": "Named target shapes; a weight per target", "change": "Our own target set; fewer targets; our own blend rules", "ref": "include/niflib/ni_morph.h (name only, not read)"},
+    {"label": "Hit shapes stored on the model", "why": "Hit shapes kept as data on the model keep combat tuning out of code.", "keep": "Collision record separate from geometry; per-model data", "change": "Our own shape types; our own hit-zone names", "ref": "include/niflib/ni_collision.h (name only, not read)"}
+  ],
+  "not_read": [
+    "Function bodies in src/ beyond the cited header fields",
+    "ni_morph.h, ni_skinning.h, ni_collision.h, ni_extra_data.h bodies (names only)",
+    "tests/ bodies",
+    "The upstream niflib.net licence text (not in repo)"
+  ]
+}

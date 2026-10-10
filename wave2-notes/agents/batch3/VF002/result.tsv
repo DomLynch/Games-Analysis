@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+FunkinCrew-Funkin	vfx-blood-finishers	P	STRONG	full	source/funkin/effects/IntervalShake.hx:38-232 - decaying interval shake (fast-start ease, width-ratio offset, restore on end and stop); no blood/finisher code in donor
+LostCityRS-Engine-TS	vfx-blood-finishers	P	STRONG	full	src/engine/entity/Npc.ts:489-508 - per-tick damage splat record with HP clamp and two-slot parity store, reset in PathingEntity.ts:593-630; third hit in a tick overwrites the first
+OpenDUNE-OpenDUNE	vfx-blood-finishers	P	STRONG	full	src/explosion.c:282-358 - effect as timed command list on a shared 60 Hz clock with 32-slot pool; blocking shake at explosion.c:124-150

@@ -1,0 +1,89 @@
+{
+ "game": "endless-sky-endless-sky",
+ "category": "animation-rigs",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Hardpoint.cpp",
+ "licence": "GPL-3.0-or-later (source headers, e.g. source/Animate.h lines 5-6; copyright file line 9 says GPL-3+)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/aim.ts",
+ "parity_row": 7,
+ "pattern_tags": [
+  "target-score",
+  "wait-gate",
+  "fixed-step",
+  "new:rate-capped-aim",
+  "new:arc-clamp"
+ ],
+ "data_fields": [
+  {
+   "name": "joint_turn_rate",
+   "donor_constant": "weapon 'turret turn' data value times ship multiplier (value not read in context)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "source/Hardpoint.cpp:139-145"
+  },
+  {
+   "name": "joint_turn_bonus",
+   "donor_constant": "per-mount turnMultiplier added to ship multiplier (default not read)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "source/Hardpoint.cpp:144"
+  },
+  {
+   "name": "creature_turn_multiplier_base",
+   "donor_constant": "1 + 'turret turn multiplier' attribute",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "source/ship/ShipAttributeCache.cpp:318"
+  },
+  {
+   "name": "joint_arc_min_max",
+   "donor_constant": "mount arc from data, intersected with weapon arc, centred on base angle",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "source/Hardpoint.cpp:523-568"
+  },
+  {
+   "name": "out_of_arc_penalty",
+   "donor_constant": "2 x shot lifetime",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "source/AI.cpp:4013"
+  },
+  {
+   "name": "lifetime_subtraction",
+   "donor_constant": "1 x shot lifetime, floored at zero",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "source/AI.cpp:3995"
+  },
+  {
+   "name": "turn_vs_hit_weight",
+   "donor_constant": "180 degrees per rendezvous unit",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "source/AI.cpp:4027"
+  },
+  {
+   "name": "command_resolution",
+   "donor_constant": "127 steps per unit",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "source/FireCommand.cpp:156"
+  },
+  {
+   "name": "frame_rate",
+   "donor_constant": "60 frames per second target",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "source/main.cpp:315"
+  }
+ ],
+ "best_idea": "Cap a joint's turn speed per step, clamp it to its arc so it never passes the limit, and pick the target by time-to-turn plus time-to-hit, so one look-at constraint serves a creature head, a hero arm or a weapon mount.",
+ "decision": "adapt",
+ "decision_why": "The rate-capped, arc-clamped look-at with time-to-turn plus time-to-hit target choice fits creature heads and hero weapon arms as client-only cosmetics; the ship-turret parts (blind spots, idle sweep, harmonization) do not fit a biped and are not taken.",
+ "decision_status": "proposed",
+ "acceptance": "In the Pit a creature turns its head toward its current target at its data turn rate and stops at its neck limit; a client test asserts the head changes by no more than rate x dt per frame and never leaves its arc; a server test asserts the same exchange resolves identically with the head aim forced to 0 and to 90 degrees."
+}

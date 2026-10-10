@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+LostCityRS-Engine-TS	animation-rigs	P	STRONG	thin	/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/entity/Player.ts:1920-1929 and PathingEntity.ts:614-617 - one clip slot with a priority gate and lock flag, cleared every tick; the donor has no skeleton, blend or IK code
+ModernUO	animation-rigs	P	STRONG	full	/mnt/frankendom-donors/ModernUO/Projects/UOContent/Spells/Base/Spell.cs:904-940 and 524-560 - cast wind-up pose pulse: ceil(cast time / 1.5 s) pulses, guard before each, stop on disturb
+OpenGothic	animation-rigs	P	STRONG	full	/mnt/frankendom-donors/OpenGothic/common/graphics/mesh/pose.cpp:728-787 and animation.cpp:239-273, 614-638 - combo windows and hit ends from clip events; window-gated chain with clock rewind; transition clips by name; per-bone crossfade

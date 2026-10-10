@@ -1,0 +1,47 @@
+{
+  "donor": "amilich-isometric-city",
+  "code_licence": "MIT. LICENSE line 1 'MIT License'; line 3 'Copyright (c) 2025 amilich'. package.json line 5 '\"license\": \"MIT\",'. README line 76 'Distributed under the MIT License.'",
+  "asset_licence": "No asset-specific licence. The repo has only the MIT LICENSE and package.json/README statements about the software. The sprite-sheet skill doc (.cursor/skills/isometric-asset-sheets/SKILL.md line 8) says the sheets are generated with a GenerateImage tool; the terms of that tool are not in the repo. The files do not say whether any sheet was hand-edited. Treated as unclear, so class C for all art groups.",
+  "rights_holder_status": "Individual author per LICENSE copyright line (amilich, 2025). The origin of the art is not stated as original work; the skill doc says sheets are generated. Rights status of the generated art: unknown from repo files.",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "building sprite sheets (PNG and WebP)", "path": "public/assets/buildings/", "count_hint": "48 files = 24 sheets in PNG and WebP; PNG sheets mostly 2048x2048, some 1024 and 1536x1024; dir about 65 MB", "licence": "MIT README/package statement (ambiguous for art)", "class": "C", "note": "Civic, commercial, residential, park, airport, stadium, university, warehouse and similar. Read as 2:1 isometric cells on a grid per sheet."},
+    {"kind": "era sheets (PNG and WebP)", "path": "public/assets/ages/", "count_hint": "10 files = 5 sheets (classics, medeival [sic], enlightenment, industrial, modern); PNG 2048x2048; dir about 41 MB", "licence": "MIT README/package statement (ambiguous for art)", "class": "C", "note": "One city look per era. File name 'medeival.png' is misspelled in the repo; keep the name if it is referenced in code."},
+    {"kind": "IsoCoaster sheets (PNG and WebP)", "path": "public/assets/coaster/", "count_hint": "24 files = 12 sheets (food, fountains, infrastructure, path_furniture, queue_elements, rides_large, rides_small, shops, stations, theme_classic, theme_modern, trees); PNG 2048x2048; dir about 85 MB", "licence": "MIT README/package statement (ambiguous for art)", "class": "C", "note": "Theme park art. theme_classic and theme_modern are two skins of the same family."},
+    {"kind": "main, variant and vehicle sprite sheets (PNG and WebP)", "path": "public/assets/sprites_red_water_new*.png and .webp (21 base names, e.g. _parks, _parks_construction, _abandoned, _dense, _modern, _planes, _planes1, _services, _shops, _stations, _farm, _china, _harry*)", "count_hint": "42 files; PNG sheets 1.5 MB to 8.5 MB each", "licence": "MIT README/package statement (ambiguous for art)", "class": "C", "note": "Names encode the variant (construction, abandoned, dense, modern, farm, china, services). Key colour is pure red (imageLoader.ts line 8). Skill doc says sheets use a 6x5 grid on solid red."},
+    {"kind": "water tiles (PNG and WebP)", "path": "public/assets/water.png, water2.png, water3.png (+ .webp), sprites_red_water1.png, sprites_red_water_new_1.png", "count_hint": "about 8 files; water2.png 171 KB, water3.png 1.1 MB, water.png 0.9 MB", "licence": "MIT README/package statement (ambiguous for art)", "class": "C", "note": "Water tile sets. Not opened."},
+    {"kind": "mansion alternates and readme images (PNG and WebP)", "path": "public/assets/mansion_alternates.*, public/readme-image.png, public/readme-coaster.png, public/og-image.png", "count_hint": "about 7 files", "licence": "MIT README/package statement (ambiguous for art)", "class": "C", "note": "Promotional and alternate art. Not opened."},
+    {"kind": "in-game screenshots (PNG)", "path": "public/games/IMG_6902.PNG to IMG_6911.PNG (9 files)", "count_hint": "9 files; dir about 26 MB", "licence": "unknown", "class": "C", "note": "Screenshots of the app. The files do not say whether they are the author's or from other people. Not opened."},
+    {"kind": "example save states (JSON data)", "path": "public/example-states/ (12 JSON files)", "count_hint": "12 files; dir about 47 MB", "licence": "MIT README/package statement (ambiguous)", "class": "C", "note": "Save-game data for the app. Not opened. Not art, but still not clearly covered."},
+    {"kind": "translation strings (JSON text)", "path": "public/_gt/ (fr, pt-BR, es, zh, de, it, tr, ja JSON files)", "count_hint": "8 files, about 146 KB total", "licence": "MIT README/package statement (ambiguous)", "class": "C", "note": "UI strings in other languages. Not opened. Content is the app's own text, so the copyright claim is the author's."}
+  ],
+  "inspiration": [
+    "Sprite sheets as atlases: each building family lives on a large sheet cut into a fixed grid, and a selector maps building type to cell (buildingSprite.ts lines 62-74). Recreate: one atlas per family with a type-to-cell table, so new buildings need no code change.",
+    "State variants share one grid: construction, abandoned, park and dense versions sit on sheets with the same layout as the main sheet (skills/adding-asset-sheets.md line 28), so swapping a state is a sheet change, not a layout change. Recreate the same rule for our own states.",
+    "Priority list for which sheet to show: construction first, then abandoned, parks, dense or modern, farm, shops, stations, services, default (buildingSprite.ts lines 64-74). Recreate as an explicit ordered rule, documented in one place.",
+    "Key-colour cut-out: art is drawn on solid pure red and the loader drops pixels within a colour distance of that red (imageLoader.ts lines 7-8). It works, but true alpha PNG or WebP is cleaner. Recreate with alpha and keep the key only as a fallback.",
+    "Era and theme re-skins: one city family repainted for five eras (ages/) and one ride family repainted in two themes (coaster/theme_classic, theme_modern). Recreate with our own eras and palette families, not the same five.",
+    "Seaplane on a planes sheet row, with wakes on water and contrails in the air (drawAircraft.ts line 948). Recreate as a flying-boat row with two state frames.",
+    "Effect puffs and particles as typed effect lists: factory smog, clouds and fireworks (effectsSystems.ts line 2). Recreate as small typed particle sets with our own colours.",
+    "Asset sheet recipe for artists: 6 rows by 5 columns, solid red background, sprites centred in each cell so nothing is cut off (SKILL.md lines 14-15 and line 124). A human artist can use the same grid with originals."
+  ],
+  "briefs": [
+    {"label": "Era-stepped civic buildings", "why": "The same civic building shown in five eras makes time pass visibly without new layouts.", "keep": ["one building family per era sheet", "same grid across eras", "era is a sheet swap"], "change": ["our own eras and materials, not the same five", "a flat shadow-side palette per era", "a different building silhouette set"], "ref": "public/assets/ages/ (e.g. modern.png, classics.png)"},
+    {"label": "Seaplane with wake and contrail", "why": "A craft that leaves a wake on water and a contrail in the air reads well at small sizes.", "keep": ["state-based frames (water, air)", "wake and contrail as separate overlays"], "change": ["a flying boat with a high wing", "our own spray and wake shape", "different colour for the craft"], "ref": "public/assets/sprites_red_water_new_planes.png row 4 (drawAircraft.ts line 948)"},
+    {"label": "Theme-park ride sheets in two skins", "why": "Repainting one ride family in two themes doubles the look for little art cost.", "keep": ["one ride grid, two skins", "theme chosen by a single flag"], "change": ["three themes with different material sets", "our own ride silhouettes", "neon or pastel palette instead of the donor colours"], "ref": "public/assets/coaster/theme_classic.png and theme_modern.png"},
+    {"label": "Red-key sprite load", "why": "A single key colour lets artists paint on a flat ground and cut out at load.", "keep": ["flat key colour on the sheet", "distance threshold at load"], "change": ["alpha PNG or WebP as the source", "a key colour that never occurs in our art", "no per-load pixel pass on phones"], "ref": "src/components/game/imageLoader.ts lines 7-8"},
+    {"label": "Abandoned and construction variants", "why": "Showing a building in decay or in progress tells the player the city's state without a new UI.", "keep": ["variants keyed by state", "same grid as the main sheet"], "change": ["weathering overlay instead of a separate sheet", "our own construction scaffold art"], "ref": "public/assets/sprites_red_water_new_abandoned.png and _construction.png; skills/adding-asset-sheets.md line 28"}
+  ],
+  "not_read": [
+    "all image pixel content (dimensions and sizes from file headers and ls only; not visually inspected)",
+    "public/_gt/*.json translation contents",
+    "public/example-states/*.json contents",
+    "public/games/IMG_*.PNG screenshots content",
+    "skills/adding-asset-sheets.md body beyond the grep hits",
+    ".cursor/skills/isometric-asset-sheets/SKILL.md body beyond the quoted lines",
+    ".cursor/CLOUD.md, .locadex/LOCADEX.md, AGENTS.md, CLOUD.md (not read)",
+    "scripts/compress-images.mjs and scripts/crop-screenshots.sh (names only)",
+    "src/ bodies beyond the quoted lines (142 files)",
+    "any external image-generation service terms (not in repo; not fetched)"
+  ]
+}

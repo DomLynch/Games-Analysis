@@ -1,0 +1,3 @@
+game	category	old	verdict	depth	finding
+xoreos-xoreos	animation-rigs	P	STRONG	full	/mnt/frankendom-donors/xoreos-xoreos/src/graphics/aurora/animationchannel.cpp:107-176 one clip per channel with timed requests and a weighted idle roll; skinning at skeletalanimation.cpp:130; distance skip at animationthread.cpp:166-167
+xu4-engine-u4	animation-rigs	P	PARTIAL	thin	/mnt/frankendom-donors/xu4-engine-u4/src/support/anim.c:140-211 is a small 2D tween pool with loop counts and deferred finish callbacks, no rig or clip blending; free-list bug at anim.c:90-95 loses one slot

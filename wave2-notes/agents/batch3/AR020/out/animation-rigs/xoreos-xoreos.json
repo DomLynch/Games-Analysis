@@ -1,0 +1,77 @@
+{
+ "game": "xoreos-xoreos",
+ "category": "animation-rigs",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/xoreos-xoreos/src/graphics/aurora/animationchannel.cpp",
+ "licence": "GPL-3.0-or-later (file headers: version 3 or any later version)",
+ "licence_class": "copyleft",
+ "target_module": "origins/client/actor/clip-channel.ts",
+ "parity_row": 6,
+ "pattern_tags": [
+  "new:clip-channel-one-shot-return-idle",
+  "new:weighted-idle-roll",
+  "new:loop-count-timer",
+  "variable-step",
+  "debt-carry",
+  "compute-budget",
+  "stale-state"
+ ],
+ "data_fields": [
+  {
+   "name": "idle_weight",
+   "donor_constant": "uint8 per entry; roll is integer 0-99; entry wins when roll < weight; remainder means no idle",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/xoreos-xoreos/src/graphics/aurora/animationchannel.cpp:197"
+  },
+  {
+   "name": "clip_speed",
+   "donor_constant": "must be > 0 (ignored otherwise); idle forced to 1.0",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/xoreos-xoreos/src/graphics/aurora/animationchannel.cpp:50"
+  },
+  {
+   "name": "timed_play_length",
+   "donor_constant": "seconds; 0 = clip length / speed; negative = until replaced",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/xoreos-xoreos/src/graphics/aurora/animationchannel.cpp:54"
+  },
+  {
+   "name": "loop_count",
+   "donor_constant": "loopCount + 1 loops; negative = until replaced",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/xoreos-xoreos/src/graphics/aurora/animationchannel.cpp:76"
+  },
+  {
+   "name": "skip_distance_divisor",
+   "donor_constant": "skipped passes = round(distance) / 8",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/xoreos-xoreos/src/graphics/aurora/animationthread.cpp:167"
+  },
+  {
+   "name": "skip_cap",
+   "donor_constant": "none in donor; uint8 result, values above 255 are out of range",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/xoreos-xoreos/src/graphics/aurora/animationthread.cpp:160"
+  },
+  {
+   "name": "transition_time_s (proposed, not in donor)",
+   "donor_constant": "read from MDL and stored; never read in this tree",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/xoreos-xoreos/src/graphics/aurora/animation.cpp:71"
+  }
+ ],
+ "best_idea": "One clip per actor where a timed request interrupts at the next tick and a finished clip falls back to a weighted, rolled idle, with a distance-based update skip that carries the skipped time forward.",
+ "decision": "adapt",
+ "decision_why": "The one-channel rules (timed request, one-loop idle that re-rolls, loop count, speed) fit hero and creature rigs, but the donor has no cross-fade, no hit timing and a global random idle roll, so Frankendom adds those itself and keeps hit frames in the engine.",
+ "decision_status": "proposed",
+ "acceptance": "In the Pit the hero's attack clip plays at its authored speed and returns to idle with no visible hold, and a server test asserts the hit frame comes from the duel-step data, never from the clip length."
+}

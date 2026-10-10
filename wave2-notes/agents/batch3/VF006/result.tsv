@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ValveSoftware-halflife	vfx-blood-finishers	P	STRONG	full	dlls/combat.cpp:1588-1653 TraceBleed: wall blood splats 1/2/4 by damage tier (<10, <25, else), jitter 0.1/0.2/0.3, 172-unit trace along shot; SpawnBlood drips at combat.cpp:1357-1358
+ValveSoftware-source-sdk-2013	vfx-blood-finishers	P	STRONG	full	client/fx_blood.cpp:76-297 FX_BloodSpray: 14 long + 24 short drops (gravity 600, dampen 0.2), 6 gore, 6 cloud, all sized from scale; layers by bitmask; server sends via effects.cpp:1149-1162
+Warzone2100-warzone2100	vfx-blood-finishers	P	STRONG	full	src/effects.cpp:957-1089 updateGraviton: giblet flight, gravity -800/s2, bounce up to 3 times at half vertical speed when |vy|>16, blood trail every 200-299 ms above ground+5, no explosion; spawned from component.cpp:1178-1181

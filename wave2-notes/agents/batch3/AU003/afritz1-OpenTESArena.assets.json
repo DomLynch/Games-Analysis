@@ -1,0 +1,44 @@
+{
+  "donor": "afritz1-OpenTESArena",
+  "code_licence": "MIT. LICENSE.txt line 1 'The MIT License (MIT)'; line 3 'Copyright (c) 2016-2026 The OpenTESArena Developers'.",
+  "asset_licence": "No separate asset licence file. The repo-wide MIT LICENSE.txt is the only licence text. README line 9 says 'No game assets are distributed.' The repo files do not say whether data/ meshes, UI or shader files are excluded from the MIT grant, so the class is set per group below.",
+  "rights_holder_status": "Fan project and clean-room reimplementation of The Elder Scrolls: Arena (README line 9: 'clean-room approach'). The original game data must be supplied by the user from a Bethesda/Steam/GOG copy (README lines 59-60 and 116-120). Original rights holder named in the repo: Bethesda Softworks (README line 9).",
+  "best_class": "A",
+  "asset_groups": [
+    {"kind": "3D meshes (OBJ, text)", "path": "data/meshes/", "count_hint": "30 files, about 124K total; WallWest.obj has 4 vertices and 2 faces", "licence": "MIT (repo LICENSE.txt, inferred)", "class": "A", "note": "Modular flat wall, raised, edge, ceiling and diagonal pieces, each a single quad or small set; a usemtl line names the material (WallWest.obj line 1 'usemtl WallSide'). Trivial geometry."},
+    {"kind": "UI layout definitions (text)", "path": "data/ui/", "count_hint": "23 .txt files, about 116K", "licence": "MIT (repo, inferred)", "class": "A", "note": "Screen layouts: Type, Position, Pivot, DrawOrder, FontName, TextColor per widget. They reference original Arena image and font files (Automap.txt line 12 'Texture=AUTOMAP.IMG') that are NOT in the repo, so the screens need user data. Only the head of Automap.txt was opened."},
+    {"kind": "audio definition text", "path": "data/audio/", "count_hint": "3 .txt files, about 16K", "licence": "MIT (repo, inferred)", "class": "A", "note": "Names: MusicDefinitions.txt, SingleInstanceSounds.txt, VocRepair.txt. Contents not opened."},
+    {"kind": "original executable string tables (text)", "path": "data/exe/", "count_hint": "2 .txt files, about 28K", "licence": "unknown", "class": "C", "note": "Names (acdExeStrings.txt, aExeStrings.txt) suggest strings taken from the original Arena executable. Not opened. Treated as proprietary until checked."},
+    {"kind": "shaders (GLSL source and SPIR-V binaries)", "path": "data/shaders/", "count_hint": "40 files; .spv binaries plus .frag, .vert, .comp and .glsl sources", "licence": "MIT (repo, inferred)", "class": "A", "note": "Code, not art. Shows the rendering pipeline: palette-index lookup with a light table (AlphaTestedWithPaletteIndexLookup.frag), light binning compute shader, screen-space animation and horizon mirror passes. Bodies only partly read."},
+    {"kind": "icon and preview images", "path": "data/icon.bmp, icon.ico, icon.icns, Preview.PNG", "count_hint": "icon.bmp about 12K; Preview.PNG about 365K", "licence": "unknown", "class": "C", "note": "Not opened. The files do not say who made them or whether they carry original Arena art."},
+    {"kind": "development screenshots (PNG)", "path": "samples/ (Image1-4, Preview1-11)", "count_hint": "14 PNG; Preview9.png and Preview11.png are 1280x720 8-bit RGBA", "licence": "unknown", "class": "C", "note": "samples/README.md says these are engine snapshots from 2016 to present plus tech-demo renders. The files do not say whether they show original Arena art. Headers only read."},
+    {"kind": "music patch set (external, not in repo)", "path": "data/eawpats/ (download link only; MidiConfig=data/eawpats/gravis.cfg in options/options-default.txt line 63)", "count_hint": "not in repo", "licence": "not stated in the repo files", "class": "C", "note": "README lines 67-70 link an eawpats zip and encourage swapping in soundfonts. Not fetched. Licence of eawpats not checked."},
+    {"kind": "original Arena game data (textures, maps, sprites, text, music)", "path": "not in repo: user-supplied ARENA or ARENACD folder (options-default.txt line 90)", "count_hint": "not in repo", "licence": "proprietary per README (user must own the game)", "class": "D", "note": "The engine reads the user's own copy (README line 120 'rar x Arena106.exe'). Frankendom cannot take these files. Inspiration only."}
+  ],
+  "inspiration": [
+    "Modular wall kit: a whole dungeon or town is assembled from a small set of flat pieces (wall, raised, edge, ceiling, diagonal, transparent wall). Each piece is a single quad or a couple of quads, and a material name per piece decides the texture. Recreate: 12-15 flat pieces with rotation variants give a lot of variety cheaply.",
+    "Palette-index shading: textures are stored as palette indices, index 0 is discarded as transparent, and a light-level lookup table turns the index into a shaded colour. Result: a coherent dim-to-bright look with no per-pixel colour art. Recreate with our own 8-bit palette and our own shade ramp.",
+    "Scheduled world clock: one clock file sets lamppost on and off times, ambient brightening and dimming windows, music switching times and a thunderstorm window that spans the night (Clocks.txt lines 18-24). The windows overlap on purpose so dusk feels gradual. Recreate: a day clock driving lights, music and weather together.",
+    "Data-declared screens: each UI screen is a text file listing widgets with type, position, pivot, draw order, font and text colour (ui/Automap.txt). New screens need no code change. Recreate with our own schema tuned for phone width and touch anchors.",
+    "Light binning on the GPU: a compute shader sorts lights into frustum-shaped bins so each surface only checks nearby lights (LightBinning.comp). Recreate with screen-tile binning instead of frustum planes if we need many torches.",
+    "Animated surfaces through a single percent uniform in a screen-space animation pass (OpaqueScreenSpaceAnimation.frag, line 12). Recreate as one time value per frame driving water or lava, with no extra art."
+  ],
+  "briefs": [
+    {"label": "Modular dungeon wall kit", "why": "A few flat pieces with per-piece material names make many distinct rooms, so the set reads as a built world rather than a single backdrop.", "keep": ["12-15 flat modular pieces", "edge, raised and diagonal variants", "one material name per piece"], "change": ["bevelled block proportions instead of flat quads", "a corner and diagonal scheme of our own", "a different material set, e.g. weathered stone and metal"], "ref": "data/meshes/WallWest.obj (and sibling files)"},
+    {"label": "Palette-indexed torchlit wall", "why": "Index-to-shade lookup gives coherent light falloff across all surfaces with one palette and one lookup table.", "keep": ["8-bit indexed art", "index 0 is transparent", "shade table lookup per light level"], "change": ["a cool blue-grey palette family instead of warm earth tones", "a different shade count and ramp curve", "emissive torch indices kept outside the shade table"], "ref": "data/shaders/AlphaTestedWithPaletteIndexLookup.frag line 23"},
+    {"label": "Day-to-night clock with lamp and storm windows", "why": "Overlapping scheduled windows (lamps, ambient, music, storm) make a town feel alive across a day without a single timeline.", "keep": ["lamps switch just before dusk", "storm window spans the night", "music changes on its own schedule"], "change": ["weather as a front that moves, not fixed clock times", "lamp timing tied to district, not one global time", "music crossfade rather than a hard switch"], "ref": "data/Clocks.txt lines 18-24"},
+    {"label": "Declarative HUD screens", "why": "Screens are data, so a designer can re-lay a screen without touching code.", "keep": ["widget list with position, pivot and draw order", "named text styles", "one file per screen"], "change": ["JSON with responsive anchors for phone width", "touch-sized hit areas declared in the same file", "no bitmap font names"], "ref": "data/ui/Automap.txt"},
+    {"label": "Light binning for many torches", "why": "Culling lights per surface keeps a torch-lit town cheap.", "keep": ["bins built each frame from the camera", "per-bin light lists"], "change": ["screen-tile bins instead of frustum planes", "fewer, larger bins for low-end phones"], "ref": "data/shaders/LightBinning.comp line 15"}
+  ],
+  "not_read": [
+    "data/audio/*.txt contents (names only)",
+    "data/exe/*.txt contents (names only; likely proprietary, deliberately not opened)",
+    "data/icon.bmp, icon.ico, icon.icns, Preview.PNG and samples/*.PNG pixel content (headers only)",
+    "all data/meshes/*.obj beyond WallWest.obj",
+    "shader bodies beyond the lines quoted in receipts",
+    "data/ui/*.txt beyond Automap.txt",
+    "docs/*.md, CONTRIBUTING.md, windows/, macOS/ packaging files",
+    "eawpats music patch set (external download, not fetched)",
+    "original Arena game data (not in repo)"
+  ]
+}

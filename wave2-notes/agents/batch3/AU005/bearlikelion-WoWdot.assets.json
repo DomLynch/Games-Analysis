@@ -1,0 +1,169 @@
+{
+  "donor": "bearlikelion-WoWdot",
+  "code_licence": "MIT (LICENSE: Copyright (c) 2026 Mark Arneman and WoWdot contributors). Vendored third-party code under its own licences per NOTICE.md (WoWee MIT, godot-cpp MIT, StormLib MIT and public domain, zlib, bzip2, GLM MIT, nlohmann/json MIT, GDDocs MIT).",
+  "asset_licence": "Mixed. Logo (wowdot_logo.png, website/) is CC BY 4.0 by Andrea Calabro per NOTICE.md. WoWee original music is reserved by its licence and is NOT included (NOTICE.md lines 21-22). Blizzard-derived UI layouts, sound-name tables and the WoWGD icon are marked OPEN in docs/legal-and-provenance.md. Screenshot and icon origins not stated.",
+  "rights_holder_status": "Fan/community client project (Godot clients for classic WoW servers). Repo says it ships no Blizzard code, archives or extracted assets (NOTICE.md line 24), and that players supply their own licensed client data. docs/legal-and-provenance.md marks some Blizzard-derived files as open for review. Official status: not affiliated with Blizzard (per README/NOTICE).",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "logo (project-original, adapted from Godot logo)",
+      "path": "wowdot_logo.png, website/logo.png, website/favicon.png, extension/wowdot_extension_logo.png, website/extension.png",
+      "count_hint": "5 PNG files (extension logos origin not stated)",
+      "licence": "wowdot_logo.png and website/ listed as CC BY 4.0, by Andrea Calabro (NOTICE.md line 19); other logos not listed",
+      "class": "A (wowdot_logo.png with attribution); other logos unknown, C",
+      "note": "Attribution string required by the notice. Logos only."
+    },
+    {
+      "kind": "client icons",
+      "path": "clients/wowgd/wowgd_icon.png, clients/wrathgd/wrathgd_icon.png, website/wowgd.png, website/wrathgd.png",
+      "count_hint": "4 PNG",
+      "licence": "wowgd icon OPEN in provenance doc (line 35); others not stated",
+      "class": "C",
+      "note": "Confirm origin before reuse."
+    },
+    {
+      "kind": "screenshots of game scenes",
+      "path": "website/benchmark/*.jpg (16), website/wowgd/*.jpg (4), website/wrathgd/wrathgd-login.jpg",
+      "count_hint": "21 JPG",
+      "licence": "Not listed in provenance doc; no origin statement in files",
+      "class": "C",
+      "note": "File names name game locations (benchmark images). Treat as unclear game imagery. Not read beyond file list."
+    },
+    {
+      "kind": "Blizzard-derived UI layouts (Godot scenes)",
+      "path": "clients/wowgd/ui/wow/*.tscn and clients/wrathgd/ui/wow/*.tscn; clients/*/tools/framexml/frames.json",
+      "count_hint": "285 tscn across clients (8 under ui/wow); frames.json 13.5K and 20.3K",
+      "licence": "OPEN: provenance doc line 33 says generated from Blizzard FrameXML (layout, coordinates, texture paths, sound names). Converter says scenes hold paths and coordinates only.",
+      "class": "C",
+      "note": "Do not reuse until the open item is decided. Layout only, no pixels stored (per convert.py docstring). Not opened."
+    },
+    {
+      "kind": "sound name tables",
+      "path": "clients/wowgd/data/classic/ui_sounds.json (85.7K), clients/wrathgd/data/wotlk/ui_sounds.json (135K)",
+      "count_hint": "2 JSON",
+      "licence": "Open for wowgd per provenance doc scope; wrathgd not listed",
+      "class": "C",
+      "note": "Sound names only. No audio ships in the repo."
+    },
+    {
+      "kind": "protocol and file-format tables (WoWee-derived)",
+      "path": "clients/*/data/*/opcodes.json, update_fields.json, dbc_layouts.json, spell_failures.json, equip_failures.json, vehicle_skins.json",
+      "count_hint": "about 15 JSON files",
+      "licence": "Provenance doc line 34: from WoWee (MIT) for opcodes, update_fields, dbc_layouts; others not stated",
+      "class": "A for the WoWee-listed tables (per doc); C for others",
+      "note": "Format data, not art. Only file list and sizes read."
+    },
+    {
+      "kind": "localisation CSVs (keys only, empty text)",
+      "path": "translations/wowgd/{deDE,esES,esMX,frFR,koKR,zhCN,zhTW}.csv",
+      "count_hint": "7 files, 59,015 keys each, about 1.2 MB each",
+      "licence": "Repo MIT; keys name game strings (README describes DBC and GlobalStrings keys)",
+      "class": "C",
+      "note": "Text column empty per handoff.md. Keys are game-derived identifiers. Not reproduced."
+    },
+    {
+      "kind": "audio and music",
+      "path": "whole donor",
+      "count_hint": "0 audio files; WoWee music excluded (NOTICE.md 21-22)",
+      "licence": "WoWee music reserved by its licence",
+      "class": "D",
+      "note": "Nothing to use."
+    },
+    {
+      "kind": "fonts, models, maps, archives",
+      "path": "whole donor",
+      "count_hint": "0 font, model or map files; game fonts loaded from player MPQs at runtime (provenance doc line 36)",
+      "licence": "n/a",
+      "class": "D",
+      "note": "Nothing to use."
+    },
+    {
+      "kind": "Godot shaders and resources",
+      "path": "clients/*, shared/*: gdshader (11), tres (11)",
+      "count_hint": "about 22 files",
+      "licence": "Repo MIT (LICENSE)",
+      "class": "A (code under MIT; not read)",
+      "note": "Code-like assets. Not read."
+    }
+  ],
+  "inspiration": [
+    "Combat and chat UI is built as small scene units (a chat line, a bubble, a message line, a model frame). A clean component split to copy in our own HUD style.",
+    "Frames are authored as layout data and converted to scenes by a script (convert.py). Keep our layout as data and generate HUD scenes, with our own coordinates and art.",
+    "Benchmark pages compare two clients on login, world load and idle CPU. Good template for a performance table on our own builds.",
+    "A translation layer keeps keys separate from text and falls back to English for missing lines. Copy this for our localisation.",
+    "The login and character creation screens are shown as a small set of screenshots per client. Good showcase pattern. The screenshots have no origin statement in the files, so they are not for reuse.",
+    "Shader and resource files are split from scenes (gdshader and tres). Good split for our material and rim-light work."
+  ],
+  "briefs": [
+    {
+      "label": "Chat speech bubble (own label)",
+      "why": "Inferred from the file name and the chat-line sibling scene; scene contents not opened. A speech bubble over a head reads as a quick social cue.",
+      "keep": [
+        "small rounded bubble above the head",
+        "fades after a few seconds",
+        "stacks when lines pile up"
+      ],
+      "change": [
+        "our own shape: a rune-scroll edge instead of a plain round box",
+        "colour keyed to speaker faction",
+        "a small tail pointing to the speaker"
+      ],
+      "ref": "clients/wowgd/ui/wow/chat_bubble.tscn"
+    },
+    {
+      "label": "Model frame portrait (own label)",
+      "why": "Inferred from the file name; scene contents not opened. A framed 3D model portrait lets players see who they talk to.",
+      "keep": [
+        "3D model in a framed window",
+        "frame sits beside the chat",
+        "frame updates with the target"
+      ],
+      "change": [
+        "our own frame: hammered metal with a crest",
+        "a dark-stone backdrop instead of a flat colour",
+        "idle sway animation on the model"
+      ],
+      "ref": "clients/wowgd/ui/wow/wow_model_frame.tscn"
+    },
+    {
+      "label": "Benchmark strip (own label)",
+      "why": "A small table of login, world load and idle CPU makes performance visible to players and devs.",
+      "keep": [
+        "two builds side by side",
+        "login, load and idle columns",
+        "colour for the better value"
+      ],
+      "change": [
+        "our own metric names",
+        "shown as a sparkline, not a grid",
+        "a note on the hardware used"
+      ],
+      "ref": "website/benchmark.html and website/benchmark/results.json"
+    },
+    {
+      "label": "Line-by-line chat log (own label)",
+      "why": "Each chat line is a scene unit, easy to restyle per channel.",
+      "keep": [
+        "one scene per message line",
+        "channel colour on the line",
+        "timestamp at the start"
+      ],
+      "change": [
+        "our own channel palette",
+        "a pale parchment background",
+        "a hover card for the sender"
+      ],
+      "ref": "clients/wowgd/ui/wow/chat_line.tscn"
+    }
+  ],
+  "not_read": [
+    "The 285 tscn scene contents (only the 8 under ui/wow named, not opened)",
+    "frames.json and ui_sounds.json contents (sizes and paths only)",
+    "all 21 screenshot jpgs (names and counts only)",
+    "the icon PNGs and extension logos (names only)",
+    "translations CSV content beyond the key header line",
+    "extension/api/extension_api.json (6.9 MB, not read)",
+    "WoWee vendored C++ code and the gdshader files",
+    "clients/wowgd/tools/translations and any batches script"
+  ]
+}

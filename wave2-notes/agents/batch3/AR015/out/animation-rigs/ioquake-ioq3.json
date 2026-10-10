@@ -1,0 +1,97 @@
+{
+ "game": "ioquake-ioq3",
+ "category": "animation-rigs",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ioquake-ioq3/code/cgame/cg_players.c",
+ "licence": "GPL-2.0-or-later (as read in file headers: 'version 2 of the License, or (at your option) any later version'; COPYING.txt is GPL v2)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/actor-anim.ts",
+ "parity_row": 6,
+ "pattern_tags": [
+  "wait-gate",
+  "hysteresis",
+  "variable-step",
+  "new:clip-clock",
+  "new:two-frame-blend",
+  "new:tag-attachment"
+ ],
+ "data_fields": [
+  {
+   "name": "clip frame time (fps per clip)",
+   "donor_constant": "frameLerp = 1000 / fps, fps from the model's animation.cfg",
+   "unit": "ms",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ioquake-ioq3/code/cgame/cg_players.c:245"
+  },
+  {
+   "name": "clip start delay",
+   "donor_constant": "initialLerp = 1000 / fps (one frame); animationTime = frameTime + initialLerp",
+   "unit": "ms",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ioquake-ioq3/code/cgame/cg_players.c:1123"
+  },
+  {
+   "name": "schedule-ahead guard",
+   "donor_constant": "200",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ioquake-ioq3/code/cgame/cg_players.c:1205"
+  },
+  {
+   "name": "haste speed scale",
+   "donor_constant": "1.5",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ioquake-ioq3/code/cgame/cg_players.c:1252"
+  },
+  {
+   "name": "torso yaw swing tolerance",
+   "donor_constant": "25 degrees",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ioquake-ioq3/code/cgame/cg_players.c:1424"
+  },
+  {
+   "name": "legs yaw swing tolerance",
+   "donor_constant": "40 degrees",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ioquake-ioq3/code/cgame/cg_players.c:1425"
+  },
+  {
+   "name": "swing clamp",
+   "donor_constant": "90 degrees, pulled to 89",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ioquake-ioq3/code/cgame/cg_players.c:1340"
+  },
+  {
+   "name": "torso share of movement offset",
+   "donor_constant": "0.25",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ioquake-ioq3/code/cgame/cg_players.c:1421"
+  },
+  {
+   "name": "swing speed",
+   "donor_constant": "cg_swingSpeed default 0.3, times frametime and band scale",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ioquake-ioq3/code/cgame/cg_main.c:249"
+  },
+  {
+   "name": "swing band factors",
+   "donor_constant": "0.5 below half tolerance, 1.0 below tolerance, 2.0 above",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ioquake-ioq3/code/cgame/cg_players.c:1312"
+  }
+ ],
+ "best_idea": "Give each actor one clip clock that schedules frame times from the previous frame time (not the wall clock), starts a new clip after one frame of delay, and blends the old frame into the new with one backlerp weight, so every clip switch and every part attachment reads one number.",
+ "decision": "adapt",
+ "decision_why": "Frankendom's hero and creature clips need the clock rules (scheduled frame times, one step per call, one-frame start delay, hold-then-next, the 200 ms guard) and a single backlerp weight; the MD3 vertex morph and the matrix blend are not needed with Three.js skinning. Client-side only.",
+ "decision_status": "proposed",
+ "acceptance": "A Pit hero that switches from guard to strike starts the strike clip one clip frame after the command and blends from the guard's last frame over that frame; a unit test feeds fake times to advance() and asserts frame and backlerp at 0 ms, one frame and 1000 ms after a stall."
+}

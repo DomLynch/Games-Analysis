@@ -1,0 +1,29 @@
+{
+  "game": "teeworlds-teeworlds",
+  "category": "animation-rigs",
+  "cell": 1,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/teeworlds-teeworlds/src/game/client/animstate.cpp",
+  "licence": "zlib-style code licence (license.txt lines 1-17, as read); datasrc/ clip data is CC-BY-SA 3.0 (license.txt line 22)",
+  "licence_class": "permissive",
+  "target_module": "src/fight/anim-state.ts",
+  "parity_row": 6,
+  "pattern_tags": ["new:distance-driven-phase", "new:additive-layer-channels", "new:state-select-chain", "fixed-step", "stale-state"],
+  "data_fields": [
+    {"name": "stride_units", "donor_constant": "100 world units per walk cycle", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/teeworlds-teeworlds/src/game/client/components/players.cpp:142"},
+    {"name": "standing_raw_vel", "donor_constant": "within plus or minus 1 raw integer velocity", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/teeworlds-teeworlds/src/game/client/components/players.cpp:137"},
+    {"name": "ground_probe_dy", "donor_constant": "16 units below the centre", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/teeworlds-teeworlds/src/game/client/components/players.cpp:138"},
+    {"name": "hammer_swing_speed", "donor_constant": "5.0 (clip ends about 0.2 s after attack tick)", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/teeworlds-teeworlds/src/game/client/components/players.cpp:177"},
+    {"name": "ninja_swing_speed", "donor_constant": "2.0 (clip ends about 0.5 s after attack tick)", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/teeworlds-teeworlds/src/game/client/components/players.cpp:182"},
+    {"name": "skid_speed_scaled", "donor_constant": "length(Vel*50) > 500", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/teeworlds-teeworlds/src/game/client/components/players.cpp:186"},
+    {"name": "skid_sound_gap", "donor_constant": "time_freq()/10, 0.1 s", "unit": "s", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/teeworlds-teeworlds/src/game/client/components/players.cpp:189"},
+    {"name": "tick_rate", "donor_constant": "SERVER_TICK_SPEED=50", "unit": "ticks", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/teeworlds-teeworlds/src/engine/shared/protocol.h:81"},
+    {"name": "tee_size", "donor_constant": "64.0f", "unit": "px", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/teeworlds-teeworlds/src/game/client/components/players.cpp:107"}
+  ],
+  "best_idea": "Drive the walk cycle from distance travelled (one cycle per stride) and layer the pose as base set, one locomotion clip added, and a swing clip added on its own channel, so the gait needs no render clock.",
+  "decision": "adapt",
+  "decision_why": "Frankendom's hero rig is 3D: keep the distance-driven gait and the layer order, but add ground contact (foot placement or IK), because the donor's feet are free sprite offsets that cannot meet a slope.",
+  "decision_status": "proposed",
+  "acceptance": "Client test with a fixed hero rig: the same x gives the same gait phase at 30 and at 144 fps; 100 world units is exactly one walk cycle; a standing hero shows the idle pose with no step; the hammer swing reaches its last key 0.2 s after the server attack tick at any frame rate."
+}

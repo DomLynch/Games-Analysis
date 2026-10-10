@@ -1,0 +1,26 @@
+{
+  "game": "2004Scape-Server",
+  "category": "animation-rigs",
+  "cell": 3,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/2004Scape-Server/src/engine/entity/Npc.ts",
+  "licence": "MIT (LICENSE line 1: MIT License, Copyright (c) 2023-2025 Lost City)",
+  "licence_class": "permissive",
+  "target_module": "src/fight/clip-arbiter.ts",
+  "parity_row": 6,
+  "pattern_tags": ["fixed-step", "stale-state", "new:same-tick-priority-arbiter", "new:protect-flag", "new:locomotion-set-override"],
+  "data_fields": [
+    {"name": "clip_priority_default", "donor_constant": "5", "unit": "count", "where": "engine constant", "donor_ref": "src/cache/config/SeqType.ts:73"},
+    {"name": "yield_priority", "donor_constant": "0 (a current clip at priority 0 is replaced by any request)", "unit": "count", "where": "engine constant", "donor_ref": "src/engine/entity/Npc.ts:456"},
+    {"name": "tick_length", "donor_constant": "600", "unit": "ms", "where": "engine constant", "donor_ref": "src/engine/World.ts:120"},
+    {"name": "clip_duration", "donor_constant": "sum of frame delays; frame delay 0 falls back to the frame's delay, then to 1", "unit": "none", "where": "engine constant", "donor_ref": "src/cache/config/SeqType.ts:104"},
+    {"name": "locomotion_slots", "donor_constant": "7 (ready, turn-on-spot, walk forward, walk back, walk left, walk right, running)", "unit": "count", "where": "engine constant", "donor_ref": "src/engine/script/handlers/PlayerOps.ts:884"},
+    {"name": "request_delay", "donor_constant": "script argument passed through unchanged; client unit not read", "unit": "none", "where": "zone data", "donor_ref": "src/engine/script/handlers/PlayerOps.ts:150"}
+  ],
+  "best_idea": "A per-actor clip arbiter for one tick: a request replaces the current clip only if its priority is strictly higher, a priority-0 clip yields to anything, a protect flag refuses every request, and the slot clears at cleanup so arbitration is per tick only.",
+  "decision": "adapt",
+  "decision_why": "The strict-greater, same-tick rule lets a hit reaction beat an attack swing requested in the same tick, but the donor has no lock across ticks, so the duel state machine (rows 1 and 3) must hold stagger and recovery.",
+  "decision_status": "proposed",
+  "acceptance": "A server test submits an attack clip (priority 5) and a hit-reaction clip (priority 9) in one tick and asserts the reaction is written to the snapshot, an equal-priority pair keeps the first request, and the next tick starts with an empty slot."
+}

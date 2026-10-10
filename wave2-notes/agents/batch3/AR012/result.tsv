@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+flutter-team-archive-pinball	animation-rigs	P	STRONG	thin	/mnt/frankendom-donors/flutter-team-archive-pinball/packages/pinball_components/lib/src/components/plunger/plunger.dart:87-139 phase-keyed clip group with edge-only reset and reversed release clip; animatronic_looping_behavior.dart:3-24 idle replay cooldown loop (Flame ticker internals not read)
+freeciv-freeciv	animation-rigs	P	STRONG	full	/mnt/frankendom-donors/freeciv-freeciv/client/mapview_common.c:289-345 battle HP drained in integer ticks on virtual copies, with the queue head driven at 441-483 (explosion and nuke not read)
+gawric-Unity-Client-for-L2J	animation-rigs	P	STRONG	thin	/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Controller/StateMachine/State/Helpers/AttackTimingHelper.cs:73-107 cycle = 500000/speed, clip rate = clip ms / cycle ms, melee hit at 0.5 and bow at 0.82 of cycle (hit delivery in SwordCollisionService not read)

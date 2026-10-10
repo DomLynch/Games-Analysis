@@ -1,0 +1,42 @@
+{
+  "donor": "00-Evan-shattered-pixel-dungeon",
+  "code_licence": "GNU GPL v3 (LICENSE.txt line 1-2; source headers 'either version 3 of the License')",
+  "asset_licence": "No asset licence file in the repo. Art and music credited by name in AboutScene.java. Freesound samples listed as CC-BY and CC0 in the credits (AboutScene.java 230-240), not per file.",
+  "rights_holder_status": "Derivative of Watabou's Pixel Dungeon source (README); copyright lines name Evan Debenham (2014-2026) and Oleg Dolya (2012-2015). Art/music ownership beyond the credits list: unknown.",
+  "best_class": "B (CC-BY freesound samples only, with attribution); all other asset groups C",
+  "asset_groups": [
+    {"kind": "sprites (mob/item/hero sheets)", "path": "core/src/main/assets/sprites/", "count_hint": "78 PNG, indexed colour, frames 16x15 to 25x22", "licence": "none stated in repo; credited to named artists in AboutScene.java", "class": "C", "note": "Inspiration only unless artist terms are checked."},
+    {"kind": "tile sheets (zones)", "path": "core/src/main/assets/environment/", "count_hint": "28 PNG, RGBA 256x256 tile sheets", "licence": "none stated in repo", "class": "C", "note": "Per-biome sheets: sewers, caves, city, halls, prison, crystal, gnoll."},
+    {"kind": "effects and item icons", "path": "core/src/main/assets/effects/ and sprites/items.png", "count_hint": "6 effect PNG; items.png 256x512 RGBA", "licence": "none stated in repo", "class": "C", "note": "Shared effects atlas."},
+    {"kind": "UI, banners, fonts", "path": "core/src/main/assets/interfaces/, fonts/", "count_hint": "21 interface files; pixel_font.ttf and .png", "licence": "none stated in repo", "class": "C", "note": "banners.png 512x256 with glow layer per docs/recommended-changes.md."},
+    {"kind": "splash art", "path": "core/src/main/assets/splashes/", "count_hint": "15 JPG/PNG, about 2.6 MB", "licence": "none stated in repo", "class": "C", "note": "Not opened."},
+    {"kind": "music", "path": "core/src/main/assets/music/", "count_hint": "31 OGG, about 18 MB", "licence": "credited to 'Cube Code' in AboutScene.java; no licence text", "class": "C", "note": "Calm/tense/boss variant per zone."},
+    {"kind": "sound effects (credited Celesti)", "path": "core/src/main/assets/sounds/", "count_hint": "67 MP3, about 0.6 MB", "licence": "credited to Celesti in AboutScene.java; no licence text", "class": "C", "note": "Some entries may be the freesound samples; mapping not checked."},
+    {"kind": "freesound samples", "path": "sounds/ (not mapped to file)", "count_hint": "unknown count of samples", "licence": "CC Attribution (5 packs/samples) and CC0 (several) per AboutScene.java 230-245", "class": "B for CC-BY entries, A for CC0 entries", "note": "Human must map each mp3 to its credit entry before reuse."},
+    {"kind": "text (messages)", "path": "core/src/main/assets/messages/", "count_hint": "207 .properties, about 17 MB", "licence": "none stated in repo", "class": "C", "note": "Protected text; summarise only. Not read beyond names."},
+    {"kind": "data/maps", "path": "not found as separate files", "count_hint": "0", "licence": "n/a", "class": "D", "note": "Levels are generated in code (not read in detail)."}
+  ],
+  "inspiration": [
+    "Tiny indexed-palette creature sheets (rat 16x15, goo 20x14, DM-300 25x22 frames): a 3-4 tone palette with one accent is a cheap, readable mob look for our originals.",
+    "Goo and DM-300 use particle emitters for spray and supercharge sparks (GooSprite.java, DM300Sprite.java): a short burst on charge-up telegraphs an attack without new art.",
+    "One tile sheet per biome (sewers, caves, city, halls, prison, crystal, gnoll): each zone gets its own palette and wall set from the same tile system.",
+    "One shared effects atlas (effects/) with speck layers and fireball variants: VFX reuse a single atlas, which keeps draw calls and art work small.",
+    "Music is calm, tense and boss variants per zone (music/): a three-state music set per zone is a clear pattern to copy with our own tracks.",
+    "Splash panoramas per biome (splashes/): large loading-screen art, one per zone, reads as place identity at a glance.",
+    "Title banner with a separate glow layer (interfaces/banners.png, per docs/recommended-changes.md): a glow layer over a base title is a cheap, reusable effect."
+  ],
+  "briefs": [
+    {"label": "Pit-watcher idol (our label)", "why": "Large central mob with a small frame size (yog sheet frames 20x19); the image was not viewed, so the mood is inferred from the name and sheet format only.", "keep": "single eye-like focal point; slow pulse frames; small palette", "change": "different head shape and limb count; our own ornament set; different accent colour", "ref": "core/src/main/assets/sprites/yog.png (sheet 256x32)"},
+    {"label": "Ember golem (our label)", "why": "Large boss-tier frame (25x22) with a supercharge spark emitter (DM300Sprite.java), suggesting a clear escalation state; not viewed.", "keep": "two-state body (idle and charged); spark particles on charge", "change": "rebuild the silhouette; different core material; our own spark colour", "ref": "core/src/main/assets/sprites/dm300.png; core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/sprites/DM300Sprite.java"},
+    {"label": "Wobbling sludge blob (our label)", "why": "Small 20x14 frame with a spray emitter and pump-up emitters (GooSprite.java), a readable telegraph; not viewed.", "keep": "pump-up particles before a spray; compact silhouette", "change": "use a different mechanic colour; blob shape with ridges; our own spray particle", "ref": "core/src/main/assets/sprites/goo.png; core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/sprites/GooSprite.java"},
+    {"label": "Sewer biome set (our label)", "why": "A dedicated 256x256 RGBA tile sheet per biome gives a distinct zone identity; the sewers sheet is the reference.", "keep": "one tile sheet per zone; zone-specific wall set", "change": "our own colour family; different wall motifs; different water tile treatment", "ref": "core/src/main/assets/environment/tiles_sewers.png"},
+    {"label": "Crystal cave set (our label)", "why": "A separate crystal sheet (tiles_caves_crystal.png) and crystal mobs suggests a sub-zone with a distinct palette; not viewed.", "keep": "crystalline tile family; sub-zone colour shift", "change": "our own crystal shapes; different glow colour; our own zone name", "ref": "core/src/main/assets/environment/tiles_caves_crystal.png"}
+  ],
+  "not_read": [
+    "No image opened or viewed (no downloads allowed). Visual notes are from file names, formats and frame sizes.",
+    "messages/*.properties content not read (only counts and names).",
+    "Individual audio files not opened; freesound-to-file mapping not checked.",
+    "splashes/ and music/ contents not opened.",
+    "AboutScene.java credits lines 240-252 not read in full."
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "game": "DCurrent-openbor",
+  "category": "animation-rigs",
+  "cell": 3,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c",
+  "licence": "BSD-3-Clause (LICENSE line 1: Copyright (c) 2003, Roel van Mastbergen & Senile Team; line 11 no-endorsement clause)",
+  "licence_class": "permissive",
+  "target_module": "src/fight/anim-clock.ts",
+  "parity_row": 6,
+  "pattern_tags": ["fixed-step", "new:catch-up-cap", "new:absolute-frame-timestamp", "new:freeze-extends-timeline", "new:per-entity-delay-scale"],
+  "data_fields": [
+    {"name": "logic_step_units", "donor_constant": "1 per logic step", "unit": "ticks", "where": "engine constant", "donor_ref": "engine/openbor.c:51604"},
+    {"name": "catch_up_cap", "donor_constant": "100", "unit": "ticks", "where": "engine constant", "donor_ref": "engine/openbor.c:51535"},
+    {"name": "game_speed", "donor_constant": "200 (GAME_SPEED_DEFAULT)", "unit": "ticks", "where": "engine constant", "donor_ref": "engine/openbor.h:80"},
+    {"name": "interval_cap_divisor", "donor_constant": "4 (interval capped at game_speed / 4)", "unit": "ratio", "where": "engine constant", "donor_ref": "engine/openbor.c:50819"},
+    {"name": "edelay_factor", "donor_constant": "per-entity float multiplier on each frame delay (model default not read)", "unit": "ratio", "where": "zone data", "donor_ref": "engine/openbor.h:2576"},
+    {"name": "edelay_modifier", "donor_constant": "per-entity int64 static add after the factor (model default not read)", "unit": "ticks", "where": "zone data", "donor_ref": "engine/openbor.h:2577"},
+    {"name": "edelay_range", "donor_constant": "per-entity min and max of the raw frame delay that the scale applies to; max < 0 disables", "unit": "ticks", "where": "zone data", "donor_ref": "engine/openbor.c:27961"},
+    {"name": "edelay_cap", "donor_constant": "per-entity min and max of the scaled delay", "unit": "ticks", "where": "engine constant", "donor_ref": "engine/openbor.c:27988"}
+  ],
+  "best_idea": "Each animation frame stores an absolute advance-at time from one authored delay scaled by a per-entity factor and modifier within range and caps, and a freeze moves that time forward one unit per logic step, so per-entity speed and hit-stop both come from data.",
+  "decision": "adapt",
+  "decision_why": "The absolute next-frame time, one factor with range and caps, and the freeze that stretches the timeline fit windup speed and hit-stop, but the donor's frame timing is client presentation, so the server must keep its own tick timeline and take only the factor as data.",
+  "decision_status": "proposed",
+  "acceptance": "A server test sets a windup factor of 0.8 and asserts the hit window opens 20 percent sooner in server ticks within the cap, and a two-tick freeze moves the hit window back by exactly two ticks; the Pit clip for the same attack uses the same factor."
+}

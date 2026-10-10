@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+id-Software-Quake	animation-rigs	P	STRONG	full	/mnt/frankendom-donors/id-Software-Quake/WinQuake/r_alias.c:652-695 (frame pick by client clock, wrapped and scanned; the sole caller is r_alias.c:722); per-entity phase set in cl_parse.c:387-390.
+id-Software-Quake-2	animation-rigs	P	STRONG	full	/mnt/frankendom-donors/id-Software-Quake-2/game/g_monster.c:361-416 (move-table stepper: queued jump, end hook, range and advance, per-frame motion and event); pain choice m_soldier.c:409-451.
+ihhub-fheroes2	animation-rigs	P	STRONG	full	/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/monster/monster_anim.cpp:41-128 (weighted idle phrase queue, display only); wall-clock gate game_delays.cpp:104 and castle_well.cpp:288-291.

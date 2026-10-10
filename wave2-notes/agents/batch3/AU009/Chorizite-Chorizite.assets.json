@@ -1,0 +1,37 @@
+{
+  "donor": "Chorizite-Chorizite",
+  "code_licence": "MIT. LICENSE.md reads 'Copyright 2024 Chorizite'; README states the MIT licence. The AcClient helper subfolder has its own MIT licence (Copyright (c) 2024 Michael Cunningham).",
+  "asset_licence": "No separate asset licence. Repo-wide MIT is the only licence for in-repo images and shaders, as far as LICENSE.md says. The bundled nsJSON installer plugin has its own zlib-style licence with attribution conditions (Installer/nsJSON-LICENSE.txt). No game data is in the repo.",
+  "rights_holder_status": "unknown. README calls it an open-source plugin manager for Asheron's Call. No game rights-holder notice in the repo. acclient.map symbol names look client-derived; the repo does not state where the map came from.",
+  "best_class": "A",
+  "asset_groups": [
+    {"kind": "logo and app icons", "path": "chorizite.png; Chorizite.Launcher/icon.png (same md5 as chorizite.png); Chorizite.Launcher/chorizite.ico", "count_hint": "3 files; two PNGs of 81,748 bytes, one ICO of 15,406 bytes", "licence": "repo MIT (LICENSE.md); no per-file licence", "class": "A", "note": "Project logo. Keep the MIT notice. Images not viewed."},
+    {"kind": "placeholder texture", "path": "Chorizite.Core/Render/nulltexture.jpg", "count_hint": "1 JPEG, 92,840 bytes", "licence": "repo MIT; no per-file licence", "class": "A", "note": "Name suggests a fallback texture for missing art. Only the JPEG magic was checked; image not viewed."},
+    {"kind": "shader source", "path": "Chorizite.NativeClientBootstrapper/Render/Shaders/Basic.fx; Chorizite.Launcher/Render/Shaders/ (2 .vert, 2 .frag)", "count_hint": "5 text files, 0.2 to 2.6 KB each", "licence": "repo MIT", "class": "A", "note": "Code, not art. Basic.fx is a world-times-projection vertex stage with one texture sampler (_tex) and vertex colour."},
+    {"kind": "symbol map", "path": "Chorizite.Core/acclient.map", "count_hint": "10,915 lines, 678,343 bytes", "licence": "none stated in repo", "class": "C", "note": "Lines are C++-style symbol names with Turbine GUID and security-level types. No origin or licence line in the repo. Treated as proprietary-derived; no names copied."},
+    {"kind": "installer plugins and scripts", "path": "Installer/ (nsJSON.dll, nsisunz.dll, INetC.dll, dotnetcore.nsh, vcredist.nsh, Installer.nsi)", "count_hint": "6 binaries of 24 to 90 KB, 3 NSIS scripts", "licence": "nsJSON: own zlib-style licence with attribution conditions; the other DLLs' licences not read", "class": "A for nsJSON (conditions: no misrepresented origin, altered versions marked, notice kept); C for the rest until read", "note": "Not art. Listed for completeness."},
+    {"kind": "native runtime library", "path": "Chorizite.Launcher/runtimes/win-x86/native/SDL2.dll; Chorizite.Launcher/Chorizite.Injector.dll; Chorizite.NativeClientBootstrapper/SigScan.dll", "count_hint": "3 binaries, 50 KB to 1.3 MB", "licence": "not read", "class": "C", "note": "Binaries not opened. Their licences are not checked here."},
+    {"kind": "game data", "path": "none in repo (no .dat, .mul, .bmp, .wav, .mp3, .m2 or .wmo in the file list)", "count_hint": "0", "licence": "not applicable", "class": "D", "note": "README and code say the framework reads DAT files through the DatReaderWriter package (Chorizite.Core/Dats/FSDatReader.cs). The user's own AC install supplies the data; none is in the repo."}
+  ],
+  "inspiration": [
+    "Overlay pipeline: one plain textured-quad shader (world times projection, one sampler, per-vertex colour) draws the whole overlay. Recreate the same minimal shape for our HUD with our own shader and art.",
+    "Placeholder-first art: a loud fallback texture stands in for any missing image, so gaps are obvious during development. Our version could be a high-contrast check in our own colours, drawn only when a load fails.",
+    "Text as its own layer: glyph wrapper and layout class are separate from draw calls, so the HUD can measure and wrap text before drawing. Reference Chorizite.Core/Render/TextLayout.cs and Chorizite.Core/Render/ACFont.cs.",
+    "Panels described as data: the framework leans on HTML/CSS-style panel descriptions instead of hand-built widgets. Our version could let artists restyle HUD panels from a layout file without code changes.",
+    "One icon for two places: the launcher icon and the repo logo are the same PNG (identical hash). Keep one brand image and reuse it, rather than a second copy.",
+    "Honest scope: the repo holds no creatures, items, armour, zones or effects. Its creative value for us is UI and rendering plumbing only."
+  ],
+  "briefs": [
+    {"label": "Missing-art checker tile", "why": "A loud placeholder that cannot be mistaken for real art; it makes missing textures obvious in development.", "keep": "High-contrast two-colour check; fixed size; shown only when a texture fails to load.", "change": "Our own colour pair, not the file's; a broken-frame glyph in the corner; a slow pulse so it is noticed.", "ref": "Chorizite.Core/Render/nulltexture.jpg (not viewed)"},
+    {"label": "Single-pass HUD quad shader", "why": "One small shader for every overlay element keeps the HUD cheap to draw.", "keep": "One vertex stage (world times projection); one texture sampler; per-vertex colour.", "change": "Add an atlas UV rectangle per element; add a palette lookup for tinting; add a soft-edge mask for panel borders.", "ref": "Chorizite.NativeClientBootstrapper/Render/Shaders/Basic.fx"},
+    {"label": "Measure-then-draw text module", "why": "Separating measure, wrap and draw keeps HUD text crisp and lets labels size themselves.", "keep": "Layout is data, separate from drawing; wrapping happens before any draw call.", "change": "Our own bitmap face; different wrap rules for chat versus world labels; signed-distance glyphs for scaling.", "ref": "Chorizite.Core/Render/TextLayout.cs; Chorizite.Core/Render/ACFont.cs"}
+  ],
+  "cross_link": "hud-ui: HTML/CSS-style panel idea and text layout module (Render/TextLayout.cs). vfx: none in repo beyond a basic shader. sound: AudioPlaybackEngine.cs exists as code only; no audio files in the repo. zones, spawns, loot, camera, animation: no assets in repo.",
+  "not_read": [
+    "chorizite.png, Chorizite.Launcher/icon.png, Chorizite.Launcher/chorizite.ico, Chorizite.Core/Render/nulltexture.jpg: images not viewed (only size, hash or magic checked)",
+    "SDL2.dll, Chorizite.Injector.dll, SigScan.dll, nsisunz.dll, INetC.dll: binaries not opened; their licences not read",
+    "acclient.map: only the first lines and two matches were sampled; the file was not read in full",
+    "The .github workflows and GitVersion.yml: not read",
+    "Tests/ and most AcClient/*.cs files: not read beyond the grep for copyright strings"
+  ]
+}

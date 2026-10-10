@@ -1,0 +1,42 @@
+{
+  "donor": "AAEmu-AAEmu",
+  "code_licence": "Conflicting. README.md 'Licensing information' names the GNU Lesser General Public License v3. LICENSE.GPL is the GNU GPL Version 3 text ('Version 3, 29 June 2007'). LICENSE.MIT is MIT, 'Copyright (c) 2019 Rain0Ash'. The repo does not say which applies to which code.",
+  "asset_licence": "Two icons carry attribution pages: 6_key_copy.html (Yusuf Önaldı, CC BY-SA 4.0, via Wikimedia Commons) and Globe_icon_(the_Noun_Project_30701).html (Chris Kerr, from The Noun Project, CC BY 3.0 US, via Wikimedia Commons). Other icons and examples have no licence line. Game client files and compact.sqlite3 are not in the repo (user supplies them per Docs/wiki/Client.md and AGENTS.md).",
+  "rights_holder_status": "unofficial server: README line 48 says 'not affiliated with XLGames' and that brands and trademarks belong to their owners. The repo does not state who holds rights in the game data or client. Third-party download links in Docs/wiki/Client.md were not followed.",
+  "best_class": "B",
+  "asset_groups": [
+    {"kind": "login icon (SVG, attributed)", "path": "AAEmu.Login/Resources/6_key_copy.svg and 6_key_copy.html", "count_hint": "1 SVG plus attribution page", "licence": "CC BY-SA 4.0 per the attribution page", "class": "B", "note": "conditions as the file states: attribution and share-alike; inspiration use only is our choice, not a licence reading"},
+    {"kind": "login icon (SVG, attributed)", "path": "AAEmu.Login/Resources/Globe_icon_(the_Noun_Project_30701).svg and .html", "count_hint": "1 SVG plus attribution page", "licence": "CC BY 3.0 US per the attribution page", "class": "B", "note": "condition as the file states: attribution"},
+    {"kind": "login icons (PNG, ICO, GIMP source)", "path": "AAEmu.Login/Resources/icon_login.png, icon_login.ico, icons.xcf", "count_hint": "3 files; icon_login.png 256x256 (IHDR)", "licence": "none stated", "class": "C", "note": "GIMP source .xcf not opened"},
+    {"kind": "game icons", "path": "AAEmu.Game/Resources/icon_game.png, icon_game.ico", "count_hint": "2 files", "licence": "none stated", "class": "C", "note": "not viewed"},
+    {"kind": "heightmap examples (PNG)", "path": "Tools/WorldConverter/doc/Example Gimp Export 1.png, Example Gimp Export 2.png", "count_hint": "2 files", "licence": "none stated", "class": "C", "note": "not viewed"},
+    {"kind": "game data (JSON and XML)", "path": "AAEmu.Game/Data/ (Creatures.xml, Doodads.xml, CharTemplates.json, Portal/*.json, Worlds/*) and AAEmu.Game/Configurations/*.json", "count_hint": "67 .json repo-wide; 18 world folders under Worlds/", "licence": "none stated", "class": "C", "note": "spawn, portal and template tables; origin not stated; content not reproduced"},
+    {"kind": "database SQL", "path": "SQL/aaemu_game.sql, SQL/updates/, SQL/examples/, SQL/patches/", "count_hint": "75 .sql repo-wide", "licence": "none stated", "class": "C", "note": "schema and content updates; not opened"},
+    {"kind": "client models, geodata, textures, audio", "path": "not in repo (game_pak per Docs/wiki/Client.md and AGENTS.md)", "count_hint": "0 in repo", "licence": "n/a", "class": "D", "note": "user must supply client; nothing to use from the repo"},
+    {"kind": "game templates database", "path": "AAEmu.Game/Data/compact.sqlite3 (required per AGENTS.md)", "count_hint": "not in repo", "licence": "n/a", "class": "D", "note": "AGENTS.md says do not commit it"}
+  ],
+  "inspiration": [
+    "Login glyph pair: a dotted globe and a key read as world plus account at a glance. Recreate the pairing with our own drawings. Refs: AAEmu.Login/Resources/Globe_icon_(the_Noun_Project_30701).svg and 6_key_copy.svg (CC BY-SA; inspiration only).",
+    "Dotted-globe construction: the globe SVG starts with small circles around a ring plus an outline path; simple vector icons of this kind scale well. Ref: the same globe SVG (first lines only).",
+    "Easy and normal instance pairs: several dungeons ship an easier folder with its own spawn files (instance_nachashgar and instance_nachashgar_easy; instance_immortal_isle and instance_immortal_isle_easy). Idea: one map, two spawn sets. Ref: AAEmu.Game/Data/Worlds/instance_nachashgar_easy/.",
+    "Multi-part instances: instance_howling_abyss and instance_howling_abyss_2 each carry their own npc, doodad and slave spawn files. Idea: a second run of an instance with its own spawn tables. Ref: AAEmu.Game/Data/Worlds/instance_howling_abyss_2/.",
+    "Terrain from 16-bit grey images: WorldConverter exports a 16-bit grayscale raw height file that GIMP or Unity can open. Idea: paint terrain as a 16-bit grey image and convert it to height. Ref: Tools/WorldConverter/README.MD.",
+    "Fast travel and respawn as data tables: Data/Portal/ holds worldgates.json, recalls.json and respawns.json. Idea: travel and respawn points defined as data, separate from code. Ref: AAEmu.Game/Data/Portal/.",
+    "Spawns split from geometry: each world folder keeps spawn files apart from map data (main_world/ has doodad, npc, slave, transfer and gimmick spawn files). Idea: designers re-tune zones without touching geometry. Ref: AAEmu.Game/Data/Worlds/main_world/."
+  ],
+  "briefs": [
+    {"label": "Dotted globe (UI glyph)", "why": "reads as world or server at small size", "keep": "ring of dots; single colour; simple outline", "change": "dot density; latitude lines instead of a ring; orbit ring", "ref": "AAEmu.Login/Resources/Globe_icon_(the_Noun_Project_30701).svg (CC BY 3.0 US; recreate, do not copy)"},
+    {"label": "Key-and-globe login card (UI)", "why": "two glyphs mean account plus world", "keep": "two-glyph card; one colour; the pairing", "change": "swap the key for a lock or rune; icon size; layout", "ref": "AAEmu.Login/Resources/6_key_copy.svg (CC BY-SA; inspiration only)"},
+    {"label": "Easy-and-normal instance pair (zone)", "why": "one map, two difficulty tiers", "keep": "same map with two spawn sets; easy variant as its own spawn file", "change": "layout; boss mechanics; theme", "ref": "AAEmu.Game/Data/Worlds/instance_nachashgar_easy/ and instance_nachashgar/"},
+    {"label": "Two-part abyss instance (zone)", "why": "a second run of an instance with fresh spawns", "keep": "two-part instance; separate npc, doodad and slave spawn files", "change": "theme; layout; enemy set", "ref": "AAEmu.Game/Data/Worlds/instance_howling_abyss_2/"},
+    {"label": "Ridged terrain from height images (zone and terrain)", "why": "a 16-bit grey height image is easy to hand-paint", "keep": "16-bit height images; export to a paint tool", "change": "biome palette; height scale", "ref": "Tools/WorldConverter/README.MD"}
+  ],
+  "not_read": [
+    "PNG and ICO pixels (sizes and names only, except icon_login.png 256x256 from IHDR).",
+    "SVG content beyond the first lines of the globe SVG; key SVG header only.",
+    "Game JSON and XML: names and structure only.",
+    "SQL files: names and counts only.",
+    "Download links in Docs/wiki/Client.md: not followed.",
+    "Attribution HTML pages: grep for the licence line only."
+  ]
+}

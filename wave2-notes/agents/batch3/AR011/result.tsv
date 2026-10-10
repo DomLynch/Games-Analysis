@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+endless-sky-endless-sky	animation-rigs	P	STRONG	full	source/Hardpoint.cpp:266-284 and 139-145, AI.cpp:3929-4041: rate-capped, arc-clamped aim for a mount, target picked by turn time plus hit time; the donor has no skeleton, skinning or blend code.
+exult-exult	animation-rigs	P	STRONG	full	objs/animate.cc:368-426 and actors.cc:152-211, 1142-1211, combat.cc:1610-1628: clip loop modes with a first-frame hold chance and tail loop, and swing windup poses per weapon style; the strike resolves after the windup action ends, by frame count.
+flareteam-flare-engine	animation-rigs	P	STRONG	full	src/Animation.cpp:359-389 and src/EntityBehavior.cpp:839-881: active frame fires the attack once, windup hold on a frame, play-once fallback to the last frame; src/Entity.cpp:660-713 gates hits with a poise percent.

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ryzom-ryzomcore	animation-rigs	P	STRONG	full	/mnt/frankendom-donors/ryzom-ryzomcore/nel/src/3d/animation_playlist.cpp:170-268 slot-weighted clip playlist with eased ramps; channel_mixer.cpp:112-155 normalised running blend
+scummvm-scummvm	animation-rigs	P	STRONG	full	/mnt/frankendom-donors/scummvm-scummvm/engines/hpl1/engine/scene/AnimationState.cpp:87-104 fade-weighted clip advance; penumbra-overture/GameEnemy.cpp:900-941 PlayAnim crossfade and phase sync
+supertuxkart-stk-code	animation-rigs	P	STRONG	full	/mnt/frankendom-donors/supertuxkart-stk-code/lib/graphics_engine/include/ge_animation.hpp:147-177 frozen-frame pose blend and skinning; src/karts/kart_model.cpp:1397-1420 steer scrub

@@ -1,0 +1,24 @@
+cell: 3 (animation-rigs) | donor: graememcc-micropolisJS | list hint: src/spriteManager.js (wrong for rigs; read as a candidate)
+Licence: GNU GPL v3 (COPYING, version 3 text), plus the "ADDITIONAL TERMS per GNU GPL Section 7" and the MICROPOLIS trademark note in LICENSE and in each file header. Treat as copyleft: clean-room, shape only.
+Verdict: PARTIAL (depth thin)
+
+Files opened (donor, read-only, VPS):
+- /mnt/frankendom-donors/graememcc-micropolisJS/src/animationManager.js (whole file, 230 lines)
+- /mnt/frankendom-donors/graememcc-micropolisJS/src/spriteManager.js (1-100: getSprite, moveObjects loop)
+- /mnt/frankendom-donors/graememcc-micropolisJS/src/explosionSprite.js (1-80: move, frame counter, end-of-effect fires)
+- /mnt/frankendom-donors/graememcc-micropolisJS/src/baseSprite.js (14-60: init, position properties)
+Grep for animation, frame, skeleton, bone, ragdoll, blend, attach and keyframe across src/*.js and src/*.ts: the hits are tile animation and sprite frame counters (animationManager.js, monsterSprite.js, boatSprite.js, tornadoSprite.js, airplaneSprite.js, trainSprite.js, copterSprite.js). No skeleton, skinning, retargeting, IK, ragdoll or clip blending was found. Other sprite files (airplane, copter, boat, train, monster, tornado) were not read.
+
+Why PARTIAL: the donor has real frame cycling for 2D tiles and one-shot sprite effects, but it has no rig, no clip blending and no state machine, and the two closest pieces (a successor table for tile sequences and a one-shot explosion that starts fires when its last frame ends) are short and tied to a 2D tile map.
+
+What is real (for the record):
+- Tile animation runs on a wall-clock period of 50 ms (animationManager.js:21, :86); blink is 500 ms (line 22, read but not receipted). A successor table maps each tile to the next (registerSingleAnimation, :169; example sequence :174). Paint history rotates between two buffers (:158) so a cell keeps a consistent frame as the view scrolls.
+- Sprites advance on the simulation cycle: spriteCycle += 1 once per moveObjects call (spriteManager.js:80); each sprite is moved with that counter (:90); sprites with frame 0 are skipped (:87).
+- ExplosionSprite starts at frame 1 (explosionSprite.js:29), advances only on even cycles (:57), and at frame > 6 resets to 0 (:69-70) and starts fire on five tiles (:72-76). The sound and report fire on the first frame (:62).
+
+Best transferable idea: A one-shot effect that advances on alternate sim cycles and spawns its follow-up effects when its last frame ends (ExplosionSprite).
+Decision (proposed): reject for animation-rigs. The rig question is answered by the GemRB note (cell 3, the flinch, attack and clip-end stance table); this donor's tile cycle is a 2D map concern, and its end-of-effect spawn is a generic idea Frankendom already has in its own effects code.
+Acceptance: (not applicable; not proposed for build)
+
+Not read: the other sprite files (airplane, boat, copter, monster, tornado, train), tileHistory.js, tileValues.ts. Blink period receipt not written (the 500 ms default is at animationManager.js:22, read but not receipted).
+Camera: not applicable.

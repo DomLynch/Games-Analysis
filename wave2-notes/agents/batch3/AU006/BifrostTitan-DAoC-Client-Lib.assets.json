@@ -1,0 +1,32 @@
+{
+  "donor": "BifrostTitan-DAoC-Client-Lib",
+  "code_licence": "MIT License, Copyright (c) 2026 Nathan Martell (LICENSE:1, LICENSE:3).",
+  "asset_licence": "None in repo. The library reads client data from a directory at runtime (README.md:5). Licence of that data not stated in repo.",
+  "rights_holder_status": "Code: copyright line for Nathan Martell (MIT). Game data: unknown; README does not name the data owner and the repo ships none of it.",
+  "best_class": "D",
+  "asset_groups": [
+    {"kind": "none (repo)", "path": ".", "count_hint": "0 asset files; 55 files total", "licence": "MIT (code only)", "class": "D", "note": "No art, models, audio, maps or text data in repo."},
+    {"kind": "code", "path": "src/, include/, tests/, tools/", "count_hint": "34 cpp, 16 h", "licence": "MIT (LICENSE:1)", "class": "A", "note": "MIT code may be adapted with the licence notice kept."},
+    {"kind": "external client data (not in repo)", "path": "client directory: dat###.mpk, sector.dat, zonejump.csv, nifs.csv, fixtures.csv, bound.csv, city.csv, water csv, terrain.pcx", "count_hint": "not counted", "licence": "not stated in repo", "class": "C", "note": "Named in src/zone_geometry.cpp (lines 19, 53, 130-201). Do not ship or copy."}
+  ],
+  "inspiration": [
+    "A zone is a folder of small named tables (jump links, boundary box, terrain NIF list, fixtures, water, city), with one loader per table (src/zone_geometry.cpp lines 130-201). Keep the zone as a data bundle with one table per concern.",
+    "Zone exits are data rows: a jump point struct plus a per-zone jump table (include/daoc_client_lib/jump_point.h:12). Zone-to-zone travel without code.",
+    "A tree swap map: a real model name maps to a replacement model and bark and leaf textures, with cluster lists for variants (include/daoc_client_lib/tree_replacement_map.h:12-36). Themed trees per zone.",
+    "Terrain height is read from a PCX image per zone (src/zone_geometry.cpp:201). Authoring heights from an image makes many zone heightfields quick. Sampling code not read.",
+    "Water is a separate geometry layer (dungeon_water.h, river_geometry.h) and not baked into terrain. Keep water as its own layer.",
+    "Recipes are plain structs of ingredients and a result (craft_recipes.h:11 and :21) with tests. A data-first crafting table.",
+    "Parsers collect warnings instead of failing on one bad row (tree_replacement_map.h:31). Good for data-driven zone loading."
+  ],
+  "briefs": [
+    {"label": "Zone data bundle", "why": "A zone that is a folder of plain tables can be authored and swapped without touching code.", "keep": "One table per concern; named files; one loader per table", "change": "Our own table names and JSON format; add spawn caps and respawn fields to the zone table", "ref": "src/zone_geometry.cpp lines 130-201"},
+    {"label": "Themed tree swap by name", "why": "A tree swap map lets one zone look different with the same world layout.", "keep": "Real model maps to replacement with bark and leaf sets; cluster variants", "change": "Swap by biome tag, not by file name; our own tree shapes", "ref": "include/daoc_client_lib/tree_replacement_map.h:12-36"},
+    {"label": "Recipe card", "why": "A crafting recipe as a small struct makes the crafting loop data.", "keep": "Ingredient list plus result struct; tests for the table", "change": "Our own economy and item names; quantities set by our rulings", "ref": "include/daoc_client_lib/craft_recipes.h:11 and :21"}
+  ],
+  "not_read": [
+    "Function bodies in src/ beyond the cited lines",
+    "tests/ bodies (names only)",
+    "tools/zone_exporter.cpp",
+    "DAoC client data itself (not in repo, not obtained)"
+  ]
+}

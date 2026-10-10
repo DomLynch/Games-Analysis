@@ -1,0 +1,37 @@
+{
+  "donor": "bernatvadell-muonline",
+  "code_licence": "No LICENSE file in repo. README.md:577 says educational and research purposes only.",
+  "asset_licence": "None shipped. README.md:120 says the client needs Season 20 (1.20.61) client data files, to be downloaded separately.",
+  "rights_holder_status": "unknown. No copyright line. README says protocol is based on public information and reverse engineering. Game data not included; owner not named in repo files read.",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "shaders", "path": "Client.Main/MGContent/*.fx", "count_hint": "7 files", "licence": "none stated in repo", "class": "C", "note": "ItemMaterial.fx and MonsterMaterial.fx are the useful references. Only the lines cited in the md were read."},
+    {"kind": "fonts", "path": "Client.Main/MGContent/Fonts/", "count_hint": "2 ttf (arial.ttf about 1.0 MB, NotoSansKR-Regular.ttf about 6.2 MB)", "licence": "not in repo", "class": "C", "note": "Font licences not in the repo. Not opened."},
+    {"kind": "2D images", "path": "Client.Main/MGContent, Client.Main/Icon.bmp, MuIos, MuAndroid", "count_hint": "18 png, 1 jpg, 1 bmp, 1 webp in repo", "licence": "none stated", "class": "C", "note": "Not opened. Mostly app icons and a background."},
+    {"kind": "game data (external)", "path": "not in repo (Season 20 Data folder)", "count_hint": "0 in repo", "licence": "CLAUDE.md:8 says do not commit proprietary game data", "class": "D", "note": "Nothing usable in repo. External data would be class C."},
+    {"kind": "format readers (code)", "path": "Client.Data/ (BMD, ATT, CAP, CWS, LANG, MAP, OBJS, OZB, OZG, Texture)", "count_hint": "cs files under Client.Data (count not measured)", "licence": "none stated", "class": "C", "note": "Code, not assets. Names only; not read."}
+  ],
+  "inspiration": [
+    "Excellent-item glow stacks cheap layers: Fresnel edge term with steep exponent, three diagonal sweep beams with sharp falloff, hue cycling over time and UV (ItemMaterial.fx, lines near 371-405). Recreate with our own palette.",
+    "Echo copies: item and monster shaders sample the same sprite 4 to 6 times at small time-driven UV offsets and add them with falling weights (ItemMaterial.fx echo block; MonsterMaterial.fx:175). Cheap aura, not a blur.",
+    "Elite monster gold: tint multiplied into lit colour, 2x metallic gain (MonsterMaterial.fx:170), shimmer from time and normal. Use for elite creatures with our own tint ramp.",
+    "Shadow sampling: 2048 shadow map with a small averaged tap pattern (MonsterMaterial.fx:56, SampleShadow). Reference for soft contact shadows on creatures.",
+    "Light floor: one fixed directional light with minimum 0.1 on N dot L so back faces never go black.",
+    "Packed item options: one integer holds item level in the low bits and an excellent flag above, to drive VFX tiers from one number.",
+    "Cut-out sprites: alpha below 0.1 discarded in both shaders. Cheap and plain."
+  ],
+  "briefs": [
+    {"label": "Edge-glow relic (top-tier drop)", "why": "A top-tier drop must read from across the arena. The edge glow separates the item from the background.", "keep": "Fresnel edge rim; sharp-falloff sweep beams; slow hue cycle", "change": "One hue family from our own palette; beams at our own angles; no rainbow", "ref": "Client.Main/MGContent/ItemMaterial.fx lines 371-405"},
+    {"label": "Gilded elite creature", "why": "An elite creature should look like it must be respected before it is fought.", "keep": "Tint multiply on lit colour; shimmer from time and normal; a brighter core", "change": "Our own tint ramp; shimmer tied to creature motion; glow only on the armour plates", "ref": "Client.Main/MGContent/MonsterMaterial.fx lines 49, 170, 175"},
+    {"label": "Afterimage aura for spells", "why": "A spell trail that echoes gives motion without a new animation.", "keep": "Four echo copies; falling weights; time-driven small offsets", "change": "Echo only along the strike direction; our own weights; fade on a timer", "ref": "Client.Main/MGContent/ItemMaterial.fx echo block near lines 236-265"},
+    {"label": "Soft-shadow creature bed", "why": "Soft contact shadows ground creatures on any floor.", "keep": "Averaged small tap pattern; strength factor; bias term", "change": "Smaller map; a different tap pattern; our own strength curve", "ref": "Client.Main/MGContent/MonsterMaterial.fx line 56 and SampleShadow"}
+  ],
+  "not_read": [
+    "Client.Data format readers (BMD, OZB, OZG, MAP) beyond file names",
+    "ItemMaterial.fx and MonsterMaterial.fx beyond the cited lines",
+    "Season 20 client data (not in repo, not downloaded)",
+    "Client.Main/MGContent/Content.mgcb (names only)",
+    "Icon images in MuIos and MuAndroid (names only)",
+    "Fonts: licence text and glyph content"
+  ]
+}

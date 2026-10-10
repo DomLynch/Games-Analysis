@@ -1,0 +1,38 @@
+{
+  "donor": "ACEmulator-ACE",
+  "code_licence": "GNU AGPL v3. LICENSE line 1 'GNU AFFERO GENERAL PUBLIC LICENSE', line 2 'Version 3, 19 November 2007'. Source/lib/README.md line 1: 'The included ACE DLL files are AGPLv3 licensed.' Third-party DLL Source/lib/Lifestoned.DataModel.dll: MIT per Source/lib/README.md line 9; licence file 'Copyright (c) 2018 Scribble'.",
+  "asset_licence": "No asset licence statement in the repo. The AGPL covers the code. Icons and Database SQL carry no licence line. Client data (portal.dat and similar) and the world database are not in the repo; README links release downloads, not followed.",
+  "rights_holder_status": "fan server: README line 12 says 'completely from-scratch open source server implementation'; line 19 says use of the game client is 'for interoperability with the emulated server'; line 20 says Asheron's Call trademark 'has since expired' (as the file states). Rights holder of game data not stated.",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "retro icon (PNG)", "path": "Source/ACE.Server/images/ace-retro-icon.png", "count_hint": "1 file, 512x512 (IHDR)", "licence": "none stated", "class": "C", "note": "not viewed"},
+    {"kind": "retro icon 2 (PNG)", "path": "Source/ACE.Server/images/ace-retro-icon2.png", "count_hint": "1 file, 512x512 (IHDR)", "licence": "none stated", "class": "C", "note": "not viewed"},
+    {"kind": "retro icon (ICO)", "path": "Source/ACE.Server/images/ace_retro_icon_2.ico", "count_hint": "1 file", "licence": "none stated", "class": "C", "note": "not viewed"},
+    {"kind": "starter loadout (JSON)", "path": "Source/ACE.Server/starterGear.json", "count_hint": "1 file; skills list with id and name", "licence": "none stated", "class": "C", "note": "first lines only"},
+    {"kind": "content SQL (shard fixes and optional)", "path": "Database/Base, Database/Updates/Shard, Database/Optional", "count_hint": "115 .sql repo-wide", "licence": "none stated", "class": "C", "note": "per-item and per-spell fix files; two headers read, rest by file name"},
+    {"kind": "content SQL archive", "path": "Database/Archive (2019-04-29, 2019-09-14, 2020-12-29)", "count_hint": "Database folder about 2.4M", "licence": "none stated", "class": "C", "note": "prior states of Base and Updates folders per Archive README"},
+    {"kind": "client data (DAT and similar)", "path": "portal.dat, client_portal.dat, client_highres.dat (named in changelog.md line 4981; not in repo)", "count_hint": "0 in repo", "licence": "n/a", "class": "D", "note": "user supplies client; not sought"},
+    {"kind": "audio, 3D models, texture archives", "path": "whole tree", "count_hint": "0 by extension census", "licence": "n/a", "class": "D", "note": "nothing usable of these kinds in the repo"}
+  ],
+  "inspiration": [
+    "Square retro badge: two 512 px retro icons plus an .ico, the idea being a square badge that reads at favicon size. Refs: Source/ACE.Server/images/ace-retro-icon.png and ace-retro-icon2.png (not viewed).",
+    "Themed armour with one signature stat: the Golden Flame armour fix re-copies one magic-absorb float value (property type 159) from the world table for one item id, so each themed piece has one clear signature property. Ref: Database/Updates/Shard/2022-05-14-04-Fix-Aegis-of-the-Golden-Flame.sql (line 1).",
+    "Dated, one-item content patches: each fix is a small dated SQL file with a comment header naming the property and the item; easy to review one at a time. Ref: Database/Updates/Shard/ (most by file name only).",
+    "Starter loadout as data: starterGear.json lists starting skills by id and name, so the starter kit is a data file, not code. Ref: Source/ACE.Server/starterGear.json.",
+    "Motif-led spell names: the file 2023-09-02-00-Update-Spell-Hieroglyph-of-Healing-Mastery.sql suggests spells named after a motif with a mastery tier. Idea only; not opened. Ref: Database/Updates/Shard/2023-09-02-00-Update-Spell-Hieroglyph-of-Healing-Mastery.sql."
+  ],
+  "briefs": [
+    {"label": "Ember armour (armour)", "why": "a themed set with one signature absorb stat", "keep": "magic-absorbing piece; flame-style motif in the name; one signature stat", "change": "motif (frost or stone instead); a different stat such as reflect; silhouette", "ref": "Database/Updates/Shard/2022-05-14-04-Fix-Aegis-of-the-Golden-Flame.sql (stat header only)"},
+    {"label": "Hieroglyph healing spell (effect)", "why": "a spell named after a glyph script with a mastery tier", "keep": "glyph-based name; mastery tier; healing focus", "change": "rune script instead of hieroglyphs; effect shape; tier names", "ref": "Database/Updates/Shard/2023-09-02-00-Update-Spell-Hieroglyph-of-Healing-Mastery.sql (name only; not opened)"},
+    {"label": "Retro badge emblem (UI)", "why": "a square retro badge reads well as an app or favicon mark", "keep": "square badge; retro look; plain and alternate variants", "change": "palette; emblem; frame", "ref": "Source/ACE.Server/images/ace-retro-icon.png (not viewed)"},
+    {"label": "Starter loadout card (UI and data)", "why": "a clear starting kit for new players", "keep": "starting skills table; one data file", "change": "class-based kit; skill set; card layout", "ref": "Source/ACE.Server/starterGear.json"}
+  ],
+  "not_read": [
+    "PNG and ICO pixels (sizes only).",
+    "SQL: two patch headers read (Golden Flame and Stormwood Dagger); the spell patch and the rest by file name only.",
+    "starterGear.json: first lines only.",
+    "The ACE and Lifestoned DLLs (code, not inspected).",
+    "The 107 .txt files (counts only).",
+    "Client data and the world database: not in the repo, not sought."
+  ]
+}

@@ -1,0 +1,111 @@
+{
+ "game": "keldaanCommunity-pokemonAutoChess",
+ "category": "animation-rigs",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/attacking-state.ts",
+ "licence": "GPL-3.0 (LICENSE at repo root: 'Version 3, 29 June 2007', standard GPL v3 text)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/attack-timing.ts",
+ "parity_row": 1,
+ "pattern_tags": [
+  "timer-wheel",
+  "variable-step",
+  "new:attack-cadence",
+  "new:hit-frame-timing",
+  "new:lock-until-complete",
+  "new:clip-timescale-from-duration"
+ ],
+ "data_fields": [
+  {
+   "name": "hit frame (per creature)",
+   "donor_constant": "d from types/delays.json, default 18",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/attacking-state.ts:132"
+  },
+  {
+   "name": "attack clip total frames (per creature)",
+   "donor_constant": "t from types/delays.json, default 36",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/attacking-state.ts:133"
+  },
+  {
+   "name": "attack length formula",
+   "donor_constant": "1000 / (0.4 + speed * 0.007)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/attacking-state.ts:131"
+  },
+  {
+   "name": "wind-up floor",
+   "donor_constant": "attackDuration / 2",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/attacking-state.ts:135"
+  },
+  {
+   "name": "base projectile speed",
+   "donor_constant": "3 cells per second before speed factor",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/config/game/battle.ts:10"
+  },
+  {
+   "name": "flight speed factor",
+   "donor_constant": "1 + speed / 100",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/attacking-state.ts:143"
+  },
+  {
+   "name": "paralysis speed factor",
+   "donor_constant": "speed / 2 when paralysed",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/attacking-state.ts:130"
+  },
+  {
+   "name": "simulation dt cap",
+   "donor_constant": "50",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/config/server/network.ts:12"
+  },
+  {
+   "name": "client visual lead (latency)",
+   "donor_constant": "20",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/public/src/game/components/pokemon-sprite.ts:497"
+  },
+  {
+   "name": "client projectile jitter",
+   "donor_constant": "plus or minus 5",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/public/src/game/components/pokemon-sprite.ts:547"
+  },
+  {
+   "name": "client projectile tween cap",
+   "donor_constant": "250",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/public/src/game/components/pokemon-sprite.ts:550"
+  },
+  {
+   "name": "attack clip frame rate",
+   "donor_constant": "36 fps",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/public/src/game/animation-manager.ts:27"
+  }
+ ],
+ "best_idea": "Derive the attack's length from one speed number, put the hit on the animation's hit frame as a share of that length (never less than half), add flight time from distance, and resolve the damage as a delayed command when it expires, so the clip, the projectile and the server hit share one clock.",
+ "decision": "adapt",
+ "decision_why": "Frankendom's duel step needs one attack clock with a per-creature hit frame as data; the donor's chain is a clean fit. But the donor lets hits overlap with no check and the client stretch relies on unverified Phaser semantics, so take the shape, add a per-hit ledger entry and a target re-check, and do not copy the overlap.",
+ "decision_status": "proposed",
+ "acceptance": "A server test with speed 100, hit frame 9 of 21 and a target 4 cells away asserts the hit resolves 1121 ms after the attack starts (455 ms wind-up, 667 ms flight); the client clip for that creature ends at 909 ms."
+}

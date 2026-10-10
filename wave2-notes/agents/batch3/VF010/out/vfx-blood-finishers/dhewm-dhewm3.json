@@ -1,0 +1,34 @@
+{
+  "game": "dhewm-dhewm3",
+  "category": "vfx-blood-finishers",
+  "cell": 13,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/Entity.cpp",
+  "licence": "GPL-3.0 or any later version, plus id Software additional terms (header read in neo/d3xp/Fx.cpp; COPYING.txt at repo root)",
+  "licence_class": "copyleft",
+  "target_module": "src/fight/hit-fx.ts",
+  "parity_row": 8,
+  "pattern_tags": [
+    "new:server-hit-record",
+    "new:surface-keyed-fx",
+    "new:entity-over-def-fallback",
+    "compute-budget",
+    "new:once-per-body",
+    "new:emitter-until-done"
+  ],
+  "data_fields": [
+    {"name": "splat_trace_len", "donor_constant": "64", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/Game_local.cpp:3942"},
+    {"name": "splat_size_base", "donor_constant": "64, size random in [32,64) before halving", "unit": "units", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/Game_local.cpp:3939"},
+    {"name": "wound_overlay_param", "donor_constant": "20", "unit": "units", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/Entity.cpp:5222"},
+    {"name": "gib_health_threshold", "donor_constant": "health < -20", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/AFEntity.cpp:1095"},
+    {"name": "gib_window", "donor_constant": "200", "unit": "ms", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/AFEntity.h:47"},
+    {"name": "gib_impulse_speed", "donor_constant": "75 (linear velocity)", "unit": "units", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/AFEntity.cpp:1139"},
+    {"name": "gib_cleanup_s", "donor_constant": "4.0", "unit": "s", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/AFEntity.cpp:1143"}
+  ],
+  "best_idea": "Resolve each hit into presentation on every client from one compact server event (joint index, joint-local point, normal and direction, def and surface ids), where the surface picks a random variant and the entity's own table overrides the damage definition, so decals and bleeds are never a second source of truth.",
+  "decision": "adapt",
+  "decision_why": "Take the shape (one server hit record, surface-keyed cosmetic variants with an entity-over-def fallback, one gib per body behind a global window). Drop Doom 3's physics gibs and world-decal projection: they do not fit a fixed-camera Pit with at most three attackers (MAX_ATTACKERS = 3), so Frankendom uses flat gib pieces.",
+  "decision_status": "proposed",
+  "acceptance": "In one Pit fight two clients receive the same server hit event and show the same wound on the same joint within one frame; a server test asserts the hit event carries joint index and joint-local point, normal and direction (no world-space point), and a gib blocked by the 200 ms window leaves the body not-gibbed so the next damage call can gib it."
+}

@@ -1,0 +1,216 @@
+{
+  "donor": "beyond-all-reason-Beyond-All-Reason",
+  "code_licence": "GPL v2 for game code (LICENSE.md:2). Per-file licences can differ, as the file says. Engine requires GPL (license_general.txt:2).",
+  "asset_licence": "Mixed by folder and author. Files say: CC-BY-SA 4.0 (Cremuss models and Arm_* textures); CC-BY-NC-ND 4.0 (most models, animations, bitmaps, icons, unit pictures, music); all rights reserved (many sounds after 2019, cursors, bitmaps); CC0 1.0 (lava2, lava6, alien_guts textures; AllyRequest.wav); GPL v2 (raptor animation scripts); Pixabay summary (modbroadcast sounds); SIL OFL 1.1 (Exo 2, Poppins, Noto fonts).",
+  "rights_holder_status": "Community project. Art, sound and music credited to named makers in licence files. Third-party content licensed in (Blender Market rocks, Pixabay sounds, gametextures.com lava7, OFL fonts). No clean-room or original-company statement.",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "code (lua, GPL)",
+      "path": "effects/, gamedata/, units/, scripts/, luaui/, luarules/",
+      "count_hint": "effects 70 lua; gamedata 26 lua; units 969 lua",
+      "licence": "GPL v2 (LICENSE.md:2)",
+      "class": "B",
+      "note": "Code. Shape-only if clean-room (GPL). Only effects/raptors read in part."
+    },
+    {
+      "kind": "models (Cremuss)",
+      "path": "objects3d/Units/ where artist tag is Cremuss",
+      "count_hint": "not counted per author",
+      "licence": "CC-BY-SA 4.0 (objects3d/Units/license.txt:1)",
+      "class": "B",
+      "note": "Share-alike. The licence file keys on an artist tag that units/ does not contain; units use model_author fields (914 files mention author). Per-model check not done."
+    },
+    {
+      "kind": "models (other authors)",
+      "path": "objects3d/ (2046 files, 2038 s3o, 209 MB)",
+      "count_hint": "2046 files",
+      "licence": "CC-BY-NC-ND 4.0 (LICENSE.md:7)",
+      "class": "C",
+      "note": "No derivatives. Binary s3o not opened."
+    },
+    {
+      "kind": "raptor models",
+      "path": "objects3d/Raptors/ (incl. *_spectre.s3o)",
+      "count_hint": "183 entries",
+      "licence": "no folder licence file; LICENSE.md:7 routes to CC-BY-NC-ND unless named Cremuss",
+      "class": "C",
+      "note": "Names only. Spectre skins are a useful idea (see inspiration)."
+    },
+    {
+      "kind": "rock models",
+      "path": "objects3d/rocks30/",
+      "count_hint": "rocks30 pack",
+      "licence": "Royalty-Free Blender Market licence to Beherith (objects3d/rocks30/licence.txt:3)",
+      "class": "C",
+      "note": "Third-party marketplace licence; terms not in repo."
+    },
+    {
+      "kind": "textures (Cremuss Arm_*)",
+      "path": "unittextures/Arm_*",
+      "count_hint": "not counted",
+      "licence": "CC-BY-SA 4.0 (unittextures/license.txt:3)",
+      "class": "B",
+      "note": "Share-alike."
+    },
+    {
+      "kind": "textures (cor_* and decals)",
+      "path": "unittextures/cor_*, decals/*_aoplane*",
+      "count_hint": "not counted",
+      "licence": "CC-BY-NC-ND 4.0 (unittextures/license.txt:1)",
+      "class": "C",
+      "note": "No derivatives."
+    },
+    {
+      "kind": "textures (CC0)",
+      "path": "luaui/images/lava/lava2_*, lava6_*; luaui/images/raptor_scum/alien_guts_*",
+      "count_hint": "lava2 3 dds; lava6 2 files; alien_guts 5 files",
+      "licence": "CC0 1.0 (luaui/images/lava/license.txt:1; raptor_scum/license.txt:1)",
+      "class": "A",
+      "note": "Usable as is per the file. Attribution not required by CC0."
+    },
+    {
+      "kind": "textures (third-party lava7)",
+      "path": "luaui/images/lava/lava7_*",
+      "count_hint": "2 dds",
+      "licence": "licensed from gametextures.com (lava/license.txt:3)",
+      "class": "C",
+      "note": "Terms not in repo."
+    },
+    {
+      "kind": "textures and bitmaps (IceXuick)",
+      "path": "bitmaps/ (227 files, 172 MB), luaui/images/Ranks, icons/ (833 png)",
+      "count_hint": "227 bitmaps; 833 icons",
+      "licence": "All rights reserved; CC BY NC ND (license_bitmaps.txt, license_icons.txt)",
+      "class": "C",
+      "note": "Inspiration only."
+    },
+    {
+      "kind": "animation frames (cursors)",
+      "path": "anims/ (5718 files, 36 MB)",
+      "count_hint": "5718 files",
+      "licence": "All rights reserved (anims/license.txt:1)",
+      "class": "C",
+      "note": "Frame-set pattern is the useful idea."
+    },
+    {
+      "kind": "music",
+      "path": "music/original/ (92 ogg, 9 mp3)",
+      "count_hint": "105 files, 516 MB",
+      "licence": "CC BY NC ND 4.0; all rights reserved (license_music.txt:1)",
+      "class": "C",
+      "note": "Credits list about 28 contributors."
+    },
+    {
+      "kind": "sound effects",
+      "path": "sounds/ (1440 wav, 15 mp3, 437 MB)",
+      "count_hint": "1459 files",
+      "licence": "All rights reserved after 2019 (license_sounds.txt:1)",
+      "class": "C",
+      "note": "Only AllyRequest.wav is CC0 (license_sounds.txt:35)."
+    },
+    {
+      "kind": "sound effects (CC0 one file)",
+      "path": "sounds/voice-soundeffects/AllyRequest.wav",
+      "count_hint": "1 file",
+      "licence": "CC0 1.0 (license_sounds.txt:35)",
+      "class": "A",
+      "note": "Named in the file."
+    },
+    {
+      "kind": "sound effects (Pixabay)",
+      "path": "sounds/modbroadcast/",
+      "count_hint": "16 files",
+      "licence": "Pixabay (sounds/modbroadcast/license.txt:1)",
+      "class": "C",
+      "note": "Licence summary copied in file; not clear for our use."
+    },
+    {
+      "kind": "fonts (OFL)",
+      "path": "fonts/exo2/, fonts/fallbacks/, OFL-Poppins",
+      "count_hint": "fonts 18 in folder",
+      "licence": "SIL OFL 1.1 (fonts/exo2/OFL.txt:3)",
+      "class": "B",
+      "note": "OFL conditions travel with the font."
+    },
+    {
+      "kind": "fonts (unlisted)",
+      "path": "fonts/monospaced/, fonts/unlisted/ (Xolonium, Mesmerize, Source Code Pro)",
+      "count_hint": "several",
+      "licence": "not read",
+      "class": "C",
+      "note": "Licence not checked."
+    },
+    {
+      "kind": "unit definitions and GLSL",
+      "path": "units/, shaders/GLSL/",
+      "count_hint": "969 lua; 8 glsl",
+      "licence": "GPL v2 (code)",
+      "class": "B",
+      "note": "Not read beyond names."
+    },
+    {
+      "kind": "none (text)",
+      "path": "language/ (34 json, 1 yml, 1 lua)",
+      "count_hint": "36 files",
+      "licence": "not read",
+      "class": "C",
+      "note": "Translations. Not read."
+    }
+  ],
+  "inspiration": [
+    "Raptor death bursts come in a size ladder (micro, small, medium, large) of one red burst; each tier layers heat clouds and simple particle systems (effects/raptors/raptorunitexplosion-red.lua). Recreate as a 3-layer burst (flash, cloud, droplets) scaled by unit size.",
+    "Blood is recoloured at runtime: drop and splat textures come in normal and white versions, and the raptor effects use the white drops (effects/raptors/raptor-effects.lua:32). Good pattern for our wound and blood parity row.",
+    "One silhouette, several skins: the raptor models include base and spectre variants (objects3d/Raptors/*_spectre.s3o). A ghostly second skin creates an elite without a new model. Visuals not read (binary).",
+    "Lava as two maps: diffuse-emit and normal-height pairs (luaui/images/lava/) so one map carries glow and one carries bumps. Use for zone materials; textures not read.",
+    "Cursor and UI frame sets: each state is a frame run at several sizes (anims/icexuick_200 etc.). Model for an animated target cursor.",
+    "Environment particles by biome (atmospherics, dust clouds, volcano, lava splash, water splash in effects/). Names only; not read."
+  ],
+  "briefs": [
+    {
+      "label": "Tiered death burst",
+      "why": "A large kill needs a readable pop, and the size of the pop should match the size of the creature.",
+      "keep": "Three layered emitters (heat cloud, particles, droplets); tier ladder by size; one burst recipe reused per tier",
+      "change": "Our own palette, not red; our own shapes; different timing and layer counts per tier",
+      "ref": "effects/raptors/raptorunitexplosion-red.lua:6 and :9"
+    },
+    {
+      "label": "Spectre skin",
+      "why": "A ghostly second skin makes a known monster read as stronger without a new model.",
+      "keep": "Same silhouette; translucent second skin; cold tint",
+      "change": "Different silhouette detail; our own glow colour; a pulsing core",
+      "ref": "objects3d/Raptors/raptor2_spectre.s3o (name only, binary not read)"
+    },
+    {
+      "label": "Blood drops from one white sprite",
+      "why": "One white sprite set tinted per monster keeps the blood palette in one place.",
+      "keep": "Drops fall and fade; white base tinted at runtime",
+      "change": "Our own tint ramp and drop count; our own splat shapes",
+      "ref": "effects/raptors/raptor-effects.lua:32; bitmaps/raptors/blood_splat_white.tga (name only)"
+    },
+    {
+      "label": "Lava emit and bump in one map pair",
+      "why": "Glowing lava that also has relief, without extra shader cost.",
+      "keep": "Emissive colour and height in separate maps; slow scroll of the glow",
+      "change": "Our own lava shapes; a cooler palette; our own scroll rate",
+      "ref": "luaui/images/lava/lava2_diffuseemit.dds and lava2_normalheight.dds (names only)"
+    },
+    {
+      "label": "Animated target cursor",
+      "why": "A cursor that animates its state reads as responsive.",
+      "keep": "Frame run per state; several sizes",
+      "change": "Our own cursor family in one set; fewer states",
+      "ref": "anims/icexuick_200/cursornormal_35.png (name only)"
+    }
+  ],
+  "not_read": [
+    "units/ (969 lua) and gamedata/ except by name",
+    "Most effects/ files (only effects/raptors read in part)",
+    "All binary files: s3o, tga, dds, png, ogg, mp3, wav, bmp, jpg. Names and counts only",
+    "language/ JSON and yml",
+    "shaders/GLSL bodies",
+    "luaui/ and luarules/ logic; ipynb notebooks",
+    "Full OFL texts beyond the first lines; monospaced and unlisted font licences",
+    "music/original/credits.txt beyond its first lines"
+  ]
+}

@@ -1,0 +1,84 @@
+{
+ "game": "cvet-fonline",
+ "category": "animation-rigs",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/cvet-fonline/Source/Client/ModelAnimation.cpp",
+ "licence": "MIT (LICENSE: MIT License, Copyright (c) 2006 - 2026, Anton Tsvetinskiy aka cvet)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/creature-presentation.ts",
+ "parity_row": 7,
+ "pattern_tags": [
+  "new:clip-crossfade-slots",
+  "new:timed-event-timeline",
+  "new:bone-suppress-snap",
+  "new:weight-complementary-blend",
+  "new:turn-in-place-threshold",
+  "new:speed-scaled-cadence",
+  "variable-step"
+ ],
+ "data_fields": [
+  {
+   "name": "body_smooth_time",
+   "donor_constant": "150 ms (Animation3dSmoothTime)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/cvet-fonline/Source/Common/Settings.inc:210"
+  },
+  {
+   "name": "leg_switch_smooth_time",
+   "donor_constant": "0.001 s",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/cvet-fonline/Source/Client/ModelInstance.cpp:889"
+  },
+  {
+   "name": "turn_in_place_angle",
+   "donor_constant": "100 (degrees, per GetDirAngleDiff range 0..180)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/cvet-fonline/Source/Common/Settings.inc:235"
+  },
+  {
+   "name": "walk_base_speed",
+   "donor_constant": "60 (moving speed divided by this, as the leg clip factor)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/cvet-fonline/Source/Common/Settings.inc:238"
+  },
+  {
+   "name": "run_start_speed",
+   "donor_constant": "80 (below = walk, at or above = run)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/cvet-fonline/Source/Common/Settings.inc:239"
+  },
+  {
+   "name": "run_base_speed",
+   "donor_constant": "120 (moving speed divided by this when running)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/cvet-fonline/Source/Common/Settings.inc:240"
+  },
+  {
+   "name": "facing_ease_rate",
+   "donor_constant": "10 per second (step = diff x elapsed x 10, clamped to diff)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/cvet-fonline/Source/Client/ModelInstance.cpp:1447"
+  },
+  {
+   "name": "nearest_snap_threshold",
+   "donor_constant": "0.5 weight, for clips with fixed sample times",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/cvet-fonline/Source/Client/ModelAnimation.cpp:1337"
+  }
+ ],
+ "best_idea": "Crossfade a clip by fading the outgoing slot and the incoming slot over one smooth time on a small timed-event timeline, with one blend rule and a per-bone rule that lets a bone set snap at once.",
+ "decision": "adapt",
+ "decision_why": "Creature and hero clip switching (rows 6-7) needs a smooth two-slot crossfade; take the slot pair, the timed events and the bone snap, but keep the clip clock as presentation only, because the donor times hit windows on the client clock and Frankendom's server must own them.",
+ "decision_status": "proposed",
+ "acceptance": "A creature's idle-to-attack pose blends over the smooth time with no frame where both slots are at full weight (a client test sums the two slot weights during the blend), and a server test asserts the hit frame comes from the server message, not from the clip position."
+}

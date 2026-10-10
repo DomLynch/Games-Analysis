@@ -1,0 +1,40 @@
+{
+  "donor": "2009scape-rt4-client",
+  "code_licence": "GNU AGPL v3. LICENSE line 1 'GNU AFFERO GENERAL PUBLIC LICENSE', line 2 'Version 3, 19 November 2007'. Third-party jars in lib/ are listed in README 'Libraries Used'; their licence files are not in the repo (not read).",
+  "asset_licence": "No asset licence file. _RESTRICTED-NOTE.txt is a usage restriction note, not a licence: 'Study shape/idea only; never copy code or constants.' Item tables, font, icons and text lists carry no licence line.",
+  "rights_holder_status": "restricted: the repo note says 'Jagex-derived RuneScape rev 530 client'; README describes decompiler clean-up (fernflower, OpenRS2 annotations) and says it is a fork of Pazaz/RT4-Client. Rights holder of game content not stated beyond Jagex-derived.",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "item table (JSON)", "path": "plugin-playground/src/main/kotlin/GroundItems/res/item_configs.json", "count_hint": "1 file, 3352381 bytes", "licence": "none stated", "class": "C", "note": "restricted donor; per-item records with flags; text values not reproduced"},
+    {"kind": "item table copy (JSON)", "path": "plugin-playground/src/main/kotlin/KondoKit/res/item_configs.json", "count_hint": "1 file, 3352381 bytes", "licence": "none stated", "class": "C", "note": "same size as the GroundItems copy; not compared byte for byte"},
+    {"kind": "NPC hitpoint table (JSON)", "path": "plugin-playground/src/main/kotlin/KondoKit/res/npc_hitpoints_map.json", "count_hint": "1 file, 47588 bytes", "licence": "none stated", "class": "C", "note": "not opened"},
+    {"kind": "font (TTF)", "path": "plugin-playground/src/main/kotlin/KondoKit/res/runescape_small.ttf", "count_hint": "1 file, 33260 bytes", "licence": "none stated", "class": "C", "note": "header only; restricted donor"},
+    {"kind": "crest icon (PNG)", "path": "client/src/main/resources/saradomin.png", "count_hint": "1 file, 64x64 px (IHDR), 3720 bytes", "licence": "none stated", "class": "C", "note": "not viewed"},
+    {"kind": "overlay icons (PNG)", "path": "plugin-playground/src/main/kotlin/XPDropPlugin/res/xpIco.png, rl-lvls.png", "count_hint": "2 files, each under 350 bytes", "licence": "none stated", "class": "C", "note": "not viewed"},
+    {"kind": "script-op name index (text)", "path": "ref/cs2-names.txt", "count_hint": "1 file, 45744 bytes, numbered lines", "licence": "none stated", "class": "C", "note": "names only; not reproduced"},
+    {"kind": "audio, 3D models, map files", "path": "whole tree", "count_hint": "0 files by extension census", "licence": "n/a", "class": "D", "note": "nothing usable of these kinds in the repo"}
+  ],
+  "inspiration": [
+    "Tiny single-purpose overlay icons: XP-drop and level icons are a few hundred bytes each, meant to read at a glance next to a number. Ref: plugin-playground/src/main/kotlin/XPDropPlugin/res/.",
+    "Data-driven item behaviour: the item table carries per-item flags so UI behaviour comes from a table, not code. Ref: structure of item_configs.json (values not reproduced).",
+    "Feature folders that ship their own res/: each small feature brings its own icons and config. Modular asset folder per feature. Ref: plugin-playground/src/main/kotlin/*/res/.",
+    "Camera feel: tweening on by default and mouse-wheel camera movement are listed as client changes. Interaction ideas worth recreating from scratch. Ref: README.md lines 42 and 52.",
+    "Crest at small size: one emblem drawn at 64 px as a faction marker; recreate with our own geometry and a legibility rule. Ref: client/src/main/resources/saradomin.png (not viewed).",
+    "Pixel label font: a small pixel-face font for overlay labels; make an original with our own proportions. Ref: plugin-playground/src/main/kotlin/KondoKit/res/runescape_small.ttf (header only)."
+  ],
+  "briefs": [
+    {"label": "Tiny XP-drop icon (UI)", "why": "level feedback at a glance", "keep": "one-glyph icon; readable under 16px; paired with a number", "change": "shape language; palette; placement", "ref": "plugin-playground/src/main/kotlin/XPDropPlugin/res/xpIco.png (not viewed)"},
+    {"label": "Order crest (faction emblem, 64px)", "why": "a single emblem legible at small size", "keep": "one emblem; legible at 64px; high-contrast silhouette", "change": "our own geometry; colour family; motif", "ref": "client/src/main/resources/saradomin.png (not viewed)"},
+    {"label": "Ground-item label overlay (UI)", "why": "quick scanning of dropped loot", "keep": "one label per item; flag-driven behaviour; small font", "change": "bottom-anchored placement; rarity colour families; icon instead of text", "ref": "plugin-playground/src/main/kotlin/GroundItems/ (code not read)"},
+    {"label": "Soft camera tween (camera feel)", "why": "softer camera moves", "keep": "tween on by default; wheel zoom; middle-drag rotate", "change": "ease curve; zoom limits; wheel versus keys", "ref": "README.md lines 42 and 52"},
+    {"label": "Pixel label font (HUD)", "why": "legible small labels", "keep": "fixed-cell pixel face; small size for overlays", "change": "x-height and glyph width; proportional spacing; accent set", "ref": "plugin-playground/src/main/kotlin/KondoKit/res/runescape_small.ttf (header only)"}
+  ],
+  "not_read": [
+    "The 355 .java files under client/src/main/java/rt4 and the Kotlin and Java plugin code (code, not assets).",
+    "item_configs.json and npc_hitpoints_map.json beyond first lines; values not reproduced in any case.",
+    "saradomin.png and the XP icons: sizes and names only.",
+    "runescape_small.ttf: header only.",
+    "The 18 jars in lib/ and their licence files.",
+    "No mirror or leak was searched for."
+  ]
+}

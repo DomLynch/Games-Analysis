@@ -1,0 +1,151 @@
+{
+  "donor": "azerothcore-azerothcore-wotlk",
+  "code_licence": "GNU GPL version 2 (LICENSE, title 'Version 2, June 1991')",
+  "asset_licence": "No separate asset licence file found in data/ or src/tools. The world SQL data sits under the repo's GPL-2.0 LICENSE with no per-folder notice. The data is game-derived (DBC-named tables, extractor tools that read client archives), so its licence position is unclear: class C.",
+  "rights_holder_status": "Repo states it is not an official Blizzard Entertainment product and not affiliated with or endorsed by World of Warcraft or Blizzard (.github/README.md line 88). The data is game-derived content from a commercial game per the file names and extractor tools. Repo does not say the data is licensed for reuse. Rights holder for the game content: not stated in repo files; treat as unclear.",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "world database SQL (creature, item, gameobject, quest, text tables)",
+      "path": "data/sql/base/db_world (309 files)",
+      "count_hint": "about 30,000 creature template rows; 297M on disk",
+      "licence": "GPL-2.0 repo LICENSE only; no per-folder notice",
+      "class": "C",
+      "note": "Names, stats, spawns, scripts data. Game-derived. Only creature and model rows sampled."
+    },
+    {
+      "kind": "DBC-derived SQL tables (client data converted to tables)",
+      "path": "data/sql/base/db_world/*_dbc.sql",
+      "count_hint": "110 files",
+      "licence": "as above; unclear",
+      "class": "C",
+      "note": "Spell visual, map difficulty, combat rating tables. Numeric IDs, not art."
+    },
+    {
+      "kind": "localised text tables (broadcast, npc text, locale)",
+      "path": "data/sql/base/db_world/*_locale.sql, broadcast_text.sql, npc_text.sql",
+      "count_hint": "many files; not counted",
+      "licence": "as above; unclear",
+      "class": "C",
+      "note": "Game dialogue and item text. Not reproduced; only a line count and table names noted."
+    },
+    {
+      "kind": "archived and updated SQL",
+      "path": "data/sql/archive (213M), data/sql/updates (51M), data/sql/old",
+      "count_hint": "not counted",
+      "licence": "as above",
+      "class": "C",
+      "note": "History of the same tables. Not read."
+    },
+    {
+      "kind": "3D models, textures, sprites, audio, fonts, maps, navmesh tiles",
+      "path": "whole donor",
+      "count_hint": "0 files of .dbc .map .vmap .mmap .png .jpg .mp3 .ogg .wav .blp .m2 .wmo .tga .ttf .mpq .db2 .bin",
+      "licence": "n/a",
+      "class": "D",
+      "note": "No art ships. The extractor tools (src/tools/map_extractor, vmap4_extractor, mmaps_generator) read the original client archive, which is not in the repo."
+    },
+    {
+      "kind": "bundled navmesh library (code, not assets)",
+      "path": "deps/recastnavigation",
+      "count_hint": "1 library",
+      "licence": "licence header Copyright (c) 2009 Mikko Mononen (full text not read)",
+      "class": "not read",
+      "note": "Library code, not game content."
+    }
+  ],
+  "inspiration": [
+    "Spell visuals are referenced by numeric ID from a table converted from client data (spellvisual_dbc.sql). The effects are not in the repo. Recreate as our own effect table: ID to particle preset.",
+    "A creature points to its display models through a separate weighted table with scale and probability (creature_template_model.sql). One creature can carry several looks. Build our own variant set with weights.",
+    "Creature templates link a base entry to difficulty-tier siblings (difficulty_entry columns). Show tiers with palette, glow and ornament rather than only a bigger model.",
+    "Map collision and navigation are baked offline from client data by extractor tools, then fed to a navmesh library (deps/recastnavigation). For us: bake navmeshes from our own level geometry as a build step; cross-link to zones and spawns.",
+    "Text lives in parallel locale tables next to the data tables, so copy can change without touching the rows. Good pattern for our text layer.",
+    "Item and gameobject templates are separate from their addon tables. Clean split of what a thing is from how it looks and behaves, which we can mirror."
+  ],
+  "briefs": [
+    {
+      "label": "Clockwork hatchling (own label)",
+      "why": "A small mechanical flying companion. Reads as a toy-like machine with a living glow, a good contrast for the player's leather or mail look.",
+      "keep": [
+        "small winged mechanical companion",
+        "metal body with exposed gears",
+        "a single glowing eye as the focal point"
+      ],
+      "change": [
+        "our own gear layout, no crest or dragon head",
+        "a bronze and teal palette instead of silver",
+        "wings made of folded plates, not membrane"
+      ],
+      "ref": "data/sql/base/db_world/creature_template.sql line 95 (row name only; no model in repo)"
+    },
+    {
+      "label": "Field golem (own label)",
+      "why": "A farm construct built from everyday materials. Warm, weathered and friendly; the silhouette sells the material story at a glance.",
+      "keep": [
+        "construct built from harvest materials",
+        "weathered, light-coloured surfaces",
+        "slow, heavy stride"
+      ],
+      "change": [
+        "our own rig with a faceted glass core",
+        "stalk and sack materials drawn in our own style",
+        "a lantern or lamp in the chest instead of a face"
+      ],
+      "ref": "data/sql/base/db_world/creature_template.sql line 99 (row name only; no model in repo)"
+    },
+    {
+      "label": "Cave crawler pack (own label)",
+      "why": "A low, many-legged pack creature that works in groups. Its low silhouette makes it read well in a dark cave camera.",
+      "keep": [
+        "low, wide silhouette",
+        "many legs and a group behaviour",
+        "dark body with a few light points"
+      ],
+      "change": [
+        "crystal carapace with a bioluminescent underside",
+        "asymmetric legs of different lengths",
+        "a clicking sound and dust trail of our own"
+      ],
+      "ref": "data/sql/base/db_world/creature_template.sql line 102 (row name only; no model in repo)"
+    },
+    {
+      "label": "Appearance roll (own label)",
+      "why": "One creature picks a look from several models with weights and a scale. Gives variety for crowds without new entries.",
+      "keep": [
+        "weighted choice of model",
+        "scale varies per roll",
+        "one entry, many looks"
+      ],
+      "change": [
+        "our own model set, not donor models",
+        "colour and marking variants on top of the model",
+        "roll tied to spawn zone"
+      ],
+      "ref": "data/sql/base/db_world/creature_template_model.sql line 41"
+    },
+    {
+      "label": "Elite tier (own label)",
+      "why": "The same creature has a harder sibling. Players learn to read the tier at a glance.",
+      "keep": [
+        "tier linked to a base creature",
+        "stronger version of the same design",
+        "tier readable from far away"
+      ],
+      "change": [
+        "tier shown by a crown or glow, not a bigger model",
+        "palette shift on the same silhouette",
+        "our own tier names and ornaments"
+      ],
+      "ref": "data/sql/base/db_world/creature_template.sql line 25 (difficulty_entry columns)"
+    }
+  ],
+  "not_read": [
+    "Most of the 309 db_world SQL files (only creature_template and creature_template_model sampled, plus table headers)",
+    "data/sql/archive, updates, old folders",
+    "all src/ C++ code and tests",
+    "deps/recastnavigation full licence text",
+    "the modules folder beyond its readme",
+    "the .github, .claude and AGENTS.md files",
+    "the source of any DBC-derived visual data (none present)"
+  ]
+}

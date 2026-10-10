@@ -1,0 +1,39 @@
+{
+  "donor": "ClassicUO",
+  "code_licence": "BSD 2-Clause. LICENSE.md reads 'BSD 2-Clause License' with 'Copyright (c) 2025, andreakarasho'. Conflict: README says 'This work is released under the BSD 4 license.' Source files carry SPDX BSD-2-Clause headers (for example Batcher2D.cs line 1).",
+  "asset_licence": "not separately stated. README says the project 'does not distribute any copyrighted game assets'. No per-folder licence file exists. Images and shaders fall under the repo-wide LICENSE by default. xBR.fx has a comment but no licence or author line.",
+  "rights_holder_status": "fan and community open-source client. The README says it distributes no copyrighted game assets and needs a legally obtained Ultima Online Classic Client. The copyright holder named in LICENSE.md is andreakarasho. Origin of the bitmap fonts and resource tables is not stated in the repo.",
+  "best_class": "A",
+  "asset_groups": [
+    {"kind": "logo, icons and background", "path": "src/ClassicUO.Client/cuologo.png (194,589 bytes); src/ClassicUO.Client/cuoicon.ico (167,022 bytes, also in ClassicUO.Bootstrap/src and ClassicUO.Bootstrap); src/ClassicUO.Client/game-background.png (1,555 bytes)", "count_hint": "5 files", "licence": "repo-wide BSD 2-Clause by default; no per-file licence line", "class": "A", "note": "Logo and icon are the project's own look as far as the repo shows; keep the notice. game-background.png header reads 50 by 50 with an 8-bit palette. Treat as C if certainty is needed. Images not viewed."},
+    {"kind": "bitmap fonts", "path": "src/ClassicUO.Renderer/fonts/ (regular_font.xnb, bold_font.xnb, map1_font.xnb to map6_font.xnb)", "count_hint": "8 compiled XNA font files, 13 to 21 KB each", "licence": "not stated", "class": "C", "note": "Embedded via FileEmbed in Fonts.cs. Origin not stated in the repo; the 'map' faces suggest map-label use. Binary, not opened. Do not copy."},
+    {"kind": "shaders", "path": "src/ClassicUO.Renderer/shaders/IsometricWorld.fx and .fxc; src/ClassicUO.Renderer/shaders/xBR.fx and .fxc", "count_hint": "4 files, 3.9 to 5.2 KB each", "licence": "repo-wide BSD 2-Clause by default; neither .fx file has its own licence or author line", "class": "C", "note": "Treated as C because the per-file licence is missing, not because of a known conflict. Code, not art. IsometricWorld.fx shows a hue-lookup and mode-switch design; xBR.fx is a 2x edge-aware upscaler."},
+    {"kind": "resource tables", "path": "src/ClassicUO.Client/Resources/ResGumps.resx (519 entries, 57.7 KB); ResGeneral.resx (135 entries, 20.6 KB); ResErrorMessages.resx (35 entries, 10.0 KB)", "count_hint": "689 entries across 3 files", "licence": "not stated", "class": "C", "note": "String and binary-object tables for windows and messages. Some entries are base64 binary objects (ResGumps.resx line 22). Text and entry names not reproduced here."},
+    {"kind": "third-party native libraries", "path": "external/x64 (SDL3, FAudio, FNA3D, libtheorafile, zlib DLLs); external/lib64 (.so); external/osx (.dylib); external/cuoapi/cuoapi.dll; external/vulkan", "count_hint": "about 24 DLLs, 6 dylibs, 1 .so", "licence": "not read", "class": "C", "note": "Runtime libraries, not art. Not opened; their licences are not checked here."},
+    {"kind": "game data", "path": "none in repo (no .mul, .uop, .mp3 or .wav files in the extension counts)", "count_hint": "0", "licence": "not applicable to the repo", "class": "D", "note": "The README says the user must legally obtain the Ultima Online Classic Client."}
+  ],
+  "inspiration": [
+    "Recolour by lookup, not by art: sprites store one grey base, and a hue table (1024 rows of 16 columns in the shader) supplies the colour. Our version could use our own palette-swap sheet so one base sprite gives armour and monster variants.",
+    "One shader, many draw modes: a mode number switches the same shader between plain, hued, partial hue, land, spectral, shadow, lights, effect hue and gump drawing. Our version could keep that idea with our own mode set, so world, UI and effects share one pipeline.",
+    "Shadow and light as their own modes: shadows and light glows are separate modes, not extra sprites. Our version could draw shadows as a flat-shaded mode and lights as an additive mode.",
+    "One light direction for the whole iso world: a single fixed vector lights every sprite the same way. Pick one key-light vector for our world so the lighting stays consistent.",
+    "Ghost look as a named mode: a spectral mode in the shader gives translucent spirits. Our version could use our own ghost tint, a dissolve or scanline edge, and an edge glow, not the stock blue.",
+    "Pixel-art upscaling in the shader: an edge-aware 2x scaler keeps pixel art crisp at higher resolution. Our version could use our own edge rules, palette-aware, with an optional sharpen step.",
+    "Fonts by role: a regular face, a bold face and six map-label faces. Our version could keep few faces, each with one role, using our own pixel face.",
+    "Windows as resource tables: each window's images and strings live in a resource table, not in code. Our version could keep a data table per window with art references."
+  ],
+  "briefs": [
+    {"label": "Hue-swap sprite recolour", "why": "One grey base sprite plus a lookup strip gives many colour variants without extra art.", "keep": "A palette-strip lookup chosen by a hue index; a per-draw hue value; shader modes that change the sample path.", "change": "Our own strip layout, not the 16-column grid; separate ramps for metal and cloth; normal-driven shading on the ramp.", "ref": "src/ClassicUO.Renderer/shaders/IsometricWorld.fx lines 14 and 16; src/ClassicUO.Renderer/ShaderHueTranslator.cs line 17"},
+    {"label": "Spectral ghost mode", "why": "A named mode makes spirits read as ghosts at a glance.", "keep": "A dedicated shader mode; translucency; its own branch in the shader.", "change": "Our own ghost tint, not the stock blue; a scanline or noise dissolve at the edges; a faint edge glow.", "ref": "src/ClassicUO.Renderer/shaders/IsometricWorld.fx lines 8 and 151"},
+    {"label": "Pixel-art 2x upscaler", "why": "An edge-aware 2x scale keeps pixel art crisp instead of blurry.", "keep": "Edge tests on colour differences; a fixed 2x factor; per-pixel blend choices.", "change": "Our own edge rules, not a copy of any published set; palette-aware edges; an optional sharpen pass.", "ref": "src/ClassicUO.Renderer/shaders/xBR.fx line 5; src/ClassicUO.Renderer/Effects/XBREffect.cs line 8"},
+    {"label": "Font set by role", "why": "Separate faces for body text, bold titles and map labels keep UI readable at small sizes.", "keep": "A few faces, each with one role; bold reserved for titles.", "change": "Our own pixel face, not the stock face; a different size ladder.", "ref": "src/ClassicUO.Renderer/Fonts.cs line 10"}
+  ],
+  "cross_link": "hud-ui: resource-table windows (Resources/*.resx) and the bitmap font set. vfx: spectral, shadow and lights modes in IsometricWorld.fx. zones and land: the LAND modes in IsometricWorld.fx. camera: Camera.cs exists as code only. sound: no audio files in the repo. loot and spawns: no assets beyond code.",
+  "not_read": [
+    "The eight .xnb font files and the native libraries: binary, not opened",
+    "PNG and ICO images: only size and the 50 by 50 PNG header were read; images not viewed",
+    "xBR.fx beyond the first lines, and IsometricWorld.fx beyond the mode and constant lines quoted",
+    "Resource entry values in the three .resx files: names and counts only, values deliberately not read",
+    "tests/ClassicUO.UnitTests, tools/monokickstart and .github workflows: not read"
+  ]
+}

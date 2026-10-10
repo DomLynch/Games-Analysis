@@ -1,0 +1,31 @@
+{
+  "game": "afritz1-OpenTESArena",
+  "category": "animation-rigs",
+  "cell": 3,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/EntityChunkManager.cpp",
+  "licence": "MIT (LICENSE.txt reads 'The MIT License (MIT)', copyright 2016-2026 The OpenTESArena Developers)",
+  "licence_class": "permissive",
+  "target_module": "src/fight/swing.ts",
+  "parity_row": 7,
+  "pattern_tags": ["hysteresis", "wait-gate", "variable-step", "new:clip-progress-hit-gate"],
+  "data_fields": [
+    {"name": "hit_gate_progress", "donor_constant": "0.50 of the attack clip progress, once per swing", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/EntityChunkManager.cpp:1668"},
+    {"name": "windup_max_s", "donor_constant": "0.75 (random fraction of this, donor comment says tbd difficulty)", "unit": "s", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/EntityChunkManager.cpp:196"},
+    {"name": "melee_start_distance", "donor_constant": "1.0", "unit": "units", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/EntityChunkManager.cpp:46"},
+    {"name": "melee_stop_distance", "donor_constant": "1.15", "unit": "units", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/EntityChunkManager.cpp:48"},
+    {"name": "detect_start_distance", "donor_constant": "4.0", "unit": "units", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/EntityChunkManager.cpp:42"},
+    {"name": "detect_stop_distance", "donor_constant": "6.0", "unit": "units", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/EntityChunkManager.cpp:44"},
+    {"name": "walk_speed", "donor_constant": "1.50", "unit": "units", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/EntityChunkManager.cpp:1606"},
+    {"name": "attack_clip_fps", "donor_constant": "14 (1/14 s per keyframe)", "unit": "ratio", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/ArenaAnimUtils.h:45"},
+    {"name": "swing_seconds", "donor_constant": "keyframe count / 14 (14 keyframes = 1.0 s; arithmetic, not measured)", "unit": "s", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/ArenaAnimUtils.cpp:402"},
+    {"name": "max_frame_dt", "donor_constant": "1/15 s (from MIN_FPS = 15)", "unit": "s", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Game/Options.h:63"},
+    {"name": "physics_step_dt", "donor_constant": "1/240 s", "unit": "s", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Collision/Physics.h:27"}
+  ],
+  "best_idea": "Gate an enemy's hit on its attack clip's own progress (one hit per swing, at 50% of the clip, and only if the target is still inside the reach band at that moment), with the swing ending when the clip ends, instead of a separate hit timer.",
+  "decision": "adapt",
+  "decision_why": "Keep the shape (hit at a data fraction of the swing, once per swing, reach checked at the hit moment, swing ends on clip time), but the clock must be the engine's fixed server tick and the clip supplies only duration and hit fraction, because Frankendom's kills are server-verified and the donor runs the swing on the client's variable frame time with a 1/15 s clamp.",
+  "decision_status": "proposed",
+  "acceptance": "A server test with a 14-frame swing (1.0 s) asserts one hit at t = 0.50 s for a player inside 1.15 units at that moment, no hit for a player who left the band before 0.50 s, and the swing still ends at 1.0 s."
+}

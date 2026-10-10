@@ -1,0 +1,126 @@
+{
+  "donor": "2003scape-rsc-c",
+  "code_licence": "GNU Affero General Public License v3 (COPYING line 1; README.md lines 352-365, 'Copyright 2024 2003Scape Team')",
+  "asset_licence": "None stated in the repo. The cache/ archives (original game data, read by texture-pack/texture-pack.js lines 156, 169, 183) have no licence or permission text in the repo. Platform PNGs and gfx atlases have no licence text.",
+  "rights_holder_status": "Code: 2003Scape Team (2024). Game data in cache/: uses original game archives named like RuneScape Classic client data; no licence or permission in repo; treat as proprietary. Derived atlases in cache/textures and gfx/ generated from those archives. Restricted-note file not present in the donor.",
+  "best_class": "C (no class A or B asset content found; original game archives present and unlicensed in repo)",
+  "asset_groups": [
+    {
+      "kind": "original game archives",
+      "path": "cache/*.jag, cache/*.mem (12 .jag, 4 .mem, plus models36.jag.backup)",
+      "count_hint": "about 17 archive files; models36.jag about 367 KB, entity8.jag about 317 KB",
+      "licence": "none stated in repo; README line 67 says distribute with ./cache; line 348 says the client decompresses cache archives",
+      "class": "C",
+      "note": "Original game data by name. Do not extract, reuse or hunt for mirrors. Contents not read."
+    },
+    {
+      "kind": "derived atlases (cache)",
+      "path": "cache/textures/*.png",
+      "count_hint": "7 PNG, 1024x1024 RGBA, about 1.2 MB",
+      "licence": "none stated in repo",
+      "class": "C",
+      "note": "Generated from the archives by texture-pack.js."
+    },
+    {
+      "kind": "derived atlases (gfx)",
+      "path": "gfx/*.png, gfx/*.t3s",
+      "count_hint": "8 PNG (seven 1024x1024 RGBA, one 400x240 RGB) and 7 .t3s index files",
+      "licence": "none stated in repo",
+      "class": "C",
+      "note": "Same atlas names as cache/textures."
+    },
+    {
+      "kind": "shader and template text",
+      "path": "cache/flat.*, cache/game-model.*, cache/pick.webgl.* ; texture-pack/entities.template.c/.h",
+      "count_hint": "14 small GLSL shader files in cache/ plus entities template files",
+      "licence": "repo AGPL v3 (code)",
+      "class": "code",
+      "note": "Not an asset class."
+    },
+    {
+      "kind": "platform images and banner",
+      "path": "3ds-cia.png; 3ds/ (2 PNG); wii/ (3 PNG); switch/ (1 PNG); web/ (1 PNG); win/ (1 PNG)",
+      "count_hint": "about 9 PNG",
+      "licence": "none stated in repo",
+      "class": "C",
+      "note": "Origin not stated."
+    },
+    {
+      "kind": "audio",
+      "path": "one .wav file (location not checked); sounds1.mem in cache/",
+      "count_hint": "1 WAV; 1 MEM",
+      "licence": "none stated in repo",
+      "class": "C",
+      "note": "Not read."
+    },
+    {
+      "kind": "text and quests/lore",
+      "path": "README.md; in-archive text not extracted",
+      "count_hint": "one README about 11 KB",
+      "licence": "AGPL v3 for README (code repo)",
+      "class": "D",
+      "note": "No lore or quest text in the repo beyond the README."
+    },
+    {
+      "kind": "maps and models",
+      "path": "inside cache/*.jag (maps63, land63, models36)",
+      "count_hint": "not extracted",
+      "licence": "none stated",
+      "class": "C",
+      "note": "Not read; not extracted in the repo."
+    }
+  ],
+  "inspiration": [
+    "A build script packs many sprites and textures into a few large 1024 atlases with a rectangle packer and writes a small index beside each sheet (texture-pack/texture-pack.js): fewer draw calls, and a clean build step for our own art.",
+    "Atmosphere by toggle: underground flicker, fog-of-war veil and roof hiding are simple on/off options on the lighting and occlusion code (src/options.c). Cheap mood tools that need no new art.",
+    "Roof hiding rule: roofs show unless the player is inside a building. A simple occlusion rule like this is a clean fix for hidden interiors.",
+    "Ground items are small 3D models on the floor (README line 14). The README gives a source for the models; we should build our own item models and keep only the idea of drops as small floor models.",
+    "A cycling-colour text effect for highlights, at a low target frame rate (src/options.c): one shared text effect for rare drops and chat highlights.",
+    "Low-end interlaced mode (README line 36): render only every second scanline as a cheap fallback for weak hardware.",
+    "Touch controls: hold to right-click and drag to zoom, with a delay before the menu (README touch options): a clear mobile input pattern."
+  ],
+  "briefs": [
+    {
+      "label": "Cycling highlight text (our label)",
+      "why": "A colour-cycling text effect marks rare drops and chat lines; it reads as special without new art. Config and README only; no art viewed.",
+      "keep": "colour cycle through a short ramp; low update rate; the effect applies only to highlight text",
+      "change": "our own palette ramp; different cadence; add an outline or shadow",
+      "ref": "src/options.c (text effect options); README.md (options section)"
+    },
+    {
+      "label": "Flickering cave lantern (our label)",
+      "why": "An underground lighting flicker makes caves feel alive; the option is on by default in the options code. Idea only.",
+      "keep": "subtle flicker on light intensity; per-light random phase",
+      "change": "our own flicker pattern; different colour temperature; our own light shapes",
+      "ref": "src/options.c (flicker option); README.md (options section)"
+    },
+    {
+      "label": "Fog veil over unexplored rooms (our label)",
+      "why": "A fog-of-war veil hides unexplored zones and keeps exploration tense; on by default in the options code. Idea only.",
+      "keep": "soft fog edge over unexplored tiles; reveal as the player walks",
+      "change": "our own fog colour and edge shape; a different reveal animation; a different fog density",
+      "ref": "src/options.c (fog_of_war option); README.md (options section)"
+    },
+    {
+      "label": "Floor drop model (our label)",
+      "why": "Ground items drawn as small 3D models read from a distance and feel physical. README calls them based on a source model set; we build our own.",
+      "keep": "small 3D model on the floor with a soft shadow; one model per item family",
+      "change": "our own item silhouettes; a glow ring instead of a shadow; a different scale rule",
+      "ref": "README.md line 14 (ground items as 3D models); src/game-model.c"
+    },
+    {
+      "label": "Interlaced fallback look (our label)",
+      "why": "A half-line render mode is a cheap fallback for weak hardware and gives a retro scan look. Idea only; no shader viewed.",
+      "keep": "render every second line; the look stays readable",
+      "change": "our own dither pattern; a different fallback trigger; a colour-shift in the fallback",
+      "ref": "README.md line 36 (F1 interlace mode); src/options.c (interlace option)"
+    }
+  ],
+  "not_read": [
+    "No image opened or viewed; no archive opened; .jag and .mem contents not read beyond names and sizes.",
+    "texture-pack/texture-pack.js read only at the lines cited.",
+    "GLSL shader contents in cache/ not read.",
+    "Platform PNGs not opened; the one .wav file not identified.",
+    "src/options.c read only for option names and toggles, not for values."
+  ]
+}

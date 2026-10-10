@@ -1,0 +1,35 @@
+{
+  "donor": "alexbatalov-fallout2-ce",
+  "code_licence": "Sustainable Use License 1.0 (LICENSE.md). Use only for internal business or non-commercial or personal use; distribution free of charge and for non-commercial purposes; no removing licensor notices; trademark use subject to applicable law. Repo README line 117 points to the same licence for the source.",
+  "asset_licence": "No game assets in the repo. README line 69 says the user needs 'master.dat', 'critter.dat', 'patch000.dat' and a data folder from their own install. The only non-code content is launcher icons. No separate licence is stated for them; the SUL text is the only licence file read.",
+  "rights_holder_status": "Fan community re-implementation of Fallout 2 (README line 3: 'fully working re-implementation of Fallout 2'). The user must own the game (README line 11). The repo files I read do not name the original publisher. Note: the README says mods such as Nevada and Sonora are partly supported, which means user mod data is also outside the repo.",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "launcher icons (PNG, Android mipmaps)", "path": "os/android/app/src/main/res/mipmap-*/ (15 PNG files)", "count_hint": "15 PNG, 48px to 432px square, plus round and foreground variants", "licence": "SUL 1.0 (repo, inferred)", "class": "C", "note": "Software icons. The files do not say whether the art carries Fallout marks or trademarks, so C by rule."},
+    {"kind": "launcher icon master (PNG)", "path": "os/ios/AppIcon.xcassets/AppIcon.appiconset/AppIcon.png", "count_hint": "1 PNG, 1024x1024, about 1.0 MB", "licence": "SUL 1.0 (repo, inferred)", "class": "C", "note": "Same question as above. Header only."},
+    {"kind": "desktop icons (ICO, ICNS)", "path": "os/windows/fallout2-ce.ico, os/macos/fallout2-ce.icns", "count_hint": "2 files", "licence": "SUL 1.0 (repo, inferred)", "class": "C", "note": "Not opened."},
+    {"kind": "original game data (art, sprites, maps, text, music, movies, sound)", "path": "not in repo: master.dat, critter.dat, patch000.dat, data/ (README line 69) and any mod data", "count_hint": "not in repo", "licence": "proprietary per README (user must own the game)", "class": "D", "note": "The engine reads the user's own copy. Frankendom cannot take these files. Inspiration only."},
+    {"kind": "third-party licence and readme text", "path": "third_party/zlib/LICENSE, third_party/zlib/README.md, third_party/fpattern/LICENSE, third_party/fpattern/README.md, third_party/sdl2/LICENSE", "count_hint": "5 files", "licence": "third-party (not read)", "class": "C", "note": "Names only. Not opened."}
+  ],
+  "inspiration": [
+    "Lip-sync by phoneme table: a fixed set of 42 phoneme slots (lips.h line 10) with speech markers keyed to the audio position (SpeechMarker in lips.h). Recreate with a smaller mouth set of about 8 to 12 shapes that we draw ourselves, timed from our own voice track.",
+    "Automap view flags saved in the save file (automap.h lines 17-18). A map that remembers how the player last looked at it is a cheap way to make a town feel known. Recreate with our own isometric map projection.",
+    "Cutscenes as a streamed frame container with audio (movie_lib.cc, movie.cc, movie_effect.cc). The file names show movie playback as its own module with effects. Recreate with a standard video format and our own transitions, not the donor container.",
+    "Palette and colour system kept apart from art: color.cc and light.cc sit next to art.cc and tile.cc, so the look can be re-tinted by location or time of day. Recreate as one tint layer over our sprites.",
+    "Sound effects cached by list (sound_effects_cache.cc, sound_effects_list.cc) so repeated effects do not reload. Recreate as a simple preload list for our phone build.",
+    "Worldmap as its own module (worldmap.cc and worldmap.h). The name alone shows a separate travel view. Recreate as a route map on our own art. Source bodies not read."
+  ],
+  "briefs": [
+    {"label": "Phoneme-timed talking head", "why": "A small set of mouth shapes timed to speech reads as talking without full animation, which is cheap on a phone.", "keep": ["fixed set of mouth shapes", "speech markers on the audio timeline", "one flag per clip for options"], "change": ["8 to 12 shapes instead of 42", "our own face style and mouth geometry", "timing from our own voice track"], "ref": "alexbatalov-fallout2-ce src/lips.h line 10"},
+    {"label": "Automap that remembers its view", "why": "A map that keeps the player's last view feels personal and costs almost nothing to store.", "keep": ["view options stored in the save", "per-save map state"], "change": ["isometric projection rather than top-down", "our own marker icons", "view state in our own save schema"], "ref": "alexbatalov-fallout2-ce src/automap.h lines 17-18"},
+    {"label": "Streamed cutscene with effects", "why": "Cutscenes as a single stream with effect hooks let one movie carry transitions.", "keep": ["stream plus audio", "effects applied per frame"], "change": ["standard video container", "our own transition set", "shorter cut lengths for mobile data"], "ref": "alexbatalov-fallout2-ce src/movie_lib.cc line 535 (container signature only)"}
+  ],
+  "not_read": [
+    "all source bodies beyond quoted lines (lips.h, automap.h, movie_lib.cc signature area)",
+    "all PNG and ICO/ICNS pixel content (names and dimensions only)",
+    "third_party/zlib and fpattern and sdl2 licence and readme text (names only)",
+    "README sections beyond the lines quoted",
+    "original Fallout 2 game data and mod data (not in repo; not fetched)",
+    "worldmap.cc, worldmap.h, color.cc, light.cc, art.cc, tile.cc (named only)"
+  ]
+}

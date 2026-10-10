@@ -1,0 +1,42 @@
+{
+  "donor": "2004Scape-Server",
+  "code_licence": "MIT. LICENSE says 'MIT License', Copyright (c) 2023-2025 Lost City; README.md line 62 says 'licensed under the MIT License'.",
+  "asset_licence": "No separate asset licence file in the repo. The repo-wide MIT text is the only licence statement found. Soundfont public/client/SCC1_Florestan.sf2 has ICOP 'Public Domain' in its RIFF INFO metadata (strings output, binary). Other game-derived assets carry no licence line.",
+  "rights_holder_status": "unknown for game-derived assets (models, maps, songs, sprites, scripts): the repo does not state their source. Code copyright holder: Lost City (LICENSE). Jagex appears in code comments (src, tools, view, public) and in game-script comments, and in in-game interface text (welcome screen and report-abuse dialogs under data/src/scripts/interface_*).",
+  "best_class": "A",
+  "asset_groups": [
+    {"kind": "3D models (binary)", "path": "data/src/models", "count_hint": "11071 files: 3454 .ob2, 7391 .frame, 226 .base; about 44M; all base and frame files under data/src/models/_unpack", "licence": "none stated", "class": "C", "note": "binary; formats and counts only, not decoded"},
+    {"kind": "map data", "path": "data/src/maps", "count_hint": "417 files: 414 .jm2, free2play.csv, labels.txt; about 39M", "licence": "none stated", "class": "C", "note": "labels.txt is a text list of place-name labels with positions (positions not reproduced)"},
+    {"kind": "music (MIDI)", "path": "data/src/songs", "count_hint": "182 .mid; about 4.9M", "licence": "none stated", "class": "C", "note": "looping area and feature themes by file name; origin not stated"},
+    {"kind": "skill jingles (MIDI)", "path": "data/src/jingles", "count_hint": "48 .mid; about 200K", "licence": "none stated", "class": "C", "note": "named advance-<skill> stingers"},
+    {"kind": "synth sound (binary)", "path": "data/src/synth", "count_hint": "435 .synth; about 2.2M; 38 entries under synth/npc", "licence": "none stated", "class": "C", "note": "per-creature and per-action sound kits; not decoded"},
+    {"kind": "sprites, textures, title, fonts (PNG)", "path": "data/src/sprites, data/src/textures, data/src/title, data/src/fonts", "count_hint": "111 .png plus 45 .opt; about 1.5M combined", "licence": "none stated", "class": "C", "note": "PNG sizes from IHDR: backbase1.png 501x61, chainmail.png 64x64, logo.png 444x142, p12.png 200x240"},
+    {"kind": "soundfont (SF2)", "path": "public/client/SCC1_Florestan.sf2", "count_hint": "1 file, 3272882 bytes", "licence": "ICOP 'Public Domain' in RIFF INFO (metadata only; not independently verified)", "class": "A", "note": "INAM 'Florestan Basic GM GS'; ICMT lists two project URLs; binary, no line receipt"},
+    {"kind": "script and content text", "path": "data/src/scripts", "count_hint": "2125 files: 1159 .rs2, 170 .obj, 151 .if, 116 .npc, 111 .loc, 100 .constant, 70 .varp", "licence": "none stated", "class": "C", "note": "game content definitions and dialogue in script form; not reproduced"},
+    {"kind": "word filter text", "path": "data/src/wordenc", "count_hint": "4 files incl. domainenc.txt", "licence": "none stated", "class": "C", "note": "word-filter list; first lines only"},
+    {"kind": "key files (not an asset)", "path": "data/config/private.pem, data/config/public.pem", "count_hint": "2 files", "licence": "n/a", "class": "D", "note": "existence only; committed key file flagged for human review; contents deliberately not opened"}
+  ],
+  "inspiration": [
+    "Per-creature sound kits: each creature has its own synth folder with one short sound per action (attack, hit, death), so the species is recognisable by ear. Refs: data/src/synth/npc/bat/ and the 38 entries under data/src/synth/npc/.",
+    "Shared rig, many poses: all 226 base and 7391 frame files sit under data/src/models/_unpack, suggesting one rig per body type with many short animation poses. Recreate with our own rig. Ref: data/src/models/_unpack/.",
+    "Recolour variants: NPC configs change colours by pairs of palette entries and reuse one animation set, so one body gives several liveries cheaply. Ref: data/src/scripts/areas/area_edgeville/configs/edgeville.npc (block [generalshopkeeper5]). No numbers copied.",
+    "Modular UI panels: panels built from many small PNG pieces (backbase, backleft, backright names) plus a fixed-cell bitmap font atlas. A 9-slice-style panel and fixed-cell font are an easy original build. Refs: data/src/sprites/, data/src/fonts/p12.png.",
+    "Small repeating material tiles: 64x64 texture tiles (chainmail, bark, canvas, darkwood names) show a cheap low-res material set for armour and wood. Ref: data/src/textures/chainmail.png (content not viewed).",
+    "Reward stingers: one short music cue per skill advance, kept apart from looping area themes. Refs: data/src/jingles/ (advance-<skill> files) and data/src/songs/.",
+    "Place-name labels as plain data: a text list drives map labels, separate from map geometry. Ref: data/src/maps/labels.txt (positions not reproduced)."
+  ],
+  "briefs": [
+    {"label": "Night-flier (creature)", "why": "a sound-led identity from a small, fast creature with its own attack, hit and death cues", "keep": "one sound kit per creature; small flying silhouette; short attack, hit and death cues", "change": "wing count and body plan; different hue family; different instrument for the timbre", "ref": "data/src/synth/npc/bat/ (names only; visuals not read)"},
+    {"label": "Chainmail tile (material)", "why": "a 64px tile reads as metal at phone size", "keep": "small square tile; mid-tone metal read; armour material use", "change": "plate or rivet pattern instead of rings; warmer or cooler metal; different light direction", "ref": "data/src/textures/chainmail.png (size verified, pattern not viewed)"},
+    {"label": "Cavern zone (zone)", "why": "zone identity carried by its own looping track and map set", "keep": "dedicated loop per zone; enclosed map shape; zone-specific ambience", "change": "lighting colour; a landmark; the instrumentation", "ref": "data/src/songs/cavern.mid, data/src/songs/crystal_cave.mid (names only), data/src/maps/"},
+    {"label": "Skill-advance stinger (effect and sound)", "why": "a short reward cue marks progress without stopping play", "keep": "one cue per skill; distinct tone per skill family; kept apart from the loop", "change": "rising or falling contour; key; length", "ref": "data/src/jingles/ (for example advance attack.mid)"},
+    {"label": "Recoloured shopkeeper (NPC variant)", "why": "one body shows several roles through colour", "keep": "one body in several colourways; role read from colour; shared walk and ready animation names", "change": "accessories on the silhouette; different role colour; new name", "ref": "data/src/scripts/areas/area_edgeville/configs/edgeville.npc"}
+  ],
+  "not_read": [
+    "All binary files: ob2, frame, base, jm2, mid, synth, PNG pixels, and the SF2 beyond strings metadata. Formats and counts only.",
+    "The 2125 script files were not opened one by one; counts from find.",
+    "public/client/*.js and *.wasm (code).",
+    "data/config/private.pem and public.pem: existence only, deliberately not opened.",
+    "No web facts used; rights status is unknown wherever the repo is silent."
+  ]
+}

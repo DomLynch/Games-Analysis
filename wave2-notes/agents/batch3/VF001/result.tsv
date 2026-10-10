@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+00-Evan-shattered-pixel-dungeon	vfx-blood-finishers	P	STRONG	full	actors/Char.java:557-560 and sprites/CharSprite.java:347-353 - blood burst count is min(9*sqrt(damage/maxHP),9), aimed attacker-to-defender, after damage is applied; Wound.java:34-85 is a separate 1 s red decal used only for Preparation openers and gripping traps.
+EQEmu	vfx-blood-finishers	P	STRONG	full	zone/attack.cpp:5579-5640 and 5351-5477 - a crit-gated finishing blow fires when the non-client target is under the HP limit (10% default), within the level cap, and on a 1..1000 per-mille roll, replacing the damage with a flat amount.
+FWGS-xash3d-fwgs	vfx-blood-finishers	P	STRONG	full	ref/gl/gl_decals.c:431-505 and 572-608 - a surface takes a steal (least-covered heavy overlap) at 6 overlaps, from a global pool capped by r_decals; cl_tent.c:872-944 gives the blood splat count size+roll(1,8)+roll(1,8).
