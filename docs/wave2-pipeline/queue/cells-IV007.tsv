@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+SCAR	9	inventory-bank-equipment	/mnt/frankendom-donors/SCAR/src/Function.cpp	3
+TurningWheel-Barony	9	inventory-bank-equipment	/mnt/frankendom-donors/TurningWheel-Barony/src/interface/playerinventory.cpp	3
+ValveSoftware-halflife	9	inventory-bank-equipment	/mnt/frankendom-donors/ValveSoftware-halflife/dlls/gamerules.cpp	3

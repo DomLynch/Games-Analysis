@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+luanti-org-luanti	6	anticheat-validation	/mnt/frankendom-donors/luanti-org-luanti/builtin/settingtypes.txt	3
+otland-forgottenserver	6	anticheat-validation	/mnt/frankendom-donors/otland-forgottenserver/src/game.cpp	3
+pmbstyle-L2Solo	6	anticheat-validation	/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Crafting/ManufactureShop.js	3

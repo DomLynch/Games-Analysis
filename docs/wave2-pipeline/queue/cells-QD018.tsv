@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+lincity-ng-lincity-ng	12	quests-dialogue	/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/messages.cpp	3
+opentibiabr-otclient	12	quests-dialogue	/mnt/frankendom-donors/opentibiabr-otclient/modules/game_questlog/game_questlog.lua	3
+otland-forgottenserver	12	quests-dialogue	/mnt/frankendom-donors/otland-forgottenserver/data/npc/lib/npcsystem/npchandler.lua	3

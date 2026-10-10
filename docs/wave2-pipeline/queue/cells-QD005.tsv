@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+OpenDiablo2-OpenDiablo2	12	quests-dialogue	/mnt/frankendom-donors/OpenDiablo2-OpenDiablo2/d2common/d2enum/quests.go	3
+OpenGothic	12	quests-dialogue	/mnt/frankendom-donors/OpenGothic/common/game/gamescript.cpp	3
+OpenRA-OpenRA	12	quests-dialogue	/mnt/frankendom-donors/OpenRA-OpenRA/mods/ra/maps/soviet-01/soviet01.lua	3

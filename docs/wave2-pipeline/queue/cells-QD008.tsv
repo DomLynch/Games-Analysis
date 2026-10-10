@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+afritz1-OpenTESArena	12	quests-dialogue	INFERRED	3
+alexbatalov-fallout1-ce	12	quests-dialogue	/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/int/intlib.cc	3
+alexbatalov-fallout2-ce	12	quests-dialogue	/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/dialog.cc	3

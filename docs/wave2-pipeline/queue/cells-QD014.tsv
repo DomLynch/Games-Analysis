@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+flutter-team-archive-pinball	12	quests-dialogue	/mnt/frankendom-donors/flutter-team-archive-pinball/packages/pinball_ui/lib/src/dialog/pinball_dialog.dart	3
+freeciv-freeciv	12	quests-dialogue	/mnt/frankendom-donors/freeciv-freeciv/data/granularity/script.lua	3
+freeorion-freeorion	12	quests-dialogue	INFERRED	3

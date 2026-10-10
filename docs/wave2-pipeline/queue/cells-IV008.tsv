@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+ValveSoftware-source-sdk-2013	9	inventory-bank-equipment	/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/client/c_basecombatweapon.cpp	3
+XProger-OpenLara	9	inventory-bank-equipment	/mnt/frankendom-donors/XProger-OpenLara/src/inventory.h	3
+afritz1-OpenTESArena	9	inventory-bank-equipment	/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/UI/UiLibrary.cpp	3

@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+evennia-evennia	9	inventory-bank-equipment	/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/equipment.py	3
+exult-exult	9	inventory-bank-equipment	/mnt/frankendom-donors/exult-exult/content/bgkeyring/data/equip.dat	3
+flareteam-flare-engine	9	inventory-bank-equipment	/mnt/frankendom-donors/flareteam-flare-engine/src/MenuInventory.cpp	3

@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+OpenRCT2-OpenRCT2	12	quests-dialogue	/mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2/scenario/ScenarioObjective.cpp	3
+OpenTTD-OpenTTD	12	quests-dialogue	/mnt/frankendom-donors/OpenTTD-OpenTTD/src/goal.cpp	3
+OpenXcom-OpenXcom	12	quests-dialogue	/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Savegame/AlienMission.h	3

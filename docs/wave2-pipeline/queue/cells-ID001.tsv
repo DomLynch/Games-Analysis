@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+DFHack-dfhack	19	instancing-dungeons	INFERRED	3
+Dawn-of-Light-DOLSharp	19	instancing-dungeons	INFERRED	3
+EQEmu	19	instancing-dungeons	/mnt/frankendom-donors/EQEmu/utils/sql/svn/1498_instance_adventure.sql	3

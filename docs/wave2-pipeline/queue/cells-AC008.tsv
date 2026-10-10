@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+gawric-Unity-Client-for-L2J	6	anticheat-validation	/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Controller/Validate/PositionValidationController.cs	3
+heroiclabs-nakama	6	anticheat-validation	INFERRED	3
+id-Software-DOOM	6	anticheat-validation	/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/m_cheat.c	3

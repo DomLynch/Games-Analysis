@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+pmbstyle-L2Solo	12	quests-dialogue	/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Quest/QuestRegistry.js	3
+vcmi-vcmi	12	quests-dialogue	/mnt/frankendom-donors/vcmi-vcmi/lib/mapObjects/Quest.cpp	3
+veloren-veloren	12	quests-dialogue	/mnt/frankendom-donors/veloren-veloren/rtsim/src/rule/npc_ai/quest.rs	3

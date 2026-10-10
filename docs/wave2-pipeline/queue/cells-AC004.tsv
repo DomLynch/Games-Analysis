@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+OpenTTD-OpenTTD	6	anticheat-validation	/mnt/frankendom-donors/OpenTTD-OpenTTD/src/command.cpp	3
+Warzone2100-warzone2100	6	anticheat-validation	/mnt/frankendom-donors/Warzone2100-warzone2100/lib/netplay/netlobby.cpp	3
+amilich-isometric-city	6	anticheat-validation	/mnt/frankendom-donors/amilich-isometric-city/src/hooks/useCheatCodes.ts	3

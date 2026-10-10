@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+scummvm-scummvm	9	inventory-bank-equipment	/mnt/frankendom-donors/scummvm-scummvm/engines/hpl1/penumbra-overture/Inventory.cpp	3
+tmewett-BrogueCE	9	inventory-bank-equipment	/mnt/frankendom-donors/tmewett-BrogueCE/src/brogue/Items.c	3
+veloren-veloren	9	inventory-bank-equipment	/mnt/frankendom-donors/veloren-veloren/common/src/comp/inventory/mod.rs	3

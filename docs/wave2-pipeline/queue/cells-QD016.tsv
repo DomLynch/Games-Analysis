@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+ioquake-ioq3	12	quests-dialogue	/mnt/frankendom-donors/ioquake-ioq3/code/botlib/l_script.c	3
+jynew-jynew	12	quests-dialogue	INFERRED	3
+keldaanCommunity-pokemonAutoChess	12	quests-dialogue	/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/public/src/game/components/game-dialog.tsx	3

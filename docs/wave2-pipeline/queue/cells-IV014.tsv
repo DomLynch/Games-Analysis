@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+flareteam-flare-game	9	inventory-bank-equipment	/mnt/frankendom-donors/flareteam-flare-game/art_src/interface/game_slots.xcf	3
+heroiclabs-nakama	9	inventory-bank-equipment	INFERRED	3
+id-Software-Quake-2	9	inventory-bank-equipment	/mnt/frankendom-donors/id-Software-Quake-2/client/cl_inv.c	3

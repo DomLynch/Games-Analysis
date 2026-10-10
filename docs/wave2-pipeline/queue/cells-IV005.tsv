@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+NetHack-NetHack	9	inventory-bank-equipment	/mnt/frankendom-donors/NetHack-NetHack/include/obj.h	3
+OpenDiablo2-OpenDiablo2	9	inventory-bank-equipment	/mnt/frankendom-donors/OpenDiablo2-OpenDiablo2/d2common/d2enum/inventory_item_type.go	3
+OpenRA-OpenRA	9	inventory-bank-equipment	/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Traits/Cargo.cs	3

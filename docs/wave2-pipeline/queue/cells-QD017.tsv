@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+l1j-en-classic	12	quests-dialogue	/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/serverpackets/S_NPCTalkReturn.java	3
+levy-street-world-of-claudecraft	12	quests-dialogue	/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/town_quests.ts	3
+lichess-org-mobile	12	quests-dialogue	/mnt/frankendom-donors/lichess-org-mobile/lib/src/model/practice/practice_gamebook_controller.dart	3

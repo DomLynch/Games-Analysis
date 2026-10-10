@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+miki151-keeperrl	9	inventory-bank-equipment	/mnt/frankendom-donors/miki151-keeperrl/equipment_slot.h	3
+openmw	9	inventory-bank-equipment	/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/inventory.hpp	3
+opentibiabr-otclient	9	inventory-bank-equipment	/mnt/frankendom-donors/opentibiabr-otclient/src/client/game.cpp	3

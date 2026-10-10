@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+EQEmu	6	anticheat-validation	/mnt/frankendom-donors/EQEmu/zone/cheat_manager.cpp	3
+LostCityRS-Engine-TS	6	anticheat-validation	/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/entity/Player.ts	3
+ModernUO	6	anticheat-validation	/mnt/frankendom-donors/ModernUO/Projects/UOContent.Tests/Tests/Network/AutoDenylist/AutoDenylistTests.cs	3

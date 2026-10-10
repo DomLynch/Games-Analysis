@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+OpenDAoC-OpenDAoC-Core	6	anticheat-validation	/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameutils/PlayerMovementMonitor.cs	3
+OpenRA-OpenRA	6	anticheat-validation	/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Traits/World/ValidateOrder.cs	3
+OpenRCT2-OpenRCT2	6	anticheat-validation	/mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2/network/NetworkBase.cpp	3

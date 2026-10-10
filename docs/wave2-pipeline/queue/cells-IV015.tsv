@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+ihhub-fheroes2	9	inventory-bank-equipment	/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/dialog/dialog_selectitems.cpp	3
+ioquake-ioq3	9	inventory-bank-equipment	/mnt/frankendom-donors/ioquake-ioq3/code/game/inv.h	3
+jynew-jynew	9	inventory-bank-equipment	INFERRED	3

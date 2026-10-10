@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+cuteshaun-lineage2-api	12	quests-dialogue	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/api/dto/quest.ts	3
+daggerfall-unity	12	quests-dialogue	/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Questing/Task.cs	3
+dhewm-dhewm3	12	quests-dialogue	INFERRED	3

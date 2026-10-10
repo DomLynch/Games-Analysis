@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+OpenTTD-OpenTTD	9	inventory-bank-equipment	/mnt/frankendom-donors/OpenTTD-OpenTTD/src/economy.cpp	3
+OpenXcom-OpenXcom	9	inventory-bank-equipment	/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Battlescape/Inventory.cpp	3
+PixelGuys-Cubyz	9	inventory-bank-equipment	/mnt/frankendom-donors/PixelGuys-Cubyz/src/entityComponent/bag.zig	3

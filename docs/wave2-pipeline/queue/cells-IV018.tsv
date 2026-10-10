@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+otland-forgottenserver	9	inventory-bank-equipment	/mnt/frankendom-donors/otland-forgottenserver/src/depotchest.cpp	3
+pmbstyle-L2Solo	9	inventory-bank-equipment	/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Actor/Backpack.js	3
+rathena-rathena	9	inventory-bank-equipment	INFERRED	3

@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+dkfans-keeperfx	6	anticheat-validation	/mnt/frankendom-donors/dkfans-keeperfx/src/packets_cheats.c	3
+evennia-evennia	6	anticheat-validation	/mnt/frankendom-donors/evennia-evennia/evennia/server/validators.py	3
+exult-exult	6	anticheat-validation	/mnt/frankendom-donors/exult-exult/cheat.cc	3

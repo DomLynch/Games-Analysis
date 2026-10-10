@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+azerothcore-azerothcore-wotlk	12	quests-dialogue	/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/e2e/suites/quests/summons/serpent_statue_e2e_test.go	3
+beyond-all-reason-Beyond-All-Reason	12	quests-dialogue	/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/singleplayer/scenarios/scenarioscripts/Begin06.lua	3
+crawl-crawl	12	quests-dialogue	INFERRED	3

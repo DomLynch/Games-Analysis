@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+2004Scape-Server	6	anticheat-validation	/mnt/frankendom-donors/2004Scape-Server/src/network/game/client/handler/ClientCheatHandler.ts	3
+Anuken-Mindustry	6	anticheat-validation	INFERRED	3
+DCurrent-openbor	6	anticheat-validation	INFERRED	3

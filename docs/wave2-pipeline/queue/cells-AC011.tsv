@@ -1,0 +1,3 @@
+game	category_no	category	evidence_hint	list
+pokerth-pokerth	6	anticheat-validation	/mnt/frankendom-donors/pokerth-pokerth/src/net/servergamestate.cpp	3
+veloren-veloren	6	anticheat-validation	/mnt/frankendom-donors/veloren-veloren/common/query_server/src/ratelimit.rs	3

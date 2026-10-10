@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+evennia-evennia	12	quests-dialogue	/mnt/frankendom-donors/evennia-evennia/evennia/contrib/full_systems/evscaperoom/state.py	3
+exult-exult	12	quests-dialogue	/mnt/frankendom-donors/exult-exult/usecode/conversation.h	3
+flareteam-flare-engine	12	quests-dialogue	/mnt/frankendom-donors/flareteam-flare-engine/src/QuestLog.cpp	3
