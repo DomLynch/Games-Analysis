@@ -1,0 +1,28 @@
+note	claim	donor_file	line	quote
+cuteshaun-lineage2-api	catalogue entries are centre anchors, not polygons	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/app/api/[chronicle]/locations/route.ts	18	single `(x, y, z)` center anchor, not a polygon.
+cuteshaun-lineage2-api	the catalogue route maps every zone to its reference DTO	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/app/api/[chronicle]/locations/route.ts	34	const locations = getHuntingZones(parsed.chronicle).map(toLocationRefDto);
+cuteshaun-lineage2-api	zones are sorted by id, so a strict less-than keeps the lowest id on a tie	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/data/indexes.ts	649	const huntingZones: HuntingZone[] = [...dataset.huntingZones].sort(
+cuteshaun-lineage2-api	fixed 10000 game-unit threshold	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/data/indexes.ts	1564	export const LOCATION_NEAREST_DISTANCE_THRESHOLD = 10000;
+cuteshaun-lineage2-api	resolver signature: chronicle and (x, y), z ignored	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/data/indexes.ts	1599	export function resolveLocationForCoordinate(
+cuteshaun-lineage2-api	resolver reads the chronicle's zone list	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/data/indexes.ts	1608	const zones = getChronicleIndexes(chronicle).huntingZones;
+cuteshaun-lineage2-api	no zones gives null	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/data/indexes.ts	1609	if (zones.length === 0) return null;
+cuteshaun-lineage2-api	threshold squared for the comparison	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/data/indexes.ts	1611	LOCATION_NEAREST_DISTANCE_THRESHOLD * LOCATION_NEAREST_DISTANCE_THRESHOLD;
+cuteshaun-lineage2-api	offset from anchor to point, x	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/data/indexes.ts	1615	const dx = z.x - x;
+cuteshaun-lineage2-api	squared 2D distance	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/data/indexes.ts	1617	const d2 = dx * dx + dy * dy;
+cuteshaun-lineage2-api	nearest so far wins	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/data/indexes.ts	1618	if (d2 < bestDist2) {
+cuteshaun-lineage2-api	equal distance: lower id wins	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/data/indexes.ts	1621	} else if (d2 === bestDist2 && best && z.id < best.id) {
+cuteshaun-lineage2-api	nearest zone returned only within the threshold	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/data/indexes.ts	1626	return best && bestDist2 <= limit2 ? best : null;
+cuteshaun-lineage2-api	audited override map: NPC id to zone id	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/api/dto/location.ts	128	const PRIMARY_LOCATION_OVERRIDES_BY_NPC_ID = new Map<number, number>([
+cuteshaun-lineage2-api	home zone is the most frequent resolved zone	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/api/dto/location.ts	147	export function computePrimaryLocation(
+cuteshaun-lineage2-api	each spawn is resolved by the same nearest-anchor rule	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/api/dto/location.ts	155	const zone = resolveLocationForSpawn(chronicle, s);
+cuteshaun-lineage2-api	most frequent wins; equal counts go to the lowest id	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/api/dto/location.ts	170	if (count > bestCount || (count === bestCount && zone.id < bestId)) {
+cuteshaun-lineage2-api	NPC wrapper applies the override first	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/api/dto/location.ts	189	export function resolvePrimaryLocationForNpc(
+cuteshaun-lineage2-api	override is looked up by NPC id	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/api/dto/location.ts	194	const overrideZoneId = PRIMARY_LOCATION_OVERRIDES_BY_NPC_ID.get(npcId);
+cuteshaun-lineage2-api	override zone returned when the chronicle has it	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/api/dto/location.ts	197	if (zone) return toLocationRefDto(zone);
+cuteshaun-lineage2-api	otherwise the mode rule runs	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/api/dto/location.ts	202	return computePrimaryLocation(spawns, chronicle);
+cuteshaun-lineage2-api	NPC field is nearest-anchor with a fixed threshold, not containment	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/api/dto/npc.ts	150	nearest-anchor with a fixed 10000-unit 2D
+cuteshaun-lineage2-api	NPC detail resolves its primary location from cleaned spawns	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/api/dto/npc.ts	391	const primaryLocation = resolvePrimaryLocationForNpc(
+cuteshaun-lineage2-api	each zone is a single centre anchor	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/types.ts	439	Each record carries a single `(x, y, z)` center anchor — NOT a
+cuteshaun-lineage2-api	resolution is nearest-anchor, not point-in-polygon	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/types.ts	442	`resolveLocationForCoordinate`), not point-in-polygon.
+cuteshaun-lineage2-api	territory umbrellas have zero coordinates and are dropped at parse time (comment; parser not read)	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/types.ts	446	`x = y = z = 0` — they are intentionally **dropped at parse
+cuteshaun-lineage2-api	licence: MIT, copyright 2026 Andrii Tsapko	/mnt/frankendom-donors/cuteshaun-lineage2-api/LICENSE	3	Copyright (c) 2026 Andrii Tsapko

@@ -1,0 +1,83 @@
+{
+ "game": "OpenXcom-OpenXcom",
+ "category": "zones-world",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Savegame/AlienMission.cpp",
+ "licence": "GPL-3.0 (LICENSE.txt Version 3; source headers: version 3 or any later version)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "director",
+  "group-refill",
+  "new:zone-rect-pick",
+  "new:zone-route",
+  "new:bounded-reject-sample",
+  "new:wave-countdown"
+ ],
+ "data_fields": [
+  {
+   "name": "zone_rectangles",
+   "donor_constant": "list of lon/lat rectangles per zone; pick by count, not area",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Mod/RuleRegion.cpp:175"
+  },
+  {
+   "name": "land_sample_tries",
+   "donor_constant": "100",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Savegame/AlienMission.cpp:794"
+  },
+  {
+   "name": "route_zone_ids",
+   "donor_constant": "ordered zone index per waypoint, with altitude and speed percentage",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Mod/UfoTrajectory.h:45"
+  },
+  {
+   "name": "wave_spacing",
+   "donor_constant": "spawnTimer in game minutes per wave (unit: minutes, not in the allowed list)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Mod/RuleAlienMission.h:40"
+  },
+  {
+   "name": "wave_spacing_jitter",
+   "donor_constant": "(floor(S/2) + rand(0..S)) * 30 minutes, S = spacing/30 (about 0.5x to 1.5x)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Savegame/AlienMission.cpp:391"
+  },
+  {
+   "name": "countdown_tick",
+   "donor_constant": "30 game minutes per tick",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Savegame/AlienMission.cpp:170"
+  },
+  {
+   "name": "wave_pause_after_kill",
+   "donor_constant": "30 * (rand(0..400) + 48) game minutes, i.e. 1440 to 13440 minutes",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Savegame/AlienMission.cpp:551"
+  },
+  {
+   "name": "region_weight",
+   "donor_constant": "ruleset weight, starting value of the region bag",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Savegame/AlienStrategy.cpp:61"
+  }
+ ],
+ "best_idea": "Describe a zone as a list of rectangles and a route as an ordered list of zone ids, pick spawn points by choosing a rectangle uniformly by count and then a point inside it, and retry a bounded number of times for a valid spot.",
+ "decision": "adapt",
+ "decision_why": "Take the zone-as-rectangles data and the route-through-zones shape; do not take the 30-minute geoscape clock, and do not copy the client-triggered kill pause (kills are server-verified). The donor's weighted draw has an off-by-one, so do not copy it.",
+ "decision_status": "proposed",
+ "acceptance": "A server test with one zone of two very different rectangles draws each about 50% over 10,000 draws; a roaming group visits zones in listed order; a spawn that fails 100 valid-spot tries is skipped or clamped by one stated rule, never placed on an invalid cell."
+}

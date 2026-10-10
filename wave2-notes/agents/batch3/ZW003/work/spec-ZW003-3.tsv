@@ -1,0 +1,30 @@
+note	claim	donor_file	quote	pick
+DFHack-dfhack	LICENSE.rst states Zlib for DFHack and its plugins unless noted	/mnt/frankendom-donors/DFHack-dfhack/LICENSE.rst	DFHack is distributed under the Zlib license, with some MIT- and BSD-licensed	only
+DFHack-dfhack	LICENSE.rst: plugins use Zlib	/mnt/frankendom-donors/DFHack-dfhack/LICENSE.rst	The core, plugins, scripts, and other DFHack code all use the ZLib license	only
+DFHack-dfhack	jobStartedHandler stores the tile type at dig start	/mnt/frankendom-donors/DFHack-dfhack/plugins/burrow.cpp	active_dig_jobs[pos] = *tt;	only
+DFHack-dfhack	started handler returns unless digging	/mnt/frankendom-donors/DFHack-dfhack/plugins/burrow.cpp	if (type != job_type_class::Digging)	first
+DFHack-dfhack	completion reads the stored previous tile type	/mnt/frankendom-donors/DFHack-dfhack/plugins/burrow.cpp	df::tiletype prev_tt = active_dig_jobs[pos];	only
+DFHack-dfhack	completion compares the new tile with the previous one	/mnt/frankendom-donors/DFHack-dfhack/plugins/burrow.cpp	if (tt && *tt && *tt != prev_tt)	only
+DFHack-dfhack	stored entry erased after completion	/mnt/frankendom-donors/DFHack-dfhack/plugins/burrow.cpp	active_dig_jobs.erase(pos);	only
+DFHack-dfhack	plugin_enable registers the completion listener	/mnt/frankendom-donors/DFHack-dfhack/plugins/burrow.cpp	EventManager::EventType::JOB_COMPLETED	only
+DFHack-dfhack	expand_burrows returns unless new tile walkable or ramp top	/mnt/frankendom-donors/DFHack-dfhack/plugins/burrow.cpp	if (!isWalkable(tt) && tileShape(tt) != tiletype_shape::RAMP_TOP)	only
+DFHack-dfhack	zone name ending in plus sign and tile assigned	/mnt/frankendom-donors/DFHack-dfhack/plugins/burrow.cpp	if (!b->name.ends_with('+') || !Burrows::isAssignedTile(b, pos))	only
+DFHack-dfhack	when the previous tile was not walkable, wall ring is added	/mnt/frankendom-donors/DFHack-dfhack/plugins/burrow.cpp	if (!isWalkable(prev_tt)) {	only
+DFHack-dfhack	add_walls on pos minus one to pos plus one	/mnt/frankendom-donors/DFHack-dfhack/plugins/burrow.cpp	add_walls_to_burrow(out, b, pos+df::coord(-1,-1,0), pos+df::coord(1,1,0));	only
+DFHack-dfhack	add_walls_to_burrow adds wall terrain only	/mnt/frankendom-donors/DFHack-dfhack/plugins/burrow.cpp	if (tt && isWallTerrain(*tt))	only
+DFHack-dfhack	isWallTerrain is the basic shape Wall	/mnt/frankendom-donors/DFHack-dfhack/library/include/TileTypes.h	== tiletype_shape_basic::Wall;	only
+DFHack-dfhack	isWalkable reads the walkable attribute of the shape	/mnt/frankendom-donors/DFHack-dfhack/library/include/TileTypes.h	return ENUM_ATTR(tiletype_shape, walkable, tileShape(tiletype));	only
+DFHack-dfhack	flood_fill takes the burrow, seed and an enable flag	/mnt/frankendom-donors/DFHack-dfhack/plugins/burrow.cpp	static void flood_fill(lua_State *L, bool enable) {	only
+DFHack-dfhack	start outside flag from the seed tile	/mnt/frankendom-donors/DFHack-dfhack/plugins/burrow.cpp	bool start_outside = is_outside(start_pos, start_des);	only
+DFHack-dfhack	start walk group from the seed tile	/mnt/frankendom-donors/DFHack-dfhack/plugins/burrow.cpp	uint16_t start_walk = Maps::getWalkableGroup(start_pos);	only
+DFHack-dfhack	cell skipped if outside or hidden differ from the seed	/mnt/frankendom-donors/DFHack-dfhack/plugins/burrow.cpp	is_outside(pos, des) != start_outside ||	only
+DFHack-dfhack	unwalkable-group seed skips cells that have a group	/mnt/frankendom-donors/DFHack-dfhack/plugins/burrow.cpp	if (!start_walk && walk)	only
+DFHack-dfhack	cell skipped when it is already in the requested state	/mnt/frankendom-donors/DFHack-dfhack/plugins/burrow.cpp	if (pos != start_pos && enable == Burrows::isAssignedTile(burrow, pos))	only
+DFHack-dfhack	one tile outside the group, trees do not count	/mnt/frankendom-donors/DFHack-dfhack/plugins/burrow.cpp	if (start_walk && start_walk != walk && tt && !is_tree_trunk(tt))	only
+DFHack-dfhack	comment: only go one tile outside of a walkability group	/mnt/frankendom-donors/DFHack-dfhack/plugins/burrow.cpp	// only go one tile outside of a walkability group (trees don't count)	only
+DFHack-dfhack	flood pushes eight neighbours on the same level	/mnt/frankendom-donors/DFHack-dfhack/plugins/burrow.cpp	flood.emplace(pos.x-1, pos.y-1, pos.z);	only
+DFHack-dfhack	vertical neighbours checked when zlevel is off	/mnt/frankendom-donors/DFHack-dfhack/plugins/burrow.cpp	        if (!zlevel) {	only
+DFHack-dfhack	is_outside checks the outside bit	/mnt/frankendom-donors/DFHack-dfhack/plugins/burrow.cpp	if (des->bits.outside)	only
+DFHack-dfhack	get_walk_group returns zero for hidden designations	/mnt/frankendom-donors/DFHack-dfhack/plugins/burrow.cpp	if (!des || des->bits.hidden)	only
+DFHack-dfhack	civilian zone filters are a name to predicate map	/mnt/frankendom-donors/DFHack-dfhack/plugins/zone.cpp	static unordered_map<string, function<bool(df::unit*)>> zone_filters;	only
+DFHack-dfhack	a zone filter maps a name to a unit predicate	/mnt/frankendom-donors/DFHack-dfhack/plugins/zone.cpp	= isContainedInItem;	only

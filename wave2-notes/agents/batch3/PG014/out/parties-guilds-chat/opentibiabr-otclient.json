@@ -1,0 +1,39 @@
+{
+ "game": "opentibiabr-otclient",
+ "category": "parties-guilds-chat",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/opentibiabr-otclient/modules/game_analyser/classes/PartyHuntAnalyser.lua",
+ "licence": "as read",
+ "licence_class": "permissive",
+ "target_module": "origins/server/party-roster.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "new:trailing-debounce",
+  "stale-state",
+  "per-player-view",
+  "presence-gated"
+ ],
+ "data_fields": [
+  {
+   "name": "roster_debounce_ms",
+   "donor_constant": "500",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/opentibiabr-otclient/modules/game_analyser/classes/PartyHuntAnalyser.lua:582"
+  },
+  {
+   "name": "roster_remove_rule",
+   "donor_constant": "removed when seen with a non-party shield that is not ShieldNone; out-of-view members kept",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/opentibiabr-otclient/modules/game_analyser/classes/PartyHuntAnalyser.lua:711"
+  }
+ ],
+ "best_idea": "Refresh a roster with a leading run plus one trailing run per debounce window, so a burst of membership events costs at most two redraws.",
+ "decision": "adapt",
+ "decision_why": "The debounce shape fits Frankendom, but the donor takes membership from visible shields and keeps out-of-view members; Frankendom needs the roster to come from the server (one ledger), so only the refresh shape is taken.",
+ "decision_status": "proposed",
+ "acceptance": "A server test asserts that after a member leaves while out of view, the next roster snapshot removes that member; and a client test shows 5 join/leave events inside one 500 ms window cause at most 2 roster renders."
+}

@@ -1,0 +1,1 @@
+boardgameio-boardgame.io	if the host supplies its own authenticateCredentials, the check is always on	/mnt/frankendom-donors/boardgameio-boardgame.io/src/server/auth.ts	64	this.shouldAuthenticate = () => true;

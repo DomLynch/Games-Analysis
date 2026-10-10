@@ -1,0 +1,104 @@
+{
+ "game": "freeciv-freeciv",
+ "category": "zones-world",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/freeciv-freeciv/server/barbarian.c",
+ "licence": "GPL-2.0-or-later (header of server/barbarian.c and server/animals.c: either version 2, or any later version; top-level COPYING is GPL v2)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "director",
+  "presence-gated",
+  "respawn-scaling",
+  "new:sampled-ring-band",
+  "new:per-pass-attempt-budget",
+  "new:terrain-spawn-table"
+ ],
+ "data_fields": [
+  {
+   "name": "minBand",
+   "donor_constant": "5",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/freeciv-freeciv/server/barbarian.h:23"
+  },
+  {
+   "name": "maxBand",
+   "donor_constant": "8",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/freeciv-freeciv/server/barbarian.h:24"
+  },
+  {
+   "name": "rate",
+   "donor_constant": "barbarianrate NORMAL = 2 (FREQUENT 3, HORDES 4); attempt factor rate-1",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/freeciv-freeciv/common/game.h:666"
+  },
+  {
+   "name": "mapFactor",
+   "donor_constant": "2000 tiles per attempt",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/freeciv-freeciv/server/barbarian.h:28"
+  },
+  {
+   "name": "onsetTick",
+   "donor_constant": "60 (turns)",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/freeciv-freeciv/common/game.h:668"
+  },
+  {
+   "name": "gateA_roll",
+   "donor_constant": "fc_rand(30)+1 against anchors times (rate-1)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/freeciv-freeciv/server/barbarian.c:584"
+  },
+  {
+   "name": "gateB_chance",
+   "donor_constant": "civil-war chance per government, classic: Anarchy 90, Despotism 80",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/freeciv-freeciv/data/classic/effects.ruleset:432"
+  },
+  {
+   "name": "tierThresholds",
+   "donor_constant": "anchor counts 10, 32, 80 (loop, growth x1.2 + 10)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/freeciv-freeciv/server/barbarian.c:605"
+  },
+  {
+   "name": "groupBaseRoll",
+   "donor_constant": "fc_rand(3): 0 to 2 extra units",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/freeciv-freeciv/server/barbarian.c:613"
+  },
+  {
+   "name": "animalDensity",
+   "donor_constant": "15 per 1000 tiles",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/freeciv-freeciv/common/map.h:646"
+  },
+  {
+   "name": "animalExclusionSqRadius",
+   "donor_constant": "5 (squared radius)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/freeciv-freeciv/server/animals.c:164"
+  }
+ ],
+ "best_idea": "Spawn zone population by sampling a random point, accepting it only inside a distance band from an existing zone anchor, and scaling the group size by how many anchors the owner holds.",
+ "decision": "adapt",
+ "decision_why": "Keep the ring-band sampler and the population-tiered count as the zone spawn director; the donor's one-shot, no-despawn uprising lacks the caps, despawn-on-empty and grace timer Frankendom's row 23 needs.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: three anchors on a 200x200 map, 1000 passes at NORMAL rate; every spawn is 5-8 tiles from an anchor on an empty tile, the tier steps up at exactly 10 anchors, and live count per zone never exceeds the zone cap (cap is new)."
+}

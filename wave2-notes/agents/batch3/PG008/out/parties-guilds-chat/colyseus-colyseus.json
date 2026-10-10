@@ -1,0 +1,68 @@
+{
+ "game": "colyseus-colyseus",
+ "category": "parties-guilds-chat",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/colyseus-colyseus/packages/core/src/rooms/QueueRoom.ts",
+ "licence": "as read",
+ "licence_class": "permissive",
+ "target_module": "origins/server/matchQueue.ts",
+ "parity_row": 1,
+ "pattern_tags": [
+  "wait-gate",
+  "group-refill",
+  "level-gap",
+  "fixed-step",
+  "new:rank-widen-by-wait"
+ ],
+ "data_fields": [
+  {
+   "name": "groupSize",
+   "donor_constant": "4",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/colyseus-colyseus/packages/core/src/rooms/QueueRoom.ts:133"
+  },
+  {
+   "name": "forceAfterCycles",
+   "donor_constant": "10",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/colyseus-colyseus/packages/core/src/rooms/QueueRoom.ts:138"
+  },
+  {
+   "name": "incompleteReleaseAfterCycles",
+   "donor_constant": "15",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/colyseus-colyseus/packages/core/src/rooms/QueueRoom.ts:137"
+  },
+  {
+   "name": "matchTickMs",
+   "donor_constant": "1000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/colyseus-colyseus/packages/core/src/rooms/QueueRoom.ts:143"
+  },
+  {
+   "name": "rankGapAbsolute",
+   "donor_constant": "10 (diff < 10)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/colyseus-colyseus/packages/core/src/rooms/QueueRoom.ts:129"
+  },
+  {
+   "name": "rankGapRatio",
+   "donor_constant": "2 (diff / average <= 2)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/colyseus-colyseus/packages/core/src/rooms/QueueRoom.ts:129"
+  }
+ ],
+ "best_idea": "A fixed 1 Hz queue cycle that re-sorts waiting players by rank, widens the accepted rank gap as they wait, and forces them into a group after a set number of cycles, with the wait counter kept on each queued player.",
+ "decision": "adapt",
+ "decision_why": "Keep the wait-based widening and the cycle re-sort, which fit a fast-duel queue. Reject the client-supplied rank and team id (join options, lines 210-211) and the team-mode averaging (lines 297, 302, 340-341) as written. Parity row 1 is a stretch: no row covers matchmaking, so Lead should decide whether to add one.",
+ "decision_status": "proposed",
+ "acceptance": "A player queued for a duel sees the queue count change at most once a second and is matched or released within about 16 s; a server test sends a join message with a made-up rank and asserts the server ignores it and uses the profile rank."
+}

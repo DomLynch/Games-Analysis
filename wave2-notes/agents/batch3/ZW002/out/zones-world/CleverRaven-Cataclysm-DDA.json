@@ -1,0 +1,135 @@
+{
+ "game": "CleverRaven-Cataclysm-DDA",
+ "category": "zones-world",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/map.cpp",
+ "licence": "CC-BY-SA 3.0 Unported",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "director",
+  "population-cap",
+  "presence-gated",
+  "stale-state",
+  "new:population-budget-spread",
+  "new:spend-on-first-load",
+  "new:store-on-unload",
+  "new:spawn-outside-sight",
+  "new:dying-decay-ratio"
+ ],
+ "data_fields": [
+  {
+   "name": "zone.populationScalar",
+   "donor_constant": "80.0 per city size (SPAWN_CITY_HORDE_SCALAR)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/overmap.cpp:3459"
+  },
+  {
+   "name": "zone.spreadRadiusPerSize",
+   "donor_constant": "1.5 x city size (SPAWN_CITY_HORDE_SPREAD)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/overmap.cpp:3461"
+  },
+  {
+   "name": "zone.smallZoneThreshold",
+   "donor_constant": "4 (SPAWN_CITY_HORDE_THRESHOLD)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/overmap.cpp:3455"
+  },
+  {
+   "name": "zone.smallZoneOneInN",
+   "donor_constant": "16 (SPAWN_CITY_HORDE_SMALL_CITY_CHANCE)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/overmap.cpp:3455"
+  },
+  {
+   "name": "spawn.density",
+   "donor_constant": "1 (donor comment; option default not read)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/overmap.cpp:3452"
+  },
+  {
+   "name": "group.spreadRadius",
+   "donor_constant": "radius argument (<=1 means one cell)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/overmap.cpp:3829"
+  },
+  {
+   "name": "group.population",
+   "donor_constant": "1 (default)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/mongroup.h:139"
+  },
+  {
+   "name": "horde.maxPerSpawnCall",
+   "donor_constant": "10",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/overmap.cpp:3523"
+  },
+  {
+   "name": "spawn.triesPerMonster",
+   "donor_constant": "10",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/map.cpp:10145"
+  },
+  {
+   "name": "reload.placeRadius",
+   "donor_constant": "1 tile",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/overmapbuffer.cpp:2171"
+  },
+  {
+   "name": "decay.dyingKeepRatio",
+   "donor_constant": "4/5 per day (integer)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/overmap.cpp:1304"
+  },
+  {
+   "name": "decay.cadence",
+   "donor_constant": "once per in-game day (calendar::once_every(1_days))",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/do_turn.cpp:582"
+  },
+  {
+   "name": "decay.overmapRadius",
+   "donor_constant": "MAPSIZE * 2 (overmaps near the player)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/overmapbuffer.cpp:705"
+  },
+  {
+   "name": "spawn.sightRange",
+   "donor_constant": "player sight range, capped at HALF_MAPSIZE_X",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/map.cpp:10032"
+  },
+  {
+   "name": "despawn.nonlocalMargin",
+   "donor_constant": "MAPSIZE_X / 6 beyond each edge",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/game.cpp:10397"
+  }
+ ],
+ "best_idea": "Give each zone a population budget that spreads from its centre with falloff, spend it the first time the zone is entered, and on exit store each monster at its cell so re-entry restores it instead of re-rolling it.",
+ "decision": "adapt",
+ "decision_why": "Take the budget spread, spend-once load, store-on-exit and reload, and 10-try placement; add a respawn timer with grace on empty (row 23) since the donor has none; reject the HP-to-zero step on unload (a stored monster is data, not a death paying loot or XP).",
+ "decision_status": "proposed",
+ "acceptance": "Server test: spreadPopulation(12, radius 3) puts no unit outside radius 3 and more at the centre than the rim; entering a zone spawns its budget once; leave and re-enter restores the same monsters at their cells with no new spawns; no spawn lands inside the player's server-side sight proxy."
+}

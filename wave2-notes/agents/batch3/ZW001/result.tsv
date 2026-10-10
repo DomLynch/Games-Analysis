@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+00-Evan-shattered-pixel-dungeon	zones-world	P	STRONG	full	actors/mobs/MobSpawner.java:39-55 (cap-gated spawn director) with levels/Level.java:770-792 (spawnMob placement, 12-step and out-of-view rule)
+0ad-0ad	zones-world	P	STRONG	full	source/simulation2/components/CCmpTerritoryManager.cpp:428-589 (influence falloff, max-weight owner, root connectivity) with 343-373 and 385-426
+2004Scape-Server	zones-world	P	STRONG	full	src/engine/zone/Zone.ts:101-122 and 132-194 (per-tick shared zone delta, per-viewer follows, full resync) with src/engine/entity/BuildArea.ts:31-93 and World.ts:1773-1777

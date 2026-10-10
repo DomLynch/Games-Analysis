@@ -1,0 +1,59 @@
+{
+ "game": "OpenDAoC-OpenDAoC-Core",
+ "category": "economy-trade",
+ "cell": 11,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameobjects/GameMerchant.cs",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "origins/economy/shop.ts",
+ "parity_row": 21,
+ "pattern_tags": [
+  "new:shop-server-price",
+  "new:sell-back-ratio",
+  "new:check-then-apply"
+ ],
+ "data_fields": [
+  {
+   "name": "shop_item_price",
+   "donor_constant": "template.Price per item, from the merchant trade list",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "GameServer/gameobjects/GameMerchant.cs:104"
+  },
+  {
+   "name": "pack_size",
+   "donor_constant": "template.PackSize; 0 means one item per count",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "GameServer/gameobjects/GameMerchant.cs:98"
+  },
+  {
+   "name": "sell_back_ratio",
+   "donor_constant": "50 (percent of item Price)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "GameServer/serverproperty/ServerProperties.cs:876"
+  },
+  {
+   "name": "price_one_floor",
+   "donor_constant": "Price 1 that rounds to 0 pays Price x count / pack",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "GameServer/gameobjects/GameMerchant.cs:314"
+  },
+  {
+   "name": "trade_range",
+   "donor_constant": "WORLD_PICKUP_DISTANCE (default not read)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "GameServer/gameobjects/GameMerchant.cs:114"
+  }
+ ],
+ "best_idea": "A shop reads its price from its own list and the client sends only an item and a count; a buy or sell is one check-then-apply step that moves no money when a check fails.",
+ "decision": "adapt",
+ "decision_why": "The server-read price and check-then-apply shape fit the one ledger; the donor grants before debiting, so Frankendom debits and grants in one step, and the sell-back ratio becomes per-shop zone data.",
+ "decision_status": "proposed",
+ "acceptance": "A server test asserts that a failed buy (no funds or no space) changes neither wallet nor inventory, buying 3 at price 100 debits 300 and grants 3, selling a price-199 item at ratio 50 credits 99, and a non-droppable item sells for 0 and is not removed."
+}

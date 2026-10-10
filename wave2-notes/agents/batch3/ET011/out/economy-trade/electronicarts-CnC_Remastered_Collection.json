@@ -1,0 +1,67 @@
+{
+ "game": "electronicarts-CnC_Remastered_Collection",
+ "category": "economy-trade",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/TIBERIANDAWN/FACTORY.CPP",
+ "licence": "GPL-3.0 with Electronic Arts section 7 additional terms (LICENSE.md 601-613)",
+ "licence_class": "copyleft",
+ "target_module": "origins/economy/instalment-spend.ts (new, proposed)",
+ "parity_row": 21,
+ "pattern_tags": [
+  "new:instalment-spend",
+  "wait-gate",
+  "timer-wheel",
+  "clamp-and-report"
+ ],
+ "data_fields": [
+  {
+   "name": "step_count",
+   "donor_constant": "108",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/TIBERIANDAWN/FACTORY.H:97"
+  },
+  {
+   "name": "cost_bias",
+   "donor_constant": "1 default; difficulty multiplier (HDATA.CPP:243, HOUSE.CPP:251,261)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/TIBERIANDAWN/HOUSE.CPP:251"
+  },
+  {
+   "name": "build_ticks",
+   "donor_constant": "per item type (Time_To_Build, body not read)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/TIBERIANDAWN/FACTORY.CPP:544"
+  },
+  {
+   "name": "installment_rate_min",
+   "donor_constant": "1",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/TIBERIANDAWN/FACTORY.CPP:550"
+  },
+  {
+   "name": "installment_rate_max",
+   "donor_constant": "255",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/TIBERIANDAWN/FACTORY.CPP:550"
+  },
+  {
+   "name": "cancel_refund_share",
+   "donor_constant": "1.0 of paid part, to credits",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/TIBERIANDAWN/FACTORY.CPP:589"
+  }
+ ],
+ "best_idea": "Pay a craft in installments from the one ledger, stall with no debt when short, and refund the paid part on cancel.",
+ "decision": "adapt",
+ "decision_why": "The stall-and-retry and refund-to-spendable shape fits crafting cost; the two-pool storage-first rule does not (Frankendom has one ledger), and the schedule must run on the server tick with integer credits.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: a craft priced 1000 with 300 credits pays 9 per installment, never takes the ledger below 0, resumes when credits arrive, and cancelling returns exactly the paid part; paid + refund + unpaid = price at every tick."
+}

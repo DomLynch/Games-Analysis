@@ -1,0 +1,54 @@
+{
+ "game": "KsanaDock-Microverse",
+ "category": "parties-guilds-chat",
+ "cell": 18,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/KsanaDock-Microverse/script/ai/DialogService.gd",
+ "licence": "MIT (as read: LICENSE, 'MIT License', Copyright (c) 2025 KsanaDock)",
+ "licence_class": "permissive",
+ "target_module": "origins/server/session.ts",
+ "parity_row": null,
+ "pattern_tags": [
+  "new:mutual-busy-gate",
+  "new:range-gated-start",
+  "new:end-all-for-one",
+  "stale-state",
+  "new:open-ended-session"
+ ],
+ "data_fields": [
+  {
+   "name": "session_range",
+   "donor_constant": "100.0",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/KsanaDock-Microverse/script/ai/DialogService.gd:8"
+  },
+  {
+   "name": "sessions_per_actor",
+   "donor_constant": "1 (busy check at start)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/KsanaDock-Microverse/script/ai/DialogService.gd:30"
+  },
+  {
+   "name": "session_turn_cap",
+   "donor_constant": "none (turn loop has no cap)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/KsanaDock-Microverse/script/ai/ConversationManager.gd:253"
+  },
+  {
+   "name": "session_timeout",
+   "donor_constant": "none (no timeout found)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/KsanaDock-Microverse/script/ai/ConversationManager.gd:195"
+  }
+ ],
+ "best_idea": "Let one actor hold at most one open session, check range and busy on both ends at start, end every session an actor is in with one call, and release a session whose reply fails (which the donor does not do).",
+ "decision": "adapt",
+ "decision_why": "The one-session gate, the range check and the one-call end fit duel invites, trades and chat on the server; the open-ended turn loop and the failure hold do not fit a fast game, so take the gate and reject the loop.",
+ "decision_status": "proposed",
+ "acceptance": "A second invite while either player is busy is refused; a session whose reply fails frees both players; a player leaving the zone ends every session they hold in one call; a server test asserts a start beyond the range value is refused."
+}

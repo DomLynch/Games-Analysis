@@ -1,0 +1,33 @@
+{
+ "game": "OpenTTD-OpenTTD",
+ "category": "parties-guilds-chat",
+ "cell": 18,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/OpenTTD-OpenTTD/src/network/network_server.cpp",
+ "licence": "GPL version 2 (header: 'as published by the Free Software Foundation, version 2.'; no 'or later' clause in the header read)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/chat-routing.ts",
+ "parity_row": 5,
+ "pattern_tags": [
+  "new:server-chosen-recipients",
+  "new:three-route-chat",
+  "new:scoped-send",
+  "new:echo-suppression",
+  "new:receiver-side-filter"
+ ],
+ "data_fields": [
+  {
+   "name": "chat_max_bytes",
+   "donor_constant": "900 (NETWORK_CHAT_LENGTH, incl. terminator)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "src/network/core/config.h:59"
+  }
+ ],
+ "best_idea": "The server picks every chat recipient from a destination type (everyone, one team, one person), and a team line goes to the sender's team by server state, not by the id in the packet.",
+ "decision": "adapt",
+ "decision_why": "The three-route table with server-chosen recipients is the chat intake we need for parties and guilds, but the donor trusts the team id in the packet and has no chat rate limit on this path, so we take the team from server membership and add a window limit.",
+ "decision_status": "proposed",
+ "acceptance": "A party line reaches only authorised party members, a forged party id in a packet reaches nobody outside the sender's party, and a private line reaches only the named authorised player (all three as server tests)."
+}

@@ -1,0 +1,82 @@
+{
+ "game": "ValveSoftware-source-sdk-2013",
+ "category": "economy-trade",
+ "cell": 11,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/shared/econ/econ_store.cpp",
+ "licence": "as read",
+ "licence_class": "restricted",
+ "target_module": "origins/economy/prices.ts",
+ "parity_row": 21,
+ "pattern_tags": [
+  "new:sale-only-when-lower",
+  "new:bundle-sum-guard",
+  "stale-state",
+  "new:round-to-granularity",
+  "new:rental-share"
+ ],
+ "data_fields": [
+  {
+   "name": "sale_percent_per_entry",
+   "donor_constant": "from price sheet (value not read); used only when 0 < pct < 100",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/shared/econ/econ_store.cpp:634"
+  },
+  {
+   "name": "keep_share_clamp",
+   "donor_constant": "clamp(100 - discount, 0, 100) percent",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/shared/econ/econ_store.cpp:783"
+  },
+  {
+   "name": "rounding_granularity",
+   "donor_constant": "1 default; 100 for several currencies; 1000 KRW; 50000 VND; 500 CRC",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/shared/econ/econ_store.cpp:788"
+  },
+  {
+   "name": "rounding_half_rule",
+   "donor_constant": "round up when remainder >= granularity/2 or value < granularity",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/shared/econ/econ_store.cpp:815"
+  },
+  {
+   "name": "rental_share_pct",
+   "donor_constant": "default 100 (not rentable); rentable only when 0 < scale < 100; max over category tags",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/shared/econ/econ_store.cpp:173"
+  },
+  {
+   "name": "market_refresh_s",
+   "donor_constant": "60.0f * 15.0f",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/client/econ/client_community_market.cpp:14"
+  },
+  {
+   "name": "preview_period_discount",
+   "donor_constant": "from price sheet key preview_period_discount (value not read)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/shared/econ/econ_store.cpp:493"
+  },
+  {
+   "name": "bundle_discount_requires_below_sum",
+   "donor_constant": "discount only when bundle current price < sum of parts (strict)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/shared/econ/econ_store.cpp:266"
+  }
+ ],
+ "best_idea": "Show a discount only when the price really is lower: a sale must be positive and below base, and a bundle shows a discount only when it costs less than its parts, with the struck-out base set to the sum of the parts.",
+ "decision": "adapt",
+ "decision_why": "Take the two discount-truth rules and the never-to-zero rounding for shop prices; take the timed market refresh as stale-while-revalidate but keep the server as owner; reject the client-side market price as displayed truth and reject a rental number without a unit name, because the donor reads the same number two ways.",
+ "decision_status": "proposed",
+ "acceptance": "A bundle at 900 with parts summing to 1000 shows base 1000 struck and a discount; a bundle at 1000 shows no strike-through; a 1% sale on a 100-gold item that rounds back to 100 shows no sale; a rental line shows the same charge in the detail view and the cart, with one named unit."
+}

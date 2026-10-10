@@ -1,0 +1,19 @@
+[
+["EQEmu","spawn point's timer checked before the respawn draw","/mnt/frankendom-donors/EQEmu/zone/spawn2.cpp",165,"if (timer.Check()) {"],
+["EQEmu","spawn point with cap-blocked group reset to respawn timer when no NPC drawn","/mnt/frankendom-donors/EQEmu/zone/spawn2.cpp",381,"void Spawn2::Reset() {"],
+["EQEmu","zone idle gate: clients count from last mob pass","/mnt/frankendom-donors/EQEmu/zone/entity.cpp",473,"numclients == 0 &&"],
+["EQEmu","settle timer fired: zone has gone idle, trader tables cleared","/mnt/frankendom-donors/EQEmu/zone/entity.cpp",491,"CheckToClearTraderAndBuyerTables();"],
+["EQEmu","door processing stops at once when zone empty (no grace)","/mnt/frankendom-donors/EQEmu/zone/entity.cpp",398,"if (numclients < 1) {"],
+["EQEmu","spawn point with path_when_zone_idle keeps stepping while idle","/mnt/frankendom-donors/EQEmu/zone/entity.cpp",515,"(mob && s2 && s2->PathWhenZoneIdle()) ||"],
+["EQEmu","mob not stepped when idle and not depop flagged; depop decides removal","/mnt/frankendom-donors/EQEmu/zone/entity.cpp",521,"} else {"],
+["EQEmu","spawn-list walk not gated by clients","/mnt/frankendom-donors/EQEmu/zone/zone.cpp",1522,"spawn_conditions.Process();"],
+["EQEmu","zone-level spawn timer: Check triggers the walk","/mnt/frankendom-donors/EQEmu/zone/zone.cpp",1524,"if (spawn2_timer.Check()) {"],
+["EQEmu","Timer::Check returns true only when the period has passed","/mnt/frankendom-donors/EQEmu/common/timer.cpp",84,"if (enabled && current_time-start_time > timer_time) {"],
+["EQEmu","zone-empty limit counter increment lives on the client add path","/mnt/frankendom-donors/EQEmu/zone/client.cpp",563,"numclients++;"],
+["EQEmu","list of limit records keyed by entity id","/mnt/frankendom-donors/EQEmu/zone/entity.cpp",4227,"void EntityList::LimitAddNPC(NPC *npc)"],
+["EQEmu","per-type limit counts all records of that type","/mnt/frankendom-donors/EQEmu/zone/entity.cpp",4252,"bool EntityList::LimitCheckType(uint32 npc_type, int count)"],
+["EQEmu","group limit check counts records of the spawn group","/mnt/frankendom-donors/EQEmu/zone/entity.cpp",4274,"bool EntityList::LimitCheckGroup(uint32 spawngroup_id, int count)"],
+["EQEmu","spawn-group weighted entries filtered by per-type cap","/mnt/frankendom-donors/EQEmu/zone/spawngroup.cpp",79,"if (!entity_list.LimitCheckType(se->NPCType, se->npc_spawn_limit)) {"],
+["EQEmu","NPC detaches from spawn point on depop with respawn timer","/mnt/frankendom-donors/EQEmu/zone/npc.cpp",860,"respawn2->DeathReset();"],
+["EQEmu","DB zone row: idle_when_empty default 1 (migration)","/mnt/frankendom-donors/EQEmu/common/database/database_update_manifest.h",5218,"ADD COLUMN `idle_when_empty` tinyint(1) UNSIGNED NOT NULL DEFAULT 1"]
+]

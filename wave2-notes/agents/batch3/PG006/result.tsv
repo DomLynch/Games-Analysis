@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+amilich-isometric-city	parties-guilds-chat	P	STRONG	full	src/lib/multiplayer/supabaseProvider.ts:94-231 and 155-217: a 5-char room code, a stored snapshot loaded on join, then the first accepted peer state-sync (no peer authority in the donor).
+ax-grymyr-l2dn-server	parties-guilds-chat	P	STRONG	full	L2Dn.GameServer.Model/Model/Party.cs:780-896 and Actor/Attackable.cs:672-703: a party kill pool scaled by member count, split by level squared, then cut per member by highfive level-gap percent (MIT).
+azerothcore-azerothcore-wotlk	parties-guilds-chat	P	STRONG	full	src/server/game/Guilds/Guild.cpp:1742-1786 and 2629-2642 and 3005-3011: a per-rank daily gold cap per member, debit then credit with rollback, reset for all guilds at the same hour (GPL-2.0, clean-room).

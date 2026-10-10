@@ -1,0 +1,36 @@
+# NodeL2-NodeL2 (parties-guilds-chat, cell 1) VERDICT: PARTIAL (thin, depth thin)
+
+Donor: /mnt/frankendom-donors/NodeL2-NodeL2 | Licence: Apache License 2.0 (read from LICENSE; permissive, code may be adapted with notice) | JavaScript (Lineage 2 protocol server emulator)
+Checked: hint file src/GameServer/Network/Response/UserInfo.js read (lines 65-87). Confidence high that no party, guild, friend list or channel model exists in the donor; read by grep over all files for party/clan/friend/guild/chat/team, plus the handlers below.
+
+Files opened (candidates, at least 3):
+- src/GameServer/Network/Request/AskForTeamUp.js (whole file, 21 lines)
+- src/GameServer/Network/Request/AnswerForTeamUp.js (whole file)
+- src/GameServer/World/World.js (lines 1-63, whole file)
+- src/GameServer/Network/Response/AskForTeamUp.js (whole file)
+- src/GameServer/Network/Request/Speak.js (whole file)
+- src/GameServer/Network/Response/Speak.js (whole file)
+- src/GameServer/Session.js (lines 1-61, whole file)
+- src/GameServer/Actor/Generics/UpdateEnvironment.js (lines 1-29)
+- src/GameServer/Network/Response/UserInfo.js (lines 1-80 read; lines 84 and 87 seen by grep only)
+- src/GameServer/Network/Response/CharInfo.js (grep only, lines 48-61)
+
+## What the donor actually has
+
+- Party invite, one step only: a client sends 0x29 (askForTeamUp). World.askForTeamUp sends the requester a waitForResponse caption (World.js 39) and sends the target a 0x39 packet with the requester id and a distribution value (World.js 41; Response/AskForTeamUp.js 4-8). There is no party object, no member list, no leader, no loot-distribution logic behind the number.
+- The answer (0x2a) is a stub. World.answerForTeamUp is `console.info(data);` (World.js 45-47). Nothing joins, declines, or notifies. So the party flow is half a handshake.
+- Target lookup (World.js 28-29) is a linear find over all sessions by actor id. If no session matches, `user` is undefined and `user.actor` throws inside the Promise executor, which rejects. askForTeamUp (World.js 40-42) has no catch. What the process does with that rejection depends on the Node version (not read).
+- Guild/clan/ally fields are sent as zero: Clan ID, Clan Crest, Ally ID, Ally Crest (UserInfo.js 73-76; CharInfo.js 48-51), and Find Party Members is 0 (UserInfo.js 84).
+- Chat (0x38 speak): the server echoes the message to the speaker and to every session in range (Request/Speak.js 25; Session.js 44-47). "In range" is World.fetchVisibleUsers, a circle of radius 5000 around the speaker (World.js 33-36). The `kind` field (channel type: shout, tell, party, clan...) is read and passed through unchanged; the only branch is kind 0 for an admin command (Speak.js 17-19). So there are no channels, no private tells, no party or clan chat.
+- Friend lists, guild ranks and permissions: none found in src (grep for clan/friend/guild returned only the zero-fill fields above).
+
+## Best transferable idea
+
+Scope chat and presence to a radius around the speaker through one area-of-interest filter that the NPC and player visibility code already uses, with the radius as a zone-data field.
+
+Decision (proposed): adapt - the radius filter is the one real mechanism here; take the shape (one function decides who hears a message, radius per zone) and not the unchanged `kind` pass-through or the stubbed answer path, which Frankendom must not copy.
+Acceptance: a server test where a message sent in zone A reaches players within the zone radius and not beyond it, and the radius comes from zone data.
+
+## Why PARTIAL and not STRONG
+
+The only complete mechanism is the radius scope (about 4 lines in World.js 33-36 and Session.js 37-47). The party flow is incomplete (invite without accept), and the rest of the topic is absent (no guild ranks, no permissions, no channels, no friend list). The fragment does not support a self-contained note, so no deep note is written.

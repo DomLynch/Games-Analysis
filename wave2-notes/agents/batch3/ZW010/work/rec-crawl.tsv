@@ -1,0 +1,44 @@
+note	claim	donor_file	line	quote
+crawl-crawl	shift window radius is line of sight plus two	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.h	11	const int ABYSS_AREA_SHIFT_RADIUS = LOS_RADIUS + 2;
+crawl-crawl	shift trigger distance from the centre	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.h	14	const int ABYSS_SHIFT_DISTANCE = min(GXM, GYM) / 2 - 1
+crawl-crawl	shift trigger distance continues: minus border and window	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.h	15	- MAPGEN_BORDER - ABYSS_AREA_SHIFT_RADIUS;
+crawl-crawl	map generation border constant	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/defines.h	96	const int MAPGEN_BORDER    = 2;
+crawl-crawl	line of sight radius constant	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/defines.h	113	#define LOS_RADIUS 8
+crawl-crawl	abyss centre is the middle of the map	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	65	const coord_def ABYSS_CENTRE(GXM / 2, GYM / 2);
+crawl-crawl	no shift while the player is inside the trigger distance	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	1050	if ((you.pos() - ABYSS_CENTRE).rdist() <= ABYSS_SHIFT_DISTANCE)
+crawl-crawl	shift entry point called when the trigger fires	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	1055	abyss_area_shift();
+crawl-crawl	a shift with the player already at the centre is skipped	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	1526	if (old_centre != ABYSS_CENTRE)
+crawl-crawl	contents around the player are moved to the centre	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	1531	_abyss_shift_level_contents_around_player(
+crawl-crawl	window radius and target centre passed to the mover	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	1532	ABYSS_AREA_SHIFT_RADIUS, ABYSS_CENTRE, abyss_genlevel_mask);
+crawl-crawl	vacated area regenerated with the shift delta	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	1535	_generate_area(abyss_genlevel_mask, delta);
+crawl-crawl	map memory is forgotten after the shift	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	1537	forget_map(true);
+crawl-crawl	monster top-up per shift: 15 plus depth times one or two	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	1544	int num_monsters = 15 + you.depth * (1 + coinflip());
+crawl-crawl	top-up monsters are placed anywhere	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	1035	mg.proximity = PROX_ANYWHERE;
+crawl-crawl	top-up monster class comes from the random-monster picker	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	1040	mg.cls = pick_random_monster(level_id::current());
+crawl-crawl	world origin moves by the shift delta	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	998	abyssal_state.major_coord += (source_centre - ABYSS_CENTRE);
+crawl-crawl	actors move by a fixed offset from source to target centre	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	917	const coord_def dst = src - source_centre + target_centre;
+crawl-crawl	kept area is a square around the player	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	951	for (rectangle_iterator ri(source, radius); ri; ++ri)
+crawl-crawl	cells outside the map border margin are not kept	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	953	if (!map_bounds_with_margin(*ri, MAPGEN_BORDER))
+crawl-crawl	everything outside the kept mask is wiped	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	802	if (!abyss_preserve_mask(*ri))
+crawl-crawl	wiped square loses its terrain	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	750	env.grid(p) = DNGN_UNSEEN;
+crawl-crawl	wiped square loses its items	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	755	lose_item_stack(p);
+crawl-crawl	monster on a wiped square is removed	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	765	_abyss_lose_monster(*mon);
+crawl-crawl	removed monster loses its inventory	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	632	mons.destroy_inventory();
+crawl-crawl	removed monster is cleaned up without a kill record	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	633	monster_cleanup(&mons);
+crawl-crawl	terrain sample is taken at the world coordinate	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	1152	const coord_def pt = p + abyssal_state.major_coord;
+crawl-crawl	local cell maps back to the world coordinate	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	1236	const coord_def rp = p - abyssal_state.major_coord;
+crawl-crawl	only masked (regenerated) cells are updated	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	1260	if (!abyss_genlevel_mask(rp))
+crawl-crawl	a cell that is still seen is not regenerated outside morph	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	1263	if (currfeat != DNGN_UNSEEN && !morph)
+crawl-crawl	regenerated cell samples the world-coordinate layout	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	1268	const ProceduralSample sample = _abyss_grid(rp);
+crawl-crawl	world origin starts at a random 31-bit point	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc	1491	abyssal_state.major_coord.x = rng::get_uint32() & 0x7FFFFFFF;
+crawl-crawl	rectangle iterator takes a centre and a half side	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/coordit.h	16	rectangle_iterator(const coord_def& center, int halfside,
+crawl-crawl	distance is the larger of the two axis offsets	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/coord-def.h	172	return abs_ce(x) > abs_ce(y) ? abs_ce(x) : abs_ce(y);
+crawl-crawl	licence version 2 of the GNU GPL	/mnt/frankendom-donors/crawl-crawl/LICENSE	7	either version 2 of the License, or
+crawl-crawl	licence: at your option any later version	/mnt/frankendom-donors/crawl-crawl/LICENSE	8	(at your option) any later version.
+crawl-crawl	rectangle iterator starts at centre minus half side	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/coordit.cc	29	topleft.x = center.x - halfside;
+crawl-crawl	rectangle iterator ends at centre plus half side, inclusive	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/coordit.cc	36	bottomright.x = center.x + halfside;
+crawl-crawl	environment effects run before the shift check	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/main.cc	2624	run_environment_effects();
+crawl-crawl	player reactions run before the shift check	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/main.cc	2627	player_reacts();
+crawl-crawl	shift check runs only in the abyss branch	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/main.cc	2629	if (player_in_branch(BRANCH_ABYSS))
+crawl-crawl	shift check call in the per-turn path	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/main.cc	2630	maybe_shift_abyss_around_player();
+crawl-crawl	Lua teleport also calls the shift check	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/l-you.cc	1690	maybe_shift_abyss_around_player();

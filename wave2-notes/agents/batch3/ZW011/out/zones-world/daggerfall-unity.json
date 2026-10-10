@@ -1,0 +1,110 @@
+{
+ "game": "daggerfall-unity",
+ "category": "zones-world",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Utility/PopulationManager.cs",
+ "licence": "MIT (LICENSE file: MIT License, Copyright (c) 2009-2023 Daggerfall Workshop; file header line 4)",
+ "licence_class": "permissive",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "population-cap",
+  "presence-gated",
+  "wait-gate",
+  "accumulator",
+  "new:pooled-spawn"
+ ],
+ "data_fields": [
+  {
+   "name": "populationPerGroup",
+   "donor_constant": "24 per group",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "PopulationManager.cs:35"
+  },
+  {
+   "name": "groupCountMin",
+   "donor_constant": "1",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "PopulationManager.cs:98"
+  },
+  {
+   "name": "groupCountMax",
+   "donor_constant": "4",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "PopulationManager.cs:98"
+  },
+  {
+   "name": "logicTickRate",
+   "donor_constant": "10 per second (0.1 s, timer reset to 0)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "PopulationManager.cs:31"
+  },
+  {
+   "name": "spawnsPerTick",
+   "donor_constant": "1 (single SpawnAvailableMobile call per tick)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "PopulationManager.cs:123"
+  },
+  {
+   "name": "spawnCoverageRadius",
+   "donor_constant": "96 nav-grid cells",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "PopulationManager.cs:36"
+  },
+  {
+   "name": "spawnPlacementAttempts",
+   "donor_constant": "11 candidates (maxAttempts 10 default)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "CityNavigation.cs:512"
+  },
+  {
+   "name": "rangeMarginOutsideZone",
+   "donor_constant": "2500 world units beyond location rect",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "PopulationManager.cs:34"
+  },
+  {
+   "name": "despawnDistance",
+   "donor_constant": "150 world units (immediate, no grace timer)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "PopulationManager.cs:37"
+  },
+  {
+   "name": "visiblePopRange",
+   "donor_constant": "120 world units (client view rule only)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "PopulationManager.cs:38"
+  },
+  {
+   "name": "frontViewHalfAngle",
+   "donor_constant": "90 degrees (from 180 field of view; client view rule only)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "PopulationManager.cs:303"
+  },
+  {
+   "name": "stuckSeekLimit",
+   "donor_constant": "recycle when seekCount > 4",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "PopulationManager.cs:216"
+  }
+ ],
+ "best_idea": "A zone-sized population pool that adds at most one creature per tick, shows each one only when it is out of the player's front view, and removes it by distance or a stuck count, with the cap set per zone.",
+ "decision": "adapt",
+ "decision_why": "The cap-from-size rule, the one-spawn-per-tick limit and the pending-until-unseen gate fit row 23, but the donor is client-only and has no grace timer or empty-zone despawn, so Frankendom keeps the shape and makes the server own spawn and despawn.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: with a zone cap of 24, live count never exceeds 24 over 1000 ticks, at most one spawn per tick, and a creature is removed only after its grace timer runs with no player within the despawn range; client check: no creature pops in or out inside the front 180-degree view within 120 units."
+}

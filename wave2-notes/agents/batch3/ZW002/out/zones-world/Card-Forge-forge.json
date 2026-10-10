@@ -1,0 +1,62 @@
+{
+ "game": "Card-Forge-forge",
+ "category": "zones-world",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/Card-Forge-forge/forge-game/src/main/java/forge/game/GameAction.java",
+ "licence": "GPL-3.0",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/transfer.ts",
+ "parity_row": 17,
+ "pattern_tags": [
+  "stale-state",
+  "new:single-transfer-entry",
+  "new:lki-capture-before-move",
+  "new:replacement-pre-move",
+  "new:token-ceases-in-transit",
+  "new:hidden-zone-flag"
+ ],
+ "data_fields": [
+  {
+   "name": "zone.holdsHiddenInfo",
+   "donor_constant": "true for Hand and Library (and other deck/hand zones), false for Battlefield and Graveyard",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-game/src/main/java/forge/game/zone/ZoneType.java:43"
+  },
+  {
+   "name": "zone.enumValues",
+   "donor_constant": "Hand(true), Library(true), Battlefield(false) as declared",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-game/src/main/java/forge/game/zone/ZoneType.java:15"
+  },
+  {
+   "name": "leaveArena.buffReset",
+   "donor_constant": "copy reset to original face on leaving the battlefield (no numeric value)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-game/src/main/java/forge/game/GameAction.java:249"
+  },
+  {
+   "name": "move.replacementVerdicts",
+   "donor_constant": "NotReplaced/Updated proceed; Prevented stops; other results stop",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-game/src/main/java/forge/game/GameAction.java:341"
+  },
+  {
+   "name": "token.movableAfterLeavingPlay",
+   "donor_constant": "false (rule 111.8 guard)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-game/src/main/java/forge/game/GameAction.java:123"
+  }
+ ],
+ "best_idea": "Route every move between zones through one function that captures the leaving entity's state first, runs a replacement pass, then removes, adds, fires the event and runs triggers last with the captured state.",
+ "decision": "adapt",
+ "decision_why": "Take the single move path with LKI captured before removal and a replacement pass before the move, and the rule that a summon leaving the arena is removed; reject the Magic-specific branches and the whole-zone snapshot copy at each checkpoint (capture only the entity that moves).",
+ "decision_status": "proposed",
+ "acceptance": "Server test: a fighter killed in the arena moves to out once, and its death trigger (loot roll, XP) reads hp and buffs as they were at death; a summon leaving the arena is removed and its id is in no zone afterwards."
+}

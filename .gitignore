@@ -1,3 +1,7 @@
 
 # receipts hold verbatim donor lines; kept in ~/Developer/Games-Analysis-receipts, never pushed
 receipts*.tsv
+# receipt builders embed verbatim donor quotes: never pushed
+**/work/*receipt*
+**/work/__pycache__/
+*.tmp

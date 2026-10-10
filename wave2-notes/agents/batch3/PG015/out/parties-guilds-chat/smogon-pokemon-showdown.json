@@ -1,0 +1,45 @@
+{
+ "game": "smogon-pokemon-showdown",
+ "category": "parties-guilds-chat",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/smogon-pokemon-showdown/server/user-groups.ts",
+ "licence": "MIT (LICENSE: The MIT License (MIT), Copyright (c) 2011-2026 Guangcong Luo and other contributors)",
+ "licence_class": "permissive",
+ "target_module": "origins/server/guild-permissions.ts",
+ "parity_row": null,
+ "pattern_tags": [
+  "new:rank-jurisdiction",
+  "new:promote-both-ends",
+  "new:room-rank-override"
+ ],
+ "data_fields": [
+  {
+   "name": "guild_rank_order",
+   "donor_constant": "list order; rank = number of groups minus index (first entry highest)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/smogon-pokemon-showdown/server/config-loader.ts:198"
+  },
+  {
+   "name": "permission_jurisdiction_default",
+   "donor_constant": "'u' (any rank strictly lower than the actor) on six example groups",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/smogon-pokemon-showdown/config/config-example.js:589"
+  },
+  {
+   "name": "room_min_rank_per_action",
+   "donor_constant": "minimum rank symbol per command or permission; when set, jurisdiction becomes 'u'",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/smogon-pokemon-showdown/server/user-groups.ts:155"
+  }
+ ],
+ "best_idea": "Give every rank a jurisdiction, with one rule meaning any rank strictly below mine, so an officer can act on any member below officer without a table entry per rank, and require the permission on both ends of a promotion.",
+ "decision": "adapt",
+ "decision_why": "The rank ladder, the strictly-below rule and the two-ended promotion fit Frankendom's guild ranks and server-side checks; adapt because the donor fails open for unknown groups, lets a section leader act across rooms, and mixes account trust into ranks, none of which Frankendom should copy.",
+ "decision_status": "proposed",
+ "acceptance": "A server test with a leader (rank 4), an officer (rank 3) and a member (rank 1): the officer kicks the member (allowed), kicks another officer (refused), promotes the member to rank 2 (allowed), promotes the member to rank 3 (refused)."
+}

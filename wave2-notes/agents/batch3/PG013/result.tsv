@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+levy-street-world-of-claudecraft	parties-guilds-chat	P	STRONG	full	src/sim/social/party.ts:126-165, 167-235, 430-536, 568-639 - party invite with 30 s expiry, one-group rule, all-or-nothing finder merge, leader succession to members[0]; MIT
+lichess-org-lila	parties-guilds-chat	P	STRONG	full	modules/team/src/main/TeamSecurity.scala:11-19, 37-51, 89-131; TeamApi.scala:304-318 - eight permission flags, admin floor and cap, creator protection, leader-needs-admin kick rule; AGPL v3 so clean-room
+lichess-org-mobile	parties-guilds-chat	P	STRONG	full	lib/src/model/relation/online_friends.dart:71-105, 121-135 (watch wiring player_screen.dart:25-33) - friend presence: snapshot on resume and reconnect, id-keyed deltas; GPL v3 so clean-room

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+00-Evan-shattered-pixel-dungeon	economy-trade	P	STRONG	full	Shopkeeper.java:201-203 sellPrice (value x 5 x depth band); WndTradeItem.java:254 sale pays base value; Shopkeeper.java:70,267,281 three-item buy-back at base value; MasterThievesArmband.java:321-336 charge-to-value steal chance; buy spend has no server-style funds check (WndTradeItem.java:298).
+0ad-0ad	economy-trade	P	STRONG	full	binaries/data/mods/public/simulation/components/Barter.js:50-61 GetPrices (true price x (100 +/- 10 + index)); :63-128 ExchangeResources (checks, pay, payout, move index 2 per lot); :130-147 ProgressTimeout restore 0.5 per 5000 interval.
+2004Scape-Server	economy-trade	P	STRONG	full	data/src/scripts/shop/scripts/shop.rs2:183-192 calc_shop_value (stock deviation x haggle, clamp, floor 100, scale 1000); :59-97 buy_item per-unit loop; :100-129 sell_item; src/engine/World.ts:1176-1211 per-row restock on tick % rate (600 ms ticks).

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+OpenRCT2-OpenRCT2	economy-trade	P	STRONG	full	src/openrct2/management/Finance.cpp:89-103 FinancePayment is the one spend function for cash, buckets and the day counter.
+OpenTTD-OpenTTD	economy-trade	P	STRONG	full	src/economy.cpp:955-1017 GetTransportedGoodsIncome prices delivery by distance, amount and a time factor with flat, linear and tail regimes.
+OpenXcom-OpenXcom	economy-trade	P	STRONG	full	src/Basescape/PurchaseState.cpp:517-554 checks funds and capacity at each add and clamps quantity; 327-382 writes the balance once at commit with no re-check.

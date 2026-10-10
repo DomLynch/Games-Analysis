@@ -1,0 +1,87 @@
+{
+ "game": "0ad-0ad",
+ "category": "economy-trade",
+ "cell": 11,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/simulation/components/Barter.js",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "origins/economy/barter.ts",
+ "parity_row": 21,
+ "pattern_tags": [
+  "new:price-index-impact",
+  "new:timed-restore-to-zero",
+  "new:fixed-lot-trade"
+ ],
+ "data_fields": [
+  {
+   "name": "lot_size",
+   "donor_constant": "100",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "Barter.js:13"
+  },
+  {
+   "name": "batch_lots",
+   "donor_constant": "5",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "Barter.js:19"
+  },
+  {
+   "name": "spread",
+   "donor_constant": "10 (percent points of true price)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "Barter.js:26"
+  },
+  {
+   "name": "index_step_per_lot",
+   "donor_constant": "2 points per 100 traded",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Barter.js:31"
+  },
+  {
+   "name": "index_cap",
+   "donor_constant": "99 - spread = 89 (points)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Barter.js:118"
+  },
+  {
+   "name": "restore_step",
+   "donor_constant": "0.5 points per tick",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Barter.js:36"
+  },
+  {
+   "name": "restore_interval",
+   "donor_constant": "5000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "Barter.js:41"
+  },
+  {
+   "name": "player_barter_multiplier",
+   "donor_constant": "1.0 default per resource and side",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "template_player.xml:70"
+  },
+  {
+   "name": "true_price",
+   "donor_constant": "100 per resource (food, wood, stone, metal)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "simulation/data/resources/metal.json:11"
+  }
+ ],
+ "best_idea": "Move each traded resource's price index by a fixed step per fixed-size lot, clamp it, and let a slow timer pull it back to zero, so repeated trades get worse but recover on their own without a designer touching anything.",
+ "decision": "adapt",
+ "decision_why": "The impact-and-recovery shape suits a player-run market, but the donor keeps one shared index and two separate ledger calls, so Frankendom scopes the index to a zone market and makes the payment one server transaction.",
+ "decision_status": "proposed",
+ "acceptance": "Trading 100 wood for stone gives 82 stone, a second trade gives 79, and the rate returns to 82 after about 20 seconds with no trades; a server test refuses a 40-unit trade with balances and indexes unchanged, and two 100-unit trades leave wood at -4 and stone at +4."
+}

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+afritz1-OpenTESArena	zones-world	P	STRONG	full	src/World/ChunkManager.cpp:46-120 (window diff into new and freed lists, recomputed only on centre or count change); src/Entities/CitizenUtils.cpp:42-47 and EntityChunkManager.cpp:1191-1282 (citizen cap floor(5 x 30 x chunks / 4), refilled only on chunk load)
+alexbatalov-fallout1-ce	zones-world	P	STRONG	full	src/game/worldmap.cc:1548-1640 (travel-interval 3d6 tier by 50-tile region, luck and perk gated specials with a once-per-save bitmask) and 2097-2160 (terrain map pick with reroll); licence restricted (SUL 1.0), clean-room
+alexbatalov-fallout2-ce	zones-world	P	STRONG	full	src/worldmap.cc:3322-3522 (1500 ms throttle, 3-tile distance gate, day-part frequency, skill notice roll) and 3557-3654 (conditional weighted entry pick with per-entry counter spend); licence restricted (SUL 1.0), clean-room

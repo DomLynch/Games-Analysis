@@ -1,0 +1,99 @@
+{
+ "game": "lincity-ng-lincity-ng",
+ "category": "economy-trade",
+ "cell": 11,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/market.cpp",
+ "licence": "GPL-2.0-or-later, as read in market.cpp header and COPYING.txt",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/economy-flow.ts",
+ "parity_row": 21,
+ "pattern_tags": [
+  "new:fill-ratio-equalise",
+  "new:conserved-transfer",
+  "clamp-and-report",
+  "wait-gate",
+  "timer-wheel",
+  "drop-filter",
+  "new:overflow-sink",
+  "new:consumption-tax-tally"
+ ],
+ "data_fields": [
+  {
+   "name": "fill_scale",
+   "donor_constant": "1000 = full (TRANSPORT_QUANTA)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/transport.hpp:67"
+  },
+  {
+   "name": "transfer_cap_divisor",
+   "donor_constant": "8 (TRANSPORT_RATE): one transfer per partner per tick <= sender max / 8",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/transport.hpp:66"
+  },
+  {
+   "name": "per_good_max_load",
+   "donor_constant": "group constants, e.g. MAX_FOOD_IN_MARKET = MAX_FOOD_ON_RAIL*8",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/market.hpp:71"
+  },
+  {
+   "name": "labour_tier_units",
+   "donor_constant": "1 / 5 / 12 / 28 for empty / low / medium / full",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/market.hpp:52"
+  },
+  {
+   "name": "labour_tier_thresholds",
+   "donor_constant": "fill below 10 / 20 / 50 percent, else full",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/market.cpp:199"
+  },
+  {
+   "name": "labour_refresh_period",
+   "donor_constant": "every 25 days at offset 17",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/market.cpp:190"
+  },
+  {
+   "name": "overflow_threshold",
+   "donor_constant": "85 percent of waste capacity",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/market.cpp:168"
+  },
+  {
+   "name": "overflow_burn_amount",
+   "donor_constant": "70 percent of waste capacity destroyed",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/market.cpp:171"
+  },
+  {
+   "name": "overflow_fire_chance",
+   "donor_constant": "0.001 * group fire chance 80 / 100 = 0.0008 per check",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/all_buildings.hpp:59"
+  },
+  {
+   "name": "link_range",
+   "donor_constant": "9 tiles (GROUP_MARKET_RANGE), size 2",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/market.hpp:47"
+  }
+ ],
+ "best_idea": "Move stock between linked shops toward one shared fill ratio, cap each transfer at a fraction of the sender's capacity, and write every move as one debit plus one credit, so surplus and shortage spread without creating or losing goods.",
+ "decision": "adapt",
+ "decision_why": "Keep the conserved pair transfer and the per-tick cap as the shape for a regional stock flow between zone shops; reject the logistics layer (trucks, traffic, fire, pollution) and reject any mapping of fill ratio to a player price, since stock flow is not a currency.",
+ "decision_status": "proposed",
+ "acceptance": "A server test runs 1000 day ticks over one hub and three linked shops and asserts each good's total is unchanged, no count goes negative, and no non-evacuating transfer exceeds hub max / 8."
+}

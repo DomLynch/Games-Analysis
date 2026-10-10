@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+alexbatalov-fallout1-ce	economy-trade	P	STRONG	full	src/game/inventry.cc:4236-4277 barter price (skill and perk modifier, clamp 10..300, currency at face value) and all-or-nothing accept; mood from src/game/reaction.cc:47-167
+alexbatalov-fallout2-ce	economy-trade	P	STRONG	full	src/inventory.cc:4673-4762 ratio price (NPC vs party best barter, offset 160, doubled uncapped cost) plus companion carry-weight swap and accept checks
+amilich-isometric-city	economy-trade	P	STRONG	full	src/lib/simulation.ts:1897-1907 monthly income and expenses, 2446-2453 day-7 quarter settlement, 2415-2416 lagged tax for demand only

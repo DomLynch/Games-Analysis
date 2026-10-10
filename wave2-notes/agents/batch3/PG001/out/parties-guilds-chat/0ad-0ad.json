@@ -1,0 +1,25 @@
+{
+  "game": "0ad-0ad",
+  "category": "parties-guilds-chat",
+  "cell": 1,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/gui/gamesetup/Controllers/PlayerAssignmentsController.js",
+  "licence": "GPL version 2 or later (LICENSE.txt: binaries/data/)",
+  "licence_class": "copyleft",
+  "target_module": "src/fight/attacker-seats.ts",
+  "parity_row": 17,
+  "pattern_tags": ["new:seat-memory-rejoin", "new:friend-gated-join", "per-player-view", "stale-state"],
+  "data_fields": [
+    {"name": "seat_count", "donor_constant": "g_GameSettings.playerCount.nbPlayers (match setting; seat pool 1..nbPlayers)", "unit": "count", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/gui/gamesetup/Controllers/PlayerAssignmentsController.js:111"},
+    {"name": "join_policy", "donor_constant": "everyone (default) | buddies | disabled", "unit": "none", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/0ad-0ad/binaries/data/config/default.cfg:433"},
+    {"name": "seat_memory_grace", "donor_constant": "none in donor (memory kept for the whole setup session; no timer)", "unit": "s", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/gui/gamesetup/Controllers/PlayerAssignmentsController.js:30"},
+    {"name": "friend_rank_playing", "donor_constant": "2 (playing buddy in the game)", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/gui/lobby/LobbyPage/Game.js:191"},
+    {"name": "friend_rank_spectating", "donor_constant": "1 (only a spectating buddy)", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/gui/lobby/LobbyPage/Game.js:191"}
+  ],
+  "best_idea": "On a join, seat the newcomer in their own last seat if it is in range and free, otherwise in the lowest free seat, with an optional friends-only gate in front.",
+  "decision": "adapt",
+  "decision_why": "The seat memory and friend gate fit a 3-attacker fight when a player drops and rejoins; the donor keys memory by display name and has no timer, so Frankendom must key by server account id and set an explicit grace window as data.",
+  "decision_status": "proposed",
+  "acceptance": "A server test where a player who leaves a 3-attacker fight and rejoins inside the grace window gets the old attacker seat back if it is free, gets the lowest free seat otherwise, and a non-friend join gets no attacker seat when friends-only is on."
+}

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+Dawn-of-Light-DOLSharp	zones-world	P	STRONG	full	GameServer/world/Zone.cs:442-1080 and Region.cs:1229-1548 - a 32x32 subzone grid answers radius queries by pruning cells with min/max distance, but a moved object is re-filed only when a scan or the 200 ms sweep reaches its cell.
+EQEmu	zones-world	P	STRONG	full	zone/entity.cpp:457-556 and zone/spawn2.cpp:152-353 - idle-when-empty grace timer (seconds_before_idle, default 60) then mobs freeze instead of despawning, with respawn variance and per-type caps on spawn points.
+FWGS-xash3d-fwgs	zones-world	P	STRONG	full	engine/server/sv_world.c:419-696 - fixed depth-4 split tree of boxes; entities filed in the first node they cross; triggers found by an overlap-only walk, brush triggers tested on the origin point.

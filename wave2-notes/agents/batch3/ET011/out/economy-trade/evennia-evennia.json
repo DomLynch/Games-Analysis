@@ -1,0 +1,52 @@
+{
+ "game": "evennia-evennia",
+ "category": "economy-trade",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/shops.py",
+ "licence": "BSD-3-Clause (LICENSE.txt line 1)",
+ "licence_class": "permissive",
+ "target_module": "origins/economy/shop-pricing.ts (new, proposed)",
+ "parity_row": 21,
+ "pattern_tags": [
+  "new:shop-markup-buyback",
+  "new:server-recheck-trade",
+  "new:sell-zero-refused"
+ ],
+ "data_fields": [
+  {
+   "name": "buy_markup",
+   "donor_constant": "1.0 (upsell_factor)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/npcs.py:235"
+  },
+  {
+   "name": "sell_buyback_rate",
+   "donor_constant": "0.5 (miser_factor)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/npcs.py:237"
+  },
+  {
+   "name": "sell_min_value",
+   "donor_constant": "sell price must be > 0 (int truncation)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/shops.py:385"
+  },
+  {
+   "name": "quest_items_sellable",
+   "donor_constant": "false (quest type excluded)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/shops.py:385"
+  }
+ ],
+ "best_idea": "Price a shop as base value x a per-shop markup on buy and base value x a per-shop buy-back rate on sell, truncate the sell value and refuse zero-value items.",
+ "decision": "adapt",
+ "decision_why": "Two per-shop rates and a server-side coin and slot check fit Frankendom's one ledger; the donor's move-sold-items-into-the-shop path and its unrecorded shop takings are rejected because they contradict the donor's own docstring and break the one ledger.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: a base-value 40 item bought with 39 coins is refused by the server; bought with 100 it costs 40 (player at 60); sold back it returns 20, is removed from the player, is not on the shop buy list, and the 20-coin difference is recorded as a sink."
+}

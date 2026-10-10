@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+electronicarts-CnC_Remastered_Collection	economy-trade	P	STRONG	full	TIBERIANDAWN/FACTORY.CPP:231-296 (AI) and 536-554 (Start): pay-as-you-build installments from the house ledger, stall with no debt, cancel refunds the paid part (also HOUSE.CPP:1771-1808)
+endless-sky-endless-sky	economy-trade	P	STRONG	full	source/Depreciation.cpp:320-375 and 302-315: age-based resale value (grace, per-day decay, linear taper, floor) with stock and fleet bins; PlayerInfo.cpp:1331-1412 buy and sell use it
+evennia-evennia	economy-trade	P	STRONG	full	evadventure/shops.py:81-123, 290-316, 377-427: buy = base value x shopkeeper markup, sell = int(value x buy-back rate), coin check on confirm only; four defects (listed in note section 6)

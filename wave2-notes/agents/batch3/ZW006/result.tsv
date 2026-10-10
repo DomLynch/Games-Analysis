@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+OpenGothic	zones-world	P	STRONG	full	common/world/worldobjects.cpp:221-244 and 249-265 split NPCs into near/mid/far tiers by squared distance to the player (3000 and 6000), with perception and speech only for the near tier; npc.cpp:4198-4199 and 3028-3035 gate perception and the AI loop.
+OpenRA-OpenRA	zones-world	P	STRONG	full	OpenRA.Mods.Common/Traits/World/ActorSpawnManager.cs:90-121 keeps a live population between Minimum and Maximum on a random interval from typed spawn points, with a burst to the minimum; count drops only via DecreaseActorCount (145-148), called only from the Sandworm disposal hook.
+OpenRCT2-OpenRCT2	zones-world	P	STRONG	full	src/openrct2/world/Park.cpp:163-213 and 215-238 derive a 16-bit per-update spawn threshold from rating, population over a soft cap (divide by 4), a hard ceiling at 52000, fee against ride value and awards, rolled against ScenarioRand to pick a random park entrance.

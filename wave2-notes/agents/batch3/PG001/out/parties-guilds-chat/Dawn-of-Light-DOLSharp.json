@@ -1,0 +1,26 @@
+{
+  "game": "Dawn-of-Light-DOLSharp",
+  "category": "parties-guilds-chat",
+  "cell": 3,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/Guild.cs",
+  "licence": "GNU GPL version 2 or any later version (Guild.cs header; gplheader.txt)",
+  "licence_class": "copyleft",
+  "target_module": "origins/server/guild-ranks.ts",
+  "parity_row": "none",
+  "pattern_tags": ["new:rank-ladder-superset", "new:single-permission-check", "new:per-recipient-hear", "presence-gated"],
+  "data_fields": [
+    {"name": "guild_rank_levels", "donor_constant": "10 rows, levels 0 to 9", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/DOLDatabase/Tables/Guild.cs:63"},
+    {"name": "join_rank_level", "donor_constant": "9 (lowest rank)", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/Guild.cs:589"},
+    {"name": "leader_rank_level", "donor_constant": "0 (leader is level 0, not a flag)", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/Guild.cs:768"},
+    {"name": "superset_ladder_thresholds", "donor_constant": "flags added at levels below 9, 8, 7, 6, 5, 4, 3, 2, 1 (default ladder)", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/GuildMgr.cs:285"},
+    {"name": "chat_spam_window_argument", "donor_constant": "500 (argument to the spam helper; unit and semantics not read)", "unit": "none", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/commands/playercommands/guildchat.cs:46"},
+    {"name": "staff_bypass_privilege", "donor_constant": "account privilege above 1 passes every rank check", "unit": "none", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/Guild.cs:681"}
+  ],
+  "best_idea": "Store one ladder of ranks by level, where each level is a superset of the level below, and gate every guild action through one server-side permission check that reads the rank's flag, with the leader defined as level 0 and chat hearing checked per recipient.",
+  "decision": "adapt",
+  "decision_why": "Keep the single permission check, the superset ladder as data and the per-recipient hear check; give Demote its own flag instead of the donor's Promote alias, and add a server guard that keeps exactly one level-0 rank.",
+  "decision_status": "proposed",
+  "acceptance": "A server test where a rank-2 officer (default ladder: invite and promote, no remove) can invite but not remove a member; a new member (rank 9) can hear guild chat but a guild send is refused; a leader edit that would leave no level-0 rank, or two, is refused with a message."
+}

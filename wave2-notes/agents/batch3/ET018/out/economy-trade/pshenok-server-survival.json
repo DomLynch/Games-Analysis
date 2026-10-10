@@ -1,0 +1,104 @@
+{
+ "game": "pshenok-server-survival",
+ "category": "economy-trade",
+ "cell": 11,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/pshenok-server-survival/src/core/economy.js",
+ "licence": "as read",
+ "licence_class": "permissive",
+ "target_module": "origins/economy/ledger.ts (proposed new; Frankendom repo not read)",
+ "parity_row": 21,
+ "pattern_tags": [
+  "variable-step",
+  "clamp-and-report",
+  "new:upkeep-ramp",
+  "new:paid-heal-toggle",
+  "new:ledger-booking",
+  "new:refund-reversal"
+ ],
+ "data_fields": [
+  {
+   "name": "upkeep_per_minute",
+   "donor_constant": "12 (compute); rule: money per minute, paid as upkeep/60 x dt",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pshenok-server-survival/src/config.js:180"
+  },
+  {
+   "name": "upkeep_ramp_base",
+   "donor_constant": "1.0",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pshenok-server-survival/src/config.js:859"
+  },
+  {
+   "name": "upkeep_ramp_max",
+   "donor_constant": "2.0",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pshenok-server-survival/src/config.js:860"
+  },
+  {
+   "name": "upkeep_ramp_time",
+   "donor_constant": "600",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pshenok-server-survival/src/config.js:861"
+  },
+  {
+   "name": "repair_cost_percent",
+   "donor_constant": "0.15 of build cost, ceil",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pshenok-server-survival/src/config.js:877"
+  },
+  {
+   "name": "auto_repair_cost_percent",
+   "donor_constant": "0.1 of total build cost per minute",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pshenok-server-survival/src/config.js:879"
+  },
+  {
+   "name": "auto_repair_heal_rate",
+   "donor_constant": "5 (hp per second, hard-coded)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pshenok-server-survival/src/core/economy.js:354"
+  },
+  {
+   "name": "sell_refund_ratio",
+   "donor_constant": "floor(build cost / 2)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pshenok-server-survival/src/sim/topology.js:422"
+  },
+  {
+   "name": "blocked_malicious_cost",
+   "donor_constant": "1.0",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pshenok-server-survival/src/config.js:833"
+  },
+  {
+   "name": "breach_penalty",
+   "donor_constant": "50.0",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pshenok-server-survival/src/config.js:834"
+  },
+  {
+   "name": "frame_dt_clamp",
+   "donor_constant": "0.1",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pshenok-server-survival/game.js:1119"
+  }
+ ],
+ "best_idea": "One booking function for every money movement, with a sale that reverses the purchase line instead of adding income, and a percent-of-price sink with a time ramp as a data field.",
+ "decision": "adapt",
+ "decision_why": "The ledger rule and percent-of-price repair fit our one-ledger and catalogue-field rulings; the client-side money counter and the per-frame drain on a browser clock do not, so the server must own the ledger and charge per tick.",
+ "decision_status": "proposed",
+ "acceptance": "A server test runs 1000 random buy, upgrade, repair, sell, heal and charge operations and asserts balance = start + income - expenses at each step; a second test asserts that with upkeep off, paid auto-repair neither heals nor charges."
+}

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+NodeL2-NodeL2	parties-guilds-chat	P	PARTIAL	thin	src/GameServer/World/World.js:38-47 and Network/Request/Speak.js:25 - party invite is one step (0x29 then 0x39) and the answer (0x2a) only logs via console.info; chat is a 5000-unit radius echo with no channels.
+OpenDAoC-OpenDAoC-Core	parties-guilds-chat	P	STRONG	full	GameServer/gameutils/Group.cs:102-184 and 186-325 (party add, leave, leader succession, two-member dissolve), DialogResponseHandler.cs:120-164 (one-shot invite accept), Group.cs:562-672 (coin and item loot split by eligibility).
+OpenDiablo2-OpenDiablo2	parties-guilds-chat	P	PARTIAL	thin	d2game/d2player/party_panel.go:299-301 and 551 - the party panel is UI only: hostile gate (both level 9) only disables a switcher, members are always Neutral, and no party, invite or chat packets exist in d2networking.

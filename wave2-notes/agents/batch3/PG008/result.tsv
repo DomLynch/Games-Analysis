@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+coding-horror-basic-computer-games	parties-guilds-chat	P	NONE	thin	27_Civil_War/python/Civilwar.py:238-241,322 - "party" is only a local hot-seat count of 1 or 2 players; no party, guild, chat or friend mechanism in the tree (whole-tree grep plus 4 files opened)
+colyseus-colyseus	parties-guilds-chat	P	STRONG	full	packages/core/src/rooms/QueueRoom.ts:125-441 - rank-sorted queue on a 1 Hz cycle, rank gap widens with waiting, forced entry after 10 cycles; rank and team id come from the client join options and team averaging is wrong (gaps)
+daggerfall-unity	parties-guilds-chat	P	STRONG	full	Assets/Scripts/Game/Guilds/Guild.cs:74-116 - a 28-day rank review over a cumulative reputation and skill ladder with promotion, demotion and expulsion; the review runs on the client when the guild window opens

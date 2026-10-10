@@ -1,0 +1,198 @@
+[
+[
+"gemrb-gemrb",
+"FindPlayer matches the 1-based party slot to the vector index",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Game.cpp",
+164,
+"if (PCs[slot]->InParty == partyID) {"
+],
+[
+"gemrb-gemrb",
+"JoinParty returns early when the actor is already in the party",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Game.cpp",
+443,
+"if (slot != -1) {"
+],
+[
+"gemrb-gemrb",
+"JoinParty records the old size before appending",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Game.cpp",
+446,
+"size_t size = PCs.size();"
+],
+[
+"gemrb-gemrb",
+"JoinParty appends with no size check",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Game.cpp",
+497,
+"PCs.push_back(actor);"
+],
+[
+"gemrb-gemrb",
+"JoinParty assigns slot size+1 when the actor has no slot",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Game.cpp",
+499,
+"actor->InParty = (ieByte) (size + 1);"
+],
+[
+"gemrb-gemrb",
+"JoinParty returns the new index",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Game.cpp",
+507,
+"return (int) size;"
+],
+[
+"gemrb-gemrb",
+"LeaveParty removes the actor from the PCs vector at its index",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Game.cpp",
+346,
+"std::vector<Actor*>::iterator m = PCs.begin() + slot;"
+],
+[
+"gemrb-gemrb",
+"LeaveParty decrements slots above the leaver",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Game.cpp",
+359,
+"if (pc->InParty > actor->InParty) {"
+],
+[
+"gemrb-gemrb",
+"LeaveParty zeroes the leaver's slot via SetPersistent(0)",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Game.cpp",
+364,
+"actor->SetPersistent(0);"
+],
+[
+"gemrb-gemrb",
+"SetPersistent stores the slot argument into InParty",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Scriptable/Actor.cpp",
+5757,
+"InParty = (ieByte) partyslot;"
+],
+[
+"gemrb-gemrb",
+"A negative slot demotes the actor and zeroes InParty",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Scriptable/Actor.cpp",
+5752,
+"//demote actor to be saved in area (after moving between areas)"
+],
+[
+"gemrb-gemrb",
+"ConsolidateParty scans slot numbers from 1 upward",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Game.cpp",
+307,
+"for (int i = 1; i <= max;) {"
+],
+[
+"gemrb-gemrb",
+"ConsolidateParty decrements slots above a gap",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Game.cpp",
+314,
+"if (pc->InParty > i) {"
+],
+[
+"gemrb-gemrb",
+"ConsolidateParty runs at game load (rearrange party slots)",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Interface.cpp",
+864,
+"// rearrange party slots"
+],
+[
+"gemrb-gemrb",
+"ConsolidateParty is called from the load path",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Interface.cpp",
+865,
+"game->ConsolidateParty();"
+],
+[
+"gemrb-gemrb",
+"Start position column is slot minus one",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Game.cpp",
+395,
+"unsigned int ip = (unsigned int) (actor->InParty - 1);"
+],
+[
+"gemrb-gemrb",
+"Start position X is read from the startpos table by slot column",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Game.cpp",
+419,
+"strta->QueryFieldSigned<int>(strta->GetRowIndex(xpos), ip);"
+],
+[
+"gemrb-gemrb",
+"PartyOverflow is false when no size cap is set",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Game.cpp",
+1527,
+"if (!partysize) {"
+],
+[
+"gemrb-gemrb",
+"PartyOverflow is true when the roster exceeds the cap",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Game.cpp",
+1530,
+"return (PCs.size() > partysize);"
+],
+[
+"gemrb-gemrb",
+"UpdateScripts checks for overflow each update",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Game.cpp",
+1666,
+"if (PartyOverflow()) {"
+],
+[
+"gemrb-gemrb",
+"Overflow opens the PartyReform window and returns",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Game.cpp",
+1668,
+"core->GetGUIScriptEngine()->RunFunction(\"PartyReform\", \"OpenReformPartyWindow\");"
+],
+[
+"gemrb-gemrb",
+"SetPartySize treats 0 as no size control",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Game.cpp",
+1686,
+"// 0 size means no party size control"
+],
+[
+"gemrb-gemrb",
+"SetPartySize ignores negative values",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Game.cpp",
+1687,
+"if (size < 0) {"
+],
+[
+"gemrb-gemrb",
+"The cap value comes from the MaxPartySize engine variable",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/GUIScripts/GameCheck.py",
+13,
+"MAX_PARTY_SIZE = GemRB.GetVar (\"MaxPartySize\")"
+],
+[
+"gemrb-gemrb",
+"Each game script sets the cap once at enter-game (iwd2)",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/GUIScripts/iwd2/Game.py",
+13,
+"GemRB.GameSetPartySize(MAX_PARTY_SIZE)"
+],
+[
+"gemrb-gemrb",
+"Join flag values are refresh, init position, select, override",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Game.h",
+46,
+"#define JP_OVERRIDE 8 // replace actor, if any"
+],
+[
+"gemrb-gemrb",
+"Hint file is the single-player premade party picker",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/GUIScripts/iwd2/SPParty.py",
+5,
+"#Single Player Party Select"
+],
+[
+"gemrb-gemrb",
+"Hint file creates premade members from party.ini names",
+"/mnt/frankendom-donors/gemrb-gemrb/gemrb/GUIScripts/iwd2/SPParty.py",
+123,
+"GemRB.CreatePlayer(CharName, j, 1)"
+]
+]

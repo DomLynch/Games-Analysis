@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+lincity-ng-lincity-ng	economy-trade	P	STRONG	full	src/lincity/modules/market.cpp:96-219 and src/lincity/lintypes.cpp:774-849: fill-ratio stock flow between a market and its partners, capped at sender max/8 per tick, with conserved debit and credit.
+miki151-keeperrl	economy-trade	P	STRONG	full	workshops.cpp:47-133 and collective.cpp:1013-1062: craft cost booked as debt, paid when stock covers it, refunded only before progress, first ready item takes the work.
+openmw	economy-trade	P	STRONG	full	apps/openmw/mwmechanics/mechanicsmanagerimp.cpp:563-590 and apps/openmw/mwgui/tradewindow.cpp:615-638: one barter offer from standing, skill, luck and personality, buy and sell terms from one difference, 75 percent window cap.

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+0ad-0ad	parties-guilds-chat	P	STRONG	full	binaries/data/mods/public/gui/gamesetup/Controllers/PlayerAssignmentsController.js:96-139 onClientJoin seats a joiner in their last seat if it is in range and free, else the lowest free seat, behind a buddies-only gate; buddy list and lobby rank in BuddyButton.js:45-66 and lobby/LobbyPage/Game.js:189-201.
+2004Scape-Server	parties-guilds-chat	P	STRONG	full	src/server/friend/FriendServerRepository.ts:332-355 isVisibleTo applies ordered privacy checks (staff, ignore, OFF, FRIENDS, ON), and src/server/friend/FriendServer.ts:473-506 sends one status entry to each follower of a changed player.
+Dawn-of-Light-DOLSharp	parties-guilds-chat	P	STRONG	full	GameServer/gameutils/Guild.cs:669-791 HasRank gates each guild action on a per-rank flag with leader as level 0 and a staff bypass, and GameServer/gameutils/GuildMgr.cs:261-341 builds the superset rank ladder.

@@ -1,0 +1,76 @@
+{
+ "game": "LostCityRS-Engine-TS",
+ "category": "parties-guilds-chat",
+ "cell": 18,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/LostCityRS-Engine-TS/src/server/friend/FriendServerRepository.ts",
+ "licence": "MIT (as read: LICENSE, 'MIT License', Copyright (c) 2023-2026 Lost City)",
+ "licence_class": "permissive",
+ "target_module": "origins/server/social.ts",
+ "parity_row": 5,
+ "pattern_tags": [
+  "new:per-viewer-presence",
+  "new:follower-fanout",
+  "new:offline-as-zero",
+  "new:tick-social-gate",
+  "new:world-slot-cap",
+  "stale-state"
+ ],
+ "data_fields": [
+  {
+   "name": "friend_cap_other",
+   "donor_constant": "100",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/LostCityRS-Engine-TS/src/server/friend/FriendServerRepository.ts:229"
+  },
+  {
+   "name": "friend_cap_member",
+   "donor_constant": "200",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/LostCityRS-Engine-TS/src/server/friend/FriendServerRepository.ts:229"
+  },
+  {
+   "name": "ignore_cap",
+   "donor_constant": "100",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/LostCityRS-Engine-TS/src/server/friend/FriendServerRepository.ts:270"
+  },
+  {
+   "name": "world_player_slots",
+   "donor_constant": "2000",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/LostCityRS-Engine-TS/src/server/friend/FriendServer.ts:57"
+  },
+  {
+   "name": "social_actions_per_tick",
+   "donor_constant": "1",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/LostCityRS-Engine-TS/src/network/game/client/handler/MessagePrivateHandler.ts:13"
+  },
+  {
+   "name": "chat_line_max",
+   "donor_constant": "100",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/LostCityRS-Engine-TS/src/network/game/client/handler/MessagePrivateHandler.ts:13"
+  },
+  {
+   "name": "tick_ms",
+   "donor_constant": "600",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/World.ts:120"
+  }
+ ],
+ "best_idea": "Compute each viewer's presence on the server from the other player's chat mode, ignore list and friend list (hidden when unknown), show hidden and offline the same, push changes only to followers, and allow one social action per player per tick.",
+ "decision": "adapt",
+ "decision_why": "The visibility order, zero-as-hidden and follower push fit server-verified social state; the private message path with no server ignore check, and the silent login drop on a full world, do not fit, so enforce ignore before delivery and refuse full logins with a reason.",
+ "decision_status": "proposed",
+ "acceptance": "A player on another's ignore list sees that player as offline and a whisper to them is refused by the server; a FRIENDS-mode player is seen only by viewers on their list; a 101st non-member friend is refused with a reason; a second social action in one tick is refused and accepted next tick; a login into a full world is refused with a message."
+}

@@ -1,0 +1,10 @@
+import { DEFAULT_RATES, buyPrice, sellPrice, buy, sell } from "./shop-sketch";
+const r = DEFAULT_RATES;
+console.log("buy 40 ->", buyPrice(40, r), "sell 40 ->", sellPrice(40, r, false));
+console.log("sell value 3 ->", sellPrice(3, r, false), "sell value 1 ->", sellPrice(1, r, false), "quest 100 ->", sellPrice(100, r, true));
+const p = { coins: 39, freeSlots: 2 };
+console.log("buy with 39 coins:", JSON.stringify(buy(p, { value: 40, size: 1, quest: false }, r)), "coins", p.coins);
+p.coins = 100;
+console.log("buy with 100:", JSON.stringify(buy(p, { value: 40, size: 1, quest: false }, r)), "coins", p.coins, "slots", p.freeSlots);
+console.log("sell back:", JSON.stringify(sell(p, { value: 40, size: 1, quest: false }, r)), "coins", p.coins, "slots", p.freeSlots);
+console.log("net round trip of a 40-value item:", sellPrice(40, r, false) - buyPrice(40, r));

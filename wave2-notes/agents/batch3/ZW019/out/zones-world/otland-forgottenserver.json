@@ -1,0 +1,96 @@
+{
+ "game": "otland-forgottenserver",
+ "category": "zones-world",
+ "cell": 7,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/otland-forgottenserver/src/spawn.cpp",
+ "licence": "GPL-2.0 (LICENSE file is GPL v2 text; spawn.cpp/spawn.h headers name GPL-2.0; no 'or later' found)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "director",
+  "presence-gated",
+  "population-cap",
+  "fixed-step",
+  "new:leash-overspawn-or-remove"
+ ],
+ "data_fields": [
+  {
+   "name": "zone_radius_tiles",
+   "donor_constant": "radius attribute; -1 unlimited; >30 warns (not used for monster leash)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/spawn.cpp:40"
+  },
+  {
+   "name": "spawntime_s",
+   "donor_constant": "spawntime attribute in seconds; min 10 s, max 86400 s",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/spawn.cpp:20"
+  },
+  {
+   "name": "type_chance_pct",
+   "donor_constant": "chance attribute percent; default 100/n; total capped at 100",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/spawn.cpp:104"
+  },
+  {
+   "name": "rate_spawn_per_check",
+   "donor_constant": "rateSpawn = 1 (global config)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/configmanager.cpp:273"
+  },
+  {
+   "name": "leash_radius_tiles",
+   "donor_constant": "deSpawnRadius = 50 (global config, not per zone)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/configmanager.cpp:267"
+  },
+  {
+   "name": "leash_range_floors",
+   "donor_constant": "deSpawnRange = 2 (global config)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/configmanager.cpp:266"
+  },
+  {
+   "name": "presence_window_tiles",
+   "donor_constant": "maxViewportX = 11 and maxViewportY = 11",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/map.h:159"
+  },
+  {
+   "name": "think_interval_ms",
+   "donor_constant": "EVENT_CREATURE_THINK_INTERVAL = 1000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/creature.h:57"
+  },
+  {
+   "name": "remove_on_despawn",
+   "donor_constant": "removeOnDespawn default true",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/configmanager.cpp:250"
+  },
+  {
+   "name": "monster_overspawn",
+   "donor_constant": "monsterOverspawn default false",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/configmanager.cpp:254"
+  }
+ ],
+ "best_idea": "A zone is a list of spawn points, each holding at most one monster with its own timer, a presence gate that blocks only the points a player is near, and a per-check spawn cap.",
+ "decision": "adapt",
+ "decision_why": "The shape (points with timers, one live monster per point, presence gate, per-check cap) fits row 23, but the donor's global leash radius and missing grace timer do not fit, so the leash radius becomes zone data and a grace timer is added.",
+ "decision_status": "proposed",
+ "acceptance": "A server test with a zone of two points at 60 s spawntime: a player within 11 tiles of point A keeps A empty; A spawns at the first zone check after the player has been away for the grace time; no more than rateSpawn spawns happen in one zone check."
+}

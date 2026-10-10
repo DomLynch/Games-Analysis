@@ -1,0 +1,85 @@
+{
+ "game": "DCurrent-openbor",
+ "category": "zones-world",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c",
+ "licence": "BSD 3-clause (root LICENSE: Redistribution and use in source and binary forms; no-endorsement clause)",
+ "licence_class": "permissive",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "director",
+  "group-refill",
+  "population-cap",
+  "wait-gate",
+  "new:position-keyed-queue",
+  "new:scroll-clock",
+  "new:player-count-variant",
+  "fixed-step"
+ ],
+ "data_fields": [
+  {
+   "name": "refill_band_min",
+   "donor_constant": "100 default (groupmin)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "engine/openbor.c:23908"
+  },
+  {
+   "name": "refill_band_max",
+   "donor_constant": "100 default (groupmax)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "engine/openbor.c:23909"
+  },
+  {
+   "name": "entry_at",
+   "donor_constant": "scroll position key, parsed from the entry (at)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "engine/openbor.c:25117"
+  },
+  {
+   "name": "min_players_variant",
+   "donor_constant": "spawnplayer_count 0..3 for 1P..4P entries (threshold = count minus one)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "engine/openbor.c:24899"
+  },
+  {
+   "name": "lock_release_delay",
+   "donor_constant": "3 * game_speed after the lock clears",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "engine/openbor.c:50180"
+  },
+  {
+   "name": "frame_step_cap",
+   "donor_constant": "100 units ahead per frame",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "engine/openbor.c:51535"
+  },
+  {
+   "name": "interval_cap",
+   "donor_constant": "game_speed / 4 per frame",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "engine/openbor.c:50819"
+  },
+  {
+   "name": "scroll_speed",
+   "donor_constant": "level->scrollspeed per step (value parse not read)",
+   "unit": "px",
+   "where": "zone data",
+   "donor_ref": "engine/openbor.c:50223"
+  }
+ ],
+ "best_idea": "A level director that spawns from an ordered, position-keyed list, refills a group between a minimum and a maximum live count, and holds a lock until the group is clear.",
+ "decision": "adapt",
+ "decision_why": "Take the refill band (min, max) and the ordered entry list as zone data for zone population; key progress to server-side zone entry instead of a scroll clock; reject the donor's coupling of lock and bounds entries to the enemy band, and its consumption of failed spawns.",
+ "decision_status": "proposed",
+ "acceptance": "Server test with band min 2, max 4: with 1 enemy alive and 4 spawn entries due, exactly 3 spawn in that step; with 2 alive none spawn; a lock entry at the head of the queue applies on the next step even while the band is full."
+}

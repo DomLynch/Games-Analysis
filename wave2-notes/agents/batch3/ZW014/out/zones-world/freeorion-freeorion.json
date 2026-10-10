@@ -1,0 +1,77 @@
+{
+ "game": "freeorion-freeorion",
+ "category": "zones-world",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/freeorion-freeorion/default/python/universe_generation/monsters.py",
+ "licence": "GNU GPL Version 2 (default/COPYING line 9; game content scripts also CC-BY-SA-3.0 per line 6; no or-later clause seen)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "population-cap",
+  "presence-gated",
+  "director",
+  "new:kind-weight-then-roll",
+  "new:zone-hop-distance-guard",
+  "new:transition-connectivity-guard",
+  "new:empty-zone-runtime-filter"
+ ],
+ "data_fields": [
+  {
+   "name": "baseChance",
+   "donor_constant": "MONSTER_FREQUENCY by galaxy setting: low 0.03, medium 0.08, high 0.2",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/freeorion-freeorion/default/python/universe_generation/universe_tables.py:125"
+  },
+  {
+   "name": "kindRate",
+   "donor_constant": "per kind, e.g. SM_KRILL_1 0.5, SM_DRONE_FACTORY 0.4, SM_EXP_OUTPOST 1000.0",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/freeorion-freeorion/default/scripting/monster_fleets.inf:37"
+  },
+  {
+   "name": "kindCap",
+   "donor_constant": "per kind, e.g. SM_DRONE_FACTORY 5, SM_FLOATER 50, SM_KRILL_1 9999 (unlimited)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/freeorion-freeorion/default/scripting/monster_fleets.inf:38"
+  },
+  {
+   "name": "minHops",
+   "donor_constant": "max(per-kind floor, MIN_MONSTER_DISTANCE); floors 2 to 6; rule default 3 minus 1 = 2",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/freeorion-freeorion/default/scripting/macros/named_values.focs.py:66"
+  },
+  {
+   "name": "runtimeChancePerTurn",
+   "donor_constant": "systems x frequency x 0.01",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/freeorion-freeorion/default/python/turn_events/turn_events.py:39"
+  },
+  {
+   "name": "runtimeSpawnsPerTurn",
+   "donor_constant": "at most 1 fleet per turn",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/freeorion-freeorion/default/python/turn_events/turn_events.py:39"
+  },
+  {
+   "name": "blockerRegionsExpected",
+   "donor_constant": "placed blockers + 2 regions while the candidate is counted",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/freeorion-freeorion/default/python/universe_generation/monsters.py:38"
+  }
+ ],
+ "best_idea": "Give each spawn kind its own location rule (a hop distance from player-held zones), a cap and a rate, then pick one eligible kind per zone before a single roll, so every zone is visited once.",
+ "decision": "adapt",
+ "decision_why": "Keep the per-kind table (rate, cap and location rule as zone data) and the one-kind-then-roll loop at generation; reject the runtime spawner as written because it ignores the caps and location rules and hard-codes one kind.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: 2-hop safe radius around player-held zones and cap 5 on one kind; over 500 seeded generation passes no spawn is within 2 hops of a player zone, the kind never exceeds 5, and a lane-breaking spawn that would split the zone graph beyond blockers + 1 regions is refused."
+}

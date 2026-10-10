@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ioquake-ioq3	zones-world	P	STRONG	full	/mnt/frankendom-donors/ioquake-ioq3/code/server/sv_snapshot.c:289-427 (per-client send filter: area connectivity then PVS cluster test) with cm_test.c:334-410 (door-driven area flood); the hint sv_world.c:35-463 is the entity sector index, not the zone decision
+keldaanCommunity-pokemonAutoChess	zones-world	P	STRONG	full	/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/mini-game.ts:265-297 (per-stage weighted encounter roll with leftover mass and once-per-run void) with town-encounters.ts:17-81 (the table); the hint gen/generate-maps.ts is an export script
+l1j-en-classic	zones-world	P	STRONG	full	/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/L1Spawn.java:298-467 (respawn min plus jitter, area or fixed spawn point, presence gate with 3000 ms retry); the hint L1MapInfo.java is a GM tile command

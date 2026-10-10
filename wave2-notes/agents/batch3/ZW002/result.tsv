@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+Anuken-Mindustry	zones-world	P	STRONG	full	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/ai/WaveSpawner.java:62-109 (spawnEnemies: per-wave count, per-point filter, flyer map-edge placement, drop-zone shockwave); SpawnGroup.java:68-74 (getSpawned); Logic.java:319-322 and 595-600 (wave timer)
+Card-Forge-forge	zones-world	P	STRONG	full	/mnt/frankendom-donors/Card-Forge-forge/forge-game/src/main/java/forge/game/GameAction.java:92-640 (changeZone: LKI capture, Moved replacement pass, remove and add, event, triggers last) and 969-1011 (ceaseToExist for tokens)
+CleverRaven-Cataclysm-DDA	zones-world	P	STRONG	full	/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/map.cpp:10028-10173 (spend population on load); overmapbuffer.cpp:2129-2205 (reload and store); overmap.cpp:3793-3885 (radial spread) and 1299-1312 (daily decay)

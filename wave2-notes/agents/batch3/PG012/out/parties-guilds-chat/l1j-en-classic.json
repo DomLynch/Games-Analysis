@@ -1,0 +1,47 @@
+{
+ "game": "l1j-en-classic",
+ "category": "parties-guilds-chat",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/L1Party.java",
+ "licence": "GPL-2.0-or-later (L1Party.java header: version 2 or any later version; repo COPYING is GPL v2 text)",
+ "licence_class": "copyleft",
+ "target_module": "origins/party/roster.ts",
+ "parity_row": 14,
+ "pattern_tags": [
+  "new:party-roster",
+  "new:single-invite-slot",
+  "new:leader-only-invite",
+  "new:party-meters-sync",
+  "new:two-member-dissolve"
+ ],
+ "data_fields": [
+  {
+   "name": "party_cap",
+   "donor_constant": "MaxPT = 8",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/l1j-en-classic/config/altsettings.properties:41"
+  },
+  {
+   "name": "invite_range",
+   "donor_constant": "5 tiles, same map",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/clientpackets/C_CreateParty.java:52"
+  },
+  {
+   "name": "hp_meter_scale",
+   "donor_constant": "100 * cur / max (integer percent)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/L1Party.java:105"
+  }
+ ],
+ "best_idea": "A party roster with one pending-invite slot per invitee, invites limited by map, tile range and leader rights, and a leave that disbands a two-member party and sends one notice per member.",
+ "decision": "adapt",
+ "decision_why": "Take the roster, the one-slot invite and the leader-only invite; clear the pending slot on accept, re-check the accepter is not already in a party, and report a full party explicitly. The donor does none of these.",
+ "decision_status": "proposed",
+ "acceptance": "A server test: an invite from 6 tiles is refused; a second invite replaces the first; accepting a replaced invite returns no-invite; accepting into a full party returns party-full with the roster unchanged; a two-member party dissolves when either member leaves."
+}

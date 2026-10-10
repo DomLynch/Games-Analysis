@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+opentibiabr-otclient	economy-trade	P	STRONG	full	t_market.lua:1667-1671 client listing fee = ceil(price/50 x amount), floor 20, cap 1000000; disagrees with server game.cpp:5251-5255 (1 percent, cap 100000)
+otland-forgottenserver	economy-trade	P	STRONG	full	game.cpp:5203-5373 and iomarket.cpp:187-203 escrow lifecycle (create/accept/cancel/expiry, 1 percent fee, 30-day expiry, 60-minute sweep); fee never returned; charges lost on sell path
+pmbstyle-L2Solo	economy-trade	P	STRONG	full	MarketListingPolicy.js:53-200 seller listing gate (funded-demand cap, 0.98 undercut, 0.60 floor, refusal rule); learned multiplier only steps down (ColdMarketListingService.js:756); hint file BotMarketPricing.js:44-53 is the price helper only

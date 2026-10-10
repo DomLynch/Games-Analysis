@@ -1,0 +1,17 @@
+Game: coding-horror-basic-computer-games (parties-guilds-chat, cell 1, list 3, hint INFERRED)
+Donor: /mnt/frankendom-donors/coding-horror-basic-computer-games (105 top-level game folders, 3667 files; licence file reads "This is free and unencumbered software released into the public domain." = Unlicense)
+Verdict: NONE
+
+Files opened (candidates):
+1. /mnt/frankendom-donors/coding-horror-basic-computer-games/27_Civil_War/python/Civilwar.py lines 236-241 and 318-326 (the only "party" variable: a hot-seat count of 1 or 2 local players)
+2. /mnt/frankendom-donors/coding-horror-basic-computer-games/00_Common/javascript/WebTerminal/HtmlTerminal.js lines 1-30 (browser terminal class; a prompt callback, no users, no channels)
+3. /mnt/frankendom-donors/coding-horror-basic-computer-games/71_Poker/csharp/Players/Computer.cs lines 1-25 (AI player class; no social state)
+4. /mnt/frankendom-donors/coding-horror-basic-computer-games/00_Alternate_Languages/14_Bowling/bowling.bas lines 1-8 (the string "BRING YOUR FRIENDS" is a printed prompt only)
+
+Search: grep -rniw over the whole tree for guild, party, friend, clan, lobby, invite, roster, chat, channel, permission, socket, websocket, http. Hits were prompt text ("MY FRIEND"), the football "TEAM 1/TEAM 2" labels, the Civil War party count, card "Rank" classes (poker hand ranks), and one Acey-Ducey comment about the STDIN "channel". No network, no server, no accounts, no friend list, no chat, no ranks of members, no permissions.
+
+Why NONE: the repo is 1970s BASIC game ports that play one local session; the only grouping concept is a count of local players, which is not party formation, membership, or permission.
+
+Best transferable idea: The nearest thing is a hot-seat player count that sets a turn loop (Civilwar.py 238-241, 322), which only says "how many local players" and does not transfer to joining, leaving, or rank-gated roles.
+Decision (proposed): reject - no social mechanism in this donor; keep the "party" label out of Frankendom's party work unless a different donor is used.
+Checked confidence: high that the donor has no party, guild, chat, or friend mechanism (whole-tree grep plus four files opened). Depth thin: I read only the candidate fragments, not all 3667 files.

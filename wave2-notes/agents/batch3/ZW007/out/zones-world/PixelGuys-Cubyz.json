@@ -1,0 +1,96 @@
+{
+ "game": "PixelGuys-Cubyz",
+ "category": "zones-world",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/server/terrain/climategen/NoiseBasedVoronoi.zig",
+ "licence": "GPL-3.0 (repo LICENSE, Version 3, 29 June 2007; no per-file header in NoiseBasedVoronoi.zig)",
+ "licence_class": "copyleft",
+ "target_module": "origins/world/zone-layout.ts (proposed new module; repo not read)",
+ "parity_row": 23,
+ "pattern_tags": [
+  "new:chunk-centre-rejection",
+  "new:parity-phase-neighbours",
+  "new:normalised-nearest-zone",
+  "new:height-gate-penalty",
+  "new:blend-band"
+ ],
+ "data_fields": [
+  {
+   "name": "chunk_size",
+   "donor_constant": "2048",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/server/terrain/climategen/NoiseBasedVoronoi.zig:71"
+  },
+  {
+   "name": "reject_cap",
+   "donor_constant": "100 consecutive rejections",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/server/terrain/climategen/NoiseBasedVoronoi.zig:116"
+  },
+  {
+   "name": "spacing_factor",
+   "donor_constant": "0.85 of summed radii",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/server/terrain/climategen/NoiseBasedVoronoi.zig:102"
+  },
+  {
+   "name": "zone_radius_min_max",
+   "donor_constant": "minRadius default 256, maxRadius default = minRadius; radius = mean, variation = half range",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/server/terrain/biomes.zig:268"
+  },
+  {
+   "name": "zone_height_range",
+   "donor_constant": "minHeight/maxHeight per zone kind (default unbounded)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/server/terrain/biomes.zig:297"
+  },
+  {
+   "name": "zone_height_limits",
+   "donor_constant": "minHeightLimit/maxHeightLimit per zone kind (default unbounded)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/server/terrain/biomes.zig:299"
+  },
+  {
+   "name": "blend_band_width",
+   "donor_constant": "0.5 of normalised distance, smoothstep",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/server/terrain/climategen/NoiseBasedVoronoi.zig:216"
+  },
+  {
+   "name": "height_limit_penalty",
+   "donor_constant": "+10 normalised distance",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/server/terrain/climategen/NoiseBasedVoronoi.zig:282"
+  },
+  {
+   "name": "biome_cell_size",
+   "donor_constant": "32 units (biomeShift 5)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/server/terrain/SurfaceMap.zig:64"
+  },
+  {
+   "name": "fragment_size",
+   "donor_constant": "8192 units (mapShift 8 + biomeShift 5)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/server/terrain/ClimateMap.zig:44"
+  }
+ ],
+ "best_idea": "Generate zone centres per 2048-unit chunk from the world seed with a spacing rule of 0.85 times the summed radii, place the chunks in four parity phases so each chunk's neighbours are already fixed, and classify a point by the nearest centre measured in units of that centre's radius.",
+ "decision": "adapt",
+ "decision_why": "Take the seeded chunk placement and the normalised nearest-zone rule, because they give a deterministic zone map from data without a baked file. Parity row 23 is the closest row, not an exact fit: this is layout, not population. Do not take the unclamped radius, the untested window-edge behaviour, or the f32 classification as is.",
+ "decision_status": "proposed",
+ "acceptance": "A server test with a fixed seed asserts that chunk centres two or more chunks inside a window are identical when the window origin changes, that no two centres in adjacent chunks are closer than 0.85 times their summed radii, and that a point in a valley is not assigned to a mountain-only zone whose height limit it breaks."
+}

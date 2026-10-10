@@ -1,0 +1,47 @@
+{
+ "game": "keldaanCommunity-pokemonAutoChess",
+ "category": "parties-guilds-chat",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/rooms/commands/lobby-commands.ts",
+ "licence": "GPL-3.0 (project LICENSE, GNU GPL v3)",
+ "licence_class": "copyleft",
+ "target_module": "origins/social/chat-channels.ts",
+ "parity_row": null,
+ "pattern_tags": [
+  "new:channel-post-rules",
+  "new:staff-delete-gate",
+  "new:ban-purge-disconnect",
+  "new:ban-admin-protection",
+  "new:store-memory-order"
+ ],
+ "data_fields": [
+  {
+   "name": "channel_max_chars",
+   "donor_constant": "250",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/rooms/commands/lobby-commands.ts:265"
+  },
+  {
+   "name": "channel_post_roles",
+   "donor_constant": "lobby: ADMIN, MODERATOR; preparation room: non-anonymous",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/rooms/commands/lobby-commands.ts:271"
+  },
+  {
+   "name": "chat_retention_s",
+   "donor_constant": "604800 (7 days)",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/models/mongo-models/chat-v2.ts:28"
+  }
+ ],
+ "best_idea": "Keep each channel's posting rule and length cap as data, check the sender's role on the server for every action, and make a ban purge the user's messages before closing their sessions.",
+ "decision": "adapt",
+ "decision_why": "Take the per-channel rule table and server-side role checks; reject the fire-and-forget store write and the inconsistent memory/store order, which lose messages without retry.",
+ "decision_status": "proposed",
+ "acceptance": "A server test: 300 characters are cut to 250; a non-staff post to the broadcast channel is refused; a moderator can ban a moderator but not an ADMIN; after a ban the target's sessions close and their messages are gone."
+}

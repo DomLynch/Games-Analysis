@@ -1,0 +1,53 @@
+{
+ "game": "azerothcore-azerothcore-wotlk",
+ "category": "parties-guilds-chat",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Guilds/Guild.cpp",
+ "licence": "GPL-2.0 (LICENSE: GNU GPL version 2, June 1991; file headers: either version 2 of the License)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/guild-bank.ts (new)",
+ "parity_row": null,
+ "pattern_tags": [
+  "new:daily-cap-per-rank",
+  "new:one-counter-per-member",
+  "new:debit-then-credit-rollback",
+  "new:global-daily-reset"
+ ],
+ "data_fields": [
+  {
+   "name": "gold_cap_per_rank_per_day",
+   "donor_constant": "rank value (set when the rank loads; loader not read)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Guilds/Guild.h:512"
+  },
+  {
+   "name": "guild_master_unlimited",
+   "donor_constant": "GUILD_WITHDRAW_MONEY_UNLIMITED (0xFFFFFFFF sentinel)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Guilds/Guild.h:48"
+  },
+  {
+   "name": "daily_reset_hour",
+   "donor_constant": "6 (GetNextTimeWithDayAndHour(-1, 6))",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/World/World.cpp:1952"
+  },
+  {
+   "name": "item_slot_cap_per_tab_per_day",
+   "donor_constant": "rank value per tab",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Guilds/Guild.cpp:2622"
+  }
+ ],
+ "best_idea": "A per-rank daily cap on how much a member may take out of a shared chest, with one counter per member, a check before the debit, a rollback if the player credit fails, and one global reset time.",
+ "decision": "adapt",
+ "decision_why": "Keep the gold cap, the counter, the order of checks and the single daily reset; drop the item-slot counter (counts removals, not items) and the repair path. Only worth building if Frankendom has a guild chest.",
+ "decision_status": "proposed",
+ "acceptance": "A server test with a 500-gold rank cap: 300 succeeds, a second 300 is refused with the bank unchanged, 200 succeeds, the reset restores 500, and a refused player credit leaves the bank and the counter unchanged."
+}

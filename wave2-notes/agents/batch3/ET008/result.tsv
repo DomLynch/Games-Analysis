@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+angband-angband	economy-trade	P	STRONG	full	src/store.c:579-674 price_item (2/3 shop buy, black market 1/6 and 3x, purse cap, never free); do_cmd_buy 1695-1704 and do_cmd_sell 1920-1923 recompute and move gold
+ax-grymyr-l2dn-server	economy-trade	P	STRONG	full	L2Dn/L2Dn.GameServer.Model/InstanceManagers/WorldExchangeManager.cs:256-376 fee and register; 118-198 expiry tick; 495-569 claim with tax; 640-689 buy; 433-494 cancel (no fee refund)
+azerothcore-azerothcore-wotlk	economy-trade	P	STRONG	full	src/server/game/AuctionHouse/AuctionHouseMgr.cpp:92-111 deposit; 187-243 sale payout (bid+deposit-cut); 518-562 expiry; 568-585 cut and 5% outbid; Handlers/AuctionHouseHandler.cpp:425-668 bid, buyout and cancel in one transaction

@@ -1,0 +1,38 @@
+{
+ "game": "PixelGuys-Cubyz",
+ "category": "parties-guilds-chat",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/server/permission.zig",
+ "licence": "GPL-3.0 (LICENSE file: GNU General Public License v3)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/guild-ranks.ts (new)",
+ "parity_row": null,
+ "pattern_tags": [
+  "new:path-permission-walk",
+  "new:stale-group-id",
+  "new:grant-ceiling"
+ ],
+ "data_fields": [
+  {
+   "name": "root_wildcard_default",
+   "donor_constant": "whitelist entry \"/\" answers yes for any path not decided earlier (rule)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/server/permission.zig:108"
+  },
+  {
+   "name": "default_group_protected",
+   "donor_constant": "default group cannot be removed from a member (rule)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/server/command/permission/group.zig:78"
+  }
+ ],
+ "best_idea": "Resolve a guild action by walking from the most specific permission path up to the root, so a member's own deny beats any rank allow, and never reuse a deleted rank's id so an old membership cannot match a new rank.",
+ "decision": "adapt",
+ "decision_why": "Frankendom needs ranks as permission sets the engine checks; take the resolver order and never-reused rank ids, but not the donor's warn-and-grant rule, root wildcard, or global chat.",
+ "decision_status": "proposed",
+ "acceptance": "A server test: an officer with guild/kick from their rank can kick; a personal deny on guild/kick blocks them although the rank allows it; re-creating a rank with the same name does not restore old members' rights; an officer without guild/invite is refused when granting it to a rank."
+}

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+smogon-pokemon-showdown	economy-trade	P	STRONG	full	/mnt/frankendom-donors/smogon-pokemon-showdown/server/chat-plugins/auction.ts:73-75,594-627,663-692 - sequential timed auction: each bid restarts the window, a reserve floor limits the bid, the balance is frozen until one close writes the sale.
+veloren-veloren	economy-trade	P	STRONG	full	/mnt/frankendom-donors/veloren-veloren/world/src/site/economy/mod.rs:886-910 (scarcity value curve with 0.8 smoothing, floor 0.1) and 576-720 (trade_at_site settlement: proportional rationing, payment, silent overdraft clamp)
+widelands-widelands	economy-trade	P	STRONG	full	/mnt/frankendom-donors/widelands-widelands/src/logic/map_objects/tribes/market.cc:355-437,631-673 - a standing two-party trade launches a batch only when both markets are ready and completes it only when both sides have received it (hint file tutorial04 mission_thread.lua is the wrong file).

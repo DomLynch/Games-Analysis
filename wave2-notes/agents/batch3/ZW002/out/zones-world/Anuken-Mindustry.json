@@ -1,0 +1,148 @@
+{
+ "game": "Anuken-Mindustry",
+ "category": "zones-world",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/ai/WaveSpawner.java",
+ "licence": "GPL-3.0",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "director",
+  "population-cap",
+  "respawn-scaling",
+  "wait-gate",
+  "variable-step",
+  "new:spawn-point-filter",
+  "new:drop-zone-clear",
+  "new:wave-index-table"
+ ],
+ "data_fields": [
+  {
+   "name": "group.begin",
+   "donor_constant": "0 (int default)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/game/SpawnGroup.java:30"
+  },
+  {
+   "name": "group.end",
+   "donor_constant": "never (Integer.MAX_VALUE)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/game/SpawnGroup.java:28"
+  },
+  {
+   "name": "group.spacing",
+   "donor_constant": "1",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/game/SpawnGroup.java:32"
+  },
+  {
+   "name": "group.unitAmount",
+   "donor_constant": "1",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/game/SpawnGroup.java:42"
+  },
+  {
+   "name": "group.unitScaling",
+   "donor_constant": "never (waves per +1 unit)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/game/SpawnGroup.java:36"
+  },
+  {
+   "name": "group.max",
+   "donor_constant": "40 per point per wave",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/game/SpawnGroup.java:34"
+  },
+  {
+   "name": "group.shields",
+   "donor_constant": "0",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/game/SpawnGroup.java:38"
+  },
+  {
+   "name": "group.shieldScaling",
+   "donor_constant": "0 per wave",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/game/SpawnGroup.java:40"
+  },
+  {
+   "name": "group.spawnPoint",
+   "donor_constant": "-1 (any point)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/game/SpawnGroup.java:44"
+  },
+  {
+   "name": "rules.dropZoneRadius",
+   "donor_constant": "300 world units",
+   "unit": "px",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/game/Rules.java:151"
+  },
+  {
+   "name": "rules.waveSpacing",
+   "donor_constant": "2 * Time.toMinutes (Time.toMinutes not read)",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/game/Rules.java:153"
+  },
+  {
+   "name": "difficulty.enemySpawnMultiplier",
+   "donor_constant": "casual 0.5, easy 0.75, normal 1, hard 1.5, eradication 2",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/game/Difficulty.java:6"
+  },
+  {
+   "name": "difficulty.waveTimeMultiplier",
+   "donor_constant": "casual 2, easy 1.5, normal 1, hard 0.8, eradication 0.6",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/game/Difficulty.java:9"
+  },
+  {
+   "name": "spawn.groundSpread",
+   "donor_constant": "tilesize * 2 = 16 world units",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/ai/WaveSpawner.java:95"
+  },
+  {
+   "name": "spawn.flyerJitter",
+   "donor_constant": "margin = 0f",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/ai/WaveSpawner.java:23"
+  },
+  {
+   "name": "spawn.spawningWindow",
+   "donor_constant": "121",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/ai/WaveSpawner.java:108"
+  },
+  {
+   "name": "spawn.coreStepLength",
+   "donor_constant": "tilesize * 1.1 per step, max 30 steps, 3-tile solid check",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/ai/WaveSpawner.java:164"
+  }
+ ],
+ "best_idea": "A zone's spawn table as records (begin, end, spacing, base count, capped scaling, optional spawn-point filter), with the count per point computed by one pure function per wave.",
+ "decision": "adapt",
+ "decision_why": "Keep the table shape and count formula as zone data in origins/server/world-spawns.ts; reject the global wave timer and the shockwave kill (kills must go through the server ledger); add the row 23 respawn and despawn-on-empty rules ourselves, since this donor has none.",
+ "decision_status": "proposed",
+ "acceptance": "Server test on one zone with group {unitAmount:2, unitScaling:3, max:6, spawnPoint:-1} and two spawn points: 2 per point on cycles 0-2, 3 per point on cycle 3, never more than 6 per point."
+}

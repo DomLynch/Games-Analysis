@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+beyond-all-reason-Beyond-All-Reason	economy-trade	P	STRONG	full	luarules/gadgets/game_tax_resource_sharing.lua:54-87 taxes each player-to-player transfer by a gross/net split (the tax is burned), and 102-243 runs an overflow pass whose second stage credits allies with no debit (237-238).
+clockworklabs-SpacetimeDB	economy-trade	P	STRONG	full	templates/money-exchange-react-ts/spacetimedb/src/index.ts:100-152 checks every rule before writing two balances and two audit rows (zero-sum), with a 100.00 starting grant per identity at 44-51 and no retry guard.
+coding-horror-basic-computer-games	economy-trade	P	STRONG	full	38_Fur_Trader/furtrader.bas:1160-1425 pays a per-fort cost, rolls per-fort price bands and a d10 route table, and settles count x price; the Java port (java/src/FurTrader.java:151-175, 267-323) drops the cent rounding, changes bands, and falls through from a YES answer into the sale.

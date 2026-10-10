@@ -1,0 +1,76 @@
+{
+  "game": "OpenDAoC-OpenDAoC-Core",
+  "category": "parties-guilds-chat",
+  "cell": 2,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameutils/Group.cs",
+  "licence": "GNU GPL v3 (LICENSE file)",
+  "licence_class": "copyleft",
+  "target_module": "origins/server/party.ts",
+  "parity_row": 18,
+  "pattern_tags": [
+    "presence-gated",
+    "drop-filter",
+    "fixed-step",
+    "new:invite-consent-one-shot",
+    "new:leader-succession",
+    "new:two-member-dissolve"
+  ],
+  "data_fields": [
+    {
+      "name": "maxMembers",
+      "donor_constant": "8",
+      "unit": "count",
+      "where": "engine constant",
+      "donor_ref": "GameServer/serverproperty/ServerProperties.cs:533"
+    },
+    {
+      "name": "positionIntervalMs",
+      "donor_constant": "2500",
+      "unit": "ms",
+      "where": "engine constant",
+      "donor_ref": "GameServer/gameutils/Group.cs:721"
+    },
+    {
+      "name": "dissolveAtMembers",
+      "donor_constant": "2 (dissolves when one member is left after a leave)",
+      "unit": "count",
+      "where": "engine constant",
+      "donor_ref": "GameServer/gameutils/Group.cs:308"
+    },
+    {
+      "name": "coinShareRounding",
+      "donor_constant": "ceil(value / eligible count); to be replaced by exact remainder rule",
+      "unit": "none",
+      "where": "engine constant",
+      "donor_ref": "GameServer/gameutils/Group.cs:591"
+    },
+    {
+      "name": "autosplitCoinsDefault",
+      "donor_constant": "true",
+      "unit": "none",
+      "where": "engine constant",
+      "donor_ref": "GameServer/gameutils/Group.cs:47"
+    },
+    {
+      "name": "autosplitLootDefault",
+      "donor_constant": "true",
+      "unit": "none",
+      "where": "engine constant",
+      "donor_ref": "GameServer/gameutils/Group.cs:46"
+    },
+    {
+      "name": "inviteLifetime",
+      "donor_constant": "no expiry found in code read",
+      "unit": "s",
+      "where": "engine constant",
+      "donor_ref": "GameServer/packets/Client/168/DialogResponseHandler.cs:125"
+    }
+  ],
+  "best_idea": "A party is one server-side object that owns membership, a capacity, a one-shot invite consent, leader succession and a shared loot split, and the presence and opt-out filter decides who can receive a drop.",
+  "decision": "adapt",
+  "decision_why": "Take the membership lifecycle (leader-only one-shot invite, capacity, succession) and the loot eligibility filter (present, opted in, has room, random pick with full-pack fallthrough); change the ceil coin rounding (creates coins), the ignored AddMember result on accept, and drop the PvP pet/guild-ID packet hack.",
+  "decision_status": "proposed",
+  "acceptance": "A server test where a 9th invite is refused as party full, a two-member party dissolves when one member leaves, a dropped item goes to exactly one random eligible in-view member with room, and a 10-coin drop across 3 eligible members credits exactly 10 on the one ledger."
+}

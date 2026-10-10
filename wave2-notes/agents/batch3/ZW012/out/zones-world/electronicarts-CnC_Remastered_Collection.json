@@ -1,0 +1,60 @@
+{
+ "game": "electronicarts-CnC_Remastered_Collection",
+ "category": "zones-world",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/REDALERT/MAP.CPP",
+ "licence": "GPL v3 with EA additional terms (Section 7), per LICENSE.md and REGION.H header",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "new:connected-region-labels",
+  "new:region-scoped-placement",
+  "new:relabel-on-blocker-change",
+  "fixed-step"
+ ],
+ "data_fields": [
+  {
+   "name": "candidate_cap",
+   "donor_constant": "10",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/REDALERT/MAP.CPP:1698"
+  },
+  {
+   "name": "region_id_limit",
+   "donor_constant": "255 (unsigned char label, no overflow check in Zone_Reset)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/REDALERT/CELL.H:115"
+  },
+  {
+   "name": "movement_classes",
+   "donor_constant": "4 (normal, crusher, destroyer, water)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/REDALERT/DEFINES.H:679"
+  },
+  {
+   "name": "neighbour_rule",
+   "donor_constant": "8-connected",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/REDALERT/MAP.CPP:1574"
+  },
+  {
+   "name": "search_ring_bound",
+   "donor_constant": "MAP_CELL_W (map width)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/REDALERT/MAP.CPP:1716"
+  }
+ ],
+ "best_idea": "Label the connected regions of a zone once, rebuild the labels only when a wall or gate state changes, and make every placement search accept only cells in the anchor's region.",
+ "decision": "adapt",
+ "decision_why": "Placement legality is a real rule for spawns and drops in a fast browser game, but Frankendom needs region labels built from its zone geometry and rebuilt on blocker change, not the donor's per-cell byte array with four movement classes.",
+ "decision_status": "proposed",
+ "acceptance": "A server test seals a pocket with a wall; a spawn requested inside the pocket lands only in the pocket's region; after the wall is destroyed the labels are rebuilt and the next spawn can land outside it."
+}

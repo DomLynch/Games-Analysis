@@ -1,0 +1,138 @@
+{
+ "game": "TurningWheel-Barony",
+ "category": "economy-trade",
+ "cell": 11,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/TurningWheel-Barony/src/items.cpp",
+ "licence": "as read",
+ "licence_class": "permissive",
+ "target_module": "origins/economy/prices.ts",
+ "parity_row": 21,
+ "pattern_tags": [
+  "new:two-sided-spread",
+  "new:proficiency-discount",
+  "new:shop-pool-ledger",
+  "status-meter",
+  "new:server-reprice-from-stock"
+ ],
+ "data_fields": [
+  {
+   "name": "buy_identified_factor",
+   "donor_constant": "0.8",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/items.cpp:5964"
+  },
+  {
+   "name": "buy_unidentified_factor",
+   "donor_constant": "1.25",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/items.cpp:5974"
+  },
+  {
+   "name": "buy_glass_gem_flat",
+   "donor_constant": "1400",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/items.cpp:5970"
+  },
+  {
+   "name": "sell_identified_factor",
+   "donor_constant": "1.20",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/items.cpp:6032"
+  },
+  {
+   "name": "sell_unidentified_factor",
+   "donor_constant": "0.75",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/items.cpp:6042"
+  },
+  {
+   "name": "blessed_buy_multiplier_per_point",
+   "donor_constant": "3 x beatitude (beatitude > 0)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/items.cpp:5981"
+  },
+  {
+   "name": "cursed_buy_factor",
+   "donor_constant": "1 + beatitude/2 (beatitude <= 0)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/items.cpp:5985"
+  },
+  {
+   "name": "sell_beatitude_factor",
+   "donor_constant": "1 + beatitude/20",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/items.cpp:6047"
+  },
+  {
+   "name": "status_factor",
+   "donor_constant": "(status + 5)/10, status BROKEN=0 .. EXCELLENT=4",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/items.cpp:5987"
+  },
+  {
+   "name": "trading_divisor_base",
+   "donor_constant": "(50 + trading)/150 (buy divides, sell multiplies)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/items.cpp:5990"
+  },
+  {
+   "name": "trading_proficiency_base_cap",
+   "donor_constant": "min(100, max(0, base))",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/stat.cpp:73"
+  },
+  {
+   "name": "charisma_sell_divisor",
+   "donor_constant": "1 + CHR/20 (sell, players only)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/items.cpp:6056"
+  },
+  {
+   "name": "consumable_buy_multiplier_pct",
+   "donor_constant": "100 default; JSON key consumable_buy_value_multiplier; floor 1.0",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/mod_tools.cpp:9313"
+  },
+  {
+   "name": "skill_gain_certain_price",
+   "donor_constant": "100 gold",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/shops.cpp:271"
+  },
+  {
+   "name": "skill_gain_chance_floor",
+   "donor_constant": "max(10, price) out of 100",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/shops.cpp:277"
+  },
+  {
+   "name": "monster_gold_drop_pct",
+   "donor_constant": "globalGoldPercent / 100 (custom gameplay)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/actmonster.cpp:3915"
+  }
+ ],
+ "best_idea": "Price every trade as catalogue value times one shared modifier stack, then clamp buys to at least the catalogue value and sells to at most it, so no trade can be arbitraged against the shop, and let trading skill narrow the spread.",
+ "decision": "adapt",
+ "decision_why": "Take the modifier stack and the two clamps for shop prices and reuse the neutral sell value for crafting costs; reject client-supplied price fields, the zero floor on overdraft, and the unbounded shop pool, which break the server-verified and one-ledger rulings.",
+ "decision_status": "proposed",
+ "acceptance": "A server test sends a buy whose packet beatitude or count differs from the stock item and asserts the price comes from the stock item (or the buy is rejected); a buy with gold below the price is rejected and no gold moves; buy price is at least catalogue value and sell price at most it; a trading-0 buyer pays about 336 and a trading-100 buyer 112 for an unidentified EXCELLENT catalogue-100 item (worked by hand)."
+}

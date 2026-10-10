@@ -1,0 +1,96 @@
+{
+ "game": "00-Evan-shattered-pixel-dungeon",
+ "category": "economy-trade",
+ "cell": 11,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/npcs/Shopkeeper.java",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "origins/economy/shop.ts",
+ "parity_row": 21,
+ "pattern_tags": [
+  "new:price-band-markup",
+  "new:sell-at-base-buyback-undo",
+  "new:charge-to-value-chance",
+  "presence-gated",
+  "grace-timer"
+ ],
+ "data_fields": [
+  {
+   "name": "sell_multiplier",
+   "donor_constant": "1 (sale pays item base value)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "WndTradeItem.java:254"
+  },
+  {
+   "name": "buy_band_multiplier",
+   "donor_constant": "5 per band",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "Shopkeeper.java:202"
+  },
+  {
+   "name": "buy_band_depths",
+   "donor_constant": "5 (band = depth / 5 + 1)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "Shopkeeper.java:202"
+  },
+  {
+   "name": "buyback_history",
+   "donor_constant": "3",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "Shopkeeper.java:70"
+  },
+  {
+   "name": "buyback_price_multiplier",
+   "donor_constant": "1 (returned.value())",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Shopkeeper.java:267"
+  },
+  {
+   "name": "steal_value_per_charge",
+   "donor_constant": "10 + level/2",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "MasterThievesArmband.java:332"
+  },
+  {
+   "name": "steal_chance_cap",
+   "donor_constant": "1",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "MasterThievesArmband.java:324"
+  },
+  {
+   "name": "cursed_drain_amount",
+   "donor_constant": "1 gold per act",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "MasterThievesArmband.java:266"
+  },
+  {
+   "name": "cursed_drain_chance",
+   "donor_constant": "1 in 5 (Random.Int(5)==0)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "MasterThievesArmband.java:265"
+  },
+  {
+   "name": "flee_grace_turns",
+   "donor_constant": "1 (turnsSinceHarmed >= 1)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "Shopkeeper.java:159"
+  }
+ ],
+ "best_idea": "Price a shop's sale at base value times a depth band, sell back at base value, and keep a three-item buy-back list, so a sell and buy-back round trip never makes gold and the only margin is the depth band.",
+ "decision": "adapt",
+ "decision_why": "The spread shape and the zero-margin buy-back fit a server-verified economy with one ledger; the donor checks funds only in the client and spends without a check, so Frankendom moves the funds check to the server.",
+ "decision_status": "proposed",
+ "acceptance": "A server test asserts a buy above the balance is refused with the balance unchanged, a sell then buy-back returns the balance to its start, and the buy-back list never holds more than three items."
+}

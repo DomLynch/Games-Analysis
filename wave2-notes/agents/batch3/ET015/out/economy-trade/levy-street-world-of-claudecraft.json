@@ -1,0 +1,74 @@
+{
+ "game": "levy-street-world-of-claudecraft",
+ "category": "economy-trade",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/exchange_eligibility.ts",
+ "licence": "MIT (LICENSE read: MIT License, Copyright (c) 2026 Levy Street)",
+ "licence_class": "permissive",
+ "target_module": "origins/server/trade-eligibility.ts",
+ "parity_row": 21,
+ "pattern_tags": [
+  "new:precedence-reason",
+  "new:closed-default-category",
+  "new:category-floor",
+  "clamp-and-report"
+ ],
+ "data_fields": [
+  {
+   "name": "equipment_quality_floor",
+   "donor_constant": "epic (rank 4 of 0 to 5)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/server/woc_market_rules.ts:558"
+  },
+  {
+   "name": "allow_equipment",
+   "donor_constant": "true",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/server/woc_market_rules.ts:557"
+  },
+  {
+   "name": "allow_mounts",
+   "donor_constant": "true (every tier, no floor)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/server/woc_market_rules.ts:559"
+  },
+  {
+   "name": "allow_chromas",
+   "donor_constant": "true (every tier, no floor)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/server/woc_market_rules.ts:560"
+  },
+  {
+   "name": "excluded_item_ids",
+   "donor_constant": "empty set in restricted policy",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/server/woc_market_rules.ts:561"
+  },
+  {
+   "name": "quality_rank_table",
+   "donor_constant": "poor 0, common 1, uncommon 2, rare 3, epic 4, legendary 5",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/server/woc_market_rules.ts:564"
+  },
+  {
+   "name": "missing_quality_default",
+   "donor_constant": "common",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/server/woc_market_rules.ts:610"
+  }
+ ],
+ "best_idea": "One eligibility function for trade, checked in a fixed order with one refusal reason per copy, where the server re-runs it and an unknown item category is refused by default.",
+ "decision": "adapt",
+ "decision_why": "Frankendom's player trade and auction need one rule that says why a copy cannot be traded (quest, bound, locked), and the closed default and the precedence chain fit; the token exchange, bond and settlement do not, and neither does the store-catalogue exclusion.",
+ "decision_status": "proposed",
+ "acceptance": "A server test: a quest item, a bound copy, a bind-on-trade copy, a soulbound sword and a player-locked item each refuse with their own reason; an unknown kind is refused as not eligible; a common sword is refused below the epic floor while an epic sword lists; a common mount lists."
+}

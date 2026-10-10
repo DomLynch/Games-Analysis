@@ -1,0 +1,104 @@
+{
+ "game": "azerothcore-azerothcore-wotlk",
+ "category": "economy-trade",
+ "cell": 11,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/AuctionHouse/AuctionHouseMgr.cpp",
+ "licence": "GNU GPL v2",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/auction.ts (proposed new module)",
+ "parity_row": 21,
+ "pattern_tags": [
+  "clamp-and-report",
+  "new:listing-deposit",
+  "new:escrow-in-record",
+  "new:sale-cut",
+  "new:expiry-sink",
+  "new:minimum-raise"
+ ],
+ "data_fields": [
+  {
+   "name": "deposit_percent",
+   "donor_constant": "depositPercent x 3 / 100 of vendor SellPrice, per house (house value not read)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "src/server/game/AuctionHouse/AuctionHouseMgr.cpp:99"
+  },
+  {
+   "name": "deposit_floor",
+   "donor_constant": "100 copper x Rate.Auction.Deposit",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/server/game/AuctionHouse/AuctionHouseMgr.cpp:108"
+  },
+  {
+   "name": "deposit_rate",
+   "donor_constant": "Rate.Auction.Deposit 1.0",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "src/server/game/World/WorldConfig.cpp:117"
+  },
+  {
+   "name": "cut_percent",
+   "donor_constant": "cutPercent per house (house value not read)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "src/server/game/AuctionHouse/AuctionHouseMgr.cpp:570"
+  },
+  {
+   "name": "cut_rate",
+   "donor_constant": "Rate.Auction.Cut 1.0",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "src/server/game/World/WorldConfig.cpp:118"
+  },
+  {
+   "name": "outbid_step_percent",
+   "donor_constant": "5 percent of current bid",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "src/server/game/AuctionHouse/AuctionHouseMgr.cpp:582"
+  },
+  {
+   "name": "outbid_step_min",
+   "donor_constant": "1 copper",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/server/game/AuctionHouse/AuctionHouseMgr.cpp:582"
+  },
+  {
+   "name": "listing_durations",
+   "donor_constant": "12, 24, 48 hours",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "src/server/game/Handlers/AuctionHouseHandler.cpp:187"
+  },
+  {
+   "name": "expiry_check_interval",
+   "donor_constant": "1 minute timer",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "src/server/game/AuctionHouse/AuctionHouseMgr.cpp:38"
+  },
+  {
+   "name": "expiry_lookahead",
+   "donor_constant": "60 seconds",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "src/server/game/AuctionHouse/AuctionHouseMgr.cpp:520"
+  },
+  {
+   "name": "max_items_per_listing",
+   "donor_constant": "160",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "src/server/game/AuctionHouse/AuctionHouseMgr.h:35"
+  }
+ ],
+ "best_idea": "Hold each open bid in the auction record itself, refund the outbid bidder and settle the sale inside one server transaction, with the deposit and the cut as explicit sinks.",
+ "decision": "adapt",
+ "decision_why": "Adopt the escrow-in-the-record, one-transaction and minimum-raise rules; adapt the deposit to a plain fraction of catalogue value times listing time, because the donor's formula is hard to explain and its house rates are data we have not read.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: a 12-hour stack of 2 at vendor value V charges max(floor, rate x fraction x V x 2); a bid below top bid plus max(5 percent, 1 copper) is refused; an outbid bidder's gold returns in the same transaction; an unsold listing returns the item and not the deposit; a sold listing pays bid + deposit - cut."
+}

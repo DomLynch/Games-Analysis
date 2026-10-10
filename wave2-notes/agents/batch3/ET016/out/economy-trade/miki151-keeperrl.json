@@ -1,0 +1,75 @@
+{
+ "game": "miki151-keeperrl",
+ "category": "economy-trade",
+ "cell": 11,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/miki151-keeperrl/workshops.cpp",
+ "licence": "GPL-2.0 (repo LICENSE and COPYING.txt, GPL Version 2 June 1991; no or-later wording in workshops.cpp)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/crafting-queue.ts",
+ "parity_row": 21,
+ "pattern_tags": [
+  "debt-carry",
+  "wait-gate",
+  "new:reserve-then-pay",
+  "new:refund-before-progress",
+  "new:first-ready-takes-work"
+ ],
+ "data_fields": [
+  {
+   "name": "prod_mult",
+   "donor_constant": "0.15 progress per work over work needed",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/miki151-keeperrl/workshops.cpp:77"
+  },
+  {
+   "name": "work_per_skill_point",
+   "donor_constant": "0.02 times efficiency times skill times speed times boost",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/miki151-keeperrl/collective.cpp:1636"
+  },
+  {
+   "name": "speed_boost",
+   "donor_constant": "max neighbouring furniture multiplier, default 1.0",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/miki151-keeperrl/collective.cpp:1630"
+  },
+  {
+   "name": "recipe_cost",
+   "donor_constant": "workshop override, else item crafting cost",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/miki151-keeperrl/workshop_item.cpp:30"
+  },
+  {
+   "name": "work_needed",
+   "donor_constant": "per item (value not read)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/miki151-keeperrl/workshops.cpp:114"
+  },
+  {
+   "name": "min_skill",
+   "donor_constant": "minimum attribute for the cost resource, from workshop info",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/miki151-keeperrl/player_control.cpp:2792"
+  },
+  {
+   "name": "refund_before_progress",
+   "donor_constant": "full cost if progress is 0, else 0",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/miki151-keeperrl/workshops.cpp:66"
+  }
+ ],
+ "best_idea": "A crafting queue that books the cost as debt when an item is queued, pays when the stock covers it, refunds only a paid item that has made no progress, and gives each work tick to the first ready item in queue order.",
+ "decision": "adapt",
+ "decision_why": "Keep the queued, paid, in-progress and done states and the refund-before-progress rule for a server-side craft queue, but make the queued cost a real hold in the one ledger; the donor debt is only a claim that other spenders ignore, and its separate debt tables are a second ledger we reject.",
+ "decision_status": "proposed",
+ "acceptance": "A server test with 10 gold in stock queues a 10-gold craft, asserts a separate 10-gold spend is refused while queued, asserts unqueue before progress returns exactly 10 gold, and asserts unqueue after progress returns 0."
+}

@@ -1,0 +1,90 @@
+{
+ "game": "ax-grymyr-l2dn-server",
+ "category": "economy-trade",
+ "cell": 11,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer.Model/InstanceManagers/WorldExchangeManager.cs",
+ "licence": "MIT",
+ "licence_class": "permissive",
+ "target_module": "origins/server/market.ts (proposed new module)",
+ "parity_row": 21,
+ "pattern_tags": [
+  "new:listing-fee-up-front",
+  "new:timed-listing-states",
+  "new:sink-by-expiry",
+  "new:server-timer-tick",
+  "clamp-and-report",
+  "new:two-currency-market"
+ ],
+ "data_fields": [
+  {
+   "name": "listing_fee_rate",
+   "donor_constant": "AdenaFee 100.0 applied as price x amount x 100.0 (comment says 100 percent; unit unclear)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "L2Dn.GameServer.Model/InstanceManagers/WorldExchangeManager.cs:270"
+  },
+  {
+   "name": "listing_fee_cap",
+   "donor_constant": "MaxAdenaFee -1 (no cap)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "L2Dn.GameServer/Config/WorldExchange.ini:38"
+  },
+  {
+   "name": "sale_tax_rate",
+   "donor_constant": "LCoinFee 0.05",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "L2Dn.GameServer/Config/WorldExchange.ini:23"
+  },
+  {
+   "name": "sale_tax_cap",
+   "donor_constant": "MaxLCoinFee 20000",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "L2Dn.GameServer/Config/WorldExchange.ini:28"
+  },
+  {
+   "name": "open_listings_per_seller",
+   "donor_constant": "10 entries in the seller's bid list (getPlayerBids count)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "L2Dn.GameServer.Model/InstanceManagers/WorldExchangeManager.cs:289"
+  },
+  {
+   "name": "listing_window_days",
+   "donor_constant": "ItemSellPeriod 14",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "L2Dn.GameServer/Config/WorldExchange.ini:47"
+  },
+  {
+   "name": "take_back_window_days",
+   "donor_constant": "ItemBackPeriod 120",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "L2Dn.GameServer/Config/WorldExchange.ini:55"
+  },
+  {
+   "name": "pay_window_days",
+   "donor_constant": "PaymentTakePeriod 120",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "L2Dn.GameServer/Config/WorldExchange.ini:51"
+  },
+  {
+   "name": "status_tick_interval",
+   "donor_constant": "BidItemsIntervalStatusCheck 30000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "L2Dn.GameServer/Config/WorldExchange.ini:18"
+  }
+ ],
+ "best_idea": "List a stack with a fee charged up front that is never refunded, then move each listing through timed states on a fixed server timer, so every sink is a rule with a visible deadline.",
+ "decision": "adapt",
+ "decision_why": "Adopt the fee-up-front, timed-state and server-checked listing shape in one ledger; adapt the currency pair and the fee unit, since the donor mixes two currencies and a fee unit that looks wrong.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: list 5 stacks at a fee fraction r; the fee is charged once and not refunded on cancel; a buy with too little currency is refused with no change to either wallet; a paid claim credits price minus min(price x tax, cap); an unclaimed sale is removed after the pay window on a fake clock."
+}

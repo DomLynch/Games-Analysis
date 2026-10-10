@@ -1,0 +1,74 @@
+{
+ "game": "daggerfall-unity",
+ "category": "parties-guilds-chat",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Guilds/Guild.cs",
+ "licence": "as read",
+ "licence_class": "permissive",
+ "target_module": "origins/progression/guildRank.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "new:cumulative-rank-ladder",
+  "wait-gate",
+  "status-meter",
+  "new:rank-perk-scale"
+ ],
+ "data_fields": [
+  {
+   "name": "reviewDays",
+   "donor_constant": "28",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Guilds/Guild.cs:79"
+  },
+  {
+   "name": "reputationStep",
+   "donor_constant": "10 per rank (0,10,...,90)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Guilds/Guild.cs:37"
+  },
+  {
+   "name": "highSkillBarByRank",
+   "donor_constant": "22 (rank 0), then 23,31,39,47,55,63,71,79,87",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Guilds/Guild.cs:38"
+  },
+  {
+   "name": "lowSkillBarByRank",
+   "donor_constant": "4 (rank 0), then 5,9,13,17,21,25,29,33,37",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Guilds/Guild.cs:39"
+  },
+  {
+   "name": "rewardPerRank",
+   "donor_constant": "+10% per rank (10 + rank) / 10",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Guilds/FightersGuild.cs:98"
+  },
+  {
+   "name": "repairDiscountPerRank",
+   "donor_constant": "-10% per rank (10 - rank) / 10",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Guilds/FightersGuild.cs:103"
+  },
+  {
+   "name": "thievesSellMagicMinRank",
+   "donor_constant": "2",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Guilds/ThievesGuild.cs:155"
+  }
+ ],
+ "best_idea": "A guild rank ladder where each rank needs the one below it, a reputation bar plus skill counts at two levels, re-checked on a 28-day clock that resets only when the rank changes; rank then gates services and scales rewards.",
+ "decision": "adapt",
+ "decision_why": "Take the cumulative ladder, the 28-day clock that resets only on a rank change, and the rank-gated service table as data. Reject the donor's client-side review at window open (Guild.cs 74 via popup 164): the port must run the review on the server from the ledger. Parity row 18 is a stretch: no row covers the rank ladder or service permissions, so Lead should decide whether to add one.",
+ "decision_status": "proposed",
+ "acceptance": "A server test sets reputation 40 with guild skills 31 and 9, runs the server's review, and asserts rank 2; opening the guild screen on the client does not change rank."
+}

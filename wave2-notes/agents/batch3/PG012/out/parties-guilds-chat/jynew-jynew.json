@@ -1,0 +1,38 @@
+{
+ "game": "jynew-jynew",
+ "category": "parties-guilds-chat",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "thin",
+ "donor_path": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameSave/GameRuntimeData.cs",
+ "licence": "unclear: project LICENSE forbids use of code or resources without public authorisation; per-file headers say MIT",
+ "licence_class": "restricted",
+ "target_module": "origins/party/roster.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "new:party-roster",
+  "new:join-moves-carried-items",
+  "new:leave-restores-member"
+ ],
+ "data_fields": [
+  {
+   "name": "party_cap",
+   "donor_constant": "MAX_TEAMCOUNT from game settings (value not read)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameCore/GameConst.cs:132"
+  },
+  {
+   "name": "leave_only_off_map",
+   "donor_constant": "true (default)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/MOD/MODRootConfig.cs:38"
+  }
+ ],
+ "best_idea": "A party roster where joining moves the member's carried items into one shared pool and strips their gear, and leaving strips gear and restores the member, with the size cap checked inside join.",
+ "decision": "adapt",
+ "decision_why": "Take the roster rule and the item move on join, but put the size cap, hero-cannot-leave and map-only rules inside the engine; the donor checks them only in Lua and UI.",
+ "decision_status": "proposed",
+ "acceptance": "A server test: a 7th join to a full party returns full and leaves the shared pool unchanged; joined items appear in the pool exactly once; a leave off the world map is refused."
+}

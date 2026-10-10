@@ -1,0 +1,205 @@
+[
+[
+"hedgewars-hw",
+"Hint file is a single-player mission with a scripted enemy team",
+"/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Missions/Scenario/User_Mission_-_Teamwork_2.lua",
+34,
+"enemy = AddHog(loc(\"WatchBot 4000\"), 5, 50, \"cyborg1\")"
+],
+[
+"hedgewars-hw",
+"Hint file gives the player a fixed starting team",
+"/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Missions/Scenario/User_Mission_-_Teamwork_2.lua",
+29,
+"playerTeamName = AddMissionTeam(-1)"
+],
+[
+"hedgewars-hw",
+"Licence is GPL version 2 (header of the flood module)",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/FloodDetection.hs",
+7,
+" * the Free Software Foundation; version 2 of the License"
+],
+[
+"hedgewars-hw",
+"Each event kind maps to a tuple: count, short window, long window, two actions",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/FloodDetection.hs",
+47,
+"boundaries :: Event -> (Int, (NominalDiffTime, Int)"
+],
+[
+"hedgewars-hw",
+"Chat boundaries: numPerEntry 3, 10 s with 2, 30 s with 3",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/FloodDetection.hs",
+48,
+"boundaries LobbyChatMessage = (3, (10, 2), (30, 3), (chat1, chat2))"
+],
+[
+"hedgewars-hw",
+"Engine message boundaries: numPerEntry 8, 10 s with 4, 25 s with 5",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/FloodDetection.hs",
+49,
+"boundaries EngineMessage = (8, (10, 4), (25, 5), (em1, em2))"
+],
+[
+"hedgewars-hw",
+"Room join boundaries: numPerEntry 2, 10 s with 2, 35 s with 3",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/FloodDetection.hs",
+50,
+"boundaries RoomJoin = (2, (10, 2), (35, 3), (join1, join2))"
+],
+[
+"hedgewars-hw",
+"Room rename shares the chat boundaries and the chat bucket",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/FloodDetection.hs",
+44,
+"transformField RoomNameUpdate f = transformField LobbyChatMessage f"
+],
+[
+"hedgewars-hw",
+"Warning text for chat, and the kick message",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/FloodDetection.hs",
+53,
+"chat1 = [Warning $ loc \"Warning! Chat flood protection activated\"]"
+],
+[
+"hedgewars-hw",
+"Kick action for chat flood",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/FloodDetection.hs",
+54,
+"chat2 = [ByeClient $ loc \"Excess flood\"]"
+],
+[
+"hedgewars-hw",
+"Entries older than the long window are dropped",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/FloodDetection.hs",
+66,
+"let nei = takeWhile ((>=) sec2 . diffUTCTime curTime . snd) ei"
+],
+[
+"hedgewars-hw",
+"Short-window count is taken over the long-window list",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/FloodDetection.hs",
+68,
+"let l1 = length $ takeWhile ((>=) sec1 . diffUTCTime curTime . snd) nei"
+],
+[
+"hedgewars-hw",
+"Kick when either window exceeds its limit plus one",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/FloodDetection.hs",
+70,
+"let actions = if l2 >= num2 + 1 || l1 >= num1 + 1 then "
+],
+[
+"hedgewars-hw",
+"Warn when either window reaches its limit",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/FloodDetection.hs",
+73,
+"if l1 >= num1 || l2 >= num2 then "
+],
+[
+"hedgewars-hw",
+"A checked event stores a new entry with the numPerEntry counter",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/FloodDetection.hs",
+78,
+"return $ [ModifyClient . transformField e . const $ (numPerEntry, curTime) : nei"
+],
+[
+"hedgewars-hw",
+"A checked event sets the pending actions for this client",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/FloodDetection.hs",
+79,
+", ModifyClient (\\c -> c{pendingActions = actions})"
+],
+[
+"hedgewars-hw",
+"Unchecked events decrement the head counter only",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/FloodDetection.hs",
+84,
+"$ \\(h:hs) -> first (flip (-) 1) h : hs"
+],
+[
+"hedgewars-hw",
+"registerEvent chooses check or decrement from the head counter",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/FloodDetection.hs",
+33,
+"if (null eventInfo) || 0 == (fst $ head eventInfo) then doCheck eventInfo else updateInfo"
+],
+[
+"hedgewars-hw",
+"Chat command relays to others before registering the event",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/HWProtoLobbyState.hs",
+52,
+"return [AnswerClients s [\"CHAT\", n, msg], RegisterEvent LobbyChatMessage]"
+],
+[
+"hedgewars-hw",
+"ReactCmd runs the command's returned actions in list order",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/Actions.hs",
+907,
+"forM_ (actions `deepseq` actions) processAction"
+],
+[
+"hedgewars-hw",
+"RegisterEvent runs the flood check, then processes the resulting actions",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/Actions.hs",
+899,
+"actions <- registerEvent e"
+],
+[
+"hedgewars-hw",
+"Pending flood actions run after the command is handled",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/ServerCore.hs",
+60,
+"mapM_ processAction pa"
+],
+[
+"hedgewars-hw",
+"Pending actions are cleared after they run",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/ServerCore.hs",
+61,
+"processAction $ ModifyClient $ \\c -> c{pendingActions = []}"
+],
+[
+"hedgewars-hw",
+"Warning action sends a WARNING line to the client",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/Actions.hs",
+116,
+"processAction $ AnswerClients [chan] [\"WARNING\", msg]"
+],
+[
+"hedgewars-hw",
+"Pending actions field lives in the client record",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/CoreTypes.hs",
+162,
+"pendingActions :: ![Action]"
+],
+[
+"hedgewars-hw",
+"Event kinds: lobby chat, engine message, room join, room rename",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/CoreTypes.hs",
+110,
+"data Event = LobbyChatMessage"
+],
+[
+"hedgewars-hw",
+"Clan chat relay for team chat uses the same-clan filter",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/HandlerUtils.hs",
+59,
+"Prelude.filter (\\c -> clientClan c == clientClan cl) otherRoomClients"
+],
+[
+"hedgewars-hw",
+"TEAMCHAT sends only to same-clan clients in the room",
+"/mnt/frankendom-donors/hedgewars-hw/gameServer/HWProtoInRoomState.hs",
+382,
+"chans <- roomSameClanChans"
+],
+[
+"hedgewars-hw",
+"Rust chat checker signature (its body is a stub, see note)",
+"/mnt/frankendom-donors/hedgewars-hw/rust/chat_sanitizer/src/flood.rs",
+6,
+"fn check(&self, player_id: T, message: &str) -> Severity {"
+]
+]

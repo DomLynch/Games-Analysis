@@ -1,0 +1,73 @@
+{
+ "game": "OpenEnroth-OpenEnroth",
+ "category": "economy-trade",
+ "cell": 11,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/Engine/PriceCalculator.cpp",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "origins/economy/prices.ts",
+ "parity_row": 21,
+ "pattern_tags": [
+  "new:shop-percent-discount",
+  "new:price-floor-clamp",
+  "new:check-then-apply"
+ ],
+ "data_fields": [
+  {
+   "name": "shop_price_multiplier",
+   "donor_constant": "fPriceMultiplier per house, float (data file not read)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "src/Engine/Tables/HouseTable.cpp:86"
+  },
+  {
+   "name": "mastery_merchant_multipliers",
+   "donor_constant": "1, 2, 3, 5 for novice, expert, master, grandmaster",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "src/Engine/PriceCalculator.cpp:137"
+  },
+  {
+   "name": "merchant_percent_cap",
+   "donor_constant": "100 (percent; grandmaster merchant is 100)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "src/Engine/PriceCalculator.cpp:150"
+  },
+  {
+   "name": "merchant_percent_offset",
+   "donor_constant": "+7 in min(bonus - rep + 7, 100)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "src/Engine/PriceCalculator.cpp:150"
+  },
+  {
+   "name": "sell_min_price",
+   "donor_constant": "1 (clamp lower bound)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/Engine/PriceCalculator.cpp:89"
+  },
+  {
+   "name": "broken_sell_price",
+   "donor_constant": "1",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/Engine/PriceCalculator.cpp:96"
+  },
+  {
+   "name": "party_reputation_term",
+   "donor_constant": "5 per hired-NPC profession present (x5 professions) plus location reputation (location value not read)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "src/Engine/Party.cpp:828"
+  }
+ ],
+ "best_idea": "A shop price is one multiplier of the item value, a skill percent that discounts it, a floor at the item value for buying, and a clamp to 1..value for selling, so no shop can undercut or over-pay the item's own worth.",
+ "decision": "adapt",
+ "decision_why": "The clamps and the percent-off shape fit a shop as zone data; the reputation term is dropped unless Frankendom has a reputation to feed it, since the duel has none.",
+ "decision_status": "proposed",
+ "acceptance": "A server test asserts that a shop's buy price is never below the item value, its sell price is never above the item value and never below 1, and a broken item sells for 1."
+}

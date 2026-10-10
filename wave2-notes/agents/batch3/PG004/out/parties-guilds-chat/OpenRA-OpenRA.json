@@ -1,0 +1,68 @@
+{
+ "game": "OpenRA-OpenRA",
+ "category": "parties-guilds-chat",
+ "cell": 18,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Game/Server/PlayerMessageTracker.cs",
+ "licence": "GPL-3.0-or-later (file header: version 3 or any later version; COPYING is GPLv3)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/chat-intake.ts",
+ "parity_row": 5,
+ "pattern_tags": [
+  "new:sliding-window-rate-limit",
+  "new:penalty-push-out",
+  "grace-timer",
+  "new:channel-routing",
+  "new:receiver-side-filter"
+ ],
+ "data_fields": [
+  {
+   "name": "chat_window_ms",
+   "donor_constant": "5000 (FloodLimitInterval)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "OpenRA.Game/Settings.cs:164"
+  },
+  {
+   "name": "chat_max_in_window",
+   "donor_constant": "5 (FloodLimitMessageCount)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "OpenRA.Game/Settings.cs:167"
+  },
+  {
+   "name": "chat_pause_ms",
+   "donor_constant": "15000 (FloodLimitCooldown)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "OpenRA.Game/Settings.cs:170"
+  },
+  {
+   "name": "chat_join_cooldown_ms",
+   "donor_constant": "5000 (FloodLimitJoinCooldown)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "OpenRA.Game/Settings.cs:161"
+  },
+  {
+   "name": "chat_max_chars",
+   "donor_constant": "2500 (ChatMessageMaxLength)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "OpenRA.Game/Network/UnitOrders.cs:22"
+  },
+  {
+   "name": "chat_penalty_stamp_delta_ms",
+   "donor_constant": "max(0, pause - window), 10000 with defaults",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "OpenRA.Game/Server/PlayerMessageTracker.cs:76"
+  }
+ ],
+ "best_idea": "Gate chat on the server with a sliding-window limit whose penalty holds the window full for a fixed time after the message that trips it, so spam control does not depend on the client.",
+ "decision": "adapt",
+ "decision_why": "The window-plus-penalty gate is the right shape for our server intake and is cheap to test, but OpenRA broadcasts every chat line and filters on receive, which breaks our server-verified rule, so the recipient set must be resolved on the server.",
+ "decision_status": "proposed",
+ "acceptance": "Five chat lines at t=0..4 s from one player: the sixth at t=6 s is dropped with about 13 s left, no line is accepted before 19 s, and a party-only line reaches party sockets only (an outsider socket receives nothing)."
+}

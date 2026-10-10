@@ -1,0 +1,74 @@
+{
+ "game": "ax-grymyr-l2dn-server",
+ "category": "parties-guilds-chat",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer.Model/Model/Party.cs",
+ "licence": "MIT License, Copyright (c) 2024-2025 Grymyr, L2Dn Server Project (LICENSE.txt)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/reward.ts (new)",
+ "parity_row": 18,
+ "pattern_tags": [
+  "xp-share",
+  "level-gap",
+  "new:level-squared-share",
+  "new:pool-then-split"
+ ],
+ "data_fields": [
+  {
+   "name": "party_bonus_by_size",
+   "donor_constant": "1.0,1.6,1.65,1.7,1.8,1.9,2.0,2.1,2.2 (index = members-1, capped)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer.Model/Model/Party.cs:36"
+  },
+  {
+   "name": "party_xp_rate",
+   "donor_constant": "1 (RatePartyXp)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer/Config/Rates.ini:17"
+  },
+  {
+   "name": "highfive_gap_bounds",
+   "donor_constant": "0-9;10-14;15-99",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer/Config/Character.ini:872"
+  },
+  {
+   "name": "highfive_gap_percent",
+   "donor_constant": "100;30;0",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer/Config/Character.ini:880"
+  },
+  {
+   "name": "level_cutoff_method_value",
+   "donor_constant": "15 (shipped; code default 20)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer/Config/Character.ini:864"
+  },
+  {
+   "name": "whole_kill_level_gate",
+   "donor_constant": "14",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer.Model/Model/Actor/Attackable.cs:1431"
+  },
+  {
+   "name": "overhit_cap",
+   "donor_constant": "25 (percent of pool)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer.Model/Model/Actor/Attackable.cs:1455"
+  }
+ ],
+ "best_idea": "Scale one pool by party size, split it by level squared over the members who fought, then cut each member by a level-gap percent set as data, so no share is handed to another member.",
+ "decision": "adapt",
+ "decision_why": "Keep the pool-then-split order and the gap table as zone data; drop the bonus entries above 3, the side-effect ledgers and the double damage share, since our ledger must be one and the kill is server-verified.",
+ "decision_status": "proposed",
+ "acceptance": "A three-player server test with levels 30, 25, 15, pool 100 and bonus 1.65 credits 84.86 and 58.93 and 0 to the level-15 player, with 21.21 not re-spread and one credit per member."
+}

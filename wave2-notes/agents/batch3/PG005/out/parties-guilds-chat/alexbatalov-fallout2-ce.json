@@ -1,0 +1,47 @@
+{
+ "game": "alexbatalov-fallout2-ce",
+ "category": "parties-guilds-chat",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/party_member.cc",
+ "licence": "Sustainable Use License, Version 1.0 (LICENSE.md)",
+ "licence_class": "restricted",
+ "target_module": "origins/server/party-roster.ts (new)",
+ "parity_row": null,
+ "pattern_tags": [
+  "population-cap",
+  "new:protected-leader-slot",
+  "new:swap-remove",
+  "new:stable-id-offset",
+  "new:save-lock"
+ ],
+ "data_fields": [
+  {
+   "name": "party_slack",
+   "donor_constant": "20 (literal added to the base member count)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/party_member.cc:377"
+  },
+  {
+   "name": "base_member_count",
+   "donor_constant": "number of consecutive 'Party Member N' sections with party_member_pid in data\\\\party.txt (file not in donor; not verified)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/party_member.cc:141"
+  },
+  {
+   "name": "stable_id_base",
+   "donor_constant": "18000 (id = 18000 + pid & 0xFFFFFF)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/party_member.cc:398"
+  }
+ ],
+ "best_idea": "Keep the party as a fixed roster with the player in slot 0 that can never be removed; refuse a join at the base-plus-slack cap, make a repeat join a no-op success, remove a killed member on the kill path, and count only living, visible members.",
+ "decision": "adapt",
+ "decision_why": "Frankendom needs a party roster with a protected leader slot, a cap and kill-path removal; take those, but not the global prototype write, the positional membership match, or the id offset as the id scheme.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: player plus two allies accepts a third ally only under the cap; a second add of the same ally adds no slot; a fallen ally leaves and the active count drops by one; a join during a zone hand-off is refused with a message; reset never removes the player."
+}

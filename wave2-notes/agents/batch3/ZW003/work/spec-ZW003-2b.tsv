@@ -1,0 +1,9 @@
+note	claim	donor_file	quote	pick
+DCurrent-openbor	update_scroller is called once per update step inside the step loop	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	update_scroller();	only
+DCurrent-openbor	the step loop advances time one unit per step	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	            ++_time;	only
+DCurrent-openbor	the step loop runs while time is below the frame target	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	while(_time < newtime)	only
+DCurrent-openbor	frame target is time plus the frame interval (normal path, last match)	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	newtime = _time + interval;	last
+DCurrent-openbor	frame target capped at 100 units ahead	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	if(newtime > _time + 100)	only
+DCurrent-openbor	cap assignment	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	newtime = _time + 100;	only
+DCurrent-openbor	interval read from the timer with game speed	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	interval = timer_getinterval(global_config.game_speed);	only
+DCurrent-openbor	interval quarter clamp	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	if(interval > global_config.game_speed / 4)	only

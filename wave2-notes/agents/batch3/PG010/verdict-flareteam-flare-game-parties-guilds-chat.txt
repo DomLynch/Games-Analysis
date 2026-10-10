@@ -1,0 +1,32 @@
+# flareteam-flare-game (parties-guilds-chat, cell 1, list 3) - verdict PARTIAL, depth thin
+
+Hint file: art_src/characters/guild/guild_male.blend is the WRONG file (a Blender model of a guild NPC). Not opened as a mechanism.
+
+Donor: /mnt/frankendom-donors/flareteam-flare-game (game data and art only; no engine source)
+Licence: README.md line 19 says the Flare engine is GPL version 3 or later; README.md line 21 says the art and data are CC-BY-SA 3.0 (LICENSE.txt is CC-BY-SA 3.0 Unported). The engine is NOT in this donor.
+camera_scope: not applicable.
+
+Search: find over the donor found no .cpp or .h files at all (file types: txt, png, blend, tmx, ogg, po, ...). grep -rli for guild|party|friend|chat|faction|ally|companion|recruit over the donor matched only NPC names and dialogue, flavour text ("Courier guildsmen", alpha_demo/items/categories/magic.txt:7), PO translation strings, and the word "party" in LICENSE.txt. The NPC dialogue "topic=Chat" lines (alpha_demo/npcs/martigan.txt:49, alpha_demo/npcs/guill.txt:15 and :147) are dialogue menus, not chat (matched by grep, not read).
+
+Files opened (candidates):
+1. mods/empyrean_campaign/powers/categories/enemy.txt (lines 1-20, 463-497, 520-531, 880-895)
+2. mods/empyrean_campaign/enemies/lvl10_minotaur_necromancer.txt (whole file)
+3. mods/empyrean_campaign/enemies/lvl10_skeleton_minion.txt (lines 1-27)
+4. mods/alpha_demo/npcs/kenrik.txt (whole file; a "Trade Guild" NPC that is only a vendor, no membership)
+5. README.md (lines 1-30 and the licence lines)
+6. LICENSE.txt (first 5 lines only)
+
+Why PARTIAL: the donor is an art-and-data-only copy of a single-player action RPG, so it has no party formation, guild ranks, chat channels, friend lists or social state sync; the only group mechanic is one enemy-side heal on a minion group, and the engine code that gives buff_party and requires_spawns their meaning is not in the donor (not read).
+
+What the donor does have (data, read):
+- Summon power 193 (enemy.txt 463-473): type=spawn, spawn_type=lvl10_skeleton_minion (467), spawn_limit=fixed,2 (468), requires_los, requires_empty_target, cooldown 10s (473).
+- Heal power 195 (enemy.txt 485-493): type=fixed, buff_party=true (488), requires_spawns=1 (489), post_effect=hp_restore,50,33ms (491), heal_animation 600ms, cooldown=5s (493; line too short to receipt, read only).
+- Lvl10 minotaur necromancer carries 193 (lines 18-19) and 195 in melee and ranged slots (lines 22-23). The third number in power=slot,id,n is not read (meaning not confirmed).
+- Skeleton minion is a plain melee enemy (hp 160, lines 8 and 14), with passive powers 185 and 194.
+- Not read: how buff_party chooses its targets (radius, faction, who counts as the group) and what requires_spawns checks, because the handler is not in the donor.
+
+Checked: 6 files opened as listed; receipts 8 of 8 verified (receipts.tsv); no sketch (PARTIAL).
+
+Best transferable idea: a group heal that only fires while the group still has living members and restores every member in one cast on a 5 s cooldown is a small rule a many-vs-one boss could use for its adds.
+
+Decision (proposed): adapt, narrowly - for a boss-with-adds heal only, as one power with requires_group and buff_group flags and the heal amount and cooldown as zone data. Reject for the party, guild, chat and friend-list parts: this donor has none of them to copy.

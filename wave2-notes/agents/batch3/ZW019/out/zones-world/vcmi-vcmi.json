@@ -1,0 +1,109 @@
+{
+ "game": "vcmi-vcmi",
+ "category": "zones-world",
+ "cell": 7,
+ "verdict": "STRONG",
+ "depth": "thin",
+ "donor_path": "/mnt/frankendom-donors/vcmi-vcmi/lib/rmg/modificators/ObjectManager.cpp",
+ "licence": "GPL-2.0-or-later (CRmgTemplate.cpp header: 'GNU General Public License v2.0 or later'; license.txt is the GPL v2 text)",
+ "licence_class": "copyleft",
+ "target_module": "origins/zones/guard-strength.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "new:tier-table-row",
+  "new:hinge-strength-curve",
+  "new:guard-for-reward",
+  "population-cap"
+ ],
+ "data_fields": [
+  {
+   "name": "guard_value1_units",
+   "donor_constant": "value1 2500 / 1500 / 1000 / 500 / 0 by tier index",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vcmi-vcmi/lib/rmg/modificators/ObjectManager.cpp:738"
+  },
+  {
+   "name": "guard_value2_units",
+   "donor_constant": "value2 7500 / 7500 / 7500 / 5000 / 5000 by tier index",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vcmi-vcmi/lib/rmg/modificators/ObjectManager.cpp:739"
+  },
+  {
+   "name": "guard_slope1_ratio",
+   "donor_constant": "multiplier1 0.5 / 0.75 / 1.0 / 1.5 / 1.5 by tier index",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vcmi-vcmi/lib/rmg/modificators/ObjectManager.cpp:740"
+  },
+  {
+   "name": "guard_slope2_ratio",
+   "donor_constant": "multiplier2 0.5 / 0.75 / 1.0 / 1.0 / 1.5 by tier index",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vcmi-vcmi/lib/rmg/modificators/ObjectManager.cpp:741"
+  },
+  {
+   "name": "min_guard_strength_units",
+   "donor_constant": "minGuardStrength 2000 (global config)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vcmi-vcmi/config/randomMap.json:19"
+  },
+  {
+   "name": "min_guarded_value_units",
+   "donor_constant": "minGuardedValues 6500 / 4167 / 3000 / 1833 / 1333 by tier index",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vcmi-vcmi/lib/rmg/modificators/TreasurePlacer.cpp:938"
+  },
+  {
+   "name": "pile_density_per_400_tiles",
+   "donor_constant": "count = zone tiles x density / 400 per tier (density values in zone JSON, not read)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/vcmi-vcmi/lib/rmg/modificators/TreasurePlacer.cpp:985"
+  },
+  {
+   "name": "treasure_tier_min_max_units",
+   "donor_constant": "target pile value random in [min, max] per tier",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/vcmi-vcmi/lib/rmg/modificators/TreasurePlacer.cpp:715"
+  },
+  {
+   "name": "guard_amount_jitter_ratio",
+   "donor_constant": "x uniform [0.75, 1.25] when amount >= 4 (candidate stacks only)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vcmi-vcmi/lib/rmg/modificators/ObjectManager.cpp:771"
+  },
+  {
+   "name": "blocking_guard_cap_ratio",
+   "donor_constant": "zone max treasure divided by 3",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vcmi-vcmi/lib/rmg/modificators/TreasurePlacer.cpp:940"
+  },
+  {
+   "name": "hidden_road_penalty_ratio",
+   "donor_constant": "score divided by 10 when the guard hides a road",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/vcmi-vcmi/lib/rmg/modificators/TreasurePlacer.cpp:1076"
+  },
+  {
+   "name": "fallback_guard_creature",
+   "donor_constant": "Azure Dragon (hard-coded, no jitter)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/vcmi-vcmi/lib/rmg/modificators/ObjectManager.cpp:775"
+  }
+ ],
+ "best_idea": "A reward's guard strength is a two-term hinge curve of the reward value with a per-tier row, the guard is the creature whose AI value fits that strength, and its count is the strength divided by that AI value.",
+ "decision": "adapt",
+ "decision_why": "Keep the strength formula, the candidate-fit rule and the count rule as authoring-time data (the tier row is picked by zone data, the fallback is a named field); reject the generator's random placement and its retry loop, which Frankendom does not need at play time.",
+ "decision_status": "proposed",
+ "acceptance": "An authoring test: a pile of value 6000 in a normal zone on a normal map gives strength 5000, a guard is required, the stack amount is 5000 divided by the creature's AI value, jittered to 75 to 125 percent only when the amount is 4 or more, and a pile at or below the tier threshold gets no guard."
+}

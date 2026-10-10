@@ -1,0 +1,117 @@
+{
+ "game": "2004Scape-Server",
+ "category": "economy-trade",
+ "cell": 11,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/2004Scape-Server/data/src/scripts/shop/scripts/shop.rs2",
+ "licence": "as read",
+ "licence_class": "permissive",
+ "target_module": "origins/economy/shop-stock.ts",
+ "parity_row": 21,
+ "pattern_tags": [
+  "new:stock-deviation-price",
+  "new:row-restock-tick",
+  "new:partial-buy-keep",
+  "clamp-and-report",
+  "fixed-step"
+ ],
+ "data_fields": [
+  {
+   "name": "shop_sell_percent",
+   "donor_constant": "100 (per-mille reading unresolved)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "data/src/scripts/shop/configs/shopkeeper.param:7"
+  },
+  {
+   "name": "shop_buy_percent",
+   "donor_constant": "60 (floored to 100 at zero deviation)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "data/src/scripts/shop/configs/shopkeeper.param:11"
+  },
+  {
+   "name": "haggle_per_unit_deviation",
+   "donor_constant": "10",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "data/src/scripts/shop/configs/shopkeeper.param:15"
+  },
+  {
+   "name": "adjustment_min",
+   "donor_constant": "-5000",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "data/src/scripts/shop/scripts/shop.rs2:185"
+  },
+  {
+   "name": "adjustment_max",
+   "donor_constant": "1000",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "data/src/scripts/shop/scripts/shop.rs2:185"
+  },
+  {
+   "name": "percent_floor",
+   "donor_constant": "100",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "data/src/scripts/shop/scripts/shop.rs2:186"
+  },
+  {
+   "name": "scale_divisor",
+   "donor_constant": "1000 (per-mille reading unresolved)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "data/src/scripts/shop/scripts/shop.rs2:187"
+  },
+  {
+   "name": "buy_unit_floor",
+   "donor_constant": "1 gp",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "data/src/scripts/shop/scripts/shop.rs2:145"
+  },
+  {
+   "name": "row_target_stock",
+   "donor_constant": "stockcount per row",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "src/cache/config/InvType.ts:110"
+  },
+  {
+   "name": "row_restock_period",
+   "donor_constant": "stockrate per row",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "src/cache/config/InvType.ts:111"
+  },
+  {
+   "name": "unlisted_decay_period",
+   "donor_constant": "100",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "src/engine/World.ts:122"
+  },
+  {
+   "name": "server_tick",
+   "donor_constant": "600",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "src/engine/World.ts:120"
+  },
+  {
+   "name": "overflow_guard_price",
+   "donor_constant": "2000000000",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "data/src/scripts/shop/scripts/shop.rs2:189"
+  }
+ ],
+ "best_idea": "Price each shop unit from that shop's own stock, so shortage raises the price and surplus lowers it by a fixed step per unit, and each stock row refills one unit per set number of server ticks toward its target, so a shop empties only at a climbing price and refills by itself.",
+ "decision": "adapt",
+ "decision_why": "The stock-driven price and per-row tick restock fit a zone market, but the donor's default numbers make the surplus side and the 60 buy default inert and its units are unresolved, so Frankendom sets the scale and floors as zone data and tests them.",
+ "decision_status": "proposed",
+ "acceptance": "Buying three units from a shop at its target gets dearer each unit, a surplus lowers the price only once the zone floor allows it, an emptied row refills one unit every rate interval; a bulk buy that runs out of coins keeps the units already paid for and drops the coins by exactly their sum."
+}

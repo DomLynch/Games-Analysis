@@ -1,0 +1,66 @@
+{
+ "game": "rathena-rathena",
+ "category": "parties-guilds-chat",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/rathena-rathena/src/map/party.cpp",
+ "licence": "GPL-3.0 (LICENSE: GNU GENERAL PUBLIC LICENSE, Version 3; party.cpp line 1: Licensed under GNU GPL)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/reward.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "xp-share",
+  "level-gap",
+  "hit-aggregation"
+ ],
+ "data_fields": [
+  {
+   "name": "party_share_level",
+   "donor_constant": "10 (code default); 15 (shipped conf/inter_athena.conf)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/char/inter.cpp:55"
+  },
+  {
+   "name": "family_share_min_level",
+   "donor_constant": "70",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/char/int_party.cpp:331"
+  },
+  {
+   "name": "even_share_bonus_per_extra_member",
+   "donor_constant": "0 (percent per extra member)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/conf/battle/party.conf:54"
+  },
+  {
+   "name": "idle_no_share_seconds",
+   "donor_constant": "no (off by default)",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/conf/battle/party.conf:49"
+  },
+  {
+   "name": "exp_calc_type_denominator",
+   "donor_constant": "0 = total damage; 1 = max HP; 2 = total damage with first attacker doubled",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/conf/battle/exp.conf:37"
+  },
+  {
+   "name": "attacker_share_cap",
+   "donor_constant": "1",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/map/mob.cpp:3122"
+  }
+ ],
+ "best_idea": "Share a kill's XP through one pool per party, weighted by each attacker's damage fraction, and switch the share off by a visible rule when the party's level spread breaks.",
+ "decision": "adapt",
+ "decision_why": "The damage-fraction pool and the level-band gate fit Frankendom's party XP and server-verified kills; adapt because the donor divides among every living party member on the map (bystanders included), switches the share off silently, and has a family exemption and config forks that Frankendom should not copy.",
+ "decision_status": "proposed",
+ "acceptance": "A server test with a party at levels 20, 22 and 35 and band 10 asserts the share is off and each attacker is paid alone; at levels 20, 22 and 24 the pooled XP from two attackers is split evenly among the three living members in the zone, and each member's XP is one ledger line."
+}

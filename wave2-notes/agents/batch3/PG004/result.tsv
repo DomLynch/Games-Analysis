@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+OpenRA-OpenRA	parties-guilds-chat	P	STRONG	full	OpenRA.Game/Server/PlayerMessageTracker.cs:42-84 and Server.cs:1027-1030: the server gates chat with a sliding-window flood limit and relays every line to all connections, while team filtering happens only on the receiver (UnitOrders.cs:161-165).
+OpenRCT2-OpenRCT2	parties-guilds-chat	P	STRONG	full	src/openrct2/network/NetworkBase.cpp:3034-3092 and 2968-2996: the server gates commands and chat on a per-rank permission bitmask with per-player cooldowns, but SetPlayerGroup (3614-3671) has no check on the target's current rank.
+OpenTTD-OpenTTD	parties-guilds-chat	P	STRONG	full	src/network/network_server.cpp:1307-1415 and 1432-1460: the server picks recipients for broadcast, team and private chat, but the team id comes from the packet and is never checked against the sender's company.

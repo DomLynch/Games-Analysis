@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+KsanaDock-Microverse	zones-world	P	STRONG	full	RoomManager.gd:12-50 registry from room_area group, centre+/-half-size inclusive test, null outside; adapt (id key, no silent fallback); see out/zones-world/KsanaDock-Microverse.deep.md
+LostCityRS-Engine-TS	zones-world	P	STRONG	full	src/engine/zone/Zone.ts:157-189,198-219 + entity/BuildArea.ts:31-93 + NetworkPlayer.ts:294-315; 13x13 window with 4/5-zone reload box, per-zone shared buffer; adapt. See out/zones-world/LostCityRS-Engine-TS.deep.md
+OpenDAoC-OpenDAoC-Core	zones-world	P	STRONG	full	GameServer/world/Zone.cs:330-394,398-466 + SubZone.cs:97-134 + ZoneService.cs:45-102 + MovementComponent.cs:56-64; 32x32 cell grid, ring query with cull, queued move; adapt; Z skipped in fully-inside cells (reject). See out/zones-world/OpenDAoC-OpenDAoC-Core.deep.md

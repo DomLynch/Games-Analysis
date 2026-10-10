@@ -1,0 +1,110 @@
+{
+ "game": "afritz1-OpenTESArena",
+ "category": "economy-trade",
+ "cell": 11,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/ArenaEntityUtils.cpp",
+ "licence": "as read",
+ "licence_class": "permissive",
+ "target_module": "origins/economy/loot-gold.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "new:class-gold-table",
+  "drop-filter",
+  "new:flat-resale-rate",
+  "new:catalogue-two-table-price",
+  "new:one-counter-gold"
+ ],
+ "data_fields": [
+  {
+   "name": "house_gold_min",
+   "donor_constant": "2 (random.next(9) + 2)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/ArenaEntityUtils.cpp:729"
+  },
+  {
+   "name": "house_gold_span",
+   "donor_constant": "9 values (2 to 10)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/ArenaEntityUtils.cpp:729"
+  },
+  {
+   "name": "village_gold_divisor",
+   "donor_constant": "2 (integer division)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/ArenaEntityUtils.cpp:732"
+  },
+  {
+   "name": "non_village_gold_multiplier",
+   "donor_constant": "2",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/ArenaEntityUtils.cpp:736"
+  },
+  {
+   "name": "palace_gold_by_city",
+   "donor_constant": "exe table palaceGoldValues[3] (values not read)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/ArenaEntityUtils.cpp:745"
+  },
+  {
+   "name": "noble_gold_multiplier",
+   "donor_constant": "10",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/ArenaEntityUtils.cpp:760"
+  },
+  {
+   "name": "dungeon_level_term",
+   "donor_constant": "levelIndex x levelIndex",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/ArenaEntityUtils.cpp:765"
+  },
+  {
+   "name": "dungeon_roll_max",
+   "donor_constant": "100 (next(100) + 1)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/ArenaEntityUtils.cpp:765"
+  },
+  {
+   "name": "slot_chance_pct",
+   "donor_constant": "exe table lootChances[4 x class + slot], filled when roll 1..100 <= chance (values not read)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Entities/ArenaEntityUtils.cpp:715"
+  },
+  {
+   "name": "resale_share",
+   "donor_constant": "(3 x value) / 4 integer",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Interface/GameWorldUiState.cpp:2739"
+  },
+  {
+   "name": "armour_class_price_per_multiplier",
+   "donor_constant": "50",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Items/ArenaItemUtils.cpp:31"
+  },
+  {
+   "name": "tavern_room_hours",
+   "donor_constant": "24",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Interface/GameWorldUiState.cpp:2852"
+  }
+ ],
+ "best_idea": "Pay loot gold from one small range per interior class (halved in villages, doubled elsewhere, scaled by the square of the level in dungeons) and keep the shop sell rate at three quarters so that resale is never a money source.",
+ "decision": "adapt",
+ "decision_why": "Take the per-class gold ranges as zone data and the three-quarter resale rule as one engine constant; reject the donor's two gold representations (counter for shops, inventory item for loot), the price captured at list build, and the equipped-item sale without refusal, since the one-ledger and server-verified rulings need one counter and a server-side price check.",
+ "decision_status": "proposed",
+ "acceptance": "A dungeon container at level 3 holds 10 to 109 gold, a village house container 1 to 5, a non-village noble container 40 to 200; all of it lands in the one gold counter; a sale of a 100-gp item pays 75; a purchase of a 75-gp item with 74 gold is refused and nothing moves."
+}

@@ -1,0 +1,81 @@
+{
+ "game": "TurningWheel-Barony",
+ "category": "zones-world",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/TurningWheel-Barony/src/maps.cpp",
+ "licence": "BSD-2-Clause (LICENSE.txt: Barony Open Source License, BSD 2-Clause, Turning Wheel LLC 2013-2020)",
+ "licence_class": "permissive",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "new:zone-band-table",
+  "new:level-gate-substitution",
+  "new:override-until-first-empty",
+  "new:seeded-spawn-stream"
+ ],
+ "data_fields": [
+  {
+   "name": "zone_roll_modulus",
+   "donor_constant": "10 for The Mines, The Swamp, The Ruins, Underworld; 20 for The Labyrinth, Hell; 15 for Caves, Citadel; 4 for fortress",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/maps.cpp:308"
+  },
+  {
+   "name": "zone_band_shares",
+   "donor_constant": "The Mines 40/40/10/10 (rat/skeleton/spider/troll); other zones as listed in the note",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/maps.cpp:309"
+  },
+  {
+   "name": "level_gate_threshold",
+   "donor_constant": "level >= 2 for spider and troll bands in The Mines, else skeleton",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/maps.cpp:321"
+  },
+  {
+   "name": "caves_table_split_level",
+   "donor_constant": "26 (table A at or below, table B above)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/maps.cpp:482"
+  },
+  {
+   "name": "boss_map_imp_swap",
+   "donor_constant": "imp band returns DEMON when the map name contains Boss",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/maps.cpp:456"
+  },
+  {
+   "name": "nested_draw_ruins",
+   "donor_constant": "second roll rand(10) > 0 selects bugbear (0.9), else vampire (0.1)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/maps.cpp:408"
+  },
+  {
+   "name": "fallback_monster",
+   "donor_constant": "SKELETON",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/maps.cpp:595"
+  },
+  {
+   "name": "custom_curve_off_after_empty",
+   "donor_constant": "custom curve switched off for the rest of the map build after one empty roll",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/TurningWheel-Barony/src/maps.cpp:7876"
+  }
+ ],
+ "best_idea": "Keep each zone's spawn table as data (a roll modulus and bands of roll ranges), gate a band by substituting a lower-tier monster below a level rather than re-rolling, and let a custom curve override the base roll only until its first empty result on a level.",
+ "decision": "adapt",
+ "decision_why": "The band table as zone data with a substitution gate fits parity row 23 (zone population). Reject the name-prefix zone lookup and the hard-coded switch statements. Keep the custom override only as explicit per-level state that resets at each level build. Caps, respawn and despawn are not in this donor's code.",
+ "decision_status": "proposed",
+ "acceptance": "A server test with the Mines table asserts that over 10,000 spawn rolls, skeletons are 60 percent plus or minus 1 at level 1 and spiders and trolls are each 10 percent plus or minus 1 at level 2; a custom curve that returns nothing once is not consulted again on that level."
+}

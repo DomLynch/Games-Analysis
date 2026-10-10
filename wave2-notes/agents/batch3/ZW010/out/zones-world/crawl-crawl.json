@@ -1,0 +1,66 @@
+{
+ "game": "crawl-crawl",
+ "category": "zones-world",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc",
+ "licence": "GPL v2 or later (repo LICENSE lines 7-8: either version 2 of the License, or (at your option) any later version.; abyss.cc has no licence header of its own)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "new:window-reanchor",
+  "new:coordinate-keyed-regen",
+  "new:topup-per-shift"
+ ],
+ "data_fields": [
+  {
+   "name": "map size (width x height)",
+   "donor_constant": "80 x 70 (GXM, GYM)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/defines.h:83"
+  },
+  {
+   "name": "re-anchor trigger distance from centre",
+   "donor_constant": "22 = min(GXM,GYM)/2 - 1 - MAPGEN_BORDER - ABYSS_AREA_SHIFT_RADIUS",
+   "unit": "cells",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.h:14"
+  },
+  {
+   "name": "kept window half-side",
+   "donor_constant": "10 = LOS_RADIUS + 2",
+   "unit": "cells",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.h:11"
+  },
+  {
+   "name": "top-up monsters per re-anchor, base",
+   "donor_constant": "15",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc:1544"
+  },
+  {
+   "name": "top-up monsters per re-anchor, per depth",
+   "donor_constant": "depth x (1 + coinflip()), so depth or 2 x depth",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/abyss.cc:1544"
+  },
+  {
+   "name": "map border margin",
+   "donor_constant": "2 (MAPGEN_BORDER)",
+   "unit": "cells",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/defines.h:96"
+  }
+ ],
+ "best_idea": "Generate terrain from world coordinates and keep only a small window around the player, so terrain you leave and come back to is rebuilt identically without storing it.",
+ "decision": "adapt",
+ "decision_why": "Keep the world-coordinate generator and the population top-up per re-anchor only if Frankendom adds endless wilderness, since authored zones do not need a window. Reject the destructive wipe: entities that leave the window must be moved or ledgered, never silently deleted.",
+ "decision_status": "proposed",
+ "acceptance": "A server test walks a player 23 cells from the zone centre, triggers a re-anchor, then walks back; terrain at every world coordinate is identical before and after; every entity leaving the window is moved or recorded; at depth 3 the top-up is 18 or 21 spawns."
+}

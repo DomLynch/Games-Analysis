@@ -1,0 +1,48 @@
+note	claim	donor_file	quote	pick
+DCurrent-openbor	root LICENSE: binary and source redistribution permitted with conditions	/mnt/frankendom-donors/DCurrent-openbor/LICENSE	Redistribution and use in source and binary forms	only
+DCurrent-openbor	root LICENSE: no endorsement without permission	/mnt/frankendom-donors/DCurrent-openbor/LICENSE	Neither the name of the Senile Team	only
+DCurrent-openbor	director and scroll run in one function each frame	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	void update_scroller()	only
+DCurrent-openbor	return when _time behind level advancetime or freezeall	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	if(_time < level->advancetime || freezeall)	only
+DCurrent-openbor	level advancetime set to current time	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	level->advancetime = _time;	only
+DCurrent-openbor	completion check uses current_spawn, enemies, p_alive	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	if(current_spawn >= level->numspawns && !findent(TYPE_ENEMY) && p_alive)	only
+DCurrent-openbor	level_completed set when no endlevel entity	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	level_completed = 1; // can be used for bonus levels	only
+DCurrent-openbor	spawn section runs only when enemy count below groupmin	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	else if(count_ents(TYPE_ENEMY) < groupmin)	only
+DCurrent-openbor	while loop condition: count below groupmax, entries left, pos reached at	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	while(count_ents(TYPE_ENEMY) < groupmax &&	only
+DCurrent-openbor	pos compared to entry at	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	level->pos >= level->spawnpoints[current_spawn].at	only
+DCurrent-openbor	wait entry branch sets level waiting	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	else if(level->spawnpoints[current_spawn].wait)	only
+DCurrent-openbor	waiting set to 1	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	level->waiting = 1;	only
+DCurrent-openbor	group entry copies min and max into globals	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	groupmax = level->spawnpoints[current_spawn].groupmax;	only
+DCurrent-openbor	index advances after each entry	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	++current_spawn;	first
+DCurrent-openbor	ordinary entry calls smartspawn	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	smartspawn(&level->spawnpoints[current_spawn]);	only
+DCurrent-openbor	waiting block: no enemy then clear flag	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	if(!findent(TYPE_ENEMY))	only
+DCurrent-openbor	go_time set to time plus 3 game speed units	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	go_time = _time + 3 * global_config.game_speed;	only
+DCurrent-openbor	scroll only when not waiting, or cheat	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	if(!level->waiting || global_config.cheats & CHEAT_OPTIONS_IMPLACABLE_ACTIVE)	only
+DCurrent-openbor	to from player box midpoint minus half screen plus offset	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	to = (lm + rm) / 2 - videomodes.hRes / 2 + level->cameraxoffset;	first
+DCurrent-openbor	if player spread exceeds screen width, hold	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	if(rm - lm > videomodes.hRes)	first
+DCurrent-openbor	clamp to scrollmaxx	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	else if(to > scrollmaxx)	first
+DCurrent-openbor	limit to scrollspeed per update	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	if(to > advancex + level->scrollspeed)	first
+DCurrent-openbor	pinned at end: pos increments by one	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	                level->pos++;	first
+DCurrent-openbor	pos set from advancex when not pinned	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	level->pos = (int)advancex;	only
+DCurrent-openbor	advancex capped at width minus screen	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	advancex = (float)level->width - videomodes.hRes;	first
+DCurrent-openbor	player count gate on spawnplayer_count	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	if(props->spawnplayer_count >= (playercount = MAX(1, count_ents(TYPE_PLAYER))))	only
+DCurrent-openbor	spawn x is entry x plus advancex	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	e = spawn(props->position.x + advancex, props->position.z, props->position.y,	only
+DCurrent-openbor	health indexed by player count minus one	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	if(props->health[playercount - 1] != 0)	only
+DCurrent-openbor	health taken from per player entry	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	e->energy_state.health_current = e->modeldata.health = props->health[playercount - 1];	only
+DCurrent-openbor	smartspawn takes a spawn entry	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	entity *smartspawn(s_spawn_entry *props)	only
+DCurrent-openbor	2PSPAWN sets spawnplayer_count to 1	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	next.spawnplayer_count = 1;	only
+DCurrent-openbor	3PSPAWN sets spawnplayer_count to 2	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	next.spawnplayer_count = 2;	only
+DCurrent-openbor	globals reset: groupmin 100	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	    groupmin = 100;	only
+DCurrent-openbor	globals reset: groupmax 100	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	    groupmax = 100;	only
+DCurrent-openbor	group command: max below 1 becomes 1	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	next.groupmax = 1;	only
+DCurrent-openbor	group command: min below 1 becomes 100	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	next.groupmin = 100;	only
+DCurrent-openbor	group command reads two integers	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	next.groupmin = GET_INT_ARG(1);	only
+DCurrent-openbor	entry at is the parsed argument	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	next.at = GET_INT_ARG(1);	only
+DCurrent-openbor	entry appended to list, no sort	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	memcpy(&level->spawnpoints[level->numspawns], &next, sizeof(next));	only
+DCurrent-openbor	numspawns incremented	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	level->numspawns++;	only
+DCurrent-openbor	spawn entry loads model while the level file is parsed	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	tempmodel = load_cached_model(GET_ARG(1), filename, 0);	first
+DCurrent-openbor	count excludes corpses only	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	count += (ent_list[i]->exists && (ent_list[i]->modeldata.type & types)	only
+DCurrent-openbor	findent skips entities that are both dead and corpse	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	!((ent_list[i]->death_state & (DEATH_STATE_DEAD | DEATH_STATE_CORPSE))	only
+DCurrent-openbor	scroll min carries flag in top bit	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	else if(level->spawnpoints[current_spawn].scrollminx & 0x80000000)	only
+DCurrent-openbor	s_spawn_entry has groupmin and groupmax	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.h	    int groupmax;	only
+DCurrent-openbor	spawnplayer_count per player count	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.h	int spawnplayer_count; // spawn this entity according to the amount of players	only
+DCurrent-openbor	blockade limits how far back the player can go	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.h	int blockade; //limit how far you can go back	only

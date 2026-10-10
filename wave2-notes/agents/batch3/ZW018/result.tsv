@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+levy-street-world-of-claudecraft	zones-world	P	STRONG	full	src/sim/portals.ts:32-46 and src/sim/displacement.ts:18-36: two-way portal pairs checked per live player in the server tick, first hit teleports to the other side's landing with no rng; hint file content/realm.ts is only the zone data (134-143)
+lincity-ng-lincity-ng	zones-world	P	STRONG	full	src/lincity/init_game.cpp:629-719 (new_setup_river): random-start priority-flood river walk to the map edge with a weighted runner-up choice and lake backtrack; topic fit is loose (city builder, no zones, spawns or transitions), decision reject
+openmw	zones-world	P	STRONG	full	apps/openmw/mwworld/positioncellgrid.cpp:9-26 with scene.cpp:549-571 and 1136-1168: grid recentre with hysteresis, 1 s velocity-predicted prefetch, detached-camera anchor snapped to 128 (static mode only, not the third-person follow camera)

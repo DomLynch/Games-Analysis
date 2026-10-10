@@ -1,0 +1,69 @@
+{
+ "game": "levy-street-world-of-claudecraft",
+ "category": "parties-guilds-chat",
+ "cell": 18,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/social/party.ts",
+ "licence": "MIT (LICENSE line 1: MIT License; Copyright (c) 2026 Levy Street)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/group.ts (proposed new; Frankendom current group code not read)",
+ "parity_row": 18,
+ "pattern_tags": [
+  "stale-state",
+  "grace-timer",
+  "new:one-group-per-pid",
+  "new:validate-then-merge",
+  "new:leader-succession",
+  "new:sub-group-numbering"
+ ],
+ "data_fields": [
+  {
+   "name": "invite_window",
+   "donor_constant": "30",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/social/party.ts:148"
+  },
+  {
+   "name": "party_cap",
+   "donor_constant": "5",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/social/party.ts:28"
+  },
+  {
+   "name": "raid_cap",
+   "donor_constant": "10",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/social/party.ts:36"
+  },
+  {
+   "name": "subgroup_size",
+   "donor_constant": "5",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/social/party.ts:37"
+  },
+  {
+   "name": "merge_min_total",
+   "donor_constant": "2",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/social/party.ts:454"
+  },
+  {
+   "name": "tick_rate",
+   "donor_constant": "20 ticks per second",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/types.ts:32"
+  }
+ ],
+ "best_idea": "A group join is an all-or-nothing server merge: validate every premade unit first, then write, so one stale member snapshot changes nothing.",
+ "decision": "adapt",
+ "decision_why": "Server-owned group state, one group per player, and an all-or-nothing merge fit the Frankendom rulings; the 5 and 10 caps must be zone data, and the donor's ephemeral Sim is not the server.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: a merge request holding one stale member snapshot returns null and leaves every group unchanged; an invite accepted after more than 30 seconds of server ticks is refused as expired."
+}

@@ -1,0 +1,55 @@
+{
+ "game": "scummvm-scummvm",
+ "category": "economy-trade",
+ "cell": 11,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/scummvm-scummvm/engines/ultima/ultima8/gumps/weasel_gump.cpp",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "origins/economy/shop.ts (proposed new; Frankendom repo not read)",
+ "parity_row": 21,
+ "pattern_tags": [
+  "new:pending-cart",
+  "new:balance-preview",
+  "new:cart-commit-once",
+  "new:abort-restores-reserve",
+  "clamp-and-report",
+  "new:stack-cap-before-debit"
+ ],
+ "data_fields": [
+  {
+   "name": "catalogue_cost_per_entry",
+   "donor_constant": "items[_curItem]._cost (weasel.dat, not read)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/scummvm-scummvm/engines/ultima/ultima8/gumps/weasel_gump.cpp:488"
+  },
+  {
+   "name": "catalogue_table_per_level",
+   "donor_constant": "getWeaselDat(_level); ammo table index 1",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/scummvm-scummvm/engines/ultima/ultima8/gumps/weasel_gump.cpp:348"
+  },
+  {
+   "name": "buy_must_leave_balance_above",
+   "donor_constant": "0 (strict cost < credits)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/scummvm-scummvm/engines/ultima/ultima8/gumps/weasel_gump.cpp:371"
+  },
+  {
+   "name": "stack_cap_per_item",
+   "donor_constant": "99 (Ultima IV add clamp)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/scummvm-scummvm/engines/ultima/ultima4/game/script.cpp:1144"
+  }
+ ],
+ "best_idea": "Reserve a purchase in a pending cart with a live balance preview, and commit the whole cart as one server transaction that re-checks the sum against the wallet, while abort gives the reserved credits back.",
+ "decision": "adapt",
+ "decision_why": "The pending cart and single commit fit our one-ledger and catalogue rulings, but the client balance, the wallet-as-item and the trusted commit do not fit server-verified play, so the server must own the balance and re-check the cart total at commit.",
+ "decision_status": "proposed",
+ "acceptance": "A server test buys three catalogue items, aborts, and asserts the wallet and the displayed balance are unchanged; a second test asserts that a commit whose total equals the balance is refused, and that a buy of a stack that would pass 99 is refused before any debit."
+}

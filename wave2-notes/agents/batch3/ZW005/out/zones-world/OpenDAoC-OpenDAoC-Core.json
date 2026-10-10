@@ -1,0 +1,67 @@
+{
+ "game": "OpenDAoC-OpenDAoC-Core",
+ "category": "zones-world",
+ "cell": 7,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/world/Zone.cs",
+ "licence": "GNU GENERAL PUBLIC LICENSE, Version 3, 29 June 2007 (LICENSE line 1-4)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/zone-grid.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "new:fixed-cell-grid",
+  "new:ring-query-cull",
+  "new:queued-cell-move",
+  "timer-wheel"
+ ],
+ "data_fields": [
+  {
+   "name": "cell_size",
+   "donor_constant": "2048 (65536 / 32)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/world/Zone.cs:23"
+  },
+  {
+   "name": "cells_per_zone_side",
+   "donor_constant": "32",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/world/Zone.cs:21"
+  },
+  {
+   "name": "zone_offset_and_size",
+   "donor_constant": "OffX * 8192, Width * 8192 (zone data in 8192-unit blocks)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/world/WorldMgr.cs:608"
+  },
+  {
+   "name": "relocation_check_interval",
+   "donor_constant": "2000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/ECS-Components/MovementComponent.cs:8"
+  },
+  {
+   "name": "respawn_interval_per_mob",
+   "donor_constant": "RespawnInterval * 1000 (DB seconds)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameobjects/GameNPC.cs:1022"
+  },
+  {
+   "name": "area_square_side",
+   "donor_constant": "radius from DB used as Width and Height",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/world/Area.cs:169"
+  }
+ ],
+ "best_idea": "Index a zone's objects in a fixed grid of cells, answer radius queries by culling cells with their nearest distance, and apply cell changes in a queued pass once per tick, triggered only by movement flags plus a timer.",
+ "decision": "adapt",
+ "decision_why": "Many-on-one and zone range queries need a cheap radius query in the world; take the grid, ring cull and queued move, and reject the Z skip inside fully-enclosed cells, the silent out-of-grid failure and the hard-coded move-to-bind policy. The Pit (MAX_ATTACKERS = 3) does not need the index.",
+ "decision_status": "proposed",
+ "acceptance": "A server test puts 5000 objects in one zone and asserts 1000 random 3D radius queries (including cell edges and the zone border) equal the brute-force set, and an object moved across a cell edge is in its new cell after one tick, not before."
+}

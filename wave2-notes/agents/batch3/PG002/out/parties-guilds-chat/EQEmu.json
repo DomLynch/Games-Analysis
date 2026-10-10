@@ -1,0 +1,54 @@
+{
+ "game": "EQEmu",
+ "category": "parties-guilds-chat",
+ "cell": 18,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/EQEmu/zone/groups.cpp",
+ "licence": "GPL-3.0-or-later (as read: zone/groups.cpp header, version 3 or any later version)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/party.ts",
+ "parity_row": null,
+ "pattern_tags": [
+  "new:fixed-slot-party",
+  "new:leader-leave-disband",
+  "new:accept-time-create",
+  "new:member-self-remove",
+  "new:size-floor-disband"
+ ],
+ "data_fields": [
+  {
+   "name": "party_size_cap",
+   "donor_constant": "6",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/EQEmu/common/eq_packet_structs.h:891"
+  },
+  {
+   "name": "min_party_keep",
+   "donor_constant": "2 (leave dropping below 2 disbands; written as MemberCount < 3 counting the leaver)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/EQEmu/zone/groups.cpp:1287"
+  },
+  {
+   "name": "invite_requires_target",
+   "donor_constant": "false",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/EQEmu/common/ruletypes.h:228"
+  },
+  {
+   "name": "already_grouped_notice",
+   "donor_constant": "true",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/EQEmu/common/ruletypes.h:211"
+  }
+ ],
+ "best_idea": "Keep a party as one fixed-size slot record on the server, with the leave rules (leader leaving, or a leave that drops below two, disbands it) and a server-checked accept.",
+ "decision": "adapt",
+ "decision_why": "Slot record, size cap and minimum-two rule fit Frankendom; client-only invite and dead succession code do not fit server-verified and one ledger, so the invite must be server-held with an expiry.",
+ "decision_status": "proposed",
+ "acceptance": "Refused accept from a gone inviter creates no party; a seventh accept is refused as full; a leader leaving clears every member's party in one write."
+}

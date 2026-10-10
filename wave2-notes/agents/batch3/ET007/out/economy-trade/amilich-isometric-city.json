@@ -1,0 +1,138 @@
+{
+ "game": "amilich-isometric-city",
+ "category": "economy-trade",
+ "cell": 11,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts",
+ "licence": "MIT (LICENSE: Copyright (c) 2025 amilich; permission granted free of charge)",
+ "licence_class": "permissive",
+ "target_module": "src/economy/settle.ts (proposed new module; not a src/fight or origins path)",
+ "parity_row": 18,
+ "pattern_tags": [
+  "fixed-step",
+  "new:weekly-settlement",
+  "new:lagged-tax-demand",
+  "new:doubling-upgrade-cost",
+  "new:client-owned-ledger"
+ ],
+ "data_fields": [
+  {
+   "name": "tax_rate_start",
+   "donor_constant": "9 (percent)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:1205"
+  },
+  {
+   "name": "income_per_person_per_percent",
+   "donor_constant": "0.1",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:1897"
+  },
+  {
+   "name": "income_per_job_per_percent",
+   "donor_constant": "0.05",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:1897"
+  },
+  {
+   "name": "ticks_per_day",
+   "donor_constant": "30",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:2446"
+  },
+  {
+   "name": "settle_every_days",
+   "donor_constant": "7 (days 7, 14, 21, 28)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:2451"
+  },
+  {
+   "name": "settle_divisor",
+   "donor_constant": "4 (quarter of the monthly net)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:2452"
+  },
+  {
+   "name": "tax_lag_per_tick",
+   "donor_constant": "0.03 of the gap",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:2416"
+  },
+  {
+   "name": "demand_smoothing_per_tick",
+   "donor_constant": "0.12 of the gap",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:2427"
+  },
+  {
+   "name": "service_cost_police_fire",
+   "donor_constant": "50 per building",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:2004"
+  },
+  {
+   "name": "service_cost_hospital",
+   "donor_constant": "100 per building",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:2006"
+  },
+  {
+   "name": "service_cost_power_plant",
+   "donor_constant": "150 per building",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:2010"
+  },
+  {
+   "name": "service_funding_start",
+   "donor_constant": "100 percent",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:1093"
+  },
+  {
+   "name": "upgrade_max_level",
+   "donor_constant": "5",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:1250"
+  },
+  {
+   "name": "upgrade_cost_base_multiplier",
+   "donor_constant": "2 per level (base x 2^level)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:1252"
+  },
+  {
+   "name": "build_cost_police_station",
+   "donor_constant": "500",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/games/isocity/types/game.ts:50"
+  },
+  {
+   "name": "finance_warning_critical_below",
+   "donor_constant": "-500 per month",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/simulation.ts:2073"
+  }
+ ],
+ "best_idea": "One settlement step turns a tax faucet and per-service budget sinks into a single balance paid on a fixed calendar, with the tax rate lagged 3% per tick for demand only so a rate change does not shock the city.",
+ "decision": "adapt",
+ "decision_why": "Take the monthly faucet and sink formulas and the day-7 quarter deposit as one server settlement on the server tick; move the ledger off the client, drop the trade income the donor loses, and decide the negative-balance rule in the data.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: population 1000, jobs 400, tax 9, one service of 2 buildings at 50 with 100% funding gives income 1080 and expenses 100; crossing day 7 takes 10000 to 10245; a tax change 9 to 100 gives effective rate 11.73 after one tick."
+}

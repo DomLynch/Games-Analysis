@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+gemrb-gemrb	economy-trade	P	STRONG	full	GUISTORE.py:1747-1799 one price function (store markup, stock depreciation with 20 floor, charisma and reputation on the sell side, min 1); UI-side gold moves at 1066-1085 and 1113-1131 break one-ledger
+hedgewars-hw	economy-trade	P	STRONG	full	Construction_Mode.lua:906-946 and 1024-1090, 1828-1844 clan energy: generator ticks, per-round income with cap and first-turn skip, crate quota, pay only on successful placement; hint ShoppaMap.lua is a rope map (wrong file)
+ihhub-fheroes2	economy-trade	P	STRONG	full	kingdom/resource_trading.cpp:48-131 tiered barter rates by category pair and marketplace count; dialog_marketplace.cpp:489-591 bounds and commit; commit is unchecked (kingdom.cpp:451-452 subtract then clamp); hint dialog file is UI only

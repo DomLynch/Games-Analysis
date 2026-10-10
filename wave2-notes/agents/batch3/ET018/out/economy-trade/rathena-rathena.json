@@ -1,0 +1,76 @@
+{
+ "game": "rathena-rathena",
+ "category": "economy-trade",
+ "cell": 11,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/rathena-rathena/src/char/int_auction.cpp",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "origins/economy/auction.ts (proposed new; Frankendom repo not read)",
+ "parity_row": 21,
+ "pattern_tags": [
+  "timer-wheel",
+  "clamp-and-report",
+  "new:escrow-debit-then-refund",
+  "new:outbid-refund",
+  "new:buyout-excess-return",
+  "new:listing-fee-sink"
+ ],
+ "data_fields": [
+  {
+   "name": "listing_fee_per_hour",
+   "donor_constant": "12000",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/map/battle.cpp:8633"
+  },
+  {
+   "name": "listing_hours_max",
+   "donor_constant": "48 (min 1)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/map/clif.cpp:17096"
+  },
+  {
+   "name": "max_price",
+   "donor_constant": "500000000",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/map/battle.cpp:8634"
+  },
+  {
+   "name": "open_listings_per_seller",
+   "donor_constant": "5",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/char/int_auction.cpp:333"
+  },
+  {
+   "name": "open_bids_per_buyer",
+   "donor_constant": "5 (refused above 4 existing, unless bid reaches buyout)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/char/int_auction.cpp:446"
+  },
+  {
+   "name": "overdue_catchup_delay",
+   "donor_constant": "10000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/char/int_auction.cpp:250"
+  },
+  {
+   "name": "listing_fee_refund_on_cancel",
+   "donor_constant": "0 (zeny 0 in the cancel mail)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/rathena-rathena/src/char/int_auction.cpp:378"
+  }
+ ],
+ "best_idea": "Debit the bid first and credit it back on every refusal path, refund the outbid price and return the buyout excess through the same ledger, with the listing fee as a non-refunded sink.",
+ "decision": "adapt",
+ "decision_why": "The escrow and fee shape fits the one-ledger ruling and gives a non-refunded listing sink for inflation control, but the session-dependent refunds and the mail-as-escrow channel do not fit server-verified play, so the refund must always be a ledger entry.",
+ "decision_status": "proposed",
+ "acceptance": "A server test with two bidders and one seller asserts, after outbid, buyout, cancel-refused, a refused listing, and a restart with an overdue row, that the sum of all balances plus the fee sink equals the start total, and that each item is delivered exactly once, even when a party is offline."
+}

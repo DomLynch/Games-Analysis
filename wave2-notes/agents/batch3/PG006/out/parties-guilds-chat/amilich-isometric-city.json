@@ -1,0 +1,88 @@
+{
+ "game": "amilich-isometric-city",
+ "category": "parties-guilds-chat",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/multiplayer/supabaseProvider.ts",
+ "licence": "MIT License, Copyright (c) 2025 amilich (LICENSE)",
+ "licence_class": "permissive",
+ "target_module": "origins/server/party-room.ts (new)",
+ "parity_row": null,
+ "pattern_tags": [
+  "stale-state",
+  "new:room-code-join",
+  "new:first-snapshot-wins",
+  "new:throttle-trailing-save"
+ ],
+ "data_fields": [
+  {
+   "name": "room_code_length",
+   "donor_constant": "5",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/context/MultiplayerContext.tsx:29"
+  },
+  {
+   "name": "room_code_alphabet_size",
+   "donor_constant": "32",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/context/MultiplayerContext.tsx:27"
+  },
+  {
+   "name": "join_reply_jitter_max",
+   "donor_constant": "200",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/multiplayer/supabaseProvider.ts:178"
+  },
+  {
+   "name": "db_save_interval",
+   "donor_constant": "3000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/multiplayer/supabaseProvider.ts:31"
+  },
+  {
+   "name": "client_push_interval",
+   "donor_constant": "2000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/hooks/useMultiplayerSync.ts:275"
+  },
+  {
+   "name": "saved_index_interval",
+   "donor_constant": "10000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/hooks/useMultiplayerSync.ts:282"
+  },
+  {
+   "name": "action_batch_window",
+   "donor_constant": "100",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/hooks/useMultiplayerSync.ts:10"
+  },
+  {
+   "name": "action_batch_max",
+   "donor_constant": "100",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/hooks/useMultiplayerSync.ts:11"
+  },
+  {
+   "name": "room_size_cap",
+   "donor_constant": "20*1024*1024",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/amilich-isometric-city/src/lib/multiplayer/database.ts:49"
+  }
+ ],
+ "best_idea": "A short invite code plus one stored snapshot that a joiner loads once, with a first-wins guard and a creator guard, gives party join without any peer authority.",
+ "decision": "adapt",
+ "decision_why": "Keep the code shape and join order; drop peer state-sync and peer actions because the server must own kills and the ledger.",
+ "decision_status": "proposed",
+ "acceptance": "A test joins by code, receives the server snapshot before any player action, and rejects a second snapshot from another client while the server snapshot stands."
+}

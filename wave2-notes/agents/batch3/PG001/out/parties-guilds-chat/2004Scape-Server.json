@@ -1,0 +1,27 @@
+{
+  "game": "2004Scape-Server",
+  "category": "parties-guilds-chat",
+  "cell": 2,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/2004Scape-Server/src/server/friend/FriendServerRepository.ts",
+  "licence": "MIT License, Copyright (c) 2023-2025 Lost City (LICENSE)",
+  "licence_class": "permissive",
+  "target_module": "origins/server/social-presence.ts",
+  "parity_row": 5,
+  "pattern_tags": ["per-player-view", "new:privacy-mode-visibility", "new:follower-fanout", "new:tick-one-shot-gate", "stale-state"],
+  "data_fields": [
+    {"name": "friend_cap", "donor_constant": "100 rows per account (count checked in the database before insert)", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/2004Scape-Server/src/server/friend/FriendServerRepository.ts:233"},
+    {"name": "ignore_cap", "donor_constant": "100 rows per account", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/2004Scape-Server/src/server/friend/FriendServerRepository.ts:268"},
+    {"name": "world_player_slots", "donor_constant": "2000 slots per world", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/2004Scape-Server/src/server/friend/FriendServer.ts:57"},
+    {"name": "social_packets_per_tick", "donor_constant": "1 (shared flag across six social handlers)", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/2004Scape-Server/src/engine/entity/Player.ts:405"},
+    {"name": "tick_length", "donor_constant": "600 ms fixed rate, drift subtracted from the next wait", "unit": "ms", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/2004Scape-Server/src/engine/World.ts:120"},
+    {"name": "private_message_max_chars", "donor_constant": "100 characters, checked at the sender", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/2004Scape-Server/src/network/game/client/handler/MessagePrivateHandler.ts:14"},
+    {"name": "unknown_subject_privacy", "donor_constant": "OFF (hidden) when the subject has no stored mode", "unit": "none", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/2004Scape-Server/src/server/friend/FriendServerRepository.ts:344"}
+  ],
+  "best_idea": "Decide each viewer's view of a friend's online status with one ordered rule (staff, then the friend's ignore list, then the friend's privacy mode, where friends-only means the friend must list the viewer), and push one status entry to each online player whose list holds the changed player.",
+  "decision": "adapt",
+  "decision_why": "Keep the ordered visibility rule and follower fan-out, but store friends, ignores and privacy mode in Frankendom's one server ledger and enforce the ignore list on private messages, which this donor does not do.",
+  "decision_status": "proposed",
+  "acceptance": "A server test where player B sets friends-only and does not list A: A's friend list shows B with world 0; after B adds A, A's list shows B's world in the same tick; an ignored player's private message to the target is refused by the server and never delivered."
+}

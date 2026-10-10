@@ -1,0 +1,56 @@
+{
+ "game": "lichess-org-lila",
+ "category": "parties-guilds-chat",
+ "cell": 18,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/lichess-org-lila/modules/team/src/main/TeamSecurity.scala",
+ "licence": "GNU AGPL v3 (LICENSE header: GNU AFFERO GENERAL PUBLIC LICENSE, version 3)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/guild.ts (proposed new; Frankendom current guild code not read)",
+ "parity_row": 18,
+ "pattern_tags": [
+  "new:flag-rank",
+  "new:admin-floor",
+  "new:admin-cap",
+  "new:kick-hierarchy",
+  "new:declined-rejoin-block",
+  "new:creator-protected",
+  "new:validate-then-write"
+ ],
+ "data_fields": [
+  {
+   "name": "leader_cap",
+   "donor_constant": "10",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/lichess-org-lila/modules/team/src/main/Team.scala:91"
+  },
+  {
+   "name": "admin_cap",
+   "donor_constant": "3",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/lichess-org-lila/modules/team/src/main/TeamSecurity.scala:129"
+  },
+  {
+   "name": "admin_floor",
+   "donor_constant": "1",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/lichess-org-lila/modules/team/src/main/TeamSecurity.scala:99"
+  },
+  {
+   "name": "new_leader_flags",
+   "donor_constant": "Public only",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/lichess-org-lila/modules/team/src/main/TeamSecurity.scala:54"
+  }
+ ],
+ "best_idea": "A guild rank is a set of independent permission flags, and the rules that protect the rank structure (at least one admin, a hard cap on admins, creator keeps admin, no rank change through the edit form) are checked before any write.",
+ "decision": "adapt",
+ "decision_why": "The flag-set rank and its invariants (an admin always exists, admins are capped, the creator keeps admin, rank changes go through one validated edit) fit a server-owned guild; the donor's flag names are forum and tournament features and must be replaced, and the caps must be data.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: an edit that would leave no admin, or name 4 admins, is refused and every member's flags are unchanged; a player with only the kick flag can remove a plain member but is refused on a leader; a kicked player's immediate re-invite is refused by a declined-request record (the donor's join-side check was not read, so this is a spec to build, not a donor-verified rule)."
+}

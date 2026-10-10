@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+keldaanCommunity-pokemonAutoChess	economy-trade	P	STRONG	full	app/models/shop.ts:94-186 and app/rooms/commands/game-commands.ts:1417-1450: sell, buy, reroll and round income move one gold field, with sold copies returned to a finite pool.
+l1j-en-classic	economy-trade	P	STRONG	full	src/l1j/server/server/model/L1TaxCalculator.java:56-94 and model/shop/L1Shop.java:160-299: NPC shop price plus tax in one debit, tax paid to castle, town and Diad public money after the charge.
+levy-street-world-of-claudecraft	economy-trade	P	STRONG	full	src/sim/exchange_eligibility.ts:155-180 and server/woc_market_rules.ts:582-617: one trade-eligibility rule with fixed precedence, one refusal reason per copy, and a closed default category.

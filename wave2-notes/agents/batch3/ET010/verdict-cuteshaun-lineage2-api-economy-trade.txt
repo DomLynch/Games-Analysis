@@ -1,0 +1,26 @@
+verdict: PARTIAL (depth: thin)
+cell: 2 of ET010 | game: cuteshaun-lineage2-api | category: economy-trade (category 11) | list 3
+donor: /mnt/frankendom-donors/cuteshaun-lineage2-api | licence: MIT (LICENSE: "Copyright (c) 2026 Andrii Tsapko"; MIT, so code may be adapted)
+
+Files opened (6, all read by sed or cat on the VPS):
+1. src/lib/api/dto/shop.ts (hint file, whole file, 112 lines): builds the shop response; buy-list products carry a price passed through; sorted by price ascending then item id (line 57).
+2. scripts/parse-multisell.ts (whole file, 201 lines): imports the Mammon/B-grade/Luxury exchange files (allow-list); one production per entry (57-58); Adena id 57 (46); Adena and tax rows summed into one line (94-102); maintainEnchantment read from the list attribute (126).
+3. scripts/parse-buylists.ts (whole file, 101 lines): buy lists keyed by npcId; npcId -1 skipped as an admin or internal sentinel (45-49); sorted by id (78).
+4. src/lib/types.ts (excerpt 540-600): BuyListProduct (adena-only price), BuyList, MultisellEntry (ingredients list plus one production), Multisell (npcIds, maintainEnchantment).
+5. src/lib/data/indexes.ts (excerpts 560-600 and 1250-1285): forward index (ingredient to exchange) and reverse index (product to exchange); the reverse lookup is "how do I obtain this".
+6. src/app/api/[chronicle]/npcs/[id]/shop/route.ts (whole file, 23 lines): 404 when the NPC does not resolve (through buildShopResponse, shop.ts 40-41).
+Also grep only (not opened in full): src/lib/api/dto/item.ts 697 (offers sorted by price, cheapest seller first) and the grep for any price arithmetic across src and scripts.
+
+Checked: grep for price arithmetic across src/ and scripts/ found only sort comparators (shop.ts 57, item.ts 697). No function computes a price, applies a markup, a discount, a tax, or a cap. maintainEnchantment is read and passed through into the DTOs (shop.ts 89, item.ts 779) and used nowhere else. The donor is a read-only data API for a game's shop and exchange tables; the trade itself (who gives what, when) happens in the game server, which is not in this repo.
+
+Why PARTIAL: the donor has real, checkable data handling (strict one-product exchange rows, Adena rows folded into one line, two-way indexes, cheapest-first sorting), but no price formula, no markup, no cap and no trade rule. The only self-contained economy idea is the data shape, not a mechanism with numbers, so it fails the STRONG test (order of operations and numbers from code that does the economy).
+
+Best transferable idea: Model every exchange as a one-product recipe row (ingredient list plus one product) with the currency rows folded into one total line, and index it both ways so "what can I get from this" and "how do I get this" are each one lookup.
+
+Decision (proposed): adapt. Take the one-product recipe row and the two-way index as the catalogue shape (parity row 21, catalogue fields), with the currency folded into the single gold ledger line; do not take the NPC price table as an engine rule, since it is zone or vendor data. Frankendom still needs its own server-verified exchange, which this donor does not show.
+
+Acceptance (if built, for the catalogue): a server test that a crafting or exchange row with two ingredients and one product returns the same forward and reverse lookups, and that a currency ingredient split across two rows is charged as one line.
+
+Licence note: MIT, so a shape can be adapted. The item and price data come from the game data sources named in scripts/chronicle-sources.ts (not read); their licence is not checked here, so do not copy data rows.
+
+Receipts: /private/tmp/p2/wave2-haiku/batch3/ET010/work/receipts-cuteshaun.tsv (20 rows, verifier passed).

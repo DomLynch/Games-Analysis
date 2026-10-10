@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+CytopiaTeam-Cytopia	zones-world	P	STRONG	full	src/game/ZoneArea.cxx:27-57 and src/game/ZoneManager.cxx:16-23,83-104: per-zone spawn of up to 5 attempts per 1 s tick, gated on vacancy and power, picking a footprint and a tile from a zone table.
+DCurrent-openbor	zones-world	P	STRONG	full	engine/openbor.c:50013-50181 (director: refill band, ordered entries keyed to scroll clock, wait lock) with smartspawn 49512-49662 and scroll 50193-50322.
+DFHack-dfhack	zones-world	P	STRONG	full	plugins/burrow.cpp:526-608 (flood_fill paint within one connected region, edge fringe) and 161-191 (expand_burrows: wall ring on dig); hint plugins/zone.cpp is unit assignment, not layout.

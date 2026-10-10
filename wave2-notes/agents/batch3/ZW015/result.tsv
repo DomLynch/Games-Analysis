@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+gemrb-gemrb	zones-world	P	STRONG	full	/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/WorldMap.cpp:361-396 (GetEncounterLink) with 248-316 and 401-463: each leg of a trip rolls its encounter chance in order, the first hit ends the trip and places a midpoint ambush zone chosen from five data slots.
+graememcc-micropolisJS	zones-world	P	STRONG	thin	/mnt/frankendom-donors/graememcc-micropolisJS/src/residential.js:211-290 with valves.js:54-142 and simulation.js:302-403: a clamped demand valve per zone type feeds a sampled grow or decay roll, and the zone pass is spread over eight of sixteen phases.
+id-Software-DOOM	zones-world	P	STRONG	full	/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_mobj.c:546-570, 578-631 and 357-409: removed pickups go into a 127-entry FIFO that respawns one per tic after 30 s, and dead monsters respawn on a timed roll if their spawn spot is free.

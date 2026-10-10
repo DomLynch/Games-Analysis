@@ -1,0 +1,31 @@
+# OpenDiablo2-OpenDiablo2 (parties-guilds-chat, cell 3) VERDICT: PARTIAL (thin)
+
+Donor: /mnt/frankendom-donors/OpenDiablo2-OpenDiablo2 | Licence: GNU GPL v3 (LICENSE file, head "GNU GENERAL PUBLIC LICENSE" / "Version 3, 29 June 2007"; copyleft, clean-room only if ever used) | Go
+Checked: the hint file d2common/d2enum/party_buttons.go is only frame indexes for the party panel buttons (lines 1-11, read in full). It is the wrong file for a mechanism. Searched the repo with grep for party, invite, relationship, hostile, friend, guild, chat and PvP. The party code is a client UI panel; there is no party, invite or chat server logic in this repo.
+
+Files opened (candidates, at least 3):
+- d2common/d2enum/party_buttons.go (whole file, 11 lines): button frame constants only.
+- d2common/d2enum/players_relationships.go (whole file, 21 lines): Neutral/Friend/Enemy enum, hostile level 9, max 8 players.
+- d2game/d2player/party_panel.go (ranges 150-158, 216-260, 284-330, 418-450, 530-560, plus grep of all relationship, OnActivated, invite and seeing/listening references).
+- d2game/d2player/game_controls.go (lines 228-242): the party panel is created only when not single player.
+- d2networking/d2netpacket/d2netpackettype/message_type.go (lines 1-60): the network packet type list has no party, invite or chat types.
+- d2common/d2enum/game_event.go (grep): TogglePartyPanel and automap party toggles only.
+
+## What the donor actually has
+
+- Relationship state (players_relationships.go 8-10) has three values: Neutral, Friend, Enemy. Every party member added to the panel is set to Neutral (party_panel.go 551). Nothing in the repo sets Friend or Enemy, so the Enemy branch of the colour and name code (party_panel.go 228, 238) is never reached.
+- The hostile gate (party_panel.go 299-301): a player may go hostile only when both the hero and the viewer are at level 9 or above (PlayersHostileLevel = 9, players_relationships.go 15). The gate is used only in setColor (245-249): when it fails, a Neutral name is coloured orange and the relationship switcher is disabled, all in the UI. No other code in the repo reads PlayersHostileLevel (grep finds only the enum and this gate).
+- The relationship, seeing and listening switchers and the invite button (party_panel.go 156-192, 194-195) have tooltips but no OnActivated handler. The only OnActivated in the panel is the close button (333). So these controls do not change any state.
+- Panel slots: MaxPlayersInGame = 8 (players_relationships.go 20). AddPlayer's free-slot search starts with idx := 0 (party_panel.go 422) and only sets idx when it finds a free slot (425-429). If every slot is taken, the write at 432 overwrites slot 0. This is a latent display bug, not a rule.
+- No network: the packet type list (message_type.go 21-33) has connection, map, move, cast, item, save and server-full types only. No party, invite, chat or guild packet exists in the repo.
+- Friendly fire is a missile record field (d2core/d2records/missiles_loader.go 166, CollideFriend) and is unrelated to party membership.
+
+## Best transferable idea
+
+A mutual level threshold (both players must reach level 9 before they can become hostile) is a one-line rule that a PvP zone could carry as data, but this donor only draws it and never enforces it.
+
+Decision (proposed): reject as built. The donor has no membership, invite, chat or enforcement to copy; the gate is a UI colour rule. If open PvP is ever ruled, a mutual level field can be designed from our own rules as zone data, not taken from this donor.
+
+## Why PARTIAL
+
+The topic (party formation, guild ranks, chat channels, friend lists, social state sync) is absent from the server side of this donor. The only real piece is a display gate and an 8-slot panel with a slot bug. That is real but thin, and it does not support a deep note. No sketch was written.

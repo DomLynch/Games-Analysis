@@ -1,0 +1,51 @@
+{
+ "game": "KsanaDock-Microverse",
+ "category": "zones-world",
+ "cell": 7,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/KsanaDock-Microverse/script/RoomManager.gd",
+ "licence": "MIT License, Copyright (c) 2025 KsanaDock (LICENSE line 1-3)",
+ "licence_class": "permissive",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "new:zone-volume-aabb",
+  "new:one-id-per-zone"
+ ],
+ "data_fields": [
+  {
+   "name": "zone_centre_xy",
+   "donor_constant": "Area2D origin + CollisionShape2D position, per zone",
+   "unit": "px",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/KsanaDock-Microverse/script/RoomManager.gd:20"
+  },
+  {
+   "name": "zone_width_height",
+   "donor_constant": "RectangleShape2D size as authored (donor reads shape.extents * 2)",
+   "unit": "px",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/KsanaDock-Microverse/script/RoomManager.gd:23"
+  },
+  {
+   "name": "zone_fallback_size_non_rect",
+   "donor_constant": "100 x 100",
+   "unit": "px",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/KsanaDock-Microverse/script/RoomManager.gd:25"
+  },
+  {
+   "name": "zone_origin_skip",
+   "donor_constant": "zone centre exactly (0,0) never matches",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/KsanaDock-Microverse/script/RoomManager.gd:40"
+  }
+ ],
+ "best_idea": "Give every zone one authored id and a rectangle, build the registry once at load, and answer which zone a point is in with one inclusive box test that returns null outside every zone.",
+ "decision": "adapt",
+ "decision_why": "Zones are data on one runtime, and row 23 population counts need one unambiguous zone id per point; take the authored box, the single id and the null-outside rule, and reject the node-name key shown to the AI, the silent 100x100 fallback and the origin skip.",
+ "decision_status": "proposed",
+ "acceptance": "A server test loads a 9-zone table and asserts each spawn point and test character position resolves to exactly one zone id (never the display name); a point in a gap returns null without error; a zone with a missing rectangle fails the load."
+}

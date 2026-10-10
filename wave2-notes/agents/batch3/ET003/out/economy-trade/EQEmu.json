@@ -1,0 +1,94 @@
+{
+ "game": "EQEmu",
+ "category": "economy-trade",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/EQEmu/zone/client_packet.cpp",
+ "licence": "GPL-3.0 (LICENSE.md, version 3, as read)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/shops.ts (proposed new module; not checked against the Frankendom tree)",
+ "parity_row": 21,
+ "pattern_tags": [
+  "clamp-and-report",
+  "new:vendor-price-curve",
+  "new:charge-before-grant"
+ ],
+ "data_fields": [
+  {
+   "name": "sell_cost_markup",
+   "donor_constant": "1.05 (SellCostMod default)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/EQEmu/common/ruletypes.h:941"
+  },
+  {
+   "name": "buy_back_factor",
+   "donor_constant": "0.95 (BuyCostMod default, applied to the sell payout)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/EQEmu/common/ruletypes.h:942"
+  },
+  {
+   "name": "cha_pivot_hostile",
+   "donor_constant": "103 (CHA pivot for faction 6 or worse)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/EQEmu/zone/client.cpp:4249"
+  },
+  {
+   "name": "cha_pivot_neutral",
+   "donor_constant": "75 (CHA pivot for faction 1-5)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/EQEmu/zone/client.cpp:4264"
+  },
+  {
+   "name": "cha_bonus_mod",
+   "donor_constant": "3.45 (ChaBonusMod default)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/EQEmu/common/ruletypes.h:945"
+  },
+  {
+   "name": "cha_penalty_mod",
+   "donor_constant": "1.52 (ChaPenaltyMod default)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/EQEmu/common/ruletypes.h:946"
+  },
+  {
+   "name": "price_bonus_cap_pct",
+   "donor_constant": "4 (PriceBonusPct default, percent)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/EQEmu/common/ruletypes.h:943"
+  },
+  {
+   "name": "price_penalty_cap_pct",
+   "donor_constant": "4 (PricePenaltyPct default, percent)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/EQEmu/common/ruletypes.h:944"
+  },
+  {
+   "name": "stackable_quantity_cap",
+   "donor_constant": "item StackSize (per item, read from item data, no fixed constant)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/EQEmu/zone/client_packet.cpp:14212"
+  },
+  {
+   "name": "non_stackable_quantity",
+   "donor_constant": "donor charges requested quantity; sketch clamps to 1",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/EQEmu/zone/client_packet.cpp:14247"
+  }
+ ],
+ "best_idea": "The vendor buy is a server transaction: the client names a stock slot and quantity, the server looks up the line, recomputes the price from base price and a charisma-style percent, takes coin from one wallet, and only then grants the item.",
+ "decision": "adapt",
+ "decision_why": "Take the slot lookup, server-computed price and single wallet, which fit server-verified transactions and one ledger; check bag room before the charge and clamp non-stackable quantity to one, because the donor takes coin first and does not refund on a full bag (14261 vs 14298); keep the CHA/faction curve optional and off by default because the addendum's rulings name no charisma or faction stat.",
+ "decision_status": "proposed",
+ "acceptance": "With the curve off, buying a 1000-copper line costs 1050 copper whatever price the request carries; a buy with a full bag is refused and the wallet is unchanged; a quantity of 5 on a non-stackable line is clamped to one item and charged for one."
+}

@@ -1,0 +1,82 @@
+{
+ "game": "pmbstyle-L2Solo",
+ "category": "parties-guilds-chat",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Clan/ClanPartyService.js",
+ "licence": "as read",
+ "licence_class": "permissive",
+ "target_module": "origins/server/group-roster.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "new:role-first-roster",
+  "new:guest-backfill",
+  "compute-budget",
+  "clamp-and-report",
+  "new:no-silent-fallback"
+ ],
+ "data_fields": [
+  {
+   "name": "group_min_members",
+   "donor_constant": "3 (clamped 2..9)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Clan/ClanSimulationConfig.js:21"
+  },
+  {
+   "name": "group_max_members",
+   "donor_constant": "9 (clamped 1..9)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Clan/ClanSimulationConfig.js:22"
+  },
+  {
+   "name": "group_level_gap",
+   "donor_constant": "5 (floor(source - gap), min 1)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Clan/ClanSimulationConfig.js:23"
+  },
+  {
+   "name": "role_order",
+   "donor_constant": "tank 0, healer 1, buffer 2, dps 3, mage 4, crafter 5, spoiler 6",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Clan/ClanGoalPolicy.js:15"
+  },
+  {
+   "name": "resolve_budget_ms",
+   "donor_constant": "80",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Clan/ClanSimulationConfig.js:34"
+  },
+  {
+   "name": "action_retry_ms",
+   "donor_constant": "60000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Clan/ClanSimulationConfig.js:40"
+  },
+  {
+   "name": "bot_member_share_cap",
+   "donor_constant": "0.70",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Clan/ClanSimulationConfig.js:6"
+  },
+  {
+   "name": "role_fallback_on_start",
+   "donor_constant": "true (final roster built with allowRoleFallback)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Clan/ClanPartyService.js:284"
+  }
+ ],
+ "best_idea": "Build a group by ranking free candidates on role order and then level, take one of each support role first, and refuse to start until the required roles are present (no silent fallback).",
+ "decision": "adapt",
+ "decision_why": "The ranked role-first roster and guest backfill fit Frankendom's zone-as-data group builds; the donor's fallback that starts without tank, healer or buffer and its forced-success resolve do not fit, so only the roster shape is taken.",
+ "decision_status": "proposed",
+ "acceptance": "A server test with candidates dps 80, dps 79, healer 40, tank 30 and a cap of 4 builds the group tank, healer, dps 80, dps 79 in that order; a group with no healer is not started unless the zone sets allow_role_fallback."
+}

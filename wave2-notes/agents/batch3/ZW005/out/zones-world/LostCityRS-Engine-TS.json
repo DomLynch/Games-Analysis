@@ -1,0 +1,75 @@
+{
+ "game": "LostCityRS-Engine-TS",
+ "category": "zones-world",
+ "cell": 7,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/zone/Zone.ts",
+ "licence": "MIT License, Copyright (c) 2023-2026 Lost City (LICENSE)",
+ "licence_class": "permissive",
+ "target_module": "origins/server/zone-stream.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "hysteresis",
+  "per-player-view",
+  "population-cap",
+  "new:origin-window-reload",
+  "new:zone-shared-buffer"
+ ],
+ "data_fields": [
+  {
+   "name": "zone_size_tiles",
+   "donor_constant": "8",
+   "unit": "tiles",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/CoordGrid.ts:18"
+  },
+  {
+   "name": "active_radius_zones",
+   "donor_constant": "3 (7x7 active zones)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/entity/BuildArea.ts:46"
+  },
+  {
+   "name": "window_radius_zones",
+   "donor_constant": "6 (13x13 window, 104 tiles)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/entity/BuildArea.ts:41"
+  },
+  {
+   "name": "reload_west_south_zones",
+   "donor_constant": "4 zones before origin",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/entity/BuildArea.ts:61"
+  },
+  {
+   "name": "reload_east_north_zones",
+   "donor_constant": "5 zones after origin",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/entity/BuildArea.ts:62"
+  },
+  {
+   "name": "zone_obj_cap",
+   "donor_constant": "129 (computed as (64 << 1) + 1)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/zone/Zone.ts:38"
+  },
+  {
+   "name": "drop_despawn_duration",
+   "donor_constant": "200 (unit not read)",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/script/handlers/InvOps.ts:77"
+  }
+ ],
+ "best_idea": "Keep a per-client window of zones around an origin, rebuild it only when the player walks out of an inner reload box (hysteresis), and send each zone's shared events once per tick to everyone while private events go only to their receiver.",
+ "decision": "adapt",
+ "decision_why": "Fits zones as data and one ledger: per-client window and per-zone shared-plus-private sync are the shape; reject the RS packet format, the bit-grid zone flags (index collision, run on VPS) and first-in-list obj eviction, which the donor's own comment contradicts.",
+ "decision_status": "proposed",
+ "acceptance": "A server test walks one player back and forth across the reload edge and asserts the window rebuild is sent once per crossing, not per step; two players in one zone get one shared encode (count = 1), and a private loot event reaches only its owner."
+}

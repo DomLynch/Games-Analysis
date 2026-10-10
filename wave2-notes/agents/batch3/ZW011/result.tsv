@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+daggerfall-unity	zones-world	P	STRONG	full	PopulationManager.cs 31-38, 97-99, 102-125, 134-167, 187-224, 301-320: zone-sized NPC pool (24 per 16 blocks, 1-4 groups), one spawn per 0.1 s tick, shown only out of front view or far, recycled by distance or stuck count.
+dhewm-dhewm3	zones-world	P	STRONG	full	game/Entity.cpp 850-905 with game/Pvs.cpp 891-925 and Mover.cpp 3073-3075: NPC freezes 3000 ms after its zone is cut off from every player through open gates; a never-awake NPC needs a player PVS check first.
+dkfans-keeperfx	zones-world	P	STRONG	full	src/room_entrance.c 92-120, 197-237, 250-326, 382-417 with src/player_utils.c 475-504: turn-interval creature director, weighted pick by room attraction, active-cap and pool gates; the cap-blocked timer reset is as read.

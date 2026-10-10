@@ -1,0 +1,52 @@
+note	claim	donor_file	quote
+CytopiaTeam-Cytopia	license.txt says GNU GPL Version 3 (copyleft, clean-room only)	/mnt/frankendom-donors/CytopiaTeam-Cytopia/license.txt	GNU GENERAL PUBLIC LICENSE
+CytopiaTeam-Cytopia	license.txt version line	/mnt/frankendom-donors/CytopiaTeam-Cytopia/license.txt	Version 3, 29 June 2007
+CytopiaTeam-Cytopia	constant amountOfBuildingsToSpawn = 5	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneArea.cxx	constexpr int amountOfBuildingsToSpawn = 5;
+CytopiaTeam-Cytopia	loop breaks when count reaches cap	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneArea.cxx	if (buildingsSpawned >= amountOfBuildingsToSpawn)
+CytopiaTeam-Cytopia	shuffle of zone nodes each call	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneArea.cxx	randomizer.shuffle(begin(), end());
+CytopiaTeam-Cytopia	skip nodes with occupied flag	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneArea.cxx	if (node.occupied)
+CytopiaTeam-Cytopia	max footprint from getMaximumTileSize	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneArea.cxx	TileSize maxTileSize = getMaximumTileSize(node.coordinate);
+CytopiaTeam-Cytopia	random tile for zone, density and max size	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneArea.cxx	getRandomTileIDForZoneWithRandomSize(m_zoneType, m_zoneDensity, maxTileSize)
+CytopiaTeam-Cytopia	buildingsSpawned++ runs after setTileID	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneArea.cxx	buildingsSpawned++;
+CytopiaTeam-Cytopia	setTileID call whose bool result is ignored	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneArea.cxx	MapFunctions::instance().setTileID(buildingTileID, node.coordinate);
+CytopiaTeam-Cytopia	getMaximumTileSize tests origin row strip	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneArea.cxx	std::vector<Point> xDirection = PointFunctions::getArea(
+CytopiaTeam-Cytopia	getMaximumTileSize tests origin column strip	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneArea.cxx	PointFunctions::getArea(originPoint, {originPoint.x, originPoint.y + distance});
+CytopiaTeam-Cytopia	getArea loops over x in corner range	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/engine/basics/PointFunctions.cxx	for (int x = startRect.x; x <= endRect.x; x++)
+CytopiaTeam-Cytopia	getTargetCoordsOfTileID cell formula	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/engine/TileManager.cxx	Point coords = {targetCoordinates.x - i, targetCoordinates.y + j};
+CytopiaTeam-Cytopia	zoneTypes membership test in getAllTileIDsForZone	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/engine/TileManager.cxx	tileData.second.zoneTypes.end(), +zone)
+CytopiaTeam-Cytopia	RequiredTiles equals requested size	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/engine/TileManager.cxx	tileData.second.RequiredTiles.height == tileSize.height
+CytopiaTeam-Cytopia	comment: only square buildings picked	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/engine/TileManager.cxx	for now only pick square buildings
+CytopiaTeam-Cytopia	random choice of eligible tile size	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/engine/TileManager.cxx	TileSize randomTileSize = *randomizer.choose(
+CytopiaTeam-Cytopia	isVacant and hasPowerSupply gate	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneManager.cxx	if (zoneArea.isVacant() && zoneArea.hasPowerSupply())
+CytopiaTeam-Cytopia	zone update and spawn registered as real-time task	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneManager.cxx	GameClock::instance().addRealTimeClockTask(
+CytopiaTeam-Cytopia	spawnBuildings called after update in the lambda	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneManager.cxx	        spawnBuildings();
+CytopiaTeam-Cytopia	tickTask re-queues with now plus period	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/services/GameClock.cxx	queue.push(Task(task.callback, now + task.m_period, task.m_period, task.hndl));
+CytopiaTeam-Cytopia	updatePlacedNodes queues occupy	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneManager.cxx	m_nodesToOccupy.push_back(mapNode.getCoordinates());
+CytopiaTeam-Cytopia	if non-empty check for occupy list	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneManager.cxx	if (!m_nodesToOccupy.empty())
+CytopiaTeam-Cytopia	signal emitted for each target coordinate	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/engine/map/MapFunctions.cxx	SignalMediator::instance().signalSetTileID.emit(currentMapNode);
+CytopiaTeam-Cytopia	bool return on empty footprint	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/engine/map/MapFunctions.cxx	if (!tileData || targetCoordinates.empty())
+CytopiaTeam-Cytopia	area placement check gates placement	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/engine/map/MapFunctions.cxx	if (!isPlacementOnAreaAllowed(targetCoordinates, tileID))
+CytopiaTeam-Cytopia	condition on line 423 cannot hold because the empty case returned at line 383	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/engine/map/MapFunctions.cxx	if ((!targetCoordinates.size()) == 1)
+CytopiaTeam-Cytopia	a layer with a tile already present is not allowed here	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/engine/GameObjects/MapNode.cxx	if (m_mapNodeData[layer].tileID.empty())
+CytopiaTeam-Cytopia	BUILDINGS case returns true early only for overplacable tiles; otherwise general checks run	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/engine/GameObjects/MapNode.cxx	if (tileDataBuildings && tileDataBuildings->isOverPlacable)
+CytopiaTeam-Cytopia	ZoneNode.occupied defaults to false	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneArea.hxx	bool occupied = false;
+CytopiaTeam-Cytopia	ZoneManager::reset starts from empty	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneManager.cxx	m_zoneAreas.clear();
+CytopiaTeam-Cytopia	reset queues nodes with zone layer	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneManager.cxx	    if (mapNode.getTileData(Layer::ZONE))
+CytopiaTeam-Cytopia	loadGame loads the map file, then calls resetManagers (line 213)	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/Game.cxx	MapFunctions::instance().loadMapFromFile(fileName);
+CytopiaTeam-Cytopia	GamePlay::resetManagers resets ZoneManager	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/GamePlay.cxx	m_ZoneManager.reset();
+CytopiaTeam-Cytopia	ZoneManager::update sets occupied false when a building appears	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneManager.cxx	zoneArea.setVacancy(nodeToOccupy, false);
+CytopiaTeam-Cytopia	initial xmin uses coordinate minus 1	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneArea.cxx	xmin(std::max(0, zoneNode.coordinate.x - 1))
+CytopiaTeam-Cytopia	addNode grows xmax by one	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneArea.cxx	xmax = std::min(Settings::instance().mapSize, xmax + 1);
+CytopiaTeam-Cytopia	zone types RESIDENTIAL INDUSTRIAL COMMERCIAL AGRICULTURAL	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/engine/basics/tileData.hxx	BETTER_ENUM(ZoneType, int, RESIDENTIAL, INDUSTRIAL, COMMERCIAL, AGRICULTURAL)
+CytopiaTeam-Cytopia	ZoneDensity enum opens; values LOW MEDIUM HIGH follow on lines 58-60	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/engine/basics/tileData.hxx	BETTER_ENUM(ZoneDensity, int,
+CytopiaTeam-Cytopia	agricultural bypasses density filter	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/engine/TileManager.cxx	(zone == +ZoneType::AGRICULTURAL ||
+CytopiaTeam-Cytopia	final return false when no case allows placement	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/engine/GameObjects/MapNode.cxx	// every case that is not handled is false
+CytopiaTeam-Cytopia	areas merged when a node touches two	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneManager.cxx	// merge zone areas
+CytopiaTeam-Cytopia	initial ymin uses coordinate minus 1	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneArea.cxx	ymin(std::max(0, zoneNode.coordinate.y - 1))
+CytopiaTeam-Cytopia	zoneTypes list on tile data	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/engine/basics/tileData.hxx	std::vector<ZoneType> zoneTypes;
+CytopiaTeam-Cytopia	zoneDensity list on tile data	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/engine/basics/tileData.hxx	std::vector<ZoneDensity> zoneDensity;
+CytopiaTeam-Cytopia	tile sizes collected from tile data	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/engine/TileManager.cxx	m_tileSizeCombinations.insert(m_tileData[id].RequiredTiles);
+CytopiaTeam-Cytopia	empty result path returns nullopt	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/engine/TileManager.cxx	if (tileIDsForThisZone.empty())
+CytopiaTeam-Cytopia	occupied counter declared and never read	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneManager.cxx	int occupied = 0;
+CytopiaTeam-Cytopia	addZoneNodeToArea: new area when no neighbour	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneManager.cxx	zoneAreas.emplace_back(zoneNode);
+CytopiaTeam-Cytopia	setTileID result not used	/mnt/frankendom-donors/CytopiaTeam-Cytopia/src/game/ZoneArea.cxx	buildingsSpawned++;

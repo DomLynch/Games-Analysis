@@ -1,0 +1,45 @@
+{
+ "game": "pokerth-pokerth",
+ "category": "parties-guilds-chat",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/pokerth-pokerth/src/net/sessiondata.cpp",
+ "licence": "AGPL-3.0-or-later (sessiondata.cpp header: GNU Affero General Public License, version 3 or any later version)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/chat-gate.ts",
+ "parity_row": null,
+ "pattern_tags": [
+  "new:chat-budget-window",
+  "new:shadow-mute",
+  "clamp-and-report"
+ ],
+ "data_fields": [
+  {
+   "name": "chat_lines_per_window",
+   "donor_constant": "5",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pokerth-pokerth/src/net/sessiondata.cpp:463"
+  },
+  {
+   "name": "chat_window_length",
+   "donor_constant": "1 second (seconds(1))",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pokerth-pokerth/src/net/sessiondata.cpp:467"
+  },
+  {
+   "name": "shadow_mute_refresh_interval",
+   "donor_constant": "10",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pokerth-pokerth/src/net/serverlobbythread.cpp:77"
+  }
+ ],
+ "best_idea": "Gate every chat line on one per-player server budget, checked before any fan-out, and let a shadow mute echo the line to the sender only so the sender cannot tell.",
+ "decision": "adapt",
+ "decision_why": "Frankendom needs the same order (budget, then mute, then fan-out) and the same server-side check, but the donor's fixed window lets about 10 lines through at a boundary, so use a sliding window or token bucket, keyed on the character not the socket, and read the mute from the one ledger rather than a 10 s database poll.",
+ "decision_status": "proposed",
+ "acceptance": "A server test sends 6 chat lines from one character within 1 s: 5 reach the room and the 6th returns a reject to the sender only; a shadow-muted character's lines reach only that character, and they still spend its budget."
+}

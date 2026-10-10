@@ -1,0 +1,46 @@
+{
+ "game": "DFHack-dfhack",
+ "category": "zones-world",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/DFHack-dfhack/plugins/burrow.cpp",
+ "licence": "Zlib (LICENSE.rst: DFHack and its plugins under the Zlib license unless noted)",
+ "licence_class": "permissive",
+ "target_module": "origins/zones/zone-paint.ts (proposed path)",
+ "parity_row": 23,
+ "pattern_tags": [
+  "new:connectivity-bounded-paint",
+  "new:fringe-include",
+  "new:edit-expands-zone",
+  "new:wall-ring-fill"
+ ],
+ "data_fields": [
+  {
+   "name": "ring_radius",
+   "donor_constant": "1 (3 by 3 block around the edited cell)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "plugins/burrow.cpp:172"
+  },
+  {
+   "name": "flood_neighbours",
+   "donor_constant": "8 neighbours on one level",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "plugins/burrow.cpp:581"
+  },
+  {
+   "name": "region_class_flags",
+   "donor_constant": "outside and hidden flags must match the seed",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "plugins/burrow.cpp:561"
+  }
+ ],
+ "best_idea": "Paint a zone from one seed by flood fill inside one connected region, taking that region's edge cell once and not crossing it; an edit that opens a wall next to a zone adds the wall ring to the zone.",
+ "decision": "adapt",
+ "decision_why": "Use the connected-region paint with an edge fringe as an authoring tool that writes zone data; reject the runtime expansion on dig, which changes zone data during play and conflicts with zones as data.",
+ "decision_status": "proposed",
+ "acceptance": "Zone-editor test (if built): a fill from a cell inside a room stops at the room's opening; the first cell past the opening is included once; a second fill from the same seed changes nothing."
+}

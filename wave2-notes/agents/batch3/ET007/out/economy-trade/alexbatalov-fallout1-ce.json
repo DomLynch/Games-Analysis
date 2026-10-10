@@ -1,0 +1,123 @@
+{
+ "game": "alexbatalov-fallout1-ce",
+ "category": "economy-trade",
+ "cell": 11,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/inventry.cc",
+ "licence": "Sustainable Use License 1.0 (LICENSE.md: internal business or non-commercial/personal use only; free distribution only)",
+ "licence_class": "restricted",
+ "target_module": "src/economy/barter.ts (proposed new module; not a src/fight or origins path)",
+ "parity_row": 21,
+ "pattern_tags": [
+  "clamp-and-report",
+  "new:currency-exempt-price",
+  "new:all-or-nothing-offer",
+  "new:mood-price-nudge"
+ ],
+ "data_fields": [
+  {
+   "name": "base_modifier_face_value",
+   "donor_constant": "100 (price = base x 100 / modifier)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/inventry.cc:4238"
+  },
+  {
+   "name": "modifier_min",
+   "donor_constant": "10",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/inventry.cc:4250"
+  },
+  {
+   "name": "modifier_max",
+   "donor_constant": "300",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/inventry.cc:4250"
+  },
+  {
+   "name": "master_trader_bonus",
+   "donor_constant": "+25 (player as buyer only)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/inventry.cc:4242"
+  },
+  {
+   "name": "skill_weight_barter",
+   "donor_constant": "1 point of barter skill = 1 modifier point (buyer minus seller)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/inventry.cc:4248"
+  },
+  {
+   "name": "npc_mood_bad_nudge",
+   "donor_constant": "-25",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/inventry.cc:4623"
+  },
+  {
+   "name": "npc_mood_good_nudge",
+   "donor_constant": "+50",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/inventry.cc:4629"
+  },
+  {
+   "name": "mood_level_neutral_above",
+   "donor_constant": "25 (score above 25 is NEUTRAL)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/reaction.cc:51"
+  },
+  {
+   "name": "mood_level_good_above",
+   "donor_constant": "75 (score above 75 is GOOD)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/reaction.cc:49"
+  },
+  {
+   "name": "mood_base_score",
+   "donor_constant": "50",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/reaction.cc:90"
+  },
+  {
+   "name": "mood_per_charisma",
+   "donor_constant": "5 per point, then -25",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/reaction.cc:98"
+  },
+  {
+   "name": "mood_per_presence_level",
+   "donor_constant": "10 per level",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/reaction.cc:104"
+  },
+  {
+   "name": "mood_childkiller_penalty",
+   "donor_constant": "-30",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/reaction.cc:137"
+  },
+  {
+   "name": "catalogue_item_cost",
+   "donor_constant": "proto item.cost (per item, times quantity)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/item.cc:663"
+  }
+ ],
+ "best_idea": "A shop or trade price is one pure function of base cost, a stat-modifier stack, a clamp, and a currency exemption, and an offer is accepted all-or-nothing when it covers that price.",
+ "decision": "adapt",
+ "decision_why": "Keep the price formula and clamp as one server function for shop and player trades; drop the NPC-mood nudge unless a zone asks for it, and fix the empty-NPC-side free gift and the dead T-key branch.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: goods 120 with currency 20, equal barter skills, GOOD NPC (+50), no perk, script mod 0 costs 86; an offer of 85 is refused; an empty offer is refused; an empty NPC side is refused."
+}

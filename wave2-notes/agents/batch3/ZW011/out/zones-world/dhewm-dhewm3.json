@@ -1,0 +1,40 @@
+{
+ "game": "dhewm-dhewm3",
+ "category": "zones-world",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/Entity.cpp",
+ "licence": "GNU GPL version 3 (COPYING.txt) with id Software additional terms (Pvs.cpp line 22)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "presence-gated",
+  "grace-timer",
+  "per-player-view",
+  "new:zone-gate-graph",
+  "wait-gate"
+ ],
+ "data_fields": [
+  {
+   "name": "dormantGraceMs",
+   "donor_constant": "3000 ms",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "game/Entity.h:50"
+  },
+  {
+   "name": "spawnGraceHeadStartFrames",
+   "donor_constant": "5 frames (msec x 5 offset at spawn)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "game/Entity.cpp:484"
+  }
+ ],
+ "best_idea": "A zone's NPCs stay awake while a player can reach their zone through open gates, freeze three seconds after the gate shuts, and a never-awake NPC waits for a player's view before it runs at all.",
+ "decision": "adapt",
+ "decision_why": "The grace timer on disconnect and the skip-the-brain-when-frozen gate fit row 23's grace rule and the server tick's per-tick NPC budget; Frankendom has zones as data, so connectivity comes from zone gate data, not a portal BSP, and dormant means frozen, with despawn left to the row 23 empty-zone rule.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: a zone reached only through a gate keeps its NPC awake until the gate has been shut for 3000 ms, then the NPC is frozen (its brain does not run); reopening the gate wakes it on the same tick; a never-awake NPC does not run its brain until a test player's view includes its zone."
+}

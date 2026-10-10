@@ -1,0 +1,59 @@
+{
+ "game": "cuteshaun-lineage2-api",
+ "category": "zones-world",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/data/indexes.ts",
+ "licence": "MIT (repo LICENSE: MIT License, Copyright (c) 2026 Andrii Tsapko)",
+ "licence_class": "permissive",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "new:nearest-anchor-threshold",
+  "new:home-zone-mode",
+  "new:audited-override"
+ ],
+ "data_fields": [
+  {
+   "name": "zone anchor position (centre x, y)",
+   "donor_constant": "per zone record, game units",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/types.ts:467"
+  },
+  {
+   "name": "zone attribution radius",
+   "donor_constant": "10000 for every zone (one global value)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/data/indexes.ts:1564"
+  },
+  {
+   "name": "zone recommended minimum level",
+   "donor_constant": "minLevel per zone; 0 means none",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/types.ts:466"
+  },
+  {
+   "name": "NPC to zone override",
+   "donor_constant": "one entry: 29001 to 34, with an audit note",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/api/dto/location.ts:129"
+  },
+  {
+   "name": "tie rule for zone and home-zone choice",
+   "donor_constant": "lowest id wins",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/api/dto/location.ts:170"
+  }
+ ],
+ "best_idea": "Name a position by the nearest authored anchor within a fixed radius, and take a group's home zone as the most frequent zone among its members, with ties going to the lowest id.",
+ "decision": "adapt",
+ "decision_why": "Nearest-anchor-within-radius gives zone labels and population attribution for zones that have no polygon, with the radius as zone data. Keep polygon containment for anything that decides legality, since anchors have no shape.",
+ "decision_status": "proposed",
+ "acceptance": "A server test places a spawn 9,000 units from a zone anchor whose radius is 10,000 and expects that zone; a spawn 11,000 units from every anchor expects no zone; a creature with three spawns in zone 7 and three in zone 4 reports zone 4."
+}

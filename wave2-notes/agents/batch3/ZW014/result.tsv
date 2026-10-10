@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+freeciv-freeciv	zones-world	P	STRONG	full	server/barbarian.c:533-760 try_summon_barbarians and summon_barbarians: random tile sampled and kept only 5-8 tiles from the nearest city, with a population-tiered group count; animals.c:61-98 adds a per-terrain animal table placed once at start.
+freeorion-freeorion	zones-world	P	STRONG	full	default/python/universe_generation/monsters.py:84-230 generate_monsters: each zone gets one roll for one randomly chosen eligible monster kind, with per-kind rate, cap and hop-distance rule from monster_fleets.inf; turn_events.py:34-63 is a separate runtime spawner that ignores those rules.
+gawric-Unity-Client-for-L2J	zones-world	P	STRONG	full	Assets/Scripts/Game/Manager/SceneLoader.cs:127-163 Update and 165-215 ResolveSeamlessTiles: neighbour tiles (edge and corner) loaded within an 80-unit band of a 32768-unit tile edge, one load or unload started per frame, no hysteresis.

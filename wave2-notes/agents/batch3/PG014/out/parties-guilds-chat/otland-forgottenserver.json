@@ -1,0 +1,70 @@
+{
+ "game": "otland-forgottenserver",
+ "category": "parties-guilds-chat",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/otland-forgottenserver/src/party.cpp",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/xp-share.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "xp-share",
+  "level-gap",
+  "presence-gated",
+  "grace-timer",
+  "stale-state",
+  "new:all-or-nothing-gate",
+  "new:class-count-bonus"
+ ],
+ "data_fields": [
+  {
+   "name": "share_range_tiles",
+   "donor_constant": "30",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/party.h:14"
+  },
+  {
+   "name": "share_range_floors",
+   "donor_constant": "1",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/party.h:15"
+  },
+  {
+   "name": "activity_window_ms",
+   "donor_constant": "60000 (pzLocked)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/configmanager.cpp:265"
+  },
+  {
+   "name": "base_share_multiplier",
+   "donor_constant": "1.20",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/data/events/scripts/party.lua:44"
+  },
+  {
+   "name": "group_multiplier_per_distinct_class",
+   "donor_constant": "1 + size*(5*(size-1)+10)/100 (size = distinct classes, 2+)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/data/events/scripts/party.lua:62"
+  },
+  {
+   "name": "level_floor_ratio",
+   "donor_constant": "ceil(highest_level*2/3)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/otland-forgottenserver/src/party.cpp:408"
+  }
+ ],
+ "best_idea": "Split a kill's XP among the whole group with a multiplier that grows with the number of distinct classes, and gate each member on level, distance and recent activity at kill time.",
+ "decision": "adapt",
+ "decision_why": "Keep the gate-then-split shape and the group multiplier as zone data, evaluated on the server at kill time; the donor's all-or-nothing gate and the class-count bonus need a Frankendom decision because the donor's cached flag can go stale.",
+ "decision_status": "proposed",
+ "acceptance": "A server test shows a 100 XP kill in a 3-member party with two distinct classes gives each member 44 XP (ceil(100 x 1.30 / 3)); a member 31 tiles from the leader gets no shared XP, and the test states whether the other members also get none (all-or-nothing option)."
+}

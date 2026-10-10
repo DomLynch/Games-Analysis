@@ -1,0 +1,82 @@
+{
+ "game": "evennia-evennia",
+ "category": "zones-world",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/dungeon.py",
+ "licence": "BSD 3-Clause (LICENSE.txt line 1)",
+ "licence_class": "permissive",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "new:lazy-zone-chain",
+  "new:unexplored-exit-budget",
+  "new:reserved-coordinates",
+  "new:lock-until-cleared",
+  "new:idle-collapse"
+ ],
+ "data_fields": [
+  {
+   "name": "max_unexplored_exits",
+   "donor_constant": "2",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/dungeon.py:213"
+  },
+  {
+   "name": "max_new_exits_per_room",
+   "donor_constant": "2 (draw 1..2 when above one)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/dungeon.py:214"
+  },
+  {
+   "name": "start_exit_reset_chance",
+   "donor_constant": "0.5 per exit per run",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/dungeon.py:439"
+  },
+  {
+   "name": "start_exit_reset_interval",
+   "donor_constant": "300 (5 minutes)",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/dungeon.py:457"
+  },
+  {
+   "name": "branch_check_interval",
+   "donor_constant": "3600 (one hour)",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/dungeon.py:458"
+  },
+  {
+   "name": "branch_max_life",
+   "donor_constant": "604800 (one week, idle since last generated room)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/dungeon.py:459"
+  },
+  {
+   "name": "depth_name_table",
+   "donor_constant": "10 named depths, then fallback",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/dungeon.py:178"
+  },
+  {
+   "name": "grid_step",
+   "donor_constant": "1 per cardinal move",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/dungeon.py:68"
+  }
+ ],
+ "best_idea": "Generate a zone chain lazily as players step through its exits, keep a fixed budget of unexplored exits and reserve every coordinate, lock each area's onward exits until its encounter is cleared, and collapse an instance after it has been idle.",
+ "decision": "adapt",
+ "decision_why": "The lazy layout with a budget and reserved coordinates fits instanced zones, and the lock-until-cleared exit fits server-verified clears; but the donor collapses by generation age and its cleanup removes no rooms, so Frankendom takes the generator and the lock and writes its own empty-with-grace despawn that really removes the instance's areas.",
+ "decision_status": "proposed",
+ "acceptance": "A player sees new areas only as they step through exits; the onward exit stays locked until the server confirms the encounter is cleared; once the instance has been empty for the grace period the server removes its areas and returns stragglers to the entrance, and a server test asserts the removed areas are gone."
+}

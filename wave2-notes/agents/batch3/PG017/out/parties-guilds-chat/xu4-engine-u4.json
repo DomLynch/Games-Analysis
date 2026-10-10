@@ -1,0 +1,61 @@
+{
+ "game": "xu4-engine-u4",
+ "category": "parties-guilds-chat",
+ "cell": 18,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/xu4-engine-u4/src/party.cpp",
+ "licence": "as read: GPL-3.0 per /mnt/frankendom-donors/xu4-engine-u4/COPYING; party.cpp has no licence line",
+ "licence_class": "copyleft",
+ "target_module": "origins/party/join.ts (proposed, not checked against the repo)",
+ "parity_row": null,
+ "pattern_tags": [
+  "new:join-gate-by-level",
+  "new:band-gate",
+  "new:roster-slot-swap",
+  "new:view-over-ledger",
+  "new:sync-bus-emit"
+ ],
+ "data_fields": [
+  {
+   "name": "roster_slots",
+   "donor_constant": "8",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/xu4-engine-u4/src/party.cpp:990"
+  },
+  {
+   "name": "size_cap_vs_leader_level",
+   "donor_constant": "members + 1 must not exceed leader level (hpMax / 100)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/xu4-engine-u4/src/party.cpp:994"
+  },
+  {
+   "name": "hp_per_level",
+   "donor_constant": "100",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/xu4-engine-u4/src/party.cpp:135"
+  },
+  {
+   "name": "virtue_block_band",
+   "donor_constant": "blocks when value > 0 and < 40 (1 to 39)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/xu4-engine-u4/src/party.cpp:998"
+  },
+  {
+   "name": "virtue_cap_on_gain",
+   "donor_constant": "99",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/xu4-engine-u4/src/party.cpp:633"
+  }
+ ],
+ "best_idea": "Run every join gate on the ledger before any roster mutation, and cap party size by the leader's level, so a refused join can never leave a half-changed roster.",
+ "decision": "adapt",
+ "decision_why": "Keep the gate-then-swap order and the size cap by leader level for a future co-op group; reject the karma band, which is Ultima IV virtue design with no Frankendom counterpart.",
+ "decision_status": "proposed",
+ "acceptance": "A server test where a level-2 leader accepts one companion, refuses a third with the size-cap result, and the roster and emitted-event count are unchanged after the refused join."
+}

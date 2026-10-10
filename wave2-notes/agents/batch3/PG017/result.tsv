@@ -1,0 +1,2 @@
+game	category	old	verdict	depth	finding
+xu4-engine-u4	parties-guilds-chat	P	STRONG	full	src/party.cpp:986-1014 join runs the level and virtue gates, then swaps the record into the next free slot and emits MEMBER_JOINED; no guild, chat, friend or network code exists in this donor

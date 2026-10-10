@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+gemrb-gemrb	parties-guilds-chat	P	STRONG	full	Game.cpp:433-508 JoinParty appends and assigns slot size+1; 335-389 LeaveParty shifts higher slots down; 304-333 ConsolidateParty closes gaps on load; 1517-1531 PartyOverflow is a one-shot over-cap check.
+hedgewars-hw	parties-guilds-chat	P	STRONG	full	FloodDetection.hs:30-85 registerEvent/doCheck: per-kind two-tier window (warn at limit, kick one past); the server relays a CHAT line before the check (HWProtoLobbyState.hs 52, ServerCore.hs 57-61).
+heroiclabs-nakama	parties-guilds-chat	P	STRONG	full	party_presence.go:53-147 Reserve/Join/Leave hold seats and enforce the cap; party_handler.go:409-475 Accept reserves, confirms, then joins or releases.

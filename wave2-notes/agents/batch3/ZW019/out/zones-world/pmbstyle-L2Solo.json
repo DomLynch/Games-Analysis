@@ -1,0 +1,83 @@
+{
+ "game": "pmbstyle-L2Solo",
+ "category": "zones-world",
+ "cell": 7,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/WorldAreaCatalog.js",
+ "licence": "Apache-2.0 (LICENSE file: Apache License, Version 2.0, January 2004; no NOTICE file in donor root)",
+ "licence_class": "permissive",
+ "target_module": "origins/server/world-zones.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "new:zone-box-first-match",
+  "new:zone-band-z",
+  "new:cell-tag-zone",
+  "new:party-only-priority",
+  "new:classify-once",
+  "new:starter-level-gate"
+ ],
+ "data_fields": [
+  {
+   "name": "zone_box_xy_units",
+   "donor_constant": "box bounds per zone (Cruma Tower X 10800..24650, Y 107200..121050); unset bound = not tested",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/WorldAreaCatalog.js:58"
+  },
+  {
+   "name": "zone_band_z_units",
+   "donor_constant": "minZ/maxZ, belowZ, aboveZ per box; unknown z fails any z bound (Cruma Tower Z -12352..-6320)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/WorldAreaCatalog.js:175"
+  },
+  {
+   "name": "spot_capacity_count",
+   "donor_constant": "spotCapacity 48 (Cruma), 72 (Insolence), 72 (Antharas), 64 (Elven Ruins), 48 (Mithril)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/WorldAreaCatalog.js:68"
+  },
+  {
+   "name": "local_until_level_count",
+   "donor_constant": "localUntilLevel 20 (Elven Ruins, Mithril Mines)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/WorldAreaCatalog.js:125"
+  },
+  {
+   "name": "seven_signs_margin_xy_units",
+   "donor_constant": "margin 300 units added around generated boxes in X and Y",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/WorldAreaCatalog.js:25"
+  },
+  {
+   "name": "seven_signs_margin_z_units",
+   "donor_constant": "margin 256 units added around generated boxes in Z",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/WorldAreaCatalog.js:38"
+  },
+  {
+   "name": "grid_cell_units",
+   "donor_constant": "cell key = (x >> 15) + 20, (y >> 15) + 18 (32768-unit cells)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/WorldAreaCatalog.js:163"
+  },
+  {
+   "name": "hunting_spot_grid_units",
+   "donor_constant": "GRID_SIZE = 6000",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Bot/AI/SpotService.js:1"
+  }
+ ],
+ "best_idea": "A zone is plain data, a list of axis-aligned boxes with an optional z band and an optional grid-cell tag, resolved by first match in list order, and a hunting spot takes the party-only zone found among its arrival points over its centre's zone.",
+ "decision": "adapt",
+ "decision_why": "The box-and-band zone data and the classify-once step fit our zones-as-data ruling, but the first-match-without-overlap-check rule and the Lineage II cell offsets do not, so overlaps are rejected at load and the grid is ours.",
+ "decision_status": "proposed",
+ "acceptance": "A server test: a point inside a box and inside its z band resolves to that zone; a point below the band resolves to none; an area with no box, cell or band never matches; two overlapping zones fail to load; a spot whose arrival point lies in the party-only zone is classed party-only even when its centre is open."
+}

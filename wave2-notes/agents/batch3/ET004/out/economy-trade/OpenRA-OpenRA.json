@@ -1,0 +1,68 @@
+{
+ "game": "OpenRA-OpenRA",
+ "category": "economy-trade",
+ "cell": 11,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Traits/Player/PlayerResources.cs",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "origins/economy/ledger.ts",
+ "parity_row": 21,
+ "pattern_tags": [
+  "new:take-or-fail",
+  "new:ore-before-cash",
+  "new:capacity-clamp",
+  "new:pay-as-built",
+  "new:refund-by-condition"
+ ],
+ "data_fields": [
+  {
+   "name": "starting_cash",
+   "donor_constant": "DefaultCash = 5000; SelectableCash [2500, 5000, 10000, 20000]",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "OpenRA.Mods.Common/Traits/Player/PlayerResources.cs:32"
+  },
+  {
+   "name": "ore_value_per_unit",
+   "donor_constant": "Ore 25, Gems 50 (mods/ra/rules/player.yaml)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "OpenRA.Mods.Common/Traits/Player/PlayerResources.cs:64"
+  },
+  {
+   "name": "storage_capacity",
+   "donor_constant": "ResourceCapacity counter, raised by AddStorageCapacity (value per building not read)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "OpenRA.Mods.Common/Traits/Player/PlayerResources.cs:107"
+  },
+  {
+   "name": "sell_refund_percent",
+   "donor_constant": "50",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "OpenRA.Mods.Common/Traits/Sellable.cs:25"
+  },
+  {
+   "name": "low_funds_notice_interval",
+   "donor_constant": "30000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "OpenRA.Mods.Common/Traits/Player/PlayerResources.cs:55"
+  },
+  {
+   "name": "pay_as_built_expected_cost",
+   "donor_constant": "linear: total cost x remaining time / total time, floored; final tick pays the rest",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "OpenRA.Mods.Common/Traits/Player/ProductionQueue.cs:789"
+  }
+ ],
+ "best_idea": "One player ledger holds cash and a capped ore pool; a debit is take-or-fail and spends ore before cash, and a timed build can be paid as it progresses so a short purse pauses it instead of cancelling it.",
+ "decision": "adapt",
+ "decision_why": "Take the take-or-fail debit and the health-scaled sale refund for Frankendom's ledger; use pay-as-built only for timed crafts; reject the lockstep sync model because the server is the authority.",
+ "decision_status": "proposed",
+ "acceptance": "A server test asserts that a 40 debit with 30 ore and 15 cash leaves 0 ore and 5 cash, a 40 debit with 30 ore and 5 cash fails and changes nothing, a 200-value item at half health sells for 50 at refund 50 percent, and a 60-tick craft pays 0 on tick 1 and the full remaining cost on its last tick."
+}

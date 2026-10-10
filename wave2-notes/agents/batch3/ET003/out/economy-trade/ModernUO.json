@@ -1,0 +1,73 @@
+{
+ "game": "ModernUO",
+ "category": "economy-trade",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/Vendors/GenericBuy.cs",
+ "licence": "GPL-3.0 (LICENSE lines 3-4, as read)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/shops.ts (proposed new module; not checked against the Frankendom tree)",
+ "parity_row": 21,
+ "pattern_tags": [
+  "respawn-scaling",
+  "wait-gate",
+  "new:lazy-one-step-catchup"
+ ],
+ "data_fields": [
+  {
+   "name": "restock_delay",
+   "donor_constant": "1 hour (TimeSpan.FromHours(1))",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/Vendors/BaseVendor.cs:130"
+  },
+  {
+   "name": "ceiling_cap",
+   "donor_constant": "999 units",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/Vendors/GenericBuy.cs:109"
+  },
+  {
+   "name": "ceiling_large_reset",
+   "donor_constant": "640 units (value a 999 ceiling halves to)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/Vendors/GenericBuy.cs:123"
+  },
+  {
+   "name": "ceiling_halve_floor",
+   "donor_constant": "20 units (ceilings at or below this never halve)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/Vendors/GenericBuy.cs:125"
+  },
+  {
+   "name": "sold_out_multiplier",
+   "donor_constant": "2 (ceiling doubles when sold out)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/Vendors/GenericBuy.cs:109"
+  },
+  {
+   "name": "list_amount",
+   "donor_constant": "per entry, e.g. 40 (BlankMap sample)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/Vendors/SBInfo/SBMapmaker.cs:16"
+  },
+  {
+   "name": "town_price_scalar",
+   "donor_constant": "100 + town tax (percent scalar)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/Vendors/BaseVendor.cs:1353"
+  }
+ ],
+ "best_idea": "Each shop line has a stock ceiling that moves with demand (doubles when sold out, halves when most of it stays unsold, never shrinks at small sizes), refills to that ceiling on the next visit after one hour, and takes only one restock step however long the shop sat unvisited.",
+ "decision": "adapt",
+ "decision_why": "Take the lazy one-step catch-up (no per-tick work, no burst after absence) and the demand-moved ceiling, which give a designer-tunable supply control for zones as data; move the cap, reset and floor constants into zone data, and keep player sales from refilling stock, as the donor does, so stock stays a designer number.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: a line with ceiling 40 and no stock is at 80 after the next list open past the delay; a line with 30 of 40 left is at 20; a shop unvisited for five hours takes one restock step, not five."
+}

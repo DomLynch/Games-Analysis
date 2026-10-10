@@ -1,0 +1,53 @@
+{
+ "game": "LostCityRS-Engine-TS",
+ "category": "economy-trade",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/script/handlers/InvOps.ts",
+ "licence": "MIT (LICENSE, as read)",
+ "licence_class": "permissive",
+ "target_module": "origins/server/trade.ts (proposed new module; not checked against the Frankendom tree)",
+ "parity_row": 21,
+ "pattern_tags": [
+  "new:two-sided-swap",
+  "new:receiver-overflow-floor",
+  "new:ledger-row-both-sides",
+  "fixed-step"
+ ],
+ "data_fields": [
+  {
+   "name": "floor_overflow_ttl",
+   "donor_constant": "200 ticks (lifecycle of overflow objects)",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/script/handlers/InvOps.ts:430"
+  },
+  {
+   "name": "floor_reveal_delay",
+   "donor_constant": "100 ticks (receiver reveal, comment only; reveal code not read)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/World.ts:1487"
+  },
+  {
+   "name": "tick_length",
+   "donor_constant": "600 ms (TICKRATE, marked DO NOT CHANGE)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/World.ts:120"
+  },
+  {
+   "name": "unit_value",
+   "donor_constant": "ObjType.cost per object type (value x count in the ledger)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/script/handlers/InvOps.ts:441"
+  }
+ ],
+ "best_idea": "A trade is one server transaction that moves both offers, conserves every unit (into the receiver's bag, or onto the floor reserved to the receiver when the bag is full), and writes one ledger row with both sides' values read before anything moves.",
+ "decision": "adapt",
+ "decision_why": "Take the one-transaction shape, unit conservation and two-sided ledger row, which fit server-verified trades and one ledger; reject the silent 200-tick floor despawn as a loss path, because an expired item with no row breaks the one-ledger ruling; the swap must be one server call, not two opcodes run in turn by content.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: A offers three stacks, B has one free slot; afterwards every unit is in B's bag or on the floor owned by B, totals per item id are unchanged, one TRADE ledger row holds both sides' values, and an expired floor item writes an EXPIRED row instead of vanishing."
+}

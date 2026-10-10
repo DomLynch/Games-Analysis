@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+exult-exult	zones-world	P	STRONG	full	/mnt/frankendom-donors/exult-exult/objs/egg.cc:829-924, 1296-1352, 324-336 (spawn-point trigger, one-roll latch, random count, ring placement) and gamemap.cc:1752-1791 (superchunk window cache-out); GPL-2.0-or-later, clean-room.
+flareteam-flare-engine	zones-world	P	STRONG	full	/mnt/frankendom-donors/flareteam-flare-engine/src/MapRenderer.cpp:92-165 (enemy groups rolled once per map load: chance gate, inclusive count range, bounded random placement, row-major fallback); GPL-3.0-or-later, clean-room.
+flareteam-flare-game	zones-world	P	STRONG	full	/mnt/frankendom-donors/flareteam-flare-engine/src/Map.cpp:972-1487 (seeded labyrinth from room pieces: random walk, door ramp, one key per door, unique rooms; rules in flare-game iron_labyrinth.txt:2-9); engine GPL-3.0-or-later, data CC-BY-SA 3.0, clean-room.

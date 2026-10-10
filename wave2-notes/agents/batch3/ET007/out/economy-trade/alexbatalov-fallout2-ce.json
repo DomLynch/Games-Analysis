@@ -1,0 +1,90 @@
+{
+ "game": "alexbatalov-fallout2-ce",
+ "category": "economy-trade",
+ "cell": 11,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/inventory.cc",
+ "licence": "Sustainable Use License 1.0 (LICENSE.md: internal business or non-commercial/personal use only; free distribution only)",
+ "licence_class": "restricted",
+ "target_module": "src/economy/barter.ts (proposed new module; not a src/fight or origins path)",
+ "parity_row": 21,
+ "pattern_tags": [
+  "clamp-and-report",
+  "new:ratio-skill-price",
+  "new:currency-exempt-price",
+  "new:all-or-nothing-offer",
+  "new:mood-price-nudge",
+  "new:companion-weight-swap"
+ ],
+ "data_fields": [
+  {
+   "name": "price_offset_k",
+   "donor_constant": "160 on both skill sides",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/inventory.cc:4695"
+  },
+  {
+   "name": "doubled_cost_factor",
+   "donor_constant": "2.0 on uncapped cost",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/inventory.cc:4695"
+  },
+  {
+   "name": "multiplier_floor",
+   "donor_constant": "0.0099999998 (applied only when negative)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/inventory.cc:4698"
+  },
+  {
+   "name": "master_trader_bonus",
+   "donor_constant": "25 points off the multiplier (player only)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/inventory.cc:4686"
+  },
+  {
+   "name": "npc_mood_bad_nudge",
+   "donor_constant": "+25",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/inventory.cc:5095"
+  },
+  {
+   "name": "npc_mood_good_nudge",
+   "donor_constant": "-15",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/inventory.cc:5101"
+  },
+  {
+   "name": "mood_good_above",
+   "donor_constant": "10",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/reaction.cc:20"
+  },
+  {
+   "name": "mood_neutral_above",
+   "donor_constant": "-10",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/reaction.cc:22"
+  },
+  {
+   "name": "catalogue_item_cost",
+   "donor_constant": "item cost per object, times quantity (proto cost via itemGetCost, not read)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/item.cc:864"
+  }
+ ],
+ "best_idea": "A price can be a skill ratio with an offset, (npc + 160) / (party + 160), applied to the cost and multiplied by a bounded modifier, so the price stays smooth and positive without a large clamp, with currency billed at face value.",
+ "decision": "adapt",
+ "decision_why": "Take the ratio form and face-value currency for server-side shop and player trades; add the clamp the donor lacks, do not inherit the doubled cost without a test, drop the companion no-value trade, and make the mood a server record field.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: NPC barter 60, party best 100, uncapped goods 100, neutral NPC: price 169; offer 168 refused, 169 accepted; GOOD NPC (-15): price 143."
+}

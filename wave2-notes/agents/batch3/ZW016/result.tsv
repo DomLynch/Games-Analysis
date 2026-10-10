@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+id-Software-Quake	zones-world	P	STRONG	full	/mnt/frankendom-donors/id-Software-Quake/qw-qc/client.qc:62-123 and 244-273 with WinQuake/sv_main.c:1015-1032: a zone exit fires once, defers the move 0.1 s, holds players 5 s, and carries a clamped kit to the next map through 16 parm slots.
+id-Software-Quake-2	zones-world	P	STRONG	full	/mnt/frankendom-donors/id-Software-Quake-2/server/sv_ccmds.c:488-547 and server/sv_init.c:117-157 with ctf/g_save.c:605-740: a zone's live entities are saved on exit and overlaid on its fresh baseline on re-entry, with a 100-frame settle and a unit wipe on a * map name.
+ihhub-fheroes2	zones-world	P	STRONG	full	/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/maps/maps_tiles_helper.cpp:1697-1725 with src/fheroes2/world/world.cpp:462-477: each week a living neutral stack grows by count/7 using one draw for the remainder, capped at 4000 on original maps, and a cleared stack never regrows.

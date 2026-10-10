@@ -1,0 +1,33 @@
+{
+ "game": "lichess-org-mobile",
+ "category": "parties-guilds-chat",
+ "cell": 18,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/lichess-org-mobile/lib/src/model/relation/online_friends.dart",
+ "licence": "GNU GPL v3 (LICENSE header: GNU GENERAL PUBLIC LICENSE, version 3)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/presence.ts (proposed new; Frankendom code not read)",
+ "parity_row": "none",
+ "pattern_tags": [
+  "stale-state",
+  "new:snapshot-on-resume",
+  "new:snapshot-on-reconnect",
+  "new:delta-by-id",
+  "new:listen-gate"
+ ],
+ "data_fields": [
+  {
+   "name": "recent_following_limit",
+   "donor_constant": "10",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/lichess-org-mobile/lib/src/model/relation/relation_repository.dart:35"
+  }
+ ],
+ "best_idea": "Keep the online-friends list by taking a full snapshot whenever the screen regains focus or the socket reconnects, then applying small enter, leave and playing deltas only while the screen is listening.",
+ "decision": "adapt",
+ "decision_why": "Snapshot-on-resume and snapshot-on-reconnect is a simple, correct way to keep a presence list in sync with no replay; Frankendom must key deltas by id and make enter idempotent, and keep presence out of every rule.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: after a forced disconnect and reconnect the client list equals the server snapshot with no duplicate ids, and an enter event for an id already in the list leaves the list unchanged."
+}

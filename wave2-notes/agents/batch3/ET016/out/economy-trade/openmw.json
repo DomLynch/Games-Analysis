@@ -1,0 +1,103 @@
+{
+ "game": "openmw",
+ "category": "economy-trade",
+ "cell": 11,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/mechanicsmanagerimp.cpp",
+ "licence": "GPL-3.0 (repo LICENSE, GNU GPL Version 3, 29 June 2007; no per-file header in lines read)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/shop-pricing.ts",
+ "parity_row": 21,
+ "pattern_tags": [
+  "new:buy-sell-spread",
+  "new:arbitrage-cap",
+  "new:one-price-function",
+  "new:standing-price-term",
+  "clamp-and-report"
+ ],
+ "data_fields": [
+  {
+   "name": "standing_clamp",
+   "donor_constant": "0 to 100",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/mechanicsmanagerimp.cpp:558"
+  },
+  {
+   "name": "standing_pivot",
+   "donor_constant": "50 (standing term is zero at 50)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/mechanicsmanagerimp.cpp:584"
+  },
+  {
+   "name": "skill_cap",
+   "donor_constant": "100 for both sides",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/mechanicsmanagerimp.cpp:578"
+  },
+  {
+   "name": "luck_term",
+   "donor_constant": "0.1 per point, capped at 10, both sides",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/mechanicsmanagerimp.cpp:579"
+  },
+  {
+   "name": "personality_term",
+   "donor_constant": "0.2 per point, capped at 10, both sides",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/mechanicsmanagerimp.cpp:580"
+  },
+  {
+   "name": "spread_slope",
+   "donor_constant": "0.5 on the side difference",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/mechanicsmanagerimp.cpp:586"
+  },
+  {
+   "name": "buy_base",
+   "donor_constant": "100 (buy term 1.0 at parity)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/mechanicsmanagerimp.cpp:586"
+  },
+  {
+   "name": "sell_base",
+   "donor_constant": "50 (sell term 0.5 at parity)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/mechanicsmanagerimp.cpp:587"
+  },
+  {
+   "name": "minimum_offer",
+   "donor_constant": "1 gold",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/mechanicsmanagerimp.cpp:589"
+  },
+  {
+   "name": "window_cap",
+   "donor_constant": "0.75 of base, buy floor and sell ceiling (trade window)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/openmw/apps/openmw/mwgui/tradewindow.cpp:624"
+  },
+  {
+   "name": "fatigue_term_settings",
+   "donor_constant": "fFatigueBase and fFatigueMult from game settings (values not in donor)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/creaturestats.cpp:49"
+  }
+ ],
+ "best_idea": "One offer formula for every vendor service, built from one difference between player and seller sides, giving a buy price and a sell price that cannot make a buy-then-sell round trip profitable once a 75 percent window cap is built in.",
+ "decision": "adapt",
+ "decision_why": "Keep one server-side offer function for all shop services with the buy and sell terms from one difference, the 1-gold minimum and the 75 percent cap inside the function; reject the fatigue and luck terms, since tiredness or a rolled attribute would need new recorded state, and keep standing only as a zone-data term.",
+ "decision_status": "proposed",
+ "acceptance": "A server test over every zone shop item asserts buy price at least 75 percent of base, sell price at most 75 percent of base, no gold gained by a buy-then-sell round trip at the same standing, and no offer below 1 gold."
+}

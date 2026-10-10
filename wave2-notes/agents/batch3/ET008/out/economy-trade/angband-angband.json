@@ -1,0 +1,89 @@
+{
+ "game": "angband-angband",
+ "category": "economy-trade",
+ "cell": 11,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/angband-angband/src/store.c",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/shop-price.ts (proposed new module)",
+ "parity_row": 21,
+ "pattern_tags": [
+  "clamp-and-report",
+  "new:buy-sell-spread",
+  "new:faucet-toggle",
+  "new:server-recomputed-price",
+  "new:day-restock"
+ ],
+ "data_fields": [
+  {
+   "name": "shop_buy_ratio",
+   "donor_constant": "2/3 of min(real, apparent) value",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "src/store.c:629"
+  },
+  {
+   "name": "black_market_buy_divisor",
+   "donor_constant": "base /2, then adjust 50 percent (net about 1/6 of value)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "src/store.c:633"
+  },
+  {
+   "name": "black_market_sell_multiplier",
+   "donor_constant": "base x2, then adjust 150 percent (net 3x)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "src/store.c:650"
+  },
+  {
+   "name": "price_round_offset",
+   "donor_constant": "(price*adjust+50)/100",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "src/store.c:655"
+  },
+  {
+   "name": "purse_max_cost_per_unit",
+   "donor_constant": "5000 / 10000 / 20000 / 30000 (owner purses)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "lib/gamedata/store.txt:22"
+  },
+  {
+   "name": "no_selling",
+   "donor_constant": "birth option: shop pays 0 for buys from player",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "src/store.c:637"
+  },
+  {
+   "name": "gold_drop_multiplier_no_selling",
+   "donor_constant": "value x5 below town",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "src/obj-make.c:1311"
+  },
+  {
+   "name": "restock_clock_turns",
+   "donor_constant": "10 x store:turns (1000) game turns per day count",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "src/game-world.c:497"
+  },
+  {
+   "name": "owner_shuffle_chance",
+   "donor_constant": "one_in_(store:shuffle), store:shuffle = 25",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "lib/gamedata/constants.txt:161"
+  }
+ ],
+ "best_idea": "Price every shop trade with one pure function that the buy and sell commands call on the server, so the client's displayed price is never the one charged, and bound shop payouts with a per-unit purse cap.",
+ "decision": "adapt",
+ "decision_why": "Adopt the server-recomputed price and the single spend-or-refuse transaction; adapt the spreads and the faucet switch to zone data, since Frankendom has no shop balance and the donor's purse is only a per-unit cap, so a gold sink and source must be added.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: a buy command sent with a client price of 1 for an item priced 40 charges 40, and a sale of a value-30 item pays 20 to a normal shop and 5 to a black-market shop; in a zone with no_selling set, the sale pays 0 and the item is still removed."
+}

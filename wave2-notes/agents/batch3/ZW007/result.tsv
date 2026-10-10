@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+OpenXcom-OpenXcom	zones-world	P	STRONG	full	src/Savegame/AlienMission.cpp:162-263,771-802 and src/Mod/RuleRegion.cpp:171-196 (zone rectangles, count-uniform pick, 100-try land sampler), AlienStrategy.cpp:119-170 and WeightedOptions.cpp:31-47 (weighted bag, inclusive-draw off-by-one)
+PixelGuys-Cubyz	zones-world	P	STRONG	full	src/server/terrain/climategen/NoiseBasedVoronoi.zig:74-157,225-303,487-547 (chunk centre rejection with 0.85 spacing and 100-reject stop, parity phases, normalised nearest zone with blend band and height-limit penalty); biomes.zig:569-587 for the climate-tree lookup
+TurningWheel-Barony	zones-world	P	STRONG	full	src/maps.cpp:291-596 (per-zone monster band tables with level gates, SKELETON fallback) and 7863-7891 (base roll before custom override, switched off after one empty roll), inside assignActions from 6998

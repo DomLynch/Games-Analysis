@@ -1,0 +1,45 @@
+{
+ "game": "ValveSoftware-source-sdk-2013",
+ "category": "parties-guilds-chat",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/server/client.cpp",
+ "licence": "Source 1 SDK LICENSE (Valve Corporation; restricted)",
+ "licence_class": "restricted",
+ "target_module": "origins/server/chat-channels.ts (new)",
+ "parity_row": null,
+ "pattern_tags": [
+  "new:single-send-path",
+  "new:listener-filter-stack",
+  "new:text-sanitiser"
+ ],
+ "data_fields": [
+  {
+   "name": "chat_cap_chars",
+   "donor_constant": "127",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/server/client.cpp:159"
+  },
+  {
+   "name": "team_relation_rule",
+   "donor_constant": "same non-empty team id (rule); base multiplay: never a teammate",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/shared/teamplay_gamerules.cpp:379"
+  },
+  {
+   "name": "ignore_modes",
+   "donor_constant": "none / team only / all (CHAT_IGNORE_TEAM, CHAT_IGNORE_ALL)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/server/basemultiplayerplayer.cpp:120"
+  }
+ ],
+ "best_idea": "Send every chat line through one server function that takes a channel tag, sanitises the text, then filters each recipient by channel relation, ignore mode, dead-speaker rule and mute list before the send.",
+ "decision": "adapt",
+ "decision_why": "Frankendom needs party and guild channels checked on the server at each send; take the single send path and per-recipient filters, not the client-chosen channel word or the base rule that silently drops team chat.",
+ "decision_status": "proposed",
+ "acceptance": "Two-client server test: a party-channel line reaches party members and not a non-member; an ignore-team listener gets no party line from a non-member; a downed player's line is not delivered to a living listener; a 300-character line arrives capped at 127; a sender with no party id is refused with a message."
+}

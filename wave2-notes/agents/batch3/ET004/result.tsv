@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+OpenDAoC-OpenDAoC-Core	economy-trade	P	STRONG	full	GameServer/gameobjects/GameMerchant.cs:87-140 (buy: server price, grant then debit), 262-295 (sell: remove then credit), 304-336 (appraisal: price x count/pack x ITEM_SELL_RATIO/100, default 50).
+OpenEnroth-OpenEnroth	economy-trade	P	STRONG	full	src/Engine/PriceCalculator.cpp:73-100 and 135-159 (buy and sell prices, merchant percent), 202-228 (tavern food, training gate); buy flow check-then-apply at src/GUI/UI/Houses/Shops.cpp:1097-1127.
+OpenRA-OpenRA	economy-trade	P	STRONG	full	OpenRA.Mods.Common/Traits/Player/PlayerResources.cs:114-261 (cash and ore ledger, take-or-fail debit, ore before cash); Traits/Player/ProductionQueue.cs:758-809 (pay-as-built per tick); Activities/Sell.cs:42 (health-scaled refund).

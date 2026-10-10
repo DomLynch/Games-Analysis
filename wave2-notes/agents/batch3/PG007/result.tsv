@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+beyond-all-reason-Beyond-All-Reason	parties-guilds-chat	P	STRONG	full	luaui/Widgets/api_ignore.lua:59-136 and luaui/Widgets/gui_chat.lua:2083-2141 - mute list keyed by account ID, hidden (not deleted) lines re-synced once per second on the client
+boardgameio-boardgame.io	parties-guilds-chat	P	STRONG	full	src/master/master.ts:618-650 with src/server/auth.ts:22-29 and src/master/filter-player-view.ts:73-74 - match chat relay checked against the seat credential, fanned out unstored
+clockworklabs-SpacetimeDB	parties-guilds-chat	P	STRONG	full	templates/chat-console-rs/spacetimedb/src/lib.rs:26-94 and templates/chat-react-ts/spacetimedb/src/index.ts:9-89 - server-stamped chat author and time, presence flag set by connect and disconnect hooks

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+jynew-jynew	parties-guilds-chat	P	STRONG	thin	GameRuntimeData.cs:404-450 JoinRoleToTeam moves a member's carried items to one pool and strips gear; no size check there (cap is in Lua, ka96.lua:7).
+keldaanCommunity-pokemonAutoChess	parties-guilds-chat	P	STRONG	full	lobby-commands.ts:259-280 staff-only post with 250-char cut; 388-440 ban order (flag, purge, disconnect); lobby-state.ts 14-54 memory/store order differs between add and remove.
+l1j-en-classic	parties-guilds-chat	P	STRONG	full	L1Party.java:38-170 roster cap, leader, two-member dissolve, kick; C_CreateParty.java:52-64 invite range and one pending slot; C_Attr.java:424-436 accept never clears the slot.

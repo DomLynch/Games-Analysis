@@ -1,0 +1,75 @@
+{
+ "game": "gawric-Unity-Client-for-L2J",
+ "category": "zones-world",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/Manager/SceneLoader.cs",
+ "licence": "Apache License, Version 2.0 (repo root LICENSE, lines 1-2); SceneLoader.cs has no per-file header",
+ "licence_class": "permissive",
+ "target_module": "origins/client/zone-stream.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "new:edge-band-preload",
+  "new:corner-neighbour-set",
+  "new:one-action-per-frame",
+  "new:grid-zone-id",
+  "stale-state"
+ ],
+ "data_fields": [
+  {
+   "name": "preloadDistance",
+   "donor_constant": "80 Unity units",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/Manager/SceneLoader.cs:12"
+  },
+  {
+   "name": "zoneSize",
+   "donor_constant": "32768 L2 units (= 624.1524 Unity units)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Utils/VectorUtils.cs:14"
+  },
+  {
+   "name": "zoneOriginOffset",
+   "donor_constant": "+20 for x, +18 for y (hard-coded in code)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Utils/VectorUtils.cs:18"
+  },
+  {
+   "name": "unitScale",
+   "donor_constant": "52.5 Unity to L2 units",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Utils/VectorUtils.cs:10"
+  },
+  {
+   "name": "loadsPerFrame",
+   "donor_constant": "1 (return after one start)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/Manager/SceneLoader.cs:149"
+  },
+  {
+   "name": "unloadsPerFrame",
+   "donor_constant": "1 (return after one start)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/Manager/SceneLoader.cs:160"
+  },
+  {
+   "name": "hysteresisMargin",
+   "donor_constant": "none in donor (load and unload share one band)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Game/Manager/SceneLoader.cs:181"
+  }
+ ],
+ "best_idea": "Keep a zone loaded while the player is within a preload band of its edge (including the corner neighbour), and start at most one zone load or unload per frame so streaming never stalls the frame.",
+ "decision": "adapt",
+ "decision_why": "Take the edge-band neighbour set and the one-action-per-frame budget for the client zone loader; reject the donor's missing hysteresis and its geodata that is never released with the zone.",
+ "decision_status": "proposed",
+ "acceptance": "Client test: walk back and forth across a zone edge at the band line for 300 frames; the neighbour stays loaded through a hysteresis margin (no load/unload per crossing), at most one load or unload starts per frame, and geodata of a zone unloaded for a set time is released."
+}

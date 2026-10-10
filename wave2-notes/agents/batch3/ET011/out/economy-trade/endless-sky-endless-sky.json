@@ -1,0 +1,66 @@
+{
+ "game": "endless-sky-endless-sky",
+ "category": "economy-trade",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Depreciation.cpp",
+ "licence": "GPL-3.0-or-later (file headers; license.txt is GPL v3)",
+ "licence_class": "copyleft",
+ "target_module": "origins/economy/depreciation.ts (new, proposed)",
+ "parity_row": 21,
+ "pattern_tags": [
+  "new:age-decay-floor",
+  "new:record-transfer",
+  "clamp-and-report"
+ ],
+ "data_fields": [
+  {
+   "name": "floor_fraction",
+   "donor_constant": "0.25",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Gamerules.h:162"
+  },
+  {
+   "name": "daily_decay",
+   "donor_constant": "0.997 per day",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Gamerules.h:163"
+  },
+  {
+   "name": "grace_days",
+   "donor_constant": "7",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Gamerules.h:164"
+  },
+  {
+   "name": "max_age_days",
+   "donor_constant": "1000 (floor at grace + 1000 = 1007)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Gamerules.h:165"
+  },
+  {
+   "name": "stock_no_record_fraction",
+   "donor_constant": "1.0",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Depreciation.cpp:383"
+  },
+  {
+   "name": "fleet_no_record_fraction",
+   "donor_constant": "floor (min)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Depreciation.cpp:383"
+  }
+ ],
+ "best_idea": "Keep each item purchase day through a trade and price it on the server with one decay curve: full value, then a per-day decay, then a floor.",
+ "decision": "adapt",
+ "decision_why": "The age-based resale curve and keeping the purchase day suit one ledger; the separate planet-stock record and oldest-first sale are rejected unless used vendor stock is wanted, because they create the buy-low sell-high spread.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: a 1000-cost piece bought 100 days old and resold the same day returns 764; at age 400 it is valued at 390; no value falls below 250; buy and sell use one function, so a mixed-age pair cannot be cycled for profit."
+}

@@ -1,0 +1,117 @@
+{
+ "game": "dkfans-keeperfx",
+ "category": "zones-world",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/dkfans-keeperfx/src/room_entrance.c",
+ "licence": "GNU GPL version 2 or any later version (room_entrance.c header lines 15-16; LICENSE file GPL v2)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "director",
+  "population-cap",
+  "presence-gated",
+  "loot-cumulative-roll",
+  "new:weighted-spawn-table"
+ ],
+ "data_fields": [
+  {
+   "name": "spawnIntervalTurns",
+   "donor_constant": "max_manage_score x generate_speed / own manage_score (default generate speed 350)",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "player_utils.c:498"
+  },
+  {
+   "name": "defaultGenerateSpeed",
+   "donor_constant": "350",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "config_rules.c:169"
+  },
+  {
+   "name": "baseEntranceWeight",
+   "donor_constant": "10",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "config_creature.c:457"
+  },
+  {
+   "name": "minimumWeight",
+   "donor_constant": "1",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "room_entrance.c:270"
+  },
+  {
+   "name": "roomSlotCount",
+   "donor_constant": "3 (ENTRANCE_ROOMS_COUNT)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "creature_control.h:49"
+  },
+  {
+   "name": "excessSlotDivisor",
+   "donor_constant": "slot index plus one (1, 2, 3)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "room_entrance.c:174"
+  },
+  {
+   "name": "roomsPerHeartOrBridge",
+   "donor_constant": "1 per 9 slabs",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "room_entrance.c:136"
+  },
+  {
+   "name": "roomsPerMostRooms",
+   "donor_constant": "1 per 3 slabs",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "room_entrance.c:148"
+  },
+  {
+   "name": "roomsPerWorkshopOrGarden",
+   "donor_constant": "1 per 4 slabs",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "room_entrance.c:152"
+  },
+  {
+   "name": "usedCapacityScale",
+   "donor_constant": "256 (used-fraction scale), lair share halved",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "room_entrance.c:132"
+  },
+  {
+   "name": "activePopulationCap",
+   "donor_constant": "max_creatures_attracted (per dungeon)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "room_entrance.c:119"
+  },
+  {
+   "name": "globalCreatureLimit",
+   "donor_constant": "rules creatures_count",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "thing_creature.c:4909"
+  },
+  {
+   "name": "spawnsPerDueTurn",
+   "donor_constant": "1 (at most one generation per due turn)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "room_entrance.c:400"
+  }
+ ],
+ "best_idea": "A spawn director that fires on a turn interval, picks one kind from a weighted table whose weights rise with what the zone supports, and stops at an active-count cap and at a price the player cannot pay.",
+ "decision": "adapt",
+ "decision_why": "The interval, weighted pick, cap and pool gates map onto row 23 spawn tables as zone data (caps, weights, intervals per zone); the donor spawns at the player's entrance and never despawns, so Frankendom keeps the director shape and makes the server own spawn and any despawn.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: a zone with cap 6 and interval 10 turns never holds more than 6 live creatures and spawns at most one per interval; the timer resets when the cap blocks a spawn, so blocked ticks do not bank spawns; over 1000 seeded picks, adding three matching zone features raises that kind's share (the test asserts the direction, not a fixed number)."
+}

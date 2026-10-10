@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+otland-forgottenserver	zones-world	P	STRONG	full	/mnt/frankendom-donors/otland-forgottenserver/src/spawn.cpp:353-383 checkSpawn (per-point timers, occupied skip, RATE_SPAWN cap); spawn.cpp:258-310 presence gate and chance roll; monster.cpp:769-790 leash; row 23
+pmbstyle-L2Solo	zones-world	P	STRONG	full	/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/WorldAreaCatalog.js:182-245 box and z-band zone match, first-match resolve, spot classification; row 23 is a stretch
+vcmi-vcmi	zones-world	P	STRONG	thin	/mnt/frankendom-donors/vcmi-vcmi/lib/rmg/modificators/ObjectManager.cpp:728-787 chooseGuard (hinge strength curve, cutoff, candidate fit); TreasurePlacer.cpp:932-985 pile count; generation-time only; row 23 is a stretch

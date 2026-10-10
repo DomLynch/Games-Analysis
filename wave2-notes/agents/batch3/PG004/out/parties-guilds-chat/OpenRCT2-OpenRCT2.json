@@ -1,0 +1,56 @@
+{
+ "game": "OpenRCT2-OpenRCT2",
+ "category": "parties-guilds-chat",
+ "cell": 18,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2/network/NetworkBase.cpp",
+ "licence": "GPL version 3 (header: 'licensed under the GNU General Public License version 3'; no 'or later' clause in the header read)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/guild-ranks.ts",
+ "parity_row": 5,
+ "pattern_tags": [
+  "new:rank-permission-bitmask",
+  "new:server-command-gate",
+  "new:grant-ceiling",
+  "new:per-command-cooldown",
+  "new:default-least-privilege",
+  "new:scoped-send",
+  "new:persisted-user-rank"
+ ],
+ "data_fields": [
+  {
+   "name": "rank_permission_bits",
+   "donor_constant": "64 (8-byte mask), 24 permissions in use",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "src/openrct2/network/NetworkGroup.h:25"
+  },
+  {
+   "name": "default_rank_id",
+   "donor_constant": "1 (Spectator)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "src/openrct2/network/NetworkBase.cpp:1115"
+  },
+  {
+   "name": "cooldown_ride_demolish_ms",
+   "donor_constant": "1000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "src/openrct2/actions/ride/RideDemolishAction.cpp:48"
+  },
+  {
+   "name": "cooldown_small_scenery_place_ms",
+   "donor_constant": "20",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "src/openrct2/actions/scenery/SmallSceneryPlaceAction.cpp:61"
+  }
+ ],
+ "best_idea": "Give each member one rank whose permission bitmask the server checks before any chat line, command or rank change, and let a rank change touch only what the actor already holds.",
+ "decision": "adapt",
+ "decision_why": "The bitmask rank and server gate fit our guild ranks, but the donor lacks a rule against demoting a higher rank, uses wall-clock cooldowns and loads rights with a toggle, so we add the ceiling and fixed-tick cooldowns.",
+ "decision_status": "proposed",
+ "acceptance": "An officer who tries to move a leader down, or promote a member to leader, is refused with 'Not allowed' and a server test asserts the rank table is unchanged; a second command inside its cooldown ticks is refused with 'slow down'."
+}

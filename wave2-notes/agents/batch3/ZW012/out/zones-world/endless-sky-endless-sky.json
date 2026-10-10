@@ -1,0 +1,82 @@
+{
+ "game": "endless-sky-endless-sky",
+ "category": "zones-world",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Engine.cpp",
+ "licence": "GPL-3.0-or-later (RandomEvent.h and Fleet.cpp headers; license.txt is GPL v3)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "new:interval-table",
+  "presence-gated",
+  "population-cap",
+  "new:pre-warm-on-entry",
+  "new:multiplier-scaled-interval"
+ ],
+ "data_fields": [
+  {
+   "name": "entry_interval",
+   "donor_constant": "period, default 200 when unset or not positive",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/endless-sky-endless-sky/source/RandomEvent.h:49"
+  },
+  {
+   "name": "spawn_rate_multiplier",
+   "donor_constant": "fleet multiplier from gamerules; 0 disables; no upper clamp in parser",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Gamerules.cpp:107"
+  },
+  {
+   "name": "interval_floor",
+   "donor_constant": "none in donor (zero bound makes every draw hit)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Engine.cpp:2033"
+  },
+  {
+   "name": "prewarm_seconds",
+   "donor_constant": "5 simulated seconds",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Engine.cpp:1531"
+  },
+  {
+   "name": "prewarm_threshold",
+   "donor_constant": "60 per simulated second (one second taken as 60 steps)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Engine.cpp:1535"
+  },
+  {
+   "name": "ally_enemy_ratio_guard",
+   "donor_constant": "2 (allies more than twice enemies blocks; only when an enemy is present)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Engine.cpp:2043"
+  },
+  {
+   "name": "neighbour_weight_when_unwelcome",
+   "donor_constant": "8 list copies for non-enemy neighbours",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Fleet.cpp:250"
+  },
+  {
+   "name": "entry_radius",
+   "donor_constant": "1000",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/endless-sky-endless-sky/source/Fleet.cpp:206"
+  }
+ ],
+ "best_idea": "Give each zone a table of spawn entries, each with an interval and a condition gate; scale every interval by one global multiplier, pre-fill a newly entered zone by a few simulated seconds of draws, and block new spawns while friendly groups already outnumber enemies two to one.",
+ "decision": "adapt",
+ "decision_why": "The per-zone interval table with a condition gate is what row 23 needs as zone data, and one global rate knob is a clean engine value; but the strength-ratio guard and missing interval floor do not fit the MAX_ATTACKERS = 3 ruling, so take the table and knob, add an explicit floor, and cap by attacker count.",
+ "decision_status": "proposed",
+ "acceptance": "A server test runs a seeded zone with one entry of interval 600 ticks at multiplier 1 and asserts a spawn count near 10 over 6000 ticks; at a large multiplier the zone floor holds (no more than one spawn per floor period per entry); with more allied groups than twice the hostile groups in the zone, no new group spawns."
+}

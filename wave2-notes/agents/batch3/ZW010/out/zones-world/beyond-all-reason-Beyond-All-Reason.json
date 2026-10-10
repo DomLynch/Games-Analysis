@@ -1,0 +1,73 @@
+{
+ "game": "beyond-all-reason-Beyond-All-Reason",
+ "category": "zones-world",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/include/startbox_utilities.lua",
+ "licence": "GPL v2 (repo LICENSE.md: released under the GPL v2 licence; startbox_utilities.lua has no own header; game_startbox_config.lua says GNU GPL, v2 or later)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "new:zone-layout-by-count",
+  "new:inset-rejection-sample",
+  "new:closest-edge-clamp"
+ ],
+ "data_fields": [
+  {
+   "name": "zone polygon vertices per team count and ally team",
+   "donor_constant": "authored on a 200-unit grid, scaled by map size / 200",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/include/startbox_utilities.lua:169"
+  },
+  {
+   "name": "spawn inset (edge margin)",
+   "donor_constant": "caller supplied: scav spread at call 1138, 0 at call 1470",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/scav_spawner_defense.lua:1138"
+  },
+  {
+   "name": "layout pick rule",
+   "donor_constant": "override if it has at least one box per team; else exact team count; else nearest larger; else nearest smaller",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/include/startbox_utilities.lua:113"
+  },
+  {
+   "name": "candidate draws per call",
+   "donor_constant": "DEFAULT_TRIES = 100; every call site found passes 1",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/include/startbox_utilities.lua:448"
+  },
+  {
+   "name": "scav outer attempt loop",
+   "donor_constant": "100, ended by the first nil draw",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/scav_spawner_defense.lua:1137"
+  },
+  {
+   "name": "fallback band depth (no layout only)",
+   "donor_constant": "0.2 of map depth or width",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/include/startbox_utilities.lua:243"
+  },
+  {
+   "name": "map edge clamp for z",
+   "donor_constant": "mapSizeZ - 1",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/include/startbox_utilities.lua:328"
+  }
+ ],
+ "best_idea": "Store each zone as data keyed by team count, pick the nearest layout when the exact count is missing, and test a spawn point with a point-in-polygon check plus four offset points so it keeps clear of the edge.",
+ "decision": "adapt",
+ "decision_why": "Zone polygons per population size belong in zone data and the pick rule and inset test belong in the engine, which is the zones-as-data shape we want. Do not copy the map-geometry fallback, the nil-then-break draw loop, or math.random for server-verified spawns.",
+ "decision_status": "proposed",
+ "acceptance": "A server test with a zone authored for 4 teams shows a 3-team instance uses the 4-team layout; 10,000 seeded spawn draws in an L-shaped zone with inset 1 all pass containment and the four-offset check; a zone with no layout for its team count fails the test rather than falling back."
+}
