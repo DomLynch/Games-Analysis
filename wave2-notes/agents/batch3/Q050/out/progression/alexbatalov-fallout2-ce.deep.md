@@ -122,3 +122,11 @@ awardXp(hero, 1000); // +1050 with bonus: xp 1113, level 2
 
 Reuse tag: rewrite-from-idea (Sustainable Use License 1.0, restricted; clean-room shape only)
 Brief rule served: one ledger (one XP credit per foe killed this attack); kills server-verified; row 18 (loot roll and XP award).
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** Threshold formula (stat.cc 662-674), Swift Learner rank*5*xp/100 (737), HP endurance/2+2 + 4/Lifegiver (771-772), cap 99, critterGetExp, per-attack kill XP only for foes not already dead (actions.cc 1731-1796), default experience 60 (proto.cc 508): verified. Small: _combat_exps is also reset after payout in _combat_over (combat.cc 2819), not only at combat start (2572) as stated; pcAddExperience passes a2=true (stat.cc 727) so party levelling is the default, note only says 'if the caller asked'.
+
+**Missed:** level-up also sets DUDE_STATE_LEVEL_UP_AVAILABLE (perk/skill point gate) and plays sound; kill XP path in _damage_object also skips when script overrides (scriptOverrides) and increments kill counts

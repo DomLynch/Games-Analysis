@@ -148,3 +148,12 @@ export {};
 
 Reuse tag: adapt (MIT; shape used, numbers as zone data)
 Brief rule served: zone population (row 23); server tick sub-line (row 18 / post-K item 3)
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** none found. Verified MIT LICENSE; Update catch-up loop 486-493 (minute = l+last+1) and clock write 521; IntermittentEnemySpawn 547-618 (window 559, night <360 or >1080 at 566-569, distances 550-552, rest-only dungeon 605); FormulaHelper 1765-1813 (24/36/24/36, dungeon requires alert else returns 1); alert decay 382-383; FoeSpawner MaxDistance 20 (line 37), constants 0.65/1.25/4 (121-123), FOV-angle ray 145-150, retry via return, spawner destroy at 71, early return at 64; ChooseRandomEnemy bands 1471-1526; Dice100.Roll 1..100; Random.Range(0,max) exclusive mirrored correctly in sketch
+
+**Missed:** CreateFoeSpawner places the spawner on the player at creation so rest/travel treats a pending spawn as a nearby enemy (GameObjectHelper.cs 1328-1330): a rest-interrupt rule not covered. Also FoeSpawner uses camera.fieldOfView degrees as the yaw offset (145), a looser 'outside view' rule than a cone test

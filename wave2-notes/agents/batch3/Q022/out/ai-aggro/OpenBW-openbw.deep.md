@@ -165,3 +165,12 @@ export {};
 Best transferable idea: Pick the enemy that can hit this fighter right now first, then the nearest; keep the current target while it stays in range, and switch only to a strictly better bucket.
 Decision (proposed): adapt — take the threat-first buckets, nearest-in-bucket pick and sticky reacquire rule; change the bucket inputs to Frankendom's fight state (in range and active, not StarCraft unit classes); keep the MAX_ATTACKERS = 3 cap as a separate engine rule; reject the RNG tie-break on the client.
 Acceptance: In a three-on-one server test, a fighter that is hit by an enemy in range keeps that enemy as its target while it stays in range, and a second assertion shows that an enemy which cannot hit it right now is not chosen while a hitter is in range.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** (1) Order gate cited at bwgame.h 12617-12621 is in execute_hidden_unit_main_order (hidden units, where PlayerGuard/AttackMove just reset to Nothing). The gate that governs the cited orders is execute_main_order 7758-7762 (same logic). (2) 'order_process_timer 8-tick gate': timer set to 8 then decremented each call, so the order runs every 9th call, not 8; and with main_order_timer reset to 15 the effective scan spacing is 18 frames (next gated pass >= 15), not 15. (3) Note implies worker +2 adds to the chain; code is if worker r+=2 else-if cannot-attack chain (exclusive, bwgame.h 1853-1857). Buckets, 16 cap, +64 bounds, range*32, bunker +2, reacquire sticky logic 2743-2783, lcg_rand 13197, get_best_score strict min all verified; no-LICENSE claim holds.
+
+**Missed:** get_default_priority_targets: bunker target is replaced by its loaded unit before priority (1842-1849); find_acquire_target min_distance takes the min of ground/air min_range when both exist (1900-1906); attack_unit_reacquire_target returns at once unless u_ready_to_attack (2744).

@@ -183,3 +183,12 @@ Best transferable idea: A fight's hit chance is a clamped piecewise curve of acc
 
 Decision (proposed): adapt - take the hit ladder (scale, base, step, clamp as engine constants, with the defense cap) and the order hit-then-damage; drop the three-pool split, spill-over and food mitigation (one ledger), the TOHIT debug output to clients, and the uncapped armour piercing exponent unless it is bounded.
 Acceptance: A server test: accuracy 0 vs defense 0 gives 75% hit; accuracy 50 above defense gives 100%; 50 below gives 50%; 100 below gives 37.5%; a MISS deals no damage and a BLOCK halves the damage; the duel log records the roll and the chance but the client receives only the result.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** (1) Sketch hitChancePct caps the whole defense at 125 (Math.min(defense, DEFENSE_CAP)); donor caps only defenseSkill inside getDefenderDefenseModifier (CombatManager.cpp ~2026) and secondary defense (~2062); defensePosture is added AFTER the cap (2135-2136), so the sketch changes the math for postured defenders. (2) Note states evade attack roll '1..500' and defend '1..200' and also 'assumes rand(n) gives 0..n-1'; code is System::random(499)+1 / random(199)+1 (2170-2171), which is 1..500 only if random(n) is inclusive of n - the note is internally inconsistent about this unread RNG range. (3) Damage is only computed when data.getDamageMultiplier() != 0 (440); note step 1 says it is computed unconditionally before the roll. (4) Damage mitigation rank (1290-1298) is read from defenderGhost (players only), note describes it as a defender ability generally. Verified OK: hitChanceEquation 2238-2259 and header constants 73-78, getWeaponDefendResult table, RICOCHET block 2155-2165, evade contest 2166-2179, calculateDamage chain 1109-1182 (1.5, 1.25, 1.5, 0.25, floor 1), pool 60/95 (1405-1407), spill 0.0834 (1452), food cap 100, getArmorPiercing 1.25/0.5 (2669-2672), wear 0.2 (2593), unskilled -15 (1980), AGPL v3.
+
+**Missed:** creoTargetCombatAction (478) skips all post-hit handling when hitVal==MISS and the state-only branch; applyDamage armour-hit-location selection not covered (acknowledged).

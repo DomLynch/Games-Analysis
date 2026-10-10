@@ -133,3 +133,12 @@ function settleDamage(hogs: Hog[], rules: Rules, multiShot: boolean, betweenTurn
 - Zones as data: the modifier and percent (uVariables.pas 2922, 2960) are match-level settings, so they fit zone data as per-encounter overrides; the 0.4 threshold, slope 70, kick 0.01 and the 1.5 and 0.5 factors are engine constants.
 - Not read: the team health recount and the poison and grave branches, the per-kind explosion cases, `HealthMachine` (uGears.pas 163-224), and how the donor synchronises the damage round across network clients. Those are open; nothing above depends on them except the claim that the round runs at rest.
 - GPL-2.0: clean-room only; the sketch is written from the mechanism and states the licence.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** (1) Line citations for ApplyDamage are wrong: note says last attacker 'line 29', hurt sound/damage tag '35-36' - real 290 and 296-297 (relative-to-function offsets). (2) Note implies the amount is clamped to remaining health before being added to pending; real ApplyDamage adds the FULL Damage to Gear.Damage (uGearsUtils.pas 346); tmpDmg (clamp at 300) is used only for vampiric heal and karma. (3) Vampiric heal is gated by cVampiric (303), not by gfKarma; note groups it under the karma sentence. (4) Sketch explosionDamage omits the Manhattan prefilter (160: |dx|+|dy|+2 < dmgBase) that is in the donor and is not in the omissions list, so it can award damage the donor would not. Verified: CheckNoDamage 81-133 order, state order, 500/1500 delay, dmgBase 2R+4, dmg div 2 capped by Radius, push 0.005*dmg+0.01 / (density/3), fall 0.4 and 1+round((dY-0.4)*70), ModifyDamage 1.5 / 0.5, defaults 1 and 100, GPL-2.
+
+**Missed:** none material.

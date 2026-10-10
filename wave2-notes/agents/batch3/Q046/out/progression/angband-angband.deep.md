@@ -121,3 +121,12 @@ export function loseExp(p: Char, amount: number, permanent: boolean): void {
 - A negative gain is refused with a message (player.c 259-263), not a clamp. The server must reject negative XP the same way (test it).
 - Kill XP falls as the player levels (divided by player level). That keeps low monsters from paying high levels, but it can feel harsh in a fast duel loop; the monster level values are zone data, so Frankendom can tune the curve there.
 - The "Angband licence" option is not-for-profit only. The GPL option is copyleft; clean-room only.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** All verified: dual GPL-2 / Angband licence header, player_exp table (50 entries, 10..5000000), adjust_level 208-255 order (mark, level down, level up + stat restores, max_lev catch-up at 248), player_exp_gain 257-278 (cap, mark += amount/10 when exp<max_exp), player_exp_lose 280-294, kill XP 1072-1108 with 65536 carry, PY_MAX_EXP 99999999 / PY_MAX_LEVEL 50, expfact = r_exp + c_exp (player-birth.c 996), Human exp:100 (p_race.txt 80), no exp: lines in class.txt, ui-display XP-to-go. Sketch matches; test numbers (16 then 17, 600/1010) are correct.
+
+**Missed:** Nothing.

@@ -136,3 +136,12 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020 /tmp/q027-20
 
 Reuse tag: adapt (MIT; code may be adapted; shape only here)
 Brief rule served: 1 (one engine); zones as data; rules 7-9 n/a
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** turn gate Npc.ts 157-168, huntAll 247-278 throttle rate-1, huntPlayers filter order 913-965 incl. 8-tick grace, vislevel*2, consumeHuntTarget 879-911, HuntIterator radius 1+distance/8 and distanceToSW cut, World.cycle order and observer-gated player hunt 608-618, HuntType defaults and codes, MIT licence all match. Acceptance warm-up arithmetic (rate 3 -> third turn) holds.
+
+**Missed:** None significant.

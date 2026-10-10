@@ -153,3 +153,12 @@ Acceptance: a server test on a zone with cap 3 and respawn 5 to 10 s: killing al
 - MAX_ATTACKERS = 3 is a duel rule (fight engine) and does not apply to spawner caps. Do not reuse the donor cap for attackers.
 - Placement: the donor tries 10 random positions and then uses a sector cache keyed by map and sector. The placement search was not read in full, so do not cite it for Frankendom placement yet.
 - Death body and delete path (who deletes the creature after `OnDeath`) was not read. The slot-release timing depends on it.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** Verified OnTick group/non-group (829-848), Spawn() weighted single roll (850-895), DoTimer park-when-full (1209-1211), Remove re-arm (391-404), Respawn 406-416, defaults 5/10 min, first spawn 1 s (707), max attempts 10 (148), ProximitySpawner DoTimer override/OnMovement/ValidTrigger (69-122), SpawnerEntry defaults 100/1, NotifySpawnedDeath is hook only (Hooks.cs 46-52), Mobile.OnDelete -> Spawner.Remove, GPL-3 / or-later headers.
+
+**Missed:** none material.

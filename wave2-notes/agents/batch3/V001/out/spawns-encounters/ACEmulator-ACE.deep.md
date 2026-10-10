@@ -172,3 +172,12 @@ Typecheck: the sketch file with `export {};` (already in the block) was run on t
 
 Reuse tag: rewrite-from-idea (AGPL-3.0; clean-room only)
 Brief rule served: zones as data (population numbers in zone data, one runtime); server-verified spawns (the director runs on the server only)
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** Verified SelectAProfile 108-178 (single roll 120, skip placeholder/maxed/unavailable, -1 profiles queue and do not end roll, 167), GetTotalProbability/GetAdjustedProbability, GetSpawnObjectsForProfile 281-314, GenStopSelectProfileConditions, Generator_Generate 1000 cap, CurrentCreate=Spawned+Queue (GeneratorProfile 70), ProcessQueue 190-229, failed first spawn kept 301, NotifyGenerator cooldown 563, NotifyOfEvent parent destruction 569-577, Landblock encounter 24 units clamp 0.5-191.5 and building destroy, dormant 1 min / unload 5 min, generator loops outside dormant block, Landblock 880 PickUp notify. AGPL licence line.
+
+**Missed:** Dormancy only applies when !Permaload && HasNoKeepAliveObjects (Landblock.cs 532); Chest generators have Delay 0 (GeneratorProfile 110-111); Treasure profiles clamp init/max to 1 (WorldObject_Generators 138-150).

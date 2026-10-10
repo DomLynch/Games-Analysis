@@ -6,15 +6,15 @@ Checked: `BaseSpawner.cs` read at 391-418 (remove, respawn), 436-456 and 500-560
 
 ## 1. Mechanism
 
-- A spawner is one data object per zone or point (JSON-serialized, `SpawnerEntry` items). It holds a cap `_count` (default 1, line 261), a min and max respawn delay (defaults 5 and 10 minutes, lines 49-50), a list of entries, and a `_running` flag (`Start` needs at least one entry, 781).
+- A spawner is one data object per zone or point (JSON-serialized, `SpawnerEntry` items). It holds a cap `_count` (field at line 314; the default 1 comes from the parameterless constructor `this(1, 5 min, 10 min)` at line 261), a min and max respawn delay (defaults 5 and 10 minutes, lines 49-50), a list of entries, and a `_running` flag (`Start` needs at least one entry, 781).
 - A single timer runs the zone (`InternalTimer`, 1310-1324). `Timer(TimeSpan delay)` is a one-shot: `Count = 1` (`Timer.cs` 40, `Init` 46-51), so `Execute` finishes it after one call (`Timer.TimerWheel.cs` 148). `DoTimer()` picks a random delay in [min, max] ms each time it arms (1176-1179) and sets `End = Now + delay` (1192-1196). It starts the timer only when the zone is not full (1209-1211).
-- `OnTick` (829-848), in order. Group mode (`_group`): `Defrag()`, then if any spawn is still alive it returns at once (835-837), so the timer is not re-armed; if the zone is empty, `Respawn()` removes all and spawns `_count` times (406-416), then calls `DoTimer()`, which starts the timer only if the zone is still not full. Non-group: `Spawn()`, then `DoTimer()`.
+- `OnTick` (829-848), in order. Group mode (`_group`): `Defrag()`, then if any spawn is still alive it returns at once (835-837), so the timer is not re-armed; if the zone is empty, `Respawn()` removes all and spawns `_count` times (406-416), and itself ends with `DoTimer()` (415). `OnTick` then calls `DoTimer()` again (847), so a group refill arms twice; the second call stops the timer, replaces the delay with a fresh draw and starts it again, so the net is one timer with the second delay. Each `DoTimer()` starts the timer only if the zone is still not full, so a refill that fills the zone leaves the timer off, and a refill that leaves room re-arms it. Non-group: `Spawn()`, then `DoTimer()`.
 - `Spawn()` (850-895): `Defrag()`; return if there are no entries or the zone is full (852-858). Sum the probability of entries that are neither full nor disabled (862-869). If the sum is 0, return (871-874). Draw `rand` in [1, sum] (876). Walk the open entries; the first whose weight is at least `rand` spawns (886-890); otherwise subtract its weight and continue (893).
 - `Remove(spawn)` (391-404): `Defrag()`, remove from the zone and the entry, then `DoTimer()` only if the zone is running, not full, and the timer is not already running (400-403). So a death re-arms the one timer with a fresh random delay, and a second death while the timer runs does not restart it.
 - `Defrag` (801-823, `SpawnerEntry.Defrag` 164-176) drops a spawn when it is deleted, has no spawner, is an item carried by a mobile, locked down or secure, or is a creature that is controlled or stabled (814-819). It is called from `Spawn` (852), `Remove` (393), `OnTick` (833, group mode), `CountSpawns` (1217), `RemoveSpawns` (1247) and `BringToHome` (1277), and once from `BaseSpawner.Entries.cs` 95 (not read).
 - `ProximitySpawner` (subclass, `ProximitySpawner.cs`): no timer. `DoTimer` only sets `End` (69-76); `Respawn` removes all and sets `End = Now` (79-84). `OnMovement` (96-122) spawns only when the zone is empty, `End <= Now`, a valid player is within `TriggerRange` and has moved (103-104); it then calls `DoTimer()` and `Spawn()`. This makes respawn presence-gated: a player must walk into range after the delay.
 - `RegionSpawner` (`RegionSpawner.cs`): `GetBoundsForSpawnAttempt` picks a rectangle from the region with probability proportional to its weight (77-89). It has no spiral scan (67).
-- Position search (`GetSpawnPosition`, 436-560, partly read): up to 10 random attempts (443, 148); after a non-transient failure, a spiral scan that covers 3 rings while the scan is still at ring 0 and 1 ring after that (536), limited per call.
+- Position search (`GetSpawnPosition`, 424-560, partly read): up to 10 random attempts (443, 148); after a non-transient failure, a spiral scan that covers 3 rings while the scan is still at ring 0 and 1 ring after that (536), limited per call.
 
 ## 2. Key functions
 
@@ -31,7 +31,7 @@ Checked: `BaseSpawner.cs` read at 391-418 (remove, respawn), 436-456 and 500-560
 
 | Reusable algorithm | Donor constants |
 |---|---|
-| Zone cap: live spawns across all entries, refill blocked when full | Default cap 1 (theirs, BaseSpawner.cs 261); `IsFull` = live >= cap (292) |
+| Zone cap: live spawns across all entries, refill blocked when full | Default cap 1 (theirs, constructor chain at BaseSpawner.cs 261, field 314); `IsFull` = live >= cap (292) |
 | Respawn delay drawn at random in a range, a fresh draw each time the timer arms | Min 5 min = 300000 ms, max 10 min = 600000 ms (theirs, 49-50, 1176-1179) |
 | Weighted entry pick over open entries; full entries leave the sum | Default probability 100 (theirs, SpawnerEntry.cs 90); default per-entry cap 1 (theirs, 91); probability is a relative weight, not a percent |
 | Group zones refill only when empty, one survivor blocks the refill | Rule (835-838) |
@@ -41,7 +41,7 @@ Checked: `BaseSpawner.cs` read at 391-418 (remove, respawn), 436-456 and 500-560
 
 ## 4. TypeScript sketch
 
-simplified: one zone, one timer, no creation or placement, no position search, no proximity or region spawner, no serialization, no `OnBeforeSpawn` hook. It keeps the donor's cap check, weighted pick with per-entry caps and full entries removed from the sum, the group refill rule (a survivor leaves the timer off), the single-spawn re-arm only when not full, and the removal re-arm only when the timer is not already armed. It uses `Math.random` for the draws and omits `Defrag`: the caller must decrement the live counts itself when a spawn is removed, where the donor runs Defrag first.
+simplified: one zone, one timer, no creation or placement, no position search, no proximity or region spawner, no serialization, no `OnBeforeSpawn` hook. It keeps the donor's cap check, weighted pick with per-entry caps and full entries removed from the sum, the group refill rule (a survivor leaves the timer off; after a refill the timer is armed if the zone is still not full), the single-spawn re-arm only when not full, and the removal re-arm only when the timer is not already armed. The group refill arms once where the donor arms twice (`Respawn` at 415 and `OnTick` at 847; the second draw wins). It uses `Math.random` for the draws and omits `Defrag`: the caller must decrement the live counts itself when a spawn is removed, where the donor runs Defrag first.
 
 ```ts
 // Licence: GPL-3.0 (donor repo LICENSE; no per-file header in BaseSpawner.cs). Clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -93,12 +93,14 @@ function spawnOne(z: Zone): void {
 }
 
 // Timer fired (donor OnTick): group mode refills only when nothing is left, and a survivor
-// leaves the timer off; non-group spawns one and re-arms only if not full.
+// leaves the timer off; after a refill the timer is armed if the zone is still not full. Non-group
+// spawns one and re-arms only if not full. (The donor arms twice on a refill; one arm is enough.)
 function onFire(z: Zone, now: number): void {
   z.dueMs = null;
   if (z.group) {
     if (z.live > 0) return;
     for (let i = 0; i < z.count; i++) spawnOne(z);
+    if (!full(z)) arm(z, now);
     return;
   }
   spawnOne(z);
@@ -140,3 +142,12 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Position search is a per-call budget (10 random attempts, then a spiral of 3 rings while at ring 0 and 1 ring after, 536). It belongs to the server-tick budget gap in cell 5, not to this note; `SectorSpawnCache.cs` was not read.
 - Fight rulings: the zone cap is not the fight cap. MAX_ATTACKERS = 3 limits attackers in a fight, not spawns in a zone; do not reuse the donor's cap as an attacker limit.
 - Pit as client: no effect. The donor's spawner has no client side.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** Default cap 1 cited at BaseSpawner.cs 261: wrong line. _count field is at 314, IsFull at 292 (right), default 1 comes from the ctor `this(1, 5min, 10min)` near line 149. GetSpawnPosition starts at 424 (note says 436). Note says group-mode OnTick: Respawn() then 'calls DoTimer()'; in code Respawn itself ends with DoTimer() (415) and OnTick calls DoTimer() again (847), so group refill arms twice. Sketch onFire group branch never re-arms after a refill that leaves the zone not full, which the donor does (via DoTimer). Verified OK: OnTick 829-848, Spawn 850-895 weighted pick, Remove 391-404 re-arm rule, DoTimer 1169-1213 (random in [min,max], start only if !IsFull), Defrag 801-823, defaults 5/10 min at 49-50, MaxSpawnAttempts 10 at 148, rings 3/1 at 536, SpawnerEntry defaults 100/1, Proximity/Region spawner behaviour, Timer(delay) count=1, GPL-3.0, no per-file header in BaseSpawner.
+
+**Missed:** Respawn() comment 'Turn off the timer!' at 415: DoTimer is called to set End/timer but timer only starts if !IsFull; note does not flag the double DoTimer.

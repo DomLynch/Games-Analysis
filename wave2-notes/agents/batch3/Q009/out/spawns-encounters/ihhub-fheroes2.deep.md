@@ -239,3 +239,12 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Presence: the weekly loop walks every map tile (world.cpp 469-476) with no player check. The same gap as cell 1.
 - Calendar: the week and month rules run on game-day boundaries, not the server tick. Frankendom should drive them from the tick so tests can step them.
 - Not read: the action-object predicate, the week-life predicate, `Monster::GetRNDSize`, the castle growth rules beyond line 872. The stack size and the join rules are therefore the donor's shape, not its numbers.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** Risk 'possible double placement' (note section 6, sketch taken-set) is wrong: each source is excluded after use and later sources are blocked within radius 3/4 (world.cpp 543,554,569) while targets are radius 1, so two sources cannot pick the same target tile. All cited lines, constants (7/4 calendar world.h 68-71, 75/25 and 50/40/10 week.cpp, 85/10/5 at 604-622, /3 and /360 at 591-592, 75-125%, 1..7 growth, 4000/4000000 cap, seed+_month at 517, GPL v2 or later) verified.
+
+**Missed:** Weekly NewWeek (465-476) routes isWeekLife tiles to updateObjectInfoTile in an else-if before the monster branch; mentioned only as not read. Nothing major.

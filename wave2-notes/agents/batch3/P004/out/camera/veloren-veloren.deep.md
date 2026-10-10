@@ -8,10 +8,10 @@ Checked: `camera.rs` lines 1-69 and 314-805 read in full (70-313 are projection 
 
 - Third-person orbit camera about a focus point. Its state: target and current distance, target and current yaw and pitch, focus, mode (first or third person), fov, fixate. Each frame `scene/mod.rs` 759 calls `update`, then 762 `compute_dependents` builds the view.
 - Input (`rotate_by`, camera.rs 517-525): the mouse delta is multiplied by `fixate` (aim zoom, line 518), yaw wraps modulo 2 pi, and pitch is clamped to about +/- (pi/2 - 0.001) (522).
-- Zoom input (`scene/mod.rs` 450, 456): the step is `delta * (0.05 + distance * 0.01)`, so zoom steps grow with distance. `zoom_switch` (551-572): in third person the target distance moves by the step; if it would fall under `MIN_THIRD_PERSON * scale` (2.35 times the player's scale, 554-557) the mode becomes first person; zooming out of first person returns to third person at 2.35 times scale (563-565). The result is capped by the zoom cap.
+- Zoom input (`scene/mod.rs` 448-460): the step is `delta * (0.05 + distance * 0.01)`, so zoom steps grow with distance. Zooming in (`delta < 0`) divides that step by `(1 - delta * 0.01)` (448-452), so the distance travelled in and out is symmetric; zooming out uses the plain step. `zoom_switch` (551-572): in third person the target distance moves by the step; if it would fall under `MIN_THIRD_PERSON * scale` (2.35 times the player's scale, 554-557) the mode becomes first person; zooming out of first person returns to third person at 2.35 times scale (563-565). The result is capped by the zoom cap.
 - Collision (`compute_dependents`, 356-373): if the target distance is under 20 (368) use the near policy, else the far policy.
   - Near policy (375-443): a fan of rays from the focus to the four padded frustum corners plus one ray behind the camera (392-421). Each ray that hits an opaque voxel gives `min(hit, target distance)`; a ray that hits nothing keeps the current distance. The smallest value wins. If that is under 2 (426), switch to the far policy. Otherwise, if the current distance is at least the collision distance, the current distance drops to it at once (429-430), and the view uses that distance.
-  - Far policy (445-470): one ray from the camera position back to the focus; a hit gives `min(dist - d - 0.03, dist)` for this frame's view (460). It does not write `self.dist`.
+  - Far policy (445-470): one ray from the camera position back to the focus, with the opposite stop test to the near policy. `compute_dependents` passes `block.is_opaque()` as the `is_transparent` argument (357); the near rays stop at the first opaque voxel (`until(is_transparent)`, 412), but the far ray stops at the first NON-opaque voxel (`until(|b| !is_transparent(b))`, 457). A stop gives `min(dist - d - 0.03, dist)` for this frame's view (460), so it detects a camera that sits inside solid terrain (d is how far the ray travels before leaving the solid); in open air the ray stops at once with d = 0 and the view is `dist - 0.03`. No stop leaves `dist`. It does not write `self.dist`.
 - Easing (`update`, 580-638): distance and fov ease toward their targets with factor `0.65 * delta / interp_time` (587), where `delta` is the change in the game time value (582) and `interp_time` is 0.1 s in both modes (11-12, 649-655). Focus eases toward its target at `delta / interp_time`, twice as fast in first person (607-619). Orientation eases at `LERP_ORI_RATE * dt` (15 per second, 630-632) with the wrap-aware `lerp_angle` (799-805), or snaps when smoothing is off (634-635), then goes through `clamp_and_modulate` (637).
 - The source comment at 581 says the timing is "horribly frame time dependent".
 - The view matrix (472-500): translate back by `dist`, then the orientation rotations, then a translation by the focus fraction. The far-plane and near-plane constants are at 8-9.
@@ -39,13 +39,13 @@ Brief rule served: one engine, client-only camera (the camera is a client concer
 | Switch to a close-range policy below a distance | Policy switch band 2 to 20 (15, 368, 426) |
 | Ease a value over the frame time with a fixed interp time | Interp time 0.1 s for both modes (11-12); factor 0.65 (587) |
 | Ease an angle the short way round | Orientation rate 15 per second (14, 630) |
-| Zoom step grows with distance; first-person switch below a scaled minimum | Step 0.05 + 0.01 times distance (450); minimum 2.35 times the player scale (554) |
+| Zoom step grows with distance (zoom in divided by 1 - delta x 0.01 so in and out match); first-person switch below a scaled minimum | Step 0.05 + 0.01 times distance and divisor 0.01 (scene/mod.rs 448-460); minimum 2.35 times the player scale (554) |
 | Limit pitch | Margin 0.0001 when set (65), 0.001 when rotated (522). The two margins differ |
 | Fixate scales input and FOV | Input times fixate (518); effective FOV is fov times fixate (701) |
 
 ## 4. TypeScript sketch
 
-simplified: keeps the donor's order: input (wrap yaw, clamp pitch, scale by fixate), zoom with the first-person switch, per-frame easing (distance, then orientation), then the view distance from a fan of corner rays with a back ray, the snap-in rule and the far policy. It omits the view matrix and frustum, the projection, fov and focus easing, freefly mode, the `get_mode` display trick, the corner padding formula (the caller passes padded corners), and the scene's viewpoint offsets. It uses one pitch margin (the donor uses 0.0001 on set and 0.001 on rotate). It clamps the ease factors to 1 (the donor's `Lerp::lerp` was not read, so whether it clamps is unknown). The far policy returns the view distance without storing it, as the donor does. The sketch typechecks on the VPS with `npx -p typescript tsc --noEmit --strict --target es2020`, exit 0.
+simplified: keeps the donor's order: input (wrap yaw, clamp pitch, scale by fixate), zoom with the first-person switch, per-frame easing (distance, then orientation), then the view distance from a fan of corner rays with a back ray (stop at the first opaque voxel), the snap-in rule and the far policy (its own ray stops at the first non-opaque voxel, so the terrain interface has two queries). It models the wheel step including the zoom-in divisor. It omits fixate easing (599-605), the view matrix and frustum, the projection, fov and focus easing, freefly mode, the `get_mode` display trick, the corner padding formula (the caller passes padded corners), and the scene's viewpoint offsets. It uses one pitch margin (the donor uses 0.0001 on set and 0.001 on rotate). It clamps the ease factors to 1 (the donor's `Lerp::lerp` was not read, so whether it clamps is unknown). The far policy returns the view distance without storing it, as the donor does. The sketch typechecks on the VPS with `npx -p typescript tsc --noEmit --strict --target es2020`, exit 0.
 
 ```ts
 // Licence of donor: GPL-3.0. clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -54,8 +54,12 @@ export {};
 interface Vec3 { x: number; y: number; z: number; }
 type Mode = "first" | "third";
 
-// Ray into the voxel grid: distance along the ray to the first opaque voxel, or undefined for none.
-interface Terrain { firstHit(from: Vec3, to: Vec3, maxSteps: number): number | undefined; }
+// Rays into the voxel grid, each giving the distance along the ray to its stop voxel, or undefined for none.
+// firstOpaque stops at the first opaque voxel (near policy); firstClear stops at the first non-opaque voxel (far policy).
+interface Terrain {
+  firstOpaque(from: Vec3, to: Vec3, maxSteps: number): number | undefined;
+  firstClear(from: Vec3, to: Vec3, maxSteps: number): number | undefined;
+}
 
 const TAU = 2 * Math.PI;
 const LERP_ORI_RATE = 15;   // orientation eases at this rate times dt (seconds)
@@ -111,6 +115,13 @@ export class OrbitCamera {
     this.tgtDist = m === "third" ? Math.max(2, this.tgtDist + 5) : MIN_ZOOM;
   }
 
+  // Raw wheel delta to zoom step: the step grows with distance; zooming in (delta < 0) is divided by
+  // (1 - delta * 0.01) so a zoom in and a zoom out of the same wheel size cover the same distance.
+  wheelStep(delta: number): number {
+    const step = delta * (0.05 + this.dist * 0.01);
+    return delta < 0 ? step / (1 - delta * 0.01) : step;
+  }
+
   // Wheel zoom. Third person: the target distance moves by delta and drops to first person below
   // MIN_THIRD * scale. Zooming out of first person returns to third at MIN_THIRD * scale.
   zoom(delta: number, cap: number, scale: number): void {
@@ -144,11 +155,13 @@ export class OrbitCamera {
     }
   }
 
-  // Far policy: a single ray from the camera position back to the focus. Does not change this.dist.
+  // Far policy: a single ray from the camera position back to the focus that stops at the first NON-opaque
+  // voxel (opposite of the near rays). It fires when the camera sits inside solid terrain; in open air it
+  // stops at once (d = 0) and the view is dist - 0.03. Does not change this.dist.
   private farView(terrain: Terrain): number {
     const fwd = this.forward();
     const start = { x: this.focus.x - fwd.x * this.dist, y: this.focus.y - fwd.y * this.dist, z: this.focus.z - fwd.z * this.dist };
-    const hit = terrain.firstHit(start, this.focus, MAX_STEPS);
+    const hit = terrain.firstClear(start, this.focus, MAX_STEPS);
     if (hit === undefined) return this.dist;
     return Math.max(0, Math.min(this.dist - hit - 0.03, this.dist));
   }
@@ -165,7 +178,7 @@ export class OrbitCamera {
     };
     let best = Infinity;
     for (const p of [...corners, behind]) {
-      const hit = terrain.firstHit(this.focus, p, MAX_STEPS);
+      const hit = terrain.firstOpaque(this.focus, p, MAX_STEPS);
       const d = hit === undefined ? this.dist : Math.min(hit, this.tgtDist);
       best = Math.min(best, Math.max(0, d));
     }
@@ -194,3 +207,12 @@ export class OrbitCamera {
 - Scaled first-person switch: the threshold scales with the player's size (554). Frankendom's hero and creature scale must be zone or catalogue data, not a constant.
 - Not read: `Lerp::lerp`, `terrain.ray`, the client clock behind `game_dt`, camera.rs 70-313 (projection code), and the viewpoint offsets in scene/mod.rs 684-709 (only 710-716 read).
 
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** (1) Zoom step: note says step = delta*(0.05+dist*0.01); scene/mod.rs 448-460 divides by (1 - delta*0.01) when delta<0 (zoom in) to keep in/out symmetric; the note omits this asymmetric branch. (2) Far policy predicate is inverted relative to near: compute_dependents passes block.is_opaque() as 'is_transparent'; near casts .until(is_transparent) (stops at opaque), far casts .until(|b| !is_transparent(b)) from camera to focus (stops at first NON-opaque voxel, i.e. detects the camera being inside solid and returns dist - d - 0.03). The sketch's farView uses the same firstHit(opaque) as the near path, so its far policy is semantically wrong; note describes it only as 'a hit'. (3) update() also eases fixate (599-605), not listed. Verified OK: constants 8-16, CLIPPING_MODE_RANGE 2..20 (15, 368, 426), near fan 375-443 (0.6 padding 404, +0.5 behind 406, max_iter 500, snap 429-430), far 460 (-0.03), rotate_by 517-525 (0.001 margin) vs clamp_and_modulate 65 (0.0001), zoom_switch 551-572 (2.35*scale), set_mode 720-735, update 580-638 (0.65*delta/interp, orientation 15*dt), lerp_angle 799-805, get_effective_fov 701, state.rs MAX_DELTA_TIME=1.0 at 57/877, GPL-3.0.
+
+**Missed:** Zoom asymmetry (see above) and the inverted far-ray predicate.

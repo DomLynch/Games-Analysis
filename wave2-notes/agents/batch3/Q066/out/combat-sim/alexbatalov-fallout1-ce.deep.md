@@ -137,3 +137,12 @@ export {};
 - Critical failure: `attack_crit_failure` (3103-3189) was not read, so the effects of a critical failure are unknown here. The sketch reports `fumble` with no effect.
 - Many-on-one: this file has no hate list, target choice or attacker cap. MAX_ATTACKERS = 3 and many-on-one logic are not covered by these functions.
 - Not read: `combat_is_shot_blocked` (cover modifier), `attack_crit_failure`, the crit table rows other than the head, `compute_spray`, `check_ranged_miss`, the initiative and turn order.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** to-hit chain and 95 cap (combat.cc 3345), no floor, roll_check/roll_check_critical (delta, /10, day gate at roll.cc 90/99), crit modifier = crit stat - location penalty (2821), crit bands 20/45/70/90/100 (3059-3071), pid 16777224 special cases, damage order (mult, /2, difficulty %, threshold, then % resistance, 3433-3441), item_w_damage, knockback /10 or /5, ran1/seed, hit_location_penalty table, head crit row, licence text: all verified.
+
+**Missed:** jinxed only converts ROLL_FAILURE (2825-2829) and burst weapons bypass roll_check via compute_spray (2817-2818), both partially covered; nothing important missed

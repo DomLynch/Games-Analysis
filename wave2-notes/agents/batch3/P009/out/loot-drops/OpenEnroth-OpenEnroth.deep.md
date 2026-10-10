@@ -143,3 +143,12 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Gold tiers and enchant chances are constants or data in the donor. Frankendom wants them as data fields (zones as data, catalogue rows 20-21), not as code.
 - Risk: the special-enchant pick (ItemTable.cpp 470-472) assumes at least one eligible candidate and asserts at 472. I did not check what happens when no candidate matches a tier. Frankendom should guard that case.
 - Unresolved in the donor: whether `items[2]` (the treasure rolled at steal or spell time) is collected anywhere. Lines 3504-3539 of LootActor were not read, so I do not claim it is lost.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** LootActor misdescribed: note says slot-3 gold is taken at Actor.cpp 3547-3558 when has-item flag set; real code takes/rolls gold earlier (3505-3518: if !ActorHasItem it rolls goldDice fresh at loot time, else takes items[3] if gold) and 3547-3558 hands over items[3] whatever it is; the carriedItemId branch 3519-3546 (give carried item + items[0], items[1], Remove(), return) is not mentioned (note admits 3504-3539 unread). 'Die drop succeeds when random(100)<20' also needs drop.itemId != ITEM_NULL (1783). Everything else checked holds: generateItem 316-474 order/lines, artifact 5% gate 351-362, enchant split 395-435, special filter 457-473, generateGold tiers 254-285, chest 20/60 split 347-353, remap table 764-771, LoadRandomItems 204-232, SetRandomGold 192-212, Monsters.cpp parse 449-498, LGPL-3.0 LICENSE lines 2-3.
+
+**Missed:** items[2] (treasure rolled by SetRandomGoldIfTheresNoItem at steal/spell time, Actor.cpp:209) is never read anywhere in src (grep items[2] gives only Actor.cpp:209 and an unrelated Conditions.cpp:31), so that roll is lost; note leaves it 'unresolved' but it is resolvable. Monsters.cpp 493-495 also parses an ItemType suffix into treasureType, and LootActor/SetRandomGold pass it to generateItem, so monsters use the known-type branch; note does not connect them.

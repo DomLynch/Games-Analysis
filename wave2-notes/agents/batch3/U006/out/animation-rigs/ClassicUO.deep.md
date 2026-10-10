@@ -117,3 +117,12 @@ Acceptance: a unit test drives a 3-frame, 80 ms clip with 16 ms updates and then
 - Repeat semantics: the donor's restart-then-loop behaviour (traced, not run) looks unintended. Do not copy it; use a plain "play N times, then hold last frame or go idle" rule.
 - The ClassicUO renderer is 2D sprites with no skeleton. Only the clock and the state-to-clip mapping transfer; any bone or skin logic is absent.
 - `FrameDelay[1]` (the value subtracted from step time) was not read, so the donor's exact step timing differs from the sketch by that amount.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** Section 1 (c) says frame count is the length of the returned span; for server-driven clips the wrap uses AnimationFrameCount (Mobile.cs 612-619, fc replaced at 618), not frames.Length. Otherwise verified: ProcessAnimation 571-693 order, early return 576, NoIterateAnimIndex 521-525 (WALKING_DELAY 150 at Constants.cs 19), 80 ms base (13), delay formula 610, repeat logic 641-660 (note's 'loops forever after flag reload' is correct: mode stays 0), write-back 679/693, ProcessSteps 718/741-745/776-780/845/867, MovementSpeed 9-12 (100/200/200/400), 22/44 px at 29-30, GetAnimDirection 76-110, GameController 381-409, GetObjectNewAnimationType_0 group numbers (4/5/6/12, 26-29, 18/19/11/9/10/12/13/14, 31/71/72, tail 2/6/5) all correct, BSD-2-Clause SPDX.
+
+**Missed:** ProcessSteps 730-739: for non-player mobiles with >1 queued steps the step is treated as mounted (halved duration) when the gap since last step is <= 100/200 ms: a catch-up rule that shortens queued steps; not covered, and it changes the step timing the note describes. Also directionChange branch (785-789, 848-853) removes zero-move steps and recurses.

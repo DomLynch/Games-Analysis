@@ -181,3 +181,12 @@ Acceptance: In a 1-vs-3 fight the three attackers each hold a distinct attack sl
 
 Reuse tag: adapt-allowed (Apache-2.0: code may be adapted with attribution; this sketch is written from the mechanism, not translated)
 Brief rule served: 1 (one engine: enemy choice lives in src/fight, not in a client); MAX_ATTACKERS = 3 via the slot claim; rules 7-9 n/a
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** (1) Note s1 line 15 and sketch claimNearest say a pickup whose target is claimed by another agent 'picks the nearest free one' (PickupItemAction.cs 37-43). Real code: itemCollection.GetFiltered<THoldable>(false,false,agent).FirstOrDefault() (PickupItemAction.cs:39) - first in list order, not nearest; no distance used. (2) s3 table cites 'Nearest target, ties keep first, strict less-than (ItemCollection.cs 82)' - that is ItemCollection.Closest (a different method, ~line 71-88); ClosestObjectSensor.Sense calls the T[] Closest extension (ClosestObjectSensor.cs:23) which the note itself lists as not read. Everything about GraphResolverJob (Execute 88-145, AddConnections 147-208, costs 210-234, retrace 246-256, H 276-297), SensorTimer, LocalTargetSensorBase, ItemBase claim/drop, DistanceMultiplier 1f/speed (GoapActionProvider 380), Apache-2.0 verified correct.
+
+**Missed:** Execute: start nodes get H=int.MaxValue (GraphResolverJob.cs:105) and are placed in the closed set before the loop (not stated). Note's cost-race sketch drops this but it is harmless.

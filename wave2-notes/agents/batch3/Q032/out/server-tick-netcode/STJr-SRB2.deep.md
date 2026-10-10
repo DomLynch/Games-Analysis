@@ -140,3 +140,12 @@ export class ServerTickLoop {
 
 Reuse tag: rewrite-from-idea (GPL-2.0; clean-room, shape only)
 Brief rule served: rule 1 (one engine); server-verified kills
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** none found; I_UpdateTime 56-84, frame cap 8 vs comment 10 (d_main.c 850-853), TryRunTics cap 1255-1261, NetUpdate >5 server 1 / client 5 and gametime=nowtime, SV_Maketic quit/missing logic, SV_SendTics 369-383 (&3 resend), receive 241-261, Consistancy, CLIENTBACKUPTICS 32, netticbuffer 0..3 default 1, GPL-2 all match
+
+**Missed:** NetUpdate also clamps counts to BACKUPTICS window (d_clisrv.c 1625-1626) and calls DedicatedIdleUpdate (1572); minor

@@ -135,3 +135,12 @@ function tickCameraFrame(
 
 Reuse tag: adaptable (MIT; code may be adapted, keep the licence notice)
 Brief rule served: 1 (one engine; camera is client-only and never changes outcomes)
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** Verified loop order (turn 880-889, accelerate 915, physics 938-941, eye 953-959, render re-init 1027-1031), rotateX fmod / rotateY clamp, eye offset 29.5/128 from Player.h 29-31 and ArenaPlayerUtils 15-16, collider radius 0.20, min-side mouse normalisation 1010-1014, turningScale 1 / 2/3, defaults sensitivity 2.5 / pitch limit 90 / FOV 60, zoom 1/tan(fov/2), MIT licence.
+
+**Missed:** options-default.txt comment says CameraPitchLimit applies in modern mode (classic mode still calls rotateY with the limit); note does not mention. Minor.

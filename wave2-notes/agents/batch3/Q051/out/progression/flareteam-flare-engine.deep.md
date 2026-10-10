@@ -144,3 +144,12 @@ Best transferable idea: scale each kill's XP by an enemy-vs-player level-gap cur
 
 Decision (proposed): adapt — the level-gap curve and the carried remainder fit a server award; the per-frame level derivation and the client dead-frame gate do not fit our one ledger, so Frankendom takes the shape and keeps the state on the server.
 Acceptance: a server test asserts that a kill of an enemy 3 levels above the player awards base x the relative-curve value for +3, that two awards of 0.5 XP give one whole point on the second kill, and that after a death with a 10 percent penalty total XP never falls below the current level's threshold.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** Verified: kill reward block 881-927 order (ally party share, getMultiplier, rewardXP silent, loot after), getMultiplier absolute then relative with nearest-end clamp, gap fill at load 119-131, rewardXP block flag + XP_GAIN bonus + whole/fraction (207-221), addXP cap, getLevelXP/getLevelFromXP, Avatar::logic level check 523 before block_xp_gain update 544, death penalty 321-334, permadeath, party_exp 100, stat_points 1, xp table repair 1331, licence GPL-3+ header.
+
+**Missed:** first_defeat_loot / defeat_status / quest_loot block precedes the XP award in the same branch (StatBlock.cpp 895-915) - not mentioned.

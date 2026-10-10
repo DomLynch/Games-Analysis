@@ -9,7 +9,7 @@ Checked: Read in full `Unit::RollMeleeOutcomeAgainst`, both overloads (Unit.cpp 
 - Entry: `AttackerStateUpdate` (2760) checks pacified and casting state, may replace the main-hand swing with a melee spell (not read in full), redirects the target, then calls `CalculateMeleeDamage` (2827). Its result goes through `DealDamageMods` (2832), then `DealMeleeDamage` (2843), which calls `DealDamage` once per damage component (2084).
 - Step A, damage before the roll (1678-1791). Each damage component is reset (1683-1689). Immune targets return early with no damage (1723-1747). For each component (1749-1791): base damage from `CalculateDamage` (not read), melee bonus done and taken (1768-1771), a script hook (1774), the victim AI hook (1776-1779), then armour reduction (1782-1786) for components whose school armour reduces. So armour is applied before the outcome is known.
 - Step B, the roll (1793). `RollMeleeOutcomeAgainst` (2973) turns the attacker's and victim's skill, aura and flag inputs into chance widths in hundredths of a percent (2979-2993), then calls the 7-argument overload (2996), which rolls once.
-- The roll (2996-3172), in this order. Each band is tested as `roll < (running sum + width)`. A band with width 0 or less is skipped (`tmp > 0` or `(tmp -= skillBonus) > 0`).
+- The roll (2996-3172), in this order. Each band is tested as `roll < (running sum + width)`. The donor tests the raw width first and only then subtracts the skill bonus for dodge, parry and block (`tmp > 0 && (tmp -= skillBonus) > 0`, 3053-3054, 3085-3086, 3102-3103). So a band whose width was set to 0 (casting, controlled, from behind) stays closed even when the skill bonus is negative; a band that is open but reduced to 0 or less is skipped.
   1. Creature that is evading attacks: EVADE, no roll (2998-3000).
   2. `skillBonus = 4 x (attacker weapon skill - victim max skill for the attacker's level)` (3012; the donor comment says 0.04% per point, 3011).
   3. `roll = urand(0, 10000)` (3014). `urand` is uniform over the inclusive range (Random.cpp 47), so 10001 values.
@@ -68,18 +68,21 @@ export interface Bands {
 }
 
 // One roll sorted into ordered bands: a band is tested only while the running sum is still above the roll.
-// The skill bonus (4 per attacker skill point over the victim's skill) lowers dodge, parry and block only.
+// The skill bonus (4 per attacker skill point over the victim's skill) lowers dodge, parry and block only,
+// and is applied only after the raw width passed the > 0 check (donor order).
 export function rollOutcome(b: Bands, skillBonus: number, roll: number): Outcome {
   let sum = 0;
-  const inBand = (width: number): boolean => {
-    if (width <= 0) return false;
-    sum += width;
+  const inBand = (width: number, bonus = 0): boolean => {
+    if (width <= 0) return false; // zero-width band stays closed, even if bonus is negative
+    const w = width - bonus;
+    if (w <= 0) return false;
+    sum += w;
     return roll < sum;
   };
   if (inBand(b.miss)) return "miss";
-  if (inBand(b.dodge - skillBonus)) return "dodge";
-  if (inBand(b.parry - skillBonus)) return "parry";
-  if (inBand(b.block - skillBonus)) return "block";
+  if (inBand(b.dodge, skillBonus)) return "dodge";
+  if (inBand(b.parry, skillBonus)) return "parry";
+  if (inBand(b.block, skillBonus)) return "block";
   if (inBand(b.glancing)) return "glancing";
   if (inBand(b.crushing)) return "crushing";
   if (inBand(b.crit)) return "crit";
@@ -143,3 +146,12 @@ Acceptance: a server test sets miss 500, dodge 1000, crit 800, other widths 0, s
 - Block amount is the shield's block value (1884), not a function of the roll. Map it to shield data in the catalogue.
 - The donor splits damage per component (weapon school, and a second weapon for players). Frankendom has one damage per swing, so only the single-component path transfers.
 - Not read: `DealDamage` (the next stage), the base `CalculateDamage`, the aura lookups for crit, and the `MeleeSpellMissChance` miss width. The miss width is therefore not described beyond its inputs.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** Mechanism, line numbers, bands, 4*skill, urand inclusive, glance cap 4000, crush 200x-1500, NO_CRIT fall-through, armour formula (2288-2299), outcome multipliers, GPL-2+ header all verified. Sketch divergence not disclosed: donor tests 'tmp > 0' BEFORE subtracting skillBonus for dodge/parry/block (Unit.cpp 3055, 3087, 3104), so a zero-width band (casting/stunned/from behind) stays closed; sketch passes (b.dodge - skillBonus) to inBand, so with a negative skillBonus (victim higher level) a zero-width band would open. Note says casting/control 'would set the width to 0 before the call' - exactly the case that breaks.
+
+**Missed:** Armour penetration cap per victim level 2255-2284 only mentioned; sitting-victim crit covered. Nothing major missed.

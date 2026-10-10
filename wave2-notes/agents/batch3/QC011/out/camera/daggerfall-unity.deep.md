@@ -111,3 +111,12 @@ Acceptance: on a hit above 2 percent of max health the camera wobbles in a rando
 
 Reuse tag: rewrite-from-idea (MIT; code may be adapted, but we rewrite the mechanism, not the lines)
 Brief rule served: 11 (fight camera is client-only; the engine never reads it)
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** None. All numbers and lines match: CameraRecoiler Update 64-110, 2% threshold 77/80, timerStart piScalar=5+floor(pct*5) at 133-135, timer 2*pi/s at 99-100, base 50 at 45, settings 0/.25/.5/.75/1 at 142-146, healthLostFactor clamp(0.015..1) at 156, sin per axis 166-167, Rotate at 104 with no deltaTime, bSwaying=(timer>0) at 107, ResetRecoil on init/load/court, VitalsChangeDetector UpdateDeltas 93-94/120 one-frame delta, so the 'amplitude only reflects the hit frame' finding holds. PlayerMouseLook pitch +/-90 (23-24, 69, 144), smoothing 100-105/163/166, NoFogCamera toggles fog 8-16, MIT header.
+
+**Missed:** none

@@ -162,3 +162,12 @@ function place(c: Cam, groundY: number, shoulder: number): { pos: [number, numbe
 - Pitch is fixed in third person (18390-18391): the donor has no pitch control outside first person. Frankendom's owner wants a better world camera; pitch control is a separate decision.
 - Licence: AGPL-3.0, clean-room. Do not copy the structure line by line; the sketch takes the shape only. Any server-side use would bring AGPL obligations; the sketch is client-only, so this does not apply to it.
 - Client-only rule: the heading and the follow state must never affect hits, targets or any server message.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** none found; snap 500 (11992), divisor (zoom-500)/15+16 (12034), turn ramp (v*m_Wc+255)/256 (12025), 8 headings x32 (12001), pitch 912 (312, 18391), zoom 750/600, distance zoom*2 and height -elev-180 (5245-5246), sway >500 frames, manual yaw 2, licence AGPL all match
+
+**Missed:** autoRotateCamera outward search at 1498 only runs if var1 > 7 (always true as called with 94); not important

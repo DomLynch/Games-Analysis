@@ -160,3 +160,11 @@ Acceptance: a server test: a zone with no players for its grace period despawns 
 - Time here is wall-clock milliseconds on a variable step (GameController.cs:61, 388). A server tick must be fixed-step (row 18 sub-line "server tick: fixed step"). The 50 ms and 500 ms constants are client cadences and must not be copied to the server tick.
 - Pooling hazard: `Chunk.ClearForReload` documents a double-ownership bug that `Destroy` would cause if a live slot were pooled (Chunk.cs:445 and its doc comment just above it). Any pooled entity in Frankendom must unlink from its owner before it is released.
 - Zone data in the donor (WorldMapGump.cs 1364-1373, 1370) is label, colour and polygon for the world-map overlay only. It has no spawn, rule or danger fields, so it gives no zone-as-data model beyond that. Thin on the zones-as-data point.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** None. Verified World.Update 294-298 (50 ms throttle), mobile cull 301-313 with deferred _toRemove 345-353, item cull 355-388 (OnGround, multi via HouseManager.TryToRemove), ClientViewRange default MAX_VIEW_RANGE 24 (World.cs:109, Constants 80-81), GameObject.Distance Chebyshev with last-step tile (32-62), GetChunk2 stamp at Map.cs:96 overwriting Create's +3000 stamp (Chunk.cs:49), ClearUnusedBlocks 247-268 (3000 ms, creation-order list, cap 50, HasNoExternalData with multi exemption commented out at Chunk.cs:482), GameScene cleanup 724-727 and first run +5000 (line 47), Chunk.Destroy node unlink and pool cap 300 (Chunk.cs ~404-421), ClearForReload doc, IsFixedTimeStep=false, Time.Ticks from TotalGameTime ms, BSD-2-Clause.
+
+**Missed:** Distance returns ushort.MaxValue when World.Player is null (GameObject.cs ~38), so nothing in range while player is absent - not mentioned.

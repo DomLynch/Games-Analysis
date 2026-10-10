@@ -125,3 +125,12 @@ Brief rule served: camera is client-only; tuning in client config, not engine or
 Best transferable idea: while a look key is held, the camera leans toward the cursor by an ease-out amount with a fixed cap, and releasing the key eases it back to centre without a snap.
 Decision (proposed): adapt. The hold-to-look, capped and eased lean fits a world camera that needs look-ahead. Rebuild it in ground-plane world units for the third-person camera, keep it off the Pit camera, and keep it out of target selection (the engine and the server never read it).
 Acceptance: client test in a world zone. With the look key held and the cursor 300 px right of centre, the view moves right by no more than the cap. Releasing the key returns the view to centre with no overshoot. The tile under the cursor when hit-tested matches the tile drawn there.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** Note describes GetViewPort (GameSceneDrawingSorting.cs 1186-1290) as how the camera follows/centres on the player and says the lean is 'added to the tile offset' there; that function computes the visible-tile culling range for the draw list (lean enters at 1238-1241 only to shift culling). Actual view centring/lean is done only through the matrix in Camera.UpdateMatrices. Everything else verified: BSD-2 SPDX line 1, constants 12-14 (250, 0.01, 5), CalculatePeek 189-224 incl. mirror 199-200 and ease 208-209, snap 215/222, UpdateMatrices 153-180 order, Zoom clamp 48-62, Scene.cs 15 (0.5,2.5,0.1) and 32, IsFixedTimeStep=false GameController.cs 61, Time.Delta 389, Scene.Update 404, Profile.cs 130-133, wheel zoom 1011-1019, restore 1372-1379, Easings OutQuad 11 / OutQuart 27
+
+**Missed:** CalculateLerpZoom (182-187) is a no-op stub despite its name, so there is no zoom smoothing; Camera ctor defaults min=max=1 so Scene supplies the zoom range

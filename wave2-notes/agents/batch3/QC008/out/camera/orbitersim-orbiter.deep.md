@@ -6,12 +6,12 @@ Checked: camera_scope = world camera (third-person orbit/chase view of a target)
 
 ## 1. Mechanism
 
-- The chase view is an orbit around a target. The camera sits at yaw `ephi` and pitch `etheta` around the target, at distance `rdist` times the target's size (`Distance()`, Camera.cpp 431; `SetRelPos` builds `rpos` from column 3 of the rotation with length `-rdist*size`, 699-700). Nothing is smoothed in this mode: the yaw/pitch are set directly (`AddPhi` at 453 calls `SetRelPos` at once, no rate limit). The donor's chase view has no lag and no collision test.
+- The chase view is an orbit around a target. The camera sits at yaw `ephi` and pitch `etheta` around the target, at distance `rdist` times the target's size (`Distance()`, Camera.cpp 431; `SetRelPos` builds `rpos` from column 3 of the rotation with length `-rdist*size`, 699-700). Nothing is smoothed in this mode: the yaw/pitch are set directly (`AddPhi` at 453 calls `SetRelPos` at once, with no limit of its own; the keyboard path limits the rate before it calls `ShiftPhi`, see the keyboard yaw line below). The donor's chase view has no lag and no collision test.
 - Order of steps per frame: `Camera::Update` is called once per frame from `EndTimeStep` after the world has stepped (`Orbiter.cpp` 1798). It (a) reads the step `dt = td.SysDT` (971, variable step, no accumulator); (b) in the external branch, the `CAMERA_TARGETRELATIVE` case (1022-1023) puts the camera at `target->GRot() * rpos + target->GPos()`, so the view follows the target every frame; (c) if a drag offset exists, ages it: `t = t1 - tref_t0` (1087); after `dragT` seconds it clears the offset (1088); before that it scales the offset magnitude by `1 - u*u*(3 - 2u)` with `u = t/dragT` (1093), i.e. the offset is `tref_d0 x scale` (1096); (d) updates the near plane (1207 onward); (e) builds the view rotation.
-- Zoom. `ShiftDist` (519) computes a step scale `max(1e-4, (rdist-1)/rdist)` (523) so steps shrink near the target surface. The donor then raises that scale to at least `1/target size` (524); the sketch omits this floor because its units are not verified. A positive shift multiplies the distance by `1 + shift`; a negative shift multiplies by `max(1/rdist, 1/(1-shift))` (527-528), which keeps `rdist` at or above 1 target radius. `ChangeDist` (532) applies the factor with `SetRelPos(rdist*fact, ...)` (538). Callers: the mouse wheel (`ShiftDist(-zDelta*0.001)`, 125) and the keyboard (`ShiftDist(-td.SysDT)` for advance, Orbiter.cpp 2182).
+- Zoom. `ShiftDist` (519) computes a step scale `max(1e-4, (rdist-1)/rdist)` (523) so steps shrink near the target surface. The donor then raises that scale to at least `1/target size` (524; the donor comment says "move at least 1m/s", target size in metres, and the shift is already scaled by the frame time), so the zoom does not stall near the target. The sketch includes this floor. A positive shift multiplies the distance by `1 + shift`; a negative shift multiplies by `max(1/rdist, 1/(1-shift))` (527-528), which keeps `rdist` at or above 1 target radius. `ChangeDist` (532) applies the factor with `SetRelPos(rdist*fact, ...)` (538). Callers: the mouse wheel (`ShiftDist(-zDelta*0.001)`, 125) and the keyboard (`ShiftDist(-td.SysDT)` for advance, Orbiter.cpp 2182).
 - Yaw by mouse drag (external view): `ShiftPhi(dx * -0.005)` (160); `ShiftPhi` passes through to `AddPhi`, which adds half the shift (`ephi+dphi*0.5`, 453). Net: 0.0025 rad per pixel, applied at once.
 - Yaw by keyboard (external view): `Orbiter.cpp` 2103-2105 set `cam_acc = 0.02`, `cam_vmax = SysDT x 1.0` and `max_dv = cam_vmax x cam_acc`. Each frame the requested step grows by `max_dv` up to `cam_vmax` (2111-2116), then `ShiftPhi(dphi)` is called (2119). Because the step is multiplied by `SysDT`, full speed is about 0.5 rad/s, but the ramp to full speed takes 1/0.02 = 50 frames, whatever the frame time. The ramp is counted in frames, not seconds.
-- In-ship (cockpit) look, for contrast: the requested rate is `input x vmax` (480). Near a panel limit the rate is cut to `(remaining angle) x dfac` with `dfac = 2 amax / vmax = 8` (1109, 1159). When `rot_smooth` is set, the change in rate per second is capped at `amax` (1169-1170). In the code I read, this is the only rate-limited look, and it is first person.
+- In-ship (cockpit) look, for contrast: the requested rate is `input x vmax` (480). Near a panel limit the rate is cut to `(remaining angle) x dfac` with `dfac = 2 amax / vmax = 8` (1109, 1159). When `rot_smooth` is set, the change in rate per second is capped at `amax` (1169-1170). The external keyboard yaw is also rate-limited (the frame ramp above); the smooth-and-cap rate shaping with panel limits is the cockpit's.
 - Drag offset: `Drag(gshift)` (544) adds a shift to a stored offset, records the start time and the offset length, and sets `rdist` from the current distance (`tref_r0/target->Size()`, 552). The offset then decays over 3 s (`dragT`, 40) with the smoothstep curve above. It is a settle-back, not a lag.
 - Tick: `Update` runs once per rendered frame. The step is whatever `BeginStep` was given (`TimeData.cpp` 41). No fixed step, no accumulator in this file.
 
@@ -39,7 +39,7 @@ Checked: camera_scope = world camera (third-person orbit/chase view of a target)
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps three of the donor's ideas as functions: the rate cap with slow-down near a limit (the donor applies it to the in-ship view only; the sketch applies it to an orbit camera, which the donor does not do), the smoothstep settle of a drag offset, and the zoom step that shrinks near the surface. It omits the cockpit recentre state machine; the keyboard frame ramp; the optional `rot_smooth` switch (the cap is always on here); the planet and near-plane logic; the donor's `1/target size` floor on the zoom step (units not verified, so it is left out); the eye offset in cockpit mode; the external-control hook; and the `normangle` wrap. The orbit position formula matches the donor's algebra (column 3 of the rotation times `-rdist*size`).
+simplified: the sketch keeps three of the donor's ideas as functions: the rate cap with slow-down near a limit (the donor applies it to the in-ship view only; the sketch applies it to an orbit camera, which the donor does not do), the smoothstep settle of a drag offset, and the zoom step that shrinks near the surface (with the donor's `1/target size` floor). It omits the cockpit recentre state machine; the keyboard frame ramp; the optional `rot_smooth` switch (the cap is always on here); the planet and near-plane logic; the eye offset in cockpit mode; the external-control hook; and the `normangle` wrap. The orbit position formula matches the donor's algebra (column 3 of the rotation times `-rdist*size`).
 
 ```ts
 // Licence: MIT (donor). Clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -78,9 +78,10 @@ function stepLook(cam: OrbitCam, wantPhi: number, wantTheta: number, dt: number,
   cam.theta += cam.vTheta * dt;
 }
 
-// Wheel or key zoom. shift > 0 pulls out, shift < 0 pushes in; the step shrinks near the target surface.
+// Wheel or key zoom. shift > 0 pulls out, shift < 0 pushes in; the step shrinks near the target surface but never below 1/targetSize.
 function zoom(cam: OrbitCam, shift: number): void {
-  const scale = Math.max(1e-4, (cam.rdist - 1) / cam.rdist); // slow down near 1 target radius
+  let scale = Math.max(1e-4, (cam.rdist - 1) / cam.rdist); // slow down near 1 target radius
+  scale = Math.max(scale, 1 / cam.targetSize); // floor: move at least 1 m/s (shift is already x dt), so zoom cannot stall
   const s = shift * scale;
   const fact = s > 0 ? 1 + s : Math.max(1 / cam.rdist, 1 / (1 - s));
   cam.rdist *= fact; // inward zoom stops at 1 target radius
@@ -128,3 +129,12 @@ Acceptance: Client unit test with variable dt: a full-rate look held 0.1 s then 
 
 Reuse tag: adapt-idea (MIT: code may be adapted; sketch clean-room)
 Brief rule served: camera is client-only (engine never reads it); follow distance as zone data, the rest as client settings.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** (1) Zoom floor: note says units of 'scale = max(scale, 1/target->Size())' not verified and drops it from the sketch; code and comment (Camera.cpp 524 'move at least 1m/s') make it clear: shift (x dt seconds) * scale is a fraction of rdist-in-radii per second, so floor = 1 m/s. Dropping it leaves the sketch zoom at ~1e-4 step near 1 radius, i.e. stalls, unlike the donor. (2) 'cockpit is the only rate-limited look' - external keyboard yaw is also rate-ramped (Orbiter.cpp 2103-2116), which the note itself describes as frame-based. Verified OK: dragT 3.0, vmax 2, amax 8, dfac 2*amax/vmax, rdist=4.0 line 52, ShiftDist/ChangeDist 519-541, Drag 544-556, SetRelPos algebra and the sketch orbitPosition, mouse yaw -0.005 and AddPhi 0.5 factor, wheel ShiftDist(-zDelta*0.001), Update SysDT, smoothstep 1-u^2(3-2u), MIT.
+
+**Missed:** None important.

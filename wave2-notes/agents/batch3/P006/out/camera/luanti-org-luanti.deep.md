@@ -92,3 +92,12 @@ Best transferable idea: Keep the fight camera out of walls with a fixed-step mar
 - Stairstep smoothing and mouse damp are separate effects. A fight camera that follows a hit-stop or knockback should not reuse the stairstep blend without a test, because the donor applies it only to upward player steps.
 - Frame timing: `dtime` is variable (FPS limiter, `game.cpp` 519). The damp and the stairstep blend are frame-rate-aware, but the march itself is a per-frame check. If Frankendom runs the camera on a fixed tick, the same check must run on the render frame, not the tick.
 - Not read: the nametag and frustum helpers, and `camera.h`. Nothing in this note depends on them.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** Sketch-omission text says view-bobbing offset is 'applied to the eye before the march (386-403)'; real code applies bobbing only when m_camera_mode < CAMERA_MODE_THIRD (camera.cpp 387-388), so it never precedes the third-person march. All other claims verified: licence SPDX line 2, march loop 425-429 (10..27, i>12), hit back-off BS/2 438-440, Y clamp 447-448, stairstep exp(-23 dt) 340, damp numeric.h 444-446, game.cpp 519/566/582/584/589/2589-2590, BS=10 constants.h 61
+
+**Missed:** none significant

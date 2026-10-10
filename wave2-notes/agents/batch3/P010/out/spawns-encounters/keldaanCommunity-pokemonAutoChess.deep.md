@@ -120,3 +120,12 @@ function lockoutMs(
 - Festival flag: one rule switches off the once-per-run limit and the sell exemption together. Frankendom should keep each as its own data field per zone.
 
 Best transferable idea: give each zone a per-stage table of independent chances whose leftover means nothing spawns, keep a once-per-run set that spends a repeat roll, and lengthen the phase by a fixed bonus when a rare entry appears.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** none found. Verified: randomWeighted random.ts 15-37; roll+repeat rule mini-game.ts 270-281; table sums (0.475/0.475/0.45/0.45/0.30/0.25); lockouts 312-325; phase block game-commands.ts 2050-2067; stages.ts 17-22; MAX_SIMULATION_DELTA_TIME=50 (app/config/server/network.ts:12, note cites 'network.ts 12' without folder); GPL v3 LICENSE line 1-2; rank is uint8 (player.ts 137)
+
+**Missed:** randomWeighted also has ap/apScaling/luck multipliers (note mentions they are left 0); not a real miss

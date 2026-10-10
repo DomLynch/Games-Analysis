@@ -110,3 +110,12 @@ export { pickSpawn, respawnTimeAtDeath, mayRespawn };
 - The pick is uniform over the top half. With two or three usable spots it always picks the furthest one, so the donor's variety is small in small zones. Make the fraction a zone field.
 - Frankendom's kill and loot ledger is not touched here, but the lock and window must not reward or cancel a kill credit. Not checked in the donor (not read).
 - Item and powerup respawn (g_items.c 245-560) was not read and is not part of this note.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** SelectRandomFurthestSpawnPoint 183-259 (telefrag skip, bot/human flags, insertion sort, cap 128, fallback 238-248, rnd = random()*(numSpots/2)), SelectSpawnPoint 268-270, SpotWouldTelefrag health test commented out (93), box -15/-24/15/32, 1700 ms lock g_combat.c 608, forced respawn g_active.c 997-1012, g_forcerespawn 20, respawnTime reset 1193, random() macro, GPL v2 or later all verified.
+
+**Missed:** ClientSpawn calls G_KillBox(ent) at g_client.c 1203, so the fallback spot (no telefrag check) kills anyone standing there; note's fallback risk section says it 'returns the first spot with no blocking check' but does not state the donor then telefrags occupants.

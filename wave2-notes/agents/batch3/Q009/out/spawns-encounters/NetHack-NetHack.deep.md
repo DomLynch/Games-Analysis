@@ -231,3 +231,12 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - The group damp uses the player level (makemon.c 106). The same caveat: with several players, define which level counts.
 - Not read: `enexto_gpflags` (group placement), `goodpos`, the stair fallback beyond 1122, the level-fill code in `mklev.c`, the species difficulty data, the quest rule (1666-1667, seen only). Group placement is therefore medium confidence.
 - The vault guard timer (vault.c 340-341) is a separate timed encounter and is not in this note; it may be a second cell-worthy mechanism if Frankendom needs timed arrivals.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** Per-turn roll 70/50/25 (allmain 160-162), call after movement allotment (240), spot-first with 50 tries and visible rejection (1087-1091), two-pass scan and stair fallback (1100-1128), 51 species draws (1226), window min=lvl/6 max=(lvl+ulevel)/2 (monst.h 273-274), weight G_FREQ+align_shift+3 temperature, reservoir sampling (1716), group 1/2 and 2/3 (1431-1437), rnd(3|10) and /4,/2 damping (85, 106), rndmongen flag (mklev 899, sp_lev 3822), NGPL: verified. Errors: 'Peaceful species form no group (125-126)' is wrong as stated - peace_minded() is rolled per extra inside the loop, so a species with a peaceful chance just yields a smaller group (donor comment 127-130); uncommon() cited 1595-1597 for 'extinct' but G_GONE is 1597 and the in-Hell rule (maligntyp > neutral is uncommon) is omitted; vault guard line leaves out the guard-death damping (vault.c 337-339).
+
+**Missed:** level_difficulty() is the deepest level reached when carrying the Amulet and differs in the endgame; Inhell G_NOHELL skip (1690); first scan pass skipped when Blind or in mklev (1100); quest 6/7 override (1666)

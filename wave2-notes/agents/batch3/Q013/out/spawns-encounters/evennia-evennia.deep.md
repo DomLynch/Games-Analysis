@@ -107,3 +107,12 @@ Sketch checks (run on the VPS): `npx -p typescript tsc --noEmit --strict --targe
 
 Reuse tag: rewrite-from-idea (BSD-3-Clause; adaptation allowed, but the sketch is written from the mechanism and is not a translation)
 Brief rule served: 1 (one engine, zones as data: respawn timing computed in the engine from zone fields); rules 7-9 n/a
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** none found. Verified BSD 3-Clause LICENSE.txt line 1; stagefunc_loop 106-134 (cycle=max-min key, iterations//, %, start_time reset); _find_stage 263-286 incl. rerun-with-same-delta (so wrap call returns '_loop', docstring 115-118 contradicts it: note's central finding is right); check 246-308; __init__ 171-233 validation and reverse sort at 230; runtime() gametime.py 91; save() 398-422; service.py 572/670; tests.py loop table 554-559; dungeon.py recycle 457, branch_check 458, max life 459, coin 439, last_updated 284, max exits 213-214, randint 326
+
+**Missed:** stagefunc_bounce exists (ondemandhandler.py 136+) and set_dt lets callers cheat the clock (322-337); also loop key spans max-min so a one-key table would divide by zero (line 130). Minor extras

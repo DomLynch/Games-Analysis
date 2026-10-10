@@ -133,3 +133,12 @@ export function pickRecipient(dealers: Dealer[], lastAttacker: string): string {
 Best transferable idea: give each kill a fixed number of rare-drop slots and gate the whole table by a killer-to-victim level gap, so rare loot is capped per kill and a killer far above the mob gets nothing.
 Decision (proposed): adapt. Keep the per-kill rare cap (zone data), the level-gap filter (engine constant) and the top-dealer recipient rule. Drop the eviction displacement, the group running-total roll and the dead party branch, because they make drop odds depend on table order and do not give the chances the data states.
 Acceptance: a server test with a seeded RNG, where a 20/30/50 group rolled over 100k kills lands within 1 point of each stated chance; a killer 15 levels above a level-3 mob never receives a rare drop; a raid zone with cap 7 never yields more than 7 rare drops per kill; among at most three attackers the top dealer receives the drop when online, else the last attacker.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** Dead party branch verified exactly (Attackable.cs 362-368, 390-393, 397, 470 vs 478); strict > for maxDealer (338); damage>1 filter (324); eviction/restore logic and the index-0 vs 'highest chance' comment (NpcTemplate 928-935, 984-987); group running-total with first-success break (779, 786, 856-858) and the 0.20/0.40/0.40 bias arithmetic reproduces by hand; Rnd.get exclusive max (Rnd.cs 22); Config defaults 2/7/14/14 and 155-168 line refs; ALT_PARTY_RANGE 1500; MIT licence: all correct.
+
+**Missed:** group path only evicts when rateChance==1 (793) - note says eviction applies to group path too, which is true but incomplete; otherwise nothing

@@ -124,3 +124,11 @@ Sketch typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on t
 - Distance rules differ: arrival uses 3D (Automation.js 82; SpeckMath.js 101-108) while leash and aggro use 2D (Npc.js 65; UpdateEnvironment.js 22). Frankendom must pick one per rule. The code does not show whether the mix is intended.
 - The numbers 1500, 500, 100, 1000, 0.644 and 77 are donor values for a 2004-era chronicle. Frankendom's must be zone data fields, not constants.
 - Not read: the player-side receiver of the hit (`Actor/Generics/ReceivedHit.js`), the player's own melee path (`Actor/Attack.js`), `utils.oneFromSpan`, and the session send path.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** None. Verified: enterCombatState 45-111 (1000 ms start 110, 100 ms interval 108, leash 1500 at 65, blocked skip 70-72, in-motion midpoint hack 78-84 with 1.3 ratio at 80, scheduleAction with actor radius 91, arrival check vs atk radius 94, meleeHit 104), meleeHit 127-153 (hit rolled at 133, packet 134, 0.644 at 147, flag clear 149-152, checkParticipants death-only 155-161), Automation ticksToMove 81-85 (ticksPerSecond 10 at 17), scheduleAction 87-105, replenish 3000 ms at 73, Formulas 132-151 (500000/atkSpd, 77*pAtk*mul/pDef, 90% at 150), UpdateEnvironment `this.previousXY` vs `actor.previousXY` defect (9 vs 18) and 500 aggro/5000 prefilter (6, 22), Timer.start 6-9, Circle inherits 2D Point.distance, Point3D.distance 3D, Npc/Generics/ReceivedHit 1-12, Apache-2.0. Global.js is at src/Global.js (note gives no dir).
+
+**Missed:** ReceivedHit 5-8: a lethal hit calls npc die and returns before replenish/enterCombat; note only lists the non-lethal path.

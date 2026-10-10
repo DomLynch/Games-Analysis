@@ -180,3 +180,12 @@ export const L2_DEFAULTS = { DEFAULT_DIST, MIN_DIST, MAX_DIST, COLLIDE_RADIUS, C
 
 Reuse tag: adaptable (Apache-2.0: adapt with the licence notice kept)
 Brief rule served: 1 (one engine; camera is client-only and never changes outcomes)
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** None found. Verified: UpdatePosition 215-262 order (Euler 217, lookAt 218, lerp 220-232 with 8*dt at 227, DetectSphereCollision 244-249, snap 254, placement 255/261), UpdateInputs 192-202 (x3 gain, +/-80 clamp), UpdateZoom 204-213 (5*0.1, clamp), LookAtPoint 269-287 (0.2*scale, -0.3 unscaled), ApplyL2Fov 316-341, collision clamp(hit,0.05,desired) at CameraCollisionDetection 61, radius floor 0.01 at 54, tan(fov) radians bug at 99 and 76, SetHeading sole caller PlayerSpawner:94, TargetManager:104, NameplateEntryStore:290, InputManager 133-134/147-149, Apache-2.0 LICENSE, derived figures (0.53125, 1.7219 m, 130 deg portrait FOV).
+
+**Missed:** Minor: InputManager.cs 153 only refreshes ZoomAxis when the mouse is not over UI, so a stale non-zero ZoomAxis can keep zooming each frame while over UI. Not covered.

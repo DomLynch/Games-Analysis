@@ -138,3 +138,12 @@ Acceptance: duel test with the skill band off: armour 25 against attack 20 takes
 
 Reuse tag: adapt-allowed (BSD-2-Clause)
 Brief rule served: 1 (one combat core, two clients) and parity row 3 (guard / parry / stamina)
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** (1) getACEffectiveness 8158-8161 returns 1.0 when defending AND NOT(shield that lacks beatitude-AC) (or parrying with weapon); note says 'defending with a shield' - a shield-less defend also gets 1.0, a non-beatitude shield does not. (2) 'backstab always hits (11426-11428)' but a female dryad vs player backstab still rolls evasion baseChance 5 (11430-11434). (3) Skill band base/variance 50/20 stated as the weapon value; setMeleeDamageSkillModifiers has other branches (polearm etc.), note admits sword branch not read. (4) MAXCHARGE 30 is not fixed: Stat::getMaxAttackCharge changes with EFF_ENSEMBLE_FLUTE (stat.cpp 2176+); sketch takes maxCharge as param so ok. Verified OK: 8206 factor 0.055, 12775 AC, 12806 formula + algebra, 12824-12831 floor, 13004-13015 charge int division, dummy caps, licence BSD-2, all sketch worked numbers (1/3/6/12).
+
+**Missed:** Magician's armour branch sets guard=true (11342-11349, noted unread); assassin-hood stealth bonus (+4..8 / halved) in backstab (12905-12915); AC also has sanctuary/guard-body/disrupted terms.

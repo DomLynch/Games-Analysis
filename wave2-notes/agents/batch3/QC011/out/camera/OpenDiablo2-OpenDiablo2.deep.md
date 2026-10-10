@@ -117,3 +117,12 @@ Acceptance: with the hero walking at a steady speed the camera trails by the sam
 
 Reuse tag: rewrite-from-idea (GPL-3.0; clean-room only)
 Brief rule served: 11 (fight camera; client only; free look never writes server state)
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** camera.go 52-58 gain -0.85 with ignored elapsed; follow target written after controls advance (game.go 273-277, controls at 235 -> renderer.go 624); FreeCam gate; arrow step 8/16 with Shift; MoveTo aliasing at camera.go 14; GPL-3 LICENSE; lag 1/0.85 derivation checked by hand.
+
+**Missed:** ClearTarget (camera.go 38-40) and FreeCam toggle not covered; minor.

@@ -156,3 +156,12 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Lock-on and many-enemy framing: not found in the camera code read. A grep for `lockon` in the donor found only reticle sprite states in `src/info.c` (3468-3476), which were not read further. So the donor gives no target-framing rule for a many-on-one fight.
 - The donor's 3D-floor and polyobject ceiling checks (p_user.c 10330-10440) and the grounded-only slope rule (10212) are not in the sketch and were not tested.
 - Zone data: `dist`, `height` and `speed` are tuning values. The donor changes distance per elevator (p_floor.c 1516-1533, grep only), so per-zone distance is a real pattern, but it was not read in full.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** All checked lines/constants hold (cam_dist 192/160 live, height 40, speed 0.3, radius 20/height 16, 41/48 eye, 64 lookahead, 11 ceiling gap, 48 fade, pitch >>3, shake 8/8 and ir*(1-dist/radius), momentum applied next tic, reset conditions, licence GPL-2). Only omissions, none contradicting.
+
+**Missed:** (1) CS_SIMPLE shift is also added into momentum (p_user.c 10557-10558: momx += FixedMul(shiftx,camspeed)); (2) in 2D levels mom is the full gap, no ease (10537-10542); (3) P_CameraThinker has a third reset path: camera floor-clamped above player+height+camheight+16 resets (p_mobj.c 3563-3567); (4) death-pit rule: no downward z momentum (10548-10553).

@@ -122,3 +122,12 @@ export {};
 Best transferable idea: pick the target as the nearest visible foe inside a per-monster range box (range from data, not the pair), and make flee a hp-share state change, not a movement.
 Decision (proposed): adapt - the nearest-in-box choice and the per-type flee threshold fit a fast duel AI, but the donor's distance-only aggro and its movement-based flee do not fit one engine with server-verified state changes and MAX_ATTACKERS = 3.
 Acceptance: a server test where a NORMAL-type monster below 20 percent of base hp, with a player within its tier range, switches to a flee state and never queues a further attack; a second test with three player characters around one monster asserts that the monster's chosen target is the nearest of them and that no more than three attackers are active.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** (1) Note presents flee/attack checks (afraid, WIMP, NORMAL/AGGRESSIVE hp flee, attack choice) as the order for every full-AI monster, but WIMP/hp-flee/attack all sit inside 'if hostilityType == HOSTILITY_LONG && target_pid' (Actor.cpp 2666-2667); gate not mentioned. (2) Note says WIMP stationary 'stands'; real code calls AI_Stand without continue (2669-2671) and falls through to hp-flee/attack checks. (3) AI_Pursue3 note omits the branch where a passed action length gives length + random(length) (2090-2091) and treant/inside-melee stand returns (2082-2089; melee one cited). Everything else verified (ranges 55-61, _SelectTarget 2033-2118 incl. v5 never advancing, flee 0.2/0.1 at 2679-2683, 5120 gate 2697, active-set 3875/3881/3897/3930/3955, GameConfig.h 269 =30, meleeRange 307.2 mm7_data.h 112, TrigLut 1024/512)
+
+**Missed:** Friendly-typed monsters become HOSTILITY_LONG when the target is within a relation-based distance (1024/2560/5120 by relation SHORT/MEDIUM/LONG; CLOSE always) (Actor.cpp 2639-2655): the actual aggro activation rule. Also non-friendly monsters with no target are reset to FRIENDLY (2558-2559, noted) and the IsNotAlive branch in _SelectTarget clears lastCharacterIdToHit (2149-2152)

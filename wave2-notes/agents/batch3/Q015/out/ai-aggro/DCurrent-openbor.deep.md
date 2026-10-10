@@ -166,3 +166,12 @@ Acceptance: a server test with one player and five hostile enemies at x = 100..3
 - Dead code: the `common_runoff` flee state is commented out (40675). Retreat is only the step-back in `common_attack_finish`. The flee pattern is not a donor feature to rely on.
 - The victim cooldown reset and the attacker's cooldown relief only apply through the donor's hit path (31760-31775) and the combat decision. Frankendom's duel step (row 1) must call the same reset.
 - Not read: `normal_prepare`, `common_try_wander`, `common_try_avoid`, `checkpathblocked`, `count_ents`, rand32/randf, `check_range_target_*` bodies, and most of `faction_check_is_hostile` (48348). The sketch does not claim anything about those.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** normal_find_target replace rules (35582-35584), distance window, THINK_SPEED 2, common_think order, common_attack %4 gate, check_attack_chance formula and clamp-to-1 consequence, recheck_nextattack 4/16/0, hit reset nextattack=0 (31774), step-back 40/80 and rand32()&3, chase point range-1 and 150 run threshold, jump-attack windows 0.05-0.4/0.5, constants 3.0/0.01/0.5, licence BSD-3: verified. Omissions that change the picture: check_attack_chance returns 1 immediately for AIATTACK1_ALWAYS; common_attack returns 0 when aiattack == -1; chase range < 0 also falls back to grabdistance; step-back also requires not NO_MOVE and not ducking.
+
+**Missed:** AIATTACK1_ALWAYS bypass of the throttle roll and aiattack == -1 off switch (openbor.c ~39620 and ~40775); in the stop branch of common_move the stall only applies when makestop is set

@@ -167,3 +167,12 @@ function flightMs(level: number): number {
 - The growl timer (typhoon.cpp 106, 194-195) is a sound cue that speeds up as heads die. Do not port it as a combat timer.
 - Not read: the event chain that starts each monster (events 15383, 15390-15392 are triggered elsewhere), `addTimer`, `getRnd`, `getCurrentTime`, projectile.cpp 92-127 and 300-303, monster.cpp 150-200.
 
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** Section 6 says the growl timer 'speeds up as heads die' (typhoon.cpp 193-195): real interval is rand(1100-50*alive, 1200-50*alive), so it is shorter (faster) with MORE heads alive and slows as heads die. Respawn text says the head 'shows normal' after respawn anim; real code hideHead(idx) then plays the respawn anim (249-254). MAX_ATTACKERS=3 is a Frankendom constant, not donor (no such symbol in engines/hadesch) - the note frames it correctly. Respawn bands, hit chance bands, flight (41-level)*100, volley (level-1)/10+1, leaves 9, 18 heads, licence all verified.
+
+**Missed:** Reset sets _isKilled/_playingTyphoonDieSound at enter (typhoon.cpp 158-159); sound-flag latches (_playingTyphoonRespawnSound) minor.

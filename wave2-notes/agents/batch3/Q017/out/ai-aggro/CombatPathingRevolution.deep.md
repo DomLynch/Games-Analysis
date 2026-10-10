@@ -133,3 +133,12 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 Best transferable idea: Gate a spacing band (distance to the target minus its radius, widened by weapon ranges) first, then make one seeded roll against a chance that never drops below a small floor outside the band, and rescale the retreat distance and wait by one per-style multiplier with a floor at the actor's diameter.
 Decision (proposed): adapt — the band-plus-one-roll gate and the style-scaled retreat are the right shape for spacing in a 1-vs-1 and for the fallback step; we take the shape, make every number catalogue or zone data, seed the roll on the server, and do not take the Skyrim hook layer or the per-frame roll.
 Acceptance: server test — with optimalRange 2.0, maxRange 3.0, circleMin 1.0, circleMax 1.0 (band 3.0 to 4.0), a gap of 3.5 with engine chance 0.5 circles on roll 0.2 and not on roll 0.9; a gap of 5.0 never circles, and its chance is max(0.1, minChance).
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** none found; band test 29-33, 0.1 floor 48, ShouldCircle 68-80, fallback 10-26 and 44-57 with diameter floor, defaults 256/0.75/0.75/0.25/30/90, RescaleRadius 12, IsMeleeOnly all match
+
+**Missed:** AdvanceInterruptHook (Advance_Hook.cpp 39-55: CPR_InterruptAction forces path state 5); WithinCricleRange also needs both min and max graph vars (26) which note folds into 'enable flag'

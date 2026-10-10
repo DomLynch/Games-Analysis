@@ -158,3 +158,12 @@ function makePlayerJob(pending: () => number, processOne: () => void): JobBody {
 
 Reuse tag: adapt-allowed (MIT, notice kept)
 Brief rule served: 1 (one engine: one scheduler for intake and fight steps)
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** WorkerPool Submit/Wake/WorkerEntry rules (queued key ignored, running key replaces pending rerun, wake zeroes reschedule, pending rerun precedence), PlayerJob returns ConnectionProcessPeriodMs, 256 cap at Server.cpp 2302, Settings.inc 128/419-422, HoldAtLease, lease only-longer rule at 3654, SyncPoint pause/resume, bisection, MIT licence all match.
+
+**Missed:** Submit-on-running also erases _cancelOnFinish (WorkerPool.cpp 133); Server.cpp 3896 MoveFinishCatchUpMaxMs catch-up cap is the part the note left as EvaluateLateCatchUp unread. Minor.

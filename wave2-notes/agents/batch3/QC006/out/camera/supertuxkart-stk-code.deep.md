@@ -117,3 +117,12 @@ function stepChaseCamera(st: ChaseState, kart: KartPose, dt: number, p: ChasePar
 
 Reuse tag: rewrite-from-idea (GPL-3.0-or-later; clean-room, shape only)
 Brief rule served: camera is client-only (rule for the world camera; owner ruling 2026-10-10)
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** None material. All cited lines, defaults (0.2/0.125/1.0, drone 2.6/33deg), 2.8+5.6*ratio, 2x floor, 0.85+ratio/2.5, 0.04 up blend, -33 restart, 50ms cap, GPL-3-or-later header verified. Small omission: moveCamera also has 'if (distance > 0) camera_distance += distance + 1' (camera_normal.cpp:120) not described.
+
+**Missed:** Nothing important; the distance>0 branch above.

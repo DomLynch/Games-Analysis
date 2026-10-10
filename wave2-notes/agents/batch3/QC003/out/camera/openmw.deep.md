@@ -174,3 +174,12 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - The pitch sign and the quaternion order (`camera.cpp` 194-195) were not re-derived; the sketch uses its own convention. Any port must test the look direction.
 - The carry-over is the least certain part: the sketch's one-velocity version is a simplification of the donor's accumulator (`camera.cpp` 254-294).
 - Zone data: the shoulder thresholds (120 and 300) and the offsets (30, -10) are tuning values. Per-zone values are a sensible guess, not a donor fact: the donor has them as global settings.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** (1) note step 3 says shoulder state 'selected' and trySwitchShoulder runs for shoulder states, but real code only calls it when autoSwitchShoulder is on (third_person.lua 100-104, default false settings.lua 47), else uses defaultShoulder; (2) note says combat offset (0,15) 'for combat' but the else branch (123-124) also applies it to Swimming state (91-92); (3) focal sphere cast start is focal-focalOffset with z+10 (camera.cpp 180-186), note says 'from the character side' (sketch caveat admits)
+
+**Missed:** Swimming state; autoSwitchShoulder gate; viewOverShoulder default false (settings.lua 44) so the whole shoulder logic is off by default

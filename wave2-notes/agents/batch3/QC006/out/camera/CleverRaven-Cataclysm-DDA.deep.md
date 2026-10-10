@@ -102,3 +102,12 @@ function stepLookAhead(st: LookAhead, h: Hero, dt: number, p: LeadParams): { x: 
 
 Reuse tag: rewrite-from-idea (CC-BY-SA-3.0; clean-room, shape only)
 Brief rule served: camera is client-only (owner ruling 2026-10-10)
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** calc_driving_offset 1363-1456 steps, border_range 2, 400 per tile, inverse_lerp unclamped (cata_utility.h 249-256), corner squeeze 0.2, sight clamp 1425-1440, glide one tile else snap (1446-1453), cruise 7 tiles, call sites do_turn 713 and map.cpp 1241, option default true, CC BY-SA 3.0 all match.
+
+**Missed:** Negative rel_offset below dead zone is real (derived correctly); IsSpawnerBound-style gates n/a. Offset is truncated to int by point(offset.x, offset.y) at 1444 (note says whole-tile, ok).

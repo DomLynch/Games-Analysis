@@ -175,3 +175,12 @@ Brief rule served: 1 (one ledger; the server moves items); zones as data: none
 Best transferable idea: Make a two-party exchange commit only when both sides accept the same offer: any change clears both acceptances, and the commit re-checks ownership and room before anything moves.
 Decision (proposed): adapt - take the two-acceptance commit and the re-check at commit for any two-party exchange (duel wager, loot split, Pit stake); do not build a player trade window yet.
 Acceptance: a server test where A offers a sword, B accepts, A adds a potion (B's acceptance clears, nothing moves), both accept again and the sword and potion swap exactly once; and if A's sword is dropped between the offers, the commit declines and neither item moves.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** (1) Note (Finalize steps 1 and 3, Close) and sketch clearAcceptance() say a busy or room failure only 'clears both acceptances'. Real ClearTradeAcceptance (Player_Trade.cs 188-194) also does ItemsInTradeWindow.Clear(), so both offer windows are emptied and players must re-add items; the sketch keeps offers. This is a behaviour difference in the very rule the note recommends porting. (2) Finalize remove loops (237-245, 247-255) silently skip an item whose TryRemove fails; no abort or rollback - not mentioned and the sketch assumes every offered item moves. Verified OK: open-trade checks 32-67 (initiator-only ignore/Olthoi), add clears both acceptances before validation (121,128), attuned/pet/unique refusals 140-159, accept 196-216, FinalizeTrade order 220-283 with 0.5 s delay and SaveBiotasInParallel, missing-item decline per side (367-377), CanAddToInventory 433-464 (burden, container slots, main slots), combat-switch close 325-340, AGPL v3.
+
+**Missed:** CanAddToInventory returns true immediately for an empty list (Container.cs 438, one-way trade) - sketch canReceive also does by loop but note does not state it. Gold/pyreal path is just items (note says so).

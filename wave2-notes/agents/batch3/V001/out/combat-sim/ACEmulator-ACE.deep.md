@@ -145,3 +145,12 @@ Typecheck: the sketch file with `export {};` appended was run on the VPS with `n
 
 Reuse tag: rewrite-from-idea (AGPL-3.0; clean-room only)
 Brief rule served: 1 (one combat core, two clients); rules 7-9 n/a
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** none found; DamageEvent order, 0.03 logistic, K=200/3, AdditiveCombine/ModToRating, crit uses MaxDamage + recklessness reset, 0.05/0.25 crit defence, TakeDamage round+death all match
+
+**Missed:** GetBodyPart for monster defenders can set Evaded and return 0 (DamageEvent.cs ~316-318); GetAttributeMod 1+(skill-55)*0.011 (SkillFormula.cs); RF_DROP flags not relevant

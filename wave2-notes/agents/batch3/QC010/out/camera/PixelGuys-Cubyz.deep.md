@@ -135,3 +135,12 @@ Checks run on the VPS (Node, transcribed formulas, not Cubyz): the sketch's unde
 
 Reuse tag: rewrite-from-idea (GPL-3.0; clean-room only)
 Brief rule served: the camera is client-only; fight camera row 11; camera_scope world camera
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** None. Verified physics.zig 420-512 (force 400, friction 30, k = 400/extent, step state -0.1 test, coyote z skip, closed-form complex solve 487-495, step kick max(1.5|vel|, vel_z, 4) and eye.pos.z -= step), 593-614 landing/doubling/coyote sqrt(2h/g)+dt, baseGravity 30, game.zig 762-793 crouch (dt*10, smoothstep, 1.7->1.3, eye box 0.2/0.05), 809/824/830, eye render sum 143, pitch clamp pi/2-0.001, Window.zig 3-slot averaging 0.0089 (552-581, 809-815), main.zig frame delta unclamped client side, server delta clamp 0.3 (server/world.zig 1106-1108), fov 70, sens 1, renderer TODO bobbing, protocols.zig 436-438 sends rotation, GPL v3.
+
+**Missed:** None.

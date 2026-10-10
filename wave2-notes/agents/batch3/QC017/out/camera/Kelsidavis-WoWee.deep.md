@@ -188,3 +188,12 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Camera values are client settings or client constants, not zone data. Mouse sensitivity, camera stiffness and max distance factor are user settings; the rest are constants of the class. None belong in the zone data, and none are authoritative (the engine never reads the camera).
 - Duplication: the wall-sweep is written three times in the donor (walking, swimming, free-fly); this camera's logic is in one function, which is the shape to keep.
 - Not read: the first-person branch details (cpp 2286-2288 only read as one line), `moveFollowedCharacter`, `groundFollowedCharacter`, the taxi branch in full.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** none found; checked ~20 claims (wall limit 0.32+0.22, tau 0.06/0.40, zoom debt 1.0/1.0/2.5, step-around 14deg gain 1.0 tau 0.12/0.30, terrain tau 0.18/0.45 clearance 0.40, follow 30/s and 1:1 while rotating, shake 70% envelope, pitch +/-88, wheel step, kMaxPhysicsDelta, licence)
+
+**Missed:** none significant

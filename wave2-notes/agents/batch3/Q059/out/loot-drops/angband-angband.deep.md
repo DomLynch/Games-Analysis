@@ -120,3 +120,12 @@ Acceptance: a server test spawns a creature with a percent entry, reads its carr
 - The count range is [min, max-1]; a copied table with max = min+1 always yields min. Frankendom must choose inclusive or exclusive and test it.
 - Item kind choice (`get_obj_num`, `make_object`) is an allocation table and artifact system that was only read to the kind choice. Not needed for zone loot; not read further.
 - The donor is GPL v2 or the Angband licence (non-profit clause in the header). Clean-room only.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** (1) table row cites mon-make.c 731 for the per-specific-entry count randint0(max-min)+min; line 731 is inside mon_create_drop_count where it is ignored when specific=false (called with false at 775); the real drop of a specific entry is at 831 (roll) and 854-855 (count, artifacts forced to 1); (2) claim 'origin 0 means loading a saved level' is inference, not shown in code; (3) licence: note says no top-level COPYING file, true, but docs/copying.rst exists
+
+**Missed:** RF_DROP_GOOD / RF_DROP_GREAT flags and the unique extra_roll (mon-make.c 769-787) feed make_object good/great/extra_roll; note omits them; make_gold(level) path

@@ -147,3 +147,12 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 Brief rule served: camera is client-only; row 11; world camera (owner's priority)
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** CG_OffsetThirdPersonView 226-295 order, FOCUS_DISTANCE 512, pitch clamp 45, +8 lift, half pitch, range 40 / angle 0 defaults, 8x8x8 box, lift (1-fraction)*32, aim pitch via atan2, error decay 100 ms, orbit delay 50, ZOOM_TIME 150, timeNudge +/-30, GPL-2.0-or-later: verified. Errors: the claim that after the second trace the camera 'may still be inside the wall' is unsupported (line 280 copies trace.endpos, the second hit point, so it stops at the hit); the trace-skip cvar is cg_cameraMode (cvar name com_cameraMode), note says com_cameraMode only.
+
+**Missed:** dead-player branch (cg_view.c 241-245): when health <= 0 the focus yaw and view yaw are forced to STAT_DEAD_YAW (look at killer) - not mentioned

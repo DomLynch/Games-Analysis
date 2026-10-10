@@ -147,3 +147,12 @@ Acceptance: a server test with a zone cap of 3 never holds more than 3 live spaw
 - Placement: the donor retries random points and then falls back to the spawner's own point. Frankendom must not spawn inside an arena or on a blocked tile; the sketch's `canSpawnAt` stands in for a check that was not read in the donor (the house and blocker checks).
 - Kills are server events. The donor frees the slot when the creature is deleted (`Mobile.OnDelete`), so the death path must go through the server ledger before the slot is freed, to keep one ledger and server-verified kills.
 - Persistence: a respawn that was pending when the server stopped is handled by the donor's serialized timer state (not read). Frankendom must decide whether a pending respawn survives a restart.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** Defrag described as removing 'dead or unowned' spawns; real OnDefragSpawn (BaseSpawner.cs 810-822) removes Deleted, Spawner==null, or Controlled/Stabled creatures (tamed), not dead ones. Also ProximitySpawner trigger additionally requires m.Location != oldLocation (ProximitySpawner.cs 104). Caps, weighted pick 860-894, DoTimer 1169-1213, Remove 391-404, OnCountChanged 316-320, 5/10 min and count 1 defaults, 10 attempts, grace Random(45)+15, GPL-3 verified.
+
+**Missed:** Tamed/stabled spawn frees its slot (Defrag); GoHome path gated by IsSpawnerBound (BaseCreature.cs 4181-4184: FightMode != None, RangeHome >= 0, not controlled/summoned, spawner on same map) and ReturnsToHome.

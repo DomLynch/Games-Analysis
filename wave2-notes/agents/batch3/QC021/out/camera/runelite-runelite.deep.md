@@ -110,3 +110,12 @@ function fitFactor(box: Box, v: View, safe: number): number {
 - Free camera and cutscene overrides exist in the API (1760-1808) but nothing here implements them. Do not copy the names as behaviour.
 - Mouse remap (right-click to rotate, middle-click menu) is UI input, not camera logic; reject for the duel.
 - Client-only rule: the fit must never feed a hit check, a target lock or any server message, in line with the camera being client-only.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** Verified: localToCanvasCpu 214-244 order, near plane z1>=50, SINE14 = i*pi/8192 (16384 per turn), model path 2048-unit rotate tables, modelToCanvasCpu MIN_VALUE sentinel, CameraPlugin copyConfigs/applyConfigs/zoom exponent 2, CameraConfig INNER 1400, outer +-400, speed default 1, Client.java setters declared 1439/1446/1782/1795/1808, getCameraFocusEntity 2445, no camera motion impl in repo, BSD-2. Design nit: acceptance says 'camera backs off' but fitFactor scales projection scale (zoom/FOV), not distance.
+
+**Missed:** localToCanvasCpu starts with a scene-bounds guard (x,y within -ESCENE_OFFSET..SCENE_SIZE+ESCENE_OFFSET in local units, else null) and uses 16-bit fixed-point (>>16) integer maths; the note's step list omits the bounds guard.

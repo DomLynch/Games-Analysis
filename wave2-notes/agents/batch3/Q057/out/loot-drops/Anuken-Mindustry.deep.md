@@ -142,3 +142,12 @@ function step(n: Node, ore: Ore, count: number, speed: number, dt: number, warmu
 - The dominant item is refreshed only on proximity updates (275). What triggers those updates was not read; a node whose footprint changes without a refresh would yield the stale item.
 - The liquid boost (liquidBoostIntensity 1.6, Drill.java 38) has no counterpart in the rulings this brief gave, and it is not in the sketch.
 - Frames: the donor's time unit is frames (Drill.java 35); Frankendom must convert to its own tick length, which this note did not read.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** All verified: countOre 198-229, canMine 231-235 (static, drop, hardness<=tier, blockedItems), sort order lowPriority > count > id with peek() = top, onProximityUpdate 272-278, getDrillTime 170-171 (300 + 50*hardness), fields lines 28/34/36/38/40, updateTile 287-325 incl. warmup-before-progress, lastDrillSpeed uses old warmup, progress %= delay, unclamped offload loop, sand lowPriority (Items.java 36), Item.lowPriority 39, Tile.drop 580, GPL-3 LICENSE. Sketch deviations are disclosed.
+
+**Missed:** Drill dumps held items to neighbours on timerDump (updateTile 288-290) and getDrop() is an overridable hook (Drill.java 121); minor.

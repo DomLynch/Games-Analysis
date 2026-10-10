@@ -175,3 +175,12 @@ function tick(p: Point, led: Ledger, now: number, rnd: Rng): number {
 - Variance is +/- half, not +/- full (spawn2.cpp 123). Frankendom's zone data must say which it means.
 - The RNG bounds of `zone->random.Int` were not read. The sketch treats the draw as an inclusive integer range.
 - `NPC::Depop` (npc.cpp 842) and the time-of-day and condition events (spawn2.cpp 737-1380) were not read in full; this note does not rely on them.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** Process early exit 161, timer gate 165, condition gate 172-177, GetNPCType caps/time/filter/weighted roll 71-119, 5 s retries 234/242, despawn call 256-257, resetTimer +/- variance/2 with 100 ms floor, ForceDespawn modes 1-4 and engaged fall-through creating a second NPC (416-449 then 287), Depop(true)->DeathReset() with realdeath default false (spawn2.h 48), limit checks entity.cpp 4252-4292, 1000 ms loop zone.cpp 956/1524, GPL-3 all match.
+
+**Missed:** Spawn2::Enabled() gate and m_resumed_npc_id path (152-157, 204-206) not mentioned; roamdist init. Minor.

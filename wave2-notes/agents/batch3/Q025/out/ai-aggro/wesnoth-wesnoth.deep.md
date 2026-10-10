@@ -143,3 +143,12 @@ Typecheck: `/tmp/wesnoth-attack-rating.ts` on the VPS, `npx -p typescript tsc --
 - Commit model: the donor re-plans every turn and executes only the first attacker. In Frankendom, engage is a state change (ruling). Re-scoring every tick would make creatures flicker between targets; the engage gate needs hysteresis (not in the donor).
 - MAX_ATTACKERS = 3: the donor's cap is 5 and its enumeration is recursive. With 3, the set count is small, but the per-tick NPC budget (row 18 sub-line) still has to bound the enumeration.
 - Not read: battle_context internals, power_projection, best_defensive_position, and the candidate-action loop that calls evaluate(). The per-turn timing is therefore not described; the position budget is described from ca.cpp 189-195 only.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** None. attack.cpp rating 268-331 matches line for line (leader overrides 270-276, base 278, exposure 280-290, damage term 294, surrounded-skip veto 299-309 with 50/2x/0.02/0.75/attack_close, support scale 311-312, divisor 315, leader x5 317-318); attack_close distance<4 (259); ca.cpp evaluate -1000 start, strict >, commit >0 (230), skip_num budget 188-195; execute movements[0] only (241-253); aspect_attacks max_attack_depth 5 (142); default_config aggression 0.4, caution 0.25, leader_aggression -4.0; core.cpp 525-536 Lua wrapper; GPL.
+
+**Missed:** None significant. (ca.cpp 179-184 also bounds simulations per analysis to 20..40 sims; not mentioned, irrelevant to sketch.)

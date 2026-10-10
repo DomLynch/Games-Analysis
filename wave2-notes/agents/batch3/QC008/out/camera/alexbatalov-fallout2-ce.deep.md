@@ -98,3 +98,12 @@ Acceptance: Client test: a third-person camera moving toward a wanted position b
 
 Reuse tag: adapt-idea (Sustainable Use License: clean-room, shape only)
 Brief rule served: camera is client-only (engine never reads it); blockers are map data.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** Verified tileSetCenter 537-600 (leash 556-561 with 480/400, scroll blocker 565, border 575), _tile_scroll_to 1947-1982 (flags 0x01 revert, 0x02 refresh, 200 path), _obj_scroll_blocking_at pid 0x500000C at 2572, mapScroll 33 ms throttle and 32/24 step, defaults 75/78, tile.h flags, callers (game.cc, map.cc 1272), licence Sustainable Use.
+
+**Missed:** _obj_scroll_blocking_at returns 'not blocked' for tile<=0 or >=40000 (object.cc 2562) with a TODO; mapScroll early-returns when both deltas are 0 (614-616).

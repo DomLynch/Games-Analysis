@@ -107,3 +107,12 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - MAX_ATTACKERS = 3: the rows are per enemy death, and no attacker-credit rule appears in these lines (credit not read). Frankendom must decide which hero gets the rows when up to three attackers hit.
 - Difficulty factor: scaled by the player's difficulty (178). Frankendom should keep the factor on the zone or run data, not a global.
 - Pit as client: the reward screen is client-only. The server decides the rows and the amounts.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** Gate at RewardData 175 (prob 0 = always, <=), bonus at 178-179 (round(addMaxCount*rewardMaxFactor), nextInt), generateCards filter-once/draw-with-replacement (CardUtil 335-338), seeded vs seedless (168; EnemySprite 557/562 pass true), gold 199/shards 9, fantasy 2/3/2 counts, 1-2 x100 + 0..100 gold, rewardMaxFactor=1 (DifficultyData 23), defeat path (WorldStage 176-190), GPL-3.0 (README 97): all hold.
+
+**Missed:** type null/empty defaults to randomCard (RewardData 176-177); EnemySprite passes isForEnemy=false and a deck stripped of basic lands and restricted editions (557); non-fantasy copyPlayerDeck falls through to standard rows (note says so) 

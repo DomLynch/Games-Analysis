@@ -50,20 +50,21 @@ Checked: Read in full `P_DamageMobj` (p_inter.c 764-917), `P_AimLineAttack`, `P_
 | Spread as a difference of two random draws, scaled by a bit shift | Shifts 18, 19, 20 and 5 (theirs, 482, 637, 720, 816, 724) |
 | Ranges | `MELEERANGE` 64 units (theirs, p_local.h 57); `MISSILERANGE` 32 x 64 units (theirs, p_local.h 58); aim probe 16 x 64 (theirs, p_pspr.c 607) |
 | Push is damage over mass, computed before the immunity gate | `damage x 12.5 / mass` (theirs, p_inter.c 817); hits under 40 that are lethal and from above can fall forward x4 (theirs, 820-827) |
-| Invulnerability absorbs small hits only | Under 1000 damage (theirs, p_inter.c 847) |
-| Armour soaks a fixed share, is capped by its points, and clears when used up | Class 1 one third (theirs, 857); class 2 one half (theirs, 859) |
+| Invulnerability absorbs small hits only (player targets only) | Under 1000 damage (theirs, p_inter.c 847) |
+| Armour soaks a fixed share, is capped by its points, and clears when used up (player targets only) | Class 1 one third (theirs, 857); class 2 one half (theirs, 859) |
 | Flinch: a per-type chance on a random draw | `painchance` per type (theirs, info.c, grep only) |
 | Retarget to the attacker when not committed | `BASETHRESHOLD` (theirs, p_inter.c 911; value not read) |
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order for the damage step: gates, push from the raw damage before the immunity gate, the invulnerability gate, the armour split with the pool clearing when used up, health and the death return (no flinch or retarget after a kill), the flinch roll, and retarget to the source only when not committed. It omits: the baby skill halving, the no-clip and chainsaw exceptions on the push, the fall-forward case, the skull-fly momentum reset, the lethal-sector hack (p_inter.c 838-842), the Vile exceptions on retarget and the see-state change, the reaction-time reset, the attacker record and damage counter, and the trace itself (section 1 only). The donor's BASETHRESHOLD value is not read, so the sketch uses a placeholder. The sketch uses a number for the source id and does not model the death handler.
+simplified: the sketch keeps the donor order for the damage step: gates, push from the raw damage before the immunity gate, the invulnerability gate and the armour split with the pool clearing when used up (both for player bodies only, as in the donor; other bodies take the raw damage), health and the death return (no flinch or retarget after a kill), the flinch roll, and retarget to the source only when not committed. It omits: the player's damage counter cap of 100, the baby skill halving, the no-clip and chainsaw exceptions on the push, the fall-forward case, the skull-fly momentum reset, the lethal-sector hack (p_inter.c 838-842), the Vile exceptions on retarget and the see-state change, the reaction-time reset, the attacker record and damage counter, and the trace itself (section 1 only). The donor's BASETHRESHOLD value is not read, so the sketch uses a placeholder. The sketch uses a number for the source id and does not model the death handler.
 
 ```ts
 // Licence: unclear (donor header: DOOM Source Code License; top-level LICENSE.TXT is GPL v2 text). clean-room sketch written from the described mechanism, not a translation of the donor lines.
 // clean-room
 export interface Body {
   id: number;
+  isPlayer: boolean;     // invulnerability and armour apply to player bodies only (donor: inside the player-specific branch)
   health: number;
   shootable: boolean;
   mass: number;          // per-type value; push = damage x 12.5 / mass (map units)
@@ -91,7 +92,7 @@ export interface HitResult {
 
 const BASE_THRESHOLD = 100; // value is a placeholder; the donor's BASETHRESHOLD is not read
 
-// Donor order: gates, then push (from raw damage, before the invulnerability gate), then armour split,
+// Donor order: gates, then push (from raw damage, before the invulnerability gate), then (players only) invulnerability and armour split,
 // then health and death, then the flinch roll, then retarget to the source (not after a kill).
 export function applyHit(b: Body, h: Hit, rand255: () => number): HitResult {
   const none: HitResult = { dealt: 0, dead: false, push: 0, flinch: false, retargetTo: null, threshold: b.threshold };
@@ -99,10 +100,10 @@ export function applyHit(b: Body, h: Hit, rand255: () => number): HitResult {
 
   const push = h.pushes ? (h.damage * 12.5) / b.mass : 0;
 
-  if (b.invulnerable && h.damage < 1000) return { ...none, push };
+  if (b.isPlayer && b.invulnerable && h.damage < 1000) return { ...none, push };
 
   let damage = h.damage;
-  if (b.armourClass !== 0) {
+  if (b.isPlayer && b.armourClass !== 0) {
     let saved = b.armourClass === 1 ? Math.trunc(damage / 3) : Math.trunc(damage / 2);
     if (b.armourPoints <= saved) {
       saved = b.armourPoints;
@@ -135,7 +136,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Reuse tag: rewrite-from-idea (unclear licence; clean-room only)
 - Brief rule served: 1 (one combat core: one damage step for every hit); rules 7-9 n/a
 
-Best transferable idea: Let armour soak a fixed share of each hit (a third or a half) from a points pool that clears when it runs out, and compute any push from the raw damage before the immunity gate, so the push is decided even when damage is not.
+Best transferable idea: Let a player's armour soak a fixed share of each hit (a third or a half) from a points pool that clears when it runs out, and compute any push from the raw damage before the immunity gate, so the push is decided even when damage is not.
 
 Decision (proposed): adapt. Armour as a pool that soaks a fixed share of each hit until it runs out, then clears, is a small, testable rule that fits the one-ledger ruling if it lives in the damage step. We adapt the push: a server stagger state scaled by damage over mass, never a position push, and we reject the chainsaw and fall-forward cases unless we add those weapon classes. We reject the aim window for this cell.
 Acceptance: a server test sets 9 armour points in class 1 and a 30 hit: 10 would be soaked, only 9 are available, so 9 is absorbed, 21 reaches health, and the armour class is cleared; a 1000-point hit is not absorbed by invulnerability.
@@ -151,3 +152,12 @@ Acceptance: a server test sets 9 armour points in class 1 and a 30 hit: 10 would
 - The aim window is about vertical aim. Frankendom's duels have no vertical aim; the window is only relevant if the third-person camera or lock-on needs it (camera cells, not this one).
 - Base threshold and per-type mass and painchance are data, not read in full (info.c grep only). They belong in the catalogue, not in engine constants.
 - `P_DamageMobj` is also called from non-combat paths (p_map.c 105, 1194, 1300; enclosing functions not read, and the names suggest a telefrag, a splash and a crush). Frankendom must not let those bypass the damage step.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** Sketch applyHit applies invulnerability gate and armour soak to every Body; in P_DamageMobj both are inside 'if (player)' (p_inter.c 835-884), non-player targets get neither. Note mechanism text says 'Player only' correctly but the sketch and 'Best transferable idea' drop it. All numbers verified: fist 476-484, GunShot 633-639, shotgun2 716-724, A_PosAttack 813-818, aim window 1039-1040, shootz 1036, armour 857/859/861-866, invuln 847, thrust 817, fall-forward 820-827, BASETHRESHOLD=100 (p_local.h 61; note says not read and uses placeholder 100: honest). Licence claim holds (p_map.c header DOOM license; LICENSE.TXT is GPL v2 at donor root)
+
+**Missed:** damagecount cap 100 and sector-11 'end of game hell hack' (838-842, listed as omitted); P_ShootSpecialLine on a shot (919-920) noted

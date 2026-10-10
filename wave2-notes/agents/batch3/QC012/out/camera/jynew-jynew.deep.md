@@ -147,3 +147,12 @@ Acceptance: when the acting character changes, the camera glides to it over a fr
 - Not read: `GlobalAssetConfig`, `GameSettingManager`, `BattleManager`, the FreeLook orbit values in the scene, `Jyx2_Input`, and the Cinemachine package.
 
 Reuse tag and brief rule are listed in section 5.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** (1) Trigger helper: note says on enter the player's direction lock is set; it is conditional on enterLockDirection (CinemachineTriggerActionHelper.cs 40-44) and exit also locks direction if exitLockDirection (63-67), unmentioned. (2) Note says follow VCam active only in Follow mode and outside world map at 'GameViewPortManager 48, 88'; line 88 (InitForLevel) activates on viewport type only, world-map exclusion is only in SetViewport (48). Rest verified: licence lines (LICENSE:8, README:290), CameraHelper lines 26-31, 54, 128, 153, 179, 190, 209-223, 233, 260/266, 280-284, 298-308, 332, 348-358, 370/389/408/427, prefab FOV 50, shoulder (-0.52,2.39,-4.53), mask 262144, radius 0.001, damping 0.5, GameConst.cs 98, BattleLoop.cs 92
+
+**Missed:** ShakeCamera calls _disposables.Clear() first (CameraHelper.cs 278), cancelling a previous shake's removal timer; ResetFOV also hard-sets FOV=60 at the end (358)

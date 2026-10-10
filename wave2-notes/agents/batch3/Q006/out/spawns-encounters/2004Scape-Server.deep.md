@@ -109,3 +109,12 @@ export { TICK_MS, onDeath, worldTick, scaleByPlayers };
 - `delayed` (set by script delay) stops the countdown (Npc.ts 122); a script that keeps an NPC delayed postpones its respawn. Not traced further.
 - The death delay is in a script, not in the engine (npc_death.rs2 13-24). Frankendom should keep the death delay as data on the creature, not in a script.
 - A depop by `npc_del` (NPC_DEL) uses the same respawn path as a kill (NpcOps.ts 78). A timed or scripted removal therefore respawns the same way as a death. That is the donor's choice; Frankendom must keep a server-verified kill separate from a despawn.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** None material. Verified: removeNpc 1330-1356 (scale 1332, RESPAWN timer 1350-1351 only when duration > -1, so 0 also qualifies; note says 'positive'), addNpc 1292-1330, scaleByPlayerCount 1773-1777 (2000 clamp, |0), getTotalPlayers 1727-1729, TICKRATE 600 at World.ts 120, reschedule 533-537, processNpcs 714-724, Npc.turn 121-135 (RESPAWN addNpc then revertType; revertType 1074-1078 does removeNpc+addNpc when resetOnRevert true at 72), resetEntity 281-293, NPC_ADD DESPAWN 48-49, NPC_DEL 77-79 passes respawnrate, NpcType respawnrate default 100 (111) and opcode 204 (208), GameMap load addNpc(npc,-1) with RESPAWN, npc_death.rs2 10-24, MIT LICENSE lines 1/3. The double-add trace is correct.
+
+**Missed:** Edge: scaled duration truncates to 0 when rate*(4000-p)/4000 < 1 (e.g. respawnrate 1 at 2000 players); lifecycleTick 0 then decrements to -1 and the NPC never respawns. Death script also does npc_walk(npc_coord) first (13) and clears %lastcombat (20), not mentioned.

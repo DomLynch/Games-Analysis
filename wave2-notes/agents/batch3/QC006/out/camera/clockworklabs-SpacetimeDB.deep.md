@@ -107,3 +107,12 @@ function stepGroupCamera(st: CamState, pieces: Piece[], dt: number, p: CamParams
 
 Reuse tag: rewrite-from-idea (Apache-2.0; code may be adapted, we rewrite from the mechanism)
 Brief rule served: camera is client-only (owner ruling 2026-10-10)
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** Licence paragraph says 'the repo root has no LICENSE file, only licenses/'. False: root has LICENSE.txt (SpacetimeDB Business Source License 1.1). The conclusion (demo/Blackholio/LICENSE is Apache-2.0) is correct, but the root BSL is the file a reader would hit first and should be named. Camera maths all verified (CameraController.cs 21-48, zero-piece size -20 -> zoom 50, TryGetCenterOfMass 71-98, GameManager 178, send rate 20/s, steering third of height).
+
+**Missed:** none material.

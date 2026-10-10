@@ -138,3 +138,12 @@ export {};
 - Boss spawns (`L1BossSpawn.executeSpawnTask`, 77-98) wait for all members to die and then use a clock cycle. That is a different mechanism; its cycle class was not read.
 - Several special NPC ids are handled inline: `deleteMe` resurrects NPC 45477 once at half HP (1202-1204), `doSpawn` offsets the map for two NPC ids (377-383), and it teleports players for three more (486-503). These are one-off hacks; Frankendom should express them as zone data or not at all.
 - Id reuse: the donor reuses the old id on a presence retry and on single-member removal (1179-1187, 364-368). Frankendom's one-ledger rule means a reused id must not keep stale state; this was not checked in this pass.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** None found. Verified L1Spawn.java calcRespawnDelay 298-314 (min*1000 + nextInt(interval)*1000, window diff/6), executeSpawnTask 323-326, init 331-346, 51-try loop (386, tryCount>49 -> home), isRespawnScreen accept, 3000 ms retry with same id (462-464), PC_AROUND_DISTANCE 30 (535); L1NpcInstance onDecay/deleteMe/DeleteTimer; altsettings.properties 138 NpcDeletionTime=50; Point.isInScreen 13/17; SpawnTable fields; GPL. Nit: Config.java 1045 hard default is 10, shipped properties 50 (note says 50 default; fine for shipped config).
+
+**Missed:** PC_AROUND case with zero players on the map just breaks the switch without setting newlocx/newlocy (previous candidate reused); spawnHome point memory (_spawnHomePoint, getSpawnHomeRange) path is acknowledged omitted.

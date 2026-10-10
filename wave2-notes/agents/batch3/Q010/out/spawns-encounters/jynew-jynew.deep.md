@@ -130,3 +130,12 @@ export function makeEncounter(
 Best transferable idea: a gauntlet or tower zone can build each encounter from one floor number alone, with roster size, level band, skill rolls and reward all taken from a few per-floor zone fields.
 Decision (proposed): adapt — take the floor-driven roster, the level band and the per-floor skill rolls, but cap the roster with zone data (8) and keep simultaneous attackers at MAX_ATTACKERS = 3 in the engine; do not copy the inclusive Lua loop (yields 9) or the unbounded re-roll.
 Acceptance: a server test starts floor 8 of a gauntlet zone and asserts exactly 2 enemies (8/4), each with base level at most 11 (floor + 3), and never more than 3 attacking at once.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** GenerateEnemies loop 0..min(level/4,8) inclusive (9 max), GenerateRole steps (76 roles, +3 band re-roll, level-up to min(floor,MAX), skill rolls 0..92 skipping 75/76, cap 10, upgrade floor*25 cap 900), NextBattle Exp 400*(level+1), win +1, AutoSave, C# BattleLoader 179-204, AddDynamicRole posKey, FindSpawnPosition fallback, licence lines all verified. Note: acceptance 'floor 8 -> exactly 2' is a deliberate Frankendom rule (donor would give 3).
+
+**Missed:** GenerateRandomTeammate has a maxLoop > 100 guard (wumingshangu.lua 205-209), a contrast to the unbounded GenerateRole re-roll; note listed 201-219 as unread. Potion reward loop 0..min(level/10,2) at 181.

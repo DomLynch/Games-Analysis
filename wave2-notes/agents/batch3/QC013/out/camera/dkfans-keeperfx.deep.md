@@ -147,3 +147,12 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Client-only by design: the donor comment says the possession zoom applies to the local camera only (local_camera.c 660). This matches the ruling that the camera is client-only.
 - Licence GPL-2.0-or-later: clean-room. The sketch is written from the arithmetic, not translated from the donor lines.
 - Values a designer might want as tunable settings: the zoom minimum comes from a user preference (`user_zoom_min`, packets.c 516; body not read); the tilt limits and default (`CAMERA_TILT_*`, engine_camera.h 46-48) are config-clamped (config_settings.c 518).
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** None in main claims. Verified local_camera.c 661-683 order (zoom_in_step 100/85 +1 cap 30000, yaw clamp DEGREES_30=170, radius=eye height+z, per-axis clamp 128, velocity clear), engine_camera.c 143-148/243-254/474, packets.c 410/413 (2560000/zoom, x3), bflib_planar.c 86-98, LICENSE GPL v2, quake 30 / +-40 jitter / -32 decay, wall-ray only in project_point_to_wall_on_angle. Nits: step also zeroes velocity_rotation (682); interpolation lerp factor is interpolate_time only if Ft_DeltaTime is on (local_camera.c ~561), not stated.
+
+**Missed:** Step is gated by local_camera_follows_player() and not PVT_MapScreen at 662-664 (note mentions only FrontView gate).

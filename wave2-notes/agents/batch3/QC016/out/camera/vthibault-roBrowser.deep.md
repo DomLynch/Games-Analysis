@@ -131,3 +131,12 @@ Brief rule served: camera is client-only (rule for camera/HUD/sound); one engine
 Best transferable idea: Let input write a goal (pitch, yaw, zoom) with clamps applied at the write, and ease the drawn camera toward that goal each frame, so drags and wheel steps never jerk the view.
 Decision (proposed): adapt - the goal-and-ease split and clamp-at-write are right for the world camera, but the orbit centre must become an over-the-shoulder offset with collision pull-in, which this donor does not have.
 Acceptance: In a zone, a right-drag (or two-finger drag) turns the view, the pitch stays inside its band, the wheel changes distance in fixed steps, and a double-click recentres yaw behind the hero; a client unit test asserts that a 16 ms step moves the yaw about 19 percent of its gap to the goal and that no goal leaves its clamp.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** All numbers verified (lerp 0.006*ms cap 1, gain 2.0, pitch 190..270, zoom 2..150 = 15*10, yaw -360..360, 720/300/150 drag rates, 500 ms/10 px double click, 3000 ms save, wheel 15, direction floor((yaw+22.5)/45)%8, FOV 15 deg at Renderer.js 191, default zoom 50 smooth true, GPL-3.0). One false statement: 'Nothing writes the drawn values directly' - the yaw wrap in processMouseAction (Camera.js 250-258) and Camera.init (154-157) write angle[] directly, and Mobile.js 268-270 writes zoomFinal.
+
+**Missed:** none significant; Camera.init sets initial pitch 240 / yaw 0 and target follow has no collision (note says so)

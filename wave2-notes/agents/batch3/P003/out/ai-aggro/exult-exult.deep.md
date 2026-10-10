@@ -156,3 +156,12 @@ export {};
 - The donor's `defend` mode names strength as `max_hp` (the mode's comparison uses strength against twice the health). This is a naming trap, not a rule to port; not sketched.
 - Chase retry: when the path fails, the donor steps toward the foe by a random 1 to 4 tiles (approach_foe, the `rand() % 4` step). That is a client-visible walk; Frankendom's engine should use the zone path rule or give up after a fixed number of failures.
 - Not read: the time queue and `get_std_delay`, the rest of `start_strike` (1082-1160, the attack call), `back_off` (804-861), `Duel_schedule`, the `fire` state, `Monster_pathfinder_client`.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** none found; is_enemy table, nearest +16/+32 and 4*16 radius, random 3 draws with weakest fallback (585), berserk coin flip, defend condition, erase on pick (782), dex_to_attack 30, rand()%300 / %600, Need_new_opponent 1 in 4, dormancy 50, run_away 8..15, 2 in 3 yell all match
+
+**Missed:** find_foe clears pool on alignment change (694-698) and returns practice_target after rescan (713-715) - neither mentioned; sleeping NPC wait start(200,1000) at 1567

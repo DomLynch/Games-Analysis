@@ -122,3 +122,12 @@ Best transferable idea: give each input its own duration and a per-input seed, a
 - No per-tick NPC budget in this donor: `dlls/monsters.cpp` think scheduling was not read, and the engine loop that calls think is absent. Row 18's sub-line budget has no counterpart here.
 - The same msec decrement is repeated in client weapon prediction (`cl_dll/hl/hl_weapons.cpp` 969-974; grep only). Frankendom should keep one timer path (one ledger), not one per client.
 - The engine's cvars and tick rate (for example `sv_unlag`, `sys_ticrate`) are not in this donor; the only `sv_unlag` reference is the comment in `engine/eiface.h` 507-508. The `pm_shared.c` copyright header reads 1996-2002.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** none found. Verified: PM_CheckParamters 2837-2880 (clientmaxspeed 2848, 1/3 at 2861, ratio 2868-2869, frozen/train/dead zero 2874+), frametime 2968, PM_ReduceTimers 2920/2928/2936, CmdStart seed 1802, AllowLagCompensation 1934, usercmd msec/lerp_msec, sv_unlag comment eiface.h 508, Valve licence header line 11
+
+**Missed:** UTIL_SharedRandomFloat computes range as unsigned int (high-low), so fractional ranges truncate (and range 0 returns low); note/sketch map to a clean float range and do not mention truncation (util.cpp 112-138)

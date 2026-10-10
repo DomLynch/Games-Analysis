@@ -124,3 +124,12 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - The cell respawn is a monthly clock checked when the cell loads (1229). Frankendom's respawn must be on the server tick with an explicit timer per zone, and the donor's death-time respawn (creature.cpp 818-819) is the shape to copy, not the monthly gate.
 - The item and creature flag swap (levelledlist.cpp 44-47) is a file-format quirk. Do not copy it; store one flag per list in zone data.
 - The placement distance 220 has no units confirmed, and the placement fallback body (worldimp.cpp 1322 onward) was not read.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** Cell respawn gating is wrong: note says the whole cell respawn runs only when time since last run exceeds 24*30*iMonthsToRespawn, then containers, creatures/NPCs, lists, moved refs. In cellstore.cpp 1229-1239 the monthly gate wraps ONLY the container reset; the creature (1245-1252), NPC (1253-1260), creature-list (1261-1266) and moved-ref (1267-1289) loops run on every respawn() call, and are paced by each creature's own delay (creature.cpp 815-819). The sketch's cellRespawnDue and the 'monthly cell clock' framing therefore describe the container clock only. Everything about the levelled pick is right: levelledlist.cpp 33-34, 37-42, 45-47, 51, 56, 59-64, 66-79; spawnRandomCreature 3610-3621 (1+rollDice, 220.f); waitdialog 204-224 and 262-274; Creature::respawn 804/807/816/818-819; timestamp 90-110; fallbackDirections at worldimp 1322; GPL-3.0.
+
+**Missed:** Non-monthly per-creature respawn path (see above) is the one Frankendom would actually copy; the note's recommendation to copy creature.cpp 818-819 still stands.

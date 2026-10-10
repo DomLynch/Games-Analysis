@@ -105,3 +105,12 @@ function fallDamage(prevVz: number, vz: number, g: number): number {
 - Zones as data: block hurt rate comes from the block's data (hurt.zig 11-21), which fits zone data. The fall safe band (7), the scale (1/2), gravity (30.0) and the send threshold are engine constants; the fall formula is a rule, not a zone value.
 - Not in this donor, so no transfer: knockback, critical hits, armour, many-on-one target selection, hate tables, MAX_ATTACKERS. The grep above found none of them; the `/kill` command only shows the ledger's reach.
 - GPL-3.0: clean-room only; the sketch is written from the mechanism and states the licence.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** None. Verified sync.zig addHealth 249-256, base op 847-870 (server clamp, <=0 refill+cause message+kill op with spawn; else health op), client branch 868-869, ignoreSource 489-494 (health ignored, kill not), AddHealth.run 1704-1729 (creative skip 1719, serverFailure 1717), deserialize target==sender check 1744, undo restoring previous (685), client sync apply 455-461, Player.kill game.zig 203-208, fall damage game.zig 818-821 and baseGravity 30, hurt.zig 26-31 (TODO server side at 27, dps*deltaTime), kill.zig 20 (-floatMax), Entity.zig 14-15 health 8, healthbar 49/52, GPL v3. Arithmetic 30 -> 4 is right.
+
+**Missed:** None.

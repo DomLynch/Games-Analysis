@@ -155,3 +155,12 @@ Brief rule served: client-only camera (ruling); no server rule touched; rules 7-
 - Shake is a random walk in the donor: each call adds a random offset with mean zero (2148). I did not trace whether the offset decays back to rest; only the explosion's amplitude decays (851-857).
 - Client only. The donor sends the cursor point over IPC in manual mode (uWorld.pas 2017). Frankendom should not copy that; the camera stays client-side.
 - Not read: the zoom-wheel step code (uCommandHandlers.pas 739-767, grep only), the zoom-range branch condition (uVariables.pas ~2753), and the full Y edge bounds (2041-2050).
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** 7/8 blend (1975), z=round(200/zoom) (1951), 4 px manhattan hand-over (1954), vertical lead _10 test (1978), cGearScrEdgesDist formula (259), zoom 0.002*Lag (920-933), shake maths (2147-2148) and explosion caller (851-854), cTimerInterval 8, cCamLimit constants, GPL v2-only header: verified. Small: step (a) is described as 'if window has focus (1948)' but the real guard is not(ExtDriven and cursor visible and no ammo menu and autoCam) and cHasFocus and GameState<>gsConfirm, and is compiled out under MOBILE; zoom range branch is just IFDEF MOBILE (uVariables 2750-2761), listed as 'not read'.
+
+**Missed:** early exit when CursorPoint==prevPoint (CameraBounds only); ammo-menu branch clamps the pivot to AmmoRect; weWrap world-edge handling; manual pan branch also requires cHasFocus

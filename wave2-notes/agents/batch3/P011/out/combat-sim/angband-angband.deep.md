@@ -178,3 +178,12 @@ export {};
 - C integer division is reproduced with `Math.trunc` in the sketch. Frankendom must pick integer or float maths and test the rounding at the edges.
 - Knockback: this melee path has none. The only push-like effect is the earthquake from the impact brand (688), whose handler was not read.
 - The target has one blow against one monster per action; many-vs-one (MAX_ATTACKERS = 3) is not covered by this code.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** Gap bullet 'to-dam may be counted twice' is unfounded: player-calcs.c 1999-2007 adds obj->to_h/to_d to state only for slots that are NOT weapon/bow (`!slot_type_is(EQUIP_WEAPON) && !EQUIP_BOW`), so the weapon's to-dam (added in melee_damage 490) is not in state.to_d (added at 827). Note left it open and told readers not to copy the order; it is resolvable and the order is safe. 'Impact brand' is really OF_IMPACT flag (816). Verified OK: py_attack_real 717-891 order, fear 751-755, hit 763, melee_damage 480-493, crit 806-809, splash 815, bonus 827, zero floor 841-846, drain 867, hit_chance 196-220 (9, 1200, 500, 83%), chance_of_melee_hit_base 88-94 (BTH_PLUS_ADJ 3 at player.h 90), invisible half 109, critical_melee 399-434 (constants.txt 219-265: debuff 10, w1 t5 lvl0 skill1 off -60 range 5000, power 650, bands 400/700/900/1300), is_debuffed 293-299, monster side 336-340, 497-522, 527-534, 540-543, dual licence header.
+
+**Missed:** py_attack (caller) with blows/energy not read, so blows-per-turn is absent; note says so. Nothing simpler missed in the files read.

@@ -127,3 +127,12 @@ Sketch typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on t
 - No ownership or turn check in the platform: every message is passed to the user's loop. Frankendom must check each intake message against the duel state in the engine (row 5), and the server, not the zone script, must verify it.
 - The donor's numbers (rate 1 to 60, queues of 128, 15 s, 30 s sweep) are donor defaults. Frankendom's tick rate and queue sizes are engine constants, and the join and idle limits are data fields.
 - The donor's own sample module runs at tick rate 1 (`sample.go` 141), so it is not evidence for a fight rate.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** None in main claims. Verified match_handler.go driver goroutine/ticker (time.Second/Rate), queueCall overflow -> Stop + disconnectClients, QueueData drop with warn only, loop order, ClearExpired every Rate*30 ticks, empty-limit counter with reset, match_presence.go expiry = tick + rate*(ms/1000), runtime_go_match_core.go tick 1..60 and size:=len(inputCh) drain, config defaults 128/128/15000/MaxEmptySec 0, Apache-2.0. Tiny ordering nit: nil-state stop and processDeferred are one if/else (state!=nil -> processDeferred, else Stop+return), note lists them as (b).
+
+**Missed:** loop() also stops the match and disconnects all clients if MatchLoop returns an error (match_handler.go ~288-295) - a second fight-ending path alongside the call-queue overflow; not mentioned.

@@ -88,3 +88,12 @@ Acceptance: In a 3-on-1 fight, a shockwave centred on the attacker's tile deals 
 
 Reuse tag: rewrite-from-idea (GPL-2.0; clean-room, shape only)
 Brief rule served: 1 (one combat core, two clients)
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** All verified: reactionDistance 16/32 (map.c 405), distance>>4 (427), skip >= radius, Unit_Damage(u, hp >> (distance>>2), 0) (431) before the player-house check, retaliation conditions, Tile_GetDistance (larger + half smaller), Unit_Damage floor at 0 / death / half-hp swap / smoking, bullet hp = damage (1982), missile trooper -25% (script/unit.c 659), arrival test (1419), degrade 1-in-4 (Random_256 & 3), GPL-2 COPYING, no source headers. Derived bands and acceptance values (1/4 at 0.5 tile, 1/8 at 0.75) are correct.
+
+**Missed:** Bullet explosion type is (explosionType + hitpoints/20) & 3 (unit.c 1444) so damage also picks the visual size; UNIT_MISSILE_HOUSE fires 17 blasts of 200 hp at fixed offsets (1424-1436). Neither mentioned.

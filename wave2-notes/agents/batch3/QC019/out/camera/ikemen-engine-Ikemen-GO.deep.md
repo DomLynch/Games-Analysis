@@ -145,3 +145,12 @@ Acceptance: client unit test on the world camera: with the hero and three enemie
 - The Z smoothing and vertical follow are not carried over; the Y branch was only read in part.
 - MIT: the code may be adapted; this note still uses a clean-room sketch and names the donor only for shape.
 - Tick order: `ResetTracking`, character update and track, then the camera (system.go 2835, 14063-14067, 2929). The character update is read as running before the camera in `System.action` (system.go 2909-2929), but the exact path through `charUpdate` was not traced.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** Main mechanism, constants (0.05, gameWidth/3200, 60/logic speed, tensionvel clamp 0..20, tension 50, MIT licence) and tick order all verified. Small: note calls the right-side tension test 'symmetric' but camera.go ~368-376 is an else-if (left test wins when both hold); Y/zoom parts honestly flagged not read.
+
+**Missed:** camera.go skipSmoothing path (snap to target) and the else-if exclusivity of the left/right dead-zone test; camerafreeze early return at top of action

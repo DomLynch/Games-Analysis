@@ -114,3 +114,12 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 Best transferable idea: a two-pass damage formula (main result, then a chip floor, then a minimum of 1) lets a weak hit always do something without a miss roll.
 Decision (proposed): adapt - keep the main formula with a chip floor, positive-hit bonuses and minimum 1 damage; change the grid falloff to a duel range band, move the roll to a seeded server RNG, and put guard/parry before damage.
 Acceptance: a server test with noise forced to 0 asserts attack 40 vs defence 10 deals 6, attack 20 vs defence 20 deals 2 (chip), and attack 0 vs defence 0 deals 1 (minimum); a parried hit never reaches the damage step.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: CLEAN.** Independent check against the donor code.
+
+**Errors / corrections:** none found; every line number and formula in the type-0 branch (165-240), Manhattan distance, AIResult.Run exp/hurt, licence conflict (MIT header vs LICENSE) match exactly
+
+**Missed:** calMaxLevelIndexByMP makes level_index depend on current MP (line 155) which affects poison add; note lists it as not read; AIResult.cs 172-175 god-mode Whosyourdad

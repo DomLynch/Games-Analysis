@@ -14,7 +14,7 @@ Checked: `getDamage` is defined at battle-actions.ts 1572 and read in full throu
   (d) A crit fires a `CriticalHit` event (1632-1634). Then the `BasePower` event runs after the crit roll (1637).
   (e) Stat boosts: a crit ignores the attacker's negative attack stages and the defender's positive defence stages (1673-1676). Attack and defence are read from `calculateStat` with the stage (1689-1690), which multiplies or divides by a table `[1, 1.5, 2, 2.5, 3, 3.5, 4]` at stages 0..6 and floors (pokemon.ts 583-589).
   (f) Base damage (1705): `int(int(int(2 * level / 5 + 2) * power * attack) / defense) / 50)`, every step truncated.
-  (g) `modifyDamage` (1711) applies, in order: +2 (1718); spread modifier 0.75 (0.5 in free-for-all) for multi-target moves (1722); Parental Bond 0.25 from gen 7 and 0.5 before (1727); a `WeatherModifyDamage` priority event (handlers not read); crit ×1.5 from gen 6 (2 before) (1738), truncated; random factor 85..100 percent (1742, `randomizer` 2397); STAB ×1.5 through the fixed-point `modify` (1752-1754); type effectiveness: each super-effective step doubles (1790), each resisted step halves with truncation (1797), the total is clamped to -6..6 (1784); burn halves physical damage (1805) unless the user has Guts; gen 5 sets 0 to 1 before the final modifier (1810); a `ModifyDamage` event; a protect bypass ×0.25 (1817); a landed attack that is 0 returns 1 from gen 6 (1825); the result is truncated to 16 bits (1828).
+  (g) `modifyDamage` (1711) applies, in order: +2 (1718); spread modifier 0.75 (0.5 in free-for-all) for multi-target moves (1722); Parental Bond 0.25 from gen 7 and 0.5 before (1727); a `WeatherModifyDamage` priority event (handlers not read); crit ×1.5 from gen 6 (2 before) (1738), truncated; random factor 85..100 percent (1742, `randomizer` 2397); STAB ×1.5 through the fixed-point `modify` (1752-1754); type effectiveness: each super-effective step doubles (1790), each resisted step halves with truncation (1797), the total is clamped to -6..6 (1784); burn halves physical damage (1805) unless the user has Guts, and from gen 6 also unless the move is Facade (1803-1806); gen 5 sets 0 to 1 before the final modifier (1810); a `ModifyDamage` event; a protect bypass ×0.25 (1817); a landed attack that is 0 returns 1 in every generation except 5 (`gen !== 5`, 1825; gen 5 instead sets 0 to 1 earlier, before the final modifier, 1810); the result is truncated to 16 bits (1828).
 - Tick: none. This is a pure function of the current state plus one random draw per random step (crit and the 85..100 roll). It is called from the move's hit step, once per target.
 - Number system: the donor's `trunc` is `num >>> 0` (dex.ts 367), an unsigned 32-bit truncation, and `modify` uses 1/4096 fixed-point multipliers with round-to-nearest (battle.ts 2345-2346). These two details decide the exact integers.
 
@@ -40,12 +40,12 @@ Checked: `getDamage` is defined at battle-actions.ts 1572 and read in full throu
 | Type effect as doublings and halvings per step | Per-step doubling (1790), halving (1797) |
 | Burn halves physical damage | 0.5 (1805) |
 | Spread modifier for multi-target hits | 0.75 doubles, 0.5 free-for-all (1722) |
-| Landed attack does at least 1 damage | 1 (1825) |
+| Landed attack does at least 1 damage (every gen except 5, which does it earlier at 1810) | 1 (1825) |
 | Final 16-bit truncation | 16 bits (1828) |
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order for the core formula: base formula with truncation, +2, crit ×1.5, the random 85..100 band, STAB as a fixed-point 1.5, type doublings and halvings, burn as a fixed-point 0.5, minimum 1, and the 16-bit final truncation. The caller passes the stage-adjusted attack and defence (it does not call `calculateStat`) and the crit and random rolls (it does not roll them). For zero base power it returns 0; the donor returns undefined there (no damage, no error). It omits the event hooks (ModifyCritRatio, BasePower, ModifyAtk and Def, ModifySTAB, ModifyDamage, weather, Parental Bond, protect bypass, Stellar and Tera), the spread modifier, the Guts exception, the Tera 60 base-power floor, the gen-5 branch and the older crit tables, the confusion path, and the HP clamp in `target.damage()`. The crit stage ladder and the stage table are kept as data.
+simplified: the sketch keeps the donor order for the core formula: base formula with truncation, +2, crit ×1.5, the random 85..100 band, STAB as a fixed-point 1.5, type doublings and halvings, burn as a fixed-point 0.5, minimum 1, and the 16-bit final truncation. The caller passes the stage-adjusted attack and defence (it does not call `calculateStat`) and the crit and random rolls (it does not roll them). For zero base power it returns 0; the donor returns undefined there (no damage, no error). It omits the event hooks (ModifyCritRatio, BasePower, ModifyAtk and Def, ModifySTAB, ModifyDamage, weather, Parental Bond, protect bypass, Stellar and Tera), the spread modifier, the Guts and Facade exceptions to burn, the Tera 60 base-power floor, the gen-5 branch and the older crit tables, the confusion path, and the HP clamp in `target.damage()`. The crit stage ladder and the stage table are kept as data.
 
 ```ts
 // Licence: MIT (donor). Shape of the donor's damage order, re-expressed in our own code; no donor lines copied.
@@ -121,3 +121,12 @@ Acceptance: a server test: with a fixed seed, two identical hits at stage 0 deal
 - Events: all modifiers (abilities, items, weather, terrain) run through `runEvent`, which was not read. Frankendom's one-engine rule means these become data fields on the duel, not hooks; the event system is out of scope for this note.
 - The donor's `target.damage()` clamps HP and reports the result (battle.ts 2141); not read here, so what the hit reports after clamping is (not read).
 - Balance numbers (the 85..100 band, the 1.5 and 0.5 multipliers, the crit ladder) are the donor's game design. Frankendom must set its own values through the data fields and test them, not copy them.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** (1) Note: 'a landed attack that is 0 returns 1 from gen 6 (1825)'; code is 'gen !== 5 && !baseDamage' i.e. every gen except 5 (battle-actions.ts 1825). (2) Burn: note says halves physical unless Guts; code also exempts Facade from gen 6 (1803-1806). Verified OK: getDamage 1572, crit tables 1614/1618/1620, crit-ignores-stages 1673-1676, base formula 1705, +2 1718, spread 0.75/0.5 1722, bond 0.25/0.5, crit 1.5/2 1738, randomizer 100-random(16), STAB, type clamp -6..6 1784, 16-bit trunc 1828, modify() rounding, trunc = >>>0, stage table pokemon.ts 583-589, MIT.
+
+**Missed:** Tera 60 BP floor and Stellar STAB (2x / 4915/4096) are in the file; sketch lists Tera/Stellar as omitted. Nothing else.

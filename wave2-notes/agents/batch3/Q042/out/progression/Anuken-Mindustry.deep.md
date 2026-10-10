@@ -138,3 +138,12 @@ Brief rule served: addendum rules 1-6; Frankendom rulings "one ledger", "server-
 Best transferable idea: Let the player pay for an unlock in instalments from whatever the ledger holds, keep the partial progress, and unlock only when the whole cost is paid, with the parent unlocking along with it.
 Decision (proposed): adapt - the instalment payment, the all-or-nothing unlock and the objective gate are a good progression shape; Frankendom must keep the progress on the server ledger (not client settings), decide the ancestor-unlock rule explicitly, and disable spending when nothing can be paid.
 Acceptance: a server test: an unlock needing 40 of an item with 25 held moves 25 from the ledger, shows 62 percent and stays locked; the next grant of 15 completes it, unlocks its parent, and leaves the ledger at zero for that item; a spend with an empty ledger changes nothing and is refused.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** Block cost formula is shown as round(60m + amount^1.11*20*m*itemMult, 10) but the real code wraps the result in UI.roundAmount (Block.java:1291); note lists UI.roundAmount only for units. canSpend has a client guard (`|| net.client()` ResearchDialog ~552) and spend returns on a client; the mechanism text omits it (the sketch omission list does mention a client-side guard). All other claims hold (spend loop 580-596, unlock ancestors, 99 cap, 0.9/0.5/0.7/0.3/0.2 map, checkAutoUnlocks, save/reset keys).
+
+**Missed:** Block.researchRequirements returns empty when researchCostMultiplier<=0 and honours a researchCost override (Block.java:1285-1286); UnitType filters zero-amount stacks so they auto-unlock.

@@ -143,3 +143,12 @@ function summonPerTurn(w: World, rate: number, turn: number, onsetTurn: number, 
 - The donor removes a hut from the spot when a wave lands (593-602). Frankendom must decide what a wave may replace on the map, as an explicit rule, not as a side effect.
 - The donor's own header comment questions the empire-size rule ("it seems a bit unjust if someone is always small", barbarian.c 527-531) and marks the government part as questionable (531). Do not treat the size gate as a balance guarantee.
 - Server-verified kills: a wave creates attackers; it does not verify kills. Frankendom's kill rule stays in the engine.
+
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-10)
+**Verdict: MINOR.** Independent check against the donor code.
+
+**Errors / corrections:** note lists hut removal (593-602) as step 8 after the tier/count calculation (605-613); real order is hut removal BEFORE tier and barb_count. Everything else (rate/onset gates 742-749, n*(rate-1) 751-757, dist 5..8, size gate rand(30)+1, Civil_War_Chance, tiers 10/32/80/186, count rand(3)+tier*rate, vision radius_sq 9, MAP_FACTOR 2000) holds
+
+**Missed:** none significant
