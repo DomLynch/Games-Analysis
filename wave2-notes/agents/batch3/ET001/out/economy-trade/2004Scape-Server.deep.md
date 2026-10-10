@@ -33,12 +33,12 @@ Buy (`buy_item`, 59-97), per unit i:
 
 Sell (`sell_item`, 100-129):
 - Amount is capped at what the player holds (103; 155-160).
-- Tradable check (104; `can_sell_obj`, 27-39: coins, untradeable and members items refused, and an Al-Kharid silk rule).
+- Tradable check (104; `can_sell_obj`, 27-39: coins, untradeable and members items refused, an Al-Kharid silk rule, and, at a shop that is not `allstock`, any item with no stock row (`inv_stockbase` = -1) refused, line 35).
 - Space checks for the coins and for the shop (108, 113).
 - Total first: each unit is priced at shop stock plus i (117-123), with no stock moved yet.
 - Then move the items (125), log the wealth event (126), and pay the coins (127-129).
 
-Restock (World.ts 1176-1211, in the world cleanup phase; cleanup stats at 1213-1215). The loop runs once per world tick, and the tick is 600 ms (TICKRATE 600, World.ts 120). For each inventory with `restock`, each row whose count is below its target gains one unit, or loses one if above, but only on ticks where `tick % stockrate == 0` (1182-1202). A row with stockrate 0 never acts, because `tick % 0` is NaN. For general stores (`allstock`), a row with no target loses one unit every INV_STOCKRATE = 100 ticks (1206-1209; the comment at 1205 says "every 1 minute" and 100 ticks is 60 seconds).
+Restock (World.ts 1176-1211, in the world cleanup phase; cleanup stats at 1213-1215). The loop runs once per world tick, and the tick is 600 ms (TICKRATE 600, World.ts 120). For each inventory with `restock` that also has both `stockcount` and `stockrate` arrays (World.ts 1181-1184 skips it otherwise), each row whose count is below its target gains one unit, or loses one if above, but only on ticks where `tick % stockrate == 0` (1182-1202). A row with stockrate 0 never acts, because `tick % 0` is NaN. For general stores (`allstock`), a row with no target loses one unit every INV_STOCKRATE = 100 ticks (1206-1209; the comment at 1205 says "every 1 minute" and 100 ticks is 60 seconds).
 
 Worked numbers, derived from the formulas above (not measured). Under the code as written, with the default percents (sell 100, buy 60) and haggle 10:
 - The shop's buy-from-player percent (the 60 default) is `max(100, 60 - 0) = 100` at zero deviation, so the 60 does not take effect at zero deviation. With haggle 10 it takes effect only when the shop is more than four units short.
@@ -180,3 +180,16 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 Reuse tag: rewrite-from-idea (MIT; code may be adapted, with attribution)
 Brief rule served: one ledger and server-verified (Frankendom rulings); licence rule 7 (permissive)
+
+- Empty rows persist: Inventory.remove (Inventory.ts ~245-304) keeps a stock-object row at count 0 (`curItem.count == 0 && !stockObj`, 280/304), which is what lets the restock loop refill a sold-out row (the loop skips null slots, World.ts 1186-1188). The acceptance relies on this; a Frankendom shop must keep emptied rows.
+- Non-allstock shops refuse to buy unlisted items (shop.rs2 35); only allstock (general) stores take arbitrary tradable goods.
+
+## Checker findings
+
+- Verdict: MINOR
+- Corrected:
+  - Restock gate in section 1: the loop also requires the inventory to have both stockcount and stockrate arrays (World.ts 1181-1184), not just `restock`.
+  - can_sell_obj rule in section 1: added that a non-allstock shop with no stock row for the item refuses it (shop.rs2 35).
+- Missed (also added to section 6):
+  - Empty rows persist: Inventory.remove (Inventory.ts ~245-304) keeps a stock-object row at count 0 (`curItem.count == 0 && !stockObj`, 280/304), which is what lets the restock loop refill a sold-out row (the loop skips null slots, World.ts 1186-1188). The acceptance relies on this; a Frankendom shop must keep emptied rows.
+  - Non-allstock shops refuse to buy unlisted items (shop.rs2 35); only allstock (general) stores take arbitrary tradable goods.

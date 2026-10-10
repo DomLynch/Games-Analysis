@@ -141,3 +141,15 @@ function handleBuy(
 - GPL-3.0: clean-room only. The sketch is written from the described mechanism and does not translate donor lines.
 
 Receipts: `/private/tmp/p2/wave2-haiku/batch3/ET003/receipts.tsv` (49 rows, verify_receipts.py: 49 ok, 0 failed).
+
+- Lore-conflict refusal happens before the charge (14198-14201).
+- Sold-item re-stocking (14504) only happens when vendor->GetKeepsSoldItems() (14478), not unconditionally.
+
+## Checker findings
+
+- Verdict: CLEAN. No errors found; cited lines and numbers verified against the donor.
+- Corrected: nothing.
+- Missed (not in the note):
+  - Lore-conflict refusal before charge (Handle_OP_ShopPlayerBuy 14198-14201).
+  - Sold-item re-stocking at 14504 only happens when vendor->GetKeepsSoldItems() (14478), not unconditionally.
+  - Minor vagueness: temp-stock clamp lines are 14203-14209.

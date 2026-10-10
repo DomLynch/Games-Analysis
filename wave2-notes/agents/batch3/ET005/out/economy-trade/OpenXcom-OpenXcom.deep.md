@@ -124,3 +124,10 @@ Typecheck: the sketch is `/private/tmp/p2/wave2-haiku/batch3/ET005/work/cart-Ope
 - Delivery in the donor is a separate transfer object, one per unit for soldiers and crafts and one per row for items and personnel groups (338-377). A Frankendom delivery queue should pick one rule and state it in the acceptance test. The `Transfer` class was not read, so its timing rules are unknown.
 - The hold-to-repeat timers are client UI (250 then 50, 217-220, 503-504). Keep them on the client only; they are not part of the server rule.
 - Licence: GPL-3.0-or-later. Clean-room only. The sketch is written from the mechanism.
+
+## Checker findings
+
+- Verdict: CLEAN. No errors found; cited lines and numbers verified against the donor.
+- Corrected: nothing.
+- Missed (not in the note):
+  - Nothing important missed.

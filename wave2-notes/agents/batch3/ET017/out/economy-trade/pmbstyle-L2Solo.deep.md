@@ -38,7 +38,7 @@ Acceptance: a server test with 6 funded units of demand and no supply lets a sel
 | Cap the listed units at funded demand minus supply | none (the subtraction, MarketListingPolicy.js 137) |
 | Undercut the cheapest rival by a share, but not below a floor | Undercut 0.98 (186); floor 0.60 of reference (BotMarketPricing.js 53) |
 | Refuse to list when the floor cannot undercut | Rule at 187 (no constant) |
-| Surplus to an NPC at a fixed share of base | Half of base (MarketListingPolicy.js 236; ItemDisposition.js 492) |
+| Ordinary surplus gear (base at or under the limit) to an NPC at a fixed share of base; other surplus to the warehouse | Half of base (MarketListingPolicy.js 236; ItemDisposition.js 492) |
 | Seller ask spread | 70 to 90 percent of reference, from `seed mod 21` (ItemDisposition.js 54) |
 | Learned multiplier | Clamp 50 to 100 (55); step 5 down per unsold expiry (ColdMarketListingService.js 756) |
 | Competitive band for counting rivals | Within 5 percent of the unit price (MarketListingPolicy.js 89) |
@@ -122,3 +122,21 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - The adena rate (`economyRate`, BotEconomyPricing.js 7) is the only inflation knob. It multiplies every base price, with a floor of 0.01. The donor does not show whether open listings re-price when the rate changes (not read). Frankendom would need that answer before it uses one multiplier.
 - Donor is a bot simulation of players. Its AI sellers and buyers are the transferable part. The player-facing market rules (cell 2 covers the escrow lifecycle of a real server market) are a different layer.
 - Licence: Apache-2.0 allows adaptation. This note copies no line; the sketch is written from the described rules.
+
+- The classify decision tree (84-130) that the note did not cover: recipe active_demand and scarce_recipe (96-107), gear recent_buyer_activity (109-116, count = recentBuyers - competitiveUnits) and material_liquidity (117-130). Now summarised in section 1 step 2b; the sketch omits them.
+- Shot exception in listingPrice (191-196): a finite cheap-shot remainder lists at the floor instead of being refused (now in section 1).
+- One-shot speculative rule (158-161): an item with `speculativeFailedAt` set is sent to the warehouse as `speculative_already_tried` and never listed speculatively again.
+- Licence: package.json says 'SEE LICENSE IN LICENSE' (the note says that field was not read; the licence text still needs reading before any reuse).
+
+## Checker findings
+
+- Verdict: MINOR
+- Corrected:
+  - Funded-demand cap: section 1 and the section 3 table presented it as the one listing rule; added step 2b listing the earlier branches (recipe, recent-buyer gear, material) that list without it.
+  - Refusal at 187: documented the Other.Shot active_demand exception (191-196) and the no-competition result max(floor, preferred) (185).
+  - NPC sink: corrected to say NPC-only and non-gear starter items go to NPC directly (58-63) and only ordinary gear at or under the surplus limit goes to NPC via surplusGearDecision, otherwise warehouse (47-50). Sketch unchanged (it already omits these gates).
+- Missed (also added to section 6):
+  - The classify decision tree (84-130) that the note did not cover: recipe active_demand and scarce_recipe (96-107), gear recent_buyer_activity (109-116, count = recentBuyers - competitiveUnits) and material_liquidity (117-130). Now summarised in section 1 step 2b; the sketch omits them.
+  - Shot exception in listingPrice (191-196): a finite cheap-shot remainder lists at the floor instead of being refused (now in section 1).
+  - One-shot speculative rule (158-161): an item with `speculativeFailedAt` set is sent to the warehouse as `speculative_already_tried` and never listed speculatively again.
+  - Licence: package.json says 'SEE LICENSE IN LICENSE' (the note says that field was not read; the licence text still needs reading before any reuse).

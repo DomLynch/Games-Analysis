@@ -137,3 +137,12 @@ Acceptance: a server test: a 1000-cost piece bought 100 days old and resold the 
 - Callers not all read: `ShipInfoDisplay.cpp` (175, 536-537), `CargoHold.cpp` (596), `BoardingPanel.cpp` (605) use `Value` or `Full()` for display or cargo worth (grep only, not read in full). `Full()` (59-62) is used only for display-side estimates, not for sale price.
 - Units: the day count is the game's calendar day (`DaysSinceEpoch`). Frankendom has no calendar day today; a server day counter would be a new rule.
 - The donor's `Depreciation` also depends on `Outfit::Cost()` and `Ship::ChassisCost()`, which were not read; their values are the donor's catalogue, which Frankendom replaces with its own catalogue fields (row 21).
+
+- SellShip with storeOutfits passes chassisOnly to stockDepreciation.Buy and prices the hull only (PlayerInfo.cpp ~1384-1393): a second, hull-only sale price rule.
+
+## Checker findings
+
+- Verdict: CLEAN. No errors found; cited lines and numbers verified against the donor.
+- Corrected: nothing.
+- Missed (not in the note):
+  - SellShip with storeOutfits passes chassisOnly to stockDepreciation.Buy and prices the hull only (PlayerInfo.cpp ~1384-1393): a second, hull-only sale price rule.

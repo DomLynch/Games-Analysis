@@ -20,7 +20,7 @@ Checked: Symbols read in full: `barter_compute_value` (inventry.cc 4236-4257), `
 - `barter_attempt_transaction`: `/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/inventry.cc` 4260-4277. The accept check and the two-way move.
 - `barter_inventory`: `/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/inventry.cc` 4563-4680 (partly read). Sets the modifier from NPC mood and runs the M and T keys.
 - `reaction_get` and `reaction_to_level`: `/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/reaction.cc` 71-167 and 47-56. Mood score and its three levels.
-- `item_total_cost` and `item_cost`: `/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/item.cc` 701-729 (partly read; the critter branch after 729 not read) and 652-698. Cost is the catalogue cost times quantity; containers and critters add their contents (partly read).
+- `item_total_cost` and `item_cost`: `/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/item.cc` 701-729 (partly read; the critter branch after 729 not read) and 652-698. Cost is the catalogue cost times quantity for plain items, but `item_cost` (652-698) adds loaded-ammo value to a weapon (ammo cost x rounds / ammo-stack capacity), prices an ammo stack as cost x rounds / capacity (partial clips), and adds contents to containers; `item_total_cost` (723-727) special-cases ammo stacks (full-clip cost x (quantity-1) plus the current clip). Critters add their contents (partly read).
 
 ## 3. Numbers vs mechanism
 
@@ -60,7 +60,7 @@ interface Goods {
   currencyValue: number; // the part of totalCost that is currency; never discounted
 }
 
-// Price the buyer pays for `goods`. 100 is face value; above 100 means the seller asks more.
+// Price the buyer pays for `goods`. 100 is face value; the price is 100*(cost-caps)/mod + caps (inventry.cc 4256), so a mod above 100 (buyer skill, Master Trader, GOOD mood) makes goods cheaper and below 100 dearer.
 function barterPrice(
   buyer: Trader,
   buyerIsPlayer: boolean,
@@ -122,3 +122,16 @@ Acceptance: a server test asserts that for goods 120 with currency 20, a player 
 
 Reuse tag: rewrite-from-idea (Sustainable Use License 1.0; clean-room only)
 Brief rule served: 1 (one ledger, server-verified); zones as data (modifier values)
+
+- barter_inventory (inventry.cc ~4571-4585) removes the NPC's worn armor and right-hand weapon (or first weapon) from the barter pool before trading: equipped gear is not for sale.
+- item_cost (item.cc 652-698) values a loaded weapon as base plus proportional loaded-ammo value and an ammo stack as cost x rounds / capacity; item_total_cost (723-727) special-cases ammo stacks.
+
+## Checker findings
+
+- Verdict: MINOR
+- Corrected:
+  - Sketch comment in barterPrice said 'above 100 means the seller asks more'; the direction is the opposite (price = 100*(cost-caps)/mod + caps, inventry.cc 4256), so a higher mod makes goods cheaper. Comment corrected; the acceptance number (86) was already right and no code changed.
+  - Section 2: 'catalogue cost times quantity' understated item_cost/item_total_cost; corrected to include loaded ammo, partial clips and ammo stacks.
+- Missed (also added to section 6):
+  - barter_inventory (inventry.cc ~4571-4585) removes the NPC's worn armor and right-hand weapon (or first weapon) from the barter pool before trading: equipped gear is not for sale.
+  - item_cost (item.cc 652-698) values a loaded weapon as base plus proportional loaded-ammo value and an ammo stack as cost x rounds / capacity; item_total_cost (723-727) special-cases ammo stacks.

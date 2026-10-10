@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+exult-exult	economy-trade	P	STRONG	full	/mnt/frankendom-donors/exult-exult/usecode/ucinternal.cc:1176-1207 all-or-nothing party debit (count, refuse, drain); count/debit predicate mismatch at objs/contain.cc:578 vs 348
+flareteam-flare-engine	economy-trade	P	STRONG	full	/mnt/frankendom-donors/flareteam-flare-engine/src/ItemManager.cpp:1794-1835 buy/sell/buyback price rules; MenuVendor.cpp:290-299 buyback listing; MenuInventory.cpp:1071-1131 settlement
+flareteam-flare-game	economy-trade	P	STRONG	full	/mnt/frankendom-donors/flareteam-flare-engine/src/LootManager.cpp:322-389 band-edge roll for vendor stock; NPC.cpp:443-451 per-load roll; game data martigan.txt:12-14, trader_martigan.txt

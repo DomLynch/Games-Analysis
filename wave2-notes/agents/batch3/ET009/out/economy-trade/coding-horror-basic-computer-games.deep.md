@@ -119,3 +119,10 @@ Best transferable idea: a market is data on the zone (cost, one price band per g
 
 Decision (proposed): adapt. The market-as-data shape (per-zone price bands, a cost paid up front, one route roll with a table) fits zones as data; the year cycle, the BASIC rounding idiom and the Java's fall-through and missing savings check must not be copied.
 Acceptance: a server test: a merchant zone with a band of 85-115 cents for a unit rolls one price on arrival in that band; selling 20 units pays exactly 20 times that price; a route roll of 1-2 takes the stock named in the zone data; a trip whose cost exceeds savings is refused and changes nothing.
+
+## Checker findings
+
+- Verdict: CLEAN. No errors found; cited lines and numbers verified against the donor.
+- Corrected: nothing.
+- Missed (not in the note):
+  - Nothing important missed. Note: the BASIC does not round the halved New York price (B1/2, M1/2), so the sketch's half-up rounding is a Frankendom choice, not donor behaviour. The note mixes BASIC statement labels and file line numbers when citing lines.

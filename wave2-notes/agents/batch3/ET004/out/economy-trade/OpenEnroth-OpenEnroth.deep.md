@@ -2,7 +2,7 @@
 
 Donor: `/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/Engine/PriceCalculator.cpp` | Licence: LGPL-3.0 (repo `LICENSE` is GNU LESSER GENERAL PUBLIC LICENSE Version 3, 29 June 2007; PriceCalculator.cpp carries no licence header) | C++ | symbol `PriceCalculator::itemBuyingPriceForPlayer`, `PriceCalculator::itemSellingPriceForPlayer`, `PriceCalculator::playerMerchant`
 
-Checked: The hint file `src/GUI/UI/Houses/Shops.cpp` is the shop window, not the pricing. The pricing is in `src/Engine/PriceCalculator.cpp` (228 lines, all read; 201-228 hold the tavern food and training prices, read and noted below). Also read: the sell and buy call sites in `Shops.cpp` (900-935, 1040-1140), `Character::SalesProcess` and the mastery multiplier in `Character.cpp` (350-400, 2835-2850, 4660-4675), `Party::GetPartyReputation` (`Party.cpp` 820-835), `HouseData.h` 17, and the house multiplier loader (`HouseTable.cpp` 86, grep only). Not read: `LocationInfo::reputation` (where the value is set), `Item::canSellRepairIdentifyAt`, `Item::IsBroken`, the `houseTable` data file itself, and the `GUIWindow.cpp` 886-898 display path (grep only). camera_scope: n/a (economy). Confidence: high on the price formulas and their order; medium on what the reputation number means (its sign and source are not read).
+Checked: The hint file `src/GUI/UI/Houses/Shops.cpp` is the shop window, not the pricing. The pricing is in `src/Engine/PriceCalculator.cpp` (228 lines, all read; 201-228 hold the tavern food and training prices, read and noted below). Also read: the sell and buy call sites in `Shops.cpp` (900-935, 1040-1140), `Character::SalesProcess` and the mastery multiplier in `Character.cpp` (350-400, 2835-2850, 4660-4675), `Party::GetPartyReputation` (`Party.cpp` 820-835), `HouseData.h` 17, and the house multiplier loader (`HouseTable.cpp` 86, grep only). Not read: `LocationInfo::reputation` (where the value is set), `Item::canSellRepairIdentifyAt`, `Item::IsBroken`, the `houseTable` data file itself, and the `GUIWindow.cpp` price display path (real location ~905-925, grep only). camera_scope: n/a (economy). Confidence: high on the price formulas and their order; medium on what the reputation number means (its sign and source are not read).
 
 Best transferable idea: a shop price is one multiplier of the item value, a merchant-skill percent that discounts it, a floor at the item value for buying, and a clamp to 1..value for selling, so no shop can undercut or over-pay the item's own worth.
 Decision (proposed): adapt — keep the clamps and the percent-off shape as zone data for each shop; drop the reputation term unless Frankendom has a reputation to feed it.
@@ -30,7 +30,7 @@ Worked arithmetic (from the code, no run): a novice merchant (bonus 1 times leve
 - `Character::SalesProcess`: `/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/Engine/Objects/Character.cpp` 366-373.
 - Buy in the shop window: `/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/GUI/UI/Houses/Shops.cpp` 1097-1131.
 - Sell in the shop window: `/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/GUI/UI/Houses/Shops.cpp` 913-915.
-- Callers of `itemSellingPriceForPlayer`: `Character.cpp:368` only (grep; the dialogue path uses the buy function at `Character.cpp:4672`).
+- Callers of `itemSellingPriceForPlayer` (grep): `Character.cpp:368` (SalesProcess), `Character.cpp:4678` (dialogue SHOP_SCREEN_SELL case), and `src/GUI/GUIWindow.cpp:908` and `921` (display of the sell price; 921 divides by 2, the SHOP_SCREEN_SELL_FOR_CHEAP tier). The dialogue buy case calls the buy function at `Character.cpp` ~4672.
 
 ## 3. Numbers vs mechanism
 
@@ -118,3 +118,16 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - The sale path does not check the take. The sketch adds a check. Frankendom must check it, since a failed take with a credited sale would be a duplicate-money bug.
 - Training gate. Training is sold only to a character who has reached the experience threshold (219). That ties a money sink to progression; the progression lane must decide whether a shop may sell a level-up, and money must not buy the threshold.
 - Licence LGPL-3.0: clean-room only. The sketch is written from the mechanism; no donor line is translated.
+
+- GUIWindow.cpp:921 SHOP_SCREEN_SELL_FOR_CHEAP shows itemSellingPrice / 2 with a floor of 1 (a second, half-price sell tier).
+- Other services in PriceCalculator.cpp are not covered: temple healing price clamp 1..10000 (130), identify and repair prices (55-70), skill teaching (169-181), tavern room (189) and food (205), training (223); the 'minimum is one third of base' idiom recurs in them (55, 66, 169, 180, 223).
+
+## Checker findings
+
+- Verdict: MINOR
+- Corrected:
+  - Section 2 callers of itemSellingPriceForPlayer: was 'Character.cpp:368 only'; real callers are Character.cpp:368 and 4678, GUIWindow.cpp:908 and 921.
+  - Checked paragraph: GUIWindow.cpp display path was cited as 886-898; real location is ~905-925.
+- Missed (also added to section 6):
+  - GUIWindow.cpp:921 SHOP_SCREEN_SELL_FOR_CHEAP shows itemSellingPrice / 2 with a floor of 1 (a second, half-price sell tier).
+  - Other services in PriceCalculator.cpp are not covered: temple healing price clamp 1..10000 (130), identify and repair prices (55-70), skill teaching (169-181), tavern room (189) and food (205), training (223); the 'minimum is one third of base' idiom recurs in them (55, 66, 169, 180, 223).

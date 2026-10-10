@@ -8,7 +8,7 @@ Checked: read `WorldExchangeManager.cs` at 36-82 (constructor and timer), 118-19
 
 - A player market. A seller registers a stack of one item with a price. Buyers pay in the premium currency LCoin (id 91663, Inventory.cs:39). The listing fee is paid in adena (id 57, Inventory.cs:33). The seller claims the sale price minus a tax later.
 - Register (`registerItemBid`, 281-376), in order:
-  (a) feature flag (283-286 region, read); (b) at most 10 entries in the seller's bid list, counted by `getPlayerBids` (289-292; whether that count includes sold or expired rows was not read); (c) the item must be in the inventory (read); (d) amount >= 1, price >= 1, amount x price >= 1 (301-305); (e) fee from `calculateFeeForRegister` (256-272): for adena the fee is `priceForEach * 100` flat (267), otherwise `priceForEach * amount * AdenaFee` (270); (f) cap at MaxAdenaFee when it is not -1 (309-311); (g) the seller must hold that much adena (313-317), and a fee below 1 is refused; (h) the stack is detached from the inventory (347); (i) the item's category is looked up (355); if it is missing the function returns FAIL, and by then the stack is already detached (read; I did not trace `detachItem` so I cannot say where the stack ends up); (j) the fee is removed from adena (363); (k) the bid's end time is now + ItemSellPeriod days (364); (l) the bid is stored with `priceForEach` as its price (365-366) and written to the database unless DBLazy is set.
+  (a) feature flag (283-286 region, read); (b) a check `playerBids.Count >= 10` on the result of `getPlayerBids` (289-292). This check is DEAD CODE: `getPlayerBids` (WorldExchangeManager.cs 927-974) always returns a map with exactly 3 keys (REGISTERED, SOLD, OUT_TIME), so `Count` is 3 and the cap never fires; the donor has no working per-seller limit (and when the feature is disabled it returns an empty map); (c) the item must be in the inventory (read); (d) amount >= 1, price >= 1, amount x price >= 1 (301-305); (e) fee from `calculateFeeForRegister` (256-272): for adena the fee is `priceForEach * 100` flat (267), otherwise `priceForEach * amount * AdenaFee` (270); (f) cap at MaxAdenaFee when it is not -1 (309-311); (g) the seller must hold that much adena (313-317), and a fee below 1 is refused; (h) the stack is detached from the inventory (347); (i) the item's category is looked up (355); if it is missing the function returns FAIL, and by then the stack is already detached (read; I did not trace `detachItem` so I cannot say where the stack ends up); (j) the fee is removed from adena (363); (k) the bid's end time is now + ItemSellPeriod days (364); (l) the bid is stored with `priceForEach` as its price (365-366) and written to the database unless DBLazy is set.
 - Status tick (`checkBidStatus`, 118-198), on a ThreadPool fixed-rate timer every BidItemsIntervalStatusCheck ms (46-47; default 30000 ms per the ini at line 18). Only bids whose end time has passed are changed (130). REGISTERED becomes OUT_TIME with a new end time of now + ItemBackPeriod days (144-145). SOLD or OUT_TIME becomes NONE and the item is set VOID (156), which removes it. NONE is removed from the map (139).
 - Buy (`buyItem`, 640-689): the bid must be REGISTERED (status checks read between 640 and 668); the buyer's LCoin count must be at least the price (669-672); the price is destroyed from the buyer's LCoin (676); the bid is replaced with a SOLD record for the seller whose end time is now + PaymentTakePeriod days (678-680); the original stack is added to the buyer (686). If that add returns null, the function sends FAIL, and the code's own TODO says the transfer is not transactional (689).
 - Claim (`takeBidMoney`, 495-569): the bid must be SOLD and the claim must be inside its end time (541). The tax is price x LCoinFee, capped at MaxLCoinFee (550-551). The seller is credited price minus tax in LCoin (552). The sold item is set VOID (555). The tax is never credited to anyone, so it is a sink.
@@ -22,7 +22,7 @@ Checked: read `WorldExchangeManager.cs` at 36-82 (constructor and timer), 118-19
 - `buyItem`: `WorldExchangeManager.cs` 640-689. No `Synchronized` attribute on it (`registerItemBid` has one at 280).
 - `takeBidMoney`: `WorldExchangeManager.cs` 495-569. Tax and credit.
 - `cancelBid`: `WorldExchangeManager.cs` 433-494. Return of stack, no fee refund.
-- Config: `L2Dn.GameServer/Config/WorldExchange.ini` (values and comments); `L2Dn.GameServer.StaticData/Configuration/Config.WorldExchange.cs` 28-30 (parsing with defaults).
+- Config: `L2Dn.GameServer/Config/WorldExchange.ini` (values and comments); `L2Dn.GameServer.StaticData/Configuration/Config.WorldExchange.cs` 27-31 (parsing with defaults; the tick interval field is named `WORLD_EXCHANGE_SAVE_INTERVAL` at 27 and is fed by the ini key `BidItemsIntervalStatusCheck`).
 
 ## 3. Numbers vs mechanism
 
@@ -31,7 +31,7 @@ Checked: read `WorldExchangeManager.cs` at 36-82 (constructor and timer), 118-19
 | Listing fee charged up front, proportional to value listed, optionally capped, not refunded on cancel | AdenaFee 100.0 (ini 33; code 270); MaxAdenaFee -1 (ini 38). See the unit warning below. |
 | Adena listing flat fee for adena itself | priceForEach x 100 (theirs, 267), not a config key |
 | Sale tax taken out of the proceeds, capped | LCoinFee 0.05 (ini 23; config 28), MaxLCoinFee 20000 (ini 28; code 551) |
-| Entries per seller (open count) | 10 (theirs, 289) |
+| Entries per seller (open count) | none in effect: the donor's `Count >= 10` test (289) is dead code because the map always has 3 keys (927-974). The sketch's cap is a Frankendom rule, value 10 chosen by us. |
 | Three timers on a listing: sell period, back-out period, pay window | ItemSellPeriod 14 days (ini 47), ItemBackPeriod 120 days (ini 55), PaymentTakePeriod 120 days (ini 51) |
 | Status check interval | BidItemsIntervalStatusCheck 30000 ms (ini 18; config 46-47 region) |
 | Currency ids | LCoin 91663 (Inventory.cs 39); adena 57 (Inventory.cs 33) |
@@ -42,7 +42,7 @@ Price semantics (as read): the register packet reads the price first (ExWorldExc
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order for list (open-count cap, validity, fee with cap, affordability, fee charged, listing opened), buy (status, affordability, premium destroyed, sold record), claim (status and window, tax with cap, credit) and the tick (registered to outOfTime, expired sold or outOfTime to none). It treats `price` as the donor does, as the amount charged once for the lot. It omits the item detach and re-add, the item category lookup, the sold clone, the database writes, the online seller alarm, the packets, the `Synchronized` attributes and the lazy-update flag. Times are plain numbers in milliseconds.
+simplified: the sketch keeps the donor order for list (a Frankendom open-count cap, which the donor's own dead check does not provide; validity, fee with cap, affordability, fee charged, listing opened), buy (status, affordability, premium destroyed, sold record), claim (status and window, tax with cap, credit) and the tick (registered to outOfTime, expired sold or outOfTime to none). It treats `price` as the donor does, as the amount charged once for the lot. It omits the item detach and re-add, the item category lookup, the sold clone, the database writes, the online seller alarm, the packets, the `Synchronized` attributes and the lazy-update flag. Times are plain numbers in milliseconds.
 
 ```ts
 // Licence: MIT (donor LICENSE.txt, Grymyr / L2Dn Server Project). Adapted shape, written from the read code, not a line-by-line port.
@@ -67,7 +67,7 @@ interface MarketTerms {
   sellDays: number;       // how long a listing stays open
   backDays: number;       // how long an expired listing can be taken back
   payDays: number;        // how long a seller can claim proceeds
-  maxOpen: number;        // open listings per seller (donor: 10)
+  maxOpen: number;        // Frankendom rule: max open listings per seller. The donor's equivalent test (Count >= 10 on a 3-key map) never fires, so this is NOT donor behaviour
 }
 
 const DAY = 86400000;
@@ -78,7 +78,7 @@ function listingFee(t: MarketTerms, price: number, count: number): number {
   return fee;
 }
 
-// List: checks, charges the fee up front (not refunded on cancel), then opens the listing.
+// List: the caller passes `open`, the seller's count of registered listings (the donor's cap on this is dead code; ours is real). Checks, charges the fee up front (not refunded on cancel), then opens the listing.
 function list(t: MarketTerms, seller: Wallet, open: number, id: number, who: string, count: number, price: number, now: number): Listing | null {
   if (open >= t.maxOpen) return null;
   if (count < 1 || price < 1) return null;
@@ -129,7 +129,7 @@ The sketch's `tick` and `claim` follow the donor's status order; the donor's cla
 ## 5. Lands in
 
 - TARGET `origins/server/market.ts` (proposed new module, server side; no Frankendom market module was read). Listing, buy, claim and the tick run on the server only; the client shows the state.
-- Parity-checklist row 21 (catalogue fields): fee rates, caps, windows and the bid-list cap are data, not code. The payment and credit side belongs with row 18 (loot roll and XP award) as the one ledger side.
+- Parity-checklist row 21 (catalogue fields): fee rates, caps, windows and the open-listing cap (ours; the donor's is dead code) are data, not code. The payment and credit side belongs with row 18 (loot roll and XP award) as the one ledger side.
 - Reuse tag: rewrite-from-idea (MIT: code may be adapted; this sketch is a clean shape-only rewrite and copies no lines)
 - Brief rule served: one ledger (every adena and premium move is a function on the wallet, one place each); server-verified (the donor's register, buy and claim all re-check on the server, and the client sends only the request); zones as data (fees, caps and windows as config)
 
@@ -148,3 +148,18 @@ The sketch's `tick` and `claim` follow the donor's status order; the donor's cla
 Best transferable idea: List a stack with a fee charged up front that is never refunded, then move each listing through timed states (open, then take-back window, then removed) on a fixed server timer, so every sink is a rule with a visible deadline.
 Decision (proposed): adapt - adopt the fee-up-front, timed-state and server-checked-listing shape in one ledger; adapt the currency and the fee units to Frankendom's single currency and a fraction rate, since the donor mixes two currencies and a fee unit it may have wrong.
 Acceptance: a server test lists 5 stacks at a price with a fee fraction r: the fee is charged once and not refunded on cancel; a buy with too little currency is refused with no change to either wallet; a paid claim credits price minus min(price x tax, cap); an unclaimed sale is removed after the pay window (fake clock).
+
+- Dead per-seller cap (above): the donor has no working limit on listings per seller, so a seller can list without bound.
+- cancelBid and takeBidMoney both verify the caller is the original owner and that the held holder is the same instance (456-469, 518-531); buy has no such check, only status.
+- checkBidStatus removes NONE entries while iterating the map (already flagged in this section; confirmed).
+
+## Checker findings
+
+- Verdict: MINOR
+- Corrected:
+  - Per-seller 10-entry cap: was presented as a live donor rule (section 1 step b, section 3 table, sketch maxOpen comment and list comment, section 5 and the sketch preamble). It is dead code: getPlayerBids (WorldExchangeManager.cs 927-974) always returns a 3-key map, so `playerBids.Count >= 10` (289) is never true. Note, table, sketch comments and preamble corrected; the sketch cap is now labelled a Frankendom rule. Sketch behaviour unchanged (comments only).
+  - Config parsing lines 28-30 corrected to 27-31, with the field name WORLD_EXCHANGE_SAVE_INTERVAL for ini key BidItemsIntervalStatusCheck.
+- Missed (also added to section 6):
+  - Dead per-seller cap (above): the donor has no working limit on listings per seller, so a seller can list without bound.
+  - cancelBid and takeBidMoney both verify the caller is the original owner and that the held holder is the same instance (456-469, 518-531); buy has no such check, only status.
+  - checkBidStatus removes NONE entries while iterating the map (already flagged in this section; confirmed).

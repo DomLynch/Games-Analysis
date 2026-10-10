@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+freeciv-freeciv	economy-trade	P	STRONG	full	common/improvement.c:307-330 and common/unittype.c:1517-1549 (buy price), server/cityhand.c:294-358 (server purchase gates and debit); rush-buy price with server recompute
+freeorion-freeorion	economy-trade	P	STRONG	full	Empire/ProductionQueue.cpp:91-125 (per-turn spend cap) and Empire/Empire.cpp:2397-2633 (server spend, completion gate, overshoot carry); bank path partly read
+gawric-Unity-Client-for-L2J	economy-trade	P	STRONG	thin	l2-unity/Assets/Scripts/UI/Game/Trade/TradeRequestWindow.cs:89-179 (20 s client invite window, drain, decline on timeout); server and trade-state logic absent or stubbed

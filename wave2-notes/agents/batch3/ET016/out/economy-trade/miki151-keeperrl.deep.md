@@ -157,3 +157,14 @@ Checked by tsc: `npx -p typescript tsc --noEmit --strict --target es2020` on the
 - The minimum skill is per resource, read from workshop info (player_control.cpp:2791-2792). Frankendom should make it a recipe field, not a workshop default.
 - The work rate uses a 0.02 factor per skill point and the largest neighbouring furniture boost (collective.cpp:1630-1637). This is the speed knob. Frankendom should express it as data (zone or station data), not as a constant in the function.
 - Not read: furnace.cpp (the second queue), `getEfficiency`, the runes path beyond the lines cited, and the whole of `immigration.cpp`.
+
+- Furnace queue (separate rule, 0.02 on the FURNACE attribute at collective.cpp ~1628) was not read.
+- Requeue path (player_control 2855-2868) re-queues with the same minSkill.
+
+## Checker findings
+
+- Verdict: CLEAN. No errors found; cited lines and numbers verified against the donor.
+- Corrected: nothing.
+- Missed (not in the note):
+  - Furnace queue (separate rule, 0.02 on FURNACE attr at collective.cpp ~1628) was not read.
+  - Requeue path (player_control 2855-2868) re-queues with the same minSkill; could be spelled out.

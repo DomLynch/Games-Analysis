@@ -158,3 +158,16 @@ class LotAuction {
 Best transferable idea: a timed sealed-price lot where each bid restarts the full window, the buyer's spendable amount excludes a reserve for mandatory costs still owed, and the balance is frozen until one close writes the sale.
 Decision (proposed): adapt - the single-lot timed bid and the reserve floor fit a server-side auction, but the chat-text bid channel and the in-memory balance must go, because we need structured commands and an append-only ledger.
 Acceptance: a player bids on a lot; each accepted bid restarts the lot timer to its full window; a bid above wallet minus reserve is refused with a message; at zero the item and the gold move in one server write, and one undo reverses both.
+
+- nominate snapshots lastQueue (564-565) BEFORE the player validity checks (567-569), so a failed nomination overwrites the undo snapshot.
+- Blind mode takes bids via onChatMessage (629-636, swallows the chat line); open mode uses onLogMessage.
+- Nomination time limit range is 7-300 (311) versus bid time 7-120.
+
+## Checker findings
+
+- Verdict: CLEAN. No errors found; cited lines and numbers verified against the donor.
+- Corrected: nothing.
+- Missed (not in the note):
+  - In nominate, lastQueue is snapshotted (564-565) BEFORE the player validity checks (567-569), so a failed nomination overwrites the undo snapshot: an undo-safety defect.
+  - Blind mode takes bids via onChatMessage (629-636, swallows the chat line) while open mode uses onLogMessage.
+  - Nomination time limit range is 7-300 (311) versus bid time 7-120.

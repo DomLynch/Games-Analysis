@@ -15,7 +15,7 @@ Acceptance: a server test where a player with 23 gold and streak 7 gets 12 at ro
 - Sinks: buy costs `RarityCost[rarity]` (1 common ... 20 legendary, shop.ts 20-30). Buy needs `money >= cost` and bench space or an evolution (game-commands 183-187), then debits (190). Reroll costs 1 unless a free roll is held (1038-1044). Level-up costs 4 gold and gives 4 XP (experience-manager.ts 51; game-commands 1091-1094).
 - Sell refund (`getSellPrice`): a duo unit is `ceil(cost x stars / 2)` (checked before the 1-star case, 150-151). A 1-star unit is the rarity cost (155). A 2-star or 3-star unit is `ceil(cost x 3^(stars-1) x 0.75)` (157-158), so a common pays 1, 3 and 7. Free-market rule: 0 (101-102, 169). During the fight phase a unit that is not on the bench cannot be sold (game-commands 970).
 - Supply, the copy pool: each rarity has a finite pool of copies per maximum star level (`PoolSize`, pools.ts 4-14; common `[1, 18, 27]`). A shop draw removes one copy (`pool.splice(index, 1)`, shop.ts 601). A sell returns 1, 3 or 9 copies by stars, halved with `ceil` for a duo (296-301, `releasePokemon`). A reroll or a full refresh first releases the six current picks back to the pool (`assignShop`, 338), then draws six new ones.
-- Order for a sell (server): alive check; unit on the player's board; not blocked by the fight phase; `releasePokemon` returns the copies to the pool; `getSellPrice` gives the refund; `addMoney(sellPrice, false)`; items on the unit go to the player's item list (game-commands 963-985).
+- Order for a sell (server): alive check; unit on the player's board; not blocked by the fight phase; `canSell` check (refuses unsellable units; not read in full, it sits just before the board delete in the sell command near game-commands 960-985); `releasePokemon` returns the copies to the pool; `getSellPrice` gives the refund; `addMoney(sellPrice, false)`; items on the unit go to the player's item list (game-commands 963-985).
 - Order for a buy (server): slot is filled and not the default; cost from `getBuyPrice`; affordability and bench space checked (187); money debited (190); unit placed on the bench; slot cleared (or the Unown shop is reassigned).
 
 ## 2. Key functions
@@ -41,7 +41,7 @@ Acceptance: a server test where a player with 23 gold and streak 7 gets 12 at ro
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order for sell (duo test first, then 1-star, then the star factor), income (interest cap, streak cap, flat, add-on), buy (balance and bench check, then debit), reroll (free-roll test, then debit) and pool moves (sell returns copies; a draw removes one). It omits the Pokemon-specific sell exceptions (egg, ditto, Eevee, uniques, legendaries, hatch, rare candy, Mothim), the free-market rule, regional pools and alt forms, the evolution trigger inside `addMoney`, the ghost-opponent gate, the Unown shop, and the reroll's release-then-redraw loop (the sketch only checks the cost). The bench check is passed in as a boolean.
+simplified: the sketch keeps the donor order for sell (duo test first, then 1-star, then the star factor), income (interest cap, streak cap, flat, add-on), buy (balance and bench check, then debit), reroll (free-roll test, then debit; a free roll is consumed, a paid roll grants free rolls for Repeat Ball holders) and pool moves (sell returns copies; a draw removes one). It omits the Pokemon-specific sell exceptions (egg, ditto, Eevee, uniques, legendaries, hatch, rare candy, Mothim), the free-market rule, regional pools and alt forms, the evolution trigger inside `addMoney`, the ghost-opponent gate, the Unown shop, and the reroll's release-then-redraw loop (the sketch only checks the cost). The bench check is passed in as a boolean.
 
 ```ts
 // Licence: GPL-3.0 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -95,6 +95,7 @@ export function roundIncome(i: RoundIncomeInput): number {
 // Ledger: one gold number per player. Every debit or credit goes through these methods.
 export class Ledger {
   gold: number;
+  freeRolls = 0; // shopFreeRolls
   readonly pool: Map<string, number> = new Map();
 
   constructor(startGold: number) {
@@ -121,11 +122,14 @@ export class Ledger {
     return refund;
   }
 
-  // Reroll: cost 1, or free while free rolls remain. The shop's picks go back to the pool first.
-  tryReroll(freeRolls: number): boolean {
-    const cost = freeRolls > 0 ? 0 : 1;
+  // Reroll: cost 1, or free while free rolls remain (a free roll is consumed). A paid reroll grants one free roll per
+  // Repeat Ball holder on the board (game-commands 1042-1049). The shop's picks go back to the pool first.
+  tryReroll(repeatBallHolders = 0): boolean {
+    const cost = this.freeRolls > 0 ? 0 : 1;
     if (this.gold < cost) return false;
     this.gold -= cost;
+    if (this.freeRolls > 0) this.freeRolls--;
+    else this.freeRolls += repeatBallHolders;
     return true;
   }
 }
@@ -143,9 +147,25 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 ## 6. Gaps and risks
 
 - One ledger is not enforced by the donor. Money changes in five commands through `addMoney` or directly, and also outside them: town item sales write `player.money += ItemSellPricesAtTown[item]` directly (game-commands 2076), which skips `addMoney`'s evolution trigger and ghost-opponent check. The scribble payout also writes money directly (scribbles.ts 95), and sets it to 1 for a shiny egg (85). Frankendom must route every credit and debit through one function, and test that none writes the field directly.
-- Interest cap can go negative. `maxInterest = 5 + gimmighoul - amulet` (1432). With enough amulet coins the cap is below 0, so `Math.min(maxInterest, ...)` is negative and the round would charge gold. Whether the uint8 schema field wraps or clamps this was not tested. Frankendom must clamp at 0 and test it.
+- Interest cap can go negative. `maxInterest = 5 + gimmighoul - amulet` (1432). With enough amulet coins the cap is below 0, so `Math.min(maxInterest, ...)` is negative and the round would charge gold. The money field is uint16 (player.ts 117), so a negative balance would wrap at 65535 (read, not run); whether a negative interest can really reach that debit was not tested. Frankendom must clamp at 0 and test it.
 - The round award is computed once, at the end of a fight, in one server call (1896-1930). Frankendom's fast duels have no shop round, so only the award shape transfers. The per-round cadence does not.
 - Pool supply is a real conservation rule (copies leave on draw and return on sell or release), but it only holds if every path that drops a unit calls release. Not checked here: `canSell` and the other drop paths (for example, a unit that dies or is removed by an item).
 - Sell refund grows to 9 times the base for a 3-star unit (`3^2 x 0.75`, shop.ts 158). Whether a merged unit can pay out more than it cost is a design question for Frankendom's economy; this was not measured.
 - Money-based evolution runs inside `addMoney` (player.ts 304-307) for every credit, so a credit can trigger a board change. Frankendom should keep evolution out of the ledger and call it from the caller.
 - The donor is GPL-3.0. Clean-room, shape only.
+
+- computeIncome also gives player.addExperience(2) every round (game-commands ~1451), an XP faucet in the same loop; OnLevelUpCommand also requires experienceManager.canLevelUp() (1092).
+- releasePokemon (models/shop.ts ~293-320) does not return regional units sold outside their home region to the pool, so the pool-conservation claim has a leak.
+- getSellPrice applies a Rare Candy star reduction (stars-1, floored at 1) at models/shop.ts ~111-113 (the note listed rare candy only as omitted).
+
+## Checker findings
+
+- Verdict: MINOR
+- Corrected:
+  - Section 6 interest-cap bullet: the money field is uint16 (not uint8), so a negative balance would wrap at 65535.
+  - Section 1 sell order now includes the canSell check (not read in full).
+  - Sketch: tryReroll never consumed a free roll and omitted the Repeat Ball grant on a paid reroll; Ledger now has a freeRolls field, tryReroll(repeatBallHolders) consumes a free roll or grants rolls on a paid one. Preamble updated. Re-typechecked on the VPS (tsc --strict, rc 0).
+- Missed (also added to section 6):
+  - computeIncome also gives player.addExperience(2) every round (game-commands ~1451), an XP faucet in the same loop; OnLevelUpCommand also requires experienceManager.canLevelUp() (1092).
+  - releasePokemon (models/shop.ts ~293-320) does not return regional units sold outside their home region to the pool, so the pool-conservation claim has a leak.
+  - getSellPrice applies a Rare Candy star reduction (stars-1, floored at 1) at models/shop.ts ~111-113 (the note listed rare candy only as omitted).
