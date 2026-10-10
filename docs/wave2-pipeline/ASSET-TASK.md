@@ -23,3 +23,10 @@ Goal (Dom, 2026-10-11): for each donor game, find out what NON-CODE content it h
 
 ## Final reply (compact)
 A table: donor, code licence, asset licence, best class, #inspiration bullets, one-line highlight; then anything you did not verify and anything unexpected.
+
+## ADDITIONS (Strategy coverage review, 2026-10-10) - apply to every donor
+- DATA FIRST: find the data tables/string tables (XML/JSON/CSV/Lua/SQL/locale) that hold names and looks and cite the table, not the loader.
+- State which HALF you read (server, client, or data pack); name the matching other half if it exists in the box. Never write 'absent' for a half you did not read.
+- Briefs: 'top striking' criteria = readable silhouette at 375 wide, one signature behaviour, one signature sound/effect, could be ours at 20-30 percent resemblance. Put Dom's rule in every brief: recreate as a clearly distinct original, never a copy; name the trait KEPT and the trait CHANGED.
+- For class C/D donors (restricted, proprietary, leaked, unclear) inspiration stays CATEGORY-LEVEL (e.g. 'a plated beetle boss'), never instance-level exact looks.
+- Every named creature/item/zone needs a file path.
