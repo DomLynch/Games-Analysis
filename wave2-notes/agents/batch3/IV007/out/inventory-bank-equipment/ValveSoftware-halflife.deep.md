@@ -122,7 +122,7 @@ function tryRespawnAt(now: number, limitInWorld: boolean, liveEntities: number, 
 export {};
 ```
 
-Checked by running the sketch on the VPS (compiled to JS, seven asserts): an ammo add of 200 into a reserve of 240 with cap 250 adds 10 and stops at 250; a 5-round add at 250 is refused; an owned weapon whose ammo is full is refused; an owned weapon with room converts (reserve 240 + 30 clamps to 250); a new weapon attaches as 1 item; with weapon-stay on, an owned non-limited weapon is refused; a dead player is refused; the timers are now+30, now+20, and a limited weapon with 800 of 1000 entities spawns now while 950 waits 20 s. Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS, exit 0.
+Checked by running the sketch on the VPS (compiled to JS, nine checks): an ammo add of 200 into a reserve of 240 with cap 250 adds 10 and stops at 250; a 5-round add at 250 is refused; an owned weapon whose ammo is full is refused; an owned weapon with room converts (reserve 240 + 30 clamps to 250); a new weapon attaches as 1 item; with weapon-stay on, an owned non-limited weapon is refused; a dead player is refused; the timers are now+30, now+20, and a limited weapon with 800 of 1000 entities spawns now while 950 waits 20 s. Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS, exit 0.
 
 ## 5. Lands in
 
