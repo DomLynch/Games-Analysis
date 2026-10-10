@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+AAEmu-AAEmu	economy-trade	P	STRONG	full	AuctionManager.cs:605-637 (listing fee 1-4% of buyout, cap 1000000), 130-188 (buy-now and outbid), 284-296 (5 s expiry sweep); no balance check on these debits (Character.cs:1503-1556).
+AAEmu-AAEmu	quests-dialogue	P	STRONG	full	NewQuestCode.cs:202-292 (objective status ladder), 62-161 (step advance); Quest.cs:344-398 (reward ratio 0/0.3/1/1/1.2 and payout); integer-division quirk at NewQuestCode.cs:271.
+AAEmu-AAEmu	parties-guilds-chat	P	STRONG	full	TeamManager.cs:732-818 (500 ms change-only party sync, 5 s forced resync, 0.01 position tolerance, one batch per recipient); TickManager.cs:16-30 (variable-step tick loop).

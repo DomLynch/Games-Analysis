@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+dkfans-keeperfx	combat-sim	P	STRONG	full	/mnt/frankendom-donors/dkfans-keeperfx/src/thing_stats.c:977-1014,1125-1146 and thing_shots.c:965-984: hit roll, luck-doubled melee blow, armour soak with a floor of 1, and first-lethal kill credit in one damage step.
+ValveSoftware-source-sdk-2013	combat-sim	P	STRONG	full	/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/server/basecombatcharacter.cpp:2480-2516: a fractional damage accumulator releases one whole point at 1.0 per entity; restricted Valve licence, shape only.
+smogon-pokemon-showdown	combat-sim	P	STRONG	full	/mnt/frankendom-donors/smogon-pokemon-showdown/sim/battle-actions.ts:1572-1829: integer damage order with a crit stage ladder, 85-100 roll, STAB 1.5, type doubling and halving, burn 0.5, minimum 1, and a 16-bit final truncation; MIT.

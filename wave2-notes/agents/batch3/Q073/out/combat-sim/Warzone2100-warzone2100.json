@@ -1,0 +1,110 @@
+{
+ "game": "Warzone2100-warzone2100",
+ "category": "combat-sim",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/Warzone2100-warzone2100/src/combat.cpp",
+ "licence": "GPL-2.0-or-later (combat.cpp header: version 2 or any later version)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/damage.ts",
+ "parity_row": 1,
+ "pattern_tags": [
+  "clamp-and-report",
+  "new:level-damage-reduction",
+  "new:seeded-hit-roll",
+  "new:miss-scatter",
+  "new:shield-before-body"
+ ],
+ "data_fields": [
+  {
+   "name": "hit_chance_short",
+   "donor_constant": "weapon stat shortHitChance, percent (values not read)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/src/combat.cpp:214"
+  },
+  {
+   "name": "hit_chance_long",
+   "donor_constant": "weapon stat hitChance, percent (values not read)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/src/combat.cpp:219"
+  },
+  {
+   "name": "exp_accuracy_bonus",
+   "donor_constant": "5 (percent of base chance per level; attacker adds, defender subtracts)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/src/droid.h:53"
+  },
+  {
+   "name": "exp_reduce_damage",
+   "donor_constant": "6 (percent of incoming damage per level)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/src/droid.h:52"
+  },
+  {
+   "name": "min_damage_pct",
+   "donor_constant": "weapon stat minimumDamage, percent floor (values not read)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/src/combat.cpp:522"
+  },
+  {
+   "name": "min_weapon_damage",
+   "donor_constant": "1",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/src/combat.cpp:525"
+  },
+  {
+   "name": "heavy_damage_level",
+   "donor_constant": "25 (percent of body; doubles fire pause in single player with camtweak option)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/src/combat.cpp:140"
+  },
+  {
+   "name": "emp_disable_time",
+   "donor_constant": "10000 (comment says 10 secs)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/src/action.h:44"
+  },
+  {
+   "name": "difficulty_modifier",
+   "donor_constant": "(150,70) (125,85) (100,100) (90,110) (80,120) percent; first applies to enemy-owned victims, second to local-player units",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/src/difficulty.cpp:57"
+  },
+  {
+   "name": "miss_min_offset",
+   "donor_constant": "2 x target shape radius",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/src/combat.cpp:348"
+  },
+  {
+   "name": "grounded_multiplier",
+   "donor_constant": "3 (grounded VTOL, and transporter in multiplayer, not moving)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/src/droid.cpp:308"
+  },
+  {
+   "name": "structure_base_level",
+   "donor_constant": "1 (default experience level used in damage for structures)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/src/structure.cpp:439"
+  }
+ ],
+ "best_idea": "Keep one damage function that applies level reduction, then armour with a percent floor, then a minimum of one, and decide the kill before shields, so every hit goes through one ledger.",
+ "decision": "adapt",
+ "decision_why": "The damage order is a small pure function that fits one engine and one ledger if it lives in src/fight; we do not take the projectile miss scatter (a visible miss is a state, not a shot), and we do not copy the shield-before-kill order without a test that pins it.",
+ "decision_status": "proposed",
+ "acceptance": "A server test asserts that a raw 40 hit into armour 10 with a 25% floor deals 30, a raw 40 hit into armour 35 deals 10, every hit deals at least 1, and the lethal-blow rule with shields is pinned by one test."
+}

@@ -1,0 +1,109 @@
+{
+ "game": "azerothcore-azerothcore-wotlk",
+ "category": "combat-sim",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+ "licence": "GPL-2.0-or-later (Unit.cpp header: version 2 or any later version)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/outcome.ts",
+ "parity_row": 1,
+ "pattern_tags": [
+  "new:banded-outcome-roll",
+  "new:skill-gap-shift",
+  "new:outcome-multiplier",
+  "new:armour-fraction"
+ ],
+ "data_fields": [
+  {
+   "name": "roll_range",
+   "donor_constant": "urand(0,10000) inclusive (10001 values); chances in hundredths of a percent",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp:3014"
+  },
+  {
+   "name": "skill_bonus_per_point",
+   "donor_constant": "4 (hundredths of a percent per attacker skill point over victim skill; lowers dodge, parry, block only)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp:3012"
+  },
+  {
+   "name": "miss_width",
+   "donor_constant": "MeleeSpellMissChance (not read; passed in by wrapper)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp:2979"
+  },
+  {
+   "name": "dodge_parry_block_widths",
+   "donor_constant": "from unit aura, skill and flag inputs (not read)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp:2986"
+  },
+  {
+   "name": "glancing_width_cap",
+   "donor_constant": "4000 (40%)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp:3125"
+  },
+  {
+   "name": "glancing_damage_per_level_gap",
+   "donor_constant": "1 - 0.1 x min(levelGap, 3)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp:1924"
+  },
+  {
+   "name": "crushing_gap_threshold",
+   "donor_constant": "15 skill points",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp:3146"
+  },
+  {
+   "name": "crushing_width_per_point",
+   "donor_constant": "gap x 200 - 1500 (2% per point, 15% base)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp:3149"
+  },
+  {
+   "name": "crushing_damage_bonus",
+   "donor_constant": "+50% (damage / 2)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp:1941"
+  },
+  {
+   "name": "crit_damage_multiplier",
+   "donor_constant": "x2 before aura mods",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp:1833"
+  },
+  {
+   "name": "armour_constant",
+   "donor_constant": "a = 0.1 x armour / (8.5 x L + 40); L + 4.5 per level above 59",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp:2291"
+  },
+  {
+   "name": "armour_fraction_cap",
+   "donor_constant": "0.75",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp:2296"
+  }
+ ],
+ "best_idea": "Resolve each swing with one server roll sorted into ordered outcome bands (miss, defence, glance, crush, crit, normal), let a skill gap shift only the defence bands, and apply each outcome's multiplier after armour.",
+ "decision": "adapt",
+ "decision_why": "Ordered single-roll bands with per-outcome multipliers after armour are a fast-duel hit resolution the server can own and the client only displays; we drop WoW-specific rules (behind-the-back, sitting victim, NO_* flags, aura mods, cleanDamage bookkeeping), and parry and block take guard state as input.",
+ "decision_status": "proposed",
+ "acceptance": "A server test sets miss 500, dodge 1000, crit 800, other widths 0, skill bonus 0, and asserts rolls 0-499 miss, 500-1499 dodge, 1500-2299 crit, 2300-9999 normal, plus one pinned armour value from the donor formula."
+}

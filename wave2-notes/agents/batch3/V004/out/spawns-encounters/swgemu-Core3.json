@@ -113,7 +113,7 @@
    "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp:1830"
   },
   {
-   "name": "group_home_grace_s",
+   "name": "theater_grace_s",
    "donor_constant": "300",
    "unit": "s",
    "where": "engine constant",

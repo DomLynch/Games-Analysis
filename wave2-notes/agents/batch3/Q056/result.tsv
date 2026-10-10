@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+jynew-jynew	loot-drops	P	STRONG	full	/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameSave/RoleInstance.cs:671-716 craft-from-study roll (LianZhiItem), fed by GameBattle/BattleManager.cs:342-343; no kill-drop table found
+keldaanCommunity-pokemonAutoChess	loot-drops	P	STRONG	full	/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/models/pve-stages.ts:177-188 stage-19 reward: unowned weight 2, owned 1, two draws, ledger written after draws
+alexbatalov-fallout2-ce	loot-drops	P	STRONG	full	/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/actions.cc:500-501 and src/item.cc:570-640: inventory spills when the body vanishes; src/map.cc:1091-1166 aging on zone re-entry

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+jynew-jynew	combat-sim	P	STRONG	full	/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/LuaScripts/Jyx2Battle/DamageCaculator.lua:149-240 - main formula, chip rule, distance falloff and min-1 damage read end to end; note out/combat-sim/jynew-jynew.deep.md
+Anuken-Mindustry	combat-sim	P	STRONG	full	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/entities/Damage.java:655-665 (calculateDamage falloff 0.4, applyArmor floor 0.1) and ShieldComp.java:28-81 (armour then shield then health); BulletType.java:488-520 hit path; note out/combat-sim/Anuken-Mindustry.deep.md
+CleverRaven-Cataclysm-DDA	combat-sim	P	STRONG	full	/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/creature.cpp:1193-1259 (hit-quality tiers and multipliers) with goodhit path 1396-1440 and accuracy_projectile_attack 1026-1036; game_constants.h:95-99; note out/combat-sim/CleverRaven-Cataclysm-DDA.deep.md

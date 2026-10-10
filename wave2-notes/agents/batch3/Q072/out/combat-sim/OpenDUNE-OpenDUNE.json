@@ -1,0 +1,66 @@
+{
+ "game": "OpenDUNE-OpenDUNE",
+ "category": "combat-sim",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/OpenDUNE-OpenDUNE/src/map.c",
+ "licence": "GPL-2.0 (COPYING: GNU GPL version 2, June 1991)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/damage.ts",
+ "parity_row": 1,
+ "pattern_tags": [
+  "clamp-and-report",
+  "hit-aggregation",
+  "new:splash-falloff"
+ ],
+ "data_fields": [
+  {
+   "name": "blast_radius_steps",
+   "donor_constant": "16 steps (1 tile); 32 steps for death-hand",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "map.c:405"
+  },
+  {
+   "name": "steps_per_tile",
+   "donor_constant": "16 (distance >> 4 of a 256-unit tile)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "map.c:427"
+  },
+  {
+   "name": "falloff_shift_per_quarter_tile",
+   "donor_constant": "distance >> 2 (one halving per quarter tile)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "map.c:431"
+  },
+  {
+   "name": "blast_hit_points",
+   "donor_constant": "shooter table damage (ui->damage)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "script/unit.c:623"
+  },
+  {
+   "name": "missile_trooper_damage_cut",
+   "donor_constant": "damage minus damage/4",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "script/unit.c:659"
+  },
+  {
+   "name": "half_hitpoint_threshold",
+   "donor_constant": "hit points below type max / 2",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "unit.c:1579"
+  }
+ ],
+ "best_idea": "An area hit that halves its damage per quarter-tile of distance, with a hard one-tile cut-off, gives a shockwave or finisher a falloff that needs only integer shifts and no square root.",
+ "decision": "adapt",
+ "decision_why": "Frankendom's many-on-one fights can use a distance falloff for a shockwave, but the donor's splash hits every unit in radius with no accuracy roll and no team check on the damage, so each hit must go through the server-verified path with guard and a cap of three targets.",
+ "decision_status": "proposed",
+ "acceptance": "In a 3-on-1 fight, a shockwave centred on the attacker's tile deals a quarter of its hit points to an enemy at 0.5 tile, an eighth at 0.75 tile, and nothing at 1 tile; at most three enemies are hit, and a server test asserts each value."
+}

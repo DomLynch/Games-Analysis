@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+keldaanCommunity-pokemonAutoChess	combat-sim	P	STRONG	full	app/core/pokemon-state.ts:32-265 (attack: crit, dodge, true split, crit reduction) and 388-786 (handleDamage: armour divisor, flat blocks, floor 1, shield, HP, mana, death); pokemon-entity.ts:336-345, 348-460.
+ax-grymyr-l2dn-server	combat-sim	P	STRONG	thin	L2Dn.GameServer.Scripts/Handlers/EffectHandlers/PhysicalAttack.cs:73-200 with Formulas.cs:204-389 and 608-664 (crit, 120-degree shield arc, perfect block) and Creature.cs:4590-4795 (doAttack, reduceCurrentHp); trait, PvP/PvE, random and auto-attack damage formulas not read.
+cvet-fonline	combat-sim	P	PARTIAL	thin	No damage or hit code in the engine repo; only doc sentences at Docs/_meta/DocumentationVerificationReport.md:2688 about Last Frontier Combat::ApplyDamage (code not vendored); see verdict-cvet-fonline-combat-sim.txt.

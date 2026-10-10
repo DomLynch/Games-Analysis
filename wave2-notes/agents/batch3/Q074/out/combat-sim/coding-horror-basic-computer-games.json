@@ -1,0 +1,87 @@
+{
+ "game": "coding-horror-basic-computer-games",
+ "category": "combat-sim",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/coding-horror-basic-computer-games/28_Combat/java/Combat.java",
+ "licence": "as read",
+ "licence_class": "permissive",
+ "target_module": "src/fight/damage.ts",
+ "parity_row": 1,
+ "pattern_tags": [
+  "new:commit-share-band",
+  "new:two-strike-sequence",
+  "new:win-band-ratio"
+ ],
+ "data_fields": [
+  {
+   "name": "pool_cap_per_side",
+   "donor_constant": "72000",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "Combat.java:18"
+  },
+  {
+   "name": "computer_army_start",
+   "donor_constant": "30000",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "Combat.java:27"
+  },
+  {
+   "name": "computer_navy_start",
+   "donor_constant": "20000",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "Combat.java:28"
+  },
+  {
+   "name": "computer_air_start",
+   "donor_constant": "22000",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "Combat.java:29"
+  },
+  {
+   "name": "first_strike_low_cut",
+   "donor_constant": "1/3 of pool",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Combat.java:97"
+  },
+  {
+   "name": "first_strike_high_cut",
+   "donor_constant": "2/3 of pool",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Combat.java:101"
+  },
+  {
+   "name": "second_strike_cut",
+   "donor_constant": "1/2 of enemy pool",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Combat.java:193"
+  },
+  {
+   "name": "win_ratio",
+   "donor_constant": "3/2 of enemy total",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Combat.java:245"
+  },
+  {
+   "name": "loss_ratio",
+   "donor_constant": "2/3 of enemy total",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Combat.java:249"
+  }
+ ],
+ "best_idea": "A group action's outcome is set by which fraction of a pool is committed (below a third, below two thirds, otherwise), with one fixed band table that is easy to test and explain.",
+ "decision": "reject",
+ "decision_why": "The bands resolve whole unit pools in a turn-based war game; Frankendom's duel is a per-blow state machine with server-verified kills, and MAX_ATTACKERS = 3 is a count, not a pool share.",
+ "decision_status": "proposed",
+ "acceptance": "If built anyway, a server test asserts that committing under one third of a pool loses only the men sent and changes no other pool."
+}

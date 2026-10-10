@@ -1,1 +1,2 @@
 game	category	old	verdict	depth	finding
+vcmi-vcmi	combat-sim	P	STRONG	full	scripts/damage/damageCalculator.lua:395-432 (Script:calculate) sums positive factors, multiplies negative ones, floors at 1 and derives kills from the range; the one server roll is at server/battles/BattleActionProcessor.cpp:1446 via lib/battle/BattleInfo.cpp:633-649

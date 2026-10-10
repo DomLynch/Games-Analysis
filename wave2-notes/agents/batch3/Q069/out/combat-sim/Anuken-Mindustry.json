@@ -1,0 +1,74 @@
+{
+  "game": "Anuken-Mindustry",
+  "category": "combat-sim",
+  "cell": 2,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/entities/Damage.java",
+  "licence": "as read: GNU GPL version 3 (LICENSE header)",
+  "licence_class": "copyleft",
+  "target_module": "src/fight/damage.ts",
+  "parity_row": 1,
+  "pattern_tags": [
+    "new:armour-floor",
+    "protect-soak",
+    "clamp-and-report",
+    "new:splash-falloff"
+  ],
+  "data_fields": [
+    {
+      "name": "min_armour_fraction",
+      "donor_constant": "0.1",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/Vars.java:133"
+    },
+    {
+      "name": "splash_edge_floor",
+      "donor_constant": "0.4",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/entities/Damage.java:657"
+    },
+    {
+      "name": "splash_radius_default",
+      "donor_constant": "-1 (no splash)",
+      "unit": "units",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/entities/bullet/BulletType.java:309"
+    },
+    {
+      "name": "per_hit_cap_fraction",
+      "donor_constant": "-1 (off by default); cap = maxHealth * fraction + shield",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/entities/bullet/BulletType.java:63"
+    },
+    {
+      "name": "armour_multiplier_default",
+      "donor_constant": "1",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/entities/bullet/BulletType.java:197"
+    },
+    {
+      "name": "knockback_scale",
+      "donor_constant": "80 * knockback * knockbackMultiplier",
+      "unit": "units",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/entities/bullet/BulletType.java:517"
+    },
+    {
+      "name": "splash_push_divisor",
+      "donor_constant": "2 / mass",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/entities/Damage.java:534"
+    }
+  ],
+  "best_idea": "A flat armour with a floor (never more than 90% of a hit) plus shield-before-health gives soak without ever making a hit do nothing.",
+  "decision": "adapt",
+  "decision_why": "Take the armour floor and shield-first order as the gear-soak and guard-soak rule in the engine damage step; keep the splash falloff only for effects that hit several enemies; reject the knockback vector.",
+  "decision_status": "proposed",
+  "acceptance": "A server test asserts armour 30 vs a raw hit of 25 deals 2.5 (10% floor), a raw hit of 25 with armour 0 against shield 10 leaves shield 0 and loses 15 health, and an area hit deals 100% at the centre and 40% at the radius edge."
+}

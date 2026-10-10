@@ -119,8 +119,6 @@ export {};
 - The reward ratio applies to XP and copper only. Item rewards are gated by a flag set in the aggro rank (QuestActObjAggro.cs:71, 79); item pool code (Quest.cs 400-418) not read.
 - Quest-level gating (who may accept, level and requirements) is not read (CharacterQuests.AddQuest). Frankendom's one ledger and the zone-data rule need that as data, not code.
 
-Reuse tag: rewrite-from-idea (LGPL/GPL: clean-room; shape only)
-
 Best transferable idea: a contract with an early turn-in (30% at half progress), a full payout at target, and a 120% overachieved bonus, all computed as a pure function of the objective counters and paid through one ledger.
 Decision (proposed): adapt — the status ladder and the ratios are plain numbers that fit bounties and contracts, but the integer-division quirk, the client-asserted talk and the untested early turn-in must not be copied.
 Acceptance: server test: a count-2 LetItDone contract refuses turn-in at 0 of 2 kills, pays 30% of the pool at 1 of 2, 100% at 2 of 2, and 120% at 3 kills (ceil(2 x 1.5) = 3); a turn-in request from a player beyond the NPC's range is refused.

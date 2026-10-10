@@ -1,0 +1,74 @@
+{
+ "game": "gemrb-gemrb",
+ "category": "loot-drops",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Interface.cpp",
+ "licence": "GPL-2.0-or-later (SPDX header, Interface.cpp line 3)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/loot.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "new:weighted-row-pick",
+  "new:tiered-table-upgrade",
+  "new:nested-table-passes",
+  "new:stack-count-range"
+ ],
+ "data_fields": [
+  {
+   "name": "row odds mode",
+   "donor_constant": "uniform, or peaked 2d((n+1)/2)-2 when n is odd and header is 2",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Interface.cpp:3418"
+  },
+  {
+   "name": "nested table pass cap",
+   "donor_constant": "10 passes",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Interface.cpp:3425"
+  },
+  {
+   "name": "tier progression",
+   "donor_constant": "lmrvvvvv (L to M to R to V, V stays)",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Interface.cpp:3361"
+  },
+  {
+   "name": "stack count range",
+   "donor_constant": "RAND(1, N) inclusive, N from item*N suffix",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Interface.cpp:3471"
+  },
+  {
+   "name": "gold amount",
+   "donor_constant": "number in the entry (fixed, no roll)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Interface.cpp:3465"
+  },
+  {
+   "name": "gold second charge",
+   "donor_constant": "uniform 0 to U-1 added to gold (IWD comment)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Interface.cpp:3249"
+  },
+  {
+   "name": "treasure sub-table count",
+   "donor_constant": "up to 5 sub-tables from the difficulty column",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/Interface.cpp:3213"
+  }
+ ],
+ "best_idea": "Give a loot row an upgrade that moves a chest to the next tier table (L to M to R to V), and resolve the whole nested table on the server in one pass capped at ten hops.",
+ "decision": "adapt",
+ "decision_why": "Keep the row table with an explicit odds field, the tier-upgrade step, a ten-pass cap and a stack count range, resolved on the server at the verified kill. Reject resolution at record read or spawn time, the string grammar, the gold second-charge trick and the global difficulty column, which conflict with server-verified kills and zones as data.",
+ "decision_status": "proposed",
+ "acceptance": "Server test with a seeded RNG: a three-row table with triangular odds gives about 25 / 50 / 25 over 100k kills (within 1 point); a chest row UP on table chest_l yields chest_m's pick, and on chest_v yields chest_v's pick; a nested table resolves to an item within ten hops; a zone with a missing table fails at load, not at the kill."
+}

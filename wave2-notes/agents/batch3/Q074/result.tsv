@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+coding-horror-basic-computer-games	combat-sim	P	STRONG	full	28_Combat/java/Combat.java:72-157 (attackFirst) and 159-259 (attackSecond): commit-share bands and the two-strike rule; deterministic, no random source; decision reject
+PixelGuys-Cubyz	combat-sim	P	STRONG	full	src/sync.zig:249-256 (addHealth) and 847-870 (clamp, kill at zero with refill, delta sync); game.zig:818-821 fall damage; server trusts client-sent damage (decision adapt)
+hedgewars-hw	combat-sim	P	STRONG	full	hedgewars/uGears.pas:81-133 (CheckNoDamage damage round) and 342-372 (turn-end rounds with pauses); uGearsUtils.pas:281-349 (ApplyDamage pending add); same-tick aggregation adapted (decision adapt)

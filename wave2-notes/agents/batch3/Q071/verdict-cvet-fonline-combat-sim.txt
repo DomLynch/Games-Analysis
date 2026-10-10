@@ -1,0 +1,24 @@
+cvet-fonline (combat-sim, cell 1)
+Verdict: PARTIAL (depth thin). Old rating P.
+Donor: /mnt/frankendom-donors/cvet-fonline (engine repo, cvet/fonline, version 2026.1.13-dev)
+Licence: MIT as read (/mnt/frankendom-donors/cvet-fonline/LICENSE: "MIT License", Copyright (c) 2006 - 2026, Anton Tsvetinskiy aka cvet). Permissive; code could be adapted.
+Hint file (INFERRED, no file given): not a real hint; searched the whole repo.
+
+Why PARTIAL: the engine repo has no damage, hit, crit or knockback code. The only combat mechanism in the donor is a sentence in a verification report describing `Combat::ApplyDamage` in the Last Frontier project, which is not vendored here, so the mechanism itself could not be read.
+
+Files opened (at least 3):
+1. /mnt/frankendom-donors/cvet-fonline/Source/Server/Critter.h lines 54-64 (class Critter declaration; no hit-point, damage or attack members in that range). A grep of the whole file for attack, hp, health, damage, combat, weapon found nothing.
+2. /mnt/frankendom-donors/cvet-fonline/Examples/MinimalMultiplayer/Scripts/Tutorial.fos lines 1-30 (properties and remote calls only; no combat).
+3. /mnt/frankendom-donors/cvet-fonline/Examples/ContentShowcase/Scripts/Showcase.fos lines 1-12 (remote calls only; no combat).
+4. /mnt/frankendom-donors/cvet-fonline/Docs/SyncCoverAnalysis.md lines 776-786 (names Combat.DeferredAttackHitAsync, Combat.ApplyMeleeCleave and ApplyDamage as call sites in managed gameplay code; no code shown).
+5. /mnt/frankendom-donors/cvet-fonline/Docs/_meta/DocumentationVerificationReport.md line 2688 (states that Combat::ApplyDamage now stops after a damage callback destroys its target; lethal-damage tests re-prove corpse handles).
+6. /mnt/frankendom-donors/cvet-fonline/Docs/en/contributing/coding-contracts/nullability.md line 197 (mentions Combat::DeferredAttackHit as a past defect).
+Searches run across the repo for ApplyDamage, DeferredAttackHit, class Combat, Combat::, lethal, ToDeadWithImpulse: matches only in Docs and llms-full.txt, none in Source, Examples or Scripts.
+
+Not read: any Combat module code (it is not in this repo), the Last Frontier project, the managed script runtime that would host it, and any tick or AI code that calls it.
+
+Confidence: high that this repo contains no damage or hit formula; medium that the Last Frontier combat exists as the docs describe, since only doc sentences were read.
+
+Best transferable idea: A damage call that kills or destroys its own target should stop at once after the death callback runs and must not touch that target again, so a server kill test can assert one death and one ledger entry per kill.
+Decision (proposed): adapt - take the stop-after-kill rule and the "re-check the target before each later step" check into the server kill step under one ledger; reject any copy of the Last Frontier combat code, since it is not in this repo and cannot be read here.
+Acceptance: A server test asserts that a hit that kills a fighter records exactly one death and one ledger entry, and that a second hit in the same tick on that fighter is ignored.

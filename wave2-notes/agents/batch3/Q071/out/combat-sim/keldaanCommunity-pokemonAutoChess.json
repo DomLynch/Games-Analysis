@@ -1,0 +1,116 @@
+{
+ "game": "keldaanCommunity-pokemonAutoChess",
+ "category": "combat-sim",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/pokemon-state.ts",
+ "licence": "GPL-3.0 as read (LICENSE file: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/damage.ts",
+ "parity_row": 1,
+ "pattern_tags": [
+  "protect-soak",
+  "clamp-and-report",
+  "hit-aggregation",
+  "new:armour-divisor"
+ ],
+ "data_fields": [
+  {
+   "name": "armour_factor",
+   "donor_constant": "0.05",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/config/game/battle.ts:5"
+  },
+  {
+   "name": "base_crit_chance",
+   "donor_constant": "10 (percent)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/config/game/battle.ts:8"
+  },
+  {
+   "name": "base_crit_power",
+   "donor_constant": "2",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/config/game/battle.ts:9"
+  },
+  {
+   "name": "crit_reduction_named_effect",
+   "donor_constant": "0.3 BATTLE_ARMOR / 0.5 MOUTAIN_RESISTANCE / 0.7 DIAMOND_STORM (one applies)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/pokemon-state.ts:74"
+  },
+  {
+   "name": "crit_reduction_per_black_augurite",
+   "donor_constant": "0.1 per item",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/pokemon-state.ts:80"
+  },
+  {
+   "name": "true_fraction_max_meltdown",
+   "donor_constant": "1.25 (STEEL_SURGE 0.33, STEEL_SPIKE 0.66, CORKSCREW_CRASH 1.0)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/pokemon-state.ts:152"
+  },
+  {
+   "name": "flat_block_by_effect",
+   "donor_constant": "12 COACHING / 9 DEFIANT / 6 STURDY / 3 GUTS (first present, not summed)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/pokemon-state.ts:548"
+  },
+  {
+   "name": "wonder_guard_flat_block",
+   "donor_constant": "20",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/pokemon-state.ts:560"
+  },
+  {
+   "name": "min_damage_floor",
+   "donor_constant": "1 (after ceil)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/pokemon-state.ts:565"
+  },
+  {
+   "name": "flinch_shield_share",
+   "donor_constant": "0.5",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/pokemon-state.ts:591"
+  },
+  {
+   "name": "armour_status_halving",
+   "donor_constant": "def / 2, rounded",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/pokemon-state.ts:478"
+  },
+  {
+   "name": "mana_per_hp_damage",
+   "donor_constant": "ceil(residual / 10)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/pokemon-state.ts:699"
+  },
+  {
+   "name": "dodge_cap",
+   "donor_constant": "0.9",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/pokemon-entity.ts:619"
+  }
+ ],
+ "best_idea": "Resolve each hit once in a fixed order (alive gate, protect gate, defence as a divisor 1/(1+k*def), flat blocks, floor of 1, shield first with overflow into HP), and split a crit into a true part that ignores the defender's crit reduction.",
+ "decision": "adapt",
+ "decision_why": "Take the hit order and the defence divisor as data; drop the cover-band redirect and reflect recursion from the damage step, since one ledger and server-verified kills need each hit recorded once and MAX_ATTACKERS = 3 makes a redirect hard to audit.",
+ "decision_status": "proposed",
+ "acceptance": "A server test asserts that a 30-point physical hit against def 20 with no shield removes exactly 15 HP, a 1-point hit against def 100 removes 1 HP, and a hit on a protected fighter removes 0 HP and spends no shield."
+}

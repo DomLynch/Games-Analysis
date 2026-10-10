@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+swgemu-Core3	ai-aggro	P	STRONG	full	ThreatMap.cpp:530-600 (getHighestThreatAttacker: 24 s hold, 128 range, rebuilt matrix) and ThreatMatrix.cpp:79-120 (taunt/focus override, weighted pool, uniform pick); AI tree default.lua:374-425
+swgemu-Core3	spawns-encounters	P	STRONG	full	SpawnAreaImplementation.cpp:23-402 (presence, interval, area cap, per-entry cap, permit, spawn) and DynamicSpawnObserverImplementation.cpp:11-98 (lair count, 4 lives, respawn 60+2*level s, empty despawn 60 s); grace AiAgentImplementation.cpp:1818-1832 and TheaterObjectImplementation.cpp:51-55 (30 s creature, 300 s theater)
+swgemu-Core3	loot-drops	P	STRONG	full	LootManagerImplementation.cpp:695-755 (per-entry chance roll then weighted group pick, 10000000 scale) and 757-813 (nested groups, depth 32); ThreatMap.cpp:308-396 (loot owner = highest loot-damage group leader, DOT excluded)

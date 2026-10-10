@@ -1,0 +1,95 @@
+{
+ "game": "swgemu-Core3",
+ "category": "loot-drops",
+ "cell": 8,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp",
+ "licence": "GNU AGPL-3.0 (COPYING, Version 3)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/loot.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "loot-cumulative-roll",
+  "hit-aggregation",
+  "new:owner-by-loot-damage",
+  "new:nested-group-descent"
+ ],
+ "data_fields": [
+  {
+   "name": "roll_scale",
+   "donor_constant": "10000000",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp:711"
+  },
+  {
+   "name": "entry_chance",
+   "donor_constant": "script lootChance (10000000 = 100%)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/lootgroup/LootGroupCollectionEntry.h:39"
+  },
+  {
+   "name": "default_chance_base",
+   "donor_constant": "2000000 (20%)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/lootgroup/LootGroupCollectionEntry.h:42"
+  },
+  {
+   "name": "default_chance_per_level",
+   "donor_constant": "20000 (0.2% per level)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/lootgroup/LootGroupCollectionEntry.h:42"
+  },
+  {
+   "name": "group_weight",
+   "donor_constant": "script weight (sums to 10000000 by convention)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/templates/LootGroupTemplate.h:108"
+  },
+  {
+   "name": "nested_depth_cap",
+   "donor_constant": "32",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp:761"
+  },
+  {
+   "name": "credits_quadratic",
+   "donor_constant": "0.03 x level^2",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp:302"
+  },
+  {
+   "name": "credits_linear",
+   "donor_constant": "3 x level",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp:302"
+  },
+  {
+   "name": "credits_base",
+   "donor_constant": "50",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp:302"
+  },
+  {
+   "name": "credits_min_fraction",
+   "donor_constant": "0.5 of max, plus 2 x level",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp:303"
+  }
+ ],
+ "best_idea": "A drop roll with an independent chance per entry and then one weighted pick per entry, with the loot owner set by the highest loot-eligible damage among groups (DOT excluded), computed once from the fight ledger.",
+ "decision": "adapt",
+ "decision_why": "Frankendom needs server-verified, replayable drops and one owner per kill. The two-roll drop and the owner-by-loot-damage rule fit row 18; the donor's overwritten result, early break and pet inconsistency must not be copied.",
+ "decision_status": "proposed",
+ "acceptance": "In a 3-player group server test with a fixed seed, replaying the same fight record gives the same drop list and owner; the owner is the group with the most loot damage (DOT excluded); a failed drop leaves earlier drops in the corpse and reports only that entry as failed."
+}

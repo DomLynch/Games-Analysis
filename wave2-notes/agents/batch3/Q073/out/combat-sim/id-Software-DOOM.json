@@ -1,0 +1,118 @@
+{
+ "game": "id-Software-DOOM",
+ "category": "combat-sim",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c",
+ "licence": "unclear (p_map.c header: DOOM Source Code License; top-level LICENSE.TXT is GPL v2 text)",
+ "licence_class": "restricted",
+ "target_module": "src/fight/damage.ts",
+ "parity_row": 1,
+ "pattern_tags": [
+  "new:armour-pool-fraction",
+  "new:push-before-gate",
+  "new:hitscan-first-valid",
+  "new:damage-roll-multiple",
+  "new:flinch-roll",
+  "new:retarget-on-hit"
+ ],
+ "data_fields": [
+  {
+   "name": "armour_class1_share",
+   "donor_constant": "1/3 of the hit (integer division)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c:857"
+  },
+  {
+   "name": "armour_class2_share",
+   "donor_constant": "1/2 of the hit (integer division)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c:859"
+  },
+  {
+   "name": "invulnerable_absorb_limit",
+   "donor_constant": "hits under 1000 are absorbed",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c:847"
+  },
+  {
+   "name": "push_scale",
+   "donor_constant": "damage x 12.5 / mass (FRACUNIT>>3 x 100 / mass in fixed point)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c:817"
+  },
+  {
+   "name": "mass",
+   "donor_constant": "per monster type in info.c (not read in full; values not receipted)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/info.c:1127"
+  },
+  {
+   "name": "painchance",
+   "donor_constant": "per monster type, 0..255 threshold on P_Random (values not read in full)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c:894"
+  },
+  {
+   "name": "fall_forward_threshold",
+   "donor_constant": "hit under 40, lethal, source 64 units below target; x4 push",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c:820"
+  },
+  {
+   "name": "fist_damage",
+   "donor_constant": "2 x (1..10); berserk x10",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_pspr.c:476"
+  },
+  {
+   "name": "pistol_damage",
+   "donor_constant": "5 x (1..3)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_pspr.c:633"
+  },
+  {
+   "name": "monster_damage",
+   "donor_constant": "3 x (1..5)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_enemy.c:817"
+  },
+  {
+   "name": "aim_slope_window",
+   "donor_constant": "+/-100/160 slope",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_map.c:1039"
+  },
+  {
+   "name": "melee_range",
+   "donor_constant": "64 units",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_local.h:57"
+  },
+  {
+   "name": "missile_range",
+   "donor_constant": "32 x 64 units",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_local.h:58"
+  }
+ ],
+ "best_idea": "Let armour soak a fixed share of each hit (a third or a half) from a points pool that clears when it runs out, and compute any push from the raw damage before the immunity gate, so the push is decided even when damage is not.",
+ "decision": "adapt",
+ "decision_why": "Armour as a points pool that soaks a fixed share and clears when used up is a small testable rule that fits one ledger in the damage step; push is adapted as a server stagger state, never a position push; the aim window is not decided here.",
+ "decision_status": "proposed",
+ "acceptance": "A server test sets 9 class-1 armour points and a 30 hit: 9 is absorbed, 21 reaches health, the armour class is cleared; a 1000-point hit is not absorbed by invulnerability."
+}

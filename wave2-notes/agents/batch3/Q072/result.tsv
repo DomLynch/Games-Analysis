@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+OpenDUNE-OpenDUNE	combat-sim	P	STRONG	full	/mnt/frankendom-donors/OpenDUNE-OpenDUNE/src/map.c:403-500 and src/unit.c:1530-1604: splash damage falls off by distance (hit points >> steps>>2) and Unit_Damage floors at zero; hint unitinfo.c is stats only
+ihhub-fheroes2	combat-sim	P	STRONG	full	/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/battle/battle_troop.cpp:517-675 and battle_action.cpp:196-206,869-951: attack-to-defence factor clamped 0.2 to 3.0 on a min-max roll, then the stack kill count; hint INFERRED was wrong
+00-Evan-shattered-pixel-dungeon	combat-sim	P	STRONG	full	/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/Char.java:372-512 and 619-685 and 701-705: two-roll hit check with sentinel, triangular armour subtracted flat after multipliers; Hero.java:570-578 parry and guard

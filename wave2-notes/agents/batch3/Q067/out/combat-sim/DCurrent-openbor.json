@@ -1,0 +1,96 @@
+{
+ "game": "DCurrent-openbor",
+ "category": "combat-sim",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "thin",
+ "donor_path": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c",
+ "licence": "BSD 3-clause style (engine/LICENSE, as read)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/damage.ts",
+ "parity_row": 1,
+ "pattern_tags": [
+  "protect-soak",
+  "status-meter",
+  "wait-gate",
+  "stale-state",
+  "new:guard-break"
+ ],
+ "data_fields": [
+  {
+   "name": "block_ratio_global",
+   "donor_constant": "0.25 when global block switch on, else 0",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c:38187"
+  },
+  {
+   "name": "block_ratio_per_defense",
+   "donor_constant": "sentinel -99999999.0 means use global",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.h:2240"
+  },
+  {
+   "name": "defense_factor_default",
+   "donor_constant": "1.0",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c:171"
+  },
+  {
+   "name": "offense_factor_clamp_adjust",
+   "donor_constant": "factor (truncated), adjust, min, max per attack type",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c:38158"
+  },
+  {
+   "name": "guard_break_refill",
+   "donor_constant": "refill to guardpoints maximum",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c:35145"
+  },
+  {
+   "name": "guard_regen_per_tick",
+   "donor_constant": "guardrate per cadence; half while blocking",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c:33183"
+  },
+  {
+   "name": "guard_regen_cadence",
+   "donor_constant": "game_speed",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c:33197"
+  },
+  {
+   "name": "guard_cost_per_blocked_hit",
+   "donor_constant": "attack guardcost",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c:30719"
+  },
+  {
+   "name": "hit_cooldown_default",
+   "donor_constant": "game_speed / 5",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c:31773"
+  },
+  {
+   "name": "block_threshold",
+   "donor_constant": "model thold plus defense blockthreshold, attack force must reach it",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c:30547"
+  }
+ ],
+ "best_idea": "A blocked hit spends a guard meter and takes a block-ratio share of the damage, and an empty guard turns the next hit into a zero-damage guard break that refills the meter.",
+ "decision": "adapt",
+ "decision_why": "The offense-then-defense order and the zero-damage guard break fit the duel step, but the guard meter is row 3, its regen and block eligibility must run on server ticks, and the lethal-chip re-entry must not be copied.",
+ "decision_status": "proposed",
+ "acceptance": "A server test with a guard of 100 and guardCost 40 blocks hits 1 to 3 at round(force x 0.25) with no HP loss beyond that, and the 4th hit is unblocked, deals 0 damage and leaves the guard refilled to 100; a hit below the block threshold is never blocked."
+}

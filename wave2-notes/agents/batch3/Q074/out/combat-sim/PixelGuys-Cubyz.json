@@ -1,0 +1,80 @@
+{
+ "game": "PixelGuys-Cubyz",
+ "category": "combat-sim",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/PixelGuys-Cubyz/src/sync.zig",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/damage.ts",
+ "parity_row": 1,
+ "pattern_tags": [
+  "clamp-and-report",
+  "new:predict-and-rollback",
+  "new:kill-refill-respawn"
+ ],
+ "data_fields": [
+  {
+   "name": "max_health",
+   "donor_constant": "8",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "src/server/Entity.zig:15"
+  },
+  {
+   "name": "health_floor",
+   "donor_constant": "0",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/sync.zig:851"
+  },
+  {
+   "name": "kill_threshold",
+   "donor_constant": "health <= 0",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/sync.zig:853"
+  },
+  {
+   "name": "fall_safe_band",
+   "donor_constant": "7",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/game.zig:819"
+  },
+  {
+   "name": "fall_scale",
+   "donor_constant": "1/2 of the rounded value",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "src/game.zig:819"
+  },
+  {
+   "name": "fall_send_threshold",
+   "donor_constant": "0.01",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/game.zig:820"
+  },
+  {
+   "name": "base_gravity",
+   "donor_constant": "30.0",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "src/physics.zig:14"
+  },
+  {
+   "name": "block_hurt_dps",
+   "donor_constant": "from block data (zon dps), rate times delta time",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "src/callbacks/block/touch/hurt.zig:11"
+  }
+ ],
+ "best_idea": "One entry point for every health change that clamps to [0, max], turns zero or below into one kill event with a full refill, and rolls back a predicted local change when the server refuses it.",
+ "decision": "adapt",
+ "decision_why": "Keep the one ledger with clamp, kill-at-zero refill and rollback; reject the trust model: here the client sends its own damage and the server checks only that the target is the sender, while our kills must be server-verified and the server must compute landing and hazard damage itself.",
+ "decision_status": "proposed",
+ "acceptance": "A server test sends a forged damage change and asserts the victim's health is unchanged; a server-computed 30-unit vertical landing deals 4 health with the donor formula; a kill respawns the player once at full health at the spawn point."
+}

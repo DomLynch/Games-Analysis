@@ -1,0 +1,108 @@
+{
+ "game": "00-Evan-shattered-pixel-dungeon",
+ "category": "combat-sim",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/Char.java",
+ "licence": "GPL-3.0 (LICENSE.txt: Version 3, 29 June 2007; Char.java header: either version 3 of the License, or any later version)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/hit.ts",
+ "parity_row": 1,
+ "pattern_tags": [
+  "clamp-and-report",
+  "new:two-roll-hit-compare",
+  "new:sentinel-certain-outcome"
+ ],
+ "data_fields": [
+  {
+   "name": "certain_outcome_sentinel",
+   "donor_constant": "1,000,000 for infinite accuracy or evasion",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "Char.java:612"
+  },
+  {
+   "name": "hit_roll_compare",
+   "donor_constant": "uniform [0,acc) >= uniform [0,ev)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Char.java:678"
+  },
+  {
+   "name": "buff_bless_roll_factor",
+   "donor_constant": "x1.25 on own roll",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Char.java:647"
+  },
+  {
+   "name": "buff_hex_roll_factor",
+   "donor_constant": "x0.8 on own roll",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Char.java:648"
+  },
+  {
+   "name": "buff_daze_roll_factor",
+   "donor_constant": "x0.5 on own roll",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Char.java:649"
+  },
+  {
+   "name": "armour_roll_range",
+   "donor_constant": "NormalIntRange(0, Barkskin level): 0..level, triangular",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "Char.java:704"
+  },
+  {
+   "name": "armour_floor",
+   "donor_constant": "max(damage - armour, 0), applied after multipliers",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "Char.java:486"
+  },
+  {
+   "name": "vulnerable_multiplier",
+   "donor_constant": "x1.33 after armour, truncated",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Char.java:495"
+  },
+  {
+   "name": "weakness_multiplier",
+   "donor_constant": "x0.67 on damage",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Char.java:480"
+  },
+  {
+   "name": "fury_multiplier",
+   "donor_constant": "x1.5 on damage",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "Char.java:437"
+  },
+  {
+   "name": "default_attack_skill",
+   "donor_constant": "10 (Hero field default)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "Hero.java:219"
+  },
+  {
+   "name": "default_defence_skill",
+   "donor_constant": "5 (Hero field default)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "Hero.java:220"
+  }
+ ],
+ "best_idea": "A hit check that compares two uniform rolls (attack against evasion), with a 1,000,000 sentinel for certain outcomes, gives a closed-form hit chance a designer can tune from two numbers.",
+ "decision": "adapt",
+ "decision_why": "The two-roll hit compare with a sentinel for certain outcomes is a clean, tunable hit check for duels, but the donor rolls on the client, makes parry an open-ended stat and applies armour after every multiplier, so Frankendom must roll on the server, keep parry under the guard row and test the armour order.",
+ "decision_status": "proposed",
+ "acceptance": "A server test with accuracy equal to evasion gives a hit rate of 50 percent over 10,000 seeded swings (within 1 percent); accuracy twice evasion gives 75 percent; a defender with an active parry is never hit; the same seed gives the same result on both clients."
+}

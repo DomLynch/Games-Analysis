@@ -1,2 +1,4 @@
 game	category	old	verdict	depth	finding
 SCAR	combat-sim	P	PARTIAL	thin	src/Hook_AttackStart.cpp:8-44 and src/SCARActionData.cpp:182-300 choose and start melee attacks by weight, chance, range and cooldown; no damage, hit, crit or knockback code exists (grep over repo), see verdict-SCAR-combat-sim.txt
+wesnoth-wesnoth	combat-sim	P	STRONG	full	src/actions/attack.cpp:76-232 (stats: cth, percent-stack damage, swarm blows), 856-1109 (one strike: roll, hit, damage, drain, death), 1222-1386 (strike order, firststrike, berserk); see out/combat-sim/wesnoth-wesnoth.deep.md
+flareteam-flare-engine	combat-sim	P	STRONG	full	src/Entity.cpp:319-532 (takeHit: accuracy and overhit, per-type resist, armour clamp, crit/overhit/miss multipliers, rounding, one takeDamage call); see out/combat-sim/flareteam-flare-engine.deep.md

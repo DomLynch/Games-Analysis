@@ -1,0 +1,102 @@
+{
+ "game": "ihhub-fheroes2",
+ "category": "combat-sim",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/battle/battle_troop.cpp",
+ "licence": "GPL-2.0-or-later (battle_troop.cpp header: either version 2 or any later version; LICENSE is the GPL v2 text)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/damage.ts",
+ "parity_row": 1,
+ "pattern_tags": [
+  "clamp-and-report",
+  "hit-aggregation",
+  "new:attack-defence-ratio-clamp",
+  "new:stack-hp-kill-count"
+ ],
+ "data_fields": [
+  {
+   "name": "attack_bonus_per_point",
+   "donor_constant": "0.1 per point of (attack - defence)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "battle_troop.cpp:585"
+  },
+  {
+   "name": "attack_bonus_cap_points",
+   "donor_constant": "20 points (factor 3.0)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "battle_troop.cpp:585"
+  },
+  {
+   "name": "defence_penalty_per_point",
+   "donor_constant": "0.05 per point (negative difference)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "battle_troop.cpp:585"
+  },
+  {
+   "name": "defence_penalty_floor_points",
+   "donor_constant": "-16 points (factor 0.2)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "battle_troop.cpp:585"
+  },
+  {
+   "name": "luck_roll_sides",
+   "donor_constant": "d24 (roll 1..24, at or below luck sets the mode)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "battle_troop.cpp:319"
+  },
+  {
+   "name": "luck_good_multiplier",
+   "donor_constant": "x2",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "battle_troop.cpp:604"
+  },
+  {
+   "name": "luck_bad_divisor",
+   "donor_constant": "/2",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "battle_troop.cpp:604"
+  },
+  {
+   "name": "castle_wall_ranged_penalty",
+   "donor_constant": "50 percent (game_static value line 280, under 15 characters)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "game_static.cpp:278"
+  },
+  {
+   "name": "melee_penalty_archer",
+   "donor_constant": "half damage (divide by 2)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "battle_troop.cpp:543"
+  },
+  {
+   "name": "petrified_damage_fraction",
+   "donor_constant": "half (divide by 2)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "battle_troop.cpp:563"
+  },
+  {
+   "name": "damage_min_max",
+   "donor_constant": "troop table minimum and maximum (not read per unit)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "battle_troop.cpp:494"
+  }
+ ],
+ "best_idea": "A single attack-to-defence ratio, clamped at both ends (0.2x to 3.0x in this donor), applied to a per-weapon min-max roll, gives a readable hit formula with a few numeric knobs per weapon.",
+ "decision": "adapt",
+ "decision_why": "The clamped attack-to-defence ratio and the min-max roll fit a fast duel, but the donor's luck roll is client-side and its caps can reach 3.0x in one hit, so Frankendom must seed the roll on the server and keep the caps as catalogue data; the stack kill model does not fit single-character duels.",
+ "decision_status": "proposed",
+ "acceptance": "A server test with attack 15 against defence 10 gives factor 1.5 and a hit inside [min x 1.5, max x 1.5]; attack 40 against defence 0 gives factor 3.0; attack 0 against defence 40 gives factor 0.2 and never less than 1 damage; the same seed gives the same hit on both clients."
+}

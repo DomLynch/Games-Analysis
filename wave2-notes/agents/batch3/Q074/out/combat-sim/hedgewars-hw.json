@@ -1,0 +1,137 @@
+{
+ "game": "hedgewars-hw",
+ "category": "combat-sim",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGears.pas",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/damage.ts",
+ "parity_row": 1,
+ "pattern_tags": [
+  "hit-aggregation",
+  "wait-gate",
+  "new:pending-then-settle",
+  "new:karma-reflect"
+ ],
+ "data_fields": [
+  {
+   "name": "damage_pause_short",
+   "donor_constant": "500",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "uGears.pas:77"
+  },
+  {
+   "name": "damage_pause_full",
+   "donor_constant": "1500",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "uGears.pas:76"
+  },
+  {
+   "name": "explosion_base_per_radius",
+   "donor_constant": "2 x radius + 4 (cHHRadius div 2)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "uGearsUtils.pas:127"
+  },
+  {
+   "name": "explosion_damage_factor",
+   "donor_constant": "1/2 of remaining distance term",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "uGearsUtils.pas:164"
+  },
+  {
+   "name": "explosion_damage_cap",
+   "donor_constant": "radius",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "uGearsUtils.pas:164"
+  },
+  {
+   "name": "explosion_push_term",
+   "donor_constant": "0.005 per damage point",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "uGearsUtils.pas:176"
+  },
+  {
+   "name": "explosion_push_kick",
+   "donor_constant": "0.01",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "uConsts.pas:634"
+  },
+  {
+   "name": "fall_threshold_dY",
+   "donor_constant": "0.4",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "uGearsUtils.pas:460"
+  },
+  {
+   "name": "fall_slope",
+   "donor_constant": "70 per unit of dY above threshold, plus 1",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "uGearsUtils.pas:462"
+  },
+  {
+   "name": "damage_percent",
+   "donor_constant": "100",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "uVariables.pas:2960"
+  },
+  {
+   "name": "damage_modifier",
+   "donor_constant": "1",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "uVariables.pas:2922"
+  },
+  {
+   "name": "king_attacker_factor",
+   "donor_constant": "1.5",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "uGearsUtils.pas:272"
+  },
+  {
+   "name": "king_or_frozen_target_factor",
+   "donor_constant": "0.5",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "uGearsUtils.pas:276"
+  },
+  {
+   "name": "hog_radius",
+   "donor_constant": "9",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "uConsts.pas:194"
+  },
+  {
+   "name": "max_health_cap",
+   "donor_constant": "268435455",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "uConsts.pas:197"
+  },
+  {
+   "name": "shove_power_factor",
+   "donor_constant": "0.01 (0.005 for king or frozen)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "uGearsUtils.pas:1444"
+  }
+ ],
+ "best_idea": "Hits only add to a pending amount, and one settle pass per target clamps health at zero; several hits on one target in one tick are summed and resolved once, so three attackers in one tick give one death.",
+ "decision": "adapt",
+ "decision_why": "Adopt the same-tick aggregation inside the server tick (one resolve per target per tick, which fits the one-ledger ruling); reject the turn-end settle with pauses, which would delay every kill in a fast duel; karma reflection and king-mode team kills are outside our rulings.",
+ "decision_status": "proposed",
+ "acceptance": "A server test lands three hits (8, 7, 6) on a 20-health defender in one tick; the defender loses 21 and dies once, the kill event is emitted once, and a single-hit tick gives the same result as today's path."
+}

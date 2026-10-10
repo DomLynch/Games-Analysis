@@ -1,0 +1,136 @@
+{
+ "game": "Dawn-of-Light-DOLSharp",
+ "category": "combat-sim",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "thin",
+ "donor_path": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameLiving.cs",
+ "licence": "GPL-2.0 (LICENSE: GNU GPL Version 2, June 1991, as read)",
+ "licence_class": "copyleft",
+ "target_module": "src/fight/resolve.ts",
+ "parity_row": 1,
+ "pattern_tags": [
+  "clamp-and-report",
+  "new:defence-order-rolls",
+  "new:many-attacker-damping"
+ ],
+ "data_fields": [
+  {
+   "name": "evade_floor",
+   "donor_constant": "0.01",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameLiving.cs:3787"
+  },
+  {
+   "name": "evade_cap_default",
+   "donor_constant": "0.995",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameLiving.cs:3790"
+  },
+  {
+   "name": "evade_cap_rvr",
+   "donor_constant": "EVADE_CAP (server property; value not read)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameLiving.cs:3789"
+  },
+  {
+   "name": "evade_penalty_per_extra_attacker",
+   "donor_constant": "0.03 raw units (about 0.00003 after scaling)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameLiving.cs:3773"
+  },
+  {
+   "name": "parry_cap_rvr",
+   "donor_constant": "PARRY_CAP (server property; value not read)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameLiving.cs:3874"
+  },
+  {
+   "name": "parry_divisor",
+   "donor_constant": "attackers / 2 in integer division (1 for 2 or 3 attackers)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameLiving.cs:3867"
+  },
+  {
+   "name": "block_shield_factor",
+   "donor_constant": "shield size / attackers in integer division (0 once attackers exceed shield size)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameLiving.cs:3943"
+  },
+  {
+   "name": "miss_base_vs_player",
+   "donor_constant": "20 (percent)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameLiving.cs:3601"
+  },
+  {
+   "name": "miss_base_vs_other",
+   "donor_constant": "25 (percent)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameLiving.cs:3601"
+  },
+  {
+   "name": "miss_reduction_per_extra_attacker",
+   "donor_constant": "MISSRATE_REDUCTION_PER_ATTACKERS (server property; value not read)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameLiving.cs:3619"
+  },
+  {
+   "name": "armour_offset",
+   "donor_constant": "90.68 (weapon side) and 20*4.67 = 93.4 (armour side)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameLiving.cs:1773"
+  },
+  {
+   "name": "absorb_cap",
+   "donor_constant": "0.85",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameLiving.cs:1782"
+  },
+  {
+   "name": "damage_band_low",
+   "donor_constant": "lower bound clamp 75 to 125 percent, plus Random(50)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameLiving.cs:1770"
+  },
+  {
+   "name": "attack_speed_floor",
+   "donor_constant": "500",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameLiving.cs:863"
+  },
+  {
+   "name": "crit_min_fraction",
+   "donor_constant": "0.1 of damage",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameLiving.cs:3211"
+  },
+  {
+   "name": "crit_max_vs_player_fraction",
+   "donor_constant": "0.5 of damage (halved)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameLiving.cs:3225"
+  }
+ ],
+ "best_idea": "Each defence (evade, parry, block) is a separate roll in a fixed order, and each is damped by how many enemies attack the defender, though the donor's damping is integer-divided and partly negligible.",
+ "decision": "adapt",
+ "decision_why": "Keep the fixed roll order and the per-defence damping as data, but set the values deliberately for MAX_ATTACKERS = 3 instead of copying the integer divisions, which make 2 and 3 attackers identical for parry and zero the block for small shields at 2 attackers.",
+ "decision_status": "proposed",
+ "acceptance": "A server test with 3 attackers on one defender gives the designed parry and block values (not zero block for a small shield), and a swing resolves in the fixed order evade, parry, block, miss with one roll each."
+}

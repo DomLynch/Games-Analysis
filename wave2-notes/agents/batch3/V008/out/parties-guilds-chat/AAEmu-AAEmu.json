@@ -1,0 +1,61 @@
+{
+ "game": "AAEmu-AAEmu",
+ "category": "parties-guilds-chat",
+ "cell": 18,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Core/Managers/TeamManager.cs",
+ "licence": "as read",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/party-sync.ts",
+ "parity_row": 18,
+ "pattern_tags": [
+  "presence-gated",
+  "per-player-view",
+  "stale-state",
+  "variable-step",
+  "new:delta-cache-resync"
+ ],
+ "data_fields": [
+  {
+   "name": "party_sync_interval",
+   "donor_constant": "500 ms (handler rate; real period 500-520 ms)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "Core/Managers/TeamManager.cs:31"
+  },
+  {
+   "name": "forced_resync_interval",
+   "donor_constant": "5000 ms",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "Core/Managers/TeamManager.cs:33"
+  },
+  {
+   "name": "position_change_tolerance",
+   "donor_constant": "0.01 (float, per axis)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "Core/Managers/TeamManager.cs:996"
+  },
+  {
+   "name": "offline_team_disband_grace",
+   "donor_constant": "5 minutes (TimeSpan.FromMinutes(5))",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "Core/Managers/TeamManager.cs:40"
+  },
+  {
+   "name": "tick_loop_sleep",
+   "donor_constant": "20 ms between tick passes",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "Core/Managers/TickManager.cs:27"
+  }
+ ],
+ "best_idea": "Party member state is pushed on a fixed cadence, but only when it changed (HP and MP exact, position within a tolerance) or after a long gap, with one batch per recipient.",
+ "decision": "adapt",
+ "decision_why": "The change-only send with a tolerance and a forced resync is a good template for party HP in a fight; the 500 ms handler, the region skip and the missing acknowledgement must not be copied.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: a teammate's HP change reaches the other member in the next sync pass; an unchanged teammate is not resent for 5 s; a teammate moved by less than 0.01 units is not resent; an offline teammate is skipped."
+}

@@ -1,0 +1,137 @@
+{
+  "game": "jynew-jynew",
+  "category": "combat-sim",
+  "cell": 1,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/LuaScripts/Jyx2Battle/DamageCaculator.lua",
+  "licence": "as read: file header says MIT; top-level LICENSE says no use of code or resources without authorisation (unclear)",
+  "licence_class": "restricted",
+  "target_module": "src/fight/damage.ts",
+  "parity_row": 1,
+  "pattern_tags": [
+    "new:two-pass-damage",
+    "clamp-and-report",
+    "new:range-falloff",
+    "new:energy-gated-hit"
+  ],
+  "data_fields": [
+    {
+      "name": "defence_multiplier",
+      "donor_constant": "3",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/LuaScripts/Jyx2Battle/DamageCaculator.lua:177"
+    },
+    {
+      "name": "main_scale",
+      "donor_constant": "2/3 (times 2, floor divide by 3)",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/LuaScripts/Jyx2Battle/DamageCaculator.lua:177"
+    },
+    {
+      "name": "main_noise_range",
+      "donor_constant": "rnd(0..19) minus rnd(0..19)",
+      "unit": "units",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/LuaScripts/Jyx2Battle/DamageCaculator.lua:177"
+    },
+    {
+      "name": "chip_divisor",
+      "donor_constant": "attack // 10",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/LuaScripts/Jyx2Battle/DamageCaculator.lua:183"
+    },
+    {
+      "name": "chip_noise_range",
+      "donor_constant": "rnd(0..3) minus rnd(0..3)",
+      "unit": "units",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/LuaScripts/Jyx2Battle/DamageCaculator.lua:183"
+    },
+    {
+      "name": "stamina_bonus_divisor",
+      "donor_constant": "stamina // 15",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/LuaScripts/Jyx2Battle/DamageCaculator.lua:194"
+    },
+    {
+      "name": "injury_bonus_divisor",
+      "donor_constant": "target injury // 20",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/LuaScripts/Jyx2Battle/DamageCaculator.lua:194"
+    },
+    {
+      "name": "range_cutoff",
+      "donor_constant": "10",
+      "unit": "count",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/LuaScripts/Jyx2Battle/DamageCaculator.lua:209"
+    },
+    {
+      "name": "range_falloff_per_step",
+      "donor_constant": "3 percentage points per step beyond the first",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/LuaScripts/Jyx2Battle/DamageCaculator.lua:211"
+    },
+    {
+      "name": "far_range_factor",
+      "donor_constant": "2/3",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/LuaScripts/Jyx2Battle/DamageCaculator.lua:214"
+    },
+    {
+      "name": "min_damage",
+      "donor_constant": "1",
+      "unit": "units",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/LuaScripts/Jyx2Battle/DamageCaculator.lua:218"
+    },
+    {
+      "name": "out_of_energy_damage",
+      "donor_constant": "1 + rnd(0..9)",
+      "unit": "units",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/LuaScripts/Jyx2Battle/DamageCaculator.lua:167"
+    },
+    {
+      "name": "injury_gain_divisor",
+      "donor_constant": "damage // 10",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/LuaScripts/Jyx2Battle/DamageCaculator.lua:225"
+    },
+    {
+      "name": "poison_antipoison_cap",
+      "donor_constant": "90",
+      "unit": "units",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/LuaScripts/Jyx2Battle/DamageCaculator.lua:234"
+    },
+    {
+      "name": "poison_divisor",
+      "donor_constant": "15",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/LuaScripts/Jyx2Battle/DamageCaculator.lua:236"
+    },
+    {
+      "name": "kill_xp_per_level",
+      "donor_constant": "target Level * 10",
+      "unit": "units",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Scripts/GameBattle/AIResult.cs:169"
+    }
+  ],
+  "best_idea": "A two-pass damage formula (main result, then a chip floor, then a minimum of 1) lets a weak hit always do something without a miss roll.",
+  "decision": "adapt",
+  "decision_why": "Keep the main formula with a chip floor, positive-hit bonuses and minimum 1; change the grid falloff to a duel range band, move the roll to a seeded server RNG, and put guard/parry before damage.",
+  "decision_status": "proposed",
+  "acceptance": "A server test with noise forced to 0 asserts attack 40 vs defence 10 deals 6, attack 20 vs defence 20 deals 2 (chip), and attack 0 vs defence 0 deals 1 (minimum); a parried hit never reaches the damage step."
+}

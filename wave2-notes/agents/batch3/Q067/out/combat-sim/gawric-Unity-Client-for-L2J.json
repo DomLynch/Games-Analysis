@@ -1,0 +1,67 @@
+{
+ "game": "gawric-Unity-Client-for-L2J",
+ "category": "combat-sim",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "thin",
+ "donor_path": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Controller/StateMachine/State/Helpers/AttackTimingHelper.cs",
+ "licence": "Apache-2.0 (repo root LICENSE, as read)",
+ "licence_class": "permissive",
+ "target_module": "src/fight/duel.ts",
+ "parity_row": 1,
+ "pattern_tags": [
+  "stale-state",
+  "wait-gate",
+  "new:swing-cycle-from-attack-speed",
+  "new:hit-once-per-swing"
+ ],
+ "data_fields": [
+  {
+   "name": "swing_cycle_constant",
+   "donor_constant": "500000 (cycle ms = 500000 / attack speed)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Utils/CalcBaseParam.cs:10"
+  },
+  {
+   "name": "min_swing_cycle",
+   "donor_constant": "100",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Utils/CalcBaseParam.cs:10"
+  },
+  {
+   "name": "default_attack_speed",
+   "donor_constant": "333",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Controller/StateMachine/State/Helpers/AttackTimingHelper.cs:56"
+  },
+  {
+   "name": "melee_hit_fraction",
+   "donor_constant": "0.5 of cycle (logs only in lines read)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Controller/StateMachine/State/Helpers/AttackTimingHelper.cs:6"
+  },
+  {
+   "name": "bow_hit_fraction",
+   "donor_constant": "0.82 of cycle (logs only in lines read)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Controller/StateMachine/State/Helpers/AttackTimingHelper.cs:119"
+  },
+  {
+   "name": "bow_flight_clamp_max",
+   "donor_constant": "1000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Utils/CalcBaseParam.cs:6"
+  }
+ ],
+ "best_idea": "A swing's one hit is latched per swing and tied to the swing's epoch, so a stale or repeated hit cannot land, with the swing length derived from attack speed.",
+ "decision": "adapt",
+ "decision_why": "The once-per-swing latch and epoch guard fit the duel step, but the hit must land on a server tick, not an animation event, and the cycle must be counted in ticks.",
+ "decision_status": "proposed",
+ "acceptance": "A server test at attack speed 333 shows a swing cycle of about 1501.5 ms (about 90 ticks at 60 ticks/s, to be confirmed with the real tick rate); a second hit in the same swing deals no damage; a hit arriving after the swing has ended is dropped."
+}

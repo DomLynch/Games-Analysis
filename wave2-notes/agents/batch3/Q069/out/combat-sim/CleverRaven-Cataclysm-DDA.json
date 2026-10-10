@@ -1,0 +1,122 @@
+{
+  "game": "CleverRaven-Cataclysm-DDA",
+  "category": "combat-sim",
+  "cell": 3,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/creature.cpp",
+  "licence": "as read: LICENSE.txt Creative Commons Attribution-ShareAlike 3.0 Unported; creature.cpp has no header licence",
+  "licence_class": "copyleft",
+  "target_module": "src/fight/damage.ts",
+  "parity_row": 1,
+  "pattern_tags": [
+    "new:hit-quality-tiers",
+    "new:closeness-crit-roll",
+    "new:dodge-share"
+  ],
+  "data_fields": [
+    {
+      "name": "tier_cut_headshot",
+      "donor_constant": "0.1",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/game_constants.h:95"
+    },
+    {
+      "name": "tier_cut_critical",
+      "donor_constant": "0.2",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/game_constants.h:96"
+    },
+    {
+      "name": "tier_cut_good",
+      "donor_constant": "0.5",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/game_constants.h:97"
+    },
+    {
+      "name": "tier_cut_standard",
+      "donor_constant": "0.8",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/game_constants.h:98"
+    },
+    {
+      "name": "tier_cut_graze",
+      "donor_constant": "1.0 (miss at or above)",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/game_constants.h:99"
+    },
+    {
+      "name": "crit_roll_closeness",
+      "donor_constant": "hit_roll * 0.5 < 0.2",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/creature.cpp:1204"
+    },
+    {
+      "name": "dodge_speed_gate",
+      "donor_constant": "20",
+      "unit": "units",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/creature.cpp:1407"
+    },
+    {
+      "name": "dodge_roll_multiplier",
+      "donor_constant": "dodge * 5",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/melee.cpp:1277"
+    },
+    {
+      "name": "headshot_multiplier",
+      "donor_constant": "0.6 + 0.45*crit_mod - 0.1*hit_roll",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/creature.cpp:1232"
+    },
+    {
+      "name": "critical_multiplier_formula",
+      "donor_constant": "0.75 + 0.25*crit_mod - 0.25*hit_roll",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/creature.cpp:1239"
+    },
+    {
+      "name": "good_hit_multiplier",
+      "donor_constant": "(1 - 0.5*hit_roll) * sqrt(2*cm)",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/creature.cpp:1246"
+    },
+    {
+      "name": "standard_multiplier",
+      "donor_constant": "1.5 - hit_roll",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/creature.cpp:1250"
+    },
+    {
+      "name": "graze_multiplier",
+      "donor_constant": "1.05 - hit_roll",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/creature.cpp:1255"
+    },
+    {
+      "name": "projectile_critical_multiplier",
+      "donor_constant": "per projectile content (default 0)",
+      "unit": "ratio",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/projectile.h:35"
+    }
+  ],
+  "best_idea": "A single 0..1 hit-quality scale with ascending cut-offs (headshot, critical, good, standard, graze), each with its own multiplier, gives a readable tier ladder for a duel's strike quality.",
+  "decision": "adapt",
+  "decision_why": "Use the quality ladder for duel strikes, with quality from server-computed timing error and the tier multipliers as data; reject the dodge share and the body-part crit factor for now (they belong to ranged shots and anatomy).",
+  "decision_status": "proposed",
+  "acceptance": "A server test with crit multiplier 2, goodhit 0, a forced roll of 0.1 and no head asserts a critical with multiplier 1.95; goodhit 0.9 asserts a graze with multiplier in (0.05, 0.15]; goodhit 1.0 asserts a miss."
+}

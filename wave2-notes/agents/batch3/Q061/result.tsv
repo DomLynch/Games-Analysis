@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ax-grymyr-l2dn-server	loot-drops	P	STRONG	full	NpcTemplate.cs:645-1250 (calculateDrops; group and ungrouped rolls, per-kill rare cap 2 normal / 7 raid, level gap 14, eviction); Attackable.cs:338-478 (top-dealer recipient; party-leader branch unreachable)
+flareteam-flare-game	loot-drops	P	PARTIAL	thin	mods/empyrean_campaign/loot/level_1.txt:2 and enemies/lvl13_goblin_thief.txt:29-33 (loot table data only; no roll code in this snapshot, the engine is not in the repo)
+gemrb-gemrb	loot-drops	P	STRONG	full	gemrb/core/Interface.cpp:3409-3477 (ResolveRandomItem: row pick uniform or 2d-shaped, UP tier step, 10-pass nested tables, stack count); Interface.cpp:3359-3399 (UpgradeRandomItem)

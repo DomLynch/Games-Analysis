@@ -1,1 +1,4 @@
 game	category	old	verdict	depth	finding
+Warzone2100-warzone2100	combat-sim	P	STRONG	full	combat.cpp:84-369 combFire (hit roll 321, miss scatter 328-361); combat.cpp:449-608 objDamage (armour/floor/min 1/kill before shields)
+azerothcore-azerothcore-wotlk	combat-sim	P	STRONG	full	Unit.cpp:2996-3172 RollMeleeOutcomeAgainst (single roll 3014, ordered bands 3020-3171); Unit.cpp:1678-1946 CalculateMeleeDamage outcome switch; Unit.cpp:2229-2299 armour
+id-Software-DOOM	combat-sim	P	STRONG	full	linuxdoom-1.10/p_map.c:1020-1085 aim window and trace; p_map.c:899-1016 first valid thing; linuxdoom-1.10/p_inter.c:764-917 P_DamageMobj (push, armour pool, health, flinch, retarget)

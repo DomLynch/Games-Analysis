@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+crawl-crawl	combat-sim	P	STRONG	thin	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/attack.cc:1040-1070 test_hit margin with a 5 percent forced hit/miss band; melee-attack.cc:1950-2014 roll, evasion and hit branch; attack.cc:982-1038 damage; actor.cc:353-396 armour soak (GPL-2 or later)
+scummvm-scummvm	combat-sim	P	STRONG	thin	/mnt/frankendom-donors/scummvm-scummvm/engines/dm/group.cpp:1650-1712 creature swing with dodge gate and wound rolls, feeding champion.cpp:757-842 defence-scaled pending damage and champion.cpp:1399-1486 once-per-pass apply (GPL-3 or later)
+EQEmu	combat-sim	P	STRONG	thin	/mnt/frankendom-donors/EQEmu/zone/attack.cpp:1474-1563 DoAttack order: avoid ladder, hit test, mitigation ratio; attack.cpp:1036-1058 RollD20 20-step ratio; attack.cpp:5429-5492 DEX-threshold melee crit (GPL-3 or later); hint utils/combat-sim/app.js is only a histogram of RollD20
