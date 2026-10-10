@@ -1,5 +1,7 @@
 # STATE 2026-10-10 DAY (READ THIS FIRST; older blocks below are history)
 
+**UPDATE 2026-10-10 11:30:** history SCRUBBED with git filter-repo (receipts*.tsv removed from every commit) and force-pushed; main is now cc2702f on GitHub, Mac and VPS (old SHAs changed). Pre-scrub bundle: ~/Developer/Games-Analysis-pre-scrub.bundle (contains the receipts; keep private). 15 Haiku agents relaunched: Q001 Q002 Q006 Q009 Q011 Q012 Q014 + QC002-QC009. Next to launch: QC010-QC013, Q015+. Dom's camera answer: no specific complaint; wants best-practice learnings from all donors, then will try options.
+
 **Who I am:** the donor-library dev. The Claude Code session is titled "VPS server storage inventory" (Dom also gave it the VPS storage-inventory job). Peers: "Project Strategy - Fable 5.1" (advisor), "Frankendom - Lead Dev" (owns the parity checklist and rulings). Dom is the owner.
 **Where this file lives:** GitHub https://github.com/DomLynch/Games-Analysis/blob/main/docs/HANDOFF.md | Mac ~/Developer/Games-Analysis/docs/HANDOFF.md | VPS (ssh -o BatchMode=yes -i ~/.ssh/binance_futures_tool root@49.12.7.18) /root/Games-Analysis/docs/HANDOFF.md. All notes: wave2-notes/ in the same repo. Pipeline files: docs/wave2-pipeline/ (TASK.md = reader instructions, BRIEF-ADDENDUM.md, queue/ = cell groups).
 
