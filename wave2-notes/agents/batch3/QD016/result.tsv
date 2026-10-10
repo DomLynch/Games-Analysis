@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ioquake-ioq3	quests-dialogue	P	STRONG	full	code/botlib/be_ai_chat.c:2428-2480 and 2634-2781 (also game/ai_dmq3.c:4611-4706): dialogue lines picked by rule priority and a 20 s per-line cooldown; no quest, objective or reward code in the donor; reply-pick cooldown defect fixed in the sketch.
+jynew-jynew	quests-dialogue	P	STRONG	full	jyx2/Assets/Scripts/LuaCore/Jyx2LuaBridge.cs:1644-1722 and 1789-1870, Scripts/GameSave/GameRuntimeData.cs:614-650: per-trigger step pointers and counters kept in one key-value ledger, reloaded on zone load; restricted licence, shape only.
+keldaanCommunity-pokemonAutoChess	quests-dialogue	P	STRONG	full	app/core/expeditions.ts:37-50 and 166-352, app/models/expeditions.ts:19-100, app/rooms/game-room.ts:1164-1168: stateless three-slot bounty board recomputed from uid hash and a completed count, settled once per game from per-game maxima and paid XP by rank; donor marks its own hash as a placeholder.

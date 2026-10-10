@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ihhub-fheroes2	inventory-bank-equipment	P	STRONG	full	resource/artifact.cpp:825-857, 891-1037, 1383-1412 and heroes/heroes_action.cpp:866-900: fixed 14-slot bag, a full bag turns a find into gold, two-hero exchange deal, sets auto-assemble, battle loot planned against free winner slots.
+ioquake-ioq3	inventory-bank-equipment	P	STRONG	full	code/game/g_items.c:426-559 and code/game/bg_misc.c:1039-1175: one grab predicate shared by client and server, refuse-when-full caps, single holdable slot, per-class respawn seconds with jitter; defects at g_items.c:479-481 and 529.
+jynew-jynew	inventory-bank-equipment	P	STRONG	full	jyx2/Assets/Scripts/GameSave/RoleInstance.cs:361-381 and 722-830: gear applied as a snapshot on equip, caps on the base only, one owner per item; defects: Anqi never reversed, equip applies heal and wound change, LimitAttr branches.
