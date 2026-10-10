@@ -1,0 +1,3 @@
+game	category	old	verdict	depth	finding
+ax-grymyr-l2dn-server	spawns-encounters	P	STRONG	full	L2Dn.GameServer.Model/Model/Spawn.cs:198-236,446-466,520-534 + TaskManagers/RespawnTaskManager.cs:21-52: cap check live+pending<cap, jittered delay with 10 s floor, 1 s sweep, stop-then-delete despawn (no presence-based despawn found)
+azerothcore-azerothcore-wotlk	spawns-encounters	P	STRONG	full	src/server/game/Maps/Map.cpp:1758-1805 + Entities/Creature/Creature.cpp:1977-1981 + Map.cpp:2792-2910: respawn delay scaled by rate/playersInZone at death, time-ordered queue with gate re-queue; no cap or empty-zone despawn read

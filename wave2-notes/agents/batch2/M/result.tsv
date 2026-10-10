@@ -1,0 +1,3 @@
+game	category	old	verdict	depth	finding
+afritz1-OpenTESArena	ai-aggro	P	STRONG	full	OpenTESArena/src/Entities/EntityChunkManager.cpp:1509-1702 three-state idle/chase/attack brain with paired wake/give-up and start/stop-attack radii and random wind-up; player-only target, no threat or flee
+CleverRaven-Cataclysm-DDA	spawns-encounters	P	STRONG	full	src/mongroup.cpp:196-274 weighted group pick with validity gates and cost budget, plus src/map.cpp:10028-10173 placement on free, walkable, out-of-view cells with 10 tries; load-triggered, no respawn timer

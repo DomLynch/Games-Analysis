@@ -1,0 +1,20 @@
+game: BehaviorTree-BehaviorTree.CPP
+category: ai-aggro (category_no 2)
+old rating: P
+verdict: PARTIAL
+depth: thin
+licence: MIT (/mnt/frankendom-donors/BehaviorTree-BehaviorTree.CPP/LICENSE line 1 "The MIT License (MIT)"); code may be adapted
+
+Files opened (donor root /mnt/frankendom-donors/BehaviorTree-BehaviorTree.CPP):
+1. src/controls/reactive_fallback.cpp 25-91 (ReactiveFallback::tick: priority loop, haltChild on the other children when one is RUNNING, resetChildren on SUCCESS)
+2. src/controls/reactive_sequence.cpp 25-91 (ReactiveSequence::tick: same loop shape; resetChildren on FAILURE at 68, final resetChildren at 87)
+3. src/control_node.cpp 32-63 (ControlNode::halt, resetChildren, haltChild)
+4. examples/t04_reactive_sequence.cpp 41-48 and 72-73 (a BatteryOK condition re-checked on every tick)
+5. sample_nodes/movebase_node.cpp 13-43 (a timed RUNNING action; no target, distance or chase logic)
+Search: grep -rniE "aggro|threat|hate|flee|chase|pursu|patrol|nearest|closest|distance|target" over include, src, examples, sample_nodes. No aggro, threat, hate, chase, flee or target-selection code. The only "find_enemy" hit is a test dummy port (tests/script_parser_test.cpp 426-443) with no logic.
+
+Why PARTIAL: BehaviorTree.CPP is a generic tree runner. It has no aggro, threat, target choice or chase/flee logic, so the topic is absent. The closest real mechanism is the reactive re-check with preemption above, which belongs to row 2 (AI brain), not ai-aggro.
+
+Best transferable idea: Re-check the branch list from the top on every tick and halt the running lower-priority branch as soon as a higher one takes over, so a chase drops the moment an attack condition passes.
+
+Not verified: the ReactiveFallback EnableException path (throw on multiple RUNNING children) was read but is not part of the idea. No tests were run.

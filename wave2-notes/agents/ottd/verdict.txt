@@ -1,0 +1,10 @@
+Verdict: PARTIAL (cell 2 ai-aggro, OpenTTD-OpenTTD). No deep note written.
+
+Opened on the VPS under /mnt/frankendom-donors/OpenTTD-OpenTTD/ (licence: GPL version 2, COPYING.md 1-8 and ai_instance.cpp 3):
+src/ai/ai_instance.cpp 1-126 (hinted file, whole); src/ai/ai_core.cpp 82-106; src/openttd.cpp 1255-1268;
+src/script/script_instance.cpp 167-171 and 186-270; src/script/squirrel.cpp 150-162, 364-420, 720-750, 806-814;
+src/3rdparty/squirrel/squirrel/sqvm.h 165-190; src/3rdparty/squirrel/squirrel/sqvm.cpp 728-746; src/3rdparty/squirrel/squirrel/sqapi.cpp 965-990, 1290-1315;
+src/script/api/script_controller.cpp 30-46; src/script/api/script_object.cpp 300-334; src/script/script_suspend.hpp 21-43;
+src/script/script_info.hpp 21; src/table/settings/script_settings.ini 46-66; src/table/settings/difficulty_settings.ini 154-162.
+
+Why PARTIAL: the hinted file is only the Squirrel host wrapper for scripted AI players, and the one real mechanism I read (a per-tick opcode budget with overdraft carry-over and a competitor_speed frame gate) schedules AI brains but contains no target selection, aggro, chase or flee logic, and a grep of src/ai and src/script for aggro/threat/flee/chase found none.

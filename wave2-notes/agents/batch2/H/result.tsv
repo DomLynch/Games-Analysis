@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+DCurrent-openbor	spawns-encounters	P	STRONG	full	engine/openbor.c:50030-50143 update_scroller director: ordered marker queue released by position, refills only below groupmin up to groupmax, wait/group markers; smartspawn 49512 skips by player count and scales health
+gawric-Unity-Client-for-L2J	server-tick-netcode	P	STRONG	thin	Controller/Validate/PositionValidationController.cs:47-120 two-band server-position reconcile (ignore/walk/snap at 0.15 and 3.743) plus PlayerPositionSender/PeriodicTimer counted position reports; client only, no server tick loop in the repo
+Warzone2100-warzone2100	ai-aggro	P	STRONG	full	src/ai.cpp:281-563,576-778,876-1025 additive target score with doomed-overkill avoidance and switch-margin stickiness, staggered re-evaluation by id+time bucket

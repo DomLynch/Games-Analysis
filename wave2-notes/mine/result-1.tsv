@@ -1,0 +1,7 @@
+game	category	old	verdict	finding
+azerothcore-azerothcore-wotlk	server-tick-netcode	P	STRONG	Main.cpp:584-619 + World.cpp:1131-1254 + MapMgr.cpp:251-300 variable-step loop, sessions then staggered 3-step map update
+boardgameio-boardgame.io	server-tick-netcode	P	STRONG	master.ts:167-335 layered action intake with stale-state-id check and per-player filtered broadcast; MIT; turn-based so real-time needs sequence numbers
+Dawn-of-Light-DOLSharp	server-tick-netcode	P	STRONG	GameTimer.cs:642-706,799-1082 hashed timing wheel with 1ms step and drift catch-up; GPL-2.0 clean-room
+FunkinCrew-Funkin	camera	P	STRONG	PlayState.hx:1217-1227,1846-1860,3918-4034 follow-point camera + decaying zoom pulse; hint file FunkinCamera.hx was render batching (wrong file); Apache-2.0
+DCurrent-openbor	camera	P	STRONG	openbor.c:49989-50262 update_scroller: camera = centre of living players, hard speed cap, wait-gate lock until encounter cleared, spawns by scroll pos with group min/max; also strong for spawns-encounters; BSD-style licence
+beyond-all-reason-Beyond-All-Reason	combat-sim	P	STRONG	unit_timeslow.lua:50-117 + unit_attributes_control.lua:812-892 side-meter slow and named-source stat modifier stack; GPL-2.0+ clean-room; base damage is in engine (not read)

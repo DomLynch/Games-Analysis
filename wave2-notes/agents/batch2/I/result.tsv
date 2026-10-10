@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+OpenDUNE-OpenDUNE	ai-aggro	P	STRONG	full	src/unit.c:743-780,923-974,2275-2323,2396-2432,2562-2578 + script/team.c:256-287: stateless target score = type weight/distance(+1) with fog/ally gates, range/leash modes, team first-member-wins
+clockworklabs-SpacetimeDB	spawns-encounters	P	STRONG	full	demo/Blackholio/server-csharp/Lib.cs:510-540,126-143,455-460: 500 ms interval director counts food, tops up to cap 600, skips when no players; removal is the respawn request
+levy-street-world-of-claudecraft	progression	P	STRONG	full	src/sim/combat/damage.ts:1736-1865,1916-1994 + types.ts:9157-9578 + progression/xp.ts:20-99: kill XP by level diff, party share with group bonus, rested pool, lifetime counter past cap, prestige capped by XP earned

@@ -1,0 +1,3 @@
+game	category	old	verdict	finding
+beyond-all-reason-Beyond-All-Reason	camera	P	STRONG	/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/luarules/gadgets/data_camera_broadcast.lua:291-311,362-417: camera state is sent on a rate that falls from 0.1 s to 0.35 s as player count rises, only when a field changed, packing the whole view.
+rathena-rathena	spawns-encounters	P	STRONG	/mnt/frankendom-donors/rathena-rathena/src/map/map.cpp:2990-3096 (with clif.cpp:10805-10806, unit.cpp:3716-3717, npc.cpp:5392-5408): spawn lines on a dynamic map are cached and populate on first player entry, with a grace timer that sweeps the map after the last player leaves.

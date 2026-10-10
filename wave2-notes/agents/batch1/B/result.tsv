@@ -1,0 +1,3 @@
+game	category	old	verdict	finding
+opentibiabr-otclient	ai-aggro	P	STRONG	mods/game_bot/default_configs/vBot_4.8/targetbot/target.lua:39-91, creature.lua:74-97, creature_priority.lua:1-60: 100 ms macro scans a 12x12 window (6x6 when more than 10 monsters), scores each monster by config priority, distance, current-target bonus and low-HP bonus, and attacks the strict maximum.
+OpenEnroth-OpenEnroth	spawns-encounters	P	STRONG	src/Engine/Objects/Actor.cpp:4210-4369 (SpawnEncounter: alert gate, count range x multiplier, tier roll from odds table); Outdoor.cpp:479-516 (day-interval respawn at entry); Indoor.cpp:1617-1703 and Game.cpp:1139-1151 (party-side ring placement and rest roll).

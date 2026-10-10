@@ -1,0 +1,3 @@
+game	category	old	verdict	finding
+dhewm-dhewm3	combat-sim	P	STRONG	/mnt/frankendom-donors/dhewm-dhewm3/neo/d3xp/Actor.cpp:2208-2281 (idActor::Damage: per-zone scale with ceil, damageCap floor, -999 clamp, gib at -20, zero-damage knockback reset), with the zone table set from damage_zone and damage_scale args at 2392-2434.
+ax-grymyr-l2dn-server	ai-aggro	P	STRONG	/mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer.Model/Model/Actor/Attackable.cs:776-816 and 958-985 (hate per hit = damage x 100/(level+7) into a capped per-attacker table, most-hated pick by strict max), driven by AttackableAI.cs:257-290 and 641-668 (passive counter, attack re-pick).

@@ -1,0 +1,3 @@
+game	category	old	verdict	depth	finding
+freeorion-freeorion	server-tick-netcode	P	STRONG	full	server/ServerFSM.cpp:3489-3510 + server/ServerApp.cpp:2142-2166 turn-end gate: advance when all seats ready and (deadline expired or not fixed-interval); after the deadline humans are skipped but AI seats always awaited; turn-based, no fixed-step tick (phase bodies not read)
+CytopiaTeam-Cytopia	camera	P	STRONG	full	src/engine/basics/Camera.cxx:6-93 stepped zoom (0.5..4.0, 0.5), pinch accumulator (0.25), centre-on-point offset formula, pan with recomputed centre, modal lock via UIManager.cxx:158-171; static iso map camera, event-driven, no smoothing

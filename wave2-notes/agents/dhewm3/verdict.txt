@@ -1,0 +1,15 @@
+verdict: PARTIAL
+cell: dhewm-dhewm3 / loot-drops (cell category 8)
+licence: GPL version 3 (COPYING.txt line 2)
+
+opened (read in full or in the stated range):
+/mnt/frankendom-donors/dhewm-dhewm3/COPYING.txt 1-2
+/mnt/frankendom-donors/dhewm-dhewm3/neo/d3xp/ai/AI.cpp 3465-3510 (idAI::Killed; def_drops spawn loop at 3480-3487)
+/mnt/frankendom-donors/dhewm-dhewm3/neo/d3xp/Actor.cpp 1680-1705 (DropItems "death" at 1698)
+/mnt/frankendom-donors/dhewm-dhewm3/neo/d3xp/Item.cpp 394-412 (respawn gate, dropped flag), 1244-1262 (SpawnNugget), 1008-1022 (CTF flag nugget timer), 1820-1935 (DropItem, DropItems)
+/mnt/frankendom-donors/dhewm-dhewm3/neo/d3xp/Player.cpp 58-64 (WEAPON_DROP_TIME), 4655-4725 (DropWeapon, died path and ammo copy)
+/mnt/frankendom-donors/dhewm-dhewm3/neo/d3xp/Weapon.cpp 1760-1815 (CanDrop, DropItem), 3768-3790 (weapon stealing in MP)
+
+grep-only (not opened, not relied on): drop-related hits in neo/d3xp/AFEntity.cpp (gib/death AF drops) and the harvest_on_death path in AI.cpp.
+
+why: dhewm3 has no drop table and no random loot roll; on death it spawns a fixed list of item defs from spawn args at the death position (AI.cpp 3480-3487, Actor.cpp 1698), and the only random number near the drop code is the CTF flag-nugget spread (Item.cpp 1254), which is not loot. The one ownership-like rule (a dropped weapon carries the player's ammo and clip counts and is removed after 20 s, Player.cpp 62, 4713-4723) is a player-inventory detail, not a self-contained loot mechanism, so it stays PARTIAL and gets no note.

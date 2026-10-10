@@ -1,0 +1,3 @@
+game	category	old	verdict	finding
+luanti-org-luanti	loot-drops	P	STRONG	/mnt/frankendom-donors/luanti-org-luanti/builtin/game/item.lua:41-133 - one drop-table roll with a per-entry 1-in-N chance, a tool filter, and a max_items cap counted on hits (note: out/loot-drops/luanti-org-luanti.deep.md).
+ax-grymyr-l2dn-server	server-tick-netcode	P	STRONG	/mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer.Model/Model/Actor/Creature.cs:3017-3218 - one 100 ms pass advances each mover by speed times ticks elapsed since its last step, idempotent per tick, with arrival by a 1.79 fraction threshold (note: out/server-tick-netcode/ax-grymyr-l2dn-server.deep.md).

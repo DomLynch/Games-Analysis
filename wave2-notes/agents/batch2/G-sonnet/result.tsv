@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+BehaviorTree-BehaviorTree.CPP	ai-aggro	P	STRONG	thin	src/controls/reactive_fallback.cpp:25-91 (+reactive_sequence.cpp, fallback_node.cpp, timeout_node.cpp): priority list re-ticked from child 0 every tick, higher branch preempts and halts the running one; donor has NO aggro/threat/target-pick code, so this is brain scaffolding only
+cvet-fonline	camera	P	STRONG	full	Source/Client/MapView.cpp:2979-3260 and 538-549: fixed 10ms step accumulator, ease-out glide that extends on retarget, zoom easing with anchor-preserving scroll, bounds clamp; map-scroll camera, no combat framing or follow-the-walking-hero (not found)
+Dawn-of-Light-DOLSharp	ai-aggro	P	STRONG	full	GameServer/ai/brain/StandardMobBrain.cs:89-224,446-566,646-708,763-857,929-1061: hate table with group pull-in, protect soak, pet split, distance-scaled pick with pruning, tether/leash reset, bring-a-friend

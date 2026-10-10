@@ -1,0 +1,3 @@
+game	category	old	verdict	finding
+veloren-veloren	loot-drops	P	STRONG	/mnt/frankendom-donors/veloren-veloren/common/src/lottery.rs:53-76 (running-total range starts, one 16-bit roll, binary search); 298-422 LootSpec recursion; distribute_many at 84-210 read but not written up
+LostCityRS-Engine-TS	combat-sim	P	STRONG	/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/entity/Npc.ts:489-507 (applyDamage: clamp to HP, effective-damage splat, two slots by hit parity); damage roll itself is not in this donor
