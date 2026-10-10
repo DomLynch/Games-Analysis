@@ -72,7 +72,7 @@ Top 5 striking:
 - Tiers (super() argument in each class): Cloth 1 (ClothArmor.java:35), Leather 2, Mail 3, Scale 4, Plate 5 (PlateArmor.java:33). Class armours (six files) use tier 5 (ClassArmor.java:68).
 - Materials: no metal or gold shader in the code. Metallic and gold looks come from art (see AU001). Tiers are not separate sets; each armour has its own sprite.
 - How tiers show: the hero avatar uses one tier film strip, with one frame per armour tier (HeroSprite.java:73).
-- Glyphs (13 files) add glow colours: holy (bright yellow, Armor.java:780), swiftness (yellow), viscosity (purple, Viscosity.java), anti-magic (teal), camouflage (green), affection (pink), flow (blue), stone (dark grey).
+- Glyphs (13 files) add glow colours: holy (a bright yellow glow constant, Armor.java:780; when it is used not read), swiftness (yellow), viscosity (purple, Viscosity.java), anti-magic (teal), camouflage (green), affection (pink), flow (blue), stone (dark grey).
 - Curses (8 files) use a black glow to signal a bad item (for example Bulk, Corrosion).
 
 Top 5 striking:
@@ -80,7 +80,7 @@ Top 5 striking:
 2. Viscosity glyph: purple pulse, a "heavy" feel.
 3. Anti-magic glyph: teal pulse, a "cold shield" feel.
 4. Affection glyph: pink pulse, a "warm" feel.
-5. Holy glow: bright yellow pulse on armour that is blessed (Armor.java:780).
+5. Holy glow: a bright yellow pulse constant (Armor.java:780); the trigger was not read.
 
 ## 5. Zones and dungeons
 - Depth zones (Dungeon.java switch): sewers 1-4 (boss at 5), prison 6-9 (boss at 10), caves 11-14 (boss at 15), city 16-19 (boss at 20), halls 21-24 (boss at 25), last level at 26. The boss depths are at Dungeon.java:442.

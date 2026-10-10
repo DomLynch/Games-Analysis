@@ -3,21 +3,21 @@
 Donor tree: /mnt/frankendom-donors/exult-exult (read-only, VPS, about 1,950 files).
 
 ## Licence (what the files say)
-- Code: GNU GPL v2. COPYING is the GPL v2 text, and README.md's badge reads "[![License: GPL v2][gpl-badge]][gpl-url]" (receipt 3).
-- Game data: README.md says a user must own the games: "You need to own "Ultima VII: The Black Gate"" (receipt 4), and names Ultima VII as "(copyright 1993)" (receipt 5). The repo does not ship the original game data. A filename search for the original DOS data names (MAINSHP, STATIC, U7CHUNKS, and uppercase .FLX/.DAT) found none.
+- Code: GNU GPL v2. COPYING is the GPL v2 text, and README.md's badge reads "[![License: GPL v2][gpl-badge]][gpl-url]" (README.md:6).
+- Game data: README.md says a user must own the games: "You need to own "Ultima VII: The Black Gate"" (README.md:34), and names Ultima VII as "(copyright 1993)" (README.md:34). The repo does not ship the original game data. A filename search for the original DOS data names (MAINSHP, STATIC, U7CHUNKS, and uppercase .FLX/.DAT) found none.
 - Shipped data/ and content/ files: no single licence. Per-folder notes only:
-  - data/README: sound effects "contributed by Joseph Morris" (receipt 7). No terms.
-  - data/credits.txt: MIDI tracks used with the author's permission (receipt 8); digital SFX packs credited (receipt 9). No terms.
-  - docs/art.txt: custom paperdoll art, with artists per item (receipts 10 and 11). No terms.
-  - content/sifixes/Readme.txt: SI Fixes "is now licensed under the GNU General Public License" (receipt 12). This is the patch's licence, not a statement for its art.
-  - content/README: the folder is "for publicly available subplot patches" (receipt 13).
+  - data/README: sound effects "contributed by Joseph Morris" (data/README:1). No terms.
+  - data/credits.txt: MIDI tracks used with the author's permission (data/credits.txt:185); digital SFX packs credited (data/credits.txt:189). No terms.
+  - docs/art.txt: custom paperdoll art, with artists per item (docs/art.txt:1 and :10). No terms.
+  - content/sifixes/Readme.txt: SI Fixes "is now licensed under the GNU General Public License" (content/sifixes/Readme.txt:236). This is the patch's licence, not a statement for its art.
+  - content/README: the folder is "for publicly available subplot patches" (content/README:1).
 - Overall asset licence: unclear, so class C.
 
 ## Rights-holder status
 Fan engine project (Exult Team, per AUTHORS and data/credits.txt). It needs Ultima VII, which the repo names but does not ship. Shipped replacement art and audio have credited authors but no licence text. Mixed status.
 
 ## Asset inventory (counts from ls and find; sizes not measured)
-- Replacement UI and font shapes: data/fonts/ (serif, small black, tiny black and white, wood-runic, metal-runic, gold-runic, and SI-only ophidian sets; data/fonts/Readme.txt says these replace shapes in the original files, receipt 14). Plus data/*.shp such as hp_bar.shp, checkmark_background.shp, sb_backpack.shp, sb_food.shp. About 484 .shp across data/ and content/.
+- Replacement UI and font shapes: data/fonts/ (serif, small black, tiny black and white, wood-runic, metal-runic, gold-runic, and SI-only ophidian sets; data/fonts/Readme.txt says these replace shapes in the original files, data/fonts/Readme.txt:1). Plus data/*.shp such as hp_bar.shp, checkmark_background.shp, sb_backpack.shp, sb_food.shp. About 484 .shp across data/ and content/.
 - Custom item and paperdoll art: data/bg/*.shp (for example caddellite_helmet.shp, firesword.shp, death_scythe.shp) and docs/art.txt, which lists shape numbers and artists per item and NPC.
 - Sound: 24 .wav files (data/bg/intro_*.wav, others). File names suggest intro clips: static bursts, a monitor slap, a shot, a moongate sound, guardian sounds. Not listened to.
 - Music: 3 MIDI files (data/marketpl.mid, data/meditown.mid, data/mtgm.mid).
@@ -37,7 +37,7 @@ Fan engine project (Exult Team, per AUTHORS and data/credits.txt). It needs Ulti
 - Best class for the donor: C. Nothing is class A or B, and the engine itself is GPL v2 code.
 
 ## Inspiration (own words)
-- Material font family: one glyph set in several treatments (wood, metal, gold, and a serpent-themed variant). For our HUD titles, use one set of our own letterforms and three palettes, each with a dark rim and one bright top-edge highlight. Fonts: data/fonts/1_wood_runic.shp, 3_metal_runic.shp, 6_gold_runic.shp, 10_gold_ophidian.shp (receipt 15 cites the last).
+- Material font family: one glyph set in several treatments (wood, metal, gold, and a serpent-themed variant). For our HUD titles, use one set of our own letterforms and three palettes, each with a dark rim and one bright top-edge highlight. Fonts: data/fonts/1_wood_runic.shp, 3_metal_runic.shp, 6_gold_runic.shp, 10_gold_ophidian.shp (data/fonts/Readme.txt:16 cites the last).
 - Paperdoll layering: equipped items are separate shape layers that follow body frames, so an item swaps without redrawing the character. For our armour, one layer per slot with anchor points, and each item keeps its palette.
 - Status-bar icon band: one small pictogram per function on a fixed grid (for example data/sb_backpack.shp, data/sb_food.shp, data/hp_bar.shp). For our HUD, one icon grammar and one pixel grid.
 - Retro intro texture: short static bursts and a monitor sound over quiet gaps (per names only). Recreate with our own noise bursts, a low hum and stings.

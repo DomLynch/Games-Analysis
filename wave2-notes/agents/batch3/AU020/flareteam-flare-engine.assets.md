@@ -3,14 +3,14 @@
 Donor tree: /mnt/frankendom-donors/flareteam-flare-engine (read-only, VPS). This is the engine repo; the game art is in the separate flare-game donor.
 
 ## Licence (what the files say)
-- Code: GNU GPL v3. COPYING is the GPL v3 text (receipt 15). README.engine.md: "Flare's source code is released under the GNU GPL v3." (receipt 16). Later versions permitted.
-- Copyright: README.engine.md says "Contributors retain copyrights to their original contributions." (receipt 17).
-- Default mod (art, text, translations): "is released under GNU GPL v3 and CC-BY-SA 3.0." (receipt 18). The file does not say which files get which licence. Dual statement, so class B with a caveat (treat as C if a strict reading is needed).
-- Liberation Sans: SIL OFL 1.1 (receipt 19 names it; the OFL line is in README.engine.md). GNU Unifont: GPL v2 with a font-embedding exception (README.engine.md).
-- AI policy: AI_POLICY.md says "No AI-generated media is allowed (art, images, videos, audio, etc.)." (receipt 20). This governs contributions to the Flare project, so it matters to us if we ever contribute upstream.
+- Code: GNU GPL v3. COPYING is the GPL v3 text (COPYING:2). README.engine.md: "Flare's source code is released under the GNU GPL v3." (README.engine.md:33). Later versions permitted.
+- Copyright: README.engine.md says "Contributors retain copyrights to their original contributions." (README.engine.md:31).
+- Default mod (art, text, translations): "is released under GNU GPL v3 and CC-BY-SA 3.0." (README.engine.md:35). The file does not say which files get which licence. Dual statement, so class B with a caveat (treat as C if a strict reading is needed).
+- Liberation Sans: SIL OFL 1.1 (README.engine.md:38). GNU Unifont: GPL v2 with a font-embedding exception (README.engine.md).
+- AI policy: AI_POLICY.md says "No AI-generated media is allowed (art, images, videos, audio, etc.)." (AI_POLICY.md:45). This governs contributions to the Flare project, so it matters to us if we ever contribute upstream.
 
 ## Rights-holder status
-Community open-source project. Copyright line names Clint Bellanger for most of the code (2010-2013). Not a commercial game. Art credits name individuals and "the community at OpenGameArt" (receipt 21).
+Community open-source project. Copyright line names Clint Bellanger for most of the code (2010-2013). Not a commercial game. Art credits name individuals and "the community at OpenGameArt" (mods/default/cutscenes/credits_engine.txt:157).
 
 ## Asset inventory
 - mods/default/images/menus/ and buttons/: about 28 png in mods/default/images. UI kit: nine-slice button, listbox, slider, scrollbar, checkbox, tab active and inactive, compass ortho and iso, movement type icons, dev console frame. PNG header sizes: button_default 142x112, slider_default 209x72, listbox_default 145x84, tab_active 128x32, compass_iso 24x24, dev_console 640x176.

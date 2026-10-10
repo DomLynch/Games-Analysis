@@ -5,10 +5,10 @@ Donor tree: /mnt/frankendom-donors/Eve-of-Darkness-dark-forge (read-only, VPS).
 ## Licence (what the files say)
 - Code: no LICENSE, COPYING or licence header in the tree. Cargo.toml has no license key. Status: not stated.
 - Assets: none stated. The only non-code file is one archive sample.
-- Name check: the folder is called "Eve-of-Darkness", but mpak/src/main.rs says the tool is for "the Dark Age of Camelot game client" (receipt 1). The repo does not say what the folder name refers to.
+- Name check: the folder is called "Eve-of-Darkness", but mpak/src/main.rs says the tool is for "the Dark Age of Camelot game client" (mpak/src/main.rs:6). The repo does not say what the folder name refers to.
 
 ## Rights-holder status
-Unknown. The repo names a game client format and says it is "a proprietary compression format" (receipt 2). It names no owner and no licence.
+Unknown. The repo names a game client format and says it is "a proprietary compression format" (mpak/src/main.rs:7). It names no owner and no licence.
 
 ## Asset inventory
 - 14 files in total: Rust sources (dark_forge/src/lib.rs, dark_forge/src/mpk/mpak.rs, mpk/mod.rs, file_info.rs, mpak/src/main.rs), Cargo manifests and locks, .gitignore files.

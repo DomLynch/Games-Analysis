@@ -115,9 +115,9 @@ Acceptance: Server test: a board with two open tasks (priority 9 and 4) and one 
 - Refresh on read: the AI refresh runs inside the task-info getter (361), so a read changes state, and it runs only when a prompt is built. Frankendom's refresh must be a scheduled server job; a player read must not change the board.
 - The two minimums disagree (3 in the AI copy, 10 in the UI copy, AIAgent.gd 399 and GodUI.gd 780). Frankendom must pick one per zone as data.
 - Completion is LLM-judged: option "4" (AIAgent.gd 1225-1227) marks the task done without any game event. Nothing checks it. Frankendom's completion must come from server-verified events (kill, loot, deliver counters), and a board must refuse a completion the server did not see.
-- Completion matches by description and creation time (1576-1582), not by id. Two tasks with the same text in the same second cannot be told apart. Frankendom should use an id.
-- The UI copy's top-up loop has no null check on the generator (GodUI.gd 780-782); the AI copy has one (AIAgent.gd 401-403). Frankendom's generator must never return nothing for a non-empty pool.
-- Rewards: none. A finished task only writes a memory line (1582-1590 area, grep confirmed the memory call in `_complete_task`). Frankendom's reward must go through the one ledger.
+- Completion matches by description and creation time (1581), not by id. Two tasks with the same text in the same second cannot be told apart. Frankendom should use an id.
+- The UI copy's top-up loop has no null check on the generator (GodUI.gd 780-783); the AI copy has one (AIAgent.gd 401-405). Frankendom's generator must never return nothing for a non-empty pool.
+- Rewards: none. `_complete_task` adds a memory line after the write (read in the 1566-1600 window). Frankendom's reward must go through the one ledger.
 - The donor file `script/TaskManager.gd` is absent (only its `.uid`), so any reference to it is dead.
 - Not read: the pool (420-469), `GameSaveManager` save and load (grep only), `DialogManager`, `MemoryManager` internals, the prompt text after line 836.
 

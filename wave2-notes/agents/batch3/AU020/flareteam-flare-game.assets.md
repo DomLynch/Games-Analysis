@@ -1,24 +1,24 @@
 # Asset audit: flareteam-flare-game (AU020)
 
-Donor tree: /mnt/frankendom-donors/flareteam-flare-game (read-only, VPS). Game content for Flare: Empyrean Campaign, with the mods fantasycore, empyrean_campaign, alpha_demo, centered_statbars, devlab, minicore, minicore_alpha. About 2,800 files in total, 1.3 GB.
+Donor tree: /mnt/frankendom-donors/flareteam-flare-game (read-only, VPS). Game content for Flare: Empyrean Campaign, with the mods fantasycore, empyrean_campaign, alpha_demo, centered_statbars, devlab, minicore, minicore_alpha. art_src has 780 files, tiled has 225, fantasycore has 1,033 and empyrean_campaign has 722 (other mods not counted). About 1.4 GB across art_src, mods and tiled (du).
 
 ## Licence (what the files say)
-- LICENSE.txt is Creative Commons Attribution-ShareAlike 3.0 Unported legal code (receipt 22).
-- README: "All of the art and data files for Flare: Empyrean Campaign are released under CC-BY-SA 3.0." Later versions permitted (receipt 23).
-- Fonts: "The Liberation fonts version 2 are released under the SIL Open Font License" (receipt 24). README also names Bona Nova SC, Noto and Marck Script under OFL 1.1.
-- Engine: "The Flare engine is released under GPL version 3 or later." (receipt 25).
-- Audio: the README blanket statement covers "art and data", and does not name audio. Per-file authorship of art and audio is pointed to an online wiki: "See the full credits listing including per-file attribution online:" (receipt 26). The repo does not contain per-file attribution. Audio is therefore unclear, class C.
-- Credits thank "artists for releasing reusable open-licensed art" (receipt 27), and the credits list names artists per area.
-- Content note: "depictions of violence, blood, and mild gore." (receipt 28).
+- LICENSE.txt is Creative Commons Attribution-ShareAlike 3.0 Unported legal code (LICENSE.txt:3).
+- README: "All of the art and data files for Flare: Empyrean Campaign are released under CC-BY-SA 3.0." Later versions permitted (README:21).
+- Fonts: "The Liberation fonts version 2 are released under the SIL Open Font License" (README:23). README also names Bona Nova SC, Noto and Marck Script under OFL 1.1.
+- Engine: "The Flare engine is released under GPL version 3 or later." (README:19).
+- Audio: the README blanket statement covers "art and data", and does not name audio. Per-file authorship of art and audio is pointed to an online wiki: "See the full credits listing including per-file attribution online:" (CREDITS.txt:104). The repo does not contain per-file attribution. Audio is therefore unclear, class C.
+- Credits thank "artists for releasing reusable open-licensed art" (CREDITS.txt:19), and the credits list names artists per area.
+- Content note: "depictions of violence, blood, and mild gore." (README:13).
 
 ## Rights-holder status
 Community open-source game. README copyright line: Clint Bellanger, 2010-2013; "Contributors retain copyrights to their original contributions." Not a commercial game. No leak or clean-room statement. Per-file rights are not in the repo.
 
 ## Asset inventory (counts from find; sizes from PNG headers)
 - Sprite sheets: mods/fantasycore/images (378 png: enemies, npcs, avatar, loot, powers, portraits, tilesets, cursors, menus, icons). mods/empyrean_campaign/images (36 png). PNG header sizes: enemies/skeleton.png 3886x2154; enemies/goblin.png 1316x3185; enemies/wyvern/wyvern_run.png 1402x2769; enemies/wyvern_fire/wyvern_fire_stance.png 1731x2004; enemies/minotaur/minotaur_run.png 1917x1654; tilesets/tileset_dungeon.png 2167x3999; tilesets/tileset_cave.png 2057x3037.
-- Animation text: mods/fantasycore/animations (enemies and npcs, about 20 files), mods/minicore_alpha/animations (statue guardians, necromancer and others). Frame cells in coordinate form (receipts 29-30 cite the wyvern fire stance: frame cell 129x209 at sheet offset 1583,939, image path wyvern_fire_stance.png).
-- Source art: art_src/ (357 png, 280 .blend, 14 .xcf, 35 jpg, 89 txt). Spells, characters, enemies, items, loot, tilesets, textures, interface, animation definitions. art_src/README.md says these are a historical reference (receipt 31); the newer HD source is in another repo named there.
-- Wyvern source: art_src/characters/wyvern has the base and per-element diffuse maps (fire, water, air, earth) and a montage note file (receipt 33).
+- Animation text: mods/fantasycore/animations (enemies and npcs, about 20 files), mods/minicore_alpha/animations (statue guardians, necromancer and others). Frame cells in coordinate form (see mods/fantasycore/animations/enemies/wyvern_fire.txt:13 and :1 for the wyvern fire stance: frame cell 129x209 at sheet offset 1583,939, image path wyvern_fire_stance.png).
+- Source art: art_src/ (357 png, 280 .blend, 14 .xcf, 35 jpg, 89 txt). Spells, characters, enemies, items, loot, tilesets, textures, interface, animation definitions. art_src/README.md says these are a historical reference (art_src/README.md:5); the newer HD source is in another repo named there.
+- Wyvern source: art_src/characters/wyvern has the base and per-element diffuse maps (fire, water, air, earth) and a montage note file (art_src/characters/wyvern/montage.txt:3).
 - Maps: tiled/ (160 .tmx, 28 tilesheets, 15 stamps). Exported text maps in mods/*/maps (137 files in empyrean_campaign). Biomes: grassland, dungeon, cave, snowplains, ruins, iron_labyrinth, plus alpha_demo and devlab.
 - Music: mods/fantasycore/music (12 ogg: title, town, overworld, forest, cave, dungeon, magical, unrest, battle, boss, safe room, wind ambient).
 - Sound effects: mods/fantasycore/soundfx (112 ogg: door, hit, die, melee attack, heartbeat, level-up, no-mana, plus enemy and environment folders). mods/empyrean_campaign/soundfx (4 ogg: environment and powers).
@@ -38,9 +38,9 @@ Community open-source game. README copyright line: Clint Bellanger, 2010-2013; "
 
 ## Inspiration (own words; no copied text)
 - One creature in several elements: the wyvern appears as fire, water and air variants in fantasycore, and art_src keeps per-element diffuse maps (fire, water, air, earth) next to the base. Recreate with our own base body and four colour passes, not separate sheets.
-- Eight-direction sprites from a turntable: render8dirs.py rotates a render platform 45 degrees per step and renders each pass (receipt 32 cites the loop). For our characters, one turntable and a fixed camera give eight consistent facings.
-- One action set per creature: the wyvern has stance, run, swing, cast, dash attack, hit and die (receipt 29 cites the stance sheet). Copy the checklist so combat code treats every enemy alike.
-- Behaviour sheets for a flying enemy: the montage note names hover, fly, sting, breathe, ram and hit as separate sheets (receipt 33 cites the montage line).
+- Eight-direction sprites from a turntable: render8dirs.py rotates a render platform 45 degrees per step and renders each pass (art_src/characters/render8dirs.py:11). For our characters, one turntable and a fixed camera give eight consistent facings.
+- One action set per creature: the wyvern has stance, run, swing, cast, dash attack, hit and die (wyvern_fire.txt:1). Copy the checklist so combat code treats every enemy alike.
+- Behaviour sheets for a flying enemy: the montage note names hover, fly, sting, breathe, ram and hit as separate sheets (montage.txt:3).
 - Elemental statue guardians: fire, wind and ice variants defined from one template in minicore_alpha. A cheap family of three from one body.
 - Biome sets with a Tiled template per area (grassland, dungeon, cave, snowplains, ruins, iron labyrinth). Copy the habit of one tile sheet and one template per zone.
 - One music track per game state (title, town, overworld, cave, dungeon, boss, battle, safe room, unrest) plus a wind bed. Copy the state-to-track table with our own music.
