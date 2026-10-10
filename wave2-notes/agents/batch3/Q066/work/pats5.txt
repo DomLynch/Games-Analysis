@@ -1,0 +1,13 @@
+.getTileLineDistance(_target.getLocation()) > _weaponRange + 1) {
+The minimum rate hit 5 percent hit
+rate of up to 95%
+hit rate of up to 95%
+_isHit = calcPcPcHit();
+_isHit = calcNpcPcHit();
+if (!_pc.glanceCheck
+SWORD_OF_ORDEAL_C) {
+_isHit = false; // B ~ C sword
+GPLv2. See license.
+if (isImmune(_targetPc))
+if (dmg <= 0) {
+if (_npc.isWeaponBreaked()) {

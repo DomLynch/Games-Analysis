@@ -1,0 +1,41 @@
+licence MIT (LICENCE.txt copyright line)	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/LICENCE.txt	Copyright (c) 2016 Suehiro
+camera action function header	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	func (c *Camera) action(x, y, scale float32, pause bool) (newX, newY, newScale float32) {
+camera fixed-view: freeze check	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	if sys.gsf(GSF_camerafreeze) {
+fighting view selected in newCamera	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	View:          Fighting_View,
+tension margin scaled by local scale	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	tension := Max(0, float32(c.tension)*c.localscl)
+left tracked edge pulls the view	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	if c.leftest < targetLeft+tension {
+right tracked edge pulls the view	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	} else if c.rightest > targetRight-tension {
+autocenter target between tracked extremes	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	targetLeft = Min(Max((c.leftest+c.rightest)/2-c.halfWidth/scale, c.minLeft), c.maxRight-2*c.halfWidth/scale)
+zoom-in hold counter check	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	if c.zoomindelaytime > 0 {
+zoom-in delay reset on failed fit	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	c.zoomindelaytime = c.zoomindelay
+logic scale normalises by logic speed	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	logicScale := 60.0 / float32(sys.gameLogicSpeed())
+edge smoothing step toward target	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	newLeft = newLeft + (targetLeft-newLeft)*0.05*logicScale*c.tensionvel
+edge snap step	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	diff := float32(sys.gameWidth) / 3200
+edge speed floor on right side	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	newRight = Min(oldRight+c.rightestvel, targetRight)
+new scale fits the view width	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	newScale = Min(c.halfWidth*2/(newRight-newLeft), c.zoomin)
+zoom speed fraction	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	adjustedNewScale := oldScale + speedFactor*scaleDiff
+y scroll speed fraction	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	return oldY + yDiff*c.yscrollspeed
+z blend per tick from z tension velocity	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	blend := Clamp(0.05*c.ztensionvel, 0, 1)
+y mix in verticalfollow branch	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	ywithoutbound = ywithoutbound*.85 + targetY*.15
+follow view centres on follow char	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	newX = c.FollowChar.pos[0]
+zoom enabled check	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	return sys.cfg.Config.ZoomActive && (c.zoomin != 1 || c.zoomout != 1 || c.autoZoom)
+tracking reset function	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	func (c *Camera) ResetTracking() {
+save or restore tracking when nothing tracked	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	func (c *Camera) SaveRestoreTracking() {
+reset clamps tension velocity 0 to 20	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	c.tensionvel = Max(Min(c.tensionvel, 20), 0)
+default tension 50	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	tension:    50,
+default tensionvel 1	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	tensionvel: 1,
+default zoom in and out 1	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	startzoom: 1, zoomout: 1, zoomin: 1,
+default zoom delay 0 and speeds 1	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	zoomindelay: 0, zoominspeed: 1, zoomoutspeed: 1,
+default vertical follow 0.2	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	verticalfollow: 0.2,
+track tracks x extremes	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/char.go	if charleft < sys.cam.leftest {
+track feeds highest	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/char.go	sys.cam.highest = Min(c.interPos[1]*c.localscl, sys.cam.highest)
+track function header	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/char.go	func (c *Char) track() {
+character update then track each tick	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/char.go				c.track()
+sys action resets tracking	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/system.go	s.cam.ResetTracking()
+sys action calls camera	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/system.go	x, y, scl = s.cam.action(x, y, scl, s.supertime > 0 || s.pausetime > 0)
+sys camera update applies scale	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/system.go	s.cam.Update(scl, x, y)
+fixed logic tick accumulator	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/system.go	s.tickCountF += s.nextAddTime
+logic speed is 60 plus config	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/system.go	base := int32(60 + s.cfg.Options.GameSpeed*s.cfg.Options.GameSpeedStep)
+stage file keys tension read	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/stage.go	sec.ReadI32("tension", &s.stageCamera.tension)
+stage file keys zoomin read	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/stage.go	sec.ReadF32("zoomin", &s.stageCamera.zoomin)
+stage file keys zoom delay read	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/stage.go	sec.ReadF32("zoomindelay", &s.stageCamera.zoomindelay)

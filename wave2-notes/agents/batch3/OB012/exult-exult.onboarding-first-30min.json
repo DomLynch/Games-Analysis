@@ -1,0 +1,71 @@
+{
+  "donor": "exult-exult",
+  "topic": "onboarding-first-30min",
+  "depth": "thin",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/exult-exult/exult.cc",
+    "/mnt/frankendom-donors/exult-exult/game.cc",
+    "/mnt/frankendom-donors/exult-exult/gamewin.cc",
+    "/mnt/frankendom-donors/exult-exult/gamemgr/bggame.cc",
+    "/mnt/frankendom-donors/exult-exult/gamemgr/sigame.cc",
+    "/mnt/frankendom-donors/exult-exult/actorio.cc",
+    "/mnt/frankendom-donors/exult-exult/usecode/ucmachine.h",
+    "/mnt/frankendom-donors/exult-exult/usecode/ucinternal.cc",
+    "/mnt/frankendom-donors/exult-exult/data/quotes.txt",
+    "/mnt/frankendom-donors/exult-exult/data/exultmsg.txt",
+    "/mnt/frankendom-donors/exult-exult/data/Makefile.am",
+    "/mnt/frankendom-donors/exult-exult/README.md",
+    "/mnt/frankendom-donors/exult-exult/COPYING"
+  ],
+  "counts": {
+    "bg_intro_scenes": 5,
+    "desk_scroll_steps": 98,
+    "desk_scroll_step_ms": 110,
+    "new_name_max_chars": 16,
+    "new_choice_slots": 4,
+    "exultmsg_txt_lines": 1141,
+    "quotes_txt_lines": 150,
+    "desk_clip_width": 320,
+    "desk_clip_height": 200
+  },
+  "rule": "Launch runs the intro unless the splash is skipped (exult.cc:1112-1116). The Black Gate intro is five scenes in a fixed order (title, logo, guardian, desk, moongate); each scene catches a skip and moves on, and a break ends the whole chain. The menu sends Journey Onwards (game.cc:715-718) to a character setup (new_game, game.cc:732), then to init_gamedat, which restores the new-game state from the original data (gamewin.cc:1369-1370). The Quotes menu item shows only when quotes.flg exists; that flag is written when the Credits sequence is watched through (bggame.cc:1966-1967). Endgame shows when endgame.flg exists (writer not traced). The did_first_scene global keeps the Avatar hidden until the usecode opening scene has run (gamewin.cc:2913-2918). skip_intro=yes sets that global true (gamewin.cc:2909), which shows the Avatar and skips the opening scene.",
+  "data_fields": [
+    {"name": "scene_hold", "unit": "ms", "donor_value_or_null": null},
+    {"name": "scene_skip", "unit": "bool (per scene)", "donor_value_or_null": null},
+    {"name": "desk_scroll_step", "unit": "ms", "donor_value_or_null": null},
+    {"name": "name_max_chars", "unit": "chars", "donor_value_or_null": null},
+    {"name": "unlock_after_sequence", "unit": "enum (credits, endgame)", "donor_value_or_null": null},
+    {"name": "first_scene_flag_skip", "unit": "bool", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Per-scene skip with a single break for the whole chain",
+    "A menu item that unlocks after a finished sequence",
+    "Character setup limited to name, sex and face, one time, before the journey"
+  ],
+  "change": [
+    "Write the Quotes unlock only when the scene ran to its end (scene branch at game.cc:746 does not check completion; show_credits does at bggame.cc:1966)",
+    "Draw captions from keyed text, not art, so they can be translated (the donor draws them as shape art, bggame.cc:1343)",
+    "Scale the 320x200 desk-scene clip to the phone width instead of letterboxing (bggame.cc:1265)",
+    "Replace the Ultima opening with the Frankendom ring opener; keep the per-player first-scene flag on the server ledger",
+    "Make skip_intro and skip_splash one documented setting"
+  ],
+  "look_test": "Client-only build on the current opener, no release rows. Caption drawn from text, not art. Compare two cuts on the phone: (a) three scenes, about 8 s total, skip by tap; (b) no intro, and a menu item that unlocks after the first win. Dom judges which opener makes him want the first fight sooner.",
+  "licence_note": "Engine code GPL v2 (COPYING; README.md:6). Original Ultima VII data not shipped; README.md:34 says the user must own the game. Shipped art, fonts, MIDI and SFX have credited authors and no licence text: class C (AU020). Clean-room, shape only; no code adapted.",
+  "tags": ["stinger", "mood-preset", "new:cutscene-skip", "new:first-scene-flag", "new:menu-unlock", "new:character-setup", "new:text-as-art"],
+  "not_read": [
+    "usecode scripts that run the opening scene and first quest (data, not in repo)",
+    "INITGAME (new-game state, not in repo)",
+    "First fight, first kill, first town, first services (not in repo)",
+    "Combat hit feedback (combat.cc and usecode not read)",
+    "BG logo scene (bggame.cc:489 onward) and guardian scene (bggame.cc:739) in full",
+    "Desk scene hand animation frames (bggame.cc:1334-1339 read; frame data not)",
+    "Character setup face pickers (bggame.cc:2001-2030 region, not read in full)",
+    "Serpent Isle intro (gamemgr/sigame.cc:277 onward; signature only)",
+    "data/exultmsg.txt and data/quotes.txt loaders (line counts only)",
+    "How config/gameplay/skip_intro relates to skip_splash (gamewin.cc:2907, exult.cc:1112)",
+    "Who writes endgame.flg (game.cc:657)",
+    "Idle or ambient behaviour, death and respawn, walk density: not read",
+    "Readability at 375 wide: not tested"
+  ]
+}

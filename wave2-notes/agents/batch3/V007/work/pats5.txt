@@ -1,0 +1,4 @@
+IsSpawnScheduled
+SetSpawnScheduled
+RespawnDenied
+IsSpawningScheduleEnabled()

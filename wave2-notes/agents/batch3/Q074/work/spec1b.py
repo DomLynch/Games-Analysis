@@ -1,0 +1,1 @@
+REC = [("licence: public-domain dedication (repo LICENSE line 1)", "/mnt/frankendom-donors/coding-horror-basic-computer-games/LICENSE", "This is free and unencumbered software released into the public domain.")]

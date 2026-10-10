@@ -1,0 +1,79 @@
+{
+  "donor": "dkfans-keeperfx",
+  "topic": "onboarding-first-30min",
+  "depth": "full",
+  "half_read": "data",
+  "paths": [
+    "/mnt/frankendom-donors/dkfans-keeperfx/campgns/keeporig.cfg",
+    "/mnt/frankendom-donors/dkfans-keeperfx/campgns/keeporig/map00001.txt",
+    "/mnt/frankendom-donors/dkfans-keeperfx/campgns/keeporig/map00002.txt",
+    "/mnt/frankendom-donors/dkfans-keeperfx/campgns/keeporig/map00003.txt",
+    "/mnt/frankendom-donors/dkfans-keeperfx/campgns/campgn_order.txt",
+    "/mnt/frankendom-donors/dkfans-keeperfx/lang/gtext_eng.pot",
+    "/mnt/frankendom-donors/dkfans-keeperfx/src/lvl_script_commands.c",
+    "/mnt/frankendom-donors/dkfans-keeperfx/src/lvl_script_commands_old.c",
+    "/mnt/frankendom-donors/dkfans-keeperfx/src/gui_frontbtns.c",
+    "/mnt/frankendom-donors/dkfans-keeperfx/src/creature_states_combt.c",
+    "/mnt/frankendom-donors/dkfans-keeperfx/src/main.cpp",
+    "/mnt/frankendom-donors/dkfans-keeperfx/src/config_keeperfx.c",
+    "/mnt/frankendom-donors/dkfans-keeperfx/LICENSE",
+    "/mnt/frankendom-donors/dkfans-keeperfx/README.md"
+  ],
+  "counts": {
+    "level1_lines": 226,
+    "level2_lines": 272,
+    "level3_lines": 269,
+    "level1_objective_calls": 13,
+    "level1_info_calls": 8,
+    "level1_flash_button_calls": 7,
+    "level1_creature_cap": 7,
+    "level2_creature_cap": 14,
+    "level3_creature_cap_start": 8,
+    "level3_creature_cap_later": 12,
+    "level1_start_gold": 2500,
+    "guitext_refs_total": 1124,
+    "guitext_level1_block": "1-21 (plus generic 0)"
+  },
+  "rule": "A per-player progress ladder in one state value (FLAG0, steps 0 to 7). Each step fires on a counted state (treasury tiles, lair tiles, garden tiles, creature count, first-wave win), never on a clock alone. Game-turn timers are short pauses inside a step (hint at 600 turns, first wave at 800, lord 500 turns after the first win). Gold counters gate hints and the lair. Tutorial buttons flash until the player clicks that control. The first fight is capped to level-1 enemies that do not flee when wounded. A named rival line after the first win precedes the arrival of the rival.",
+  "data_fields": [
+    {"name": "start_gold", "unit": "gold", "donor_value_or_null": null},
+    {"name": "creature_cap_stage1", "unit": "creatures", "donor_value_or_null": null},
+    {"name": "hint_turn_first", "unit": "game turns", "donor_value_or_null": null},
+    {"name": "hint_turn_camera", "unit": "game turns", "donor_value_or_null": null},
+    {"name": "first_wave_timer", "unit": "game turns (absolute timer value)", "donor_value_or_null": null},
+    {"name": "lord_delay_after_first_win", "unit": "game turns", "donor_value_or_null": null},
+    {"name": "gold_hint_thresholds", "unit": "gold mined", "donor_value_or_null": null},
+    {"name": "enemy_level_cap", "unit": "level", "donor_value_or_null": null},
+    {"name": "enemy_strength_knight", "unit": "stat points", "donor_value_or_null": null},
+    {"name": "enemy_armour_knight", "unit": "stat points", "donor_value_or_null": null},
+    {"name": "fear_wounded_pct", "unit": "percent of base health", "donor_value_or_null": null},
+    {"name": "turns_per_second_default", "unit": "turns per second", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "One goal on screen at a time, changed by state",
+    "Flash the control until the player clicks it (show, don't tell)",
+    "Counted-action gates (kills, gold, loot, creature count) rather than clock",
+    "Capped first fight with a named rival line after the win and an arrival timer",
+    "Cap growth across stages (7, then 14 in level 2)",
+    "Safety net for a stuck resource (imp fallback)"
+  ],
+  "change": [
+    "Do not gate on exactly the cap; do not make the first wave wait on a stalled stage without a hint",
+    "First fight in the ring: one attacker, then two, then three (MAX_ATTACKERS = 3)",
+    "Town hall services introduced one at a time (bank, shop, trainer), each flashed until visited",
+    "Replace gold gates with kill and loot gates; one-line hint text at 375 wide",
+    "Server ticks and a grace timer for pacing instead of turn-count pauses"
+  ],
+  "look_test": "Two 90-second ring clips at 375 wide. A: first fight with three attackers at once and no hint. B: one attacker, the attack control flashing until the first tap, one line after the first kill, a champion banner with a 10-second timer, then two attackers. Dom judges whether the first tap came without reading, whether the first kill was readable, and whether the champion line makes him want the next fight.",
+  "licence_note": "Code and scripts: GNU GPL v2 (LICENSE; README.md:103). Map scripts and the string template carry GPL headers. Original Dungeon Keeper art, sound and maps are not in the repo (docs/files_required_from_original_dk.txt). Clean-room, shape only: take the ladder, flash-until-click, capped first fight and rival line; write own scripts, hint text and values. Donor values are null. No legal conclusion drawn.",
+  "tags": ["first-fight", "first-kill", "first-loot", "flash", "timed-event", "invasion", "boss-intro", "rumour", "fear", "new:objective-ladder", "new:unlock-ladder", "new:tutorial-flash-until-click", "new:creature-cap-ramp", "new:first-battle-capped"],
+  "not_read": [
+    "Live handler for ADD_TUNNELLER_PARTY_TO_LEVEL (argument meanings not verified; lvl_script_commands_old.c body used only as a hint)",
+    "gui_set_button_flashing body (meaning of -1 as until-clicked inferred from click-clear code and script usage)",
+    "Compiled gtext .dat (built from .po files; only the .pot template is in lang/)",
+    "Map layouts and sprites (not in repo)",
+    "Intro and outro media (not in repo)",
+    "Creature idle animations and the GUI layout at 375 wide",
+    "Engine hit feedback (stagger, hit-stop, numbers) beyond the script's slap line"
+  ]
+}

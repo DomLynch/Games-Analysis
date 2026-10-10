@@ -1,0 +1,73 @@
+{
+  "donor": "Anuken-Mindustry",
+  "topic": "onboarding-first-5",
+  "depth": "full",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/ui/fragments/HintsFragment.java",
+    "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/game/Objectives.java",
+    "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/game/MapObjectives.java",
+    "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/content/SectorPresets.java",
+    "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/type/SectorPreset.java",
+    "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/core/Logic.java",
+    "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/game/Saves.java",
+    "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/game/EventType.java",
+    "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/ui/dialogs/SettingsMenuDialog.java",
+    "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/input/Binding.java",
+    "/mnt/frankendom-donors/Anuken-Mindustry/core/assets/bundles/bundle.properties",
+    "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/ui/fragments/HudFragment.java (grep only, line 788)",
+    "/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/ui/dialogs/PlanetDialog.java (grep only, lines 417 to 420)"
+  ],
+  "counts": {
+    "default_hint_enum_entries": 27,
+    "hint_text_keys_plain": 28,
+    "hint_mobile_variant_keys": 11,
+    "hint_keys_without_enum_entry": 1,
+    "objective_classes_in_map_objectives": 13,
+    "sector_gate_objective_classes": 5,
+    "requirement_string_lines": 7,
+    "objective_string_lines": 29,
+    "tutorial_sector_capture_wave": 10,
+    "tutorial_sector_difficulty": 1
+  },
+  "rule": "Hint queue: one hint on screen at a time; each frame the first hint (by enum order) whose show test is true is taken; if its done test is already true it is removed silently; otherwise its done test is checked each frame and it completes when true; Skip completes it; the whole queue waits for 8000 ms of total save playtime and never shows during a cutscene; done is stored per hint name in settings (per install). Services appear by context (show test), not by a menu. Objective graph: each objective has parents (runs when all parents are done), flags added or removed on done, markers and an optional logic script; thirteen objective classes including build count, timer and destroy. Sector gates: five requirement types (research, produce, capture, on sector, on planet). Grace: first wave timer is two wave spacings times the campaign difficulty multiplier; groundZero declares a first-wave multiplier of 3 with no reader found in core/src.",
+  "data_fields": [
+    {"name": "hint_first_show_playtime_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "hint_fade_out_s", "unit": "s", "donor_value_or_null": null},
+    {"name": "hint_slide_up_units", "unit": "units", "donor_value_or_null": null},
+    {"name": "hints_visible_at_once", "unit": "count", "donor_value_or_null": null},
+    {"name": "hint_box_width_desktop_units", "unit": "units", "donor_value_or_null": null},
+    {"name": "hint_box_width_mobile_units", "unit": "units", "donor_value_or_null": null},
+    {"name": "first_wave_grace_wave_spacings", "unit": "multiple", "donor_value_or_null": null},
+    {"name": "sector_first_wave_multiplier_declared", "unit": "multiple", "donor_value_or_null": null},
+    {"name": "tutorial_zone_capture_waves", "unit": "waves", "donor_value_or_null": null},
+    {"name": "tutorial_zone_difficulty", "unit": "rating", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "One hint on screen at a time, ordered by a fixed priority",
+    "Each hint has a show test (context) and a done test (the player did the action)",
+    "Hint disappears the moment its done test is true, so the tutorial costs nothing once learned",
+    "Skip button on every hint",
+    "Services introduced by context, not by a menu of buttons",
+    "Objective graph with parents and flags for scripted first-zone goals",
+    "Settings switch to turn all hints off"
+  ],
+  "change": [
+    "Done flag per save, not per install (donor stores it in global settings)",
+    "Phone-first first movement hint (donor has move and shoot hints as desktop-only)",
+    "Done tests must come from server-verified events; client draws the box only",
+    "Add the research pointer or remove the orphan hint text (donor has hint.research with no enum entry)",
+    "Wire the first-wave grace multiplier as data and confirm it applies (donor declares 3 on the tutorial zone with no reader in core/src)"
+  ],
+  "look_test": "On a 375-wide phone ring fight: three hints in order. (a) Tap to guard appears after 8 seconds of play and clears when the server logs a guard. (b) Hold to power a strike appears when a strike is first available and clears on a strike. (c) A second attacker is coming appears when a second enemy engages and clears on the first hit taken. One visible at a time, Skip on each, 0.6 s fade. Judge: does each hint vanish the moment you do the thing? Score 1 to 5 for knowing what to do next after the first fight.",
+  "licence_note": "Code GPL-3.0 (LICENSE): clean-room, shape only; no donor values, strings or code copied. Assets have no licence statement (per AU004): category-level inspiration only. Hint text paraphrased, not copied. This is what the files say, not a legal reading.",
+  "tags": ["first-fight", "timed-event", "ordered-feedback", "new:hint-queue", "new:objective-graph", "new:first-hint-delay", "new:launch-pull", "new:context-gated-services"],
+  "not_read": [
+    "core/assets/maps/serpulo/groundZero.msav (binary; likely holds the objective graph and its text, not confirmed)",
+    "server/ module (may consume startWaveTimeMultiplier or hold server objectives)",
+    "Fx.java and bullet effect classes (hit feedback visuals and sound)",
+    "HudFragment.java beyond line 788 comment; PlanetDialog.java beyond the grep lines",
+    "launchers (android, desktop, ios)",
+    "objective text strings beyond the lines cited"
+  ]
+}

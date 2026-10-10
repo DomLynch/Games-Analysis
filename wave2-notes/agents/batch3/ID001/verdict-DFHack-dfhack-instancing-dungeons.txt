@@ -1,0 +1,25 @@
+DFHack-dfhack | instancing-dungeons | cell 1 | verdict NONE | depth thin | camera_scope: n/a (not a camera cell)
+Licence: DFHack is distributed under the Zlib license, with some MIT- and BSD-licensed components (/mnt/frankendom-donors/DFHack-dfhack/LICENSE.rst). Read, not adopted.
+
+Files opened (at least 3 required):
+1. /mnt/frankendom-donors/DFHack-dfhack/plugins/lair.cpp (lines 1-40 read; sets or clears monster_lair occupancy bits on map blocks; not instancing)
+2. /mnt/frankendom-donors/DFHack-dfhack/plugins/misery.cpp (header and includes only; not read further)
+3. /mnt/frankendom-donors/DFHack-dfhack/plugins/autobutcher.cpp (lines 136-150 and 384-392: world-unload handler and per-world cleanup)
+4. /mnt/frankendom-donors/DFHack-dfhack/plugins/infinite-sky.cpp (lines 60-128: enable/cleanup and world-unload handler)
+5. /mnt/frankendom-donors/DFHack-dfhack/plugins/eventful.cpp (lines 490-505: world-specific hook setup and teardown on load and unload)
+
+Search: grep -rniE over plugins/, scripts/ and library/ for dungeon, instanc, party, pocket, sub-site, teardown, unload, respawn, despawn. Hits were C++ class instances (static instance singletons), the DF dungeon-mode viewscreen name (df::viewscreen_dungeonmodest, used by rendermax and overlay), the AttendParty job type (dwarfmonitor.cpp 506), and the Dungeon civzone type name (zone.lua, sort/places.lua). None of these is a copy of a zone or map per party or per run. DFHack is a tool layer over one Dwarf Fortress world; it does not create a second map for a group.
+
+Checked: the topic (separate instanced copies of a zone for a party, entry and exit, per-party state, cleanup of the copy) has no implementation in this donor. Confidence high that no instancing exists. The only related pattern is teardown on world unload (listed below), and it covers one world, not many.
+
+## What the donor does on unload (read, not instancing)
+- autobutcher.cpp 141-147: on SC_WORLD_UNLOADED it disables itself and calls cleanup_autobutcher; 384-389 clears race_to_id and deletes watched_races.
+- infinite-sky.cpp 120-125: on SC_WORLD_UNLOADED it disables itself and calls cleanup(); cleanup() (67) unregisters its CONSTRUCTION listener.
+- eventful.cpp 497-498: on SC_WORLD_UNLOADED it calls world_specific_hooks(out,false).
+
+Best transferable idea: When a session or dungeon run ends, drop that run's state and unregister its listeners in one teardown function, so a finished instance cannot leak state into the next run.
+Decision (proposed): reject - DFHack has no instancing to adopt, and its unload teardown is a generic habit that the zone runtime should follow anyway, not a mechanism to port.
+Acceptance (not applicable for NONE): n/a.
+Parity row hint: 23 (zone population) - not matched; no spawn caps, respawn or despawn logic was found in this donor.
+
+Not verified: no DFHack code was run; instancing absence rests on the grep plus the files listed. Files in plugins/ outside the listed ones were not read.

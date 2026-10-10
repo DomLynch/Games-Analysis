@@ -1,0 +1,74 @@
+{
+  "donor": "00-Evan-shattered-pixel-dungeon",
+  "topic": "creature-grammar",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/Rat.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/Albino.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/FetidRat.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/Acidic.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/CausticSlime.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/PhantomPiranha.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/Mimic.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/Elemental.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/MobSpawner.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/sprites/RatSprite.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/sprites/AlbinoSprite.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/sprites/GnollExileSprite.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/sprites/MimicSprite.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/sprites/CausticSlimeSprite.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/sprites/ElementalSprite.java"
+  ],
+  "counts": {
+    "mob_java_files": 71,
+    "mob_non_abstract_top_level": 67,
+    "mob_abstract_top_level": 4,
+    "nested_mob_subclasses_grep": 16,
+    "rare_alt_pairs": 11,
+    "sprite_files": 90,
+    "sprite_classes_extending_MobSprite": 81
+  },
+  "rule": "A family is one base mob class (stats, AI, loot) plus one sprite class on one shared sheet. A variant is a subclass that changes one thing: (a) a frame block in the same sheet selected by an offset (rat 0, albino +16, fetid +32; gnoll 0, exile +21, trickster +42; mimic 0 / gold +16 / crystal +32 / ebony +48; caustic slime +9), (b) one on-hit or on-damage effect or one flag (albino bleed on a coin flip, caustic slime ooze on a coin flip, acidic ooze on hit and on being struck while adjacent, phantom piranha halves damage when the attacker is not adjacent), and sometimes (c) a stat row (albino base HP is higher than the rat). Spawn: each rotation slot swaps to its variant with a chance of 1 in 50 times an exotic multiplier. Depth scaling is a formula per family with a floor (elemental region scale never below 2).",
+  "data_fields": [
+    {"name": "alt_swap_chance_per_slot", "unit": "probability per rotation slot", "donor_value_or_null": null},
+    {"name": "exotic_multiplier_default", "unit": "ratio", "donor_value_or_null": null},
+    {"name": "variant_frame_block_offset", "unit": "frames into sheet", "donor_value_or_null": null},
+    {"name": "variant_on_hit_effect_chance", "unit": "probability per hit", "donor_value_or_null": null},
+    {"name": "variant_on_hit_effect_duration", "unit": "turns", "donor_value_or_null": null},
+    {"name": "variant_base_hp_ratio", "unit": "ratio vs family base HP", "donor_value_or_null": null},
+    {"name": "depth_scale_floor", "unit": "level (minimum multiplier)", "donor_value_or_null": null},
+    {"name": "depth_scale_divisor", "unit": "depth levels per step", "donor_value_or_null": null},
+    {"name": "depth_hp_per_level", "unit": "HP per level", "donor_value_or_null": null},
+    {"name": "sheet_frame_size", "unit": "pixels (w x h)", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "One sheet per family with frame blocks; the variant keeps the base outline",
+    "One swapped effect per variant (one readable tag), not a bundle",
+    "Rare alt swap inside the spawn group (1 in N per slot), not a per-spawn coin on every mob",
+    "Depth formulas per family with a floor, so the early zone never goes to zero",
+    "Boss roster built from known family members (summons reuse base classes)"
+  ],
+  "change": [
+    "Java subclass per variant becomes a data row (family id plus overrides)",
+    "Hidden random swap in the elemental picker becomes an explicit row",
+    "No stacking of base and variant effects on one hit (caustic and acidic both ooze)",
+    "Our own sheet, silhouettes, names and palette; no copied frame layouts or art",
+    "At most 3 attackers per group: at most one variant per group of 3 by default"
+  ],
+  "look_test": "Build one 375-wide fragment with four creatures: a base sewer vermin, its pale variant with a bleed tag on first hit, an elemental-tinted variant from the same body, and a mimic prop from the same sheet. Dom judges whether the family reads in one second and whether the variant tag reads without text. Second pass: the same group at alt rate 1 in 50 and 1 in 10, to see which feels like a surprise rather than a pattern.",
+  "licence_note": "Code GNU GPL v3 (LICENSE.txt lines 1-2). Art, music and sounds credited by name in AboutScene.java; no asset licence file in the repo; freesound samples mixed CC-BY and CC0 (AU001). Messages text protected. Inspiration category-level only; recreate as originals; no donor values reused (all donor_value_or_null are null).",
+  "tags": ["creature-family", "recolour-tier", "swapped-ability", "bleed", "scale-tier", "scheduler", "boss-elite-pattern", "new:alt-spawn-chance", "new:depth-formula", "new:frame-block"],
+  "not_read": [
+    "Mob.java AI body and the Investigating and Stealth states",
+    "Full standardMobRotation and addRareMobs bodies (only the RARE_ALTS static block and altChance line)",
+    "Elemental.random body",
+    "DwarfKing nested summon bodies (names and extends lines only)",
+    "GnollExile and GnollTrickster AI bodies",
+    "Traps, painters, mining and vault levels",
+    "Sprite pixels, sheet images and frame content (sizes from AU001 only)",
+    "Sound files and music",
+    "messages/*.properties (protected text)"
+  ]
+}

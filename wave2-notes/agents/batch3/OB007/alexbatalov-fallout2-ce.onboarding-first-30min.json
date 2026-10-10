@@ -1,0 +1,67 @@
+{
+  "donor": "alexbatalov-fallout2-ce",
+  "topic": "onboarding-first-30min",
+  "depth": "thin",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/main.cc",
+    "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/mainmenu.cc",
+    "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/character_selector.cc",
+    "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/game_movie.cc",
+    "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/game_movie.h",
+    "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/worldmap.cc",
+    "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/stat.cc",
+    "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/combat.cc",
+    "/mnt/frankendom-donors/alexbatalov-fallout2-ce/src/sfall_config.cc",
+    "/mnt/frankendom-donors/alexbatalov-fallout2-ce/LICENSE.md"
+  ],
+  "counts": {
+    "opening_movies_before_menu": 3,
+    "movies_in_enum": 17,
+    "artimer_movies": 4,
+    "premade_characters": 3,
+    "encounter_frequency_classes": 6,
+    "day_part_modifier_entries": 3
+  },
+  "rule": "Each world step: pick the day part from the clock, read the subtile encounter frequency (from config), shift it by one fifteenth on easy or hard, then roll 0 to 100; no encounter at or above the frequency. An encounter is spotted by a separate roll on outdoorsman (plus 20 with a motion scanner, capped at 95, plus a tile modifier). Spotted: award 100 minus the spotting value in XP and offer a yes or no to engage (no hides the icon). Unspotted: the encounter starts with no prompt. In a vehicle, the frequency is first reduced by a day-part modifier. Level-up: XP thresholds from a table function, a pending level-up state, a sound, and endurance-based hit points.",
+  "data_fields": [
+    {"name": "encounter_class_frequency", "unit": "percent", "donor_value_or_null": null},
+    {"name": "daypart_frequency_modifier", "unit": "percent (3 entries, vehicle only)", "donor_value_or_null": null},
+    {"name": "night_start_clock", "unit": "clock value", "donor_value_or_null": null},
+    {"name": "difficulty_frequency_shift", "unit": "fraction of frequency", "donor_value_or_null": null},
+    {"name": "spot_skill_cap", "unit": "percent", "donor_value_or_null": null},
+    {"name": "scanner_spot_bonus", "unit": "points", "donor_value_or_null": null},
+    {"name": "spot_xp_formula", "unit": "XP", "donor_value_or_null": null},
+    {"name": "xp_threshold_base", "unit": "XP", "donor_value_or_null": null},
+    {"name": "hp_per_level", "unit": "points", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Two-roll structure: chance per step, then a separate spotting roll",
+    "Spot-before-engage yes or no prompt, with a no that cancels the encounter",
+    "Unspotted encounter plays out with no prompt (ambush read)",
+    "Blinking icon while a roll is pending",
+    "Three premade starting roles plus a custom path",
+    "Level-up as a pending state the player resolves later"
+  ],
+  "change": [
+    "Spotting XP as a fixed zone-data value, not 100 minus skill (the donor reward rises as skill falls)",
+    "All numbers, names, art and movies are our own",
+    "Frequency per zone tile and time band as zone data (walk density as data)",
+    "Engage is a state change on the server; the prompt is a client view of that state",
+    "One opening with skip on any input instead of stacked movies",
+    "Level-up XP event from the server; client shows sound and pop-up"
+  ],
+  "look_test": "Phone 375 wide: a 30-step world-map strip with a moving dot; a blinking icon on rolled steps; a yes or no prompt only on spotted steps. Run one day pass and one night pass with higher frequency. Dom walks, then judges: does the prompt read as a choice, is the blink visible at a glance, does an unspotted ambush feel fair.",
+  "licence_note": "Sustainable Use License 1.0 (LICENSE.md line 1), restricting use to internal business, non-commercial or personal use. Not MIT-type: clean-room, shape only. No code adapted, no donor values used, no names or art. Game data is user-supplied and not in the box.",
+  "tags": ["walk-density", "encounter-ambush", "day-night", "stinger", "timed-event", "new:spot-before-engage", "new:spot-xp", "new:premade-archetypes", "new:movie-stack", "new:skip-flag", "new:level-up-pending"],
+  "not_read": [
+    "Data pack: master.dat, critter.dat, patch000.dat and the data folder (not in box): first map, first fight, first loot, town, services, dialogue, message text",
+    "Movie files (.mve) and their lengths",
+    "Config values for encounter classes, day-part table and tile modifiers (data pack)",
+    "sfall timer units and meaning (ARTIMER1-4 values read only)",
+    "Next-level helper for XP thresholds; level-up screen; pending level-up consumer",
+    "Premade starting stats and the editor's internals (characterEditorShow)",
+    "src/automap.cc, src/pipboy.cc, src/endgame.cc (not opened)",
+    "Sibling alexbatalov-fallout1-ce (in box, audit AU002) not read for this topic"
+  ]
+}

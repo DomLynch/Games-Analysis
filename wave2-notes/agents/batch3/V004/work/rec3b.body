@@ -1,0 +1,6 @@
+swgemu-Core3	credits added to corpse cash	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/CreatureManagerImplementation.cpp	692	destructedObject->addCashCredits(credits);
+swgemu-Core3	credits only for non-player, non-event mobs	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/CreatureManagerImplementation.cpp	687	if (destructedObject->isNonPlayerCreatureObject() && !destructedObject->isEventMob()) {
+swgemu-Core3	collection failure reported	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp	751	trx.abort() << "Did not win loot rolls.";
+swgemu-Core3	item placed in corpse	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp	804	if (container->transferObject(obj, -1, false, true)) {
+swgemu-Core3	failed transfer destroys the item	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp	807	obj->destroyObjectFromDatabase(true);
+swgemu-Core3	item created from its template	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp	795	obj = createLootObject(trx, itemTemplate, level, maxCondition);

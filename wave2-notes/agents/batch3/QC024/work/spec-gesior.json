@@ -1,0 +1,158 @@
+[
+ [
+  "modules/structures.ts",
+  15,
+  "top: number = 6;",
+  "default view margin top is 6 tiles"
+ ],
+ [
+  "modules/structures.ts",
+  16,
+  "right: number = 9;",
+  "default view margin right is 9 tiles"
+ ],
+ [
+  "modules/structures.ts",
+  17,
+  "bottom: number = 7;",
+  "default view margin bottom is 7 tiles"
+ ],
+ [
+  "modules/structures.ts",
+  18,
+  "left: number = 8;",
+  "default view margin left is 8 tiles"
+ ],
+ [
+  "modules/structures.ts",
+  21,
+  "return this.left + this.right + 1;",
+  "view width is left plus right plus one"
+ ],
+ [
+  "modules/network/protocolgame.ts",
+  2079,
+  "range.left = xrange/2 - ((xrange+1) % 2);",
+  "range change packet sets left margin from the x byte"
+ ],
+ [
+  "modules/network/protocolgame.ts",
+  2080,
+  "range.right = xrange/2;",
+  "range change packet sets right margin from the x byte"
+ ],
+ [
+  "modules/network/protocolgame.ts",
+  2084,
+  "g_map.setAwareRange(range);",
+  "range change packet calls the map setter"
+ ],
+ [
+  "modules/network/protocolgame.ts",
+  828,
+  "g_map.setCentralPosition(pos);",
+  "map description sets the central position to the player tile"
+ ],
+ [
+  "modules/network/protocolgame.ts",
+  831,
+  "this.setMapDescription(msg, pos.x - range.left, pos.y - range.top",
+  "full map description starts at centre minus left and top margins"
+ ],
+ [
+  "modules/network/protocolgame.ts",
+  850,
+  "range.horizontal(), 1);",
+  "north move describes one row of the window"
+ ],
+ [
+  "modules/network/protocolgame.ts",
+  864,
+  "this.setMapDescription(msg, pos.x + range.right",
+  "east move describes the column entering on the right"
+ ],
+ [
+  "modules/network/protocolgame.ts",
+  17,
+  "import {g_map, Map} from \"../map\";",
+  "protocol code imports the map singleton from map.ts"
+ ],
+ [
+  "modules/network/protocolgame.ts",
+  2128,
+  "setMapDescription(msg: InputMessage, x: number, y: number, z: number",
+  "map description takes origin and size per floor"
+ ],
+ [
+  "modules/network/protocolgame.ts",
+  2133,
+  "if (z > Otc.SEA_FLOOR) {",
+  "floor band depends on whether above sea floor"
+ ],
+ [
+  "modules/network/protocolgame.ts",
+  2135,
+  "endz = Math.min(z + Otc.AWARE_UNDEGROUND_FLOOR_RANGE, Otc.MAX_Z);",
+  "underground floors are clamped to the floor range and max floor"
+ ],
+ [
+  "modules/network/protocolgame.ts",
+  2146,
+  "skip = this.setFloorDescription(msg, x, y, nz, width, height",
+  "each floor band is described with the same window"
+ ],
+ [
+  "modules/constants/const.ts",
+  8,
+  "AWARE_UNDEGROUND_FLOOR_RANGE = 2,",
+  "underground floor range constant is 2"
+ ],
+ [
+  "modules/map.ts",
+  16,
+  "setAwareRange(arg0: any): any {",
+  "map range setter is declared with no body"
+ ],
+ [
+  "modules/map.ts",
+  17,
+  "throw new Error(\"Method not implemented.\");",
+  "map range setter throws, so the change packet cannot apply"
+ ],
+ [
+  "modules/map.ts",
+  61,
+  "let g_map = new Map();",
+  "the map singleton is created once in map.ts"
+ ],
+ [
+  "modules/map.ts",
+  13,
+  "return new Tile();",
+  "map tile lookup returns a new empty tile"
+ ],
+ [
+  "modules/game.ts",
+  34,
+  "return new Map();",
+  "game getter for the map returns a fresh map each time"
+ ],
+ [
+  "package.json",
+  10,
+  "\"license\": \"MIT\",",
+  "package licence is MIT"
+ ],
+ [
+  "README.md",
+  5,
+  "**ALPHA VERSION** - project is not working in most cases",
+  "README says the project is alpha and mostly not working"
+ ],
+ [
+  "modules/constants/const.ts",
+  6,
+  "UNDERGROUND_FLOOR = Otc.SEA_FLOOR + 1,",
+  "underground floor is one above the sea floor constant"
+ ]
+]

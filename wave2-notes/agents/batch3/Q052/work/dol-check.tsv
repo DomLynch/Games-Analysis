@@ -1,0 +1,59 @@
+note	claim	donor_file	line	quote
+Dawn-of-Light-DOLSharp	licence GPL v2 text	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/LICENSE	1	GNU GENERAL PUBLIC LICENSE
+Dawn-of-Light-DOLSharp	licence GPL v2 text	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/LICENSE	2	Version 2, June 1991
+Dawn-of-Light-DOLSharp	OnNPCKilled entry	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	1042	public virtual void OnNPCKilled(GameNPC killedNPC, GameObject killer)
+Dawn-of-Light-DOLSharp	charmed or unworthy kill: no XP	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	1054	if (!killedNPC.IsWorthReward)
+Dawn-of-Light-DOLSharp	participants must be in range	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	1078	!player.IsWithinRadius(killedNPC, WorldMgr.MAX_EXPFORKILL_DISTANCE))
+Dawn-of-Light-DOLSharp	NPC XP value from ExperienceValue	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	1100	long npcExpValue = killedNPC.ExperienceValue;
+Dawn-of-Light-DOLSharp	per gainer loop over XPGainers	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	1111	foreach (DictionaryEntry de in killedNPC.XPGainers)
+Dawn-of-Light-DOLSharp	damage share	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	1127	double damagePercent = (float)de.Value / totalDamage;
+Dawn-of-Light-DOLSharp	solo: XP by damage share	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	1187	xpReward = (long)(npcExpValue * damagePercent);
+Dawn-of-Light-DOLSharp	grouped: full XP value	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	1189	xpReward = npcExpValue;
+Dawn-of-Light-DOLSharp	cap 125% of level table value	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	1200	ServerProperties.Properties.XP_CAP_PERCENT / 100);
+Dawn-of-Light-DOLSharp	group cap	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	1209	ServerProperties.Properties.XP_GROUP_CAP_PERCENT / 100);
+Dawn-of-Light-DOLSharp	challenge code: highest grouped con	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	1230	if (player != null && highestPlayer != null && highestConValue < 0)
+Dawn-of-Light-DOLSharp	challenge code cap from con level	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	1233	GameObject.GetLevelFromCon(player.Level, highestConValue)));
+Dawn-of-Light-DOLSharp	cap applied	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	1241	if (xpReward > expCap)
+Dawn-of-Light-DOLSharp	camp: full bonus after 30 minutes	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	1249	if (killedNPC.CurrentRegion.Time - killedNPC.SpawnTick > 1800000)
+Dawn-of-Light-DOLSharp	camp: reset to 0.95	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	1252	killedNPC.CampBonus = 0.95;
+Dawn-of-Light-DOLSharp	camp: decays 0.05 per gainer	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	1257	if (killedNPC.CampBonus >= 0.05) killedNPC.CampBonus -= 0.05;
+Dawn-of-Light-DOLSharp	camp: dungeon x1.2	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	1263	campBonusPerc *= 1.20;
+Dawn-of-Light-DOLSharp	camp bonus value	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	1270	campBonus = (long)(xpReward * campBonusPerc);
+Dawn-of-Light-DOLSharp	outpost: keep within 16000	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	1283	GetKeepCloseToSpot(living.Position, 16000);
+Dawn-of-Light-DOLSharp	group XP: 12.5 per member	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	1310	groupExp += (long)(0.125 * xpReward * (int)plrGrpExp[player.Group]);
+Dawn-of-Light-DOLSharp	bonuses summed	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	1318	xpReward += (long)campBonus + groupExp + outpostXP;
+Dawn-of-Light-DOLSharp	dead living gets 25 percent	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	1320	if (!living.IsAlive)//Dead living gets 25% exp only
+Dawn-of-Light-DOLSharp	GainExperience call with split	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	1324	living.GainExperience(GameLiving.eXPSource.NPC, xpReward, campBonus, groupExp, outpostXP, true, true, true);
+Dawn-of-Light-DOLSharp	level XP table function	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	604	public virtual long GetExperienceForLiving(int level)
+Dawn-of-Light-DOLSharp	level XP table lookup	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	609	if (level < GameLiving.XPForLiving.Length)
+Dawn-of-Light-DOLSharp	formula branch for level 35+	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	631	if (level >= 35)
+Dawn-of-Light-DOLSharp	formula value	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverrules/AbstractServerRules.cs	646	long exp = (long)(Math.Pow(2, k1 + (level - k1_lvl) * k1_inc) * 5);
+Dawn-of-Light-DOLSharp	MAX_CAMP_BONUS default 0.55	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverproperty/ServerProperties.cs	1944	"max_camp_bonus", "Max camp bonus, 0.55 = 55%", 0.55
+Dawn-of-Light-DOLSharp	XP_Cap default 125	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverproperty/ServerProperties.cs	835	[ServerProperty("rates", "XP_Cap_Percent"
+Dawn-of-Light-DOLSharp	XP_Group_Cap default 125	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverproperty/ServerProperties.cs	841	[ServerProperty("rates", "XP_Group_Cap_Percent"
+Dawn-of-Light-DOLSharp	XP_HardCap default 500	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverproperty/ServerProperties.cs	853	[ServerProperty("rates", "XP_HardCap_Percent"
+Dawn-of-Light-DOLSharp	XP_RATE default 1.0	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverproperty/ServerProperties.cs	859	[ServerProperty("rates", "xp_rate"
+Dawn-of-Light-DOLSharp	kill XP radius	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/world/WorldMgr.cs	59	public const int MAX_EXPFORKILL_DISTANCE = 16384;
+Dawn-of-Light-DOLSharp	base GainExperience notifies event	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameLiving.cs	4516	if (expTotal > 0 && notify) Notify(GameLivingEvent.GainedExperience
+Dawn-of-Light-DOLSharp	NoXPForLevel grey table	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameLiving.cs	1474	public static readonly int[] NoXPForLevel =
+Dawn-of-Light-DOLSharp	grey test against table	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameLiving.cs	1553	if (target.EffectiveLevel <= GameLiving.NoXPForLevel[sourceLevel])
+Dawn-of-Light-DOLSharp	XPForLiving table	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameLiving.cs	1362	public static readonly long[] XPForLiving =
+Dawn-of-Light-DOLSharp	ExperienceValue per level	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameLiving.cs	1314	public virtual long ExperienceValue
+Dawn-of-Light-DOLSharp	GainExperience override: rates	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GamePlayer.cs	4864	public override void GainExperience(eXPSource xpSource, long expTotal
+Dawn-of-Light-DOLSharp	RvR rate	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GamePlayer.cs	4891	expTotal = (long)(expTotal * ServerProperties.Properties.RvR_XP_RATE);
+Dawn-of-Light-DOLSharp	XP rate	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GamePlayer.cs	4893	expTotal = (long)(expTotal * ServerProperties.Properties.XP_RATE);
+Dawn-of-Light-DOLSharp	hard cap of 500 percent	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GamePlayer.cs	4902	ServerProperties.Properties.XP_HARDCAP_PERCENT / 100);
+Dawn-of-Light-DOLSharp	catacomb 1.5x below level 20	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GamePlayer.cs	4932	expTotal = (long)(expTotal * 1.5);
+Dawn-of-Light-DOLSharp	floor: second stage midpoint	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GamePlayer.cs	4942	if (Experience + expTotal < ExperienceForCurrentLevelSecondStage)
+Dawn-of-Light-DOLSharp	floor: current level start	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GamePlayer.cs	4947	else if (Experience + expTotal < ExperienceForCurrentLevel)
+Dawn-of-Light-DOLSharp	XP stored	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GamePlayer.cs	4976	Experience += expTotal;
+Dawn-of-Light-DOLSharp	second stage at 40+	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GamePlayer.cs	4989	else if (Level >= 40 && Level < MaxLevel && !IsLevelSecondStage
+Dawn-of-Light-DOLSharp	one level step per gain	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GamePlayer.cs	4994	else if (Level < MaxLevel && Experience >= ExperienceForNextLevel)
+Dawn-of-Light-DOLSharp	second-stage midpoint formula	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GamePlayer.cs	4806	1 + ExperienceForCurrentLevel + (ExperienceForNextLevel - ExperienceForCurrentLevel) / 2
+Dawn-of-Light-DOLSharp	XP to reach a level	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GamePlayer.cs	4679	public virtual long GetExperienceNeededForLevel(int level)
+Dawn-of-Light-DOLSharp	XP to reach a level: index	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GamePlayer.cs	4687	return GetExperienceAmountForLevel(level - 1);
+Dawn-of-Light-DOLSharp	XP table declaration	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GamePlayer.cs	4711	private static readonly long[] XPForLevel =
+Dawn-of-Light-DOLSharp	XP table entry level 2	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GamePlayer.cs	4714	50, // xp to level 2
+Dawn-of-Light-DOLSharp	max level 50	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GamePlayer.cs	4673	get { return 50; }
+Dawn-of-Light-DOLSharp	trainer grants 0 XP to trigger level-up	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/CustomNPC/GameTrainer.cs	154	player.GainExperience(GameLiving.eXPSource.Other, 0);//levelup
+Dawn-of-Light-DOLSharp	trainer free-level XP difference	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/CustomNPC/GameTrainer.cs	160	long xp = player.GetExperienceNeededForLevel(player.LastFreeLevel + 1) - player.GetExperienceNeededForLevel(player.LastFreeLevel);

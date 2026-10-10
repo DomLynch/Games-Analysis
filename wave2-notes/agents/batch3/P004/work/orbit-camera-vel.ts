@@ -4,8 +4,12 @@ export {};
 interface Vec3 { x: number; y: number; z: number; }
 type Mode = "first" | "third";
 
-// Ray into the voxel grid: distance along the ray to the first opaque voxel, or undefined for none.
-interface Terrain { firstHit(from: Vec3, to: Vec3, maxSteps: number): number | undefined; }
+// Rays into the voxel grid, each giving the distance along the ray to its stop voxel, or undefined for none.
+// firstOpaque stops at the first opaque voxel (near policy); firstClear stops at the first non-opaque voxel (far policy).
+interface Terrain {
+  firstOpaque(from: Vec3, to: Vec3, maxSteps: number): number | undefined;
+  firstClear(from: Vec3, to: Vec3, maxSteps: number): number | undefined;
+}
 
 const TAU = 2 * Math.PI;
 const LERP_ORI_RATE = 15;   // orientation eases at this rate times dt (seconds)
@@ -61,6 +65,13 @@ export class OrbitCamera {
     this.tgtDist = m === "third" ? Math.max(2, this.tgtDist + 5) : MIN_ZOOM;
   }
 
+  // Raw wheel delta to zoom step: the step grows with distance; zooming in (delta < 0) is divided by
+  // (1 - delta * 0.01) so a zoom in and a zoom out of the same wheel size cover the same distance.
+  wheelStep(delta: number): number {
+    const step = delta * (0.05 + this.dist * 0.01);
+    return delta < 0 ? step / (1 - delta * 0.01) : step;
+  }
+
   // Wheel zoom. Third person: the target distance moves by delta and drops to first person below
   // MIN_THIRD * scale. Zooming out of first person returns to third at MIN_THIRD * scale.
   zoom(delta: number, cap: number, scale: number): void {
@@ -94,11 +105,13 @@ export class OrbitCamera {
     }
   }
 
-  // Far policy: a single ray from the camera position back to the focus. Does not change this.dist.
+  // Far policy: a single ray from the camera position back to the focus that stops at the first NON-opaque
+  // voxel (opposite of the near rays). It fires when the camera sits inside solid terrain; in open air it
+  // stops at once (d = 0) and the view is dist - 0.03. Does not change this.dist.
   private farView(terrain: Terrain): number {
     const fwd = this.forward();
     const start = { x: this.focus.x - fwd.x * this.dist, y: this.focus.y - fwd.y * this.dist, z: this.focus.z - fwd.z * this.dist };
-    const hit = terrain.firstHit(start, this.focus, MAX_STEPS);
+    const hit = terrain.firstClear(start, this.focus, MAX_STEPS);
     if (hit === undefined) return this.dist;
     return Math.max(0, Math.min(this.dist - hit - 0.03, this.dist));
   }
@@ -115,7 +128,7 @@ export class OrbitCamera {
     };
     let best = Infinity;
     for (const p of [...corners, behind]) {
-      const hit = terrain.firstHit(this.focus, p, MAX_STEPS);
+      const hit = terrain.firstOpaque(this.focus, p, MAX_STEPS);
       const d = hit === undefined ? this.dist : Math.min(hit, this.tgtDist);
       best = Math.min(best, Math.max(0, d));
     }

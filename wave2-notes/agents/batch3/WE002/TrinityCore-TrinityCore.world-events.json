@@ -1,0 +1,90 @@
+{
+  "donor": "TrinityCore-TrinityCore",
+  "topic": "world-events",
+  "depth": "full",
+  "half_read": "server",
+  "paths": [
+    "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Events/GameEventMgr.h",
+    "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Events/GameEventMgr.cpp",
+    "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Events/GameEventSender.cpp",
+    "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/scripts/Events/zalazane_fall.cpp",
+    "/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/scripts/Events/fireworks_show.cpp",
+    "/mnt/frankendom-donors/TrinityCore-TrinityCore/sql/base/dev/world_database.sql",
+    "/mnt/frankendom-donors/TrinityCore-TrinityCore/sql/updates/world/master/2026_09_22_02_world_2026_09_11_00_world.sql",
+    "/mnt/frankendom-donors/TrinityCore-TrinityCore/COPYING"
+  ],
+  "counts": {
+    "game_event_schema_tables": 14,
+    "game_event_columns": 11,
+    "game_event_state_values": 6,
+    "loader_queries_gameeventmgr": 16,
+    "event_script_cpp_files": 13,
+    "files_mentioning_gameeventmgr_or_game_event_hooks": 20,
+    "game_event_insert_rows_in_donor_box": 0,
+    "zalazane_fall_lines": 406,
+    "fireworks_show_lines": 907
+  },
+  "rule": "Timed window: a world event is on for length minutes out of every occurence minutes, counted from start, and never past end (GameEventMgr.cpp NextCheck). Progress event: a quest completion adds to a counter per condition; when all counters reach required, the event enters a next-phase timer (length minutes) before the follow-up event starts; states are saved per event. Holiday ritual: fixed clock on the hour, random burst spot per interval in a 1-2 s band, stop at minute 10, finale on a fixed local time. Summon gate: a per-summoner aura blocks a second summon for 50 s; the chain escalates by stage when the boss drops to 20 percent (zalazane_fall.cpp).",
+  "data_fields": [
+    {"name": "window_period_min", "unit": "minutes", "donor_value_or_null": null},
+    {"name": "window_length_min", "unit": "minutes", "donor_value_or_null": null},
+    {"name": "window_start_utc", "unit": "timestamp", "donor_value_or_null": null},
+    {"name": "window_end_utc", "unit": "timestamp", "donor_value_or_null": null},
+    {"name": "condition_required_count", "unit": "count", "donor_value_or_null": null},
+    {"name": "condition_done_count", "unit": "count", "donor_value_or_null": null},
+    {"name": "progress_per_quest_completion", "unit": "count per quest", "donor_value_or_null": null},
+    {"name": "followup_wait_min", "unit": "minutes", "donor_value_or_null": null},
+    {"name": "announce_mode", "unit": "enum 0 silent, 1 announce, 2 config", "donor_value_or_null": null},
+    {"name": "burst_interval_min_s", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "burst_interval_max_s", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "burst_stop_minute_of_hour", "unit": "minute of hour", "donor_value_or_null": null},
+    {"name": "finale_local_time", "unit": "hh:mm:ss local", "donor_value_or_null": null},
+    {"name": "summon_check_interval_s", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "summon_range_yd", "unit": "yards", "donor_value_or_null": null},
+    {"name": "gate_reapply_s", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "pounce_interval_s", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "escalation_hp_pct", "unit": "percent of max health", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Window formula: period, length, start and end in one row, evaluated once on the server",
+    "Explicit state machine with a saved phase per event, so a restart does not lose progress",
+    "Progress bar that stops full and runs a countdown before the next event",
+    "Per-summoner lock that blocks a second summon for a fixed time",
+    "Three-stage escalation that switches at a health threshold",
+    "On-the-hour ritual with random placement inside a short band"
+  ],
+  "change": [
+    "Add a timeout to every progress event; the code path has none",
+    "Keep progress counters in our server ledger, not in quest completion alone",
+    "Make the New Year finale a data row, not a hard-coded time",
+    "Cap attackers at three in the switch stage; the switch fires once",
+    "Rename every boss and redraw the spark, sound and chain"
+  ],
+  "look_test": "On a 375-wide phone card for one zone: a window badge reading 'on 10 min, every 60' with a countdown, and a progress bar reading 0 of 20 kills. When the bar fills, a two-minute countdown, then a next boss row. A three-stage gate: a summon at full health, a boss that pounces every 30 s, and at 20 percent a switch to a bigger boss for the same player. Dom judges whether the window reads in under two seconds, whether the 20 percent switch feels like an event, and whether the hour ritual reads as a town event without a chat line.",
+  "licence_note": "Code is GPL-2.0 (COPYING version 2; scripts carry the GPL header). No code, table or content copied. Category-level inspiration only: timed windows, progress gates, per-player summon lock, staged switch. No donor values used as data. Event content rows are not in the donor box.",
+  "tags": [
+    "world-event",
+    "scheduler",
+    "timed-event",
+    "duration-rule",
+    "particle-burst",
+    "signage",
+    "boss-elite-pattern",
+    "new:progress-gate",
+    "new:state-machine",
+    "new:summon-gate",
+    "new:escalation-ladder",
+    "new:world-state-bar",
+    "new:licence-gpl",
+    "new:data-not-in-repo"
+  ],
+  "not_read": [
+    "client half (no client event UI read)",
+    "DBC and hotfix holiday tables (only the holiday id column noted)",
+    "characters database save tables beyond names game_event_save and game_event_condition_save",
+    "10 of 13 event script .cpp files (brewfest, childrens_week, darkmoon_faire, events_script_loader, hallows_end, love_is_in_the_air, lunar_festival, midsummer, pilgrims_bounty, winter_veil)",
+    "operation_gnomeregan.cpp (grep only)",
+    "src/server/scripts/Events/Anniversary folder (not opened)",
+    "game_event rows (not in donor box; schema only)"
+  ]
+}

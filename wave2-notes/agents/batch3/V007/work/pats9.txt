@@ -1,0 +1,50 @@
+var dice = (long)Random.Shared.Next(0, 10000000);
+dice = (long)Math.Floor(dice / (lootDropRate * AppConfiguration.Instance.World.LootRate));
+if (lootGroup.DropRate > 0 && dice > lootGroup.DropRate)
+private List<(uint itemId, int count, byte grade)> GeneratePack(float lootDropRate
+public List<(uint itemId, int count, byte grade, uint lootGroupOrigin)> GeneratePackNewV2
+var requiresDice = (long)Math.Floor(loot.DropRate * lootDropRate * AppConfiguration.Instance.World.LootRate);
+if (dice < requiresDice || loot.AlwaysDrop)
+var requiresDice = (long)Math.Floor(10_000_000f * groupRate * lootDropRate * AppConfiguration.Instance.World.LootRate);
+if (dice < requiresDice)
+var roll = (long)Random.Shared.Next(0, normalizedRate);
+cumulativeRate += (long)Math.Floor(normalizedRate * itemRate * lootDropRate * AppConfiguration.Instance.World.LootRate);
+if (roll < cumulativeRate)
+var groupRate = group is { DropRate: > 0 } ? group.DropRate / 10_000_000f : 1f;
+if (actDice * actLevelMultiplier > actGroup.MaxDice)
+foreach (var loot in tmpSelectedQuestItemsByGroup[groupNo])
+if (selectedItemsByGroup[groupNo].Contains(loot))
+normalizedRate += loot.AlwaysDrop ? 10_000_000 : loot.DropRate;
+if (loot.DropRate > 1 ? loot.DropRate / (float)normalizedRate : 1f;
+var itemRate = loot.DropRate > 1 ? loot.DropRate / (float)normalizedRate : 1f;
+var countToAddNow = Random.Shared.Next(loot.MinAmount, loot.MaxAmount + 1);
+var generatedGrade = inheritedGrade ?? loot.GradeId;
+var lootDropRate = (100f + player.DropRateMul) / 100f;
+if (loot.Group <= 0 || loot.AlwaysDrop || loot.DropRate == 10000000)
+if (itemTemplate?.LootQuestId > 0 && player != null)
+var actGroup = ActabilityGroups.Values.FirstOrDefault(g => g.GroupId == loot.Group);
+lootPackResults.AddRange(lootPack.GeneratePackNewV2(lootDropRate, lootGoldRate, killer as Character, ActabilityType.None));
+var maxDropRateMul = -100f;
+lootDropRate = maxDropRateMul;
+if (aggroDropMul > maxDropRateMul)
+var roll = (long)Random.Shared.Next(0, normalizedRate);
+var rollResult = rollRequest ? (sbyte)Random.Shared.Next(1, 100) : (sbyte)-1;
+var highestResult = itemEntry.PlayerRolls
+.Where(x => x.Value > 0)
+.OrderBy(x => x.Value)
+.Select(x => x.Value)
+var pickIndex = Random.Shared.Next(highestEntries.Count);
+if (itemEntry.PlayerRolls.Any(m => m.Value == 0))
+var minimumDespawnTime = CreationTime;
+minimumDespawnTime = CreationTime.AddSeconds(npc.Spawner.DespawnTime);
+const float MakeLootPublicTime = 180f;
+private const float MakeLootPublicTime = 180f;
+public const float MaxLootingRange = 200f;
+public CreationTime
+if (CreationTime.AddSeconds(MakeLootPublicTime) <= DateTime.UtcNow)
+var highestEntries = itemEntry.PlayerRolls
+.Where(x => x.Value >= highestResult)
+var lootGoldRate
+countToAdd = (int)Math.Round(countToAdd * lootGoldRate);
+if (selectedPack.ItemId == Item.Coins)
+public static float GetLootMultiplier

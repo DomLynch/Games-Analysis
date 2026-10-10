@@ -1,0 +1,51 @@
+swgemu-Core3	getHighest selector entry point	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.cpp	530	TangibleObject* ThreatMap::getHighestThreatAttacker() {
+swgemu-Core3	cached target kept while doEvaluation timer not past	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.cpp	541	!cooldownTimerMap.isPast("doEvaluation")
+swgemu-Core3	evaluation timer restarted after each full pass	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.cpp	597	ThreatMap::EVALUATIONCOOLDOWN);
+swgemu-Core3	EVALUATIONCOOLDOWN = 24000 ms	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.h	166	enum { EVALUATIONCOOLDOWN = 24000 };
+swgemu-Core3	candidate range 128 and attackable	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.cpp	572	!tano->isInRange(selfCreo, 128.f) || !tano->isAttackableBy(selfCreo))
+swgemu-Core3	dead or incapacitated creatures skipped	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.cpp	578	if (creature != nullptr && !creature->isDead() && !creature->isIncapacitated()) {
+swgemu-Core3	hit adds damage keyed by weapon xp type	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.cpp	102	entry->addDamage(xpToAward, damage);
+swgemu-Core3	hit adds aggro +1	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.cpp	103	entry->addAggro(1);
+swgemu-Core3	threat from damage = total minus non-aggro	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMatrix.cpp	55	uint32 totalDamage = entry->getTotalDamage() - entry->getNonAggroDamage();
+swgemu-Core3	damage pool only if totalDamage > 0	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMatrix.cpp	59	if (totalDamage > 0)
+swgemu-Core3	damage pool: one random entry	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMatrix.cpp	93	System::random(damageMap.size() - 1)).getValue());
+swgemu-Core3	aggro pool: one random entry	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMatrix.cpp	99	System::random(aggroMap.size() - 1)).getValue());
+swgemu-Core3	heal pool: top healer once	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMatrix.cpp	103	targetSelection.add(healMap.elementAt(healMap.size() - 1).getValue());
+swgemu-Core3	final uniform pick over pool	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMatrix.cpp	107	returnThreat = targetSelection.get(System::random(targetSelection.size() - 1));
+swgemu-Core3	taunt overrides the pool	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMatrix.cpp	83	returnThreat = tauntThreat;
+swgemu-Core3	focus overrides the pool when no taunt	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMatrix.cpp	86	returnThreat = focusedThreat;
+swgemu-Core3	matrix cleared after each pick	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMatrix.cpp	119	return returnThreat;
+swgemu-Core3	TAUNTED state bit 0x101	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatStates.h	21	const static int TAUNTED = 0x101;
+swgemu-Core3	FOCUSED state bit 0x102	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatStates.h	22	const static int FOCUSED = 0x102;
+swgemu-Core3	removeAll keeps entry, moves damage to non-aggro	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.cpp	134	value->setNonAggroDamage(value->getTotalDamage());
+swgemu-Core3	removeAll drops dead or offline attackers	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.cpp	127	key->asCreatureObject()->isDead() || !key->asCreatureObject()->isOnline()
+swgemu-Core3	clearAggro writes to a local copy (donor bug)	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.cpp	646	entry.clearAggro();
+swgemu-Core3	DOT damage adds aggro only	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp	4031	getThreatMap()->addAggro(attacker, 1);
+swgemu-Core3	direct damage adds threat via addDamage	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp	4044	getThreatMap()->addDamage(attacker, damage, xp);
+swgemu-Core3	getTargetFromMap function	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp	1547	SceneObject* AiAgentImplementation::getTargetFromMap() {
+swgemu-Core3	adopt gate: damage in last 20 s	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp	1550	lastDamageReceived.miliDifference() < 20000
+swgemu-Core3	adopt gate: distance under 128	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp	1550	target->getDistanceTo(asAiAgent()) < 128.f
+swgemu-Core3	validateTarget range 128	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp	1671	if (!target->isInRange(asAiAgent(), 128)) {
+swgemu-Core3	validateTarget incapacitated or not attackable	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp	1684	if (targetCreO->isIncapacitated() || !targetCreO->isAttackableBy(asAiAgent())) {
+swgemu-Core3	addDefender adds +1 aggro	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp	2134	threatMap->addAggro(defender->asTangibleObject(), 1);
+swgemu-Core3	addDefender triggers pack notify	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp	2137	notifyPackMobs(defender);
+swgemu-Core3	removeDefender drops threat entry	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp	2147	getThreatMap()->dropDamage(defender->asTangibleObject());
+swgemu-Core3	pack range formula	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp	4092	float packRange = 20.f + (getLevel() / 100.f);
+swgemu-Core3	pack range +5 when aggressive	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp	4095	packRange += 5.f;
+swgemu-Core3	pack partner skip if leashing	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp	4084	agent->getMovementState() == AiAgent::LEASHING
+swgemu-Core3	pack line of sight check	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp	4100	if (!checkLineOfSight(creo))
+swgemu-Core3	pack 30 s throttle	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp	4114	lastNotify->addMiliTime(30000);
+swgemu-Core3	pack partner set defender	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp	4118	agentRef->setDefender(attackerRef);
+swgemu-Core3	leash sets LEASHING state	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp	1919	setMovementState(AiAgent::LEASHING);
+swgemu-Core3	behaviour interval MIN 400 ms	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgent.idl	215	BEHAVIORINTERVALMIN = 400;
+swgemu-Core3	behaviour interval MID 700 ms	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgent.idl	216	BEHAVIORINTERVALMID = 700;
+swgemu-Core3	behaviour interval MAX 1000 ms	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgent.idl	217	BEHAVIORINTERVALMAX = 1000;
+swgemu-Core3	default interval in combat branch	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp	3928	nextBehaviorInterval = BEHAVIORINTERVALMIN;
+swgemu-Core3	BT: threat map prospect first	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/bin/scripts/ai/default.lua	380	name="GetProspectFromThreatMap",
+swgemu-Core3	BT: main defender second	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/bin/scripts/ai/default.lua	385	name="GetProspectFromDefenders",
+swgemu-Core3	BT: validity check	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/bin/scripts/ai/default.lua	388	name="CheckTargetIsValid",
+swgemu-Core3	BT: drop invalid prospect	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/bin/scripts/ai/default.lua	391	name="DropProspectFromDefenders",
+swgemu-Core3	BT: set defender from prospect	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/bin/scripts/ai/default.lua	393	name="SetDefenderFromProspect",
+swgemu-Core3	BT leaf: threat map pick	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/bt/leaf/FollowActions.h	39	agent->getThreatMap()->getHighestThreatAttacker();
+swgemu-Core3	BT leaf: set defender	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/bt/leaf/FollowActions.h	215	agent->setDefender(tar);
+swgemu-Core3	BT leaf check: validateTarget	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/bt/leaf/Checks.cpp	244	return agent->validateTarget(tar);

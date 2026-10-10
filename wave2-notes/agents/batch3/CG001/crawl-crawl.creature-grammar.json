@@ -1,0 +1,90 @@
+{
+  "donor": "crawl-crawl",
+  "topic": "creature-grammar",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/dat/mons/",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/dat/mons/black-draconian.yaml",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/dat/mons/ancestor-knight.yaml",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/dat/mons/serpent-of-hell-dis.yaml",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/mon-pick-data.h",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/mon-flags.h",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/mon-death.cc"
+  ],
+  "counts": {
+    "monster_yaml_files": 689,
+    "files_with_genus": 255,
+    "distinct_genus": 55,
+    "files_without_genus": 434,
+    "draconian_family_size": 8,
+    "ancestor_set_size": 3,
+    "serpent_boss_variants": 4,
+    "dragon_genus_files": 19,
+    "tall_tile_files": 17,
+    "unique_flag_files": 99,
+    "no_gen_derived_files": 38,
+    "tile_field_files": 64,
+    "tile_program_bug_files": 18,
+    "shout_distinct_values": 27,
+    "population_rows": 1062,
+    "population_rows_flat": 532,
+    "population_rows_fall": 174,
+    "population_rows_semi": 152,
+    "population_rows_rise": 108,
+    "population_rows_peak": 96
+  },
+  "rule": "A family is a shared body keyed by genus. Within a family the stat row is shared and each variant changes one trait: a colour, one resist, one damage or shape flag. The 8-colour draconian family shares hit dice 14 and hp_10x 980 and differs by one resist per colour, one damage change (grey) and one wing flag (black). A boss is one body and one stat block with variants that swap the bite element, the resists and the spell list (serpent line, 4 variants, hp_10x 3230 in the file read). Derived undead: a dying creature can leave a copy of its body with a prefix name that replaces the family noun (MF_NAME_ZOMBIE). Population is a depth-banded weighted table of rows {min depth, max depth, weight, shape, monster}; the shape names suggest weight curves but the curve code was not read.",
+  "data_fields": [
+    {"name": "family_key", "unit": "label (genus)", "donor_value_or_null": null},
+    {"name": "family_size", "unit": "count", "donor_value_or_null": null},
+    {"name": "trait_swap_per_variant", "unit": "trait count (1 resist plus 1 shape or damage)", "donor_value_or_null": null},
+    {"name": "boss_variant_count", "unit": "count", "donor_value_or_null": null},
+    {"name": "boss_bite_element_swap", "unit": "enum", "donor_value_or_null": null},
+    {"name": "population_depth_min", "unit": "zone depth", "donor_value_or_null": null},
+    {"name": "population_depth_max", "unit": "zone depth", "donor_value_or_null": null},
+    {"name": "population_weight", "unit": "integer weight", "donor_value_or_null": null},
+    {"name": "derived_undead_chance", "unit": "percent", "donor_value_or_null": null},
+    {"name": "tall_frame_flag", "unit": "boolean", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "genus as the family key, with one shared stat row per family",
+    "one swapped trait per variant (a resist, a shape flag, a damage step)",
+    "boss as one body with 4 variants that swap element and spell list",
+    "depth-banded weighted population rows as zone spawn data",
+    "derived undead as a prefix-named copy of a fallen creature",
+    "taller frame for uniques"
+  ],
+  "change": [
+    "the 8-colour family uses identical stats; vary one step per variant so a list does not read as copies",
+    "no placeholder tile name; ship real art for each variant",
+    "no free-form shout voice without audio; use a text tag",
+    "our own names; no monster names or yaml copied",
+    "re-implement from the idea; GPL code is not to be pasted into a non-GPL repo"
+  ],
+  "look_test": "A 375-wide strip of our own art: row 1 is eight recoloured mooks of one family with one trait icon each (a resist badge on six, a shape flag on one); row 2 is one boss in four variants at the same size, each with a different element tint and one spell tag. Dom judges whether row 1 reads as one family and row 2 as one boss with four elements. Preview only.",
+  "licence_note": "Code: GPL v2 or later (LICENSE; README.md says GPLv2+). Data under dat/ is covered by the general GPLv2+ statement only. Tiles are mostly CC0 with RLTiles public-domain tiles (some modified); per-tile authors are not in the repo; title art, icons and DejaVu fonts have no licence stated (asset audit AU011). Inspiration is category-level for art. No legal conclusions.",
+  "tags": [
+    "creature-family",
+    "recolour-tier",
+    "swapped-ability",
+    "boss-elite-pattern",
+    "naming-grammar",
+    "new:population-table",
+    "new:derived-undead",
+    "new:tall-frame",
+    "new:genus-family-key"
+  ],
+  "not_read": [
+    "tile rendering and the tile lookup (625 of 689 yaml files have no tile line; resolution not read)",
+    "serpent spell tables (C++ source, not read)",
+    "mon-pick.cc (300 lines) and the weight-curve code for FLAT, FALL, SEMI, RISE, PEAK",
+    "name_zombie_from_mon body in mon-death.cc",
+    "dat/species (49 files; names listed only)",
+    "dat/descript monster descriptions (not read)",
+    "dat/jobs (not read)",
+    "serpent variants cocytus, tartarus and fire yaml beyond bite, spell and resist lines",
+    "speed field (254 files carry it; not tallied)",
+    "audio (none in tree)"
+  ]
+}

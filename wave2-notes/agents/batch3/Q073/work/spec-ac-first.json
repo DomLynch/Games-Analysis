@@ -1,0 +1,14 @@
+[
+ [
+  "azerothcore-azerothcore-wotlk",
+  "skill bonus comment 0.04 percent",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "bonus from skills is 0.04%"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "parry band reduced by skill bonus (first occurrence is parry)",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "&& (tmp -= skillBonus) > 0"
+ ]
+]

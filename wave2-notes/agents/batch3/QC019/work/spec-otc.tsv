@@ -1,0 +1,16 @@
+map panel follows the local player	/mnt/frankendom-donors/OTCv8-otclientv8/modules/game_interface/gameinterface.lua	gameMapPanel:followCreature(g_game.getLocalPlayer())
+visible map is 15 by 11 tiles	/mnt/frankendom-donors/OTCv8-otclientv8/modules/game_interface/gameinterface.lua	gameMapPanel:setVisibleDimension({ width = 15, height = 11 })
+desktop default zoom 15	/mnt/frankendom-donors/OTCv8-otclientv8/modules/game_interface/gameinterface.lua	gameMapPanel:setZoom(15)
+zoom out limited to 513 for normal play	/mnt/frankendom-donors/OTCv8-otclientv8/modules/game_interface/gameinterface.lua	gameMapPanel:setMaxZoomOut(513)
+zoom out limited to 15 when limited zoom is set	/mnt/frankendom-donors/OTCv8-otclientv8/modules/game_interface/gameinterface.lua	gameMapPanel:setMaxZoomOut(15)
+zoom in/out keys are bound to the map panel	/mnt/frankendom-donors/OTCv8-otclientv8/modules/game_interface/gameinterface.lua	g_keyboard.bindKeyPress('Ctrl+=', function()
+image zoom factor 1.1 per wheel step	/mnt/frankendom-donors/OTCv8-otclientv8/modules/corelib/ui/uiimageview.lua	local zoom = self.zoom * 1.1
+image zoom keeps the point under the cursor	/mnt/frankendom-donors/OTCv8-otclientv8/modules/corelib/ui/uiimageview.lua	local offsetX = centerX - x * self.zoom
+old zoom read before the new one is set	/mnt/frankendom-donors/OTCv8-otclientv8/modules/corelib/ui/uiimageview.lua	local posX, posY = self:getImagePosition(x, y)
+image point clamped to the texture	/mnt/frankendom-donors/OTCv8-otclientv8/modules/corelib/ui/uiimageview.lua	x = math.max(math.min(x, self:getImageTextureWidth()), 0)
+mouse wheel zooms about the cursor	/mnt/frankendom-donors/OTCv8-otclientv8/modules/corelib/ui/uiimageview.lua	self:zoomIn(x, y)
+minimap camera follows player unless dragging	/mnt/frankendom-donors/OTCv8-otclientv8/modules/game_minimap/minimap.lua	if not minimapWidget:isDragging() then
+minimap camera set to player position	/mnt/frankendom-donors/OTCv8-otclientv8/modules/game_minimap/minimap.lua	minimapWidget:setCameraPosition(player:getPosition())
+drag remembers the start camera	/mnt/frankendom-donors/OTCv8-otclientv8/modules/gamelib/ui/uiminimap.lua	self.dragCameraReference = self:getCameraPosition()
+drag moves camera by the pointer delta over scale	/mnt/frankendom-donors/OTCv8-otclientv8/modules/gamelib/ui/uiminimap.lua	local dx = (self.dragReference.x - pos.x)/scale
+reset re-centres on the cross	/mnt/frankendom-donors/OTCv8-otclientv8/modules/gamelib/ui/uiminimap.lua	self:setCameraPosition(self.cross.pos)

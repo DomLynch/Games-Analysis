@@ -1,0 +1,29 @@
+{
+  "donor": "geckosio-geckos.io",
+  "code_licence": "BSD-3-Clause. LICENSE:1 'BSD 3-Clause License'; LICENSE:3 'Copyright (c) 2021, Yannick Deubel'; package.json:48 \"license\": \"BSD-3-Clause\"; README.md:739 repeats it.",
+  "asset_licence": "None stated. No game assets. The only image files are 5 logo and thumbnail files under readme/, and no licence line in the tree covers them separately.",
+  "rights_holder_status": "Single named copyright holder in LICENSE:3 (Yannick Deubel, 2021). No game content in the tree. The file enable3d-logo.png is named after a project, but the files do not state who owns it.",
+  "best_class": "D",
+  "asset_groups": [
+    {"kind": "project logos and thumbnail", "path": "readme/logo-256.png, readme/logo-512.png, readme/logo.svg, readme/thumbnail.png, readme/enable3d-logo.png", "count_hint": "5 files", "licence": "not stated", "class": "D", "note": "Brand and project marks, not game content. Not opened (binary). Do not reuse."},
+    {"kind": "demo chat page", "path": "packages/chatApp/src/index.html (plus client.ts, server.ts)", "count_hint": "1 html page in a demo package", "licence": "BSD-3-Clause via repo LICENSE (no separate statement)", "class": "D", "note": "Demo UI for chat, not game art. Listed only."},
+    {"kind": "browser client bundles", "path": "bundles/geckos.io-client.<version>.min.js (10 versions, 1.7.2 to 3.1.0)", "count_hint": "10 files", "licence": "BSD-3-Clause via repo LICENSE", "class": "D", "note": "Minified JavaScript, code not content. Listed only; contents not opened."}
+  ],
+  "inspiration": [
+    "Shared packages for both halves: packages/client, packages/server and packages/common (package.json description: real-time client/server communication over UDP using WebRTC and Node.js, README.md:9). Idea: one shared message schema in a common package so client and server cannot drift apart.",
+    "Transport trade-off written down: UDP over WebRTC for lower latency and fewer spikes, with websocket named as the simpler fallback (README.md:50 and :73). Idea: state the transport choice and its cost in our own docs, as the donor does.",
+    "Port range set by config for NAT-limited networks (README.md:152). Ops detail, not art.",
+    "Versioned client bundles per release (bundles/*.min.js, 10 versions). Idea: pin client versions per release for cache-safe deployment.",
+    "No art or narrative in this donor. Nothing visual or thematic to recreate."
+  ],
+  "briefs": [],
+  "briefs_note": "No creatures, items, armour, zones or effects in the tree. Nothing usable for a brief.",
+  "cross_link": "No cell topic has assets here. The shared-package layout is an architecture reference for netcode only.",
+  "not_read": [
+    "packages/client, packages/server, packages/common source (directory listing only; the README and package.json descriptions were read)",
+    "test/ (cjs, common, e2e, server) and jest config",
+    "bundles/*.min.js contents (minified; listed only)",
+    "package-lock.json (622 KB, not opened)",
+    "readme/*.png and readme/logo.svg (listed; binary not opened)"
+  ]
+}

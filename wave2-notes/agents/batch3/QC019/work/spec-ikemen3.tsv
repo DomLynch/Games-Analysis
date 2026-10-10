@@ -1,0 +1,4 @@
+remaining characters updated then tracked (comment)	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/char.go	// Run update() for the remaining characters
+x tracking only for movecamera_x characters	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/char.go	if c.csf(CSF_movecamera_x) {
+y tracking only for movecamera_y characters	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/char.go	if c.csf(CSF_movecamera_y) && !math.IsInf(float64(c.pos[1]), 0) {
+track skipped when not trackable	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/char.go	if !c.trackableByCamera() {

@@ -1,0 +1,9 @@
+ai/ai_battle.cpp	Battle::Actions AI::BattlePlanner::planUnitTurn( Battle::Arena & arena, const Battle::Unit & currentUnit )
+ai/ai_battle.cpp	const Battle::Actions archerActions = archerDecision( arena, currentUnit );
+ai/ai_battle.cpp	target = meleeUnitDefense( arena, currentUnit );
+ai/ai_battle.cpp	// Melee unit final stage - add actions to the queue
+ai/ai_battle.cpp	actions.emplace_back( Battle::Command::ATTACK, currentUnit.GetUID(), target.unit->GetUID(),
+ai/ai_battle.cpp	if ( currentUnit.Modes( Battle::SP_BERSERKER ) ) {
+ai/ai_battle.cpp	// Step 2. Check retreat/surrender condition
+ai/ai_battle.cpp	void AI::BattlePlanner::analyzeBattleState
+ai/ai_battle.cpp	const bool hasValuableArtifacts

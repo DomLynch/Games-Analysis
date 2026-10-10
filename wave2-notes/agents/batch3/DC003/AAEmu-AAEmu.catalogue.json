@@ -1,0 +1,176 @@
+{
+  "donor": "AAEmu-AAEmu",
+  "counts": {
+    "creatures": 13382,
+    "classes": 18,
+    "weapons": 0,
+    "gear_sets": 3,
+    "zones": 18
+  },
+  "counts_basis": {
+    "creatures": "Creature rows in Data/Creatures.xml (10205 unique names); names only, no tiers",
+    "classes": "10 class names in Docs/wiki/Classes.md plus 8 races in Models/Game/Char/Race.cs; no class enum in code; most wiki entries are TODO",
+    "weapons": "0 weapon item rows in the box; wield kinds (3) are in Models/Game/Char/WeaponWieldKind.cs",
+    "gear_sets": "3 armour-family 4-piece buff constants used in Models/Game/Units/Unit.cs; 0 set rows in the box",
+    "zones": "18 world folders in Data/Worlds/"
+  },
+  "creature_families": [
+    {"family": "elemental", "name_hits": 146},
+    {"family": "bear", "name_hits": 106},
+    {"family": "orc", "name_hits": 81},
+    {"family": "golem", "name_hits": 74},
+    {"family": "wolf", "name_hits": 67},
+    {"family": "goblin", "name_hits": 42},
+    {"family": "harpy", "name_hits": 42},
+    {"family": "spirit", "name_hits": 41},
+    {"family": "spider", "name_hits": 40},
+    {"family": "skeleton", "name_hits": 31},
+    {"family": "boar", "name_hits": 30},
+    {"family": "dragon", "name_hits": 25},
+    {"family": "ogre", "name_hits": 22},
+    {"family": "scorpion", "name_hits": 22},
+    {"family": "treant", "name_hits": 15},
+    {"family": "demon", "name_hits": 13}
+  ],
+  "top_creatures": [
+    {
+      "label": "Two-stance sky boss",
+      "why": "Boss that changes phase (ground, then hover) by skill list and health gate",
+      "keep": "Phase switch by health; one skill pipe per phase",
+      "change": "Flight body and silhouette; our own phase names",
+      "ref": "AAEmu.Game/Models/Game/AI/v2/Params/Almighty/AiSkillList.cs; AlmightyNpcAiParams.cs"
+    },
+    {
+      "label": "Charging beast",
+      "why": "Short burst charge as its signature move",
+      "keep": "One spurt skill in its own file",
+      "change": "Species and body shape",
+      "ref": "AAEmu.Game/Models/Game/AI/v2/Params/WildBoar/WildBoarAiSpurtSkill.cs; WildBoarAiParams.cs"
+    },
+    {
+      "label": "Snapping plant trap",
+      "why": "Stationary; melee and ranged skill lists kept apart",
+      "keep": "Stationary; two skill lists",
+      "change": "Plant body; make it a mimic or statue",
+      "ref": "AAEmu.Game/Models/Game/AI/v2/Params/Flytrap/FlytrapCombatSkill.cs; FlytrapAiParams.cs"
+    },
+    {
+      "label": "Tidal sea-beast mount",
+      "why": "Sea creature exists as a vehicle kind",
+      "keep": "Sea-only vehicle slot",
+      "change": "Body, fins and theme",
+      "ref": "AAEmu.Game/Models/Game/Slaves/SlaveKind.cs (Leviathan = 11); AAEmu.Game/Data/Worlds/main_world/slave_spawns.json"
+    },
+    {
+      "label": "Room-by-room gate boss",
+      "why": "Spawn file grouped by room; comments tag each room boss and its event hooks",
+      "keep": "Room order; gated boss in the last room",
+      "change": "Layout and enemy set",
+      "ref": "AAEmu.Game/Data/Worlds/instance_nachashgar/npc_spawns.json"
+    },
+    {
+      "label": "Leader-and-formation pack",
+      "why": "One leader flag plus per-member formation offsets and a tension value",
+      "keep": "Leader flag and offsets",
+      "change": "Formation shape (ring, wedge)",
+      "ref": "SQL/patches/compact/2026-01-23-npc_group_members.sql; SQL/patches/compact/2026-01-23-npc_groups.sql"
+    },
+    {
+      "label": "Ranged roamer and holder pair",
+      "why": "Each archer type ships in roaming and hold-position forms",
+      "keep": "Roam versus hold split",
+      "change": "Weapon and theme",
+      "ref": "AAEmu.Game/Models/Game/AI/v2/AiCharacters/ArcherRoamingAiCharacter.cs; ArcherHoldPositionAiCharacter.cs"
+    },
+    {
+      "label": "Big roamer with hold mode",
+      "why": "Same roam-or-hold split for a large body",
+      "keep": "Two AI characters per type",
+      "change": "Body scale and skill set",
+      "ref": "AAEmu.Game/Models/Game/AI/v2/AiCharacters/BigMonsterRoamingAiCharacter.cs; BigMonsterHoldPositionAiCharacter.cs"
+    }
+  ],
+  "classes": [
+    {"name": "Sorcery", "role": "ranged spellcaster", "signature": "fire, frost and lightning spells (Fireball, Freezing Arrow, Chain Lightning, Meteor); several marked not working in the wiki", "progression": "not documented", "ref": "Docs/wiki/Classes.md"},
+    {"name": "Archery", "role": "not read (wiki TODO)", "signature": "not read", "progression": "not read", "ref": "Docs/wiki/Classes.md"},
+    {"name": "Auramancy", "role": "not read (wiki TODO)", "signature": "not read", "progression": "not read", "ref": "Docs/wiki/Classes.md"},
+    {"name": "Battlerage", "role": "not read (wiki TODO)", "signature": "not read", "progression": "not read", "ref": "Docs/wiki/Classes.md"},
+    {"name": "Defense", "role": "not read (wiki TODO)", "signature": "not read", "progression": "not read", "ref": "Docs/wiki/Classes.md"},
+    {"name": "Occultism", "role": "not read (wiki TODO)", "signature": "not read", "progression": "not read", "ref": "Docs/wiki/Classes.md"},
+    {"name": "Shadowplay", "role": "not read (wiki TODO)", "signature": "not read", "progression": "not read", "ref": "Docs/wiki/Classes.md"},
+    {"name": "Songcraft", "role": "not read (wiki TODO)", "signature": "not read; code has a Musical equipment slot (value 18)", "progression": "not read", "ref": "Docs/wiki/Classes.md; Models/Game/Items/EquipmentItemSlot.cs"},
+    {"name": "Vitalism", "role": "not read (wiki TODO)", "signature": "not read", "progression": "not read", "ref": "Docs/wiki/Classes.md"},
+    {"name": "Witchcraft", "role": "not read (wiki TODO)", "signature": "not read", "progression": "not read", "ref": "Docs/wiki/Classes.md"},
+    {"name": "Nuian", "role": "race (8 values in enum: Nuian, Fairy, Dwarf, Elf, Hariharan, Ferre, Returned, Warborn)", "signature": "start town in Data/CharTemplates.json", "progression": "not read", "ref": "Models/Game/Char/Race.cs"},
+    {"name": "Elf", "role": "race", "signature": "start town in Data/CharTemplates.json", "progression": "not read", "ref": "Models/Game/Char/Race.cs"},
+    {"name": "Hariharan", "role": "race", "signature": "start town in Data/CharTemplates.json", "progression": "not read", "ref": "Models/Game/Char/Race.cs"},
+    {"name": "Ferre", "role": "race", "signature": "start town in Data/CharTemplates.json", "progression": "not read", "ref": "Models/Game/Char/Race.cs"},
+    {"name": "Fairy", "role": "race", "signature": "not read", "progression": "not read", "ref": "Models/Game/Char/Race.cs"},
+    {"name": "Dwarf", "role": "race", "signature": "not read", "progression": "not read", "ref": "Models/Game/Char/Race.cs"},
+    {"name": "Returned", "role": "race", "signature": "not read", "progression": "not read", "ref": "Models/Game/Char/Race.cs"},
+    {"name": "Warborn", "role": "race", "signature": "not read", "progression": "not read", "ref": "Models/Game/Char/Race.cs"}
+  ],
+  "weapon_families": [],
+  "gear_tiers": [
+    {"tier": "Crude", "value": 0, "ref": "Models/Game/Items/ItemGrade.cs"},
+    {"tier": "Basic", "value": 1, "ref": "Models/Game/Items/ItemGrade.cs"},
+    {"tier": "Grand", "value": 2, "ref": "Models/Game/Items/ItemGrade.cs"},
+    {"tier": "Rare", "value": 3, "ref": "Models/Game/Items/ItemGrade.cs"},
+    {"tier": "Arcane", "value": 4, "ref": "Models/Game/Items/ItemGrade.cs; set gate in Models/Game/Units/Unit.cs"},
+    {"tier": "Heroic", "value": 5, "ref": "Models/Game/Items/ItemGrade.cs"},
+    {"tier": "Unique", "value": 6, "ref": "Models/Game/Items/ItemGrade.cs"},
+    {"tier": "Celestial", "value": 7, "ref": "Models/Game/Items/ItemGrade.cs"},
+    {"tier": "Divine", "value": 8, "ref": "Models/Game/Items/ItemGrade.cs"},
+    {"tier": "Epic", "value": 9, "ref": "Models/Game/Items/ItemGrade.cs"},
+    {"tier": "Legendary", "value": 10, "ref": "Models/Game/Items/ItemGrade.cs"},
+    {"tier": "Mythic", "value": 11, "ref": "Models/Game/Items/ItemGrade.cs"},
+    {"tier": "Armour types: Cloth, Leather, Metal (plus PetArmor, Etc)", "value": null, "ref": "Models/Game/Items/ArmorType.cs; 4-piece buffs Cloth4P, Leather4P, Plate4P in Models/Game/Units/Unit.cs"}
+  ],
+  "zones": [
+    {"name": "main_world", "kind": "open world", "size_note": "26273 NPC entries, 42656 doodad entries, 70 transfer entries", "ref": "Data/Worlds/main_world/"},
+    {"name": "instance_library", "kind": "instance", "size_note": "2277 NPC entries, 700 doodad entries", "ref": "Data/Worlds/instance_library/"},
+    {"name": "instance_nachashgar", "kind": "instance, room-by-room with gate boss", "size_note": "99 NPC entries, 970 doodad entries", "ref": "Data/Worlds/instance_nachashgar/"},
+    {"name": "instance_howling_abyss", "kind": "two-part instance (part 1)", "size_note": "213 NPC, 220 doodad, 6 slave entries", "ref": "Data/Worlds/instance_howling_abyss/"},
+    {"name": "instance_howling_abyss_2", "kind": "two-part instance (part 2)", "size_note": "253 NPC, 284 doodad, 6 slave entries", "ref": "Data/Worlds/instance_howling_abyss_2/"},
+    {"name": "instance_sal_temple", "kind": "instance", "size_note": "126 NPC, 98 doodad entries", "ref": "Data/Worlds/instance_sal_temple/"},
+    {"name": "instance_hadir_farm", "kind": "instance", "size_note": "116 NPC entries", "ref": "Data/Worlds/instance_hadir_farm/"},
+    {"name": "instance_cradle_of_destruction", "kind": "instance", "size_note": "77 NPC, 33 doodad entries", "ref": "Data/Worlds/instance_cradle_of_destruction/"},
+    {"name": "instance_cuttingwind_deadmine", "kind": "instance (mine-style by name only)", "size_note": "66 NPC, 16 doodad entries", "ref": "Data/Worlds/instance_cuttingwind_deadmine/"},
+    {"name": "instance_burntcastle_armory", "kind": "instance", "size_note": "45 NPC entries", "ref": "Data/Worlds/instance_burntcastle_armory/"},
+    {"name": "instance_immortal_isle", "kind": "instance (easy copy is byte-identical)", "size_note": "3 NPC, 11 doodad entries", "ref": "Data/Worlds/instance_immortal_isle/"},
+    {"name": "instance_immortal_isle_easy", "kind": "instance (spawn files identical to normal)", "size_note": "3 NPC, 11 doodad entries", "ref": "Data/Worlds/instance_immortal_isle_easy/"},
+    {"name": "instance_nachashgar_easy", "kind": "instance (spawn files empty)", "size_note": "0 NPC, 0 doodad entries", "ref": "Data/Worlds/instance_nachashgar_easy/"},
+    {"name": "instance_prologue", "kind": "instance (spawn files empty)", "size_note": "0 NPC, 0 doodad entries", "ref": "Data/Worlds/instance_prologue/"},
+    {"name": "instance_training_camp", "kind": "training instance", "size_note": "14 NPC entries", "ref": "Data/Worlds/instance_training_camp/"},
+    {"name": "instance_training_camp_1on1", "kind": "training instance (one on one)", "size_note": "14 NPC entries", "ref": "Data/Worlds/instance_training_camp_1on1/"},
+    {"name": "racing_test_world", "kind": "test world", "size_note": "329 NPC, 5 doodad entries", "ref": "Data/Worlds/racing_test_world/"},
+    {"name": "arche_mall_world", "kind": "town hub (auto-created dungeon id 1)", "size_note": "418 NPC, 1196 doodad entries", "ref": "Data/Worlds/arche_mall_world/; Configurations/Dungeons.json"}
+  ],
+  "looks": [
+    {"label": "Pack formation with leader and offsets", "technique": "per-member offset vectors around one leader, plus a tension value", "ref": "SQL/patches/compact/2026-01-23-npc_group_members.sql"},
+    {"label": "Two-phase boss switch", "technique": "phase gate by health with one skill pipe per phase; phase names in code comments", "ref": "AAEmu.Game/Models/Game/AI/v2/Params/Almighty/AiSkillList.cs"},
+    {"label": "Cosmetic layer over gear", "technique": "cosmetic slots and per-character visual flags over real gear", "ref": "AAEmu.Game/Models/Game/Items/EquipmentItemSlot.cs; AAEmu.Game/Models/Game/Char/CharacterVisualOptions.cs"}
+  ],
+  "originals": [
+    {"name": "Two-stance tide tyrant", "idea": "A sea boss that swaps between a surface stance and a rising stance at health gates, each with its own skill list.", "keep": "Health-gated phase switch; one skill list per phase", "change": "Body (no wings), palette and phase names"},
+    {"name": "Fin-mount leviathan", "idea": "A sea-beast mount that only works in water.", "keep": "Sea-only vehicle slot", "change": "Body, rune fins and saddle"},
+    {"name": "Gate-crypt run", "idea": "A room-by-room instance where each room's boss opens the next door.", "keep": "Room order and gate boss", "change": "Layout and enemy set"},
+    {"name": "Twin-corps skirmish", "idea": "A two-side battlefield with mirrored spawn corners.", "keep": "Symmetric corps spawns", "change": "Map, objective and theme"},
+    {"name": "Standard-bearer pack", "idea": "A pack that follows one leader in a shield-wall formation.", "keep": "Leader flag and formation offsets", "change": "Formation shape and unit mix"},
+    {"name": "Charge stone-boar", "idea": "A stone-plated beast with one short charge move.", "keep": "A single burst charge", "change": "Species and silhouette"},
+    {"name": "Mimic chest", "idea": "A stationary chest that snaps at melee range and spits at range.", "keep": "Two skill lists; stationary", "change": "Body (chest, not plant)"},
+    {"name": "Arcane-gated set", "idea": "A four-piece set whose second bonus unlocks only at the Arcane-and-up tier.", "keep": "Lowest-grade rule for the gate", "change": "Names, thresholds and bonus effects"}
+  ],
+  "licence_note": "README.md states LGPL v3; LICENSE.GPL is GPL v3 text; LICENSE.MIT is MIT (Copyright 2019 Rain0Ash). The repo does not say which licence covers which code (conflicting). README: not affiliated with XLGames. Game data files carry no licence line. Client files are not in the repo. Donor class for inspiration: C.",
+  "not_read": [
+    "Client data (game_pak, compact.sqlite3 templates, models, textures, sound): not in the box",
+    "Creature levels, stats, kind and grade per creature: not in the box; escalation with level NOT read",
+    "Weapon, gear, set and material item rows: not in the box",
+    "Silhouettes and sounds of any creature: not read",
+    "SQL content of aaemu_game.sql: table list only",
+    "IndunGameData.cs, Weather/, Physics/, Lua scripts: not read",
+    "Doodads.xml: names and count only",
+    "Docs/wiki beyond Classes.md: not read; Client.md download links not followed",
+    "Correction to AU002 idea 3: easy instance folders are empty (nachashgar_easy) or byte-identical copies (immortal_isle_easy); not supported"
+  ]
+}

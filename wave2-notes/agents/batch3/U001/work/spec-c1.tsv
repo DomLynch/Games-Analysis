@@ -1,0 +1,52 @@
+ModernUO	swing entry: hit-or-miss branch	BW	888
+ModernUO	hit check function	BW	1208
+ModernUO	attacker side of hit ratio	BW	1272
+ModernUO	defender side of hit ratio	BW	1321
+ModernUO	hit chance = ratio over 2	BW	1331
+ModernUO	attacker accuracy cap 45	BW	1266
+ModernUO	defender defend cap 45	BW	1315
+ModernUO	pre-AOS hit value uses +50	BW	1327
+ModernUO	AOS hit chance floor	BW	1335
+ModernUO	skill roll compares chance to random	SKC	115
+ModernUO	chance below zero never succeeds	SKC	93
+ModernUO	chance at or above one always succeeds	SKC	98
+ModernUO	skill gain uses (1 minus chance)	SKC	130
+ModernUO	SkillCheck direct handler wiring	SKC	36
+ModernUO	miss path	BW	894
+ModernUO	damage entry: ComputeDamage	BW	1763
+ModernUO	base damage uniform random between min and max	BW	2455
+ModernUO	strength bonus scalar and threshold	BW	2540
+ModernUO	anatomy bonus	BW	2541
+ModernUO	tactics bonus	BW	2542
+ModernUO	bonus helper: value times scalar	BW	2488
+ModernUO	bonus helper: offset at threshold	BW	2492
+ModernUO	bonus helper: divide by 100	BW	2495
+ModernUO	weapon damage bonus capped at 100	BW	2578
+ModernUO	total bonus sum	BW	2583
+ModernUO	scaled damage returned	BW	2586
+ModernUO	weapon damage percent bonus	BW	1786
+ModernUO	double strike malus 10	BW	1832
+ModernUO	percent total cap 300	BW	1861
+ModernUO	percent scale applied	BW	1863
+ModernUO	armour/parry step	BW	1873
+ModernUO	parry check inside AbsorbDamageAOS	BW	1582
+ModernUO	blocked hit: parry effect plays, damage then zeroed	BW	1586
+ModernUO	armour location roll	BW	1622
+ModernUO	default element split: physical remainder	BW	2364
+ModernUO	AOS.Damage call from OnHit	BW	1993
+ModernUO	AOS.Damage early exit on no damage	AOS	52
+ModernUO	pre-AOS path hands damage straight to mobile	AOS	64
+ModernUO	resist-weighted sum	AOS	126
+ModernUO	resist-weighted divide by 10000	AOS	132
+ModernUO	minimum 1 after resist	AOS	144
+ModernUO	ignore-armour path keeps raw damage	AOS	167
+ModernUO	integer percent scale helper	AOS	251
+ModernUO	final mobile damage call	AOS	239
+ModernUO	Mobile.Damage signature	MOB	5956	public virtual void Damage(int amount, Mobile from = null, bool informMount
+ModernUO	Mobile.Damage applies hits subtraction	MOB	5974
+ModernUO	Mobile CheckSkill chance overload	MOB	8094
+ModernUO	CheckParry definition	BW	1491
+ModernUO	shield parry chance from parry minus bushido	BW	1508
+ModernUO	no-shield parry chance formula	BW	1540
+ModernUO	AOS parry chance base parry over 800	BW	1542
+ModernUO	no-shield parry roll	BW	1573

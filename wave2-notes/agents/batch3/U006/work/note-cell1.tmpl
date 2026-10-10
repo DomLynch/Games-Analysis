@@ -1,0 +1,66 @@
+# ClassicUO (animation-rigs, cell 3)
+
+Donor: `/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs` (clock and step code) with `/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/MobileAnimation.cs` (group choice), `.../Game/Data/MovementSpeed.cs`, `.../Game/Constants.cs`, `/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Renderer/Animations/Animation.cs` | Licence: BSD 2-Clause License, "Copyright (c) 2025, andreakarasho" (LICENSE.md; each file header says `SPDX-License-Identifier: BSD-2-Clause`) | C# | symbol `Mobile.ProcessAnimation`
+
+Checked: Read in full: `Mobile.ProcessAnimation` (571-693), `Mobile.NoIterateAnimIndex` (521-525), `Mobile.SetAnimation` (350 onward, read to its end), `Mobile.ProcessSteps` (696 onward; the evaluate branch from 700 moves offsets and removes steps), `MovementSpeed.cs` (all 133 lines), `Animation.GetAnimDirection` (76-110), `GameController.Update` (381-409), World mobile loop (301-303). Read only in part: `MobileAnimation.GetObjectNewAnimation` (1508-1560) and `GetObjectNewAnimationType_0` (1591-1726); the other type functions (1_2 through 11) were not read. Not read: what `Client.Game.FrameDelay[1]` is (it is subtracted in the `maxDelay` expression of the step code; not read further), what `GetGroupForAnimation` returns for group 0xFF, and the Scene/World code between `Scene.Update` and the mobile loop. Confidence: high for the frame clock and step-offset maths; medium for group choice (one of the twelve dispatch functions). This is a sprite (2D, UO art) renderer, so there are no bones; "rig" here means the clip clock and the state-to-clip table. camera_scope: not a camera note.
+
+## 1. Mechanism
+
+- Clock. MonoGame's variable-step `Update(GameTime)` sets the global `Time.Ticks` (ms since start) and `Time.Delta` every frame (`GameController.cs` 388-389). Each frame it first parses incoming packets, then runs `Scene.Update()` when a scene is loaded, then UI (`GameController.cs` 381-409). The world loop calls `mob.Update()` for every mobile (`World.cs` 301-303). `Mobile.Update` runs the idle check (`Mobile.cs` 257) and then `ProcessAnimation(true)` (262).
+- Frame advance, `ProcessAnimation` (571). (a) Steps are processed first (`ProcessSteps`). (b) Return early if the next-change time is still in the future (`LastAnimationChangeTime >= Time.Ticks`) or `NoIterateAnimIndex` is true (576; 523-524: not `ExecuteAnimation`, or the mobile walked within `WALKING_DELAY` 150 ms and has no queued steps). This is the hold while a walk just finished. (c) Look up the clip for the graphic, the group, and the 0-4 direction (after `GetAnimDirection`). The frame count is the length of the returned span. (d) `frameIndex = AnimIndex + 1`, or `- 1` only for a server-driven clip played backwards.
+- Local clip (`AnimationFromServer` false): `currentDelay` stays at 80 ms (588). The index wraps to 0 at the end. A corpse with the high serial bit is removed when its clip ends (`else if` branch, not read line by line).
+- Server-driven clip (`AnimationFromServer` true): `currentDelay += currentDelay * (_animationInterval + 1)` (610), so the frame time is 80 x (interval + 2) ms. Only at a wrap does the repeat logic run (the wrap check is at 621): repeat count 0 means loop forever (641); otherwise `--_animationRepeateMode > 0` keeps going (646); at zero, if the repeat flag is set it reloads the count and clears the flag, else `SetAnimation(0xFF)` ends the clip. I traced this by hand (not run): after the flag reload the count field is 0, so every later wrap loops forever.
+- Write-back: `AnimIndex = frameIndex % frames.Length` (679), then `LastAnimationChangeTime = Time.Ticks + currentDelay` (693). One index step per call, no catch-up: if a call comes late, the clip moves one frame, not elapsed/80 frames.
+- Steps (movement offset), `ProcessSteps` evaluate branch. `delay = Time.Ticks - LastStepTime` (718). `maxDelay = TimeToCompleteMovement(run, mounted) - FrameDelay[1]`. The step is removed when `delay >= maxDelay` (745). A step is treated as bad, and removed without an offset, if the position is more than one tile away, or if `Pathfinder.GetNewXY` from the current tile does not reach the step (inside the bad-step check, not read in full). Otherwise `steps = maxDelay / 80` (776), `x = delay / 80`, and `GetPixelOffset` scales `x` by `22 / steps`, so `x` runs linearly from 0 to 22 px over the step (44 px when only one screen axis moves). Z moves by `(step.Z - Z) x (delay / 80) x (4 / steps)`.
+- Step end (removal block, read): X, Y, Z snap to the step's tile, offset is zeroed, the step is popped (`Steps.RemoveFromFront()`, 845), the idle timer restarts, and `LastStepTime = Time.Ticks` is set in the same block (not receipted). The next step's clock therefore starts at the removal time, not at the scheduled time.
+- Group choice, `GetObjectNewAnimation` (1508). It returns 0 if the graphic is past the table; otherwise it switches on the animation type (0 to 11, 14). Type 0 (1591): the type defaults to Monster and is replaced by the table's type when the clip is found. Action above 10 returns 0 (1593). Monster: `mode % 4` picks group 4, 5, 6, or 12 (12 when the Unknown1 flag is set and mode is 3). SeaMonster: `mode` parity picks 5 or 6. Animal: the action is ignored and the result is 2 (if the Use2IfHittedWhileRunning flag is set), else 6 (if `mode` is odd and clip 6 exists), else 5. Other types (human-like): mounted gives 26, 27, 28 or 29 by action; actions 1, 2, 3, 4, 5, 6, 7, 8 give 18, 19, 11, 9, 10, 12, 13 (72 for a flying gargoyle), 14; the default is 31 if that clip exists (71 for a flying gargoyle; the 31 test is at 1671), then the same 2 / 6 / 5 tail.
+
+## 2. Key functions
+
+- `Mobile.ProcessAnimation`: `/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs` 571-693. Steps, then the early return at 576, clip lookup, frame advance, and the next due time at 693.
+- `Mobile.SetAnimation`: `Mobile.cs` 350 (signature; read to its end). Sets the group, the start frame (`forward ? 0 : frameCount`), the interval, the repeat count and flags, and resets the timer.
+- `Mobile.ProcessSteps`: `Mobile.cs` 696 (signature), with the evaluate branch from 700. Delay at 718, removal at 745, step size at 776, pop at 845.
+- `MovementSpeed.TimeToCompleteMovement`: `/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Data/MovementSpeed.cs` 17-25. Picks the step duration from run and mounted.
+- `MovementSpeed.GetPixelOffset`: `MovementSpeed.cs` 27-132. Per-direction pixel vector; clamps to 22 px (44 px for the one-axis cases).
+- `Animation.GetAnimDirection`: `/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Renderer/Animations/Animation.cs` 76-110. Folds eight facings onto five sprite directions with a mirror flag.
+- `MobileAnimation.GetObjectNewAnimation` and `GetObjectNewAnimationType_0`: `/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/MobileAnimation.cs` 1508-1560 and 1591-1726 (partly read, see Checked).
+
+## 3. Numbers vs mechanism
+
+| Reusable algorithm | Game-specific constants |
+|---|---|
+| Clip frame due when `now >= nextAt`; advance one index; set `nextAt = now + frameMs` | Base frame time 80 ms (theirs, `Constants.cs` 13) |
+| Server-timed clips scale frame time: `frameMs = base * (interval + 2)` | Interval from the server; the `+ 2` is the donor's (`Mobile.cs` 610) |
+| Repeat count spent once per wrap; 0 means forever; a flag reloads once | Repeat semantics (traced, `Mobile.cs` 641-660) |
+| Step progress = elapsed / step duration, clamped at removal | Walk 400 ms (theirs, `MovementSpeed.cs` 12); run 200 ms (`MovementSpeed.cs` 11); mounted walk 200 ms (`MovementSpeed.cs` 10); mounted run 100 ms (`MovementSpeed.cs` 9) |
+| Offset linear in progress | 22 px per tile (`MovementSpeed.cs` 30); 44 px on one-axis directions (`MovementSpeed.cs` 29) |
+| Held pose while moving with nothing queued | `WALKING_DELAY` 150 ms (`Constants.cs` 19) |
+| Eight facings from five sprite directions, mirrored | Table in `Animation.cs` 76-110 (sprite-only, rejected for 3D) |
+| Clip chosen by state and mode | Group numbers 2, 4, 5, 6, 9, 10, 11, 12, 13, 14, 18, 19, 26-29, 31 (and 71, 72 for a flying gargoyle) (theirs, `MobileAnimation.cs` 1591-1671) |
+
+## 4. TypeScript sketch
+
+simplified: keeps the frame clock (one advance per due call, no catch-up, the donor's repeat count with its restart-then-loop trace), the server interval scaling, and the linear step progress. Donor applies repeat logic only to server-driven clips; the sketch applies it to every clip, which matches the donor when `repeatLeft` is 0 (loop forever). It omits the reverse playback, corpse removal, the group-choice tables, the `FrameDelay[1]` subtraction (not read), the mounted and Z offsets, the bad-step adjacency check, the direction mirror, and the pixel offsets. It reorders nothing.
+
+```ts
+@@CODE@@
+```
+
+## 5. Lands in
+
+- TARGET `src/fight/actor-clips.ts` (new module). Creature clip clock: which clip plays, how far through it, and when the next frame is due. Parity-checklist row 7 (creature actor/clips).
+- Best transferable idea: drive clip frames from elapsed time against a per-clip frame duration with the repeat count as data, and make a step's visual progress elapsed/duration so a late update neither skips nor stretches a move.
+- Decision (proposed): adapt. Take the elapsed-time frame clock and the progress fraction; reject the sprite direction mirror and the pixel offsets (Frankendom's actors are 3D); do not copy the one-frame-per-call behaviour, which slows clips when the frame rate drops.
+- Acceptance: a unit test drives a 3-frame, 80 ms clip with 16 ms updates and then one 250 ms gap; the frame shown at 250 ms is `floor(250 / 80) mod 3`, not one step later. A player at 20 fps sees the same swing frame at the same time as at 60 fps.
+- Reuse tag: rewrite-from-idea (BSD-2-Clause, code may be adapted; written as a clean sketch anyway)
+- Brief rule served: 1 (one fight engine, actors are clients of its state); row 7; the clip never decides hit timing (server-verified kills stay in the engine).
+
+## 6. Gaps and risks
+
+- The donor's clock is per-call, not per-time. Frankendom must not copy it: a dropped frame would stretch every swing, and that changes the feel of a timed attack.
+- The clip choice is a table of numeric group ids keyed by graphic type. Frankendom's ruling is zones and catalogue as data (catalogue fields, row 21), so clip names and durations go in the creature record, not in a numeric table.
+- Server-driven timing (interval scales the frame time) is a wire-format detail of UO. Frankendom needs one explicit per-attack field (`frameMs` or `interval`), set in data, not inferred from a packet.
+- The donor's visual step offset is client prediction and snaps to the server tile on removal. In Frankendom the engine owns position; the actor may lerp for display, but a hit window must come from the engine tick, not from the clip frame or the offset.
+- Repeat semantics: the donor's restart-then-loop behaviour (traced, not run) looks unintended. Do not copy it; use a plain "play N times, then hold last frame or go idle" rule.
+- The ClassicUO renderer is 2D sprites with no skeleton. Only the clock and the state-to-clip mapping transfer; any bone or skin logic is absent.
+- `FrameDelay[1]` (the value subtracted from step time) was not read, so the donor's exact step timing differs from the sketch by that amount.

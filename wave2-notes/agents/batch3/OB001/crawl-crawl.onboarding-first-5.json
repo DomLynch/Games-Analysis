@@ -1,0 +1,77 @@
+{
+  "donor": "crawl-crawl",
+  "topic": "onboarding-first-5",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/main.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/startup.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/newgame.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/hints.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/tutorial.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/ng-setup.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/dungeon.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/mon-util.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/dat/dlua/tutorial.lua",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/dat/des/tutorial/lesson1.des",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/dat/des/tutorial/lesson2.des",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/dat/descript/hints.txt",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/dat/descript/tutorial.txt",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/dat/database/miscname.txt"
+  ],
+  "counts": {
+    "hints_blocks": 218,
+    "hints_welcome_lines": 70,
+    "hints_death_blocks": 10,
+    "hints_finished_blocks": 8,
+    "tutorial_blocks": 89,
+    "tutorial_lesson_keyed_blocks": [15, 16, 24, 17, 10],
+    "tutorial_lessons": 5,
+    "lesson2_monster_lines": 4,
+    "turn_gate_shift_run": 200,
+    "turn_gate_map_view": 500,
+    "turn_gate_auto_explore": 700,
+    "run_away_hp_fraction": 0.5,
+    "death_random_slots": 6,
+    "graduate_xl": 7
+  },
+  "rule": "Three start modes. Normal: a yellow goal line chosen by game type, a god greeting if worshipped, then a press-? line outside tutorial mode; no modal and no teaching. Hints: a modal welcome closed by any key, then one-time hint events written to the log; each event's flag is cleared when it fires, at most one hint per turn unless the event is rare, and events fire only when the character is safe with full hit points and magic (turn gates 200, 500, 700 for shift-run, map view and auto explore); below half hit points a run-away hint fires; the death screen picks a note from play-style counters (spells, melee, throws, berserk) with a random fallback over six slots, then resets the events; XL 7 graduates the hints mode. Tutorial: fixed human fighter with a flail; five lesson maps; messages fire from glyph markers that can remove themselves after one use; lesson 1 exits by one-way stairs; lesson 2 stages a weapon pick-up, a training dummy with 10 hit points, a rat, a wyvern and a jackal, in marker order pick-up, melee, rest, wait.",
+  "data_fields": [
+    {"name": "calm_gate", "unit": "boolean: safe, full hit points and magic", "donor_value_or_null": null},
+    {"name": "turn_gate_shift_run", "unit": "game turns", "donor_value_or_null": null},
+    {"name": "turn_gate_map_view", "unit": "game turns", "donor_value_or_null": null},
+    {"name": "turn_gate_auto_explore", "unit": "game turns", "donor_value_or_null": null},
+    {"name": "run_away_hp_fraction", "unit": "fraction of max hit points", "donor_value_or_null": null},
+    {"name": "hints_per_turn_cap", "unit": "count (rare events excepted)", "donor_value_or_null": null},
+    {"name": "death_random_slots", "unit": "count", "donor_value_or_null": null},
+    {"name": "graduate_level", "unit": "character level", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "tips wait for a calm, healthy moment and never fire during a fight",
+    "one-time flag per event, cleared when it fires",
+    "death note picked from what the fight showed, with a random fallback",
+    "one-time markers on a lesson map that fire a message",
+    "run-away tip below half hit points"
+  ],
+  "change": [
+    "calm means no enemy within our 8-cell ring and full hit points",
+    "death-note counters are ours: hits taken, attackers at once (cap 3), potions used",
+    "normal game gets first-run guidance instead of only a goal line",
+    "all prose, names and maps are ours; the donor text is not copied"
+  ],
+  "look_test": "Five minutes on a phone at 375 wide, via a style flag on the existing opening (look-test skill, no release rows). (a) Show two death cards after the same loss, one by the counter rule and one generic; Dom judges which reads as a coach. (b) Run a short fight and show one tip only after the hero stops at full hit points, against one shown during the fight; Dom judges whether the tip is welcome or noise.",
+  "licence_note": "Code GPL v2 or later (LICENSE; README line 96; AU011). dat/ text covered by the general GPLv2+ statement (AU011, class B). Hint and tutorial prose is not copied; shape only, clean-room. Donor values are null because the donor is GPL.",
+  "tags": ["first-fight", "first-kill", "first-loot", "timed-event", "new:tutorial-lessons", "new:welcome-modal", "new:death-coach", "new:calm-gated-hint", "new:hint-once-flag", "new:graduation", "new:marker-lesson"],
+  "not_read": [
+    "startup menu UI and its options (startup.cc 1085 onward)",
+    "depth-1 monster pick and spawn depth rules",
+    "ouch.cc and message.cc (hit feedback and combat messages)",
+    "lesson 3 to 5 maps and their monster and item lines beyond counts",
+    "lesson 2 wyvern cage or sleep state",
+    "caller of hints_finished (XL 7 check)",
+    "hint and tutorial prose (read by key name only)",
+    "welcome_spam variants beyond the lines cited",
+    "webserver folder (not on the onboarding path)",
+    "idle and ambient animation, walk density, loot ceremony beyond the first-item hint"
+  ]
+}

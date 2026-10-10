@@ -1,0 +1,55 @@
+{
+  "game": "Dawn-of-Light-DOLSharp",
+  "category": "inventory-bank-equipment",
+  "cell": 2,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/GameLivingInventory.cs",
+  "licence": "GPL-2.0-or-later (file header: version 2 or any later version; LICENSE file is GNU GPL v2)",
+  "licence_class": "copyleft",
+  "target_module": "origins/server/inventory.ts (new; path not confirmed against the Frankendom repo)",
+  "parity_row": 18,
+  "pattern_tags": ["new:plan-then-commit-add", "new:check-then-apply-remove", "new:stack-split-move", "new:change-batch", "new:slot-type-gate"],
+  "data_fields": [
+    {
+      "name": "backpack_slot_count",
+      "donor_constant": "40 slots (FirstBackpack 40 to LastBackpack 79 inclusive)",
+      "unit": "count",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/IGameInventory.cs:73"
+    },
+    {
+      "name": "item_max_count_per_stack",
+      "donor_constant": "per template (MaxCount); no fixed number in this donor",
+      "unit": "count",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/GameLivingInventory.cs:966"
+    },
+    {
+      "name": "vault_first_slot",
+      "donor_constant": "110 (FirstVault) to 149 (LastVault)",
+      "unit": "count",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/IGameInventory.cs:92"
+    },
+    {
+      "name": "move_requested_count",
+      "donor_constant": "0 = whole stack; merge should move min(requested, source count, room) (donor moves the whole source count, defect)",
+      "unit": "count",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/GamePlayerInventory.cs:1260"
+    },
+    {
+      "name": "ui_flush_per_batch",
+      "donor_constant": "one flush per outermost batch, only when slots changed",
+      "unit": "none",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/GameLivingInventory.cs:1261"
+    }
+  ],
+  "best_idea": "Add a loot bundle or purchase all-or-nothing by planning the whole stack placement first (top up existing stacks, then open empty slots) and only then writing, so a full bag refuses the whole bundle.",
+  "decision": "adapt",
+  "decision_why": "Take the plan-then-commit add and the check-then-apply remove; reject the per-slot rule table and inline DB writes. Frankendom needs all-or-nothing loot awards and one UI flush per award under the one-ledger ruling; the donor's slot switch and inline saves do not fit zones-as-data. Stack caps belong to the item catalogue (rows 20-21), not zones.",
+  "decision_status": "proposed",
+  "acceptance": "A server test awards a 20-count loot bundle into a bag with room for 19 and asserts the bag is unchanged and the award returns false; a second test moves 5 of a 20-stack onto a stack of 10 (max 20) and asserts 5 moved, 15 left in the source, and one inventory update sent."
+}

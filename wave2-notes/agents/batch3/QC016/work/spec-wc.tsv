@@ -1,0 +1,6 @@
+note	claim	donor_file	line	quote	local
+wowserhq-client	script SetCamera is an empty stub returning 0	/mnt/frankendom-donors/wowserhq-client/src/ui/components/simple/Model.script.ts	33	export const SetCamera = () => {	copies/wc-Model.script.ts
+wowserhq-client	SetCamera body returns 0 (stub)	/mnt/frankendom-donors/wowserhq-client/src/ui/components/simple/Model.script.ts	34	  return 0;	copies/wc-Model.script.ts
+wowserhq-client	orthographic projection for layers is a TODO	/mnt/frankendom-donors/wowserhq-client/src/gfx/Screen.ts	91	// TODO: Ortho projection	copies/wc-Screen.ts
+wowserhq-client	layer viewport switch by flag (not camera)	/mnt/frankendom-donors/wowserhq-client/src/gfx/Screen.ts	82	this.setViewport(0, 1, 0, 1, 0, 1);	copies/wc-Screen.ts
+wowserhq-client	UI root camera setup is a TODO	/mnt/frankendom-donors/wowserhq-client/src/ui/components/UIRoot.ts	130	// TODO: Camera setup screen projection	copies/wc-UIRoot.ts

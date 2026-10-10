@@ -1,0 +1,46 @@
+hitRate = attackerDice > defenderDice ? 100 : 0;
+if (isKiringku) {
+_hitRate = 100;
+if (isMissingSkillEffect()) {
+return (int) dmg;
+dmg -= calcNpcDamageReduction();
+if (dmg <= 0) {
+_isHit = false;
+if (_npc.isWeaponBreaked()) {
+dmg /= 2;
+if (dmg <= 0) {
+if (!isNowWar) {
+addNpcPoisonAttack(_npc, _targetPc);
+public int calcDamage() {
+_damage = calcPcPcDamage();
+_damage = calcNpcPcDamage();
+public void commit() {
+private void commitPc() {
+_targetPc.receiveDamage(_pc, _damage, false);
+_targetNpc.receiveDamage(_pc, _damage);
+public void commitCounterBarrier() {
+private static int calcCounterBarrierDamage
+damage = damage / 2;
+public int calcDamage() {
+private int calcPcNpcDamage() {
+double dmg = calcPcBaseDamage(small, true, hardSkin, false);
+public boolean calcHit() {
+_isHit = calcPcPcHit();
+_isHit = calcNpcPcHit();
+_isHit = calcNpcNpcHit();
+private boolean calcNpcPcHit() {
+_hitRate = getNpcHitRate(_npc, _targetPc);
+if (_npc.getNpcTemplate().get_ranged() >= 10
+public static int getDragonSkinReduction
+} else if(reduction >= 72) {
+int reduction = 3;
+if(level >= 80) {
+private double calcPcBaseDamage
+if (_weaponType == WeaponType.Claw
+weaponTotalDamage *= 2;
+if (_weaponId == GREAT_SWORD_OF_DESTRUCTION
+weaponTotalDamage += calcDestruction
+if (_weaponType == WeaponType.Edoryu
+damage += ThreadLocalRandom.current().nextInt(arrowDamage) + 1;
+damage = (ThreadLocalRandom.current().nextInt(5) + 4) / 4;
+damage += isRanged ? _pc.getBowDmgModifierByArmor() : _pc

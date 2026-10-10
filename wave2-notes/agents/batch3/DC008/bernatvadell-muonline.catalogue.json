@@ -1,0 +1,244 @@
+{
+  "donor": "bernatvadell-muonline",
+  "counts": {
+    "creatures": 505,
+    "classes": 10,
+    "weapons": 7,
+    "gear_sets": 1,
+    "zones": 110
+  },
+  "creature_families": [
+    "elite variants (33 top-level names with an Elite suffix)",
+    "colour-prefixed families: crimson-flame (13), bloody (9), gray (6), underground (5), cursed (5), twisted (3), chaos goblins in four colours (4), monkeys in four colours (4)",
+    "elemental triads repeated across three zone variants (elemental beast, elemental knight, devil fairy)",
+    "tree and plant monsters (DeathTree, GrayDeathTree, swamp ent)",
+    "brood and cluster objects (spider eggs, three variants)",
+    "named bosses sharing the normal monster base class (model set in the class; phase logic not in client)",
+    "generic numbered classes (20) with no name",
+    "counts: 399 top-level classes, 58 in Monsters/BloodCastle, 48 in Monsters/NewYearChinese; escalation with level is server data, not read"
+  ],
+  "top_creatures": [
+    {
+      "label": "Slow-falling ember flier",
+      "why": "Death animation plays at 0.22 speed so the fall reads as a long descent; separate idle and attack cues",
+      "keep": "slow final fall as a boss-kill moment",
+      "change": "silhouette, palette, wing shape",
+      "ref": "Client.Main/Objects/Monsters/PhoenixOfDarkness.cs:21-49 (model Monster/Monster56.bmd; death PlaySpeed at 30-32)"
+    },
+    {
+      "label": "Hit-reacting hatchling dragon",
+      "why": "Plays its attack cue when hit, walks at a slower action speed (0.7), has its own death cue",
+      "keep": "reaction sound on hit",
+      "change": "species, model, sound",
+      "ref": "Client.Main/Objects/Monsters/BudgeDragon.cs:29-61"
+    },
+    {
+      "label": "Oversized brute",
+      "why": "One class scales a common model up by 30 percent so the creature reads bigger at spawn",
+      "keep": "fixed scale-up as an elite cue",
+      "change": "armour and silhouette",
+      "ref": "Client.Main/Objects/Monsters/Dreadfear.cs:15 (scale), :20 (Monster/Monster117.bmd)"
+    },
+    {
+      "label": "Cool-rim elite crust",
+      "why": "Monster shader in simple colour mode with a cool cyan tint at high intensity, so the elite glows with no extra effect",
+      "keep": "tint-only elite glow",
+      "change": "hue, shape, and cap the intensity for phones",
+      "ref": "Client.Main/Objects/Monsters/AlphaCrust.cs:26-28"
+    },
+    {
+      "label": "Scorched bull elite",
+      "why": "Dark warm tint at lower intensity gives an ember-tinged elite without a new model",
+      "keep": "warm tint on an existing base",
+      "change": "species and horns",
+      "ref": "Client.Main/Objects/Monsters/EliteBullFighter.cs:22-24"
+    },
+    {
+      "label": "Walking tree stalker",
+      "why": "Tree-type enemy family; a walking tree reads well at 375 wide",
+      "keep": "tree silhouette and bark-leaf palette idea",
+      "change": "bark, leaves, motion. Attack behaviour not read (model load only)",
+      "ref": "Client.Main/Objects/Monsters/GrayDeathTree.cs:18 (Monster/Monster385.bmd); Client.Main/Objects/Monsters/SwampEnt.cs:18 (Monster/Monster324.bmd)"
+    },
+    {
+      "label": "Elemental beast across zones",
+      "why": "The same beast family placed as three zone variants, so one family reskins per zone",
+      "keep": "a family that travels across zones",
+      "change": "colours and design per zone. Behaviour not read",
+      "ref": "Client.Main/Objects/Monsters/UbaidElementalBeast.cs:18 (Monster/Monster222.bmd); DebenterElementalBeast.cs; NarsElementalBeast.cs"
+    },
+    {
+      "label": "Brood cluster",
+      "why": "Egg-brood classes make a cluster object act as a monster, a swarm-spawner read",
+      "keep": "cluster as a hazard object",
+      "change": "egg design and hatch cue. Behaviour not read",
+      "ref": "Client.Main/Objects/Monsters/SpiderEggs1.cs:18 (Monster/Monster152.bmd); SpiderEggs2.cs; SpiderEggs3.cs"
+    }
+  ],
+  "classes": [
+    "Dark Wizard: ranged caster; area and target spells (Client.Data/BMD/SkillDefinitions.cs:17-27); base class then advanced path (Client.Main/Controls/UI/Game/BloodCastleEnterControl.cs:678-681)",
+    "Dark Knight: melee; can summon a Dark Knight (SkillDefinitions.cs:53, skill 34); base class",
+    "Fairy Elf: ranged support; buff effects (Client.Main/Objects/Effects/ElfBuff*.cs, names read); skill range 27-52 (SkillDefinitions.cs:46); base class",
+    "Magic Gladiator: hybrid melee and caster; advanced in move-command set (Client.Main/Controls/UI/Game/MoveCommandWindow.cs:174-176)",
+    "Dark Lord: leader; its own stat row for the Dark Lord family (Client.Main/Controls/UI/Game/Character/CharacterInfoWindowControl.cs:847-945); skills 230-270 (SkillDefinitions.cs:116)",
+    "Summoner: summon; skills 200-225 (SkillDefinitions.cs:95)",
+    "Rage Fighter: martial melee; skills 230-270; rage blow effect (Client.Main/Objects/Effects/RagefulBlowEffect.cs, name read)",
+    "Duel Master, Lord Emperor, Fist Master: advanced names only (MoveCommandWindow.cs:174-176); progression not read",
+    "Races and factions: none separate in the client; class is the only identity axis read",
+    "Class enum (CharacterClassNumber) declaration not found in repo; class IDs unverified"
+  ],
+  "weapon_families": [
+    "blade (item group 0)",
+    "axe (item group 1)",
+    "mace or scepter (item group 2)",
+    "spear (item group 3; a named polearm at group + 7, name only)",
+    "bow or crossbow (item group 4)",
+    "staff (item group 5)",
+    "shield (item group 6)",
+    "Special properties: excellent and ancient flags per hand (Client.Main/Objects/Player/PlayerObject.cs:885-914). Set bonuses not in client"
+  ],
+  "gear_tiers": [
+    "Plain, levels 0-6: no extra layers (Client.Main/MGContent/ItemMaterial.fx:208-209)",
+    "Levels 7-8: echo layers at low ghost intensity (ItemMaterial.fx:213-216)",
+    "Level 9: stronger echo (ItemMaterial.fx:219-222)",
+    "Levels 10 and up: stronger echo; ghostIntensity = 0.7 + (itemLevel / 30) uses integer division so 10-15 get the same value (ItemMaterial.fx:229; may be a bug, check before copying)",
+    "Excellent: any option value above 15 sets the flag (ItemMaterial.fx:195); spectrum ramp (ItemMaterial.fx:125-134) and six echo layers (ItemMaterial.fx:245-265)",
+    "Ancient: two slow echo layers (ItemMaterial.fx:241-243, 258-259) and a cool trail colour (Client.Main/Objects/Player/WeaponObject.cs:138-143)",
+    "Ancient set complete: server flag (Client.Main/Networking/PacketHandling/Handlers/ScopeHandler.cs:670-815); NPC shows five ancient armour pieces (Client.Main/Objects/NPCS/Leo.cs:25-29)",
+    "Material tiers (cloth to plate, mythic metals): NOT read; item data is in Client.Data/BMD/ItemBMD.cs (not read) and the external data pack",
+    "17 wing and cape entries (Client.Data/ModelType.cs, wing group; Client.Main/Objects/Wings/Wing403.cs, WingObject.cs names read)",
+    "Excellent mount variant (Client.Main/Objects/Player/PlayerObject.cs:101 speed constant, :1784 excellent vehicle check)"
+  ],
+  "zones": [
+    "Town and hub: Lorencia, Noria, Devias, Elbeland, Santa village, Loren market, event square, stadium, arena (Client.Main/Worlds/*World.cs)",
+    "Field: Tarkan, Atlans, Icarus, Vulcanus, Ferea, Nars, Debenter, Uruk mountain 1-3, swamps of darkness and peace, valley of Loren, Acheron, Aida, ashen Aida, Crywolf, Nixie's lake, Kubera mine, ignis volcano, tormenta island, lost tower, refine tower",
+    "Gate-series gauntlets: Blood Castle 1-8 (8), Chaos Castle 1-7 (7), Devil Square (2), Kalima 1-7 (7), Deep Dungeon 1-5 (5)",
+    "Event instances: Illusion Temple (6 incl. league), Doppelganger (6), Imperial Guardian (4), Kanturu (3), Abyss of Atlans (3), Balgass barracks and refuge (2), Karutan (2)",
+    "Hazard: lava tile object on map tile type 7 (Client.Main/Worlds/TarkanWorld.cs:45; Client.Main/Objects/Worlds/Tarkan/LavaObject.cs)",
+    "Weather: ambient snow, toggled by settings (Client.Main/Objects/Worlds/Devias/DeviasSnowAmbientEffect.cs; Client.Main/Worlds/DeviasWorld.cs:23-27)",
+    "Ice instance: Client.Main/Worlds/DoppelgangerIceWorld.cs:15 (comment says snow)",
+    "Per-zone water and grass settings: Client.Main/Worlds/LorenciaWorld.cs:55-60, NoriaWorld.cs:69-74, NewLoginWorld.cs:41-44"
+  ],
+  "looks": [
+    {
+      "label": "Excellent spectrum and echo",
+      "technique": "three-hue ramp with no green, plus six sampled echo layers at small time-driven UV offsets, shimmer on normal",
+      "ref": "Client.Main/MGContent/ItemMaterial.fx:125-134, 245-265 (AU006 covers this shader)"
+    },
+    {
+      "label": "Level ladder glow",
+      "technique": "brightness and echo strength step up at levels 7, 9 and 10",
+      "ref": "Client.Main/MGContent/ItemMaterial.fx:194-240"
+    },
+    {
+      "label": "Slow ancient echo",
+      "technique": "two sampled echo layers on slow sine offsets, quieter than excellent",
+      "ref": "Client.Main/MGContent/ItemMaterial.fx:241-243, 258-259"
+    },
+    {
+      "label": "Elite gold default",
+      "technique": "default warm gold glow colour, metallic gain, shimmer from time and normal, echo layers (AU006 covers the shader)",
+      "ref": "Client.Main/MGContent/MonsterMaterial.fx:49, 169-170, 185-189"
+    },
+    {
+      "label": "Per-elite tint",
+      "technique": "simple colour mode with a per-class glow colour and intensity; two classes set it",
+      "ref": "Client.Main/Objects/Monsters/AlphaCrust.cs:26-28; Client.Main/Objects/Monsters/EliteBullFighter.cs:22-24"
+    },
+    {
+      "label": "Weapon trail by tier",
+      "technique": "trail colour chosen from ancient, excellent and level flags with a base colour",
+      "ref": "Client.Main/Objects/Player/WeaponObject.cs:138-143"
+    },
+    {
+      "label": "Phoenix slow death",
+      "technique": "death action play speed reduced so the fall is long",
+      "ref": "Client.Main/Objects/Monsters/PhoenixOfDarkness.cs:30-32"
+    },
+    {
+      "label": "Lava blended tile",
+      "technique": "inverse-destination blend, lit, transparent map object",
+      "ref": "Client.Main/Objects/Worlds/Tarkan/LavaObject.cs; Client.Main/Worlds/TarkanWorld.cs:45"
+    },
+    {
+      "label": "Elf buff orbit and sparkle",
+      "technique": "orbiting light, mist emitter, sparkle and trail particles (names read, code not read)",
+      "ref": "Client.Main/Objects/Effects/ElfBuffOrbitingLight.cs; ElfBuffMistEmitter.cs; ElfBuffSparkle.cs; ElfBuffTrailParticle.cs"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Ember Flier Boss",
+      "idea": "A flying fire boss whose final fall is slowed so the kill lands",
+      "keep": "slow final fall; sound cue on idle and attack",
+      "change": "silhouette, palette, wing shape, no phoenix shape"
+    },
+    {
+      "name": "Hit-Snort Hatchling",
+      "idea": "A small dragon that answers every hit with its own cue",
+      "keep": "reaction cue on hit",
+      "change": "species, sound, animation"
+    },
+    {
+      "name": "Oversized Brute elite",
+      "idea": "An elite made by a fixed 30 percent scale-up of a common model",
+      "keep": "scale as the elite cue",
+      "change": "silhouette and armour"
+    },
+    {
+      "name": "Frost-Rim Elite",
+      "idea": "Tint-only elite glow with a cool rim and no extra model",
+      "keep": "tint-only elite",
+      "change": "hue; cap the intensity for phones"
+    },
+    {
+      "name": "Walking Tree Stalker",
+      "idea": "A tree enemy with a bark and leaf palette",
+      "keep": "tree silhouette",
+      "change": "bark, leaves, motion, attacks (donor attacks not read)"
+    },
+    {
+      "name": "Elemental Beast Across Zones",
+      "idea": "One beast family reskinned per zone",
+      "keep": "a family that travels across zones",
+      "change": "design and per-zone colours"
+    },
+    {
+      "name": "Tier-Coloured Trail",
+      "idea": "Weapon trail colour as the tier readout",
+      "keep": "trail as a readout",
+      "change": "colours"
+    },
+    {
+      "name": "Lava Pool Layer",
+      "idea": "Lava as a lit, blended map object",
+      "keep": "blend and lit transparency",
+      "change": "colours and flow"
+    },
+    {
+      "name": "Ambient Snow Toggle",
+      "idea": "Snow as an ambient layer with a settings switch",
+      "keep": "the switch for low-end phones",
+      "change": "flake design"
+    },
+    {
+      "name": "Set-Complete Glow",
+      "idea": "A binary set-complete flag from the server changes the armour glow",
+      "keep": "flag-driven look",
+      "change": "the visual and the set rule"
+    }
+  ],
+  "licence_note": "No LICENSE file in repo. README.md:577 says educational and research purposes only. No game data shipped; README.md:120 says Season 20 client data must be downloaded separately. CLAUDE.md:8 says not to commit proprietary game data. Not legal advice.",
+  "not_read": [
+    "Season 20 data pack (models, textures, maps, sound): not in repo",
+    "Server half: not in box",
+    "Client.Data/BMD/ItemBMD.cs and item BMD readers (names only)",
+    "Monster stats, levels, drops: external data",
+    "Monster attack and idle logic of most of the 399 top-level classes (only cited overrides read)",
+    "BloodCastle (58) and NewYearChinese (48) monster folders: counted only",
+    "110 world files: names and grep hits only",
+    "ItemMaterial.fx lines 1-120 and 266-end; MonsterMaterial.fx beyond cited lines",
+    "Wing behaviour (Wings/Wing403.cs, WingObject.cs), scroll effects, elf buff code: names only",
+    "CharacterClassNumber declaration: not found in repo"
+  ]
+}

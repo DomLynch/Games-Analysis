@@ -1,0 +1,83 @@
+{
+  "donor": "blinkdog-ShadowbaneCacheExporter",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 105
+  },
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [
+    {
+      "label": "Terrain map layouts (table entries, not named zones)",
+      "sizes": "18 at 14x14, 64 at 16x16, 15 at 8x8, 4 at 3x3, 4 at 1x1",
+      "ordering": "COLUMN_MAJOR for all entries",
+      "tile": "128x128 greyscale alpha image per tile",
+      "ref": "src/main/java/com/pmeade/shadowbane/terrain/TerrainAlphaCache.java:45-151; src/main/java/com/pmeade/shadowbane/terrain/TerrainAlphaResource.java:33-39"
+    }
+  ],
+  "looks": [
+    {
+      "label": "Mask-blended ground",
+      "technique": "one greyscale mask per terrain tile; the exporter writes the mask only, the blend shader is in the client (not in repo, not read)",
+      "ref": "src/main/java/com/pmeade/shadowbane/terrain/TerrainAlphaResource.java:33; src/main/java/com/pmeade/shadowbane/terrain/TerrainAlphaCache.java:206"
+    },
+    {
+      "label": "Texture row order",
+      "technique": "stored upside down; first pixel is lower-left (pipeline check on import)",
+      "ref": "README.md:415-417"
+    },
+    {
+      "label": "Text-form mesh export",
+      "technique": "mesh exported as Blender Python script (pipeline idea: keep a text mesh form, use glTF JSON for us)",
+      "ref": "README.md:24"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Layered ground by mask",
+      "idea": "one greyscale mask per tile drives two or more ground textures, giving many biome edges from few textures",
+      "keep": "greyscale mask per tile over layered textures",
+      "change": "our tile size, our own mask shapes, a palette per zone"
+    },
+    {
+      "name": "Zone as a grid spec",
+      "idea": "a zone is a width by height grid of tiles, declared as one data row",
+      "keep": "start index, width, height and ordering in one record",
+      "change": "named zones; a size ladder (1x1 camp, 8x8 field, 16x16 region); load-time overlap check"
+    },
+    {
+      "name": "Hidden keepsake",
+      "idea": "an optional find off the main route with a short note or picture",
+      "keep": "optional, off-route, rewards exploring, does not change the quest path",
+      "change": "our own text and art, placed by zone designers; no donor content"
+    },
+    {
+      "name": "Readable mesh pack",
+      "idea": "meshes stored as an editable text file for review and diffs",
+      "keep": "explicit vertex and triangle lists",
+      "change": "glTF JSON with our naming and LOD fields"
+    },
+    {
+      "name": "Archive with directory",
+      "idea": "many small resources in one archive with a directory of offset, size and stored size",
+      "keep": "directory entries; stored-as-is when compression does not help",
+      "change": "our own format and index"
+    }
+  ],
+  "licence_note": "Code: GNU GPL v3 (LICENSE:2; README.md:468-469 'version 3 of the License, or any later version'); copyright 2016 Patrick Meade (src/main/java/com/pmeade/shadowbane/CacheArchive.java:3). Cache data: no licence in repo, rights unknown. Clean-room, shape only. Not a legal opinion.",
+  "not_read": [
+    "all .cache files (not in the box; the repo ships none)",
+    "exporter output (none in repo); README counts (13 caches, 24387 meshes, 20912 terrain masks, 9680 textures, 1086 sounds) are README text only, not verified",
+    "Java bodies beyond the terrain table, the archive reader lines cited, and the class comments of MeshResource and TerrainAlphaResource",
+    "client blend shader (not in repo)",
+    "pom.xml (not read here; AU007 has its own partial read)",
+    "README 'Interesting exports' content (only the section heading and line 59 pointer)",
+    "README download and store links (not followed)"
+  ]
+}

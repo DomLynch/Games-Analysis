@@ -1,0 +1,35 @@
+creature loot: collection of the dead creature	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp	return createLootFromCollection(trx, container, lootCollection, creature->getLevel());
+collection pass: function header	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp	bool LootManagerImplementation::createLootFromCollection(
+collection entry skipped when chance is zero	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp	if (lootChance <= 0)
+first roll per entry against its chance	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp	if (roll > lootChance)
+second roll picks the group	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp	roll = System::random(10000000);	720
+groups scanned with running total	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp	tempChance += groupEntry->getLootChance();
+group passes when running total reaches the roll	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp	if (tempChance < roll)
+winning group creates its loot (overwrites the id)	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp	objectID = createLoot(trx, container, groupEntry->getLootGroupName(), level);
+collection succeeds when the last id is above zero	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp	return objectID > 0 ? true : false;
+nested group descent: one roll per level	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp	lootEntry = group->getLootGroupEntryForRoll(System::random(10000000));
+nested descent depth cap 32	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp	int depthMax = 32;
+missing item template logged and dropped	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp	LootMapEntry does not exist
+credits: max formula	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp	int maxcredits = (int) round((.03f * level * level) + (3 * level) + 50);
+credits: min formula	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp	int mincredits = (int) round((((float) maxcredits) * .5f) + (2.0f * level));
+credits: random between min and max	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/LootManagerImplementation.cpp	int credits = mincredits + System::random(maxcredits - mincredits);
+default collection chance: 20% plus 0.2% per level	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/lootgroup/LootGroupCollectionEntry.h	lootChance = 2000000 + (level * 20000); // 20% + (0.2% * level)
+collection chance read from script	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/lootgroup/LootGroupCollectionEntry.h	lootChance = lua->getIntField("lootChance");
+group entries sorted by weight, descending (comment)	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/loot/lootgroup/LootGroupEntry.h	Loot Group Entries are sorted by their weights, in descending order.
+group entry weight read from script	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/templates/LootGroupTemplate.h	int chance = lootItem.getIntField("weight");
+group template picks by running total of weights	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/templates/LootGroupTemplate.h	if (totalChance >= roll && weight > 0)
+group template: falls through when weights do not reach the roll	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/templates/LootGroupTemplate.h	//Should never get here unless the scripts didn't add up to 10000000.
+loot owner: highest loot-damage group leader	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/CreatureManagerImplementation.cpp	ManagedReference<CreatureObject*> player = copyThreatMap.getHighestDamageGroupLeader();
+owner id is the group when grouped	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/CreatureManagerImplementation.cpp	ownerID = player->getGroupID();
+owner id is the player when solo	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/CreatureManagerImplementation.cpp	ownerID = player->getObjectID();
+loot only when the leader is a player	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/CreatureManagerImplementation.cpp	if (creatureInventory != nullptr && player != nullptr && player->isPlayerCreature()) {
+corpse container owned by owner id	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/CreatureManagerImplementation.cpp	creatureInventory->setContainerOwnerID(ownerID);
+creature loot call	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/CreatureManagerImplementation.cpp	if (lootManager->createLoot(trx, creatureInventory, destructedObject)) {
+loot damage excludes dotDMG	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.cpp	uint32 totalDamage = entry->getLootDamage();
+group damage: leader check (scan stops on bad leader)	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.cpp	if (thisleader == nullptr || !thisleader->isPlayerCreature())	330
+pet owner compared as a single entry (not the sum)	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.cpp	if (totalDamage > highestGroupDmg) {	370
+highest player: total damage includes DOT	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.cpp	uint32 totalDamage = entry->getTotalDamage();
+highest player: strictly greater wins ties to first	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.cpp	if (damageMap.get(tano->getObjectID()) > maxDamage) {
+pet damage credited to owner	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.cpp	CreatureObject* owner = creo->getLinkedCreature().get();	280
+quest mob loot: 100% chance	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/bin/scripts/mobile/quest/corellia/maerzen.lua	lootChance = 10000000
+loot group weight sample (1 in 6)	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/bin/scripts/loot/groups/coa2_decoder_components.lua	weight = 1666667

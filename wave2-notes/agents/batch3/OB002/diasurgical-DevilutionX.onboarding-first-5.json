@@ -1,0 +1,83 @@
+{
+  "donor": "diasurgical-DevilutionX",
+  "topic": "onboarding-first-5",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/diablo.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/interfac.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/quests.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/towners.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/player.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/dead.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/cursor.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/stores.h",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/tables/playerdat.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/quests/questdat.tsv",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/towners/towners.tsv",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/towners/quest_dialog.tsv",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/classes/warrior/starting_loadout.tsv",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/classes/rogue/starting_loadout.tsv",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/classes/sorcerer/starting_loadout.tsv",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/classes/barbarian/starting_loadout.tsv",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/classes/bard/starting_loadout.tsv",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/classes/monk/starting_loadout.tsv",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/monsters/monstdat.tsv",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/Experience.tsv",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/text/textdat.tsv"
+  ],
+  "counts": {
+    "quest_rows": 24,
+    "towner_rows": 12,
+    "towners_with_gossip": 8,
+    "quest_dialog_towner_rows": 10,
+    "monstdat_rows": 112,
+    "experience_rows": 50,
+    "textdat_rows": 338,
+    "starting_loadouts_read": 6,
+    "opening_quest_pools": 5,
+    "starting_gold": 100
+  },
+  "rule": "Seeded opening: when the randomize-quests option is on, a seed removes one quest from each of five pools, so runs differ but a seed replays exactly. A towner row is present only while its quest is neither unavailable nor done. XP award scales by level difference in 10 percent steps and is clamped at zero; the level loop then runs while XP is past the next threshold. On death in single player, the kept gold is halved and the dropped half is placed on the death tile, which can be clicked to recover it.",
+  "data_fields": [
+    {"name": "opening_pool_size", "unit": "quests per pool", "donor_value_or_null": null},
+    {"name": "opening_pool_count", "unit": "pools", "donor_value_or_null": null},
+    {"name": "xp_per_level_step", "unit": "fraction of base XP per level difference", "donor_value_or_null": null},
+    {"name": "xp_zero_level_gap", "unit": "levels below which XP is zero", "donor_value_or_null": null},
+    {"name": "death_gold_drop_fraction", "unit": "percent of gold dropped on the death tile", "donor_value_or_null": null},
+    {"name": "town_presence_gate", "unit": "quest states that hide a towner", "donor_value_or_null": null},
+    {"name": "towner_anim_frame_delay", "unit": "ticks per frame", "donor_value_or_null": null},
+    {"name": "starting_gold", "unit": "gold", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Seeded opening pools: one removed option per pool, same seed replays exactly",
+    "Town presence gated by quest state",
+    "Level-gap XP scaling in 10 percent steps, zero XP far below level",
+    "Half-gold drop on death placed on the death tile and recoverable by click",
+    "Intro gated by a play-once setting",
+    "Towner idle animation order lists (hold and sweep)"
+  ],
+  "change": [
+    "Server holds the seed and removed set; client only shows the result",
+    "Single ledger: the recovered gold is server-verified; no player-kill ear item",
+    "One NPC quest is too thin for 30 minutes; sit it beside the first Pit fight",
+    "Town shows the three nearest services at once on 375 wide, not a towner list",
+    "Level-gap XP cap rule for multiplayer not carried over (not read in full)"
+  ],
+  "look_test": "Build a 375-wide mock with no engine: a wounded NPC at a town edge (tap starts a quest and writes one log line); a card showing which of three opening quests this seed kept; a death mock that drops half the gold as a pile on the tile with a tap to recover. Compare with the current Pit intro: loss feels bearable, quest reads in one glance, seed card makes him want a second run.",
+  "licence_note": "Code is Sustainable Use License 1.0, non-commercial only, not OSI (LICENSE.md line 1; README.md line 84). Assets carry a Blizzard copyright notice with no stated origin (README.md line 86; AU015 class C). Clean-room, shape only; no donor values copied; no names, sprites or strings reproduced. inspect.lua is MIT but unused here. No legal conclusion drawn.",
+  "tags": ["first-kill", "rumour", "seed-discipline", "new:quest-pool", "new:towner-presence-gate", "new:xp-level-gap", "new:death-drop-half-gold", "new:corpse-recover", "new:towner-idle-order", "new:intro-play-once"],
+  "not_read": [
+    "combat hit feedback order (hit stop, shake, flash, knockback) in Source/monster.cpp and Source/missiles.cpp beyond grep hits",
+    "Source/items.cpp loot drop ceremony, rarity colour and sound",
+    "walk density (no spawn code read)",
+    "death-to-respawn path after the death sequence",
+    "default values of the intro and randomize-quests settings",
+    "second argument of the speech call on quest kill",
+    "the gold drop call flag meaning (DropGold ... true)",
+    "assets/levels/towndata/automap.dun town map",
+    "which build owns barbarian, bard and monk",
+    "monstdat HP unit; Butcher level mismatch (quest row 2, monster row 1) unresolved",
+    "Source/player.cpp multiplayer XP cap lines (about 2447-2452)"
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "donor": "bearlikelion-WoWdot",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "creature_families": [
+    "No creature family or type data in the repo. Creatures are built from DBC display rows (creature_models.gd line 51, instantiate) that are not shipped.",
+    "Monster skin texture slots 11, 12, 13 (creature_models.gd line 4, TextureSlot; line 8, SKIN_COLUMNS)."
+  ],
+  "top_creatures": [],
+  "classes": [
+    "No class enum or class list found in the repo (grep for enum Class returned nothing).",
+    "Equipment slots: character_models.gd line 6 (EquipSlot).",
+    "Character sections: character_models.gd line 4 (Section); options line 5 (Option).",
+    "Barbershop style types: barbershop.gd line 10 (StyleType: hair, facial hair, skin).",
+    "Faction split by race id: area_info.gd line 4 (FactionGroup) and line 6 (HORDE_RACES = 2, 5, 6, 8)."
+  ],
+  "weapon_families": [
+    "Weapon slots: item_models.gd line 4 (Slot: head, shoulders, main hand, off hand, ranged).",
+    "Sheath states: item_models.gd line 12 (Sheath: none, two-handed, staff, one-handed, shield); line 14 (SheathState: unarmed, melee, ranged).",
+    "Carry-on-back weapon subclasses: item_models.gd line 15 (WeaponSubclass: bow, gun, thrown, crossbow, wand); BACK_RANGED at line 32.",
+    "Sheath socket table: item_models.gd line 25 (SHEATH_POINTS); used for unarmed and ranged at line 160.",
+    "Weapon and ammo model folders: item_models.gd lines 20 and 21."
+  ],
+  "gear_tiers": [
+    "No gear tier data in the repo; tiers come from the player's client archives.",
+    "Armour painted onto one skin atlas: character_models.gd _paint_equipment (line 341), slots in draw order ITEM_DRAW_ORDER (line 53), atlas size SKIN_ATLAS_SIZE (line 10).",
+    "Per-gender component textures (_M, _F, shared _U): character_models.gd near line 360.",
+    "Helmet and cloak hide flags: PLAYER_FLAG_HIDE_HELM 0x400 (line 36), PLAYER_FLAG_HIDE_CLOAK 0x800 (line 37), HELMET_HIDES (line 70)."
+  ],
+  "zones": [
+    "No zone or area names in the repo (AreaTable is a layout only in clients/wowgd/data/classic/dbc_layouts.json).",
+    "Liquid materials (4): shared/game/world/liquid_magma.tres (unshaded, warm orange), liquid_ocean.tres, liquid_slime.tres, liquid_water.tres.",
+    "Weather particle kinds (3): rain, snow, sand. world_weather.gd lines 4 to 12 (textures, colours, gravity values).",
+    "World conditions: world_light.gd line 26 (Condition: clear, underwater, storm, storm underwater, death); colour bands at line 5 (ColorBand), float bands at line 24 (FloatBand).",
+    "Instance modes: instance_difficulty.gd line 8 (InstanceType: none, party, raid, PvP, arena); DUNGEON_MODES = 2 (line 10); RAID_MODES = 4 (line 11)."
+  ],
+  "looks": [
+    {
+      "label": "Water with ripple array and depth blend",
+      "technique": "Unshaded, no depth draw; ripple texture array with frame count; shallow and deep colour uniforms; depth-texture fade.",
+      "ref": "/mnt/frankendom-donors/bearlikelion-WoWdot/shared/game/world/water.gdshader lines 2 and 10 to 20"
+    },
+    {
+      "label": "Banded sky with cloud noise and storm parameter",
+      "technique": "Five sky band colours plus fog, disc and halo sizes, cloud noise with wind, glow, storm and density uniforms.",
+      "ref": "/mnt/frankendom-donors/bearlikelion-WoWdot/shared/game/world/sky.gdshader lines 4 to 22"
+    },
+    {
+      "label": "Per-chunk texture layers with alpha splat",
+      "technique": "Texture array layers per chunk, chunk layer map, alpha maps blending layers.",
+      "ref": "/mnt/frankendom-donors/bearlikelion-WoWdot/shared/game/world/terrain.gdshader lines 2 to 8"
+    },
+    {
+      "label": "Colour-coded debuff slots",
+      "technique": "Dispel-type enum (none, magic, curse, disease, poison) with a colour per type; 48 aura slots; harmful auras from slot 32.",
+      "ref": "/mnt/frankendom-donors/bearlikelion-WoWdot/shared/game/world/unit_auras.gd lines 4 to 9"
+    },
+    {
+      "label": "Additive weapon trail",
+      "technique": "Additive ribbon with 30 edges per second, 0.5 s lifetime, tint and gravity.",
+      "ref": "/mnt/frankendom-donors/bearlikelion-WoWdot/shared/game/world/ribbon_trail.gd lines 5 to 14"
+    },
+    {
+      "label": "Data-driven spell visual kits",
+      "technique": "Precast, cast and impact kits per spell; missile speed; shake group by kit.",
+      "ref": "/mnt/frankendom-donors/bearlikelion-WoWdot/shared/game/world/spell_visuals.gd lines 5, 48, 82, 92"
+    },
+    {
+      "label": "Round portrait mask",
+      "technique": "Canvas shader that fades alpha outside a round radius on the portrait texture.",
+      "ref": "/mnt/frankendom-donors/bearlikelion-WoWdot/clients/wowgd/ui/portrait.gdshader (6 lines)"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Dune-storm zone",
+      "idea": "A desert zone whose sand storm drifts sideways and lowers visibility.",
+      "keep": "Sideways sand drift and a storm state.",
+      "change": "Palette, shimmer warning and our own weather odds."
+    },
+    {
+      "name": "Tidal basin",
+      "idea": "A water zone that switches to an underwater state when the player dips below the surface.",
+      "keep": "One world-condition enum drives fog and tint.",
+      "change": "Our underwater palette; no copied grade."
+    },
+    {
+      "name": "Ember channel",
+      "idea": "A magma liquid used as a hazard channel with crack glow lines.",
+      "keep": "Unshaded hot liquid.",
+      "change": "Crack glow and a pulse."
+    },
+    {
+      "name": "Three-state stance",
+      "idea": "Unarmed, melee and ranged stances with a shield stance added.",
+      "keep": "Three states readable at 375 wide.",
+      "change": "Shield stance and our own idle poses."
+    },
+    {
+      "name": "Armour-as-paint",
+      "idea": "Armour painted into one skin atlas, with a glow channel for tier.",
+      "keep": "Texture-region painting.",
+      "change": "Our atlas layout and glow tiers."
+    },
+    {
+      "name": "Trail by weapon family",
+      "idea": "Short additive ribbon trails whose shape and tint depend on the weapon family.",
+      "keep": "Short additive trail.",
+      "change": "Trail shape and tint per family."
+    },
+    {
+      "name": "Colour-coded debuff slots",
+      "idea": "Harmful auras shown in a block of slots coloured by type.",
+      "keep": "Slot block and type colours.",
+      "change": "Our slot layout and iconography."
+    },
+    {
+      "name": "Round portrait mask",
+      "idea": "A frame with a round mask on the unit portrait.",
+      "keep": "Round mask.",
+      "change": "Frame shape and ornament."
+    }
+  ],
+  "licence_note": "Code: MIT (LICENSE line 3, copyright 2026 Mark Arneman and WoWdot contributors). Vendored third-party code keeps its own licence per NOTICE.md (WoWee MIT, godot-cpp MIT, StormLib MIT and public domain, zlib, bzip2, GLM MIT, nlohmann/json MIT, GDDocs MIT). Logo CC BY 4.0 (NOTICE.md line 19). WoWee original music reserved (NOTICE.md lines 21 to 22). Blizzard-derived layouts, sound names, icons and screenshots marked OPEN in docs/legal-and-provenance.md (per AU005). Not legal advice.",
+  "not_read": [
+    "Contents of the 285 .tscn scenes under clients (8 named only, per AU005); frames.json and ui_sounds.json contents (sizes and paths only); screenshot JPGs (names only); icon PNGs (names only)",
+    "Translation CSVs beyond the header (59,015 keys each, per AU005)",
+    "extension/api/extension_api.json (6.9 MB) and the WoWee C++ and gdshader files under extension/",
+    "world_sky.gd and world_weather.gd beyond the constants read; character_models.gd beyond the lines cited; creature_models.gd beyond line 70",
+    "Minimap, colour-wheel and colour-value shaders",
+    "Remaining .tres and .gdshader files in shared/game/world"
+  ]
+}

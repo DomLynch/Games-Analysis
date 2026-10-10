@@ -1,0 +1,111 @@
+{
+  "donor": "gesior-otwebclient",
+  "code_licence": "MIT (package.json line 10 \"license\": \"MIT\"); no LICENSE/COPYING file in tree",
+  "asset_licence": "none stated for img/bg.jpg and img/bg2.jpg; no game assets shipped",
+  "rights_holder_status": "unknown (README says based on edubart/otclient; package.json names author Gesior.pl; no file names the game owner)",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "background JPEG",
+      "path": "img/bg2.jpg, img/bg.jpg",
+      "count_hint": "2 files, about 2.5 KB each",
+      "licence": "none stated",
+      "class": "C",
+      "note": "JPEG (EXIF header). styles.css line 15 uses img/bg2.jpg as body background. bg.jpg not referenced in styles.css, index.html or default.html."
+    },
+    {
+      "kind": "game sprites",
+      "path": "not in tree (modules/spritemanager.ts line 11 stub)",
+      "count_hint": "0",
+      "licence": "n/a",
+      "class": "D",
+      "note": "getSpriteImage returns a blank Image; m_spritesFile never filled."
+    },
+    {
+      "kind": "game data tables (.dat)",
+      "path": "not in tree (modules/thingtype.ts parses layout, no file shipped)",
+      "count_hint": "0",
+      "licence": "n/a",
+      "class": "D",
+      "note": "Loader structure exists; no data file in the box."
+    },
+    {
+      "kind": "fonts",
+      "path": "none shipped (styles.css body font-family Verdana)",
+      "count_hint": "0",
+      "licence": "n/a",
+      "class": "D",
+      "note": "System font name only."
+    },
+    {
+      "kind": "UI text",
+      "path": "index.html line 4; default.html line 7",
+      "count_hint": "2 titles",
+      "licence": "none",
+      "class": "D",
+      "note": "Demo leftovers, not game text."
+    },
+    {
+      "kind": "data tables (code constants)",
+      "path": "modules/constants/const.ts; modules/constants/proto.ts",
+      "count_hint": "2 tables (proto.ts 227 lines)",
+      "licence": "MIT (code)",
+      "class": "n/a",
+      "note": "Hold tile/floor/draw-layer/timing constants and the Proto opcode enum. Cited as data first, not as assets."
+    }
+  ],
+  "inspiration": [
+    "Sprite sheets are addressed by one formula over animation frame, pattern X/Y/Z, layer and cell size (modules/thingtype.ts getSpriteIndex, line 614). An artist could lay out sheets on that grid.",
+    "The world is a 32 px tile grid stacked as floors, with a sea-level floor and an underground band (modules/constants/const.ts, Otc block). Our zone depth bands could borrow the sea line and deep band idea.",
+    "Draw order is split into named layers: ground, borders, bottom, items, creatures, effects, missiles, texts (modules/constants/const.ts, DrawFlags). Useful model for camera and VFX sort order.",
+    "Speech-style floating text stays up longer for longer lines, with a minimum and a width cap (modules/constants/const.ts block near ANIMATED_TEXT_DURATION). A fade-and-float bubble can be built on the same idea.",
+    "Character look is a set of slots (head, body, legs, feet, mount) on an outfit object (modules/outfit.ts). Setters are stubbed, but the slot model is clear.",
+    "Effects step through a per-frame animation phase that clamps at the last frame and wraps the pattern offset (modules/effect.ts drawEffect). Useful for spell and impact VFX timing.",
+    "Dialog look is a near-transparent light panel with a thin dark border (index.html inline style for .ui-dialog). A simple HUD panel idea for hud-ui."
+  ],
+  "briefs": [
+    {
+      "label": "Layered depth band zone",
+      "why": "Zones read as depth when a sea-level line and a deep band sit in the same vertical stack; the player feels the drop.",
+      "keep": "a visible sea line, a clear underground band, a fixed number of floors per zone",
+      "change": "our own palette and ground textures, a different floor count and step size, zone-specific fog instead of plain bands",
+      "ref": "gesior-otwebclient/modules/constants/const.ts (Otc block: SEA_FLOOR, UNDERGROUND_FLOOR, MAX_Z)"
+    },
+    {
+      "label": "Fade-and-float speech bubble",
+      "why": "Short text that rises and fades, with duration scaling to line length, gives a readable chat without a log window.",
+      "keep": "duration scales with length, a minimum on-screen time, a width cap that wraps the text",
+      "change": "our bubble shape (rounded tag, not a plain box), a slower rise, a small icon on the speaker's side",
+      "ref": "gesior-otwebclient/modules/constants/const.ts (ANIMATED_TEXT_DURATION, STATIC_DURATION_PER_CHARACTER, MAX_STATIC_TEXT_WIDTH)"
+    },
+    {
+      "label": "Modular slot outfit",
+      "why": "A character reads as unique when head, body, legs, feet and a mount are separate slots that can be swapped and recoloured.",
+      "keep": "five slots (head, body, legs, feet, mount), separate colour per slot, swap without rebuilding the character",
+      "change": "our own silhouette set and proportions, slot names that match our armour lanes, a colour ramp per material rather than per slot",
+      "ref": "gesior-otwebclient/modules/outfit.ts (setHead, setBody, setLegs, setFeet, setMount)"
+    },
+    {
+      "label": "Looping effect frame cycle",
+      "why": "A spell or impact that plays a short frame cycle, then holds on the last frame, reads as a clean hit without a timer bug.",
+      "keep": "phase clamped at the last frame, pattern offset wraps around for direction, one frame cycle per effect",
+      "change": "our own frame count and easing curve, a glow pass on top, a sound cue on frame one",
+      "ref": "gesior-otwebclient/modules/effect.ts (drawEffect, EFFECT_TICKS_PER_FRAME)"
+    },
+    {
+      "label": "Translucent HUD panel",
+      "why": "A pale, see-through panel with a thin border lets the game world show through the HUD.",
+      "keep": "semi-transparent light panel, thin dark edge, panel sits over the world rather than a solid box",
+      "change": "our own panel tint and corner shape, a stronger edge for phone legibility at 375 wide, a tab row on the top edge",
+      "ref": "gesior-otwebclient/index.html (inline style block, .ui-dialog)"
+    }
+  ],
+  "not_read": [
+    "js/vendor.js (bundle, about 762 KB) and js/index.js (about 118 KB): not opened",
+    "node_modules/ licence files: listed only",
+    "modules/statictext.ts, modules/map.ts, modules/game.ts, modules/creature.ts: names only",
+    ".idea/ IDE files, package-lock.json",
+    "img/*.jpg pixel content: header bytes only",
+    "server half: not in the box (README line 10 names a websocket-proxy server)"
+  ]
+}

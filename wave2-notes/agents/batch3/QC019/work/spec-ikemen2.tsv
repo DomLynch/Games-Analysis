@@ -1,0 +1,3 @@
+edge snap step (unique line)	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/camera.go	if Abs(diffLeft) <= diff*logicScale*c.tensionvel {
+run order loop calls update then track	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/char.go	for _, c := range cl.runOrder {
+char track call per character	/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/char.go	c.track()

@@ -1,0 +1,40 @@
+note	claim	donor_file	line	quote
+ClassicUO	ProcessAnimation entry point	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs		public override void ProcessAnimation(bool evalutate = false)
+ClassicUO	timer gate: one advance per call, no catch-up	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs		if (LastAnimationChangeTime >= Time.Ticks || NoIterateAnimIndex())
+ClassicUO	base clip delay 80 ms	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs		int currentDelay = Constants.CHARACTER_ANIMATION_DELAY;
+ClassicUO	server clip delay scales with interval	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs		currentDelay += currentDelay * (_animationInterval + 1);
+ClassicUO	next advance time set after each frame	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs		LastAnimationChangeTime = Time.Ticks + currentDelay;
+ClassicUO	repeat count decremented on wrap only	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs		if (--_animationRepeateMode > 0) // play animation n times
+ClassicUO	infinite repeat when count is 0	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs		if (_animationRepeateMode == 0) // play animation infinite time
+ClassicUO	wrap forward at end of clip	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs		if (_isAnimationForwardDirection && frameIndex >= fc)
+ClassicUO	set group and frame, set from server flag	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs		AnimIndex = (byte)(frameIndex % frames.Length);
+ClassicUO	SetAnimation resets frame and timer	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs		AnimIndex = (byte)(forward ? 0 : frameCount);
+ClassicUO	step elapsed time from last step	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs		int delay = (int)Time.Ticks - (int)LastStepTime;
+ClassicUO	step duration target and steps per tile	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs		float steps = maxDelay / (float)Constants.CHARACTER_ANIMATION_DELAY;
+ClassicUO	step removed when elapsed reaches duration	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs		bool removeStep = delay >= maxDelay;
+ClassicUO	mobile update calls animation each frame	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs		ProcessAnimation(true);
+ClassicUO	world loop over all mobiles	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/World.cs		mob.Distance > ClientViewRange
+ClassicUO	variable step time from MonoGame gameTime	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/GameController.cs		Time.Ticks = (uint)gameTime.TotalGameTime.TotalMilliseconds;
+ClassicUO	time delta in seconds	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/GameController.cs		Time.Delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
+ClassicUO	packets parsed at start of each update	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/GameController.cs		var packetsCount = PacketHandlers.Handler.ParsePackets(NetClient.Socket, UO.World, data);
+ClassicUO	theirs: walk step 400 ms	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Data/MovementSpeed.cs		public const int STEP_DELAY_WALK = 400;
+ClassicUO	theirs: run step 200 ms	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Data/MovementSpeed.cs		public const int STEP_DELAY_RUN = 200;
+ClassicUO	theirs: duration pick run vs walk	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Data/MovementSpeed.cs		return run ? STEP_DELAY_RUN : STEP_DELAY_WALK;
+ClassicUO	theirs: pixel offset per tile 22 px	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Data/MovementSpeed.cs		float step_NESW = 22.0f / framesPerTile;
+ClassicUO	theirs: animation delay constant 80	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Constants.cs		public const int CHARACTER_ANIMATION_DELAY = 80;
+ClassicUO	theirs: walking delay 150 ms	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Constants.cs		public const int WALKING_DELAY = 150;
+ClassicUO	8 directions mapped to 5 sprite dirs	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Renderer/Animations/Animation.cs		public void GetAnimDirection(ref byte dir, ref bool mirror)
+ClassicUO	mirror flag for direction 2	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Renderer/Animations/Animation.cs		mirror = dir == 2;
+ClassicUO	group lookup rejects bad action/dir	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Renderer/Animations/Animation.cs		if (action >= AnimationsLoader.MAX_ACTIONS || dir >= AnimationsLoader.MAX_DIRECTIONS)
+ClassicUO	mobile type-0 group dispatch	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/MobileAnimation.cs		private static byte GetObjectNewAnimationType_0(Animations animations
+ClassicUO	action above 10 returns 0	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/MobileAnimation.cs		if (action > 10)
+ClassicUO	type-0 default: group 31 if clip exists	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/MobileAnimation.cs		animations.AnimationExists(mobile.Graphic, 31)
+ClassicUO	SetAnimation signature	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs		public void SetAnimation(
+ClassicUO	ProcessSteps signature	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs		public void ProcessSteps(out byte dir, bool evalutate = false)
+ClassicUO	step removal pops queue	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs		Steps.RemoveFromFront();
+ClassicUO	theirs: mounted run 100 ms	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Data/MovementSpeed.cs		public const int STEP_DELAY_MOUNT_RUN = 100;
+ClassicUO	theirs: mounted walk 200 ms	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Data/MovementSpeed.cs		public const int STEP_DELAY_MOUNT_WALK = 200;
+ClassicUO	theirs: 44 px diagonal-axis constant	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Data/MovementSpeed.cs		float step_NESW_D = 44.0f / framesPerTile;
+ClassicUO	mob update drives idle and animation	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs		if (_lastAnimationIdleDelay < Time.Ticks)
+ClassicUO	GameController Update calls Scene.Update in MonoGame loop	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/GameController.cs		protected override void Update(GameTime gameTime)
+ClassicUO	scene update only when loaded	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/GameController.cs		if (Scene != null && Scene.IsLoaded && !Scene.IsDestroyed)

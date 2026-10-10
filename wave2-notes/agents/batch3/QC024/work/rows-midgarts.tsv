@@ -1,0 +1,23 @@
+drgomesp-midgarts	stored default yaw is 270 (theirs constant)	/mnt/frankendom-donors/drgomesp-midgarts/internal/camera/camera.go	18	Yaw   = float32(270.0)
+drgomesp-midgarts	stored default pitch is -60 (theirs constant)	/mnt/frankendom-donors/drgomesp-midgarts/internal/camera/camera.go	19	Pitch = float32(-60.0)
+drgomesp-midgarts	distance field is set to 30.0 at construction	/mnt/frankendom-donors/drgomesp-midgarts/internal/camera/camera.go	43	distance:       30.0,
+drgomesp-midgarts	altitude field is set to 50.0 at construction	/mnt/frankendom-donors/drgomesp-midgarts/internal/camera/camera.go	44	altitude:       50.0,
+drgomesp-midgarts	projection is a fixed perspective built once at construction	/mnt/frankendom-donors/drgomesp-midgarts/internal/camera/camera.go	48	cam.projectionMatrix = mgl32.Perspective(cam.fov, cam.aspect, cam.near, cam.far)
+drgomesp-midgarts	view looks along the graphic.Forward constant, not the front vector	/mnt/frankendom-donors/drgomesp-midgarts/internal/camera/camera.go	58	c.Position().X()+graphic.Forward.X(),
+drgomesp-midgarts	reset sets the default angles and height	/mnt/frankendom-donors/drgomesp-midgarts/internal/camera/camera.go	76	func (c *Camera) ResetAngleAndY(windowWidth, windowHeight int32) {
+drgomesp-midgarts	reset calls Rotate with the pitch and yaw	/mnt/frankendom-donors/drgomesp-midgarts/internal/camera/camera.go	80	c.Rotate(c.pitch, c.yaw)
+drgomesp-midgarts	SetY moves the camera back 32 units on z	/mnt/frankendom-donors/drgomesp-midgarts/internal/camera/camera.go	85	c.SetPosition(mgl32.Vec3{c.Position().X(), y, c.Position().Z() - 32})
+drgomesp-midgarts	Rotate computes a front vector from yaw and pitch	/mnt/frankendom-donors/drgomesp-midgarts/internal/camera/camera.go	89	c.front = mgl32.Vec3{
+drgomesp-midgarts	Rotate calls the visible-range stub	/mnt/frankendom-donors/drgomesp-midgarts/internal/camera/camera.go	97	c.UpdateVisibleZRange(0, 0)
+drgomesp-midgarts	visible-range stub builds a view and discards it	/mnt/frankendom-donors/drgomesp-midgarts/internal/camera/camera.go	101	view := c.createViewMatrix()
+drgomesp-midgarts	the forward constant is +Z	/mnt/frankendom-donors/drgomesp-midgarts/internal/graphic/transform.go	10	Forward   = mgl32.Vec3{0, 0, 1}
+drgomesp-midgarts	client camera: fov 0.638, near 0.1, far 1000	/mnt/frankendom-donors/drgomesp-midgarts/cmd/sdlclient/main.go	119	cam := camera.NewPerspectiveCamera(0.638, AspectRatio, 0.1, 1000.0)
+drgomesp-midgarts	Z key moves the camera 0.2 per loop pass	/mnt/frankendom-donors/drgomesp-midgarts/cmd/sdlclient/main.go	273	Position().Z() + 0.2})
+drgomesp-midgarts	loop sleeps for a fixed refresh period	/mnt/frankendom-donors/drgomesp-midgarts/cmd/sdlclient/main.go	180	var refreshPeriod = time.Second / FPS
+drgomesp-midgarts	frame delta is frameStart minus itself, so always zero	/mnt/frankendom-donors/drgomesp-midgarts/cmd/sdlclient/main.go	285	frameDelta := frameStart.Sub(frameStart)
+drgomesp-midgarts	world update receives the zero delta	/mnt/frankendom-donors/drgomesp-midgarts/cmd/sdlclient/main.go	287	w.Update(float32(frameDelta.Seconds()))
+drgomesp-midgarts	example moves the camera 1.0 per pass on the same key	/mnt/frankendom-donors/drgomesp-midgarts/examples/3d/main.go	122	Position().Z() + 1.0})
+drgomesp-midgarts	sprite facing uses a fixed camera direction constant	/mnt/frankendom-donors/drgomesp-midgarts/internal/system/character_render.go	28	FixedCameraDirection = 6
+drgomesp-midgarts	sprite direction is offset by the fixed camera entry	/mnt/frankendom-donors/drgomesp-midgarts/internal/system/character_render.go	91	direction := int(char.Direction) + directiontype
+drgomesp-midgarts	licence file is GPL version 3	/mnt/frankendom-donors/drgomesp-midgarts/LICENSE	1	GNU GENERAL PUBLIC LICENSE
+drgomesp-midgarts	README documents Z/X/C/V camera moves only	/mnt/frankendom-donors/drgomesp-midgarts/README.md	143	Move Camera Backward

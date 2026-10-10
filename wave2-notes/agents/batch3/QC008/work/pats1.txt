@@ -1,0 +1,23 @@
+const double dragT
+static const double vmax
+static const double amax
+double scale = (1.0 - t
+double scale = max (1e-4
+scale = max(scale, 1.0/target
+if (shift > 0) fact
+else fact = max(1.0/rdist
+SetRelPos (rdist*fact
+SetRelPos (rdist, ephi+dphi
+if (dx) ShiftPhi
+ShiftDist(-zDelta
+static const double dfac
+if (vp > 0) vp = min
+if (fabs (vp-vphi)*td.iSysDT > amax
+return rdist*target->Size
+dphi = _dphi*vmax
+tref *= (tref_d0
+if (t >= dragT)
+const double cam_acc
+double cam_vmax
+double max_dv = cam_vmax
+if (dphi) g_camera->ShiftPhi

@@ -1,0 +1,3 @@
+donor	status	counts_creatures	counts_classes	counts_weapons	counts_gear_sets	counts_zones	outputs	notes
+alexbatalov-fallout2-ce	done_partial_data	19	0	0	0	4	alexbatalov-fallout2-ce.catalogue.md; alexbatalov-fallout2-ce.catalogue.json	Engine source only; data pack absent from box; creatures are KILL_TYPE family names with no stats; weapons, armour and zones are enum-level
+angband-angband	done	623	9	61	58	9	angband-angband.catalogue.md; angband-angband.catalogue.json	Data half read (lib/gamedata); src/ not read in depth; 8 monsters read in full, rest from field extract; art and audio names only; receipts.tsv not produced

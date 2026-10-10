@@ -1,0 +1,7 @@
+ai/ai_battle.cpp	double attackValue = target.evaluateThreatForUnit( attacker );
+ai/ai_battle.cpp	iter->second += attackValue;
+ai/ai_battle.cpp	iter->second = std::max( iter->second, attackValue );
+ai/ai_battle.cpp	const uint32_t moveDist = arena.CalculateMoveDistance( currentUnit, pos );
+ai/ai_battle.cpp	const double priority = enemy->evaluateThreatForUnit( currentUnit ) / nearestCellInfo.dist;
+ai/ai_battle.cpp	const double allEnemiesThreat = std::accumulate( enemies.begin(), enemies.end(), 0.0, [&currentUnit]( const double total, const Battle::Unit * unit ) {
+ai/ai_battle.cpp	return ( newOutcome.canAttackImmediately && !previous.canAttackImmediately )

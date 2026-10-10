@@ -1,0 +1,62 @@
+{
+ "game": "Card-Forge-forge",
+ "category": "quests-dialogue",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/util/AdventureQuestController.java",
+ "licence": "GNU GPL version 3 (LICENSE lines 1-2)",
+ "licence_class": "copyleft",
+ "target_module": "origins/quests/stage-engine.ts",
+ "parity_row": 21,
+ "pattern_tags": [
+  "new:objective-stage",
+  "new:event-fanout",
+  "new:two-pass-activation",
+  "new:fail-counter",
+  "new:fetch-recheck",
+  "new:room-gate"
+ ],
+ "data_fields": [
+  {
+   "name": "stage.count",
+   "donor_constant": "goal count per stage (count3 for most objectives, count1 for fetch); values in quest data, not read",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/data/AdventureQuestStage.java:299"
+  },
+  {
+   "name": "stage.failAt",
+   "donor_constant": "count4; 0 = the stage never fails",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/data/AdventureQuestStage.java:301"
+  },
+  {
+   "name": "player.maxActiveSideQuests",
+   "donor_constant": "5 (source: todo, move to configuration)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/util/AdventureQuestController.java:151"
+  },
+  {
+   "name": "poi.dayGateResetChance",
+   "donor_constant": "0.85 (chance the day gate clears after a completed side quest)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/util/AdventureQuestController.java:221"
+  },
+  {
+   "name": "spawn.questBoostSplit",
+   "donor_constant": "equal split of total weight across matching enemies (rule)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/util/AdventureQuestController.java:103"
+  }
+ ],
+ "best_idea": "Quest progress as typed objective stages that each read only their own event kind, with completion as every stage complete and failure as a sticky flag, updated in two passes (update all quests, then start next stages).",
+ "decision": "adapt",
+ "decision_why": "Take the typed stage switch, the two-pass update and the sticky failure; change the source so the server emits quest events from its own fight and zone records, the client never emits them, and rewards go to the one ledger on stage completion, not through dialog effects.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: a stage defeat 3 bandits, fail after 2 losses completes after the third server-verified win and fails after the second loss; a client-sent quest event is refused; a quest reports complete only when every stage is complete."
+}

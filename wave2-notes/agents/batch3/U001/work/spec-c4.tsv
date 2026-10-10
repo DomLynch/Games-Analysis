@@ -1,0 +1,31 @@
+ModernUO	spawner default delay min 5 minutes	SPB	49
+ModernUO	spawner default delay max 10 minutes	SPB	50
+ModernUO	max spawn attempts default 10	SPB	148
+ModernUO	spawner full when spawned reaches count	SPB	292
+ModernUO	count change stops timer when full	SPB	320
+ModernUO	tick: group respawn branch	SPB	829	public virtual void OnTick()
+ModernUO	tick: non-group spawns one	SPB	850	public virtual void Spawn()
+ModernUO	spawn: early return when no entries or full	SPB	855	if (entries.Length <= 0 || IsFull)
+ModernUO	spawn: weighted pick sum of probabilities	SPB	876
+ModernUO	spawn: chosen entry spawns once and returns	SPB	888	Spawn(entry, out var flags);
+ModernUO	spawn: entry full check (SpawnerEntry)	SPE	162	public bool IsFull => Spawned.Count >= SpawnedMaxCount;
+ModernUO	entry defrag calls parent OnDefragSpawn	SPE	170
+ModernUO	defrag removes deleted or unowned entries	SPB	822
+ModernUO	remove on deletion re-arms timer when not full	SPB	400
+ModernUO	respawn group: remove all then spawn count	SPB	406
+ModernUO	timer delay: random between min and max	SPB	1179
+ModernUO	timer start only when not full	SPB	1211	_timer.Start();
+ModernUO	spawn position: random x in bounds	SPB	457
+ModernUO	spawn position: attempt loop	SPB	444
+ModernUO	proximity: trigger on player movement	PRX	96
+ModernUO	proximity: only when empty and timer elapsed	PRX	103
+ModernUO	proximity: instant flag sets combatant	PRX	111	if (InstantFlag)
+ModernUO	Mobile delete removes from spawner	MOB	4649
+ModernUO	non-player death path in base OnDeath	MOB	4890	public virtual void OnDeath(Container c)
+ModernUO	creature death notifies spawner	BCR	3479
+ModernUO	creature death calls base OnDeath	BCR	3662
+ModernUO	sector deactivate: return-home grace 15 to 60 s	BCR	4190
+ModernUO	sector deactivate: range-sensitive AI deactivated	BCR	4196
+ModernUO	go-home callback checks sector still inactive	BCR	4204
+ModernUO	go-home teleports to home	BCR	4206
+ModernUO	spawner: spawn tick entry point	SPB	850

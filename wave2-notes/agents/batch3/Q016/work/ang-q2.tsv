@@ -1,0 +1,6 @@
+src/mon-move.c	for (i = cave_monster_max(cave) - 1; i >= 1; i--) {
+src/mon-move.c	moving = mon->energy >= z_info->move_energy ? true : false;
+src/mon-move.c	mon->energy -= z_info->move_energy;
+src/game-world.c	player->energy += turn_energy(player->state.speed);
+src/game-world.c	process_monsters(0);
+src/game-world.c	static void update_scent(void)

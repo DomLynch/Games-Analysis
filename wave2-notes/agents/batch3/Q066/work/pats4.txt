@@ -1,0 +1,29 @@
+IMMUNE_TO_HARM)) {
+dmg *= 1.1;
+if (isUndeadDamage()) {
+if (isMissingSkillEffect()) {
+_hitRate = getNpcHitRate(_npc, _targetPc);
+if (_targetPc.getEr()
+if (isBow && _weaponId != SAYHAS_BOW
+if (_pc.getLocation().getTileLineDistance(_target.getLocation()) > _weaponRange + 1) {
+if (!_pc.glanceCheck(_targetX, _targetY)) {
+if (_weaponId == SWORD_OF_ORDEAL
+private static final int[] strDmg
+private static final int[] dexDmg
+private static final int[] PREVENT_DAMAGE
+public L1Attack(L1Character attacker, L1Character target) {
+_isHit = calcNpcPcHit();
+public int calcDamage() {
+_damage = calcNpcPcDamage();
+private double calcPcBaseDamage
+if (_npc.getNpcTemplate().get_ranged() >= 10
+int fumble = hitRate;
+int critical = hitRate + 19;
+if (_targetPc.hasSkillEffect(PATIENCE)) {
+dmg -= getDragonSkinReduction
+if (_weaponType == WeaponType.Claw
+if (isNowWar) {
+if (!isNowWar) {
+if (_npc instanceof L1PetInstance) {
+dmg /= 2;
+dmg -= calcNpcDamageReduction();

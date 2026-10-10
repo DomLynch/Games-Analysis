@@ -1,0 +1,31 @@
+note	claim	donor_file	line	quote
+exult-exult	licence GPL-2.0-or-later header	/mnt/frankendom-donors/exult-exult/objs/egg.cc	7	either version 2 of the License, or
+exult-exult	egg trigger: is_active dispatch on criteria (cached_in/party/avatar)	/mnt/frankendom-donors/exult-exult/objs/egg.cc	829	bool Egg_object::is_active(
+exult-exult	already hatched and not auto-reset: no trigger	/mnt/frankendom-donors/exult-exult/objs/egg.cc	838	return false;    // For now... Already hatched.
+exult-exult	nocturnal: no trigger outside hours 21 to 4	/mnt/frankendom-donors/exult-exult/objs/egg.cc	843	if (hour < 21 && hour > 4) {
+exult-exult	avatar_near: main actor only	/mnt/frankendom-donors/exult-exult/objs/egg.cc	873	if (obj != gwin->get_main_actor()) {
+exult-exult	party_near edge: new tile in area, old tile out	/mnt/frankendom-donors/exult-exult/objs/egg.cc	896	area.has_world_point(tx, ty) && !area.has_world_point(from_tx, from_ty);
+exult-exult	area: square of radius distance	/mnt/frankendom-donors/exult-exult/objs/egg.cc	784	int width = 2 * distance;
+exult-exult	area square build	/mnt/frankendom-donors/exult-exult/objs/egg.cc	792	area = TileRect(t.tx - distance, t.ty - distance, width, width);
+exult-exult	distance read from egg record bits 10-14	/mnt/frankendom-donors/exult-exult/objs/egg.cc	679	distance                    = (itype >> 10) & 0x1f;
+exult-exult	hatch roll 1..100 against probability	/mnt/frankendom-donors/exult-exult/objs/egg.cc	1334	const int roll = must ? 0 : 1 + rand() % 100;
+exult-exult	hatch succeeds when roll <= probability	/mnt/frankendom-donors/exult-exult/objs/egg.cc	1335	if (roll <= probability) {
+exult-exult	once eggs removed after hatch	/mnt/frankendom-donors/exult-exult/objs/egg.cc	1345	if (!can_unhatch() && flags & (1 << static_cast<int>(once))) {
+exult-exult	hatched flag set after every attempt	/mnt/frankendom-donors/exult-exult/objs/egg.cc	1351	flags |= (1 << static_cast<int>(hatched));
+exult-exult	monster egg: count and schedule decoded from data1	/mnt/frankendom-donors/exult-exult/objs/egg.cc	314	sched(d1 >> 8), align(d1 & 3), cnt((d1 & 0xff) >> 2)
+exult-exult	monster egg: count randomised 1 to cnt	/mnt/frankendom-donors/exult-exult/objs/egg.cc	333	num = 1 + (rand() % num);
+exult-exult	monster egg: hatch_now branch for NPC shapes	/mnt/frankendom-donors/exult-exult/objs/egg.cc	327	if (info.is_npc()) {
+exult-exult	monster spawn spot: find_spot radius 5 from egg tile	/mnt/frankendom-donors/exult-exult/objs/egg.cc	300	const Tile_coord dest = Map_chunk::find_spot(get_tile(), 5, mshape, 0, 1);
+exult-exult	monster created with schedule and alignment	/mnt/frankendom-donors/exult-exult/objs/egg.cc	302	Monster_actor::create(mshape, dest, sched, align);
+exult-exult	find_spot: start tile first if free	/mnt/frankendom-donors/exult-exult/objs/chunks.cc	1286	return Tile_coord(pos.tx, pos.ty, new_lift);
+exult-exult	find_spot: random starting side	/mnt/frankendom-donors/exult-exult/objs/chunks.cc	1289	dir = rand() % 8;
+exult-exult	find_spot: ring test	/mnt/frankendom-donors/exult-exult/objs/chunks.cc	1301	if (!Map_chunk::is_blocked(zs, p.tz, p.tx - xs + 1
+exult-exult	trigger: activate_eggs tests is_active then hatch	/mnt/frankendom-donors/exult-exult/objs/chunks.cc	605	&& egg->is_active(obj, tx, ty, tz, from_tx, from_ty)) {
+exult-exult	trigger: hatch called with the actor	/mnt/frankendom-donors/exult-exult/objs/chunks.cc	607	egg->hatch(obj, now);
+exult-exult	trigger site: actor tile change calls activate_eggs	/mnt/frankendom-donors/exult-exult/actors.cc	4754	nlist->activate_eggs(this, t.tx, t.ty, t.tz, oldtile.tx, oldtile.ty);
+exult-exult	base egg: can_unhatch defaults to false	/mnt/frankendom-donors/exult-exult/objs/egg.h	177	virtual bool can_unhatch() {
+exult-exult	flag bit: once	/mnt/frankendom-donors/exult-exult/objs/egg.h	97	once       = 1,
+exult-exult	flag bit: hatched	/mnt/frankendom-donors/exult-exult/objs/egg.h	98	hatched    = 2,
+exult-exult	flag bit: auto_reset read	/mnt/frankendom-donors/exult-exult/objs/egg.h	115	return (flags & (1 << static_cast<int>(auto_reset))) != 0;
+exult-exult	criteria: party_near	/mnt/frankendom-donors/exult-exult/objs/egg.h	120	party_near        = 1,
+exult-exult	criteria: avatar_near	/mnt/frankendom-donors/exult-exult/objs/egg.h	121	avatar_near       = 2,

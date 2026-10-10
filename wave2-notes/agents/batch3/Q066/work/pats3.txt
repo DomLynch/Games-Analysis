@@ -1,0 +1,22 @@
+IMMUNE_TO_HARM)) {
+dmg *= 1.1;
+if (isUndeadDamage()) {
+if (2000 > interval && interval >= 1900)
+} else if (200 > interval && interval >= 100)
+} else if (100 > interval && interval >= 0)
+if (damage >= 0) {
+if (getInventory().checkEquipped(145)
+if (hasSkillEffect(ILLUSION_AVATAR)) {
+int newHp = getCurrentHp() - (int) (damage);
+setCurrentHp(getMaxHp());
+if (damage > 0 && rnd <= 23) {
+if (isMagicDamage == true) {
+public void receiveDamage(L1Character attacker, double damage, boolean isMagicDamage)
+public void receiveDamage(L1Character attacker, int damage, int attr)
+if (getCurrentHp() > 0 && !isDead()) {
+if (isMissingSkillEffect()) {
+_hitRate = getNpcHitRate(_npc, _targetPc);
+if (_targetPc.getEr()
+if (isBow && _weaponId != SAYHAS_BOW
+if (_pc.getLocation().getTileLineDistance(_target.getLocation()) > _weaponRange + 1) {
+if (!_pc.glanceCheck(_targetX, _targetY)) {

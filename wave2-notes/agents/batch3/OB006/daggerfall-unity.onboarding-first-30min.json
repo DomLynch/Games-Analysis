@@ -1,0 +1,82 @@
+{
+  "donor": "daggerfall-unity",
+  "topic": "onboarding-first-30min",
+  "depth": "full",
+  "half_read": "both",
+  "half_note": "client code (Assets/Scripts) and quest/config data (StreamingAssets/Quests, Resources/defaults.ini.txt) read. DOS data-pack half not in the box and not read. Server half: none (single player).",
+  "paths": [
+    "/mnt/frankendom-donors/daggerfall-unity/Assets/StreamingAssets/Quests/_TUTOR__.txt",
+    "/mnt/frankendom-donors/daggerfall-unity/Assets/StreamingAssets/Quests/_BRISIEN.txt",
+    "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Utility/StartGameBehaviour.cs",
+    "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/UserInterfaceWindows/DaggerfallStartNewGameWizard.cs",
+    "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Questing/Clock.cs",
+    "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Internal/WorldTime.cs",
+    "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/EnemyHealth.cs",
+    "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/EnemyBlood.cs",
+    "/mnt/frankendom-donors/daggerfall-unity/Assets/Resources/defaults.ini.txt"
+  ],
+  "counts": {
+    "tutorial_pages": 17,
+    "tutorial_closing_pages": 1,
+    "tutorial_timed_pages": 14,
+    "tutorial_timer_game_minutes_total": 42,
+    "tutorial_timer_real_seconds_total": 210,
+    "dungeon_phase_timer_real_seconds": 120,
+    "city_phase_timer_real_seconds": 90,
+    "timed_pages_matching_text": 13,
+    "timed_pages_mismatched_text": 1,
+    "wizard_window_setups": 14,
+    "brisienna_invite_min_game_days": 7,
+    "brisienna_invite_max_game_days": 14,
+    "defaults_start_cell_x": 109,
+    "defaults_start_cell_y": 158
+  },
+  "rule": "Opt-in coach. A yes/no prompt at quest start, then pages that each fire either on a game-time timer (2, 3, 2, 1, 2, 3, 9, 1, 1, 9, 3, 2, 2, 2 game minutes) or on a world event (dungeon exit, city arrival). Game time runs at 12 game seconds per real second, so one game minute is 5 real seconds. No ends the coach at any prompt. Main-story hook is a dated letter, random between 7 and 14 game days, with a 30-day reminder and a 14-day fail timer costing reputation.",
+  "data_fields": [
+    {"name": "page_gate", "unit": "enum: timer | event", "donor_value_or_null": null},
+    {"name": "page_timer", "unit": "real seconds (converted from game minutes)", "donor_value_or_null": null},
+    {"name": "time_scale", "unit": "game seconds per real second", "donor_value_or_null": 12},
+    {"name": "hook_window_min", "unit": "game days", "donor_value_or_null": null},
+    {"name": "hook_window_max", "unit": "game days", "donor_value_or_null": null},
+    {"name": "hook_fail_reputation", "unit": "reputation points", "donor_value_or_null": null},
+    {"name": "start_in_dungeon", "unit": "bool", "donor_value_or_null": true},
+    {"name": "hit_splash_fps", "unit": "frames per second", "donor_value_or_null": 10}
+  ],
+  "keep": [
+    "Opt-in coach with a yes/no at start and a No that ends it at any page",
+    "Event-gated pages (dungeon exit, city arrival) so the next page waits for the player",
+    "Controls-first page before any combat",
+    "Escape is always allowed in the starter fight, and the coach says so",
+    "Dated main-story hook with a random window, so the player is not told the exact day"
+  ],
+  "change": [
+    "Text and timer come from one data field (page 6 says 10 seconds but the timer is 15)",
+    "Coach comes after the first ring fight, not before it",
+    "Hook window in minutes and visible in session (door, rival, rumour), not game days",
+    "Hit feedback is blood splash only in the files read; add hit stop and a flash at the first fight (parity row 10)",
+    "Dead waits of 45 seconds with nothing to do; replace with the next goal or cut"
+  ],
+  "onboarding": {
+    "1_first_90s": "Character wizard (14 window setups, some path-only), three cinematics if enabled (data pack, not read), then tutorial yes/no and a wake-up narration; first page says check controls.",
+    "2_first_fight": "Starter cave: a rat with no treasure and an imp that needs steel. Escape is named as safe. No rig found in files read; spawns are data-pack.",
+    "3_first_reward": "Treasure pile on an altar with a remove-items inventory step. Loot ceremony not read. Level growth from skill use.",
+    "4_first_hub": "Travel to Daggerfall city, then talk for directions, shops, guilds, quest; one topic per page.",
+    "5_first_choice": "Fight or escape in the starter dungeon; join a guild or temple; accept or reject a guild quest.",
+    "6_pull_forward": "Timed pages to about 4 real minutes; event gates at dungeon exit and city arrival; dated letter 7-14 game days in; fail costs -15 reputation.",
+    "7_style": "Opt-in yes/no, timed pages, No ends at any prompt, 17 pages plus closing; show-and-tell.",
+    "8_drop_off": "Page 6 text-timer mismatch; 45-second dead waits; loiter skips the wait; text volume.",
+    "9_idea": "Opt-in coach after the first ring fight, event-gated pages, one data field for text and timer, in-session hook window."
+  },
+  "look_test": "Sixty-second first-run on the phone at 375 wide: variant A three timed coach pages (10 s, 15 s, 5 s real time) starting after the first ring fight; variant B the same pages gated on events (first hit landed, first win, zone enter). Dom judges readability at 375 wide and whether the timed version lands during a fight.",
+  "licence_note": "Code MIT (root LICENSE line 1; copyright line 3 2009-2023 Daggerfall Workshop). Assets/Licenses/Daggerfall Unity.txt line 3 names Gavin Clayton 2014-2022 (MIT); conflict recorded per AU013. Quest scripts, text and tables have no licence line (class C): shape only, no text reproduced. Not legal advice.",
+  "tags": ["first-fight", "first-loot", "timed-event", "duration-rule", "rumour", "particle-burst", "ordered-feedback"],
+  "not_read": [
+    "DOS data pack (starter dungeon monsters, sprites, cinematics, ARENA2 files): not in the box",
+    "EnemyMotor.cs (1482 lines), EnemyAttack.cs, WeaponManager swing timing beyond input lines",
+    "Inventory and loot UI, level-up UI, loot ceremony",
+    "Quest bodies beyond the tutorial pages and the Brisienna QBN block",
+    "Screen order of the two quest start-ups (_TUTOR__ prompt and _BRISIEN narration)",
+    "Whether cell 109,158 is the Pirates Hold (data pack)",
+    "Loiter skip code path (text read at line 230 only)"
+  ]
+}

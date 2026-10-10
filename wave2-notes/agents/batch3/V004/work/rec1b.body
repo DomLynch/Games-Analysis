@@ -1,0 +1,6 @@
+swgemu-Core3	ThreatMatrix pick function	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMatrix.cpp	79	TangibleObject* ThreatMatrix::getLargestThreat() {
+swgemu-Core3	DOT note in source comment	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp	4029	it should not count towards loot and thus not be added to the threat map damage.
+swgemu-Core3	BT: flee skips main defender	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/bin/scripts/ai/default.lua	384	args={condition=FLEEING}},
+swgemu-Core3	pack notify throttle gate	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp	4055	if (!lastPackNotify.isPast() || closeObjectsVector == nullptr)
+swgemu-Core3	pack notify function	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp	4052	void AiAgentImplementation::notifyPackMobs(SceneObject* attacker) {
+swgemu-Core3	cached current threat still alive check	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.cpp	545	if (currentCreo != nullptr && !currentCreo->isDead() && !currentCreo->isIncapacitated()) {

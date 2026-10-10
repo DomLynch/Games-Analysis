@@ -1,0 +1,45 @@
+main loop timer sets wall-clock ticks	/mnt/frankendom-donors/crossuo-crossuo/src/Application.cpp	g_Ticks = SDL_GetTicks();
+main loop calls game process	/mnt/frankendom-donors/crossuo-crossuo/src/Application.cpp	g_Game.Process(true);
+active window frame delay 30 ms	/mnt/frankendom-donors/crossuo-crossuo/src/Constants.h	const int FRAME_DELAY_ACTIVE_WINDOW = 30;
+animation/step update runs each loop	/mnt/frankendom-donors/crossuo-crossuo/src/CrossUO.cpp	g_World->ProcessAnimation();
+window bounds (camera) computed on rendering frame	/mnt/frankendom-donors/crossuo-crossuo/src/CrossUO.cpp	g_GameScreen.CalculateGameWindowBounds();
+delay scale set per frame from config	/mnt/frankendom-donors/crossuo-crossuo/src/GameObjects/GameWorld.cpp	g_AnimCharactersDelayValue = (float)delay;
+original step delay scale 100	/mnt/frankendom-donors/crossuo-crossuo/src/Constants.h	const int ORIGINAL_CHARACTERS_ANIMATION_DELAY = 100;
+xuo step delay scale 70	/mnt/frankendom-donors/crossuo-crossuo/src/Constants.h	const int XUO_CHARACTERS_ANIMATION_DELAY = 70;
+step update called for each mobile	/mnt/frankendom-donors/crossuo-crossuo/src/GameObjects/GameWorld.cpp	gc->UpdateAnimationInfo_ProcessSteps(dir, true);
+step update function header	/mnt/frankendom-donors/crossuo-crossuo/src/GameObjects/GameCharacter.cpp	void CGameCharacter::UpdateAnimationInfo_ProcessSteps(uint8_t &dir, bool canChange)
+step length = walk speed minus 15 ms	/mnt/frankendom-donors/crossuo-crossuo/src/GameObjects/GameCharacter.cpp	int maxDelay = g_PathFinder.GetWalkSpeed(run != 0, IsMounted()) - 15;
+elapsed time since last step start	/mnt/frankendom-donors/crossuo-crossuo/src/GameObjects/GameCharacter.cpp	int delay = (int)g_Ticks - (int)LastStepTime;
+step removed when elapsed >= step length	/mnt/frankendom-donors/crossuo-crossuo/src/GameObjects/GameCharacter.cpp	bool removeStep = (delay >= maxDelay);
+steps value = step length / delay scale	/mnt/frankendom-donors/crossuo-crossuo/src/GameObjects/GameCharacter.cpp	float steps = maxDelay / g_AnimCharactersDelayValue;
+progress x = elapsed / delay scale	/mnt/frankendom-donors/crossuo-crossuo/src/GameObjects/GameCharacter.cpp	float x = delay / g_AnimCharactersDelayValue;
+height offset per step fraction	/mnt/frankendom-donors/crossuo-crossuo/src/GameObjects/GameCharacter.cpp	OffsetZ = (char)(((wd.Z - m_Z) * x) * (4.0f / steps));
+pixel offset from walk data	/mnt/frankendom-donors/crossuo-crossuo/src/GameObjects/GameCharacter.cpp	wd.GetOffset(x, y, steps);
+cardinal step covers 22 px over steps	/mnt/frankendom-donors/crossuo-crossuo/src/Walker/WalkData.cpp	float step_NESW = 22.0f / steps;
+diagonal step covers 44 px over steps	/mnt/frankendom-donors/crossuo-crossuo/src/Walker/WalkData.cpp	float step_NESW_D = 44.0f / steps;
+walk delay constant 400	/mnt/frankendom-donors/crossuo-crossuo/src/Constants.h	const int STEP_DELAY_WALK = 400;
+run delay constant 200	/mnt/frankendom-donors/crossuo-crossuo/src/Constants.h	const int STEP_DELAY_RUN = 200;
+mounted walk delay constant 200	/mnt/frankendom-donors/crossuo-crossuo/src/Constants.h	const int STEP_DELAY_MOUNT_WALK = 200;
+mounted run delay constant 100	/mnt/frankendom-donors/crossuo-crossuo/src/Constants.h	const int STEP_DELAY_MOUNT_RUN = 100;
+walk speed table lookup	/mnt/frankendom-donors/crossuo-crossuo/src/Walker/PathFinder.cpp	return CHARACTER_ANIMATION_DELAY_TABLE[mounted][run];
+logical tile moves only when step removed	/mnt/frankendom-donors/crossuo-crossuo/src/GameObjects/GameCharacter.cpp	if (removeStep)
+logical position assigned at step end	/mnt/frankendom-donors/crossuo-crossuo/src/GameObjects/GameCharacter.cpp	if (m_X != wd.X || m_Y != wd.Y || m_Z != wd.Z)
+draw coordinates refreshed at step end	/mnt/frankendom-donors/crossuo-crossuo/src/GameObjects/GameCharacter.cpp	UpdateRealDrawCoordinates();
+last step time set at step end	/mnt/frankendom-donors/crossuo-crossuo/src/GameObjects/GameCharacter.cpp	LastStepTime = g_Ticks;
+character draw adds sprite offset	/mnt/frankendom-donors/crossuo-crossuo/src/GameObjects/GameCharacter.cpp	int x = DrawX + OffsetX;
+window centre subtracts player x offset	/mnt/frankendom-donors/crossuo-crossuo/src/ScreenStages/GameScreen.cpp	g_RenderBounds.GameWindowCenterX -= g_Player->OffsetX;
+window centre subtracts y offset minus z offset	/mnt/frankendom-donors/crossuo-crossuo/src/ScreenStages/GameScreen.cpp	g_RenderBounds.GameWindowCenterY -= (g_Player->OffsetY - g_Player->OffsetZ);
+height lifts the window centre 4 px per unit	/mnt/frankendom-donors/crossuo-crossuo/src/ScreenStages/GameScreen.cpp	(g_Player->GetZ() * 4);
+world draw offset from tile position	/mnt/frankendom-donors/crossuo-crossuo/src/ScreenStages/GameScreen.cpp	((g_Player->GetX() - g_Player->GetY()) * 22) - g_RenderBounds.GameWindowCenterX;
+player circle draw adds offset to centre	/mnt/frankendom-donors/crossuo-crossuo/src/ScreenStages/GameScreen.cpp	int drawX = g_RenderBounds.GameWindowCenterX + g_Player->OffsetX;
+window bounds function header	/mnt/frankendom-donors/crossuo-crossuo/src/ScreenStages/GameScreen.cpp	void CGameScreen::CalculateGameWindowBounds()
+quake shake active while timer runs	/mnt/frankendom-donors/crossuo-crossuo/src/ScreenStages/GameScreen.cpp	if (g_Ticks < g_Weather.EarthquakeTimer)
+quake jitter added to centre each frame	/mnt/frankendom-donors/crossuo-crossuo/src/ScreenStages/GameScreen.cpp	g_RenderBounds.GameWindowCenterX += RandomInt(EarthquakeMagnitude * 3);
+quake timer set from duration	/mnt/frankendom-donors/crossuo-crossuo/src/Weather.cpp	EarthquakeTimer = g_Ticks + (duration * 1000);
+quake magnitude stored	/mnt/frankendom-donors/crossuo-crossuo/src/Weather.cpp	g_GameScreen.EarthquakeMagnitude = magnitude;
+quake triggered by server weather event	/mnt/frankendom-donors/crossuo-crossuo/src/Managers/PacketManager.cpp	g_Weather.Earthquake(3, 1);
+RandomInt is rand modulo n	/mnt/frankendom-donors/crossuo-crossuo/src/Misc.h	return (rand() % n);
+licence file is AGPL-3.0	/mnt/frankendom-donors/crossuo-crossuo/LICENSE	GNU AFFERO GENERAL PUBLIC LICENSE
+GameScreen SPDX header	/mnt/frankendom-donors/crossuo-crossuo/src/ScreenStages/GameScreen.cpp	// SPDX-License-Identifier: MIT
+GameWorld SPDX header	/mnt/frankendom-donors/crossuo-crossuo/src/GameObjects/GameWorld.cpp	// SPDX-License-Identifier: AGPL-3.0-or-later
+global delay scale default overwritten each frame	/mnt/frankendom-donors/crossuo-crossuo/src/Globals.cpp	float g_AnimCharactersDelayValue = 80.0f;

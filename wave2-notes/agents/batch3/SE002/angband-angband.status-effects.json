@@ -1,0 +1,81 @@
+{
+  "donor": "angband-angband",
+  "topic": "status-effects",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/angband-angband/lib/gamedata/player_timed.txt",
+    "/mnt/frankendom-donors/angband-angband/src/list-player-timed.h",
+    "/mnt/frankendom-donors/angband-angband/src/list-mon-timed.h",
+    "/mnt/frankendom-donors/angband-angband/src/player-timed.c",
+    "/mnt/frankendom-donors/angband-angband/src/mon-timed.c",
+    "/mnt/frankendom-donors/angband-angband/src/mon-timed.h",
+    "/mnt/frankendom-donors/angband-angband/src/game-world.c",
+    "/mnt/frankendom-donors/angband-angband/src/player-calcs.c",
+    "/mnt/frankendom-donors/angband-angband/src/player-attack.c",
+    "/mnt/frankendom-donors/angband-angband/src/mon-attack.c",
+    "/mnt/frankendom-donors/angband-angband/src/mon-move.c",
+    "/mnt/frankendom-donors/angband-angband/src/cmd-cave.c",
+    "/mnt/frankendom-donors/angband-angband/lib/gamedata/monster.txt",
+    "/mnt/frankendom-donors/angband-angband/lib/gamedata/blow_effects.txt",
+    "/mnt/frankendom-donors/angband-angband/docs/copying.rst"
+  ],
+  "counts": {
+    "player_timed_effects": 53,
+    "player_timed_grades_cut": 7,
+    "player_timed_grades_stun": 3,
+    "monster_timed_effects": 10,
+    "monster_timed_stack_kinds": 3,
+    "monster_blow_lines": 1701,
+    "monster_blow_CONFUSE": 48,
+    "monster_blow_PARALYZE": 35,
+    "monster_blow_TERRIFY": 22,
+    "monster_blow_BLIND": 16,
+    "monster_blow_HALLU": 6,
+    "monster_blow_HURT": 1019,
+    "cut_tier_values": 8,
+    "stun_tier_values": 8,
+    "monster_min_inc_turns": 2,
+    "monster_stun_miss_1_in": 10,
+    "monster_resist_cap_percent": 90
+  },
+  "rule": "One integer timer per status (player or monster). The status word shown is the grade the timer sits in; grades are turn thresholds. Player increases add to the timer and are blocked only by NONSTACKING (paralysis). Monster effects use one of three stack rules per effect: NO, MAX or INCR. Stun-on-hit amounts are rolled by critical tier, then the grade ladder decides the word and the penalty. Monster resist is a level-based roll (cap 90 percent) with a double roll for uniques, and certain monster flags auto-resist. Cut damage per turn scales with grade (1, 2 or 3). Stun gives a to-hit and damage penalty by grade, and Knocked Out removes the turn.",
+  "data_fields": [
+    {"name": "cut_grade_thresholds", "unit": "turns", "donor_value_or_null": null},
+    {"name": "stun_grade_thresholds", "unit": "turns", "donor_value_or_null": null},
+    {"name": "cut_tier_roll_by_crit", "unit": "turns", "donor_value_or_null": null},
+    {"name": "stun_tier_roll_by_crit", "unit": "turns", "donor_value_or_null": null},
+    {"name": "stun_to_hit_penalty_by_grade", "unit": "points", "donor_value_or_null": null},
+    {"name": "monster_stun_miss_chance_1_in", "unit": "turns (per turn roll)", "donor_value_or_null": null},
+    {"name": "monster_stun_damage_reduction", "unit": "percent", "donor_value_or_null": null},
+    {"name": "monster_effect_resist_cap", "unit": "percent", "donor_value_or_null": null},
+    {"name": "monster_effect_min_turns_new", "unit": "turns", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "One word per grade on the status line, with the grade name carrying the danger",
+    "Grade thresholds as data, not code",
+    "NONSTACKING flag for hard disables (no re-paralyse while held)",
+    "Monster resist roll tied to monster level, with a unique double check",
+    "Minimum turns floor on a new monster effect (2 turns)",
+    "Stun as a short miss chance and a damage and accuracy cut, not a full lock"
+  ],
+  "change": [
+    "Seven cut grades is too many for a 375 phone; use three or four",
+    "Do not roll a new random tier per hit on top of a critical roll; one server roll per hit",
+    "Names, message strings and numbers are ours, not the donor's",
+    "Stun with three attackers: use MAX not INCR, so stacked stuns do not add into a long lock",
+    "Fear per attacker needs a cap; the donor fear is INCR, which we should bound"
+  ],
+  "look_test": "On the existing duel scene: one enemy's hit gives a bleed that moves from its first word to its second after two hits; a second enemy's hit gives a stun that moves Stun to Heavy Stun. Show the word chip above the health bar at 375 wide. Compare the grade-word chip against an icon with a number. Dom judges whether the danger is readable at a glance without a number.",
+  "licence_note": "Code is GPL version 2 or the Angband licence (docs/copying.rst line 5). The Angband licence allows copying for educational, research and not-for-profit purposes only (copying.rst line 10). Data in lib/gamedata sits under the same dual licence. Inspiration at category level only: graded bleed and graded stun. No code, grade names, message strings or numbers copied; donor_value_or_null is null because the licence is not MIT, Apache or BSD. No legal conclusion.",
+  "tags": ["status-stack", "bleed", "stagger", "fear", "knockdown", "duration-rule"],
+  "not_read": [
+    "src/ui-effect.c (render half)",
+    "src/effect-handler-general.c beyond cited lines",
+    "src/player-timed.c grade parser lines 244-342",
+    "monster effect message strings",
+    "lib/customize/message.prf and sound.prf",
+    "src/mon-move.c monster fleeing and confused movement beyond timer lines",
+    "lib/gamedata/blow_effects.txt beyond names"
+  ]
+}

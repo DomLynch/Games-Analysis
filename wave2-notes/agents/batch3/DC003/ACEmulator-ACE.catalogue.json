@@ -1,0 +1,146 @@
+{
+  "donor": "ACEmulator-ACE",
+  "counts": {
+    "creatures": 102,
+    "classes": 13,
+    "weapons": 0,
+    "gear_sets": 141,
+    "zones": 0
+  },
+  "counts_basis": {
+    "creatures": "102 CreatureType enum entries (Source/ACE.Entity/Enum/CreatureType.cs); no creature rows in the box",
+    "classes": "13 heritage groups (Source/ACE.Entity/Enum/HeritageGroup.cs); ACE has no class enum",
+    "weapons": "0 weapon rows in the box; 7 named weapon and shield fix files in Database/Updates/Shard",
+    "gear_sets": "141 EquipmentSet enum entries (includes Invalid and test entries); 0 set-bonus rows in the box",
+    "zones": "0 landblock or encounter rows; WorldBase.sql has 54 CREATE TABLE statements and 0 INSERT"
+  },
+  "creature_families": [
+    {"family": "elemental quartet", "members_named": ["FireElemental", "LightningElemental", "AcidElemental", "FrostElemental", "Elemental"], "ref": "Source/ACE.Entity/Enum/CreatureType.cs"},
+    {"family": "undead line", "members_named": ["Undead", "Skeleton", "Mumiyah", "Ghost", "Apparition", "DarkSarcophagus"], "ref": "Source/ACE.Entity/Enum/CreatureType.cs"},
+    {"family": "plated construct line", "members_named": ["Golem", "Statue", "Doll", "Marionette", "Device", "Scarecrow", "Wall", "Idol", "Crystal"], "ref": "Source/ACE.Entity/Enum/CreatureType.cs"},
+    {"family": "armoured beast line", "members_named": ["Armoredillo", "Auroch", "Tusker", "Ursuin", "Grievver"], "ref": "Source/ACE.Entity/Enum/CreatureType.cs"},
+    {"family": "swarm line", "members_named": ["Mite", "PhyntosWasp", "Swarm"], "ref": "Source/ACE.Entity/Enum/CreatureType.cs"},
+    {"family": "water line", "members_named": ["ShallowsShark", "Reedshark"], "ref": "Source/ACE.Entity/Enum/CreatureType.cs"},
+    {"family": "critter variant family", "members_named": ["Rabbit", "Bunny", "BleachedRabbit", "NastyRabbit", "GrimacingRabbit"], "ref": "Source/ACE.Entity/Enum/CreatureType.cs"},
+    {"family": "sprite line", "members_named": ["Wisp", "Fae"], "ref": "Source/ACE.Entity/Enum/CreatureType.cs"}
+  ],
+  "top_creatures": [
+    {
+      "label": "Elemental quartet",
+      "why": "Four sibling elemental types in one family; an easy readable set",
+      "keep": "One family; four element variants",
+      "change": "Our own element set, palette and sound",
+      "ref": "Source/ACE.Entity/Enum/CreatureType.cs (FireElemental, LightningElemental, AcidElemental, FrostElemental)"
+    },
+    {
+      "label": "Plated construct line",
+      "why": "Nine animated-object type names read as one family",
+      "keep": "Animated-object theme",
+      "change": "Materials, silhouette and sound",
+      "ref": "Source/ACE.Entity/Enum/CreatureType.cs"
+    },
+    {
+      "label": "Undead line",
+      "why": "Six undead-type names give a ranked-looking family",
+      "keep": "Family spanning a sarcophagus through a ghost-type",
+      "change": "Names and look",
+      "ref": "Source/ACE.Entity/Enum/CreatureType.cs"
+    },
+    {
+      "label": "Armoured beast line",
+      "why": "Five armoured beasts, each with a different shell, in one family",
+      "keep": "Shelled beast family",
+      "change": "Shell design",
+      "ref": "Source/ACE.Entity/Enum/CreatureType.cs (Armoredillo, Auroch, Tusker, Ursuin, Grievver)"
+    },
+    {
+      "label": "Swarm line",
+      "why": "Mites and wasps suit crowds at 375 wide",
+      "keep": "Swarm plus one large variant",
+      "change": "Species",
+      "ref": "Source/ACE.Entity/Enum/CreatureType.cs (Mite, PhyntosWasp, Swarm)"
+    },
+    {
+      "label": "Critter variant family",
+      "why": "One critter in five variants (plain, bleached, nasty, grimacing, bunny)",
+      "keep": "Single base with variant tags",
+      "change": "The critter and the variant names",
+      "ref": "Source/ACE.Entity/Enum/CreatureType.cs (Rabbit, Bunny, BleachedRabbit, NastyRabbit, GrimacingRabbit)"
+    },
+    {
+      "label": "Water pair",
+      "why": "Shark and reedshark give a shore-and-shallows contrast",
+      "keep": "Shallows-only pair",
+      "change": "Body and sound",
+      "ref": "Source/ACE.Entity/Enum/CreatureType.cs (ShallowsShark, Reedshark)"
+    },
+    {
+      "label": "Sprite line",
+      "why": "Wisp and fae give a light-based ambient creature",
+      "keep": "Light-sprite family",
+      "change": "Glow colour and form",
+      "ref": "Source/ACE.Entity/Enum/CreatureType.cs (Wisp, Fae)"
+    }
+  ],
+  "classes": [
+    {"name": "Aluvian", "role": "heritage group (race-like)", "signature": "not read", "progression": "not read", "ref": "Source/ACE.Entity/Enum/HeritageGroup.cs"},
+    {"name": "Gharundim", "role": "heritage group", "signature": "not read", "progression": "not read", "ref": "Source/ACE.Entity/Enum/HeritageGroup.cs"},
+    {"name": "Sho", "role": "heritage group", "signature": "not read", "progression": "not read", "ref": "Source/ACE.Entity/Enum/HeritageGroup.cs"},
+    {"name": "Viamontian", "role": "heritage group", "signature": "not read", "progression": "not read", "ref": "Source/ACE.Entity/Enum/HeritageGroup.cs"},
+    {"name": "Shadowbound", "role": "heritage group", "signature": "not read", "progression": "not read", "ref": "Source/ACE.Entity/Enum/HeritageGroup.cs"},
+    {"name": "Gearknight", "role": "heritage group", "signature": "not read", "progression": "not read", "ref": "Source/ACE.Entity/Enum/HeritageGroup.cs"},
+    {"name": "Tumerok", "role": "heritage group", "signature": "not read", "progression": "not read", "ref": "Source/ACE.Entity/Enum/HeritageGroup.cs"},
+    {"name": "Lugian", "role": "heritage group", "signature": "not read", "progression": "not read", "ref": "Source/ACE.Entity/Enum/HeritageGroup.cs"},
+    {"name": "Empyrean", "role": "heritage group", "signature": "not read", "progression": "not read", "ref": "Source/ACE.Entity/Enum/HeritageGroup.cs"},
+    {"name": "Penumbraen", "role": "heritage group", "signature": "not read", "progression": "not read", "ref": "Source/ACE.Entity/Enum/HeritageGroup.cs"},
+    {"name": "Undead", "role": "heritage group", "signature": "not read", "progression": "not read", "ref": "Source/ACE.Entity/Enum/HeritageGroup.cs"},
+    {"name": "Olthoi", "role": "heritage group", "signature": "not read", "progression": "not read", "ref": "Source/ACE.Entity/Enum/HeritageGroup.cs"},
+    {"name": "OlthoiAcid", "role": "heritage group", "signature": "not read", "progression": "not read", "ref": "Source/ACE.Entity/Enum/HeritageGroup.cs"}
+  ],
+  "weapon_families": [
+    {"family": "dagger", "named": ["Stormwood Dagger"], "ref": "Database/Updates/Shard/2021-12-19-00-Fix-Stormwood-Dagger.sql"},
+    {"family": "bows", "named": ["Black Cloud Bow", "Rynthid Tentacle Bow"], "ref": "Database/Updates/Shard/2022-05-14-01-Fix-Black-Cloud-Bow.sql; Database/Updates/Shard/2021-06-17-00-Fix-Rynthid-Tentacle-Bow-WeenieType.sql"},
+    {"family": "silveran red-rune weapons", "named": ["Red Rune Silveran Weapons"], "ref": "Database/Updates/Shard/2022-01-14-00-Update-Red-Rune-Silveran-Weapons.sql"},
+    {"family": "shield", "named": ["Shield of Perfect Light"], "ref": "Database/Updates/Shard/2022-01-14-01-Update-Shield-of-Perfect-Light.sql"},
+    {"family": "orb", "named": ["Nether Society Orb"], "ref": "Database/Updates/Shard/2022-05-14-03-Fix-Nether-Society-Orb.sql"},
+    {"family": "purified weapons (wield requirement fix)", "named": ["Purified Weapons"], "ref": "Database/Updates/Shard/2023-07-14-00-Fix-Purified-Weapons-Wield-Requirement.sql"}
+  ],
+  "gear_tiers": [
+    {"tier": "Cloth", "kind": "armour type", "ref": "Source/ACE.Entity/Enum/ArmorType.cs"},
+    {"tier": "Leather", "kind": "armour type", "ref": "Source/ACE.Entity/Enum/ArmorType.cs"},
+    {"tier": "StuddedLeather", "kind": "armour type", "ref": "Source/ACE.Entity/Enum/ArmorType.cs"},
+    {"tier": "Scalemail", "kind": "armour type", "ref": "Source/ACE.Entity/Enum/ArmorType.cs"},
+    {"tier": "Chainmail", "kind": "armour type", "ref": "Source/ACE.Entity/Enum/ArmorType.cs"},
+    {"tier": "Metal", "kind": "armour type", "ref": "Source/ACE.Entity/Enum/ArmorType.cs"},
+    {"tier": "Material families: textiles, gems, hides, metals, stones, woods (78 MaterialType entries)", "kind": "material", "ref": "Source/ACE.Entity/Enum/MaterialType.cs"}
+  ],
+  "zones": [],
+  "looks": [
+    {"label": "Weapon aura family", "technique": "numeric aura stats on a weapon (offense, defense, elemental, mana conversion, damage, speed)", "ref": "Source/ACE.Entity/Enum/Properties/PropertyFloat.cs; Source/ACE.Entity/Enum/Properties/PropertyInt.cs"},
+    {"label": "Shade and translucency properties", "technique": "float properties named Shade, Shade2 to Shade4 and Translucency; visual effect NOT read", "ref": "Source/ACE.Entity/Enum/Properties/PropertyFloat.cs"},
+    {"label": "Golden Flame absorb fix", "technique": "one signature absorb stat re-copied from the world table for one item id", "ref": "Database/Updates/Shard/2022-05-14-04-Fix-Aegis-of-the-Golden-Flame.sql"}
+  ],
+  "originals": [
+    {"name": "Elemental quartet", "idea": "Four sibling elemental creatures that share one body plan and differ by element.", "keep": "One family; four variants", "change": "Our element set, palette and sound"},
+    {"name": "Animated-object line", "idea": "A family of constructs (statue, doll, scarecrow-type) with one shared wake-up move.", "keep": "Animated-object theme", "change": "Materials and silhouette"},
+    {"name": "Grid set", "idea": "A 36-entry set grid: three bases, four elemental adjectives, three tiers.", "keep": "Base x element x tier grid", "change": "All names, the element set and the bonus per cell"},
+    {"name": "Weapon aura", "idea": "A weapon that carries one aura stat drawn from a small family (offense, defense, elemental).", "keep": "One aura per weapon", "change": "Aura names and glow"},
+    {"name": "Critter variants", "idea": "One critter in five variants for a seasonal or event spawn.", "keep": "One base; variant tags", "change": "The critter and the variant names"},
+    {"name": "Rune silver family", "idea": "A weapon family tied to one rune motif with a silver-and-red palette.", "keep": "One motif across a family", "change": "Motif and palette"},
+    {"name": "Shore-and-shallows pair", "idea": "A shallows-only hunter and a reed-dwelling hunter.", "keep": "Water-only pair", "change": "Body, sound and behaviour"},
+    {"name": "Single-stat aegis", "idea": "A named armour piece whose identity is one signature absorb stat.", "keep": "One signature stat", "change": "The stat and the motif"}
+  ],
+  "licence_note": "LICENSE is GNU AGPL v3 (code). Source/lib README (per AU002, not re-read): ACE DLLs AGPLv3; Lifestoned DLL MIT. README (per AU002): educational and non-commercial; Asheron's Call trademark statement as the file says. Assets and SQL content carry no licence line. Client data not in the repo. Donor class for inspiration: C.",
+  "not_read": [
+    "World database content (weenie, landblock, encounter rows): not in the box; WorldBase.sql is schema only",
+    "Client DAT files and the DAT loader (Source/ACE.DatLoader): not in the box or not read",
+    "Creature and item stats, tiers, weapon looks: not read",
+    "Silhouettes, palettes and sounds of any creature or item: not read; icons not viewed",
+    "Shard fix bodies: only the Golden Flame header read",
+    "Database/Archive (81 files): names only",
+    "starterGear.json: not read in this pass",
+    "Source/ACE.Server code beyond enum files: not read",
+    "Hieroglyph of Healing Mastery spell fix: name only",
+    "107 .txt files and changelog.md: not read"
+  ]
+}

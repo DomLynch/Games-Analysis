@@ -1,0 +1,76 @@
+{
+  "donor": "afritz1-OpenTESArena",
+  "counts": {
+    "creatures": 24,
+    "classes": 18,
+    "weapons": 18,
+    "gear_sets": 3,
+    "zones": 10
+  },
+  "counts_note": "Declared in source (ExeData.h struct sizes, CharacterClassLibrary.cpp:25, ArenaTypes.h enums). Names and values come from the user's own Arena exe, which is not in the box and was not read. zones = ArenaInteriorType entries only; climates (3), chasm types (3) and weather types (8) are listed in the zones array.",
+  "creature_families": [
+    "undead group (7 IDs, ExeData.h:183)",
+    "ghost-flagged pair (indices 11 and 14, ArenaAnimUtils.cpp:867)",
+    "disease-carrier group (4 IDs, ExeData.h:180)",
+    "final boss (separate name slot, CreatureDefinitionLibrary.cpp:19)",
+    "23 named creature slots (names in exe, not read)"
+  ],
+  "top_creatures": [
+    {"label": "undead band", "why": "one flag makes a family of enemies share behaviour", "keep": "shared undead group", "change": "our own undead palette and silhouette", "ref": "OpenTESArena/src/Assets/ExeData.h:183"},
+    {"label": "veil wisp", "why": "translucent ghost-flagged foes", "keep": "ghost flag as a rule", "change": "our own cold haze and shape", "ref": "OpenTESArena/src/Entities/ArenaAnimUtils.cpp:867"},
+    {"label": "vanishing beast", "why": "per-creature corpse flag gives an instant vanish", "keep": "no-corpse flag", "change": "dust motes instead of blood", "ref": "OpenTESArena/src/Assets/ExeData.h:175-176"},
+    {"label": "scaled brute", "why": "per-creature scale in 1/256ths, so size varies without new models", "keep": "data-driven scale and Y offset", "change": "our own fixed height ladder", "ref": "OpenTESArena/src/Assets/ExeData.h:173-174"},
+    {"label": "plague carrier", "why": "per-creature disease chance turns a hit into a status", "keep": "chance per creature", "change": "our own status icon and green fume", "ref": "OpenTESArena/src/Assets/ExeData.h:177-181"},
+    {"label": "lone warden", "why": "boss outside the normal list, own name, no normal loot", "keep": "separate boss slot and no loot table", "change": "our own staged fight with phase cue", "ref": "OpenTESArena/src/Entities/CreatureDefinitionLibrary.cpp:19"},
+    {"label": "six-angle hunter", "why": "one creature shown from six angles", "keep": "angle-relative animation slots", "change": "our own 3D rig with turn blend, not sprite sheets", "ref": "OpenTESArena/src/Entities/ArenaAnimUtils.cpp:185-188"},
+    {"label": "attribute brute", "why": "8 attributes per creature on a 255-is-100 scale", "keep": "8-attribute vector", "change": "our own names and a 0-to-10 phone scale", "ref": "OpenTESArena/src/Assets/ExeData.h:178"}
+  ],
+  "classes": [
+    "18 original classes in 3 categories of 6 (CharacterClassLibrary.cpp:25,31; CharacterClassDefinition.h:13-15): mage, thief, warrior. Role: mage uses spell-point multiplier, thief uses thieving divisor, warrior uses armour and weapons (CharacterClassLibrary.cpp:20-23). Progression: health dice, initial experience cap, preferred attributes. Gear access: four armour-permission levels (CharacterClassLibrary.cpp:42-57).",
+    "8 playable races (CharacterRaceLibrary.cpp:11). One race swims at normal speed with a high stamina drain; another climbs 4 times faster (CharacterRaceLibrary.cpp:22-31). Race is a movement trait, not a combat class."
+  ],
+  "weapon_families": [
+    "18 weapons from a staff to a long bow, each with quality, base price, weight, damage min/max, handedness (ExeData.h:313-318)",
+    "14 enchantment names as a separate layer (ExeData.h:321)"
+  ],
+  "gear_tiers": [
+    "3 armour families (plate, chain, leather), 11 pieces each including shields (ExeData.h:285-301)",
+    "8 material tiers with rating bonus, chance and price multiplier (ExeData.h:272-275)",
+    "named condition steps (ExeData.h:278)",
+    "material prefix in item names (ItemDefinition.h:41 comment)"
+  ],
+  "zones": [
+    "10 interior archetypes: crypt, dungeon, equipment store, house, mages guild, noble house, palace, tavern, temple, tower (ArenaTypes.h:64-75)",
+    "3 climates: temperate, desert, mountain (ArenaTypes.h:161-165)",
+    "3 chasm types: dry, wet, lava (ArenaTypes.h:143-148); lava is damaging and emissive (VoxelChasmDefinition.cpp:140-141); wet allows swimming (:139)",
+    "8 weather types with thunderstorm windows (ArenaTypes.h:170-180)",
+    "10 voxel types including none (ArenaTypes.h:127-141)"
+  ],
+  "looks": [
+    {"label": "palette-shade torchlight", "technique": "index-to-shade lookup per light level, index 0 transparent", "ref": "data/shaders/AlphaTestedWithPaletteIndexLookup.frag:12"},
+    {"label": "screen-space animation", "technique": "one shared time value drives a fragment-shader animation pass", "ref": "data/shaders/OpaqueScreenSpaceAnimation.frag:12-15"},
+    {"label": "many-light binning", "technique": "compute pass bins lights per screen tile", "ref": "data/shaders/LightBinning.comp:15"},
+    {"label": "self-lit lava pit", "technique": "emissive flag set from damaging flag", "ref": "OpenTESArena/src/Voxels/VoxelChasmDefinition.cpp:141"},
+    {"label": "dry chasm", "technique": "one solid palette colour, no animation", "ref": "OpenTESArena/src/Voxels/VoxelChasmDefinition.cpp:147"},
+    {"label": "water mirror", "technique": "horizon-mirror shader pair (names only, bodies not read)", "ref": "data/shaders/AlphaTestedWithHorizonMirrorFirstPass.frag"}
+  ],
+  "originals": [
+    {"name": "Ember rift", "idea": "a floor pit that is damaging and self-lit", "keep": "one flag drives damage and glow", "change": "our own ember palette, rim and heat haze"},
+    {"name": "Veil wisp", "idea": "a translucent foe marked by a ghost rule", "keep": "ghost flag as a rule", "change": "our own shape and cold haze"},
+    {"name": "Vanishing beast", "idea": "a creature with no corpse that leaves dust motes", "keep": "no-corpse flag", "change": "our own dust effect, no blood"},
+    {"name": "Tiered metal ladder", "idea": "8 material steps, each with a bonus and a price", "keep": "data-driven ladder of 8", "change": "our own metal names and a gold-plated top step"},
+    {"name": "Three-family kit", "idea": "plate, chain and leather with 11 pieces each", "keep": "three families and shared slot count", "change": "our own silhouettes, no copied pieces"},
+    {"name": "Lone warden", "idea": "a boss with its own name and no loot table", "keep": "separate boss slot", "change": "our own staged fight"},
+    {"name": "Storm front", "idea": "a timed storm window that moves", "keep": "timed window", "change": "a moving weather front readable on a phone"},
+    {"name": "Palette-shade torchlight", "idea": "a per-light-level palette lookup", "keep": "index-to-shade lookup", "change": "a cool palette and our own shade curve"}
+  ],
+  "licence_note": "As the files say: code MIT (LICENSE.txt line 1); README line 9 says no game assets are distributed; README line 120 says the user extracts original game data. No separate asset licence found. Not a legal conclusion.",
+  "not_read": [
+    "exe-backed values: creature names, levels, HP, damage, loot, item names and prices (data pack not in the box)",
+    "data/exe/aExeStrings.txt and acdExeStrings.txt (449 lines each, counted only)",
+    "shader bodies beyond quoted lines; horizon-mirror shader bodies",
+    "OpenTESArena/src/Entities/ArenaEntityUtils.cpp beyond names used",
+    "OpenTESArena/src/Items/ItemLibrary.cpp, Combat/CombatLogic.cpp, Spells/SpellDefinition.h",
+    "samples/ images, Preview.PNG, icon files"
+  ]
+}

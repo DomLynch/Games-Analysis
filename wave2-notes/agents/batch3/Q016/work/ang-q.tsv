@@ -1,0 +1,80 @@
+src/mon-move.c	a) the GNU General Public License as published by the Free Software
+src/mon-move.c	static bool monster_check_active(struct monster *mon)
+src/mon-move.c	if ((mon->cdis <= mon->race->hearing) && monster_passes_walls(mon)) {
+src/mon-move.c	} else if (mon->hp < mon->maxhp) {
+src/mon-move.c	} else if (monster_can_hear(mon)) {
+src/mon-move.c	} else if (monster_can_smell(mon)) {
+src/mon-move.c	static void monster_reduce_sleep(struct monster *mon)
+src/mon-move.c	uint32_t player_noise = ((uint32_t) 1) << (30 - stealth);
+src/mon-move.c	uint32_t notice = (uint32_t) randint0(1024);
+src/mon-move.c	} else if ((notice * notice * notice) <= player_noise) {
+src/mon-move.c	if ((local_noise > 0) && (local_noise < 50)) {
+src/mon-move.c	sleep_reduction = (100 / local_noise);
+src/mon-move.c	mon_dec_timed(mon, MON_TMD_SLEEP, sleep_reduction, MON_TMD_FLG_NOTIFY);
+src/mon-move.c	if (one_in_(10) && mflag_has(mon->mflag, MFLAG_ACTIVE)) {
+src/mon-move.c	mflag_on(mon->mflag, MFLAG_AWARE);
+src/mon-move.c	if (mon->m_timed[MON_TMD_SLEEP]) {
+src/mon-move.c	monster_reduce_sleep(mon);
+src/mon-move.c	if (monster_check_active(mon)) {
+src/mon-move.c	if (process_monster_timed(mon))
+src/mon-move.c	monster_turn(mon);
+src/mon-move.c	mon->energy += turn_energy(mspeed);
+src/mon-move.c	if (mon->energy < minimum_energy) continue;
+src/mon-move.c	return base_hearing > cave->noise.grids[mon->grid.y][mon->grid.x];
+src/mon-move.c	return mon->race->smell > cave->scent.grids[mon->grid.y][mon->grid.x];
+src/mon-move.c	if (player->timed[TMD_COVERTRACKS] && (mon->cdis > z_info->max_sight / 4)) {
+src/mon-move.c	static void get_move_find_range(struct monster *mon)
+src/mon-move.c	if (mon->m_timed[MON_TMD_FEAR] || rf_has(mon->race->flags, RF_FRIGHTENED)) {
+src/mon-move.c	if (player->timed[TMD_TAUNT]) return;
+src/mon-move.c	m_lev = mon->race->level + (mon->midx & 0x08) + 25;
+src/mon-move.c	if (m_lev + 3 < p_lev) {
+src/mon-move.c	} else if (m_lev - 5 < p_lev) {
+src/mon-move.c	p_val = (p_lev * p_mhp) + (p_chp << 2);
+src/mon-move.c	if (p_val * m_mhp > m_val * p_mhp)
+src/mon-move.c	} else if (mon->cdis < z_info->turn_range) {
+src/mon-move.c	static bool get_move_advance(struct monster *mon, bool *track)
+src/mon-move.c	if (monster_can_see_player(mon)) {
+src/mon-move.c	int heard_noise = base_hearing - cave->noise.grids[grid.y][grid.x];
+src/mon-move.c	if (heard_noise > current_noise) {
+src/mon-move.c	} else if (heard_noise == current_noise) {
+src/mon-move.c	smelled_scent = mon->race->smell
+src/mon-move.c	(cave->scent.grids[grid.y][grid.x] != 0)) {
+src/mon-move.c	static bool get_move(struct monster *mon, int *dir, bool *good)
+src/mon-move.c	get_move_find_range(mon);
+src/mon-move.c	if (get_move_advance(mon, good)) {
+src/mon-move.c	struct monster *tracker = group_monster_tracking(cave, mon);
+src/mon-move.c	grid = get_move_random(mon);
+src/mon-move.c	if ((open < 5) && (player->chp > player->mhp / 2)) {
+src/mon-move.c	if (!done && (mon->min_range == flee_range)) {
+src/mon-move.c	if (!done && group_ai && square_isview(cave, mon->grid)) {
+src/mon-move.c	if (cave->noise.grids[grid.y][grid.x] >
+src/mon-move.c	cave->noise.grids[mon->grid.y][mon->grid.x] + 2 * d)
+src/mon-move.c	if (!square_isview(cave, grid)) {
+src/mon-move.c	static bool get_move_flee(struct monster *mon)
+src/mon-move.c	if (mon->cdis >= mon->best_range) {
+src/mon-move.c	if (!monster_can_hear(mon) && !monster_can_smell(mon)) {
+src/mon-move.c	score = 5000 / (dis + 3) - 500 /(cave->noise.grids[grid.y][grid.x] + 1);
+src/mon-move.c	if (score < best_score) continue;
+src/mon-move.c	min = distance(player->grid, mon->grid) * 3 / 4 + 2;
+src/mon-move.c	if (dis < gdis && dis >= min) {
+src/mon-move.c	monster_group_rouse(cave, mon);
+src/mon-move.c	if (!get_move(mon, &dir, &tracking)) return;
+src/game-world.c	void make_noise(struct player *p, const struct loc *origin,
+src/game-world.c	? *falloff : (p->timed[TMD_COVERTRACKS] ? 4 : 1);
+src/game-world.c	cave->noise.grids[next.y][next.x] = 0;
+src/game-world.c	noise = cave->noise.grids[next.y][next.x] + noise_increment;
+src/game-world.c	if (noise >= z_info->max_hearing) {
+src/game-world.c	/* Update noise and scent (not if resting) */
+src/game-world.c	int scent_strength[5][5] = {
+src/game-world.c	{2, 1, 1, 1, 2},
+src/game-world.c	{2, 1, 0, 1, 2},
+src/mon-util.c	void monster_wake(struct monster *mon, bool notify, int aware_chance)
+src/mon-util.c	if (randint0(100) < aware_chance) {
+src/mon-group.c	void monster_group_rouse(struct chunk *c, struct monster *mon)
+src/mon-group.c	if (!mflag_has(mon->mflag, MFLAG_AWARE)) return;
+src/mon-group.c	if (friend->m_timed[MON_TMD_SLEEP] && monster_can_see(c, mon, fgrid)) {
+src/mon-group.c	if (one_in_(dist * 20)) {
+src/mon-group.c	monster_wake(friend, true, 50);
+lib/gamedata/constants.txt	mon-play:flee-range:5
+lib/gamedata/constants.txt	mon-play:turn-range:5
+lib/gamedata/constants.txt	player:max-sight:20

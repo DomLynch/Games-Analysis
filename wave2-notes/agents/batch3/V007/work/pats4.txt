@@ -1,0 +1,7 @@
+if (Template.SuspendSpawnCount > 0 && CurrentSpawnCount + AreOtherNpcsInSpawnZone
+if (IsSpawnScheduled)
+private bool IsCorpse
+public bool IsSpawningScheduleEnabled
+if (npc.LootingContainer != null && npc.LootingContainer.Items.Count > 0)
+public void Update()
+if (CurrentSpawnCount >= maxPopulation)

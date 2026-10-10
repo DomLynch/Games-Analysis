@@ -1,0 +1,68 @@
+{
+  "donor": "electronicarts-CnC_Remastered_Collection",
+  "topic": "onboarding-first-30min",
+  "depth": "thin",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/TIBERIANDAWN/INTRO.CPP",
+    "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/TIBERIANDAWN/INIT.CPP",
+    "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/TIBERIANDAWN/STARTUP.CPP",
+    "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/TIBERIANDAWN/SCENARIO.CPP",
+    "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/TIBERIANDAWN/SIDEBAR.CPP",
+    "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/REDALERT/INTRO.CPP",
+    "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/REDALERT/INIT.CPP",
+    "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/REDALERT/TACTION.CPP",
+    "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/REDALERT/TACTION.H",
+    "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/REDALERT/RULES.CPP",
+    "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/CnCTDRAMapEditor/Model/BriefingSection.cs",
+    "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/LICENSE.md"
+  ],
+  "counts": {
+    "red_alert_tutorial_slots": 225,
+    "tutorial_ini_entries_in_repo": 0,
+    "mission_ini_files_in_repo": 0,
+    "red_alert_message_delay_default_minutes": 0.6,
+    "tutor_flags_reads_in_tree": 0
+  },
+  "rule": "First launch after install (CONQUER.INI Intro/PlayIntro is not No; the key is rewritten to No on read, STARTUP.CPP:566-568, 583): on a machine with 12 MB or more the title menu is skipped and New Game is selected (TIBERIANDAWN/INIT.CPP:988-989); under 12 MB the INTRO2 movie plays first (INIT.CPP:820-827). Scenario start order: read scenario, intro movie for early scenarios (skipped only for Nod scenario 1; the side is always GDI so scenario 1 always plays it), briefing movie or in-game briefing text, action movie, map. Red Alert tutor lines are TACTION_TEXT_TRIGGER actions that post TutorialText[n] to the overlay after Rule.MessageDelay minutes. The sidebar sweep removes any item that cannot be built, and drops its production; the add-back code was not read. Lose plays a movie then offers a replay of the same scenario. The side-choice movies are compiled out (Play_Intro returns at TIBERIANDAWN/INIT.CPP:1775; Choose_Side hard-codes GDI).",
+  "data_fields": [
+    {"name": "message_delay", "unit": "minutes", "donor_value_or_null": null},
+    {"name": "briefing_skip_after", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "tutor_lines_per_mission", "unit": "count", "donor_value_or_null": null},
+    {"name": "sidebar_reveal_rule", "unit": "enum (prerequisite-met)", "donor_value_or_null": null},
+    {"name": "first_run_intro_lock", "unit": "bool", "donor_value_or_null": null},
+    {"name": "loss_replay_prompt", "unit": "bool", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "One brief card before a mission, skippable",
+    "Text overlay keyed to an event ID with a timed delay, non-modal",
+    "Sidebar shows only buildable items, so services unlock one at a time",
+    "Loss shows a short movie then a replay prompt on the same encounter"
+  ],
+  "change": [
+    "Null-check tutor text by ID; fallback string and load-time warning",
+    "Write the first-run flag after the movie completes, not on read",
+    "Replace the dead side-choice path with the Frankendom ring opener (no side choice)",
+    "Show the title menu once on first launch instead of skipping it to New Game on 12 MB+ machines (INIT.CPP:988-989)",
+    "Drop the TutorFlags reset (never read in this tree) or make it a shown-once tracker keyed by ID",
+    "Reconcile the IntroMovie comment with its code by writing the rule as data and testing it"
+  ],
+  "look_test": "Client-only build on the current ring opener, no release rows. (1) A 4 s brief card over a static ring frame, tap to skip. (2) First duel: one overlay line at 36 s only if the player has not yet landed a hit, versus one on the first miss. (3) After the first win, one town card 'bank is open', shown only when the first coin is looted. Dom checks whether the card blocks a duel, whether the line lands at a useful moment, and whether the bank card reads as a reward. 36 s is a starting value for our tuning, not copied from the donor.",
+  "licence_note": "GPL v3 with additional terms (LICENSE.md line 1; no trademark or publicity rights granted per AU017). Map editor licence text conflicts with TIBERIANDAWN/License.txt (AU017). Game content is not in the repo. Clean-room, shape only; no code adapted. Inspiration is category-level only.",
+  "tags": ["first-fight", "faction-map", "timed-event", "new:tutorial-text", "new:side-choice", "new:first-run-flag", "new:first-run-menu-skip", "new:sidebar-gating", "new:loss-replay"],
+  "not_read": [
+    "Mission INI files (for example SCG01EA.INI): not in repo",
+    "TUTORIAL.INI: not in repo",
+    "VQA movies and audio: not in repo",
+    "TIBERIANDAWN/TRIGGER.CPP body (1483 lines, grep only)",
+    "TIBERIANDAWN/REINF.CPP (696 lines)",
+    "TIBERIANDAWN/TEAMTYPE.CPP (977 lines)",
+    "TIBERIANDAWN/HELP.CPP (403 lines)",
+    "TIBERIANDAWN/MAPSEL.CPP (1274 lines)",
+    "TIBERIANDAWN/ENDING.CPP",
+    "Add_Message NULL handling",
+    "SCENARIO.CPP briefing text fallback body (lines 106-130, partly read)",
+    "Idle or ambient behaviour, loot reveal, walk density, boss intro: none in the files read",
+    "Readability at 375 wide: not tested"
+  ]
+}

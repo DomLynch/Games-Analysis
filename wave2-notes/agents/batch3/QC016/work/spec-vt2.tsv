@@ -1,0 +1,3 @@
+note	claim	donor_file	line	quote	local
+vthibault-roBrowser	double-click distance test: under 10 px	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	205	Math.abs(action.x-Mouse.screen.x) < 10 &&	copies/vt-Camera.js
+vthibault-roBrowser	map render callback registered with Renderer	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/MapRenderer.js	160	Renderer.render( MapRenderer.onRender );	copies/vt-MapRenderer.js

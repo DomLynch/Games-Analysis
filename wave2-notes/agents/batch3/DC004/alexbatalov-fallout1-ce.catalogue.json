@@ -1,0 +1,91 @@
+{
+  "donor": "alexbatalov-fallout1-ce",
+  "counts": {
+    "creatures": 15,
+    "classes": 0,
+    "weapons": 13,
+    "gear_sets": 0,
+    "zones": 4
+  },
+  "counts_note": "Declared in the engine headers under src/game/. creatures = kill-type categories (proto_types.h:101-117). classes = 0 (no class enum in the engine; archetype shapes are 7 primary stats, 18 skills, 16 traits, 64 perks). weapons = 13 ammo calibers (proto_types.h:70-86); the weapon instances are in the data pack. gear_sets = 0 (no set-bonus code found). zones = 4 world terrains (worldmap.h:107-110). All values are from the engine, not from the data pack, which is not in the box and was not read.",
+  "creature_families": [
+    "human kill categories: man, woman, child (proto_types.h:102-104)",
+    "mutant brute (proto_types.h:105)",
+    "undead humanoid (proto_types.h:106)",
+    "domestic beast (proto_types.h:107)",
+    "giant scorpion (proto_types.h:108)",
+    "rat (proto_types.h:109)",
+    "hovering creature (proto_types.h:110)",
+    "hybrid rider (proto_types.h:111)",
+    "robot (proto_types.h:112)",
+    "canine (proto_types.h:113)",
+    "giant mantis (proto_types.h:114)",
+    "clawed predator (proto_types.h:115)",
+    "walking plant (proto_types.h:116)",
+    "body types: biped, quadruped, robotic (proto_types.h:94-98)"
+  ],
+  "top_creatures": [
+    {"label": "plated brute", "why": "big biped with a readable chest silhouette at 375 wide", "keep": "heavy biped silhouette and a heavy sound cue", "change": "our own plates, palette and head", "ref": "src/game/proto_types.h:105"},
+    {"label": "tail-stinger", "why": "low wide body with a raised tail, readable at a glance", "keep": "low quadruped body and raised tail", "change": "our own shell pattern and hooked stinger", "ref": "src/game/proto_types.h:108"},
+    {"label": "blade-arm mantis", "why": "long limbs and a bladed front pair, strong mid-fight silhouette", "keep": "long bladed front limbs", "change": "our own limb count and colours", "ref": "src/game/proto_types.h:114"},
+    {"label": "raptor-lizard", "why": "fast big-clawed quadruped", "keep": "fast quadruped with large claws", "change": "our own head and hide pattern", "ref": "src/game/proto_types.h:115"},
+    {"label": "thorn walker", "why": "non-animal silhouette, a plant on legs", "keep": "plant body with a slow gait", "change": "our own bloom and a glowing heart", "ref": "src/game/proto_types.h:116"},
+    {"label": "hover drifter", "why": "legless floating silhouette, good flying read", "keep": "no-leg body with a hover bob", "change": "our own shape and a lamp-like glow", "ref": "src/game/proto_types.h:110"},
+    {"label": "steel sentry", "why": "robotic body type is its own animation class", "keep": "robotic body type as its own animation class", "change": "our own sparks and steel palette", "ref": "src/game/proto_types.h:97 and :112"},
+    {"label": "half-beast", "why": "human-animal hybrid with a four-leg lower body", "keep": "hybrid lower body", "change": "our own proportions and cloth mantle", "ref": "src/game/proto_types.h:111"}
+  ],
+  "classes": [
+    "No class enum in the engine. Progression shape: 7 primary stats (stat_defs.h:64), 18 skills with 3 tagged at start (skill_defs.h:9, :31), 16 traits (trait.h:29), 64 perks (perk_defs.h:7-70). Tag-skill effects are in skill.cc, not read.",
+    "2 human race variants and 2 genders (proto_types.h:20-24, :88-92). Race is a look, not a class."
+  ],
+  "weapon_families": [
+    "13 ammo calibers plus none: rocket, flamethrower fuel, two energy-cell tiers, rifle, pistol and shotgun calibers (proto_types.h:70-86)",
+    "7 damage types: normal, laser, fire, plasma, electrical, EMP, explosion (proto_types.h:59-68)",
+    "4 attack modes plus none: unarmed, melee, throw, ranged (item.h:11-17)",
+    "about 20 melee and unarmed hit modes in punch and kick ladders (combat_defs.h, HIT_MODE_* near lines 40-66)",
+    "special property: big-gun extended flag (proto_types.h:182)"
+  ],
+  "gear_tiers": [
+    "armour is an item type (proto_types.h:26-34), no set bonuses found",
+    "8 material types: glass, metal, plastic, wood, dirt, stone, cement, leather (proto_types.h:47-57)",
+    "power armour as a special item ID (proto_types.h:121)",
+    "per-item stats and looks are in the data pack, not read"
+  ],
+  "zones": [
+    "4 world terrains: desert, mountain, city, coast (worldmap.h:107-110)",
+    "random encounter table indexed by world position (worldmap.cc:2099; table not read)",
+    "3 elevations (map_defs.h:6)",
+    "elevator IDs grouped by location, including two glow elevators (elevator.h:6; elevator.cc:78-79)",
+    "radiation levels from mild to fatal, 8 radiation effects (critter.h:18, :36-44; critter.cc:58, :77)",
+    "dungeon archetypes are in map data files, not read"
+  ],
+  "looks": [
+    {"label": "palette colour cycling", "technique": "five palette ranges (slime, shoreline, two fire rates, monitors) rotate in the palette, no sprites", "ref": "src/game/cycle.h:6-10; src/game/cycle.cc:186"},
+    {"label": "light scale", "technique": "max, min and night-vision bonus light levels per tile", "ref": "src/game/light.h:6-10"},
+    {"label": "elevator glow", "technique": "two glow frame indices swap a lit frame on the lift", "ref": "src/game/elevator.cc:78-79"},
+    {"label": "projectile light", "technique": "a projectile emits light for its flight", "ref": "src/game/actions.cc:745"},
+    {"label": "animated owner light", "technique": "animation light follows the owner", "ref": "src/game/anim.cc:1552"},
+    {"label": "combat light thresholds", "technique": "three visible-light cut-offs change hit odds", "ref": "src/game/combat.cc:3310-3316"},
+    {"label": "palette fade", "technique": "fade done by colour table, from the audit", "ref": "src/game/palette.h:12"}
+  ],
+  "originals": [
+    {"name": "Plated brute", "idea": "a big biped with a plate silhouette", "keep": "heavy biped, readable chest", "change": "our own plates, palette and head"},
+    {"name": "Tail-stinger", "idea": "a low wide quadruped with a raised stinger", "keep": "low body and raised tail", "change": "our own shell and hook"},
+    {"name": "Blade-arm mantis", "idea": "a long-limbed insect with a bladed front pair", "keep": "long bladed front limbs", "change": "our own limb count and colours"},
+    {"name": "Hover drifter", "idea": "a legless floating creature with a lamp glow", "keep": "no-leg hover", "change": "our own shape and glow colour"},
+    {"name": "Powered frame", "idea": "one special armour that changes the silhouette", "keep": "a single special armour", "change": "our own frame and equip effect"},
+    {"name": "Lit lift", "idea": "a vertical shaft with glow frames", "keep": "upper and lower glow", "change": "our own glow colour"},
+    {"name": "Colour-cycle shoreline", "idea": "palette ranges that rotate for water and fire", "keep": "colour cycling technique", "change": "a glow shader instead of palette rotation"},
+    {"name": "Light-band combat", "idea": "visible light thresholds change hit odds", "keep": "three light thresholds", "change": "our own phone-readable light meter"}
+  ],
+  "licence_note": "As the files say: code under the Sustainable Use License 1.0 (LICENSE.md line 1), with internal and non-commercial terms (line 15). README line 9: you must own the game to play. Original game data is not in the box. Not a legal conclusion.",
+  "not_read": [
+    "PRO and MSG values (creature stats, item stats, names, map data): data pack (master.dat, critter.dat, data folder) not in the box",
+    "src/game/skill.cc, trait.cc, perk.cc, item.cc and critter.cc bodies beyond the lines cited",
+    "src/game/worldmap.cc (3771 lines) beyond the terrain lookup line",
+    "src/game/art.cc (1219 lines) beyond names used",
+    "src/game/combatai.cc and combat.cc bodies beyond quoted lines",
+    "src/audio_engine.cc, movie_lib.cc, src/platform, src/plib",
+    "launcher icons (os/android, os/ios, os/windows, os/macos) and third_party folders"
+  ]
+}

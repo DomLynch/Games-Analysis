@@ -1,0 +1,146 @@
+[
+ [
+  "ClassicUO",
+  "ext cmd 1 is the fast walk prevention batch",
+  "PH",
+  "// fast walk prevention"
+ ],
+ [
+  "ClassicUO",
+  "ext cmd 1 stores each key into the token pool",
+  "PH",
+  "world.Player.Walker.FastWalkStack.SetValue(i, p.ReadUInt32BE());"
+ ],
+ [
+  "ClassicUO",
+  "ext cmd 2 adds one key",
+  "PH",
+  "world.Player.Walker.FastWalkStack.AddValue(p.ReadUInt32BE());"
+ ],
+ [
+  "ClassicUO",
+  "token pool size 5",
+  "C",
+  "public const int MAX_FAST_WALK_STACK_SIZE = 5;"
+ ],
+ [
+  "ClassicUO",
+  "token pool storage",
+  "WM",
+  "private readonly uint[] _keys = new uint[Constants.MAX_FAST_WALK_STACK_SIZE];"
+ ],
+ [
+  "ClassicUO",
+  "set checks the slot index",
+  "WM",
+  "if (index >= 0 && index < Constants.MAX_FAST_WALK_STACK_SIZE)"
+ ],
+ [
+  "ClassicUO",
+  "add fills first empty slot",
+  "WM",
+  "if (_keys[i] == 0)"
+ ],
+ [
+  "ClassicUO",
+  "take reads the slot it returns",
+  "WM",
+  "uint key = _keys[i];"
+ ],
+ [
+  "ClassicUO",
+  "walk request carries the spent token",
+  "OP",
+  "writer.WriteUInt32BE(fastWalk);"
+ ],
+ [
+  "ClassicUO",
+  "client spends one token per move",
+  "PM",
+  "NetClient.Socket.Send_WalkRequest(direction, Walker.WalkSequence, run,"
+ ],
+ [
+  "ClassicUO",
+  "pre-send gate: failed, time, queue, paralysis",
+  "PM",
+  "if (Walker.WalkingFailed || Walker.LastStepRequestTime > Time.Ticks"
+ ],
+ [
+  "ClassicUO",
+  "run forced off when stamina is spent",
+  "PM",
+  "if (SpeedMode >= CharacterSpeedType.CantRun || Stamina <= 1 && !IsDead"
+ ],
+ [
+  "ClassicUO",
+  "pathfinder CanWalk signature (checked before send)",
+  "PF",
+  "public bool CanWalk(ref Direction direction, ref int x, ref int y, ref sbyte z)"
+ ],
+ [
+  "ClassicUO",
+  "CanWalk: target height via CalculateNewZ",
+  "PF",
+  "bool passed = CalculateNewZ(newX, newY, ref newZ, (byte) direction);"
+ ],
+ [
+  "ClassicUO",
+  "diagonal moves try two neighbours",
+  "PF",
+  "if ((sbyte) direction % 2 != 0)"
+ ],
+ [
+  "ClassicUO",
+  "neighbour offsets are +1 and -1 directions",
+  "PF",
+  "private static readonly sbyte[] _dirOffset ="
+ ],
+ [
+  "ClassicUO",
+  "inbound step queue is capped",
+  "M",
+  "if (Steps.Count >= Constants.MAX_STEP_COUNT)"
+ ],
+ [
+  "ClassicUO",
+  "inbound step: adjacency test",
+  "M",
+  "badStep = absX > 1 || absY > 1 || absX + absY == 0;"
+ ],
+ [
+  "ClassicUO",
+  "inbound step: must reach the step tile",
+  "M",
+  "badStep = absX != step.X || absY != step.Y;"
+ ],
+ [
+  "ClassicUO",
+  "other mobile: full queue snaps to server tile",
+  "PH",
+  "if (!mobile.EnqueueStep(x, y, z, cleaned_dir, isrun))"
+ ],
+ [
+  "ClassicUO",
+  "other mobile: unknown mobile snaps and clears steps",
+  "PH",
+  "if (world.Get(mobile) == null || mobile.X == 0xFFFF && mobile.Y == 0xFFFF)"
+ ],
+ [
+  "ClassicUO",
+  "deny sets the local state to server state",
+  "PH",
+  "world.Player.Walker.DenyWalk(0xFF, -1, -1, -1);"
+ ],
+ [
+  "ClassicUO",
+  "bad confirm blocks walking and resyncs",
+  "WM",
+  "if (!ResendPacketResync)"
+ ],
+ [
+  "ClassicUO",
+  "comment: sequence echoed in 0x22",
+  "WM",
+  "// the sequence in its 0x22 confirmation. If a confirmation arrives for an unknown"
+ ]
+]

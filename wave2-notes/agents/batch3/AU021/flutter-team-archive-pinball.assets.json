@@ -1,0 +1,39 @@
+{
+  "donor": "flutter-team-archive-pinball",
+  "code_licence": "MIT (LICENSE: 'MIT License', 'Copyright (c) 2021 Very Good Ventures'); packages/pinball_components/sandbox/LICENSE also MIT",
+  "asset_licence": "Not stated. No licence file names the art, fonts, audio or strings. The repo MIT LICENSE does not say whether it covers non-code files. Treated as unclear (C).",
+  "rights_holder_status": "Per README.md: 'Built by Very Good Ventures in partnership with Google' for Google I/O 2022. Character and mascot names (Dash, Sparky, Dino, Android) appear in the code and asset folders; no file states who owns those designs. Unknown beyond the README wording.",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "2D sprites (PNG) for the table, bumpers, flippers, plunger, ball, boundaries", "path": "packages/pinball_components/assets/images/", "count_hint": "about 114 files under packages/pinball_components/assets (PNG plus fonts)", "licence": "none stated", "class": "C", "note": "Subfolders named per component (android/spaceship, dash, sparky, dino, ball, flipper, plunger, backbox, boundary, launch_ramp, skill_shot, signpost, multiball). Large PNGs by IHDR read (dino/animatronic/head.png 2035x1422; sparky/animatronic.png 1800x1400; dash/animatronic.png 1950x900; android/spaceship/saucer.png 1295x618). Pixel style not verified (binary not opened)."},
+    {"kind": "character and mascot animatronic art", "path": "packages/pinball_components/assets/images/dino/animatronic/ (head.png, mouth.png); .../sparky/animatronic.png; .../dash/animatronic.png", "count_hint": "a few files per mascot", "licence": "none stated", "class": "C", "note": "Mascot-based art tied to Google/Flutter partner names. Use only as category-level inspiration (a jaw-split animatronic head), never as copied art."},
+    {"kind": "UI art (buttons, dialog, loading header)", "path": "packages/pinball_ui/assets/images/ (button 5 files, dialog 1); assets/images/loading_game/io_pinball.png (618x270 by IHDR); art/readme_header.png", "count_hint": "about 10 files", "licence": "none stated", "class": "C", "note": "README header image in art/ is about 1.3 MB."},
+    {"kind": "fonts (TTF)", "path": "packages/pinball_components/fonts/ and packages/pinball_ui/fonts/ (PixeloidSans, PixeloidSansBold, PixeloidMono)", "count_hint": "3 font files per package", "licence": "none in box", "class": "C", "note": "No font licence file in the box for the Pixeloid family. Pixel-font UI feel is worth emulating with our own font."},
+    {"kind": "sound effects (MP3)", "path": "packages/pinball_audio/assets/sfx/", "count_hint": "15 files (android, cow_moo, bumper_a/b, launcher, rollover, dino, sparky, dash, google, flipper, kicker_a/b, io_pinball_voice_over, game_over_voice_over)", "licence": "none stated", "class": "C", "note": "Includes named voice-over clips. Do not reuse voice clips. Read as file names only."},
+    {"kind": "music (MP3)", "path": "packages/pinball_audio/assets/music/background.mp3", "count_hint": "1 file", "licence": "none stated", "class": "C", "note": "Not played or opened."},
+    {"kind": "strings (ARB localisation)", "path": "lib/l10n/arb/app_en.arb", "count_hint": "55 keys each with a description (English only in the box; README shows an es example)", "licence": "under repo MIT only by inference; file does not say", "class": "C", "note": "Data table for UI text. Key names such as 'tapAndHoldRocket' and 'launchControls' show the menu structure (launch, flipper, how-to-play dialogs)."},
+    {"kind": "level or board layout data", "path": "not located as data files; board is built in code (packages/pinball_components/lib/src/components/, e.g. dino_walls.dart, board_side.dart)", "count_hint": "n/a", "licence": "n/a", "class": "D", "note": "No JSON or XML level files found by extension count. Board layout data not read."}
+  ],
+  "inspiration": [
+    "Animatronic mascot heads are built from two layers, a static head and a separate jaw sprite, then driven by behaviour components (chomp, spit, swivel, mouth-open). Recreate the layering idea with our own character art.",
+    "Table walls drawn as a creature's open jaws (dino top_wall.png, bottom_wall.png, top_wall_tunnel.png) make the boundary part of the monster. Good for zone edges.",
+    "A cabinet-mounted machine (Sparky computer) reacts through a sensor behaviour when the ball touches it. Good model for an object that responds to proximity, not only to hits.",
+    "The flying-saucer unit runs a state cycle through a cubit (android_spaceship_cubit and state files). A visible multi-state cycle reads well as a timed threat.",
+    "Skill-shot and multiball use blink behaviours as telegraphs before a reward. A steady blink cadence tells the player timing without text.",
+    "Ball flame trail is a separate effect sprite (packages/pinball_components/assets/images/ball/flame_effect.png). Layer a glow sprite on the moving object for speed read."
+  ],
+  "briefs": [
+    {"label": "Jaw-gate boundary", "rule": "Recreate as a clearly distinct original, never a copy.", "why": "A zone edge that is a monster's open mouth makes the wall itself the creature, and the gate can open and close.", "keep": "Hinged jaw that opens on a timer; tongue-like ramp; wall silhouette that reads at 375 wide", "change": "Make it a different beast (horned gate, not a dino head); use a different palette and jaw count; hinge from the side not the top", "ref": "packages/pinball_components/assets/images/dino/top_wall.png; packages/pinball_components/lib/src/components/dino_walls.dart; packages/pinball_components/lib/src/components/chrome_dino/chrome_dino.dart"},
+    {"label": "Spitting arcade serpent", "rule": "Recreate as a clearly distinct original, never a copy.", "why": "A chomp followed by a spit is a readable two-beat attack that turns a bumper into a threat.", "keep": "Chomp trigger, short mouth-open telegraph, one projectile out", "change": "Different body (armoured slug or plant pod, not a dino); a spore cloud instead of a ball; the attack fires on a timer, not on contact", "ref": "packages/pinball_components/lib/src/components/chrome_dino/behaviors/chrome_dino_spitting_behavior.dart; .../chrome_dino_chomping_behavior.dart"},
+    {"label": "Cabinet mascot head", "rule": "Recreate as a clearly distinct original, never a copy.", "why": "A large head that sits on the cabinet and reacts to ball contact gives the table a face.", "keep": "Oversized head that dominates its part of the cabinet; reacts with a short animation to hits", "change": "Mechanical face instead of a mascot; asymmetric eyes; different colour ramp and ornament", "ref": "packages/pinball_components/assets/images/sparky/animatronic.png; packages/pinball_components/lib/src/components/sparky_animatronic.dart"},
+    {"label": "Telegraphed skill-shot blink", "rule": "Recreate as a clearly distinct original, never a copy.", "why": "A blink cadence tells the player when a reward is live, with no text needed.", "keep": "Steady blink rhythm; reward state visible from across the table", "change": "Use a pulse ring or sweeping light instead of a flash; a different count of blinks", "ref": "packages/pinball_components/lib/src/components/skill_shot/behaviors/skill_shot_blinking_behavior.dart"}
+  ],
+  "not_read": [
+    "All PNG, MP3, TTF binary contents (only folder listing, file names and IHDR sizes read)",
+    "packages/pinball_components/lib/src/components/** bodies beyond the class line of each component",
+    "functions/ (Firebase server half) and firestore.rules, storage.rules",
+    "packages/pinball_components/sandbox/ (beyond its LICENSE header)",
+    "web/, test/, packages/pinball_flame, packages/leaderboard_repository",
+    "Pixeloid font licence (none in box)"
+  ]
+}

@@ -1,0 +1,38 @@
+note	claim	donor_file	line	quote	local
+vthibault-roBrowser	orbit step is driven by elapsed ms (lerp), capped at 1	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	294	Math.min( (tick - this.lastTick) * 0.006, 1.0);	copies/vt-Camera.js
+vthibault-roBrowser	zoom ceiling = 15 x MAX_ZOOM (altitude span x 10)	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	280	Math.abs(this.altitudeTo-this.altitudeFrom) * this.MAX_ZOOM );	copies/vt-Camera.js
+vthibault-roBrowser	zoom floor 2.0	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	281	Math.max( this.zoomFinal,  2.0 );	copies/vt-Camera.js
+vthibault-roBrowser	wheel notch changes zoom goal by 15	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	279	this.zoomFinal += delta * 15;	copies/vt-Camera.js
+vthibault-roBrowser	pitch clamp lower bound 190	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	235	Math.max( this.angleFinal[0], 190 );	copies/vt-Camera.js
+vthibault-roBrowser	pitch clamp upper bound 270	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	236	Math.min( this.angleFinal[0], 270 );	copies/vt-Camera.js
+vthibault-roBrowser	shift-drag pitch: dy / screen height x 300	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	234	/ Mouse.screen.height * 300;	copies/vt-Camera.js
+vthibault-roBrowser	ctrl-drag zoom: dy / screen height x 150	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	241	/ Mouse.screen.height * 150;	copies/vt-Camera.js
+vthibault-roBrowser	drag yaw: dx / screen width x 720 (subtracted)	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	248	/ Mouse.screen.width * 720;	copies/vt-Camera.js
+vthibault-roBrowser	yaw goal clamp to rotationFrom..rotationTo	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	260	this.angleFinal[1] = Math.max( this.angleFinal[1], this.rotationFrom );	copies/vt-Camera.js
+vthibault-roBrowser	rotationTo constant is +360	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	110	Camera.rotationTo   =  360;	copies/vt-Camera.js
+vthibault-roBrowser	double-click window 500 ms	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	204	if (action.tick + 500 > tick &&	copies/vt-Camera.js
+vthibault-roBrowser	double-click without modifier resets yaw goal to 0	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	215	this.angleFinal[1] = 0;	copies/vt-Camera.js
+vthibault-roBrowser	double-click with shift resets pitch goal to range (240)	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	209	this.angleFinal[0] = +this.range;	copies/vt-Camera.js
+vthibault-roBrowser	double-click with ctrl sets zoom goal to 0	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	212	this.zoomFinal = 0.0;	copies/vt-Camera.js
+vthibault-roBrowser	wheel and drag both call setZoom/rotate from MapControl	/mnt/frankendom-donors/vthibault-roBrowser/src/Controls/MapControl.js	214	Camera.setZoom(delta);	copies/vt-MapControl.js
+vthibault-roBrowser	right button down starts rotate	/mnt/frankendom-donors/vthibault-roBrowser/src/Controls/MapControl.js	135	Camera.rotate( true );	copies/vt-MapControl.js
+vthibault-roBrowser	update runs once per rendered frame	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/MapRenderer.js	365	Camera.update( tick );	copies/vt-MapRenderer.js
+vthibault-roBrowser	frame tick is Date.now() set in the rAF loop	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Renderer.js	226	this.tick = Date.now();	copies/vt-Renderer.js
+vthibault-roBrowser	perspective field of view 15 degrees, near 1, far 1000	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Renderer.js	191	mat4.perspective( 15.0, width/height, 1, 1000, Camera.projection );	copies/vt-Renderer.js
+vthibault-roBrowser	zoom sets the translateZ offset (altitudeFrom - zoom) / 2	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	329	mat4.translateZ( matrix, (this.altitudeFrom - this.zoom) / 2 );	copies/vt-Camera.js
+vthibault-roBrowser	pitch and yaw rotations applied after translateZ	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	330	mat4.rotateX( matrix, matrix, this.angle[0] / 180 * Math.PI );	copies/vt-Camera.js
+vthibault-roBrowser	yaw rotation applied as rotateY	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	331	mat4.rotateY( matrix, matrix, this.angle[1] / 180 * Math.PI );	copies/vt-Camera.js
+vthibault-roBrowser	focus follows target with lerp when smooth	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	304	this.position[0] += ( -this.target.position[0] - this.position[0] ) * lerp ;	copies/vt-Camera.js
+vthibault-roBrowser	zoom eases toward goal at lerp x 2	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	315	( this.zoomFinal - this.zoom ) * lerp * 2.0;	copies/vt-Camera.js
+vthibault-roBrowser	yaw eases toward goal at lerp x 2	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	319	( this.angleFinal[1] - this.angle[1] ) * lerp * 2.0;	copies/vt-Camera.js
+vthibault-roBrowser	pitch starts at 240 degrees	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	154	this.angle[0]      = 240.0;	copies/vt-Camera.js
+vthibault-roBrowser	MAX_ZOOM constant is 10	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	100	Camera.MAX_ZOOM = 10;	copies/vt-Camera.js
+vthibault-roBrowser	altitudeFrom constant -50	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	107	Camera.altitudeFrom =  -50;	copies/vt-Camera.js
+vthibault-roBrowser	altitudeTo constant -65	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	108	Camera.altitudeTo   =  -65;	copies/vt-Camera.js
+vthibault-roBrowser	default zoom preference 50	/mnt/frankendom-donors/vthibault-roBrowser/src/Preferences/Camera.js	20	zoom:    50.0	copies/vt-PrefCamera.js
+vthibault-roBrowser	default smooth preference true	/mnt/frankendom-donors/vthibault-roBrowser/src/Preferences/Camera.js	19	smooth:  true,	copies/vt-PrefCamera.js
+vthibault-roBrowser	camera preference saved 3000 ms after the last change	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	181	Events.setTimeout( save, 3000);	copies/vt-Camera.js
+vthibault-roBrowser	sprite direction = 8 sectors of 45 degrees from yaw	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	324	Math.floor( ( this.angle[1] + 22.5 ) / 45 ) % 8;	copies/vt-Camera.js
+vthibault-roBrowser	mobile pinch zoom step scale x 0.1	/mnt/frankendom-donors/vthibault-roBrowser/src/Core/Mobile.js	268	Camera.zoomFinal += scale * 0.1;	copies/vt-Mobile.js
+vthibault-roBrowser	camera init snaps position to target	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	159	this.position[0] = -this.target.position[0];	copies/vt-Camera.js
+vthibault-roBrowser	pitch/yaw angle wrap at +/-180 only when both goal and current cross	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	250	if (this.angle[1] > 180 && this.angleFinal[1] > 180) {	copies/vt-Camera.js

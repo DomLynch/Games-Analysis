@@ -1,0 +1,63 @@
+{
+  "donor": "dhewm-dhewm3",
+  "topic": "hit-feedback-stack",
+  "depth": "thin",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/Player.cpp",
+    "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/PlayerView.cpp",
+    "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/Actor.cpp",
+    "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/Fx.cpp",
+    "/mnt/frankendom-donors/dhewm-dhewm3/neo/framework/DeclFX.cpp",
+    "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/Misc.cpp",
+    "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/gamesys/SysCvar.cpp",
+    "/mnt/frankendom-donors/dhewm-dhewm3/neo/d3xp/Player.cpp (line check only)",
+    "/mnt/frankendom-donors/dhewm-dhewm3/neo/d3xp/PlayerView.cpp (line check only)",
+    "/mnt/frankendom-donors/dhewm-dhewm3/README.md"
+  ],
+  "counts": {
+    "base_cfg_files": 3,
+    "def_files_in_tree_depth3": 1,
+    "game_data_assets_in_repo": 0,
+    "cvars_read_by_name": 6
+  },
+  "rule": "Player hit (Player::Damage order): knockback velocity first (damage-def knockback, default 20, scaled by a global cvar and attacker push scale), with a no-counter timer clamped 50-200 ms; then armour-soak sound (rate-limited 200 ms); burn and no-air sounds; then view feedback if alive and the view-effect cvar is on, skipped if the last impulse was under 150 ms ago: double-vision time, head kick time and amplitude from the blow direction, screen blob time, position, size and material; health damage applied last. Monster pain (Actor::Pain): debounce, then pain sound by health band (75, 50, 25), then pain animation only if allowed, not in the pain window, and damage passes the pain threshold. Shake: sound-driven view jitter scaled by the summed shake amplitude at the listener, and event-driven FX_SHAKE kick to players within a distance, with an optional radial push.",
+  "data_fields": [
+    {"name": "knockback_base", "unit": "integer, default 20 if absent", "donor_value_or_null": null},
+    {"name": "knockback_global_scale", "unit": "cvar, default 1000", "donor_value_or_null": null},
+    {"name": "knockback_no_counter_clamp", "unit": "ms, clamped 50 to 200", "donor_value_or_null": null},
+    {"name": "impulse_delay", "unit": "ms (fixed in code)", "donor_value_or_null": null},
+    {"name": "kick_time", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "kick_amplitude", "unit": "ratio", "donor_value_or_null": null},
+    {"name": "dv_time", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "blob_time", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "blob_width_height", "unit": "pixels times blob-size cvar", "donor_value_or_null": null},
+    {"name": "pain_delay", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "pain_threshold", "unit": "damage points", "donor_value_or_null": null},
+    {"name": "pain_health_bands", "unit": "health points (75, 50, 25)", "donor_value_or_null": null},
+    {"name": "shake_sound_amplitude", "unit": "per-sound value (not read)", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Camera kick follows the hit direction",
+    "Screen blob placed on the side the hit came from",
+    "Short impulse lock so rapid hits do not stack the view",
+    "No-counter timer after a push",
+    "Pain sound chosen by health band, with a debounce"
+  ],
+  "change": [
+    "Drop the double-vision effect (readability on a small screen)",
+    "Keep the kick small and one event per hit, not stacked",
+    "Knockback becomes a server-verified tile move, not a free velocity",
+    "Our own blob art, kick numbers, names and timing"
+  ],
+  "look_test": "Same duel scene as the other donor's test (dummy and three attackers from left, right and front). Three profiles: X sound and a white fade only; Y small direction kick plus a blob on the hit side; Z Y plus a 150 ms impulse lock. Dom says which profile shows which side hit him within one second, without discomfort. No release rows.",
+  "licence_note": "Code is GNU GPL (COPYING.txt line 1) with Doom 3 GPL additional terms (README.md line 225) and an excluded-code clause (README.md line 227). Game data not in repo (README.md line 48) and proprietary under the Doom 3 EULA. Category-level inspiration only. No code, names, textures, sounds or donor numbers kept.",
+  "tags": ["screen-shake", "knockback", "new:screen-blob", "hit-sound", "stagger", "ordered-feedback", "duration-rule"],
+  "not_read": [
+    "Data half: damage and feel defs, materials, sounds and models (absent from this release)",
+    "Sound shader shake values (data half)",
+    "neo/d3xp copy of the routines (line check only)",
+    "Doom 3 EULA full text (first line only)",
+    "Weapon muzzle kick (weapon-side, not a hit effect)"
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "donor": "angband-angband",
+  "topic": "onboarding-first-5",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/angband-angband/src/ui-birth.c",
+    "/mnt/frankendom-donors/angband-angband/src/player-birth.c",
+    "/mnt/frankendom-donors/angband-angband/src/gen-cave.c",
+    "/mnt/frankendom-donors/angband-angband/src/game-world.c",
+    "/mnt/frankendom-donors/angband-angband/src/ui-store.c",
+    "/mnt/frankendom-donors/angband-angband/src/cmd-cave.c",
+    "/mnt/frankendom-donors/angband-angband/src/ui-death.c",
+    "/mnt/frankendom-donors/angband-angband/src/player.c",
+    "/mnt/frankendom-donors/angband-angband/src/list-options.h",
+    "/mnt/frankendom-donors/angband-angband/lib/gamedata/class.txt",
+    "/mnt/frankendom-donors/angband-angband/lib/gamedata/monster.txt",
+    "/mnt/frankendom-donors/angband-angband/lib/gamedata/store.txt",
+    "/mnt/frankendom-donors/angband-angband/lib/gamedata/hints.txt",
+    "/mnt/frankendom-donors/angband-angband/lib/gamedata/world.txt",
+    "/mnt/frankendom-donors/angband-angband/lib/gamedata/constants.txt",
+    "/mnt/frankendom-donors/angband-angband/lib/screens/news.txt"
+  ],
+  "counts": {
+    "monster_name_entries": 624,
+    "depth0_town_entries": 16,
+    "depth0_experience_zero": 16,
+    "town_residents_day": 4,
+    "town_residents_night": 8,
+    "hints": 99,
+    "store_entries": 8,
+    "store_owner_records": 32,
+    "world_level_records": 128,
+    "feeling_need_squares": 10,
+    "object_feeling_tiers": 11,
+    "monster_feeling_tiers": 9,
+    "start_gold": 600,
+    "town_width_grids": 66,
+    "town_height_grids": 22
+  },
+  "rule": "Two-stage level feeling: the monster tier is shown on arrival; the object tier is held until a set number of squares are seen, then both are joined into one line. Town residents are drawn from a day or night count and placed a fixed distance from the arrival square. Shop greetings: half skip; otherwise a hint line with a one-in-three roll when hints exist. Town monsters are weak and give zero experience, so the first fight pays gold.",
+  "data_fields": [
+    {"name": "town_residents_day", "unit": "count", "donor_value_or_null": null},
+    {"name": "town_residents_night", "unit": "count", "donor_value_or_null": null},
+    {"name": "town_spawn_distance", "unit": "grids", "donor_value_or_null": null},
+    {"name": "feeling_need_squares", "unit": "squares", "donor_value_or_null": null},
+    {"name": "monster_feeling_tier", "unit": "tier 0-9 per zone", "donor_value_or_null": null},
+    {"name": "object_feeling_tier", "unit": "tier 0-10 per zone", "donor_value_or_null": null},
+    {"name": "starter_gold", "unit": "gold", "donor_value_or_null": null},
+    {"name": "point_leftover_gold", "unit": "gold per unspent point", "donor_value_or_null": null},
+    {"name": "hint_skip_chance", "unit": "percent", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Two-stage reveal: threat line on arrival, loot line after exploring a set number of squares",
+    "Harmless, zero-experience town residents as the first fight",
+    "Day and night resident counts",
+    "Short one-line hints (under 80 characters) delivered by shopkeepers",
+    "Quickstart prompt for returning heroes (use as is, redo)"
+  ],
+  "change": [
+    "Our own feeling wording and tiers per zone, set server-side from zone data",
+    "No ASCII text screens; the threat line must read in two seconds at 375 wide",
+    "Death and respawn decided by row 17 and our ruling, not by the donor permadeath menu",
+    "Drop the change-history branch of quickstart unless our data holds a history"
+  ],
+  "look_test": "Build a 375-wide mock with no engine: an arrival card with a threat line, a second line that appears only after ten tiles are walked, a town square with four harmless residents at three tiles (gold-only drop, zero XP shown), and one hint line on the first shop visit. Compare with the current Pit intro: first hit under 10 seconds, threat named on one read, loot line felt as reward not delay.",
+  "licence_note": "Code is GPL v2 or the Angband licence (dual), per docs/copying.rst line 5; file headers say other copyrights may also apply. Art and sound are mixed classes A, B and C (AU004). Clean-room, shape only; no donor values copied; no names or lore reproduced. No legal conclusion drawn.",
+  "tags": ["first-fight", "first-loot", "rumour", "day-night", "new:level-feeling", "new:quickstart-prompt", "new:town-residents-by-time", "new:death-menu", "new:starter-kit"],
+  "not_read": [
+    "src/player-attack.c and src/mon-attack.c (hit feedback, hit stop, flash, shake, knockback order in the first fight)",
+    "sound files and lib/customize/sound.prf beyond AU004",
+    "depth-1 monster list (15 entries counted, not read in full)",
+    "src/obj-make.c item generation and src/store.c stock logic",
+    "lib/help/*.txt beyond file names",
+    "point-based stat roller in full",
+    "death-to-new-character path (permadeath inferred from the menu only)",
+    "splash first-frame sequence (src/ui-display.c 2387-2460 only partly read)"
+  ]
+}

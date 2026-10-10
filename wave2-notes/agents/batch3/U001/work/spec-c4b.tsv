@@ -1,0 +1,2 @@
+ModernUO	spawner default count 1 and default delays	SPB	261
+ModernUO	entry default max alive 1	SPE	91	int spawnedMaxCount = 1

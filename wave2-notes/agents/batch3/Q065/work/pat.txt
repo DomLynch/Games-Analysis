@@ -1,0 +1,19 @@
+critMult = [0, 24, 8, 2, 1];
+critMult = [0, 16, 8, 4, 3, 2];
+moveHit.crit = this.battle.randomChance(1, critMult[critRatio]);
+const baseDamage = tr(tr(tr(tr(2 * level / 5 + 2) * basePower * attack) / defense) / 50);
+baseDamage += 2;
+baseDamage = tr(baseDamage * (move.critModifier || (this.battle.gen >= 6 ? 1.5 : 2)));
+baseDamage = this.battle.randomizer(baseDamage);
+stab = 1.5;
+baseDamage *= 2;
+baseDamage = tr(baseDamage / 2);
+if (this.battle.gen !== 5 && !baseDamage) return 1;
+return tr(baseDamage, 16);
+return tr(tr(baseDamage * (100 - this.random(16))) / 100);
+critRatio = this.battle.clampIntRange(critRatio, 0, 4);
+const spreadModifier = this.battle.gameType === 'freeforall' ? 0.5 : 0.75;
+ignorePositiveDefensive = true;
+let critRatio = this.battle.runEvent
+return this.modifyDamage(baseDamage, source, target, move, suppressMessages);
+const curDamage = this.getDamage(source, target, moveData);

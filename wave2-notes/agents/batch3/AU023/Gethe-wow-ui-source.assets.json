@@ -1,0 +1,133 @@
+{
+  "donor": "Gethe-wow-ui-source",
+  "code_licence": "none for Blizzard UI code (_RESTRICTED-NOTE.txt line 1: no licence); third-party middleclass.lua carries permission-notice wording in its header; no LICENSE file in tree",
+  "asset_licence": "none for the four talent PNG masks and the other Blizzard content; no audio, fonts, models or maps in the box",
+  "rights_holder_status": "proprietary, Blizzard Entertainment (AddOnList TOC author line; _RESTRICTED-NOTE.txt 'Blizzard proprietary')",
+  "best_class": "C",
+  "asset_groups": [
+    {
+      "kind": "talent node masks (PNG)",
+      "path": "Interface/AddOns/Blizzard_SharedTalentUI/talents-diamond-mask.png (128x128); talents-hexagon-mask.png (64x64); talents-octagon-mask.png (128x128); talents-octagon-mask-half.png (128x128)",
+      "count_hint": "4",
+      "licence": "none; restricted note",
+      "class": "C",
+      "note": "Dimensions from PNG header. No lua or xml reference to these four file names found by grep."
+    },
+    {
+      "kind": "UI XML layout schema",
+      "path": "Interface/AddOns/Blizzard_SharedXML/UI.xsd",
+      "count_hint": "1 schema",
+      "licence": "none; restricted note",
+      "class": "C",
+      "note": "Declares XML frame enumerations such as frame points."
+    },
+    {
+      "kind": "Lua and XML UI code",
+      "path": "Interface/AddOns/Blizzard_*/",
+      "count_hint": "about 2551 .lua, 1091 .xml, 394 .toc",
+      "licence": "none; restricted note",
+      "class": "C",
+      "note": "Code, not art. Named because the data tables live here."
+    },
+    {
+      "kind": "data tables (Lua)",
+      "path": "Interface/AddOns/Blizzard_CooldownViewer/CooldownViewerSoundAlertData.lua; Interface/AddOns/Blizzard_BoostTutorial/Blizzard_TutorialRacialData.lua; Interface/AddOns/Blizzard_HousingTutorials/Blizzard_HousingTutorialsData.lua",
+      "count_hint": "3",
+      "licence": "none; restricted note",
+      "class": "C",
+      "note": "Sound-cue categories with text keys; distance range tiers for callouts; housing tutorial data."
+    },
+    {
+      "kind": "API documentation",
+      "path": "Interface/AddOns/Blizzard_APIDocumentationGenerated/",
+      "count_hint": "many (not counted)",
+      "licence": "none; restricted note",
+      "class": "C",
+      "note": "Generated documentation tables. Names only, not opened."
+    },
+    {
+      "kind": "localisation files",
+      "path": "Localization.lua in Blizzard_AddOnList, Blizzard_EncounterJournal, Blizzard_BlackMarketUI and others",
+      "count_hint": "several (not counted)",
+      "licence": "none; restricted note",
+      "class": "C",
+      "note": "Text strings. Not opened."
+    },
+    {
+      "kind": "third-party Lua library",
+      "path": "Interface/AddOns/middleclass/middleclass.lua (+ middleclass.toc)",
+      "count_hint": "1",
+      "licence": "permission-notice wording in header (MIT-style, as stated in file)",
+      "class": "A",
+      "note": "Code library, outside the Blizzard restriction. Listed for licence clarity."
+    },
+    {
+      "kind": "file lists and workflow",
+      "path": "Interface/ui-code-list.txt (4043 lines); Interface/ui-gen-addon-list.txt; Interface/ui-toc-list.txt (394 lines); .github/workflows/export.yml",
+      "count_hint": "4",
+      "licence": "none",
+      "class": "n/a",
+      "note": "Build and export lists. Workflow named 'Extract interface files from CDN'."
+    },
+    {
+      "kind": "fonts, audio, models, maps",
+      "path": "none in tree",
+      "count_hint": "0",
+      "licence": "n/a",
+      "class": "D",
+      "note": "Not present in this box."
+    }
+  ],
+  "inspiration": [
+    "Talent nodes come in a small family of faceted shapes (diamond, hexagon, octagon, half-octagon) at two sizes; the shape carries the tier. An artist could make a family of distinct faceted node shapes for ability tiers (Blizzard_SharedTalentUI masks).",
+    "Sound alerts are grouped by category, and each category holds short named cues with text labels (Blizzard_CooldownViewer/CooldownViewerSoundAlertData.lua). A grouped cue picker is a clean alert pattern.",
+    "Tutorial callouts use a few distance bands defined in one data table (Blizzard_BoostTutorial/Blizzard_TutorialRacialData.lua). Distance-tier callouts help players read range.",
+    "Housing and edit-mode data providers show sample icons while the player places HUD parts (Blizzard_FrameXMLUtil/EditModeAuraDataProvider.lua). A placement-mode preview idea for our hud-ui.",
+    "The map event overlay is a separate data provider on top of the base map (Blizzard_WorldMap/WM_EventOverlayDataProvider.lua). Layered map overlays suit zone heat or event tint.",
+    "The XML schema enumerates frame anchor points (Blizzard_SharedXML/UI.xsd). A declarative layout schema could keep our HUD positions data-driven."
+  ],
+  "briefs": [
+    {
+      "label": "Faceted talent node family",
+      "why": "Tier reads at a glance from the node silhouette, before the player reads any text.",
+      "keep": "a small family of geometric node silhouettes (diamond, hexagon, octagon); one shape per tier; two node sizes",
+      "change": "our own faceting angles and corner cuts; a keystone shape that is not a polygon; a glyph row on the node edge",
+      "ref": "Interface/AddOns/Blizzard_SharedTalentUI/talents-hexagon-mask.png (64x64); talents-octagon-mask.png (128x128); talents-diamond-mask.png (128x128)"
+    },
+    {
+      "label": "Grouped cue picker",
+      "why": "Alert sounds stay learnable when they are grouped into a few named categories, each with a text label.",
+      "keep": "categories with a short list of named cues, text label next to each cue, one category at a time",
+      "change": "our own cue sounds (synth stingers, not animal calls); categories by weapon class or school, not by animal",
+      "ref": "Interface/AddOns/Blizzard_CooldownViewer/CooldownViewerSoundAlertData.lua (category table at top of file)"
+    },
+    {
+      "label": "Distance-tier callouts",
+      "why": "A short, medium and long range band lets a hint fire at the right distance without a hard-coded radius per case.",
+      "keep": "a single table of named range tiers; callouts keyed to the tier; a tutorial hook per tier",
+      "change": "our own radius values in metres or tiles of our own grid; tier names from our fiction; an icon per tier instead of text",
+      "ref": "Interface/AddOns/Blizzard_BoostTutorial/Blizzard_TutorialRacialData.lua (SpecialCalloutRanges table near top of file)"
+    },
+    {
+      "label": "Placement-mode HUD preview",
+      "why": "Showing sample icons while the player moves HUD parts lets them place things without a live fight.",
+      "keep": "sample data feeds the preview; placement mode is a separate state from play; icons, not text, in the preview",
+      "change": "our own sample set (a sample shield bar, a sample cooldown ring); a ghost layer sized for 375 px wide phones; snap to the thumb zone",
+      "ref": "Interface/AddOns/Blizzard_FrameXMLUtil/EditModeAuraDataProvider.lua (GetSampleAuraIcon)"
+    },
+    {
+      "label": "Layered zone event overlay",
+      "why": "Events drawn as an overlay layer on the base map keep the map readable and let the layer toggle on and off.",
+      "keep": "base map and event overlay as separate providers; overlay on top of the base map; toggleable layer",
+      "change": "our overlay as zone heat or colour tint rather than icons; a time-decay on the tint; our own layer names",
+      "ref": "Interface/AddOns/Blizzard_WorldMap/WM_EventOverlayDataProvider.lua"
+    }
+  ],
+  "not_read": [
+    "Localization.lua files: names only",
+    "Most of the 348 AddOns folders: listed only",
+    "Blizzard_APIDocumentationGenerated files: names only",
+    "pixel content of the four PNG masks: header bytes only",
+    "game client and server halves: not in the box"
+  ]
+}

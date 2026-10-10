@@ -138,9 +138,5 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Not read: `ScriptRunner.execute` (the opcode loop and its limits), the packet classes for open-interface messages, the RS2 quest scripts (not in the repo), the rest of `closeModal` after line 810.
 
 Best transferable idea: a dialogue is a parked script with an explicit continue list. Only the ids it added for the current pause resume it, and opening or closing any interface drops the wait.
-
 Decision (proposed): adapt — Frankendom needs a server-side dialogue wait, but the donor's list is never cleared on resume and clicks are trusted up to visibility. Keep the park, the explicit list, and the drop-on-open rule; add step ids, clear the list each pause, and validate the click on the server.
 Acceptance: A test starts a two-step quest talk, the server parks at step 2 with continue id 1003; a click on step 1's id 1001 is rejected and the stage does not advance; opening the shop closes the talk without advancing the quest; a stage write of 9 into a 2-bit field is rejected, not stored as 0.
-
-Reuse tag: adapt (MIT)
-Brief rule served: one engine; server-verified (click checked on the server); rules 7-9 n/a

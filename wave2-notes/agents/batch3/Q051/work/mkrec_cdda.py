@@ -1,0 +1,60 @@
+import csv
+G="CleverRaven-Cataclysm-DDA"; R="/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/"
+rows=[
+("train signature takes catch-up and knowledge modifiers","src/skill.cpp",350,"void SkillLevel::train( int amount, float catchup_modifier, float knowledge_modifier,"),
+("level gap ratio knowledge over practical level","src/skill.cpp",358,"float level_gap = 1.0f * std::max( knowledgeLevel(), 1 ) / std::max( level(), 1 );"),
+("catch-up scales with level gap when theory is ahead","src/skill.cpp",362,"catchup_amount *= level_gap;"),
+("same-level branch when theory XP is ahead","src/skill.cpp",363,"} else if( knowledgeLevel() == level() && _knowledgeExperience > _exercise ) {"),
+("same-level catch-up slows as practice nears theory","src/skill.cpp",365,"catchup_amount = amount * std::max( catchup_modifier - 1.0f"),
+("same-level knowledge gain slows the same way","src/skill.cpp",367,"knowledge_modifier - 0.1f * _exercise / _knowledgeExperience"),
+("equal-track default multiplier 1","src/skill.cpp",371,"catchup_amount = amount * 1.0f;"),
+("knowledge gain capped at 0.9 of catch-up","src/skill.cpp",377,"knowledge_amount = catchup_amount * 0.9f;"),
+("cap knowledge gain at 90 percent","src/skill.cpp",376,"if( knowledge_amount > catchup_amount * 0.9f ) {"),
+("knowledge stops at MAX_SKILL","src/skill.cpp",380,"if( unadjustedKnowledgeLevel() >= MAX_SKILL ) {"),
+("training speed option scales both tracks","src/skill.cpp",384,"const double scaling = get_option<float>( \"SKILL_TRAINING_SPEED\" );"),
+("practical XP gained from catch-up amount","src/skill.cpp",389,"_exercise += catchup_amount;"),
+("train reduces rust accumulator","src/skill.cpp",397,"_rustAccumulator -= catchup_amount;"),
+("knowledge XP gained","src/skill.cpp",398,"_knowledgeExperience += knowledge_amount;"),
+("level recomputed after train","src/skill.cpp",400,"on_exercise_change( allow_multilevel );"),
+("practice stamps the last-practised turn","src/skill.cpp",492,"_lastPracticed = calendar::turn;"),
+("book/teacher learning multiplier","src/skill.cpp",421,"float level_mult = 2.0f / ( level_gap + 1.0f );"),
+("knowledge level-up threshold 10000 times (K+1) squared","src/skill.cpp",430,"if( _knowledgeExperience >= 10000 * pow( unadjustedKnowledgeLevel() + 1, 2U ) ) {"),
+("isRusty when practical lags theory by a margin","src/skill.cpp",441,"_knowledgeExperience - _exercise >= pow( level() + 1, 2U ) * 10;"),
+("rust grace period of 24 hours after practice","src/skill.cpp",446,"if( ( calendar::turn - _lastPracticed ) < 24_hours ) {"),
+("rust stops above 3 times the level XP","src/skill.cpp",458,"if( _rustAccumulator > level_exp * 3 ) {"),
+("level XP scale 10000 times (L+1) squared","src/skill.cpp",457,"float level_exp = level_multiplier * 10000.0f;"),
+("rust slowdown uses sqrt of accumulator fraction","src/skill.cpp",464,"float rust_slowdown = std::max("),
+("rust slowdown uses sqrt with a floor at 0.04 (floor on line 465)","src/skill.cpp",464,"static_cast<float>( std::sqrt( _rustAccumulator / level_exp ) ),"),
+("rust amount formula","src/skill.cpp",469,"int rust_amount = level_multiplier * rust_multiplier * 16 / rust_slowdown;"),
+("rust comment: 4 percent, every 24 hours","src/skill.cpp",467,"rust amount starts at 4% of a level's xp, run every 24 hours."),
+("rust moves XP out of practical and into accumulator","src/skill.cpp",483,"_rustAccumulator += rust_amount;"),
+("rust removes practical XP","src/skill.cpp",484,"_exercise -= rust_amount;"),
+("practical level-up threshold 10000 times (L+1) squared","src/skill.cpp",522,"return 100 * 100 * pow( unadjustedLevel() + 1, 2U );"),
+("multi-level loop on exercise change","src/skill.cpp",524,"while( _exercise >= xp_to_level() ) {"),
+("leftover XP carries only when multilevel is allowed","src/skill.cpp",525,"_exercise = allow_multilevel ? _exercise - xp_to_level() : 0;"),
+("Character::practice signature","src/character.cpp",2543,"bool Character::practice( const skill_id &id, int amount, int cap, bool suppress_warning,"),
+("no practice while asleep or at cap","src/character.cpp",2548,"if( !level.can_train() || in_sleep_state() ||"),
+("catch-up modifier from INT and PER","src/character.cpp",2558,"float catchup_modifier = 1.0f + ( 2.0f * get_int() + get_per() ) / 24.0f;"),
+("knowledge modifier from INT","src/character.cpp",2561,"float knowledge_modifier = 1.0f + get_int() /"),
+("amount scaled by focus and times 100","src/character.cpp",2578,"amount = adjust_for_focus( std::min( 1000, amount ) ) * 100.0f;"),
+("savant halves non-savant skill gain","src/character.cpp",2588,"amount *= 0.5f;"),
+("blunt grinding cap zeroes gain above cap","src/character.cpp",2592,"//blunt grinding cap implementation for crafting"),
+("training only when the level is training","src/character.cpp",2600,"if( amount > 0 && level.isTraining() ) {"),
+("practice hands off to SkillLevel::train","src/character.cpp",2603,"get_skill_level_object( id ).train( amount, catchup_modifier, knowledge_modifier,"),
+("practice default cap 99","src/character.h",1288,"bool practice( const skill_id &id, int amount, int cap = 99"),
+("crafting calls practice with the recipe skill cap","src/crafting.cpp",3160,"practice( making.skill_used, num_practice_ticks, skill_cap, true );"),
+("MAX_SKILL is 10","src/game_constants.h",92,"constexpr int MAX_SKILL = 10;"),
+("rust runs from a once-per-24h check","src/character_body.cpp",379,"if( calendar::once_every( 24_hours ) ) {"),
+("do_skill_rust is called from the 24h check","src/character_body.cpp",380,"do_skill_rust();"),
+("rust loop header","src/character_knowledge.cpp",255,"void Character::do_skill_rust()"),
+("predator branch skips combat skills","src/character_knowledge.cpp",261,"if( aSkill.is_combat_skill() &&"),
+("rust called per skill","src/character_knowledge.cpp",285,"if( skill_level_obj.rust( rust_resist, rust_resist_mult ) ) {"),
+("licence: CC-BY-SA 3.0 for the game","LICENSE.txt",1,"Cataclysm is licensed under the Creative Commons Attribution-ShareAlike 3.0"),
+]
+with open("receipts_cdda.tmp","w") as fh:
+    fh.write("note\tclaim\tdonor_file\tline\tquote\n")
+    for c,f,l,q in rows:
+        fh.write("\t".join((G,c,R+f,str(l),q))+"\n")
+for c,f,l,q in rows:
+    if not (15<=len(q)<=90): print("LEN",len(q),c)
+print(len(rows))

@@ -1,0 +1,51 @@
+opentibiabr-otclient	camera position is the followed creature tile, else the custom position	/mnt/frankendom-donors/opentibiabr-otclient/src/client/mapview.cpp	1034	return isFollowingCreature() ? m_followingCreature->getPosition()
+opentibiabr-otclient	following needs a followed creature and the follow flag	/mnt/frankendom-donors/opentibiabr-otclient/src/client/mapview.h	63	return m_followingCreature && m_follow;
+opentibiabr-otclient	followCreature sets the creature camera-following flag	/mnt/frankendom-donors/opentibiabr-otclient/src/client/mapview.cpp	749	m_followingCreature->setCameraFollowing(true);
+opentibiabr-otclient	followCreature resets last camera position	/mnt/frankendom-donors/opentibiabr-otclient/src/client/mapview.cpp	750	m_lastCameraPosition = {};
+opentibiabr-otclient	setCameraPosition turns follow off	/mnt/frankendom-donors/opentibiabr-otclient/src/client/mapview.cpp	761	m_follow = false;
+opentibiabr-otclient	drawn view adds the followed creature walk offset in pixels	/mnt/frankendom-donors/opentibiabr-otclient/src/client/mapview.cpp	836	drawOffset += m_followingCreature->getWalkOffset()
+opentibiabr-otclient	free-look offset is used only when not following	/mnt/frankendom-donors/opentibiabr-otclient/src/client/mapview.cpp	837	else if (!m_moveOffset.isNull())
+opentibiabr-otclient	move() adds whole tiles to the custom camera position	/mnt/frankendom-donors/opentibiabr-otclient/src/client/mapview.cpp	812	m_customCameraPosition.x += tmp;
+opentibiabr-otclient	onCameraMove picks the viewport by the walk direction when walking	/mnt/frankendom-donors/opentibiabr-otclient/src/client/mapview.cpp	546	updateViewport(m_followingCreature->isWalking()
+opentibiabr-otclient	viewport cache starts from the aware range top	/mnt/frankendom-donors/opentibiabr-otclient/src/client/mapview.cpp	995	vp.top = m_posInfo.awareRange.top;
+opentibiabr-otclient	north and south walks widen the bottom range by one tile	/mnt/frankendom-donors/opentibiabr-otclient/src/client/mapview.cpp	1004	vp.bottom += 1;
+opentibiabr-otclient	idle viewport case shrinks the horizontal range	/mnt/frankendom-donors/opentibiabr-otclient/src/client/mapview.cpp	1023	case Otc::InvalidDirection:
+opentibiabr-otclient	updateViewport copies the chosen direction rectangle	/mnt/frankendom-donors/opentibiabr-otclient/src/client/mapview.h	189	void updateViewport(const Otc::Direction dir
+opentibiabr-otclient	followCreature definition	/mnt/frankendom-donors/opentibiabr-otclient/src/client/mapview.cpp	737	void MapView::followCreature(const CreaturePtr& creature)
+opentibiabr-otclient	setCameraPosition definition	/mnt/frankendom-donors/opentibiabr-otclient/src/client/mapview.cpp	756	void MapView::setCameraPosition(const Position& pos)
+opentibiabr-otclient	move definition	/mnt/frankendom-donors/opentibiabr-otclient/src/client/mapview.cpp	804	void MapView::move(const int32_t x, const int32_t y)
+opentibiabr-otclient	onCameraMove definition	/mnt/frankendom-donors/opentibiabr-otclient/src/client/mapview.cpp	542	void MapView::onCameraMove(const Point& /*offset*/)
+opentibiabr-otclient	updateViewportDirectionCache definition	/mnt/frankendom-donors/opentibiabr-otclient/src/client/mapview.cpp	991	void MapView::updateViewportDirectionCache()
+opentibiabr-otclient	calcFramebufferSource definition	/mnt/frankendom-donors/opentibiabr-otclient/src/client/mapview.cpp	832	Rect MapView::calcFramebufferSource(const Size& destSize)
+opentibiabr-otclient	map notifies every map view on a camera move	/mnt/frankendom-donors/opentibiabr-otclient/src/client/map.cpp	109	void Map::notificateCameraMove(const Point& offset) const
+opentibiabr-otclient	walk offset is set from walked pixels (north)	/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp	731	m_walkOffset.y = g_gameConfig.getSpriteSize() - totalPixelsWalked;
+opentibiabr-otclient	walkedPixels is elapsed ticks over ticks per pixel, capped at one tile	/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp	812	std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel
+opentibiabr-otclient	ticks per pixel is step duration over tile size	/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp	810	getStepDuration(true) / static_cast<float>
+opentibiabr-otclient	a moved follow camera notifies the map when the walk offset changes	/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp	823	if (isCameraFollowing() && oldWalkOffset != m_walkOffset)
+opentibiabr-otclient	a followed creature uses the dispatcher, others a timed schedule	/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp	805	isCameraFollowing() ? g_dispatcher.addEvent(action)
+opentibiabr-otclient	walk offset resets to zero when the step ends	/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp	852	m_walkOffset = {};
+opentibiabr-otclient	walk start restarts the walk timer	/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp	527	m_walkTimer.restart();
+opentibiabr-otclient	updateWalk definition	/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp	808	void Creature::updateWalk()
+opentibiabr-otclient	updateWalkOffset definition	/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp	727	void Creature::updateWalkOffset(const uint8_t totalPixelsWalked)
+opentibiabr-otclient	terminateWalk definition	/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp	832	void Creature::terminateWalk()
+opentibiabr-otclient	nextWalkUpdate definition	/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp	788	void Creature::nextWalkUpdate()
+opentibiabr-otclient	Creature walk definition	/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp	512	void Creature::walk(const Position& oldPos, const Position& newPos)
+opentibiabr-otclient	step duration is 1000 times ground speed	/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp	1135	uint32_t stepDuration = 1000 * groundSpeed;
+opentibiabr-otclient	step duration divides by creature speed (else branch)	/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp	1138	} else stepDuration /= m_speed;
+opentibiabr-otclient	default ground speed of 150 when the tile has none	/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp	1129	groundSpeed = 150;
+opentibiabr-otclient	server-beat rounding applies for client 860 or forced formula	/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp	1140	g_game.getClientVersion() >= 860) {
+opentibiabr-otclient	step duration rounded up to the server beat	/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp	1141	stepDuration = ((stepDuration + serverBeat - 1)
+opentibiabr-otclient	walk duration for non-followed creatures is capped by the frame constant	/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp	1146	m_stepCache.walkDuration = std::min<int>(stepDuration
+opentibiabr-otclient	followed local player adds 10 ms per queued pre-walk, at least one	/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp	1158	duration += 10 * std::max<int>(1, localPlayer->getPreWalkingSize());
+opentibiabr-otclient	the pre-walk penalty applies only to the followed local player	/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp	1156	if (isCameraFollowing() && isLocalPlayer()) {
+opentibiabr-otclient	getStepDuration definition	/mnt/frankendom-donors/opentibiabr-otclient/src/client/creature.cpp	1114	uint16_t Creature::getStepDuration(const bool ignoreDiagonal
+opentibiabr-otclient	predicted steps are capped by the server walk max steps	/mnt/frankendom-donors/opentibiabr-otclient/src/client/localplayer.cpp	50	if (m_preWalks.size() > g_game.getWalkMaxSteps())
+opentibiabr-otclient	walk max steps getter	/mnt/frankendom-donors/opentibiabr-otclient/src/client/game.h	488	auto getWalkMaxSteps() { return m_walkMaxSteps; }
+opentibiabr-otclient	canWalk definition	/mnt/frankendom-donors/opentibiabr-otclient/src/client/localplayer.cpp	38	bool LocalPlayer::canWalk(const bool ignoreLock)
+opentibiabr-otclient	a pre-walk is appended to the queue	/mnt/frankendom-donors/opentibiabr-otclient/src/client/localplayer.cpp	86	m_preWalks.emplace_back(oldPos.translatedToDirection(direction))
+opentibiabr-otclient	preWalk definition	/mnt/frankendom-donors/opentibiabr-otclient/src/client/localplayer.cpp	81	void LocalPlayer::preWalk(Otc::Direction direction)
+opentibiabr-otclient	a server walk that matches the queue front pops it	/mnt/frankendom-donors/opentibiabr-otclient/src/client/localplayer.cpp	69	if (isPreWalking() && newPos == m_preWalks.front()) {
+opentibiabr-otclient	LocalPlayer walk definition	/mnt/frankendom-donors/opentibiabr-otclient/src/client/localplayer.cpp	65	void LocalPlayer::walk(const Position& oldPos, const Position& newPos)
+opentibiabr-otclient	unconfirmed predictions dropped after min(max(step, ping)+100, 1000) ms	/mnt/frankendom-donors/opentibiabr-otclient/src/client/localplayer.cpp	112	std::min<int>(std::max<int>(getStepDuration(), g_game.getPing()) + 100, 1000)
+opentibiabr-otclient	licence line 1 MIT	/mnt/frankendom-donors/opentibiabr-otclient/LICENSE	1	OTClient is made available under the MIT License
+opentibiabr-otclient	licence copyright line	/mnt/frankendom-donors/opentibiabr-otclient/LICENSE	3	Copyright (c) 2010-2020 OTClient <https://github.com/edubart/otclient>

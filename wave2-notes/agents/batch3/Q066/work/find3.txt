@@ -1,0 +1,4 @@
+.getDmgModifier()) * 2;
++ weapon.getEnchantLevel() + weapon.getItem()
+if(target.hasSkillEffect(IMMUNE_TO_HARM)) {
+damage = damage / 2;

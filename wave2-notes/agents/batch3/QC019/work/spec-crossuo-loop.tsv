@@ -1,0 +1,5 @@
+game process entry point (per loop, rendering flag)	/mnt/frankendom-donors/crossuo-crossuo/src/CrossUO.cpp	void CGame::Process(bool rendering)
+app run loop calls OnMainLoop each pass	/mnt/frankendom-donors/crossuo-crossuo/src/Wisp/WispApplication.cpp	// 2] Run main loop, packets, rendering etc..
+app loop sleeps by render delay minus frame time	/mnt/frankendom-donors/crossuo-crossuo/src/Wisp/WispApplication.cpp	SDL_Delay(std::max(iDelay - iDynamicFPS, CPU_USAGE_DELAY));
+frame time measured from start tick	/mnt/frankendom-donors/crossuo-crossuo/src/Wisp/WispApplication.cpp	int32_t iDynamicFPS = SDL_GetTicks() - g_Ticks;
+app loop while not quit	/mnt/frankendom-donors/crossuo-crossuo/src/Wisp/WispApplication.cpp	while (!quit)

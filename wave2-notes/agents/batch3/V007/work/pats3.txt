@@ -1,0 +1,19 @@
+if (npc.IsDead)
+IncrementCount(true);
+Spawner?.DoDespawn(this);
+DeadTime = DateTime.UtcNow;
+public DateTime Despawn { get; set; }
+public uint MaxPopulation { get; set; } = 1;
+public float SpawnDelayMin { get; set; } = 5;
+public float SpawnDelayMax { get; set; } = 10;
+public float TestRadiusNpc { get; set; } = 3;
+MaxPopulation = reader.GetUInt32("maxPopulation"),
+SpawnDelayMin = reader.GetFloat("spawn_delay_min"),
+if (minPopulation == 0)
+minPopulation = 1;
+maxPopulation = (uint)playerCount;
+public int RespawnTime { get; set; } = 15;
+public int DespawnTime { get; set; } = 20;
+var testRadiusPc = Template.TestRadiusPc
+if (playerCount == 0)
+_lastSpawnTime ==

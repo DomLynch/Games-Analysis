@@ -1,0 +1,142 @@
+{
+  "donor": "greenboxal-fimbulclient",
+  "code_licence": "GNU GPL version 3 or later, stated in per-file headers (e.g. src/libragnarok/Ragnarok/Graphics/RsmModel.h line 5); no top-level LICENSE or COPYING file",
+  "asset_licence": "no licence line on the Delta and Metro theme PNGs; Delta jquery-ui.css is dual MIT or GPL v2 (line 5); game data not in the box",
+  "rights_holder_status": "unknown for game content (README.md lines 4 and 6 point to a rAthena forum topic and a wiki; no owner named in files); client code GPLv3-or-later per headers",
+  "best_class": "B",
+  "asset_groups": [
+    {
+      "kind": "jQuery UI theme images (Delta)",
+      "path": "data/data/ui/styles/Delta/images/*.png",
+      "count_hint": "20 PNG",
+      "licence": "no licence line on the images; the Delta CSS (line 5) is dual MIT or GPL v2",
+      "class": "C",
+      "note": "Icon sheets at 256x240 by file name, glass gradient strips, slider handles, close icons; @2x variants for close icon and slider handles. Pixel content not opened."
+    },
+    {
+      "kind": "jQuery UI theme images (Metro)",
+      "path": "data/data/ui/styles/Metro/images/*.png",
+      "count_hint": "5 PNG",
+      "licence": "no licence line on the images",
+      "class": "C",
+      "note": "Icon sheets with names ending in _0. Metro CSS not read."
+    },
+    {
+      "kind": "UI theme CSS",
+      "path": "data/data/ui/styles/Delta/jquery-ui.css",
+      "count_hint": "1",
+      "licence": "Dual licensed under the MIT or GPL Version 2 licenses (line 5)",
+      "class": "B",
+      "note": "The user picks one licence. The GPL v2 branch is a share-alike condition."
+    },
+    {
+      "kind": "UI script libraries",
+      "path": "data/data/ui/js/jquery-1.8.2.js (line 9 MIT); data/data/ui/js/jquery-ui-1.9.1.custom.js (line 4 MIT); data/data/ui/js/modernizr-2.0.6.min.js (line 1 MIT & BSD)",
+      "count_hint": "3",
+      "licence": "MIT; MIT and BSD, as stated in headers",
+      "class": "A",
+      "note": "Third-party code libraries. Keep attribution in headers."
+    },
+    {
+      "kind": "UI page and view-model",
+      "path": "data/data/ui/login.html; data/data/ui/js/rocketmvvm.js",
+      "count_hint": "2",
+      "licence": "not stated in lines read",
+      "class": "n/a",
+      "note": "Not read."
+    },
+    {
+      "kind": "GLSL shaders",
+      "path": "data/data/shaders/model.glsl; data/data/shaders/ground.glsl; data/data/shaders/uitexture.glsl",
+      "count_hint": "3",
+      "licence": "no licence line in lines read; GPL by repo location only",
+      "class": "n/a",
+      "note": "Code. Recipes described in inspiration."
+    },
+    {
+      "kind": "game maps (.rsw)",
+      "path": "not in tree; loader src/libragnarok/Ragnarok/Graphics/World.cpp line 53; map name from config in src/testclient/TestGameMode.cpp line 56",
+      "count_hint": "0",
+      "licence": "n/a",
+      "class": "D",
+      "note": "Loader only. A map file is named by a config key with a default, from the data folder."
+    },
+    {
+      "kind": "game models (RSM)",
+      "path": "not in tree; RsmModel.h/.cpp under src/libragnarok/Ragnarok/Graphics/",
+      "count_hint": "0",
+      "licence": "n/a",
+      "class": "D",
+      "note": "Loader code only."
+    },
+    {
+      "kind": "game textures, archives, sprites",
+      "path": "not in tree",
+      "count_hint": "0",
+      "licence": "n/a",
+      "class": "D",
+      "note": "Not present."
+    },
+    {
+      "kind": "code",
+      "path": "src/ (about 130 files), 3rdparty/SOIL (empty submodule folder)",
+      "count_hint": "about 143 files in donor",
+      "licence": "GPLv3 or later (headers)",
+      "class": "n/a",
+      "note": "Client code. SOIL is a git submodule (.gitmodules line 3) not checked out."
+    }
+  ],
+  "inspiration": [
+    "Ground lighting recipe: surface colour times a per-vertex colour, plus a baked lightmap added, masked by the lightmap alpha, then multiplied by a directional diffuse term and flat ambient (data/data/shaders/ground.glsl lines 75 to 80). A recipe for baked-plus-dynamic light on our zones.",
+    "Prop lighting: one directional light, flat ambient, and an alpha test that discards empty texels (data/data/shaders/model.glsl lines 55 to 59). A cheap lit-prop shader for phones.",
+    "Two texture coordinate sets: one for the surface, one for the lightmap (ground.glsl TexCoord0 and TexCoord1). Lets a wear or decal layer use its own UVs.",
+    "A zone is one named file picked by a config key with a default name (src/testclient/TestGameMode.cpp line 56). A simple data-first zone switch for our own zone list.",
+    "UI icon sheets are one sheet per accent colour, 256 by 240 px by file name (data/data/ui/styles/Delta/images). One icon sheet per faction colour would keep the HUD consistent.",
+    "Glass-style panel fill: a semi-transparent gradient strip used as the panel background (data/data/ui/styles/Delta/images, glass strips). A panel fill we can tint per zone."
+  ],
+  "briefs": [
+    {
+      "label": "Baked lightmap plus lit surface",
+      "why": "Baked light gives a zone its mood for free, and a small dynamic term keeps moving things lit.",
+      "keep": "surface colour times vertex colour; a baked light layer added on top and masked by its alpha; one directional term plus ambient",
+      "change": "our own light direction per zone; a time-of-day lightmap swap; a second UV set for decals instead of wear layers",
+      "ref": "data/data/shaders/ground.glsl lines 75 to 80"
+    },
+    {
+      "label": "Flat-lit prop with cut-outs",
+      "why": "A single directional light and an alpha cut-out keep props readable and cheap at 375 px wide.",
+      "keep": "one directional light; flat ambient; alpha test that drops empty texels",
+      "change": "a stepped two-tone ramp instead of a smooth diffuse; a rim term on the silhouette; our own ambient colour per zone",
+      "ref": "data/data/shaders/model.glsl lines 55 to 59"
+    },
+    {
+      "label": "Icon sheet per accent colour",
+      "why": "One sheet per accent colour keeps every icon of a faction on one texture, which is cheap to draw.",
+      "keep": "one 256x240 sheet per accent colour; a 2x variant for the close and slider controls",
+      "change": "our own faction sigils instead of generic icons; one sheet per faction colour from our palette; a glyph row sized for thumbs",
+      "ref": "data/data/ui/styles/Delta/images/ (ui-icons_*_256x240.png)"
+    },
+    {
+      "label": "Named zone file switch",
+      "why": "A zone chosen by name from config keeps the level list data-driven, so a new zone needs no code change.",
+      "keep": "zone is a named file; a config key picks it; a default zone when the key is missing",
+      "change": "our own zone file format; per-zone spawn tables inside the file; a zone-enter cue",
+      "ref": "src/testclient/TestGameMode.cpp line 56; src/libragnarok/Ragnarok/Graphics/World.cpp line 53"
+    },
+    {
+      "label": "Glass HUD panel strip",
+      "why": "A see-through gradient strip as panel fill lets the world show behind the HUD.",
+      "keep": "semi-transparent gradient fill; a 1x400 strip stretched to panel size",
+      "change": "our own tint per zone; an edge highlight for legibility at 375 px; a corner cut instead of a square panel",
+      "ref": "data/data/ui/styles/Delta/images/ (ui-bg_glass_*_1x400.png)"
+    }
+  ],
+  "not_read": [
+    "data/data/ui/login.html and data/data/ui/js/rocketmvvm.js: names only",
+    "pixel content of all 25 PNG theme files: names and folder counts only",
+    "Metro jquery-ui CSS: names only",
+    "most of src/libragnarok and src/ya3de: headers and grep hits only",
+    "3rdparty/SOIL: empty in donor (submodule not checked out)",
+    "server half and game data half: not in the box"
+  ]
+}

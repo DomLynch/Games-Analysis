@@ -1,0 +1,53 @@
+note	claim	donor_file	line	quote
+hedgewars-hw	damage round: a pending hit is held in Damage until the turn-end machine applies it	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGears.pas	93	inc(Gear^.Damage, Gear^.Karma);
+hedgewars-hw	damage round: karma is reset outside a multi-shot	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGears.pas	128	Gear^.Karma:= 0;
+hedgewars-hw	damage round: a hog with pending damage that is not invulnerable loses it from health	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGears.pas	105	dec(Gear^.Health, dmg);
+hedgewars-hw	damage round: health clamps to zero when the damage is larger	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGears.pas	99	if (Gear^.Health < dmg) then
+hedgewars-hw	damage round: each applied round spawns a health tag	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGears.pas	113	spawnHealthTagForHH(Gear, dmg);
+hedgewars-hw	damage round: king mode kills a hog whose team has no king	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGears.pas	119	else if ((GameFlags and gfKing) <> 0) and (not Gear^.Hedgehog^.Team^.hasKing) then
+hedgewars-hw	damage round: pending damage is reset for every hog after the round	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGears.pas	129	Gear^.Damage:= 0
+hedgewars-hw	damage round: invulnerable hog's pending damage is discarded (reset)	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGears.pas	94	if (Gear^.Damage <> 0) and ((Gear^.Hedgehog^.Effects[heInvulnerable] = 0)) then
+hedgewars-hw	turn-end machine runs only when every gear is inactive	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGears.pas	342	if AllInactive then
+hedgewars-hw	state stChDmg calls the damage round	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGears.pas	357	if CheckNoDamage then
+hedgewars-hw	state stChDmg waits the short delay in a multi-shot	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGears.pas	362	delay:= delayDamageTagShort
+hedgewars-hw	state stChDmg waits the full delay otherwise	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGears.pas	364	delay:= delayDamageTagFull;
+hedgewars-hw	the short damage-tag delay constant	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGears.pas	77	delayDamageTagShort = 500;
+hedgewars-hw	the full damage-tag delay constant	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGears.pas	76	delayDamageTagFull = 1500;
+hedgewars-hw	later state: the damage round runs when the active hog has no pending damage	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGears.pas	564	or (CurrentHedgehog^.Gear^.Damage = 0) then
+hedgewars-hw	multi-shot flag cleared at the end of a multi-shot turn	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGears.pas	513	isInMultiShoot:= false
+hedgewars-hw	turn-end states in order: pause, damage round, sweep, ...	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGears.pas	67	step: (stInit, stDelay1, stChDmg, stSweep, stTurnStats, stChWin1,
+hedgewars-hw	sweep state re-wakes gears when the sweep is dirty	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGears.pas	369	if SweepDirty then
+hedgewars-hw	DoDelay counts down once per call and returns true at zero	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGears.pas	141	DoDelay:= delay = 0;
+hedgewars-hw	hit application: ApplyDamage adds to the pending Damage field	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	346	inc(Gear^.Damage, Damage);
+hedgewars-hw	ApplyDamage: pending-aware clamp for karma and vampiric accounting	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	300	tmpDmg:= min(Damage, max(0,Gear^.Health-Gear^.Damage));
+hedgewars-hw	ApplyDamage: karma is credited to the active hog, not to the attacker	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	319	inc(CurrentHedgehog^.Gear^.Karma, tmpDmg);
+hedgewars-hw	ApplyDamage: karma and vampiric skip self hits	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	301	if (Gear <> CurrentHedgehog^.Gear) and (CurrentHedgehog^.Gear <> nil) and (tmpDmg >= 1) then
+hedgewars-hw	ApplyDamage: vampiric heal is 0.8 of the damage	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	305	vampDmg:= hwRound(int2hwFloat(tmpDmg)*_0_8);
+hedgewars-hw	ApplyDamage: no damage applied when the amount is zero	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	285	if Damage = 0 then
+hedgewars-hw	ModifyDamage: damage scaled by modifier times percent times 0.01	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	278	ModifyDamage:= hwRound(cDamageModifier * dmg * i * cDamagePercent * _0_01);
+hedgewars-hw	ModifyDamage: frozen or king target takes half	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	276	ModifyDamage:= hwRound(cDamageModifier * dmg * i * cDamagePercent * _0_5 * _0_01)
+hedgewars-hw	ModifyDamage: king attacker multiplier 1.5	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	272	if (CurrentHedgehog <> nil) and CurrentHedgehog^.King then
+hedgewars-hw	fall damage: threshold is a downward speed above 0.4	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	460	if _0_4 < Gear^.dY then
+hedgewars-hw	fall damage: 1 plus rounded (speed minus 0.4) times 70	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	462	dmg := ModifyDamage(1 + hwRound((Gear^.dY - _0_4) * 70), Gear);
+hedgewars-hw	fall damage: invulnerable hog takes no fall damage	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	476	if ((Gear^.Hedgehog^.Effects[heInvulnerable] <> 0)) then
+hedgewars-hw	fall damage: charged to the last hog that hurt it	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	480	ApplyDamage(Gear, Gear^.LastDamage, dmg, dsFall)
+hedgewars-hw	explosion: base is twice the radius plus half the hog radius	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	127	dmgBase:= Radius shl 1 + cHHRadius div 2;
+hedgewars-hw	explosion: cheap rejection by Manhattan distance	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	160	if LongInt(abs(hwRound(tdX)) + abs(hwRound(tdY)) + 2) < dmgBase then
+hedgewars-hw	explosion: damage is base minus rounded distance	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	161	dmg:= dmgBase - hwRound(Distance(tdX, tdY));
+hedgewars-hw	explosion: damage is half the remainder, capped at the radius	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	164	dmg:= ModifyDamage(min(dmg div 2, Radius), Gear);
+hedgewars-hw	explosion: the damage is applied as explosion damage	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	169	ApplyDamage(Gear, AttackingHog, dmg, dsExplosion)
+hedgewars-hw	explosion push: each axis gets the damage term plus a kick, divided by density over three	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	176	Gear^.dX:= Gear^.dX + SignAs(_0_005 * dmg + cHHKick, tdX)/(Gear^.Density/_3);
+hedgewars-hw	explosion push: the vertical push uses the same term	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	177	Gear^.dY:= Gear^.dY + SignAs(_0_005 * dmg + cHHKick, tdY)/(Gear^.Density/_3);
+hedgewars-hw	explosion push: a non-invulnerable hog is set moving	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	179	Gear^.State:= (Gear^.State or gstMoving) and (not gstLoser);
+hedgewars-hw	shove push: velocity from ammo direction, power times 0.01	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	1444	Gear^.dX:= Ammo^.dX * Power * _0_01;
+hedgewars-hw	shove push for king or frozen hog: power times 0.005	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	1432	Gear^.dX:= Ammo^.dX * Power * _0_005;
+hedgewars-hw	shove: hit-order gate for some shot kinds	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	1348	or (not UpdateHitOrder(
+hedgewars-hw	damage tag and ouch threshold	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	366	if (Damage >= ouchDmg) and (OuchTauntTimer = 0)
+hedgewars-hw	hit hook: script sees each applied hit	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uGearsUtils.pas	348	ScriptCall('onGearDamage', Gear^.UID, Damage);
+hedgewars-hw	kick constant cHHKick is 0.01	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uConsts.pas	634	cHHKick:= hwf_new(1, 100);  // _0_01
+hedgewars-hw	hedgehog radius constant 9	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uConsts.pas	194	cHHRadius = 9; // hedgehog radius
+hedgewars-hw	max hog health constant	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uConsts.pas	197	cMaxHogHealth = 268435455; // maximum hedgehog health
+hedgewars-hw	karma flag: receive damage you deal (constant comment)	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uConsts.pas	254	gfKarma              = $00000400; // receive damage you deal
+hedgewars-hw	damage modifier default is 1	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uVariables.pas	2922	cDamageModifier         := _1;
+hedgewars-hw	damage percent default is 100	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uVariables.pas	2960	cDamagePercent      := 100;
+hedgewars-hw	licence: GNU GPL version 2	/mnt/frankendom-donors/hedgewars-hw/COPYING	2	Version 2, June 1991

@@ -1,0 +1,2 @@
+game	category	old	verdict	depth	finding
+AAEmu-AAEmu	spawns-encounters	P	STRONG	full	NpcSpawner.cs:73-100 (Update), 176-225 (CanSpawn), 385-413 (population cap), 921 onward (DoSpawn), 733-776 (DoDespawn) and SpawnManager.cs:1042-1113 (respawn/removal queue): a presence-gated population cap that scales with players near the spawn point, with a corpse-gated replacement and a respawn queue, plus reading-only defects (spawn flag, unreachable despawn-on-empty branch).

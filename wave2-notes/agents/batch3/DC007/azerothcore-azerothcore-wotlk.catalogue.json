@@ -1,0 +1,252 @@
+{
+  "donor": "azerothcore-azerothcore-wotlk",
+  "counts": {
+    "creatures": 29947,
+    "classes": 10,
+    "weapons": 6651,
+    "gear_sets": 475,
+    "zones": 85
+  },
+  "creature_families": [
+    "wolf (family 1): 167 rows",
+    "cat (2): 140",
+    "spider (3): 126",
+    "bear (4): 79",
+    "raptor (11): 69",
+    "bird of prey (26): 64",
+    "carrion bird (7): 57",
+    "crocolisk (6): 45",
+    "scorpid (20): 41",
+    "crab (8): 40",
+    "wind serpent (27): 38",
+    "boar (5): 36",
+    "worm (42): 35",
+    "hyena (25): 35",
+    "bat (24): 33",
+    "turtle (21): 33",
+    "tallstrider (12): 23",
+    "gorilla (9): 23",
+    "silithid (41): 21",
+    "chimaera (38): 20",
+    "warp stalker (32): 20",
+    "dragonhawk (30): 18",
+    "ravager (31): 18",
+    "wasp (44): 17",
+    "serpent (35): 15",
+    "moth (37): 15",
+    "nether ray (34): 15",
+    "sporebat (33): 13",
+    "devilsaur (39): 10",
+    "core hound (45): 10",
+    "rhino (43): 9",
+    "spirit beast (46): 5",
+    "type counts: humanoid 16544, not specified 3746, beast 2769, undead 2527, elemental 1000, demon 962, dragonkin 785, mechanical 587, non-combat pet 276, totem 261, giant 236, critter 220",
+    "rank counts: normal 21538, elite 6913, boss tier (WORLDBOSS, 3) 962, rare 328, rare elite 186",
+    "family and type enums from src/server/shared/SharedDefines.h lines 2620 (type), 2642 (family), 2962 (elite rank)"
+  ],
+  "top_creatures": [
+    {
+      "label": "Winged sovereign with a stacked health pool",
+      "why": "Dragonkin boss tier with the highest dragonkin boss-tier health multiplier (10000; the training-dummy row at 23809 is excluded); a fight-length boss rather than a big-hit boss.",
+      "keep": "Boss-tier rank and a long, phased fight.",
+      "change": "No dragon design copied; express health through phases, not one raw multiplier.",
+      "ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/data/sql/base/db_world/creature_template.sql:24954 (entry 31333, level 83)"
+    },
+    {
+      "label": "Quartet of crypt wardens",
+      "why": "Four linked undead boss-tier rows at level 63 share one encounter; health 100 to 110, damage 15 to 22.5.",
+      "keep": "Group encounter of four distinct silhouettes.",
+      "change": "Each warden gets a different element and aura; kill order changes the fight.",
+      "ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/data/sql/base/db_world/creature_template.sql:9376 to 9379 (entries 15082 to 15085)"
+    },
+    {
+      "label": "Stone sentinel and its hard variant",
+      "why": "Entry 31125 links via difficulty_entry_1 to entry 31722: health 165 becomes 715, damage 36.8 becomes 70.24, same display id 26967. Clearest tier-by-stat-step in the box.",
+      "keep": "Shared silhouette; roughly 2x health and 2x damage on the hard tier.",
+      "change": "The hard tier shows its difference (cracks, glow, crown) and gains a phase instead of only bigger numbers.",
+      "ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/data/sql/base/db_world/creature_template.sql:24754 and 25339; creature_template_model.sql:32604 and 33414"
+    },
+    {
+      "label": "Undead tyrant at the top of the undead damage range",
+      "why": "Undead boss tier with damage multiplier 492.9 (highest undead boss-tier damage) and health 7397.",
+      "keep": "A damage ceiling the player can read, with a long telegraph before each heavy hit.",
+      "change": "Windup and telegraph are our own design; no number-on-a-sheet tuning.",
+      "ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/data/sql/base/db_world/creature_template.sql:29702 (entry 39168)"
+    },
+    {
+      "label": "Icy beast-lord variant",
+      "why": "Beast boss tier with damage multiplier 161.8 and health 1300, the highest beast boss-tier damage; the beast family's biggest hitter.",
+      "keep": "Beast family big-hit boss.",
+      "change": "Different biome, palette and attack shape.",
+      "ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/data/sql/base/db_world/creature_template.sql:27986 (entry 35449)"
+    },
+    {
+      "label": "Oversized humanoid commander",
+      "why": "Humanoid boss tier at scale 3 with health 1000, level 83; a 3x silhouette reads well at 375 wide.",
+      "keep": "Readable 3x silhouette and a boss-tier pace.",
+      "change": "No banner and no named-hero look; use a shield-wall aura.",
+      "ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/data/sql/base/db_world/creature_template.sql:26903 (entry 33628); scale 3 at creature_template_model.sql:35743"
+    },
+    {
+      "label": "Molten colossus",
+      "why": "Elemental boss tier, level 63, health 330; four spell ids linked (20566, 19773, 19780, 20565) but spell names are not in the box.",
+      "keep": "Slow, telegraphed heavy hits.",
+      "change": "Crack-glow lines instead of flat lava; different spell set.",
+      "ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/data/sql/base/db_world/creature_template.sql:7800 (entry 11502); spells in creature_template_spell.sql"
+    },
+    {
+      "label": "Demon warlord with the highest demon boss-tier damage",
+      "why": "Demon boss tier, level 73, damage multiplier 111, the highest demon boss-tier damage multiplier.",
+      "keep": "A damage-first demon boss.",
+      "change": "Original armoured silhouette; keep the damage pattern, not the design.",
+      "ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/data/sql/base/db_world/creature_template.sql:18875 (entry 24882)"
+    }
+  ],
+  "classes": [
+    "Warrior (melee): signature not read; stat archetype 1 in creature_classlevelstats.sql",
+    "Paladin (melee and support): signature not read; archetype 2",
+    "Hunter (ranged): signature not read; pet-linked families exist in creature data",
+    "Rogue (melee): signature not read; archetype 4",
+    "Priest (caster and healer): signature not read",
+    "Death Knight (melee): signature not read",
+    "Shaman (hybrid): signature not read",
+    "Mage (caster): signature not read; mana curve archetype 8 (level 80 mana 8814)",
+    "Warlock (caster and pet): signature not read; demon families exist in creature data",
+    "Druid (hybrid): signature not read",
+    "Races (10 playable, enum Races at src/server/shared/SharedDefines.h line 68): Human, Orc, Dwarf, Night Elf, Undead, Tauren, Gnome, Troll, Blood Elf, Draenei",
+    "Class enum at SharedDefines.h line 123; role column from general knowledge, unverified in box"
+  ],
+  "weapon_families": [
+    "Dagger 802 rows (subclass 15)",
+    "Staff 790 (10)",
+    "One-hand sword 767 (7)",
+    "One-hand mace 695 (4)",
+    "One-hand axe 490 (0)",
+    "Two-hand sword 460 (8)",
+    "Two-hand axe 418 (1)",
+    "Wand 339 (19)",
+    "Two-hand mace 371 (5)",
+    "Bow 308 (2)",
+    "Polearm 266 (6)",
+    "Gun 253 (3)",
+    "Fist 232 (13)",
+    "Crossbow 158 (18)",
+    "Misc 146 (14)",
+    "Thrown 135 (16)",
+    "Fishing pole 15 (20)",
+    "Spear 3 (17); exotic 3 (11)",
+    "Weapon quality rows: poor 2132, common 420, uncommon 1494, rare 1134, epic 1421, legendary 27, artifact 8, heirloom 15",
+    "Weapons with an on-hit spell: 1509 rows; 4886 distinct weapon display ids",
+    "Subclass enum at src/server/game/Entities/Item/ItemTemplate.h line 342"
+  ],
+  "gear_tiers": [
+    "Armour subclass rows: misc 3846, cloth 5721, leather 4519, mail 4292, plate 4264, shield 686, libram 72, idol 79, totem 76, sigil 23 (ItemTemplate.h line 388)",
+    "Armour quality rows: poor 3066, common 1359, uncommon 6398, rare 4355, epic 8363, legendary 3, artifact 9, heirloom 25",
+    "Item level by armour quality: poor 0 to 187; common 0 to 115; uncommon 1 to 182; rare 0 to 435 (the 435 rows are QA test rings); epic 1 to 284; legendary 80 to 175; artifact 1 to 60; heirloom 1",
+    "Sets: 475 set ids used by items; 2481 set-name rows (item_set_names.sql, first row line 39); sets by member count: 5 pieces 108, 6 pieces 68, 8 pieces 62, 20 pieces 62, 3 pieces 51, 2 pieces 25",
+    "Material words in names (substring, rough): plate 1269, leather 566, mail 475, cloth 336, crystal 122, silver 142, gold 76, saronite 62, bronze 48, mithril 28, primal 33, obsidian 18, khorium 18, thorium 21, adamant 22, dragonscale 23, felsteel 11, netherweave 11",
+    "Quality colours are a table in SharedDefines.h line 315; colour codes deliberately not copied"
+  ],
+  "zones": [
+    "Dungeon archetypes from instance_template.sql (85 maps, 74 with script names); archetype labels inferred from script names only",
+    "Map 309 (line 59, instance_zulgurub): jungle temple archetype (inferred)",
+    "Map 409 (line 63, instance_molten_core): molten cave archetype (inferred)",
+    "Map 533 (line 71, instance_naxxramas): undead necropolis archetype (inferred)",
+    "Map 574 (line 97, instance_utgarde_keep): fortified hall archetype (inferred), allowMount set",
+    "Encounters: 612 rows in instance_encounters.sql",
+    "Weather per zone: 35 rows in game_weather.sql (rain, snow, storm chance per season); zone 3 at line 50 has spring storm chance 20",
+    "Hazards: 624 trap gameobjects (type 6, SharedDefines.h line 1570); 1111 goobers (type 10, line 1574); 205 dungeon difficulty switches (type 31, line 1595)",
+    "Biome names not in box: areatable_dbc.sql and map_dbc.sql have 0 data rows"
+  ],
+  "looks": [
+    {
+      "label": "Shared display id across many items",
+      "technique": "Many items point at one display id (e.g. 6494, 9834), so tiers can come from one model plus a tint or glow.",
+      "ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/data/sql/base/db_world/item_template.sql:13761 to 13762 (entries 17782, 17783)"
+    },
+    {
+      "label": "One weapon name, four looks",
+      "technique": "Same staff name, four entries with four display ids (per-look variants).",
+      "ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/data/sql/base/db_world/item_template.sql:17975 to 18018 (entries 22589, 22630, 22631, 22632)"
+    },
+    {
+      "label": "Creature model roll with probability",
+      "technique": "A creature picks one of up to 4 weighted models with a scale; 5588 creatures have multiple model rows.",
+      "ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/data/sql/base/db_world/creature_template_model.sql:11325 (entry 15082, probability 1)"
+    },
+    {
+      "label": "Oversized scale for a single boss",
+      "technique": "Scale 2 to 3 on one boss silhouette; 41 rows at 2.4 and a few at 3.",
+      "ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/data/sql/base/db_world/creature_template_model.sql:35743 (entry 33628, scale 3)"
+    },
+    {
+      "label": "Difficulty tiers via sibling entries",
+      "technique": "Hard variant shares the model and gets a stat step plus a visual cue; 1804 creatures have difficulty siblings.",
+      "ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/data/sql/base/db_world/creature_template.sql:24754 (entry 31125) and 25339 (entry 31722)"
+    },
+    {
+      "label": "Heirloom items at item level 1",
+      "technique": "All heirloom rows carry item level 1 (25 armour, 15 weapon), pointing at a single scaling rule; scaling itself not in the box.",
+      "ref": "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/data/sql/base/db_world/item_template.sql:34079 (entry 38691), 38336 (entry 42949)"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Stone warden, two tiers",
+      "idea": "A bulwark-style boss with a shared silhouette at two difficulties; the hard tier gains a phase.",
+      "keep": "The sibling link and a roughly 2x stat step.",
+      "change": "The hard tier gains cracks, glow and a phase; no named-character look."
+    },
+    {
+      "name": "Crypt quartet",
+      "idea": "Four linked undead bosses, each holding a different element aura; kill order changes the fight.",
+      "keep": "Four-boss group encounter.",
+      "change": "Our own elements and auras; no ability copy."
+    },
+    {
+      "name": "Ember colossus",
+      "idea": "A slow elemental giant with glowing crack lines that brighten as it takes damage.",
+      "keep": "Slow telegraphed heavy hits.",
+      "change": "Crack light instead of flat lava; a different spell set."
+    },
+    {
+      "name": "Oversized commander",
+      "idea": "A 3x scale humanoid commander with a shield-wall aura that pulses on a readable beat.",
+      "keep": "The 3x silhouette readable at 375 wide.",
+      "change": "No banner and no named hero."
+    },
+    {
+      "name": "Gearling swarm",
+      "idea": "A flock of small mechanical flyers that assemble into a shape.",
+      "keep": "Mechanical critter tier (587 mechanical rows).",
+      "change": "The swarm mechanic is ours."
+    },
+    {
+      "name": "Heirloom blade that grows",
+      "idea": "A weapon with a level 1 base that gains glow tiers as the player levels.",
+      "keep": "Heirloom growth.",
+      "change": "Growth shown by light, not a stat sheet; no existing item name."
+    },
+    {
+      "name": "Storm-chance coast",
+      "idea": "A coast whose storm odds change per season, with a shimmer warning before each storm.",
+      "keep": "Per-season odds table.",
+      "change": "Storms become readable hazards."
+    },
+    {
+      "name": "Trap-lined vault",
+      "idea": "A vault whose traps show through fog as the player nears.",
+      "keep": "Trap-lined boss room.",
+      "change": "Traps are visible, not hidden."
+    }
+  ],
+  "licence_note": "Code: GNU GPL v2 (LICENSE, Version 2 June 1991). Assets: no separate asset licence file in data/ or src/tools; world SQL sits under the repo LICENSE with no per-folder notice; content is game-derived, licence position unclear (class C, per AU005). Repo says it is not an official Blizzard product (per AU005, .github/README.md line 88, not re-checked). Not legal advice.",
+  "not_read": [
+    "Most of the 309 db_world SQL files (creature, item, instance, weather, gameobject, set and spell_dbc sampled only); archive, updates and old folders",
+    "All C++ source except the enum headers SharedDefines.h and ItemTemplate.h; the scripts folder (boss AI); tests; modules beyond readme",
+    "Spell names and effects: spell_dbc.sql has 4491 rows, only 5 of 9556 creature-spell links resolve",
+    "Client half (art, models, sounds): not in the box; DBC data tables are schema only (0 rows)",
+    ".github, .claude, AGENTS.md and CLAUDE.md treated as data and not followed",
+    "Full Recast licence text"
+  ]
+}

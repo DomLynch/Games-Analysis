@@ -1,0 +1,73 @@
+{
+  "donor": "0ad-0ad",
+  "topic": "onboarding-first-30min",
+  "depth": "full",
+  "half_read": "both",
+  "half_note": "client and data read (maps/tutorials, maps/scripts/Tutorial.js, gui/session, gui/pregame). Engine half under source/ NOT read.",
+  "paths": [
+    "/mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/maps/tutorials/introductory_tutorial.js",
+    "/mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/maps/tutorials/starting_economy_walkthrough.js",
+    "/mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/maps/tutorials/introductory_tutorial.xml",
+    "/mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/maps/scripts/Tutorial.js",
+    "/mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/gui/session/messages.js",
+    "/mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/gui/session/tutorial_panel.xml",
+    "/mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/gui/pregame/MainMenuItems.js"
+  ],
+  "counts": {
+    "introductory_goal_blocks": 27,
+    "starting_economy_goal_blocks": 32,
+    "tutorial_maps": 2,
+    "player2_champion_entities_awk": 65,
+    "player2_champion_ranged": 30,
+    "player2_champion_infantry": 23,
+    "player2_champion_marine": 12,
+    "player1_start_entities_awk": 6,
+    "player1_female_citizens": 3,
+    "panel_width_units": 760,
+    "champions_kept_after_trim": 6
+  },
+  "rule": "Ordered goal list. Each goal has an optional gate (no-trigger goal shows a Ready button; action goals wait for a matching player command or a game event). A wrong batch order resets the production queue and shows an orange warning. Enemy attack is scripted on a research-finish event; a siege-stage trim removes enemy champions beyond 6 once two rams are queued. Panel accumulates every earlier goal text.",
+  "data_fields": [
+    {"name": "goal_gate", "unit": "enum: ready | action | event", "donor_value_or_null": null},
+    {"name": "wrong_action_policy", "unit": "enum: warn | reset", "donor_value_or_null": null},
+    {"name": "attack_trigger", "unit": "event name (tech finish)", "donor_value_or_null": null},
+    {"name": "trim_keep_count", "unit": "units", "donor_value_or_null": null},
+    {"name": "trim_ram_threshold", "unit": "siege units queued", "donor_value_or_null": null},
+    {"name": "panel_width", "unit": "GUI units", "donor_value_or_null": null},
+    {"name": "start_resources", "unit": "food, wood, stone, metal", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Ordered goal list with one goal on screen at a time",
+    "Ready gate on reading steps",
+    "Orange warning line for a wrong action",
+    "One building or service introduced per goal in build order",
+    "Scripted attack as a timed consequence of a finished tech"
+  ],
+  "change": [
+    "Wrong action resets the player's queue; instead the server rejects and the HUD says why",
+    "Army trim is silent; instead make the rig explicit encounter data and log it in the fight record",
+    "Panel stacks every earlier goal; instead show one goal and dismiss on its gate",
+    "Fixed 760-unit panel; instead a 375-wide layout that does not cover the fight"
+  ],
+  "onboarding": {
+    "1_first_90s": "Ready-gated welcome goal, then one left-click plus right-click order; optional main-menu entry, not forced.",
+    "2_first_fight": "No early fight. Enemy AI empty. Attack scripted on a tech finish; siege-stage trim to 6 champions is silent.",
+    "3_first_reward": "First unlock is Town Phase by goal. Celebration not read.",
+    "4_first_hub": "Civic Center; buildings one per goal in build order.",
+    "5_first_choice": "Food or wood first; no reward for either.",
+    "6_pull_forward": "Goal-gated; no minute marks; visible next goals only.",
+    "7_style": "Optional entry, forced once started; text-heavy panel; Quit at end.",
+    "8_drop_off": "Fixed-width panel; text pile; queue reset loop; the army trim is hidden.",
+    "9_idea": "Ordered goals with Ready and event gates, orange warning, first ring fight gated on server events."
+  },
+  "look_test": "Throwaway 375-wide panel with three goals (Ready on reading, first server hit as the gate, orange warning on a wrong action) versus a stacked text panel. Dom judges which reads without covering the fight.",
+  "licence_note": "Code GPL v2 or later; binaries/data is GPL v2+ (LICENSE.txt line 18 as recorded in AU001). Shape only; no string text reused.",
+  "tags": ["ordered-feedback", "first-fight", "encounter-ambush"],
+  "not_read": [
+    "C++ engine (source/): hit feedback, combat numbers, reward and phase-up celebration",
+    "Tutorial map entity bodies beyond header and counts",
+    "The 27 and 32 goal texts beyond the first lines",
+    "gui/text/tips (47 loading tips)",
+    "Entity counts are awk counts, not checked against the engine"
+  ]
+}

@@ -1,0 +1,15 @@
+baseDamage = this.battle.modify(baseDamage, 0.5);
+const isCrit = target.getMoveHitData(move).crit;
+if (move.willCrit === undefined) {
+if (moveHit.crit) {
+const modifier = tr(numerator * 4096 / denominator);
+const boostTable = [1, 1.5, 2, 2.5, 3, 3.5, 4];
+let isSTAB = 
+const isSTAB = move.forceSTAB
+const attack = attacker.calculateStat
+let attack = attacker.calculateStat(attackStat, atkBoosts, 1, source);
+let defense = defender.calculateStat(defenseStat, defBoosts, 1, target);
+const level = source.level;
+const baseDamage = tr(
+if (critRatio) {
+let typeMod = target.runEffectiveness(move);

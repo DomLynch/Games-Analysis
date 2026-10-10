@@ -1,0 +1,80 @@
+{
+  "donor": "gemrb-gemrb",
+  "code_licence": "GPL-2.0-or-later. COPYING:2 is GPL v2 text ('Version 2, June 1991'). REUSE.toml:22 assigns GPL-2.0-or-later to the non-code path list (REUSE.toml:7-22). Grep of gemrb/core found 308 headers reading SPDX-License-Identifier: GPL-2.0-or-later (grep count, not receipted).",
+  "asset_licence": "Mixed, by path. (1) gemrb/unhardcoded/** and gemrb/override/** and artwork/** are GPL-2.0-or-later (REUSE.toml:9, :17, :22). (2) demo/** is CC-BY-SA-4.0 by wildcard (REUSE.toml:39-41), with per-file overrides: CC0-1.0, CC-BY-3.0, CC-BY-4.0, CC-BY-SA-3.0, OFL-1.1-RFN (fonts). (3) demo music is in conflict: REUSE covers it under the wildcard, while demo/README.md:52 says the main theme and area music are licensed from a named composer, with the licence documents in another repo that is not in the box.",
+  "rights_holder_status": "Community open-source reimplementation of the Infinity Engine (README.md:12, reimplementation of the Infinity Engine). Original game data is not in the donor and must be installed by the user (README.md:17, :20). Demo credits are per file in REUSE.toml and point to an OpenGameArt collection (demo/README.md:49). The files do not say clean-room.",
+  "best_class": "A",
+  "asset_groups": [
+    {"kind": "game-rule data tables (unhardcoded)", "path": "gemrb/unhardcoded/{bg1,bg2,bgee,bg2ee,iwd,iwd2,pst,how,shared}/ (2da, ids, ini text)", "count_hint": "bg1 163, bg2 102, bgee 183, bg2ee 89, iwd 387, iwd2 473, pst 305, how 390, shared 110 files", "licence": "GPL-2.0-or-later (REUSE.toml:9)", "class": "B", "note": "Data tables that name classes, actions, spells and stats. Share-alike is the condition the file states. Cite the table, do not copy rows."},
+    {"kind": "override data (unhardcoded overrides)", "path": "gemrb/override/{bg1,bg2,bgee,bg2ee,iwd,iwd2,pst,how,shared}/", "count_hint": "bg1 3, bg2 5, bgee 1, bg2ee 6, iwd 3, iwd2 4, pst 7, how 3, shared 5 files", "licence": "GPL-2.0-or-later (REUSE.toml:9)", "class": "B", "note": "Small override set. Listed only."},
+    {"kind": "project artwork and logos", "path": "artwork/ (gemrb-logo*.png, gemrb.icns, gemrb.bmp, gemrb-logo.ico, logo04-rb_only.svg)", "count_hint": "10 files", "licence": "GPL-2.0-or-later (REUSE.toml:17)", "class": "B", "note": "Project brand marks. Do not reuse the marks; use only as a style reference."},
+    {"kind": "demo art, CC0 subset", "path": "demo/override/ar0100.png (1600x1152 PNG), demo/override/loading.bam, demo/override/swirl.bam, demo/override/winopen.ogg, demo/override/winclose.ogg, demo/override/btnpress.ogg, demo/override/MOS2000.PVRZ", "count_hint": "7 files", "licence": "CC0-1.0 (REUSE.toml:52-54, :108-110, :143-150, :157-160)", "class": "A", "note": "Public-domain-style dedication per the file. Usable as is with no attribution required by the file."},
+    {"kind": "demo art and sound, CC-BY-3.0 subset", "path": "demo/override/stonhelm.png and other ston**.png, stonbag.png, stonquiv.png, worldmap.png, backpack.bam, cursarrs.bam, portr1**.png, win/btn bams listed at REUSE.toml:87, fs_dirt**.ogg, spell_02.ogg", "count_hint": "about 40 files (count not exact)", "licence": "CC-BY-3.0 (REUSE.toml:74, :87-95, :98-100, :123-135, :153-155)", "class": "A", "note": "Usable with the attribution the file names (author per REUSE.toml). Attribution required by the licence named in the file."},
+    {"kind": "demo art, CC-BY-4.0", "path": "demo/override/ruby**.png (ruby128.png)", "count_hint": "1 file matched by the pattern (ruby32.bam and ruby.itm fall under the demo wildcard instead)", "licence": "CC-BY-4.0 (REUSE.toml:103-105)", "class": "A", "note": "Usable with attribution per the file."},
+    {"kind": "demo art and sound, CC-BY-SA-3.0 subset", "path": "demo/override/cursor00.png to cursor47.png, demo/override/grndloot.bam, demo/override/contgrnd.bam, demo/override/AMB_D18.ogg", "count_hint": "48 cursor files plus 3", "licence": "CC-BY-SA-3.0 (REUSE.toml:82-84, :113-115, :138-140)", "class": "B", "note": "Share-alike condition named in the file. Inspiration use only unless we accept share-alike."},
+    {"kind": "demo art, CC-BY-SA-4.0 wildcard", "path": "demo/** not otherwise annotated; CHMB1**.bam (REUSE.toml:57-59)", "count_hint": "most of demo/override", "licence": "CC-BY-SA-4.0 (REUSE.toml:39-41, :57-59)", "class": "B", "note": "Share-alike by wildcard. Per-file lines in REUSE.toml override it where they exist."},
+    {"kind": "demo fonts", "path": "demo/override/Eadui.ttf, demo/override/Lato-Bold.ttf", "count_hint": "2 files", "licence": "OFL-1.1-RFN (REUSE.toml:62-69)", "class": "B", "note": "SIL Open Font Licence with the Reserved Font Name marker, as the file's SPDX line says. The files do not say more."},
+    {"kind": "demo music", "path": "demo/music/mx0100.mus, demo/music/theme.mus", "count_hint": "2 files", "licence": "conflict: CC-BY-SA-4.0 by wildcard (REUSE.toml:39-41) vs licensed from a named composer (demo/README.md:52)", "class": "C", "note": "Conflicting statements in the donor. Class C until the licence documents in the separate gemrb-assets repo are checked (not in box; not fetched)."},
+    {"kind": "demo string table and key index", "path": "demo/dialog.tlk (12,589 bytes), demo/chitin.key (2,992 bytes)", "count_hint": "2 files", "licence": "CC-BY-SA-4.0 by wildcard only (REUSE.toml:39-41)", "class": "C", "note": "No per-file line and no origin stated in the tree. Treat as unclear. Do not copy text from dialog.tlk."},
+    {"kind": "demo game-rule and area data", "path": "demo/override/*.2da (36), *.ids (8), *.bcs (6), *.are, *.wed, *.tis, *.mos, *.cre, *.itm, *.baf, *.chu", "count_hint": "about 90 files", "licence": "CC-BY-SA-4.0 by wildcard (REUSE.toml:39-41)", "class": "B", "note": "Data first: classes.2da, itemtype.2da, action.ids, avatars.2da, protagon.cre, rabbit.cre, riddler.cre, ruby.itm, fist.itm, ar0100.are."},
+    {"kind": "original Infinity Engine game data", "path": "not in donor (README.md:17, :20 says the user must install it)", "count_hint": "0 in box", "licence": "n/a", "class": "D", "note": "Nothing from this group in the box. Proprietary original data is not ours to use."}
+  ],
+  "inspiration": [
+    "Layered area backdrop: ar0100.png (1600x1152) sits beside ar0100.wed, .tis, .mos and .are, so the art layer and the walk-or-block layer are separate files (demo/override/). Keep: art and passability as two layers. Change: our own architecture and palette.",
+    "Equipment icon family at 30x30 (demo/override/ston**.png, CC-BY-3.0): one frame for every slot with one silhouette per slot. Keep the frame and silhouette rules. Change the motifs and colours.",
+    "Gem as a hero item: ruby128.png (128x128) beside ruby32.bam and the item definition ruby.itm. Keep: a large master icon plus a small version. Change: the cut, colour and setting.",
+    "Context pointer set: 48 cursor files at 33x33 (demo/override/cursor00.png to cursor47.png, CC-BY-SA-3.0). Meaning of each state not read per file. Keep: a small pointer that changes state. Change: the shape language.",
+    "Ground container for loot: grndloot.bam and contgrnd.bam (CC-BY-SA-3.0). Keep: a low sack on the ground as a drop marker. Change: silhouette and colour.",
+    "Footstep variant pool: fs_dirta.ogg to fs_dirti.ogg (CC-BY-3.0) picked at random per step. Keep: a pool of short variants. Change: surface type, pitch range and clip length.",
+    "Data-first: classes.2da, itemtype.2da, action.ids, avatars.2da and the .cre and .itm files carry names and rules, so content can be data-driven. Keep the table-driven approach. Do not copy names or rows."
+  ],
+  "briefs": [
+    {
+      "label": "Walled town backdrop with a passability layer",
+      "why": "Reads at 375 wide as a wall line and roof tops. Signature sound: a zone ambient loop (AMB_D18.ogg, CC-BY-SA-3.0 per REUSE.toml:138-140). The walk-or-block layer is data, so the backdrop can stay pre-rendered.",
+      "keep": ["pre-rendered backdrop with a separate walk-or-block layer", "one ambient loop per zone", "wall-line silhouette that frames the play area"],
+      "change": ["Recreate as a clearly distinct original, never a copy: new layout grid and street plan", "palette and architecture of our own (target about 20-30 percent resemblance)", "ambient loop replaced by our own sound"],
+      "ref": "demo/override/ar0100.png, demo/override/ar0100.wed, demo/override/ar0100.tis, demo/override/AMB_D18.ogg"
+    },
+    {
+      "label": "Stone-set slot icon family",
+      "why": "A 30x30 slot icon reads in a bag grid on a phone. One silhouette per slot keeps the inventory scannable.",
+      "keep": ["one fixed frame size for every slot", "one readable silhouette per slot", "a single rim colour for the set"],
+      "change": ["Recreate as a clearly distinct original, never a copy: our own silhouettes for each slot", "our own motifs and metal palette", "different rim treatment (not the donor rim)"],
+      "ref": "demo/override/stonhelm.png, demo/override/stonboot.png, demo/override/stonring.png"
+    },
+    {
+      "label": "Faceted gem hero icon",
+      "why": "One bright glint reads at small size. The 128 master with a small version works for item tooltips and bag slots.",
+      "keep": ["one bright highlight as the signature", "large master icon with a small version", "gem as the hero item of its family"],
+      "change": ["Recreate as a clearly distinct original, never a copy: new cut and facet count", "our own colour and setting", "glint placed differently from the donor"],
+      "ref": "demo/override/ruby128.png, demo/override/ruby.itm"
+    },
+    {
+      "label": "Ground sack loot container",
+      "why": "A low sack on the ground reads as lootable from a distance. Signature effect: a short settle on drop.",
+      "keep": ["low sack silhouette on the ground", "drop as a marker of loot", "one clear shape with no detail needed at range"],
+      "change": ["Recreate as a clearly distinct original, never a copy: new tie or clasp", "our own colour and material", "different settle motion"],
+      "ref": "demo/override/grndloot.bam, demo/override/contgrnd.bam"
+    },
+    {
+      "label": "Nine-variant dirt footstep pool",
+      "why": "Variety without new art. Signature sound: a dirt step chosen at random from a pool each time.",
+      "keep": ["pool of short variants picked at random", "one sound per step", "soft attack for dirt"],
+      "change": ["Recreate as a clearly distinct original, never a copy: our own surface sounds", "different pitch range and clip length", "pool size and variant character of our own"],
+      "ref": "demo/override/fs_dirta.ogg to demo/override/fs_dirti.ogg (demo/override/fs_dirt**.ogg, REUSE.toml:153-155)"
+    }
+  ],
+  "cross_link": "zones: ar0100 backdrop and area data (demo/override/ar0100.*). loot: grndloot, contgrnd, ruby, stone icons (demo/override/). hud-ui: cursor set, win and btn bams, Eadui.ttf and Lato-Bold.ttf (demo/override/). vfx: firescis.BAM and FOGOWAR.BAM listed, not opened. animation: bam sequences (listed). sound: fs_dirt footsteps, AMB_D18 ambient, winopen and winclose (demo/override/). camera: none checked. spawns: .cre files protagon, rabbit, riddler (demo/override/) read by name only.",
+  "not_read": [
+    "gemrb/core C++ (headers counted by grep only; no files opened)",
+    "gemrb/GUIScripts Python (208 .py files; listed only)",
+    "gemrb/docs/en (listed only)",
+    "demo/override/*.2da, *.ids, *.are, *.wed, *.bcs, *.cre, *.itm contents (only the first lines of classes.2da and action.ids were read; other data files listed by name)",
+    "demo/override/*.bam, *.PVRZ, *.BMP, *.tis binary contents (listed; not opened)",
+    "demo/dialog.tlk and demo/chitin.key contents (sizes only)",
+    "demo/music/*.mus contents and any .ogg audio (listed and counted only)",
+    "the separate gemrb-assets repo named in demo/README.md:44-52 (not in the box; not fetched)",
+    "the original Infinity Engine game data (not in the donor folder; the top-level and gemrb/ listings show none)"
+  ]
+}

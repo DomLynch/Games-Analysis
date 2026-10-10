@@ -1,0 +1,28 @@
+note	claim	donor_file	line	quote
+Dawn-of-Light-DOLSharp	licence GPL v2 or later (source header)	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameNPC.cs	7	of the License, or (at your option) any later version.
+Dawn-of-Light-DOLSharp	DB respawn -1 means default	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameNPC.cs	1854	if (dbMob.RespawnInterval == -1)
+Dawn-of-Light-DOLSharp	DB respawn seconds to milliseconds	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameNPC.cs	1858	m_respawnInterval = dbMob.RespawnInterval * 1000;
+Dawn-of-Light-DOLSharp	RespawnInterval getter: explicit value returned (negative = never)	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameNPC.cs	4223	if (m_respawnInterval > 0 || m_respawnInterval < 0)
+Dawn-of-Light-DOLSharp	RespawnInterval: random minutes between min and min+5	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameNPC.cs	4226	int minutes = Util.Random(ServerProperties.Properties.NPC_MIN_RESPAWN_INTERVAL
+Dawn-of-Light-DOLSharp	RespawnInterval: capitalised name adds 5 minutes	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameNPC.cs	4228	if (Name != Name.ToLower())
+Dawn-of-Light-DOLSharp	RespawnInterval: low-level non-realm mob returns minutes	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameNPC.cs	4235	return minutes * 60000;
+Dawn-of-Light-DOLSharp	RespawnInterval: realm NPC 5 to 10 minutes	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameNPC.cs	4240	return Util.Random(5 * 60000, 10 * 60000);
+Dawn-of-Light-DOLSharp	RespawnInterval: level above 65 adds (level - 65) plus minimum	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameNPC.cs	4244	int add = (Level - 65) + ServerProperties.Properties.NPC_MIN_RESPAWN_INTERVAL;
+Dawn-of-Light-DOLSharp	RespawnInterval: total minutes to milliseconds	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameNPC.cs	4245	return (minutes + add) * 60000;
+Dawn-of-Light-DOLSharp	StartRespawn: no-op when alive	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameNPC.cs	4286	if (IsAlive) return;
+Dawn-of-Light-DOLSharp	StartRespawn: interval drawn fresh	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameNPC.cs	4291	int respawnInt = RespawnInterval;
+Dawn-of-Light-DOLSharp	StartRespawn: registered in region respawn registry	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameNPC.cs	4306	CurrentRegion.MobsRespawning.TryAdd(this, respawnInt);
+Dawn-of-Light-DOLSharp	StartRespawn: timer started with the drawn interval	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameNPC.cs	4308	m_respawnTimer.Start(respawnInt);
+Dawn-of-Light-DOLSharp	respawn timer callback (calls Spawn at 4315)	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameNPC.cs	4313	protected virtual int RespawnTimerCallback(RegionTimer respawnTimer)
+Dawn-of-Light-DOLSharp	Spawn: unregister from region registry	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameNPC.cs	2910	CurrentRegion.MobsRespawning.TryRemove(this, out dummy);
+Dawn-of-Light-DOLSharp	Spawn: refuse if already alive or active	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameNPC.cs	2921	if (IsAlive || ObjectState == eObjectState.Active) return false;
+Dawn-of-Light-DOLSharp	Spawn: restore to spawn position	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameNPC.cs	2926	Position = SpawnPosition;
+Dawn-of-Light-DOLSharp	Die: respawn started for every non-pet NPC death	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameobjects/GameNPC.cs	4006	StartRespawn();
+Dawn-of-Light-DOLSharp	region registry of respawning mobs	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/world/Region.cs	155	protected readonly ConcurrentDictionary<GameNPC, int> m_mobsRespawning
+Dawn-of-Light-DOLSharp	util random inclusive range documented	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/Util.cs	173	Generates a random number between min..max inclusive min AND max
+Dawn-of-Light-DOLSharp	property default minimum respawn 5 minutes	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/serverproperty/ServerProperties.cs	1319	"npc_min_respawn_interval", "Minimum respawn time, in minutes, for npc's
+Dawn-of-Light-DOLSharp	resync: frozen timer detected by unchanged time	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/RegionTimersResync.cs	89	if (old_time.ContainsKey(mgr) && old_time[mgr] > 0 && old_time[mgr] == mgr.CurrentTime)
+Dawn-of-Light-DOLSharp	resync: timer manager stopped	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/RegionTimersResync.cs	100	if (!mgr.Stop())
+Dawn-of-Light-DOLSharp	resync: timer manager restarted	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/RegionTimersResync.cs	128	if (!mgr.Start())
+Dawn-of-Light-DOLSharp	resync: respawn registry snapshot	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/RegionTimersResync.cs	224	List<GameNPC> respawnings = new List<GameNPC>(reg.MobsRespawning.Keys);
+Dawn-of-Light-DOLSharp	resync: StartRespawn re-called for each registered mob	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/RegionTimersResync.cs	229	mob.StartRespawn();

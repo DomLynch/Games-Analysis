@@ -1,0 +1,38 @@
+[
+ [
+  "id-Software-DOOM",
+  "aim probe start shootz = z + half height + 8",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_map.c",
+  "shootz = t1->z + (t1->height>>1) + 8*FRACUNIT;"
+ ],
+ [
+  "id-Software-DOOM",
+  "P_PathTraverse in aim",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_map.c",
+  "PTR_AimTraverse );"
+ ],
+ [
+  "id-Software-DOOM",
+  "PTR_ShootTraverse is the line-attack callback",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_map.c",
+  "PTR_ShootTraverse );"
+ ],
+ [
+  "id-Software-DOOM",
+  "shotgun pellets 5 x (1..3) (20 pellets)",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_pspr.c",
+  "damage = 5*(P_Random ()%3+1);"
+ ],
+ [
+  "id-Software-DOOM",
+  "monster and pistol spread shift 18 bits",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_pspr.c",
+  "angle += (P_Random()-P_Random())<<18;"
+ ],
+ [
+  "id-Software-DOOM",
+  "double-barrel loop of 20 pellets",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_pspr.c",
+  "for (i=0 ; i<20 ; i++)"
+ ]
+]

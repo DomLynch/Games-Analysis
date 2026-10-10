@@ -1,0 +1,92 @@
+{
+  "donor": "AAEmu-AAEmu",
+  "topic": "world-events",
+  "depth": "thin",
+  "half_read": "server",
+  "paths": [
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/InstantGame/InstantGame.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/InstantGame/InstantGameEvents.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/InstantGame/GameRuleSet.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/InstantGame/Battlefield.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Core/Managers/InstantGameManager.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/GameData/BattlefieldGameData.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/GameData/SchedulesGameData.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/Schedules/GameSchedules.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Core/Managers/GameScheduleManager.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/AI/v2/AiCharacters/BigMonsterRoamingAiCharacter.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/AI/v2/Behaviors/Common/RoamingBehavior.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/AI/Utils/AIUtils.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/AI/Enums/AiParamType.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/World/WorldEvents.cs",
+    "/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Data/battlefields.json"
+  ],
+  "counts": {
+    "event_like_files_in_game_and_commons": 16,
+    "battlefield_records_in_json": 2,
+    "schedule_tables_loaded_from_sqlite": 4,
+    "rule_set_table_loaded_from_sqlite": 1,
+    "instance_event_hooks": 6,
+    "roam_matches_creatures_xml": 6,
+    "roam_matches_main_world_npc_spawns": 6,
+    "main_world_npc_spawns_lines": 213909,
+    "game_schedule_manager_lines": 599,
+    "instant_game_lines": 263
+  },
+  "rule": "Battlefield match: queue fills to corps size times two, then a 20 s start countdown, then play for time_playing minutes (or until a side reaches victory_score), then a result that stays for time_ending minutes before the instance is removed. Roaming big monster: roam point within a 6-unit square around its idle point, pause 3 to 5 s, repeat; switch to attack on aggro. Cron-gated spawners and doodads: a day-of-week and clock window in minutes plus start and end dates per schedule row.",
+  "data_fields": [
+    {"name": "corps_size", "unit": "players per side", "donor_value_or_null": null},
+    {"name": "time_opening", "unit": "minutes", "donor_value_or_null": null},
+    {"name": "time_playing", "unit": "minutes", "donor_value_or_null": null},
+    {"name": "time_ending", "unit": "minutes", "donor_value_or_null": null},
+    {"name": "victory_score", "unit": "points", "donor_value_or_null": null},
+    {"name": "start_countdown_ms", "unit": "milliseconds (hard-coded 20000 in code)", "donor_value_or_null": null},
+    {"name": "corps_spawn_point", "unit": "zone id plus X, Y, Z (game units)", "donor_value_or_null": null},
+    {"name": "roam_radius", "unit": "game units (square half-width 6, unit not checked)", "donor_value_or_null": null},
+    {"name": "roam_pause_min_s", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "roam_pause_max_s", "unit": "seconds (exclusive upper bound in code)", "donor_value_or_null": null},
+    {"name": "schedule_day_of_week", "unit": "enum (or any)", "donor_value_or_null": null},
+    {"name": "schedule_start_min", "unit": "minutes of day", "donor_value_or_null": null},
+    {"name": "schedule_end_min", "unit": "minutes of day", "donor_value_or_null": null},
+    {"name": "schedule_start_date", "unit": "year, month, day, hour, minute", "donor_value_or_null": null},
+    {"name": "schedule_end_date", "unit": "year, month, day, hour, minute", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Four match phases: queue, countdown, play, result",
+    "Early end on victory score as well as on the timer",
+    "Score line with the scorer's name sent live from the server",
+    "Roam, pause, roam loop with a switch to attack on aggro",
+    "Day-and-clock schedule rows that gate a camp or prop without code changes"
+  ],
+  "change": [
+    "Add the 60-second queue expiry that the TODO names (InstantGame.cs line 151)",
+    "Add the group-member handling that the roam TODO names (RoamingBehavior.cs line 65), so a roaming boss does not drift from its group",
+    "Move the 20000 ms countdown into data",
+    "Fit the queue to three-per-side corps, not a large war",
+    "Give the roam loop a home leash so a boss returns to its post"
+  ],
+  "look_test": "At 375 wide: a queue card reading 'three of six for the match' with a fill bar; a 20-second countdown on the match card; a live score line with a name; a result card for 10 seconds. Separately, one roaming boss that wanders six units, pauses three to five seconds, and turns to attack when a player enters its aggro ring. Dom judges whether the queue fill reads at a glance, whether the score line feels like a live contest, and whether the wander-and-pause reads as a boss waiting.",
+  "licence_note": "Code licence conflicts in the repo (README says LGPL v3; LICENSE.GPL is GPL v3; LICENSE.MIT is MIT); no code copied, category-level only. Data files carry no licence line; coordinates and schedule rows are not reproduced. Unofficial server; not affiliated with the rights holder per README.",
+  "tags": [
+    "world-event",
+    "timed-event",
+    "duration-rule",
+    "scheduler",
+    "roaming-boss",
+    "walk-density",
+    "faction-map",
+    "new:instant-match",
+    "new:cron-gated-spawn",
+    "new:event-bus",
+    "new:queue-expiry-todo",
+    "new:licence-conflict"
+  ],
+  "not_read": [
+    "rest of GameScheduleManager.cs (599 lines; key blocks only)",
+    "rest of InstantGameManager.cs (queue logic read at one call site only; queueCount meaning not settled)",
+    "Npc.cs and DoodadSpawner.cs beyond grep hits",
+    "Creatures.xml and npc_spawns.json beyond roam counts",
+    "consumers of WorldEvents hooks",
+    "SQLite game-data rows: game_schedules, game_schedule_spawners, game_schedule_doodads, game_schedule_quests, game_rule_sets (not in repo)",
+    "client half (not read)"
+  ]
+}

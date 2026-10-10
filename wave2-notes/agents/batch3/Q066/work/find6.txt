@@ -1,0 +1,18 @@
+_oldTime = nowTime;
+if (isImmune(_targetNpc))
+dmg = 0;
+dmg -= 5;
+if (_targetPc.hasSkillEffect(COOKING_1_0_S)
+if (_weaponType == WeaponType.Claw
+weaponDamage = weaponMaxDamage;
+else if (_weaponType == WeaponType.Fist || isRanged) {
+if (_weaponType == WeaponType.Edoryu
+if ((_weaponType == WeaponType.Claw
+if (_pc.hasSkillEffect(DOUBLE_BRAKE)
+if (_weaponId == GREAT_SWORD_OF_DESTRUCTION
+weaponDamage = weaponMaxDamage;
+if (!isRanged && _pc.hasSkillEffect(SOUL_OF_FLAME)) {
+if (isBow) {
+} else if (isGauntlet) {
+if (isKiringku) {
+} else if (isMissingSkillEffect

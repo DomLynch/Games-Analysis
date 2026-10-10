@@ -1,0 +1,48 @@
+{
+  "game": "EQEmu",
+  "category": "inventory-bank-equipment",
+  "cell": 3,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/EQEmu/zone/inventory.cpp",
+  "licence": "GPL-3.0-or-later (file header of common/inventory_profile.cpp: version 3 or any later version; LICENSE.md is GNU GPL v3)",
+  "licence_class": "copyleft",
+  "target_module": "origins/server/inventory.ts (new; path not confirmed against the Frankendom repo)",
+  "parity_row": 18,
+  "pattern_tags": ["new:stack-split-move", "new:refuse-before-write", "new:gate-before-visible-write", "new:capacity-precheck"],
+  "data_fields": [
+    {
+      "name": "stack_merge_amount",
+      "donor_constant": "min(room left in destination, requested count); the source keeps the rest",
+      "unit": "count",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/EQEmu/zone/inventory.cpp:2038"
+    },
+    {
+      "name": "item_stack_size",
+      "donor_constant": "per item (StackSize in item data; value not read in this donor pass)",
+      "unit": "count",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/EQEmu/zone/inventory.cpp:1765"
+    },
+    {
+      "name": "banker_range",
+      "donor_constant": "40000 (USE_NPC_RANGE2, commented 'arbitrary right now'; the unit follows the donor's distance function, not read)",
+      "unit": "units",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/EQEmu/common/features.h:215"
+    },
+    {
+      "name": "bag_slot_count",
+      "donor_constant": "SLOT_COUNT per bag (value in RoF2 headers, not read)",
+      "unit": "count",
+      "where": "engine constant",
+      "donor_ref": "/mnt/frankendom-donors/EQEmu/common/inventory_profile.cpp:1097"
+    }
+  ],
+  "best_idea": "Move part of a stack by min(requested, room): the destination takes what fits, the source keeps the rest, and every refusal (too few charges, other item id, full destination) is decided before any write.",
+  "decision": "adapt",
+  "decision_why": "Take the requested-count merge and the refuse-before-write order for Frankendom stack moves; reject the per-item loot pickup (it can report false after a partial move) and the per-row DB saves. The one-ledger ruling needs refusals before writes; the all-or-nothing award comes from the planned add in the Dawn-of-Light note, with HasSpaceForItem as a capacity precheck.",
+  "decision_status": "proposed",
+  "acceptance": "A server test moves 5 charges from a 20-stack onto a 17-stack (max 20) and asserts 3 moved, the destination holds 20, and the source holds 17; a move of a different item id is refused and both stacks are unchanged."
+}

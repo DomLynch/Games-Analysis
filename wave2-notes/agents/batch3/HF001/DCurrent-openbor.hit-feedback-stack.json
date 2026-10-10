@@ -1,0 +1,70 @@
+{
+  "donor": "DCurrent-openbor",
+  "topic": "hit-feedback-stack",
+  "depth": "thin",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c",
+    "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.h",
+    "/mnt/frankendom-donors/DCurrent-openbor/engine/source/openborscript/",
+    "/mnt/frankendom-donors/DCurrent-openbor/LICENSE",
+    "/mnt/frankendom-donors/DCurrent-openbor/engine/LICENSE",
+    "/mnt/frankendom-donors/DCurrent-openbor/media/",
+    "/private/tmp/p2/wave2-haiku/batch3/AU014/DCurrent-openbor.assets.md"
+  ],
+  "counts": {
+    "feel_fields_in_attack_struct": 9,
+    "collision_arg_layouts": 2,
+    "freeze_command_forms_with_different_units": 2,
+    "module_data_pack_entries_in_repo": 0,
+    "media_entries_in_repo": 1
+  },
+  "rule": "Hit order in the engine: block or counter or takedamage first; on a normal hit, the contact flash spawns (skipped by no_flash), the owner combo timer is set, the attacker pauses only if not already paused or airborne (adds pause_add to its timers), the target always pauses by pause_add, and the hit sound plays last with pitch set by damage: speed = 100 - (attack_force - 5) clamped to 60..100 (or 100 with noslowfx). Freeze sets a timer only when the target has none. Bounce sets a fixed 4 px screen quake unless disabled. Frame quakes set level->quake per repeat.",
+  "data_fields": [
+    {"name": "hitstop_attacker_ticks", "unit": "engine _time ticks (unit not verified)", "donor_value_or_null": null},
+    {"name": "hitstop_target_ticks", "unit": "engine _time ticks (unit not verified)", "donor_value_or_null": null},
+    {"name": "hitsound_speed_base", "unit": "percent", "donor_value_or_null": 100},
+    {"name": "hitsound_speed_offset", "unit": "damage points before slope", "donor_value_or_null": 5},
+    {"name": "hitsound_speed_per_damage", "unit": "percent per damage point", "donor_value_or_null": 1},
+    {"name": "hitsound_speed_min", "unit": "percent", "donor_value_or_null": 60},
+    {"name": "freeze_ticks", "unit": "engine _time ticks (two command forms use different units)", "donor_value_or_null": null},
+    {"name": "bounce_quake_px", "unit": "px", "donor_value_or_null": 4},
+    {"name": "quakeframe_v", "unit": "px", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Attacker pause gated on not already paused, or airborne",
+    "Damage-to-pitch curve on the hit sound, clamped",
+    "Contact flash skipped by a per-attack no_flash flag",
+    "Freeze timer set only when the target has none",
+    "Frame quake as per-animation data (framestart, repeat, v)"
+  ],
+  "change": [
+    "Target pause stacks in this donor (always added); cap it and take max, not sum",
+    "One unit for all freeze times (the donor mixes raw ints and float times times game_speed)",
+    "One named tuple for the attack (the donor has two positional layouts for the same fields)",
+    "Freeze length comes from the server event, not the client",
+    "Our own flash sprite, palette and sound set"
+  ],
+  "look_test": "Flag on the existing dummy duel, published to /preview/ with no release rows. Modes: A baseline (no flash, no pause, no pitch change); B contact flash plus gated attacker pause (4 ticks) and target pause (6 ticks) plus damage-to-pitch curve plus 4 px bounce quake on heavy only; C B with three attackers hitting one target in turn, to show the stacking cap. Dom judges whether the pitch reads as heavier with no number on screen and whether the three-on-one freeze reads as impact or lag.",
+  "licence_note": "Code 3-clause BSD: LICENSE line 1 names Roel van Mastbergen and Senile Team (2003); line 2 names the OpenBOR Team (2004). engine/LICENSE carries the same text. Art: no licence stated in the engine tree; audit AU014 class C; README line 21 (per audit) names a source series for the original game's art. We use no art and copy no code; ideas only.",
+  "tags": [
+    "hit-stop",
+    "screen-shake",
+    "flash",
+    "hit-sound",
+    "particle-burst",
+    "ordered-feedback",
+    "knockdown",
+    "new:damage-pitch-curve",
+    "new:gated-attacker-pause",
+    "new:freeze-lock",
+    "new:unit-trap"
+  ],
+  "not_read": [
+    "module data pack (media/ holds only _DUMMY; no per-move hit values in repo)",
+    "spawn_attack_flash body beyond the no_flash check (openbor.c 30800-30830)",
+    "knock-back velocity source: animation velocities, attack_drop, dropv (openbor.c 20103) for attacks",
+    "_time tick length (engine _time is uint64 at openbor.c 593; unit not found)",
+    "engine source beyond the functions cited; tools/ binaries; tests/"
+  ]
+}

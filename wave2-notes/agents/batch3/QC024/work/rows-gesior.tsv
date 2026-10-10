@@ -1,0 +1,26 @@
+gesior-otwebclient	default view margin top is 6 tiles	/mnt/frankendom-donors/gesior-otwebclient/modules/structures.ts	15	top: number = 6;
+gesior-otwebclient	default view margin right is 9 tiles	/mnt/frankendom-donors/gesior-otwebclient/modules/structures.ts	16	right: number = 9;
+gesior-otwebclient	default view margin bottom is 7 tiles	/mnt/frankendom-donors/gesior-otwebclient/modules/structures.ts	17	bottom: number = 7;
+gesior-otwebclient	default view margin left is 8 tiles	/mnt/frankendom-donors/gesior-otwebclient/modules/structures.ts	18	left: number = 8;
+gesior-otwebclient	view width is left plus right plus one	/mnt/frankendom-donors/gesior-otwebclient/modules/structures.ts	21	return this.left + this.right + 1;
+gesior-otwebclient	range change packet sets left margin from the x byte	/mnt/frankendom-donors/gesior-otwebclient/modules/network/protocolgame.ts	2079	range.left = xrange/2 - ((xrange+1) % 2);
+gesior-otwebclient	range change packet sets right margin from the x byte	/mnt/frankendom-donors/gesior-otwebclient/modules/network/protocolgame.ts	2080	range.right = xrange/2;
+gesior-otwebclient	range change packet calls the map setter	/mnt/frankendom-donors/gesior-otwebclient/modules/network/protocolgame.ts	2084	g_map.setAwareRange(range);
+gesior-otwebclient	map description sets the central position to the player tile	/mnt/frankendom-donors/gesior-otwebclient/modules/network/protocolgame.ts	828	g_map.setCentralPosition(pos);
+gesior-otwebclient	full map description starts at centre minus left and top margins	/mnt/frankendom-donors/gesior-otwebclient/modules/network/protocolgame.ts	831	this.setMapDescription(msg, pos.x - range.left, pos.y - range.top
+gesior-otwebclient	north move describes one row of the window	/mnt/frankendom-donors/gesior-otwebclient/modules/network/protocolgame.ts	850	range.horizontal(), 1);
+gesior-otwebclient	east move describes the column entering on the right	/mnt/frankendom-donors/gesior-otwebclient/modules/network/protocolgame.ts	864	this.setMapDescription(msg, pos.x + range.right
+gesior-otwebclient	protocol code imports the map singleton from map.ts	/mnt/frankendom-donors/gesior-otwebclient/modules/network/protocolgame.ts	17	import {g_map, Map} from "../map";
+gesior-otwebclient	map description takes origin and size per floor	/mnt/frankendom-donors/gesior-otwebclient/modules/network/protocolgame.ts	2128	setMapDescription(msg: InputMessage, x: number, y: number, z: number
+gesior-otwebclient	floor band depends on whether above sea floor	/mnt/frankendom-donors/gesior-otwebclient/modules/network/protocolgame.ts	2133	if (z > Otc.SEA_FLOOR) {
+gesior-otwebclient	underground floors are clamped to the floor range and max floor	/mnt/frankendom-donors/gesior-otwebclient/modules/network/protocolgame.ts	2135	endz = Math.min(z + Otc.AWARE_UNDEGROUND_FLOOR_RANGE, Otc.MAX_Z);
+gesior-otwebclient	each floor band is described with the same window	/mnt/frankendom-donors/gesior-otwebclient/modules/network/protocolgame.ts	2146	skip = this.setFloorDescription(msg, x, y, nz, width, height
+gesior-otwebclient	underground floor range constant is 2	/mnt/frankendom-donors/gesior-otwebclient/modules/constants/const.ts	8	AWARE_UNDEGROUND_FLOOR_RANGE = 2,
+gesior-otwebclient	map range setter is declared with no body	/mnt/frankendom-donors/gesior-otwebclient/modules/map.ts	16	setAwareRange(arg0: any): any {
+gesior-otwebclient	map range setter throws, so the change packet cannot apply	/mnt/frankendom-donors/gesior-otwebclient/modules/map.ts	17	throw new Error("Method not implemented.");
+gesior-otwebclient	the map singleton is created once in map.ts	/mnt/frankendom-donors/gesior-otwebclient/modules/map.ts	61	let g_map = new Map();
+gesior-otwebclient	map tile lookup returns a new empty tile	/mnt/frankendom-donors/gesior-otwebclient/modules/map.ts	13	return new Tile();
+gesior-otwebclient	game getter for the map returns a fresh map each time	/mnt/frankendom-donors/gesior-otwebclient/modules/game.ts	34	return new Map();
+gesior-otwebclient	package licence is MIT	/mnt/frankendom-donors/gesior-otwebclient/package.json	10	"license": "MIT",
+gesior-otwebclient	README says the project is alpha and mostly not working	/mnt/frankendom-donors/gesior-otwebclient/README.md	5	**ALPHA VERSION** - project is not working in most cases
+gesior-otwebclient	underground floor is one above the sea floor constant	/mnt/frankendom-donors/gesior-otwebclient/modules/constants/const.ts	6	UNDERGROUND_FLOOR = Otc.SEA_FLOOR + 1,

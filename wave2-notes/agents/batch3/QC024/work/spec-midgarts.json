@@ -1,0 +1,140 @@
+[
+ [
+  "internal/camera/camera.go",
+  18,
+  "Yaw   = float32(270.0)",
+  "stored default yaw is 270 (theirs constant)"
+ ],
+ [
+  "internal/camera/camera.go",
+  19,
+  "Pitch = float32(-60.0)",
+  "stored default pitch is -60 (theirs constant)"
+ ],
+ [
+  "internal/camera/camera.go",
+  43,
+  "distance:       30.0,",
+  "distance field is set to 30.0 at construction"
+ ],
+ [
+  "internal/camera/camera.go",
+  44,
+  "altitude:       50.0,",
+  "altitude field is set to 50.0 at construction"
+ ],
+ [
+  "internal/camera/camera.go",
+  48,
+  "cam.projectionMatrix = mgl32.Perspective(cam.fov, cam.aspect, cam.near, cam.far)",
+  "projection is a fixed perspective built once at construction"
+ ],
+ [
+  "internal/camera/camera.go",
+  58,
+  "c.Position().X()+graphic.Forward.X(),",
+  "view looks along the graphic.Forward constant, not the front vector"
+ ],
+ [
+  "internal/camera/camera.go",
+  76,
+  "func (c *Camera) ResetAngleAndY(windowWidth, windowHeight int32) {",
+  "reset sets the default angles and height"
+ ],
+ [
+  "internal/camera/camera.go",
+  80,
+  "c.Rotate(c.pitch, c.yaw)",
+  "reset calls Rotate with the pitch and yaw"
+ ],
+ [
+  "internal/camera/camera.go",
+  85,
+  "c.SetPosition(mgl32.Vec3{c.Position().X(), y, c.Position().Z() - 32})",
+  "SetY moves the camera back 32 units on z"
+ ],
+ [
+  "internal/camera/camera.go",
+  89,
+  "c.front = mgl32.Vec3{",
+  "Rotate computes a front vector from yaw and pitch"
+ ],
+ [
+  "internal/camera/camera.go",
+  97,
+  "c.UpdateVisibleZRange(0, 0)",
+  "Rotate calls the visible-range stub"
+ ],
+ [
+  "internal/camera/camera.go",
+  101,
+  "view := c.createViewMatrix()",
+  "visible-range stub builds a view and discards it"
+ ],
+ [
+  "internal/graphic/transform.go",
+  10,
+  "Forward   = mgl32.Vec3{0, 0, 1}",
+  "the forward constant is +Z"
+ ],
+ [
+  "cmd/sdlclient/main.go",
+  119,
+  "cam := camera.NewPerspectiveCamera(0.638, AspectRatio, 0.1, 1000.0)",
+  "client camera: fov 0.638, near 0.1, far 1000"
+ ],
+ [
+  "cmd/sdlclient/main.go",
+  273,
+  "Position().Z() + 0.2})",
+  "Z key moves the camera 0.2 per loop pass"
+ ],
+ [
+  "cmd/sdlclient/main.go",
+  180,
+  "var refreshPeriod = time.Second / FPS",
+  "loop sleeps for a fixed refresh period"
+ ],
+ [
+  "cmd/sdlclient/main.go",
+  285,
+  "frameDelta := frameStart.Sub(frameStart)",
+  "frame delta is frameStart minus itself, so always zero"
+ ],
+ [
+  "cmd/sdlclient/main.go",
+  287,
+  "w.Update(float32(frameDelta.Seconds()))",
+  "world update receives the zero delta"
+ ],
+ [
+  "examples/3d/main.go",
+  122,
+  "Position().Z() + 1.0})",
+  "example moves the camera 1.0 per pass on the same key"
+ ],
+ [
+  "internal/system/character_render.go",
+  28,
+  "FixedCameraDirection = 6",
+  "sprite facing uses a fixed camera direction constant"
+ ],
+ [
+  "internal/system/character_render.go",
+  91,
+  "direction := int(char.Direction) + directiontype",
+  "sprite direction is offset by the fixed camera entry"
+ ],
+ [
+  "LICENSE",
+  1,
+  "GNU GENERAL PUBLIC LICENSE",
+  "licence file is GPL version 3"
+ ],
+ [
+  "README.md",
+  143,
+  "Move Camera Backward",
+  "README documents Z/X/C/V camera moves only"
+ ]
+]

@@ -1,0 +1,10 @@
+not in allowed time window
+is within active schedule
+private static bool IsNpcInTimeWindow
+case GameScheduleManager.PeriodStatus.InProgress:
+return true; //
+if ((DateTime.UtcNow - cache.LastUpdate).TotalSeconds < 10)
+private bool IsDespawningScheduleEnabled
+if (IsSpawnDelayNotElapsed())
+private bool IsWithinSpawnTime
+var curTime = TimeManager.Instance.GetTime;

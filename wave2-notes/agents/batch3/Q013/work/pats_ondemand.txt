@@ -1,0 +1,24 @@
+class OnDemandTask
+def stagefunc_loop
+total_dt = max(dts) - min(dts)
+task.iterations += (now - original_start_time) // total_dt
+current_loop_time = (now - original_start_time) % total_dt
+task.start_time = now - current_loop_time
+def check(self, autostart=True
+def _find_stage(delta_dt
+if delta_dt < dt:
+return _find_stage(delta_dt, _rerun=True)
+stage_func(self, **kwargs)
+dt = now - self.start_time
+self.stages = {dt: tup
+sorted(_stages.items()
+ServerConfig.objects.conf(ONDEMAND_HANDLER_SAVE_NAME, self.tasks)
+Note that the "respawn" state
+def runtime():
+return _RUNTIME()
+ON_DEMAND_HANDLER = OnDemandHandler()
+if autostart and stage != self.last_stage and not _rerun:
+self.last_stage = stage
+        return self.check(autostart=True, **kwargs)[1]
+def get_stage(self, **kwargs):
+def stagefunc_bounce

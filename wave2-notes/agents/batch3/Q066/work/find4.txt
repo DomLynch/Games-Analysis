@@ -1,0 +1,3 @@
+if (hasSkillEffect(COUNTER_BARRIER) && !hasSkillEffect(EARTH_BIND)) {
+attack.actionCounterBarrier();
+attack.commitCounterBarrier();

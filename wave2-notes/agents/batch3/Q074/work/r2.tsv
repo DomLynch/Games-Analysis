@@ -1,0 +1,42 @@
+note	claim	donor_file	line	quote
+PixelGuys-Cubyz	licence: GNU GPL version 3 (LICENSE line 2)	/mnt/frankendom-donors/PixelGuys-Cubyz/LICENSE	2	Version 3, 29 June 2007
+PixelGuys-Cubyz	one health entry point: addHealth takes the cause and the side	/mnt/frankendom-donors/PixelGuys-Cubyz/src/sync.zig	249	pub fn addHealth(health: f32, cause: main.game.DamageType, side: Side
+PixelGuys-Cubyz	client side sends the change to the server as a command	/mnt/frankendom-donors/PixelGuys-Cubyz/src/sync.zig	252	client.executeCommand(.{.addHealth = .{.target = entity
+PixelGuys-Cubyz	server side runs the change directly	/mnt/frankendom-donors/PixelGuys-Cubyz/src/sync.zig	254	server.executeCommand(.{.addHealth = .{.target = entity
+PixelGuys-Cubyz	server applies: remember previous health	/mnt/frankendom-donors/PixelGuys-Cubyz/src/sync.zig	849	info.previous = info.target.?.player().health;
+PixelGuys-Cubyz	server applies: clamp to [0, max]	/mnt/frankendom-donors/PixelGuys-Cubyz/src/sync.zig	851	std.math.clamp(info.target.?.player().health + info.health, 0,
+PixelGuys-Cubyz	server applies: at zero or below, a kill	/mnt/frankendom-donors/PixelGuys-Cubyz/src/sync.zig	853	if (info.target.?.player().health <= 0) {
+PixelGuys-Cubyz	server kill: refill to max health	/mnt/frankendom-donors/PixelGuys-Cubyz/src/sync.zig	854	info.target.?.player().health = info.target.?.player().maxHealth;
+PixelGuys-Cubyz	server kill: cause message to the chat	/mnt/frankendom-donors/PixelGuys-Cubyz/src/sync.zig	855	info.cause.sendMessage(info.target.?.name);
+PixelGuys-Cubyz	server kill: one kill sync operation with spawn point	/mnt/frankendom-donors/PixelGuys-Cubyz/src/sync.zig	857	self.syncOperations.append(allocator, .{.kill = .{
+PixelGuys-Cubyz	server not dead: one health sync operation carrying the delta	/mnt/frankendom-donors/PixelGuys-Cubyz/src/sync.zig	862	self.syncOperations.append(allocator, .{.health = .{
+PixelGuys-Cubyz	client undo of a refused change restores previous health	/mnt/frankendom-donors/PixelGuys-Cubyz/src/sync.zig	685	main.game.Player.super.health = info.previous;
+PixelGuys-Cubyz	client applies a health sync by clamping	/mnt/frankendom-donors/PixelGuys-Cubyz/src/sync.zig	457	main.game.Player.super.health = std.math.clamp(main.game.Player.super.health + health.health, 0, main.game.Player.super.maxHealth);
+PixelGuys-Cubyz	client applies a kill sync by respawning	/mnt/frankendom-donors/PixelGuys-Cubyz/src/sync.zig	460	main.game.Player.kill(kill.spawnPoint);
+PixelGuys-Cubyz	creative targets are skipped on the server	/mnt/frankendom-donors/PixelGuys-Cubyz/src/sync.zig	1719	if (target.?.gamemode.raw == .creative) return;
+PixelGuys-Cubyz	server accepts only a sender's change to itself	/mnt/frankendom-donors/PixelGuys-Cubyz/src/sync.zig	1744	if (user.?.id != result.target) return error.Invalid;
+PixelGuys-Cubyz	command entry point on the server	/mnt/frankendom-donors/PixelGuys-Cubyz/src/sync.zig	183	pub fn executeCommand(payload: Command.Payload, source: ?*main.server.User) void {
+PixelGuys-Cubyz	execution context forwards to the base operation	/mnt/frankendom-donors/PixelGuys-Cubyz/src/sync.zig	910	return self.cmd.executeBaseOperation(self.allocator, _op, self.side);
+PixelGuys-Cubyz	health sync: ignoreSource lists health as true, so the sender is skipped	/mnt/frankendom-donors/PixelGuys-Cubyz/src/sync.zig	491	.create, .delete, .useDurability, .health, .energy, .rotation => true,
+PixelGuys-Cubyz	kill sync: ignoreSource lists kill as false, so the sender gets it	/mnt/frankendom-donors/PixelGuys-Cubyz/src/sync.zig	492	.kill => false,
+PixelGuys-Cubyz	network entry: a received user command is executed on the server	/mnt/frankendom-donors/PixelGuys-Cubyz/src/sync.zig	235	executeCommand(payload, source);
+PixelGuys-Cubyz	sender is skipped for ignoreSource operations	/mnt/frankendom-donors/PixelGuys-Cubyz/src/sync.zig	204	if (user == source and op.ignoreSource()) continue;
+PixelGuys-Cubyz	DamageType: heal is the add-health cause	/mnt/frankendom-donors/PixelGuys-Cubyz/src/game.zig	52	heal = 0, // For when you are adding health
+PixelGuys-Cubyz	DamageType enum declaration	/mnt/frankendom-donors/PixelGuys-Cubyz/src/game.zig	51	pub const DamageType = enum(u8) {
+PixelGuys-Cubyz	client kill: respawn position and full health	/mnt/frankendom-donors/PixelGuys-Cubyz/src/game.zig	207	Player.super.health = Player.super.maxHealth;
+PixelGuys-Cubyz	fall damage: change in vertical speed at a landing	/mnt/frankendom-donors/PixelGuys-Cubyz/src/game.zig	818	const velocityChange = @abs(@abs(prevVel[2]) - @abs(Player.super.vel[2]));
+PixelGuys-Cubyz	fall damage: height from speed minus 7 safe units, rounded, halved	/mnt/frankendom-donors/PixelGuys-Cubyz/src/game.zig	819	const damage: f32 = @floatCast(@round(@max((velocityChange*velocityChange)/(2*physics.baseGravity) - 7, 0))/2);
+PixelGuys-Cubyz	fall damage: ignore tiny values	/mnt/frankendom-donors/PixelGuys-Cubyz/src/game.zig	820	if (damage > 0.01) {
+PixelGuys-Cubyz	fall damage is sent as a client change	/mnt/frankendom-donors/PixelGuys-Cubyz/src/game.zig	821	main.sync.addHealth(-damage, .fall, .client, Player.id);
+PixelGuys-Cubyz	fall damage runs in the client update	/mnt/frankendom-donors/PixelGuys-Cubyz/src/game.zig	621	pub fn update(deltaTime: f64) void {
+PixelGuys-Cubyz	gravity constant used by the fall formula	/mnt/frankendom-donors/PixelGuys-Cubyz/src/physics.zig	14	pub const baseGravity = 30.0;
+PixelGuys-Cubyz	touch callback is run per block from physics	/mnt/frankendom-donors/PixelGuys-Cubyz/src/physics.zig	345	_ = block.?.onTouch().run(.{.entity = entity, .source = block.?
+PixelGuys-Cubyz	block touch hurt: damage per frame is dps times delta time	/mnt/frankendom-donors/PixelGuys-Cubyz/src/callbacks/block/touch/hurt.zig	28	const damage = self.dps*@as(f32, @floatCast(params.deltaTime));
+PixelGuys-Cubyz	block touch hurt: sent as a client change	/mnt/frankendom-donors/PixelGuys-Cubyz/src/callbacks/block/touch/hurt.zig	29	main.sync.addHealth(-damage, self.damageType, .client, main.game.Player.id);
+PixelGuys-Cubyz	block touch hurt: server side not implemented (TODO)	/mnt/frankendom-donors/PixelGuys-Cubyz/src/callbacks/block/touch/hurt.zig	27	TODO: Implement on the server side
+PixelGuys-Cubyz	block hurt: dps comes from the block data (zon)	/mnt/frankendom-donors/PixelGuys-Cubyz/src/callbacks/block/touch/hurt.zig	11	.dps = zon.get(f32, "dps") orelse {
+PixelGuys-Cubyz	kill command: a huge negative change through the same entry point	/mnt/frankendom-donors/PixelGuys-Cubyz/src/server/command/kill.zig	20	main.sync.addHealth(-std.math.floatMax(f32), .kill, .server, target.user.id);
+PixelGuys-Cubyz	base entity default health	/mnt/frankendom-donors/PixelGuys-Cubyz/src/server/Entity.zig	14	health: f32 = 8,
+PixelGuys-Cubyz	base entity default max health	/mnt/frankendom-donors/PixelGuys-Cubyz/src/server/Entity.zig	15	maxHealth: f32 = 8,
+PixelGuys-Cubyz	healthbar: half-heart units are 2 per health point	/mnt/frankendom-donors/PixelGuys-Cubyz/src/gui/windows/healthbar.zig	49	const halfHeartUnits: usize = @ceil(displayHealth*2);
+PixelGuys-Cubyz	healthbar: total hearts from max health	/mnt/frankendom-donors/PixelGuys-Cubyz/src/gui/windows/healthbar.zig	52	const totalHearts: usize = @ceil(main.game.Player.super.maxHealth);

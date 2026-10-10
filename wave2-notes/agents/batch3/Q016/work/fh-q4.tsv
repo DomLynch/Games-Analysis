@@ -1,0 +1,4 @@
+battle/battle_troop.cpp	if ( attacker.isAbilityPresent( fheroes2::MonsterAbilityType::ENEMY_HALVING ) ) {
+battle/battle_troop.cpp	attackerThreat *= 2;
+battle/battle_troop.cpp	if ( attacker.isIgnoringRetaliation() ) {
+battle/battle_troop.cpp	if ( retaliatoryDamage > 0 ) {

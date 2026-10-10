@@ -1,0 +1,85 @@
+{
+  "donor": "BifrostTitan-daoc-niflib",
+  "counts": {
+    "creatures": 0,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 0
+  },
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [],
+  "weapon_families": [],
+  "gear_tiers": [],
+  "zones": [],
+  "looks": [
+    {
+      "label": "Metal sheen from one material record",
+      "technique": "NiMaterialProperty reads ambient, diffuse, specular, emissive, glossiness and alpha as one record; a metal or gilded look is numbers on a flat material, not a special shader",
+      "ref": "src/ni_properties.cpp:20-25; include/niflib/ni_properties.h:30-35"
+    },
+    {
+      "label": "Glow only where painted",
+      "technique": "separate gloss map (per-pixel shine) and glow map (self-light only where painted) after base, dark and detail slots",
+      "ref": "src/ni_textures.cpp:131-135; include/niflib/ni_textures.h:72-77"
+    },
+    {
+      "label": "Particle burst as one data record",
+      "technique": "emitter record with speed, random speed, direction cone, emit window, emit rate, lifetime spread and start-position spread; defect: the particle-count guard at line 72 tests a uint16 against 65535 and can never fire (fix: per-emitter budget with explicit error)",
+      "ref": "include/niflib/ni_particles.h:88-107; src/ni_particle_controller.cpp:17-42; src/ni_particle_controller.cpp:72"
+    },
+    {
+      "label": "Pulsing glow on a material (name only)",
+      "technique": "controller classes for material colour and alpha tracks, which by name would drive a pulse; controller bodies not read",
+      "ref": "include/niflib/ni_animation.h:56; include/niflib/ni_animation.h:86"
+    },
+    {
+      "label": "Named type registry",
+      "technique": "each block type registered by name with a constructor lambda; unknown names fail explicitly (README)",
+      "ref": "src/nif_object_factory.cpp:301-307; README.md:16"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Gilded Relic material",
+      "idea": "one flat material record per item tier, with specular and glossiness set per tier, plus a glow map painted only on engraved lines",
+      "keep": "flat material with specular and gloss numbers; glow only on engraved lines",
+      "change": "our own tier palette and maps; no donor values or art"
+    },
+    {
+      "name": "Ember Burst emitter record",
+      "idea": "one small data record for hit sparks, embers and blood motes",
+      "keep": "speed, random speed, direction cone, emit window, lifetime spread, emit rate",
+      "change": "named fields only; hard per-emitter particle cap with an explicit error; stop when off screen"
+    },
+    {
+      "name": "Phase pulse aura",
+      "idea": "elite creatures get a colour or alpha pulse on their material",
+      "keep": "a colour or alpha track on the material",
+      "change": "pulse follows the boss phase from engine state, not a fixed clock"
+    },
+    {
+      "name": "Effect registry by name",
+      "idea": "effects and looks are loaded by name from data",
+      "keep": "name lookup; one constructor per type",
+      "change": "unknown names fail at load with a clear message; no silent fallback"
+    },
+    {
+      "name": "Engraved rune plate",
+      "idea": "a gear tier marker where only the engraved lines glow",
+      "keep": "glow map limited to engraved lines",
+      "change": "our own tier colour and rune shapes"
+    }
+  ],
+  "licence_note": "Source headers: GPL-2.0-or-later (src/ni_particle_controller.cpp:1). No LICENSE file in repo; upstream named as dol-leodagan's niflib.net (README.md:3). Clean-room, shape only; no code copied. Not a legal opinion.",
+  "not_read": [
+    "game art and effect files (not in box; parser reads them at runtime only)",
+    "bodies of NiAlphaController and NiMaterialColorController (src/ni_animation.cpp not read)",
+    "src/ni_skinning.cpp and src/ni_morph.cpp bodies (names only from include/)",
+    "src/ni_geometry.cpp beyond material name lists",
+    "tests/nif_records_tests.cpp",
+    "shader or rendering code (none in repo)",
+    "paired donor BifrostTitan-DAoC-Client-Lib (DC008, not read by DC009)"
+  ]
+}

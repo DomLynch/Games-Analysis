@@ -1,0 +1,38 @@
+[
+ [
+  "azerothcore-azerothcore-wotlk",
+  "wrapper reads chances from attacker and victim",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "RollMeleeOutcomeAgainst(Unit const* victim, WeaponAttackType attType)"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "outcome roll takes precomputed chances",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "RollMeleeOutcomeAgainst(Unit const* victim, WeaponAttackType attType, int32 crit_chance"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "single roll drawn from urand 0..10000",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "int32    roll = urand (0, 10000);"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "melee damage computed before outcome",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "= Unit::CalcArmorReducedDamage(this, damageInfo->target, damage, nullptr, 0"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "outcome rolled after armour",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "damageInfo->hitOutCome = RollMeleeOutcomeAgainst(damageInfo->target"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "armour reduction signature",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "uint32 Unit::CalcArmorReducedDamage(Unit const* attacker, Unit const* victim"
+ ]
+]

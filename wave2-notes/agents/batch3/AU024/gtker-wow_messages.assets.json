@@ -1,0 +1,36 @@
+{
+  "donor": "gtker-wow_messages",
+  "code_licence": "MIT OR Apache-2.0, dual at your option (README.md line 48 'Licensed under either of'; Cargo.toml line 14)",
+  "asset_licence": "No separate asset licence stated. Repo dual licence covers repo text; game-derived protocol content has no rights statement in the repo.",
+  "rights_holder_status": "unknown: repo names only Gtker as copyright holder (LICENSE-MIT line 1); protocol source of the facts not stated",
+  "best_class": "A",
+  "asset_groups": [
+    {"kind": "protocol message DSL (wowm)", "path": "/mnt/frankendom-donors/gtker-wow_messages/wow_message_parser/wowm", "count_hint": "1062 .wowm files", "licence": "repo dual MIT OR Apache-2.0; no per-folder licence", "class": "C", "note": "describes a commercial game's network messages; publisher rights not stated in repo"},
+    {"kind": "mdBook docs", "path": "/mnt/frankendom-donors/gtker-wow_messages/wowm_language/src/docs", "count_hint": "1439 entries", "licence": "repo dual MIT OR Apache-2.0", "class": "A", "note": "repo prose; enum tables inside are game-derived (addontype.md line 23)"},
+    {"kind": "ember_output message schemas", "path": "/mnt/frankendom-donors/gtker-wow_messages/ember_output", "count_hint": "653 .json", "licence": "repo dual MIT OR Apache-2.0", "class": "C", "note": "one JSON per message with typed field lists; game-derived"},
+    {"kind": "intermediate representation", "path": "/mnt/frankendom-donors/gtker-wow_messages/intermediate_representation.json", "count_hint": "1 file, 29.8 MB", "licence": "repo dual MIT OR Apache-2.0", "class": "C", "note": "machine-readable form of the wowm files; head -c 300 only"},
+    {"kind": "schemas", "path": "/mnt/frankendom-donors/gtker-wow_messages/intermediate_representation_schema.json (also _2020_12.json, .capnp, schema.proto)", "count_hint": "4 files", "licence": "repo dual MIT OR Apache-2.0", "class": "A", "note": "format descriptions, not game content"},
+    {"kind": "art, audio, models, fonts, maps", "path": "whole box", "count_hint": "0 found by extension scan", "licence": "n/a", "class": "D", "note": "scan found only rs, md, wowm, json, txt, toml, yml, sh, proto, pest, capnp"}
+  ],
+  "inspiration": [
+    "One source definition generates many outputs (Rust crates, JSON IR, JSON schema, docs). Keep one data definition for item, creature and skill tables and generate the JSON the game reads plus reference docs (README.md lines 3-7).",
+    "Version-scoped enums: the ProtocolVersion enum at the top of challenge_client.wowm documents which client builds use each member. Tag content rows with the content version they belong to.",
+    "Conditional fields as data: wow_message_parser/tests/simple_if_enum.txt shows a field that exists only when an earlier type field has a given value. Use for row types that carry different extra fields.",
+    "Generated inspector: README.md documents WOWM_WIRESHARK, which generates a dissector from the same definitions. Generate a debug viewer for our data files the same way.",
+    "Headless harness: examples/vanilla_client and examples/vanilla_server pair a client and a server. Use a scripted client against our own server for regression runs.",
+    "Auto-generated reference tables per enum value (wowm_language/src/docs/addontype.md line 23). Generate reference tables for item and skill enums."
+  ],
+  "briefs": [],
+  "not_read": [
+    "intermediate_representation.json beyond head -c 300",
+    "examples/*/src (names only)",
+    "wow_world_messages/src and wow_login_messages generated Rust (file list only)",
+    "wowm_language docs bodies (grep of addontype.md line 23 only)",
+    "ember_output JSON bodies beyond cmsg_who.json",
+    "wow_message_parser/tests bodies (names only)",
+    "wow_items and wow_spells data crates (not in the box; README says they are separate)"
+  ],
+  "half_read": "data pack (wowm, docs, JSON). Code halves in box: examples/vanilla_client, vanilla_server, tbc_server, wrath_server (names only, not read).",
+  "data_tables": ["wow_message_parser/wowm/world/item", "wow_message_parser/wowm/world/spell", "ember_output/*.json"],
+  "cross_link": "camera, zones, spawns, hud-ui, vfx, animation, sound: no assets. loot and spells: enum structure only."
+}

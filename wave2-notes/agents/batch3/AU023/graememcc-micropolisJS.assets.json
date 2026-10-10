@@ -1,0 +1,125 @@
+{
+  "donor": "graememcc-micropolisJS",
+  "code_licence": "GPLv3 with additional terms (README.md line 6; LICENSE; COPYING), plus the Micropolis Public Name License for the name (MicropolisPublicNameLicense.md)",
+  "asset_licence": "no licence stated for sprites/, images/ or the game art; Chunk font under SIL OFL 1.1 with reserved font name (css/FONT_LICENSE.markdown)",
+  "rights_holder_status": "mixed as stated in files: code copyright Graeme McCutcheon 2013 (LICENSE line 3), adapted from original Micropolis release (LICENSE line 5); MICROPOLIS name is a registered trademark of Micropolis GmbH (README.md line 9); art owner not stated",
+  "best_class": "B",
+  "asset_groups": [
+    {
+      "kind": "object sprites",
+      "path": "sprites/obj<group>-<frame>.png",
+      "count_hint": "61 files, 32x32 px (IHDR read)",
+      "licence": "no asset licence stated; LICENSE covers the program",
+      "class": "C",
+      "note": "Numbered by group and frame. Unclear whether art is under GPL or other terms, so class C."
+    },
+    {
+      "kind": "tile sheets",
+      "path": "images/tiles.png (512x512); images/tilessnow.png (512x512)",
+      "count_hint": "2",
+      "licence": "no asset licence stated",
+      "class": "C",
+      "note": "Terrain sheets, snow variant."
+    },
+    {
+      "kind": "sprite sheet strip",
+      "path": "images/sprites.png (768x128)",
+      "count_hint": "1",
+      "licence": "no asset licence stated",
+      "class": "C",
+      "note": "Single strip of sprites."
+    },
+    {
+      "kind": "ground background",
+      "path": "images/dirtbg.png (16x16)",
+      "count_hint": "1",
+      "licence": "no asset licence stated",
+      "class": "C",
+      "note": "16 px tiling background."
+    },
+    {
+      "kind": "display font",
+      "path": "css/chunk.woff (referenced in css/style.css lines 22-25)",
+      "count_hint": "1",
+      "licence": "SIL Open Font License 1.1, reserved font name 'Chunk' (css/FONT_LICENSE.markdown lines 1-3)",
+      "class": "B",
+      "note": "Conditions: OFL 1.1 (only the header was read) and the reserved font name. Font binary not opened."
+    },
+    {
+      "kind": "trademark name licence",
+      "path": "MicropolisPublicNameLicense.md",
+      "count_hint": "1 document",
+      "licence": "Micropolis Public Name License v1 (line 3)",
+      "class": "B",
+      "note": "Name only, not art. Term 1 (line 16) requires trademark attribution when the name Micropolis is used, including variations."
+    },
+    {
+      "kind": "data tables (code)",
+      "path": "src/spriteConstants.ts (7 SPRITE_ constants); src/tileValues.ts (about 198 export lines)",
+      "count_hint": "2 files",
+      "licence": "GPLv3 with additional terms (code)",
+      "class": "n/a",
+      "note": "Sprite kinds and contiguous tile ID blocks. Data first."
+    },
+    {
+      "kind": "code",
+      "path": "src/ (90 files); test/ (7 files)",
+      "count_hint": "97",
+      "licence": "GPLv3 with additional terms (code)",
+      "class": "n/a",
+      "note": "Game code."
+    }
+  ],
+  "inspiration": [
+    "Water and woods are contiguous ID blocks with edge variants (src/tileValues.ts). A block-per-terrain-family scheme makes autotiling simple for our tile sets.",
+    "Seven sprite kinds cover moving city units, a roaming monster, a tornado and an explosion (src/spriteConstants.ts). A short list of sprite kinds keeps the cast small.",
+    "The monster appears in a separate TV-style window module (src/monsterTV.js). A side-screen event is a cheap news beat for the world.",
+    "Small 32 px sprites are numbered by group and frame (sprites/obj*.png). An easy naming scheme for an artist to follow.",
+    "A chunky display font is used for titles (css/style.css lines 22-25). Usable only under OFL conditions and not under the reserved name."
+  ],
+  "briefs": [
+    {
+      "label": "Side-window roaming monster",
+      "why": "A monster seen through a separate small window makes the threat feel like news, and the main view stays clean.",
+      "keep": "monster is a sprite kind of its own; shown in a side window rather than the main view; roams on its own timer",
+      "change": "our own creature silhouette and proportions (a crawling bio-mech shape, not a lizard); a glowing eye band; a named faction badge in the window frame",
+      "ref": "src/spriteConstants.ts (SPRITE_MONSTER); src/monsterTV.js"
+    },
+    {
+      "label": "Disaster and impact sprite pair",
+      "why": "Separate sprite kinds for a disaster and for impact keep the effects readable and let each have its own timing.",
+      "keep": "a moving disaster sprite and a separate impact sprite; each is its own kind; impact plays on contact",
+      "change": "our own effect palette (ash, ember, cold blue instead of grey and orange); a different twist shape for the storm; a shockwave ring instead of a flat burst",
+      "ref": "src/spriteConstants.ts (SPRITE_TORNADO, SPRITE_EXPLOSION); src/explosionSprite.js"
+    },
+    {
+      "label": "Contiguous terrain ID blocks",
+      "why": "Keeping each terrain family in one run of IDs, with edge variants in the same run, makes autotile rules short and clear.",
+      "keep": "a run of IDs per terrain family; edge variants inside the family's run; a separate run for trees",
+      "change": "our own number of edge variants and our own family order; a bridge family between water and land; labels on every ID from the start",
+      "ref": "src/tileValues.ts (RIVER, REDGE, CHANNEL, LASTRIVEDGE, TREEBASE block near top of file)"
+    },
+    {
+      "label": "Travelling unit sprite kinds",
+      "why": "Moving city units as distinct sprite kinds let the player read traffic at a glance.",
+      "keep": "a unit kind per mode of travel (rail, air, sea, road); units moving across the map on their own paths",
+      "change": "our own vehicle designs in our fiction (hover-skiff, rail-glider, sky-barge); a mode that is a foot courier; a trail effect per unit",
+      "ref": "src/spriteConstants.ts (SPRITE_TRAIN, SPRITE_HELICOPTER, SPRITE_AIRPLANE, SPRITE_SHIP)"
+    },
+    {
+      "label": "Numbered 32 px frame groups",
+      "why": "Small, numbered frame groups keep sprite production simple for one artist and make animation frames easy to find.",
+      "keep": "32 px frames; numbered groups per object; frame index for animation",
+      "change": "our own tile grid and frame counts; a palette ramp per group; a larger 48 px hero size for the player",
+      "ref": "sprites/obj8-3.png; sprites/obj1-0.png (both 32x32)"
+    }
+  ],
+  "not_read": [
+    "pixel content of sprites/, images/ (names, sizes and header bytes only)",
+    "css/chunk.woff binary (name and css reference only)",
+    "src/monsterTV.js (header only), src/explosionSprite.js, src/splashScreen.js, src/disasterWindow.js (names only)",
+    "about.html and name_license.html in full (cited lines by grep only)",
+    "COPYING (header only)",
+    "test/ folder content (names only)"
+  ]
+}

@@ -1,0 +1,3 @@
+donor	creatures	classes	weapons	gear_sets	zones	halves_read	status	notes
+Anuken-Mindustry	60	0	28	0	46	core (logic and content); server/ and launchers not read	done	creatures = 60 unit name keys (62 declarations); weapons = 28 weapon turrets; no armour items; Java content, names in bundle.properties; class C assets, inspiration category-level
+ax-grymyr-l2dn-server	2594	99	2340	51	2768	server half (DataPack XML, Enums, AI/Areas partial); client art not in box	done	creatures = Monster+RaidBoss+GrandBoss type attrs; classes = classList entries (not split); licence unclear (class C/D), inspiration category-level only

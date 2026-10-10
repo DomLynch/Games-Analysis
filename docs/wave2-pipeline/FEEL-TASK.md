@@ -26,3 +26,5 @@ Controlled tags (use these, add new ones with prefix new:): creature-family, rec
 
 ## Final reply (compact)
 Table: donor, depth, half read, 2-line highlight, tags; then anything unverified.
+
+Also report, where the donor has it: idle/ambient behaviours, death/respawn presentation, loot reveal ceremony, walk density, readability at 375 wide.

@@ -1,0 +1,20 @@
+if (!team.IsParty)
+else if (team.MembersCount() > 3)
+GetDistanceTo(this, true) <= Items.Containers.LootingContainer.MaxLootingRange
+isFullTeam = true;
+pl.AddExp(plKillXp, true);
+if (eligiblePlayers.Count == 0 && killer is Character characterKiller)
+else if (eligiblePlayers.Count is > 1 and <= 3)
+plMod = 0.875f;
+plMod = 0.90f;
+if (levelDifference > 0)
+else if (levelDifference < 0)
+plMod = 0.33f;
+mateMod = 0.66f;
+mateMod = 0.90f;
+Player is solo, or at least only 1 player is close enough
+Player is in a team of more than 3 people
+if (Template.NoExp)
+res *= Template.ExpMultiplier;
+res += Template.ExpAdder;
+characterKiller.AddExp(KillExp, true);

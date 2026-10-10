@@ -1,0 +1,38 @@
+[
+ [
+  "id-Software-DOOM",
+  "top-level LICENSE.TXT is GPL v2 text (title line)",
+  "/mnt/frankendom-donors/id-Software-DOOM/LICENSE.TXT",
+  "GNU GENERAL PUBLIC LICENSE"
+ ],
+ [
+  "id-Software-DOOM",
+  "pistol damage 5 x (1..3) (first occurrence is the pistol)",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_pspr.c",
+  "damage = 5*(P_Random ()%3+1);"
+ ],
+ [
+  "id-Software-DOOM",
+  "bullet slope aim range 16 x 64 (first occurrence)",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_pspr.c",
+  "bulletslope = P_AimLineAttack (mo, an, 16*64*FRACUNIT);"
+ ],
+ [
+  "id-Software-DOOM",
+  "monster shot damage 3 x (1..5) (first occurrence is A_PosAttack)",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_enemy.c",
+  "damage = ((P_Random()%5)+1)*3;"
+ ],
+ [
+  "id-Software-DOOM",
+  "monster shot line attack (first occurrence is A_PosAttack)",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_enemy.c",
+  "P_LineAttack (actor, angle, MISSILERANGE, slope, damage);"
+ ],
+ [
+  "id-Software-DOOM",
+  "full turn is 2^32 units: ANG180 is 0x80000000",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/tables.h",
+  "#define ANG180"
+ ]
+]

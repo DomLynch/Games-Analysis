@@ -1,0 +1,71 @@
+{
+  "donor": "crawl-crawl",
+  "topic": "status-effects",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/duration-data.h",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/duration-type.h",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/enchant-type.h",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/mon-ench.h",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/mon-ench.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/mon-behv.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/fearmonger.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/player.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/melee-attack.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/monster.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/status.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/defines.h"
+  ],
+  "counts": {
+    "duration_table_rows": 230,
+    "duration_enum_entries": 231,
+    "enchant_enum_entries": 193,
+    "fear_first_turns": 7,
+    "fear_extra_per_source": 5,
+    "fear_cap_turns": 12,
+    "confusion_cap_turns": 40,
+    "monster_enchant_degree_cap": 4,
+    "monster_enchant_duration_cap_aut": 30000,
+    "baseline_delay_aut_per_turn": 10,
+    "bleed_enum_retired": 1,
+    "trickster_daze_chance_1_in": 3
+  },
+  "rule": "Player statuses are rows in a duration table: a short tag, colour, flags and optional end messages. Each increase names a cap in turns; the stored value is turns times 10 aut. Fear is a list of sources: the first source sets 7 turns, each further source adds 5 turns, the cap is 12, and fear ends only when no source remains. Stun immunity, given after some disables, blocks later paralysis, sleep and daze. Monster enchantments of the same kind merge by adding degree (capped at 4) and duration (capped at 30000 aut). Stagger removes energy after a concussive stumble. Knockback chance depends on the size difference. Bleed is a retired enum under a legacy version guard and has no live use in this tree.",
+  "data_fields": [
+    {"name": "status_cap_confusion", "unit": "turns", "donor_value_or_null": null},
+    {"name": "fear_first_application", "unit": "turns", "donor_value_or_null": null},
+    {"name": "fear_per_extra_source", "unit": "turns", "donor_value_or_null": null},
+    {"name": "fear_cap", "unit": "turns", "donor_value_or_null": null},
+    {"name": "daze_turns_range", "unit": "turns", "donor_value_or_null": null},
+    {"name": "stun_immunity_after_vexed", "unit": "turns", "donor_value_or_null": null},
+    {"name": "monster_enchant_degree_cap", "unit": "degree", "donor_value_or_null": null},
+    {"name": "monster_enchant_duration_cap", "unit": "aut", "donor_value_or_null": null},
+    {"name": "stagger_energy_roll", "unit": "aut", "donor_value_or_null": null},
+    {"name": "knockback_size_offset_ratio", "unit": "ratio", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Source-count fear: each attacker adds a bounded amount; fear ends when the last source leaves",
+    "Short tag per status with a sign colour",
+    "Expiry suffix on the tag (expiring) and a prefix on the long text, so the warning survives without colour",
+    "Per-status cap on every increase",
+    "Stun immunity after a disable, so a chain of disables cannot lock the player",
+    "Stagger that costs energy but does not lock the target"
+  ],
+  "change": [
+    "Trickster roll (one in three, random effect) is too random for a fast phone duel; pick the effect in data",
+    "Drop bleed from our plan: the donor retired it",
+    "Use our own tag text and names; do not copy the donor's tags",
+    "Numbers are ours; the donor values are GPL code and not copied",
+    "Bound the fear list to max three attackers and show the count on the chip"
+  ],
+  "look_test": "On the existing duel scene, spawn three enemies in view. Each adds to one Fear chip. Show a count (x1, x2, x3) and the turns left, with an expiring form in the last turns. Compare the summed chip with a single chip that ignores the count. Dom judges whether he can tell how many are scaring him and when it ends, at 375 wide, without a number.",
+  "licence_note": "Code is GPL version 2 or later (/mnt/frankendom-donors/crawl-crawl/README.md line 96 says GPLv2+; full text in top-level LICENSE, not opened). Dat text is under the general GPL statement. Inspiration at category level only: a fear that sums per source and ends when the sources end; a concussive stagger. No code, table rows, tag text or numbers copied. donor_value_or_null is null because the licence is GPL and not MIT, Apache or BSD. No legal conclusion.",
+  "tags": ["status-stack", "fear", "stagger", "knockback", "duration-rule", "bleed"],
+  "not_read": [
+    "render code for the status row (status.cc beyond the expiry and colour helpers)",
+    "where afraid() gates combat and movement (only set and clear sites traced)",
+    "spell and monster files that apply statuses beyond the cited call sites",
+    "art and audio (out of scope for this topic; see AU011)"
+  ]
+}

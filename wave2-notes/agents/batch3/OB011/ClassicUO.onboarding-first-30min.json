@@ -1,0 +1,76 @@
+{
+  "donor": "ClassicUO",
+  "topic": "onboarding-first-30min",
+  "depth": "thin",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/PacketHandlers.cs",
+    "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/UI/Gumps/TipNoticeGump.cs",
+    "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/EntityTextContainer.cs",
+    "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Scenes/LoginScene.cs",
+    "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Scenes/GameScene.cs",
+    "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/UI/Gumps/CharCreation/CharCreationGump.cs",
+    "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/UI/Gumps/CharCreation/CreateCharCityGump.cs",
+    "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/UI/Gumps/CharCreation/CreateCharProfessionGump.cs",
+    "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/UI/Gumps/CharCreation/CreateCharTradeGump.cs",
+    "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/UI/Gumps/CharCreation/CreateCharAppearanceGump.cs",
+    "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Constants.cs",
+    "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/AudioManager.cs",
+    "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameActions.cs",
+    "/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Main.cs",
+    "/mnt/frankendom-donors/ClassicUO/LICENSE.md",
+    "/mnt/frankendom-donors/ClassicUO/README.md"
+  ],
+  "counts": {
+    "client_scenes": 4,
+    "creation_pages": 4,
+    "city_facets": 6,
+    "damage_queue_cap": 10,
+    "damage_life_ms": 1500,
+    "death_overlay_ms": 1500,
+    "war_music_tracks": 3,
+    "name_min_chars": 2,
+    "name_max_chars": 16,
+    "tutorial_code_found": 0
+  },
+  "rule": "Hit feedback is a per-entity queue of short-lived damage numbers, each carrying an owner hue, a 1.5 s life, a one-pixel rise every 25 ms and a cap of ten per entity. Death is a timer started by the server's death packet that gates one overlay and plays a fixed death track. Music is keyed to state: a login loop, a random war track on entering war mode, a fixed death track. The client has no tutorial code; the first-30-minute content (tips, intro, first fight, loot, hub) is server-sent and not in the donor.",
+  "data_fields": [
+    {"name": "damage_number_life", "unit": "ms", "donor_value_or_null": 1500},
+    {"name": "damage_number_rise_step", "unit": "px per tick", "donor_value_or_null": 1},
+    {"name": "damage_number_rise_tick", "unit": "ms", "donor_value_or_null": 25},
+    {"name": "damage_number_queue_cap", "unit": "count per entity", "donor_value_or_null": 10},
+    {"name": "damage_hue_self", "unit": "hue index", "donor_value_or_null": "0x0034"},
+    {"name": "damage_hue_other", "unit": "hue index", "donor_value_or_null": "0x0021"},
+    {"name": "death_overlay_hold", "unit": "ms", "donor_value_or_null": 1500},
+    {"name": "death_music_track", "unit": "track index", "donor_value_or_null": 42},
+    {"name": "login_music_track", "unit": "track index", "donor_value_or_null": "78 (7.0+), 0 (newer than 308Z), 8 (older)"},
+    {"name": "war_music_tracks", "unit": "track index, random pick", "donor_value_or_null": "38-40"},
+    {"name": "tip_window_pos_with_buttons", "unit": "px", "donor_value_or_null": "200,100"},
+    {"name": "tip_window_pos_notice", "unit": "px", "donor_value_or_null": "20,20"},
+    {"name": "name_min_chars", "unit": "chars", "donor_value_or_null": 2},
+    {"name": "name_max_chars", "unit": "chars", "donor_value_or_null": 16},
+    {"name": "default_city_index_new_client", "unit": "index", "donor_value_or_null": 0}
+  ],
+  "keep": [
+    "Per-target damage-number queue with a hard cap so multi-attacker fights stay readable",
+    "Owner-coloured damage numbers (own hue vs other hue)",
+    "Short death beat: one overlay, one music cue, timer-bounded",
+    "Preselected default in the creation flow so the first confirm is one tap",
+    "Server-authored tip windows: text from the server, client only shows it and requests next or previous"
+  ],
+  "change": [
+    "No profession tree or six-facet city map: first screen is the ring",
+    "Replace the random war track with a fixed, placed stinger on the first fight",
+    "Make the death beat a single line plus the next state (town hall), not an idle overlay"
+  ],
+  "look_test": "On a 375-wide phone, play one 60-second ring clip twice. A: current hit feedback. B: own hits in one hue, attacker hits in another, numbers rising for 1.5 s, capped at ten per target, three attackers on screen. Dom judges whether his own numbers read at a glance and whether the death beat feels like a beat or a pause.",
+  "licence_note": "Code: BSD 2-Clause (LICENSE.md line 1; README line 68 says BSD 4, conflicting wording; LICENSE.md is the licence text). Adapt-with-notice allowed for code. No game assets distributed (README line 68). Donor numeric values may be used because the code is BSD. No legal conclusion drawn.",
+  "tags": ["new:damage-number", "new:death-screen", "stinger", "new:char-creation-flow", "new:server-tip", "new:preselected-default"],
+  "not_read": [
+    "Server half (not in this donor): intro, starter quests, tip texts, city descriptions, first fight, loot tables",
+    "GridLootGump body (loot container view)",
+    "Sound-effect handler (0x54)",
+    "Death overlay text resource key",
+    "tests/, tools/monokickstart, .github workflows"
+  ]
+}

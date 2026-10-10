@@ -1,0 +1,6 @@
+swgemu-Core3	unique state forces a fresh evaluation	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.cpp	197	cooldownTimerMap.updateToCurrentTime("doEvaluation");
+swgemu-Core3	DOT pack command adds damage with xp dotDMG	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/commands/DotPackCommand.h	245	targetCreature->getThreatMap()->addDamage(creature, dotDMG, "dotDMG");
+swgemu-Core3	loot damage skips dotDMG	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.h	143	if (type == "dotDMG")
+swgemu-Core3	total damage sums all entries	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.h	128	totalDamage += elementAt(i).getValue();
+swgemu-Core3	addHeal entry point	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.cpp	650	void ThreatMap::addHeal(TangibleObject* target, int value) {
+swgemu-Core3	addAggro with duration schedules removal	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/threat/ThreatMap.cpp	624	removeAggroTask->schedule(duration);

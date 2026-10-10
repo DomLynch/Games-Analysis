@@ -1,0 +1,21 @@
+CombatPathingRevolution | category inventory-bank-equipment (category 9) | cell 1 of batch 3 (list 3) | old P | verdict PARTIAL | depth thin
+Donor: /mnt/frankendom-donors/CombatPathingRevolution | Licence: MIT License, Copyright (c) 2022 max-su-2019 (LICENSE line 1: "MIT License") | C++ (Skyrim SKSE plugin)
+Licence class for any future sidecar: permissive (MIT). Code may be adapted.
+
+Files opened (at least 3 candidates):
+1. /mnt/frankendom-donors/CombatPathingRevolution/src/Circling_Hook.cpp (hint file; lines 1-60 read, lines 17-33 WithinCricleRange read)
+2. /mnt/frankendom-donors/CombatPathingRevolution/src/Util.cpp (read in full, 104 lines)
+3. /mnt/frankendom-donors/CombatPathingRevolution/src/Util.h (read in full, 29 lines)
+4. /mnt/frankendom-donors/CombatPathingRevolution/src/RE/CombatBehaviorController.h (read in full)
+5. /mnt/frankendom-donors/CombatPathingRevolution/src/RE/CombatBehaviorTreeControl.h (grep only: ActionStack at lines 10-21; not read in full)
+6. /mnt/frankendom-donors/CombatPathingRevolution/doc/en/Developers Guidelines of CPR.md (grep only: weapon equip/unequip hkx names, lines 200-216)
+Also searched: grep -rlniE "inventory|equip|loot|bank|stack|container" over the donor, excluding extern. Matches are only in the files above plus Nemesis_Engine/mod/mscpr/0_master/#0106.txt and PCH.h (includes <stack>, a C++ header).
+Not read: the CombatInventory struct itself (its fields optimalRange, maximumRange, equippedItems are used here but defined outside this donor, probably in extern/CommonLibSSE; (not read)).
+
+Checked: The donor is a Skyrim combat-pathing AI mod. It has no bag, bank, slot, stack, atomic-move or loot-presentation code. The only inventory reads are: (a) IsMeleeOnly (Util.cpp 7-36) loops over the equipped items and returns false if any item type is magic, ranged, scroll or staff; (b) GetEquippementRange (Util.cpp 38-45) returns the engine's own optimalRange or maximumRange field, it does not compute a range itself; (c) WithinCricleRange (Circling_Hook.cpp 18-33, band logic at 26-33) shifts a circling distance band by those two ranges. So the topic (slots, stacking, moves, loot) is NOT present. It is PARTIAL only because the equipped-weapon reach feeding a spacing band is a real, small mechanism. Confidence: high that there is no inventory model; medium that this counts as relevant at all.
+
+Best transferable idea: Derive a duel spacing band from the equipped weapon's reach (an optimal and a maximum value per loadout) instead of a fixed distance, shifting the minimum by the optimal reach and the maximum by the max reach.
+
+Decision (proposed): reject for inventory-bank-equipment: the donor has no slot, bank, stack or move model to adopt. The reach-band idea belongs to the duel-spacing row 1 (src/fight/) and only if a duel cell is re-rated to use it; it is not an inventory mechanism.
+
+Receipts: /private/tmp/p2/wave2-haiku/batch3/IV003/receipts.tsv (6 rows, verifier ok 6 failed 0).

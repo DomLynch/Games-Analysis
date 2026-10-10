@@ -1,0 +1,46 @@
+{
+  "donor": "guilhermelhr-unityro",
+  "code_licence": "GNU AGPL v3.0 (LICENSE line 1; README line 80 'licensed under the GNU Affero General Public License v3.0')",
+  "asset_licence": "No project-wide asset licence. Game data (GRF) not in repo; user supplies it (StreamingAssets/config.json line 3). Bundled: LiberationSans under SIL OFL 1.1; EmojiOne terms not in repo; Standard Assets water and DLLs have no licence in repo.",
+  "rights_holder_status": "RO-derived assets are original-game-derived (repo reads user GRF at run time); rights holder not named in repo; proprietary by the repo's own design",
+  "best_class": "A",
+  "asset_groups": [
+    {"kind": "font (TextMesh Pro LiberationSans)", "path": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/TextMesh Pro/Fonts/LiberationSans.ttf (+ LiberationSans - OFL.txt)", "count_hint": "1 ttf", "licence": "SIL OFL 1.1 (OFL.txt line 6)", "class": "A", "note": "copyright lines name Google and Red Hat (OFL.txt lines 1-4)"},
+    {"kind": "emoji sprite sheet", "path": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/TextMesh Pro/Sprites/EmojiOne.png (+ .json, Attribution.txt)", "count_hint": "1 png", "licence": "attribution file says review EmojiOne licensing terms; no licence text in repo", "class": "C", "note": "not opened"},
+    {"kind": "RO-derived UI sprites and bitmaps", "path": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/Resources/Sprites and Resources/Fonts", "count_hint": "9 image files (DamageSprite.png 96x32, crit_baloon.png 70x60, warp_particle.png 64x64, panels, scrollbars, bmp)", "licence": "none stated", "class": "C", "note": "pixel content not opened; sizes from PNG header"},
+    {"kind": "RO-derived data tables (JSON)", "path": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/AddressableAssets/DataTables", "count_hint": "3 files: ClassTable.json, WeaponJobTable.json, WeaponActions.json", "licence": "none stated", "class": "C", "note": "id-keyed; name strings non-ASCII legacy code page, not decoded or copied"},
+    {"kind": "Unity Standard Assets water", "path": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/Standard Assets/Environment/Water (Basic)", "count_hint": "at least 11 files (fbx, jpg, 2 psd, shader, prefabs, materials)", "licence": "no licence file in repo; namespace UnityStandardAssets.Water (WaterBasic.cs line 4)", "class": "C", "note": "Unity package; inspiration only"},
+    {"kind": "Unity project files (scenes, prefabs, animation, shaders)", "path": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets (Scenes, Resources/Prefabs, Resources/Animations/ItemDrop.anim, Resources/Shaders, Resources/Shaders/Ragnarok/RagnarokEffectShader.shader)", "count_hint": "9 .unity, 49 .prefab, 25 .shader", "licence": "AGPL-3.0 (repo code licence)", "class": "B", "note": "project's own files; reference RO-derived content loaded from GRF"},
+    {"kind": "third-party DLLs", "path": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/Plugins", "count_hint": "8 .dll", "licence": "none in repo", "class": "C", "note": "binaries; not opened"},
+    {"kind": "runtime config", "path": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/StreamingAssets/config.json; RemoteConfigs/RemoteConfigs.json", "count_hint": "2 files", "licence": "n/a", "class": "D", "note": "config, not assets"}
+  ],
+  "inspiration": [
+    "Damage numbers as a sprite font: a small digit sheet through a TextMesh Pro sprite material, and a separate bubble-shaped sprite for critical hits (Resources/Fonts/DamageSprite.png, crit_baloon.png; Resources/Prefabs/Damage.prefab). Keep the separate crit shape; change the bubble and digit rig.",
+    "One effect shader with exposed blend, cull and depth-write options, so one material setup covers additive and alpha effects (Resources/Shaders/Ragnarok/RagnarokEffectShader.shader lines 7-10, 26-30). Copy the approach, write our own shader.",
+    "A short one-shot drop clip at 60 fps, not looped (Resources/Animations/ItemDrop.anim, m_SampleRate line 55, m_LoopTime line 80). Template for loot pickup feedback.",
+    "A warp burst from one 64x64 soft particle plus a particle prefab (Resources/Sprites/warp_particle.png; Resources/Prefabs/PortalParticles.prefab). Keep single-texture bursts; change the silhouette.",
+    "Time-of-day water from separate daytime and night gradient strips plus a normal map (Standard Assets water Textures folder). Generic technique; re-author our own gradient.",
+    "Id-keyed class x weapon matrix driving combat options (Assets/AddressableAssets/DataTables/WeaponActions.json). Structure only, useful for our class-weapon table."
+  ],
+  "briefs": [
+    {"label": "critical-hit number bubble", "why": "a crit gets its own shape so the big number reads at a glance at 375 px wide", "keep": "separate crit sprite; number-as-sprite-font; short pop", "change": "our own bubble silhouette and ink colour; our own digit rig; no copy of the sprite", "ref": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/Resources/Fonts/crit_baloon.png (70x60); .../Resources/Prefabs/Damage.prefab"},
+    {"label": "loot pickup pop", "why": "a one-shot arc that confirms a pickup; readable without sound", "keep": "one-shot clip, 60 fps, no loop", "change": "our own motion curve and axis; a different lift height and settle", "ref": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/Resources/Animations/ItemDrop.anim"},
+    {"label": "warp burst", "why": "a bright single-texture burst marks a teleport at phone size", "keep": "one small soft particle reused in a burst", "change": "our own particle shape (not a ring), palette and timing", "ref": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/Resources/Sprites/warp_particle.png (64x64); .../Resources/Prefabs/PortalParticles.prefab"},
+    {"label": "time-of-day water tint", "why": "water colour follows the time of day through a gradient strip", "keep": "gradient lookup by time of day", "change": "our own colour story, wave pattern and normal map", "ref": "/mnt/frankendom-donors/guilhermelhr-unityro/UnityClient/Assets/Standard Assets/Environment/Water (Basic)/Textures/WaterBasicDaytimeGradient.psd (and Nighttime)"}
+  ],
+  "not_read": [
+    "GRF game data (not in repo; not required to classify)",
+    "DLL contents",
+    "scene, prefab and material YAML beyond the lines cited",
+    "EmojiOne.png and EmojiOne.json (not opened)",
+    "UI and warp sprite pixel content (sizes from PNG header only)",
+    "DataTables contents beyond the first lines",
+    "Assets/Scripts (128 .cs; names only)",
+    "Standard Assets water FBX, JPG and PSD contents",
+    "RemoteConfigs remote URL (not visited)",
+    "server half (not in box as far as listed; not read)"
+  ],
+  "half_read": "client (UnityClient). Server half (rAthena or Hercules per README) not read.",
+  "data_tables": ["Assets/AddressableAssets/DataTables/ClassTable.json", "Assets/AddressableAssets/DataTables/WeaponJobTable.json", "Assets/AddressableAssets/DataTables/WeaponActions.json"],
+  "cross_link": "vfx: damage numbers, shader, warp burst. animation: ItemDrop.anim. hud-ui: UI sprites. zones and camera: 9 scenes (YAML not read). loot: DataTables. sound: none in box."
+}

@@ -1,0 +1,71 @@
+{
+  "donor": "gawric-Unity-Client-for-L2J",
+  "code_licence": "Apache License 2.0. LICENSE:2 'Version 2.0, January 2004'; LICENSE:191 'Licensed under the Apache License, Version 2.0'. No SPDX or per-folder licence found in l2-unity/Assets/Scripts (grep: 0 files with SPDX-License-Identifier).",
+  "asset_licence": "No licence file covers the art. The docs say the armour textures and meshes are imported from Lineage 2 Interlude (l2-unity/docs/convert-armor/README.md:3). The author's own additions are described (README.md:14 '400 new textures and meshes'; README.md:59 '150 new models') with no licence line. Plugins: FMOD folder has an END USER LICENCE AGREEMENT (LICENSE.TXT:1); NuGet/Newtonsoft.Json has the MIT licence (LICENSE.md:1); NuGet folder LICENSE is MIT (LICENSE:3). Atmospheric Height Fog, Simple Water Shader, URP-WaterShaders, ProBuilder Data and BouncyCastle folders have no licence file in the tree.",
+  "rights_holder_status": "Fork. README.md:3 says this is a branch based on a source by gitlab shnok. The armour pipeline uses original Lineage 2 Interlude data (docs/convert-armor/README.md:3), which the files treat as the game's own assets. Rights in the author additions are not stated.",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "animation and skeletal meshes", "path": "l2-unity/Assets/Resources/Data/Animations/ (Animator, DarkElf, Dwarf, Elf, Fighter, Human, Magic and others; FBX, prefab, anim)", "count_hint": "5,869 files", "licence": "converted from Lineage 2 Interlude for armour (convert-armor/README.md:3); other races not stated", "class": "C", "note": "Proprietary origin for the armour part per the docs. Inspiration only. Race sets: FDwarf under Dwarf/FDwarf/Models."},
+    {"kind": "static meshes", "path": "l2-unity/Assets/Resources/Data/StaticMeshes/", "count_hint": "1,848 files", "licence": "not stated", "class": "C", "note": "Origin not stated in the files. Listed only."},
+    {"kind": "system textures and materials", "path": "l2-unity/Assets/Resources/Data/SysTextures/", "count_hint": "23,875 files (9,846 png and tga)", "licence": "armour materials converted from L2 per docs (convert-armor/README.md:5-14); rest not stated", "class": "C", "note": "Largest group. Armour materials are the L2 part. Listed by count only."},
+    {"kind": "textures", "path": "l2-unity/Assets/Resources/Data/Textures/", "count_hint": "6,449 files", "licence": "not stated", "class": "C", "note": "Listed only."},
+    {"kind": "UI (UI Toolkit)", "path": "l2-unity/Assets/Resources/Data/UI/ (uxml, uss, tss in Assets)", "count_hint": "4,261 files", "licence": "not stated", "class": "C", "note": "Listed only. Docs/Ui.md and Docs/Ui_Interface.md describe the UI (not opened)."},
+    {"kind": "skill and effect shaders and particles", "path": "l2-unity/Assets/Resources/Data/Effects/ (893 files), l2-unity/Assets/Resources/Data/Shaders/ (421 files; .shader, .shadergraph, .hlsl)", "count_hint": "1,314 files", "licence": "not stated", "class": "C", "note": "Effects and shader source. Property catalogue in l2-unity/L2_Shader_Property_Catalog.md (not read beyond headers)."},
+    {"kind": "maps and clock", "path": "l2-unity/Assets/Resources/Data/Maps/ (309), l2-unity/Assets/Resources/Data/Clock/ (26), l2-unity/Assets/StreamingAssets/Data/Maps/ (9)", "count_hint": "344 files", "licence": "not stated", "class": "C", "note": "Zone data. Listed only."},
+    {"kind": "Unity scenes and prefabs", "path": "l2-unity/Assets/Resources/Scenes/ (30 files), l2-unity/Assets/Resources/Prefab/ (64 files)", "count_hint": "94 files", "licence": "not stated (repo LICENSE is the only licence file)", "class": "C", "note": "Unity YAML, not opened."},
+    {"kind": "FMOD sound banks", "path": "l2-unity/Assets/StreamingAssets/*.bank (InterfaceSound, AmbSound, ItemSound, MonSound, StepSound, SkillSound, Music, ChrSound, Master, Master.strings)", "count_hint": "110 files in StreamingAssets, 111 MB", "licence": "not stated", "class": "C", "note": "Built sound banks. Origin not stated in the files."},
+    {"kind": "FMOD source audio", "path": "l2-unity-fmod/Assets/{InterfaceSound 22, AmbSound 229, ItemSound 58, MonSound 154, StepSound 30, SkillSound 14, Music 76, ChrSound 99}", "count_hint": "606 wav and 76 ogg", "licence": "not stated", "class": "C", "note": "Project file l2-unity-fmod.fspro and Metadata listed only. Origin not stated."},
+    {"kind": "data tables (DATA FIRST)", "path": "l2-unity/Assets/StreamingAssets/Data/Meta/ItemName_Classic-eu.txt (11,354 lines), Skillname_interlude-e.txt (29,819), Questname-e_interlude.txt (2,051), ActionName_Classic-eu.txt (241), Weapongrp_Classic.txt (1,676), ItemStatData_Classic.txt, Skillgrp_Classic.txt, Npc_deco_effects.csv, L2TerrainIntensityLUT.csv, L2DayNightLUT.csv", "count_hint": "89 files in Data/Meta (23 txt, 8 csv, 7 bin)", "licence": "not stated", "class": "C", "note": "Names and stats tables. Cite the table; never copy names or text."},
+    {"kind": "third-party plugins", "path": "l2-unity/Assets/Plugins/ (Atmospheric Height Fog 216 files, Simple Water Shader 18, URP-WaterShaders 31, ProBuilder Data 2, BouncyCastle 4, FMOD, NuGet)", "count_hint": "about 300+ files", "licence": "FMOD EULA (LICENSE.TXT:1); NuGet/Newtonsoft MIT; others not stated", "class": "C", "note": "Third-party packages. Their licences are not in their folders. Do not reuse without checking."},
+    {"kind": "docs (text)", "path": "README.md, Docs/*.md, l2-unity/docs/**/*.md, l2-unity/L2_Shader_Property_Catalog.md", "count_hint": "about 20 md files", "licence": "not stated", "class": "C", "note": "Author's text. Read by heading and by the armour doc only."}
+  ],
+  "inspiration": [
+    "Skill effect library: a script-generated particle system in which each skill is a shader plus a particle config, with a property catalogue (l2-unity/L2_Shader_Property_Catalog.md; l2-unity/docs/L2Fx_Shader_Library_API.md). Keep the single reusable effect template with seed, fade-in, hold and fade-out timing. Change our own timing curve and colour grammar.",
+    "Batched name tags: all nameplates drawn in one draw call (README.md:19). Keep the batching. Change the plate shape and the font.",
+    "Four-state animation layer: the animator reduces to four states, with the rest substituted at run time (README.md:10). Keep a reduced state set. Change which states we pick.",
+    "Armour import by naming convention with a reference check: each armour piece is a mesh and a material found by a package-and-name convention, verified against a hand-made reference by vertex count, bounds and bone count (l2-unity/docs/convert-armor/README.md:5 and :216). Keep the reference check. Change the naming.",
+    "Reproducible particle spawns: spawn logs with seeds so an effect can be replayed (l2-unity/docs/SpawnParticleSnapshot_RngLog_Guide.md, listed, not opened). Keep the replay idea for effect QA.",
+    "Modular armour per body region: legs, arms and head are separate models per race (README.md:59). Keep the part-swap rig. Change proportions and ornament."
+  ],
+  "briefs": [
+    {
+      "label": "Modular race armour set by body region",
+      "why": "Swapping legs, arms and head parts gives a readable silhouette at 375 wide, and the parts change on equip. Signature sound: an equip clank from the item sound family (category-level only; sound not opened).",
+      "keep": ["armour built from separate region parts (legs, arms, head)", "parts swap on equip", "one family per race"],
+      "change": ["Recreate as a clearly distinct original, never a copy: our own proportions per race", "our own ornament and trim pattern", "our own palette (target about 20-30 percent resemblance)"],
+      "ref": "l2-unity/Assets/Resources/Data/Animations/Dwarf/FDwarf/Models/ (category reference only; C class, not copied)"
+    },
+    {
+      "label": "Staggered radial skill splash",
+      "why": "A single burst reads at phone width. Signature effect: each particle starts at a random delay and fades in, holds and fades out.",
+      "keep": ["per-particle random start delay", "fade-in, hold, fade-out", "one burst as the signature"],
+      "change": ["Recreate as a clearly distinct original, never a copy: a different burst shape", "our own colour scale over time", "our own seed and delay ranges"],
+      "ref": "l2-unity/L2_Shader_Property_Catalog.md (effect entries, for example the cure-poison splash)"
+    },
+    {
+      "label": "Dwarf stocky walk set",
+      "why": "A shorter, wider humanoid reads as a different race at a glance. The animation set exists in the tree; its gait was not read.",
+      "keep": ["shorter, wider body shape", "a distinct walk rhythm (to be checked by eye)", "one clear silhouette change per race"],
+      "change": ["Recreate as a clearly distinct original, never a copy: our own body proportions", "our own gait", "our own armour shapes"],
+      "ref": "l2-unity/Assets/Resources/Data/Animations/Dwarf/FDwarf/Models/ (FDwarf_m000_l.fbx and siblings)"
+    },
+    {
+      "label": "Batched name tag strip",
+      "why": "Names read at phone width and cost one draw call for the whole crowd.",
+      "keep": ["all name tags in one draw call", "colour by status", "small readable text"],
+      "change": ["Recreate as a clearly distinct original, never a copy: our own plate shape", "our own font and colour rules", "a different anchor point above the head"],
+      "ref": "README.md:19 (NamePlates line)"
+    }
+  ],
+  "cross_link": "hud-ui: Assets/Resources/Data/UI (4,261 files), Docs/Ui.md and Docs/Ui_Interface.md. vfx: Data/Effects (893) and Data/Shaders (421). animation: Data/Animations (5,869). sound: FMOD banks in StreamingAssets and l2-unity-fmod/Assets. loot and item names: Data/Meta tables. zones: Data/Maps (309) and StreamingAssets/Data/Maps (9). spawns: Npc_deco_effects.csv (listed). camera: none read.",
+  "not_read": [
+    "Assets/Scripts C# (1,473 .cs files across Assets; directory listing only)",
+    "the L2J server half (Acis or Mobius, README.md:31); not in the box and not read",
+    "binary textures, meshes, FBX, TGA, PNG and FMOD banks (counted and listed; not opened)",
+    "Unity YAML scenes and prefabs (listed only)",
+    "Docs/Ui.md, Docs/Ui_Interface.md, Docs/shader-vfx-dangerous-functions.md (named only)",
+    "l2-unity/L2_Shader_Property_Catalog.md and docs/L2Fx_Shader_Library_API.md (headers only)",
+    "abso-chat-actions.patch, _tmp_onplaysound_out.txt (not read)",
+    "the video links in README.md (not opened)"
+  ]
+}

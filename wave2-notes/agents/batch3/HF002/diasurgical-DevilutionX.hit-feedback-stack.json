@@ -1,0 +1,73 @@
+{
+  "donor": "diasurgical-DevilutionX",
+  "topic": "hit-feedback-stack",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/monster.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/player.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/missiles.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/items.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/tables/itemdat.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/monster.h",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/monsters/monstdat.tsv",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/sound/effects.tsv",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/items/item_suffixes.tsv",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/items/unique_itemdat.tsv"
+  ],
+  "counts": {
+    "monstdat_rows": 112,
+    "monstdat_columns": 41,
+    "gothit_frames_min": 1,
+    "gothit_frames_max": 26,
+    "gothit_frames_median": 10,
+    "gothit_rate_min": 1,
+    "gothit_rate_max": 30,
+    "gothit_rate_median": 14,
+    "monster_knockback_rows": 1,
+    "item_knockback_suffix_rows": 1,
+    "item_knockback_unique_rows": 3,
+    "effects_tsv_lines": 814,
+    "effects_hit_or_impact_names": 4,
+    "hit_sound_variants_per_monster": 2,
+    "hero_recovery_skip_levels": 3
+  },
+  "rule": "Monster hit: hit sound first (variant 1 or 2 at random, skipped if that variant still plays), then a hard-hit check (damage/64 >= monster level + offset, or one of four always-hard types). Ordinary hit stops there. Hard hit: type reaction, roll position back to previous tile, got-hit animation. Knockback (affix, arrow, or table flag): one tile away if free. Hero hit: grunt and health redraw always; flinch only when damage/64 reaches hero level (barbarian higher); flinch animation with 0-3 recovery frames skipped; knockback moves hero one tile in the monster's facing if walkable.",
+  "data_fields": [
+    {"name": "hard_hit_divisor", "unit": "damage units", "donor_value_or_null": null},
+    {"name": "hard_hit_level_offset", "unit": "monster levels", "donor_value_or_null": null},
+    {"name": "hero_flinch_level_scale_barbarian", "unit": "ratio", "donor_value_or_null": null},
+    {"name": "hero_flinch_level_scale_other", "unit": "ratio", "donor_value_or_null": null},
+    {"name": "recovery_skip_frames_fast_faster_fastest", "unit": "frames", "donor_value_or_null": null},
+    {"name": "hit_sound_variants_per_monster", "unit": "count", "donor_value_or_null": null},
+    {"name": "hit_sound_skip_if_playing", "unit": "boolean", "donor_value_or_null": null},
+    {"name": "gothit_frames_per_monster", "unit": "frames", "donor_value_or_null": null},
+    {"name": "gothit_rate_per_monster", "unit": "rate units (not verified)", "donor_value_or_null": null},
+    {"name": "knockback_tiles", "unit": "tiles", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Hit sound first and always, with a skip-if-still-playing rule per variant",
+    "Stagger and cancel only on hard hits, not on every hit",
+    "Hero flinch threshold tied to hero level",
+    "Knockback as a one-tile move, only from a flagged source",
+    "Per-family reaction data (frames, rate, variant count) reused across many characters"
+  ],
+  "change": [
+    "No server-side randomness for the cosmetic sound variant pick",
+    "Knockback and stagger become server-verified position events, presented by the client",
+    "Add a visible attacker-side cue for up to three attackers (donor has none)",
+    "Our own recoil frames, sounds, names and numbers"
+  ],
+  "look_test": "One duel scene: a dummy and three attackers from left, right and front, behind a flag feel_hit_profile with values A (sound and recoil only), B (A plus stagger on hard hits), C (B plus one-tile knockback). Dom taps each profile three times with three attackers on and says which profile shows the attacker and the big hit within one second. No release rows.",
+  "licence_note": "Code is Sustainable Use License 1.0 (non-commercial, not OSI; LICENSE.md line 1; README.md line 84). No separate asset licence; README.md line 82 says the SUL covers assets/ by location; README.md line 86 gives a Blizzard Diablo copyright notice; origin of in-tree art not stated. Category-level inspiration only. No code, art, sound, names or donor numbers kept.",
+  "tags": ["hit-sound", "knockback", "stagger", "ordered-feedback", "creature-family"],
+  "not_read": [
+    "Audio: the tree has no audio files; monster sound paths built in code only",
+    "Sprite and animation binaries (CLX, TRN, DUN, PAL)",
+    "Class animation tables beyond the recoveryFrames line",
+    "Recovery-affix rows (no matching rows found in assets/txtdata)",
+    "External devilutionx-assets repository",
+    "Test folder",
+    "Rate unit for the got-hit slot"
+  ]
+}

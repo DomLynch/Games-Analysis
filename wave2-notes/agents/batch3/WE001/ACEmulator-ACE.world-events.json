@@ -1,0 +1,59 @@
+{
+  "donor": "ACEmulator-ACE",
+  "topic": "world-events",
+  "depth": "thin",
+  "half_read": "server",
+  "paths": [
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Managers/EventManager.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/WorldObjects/WorldObject_Generators.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/WorldObjects/Managers/EmoteManager.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Command/Handlers/AdminCommands.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Entity/Enum/GameEventState.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Entity/Enum/GeneratorTimeType.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Entity/Enum/EmoteType.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Entity/Enum/EmoteCategory.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Database/Models/World/Event.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Database/Base/WorldBase.sql"
+  ],
+  "counts": {
+    "game_event_states": 5,
+    "generator_time_types_real": 5,
+    "generator_time_types_listed": ["Undef", "RealTime", "Defined", "Event", "Night", "Day"],
+    "event_table_insert_rows_in_repo": 0,
+    "database_shard_update_files": 33,
+    "event_related_emote_types": 3,
+    "event_emote_categories": 2
+  },
+  "rule": "A named event is a state machine with an optional unix-time window and no timer. States: enabled (armed), disabled (blocked), off, on. Start and stop only move between armed/off and on. The window is checked lazily when something asks (IsEventStarted): an on-event past its end is stopped, an armed or off event past its start is started, then the on-state is returned. Generators gate on the flag (GeneratorTimeType Event: active while enabled and started) or on the in-game clock (Day, Night). A flip is staged: the first check that sees a change only sets a flag, and the next generator update applies the then-current value, so the world lags one update and a reversed flip still lands. NPC emotes can start, stop or query an event; the query picks a success or failure line. Generator updates run every RegenerationInterval seconds (value not read).",
+  "data_fields": [
+    {"name": "event_state", "unit": "enum: undef 0, enabled 1, disabled 2, off 3, on 4", "donor_value_or_null": null},
+    {"name": "event_start_time", "unit": "unix seconds; -1 = none", "donor_value_or_null": null},
+    {"name": "event_end_time", "unit": "unix seconds; -1 = none", "donor_value_or_null": null},
+    {"name": "generator_time_type", "unit": "enum: real_time, event, night, day, defined (not implemented)", "donor_value_or_null": null},
+    {"name": "generator_check_interval", "unit": "seconds (RegenerationInterval; value not read)", "donor_value_or_null": null},
+    {"name": "stage_checks", "unit": "count; 2 = one-tick debounce", "donor_value_or_null": null},
+    {"name": "emote_query_branch", "unit": "emote types 23 start, 24 stop, 51 query; categories 27 success, 28 failure", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "One named flag gates both a spawn (generator) and an NPC dialogue branch (success or failure line).",
+    "Lazy window check when asked; no per-event timer.",
+    "One-update debounce on world-state flips so a flicker does not repop or despawn a camp.",
+    "Start and stop are emote-driven, so a designer can flip an event from a scripted NPC without code."
+  ],
+  "change": [
+    "The donor announces nothing on a flip; add a banner from the server ledger row.",
+    "Make the debounce explicit and keyed by event id on the server, not a side effect of a heartbeat count.",
+    "Do not ship a Defined generator type as a TODO stub; implement or remove it.",
+    "Keep the flag as the only server-written state; zones and NPCs only read it."
+  ],
+  "look_test": "On the existing phone build, flip one named event on and off and compare at 375 wide: (a) the world only changes (a camp appears; the NPC line changes when asked); (b) the same change plus a 2-second top banner. Dom judges whether a player not looking can tell the world changed. Then flip on and off inside one tick: the world must settle on the last state with no flicker.",
+  "licence_note": "AGPLv3 code (LICENSE). Assets have no licence line; client data (portal.dat and similar) not in the repo and not sought. Event names and emote text are not in the repo. No donor values recorded. Inspiration is category-level only.",
+  "tags": ["world-event", "timed-event", "scheduler", "day-night", "rumour", "signage", "new:flag-gated-spawn", "new:lazy-window", "new:one-tick-debounce", "new:emote-query-branch"],
+  "not_read": [
+    "generator spawn and despawn bodies (what happens to live objects on disable)",
+    "RegenerationInterval default",
+    "emote data rows and weenie emote sets carrying success and failure text (not in repo)",
+    "in-game clock source (Timers.CurrentInGameTime)",
+    "client data (not in repo)"
+  ]
+}

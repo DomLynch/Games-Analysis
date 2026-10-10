@@ -1,0 +1,8 @@
+AI tick cancelled when no players and no follow object	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp	if ((!alwaysActive && numberOfPlayersInRange.get() <= 0	3890
+AI arrival of a player schedules the tick	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/ai/AiAgentImplementation.cpp	activateAiBehavior();	2185
+grace event clears itself first	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/events/DespawnCreatureOnPlayerDissappear.h	strongRef->clearDespawnEvent();
+theater entry cancels its grace timer	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/intangible/TheaterObjectImplementation.cpp	clearDespawnEvent();
+spawn call for a lair	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/region/SpawnAreaImplementation.cpp	creatureManager->spawn(lairHashCode, lairLevel, lairBuildingLevel
+player level for lair difficulty: group level	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/region/SpawnAreaImplementation.cpp	level = group->getGroupLevel();
+lair building level 5 default	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/region/SpawnAreaImplementation.cpp	int lairBuildingLevel = 5;
+counter clamped at zero on area exit	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/region/SpawnAreaImplementation.cpp	numberOfPlayersInRange.set(0);

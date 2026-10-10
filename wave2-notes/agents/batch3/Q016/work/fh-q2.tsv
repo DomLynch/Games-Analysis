@@ -1,0 +1,30 @@
+battle/battle_troop.cpp	double Battle::Unit::evaluateThreatForUnit( const Unit & defender ) const
+battle/battle_troop.cpp	const uint32_t attackerDamageToDefender = attacker.getPotentialDamage( defender );
+battle/battle_troop.cpp	attackerThreat /= distanceModifier;
+battle/battle_troop.cpp	const uint32_t attackRange = attackerSpeed + 1;
+battle/battle_troop.cpp	return 1.5 * static_cast<double>( distance ) / static_cast<double>( attackerSpeed );
+battle/battle_troop.cpp	if ( attacker.isFlying() || attacker.isArchers() ) {
+battle/battle_troop.cpp	attackerThreat += attackerThreat * ( 1.0 - std::min( static_cast<double>( retaliatoryDamage ) / static_cast<double>( attacker.GetHitPoints() ), 1.0 ) );
+battle/battle_troop.cpp	// Otherwise, estimate the second attack as approximately equal to the first in damage
+battle/battle_troop.cpp	attackerThreat *= 1.3;
+battle/battle_troop.cpp	attackerThreat *= 3;
+battle/battle_troop.cpp	return defender.EstimateRetaliatoryDamage( attackerDamageToDefender );
+ai/ai_battle.cpp	bool ValueHasImproved( double primary, double primaryMax, double secondary, double secondaryMax )
+ai/ai_battle.cpp	return primaryMax < primary || ( secondaryMax < secondary && std::fabs( primaryMax - primary ) < 0.001 );
+ai/ai_battle.cpp	return ( newOutcome.canAttackImmediately && !previous.canAttackImmediately )
+ai/ai_battle.cpp	const double priority = enemy->evaluateThreatForUnit( currentUnit ) / nearestCellInfo.dist;
+ai/ai_battle.cpp	if ( priority < maxPriority ) {
+ai/ai_battle.cpp	if ( enemySpeed == Speed::STANDING ) {
+ai/ai_battle.cpp	return enemySpeed < currentUnit.GetSpeed( false, true );
+ai/ai_battle.cpp	chooseDistantTarget( []( const Battle::Unit * ) { return true; } );
+ai/ai_battle.cpp	if ( _defensiveTactics ) {
+ai/ai_battle.cpp	target = meleeUnitOffense( arena, currentUnit );
+ai/ai_battle.cpp	if ( !outcome.canAttackImmediately ) {
+ai/ai_battle.cpp	if ( IsOutcomeImproved( outcome, bestOutcome ) ) {
+ai/ai_battle.cpp	const double overPowerRatio = ( currentUnit.isFlying() ? 6 : 10 );
+ai/ai_battle.cpp	_cautiousOffensive = ( enemyArcherRatio < 0.15 );
+ai/ai_battle.cpp	if ( enemyArcherRatio > 0.66 ) {
+ai/ai_battle.cpp	if ( result.idx == -1 || moveDist < result.dist ) {
+ai/ai_battle.cpp	return !unit1->isArchers() && unit2->isArchers();
+ai/ai_battle.cpp	it under the terms of the GNU General Public License as published by
+LICENSE	Version 2, June 1991

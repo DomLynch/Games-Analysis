@@ -1,0 +1,13 @@
+tickManager.OnTick.Subscribe(ActiveRegionTick
+npcSpawner.Update();
+private bool IsSpawnerActive
+return spawner.IsPlayerInSpawnRadius();
+npc.Spawner.SetSpawnScheduled(false);
+private void CheckRespawns()
+Thread.Sleep(1000);
+var respawnThread = new Thread(CheckRespawns)
+if (obj.Despawn >= DateTime.UtcNow)
+npc.Spawner.Despawn(npc);
+public void AddRespawn(GameObject obj)
+public void AddDespawn(GameObject obj)
+foreach (var npc in temp.Where(npc => npc.Respawn <= DateTime.UtcNow))

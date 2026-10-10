@@ -1,0 +1,93 @@
+{
+  "donor": "CleverRaven-Cataclysm-DDA",
+  "topic": "onboarding-first-30min",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/gamemode_tutorial.cpp",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/gamemode_tutorial.h",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/main_menu.cpp",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/scenario.h",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/mods/dda_tutorial/snippets.json",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/mods/dda_tutorial/monsters.json",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/mods/dda_tutorial/mapgen.json",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/mods/dda_tutorial/specials.json",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/json/scenarios.json",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/json/start_locations.json",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/json/starting_missions.json",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/json/professions.json",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/json/npcs/other/TALK_shelter_survivors.json",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/json/npcs/npc.json",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/json/itemgroups/SUS/evac_shelter.json",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/LICENSE.txt"
+  ],
+  "counts": {
+    "scenarios": 61,
+    "start_locations": 101,
+    "starting_missions": 31,
+    "professions": 219,
+    "professions_with_missions_list_grep": 26,
+    "tutorial_lesson_snippets": 35,
+    "tutorial_lesson_words_total": 2285,
+    "tutorial_distinct_add_message_lessons": 33,
+    "dreams_entries_count_only": 110,
+    "shelter_item_groups_count_only": 14
+  },
+  "rule": "One-shot, action-matched teaching in a separate opt-in training room. The tutorial keeps a per-lesson seen map; each step asks whether the lesson matches what just happened (per turn for state such as stairs, dark, pain; after each action for open, close, pick up, wear, act); if unseen, it is marked seen and the popup opens (src/gamemode_tutorial.cpp 375-383). The first hostile contact is a training dummy that is immobile, deals zero melee damage and leaves no corpse, so the first hit is safe and visible. Tutorial skills start at level 5 in gun, melee and throwing (init, line 180).",
+  "data_fields": [
+    {"name": "lesson_once_flag", "unit": "bool per lesson id", "donor_value_or_null": null},
+    {"name": "lesson_text_max_words", "unit": "words", "donor_value_or_null": null},
+    {"name": "dummy_hp", "unit": "hit points", "donor_value_or_null": null},
+    {"name": "dummy_melee_damage", "unit": "damage", "donor_value_or_null": null},
+    {"name": "starting_skill_level_training", "unit": "level", "donor_value_or_null": null},
+    {"name": "personal_goal_morale_bonus", "unit": "morale points", "donor_value_or_null": null},
+    {"name": "personal_goal_duration", "unit": "hours", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "once-per-lesson seen flag, set before the popup opens",
+    "action-matched popups, not a schedule",
+    "zero-risk training dummy for the first hit",
+    "one popup per pickup type (armour, weapon, food, tool, gun, ammo) on first pickup",
+    "opt-in training room kept separate from the main game",
+    "shelter survivor first-meeting flag that changes a cold greeting to a calm one",
+    "jobs option hidden while a job is already assigned"
+  ],
+  "change": [
+    "about 25 words per popup for 375-wide phone (donor snippets run about 35-150 words)",
+    "every lesson must have a trigger (LESSON_HIT_MONSTER has a snippet but no add_message call in src)",
+    "no forced save warning popup in the training room",
+    "all lesson text, names, numbers and dialogue are ours"
+  ],
+  "look_test": "On the existing Pit, add a training dummy record (50 hit points, zero damage, immobile, no corpse) and a 25-word popup on the first hit only. Dom taps it five times: does one tip appear once and never repeat? Second beat: pick up three items of three types (armour, weapon, food); each type gets one line, once. Compare with the same Pit fight with no dummy. Pass if Dom says the first hit was safe and clear within 10 seconds and no popup repeats.",
+  "licence_note": "CC BY-SA 3.0 Unported for code and content (LICENSE.txt line 1; AU010). Share-alike applies to copied material, so nothing is copied; only category ideas are taken. Donor values are null in data_fields. No legal conclusion.",
+  "tags": [
+    "first-fight",
+    "first-loot",
+    "duration-rule",
+    "new:lesson-once",
+    "new:dummy-first-hit",
+    "new:personal-goal",
+    "new:npc-first-meet-flag",
+    "new:scenario-points"
+  ],
+  "not_read": [
+    "src/gamemode.cpp",
+    "src/scenario.cpp (only scenario.h line 164 read)",
+    "src/newcharacter.cpp (grep only)",
+    "src/mission_start.cpp",
+    "first-zombie placement and overmap spawn code",
+    "death and game-over path",
+    "shelter_basic palette and shelter overmap files",
+    "traps.json bodies (ids only)",
+    "mapgen.json rooms other than lines 1-12 and 90-115",
+    "dreams.json text (count only)",
+    "scores.json",
+    "59 of 61 scenarios and 99 of 101 start locations (not read)",
+    "29 of 31 starting-mission bodies (ids only)",
+    "TALK_shelter_survivors.json topics beyond first-meeting and intro"
+  ],
+  "verdict": "STRONG for the tutorial lesson mechanism; main-game first 30 minutes thin (no scripted onboarding found in the data read)",
+  "decision": "adapt (idea)",
+  "best_transferable_idea": "Each teaching popup fires once, on the first action that matches it, from a per-lesson seen flag, inside a separate opt-in training room that includes a zero-risk training dummy.",
+  "minute_mapping": "estimated, not timed"
+}

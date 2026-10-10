@@ -1,0 +1,54 @@
+{
+  "donor": "hedgewars-hw",
+  "code_licence": "GNU GPL v2 (COPYING line 1; README line 136 'distributed under the terms of the GNU General Public Licence version 2')",
+  "asset_licence": "Mixed. README line 137: images and sounds under GNU FDL 1.2. Theme READMEs: GNU FDL. CREDITS: CC0 (frontend images), CC-BY 3.0 (LICENSE REFERENCES line 126), freesound.org pages for some effects (licence not in files read). Fonts: Bitstream Vera notice, Droid under Apache.",
+  "rights_holder_status": "open source; README line 140 names Andrey Korotaev and others; per-asset authors credited in CREDITS and per-theme credits.txt; no leak or proprietary-data source named",
+  "best_class": "B",
+  "asset_groups": [
+    {"kind": "hedgehog, ammo and weapon icons", "path": "/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Graphics/Hedgehog", "count_hint": "75 PNG (amBazooka.png 64x64)", "licence": "README line 137 (FDL 1.2 for images); CREDITS fallback line 7", "class": "B", "note": "file-level licence not stated; default from README"},
+    {"kind": "hats (costume overlay sheets)", "path": "/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Graphics/Hats", "count_hint": "340 PNG (AkuAku.png 64x512)", "licence": "README FDL 1.2 default; CREDITS HATS section (lines 17-55) names authors per hat", "class": "B", "note": "frame sheets (frame count not verified)"},
+    {"kind": "graves", "path": "/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Graphics/Graves", "count_hint": "47 PNG (Badger.png 32x256)", "licence": "README FDL 1.2 default; CREDITS GRAVES section (lines 56-62)", "class": "B", "note": "tall narrow strips"},
+    {"kind": "flags", "path": "/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Graphics/Flags", "count_hint": "294 PNG (22x15 px examples)", "licence": "README FDL 1.2 default", "class": "B", "note": "small icons"},
+    {"kind": "missions, ammo menu, sudden death graphics", "path": "/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Graphics/Missions, AmmoMenu, SuddenDeath", "count_hint": "84 + 9 + 6 PNG/SVG", "licence": "README FDL 1.2 default", "class": "B", "note": "not opened"},
+    {"kind": "frontend images", "path": "CREDITS lines 66-72 (folder, audio, home, Videos, Palette); file locations not checked", "count_hint": "about 5 listed", "licence": "CC0 per CREDITS line 69 and similar lines", "class": "A", "note": "file paths not verified"},
+    {"kind": "themes (art, config, credits)", "path": "/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Themes", "count_hint": "35 entries, 34 theme.cfg, 949 files", "licence": "theme READMEs: GNU FDL (Themes/Cave/README line 3; Themes/Olympics/README line 3)", "class": "B", "note": "per-theme credits.txt gives author names; includes animated splash sheets (Themes/Hell/Splash.png 160x500)"},
+    {"kind": "maps", "path": "/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Maps", "count_hint": "337 files, 52 map.png (Maps/Bamboo/map.png 2048x1024)", "licence": "credits.txt per map; README FDL 1.2 default for images", "class": "B", "note": "map.cfg plus map.png"},
+    {"kind": "forts and tiles", "path": "/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Forts and Tiles", "count_hint": "90 and 28 files", "licence": "README FDL 1.2 default", "class": "B", "note": "not opened"},
+    {"kind": "sound effects", "path": "/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Sounds", "count_hint": "1003 ogg", "licence": "README FDL 1.2 for sounds; CREDITS SOUND EFFECTS lines 79-120 cite freesound.org pages (licence per page not in files read)", "class": "C", "note": "treat freesound-sourced files as C until checked; the rest B by README default"},
+    {"kind": "music", "path": "/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Music", "count_hint": "29 files (ogg, opus); credits.txt", "licence": "per-track author in credits.txt; no per-track licence in files read; CREDITS cites CC-BY 3.0 (line 126)", "class": "C", "note": "unclear which tracks are CC-BY"},
+    {"kind": "fonts", "path": "/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Fonts (+ Fonts_LICENSE.txt)", "count_hint": "3 files", "licence": "Fonts_LICENSE.txt lines 1-2 (Bitstream Vera notice, Droid Apache)", "class": "A", "note": "keep the notices"},
+    {"kind": "name lists (text and cfg)", "path": "/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Names", "count_hint": "124 files", "licence": "none stated for these files", "class": "C", "note": "names not copied; format in Names/README.md"},
+    {"kind": "locale translations (.ts)", "path": "/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Locale", "count_hint": "119 files", "licence": "none stated for the translation files", "class": "C", "note": "GNU GPL v2 appears only as a translatable string"},
+    {"kind": "scripts and missions (Lua, hwp)", "path": "/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Scripts and Missions", "count_hint": "61 scripts, 88 mission files (47 Campaign)", "licence": "GPL v2 as code (COPYING)", "class": "B", "note": "mode names Racer, Construction_Mode, Continental_supplies in Scripts/Multiplayer"},
+    {"kind": "shaders", "path": "/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Shaders", "count_hint": "5 files", "licence": "GPL v2 as code", "class": "B", "note": "not opened"}
+  ],
+  "inspiration": [
+    "Sudden death as a palette swap: theme.cfg has separate sd-* keys for water and music, and sudden-death art variants exist (Themes/Hell/theme.cfg lines 4-10; SDWater.svg, SDClouds.svg, SDDroplet.png). When the timer runs out the zone reskins. Keep the phase swap; use our own hue and sound cue.",
+    "Theme as a data folder: one folder with a config (sky, border, water top and bottom, opacity, music, cloud count, placed objects). Keep the data-driven zone skin; use our own palette and object list.",
+    "Tall splash sheet: Themes/Hell/Splash.png (160 x 500) gives impact frames in one strip. Keep the tall narrow strip; change shape and colour.",
+    "Head overlays on a fixed 64-pixel grid: Graphics/Hats/AkuAku.png (64 x 512) stacks head-gear frames in one strip. Keep one overlay per head slot; change silhouettes and ornament.",
+    "Tall grave strips: Graphics/Graves/Badger.png (32 x 256). A fallen unit keeps a marker in the world. Keep the narrow tall marker; change the design.",
+    "Scripted modes over a normal map: Scripts/Multiplayer/Racer.hwp, Construction_Mode.hwp, Continental_supplies.hwp. A mode is a script that changes objectives on the same map. Keep the idea; write our own objectives and rewards.",
+    "Themed name pools per costume: Names/README.md describes a hat config that selects a name list. Keep per-costume name pools; write our own lists."
+  ],
+  "briefs": [
+    {"label": "sudden-death palette swap", "why": "the zone turns hostile when time runs out, so the endgame reads at a glance", "keep": "phase swap of water and music; separate sudden-death art variants", "change": "our own hue, water shape and sound cue; never the same colours", "ref": "/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Themes/Hell/theme.cfg (sd-* keys); .../Themes/Hell/SDWater.svg"},
+    {"label": "fallen-unit marker strip", "why": "a narrow tall marker stays in the world after a unit falls and reads from a distance", "keep": "tall narrow strip; one marker per fallen unit", "change": "our own marker design, not an animal tombstone; our own crack and glow", "ref": "/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Graphics/Graves/Badger.png (32x256)"},
+    {"label": "head overlay strip", "why": "a costume overlay swaps head gear without new body art", "keep": "fixed-width overlay grid; one overlay per head slot", "change": "our own head silhouettes and ornament; different proportions", "ref": "/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Graphics/Hats/AkuAku.png (64x512)"},
+    {"label": "scripted mode trio", "why": "one map supports several objectives, so modes are cheap to add", "keep": "a mode as a script over a normal map", "change": "our own objectives, rewards and names", "ref": "/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Scripts/Multiplayer/Racer.hwp"},
+    {"label": "tall splash sheet", "why": "a narrow tall impact strip reads well on a phone-width screen", "keep": "tall narrow frames in one sheet", "change": "our own splash shape, colour and frame count", "ref": "/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Themes/Hell/Splash.png (160x500)"}
+  ],
+  "not_read": [
+    "engine (hedgewars/*.pas) and server (gameServer/*.hs): names only",
+    "PNG and SVG pixel content (sizes from PNG header only)",
+    "Scripts and Missions bodies (names only)",
+    "Names lists and Locale .ts bodies",
+    "Themes/Hell/theme.cfg lines beyond the keys cited",
+    "Sounds and Music contents (names and credits only)",
+    "sifz sprite definitions (not opened)",
+    "Maps map.cfg and map.png contents"
+  ],
+  "half_read": "data pack (share/hedgewars/Data). Matching engine (hedgewars/*.pas) and server (gameServer/*.hs) are in the box; not read beyond names.",
+  "data_tables": ["share/hedgewars/Data/Themes/*/theme.cfg", "share/hedgewars/Data/Maps/*/map.cfg", "share/hedgewars/Data/Names/*.cfg and *.txt", "share/hedgewars/Data/Scripts/Multiplayer/*.hwp"],
+  "cross_link": "zones: Themes and Maps. hud-ui: AmmoMenu, Fonts. vfx: SuddenDeath, Splash.sifz, BulletHit.sifz, BigExplosion.png. animation: sprite strips and .sifz. sound: Sounds (1003) and Music (29). loot, spawns, camera: none direct."
+}

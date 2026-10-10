@@ -1,0 +1,6 @@
+note	claim	donor_file	line	quote
+Dawn-of-Light-DOLSharp	timer wheel: bucket size 16 ms (2^4)	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/GameTimer.cs	205	public static readonly int BUCKET_BITS = 4;
+Dawn-of-Light-DOLSharp	timer wheel: table of 2^17 buckets	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/GameTimer.cs	210	public static readonly int TABLE_BITS = 17;
+Dawn-of-Light-DOLSharp	timer thread uses stopwatch time when resync watch exists	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/GameTimer.cs	821	m_time = DOL.GS.GameEvents.RegionTimersResynch.watch.ElapsedMilliseconds;
+Dawn-of-Light-DOLSharp	timer thread tick increments	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/GameTimer.cs	824	int newTick = m_tick = (m_tick + 1) & TICK_MASK;
+Dawn-of-Light-DOLSharp	timer Start inserts into the region time manager	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/GameTimer.cs	144	m_time.InsertTimer(this, initialDelay);

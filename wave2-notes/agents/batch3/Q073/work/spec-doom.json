@@ -1,0 +1,254 @@
+[
+ [
+  "id-Software-DOOM",
+  "licence: p_map.c header names the DOOM Source Code License",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_map.c",
+  "only under the terms of the DOOM Source Code License as"
+ ],
+ [
+  "id-Software-DOOM",
+  "top-level LICENSE.TXT is GPL v2 text (conflicts with file header)",
+  "/mnt/frankendom-donors/id-Software-DOOM/LICENSE.TXT",
+  "GNU GENERAL PUBLIC LICENSE"
+ ],
+ [
+  "id-Software-DOOM",
+  "P_LineAttack damage-0 is a test trace",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_map.c",
+  "If damage == 0, it is just a test trace"
+ ],
+ [
+  "id-Software-DOOM",
+  "aim window starts at +-100/160 slope",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_map.c",
+  "topslope = 100*FRACUNIT/160;"
+ ],
+ [
+  "id-Software-DOOM",
+  "aim window bottom slope",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_map.c",
+  "bottomslope = -100*FRACUNIT/160;"
+ ],
+ [
+  "id-Software-DOOM",
+  "aim traverse narrows window at two-sided lines",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_map.c",
+  "if (topslope <= bottomslope)"
+ ],
+ [
+  "id-Software-DOOM",
+  "aim traverse: thing below window rejected",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_map.c",
+  "if (thingbottomslope > topslope)"
+ ],
+ [
+  "id-Software-DOOM",
+  "aim slope is midpoint of thing range clipped to window",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_map.c",
+  "aimslope = (thingtopslope+thingbottomslope)/2;"
+ ],
+ [
+  "id-Software-DOOM",
+  "shoot traverse rejects thing above aim slope",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_map.c",
+  "if (thingtopslope < aimslope)"
+ ],
+ [
+  "id-Software-DOOM",
+  "shoot traverse rejects thing below aim slope",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_map.c",
+  "if (thingbottomslope > aimslope)"
+ ],
+ [
+  "id-Software-DOOM",
+  "shoot traverse applies damage at first thing in window",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_map.c",
+  "P_DamageMobj (th, shootthing, shootthing, la_damage);"
+ ],
+ [
+  "id-Software-DOOM",
+  "shoot traverse skips la_damage zero",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_map.c",
+  "if (la_damage)"
+ ],
+ [
+  "id-Software-DOOM",
+  "P_LineAttack sets aimslope from argument",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_map.c",
+  "aimslope = slope;"
+ ],
+ [
+  "id-Software-DOOM",
+  "melee range constant",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_local.h",
+  "#define MELEERANGE"
+ ],
+ [
+  "id-Software-DOOM",
+  "missile range constant",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_local.h",
+  "#define MISSILERANGE"
+ ],
+ [
+  "id-Software-DOOM",
+  "fist damage 2 x (1..10)",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_pspr.c",
+  "damage = (P_Random ()%10+1)<<1;"
+ ],
+ [
+  "id-Software-DOOM",
+  "berserk multiplies fist by 10",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_pspr.c",
+  "if (player->powers[pw_strength])"
+ ],
+ [
+  "id-Software-DOOM",
+  "pistol damage 5 x (1..3)",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_pspr.c",
+  "damage = 5*(P_Random ()%3+1);"
+ ],
+ [
+  "id-Software-DOOM",
+  "bullet slope aim range 16 x 64",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_pspr.c",
+  "bulletslope = P_AimLineAttack (mo, an, 16*64*FRACUNIT);"
+ ],
+ [
+  "id-Software-DOOM",
+  "bullet slope probes +90 units of angle",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_pspr.c",
+  "an += 1<<26;"
+ ],
+ [
+  "id-Software-DOOM",
+  "bullet slope probes -90 units of angle",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_pspr.c",
+  "an -= 2<<26;"
+ ],
+ [
+  "id-Software-DOOM",
+  "pistol shot line attack",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_pspr.c",
+  "P_LineAttack (mo, angle, MISSILERANGE, bulletslope, damage);"
+ ],
+ [
+  "id-Software-DOOM",
+  "monster shot damage 3 x (1..5)",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_enemy.c",
+  "damage = ((P_Random()%5)+1)*3;"
+ ],
+ [
+  "id-Software-DOOM",
+  "monster shot aims first",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_enemy.c",
+  "slope = P_AimLineAttack (actor, angle, MISSILERANGE);"
+ ],
+ [
+  "id-Software-DOOM",
+  "monster shot spread",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_enemy.c",
+  "angle += (P_Random()-P_Random())<<20;"
+ ],
+ [
+  "id-Software-DOOM",
+  "monster shot line attack",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_enemy.c",
+  "P_LineAttack (actor, angle, MISSILERANGE, slope, damage);"
+ ],
+ [
+  "id-Software-DOOM",
+  "P_DamageMobj gate on shootable",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c",
+  "if ( !(target->flags & MF_SHOOTABLE) )"
+ ],
+ [
+  "id-Software-DOOM",
+  "baby skill halves player damage",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c",
+  "take half damage in trainer mode"
+ ],
+ [
+  "id-Software-DOOM",
+  "push uses damage over mass",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c",
+  "thrust = damage*(FRACUNIT>>3)*100/target->info->mass;"
+ ],
+ [
+  "id-Software-DOOM",
+  "chainsaw does not push",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c",
+  "|| source->player->readyweapon != wp_chainsaw))"
+ ],
+ [
+  "id-Software-DOOM",
+  "god/invuln absorbs hits under 1000",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c",
+  "if ( damage < 1000"
+ ],
+ [
+  "id-Software-DOOM",
+  "god/invuln comment",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c",
+  "ignore damage in GOD mode, or with INVUL power."
+ ],
+ [
+  "id-Software-DOOM",
+  "armour class 1 soaks a third",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c",
+  "saved = damage/3;"
+ ],
+ [
+  "id-Software-DOOM",
+  "armour class 2 soaks a half",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c",
+  "saved = damage/2;"
+ ],
+ [
+  "id-Software-DOOM",
+  "armour used up clamps saved to points",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c",
+  "if (player->armorpoints <= saved)"
+ ],
+ [
+  "id-Software-DOOM",
+  "armour points reduced by saved",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c",
+  "player->armorpoints -= saved;"
+ ],
+ [
+  "id-Software-DOOM",
+  "monster health reduced by damage",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c",
+  "target->health -= damage;"
+ ],
+ [
+  "id-Software-DOOM",
+  "death call when health <= 0",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c",
+  "P_KillMobj (source, target);"
+ ],
+ [
+  "id-Software-DOOM",
+  "pain roll against painchance",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c",
+  "if ( (P_Random () < target->info->painchance)"
+ ],
+ [
+  "id-Software-DOOM",
+  "retarget to source when not busy",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c",
+  "if ( (!target->threshold || target->type == MT_VILE)"
+ ],
+ [
+  "id-Software-DOOM",
+  "retarget sets target to source",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c",
+  "target->target = source;"
+ ],
+ [
+  "id-Software-DOOM",
+  "retarget sets threshold",
+  "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c",
+  "target->threshold = BASETHRESHOLD;"
+ ]
+]

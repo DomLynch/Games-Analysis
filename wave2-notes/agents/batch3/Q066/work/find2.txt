@@ -1,0 +1,2 @@
+damage = (weapon.getItem().getDmgLarge()
+if (weapon.getItem().getType() == 3) { // Two-handed sword

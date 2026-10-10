@@ -1,0 +1,44 @@
+ModernUO	FightMode enum: Strongest entry	BCR	38
+ModernUO	default perception range 16	BCR	171
+ModernUO	chase leash = 2x perception	BCR	1094
+ModernUO	ambient reacquire delay 10 s	BCR	1321
+ModernUO	approach reaction delay 2 s (paragon zero)	BCR	1326	public virtual TimeSpan AcquireOnApproachDelay
+ModernUO	approach trigger range 10	BCR	1330
+ModernUO	approach clamps the scan deadline	BCR	1339
+ModernUO	approach trigger requires enemy in range	BCR	1358
+ModernUO	movement hook runs approach check	BCR	3068
+ModernUO	ForceReacquire sets gate to now	BCR	3063
+ModernUO	ranking: Strongest = tactics + strength	BCR	2740
+ModernUO	ranking: Weakest = negative hits	BCR	2741
+ModernUO	ranking: default Closest = negative distance	BCR	2742
+ModernUO	aggressive action hands off to AI policy	BCR	2791
+ModernUO	AI aggressive-action policy	BAI	138
+ModernUO	closer visible aggressor takes over	BAI	184
+ModernUO	think: flee check first	BAI	275
+ModernUO	combat action validates combatant	BAI	477
+ModernUO	flee threshold default 0	BAI	761
+ModernUO	flee duration 10 to 30 s	BAI	780
+ModernUO	flee needs hit fraction at or below threshold	BAI	800
+ModernUO	flee roll against chance	BAI	805
+ModernUO	AcquireFocusMob signature	BAI	853
+ModernUO	reacquire delay read from creature	BAI	893
+ModernUO	reacquire gate: blocked while remaining in (0, delay]	BAI	896
+ModernUO	scan re-arms full reacquire delay	BAI	908
+ModernUO	aggressor-only mode with no aggressors does not scan	BAI	980
+ModernUO	candidate ranking call	BAI	1027
+ModernUO	strict greater-than keeps first max; needs LOS	BAI	1029
+ModernUO	chosen focus: new, else enemy summon, else master	BAI	1041
+ModernUO	aggressor mode filter	BAI	1079
+ModernUO	hostile = combatant or aggressor or aggressed	BAI	1092
+ModernUO	melee wander: acquire then enter combat	MEL	16
+ModernUO	combat: out of perception range triggers rescan	MEL	44
+ModernUO	out-of-range rescan helper	MEL	75
+ModernUO	out-of-range rescan call	MEL	77
+ModernUO	leash drop of combatant beyond chase leash	MEL	84
+ModernUO	combatant cleared on leash break	MEL	86
+ModernUO	flee exit: back to combat when hits recover	MEL	144
+ModernUO	think cadence from current speed	ATM	155
+ModernUO	next think = now + period	ATM	156
+ModernUO	idle think jitter	ATM	165
+ModernUO	think gate: only when due	ATM	137
+ModernUO	prod forces a think now	ATM	60

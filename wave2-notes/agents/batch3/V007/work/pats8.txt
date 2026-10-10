@@ -1,0 +1,12 @@
+public override void Despawn(Npc npc)
+private bool CanSpawn()
+private bool CanSpawnNpcs()
+public void DoSpawn()
+private int GetNumberOfPlayerInSpawnRadius
+private (bool, int) AreOtherNpcsInSpawnZone()
+private void DoDespawn
+internal void DoDespawn(Npc npc)
+public bool IsOptimalSpawner()
+private struct SpawnerPlayerCountCache
+public void DoSpawnEffect
+private void DecrementCount

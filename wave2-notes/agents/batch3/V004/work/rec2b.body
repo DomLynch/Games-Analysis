@@ -1,0 +1,10 @@
+swgemu-Core3	dynamic lair despawn task destroys the lair object	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/events/DespawnDynamicSpawnTask.h	23	spawn->destroyObjectFromWorld(true);
+swgemu-Core3	dynamic lair empties check	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/DynamicSpawnObserverImplementation.cpp	49	if (spawnedCreatures.isEmpty()) {
+swgemu-Core3	lair object grace 300 s	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/LairObject.idl	85	despawnEvent.schedule(300000);
+swgemu-Core3	POI building grace 300 s	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/building/PoiBuilding.idl	85	despawnEvent.schedule(300000);
+swgemu-Core3	per-area total cap is set from region data	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/planet/PlanetManagerImplementation.cpp	1069	area->setMaxSpawnLimit(regionObject.getIntAt(7));
+swgemu-Core3	dynamic lair mob placement uses building size	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/DynamicSpawnObserverImplementation.cpp	130	float y = building->getPositionY() + (size - System::random(size * 20) / 10.0f);
+swgemu-Core3	dynamic lair: herd leader is first mob of a herd template	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/DynamicSpawnObserverImplementation.cpp	171	if (j == 0 && herdLeader == nullptr && creatureTemplate->isHerd()) {
+swgemu-Core3	dynamic lair: followers set to FOLLOWING	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/DynamicSpawnObserverImplementation.cpp	201	agent->setMovementState(AiAgent::FOLLOWING);
+swgemu-Core3	dynamic lair: mob home set to building	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/DynamicSpawnObserverImplementation.cpp	164	agent->setHomeObject(building);
+swgemu-Core3	dynamic lair: mob added to spawned list	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/DynamicSpawnObserverImplementation.cpp	167	spawnedCreatures.add(creo);

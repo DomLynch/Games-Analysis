@@ -1,0 +1,78 @@
+import csv,sys
+Z="/mnt/frankendom-donors/EQEmu/zone/"
+A=Z+"attack.cpp"; H=Z+"hate_list.cpp"; M=Z+"mob_ai.cpp"; MB=Z+"mob.cpp"; R="/mnt/frankendom-donors/EQEmu/common/ruletypes.h"; F="/mnt/frankendom-donors/EQEmu/common/features.h"
+F2="/mnt/frankendom-donors/EQEmu/common/features.h"
+N="EQEmu"
+rows=[
+("AddToHateList entry point",A,3054,"void Mob::AddToHateList(Mob* other, int64 hate"),
+("hate is applied only when the attacker is already on the list",A,3085,"bool on_hatelist = CheckAggro(other);"),
+("hatemod from spell and item bonuses, base 100",A,3090,"int64 hatemod = 100 + other->spellbonuses.hatemod"),
+("hate scaled by hatemod percent for known entries",A,3095,"hate = ((hate * (hatemod)) / 100);"),
+("new entries get InitialAggroBonus instead",A,3100,"hate += RuleI(Aggro, InitialAggroBonus);"),
+("tunnel vision: hate cut when the hitter is not the top target",A,3158,"if (top && top != other) {"),
+("tunnel vision multiplier rule",A,3164,"hate *= RuleR(Aggro, TunnelVisionAggroMod);"),
+("damage credit capped at HP left (kill-steal guard)",A,3175,"if (damage > GetHP())"),
+("damage credit capped to HP",A,3176,"damage = GetHP();"),
+("hate and damage handed to the hate list",A,3182,"hate_list.AddEntToHateList(other, hate, damage, bFrenzy, !iBuffTic);"),
+("AddEntToHateList: damage credit adds, never negative",H,221,"entity->hatelist_damage += (in_damage >= 0) ? in_damage : 0;"),
+("AddEntToHateList: stored hate accumulates",H,222,"entity->stored_hate_amount += in_hate;"),
+("AddEntToHateList: new entry starts out-of-range count at zero",H,241,"entity->oor_count = 0;"),
+("GetMobWithMostHateOnList: smart list switch",H,366,"if (RuleB(Aggro, SmartAggroList)) {"),
+("sanctuary entries are a fallback only",H,407,"if (m->Sanctuary()) {"),
+("divine aura, mez and fear entries are a fallback only",H,417,"if (m->DivineAura() || m->IsMezzed() || m->IsFeared()) {"),
+("current hate read from the entry",H,427,"int64 current_hate = cur->stored_hate_amount;"),
+("sitting client gets SittingAggroMod",H,431,"aggro_mod += RuleI(Aggro, SittingAggroMod);"),
+("current target gets CurrentTargetAggroMod (client branch)",H,436,"aggro_mod += RuleI(Aggro, CurrentTargetAggroMod);"),
+("melee range gets MeleeRangeAggroMod",H,441,"aggro_mod += RuleI(Aggro, MeleeRangeAggroMod);"),
+("critically wounded test: HP below 20 percent",H,464,"((m->GetHP() * 100 / m->GetMaxHP()) < 20)"),
+("sanctuary fallback only while nothing better is found",H,408,"if (hate == -1) {"),
+("aura, mez or fear fallback only while nothing better is found",H,418,"if (hate == -1) {"),
+("critically wounded bonus",H,465,"aggro_mod += RuleI(Aggro, CriticallyWoundedAggroMod);"),
+("aggro_mod applied to hate as integer percent",H,469,"current_hate += (current_hate * aggro_mod / 100);"),
+("top replaced when larger or frenzied",H,472,"if (current_hate > hate || cur->is_entity_frenzy) {"),
+("client-type preference when a player is in melee range",H,480,"if (top_client_type_in_range && top_hate) {"),
+("RemoveStaleEntries signature: time and distance",H,854,"void HateList::RemoveStaleEntries(int time_ms, float dist)"),
+("stale by time since last_modified",H,867,"if (cur_time - (*it)->last_modified > time_ms) {"),
+("out of range when squared distance exceeds leash",H,871,"DistanceSquaredNoZ(hate_owner->GetPosition(), m->GetPosition()) > dist2"),
+("second out-of-range pass removes the entry",H,873,"if ((*it)->oor_count == 2) {"),
+("cleanup timer gate",M,1051,"if (hate_list_cleanup_timer.Check()) {"),
+("cleanup uses 600000 ms and zone npc_aggro_max_dist",M,1052,"hate_list.RemoveStaleEntries(600000, static_cast<float>"),
+("empty hate list means no longer engaged",M,1053,"if (hate_list.IsHateListEmpty()) {"),
+("rooted or blind: closest entity instead of top hate",M,1063,"SetTarget(hate_list.GetClosestEntOnHateList(this));"),
+("target refresh gate, AI_target_check_timer",M,1065,"if (AI_target_check_timer->Check()) {"),
+("target refresh picks top hate (not-focused branch)",M,1082,"SetTarget(hate_list.GetMobWithMostHateOnList(this));"),
+("engaged path also refreshes the target on the timer",M,770,"if(AI_target_check_timer->Check())"),
+("NPC aggro max distance rule can disable the cleanup timer",M,447,"if(!RuleB(Aggro, NPCAggroMaxDistanceEnabled)) {"),
+("cleanup timer starts at 6000 ms",MB,129,"hate_list_cleanup_timer(6000),"),
+("target check duration constant 500",F,150,"AItarget_check_duration = 500,"),
+("rule SmartAggroList default true",R,712,"RULE_BOOL(Aggro, SmartAggroList, true"),
+("rule SittingAggroMod default 35",R,713,"RULE_INT(Aggro, SittingAggroMod, 35,"),
+("rule MeleeRangeAggroMod default 10",R,714,"RULE_INT(Aggro, MeleeRangeAggroMod, 10,"),
+("rule CurrentTargetAggroMod default 0",R,715,"RULE_INT(Aggro, CurrentTargetAggroMod, 0,"),
+("rule CriticallyWoundedAggroMod default 100",R,716,"RULE_INT(Aggro, CriticallyWoundedAggroMod, 100,"),
+("rule TunnelVisionAggroMod default 0.75",R,719,"RULE_REAL(Aggro, TunnelVisionAggroMod, 0.75,"),
+("rule InitialAggroBonus default 100",R,732,"RULE_INT(Aggro, InitialAggroBonus, 100,"),
+("rule NPCAggroMaxDistanceEnabled default true",R,728,"RULE_BOOL(Aggro, NPCAggroMaxDistanceEnabled, true,"),
+("licence: version 3 or any later version (hate_list.cpp header)",H,7,"either version 3 of the License, or"),
+("first-aggro gate: CheckWillAggro entry point",Z+"aggro.cpp",370,"bool Mob::CheckWillAggro(Mob *mob) {"),
+("first-aggro gate: aggro range read per creature",Z+"aggro.cpp",422,"float aggro_range = GetAggroRange();"),
+("first-aggro gate: engaged creatures take no new hate unless frustrated or prox aggro",Z+"aggro.cpp",452,"!is_frustrated &&"),
+("first-aggro gate: squared-distance check against aggro range",Z+"aggro.cpp",481,"float distance_squared = DistanceSquared(mob->GetPosition(), m_Position);"),
+("first-aggro gate: out of range returns false",Z+"aggro.cpp",484,"if (distance_squared > aggro_range_squared ) {"),
+("first-aggro gate: heroic CHA reduces the threatening roll",Z+"aggro.cpp",498,"int heroic_cha_mod = (mob->itembonuses.HeroicCHA / 25);"),
+("first-aggro gate: level rule branch",Z+"aggro.cpp",504,"RuleB(Aggro, UseLevelAggro) &&"),
+("first-aggro gate: threatening roll uses 32 minus CHA mod",Z+"aggro.cpp",524,"zone->random.Roll(THREATENINGLY_AGGRO_CHANCE - heroic_cha_mod)"),
+("first-aggro gate: line of sight is the last check",Z+"aggro.cpp",528,"if(CheckLosFN(mob)) {"),
+("first-aggro gate: INT at or below threshold always aggros (else branch)",Z+"aggro.cpp",536,"(GetINT() <= RuleI(Aggro, IntAggroThreshold))"),
+("threatening chance constant 32 of 128",F2,201,"#define THREATENINGLY_AGGRO_CHANCE 32"),
+("rule MinAggroLevel default 18",R,723,"RULE_INT(Aggro, MinAggroLevel, 18,"),
+("rule IntAggroThreshold default 75",R,721,"RULE_INT(Aggro, IntAggroThreshold, 75,"),
+("rule UseLevelAggro default true",R,724,"RULE_BOOL(Aggro, UseLevelAggro, true,"),
+]
+with open(sys.argv[1],'w',newline='') as f:
+    w=csv.writer(f,delimiter='\t',quoting=csv.QUOTE_NONE,lineterminator='\n')
+    w.writerow(["note","claim","donor_file","line","quote"])
+    for claim,path,line,q in rows:
+        if not (15<=len(q)<=90): print("LEN",len(q),q)
+        w.writerow([N,claim,path,str(line),q])
+print("rows",len(rows))

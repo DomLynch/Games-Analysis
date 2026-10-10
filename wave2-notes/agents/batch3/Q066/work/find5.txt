@@ -1,0 +1,6 @@
+if (target.hasSkillEffect(UNCANNY_DODGE))
+skillAdjustment -= 5;
+if (target.hasSkillEffect(RESIST_FEAR))
+skillAdjustment += 5;
+private int _leverage = 10;
+public void setLeverage(int i) {

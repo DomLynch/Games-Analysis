@@ -1,0 +1,177 @@
+{
+  "donor": "angband-angband",
+  "counts": {
+    "creatures": 623,
+    "classes": 9,
+    "weapons": 61,
+    "gear_sets": 58,
+    "zones": 9
+  },
+  "creature_families": [
+    {"family": "person (human and townsfolk)", "count": 54, "ref": "lib/gamedata/monster.txt (base:person)"},
+    {"family": "dragon", "count": 30, "ref": "lib/gamedata/monster.txt (base:dragon), monster.txt line 2623 onward"},
+    {"family": "ancient dragon", "count": 29, "ref": "lib/gamedata/monster.txt (base:ancient dragon), line 10976 onward"},
+    {"family": "humanoid", "count": 22, "ref": "lib/gamedata/monster.txt (base:humanoid)"},
+    {"family": "zephyr hound", "count": 21, "ref": "lib/gamedata/monster.txt line 3986 onward"},
+    {"family": "elemental", "count": 20, "ref": "lib/gamedata/monster.txt line 3448 onward"},
+    {"family": "wraith", "count": 19, "ref": "lib/gamedata/monster.txt line 5689 onward"},
+    {"family": "orc", "count": 18, "ref": "lib/gamedata/monster.txt line 2009 onward"},
+    {"family": "major demon", "count": 18, "ref": "lib/gamedata/monster.txt line 9713 onward"},
+    {"family": "troll", "count": 16, "ref": "lib/gamedata/monster.txt line 4397 onward"},
+    {"family": "spider", "count": 16, "ref": "lib/gamedata/monster.txt line 1116 onward"},
+    {"family": "canine", "count": 16, "ref": "lib/gamedata/monster.txt line 1061 onward"},
+    {"family": "ghost", "count": 15, "ref": "lib/gamedata/monster.txt line 1203 onward"},
+    {"family": "jelly", "count": 14, "ref": "lib/gamedata/monster.txt line 959 onward"},
+    {"family": "ainu (angelic beings)", "count": 14, "ref": "lib/gamedata/monster.txt line 8037 onward"},
+    {"family": "vortex", "count": 13, "ref": "lib/gamedata/monster.txt line 5324 onward"},
+    {"family": "golem", "count": 13, "ref": "lib/gamedata/monster.txt line 3844 onward"},
+    {"family": "eye", "count": 11, "ref": "lib/gamedata/monster.txt line 694 onward"},
+    {"family": "giant", "count": 11, "ref": "lib/gamedata/monster.txt line 5966 onward"},
+    {"family": "worm", "count": 11, "ref": "lib/gamedata/monster.txt line 677 onward"},
+    {"family": "quylthulg (summoner)", "count": 10, "ref": "lib/gamedata/monster.txt line 5104 onward"},
+    {"family": "creeping coins", "count": 5, "ref": "lib/gamedata/monster.txt lines 1588, 1992, 3063, 3682, 6326"},
+    {"family": "mimic", "count": 4, "ref": "lib/gamedata/monster.txt lines 4683, 5294, 6954, 8466"}
+  ],
+  "top_creatures": [
+    {
+      "label": "Coin-hoard mimic",
+      "why": "A treasure pile that stands up and bites reads at a glance; the metal tier is the colour and rarity signal.",
+      "keep": "Treasure disguise, five-step metal ladder (copper to adamantite), poison touch on the top tiers.",
+      "change": "Our own silhouette (pile with legs) and our own tier metals.",
+      "ref": "lib/gamedata/monster.txt line 3682 (creeping mithril coins, depth 13, read in full); family lines 1588, 1992, 3063, 6326"
+    },
+    {
+      "label": "Metal guardian statue",
+      "why": "A statue worth killing for its loot, with heavy blows and element immunities.",
+      "keep": "Statue body, immunities to cold, fire and poison, gold-only drop.",
+      "change": "Our silhouette, tier names and drop table.",
+      "ref": "lib/gamedata/monster.txt line 7105 (mithril golem, depth 30, read in full); line 5461 (iron golem, depth 22)"
+    },
+    {
+      "label": "Elemental hound pack",
+      "why": "A pack that glows in one element and breathes it; packs read well at 375 px as a group of small bright shapes.",
+      "keep": "Pack summon, element colour, breath, glow radius of 2.",
+      "change": "Pack shape, our element set and our breath look.",
+      "ref": "lib/gamedata/monster.txt line 4609 (fire hound, depth 18, read in full, friends 100:2d7:Same, BR_FIRE); other zephyr hound entries from line 3986 (light hound) onward"
+    },
+    {
+      "label": "Swirl vortex",
+      "why": "A spinning mass whose element changes with depth; one body, many elements.",
+      "keep": "Spinning body, engulf attack, element glow.",
+      "change": "Our body shape and our element list.",
+      "ref": "lib/gamedata/monster.txt line 5324 (fire vortex, depth 21, read in full); lines 5343, 5361, 7055, 8976, 8995, 9038, 9201, 9219, 11517, 12168"
+    },
+    {
+      "label": "Hatchling-to-wyrm line",
+      "why": "Four visible growth stages and a shimmering apex make a clear progression ladder.",
+      "keep": "One body plan per element; colour equals element; multi-hued apex with shimmer.",
+      "change": "Three stages instead of five; our stage names; our apex colour cycle and breath set.",
+      "ref": "lib/gamedata/monster.txt line 2623 (baby blue dragon, depth 9, read in full); line 11492 (ancient multi-hued dragon, depth 53, read in full, ATTR_MULTI); great wyrms near lines 12958 to 14076"
+    },
+    {
+      "label": "Many-eyed watcher",
+      "why": "Each tier adds eyes and gaze effects, so the silhouette and threat both grow.",
+      "keep": "Eye-count escalation; gaze effects as status (charge drain, exp drain, blind, confuse).",
+      "change": "Body shape (not a sphere); our own gaze set.",
+      "ref": "lib/gamedata/monster.txt line 9474 (beholder, depth 40, read in full); line 694 (floating eye, depth 1); line 12714 (hive-mother, depth 67)"
+    },
+    {
+      "label": "Summon mound",
+      "why": "A pulsing mound that does nothing but blink and summon; reads as a threat from range.",
+      "keep": "Stationary summoner, blink, summon, late greater tier.",
+      "change": "Our summon theme and silhouette.",
+      "ref": "lib/gamedata/monster.txt line 5104 (quylthulg, depth 20, read in full); lines 13104, 13607"
+    },
+    {
+      "label": "Item mimic line",
+      "why": "Each mimic disguises as an item glyph, so the player reads it as loot until it bites.",
+      "keep": "Glyph disguise, one mimic per item class.",
+      "change": "Our item classes and the reveal animation.",
+      "ref": "lib/gamedata/monster.txt lines 4683 (potion, glyph !), 5294 (scroll, ?), 6954 (ring, =), 8466 (chest, ~)"
+    }
+  ],
+  "classes": [
+    {"name": "Warrior", "kind": "class", "role": "front-line melee", "signature": "no spell book; highest hit die of the classes", "progression": "more blows with level (max 6)", "ref": "lib/gamedata/class.txt line 136"},
+    {"name": "Mage", "kind": "class", "role": "arcane caster", "signature": "bolts and utility spells from a book at start", "progression": "spell list grows", "ref": "lib/gamedata/class.txt line 172"},
+    {"name": "Druid", "kind": "class", "role": "nature caster", "signature": "shape-change spells", "progression": "spell list and forms", "ref": "lib/gamedata/class.txt line 449"},
+    {"name": "Priest", "kind": "class", "role": "prayer caster", "signature": "prayer book, support", "progression": "spell list", "ref": "lib/gamedata/class.txt line 687"},
+    {"name": "Necromancer", "kind": "class", "role": "shadow caster", "signature": "dark spell book", "progression": "spell list", "ref": "lib/gamedata/class.txt line 956"},
+    {"name": "Paladin", "kind": "class", "role": "melee with prayer", "signature": "prayer from the first level", "progression": "melee plus spells", "ref": "lib/gamedata/class.txt line 1215"},
+    {"name": "Rogue", "kind": "class", "role": "stealth and thievery", "signature": "book spells starting later", "progression": "late spells", "ref": "lib/gamedata/class.txt line 1377"},
+    {"name": "Ranger", "kind": "class", "role": "archery with nature spells", "signature": "nature book from a later level", "progression": "archery and spells", "ref": "lib/gamedata/class.txt line 1483"},
+    {"name": "Blackguard", "kind": "class", "role": "melee with dark power", "signature": "shadow book from the first level", "progression": "melee plus dark spells", "ref": "lib/gamedata/class.txt line 1593"},
+    {"name": "Human", "kind": "race", "role": "baseline stat package", "signature": "no special flag", "progression": "hit die 10", "ref": "lib/gamedata/p_race.txt line 67"},
+    {"name": "Half-Elf", "kind": "race", "role": "stat package", "signature": "sustain Dex", "progression": "hit die 10", "ref": "lib/gamedata/p_race.txt line 87"},
+    {"name": "Elf", "kind": "race", "role": "stat package", "signature": "sustain Dex", "progression": "hit die 9", "ref": "lib/gamedata/p_race.txt line 108"},
+    {"name": "Hobbit", "kind": "race", "role": "stealth package", "signature": "hold life; best stealth of the races", "progression": "hit die 7", "ref": "lib/gamedata/p_race.txt line 130"},
+    {"name": "Gnome", "kind": "race", "role": "stat package", "signature": "free action", "progression": "hit die 8", "ref": "lib/gamedata/p_race.txt line 152"},
+    {"name": "Dwarf", "kind": "race", "role": "stat package", "signature": "protect from blindness", "progression": "hit die 11", "ref": "lib/gamedata/p_race.txt line 174"},
+    {"name": "Half-Orc", "kind": "race", "role": "stat package", "signature": "no special flag", "progression": "hit die 10", "ref": "lib/gamedata/p_race.txt line 196"},
+    {"name": "Half-Troll", "kind": "race", "role": "heavy stat package", "signature": "sustain Str and regeneration", "progression": "hit die 12", "ref": "lib/gamedata/p_race.txt line 217"},
+    {"name": "Dunadan", "kind": "race", "role": "stat package", "signature": "sustain Con", "progression": "hit die 10", "ref": "lib/gamedata/p_race.txt line 238"},
+    {"name": "High-Elf", "kind": "race", "role": "stat package", "signature": "see invisible", "progression": "hit die 10", "ref": "lib/gamedata/p_race.txt line 259"},
+    {"name": "Kobold", "kind": "race", "role": "stat package", "signature": "stealth 3", "progression": "hit die 8", "ref": "lib/gamedata/p_race.txt line 281"}
+  ],
+  "weapon_families": [
+    {"family": "sword", "count": 14, "tiers": "dagger, rapier, short sword, cutlass, tulwar, scimitar, long sword, broad sword, bastard sword, katana, zweihander, executioner's sword, blade of chaos", "ref": "lib/gamedata/object.txt (type:sword)"},
+    {"family": "hafted", "count": 14, "tiers": "ball-and-chain, flail, mace, war hammer, maul, morning star, whip, mace of disruption", "ref": "lib/gamedata/object.txt (type:hafted)"},
+    {"family": "polearm", "count": 16, "tiers": "awl-pike, halberd, trident, pike, spear, glaive, axes, scythe, lance, lucerne hammer", "ref": "lib/gamedata/object.txt (type:polearm)"},
+    {"family": "bow", "count": 5, "tiers": "sling, short bow, long bow, light and heavy crossbow", "ref": "lib/gamedata/object.txt (type:bow)"},
+    {"family": "ammunition", "count": 9, "tiers": "arrow, bolt, shot, each with seeker and mithril tiers", "ref": "lib/gamedata/object.txt (type:arrow, bolt, shot)"},
+    {"family": "digger", "count": 3, "tiers": "pick, shovel, mattock", "ref": "lib/gamedata/object.txt (type:digger)"}
+  ],
+  "gear_tiers": [
+    {"tier": "soft armour", "count": 5, "ladder": "soft leather, studded leather, hard leather, leather scale mail, robe", "ref": "lib/gamedata/object.txt (type:soft armor)"},
+    {"tier": "hard armour", "count": 12, "ladder": "metal scale, chain, augmented chain, bar chain, brigandine, partial plate, lamellar, full plate, ribbed plate, mithril chain, mithril plate, adamantite plate", "ref": "lib/gamedata/object.txt (type:hard armor)"},
+    {"tier": "dragon armour", "count": 12, "ladder": "12 colour-named scale-mail sets, one per dragon colour or alignment", "ref": "lib/gamedata/object.txt (type:dragon armor)"},
+    {"tier": "shields", "count": 6, "ladder": "wicker, small metal, leather, large metal, knight's, mithril", "ref": "lib/gamedata/object.txt (type:shield)"},
+    {"tier": "helms and crowns", "count": 8, "ladder": "hard leather cap, metal cap, iron helm, steel helm; iron, golden, jewel-encrusted and massive iron crowns", "ref": "lib/gamedata/object.txt (type:helm, crown)"},
+    {"tier": "cloaks, boots, gloves", "count": 15, "ladder": "fur and elven cloaks; leather, iron, steel and mithril boots; gauntlets and mithril gauntlets", "ref": "lib/gamedata/object.txt (type:cloak, boots, gloves)"}
+  ],
+  "zones": [
+    {"name": "town", "kind": "dungeon profile", "ref": "lib/gamedata/dungeon_profile.txt"},
+    {"name": "labyrinth", "kind": "dungeon profile", "ref": "lib/gamedata/dungeon_profile.txt"},
+    {"name": "cavern", "kind": "dungeon profile", "ref": "lib/gamedata/dungeon_profile.txt"},
+    {"name": "classic", "kind": "dungeon profile", "ref": "lib/gamedata/dungeon_profile.txt"},
+    {"name": "modified", "kind": "dungeon profile", "ref": "lib/gamedata/dungeon_profile.txt"},
+    {"name": "moria", "kind": "dungeon profile", "ref": "lib/gamedata/dungeon_profile.txt"},
+    {"name": "lair", "kind": "dungeon profile", "ref": "lib/gamedata/dungeon_profile.txt"},
+    {"name": "gauntlet", "kind": "dungeon profile", "ref": "lib/gamedata/dungeon_profile.txt"},
+    {"name": "hard centre", "kind": "dungeon profile", "ref": "lib/gamedata/dungeon_profile.txt"},
+    {"name": "monster pits (40 family pits)", "kind": "archetype", "ref": "lib/gamedata/pit.txt"},
+    {"name": "vault and room entries (161: 66 interesting rooms, 40 greater, 29 medium, 26 lesser)", "kind": "archetype", "ref": "lib/gamedata/vault.txt"},
+    {"name": "lava and magma/quartz veins", "kind": "hazard terrain", "ref": "lib/gamedata/terrain.txt"},
+    {"name": "traps (39 plus none)", "kind": "hazard", "ref": "lib/gamedata/trap.txt"}
+  ],
+  "looks": [
+    {"label": "Monster colour flicker", "technique": "Palette cycle used only by monsters (46 entries with ATTR_FLICKER); the file says only monsters may flicker.", "ref": "lib/gamedata/visuals.txt lines 39-56; lib/gamedata/monster.txt (grep ATTR_FLICKER)"},
+    {"label": "Multi-hued shimmer", "technique": "Colour rotates through an element set (24 entries with ATTR_MULTI).", "ref": "lib/gamedata/monster.txt line 11492"},
+    {"label": "Clear monster", "technique": "Transparency flag on 6 entries (ATTR_CLEAR).", "ref": "lib/gamedata/monster.txt (grep ATTR_CLEAR)"},
+    {"label": "Creature glow", "technique": "Light radius field on a monster so the glow moves with it (fire hound and fire vortex read light 2).", "ref": "lib/gamedata/monster.txt lines 4609, 5324"},
+    {"label": "Swappable tile sets", "technique": "Five tile sets each with a mapping file, so the art layer swaps without code changes (16x16, 32x32, 64x64, 8x8, 8x16).", "ref": "lib/tiles/list.txt; lib/tiles/*/graf-*.prf (names only)"},
+    {"label": "Dragon colour series", "technique": "One shape in many colours, each colour carrying an element.", "ref": "lib/gamedata/object.txt (type:dragon armor)"},
+    {"label": "Depth-tiered ambience", "technique": "Bells and iron doors underground at depth bands; a sound bed that changes with depth.", "ref": "lib/customize/sound.prf lines 33-39; lib/sounds/amb_bell_*.mp3 (names only)"}
+  ],
+  "originals": [
+    {"name": "Hoard mimic", "idea": "A treasure pile that stands up in five metal tiers, with a poison touch on the top tiers and a depth gate.", "keep": "Treasure disguise and the metal ladder.", "change": "Silhouette, attacks and tier names."},
+    {"name": "Metal sentinel line", "idea": "Four statue guardians, each heavier metal, immune to two elements, dropping gold on death.", "keep": "Element immunities and the gold drop.", "change": "Our metals, silhouette and drop table."},
+    {"name": "Element hound pack", "idea": "A pack of up to twelve sharing one element, each breathing it.", "keep": "Pack summon and glow radius.", "change": "Our element set and pack shape."},
+    {"name": "Three-stage wyrm", "idea": "Hatchling, adult and apex in one body plan, colour equals element, apex shimmers through the element set.", "keep": "Colour-as-element and the shimmer.", "change": "Stage count (three not five), names and breath."},
+    {"name": "Watcher line", "idea": "A small watcher that grows more eyes and gaze effects up to a boss.", "keep": "Eye-count escalation.", "change": "Body shape and gaze effects."},
+    {"name": "Summon mound", "idea": "A stationary pulsing summoner that blinks and summons, with a late greater tier.", "keep": "Stationary summoner.", "change": "Summon theme and look."},
+    {"name": "Item mimic line", "idea": "Four mimics each disguised as an item glyph, one per item class.", "keep": "Glyph disguise.", "change": "Our item classes and reveal."},
+    {"name": "Element scale set", "idea": "Twelve colour-named armour sets, one per element or alignment.", "keep": "Colour equals element.", "change": "Our names and element list."}
+  ],
+  "licence_note": "Code: GPL version 2, or the Angband licence (docs/copying.rst line 5). Assets per group (docs/copying.rst): Adam Bolt 16x16 tiles permit use for any purpose (line 24); Gervais 32x32 tiles are CC BY 3.0 (line 26); Shockbolt 64x64 has its own licence with limits (lines 28, 40); sounds CC BY 4.0 by Dubtrain (line 46); fonts GPL (line 48). Old 8x8 and nomad 8x16 tiles, icons, screens and gamedata text are not named in a licence line. Several artifact and unique names look Tolkien-derived (not assessed). This summarises the files, not a legal opinion.",
+  "not_read": [
+    "Image and audio file pixels and waveforms (lib/tiles, lib/sounds, lib/icons, screenshots)",
+    "Full entries for 615 of 623 monsters (8 read in full; the rest from the field extract)",
+    "Monster message and sound text",
+    "lib/gamedata/blow_effects.txt, projection.txt, monster_spell.txt (names and counts only)",
+    "lib/gamedata/room_template.txt contents and dungeon profile internals",
+    "lib/gamedata/shape.txt beyond names",
+    "Full lore and item text (sampling only)",
+    "src/ code (only the z-file.c header via the AU004 audit)",
+    "help folder and most of docs/"
+  ]
+}

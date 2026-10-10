@@ -1,0 +1,46 @@
+int attackerDice = ThreadLocalRandom
+int defenderValue = (int)
+int defenderDice = 0;
+defenderDice = 10 - _targetPc.getAc();
+defenderDice = 10 + ThreadLocalRandom
+int fumble = _hitRate - 9;
+int critical = _hitRate + 10;
+_hitRate = attackerDice > defenderDice ? 100 : 0;
+if (isImmune(_targetPc))
+return _hitRate >= rnd;
+if (isBow && _hitRate >= rnd) {
+int defenderDice = 10 - _targetNpc.getAc();
+int hitRate = attacker.getLevel() + attacker.getHitup();
+int attackerDice = ThreadLocalRandom.current().nextInt(20) + 1 + hitRate - 1;
+int defenderDice = targetAc >= 0
+int fumble = hitRate;
+int critical = hitRate + 19;
+return _targetPc.getEr() < ThreadLocalRandom
+int hitRate = _pc.getLevel();
+hitRate += _weaponAddHit + _weaponEnchant / 2;
+hitRate += str > 59
+hitRate += dex > 60
+_statusDamage = isBow ? dexDmg
+private static final int[] strHit
+private static final int[] dexHit
+int weaponMaxDamage = small
+weaponDamage = ThreadLocalRandom.current().nextInt(weaponMaxDamage) + 1;
+double damage = weaponTotalDamage
+damage = calcBuffDamage(damage);
+if (_weaponType == WeaponType.Fist) {
+double dmg = calcPcBaseDamage(true, false, false, true);
+dmg -= _targetPc.getDamageReductionByArmor();
+dmg -= (targetPcLvl - 50) / 5 + 1;
+dmg -= getDragonSkinReduction
+if (_targetPc.hasSkillEffect(PATIENCE)) {
+dmg /= 2;
+dmg = ThreadLocalRandom.current().nextInt(lvl) + _npc.getStr() / 2 + 1;
+dmg = dmg * getLeverage() / 10;
+dmg -= calcPcDefense();
+int ac = Math.max(0, 10 - _targetPc.getAc());
+return ThreadLocalRandom.current().nextInt(acDefMax + 1);
+dmg /= 2;
+int damage = _weaponAttrEnchantLevel * 2 - 1;
+return (int) (damage * (1 - resist / 100.0));
+resist = -50;
+_drainHp = Math.max(1, (dmg / 4) + 1);

@@ -29,3 +29,9 @@ Rulings: one engine (src/fight is the whole fight; the Pit and zones are clients
 
 ## Rule added 2026-10-10 (Dom): keep the idea, fix the defect
 Old donors (10-20 years) often had a sound design but a flawed implementation (overshoot, no delta-time, inverted lookup, integer division). Do NOT reject a mechanism for a defect alone. In the note: keep the idea, list each defect with "fix: <how>", and set Decision to adapt (idea) with the defect fixed in the sketch. Reject only when the idea itself is wrong or conflicts with the Frankendom rulings.
+
+## Strategy coverage-review additions (apply to every reader, 2026-10-11)
+- Find the DATA tables first (XML/JSON/CSV/Lua/SQL); cite the table, not only the loader. State which half you read (server/client/data) and name the paired donor if it exists in the box.
+- Open the string table/locale file; count entries; describe the grammar, quote nothing.
+- Per-topic fold-ins: hud-ui = minimap/world map, touch UX, input buffer and lock-on forgiveness, accessibility; sound-music = layering, stingers, ambience beds per biome and border crossfades (not just 'plays a wav'); progression = talent trees, build diversity, death penalty, achievements/titles/cosmetic collections; loot = drop ceremony, rarity colour+sound, phone inspect flow; spawns/encounters = walk density (what appears every ~20 s of walking: chest, corpse, shrine, track).
+- Also note where seen: idle/ambient animation vocabulary (what creatures do when nothing happens), death and respawn presentation (how a loss is made bearable), boss intro/finisher staging, readability at 375 wide (silhouette, threat colour-coding, max enemies per frame).

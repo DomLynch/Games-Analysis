@@ -1,0 +1,51 @@
+{
+  "donor": "hdneo-mxo-hd",
+  "code_licence": "ambiguous: LICENSE text is MIT, but its copyright line names Google, Inc. / AngularJS (LICENSE line 3); README has no licence section",
+  "asset_licence": "No licence terms for any data file. README (line 92) credits MxOSource (mission XML) and the community and mxoemu.info (data files) with no terms.",
+  "rights_holder_status": "game-derived data from The Matrix Online (MxO) per README (parsed from logs and game files); no rights holder named; treat as proprietary-derived",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "world static objects (CSV)", "path": "/mnt/frankendom-donors/hdneo-mxo-hd/data/staticObjects_dt_1.csv, _dt_2.csv, _it.csv, _slums_1.csv, _slums_2.csv", "count_hint": "5 files, about 2.86 million lines", "licence": "none stated", "class": "C", "note": "header in staticObjects_it.csv line 1; coordinates not recorded here"},
+    {"kind": "mob and NPC lists (CSV)", "path": "/mnt/frankendom-donors/hdneo-mxo-hd/data/mob_parsed_cleaned.csv, mob_parsed.csv, mob_parsed_untouched.csv, mob.csv, mob_just_some_and_winter.csv", "count_hint": "5 files, about 40900 lines", "licence": "none stated", "class": "C", "note": "game-derived; names not copied"},
+    {"kind": "clothing item table (CSV)", "path": "/mnt/frankendom-donors/hdneo-mxo-hd/data/mxoClothing.csv (+ mxoClothing_previos_version.csv)", "count_hint": "2 files, about 75000 lines", "licence": "none stated", "class": "C", "note": "header line 1: GoidDecimal;ClothesType;ShortName;ItemName;ModelId;ColorId"},
+    {"kind": "ability table (CSV)", "path": "/mnt/frankendom-donors/hdneo-mxo-hd/data/abilityIDs.csv", "count_hint": "9973 lines", "licence": "none stated", "class": "C", "note": "cast animation hooks and FX ids per ability"},
+    {"kind": "vendor tables (CSV)", "path": "/mnt/frankendom-donors/hdneo-mxo-hd/data/vendor_items.csv, vendor_items_old.csv", "count_hint": "44 and 2 lines", "licence": "none stated", "class": "C", "note": "README says many vendors are missing"},
+    {"kind": "game object definitions and rsi ids (CSV)", "path": "/mnt/frankendom-donors/hdneo-mxo-hd/data/gameobjects.csv, newrsiIDs.csv", "count_hint": "44406 and 83 lines", "licence": "none stated", "class": "C", "note": "gameobjects.csv has no header row"},
+    {"kind": "animation and effect name lists", "path": "/mnt/frankendom-donors/hdneo-mxo-hd/data/animations.txt, fxlisthex.txt, fxlistreal.txt", "count_hint": "5442 animation entries; about 6000 effect lines", "licence": "none stated", "class": "C", "note": "symbolic names of game assets"},
+    {"kind": "mission XML", "path": "/mnt/frankendom-donors/hdneo-mxo-hd/data/missions/ (3 files); hds/bin/Debug/netcoreapp3.1/data/missions/ (+ old/*.bck)", "count_hint": "3 plus 2 plus 3 backups", "licence": "README line 92: MxOSource contribution, no terms", "class": "C", "note": "mission template shape is the useful part"},
+    {"kind": "NPC collection XML", "path": "/mnt/frankendom-donors/hdneo-mxo-hd/data/NPC_COLLECTION.xml", "count_hint": "182 lines", "licence": "none stated", "class": "C", "note": "NPC_NUMBER attribute on the data element"},
+    {"kind": "compiled data archive", "path": "/mnt/frankendom-donors/hdneo-mxo-hd/hds/bin/Debug/netcoreapp3.1/data/data.zip", "count_hint": "1 file, 37219664 bytes", "licence": "none stated", "class": "C", "note": "not opened; README says data.zip lives in docs/, which holds only SETUP.MD"},
+    {"kind": "binaries (Lua runtime)", "path": "/mnt/frankendom-donors/hdneo-mxo-hd/hds/lua/lua51.dll, LuaInterface.dll", "count_hint": "2 files", "licence": "none stated", "class": "C", "note": "not opened"},
+    {"kind": "art, audio, models, fonts", "path": "whole box", "count_hint": "0 found by extension scan", "licence": "n/a", "class": "D", "note": "no image, audio or model files in the box"}
+  ],
+  "inspiration": [
+    "Four-phase ability timing: a cast time paired with start, middle and end animation hooks and separate activation and execution effect IDs (data/abilityIDs.csv header). Use the phase structure, not the names.",
+    "Clothing as colourways: one model ID plus a colour ID per item gives many looks (data/mxoClothing.csv header). Use for armour recolours.",
+    "Large emote library with prefixed names (data/animations.txt, 5442 entries). Use a smaller own gesture set with consistent prefixes.",
+    "Per-faction numeric standing with alignment and reputation (README chat-command section). Use the mechanic with our own factions and scale.",
+    "Mission template: one data node carries title, experience, info reward and objective counts (data/missions/mission_zion_1.xml). Use the template shape only.",
+    "Sparse fast-travel nodes (README feature list: signposts, hyperjump, teleport through hardlines). Use sparse travel nodes with our own names."
+  ],
+  "briefs": [
+    {"label": "colourway armour family", "why": "one model with several colour IDs gives a whole armour family for little art cost", "keep": "one model, many colour IDs; clothing slot types", "change": "our own palette ramps and trim shapes; no shared models", "ref": "/mnt/frankendom-donors/hdneo-mxo-hd/data/mxoClothing.csv"},
+    {"label": "four-phase telegraphed ability", "why": "a clear wind-up, mid and end pose lets players read an attack before it lands", "keep": "cast split into three animation phases; separate activation and impact effects", "change": "our own telegraph shapes and timing numbers; different impact VFX", "ref": "/mnt/frankendom-donors/hdneo-mxo-hd/data/abilityIDs.csv (CastAnimStart, CastAnimMid, CastAnimEnd, ActivationFX, executionFX columns)"},
+    {"label": "faction standing", "why": "a numeric standing per faction gives every choice a visible consequence", "keep": "per-faction numeric standing", "change": "our own factions, names and scale", "ref": "/mnt/frankendom-donors/hdneo-mxo-hd/README.md (Chat commands section)"},
+    {"label": "mission reward template", "why": "one node with reward and objective counts makes missions easy to author", "keep": "reward fields and objective counts on one node", "change": "our own objective types and reward curve", "ref": "/mnt/frankendom-donors/hdneo-mxo-hd/data/missions/mission_zion_1.xml"},
+    {"label": "emote set with prefixes", "why": "a large idle and emote set makes characters feel alive between fights", "keep": "prefixed naming; stance plus gesture", "change": "our own smaller gesture set and poses", "ref": "/mnt/frankendom-donors/hdneo-mxo-hd/data/animations.txt"}
+  ],
+  "not_read": [
+    "data.zip (37 MB, not opened)",
+    "SQL/reality_hd.sql",
+    "hds/*.cs bodies (about 1500 files; names only)",
+    "hds/resources/gameobjects definitions (names only)",
+    "staticObjects, mob and mxoClothing row contents beyond headers (no positions or names copied)",
+    "fxlist bodies beyond the first line",
+    "animations.txt bodies beyond line 2",
+    "NPC_COLLECTION.xml body",
+    "lua51.dll and LuaInterface.dll",
+    "client half (not in my listing; not read)"
+  ],
+  "half_read": "server (hds/, C#) and data pack (data/). Client half not read.",
+  "data_tables": ["data/staticObjects_*.csv", "data/mob_parsed_cleaned.csv", "data/mxoClothing.csv", "data/abilityIDs.csv", "data/vendor_items.csv", "data/animations.txt", "data/missions/*.xml"],
+  "cross_link": "zones and spawns: staticObjects and mob tables (structure only). loot: vendor_items. vfx: fxlist. animation: animations.txt. hud-ui, camera, sound: none in box."
+}

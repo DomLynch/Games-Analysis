@@ -1,0 +1,194 @@
+{
+  "donor": "Anuken-Mindustry",
+  "counts": {
+    "creatures": 60,
+    "classes": 0,
+    "weapons": 28,
+    "gear_sets": 0,
+    "zones": 46
+  },
+  "halves_read": {
+    "read": "core (shared logic and content): core/src/mindustry/content/*.java, core/src/mindustry/game/Team.java, core/assets/bundles/bundle.properties, two shaders",
+    "other_half_in_box": "server/ (dedicated server module), not read",
+    "launchers_not_read": "android/, desktop/, ios/"
+  },
+  "creature_families": [
+    "Serpulo ground mech, 5 tiers: dagger, mace, fortress, scepter, reign (UnitTypes.java l.100-291)",
+    "Serpulo boost-mech, 5 tiers: nova, pulsar, quasar, vela, corvus (l.357-585)",
+    "Serpulo legged crawler, 5 tiers: crawler, atrax, spiroct, arkyid, toxopid; leg count rises (l.661-914)",
+    "Serpulo air, 5 tiers: flare, horizon, zenith, antumbra, eclipse (l.1047-1263)",
+    "Serpulo support and builder, 5 tiers: mono, poly, mega, quad, oct (l.1345-1547)",
+    "Serpulo naval gunship, 5 tiers: risso, minke, bryde, sei, omura (l.1577-1892)",
+    "Serpulo naval support, 5 tiers: retusa, oxynoe, cyerce, aegires, navanax (l.1943-2325)",
+    "Core units, 3: alpha, beta, gamma (l.2494-2596)",
+    "Erekir tank, 5 tiers: stell, locus, precept, vanquish, conquer (l.2654-2969)",
+    "Erekir legged and hover, 5 tiers: merui, cleroi, anthicus, tecta, collaris (l.3153-3615)",
+    "Erekir fast flyer, 5 tiers: elude, avert, obviate, quell, disrupt (l.3789-4149)",
+    "Erekir neoplasm spawners: renale, latum (l.4309-4346)",
+    "Erekir support, 3: evoke, incite, emanate (l.4354-4499)",
+    "Utility: manifold, assembly-drone; placeholders block and dummy (l.4572-4635)",
+    "Boss pattern: a permanent boss status effect applied to any unit (StatusEffects.java l.178-184), not a boss class"
+  ],
+  "top_creatures": [
+    {
+      "label": "Hex-leg burrower (own label)",
+      "why": "Leg count is the escalation signal, so the silhouette grows tier by tier.",
+      "keep": "Legged gait that rises by leg count; ground-only walking",
+      "change": "Leg rig, body shape, sound; drop the acid and creep identity",
+      "ref": "core/src/mindustry/content/UnitTypes.java l.701-926 (atrax l.701, legCount l.714, l.750, l.819, l.926)"
+    },
+    {
+      "label": "Crush-tread bulwark (own label)",
+      "why": "Tank tier whose signature is damage on contact with what it runs over.",
+      "keep": "Crush on contact",
+      "change": "Tread design and a bulwark role instead of a rolling wall",
+      "ref": "core/src/mindustry/content/UnitTypes.java l.2857-2975 (crushDamage l.2864, l.2975)"
+    },
+    {
+      "label": "Bubble carrier (own label)",
+      "why": "Slow hovering support; the shield bubble makes others hide behind it.",
+      "keep": "Bubble aura plus repair pulse",
+      "change": "Dome shape and the bubble shader (not the hex field)",
+      "ref": "core/src/mindustry/content/UnitTypes.java l.1547-1571 (force field l.1569, repair l.1571)"
+    },
+    {
+      "label": "Suppression leviathan (own label)",
+      "why": "Naval capital whose field suppresses nearby enemies; very readable from far away.",
+      "keep": "Area field that disables enemies",
+      "change": "Field rule, colour, silhouette",
+      "ref": "core/src/mindustry/content/UnitTypes.java l.2325-2494 (suppression field l.2481)"
+    },
+    {
+      "label": "Heavy titan mech (own label)",
+      "why": "Largest Serpulo ground mech; reads at a distance.",
+      "keep": "Large walking mech as the top tier",
+      "change": "Give it our own signature ability; none is declared on this unit",
+      "ref": "core/src/mindustry/content/UnitTypes.java l.291 (reign)"
+    },
+    {
+      "label": "Boost-hop mech line (own label)",
+      "why": "Walker that hops over obstacles and gains a force field as it grows.",
+      "keep": "Hop over obstacles when blocked",
+      "change": "Hop trigger and a different field",
+      "ref": "core/src/mindustry/content/UnitTypes.java l.357-585 (canBoost l.358, l.398, l.457, l.518; force field l.473)"
+    },
+    {
+      "label": "Death-brood husk (own label)",
+      "why": "The dying unit releases a small brood, so death is a second event.",
+      "keep": "Death spawns a timed brood",
+      "change": "Brood type and count rule",
+      "ref": "core/src/mindustry/content/UnitTypes.java l.4329-4346 (SpawnDeathAbility l.4346)"
+    },
+    {
+      "label": "Rebuilder drone (own label)",
+      "why": "Small support that repairs nearby allies and structures.",
+      "keep": "Area repair pulse",
+      "change": "Our own visual and repair rule",
+      "ref": "core/src/mindustry/content/UnitTypes.java l.1364-1383 (repair field l.1383)"
+    }
+  ],
+  "classes": [
+    "No player classes in this donor.",
+    "Unit roles (by movement and purpose): ground mech, boost mech, legged walker, air, support and builder, naval gunship, naval support, core unit, Erekir tank, Erekir legged and hover, Erekir fast flyer, neoplasm spawner.",
+    "Factions (core/src/mindustry/game/Team.java l.33-41): derelict, sharded, crux, malis, green, blue, neoplastic. Only crux is traced to an effect (boss status tint).",
+    "Progression shape: each line steps up one tier at a time, five tiers deep; the newest tier adds one ability or a larger body."
+  ],
+  "weapon_families": [
+    "Families by bullet class in ammo wiring (Blocks.java): basic, artillery, flak, shrapnel, missile, rail, plain bullet; 20 ammo blocks",
+    "Serpulo turrets, 18: duo, scatter, scorch, hail, wave, lancer, arc, parallax, swarmer, salvo, segment, tsunami, fuse, ripple, cyclone, foreshadow, spectre, meltdown (Blocks.java l.3276-4341)",
+    "Erekir turrets, 10: breach, diffuse, sublimate, titan, disperse, afflict, lustre, scathe, smite, malign (Blocks.java l.4378-5959); reinforced drawer setup",
+    "Ammo items as the tier signal in the wiring: copper, lead, scrap, graphite, silicon at the bottom; thorium, pyratite, blast compound, surge alloy higher; plastanium, phase fabric, oxide, carbide, tungsten, beryllium further out",
+    "Status on hit (status = StatusEffects.X in Blocks.java, UnitTypes.java, Bullets.java): burning, wet, blasted, shocked, melting, tarred, slow, muddy, freezing, corroded",
+    "Turret tier visual distinctness: not read"
+  ],
+  "gear_tiers": [
+    "No gear sets and no armour items. Unit armour exists only as a shader (core/assets/shaders/unitarmor.frag).",
+    "Core tiers, 6: core-shard, core-foundation, core-nucleus, core-bastion, core-citadel, core-acropolis (Blocks.java l.3145-3225; names bundle.properties l.1942, l.2283).",
+    "Materials, 22 items (core/src/mindustry/content/Items.java): copper, lead, metaglass, graphite, sand, coal, titanium, thorium, scrap, silicon, plastanium, phase-fabric, surge-alloy, spore-pod, blast-compound, pyratite, beryllium, tungsten, oxide, carbide, fissile-matter, dormant-cyst. Top tier reads as surge-alloy, phase-fabric, plastanium, fissile-matter, dormant-cyst.",
+    "Material look: not read (sprites not opened)."
+  ],
+  "zones": [
+    "Planets (core/src/mindustry/content/Planets.java): serpulo l.123, erekir l.46, sun l.29, tantros l.107 (sun and tantros not read further)",
+    "Serpulo presets, 29 (SectorPresets.java l.22-156), e.g. frozenForest, taintedWoods, ruinousShores, windsweptIslands, tarFields l.132, navalFortress l.99, coastline l.89, desolateRift l.142, nuclearComplex, impact0078",
+    "Erekir presets, 17 (SectorPresets.java l.166-236): onset, aegis, lake, intersect, atlas, split, basin, marsh, peaks, ravine, caldera, stronghold, crevice, siege, crossroads, karst, origin",
+    "Weather types (core/src/mindustry/content/Weathers.java): snow, rain, sandstorm, sporestorm, fog, suspended particles",
+    "Hazard surfaces (names only, not opened): core/assets/shaders tar.frag, mud.frag, slag.frag, cryofluid.frag, caustics.frag",
+    "Dungeon archetypes: capture-by-waves (captureWave, SectorPresets.java l.25) and waves-then-attack (attackAfterWaves, l.182)"
+  ],
+  "looks": [
+    {
+      "label": "Banded build-in reveal",
+      "technique": "Alpha times a progress value, times a sine band mask on sprite height",
+      "ref": "core/assets/shaders/unitarmor.frag l.17-18"
+    },
+    {
+      "label": "Forcefield with wobble and edge glow",
+      "technique": "Sine texture wobble; edge glow from max of four neighbour samples; diagonal sparkle from modulo on screen coordinates",
+      "ref": "core/assets/shaders/shield.frag l.19, l.24-28, l.32"
+    },
+    {
+      "label": "Permanent team-tinted boss status",
+      "technique": "Status effect with team colour tint and health and damage multipliers",
+      "ref": "core/src/mindustry/content/StatusEffects.java l.178-184"
+    },
+    {
+      "label": "Planet with atmosphere shell",
+      "technique": "Planet and atmosphere vertex and fragment pair (names only, not opened)",
+      "ref": "core/assets/shaders/planet.frag, atmosphere.vert"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Hex-stride siege walker",
+      "idea": "Legged siege unit whose leg count rises tier by tier.",
+      "keep": "Leg-count escalation; ground-only walking",
+      "change": "Rig, body, sound; no acid identity"
+    },
+    {
+      "name": "Crush-tread bulwark",
+      "idea": "Tank tier that damages what it rolls over.",
+      "keep": "Crush on contact",
+      "change": "Tread, role, silhouette"
+    },
+    {
+      "name": "Bubble carrier",
+      "idea": "Hovering support carrier that shields and repairs an area.",
+      "keep": "Bubble plus repair pulse",
+      "change": "Dome bubble shader, shape, colour"
+    },
+    {
+      "name": "Brood husk",
+      "idea": "Unit whose death releases a timed brood.",
+      "keep": "Death spawn",
+      "change": "Brood type, count, timing"
+    },
+    {
+      "name": "Rebuilder drone",
+      "idea": "Small support that repairs nearby allies and blocks.",
+      "keep": "Area repair pulse",
+      "change": "Visual and rules"
+    },
+    {
+      "name": "Banded build-in reveal",
+      "idea": "Units appear in bands as they finish building.",
+      "keep": "Band reveal",
+      "change": "Rate and direction"
+    },
+    {
+      "name": "Permanent boss tint",
+      "idea": "Boss status that tints and multiplies, with our own colour rule.",
+      "keep": "Permanent boss mark",
+      "change": "Colour, multipliers, tint method"
+    }
+  ],
+  "licence_note": "Code: GNU GPL v3 (LICENSE). Assets: no asset licence statement found; the only licence text is GPL-3.0. Class C for assets. Inspiration kept at category level because the asset licence is unclear. What the files say, not a legal reading.",
+  "not_read": [
+    "Images, audio, maps (msav), music and sounds",
+    "Blocks.java drawer and rendering code for turret tiers",
+    "Fx.java (2993 lines) effects",
+    "Shaders other than shield.frag and unitarmor.frag",
+    "Weapon behaviour beyond ammo wiring",
+    "server/ module (other half) and launchers android, desktop, ios",
+    "Per-unit numbers (health, speed, cost): deliberately not recorded"
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "donor": "TurningWheel-Barony",
+  "topic": "onboarding-first-5",
+  "depth": "full",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/TurningWheel-Barony/src/game.cpp",
+    "/mnt/frankendom-donors/TurningWheel-Barony/src/menu.cpp",
+    "/mnt/frankendom-donors/TurningWheel-Barony/src/ui/MainMenu.cpp",
+    "/mnt/frankendom-donors/TurningWheel-Barony/src/mod_tools.cpp",
+    "/mnt/frankendom-donors/TurningWheel-Barony/src/charclass.cpp",
+    "/mnt/frankendom-donors/TurningWheel-Barony/src/game.hpp",
+    "/mnt/frankendom-donors/TurningWheel-Barony/src/maps.cpp",
+    "/mnt/frankendom-donors/TurningWheel-Barony/src/files.cpp",
+    "/mnt/frankendom-donors/TurningWheel-Barony/lang/en.txt",
+    "/mnt/frankendom-donors/TurningWheel-Barony/LICENSE.txt",
+    "/mnt/frankendom-donors/TurningWheel-Barony/README.md"
+  ],
+  "counts": {
+    "src_files": 172,
+    "lang_lines_starting_with_digit": 5753,
+    "class_enum_values": 26,
+    "class_loadout_checks_charclass": 40,
+    "trial_maps_in_manifest": 10,
+    "story_skip_presses": 3,
+    "story_default_box_lines": 2,
+    "story_box_pause_multiplier": 5,
+    "first_time_prompt_options": 2,
+    "data_half_files_in_box": 0
+  },
+  "rule": "Boot intro stage, then a random roll picks one of two menu backdrops; unless skipintro or quick-start, a typewritten story screen runs (pause per text box, three Back presses to skip). After the title press, the main menu is created and the one-time binary tutorial prompt is checked: Yes opens the Hall of Trials (tutorial1), No shows a note pointing at the Play Game menu. Class cards show a list and a details card with per-stat colour words; the list is filtered by content-pack validity. New game sets currentlevel to startfloor (0) and the starter kit is hand-coded per class, with the first weapon in hotbar slot 0. The trial hub is a ten-entry list read from data (not in the box), with a completion prompt that counts the remaining trials.",
+  "data_fields": [
+    {"name": "trial_count", "unit": "trials", "donor_value_or_null": 10},
+    {"name": "story_skip_presses", "unit": "presses", "donor_value_or_null": 3},
+    {"name": "story_box_default_lines", "unit": "lines", "donor_value_or_null": 2},
+    {"name": "story_box_pause", "unit": "frames (fpsLimit x 5; seconds not computed, fpsLimit not read)", "donor_value_or_null": "fpsLimit*5"},
+    {"name": "first_time_offer_count", "unit": "times shown per settings doc", "donor_value_or_null": 1},
+    {"name": "class_count", "unit": "classes", "donor_value_or_null": 26},
+    {"name": "class_card_list_px", "unit": "px", "donor_value_or_null": 446},
+    {"name": "class_card_details_px", "unit": "px", "donor_value_or_null": 664},
+    {"name": "start_floor", "unit": "floor index", "donor_value_or_null": 0}
+  ],
+  "keep": [
+    "One yes-or-no first-run tutorial offer, asked once, with a note on the No path",
+    "Trial hub as a list of challenges with a remaining-count after each completion",
+    "Starter weapon already in hotbar slot 0 so the first attack needs no menu",
+    "Class details card with per-stat ratings as coloured words",
+    "Class list filtered by what the player can use",
+    "Story text format tokens: caret for image advance, hash for pause, asterisk and digit for box size"
+  ],
+  "change": [
+    "Delete the dead FirstTimePrompt window body (mod_tools.cpp createPrompt and drawDialogue return on their first line); keep one offer path in MainMenu.cpp (fix: single offer path)",
+    "Move hand-coded class loadouts (charclass.cpp initClass) into data rows: class, starter items, hotbar slot",
+    "Story skip is one press on phone, not three",
+    "Trial ladder ramps attackers 1, 2, 3 across trials (MAX_ATTACKERS = 3); trial 1 is one enemy",
+    "Trial result is server-verified (parity row 19 fight record); story, camera, HUD and sound stay client-only"
+  ],
+  "look_test": "Phone, 375 wide: one question (Yes or No), then Trial 1 of 10 with one enemy and a count card after the win. Time seconds to first swing and to the first trial card. Compare with the donor: three-press story skip and a 26-class card. Pass: first trial starts within 60 s of launch, one tap to skip the story.",
+  "licence_note": "Code BSD 2-Clause (LICENSE.txt): adaptable with notice kept. Data pack (story JSON, tutorial strings, trial maps, hamlet, art, music, monsters' placement) is not in the box and the README requires a purchased copy: not licensed to us. Category-level inspiration only; no story text, trial text, class descriptions or level names carried over. No legal conclusions.",
+  "tags": ["new:first-time-prompt", "new:story-skip-3-press", "new:story-typewriter", "new:trial-ladder", "new:class-card-stat-ratings", "new:dead-first-run-window", "new:class-loadout-hardcoded", "new:starter-hotbar-slot", "new:count-card", "new:dlc-tinted-class-list"],
+  "not_read": [
+    "Data half absent from the box: data/story/intro.json, data/tutorial_strings.json, trial maps, hamlet map, monster placement, class description data",
+    "First fight, first kill, first loot, first level-up panel and celebration",
+    "Hit feedback beyond one limb-shake helper (actmonster.cpp:10935): no hitstop or screen shake read",
+    "fpsLimit and frame cap (5-second pause not confirmed in seconds)",
+    "shops.cpp and monster_shopkeeper.cpp (names only)",
+    "Services in hamlet (bank, shop, trainer) and their introduction order",
+    "Idle and ambient behaviour, death and respawn presentation, walk density, phone readability"
+  ]
+}

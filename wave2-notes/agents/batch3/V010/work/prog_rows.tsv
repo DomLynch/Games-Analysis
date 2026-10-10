@@ -1,0 +1,56 @@
+TrinityCore-TrinityCore	group member in reach and alive counts toward share	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/KillRewarder.cpp	97	member->IsAtGroupRewardDistance(_victim) && member->IsAlive()
+TrinityCore-TrinityCore	member counted into _sumLevel	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/KillRewarder.cpp	103	_sumLevel += lvl;
+TrinityCore-TrinityCore	gray level of each member	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/KillRewarder.cpp	109	uint32 grayLevel = Trinity::XP::GetGrayLevel(lvl);
+TrinityCore-TrinityCore	highest non-gray member selected	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/KillRewarder.cpp	110	if (_victim->GetLevelForTarget(member) > grayLevel && (!_maxNotGrayMember
+TrinityCore-TrinityCore	full XP only if top member is non-gray	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/KillRewarder.cpp	116	_isFullXP = _maxNotGrayMember && (_maxLevel == _maxNotGrayMember->GetLevel());
+TrinityCore-TrinityCore	base XP computed from killer via Gain	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/KillRewarder.cpp	130	_xp = Trinity::XP::Gain(player, _victim, _isBattleGround);
+TrinityCore-TrinityCore	single killer path initialises XP from killer	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/KillRewarder.cpp	273	_InitXP(killer, killer);
+TrinityCore-TrinityCore	group base XP from max non-gray member	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/KillRewarder.cpp	227	_InitXP(_maxNotGrayMember, killer);
+TrinityCore-TrinityCore	group rate from count of members	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/KillRewarder.cpp	238	_groupRate = Trinity::XP::xp_in_group_rate(_count, isRaid);
+TrinityCore-TrinityCore	per-member share is group rate x level / sum	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/KillRewarder.cpp	206	_groupRate * float(player->GetLevel()) / _sumLevel
+TrinityCore-TrinityCore	member above top non-gray level gets nothing	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/KillRewarder.cpp	149	_maxNotGrayMember->GetLevel() >= player->GetLevel())
+TrinityCore-TrinityCore	full or half share switch	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/KillRewarder.cpp	150	xp = _isFullXP ?
+TrinityCore-TrinityCore	half share with +1	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/KillRewarder.cpp	152	uint32(xp * rate / 2) + 1;
+TrinityCore-TrinityCore	aura XP multiplier applied before GiveXP	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/KillRewarder.cpp	159	xp *= player->GetTotalAuraMultiplier(SPELL_AURA_MOD_XP_PCT);
+TrinityCore-TrinityCore	GiveXP called with group rate	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/KillRewarder.cpp	163	player->GiveXP(xp, _victim, _groupRate);
+TrinityCore-TrinityCore	pet gets half when grouped	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/KillRewarder.cpp	166	pet->GivePetXP(player->GetGroup() ? xp / 2 : xp);
+TrinityCore-TrinityCore	Reward entry point	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/KillRewarder.cpp	253	void KillRewarder::Reward()
+TrinityCore-TrinityCore	Gain formula entry point	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Miscellaneous/Formulas.h	181	inline uint32 Gain(Player* player, Unit* u, bool isBattleGround = false)
+TrinityCore-TrinityCore	gray level below 35	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Miscellaneous/Formulas.h	76	else if (pl_level < 35)
+TrinityCore-TrinityCore	gray level at 35 and above	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Miscellaneous/Formulas.h	85	level = pl_level - 10;
+TrinityCore-TrinityCore	base gain +5% per level above, capped at 4	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Miscellaneous/Formulas.h	156	baseGain = uint32(round(xpPlayer->PerKill * (1 + 0.05f * nLevelDiff)));
+TrinityCore-TrinityCore	cap of 4 levels	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Miscellaneous/Formulas.h	153	if (nLevelDiff > 4)
+TrinityCore-TrinityCore	lower mob uses zero-difference scaling	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Miscellaneous/Formulas.h	164	baseGain = uint32(round(xpMob->PerKill
+TrinityCore-TrinityCore	XP one-tenth for older expansion creatures	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Miscellaneous/Formulas.h	196	gain = uint32(round(gain / 10.0f));
+TrinityCore-TrinityCore	elite instance multiplier	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Miscellaneous/Formulas.h	202	xpMod *= 2.75f;
+TrinityCore-TrinityCore	creature ModExperience multiplier	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Miscellaneous/Formulas.h	207	xpMod *= creature->GetCreatureTemplate()->ModExperience;
+TrinityCore-TrinityCore	kill rate config multiplier	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Miscellaneous/Formulas.h	210	xpMod *= isBattleGround ? sWorld->getRate(RATE_XP_BG_KILL)
+TrinityCore-TrinityCore	final gain truncation	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Miscellaneous/Formulas.h	214	gain = uint32(gain * xpMod);
+TrinityCore-TrinityCore	group rate function entry	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Miscellaneous/Formulas.h	221	inline float xp_in_group_rate(uint32 count, bool isRaid)
+TrinityCore-TrinityCore	raid group rate comment	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Miscellaneous/Formulas.h	228	set to < 1 to, so client will display raid related strings
+TrinityCore-TrinityCore	GiveXP entry	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/Player.cpp	2110	void Player::GiveXP(uint32 xp, Unit* victim, float group_rate)
+TrinityCore-TrinityCore	dead player gets no XP	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/Player.cpp	2115	if (!IsAlive() && !GetBattlegroundId())
+TrinityCore-TrinityCore	creature without loot recipient gives no XP	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/Player.cpp	2121	!victim->ToCreature()->hasLootRecipient())
+TrinityCore-TrinityCore	RaF doubles and does not stack with rest	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/Player.cpp	2137	bonus_xp = 2 * xp;
+TrinityCore-TrinityCore	rested XP applied only with a victim	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/Player.cpp	2139	bonus_xp = victim ? _restMgr->GetRestBonusFor(REST_TYPE_XP, xp) : 0;
+TrinityCore-TrinityCore	new XP total includes rested	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/Player.cpp	2150	uint32 newXP = GetXP() + xp + bonus_xp;
+TrinityCore-TrinityCore	level-up carry loop	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/Player.cpp	2152	while (newXP >= nextLvlXP && !IsMaxLevel())
+TrinityCore-TrinityCore	level-up subtracts threshold	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/Player.cpp	2154	newXP -= nextLvlXP;
+TrinityCore-TrinityCore	rest update called from Player::Update	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/Player.cpp	982	_restMgr->Update(now);
+TrinityCore-TrinityCore	offline rest bubble in wilderness	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/Player.cpp	18820	float bubble0 = 0.031f;
+TrinityCore-TrinityCore	offline rest bubble in tavern or city	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/Player.cpp	18822	float bubble1 = 0.125f;
+TrinityCore-TrinityCore	offline accrual call	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/Player.cpp	18827	_restMgr->AddRestBonus(REST_TYPE_XP, time_diff
+TrinityCore-TrinityCore	rested cap at 0.75 of next level	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/RestMgr.cpp	58	float rest_bonus_max = float(next_level_xp) * 1.5f / 2;
+TrinityCore-TrinityCore	rested loss on use	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/RestMgr.cpp	130	SetRestBonus(restType, GetRestBonus(restType) - rested_loss);
+TrinityCore-TrinityCore	rested bonus limited to the kill XP	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/RestMgr.cpp	123	if (rested_bonus > xp)
+TrinityCore-TrinityCore	rest consumption aura modifier	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/RestMgr.cpp	128	AddPct(rested_loss, _player->GetTotalAuraModifier(
+TrinityCore-TrinityCore	rest accrual gated by 3% roll	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/RestMgr.cpp	138	if (roll_chance(3) && _restTime > 0)
+TrinityCore-TrinityCore	rest accrual needs 10 s elapsed	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/RestMgr.cpp	141	if (timeDiff >= 10)
+TrinityCore-TrinityCore	in-game rest bubble	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/RestMgr.cpp	145	float bubble = 0.125f * sWorld->getRate(RATE_REST_INGAME);
+TrinityCore-TrinityCore	rest accrual adds elapsed times rate	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/RestMgr.cpp	146	AddRestBonus(REST_TYPE_XP, timeDiff * CalcExtraPerSec(REST_TYPE_XP, bubble));
+TrinityCore-TrinityCore	per-second accrual uses NextLevelXP over 72000	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/RestMgr.cpp	165	return float(_player->m_activePlayerData->NextLevelXP) / 72000.0f * bubble;
+TrinityCore-TrinityCore	tap list supplies the reward recipients	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Unit/Unit.cpp	11334	for (ObjectGuid tapperGuid : creature->GetTapList())
+TrinityCore-TrinityCore	kill rewarder called with tappers	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Unit/Unit.cpp	11448	KillRewarder(Trinity::IteratorPair(tappers.data()
+TrinityCore-TrinityCore	Rate.XP.Kill default	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/worldserver/worldserver.conf.dist	2478	Rate.XP.Kill    = 1
+TrinityCore-TrinityCore	Rate.Rest.InGame default	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/worldserver/worldserver.conf.dist	2515	Rate.Rest.InGame                 = 1
+TrinityCore-TrinityCore	licence: GPL v2 or later (KillRewarder.cpp)	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/KillRewarder.cpp	6	Free Software Foundation; either version 2 of the License, or (at your

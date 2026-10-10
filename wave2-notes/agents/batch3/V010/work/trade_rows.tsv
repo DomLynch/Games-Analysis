@@ -1,0 +1,51 @@
+TrinityCore-TrinityCore	trade item change resets server index on the changed side	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/TradeData.cpp	72	UpdateServerStateIndex();
+TrinityCore-TrinityCore	item set clears the accept on both sides	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/TradeData.cpp	70	GetTraderData()->SetAccepted(false);
+TrinityCore-TrinityCore	no-op item set does not reset anything	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/TradeData.cpp	64	if (_items[slot] == itemGuid && !update)
+TrinityCore-TrinityCore	server state index is 32-bit random	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/TradeData.cpp	152	_serverStateIndex = rand32();
+TrinityCore-TrinityCore	gold change path checks the player's money	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/TradeData.cpp	108	if (!_player->HasEnoughMoney(money))
+TrinityCore-TrinityCore	gold no-op check	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/TradeData.cpp	105	if (_money == money)
+TrinityCore-TrinityCore	gold change resets accepts	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/TradeData.cpp	120	GetTraderData()->SetAccepted(false);
+TrinityCore-TrinityCore	unaccept notifies with UNACCEPTED	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/TradeData.cpp	142	info.Status = TRADE_STATUS_UNACCEPTED;
+TrinityCore-TrinityCore	item getter reads the owner's item	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/TradeData.cpp	32	return !_items[slot].IsEmpty() ? _player->GetItemByGuid(_items[slot]) : nullptr;
+TrinityCore-TrinityCore	client state index advances on every set	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	723	my_trade->UpdateClientStateIndex();
+TrinityCore-TrinityCore	item set rejects an item already in another slot	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	754	if (my_trade->HasItem(iGUID))
+TrinityCore-TrinityCore	item set refuses partner-bound items	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	764	item->IsBindedNotWith(my_trade->GetTrader()))
+TrinityCore-TrinityCore	item set forwards to TradeData::SetItem	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	772	my_trade->SetItem(TradeSlots(setTradeItem.TradeSlot), item);
+TrinityCore-TrinityCore	accept marks the accepter first	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	251	my_trade->SetAccepted(true);
+TrinityCore-TrinityCore	accept quotes the partner's index	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	254	if (his_trade->GetServerStateIndex() != acceptTrade.StateIndex)
+TrinityCore-TrinityCore	state-changed status	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	256	info.Status = TRADE_STATUS_STATE_CHANGED;
+TrinityCore-TrinityCore	range check at accept	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	262	if (!_player->IsWithinDistInMap(trader, TRADE_DISTANCE, false))
+TrinityCore-TrinityCore	gold check at accept	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	271	if (!_player->HasEnoughMoney(my_trade->GetMoney()))
+TrinityCore-TrinityCore	tradable item check at accept	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	313	if (!item->CanBeTraded(false, true))
+TrinityCore-TrinityCore	commit only when partner has accepted	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	362	if (his_trade->IsAccepted())
+TrinityCore-TrinityCore	both sides flagged in-trade before checks	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	364	setAcceptTradeMode(my_trade, his_trade, myItems, hisItems);
+TrinityCore-TrinityCore	room check on partner side	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	450	trader->CanStoreItems(myItems, TRADE_SLOT_TRADED_COUNT
+TrinityCore-TrinityCore	in-trade flags cleared after room check	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	453	clearAcceptTradeMode(myItems, hisItems);
+TrinityCore-TrinityCore	room failure unaccepts both	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	456	if (myCanCompleteInfo.BagResult != EQUIP_ERR_OK)
+TrinityCore-TrinityCore	remove step of commit	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	491	_player->MoveItemFromInventory(myItems[i]->GetBagSlot(), myItems[i]->GetSlot(), true);
+TrinityCore-TrinityCore	store step of commit	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	501	moveItems(myItems, hisItems);
+TrinityCore-TrinityCore	gold debit of the accepter	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	524	_player->ModifyMoney(-int64(my_trade->GetMoney()));
+TrinityCore-TrinityCore	gold credit to the trader	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	527	trader->ModifyMoney(my_trade->GetMoney());
+TrinityCore-TrinityCore	trade cleanup	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	537	delete _player->m_trade;
+TrinityCore-TrinityCore	saves both characters in one transaction	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	543	CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
+TrinityCore-TrinityCore	complete status	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	548	info.Status = TRADE_STATUS_COMPLETE;
+TrinityCore-TrinityCore	partner notified on single accept	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	554	info.Status = TRADE_STATUS_ACCEPTED;
+TrinityCore-TrinityCore	moveItems store only when both directions fit	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	121	if (traderCanTrade && playerCanTrade)
+TrinityCore-TrinityCore	moveItems stores the trader's item to the player on the success path	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	142	trader->MoveItemToInventory(traderDst, myItems[i], true, true);
+TrinityCore-TrinityCore	moveItems rollback returns a player item to its owner	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	172	_player->MoveItemToInventory(playerDst, myItems[i], true, true);
+TrinityCore-TrinityCore	moveItems rollback returns a trader item to its owner	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	182	trader->MoveItemToInventory(traderDst, hisItems[i], true, true);
+TrinityCore-TrinityCore	in-trade flag set helper	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	205	myItems[i]->SetInTrade();
+TrinityCore-TrinityCore	cancel from the player	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	594	_player->TradeCancel(true);
+TrinityCore-TrinityCore	initiate refused while already trading	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	599	if (GetPlayer()->m_trade)
+TrinityCore-TrinityCore	trade level requirement check	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	631	if (GetPlayer()->GetLevel() < sWorld->getIntConfig(CONFIG_TRADE_LEVEL_REQ))
+TrinityCore-TrinityCore	target must not be busy	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	647	if (pOther == GetPlayer() || pOther->m_trade)
+TrinityCore-TrinityCore	target must be alive	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	654	if (!pOther->IsAlive())
+TrinityCore-TrinityCore	range check at initiate	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	693	if (!pOther->IsWithinDistInMap(_player, TRADE_DISTANCE, false))
+TrinityCore-TrinityCore	both sides get a new TradeData	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	709	_player->m_trade = new TradeData(_player, pOther);
+TrinityCore-TrinityCore	TradeCancel clears both sides	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/Player.cpp	13226	delete trader->m_trade;
+TrinityCore-TrinityCore	TradeCancel notifies the trader	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Player/Player.cpp	13221	trader->GetSession()->SendCancelTrade(status);
+TrinityCore-TrinityCore	TRADE_DISTANCE constant	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Entities/Object/ObjectDefines.h	27	#define TRADE_DISTANCE
+TrinityCore-TrinityCore	trade level default	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/World/World.cpp	713	{ .Name = "LevelReq.Trade"sv, .DefaultValue = 1, .Index = CONFIG_TRADE_LEVEL_REQ },
+TrinityCore-TrinityCore	two-side trade config default	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/worldserver/worldserver.conf.dist	1684	AllowTwoSide.Trade = 0
+TrinityCore-TrinityCore	auction cut calculation	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/AuctionHouse/AuctionHouseMgr.cpp	1462	return std::max(int64(CalculatePct(bidAmount, _auctionHouse->ConsignmentRate)
+TrinityCore-TrinityCore	licence GPL v2 or later (TradeHandler.cpp)	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Handlers/TradeHandler.cpp	6	Free Software Foundation; either version 2 of the License, or (at your

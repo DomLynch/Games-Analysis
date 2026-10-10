@@ -164,9 +164,5 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Not read: `Definitions/*.cs`, the Collect, Deliver and Escort objective bodies, the report and reward gumps (MLQuestEntry.cs 234-277), MLQuestPersistence.cs, and the classic `Engines/Quests/Core` system (QuestSystem.cs 742 lines; QuestConversation.cs 155 lines).
 
 Best transferable idea: a quest is an instance with per-objective state, and the claim is two-phase: every objective can veto before any effect runs, and the reward write either fully places or changes nothing.
-
 Decision (proposed): adapt — Frankendom needs the quest as a server instance with a check-then-effect claim and once-per-quest kill credit, but its rewards go through the one ledger and its timers run on the server tick, not on wall clock; keep the veto pass, the cooldown written at claim, and the all-or-nothing write.
 Acceptance: A quest "clear 2 wolves in the north gate" counts only wolves killed inside the gate; a third wolf outside the gate is not counted; with 2 counted kills the completion notice shows; a test forces the ledger write to fail and the quest stays claimable with no stage change; a second accept inside the cooldown is refused.
-
-Reuse tag: rewrite-from-idea (GPL-3.0; clean-room, shape only)
-Brief rule served: one ledger; server-verified kills; zones as data; rules 7-9 n/a

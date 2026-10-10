@@ -1,0 +1,50 @@
+# daggerfall-unity (onboarding first 30 min, OB006)
+
+Donor: daggerfall-unity (Unity fan reimplementation of Daggerfall, single-player). Read over ssh from /mnt/frankendom-donors/daggerfall-unity (read only).
+Licence: code MIT (root LICENSE line 1 "MIT License"; line 3 copyright 2009-2023 Daggerfall Workshop). Assets/Licenses/Daggerfall Unity.txt line 3 names Gavin Clayton 2014-2022 (MIT): the holder conflict is recorded as in AU013. Quest scripts, text and tables have no licence line (class C). Shape only: no quest text reproduced here. Not legal advice.
+Checked: StartGameBehaviour.cs (StartNewCharacter, lines 353-461), DaggerfallStartNewGameWizard.cs (window setup and StartNewGame, lines 584-608), _TUTOR__.txt (433 lines, read in full for structure), _BRISIEN.txt (284 lines, QBN block and timers), Clock.cs (time parsing, FromRange, tick), WorldTime.cs (TimeScale), EnemyHealth.cs, EnemyBlood.cs, defaults.ini.txt start settings, SettingsManager.cs start ranges. Confidence: high on the timer and gate logic (checked against the code); medium on the page mapping, which I checked page by page.
+Receipts: receipts.tsv in this folder (verified, 41 of 41 quotes present, with the rows for this donor).
+Half read: client (Assets/Scripts) and data (StreamingAssets/Quests, Resources/defaults.ini.txt). Server half: none (single player). The DOS data-pack half (ARENA2 files, starter dungeon monsters, intro videos) is NOT in the box and NOT read: anything about the starter dungeon's monsters or the cinematics is "not in the half I read".
+Decision: adapt (idea).
+
+## Onboarding (what the player meets in the first 30 minutes)
+
+1. FIRST 90 SECONDS. New game runs the character wizard: race, gender, class path (pick a class, or answer class questions for a custom class), biography choice and biography, name, face, bonus stats, bonus skills, reflexes, summary (DaggerfallStartNewGameWizard.cs window setup, lines 113-291; some steps only on the custom-class path). Then, if enableVideos is set, three cinematics play and the last one calls TriggerGame (wizard line 597; the video files are data-pack, not read). StartNewCharacter (StartGameBehaviour.cs) then starts the tutorial quest _TUTOR__ (line 446) and the main-story quest _BRISIEN (line 447). Both start-ups fire at game start: _BRISIEN says the wake-up narration (message 1025), and _TUTOR__ asks the yes/no question, use the tutorial (line 321, prompt 1010). The on-screen order of these two was not traced. The first tutorial page (1012) appears at once and tells the player to press Escape and open Controls before any combat; the next page arrives after 10 s. Start location: StartInDungeon=True at map cell 109,158 (defaults.ini.txt lines 168-170); the text places the player in a cave. I did not confirm that cell 109,158 is the Pirates Hold in the data pack.
+2. FIRST FIGHT, FIRST HIT, FIRST KILL. In the starter dungeon: a rat (no treasure, per page 7) and an imp that needs steel or better (page 8). Page 9 tells the player that some monsters are stronger, that escape costs nothing, and that growth comes from skill use rather than kills (_TUTOR__ line 149). Winnable rigging: none in the files I read; monster stats and spawns are data-pack, not read. Hit feedback in the read files is thin: EnemyHealth.RemoveHealth (lines 40-53) subtracts health, sends Die below zero, aggros the enemy, and shows a blood splash (line 52). EnemyBlood.ShowBloodSplash (lines 26-39) plays a one-shot billboard at 10 frames per second (line 37), placed just in front of the enemy. No hit stop, screen shake or flash in those two files. Not read: EnemyMotor.cs (1482 lines), EnemyAttack.cs, the swing timing in WeaponManager.cs beyond the input lines.
+3. FIRST REWARD, FIRST LOOT, FIRST LEVEL. First loot: a treasure pile on an altar in the first room. Page 7 says to open the inventory and click items to take them (remove mode). The loot ceremony (sound, card, colour) is in the inventory UI, not read. First level: skill-based. PlayerEntity.cs line 1495 calls FormulaHelper.CalculatePlayerLevel from the skill sum; not read further. The tutorial teaches that growth comes from skill use.
+4. FIRST HUB. Travel map (V) to Daggerfall city, with travel settings CAUTIOUSLY and INNS so the player arrives in the morning (page 11). On arrival (_TUTOR__ line 392, 'when pc enters city') the tutorial moves on: talk to a townsperson in dialogue mode and ask for directions (page 12); ask for Work (page 13); general stores open at 6 AM, pawn shops and armourers later (page 14); guilds, temples, knightly orders (page 15); a guild quest from inside the guild, or asking shopkeepers and patrons for work (pages 16-17). Services arrive one topic per page. A post-quest rumour names the bank (_TUTOR__ line 16), not in the main pages.
+5. FIRST MEANINGFUL CHOICE. Fight or escape in the starter dungeon (pages 8-9). Then join a guild or temple (page 15), and accept or reject a guild quest (page 16: rejecting has no cost if the quest is not main-story).
+6. PULL-FORWARD HOOKS. Timed pages carry the early pull. The main hook is a dated letter (_BRISIEN line 236: 'Clock _invitepc_ 7.00:00 14.00:00'): it arrives at a random time between 7 and 14 game days after start (Clock.cs line 210, FromRange). If the player ignores it: a reminder timer (30 days), a fail timer (14 days), then reputation -15 with Lady Brisienna and a stop-quest letter (_BRISIEN line 261). The tutorial itself gives no visible goal beyond the next page.
+7. TUTORIAL STYLE. Opt-in: a yes/no at quest start (line 321). Every prompt page is a yes/no; No ends the tutorial at any page, and the prompt pages say 'Press No to end tutorial' (the closing page does not). Pages fire on game-time timers or on world events (dungeon exit, city arrival). Text length: 17 numbered pages plus a closing page (line 293); several lines each, some near fourteen. Mixed show and tell: it names the key to press and the place to look, then waits.
+8. DROP-OFF RISKS. (a) One timing defect: page 6 says 'Next message in 10 seconds' (_TUTOR__ line 109) but the timer that follows is 'Clock _page6_ 00:03' (line 309), started by line 361, which is 3 game minutes = 15 real seconds. The other 13 timed pages match (checked). (b) Two dead waits of 45 seconds (page 7 timer at line 310, page 12 timer at line 313) with nothing to do. (c) Page 14 tells the player that loitering skips the wait (line 230), so the timer is gameable. (d) Text volume: about 17 blocks in the first half hour. (e) The first fight has no guaranteed win (the escape path is the safety net, which is the right kind).
+9. TRANSFERABLE IDEA (20-30 percent resemblance). Keep an opt-in coach that never blocks play, pages that end on No, and event-gated pages (dungeon exit, city arrival) so the next page waits for the player. Keep the escape-first-fight message and the controls-first page. Change: our coach comes after the first ring fight, not before it; the timer and the text come from one data field so they cannot drift; and the dated hook becomes an in-session visible hook (for example a door that opens after three wins), because 7 to 14 game days is far too long for 30 minutes.
+
+## Timing (checked in the code)
+- World time runs at 12 game seconds per real second (WorldTime.cs line 32 'TimeScale = 12f', line 67 RaiseTime(Time.deltaTime * TimeScale)). So 1 game minute = 5 real seconds.
+- Clock values are hh:mm game minutes (Clock.cs lines 368-387; 'Clock _page1_ 00:02' = 2 game minutes = 10 real seconds, matching page 1's text).
+- Timed pages: 14 timers totalling 42 game minutes = 210 real seconds (3.5 minutes) of pure waiting; dungeon phase 24 game minutes = 120 real seconds; city phase 18 game minutes = 90 real seconds. Event gates (dungeon exit, city arrival, guild) add time the timers do not count.
+
+## Rule behind it (designer-tunable DATA FIELDS)
+- page: {id, text_key, prompt: "yes_no", gate: "timer" | "event", gate_event, timer_real_s}. Unit: real seconds. Donor value null for page text and quest data (class C); the conversion factor below is donor code (MIT).
+- time_scale: 12. Unit: game seconds per real second. Donor value: 12 (MIT code, WorldTime.cs line 32).
+- timer_game_minutes per timed page: 2, 3, 2, 1, 2, 3, 9, 1, 1, 9, 3, 2, 2, 2 (quest data). Donor value null.
+- hook_window: {min_game_days: 7, max_game_days: 14}. Unit: game days. Donor value null (quest data).
+- hook_fail_penalty: reputation -15. Donor value null.
+- start_in_dungeon: true (defaults.ini.txt line 170). Donor value true (MIT).
+- hit_splash_fps: 10. Unit: frames per second. Donor value 10 (MIT code, EnemyBlood.cs line 37).
+
+## For Frankendom
+- The 30-minute coach runs after the first ring fight. The gate is a server-verified event (first hit landed, first win, zone enter), never a timer alone.
+- Text and timer come from one data field (fixes the page-6 defect class).
+- The first fight keeps an escape path (leash, row 4), and the coach says so.
+- Dated hooks become visible hooks in the same session (door, rival, rumour) with a window of minutes, not days.
+- 700 zones as data: 'pc enters city' maps to zone-enter events driving the next page.
+
+## 5-minute look test (Dom, on phone, 375 wide)
+Build a 60-second first-run on the phone with two variants of the first coach: (A) three timed pages at 10 s, 15 s and 5 s, starting after the first ring fight; (B) the same three pages gated on events (first hit landed, first win, zone enter). Dom judges which reads at 375 wide without covering the fight, and whether the timed version ever lands during a fight.
+
+## Gaps
+- Not read: DOS data pack (monsters, starter dungeon, cinematics, sprites), EnemyMotor.cs, EnemyAttack.cs, WeaponManager swing timing, inventory and loot UI, level-up UI.
+- Half read: client and quest data only. Server half: none.
+- Page-to-timer mapping was checked page by page (14 timed pages, 13 match). The 'loiter' skip (line 230) was read as text; its code path was not traced.
+- Minutes are the code conversion (12x), not a measured playthrough.

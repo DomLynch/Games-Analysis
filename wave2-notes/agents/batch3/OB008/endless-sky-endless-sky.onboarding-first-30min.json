@@ -1,0 +1,91 @@
+{
+  "donor": "endless-sky-endless-sky",
+  "topic": "onboarding-first-30min",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/endless-sky-endless-sky/data/starts.txt",
+    "/mnt/frankendom-donors/endless-sky-endless-sky/data/human/intro missions.txt",
+    "/mnt/frankendom-donors/endless-sky-endless-sky/data/_ui/help.txt",
+    "/mnt/frankendom-donors/endless-sky-endless-sky/data/_ui/flight checks.txt",
+    "/mnt/frankendom-donors/endless-sky-endless-sky/source/Panel.cpp",
+    "/mnt/frankendom-donors/endless-sky-endless-sky/source/MainPanel.cpp",
+    "/mnt/frankendom-donors/endless-sky-endless-sky/source/AI.cpp",
+    "/mnt/frankendom-donors/endless-sky-endless-sky/source/Account.cpp",
+    "/mnt/frankendom-donors/endless-sky-endless-sky/source/PlanetPanel.cpp",
+    "/mnt/frankendom-donors/endless-sky-endless-sky/source/PlayerInfo.cpp",
+    "/mnt/frankendom-donors/endless-sky-endless-sky/copyright"
+  ],
+  "counts": {
+    "start_blocks": 5,
+    "intro_mission_blocks": 53,
+    "intro_mission_blocks_default": 14,
+    "intro_mission_blocks_midgard": 14,
+    "intro_mission_blocks_mainsail": 14,
+    "intro_mission_blocks_delve": 11,
+    "shipyard_guard_missions": 3,
+    "help_topics": 40,
+    "help_words_total_approx": 3700,
+    "flight_check_conversations": 5,
+    "flight_check_words_approx": 710,
+    "default_start_conversation_words_approx": 645,
+    "mentor_intro_conversation_words_approx": 1219,
+    "evade_intro_conversation_words_approx": 1275,
+    "loan_term_days_read_starts": 3
+  },
+  "rule": "One-shot, state-triggered teaching. A state is entered (stranded, dead, disabled, first panel opened); its help flag is checked; if unset the popup opens and the flag is set (source/Panel.cpp 535-543), so it never repeats. The first danger is staged so the player wins by escape or by protecting an NPC, not by a damage race (convoy escort with an NPC-survival win; an evade mission whose enemy outclasses the player's shields). A bad purchase is a conversation with a named fix, not a failure state. A pre-launch flight check blocks launch and names the one missing part (source/PlanetPanel.cpp 410; data/_ui/flight checks.txt). Debt is shown on the first screen as a daily payment; a missed payment is reported (source/Account.cpp 220-222).",
+  "data_fields": [
+    {"name": "help_topic_flag", "unit": "bool per screen, once per install", "donor_value_or_null": null},
+    {"name": "debt_daily_payment", "unit": "credits per day", "donor_value_or_null": null},
+    {"name": "debt_term", "unit": "days", "donor_value_or_null": null},
+    {"name": "first_payout", "unit": "credits", "donor_value_or_null": null},
+    {"name": "convoy_size", "unit": "ships", "donor_value_or_null": null},
+    {"name": "evade_enemy_shield_multiple", "unit": "x player shields", "donor_value_or_null": null},
+    {"name": "blocked_mission_capacity_needed", "unit": "slots", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "once-per-state help popups (help flag set on first show)",
+    "flight-check gate that names the one missing part and sends the player to fix it",
+    "convoy escort first contact with a protect-don't-kill win",
+    "evade-first contact taught by escape",
+    "mentor who is also the first mission giver and explains blocked missions",
+    "debt visible on the first screen as a daily payment",
+    "bad-buy conversations that name the problem and offer a fix"
+  ],
+  "change": [
+    "about 25 words per popup for 375-wide phone (donor intro conversations run about 1,200 to 1,300 words)",
+    "no multi-screen loan scene before the first control",
+    "no long intro conversation before the first hit",
+    "all names, copy, numbers, pirate and convoy content are ours"
+  ],
+  "look_test": "Three-beat prototype on the existing Pit, no release rows, no lock. Beat 1: first screen with a debt line and one engage button. Beat 2: first knockdown shows a once-only help line (25 words max). Beat 3: convoy-escort variant of the first fight with a visible keep-the-NPC-alive objective beside the normal ring fight. Dom plays each once and says whether he knows what to do within 10 seconds and which first fight feels like the first 30 minutes; pass if he can name the next goal after the escort run.",
+  "licence_note": "GPL-3.0-or-later for code and data text (copyright file, Files: *, line 9; AU018). Clean-room, shape only. No dialogue, mission names, ship names or numbers carried over; donor values are null in data_fields.",
+  "tags": [
+    "first-fight",
+    "first-loot",
+    "encounter-escort",
+    "duration-rule",
+    "new:help-once-per-state",
+    "new:flight-check-gate",
+    "new:debt-on-first-screen",
+    "new:blocked-mission",
+    "new:flee-first-encounter",
+    "new:bad-buy-conversation"
+  ],
+  "not_read": [
+    "intro missions lines 133-210 (earth, freighter, ingot)",
+    "intro missions lines 346-440 (mining intro)",
+    "intro missions lines 660-792 and 845-925 (transport, freighter, interceptor branches beyond first missions)",
+    "intro missions lines 1878-2251 (Delve chain beyond its first mission)",
+    "starts.txt lines 141-375 (paradise, syndicate and hai space bodies)",
+    "data/_ui/tooltips.txt, messages.txt, landing messages.txt",
+    "PlayerInfo::FlightCheck body",
+    "hit feedback code (sparks, shake, sound)",
+    "shipyard and outfitter UI code beyond DoHelp call lines",
+    "effect frame strips, planet sprites, ambient mp3s (AU018 only)"
+  ],
+  "verdict": "STRONG",
+  "decision": "adapt (idea)",
+  "best_transferable_idea": "A once-per-state help popup that opens only when the player first reaches that state, plus a pre-launch check that names the one missing part and sends the player to fix it.",
+  "minute_mapping": "estimated from mission order, not timed"
+}

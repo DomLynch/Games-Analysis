@@ -1,0 +1,15 @@
+recycle_time = 60 * 5
+branch_check_time = 60 * 60
+branch_max_life = 60 * 60 * 24 * 7
+max_unexplored_exits = 2
+max_new_exits_per_room = 2
+random() < 0.5
+self.last_updated = datetime.utcnow()
+if branch.last_updated < max_allowed_date:
+class EvAdventureDungeonBranchDeleter
+class EvAdventureStartRoomResetter
+exi.reset_exit()
+n_exits = randint(1, n_exits)
+depth = int(sqrt(new_x**2 + new_y**2))
+def reset_exit
+self.destination = self.location

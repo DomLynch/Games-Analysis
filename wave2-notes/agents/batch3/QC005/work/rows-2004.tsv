@@ -1,0 +1,23 @@
+2004Scape-Server	CAM_LOOKAT handler queues a type-1 CameraInfo on the player	/mnt/frankendom-donors/2004Scape-Server/src/engine/script/handlers/PlayerOps.ts	167	new CameraInfo(1, pos.x, pos.z
+2004Scape-Server	CAM_MOVETO handler queues a type-0 CameraInfo on the player	/mnt/frankendom-donors/2004Scape-Server/src/engine/script/handlers/PlayerOps.ts	174	new CameraInfo(0, pos.x, pos.z
+2004Scape-Server	CAM_SHAKE is written straight to the client, not queued	/mnt/frankendom-donors/2004Scape-Server/src/engine/script/handlers/PlayerOps.ts	180	state.activePlayer.write(new CamShake(
+2004Scape-Server	CAM_RESET is written straight to the client, not queued	/mnt/frankendom-donors/2004Scape-Server/src/engine/script/handlers/PlayerOps.ts	184	state.activePlayer.write(new CamReset());
+2004Scape-Server	per-player camera queue is a LinkList of CameraInfo	/mnt/frankendom-donors/2004Scape-Server/src/engine/entity/Player.ts	363	cameraPackets: LinkList<CameraInfo> = new LinkList();
+2004Scape-Server	queue is cleared in cleanup()	/mnt/frankendom-donors/2004Scape-Server/src/engine/entity/Player.ts	433	cleanup(): void {
+2004Scape-Server	queue is cleared in cleanup()	/mnt/frankendom-donors/2004Scape-Server/src/engine/entity/Player.ts	443	this.cameraPackets.clear();
+2004Scape-Server	updateMap drains the camera queue from head	/mnt/frankendom-donors/2004Scape-Server/src/engine/entity/NetworkPlayer.ts	258	for (let info = this.cameraPackets.head();
+2004Scape-Server	camera X is made zone-local by subtracting the zone origin	/mnt/frankendom-donors/2004Scape-Server/src/engine/entity/NetworkPlayer.ts	259	const localX = info.camX - CoordGrid.zoneOrigin(this.originX);
+2004Scape-Server	type 0 is written as CamMoveTo	/mnt/frankendom-donors/2004Scape-Server/src/engine/entity/NetworkPlayer.ts	262	this.write(new CamMoveTo(localX, localZ
+2004Scape-Server	type 1 is written as CamLookAt	/mnt/frankendom-donors/2004Scape-Server/src/engine/entity/NetworkPlayer.ts	264	this.write(new CamLookAt(localX, localZ
+2004Scape-Server	per tick, processClientsOut calls updateMap for each connected player	/mnt/frankendom-donors/2004Scape-Server/src/engine/World.ts	1117	player.updateMap();
+2004Scape-Server	world tick rate is 600 ms	/mnt/frankendom-donors/2004Scape-Server/src/engine/World.ts	120	TICKRATE: number = 600;
+2004Scape-Server	cycle() calls processClientsOut once per cycle	/mnt/frankendom-donors/2004Scape-Server/src/engine/World.ts	437	this.processClientsOut();
+2004Scape-Server	camera opcodes on the wire (CAM_LOOKAT id 222, length 6)	/mnt/frankendom-donors/2004Scape-Server/src/network/game/server/codec/rs244/ServerProt244.ts	36	static readonly CAM_LOOKAT = new ServerProt244(222, 6);
+2004Scape-Server	CAM_MOVETO encodes height as p2 (two bytes)	/mnt/frankendom-donors/2004Scape-Server/src/network/game/server/codec/rs244/CamMoveToEncoder.ts	12	buf.p2(message.height);
+2004Scape-Server	CAM_SHAKE first field is marked as a guess by the author	/mnt/frankendom-donors/2004Scape-Server/src/network/game/server/codec/rs244/CamShakeEncoder.ts	10	buf.p1(message.type); // direction?
+2004Scape-Server	duel arena picks the nearest camera anchor from an enum	/mnt/frankendom-donors/2004Scape-Server/data/src/scripts/minigames/game_duelarena/scripts/duel_arena_lean.rs2	22	~closest_enum_coord_and_index(coord, duel_arena_camera_coords)
+2004Scape-Server	duel arena north camera: move 8 tiles back, height 1926, speed 0, multiplier 100	/mnt/frankendom-donors/2004Scape-Server/data/src/scripts/minigames/game_duelarena/scripts/duel_arena_lean.rs2	48	cam_moveto(movecoord($closest_camera_coord, 0, 0, 8), 1926, 0, 100);
+2004Scape-Server	duel arena north camera look-at: 3 tiles, height 1276	/mnt/frankendom-donors/2004Scape-Server/data/src/scripts/minigames/game_duelarena/scripts/duel_arena_lean.rs2	49	cam_lookat(movecoord($closest_camera_coord, 0, 0, 3), 1276, 0, 100);
+2004Scape-Server	gnomeball goal throw: cam_moveto with height 300, speed 100, multiplier 100	/mnt/frankendom-donors/2004Scape-Server/data/src/scripts/minigames/game_gnomeball/scripts/gnomeball_shoot.rs2	33	cam_moveto(movecoord(loc_coord, 3, 0, 0), 300, 100, 100);
+2004Scape-Server	licence line	/mnt/frankendom-donors/2004Scape-Server/LICENSE	3	Copyright (c) 2023-2025 Lost City
+2004Scape-Server	logout path calls cleanup() on the player (removePlayer)	/mnt/frankendom-donors/2004Scape-Server/src/engine/World.ts	1640	player.cleanup();

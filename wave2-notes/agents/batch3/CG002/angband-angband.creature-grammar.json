@@ -1,0 +1,82 @@
+{
+  "donor": "angband-angband",
+  "topic": "creature-grammar",
+  "depth": "full",
+  "half_read": "data",
+  "paths": [
+    "/mnt/frankendom-donors/angband-angband/lib/gamedata/monster.txt (624 entries, all parsed; line 1886 giant white dragon fly entry; line 1888 base key; line 1898 blow; line 11091 color-cycle)",
+    "/mnt/frankendom-donors/angband-angband/lib/gamedata/monster_base.txt (56 templates; line 32 ancient dragon; line 116 dragon fly)",
+    "/mnt/frankendom-donors/angband-angband/lib/gamedata/blow_methods.txt (19 methods; line 59 first method)",
+    "/mnt/frankendom-donors/angband-angband/lib/gamedata/blow_effects.txt (30 effects)",
+    "/mnt/frankendom-donors/angband-angband/lib/gamedata/pain.txt (12 pain types; header line 16)",
+    "/mnt/frankendom-donors/angband-angband/lib/gamedata/visuals.txt (colour cycle definitions from line 245)",
+    "/mnt/frankendom-donors/angband-angband/src/mon-init.c (line 1720 parse_monster_color_cycle; located, not read in full)",
+    "/private/tmp/p2/wave2-haiku/batch3/CG002/angband-angband.creature-grammar.md"
+  ],
+  "counts": {
+    "monster_entries": 624,
+    "monster_base_templates": 56,
+    "bases_with_5plus_members": 49,
+    "bases_with_10plus_members": 26,
+    "largest_base_members": 54,
+    "friends_entries": 166,
+    "friends_base_entries": 26,
+    "drop_base_entries": 41,
+    "unique_flagged_entries": 101,
+    "bases_holding_uniques": 33,
+    "bases_holding_uniques_that_also_have_non_uniques": 32,
+    "unique_hp_median": 2500,
+    "non_unique_hp_median": 118.5,
+    "unique_depth_median": 50,
+    "non_unique_depth_median": 26,
+    "color_cycle_monsters": 9,
+    "shape_changer_entries": 11,
+    "mimic_entries": 9,
+    "blow_methods": 19,
+    "blow_effects": 30,
+    "pain_types": 12,
+    "distinct_colour_codes_used": 26,
+    "dragon_base_element_rows_depth9_hp88": 6,
+    "dragon_fly_members": 4
+  },
+  "rule": "One base template per family supplies glyph, pain set and default flags; every monster names its base. Colour is the element within one body: the same base is repeated per colour with one element immunity, one breath spell and one swapped blow. A boss is a unique that shares its base with ordinary members, with much higher hit points and depth. The top tier of a family may use a multi-step colour cycle (a palette animation) instead of a static colour. Escorts are defined per base.",
+  "data_fields": [
+    {"name": "families", "unit": "count", "donor_value_or_null": null},
+    {"name": "members_per_family", "unit": "count", "donor_value_or_null": null},
+    {"name": "element_colour_slots", "unit": "count", "donor_value_or_null": null},
+    {"name": "swapped_blow_per_member", "unit": "count", "donor_value_or_null": null},
+    {"name": "speed_step_per_member", "unit": "percent of base speed", "donor_value_or_null": null},
+    {"name": "elite_hp_mult", "unit": "multiplier", "donor_value_or_null": null},
+    {"name": "boss_hp_mult", "unit": "multiplier", "donor_value_or_null": null},
+    {"name": "cycle_frames", "unit": "count", "donor_value_or_null": null},
+    {"name": "cycle_period_ms", "unit": "milliseconds", "donor_value_or_null": null},
+    {"name": "pain_bands", "unit": "count", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "one base per family, members name the base",
+    "colour as element within one body",
+    "one swapped blow per member",
+    "slow colour cycle reserved for the top tier",
+    "boss shares its family base",
+    "escort groups defined per base",
+    "blow method table as a text layer for the attack verb"
+  ],
+  "change": [
+    "no glyph; the telegraph is a pose and a colour step",
+    "cycle is a palette step in our renderer, not the legacy flicker",
+    "no unique that shares no base with a family",
+    "server rolls member, element and blow from the zone seed",
+    "all attack verb text is ours"
+  ],
+  "look_test": "One four-member insect base at 375 wide with element colour per member, then the same base as the top tier with a two-frame cycle and a name card. Dom judges: members told apart by colour at fight distance; top tier reads as same family stronger; the cycle draws the eye before the breath.",
+  "licence_note": "Code GPL version 2 or the Angband licence (docs/copying.rst line 5); the Angband licence allows copying for educational, research and not-for-profit purposes (docs/copying.rst line 10). Assets mixed per tile set and sound; lib/gamedata header says other copyrights may apply. Inspiration is category-level only; no names, plurals, description text or tables copied. donor_value_or_null is null for every field.",
+  "tags": ["creature-family", "recolour-tier", "swapped-ability", "boss-elite-pattern", "naming-grammar", "new:colour-element", "new:colour-cycle-elite", "new:attack-verb-table", "new:escort-per-base"],
+  "not_read": [
+    "src/mon-init.c beyond line 1720 (located only)",
+    "lib/tiles sprite files and .prf mappings (AU004 file level only)",
+    "monster_spell.txt (1234 lines, not read)",
+    "dungeon_profile.txt and vault.txt (not part of this note)",
+    "lore and description text beyond short checks",
+    "sound files (AU004 counts only)"
+  ]
+}

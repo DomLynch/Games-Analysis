@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+CleverRaven-Cataclysm-DDA	quests-dialogue	P	STRONG	full	src/mission.cpp:391-421,467,566-732,850-861; src/npctalk_funcs.cpp:124-146,190-200 - mission lifecycle, per-goal completion predicates, report-back gate and reward booked as NPC owed balance
+DCurrent-openbor	quests-dialogue	P	STRONG	thin	engine/openbor.c:1422-1426,32895-33056,49240-49247,28781-28902; engine/openbor.h:1838-1850 - text box entity freezes other actors, holds their timers, pages on timer or skip press, removes itself at last page; no quest or dialogue-tree logic in this donor
+Dawn-of-Light-DOLSharp	quests-dialogue	P	STRONG	full	GameServer/quests/QuestsMgr/DataQuest.cs:1586-1780,2705-2735,2827-3062,1007-1088 - per-character step pointer driven by a step list, event match, kill-step drop roll, precheck-then-grant rewards and completion count

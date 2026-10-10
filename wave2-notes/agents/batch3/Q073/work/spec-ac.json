@@ -1,0 +1,284 @@
+[
+ [
+  "azerothcore-azerothcore-wotlk",
+  "licence: GPL v2 or later header",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "the Free Software Foundation; either version 2 of the License,"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "melee outcome wrapper reads chances",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "MeleeHitOutcome Unit::RollMeleeOutcomeAgainst(Unit const* victim, WeaponAttackType attType) const"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "outcome roll takes precomputed chances",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "MeleeHitOutcome Unit::RollMeleeOutcomeAgainst(Unit const* victim, WeaponAttackType attType, int32 crit_chance"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "evading creatures always evade",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "if (victim->IsCreature() && victim->ToCreature()->IsEvadingAttacks())"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "skill bonus is 4 per skill point",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "skillBonus  = 4 * (attackerWeaponSkill - victimMaxSkillValueForLevel);"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "skill bonus comment 0.04 percent",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "bonus from skills is 0.04%"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "single roll drawn from urand 0..10000",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "roll = urand (0, 10000);"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "urand is inclusive uniform",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/common/Utilities/Random.cpp",
+  "std::uniform_int_distribution<uint32> uid(min, max);"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "miss band first",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "tmp = miss_chance;"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "miss return",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "return MELEE_HIT_MISS;"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "dodge band reduced by skill bonus",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "&& ((tmp -= skillBonus) > 0)"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "dodge return",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "return MELEE_HIT_DODGE;"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "parry band reduced by skill bonus",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "&& (tmp -= skillBonus) > 0"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "parry return",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "return MELEE_HIT_PARRY;"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "block return",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "return MELEE_HIT_BLOCK;"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "glancing width uses skill gap",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "tmp = (10 + (victimDefenseSkill - skill)) * 100;"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "glancing width capped at 4000",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "tmp = tmp > 4000 ? 4000 : tmp;"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "glancing return",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "return MELEE_HIT_GLANCING;"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "crushing width is 2 percent per point over 15",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "// add 2% chance per lacking skill point, min. is 15%"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "crushing width formula",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "tmp = tmp * 200 - 1500;"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "crushing return",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "return MELEE_HIT_CRUSHING;"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "crit band",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "tmp = crit_chance;"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "crit return",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "return MELEE_HIT_CRIT;"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "normal return",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "return MELEE_HIT_NORMAL;"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "melee damage computed before outcome",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "damageInfo->damages[i].damage = Unit::CalcArmorReducedDamage(this, damageInfo->target, damage, nullptr, 0, damageInfo->attackType);"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "outcome rolled after armour",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "damageInfo->hitOutCome = RollMeleeOutcomeAgainst(damageInfo->target, damageInfo->attackType);"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "sitting victim forces crit unless miss",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "If the victim was a sitting player and we didn't roll a miss, then crit."
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "crit doubles damage",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "damageInfo->damages[i].damage *= 2;"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "block amount from shield block value",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "damageInfo->blocked_amount = damageInfo->target->GetShieldBlockValue();"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "glancing reduction factor",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "float reducePercent = 1 - leveldif * 0.1f;"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "glancing level gap capped at 3",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "if (leveldif > 3)"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "crushing adds half of damage",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "damageInfo->damages[i].damage += (damageInfo->damages[i].damage / 2);"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "crushing comment 150 percent",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "// 150% normal damage"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "attack state update calls calculate",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "CalculateMeleeDamage(victim, &damageInfo, attType, sittingVictim);"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "absorb mods applied before deal",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "Unit::DealDamageMods(victim, damageInfo.damages[i].damage, &damageInfo.damages[i].absorb);"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "deal melee damage after mods",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "DealMeleeDamage(&damageInfo, true);"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "deal damage call inside DealMeleeDamage",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "Unit::DealDamage(this, victim, damageInfo->damages[i].damage, &cleanDamage, DIRECT_DAMAGE"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "armour reduction signature",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "uint32 Unit::CalcArmorReducedDamage(Unit const* attacker, Unit const* victim, const uint32 damage"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "armour below zero clamped",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "if (armor < 0.0f)"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "armour level scaling above 59",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "if (levelModifier > 59)"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "armour level scaling formula",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "levelModifier = levelModifier + (4.5f * (levelModifier - 59));"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "armour fraction formula",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "float tmpvalue = 0.1f * armor / (8.5f * levelModifier + 40);"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "armour fraction x/(1+x)",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "tmpvalue = tmpvalue / (1.0f + tmpvalue);"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "armour fraction cap 0.75",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "if (tmpvalue > 0.75f)"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "armour reduced damage returned",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "return uint32(std::ceil(std::max(damage * (1.0f - tmpvalue), 0.0f)));"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "DealDamage signature",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "uint32 Unit::DealDamage(Unit* attacker, Unit* victim, uint32 damage"
+ ],
+ [
+  "azerothcore-azerothcore-wotlk",
+  "DealMeleeDamage signature",
+  "/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/game/Entities/Unit/Unit.cpp",
+  "void Unit::DealMeleeDamage(CalcDamageInfo* damageInfo, bool durabilityLoss)"
+ ]
+]

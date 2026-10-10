@@ -1,0 +1,74 @@
+{
+  "donor": "EQEmu",
+  "topic": "world-events",
+  "depth": "full",
+  "half_read": "server",
+  "paths": [
+    "/mnt/frankendom-donors/EQEmu/world/world_event_scheduler.cpp",
+    "/mnt/frankendom-donors/EQEmu/world/world_event_scheduler.h",
+    "/mnt/frankendom-donors/EQEmu/common/server_event_scheduler.h",
+    "/mnt/frankendom-donors/EQEmu/common/server_event_scheduler.cpp",
+    "/mnt/frankendom-donors/EQEmu/common/repositories/server_scheduled_events_repository.h",
+    "/mnt/frankendom-donors/EQEmu/common/repositories/spawn_events_repository.h",
+    "/mnt/frankendom-donors/EQEmu/common/database/database_update_manifest.h",
+    "/mnt/frankendom-donors/EQEmu/common/ruletypes.h",
+    "/mnt/frankendom-donors/EQEmu/zone/zone_event_scheduler.cpp",
+    "/mnt/frankendom-donors/EQEmu/zone/zone_event_scheduler.h",
+    "/mnt/frankendom-donors/EQEmu/zone/spawn2.cpp",
+    "/mnt/frankendom-donors/EQEmu/zone/spawn2.h",
+    "/mnt/frankendom-donors/EQEmu/zone/event_codes.h",
+    "/mnt/frankendom-donors/EQEmu/common/emu_constants.h",
+    "/mnt/frankendom-donors/EQEmu/zone/exp.cpp",
+    "/mnt/frankendom-donors/EQEmu/zone/global_loot_manager.cpp"
+  ],
+  "counts": {
+    "server_event_types": 5,
+    "server_event_types_list": ["hot_zone_activate", "broadcast", "reload_world", "rule_change", "content_flag_change"],
+    "spawn_condition_on_change_codes": 5,
+    "spawn_event_actions": 5,
+    "npc_emote_event_types": 9,
+    "npc_emote_kinds": 4,
+    "quest_event_code_identifiers": 150,
+    "spawn_event_rows_in_repo_sql": 0,
+    "spawn_condition_rows_in_repo_sql": 0,
+    "server_scheduled_event_rows_in_repo_sql": 0
+  },
+  "rule": "Three owners, one clock. World process polls once per real minute and sends broadcasts and world reloads to all zones. Each zone polls once per real minute and toggles hot-zone, rule and content-flag state in memory, clearing its active list when a window ends. A per-zone integer (spawn condition) drives camps: spawn events move it on a period measured in EQ minutes (3 real seconds each); when it crosses a spawn point's threshold, the point despawns, repops, repops if ready, or signals its mob (signal number = on_change minus 10). Strict spawn events fire only inside a short window after their trigger; missed windows are skipped. Windows are start/end calendar fields with 0 meaning 'use now', or a cron expression with a 10-second pad. A non-cron broadcast with no end fires every minute poll from its start (read from code; not run).",
+  "data_fields": [
+    {"name": "event_type", "unit": "enum string", "donor_value_or_null": null},
+    {"name": "window_start_end", "unit": "calendar fields; 0 = use now", "donor_value_or_null": null},
+    {"name": "cron_expression", "unit": "cron string, max 100 chars", "donor_value_or_null": null},
+    {"name": "cron_pad", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "scheduler_poll", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "eq_minute", "unit": "real seconds", "donor_value_or_null": null},
+    {"name": "strict_window", "unit": "EQ minutes", "donor_value_or_null": null},
+    {"name": "hotzone_xp_bonus", "unit": "multiplier added", "donor_value_or_null": null},
+    {"name": "spawn_event_period", "unit": "EQ minutes", "donor_value_or_null": null},
+    {"name": "spawn_event_action", "unit": "enum: set, add, subtract, multiply, divide", "donor_value_or_null": null},
+    {"name": "on_change", "unit": "enum: nothing, despawn, repop, repop_if_ready, signal (base 10)", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Split world-scope rows (broadcast, reload) from zone-scope rows (hot zone, rule, content flag).",
+    "Threshold-to-signal chain: a counter crossing a line makes spawn points act, one chosen action each.",
+    "Strict window: a missed trigger is skipped, not replayed after a restart.",
+    "Cron window with a short pad rather than exact-second matching.",
+    "Once-a-minute poll that re-reads the events table only when it changed."
+  ],
+  "change": [
+    "Make start and end explicit; drop zero-means-now, which drifts for partial windows and cannot express midnight.",
+    "Add a fire-once latch per event id, so a broadcast cannot repeat every poll while its window is open.",
+    "Put the banner on the server ledger, one row per event start, and let the client only draw from that row.",
+    "Replace the single yellow chat line with a 375-wide banner with a countdown and one NPC line."
+  ],
+  "look_test": "On the existing phone build, compare three ways to show one zone event at 375 wide: (a) plain yellow chat line only; (b) top banner with one NPC bark and a 10-second countdown; (c) banner plus ground marker where the camp changes. Dom judges in three seconds whether he can say what started and where. Then restart the server mid-event: the banner must replay once, not repeat.",
+  "licence_note": "EQEmu code is GPL-3.0 (LICENSE.md). Game content is not in the repo (schema only; zero event rows in utils/sql). No donor values recorded: copyleft. Inspiration is category-level only (counter-driven camp flip, strict window, cron window).",
+  "tags": ["world-event", "timed-event", "scheduler", "roaming-boss", "rumour", "signage", "duration-rule", "new:condition-threshold", "new:strict-window", "new:fire-once-latch", "new:npc-emote-event"],
+  "not_read": [
+    "client_files (export/import tooling only; not read further)",
+    "quest scripts (not in repo)",
+    "sound and VFX (none in repo)",
+    "NPC emote rows (data, not in repo)",
+    "zone/worldserver.cpp reload handling beyond the scheduler update branch",
+    "spawn2 path_when_zone_idle movement code (parameter only read)"
+  ]
+}

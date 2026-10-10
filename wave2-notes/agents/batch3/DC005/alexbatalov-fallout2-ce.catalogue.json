@@ -1,0 +1,116 @@
+{
+  "donor": "alexbatalov-fallout2-ce",
+  "counts": {
+    "creatures": 19,
+    "classes": 0,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 4
+  },
+  "creature_families": [
+    {"family": "human adults (man, woman, child)", "count": 3, "ref": "src/proto_types.h lines 107-109 (KILL_TYPE enum; names only, no stats)"},
+    {"family": "mutant (super mutant)", "count": 1, "ref": "src/proto_types.h line 110"},
+    {"family": "undead (ghoul)", "count": 1, "ref": "src/proto_types.h line 111"},
+    {"family": "livestock (brahmin)", "count": 1, "ref": "src/proto_types.h line 112"},
+    {"family": "giant scorpion (radscorpion)", "count": 1, "ref": "src/proto_types.h line 113"},
+    {"family": "rodent (rat)", "count": 1, "ref": "src/proto_types.h line 114"},
+    {"family": "drifting creature (floater)", "count": 1, "ref": "src/proto_types.h line 115"},
+    {"family": "hybrid (centaur)", "count": 1, "ref": "src/proto_types.h line 116"},
+    {"family": "machine (robot)", "count": 1, "ref": "src/proto_types.h line 117"},
+    {"family": "dog", "count": 1, "ref": "src/proto_types.h line 118"},
+    {"family": "mantis-like insect", "count": 1, "ref": "src/proto_types.h line 119"},
+    {"family": "apex claw beast (death claw)", "count": 1, "ref": "src/proto_types.h line 120"},
+    {"family": "plant", "count": 1, "ref": "src/proto_types.h line 121"},
+    {"family": "lizard (gecko)", "count": 1, "ref": "src/proto_types.h line 122"},
+    {"family": "alien", "count": 1, "ref": "src/proto_types.h line 123"},
+    {"family": "giant ant", "count": 1, "ref": "src/proto_types.h line 124"},
+    {"family": "boss slot (big bad boss)", "count": 1, "ref": "src/proto_types.h line 125"}
+  ],
+  "top_creatures": [
+    {
+      "label": "Apex claw beast",
+      "why": "Name suggests a top predator; family slot only, stats not in repo (name-level pick).",
+      "keep": "Apex predator slot.",
+      "change": "Silhouette, attacks and behaviour, all ours.",
+      "ref": "src/proto_types.h line 120"
+    },
+    {
+      "label": "Boss slot",
+      "why": "A dedicated boss family used for kill bonuses; name-level pick.",
+      "keep": "A separate boss family.",
+      "change": "Our boss design and bonus.",
+      "ref": "src/proto_types.h line 125"
+    },
+    {
+      "label": "Blade mantis",
+      "why": "Name suggests raptorial forelimbs; name-level pick.",
+      "keep": "Insect silhouette with blade limbs.",
+      "change": "Colour and limb count.",
+      "ref": "src/proto_types.h line 119"
+    },
+    {
+      "label": "Drift floater",
+      "why": "Name suggests a floating body; name-level pick, flight not verified.",
+      "keep": "Hovering read.",
+      "change": "Our body and movement.",
+      "ref": "src/proto_types.h line 115"
+    },
+    {
+      "label": "Machine enemy",
+      "why": "Robotic body plan is separate from organic in the engine (body type enum); name-level pick.",
+      "keep": "Robotic body plan as a distinct read.",
+      "change": "Our design.",
+      "ref": "src/proto_types.h line 117 and body type enum lines 100-102"
+    }
+  ],
+  "classes": [],
+  "weapon_families": [
+    {"family": "attack modes", "count": 4, "tiers": "unarmed, melee, throw, ranged (plus none)", "ref": "src/item.h lines 10-14"},
+    {"family": "item types", "count": 7, "tiers": "armour, container, drug, weapon, ammo, misc, key", "ref": "src/proto_types.h lines 27-34"},
+    {"family": "damage types", "count": 7, "tiers": "normal, laser, fire, plasma, electrical, EMP, explosion", "ref": "src/proto_types.h lines 60-66; threshold stats in src/stat_defs.h lines 41-46"},
+    {"family": "ammo and fuel calibres", "count": 18, "tiers": "about 18 real types incl. rocket, flamethrower fuel, two energy-cell grades, needler", "ref": "src/proto_types.h lines 70-89"}
+  ],
+  "gear_tiers": [
+    {"tier": "powered armour", "ladder": "powered armour, combat armour, advanced armour I, advanced armour II", "ref": "src/perk_defs.h lines 69-70, 75-76 (perk-based tiers)"},
+    {"tier": "dermal and phoenix", "ladder": "dermal impact armour, dermal impact assault enhancement, phoenix armour implants, phoenix assault enhancement", "ref": "src/perk_defs.h lines 81-84"},
+    {"tier": "health perk", "ladder": "vault city inoculations", "ref": "src/perk_defs.h line 85"},
+    {"tier": "materials", "ladder": "glass, metal, plastic, wood, dirt, stone, cement, leather (material tags, 8)", "ref": "src/proto_types.h lines 48-55"}
+  ],
+  "zones": [
+    {"name": "desert random encounter", "kind": "biome encounter set", "ref": "src/worldmap.h line 53"},
+    {"name": "mountain random encounter", "kind": "biome encounter set", "ref": "src/worldmap.h line 54"},
+    {"name": "city random encounter", "kind": "biome encounter set", "ref": "src/worldmap.h line 55"},
+    {"name": "coast random encounter", "kind": "biome encounter set", "ref": "src/worldmap.h line 56"},
+    {"name": "ghost town", "kind": "settlement type", "ref": "src/worldmap.h line 47"},
+    {"name": "caravan encounters", "kind": "travelling set", "ref": "src/worldmap.h line 71"},
+    {"name": "13 special one-off encounters", "kind": "special encounter set (names not reused)", "ref": "src/worldmap.h lines 58-70"},
+    {"name": "three elevation levels per map", "kind": "map structure", "ref": "src/map_defs.h line 6"}
+  ],
+  "looks": [
+    {"label": "Phoneme lip-sync", "technique": "42 mouth-shape slots with speech markers keyed to audio; use 8 to 12 own shapes.", "ref": "src/lips.h line 10 and SpeechMarker struct; src/lips.cc"},
+    {"label": "Palette fade", "technique": "Timed palette fade of about 700 ms between scenes.", "ref": "src/palette.cc around line 48"},
+    {"label": "Palette colour cycle", "technique": "Speed-factor palette cycle for animated colour.", "ref": "src/cycle.h line 12"},
+    {"label": "Ambient plus per-tile light", "technique": "Global ambient intensity and per-tile intensity, so one tint layer handles the scene.", "ref": "src/light.h lines 6-7; src/light.cc lines 42-134"},
+    {"label": "Cutscene frames with effects", "technique": "Frame container with audio and per-frame effects; we use a standard video format.", "ref": "src/movie_lib.cc line 535; src/movie_effect.cc"},
+    {"label": "Automap view state in save", "technique": "View options stored in the save file.", "ref": "src/automap.h lines 17-18"}
+  ],
+  "originals": [
+    {"name": "Eight-to-twelve-shape talker", "idea": "A talking head with our own mouth shapes and speech markers timed to audio.", "keep": "Marker timing.", "change": "Shape count and our face."},
+    {"name": "Seven damage tints", "idea": "Each damage type gets its own hit flash and sound.", "keep": "The damage-type split.", "change": "Our colours and feedback."},
+    {"name": "Biome encounter table", "idea": "Random encounter sets per biome: desert, mountain, city, coast.", "keep": "Biome-based encounters.", "change": "Our biomes and creatures."},
+    {"name": "Armour perk ladder", "idea": "Frame, combat frame, two advanced grades, skin armour, then implants with an assault upgrade.", "keep": "Ladder shape as perks.", "change": "Our names and effects."},
+    {"name": "Automap with saved view", "idea": "A map that keeps zoom and marker state in the save file.", "keep": "View state saved.", "change": "Isometric view and our markers."},
+    {"name": "Family bounty", "idea": "A kill bonus per creature family using our families.", "keep": "Per-family bonus.", "change": "Our families and bonus."},
+    {"name": "Palette fade transition", "idea": "A timed palette fade between zones.", "keep": "Timed palette fade.", "change": "Our timing and colours."}
+  ],
+  "licence_note": "Code: Sustainable Use License 1.0 (LICENSE.md line 1). The licence limits use to internal business or non-commercial, personal use (line 15, as the AU003 audit records); README line 117 points the source to this licence. Assets: no separate licence; no game art, audio, maps or text in the repo apart from launcher icons (os/ folder, status unclear). README line 11: the user must own the game to play. The original publisher is not named in the files read. This summarises the files, not a legal opinion.",
+  "not_read": [
+    "Game data pack: master.dat, critter.dat, patch000.dat and the data folder are absent from the box (user-supplied, proprietary, class D per AU003)",
+    "Creature stats, sprites, spawn tables, weapon and armour prototypes, dialogue and lore (none in repo)",
+    "Launcher icon pixels (os/android, os/ios, os/windows, os/macos)",
+    "third_party zlib, fpattern, sdl2 readme and licence text",
+    "Most .cc bodies: critter.cc, combat.cc, combat_ai.cc, item.cc, proto.cc, worldmap.cc, color.cc, art.cc, tile.cc; light.cc and lips.cc only at listed functions",
+    "src/sfall_* mod hooks (not content)",
+    "README.md beyond quoted lines"
+  ]
+}

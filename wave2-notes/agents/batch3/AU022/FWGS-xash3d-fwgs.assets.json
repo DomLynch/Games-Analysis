@@ -1,0 +1,31 @@
+{
+  "donor": "FWGS-xash3d-fwgs",
+  "code_licence": "No LICENSE file in the donor tree and no licence section in README.md. Source headers are mixed: 339 .c/.h files carry GNU GPL text (engine/server/sv_main.c:7 says either version 3), 4 carry BSD text, and public/getopt.c:4 says SPDX BSD-3-Clause. Not stated as one licence.",
+  "asset_licence": "None stated. The engine ships without game data: README.md:34 and :37 say the Half-Life valve folder must be copied in by the user. The tree holds only icons and documentation screenshots, and no licence line covers them.",
+  "rights_holder_status": "Fork. README.md:11 says Xash3D FWGS is a heavily modified fork of an original Xash3D Engine by Unkle Mike. Game resources are Half-Life data the user supplies; README.md:49 says reports are accepted only for legally acquired product.",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "game data (Half-Life valve folder)", "path": "not in donor tree (top-level listing has no valve/ folder)", "count_hint": "0", "licence": "n/a, user-supplied per README.md:37", "class": "D", "note": "Engine only. Nothing to use from this donor for game art, models, maps or audio."},
+    {"kind": "app icons", "path": "game_launch/icon-xash-material.png, game_launch/icon-xash-material.ico, engine/platform/nswitch/icon.jpg, engine/platform/psvita/sce_sys/icon0.png, engine/platform/psvita/sce_sys/livearea/contents/startup.png and bg.png, android/app/src/main/res/mipmap-*/ic_launcher*.png", "count_hint": "16 files", "licence": "not stated", "class": "C", "note": "Small platform icons. Only file listing and sizes checked, not opened."},
+    {"kind": "documentation screenshots", "path": "Documentation/images/*.jpg", "count_hint": "8 jpg (editor, touch-profiles, touch-buttons, example1-5)", "licence": "not stated", "class": "C", "note": "Screenshots of the touch-control editor and examples. Not opened (binary). Inspiration only."},
+    {"kind": "shader source as GLSL in C strings", "path": "ref/gl/gl2_shim/fragment.glsl.inc, ref/gl/gl2_shim/vertex.glsl.inc, ref/gl/vgl_shim/vgl_shaders/vertex.cg.inc, fragment.cg.inc", "count_hint": "4 files (1.5 KB and 1.1 KB for the gl2 pair)", "licence": "code licence (see code_licence)", "class": "C", "note": "Code, not art. Used only as a technique reference for version-switched shader bodies."}
+  ],
+  "inspiration": [
+    "Touch-control layout editor: an in-game grid (default 50 cells, toggled by a command) where buttons are placed, named profiles are saved, and each button has a parameter panel (Documentation/touch-controls.md:11; screenshots Documentation/images/editor.jpg, touch-profiles.jpg, touch-buttons.jpg, not opened). Worth recreating for our 375-wide mobile HUD: snap-to-grid on-device layout editing.",
+    "Controls as a data file: the doc says the config lets the user add or change buttons and create custom menus (Documentation/touch-controls.md:5). Idea: ship HUD layouts as data so a layout change needs no code change.",
+    "Texture override folders: replacement textures are looked up per map, per common folder, per decal folder and per model name, and one toggle switches them on (Documentation/hd-textures.md:3-9). Idea: a per-zone and per-monster override tier so an artist can swap a look without a code change.",
+    "Content kept out of the engine: the engine runs only after the user copies in a separate game folder (README.md:34-37). Idea for us: keep any licensed or borrowed content in a separate pack so the code repo stays clean.",
+    "One shader body for several GL dialects: a version-switch preamble (ref/gl/gl2_shim/fragment.glsl.inc:1-5, for example #if VER <= 300 and #define out attribute) wraps the same GLSL source. Idea: write one shader body and generate the variants for a web or mobile target."
+  ],
+  "briefs": [],
+  "briefs_note": "No creatures, items, armour, zones or effects are in this donor (the monsters, weapons and maps live in the user-supplied valve folder, which is not in the box). Nothing usable for a brief. The inspiration bullets above carry the UI and shader ideas.",
+  "cross_link": "hud-ui: Documentation/touch-controls.md and the touch editor screenshots are worth a look. vfx: the GLSL shim is a technique reference only. camera, zones, spawns, loot, animation, sound: no assets in the tree.",
+  "not_read": [
+    "engine/server and engine/client game-logic C (listed only, not read); the matching game-logic half (HLSDK fork) is described in README.md:36 as in the repo but was not read; pm_shared/ listed only",
+    "3rdparty/: mainui holds only a wscript and 3rdparty/extras only an xash-extras directory in this snapshot; submodule contents not checked; no other 3rdparty files read",
+    "ref/soft and ref/gl renderer C (listed only)",
+    "Documentation/images/*.jpg and game_launch PNG/ICO/JPG icons (listed and sized, not opened: binary)",
+    "waf (binary build tool), CONTRIBUTING.md, SECURITY.md",
+    "data tables: none seen in the top-level or common/ listing; no full-tree search run for string or data tables"
+  ]
+}

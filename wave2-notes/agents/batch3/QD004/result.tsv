@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+LostCityRS-Engine-TS	quests-dialogue	P	STRONG	thin	src/engine/script/handlers/PlayerOps.ts:425-426 and src/network/game/client/handler/IfButtonHandler.ts:26-28 park a dialogue script and resume it only from its own continue list; src/engine/entity/Player.ts:774-777 and 2015-2017 drop it on close or open; the donor has no quest content.
+ModernUO	quests-dialogue	P	STRONG	full	Projects/UOContent/Engines/ML Quests/MLQuestEntry.cs:278-351 runs a two-phase claim (objective vetoes before any effect, cooldown and claim flag after), and MLQuestEntry.cs:353-392 places rewards all-or-nothing; kill credit comes from MLQuestSystem.cs:511-551.
+NodeL2-NodeL2	quests-dialogue	P	PARTIAL	thin	src/GameServer/World/Generics/NpcTalkResponse.js:12-16 builds a per-NPC html path from client text with a fixed NPC id 7146; the four Quest links in data/Html point to missing pages or an unhandled verb, and there is no quest state.

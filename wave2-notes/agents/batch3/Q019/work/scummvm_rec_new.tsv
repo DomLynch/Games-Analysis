@@ -1,0 +1,44 @@
+note	claim	donor_file	line	quote
+scummvm-scummvm	combatOn sets the state, the ratio constants and the waypoint counts	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	52	void ActorCombat::combatOn(int actorId, int initialState, bool rangedAttackFlag
+scummvm-scummvm	cover ratio is zeroed when the actor has no cover waypoints	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	93	if (_coversWaypointCount == 0) {
+scummvm-scummvm	melee attack ratio: distance term weight 0.20	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	606	2 * (50 - MIN(actor->distanceFromActor(_enemyId) / 12.0f, 50.0f));
+scummvm-scummvm	melee attack ratio: aggression weight 0.30	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	622	aggressivenessFactor * 0.30f;
+scummvm-scummvm	ranged attack ratio: angle weight 0.25	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	610	angleFactor          * 0.25f +
+scummvm-scummvm	angle factor divides by 512	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	605	(100 * abs(enemy->angleTo(_actorPosition))) / 512;
+scummvm-scummvm	cover ratio (ranged): aggression weight 0.50	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	645	aggressivenessFactor * 0.50f;
+scummvm-scummvm	cover ratio (melee): aggression weight 0.50	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	652	aggressivenessFactor * 0.50f;
+scummvm-scummvm	flee ratio: actor HP weight 0.4	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	670	actorHpFactor * 0.4f +
+scummvm-scummvm	tick: attack ratio recomputed unless a constant is set	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	138	_attackRatio = calculateAttackRatio();
+scummvm-scummvm	tick: cover or flee wins only when strictly above attack	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	160	if (_attackRatio < _fleeRatio || _attackRatio < _coverRatio) {
+scummvm-scummvm	tick: cover beats flee on a tie	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	161	if (_coverRatio >= _fleeRatio && _coverRatio >= _attackRatio) {
+scummvm-scummvm	tick: close attack when within 36 units	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	178	if (dist > 36.0f) {
+scummvm-scummvm	tick: approach close attack beyond 36 units	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	179	_state = kActorCombatStateApproachCloseAttack;
+scummvm-scummvm	tick: retired enemy sends the actor to idle	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	186	if (enemy->isRetired()) {
+scummvm-scummvm	tick guard: static reentrancy counter	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	116	static int processingCounter = 0;
+scummvm-scummvm	tick decrement after dispatch	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	225	--processingCounter;
+scummvm-scummvm	hit attempt: McCoy not in control blocks the hit	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	232	if (_enemyId == kActorMcCoy && !_vm->playerHasControl() && !_unstoppable) {
+scummvm-scummvm	hit roll is 1..100	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	251	int random = _vm->_rnd.getRandomNumberRng(1, 100);
+scummvm-scummvm	hit when roll is at or below coefficient	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	253	if (random <= attackCoefficient) {
+scummvm-scummvm	damage uses roll and coefficient	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	269	damage = getDamageCloseAttack(random, attackCoefficient);
+scummvm-scummvm	enemy HP floors at zero	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	272	int enemyHp = MAX(enemy->getCurrentHP() - damage, 0);
+scummvm-scummvm	death retires the enemy with parameters 6 and 3	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	289	enemy->retire(true, 6, 3, _actorId);
+scummvm-scummvm	flee function entry	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	497	void ActorCombat::flee() {
+scummvm-scummvm	close coefficient: still enemy base 33	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	540	aggressiveness = 33;
+scummvm-scummvm	close coefficient: running enemy base 11	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	536	aggressiveness = 11;
+scummvm-scummvm	close coefficient: actor aggression divided by 3	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	543	aggressiveness += actor->getCombatAggressiveness() / 3;
+scummvm-scummvm	close coefficient: angle beyond 128 returns no attack	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	547	if (angle > 128) {
+scummvm-scummvm	close coefficient: angle term abs(angle-128)/3.7	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	551	return aggressiveness + (abs(angle - 128) / 3.7f);
+scummvm-scummvm	ranged coefficient: distance capped at 900	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	562	int distance = MIN(actor->distanceFromActor(_enemyId), 900.0f);
+scummvm-scummvm	ranged coefficient: distance term and intelligence	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	574	return aggressiveness + abs((distance / 30) - 30) + actor->getIntelligence() / 5;
+scummvm-scummvm	damage margin formula	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	584	return ((MIN(max - min, 30) * 100.0f / 60.0f) + 50) * _damage / 100;
+scummvm-scummvm	McCoy easy halves damage	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	579	return _damage / 2;
+scummvm-scummvm	tickCombat calls combat tick for non-player combatants	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor.cpp	915	if (_id != kActorMcCoy && !_isRetired && _inCombat) {
+scummvm-scummvm	tickCombat calls ActorCombat::tick	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor.cpp	916	_combatInfo->tick();
+scummvm-scummvm	default aggression is 50	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor.cpp	115	_combatAggressiveness        = 50;
+scummvm-scummvm	aggression is clipped to 0..100 on change	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor.cpp	1197	_combatAggressiveness = CLIP(_combatAggressiveness + change, 0, 100);
+scummvm-scummvm	main loop calls tickCombat on every actor	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/bladerunner.cpp	1234	_actors[i]->tickCombat();
+scummvm-scummvm	gameTick is called from the game loop	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/bladerunner.cpp	1165	} while (_gameIsRunning);
+scummvm-scummvm	hit attempt is a script call	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/script/script.cpp	268	_vm->_actors[actorId]->_combatInfo->hitAttempt();
+scummvm-scummvm	example: hit attempt fires on animation frame 9	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/script/ai/izo.cpp	639	if (_animationFrame == 9) {
+scummvm-scummvm	example: hit attempt call for Izo	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/script/ai/izo.cpp	640	Actor_Combat_AI_Hit_Attempt(kActorIzo);
+scummvm-scummvm	licence: GPL version 3 or later	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	9	the Free Software Foundation, either version 3 of the License, or

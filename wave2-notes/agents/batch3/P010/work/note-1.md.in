@@ -1,0 +1,69 @@
+# keldaanCommunity-pokemonAutoChess (spawns-encounters, cell 1)
+
+Donor: `/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/mini-game.ts` | Licence: GPL-3.0 (LICENSE file, line 1 "GNU GENERAL PUBLIC LICENSE", line 2 "Version 3, 29 June 2007"; clean-room, shape only) | TypeScript | symbol `MiniGame.initialize`
+
+Checked: Read in full: `app/config/game/town-encounters.ts` (1-118) and `app/utils/random.ts` (1-80). Read in part: `app/core/mini-game.ts` (1-60, 150-364, 456-470, 786-812, 832-860), `app/rooms/commands/game-commands.ts` (1175-1190, 2036-2080), `app/rooms/game-room.ts` (715-735). Config values (`stages.ts` 17-22, `game-state.ts` 64, `network.ts` 12, `player.ts` 137) read via grep output and sed. Callers by `grep -rn` under `app/`: `MiniGame.initialize` is called from `game-room.ts:729` (enclosing function not read) and `game-commands.ts:2052`; `MiniGame.update` only from `game-commands.ts:1182`; `MiniGame.stop` only from `game-commands.ts:2044`. Candidates opened: town-encounters.ts, mini-game.ts, random.ts, game-commands.ts, game-room.ts (5 files). Not read: mini-game.ts 365-640 (per-encounter branches, e.g. the Kecleon shop), 640-790, 860-962; the client files under `app/public`. Confidence: high on the roll, the repeat rule and the phase-length arithmetic (each read in the code path). Medium on what the rank term means in play (the rank direction was not read).
+
+## 1. Mechanism
+
+- What it is: a single weighted roll per town phase (the minigame between fights) that picks at most one "town encounter" for the stage. Tables exist only for stages 4, 12, 17, 22, 27 and 34 (keys at town-encounters.ts 20, 32, 44, 55, 66, 74; `ItemCarouselStages` at stages.ts 20). Portal stages (`PortalCarouselStages`, stages.ts 22) and stage 0 have no table, so `townEncounter` is set to null there (mini-game.ts 296).
+- Order of steps in `MiniGame.initialize` (called at the start of each town phase, game-commands.ts 2052):
+  (a) Roll (270-274): `randomWeighted(table, total)` where total is `undefined` under the TOWN_FESTIVAL rule (the table is then normalised to its own sum) and `1` otherwise. `randomWeighted` draws `U = Math.random() * total`, walks the entries in object order subtracting each weight, and returns the first entry that takes the value below zero; if none does, it returns null (random.ts 15-37). So each entry wins with its own weight, and "no encounter" has the leftover probability.
+  (b) Repeat rule (275-281): outside festival, if the rolled encounter is already in `state.townEncounters` (a once-per-run Set, game-state.ts 64), the result is forced to null. The roll is spent; there is no second roll.
+  (c) Bookkeeping (282-294): the result is stored on the state (282). If it is not null it is added to the Set (284) and a static circle of radius 20 is placed at the carousel centre as a blocker (286-293). Otherwise the state is set to null (296).
+  (d) Per-player lockouts (299-334, below).
+- Phase length, set after initialize returns (game-commands.ts 2058-2067): start from 16000 for item stages (stages.ts 17) or 23000 for portal stages (stages.ts 18). If the stage is not a portal stage and not the first item stage (stage 4 is `ItemCarouselStages[0]`), add 2000 per alive player (2061-2062). If `townEncounter != null`, add 5000 (2064-2065). The total is written to `state.time`. Initialize (step c) runs before this block, so the bonus sees the roll's result.
+- Per-player input lockout, `avatar.timer` (mini-game.ts 312-333): base 10000 if an encounter exists, else 5000, plus `(alive - rank) * 2000`. Stage overrides then replace that value: stage 0 gets 12000 (317); portal stages get 8000 (319); other stages below 5 (i.e. stage 4 in the table) get 10000 or 5000 with no rank term (320-321). Bots add `randomBetween(1000, 6000)` last (325).
+- While `timer > 0` the avatar ignores move input (`applyVector` 790-792; `updatePlayerVector` 802). `update(dt)` counts the timer down by `dt` each call (466-469). The town phase calls `update(deltaTime)` each tick (game-commands.ts 1181-1182). The room clamps `deltaTime` to 50 ms before dispatch (game-room.ts 716-719; network.ts 12).
+- End of phase, `stop` (mini-game.ts 832-860, read to 860): for each avatar with no item, a human player (not a bot) is given a random remaining floating item (857) unless the stage's encounter is in the sell-price table and the rule is not festival (846-850).
+- Tick: the roll is one synchronous call per town phase. Lockouts and the phase clock count down by variable frame dt capped at 50 ms (not a fixed step).
+
+## 2. Key functions
+
+- `MiniGame.initialize`: `/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/mini-game.ts` 265-334 (roll 270-297; per-player lockouts 305-333).
+- `randomWeighted`: `/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/utils/random.ts` 15-37 (`ap` and `luck` arguments are left at 0 by this call; the other callers were not read).
+- Phase length block: `/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/rooms/commands/game-commands.ts` 2050-2067 (`initializeTownPhase`).
+- Lockout gate: `/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/mini-game.ts` 790-802 (`applyVector`, `updatePlayerVector`); countdown 463-470 (`update`).
+- Stop fallback: `/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/core/mini-game.ts` 832-860 (partial read).
+
+## 3. Numbers vs mechanism
+
+| Reusable algorithm | Game-specific constants |
+|---|---|
+| One weighted roll per phase. Each entry takes a slice of [0,1) and the rest means "nothing" | Per-stage tables (theirs, town-encounters.ts 20-79). Stage 4: nine entries at 1/20 and one at 1/40 (receipts lines 21, 28), so 0.475 chance of an encounter. Stage 12: 0.475 (nine at 1/20, one at 1/40, lines 33-42). Stage 17: 0.45 (nine at 1/20, lines 45-53). Stage 22: 0.45 (lines 56-64). Stage 27: 0.30 (six, lines 67-72). Stage 34: 0.25 (five, lines 75-79). Counts and weights from reading the table; the 0.475 etc. are sums of those weights |
+| Once-per-run ledger; a repeat spends the roll | Set on the game state (theirs, game-state.ts 64) |
+| Festival flag: no ledger and table normalised to its own sum | Rule name TOWN_FESTIVAL (theirs, mini-game.ts 273, 278) |
+| Phase length = base + per-alive-player term + bonus for a rare event | 16000 item / 23000 portal base (theirs, stages.ts 17-18); 2000 per alive player (game-commands.ts 2062); 5000 bonus with an encounter (2065) |
+| Input lockout = base (depends on rare event) + rank step x 2000, bot jitter last | 10000 / 5000 base (mini-game.ts 313); 2000 per rank step (314); stage 0 override 12000 (317); portal override 8000 (319); bot jitter 1000-6000 (325) |
+| Clamp frame dt before counting timers | 50 ms (theirs, network.ts 12; applied at game-room.ts 719) |
+
+## 4. TypeScript sketch
+
+simplified: the sketch keeps the donor order (roll, then the once-per-run check, then the phase length, then the lockout with bot jitter last). It omits the Matter.js carousel bodies and the central blocker circle, the sell-price exemption and the random-item fallback in `stop`, the per-encounter mini-game branches, and the portal and item carousel setup. It takes the stage overrides as one `fixedMs` argument instead of looking up the stage. The phase base values are written as constants here, and the donor reads them from its stage config.
+
+```ts
+@@BLOCK@@
+```
+
+## 5. Lands in
+
+- TARGET `origins/server/world-spawns.ts` (zone population engine logic; the numbers become zone data fields: a per-stage `encounterTable` of chances whose leftover means nothing spawns, a once-per-run flag, and the phase and lockout base values). Parity-checklist row 23 (zone population: spawn caps, respawn, despawn on empty with a grace timer).
+- Not in this cell: the phase clock and lockout timers belong to the town/phase module, not to the spawn module. They are noted in section 6 only.
+- Reuse tag: rewrite-from-idea (GPL-3.0; clean-room only)
+- Brief rule served: 8 (named target file and parity row); zones as data
+
+## 6. Gaps and risks
+
+- GPL-3.0 (LICENSE file, read lines 1-2): clean-room only. The sketch is written from the steps above, not a line-by-line translation.
+- Scope: the donor's encounter is a town-phase event (one encounter NPC or shop per stage, chance per stage), not a monster spawn. It has no respawn, no despawn and no spawn cap, so row 23's respawn and grace-timer parts are not covered by this note.
+- One ledger: the once-per-run set lives on the room state (game-state.ts 64). Frankendom must keep it in the run ledger and let only the server write it, so a client cannot re-roll or repeat an encounter.
+- Server-verified: the roll, lockouts and stop fallback all run in the room code (`app/core`, `app/rooms`, game-commands.ts 2052 and 1182). The client drawing (`app/public`) was not read and is not needed for the mechanism.
+- Timers are variable dt, clamped to 50 ms (game-room.ts 716-719; network.ts 12). Under lag a 16-second phase runs slower than wall clock. Frankendom's server tick (post-K item 3 sub-line "fixed step") must choose one rule; this donor does not use a fixed step.
+- The rank term: the lockout grows as the rank number falls. Whether rank 1 is the best player was not read (player.ts 137 only gives the field). Frankendom should keep any rank-based handicap as an explicit zone or ruleset field, not as an implicit ordering.
+- The stop fallback grants a random item to any human who took none (mini-game.ts 857). In Frankendom that grant must be a recorded ledger entry, not a side effect of ending a phase.
+- Festival flag: one rule switches off the once-per-run limit and the sell exemption together. Frankendom should keep each as its own data field per zone.
+
+Best transferable idea: give each zone a per-stage table of independent chances whose leftover means nothing spawns, keep a once-per-run set that spends a repeat roll, and lengthen the phase by a fixed bonus when a rare entry appears.
+
+Reuse tag: rewrite-from-idea (GPL-3.0; clean-room only)
+Brief rule served: 8 (named target file and parity row 23); zones as data

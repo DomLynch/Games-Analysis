@@ -1,0 +1,106 @@
+{
+  "donor": "BifrostTitan-DAoC-Client-Lib",
+  "counts": {
+    "creatures": 0,
+    "classes": 3,
+    "weapons": 0,
+    "gear_sets": 0,
+    "zones": 4
+  },
+  "creature_families": [],
+  "top_creatures": [],
+  "classes": [
+    "Three faction realms as a fixed set of slots (src/craft_recipes.cpp:240-254); names not copied",
+    "No character classes or races in the repo; progression shape: none",
+    "Craft professions: 19, each with 200 category slots (src/craft_recipes.cpp:15-16, 140-144, 273); a crafting progression, not classes"
+  ],
+  "weapon_families": [],
+  "gear_tiers": [
+    "Craft tier gate: skill level plus item level plus material level on each recipe (include/daoc_client_lib/craft_recipes.h:21-30; material_level read at src/craft_recipes.cpp:50)",
+    "Ingredients name a base material and a count, and may point to a sub-recipe (include/daoc_client_lib/craft_recipes.h:11-18)",
+    "Zone types as a tier-like set: terrain, city, dungeon, sky city (include/daoc_client_lib/zone_geometry.h:18-24)"
+  ],
+  "zones": [
+    "Zone types: terrain (0), city (1), dungeon (2), sky city (4) (include/daoc_client_lib/zone_geometry.h:18-24); type set from zone data (src/zone_geometry_chooser.cpp:38)",
+    "Zone as a data bundle: one package per zone (src/zone_geometry.cpp:19) with one loader per table (src/zone_geometry.cpp:130-201, per the AU006 audit)",
+    "Zone exits as rows: JumpPoint with position, heading and extra zone ids (include/daoc_client_lib/jump_point.h:12-22; include/daoc_client_lib/zone_records.h:12)",
+    "Terrain height from a per-zone PCX image (src/zone_geometry.cpp:201; include/daoc_client_lib/terrain_height_map.h:11)",
+    "Water as a separate geometry layer (include/daoc_client_lib/dungeon_water.h:17-22; include/daoc_client_lib/river_geometry.h:13-19)",
+    "Tree replacement clusters per zone with bark and leaf textures (include/daoc_client_lib/tree_replacement_map.h:12-22; src/tree_replacement_map.cpp:107-119)"
+  ],
+  "looks": [
+    {
+      "label": "Themed tree swap",
+      "technique": "a real model name maps to a replacement model with bark and leaf textures, plus variant clusters per zone",
+      "ref": "include/daoc_client_lib/tree_replacement_map.h:12-22; src/tree_replacement_map.cpp:107-119"
+    },
+    {
+      "label": "Water corner quads",
+      "technique": "water as a set of four corners and a translation, separate from terrain",
+      "ref": "include/daoc_client_lib/dungeon_water.h:17-22"
+    },
+    {
+      "label": "River bank strips",
+      "technique": "paired banks of three points each, for a riverside strip",
+      "ref": "include/daoc_client_lib/river_geometry.h:13-19"
+    },
+    {
+      "label": "NIF placement metadata",
+      "technique": "model placement records for the sibling NIF reader (names only; see not_read)",
+      "ref": "include/daoc_client_lib/nif_geometry.h:12"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Zone Bundle",
+      "idea": "Each zone is a folder of small tables, one per concern (exits, boundary, terrain, water, fixtures)",
+      "keep": "one bundle per zone, one table per concern",
+      "change": "table names, file format, our own concern list"
+    },
+    {
+      "name": "Zone Exit Rows",
+      "idea": "Zone travel is a data row with a position, heading and extra zones the exit also belongs to",
+      "keep": "exits as data rows",
+      "change": "fields and the travel rule"
+    },
+    {
+      "name": "Heightfield From Image",
+      "idea": "Zone terrain heights come from an authored greyscale image",
+      "keep": "image as the height source",
+      "change": "format, scale and sampling"
+    },
+    {
+      "name": "Water Layer",
+      "idea": "Water is its own layer built from corner quads, not baked into terrain",
+      "keep": "separate water layer",
+      "change": "shape and flow rules"
+    },
+    {
+      "name": "Themed Tree Swap",
+      "idea": "Per-zone tree sets with bark and leaf textures and variant clusters",
+      "keep": "per-zone tree sets with variant clusters",
+      "change": "all models and textures"
+    },
+    {
+      "name": "Tiered Craft Gate",
+      "idea": "A craft tier is a skill level plus a material level, with nested sub-recipes",
+      "keep": "two-number gate and nested sub-recipes",
+      "change": "names, counts and the formula"
+    },
+    {
+      "name": "Warn, Do Not Fail",
+      "idea": "A loader warns on one bad row and keeps the rest",
+      "keep": "warn and continue",
+      "change": "warning format"
+    }
+  ],
+  "licence_note": "LICENSE:1 MIT License; LICENSE:3 Copyright (c) 2026 Nathan Martell. No game data in repo; the library reads an existing client directory at runtime (README.md:5); the licence of that data is not stated. Not legal advice.",
+  "not_read": [
+    "DAoC client data itself (zone packages, tables, texts): not in repo, not obtained",
+    "Function bodies in src/ beyond the cited lines",
+    "tests/ bodies (names only; craft_recipes_tests.cpp by count)",
+    "tools/zone_exporter.cpp",
+    "src/terrain_height_map.cpp sampling; src/river_geometry.cpp builders",
+    "Sibling BifrostTitan-daoc-niflib: separate donor, not read in DC008"
+  ]
+}

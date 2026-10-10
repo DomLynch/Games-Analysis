@@ -1,0 +1,67 @@
+{
+  "donor": "smogon-pokemon-showdown",
+  "topic": "onboarding-first-5",
+  "depth": "thin",
+  "half_read": "server",
+  "paths": [
+    "/mnt/frankendom-donors/smogon-pokemon-showdown/server/users.ts",
+    "/mnt/frankendom-donors/smogon-pokemon-showdown/config/formats.ts",
+    "/mnt/frankendom-donors/smogon-pokemon-showdown/server/chat-commands/info.ts",
+    "/mnt/frankendom-donors/smogon-pokemon-showdown/server/chat-plugins/smogtours.ts",
+    "/mnt/frankendom-donors/smogon-pokemon-showdown/server/room-battle.ts",
+    "/mnt/frankendom-donors/smogon-pokemon-showdown/data/text/default.ts",
+    "/mnt/frankendom-donors/smogon-pokemon-showdown/data/random-battles"
+  ],
+  "counts": {
+    "random_battle_gen9_data_files_listed": 7,
+    "timer_starting_s": 150,
+    "timer_grace_s": 60,
+    "disconnect_timer_s": 60,
+    "timer_reenable_cooldown_s": 20,
+    "per_turn_add_non_singles_s": 25,
+    "per_turn_add_singles_s": 10,
+    "default_text_string_lines_grep_count": 271,
+    "intro_commands_read": 2
+  },
+  "rule": "Opt-in clock: the battle timer is off by default and only starts when a player requests it. When on, each side has a bank (150 s plus 60 s grace), gains a fixed add per own turn (25 s non-singles, 10 s singles), and an inactive side loses when the bank runs out. Re-enabling is blocked for 20 s after someone turns it off. Accelerated per-turn add only after turns 100 and 200, and only when no timer rule is set. First-run: guest name on connect, random-team formats for the first battle (no team build), and onboarding only as chat commands (/intro, /smogintro) that the user asks for.",
+  "data_fields": [
+    {"name": "timer_bank_start", "unit": "s", "donor_value_or_null": 150},
+    {"name": "timer_grace", "unit": "s", "donor_value_or_null": 60},
+    {"name": "timer_add_per_turn_long", "unit": "s", "donor_value_or_null": 25},
+    {"name": "timer_add_per_turn_singles", "unit": "s", "donor_value_or_null": 10},
+    {"name": "timer_reenable_cooldown", "unit": "s", "donor_value_or_null": 20},
+    {"name": "disconnect_bank", "unit": "s", "donor_value_or_null": 60}
+  ],
+  "keep": [
+    "Clock is opt-in; the first battle has no clock unless someone asks for one.",
+    "Bank plus per-turn add rather than a fixed per-turn clock.",
+    "Re-enable cooldown so nobody toggles the clock every turn.",
+    "Random first team so the first battle needs no build step.",
+    "Onboarding as text the player asks for, not a forced tutorial."
+  ],
+  "change": [
+    "Frankendom fast duels are real time: the bank model fits only menu or turn steps (town hall, trade, ledger), not the fight loop.",
+    "No first-30-minute progression exists in the donor; Frankendom needs its own first-reward ladder (see the keldaanCommunity-pokemonAutoChess note)."
+  ],
+  "look_test": "Static HTML page at 375 wide, no server: first screen with two options (random first fight, build my own); a bank pill counting from 150 s with +25 s per action; a toggle that is disabled for 20 s after turning off. Compare bank visible vs hidden, random first fight vs build, timer opt-in vs forced.",
+  "licence_note": "MIT (LICENSE read, Copyright 2011-2026 Guangcong Luo and other contributors). Code may be adapted with attribution. Pokemon names, species data and battle text are third-party IP; category level only.",
+  "tags": [
+    "first-fight",
+    "duration-rule",
+    "new:opt-in-timer",
+    "new:chat-intro",
+    "new:guest-first-run",
+    "new:random-loadout"
+  ],
+  "not_read": [
+    "web client (not in this box): all first-90-second screens are not in the half I read",
+    "sim/ battle engine",
+    "data/random-battles generator internals (file names only)",
+    "server/ladders-local.ts, server/ladders-remote.ts, ladders.ts",
+    "team validator",
+    "data/text beyond lines 1 to 40",
+    "smogtours.ts beyond lines 395 to 410",
+    "chat-commands beyond info.ts intro block",
+    "accelerate logic full detail (lines 292 to 300 read in part)"
+  ]
+}

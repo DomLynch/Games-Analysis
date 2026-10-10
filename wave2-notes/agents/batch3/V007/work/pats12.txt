@@ -1,0 +1,5 @@
+eligiblePlayers.Add(CharacterTagging.Tagger);
+eligiblePlayers.Add(member.Character);
+else if (CharacterTagging.Tagger != null)
+if (CharacterTagging.TagTeam != 0)
+mate.AddExp(KillExp);

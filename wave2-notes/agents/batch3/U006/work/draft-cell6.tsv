@@ -1,0 +1,25 @@
+note	claim	donor_file	line	quote
+ClassicUO	ext cmd 1 is the fast walk prevention batch	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/PacketHandlers.cs		// fast walk prevention
+ClassicUO	ext cmd 1 stores each key into the token pool	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/PacketHandlers.cs		world.Player.Walker.FastWalkStack.SetValue(i, p.ReadUInt32BE());
+ClassicUO	ext cmd 2 adds one key	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/PacketHandlers.cs		world.Player.Walker.FastWalkStack.AddValue(p.ReadUInt32BE());
+ClassicUO	token pool size 5	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Constants.cs		public const int MAX_FAST_WALK_STACK_SIZE = 5;
+ClassicUO	token pool storage	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/WalkerManager.cs		private readonly uint[] _keys = new uint[Constants.MAX_FAST_WALK_STACK_SIZE];
+ClassicUO	set checks the slot index	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/WalkerManager.cs		if (index >= 0 && index < Constants.MAX_FAST_WALK_STACK_SIZE)
+ClassicUO	add fills first empty slot	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/WalkerManager.cs		if (_keys[i] == 0)
+ClassicUO	take reads the slot it returns	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/WalkerManager.cs		uint key = _keys[i];
+ClassicUO	walk request carries the spent token	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/OutgoingPackets.cs		writer.WriteUInt32BE(fastWalk);
+ClassicUO	client spends one token per move	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/PlayerMobile.cs		NetClient.Socket.Send_WalkRequest(direction, Walker.WalkSequence, run,
+ClassicUO	pre-send gate: failed, time, queue, paralysis	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/PlayerMobile.cs		if (Walker.WalkingFailed || Walker.LastStepRequestTime > Time.Ticks
+ClassicUO	run forced off when stamina is spent	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/PlayerMobile.cs		if (SpeedMode >= CharacterSpeedType.CantRun || Stamina <= 1 && !IsDead
+ClassicUO	pathfinder CanWalk signature (checked before send)	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Pathfinder.cs		public bool CanWalk(ref Direction direction, ref int x, ref int y, ref sbyte z)
+ClassicUO	CanWalk: target height via CalculateNewZ	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Pathfinder.cs		bool passed = CalculateNewZ(newX, newY, ref newZ, (byte) direction);
+ClassicUO	diagonal moves try two neighbours	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Pathfinder.cs		if ((sbyte) direction % 2 != 0)
+ClassicUO	neighbour offsets are +1 and -1 directions	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Pathfinder.cs		private static readonly sbyte[] _dirOffset =
+ClassicUO	inbound step queue is capped	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs		if (Steps.Count >= Constants.MAX_STEP_COUNT)
+ClassicUO	inbound step: adjacency test	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs		badStep = absX > 1 || absY > 1 || absX + absY == 0;
+ClassicUO	inbound step: must reach the step tile	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/Mobile.cs		badStep = absX != step.X || absY != step.Y;
+ClassicUO	other mobile: full queue snaps to server tile	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/PacketHandlers.cs		if (!mobile.EnqueueStep(x, y, z, cleaned_dir, isrun))
+ClassicUO	other mobile: unknown mobile snaps and clears steps	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/PacketHandlers.cs		if (world.Get(mobile) == null || mobile.X == 0xFFFF && mobile.Y == 0xFFFF)
+ClassicUO	deny sets the local state to server state	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/PacketHandlers.cs		world.Player.Walker.DenyWalk(0xFF, -1, -1, -1);
+ClassicUO	bad confirm blocks walking and resyncs	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/WalkerManager.cs		if (!ResendPacketResync)
+ClassicUO	comment: sequence echoed in 0x22	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/WalkerManager.cs		// the sequence in its 0x22 confirmation. If a confirmation arrives for an unknown

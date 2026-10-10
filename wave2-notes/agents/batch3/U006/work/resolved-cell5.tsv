@@ -1,0 +1,39 @@
+note	claim	donor_file	line	quote
+ClassicUO	fixed step off: variable MonoGame update	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/GameController.cs	61	IsFixedTimeStep = false; // Settings.GlobalSettings.FixedTimeStep;
+ClassicUO	target elapsed time 4 ms (unused when fixed step off)	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/GameController.cs	62	TargetElapsedTime = TimeSpan.FromMilliseconds(1000.0 / 250.0);
+ClassicUO	per-frame update entry point	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/GameController.cs	381	protected override void Update(GameTime gameTime)
+ClassicUO	time from gameTime each frame	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/GameController.cs	388	Time.Ticks = (uint)gameTime.TotalGameTime.TotalMilliseconds;
+ClassicUO	intake: one read per frame	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/GameController.cs	393	var data = NetClient.Socket.CollectAvailableData();
+ClassicUO	intake: parse all complete packets	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/GameController.cs	394	var packetsCount = PacketHandlers.Handler.ParsePackets(NetClient.Socket, UO.World, data);
+ClassicUO	flush sends once per frame	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/GameController.cs	397	NetClient.Socket.Flush();
+ClassicUO	receive buffer is 4096 bytes	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/NetClient.cs	18	private readonly byte[] _compressedBuffer = new byte[4096];
+ClassicUO	collect reads one chunk	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/NetClient.cs	167	var size = _socket.Read(_compressedBuffer);
+ClassicUO	flush drains the send queue	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/NetClient.cs	269	while (_sendStream.Length > 0)
+ClassicUO	socket read capped at min(buffer, available)	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/Socket/TcpSocketWrapper.cs	62	var available = Math.Min(buffer.Length, _socket.Available);
+ClassicUO	parse loop runs while bytes remain	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/PacketHandlers.cs	72	while (stream.Length > 0)
+ClassicUO	partial packet waits for more data	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/PacketHandlers.cs	98	// need more data
+ClassicUO	confirm (0x22) handler calls walker	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/PacketHandlers.cs	1214	world.Player.Walker.ConfirmWalk(seq);
+ClassicUO	deny (0x21) handler snaps to server tile	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/PacketHandlers.cs	1192	world.Player.Walker.DenyWalk(seq, x, y, z);
+ClassicUO	ping reply stores round trip	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/PacketHandlers.cs	2674	NetClient.Socket.Statistics.PingReceived(p.ReadUInt8());
+ClassicUO	ping ring size 5	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/NetStatistics.cs	13	private readonly uint[] _pings = new uint[5];
+ClassicUO	ping stored as ticks since send	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/NetStatistics.cs	68	_pings[idx % _pings.Length] = Time.Ticks - _startTickValue;
+ClassicUO	ping average over nonzero samples	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/NetStatistics.cs	62	return sum / count;
+ClassicUO	ping slot index advances mod 5	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/NetStatistics.cs	80	_pingIdx = (byte)((_pingIdx + 1) % _pings.Length);
+ClassicUO	stats window 500 ms	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Network/NetStatistics.cs	96	_statisticsTimer = Time.Ticks + 500;
+ClassicUO	ping sent once per second from scene update	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Scenes/GameScene.cs	746	if (Time.Ticks > _timePing)
+ClassicUO	next ping due 1000 ms later	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Scenes/GameScene.cs	749	_timePing = (long)Time.Ticks + 1000;
+ClassicUO	theirs: queue cap 5 (MAX_STEP_COUNT)	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Constants.cs	16	public const int MAX_STEP_COUNT = 5;
+ClassicUO	theirs: turn delay 80 ms	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Constants.cs	17	public const int TURN_DELAY = 80;
+ClassicUO	theirs: fast turn delay 45 ms	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Constants.cs	18	public const int TURN_DELAY_FAST = 45;
+ClassicUO	walk gate: refuse while failed, time-gated, or queue full	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/PlayerMobile.cs	525	if (Walker.WalkingFailed || Walker.LastStepRequestTime > Time.Ticks
+ClassicUO	turn-only coalescing when 3+ unacked	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/PlayerMobile.cs	621	if (walkTime == (ushort)MovementSpeed.TurnDelay && Walker.UnacceptedPacketsCount >= 3)
+ClassicUO	walk request sent with sequence byte	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/PlayerMobile.cs	668	NetClient.Socket.Send_WalkRequest(direction, Walker.WalkSequence, run,
+ClassicUO	unacked count goes up on send	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/PlayerMobile.cs	682	Walker.UnacceptedPacketsCount++;
+ClassicUO	sequence wraps 0xFF to 1	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/GameObjects/PlayerMobile.cs	673	if (Walker.WalkSequence == 0xFF)
+ClassicUO	confirm: sequence found at index	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/WalkerManager.cs	149	if (stepIndex >= CurrentWalkSequence)
+ClassicUO	confirm: unknown sequence is bad step	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/WalkerManager.cs	144	bool isBadStep = stepIndex == StepsCount;
+ClassicUO	bad step sends resync once	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/WalkerManager.cs	179	NetClient.Socket.Send_Resync();
+ClassicUO	bad step blocks walking until reset	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/WalkerManager.cs	183	WalkingFailed = true;
+ClassicUO	design comment: turns no delay	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/WalkerManager.cs	5	// Turns (direction changes) have no delay. The client sends a 0x02 walk request
+ClassicUO	design comment: 5 unconfirmed packets	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/WalkerManager.cs	15	// The client may queue up to 5 unconfirmed walk packets (MaxStepCount).
+ClassicUO	walk speeds comment (retail)	/mnt/frankendom-donors/ClassicUO/src/ClassicUO.Client/Game/Managers/WalkerManager.cs	10	//   Walking:       400ms per tile  (2.5 tiles/sec)

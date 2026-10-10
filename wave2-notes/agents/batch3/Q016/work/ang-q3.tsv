@@ -1,0 +1,9 @@
+src/mon-move.c	if (rf_has(mon->race->flags, RF_NEVER_MOVE))
+src/mon-move.c	if (rf_has(mon->race->flags, RF_NEVER_BLOW))
+src/mon-move.c	/* Nearby monsters won't run away */
+src/mon-move.c	if (!(mon->min_range < flee_range)) {
+src/mon-move.c	mon->min_range += 3;
+src/mon-move.c	int flee_range = z_info->max_sight + z_info->flee_range;
+src/mon-move.c	/* Maximum range to flee to */
+src/mon-move.c	if (mon->min_range < flee_range) {
+src/mon-move.c	mon->min_range = 1;

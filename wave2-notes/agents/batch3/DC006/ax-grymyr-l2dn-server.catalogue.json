@@ -1,0 +1,188 @@
+{
+  "donor": "ax-grymyr-l2dn-server",
+  "counts": {
+    "creatures": 2594,
+    "classes": 99,
+    "weapons": 2340,
+    "gear_sets": 51,
+    "zones": 2768
+  },
+  "halves_read": {
+    "read": "server half: L2Dn/L2Dn.GameServer/DataPack (XML data), L2Dn.GameServer.Enums, L2Dn.GameServer.Scripts/AI/Areas (partial)",
+    "other_half_in_box": "client art: not in the box (audit says it needs a user-supplied client path); top-level tree shows no client folder, not searched further",
+    "not_read_halves": "auth server, DB, protocol, dashboard, tools (except audit)"
+  },
+  "creature_families": [
+    "Monster templates, type Monster: 2336 (levels 1 to 87; peak in 70-89 band)",
+    "RaidBoss templates: 249 (levels 20 to 90), example stats/npcs/25000-25099.xml",
+    "GrandBoss templates: 9 (levels 40 to 84), example stats/npcs/29000-29099.xml",
+    "Race enum (L2Dn.GameServer.Enums/Race.cs) lists monster families: animal, beast, bug, construct, demonic, divine, dragon, elemental, fairy, giant, humanoid, plant, siege, undead",
+    "Keyword hits in NPC names (approximate, not per-family totals): lizard-type about 69, orc-type about 139, spirit about 42, wolf about 33, bear about 34, skeleton about 30, ghost about 30, golem about 22, spider about 19, zombie about 17, beetle about 16, dragon about 15, drake about 11",
+    "Pets: 810 Pet-type NPC tags in stats/npcs; 53 pet data files in stats/pets (audit count)"
+  ],
+  "top_creatures": [
+    {
+      "label": "Kill-site avenger (own label)",
+      "why": "When a monster falls, a timed avenger spawns at that spot and hunts the killer or the killer's pet.",
+      "keep": "Kill-site spawn and timed hunt",
+      "change": "Look, trigger rule, timer length",
+      "ref": "L2Dn/L2Dn.GameServer.Scripts/AI/Areas/Cemetery.cs (OnKill, addSpawn 300000 ms); same pattern at AI/Areas/LairOfAntharasPytan.cs l.29 and AI/Areas/FieldOfMassacre.cs l.43"
+    },
+    {
+      "label": "Companion-reactive hive (own label)",
+      "why": "Hitting a companion triggers a random buff; killing a hive monster spawns a counter-monster after the killer.",
+      "keep": "Swarm answers the player's companion",
+      "change": "Spawn theme and buff set",
+      "ref": "L2Dn/L2Dn.GameServer.Scripts/AI/Areas/BeeHive.cs (OnAttack l.45-59; OnKill l.63-109)"
+    },
+    {
+      "label": "Cursed relic (own label)",
+      "why": "A relic with a stage-kill ladder that drops on the carrier's death and disappears after a timer.",
+      "keep": "Stage-kill ladder and timed disappearance",
+      "change": "Item, drop rule, relic look",
+      "ref": "L2Dn/L2Dn.GameServer/DataPack/CursedWeapons.xml (fields stageKills, durationLost, dropRate, disapearChance, duration; 2 items)"
+    },
+    {
+      "label": "Mounted beast form (own label)",
+      "why": "Whole-body transform into a riding beast with its own action list.",
+      "keep": "Full-body mount form",
+      "change": "Our own mount silhouette and controls",
+      "ref": "L2Dn/L2Dn.GameServer/DataPack/stats/transformations/00157.xml (type RIDING_MODE; 29 transformation files)"
+    },
+    {
+      "label": "Absorb-to-evolve spirit (own label)",
+      "why": "An elemental companion grows by absorbing items.",
+      "keep": "Item-fed evolution steps",
+      "change": "Our own element set and naming",
+      "ref": "L2Dn/L2Dn.GameServer/DataPack/ElementalSpiritData.xml (24 spirit entries, 32 itemToEvolve, 20 absorbItem)"
+    },
+    {
+      "label": "Grand-boss tier (own label)",
+      "why": "A rare top rung above a large raid-boss ladder.",
+      "keep": "Rare, gated top rung",
+      "change": "Our own phase design (data only, not read in code)",
+      "ref": "L2Dn/L2Dn.GameServer/DataPack/stats/npcs/29000-29099.xml"
+    },
+    {
+      "label": "Dragon-kin family (own label)",
+      "why": "Winged-reptile family with its own tiers (keyword match only, approximate).",
+      "keep": "Winged reptile silhouette",
+      "change": "Anatomy and sound",
+      "ref": "L2Dn/L2Dn.GameServer/DataPack/stats/npcs/20100-20199.xml and 13500-13599.xml (keyword match; 13500-13599 is mostly NPC type Folk, check by hand)"
+    },
+    {
+      "label": "Raid-boss ladder (own label)",
+      "why": "A long run of raid bosses from level 20 to 90 gives steady escalation.",
+      "keep": "Steady ladder by level band",
+      "change": "Boss list and gates",
+      "ref": "L2Dn/L2Dn.GameServer/DataPack/stats/npcs/25000-25099.xml"
+    }
+  ],
+  "classes": [
+    "Class tree: 99 entries in stats/chars/classList.xml linked by parentClassId; CharacterClass.cs has 50 enum values; not split into base and subclass",
+    "Example link: base fighter (classId 0) then promoted warrior (classId 1)",
+    "Races (Race.cs): playable races plus monster families (see creature_families); category-level only",
+    "Progression shape: class tree by parent link; race fixed at character creation (not read in code)"
+  ],
+  "weapon_families": [
+    "weapon_type counts (stats/items): blunt 587, sword 552, dual 315, dagger 220, pole 183, bow 153, dual fist 105, fist 59, rapier 57, ancient sword 55; others (crossbow, flag, dual dagger, fishing rod) not counted",
+    "Crystal grade tiers: D 843, C 769, B 549, A 756, S 66, none 144 (crystal_type attribute matches)",
+    "Special properties: elemental attributes (ElementalAttributeData.xml, imbue) and set bonuses via armour sets",
+    "Visual distinctness of tiers: not in the box"
+  ],
+  "gear_tiers": [
+    "Armour sets: 51 entries in stats/armorsets/Sets.xml; each lists required items and a skill granted at minimumPieces (2 or 3 in sample)",
+    "Armour types (armor_type attribute matches): heavy 271, light 177, magic 162, sigil 37, none 9 (shields)",
+    "Materials (material attribute matches): paper, fish, liquid, wood, leather, cloth, bronze, silver, steel, fine steel, mithril, rare top metal 142, gold 994, crystal 776",
+    "Enchant and grade: crystal grade letter and enchant level (EnchantItemOptions, EnchantItemGroups); augmentation options (stats/augmentation/options); ensoul (stats/ensoul/ensoulOptions.xml, ensoulStones.xml)",
+    "How the game shows tiers: grade letter and enchant level in data; client visuals not in the box"
+  ],
+  "zones": [
+    "Zone shapes (zones/documentation.txt): cuboid (2 points), polygon (3 or more points), cylinder (1 point plus radius); ZoneShape.cs",
+    "Zone types (ZoneType.cs): arena, boss, castle, clan hall, cleft, condition, damage, derby track, effect, fishing, fort, headquarters, jail, landing, mother tree, no-drop, no-landing, no-restart, no-PvP, no-store, no-summon, NPC territory, Olympiad stadium, peace, residence hall and residence teleport, respawn, script, siege, siegable hall, swamp, tax, territory war, town, water, Sayune, undying, teleport, timed hunting",
+    "Zone data: 2768 entries in zones/; shapes NPoly 2278, Cuboid 479; type values include ConditionZone 1070, WaterZone 425, EffectZone 218, RespawnZone 147, PeaceZone 136, ScriptZone 133, TaxZone 122; a second type attribute (chaotic 527, banish 156, other 532) not decoded",
+    "Instances: 9 named instance XML files in instances/ (e.g. MonsterArena.xml, SanctumOfLilith.xml, GoldbergsRoom.xml), plus Olympiad and custom folders",
+    "Residences: residences/castles and residences/clanHalls; timed hunting zones: TimedHuntingZoneData.xml"
+  ],
+  "looks": [
+    {
+      "label": "Mounted beast form",
+      "technique": "Swap body model and control set for a whole-body mount with an action list (our own silhouette)",
+      "ref": "L2Dn/L2Dn.GameServer/DataPack/stats/transformations/00157.xml"
+    },
+    {
+      "label": "Kill-site avenger spawn",
+      "technique": "Spawn at kill spot with timed hunt; a glow or dust trail on spawn (our own)",
+      "ref": "L2Dn/L2Dn.GameServer.Scripts/AI/Areas/Cemetery.cs"
+    },
+    {
+      "label": "Element imbue glow by level",
+      "technique": "Element per item; glow strength by level (idea only, data file and DB class not opened for visuals)",
+      "ref": "L2Dn/L2Dn.GameServer/DataPack/ElementalAttributeData.xml; L2Dn/L2Dn.GameServer.Db/DbItemElemental.cs"
+    },
+    {
+      "label": "Augmentation seam tier",
+      "technique": "Tier from stat options mapped to a shader ramp (our own); no visuals ship",
+      "ref": "L2Dn/L2Dn.GameServer/DataPack/stats/augmentation/options/00000-00099.xml"
+    }
+  ],
+  "originals": [
+    {
+      "name": "Kill-site avenger",
+      "idea": "A timed hunter that appears where a foe fell and hunts its killer.",
+      "keep": "Kill-site spawn and timer",
+      "change": "Look, trigger, timer length"
+    },
+    {
+      "name": "Companion-reactive hive",
+      "idea": "A swarm that answers a player's companion.",
+      "keep": "Companion triggers buffs; kill spawns a counter",
+      "change": "Swarm theme and buff set"
+    },
+    {
+      "name": "Cursed relic",
+      "idea": "A wandering item with a kill ladder that vanishes on a timer.",
+      "keep": "Stage-kill ladder and timed vanish",
+      "change": "Item, drop rule, look"
+    },
+    {
+      "name": "Mounted beast form",
+      "idea": "Whole-body transform into a riding beast.",
+      "keep": "Full-body mount",
+      "change": "Our silhouette and controls"
+    },
+    {
+      "name": "Absorb-to-evolve spirit",
+      "idea": "A companion that evolves by absorbing items.",
+      "keep": "Item-fed evolution",
+      "change": "Element set, names"
+    },
+    {
+      "name": "Rune-seam gear tier",
+      "idea": "A tier shown as a seam, set by augmentation options.",
+      "keep": "Option-based tier",
+      "change": "Seam shader and palette"
+    },
+    {
+      "name": "Piece-count set bonus",
+      "idea": "A set that grants a skill at 2 or 3 pieces.",
+      "keep": "Piece-count bonus",
+      "change": "Theme and skill"
+    },
+    {
+      "name": "Node-built zone volumes",
+      "idea": "Boxes, polygons and cylinders as zone volumes with a debug overlay.",
+      "keep": "Volume types",
+      "change": "Overlay and naming"
+    }
+  ],
+  "licence_note": "Code: MIT (LICENSE.txt). Assets: conflicting notices. admin/help/license.htm says GPL v3 or later; admin/help/license2.htm (Datapack License) says the datapack belongs to its respective owners, free to use and modify, but not to distribute without consent. One enum source file carries a third-party copyright string (SystemMessageId.cs l.195). No authorisation stated. Class C for data, D for art. Inspiration kept at category level. What the files say, not a legal reading.",
+  "not_read": [
+    "Most dialogue bodies in DataPack/html (about 2285 .htm and 48 .html) and quest HTML",
+    "Most stats XML bodies (sampled only)",
+    "Auth server, DB projects, protocol, dashboard, tools, most C#, Db migrations, bootstrap licence, geodata map",
+    "Most of L2Dn.GameServer.Scripts (AI/Areas partial; one quest file)",
+    "Creature stats (health, damage, speed): deliberately not recorded",
+    "Meaning of second zone type values (chaotic, banish, other)"
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "donor": "2009scape-rt4-client",
+  "topic": "onboarding-first-30min",
+  "depth": "thin",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/2009scape-rt4-client/client/src/main/java/rt4/Player.java",
+    "/mnt/frankendom-donors/2009scape-rt4-client/client/src/main/java/rt4/Protocol.java",
+    "/mnt/frankendom-donors/2009scape-rt4-client/client/src/main/java/rt4/ServerProt.java",
+    "/mnt/frankendom-donors/2009scape-rt4-client/client/src/main/java/rt4/LocalizedText.java",
+    "/mnt/frankendom-donors/2009scape-rt4-client/plugin-playground/src/main/kotlin/LoginTimer/plugin.kt",
+    "/mnt/frankendom-donors/2009scape-rt4-client/_RESTRICTED-NOTE.txt",
+    "/mnt/frankendom-donors/2009scape-rt4-client/LICENSE"
+  ],
+  "counts": {
+    "onboarding_zone_tests": 2,
+    "onboarding_exit_zone_tests": 1,
+    "gated_message_sites_in_protocol": 14,
+    "hint_arrow_message_opcode_entries": 1,
+    "creatures_or_npcs_described": 0
+  },
+  "rule": "The client treats the player as in onboarding when the player's tile falls in one of two onboarding rectangles, and out again inside a third rectangle; the flag is set from the player's tile (Player.setTutorialIsland; the method that calls it was not checked). While the flag is set, fourteen incoming message handlers in Protocol.java skip showing social messages (trade requests, trade lines, quick-chat phrases and others). The server drives onboarding arrows through one HINT_ARROW message: a flags byte (slot in the high bits, target kind in the low bits), a sprite index, then a per-kind target (actor id for kinds 1 and 10, coordinate-style for kinds 2 to 6). The client draws the arrow over the actor and a minimap marker.",
+  "data_fields": [
+    {"name": "onboarding_zone_count", "unit": "zones", "donor_value_or_null": null},
+    {"name": "onboarding_exit_zone_count", "unit": "zones", "donor_value_or_null": null},
+    {"name": "gated_message_sites", "unit": "handlers", "donor_value_or_null": null},
+    {"name": "hint_arrow_target_kinds", "unit": "kinds", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Zone-based onboarding flag read from the player's tile, not a player setting",
+    "Mute of social noise (trade and quick-chat messages) during onboarding",
+    "One hint arrow with a target kind (actor or tile) plus a minimap marker for the same target",
+    "Server-sent hint messages: the client never decides what to point at"
+  ],
+  "change": [
+    "Dim or collapse muted messages instead of hiding them outright, so a rival's message still shows once",
+    "Onboarding zone is a row in our zone data, not hard-coded rectangles",
+    "Hint arrow message is typed data (target kind, sprite, target), no pixel-offset coupling"
+  ],
+  "look_test": "Two runs on Dom's phone, same first 90 seconds: (A) social messages shown; (B) social messages dimmed in the onboarding zone with one hint arrow and a minimap marker. Compare: arrow found within 3 seconds; first fight reads clearly; a rival's message not missed when it matters.",
+  "licence_note": "Code is GNU AGPL v3 (LICENSE). RESTRICTED donor per _RESTRICTED-NOTE.txt: Jagex-derived RuneScape rev 530 client; study shape and idea only; never copy code or constants. Clean-room, shape only; no constants, coordinates or colours recorded here, so donor_value_or_null is null for every field. Inspiration is category-level.",
+  "tags": [
+    "new:zone-presentation-gate",
+    "new:message-gate",
+    "new:hint-arrow",
+    "new:tab-flash-not-found"
+  ],
+  "not_read": [
+    "tab-flash renderer (grep for flash finds only chat colour codes in LocalizedText.java; renderer not located)",
+    "the enclosing method of Player.setTutorialIsland call at Player.java line 292",
+    "per-kind branches of HINT_ARROW beyond kind 2 (Protocol.java around lines 1887-1900)",
+    "the bodies of about eleven of the fourteen gated handlers (lines by number only)",
+    "level-up dialog (not in this half)",
+    "server half for rev 530 (not identified in the box; 2004Scape-Server is a different revision and its protocol table differs)",
+    "tutorial scripts, guide dialogue and first-fight rules (server and data half; see 2004Scape-Server)",
+    "death and respawn presentation, loot reveal, walk density, idle animation (none in this half)",
+    "plugin-playground ToggleResizableSD/plugin.kt (not read)",
+    "plugin-playground LoginTimer/plugin.kt beyond its first 60 lines (report-abuse timer; not onboarding)"
+  ]
+}

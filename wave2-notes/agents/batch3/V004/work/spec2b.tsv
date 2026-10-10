@@ -1,0 +1,10 @@
+dynamic lair despawn task destroys the lair object	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/creature/events/DespawnDynamicSpawnTask.h	spawn->destroyObjectFromWorld(true);
+dynamic lair empties check	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/DynamicSpawnObserverImplementation.cpp	if (spawnedCreatures.isEmpty()) {
+lair object grace 300 s	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/tangible/LairObject.idl	despawnEvent.schedule(300000);
+POI building grace 300 s	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/objects/building/PoiBuilding.idl	despawnEvent.schedule(300000);
+per-area total cap is set from region data	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/planet/PlanetManagerImplementation.cpp	area->setMaxSpawnLimit(regionObject.getIntAt(7));
+dynamic lair mob placement uses building size	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/DynamicSpawnObserverImplementation.cpp	float y = building->getPositionY() + (size - System::random(size * 20) / 10.0f);
+dynamic lair: herd leader is first mob of a herd template	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/DynamicSpawnObserverImplementation.cpp	if (j == 0 && herdLeader == nullptr && creatureTemplate->isHerd()) {
+dynamic lair: followers set to FOLLOWING	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/DynamicSpawnObserverImplementation.cpp	agent->setMovementState(AiAgent::FOLLOWING);
+dynamic lair: mob home set to building	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/DynamicSpawnObserverImplementation.cpp	agent->setHomeObject(building);
+dynamic lair: mob added to spawned list	/mnt/frankendom-donors/swgemu-Core3/MMOCoreORB/src/server/zone/managers/creature/DynamicSpawnObserverImplementation.cpp	spawnedCreatures.add(creo);

@@ -1,0 +1,10 @@
+donor	topic	depth	finding	tags
+EQEmu	world-events	full	Three owners on one minute clock: world sends broadcasts and reloads to all zones; zones toggle hot-zone, rule and content-flag state; per-zone spawn conditions drive camps.	world-event;scheduler;timed-event
+EQEmu	world-events	full	Threshold-to-signal chain: a zone integer moved by timed spawn events crosses a per-point threshold and the point despawns, repops, repops if ready, or signals its mob (base 10).	world-event;roaming-boss;new:condition-threshold
+EQEmu	world-events	full	Strict spawn events fire only inside a short window after trigger (rule default 3 EQ minutes); missed windows are skipped. EQ minute is 3 real seconds.	timed-event;duration-rule;new:strict-window
+EQEmu	world-events	full	Non-cron broadcast with no end time repeats every minute poll (from code, not run); zero-means-now window fields drift; cron pad is 10 seconds.	scheduler;new:fire-once-latch
+EQEmu	world-events	full	NPC emote event types (9) and speech kinds (4) let camps and NPCs announce spawn, combat, death and kills; the announcing lines are data not in repo.	rumour;signage
+ACEmulator-ACE	world-events	full	Named event is an on/off/armed/blocked state with unix start and end, no timer; window checked lazily on query.	world-event;timed-event;scheduler;new:lazy-window
+ACEmulator-ACE	world-events	full	One flag gates a generator (spawn) and an NPC query branch (success or failure line); admin and emote commands start and stop it.	world-event;rumour;new:flag-gated-spawn;new:emote-query-branch
+ACEmulator-ACE	world-events	full	Generator flips are staged: the first check sets a flag, the next generator update applies the current value, a one-tick debounce; Defined generator type is a TODO stub.	day-night;new:one-tick-debounce
+ACEmulator-ACE	world-events	thin	No banner or broadcast on event flip in the repo; announce text lives in emote data not in repo; event rows absent from base SQL.	signage;new:data-not-in-repo

@@ -1,0 +1,29 @@
+Anuken-Mindustry	licence line 1 is GPL	/mnt/frankendom-donors/Anuken-Mindustry/LICENSE	1	GNU GENERAL PUBLIC LICENSE
+Anuken-Mindustry	licence version line	/mnt/frankendom-donors/Anuken-Mindustry/LICENSE	2	Version 3, 29 June 2007
+Anuken-Mindustry	zoom target default is scale 4	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/core/Renderer.java	59	targetscale = Scl.scl(4),
+Anuken-Mindustry	zoom target is clamped between min and max scale	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/core/Renderer.java	162	float dest = Mathf.clamp(baseTarget, minScale(), maxScale());
+Anuken-Mindustry	zoom lerps each frame with factor 0.1	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/core/Renderer.java	163	camerascale = Mathf.lerpDelta(camerascale, dest, 0.1f);
+Anuken-Mindustry	visible width is screen width over zoom scale	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/core/Renderer.java	198	camera.width = graphics.getWidth() / camerascale;
+Anuken-Mindustry	shake sets the strongest intensity and longest duration	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/core/Renderer.java	86	shakeIntensity = Math.max(shakeIntensity, Mathf.clamp(intensity, 0, 100));
+Anuken-Mindustry	shake decays linearly: reduction is intensity over time	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/core/Renderer.java	88	shakeReduction = shakeIntensity / shakeTime;
+Anuken-Mindustry	shake is applied only while shake time is positive	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/core/Renderer.java	209	if(shakeTime > 0){
+Anuken-Mindustry	shake intensity scales with the screenshake setting over 4 and a 0.75 factor	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/core/Renderer.java	210	float intensity = shakeIntensity * (settings.getInt("screenshake", 4) / 4f) * 0.75f;
+Anuken-Mindustry	shake offset is a random direction scaled by a random amount up to intensity	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/core/Renderer.java	211	camShakeOffset.setToRandomDirection().scl(Mathf.random(intensity));
+Anuken-Mindustry	shake offset is added to the camera position before drawing	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/core/Renderer.java	212	camera.position.add(camShakeOffset);
+Anuken-Mindustry	shake intensity decays by reduction times frame delta	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/core/Renderer.java	213	shakeIntensity -= shakeReduction * Time.delta;
+Anuken-Mindustry	shake time counts down by frame delta	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/core/Renderer.java	214	shakeTime -= Time.delta;
+Anuken-Mindustry	shake offset is subtracted after the frame is drawn	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/core/Renderer.java	227	camera.position.sub(camShakeOffset);
+Anuken-Mindustry	Effect.shake falls off with distance from the camera	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/entities/Effect.java	201	public static void shake(float intensity, float duration, float x, float y){
+Anuken-Mindustry	impact distance is measured from the camera position	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/entities/Effect.java	204	float distance = Core.camera.position.dst(x, y);
+Anuken-Mindustry	distance is floored at 1	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/entities/Effect.java	205	if(distance < 1) distance = 1;
+Anuken-Mindustry	falloff constant is 10000	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/entities/Effect.java	21	private static final float shakeFalloff = 10000f;
+Anuken-Mindustry	impact intensity is clamped factor of inverse square distance	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/entities/Effect.java	207	shake(Mathf.clamp(1f / (distance * distance / shakeFalloff)) * intensity
+Anuken-Mindustry	Effect.shake reaches the renderer only when not headless	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/entities/Effect.java	197	Vars.renderer.shake(intensity, duration);
+Anuken-Mindustry	detached camera setting is read from settings	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/input/DesktopInput.java	240	boolean detached = settings.getBool("detach-camera", false);
+Anuken-Mindustry	camera speed is pan speed scaled by frame delta	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/input/DesktopInput.java	239	float camSpeed = (!Core.input.keyDown(Binding.boost)
+Anuken-Mindustry	detached mode moves the camera with the move axes	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/input/DesktopInput.java	282	Core.camera.position.add(Tmp.v1.setZero().add(Core.input.axis(Binding.moveX)
+Anuken-Mindustry	follow target is core, spectated unit, or player	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/input/DesktopInput.java	287	Position panTarget = coreTarget != null ? coreTarget
+Anuken-Mindustry	follow is a lerp with 0.08, or snap to 1.0 when smooth camera is off	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/input/DesktopInput.java	289	Core.settings.getBool("smoothcamera") ? 0.08f : 1f);
+Anuken-Mindustry	mouse pan moves by clamped offset from screen centre times speed	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/input/DesktopInput.java	293	Core.camera.position.x += Mathf.clamp((Core.input.mouseX()
+Anuken-Mindustry	detached mode makes the unit steer toward the camera	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/input/DesktopInput.java	986	movement.set(targetPos).sub(player).limit(speed);
+Anuken-Mindustry	unit stops within 15 units of the detached camera	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/input/DesktopInput.java	988	if(player.within(targetPos, 15f)){

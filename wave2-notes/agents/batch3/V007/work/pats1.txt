@@ -1,0 +1,45 @@
+public void Update()
+if (CanDespawnNpcs())
+else if (!IsPlayerInSpawnRadius() && CurrentSpawnCount > 0)
+if (!didAction && CanSpawnNpcs())
+private readonly DateTime _lastSpawnTime
+if (IsSpawnDelayNotElapsed())
+if (HasCorpse())
+if (IsSpawnScheduled)
+if (!IsOptimalSpawner())
+if (!CheckSpawnCountCanSpawn())
+private bool CheckSpawnCountCanSpawn
+if (playerCount < minPopulation)
+if (playerCount >= minPopulation
+if (CurrentSpawnCount + AreOtherNpcsInSpawnZone().Item2 >= maxPopulation)
+if (CurrentSpawnCount >= Template.MaxPopulation)
+public bool IsPlayerInSpawnRadius
+var testRadius = testRadiusPc
+if ((DateTime.UtcNow - cache.LastUpdate).TotalSeconds < 10)
+var tmpPlayerCount
+count += CurrentSpawnCount + _scheduledCount;
+public uint Count
+foreach (var npcTemplate in SpawnableNpcs)
+npc.Despawn = DateTime.UtcNow.AddSeconds(DespawnTime);
+npc.Respawn = deathTime.AddSeconds(RespawnTime);
+if (RespawnTime > 0 && AreOtherNpcsInSpawnZone().Item2 + _scheduledCount < Template.MaxPopulation)
+private bool IsDespawningScheduleEnabled
+if (IsWithinDespawnTime(npc))
+if (IsNpcInTimeWindow(npc))
+return true; // было
+npc.Despawn += TimeSpan.FromSeconds(LootingContainer.LootDespawnExtensionTime);
+private static readonly object _spawnLock
+Logger.Info($"Immediate despawn scheduled
+var spawned = npcTemplate.Spawn(this);
+public static T Clone<T>(T obj)
+var inst = obj.GetType().GetMethod("MemberwiseClone"
+npc.Spawner.RespawnTime = (int)Random.Shared.Next(
+public int DespawnTime
+public int RespawnTime
+private bool IsWithinSpawnTime
+if (IsWithinSpawnTime())
+private void DoDespawnNow(Npc npc)
+npc.ParentWorld.SpawnManager.AddDespawn(npc);
+if (AreOtherNpcsInSpawnZone().Item2 + _scheduledCount < Template.MaxPopulation)
+Spawner?.DoDespawn(this);
+private void DoDespawn(Npc npc)

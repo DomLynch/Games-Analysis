@@ -1,0 +1,83 @@
+{
+  "donor": "ikemen-engine-Ikemen-GO",
+  "topic": "hit-feedback-stack",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/char.go",
+    "/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/system.go",
+    "/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/anim.go",
+    "/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/bytecode.go",
+    "/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/data/common1.cns.zss",
+    "/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/data/guardbreak.zss",
+    "/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/data/common.const",
+    "/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/LICENCE.txt",
+    "/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/README.md"
+  ],
+  "counts": {
+    "hit_reaction_statedefs_5000_to_5210": 21,
+    "guard_statedefs_130_131_132_150_to_155": 9,
+    "forcefeedback_time6_square_lines_common1": 3,
+    "palfx_hit_flash_lines_common1": 2,
+    "env_shake_default_fields": 4,
+    "character_packs_in_repo": 0
+  },
+  "rule": "Contact order: spark and hit sound on the contact frame; then a shared freeze set on both sides (attacker pausetime[0], target pausetime[1]), with the target freeze assigned only when not already in hit-stun; then a flash in the air states (3 frames) and rumble by tier; then the knock slide, whose x velocity is multiplied by 0.6 once time reaches slideTime; then screen shake on fall or bounce from one shared EnvShake object that a new trigger overwrites rather than sums. Freeze length is simulation state in the engine (c.hitPauseTime counts down in the update loop), so it belongs in the server event.",
+  "data_fields": [
+    {"name": "hitstop_attacker_ticks", "unit": "logic frames", "donor_value_or_null": null},
+    {"name": "hitstop_target_ticks", "unit": "logic frames", "donor_value_or_null": null},
+    {"name": "hitstop_guard_ticks", "unit": "logic frames", "donor_value_or_null": null},
+    {"name": "hitpause_newer_offset", "unit": "frames", "donor_value_or_null": 1},
+    {"name": "flash_hit_ticks", "unit": "frames", "donor_value_or_null": 3},
+    {"name": "flash_hit_add", "unit": "0-255 per channel", "donor_value_or_null": 128},
+    {"name": "flash_guardbreak_ticks", "unit": "frames", "donor_value_or_null": 20},
+    {"name": "flash_guardbreak_add", "unit": "0-255 per channel (red only)", "donor_value_or_null": 64},
+    {"name": "shake_freq", "unit": "degrees per frame", "donor_value_or_null": 60},
+    {"name": "shake_ampl", "unit": "px (negative flips direction)", "donor_value_or_null": -4},
+    {"name": "shake_ticks", "unit": "frames", "donor_value_or_null": null},
+    {"name": "knock_slide_mul", "unit": "multiplier per frame", "donor_value_or_null": 0.6},
+    {"name": "rumble_ticks_light", "unit": "frames", "donor_value_or_null": 6},
+    {"name": "rumble_ticks_mid", "unit": "frames", "donor_value_or_null": 8},
+    {"name": "rumble_ticks_heavy", "unit": "frames", "donor_value_or_null": 15}
+  ],
+  "keep": [
+    "Order: contact spark and sound, then shared freeze, then flash, then slide that eases, then shake on fall or bounce",
+    "Target freeze assigned only when not already in hit-stun (no stacking by addition)",
+    "One shared shake object per screen (new trigger overwrites)",
+    "3-frame white flash on airborne hit; 20-frame red flash on guard break",
+    "Commands pressed during the freeze are buffered, not lost (deprecated global toggle; keep per command)"
+  ],
+  "change": [
+    "Freeze length comes from the server event, both clients identical",
+    "Our own colours, sounds and shake shape",
+    "Rumble only on the heavy tier, none on light hits",
+    "No shake on light hits",
+    "Shake takes the max across stacked hits, not an overwrite by the latest"
+  ],
+  "look_test": "Flag on the existing dummy duel, published to /preview/ with no release rows. Three switchable modes on one screen: A no feedback (baseline); B the ordered stack (spark and sound at contact, both frozen 4 and 6 frames, white flash, slide that eases, shake and rumble on heavy only); C B with three attackers piling onto one target to test the stacking rule. Dom judges: can he tell which hit landed in a three-on-one pile, and does heavy feel heavier than light with no number on screen.",
+  "licence_note": "Code MIT per LICENCE.txt line 1 and line 33 (the MIT License applies to the engine and the scripts in this repo, which covers data/*.zss). README lines 58 and 67: bundled default screenpack is CC-BY 3 (not read in full, not used). Character packs absent. We take ideas and order only; no code copied.",
+  "tags": [
+    "hit-stop",
+    "screen-shake",
+    "flash",
+    "knockback",
+    "hit-sound",
+    "particle-burst",
+    "ordered-feedback",
+    "stagger",
+    "knockdown",
+    "guard-break",
+    "new:haptic-rumble",
+    "new:freeze-assign-not-add",
+    "new:input-buffer-during-freeze"
+  ],
+  "not_read": [
+    "character packs (chars, sff, snd): absent from the repo",
+    "fightfx sprite and sound packs: absent",
+    "src/bytecode.go EnvShake controller around line 10720 (type and fields only)",
+    "call order between hitspark and hit sound (src/char.go 12040-12095) and pause assignment (14316-14334): not traced",
+    "whether knock velocity applies on the contact frame or after the freeze: not traced",
+    "shake decay default (env decay field): not read",
+    "sound call details beyond the play block (src/char.go 12070-12095)"
+  ]
+}

@@ -1,0 +1,1 @@
+vthibault-roBrowser	yaw lower bound constant -360	/mnt/frankendom-donors/vthibault-roBrowser/src/Renderer/Camera.js	109	Camera.rotationFrom = -360;	copies/vt-Camera.js

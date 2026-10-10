@@ -1,0 +1,37 @@
+{
+  "donor": "FunkinCrew-Funkin",
+  "code_licence": "Apache 2.0 (LICENSE.md: 'The Friday Night Funkin' source code is licensed under the Apache 2.0 license'); docs/style-guide.md says no per-file code licence headers",
+  "asset_licence": "Not in the box. art/ and assets/ are git submodules (.gitmodules points at FunkinCrew/Funkin.art and FunkinCrew/Funkin.assets); both folders are empty here. LICENSE.md points to a separate funkin-assets licence (not fetched). docs/COMPILING.md describes the downloaded Content as 'proprietary and protected by national and international copyright and trademark laws'. Treated as proprietary.",
+  "rights_holder_status": "Per LICENSE.md: 'Copyright 2020-2024 The Funkin' Crew Inc.', with 'Friday Night Funkin'' and its logo marked as trademarks of The Funkin' Crew Inc. README credits named contributors and says the game was made 'with love to Newgrounds and its community'. Original project for the code; the content half is proprietary per the file, and its licence is outside the box.",
+  "best_class": "C",
+  "asset_groups": [
+    {"kind": "game art and animation (sprites, stages, characters, UI)", "path": "art/ and assets/ (git submodules, empty in this box)", "count_hint": "0 files in box", "licence": "proprietary per docs/COMPILING.md; upstream licence not in box", "class": "C", "note": "Not in the box. The file says the content is proprietary, so inspiration only, at category level."},
+    {"kind": "credits and roll text", "path": "credits.json is referenced in README.md:39 (upstream assets repo, not in box); source/funkin/ui/credits/CreditsData.hx defines the schema", "count_hint": "n/a", "licence": "unknown (upstream)", "class": "D", "note": "Only the data schema is in the box."},
+    {"kind": "documentation images (third-party)", "path": "docs/readme_images/FNF_logo.png (512,994 bytes), Menu.png (554,421 bytes), Title_Card.gif (2,070,965 bytes)", "count_hint": "3 files plus credits.txt", "licence": "none stated; docs/readme_images/credits.txt says they come from fridaynightfunkin.wiki.gg", "class": "D", "note": "Third-party wiki images with no licence in the box. Do not reuse."},
+    {"kind": "example mod content", "path": "example_mods/introMod/ (data/introText.txt, _polymod_icon.png, _polymod_meta.json, README.md); example_mods/testing123/images/newgrounds_logo.png (362x350 by IHDR)", "count_hint": "about 6 files", "licence": "introMod _polymod_meta.json says 'license': 'Apache-2.0'; newgrounds_logo.png has no licence", "class": "A for introMod code and text (Apache-2.0 metadata); D for newgrounds_logo.png", "note": "The Newgrounds logo is a third-party mark with no licence in the box."},
+    {"kind": "texture compression config", "path": "astc-compression-data.json; organize_astc_data.sh", "count_hint": "2 files", "licence": "under repo Apache 2.0 by inference; file does not say", "class": "C", "note": "Settings only (input ./assets, quality medium, block size 10x10 in the file); no pixel data."},
+    {"kind": "music and sound", "path": "not in box (under art/ and assets/ upstream)", "count_hint": "0 in box", "licence": "proprietary per docs/COMPILING.md", "class": "C", "note": "Not present. Charting data is also upstream."}
+  ],
+  "inspiration": [
+    "Note hits spawn a pooled splash sprite: one sprite is reused and given one of several animation variants by direction, with a small frame-rate variance so repeat hits do not look identical (source/funkin/play/notes/NoteSplash.hx: splashFramerate = 24, splashFramerateVariance).",
+    "The pre-song countdown is a three-step sequence whose graphic and sound swap by note style, for example a pixel variant for one week (source/funkin/play/Countdown.hx, soundSuffix and the Week 6 comment).",
+    "The results screen layers a sticker-style transition, bitmap-font score text, gradient backgrounds and a scrolling backdrop (source/funkin/play/ResultState.hx imports: StickerSubState, FlxBitmapFont, FlxGradient, FlxBackdrop).",
+    "Credits are data: roles with an optional header, a body of lines and an option to append backers automatically (source/funkin/ui/credits/CreditsData.hx). A data-driven credit roll updates without code edits.",
+    "Character definitions are data-driven (source/funkin/data/character/CharacterData.hx), so a new character is a data entry, not a code change. The data files themselves are upstream and not in the box.",
+    "The style can be switched per note style (source/funkin/play/notes/notestyle/ is the hook; the countdown reads the style's suffix). Build a per-level skin as a style, not a fork."
+  ],
+  "briefs": [
+    {"label": "Pooled hit burst", "rule": "Recreate as a clearly distinct original, never a copy.", "why": "A single reused sprite with direction variants and a frame-rate jitter gives many hit bursts for little memory.", "keep": "Pooled sprite reuse; direction-based variant pick; small frame-rate jitter", "change": "A shard or ring burst instead of a sprite burst; a different palette; no frame-accurate match to the beat", "ref": "source/funkin/play/notes/NoteSplash.hx"},
+    {"label": "Ready-set cue", "rule": "Recreate as a clearly distinct original, never a copy.", "why": "A three-step pre-start cue sets the beat before the song begins.", "keep": "Three steps before start; per-style swap of graphic and sound", "change": "A slam or rotating card instead of three numbers; one-word cue; a different sound family", "ref": "source/funkin/play/Countdown.hx"},
+    {"label": "Sticker results transition", "rule": "Recreate as a clearly distinct original, never a copy.", "why": "A sticker-sheet style transition makes the results screen feel like a reward.", "keep": "Stamp-like transition into results; bitmap score font; scrolling backdrop", "change": "Paper-cut or torn-edge transition instead of stickers; a different score font; a vertical backdrop", "ref": "source/funkin/play/ResultState.hx; source/funkin/ui/transition/stickers/ (StickerSubState)"},
+    {"label": "Backer roll credits", "rule": "Recreate as a clearly distinct original, never a copy.", "why": "A credit roll built from role blocks with an auto-appended backers list keeps credits current with no code edits.", "keep": "Role blocks with headers; backers appended from data; roll-up text", "change": "Scroll sideways or as a film strip; a different block order; no header for the backers block", "ref": "source/funkin/ui/credits/CreditsData.hx; source/funkin/ui/credits/CreditsState.hx"}
+  ],
+  "not_read": [
+    "art/ and assets/ (submodules, empty in the box; upstream not fetched)",
+    "source/ bodies beyond the lines cited (NoteSplash.hx, Countdown.hx, CreditsData.hx, ResultState.hx imports)",
+    "hmm.json, project.hxp, build and tooling scripts (only the header read)",
+    "docs/COMPILING.md beyond the one licence note; docs/ other files",
+    "example_mods/introMod/data/introText.txt and testing123 contents beyond the file names",
+    "the Funkin' Crew credits list (credits.json upstream, not in box)"
+  ]
+}

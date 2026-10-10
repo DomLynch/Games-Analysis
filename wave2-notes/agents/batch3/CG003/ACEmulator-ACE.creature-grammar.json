@@ -1,0 +1,70 @@
+{
+  "donor": "ACEmulator-ACE",
+  "topic": "creature-grammar",
+  "depth": "thin",
+  "half_read": "server",
+  "paths": [
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Entity/Enum/CreatureType.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Entity/Enum/CombatBodyPart.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Entity/Models/PropertiesBodyPart.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/WorldObjects/Monster_Melee.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/WorldObjects/Creature_Death.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/WorldObjects/Creature_Equipment.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/WorldObjects/Clothing.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/WorldObjects/Creature_BodyPart.cs",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Source/ACE.Server/Factories/Tables/",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Database/Base/WorldBase.sql",
+    "/mnt/frankendom-donors/ACEmulator-ACE/Database/Updates/Shard/"
+  ],
+  "counts": {
+    "creature_type_enum_entries_incl_invalid": 103,
+    "creature_species_excl_invalid": 102,
+    "combat_body_part_enum_entries_incl_undefined": 28,
+    "body_part_model_fields": 25,
+    "hit_zone_fields": 12,
+    "armour_vs_damage_type_fields": 8,
+    "factories_tables_files": 27,
+    "world_base_sql_create_table": 29,
+    "world_base_sql_insert_into": 0,
+    "updates_world_files": 1,
+    "updates_shard_files": 33
+  },
+  "rule": "A creature is one species id plus per-creature rows (biota), not a class per creature. Each body part carries damage type, damage value, variance fraction, base armour, armour per damage type, a hit-height weight and twelve hit-zone weights. An attack cone names a part index; special attacks use the breath part; otherwise a random part with non-zero damage is used. Palette template and shade set the look, and the corpse copies both on death. On treasure create-list rows a non-zero shade is used as a probability, handled in 0-1 chunks.",
+  "data_fields": [
+    {"name": "species_id", "unit": "enum id", "donor_value_or_null": null},
+    {"name": "body_part_damage_value", "unit": "damage points", "donor_value_or_null": null},
+    {"name": "body_part_damage_variance", "unit": "fraction", "donor_value_or_null": null},
+    {"name": "body_part_base_armour", "unit": "armour points", "donor_value_or_null": null},
+    {"name": "body_part_armour_per_damage_type", "unit": "armour points (8 types)", "donor_value_or_null": null},
+    {"name": "body_part_hit_zone_weight", "unit": "fraction (12 zones)", "donor_value_or_null": null},
+    {"name": "palette_template_id", "unit": "id", "donor_value_or_null": null},
+    {"name": "look_shade", "unit": "0-1 (also drop chance on treasure rows)", "donor_value_or_null": null},
+    {"name": "attack_cone_part_index", "unit": "enum id", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Species id plus palette: one id, one look, reused across rows",
+    "Corpse and loot inherit the creature look on death",
+    "Attack cone telegraph: one named zone lit before the strike",
+    "Small variance per body part instead of a fixed number",
+    "Shade as a 0-1 probability on loot rows"
+  ],
+  "change": [
+    "12 hit zones become 3 (head, body, legs) on a 375-wide phone",
+    "8 armour types become our 3 damage families",
+    "World rows live in our data store, not SQL patch files",
+    "Species names and any donor stat rows are not reused"
+  ],
+  "look_test": "One creature at 375 wide, twice: a plain strike and a three-zone telegraph (head, body, legs) that lights the zone about half a second before the hit. Dom judges whether he can tell the zone in under one second and whether the corpse reads as the same creature. Build only the telegraph and the palette copy; no new art.",
+  "licence_note": "Code GNU AGPL v3 (LICENSE lines 1-2; Source/lib/README.md line 1). Lifestoned DLL MIT (Source/lib/README.md line 9). No asset licence; SQL content has no licence line; client data not in repo (AU002). README says educational and non-commercial use only (line 19). Class C content, class D client data. Inspiration category-level only; no donor values reused.",
+  "tags": ["creature-family", "recolour-tier", "new:species-enum", "new:body-part-zones", "new:attack-cone", "new:corpse-inherits-look", "new:shade-drop-chance"],
+  "not_read": [
+    "All creature rows (absent from repo: schema only in Database/Base/WorldBase.sql)",
+    "Factories/Tables file bodies (names only)",
+    "Monster AI and Monster_Tick bodies",
+    "Creature_BodyPart armour arithmetic (signatures only)",
+    "Source/ACE.Server/Mods folder",
+    "Lifestoned and ACE DLLs (code, not inspected)",
+    "The 107 .txt files (counts only in AU002)",
+    "Client data (portal.dat and others, not in repo)"
+  ]
+}

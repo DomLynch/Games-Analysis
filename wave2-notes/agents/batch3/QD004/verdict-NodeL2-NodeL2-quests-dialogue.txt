@@ -1,0 +1,26 @@
+VERDICT: PARTIAL (depth thin) | cell 12 quests-dialogue | donor /mnt/frankendom-donors/NodeL2-NodeL2
+Licence (read): Apache License, Version 2.0, January 2004 (LICENSE). Permissive: code may be adapted.
+
+Files opened (read in full unless marked):
+1. src/GameServer/World/Generics/NpcTalk.js (14 lines): builds the NPC talk from data/Html/<selfId>.html, falls back to noquest.html (line 9).
+2. src/GameServer/World/Generics/NpcTalkResponse.js (83 lines): the link verb switch (html, teleport, admin-teleport, admin-teleport-random, admin-shop, default warn).
+3. src/GameServer/Network/Request/HtmlLink.js (19 lines): takes the link text from the client packet (line 11).
+4. src/GameServer/Network/Request/QuestList.js and src/GameServer/Network/Response/QuestList.js: the quest list reply is an empty packet (opcode 0x80, two zero counts).
+5. src/GameServer/World/Generics/NpcRewards.js (30 lines) and RemoveNpc.js (lines 1-12): NPC removal rolls a drop table; this is loot, not quest state.
+6. data/Html/7370.html (hint), data/Html/7146.html, data/Html/7540.html, data/Html/126.html: each "Quest" link target checked against data/Html and data/Html/Gatekeeper (none of the quest targets exists).
+7. data/Npcs/npcs.json (grep for quest): only monster titles "Quest Monster"; no quest data.
+8. README.md: lists "NPC interaction, Quests" as WIP/Experimental.
+
+Why PARTIAL: the donor has a real but static dialogue dispatch (a page per NPC, a fallback page, and a closed set of link verbs), but no quest state, no objectives, no triggers and no rewards tied to a quest; every "Quest" link in the data points to a page that is missing or to a verb the switch does not handle.
+
+Facts from the code (read, not run):
+- Link path is built from the client's text: `const filename = path + parts[1] + '.html';` (NpcTalkResponse.js 12). The donor does not restrict parts[1] to known pages.
+- The html reply always names NPC 7146: `ServerResponse.npcHtml(7146, ...)` (NpcTalkResponse.js 16), so the reply is not tied to the talking NPC.
+- Unknown verbs are logged and ignored (NpcTalkResponse.js 77-79).
+- Not run: whether a traversal in parts[1] would reach files outside data/Html. Not tested.
+
+Best transferable idea: an NPC talk is a page keyed by the NPC's id, with a fallback page for NPCs that have none, and its link verbs form a closed switch in which unknown verbs are logged and ignored.
+
+Decision (proposed): reject. The page lookup adds nothing that zones-as-data does not already give us, and the verb takes a file name from the client (NpcTalkResponse.js 12), which conflicts with the server-verified rule. The quest half is absent, so there is no shape to copy for the one-ledger or objective rules.
+
+Checked: depth thin (the donor has only the dialogue dispatch; no quest mechanism). Camera scope: not a camera cell.

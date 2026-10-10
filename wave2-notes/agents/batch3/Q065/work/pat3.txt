@@ -1,0 +1,23 @@
+if (!target.runImmunity(move, !suppressMessages)) {
+if (move.ohko) return
+if (move.damageCallback) return
+if (move.damage === 'level') {
+let basePower: number | false | null = move.basePower;
+if (this.battle.gen <= 5) {
+critRatio = this.battle.clampIntRange(critRatio, 0, 5);
+if (this.battle.gen === 6) {
+const spreadModifier = this.battle.gameType
+let typeMod = target.runEffectiveness(move);
+typeMod = this.battle.clampIntRange(typeMod, -6, 6);
+if (this.battle.gen === 5 && !baseDamage) baseDamage = 1;
+baseDamage = this.battle.modify(baseDamage, gen
+const bypassProtect = target.getMoveHitData(move).bypassProtect;
+baseDamage = this.battle.modify(baseDamage, 0.25);
+const bondModifier
+if (this.battle.gen !== 5 && !baseDamage) return 1;
+const dexMove = this.dex.moves.get(move.id);
+  getDamage(
+  modifyDamage(
+  spreadMoveHit(
+  moveHit(
+  hitStepMoveHitLoop(

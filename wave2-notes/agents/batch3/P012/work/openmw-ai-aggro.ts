@@ -25,6 +25,7 @@ function fightTerm(actor: Mob, distance: number, c: AggroConsts): number {
 }
 
 // Threshold rule: already fighting counts as aggressive; otherwise the term must reach 100.
+// targetIsWerewolf: the target is an NPC-class actor (the player counts) that is a werewolf, or the player with the known-werewolf global set (donor 634-638).
 function isAggressive(actor: Mob, targetIsWerewolf: boolean, inCombatWithTarget: boolean, distance: number, c: AggroConsts): boolean {
   if (inCombatWithTarget) return true;
   if (actor.isDead || !actor.isMobile || actor.calmed) return false;
@@ -54,5 +55,3 @@ function awarenessPasses(s: Stealth, o: Observer, distance: number, roll0to99: n
   const y = o.obsTerm * o.fatigueTerm * (o.facingAway ? noViewMult : viewMult);
   return roll0to99 >= x - y;
 }
-
-export {}

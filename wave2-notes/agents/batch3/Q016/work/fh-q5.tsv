@@ -1,0 +1,6 @@
+ai/ai_battle.cpp	if ( enemy->isArchers() ) {
+ai/ai_battle.cpp	if ( enemy->isFlying() ) {
+ai/ai_battle.cpp	if ( _attackingCastle ) {
+ai/ai_battle.cpp	return enemySpeed < currentUnit.GetSpeed( false, true );
+ai/ai_battle.cpp	AI::BattleTargetPair AI::BattlePlanner::meleeUnitDefense( Battle::Arena & arena, const Battle::Unit & currentUnit ) const
+ai/ai_battle.cpp	static_assert

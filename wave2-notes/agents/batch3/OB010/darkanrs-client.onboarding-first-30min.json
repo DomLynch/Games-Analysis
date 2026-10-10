@@ -1,0 +1,87 @@
+{
+  "donor": "darkanrs-client",
+  "topic": "onboarding-first-30min",
+  "depth": "thin",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/darkanrs-client/_RESTRICTED-NOTE.txt",
+    "/mnt/frankendom-donors/darkanrs-client/src/main/java/com/rs/jagex/MaterialProp23.java",
+    "/mnt/frankendom-donors/darkanrs-client/src/main/java/com/rs/jagex/CutsceneDefinitions.java",
+    "/mnt/frankendom-donors/darkanrs-client/src/main/java/com/rs/jagex/BrightnessPreference.java",
+    "/mnt/frankendom-donors/darkanrs-client/src/main/java/com/rs/jagex/CombinedInputSubscriber.java",
+    "/mnt/frankendom-donors/darkanrs-client/src/main/java/com/rs/jagex/ApplyHitmarkCutsceneAction.java",
+    "/mnt/frankendom-donors/darkanrs-client/src/main/java/com/rs/jagex/CutsceneAction_Sub9.java",
+    "/mnt/frankendom-donors/darkanrs-client/src/main/java/com/rs/jagex/CutsceneArea.java",
+    "/mnt/frankendom-donors/darkanrs-client/src/main/java/com/rs/jagex/SendFinishedCutsceneAction.java",
+    "/mnt/frankendom-donors/darkanrs-client/src/main/java/com/rs/jagex/GameTipsLoader.java",
+    "/mnt/frankendom-donors/darkanrs-client/src/main/java/com/rs/jagex/IndexLoaders.java",
+    "/mnt/frankendom-donors/darkanrs-client/src/main/java/com/rs/jagex/PacketDecoder.java",
+    "/mnt/frankendom-donors/darkanrs-client/src/main/java/com/rs/jagex/Login.java",
+    "/mnt/frankendom-donors/darkanrs-client/src/main/java/com/rs/jagex/LoginStage.java",
+    "/mnt/frankendom-donors/darkanrs-client/src/main/java/com/rs/jagex/LobbyStage.java",
+    "/mnt/frankendom-donors/darkanrs-client/src/main/java/com/rs/jagex/AccountCreationResponseOpcodes.java",
+    "/mnt/frankendom-donors/darkanrs-client/src/main/java/com/rs/jagex/LocalizedText.java",
+    "/mnt/frankendom-donors/darkanrs-client/src/main/java/com/rs/jagex/ServerProt.java"
+  ],
+  "counts": {
+    "java_files": 1060,
+    "cutscene_named_files": 33,
+    "named_localized_strings": 62,
+    "login_stage_values": 20,
+    "lobby_stage_values": 3,
+    "account_creation_response_values": 10,
+    "client_jar_entries_listed_not_extracted": 1078
+  },
+  "rule": "Cutscene actions carry a start offset in client frames; once playing, a cursor fires every due action and stops at the first future one. The cutscene does not start until all entities, music actions and objects report ready. Skip is a data-defined input gesture (click type, minimum clicks, held keys). The finish packet carries 1 for natural end and 0 for skip. Loading tips come from a tip group chosen by a per-player preference, with an optional pinned first tip and a shuffle of the rest; the loading stage waits for the first tip (and a second when pinned) to load.",
+  "data_fields": [
+    {"name": "cutscene.action.start_offset", "unit": "frames (ours: ms)", "donor_value_or_null": null},
+    {"name": "cutscene.ready_gate", "unit": "bool", "donor_value_or_null": null},
+    {"name": "cutscene.skip.click_type", "unit": "enum", "donor_value_or_null": null},
+    {"name": "cutscene.skip.min_clicks", "unit": "count", "donor_value_or_null": null},
+    {"name": "cutscene.skip.held_keys", "unit": "list of key ids", "donor_value_or_null": null},
+    {"name": "cutscene.finish_flag", "unit": "1 natural, 0 skipped", "donor_value_or_null": null},
+    {"name": "hit_presentation.value", "unit": "damage number from the server event", "donor_value_or_null": null},
+    {"name": "loading_tip.group_id", "unit": "id", "donor_value_or_null": null},
+    {"name": "loading_tip.pinned_first", "unit": "bool", "donor_value_or_null": null},
+    {"name": "loading_tip.shuffle", "unit": "bool", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Ready gate: do not start an intro until its music, entities and objects are loaded",
+    "Time-sorted cursor for scripted timeline actions",
+    "Skip gesture as data, not code",
+    "Finish flag sent back to the server so it knows the intro ended or was skipped",
+    "Pinned first tip so the loading card is never empty",
+    "Scripted hit shows the number from the real server event"
+  ],
+  "change": [
+    "Offsets in ms as data, not frame counts in code",
+    "Skip is one tap by default",
+    "No idle-kill logic in the presentation layer; the server owns connection health",
+    "Our tip text and art, no donor text or assets"
+  ],
+  "onboarding": {
+    "first_90_seconds": "Loading screen with a bar and one tip line, then login, then any server-started intro. Nothing before control except the loading screen and the intro.",
+    "first_fight_staging": "A scripted hit can be shown on a cutscene entity at a timed point. Winnability is not in the client half.",
+    "first_reward_loot_level": "Not in the client half (not read).",
+    "first_hub_services": "A cutscene area builds a walk packet and sets the minimap flag; services not in the client half (not read).",
+    "first_meaningful_choice": "Not in the client half (not read).",
+    "pull_forward_5_10_30": "Not in the client half (not read).",
+    "tutorial_style": "No tutorial code in the client half; the skip is data-defined; text length not read.",
+    "drop_off_risks": "Intro can stay in loading state if an asset never reports ready (no timeout seen in lines read). Avoids: one-tap skip; pinned first tip.",
+    "could_be_ours": "Skippable ring walk-in with a stinger and a server-taken first hit number, plus a pinned-first loading card."
+  },
+  "look_test": "On the gladiator ring: a 4-second walk-in with camera push-in, one music stinger at about 1.2 s, the first hit number at about 2.4 s from a real server event, any tap skips. Plus a loading card with three tips, one pinned, one line each. Judge: number readable at 375 wide, one tap skips, stinger lands on the hit, tip clear of the bar.",
+  "licence_note": "Code GPL v3; repo restricted note: Jagex-derived RuneScape client, study shape/idea only, never copy code or constants. Content class D for code, C for game-derived. Category-level inspiration only.",
+  "tags": ["stinger", "ordered-feedback", "first-fight", "new:cutscene-ready-gate", "new:skip-gesture", "new:loading-tip", "new:pinned-first-tip", "new:finish-flag"],
+  "not_read": [
+    "client.jar class bodies",
+    "lib/clientlibs.jar contents beyond listing",
+    "tips index contents (cache, not in repo)",
+    "cutscene index contents (cache, not in repo)",
+    "CS2 scripts (cache, not in repo)",
+    "server half (not in repo; LostCityRS-Engine-TS and Open-RSC-Core-Framework named by folder name only, not opened)",
+    "Login.java full body",
+    "CutsceneAction_Sub4.java trigger logic around line 227",
+    "Defaults8Loader.java input subscriber decode beyond line 28"
+  ]
+}
