@@ -93,3 +93,6 @@ File: /Users/domininclynch/Library/Application Support/Claude/scratch-workspaces
 4. Run Step 1 backup. Split 218 files into 6 category-based groups (~36 each; keep each category in one group). Launch six Sonnet 5.5 medium readers with the plan above. Put the 8 known errors in the prompt of the reader whose group holds each file (OpenTTD and Mindustry: server-tick-netcode; NodeL2: progression; Quake 1 and Veloren: combat-sim; BrogueCE: ai-aggro; crawl: spawns-encounters; Quake 2: loot-drops).
 5. Gate every batch (me, mechanically), then audit with two fresh Sonnet readers (40 files each, disjoint, from unsampled-118.txt). Report the real numbers.
 6. Promote only after the pass is done and receipted. Back up the library first.
+
+## Resume tomorrow
+Say "start the queue". Wave 1 re-rating lists are in docs/wave2-lists/, brief in docs/rerate-brief.md (copy to /private/tmp/p2/wave2 if /private/tmp is gone; restore notes from deep/ here or from /mnt/frankendom-donors/_donor-library/categories). Library is already promoted (v6); no agents were running at save time.
