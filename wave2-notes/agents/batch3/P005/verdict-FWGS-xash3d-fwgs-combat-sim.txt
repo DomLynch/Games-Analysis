@@ -1,0 +1,32 @@
+VERDICT: PARTIAL (cell 1, combat-sim) | depth: thin | old rating: P
+Game: FWGS-xash3d-fwgs (Xash3D engine, GoldSrc/Half-Life-era API). Donor root: /mnt/frankendom-donors/FWGS-xash3d-fwgs/
+
+Licence (read from headers): engine/server/sv_game.c header is GPL-3.0-or-later ("GNU General Public License ... version 3 ... or (at your option) any later version"). common/weaponinfo.h and common/const.h carry a Valve LLC header: "Use, distribution, and modification ... restricted to non-commercial enhancements to products from Valve LLC" plus an Id Technology notice. Any reuse of those headers is out; the autoaim idea is clean-room only.
+
+Files opened (candidates for damage/hit resolution, 9):
+1. common/weaponinfo.h (whole file, 50 lines): weapon_data_t struct only, no damage function.
+2. common/const.h (lines 98-108): DAMAGE_NO 0, DAMAGE_YES 1, DAMAGE_AIM 2.
+3. engine/client/parse/cl_qparse.c (lines 592-606): CL_ParseQuakeDamage reads armor, blood and a 3-coordinate direction and forwards them to a dispatcher named "Damage". No health or armour maths.
+4. engine/client/parse/cl_parse_gs.c (lines 620-650): svc_goldsrc_damage case is a no-op ("this does nothing").
+5. engine/server/sv_game.c (lines 2236-2320): pfnGetAimVector (the autoaim entry point).
+6. engine/server/sv_phys.c (line 766 header of SV_PushEntity, which takes a flDamage argument): header read only, body (not read).
+7. engine/server/sv_main.c (lines 25-26): sv_aim and sv_allow_autoaim cvars.
+8. engine/common/net_encode.c (line 144): m_fAimedDamage appears in the weapon field table, only reference found.
+9. engine/eiface.h (line 144): the pfnGetAimVector declaration.
+
+Search: grep -rn over engine, common, pm_shared for takedamage, TakeDamage, flDamage, crush, damage. No hit-resolution function (health subtraction, armour, crit, knockback, damage multiplier) exists in this repo. The game DLL that would own that logic (the Half-Life SDK style dll with T_Damage-like code) is NOT in the donor (not read: it is absent from the tree).
+
+Why PARTIAL and not NONE: the one real mechanism in the repo is aim assist, which is targeting and not damage resolution, so it counts as indirect. Why not STRONG: it is not the topic (damage/hit resolution), and I read it only through the engine side; the game DLL that calls it (callers) was not read (not in the donor).
+
+The autoaim mechanism as the code runs (sv_game.c 2257-2317):
+- Default out is the view forward vector (2257).
+- Trace from eye origin (origin + view_ofs, 2263) straight 2048 units (2267).
+- Early return, keeping the forward vector, if that trace hits any entity and (it has takedamage AIM, or the shooter team <= 0, or the teams differ) (2271). So the assist only runs when the straight shot hits nothing or a teammate with team > 0.
+- Threshold: bestdist = sv_aim.value when sv_allow_autoaim is set (2276-2277), else 0 (2278). Defaults: sv_aim "1", sv_allow_autoaim "0" (sv_main.c 25-26). With autoaim off the threshold is 0, a 90-degree half-cone. With autoaim on and sv_aim at its default 1, only targets exactly on the forward axis pass.
+- Candidates: entities with takedamage == DAMAGE_AIM (2285), not fake clients (line not checked), not same-team when shooter team > 0 (2291), not self (2294). Aim point = bounding box centre (loop body, not quoted).
+- For each: normalised direction, dot with forward; skip if below bestdist (2304); trace to the centre; if the first thing hit is the candidate (2309), take it as best and raise bestdist to its dot.
+- Output: the best direction (2317).
+
+Numbers are read from code. Not read: the game DLL that calls pfnGetAimVector; whether dead targets are excluded (sv_game.c 1011 clears takedamage on some edict, not read in context).
+
+Best transferable idea: Snap an aimed shot to the best trace-visible target inside a dot-product cone, and skip the snap when the straight shot already hits an enemy.

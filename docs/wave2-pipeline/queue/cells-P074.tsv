@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+jynew-jynew	4	spawns-encounters	INFERRED	7
+wesnoth-wesnoth	4	spawns-encounters	/mnt/frankendom-donors/wesnoth-wesnoth/data/campaigns/Northern_Rebirth/lua/respawn_utils.lua	7
+OpenEnroth-OpenEnroth	14	camera	/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/Engine/Engine.cpp	7

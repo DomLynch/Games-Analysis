@@ -1,0 +1,2 @@
+game	category	old	verdict	depth	finding
+electronicarts-CnC_Remastered_Collection	spawns-encounters	P	STRONG	thin	/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/TIBERIANDAWN/TEAMTYPE.CPP:876-882,929-972 with HOUSE.CPP:1001-1033 and TEAM.CPP:303-353,417-419: one team per idle pulse (TEAM_DELAY 90 ticks), per-type live cap MaxAllowed, alert-gated autocreate teams, strength and delete rules; refill path not read.

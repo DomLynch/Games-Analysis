@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+LostCityRS-Engine-TS	8	loot-drops	/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/World.ts	4
+OpenDiablo2-OpenDiablo2	8	loot-drops	/mnt/frankendom-donors/OpenDiablo2-OpenDiablo2/d2core/d2records/set_item_loader.go	4
+Anuken-Mindustry	8	loot-drops	INFERRED	5

@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+evennia-evennia	8	loot-drops	/mnt/frankendom-donors/evennia-evennia/evennia/contrib/game_systems/turnbattle/tb_items.py	3
+daggerfall-unity	8	loot-drops	INFERRED	3
+Dawn-of-Light-DOLSharp	8	loot-drops	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/LootGeneratorScroll.cs	3

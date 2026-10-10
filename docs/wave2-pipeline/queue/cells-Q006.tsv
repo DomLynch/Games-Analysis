@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+EQEmu	4	spawns-encounters	/mnt/frankendom-donors/EQEmu/utils/sql/svn/979_unique_spawn_by_name.sql	5
+2004Scape-Server	4	spawns-encounters	/mnt/frankendom-donors/2004Scape-Server/src/engine/GameMap.ts	5
+ioquake-ioq3	4	spawns-encounters	/mnt/frankendom-donors/ioquake-ioq3/code/game/g_spawn.c	5

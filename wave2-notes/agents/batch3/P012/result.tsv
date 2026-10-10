@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+dhewm-dhewm3	spawns-encounters	P	STRONG	full	neo/game/Item.cpp:389-409 and 544-556 (pickup respawn: item key, 20 s multiplayer default, queued event, dropped items removed); neo/game/Player.cpp:5672-5686 and 6466-6530 (respawn gate: minimum from respawn_delay, early release by attack, forced at min + 10000 ms)
+openmw	ai-aggro	P	STRONG	full	apps/openmw/mwmechanics/combat.cpp:623-647 (threshold: aggression setting plus distance and disposition biases must reach 100); actors.cpp:615-800 and 1620-1632 (sampled engage check, aggression test at 733-741); mechanicsmanagerimp.cpp:1601-1671 (stealth roll)
+ValveSoftware-halflife	server-tick-netcode	P	STRONG	thin	dlls/client.cpp:1789-1803 (CmdStart stores the per-input seed); pm_shared/pm_shared.c:2868-2869 and 2968 (input speed clamp and msec-driven frame time); dlls/util.cpp:112-136 (seeded shared random); the server tick loop itself is not in this donor (engine/ holds headers only)

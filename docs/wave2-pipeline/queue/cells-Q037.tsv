@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+pmbstyle-L2Solo	5	server-tick-netcode	/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Network/Response/UserInfo.js	5
+evennia-evennia	5	server-tick-netcode	/mnt/frankendom-donors/evennia-evennia/evennia/server/amp_client.py	5
+l1j-en-classic	5	server-tick-netcode	INFERRED	5

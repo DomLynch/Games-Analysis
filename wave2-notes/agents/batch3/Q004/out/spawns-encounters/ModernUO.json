@@ -1,0 +1,82 @@
+{
+ "game": "ModernUO",
+ "category": "spawns-encounters",
+ "cell": 4,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/ModernUO/Projects/UOContent/Engines/Spawners/BaseSpawner.cs",
+ "licence": "GNU GPL v3 (LICENSE line 4 'Version 3, 29 June 2007'); per-file headers GPL v3 or any later version",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "director",
+  "population-cap",
+  "wait-gate",
+  "presence-gated",
+  "group-refill"
+ ],
+ "data_fields": [
+  {
+   "name": "cap",
+   "donor_constant": "amount argument; BaseSpawner() default 1",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "BaseSpawner.cs:261"
+  },
+  {
+   "name": "entry_cap",
+   "donor_constant": "SpawnedMaxCount per entry; default 1",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "SpawnerEntry.cs:102"
+  },
+  {
+   "name": "entry_weight",
+   "donor_constant": "SpawnedProbability per entry; default 100 (relative weight)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "SpawnerEntry.cs:90"
+  },
+  {
+   "name": "respawn_min",
+   "donor_constant": "DefaultMinDelay 5 minutes (300 s)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "BaseSpawner.cs:49"
+  },
+  {
+   "name": "respawn_max",
+   "donor_constant": "DefaultMaxDelay 10 minutes (600 s)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "BaseSpawner.cs:50"
+  },
+  {
+   "name": "first_spawn_delay",
+   "donor_constant": "1 second after InitSpawn",
+   "unit": "s",
+   "where": "engine constant",
+   "donor_ref": "BaseSpawner.cs:707"
+  },
+  {
+   "name": "placement_attempts",
+   "donor_constant": "DefaultMaxSpawnAttempts = 10",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "BaseSpawner.cs:148"
+  },
+  {
+   "name": "trigger_range",
+   "donor_constant": "triggerRange ctor parameter default 0 (tiles)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "ProximitySpawner.cs:54"
+  }
+ ],
+ "best_idea": "A zone spawn director that makes at most one spawn per timer fire, pauses its timer while full, re-arms on removal, and for presence zones triggers only when empty and off cooldown.",
+ "decision": "adapt",
+ "decision_why": "Keep the park-when-full timer, one spawn per fire, weighted entry pick and empty-plus-cooldown presence gate; start the cooldown at the despawn with a grace timer as row 23 requires, not at the trigger; group refill-after-wipe only as an optional zone flag.",
+ "decision_status": "proposed",
+ "acceptance": "Server test on a zone with cap 3 and respawn 5 to 10 s: killing all three wolves empties the zone; a fourth wolf never appears while three are alive; the timer does not run while the zone is full; a player stepping into range of an empty zone gets one spawn, only after the cooldown has elapsed."
+}

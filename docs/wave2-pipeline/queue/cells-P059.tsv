@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+angband-angband	8	loot-drops	INFERRED	6
+cuteshaun-lineage2-api	8	loot-drops	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/api/drops.ts	6
+OpenDAoC-OpenDAoC-Core	4	spawns-encounters	/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameobjects/GameNPC.cs	6

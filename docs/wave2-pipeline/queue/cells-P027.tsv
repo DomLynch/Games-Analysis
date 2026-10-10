@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+Dawn-of-Light-DOLSharp	8	loot-drops	/mnt/frankendom-donors/Dawn-of-Light-DOLSharp/GameServer/gameutils/LootGeneratorScroll.cs	3
+heroiclabs-nakama	5	server-tick-netcode	/mnt/frankendom-donors/heroiclabs-nakama/server/api_test.go	3
+evennia-evennia	1	combat-sim	/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/tests/test_combat.py	3

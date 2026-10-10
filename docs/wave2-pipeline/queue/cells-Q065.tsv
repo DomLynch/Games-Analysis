@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+dkfans-keeperfx	1	combat-sim	/mnt/frankendom-donors/dkfans-keeperfx/src/creature_states.h	3
+ValveSoftware-source-sdk-2013	1	combat-sim	/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/server/basecombatcharacter.cpp	4
+smogon-pokemon-showdown	1	combat-sim	INFERRED	4

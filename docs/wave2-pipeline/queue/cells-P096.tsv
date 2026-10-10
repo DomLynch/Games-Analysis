@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+2004Scape-Server	10	progression	/mnt/frankendom-donors/2004Scape-Server/src/network/game/server/codec/ServerProtPriority.ts	8
+OpenDAoC-OpenDAoC-Core	2	ai-aggro	/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/CoreDatabase/Tables/DbFactionAggroLevel.cs	8
+hedgewars-hw	1	combat-sim	/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Scripts/Multiplayer/Random_Weapon.lua	8

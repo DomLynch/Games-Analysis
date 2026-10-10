@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+0ad-0ad	5	server-tick-netcode	INFERRED	5
+diasurgical-DevilutionX	5	server-tick-netcode	/mnt/frankendom-donors/diasurgical-DevilutionX/Source/msg.cpp	6
+dhewm-dhewm3	5	server-tick-netcode	/mnt/frankendom-donors/dhewm-dhewm3/neo/framework/Session.cpp	6

@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+exult-exult	5	server-tick-netcode	/mnt/frankendom-donors/exult-exult/server/servemsg.cc	2
+ModernUO	2	ai-aggro	/mnt/frankendom-donors/ModernUO/Projects/UOContent.Tests/Tests/Mobiles/AI/FamiliarAITests.cs	2
+angband-angband	14	camera	INFERRED	2

@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+dhewm-dhewm3	4	spawns-encounters	INFERRED	2
+openmw	2	ai-aggro	/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/aisetting.hpp	2
+ValveSoftware-halflife	5	server-tick-netcode	/mnt/frankendom-donors/ValveSoftware-halflife/cl_dll/GameStudioModelRenderer_Sample.cpp	2

@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+supertuxkart-stk-code	5	server-tick-netcode	/mnt/frankendom-donors/supertuxkart-stk-code/src/network/protocols/server_lobby.cpp	4
+ioquake-ioq3	5	server-tick-netcode	INFERRED	4
+OpenBW-openbw	5	server-tick-netcode	/mnt/frankendom-donors/OpenBW-openbw/sync.h	5

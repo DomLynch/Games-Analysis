@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+0ad-0ad	1	combat-sim	/mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/simulation/components/Attack.js	2
+OpenEnroth-OpenEnroth	8	loot-drops	/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/Engine/Data/ItemData.h	2
+ryzom-ryzomcore	10	progression	/mnt/frankendom-donors/ryzom-ryzomcore/ryzom/server/src/entities_game_service/egs_sheets/egs_sheets.cpp	2

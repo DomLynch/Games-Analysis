@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+crawl-crawl	loot-drops	P	STRONG	full	mon-gear.cc:2498-2515 rolls carried gear at spawn by depth tier with 1-in-N gates; mon-poly.cc:75-120 drops all carried items at death with a dropper id; mon-act.cc:3016-3095 limits monster pickup (player-seen items blocked unless self-dropped).
+freeorion-freeorion	combat-sim	P	STRONG	full	combat/CombatSystem.cpp:356-390 applies damage = max(0, power - shield) per shot, 776-800 dispatches by type, 1350-1472 picks one random target per shot (1457), 1672-1841 runs seeded bouts with shuffled attackers, and 1841 culls at bout end.
+2004Scape-Server	server-tick-netcode	P	STRONG	full	src/engine/World.ts:369-537 runs a fixed 600 ms cycle with a fixed phase order and a drift-corrected sleep; NetworkPlayer.ts:55-75 and ClientProtCategory.ts:5-8 cap input per tick at 20 client, 5 user, 2 restricted; World.ts:714-725 has no per-tick NPC budget.

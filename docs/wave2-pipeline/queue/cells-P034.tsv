@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+alexbatalov-fallout1-ce	1	combat-sim	INFERRED	4
+luanti-org-luanti	5	server-tick-netcode	/mnt/frankendom-donors/luanti-org-luanti/builtin/game/item.lua	4
+crashkonijn-GOAP	4	spawns-encounters	/mnt/frankendom-donors/crashkonijn-GOAP/Demo/Assets/CrashKonijn/GOAP/Demos/Complex/Behaviours/AgentSpawnBehaviour.cs	4

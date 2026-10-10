@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+flareteam-flare-engine	loot-drops	P	STRONG	full	LootManager.cpp:322-389 checkLoot: fixed pass (331-343) then one threshold-narrowed pick (345-388); per-death driver checkEnemiesForLoot 256-294; death queued at StatBlock.cpp:927.
+Card-Forge-forge	loot-drops	P	STRONG	full	RewardData.java:166-351 generate: probability gate (175), difficulty-scaled bonus count (178-179), typed draws; CardUtil.java:330-351 generateCards draws with replacement from a filtered pool; EnemySprite.java:473-566 getRewards.
+OpenRCT2-OpenRCT2	ai-aggro	P	STRONG	full	Staff.cpp:310-385 handymanDirectionToNearestLitter (3-tile nearest-only target, 4x height term), 495-585 doHandymanPathFinding (follow edge 0.9 or 0.1 on queue), 387-407 claim check; no aggro or threat in this donor (park sim, non-combat pursuit).

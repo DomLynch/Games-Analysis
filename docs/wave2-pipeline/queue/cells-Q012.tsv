@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+00-Evan-shattered-pixel-dungeon	4	spawns-encounters	/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/sprites/SpawnerSprite.java	8
+lincity-ng-lincity-ng	4	spawns-encounters	/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/fire.cpp	8
+angband-angband	4	spawns-encounters	INFERRED	8

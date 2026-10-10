@@ -1,0 +1,2 @@
+game	category	old	verdict	depth	finding
+ModernUO	spawns-encounters	P	STRONG	full	out/spawns-encounters/ModernUO.deep.md:1 (BaseSpawner.cs 829-891, 1169-1211, 391-404; ProximitySpawner.cs 69-122)

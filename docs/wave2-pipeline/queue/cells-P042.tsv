@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+2004Scape-Server	14	camera	/mnt/frankendom-donors/2004Scape-Server/src/network/game/server/codec/rs244/ServerProt244.ts	4
+ioquake-ioq3	5	server-tick-netcode	INFERRED	4
+cvet-fonline	2	ai-aggro	INFERRED	4

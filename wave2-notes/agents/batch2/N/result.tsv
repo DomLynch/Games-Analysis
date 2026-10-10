@@ -1,0 +1,3 @@
+game	category	old	verdict	depth	finding
+opentibiabr-otclient	progression	P	STRONG	full	modules/game_skills/skills.lua:564-570,992-1017,1278-1289,1603-1617 + modules/game_analyser/classes/XPAanalyser.lua:44-55,356-412 + analyser.lua:403-422: client-side XP readout (cubic level curve, additive bonus slots times stamina multiplier, delta-based session gain, raw-XP back-calculation, XP/hour, ETA, 30-sample rolling speed); server award not in donor
+scummvm-scummvm	camera	P	STRONG	full	engines/icb/camera.cpp:224-389 (+99-147,416-476,149-183,564-596): fixed-camera director with per-floor camera data, elastic hysteresis (30 units), entry/exit pins on override polygons; driven by a fixed 70 ms step (p4_pc.cpp:389-396)

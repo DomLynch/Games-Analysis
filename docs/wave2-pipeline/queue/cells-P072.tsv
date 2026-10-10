@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+LostCityRS-Engine-TS	14	camera	/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/entity/CameraInfo.ts	7
+00-Evan-shattered-pixel-dungeon	10	progression	/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/hero/Hero.java	7
+id-Software-Quake	2	ai-aggro	INFERRED	7

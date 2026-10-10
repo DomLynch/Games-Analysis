@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+SCAR	1	combat-sim	/mnt/frankendom-donors/SCAR/Nemesis_Engine/mod/scar/1hm_behavior/#0085.txt	5
+wesnoth-wesnoth	1	combat-sim	/mnt/frankendom-donors/wesnoth-wesnoth/data/core/units/orcs/Warrior.cfg	5
+flareteam-flare-engine	1	combat-sim	/mnt/frankendom-donors/flareteam-flare-engine/src/CombatText.cpp	5

@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+orbitersim-orbiter	14	camera	/mnt/frankendom-donors/orbitersim-orbiter/Src/Orbiter/CamAPI.cpp	6
+alexbatalov-fallout2-ce	14	camera	INFERRED	6
+LostCityRS-Engine-TS	14	camera	/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/entity/CameraInfo.ts	7

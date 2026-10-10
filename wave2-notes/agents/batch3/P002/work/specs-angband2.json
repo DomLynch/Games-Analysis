@@ -1,0 +1,4 @@
+[
+{"note":"angband-angband","claim":"modify_panel upper clamp (line 563)","file":"angband-angband/src/ui-output.c","quote":"if (wy > dungeon_hgt - screen_hgt) wy = dungeon_hgt - screen_hgt;","line":563},
+{"note":"angband-angband","claim":"modify_panel lower clamp (line 564)","file":"angband-angband/src/ui-output.c","quote":"if (wy < 0) wy = 0;","line":564}
+]

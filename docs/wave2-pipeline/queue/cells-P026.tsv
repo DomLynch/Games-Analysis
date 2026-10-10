@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+NodeL2-NodeL2	5	server-tick-netcode	/mnt/frankendom-donors/NodeL2-NodeL2/src/GameServer/Network/Request/CharSelected.js	3
+heroiclabs-nakama	10	progression	INFERRED	3
+open-duelyst-duelyst	4	spawns-encounters	/mnt/frankendom-donors/open-duelyst-duelyst/app/sdk/playerModifiers/playerModifierEndTurnRespawnEntityAnywhere.coffee	3

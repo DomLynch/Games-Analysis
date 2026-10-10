@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+ModernUO	4	spawns-encounters	/mnt/frankendom-donors/ModernUO/Projects/UOContent.Tests/Tests/Engines/Spawners/SectorSpawnCacheTests.cs	4
+hedgewars-hw	4	spawns-encounters	/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Missions/Campaign/A_Space_Adventure/desert01.lua	4
+OpenRA-OpenRA	4	spawns-encounters	/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Traits/SpawnActorOnDeath.cs	5

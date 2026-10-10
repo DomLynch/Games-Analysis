@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+DCurrent-openbor	2	ai-aggro	INFERRED	3
+rathena-rathena	2	ai-aggro	INFERRED	3
+freeciv-freeciv	2	ai-aggro	/mnt/frankendom-donors/freeciv-freeciv/ai/default/daiparadrop.c	3

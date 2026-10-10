@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+LostCityRS-Engine-TS	8	loot-drops	/mnt/frankendom-donors/LostCityRS-Engine-TS/src/engine/World.ts	4
+dhewm-dhewm3	14	camera	/mnt/frankendom-donors/dhewm-dhewm3/neo/framework/Common.cpp	4
+OpenEnroth-OpenEnroth	2	ai-aggro	/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/Engine/Objects/ActorEnums.h	4

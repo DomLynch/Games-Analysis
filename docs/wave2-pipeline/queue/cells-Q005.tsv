@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+veloren-veloren	4	spawns-encounters	/mnt/frankendom-donors/veloren-veloren/server/src/events/entity_manipulation.rs	5
+freeciv-freeciv	4	spawns-encounters	/mnt/frankendom-donors/freeciv-freeciv/data/nation/animals.ruleset	5
+beyond-all-reason-Beyond-All-Reason	4	spawns-encounters	/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/singleplayer/scenarios/scenarioscripts/Begin06.lua	5

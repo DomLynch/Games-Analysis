@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+crawl-crawl	1	combat-sim	INFERRED	6
+scummvm-scummvm	1	combat-sim	/mnt/frankendom-donors/scummvm-scummvm/engines/dm/champion.cpp	6
+EQEmu	1	combat-sim	/mnt/frankendom-donors/EQEmu/utils/combat-sim/index.html	6

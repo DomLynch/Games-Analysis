@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+diasurgical-DevilutionX	4	spawns-encounters	/mnt/frankendom-donors/diasurgical-DevilutionX/Source/player.cpp	2
+veloren-veloren	14	camera	/mnt/frankendom-donors/veloren-veloren/voxygen/src/scene/camera.rs	2
+scummvm-scummvm	4	spawns-encounters	/mnt/frankendom-donors/scummvm-scummvm/engines/hadesch/rooms/monster/typhoon.cpp	2

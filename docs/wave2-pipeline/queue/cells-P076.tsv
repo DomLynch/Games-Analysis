@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+PixelGuys-Cubyz	14	camera	/mnt/frankendom-donors/PixelGuys-Cubyz/src/physics.zig	7
+wesnoth-wesnoth	2	ai-aggro	/mnt/frankendom-donors/wesnoth-wesnoth/data/ai/micro_ais/cas/ca_patrol.lua	7
+cvet-fonline	1	combat-sim	INFERRED	7

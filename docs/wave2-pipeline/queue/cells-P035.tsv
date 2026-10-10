@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+ValveSoftware-halflife	4	spawns-encounters	/mnt/frankendom-donors/ValveSoftware-halflife/cl_dll/hl/hl_baseentity.cpp	4
+MovingBlocks-Terasology	5	server-tick-netcode	/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/protobuf/NetMessage.proto	4
+ModernUO	4	spawns-encounters	/mnt/frankendom-donors/ModernUO/Projects/UOContent.Tests/Tests/Engines/Spawners/SectorSpawnCacheTests.cs	4

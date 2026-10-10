@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+exult-exult	server-tick-netcode	P	STRONG	full	/mnt/frankendom-donors/exult-exult/tqueue.cc:192-224 and 291-309 (with tqueue.h:140-142, gump_utils.h:44-55, exult.cc:1348-1391): one wall-clock sorted timer queue drained each frame; a counted pause shifts only entries queued during that pause; single-player, no netcode, variable step
+ModernUO	ai-aggro	P	STRONG	full	/mnt/frankendom-donors/ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/BaseAI.cs:853-911 and 993-1043 (ranking BaseCreature.cs:2731-2744; approach 1334-1359; forced reacquire 3061-3063): one scan gate re-armed per scan, per-mode scoring, approach pull; no attacker cap
+angband-angband	camera	P	STRONG	full	/mnt/frankendom-donors/angband-angband/src/ui-output.c:587-640 and 553-585 (move event: mon-util.c:621, player-calcs.c:2626-2628, ui-display.c:2748): per-axis 3-cell edge recentre, optional centring, world clamp, half-view shift; event-driven, no smoothing

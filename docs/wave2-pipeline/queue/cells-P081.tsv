@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+CleverRaven-Cataclysm-DDA	10	progression	/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/crafting.cpp	7
+SCAR	14	camera	/mnt/frankendom-donors/SCAR/Nemesis_Engine/mod/scar/1hm_behavior/#0085.txt	7
+keldaanCommunity-pokemonAutoChess	5	server-tick-netcode	/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/config/server/rules.ts	7

@@ -1,0 +1,80 @@
+{
+ "game": "pmbstyle-L2Solo",
+ "category": "spawns-encounters",
+ "cell": 6,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/Generics/SpawnNpcs.js",
+ "licence": "as read",
+ "licence_class": "permissive",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "respawn-queue",
+  "grace-timer",
+  "new:clock-period-swap"
+ ],
+ "data_fields": [
+  {
+   "name": "total_per_row",
+   "donor_constant": "spawn.total, integer copies placed at boot per random-point row; never enforced again",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/Generics/SpawnNpcs.js:244"
+  },
+  {
+   "name": "respawn_s",
+   "donor_constant": "spawn.respawn, integer seconds (e.g. 40 in c4_garden_of_beasts.json, 120 in c4_catacomb_of_dark_omen.json)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/Generics/SpawnNpcs.js:293"
+  },
+  {
+   "name": "bias_s",
+   "donor_constant": "spawn.bias, integer seconds; jitter band is respawn plus or minus bias (0 in the rows read)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/Generics/SpawnNpcs.js:294"
+  },
+  {
+   "name": "respawn_enabled_rule",
+   "donor_constant": "respawn > 0 enables respawn",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/Generics/SpawnNpcs.js:290"
+  },
+  {
+   "name": "period",
+   "donor_constant": "spawn.period enum always|day|night; anything else reads as always",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/World/Generics/SpawnNpcs.js:54"
+  },
+  {
+   "name": "spawn_aggro_grace_ms",
+   "donor_constant": "10000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Npc/NpcAggro.js:4"
+  },
+  {
+   "name": "zone_population_cap",
+   "donor_constant": "absent in donor (no cap found)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "none"
+  },
+  {
+   "name": "despawn_empty_grace_s",
+   "donor_constant": "absent in donor (no idle despawn found)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "none"
+  }
+ ],
+ "best_idea": "A per-death respawn timer per spawn slot, with a jitter band (respawn plus or minus bias seconds), that re-checks a period revision before placing the replacement.",
+ "decision": "adapt",
+ "decision_why": "Take the death-to-respawn timer with jitter and the 10 s spawn grace as zone data and engine logic; add the population cap and empty-zone despawn that the donor lacks, since row 23 needs both.",
+ "decision_status": "proposed",
+ "acceptance": "A server test spawns one wolf in a zone row with respawn 40 and bias 0, kills it at t=0, and asserts no replacement at 39.9 s and exactly one at 40 s at one of the row's listed points; a new wolf does not engage a player in range until 10 s have passed."
+}

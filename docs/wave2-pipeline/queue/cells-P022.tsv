@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+daggerfall-unity	8	loot-drops	INFERRED	3
+TurningWheel-Barony	1	combat-sim	/mnt/frankendom-donors/TurningWheel-Barony/src/actgeneral.cpp	3
+CombatPathingRevolution	1	combat-sim	/mnt/frankendom-donors/CombatPathingRevolution/src/RE/CombatBehaviorController.h	3

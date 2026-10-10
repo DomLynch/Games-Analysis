@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+CombatPathingRevolution	1	combat-sim	/mnt/frankendom-donors/CombatPathingRevolution/src/RE/CombatBehaviorController.h	3
+daggerfall-unity	1	combat-sim	INFERRED	3
+evennia-evennia	1	combat-sim	/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/tests/test_combat.py	3

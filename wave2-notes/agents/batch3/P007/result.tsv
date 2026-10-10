@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ioquake-ioq3	progression	P	STRONG	full	/mnt/frankendom-donors/ioquake-ioq3/code/ui/ui_atoms.c:240-330 post-game score (base + shutout + 10/s under par, x skill) and personal-best record; sender game/g_arenas.c:110-134
+flareteam-flare-game	combat-sim	P	STRONG	full	/mnt/frankendom-donors/flareteam-flare-engine/src/Entity.cpp:319-727 Entity::takeHit (sibling engine donor; game repo has data only): avoidance/overhit, resist, absorb, crit, miss, poise
+CleverRaven-Cataclysm-DDA	loot-drops	P	STRONG	full	/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/item_group.cpp:894-960 collection rolls and weighted pick, leaf ITEM_SPAWNRATE gate 295-300; death roll monster.cpp:3409-3420

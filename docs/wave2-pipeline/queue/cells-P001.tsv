@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+crawl-crawl	8	loot-drops	INFERRED	2
+freeorion-freeorion	1	combat-sim	INFERRED	2
+2004Scape-Server	5	server-tick-netcode	/mnt/frankendom-donors/2004Scape-Server/src/network/game/server/codec/rs244/ServerProt244.ts	2

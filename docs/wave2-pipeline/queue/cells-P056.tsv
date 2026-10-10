@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+clockworklabs-SpacetimeDB	8	loot-drops	/mnt/frankendom-donors/clockworklabs-SpacetimeDB/crates/engine/src/update.rs	5
+supertuxkart-stk-code	14	camera	/mnt/frankendom-donors/supertuxkart-stk-code/src/graphics/camera/camera_debug.cpp	5
+gawric-Unity-Client-for-L2J	8	loot-drops	INFERRED	6

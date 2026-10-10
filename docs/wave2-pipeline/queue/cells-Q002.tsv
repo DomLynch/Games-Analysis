@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+open-duelyst-duelyst	4	spawns-encounters	/mnt/frankendom-donors/open-duelyst-duelyst/app/sdk/playerModifiers/playerModifierEndTurnRespawnEntityAnywhere.coffee	3
+luanti-org-luanti	4	spawns-encounters	/mnt/frankendom-donors/luanti-org-luanti/builtin/game/static_spawn.lua	3
+cuteshaun-lineage2-api	4	spawns-encounters	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/data/cleaned-npcs.ts	4

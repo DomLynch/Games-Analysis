@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+freeorion-freeorion	2	ai-aggro	/mnt/frankendom-donors/freeorion-freeorion/default/python/AI/ship_design/_ship_design_cache.py	5
+dhewm-dhewm3	2	ai-aggro	/mnt/frankendom-donors/dhewm-dhewm3/neo/d3xp/ai/AI.h	5
+OpenGothic	2	ai-aggro	/mnt/frankendom-donors/OpenGothic/common/world/aiqueue.cpp	5

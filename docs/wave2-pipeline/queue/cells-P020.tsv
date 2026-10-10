@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+STJr-SRB2	5	server-tick-netcode	/mnt/frankendom-donors/STJr-SRB2/src/r_fps.c	3
+miki151-keeperrl	10	progression	/mnt/frankendom-donors/miki151-keeperrl/creature.cpp	3
+freeciv-freeciv	5	server-tick-netcode	INFERRED	3

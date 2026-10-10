@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+cuteshaun-lineage2-api	8	loot-drops	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/api/drops.ts	6
+exult-exult	8	loot-drops	/mnt/frankendom-donors/exult-exult/content/sifixes/src/misc/exchanged_item_list.uc	6
+id-Software-Quake	8	loot-drops	/mnt/frankendom-donors/id-Software-Quake/qw-qc/items.qc	6

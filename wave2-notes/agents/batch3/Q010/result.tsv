@@ -1,0 +1,2 @@
+game	category	old	verdict	depth	finding
+jynew-jynew	spawns-encounters	P	STRONG	full	Mods/xiastart_roguelike/Lua/wumingshangu.lua:75-89 (GenerateEnemies roster loop, 4 floors per enemy, cap 8 with inclusive loop) and 93-138 (GenerateRole level band +3, skill rolls, floor*25 skill levels) and 142-189 (NextBattle floor counter, EXP 400*(floor+1)); BattleLoader.cs 198-202 and 316-323 place the generated enemies

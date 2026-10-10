@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+id-Software-Quake-2	2	ai-aggro	INFERRED	8
+dkfans-keeperfx	14	camera	/mnt/frankendom-donors/dkfans-keeperfx/src/engine_camera.h	8
+PixelGuys-Cubyz	8	loot-drops	/mnt/frankendom-donors/PixelGuys-Cubyz/src/blocks.zig	8

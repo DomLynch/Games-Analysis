@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+cuteshaun-lineage2-api	2	ai-aggro	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/types.ts	7
+wesnoth-wesnoth	2	ai-aggro	/mnt/frankendom-donors/wesnoth-wesnoth/data/ai/micro_ais/cas/ca_patrol.lua	7
+gawric-Unity-Client-for-L2J	2	ai-aggro	/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Editor/L2MonsterPrefabBuilder.cs	7

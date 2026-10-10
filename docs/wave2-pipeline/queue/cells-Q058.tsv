@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+OpenXcom-OpenXcom	8	loot-drops	/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Battlescape/UnitDieBState.cpp	5
+vcmi-vcmi	8	loot-drops	/mnt/frankendom-donors/vcmi-vcmi/config/objects/creatureBanks.json	5
+rathena-rathena	8	loot-drops	INFERRED	5

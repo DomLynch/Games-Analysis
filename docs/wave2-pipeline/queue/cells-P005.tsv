@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+FWGS-xash3d-fwgs	1	combat-sim	/mnt/frankendom-donors/FWGS-xash3d-fwgs/common/weaponinfo.h	2
+id-Software-wolf3d	2	ai-aggro	INFERRED	2
+opentibiabr-otclient	8	loot-drops	/mnt/frankendom-donors/opentibiabr-otclient/mods/game_bot/default_configs/vBot_4.8/vBot/items.lua	2

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+luanti-org-luanti	camera	P	STRONG	full	src/client/camera.cpp:413-461 third-person camera pulled in by a fixed-step march along the view ray (also 328-342 stairstep blend; util/numeric.h:444-446 damp)
+xoreos-xoreos	progression	P	STRONG	full	src/engines/nwn/gui/chargen/chargenchoices.cpp:560-577 skill-point pool, 599-605 rank cap and cross-class half cap; charskills.cpp:117-136 spend and refund rules (XP formula not in donor; nwn/creature.cpp:792 only loads saved XP)
+0ad-0ad	spawns-encounters	P	STRONG	full	binaries/data/mods/public/maps/random/danubius_triggers.js:236-275 civic-centre waves, 326-351 ship director (refill loop at 330-334 reaches only target minus alive), 381-405 fill; licence GPL-2.0-or-later

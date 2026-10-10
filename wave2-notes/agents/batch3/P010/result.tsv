@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+keldaanCommunity-pokemonAutoChess	spawns-encounters	P	STRONG	full	app/core/mini-game.ts:265-333 and app/config/game/town-encounters.ts:17-81: one weighted encounter roll per town phase per stage, a once-per-run set that spends a repeat roll, phase length and per-player lockouts (stop fallback read only at 832-860).
+azerothcore-azerothcore-wotlk	loot-drops	P	STRONG	full	src/server/game/Loot/LootMgr.cpp:1667-1736 and 1262-1297: independent entries with their own roll, one shared roll per group with cumulative chances and an equal-chance pool for the leftover, per-item caps (59-92), and a group-amount chain that stops at the first miss.
+xu4-engine-u4	ai-aggro	P	STRONG	full	src/creature.cpp:304-465 and 564-601: each round an ordered set of action dice (teleport 1/8, ranged 1/4, sleep 1/4, then flee below 24 hp), nearest-party-member target with a 1/2 tie roll, and melee switched to advance at movement distance above 1.

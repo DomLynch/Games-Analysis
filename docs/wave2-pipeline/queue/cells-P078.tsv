@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+gemrb-gemrb	8	loot-drops	/mnt/frankendom-donors/gemrb-gemrb/demo/override/grndloot.bam	7
+flareteam-flare-game	4	spawns-encounters	/mnt/frankendom-donors/flareteam-flare-game/tiled/empyrean_campaign/fort_amir.tmx	7
+OpenDUNE-OpenDUNE	1	combat-sim	/mnt/frankendom-donors/OpenDUNE-OpenDUNE/src/table/unitinfo.c	7

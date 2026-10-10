@@ -1,0 +1,2 @@
+game	category	old	verdict	depth	finding
+veloren-veloren	spawns-encounters	P	STRONG	full	/mnt/frankendom-donors/veloren-veloren/rtsim/src/rule/architect.rs:55-252 architect_tick: budget, refill, drain, requeue; plus spawn_npc 421-615 and data/architect.rs ledger

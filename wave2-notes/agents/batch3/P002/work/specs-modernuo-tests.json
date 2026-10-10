@@ -1,0 +1,5 @@
+[
+{"note":"ModernUO","claim":"test: an empty scan honours the full reacquire delay (corroboration)","file":"ModernUO/Projects/UOContent.Tests/Tests/Mobiles/AI/AcquisitionTests.cs","quote":"Assert.InRange(bc.NextReacquireTime - Core.TickCount, 5000, 10000);","line":63},
+{"note":"ModernUO","claim":"test: a gate beyond ReacquireDelay reads as open (corroboration)","file":"ModernUO/Projects/UOContent.Tests/Tests/Mobiles/AI/AcquisitionTests.cs","quote":"// Illegal deadline (beyond ReacquireDelay): must read as open, not block forever.","line":80},
+{"note":"ModernUO","claim":"test: approach clamp is to the approach delay, never opened outright (corroboration)","file":"ModernUO/Projects/UOContent.Tests/Tests/Mobiles/AI/AcquisitionTests.cs","quote":"// Clamped to the approach delay (2s), never opened outright.","line":120}
+]

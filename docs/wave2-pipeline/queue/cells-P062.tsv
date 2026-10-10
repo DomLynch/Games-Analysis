@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+CleverRaven-Cataclysm-DDA	14	camera	INFERRED	6
+l1j-en-classic	4	spawns-encounters	/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/command/executor/L1SpawnCmd.java	6
+OpenBW-openbw	2	ai-aggro	/mnt/frankendom-donors/OpenBW-openbw/bwgame.h	6

@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+keldaanCommunity-pokemonAutoChess	4	spawns-encounters	/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/config/game/town-encounters.ts	2
+azerothcore-azerothcore-wotlk	8	loot-drops	/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/e2e/suites/social/loot/loot_e2e_test.go	2
+xu4-engine-u4	2	ai-aggro	/mnt/frankendom-donors/xu4-engine-u4/src/creature.cpp	2

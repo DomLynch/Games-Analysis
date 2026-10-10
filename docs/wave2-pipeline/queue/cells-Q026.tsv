@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+00-Evan-shattered-pixel-dungeon	2	ai-aggro	INFERRED	7
+flareteam-flare-engine	2	ai-aggro	/mnt/frankendom-donors/flareteam-flare-engine/src/EnemyGroupManager.h	7
+EQEmu	2	ai-aggro	INFERRED	7

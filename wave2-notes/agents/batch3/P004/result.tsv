@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+diasurgical-DevilutionX	spawns-encounters	P	STRONG	full	/mnt/frankendom-donors/diasurgical-DevilutionX/Source/monster.cpp:3686-3748 (InitMonsters: open-area budget /30, cap 190, scatter groups) and 308-381 (PlaceGroup: seed retries, rollback, member walk, leash); population set once per level, no respawn.
+veloren-veloren	camera	P	STRONG	full	/mnt/frankendom-donors/veloren-veloren/voxygen/src/scene/camera.rs:375-443 (terrain ray clip, snap-in to collision distance) and 580-638 (eased update, angle wrap), zoom and first-person switch 551-572.
+scummvm-scummvm	spawns-encounters	P	STRONG	full	/mnt/frankendom-donors/scummvm-scummvm/engines/hadesch/rooms/monster/typhoon.cpp:237-291 (head respawn timer, window by level 273-287) and 304-333 (hit, all-heads-down ends fight); volley size and miss odds in projectile.cpp 154-173.

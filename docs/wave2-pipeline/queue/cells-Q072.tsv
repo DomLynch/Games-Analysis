@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+OpenDUNE-OpenDUNE	1	combat-sim	/mnt/frankendom-donors/OpenDUNE-OpenDUNE/src/table/unitinfo.c	7
+ihhub-fheroes2	1	combat-sim	INFERRED	7
+00-Evan-shattered-pixel-dungeon	1	combat-sim	/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/Char.java	8

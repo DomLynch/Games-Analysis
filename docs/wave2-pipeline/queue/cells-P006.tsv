@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+luanti-org-luanti	14	camera	/mnt/frankendom-donors/luanti-org-luanti/builtin/game/features.lua	2
+xoreos-xoreos	10	progression	/mnt/frankendom-donors/xoreos-xoreos/src/engines/nwn/gui/chargen/charskills.cpp	2
+0ad-0ad	4	spawns-encounters	INFERRED	2

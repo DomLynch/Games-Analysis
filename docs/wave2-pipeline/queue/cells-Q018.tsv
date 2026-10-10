@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+OpenEnroth-OpenEnroth	2	ai-aggro	/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/Engine/Objects/ActorEnums.h	4
+dkfans-keeperfx	2	ai-aggro	/mnt/frankendom-donors/dkfans-keeperfx/config/fxdata/lua/bindings/ai.lua	4
+cvet-fonline	2	ai-aggro	INFERRED	4

@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+ioquake-ioq3	14	camera	INFERRED	6
+teeworlds-teeworlds	4	spawns-encounters	/mnt/frankendom-donors/teeworlds-teeworlds/src/game/server/gamecontroller.cpp	6
+id-Software-DOOM	2	ai-aggro	INFERRED	6

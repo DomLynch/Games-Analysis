@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+flutter-team-archive-pinball	2	ai-aggro	/mnt/frankendom-donors/flutter-team-archive-pinball/packages/pinball_flame/lib/src/behaviors/contact_behavior.dart	8
+crashkonijn-GOAP	2	ai-aggro	/mnt/frankendom-donors/crashkonijn-GOAP/Package/Runtime/CrashKonijn.Goap.Runtime/Classes/GoalRequest.cs	8
+Card-Forge-forge	2	ai-aggro	/mnt/frankendom-donors/Card-Forge-forge/forge-ai/src/main/java/forge/ai/AiProps.java	8

@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+lichess-org-lila	10	progression	/mnt/frankendom-donors/lichess-org-lila/modules/rating/src/main/Glicko.scala	4
+OpenDiablo2-OpenDiablo2	10	progression	/mnt/frankendom-donors/OpenDiablo2-OpenDiablo2/d2core/d2records/monster_stats_record.go	5
+daggerfall-unity	10	progression	INFERRED	5

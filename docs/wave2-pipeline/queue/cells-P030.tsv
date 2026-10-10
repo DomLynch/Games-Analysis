@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+l1j-en-classic	1	combat-sim	/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/serverpackets/S_UseAttackSkill.java	4
+STJr-SRB2	14	camera	/mnt/frankendom-donors/STJr-SRB2/src/r_main.c	4
+openmw	14	camera	/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/character.cpp	4

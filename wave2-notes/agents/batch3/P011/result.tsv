@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+keldaanCommunity-pokemonAutoChess	camera	P	STRONG	full	app/public/src/game/scenes/game-scene.ts:217-247 and 1014-1020: wheel zoom clamped 1-2 in 0.1 steps with 400 ms pan to pointer, drag pan divided by zoom, lock key, and shake gated by a default-off preference (preferences.ts 75-76).
+00-Evan-shattered-pixel-dungeon	loot-drops	P	STRONG	full	core/.../actors/mobs/Mob.java:1096-1124 (level gate 1097, base roll 1101, wealth pity 1110-1117) and items/Generator.java:675-730 (weighted deck, restock, seeded per-category stream), items/rings/RingOfWealth.java:111-165 (pity counters); item-tier generators not read.
+angband-angband	combat-sim	P	STRONG	full	src/player-attack.c:717-891 (py_attack_real: hit roll 763, base dice 804, crit 807, fighter to-dam 827, zero floor 841), 196-220 (hit_chance), 399-434 (critical_melee); src/mon-attack.c:497-522 and 540-543 (monster crit tiers, armour soak; helpers only).

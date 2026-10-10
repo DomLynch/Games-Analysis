@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+flareteam-flare-engine	8	loot-drops	/mnt/frankendom-donors/flareteam-flare-engine/src/LootManager.h	2
+Card-Forge-forge	8	loot-drops	INFERRED	2
+OpenRCT2-OpenRCT2	2	ai-aggro	/mnt/frankendom-donors/OpenRCT2-OpenRCT2/src/openrct2/peep/GuestPathfinding.cpp	2

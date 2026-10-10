@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+afritz1-OpenTESArena	4	spawns-encounters	INFERRED	3
+Card-Forge-forge	1	combat-sim	INFERRED	3
+Anuken-Mindustry	2	ai-aggro	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/ai/ControlPathfinder.java	3

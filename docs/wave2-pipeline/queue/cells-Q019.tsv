@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+vcmi-vcmi	2	ai-aggro	/mnt/frankendom-donors/vcmi-vcmi/lib/mapObjects/CGCreature.cpp	5
+KsanaDock-Microverse	2	ai-aggro	INFERRED	5
+scummvm-scummvm	2	ai-aggro	/mnt/frankendom-donors/scummvm-scummvm/engines/bladerunner/actor_combat.cpp	5

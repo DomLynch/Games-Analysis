@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+pmbstyle-L2Solo	4	spawns-encounters	/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Bot/Population/BackgroundResolver.js	6
+ihhub-fheroes2	4	spawns-encounters	/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/campaign/campaign_scenariodata.cpp	6
+NetHack-NetHack	4	spawns-encounters	/mnt/frankendom-donors/NetHack-NetHack/src/vault.c	7

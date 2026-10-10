@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+pokerth-pokerth	2	ai-aggro	/mnt/frankendom-donors/pokerth-pokerth/src/engine/local_engine/aiengine4.h	6
+pmbstyle-L2Solo	10	progression	/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/ClassProgression.js	7
+flareteam-flare-game	8	loot-drops	/mnt/frankendom-donors/flareteam-flare-game/art_src/loot/loot_maul.blend	7

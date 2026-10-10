@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+Dawn-of-Light-DOLSharp	1	combat-sim	INFERRED	5
+OpenBW-openbw	5	server-tick-netcode	/mnt/frankendom-donors/OpenBW-openbw/sync.h	5
+pmbstyle-L2Solo	5	server-tick-netcode	/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Network/Response/UserInfo.js	5

@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+CombatPathingRevolution	14	camera	INFERRED	8
+TurningWheel-Barony	14	camera	/mnt/frankendom-donors/TurningWheel-Barony/src/actplayer.cpp	8
+jynew-jynew	14	camera	/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Prefabs/GameViewport/GameViewport_FollowCamera.prefab	8

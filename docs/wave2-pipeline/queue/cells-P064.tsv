@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+exult-exult	8	loot-drops	/mnt/frankendom-donors/exult-exult/content/sifixes/src/misc/exchanged_item_list.uc	6
+alexbatalov-fallout2-ce	2	ai-aggro	INFERRED	6
+pmbstyle-L2Solo	4	spawns-encounters	/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Bot/Population/BackgroundResolver.js	6

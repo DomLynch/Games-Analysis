@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+exult-exult	14	camera	INFERRED	7
+daggerfall-unity	14	camera	/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/NoFogCamera.cs	8
+OpenDiablo2-OpenDiablo2	14	camera	/mnt/frankendom-donors/OpenDiablo2-OpenDiablo2/d2game/d2gamescreen/game.go	8

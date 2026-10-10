@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+cuteshaun-lineage2-api	10	progression	/mnt/frankendom-donors/cuteshaun-lineage2-api/src/lib/api/dto/skill.ts	8
+evennia-evennia	4	spawns-encounters	/mnt/frankendom-donors/evennia-evennia/evennia/prototypes/spawner.py	8
+jynew-jynew	14	camera	/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Prefabs/GameViewport/GameViewport_FollowCamera.prefab	8

@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+geckosio-geckos.io	5	server-tick-netcode	/mnt/frankendom-donors/geckosio-geckos.io/test/e2e/server.test.js	3
+openmw	4	spawns-encounters	/mnt/frankendom-donors/openmw/apps/openmw/mwworld/scene.cpp	3
+ValveSoftware-halflife	14	camera	/mnt/frankendom-donors/ValveSoftware-halflife/cl_dll/camera.h	3

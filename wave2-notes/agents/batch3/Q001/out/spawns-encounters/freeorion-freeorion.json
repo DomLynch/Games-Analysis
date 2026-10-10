@@ -1,0 +1,59 @@
+{
+ "game": "freeorion-freeorion",
+ "category": "spawns-encounters",
+ "cell": 4,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/freeorion-freeorion/default/python/universe_generation/monsters.py",
+ "licence": "GPL-2.0 for code; game content scripts dual GPL-2.0 and CC-BY-SA-3.0 (default/COPYING; README.md 145-151); default/python not stated either way",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "director",
+  "population-cap",
+  "presence-gated"
+ ],
+ "data_fields": [
+  {
+   "name": "plan_weight",
+   "donor_constant": "0.5 krill; 0.7 floater; 0.8 kraken",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/freeorion-freeorion/default/scripting/monster_fleets.inf:6"
+  },
+  {
+   "name": "spawn_cap",
+   "donor_constant": "9999 krill; 50 floater; 100 kraken",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/freeorion-freeorion/default/scripting/monster_fleets.inf:7"
+  },
+  {
+   "name": "zone_frequency_base_chance",
+   "donor_constant": "table: none 0.0; extremelyLow 0.002; veryLow 0.01; low 0.03; medium 0.08; high 0.2; veryHigh 0.5; extremelyHigh 0.999",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/freeorion-freeorion/default/python/universe_generation/universe_tables.py:121"
+  },
+  {
+   "name": "min_jumps_from_owned_planets",
+   "donor_constant": "max(2, MIN_MONSTER_DISTANCE) krill; max(3, ...) drone factory; max(4, ...) dragon; MIN_MONSTER_DISTANCE = rule default 3 minus 1",
+   "unit": "jumps",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/freeorion-freeorion/default/scripting/monster_fleets.inf:10"
+  },
+  {
+   "name": "turn_spawn_density_per_system",
+   "donor_constant": "0.01 (roll = systems x freq x 0.01, one roll per turn, unclamped)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/freeorion-freeorion/default/python/turn_events/turn_events.py:39"
+  }
+ ],
+ "best_idea": "Give each spawn plan a counter set to its zone cap, check it before the roll and decrement it on each placed spawn, so the cap holds however many spawn points there are.",
+ "decision": "adapt",
+ "decision_why": "Take the roll x per-plan cap x eligibility pass for zone population (row 23), but add respawn and despawn-on-empty with a grace timer, which this donor lacks, and keep the cap on the server ledger; do not copy the turn-pass trickle, which has no cap.",
+ "decision_status": "proposed",
+ "acceptance": "A server test seeds a zone with a Krill cap of 2 and 200 eligible points; after 500 director passes exactly 2 Krill are alive, and no spawn is placed within the minimum jump distance of a player-held point."
+}

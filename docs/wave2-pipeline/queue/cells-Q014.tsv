@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+endless-sky-endless-sky	2	ai-aggro	/mnt/frankendom-donors/endless-sky-endless-sky/source/NPC.cpp	2
+Anuken-Mindustry	2	ai-aggro	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/ai/ControlPathfinder.java	3
+evennia-evennia	2	ai-aggro	/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/tests/test_ai.py	3

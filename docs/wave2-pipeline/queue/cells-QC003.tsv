@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+STJr-SRB2	14	camera	/mnt/frankendom-donors/STJr-SRB2/src/r_main.c	4
+openmw	14	camera	/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/character.cpp	4
+KsanaDock-Microverse	14	camera	/mnt/frankendom-donors/KsanaDock-Microverse/script/CameraController.gd	4

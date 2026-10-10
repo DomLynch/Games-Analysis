@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+SCAR	1	combat-sim	/mnt/frankendom-donors/SCAR/Nemesis_Engine/mod/scar/1hm_behavior/#0085.txt	5
+vcmi-vcmi	2	ai-aggro	/mnt/frankendom-donors/vcmi-vcmi/lib/mapObjects/CGCreature.cpp	5
+veloren-veloren	4	spawns-encounters	/mnt/frankendom-donors/veloren-veloren/server/src/events/entity_manipulation.rs	5

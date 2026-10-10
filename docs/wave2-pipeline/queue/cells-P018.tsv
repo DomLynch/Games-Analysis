@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+evennia-evennia	2	ai-aggro	/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/tests/test_ai.py	3
+veloren-veloren	5	server-tick-netcode	/mnt/frankendom-donors/veloren-veloren/client/src/lib.rs	3
+ModernUO	8	loot-drops	/mnt/frankendom-donors/ModernUO/Projects/UOContent/Items/Armor/Artifacts/InquisitorsResolution.cs	3

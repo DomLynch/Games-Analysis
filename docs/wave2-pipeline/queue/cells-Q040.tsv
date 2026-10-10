@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+Blizzard-s2client-api	5	server-tick-netcode	/mnt/frankendom-donors/Blizzard-s2client-api/src/sc2api/sc2_connection.cc	8
+colyseus-colyseus	5	server-tick-netcode	/mnt/frankendom-donors/colyseus-colyseus/packages/sdk/src/input/InputHandle.ts	8
+rathena-rathena	5	server-tick-netcode	INFERRED	8

@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+rathena-rathena	5	server-tick-netcode	INFERRED	8
+azerothcore-azerothcore-wotlk	1	combat-sim	/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/e2e/suites/spells/effects/effects_e2e_test.go	8
+open-duelyst-duelyst	5	server-tick-netcode	/mnt/frankendom-donors/open-duelyst-duelyst/worker/creategame.coffee	8

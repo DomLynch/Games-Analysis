@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+evennia-evennia	10	progression	INFERRED	2
+alexbatalov-fallout1-ce	8	loot-drops	/mnt/frankendom-donors/alexbatalov-fallout1-ce/src/game/inventry.h	2
+exult-exult	2	ai-aggro	/mnt/frankendom-donors/exult-exult/actors.cc	2

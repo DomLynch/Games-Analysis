@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+freeorion-freeorion	10	progression	/mnt/frankendom-donors/freeorion-freeorion/test-scripting/focs/_empire_statistics.py	7
+amilich-isometric-city	14	camera	/mnt/frankendom-donors/amilich-isometric-city/src/components/game/CanvasIsometricGrid.tsx	7
+EQEmu	2	ai-aggro	INFERRED	7

@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+opentibiabr-otclient	5	server-tick-netcode	/mnt/frankendom-donors/opentibiabr-otclient/src/client/protocolgameparse.cpp	7
+keldaanCommunity-pokemonAutoChess	5	server-tick-netcode	/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/config/server/rules.ts	7
+teeworlds-teeworlds	5	server-tick-netcode	INFERRED	7

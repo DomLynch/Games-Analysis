@@ -1,0 +1,88 @@
+{
+ "game": "electronicarts-CnC_Remastered_Collection",
+ "category": "spawns-encounters",
+ "cell": 4,
+ "verdict": "STRONG",
+ "depth": "thin",
+ "donor_path": "/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/TIBERIANDAWN/TEAMTYPE.CPP",
+ "licence": "GPL v3 (or any later version per the file header) with Electronic Arts' additional terms under GPL section 7, per repo LICENSE.md",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "director",
+  "population-cap",
+  "new:alert-batch",
+  "new:difficulty-interval"
+ ],
+ "data_fields": [
+  {
+   "name": "respawn_pulse",
+   "donor_constant": "TEAM_DELAY = TICKS_PER_MINUTE/10 = 90 ticks",
+   "unit": "ticks",
+   "where": "zone data",
+   "donor_ref": "HOUSE.H:696"
+  },
+  {
+   "name": "group_cap",
+   "donor_constant": "MaxAllowed per team type; default 0",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "TEAMTYPE.CPP:939"
+  },
+  {
+   "name": "group_priority",
+   "donor_constant": "RecruitPriority; RecruitPriority/2 when no needed type is available",
+   "unit": "none",
+   "where": "zone data",
+   "donor_ref": "TEAMTYPE.CPP:964"
+  },
+  {
+   "name": "alert_batch_max",
+   "donor_constant": "Random_Pick(2, (BuildLevel-1)/3+1)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "HOUSE.CPP:1006"
+  },
+  {
+   "name": "alert_interval_hard",
+   "donor_constant": "TICKS_PER_MINUTE * Random_Pick(4, 10)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "HOUSE.CPP:1016"
+  },
+  {
+   "name": "alert_interval_easy",
+   "donor_constant": "TICKS_PER_MINUTE * Random_Pick(16, 40)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "HOUSE.CPP:1019"
+  },
+  {
+   "name": "alert_interval_normal",
+   "donor_constant": "TICKS_PER_MINUTE * Random_Pick(5, 20)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "HOUSE.CPP:1021"
+  },
+  {
+   "name": "tick_rate",
+   "donor_constant": "TICKS_PER_SECOND = 15",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "DEFINES.H:2146"
+  },
+  {
+   "name": "reform_threshold",
+   "donor_constant": "reinforcable group under strength when Total <= desired/3",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "TEAM.CPP:326"
+  }
+ ],
+ "best_idea": "A spawn director that adds at most one group per timer pulse, counts live groups per type against a cap, and lets a second, alert-only group type spawn in batches only after the zone is alerted.",
+ "decision": "adapt",
+ "decision_why": "The one-per-pulse timer, the per-type live cap and the alert gate map onto row 23 zone population, but the donor's unit-mix scoring, its RNG batch and its keep-empty-unstarted-groups rule do not fit our one ledger, so only the shape is taken.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: a group def with cap 3 and a 90-tick pulse keeps its live count at or below 3 over 10 simulated minutes, respawns exactly one group per pulse after 3 kills, and an alert-only def spawns only after the zone is alerted."
+}

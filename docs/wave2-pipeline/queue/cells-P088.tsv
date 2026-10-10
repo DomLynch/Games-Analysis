@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+Blizzard-s2client-api	5	server-tick-netcode	/mnt/frankendom-donors/Blizzard-s2client-api/src/sc2api/sc2_connection.cc	8
+lincity-ng-lincity-ng	4	spawns-encounters	/mnt/frankendom-donors/lincity-ng-lincity-ng/src/lincity/modules/fire.cpp	8
+CleverRaven-Cataclysm-DDA	2	ai-aggro	INFERRED	8

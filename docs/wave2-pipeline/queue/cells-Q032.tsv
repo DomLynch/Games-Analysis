@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+geckosio-geckos.io	5	server-tick-netcode	/mnt/frankendom-donors/geckosio-geckos.io/test/e2e/server.test.js	3
+STJr-SRB2	5	server-tick-netcode	/mnt/frankendom-donors/STJr-SRB2/src/r_fps.c	3
+freeciv-freeciv	5	server-tick-netcode	INFERRED	3

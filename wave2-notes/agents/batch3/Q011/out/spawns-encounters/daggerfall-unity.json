@@ -1,0 +1,152 @@
+{
+ "game": "daggerfall-unity",
+ "category": "spawns-encounters",
+ "cell": 4,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs",
+ "licence": "MIT (LICENSE line 3; FoeSpawner.cs line 4)",
+ "licence_class": "permissive",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "director",
+  "presence-gated",
+  "timer-wheel",
+  "accumulator",
+  "per-player-view"
+ ],
+ "data_fields": [
+  {
+   "name": "window_period",
+   "donor_constant": "144 game minutes (window opens when ((Minutes / 12) % 12) == 0)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs:559"
+  },
+  {
+   "name": "window_length",
+   "donor_constant": "12 game minutes; each minute is one roll",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs:559"
+  },
+  {
+   "name": "location_night_one_in",
+   "donor_constant": "24 (Random.Range(0, 24) == 0)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:1771"
+  },
+  {
+   "name": "wilderness_day_one_in",
+   "donor_constant": "36 (Random.Range(0, 36) != 0 returns no spawn)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:1784"
+  },
+  {
+   "name": "wilderness_night_one_in",
+   "donor_constant": "24 (Random.Range(0, 24) == 0)",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:1797"
+  },
+  {
+   "name": "dungeon_alert_one_in",
+   "donor_constant": "36, only while resting and enemy alert active",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Formulas/FormulaHelper.cs:1810"
+  },
+  {
+   "name": "min_distance_location",
+   "donor_constant": "10",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs:551"
+  },
+  {
+   "name": "min_distance_wilderness",
+   "donor_constant": "10",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs:552"
+  },
+  {
+   "name": "min_distance_dungeon",
+   "donor_constant": "8",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs:550"
+  },
+  {
+   "name": "max_distance",
+   "donor_constant": "20 (default in the spawner; every call site uses it)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Utility/FoeSpawner.cs:37"
+  },
+  {
+   "name": "spawn_count_per_pass",
+   "donor_constant": "1 (every call site passes 1)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs:574"
+  },
+  {
+   "name": "placement_separation",
+   "donor_constant": "1.25",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Utility/FoeSpawner.cs:122"
+  },
+  {
+   "name": "placement_floor_distance",
+   "donor_constant": "4 (max floor ray length)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Utility/FoeSpawner.cs:123"
+  },
+  {
+   "name": "placement_clearance_sphere",
+   "donor_constant": "0.65 (overlap sphere radius)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Utility/FoeSpawner.cs:121"
+  },
+  {
+   "name": "view_edge_jitter",
+   "donor_constant": "0 to 4 degrees added to the field of view",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Utility/FoeSpawner.cs:146"
+  },
+  {
+   "name": "foe_level_window",
+   "donor_constant": "level-3 to level+3; roll 81-95 gives 0 to level+1; roll 96-100 gives 0 to level+2 (0-19 above level 5)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Utility/RandomEncounters.cs:1500"
+  },
+  {
+   "name": "alert_decay",
+   "donor_constant": "8 * DaggerfallDateTime.MinutesPerHour game minutes (constant value not read)",
+   "unit": "ticks",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Entities/PlayerEntity.cs:382"
+  },
+  {
+   "name": "rest_block_radius",
+   "donor_constant": "1024 * MeshReader.GlobalScale",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/GameManager.cs:686"
+  }
+ ],
+ "best_idea": "A zone spawn rate as a per-zone-kind 1-in-N roll on each clock step, inside a fixed 12-of-144 window, gated by presence (outdoor, dungeon while resting and alerted), with a server-side rule and no per-frame randomness.",
+ "decision": "adapt",
+ "decision_why": "The window shape and per-zone odds fit zones as data, but the donor has no population cap and its per-frame catch-up drops rolls after a spawn, so we take the window and odds and rebuild the cap and the step on the fixed server tick.",
+ "decision_status": "proposed",
+ "acceptance": "Server test with a seeded RNG and a night rule of 1 in 24: advance a zone clock 1440 steps one minute at a time; every spawn falls inside a 12-minute window of a 144-minute period, no two spawns share a minute, and the live spawn count never exceeds the zone cap (row 23)."
+}

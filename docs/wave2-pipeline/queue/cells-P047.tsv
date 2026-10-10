@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+freeciv-freeciv	4	spawns-encounters	/mnt/frankendom-donors/freeciv-freeciv/data/nation/animals.ruleset	5
+wesnoth-wesnoth	1	combat-sim	/mnt/frankendom-donors/wesnoth-wesnoth/data/core/units/orcs/Warrior.cfg	5
+KsanaDock-Microverse	2	ai-aggro	INFERRED	5

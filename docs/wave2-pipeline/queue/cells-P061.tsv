@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+alexbatalov-fallout1-ce	2	ai-aggro	INFERRED	6
+scummvm-scummvm	1	combat-sim	/mnt/frankendom-donors/scummvm-scummvm/engines/dm/champion.cpp	6
+MovingBlocks-Terasology	4	spawns-encounters	/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/rendering/nui/layers/ingame/DeathScreen.java	6

@@ -1,0 +1,102 @@
+{
+ "game": "EQEmu",
+ "category": "spawns-encounters",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/EQEmu/zone/spawn2.cpp",
+ "licence": "GPL-3.0-or-later (as read: spawn2.cpp header 'either version 3 of the License, or'; LICENSE.md is GPL v3)",
+ "licence_class": "copyleft",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "population-cap",
+  "grace-timer",
+  "fixed-step",
+  "new:persisted-respawn"
+ ],
+ "data_fields": [
+  {
+   "name": "respawn_s",
+   "donor_constant": "spawn2 respawntime, seconds (converted x1000)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "zone/spawn2.cpp:120"
+  },
+  {
+   "name": "variance_s",
+   "donor_constant": "spawn2 variance, rolled +/- variance/2",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "zone/spawn2.cpp:124"
+  },
+  {
+   "name": "respawn_floor_ms",
+   "donor_constant": "100",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "zone/spawn2.cpp:127"
+  },
+  {
+   "name": "despawn_s",
+   "donor_constant": "spawngroup despawn_timer, seconds (default 100)",
+   "unit": "s",
+   "where": "zone data",
+   "donor_ref": "common/repositories/base/base_spawngroup_repository.h:145"
+  },
+  {
+   "name": "group_cap",
+   "donor_constant": "spawngroup group_spawn_limit (count of live NPCs in group)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "zone/spawngroup.cpp:76"
+  },
+  {
+   "name": "type_cap",
+   "donor_constant": "npc_types spawn_limit (count of live NPCs of that type in zone)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "zone/spawngroup.cpp:84"
+  },
+  {
+   "name": "entry_chance",
+   "donor_constant": "integer weight per spawn entry",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "zone/spawngroup.cpp:98"
+  },
+  {
+   "name": "hour_window",
+   "donor_constant": "min_time/max_time hour of day, 0-24",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "zone/spawngroup.cpp:88"
+  },
+  {
+   "name": "zone_pass_ms",
+   "donor_constant": "1000",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "zone/zone.cpp:956"
+  },
+  {
+   "name": "type_limit_retry_ms",
+   "donor_constant": "5000 (retry when a unique or type cap blocks a spawn; not in sketch)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "zone/spawn2.cpp:242"
+  },
+  {
+   "name": "default_despawn_timer_ms",
+   "donor_constant": "100000 (used when the despawn mode is not 1-4)",
+   "unit": "ms",
+   "where": "engine constant",
+   "donor_ref": "zone/spawn2.cpp:435"
+  }
+ ],
+ "best_idea": "A spawn point owns one timer: a respawn after death with a jittered delay, group and type caps checked at roll time, and a despawn timer that removes only an unengaged NPC and never a fight in progress.",
+ "decision": "adapt",
+ "decision_why": "Row 23 needs exactly this shape (caps, respawn, grace despawn as zone data). Adapt because the donor's engaged path can leave two live NPCs at one point, its cadence is a separate 1 s pass not our fixed-step server tick, and 'engaged' is only a non-empty hate list; keep one NPC per point and drive the pass from the server tick.",
+ "decision_status": "proposed",
+ "acceptance": "Server test: one point with respawn 60 s and variance 10 s; after its NPC dies a new NPC appears between 55 s and 65 s later; an engaged NPC past the despawn timer is still in the world and no second NPC appears at that point."
+}

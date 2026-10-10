@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+cvet-fonline	5	server-tick-netcode	INFERRED	4
+TurningWheel-Barony	5	server-tick-netcode	/mnt/frankendom-donors/TurningWheel-Barony/src/net.cpp	4
+dkfans-keeperfx	5	server-tick-netcode	/mnt/frankendom-donors/dkfans-keeperfx/tests/tst_enet_server.cpp	4

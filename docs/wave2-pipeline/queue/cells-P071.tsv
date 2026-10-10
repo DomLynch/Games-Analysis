@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+ax-grymyr-l2dn-server	1	combat-sim	INFERRED	7
+OpenDAoC-OpenDAoC-Core	10	progression	/mnt/frankendom-donors/OpenDAoC-OpenDAoC-Core/GameServer/gameobjects/CharacterClasses/ICharacterClass.cs	7
+NetHack-NetHack	4	spawns-encounters	/mnt/frankendom-donors/NetHack-NetHack/src/vault.c	7

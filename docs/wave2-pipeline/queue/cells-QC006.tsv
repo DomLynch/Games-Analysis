@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+supertuxkart-stk-code	14	camera	/mnt/frankendom-donors/supertuxkart-stk-code/src/graphics/camera/camera_debug.cpp	5
+clockworklabs-SpacetimeDB	14	camera	/mnt/frankendom-donors/clockworklabs-SpacetimeDB/demo/Blackholio/client-godot/GameManager.cs	6
+CleverRaven-Cataclysm-DDA	14	camera	INFERRED	6

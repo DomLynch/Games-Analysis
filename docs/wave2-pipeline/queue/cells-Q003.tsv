@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+electronicarts-CnC_Remastered_Collection	4	spawns-encounters	INFERRED	4
+crashkonijn-GOAP	4	spawns-encounters	/mnt/frankendom-donors/crashkonijn-GOAP/Demo/Assets/CrashKonijn/GOAP/Demos/Complex/Behaviours/AgentSpawnBehaviour.cs	4
+ValveSoftware-halflife	4	spawns-encounters	/mnt/frankendom-donors/ValveSoftware-halflife/cl_dll/hl/hl_baseentity.cpp	4

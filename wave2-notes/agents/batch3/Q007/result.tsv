@@ -1,0 +1,2 @@
+game	category	old	verdict	depth	finding
+dkfans-keeperfx	spawns-encounters	P	STRONG	full	src/room_entrance.c:382-417 (process_entrance_generation, per-turn director) with 92-120, 197-308, 328-380 and src/game_update.cpp:276; interval src/player_utils.c:498

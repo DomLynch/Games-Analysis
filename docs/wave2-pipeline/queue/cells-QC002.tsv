@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+afritz1-OpenTESArena	14	camera	/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/World/ArenaMeshUtils.cpp	3
+ValveSoftware-halflife	14	camera	/mnt/frankendom-donors/ValveSoftware-halflife/cl_dll/camera.h	3
+gawric-Unity-Client-for-L2J	14	camera	INFERRED	3

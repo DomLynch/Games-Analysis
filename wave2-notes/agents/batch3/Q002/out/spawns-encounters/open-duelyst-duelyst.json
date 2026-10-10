@@ -1,0 +1,51 @@
+{
+ "game": "open-duelyst-duelyst",
+ "category": "spawns-encounters",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/open-duelyst-duelyst/app/sdk/playerModifiers/playerModifierEndTurnRespawnEntityAnywhere.coffee",
+ "licence": "CC0-1.0 (LICENSE: CC0 1.0 Universal; package.json license field CC0-1.0)",
+ "licence_class": "permissive",
+ "target_module": "origins/server/world-spawns.ts",
+ "parity_row": 23,
+ "pattern_tags": [
+  "respawn-queue",
+  "new:free-tile-pick"
+ ],
+ "data_fields": [
+  {
+   "name": "respawn_wait",
+   "donor_constant": "durationEndTurn: 1 (one boundary)",
+   "unit": "count",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/open-duelyst-duelyst/app/sdk/playerModifiers/playerModifierEndTurnRespawnEntityAnywhere.coffee:12"
+  },
+  {
+   "name": "respawn_count_per_death",
+   "donor_constant": "1 (one random pick)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/open-duelyst-duelyst/app/sdk/playerModifiers/playerModifierEndTurnRespawnEntityAnywhere.coffee:27"
+  },
+  {
+   "name": "respawn_tile_pattern",
+   "donor_constant": "whole board: offsets from -BOARDCOL..BOARDCOL-1 by -BOARDROW..BOARDROW-1, origin (0,0)",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/open-duelyst-duelyst/app/common/config.js:1108"
+  },
+  {
+   "name": "no_free_tile_retry",
+   "donor_constant": "none: respawn dropped silently when no tile is free",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/open-duelyst-duelyst/app/sdk/playerModifiers/playerModifierEndTurnRespawnEntityAnywhere.coffee:26"
+  }
+ ],
+ "best_idea": "Queue a dead unit's respawn before its death is applied, then on the next boundary pick one free tile from a coverage pattern and spawn it there, never dropping it silently.",
+ "decision": "adapt",
+ "decision_why": "The free-tile pick inside a zone's coverage fits row 23 respawn, but the end-turn trigger does not fit real time and the server must draw the tile itself (donor uses Math.random and only flags the action).",
+ "decision_status": "proposed",
+ "acceptance": "When a zone creature dies with respawn set to N seconds, a creature of that kind appears on a free tile inside the zone coverage within N seconds, chosen on the server; a server test asserts the tile is free and inside coverage, and that a full zone retries rather than dropping the respawn."
+}

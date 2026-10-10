@@ -1,0 +1,2 @@
+game	category	old	verdict	depth	finding
+MovingBlocks-Terasology	spawns-encounters	P	STRONG	full	/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/logic/players/PlayerSystem.java:70-96,205-255 - respawn queue held until chunk ready, widened view while waiting; no encounter director in this checkout (modules/ empty)

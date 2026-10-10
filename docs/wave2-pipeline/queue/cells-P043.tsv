@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+DCurrent-openbor	1	combat-sim	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	5
+Anuken-Mindustry	8	loot-drops	INFERRED	5
+OpenRA-OpenRA	4	spawns-encounters	/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Mods.Common/Traits/SpawnActorOnDeath.cs	5

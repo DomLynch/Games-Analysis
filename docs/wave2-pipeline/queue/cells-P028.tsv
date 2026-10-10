@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+CombatPathingRevolution	2	ai-aggro	/mnt/frankendom-donors/CombatPathingRevolution/src/RE/CombatBehaviorTreeControl.h	3
+luanti-org-luanti	4	spawns-encounters	/mnt/frankendom-donors/luanti-org-luanti/builtin/game/static_spawn.lua	3
+dkfans-keeperfx	1	combat-sim	/mnt/frankendom-donors/dkfans-keeperfx/src/creature_states.h	3

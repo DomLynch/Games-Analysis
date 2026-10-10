@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+flutter-team-archive-pinball	10	progression	/mnt/frankendom-donors/flutter-team-archive-pinball/packages/pinball_components/test/src/components/skill_shot/skill_shot_test.dart	7
+opentibiabr-otclient	5	server-tick-netcode	/mnt/frankendom-donors/opentibiabr-otclient/src/client/protocolgameparse.cpp	7
+flareteam-flare-engine	10	progression	INFERRED	7

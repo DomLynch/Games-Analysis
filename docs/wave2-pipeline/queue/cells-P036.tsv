@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+cvet-fonline	5	server-tick-netcode	INFERRED	4
+alexbatalov-fallout2-ce	8	loot-drops	INFERRED	4
+graememcc-micropolisJS	2	ai-aggro	/mnt/frankendom-donors/graememcc-micropolisJS/src/trainSprite.js	4

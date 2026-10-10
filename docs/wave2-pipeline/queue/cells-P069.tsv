@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+id-Software-Quake	8	loot-drops	/mnt/frankendom-donors/id-Software-Quake/qw-qc/items.qc	6
+alexbatalov-fallout2-ce	14	camera	INFERRED	6
+ax-grymyr-l2dn-server	8	loot-drops	/mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/L2Dn.GameServer.Scripts/Handlers/EffectHandlers/Sweeper.cs	6

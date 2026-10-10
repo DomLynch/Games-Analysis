@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+DCurrent-openbor	2	ai-aggro	INFERRED	3
+Anuken-Mindustry	10	progression	/mnt/frankendom-donors/Anuken-Mindustry/core/src/mindustry/content/ErekirTechTree.java	3
+evennia-evennia	8	loot-drops	/mnt/frankendom-donors/evennia-evennia/evennia/contrib/game_systems/turnbattle/tb_items.py	3

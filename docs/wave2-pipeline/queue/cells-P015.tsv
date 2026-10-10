@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+levy-street-world-of-claudecraft	5	server-tick-netcode	/mnt/frankendom-donors/levy-street-world-of-claudecraft/server/tick_rate_meter.ts	3
+beyond-all-reason-Beyond-All-Reason	8	loot-drops	/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason/effects/lootboxes/lootbox-trail.lua	3
+EQEmu	8	loot-drops	/mnt/frankendom-donors/EQEmu/shared_memory/items.cpp	3

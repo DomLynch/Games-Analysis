@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+EQEmu	4	spawns-encounters	/mnt/frankendom-donors/EQEmu/utils/sql/svn/979_unique_spawn_by_name.sql	5
+flareteam-flare-engine	1	combat-sim	/mnt/frankendom-donors/flareteam-flare-engine/src/CombatText.cpp	5
+jynew-jynew	1	combat-sim	/mnt/frankendom-donors/jynew-jynew/jyx2/Assets/Prefabs/Jyx2/AttackInfoText.prefab	5

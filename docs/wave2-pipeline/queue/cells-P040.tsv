@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+open-duelyst-duelyst	10	progression	/mnt/frankendom-donors/open-duelyst-duelyst/app/view/layers/postgame/RiftProgressLayer.js	4
+OpenDiablo2-OpenDiablo2	8	loot-drops	/mnt/frankendom-donors/OpenDiablo2-OpenDiablo2/d2core/d2records/set_item_loader.go	4
+hedgewars-hw	4	spawns-encounters	/mnt/frankendom-donors/hedgewars-hw/share/hedgewars/Data/Missions/Campaign/A_Space_Adventure/desert01.lua	4

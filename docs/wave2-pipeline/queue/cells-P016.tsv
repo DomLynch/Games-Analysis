@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+alexbatalov-fallout1-ce	10	progression	INFERRED	3
+afritz1-OpenTESArena	14	camera	/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/World/ArenaMeshUtils.cpp	3
+EQEmu	5	server-tick-netcode	/mnt/frankendom-donors/EQEmu/eqlaunch/worldserver.cpp	3

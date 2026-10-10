@@ -1,0 +1,252 @@
+[
+{
+"note": "ModernUO",
+"claim": "AcquireFocusMob entry point",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/BaseAI.cs",
+"quote": "public virtual bool AcquireFocusMob(int iRange, FightMode acqType"
+},
+{
+"note": "ModernUO",
+"claim": "FightMode None short-circuit clears focus",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/BaseAI.cs",
+"quote": "if (acqType == FightMode.None)"
+},
+{
+"note": "ModernUO",
+"claim": "aggressor short-circuit runs before the gate",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/BaseAI.cs",
+"quote": "if (HandleAggressor(acqType))"
+},
+{
+"note": "ModernUO",
+"claim": "gate remaining time computed from NextReacquireTime",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/BaseAI.cs",
+"quote": "var gateRemaining = Mobile.NextReacquireTime - Core.TickCount;"
+},
+{
+"note": "ModernUO",
+"claim": "gate blocks a scan only when remaining is within ReacquireDelay",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/BaseAI.cs",
+"quote": "if (gateRemaining > 0 && gateRemaining <= reacquireDelay)"
+},
+{
+"note": "ModernUO",
+"claim": "scan delegated to AcquireNewFocusMob",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/BaseAI.cs",
+"quote": "var acquired = AcquireNewFocusMob(Mobile.Map, iRange, acqType"
+},
+{
+"note": "ModernUO",
+"claim": "gate re-armed to full ReacquireDelay after every scan",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/BaseAI.cs",
+"quote": "Mobile.NextReacquireTime = Core.TickCount + reacquireDelay;"
+},
+{
+"note": "ModernUO",
+"claim": "Aggressor mode with no aggressor or allegiance: no scan",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/BaseAI.cs",
+"quote": "if (acqType != FightMode.Aggressor ||"
+},
+{
+"note": "ModernUO",
+"claim": "candidate ranking by GetFightModeRanking",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/BaseAI.cs",
+"quote": "var theirVal = Mobile.GetFightModeRanking(m, acqType, bPlayerOnly);"
+},
+{
+"note": "ModernUO",
+"claim": "best candidate needs strictly higher value and line of sight",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/BaseAI.cs",
+"quote": "if (theirVal > val && Mobile.InLOS(m))"
+},
+{
+"note": "ModernUO",
+"claim": "focus is the best normal candidate, else an enemy summon, else the summon master",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/BaseAI.cs",
+"quote": "Mobile.FocusMob = newFocusMob ?? enemySummonMob ?? summonMaster;"
+},
+{
+"note": "ModernUO",
+"claim": "candidate filter rejects familiars, blessed, dead, staff",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/BaseAI.cs",
+"quote": "m.Deleted || m.Blessed || m == Mobile || m is BaseFamiliar"
+},
+{
+"note": "ModernUO",
+"claim": "Aggressor and Evil modes filter candidates by hostility",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/BaseAI.cs",
+"quote": "if (acqType is not (FightMode.Aggressor or FightMode.Evil))"
+},
+{
+"note": "ModernUO",
+"claim": "Evil mode keeps only targets with negative karma",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/BaseAI.cs",
+"quote": "return !valid && (acqType != FightMode.Evil"
+},
+{
+"note": "ModernUO",
+"claim": "retaliation policy entry point",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/BaseAI.cs",
+"quote": "public virtual bool OnAggressiveAction(Mobile aggressor)"
+},
+{
+"note": "ModernUO",
+"claim": "an attacker becomes combatant only when none is set",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/BaseAI.cs",
+"quote": "else if (Mobile.Combatant == null && !Mobile.BardPacified)"
+},
+{
+"note": "ModernUO",
+"claim": "closer visible aggressor takes over",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/BaseAI.cs",
+"quote": "protected void PreferCloserAggressor(Mobile aggressor)"
+},
+{
+"note": "ModernUO",
+"claim": "default ReacquireDelay is 10 seconds",
+"file": "ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs",
+"quote": "public virtual TimeSpan ReacquireDelay => TimeSpan.FromSeconds(10.0);"
+},
+{
+"note": "ModernUO",
+"claim": "default RangePerception is 16",
+"file": "ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs",
+"quote": "public const int DefaultRangePerception = 16;"
+},
+{
+"note": "ModernUO",
+"claim": "approach delay 2 s, zero for paragons",
+"file": "ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs",
+"quote": "public virtual TimeSpan AcquireOnApproachDelay => _isParagon ? TimeSpan.Zero"
+},
+{
+"note": "ModernUO",
+"claim": "approach range 10 tiles",
+"file": "ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs",
+"quote": "public virtual int AcquireOnApproachRange => 10;"
+},
+{
+"note": "ModernUO",
+"claim": "chase leash is twice RangePerception",
+"file": "ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs",
+"quote": "public virtual int ChaseLeashRange => RangePerception * 2;"
+},
+{
+"note": "ModernUO",
+"claim": "approach scheduling clamps the gate and never extends it",
+"file": "ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs",
+"quote": "if (deadline - NextReacquireTime < 0)"
+},
+{
+"note": "ModernUO",
+"claim": "approach trigger conditions",
+"file": "ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs",
+"quote": "FightMode != FightMode.None && FightMode != FightMode.Aggressor &&"
+},
+{
+"note": "ModernUO",
+"claim": "enemy movement inside approach range schedules a scan",
+"file": "ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs",
+"quote": "if (ShouldAcquireOnApproach(m))"
+},
+{
+"note": "ModernUO",
+"claim": "ForceReacquire sets gate to now",
+"file": "ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs",
+"quote": "public virtual void ForceReacquire()"
+},
+{
+"note": "ModernUO",
+"claim": "being attacked forces an immediate reacquire",
+"file": "ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs",
+"quote": "ForceReacquire();",
+"line": 2798
+},
+{
+"note": "ModernUO",
+"claim": "ranking function signature",
+"file": "ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs",
+"quote": "public virtual double GetFightModeRanking(Mobile m, FightMode acqType, bool bPlayerOnly)"
+},
+{
+"note": "ModernUO",
+"claim": "Strongest score is tactics plus strength",
+"file": "ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs",
+"quote": "FightMode.Strongest => m.Skills.Tactics.Value + m.Str"
+},
+{
+"note": "ModernUO",
+"claim": "Weakest score is negative hits",
+"file": "ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs",
+"quote": "FightMode.Weakest   => -m.Hits,"
+},
+{
+"note": "ModernUO",
+"claim": "default (Closest) score is negative squared distance",
+"file": "ModernUO/Projects/UOContent/Mobiles/BaseCreature.cs",
+"quote": "-this.GetDistanceToSqrt(m)"
+},
+{
+"note": "ModernUO",
+"claim": "wild wake interval is CurrentSpeed seconds and first start is randomised",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/AITimer.cs",
+"quote": "TimeSpan.FromSeconds(owner.Mobile.CurrentSpeed))"
+},
+{
+"note": "ModernUO",
+"claim": "first start delay random up to 255 ms",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/AITimer.cs",
+"quote": "Delay = TimeSpan.FromMilliseconds(Utility.Random(256));"
+},
+{
+"note": "ModernUO",
+"claim": "Prod sets zero delay for an immediate think",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/AITimer.cs",
+"quote": "Delay = TimeSpan.Zero;"
+},
+{
+"note": "ModernUO",
+"claim": "think tick calls OnThink when due",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/AITimer.cs",
+"quote": "_owner.Mobile.OnThink();"
+},
+{
+"note": "ModernUO",
+"claim": "guard faction reacquire delay 2 seconds",
+"file": "ModernUO/Projects/UOContent/Engines/Factions/Mobiles/Guards/BaseFactionGuard.cs",
+"quote": "public override TimeSpan ReacquireDelay => TimeSpan.FromSeconds(2.0);"
+},
+{
+"note": "ModernUO",
+"claim": "melee guard scan calls AcquireFocusMob with RangePerception",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/MeleeAI.cs",
+"quote": "if (AcquireFocusMob(Mobile.RangePerception, Mobile.FightMode, false, false, true))",
+"line": 127
+},
+{
+"note": "ModernUO",
+"claim": "melee out-of-range combatant rescan",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/MeleeAI.cs",
+"quote": "if (AcquireFocusMob(Mobile.RangePerception, Mobile.FightMode, false, false, true))",
+"line": 77
+},
+{
+"note": "ModernUO",
+"claim": "melee blocked-move rescan",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/MeleeAI.cs",
+"quote": "if (AcquireFocusMob(Mobile.RangePerception, Mobile.FightMode, false, false, true))",
+"line": 106
+},
+{
+"note": "ModernUO",
+"claim": "license version 3 (donor LICENSE)",
+"file": "ModernUO/LICENSE",
+"quote": "Version 3, 29 June 2007"
+},
+{
+"note": "ModernUO",
+"claim": "license version 3 wording in donor header",
+"file": "ModernUO/Projects/UOContent/Mobiles/AI/BaseAI/BaseAI.cs",
+"quote": "either version 3 of the License, or"
+}
+]

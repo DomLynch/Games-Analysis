@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+angband-angband	4	spawns-encounters	INFERRED	8
+colyseus-colyseus	5	server-tick-netcode	/mnt/frankendom-donors/colyseus-colyseus/packages/sdk/src/input/InputHandle.ts	8
+ihhub-fheroes2	10	progression	INFERRED	8

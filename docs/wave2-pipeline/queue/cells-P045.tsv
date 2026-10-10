@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+evennia-evennia	5	server-tick-netcode	/mnt/frankendom-donors/evennia-evennia/evennia/server/amp_client.py	5
+OpenDiablo2-OpenDiablo2	10	progression	/mnt/frankendom-donors/OpenDiablo2-OpenDiablo2/d2core/d2records/monster_stats_record.go	5
+l1j-en-classic	5	server-tick-netcode	INFERRED	5

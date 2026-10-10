@@ -1,0 +1,4 @@
+game	category_no	category	evidence_hint	list
+OpenXcom-OpenXcom	14	camera	/mnt/frankendom-donors/OpenXcom-OpenXcom/src/Battlescape/Camera.h	2
+EQEmu	14	camera	/mnt/frankendom-donors/EQEmu/zone/gm_commands/camerashake.cpp	2
+endless-sky-endless-sky	2	ai-aggro	/mnt/frankendom-donors/endless-sky-endless-sky/source/NPC.cpp	2
