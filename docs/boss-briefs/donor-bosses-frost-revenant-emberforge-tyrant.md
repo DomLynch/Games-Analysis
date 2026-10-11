@@ -79,3 +79,6 @@ Pipeline run by the donor-library dev; all steps worked. Files: `img/frost-reven
 - Tyrant Guard, Kick, Run Through finisher and Split Crown death all hold together (`img/emberforge-tyrant-fit3-moves.png`).
 - Still open: real in-game still through the game's own hero loader (tooling on a branch not in trunk), head-fit and creature-pack steps, Frost Revenant shows ragged geometry at the tabard hem during Attack, phone frame time.
 - VPS builds: `/root/boss-builds/emberforge-tyrant-fit3-glow.glb`, `frost-revenant-fit3-bigger-maul.glb`.
+
+## 13. Tyrant glow colour (2026-10-11, Dom): dark crimson instead of orange
+Dom asked for a darker crimson glow that suits the gritty gladiator look. Done with `EMIT=2` in `tools/fit_tmax_to_knight_rig.py` (crimson emission, strength 0.9, glow pixels in the albedo darkened toward red). Orange stays as `EMIT=1`. Side by side: `img/emberforge-tyrant-orange-vs-crimson.png`. VPS build: `/root/boss-builds/emberforge-tyrant-fit5-crimson.glb` (the earlier `fit4` was too bright). Only the colour changed: no re-generation, about 3 minutes. For a different shade or intensity, change the three numbers in the `EMIT == 2` branches.

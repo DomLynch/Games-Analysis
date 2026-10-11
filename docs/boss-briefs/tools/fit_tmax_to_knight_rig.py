@@ -108,11 +108,22 @@ if EMIT:
         r, g, b = px[:, 0], px[:, 1], px[:, 2]
         mask = (r > 0.15) & (r > g * 1.3) & (b < 0.6 * r)
         em = np.zeros_like(px)
-        glow = np.stack([np.ones_like(r), np.minimum(g / np.maximum(r, 1e-4) * 1.4, 0.55), np.full_like(r, 0.04)], axis=1)
+        if EMIT == 2:
+            glow = np.stack([np.full_like(r, 0.55), np.minimum(g / np.maximum(r, 1e-4) * 0.1, 0.03), np.full_like(r, 0.015)], axis=1)
+        else:
+            glow = np.stack([np.ones_like(r), np.minimum(g / np.maximum(r, 1e-4) * 1.4, 0.55), np.full_like(r, 0.04)], axis=1)
         em[:, :3] = glow * mask[:, None]
         em[:, 3] = 1.0
         lift = np.clip(px[:, :3] * 2.6, 0.0, 1.0)
-        px[:, :3] = np.where(mask[:, None], px[:, :3], lift)
+        if EMIT == 2:
+            lift[:, 1] = lift[:, 1]
+            crim = px[:, :3].copy()
+            crim[:, 0] *= 0.55
+            crim[:, 1] *= 0.12
+            crim[:, 2] *= 0.3
+            px[:, :3] = np.where(mask[:, None], crim, lift)
+        else:
+            px[:, :3] = np.where(mask[:, None], px[:, :3], lift)
         base.pixels.foreach_set(px.reshape(-1))
         base.update()
         eimg = bpy.data.images.new("emit", w, h)
@@ -120,7 +131,7 @@ if EMIT:
         tex = mat.node_tree.nodes.new("ShaderNodeTexImage")
         tex.image = eimg
         mat.node_tree.links.new(tex.outputs["Color"], bsdf.inputs["Emission Color"])
-        bsdf.inputs["Emission Strength"].default_value = 3.0
+        bsdf.inputs["Emission Strength"].default_value = 0.9 if EMIT == 2 else 3.0
         print("EMISSION", mat.name, "glow pixels", int(mask.sum()), "of", w * h)
 
 # Pose our arms out to match the A-pose (rotate about the shoulder around the front-back axis).
