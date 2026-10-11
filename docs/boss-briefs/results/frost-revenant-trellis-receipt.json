@@ -1,0 +1,15 @@
+{
+  "space": "microsoft/TRELLIS.2",
+  "seed": 190926,
+  "resolution": "1536",
+  "faces": 500000,
+  "texture": 4096,
+  "image": "frost-source-t1.png",
+  "preprocess_s": 8.9,
+  "image_to_3d_s": 51.0,
+  "extract_glb_s": 119.0,
+  "glb": "src/assets/source/creatures/frost-tmax.glb",
+  "bytes": 25110264,
+  "sha256": "fc73b37f194f57038702a06c6c1f63f72bc612017a1ea7216b3a78238cf8b0ec",
+  "attempts": 1
+}

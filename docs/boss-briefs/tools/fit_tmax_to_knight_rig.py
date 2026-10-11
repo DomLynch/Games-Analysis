@@ -1,0 +1,144 @@
+"""Blender headless: fit a TRELLIS A-pose mesh onto our 65-bone knight rig and export with all animations.
+
+Steps: normalise height, decimate, pose our arms out to match the A-pose, copy skin weights from our body
+(posed), bring the mesh back to the rest pose through the weights, bind, export.
+
+Usage: blender -b -P fit_tmax.py -- TMAX.glb KNIGHT.glb OUT.glb [ARM_DEG] [HEIGHT] [TRIS]
+"""
+
+import math
+import sys
+
+import bpy
+from mathutils import Matrix, Vector
+
+a = sys.argv[sys.argv.index("--") + 1 :]
+tmax, knight, out = a[0], a[1], a[2]
+ARM = float(a[3]) if len(a) > 3 else 25.0
+HEIGHT = float(a[4]) if len(a) > 4 else 2.35
+TRIS = int(a[5]) if len(a) > 5 else 46000
+
+bpy.ops.wm.read_factory_settings(use_empty=True)
+bpy.ops.import_scene.gltf(filepath=knight)
+arm = [o for o in bpy.data.objects if o.type == "ARMATURE"][0]
+body = bpy.data.objects["CreatureBody"]
+for o in list(bpy.data.objects):
+    if o.name.startswith("Mesh_") or o.name in ("WeaponDrawn", "Icosphere"):
+        bpy.data.objects.remove(o, do_unlink=True)
+arm.data.pose_position = "REST"
+for pb in arm.pose.bones:
+    pb.rotation_mode = "QUATERNION"
+    pb.rotation_quaternion = (1, 0, 0, 0)
+    pb.location = (0, 0, 0)
+    pb.scale = (1, 1, 1)
+if arm.animation_data:
+    arm.animation_data.action = None
+
+before = set(bpy.data.objects)
+bpy.ops.import_scene.gltf(filepath=tmax)
+new = [o for o in bpy.data.objects if o not in before]
+meshes = [o for o in new if o.type == "MESH"]
+print("TMAX objects", [(o.name, o.type) for o in new], "faces", sum(len(m.data.polygons) for m in meshes))
+for o in new:
+    if o.type != "MESH":
+        for c in list(o.children):
+            c.parent = None
+        bpy.data.objects.remove(o, do_unlink=True)
+
+bpy.ops.object.select_all(action="DESELECT")
+for m in meshes:
+    m.select_set(True)
+bpy.context.view_layer.objects.active = meshes[0]
+if len(meshes) > 1:
+    bpy.ops.object.join()
+mesh = bpy.context.view_layer.objects.active
+bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+
+
+def bbox(o):
+    cs = [o.matrix_world @ Vector(c) for c in o.bound_box]
+    return Vector(map(min, *cs)), Vector(map(max, *cs))
+
+
+lo, hi = bbox(mesh)
+s = HEIGHT / (hi.z - lo.z)
+mesh.scale = (s, s, s)
+bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+lo, hi = bbox(mesh)
+mesh.location = Vector((-(lo.x + hi.x) / 2, -(lo.y + hi.y) / 2 + 0.0, -lo.z + 0.03))
+bpy.ops.object.transform_apply(location=True, rotation=False, scale=False)
+print("TMAX bbox", tuple(round(v, 3) for v in bbox(mesh)[0]), tuple(round(v, 3) for v in bbox(mesh)[1]))
+
+# Decimate to the phone budget (UVs and texture kept).
+n0 = len(mesh.data.polygons)
+dec = mesh.modifiers.new("dec", "DECIMATE")
+dec.ratio = min(1.0, TRIS / max(n0, 1))
+bpy.context.view_layer.objects.active = mesh
+bpy.ops.object.modifier_apply(modifier="dec")
+print("DECIMATE", n0, "->", len(mesh.data.polygons))
+
+# Shrink textures to 2048.
+for img in bpy.data.images:
+    if img.size[0] > 2048:
+        img.scale(2048, 2048)
+
+# Pose our arms out to match the A-pose (rotate about the shoulder around the front-back axis).
+arm.data.pose_position = "POSE"
+bpy.context.view_layer.update()
+for side in ("l", "r"):
+    pb = arm.pose.bones["upperarm_" + side]
+    head = arm.matrix_world @ pb.head
+    hand = arm.matrix_world @ arm.pose.bones["hand_" + side].head
+    sgn = 1.0 if hand.x >= head.x else -1.0
+    rot = Matrix.Rotation(-sgn * math.radians(ARM), 4, "Y")
+    M = Matrix.Translation(head) @ rot @ Matrix.Translation(-head)
+    pb.matrix = M @ pb.matrix
+    bpy.context.view_layer.update()
+
+# Copy skin weights from the posed body to the mesh.
+for g in body.vertex_groups:
+    mesh.vertex_groups.new(name=g.name)
+dt = mesh.modifiers.new("wt", "DATA_TRANSFER")
+dt.object = body
+dt.use_vert_data = True
+dt.data_types_verts = {"VGROUP_WEIGHTS"}
+dt.vert_mapping = "POLYINTERP_NEAREST"
+dt.layers_vgroup_select_src = "ALL"
+dt.layers_vgroup_select_dst = "NAME"
+bpy.context.view_layer.objects.active = mesh
+bpy.ops.object.modifier_apply(modifier="wt")
+print("WEIGHTS groups", len(mesh.vertex_groups))
+
+# Bind in the A-pose, then return to the rest pose through the weights and apply.
+am = mesh.modifiers.new("arm", "ARMATURE")
+am.object = arm
+bpy.ops.object.select_all(action="DESELECT")
+mesh.select_set(True)
+for pb in arm.pose.bones:
+    pb.rotation_quaternion = (1, 0, 0, 0)
+    pb.location = (0, 0, 0)
+    pb.scale = (1, 1, 1)
+arm.data.pose_position = "REST"
+bpy.context.view_layer.update()
+bpy.context.view_layer.objects.active = mesh
+bpy.ops.object.modifier_apply(modifier="arm")
+am = mesh.modifiers.new("arm", "ARMATURE")
+am.object = arm
+mesh.parent = arm
+arm.data.pose_position = "POSE"
+
+bpy.data.objects.remove(body, do_unlink=True)
+bpy.ops.object.select_all(action="DESELECT")
+arm.select_set(True)
+mesh.select_set(True)
+bpy.ops.export_scene.gltf(
+    filepath=out,
+    export_format="GLB",
+    use_selection=True,
+    export_animations=True,
+    export_animation_mode="ACTIONS",
+    export_skins=True,
+    export_image_format="JPEG",
+    export_image_quality=88,
+)
+print("DONE", out, "actions", len(bpy.data.actions))
