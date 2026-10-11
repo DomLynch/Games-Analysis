@@ -1,0 +1,62 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>fight</title>
+<style>body{margin:0;background:#161312}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head><body><canvas id="c"></canvas>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {KTX2Loader} from 'three/addons/loaders/KTX2Loader.js';
+import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
+import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+
+// ?bosses=a,b  &out=name   Panels per boss: ready (both Idle) and mid-fight (boss Attack, player Guard). Portrait like the phone (420x910 each).
+const q = new URLSearchParams(location.search);
+const bosses = (q.get('bosses') || '').split(',').filter(Boolean);
+const out = q.get('out') || 'fight';
+const PW = 420, PH = 910, n = bosses.length * 2;
+const canvas = document.getElementById('c');
+const r = new THREE.WebGLRenderer({canvas, antialias: true, preserveDrawingBuffer: true});
+r.setPixelRatio(1); r.setSize(PW * n, PH); r.setScissorTest(true);
+r.outputColorSpace = THREE.SRGBColorSpace; r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.5;
+r.shadowMap.enabled = true;
+const env = new THREE.PMREMGenerator(r).fromScene(new RoomEnvironment(), 0.04).texture;
+const ktx2 = new KTX2Loader().setTranscoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/basis/').detectSupport(r);
+const loader = new GLTFLoader().setKTX2Loader(ktx2).setMeshoptDecoder(MeshoptDecoder);
+const load = async f => { for (let t = 0; t < 4; t++) { try { return await loader.loadAsync('m/' + f + '.glb'); } catch (e) { await new Promise(rs => setTimeout(rs, 400)); } } throw new Error('load ' + f); };
+
+function clipOf(g, name) { const k = name.toLowerCase(); return g.animations.find(a => a.name.toLowerCase() === k); }
+function place(g, x, z, rotY, clipName, frac) {
+  const root = g.scene; root.position.set(x, 0, z); root.rotation.y = rotY;
+  root.traverse(o => { if (o.isMesh) { o.castShadow = true; o.frustumCulled = false; } });
+  const mx = new THREE.AnimationMixer(root);
+  const c = clipOf(g, clipName); if (c) { mx.clipAction(c).play(); mx.setTime(c.duration * frac); }
+  return root;
+}
+const log = [];
+for (let bi = 0; bi < bosses.length; bi++) {
+  for (let pi = 0; pi < 2; pi++) {
+    const fight = pi === 1;
+    const boss = await load(bosses[bi]), player = await load('fk_knight');
+    const s = new THREE.Scene();
+    s.background = new THREE.Color(0xc98b5e); s.fog = new THREE.Fog(0xc98b5e, 14, 34); s.environment = env;
+    const floor = new THREE.Mesh(new THREE.CircleGeometry(14, 48), new THREE.MeshStandardMaterial({color: 0xa57c52, roughness: 1}));
+    floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; s.add(floor);
+    s.add(new THREE.HemisphereLight(0xffe2c0, 0x6b4a30, 1.3));
+    const sun = new THREE.DirectionalLight(0xffc88a, 3.2); sun.position.set(-6, 9, 5); sun.castShadow = true;
+    sun.shadow.camera.left = -6; sun.shadow.camera.right = 6; sun.shadow.camera.top = 6; sun.shadow.camera.bottom = -6; sun.shadow.mapSize.set(1024, 1024);
+    s.add(sun);
+    const fill = new THREE.DirectionalLight(0x9fb4ff, 0.8); fill.position.set(6, 4, 6); s.add(fill);
+    s.add(place(boss, 0, -2.4, 0, fight ? 'Attack' : 'Idle', fight ? 0.45 : 0.5));
+    s.add(place(player, 0.0, 2.4, Math.PI, fight ? 'Guard' : 'Idle', fight ? 0.35 : 0.5));
+    const cam = new THREE.PerspectiveCamera(38, PW / PH, 0.1, 80);
+    cam.position.set(0, 6.4, 10.2); cam.lookAt(0, 1.1, -1.0);
+    const x = (bi * 2 + pi) * PW;
+    r.setViewport(x, 0, PW, PH); r.setScissor(x, 0, PW, PH); r.render(s, cam);
+    log.push(bosses[bi] + (fight ? ' fight' : ' ready'));
+  }
+}
+const blob = await new Promise(rs => canvas.toBlob(rs, 'image/png'));
+await fetch('/save?name=' + out, {method: 'POST', body: blob});
+document.title = 'saved ' + out + ' | ' + log.join(', ');
+</script></body></html>

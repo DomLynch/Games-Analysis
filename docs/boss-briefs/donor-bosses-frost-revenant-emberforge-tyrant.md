@@ -71,3 +71,11 @@ Pipeline run by the donor-library dev; all steps worked. Files: `img/frost-reven
 - Emberforge Tyrant: same pipeline, realistic broad proportions (the donor is chibi). Design `img/emberforge-tyrant-design-source.png` (prompt `results/emberforge-tyrant-t2i-prompt.txt`), TRELLIS max (settings `results/emberforge-tyrant-trellis-params.json`), fitted at height 2.5 with the maul (`img/emberforge-tyrant-fit1-sheet.png`: standing, Attack, Heavy, Roll all hold together).
 - Known gaps (Tyrant): the glowing furnace grate and molten seams are baked colour only, so in motion they read dim red; a proper emissive map is needed (Blender step, not done). Both bosses are dark in the quick viewer; check under arena lighting. Not yet checked: Guard, Kick, finishers on the Tyrant; fight-camera stills; head-fit and creature-pack steps.
 - Binaries on VPS `/root/boss-builds/`: `frost-revenant-fit1.glb`, `frost-revenant-fit2-maul.glb`, `frost-revenant-trellis-max.glb`, `emberforge-tyrant-fit1.glb`, `emberforge-tyrant-trellis-max.glb`.
+
+## 12. Test 5 (2026-10-11): glow, arena lighting, fight camera, more Tyrant moves, bigger maul
+- Maul scaled 1.5x extra for both bosses (`MAULX` in `tools/fit_tmax_to_knight_rig.py`; args: ARM HEIGHT TRIS EMIT MAULX).
+- Tyrant glow: the TRELLIS texture is dark (brightest red 0.42), so the glow was found by hue at a low threshold (18,876 pixels), turned into an emission map (orange, strength 3), and the armour albedo was lifted 2.6x. Result: orange chest grate and glowing eye slit, armour detail readable. Still darker than the design image: a real glow pass in the lane's pipeline would do better.
+- Arena lighting plus a phone-style fight camera with our knight facing each boss (`img/bosses-arena-fight-camera-stills.png`, `tools/fight_camera_stills.html`). Scale reads right against the player. This is a Three.js approximation, not the game's own renderer.
+- Tyrant Guard, Kick, Run Through finisher and Split Crown death all hold together (`img/emberforge-tyrant-fit3-moves.png`).
+- Still open: real in-game still through the game's own hero loader (tooling on a branch not in trunk), head-fit and creature-pack steps, Frost Revenant shows ragged geometry at the tabard hem during Attack, phone frame time.
+- VPS builds: `/root/boss-builds/emberforge-tyrant-fit3-glow.glb`, `frost-revenant-fit3-bigger-maul.glb`.

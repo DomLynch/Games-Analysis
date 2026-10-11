@@ -17,14 +17,20 @@ tmax, knight, out = a[0], a[1], a[2]
 ARM = float(a[3]) if len(a) > 3 else 25.0
 HEIGHT = float(a[4]) if len(a) > 4 else 2.35
 TRIS = int(a[5]) if len(a) > 5 else 46000
+EMIT = int(a[6]) if len(a) > 6 else 0
+MAULX = float(a[7]) if len(a) > 7 else 1.5
 
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.import_scene.gltf(filepath=knight)
 arm = [o for o in bpy.data.objects if o.type == "ARMATURE"][0]
 body = bpy.data.objects["CreatureBody"]
 for o in list(bpy.data.objects):
-    if o.name.startswith("Mesh_") or o.name in ("WeaponDrawn", "Icosphere"):
+    if o.name == "Icosphere":
         bpy.data.objects.remove(o, do_unlink=True)
+weapon = [o for o in bpy.data.objects if o.name == "WeaponDrawn" or o.name.startswith("Mesh_")]
+wd = bpy.data.objects.get("WeaponDrawn")
+if wd is not None:
+    wd.scale = wd.scale * (HEIGHT / 2.12) * MAULX
 arm.data.pose_position = "REST"
 for pb in arm.pose.bones:
     pb.rotation_mode = "QUATERNION"
@@ -82,6 +88,41 @@ for img in bpy.data.images:
     if img.size[0] > 2048:
         img.scale(2048, 2048)
 
+
+# Optional glow: build an emission map from the bright orange pixels of the base colour map.
+if EMIT:
+    import numpy as np
+
+    for mat in mesh.data.materials:
+        if not mat or not mat.use_nodes:
+            continue
+        bsdf = next((n for n in mat.node_tree.nodes if n.type == "BSDF_PRINCIPLED"), None)
+        links = bsdf.inputs["Base Color"].links if bsdf else []
+        if not links or links[0].from_node.type != "TEX_IMAGE":
+            continue
+        base = links[0].from_node.image
+        w, h = base.size
+        px = np.empty(w * h * 4, dtype=np.float32)
+        base.pixels.foreach_get(px)
+        px = px.reshape(-1, 4)
+        r, g, b = px[:, 0], px[:, 1], px[:, 2]
+        mask = (r > 0.15) & (r > g * 1.3) & (b < 0.6 * r)
+        em = np.zeros_like(px)
+        glow = np.stack([np.ones_like(r), np.minimum(g / np.maximum(r, 1e-4) * 1.4, 0.55), np.full_like(r, 0.04)], axis=1)
+        em[:, :3] = glow * mask[:, None]
+        em[:, 3] = 1.0
+        lift = np.clip(px[:, :3] * 2.6, 0.0, 1.0)
+        px[:, :3] = np.where(mask[:, None], px[:, :3], lift)
+        base.pixels.foreach_set(px.reshape(-1))
+        base.update()
+        eimg = bpy.data.images.new("emit", w, h)
+        eimg.pixels.foreach_set(em.reshape(-1))
+        tex = mat.node_tree.nodes.new("ShaderNodeTexImage")
+        tex.image = eimg
+        mat.node_tree.links.new(tex.outputs["Color"], bsdf.inputs["Emission Color"])
+        bsdf.inputs["Emission Strength"].default_value = 3.0
+        print("EMISSION", mat.name, "glow pixels", int(mask.sum()), "of", w * h)
+
 # Pose our arms out to match the A-pose (rotate about the shoulder around the front-back axis).
 arm.data.pose_position = "POSE"
 bpy.context.view_layer.update()
@@ -131,6 +172,8 @@ bpy.data.objects.remove(body, do_unlink=True)
 bpy.ops.object.select_all(action="DESELECT")
 arm.select_set(True)
 mesh.select_set(True)
+for o in weapon:
+    o.select_set(True)
 bpy.ops.export_scene.gltf(
     filepath=out,
     export_format="GLB",
