@@ -1,0 +1,15 @@
+{
+  "space": "microsoft/TRELLIS.2",
+  "seed": 190926,
+  "resolution": "1536",
+  "faces": 500000,
+  "texture": 4096,
+  "image": "tyrant-source-t1.png",
+  "preprocess_s": 9.5,
+  "image_to_3d_s": 63.5,
+  "extract_glb_s": 78.9,
+  "glb": "src/assets/source/creatures/tyrant-tmax.glb",
+  "bytes": 21361892,
+  "sha256": "c0a29b019d7f93cc7576de71f7b77f43bb6392a3599308d78eb654d44f5db00c",
+  "attempts": 1
+}
