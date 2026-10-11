@@ -1,0 +1,37 @@
+<!doctype html><meta charset=utf-8><body style="margin:0;background:#222">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type=module>
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+const W=480,H=720,N=4;
+const r=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});r.setSize(W*N,H);document.body.appendChild(r.domElement);
+r.setScissorTest(true);
+const sc=new THREE.Scene();sc.background=new THREE.Color(0x3a3d44);
+sc.add(new THREE.HemisphereLight(0xffffff,0x444455,2.2));const dl=new THREE.DirectionalLight(0xffffff,2.5);dl.position.set(2,4,3);sc.add(dl);
+const g=await new GLTFLoader().loadAsync((new URLSearchParams(location.search).get('glb')||'out/model.glb'));
+const root=g.scene;sc.add(root);
+let sm;root.traverse(o=>{if(o.isSkinnedMesh)sm=o});
+const bones=sm.skeleton.bones;
+root.updateMatrixWorld(true);const box=new THREE.Box3();bones.forEach(b=>box.expandByPoint(new THREE.Vector3().setFromMatrixPosition(b.matrixWorld)));box.expandByScalar(0.05);const c=box.getCenter(new THREE.Vector3()),s=box.getSize(new THREE.Vector3());
+const info={bones:bones.length,size:s.toArray(),tris:sm.geometry.index?sm.geometry.index.count/3:0};
+const depth=b=>{let d=0;while(b.parent&&b.parent.isBone){b=b.parent;d++}return d};
+const leaves=bones.filter(b=>!b.children.some(x=>x.isBone));
+const rest=bones.map(b=>b.quaternion.clone());
+const target=leaves.map(l=>l.parent&&l.parent.parent&&l.parent.parent.isBone?l.parent.parent:l.parent).filter(Boolean);
+info.leaves=leaves.length;
+const cam=new THREE.PerspectiveCamera(30,W/H,0.1,100);
+const dist=Math.max(s.x,s.y,s.z)*2.6;
+const poses=[null,['x',0.5],['z',0.5],['x',-0.5]];
+const e=new THREE.Euler();
+poses.forEach((p,i)=>{
+  bones.forEach((b,k)=>b.quaternion.copy(rest[k]));
+  if(p){target.forEach(b=>{b.rotateOnAxis(new THREE.Vector3(p[0]=='x'?1:0,0,p[0]=='z'?1:0),p[1])})}
+  root.updateMatrixWorld(true);
+  cam.position.set(c.x,c.y,c.z+dist);cam.lookAt(c);
+  r.setViewport(i*W,0,W,H);r.setScissor(i*W,0,W,H);r.render(sc,cam);
+});
+window.__info=info;
+const blob=await new Promise(res=>r.domElement.toBlob(res,'image/png'));
+await fetch('/save?name='+(new URLSearchParams(location.search).get('name')||'pose-stress'),{method:'POST',body:blob});
+document.title='done '+JSON.stringify(info);
+</script>
