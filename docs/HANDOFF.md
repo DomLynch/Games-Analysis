@@ -1,3 +1,5 @@
+**=== RESUME HERE (latest, 2026-10-11 night): read docs/HANDOVER-2026-10-11-v3.md FIRST (supersedes v2 as the entry point: status table, boss process, wipe warning and restore steps, Monday next steps). ===**
+
 **=== RESUME HERE (latest): read docs/HANDOVER-2026-10-11-v2.md FIRST. It has the exact counts, the 18 agents left running, launch recipes for every topic, the quality loop still owed, open items for Dom/Strategy/Lead, and the backup recipe. The "RESUME HERE v2" block below is older. ===**
 
 **=== RESUME HERE v2 (state saved 2026-10-11 late; supersedes the older block below) ===**
