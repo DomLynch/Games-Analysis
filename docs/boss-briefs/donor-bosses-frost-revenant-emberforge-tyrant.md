@@ -51,3 +51,9 @@ Unverified: the exact origin of these two files (own pipeline vs a CC0 kit) was 
 - Plays our full move set on the shared rig with no stretching in Attack, Guard, Roll and a finisher.
 - About 46k polys, textured, passes a phone look-test against the arena lighting; stills at the fight camera, 375 wide, ready idle plus mid-fight.
 - Per-job Hugging Face dollars reported; licence trace kept per asset.
+
+## 9. Test 2 result (kit-bash on the knight, run 2026-10-11 by the donor-library dev, CPU only, no Hugging Face)
+Script: `tools/kitbash_frost_revenant.py` (Blender headless on the VPS; pictures rendered in Three.js). Input: our `knight.glb`. Changes: maul removed, body tinted frost-blue, 13 icy spike pieces (3 per shoulder, 2 per forearm, helm crest plus 2 side shards) each bound rigidly to one bone.
+- Works mechanically: it keeps our 65 bones and all 37 animations, the pieces stay attached through Attack and nothing tears (`img/test2-kitbash-attack.png`).
+- Look is basic: it reads as a spiky knight with white cones, far from the donor's tattered tabard and big shaped pauldrons (`img/test2-kitbash-views-vs-donor.png`).
+- Next for the lane: replace the cones with a real signature armour piece through hero-set (crested helm, shaped spiked pauldrons), add a tabard, and use the Guard or Knight body. No auto-skinning needed.
