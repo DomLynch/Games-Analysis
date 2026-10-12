@@ -1,6 +1,6 @@
 # SK focus (character-stats-skills), from Strategy 2026-10-12. Read this after TASK.md for every SK group.
 
-Frankendom is gladiator MELEE, no magic. Stamina and stance are the economy, not mana. Code only from MIT/Apache/BSD donors; GPL/AGPL/restricted = shape only.
+CORRECTION from Dom 2026-10-12: Frankendom WILL have plenty of magic (dragons, necromancy, witchcraft, mind/telepathy, persuasion and more) alongside melee and special moves. Do not ignore magic stats: mana/focus/other resources, spell power, casting stats, resistances and school skills all matter. Stamina and stance remain the melee economy. Code only from MIT/Apache/BSD donors; GPL/AGPL/restricted = shape only.
 
 For EACH stat or skill you find, give a TABLE row (not prose): name | what it does | formula | number ranges (min/max/typical, per level if any) | caps (soft/hard) | file:line. Strategy turns each row into a catalogue row.
 
@@ -15,5 +15,5 @@ Cover, with the donor's own numbers:
 8. Skill systems: use-based vs XP-bought, gain formulas, caps, skill decay; talents.
 9. Level and rank scaling: level-50 curves, grade/rank tiers as multipliers, power budget per level (must be a data curve), respec.
 10. Luck as a real stat. 11. What a coach/manager view of a fighter would show (stat sheet, readouts).
-Resistances/elemental only where the donor has them (low priority).
+12. Magic and mental stats: mana/focus/other resource pools, spell power, cast stats, schools (necromancy, witchcraft/hexes, mind/telepathy, elemental, nature, divine), resistances and elemental damage, plus social skills (persuasion, speech, intimidation, barter): formula and ranges as rows.
 Fast-action references (OpenMB, veloren, Barony) matter most; call out which numbers suit a fast mobile fight.
