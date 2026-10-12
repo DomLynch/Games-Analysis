@@ -36,9 +36,10 @@ def pack(game, pat, budget):
         try:
             if os.path.getsize(p) > 400_000: continue
         except OSError: continue
-        base = os.path.basename(p).lower()
-        bonus = 30 if re.search(pat.split('|')[0][:6], base) or re.search(pat, base, re.I) else 0
-        files.append((int(n) + bonus, p))
+        rel = p.replace(root, '')
+        bonus = 600 if re.search(pat, rel, re.I) else 0
+        if re.search(r'test|render|shader|mesh|navig|detour|blocks?file|texture|sprite|sound|audio|network|serial|save', rel, re.I): bonus -= 400
+        files.append((min(int(n), 300) + bonus, p))
     files.sort(reverse=True)
     text, used, picked = f'\n## {game}  (repo {root})\n', 0, []
     for score, p in files:
