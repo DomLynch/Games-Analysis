@@ -50,3 +50,8 @@ Everything below is committed; Mac = GitHub = VPS at 5c6e23c (check `git log -1`
 - Strategy's token-burn rule: Sonnet medium, at most 8 agents per batch, no second batch before the first returns, report tokens per batch. (Tonight I broke it with batches of 13/13/9/20; approximate tokens: older-note checkers 3.0M, their fixers 1.6M, gap-check about 3.5M.)
 - Dom wants: all of it done properly; check with Strategy; tell him if Strategy disagrees. Strategy had no objection (message 18:4x).
 - Still open: wave-4 notes outside the 6 topics (AU DC OB AC AR feel topics) unchecked; pathfinding internals, group tactics, closed-engine replay formats have no notes; parity checklist lacks quest/trade/chat rows; some .json sidecars carry old text.
+
+## 6. FINAL STATE 2026-10-12 night (supersedes the in-flight row in section 5)
+Wave-4 quality batch is DONE: 78 notes (1 in 4 of HU IV QD ID VF RP) checked: 42 clean, 35 minor, 1 wrong (Wesnoth QD020, rewritten); all fixed, 8 fixers, sketches typechecked on the VPS. Error rate below the widen trigger, so no widening. Tokens for the batch about 2.4M (checkers about 1.6M, fixers about 0.8M). Backup: Mac = GitHub = VPS at 3a54998 (check git log -1), receipts only on Mac + VPS.
+Everything asked is complete except: (a) wave-4 notes outside those six topics (AU DC OB AC AR and the feel topics, about 600 notes) are NOT quality-checked; (b) Dom answers the 19 rulings in docs/RULINGS-FOR-DOM-2026-10-12.md ('accept all' or changes); (c) the graphics test is with another dev (docs/ASSET-PIPELINE-HANDOVER-FOR-NEW-DEV-2026-10-12.md); (d) .json sidecars of some fixed notes carry old text.
+No agents are running. Safe to clear.
