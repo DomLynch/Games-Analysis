@@ -10,6 +10,8 @@
 
 ## NOTE 2026-10-12: five lines (U6, U38, U41, U42, S5) are SUPERSEDED by Dom's existing written rules (closed, Dom may reopen); the quest kill-counter item B29 in the build list must use non-kill objectives (Region 1 'no kill-N').
 
+- **L4. How closely may Tier C art (no licence, non-commercial, leaked, game-rip) be recreated?** At 30 to 40 percent resemblance, no closer (was 20 to 30 percent). [Dom 2026-10-12, relayed by Strategy; applies to assets only, never to code or numbers from copyleft or restricted donors]
+
 ## THE 19 (answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation; B2 and L3 stay flagged pending legal review / Dom). Dom can still change any of them.
 
 - **B1. [NOT the brief's call: launch target. Dom confirms.]** How many players do we plan for on launch day? Strategy recommends planning for 1,000 at once, and buying hosts for 10,000 only when the test shows 80 percent of one host used. [server-performance-scaling #1] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
