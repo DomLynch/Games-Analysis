@@ -1,0 +1,30 @@
+{
+  "game": "OpenEnroth-OpenEnroth",
+  "category": "character-creation-appearance",
+  "cell": 3,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/Engine/Objects/Character.cpp",
+  "licence": "GNU LGPL version 3 (LICENSE: Version 3, 29 June 2007)",
+  "licence_class": "copyleft",
+  "target_module": "origins/character/build-budget.ts",
+  "parity_row": 21,
+  "pattern_tags": ["new:build-budget", "new:asymmetric-step-cost", "new:shared-party-pool"],
+  "data_fields": [
+    {"name": "race_stat_base", "donor_constant": "Human 11/9, Elf 7/14/11/7/14/11/9, Goblin 14/7/7/11/11/14/9, Dwarf 14/11/11/14/7/7/9 (seven stats each, in row order)", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/Engine/Objects/Character.cpp:72"},
+    {"name": "race_stat_max", "donor_constant": "15 to 30 per stat (25 for Human)", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/Engine/Objects/Character.cpp:81"},
+    {"name": "race_stat_dropped_step", "donor_constant": "1 or 2 per stat", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/Engine/Objects/Character.cpp:66"},
+    {"name": "race_stat_base_step", "donor_constant": "1 or 2 per stat", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/Engine/Objects/Character.cpp:67"},
+    {"name": "creation_pool", "donor_constant": "50 for the whole party", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/Engine/Objects/Character.cpp:316"},
+    {"name": "decrease_floor_below_base", "donor_constant": "2", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/Engine/Objects/Character.cpp:3044"},
+    {"name": "level1_experience_base", "donor_constant": "251 plus grng->random(100)", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/Engine/Objects/Character.cpp:2984"},
+    {"name": "name_max_length", "donor_constant": "15", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/GUI/UI/UIPartyCreation.cpp:234"},
+    {"name": "error_message_seconds", "donor_constant": "4", "unit": "s", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/GUI/UI/UIPartyCreation.cpp:204"},
+    {"name": "required_skill_picks", "donor_constant": "4 per character", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/OpenEnroth-OpenEnroth/src/GUI/UI/UIPartyCreation.cpp:78"}
+  ],
+  "best_idea": "Price each stat from its own state (the dropped step per point at or above base, a step-scaled refund below base) and spend one budget per character, with a floor and a cap per race row.",
+  "decision": "adapt",
+  "decision_why": "The state-based cost and the asymmetric steps are a clean, testable build rule that fits class-free start, but the donor's 50-point pool is shared by the whole party, which breaks Frankendom's one-character ledger, and its threshold check is not the exact cost; so Frankendom keeps the cost rule per character with an exact check.",
+  "decision_status": "proposed",
+  "acceptance": "The create screen shows N points left from the cost rule and disables plus when the next step would exceed the budget or the race cap; a server test asserts that Elf Might at 9 costs 4 points, Elf Intelligence at 12 refunds 4, and a click over budget is refused."
+}

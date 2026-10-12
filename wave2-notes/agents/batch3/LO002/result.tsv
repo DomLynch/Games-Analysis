@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+wesnoth-wesnoth	live-ops-events-lore-delivery	P	STRONG	full	/mnt/frankendom-donors/wesnoth-wesnoth/src/tod_manager.cpp:532-541 and 214-279, play_controller.cpp:507-522: a turn-indexed phase schedule read from scenario data, per-tile illumination with net direction, and a once-per-turn event latch.
+crawl-crawl	live-ops-events-lore-delivery	P	STRONG	thin	/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/timed-effects.cc:619-653: capped live catch-up on level re-entry, then cheap timers on the remainder, with a double subtraction at line 627 (defect fixed in the sketch); the live step bodies were not read.
+veloren-veloren	live-ops-events-lore-delivery	P	STRONG	full	/mnt/frankendom-donors/veloren-veloren/rtsim/src/rule/report.rs:19-74 and rtsim/src/data/report.rs:33-47: a kill or theft becomes one shared report with kind-based memory, witnesses inside 32 or 24 units receive it, and NPCs speak within a 300 in-game second window.

@@ -1,0 +1,17 @@
+{"game":"veloren-veloren","category":"live-ops-events-lore-delivery","cell":3,"verdict":"STRONG","depth":"full",
+ "donor_path":"/mnt/frankendom-donors/veloren-veloren/rtsim/src/data/report.rs",
+ "licence":"GPL-3.0 (donor LICENSE line 2; the rtsim files read carry no per-file licence header)","licence_class":"copyleft",
+ "target_module":"origins/server/world-news.ts","parity_row":19,
+ "pattern_tags":["new:report-memory","new:witness-radius","presence-gated","new:response-window","group-refill","clamp-and-report"],
+ "data_fields":[
+  {"name":"deathWithKillerMemoryS","donor_constant":"15 days (DAYS * 15.0), in-game seconds","unit":"s","where":"engine constant","donor_ref":"/mnt/frankendom-donors/veloren-veloren/rtsim/src/data/report.rs:39"},
+  {"name":"deathNoKillerMemoryS","donor_constant":"5 days (DAYS * 5.0), in-game seconds","unit":"s","where":"engine constant","donor_ref":"/mnt/frankendom-donors/veloren-veloren/rtsim/src/data/report.rs:41"},
+  {"name":"theftMemoryS","donor_constant":"1.5 days (DAYS * 1.5), in-game seconds","unit":"s","where":"engine constant","donor_ref":"/mnt/frankendom-donors/veloren-veloren/rtsim/src/data/report.rs:45"},
+  {"name":"deathWitnessRadius","donor_constant":"32 units (literal in on_death)","unit":"units","where":"zone data","donor_ref":"/mnt/frankendom-donors/veloren-veloren/rtsim/src/rule/report.rs:23"},
+  {"name":"theftWitnessRadius","donor_constant":"24 units (literal in on_theft)","unit":"units","where":"zone data","donor_ref":"/mnt/frankendom-donors/veloren-veloren/rtsim/src/rule/report.rs:53"},
+  {"name":"responseWindowS","donor_constant":"300 in-game s (60 * 5)","unit":"s","where":"engine constant","donor_ref":"/mnt/frankendom-donors/veloren-veloren/rtsim/src/rule/npc_ai/mod.rs:1256"}
+ ],
+ "best_idea":"A kill or theft becomes one shared record whose memory length depends on its kind and whose witnesses are the loaded actors inside a radius, so news spreads by who was there and fades by kind rather than by a global timer.",
+ "decision":"adapt","decision_why":"Keep kind-based memory, radius witness delivery with presence gating, the once-read known set with a 5-minute response window and the site rumour path; index reports by zone chunk, cap them per zone and keep speech server-side, because the donor pushes one id into every inbox and has no report cap.",
+ "decision_status":"proposed",
+ "acceptance":"A server test kills an enemy at a fixed point with a civilised NPC 20 units away and another 40 units away; the first speaks the death phrase to the killer within 300 in-game seconds and the second does not; a death without a killer is pruned after 5 days and a murder after 15 days."}

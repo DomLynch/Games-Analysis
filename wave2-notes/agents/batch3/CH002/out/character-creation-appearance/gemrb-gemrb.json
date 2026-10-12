@@ -1,0 +1,27 @@
+{
+  "game": "gemrb-gemrb",
+  "category": "character-creation-appearance",
+  "cell": 2,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/gemrb-gemrb/gemrb/GUIScripts/PaperDoll.py",
+  "licence": "GPL-2.0-or-later (SPDX headers in GUIScripts; COPYING is GPL version 2, June 1991)",
+  "licence_class": "copyleft",
+  "target_module": "origins/character/body-family.ts",
+  "parity_row": 6,
+  "pattern_tags": ["new:family-key", "new:tier-table", "clamp-and-report"],
+  "data_fields": [
+    {"name": "family_base_key", "donor_constant": "0x6000", "unit": "none", "where": "engine constant", "donor_ref": "PaperDoll.py:124"},
+    {"name": "chargen_sentinel", "donor_constant": "0x2000 (stored key meaning still in chargen)", "unit": "none", "where": "engine constant", "donor_ref": "PaperDoll.py:123"},
+    {"name": "race_offset", "donor_constant": "Human 0, Elf 1, Half-elf 1, Dwarf 2, Halfling 3, Gnome 4, Half-orc 5", "unit": "count", "where": "engine constant", "donor_ref": "bg2ee/avprefr.2da:5-11"},
+    {"name": "class_prefix", "donor_constant": "Fighter/Paladin/Ranger/Barbarian 0x100; Mage/Sorcerer 0x200; Thief/Bard/Mage-Thief 0x300; Monk 0x500; Cleric/Druid/Shaman 0", "unit": "none", "where": "engine constant", "donor_ref": "shared/avprefc.2da:5-26"},
+    {"name": "female_offset", "donor_constant": "0x10 (male 0)", "unit": "none", "where": "engine constant", "donor_ref": "shared/avprefg.2da:6"},
+    {"name": "armour_tiers", "donor_constant": "4 (LEVEL1 to LEVEL4 from IE_ARMOR_TYPE + 1)", "unit": "count", "where": "engine constant", "donor_ref": "PaperDoll.py:136"},
+    {"name": "family_rows", "donor_constant": "about 100 rows in bg2ee/pdolls.2da, each with 4 tier models", "unit": "count", "where": "engine constant", "donor_ref": "bg2ee/pdolls.2da:36"}
+  ],
+  "best_idea": "Derive a body family key by adding bit-packed race, class and sex offsets to a base, keep the stored key once chargen ends, and pick the model from a per-family table by armour tier; return an explicit error for a missing family instead of a guessed name.",
+  "decision": "adapt",
+  "decision_why": "The shared humanoid rig needs one family key and one lookup by armour tier, which this gives; but the donor uses separate model sets per family rather than one rig, its class column is misnamed on the BG2/EE path, and its miss is silent, so Frankendom keeps the key and the tier table as data with an explicit error and a PREFIX-only class term.",
+  "decision_status": "proposed",
+  "acceptance": "A female human fighter at armour tier 2 resolves to CHFF2INV through the family key 0x6110, and a server test asserts that an unknown family key returns an explicit error rather than a guessed model name."
+}

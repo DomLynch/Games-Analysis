@@ -1,0 +1,34 @@
+verdict: PARTIAL (depth thin)
+cell: 3 of 3 (trading-barter-vendors, list 4)
+donor: /mnt/frankendom-donors/ao-data-albiondata-client
+licence: MIT License, Copyright (c) 2017 The Albion Data Project (LICENSE line 1 "MIT License"). Code may be adapted.
+camera_scope: n/a
+
+Files opened (4 candidates, all read in full unless stated):
+- lib/market.go (85 lines): order and notification structs; SalesTax constant (line 34).
+- client/operation_read_mail.go (112 lines): sell and expiry summary decoders (lines 30-37, 52-78, 80-112).
+- client/operation_auction_get_offers.go (98 lines): offers response handler (lines 25-98).
+- client/operation_auction_get_item_average_stats.go (126 lines): price-history request and response, cache slot, wait loop.
+- README.md: licence section (line 110-112) only.
+Grep for trade, barter, vendor, auction, bazaar, shop, exchange across *.go (thirdparty excluded). Hits for barter, NPC vendor and trade offers: none. "shop" matches are cash-shop event and operation names only (client/events.go:414-415, client/operations.go:38, 41), not read further.
+
+Why PARTIAL: the donor is a passive market-data uploader. It reads the game's auction packets and mail summaries and sends them to an ingest. It does not hold a trade, escrow items, match orders, pay out, apply the tax to a balance, or run NPC vendors; the game server does all of that. The only transferable pieces are one tax formula and the shape of two settlement summaries. That is a fragment, so no full note.
+
+Mechanism that is here (receipts in receipts.tsv, note ao-data-albiondata-client):
+- Sales tax: SalesTax = 0.03 (lib/market.go:34).
+- Sell summary (operation_read_mail.go:62-71): Price = price / 10000 with integer division (line 70), then TotalAfterTaxes = Price x Amount x (1 - 0.03) in float32 (line 71). The tax is taken after the sub-silver truncation.
+- Expiry summary (operation_read_mail.go:84-105): fields Sold, Amount, Price (Price = price / 10000, line 104). Expiry reports the unsold and sold counts; it returns nothing to the seller in this code.
+- Offers response (operation_auction_get_offers.go:83-84): an empty decoded list is dropped.
+- Price history (operation_auction_get_item_average_stats.go): request stores a slot at MessageID % CacheSize (21); the response waits up to 30 one-second sleeps for the request (55-63, sleep at 58); the slot is cleared after use (74); amounts below -124 are skipped (88-91); history sorted newest first (111-113).
+
+Defects found (each a fix for the Frankendom version):
+- D1 money as float32 (line 55, 71): fix: integer minor units; round the tax once, in one place, and say which way.
+- D2 truncation before the tax (line 70): fix: keep full precision; tax on the full value.
+- D3 expiry ItemID taken from body token 1 (line 103), the same token parsed as Amount at line 90: fix: check against a real mail body (not read) before using it; take the item id from its own field.
+- D4 positional tokens with no field names and no length check (body[3] at line 62 and body[2] at line 96 are read without checking the body has that many tokens; a short body would panic): fix: named fields and a length check before any read.
+- D5 the wait loop blocks the packet handler for up to 30 seconds (55-63): fix: do not block; park the response and match it on arrival.
+- D6 the request-side wrap range (line 28, -128 to -1) and the response-side cut (line 88, below -124) do not match: fix: one shared range.
+
+Best transferable idea: an auction sale pays the seller unit price x amount minus one fixed sales tax, computed once in integer minor units at payout, with the tax recorded as a sink row in the one ledger instead of a display number.
+
+Decision (proposed): adapt. Take the fixed-rate sales tax as a market data field (data, not a constant) and the sold/expired summary as the shape of a sale row and an expiry row. Reject the mail channel as the payout path (the ledger is the channel) and reject the float money and the blocking wait (defects D1, D5).

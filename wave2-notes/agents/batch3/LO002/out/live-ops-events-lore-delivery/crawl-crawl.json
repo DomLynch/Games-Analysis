@@ -1,0 +1,14 @@
+{"game":"crawl-crawl","category":"live-ops-events-lore-delivery","cell":2,"verdict":"STRONG","depth":"thin",
+ "donor_path":"/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/timed-effects.cc",
+ "licence":"GPL-2.0-or-later (repo LICENSE line 7; the files read carry no per-file licence header)","licence_class":"copyleft",
+ "target_module":"origins/server/world-spawns.ts","parity_row":23,
+ "pattern_tags":["new:capped-catchup","fixed-step","timer-wheel","clamp-and-report","new:square-trigger","stale-state"],
+ "data_fields":[
+  {"name":"liveTurnsCap","donor_constant":"min(10, elapsed / 10) live turns on re-entry","unit":"count","where":"zone data","donor_ref":"/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/timed-effects.cc:625"},
+  {"name":"ticksPerTurn","donor_constant":"10 ticks per normal turn","unit":"ticks","where":"engine constant","donor_ref":"/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/timed-effects.cc:625"},
+  {"name":"turnElapsedTotal","donor_constant":"(live + quick) * 10 ticks reported to the bus (donor is short by live * 10; fixed in sketch)","unit":"ticks","where":"engine constant","donor_ref":"/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/timed-effects.cc:650"}
+ ],
+ "best_idea":"After a zone sits empty, simulate at most a capped number of live turns, then advance the cheap timers by the uncapped remainder, so a long absence costs bounded work and nothing is counted twice.",
+ "decision":"adapt","decision_why":"Keep the capped live catch-up and the cheap remainder timers; fix the donor's double subtraction, make the cap zone data, and award no kills or loot during catch-up, since the donor's live part moves monsters and the rules here are server-verified kills and one ledger.",
+ "decision_status":"proposed",
+ "acceptance":"A server test leaves a zone empty for 300 ticks, re-enters it, and asserts 10 live spawn steps, timers advanced by 200 ticks, and a timer total of 300; a 50-tick absence gives 5 live and 0 quick steps; no kill or loot credit is recorded during catch-up."}

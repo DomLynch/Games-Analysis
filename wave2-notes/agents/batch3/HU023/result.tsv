@@ -1,0 +1,2 @@
+game	category	old	verdict	depth	finding
+lichess-org-lila	hud-ui	P	STRONG	thin	/mnt/frankendom-donors/lichess-org-lila/ui/round/src/ctrl.ts:501-520 and 546-566: stored premove deferred one tick (1 ms, 100 ms atomic), re-checked by ply and FEN, cancelled on reload; premove.ts:207-214 fail-open catch noted

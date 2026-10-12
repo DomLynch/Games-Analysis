@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+luanti-org-luanti	housing-player-built-spaces	P	STRONG	full	src/util/areastore.h:36-60 and src/util/areastore.cpp:104-233: box index with owner string, per-block point cache cleared on every write; builtin/game/misc.lua:142-186 sampled volume check that can miss thin protected regions
+veloren-veloren	housing-player-built-spaces	P	STRONG	full	world/src/site/tile.rs:76-143 grow_aabr: lot grows from a road-side seed into empty tiles with area and side limits; mod.rs:455-541 finders; area guard uses the wrong edge when abs(x+y) is odd (defect)
+ACEmulator-ACE	housing-player-built-spaces	P	STRONG	full	Source/ACE.Server/Managers/HouseManager.cs:327-546 due-time rent queue, settle at due time, eviction; defect: early returns at 390-405 drop an owner from the queue; eviction notice promises item loss not found in code

@@ -1,0 +1,17 @@
+{"game":"wesnoth-wesnoth","category":"live-ops-events-lore-delivery","cell":1,"verdict":"STRONG","depth":"full",
+ "donor_path":"/mnt/frankendom-donors/wesnoth-wesnoth/src/tod_manager.cpp",
+ "licence":"GPL-2.0-or-later (time_of_day.cpp header lines 8-9; COPYING is GPL v2)","licence_class":"copyleft",
+ "target_module":"origins/server/world-clock.ts","parity_row":23,
+ "pattern_tags":["new:turn-indexed-schedule","new:once-per-turn-latch","new:net-direction-aura","clamp-and-report"],
+ "data_fields":[
+  {"name":"phaseCount","donor_constant":"count of [time] children; no cap in code","unit":"count","where":"zone data","donor_ref":"src/tod_manager.cpp:541"},
+  {"name":"phaseLightBonus","donor_constant":"lawful_bonus per [time] child (scenario data)","unit":"units","where":"zone data","donor_ref":"src/time_of_day.cpp:72"},
+  {"name":"startPhase","donor_constant":"current_time default 0","unit":"count","where":"zone data","donor_ref":"src/tod_manager.cpp:63"},
+  {"name":"liminalFloor","donor_constant":"25","unit":"units","where":"engine constant","donor_ref":"src/tod_manager.cpp:55"},
+  {"name":"illumRadius","donor_constant":"default 1 hex; all_map = unlimited","unit":"count","where":"zone data","donor_ref":"src/tod_manager.cpp:237"},
+  {"name":"eventsPerTurn","donor_constant":"turn_N and new_turn fire once per turn (latch)","unit":"count","where":"engine constant","donor_ref":"src/play_controller.cpp:513"}
+ ],
+ "best_idea":"A zone's day/night and event schedule is a list of data phases indexed by modulo of elapsed server time, with a once-per-tick latch so an event fires once no matter how many players cause the tick.",
+ "decision":"adapt","decision_why":"Keep the modulo phase clock and once-per-tick latch, key them to server seconds and store phases as zone data; keep light out of combat until a ruling exists, since the donor feeds light into combat bonus.",
+ "decision_status":"proposed",
+ "acceptance":"A server test with a 3-phase zone schedule asserts the phase at tick T equals phases[(start + elapsed) mod 3] across two full cycles, and a zone event fires once when two players trigger the same tick."}

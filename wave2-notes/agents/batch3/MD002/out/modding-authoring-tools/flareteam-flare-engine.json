@@ -1,0 +1,46 @@
+{
+ "game": "flareteam-flare-engine",
+ "category": "modding-authoring-tools",
+ "cell": 3,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/flareteam-flare-engine/src/ModManager.cpp",
+ "licence": "GPL-3.0 (COPYING line 2)",
+ "licence_class": "copyleft",
+ "target_module": "origins/catalogue/packs.ts",
+ "parity_row": 20,
+ "pattern_tags": [
+  "new:priority-list-override",
+  "new:requirement-first-order",
+  "new:version-range-requires",
+  "new:scale-string-step"
+ ],
+ "data_fields": [
+  {
+   "name": "requires_version_min",
+   "donor_constant": "optional lower bound per requirement; inverted bounds raised to min",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/flareteam-flare-engine/src/ModManager.cpp:382"
+  },
+  {
+   "name": "requires_version_max",
+   "donor_constant": "default MAX when no max is given (code after the doc line; not line-numbered)",
+   "unit": "ratio",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/flareteam-flare-engine/src/ModManager.cpp:382"
+  },
+  {
+   "name": "scale_step_default",
+   "donor_constant": "1 (step default in clear and in the parse default)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/flareteam-flare-engine/src/ItemManager.cpp:223"
+  }
+ ],
+ "best_idea": "Let a content pack override another by its position in a priority list, resolve a pack's requirements (with a version range) before it, and refuse a pack whose requirement is missing at any position, so an unmet dependency is never enabled silently.",
+ "decision": "adapt",
+ "decision_why": "Priority-ordered event packs with version-ranged requires fit server-staged content; reject whole-file override for live rows (two packs replacing one file lose data silently) and keep balance numbers as published rows, not pack globals.",
+ "decision_status": "proposed",
+ "acceptance": "A staff event pack that requires core 1.0 to 2.0 is refused at stage time, with the missing or out-of-range requirement named, when core is absent or listed after it (server test: resolvePacks returns an error for the event pack when core is missing, and an order core then event with no errors when core is present)."
+}

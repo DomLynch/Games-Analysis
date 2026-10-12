@@ -1,0 +1,54 @@
+{
+ "game": "CleverRaven-Cataclysm-DDA",
+ "category": "modding-authoring-tools",
+ "cell": 2,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/generic_factory.h",
+ "licence": "CC-BY-SA-3.0 (LICENSE.txt line 1)",
+ "licence_class": "copyleft",
+ "target_module": "origins/catalogue/deltas.ts",
+ "parity_row": 21,
+ "pattern_tags": [
+  "new:copy-from-delta",
+  "new:deferred-retry-loader",
+  "new:strict-unknown-field",
+  "new:same-source-duplicate-error",
+  "new:mod-set-tunable"
+ ],
+ "data_fields": [
+  {
+   "name": "proportional_scalar",
+   "donor_constant": "must be > 0 and != 1; value multiplies inherited number",
+   "unit": "ratio",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/generic_factory.h:829"
+  },
+  {
+   "name": "relative_adder",
+   "donor_constant": "any number, added to inherited number",
+   "unit": "units",
+   "where": "zone data",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/generic_factory.h:899"
+  },
+  {
+   "name": "retry_passes",
+   "donor_constant": "no cap; stops when a pass makes no progress",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/init.cpp:205"
+  },
+  {
+   "name": "example_tunable_str_cap",
+   "donor_constant": "35 (sample mod value)",
+   "unit": "units",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/mods/Magiclysm/modinfo.json:17"
+  }
+ ],
+ "best_idea": "Let a content row copy a base row by id and override only a few numbers with a multiplier or an adder, load rows in any order by retrying until a pass makes no progress, and reject any unknown key at load time.",
+ "decision": "adapt",
+ "decision_why": "Copy-from with proportional and relative deltas fits 100+ legends that differ by a few numbers; the retry loader and strict keys catch order and typo errors at save. Reject mod-set global options because balance numbers must be server-owned rows.",
+ "decision_status": "proposed",
+ "acceptance": "A legend row copies a base and sets proportional hp 1.2; the preview shows 1.2x the base hp before publish. A typo key is refused at save with 'unknown field', and a missing base id is named in the error (server test: loadRows() applies the delta, resolves a row listed before its base, and returns an error for an unknown key)."
+}

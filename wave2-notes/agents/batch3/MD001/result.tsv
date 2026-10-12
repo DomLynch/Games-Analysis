@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+luanti-org-luanti	modding-authoring-tools	P	STRONG	full	/mnt/frankendom-donors/luanti-org-luanti/src/content/mod_configuration.cpp:197-315 (ModConfiguration::checkConflictsAndDeps and resolveDependencies: name-clash refusal, required and optional deps, ready stack, unsatisfied leftovers); with the sandbox and write ceiling in src/script/cpp_api/s_security.cpp:765-951
+openmw	modding-authoring-tools	P	STRONG	full	/mnt/frankendom-donors/openmw/components/lua/configuration.cpp:160-192 (getLocalConf: type, row and instance layers with detach); per-call instruction watchdog in components/lua/luastate.cpp:62-79 is opt-in via settings-default.cfg:1204
+wesnoth-wesnoth	modding-authoring-tools	P	STRONG	full	/mnt/frankendom-donors/wesnoth-wesnoth/src/server/campaignd/server.cpp:1261-1500 (validate_addon publish gate) with src/addon/validation.cpp:325-379 (name-and-hash update packs: removelist and addlist)

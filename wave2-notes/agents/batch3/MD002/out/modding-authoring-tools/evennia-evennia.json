@@ -1,0 +1,46 @@
+{
+ "game": "evennia-evennia",
+ "category": "modding-authoring-tools",
+ "cell": 1,
+ "verdict": "STRONG",
+ "depth": "full",
+ "donor_path": "/mnt/frankendom-donors/evennia-evennia/evennia/prototypes/spawner.py",
+ "licence": "BSD-3-Clause (LICENSE.txt line 1)",
+ "licence_class": "permissive",
+ "target_module": "origins/catalogue/inherit.ts",
+ "parity_row": 20,
+ "pattern_tags": [
+  "new:prototype-chain-inherit",
+  "new:validate-dry-run",
+  "new:read-only-code-rows",
+  "new:lock-on-save"
+ ],
+ "data_fields": [
+  {
+   "name": "max_parent_depth",
+   "donor_constant": "none in donor (FUNCPARSER_MAX_NESTING = 20 caps $func nesting only)",
+   "unit": "count",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/evennia-evennia/evennia/settings_default.py:756"
+  },
+  {
+   "name": "default_lock_spawn_edit",
+   "donor_constant": "all()",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/evennia-evennia/evennia/prototypes/prototypes.py:990"
+  },
+  {
+   "name": "code_rows_editable",
+   "donor_constant": "rule: code-defined rows cannot be edited",
+   "unit": "none",
+   "where": "engine constant",
+   "donor_ref": "/mnt/frankendom-donors/evennia-evennia/evennia/prototypes/prototypes.py:1163"
+  }
+ ],
+ "best_idea": "Author content as named rows that inherit from a parent row by key, validate the whole chain at save time with the same validator the spawner uses, and make code-shipped base rows read-only.",
+ "decision": "adapt",
+ "decision_why": "Legends and zones are rows with a few inheritable fields, and the editor needs one validator for preview and save; reject the $func string-evaluation layer since legend rows need no inline expressions.",
+ "decision_status": "proposed",
+ "acceptance": "A staff editor saves a legend row with a parent and sees its flattened stats before publish; saving a row whose parent chain loops returns an error and nothing is written (server test: saveRow returns errors and the store is unchanged)."
+}
