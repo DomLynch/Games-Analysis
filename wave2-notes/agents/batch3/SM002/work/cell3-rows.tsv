@@ -1,0 +1,44 @@
+DCurrent-openbor	licence: BSD-style source redistribution clause (permissive)	/mnt/frankendom-donors/DCurrent-openbor/LICENSE	7	Redistributions of source code must retain the above copyright notice
+DCurrent-openbor	licence: no-endorsement clause (BSD-3 style)	/mnt/frankendom-donors/DCurrent-openbor/LICENSE	11	Neither the name of the Senile Team, OpenBOR Team nor the names of its contributors
+DCurrent-openbor	play path: sample plays on a channel acquired from the pool	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/soundmix.c	2440	channel = sound_channel_pool_acquire(&sound_channel_pool);
+DCurrent-openbor	when the pool is full, steal the lowest-priority channel	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/soundmix.c	2442	channel = sound_find_lowest_priority_channel(&priority_low);
+DCurrent-openbor	newcomer is dropped when the lowest active priority is above it	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/soundmix.c	2443	if(channel < 0 || priority_low > priority) {
+DCurrent-openbor	steal finder: first channel found wins ties (strict less-than)	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/soundmix.c	2299	if(channel < 0 || record->priority < *lowest_priority) {
+DCurrent-openbor	steal finder starts from UINT_MAX	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/soundmix.c	2289	*lowest_priority = UINT_MAX;
+DCurrent-openbor	start phase staggered by channel index (avoids identical waveforms summing)	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/soundmix.c	2494	(((uint64_t)channel * 4U) / (uint64_t)sample->channels) % sample->framecount;
+DCurrent-openbor	delay is stored and converted to output frames at play time	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/soundmix.c	2505	record->delay_frames = sound_play_delay_frames_calculate(options);
+DCurrent-openbor	delay: whole units times output rate	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/soundmix.c	2343	delay_whole = options->delay / rate;
+DCurrent-openbor	delay: partial unit rounds up to a whole frame	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/soundmix.c	2352	partial_frames = (partial_numerator + rate - 1U) / rate;
+DCurrent-openbor	chance roll is drawn at play time with rand32	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/soundmix.c	2509	record->chance_roll = record->chance < SOUND_PLAY_CHANCE_MAX
+DCurrent-openbor	chance is tested in the mixer when the delay has ended	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/soundmix.c	1576	if((uint64_t)record->chance_roll >= chance_threshold) {
+DCurrent-openbor	chance threshold scales the roll to 2^32	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/soundmix.c	1573	chance_threshold = ((uint64_t)chance * (UINT64_C(1) << 32))
+DCurrent-openbor	a failed chance roll deactivates the channel	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/soundmix.c	1577	sound_channel_pool_deactivate(&sound_channel_pool, channel);
+DCurrent-openbor	delay countdown: returns silent until the delay is used up	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/soundmix.c	1556	if(record->delay_frames) {
+DCurrent-openbor	chance field doc: 0 through 100	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/sound_channel.h	168	Playback chance from 0 through 100.
+DCurrent-openbor	chance roll doc says evaluated when delay expires (code rolls at play time)	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/sound_channel.h	169	Main-thread roll evaluated when delay expires.
+DCurrent-openbor	pool size: 64 banks of 64 channels	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/sound_channel.h	29	(SOUND_CHANNEL_BANK_COUNT * SOUND_CHANNEL_BANK_SIZE)
+DCurrent-openbor	reported maximum channels is the pool size	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/soundmix.c	4041	return (int)SOUND_CHANNEL_COUNT_MAX;
+DCurrent-openbor	music channel is reserved at init (excluded from acquire and steal)	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/soundmix.c	4000	!sound_channel_pool_reserve_mask(&sound_channel_pool, 0, UINT64_C(1))) {
+DCurrent-openbor	acquire skips reserved channels	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/sound_channel.c	394	channel_mask = ~(bank->active_mask | bank->reserved_mask);
+DCurrent-openbor	acquire allocates a new bank when every bank is full	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/sound_channel.c	362	Acquire the lowest available channel. Allocate
+DCurrent-openbor	group and owner match: owner all-ones matches any owner	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/sound_channel.c	105	(owner_id == UINT64_MAX || record->owner_id == owner_id);
+DCurrent-openbor	group stop entry point	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/soundmix.c	2832	size_t sound_group_stop(
+DCurrent-openbor	music opens by closing the current music first (no fade)	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/soundmix.c	3449	sound_close_music();
+DCurrent-openbor	music is started through the same play path on the music channel	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/soundmix.c	3463	channel = sound_play_sample_internal(
+DCurrent-openbor	close music stops the music channel at once	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/soundmix.c	3832	sound_stop_sample(SOUND_CHANNEL_MUSIC_DEFAULT);
+DCurrent-openbor	no fade function exists in the sound code (grep for fade returned nothing; this row is the play path entry)	/mnt/frankendom-donors/DCurrent-openbor/engine/source/gamelib/soundmix.c	2370	static int sound_play_sample_internal(
+DCurrent-openbor	frame sound collection: each frame's sound slots are submitted in ascending order	/mnt/frankendom-donors/DCurrent-openbor/engine/source/openbor.c	10061	while (active_status) {
+DCurrent-openbor	frame sound collection: a random range picks one slot, the rest always play	/mnt/frankendom-donors/DCurrent-openbor/engine/source/openbor.c	10053	if (collection->random_status) {
+DCurrent-openbor	frame sound collection comment: the acquired channel owns delay, chance and offsets	/mnt/frankendom-donors/DCurrent-openbor/engine/source/openbor.c	10029	The acquired mixer channel owns delay, chance, looping, and
+DCurrent-openbor	frame sound options: delay copied from the slot	/mnt/frankendom-donors/DCurrent-openbor/engine/source/openbor.c	10071	options.delay = sound->delay;
+DCurrent-openbor	frame sound delay rate is the game speed	/mnt/frankendom-donors/DCurrent-openbor/engine/source/openbor.c	10080	? (unsigned int)global_config.game_speed
+DCurrent-openbor	frame sound play uses the options path	/mnt/frankendom-donors/DCurrent-openbor/engine/source/openbor.c	10088	sound_play_sample_with_options(
+DCurrent-openbor	random frame sound: one candidate picked uniformly (doc)	/mnt/frankendom-donors/DCurrent-openbor/engine/source/openbor.c	9923	Select one configured sound bit uniformly from a non-zero
+DCurrent-openbor	random frame sound: rejection limit avoids modulo bias	/mnt/frankendom-donors/DCurrent-openbor/engine/source/openbor.c	9945	- ((UINT64_C(1) << 32) % candidate_count);
+DCurrent-openbor	random frame sound selector entry point	/mnt/frankendom-donors/DCurrent-openbor/engine/source/openbor.c	9927	static uint64_t frame_sound_select_random_status(uint64_t candidate_status) {
+DCurrent-openbor	frame slot count per frame	/mnt/frankendom-donors/DCurrent-openbor/engine/source/openbor.h	2422	#define MAX_FRAME_SOUNDS_PER_FRAME
+DCurrent-openbor	group stop from a frame action, owned by the entity	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	10001	sound_group_stop(action->group, owner_id);
+DCurrent-openbor	gameplay sounds mostly play at priority 0 (jump)	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	44718	sound_play_sample(global_sample_list.jump, 0, savedata.effectvol
+DCurrent-openbor	gameplay sounds mostly play at priority 0 (death sound)	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	36817	sound_play_sample(target_entity->modeldata.diesound, 0, savedata.effectvol
+DCurrent-openbor	the generic playback helper uses a named priority constant of zero	/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c	31955	#define PLAYBACK_PRIORITY 0
+DCurrent-openbor	script sample play with loop uses the offset loop path	/mnt/frankendom-donors/DCurrent-openbor/engine/openborscript.c	12858	result = sound_loop_sample_offset(
