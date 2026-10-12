@@ -2,7 +2,7 @@
 
 | Block | Decisions | Note |
 |---|---|---|
-| Urgent this week | 45 | Most important: U1, who pays the market fee (recommend the seller) |
+| Urgent this week | 47 | Most important: U1, who pays the market fee (recommend the seller) |
 | Soon | 79 | Skills, spells, enemy AI, chat, quests, replay |
 | Parked | 16 | Zone generation, healer resurrect, companions |
 | Design-brief questions | 15 | 12 are accept-in-one-yes; 3 are not the brief's call (B1 launch target, B2 kids/age, B3 test box) |
@@ -30,7 +30,7 @@
 - **U41. On a player kill, does the killer take exactly one item (PvP zones only, never the Pit), at a rate set per zone?** Yes, never the donor's drop-everything. [rAthena DR004, Open-RSC DR005]
 - **U42. What does a player keep on death?** Keep 3 items unflagged, 0 if skulled (marked as an attacker), plus 1 with the protect ability, worn gear kept in unflagged zones; numbers are zone data so open-PvP zones can differ. [Open-RSC DR005]
 
-Strategy's ruling (2026-10-12): the 139 other decisions are ruled as written, every number kept as data and tuned in playtests. Lines are marked [ruled by Strategy 2026-10-12] below.
+Strategy's ruling (2026-10-12): the 141 other decisions (139 plus two added from the gap-checks, U46 and U47) are ruled as written, every number kept as data and tuned in playtests. Lines are marked [ruled by Strategy 2026-10-12] below.
 
 
 How to read this: each line is one question. Answer "yes" to accept my recommendation, or write the change. Where several donor games asked the same thing, they are listed in brackets. Where two donors disagreed I say so and pick one.
@@ -64,7 +64,7 @@ How to read this: each line is one question. Answer "yes" to accept my recommend
 - **U20. Are quest-only items destroyed when the quest fails or is dropped?** Yes by default, with a per-quest switch to keep them, because it keeps the economy clean. [AzerothCore QU003] [ruled by Strategy 2026-10-12]
 
 ### Fights and connection (netcode)
-- **U21. When a fight's input queue is full, drop the oldest input or the newest?** Drop the oldest, because the newest is what the player just did. [Nakama NW002] [ruled by Strategy 2026-10-12]
+- **U21. When a fight's input queue is full, drop the oldest input or the newest?** Applies only to fights with a live server intake (world/zone fights, when built); duels keep peer rollback plus the server replay verifier and have no per-fight input queue. For a live intake: drop the oldest, because the newest is what the player just did. [Nakama NW002; caveat: docs/gap-check/NW.md] [ruled by Strategy 2026-10-12]
 - **U22. Should each player have a cap on how many actions count per game step?** Yes: start at 5 actions per step (one applied move per step for movement), a refused action still spends the cap, and measure with a real phone before changing it, because a flood must not push out real inputs. [2004Scape NW003, Teeworlds NW001, Nakama and geckos.io NW002 on the per-second cap] [ruled by Strategy 2026-10-12]
 - **U23. If a fight cannot keep up, should it slow down and skip enemy work, or end?** Slow down and skip enemy work, never end the fight, because ending hurts the players for the server's problem. [Nakama NW002] [ruled by Strategy 2026-10-12]
 - **U24. Should a bad input (impossible direction or value) be rejected or quietly corrected?** Rejected and counted, never corrected, because quiet corrections are how cheats hide. [Teeworlds NW001] [ruled by Strategy 2026-10-12]
@@ -78,7 +78,7 @@ How to read this: each line is one question. Answer "yes" to accept my recommend
 - **U32. One server step size for everything (zones, Pit, enemies)?** Yes, one fixed step, because it is what makes a fight replayable. [ioq3 NW001] [ruled by Strategy 2026-10-12]
 
 ### Lag compensation (how far back the server may look to judge a hit)
-- **U33. How far back may the server look?** 250 ms for duels, tested on a 150 ms phone link before any change; loosen only if real phones need it. The donors disagree (Valve proposes 250 ms against its own 1 s; Colyseus uses 500 ms), and a tighter window favours the target. [Valve NW001, Colyseus NW002] [ruled by Strategy 2026-10-12]
+- **U33. How far back may the server look to judge a hit?** Applies only to live-server fights; duels have no server hit test, so no lag-compensation window. The 250 ms value is the starting figure for world fights, tested on a 150 ms phone link. The donors disagree (Valve 250 ms against its own 1 s; Colyseus 500 ms). [Valve NW001, Colyseus NW002; caveat: docs/gap-check/NW.md] [ruled by Strategy 2026-10-12]
 - **U34. Does it apply to melee as well as ranged, and look back at only the one player struck?** Yes to both, because melee needs it on a phone and checking one target keeps the cost low. [Colyseus NW002, Valve NW001] [ruled by Strategy 2026-10-12]
 - **U35. If a player's claimed time is more than 200 ms off the server's estimate, replace it with the server's?** Yes, the cheapest cheat guard there is. [Valve NW001] [ruled by Strategy 2026-10-12]
 - **U36. One 200 ms "future" limit for every mode, or shorter in duels?** One limit for now, because per-zone limits are an exploit surface; measure first. [ioq3 NW001] [ruled by Strategy 2026-10-12]
@@ -93,6 +93,10 @@ How to read this: each line is one question. Answer "yes" to accept my recommend
 - **U43. Does a death count as PvP if any player hurt the victim recently, even if they have since logged out?** Yes, because the drop outcome changes and logging out must not erase blame. [2004Scape DR005; the donor says no] [ruled by Strategy 2026-10-12]
 - **U44. Does kill credit reset on a full heal or after idle time?** After idle time (10 steps by default), because a heal should not wipe credit. [2004Scape DR005] [ruled by Strategy 2026-10-12]
 - **U45. Does an attack that misses still mark the attacker as a player-killer?** Yes, because choosing to attack is the offence. [2004Scape DR005] [ruled by Strategy 2026-10-12]
+
+### Added by Strategy 2026-10-12 (from the gap-checks; no question for Dom)
+- **U46. Is the world (zone) camera blocked by the camera freeze?** No. "Camera: frozen" in origins/world/README.md:59-61 is the Pit camera freeze of 10-06 and is correct. The zone camera is open and critical by Dom's ruling of 10-10: over-the-shoulder follow, presets A and B as zone-row data on the shared follow module. That README line should say "Pit camera frozen; zone camera = zone-row data". [docs/gap-check/QC.md] [ruled by Strategy 2026-10-12]
+- **U47. Where does the metal currency live, and when does it go live?** Metal is a ledger currency like gold: every credit and debit goes through the one ledger's settle() with a closed reason, no separate store. Nothing debits it yet because its first consumer is the Core items/bank slice; until that lands it stays "drafted, not live" in the docs. [docs/gap-check/ET.md] [ruled by Strategy 2026-10-12]
 
 ## Soon (skills, spells, enemy AI, chat, quests, replay)
 
