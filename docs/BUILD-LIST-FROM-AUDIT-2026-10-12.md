@@ -1,5 +1,7 @@
 # Build list from the audit (analyst draft), 2026-10-12
 
+> UPDATE 2026-10-12 (Dom approved): rulings U6, U38, U41, U42, S5 are WITHDRAWN (older written Dom rules apply: barter-only player trade, no death penalty, no skill gain by use). B29 (quest counters) must use non-kill objectives (guardian, event, travel) because Region 1 bans kill-N. Items shaped by those rulings (B27 trade wiring, death/respawn items) must follow the older rules.
+
 Draft for Dom and Strategy/Lead. Analysis only: nothing here is an assignment, and the order is NOT final. Strategy and Lead do the real ranking. Not committed.
 
 ## Summary (10 lines)
