@@ -1,6 +1,6 @@
 # Build list from the audit (analyst draft), 2026-10-12
 
-> UPDATE 2026-10-12 (Dom approved): rulings U6, U38, U41, U42, S5 are WITHDRAWN (older written Dom rules apply: barter-only player trade, no death penalty, no skill gain by use). B29 (quest counters) must use non-kill objectives (guardian, event, travel) because Region 1 bans kill-N. Items shaped by those rulings (B27 trade wiring, death/respawn items) must follow the older rules.
+> UPDATE 2026-10-12 (Strategy ruled, Dom approved): rulings U6, U38, U41, U42, S5 are SUPERSEDED (older written Dom rules apply: barter-only player trade, no death penalty, no skill gain by use). B29 (quest counters) must use non-kill objectives (guardian, event, travel) because Region 1 bans kill-N. Items shaped by those rulings (B27 trade wiring, death/respawn items) must follow the older rules.
 
 Draft for Dom and Strategy/Lead. Analysis only: nothing here is an assignment, and the order is NOT final. Strategy and Lead do the real ranking. Not committed.
 
@@ -132,7 +132,7 @@ Analyst rank 17 | Layer Core | as-data: yes (exclusion table) | phone-first: yes
 
 | Id | Item | Rests on | Rulings | Size | Depends | Layer / data / phone | Analyst rank |
 |---|---|---|---|---|---|---|---|
-| B27 | Player trade wiring: server module that opens, changes, accepts, settles (pure rules and SQL exist) | TR ADD 1 (7 notes); ET (trade left to TR) | U2 to U9, U11, U13, U15; see conflict on trade money in verify list | medium to large | B7, B6 | Core / no / risk | 27 |
+| B27 [NOTE: player trade is barter-only, no money in a player trade (trading.md:696, Dom 2026-10-07); market OFF per Strategy 2026-10-10] | Player trade wiring: server module that opens, changes, accepts, settles (pure rules and SQL exist) | TR ADD 1 (7 notes); ET (trade left to TR) | U2 to U9, U11, U13, U15; see conflict on trade money in verify list | medium to large | B7, B6 | Core / no / risk | 27 |
 | B61 | Zone tax into a town counter (needs its own table, not an account) | ET G3 | none found | medium | B9, B16 | Core / yes / yes | 61 |
 | B64 | Housing plot upkeep, interior instance, donor-defect tests | HS (4 upkeep notes merged) | none; housing is a later step | medium to large | B9 | Core / yes / yes | 64 |
 | B66 | Gear wear and repair | CR (5 notes merged) | U39 (no wear until repair exists; ruled) | medium | gear must enter `stepDuel` first | Core / yes / yes | 66 |
@@ -179,7 +179,7 @@ Analyst rank 26 | Layer Core | as-data: no | phone-first: yes
 
 | Id | Item | Rests on | Rulings | Size | Depends | Layer / data / phone | Analyst rank |
 |---|---|---|---|---|---|---|---|
-| B40 | Player death in open zones: reclaim delay 30/60/120 s, idle ghost release, killer takes one item (PvP zones), keep rules, ally revive "Downed", staged death beat | DR (EQEmu, ModernUO, TrinityCore, Veloren, Daggerfall); DR004/005 | U38, U40, U41, U42 pending Dom; U39, U43 to U45, S79, P3, P15 ruled | large | B6, B26, B41 | Core / yes / yes | 40 |
+| B40 [SUPERSEDED IN PART: no death penalty, never gear loss (progression-proposal.md:318, living-world.md:12); reclaim delay, killer-takes-item and item-loss parts are dropped, keep respawn/ghost release/ally revive only; Dom may reopen] | Player death in open zones: reclaim delay 30/60/120 s, idle ghost release, killer takes one item (PvP zones), keep rules, ally revive "Downed", staged death beat | DR (EQEmu, ModernUO, TrinityCore, Veloren, Daggerfall); DR004/005 | U38, U40, U41, U42 pending Dom; U39, U43 to U45, S79, P3, P15 ruled | large | B6, B26, B41 | Core / yes / yes | 40 |
 | B41 | Open-PvP hostile flag with quiet-period timer, combat tag, respite; server engage gate with level band and reason string | RF002 (+ACE, l1j), PV (Open-RSC) | U41 pending; flag shape in `feuds.md` section 9 unchecked | medium | B2 | Core / yes / yes | 41 |
 | B43 | Elite and boss tiers (two multipliers), wider look pool, element overlay with a non-colour cue, one swapped ability with a pre-swing cue, pack beats | CG G1 to G4; DC G3, G4 | none | medium | B4 | Core / yes / risk (375 silhouette) | 43 |
 | B44 | Ambush and patrol shapes on the mob row; approach radii, back-off, circle band | EN G2, AI G2, DC G6 | S42, S46, S45 (ruled) | medium | B13 | Core / yes / yes | 44 |
@@ -218,7 +218,7 @@ Analyst rank 23 | Layer Core | as-data: yes (routine rows, idle routes) | phone-
 | Id | Item | Rests on | Rulings | Size | Depends | Layer / data / phone | Analyst rank |
 |---|---|---|---|---|---|---|---|
 | B28 | Onboarding after fight 1: hint ladder, next-goal line, Exchange service tour, zone arrival lines; plus FIX: write the first-loss done flag when the lesson ends, not starts (`src/main.ts:1283`) | OB G1 to G4 | none | fix small; rest medium | quests/talk working (B11) | Core / yes / yes | 28 |
-| B29 | Quest objectives and timers (counters, deadlines) fed only by server-verified kills | QU G1 | U16 to U20, S60; CONFLICT with Region 1 "no kill-N" (verify list) | medium to large | B26 maybe | Core / yes / yes | 29 |
+| B29 | Feud/Bounty stages advanced by named events (no counters, no kill-N), per region1-ash-frontier.md:212; deadlines stay | QU G1 (rewritten) | U16 to U20, S60; dependency on QU notes stays | medium | B26 maybe | Core / yes / yes | 29 |
 | B30 | Quest flag writer; daily board as a derived view | QU G5, G2 | none | small / medium | B10 | Core / yes / yes | 30 |
 | B42 | Faction standing ledger: kill hits to rival/ally factions, derived standing, spend to advance boss ladder, witness reactions | GL A,B,C; RF001; QU G6; WF G4 | decay conflicts with progression rule "no decay" (needs a ruling) | medium | B10 (write path) | Core / yes / yes | 42 |
 | B55 | World text: name pools and place grammar, signs, rumours and barks, zone cards, discovery cards | WF G1 to G5; QU G4 | no free text (`living-world.md:72`); legends public-domain only | medium | B18, B2 | Core / yes / yes (375 label length) | 55 |
