@@ -1,5 +1,7 @@
 # Build list from the audit (analyst draft), 2026-10-12
 
+> **Ranked by Strategy + Lead 2026-10-12, HELD by Dom.** Order of record for when Dom lifts the hold (Lead's dependency-amended): B1 ‖ B2 → B3 → B4 → B13; B8 → B5 → B6 → B7 → B10 → B9; B72 anywhere. Strategy's top 10: B1 tick safety, B2 zone registry, B4 spawn director (B3 inside), B6 loot edge cases (B5 inside), B8 writer action limit, B7 inventory on the writer + pack grid, B9 metal through the one ledger (migration 0007 GO given by Strategy), B10 quest reward claim, B72 scorecard/career/leaderboard, B13 enemy chase. Next three: B16 vendor, B11 talk and journal, B22 phone guard rails. Slice packs are NOT written (hold).
+
 > UPDATE 2026-10-12 (Strategy ruled, Dom approved): rulings U6, U38, U41, U42, S5 are SUPERSEDED (older written Dom rules apply: barter-only player trade, no death penalty, no skill gain by use). B29 (quest counters) must use non-kill objectives (guardian, event, travel) because Region 1 bans kill-N. Items shaped by those rulings (B27 trade wiring, death/respawn items) must follow the older rules.
 
 Draft for Dom and Strategy/Lead. Analysis only: nothing here is an assignment, and the order is NOT final. Strategy and Lead do the real ranking. Not committed.
