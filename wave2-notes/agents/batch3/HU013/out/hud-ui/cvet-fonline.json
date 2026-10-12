@@ -1,0 +1,24 @@
+{
+  "game": "cvet-fonline",
+  "category": "hud-ui",
+  "cell": 2,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/cvet-fonline/Source/Client/FogOfWar.cpp",
+  "licence": "as read: MIT (LICENSE lines 3-5)",
+  "licence_class": "permissive",
+  "target_module": "src/hud/threat-zone.ts",
+  "parity_row": 14,
+  "pattern_tags": ["follow-point", "new:los-traced-zone", "new:morph-fan", "new:collapse-to-origin"],
+  "data_fields": [
+    {"name": "threat_reach_hexes", "donor_constant": "Distance {} (0 per comment = derive; code uses 0 literally)", "unit": "count", "where": "zone data", "donor_ref": "MapView.h:108"},
+    {"name": "look_extra_hexes", "donor_constant": "ExtraLength {1}", "unit": "count", "where": "zone data", "donor_ref": "MapView.h:110"},
+    {"name": "fan_morph_ms", "donor_constant": "TransitionDuration {150}", "unit": "ms", "where": "engine constant", "donor_ref": "MapView.h:111"},
+    {"name": "fan_clear_radius", "donor_constant": "ClearRadius {0.85f}", "unit": "ratio", "where": "engine constant", "donor_ref": "MapView.h:115"}
+  ],
+  "best_idea": "Draw a critter's reach as a fan whose rays stop at the first blocking hex and fade with the blocking distance, and glide the fan over about 150 ms when the critter moves, collapsing it to the origin when it goes.",
+  "decision": "adapt",
+  "decision_why": "Take the fan shape, the line-of-sight rays with strength falloff and the 150 ms morph and collapse for the threat telegraph; the blocking hexes must come from the engine's own line-of-sight (server authority), and the donor's reach-0 and ExtraLength defects are fixed first.",
+  "decision_status": "proposed",
+  "acceptance": "In a zone a wall two hexes from a critter cuts its threat fan at two hexes, and the fan glides over 150 ms when the critter steps rather than snapping; a server test asserts the blocking hex for a fixture comes from the engine line-of-sight function; a unit test asserts 10 points for reach 1."
+}

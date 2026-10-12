@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+electronicarts-CnC_Remastered_Collection	hud-ui	P	STRONG	full	TIBERIANDAWN/RADAR.CPP:1361-1528 (input) and 1492-1511 (tap to centre the view, pulse set at 1511): a radar tap centres the tactical view on the tapped cell and starts a 4-px bracket pulse that closes over four AI ticks; hit-test bug at line 921 and height bug at line 714 noted.
+endless-sky-endless-sky	hud-ui	P	STRONG	full	source/MiniMap.cpp:55-144 (Step: retarget, 300-frame linger, 30-frame fade, midpoint centre, 150-frame glide) and 148-292 (Draw: alpha, fade gate, system rings, dashed arrow); frame-counted timing is the main defect.
+evennia-evennia	hud-ui	P	STRONG	full	evennia/contrib/grid/ingame_map_display/ingame_map_display.py:164-188 (depth-limited walk, placed-once check, backtracking by cached position) and 198 (connector loop with no access check, a leak); max-size settings read at line 68 is a defect.

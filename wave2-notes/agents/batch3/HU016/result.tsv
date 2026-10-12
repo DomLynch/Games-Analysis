@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+exult-exult	hud-ui	P	STRONG	full	/mnt/frankendom-donors/exult-exult/gumps/Face_stats.cc:108-158, 282-340 and actors.cc:2912-2964: party HP bar scaled to strength in 32 px steps, priority-ordered status outline and a 200 ms hit flash; hint exultmenu.cc is the title menu, not the HUD.
+flareteam-flare-engine	hud-ui	P	STRONG	full	/mnt/frankendom-donors/flareteam-flare-engine/src/GameStatePlay.cpp:153-225 and MenuEnemy.cpp:51-149: target lock on the last hit for a 10 s logic-step window with nearest fallback, and the enemy HP frame; hint MenuCharacter.cpp is the character sheet, not the HUD.
+flareteam-flare-game	hud-ui	P	STRONG	full	/mnt/frankendom-donors/flareteam-flare-game/mods/fantasycore/menus/minimap.txt:1-9 with flareteam-flare-engine/src/MenuMiniMap.cpp:294-349 and 558-623: hero-centred minimap with explored-tile gate and engaged-only foe dots; hint art_src/interface/menus.xcf is a binary art source.

@@ -1,0 +1,24 @@
+{
+  "game": "crawl-crawl",
+  "category": "hud-ui",
+  "cell": 1,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/map-knowledge.cc",
+  "licence": "as read: GPL-2.0-or-later (LICENSE lines 7-8)",
+  "licence_class": "copyleft",
+  "target_module": "src/hud/minimap.ts",
+  "parity_row": 14,
+  "pattern_tags": ["new:priority-layer-map", "new:explore-frontier", "new:safe-click-travel", "new:fit-to-stat-column"],
+  "data_fields": [
+    {"name": "minimap_cell_cap_px", "donor_constant": "0 = no cap, else min(fit, cap) (tile_map_pixels)", "unit": "px", "where": "engine constant", "donor_ref": "tilesdl.cc:1071"},
+    {"name": "minimap_margin_px", "donor_constant": "2", "unit": "px", "where": "engine constant", "donor_ref": "tilesdl.cc:796"},
+    {"name": "minimap_grid_cols", "donor_constant": "80 (GXM, defines.h:83)", "unit": "count", "where": "zone data", "donor_ref": "tilesdl.cc:1065"},
+    {"name": "minimap_grid_rows", "donor_constant": "70 (GYM, defines.h:85)", "unit": "count", "where": "zone data", "donor_ref": "tilesdl.cc:1084"}
+  ],
+  "best_idea": "Resolve each map cell to one colour by a fixed priority (monster over item over floor), add an unexplored-frontier colour, and fit the cell size to the free space, so a zone minimap reads on a 375 px phone.",
+  "decision": "adapt",
+  "decision_why": "Keep the priority-resolved cell colour, the frontier marker and the safe tap-to-travel rule for the zone minimap; fix the donor's dead cloud category, dead monster colours and zero-size placement first; the 80 x 70 grid is one level's size and becomes zone data.",
+  "decision_status": "proposed",
+  "acceptance": "On a 375 px phone a seen item on a floor cell shows the item colour, a detected unseen monster shows the hostile colour, an unknown cell next to known floor shows the frontier colour; a tap on an adjacent cell acts on it, a tap on a far cell in a safe zone starts travel, and a tap on a far cell when the safety test fails takes one step; a unit test asserts each category."
+}

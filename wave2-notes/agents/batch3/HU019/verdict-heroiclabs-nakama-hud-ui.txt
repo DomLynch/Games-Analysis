@@ -1,0 +1,17 @@
+heroiclabs-nakama (hud-ui, cell 16) verdict: NONE (depth thin)
+Donor: /mnt/frankendom-donors/heroiclabs-nakama | Licence: Apache License 2.0 (read from LICENSE, header "Version 2.0, January 2004") | Go server + compiled admin console (React bundle, minified)
+Hint file read: /mnt/frankendom-donors/heroiclabs-nakama/console/ui/dist/index.html.gz is a 356-byte gzip of the shell page; the shell was opened as /mnt/frankendom-donors/heroiclabs-nakama/console/ui/dist/index.html (full, 22 lines).
+
+Files opened (candidates, at least 3):
+1. /mnt/frankendom-donors/heroiclabs-nakama/console/ui/dist/index.html (read in full): the admin console shell, title "Nakama", one empty #app div, no HUD.
+2. /mnt/frankendom-donors/heroiclabs-nakama/console/ui/dist/static/index-CNoeGISM.js (7.2 MB minified bundle, grep with context): the "minimap", "locale", "i18n" and "touchstart" hits are Monaco editor colour tokens and strings (minimap.findMatchHighlight, Minimap marker color), dayjs locale data (_="en"), and jsonforms i18n defaults (IH={locale:"en"...}). The bundle's only language is English.
+3. /mnt/frankendom-donors/heroiclabs-nakama/server/console_account.go (grep of lang_tag lines 244, 448, 460, 468, 478, 501, 514, 535, 570, 574): the server stores a player language tag on the account row and escapes it for the console. No string table.
+4. /mnt/frankendom-donors/heroiclabs-nakama/console/ui/dist/static/ (directory listing): the Hiro feature icons (hiro_achievements, hiro_economy, hiro_energy, hiro_inventory, hiro_progressions...) are SVG artwork for the admin console's game-system pages, not in-game HUD.
+5. /mnt/frankendom-donors/heroiclabs-nakama/console/ui/dist/static/index-Bdh9Sy6s.css (grep for minimap/hud/touch/panel selectors): selectors .minimap, .markers-panel, .rss-releases-panel (grep only; the file was not read in full, and I did not confirm that .minimap belongs to Monaco).
+Repo-wide grep for minimap/lock-on/touch/hud/i18n/locale over *.go, *.json, *.yaml, *.proto, *.md (vendor excluded) returned only CHANGELOG.md, console/api.swagger.json, server/console_account.go, social/social.go and two vendored internal packages (gopher-lua, skiplist). None is a game HUD or string table.
+
+Why NONE: Nakama is a game backend and its admin console; it ships no in-game HUD, minimap, world map, touch input, lock-on, or string table. The only localisation data is dayjs and jsonforms defaults plus Monaco's own strings.
+
+Best transferable idea: No HUD mechanism to lift; the closest idea is to store a per-player language tag on the account so the server can choose the text it sends to the client (notifications, reward text), but nothing in this donor uses it for UI strings.
+Decision (proposed): reject - Frankendom has no string table yet; the lang_tag field is data without a consumer here, and the HUD rulings keep the HUD client-only, so there is nothing for the engine to take.
+Parity row hint: 14 (HUD), not reached by this donor.

@@ -1,0 +1,26 @@
+{
+  "game": "daggerfall-unity",
+  "category": "hud-ui",
+  "cell": 3,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/Automap.cs",
+  "licence": "as read: MIT (Automap.cs line 4; LICENSE line 3)",
+  "licence_class": "permissive",
+  "target_module": "src/hud/worldmap-reveal.ts",
+  "parity_row": 14,
+  "pattern_tags": ["new:view-cone-reveal", "new:three-ray-agreement", "new:explored-memory-lru", "new:scan-gate-hz"],
+  "data_fields": [
+    {"name": "scan_interval_s", "donor_constant": "1 / 5.0 Hz = 0.2 s", "unit": "s", "where": "engine constant", "donor_ref": "Automap.cs:172"},
+    {"name": "floor_reveal_units", "donor_constant": "3.0", "unit": "units", "where": "engine constant", "donor_ref": "Automap.cs:168"},
+    {"name": "view_reveal_units", "donor_constant": "30.0", "unit": "units", "where": "zone data", "donor_ref": "Automap.cs:169"},
+    {"name": "protect_offset_units", "donor_constant": "0.1", "unit": "units", "where": "engine constant", "donor_ref": "Automap.cs:1164"},
+    {"name": "agree_tolerance_units", "donor_constant": "0.01", "unit": "units", "where": "engine constant", "donor_ref": "Automap.cs:1123"},
+    {"name": "memory_zone_count", "donor_constant": "1 (0 = only the current dungeon)", "unit": "count", "where": "engine constant", "donor_ref": "Automap.cs:257"}
+  ],
+  "best_idea": "Reveal map cells only when three rays from offset points agree on the same object and on its distance, so a gap or a pillar cannot reveal what the player cannot see, and keep the N most recently explored zones.",
+  "decision": "adapt",
+  "decision_why": "Take the three-ray agreement test, the floor-under-head, view and sweep order, the 5 Hz gate that skips while the map is open, and the keep-N memory; view length is zone data; fix the donor's sweep gap, missing-hit and tie defects first; explored state goes to the character ledger.",
+  "decision_status": "proposed",
+  "acceptance": "Walking a zone at 375 px fills in map cells in view and the floor just ahead, and a cell seen only through a pillar gap stays unrevealed; a unit test asserts a 0.2-unit gap refuses the reveal; the character's explored set is restored after re-login from the ledger."
+}

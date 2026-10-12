@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+heroiclabs-nakama	hud-ui	P	NONE	thin	console/ui/dist/static/index-CNoeGISM.js:31,387,943 and console/ui/dist/index.html:7 show no game HUD or string table (Monaco minimap, dayjs and jsonforms locale defaults only); see verdict-heroiclabs-nakama-hud-ui.txt
+id-Software-DOOM	hud-ui	P	STRONG	full	linuxdoom-1.10/st_stuff.c:752-922 status-face priority ladder with timers and pain bands; the OUCH test at 807 and 860 has the sign inverted
+id-Software-Quake	hud-ui	P	STRONG	full	WinQuake/pr_cmds.c:1326-1402 PF_aim cone lock-on with most-central visible pick and vertical-only snap; QW/server/pr_cmds.c:1157 uses sv_aim 2 as the off switch
