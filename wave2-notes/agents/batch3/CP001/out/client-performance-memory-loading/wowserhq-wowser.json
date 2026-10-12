@@ -1,0 +1,26 @@
+{
+  "game": "wowserhq-wowser",
+  "category": "client-performance-memory-loading",
+  "cell": 39,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/wowserhq-wowser/src/lib/game/world/doodad-manager.js",
+  "licence": "MIT (LICENSE: MIT License, Copyright (c) 2012-2018 Wowser Contributors; package.json license MIT)",
+  "licence_class": "permissive",
+  "target_module": "origins/client/zone_streaming.ts",
+  "parity_row": 23,
+  "pattern_tags": ["new:chunk-reference-set", "compute-budget", "timer-wheel", "new:holder-retain"],
+  "data_fields": [
+    {"name": "chunkRenderRadius", "donor_constant": "12 chunks each way (25 x 25 window)", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/wowserhq-wowser/src/lib/game/world/map.js:18"},
+    {"name": "minPerSlice", "donor_constant": "2", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/wowserhq-wowser/src/lib/game/world/doodad-manager.js:9"},
+    {"name": "backlogShare", "donor_constant": "1 / 40 of the remaining backlog per slice", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/wowserhq-wowser/src/lib/game/world/doodad-manager.js:6"},
+    {"name": "sliceIntervalMs", "donor_constant": "1", "unit": "ms", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/wowserhq-wowser/src/lib/game/world/doodad-manager.js:12"},
+    {"name": "unloadDelayS", "donor_constant": "15", "unit": "s", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/wowserhq-wowser/src/lib/pipeline/m2/blueprint.js:13"},
+    {"name": "workerConcurrency", "donor_constant": "navigator.hardwareConcurrency, fallback 4", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/wowserhq-wowser/src/lib/pipeline/worker/pool.js:15"}
+  ],
+  "best_idea": "Stream world props by chunk window with a reference set per prop, drain load and unload backlogs in slices sized to a fixed share of what is left, and share one refcounted model blueprint across instances so an animated model advances once.",
+  "decision": "adapt",
+  "decision_why": "The chunk-reference set and backlog-proportional slice fit zones as data, but Frankendom must first fix the late-load leak, duplicate in-flight loads, cached failures and idle timers, and must map props to zone content rather than to spawns.",
+  "decision_status": "proposed",
+  "acceptance": "A unit test walks a 25 x 25 chunk window back and forth; every prop is released exactly once when its last chunk leaves; a prop removed mid-load is released, not shown; a failed chunk or model load is retried on the next window change; no timer runs while the pending queues are empty."
+}

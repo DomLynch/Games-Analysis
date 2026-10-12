@@ -1,0 +1,25 @@
+{
+  "game": "ValveSoftware-source-sdk-2013",
+  "category": "rendering-performance",
+  "cell": 2,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/client/clientshadowmgr.cpp",
+  "licence": "Valve SOURCE 1 SDK LICENSE (LICENSE file line 1); not an OSI licence; read as restricted",
+  "licence_class": "restricted",
+  "target_module": "src/render/shadows.ts (proposed; no src/fight or origins module fits client rendering)",
+  "parity_row": 16,
+  "pattern_tags": ["compute-budget", "hysteresis", "new:redraw-cap-with-blob-fallback", "new:screen-area-priority"],
+  "data_fields": [
+    {"name": "shadow_redraw_cap_per_call", "donor_constant": "32", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/client/clientshadowmgr.cpp:685"},
+    {"name": "shadow_texture_min_power", "donor_constant": "4 (16 px) on PC builds", "unit": "px", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/client/clientshadowmgr.cpp:167"},
+    {"name": "shadow_texture_max_power", "donor_constant": "8 (256 px)", "unit": "px", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/client/clientshadowmgr.cpp:165"},
+    {"name": "shadow_keep_hysteresis_steps", "donor_constant": "1 power step", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/client/clientshadowmgr.cpp:538"},
+    {"name": "shadow_cast_distance_default", "donor_constant": "50", "unit": "units", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/ValveSoftware-source-sdk-2013/src/game/client/clientshadowmgr.cpp:1289"}
+  ],
+  "best_idea": "Rank visible shadow casters by on-screen area, spend a fixed number of texture redraws on the largest, and give every other caster a cheap blob, so a crowded scene has a predictable shadow cost.",
+  "decision": "adapt",
+  "decision_why": "Rank-by-screen-size, a redraw cap and a blob fallback give a crowded zone a predictable shadow cost at phone quality tiers; the donor's per-call cap, the texture page allocator and the over-cap blob of valid textures must change, and the texture allocator is only worth porting if the renderer uses render targets.",
+  "decision_status": "proposed",
+  "acceptance": "With more visible characters than the cap, a debug counter shows at most the cap of full shadow redraws per frame, the largest characters on screen get the full shadow, the rest get a blob, and a valid cached shadow over the cap stays cached (not a blob)."
+}

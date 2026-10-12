@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ModernUO	server-performance-scaling	P	STRONG	full	Projects/Server/Timer/Timer.TimerWheel.cs:31-252 - 8 ms tick, three 4096-slot rings, catch-up turns (59-70), detach-before-run (75-144) and remainder promotion (192-252); Next defect at 237
+colyseus-colyseus	server-performance-scaling	P	STRONG	full	packages/core/src/Room.ts:1021-1067 - fixed-step accumulator fed by measured delta, cap of 5 steps then backlog drop (1051-1065); patch rate decoupled at 57, 540 and 291-292
+clockworklabs-SpacetimeDB	server-performance-scaling	P	STRONG	full	crates/core/src/subscription/delta.rs:19-125 - per-transaction net-count bag-semantics delta (54-112) fed by per-query dedup (module_subscription_manager.rs:1463-1466) and handed to an ordered send worker (1389-1391, 1842-1884)

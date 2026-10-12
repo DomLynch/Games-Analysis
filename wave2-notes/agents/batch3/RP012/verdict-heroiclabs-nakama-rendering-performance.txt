@@ -1,0 +1,17 @@
+verdict: NONE
+cell: 17 rendering-performance | game: heroiclabs-nakama | list: 3
+donor: /mnt/frankendom-donors/heroiclabs-nakama (Go game backend; no client renderer in the box)
+licence: Apache License 2.0 (repo LICENSE: "Apache License Version 2.0, January 2004"; per-file headers say "Licensed under the Apache License, Version 2.0")
+
+Files opened (candidates, all read on the VPS):
+1. /mnt/frankendom-donors/heroiclabs-nakama/server/leaderboard_cache.go (the hint file): lines 1-40 read (licence header, imports, sort-order constants); grep of func names read (71-224). It is a leaderboard cache, not rendering.
+2. /mnt/frankendom-donors/heroiclabs-nakama/server/match_handler.go: grep of "tick" (39 hits, seen as grep lines only; no contiguous block read). Grep shows the server match loop ticker: time.NewTicker at 176 with the rate, and a tick case at 186-187 that queues one loop invocation (comment text). Server-side, not rendering. Rest of the file (not read).
+3. /mnt/frankendom-donors/heroiclabs-nakama/sample_go_module/sample.go: lines 1-25 read (licence header, package and imports). Sample runtime module, no rendering.
+4. /mnt/frankendom-donors/heroiclabs-nakama/server/console.go: grep hit at 463 (X-Frame-Options header). Not rendering.
+
+Search (narrow, VPS, excluding vendor/ and .git/): grep -rli for cull, frustum, atlas, draw call, sprite, level of detail, foliage, weather, terrain, render, texture, frame rate, fps. Every hit outside vendor and the minified console bundle was a false positive: go.sum "jwalterweatherman", .gitignore "atlassian", console/ui/dist minified JS, Go "X-Frame-Options" and "render the message content" (console.pb.go 7353). No batching, culling, LOD, atlas, camera, terrain, foliage, water or weather code exists in the donor. vendor/ hits (grpc, pgx batch, bluge) are library code, not game rendering.
+
+Checked: depth full for the negative search (every non-vendor, non-minified hit read or classed); the three positive-looking Go files opened as above. Confidence high that the donor has no rendering-performance mechanism.
+
+Best transferable idea: none for rendering; the closest real idea is the per-match ticker that queues one loop invocation per tick (server/match_handler.go 176-187), which belongs to server tick (parity row 18 / post-K item 3 sub-line "server tick: fixed step, input intake, per-tick NPC budget"), not to this topic.
+Decision (proposed): reject for rendering-performance. The donor has no rendering code, so nothing here lands in a client renderer; the match ticker is a server-tick question for another cell.

@@ -1,0 +1,25 @@
+{
+  "game": "MrAntares-roBrowserLegacy",
+  "category": "client-performance-memory-loading",
+  "cell": 39,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Core/MemoryManager.js",
+  "licence": "GNU GPL v3 (LICENSE: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007; package.json license GNU GPL V3)",
+  "licence_class": "copyleft",
+  "target_module": "origins/client/asset_cache.ts",
+  "parity_row": 7,
+  "pattern_tags": ["stale-state", "compute-budget", "new:timed-asset-eviction", "new:holder-retain"],
+  "data_fields": [
+    {"name": "rememberMs", "donor_constant": "30000", "unit": "ms", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Core/MemoryManager.js:27"},
+    {"name": "sweepIntervalMs", "donor_constant": "10000", "unit": "ms", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Core/MemoryManager.js:37"},
+    {"name": "removalsPerIdleSlice", "donor_constant": "5", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Core/MemoryManager.js:144"},
+    {"name": "idleSliceBudget", "donor_constant": "deadline.timeRemaining() > 0 (no fixed ms)", "unit": "ms", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Core/MemoryManager.js:146"},
+    {"name": "spriteTextureFree", "donor_constant": "every frame texture and the atlas texture", "unit": "none", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/MrAntares-roBrowserLegacy/src/Core/MemoryManager.js:229"}
+  ],
+  "best_idea": "A timed sweep of unused decoded assets that releases GPU handles in small idle slices, with a holder count so an entity that still draws from an asset cannot have its texture freed under it.",
+  "decision": "adapt",
+  "decision_why": "The timed, idle-sliced eviction fits our zone and actor art loading, but Frankendom needs explicit retain and release holds and must not port the global mutable map or the unguarded removal.",
+  "decision_status": "proposed",
+  "acceptance": "An asset read at t = 29 s survives the t = 30 s sweep; an asset held by a live creature or effect is never freed during a 60 s fight; a half-loaded asset is never removed; a unit test asserts at most 5 assets are freed per idle slice."
+}

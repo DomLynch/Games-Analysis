@@ -1,0 +1,24 @@
+{
+  "game": "Warzone2100-warzone2100",
+  "category": "rendering-performance",
+  "cell": 3,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/Warzone2100-warzone2100/lib/ivis_opengl/piedraw.cpp",
+  "licence": "GPL version 2 or any later version (piedraw.cpp header lines 8-9; COPYING is GPL v2)",
+  "licence_class": "copyleft",
+  "target_module": "src/render/instanced-units.ts (proposed; no src/fight or origins module fits client rendering)",
+  "parity_row": 16,
+  "pattern_tags": ["compute-budget", "new:instanced-key-batch", "new:per-instance-team-colour", "new:pass-order-draw"],
+  "data_fields": [
+    {"name": "batch_sweep_interval_frames", "donor_constant": "600", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/lib/ivis_opengl/piedraw.cpp:1117"},
+    {"name": "stencil_shadow_caster_max_distance", "donor_constant": "8000 (squared limit 8000*8000)", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/lib/ivis_opengl/piedraw.cpp:65"},
+    {"name": "instance_buffer_slots", "donor_constant": "maxFramesInFlight + 1", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/lib/ivis_opengl/piedraw.cpp:1171"},
+    {"name": "translucent_alpha_per_instance", "donor_constant": "from flag data (pieFlagData, per instance)", "unit": "ratio", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/Warzone2100-warzone2100/lib/ivis_opengl/piedraw.cpp:563"}
+  ],
+  "best_idea": "Key the draw calls on mesh, shader and pass flags only; put each unit's matrix, colour, team colour, alpha and frame in a per-instance buffer, and draw each key once per pass in a fixed pass order.",
+  "decision": "adapt",
+  "decision_why": "Keying draw calls on mesh and pass, with per-unit colour and team colour in instance data, makes the draw count scale with mesh types rather than unit count, which fits crowds in zones; the donor's translucent order (first use, not depth) must be fixed and its creature clips do not transfer.",
+  "decision_status": "proposed",
+  "acceptance": "A dev counter shows that N units of one model with different team colours produce one instanced draw call per pass, that adding a unit of a second model adds exactly one call, and that translucent effect instances are drawn after all opaque instances in every frame."
+}

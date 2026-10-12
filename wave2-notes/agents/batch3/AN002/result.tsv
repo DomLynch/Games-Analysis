@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+lichess-org-lila	analytics-telemetry-observability	P	STRONG	full	modules/mon/src/main/Chronometer.scala:17-23,143-147 and modules/web/src/main/PrometheusReporter.scala:79-93: a timed wait counts timeouts, but syncMon never stops its timer when the call throws, and a per-minute watch counts series per metric name
+evennia-evennia	analytics-telemetry-observability	P	STRONG	full	evennia/server/throttle.py:100-135,189-225: a bounded per-key failure record locks after the limit, logs once on the lock transition and never logs blocked attempts; its refresh call on line 218 uses a double-prefixed key
+runelite-runelite	analytics-telemetry-observability	P	STRONG	full	runelite-client/src/main/java/net/runelite/client/callback/Hooks.java:631-687: a client error reporter sends the first error of a quiet period, drops the rest during a cool-down that grows by 10 s per storm report with no cap, and keeps only a boolean for the drops

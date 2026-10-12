@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+OpenRA-OpenRA	client-performance-memory-loading	P	STRONG	full	OpenRA.Game/Game.cs:771-897 and Network/TickTime.cs:28-49: timestamp-scheduled logic and render loop with a 250 ms backlog drop and one forced draw per logic step; GC settle at load Game.cs:227-254.
+0ad-0ad	client-performance-memory-loading	P	STRONG	full	source/ps/Loader.cpp:144-292 and source/main.cpp:311: FIFO progressive loader with a 10 ms slice and estimate-based admission; tasks yield on their own 200 ms window (source/graphics/MapReader.cpp:280) instead of the slice budget.
+supertuxkart-stk-code	client-performance-memory-loading	P	STRONG	full	src/main_loop.cpp:196-312, 460-463, 713-735: accumulator of 120 Hz physics ticks, 50 ms frame clamp (6 ticks, the comment says 3), vsync-aware fps throttle; src/network/child_loop.cpp:37-76 server-side cap.

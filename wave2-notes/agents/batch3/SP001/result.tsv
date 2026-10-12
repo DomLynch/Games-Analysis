@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+veloren-veloren	server-performance-scaling	P	STRONG	full	/mnt/frankendom-donors/veloren-veloren/server/src/sys/entity_sync.rs:276-296 sends each far entity's position only every N ticks by distance band, with a per-entity phase, and region subscription is in server/src/sys/subscription.rs:82-110.
+TrinityCore-TrinityCore	server-performance-scaling	P	STRONG	full	/mnt/frankendom-donors/TrinityCore-TrinityCore/src/server/game/Maps/Map.cpp:1974-1992 drains a dirty set of changed objects once per map update and sends each player one packet containing only the changed fields.
+EQEmu	server-performance-scaling	P	STRONG	thin	/mnt/frankendom-donors/EQEmu/zone/entity.cpp:457-530 skips NPC processing when the zone is empty once a zone-data grace window (seconds_before_idle) has run out, with quest-override and path-while-idle exceptions.

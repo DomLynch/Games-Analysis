@@ -1,0 +1,23 @@
+ZenKit (rendering-performance, cell 17): PARTIAL, depth thin, old rating P.
+Donor: /mnt/frankendom-donors/ZenKit | Licence: MIT (src/world/BspTree.cc line 2, "SPDX-License-Identifier: MIT"; license.md "The MIT license"). Permissive: code may be adapted.
+
+Files opened (at least 3 candidates, all read in the ranges named):
+1. /mnt/frankendom-donors/ZenKit/src/world/BspTree.cc 1-200 (BSP parser, leaf polygon list, sectors, portals)
+2. /mnt/frankendom-donors/ZenKit/include/zenkit/world/BspTree.hh 1-75 (BspNode, BspSector, BspTree fields)
+3. /mnt/frankendom-donors/ZenKit/src/Mesh.cc 195-215 (triangulation filter by leaf list, portal and occluder skips)
+4. /mnt/frankendom-donors/ZenKit/src/World.cc 95-125 (loader hands leaf list to the mesh)
+5. /mnt/frankendom-donors/ZenKit/src/MultiResolutionMesh.cc 1-344 and include/zenkit/MultiResolutionMesh.hh 1-108 (progressive-mesh parser)
+6. /mnt/frankendom-donors/ZenKit/src/vobs/Zone.cc 49-80 and include/zenkit/vobs/Zone.hh 77-120 (zone far plane and fog VObs)
+7. Grep only: tests/TestWorld.cc (BSP node values checked in a test), src/Mesh.cc flag writers, src/vobs and include for weather, foliage, fog and draw-call terms (weather hits are script variables only; foliage is a comment on VirtualObject.hh 73).
+
+Why PARTIAL: the donor is a file-format library (ZenKit reads and writes ZenGin files). It parses the BSP tree, the progressive-mesh edge data and the zone far-plane and fog records, but no runtime in the donor traverses the BSP, selects a progressive-mesh LOD level, culls by sector or portal, batches draws, or paces frames. Grep for front_index and back_index finds only the parser, the writer and a test that checks values. So the rendering mechanism the cell asks about is not in this donor, only its data layout. Confidence: high that no runtime traversal exists in src/ and include/ (grep, plus full reads of the parser files); medium on examples/ and docs/, which were not read in full.
+
+Best transferable idea: Store a per-zone far-plane distance and fog range as zone data (values a designer edits per volume), so the draw distance is authored per zone instead of one global constant.
+
+Decision (proposed): adapt - zone far plane and fog as zone data fit Frankendom's zones-as-data rule and give a real cull distance and fade; the BSP leaf, portal and occluder machinery does not fit, because the donor has no runtime to copy and Frankendom zones are not BSP-built.
+
+Data fields seen (zone data, not engine constants): vob_far_plane_z (vobFarPlaneZ, Zone.cc 55), inner_range_percentage (innerRangePerc, Zone.cc 56 and 72; runtime meaning not read), range_center (fogRangeCenter, Zone.cc 71), fog colour (Zone.cc 73), fade_out_sky and override_color (Gothic 2 only, Zone.cc 75-78).
+
+Defects and gaps: none of the parsed values has a runtime use in the donor, so there is no behaviour to copy or to check for defects. The progressive-mesh layout (edge_scores, triangle_edges, edges, wedge_map) is the data a collapse-order LOD would need, but vertex_updates is declared (MultiResolutionMesh.hh 52) and its offset and size are read (MultiResolutionMesh.cc 47-58), while SubMesh::load (MultiResolutionMesh.cc 191-265) never reads its data, so a LOD built from this file is incomplete.
+
+Not read: the examples/ and docs/ folders in full; any renderer code (none in this donor).

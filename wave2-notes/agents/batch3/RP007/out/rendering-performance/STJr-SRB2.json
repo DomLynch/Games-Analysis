@@ -1,0 +1,24 @@
+{
+  "game": "STJr-SRB2",
+  "category": "rendering-performance",
+  "cell": 1,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/STJr-SRB2/src/hardware/hw_batching.c",
+  "licence": "GPL version 2 (LICENSE file; hw_batching.c header line 6: terms of the GNU General Public License, version 2.)",
+  "licence_class": "copyleft",
+  "target_module": "src/render/batch.ts (proposed; no src/fight or origins module fits client rendering)",
+  "parity_row": 16,
+  "pattern_tags": ["compute-budget", "clamp-and-report", "new:state-sorted-batch", "new:draw-call-counter"],
+  "data_fields": [
+    {"name": "initial_polygon_capacity", "donor_constant": "65536", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/STJr-SRB2/src/hardware/hw_batching.c:26"},
+    {"name": "initial_vertex_capacity", "donor_constant": "65536", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/STJr-SRB2/src/hardware/hw_batching.c:39"},
+    {"name": "draw_call_budget_per_frame", "donor_constant": "none in donor (counter only, hw_batching.c:364)", "unit": "count", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/STJr-SRB2/src/hardware/hw_batching.c:364"},
+    {"name": "batching_enabled", "donor_constant": "On (cvar default)", "unit": "none", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/STJr-SRB2/src/hardware/hw_main.c:5721"}
+  ],
+  "best_idea": "Collect a frame's opaque draws, sort them by a state key (texture, flags, colour, shader), issue one draw per run of equal state, and count the draw calls so the budget is a number a test can check.",
+  "decision": "adapt",
+  "decision_why": "The collect, sort-by-state, flush-on-change shape and the per-frame draw-call counter fit a browser renderer that needs a testable budget for many-on-one scenes; the hand-rolled vertex copy does not, because the renderer already owns materials and instances, and the donor's ordering defects must be fixed in the design.",
+  "decision_status": "proposed",
+  "acceptance": "A dev overlay prints draw calls per frame for the Pit and a zone, and a test asserts that N enemies sharing one material produce one draw call and that changing one enemy's material adds exactly one."
+}
