@@ -8,7 +8,7 @@ Best transferable idea: A content file is a layer over a named parent: it change
 
 Decision (proposed): adapt - take the layer-over-parent rule with `op` modifiers for legend and zone variants (a zone boss is a layer over a stock legend that multiplies two numbers); adapt the number type (donor: fixed-point strings for lockstep, Frankendom is server-verified, so use integer basis points and a single rounding rule); reject the publish-to-players signed mod download for now (Dom only until beta), keep its verify-then-install order as the design to copy if user packs ever ship.
 
-Acceptance: a server test loads a legend layer with parent `legend_base` and `Health op="mul" 1.2` and asserts Health equals the rounded product of the base value and 1.2; a layer whose parent chain loops, or whose parent is missing, fails the load with the file name, and the fight shows the stock legend (no partial variant reaches a player).
+Acceptance: a server test loads a legend layer with parent `legend_base` (Health 155) and `Health op="mul_round" 1.2` and asserts Health is 186, and that the same layer with `op="mul"` gives the plain unrounded product (the sketch's `mul` does not round; only `mul_round` does, so a Health layer meant to stay whole uses `mul_round`); a layer whose parent chain loops, or whose parent is missing, fails the load with the file name, and the fight shows the stock legend (no partial variant reaches a player).
 
 ## 1. Mechanism
 
@@ -24,7 +24,7 @@ Acceptance: a server test loads a legend layer with parent `legend_base` and `He
   6. Anything else: a plain value replaces the inherited value (the `!hasSetValue` path).
   Attributes on the element become children named with an `@` prefix (ApplyLayer, last block).
 - Numbers are fixed-point (`fixed::FromString`, ParamNode.cpp 189; a TODO at 187 says other data types are not handled).
-- Mod enable: `EnableMods` builds the enabled list (public and mod are added if missing), runs `CheckForIncompatibleMods` once, and erases the incompatible mods from the list (Mod.cpp 152-170). A dependency is `name` followed by one of `<=`, `>=`, `=`, `<`, `>` and a version (Mod.cpp 325-338). A missing mod or a failed version test marks the dependent mod incompatible (Mod.cpp 299, 336-337).
+- Mod enable: `EnableMods` builds the enabled list (public and mod are added if missing), runs `CheckForIncompatibleMods` once, and erases the incompatible mods from the list (Mod.cpp 152-170). A dependency is `name` followed by one of `<=`, `>=`, `=`, `<`, `>` and a version (Mod.cpp 325-338). An enabled mod that is not in the available list is marked incompatible (Mod.cpp 299); a dependency that is missing or fails its version test marks the mod that declared it (Mod.cpp 336-337)
 - Signed downloads (mod.io path): the file size must equal the listed size, then the MD5 must match (transfer check only), then a BLAKE2b hash of the streamed file is verified against a detached Ed25519 signature with the trusted key in `m_pk` (where that key comes from was not followed) (ModIo.cpp 531-536, 547-556, 561-575). Install runs only after this passes (ModIo.cpp 477, 490). The installer takes the folder name from `name` in `mod.json` (ModInstaller.cpp 98-102).
 - Schema validation: each template type has a RelaxNG grammar; the highest-priority mod that has it is used; a failing file is logged with its path (validate_grammar.py 150-174; assertValid at 171).
 - Reference check: `checkrefs.py` builds a parent-to-dependency table from the files and reports any dependency that is missing, with the files that refer to it (checkrefs.py 618-646). Its unused-file check is marked as noisy (63).
@@ -209,6 +209,7 @@ function enableMods(requested: string[], available: Map<string, ModInfo>): { ena
 
 - Numbers are fixed-point in the donor (ParamNode.cpp 187-200), which suits lockstep play. Frankendom is server-verified, so the server and the client must agree on one number type. Recommend integer basis points with one rounding rule, decided before any legend variant is written.
 - Mod dependency defect: a dependency written without an operator is never tested (Mod.cpp 325-329). Fix: check presence (in the sketch).
+- Mod dependency defect (verified over ssh): `CheckForIncompatibleMods` pushes the mod once per failing dependency (Mod.cpp 337), so a mod with two bad dependencies is listed twice, and `EnableMods` then runs `erase(find(...))` for each entry (Mod.cpp 169-170); the second `find` returns end(), which is undefined behaviour. Fix: de-duplicate the list (the sketch's `bad` filter is one entry per mod).
 - Mod dependency defect: the check runs once, so a mod whose own dependency was removed stays enabled (Mod.cpp 167-170). Fix: repeat until stable (in the sketch).
 - Folder name from `mod.json` is used without a check in `Install` (ModInstaller.cpp 102). Whether `OsPath` normalises `..` was not read. Frankendom must not use a name from an authored file as a path.
 - The donor's `op` on an absent key uses `ToFixed()` of an empty node (ParamNode.cpp 188); the result for an absent key was not read. Frankendom must make a missing base an error, not a zero.
@@ -217,3 +218,11 @@ function enableMods(requested: string[], available: Map<string, ModInfo>): { ena
 - The signed-download design (size, then hash, then Ed25519 signature, then install) only protects against tampering in transit and by the host. It does not check that the content is safe to run. The donor's content is data, so the risk is lower; a Frankendom pack must stay data-only, with no script field.
 - The mod.io key and the signature parse (ModIo.cpp 790-850) were read only in part.
 - Frankendom's one-ledger rule: a layer must never write a count or a grant directly. Stat multipliers are fine as layers; a reward row goes through the ledger.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Mod.cpp: note says a missing mod or failed version test marks 'the dependent mod' incompatible (299, 336-337); line 299 marks the enabled mod that is not in the available list (not a dependent), only 337 marks the dependent. Counts 191/111/124 are grep counts, match. Everything else matches (ApplyLayer ops 98-200, tokens 134-178, loop guard depth>100 at 41, lookup order 64-68, EnableMods 147-173, siege tower WalkSpeed mul 0.7 at line 100, BYTES_MAX 565, md5 543-556, ModInstaller 102).
+Missed: "Acceptance wording risk: 'Health equals the rounded product of base and 1.2' with op=""mul"" - the sketch's mul is NOT rounded (only mul_round rounds). A correct build of the sketch passes only if base*1.2 is whole (e.g. 100). Specify mul_round or integer basis points. MISSED donor bug: CheckForIncompatibleMods (Mod.cpp 337) can push the same mod twice (two failing deps), then EnableMods 169-170 does erase(find(...)) twice; the second find returns end() = undefined behaviour. Also dep lines with 'name' only skip (noted)."
+
+Fixed 2026-10-12 (Sonnet fixer): Acceptance now uses mul_round on a whole base (155 -> 186) and says plain mul is unrounded, matching the sketch; Mod.cpp 299 vs 336-337 wording corrected; added the verified double-push/double-erase bug (Mod.cpp 337, 169-170). Sketch unchanged.

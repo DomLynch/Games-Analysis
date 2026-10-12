@@ -174,3 +174,9 @@ Wesnoth has no gods, no favour resource and no patron system in the parts read. 
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 Brief rule served: zones as data (per-zone schedule row); one engine (damage stays server-side); licence rule 7
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: All claims checked hold: attack.cpp 184-210 (100 base, alignment term via weapon->alignment().value_or at 187, leadership, resistance, round_damage 10000 / 20000), generic_combat_modifier 1506-1530 incl. liminal max-|L| and fearless clamp, combat_modifier 1503 passes get_max_liminal_bonus, explicit lawful_bonus path passes 0 (189), math.hpp bounded_add and round_damage (divisor/2 minus 1 above divisor, min 1), tod_manager.cpp 55 max(25,..), 214-272 illumination pass, 591-620 calibration, schedules.cfg lawful_bonus lines 30/39/48 (+25), 69/81/93/115 (-25), 129 (-30), 208-256 (-25), 268 (-15), 280 (-5), contexts.cpp liminal estimate -abs(L) at 1032 (defect D1 real), GPL v2-or-later header. Sketch matches donor logic. Honest not-read list.
+Missed: ai/contexts.cpp comment: the AI deliberately uses only the global ToD ('Considering the unit location would be too slow') so it also ignores illumination, not only the liminal/weapon-alignment defects D1/D2; the note lists contexts.cpp as 'the only other reader' without saying this is global-only.

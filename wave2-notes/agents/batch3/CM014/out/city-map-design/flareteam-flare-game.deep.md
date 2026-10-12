@@ -13,7 +13,7 @@ Rules (data, iron_labyrinth.txt lines 2-9): doors_max 2, door_spacing_min 2, mai
 1. Setup: the grid size is the region size divided by the chunk size (Map.cpp 1275-1276, 1317). The four ports come from the first link chunk: regions named north, south, west and east (1287-1307; the comment at 1288 says only the first link chunk is used).
 2. Main path: each attempt clears the grid (1024-1035) and starts at a random cell (1044-1045). The desired length is random between the min and max (1330). The attempt loop stops at the cap (1332), keeping the last path even if it is out of range (see gaps).
 3. Step: pick a random direction (1071); if that link is taken, rotate up to four times (1075-1086). A neighbour is taken by `procGenWalkSingle` (972-1015): on the main path it must be empty; start, end and door cells block; a neighbour that already has k links is taken at odds 1/k and only on the same door level (1011).
-4. Doors: once the walk has gone past the minimum spacing (1168), a straight cell may become a door (north-south or west-east) at a chance that starts at 100 for the first door and rises by 5 per step after that (1170-1172). A placed door raises the door level on both sides (1160-1161), resets the chance and the branch count (1162-1165).
+4. Doors: once the walk has gone past the minimum spacing (1168), a straight cell may become a door (north-south or west-east) at a chance that starts at 100 for the first door and rises by 5 per step after that (1170-1172). A placed door raises the door level on both sides (1160-1161), resets the chance and the branch count (1162-1165). The minimum gap between doors is `door_spacing_min` (floored at 2) when the rules set one (1062-1064); the length-divided value (1061) is only the fallback.
 5. Branches: on each normal cell the walk may record a branch root, at a chance that starts at 50, rises by 5 per step, and resets to 50 after a root (1066, 1181, 1177), with at most 2 roots per door level (1175).
 6. Branches are grown from their roots with `procGenCreatePath` again, using a random length (1339-1341). The length call is defective (see gaps).
 7. The last main-path cell becomes the end (1192).
@@ -35,7 +35,7 @@ Rules (data, iron_labyrinth.txt lines 2-9): doors_max 2, door_spacing_min 2, mai
 | Reusable algorithm | Donor constants |
 |---|---|
 | Path length between min and max | Rules: min 10, max 20 (iron_labyrinth.txt 4-5); min clamped to at least 3 (Map.cpp 1325), max to at least min (1326) |
-| Door count and spacing | doors_max 2 (rules 2); spacing min 2 (rules 3); min door distance max(2, desired / doors_max) (1061) |
+| Door count and spacing | doors_max 2 (rules 2); spacing min 2 (rules 3); min door distance starts as max(2, desired / doors_max) (1061) but is overwritten by max(2, door_spacing_min) whenever spacing is above 0 (1062-1064), so with the shipped rules (spacing 2) it is 2 |
 | Door chance | 100 for the first door, then +5 per step (1170, 1172); 0 after a door (1162) |
 | Branch chance | start 50 (1066); +5 per step (1181); reset 50 after a root (1177) |
 | Branches | max 2 per door level (rules 9; 1175); length 5 to 10 intended (rules 7-8) |
@@ -232,3 +232,11 @@ Acceptance: a new town run builds a grid in which every road port lines up with 
 
 Reuse tag: rewrite-from-idea (GPL-3.0-or-later code and CC-BY-SA data; clean-room only)
 Brief rule served: zones as data (rules and pools are data); one ledger (seed and unique statuses on the server); server-verified state
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Table row 'min door distance max(2, desired/doors_max) (1061)' is not the effective value: Map.cpp:1062-1064 overwrites it with max(2, door_spacing_min)=2 whenever spacing>0 (shipped rules 3: spacing 2), so the desired/doors_max term never applies with the shipped rules. Everything else checked holds: walk accept rule 972-1015 (1/k, door level, start/end/door block), door chance 100 then +5 (1168-1172), reset at 1162-1165, branch chance 50/+5/reset (1066,1175-1181), keys 1362-1375, variant nudge 1404-1414, unique status 1391/1420-1422, branch length defect at 1340 (randBetween(5, min(5,10)) real), randBetween reversed-bounds defect real (UtilsMath.h:45-48), licence GPL header 9-11 and CC-BY-SA LICENSE line 3, rules file values, tmx counts 53/35/18, zone 74,45,8,13, number parse at 622-623. Not-read list honest.
+Missed: Effective door spacing override (1062-1064). Door-direction restriction (1088-1100) is disclosed as omitted. No bigger mechanism missed.
+
+Fixed 2026-10-12 (Sonnet fixer): effective door spacing corrected (verified Map.cpp 1061-1064). No sketch change (the sketch takes doorMinDist as a rule input).

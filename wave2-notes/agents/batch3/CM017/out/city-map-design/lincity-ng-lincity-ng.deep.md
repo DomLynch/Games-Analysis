@@ -124,3 +124,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Shuffled order each day (simulate.cpp 237): the donor relies on the commit to make order irrelevant. Frankendom's server tick should keep the same property, or sort the updates so order is fixed for replays.
 - Build path: the donor checks the tech gate before the footprint (lintypes.cpp 930, 959) and charges before placing (world.cpp 426-428). Frankendom should check, charge and place in that order so a failed place never charges.
 - The minimap and the road grammar (`src/lincity-ng/MiniMap.cpp`, `src/lincity/modules/track_road_rail.cpp`) were seen by grep only and are not described here.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: none found; 12+ claims verified (health_centre.cpp 62-133 incl. phase 75, tolerance 5, < loop, clamp 1; engine.cpp 131-153 commit; simulate.cpp order/shuffle; ranges 14/17/9; labour 6 goods 40; residence 196-203; GPL v2+ header line 13)
+Missed: update() also gates the working day on a waste cap (health_centre.cpp:88 waste+goods/3 <= MAX_WASTE_AT_HEALTH_CENTRE) and on running-cost OutOfMoney (82-96, caught); note lists only labour+goods inputs. Monthly busy/working_days reset at 103-107 not described.

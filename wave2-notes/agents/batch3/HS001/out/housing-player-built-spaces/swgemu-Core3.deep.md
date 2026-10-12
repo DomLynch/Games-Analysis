@@ -9,12 +9,12 @@ Checked: Read in full: StructureMaintenanceTask.cpp (1-283). StructureObjectImpl
 - Upkeep is a pool. Each structure has `surplusMaintenance`, a credit balance. Its per-hour cost is `getMaintenanceRate()`: the template's base rate (`baseMaintenanceRate`, read by `getBaseMaintenanceRate`, 790-797) times 0.8 if the structure has `maintenanceReduced` (324-325), then truncated to an integer (326-328).
 - Charging is continuous. `updateStructureStatus` (522-590) computes `timeDiff` from the stored `lastMaintenanceTime` (543), so the charge is `rate / 3600 * seconds` (544) and it is taken off the pool (578). The timestamp moves only when something was due (553-556). This is delta-time accrual: the result does not depend on how often the function runs.
 - Negative pool is decay. When the pool is below zero the difference is written as condition damage (585-589). Condition percent is `(maxCond - damage) * 100 / maxCond`, plus 1, clamped to 0-100 (633-662). `isDecayed` means percent is 0 (629-631).
-- Daily check (`StructureMaintenanceTask::run`, 22-143). It first refuses a structure whose owner has no credit object or name (45-53), and reschedules if the pool is already positive (59-65). It brings the status up to date (71). Then it computes one week: `7*24*rate - surplus` (74), adds the city tax on buildings (77-80), and adds the debt (82-85). If that is positive and the owner's bank covers it (88), it pays from the bank into the pool (91), mails the owner, and schedules the next check from the surplus (104). Otherwise it starts the decay path (106-141).
+- Daily check (`StructureMaintenanceTask::run`, 22-143). It first refuses a structure whose owner has no credit object or name (45-53), and reschedules without charging if the pool is already positive (59-65). It brings the status up to date (71). Then it computes one week: `7*24*rate - surplus` (74), adds the city tax on buildings (77-80), and adds the debt again (82-85): when the pool is negative, line 74 already adds the debt (minus a negative) and lines 82-85 add it a second time, so the owner pays the debt twice (defect 3). If that is positive and the owner's bank covers it (88), it pays from the bank into the pool (91), mails the owner, and schedules the next check from the surplus (104). Otherwise it starts the decay path (106-141).
 - Decay path. Not yet decayed: mail the owner and check again in a day (108, 114-121). Decayed: a building is condemned, not removed, while its backlog is within the allowance (123-135). `shouldBuildingBeDestroyed` (268-283) allows backlog `30 days * rate` (`getDelayDestroyHours` = 720 h, 808-810). A decayed non-building is destroyed at once (137-139), through `StructureManager::destroyStructure` (158).
 - Next check time (`scheduleMaintenanceExpirationEvent`, 363-437). Time to exhaust the pool at the rate (415), capped at one day with a random 12-24 hour spread (424-425). An empty pool on boot is scheduled 600 s plus a random hour from config (422). The debt-to-time path is the same formula as the charge.
 - Lots (placement budget). Each player has `maximumLots` = 10 (PlayerObject.idl 387, block not checked). `getLotsRemaining` subtracts each owned structure's lot size from that (3152-3167). Placement is refused when the deed's lot count is not available (452-459 in StructureManager.cpp). Construction takes 3000 ms per lot (PlaceStructureSessionImplementation.cpp 69).
 - Lot and rate values (templates): large house 5 lots and 50 per hour (rate line 46 receipted; the lot line is short); small house 2 lots and 16 per hour (rate line 46 receipted). A medium Tatooine house is 2 lots and 34 per hour (grep only). Across the 38 player-house templates the grep shows rates of 0, 10, 16, 34, 50 and 100 per hour; the mapping from house to rate was not checked one by one.
-- Permissions. Each structure holds named lists: ADMIN, ENTRY, VENDOR, HOPPER, BAN (`isOnPermissionList`, 886-904). Each entry is a player id or a guild id (901, 897-900). A privileged player passes every list except BAN (889-893). ADMIN also passes the ENTRY, VENDOR and HOPPER checks (834-837, 872-874). The ban check returns false for a god-mode player (853-854). Containers: vendor move needs a public structure and VENDOR or admin (17-19); owners and admins pass the general container check (29-31).
+- Permissions. Each structure holds named lists: ADMIN, ENTRY, VENDOR, HOPPER, BAN (`isOnPermissionList`, 886-904). Each entry is a player id or a guild id (901, 897-900). A privileged player passes every list except BAN (889-893). The dedicated entry check passes ADMIN, ENTRY or VENDOR entries (834-837), and the dedicated hopper check passes HOPPER or ADMIN (872-874). The generic `isOnPermissionList("VENDOR")` (886-904) is a plain list lookup and does not pass ADMIN; the container vendor move therefore asks for the VENDOR list or the admin check (17). So VENDOR implies ENTRY, ADMIN implies ENTRY and HOPPER. The ban check returns false for a god-mode player (853-854). Containers: vendor move needs a public structure and VENDOR or admin (17-19); owners and admins pass the general container check (29-31).
 
 ## 2. Key functions
 
@@ -36,7 +36,7 @@ Checked: Read in full: StructureMaintenanceTask.cpp (1-283). StructureObjectImpl
 |---|---|
 | A balance drained by rate times elapsed time; the negative balance is the debt | Per-hour rate from the template (50 large, 16 small, 34 medium); reduced multiplier 0.8 (SOI 325, receipt not written: the line is 13 characters) |
 | Truncation to integer after the multiplier | `(int)rate` (SOI 328); the comment says "Round to nearest int" (see defect 1) |
-| Weekly prepay = 168 hours of rate, plus the debt | 7 * 24 hours (SMT 74) |
+| Weekly prepay = 168 hours of rate, plus the debt (donor adds the debt twice, defect 3; the sketch adds it once) | 7 * 24 hours (SMT 74) |
 | Check once a day, or sooner when the pool runs out | 24 * 60 * 60 s (SMT 108); random 12-24 h spread (SOI 425) |
 | Boot spread for an empty pool | 600 s plus random under 3600 s, from config key `Core3.StructureObject.MaintenanceBootDelay` (SOI 422) |
 | Condemn, then remove after a backlog allowance | 30 days of rate (SOI 809; SMT 275-278) |
@@ -46,7 +46,7 @@ Checked: Read in full: StructureMaintenanceTask.cpp (1-283). StructureObjectImpl
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order: accrue the pool from elapsed time, take the week from the bank if the pool is low, otherwise warn, condemn or destroy. It fixes the decay percent: damage is capped at the maximum, so zero condition reads 0 (donor reads 1 there; defect 1). It takes the rate as given, so the 0.8 reduction is applied to the rate by the caller without truncation (defect 2 is fixed by the caller, not in the sketch). It omits: city property tax, the cash-first payment order, mails, the random spreads and boot delay (the caller schedules), the rapid-decay debug flag, and the lot budget and permission lists. The `export {};` line used for the check is not shown.
+simplified: the sketch keeps the donor order: accrue the pool from elapsed time, return 'idle' if the pool is positive (donor reschedules, 59-65), take the week (168 hours of rate less the pool, so the debt counts once) from the bank if the pool is low, otherwise warn, condemn or destroy. It fixes the decay percent: damage is capped at the maximum, so zero condition reads 0 (donor reads 1 there; defect 1). It takes the rate as given, so the 0.8 reduction is applied to the rate by the caller without truncation (defect 2 is fixed by the caller, not in the sketch). It omits: city property tax, the cash-first payment order, mails, the random spreads and boot delay (the caller schedules), the rapid-decay debug flag, and the lot budget and permission lists. The `export {};` line used for the check is not shown.
 
 ```ts
 // Licence: AGPL-3.0 (donor, COPYING). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -76,11 +76,12 @@ function percentCondition(p: Plot): number {
   return Math.floor(((p.maxCondition - damage) * 100) / p.maxCondition);
 }
 
-type Outcome = "paid" | "warned" | "condemned" | "destroyed";
+type Outcome = "idle" | "paid" | "warned" | "condemned" | "destroyed";
 
 // Daily check (donor: StructureMaintenanceTask::run). One outcome per run.
 function dailyCheck(p: Plot, nowS: number): Outcome {
   accrue(p, nowS);
+  if (p.pool > 0) return "idle"; // donor: scheduled early, reschedule without charging
   const oneWeek = 7 * 24 * p.rate - p.pool; // donor: 168 h of rate, less the surplus
   if (oneWeek > 0 && p.bank >= oneWeek) {
     p.bank -= oneWeek;
@@ -102,12 +103,13 @@ function dailyCheck(p: Plot, nowS: number): Outcome {
 
 Best transferable idea: Upkeep is a per-plot balance that drains at a rate in real elapsed time; the debt past zero is shown as decay, and a building is condemned for a set backlog before it is removed, so a lapsed owner always has a warning stage.
 Decision (proposed): adapt - keep the pool as the ledger row, decay as its debt, and condemn-then-remove for plots; take gold from the one ledger instead of a bank; fix the truncation and the rounding in the sketch and the rate.
-Acceptance: A server test with an empty pool and enough gold shows the pool back above zero after one charge of 168 hours of rate, and the gold down by the same amount; with no gold, a plot shows decay from the first day it is in debt, is marked condemned until its debt passes 30 days of rate, then the row is deleted; a plot at full damage reads 0 percent; a reduced 16-per-hour plot charges 12.8 per hour, not 12.
+Acceptance: A server test with a pool at zero and enough gold shows the pool back above zero after one charge of 168 hours of rate, and the gold down by 168 hours of rate minus the pool (the debt counts once; a plot with a positive pool is left alone and returns 'idle'); with no gold and a test plot whose max condition is pinned to one day of rate, the plot reads 'warned' while its debt is under that max condition, becomes condemned once the debt reaches it (condition 0 percent), and the row is deleted once the debt passes 30 days of rate; a plot at full damage reads 0 percent; a reduced 16-per-hour plot charges 12.8 per hour, not 12. (A plot whose max condition is larger than 30 days of rate stays at 'warned' until the debt reaches that max, so the test must pin the max condition.)
 
 ## 6. Gaps and risks
 
 - Defect 1 (donor): decay percent is computed as `(max - damage) * 100 / max` and then `+1` (643-646). At full damage it reads 1, not 0. Because the division truncates in integer maths, the `isDecayed` test (`== 0`) only becomes true once damage is about 1 percent above the maximum. Whether `setConditionDamage` clamps damage at the maximum was not read (not read). Fix: cap damage at max and floor the result (sketch section 4).
 - Defect 2 (donor): the reduced rate is truncated to an integer after the 0.8 multiplier (324-328), but the comment says "Round to nearest int". A 16-per-hour plot becomes 12 per hour, a 25 percent reduction, and a 34-per-hour plot becomes 27, about 21 percent. Fix: keep the rate as a float, or round it, and make the multiplier a data field (sketch takes the rate as given).
+- Defect 3 (donor): the weekly charge counts a negative pool twice (74 and 82-85, verified in the fix pass). Fix: add the debt once (sketch).
 - No grace before removal for a non-building (137-139): a decayed non-building structure is destroyed in the same run. A building gets the 30-day backlog. Frankendom should use the zone grace timer (row 23) for every plot kind, not only buildings.
 - The weekly bank payment is all or nothing: the daily check pays only when the bank covers the whole week (88), and otherwise goes to the decay path without a partial payment. Keep that rule: a partial payment would hide the debt.
 - Lots are a per-player budget, not a per-zone cap. Frankendom's zones-as-data rule would put the cap on the zone row instead. The donor shows the summing shape only.
@@ -119,3 +121,11 @@ Acceptance: A server test with an empty pool and enough gold shows the pool back
 
 Reuse tag: rewrite-from-idea (AGPL-3.0; clean-room only)
 Brief rule served: zones as data; one ledger; server-verified
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Cites verified: pool accrual 543-578, rate 0.8 then int truncation 324-328 (comment says round), decay percent +1 at 643-646, 30 days = 720h (808-810), shouldBuildingBeDestroyed 275-278, schedule 415/422/425, lots 3152-3167 and 452-459, 3000 ms/lot (69), template rates 50/16, AGPL. Errors: (1) Section 1 says run() 'reschedules if the pool is already positive (59-65)' but the sketch dailyCheck does not: with pool>0 and oneWeek<=0 it returns 'warned' for a healthy plot, and with pool>0 it tops up from the bank (donor only charges when pool<=0 after the early return). (2) Section 1/3 say 'weekly prepay = 168h of rate plus the debt'; real code adds the debt twice when pool<0: line 74 subtracts the (negative) surplus and lines 82-85 add uncondemnCost=-surplus again. Not flagged as a defect; sketch charges once. (3) 'ADMIN also passes ... VENDOR checks (834-837, 872-874)': isOnPermissionList('VENDOR') (886-904) does not pass ADMIN; ENTRY list passes ADMIN/ENTRY/VENDOR (834-837), HOPPER passes ADMIN (872-874); the container vendor check needs 'VENDOR or isOnAdminList' (17). Missed: VENDOR implies ENTRY. Acceptance risk: 'no gold: plot shows decay from first day in debt, condemned until debt passes 30 days of rate, then deleted' - in donor and sketch condemned/destroyed only happens once percent==0, i.e. damage >= maxCondition (and donor percent is +1 so only above max, defect 1, with clamp unread). If a test plot has maxCondition larger than 30 days of rate it stays 'warned' forever and is never deleted, so the acceptance fails; the test must pin maxCondition low. Also 'gold down by the same amount' is 168h*rate only when pool is 0 (otherwise 168h*rate - pool).
+Missed: Double-charged debt in run() (74 plus 82-85); early return when surplus>0 (59-65) not used in sketch; VENDOR list implies ENTRY (829-848).
+
+Fixed 2026-10-12 (Sonnet fixer): permission-list claim corrected (ENTRY check passes ADMIN/ENTRY/VENDOR; HOPPER passes ADMIN; VENDOR list does not pass ADMIN); added the early return when the pool is positive (59-65) to prose and sketch ('idle'); debt-counted-twice added as defect 3; acceptance rewritten so max condition is pinned and the gold figure is 168 h less the pool. Also found: VENDOR implies ENTRY (829-848).

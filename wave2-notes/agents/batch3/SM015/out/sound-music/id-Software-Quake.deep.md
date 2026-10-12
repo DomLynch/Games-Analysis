@@ -113,3 +113,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 Brief rule served: rule 1 (one engine, two clients; zones as data); rule 8 (named target and parity row)
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: All checked claims hold: S_UpdateAmbientSounds 664-711 (leaf cut when no leaf or ambient_level 0, vol<8 gate, ramp host_frametime*ambient_fade, clamp on arrival, leftvol=rightvol), cvars ambient_level 0.3 / ambient_fade 100 (78-79), only water and sky precached (237-238), master_vol is int (sound.h:79) so the compound assignment truncates the sum and the rise stalls when step <1 (>100 fps) while the fall always moves, host_frametime double (quakedef.h:299), SND_PickChannel order and player-protect skip, SND_Spatialize 1+/-dot and floor at 0, mixer clamp 255 (snd_mix.c 353-356), S_StartSound identical-sound 0.1 s offset, static merge 'j == total_channels' never true (benign), S_StaticSound attenuation/64, sound.h comment vs code layout (beds 0-3, dynamic 4-11), CDAudio_Play same-track no-op and stop-then-play, bgmvolume*255, GPL v2-or-later header. Not-read list honest.
+Missed: Minor omissions: S_UpdateAmbientSounds also returns early on !snd_ambient and !cl.worldmodel; SND_Spatialize has a mono path (lscale=rscale=1); SND_PickChannel entchannel == -1 matches any channel of the entity; S_StaticSound rejects non-looping sounds; CDAudio_Play remaps the track via remap[] and requires cd.valid.

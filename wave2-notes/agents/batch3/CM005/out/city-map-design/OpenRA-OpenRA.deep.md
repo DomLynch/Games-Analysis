@@ -13,7 +13,7 @@ Acceptance: a server test (seeded) asserts that every generated hub has its serv
 Two placement paths in the same file. Both run at map generation time, once, on a grid of cells. Neither runs per frame.
 
 **A. Hub cluster (`AddActorCluster`, expansions) (Terraformer.cs 921-963).**
-1. Centre: `ChooseInZoneable(random, zoneable, maximumRadius + outerBorder)` (936-937) returns the free cell with the most room. Room is the Chebyshev distance to the nearest blocked cell (734), capped at the argument. Equal best cells are chosen at random (`FindRandomBest`, CellLayerUtils.cs, "If there are equally good best candidates, choose one at random").
+1. Centre: `ChooseInZoneable(random, zoneable, maximumRadius + outerBorder)` (936-937) returns the free cell with the most room. Room is the Chebyshev distance to the nearest blocked cell (734), capped at the argument and also at the symmetry `projectionSpacing` of that cell (`min(maximumSpace, min(roominess, projectionSpacing))`, 731-740), so mirrored copies of the cluster cannot overlap. The sketch omits that second cap. Equal best cells are chosen at random (`FindRandomBest`, CellLayerUtils.cs, "If there are equally good best candidates, choose one at random").
 2. Radius: `radius2 = room - outerBorder - 1` (938). Below `minimumRadius` the cluster is refused (939-940). Capped at `maximumRadius`. `radius1 = min(innerReservation, radius2)` (945). If radius1 < 1 the cluster is refused.
 3. Weights: every cell inside radius2 and outside radius1 gets weight = squared distance from the centre in cells (951, 958). The inner disc gets 0. So the outside of the ring is preferred.
 4. Placement (`AddDistributedActors`, 848-895): the cluster copies the zoneable grid (clusterZoneable). Loop for each target count:
@@ -24,7 +24,7 @@ Two placement paths in the same file. Both run at map generation time, once, on 
    - Zero the weight inside the actor's span disc (883-888).
    - Place the actor. Dezone its footprint and its reserve disc on the map zoneable (890). Dezone its footprint only on clusterZoneable (891).
    So each new actor goes to the outermost free cell that still fits its span, and the spacing inside the cluster comes from the span disc, not from the reserve.
-5. Caller budget (Classic 794-809): per cluster the count is `min(remaining, random 1..MaximumResourceSpawnsPerExpansion)` (801). `remaining` is reduced by what was added (808). The loop stops when a cluster adds nothing (809). The per-map total is `MaximumExpansionResourceSpawns * perSymmetryEntityMultiplier / EntityBonusMax`, where the multiplier is zoneable area times `AreaEntityBonus` plus players times `PlayerCountEntityBonus` (751-753). `EntityBonusMax` is 1,000,000 in the D2k generator (D2kMapGenerator.cs 29); the Classic constant was not read.
+5. Caller budget (Classic 794-809): per cluster the count is `min(remaining, random 1..MaximumResourceSpawnsPerExpansion)` (801). `remaining` is reduced by what was added (808). The loop stops when a cluster adds nothing (809). The per-map total is `MaximumExpansionResourceSpawns * perSymmetryEntityMultiplier / EntityBonusMax`, where the multiplier is zoneable area times `AreaEntityBonus` plus players times `PlayerCountEntityBonus` (751-753). `EntityBonusMax` is 1,000,000 in the D2k, TS and Classic generators (D2kMapGenerator.cs 29, TSMapGenerator.cs 30, ClassicMapGenerator.cs 29).
 6. Classic spawn resources (780-786) use `AddDistributedActors` with `weighted = false`, so the best cell is taken. Expansions (797-806) pass `weighted = true`, so the cell is drawn by weight.
 
 **B. Village grammar (`DecorationPattern`, 2256-2330; used for civilian buildings).**
@@ -230,3 +230,11 @@ export {};
 - Not verified: the donor's cell-level cost and the placement quality on real maps. The sketch is only typechecked (VPS, `tsc --strict --target es2020`, exit 0). It was not run on a map.
 - Half read: authoring-time generator code (not the server or client half), plus the TS mod's `mods/ts/rules/map-generators.yaml` as the data table. The RA and Cnc generator YAML values were not compared.
 - Frankendom's zone code was not read in this pass, so whether it already has a grid layout is not known (not read). Adopting this means adding an authoring tool and a validator; that is a scope decision for Lead, not an engine change.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Mechanism 1 step 1 says room is Chebyshev distance capped by the argument; real ChooseInZoneable (Terraformer.cs 726-742) takes min(maximumSpace, min(roominess, projectionSpacing)), so the symmetry projection spacing also limits it and is not mentioned. All other claims hold: AddActorCluster 921-963, AddDistributedActors 848-895 (requiredSpace MaxSpan*1024/1448+2, early return at weight 0), BooleanBlur thresholds 45/4, 8 passes, TS yaml 45-61 values, callers (TS 711/728/833, Classic 780/797/881), D2k only calls ChooseSpawnInZoneable at 453, GPL header lines 6-7. Defect 2 (changes counts non-seed flips) confirmed.
+Missed: Symmetry projection (projectionSpacing and ProjectPlaceDezoneActor) shapes where clusters can land; note admits it omits symmetry. Also Classic EntityBonusMax is 1,000,000 (ClassicMapGenerator.cs:29), which the note says it did not read.
+
+Fixed 2026-10-12 (Sonnet fixer): ChooseInZoneable room is also capped by projectionSpacing (symmetry), now stated; EntityBonusMax is 1,000,000 in Classic and TS too (verified). Sketch unchanged (symmetry already listed as omitted).

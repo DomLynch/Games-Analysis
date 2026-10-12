@@ -95,8 +95,16 @@ export {};
 - Defect 5, wall clock: `now = time.time()` (421) with `max(0, now - command_counter_reset)` (430). After a backward clock step the difference is negative, `max` clamps it to 0, and no window reset happens until the clock passes the old stamp. Fix: monotonic clock (the sketch takes `nowMs` from the caller).
 - Defect 6, warning per line: each rejected line sends the warning (438), so a flood gets one reply per line. Fix: send one warning per window.
 - The overflow limit is not a chat limit. 80 lines per second is far above human chat, and the code has no per-channel rate, no duplicate-line check and no per-minute cap. Frankendom needs its own chat budget on top (ruling: spam limits).
-- Chat moderation elsewhere in the donor (read as context, not written up here): channel mute is a per-user list (`comms/comms.py` 265-287) filtered at send time unless `bypass_mute` is set (643-644); channel ban is checked at connect (`comms/comms.py` 370) and its own docstring says it does not stop users already connected (309-318); boot and ban write `logger.log_sec` lines (`commands/default/comms.py` 610-666). Joining (379) and leaving (406) both clear a user's mute, so a mute does not survive a rejoin. These are candidates for the moderation cells, not this note.
+- Chat moderation elsewhere in the donor (read as context, not written up here): channel mute is a per-user list (`comms/comms.py` 265-287) filtered at send time unless `bypass_mute` is set (643-644); channel ban is checked at connect (`comms/comms.py` 370) and its own docstring says it does not stop users already connected (309-318); channel boot writes a `logger.log_sec` line (`commands/default/comms.py` 641; the channel `ban_user` at 647 writes none, and the only other log_sec in that file is channel delete at 552; the server-wide ban and unban in `commands/default/admin.py` 229 and 284 do log). Joining (379) and leaving (406) both clear a user's mute, so a mute does not survive a rejoin. These are candidates for the moderation cells, not this note.
 - Not read: the telnet and other protocol callers of `data_in`, the scrub step (`clean_senddata`), and the server side of the relay.
 
 Reuse tag: adapt (BSD-3-Clause)
 Brief rule served: one engine, server-verified intake; row 5
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Note says 'boot and ban write logger.log_sec lines (commands/default/comms.py 610-666)'. Only boot logs (log_sec at 641); ban_user (starts 647) has no log_sec; the only other log_sec in the file is channel delete at 552. Everything else holds: data_in 396-456, length check 413, counter 421-437, 80/s math, retry callLater 444, settings 272-290, MAX_COMMAND_RATE=0 divides at 29, comms.py mute/unmute/ban/connect lines, licence BSD-3.
+Missed: None significant.
+
+Fixed 2026-10-12 (Sonnet fixer): channel ban does not write a security log line; only channel boot does (comms.py 641). Verified by grep of comms.py and admin.py.

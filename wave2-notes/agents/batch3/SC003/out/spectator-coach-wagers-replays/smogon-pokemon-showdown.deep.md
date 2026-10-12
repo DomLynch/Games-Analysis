@@ -119,3 +119,9 @@ export { coachView, spectatorView, ownerView };
 - Replay content: the donor saves the public view for most formats and the full view only for custom games and ended team formats (rooms.ts 2066-2069). Frankendom must decide what a saved Pit bout holds. Fix: make it a data field per mode, default public, with the full record kept for debug.
 - The 500-line flush (sim/battle.ts:3027) is commented as a test workaround. Do not treat it as a tuned budget.
 - Not read: the test file beyond the lines above, the client renderer, and the rest of the saved-replay function (rooms.ts after 2081).
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: Verified: extractChannelMessages 35-56 and regex line 33, empty-line skip at 52, addSplit 3081-3089 and closure add 3093-3110, sendUpdates 3265-3272, 500-line flush 3027 with 'workaround for tests', getPlayerStreams -1/0/1-4 extraction, replay branch battle-stream 59-66, sockets ':' and '.' handlers incl. truthiness defect at 265, channelMove 125-126, room-battle channelIndex 122 (multi maps num>2 to num-2), updateChannel/destroy, rooms.ts 2066-2080 hideDetails and save codes, replays.ts value table and code-2-to-1 conversion, MIT licence. Not-read list honest; no coach or wager code exists (agree).
+Missed: BUILD-RISK (design inconsistency, not a code error): Decision says key channels by role not seat number, but the sketch's Channel type is the donor's seat numbers 1-4 and has no coach-only entry kind, so the Acceptance 'coach-only line visible to coach, not spectator, owner sees both' can only be built by treating the coach as a combatant seat (it would also see that seat's secrets). Builder must add a role channel or the test is ambiguous. Missed minor: live 'update' fan-out sends p1-p4 streams the same text for multi battles shared seats; already flagged in gaps.

@@ -125,3 +125,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 Reuse tag: adapt-idea (GPL-3.0 LICENSE; file headers say GPL v2 or later; clean-room only)
 Brief rule served: Strategy CT rulings (spam limits; mute tiers and durations; chat through the writer; report path with a reason row); addendum rule "keep the idea, fix the defect".
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: No false claims found. Verified: IsSpammingCommand AbstractCommandHandler.cs 26-48 (staff bypass 28, key+NOSPAM 31, refusal 41-43, write 46, dead changeTime 39, equal-time removal 34-37); whisper.cs 39 500 ms, 'Slow down!', Whisper result unread at 58; GameLiving.WhisperReceive 3108-3137 (1500 ms, PrivLevel==1, silent false, sets WHISPERDELAY after); GameLiving.Whisper 3145-3165 (IsSilent, WHISPER_DISTANCE); IsIgnoring 7324-7336 and guards in PrivateMessageReceive/SayReceive/YellReceive; IsMuted grep list matches (no hit in whisper, chatgroup, Whisper paths); chatgroup.cs spam gate default delay, no mute/ignore; distances 512/512/1024 WorldMgr.cs 32/36/48; COMMAND_SPAM_DELAY default 1500 (ServerProperties.cs 241-242); filter.cs is a no-op; report.cs MAX_REPORTS unused; GamePlayer.cs:9996 account mute copied on load; licence GPLv3 LICENSE, headers v2-or-later. Acceptance is consistent with the sketch (two whispers inside 500 ms -> one delivery, window not reset).
+Missed: Minor: whisper.cs also refuses whispering to self and has no-target message (not needed). GameLiving.IsSilent is a separate flag from IsMuted (note mentions IsSilent only as a refusal, fine).

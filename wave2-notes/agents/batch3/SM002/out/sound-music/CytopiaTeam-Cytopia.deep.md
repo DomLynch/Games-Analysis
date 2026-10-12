@@ -127,3 +127,9 @@ export {};
 - Repeat count not applied (defect). `Soundtrack.Loop` is declared (`Soundtrack.hxx` 46) and documented as 0 to 255 (43-44), but no code sets `AL_LOOPING` or reads `Loop`. Fix: apply it, or remove it.
 - No voice cap and no priority. `m_Playing` is an unbounded list (`AudioMixer.hxx` 161). Fix: the cap in the sketch, with music kept while anything else can go.
 - The Frankendom fight has no ambience today. Adopting the trigger table and timers only makes sense once the zone bed data exists.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: Verified: trigger table build 31-36, getTrack 106-121, prune task 80-86 and 237-250, stopAll 213-228, playSoundtrack 259-271, effect slot 357 with no delete (alDeleteAuxiliaryEffectSlots only declared 288 / loaded 322), onTrackFinished 378-394 with **it on end() and no caller, Game.cxx timers 8min/3min and 3D coords 129/136, MainMenu coord 54 and stinger, GameClock.cxx 14 re-queue at now+period, GameClock.inl.hxx 13-15 immediate call, AudioConfig.hxx 20 triggers, JSON counts 9 music (8 MainTheme, 1 MainMenu) and 18 sound (2 NatureSounds), Loop never applied, GPL v3.
+Missed: None significant.

@@ -6,7 +6,7 @@ Checked: Read in full: `modules/relay/src/main/RelayDelay.scala` (all 141 lines)
 
 Best transferable idea: Show spectators a fight only as it stood a fixed time ago, read from the one record by time (not from a second copy), with the start position shown until the first delayed time, so a spectator with a wager cannot act on what is still live.
 Decision (proposed): adapt - take the delayed read and the start-position fallback; drop the second snapshot store and read the one fight record at (now minus delay). Frankendom's one-ledger ruling rules out a copied PGN-style table.
-Acceptance: A Pit bout test with a 30 s spectator delay asserts that a view requested at 10 s shows the start state (no hits), and a view at 45 s shows events up to 15 s; the record holds one copy of each event.
+Acceptance: A Pit bout test with a 30 s spectator delay and lag 0 (the server writes the record itself) asserts that a view requested at 10 s shows the start state (no hits), and a view at 45 s shows events up to 15 s (with a nonzero lag L the cut-off moves to 45 - (30 - L) s); the record holds one copy of each event, and `viewAt` reads it without storing any snapshot.
 
 ## 1. Mechanism
 
@@ -41,68 +41,44 @@ Acceptance: A Pit bout test with a 30 s spectator delay asserts that a view requ
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order (store only changes, subtract the lag, read the newest snapshot at or before now minus the effective delay, otherwise the start position) and uses in-memory arrays instead of a collection with string ids. It fixes the countdown: `firstMoveVisibleAtMs` uses the same effective delay as `observe`, where the donor's `delayedUntil` adds the full delay (RelayDelay.scala 36). It adds `prune`, which the donor does not do in this file (no pruning seen in RelayDelay.scala; other files not searched). It omits the URL dedup cache, the parallel source fetch, the PGN-to-games conversion, the 999-game split limit, and the push path. Typechecked on the VPS (`tsc --noEmit --strict --target es2020`, exit 0).
+simplified: the sketch keeps the donor's reading rule (subtract a lag from the delay, keep it only if positive, show the newest state at or before now minus that effective delay, otherwise the start position) but applies it as a query over the ONE fight record, as the Decision says. The donor stores full copies of the source state because it polls an outside source; Frankendom owns the record, so there is no snapshot store and no `putIfNew`, and the Acceptance "one copy of each event" holds by construction. It fixes the countdown: `firstEventVisibleAtMs` uses the same effective delay as `viewAt`, where the donor's `delayedUntil` adds the full delay (RelayDelay.scala 36). Frankendom's server writes the record itself, so its polling lag is 0 (`lagS` is a parameter; the donor's 1 s push and 6 s pull lags are not Frankendom numbers). It omits the URL dedup cache, the parallel source fetch, the PGN conversion, the 999-game split and the push path. Typechecked on the VPS (`tsc --noEmit --strict --target es2020`, exit 0).
 
 ```ts
 // Licence: GNU AGPL v3 (donor LICENSE line 1; COPYING.md line 10). clean-room: shape only, no donor lines copied.
 // clean-room
 const MAX_DELAY_S = 3600; // form-level cap in the donor (validation), kept here as an engine constant
-const FIXED_POLL_LAG_PUSH_S = 1; // donor's pollingLag for push-fed rounds
-const FIXED_POLL_LAG_PULL_S = 6; // donor's pollingLag for upstream-pulled rounds
 
-interface Snapshot { atMs: number; state: string; } // one stored copy of the source state, oldest first
+// One event of the one fight record, in server time. Events are appended in time order and never copied.
+interface FightEvent { atMs: number; seq: number; }
 
-class SpectatorDelay {
-	private snaps: Snapshot[] = [];
+interface SpectatorView { events: readonly FightEvent[]; atStart: boolean; }
 
-	constructor(
-		private readonly delayS: number,            // zone or event data, 0..MAX_DELAY_S
-		private readonly lagS: number,              // FIXED_POLL_LAG_*
-		private readonly startState: string,        // the position before any move
-	) {
-		if (delayS < 0 || delayS > MAX_DELAY_S) throw new Error('delay out of range');
-	}
-
-	// delay minus the source's polling lag; undefined means no delay is applied (as in delayMinusLag)
-	private effectiveS(): number | undefined {
-		const s = this.delayS - this.lagS;
-		return s > 0 ? s : undefined;
-	}
-
-	// One fetch from the source. Store the state only when it changed, then return what a spectator may see now.
-	observe(nowMs: number, state: string): string {
-		const last = this.snaps[this.snaps.length - 1];
-		if (!last || last.state !== state) this.snaps.push({ atMs: nowMs, state });
-		const s = this.effectiveS();
-		if (s === undefined) return state;
-		const cutoff = nowMs - s * 1000;
-		for (let i = this.snaps.length - 1; i >= 0; i--) {
-			if (this.snaps[i].atMs <= cutoff) return this.snaps[i].state; // newest snapshot old enough
-		}
-		return this.startState; // nothing is old enough yet: the start position, no moves
-	}
-
-	// Time when the first move becomes visible to spectators. The donor adds the full delay here,
-	// while observe() subtracts the lag; this uses the same effective delay as observe().
-	firstMoveVisibleAtMs(firstMoveAtMs: number): number {
-		const s = this.effectiveS() ?? 0;
-		return firstMoveAtMs + s * 1000;
-	}
-
-	// Frankendom addition (not in donor): drop snapshots that no spectator can ask for any more.
-	prune(nowMs: number): void {
-		const s = this.effectiveS();
-		if (s === undefined) { this.snaps = []; return; }
-		const cutoff = nowMs - s * 1000;
-		let keepFrom = 0;
-		for (let i = 0; i < this.snaps.length; i++) {
-			if (this.snaps[i].atMs <= cutoff) keepFrom = i; // keep the newest one at or before the cutoff
-		}
-		this.snaps = this.snaps.slice(keepFrom);
-	}
+// delay minus the source's polling lag; undefined means no delay is applied (as in delayMinusLag)
+function effectiveDelayS(delayS: number, lagS: number): number | undefined {
+	if (delayS < 0 || delayS > MAX_DELAY_S) throw new Error('delay out of range');
+	const s = delayS - lagS;
+	return s > 0 ? s : undefined;
 }
 
-export { SpectatorDelay, MAX_DELAY_S, FIXED_POLL_LAG_PUSH_S, FIXED_POLL_LAG_PULL_S };
+// What a spectator may see at nowMs: the events up to (now minus effective delay).
+// Before the first event is old enough the view is the start state (no events).
+function viewAt(record: readonly FightEvent[], nowMs: number, delayS: number, lagS = 0): SpectatorView {
+	const s = effectiveDelayS(delayS, lagS);
+	if (s === undefined) return { events: record, atStart: record.length === 0 };
+	const cutoff = nowMs - s * 1000;
+	const visible = record.filter((e) => e.atMs <= cutoff);
+	return { events: visible, atStart: visible.length === 0 };
+}
+
+// Time when an event becomes visible to spectators. The donor adds the full delay here,
+// while its read subtracts the lag; this uses the same effective delay as viewAt().
+function eventVisibleAtMs(eventAtMs: number, delayS: number, lagS = 0): number {
+	const s = effectiveDelayS(delayS, lagS) ?? 0;
+	return eventAtMs + s * 1000;
+}
+
+export { viewAt, eventVisibleAtMs, effectiveDelayS, MAX_DELAY_S };
+export type { FightEvent, SpectatorView };
 ```
 
 ## 5. Lands in
@@ -117,8 +93,16 @@ export { SpectatorDelay, MAX_DELAY_S, FIXED_POLL_LAG_PUSH_S, FIXED_POLL_LAG_PULL
 - Coach: `modules/coach` is a coach profile with an optional free-text hourly rate (CoachProfile.scala; CoachProfileForm.scala 21 `"hourlyRate" -> optional(text(minLength = 3, maxLength = 140))`). No fight-level pricing and no mid-game instructions were found. The module was read by name and in part only.
 - Lobby shape: not read for this cell (the pool and matchmaking module `modules/pool` exists, not opened).
 - Defect (possible, not run): `idOf` uses whole seconds (RelayDelay.scala 84). Two stored changes for the same key in the same second get the same id, and `putIfNew` (87-95) checks the latest PGN before inserting, so two rounds on one URL racing in the same second could insert the same id. Whether that fails depends on the unique index of `colls.delay`, which I did not read. Fix: a random suffix or a sequence in the id, and sort on the time field.
-- Defect (as read): `delayedUntil` adds the full `delay.value` (RelayDelay.scala 36) but `fromSource` returns snapshots at `delay - lag` (51-54). The countdown can run 1 s (push) or 6 s (pull) later than the real reveal. Fix: use the effective delay in `delayedUntil`. The sketch's `firstMoveVisibleAtMs` does this.
-- Storage: every changed state is inserted as a full PGN (RelayDelay.scala 93). Nothing in this file removes old snapshots; pruning elsewhere was not searched. Frankendom has one ledger, so store nothing extra: keep the record and prune by the maximum delay.
+- Defect (as read): `delayedUntil` adds the full `delay.value` (RelayDelay.scala 36) but `fromSource` returns snapshots at `delay - lag` (51-54). The countdown can run 1 s (push) or 6 s (pull) later than the real reveal. Fix: use the effective delay in `delayedUntil`. The sketch's `eventVisibleAtMs` does this.
+- Storage: every changed state is inserted as a full PGN (RelayDelay.scala 93). Nothing in this file removes old snapshots; pruning elsewhere was not searched. Frankendom has one ledger, so store nothing extra: the sketch reads the record and keeps no copies, so there is nothing to prune.
 - Cap: the store splits the snapshot into at most 999 games (RelayDelay.scala 99, `MultiPgn.split(pgn, Max(999))`). Not a Frankendom limit; ignore.
 - Secondary mechanism, not written as a note: the TV spotlight (`modules/tv/src/main/ChannelSyncActor.scala`, `Env.scala` 37-38, `Tv.scala` 219-243). A selector runs every 3 s after 12 s (Env.scala 37). Candidates are clocked games that start and match a channel filter, kept for 3 minutes (ChannelSyncActor.scala 32, 57; TvSyncActor.scala 54-60). Engine-flagged accounts are removed from the candidates (66-67). The current game is replaced only if a candidate scores more than 1.17 times the current score (83). Score is each player's stable rating (default 1300) plus a title bonus above 2100 (103-114). Defect as read: the flagged-account filter applies to candidates, not to the game already on air. Best idea for a later note: a spectator spotlight with hysteresis (replace only if 17 percent better) and per-channel freshness windows as data (Tv.scala 219: blitz-class 120 s).
 - Not read: the rest of `RelayApi.scala`, the study propagation, the pool module, the TV UI, and the tests.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Verified line-by-line: RelayDelay.scala 42-55 order (fetch, delayMinusLag, putIfNew, get else resetToSetup), dedupCache 59-80, idOf whole seconds (84), putIfNew compares newest PGN (90), getPgn cutoff lte (107), nextDate regex '\n1\. ' (120), delayedUntil +full delay (36) vs delay-lag (defect real), maxSeconds 3600 (128), form max (RelayRoundForm 93), pollingLag 1/6 and positive filter (RelayRound 156-157), push schedule (RelayPush 43-49), early-start min(90, 60+delay/60) (RelayApi 585), AGPL. BUILD RISKS: (1) Decision says 'drop the second snapshot store, read the one fight record at now-delay' and Acceptance says 'record holds one copy of each event', but the TypeScript sketch IS a second snapshot store (Snapshot[] of full state copies). (2) Acceptance: 30 s delay, view at 45 s shows events up to 15 s. The sketch subtracts lagS (1 or 6 s), so effective delay is 29/24 s and the 45 s view shows events up to 16/21 s; the test passes only with lag 0. Spec and sketch disagree. Minor: ids are strings compared lexicographically in getPgn range (works only while epoch-second digit count is equal) - not noted.
+Missed: Lexicographic _id range query in getPgn (107); and snapshots are only stored when delayMinusLag is Some, so toggling delay on mid-round loses history.
+
+Fixed 2026-10-12 (Sonnet fixer, RelayDelay.scala 42-112 re-read over ssh): the sketch is now a pure query over the one fight record (no snapshot store), so it matches the Decision and the "one copy of each event" Acceptance; lag is a parameter (0 for Frankendom) and the Acceptance states lag 0. Typechecked on the VPS. Also found (verified): the donor's snapshot ids are strings `"<key> <epoch seconds>"` and getPgn (107) range-queries them lexicographically on `_id`, which breaks when the seconds count gains a digit and ties within one second; snapshots are written only while a delay is set (line 52-54), so switching a delay on mid-round has no history to read. The idOf race note was left as written (index not read).

@@ -127,3 +127,9 @@ Best transferable idea: Warn once per fighter when a timed resource falls to a f
 
 Decision (proposed): adapt - keep the 10 % latched warning and the re-arm rule (both client-side and engine-driven), decide the warning in the tick rather than in a render, and make the threshold a fraction of the budget (data), not the donor's fixed 8 s.
 Acceptance: A fighter whose stamina or fight timer drops under ten percent hears one low-stamina sting, not one per frame; after a reset or a new round the sting can play again; a client test drives a tick sequence through the threshold and asserts exactly one cue per budget.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: None found. Verified clock_tool_controller.dart: latch maps 36-39, threshold maps 40-43, threshold set at 59-60, 10 % rounded at 91-93, listeners 72-73, onClockEmergency 95-106 order (active side, latch, read time, <= threshold, play, set latch), re-arm at 136-137, 183-184, 212-213; MoveExpiration game_player.dart: 1000 ms period 407, 8 s at 449, latch only at 410/451/454, didUpdateWidget 431-437 does not reset it, setState inside build 453-455; game_controller onClockEmergency 461-466; sound_service _kMaxConcurrentStreams 2 (15, 166), play volume gate 175-181, changeTheme order 199-211, aifc/mp3 at 50, rootBundle fallback; move_feedback.dart playedMove 28-35 and haptics (note path is lib/src/service/move_feedback.dart); GPL v3.
+Missed: Minor: haptics are gated by boardPreferences.hapticFeedback (not mentioned); Linux has a separate _LinuxSoundPlayer path. Neither affects the idea.

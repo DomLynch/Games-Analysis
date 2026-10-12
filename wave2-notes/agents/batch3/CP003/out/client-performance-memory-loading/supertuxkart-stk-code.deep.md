@@ -143,3 +143,9 @@ Brief rule served: 1 (one engine: the same step function runs in the Pit and zon
 - Fast-forward is online-race only: `fast_forward` reaches the race event manager only when it runs (325-326); offline, a large debt runs all its steps (328). Not a problem for the client cap, but a gap if the Pit ever goes networked.
 - Not read: the quality presets (`src/states_screens/options/options_screen_video.cpp`), the level-of-detail node (`src/graphics/lod_node.cpp`), and the texture and asset loading path (not in this topic's scope for this note). Those belong to the other topics in this category.
 - Not run: the sketch is typechecked only (`tsc --strict`, ES2020); behaviour claims come from reading the donor.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: None found. Verified: getLimitedDt 196-312 incl. zero-dt sleep 267-277, clamp 302-307 (50 ms = 6 ticks at 120 Hz), dt*0.001 at 310; run accumulator 460-463, graphics before debt 564-580, debt 596-619, fast_forward 623-625, step loop 626, updateRace 320-329, cap 713-735; ChildLoop 37-76 incl. integer wait_time and setup-phase break; fps=120 at stk_config.xml 147; max_fps 120 at user_config.hpp 661; setTicksAdjustment no callers; setAllowLargeDt at cutscene_world 79/180; GPL-3.0-or-later.
+Missed: getLimitedDt also returns fixed 1/60 in profile/no-graphics or arena_ai_stats mode and resynchronises the network timer when the system clock runs backwards (main_loop.cpp ~225-250); not mentioned (small).

@@ -4,13 +4,13 @@ Donor: `/mnt/frankendom-donors/EQEmu/zone/mob_ai.cpp` (`Mob::StartEnrage`, `Mob:
 
 Checked: Read in full: `Mob::HateSummon` (4822-4910), the accessors and row parser (7468-7591), `StartEnrage`, `ProcessEnrage`, `IsEnraged` (1930-1980), the call sites in the engaged AI branch (1146, 1148, 1322-1325), the AI init and timer-disable lines (486-498, 562-574), the enrage poll in `npc.cpp` (129, 757-762), the `Timer` class (`common/timer.h` 30-50, `timer.cpp` 82-93), the rule and constant definitions (`features.h` 159-160, `ruletypes.h` 688-689), the riposte branch (`zone/attack.cpp` 486-500) and the special-ability enum (`common/emu_constants.h` 525-585). Confidence: high on the order of operations of summon and enrage and on the row format; medium on the riposte condition (`InFront` is computed earlier in `attack.cpp`, not read). Not read: `Rampage` and `AreaRampage` (`zone/tune.cpp` 1543-1554, grep only), the name of the function at `mob_ai.cpp` 555-574 that disables the ability timers, `MovePC` for summoned clients, and `IsEnraged` use in combat beyond the riposte branch. Not found: breath cones (only a comment at `zone/spells.cpp` 7164), flight for NPC bosses (no `FlyMode` or flying-NPC code located), taming and mounts (grep only, not read), armour per body part (not read). `camera_scope`: not applicable.
 
-Best transferable idea: A boss burst is one timer that first runs as the burst length and then as the rest period, gated by an HP fraction; while it runs, every frontal melee hit is ripostes (no damage), and each boss's abilities are a data row of "id, level, up to nine numeric parameters".
+Best transferable idea: A boss burst is one timer that first runs as the burst length and then as the rest period, gated by an HP fraction; while it runs, every frontal melee hit is riposted (no damage), and each boss's abilities are a data row of "id, level, up to nine numeric parameters".
 Decision (proposed): adapt - take the one-timer burst window, the HP gate and the data row format, but count the rest period from the scheduled end (no drift from the poll) and spend a pull's cooldown only when a target exists. The riposte effect must become a server-verified parry state in `src/fight` (a guard-style window), not a per-client roll.
-Acceptance: A server test: a boss at or below 9 percent HP starts a 10 s burst; during it every frontal melee hit is ripostes with no damage; the next burst cannot start before 360 s after the scheduled burst end, even when the 1 s poll runs late; a pull with no hate-top does not start its cooldown. A player sees the boss go to a visible enraged state at 9 percent and every frontal swing bounce off for 10 s.
+Acceptance: A server test: a boss at or below 9 percent HP starts a 10 s burst; during it every frontal melee hit is riposted with no damage; the next burst cannot start before 360 s after the scheduled burst end, even when the 1 s poll runs late; a pull with no hate-top does not start its cooldown. A player sees the boss go to a visible enraged state at 9 percent and every frontal swing bounces off for 10 s.
 
 ## 1. Mechanism
 
-- Data: each NPC type has a string `special_abilities` in the form `id,level,p0,p1,...^id,level,...` (`zone/npc.cpp` 908 gives a sample `1,1,3000,50^12,1^...`). `ProcessSpecialAbilities` clears all abilities (`mob.cpp` 7552), splits the string on `^` (7554), reads id and level (7565), then up to nine numeric parameters (7584-7590). `SpecialAbility::MaxParameters` is 9 (`emu_constants.h` 585). Each ability has one level value and one timer slot (`SetSpecialAbility` 7496-7502, `StartSpecialAbilityTimer` 7512-7523, `GetSpecialAbilityTimer` 7533-7539).
+- Data: each NPC type has a string `special_abilities` in the form `id,level,p0,p1,...^id,level,...` (`zone/npc.cpp` 908 gives a sample `1,1,3000,50^12,1^...`). `ProcessSpecialAbilities` clears all abilities (`mob.cpp` 7552), splits the string on `^` (7554), reads id and level (7565), then up to nine numeric parameters (7584-7590). Numeric means `Strings::IsNumber` (`strings.cpp` 195-207): a leading minus sign and the empty string both count as numbers. Ability ids below 0 or at or above `SpecialAbility::Max` are dropped (`SetSpecialAbility` 7496-7499). Side effects in the parser (7568-7578): `QuadrupleAttack` with level above 0 also sets `TripleAttack` to 1, and `DestructibleObject` toggles `SetDestructibleObject`. `SpecialAbility::MaxParameters` is 9 (`emu_constants.h` 585). Each ability has one level value and one timer slot (`SetSpecialAbility` 7496-7502, `StartSpecialAbilityTimer` 7512-7523, `GetSpecialAbilityTimer` 7533-7539).
 - Burst (enrage), in `StartEnrage` (`mob_ai.cpp` 1930-1961), called on each engaged AI tick before the range check (1146):
   (a) Stop if already in a burst (1933-1934). Stop if the ability level is 0 (1936-1937).
   (b) HP gate: the threshold is parameter 0, or the rule `NPC:StartEnrageValue` (default 9 percent) when the parameter is 0 (1939-1940). Stop if HP ratio is above it (1941-1943).
@@ -19,14 +19,14 @@ Acceptance: A server test: a boss at or below 9 percent HP starts a 10 s burst; 
   (e) Start the shared timer for the burst length: parameter 1, or 10000 ms by default (1954-1956). Set the burst flag (1959) and announce it.
 - End of burst, in `ProcessEnrage` (1963-1975), polled from the NPC's process loop: when the timer expires, start the same timer for the rest period: parameter 2, or 360000 ms by default (1969-1971), and clear the flag (1972).
 - The poll: `enraged_timer` is a one-second timer (`npc.cpp` 129). When it expires the NPC calls `ProcessEnrage` (757-758), and it disables its own poll when the ability is off (761-762). So the burst end is noticed at up to one second after it happens.
-- Effect of the burst: in the melee defence code, an enraged defender ripostes a frontal hit when it is allowed to riposte (`attack.cpp` 489-494), which sets the damage to ripostes and returns. No roll is made in that branch.
+- Effect of the burst: in the melee defence code, an enraged defender counters with a riposte against a frontal hit when it is allowed to riposte (`attack.cpp` 489-494), which sets the damage to the riposte value (no damage) and returns. No roll is made in that branch.
 - Pull (summon), in `HateSummon` (`mob.cpp` 4822-4910), called only when the NPC is not in melee range (`mob_ai.cpp` 1322-1325):
   (a) Level 1 or 2 is required, and a target must exist (4828-4836).
   (b) HP gate: parameter 1, or 97 by default (4839-4843, 4840).
   (c) Cooldown: parameter 0, or 6000 ms by default (4846-4847). If the timer exists and has not expired, stop (4849-4854). Otherwise the timer is started for the cooldown (4851 or 4856) before the target is looked up.
-  (d) Target: the hate-list top (4860-4861). Level 1 moves the target to about 5 units from the caster (4866-4874, 4894) and returns true. Level 2 moves the caster onto the target (4904-4906).
+  (d) Target: the hate-list top (4860-4861). Level 1 moves the target to about 5 units from the caster (4866-4874, 4894) and returns true. Level 2 moves the caster onto the target with `GMMove` (4904-4906) and then falls through to `return false` (4909), so the AI keeps chasing; only level 1 returns true.
 - Timer class: `Timer(time)` uses inexact timing by default (`common/timer.h` 34). `Check` fires when the elapsed time exceeds the period (`timer.cpp` 84), and on a reset it sets the start to the time of the check (89). So each cycle starts late by however late the check ran.
-- Reset: a function containing `mob_ai.cpp` 570-573 (its name was not read) disables every ability timer, which clears the cooldowns when that function runs.
+- Shutdown: `Mob::AI_ShutDown` (`mob_ai.cpp` 554-574, comment at 553 says zone shutdown only) calls `Disable()` on every ability timer. `Disable` only sets `enabled = false` (`timer.cpp` 99-101), so `Check` then never fires; it does not clear or reset a cooldown.
 
 ## 2. Key functions
 
@@ -44,7 +44,7 @@ Acceptance: A server test: a boss at or below 9 percent HP starts a 10 s burst; 
 | Burst length on the shared timer | 10000 ms default (`common/features.h` 160), or the row's parameter 1 |
 | Rest period on the same timer | 360000 ms default (`features.h` 159), or the row's parameter 2 |
 | Burst HP gate | 9 percent default from rule `NPC:StartEnrageValue` (`common/ruletypes.h` 688); row parameter 0 overrides |
-| Burst effect | frontal melee hits ripostes (`attack.cpp` 489-494) |
+| Burst effect | frontal melee hits are riposted (`attack.cpp` 489-494) |
 | Live-like rule | `NPC:LiveLikeEnrage` default false (`ruletypes.h` 689): when on, NPC bosses do not burst |
 | Pull HP gate | 97 percent default (`mob.cpp` 4840); row parameter 1 overrides |
 | Pull cooldown | 6000 ms default (`mob.cpp` 4847); row parameter 0 overrides; the example row in `npc.cpp` 908 uses 3000 ms and 50 percent |
@@ -56,7 +56,7 @@ Which numbers suit a fast mobile fight: a 10 s burst every 6 minutes is long bet
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor's gates in order: the level or enabled flag, the HP gate, the rest or cooldown check, then the start. It keeps one timer for the burst and the rest, the riposte rule while a burst runs, and the pull's out-of-melee check and hate-top target. It omits the live-like rule, the "already enraged" check (represented by the `active` flag), the rule lookup for defaults, the announce messages, the `MovePC` and `GMMove` calls, and the level 2 caster-to-target move. The row parser keeps the donor's rule of skipping rows with non-numeric id or level, and it fills missing parameters with 0, which matches the donor's cleared table. Two changes are fixes: the rest period counts from the scheduled burst end, not the poll time (donor: `Timer::Check` resets to the check time), and a pull spends its cooldown only when a target exists (donor: the timer starts before the target check).
+simplified: the sketch keeps the donor's gates in order: the level or enabled flag, the HP gate, the rest or cooldown check, then the start. It keeps one timer for the burst and the rest, the riposte rule while a burst runs, and the pull's out-of-melee check and hate-top target. It omits the live-like rule, the "already enraged" check (represented by the `active` flag), the rule lookup for defaults, the announce messages, the `MovePC` and `GMMove` calls, and the level 2 caster-to-target move. The row parser skips rows with non-numeric id or level using the donor's number test (leading minus and the empty field both pass), drops ids outside 0..maxId (the donor's `SpecialAbility::Max`, passed in because its value was not read), and fills missing parameters with 0, which matches the donor's cleared table. It omits the QuadrupleAttack and DestructibleObject side effects. Two changes are fixes: the rest period counts from the scheduled burst end, not the poll time (donor: `Timer::Check` resets to the check time), and a pull spends its cooldown only when a target exists (donor: the timer starts before the target check).
 
 ```ts
 // Licence: GPL-3.0-or-later (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -64,14 +64,18 @@ simplified: the sketch keeps the donor's gates in order: the level or enabled fl
 export interface AbilityRow { id: number; level: number; params: number[] } // params: up to 9
 
 // Donor row format: "id,level,p0,p1,...^id,level,...". Non-numeric fields are skipped.
-export function parseAbilityRows(text: string): Map<number, AbilityRow> {
+export function parseAbilityRows(text: string, maxId: number): Map<number, AbilityRow> {
   const out = new Map<number, AbilityRow>();
-  const isNum = (x: string): boolean => /^\d+$/.test(x);
+  // donor test: digits, with an optional leading minus; the empty field passes too
+  const isNum = (x: string): boolean => /^-?\d*$/.test(x);
+  const toInt = (x: string): number => Number(x) || 0;
   for (const part of text.split("^")) {
     const f = part.split(",");
     if (f.length < 2 || !isNum(f[0]) || !isNum(f[1])) continue;
-    const params = f.slice(2, 2 + 9).map((x) => (isNum(x) ? Number(x) : 0));
-    out.set(Number(f[0]), { id: Number(f[0]), level: Number(f[1]), params });
+    const id = toInt(f[0]);
+    if (id < 0 || id >= maxId) continue;   // donor drops ids outside 0..Max
+    const params = f.slice(2, 2 + 9).map((x) => (isNum(x) ? toInt(x) : 0));
+    out.set(id, { id, level: toInt(f[1]), params });
   }
   return out;
 }
@@ -99,7 +103,7 @@ export function pollBurst(s: BurstState, spec: BurstSpec): void {
   }
 }
 
-// While a burst is active, a frontal melee hit is ripostes (no damage).
+// While a burst is active, a frontal melee hit is riposted (no damage).
 export function ripostesFrontal(s: BurstState, inFront: boolean): boolean {
   return s.active && inFront;
 }
@@ -139,3 +143,11 @@ export {};
 - Frankendom gap: MAX_ATTACKERS = 3 caps melee attackers. The donor's pull has no such cap (`HateSummon` pulls one target). Nothing in the donor limits the number of pulls per burst; Frankendom must set one.
 - Not read in this cell (scope): breath cones (no breath special found), flight and mounts (not found for NPC bosses), taming, armour per body part, and the spell-side dragon body-type gates (`zone/spell_effects.cpp` 7607-7621, grep only).
 - Data (zone data for Frankendom, from section 3): the burst HP fraction, burst length, rest length, the pull HP fraction and cooldown, and the pull distance. The poll interval and the parameter count are engine constants.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: (1) Section 1 'Reset' bullet says the function containing mob_ai.cpp 570-573 'clears the cooldowns' and that its name was not read. Real: lines 554-574 are Mob::AI_ShutDown (comment at 553 'only call this on a zone shutdown event'); it only Disable()s the ability timers (timer.cpp:99-101 sets enabled=false; Check() then returns false), it does not clear cooldowns. (2) Sketch parseAbilityRows uses /^\d+$/ but Strings::IsNumber (strings.cpp:195-207) accepts a leading '-' and the empty string, so negative levels/params and empty fields are treated differently from the donor. (3) HateSummon level 2 path returns false after GMMove (mob.cpp:4909) so the AI continues to chase; note says level 2 only 'moves the caster onto the target' and gives no return value. (4) Typo/garble: 'ripostes' used as verb. Verified OK: StartEnrage 1930-1961 order (already-enraged, ability level, HP gate param0/rule 9, LiveLikeEnrage, timer Check, duration param1/10000), ProcessEnrage 1963-1975 (rest param2/360000), enraged_timer 1000 ms (npc.cpp 129) with poll at 757-762, features.h 159-160, ruletypes 688-689, riposte branch attack.cpp 489-494 (also needs hit.hand != range, InFront, !ImmuneRipo), HateSummon 4822-4910 (97 default 4840, cooldown 6000 default 4847, timer started before hate-top lookup 4851/4856 vs 4860, 5.0 units 4874), parser 7551-7591 and MaxParameters 9, ClearSpecialAbilities 7541-7549, ProcessSpecialAbilities called at mob_ai.cpp 496, Timer::Check inexact reset at timer.cpp:89, sample row npc.cpp 908, licence GPL-3.0-or-later per file header. Acceptance is satisfiable by the sketch.
+Missed: Parser side effect at mob.cpp 7568-7572: QuadrupleAttack with level>0 also sets TripleAttack=1, and DestructibleObject toggles SetDestructibleObject (7573-7578); note and sketch omit this. Also ability ids >= SpecialAbility::Max are silently dropped in SetSpecialAbility (7497), sketch stores any id.
+
+Fixed 2026-10-12 (Sonnet fixer): AI_ShutDown only disables timers (not a cooldown clear), verified 554-574 and timer.cpp 99-101; level-2 summon returns false (4909); IsNumber accepts a leading minus and empty strings, ids outside 0..Max are dropped, QuadrupleAttack/DestructibleObject parser side effects added; sketch parser updated to match (new maxId argument) and typechecked; 'ripostes' verb typo fixed. Also found: the parser side effects.

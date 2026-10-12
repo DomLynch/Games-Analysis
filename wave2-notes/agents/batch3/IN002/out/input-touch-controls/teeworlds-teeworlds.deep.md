@@ -153,3 +153,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 
 Reuse tag: rewrite-from-idea
 Brief rule served: 1 (one engine; fire counted and verified on the server) and row 5 (input intake)
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: No false claims found. Verified: ConKeyInputCounter 52-58, OnReset fire release 26-28, send policy and the 10 Hz comment vs time_freq()/25 (controls.cpp 183-184), zero aim -> (1,0) and server (0,-1), ClampMousePos and GetMaxMouseDistance formula, absolute joystick, CountInput 21-31, OnDirectInput order incl m_NumInputs>2 and the copy at the end, FireWeapon reload gate/WillFire/125 ms, reload = Firedelay*TickSpeed/1000, mask 0x3f, tick 50, zlib licence. The reload-drop defect is real: HandleWeapons calls FireWeapon every tick but prev==latest after OnDirectInput copy, so a press during reload is lost for non-full-auto weapons. Acceptance is consistent with the sketch (note only: sketch fires one tick after reload hits 0, same as donor; the test should allow that tick). Not-read list is honest; no touch code exists in donor.
+Missed: Full-auto weapons (grenade, shotgun, laser) fire while fire is held (character.cpp 255-266) so the press-drop defect affects only hammer and gun; the note mentions full-auto but not which weapons. Firedelays are in datasrc/content.py (125,125,500,500,800), which the note says not read; a 300 ms reload in the acceptance matches none, fine as a test parameter. Spectator branch of ClampMousePos (different clamp) not mentioned.

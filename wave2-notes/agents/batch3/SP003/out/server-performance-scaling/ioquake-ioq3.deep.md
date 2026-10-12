@@ -118,3 +118,9 @@ Typecheck: `tsc --noEmit --strict --target es2020` on the VPS, exit 0 (run this 
 
 Reuse tag: rewrite-from-idea (GPL-2.0; clean-room, shape only)
 Brief rule served: rule 1 (one engine; server decides the send); no camera or client rule touched.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: Verified: SV_Frame residual and fixed chunks (1087, 1095, 1143-1150), SV_SendClientMessages call 1160, SV_RateMsec 1178-1214 with 28/48 header (1175-1176, 1203-1205), formula 1207 and rate-reuse 1208, SV_SendClientMessages gates 656/662-665/668-678 and stamp 682, SV_SendClientSnapshot 597-635 (allowoverflow 611, MSG_Clear 631, send 634), SV_SendMessageToClient records size 580, SV_EmitPacketEntities merge 72-108, delta base PACKET_BACKUP-3 at 137 and ring check 148, SV_AddEntToSnapshot silent cap 278-280, MAX_SNAPSHOT_ENTITIES 256 (qcommon.h 129), PACKET_BACKUP 32 (123), rate clamp 1000..90000 and default 3000 (sv_client.c 1423-1429), LAN 99999 (1417), snaps clamp 1..sv_fps and default 50 (1447-1455), sv_fps 20 (sv_init 667), sv_maxRate 0 (644), GPL-2 COPYING.txt. Acceptance arithmetic (1228*1000/3000 = 409 ms) is correct and consistent with the sketch. Small imprecisions: cadence gate multiplies snapshotMsec by com_timescale (656), omitted from the mechanism (sketch admits omission); SV_RateMsec uses netchan.lastSentSize (actual last datagram, possibly a fragment) not the snapshot size.
+Missed: Two further skip conditions in the send loop: clients downloading are skipped (659-660), and the queue gate also checks netchan_start_queue (662). Changing snaps resets lastSnapshotTime to 0 (sv_client.c 1457-1461) so the client does not desync. Also sv_minRate/sv_maxRate clamps inside SV_RateMsec (1186-1200).

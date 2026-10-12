@@ -11,7 +11,7 @@ Acceptance: a player who kills a lawful, non-pink player gets a PK count and a 2
 ## 1. Mechanism
 
 - One number per player: `_lawful`, clamped to -32768..32767 on add (`L1Character.java` 1015-1017). Below zero is chaotic. It moves on monster kills (`CalcExp.java` 523-529) and on player kills (below).
-- Pink window (`L1PinkName.java`). A hostile act by a player on a player starts a pink timer on the attacker. Gates in `onAction` (106-111): victim lawful is zero or above; victim not already pink (unless `DualPink`); attacker lawful zero or above (unless `ChaoPink`); both in a normal zone; no castle war. If there is no timer, one starts at 180 (`_secondsLeft = 180`, 27). If a timer exists and 90 s or less are left, it resets to 180 (117-119, 74). The timer thread decrements once per loop and sleeps 1000 ms per pass (39-42), so the window is a counter, not a deadline. It ends early when the attacker dies while not pink, or when the attacker turns chaotic (52-55; `ChaoPink` off).
+- Pink window (`L1PinkName.java`). A hostile act by a player on a player starts a pink timer on the attacker. Early returns in `onAction` first (88-96): the attacker must be a player, not the victim, and not the victim's duel partner (`getFightId()` equals the victim id), so duel partners never go pink. Then the gate (104-111): not a GM spoofing a monster; victim lawful is zero or above; victim not already pink (unless `DualPink`); attacker lawful zero or above (unless `ChaoPink`); both in a normal zone; no castle war. If there is no timer, one starts at 180 (`_secondsLeft = 180`, 27). If a timer exists and 90 s or less are left, it resets to 180 (117-119, 74). The timer thread decrements once per loop and sleeps 1000 ms per pass (39-42), so the window is a counter, not a deadline. It ends early when the attacker dies while not pink, or when the attacker turns chaotic (52-55; `ChaoPink` off).
 - Death (`L1PcInstance.Death.run`, from 382). Gates first: a victim in a non-normal zone, hit by a player who is not in a war area, returns (365-374); a sim-war result returns (376-379); a duel partner returns (391-397); if the map has no death penalty, return (382-384). Then:
   1. Guard killer: the victim's PK count drops by one and last PK is cleared (406-411).
   2. Item-loss roll (419-438). `lostRate = trunc(((lawful + 32768) / 1000 - 65) * 4)`. If it is negative, take its magnitude and double it when lawful is below zero (422-424). Roll `1..1000` (425). If roll is at or under the rate, drop items: count 1 by default; 1-2 at -10000 and below; 1-3 at -20000 and below; 1-4 at -30000 and below (428-436). Items go to the floor through `caoPenaltyResult` (437, 3462-3473).
@@ -20,7 +20,7 @@ Acceptance: a player who kills a lawful, non-pink player gets a PK count and a 2
 - Wanted: `isWanted()` is true for 24 hours after the last stamp (2086-2095). It expires on read (clears the stamp at 2090).
 - Guards. A visible guard searches for players (`L1GuardInstance.searchTarget`, 81-104): it adds and targets any visible, living, non-GM player who is `isWanted()` (94-100), unless the guard is a castle guard and the player holds that castle. When a pink player damages a player, every visible guard is told to target the attacker (2327-2331; the same pattern at 2419-2424).
 - Karma (`L1Karma`): a separate counter, -15.5M to 15.5M. Gained on kills (`CalcExp.AddExp` 531-533; `L1MonsterInstance.giveKarma` 586-592; `L1GuardianInstance` 312). Level is 1 to 8 per sign (thresholds 10000, 20000, 100000, 500000, 1.5M, 3M, 5M, 10M), and the percent to the next level uses the ninth threshold (15.5M) as the top (`getPercent`, 82-83).
-- Order for one death: zone and war gates → duel gate → map gate → guard PK count reset → item-loss roll → PK kill and lawful drop → pink clears on a pink or chaotic victim.
+- Order for one death: zone and war gates → sim-war gate → map gate → duel gate → guard PK count reset → item-loss roll (runs for any attacker type, monster or player; only the map flag and the earlier returns stop it) → castle-war result (441-444, a return, not read) → PK kill and lawful drop (needs an attributed player killer) → pink clears on a pink or chaotic victim.
 
 ## 2. Key functions
 
@@ -50,7 +50,7 @@ Acceptance: a player who kills a lawful, non-pink player gets a PK count and a 2
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order for a death: the item-loss roll runs before the PK ledger, and the PK ledger runs only for a lawful, non-pink victim. It changes the pink counter into a server end-stamp (defect 1). It omits the zone and war gates and the duel and sim-war returns (listed in section 1), the pet and summon master attribution (`getAttackingPlayer`), elf PK counts, the hell mode, the damage-over-time and reload effects, the `CHAO_PINK` and `DUAL_PINK` switches (both off, as the config default), the guard hate-list call, the item choice (`CaoPenalty()`), and all packets. The sketch treats the map death-penalty flag as an input and the normal-zone check as an input on the pink path only.
+simplified: the sketch keeps the donor order for a death: the item-loss roll runs before the PK ledger, and the PK ledger runs only for a lawful, non-pink victim. It changes the pink counter into a server end-stamp (defect 1). It omits the zone and war gates, the sim-war return and the castle-war return (listed in section 1); the duel exemption is carried (pink and death), the pet and summon master attribution (`getAttackingPlayer`), elf PK counts, the hell mode, the damage-over-time and reload effects, the `CHAO_PINK` and `DUAL_PINK` switches (both off, as the config default), the guard hate-list call, the item choice (`CaoPenalty()`), and all packets. The sketch treats the map death-penalty flag as an input and the normal-zone check as an input on the pink path only.
 
 ```ts
 // Licence: GPL-2.0 (donor, repo COPYING). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -69,6 +69,7 @@ interface Pc {
   pinkUntil: number | null;    // ms timestamp (fixed: donor counts seconds in a loop)
   lastPkAt: number | null;     // ms timestamp of the last PK kill
   inNormalZone: boolean;
+  fightId: string | null;      // duel partner id (donor getFightId)
   mapDeathPenalty: boolean;    // read from the map on the donor
 }
 
@@ -78,6 +79,7 @@ const isPink = (p: Pc, now: number): boolean => p.pinkUntil !== null && p.pinkUn
 // Hostile act on a player: the attacker goes pink. A repeat act refreshes only at or below 90 s left.
 function onHostileAct(attacker: Pc, victim: Pc, now: number): void {
   if (attacker.id === victim.id) return;
+  if (attacker.fightId === victim.id) return;             // a duel partner never goes pink (donor 94-96)
   if (victim.lawful < 0 || attacker.lawful < 0) return;   // chaotic on either side: no pink (CHAO_PINK off)
   if (isPink(victim, now)) return;                        // a pink victim gets no new pink (DUAL_PINK off)
   if (!victim.inNormalZone || !attacker.inNormalZone) return;
@@ -88,8 +90,13 @@ function onHostileAct(attacker: Pc, victim: Pc, now: number): void {
 }
 
 // Death of a victim. Returns the number of inventory items the ledger says to drop.
+// killer is the attributed player (null for a monster, guard or environment death): item loss still runs, the PK ledger does not.
 function onDeath(victim: Pc, killer: Pc | null, rng: () => number, now: number): number {
-  if (!victim.mapDeathPenalty || !killer || killer.id === victim.id) return 0;
+  if (!victim.mapDeathPenalty) return 0;
+  if (killer && killer.id !== victim.id && victim.fightId === killer.id && killer.fightId === victim.id) {
+    victim.fightId = null; killer.fightId = null;   // duel death: both cleared, no penalty (donor 391-397)
+    return 0;
+  }
 
   // Lawful-scaled drop: rate in per mille, doubled when chaotic.
   let lostRate = Math.trunc(((victim.lawful + 32768) / 1000 - 65) * 4);
@@ -106,7 +113,7 @@ function onDeath(victim: Pc, killer: Pc | null, rng: () => number, now: number):
     }
   }
 
-  if (victim.lawful >= 0 && !isPink(victim, now)) {
+  if (killer && killer.id !== victim.id && victim.lawful >= 0 && !isPink(victim, now)) {
     // PK kill: count it if the killer is not very lawful, then set killer lawful to the level floor
     // or 1000 below the current value, whichever is lower.
     if (killer.lawful < 30000) {
@@ -115,7 +122,7 @@ function onDeath(victim: Pc, killer: Pc | null, rng: () => number, now: number):
     }
     const levelFloor = killer.level < 50 ? -4 * killer.level ** 2 : -0.08 * killer.level ** 3;
     killer.lawful = clampLawful(Math.min(Math.trunc(levelFloor), killer.lawful - 1000));
-  } else {
+  } else if (killer) {
     victim.pinkUntil = null;   // a pink or chaotic victim is not a PK victim; the pink clears
   }
   return drops;
@@ -165,7 +172,16 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Scope: this donor's death penalty is gated by the map flag (382-384). That is zone data, which fits "zones as data" in Frankendom. The duel, sim-war and castle-war returns are engine rules we would need to decide on (duels are not in the Frankendom rulings).
 - Guards: the donor's guards hunt any wanted player for 24 h (`L1GuardInstance.java` 94-100), and a pink attacker pulls every visible guard onto them. Frankendom has guard spawns in zone rows; the 24-hour hunt is a data field, not a constant.
 - Jail: `JailController` holds a release time per player and teleports on release (149-171). The body was only grepped; the sentence length and the jail rule are not in this note.
+- Missed rule worth keeping: a duel partner never goes pink and a duel death carries no penalty (L1PinkName 94-96; L1PcInstance 391-397). Any Frankendom PvP flag needs this exemption.
 - Not read: the rest of the death runnable (194-330), `beginHell`, `caoPenaltyResult`'s item choice, the `CHAO_PINK` and `DUAL_PINK` code paths.
 
 Reuse tag: rewrite-from-idea (GPL-2.0; clean-room only)
 Brief rule served: 1 (one ledger: the lawful number and the PK state live on the server); rules 7-9 n/a
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Verified: PinkNameTimer 25-80 (180 at 27, reset 73-75, refresh at <=90 at 117, sleep 1000 at 42, chaos break 52-55, dead-and-not-pink break 49); gates 106-111 incl. DualPink/ChaoPink; Death.run gates 365-384, duel return 391-397, guard PK reset 406-411, lostRate 419-424 and roll 425, count bands 428-436, caoPenaltyResult 437/3462-3473, PK ledger 449-479 (lawful<30000 gate 451, floor -4*l^2 / -0.08*l^3, min with cur-1000, clamp -32768), hell at 5/10 (config PKsForHellWarning 5, PKsForHell 10), else-branch setPinkName(false) 491; rate examples 128/336/416/520 all recompute correctly; isWanted 2086-2094 (24 h, writes on read); guard searchTarget 81-104 and setTarget on pink attacker 2327-2331 and 2419-2425; L1Character clamp 1015-1018; L1Karma thresholds 24-25, range, level loop 53-62 (cap 8), getPercent 82-83; CalcExp 531-533 x5 aligned; L1MonsterInstance 589-590 x5 on differing sign (defect 4 real); DualPink/ChaoPink default False server.properties 177/184; GPL v2 COPYING. Errors: (a) onAction gate list omits the early returns at 91-96 (attacker==victim, and attacker.getFightId()==victim id i.e. a duel partner never goes pink) and the GM-spoof exclusion at 104-106; sketch has only the self check, so duel partners would go pink. (b) Sketch onDeath returns 0 when there is no killer (monster, guard or environment death), but the donor item-loss roll (419-439) runs for any attacker type, gated only by the map death-penalty flag and the earlier zone/sim-war returns; note's own text says item loss is unconditional on killer type, so the sketch contradicts the mechanism. (c) 'Order' line omits castleWarResult (441-444), a return between item loss and the PK ledger (note lists it under not read, so honest, but the order line implies it is absent). (d) Section 1 says count bands 'By default 1' correct, but at lawful 0..-9999 the band is explicit (434-436, nextInt(1)+1), trivial.
+Missed: Duel exemption in the pink path (L1PinkName 94-96) is a simple, important rule for any PvP flag and is not in the note. Also the death-time exemption for duels (391-397) is noted but not carried into the sketch.
+
+Fixed 2026-10-12 (Sonnet fixer): (a) added the duel-partner, self and GM-spoof early returns to the pink gate text and the sketch; (b) sketch no longer returns 0 when there is no killer (item loss now runs for monster and environment deaths; the PK ledger needs a player killer); (c) order line now lists the sim-war, map and duel order and the castle-war return; (d) trivial band wording left as is. Added the duel exemption as an 'also found' line. Sketch changed: typecheck below.

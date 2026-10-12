@@ -27,7 +27,7 @@ Best transferable idea: a server-owned game clock that moves the light palette i
 
 ## 3. The rule behind it
 
-Clock. One game minute is 25 sub-steps (`gameclk.h` 32). A requested time jump is rounded to the nearest 15 minutes (`gameclk.cc` 245). Each full hour: heal the party, run hunger checks, and re-read NPC schedules (`gameclk.cc` 294, 296; `gamewin.cc` 2536, where schedule blocks are 3 hours wide).
+Clock. One game minute is 25 sub-steps (`gameclk.h` 32); each clock event adds `time_rate` ticks (default 1, `gameclk.cc` 275) and is rescheduled every std_delay (309), so a game minute is about 25 x std_delay of real time at the default rate. The std_delay value was not read; a build must pick its own seconds-per-game-hour to tune the 60-step glide. A requested time jump is rounded to the nearest 15 minutes (`gameclk.cc` 245). Each full hour: heal the party, run hunger checks, and re-read NPC schedules (`gameclk.cc` 294, 296; `gamewin.cc` 2536, where schedule blocks are 3 hours wide).
 
 Phase by hour (`gameclk.cc` 42-54): indoors or before 05:00 is night; 05:00 is dawn; 06:00 to 19:59 is day; 20:00 is dusk; after 20:00 is night. Nocturnal eggs use the same night window, 21:00 to 04:59 (`objs/egg.cc` 843).
 
@@ -35,18 +35,19 @@ Glide. The palette target is the phase of the next hour (`gameclk.cc` 99). The h
 
 Storm, in order from the egg firing (`effects.cc` 1512-1518; times in ms unless stated):
 1. Clouds at once.
-2. Rain starts at 20 to 1019 ms. Rain stays 2 game minutes past the storm end.
+1b. A cloud effect with duration + 1 minute runs alongside (`effects.cc` 1514).
+2. Rain starts at 20 to 1019 ms and runs duration + 2 game minutes.
 3. Lightning starts 0 to 499 ms after rain. It stops 2 game minutes before the storm end.
 
 Lightning loop (`effects.cc` 1487-1498): flash is 25 or 50 ms; after a flash, 1 in 50 re-flashes after 40 to 280 ms; otherwise waits 4000 to 6999 ms. No lightning in a dungeon unless from usecode.
 
-Rain ramp (`effects.cc` 1397, 1390, 1438): check every 100 ms. Ramp up by 0 to 4 drops per check to 200. Ramp down by 0 to 14 per check after the end.
+Rain ramp (`effects.cc` 1397, 1390, 1438): check every 100 ms. Ramp up by 0 to 4 drops per check to 200. Ramp down by 0 to 14 per check during the last 2500 ms BEFORE the effect's stop time (`curtime > stop_time - 2500`, `effects.cc` ~1385-1390); the rain effect itself already runs 2 game minutes past the storm length, so the visible rain ends gradually at that later stop.
 
 Fog (egg kind 4, `effects.cc` 1619-1620, 1629): sparkles start 250 to 1249 ms in, capped at 100 (MAXDROPS / 2). Fog is shown only in dawn and day palettes (`gameclk.cc` 75-76).
 
-Egg packing (`objs/egg.cc` 531, 1390): one 16-bit field: low byte = kind (0 clear, 1 snow, 2 storm, 3 sparkle, 4 fog, 5 overcast, 6 clouds), high byte = minutes. Zero minutes means continuous (6000). A new kind clears old weather except fog (`objs/egg.cc` 1395).
+Egg packing (`objs/egg.cc` 531, 1390): one 16-bit field: low byte = kind (0 clear, 1 snow, 2 storm, 3 sparkle, 4 fog, 5 overcast, 6 clouds), high byte = minutes. Zero minutes means continuous (6000). Old weather is cleared when the new kind differs from the current one or is kind 3, except when the new kind is fog (`objs/egg.cc` ~1393-1395); the same kind again does not clear.
 
-Ambient state (`gamewin.cc` 196-205, 285-289): priority is dungeon, rain, snow, night, outside. Ambient bird and cricket bursts: after a play, repeat with chance 1 in (repeats + 1), after 500 to 1499 ms; otherwise wait 4000 to 6999 ms and reset (`gamewin.cc` 269-270 lists the entries: night 61, 61, 255 where 255 is silence; day 82, 85, 85).
+Ambient night window is hour below 6 or above 20 (`gamewin.cc` 196), not the 21:00 to 04:59 nocturnal-egg window. Day birds play only when no music track is playing (`gamewin.cc` ~273-276). Ambient state (`gamewin.cc` 196-205, 285-289): priority is dungeon, rain, snow, night, outside. Ambient bird and cricket bursts: after a play, repeat with chance 1 in (repeats + 1), after 500 to 1499 ms; otherwise wait 4000 to 6999 ms and reset (`gamewin.cc` 269-270 lists the entries: night 61, 61, 255 where 255 is silence; day 82, 85, 85).
 
 Hourly chime (`objs/animate.cc` 234): on minute 0, strike hour mod 12, with 0 becoming 12. Hourly frame (`objs/animate.cc` 384): frame = hour mod frame count.
 
@@ -85,7 +86,7 @@ Server clock sub-line: row 18 / post-K item 3, named "server tick: fixed step, i
 
 Defects found by reading (keep the idea, fix the defect):
 1. Clouds with kind 6 (no overcast) calls `set_overcast(false)` in its constructor (`effects.cc` 1755) with no matching increment. The counter goes to -1, and the next overcast leaves it at 0, so it does not darken. Fix: only touch the counter in the overcast branch, and clamp at 0. Our build uses one clamped channel.
-2. Fog counter is forced to 0 at night (`gameclk.cc` 204-205), but the fog effect's destructor still decrements (`effects.cc` 1608). A fog that starts or ends at night leaves the counter at -1, so a later day fog shows nothing. Fix: clamp; read night as a draw-time rule, never as a counter write.
+2. Fog counter is forced to 0 whenever the hour is below 6 or above 20 (`gameclk.cc` 204-205, which includes the 05:00 dawn hour where fog would be drawn), but the fog effect's destructor still decrements (`effects.cc` 1608). A fog that starts in that window is zeroed, then its end drives the counter to -1; ending a fog at night alone only sets 0, so the -1 needs a start in the window and an end outside it. A later day fog then shows nothing. Fix: clamp; read night as a draw-time rule, never as a counter write.
 3. Dawn and dusk share palette index 1 (`palette.h` 33-34, with the comment "Think this is it."). Not proven wrong. Fix for us: give dusk its own palette entry, or leave it as one and say so in the look test.
 4. The `???` on the night fog rule (`gameclk.cc` 205) is the donor's own open question. Our call: fog allowed at dusk, not night.
 
@@ -100,6 +101,8 @@ Dom judges, 30 seconds each, on a 375-wide phone:
 - D: day fog with 40 sparkles.
 
 Question: can he read the three silhouettes and the telegraph colour during a lightning flash and during fog? Pick one as the default look.
+
+Acceptance for the look test (none existed): the server sends `sky.phase` on the hour; a test asserts the phase table in section 3 (night before 05:00, dawn 05:00, day 06:00 to 19:59, dusk 20:00, night after) and that a fog channel started and ended in any order never goes below zero.
 
 ## 6. Licence and IP
 
@@ -231,3 +234,11 @@ function overcastVisible(overcast: Channel, phase: Phase): boolean {
 
 Reuse tag: new (sky clock and weather timers). No other lane's weather code was searched (not read).
 Brief rule served: feel note for weather-time-light; rule and data fields given; GPL so clean-room only.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: 1) Defect 2 overstated: set_fog(false) at night (hour<6||hour>20) sets fog=0, not -1 (gameclk.cc 202-208); the -1 only arises when fog STARTS at night (forced to 0) and ENDS by day. Also the zeroing condition is hour<6||hour>20, i.e. it also zeroes at 05:00 when the palette is dawn and fog is drawn - the note treats it as 'night' only. 2) Rain ramp-down: note says 'ramp down 0 to 14 per check after the end'; real code ramps down during the last 2500 ms BEFORE stop_time (effects.cc ~1385-1390: curtime > stop_time - 2500), and the rain effect already runs duration+2 min. 3) Ambient: birds play by day only when no background music track is playing and not play_bg_tracks (gamewin.cc ~270-276); night window for ambience is bghour<6||>20 (not the 21-04:59 nocturnal-egg window the note pairs it with). 4) set_weather clears old weather when kind differs from current or kind==3, except fog (egg.cc ~1393-1395); note says 'a new kind clears old weather except fog' (same kind does not clear). All other claims verified: phase table, palette indices, 25 ticks/min, 60/20 steps and rates, round to 15, storm timers (20+rand%1000, +rand%500, duration+2/-2), lightning 25/50 ms, 1/50 re-flash 40-280 ms, pause 4000-6999, Clouds n==6 counter bug (effects.cc ~1755), dawn=dusk palette 1, egg packing and 6000, hourly chime and frame, schedule blocks hour/3.
+Missed: Real-time length of a game minute/hour is not stated (time_rate in handle_event, gameclk.cc ~269, and std_delay in Weather_effect stop_time) - the 'server clock' mapping gives no seconds-per-game-hour, which a build needs to tune the 60-step glide. Clouds_effect(duration+1) leg of the storm is omitted from the timer list. No Decision/Acceptance lines in this feel note; the look test has no assertions that could fail a correct build.
+
+Fixed 2026-10-12 (Sonnet fixer): verified set_fog zeroes at hour<6||>20 (gameclk.cc 202-208) so defect 2 is narrowed to start-in-window/end-outside; rain ramp-down happens before stop_time (effects.cc ~1385); egg clear rule is differs-or-kind-3 except fog; ambient night window is hour<6||>20; Clouds(duration+1) leg added; game-minute real-time rule added (std_delay not read); a small acceptance added since the note had none. Sketch unchanged (Channel already clamps).

@@ -112,3 +112,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Question: a worned armour piece is unequipped and kept (the destroy call is commented out at 3405-3410). Frankendom must decide between keeping it at 1 hp (current donor) and destroying it.
 - Repair and salvage are NONE in this donor (see Checked). Gathering: a creature corpse is the resource and its raw-material quantities are removed on harvest (`harvest_phrase.cpp` 395-398). That is node-like but tied to creature spawns; not sketched. Zone rows (pool, respawn, cap) are not in the read code.
 - Outside this cell, noted in passing: `combat_phrase.cpp` 2405 tests `playerChar != NULL ||` and then dereferences `playerChar` in the same expression; it should be `&&`. Not verified at runtime.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: No false claims found. Verified: launchAttack wear block 2324-2355 (wear before success roll, wearFactor=latency/20); removeHp fractional carry and floor at 1 (game_item.cpp 1851-1919, return hp-_HP defect at 1891); computeItemWornState 1099-1133 and WornState 0.25/0.10/0.05/0.01 (egs_variables 213-216); ArmorWearPerAction 0.01; 6 armour and 10 jewel slots; destroy lines commented out and unequipCharacter used; faber_action 93 and 392; harvest 395-398; combat_phrase 2405 playerChar != NULL || bug. Minor line drift only (MAX/const lines).
+Missed: removeHp returns 0 at once for an Unbreakable shield (game_item.cpp 1853-1854), not mentioned. BUILD-TEST FLAG: Acceptance says a worn piece at hp 1 is 'skipped and unequipped' but the sketch (wearOnSwing) only skips; unequip is outside the module, so that clause cannot be asserted against the sketch. The 100-swing and 200-swing assertions pass only through double rounding (0.01 summed 100 times = 1.0000000000000007; 199 swings = 0.995 so 200 passes) - correct but fragile; a build using integer or fixed-point carry would still pass at exactly 100/200.

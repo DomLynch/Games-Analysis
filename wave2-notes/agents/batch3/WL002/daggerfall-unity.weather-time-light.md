@@ -1,6 +1,6 @@
 # daggerfall-unity (weather-time-light, feel, cell WL002)
 
-Donor: `/mnt/frankendom-donors/daggerfall-unity` | Licence: MIT (`LICENSE` line 3: "Copyright (c) 2009-2023 Daggerfall Workshop"; per-file headers say MIT too) | C# (Unity) | Decision: adapt (idea), with the defects below fixed in the sketch
+Donor: `/mnt/frankendom-donors/daggerfall-unity` | Licence: MIT (`LICENSE` line 3: "Copyright (c) 2009-2023 Daggerfall Workshop"; per-file headers say MIT too) | C# (Unity) | Decision: adapt (idea), with the defects below to be fixed when it is built (this note has no TypeScript sketch)
 
 Checked: read in full `Assets/Scripts/Game/WeatherManager.cs` (577 lines), `Assets/Scripts/Game/Weather/Weather.cs` (237), `Assets/Scripts/Internal/WorldTime.cs` (243), `Assets/Scripts/Game/SunlightManager.cs` (200), `Assets/Scripts/Game/PlayerAmbientLight.cs` (127), `Assets/Scripts/Game/PlayerWeather.cs` (88), `Assets/Scripts/Game/Questing/Actions/Weather.cs` (110), and the data table `Assets/Resources/WeatherTable.json` (189 lines). Read by key range: `Utility/DaggerfallDateTime.cs` (time constants, IsDay/IsNight, RaiseTime, season mapping, ToSeconds/FromSeconds), `Internal/DaggerfallSky.cs` (sky frame and mirror logic), `Game/AmbientEffectsPlayer.cs` (ambient one-shots and lightning), `Utility/AssetInjection/Components/DayNight.cs`, `Utility/ClimateSwaps.cs` (season texture offsets), `Game/Entities/PlayerEntity.cs` (daily re-roll, line 439-447). Data: `Prefabs/World/SkyRig.prefab` and `SunlightRig.prefab` (curve keys), `Prefabs/DaggerfallUnity.prefab` (WorldTime block), `Scenes/DaggerfallUnityGame.unity` (ambient settings), string row `seasonNames` in `StreamingAssets/Text/Master Localization CSV Files/Internal_Strings.csv`. The time and light code was found by grep -rn for weather, daylight, sunrise, TimeOfDay and DateTime across Assets/Scripts, and the matches were then read. Confidence: high for the weather odds, the sunlight/ambient chain and the clock; medium for the Unity curve wrap behaviour (not run).
 
@@ -15,7 +15,7 @@ Best transferable idea: one clock-driven scalar drives sun pitch, sun intensity,
 
 ## 2. Why it works / is striking
 
-- Readable at 375 wide: one number (sun scale) moves light, shadow and ambient together, so the screen reads as one change, not five. Night is not dark-on-dark because the ambient is lerped from a night colour (0.25) to a noon colour (0.9), not set to black.
+- Readable at 375 wide: one number (sun scale) moves light, shadow and ambient together, so the screen reads as one change, not five. Night is not dark-on-dark because the ambient is lerped from a night colour (0.25, multiplied by the player setting `NightAmbientLightScale`, 0 to 1, PlayerAmbientLight.cs 123) to a noon colour (0.9), not set to black. With the setting at 0 the night ambient is black.
 - One signature behaviour: a weather roll per climate per season from a 24-row table (6 climate groups x 4 seasons, each row summing to 100 percent). The same roll applies to every zone in that climate, so a region has one sky.
 - One signature sound: the rain and storm presets switch the ambient bed, while the one-shots keep firing on a random timer.
 - 20 to 30 percent resemblance is enough: a region weather table plus a sun/ambient scalar gives the same feel with our own numbers.
@@ -46,10 +46,10 @@ Data fields (designer-tunable; donor value given because the repo is MIT):
 | city_lights_on_hour / off_hour | game hour | 17 / 8 (DaggerfallDateTime.cs 50-51) |
 | sun_pitch_range | degrees | 0 to 180 across day, x rotation = 180 x time (SunlightManager.cs 115) |
 | sun_intensity_keys | (time, value) | (0, 0), (0.08, 0.36), (0.5, 0.9), (0.92, 0.36), (1, 0) (`SunlightRig.prefab` LightCurve) |
-| ambient_night / noon | RGB 0-1 | 0.25 grey / 0.9 grey (PlayerAmbientLight.cs 14-15) |
+| ambient_night / noon | RGB 0-1 | 0.25 grey (times the user setting NightAmbientLightScale, 123) / 0.9 grey (PlayerAmbientLight.cs 14-15) |
 | dungeon_ambient_fade | seconds | 3 (PlayerAmbientLight.cs 23, step 0.1) |
 | ambient_oneshot_wait | seconds | 4 to 35 in code (AmbientEffectsPlayer.cs 26-27); scene 5 to 25 |
-| sky_frames | count | 64; frames 32-63 are mirrors of 0-31 (DaggerfallSky.cs 170) |
+| sky_frames | count | 64; by day, frames 32-63 are drawn as flipped mirrors of 0-31 (`63 - frame`, DaggerfallSky.cs 168-170); at night the frame is used as is |
 | sky_curve_keys | (time, value) | (0, 0), (0.083, 0.15), (0.166, 0.317), (0.5, 0.5), (0.834, 0.683), (0.917, 0.85), (1, 1) (`SkyRig.prefab`) |
 | season_texture_offset | archive index | +1 winter, +2 rain (ClimateSwaps.cs 97; DFLocation.ClimateWeather enum) |
 
@@ -67,7 +67,7 @@ Data fields (designer-tunable; donor value given because the repo is MIT):
   - Overcast leaves the sky style alone. `SetOvercast` (224-227) only sets fog, while `ClearOvercast` sets the sky to Normal (161), so overcast nights can keep the stars. Not run in game; verify before copying the look.
   - Time seeded from the millisecond clock. `AmbientEffectsPlayer` seeds with `new System.Random(System.DateTime.Now.Millisecond)` (line 79), which gives 1000 possible seeds. Fix: seed from the zone and server tick.
   - Lightning is switched off in both scene instances (`PlayLightningEffect: 0` at scene lines 522 and 1360, and the code says lightning is deprecated, AmbientEffectsPlayer.cs 21). Do not copy the disabled path; if we want a flash, write our own presentation-only timer.
-  - Light curve wrap. The curve serialises pre and post infinity as 2 (`SunlightRig.prefab`, m_PreInfinity). Night times fall outside [0,1] and rely on that wrap. Not run; clamp the time in our code and check the editor setting before reuse.
+  - Light curve wrap. The curve serialises pre and post infinity as 2 (`SunlightRig.prefab` 298-299). Night times fall outside [0,1]. What value 2 does (wrap or clamp) was not verified; the note's earlier claim that night relies on a wrap is withdrawn. Either way the curve ends at 0 and the light is switched off at night. Clamp the time in our code and check the editor setting before reuse.
 
 ## 5. A 5-minute look test Dom can judge on his phone
 
@@ -94,3 +94,11 @@ Data fields (designer-tunable; donor value given because the repo is MIT):
   - Loot reveal ceremony: not in this topic, not read.
   - Walk density: one ambient one-shot every 5 to 25 s on average while walking.
   - Readability at 375: heavy fog half-visibility about 14 units; snowy about 139 units; rainy about 231 units (ln 2 / density).
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Verified: WeatherManager scales/shadows/fog constants (38-74), SetSunlightScale order winter then rain/storm/snow/overcast then exp(-50*density) (312-349), PollWeatherChanges commented (153), TODO smooth transitions (28), SetClimateWeathers (419-427), PlayerEntity daily re-roll (439-447), Weather.cs cumulative roll and Chronicles pg. 47 citation, quest Cloudy hard-coded false, WorldTime TimeScale 12 (32,67), Dawn/Dusk 6/18 and lights 17/8, sun xrot=180*time and curve keys (SunlightManager 115; SunlightRig 0/0.08/0.5/0.92/1), ambient 0.25/0.9 colours and FadeDuration 3, FadeStep 0.1, AmbientEffectsPlayer 4/35 and System.Random(DateTime.Now.Millisecond) at 79, PlayLightningEffect 0 at scene 522 and 1360, WeatherTable 24 season rows / 127 non-zero cells / all rows sum 100, sky mirror 63-frame at DaggerfallSky 168-170, season by month, MIT. Errors: (1) Night ambient is multiplied by the user setting DaggerfallUnity.Settings.NightAmbientLightScale (PlayerAmbientLight.cs 123; SettingsManager 340/575, range 0-1) so '0.25 night colour' is not the actual night ambient; note never mentions it. (2) 'Light curve wrap: pre/post infinity 2 ... night relies on that wrap' is doubtful: Unity serialises m_PreInfinity/m_PostInfinity 2 for the default clamp behaviour, so night evaluates to the clamped end value 0, not a wrapped value; the outcome (0 at night) is the same, but the stated mechanism is unverified. (3) No TypeScript sketch exists although the header says 'defects below fixed in the sketch'. (4) 'frames 32-63 are mirrors of 0-31' is only true for day (!IsNight) frames >= 32 (flip, 63-frame). No Acceptance line, so nothing in it can fail a correct build; Decision 'adapt' is fine.
+Missed: User setting NightAmbientLightScale scaling the night ambient; DaggerfallDateTime hour constants fine. Nothing else important.
+
+Fixed 2026-10-12 (Sonnet fixer): verified PlayerAmbientLight.cs 123 multiplies the night colour by the user setting NightAmbientLightScale; added in sections 2 and 3. Verified DaggerfallSky.cs 168-170: the mirror applies only by day; reworded. The curve-wrap mechanism could not be verified (Unity's meaning of serialised infinity value 2), so the claim is softened to unverified. The header's 'fixed in the sketch' is removed because the note has no sketch; there is no Acceptance line. Added: the night ambient is user-scaled (the missed mechanism).

@@ -8,12 +8,12 @@ Checked: Read in full: `Server/SecureTrade.cs` (477 lines), `Server/Items/Secure
 
 Trade window, in the order the code runs:
 
-- **Open.** `Mobile.OpenTrade` (Mobile.cs 7621) checks a feature kill switch first (7623), then both players are players, alive and have a NetState (7627-7637). It asks the receiving mobile's veto `CheckTrade` (7644), reuses an existing trade container or creates a `SecureTrade` (7642, 7649; NetState.AddTrade 423). The drop path needs range 2 (7674).
+- **Open.** `Mobile.OpenTrade` (Mobile.cs 7621) checks a feature kill switch first (7623), then both players are players, alive and have a NetState (7627-7637). It asks the initiator's veto `from.CheckTrade(this, ...)` (7644; `from` is the player who dragged the item, `this` the receiver), reuses an existing trade container or creates a `SecureTrade` (7642, 7649; NetState.AddTrade 423). The drop path needs range 2 (7674).
 - **Escrow for items only.** Each side gets a `SecureTradeContainer` (SecureTradeInfo ctor, SecureTrade.cs 431-441). Dropped items physically go into it. Currency is not moved at open: the offered gold and platinum sit on a `VirtualCheck` item (a field holder, not a stack of gold), and the move loops skip it (SecureTrade.cs 205, 225, 288, 310).
 - **Lock on change.** Adding or removing any non-VirtualCheck item in the container calls `ClearChecks` (SecureTradeContainer.cs 40-70 hooks, 72-90). `ClearChecks` sets BOTH accept flags to false (81, 86) and then calls `Update` (89). A client gold or platinum edit also calls `ClearChecks` (IncomingMobilePackets 162).
 - **Two-step confirm.** The client's Check packet sets only that player's accept flag and calls `Update` (IncomingMobilePackets 123-129). `Update` (SecureTrade.cs 186) does nothing else unless both accepts are true and neither side is disposed (193). If only one accept is set, it sends status to both clients and returns (326-329).
 - **Re-check at confirm.** With both accepts true, `Update` runs `AllowSecureTrade` on every item in both containers (195-235, first call 210). When `AccountGold` is enabled it checks both players' balances against the offer (237-262; the failure message is at 247). If any check fails, both accept flags are cleared, both clients get status, and it returns (264-273).
-- **Settle.** Currency first: `HandleAccountGoldTrade` (275-277, body 333-380) withdraws the payer's platinum and gold (338, 348, 358, 368), then deposits to the receiver (342, 352, 362, 372). Items second: From's items go to To's backpack through `OnSecureTrade(..., true)` (280-300), then To's go to From's (302-322). Then `Close` (324).
+- **Settle.** Currency moves only when `AccountGold` is enabled and both players have accounts (SecureTrade.cs 270-277); otherwise offered gold and platinum do nothing. Currency first: `HandleAccountGoldTrade` (275-277, body 333-380) withdraws the payer's platinum and gold (338, 348, 358, 368), then deposits to the receiver (342, 352, 362, 372). Items second: From's items go to To's backpack through `OnSecureTrade(..., true)` (280-300), then To's go to From's (302-322). Then `Close` (324). Each deposit is conditional on its withdraw having worked, but a failed deposit after a successful withdraw is not refunded (333-380), so that money is destroyed.
 - **Close.** `Close` (136-158) sends close packets, sets `Valid = false`, removes the trade from both NetStates and disposes the two containers on a timer (156-157).
 - **Cancel.** `Cancel` (82-134) puts each item back with `OnSecureTrade(..., false)` and `AddToBackpack` (102-108, 124-130). Currency never left the accounts, so nothing has to be returned. Then `Close`.
 - **Presence.** `NetState.ValidateAllTrades` (311-338) cancels a trade when either player is deleted or dead, when the partner is not `InRange(…, 2)` (333), or when the maps differ (334). It is called from `Mobile.SetLocation` (7379) and from another site (Mobile.cs 2532, not read). `CancelAllTrades` runs in `Kill` (4749).
@@ -53,9 +53,9 @@ Vendor prices and stock (read, not run). Columns: formula, numbers, where.
 
 | Rule | Formula and numbers | Where |
 |---|---|---|
-| Stock price to buyer | `(m_Price * DefaultPrice + 50) / 100`, scalar = `100 + tax` when DefaultPrice != 0; if DefaultPrice == 0, base price is used. Integer, rounds half up. | GenericBuy.cs 57-82 (formula 79, zero check 61) |
+| Stock price to buyer | `(m_Price * DefaultPrice + 50) / 100`, scalar = `100 + tax` when DefaultPrice != 0; if DefaultPrice == 0, base price is used. Integer, rounds half up. When the stored price is above 5,000,000 a long branch is used and the result is clamped to int max. | GenericBuy.cs 57-82 (formula 79, zero check 61, long branch 63-77) |
 | Scalar expression | `100 + Town.FromRegion(Region)?.Tax ?? 0`: the `??` binds after `+`, so no town gives scalar 0, which means base price | BaseVendor.cs 1353 |
-| Sell price (player to vendor) | table[type]; Low x 0.60, Exceptional x 1.25; armour + 100 x Durability + 100 x ProtectionLevel; weapon + 100 x DurabilityLevel + 100 x DamageLevel; minimum 1 | GenericSell.cs 12-48 (Low at 20, durability at 25) |
+| Sell price (player to vendor) | table[type]; Low x 0.60, Exceptional x 1.25; armour + 100 x Durability + 100 x ProtectionLevel; weapon + 100 x DurabilityLevel + 100 x DamageLevel; minimum 1 applies only inside the armour and weapon branches | GenericSell.cs 12-48 (Low at 20, durability at 25) |
 | Buy-back price (vendor to player, resold items) | `(int)(1.90 * sell price)`: a 90% markup over the sell price | GenericSell.cs 83 |
 | Restock timer | 1 hour, checked when the buy list opens | BaseVendor.cs 130, 866 |
 | Restock refill | remaining = max after the rule below | GenericBuy.cs 136 |
@@ -64,7 +64,7 @@ Vendor prices and stock (read, not run). Columns: formula, numbers, where.
 | Player-sold stock decay | 1 hour after last move | BaseVendor.cs 34, 926 |
 | Sell batch cap | 500 stacks (counts stacks, not units) | BaseVendor.cs 32, 451 |
 | Sell payout | sum of sell price x amount, paid as Gold items in 60,000 chunks | BaseVendor.cs 537, 544, 550 |
-| Bank fallback for a buy | totalCost >= 2000 may be paid from the bank | BaseVendor.cs 264 |
+| Payment order for a buy | backpack Gold first (`ConsumeTotal`); only if that fails and totalCost >= 2000, the bank (`Banker.Withdraw`); staff skip both | BaseVendor.cs 245-268 |
 | Staff buy | GameMaster and above buy for free | BaseVendor.cs 249 |
 | Player vendor hold | accepts gold while HoldGold < 1,000,000; owner collects up to what the bank takes | PlayerVendor.cs 553-557, 800-801 |
 
@@ -198,7 +198,7 @@ Best transferable idea: a trade is two accept flags plus one settle that re-chec
 
 Decision (proposed): adapt — keep the two-step confirm and the reset-on-change lock, because they stop a bait-and-switch; change the escrow to ownership-at-commit and make settle one all-or-nothing batch, because the donor's currency-then-items order is not atomic and its client amounts are not validated.
 
-Acceptance: Two test players: A offers 50 gold and a sword; B accepts; A changes gold to 60, and both accept flags clear; B alone never settles; when both accept, one settle moves the sword and 60 gold and the total of all wallets is unchanged; a negative offer is refused when written; an offer above the payer's balance is refused at confirm and both accepts reset.
+Acceptance: Two test players: A offers 50 gold and a sword; B accepts; A changes gold to 60, and both accept flags clear; B alone never settles; when both accept, one settle moves the sword and 60 gold and the total of all wallets is unchanged; a negative offer is refused when written; an offer above the payer's balance is refused when written; and if the payer's balance drops below the offer after both sides have accepted (the test lowers it between write and confirm), the confirm-time re-check fails, no settle happens and both accepts reset.
 
 ## 5. Lands in
 
@@ -211,6 +211,7 @@ Acceptance: Two test players: A offers 50 gold and a sword; B accepts; A changes
 
 - GPL-3.0-or-later: clean-room only. The sketch is written from the order of operations, not from the donor lines.
 - Two wallets in the donor. Currency goes through the account API (Account.cs) and vendor payouts are Gold items in the backpack (BaseVendor.cs 550). Frankendom must not copy that: every trade and vendor payout is a ledger row through settle().
+- Money-loss case: in `HandleAccountGoldTrade` (333-380) the payer's withdraw can succeed while the receiver's deposit fails (for example a full balance); the code does not give the amount back, so it vanishes. The sketch's batch refuses the whole trade instead.
 - Donor is not atomic. Currency moves for both sides before items move (SecureTrade.cs 277-322), and an exception between the two leaves a half trade. The donor code does not show a rollback. Our sketch uses dry run then commit.
 - Client amounts are not validated. `reader.ReadInt32()` at IncomingMobilePackets.cs 142-143 is stored as-is. A negative offer is shown to the other player and transfers nothing (SecureTrade.cs 244 passes for a negative amount). Fix: reject at write (offerIsValid).
 - No int32 cap on deposit. `TotalPlat += amount` (Account.cs 549) has no check. Fix: settle caps every balance (MAX_BALANCE) and refuses the batch.
@@ -222,3 +223,11 @@ Acceptance: Two test players: A offers 50 gold and a sword; B accepts; A changes
 - Vendor overflow: the resale branch adds `GetBuyPriceFor(item) * amount` to an int (BaseVendor.cs 210) with no overflow guard; the stock branch checks with long and refuses the whole order (1203). Not reproduced (not run). Fix: use the long accumulator and refuse the order, as the stock branch does.
 - Staff buy for free (BaseVendor.cs 249). Frankendom must log this as a row or keep staff out of the shop path.
 - The scalar expression (BaseVendor.cs 1353) works but reads wrong: no town gives scalar 0, which Price treats as base price. Fix: write `100 + (tax ?? 0)` explicitly.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: 1) Acceptance conflicts with the note's own sketch: 'an offer above the payer's balance is refused at confirm and both accepts reset' but the sketch setOffer rejects such an offer at write time (offerIsValid checks balance), so a correct build cannot reach confirm with an over-balance offer unless the test lowers the balance after the offer; as worded the test fails against the sketch. 2) Mobile.OpenTrade veto is from.CheckTrade(this, ...) (Mobile.cs 7644-ish), the initiator's mobile, not the receiving mobile's CheckTrade as the note says. 3) Bank fallback: real order is backpack Gold first (ConsumeTotal), then bank only if totalCost >= 2000 (BaseVendor.cs ~250-268); the note's row implies bank alone. 4) GenericBuy.Price has a long branch for m_Price > 5,000,000 (GenericBuy.cs 63-77) not mentioned. 5) Sell price minimum 1 applies only inside the armour and weapon branches. Verified OK: Update gate 193, AllowSecureTrade re-check, balance re-check (totalPlat < From.Plat) and reset 264-273, ClearChecks 81/86/89 and VirtualCheck exemption, currency-before-items non-atomic settle, HandleAccountGoldTrade needs both accounts, no cap on DepositPlat (Account.cs 549), negative offers unvalidated, ValidateAllTrades dead/deleted/InRange 2/map, price formula (m_Price*Scalar+50)/100, scalar precedence (Town.Tax is int so no town gives 0), buy-back 1.90, restock 1 h, sold-out min(999,2x), half rule 640/ max/2, 500 sell cap, 60,000 gold chunks, int-overflow in resale branch BaseVendor ~210 vs long check ~1203, GPL-3. Donor CLAUDE.md/AGENTS.md exist and were treated as data.
+Missed: The mechanism that Update's currency path is skipped entirely when AccountGold is disabled (offers then do nothing) is only partly noted; HandleAccountGoldTrade swallows a failed deposit after a successful withdraw (money destroyed) - note says 'not atomic' but does not state the loss case explicitly.
+
+Fixed 2026-10-12 (Sonnet fixer): verified at Mobile.cs 7640-7676, BaseVendor.cs 245-268, GenericBuy.cs 55-85, GenericSell.cs 12-50, SecureTrade.cs 270-380. Corrected the OpenTrade veto owner (the initiator), the buy payment order (backpack first, then bank), the long price branch, and the sell minimum scope. Rewrote the acceptance so the over-balance case is reachable (refused at write; at confirm only after the balance drops), matching the sketch. Added the money-loss case and the AccountGold-disabled case. Sketch unchanged.

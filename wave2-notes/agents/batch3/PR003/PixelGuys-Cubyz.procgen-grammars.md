@@ -87,3 +87,9 @@ Best transferable idea: give each site one roll over a short weighted ladder wit
 Reuse tag: new:chance-ladder, new:socket-grammar, new:tag-gated-table, seed-discipline.
 Tags: walk-density, seed-discipline, encounter-camp, signage, new:chance-ladder, new:socket-grammar, new:tag-gated-table.
 Brief rule served: FEEL-TASK procgen-grammars (zones as data, seeded, server-verified, one ledger, walk density).
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: Verified: SimpleStructureGen 97-139 (one roll, subtract chance, orelse break at 116/163, band test 45, /16 at 159); structures.zig 106-111 table normalisation and 135-136 comparator '== .gt'; biomes.zig 368-382 tag gate and >1 rescale; StructureMap seed XOR (131/181) and ascending priority; SbbEnumerationGenerator 145 (mod repeat), 152 (sign row 1024), 174 (row-only seed), defaultState=.disabled (30); SbbGen alignDirections 80-96; sbb.zig rotation 192-200; data: 226 biomes, 158 blueprints in 13 folders, 4 tables, chances 0.000005/0.00002/0.0001/0.16, 1243 chance lines, 252 sbb lines, GPL-3 LICENSE. Not-read list is honest.
+Missed: Minor: water_surface branch at SimpleStructureGen 127 (wpz != 0 -> break) and the high-LOD chance conversion 1-(1-p)^(voxelSize^2) at 161 are not covered; not important to the idea.

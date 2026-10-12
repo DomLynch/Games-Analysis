@@ -1,6 +1,6 @@
 # openmw (weather-time-light, depth full)
 
-Donor: openmw, root /mnt/frankendom-donors/openmw. Licence: GNU GPL v3 (LICENSE). Clean-room: shape only. No code, constants or colour codes are copied, and every donor value is withheld (null) in the JSON. Half read: client engine (apps/openmw/mwworld/weather.cpp, apps/openmw/mwrender/sky.cpp) and the shipped fallback table (files/openmw.cfg). No server half exists (single-player engine). The region weather roll runs in-process. Region chance records (components/esm3/loadregn.cpp) and the game's own weather records were not in the box and were not read.
+Donor: openmw, root /mnt/frankendom-donors/openmw. Licence: GNU GPL v3 (LICENSE). Clean-room: shape only. No code or colour codes are copied, and every donor value is withheld (null) in the JSON data fields. The prose below does quote a few donor constants (for example 20 game hours, 0.015, 0.25, 400, the x20 rain factor, 10 strikes per minute, the 1..100 roll) so the cites can be checked; treat those as evidence, not as values to ship. Half read: client engine (apps/openmw/mwworld/weather.cpp, apps/openmw/mwrender/sky.cpp) and the shipped fallback table (files/openmw.cfg). No server half exists (single-player engine). The region weather roll runs in-process. Region chance records (components/esm3/loadregn.cpp) and the game's own weather records were not in the box and were not read.
 
 Checked: read in full the TimeOfDay interpolator (weather.cpp 40-134), region weather choice (306-361), WeatherManager::update (831-980), timers and transitions (1163-1296), per-weather result and blend (1298-1400), thunder (232-305); sky.cpp lines 428, 548, 793 and the rain setup at 605-640 by grep. Confidence high on weather state, transitions and thunder. fogmanager.cpp and most of sky.cpp were not read. Receipts: 64 of 64 pass (receipts.tsv, shared with OpenGothic).
 
@@ -12,7 +12,7 @@ Weather changes on a timer (fallback 20 game hours). The choice is rolled per re
 ## 2. Why it works, or is striking
 - Readable at 375 wide: colour keys with narrow pre and post bands never snap, so the state reads by colour and by the rain count.
 - One signature behaviour: flashes add up across strikes (weather.cpp:284). Back-to-back strikes get brighter and last longer, then decay at a per-weather rate.
-- One signature sound: thunder has four distance bins. A near strike is brighter (flash 1.0, 0.75, 0.5, 0.25 across the bins, from 1 minus distance times 0.25, weather.cpp:282-284) and louder; a far one is faint.
+- One signature sound: thunder has four distance bins. A near strike is brighter (flash 1.0, 0.75, 0.5, 0.25 across the bins, from 1 minus distance times 0.25, weather.cpp:282-284); a far one is fainter. Only the flash varies: the donor plays every thunder sample at the same volume (volume 1.0, weather.cpp:285), so a volume-by-distance is our own addition if we want it.
 - Could be made ours at 20-30 percent resemblance: a region-rolled weather, a real-time crossfade with queue and carry, and a four-key colour blend.
 
 ## 3. The rule behind it
@@ -21,12 +21,12 @@ Weather changes on a timer (fallback 20 game hours). The choice is rolled per re
 - Crossfade: the factor falls by elapsed real seconds times the incoming weather's transition speed (1202-1203, comment at 222 says real time, not game time). If a change is requested mid-crossfade, it is queued. When the factor passes zero, the overflow time is turned back into a factor for the queued change (1215-1216), and the new crossfade starts at factor 1 (1264).
 - Colour blend: each colour has four keys. Between keys the blend is linear over the band, with factor = advance / duration * 2 (weather.cpp:88, 97, 117, 126). The bands come from the pre and post times per colour group (openmw.cfg:238-253).
 - Sun: the orbit is linear within day and within night separately (weather.cpp:912), and the sun direction uses a fixed arc vector (921). Glare fades as a triangle that peaks at the midpoint of the day (933).
-- Thunder: strike chance per frame is frequency times 10 per minute, scaled by how far the transition is past the threshold (271-272). Flash decays at a per-weather decrement per second (261). Flash brightness is added across strikes (284).
+- Thunder: strike chance per frame is frequency times 10 per minute, scaled by how far the transition is past the threshold (271-272). During a crossfade both weathers roll thunder, each with its own ratio (the current weather with the transition factor, the next with 1 minus it), and the two flashes are summed (weather.cpp 1286-1290). Flash decays at a per-weather decrement per second (261). Flash brightness is added across strikes (284).
 - Rain: emission rate is max drops over entrance speed times 20 per second (sky.cpp:428). Cloud scroll is duration times cloud speed over 400 (sky.cpp:548). Cloud crossfade is clamped to 0 to 1 (sky.cpp:793).
 
 Defects found, with the fix (idea kept):
 - Flash is hard-cut to zero whenever the transition is below threshold (weather.cpp:250). Fix: keep running the decrement every frame so the flash decays to zero instead of cutting.
-- Region chances that do not sum to 100 silently pick the first weather in store order (weather.cpp:361). Fix: check and renormalise the table at load, and log a warning.
+- Region chances that do not sum to 100 silently fall back to weather index 0, the first entry of the weather list (weather.cpp:361, `indexToRefId(0)`). Fix: check and renormalise the table at load, and log a warning.
 - Ashstorm and blight transition speeds are named in the validator (components/fallback/validate.cpp:41) but their transition lines are not in files/openmw.cfg (8 types have one). Fix: state the defaults explicitly in our data.
 - Rain emission divides by entrance speed (sky.cpp:428, 619). A zero entrance speed would divide by zero. Fix: clamp to a minimum.
 
@@ -71,3 +71,11 @@ Decision: adapt (idea), with the four defects fixed in the design above.
 No code sketch: this template asks for data fields, not code, so nothing was typechecked.
 
 Tags: weather-state, day-night, duration-rule, flash, stinger, particle-burst, mood-preset, new:region-roll, new:transition-carry, new:sky-keyframes
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Verified: TimeOfDay interpolator factor = advance/duration*2 (weather.cpp 88,97,117,126), region roll 1..100 cumulative (348-361), re-roll when chance drops to zero (311), timer keeps phase (1165,1176), transition factor and overflow carry (1202-1216, new crossfade factor 1.0 at 1264), thunder chance (freq*10/60 * dt * scale), flash decrement, additive flash 1.0/.75/.5/.25, hard cut at 250, glare triangle, sun orbit, rain x20 (sky.cpp 428, 619), cloud /400 (548), 20 hours and 0.015 clear in openmw.cfg (218, 267), only 8 Transition_Delta lines (Ashstorm and Blight missing), 287 weather fallback lines, GPLv3. Errors: (1) header says every donor value is withheld and no constants copied, yet the body states 20 hours, 0.015, 67 s, 0.25 steps, 400, x20, 10 per minute, 1..100 (honesty of the clean-room statement). (2) 'near strike is ... louder': code plays every thunder sample at volume 1.0 (playSound(.., 1.0, 1.0)); only brightness varies; louder is invented. (3) bad-sum chances fall back to ESM::Weather::indexToRefId(0) (Clear), not 'first weather in store order' (361).
+Missed: During a transition both weathers' calculateThunder run and flashes are summed (weather.cpp ~1380), and current weather's ratio is mTransitionFactor; not covered. Moon model and Constructor sections honestly listed as not read. No Acceptance line exists in this design note (only a look test); nothing that would make a correct build fail. Build note: Ashstorm/Blight missing Transition_Delta may yield a zero delta (transition never ends); note handles with 'state defaults', fine.
+
+Fixed 2026-10-12 (Sonnet fixer): header no longer claims no constants are quoted (prose cites a few for checking; the JSON data fields stay null); removed the invented "louder when near" (every thunder sample plays at volume 1.0, weather.cpp 285); bad-sum region chances fall back to weather index 0 (361), not store order. Also found: during a crossfade both weathers roll thunder and the flashes are summed (1286-1290). Not verified: whether a missing Ashstorm/Blight Transition_Delta reads as zero (the fallback map reader was not read).

@@ -24,7 +24,7 @@ Order of steps in `calculate_healing(side, update_display)` (`heal.cpp` 290-358)
 
 (f) Clamp (330-332 and the matching max). Minimum heal is min(0, 1 - HP): a tick cannot take a unit below 1 HP. Maximum heal is max HP minus HP. Clamp (331-334).
 
-(g) Apply. If the cure is CURE or the heal is non-zero, the heal is queued for display (`animate_heals`, nearest first, at 247 inside the anonymous namespace that closes at 286) or applied at once when not animating (`do_heal`, 231-238). `do_heal` clears poison on CURE (234) then heals or takes the hit.
+(g) Apply. If the cure is CURE or the heal is non-zero, the heal is queued for display (`animate_heals`, nearest first, at 247 inside the anonymous namespace that closes at 286) or applied at once when not animating (`do_heal`, 231-240). `do_heal` clears poison on CURE (234) then heals or takes the hit.
 
 Attack preview uses the same poison amount: `attack.cpp` 389-392 counts expected poison damage for both units in the combat forecast.
 
@@ -35,7 +35,7 @@ Data. Defaults: poison tick 8 (`game_config.cpp` 47), rest heal 2 (48); both can
 - `calculate_healing`: `/mnt/frankendom-donors/wesnoth-wesnoth/src/actions/heal.cpp` 290-358.
 - `poison_progress`: `/mnt/frankendom-donors/wesnoth-wesnoth/src/actions/heal.cpp` 84-150.
 - `heal_amount` and `update_healing`: `/mnt/frankendom-donors/wesnoth-wesnoth/src/actions/heal.cpp` 163-224.
-- `do_heal`: `/mnt/frankendom-donors/wesnoth-wesnoth/src/actions/heal.cpp` 231-238.
+- `do_heal`: `/mnt/frankendom-donors/wesnoth-wesnoth/src/actions/heal.cpp` 231-240.
 - composite heal value: `/mnt/frankendom-donors/wesnoth-wesnoth/src/units/abilities.cpp` 2194-2262 (`effect_impl`).
 - defaults: `/mnt/frankendom-donors/wesnoth-wesnoth/src/game_config.cpp` 47-48.
 
@@ -66,7 +66,7 @@ Defects (keep the idea, fix the defect):
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order (rest first, then heal for the unpoisoned or the tick for the poisoned, then the 1-HP floor and max-HP clamp) and the three-level cure ladder (none, slow, cure), and it uses only the best non-cumulative heal. It reorders nothing inside the donor's clamp. It omits: the enemy and ally side checks (the caller supplies the best cure level), the `unhealable` and incapacitated skip, the animation queue (`animate_heals`, nearest first), the replay and display path, the cumulative heal sums, harm sources (`update_healing`'s worst-harm branch), the attack preview, WML overrides and the per-ability `max_value`. It also drops the donor's D1 behaviour on purpose: the cure turn applies the heal (see D1 fix), so the sketch differs from the donor there.
+simplified: the sketch keeps the donor order (rest first, then heal for the unpoisoned or the tick for the poisoned, then the 1-HP floor and max-HP clamp) and the three-level cure ladder (none, slow, cure), and it uses only the best non-cumulative heal. It reorders nothing inside the donor's clamp. It omits: the enemy and ally side checks (the caller supplies the best cure level), the `unhealable` and incapacitated skip, the animation queue (`animate_heals`, nearest first), the replay and display path, the cumulative heal sums, harm sources (`update_healing`'s worst-harm branch), the attack preview, WML overrides and the per-ability `max_value`. It drops the donor's D1 behaviour on purpose: the cure turn applies the heal (see D1 fix), so the sketch differs from the donor there. Its rest line is unchanged: rest still applies before the poison branch, also on a cure turn.
 
 ```ts
 // clean-room sketch (GPL-2.0-or-later donor; shape only, no donor text or lines carried over).
@@ -95,8 +95,9 @@ function turnResult(p: Patient, t: Turn): Result {
   let delta = 0;
   // Rest heal is added before the poison branch, so a resting poisoned unit nets rest minus tick.
   if (p.ownTurn && (p.resting || p.healthy)) delta += t.restHeal;
-  // Heals are not applied to a poisoned unit, even on the turn it is cured.
-  if (!p.poisoned && t.heals.length > 0) delta += Math.max(...t.heals);
+  // Donor (D1): a poisoned unit gets no heal, even on the turn it is cured.
+  // Fix: on a cure turn the patient gets the heal it would have had.
+  if ((!p.poisoned || t.cure === "cure") && t.heals.length > 0) delta += Math.max(...t.heals);
   if (p.poisoned && t.cure === "none" && p.ownTurn) delta -= t.tickDamage;
   // Clamp: poison cannot take a unit below 1 HP; healing cannot exceed max HP.
   const maxHeal = Math.max(0, p.maxHp - p.hp);
@@ -108,7 +109,7 @@ function turnResult(p: Patient, t: Turn): Result {
 export {};
 ```
 
-Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020 /tmp/wesnoth-poison-cure.ts` on the VPS, exit 0. Note: the sketch as written follows the donor (including D1); the D1 fix is described in section 3 and in the acceptance line, not coded.
+Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020 /tmp/wesnoth-poison-cure.ts` on the VPS, exit 0. Note: the sketch codes the D1 fix (the cure turn applies the best heal), so it matches the acceptance line; a poisoned unit that is only slowed or ticking still gets no heal, as in the donor. Retypechecked on the VPS after the change, exit 0.
 
 ## 5. Lands in
 
@@ -128,3 +129,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020 /tmp/wesnoth
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room)
 Brief rule served: 1 (one engine); specials row 13; one HP writer
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Donor facts hold: calculate_healing 290-358 order (rest 312-313, unpoisoned heal_amount 317-318, poison_progress 321, tick only if NORMAL and own side 324-325, clamp 328-334 incl min_heal=min(0,1-HP)), poison_progress 84-150 ladder, update_healing 160-176, heal_amount 181-225 (side filter 204-209), do_heal 231-240 (clears poison 234), asserts at 122 and 206, game_config 47-48 and 278-279 (8 and 2), unit.hpp is_healthy, attack.cpp 389-392, GPL-2.0-or-later header. D1 (poisoned unit gets no heal_amount, including on the CURE turn) is real. Small: do_heal spans 231-240 not 231-238; abilities.cpp composite-value description is crude (effect_impl 2194+ also has add/sub/mul/div and max_value/min_value paths; non-cumulative max/min tracking is at ~2217-2230) but the 'best single non-cumulative, cumulative summed' conclusion is right. IMPORTANT for build: the Acceptance line says 'a cure clears the poison and the same turn applies the village or healer heal' and the Decision says to change the donor on this, but the TypeScript sketch (turnResult) deliberately keeps the donor behaviour: 'if (!p.poisoned && heals.length>0) delta += max(heals)' so a cured poisoned patient gets NO heal that turn. The sketch preamble says it 'drops the donor D1 behaviour on purpose' while the closing Typecheck note says it 'follows the donor (including D1)'. A build copied from the sketch FAILS its own acceptance clause 2; a build that satisfies the acceptance contradicts the sketch.
+Missed: Cure turn: rest heal DOES still apply (line 312-313 runs before the poison branch) - only village/healer/regen heals are skipped; the note covers this. Not noted: a unit not on the calculating side can still be cured/slowed by healers (poison_progress runs for any poisoned patient), only the tick and village/regen cure are own-side.
+
+Fixed 2026-10-12 (Sonnet fixer): the sketch now implements the D1 fix (a cured patient gets the best heal that turn), so the sketch, the preamble, the typecheck note and the Acceptance line agree; do_heal span corrected to 231-240. Checker's other facts were verified by the checker and left as is.

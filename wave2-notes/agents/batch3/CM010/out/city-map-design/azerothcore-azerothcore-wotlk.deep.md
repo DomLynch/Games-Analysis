@@ -2,14 +2,14 @@
 
 Donor: `/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/src/server/scripts/Northrend/zone_dalaran.cpp` (AI `npc_mageguard_dalaranAI::MoveInLineOfSight`, lines 301-344) | Licence: GPL-2.0 (`/mnt/frankendom-donors/azerothcore-azerothcore-wotlk/LICENSE`, line 1 "GNU GENERAL PUBLIC LICENSE", version 2, June 1991) | C++ | symbol `npc_mageguard_dalaran`
 
-Checked: Hint file `e2e/suites/world/dalaran/trespasser_e2e_test.go` read in full (203 lines); it is the test and states the rule. Donor code read: `zone_dalaran.cpp` 220-352 (guard AI, watch range, building lists, eject decision) and `GridNotifiers.cpp` 127-142 (what calls the AI). Files opened: 3 (the test, zone_dalaran.cpp, GridNotifiers.cpp), plus `AreaDefines.h` checked by grep only (the constants at lines 151, 162, 175; not read as a file). Not read: the trespass spell 54028 / 54029 effect (the ejection itself; `grep` in `data/sql/base/db_world` found no effect row for it, only a disables row). The ejection destination is taken from the test's own comments and assertion (test lines 53-54, 187), not from donor data. Confidence: high on the detection and decision path; medium on the outcome. Depth: thin. camera_scope: n/a (not a camera cell).
+Checked: Hint file `e2e/suites/world/dalaran/trespasser_e2e_test.go` read in full (203 lines); it is the test and states the rule. Donor code read: `zone_dalaran.cpp` 220-352 (guard AI, watch range, building lists, eject decision) and `GridNotifiers.cpp` 127-142 (what calls the AI). Files opened: 3 (the test, zone_dalaran.cpp, GridNotifiers.cpp), plus `src/server/game/Maps/AreaDefines.h` checked by grep only (the constants at lines 151, 162, 175; not read as a file). Not read: the trespass spell 54028 / 54029 effect (the ejection itself; `grep` in `data/sql/base/db_world` found no effect row for it, only a disables row). The ejection destination is taken from the test's own comments and assertion (test lines 53-54, 187), not from donor data. Confidence: high on the detection and decision path; medium on the outcome. Depth: thin. camera_scope: n/a (not a camera cell).
 
 ## 1. Mechanism
 
 - A guard NPC stands in one quarter of a city. The guard's AI is called for a unit through `CreatureUnitRelocationWorker`, which calls `c->AI()->MoveInLineOfSight_Safe(u)` when the creature is AI-enabled and can see the unit (`GridNotifiers.cpp` 136-138). The donor's test says this fires on relocation (test lines 171-172). The notifier's other callers were not read.
 - Order of checks inside `MoveInLineOfSight` (`zone_dalaran.cpp` 301-344):
   (a) the unit must be in the Dalaran zone (303);
-  (b) the unit must be within 40 yards of the guard (306, with `GUARD_WATCH_RANGE` at 244);
+  (b) the unit must be within 40 yards of the guard on the ground plane: `IsWithinDist(who, GUARD_WATCH_RANGE, false)` with the 3D flag off, so height is ignored, and the default flags add both bodies' radii (306, with `GUARD_WATCH_RANGE` at 244; signature at Object.h 555);
   (c) a non-combat pet is skipped (309);
   (d) the rules come from the unit's player owner, or the player itself; no player means no action (312, 314);
   (e) exemptions: GM, being teleported, or a rider above Z 670 in a vehicle (314); a disguise aura from the two quest disguises (316);
@@ -40,7 +40,7 @@ Checked: Hint file `e2e/suites/world/dalaran/trespasser_e2e_test.go` read in ful
 
 ## 4. TypeScript sketch
 
-simplified: the sketch takes the trespasser's area id and building id as already-resolved inputs (the donor calls `GetAreaInfo` itself and reads the owner through `GetCharmerOrOwnerPlayerOrPlayerItself`). It merges the two donor guards into one `District` record (the data shape Frankendom wants). It keeps the donor's check order (zone, coverage, non-combat pet, owner exemptions, faction, ground). It omits the spell cast, the facing reset, the disguise aura lookup detail, and the donor's `IsWithinDist` third argument (not read); it uses 3D distance. It does not model the relocation trigger, which is the donor's defect (see section 6).
+simplified: the sketch takes the trespasser's area id and building id as already-resolved inputs (the donor calls `GetAreaInfo` itself and reads the owner through `GetCharmerOrOwnerPlayerOrPlayerItself`). It merges the two donor guards into one `District` record (the data shape Frankendom wants). It keeps the donor's check order (zone, coverage, non-combat pet, owner exemptions, faction, ground). It omits the spell cast, the facing reset, the disguise aura lookup detail, and the body-radius terms the donor adds to the range test. The range test is flat (x and y only), as in the donor, whose 3D flag is off. It does not model the relocation trigger, which is the donor's defect (see section 6).
 
 ```ts
 // Licence: GPL-2.0 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -80,11 +80,11 @@ interface Visitor {
   ownerDisguised: boolean;
 }
 
-function dist3(a: XYZ, b: XYZ): number {
+// Flat distance: the donor's IsWithinDist is called with the 3D flag off, so height is ignored.
+function dist2d(a: XYZ, b: XYZ): number {
   const dx = a.x - b.x;
   const dy = a.y - b.y;
-  const dz = a.z - b.z;
-  return Math.sqrt(dx * dx + dy * dy + dz * dz);
+  return Math.sqrt(dx * dx + dy * dy);
 }
 
 // Decide whether this guard casts the eject on this visitor.
@@ -92,7 +92,7 @@ function dist3(a: XYZ, b: XYZ): number {
 export function shouldEject(g: Guard, v: Visitor): boolean {
   const d = g.district;
   if (v.zoneId !== d.zoneId) return false;
-  if (dist3(g.pos, v.pos) > d.watchRange) return false;
+  if (dist2d(g.pos, v.pos) > d.watchRange) return false;
   if (v.nonCombatPet) return false;
   if (v.ownerFaction === null) return false;
   if (v.ownerIsGM || v.ownerTeleporting) return false;
@@ -131,3 +131,11 @@ Acceptance: a rival-faction player who walks into any building tagged to the enc
 
 Reuse tag: rewrite-from-idea (GPL-2.0; clean-room only)
 Brief rule served: zones as data; server-verified state change; the client only shows the warning.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Sketch uses 3D distance and says IsWithinDist third arg 'not read'; real call is me->IsWithinDist(who, GUARD_WATCH_RANGE, false) at zone_dalaran.cpp:306 and the 3rd param is is3D (Object.h:555), so the 40-yard range is 2D (ignores height). Acceptance/sketch dist3 therefore differs from donor. All other claims verified: lines 244, 259-265, 268-279, 301-346, order of checks, Z 670 at 314, faction gates 332/337, area ids 4740/4616/4395 at AreaDefines.h 175/162/151 (path is src/server/game/Maps/, note gave no path), GridNotifiers 138, test line 171 quote, GPL-2 LICENSE.
+Missed: Guard cast spells differ per guard (SPELL_TRESPASSER_A vs _H) - trivial. Nothing important missed.
+
+Fixed 2026-10-12 (Sonnet fixer): range test is flat (2D), not 3D (verified zone_dalaran.cpp 306 and Object.h 555); sketch now uses dist2d and was re-typechecked; AreaDefines.h path added. Not added: the per-guard spell ids (trivial).

@@ -165,3 +165,9 @@ Acceptance: a server test offers 20,000 events into a 4,096-slot queue in one ti
 
 Reuse tag: rewrite-from-idea (Apache-2.0)
 Brief rule served: 1 (one engine, telemetry as a sink), 3 (kills stay server-verified)
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: none
+Missed: none

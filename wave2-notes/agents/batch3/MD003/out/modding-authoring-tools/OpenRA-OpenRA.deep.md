@@ -8,7 +8,7 @@ Best transferable idea: A mod unit is a short row that says which base it inheri
 
 Decision (proposed): adapt - take the inherits-and-minus-removal format for our legend and zone rows, because it is the cheapest way for Dom or a designer to write "this boss is the base legend with two changes"; keep the donor's errors (a removal with no match, a repeated parent, a self-inherit, a missing parent); add what the donor lacks, a warning when a patch overwrites a stat value; a layer must never write a reward count (the one-ledger rule); reject the Lua scripting sandbox for player or designer content (our rows stay data-only; no script field).
 
-Acceptance: a server test loads a base legend row set, then a legend row with `Inherits: legend_base` and `-Ability: bleed` and asserts the ability list equals the base list without bleed; a row that inherits the same parent twice, or removes a key the parent lacks, fails the load and the error names the file and line.
+Acceptance: a server test loads a base legend row set, then a legend row with `Inherits: legend_base` and `-Ability@bleed` (each ability is its own key, e.g. `Ability@bleed: bleed`, because a `-Key` removes every row with that key and ignores the value, MiniYaml.cs 491-492, and same-key rows in one set merge into one) and asserts the ability rows equal the base rows without the bleed row; a row that inherits the same parent twice, or removes a key the parent lacks, fails the load and the error names the file and line (the sketch's `loc` field carries `file:line`); a top-level `-legend_base` row removes the whole base block from the result.
 
 ## 1. Mechanism
 
@@ -53,7 +53,7 @@ Acceptance: a server test loads a base legend row set, then a legend row with `I
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor rule set: a same-key row in a later layer merges into the earlier one unless a removal of that key sits between them (then it is appended); resolution follows the parent link and applies removals in order; a repeated parent, a self-inherit, a missing parent and a removal with no match are errors. It omits the conflict-log duplicate check (Exts.cs 414-463), the `Inherits@name` suffix (treated as a plain link here), the map-rules append in Load (684-695), the source-location text in each error (the donor prints `n.Location`), the string pool and the comments. It reorders nothing else. The sketch's errors are plain messages without the file and line; the file-and-line text is the part Frankendom needs to add.
+simplified: the sketch keeps the donor rule set: a same-key row in a later layer merges into the earlier one unless a removal of that key sits between them (then it is appended); resolution follows the parent link and applies removals in order; a repeated parent, a self-inherit, a missing parent and a removal with no match are errors. It omits the conflict-log duplicate check (Exts.cs 414-463), the `Inherits@name` suffix (treated as a plain link here), the map-rules append in Load (684-695), the string pool and the comments. It reorders nothing else. Errors now carry a `loc` (file:line) string that the loader fills in from the source file; the sketch does not parse files. Top-level whole-block removal (donor 431-433) is not coded; see Also found.
 
 ```ts
 // Licence: GPL-3.0-or-later (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -64,6 +64,7 @@ interface Node {
   key: string;
   value?: string;
   children: Node[];
+  loc?: string; // "file:line", carried into every error message (donor prints n.Location)
 }
 
 type Tree = Map<string, Node[]>;
@@ -115,20 +116,22 @@ function mergeInto(resolved: Node[], n: Node, tree: Tree, inherited: Set<string>
 // Resolve parent links and removals for one list of rows (donor: ResolveInherits 459-505).
 // A parent may be linked once per tree; a missing parent, a repeated parent, or a removal with
 // nothing to remove is an error (the donor throws on each of these).
+const at = (n: Node): string => n.loc ?? "unknown";
+
 function resolveNodes(nodes: Node[], tree: Tree, inherited: Set<string>): Node[] {
   const resolved: Node[] = [];
   for (const n of nodes) {
     if (n.key === "Inherits" || n.key.startsWith("Inherits@")) {
       const parentName = n.value ?? "";
       const parent = tree.get(parentName);
-      if (parent === undefined) throw new Error(`Parent type ${parentName} not found`);
-      if (inherited.has(parentName)) throw new Error(`Parent type ${parentName} was already inherited`);
+      if (parent === undefined) throw new Error(`${at(n)}: Parent type ${parentName} not found`);
+      if (inherited.has(parentName)) throw new Error(`${at(n)}: Parent type ${parentName} was already inherited`);
       inherited.add(parentName);
       for (const r of resolveNodes(parent, tree, new Set(inherited))) mergeInto(resolved, r, tree, inherited);
     } else if (isRemoval(n)) {
       const removed = n.key.slice(1);
       const kept = resolved.filter((r) => r.key !== removed);
-      if (kept.length === resolved.length) throw new Error(`There are no elements with key ${removed} to remove`);
+      if (kept.length === resolved.length) throw new Error(`${at(n)}: There are no elements with key ${removed} to remove`);
       resolved.splice(0, resolved.length, ...kept);
     } else {
       mergeInto(resolved, n, tree, inherited);
@@ -157,7 +160,8 @@ function resolveAll(tree: Tree): Map<string, Node[]> {
 
 ## 6. Gaps and risks
 
-- The donor's removal error text names the file and line through `n.Location` (MiniYaml.cs 474, 483, 493). The sketch drops this; Frankendom must keep it, because a designer will fix a row from the message.
+- Also found: the donor also resolves top-level removals (MiniYaml.cs 431-433), so `-LegendName` at the top level removes a whole base block from the final result; useful for a zone row that drops a base legend. Not in the sketch.
+- The donor's error text names the file and line through `n.Location` (MiniYaml.cs 474, 483, 493). The sketch now carries `loc` into each error; Frankendom's loader must fill it, because a designer will fix a row from the message.
 - The `Inherits` rule copies a parent's whole block, so a change to the base legend changes every child that did not override it. That is the point of the format, but a stat change to a base legend will move every zone variant. Frankendom needs a test that lists the children of a base before a base change ships.
 - Same-key merge is recursive and silent for values: a later file that writes a value for an existing key replaces it (`n.value ?? old.value`, the sketch; donor MergePartial returns the override's value when present, MiniYaml.cs 594). The donor does not warn. Frankendom must warn when a patch overwrites a stat.
 - Lua sandbox: an allowlist with nulls for every other global, and no `math.random` (ScriptContext.cs 161-180). The idea is good, but scripting is out for our rows (data-only). Reject for now.
@@ -167,3 +171,11 @@ function resolveAll(tree: Tree): Map<string, Node[]> {
 - The `Inherits@name` link (MiniYaml.cs 470) allows several named parents. The sketch treats it as a plain link. Frankendom should allow one parent first; add named parents only with a test.
 - No publishing, rating or upload code was found in `OpenRA.Game` or `OpenRA.Mods.Common` (grep for `upload` empty). Strategy's MD questions on who may publish and on rating are not answered by this donor.
 - Licence: GPL-3.0; clean-room only. The sketch is written from the described rules.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Verified: Merge 408-435 (self-name in inherited 426, top-level removals 431-433), MergeIntoResolved 437-458, ResolveInherits 459-501 (errors 474/483/493, Location in messages), MergeSelfPartial 507-531, weak removal 533-565, layer MergePartial closer-removal 633-646, value override 594, Load 684-697 (map rules appended last), Lua allowlist 163-169 (13 names), math.random/randomseed nulled, 50 MB at 122/215, 1,000,000 at 125/191, MapClassification User=2, BinSize 250 at 32, GPL v3. Acceptance flaw: 'Inherits: legend_base and -Ability: bleed ... ability list equals base list without bleed'. In OpenRA a '-Key' removes every row with that KEY and the value is ignored (MiniYaml.cs 491-492); same-key rows in one set are merged into one (MergeSelfPartial 519-527), so a list of repeated 'Ability: x' rows cannot exist. A correct build removes the whole Ability row, not only 'bleed', so this test would fail or be meaningless; the row format needs 'Ability' as a parent with child rows (remove the child key) or a distinct key per ability. The sketch also drops file-and-line from errors although Acceptance demands the error name file and line (disclosed in section 4 but the sketch cannot meet its own Acceptance). Minor: 'Inherits@name' shared mutable Set in sketch is equivalent. 
+Missed: Top-level whole-block removal (431-433) only appears in the key-functions list, not as a rule for Frankendom (-LegendName removes a base block).
+
+Fixed 2026-10-12 (Sonnet fixer): verified '-Key' removes by key only (MiniYaml.cs 486-493); acceptance rewritten to use one key per ability (`-Ability@bleed`) so a correct build passes; sketch errors now carry file:line via a loc field so the acceptance on file and line is satisfiable; top-level whole-block removal added as Also found. Retypechecked.

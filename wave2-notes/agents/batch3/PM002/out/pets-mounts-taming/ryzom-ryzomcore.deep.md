@@ -6,7 +6,7 @@ Checked: Read in full: `updatePetCoordinateAndDatabase` (character.cpp 6385-6462
 
 Best transferable idea: a mount's food meter drains only for distance travelled above its walk speed (per-metre rate from the creature row), clamps at zero, and at zero flips one speed flag that slows the mount until it is fed.
 Decision (proposed): adapt - a travel-fatigue meter for a mount or summoned companion in open zones fits zones-as-data and server state; the donor's food loop, unit mismatch and AND gate must not be copied, and the duel and Pit do not need it.
-Acceptance: In an open zone, a mount run 500 m above walk speed (server test) drains the meter by 500 x the row's per-metre rate, and at zero the server reports run speed capped to walk; a unit test asserts that a 20 mm move along one axis only is charged.
+Acceptance: In an open zone, a server test moves a mount so that it covers 500 m more than its walk speed allows over the sampled time (distance minus walk speed x elapsed) and asserts the meter drops by 500 x the row's per-metre rate; at zero the server reports run speed capped to walk; a unit test with sample period 1.6 s and walk speed 4.5 m/s moves the mount 10 m along one axis only (y unchanged) and asserts it is charged (10 - 7.2 = 2.8 m of excess), while a 20 mm move along one axis costs nothing (it is under the walk allowance, and the donor's both-axes gate would skip it).
 
 ## 1. Mechanism
 
@@ -20,7 +20,7 @@ Acceptance: In an open zone, a mount run 500 m above walk speed (server test) dr
   (f) Leash: `checkAnimalInRange` runs here, still inside the moving branch (6432). It reads the previous stored position against the owner's current position, and if the squared distance is over 100 m squared it sends STAND and stops the follow (5977-5993).
   (g) If Satiety is already 0 (the else branch, 6436-6442): call `onAnimalHungry(i, false)`, which eats food from the pet's own inventory unit by unit until full, then sets the speed flag to Satiety > 0 (5897-5971). Then the leash check runs again (6442).
   (h) Store the new position (6446-6448) and check for death (6451-6461).
-- Mount side (`mount`, 2063): refuses while invisible; needs a mountable form (2077) and no rider (2079); needs the rider within the mount distance (2089). It sets the rider, sets IsMounted, copies the creature's walk and run speed into the player (2124-2125), and makes the mount unmountable while ridden (2127). `unmount` (2195) sets the player back to a fixed 1.3 walk and 6.0 run (2214-2215), makes the mount mountable again (2209) and clears IsMounted.
+- Mount side (`mount`, 2063): refuses while invisible; needs a mountable form (2077) and no rider (2079); needs the creature to be one of the player's own pets (`getPlayerPet`, petIndex != -1, 2082-2083) and the rider within `MaxTalkingDistSquare` (2089-2090; not a mount-specific distance). It sets the rider, sets IsMounted, copies the creature's walk and run speed into the player (2124-2125), and makes the mount unmountable while ridden (2127). `unmount` (2195) sets the player back to a fixed 1.3 walk and 6.0 run (2214-2215), makes the mount mountable again (2209) and clears IsMounted.
 
 ## 2. Key functions
 
@@ -54,7 +54,7 @@ Formula and number ranges (table rows, file:line):
 | Leash | `dist^2 > 100^2` (m) | 100 m | egs_variables.cpp:564, character.cpp:5987 |
 | Dismount speeds | constants | walk 1.3, run 6.0 | character.cpp:2214-2215 |
 
-The 76.8 m row is the donor's own example run through its code path. The donor comment promises 7680 m for the same numbers, so the code is 100 times more hungry than its comment (defect 2).
+The 76.8 m row is the donor's own example run through its code path. The donor comment promises 7680 m for the same numbers, so the code is 100 times more hungry than its comment (defect 2); a per-tick-correct reading of the comment formula would give about 768 m, so the comment itself is also inconsistent.
 
 ## 4. TypeScript sketch
 
@@ -130,8 +130,16 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 
 - AGPL-3.0: clean-room, shape only. The sketch is written from the mechanism.
 - Defect 1, the AND gate (`character.cpp:6408`): a pet that moves only along one axis by more than 10 mm is not charged and not leashed. Fix: use the straight-line distance and test that instead.
-- Defect 2, units (`egs_variables.cpp:555-560` against `character.cpp:6413-6419`): the comment says the factor is per tick per m/tick at a 0.1 s tick, but the code multiplies by 16 cycles and never converts speed to per-tick metres. With the donor's own example (1000 satiety, 9 and 4.5 m/s), the bar empties after 76.8 m, not 7680 m. Fix: store one per-metre rate per creature row, charge distance above walk speed directly (as in the sketch), and add a test that asserts the arithmetic; no time factor.
+- Defect 2, units (`egs_variables.cpp:555-560` against `character.cpp:6413-6419`): the comment says the factor is per tick per m/tick at a 0.1 s tick, but the code multiplies by 16 cycles and never converts speed to per-tick metres. The comment formula is also off by itself: it puts the seconds-per-tick in the denominator, so even a per-tick-correct implementation would empty the bar after about 768 m, not the promised 7680 m (my hand arithmetic: 1000 satiety / (2.604 x 0.45 m/tick) = 853 ticks x 0.9 m = 768 m). With the donor's own example (1000 satiety, 9 and 4.5 m/s), the bar empties after 76.8 m, not 7680 m. Fix: store one per-metre rate per creature row, charge distance above walk speed directly (as in the sketch), and add a test that asserts the arithmetic; no time factor.
 - Defect 3, step dependence: the cost per metre works out to F x (v - w) / (v x step), because the drain per sample is fixed at 16 cycles while the distance per sample grows with the step. A change of game step therefore changes the cost per metre. Fix: drain by distance, not by speed x time (the sketch does).
 - Food loop: `onAnimalHungry` removes food units from the pet's inventory every sample while hungry (5914-5959). Frankendom needs this to go through the one ledger, with the item removal logged once.
 - Frankendom rulings: the duel does not use mounts, so this is travel only; the Pit is a client and needs none of it (row 22). MAX_ATTACKERS = 3 does not apply. Hunger must be server-side; the donor pushes the speed flag to the client (`DSPropertyFUEL`, 5967-5968), which we would do as a state field only.
 - Not verified: the taming check, stabling and summon rules are not in this note; the donor's stable file (`entities_game_service/stables/stable.cpp`) was not read.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Defect 2 cause: note says the code 'never converts speed to per-tick metres', implying the comment formula is right. But the comment formula itself (egs_variables.cpp 555-560) puts NbSecondPerTick in the denominator, so even a per-tick-correct implementation would not give 7680 m (about 768 m). Numbers derived (F=2.604, drain 187.5, 14.4 m, 76.8 m) are right. 'rider within the mount distance (2089)' is actually MaxTalkingDistSquare. Mount also requires the creature to be in the player's own pets (petIndex != -1, 2082-2083), not stated.
+Missed: ACCEPTANCE WOULD FAIL A CORRECT BUILD: 'a unit test asserts that a 20 mm move along one axis only is charged'. In the sketch a 20 mm move gives excessM = max(0, 0.02 - walkMs*dtS) = 0, so nothing is charged. Test needs a move large enough to exceed walk speed over dt on one axis. Also note the donor's leash only runs inside the moving branch (6432) - covered.
+
+Fixed 2026-10-12 (Sonnet fixer, egs_variables.cpp 554-564 and character.cpp 2074-2095 read over ssh): Acceptance no longer pins a 20 mm move as charged (it is under the walk allowance in the sketch); it now uses a 10 m one-axis move and states the 500 m means distance beyond the walk allowance. Defect 2 now says the comment formula is itself off (about 768 m). Mount precondition: own-pet check and MaxTalkingDistSquare. Sketch unchanged.

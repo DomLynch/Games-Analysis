@@ -44,7 +44,7 @@ A codex (encyclopedia) per character. Its content is static, from sheets: albums
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor's state model (hidden, shown, done in 2-bit slots), the unlock that reveals, the refusals in updateTask, and the rite-gated thema completion. It changes three things: it keys themas by stable string ids (the donor keys them by array position, see section 6), it refuses a slot number above the sheet's task count (the donor does not check it), and it throws at load when a thema has more than seven tasks (the donor only warns). It omits: the album roll-up and reward brick (the completion rule is described in section 1 but not coded), the reward text and sheet, the NPC giver and task-name lookups, the client message builders and string caches, the GM admin path, and the donor's `nlassert` checks (replaced by returns).
+simplified: the sketch keeps the donor's state model (hidden, shown, done in 2-bit slots), the unlock that reveals, the refusals in updateTask, and the rite-gated thema completion. It changes three things: it keys themas by stable string ids (the donor keys them by array position, see section 6), it refuses a slot number above the sheet's task count (the donor only asserts the slot is below 8), and it throws at load when a thema has more than seven tasks (the donor only warns). It now includes the album layer (album state, the album-complete lockout, the roll-up when every thema is done, and reward-visible checks at state 2). It omits: the reward text and sheet themselves, the NPC giver and task-name lookups, the client message builders and string caches, the GM admin path, and the donor's `nlassert` checks (replaced by returns).
 
 ```ts
 // Licence: GNU AGPL v3 (repo COPYING; file headers say version 3 or later). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -78,7 +78,8 @@ interface ThemaProgress {
 class Codex {
   private progress = new Map<string, ThemaProgress>();
 
-  constructor(private sheets: Map<string, ThemaSheet>) {
+  private albumState = new Map<string, State>(); // album id -> state
+  constructor(private sheets: Map<string, ThemaSheet>, private albums: Map<string, string[]>) { // album id -> thema ids
     // Donor only warns when a thema has more than 7 tasks; here it is refused at load.
     for (const s of sheets.values()) {
       if (s.taskIds.length > 7) throw new Error(`thema ${s.id} has more than 7 tasks`);
@@ -100,21 +101,48 @@ class Codex {
     if (!sheet) return;
     const p = this.get(themaId);
     if (p.state === 0) p.state = 1;
+    this.showAlbumOf(themaId);
     for (let slot = 0; slot <= sheet.taskIds.length; slot++) {
       if (p.slots.get(slot) === 0) p.slots.set(slot, 1);
     }
   }
 
+  private albumOf(themaId: string): string | undefined {
+    for (const [aid, ids] of this.albums) if (ids.includes(themaId)) return aid;
+    return undefined;
+  }
+
+  private showAlbumOf(themaId: string): void {
+    const aid = this.albumOf(themaId);
+    if (aid !== undefined && (this.albumState.get(aid) ?? 0) === 0) this.albumState.set(aid, 1);
+  }
+
+  // Album done when every thema in it is done (donor checkIfAlbumCompleted).
+  private checkAlbum(themaId: string): void {
+    const aid = this.albumOf(themaId);
+    if (aid === undefined) return;
+    const ids = this.albums.get(aid) as string[];
+    if (ids.every((id) => this.get(id).state === 2)) this.albumState.set(aid, 2);
+  }
+
+  // Rewards are visible only at state 2 (donor sends them whenever a done entry is shown; a one-time grant is a ledger rule).
+  themaRewardVisible(themaId: string): boolean { return this.get(themaId).state === 2; }
+  albumRewardVisible(albumId: string): boolean { return (this.albumState.get(albumId) ?? 0) === 2; }
+
   // A mission finished: set one slot. Returns false when refused.
   updateSlot(themaId: string, slot: Slot, next: State): boolean {
     const sheet = this.sheets.get(themaId);
-    if (!sheet || slot > sheet.taskIds.length) return false; // donor does not check the slot against the sheet
+    if (!sheet || slot > sheet.taskIds.length) return false; // donor only asserts slot < 8, it does not check the sheet's task count
     const p = this.get(themaId);
+    const aid = this.albumOf(themaId);
+    if (aid !== undefined && this.albumState.get(aid) === 2) return false; // donor: album-complete lockout
     if (p.state === 2 || p.slots.get(slot) === next) return false;
     p.slots.set(slot, next);
     if (p.state === 0) p.state = 1;
+    this.showAlbumOf(themaId);
     if (p.slots.get(0) === 0) p.slots.set(0, 1); // the rite becomes visible once anything moves
     if (this.isThemaDone(themaId)) p.state = 2;
+    this.checkAlbum(themaId);
     return true;
   }
 
@@ -157,7 +185,15 @@ Typecheck: copied to `/tmp/LO001-ryzom-codex.ts` on the VPS; `npx -p typescript 
 
 Best transferable idea: a codex where each entry is a theme with a rite and up to seven task slots, packed as 2-bit states, revealed by a mission or action, completed by mission success, and rewarded per theme and per album.
 Decision (proposed): adapt — keep the album, thema and slot model with hidden, shown and done states, mission-driven updates, rite-gated completion and completion-only rewards, with stable string ids, refused out-of-range slots and errors instead of asserts; reject the position-keyed storage and the unchecked task count.
-Acceptance: a server test with one album of two themas, where finishing a thema's rite and tasks makes it done and shows its reward text once, the album shows its reward brick when both themas are done, an eight-task sheet fails to load, and renumbering a thema leaves progress on the same legend.
+Acceptance: a server test with one album of two themas, where finishing a thema's rite and tasks makes it done and has its reward visible (themaRewardVisible true only at done; the donor re-sends it on every codex view, so a once-only grant is a ledger rule, not donor behaviour), the album reward is visible only when both themas are done and a further slot write after that is refused (album lockout), an eight-task sheet fails to load, and renumbering a thema leaves progress on the same legend.
 
 Reuse tag: rewrite-from-idea (AGPL-3.0; clean-room only)
 Brief rule served: 20 (catalogue as runtime source); one ledger; legends-rule (myth, not scripture; text not reproduced).
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Verified: updateTask refusals/order (cpp 70-116), unlockThema 120-157 incl. unconditional message, checkIfThemaCompleted (rite + sheet tasks, bTasksFinished[7] overflow), checkIfAlbumCompleted, 2-bit packing 8 slots, hooks in mission_base_behaviour 1333-1352 and mission_action 4210-4226, callers (admin 7823/7830, version_adapter 765), position keying (egs_static_encyclo.cpp 179 ThemaNumber-1; note says 180), warn at >7 tasks, AGPL header. Errors: (1) note says donor does not check task index; donor does nlassert(nTask < 8) at updateTask (cpp ~74) - it only fails to check against the sheet's task count, as the sketch comment half-says. (2) Section 1 says reward text shown only at state 2; true, but Acceptance 'shows its reward text once' has no donor basis: the donor sends reward text on every sendEncycloToClient for a done thema (cached string id, not once-only). BUILD RISK: Acceptance requires 'album shows its reward brick when both themas are done' but the sketch has no album layer at all (note admits roll-up not coded), so a build from the sketch cannot meet its own acceptance without adding album state; also 'reward text once' needs a design rule not in sketch.
+Missed: Donor updateTask forces AlbumState=1 and ThemaState=1 on any slot write and refuses when AlbumState==2 (album-complete lockout) - the sketch drops the album lockout; also DemonKnight/animate-style special cases not relevant.
+
+Fixed 2026-10-12 (Sonnet fixer): verified updateTask has nlassert(nTask < 8) and an album-complete lockout (cpp 70-116) and checkIfAlbumCompleted (294-311); added the album layer and lockout to the sketch so the acceptance is satisfiable; reworded the slot-check claim and the 'reward text once' acceptance. Line cite 180 for ThemaNumber-1 kept (verified at 180). Retypechecked.

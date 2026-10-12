@@ -120,3 +120,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Karma is per account (`database.UpdateKarma(AccountID(), ...)`, `client_process.cpp` 260). Trust carries across characters on one account; that is intended for anti-alt, but it also means a new character starts with the account's trust.
 - Global OOC mute is one server flag with no duration (`set_ooc_mute.cpp` 36; `client.cpp` 1436). Frankendom mute tiers and durations belong in the ledger (see the TrinityCore note).
 - The UCS ignore list is stored as friends rows with type 0 (ignore) and type 1 (buddy) (`ucs/clientlist.cpp` 444-449, 409-413; `ucs/database.cpp` 666). The delivery check that applies it was not found by grep; do not copy the list without the check.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: Verified: GPL-3 LICENSE.md; anti-spam block client.cpp 1263-1294 (channels shout/auction/ooc/tell, interval restart, 4+karma clamp 12, bypass 100 -> 10000, count before test, kick >20 'Sent too many chat messages at once.', seconds-left / 60 s notice); karma timer client.cpp 289 and client_process.cpp 257-260 (no activity check, per-account UpdateKarma); client_packet.cpp 778 load; ruletypes.h 923-929 values (in common/ruletypes.h); auction gate 1404-1406 with 72 and level limit; OOC mute 1436 and set_ooc_mute.cpp; UCS limiter 1350-1380 conditions. Not-read list honest.
+Missed: Small: UCS path sets ForceDisconnect on kick but does not return immediately (differs from zone path); GlobalChatLevelLimit default 8 (ruletypes.h:930) not quoted. Not material.

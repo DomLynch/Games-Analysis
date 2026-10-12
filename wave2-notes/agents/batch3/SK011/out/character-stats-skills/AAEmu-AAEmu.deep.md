@@ -10,7 +10,7 @@ Acceptance: A server test asserts a 100-attack base with +10 flat gear and a +20
 
 ## 1. Mechanism
 
-(a) Base. Each stat is a per-level formula evaluated over level, Str, Dex, Sta, Int, Spi and Fai (for example `MaxHp` 428-443; `HpRegen` 450-468). The formulas come from `FormulaManager` keyed by owner and kind (`UnitFormulaKind`: Str, Dex, Sta, Int, Spi, Fai, MaxHealth, MaxMana, HealthRegen, ManaRegen, Armor, MagicResist, MeleeCritical, MeleeAntiMiss, Block, Dodge and about 40 more).
+(a) Base. The six attributes (Str, Dex, Sta and the rest) are formulas over level only (`Character.Str` passes just `level`, Character.cs 326-340). The derived stats are formulas over level and the attributes (for example `MaxHp` 428-443; `HpRegen` 450-468). The formulas come from `FormulaManager` keyed by owner and kind (`UnitFormulaKind`: Str, Dex, Sta, Int, Spi, Fai, MaxHealth, MaxMana, HealthRegen, ManaRegen, Armor, MagicResist, MeleeCritical, MeleeAntiMiss, Block, Dodge and about 40 more).
 
 (b) Flat equipment. Equipped items with `IsNotDestroyed` add their own flat stat values to the base before the stack (`Str` 334-336; `Dex` 351-353; `Sta` similar). For armour, the base is the sum of `armor.BaseArmor` for armour pieces (1135), `weapon.Armor` for weapons (1138) and `accessory.BaseArmor` for accessories (1141), then the stack (1146).
 
@@ -25,7 +25,7 @@ Because each percent is applied to the running value, percent bonuses compound (
 
 (e) Regeneration. Two rates per unit: `HpRegen` (out of battle) and `PersistentHpRegen` (in battle; default 30 on `Unit` at 104). `Character.RegenTick(delta)` (2970-2992) does nothing when dead, not needing regen, or drowning; otherwise it adds `PersistentHpRegen` if `IsInBattle` (2981-2983) and `HpRegen` otherwise (2987), the same for mana with a post-cast flag, and clamps to max. The delta is passed in but not used in the add. The base comment says the hook is called "about once per second" for units in active player regions (1565). Battle ends after `WorldManager.DefaultCombatTimeout` seconds without combat activity (`CombatTick`, not read in full; the timeout value was not read).
 
-(f) Death experience. `DoDie` (CharacterCombat 60-90) computes the XP loss from the level (`GetExpLoss`), caps it to the XP earned in the current level (77), and marks 80 percent of it as recoverable (78). Below `MinimumExpLossLevel` the death is free (no XP loss). Mastery of the death wait (`ComputeDeathWaitTime`) was not read.
+(f) Death. `DoDie` (CharacterCombat 62-92) first calls `ComputeDeathWaitTime` (an escalating respawn timer, body not read) and sets a durability loss ratio (`LastDurabilityLoss`, zero below `MinimumExpLossLevel`). XP is lost only if the player is below max level, in the default instance, and at or above `MinimumExpLossLevel`: then the loss comes from `GetExpLoss`, is capped to the XP earned in the current level (77), and 80 percent of it is recoverable (78). Below the minimum level the player gets a free resurrection; at max level or in another world no XP is lost (`LastExpLoss` is 0) but the durability loss still applies.
 
 ## 2. Key functions
 
@@ -45,7 +45,7 @@ Because each percent is applied to the running value, percent bonuses compound (
 | Percent unit | value / 100 (786, 795) |
 | Dynamic ratio | elapsed / duration, clamped 0..1 (DynamicBonus.cs 46-47) |
 | Regen per unit | HpRegen out of battle, PersistentHpRegen in battle, default 30 for the persistent rate on `Unit` (Unit.cs 104); Character overrides both with formulas (Character.cs 450, 475) |
-| Death XP | loss capped to the current level's XP (CharacterCombat.cs 77); 80 percent recoverable (78) |
+| Death XP | loss capped to the current level's XP (CharacterCombat.cs 77); 80 percent recoverable (78); none at max level or outside the default instance; durability loss and an escalating respawn timer also run (62-70) |
 
 ### 3b. Catalogue rows (SK-FOCUS table format)
 
@@ -61,7 +61,7 @@ Because each percent is applied to the running value, percent bonuses compound (
 | Facet, MagicResist | resistance and other | formula kinds exist (values 19 and 20 in the enum) | not read | not read | UnitFormulaKind.cs (enum values 19-20; line not recorded) |
 | Actability (crafting) | crafting skill levels | attribute ids (enum values 99-118, for example Archemy and Cook) | not read | not read | UnitAttribute.cs (enum values 99-118; line not recorded); CharacterAbilities.cs 53-57 (grep only) |
 | Luck | none | no luck attribute; the one luck hit is a random craft roll (CharacterCraft.cs 401) | none | none | grep only |
-| Death XP loss | XP lost on death | `GetExpLoss(level, rate)`, capped to in-level XP | rate in configuration (not read) | cap to in-level XP | CharacterCombat.cs 72-78 |
+| Death XP loss | XP lost on death | `GetExpLoss(level, rate)`, capped to in-level XP; only below max level, in the default instance, at or above the minimum level | rate in configuration (not read) | cap to in-level XP | CharacterCombat.cs 72-78 |
 | Recoverable XP | XP that can be recovered | 80 percent of the loss | 0.80 | none | CharacterCombat.cs 78 |
 
 Not read in this pass, so no rows: the encumbrance or tired-body state (not searched), the stamina or fatigue cost of actions (not searched), poise and stagger, block, parry and riposte windows, damage types against armour, hit location and wounds, skill gain formulas, talents, level-50 curves, magic schools.
@@ -145,3 +145,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 Reuse tag: rewrite-from-idea (licence unclear; clean-room, shape only)
 Brief rule served: Frankendom rulings (one engine, server-verified state, data-driven values); parity row 21
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: (1) Mechanism (a) says every stat is a formula over level, Str, Dex, Sta, Int, Spi, Fai; Character.Str (Character.cs 326-340) passes only {level}; the full attribute set is used by derived stats (HpRegen 450-468 etc.). (2) Death XP (f): note says only 'below MinimumExpLossLevel the death is free'; DoDie (CharacterCombat.cs 62-92) has three branches: loss only if Level < MaxPlayerLevel AND in the default instance AND Level >= MinimumExpLossLevel; max-level or other worlds lose no XP (LastExpLoss=0); it also sets LastDurabilityLoss and calls ComputeDeathWaitTime first. Cap to in-level XP (77) and 0.80 recoverable (78) are correct. (3) Licence: README names LGPL v3 (either version 3 ... lines 36-37; 'or later' not seen in the lines I printed), fine as 'unclear'. Verified OK: CalculateWithBonuses 755-800 four passes and order comment, percent compounding at 786/795, Evaluate 24-58 with clamp 46-47 and ManualFunc false, PersistentHpRegen = 30 at Unit.cs:104, HpRegen (int)res, RegenTick 2970-2992 ignoring delta (2983/2987), UnitPointsRegenTask dead code (only own file), its mana test reads Hp, equipment IsNotDestroyed, Armor sum 1135-1146, acceptance maths 132 and 121.
+Missed: Durability loss on death (LastDurabilityLoss) and escalating respawn timer in DoDie; XP loss exemption at max level.
+
+Fixed 2026-10-12 (Sonnet fixer): attribute formulas now stated as level-only (derived stats use the attributes); death section now covers the three branches (loss, free resurrect, max level or other world) plus the durability loss and escalating respawn timer. Licence line left as 'unclear' (checker agreed). Sketch not changed.

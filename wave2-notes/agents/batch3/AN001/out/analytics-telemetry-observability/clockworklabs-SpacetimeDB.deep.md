@@ -165,3 +165,9 @@ Acceptance: a server test writes 10,000 records with `maxBytes` 65536 and assert
 
 Reuse tag: rewrite-from-idea (BSL 1.1, clean-room)
 Brief rule served: 1 (one engine: log is a sink), 3 (kills stay server-verified)
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: None material. Checked ~20 claims (database_logger.rs 77-82 rotate, 139-146 compact, 332 broadcast 64, 333 unbounded, 357-381 write/panic backtrace, 468-527 worker/tail 2500 cap, 529-539 lag trace, 542-593 scan, 197 code 101; worker_metrics 27-50, 249-261, 728-748 sleep 10s, 771/794; resource.rs 38-42; BSL header) all match. Tiny wording: scan chunk is min(next_pow2(n*150), 64KiB), not always 64 KiB chunks.
+Missed: worker_metrics/mod.rs 769 and 792: returned_pages gauge is set from reused_count() (copy-paste defect in donor). database_logger.rs 80: FileLogger::maybe_rotate does open(..).unwrap(), so a rotation failure panics the worker (note only lists the write_all unwrap at 88). Level filter: grep outside database_logger.rs finds LogLevel only in bindings/logger.rs and cli logs.rs (no server-side filter), consistent with the note's hedge.

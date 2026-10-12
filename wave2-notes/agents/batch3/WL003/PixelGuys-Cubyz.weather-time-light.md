@@ -6,28 +6,28 @@ Checked: read in full `src/game.zig` 400-560 (World clock, DayTime struct: phase
 
 ## 1. What the player sees and feels
 
-- The world runs on one long day. Day is the longest stretch, then a short dusk, a long night, and a short dawn. The night is dim and blue-grey, never black, so the shapes of what is nearby still read.
+- The world runs on one long day. Day is the longest stretch, then a short dusk, a long night, and a short dawn. At night the sky and fog colour go fully black (the sky factor is 0, game.zig 503), but lit surfaces are never black: the ambient light has a floor and a blue-grey night tint, so the shapes of what is nearby still read. A dark sky with stars is the donor look.
 - Dusk drains the sky colour one channel at a time: blue goes first, then green, and red lingers last. Dawn runs the same ramp backwards, so the sunrise feels warm before the day feels cool.
 - Stars fade in during dusk and drift across the sky with the day's progress. The sun itself is not drawn.
-- Fog colour follows the sky colour, so the horizon matches the sky. When the player crosses into a new biome, the fog eases into the new colour and density over about half a second instead of cutting.
-- On a 375-wide phone the change is mostly tint and fog. Silhouettes stay readable because the ambient light has a floor.
+- Fog colour is the biome fog colour times the same sky factor as the sky, so the horizon matches the sky (and both go black at night). When the player crosses into a new biome, the fog eases into the new colour and density over about half a second instead of cutting.
+- On a 375-wide phone the change is mostly tint and fog. Silhouettes stay readable because the ambient light has a floor (min 0.1, game.zig 441/495).
 
 ## 2. Why it works, or is striking
 
 - Readable silhouette at 375 wide: ambient never goes below a floor, and the night floor is a tint (renderer.zig:159-160), so an enemy stays a shape, not a hole.
 - One signature behaviour: a single clock (server counter, one step per 100 ms) drives sky, fog, stars and light, so every system agrees on the time of day.
 - One signature effect: the channel-by-channel sky ramp (blue first at dusk, red last). It is cheap, and it reads as sunset without a sunset asset.
-- Could be made ours at 20-30 percent resemblance: yes. The clock, the phase split and the staged ramp carry over. Palette, durations and the night tint are ours to set.
+- Could be made ours at 20-30 percent resemblance: yes. The clock, the phase split and the staged ramp carry over. Palette, durations and the night tint are ours to set. Donor day lengths for reference: day 7200, dusk 1200, night 4800, dawn 1200 ticks of 100 ms (12 / 2 / 8 / 2 minutes, game.zig 420-423); our table sets its own split.
 
 ## 3. The rule behind it
 
 Order of operations on each client frame, with the server clock as the authority:
 
-1. Server clock: one counter, +1 per 100 ms while the world runs (`src/server/world.zig:1113`). The server sends the counter to every connected client when more than 2 s have passed since the last send (`src/server/world.zig:1115`).
+1. Server clock: one counter, +1 per 100 ms while the world runs and the `doGameTimeCycle` flag is on (`src/server/world.zig:1113`). The server sends the counter to every connected client when more than 2 s have passed since the last send (`src/server/world.zig:1115`).
 2. Client clock: its own counter also steps +1 per 100 ms (`src/game.zig:405-414`). On each server packet it corrects: if the gap is 10 ticks or more it snaps, otherwise it steps one tick toward the server per packet (`src/network/protocols.zig:653`).
 3. Phase: tick modulo the cycle, then the phase name and progress 0..1 (`src/game.zig:456-477`).
 4. Ambient scalar: day = 1; dusk ramps from 1 down to the night floor; night = floor; dawn ramps from floor back to 1 (`src/game.zig:491-499`).
-5. Sky factor per channel, staged on solar presence (dusk uses 1 minus progress): red rises first, green from a quarter to three quarters, blue from a half to 1 (`src/game.zig:500-533`, receipts R7-R9).
+5. Sky factor per channel: day = 1 on all channels, night = 0 on all channels; dusk and dawn are staged on solar presence (dusk uses 1 minus progress): red rises first, green from a quarter to three quarters, blue from a half to 1 (`src/game.zig:500-533`, receipts R7-R9).
 6. Blend: biome fog colour, sky colour, density and fog range ease toward the target with `t = 1 - exp(-2 * dt)` (`src/game.zig:538-545`), then the fog colour is multiplied by the sky factor (`src/game.zig:549-550`).
 7. Light: the item-drop path combines the sun channel (scaled by the ambient scalar) and the block light as a square root of summed squares, clamped to 1 (`src/itemdrop.zig:661-663`). The chunk shader was not read.
 
@@ -60,7 +60,7 @@ Data fields (designer-tunable; donor value null because the licence is GPL-3):
 
 - Build: a preview-only flag on the existing 3-attacker Pit arena. A time slider with four stops (dawn, noon, dusk, night) and one fixed sky preset. No release rows, no lock. Publish to the /preview/ folder.
 - Compare at the fight camera, 375 wide: noon and night stills, with the three attackers in view.
-- Dom judges three things: (a) at night can he tell the three attackers apart and see their threat colour; (b) does dusk read as dusk, not as a damage tint; (c) is the night dim, not black.
+- Dom judges three things: (a) at night can he tell the three attackers apart and see their threat colour; (b) does dusk read as dusk, not as a damage tint; (c) is the night dim, not black (lit surfaces and silhouettes; the sky itself may go dark).
 - Pass if the three attackers stay separable at night and the threat colours do not shift with the sky.
 
 ## 6. Licence and IP
@@ -78,3 +78,11 @@ Best transferable idea: one server clock plus staged sky and fog presets, slewed
 
 Reuse tag: none (no prior Frankendom lane reuse used).
 Brief rule served: feel note, weather-time-light, phone-first 375 wide, server-verified, one ledger, a world worth walking.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Claim (section 1): 'The night is dim and blue-grey, never black' and 'fog colour follows the sky colour'. Real: getSkyColorFactor returns splat(0) at night (game.zig:503) and fog/sky colour are multiplied by it (549-550), so sky and fog go fully black at night; only the AMBIENT LIGHT has a floor (min 0.1, game.zig:441/495; blue-grey nightColor 0.3,0.4,0.5 x nightBrightness 0.5 at renderer.zig:159-160). The note's step 5 also omits that day = 1 and night = 0. The 'ambient floor keeps silhouettes' point is right; the 'never black' claim applies to lit surfaces, not the sky. Also step 1 omits that the server counter only steps when doGameTimeCycle is true (world.zig:1113). Verified OK: world.zig 1113/1115, game.zig 405-414, 456-477, 491-499, 500-533 (b from 0.5, g 0.25-0.75, r to 0.5), 538-550 (t = 1-exp(-2dt)), protocols.zig 653 (snap at >=10, else step one), itemdrop.zig 661-663, renderer.zig 156 sun TODO and 847 star rotation, GPL v3, 226 biome zon files, 35 with fogColor, 40 with fogDensity, no weather system in src.
+Missed: Donor day lengths (7200/1200/4800/1200 ticks = 12/2/8/2 min, game.zig:420-423) and the doGameTimeCycle freeze flag; the black night sky means a dark sky with stars is the donor look, which conflicts with the note's 'blue-grey night' tint for the sky. The player night-brightness slider (settings.zig:62) is mentioned in the table only.
+
+Fixed 2026-10-12 (Sonnet fixer): corrected the 'night is never black' claim (sky and fog are black at night; only lit surfaces keep an ambient floor, 0.1 min, plus the 0.3/0.4/0.5 tint times night brightness at renderer.zig 159-160); added day = 1 / night = 0 to the sky-factor step, the doGameTimeCycle clock gate (world.zig 1113) and the donor day lengths (game.zig 420-423). The look-test line (c) now says lit surfaces, not the sky. All verified over ssh.

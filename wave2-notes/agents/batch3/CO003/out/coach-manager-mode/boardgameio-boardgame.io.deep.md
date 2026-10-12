@@ -6,7 +6,7 @@ Checked: Read in full: `src/ai/bot.ts`, `src/ai/random-bot.ts`, `src/ai/ai.ts`. 
 
 Best transferable idea: give each side a command budget per window with a minimum and a maximum count of commands, close the side's window when the maximum is reached, and let free actions skip the count.
 Decision (proposed): adapt - take the min/max budget and the ALL_ONCE / OTHERS_ONCE presets as the shape, keep the counters immutable and server-side (the donor mutates its counter in place, see section 6), and bind the budget to the coach's command window.
-Acceptance: a server test gives a coach a window maximum of 3: the first three commands are accepted, the fourth is refused, and a free stance change (no-limit) does not use a slot; pre-fight, the fight does not start until both coaches have each submitted one order set (ALL_ONCE).
+Acceptance: a server test gives a coach a window maximum of 3: the first three counted commands are accepted and the fourth is refused; a free stance change (no-limit) sent mid-window (after command 1) is accepted and leaves the count at 1 (after the window is full the sketch refuses every command, free or not, as the donor's closed stage does); pre-fight, the fight does not start until both coaches have each submitted one order set (ALL_ONCE).
 
 ## 1. Mechanism
 
@@ -126,3 +126,11 @@ export {};
 
 Reuse tag: rewrite-from-idea (MIT; clean-room sketch)
 Brief rule served: 1 (one engine), 2 (server-verified commands)
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: numMoves reset cited flow.ts:337 but the line is 336 (`numMoves: 0` in StartTurn). Other cited claims hold: ProcessMove 727-762 order (shouldCount via noLimit, numMoves++ only for current player at 736, per-player count at 737, auto EndStage at 750-754), ShouldEndTurn maxMoves, EndTurn/EndStage min gates, falsy min/max storage turn-order.ts:341-342, ALL_ONCE/OTHERS_ONCE {min 1,max 1}, in-place counter mutation defect (real), bot random(0)/random([]) defects (real), MCTS 1000/50, UCT line 170, ai.ts depth 10000, MIT line 3. ACCEPTANCE RISK: the sketch's submit() refuses every command once used>=maxMoves, including noLimit ones, so the test 'free stance change does not use a slot' only passes if the stance change is sent BEFORE the window is full; if sent after the third counted command a correct build refuses it (donor also has the stage ended by then). Acceptance should say the free command is sent mid-window or the sketch should let noLimit bypass the max check. Also the 'ALL_ONCE: fight does not start until both have submitted' test is fine.
+Missed: None major. Donor also gives every active player a per-stage budget through activePlayers/setActivePlayers (the simultaneous-window mechanism that the sketch calls 'omitted') and the stage `next` hand-off; note admits omitting them.
+
+Fixed 2026-10-12 (Sonnet fixer): acceptance now sends the free stance change mid-window so a correct build passes it (the sketch refuses all commands once the window is full, matching the donor, whose stage has ended by then). Checker's line claim (numMoves reset at 336) not confirmed: flow.ts:337 is the `numMoves: 0` line, so the note's cite stays. Also found: none needed (activePlayers per-stage budget is already listed as omitted).

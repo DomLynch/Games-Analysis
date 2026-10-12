@@ -12,7 +12,7 @@ Acceptance: A server test sends two lines from one connection 0.2 s apart: the f
 
 Host intake, `OnHostReceive` (Chat.cs 215-268), in order:
 - (a) return if chat is disabled or the raw text is whitespace (217-218).
-- (b) for a client sender, read the connection's last-talked timer (222). If it is under 0.66 s, return silently (223). Reset the timer (224).
+- (b) when the message has a source connection (`source is not null`, 220; this includes the host's own line, since Say passes Connection.Host), read that connection's last-talked timer (222). If it is under 0.66 s, return silently (223). Reset the timer (224).
 - (c) clean the line (227): drop control, zero-width, bidi, line and paragraph separators and the BOM, then trim (`SanitizeMessage`, 184-210). If empty, return (228).
 - (d) clamp to the project maximum length (230-231).
 - (e) fire the scene event `IChatEvent` (239). It can suppress (241) or set a per-recipient filter (250).
@@ -46,7 +46,7 @@ Reports (`Reports.cs`): `Post` sends a package id and a flag reason (52-56). The
 | Reusable idea | Donor constant |
 |---|---|
 | Per-connection rate window | 0.66 s (Chat.cs 14) |
-| Maximum line length | Project setting `ChatMaxMessageLength` (Chat.cs 29); value not read |
+| Maximum line length | Project setting `ChatMaxMessageLength` (Chat.cs 29); default 255, editor range 32-256 (PlatformSettings.cs 42-43) |
 | Menu send cooldown, per player | 1 s (GlobalChatService.cs 24) |
 | Menu receive throttle, per sender | 0.5 s (GlobalChatService.cs 291) |
 | Menu body cap | 400 characters (GlobalChatService.cs 308) |
@@ -61,7 +61,7 @@ simplified: the sketch keeps the donor's clean-then-clamp order and the recipien
 ```ts
 // Licence: MIT (donor LICENSE.md). Clean-room sketch written from the described mechanism, not a translation of the donor lines.
 const RATE_LIMIT_S = 0.66; // donor value, Chat.cs line 14
-const MAX_LEN = 200;       // placeholder; the donor reads a project setting (ChatMaxMessageLength), value not read
+const MAX_LEN = 255;       // donor default of the project setting ChatMaxMessageLength
 
 interface Sender { id: string; lastSpokeAt: number | null; }
 
@@ -124,5 +124,13 @@ export {};
 - Gap: text filtering is Steam's native filter with the sender id (Chat.cs 83, 264; Steam.cs 107). Frankendom needs its own write-time blocklist (ruled); Steam's filter does not transfer.
 - Defect: `Reports.Post` swallows every exception (Reports.cs 58), so a failed report looks sent. Fix: return the result and show the player a failure message.
 - Note: a dedicated server logs the line text on its own (Chat.cs 257-259) without the Steam filter. Frankendom's moderation log should record the cleaned line, not the raw one.
-- Gap: no mute, ban, kick or moderation-log code was found in this repo. Mute tiers, durations, child-safety defaults and friends lists are not covered here.
+- Gap: no chat mute, ban or moderation-log code was found in this repo. Kick code does exist but is not chat moderation: PartyRoom.Message.cs 29 `Kick(SteamId)` and `Connection.Kick("Unauthorized RPC")` in Rpc.StaticRpc.cs 22 and Rpc.InstanceRpc.cs 117, 168. Mute tiers, durations, child-safety defaults and friends lists are not covered here.
 - Gap: menu history is stored in Steam lobby metadata with an 8 KB cap (GlobalChatService.cs 355-365). Frankendom has a server store; do not copy this.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Chat.cs (319 lines) path verified line by line: RateLimit 0.66 (14), sanitise ranges (184-210), whitespace/empty/clamp order, timer set at 224 before empty check at 228, RecipientFilter broadcast 250-254, dedicated-server log 257-259, host Steam filter 264, receiver block check 79-81. GlobalChatService numbers verified (1 s, 0.5 s, 400, 20, 8191, 100, dedupe, sender id from Friend). Reports.cs 8 flags and swallowed catch verified. Steam.cs FilterChat at 107. ERRORS: (1) Note says rate window applies 'for a client sender'; code is 'if (source is not null)' and Say passes Connection.Host for the host's own line, so the host is rate-limited too. (2) 'No mute, ban, kick ... found': PartyRoom.Message.cs:29 has Kick(SteamId) and Connection.Kick('Unauthorized RPC') is used in Rpc.StaticRpc.cs:22 / Rpc.InstanceRpc.cs:117,168 (not chat moderation, but kick code exists). (3) MaxMessageLength default is 255 (PlatformSettings.cs:43); note says value not read (honest, but easily readable).
+Missed: ChatMaxMessageLength default 255 (engine/Sandbox.Engine/Systems/Project/ProjectSettings/PlatformSettings.cs:43).
+
+Fixed 2026-10-12 (Sonnet fixer): rate window applies to the host too; max length default 255 (range 32-256) now stated; the no-kick claim narrowed to chat moderation with the kick code named. All verified. The sketch MAX_LEN changed from 200 to the donor default 255 (number only; typechecked).

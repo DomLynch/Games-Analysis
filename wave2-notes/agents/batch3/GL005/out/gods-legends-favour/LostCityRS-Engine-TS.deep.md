@@ -7,7 +7,7 @@ Checked: opened `PlayerOps.ts` 514-625 and 591-600 (all five stat ops and `STAT_
 ## 1. Mechanism
 
 - One ladder per stat. Each stat has a base level (`baseLevels`, from XP) and a current level (`levels`). `levels` is a `Uint8Array(21)` (Player.ts 298). Blessings and curses are ops on the current level, measured against the base or the current value.
-- Common order in every stat op: pop stat, constant and percent; reject bad arguments (`check` guards); read base and current; compute `delta = (constant + base x percent / 100) | 0` (the `| 0` truncates toward zero); clamp; write; call `changeStat` only if the value changed (for example PlayerOps 514-532 for `STAT_ADD`).
+- Common order in every stat op: pop stat, constant and percent; reject bad arguments (`check` guards); read base and current; compute `delta = (constant + base x percent / 100) | 0` (the `| 0` truncates toward zero); clamp; write; call `changeStat` only if the computed value (before the 255 cap) differs from current (for example PlayerOps 514-532 for `STAT_ADD`, compare at 529). So a change notice can fire when the cap leaves the stored value unchanged.
 - Blessing shape, `STAT_BOOST` (551-570): `boost = delta(base)`; `boosted = max(min(current + boost, base + boost), current)`; then capped at 255 (564). It raises the stat toward base + boost and never lowers it. A second identical boost is a no-op once the stat is at base + boost.
 - Heal, `STAT_HEAL` (610-630): `healed = current + delta(base)`; `max(min(healed, base), current)` (620-621). It restores up to base and never pulls a boosted stat down.
 - Curse by base, `STAT_SUB` (534-550): `subbed = current - delta(base)`, floored at 0 (544-545).
@@ -120,8 +120,17 @@ Brief rule served: GL-FOCUS 2 (blessings and curses as timed status rows on one 
 - The content scripts that call these ops are not in the repo. The meaning of each call (what a blessing is, how long it runs) is unknown from this donor.
 - Defect 1 (keep the idea, fix): the regen clock starts at 0 (Npc.ts 62), so the first turn regens at once. Fix: create the clock with `interval = regenrate`.
 - Defect 2 (keep the idea, fix): `STAT_RANDOM` clamps the level only from above (PlayerOps 595). A level of 0 makes `(L - 1)` equal -1 (596). Fix: clamp to 1..99 before the odds are computed.
-- Defect 3 (keep the idea, fix): the 255 cap is enforced per op (525, 564), not in one setter, and `levels` is a `Uint8Array` (298), which wraps at 256. Fix: put the cap in one setter that every write goes through.
+- Risk 3 (weak, not a proven defect): the 255 cap is enforced per op (525, 564), not in one setter, and `levels` is a `Uint8Array` (298), which wraps at 256. Every op read caps before writing, so no wrap path exists in the ops read. Advice only: a single capped setter would keep a future op from skipping the cap.
 - Rounding rule: `| 0` truncates toward zero, so a fractional curse rounds in the victim's favour. State the rule in the spec (floor or truncate) rather than inherit it.
 - Frankendom rulings: server-owned ladder (kills are server-verified). A curse that drains hit points to 0 must go through the death rule (row 17); the donor's death path (Player.ts 1940-1945, damage) was not read beyond grep.
+- Also found: `STAT_ADD`, `STAT_BOOST` and `STAT_HEAL` clear the hero-point ledger when hit points reach base (PlayerOps 526, 565, 623), so the buff ladder is coupled to the damage-credit ledger; the sketch drops this on purpose.
 - One ledger: blessings and curses are status rows on the one effect ladder, not a second meter. The Pit is a client (row 22), so the ladder runs in the engine only.
 - Second mechanism, not written up as a note (one note per cell): the damage-contribution ledger `HeroPoints` (16 slots per player and per NPC). `BOTH_HEROPOINTS` adds the attacker's damage to the target's ledger (PlayerOps 1232); `FINDHERO` and `NPC_FINDHERO` return the top contributor (PlayerOps 1204, NpcOps 130); `NPC_HEROPOINTS` adds to the NPC ledger (NpcOps 494). This is a live favour-by-contribution rule (the top hitter is credited). Donor defect: `addHero` drops any new attacker once all 16 slots are full (HeroPoints.ts 31-34), with no eviction. Fix: evict the lowest slot. Licence MIT: adaptable. Read: `HeroPoints.ts` in full; the script callers were read only at the lines cited.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: (1) note says changeStat fires if the written value changed; real code compares the pre-cap value (added/boosted vs current, PlayerOps 529, 568) so it can fire at the 255 cap. (2) Defect 3 (Uint8Array wrap) is weak: every op caps at 255 before writing, so no wrap path exists in the ops read. All formulas, line numbers, regen 100 default, 600 ms tick, HeroPoints 31-34, MIT licence verified
+Missed: STAT_ADD/BOOST/HEAL clear heroPoints when HP reaches base (PlayerOps 526,565,623) - a coupling of buff ladder to damage-credit ledger, listed only as dropped
+
+Fixed 2026-10-12 (Sonnet fixer): changeStat condition corrected (compares the pre-cap value; verified at PlayerOps 529, 568, 625); Defect 3 downgraded to a weak risk (no wrap path in the ops read); added the heroPoints-clear coupling as an Also found line. No sketch change.

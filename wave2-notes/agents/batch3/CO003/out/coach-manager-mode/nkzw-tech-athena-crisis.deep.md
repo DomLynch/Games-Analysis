@@ -140,3 +140,9 @@ export {};
 
 Reuse tag: rewrite-from-idea (MIT; clean-room sketch)
 Brief rule served: 1 (one engine), 2 (server-verified kills and changes)
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: Nit only: shouldActivatePower.tsx:83-100 applies the 0.5 ratio gate to every skill in the shouldConsiderUnitRatio true-list (buy/unlock/Charge etc), not just 'attack-type' powers. All other claims hold: getChargeValue.tsx 13-28, Action.tsx 521/553/554/556/557/609/613, canActivatePower 5-14, applyActionResponse 551, applyEndTurn 13, Player.tsx 100, Skill.tsx 374/375, Configuration 40/52/53, applyPower 156, MIT licence. Acceptance numbers check out (100*0.4*1=40; 100*0.4*0.33=13.2 -> 13; 3 bars=4500 > 2 banked=3000 refused). No acceptance clause would fail a correct build.
+Missed: attackBuilding also pays the occupant unit (chargeC, Action.tsx:621-626, 'playerC.id === playerB.id ? chargeB : playerC.charge' stacking) which the note only half-covers (not-read list); the Charge-skill 1.1 modifier is NOT applied to building-destroy payouts or the 0.5 counter weight path beyond what is noted (getChargeValue ignores modifier for non-units, line 13-24).

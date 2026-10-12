@@ -192,3 +192,9 @@ export {};
 - MAX_ATTACKERS = 3: the per-class cap for hit voices can be set to 3. That is our choice; the donor has no cap.
 - The per-object rule cuts an object's previous voice when a new one plays. In a fight a finisher voice could be cut by a hit cue on the same enemy; the priority steal only applies across the pool, so the finisher needs its own class (acceptance to test).
 - Not verified: the perceived loudness of the bed curve, and the real 2DA rows (not in the donor tree). Crossfade times, caps and the jitter band must be tuned on a 375 px phone with sound on; the donor has no measured values.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: All 6+ checked claims hold: Area::show plays sound then music (255-256), hide->stopSound stops music then sound, playAmbientMusic/Sound stop-then-play with day fallback and the day/night TODOs, volume CLIP 0..127 and 1.25*(1-5^(-v/127)) curve (0.69 at 63 true), setMusicBattleTrack stores 3 stingers and nothing reads them (getMusicBattleTrack no caller; script rows 430-432 are 0 at function_tables.h 566-568; row 569 also 0), Object::playSound stops previous voice first, pitch 1+((r/1000)/5-0.1) with RNG.getNext(0,1001) giving 0.9..1.1, kChannelCount 65535, newChannel linear scan throws 'All sound channels occupied', type gain config 140-143, update frees finished channels and thread waits 100 ms, XACT playCue weight-range pick, playSound warns on >1 track and plays tracks[0], waves[0], kWeightMaximum 10000, priority default 255, Jade playCue(0,_ambientMusicState) and CombatMusicState stored never used, GPL header. Not-read list is honest.
+Missed: NWN does implement script-driven day/night music switching (MusicBackgroundChangeDay/Night, GetDayTrack/GetNightTrack, function_tables.h 564-565 and 694-695), so 'day/night never chosen' is true only for the automatic area start, not for script control; a small nuance the note does not state.

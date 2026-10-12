@@ -12,10 +12,11 @@ Acceptance: when a player dies, the camera drops and the screen fades to black o
 
 Player death, as the code runs (PlayerDeath.cs):
 
-- (a) Health reaches zero. `DaggerfallEntity.SetHealth` clamps to 0..MaxHealth (333) and raises the death event when `currentHealth <= 0` (334-335). A shield effect absorbs incoming damage first (`DecreaseHealth` 315-325, 328).
+- (a) Health reaches zero. `DaggerfallEntity.SetHealth` clamps health between 0 and the entity's computed max health (line 333; max health is a per-entity value, not a constant) and raises the death event when `currentHealth <= 0` (334-335), unless the entity is in `quiesce` state (the raise is gated at 875-880). A shield effect absorbs incoming damage first (`DecreaseHealth` 315-325, 328).
 - (b) Death starts once. `PlayerEntity_OnDeath` returns if a death is already running or there is no camera (150-151). Otherwise it sets `deathInProgress = true` and `timeOfDeath = Time.fixedTime` (154-155), pauses input (156), records the camera height and sets a target height `height - height * 1.25` (159-160), fades the HUD to black over `FadeDuration` (162), plays the death pain sound (164-173), and raises `OnPlayerDeath` (175-176).
 - (c) Each frame while dying (`Update`, 77-96). Movement is cancelled (79). The camera falls while it is above the target: `currentCameraHeight -= fallSpeed * Time.deltaTime` (83), where `fallSpeed` = 2.5 (29). Position y is written (84-86).
 - (d) Return. When `Time.fixedTime - timeOfDeath > TimeBeforeReset` (89; `TimeBeforeReset` = 3, line 33), the start method is set to `TitleMenuFromDeath` (92), `deathInProgress` clears (93), and the camera resets to the start height (94; `ResetCamera`, 106-114).
+- (d2) What the return does (StartGameBehaviour.cs 325-350, `StartTitleMenuFromDeath`): resets the death camera, pops the UI to the HUD, clears the quest state (`QuestMachine.ClearState`), disables the parent interiors and resets the weapon manager, then posts the title-menu message. `StateManager` also switches to the Death state when `OnPlayerDeath` fires (StateManager.cs 141). So death ends the session and clears quests, though there is still no XP, item or durability penalty.
 - (e) ClearDeathAnimation (119-128) can end the beat early: it clears the fade, unpauses input and resets the camera.
 - (f) Enemy death (EnemyDeath.cs). The enemy entity's death event sets `performDeath` (161-167). `CompleteDeath` (62-141) waits while a quest-linked foe is not yet marked dead (67-73). It disables the enemy GameObject but does not destroy it, so the enemy's state is saved (76-77). It shows the death line (80-83), builds a lootable corpse marker with the enemy's corpse texture (85-101), unequips the enemy's head-to-feet items (107-116, so they are not marked as equipped), then moves every item the enemy owned into the corpse (123, take-all), plays a body-fall sound (126-129), and clears the player's alert only if this enemy was targeting the player (135-136). `OnEnemyDeath` is raised last (139-140).
 - (g) Corpse container. `GameObjectHelper.CreateLootableCorpseMarker` (786) finds the ground under the enemy (817), creates a `CorpseMarker` loot container (820-828), marks it as a custom drop and not player owned (832-833), and parents it to the dungeon, interior or streaming target (800-810).
@@ -38,7 +39,7 @@ Player death, as the code runs (PlayerDeath.cs):
 | Return to title after a fixed time from death (89) | 3 s (33) |
 | Input and movement locked while the beat runs (79, 156) | flag |
 | Death fires once per beat (150) | guard |
-| Health floor at zero, death at zero or below (333-335) | 0 |
+| Health floor at zero, death at zero or below (333-335), skipped while the entity is quiescent (875-880) | 0 |
 | Corpse keeps the enemy's items, all moved (123) | take-all |
 | Alert clears only when the dying enemy targeted the player (135-136) | flag |
 
@@ -114,7 +115,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 ## 6. Gaps and risks
 
 - MIT: code may be adapted; the sketch is still written from the mechanism, not copied.
-- No death penalty and no respawn penalty in this donor. The donor is not a source for the penalty; TrinityCore and OpenDAoC are. Death here ends the session into the title menu (PlayerDeath 92).
+- No death penalty and no respawn penalty in this donor. The donor is not a source for the penalty; TrinityCore and OpenDAoC are. Death here ends the session into the title menu (PlayerDeath 92), and that return also clears the quest state (StartGameBehaviour.cs 325-340), a real consequence even if not a penalty.
 - Defect 1, camera overshoot. The fall subtracts `fallSpeed * dt` while the camera is above the target and never clamps (PlayerDeath 81-86), so one frame can end below target. Fix: clamp (sketch).
 - Defect 2, mixed clocks. The fall uses `Time.deltaTime` (83) and the return uses `Time.fixedTime` (89, 155). Under a paused or scaled clock the two can disagree. Fix: one clock.
 - Defect 3, the death beat and the death state are one object. `deathInProgress` is set in the client (PlayerDeath 154) and the title return is a client action; Frankendom's rule is that kills are server-verified. Fix: the server sends the death; the client runs the beat.
@@ -125,3 +126,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 
 Reuse tag: rewrite-from-idea (MIT; adapted from the mechanism)
 Brief rule served: rule 4 (server-verified death; the beat is client) and rule 1 (one engine); parity row 17
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Mechanism 'clamps to 0..MaxHealth (333)' reads as value 333; 333 is the line number and MaxHealth is computed (DaggerfallEntity.cs:258 GetMaxHealth), not a constant. RaiseOnDeathEvent is gated by !quiesce (DaggerfallEntity.cs:875-880) not mentioned. Everything else verified (2.5 fall, 2 s fade, 3 s reset, 160 target, fixedTime vs deltaTime, EnemyDeath 62-141 incl TransferAll 123, alert clear 135-136, MIT).
+Missed: StateManager.cs:141 reacts to OnPlayerDeath with ChangeState(Death); StartGameBehaviour.cs:325 StartTitleMenuFromDeath also clears quest state (QuestMachine.ClearState) and pops UI, a real consequence of death the note says does not exist. Not a penalty, but part of the death flow.
+
+Fixed 2026-10-12 (Sonnet fixer): clarified that 333 is a line number and max health is computed per entity; added the quiesce gate on the death event; added the StateManager Death state and the StartTitleMenuFromDeath consequences (quest state cleared, UI popped) and softened 'no consequence' in the gaps. Sketch not changed.

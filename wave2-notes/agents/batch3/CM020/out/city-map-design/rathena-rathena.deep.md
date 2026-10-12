@@ -155,3 +155,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 Reuse tag: rewrite-from-idea (GPL-3.0; clean-room only)
 Brief rule served: zones as data; HUD client-only (parity row 14)
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: All checked claims hold: navi_create_lists 633-653 order (638,640,644,648); id bases 13350 (460) and 11984 (471); skip filters 466-469; both-map warp recording 462-463/481-483; type code 102/101 at 393; name before # at 384; mob 300/301 by mexp at 406; map_type 318-319, 322-328, 334-338 and the segmented defect is real (find_if results compared to warps_into.end(); predicate effectively always true); null deref ShowError at 379 real; A* 154-283 (start unchecked 168, goal checked 173, diagonal rule 245-258, goal test on pop 234, len by parent links 267); heuristic 63 with inadmissible comment at 62; costs 10/14 path.hpp 11-12; buffer 1024 navi.hpp; P rows commented 594-601; E rows 603-610; npc distance 527-541 and skip rules 555-562; Lua output via write_header 298-300, filePrefix line 28, files 424-427; GPL v3 LICENSE ok; npc/cities has 27 files.
+Missed: (1) navi_walkpath_data.path_len is uint8 (navi.hpp ~35) while the buffer is 1024 and the overflow check at 268 allows len up to 1024, so step counts above 255 wrap silently; the note presents 1024 as the path limit without this. (2) NPC link entries also get warp ids (480-483) - note only mentions it in the both-maps line. Neither changes the recommendation.

@@ -197,3 +197,9 @@ Defects found, each with the fix:
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 Brief rule served: zones as data; row 23 zone content placement; one seed, one town, server and client agree.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: None found. Verified: placeStartingEntities 75-101 (dist 6, space 2, angle formula line 90, silent skip at 101 via placeEntityPassable RandomMap.js 289-295); CityPainter 4-84 (maxCount default Infinity 13, 0.5 step 44-45, shuffle 53, angle 59, break 81, TODO 37); g_PlayerBaseFunctions 17-27; Kush layout 11 entries, fortress 25/road 8, CC 60, barracks 12, tower 17, market 15, no maxCount in jebel_barkal; athen.json StartEntities; LICENSE GPL v3-or-later for binaries/data.
+Missed: Minor: the layout also has forge 30 and camps 30, stable 20, elephant stable 10 (not cited); difficulty-gated entries use 'uncapturable|' prefix. Nothing important missed.

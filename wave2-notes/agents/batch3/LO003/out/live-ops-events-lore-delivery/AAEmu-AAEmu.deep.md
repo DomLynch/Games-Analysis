@@ -149,3 +149,9 @@ Best transferable idea: One zone-event row (weekday, start and end minute, optio
 
 Decision (proposed): adapt - keep the row shape and the aggregate rule as zone data for timed invasions and events, but apply the time of day on every day the row covers, use one clock, and compute the next switch once per zone instead of one cron string per spawner.
 Acceptance: A zone row set to Friday 20:00 to 22:00 UTC with no date range opens its spawn group only between 20:00 and 22:00 each Friday: a server test asserts Friday 19:59 closed, 20:00 open, 21:59 open, 22:01 closed and Saturday 20:30 closed; a row with a last date reports Ended after that date and never reopens.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: All checked claims hold: CheckData 321-363 (UTC 323, weekday enum +1 at 328, time-of-day only on first bound date 346 and never when startDate==MinValue, ended needs end date 357), CheckPeriodStatus 162-193 precedence, NotFound at 137-138/151-152, last-row-wins at 233 (also 209) vs min in GetRemainingTime 253-255, dead sentinel '0 0 0 0 0 ?' at DoodadSpawner 288/328/384/452 vs Replace('?','*') at GameScheduleManager 585, NPC gate 1021-1047, fallback window 1065-1080 with wrap helper 1149-1161, doodad spawn gate 362-412, despawn 264-297, TODO quests at 296, CheckSpawnerScheduler indexer at 97, BuildCronExpression 590-596 (8 -> '*'), DayOfWeek enum Sunday=1..Invalid=8. Licence: README says LGPL-3.0-or-later wording; LICENSE.GPL and LICENSE.MIT exist; note's 'unclear' is honest. Sketch and acceptance (Fri 20:00-22:00 UTC cases) are consistent and would pass.
+Missed: Doodad spawn Ended branch (DoodadSpawner 413+) not described; note says 412 onward not read (honest). Donor repo has AGENTS.md (treated as data, not followed).

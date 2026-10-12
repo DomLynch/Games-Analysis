@@ -6,8 +6,8 @@ Checked: Read in full: `tod_manager.cpp` 214-279 (illumination), 526-541 (index 
 
 ## 1. Mechanism
 
-- A scheduled clock, read from data. The scenario supplies an ordered list of phases, one `[time]` child each (time_of_day.cpp:72). The phase for a turn is `modulo(currentIndex + turn - currentTurn, N)` (tod_manager.cpp:541), where `N` is the list length and the modulo returns a value in `[0, N)` (math.hpp:60). So the list wraps forever with no stored timetable. Current phase = the turn-index with `turn == currentTurn`, which is just `currentIndex` (`get_time_of_day` sets `n_turn = turn_` at 190-191 and calls `get_time_of_day_turn` at 202; that calls the index function at 449). Previous phase uses `turn_ - 1` (tod_manager.cpp:156).
-- Order of steps for one tile's light (`get_illuminated_time_of_day`, tod_manager.cpp:214-279): (a) start from the phase's `lawful_bonus`; (b) the terrain's light modifier, evaluated with the phase's bonus, gives `terrain_light` (222); (c) for each unit with an `illuminates` ability within its radius (default 1 hex, `all_map` = unlimited; 237-238), record the source's modifier, the highest `max_value` and lowest `min_value`, and track the most positive (`most_add`) and most negative (`most_sub`) modifier (227-251, one pass); (d) the net direction is `net_darker = most_add < -most_sub` (257); the base is `terrain_light + (net_darker ? most_add : most_sub)` (261); (e) each source gives `bounded_add(base, mod, max, min)` (264), and the most extreme result in the chosen direction wins (265-271); (f) the result is written back as `lawful_bonus` and the difference as `bonus_modified` (274-275).
+- A scheduled clock, read from data. The scenario supplies an ordered list of phases, one `[time]` child each (time_of_day.cpp:72). The phase for a turn is `modulo(currentIndex + turn - currentTurn, N)` (tod_manager.cpp:541), where `N` is the list length and the modulo returns a value in `[0, N)` (math.hpp:60). So the list wraps forever. The clock is not stateless: `currentTime_` is stored and `set_turn` rewrites it every turn (see Also found), but the schedule itself needs no timetable. Current phase = the turn-index with `turn == currentTurn`, which is just `currentIndex` (`get_time_of_day` sets `n_turn = turn_` at 190-191 and calls `get_time_of_day_turn` at 202; that calls the index function at 449). Previous phase uses `turn_ - 1` (tod_manager.cpp:156).
+- Order of steps for one tile's light (`get_illuminated_time_of_day`, tod_manager.cpp:214-279): (a) start from the phase's `lawful_bonus`; (b) the terrain's light modifier, evaluated with the phase's bonus, gives `terrain_light` (222); (c) for each unit that is not incapacitated (`u.incapacitated()` units are skipped) and has an `illuminates` ability within its radius (default 1 hex, `all_map` = unlimited; 237-238), record the source's modifier, the highest `max_value` and lowest `min_value`, and track the most positive (`most_add`) and most negative (`most_sub`) modifier (227-251, one pass); (d) the net direction is `net_darker = most_add < -most_sub` (257); the base is `terrain_light + (net_darker ? most_add : most_sub)` (261); (e) each source gives `bounded_add(base, mod, max, min)` (264), and the most extreme result in the chosen direction wins (265-271); (f) the result is written back as `lawful_bonus` and the difference as `bonus_modified` (274-275).
 - The bounded add (math.hpp:46-53): a positive modifier can raise the value only up to `max(base, max_sum)`, a negative one can lower it only down to `min(base, min_sum)`. A source can never pull a tile back past a cap that the tile already exceeds.
 - Turn events, once per turn. At the start of a side's turn (play_controller.cpp:507-519): the `turn_N` and `new_turn` events fire only if the latch `has_turn_event_fired` is clear (513-515), and the latch is then set (516). The side events `side_turn`, `side_N_turn`, `side_turn_T` and `side_N_turn_T` fire for every side after that block (519-522). The latch is cleared in `tod_manager::next_turn` (579-584) after the turn number goes up (581-582).
 - Tick: turn-based. The turn number is the tick; there is no per-frame loop for the clock that I read. `get_illuminated_time_of_day` computes one tile's light when called; its callers were not read, so I do not claim how often it runs.
@@ -64,12 +64,12 @@ function boundedAdd(base: number, inc: number, maxSum: number, minSum = 0): numb
   return Math.max(base + inc, Math.min(base, minSum));
 }
 
-interface Illuminator { distance: number; radius: number; delta: number; min: number; max: number; }
+interface Illuminator { distance: number; radius: number; delta: number; min: number; max: number; incapacitated: boolean; }
 
 // Light at one tile: terrain light plus nearby sources. The larger total push sets the direction;
 // each source is bounded by its own min and max; the most extreme result in that direction wins.
 function tileLight(terrainLight: number, sources: Illuminator[]): number {
-  const inRange = sources.filter(s => s.distance <= s.radius);
+  const inRange = sources.filter(s => !s.incapacitated && s.distance <= s.radius);
   let mostAdd = 0;
   let mostSub = 0;
   for (const s of inRange) {
@@ -114,6 +114,8 @@ class TurnClock {
 - Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 - Brief rule served: zones as data on one runtime; server-verified state (the phase and the latch are server values); client-only camera, HUD and sound are not touched.
 
+- Also found: the real tick is `tod_manager::set_turn` (tod_manager.cpp 491-507), which calls `set_new_current_times` (544-551) to move the stored `currentTime_` (and each time area's own current time) to the new turn's index, and sets `has_tod_bonus_changed_` when the new phase's `lawful_bonus` differs. Time areas (per-hex schedule overrides) are read in `get_time_of_day`, 194-199. `next_turn` (579-584) calls `set_turn(turn_ + 1)` and then clears the latch.
+
 ## 6. Gaps and risks
 
 - GPL-2.0-or-later: clean-room only. The sketch is written from the mechanism, not translated.
@@ -127,3 +129,11 @@ class TurnClock {
 Decision (proposed): adapt — keep the modulo phase clock and the once-per-tick latch, key them to server seconds, store the phase list as zone data, and keep light out of combat until a ruling says otherwise.
 Acceptance: a server test with a 3-phase zone schedule asserts the phase at tick T equals phases[(start + elapsed) mod 3] across two full cycles, and a zone event fires once when two players trigger the same tick.
 Best transferable idea: a zone's day/night and event schedule is a list of data phases indexed by modulo of elapsed server time, with a once-per-tick latch so an event fires once no matter how many players cause the tick.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Verified: modulo index tod_manager.cpp 535-541, fix_time_index, liminal floor 25 at line 55, current_time default 0 at 63, illumination 214-279 order, bounded_add math.hpp 46-53, turn latch play_controller 513-516 and side events, next_turn 579-584, GPL header. Slips: illumination loop skips u.incapacitated() units (not mentioned); 'wraps forever with no stored timetable' is misleading since currentTime_ is stored state that set_turn mutates every turn.
+Missed: set_turn -> set_new_current_times (tod_manager.cpp 491-524, 544-551) advances currentTime_ each turn and sets has_tod_bonus_changed_; this is the real tick mechanism and the note never opened it. Areas override the schedule per hex (get_time_of_day 194-199). Build risk: none found; Acceptance (phases[(start+elapsed) mod 3] over two cycles, event fires once for two players) is consistent with the sketch, provided the latch is cleared by advance().
+
+Fixed 2026-10-12 (Sonnet fixer): verified that illumination skips incapacitated units (added to mechanism and sketch) and that the clock keeps stored state rewritten by set_turn (wording fixed, 'Also found' line added for set_turn / set_new_current_times / time areas). Acceptance unchanged: it holds because advance() clears the latch. Sketch retypechecked.

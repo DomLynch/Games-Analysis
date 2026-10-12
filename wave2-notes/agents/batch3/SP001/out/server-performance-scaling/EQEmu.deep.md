@@ -116,3 +116,9 @@ Acceptance: a zone with 200 NPCs and one player: when the player leaves, NPC AI 
 
 Reuse tag: rewrite-from-idea (GPL-3.0; clean-room only)
 Brief rule served: zones as data (zone fields for the grace and gate); row 18 sub-line "per-tick NPC budget" for the gate
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: No errors found. Verified: zone loop 32 ms (main.cpp:636) and pass order incl. MobProcess 604, zone->Process 611, quest timers; EntityList::Process = CheckSpawnQueue (3128-3131); idle gate 471, grace start 473-482, expiry 485/492/494, disable-on-return 498-501, old_client_count 505, s2 read 507 (CastToNPC unchecked static_cast, only _EQDEBUG checked, entity.cpp:73-81; clients added to mob_list at 316), process condition 514-518, depop-only 522; defaults 1 / 60 (zone_store.cpp:723/729, manifest 5218-5219); client_update_range 600 (manifest 6323, zone.cpp:1385); AIthink 50 ms (features.h:147, mob_ai.cpp:434), gates 696/969, scan timer 500-6000 (mob_ai.cpp:452, ruletypes 691-692); scan 6000/60000 (mob.cpp:8581-8582); MobCloseScanDistance 600 (ruletypes:765), GetCloseMobList fallback to full list (5731-5738); donor comment numbers 2,520,000 / 144,000 and the '1-6 seconds' mismatch; QueueCloseClients >= distance continue (1745); path_while_idle spawn2.h:56; GPL-3.0.
+Missed: The whole grace-timer state machine lives INSIDE the per-mob while loop of MobProcess (entity.cpp 461-505), so it only advances when mob_list is non-empty and is re-evaluated once per mob per tick (idempotent, but costly and it never starts the grace timer in a zone with zero mobs). The note describes it as a once-per-tick gate; the sketch's update() once per tick is a reasonable fix but the donor quirk is not recorded.

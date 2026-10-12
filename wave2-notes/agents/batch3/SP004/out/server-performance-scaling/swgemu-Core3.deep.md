@@ -37,16 +37,19 @@ For a phone and a small Node server: the 8-unit split floor and the crossing-bas
 
 ## 4. TypeScript sketch
 
-simplified: The sketch keeps the donor's shape: a lazy quadtree that splits on the second insert while a side is over 8 units, a conservative node test, a radius query that culls nodes before entities, and a move step that removes pairs on the crossing edge (previous position) and adds pairs now in range. It omits: the bounding-object rule (objects crossing a boundary stay in the parent; the sketch files each entity in one leaf), the mutex and the zone lock, the root-parent redirection for objects in containers, the `notifyPositionUpdate` refresh for pairs already known (592), the active areas, the light and full transform messages, and node cleanup on empty leaves. The split condition is the donor's: split while either side is over 8 (`QuadTree.cpp` 306 stops only when both are 8 or less).
+simplified: The sketch keeps the donor's shape: a lazy quadtree that splits on the second insert while a side is over 8 units, a conservative node test, a radius query that culls nodes before entities, and a move step that removes pairs on the crossing edge (previous position) and adds pairs now in range. It adds the re-file step the donor has in `QuadTree::update` (105-137; `_update`), which the first version of this sketch dropped: `move` takes the entity out of its old leaf and files it at the new position before the interest refresh, and `insert` builds the first interest set. The refresh returns enter and leave events per pair. The caller no longer sets prevX/prevY. It omits: the bounding-object rule (objects crossing a boundary stay in the parent; the sketch files each entity in one leaf), the mutex and the zone lock, the root-parent redirection for objects in containers, the `notifyPositionUpdate` refresh for pairs already known (592), the active areas, the light and full transform messages, and node cleanup on empty leaves. The split condition is the donor's: split while either side is over 8 (`QuadTree.cpp` 306 stops only when both are 8 or less).
 
 ```ts
 // Licence: AGPL-3.0 (donor). Clean-room sketch written from the described mechanism, not a translation of the donor lines.
 // clean-room
+export interface Edge { a: Entity; b: Entity; }
+export interface Interest { enters: Edge[]; leaves: Edge[]; }
+
 export interface Entity {
   readonly id: number;
   x: number;
   y: number;
-  prevX: number;             // position before the last move
+  prevX: number;             // position before the last move (move() sets it)
   prevY: number;
   readonly interest: Set<Entity>; // entities this one currently sees
 }
@@ -83,8 +86,35 @@ export class AoiIndex {
     this.root = new QNode(x0, y0, x1, y1);
   }
 
-  insert(e: Entity): void {
+  // Insert and fill the first interest set. Returns the enter events.
+  insert(e: Entity): Interest {
+    e.prevX = e.x;
+    e.prevY = e.y;
     this.place(this.root, e);
+    return this.updateInterest(e);
+  }
+
+  // Donor QuadTree::update: take the entity out of its old leaf (found by the OLD position) and file it at the new
+  // one, then refresh the interest set. Without this step a moved entity stays in a stale leaf and queries miss it.
+  move(e: Entity, nx: number, ny: number): Interest {
+    e.prevX = e.x;
+    e.prevY = e.y;
+    this.removeFromTree(e, e.prevX, e.prevY);
+    e.x = nx;
+    e.y = ny;
+    this.place(this.root, e);
+    return this.updateInterest(e);
+  }
+
+  remove(e: Entity): Interest {
+    this.removeFromTree(e, e.x, e.y);
+    const leaves: Edge[] = [];
+    for (const other of [...e.interest]) {
+      e.interest.delete(other);
+      other.interest.delete(e);
+      leaves.push({ a: e, b: other });
+    }
+    return { enters: [], leaves };
   }
 
   // Radius query: whole nodes are culled before their entities are tested.
@@ -94,10 +124,19 @@ export class AoiIndex {
     return out;
   }
 
-  // Call after an entity moved: x/y are the new position, prevX/prevY the old one.
-  // Leave when it is out of range now but was in range before; enter when it is in range now.
-  updateInterest(mover: Entity): void {
+  private removeFromTree(e: Entity, x: number, y: number): void {
+    let n = this.root;
+    while (n.kids) n = this.childFor(n, x, y);
+    const i = n.items.indexOf(e);
+    if (i >= 0) n.items.splice(i, 1);
+  }
+
+  // Leave when it is out of range now but was in range before; enter when it is in range now and was not in the set.
+  // Each pair fires one enter when it crosses in and one leave when it crosses out.
+  private updateInterest(mover: Entity): Interest {
     const r2 = this.range * this.range;
+    const enters: Edge[] = [];
+    const leaves: Edge[] = [];
 
     for (const other of [...mover.interest]) {
       const nowOut = dist2(mover.x, mover.y, other.x, other.y) > r2;
@@ -105,14 +144,17 @@ export class AoiIndex {
       if (nowOut && wasIn) {
         mover.interest.delete(other);
         other.interest.delete(mover);
+        leaves.push({ a: mover, b: other });
       }
     }
 
     for (const other of this.query(mover.x, mover.y, this.range)) {
-      if (other === mover) continue;
+      if (other === mover || mover.interest.has(other)) continue;
       mover.interest.add(other);
       other.interest.add(mover);
+      enters.push({ a: mover, b: other });
     }
+    return { enters, leaves };
   }
 
   private place(n: QNode, e: Entity): void {
@@ -178,16 +220,25 @@ Typecheck: the block above (with `export {}`) was saved as `work/core3-aoi-quadt
 
 - Copyleft: clean-room. The sketch is written from the mechanism.
 - Scaling: the donor walks the whole close set on every move (`QuadTree.cpp` 162-188), so cost is per move times local density. At 1,000 to 10,000 players in one zone this is the first thing to measure. Frankendom needs a cap or a per-tick budget on enter and leave work, or it has to coarsen the grid when a zone is crowded. (Not measured.)
-- Locking: `QuadTree::update` and `inRange` take the tree mutex (108, 148). Our Node server is single-threaded per zone, so the mutex is not needed; do not copy it. The zone lock in `GroundZoneComponent::updateZone` (105) is the part that would matter if zones ever ran on threads.
-- Pair symmetry: the leave test uses the mover's previous position against the other object's current position (`QuadTree.cpp` 175-176, 597-600). This is exact when the other object did not move in the same tick. A pair where both move in one tick was not tested (I did not run the code), so the acceptance test below must cover that case.
+- Locking: `QuadTree::update` takes the tree mutex (108); `inRange` takes a read lock on it (148). Our Node server is single-threaded per zone, so the mutex is not needed; do not copy it. The zone lock in `GroundZoneComponent::updateZone` (105) is the part that would matter if zones ever ran on threads.
+- Pair symmetry: the leave test uses the mover's previous position against the other object's current position (`QuadTree.cpp` 175-176, 597-600). This is exact when the other object did not move in the same tick. A pair where both move in one tick was not tested (I did not run the code). The acceptance below moves one entity at a time, which the logic covers; simultaneous moves of both members of a pair are open and need a separate test.
 - Bounding objects: objects that cross a child boundary stay in the parent (327-328). The sketch files each entity in one leaf. If Frankendom adopts the donor's rule, a large fight body near a zone seam could be in a parent node and be found by every query that passes the parent. Not decided here.
+- Also found: `QuadTree::update` (105-137) is the re-file step that keeps the index valid while entities move; a build must have it (the sketch's `move`).
 - Persistence: the write is an engine thread not in the donor. The character batch in the donor (`ObjectManager.cpp` 1035-1086) clears dirty rows with a DELETE keyed on rows read earlier. A row marked dirty between the read and the DELETE could be cleared without being written. This is not verified: it depends on how `characters_dirty` rows are written, which is not in this box. For us, the rule is to clear a dirty flag only with the version that was written.
 - The zone object range is not in the donor box (not read), so no number from it goes into the data fields.
 - Ruling check: "server-verified kills" and "one ledger" are not touched by the interest set. Kills must still be decided in the fight step, and the interest set only decides who is told.
 
 Best transferable idea: keep an explicit per-player interest set that changes only on crossings (enter when in range now, leave when it was in range before and is out now), fed by a radius query that culls whole quadrants before testing entities, so the server sends only pairs that changed.
 Decision (proposed): adapt. Keep the crossing-based enter and leave on each move and the node-culled radius query (idea). Use a Frankendom-specific cap on enter and leave work per tick, and make the radius data per zone, not a global constant. Reject the donor's mutex and its character-batch clear (the defect above is fixed by clearing with the written version).
-Acceptance: a server test runs 2,000 random moves of 20 entities in a 512-unit zone and asserts that after every move each entity's interest set equals the brute-force set of entities within range, and that every pair fires one enter and one leave per crossing.
+Acceptance: a server test inserts 20 entities in a 512-unit zone (insert fills the first sets), then runs 2,000 random single-entity moves through `move` and asserts that after every move each entity's interest set equals the brute-force set of entities within range, and that the enter and leave events returned by `move` match the brute-force change in each pair (one enter on the crossing in, one leave on the crossing out, none otherwise). Both-members-move-in-one-tick is a separate case.
 
 Reuse tag: rewrite-from-idea (AGPL-3.0 copyleft; clean-room only)
 Brief rule served: 1 (one engine; the interest set is a view, not a ledger)
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Donor claims verified: QuadTree::update 105-137 (mutex 108); inRange 139-209 (note says tree mutex at 148: it is a ReadLocker, minor); previous position 157-158; leave loop 162-188 with now-out 174 and was-in 178; _inRange object 558-629 (enter/notify 579-592, leave 596-611); range query 717-745; TreeNode::testInRange 165-179 matches the sketch's mayHit; _insert 283-330 split rule at 301 and stop only when both sides <= 8 at 306, bounding skip 327; updateZone lock 105, update 123, unlock 125, inRange 129; +64 pad at GroundZoneComponent 430; 500 ms poll ZoneServerImplementation 285-286; updatePersistentObject only sets dirty bit 494-498; onCommitData 1053-1100 (REPLACE + one DELETE) and read at 1035/1037; AGPL v3 COPYING and README 'any later version'. Problems: 1) The TS sketch cannot satisfy the stated Acceptance (2,000 random moves of 20 entities, interest set equals brute force). It has no remove/re-file step, so a moved entity stays in its old leaf (the donor's QuadTree::update at 105-137 is exactly that step, which the sketch drops); queries cull by the old leaf box and will miss moved entities. Nothing in the sketch writes prevX/prevY (caller must), and insert() does not fill the interest set, so the first-time pairs are never created unless the test calls updateInterest for every entity. 2) The Acceptance asserts 'every pair fires one enter and one leave per crossing' but the sketch emits no enter/leave events, only set edits. 3) 'Pair symmetry' risk is raised but left to the test; the sequential-move case is consistent in the donor logic, only simultaneous moves are open. A correct build needs re-file on move plus events or the test will fail on the sketch as written.
+Missed: The donor's re-file step (QuadTree::update -> _update) and the bounding-object rule are what keep the index valid while entities move; the note lists bounding as omitted but not the re-file as a requirement.
+
+Fixed 2026-10-12 (Sonnet fixer): verified QuadTree::update re-files the object (105-137) and inRange takes a read lock at 148 (not the write mutex). Sketch gained insert-fills-interest, move (re-file then refresh), remove, and enter/leave events, so the acceptance is satisfiable; acceptance now says single-entity moves; typechecked on the VPS.

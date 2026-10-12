@@ -123,3 +123,9 @@ function attemptCatch(t: CatchTarget, c: CatchContext, roll: () => number): Catc
 Best transferable idea: a capture is one server roll against a catalogue rate out of 10000 that rises as the target's HP falls (C * (200 - hp%) / 100, floor 1), gated by a lure match, distance, a free slot and visibility, and spent on every attempt.
 Decision (proposed): adapt - keep the single roll, the HP-scaled rate and the floor, but make a zero rate an explicit "not capturable" flag (the donor's floor turns 0 into 0.01%) and consume the lure in the same server step as the roll (the donor's FIXME).
 Acceptance: a server test with a catalogue rate of 2000 asserts that a full-HP target is captured in about 20% of seeded rolls and a target at 1% HP in about 40%; a roll above the rate leaves the target alive and the lure spent; a rate of 0 refuses the attempt outright.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: All verified: GPL-3 licence, gate order in pet_catch_process_end, flags, rate formula pet.cpp 1330-1332, floor 1, scale, rnd_chance(1..10000), kill-before-intif_create_pet order, FIXME at ~1267, conf values 17-29, 107 active CaptureRate entries with 27 at 0, max 5000, Poring 2000. No fabrications.
+Missed: pet_catch_process_start (1214-1234) already refuses on the no-capture map flag (MF_NOPETCAPTURE) before storing the process; note lists that gate only at confirm (b) and says start 'Nothing is rolled' - small omission, harmless.

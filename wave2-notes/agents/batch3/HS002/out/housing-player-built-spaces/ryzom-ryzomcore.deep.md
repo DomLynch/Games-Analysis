@@ -135,3 +135,9 @@ Acceptance: a player enters a friend's house and the instance is created; the fr
 
 Reuse tag: rewrite-from-idea (AGPL-3.0; clean-room only)
 Brief rule served: zones as data; server-verified choices; parity row 23 (despawn on empty)
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: All checked claims hold: allocateRoom 652-672 (cell = -2-(idx<<1) at 659), pool step 128/1 at 149-151, reallocRooms resize at 679, removePlayerFromRoom 618-649 (free-list push 642-647), addUser 81-140 (alloc 118, template check 119, lookup 131-137), CRoomInstancePlayer::removeUser 134-165 (--_RefCount 152, resetRoomCell with user->getId() at 158 under non-FORGE build, release 160), release 249-256 only removes bots, isValid refcount!=0 (room_instance.h 132-134), onPlayerDeletion 486-540 (tp at 523, swap at 528-535, STOP_IF 533, state++ 539), addPlayer 185-201, getOwnerIdx side effect 214-223, resetRoomCell 228-242, triggerTeleport uint16 session 728-746, erases at 744/752/762 without timer delete vs removeTriggerRequest 524-525, TriggerRequestTimout 300 (egs_variables 431), MaxEntryPerLiftPage 8, AGPL COPYING. RYZOM_FORGE_ROOM only appears in source files (not cmake) as stated. Defect 1 is real. Acceptance is satisfiable by the sketch. Minor note: sketch/Decision keep 16-bit wrap but Defect 5 says use 32-bit; test passes either way.
+Missed: addUser rejects a dead visitor (building_physical.cpp 96-100, currentHp<=0); note never mentions it and the sketch has no alive check. Also addUser rejects owner index >= Cells.size (89-93).

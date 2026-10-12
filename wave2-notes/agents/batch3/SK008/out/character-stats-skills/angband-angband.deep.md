@@ -2,7 +2,7 @@
 
 Donor: `/mnt/frankendom-donors/angband-angband/src/player-calcs.c` | Licence: GPL-2.0 or the "Angband licence" (dual; file header and docs/copying.rst) | C | symbol `calc_blows`
 
-Checked: Symbol `calc_blows` at 1703-1735 (read in full), with its two call sites in `calc_bonuses` (2305 weapon, 2318 unarmed; grep shows no other callers in src). Also read: the STR and DEX blow tables (548-592, 594), the 12x12 `blows_table` (889-911, checked row by row against the sketch), the heavy-weapon gate (2251, 2298-2304), the stat-index mapping (2063-2072), skill assembly (1905, 2240-2249), stat-to-combat terms (2217-2236), HP and mana (1493-1574), melee to-hit and crit (`player-attack.c` 88-109, 196-219, 399-432, 763, 807), and the class and constants data (`lib/gamedata/class.txt` 144-187, 1391-1607; `constants.txt` 219-265). camera_scope: not applicable (not a camera cell). Confidence: high on the blow path and the hit and crit formulas; medium on level-50 numbers (hand-computed from the formulas, not run). Not read: where `calc_bonuses` is triggered, `calc_shapechange` (2031, extra blows from shapes), the spell and school code, and the monster-side attack. The donor has no player stamina, poise or stun (grep of src and lib/gamedata; the only "stagger" is monster movement at `mon-move.c` 1067-1071).
+Checked: Symbol `calc_blows` at 1703-1735 (read in full), with its two call sites in `calc_bonuses` (2305 weapon, 2318 unarmed; grep shows no other callers in src). Also read: the STR and DEX blow tables (548-592, 594), the 12x12 `blows_table` (889-928, checked row by row against the sketch), the heavy-weapon gate (2251, 2298-2304), the stat-index mapping (2063-2072), skill assembly (1905, 2240-2249), stat-to-combat terms (2217-2236), HP and mana (1493-1574), melee to-hit and crit (`player-attack.c` 88-109, 196-219, 399-432, 763, 807), and the class and constants data (`lib/gamedata/class.txt` 144-187, 1391-1607; `constants.txt` 219-265). camera_scope: not applicable (not a camera cell). Confidence: high on the blow path and the hit and crit formulas; medium on level-50 numbers (hand-computed from the formulas, not run). Not read: where `calc_bonuses` is triggered, `calc_shapechange` (2031, extra blows from shapes), the spell and school code, and the monster-side attack. The donor has no player stamina, poise or stun (grep of src and lib/gamedata; the only "stagger" is monster movement at `mon-move.c` 1067-1071).
 
 ## 1. Mechanism
 
@@ -23,7 +23,7 @@ Checked: Symbol `calc_blows` at 1703-1735 (read in full), with its two call site
 ## 2. Key functions
 
 - `calc_blows`: `/mnt/frankendom-donors/angband-angband/src/player-calcs.c` 1703-1735. The whole blow count. (Read in full.)
-- `blows_table`: same file, 889-911. The 12x12 energy table; the header comment (862-888) explains the P and D indexes.
+- `blows_table`: same file, 889-928. The 12x12 energy table; the header comment (862-888) explains the P and D indexes.
 - `adj_str_blow` 548-592 and `adj_dex_blow` 594 (table start). Stat-to-band tables.
 - `calc_bonuses`: same file, 1877 on. Builds the whole stat sheet in one pass; calls `calc_blows` at 2305 and 2318; heavy-weapon gate at 2298-2304.
 - Melee to-hit: `/mnt/frankendom-donors/angband-angband/src/player-attack.c` `chance_of_melee_hit_base` 88-94 (base chance), `chance_of_melee_hit` 104-109 (unseen halves), `hit_chance` 196-220 (P of hit), `test_hit` 174-178. Called from `py_attack_real` (717 on) at 763.
@@ -38,7 +38,7 @@ Each row: name | what it does | formula | number ranges | caps | file:line.
 | Stat index (STR, DEX, INT, WIS, CON) | Maps the stat value to a table index | 0 if use <= 3; use - 3 for 4-18; 15 + (use - 18) / 10 for 18/00-18/219; 37 for 18/220+ | 0-37 | 37 | 2063-2072 |
 | STR blow band | Strength term of the blow count | adj_str_blow * class multiplier / max(weight, class min-weight) | 3-240 before division; row 0-11 | row 11 | 1718-1722; 548-592 |
 | DEX blow band | Dexterity term of the blow count | adj_dex_blow[DEX index] | 0-11 | 11 | 1725; 594 |
-| Blow energy | Cost of one blow in hundredths of a turn | blows_table[row][col] | 15-100 | table limits | 1728; 889-911 |
+| Blow energy | Cost of one blow in hundredths of a turn | blows_table[row][col] | 15-100 | table limits | 1728; 889-928 |
 | Blows per turn | Attacks per turn | min(10000 / energy, 100 * max-attacks) + 100 * bonus blows; floor 100 | 1.00-6.00 blows (100-600) | class max-attacks (4-6) | 1730-1734 |
 | Class strength multiplier | How much STR counts for blows | data per class | Mage 2, Warrior 5, Rogue 4 (others 3-5: Druid 3, Priest 3, Necromancer 3, Paladin 5, Ranger 4, Blackguard 5) | none | class.txt 151, 187, 464, 702, 971, 1230, 1392, 1498, 1608 |
 | Class min weapon weight | Floor on the weight used for blows | max(weight, min-weight), tenths of a pound | 20-100 (Warrior 30, Mage 40, Rogue 20, Blackguard 100) | floor | class.txt 150, 186, 1391, 1607 |
@@ -57,7 +57,7 @@ Each row: name | what it does | formula | number ranges | caps | file:line.
 | Encumbrance speed loss | Speed lost when carrying too much | if weight > limit / 2: speed -= (weight - limit/2) / (limit/10) (integer) | 1 speed per tenth of limit over half | speed clamp 0-199 (seen, not receipted) | 2224-2226 |
 | Fear | Afraid state | to_h -= 20; to_a += 8; device skill scaled down | fixed | none | 2217-2218 |
 | Max HP | HP per level from CON | player_hp[lev - 1] + adj_con_mhp[CON] * lev / 100; floor lev + 1 | table values (not read per value) | floor 1 per level | 1568-1574 |
-| Mana | Pool from spell stat | msp += adj_mag_mana[spell stat] * levels / 100; levels = lev - spell_first + 1 | table values (not read per value) | levels clamp 0 | 1493-1498 |
+| Mana | Pool from spell stat | msp = 1, then msp += adj_mag_mana[spell stat] * levels / 100; levels = lev - spell_first + 1; msp = 0 when levels <= 0 | table values (not read per value) | levels clamp 0 | 1493-1498 |
 | INT and WIS skills | Stat-driven skills | device += adj_int_dev; disarm magic += adj_int_dis; save += adj_wis_sav | table values | none | 2240-2243 |
 | DEX skill | Disarm (physical) | disarm phys += adj_dex_dis | table values | none | 2240 |
 | STR digging | Digging | digging += adj_str_dig, floor 1 | table values | floor 1 | 2244; 2248 |
@@ -118,7 +118,7 @@ const example: number = blowsPerTurn({
 export {};
 ```
 
-Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS passed (no errors). The table was compared row by row with `player-calcs.c` 889-911 (12 of 12 rows equal).
+Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS passed (no errors). The table was compared row by row with `player-calcs.c` 889-928 (12 of 12 rows equal).
 
 ## 5. Lands in
 
@@ -143,3 +143,11 @@ Acceptance: server test: for a warrior with STR 18/10 and DEX 18/50, a 1.2 lb da
 
 Reuse tag: adapt-idea (GPL-2.0 or Angband licence; clean-room, shape only)
 Brief rule served: 1 (one engine); 7 (licence: clean-room)
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: blows_table is cited as 889-928 but spans 889-928 (12 rows; row 11 at ~927); the note says it was compared row by row - the table content in the sketch is correct for all 12 rows. Mana: note says 'msp += adj_mag_mana * levels / 100' but donor starts msp = 1 then adds it (player-calcs.c ~1496-1497). Everything else verified: calc_blows 1703-1735, floor 200 under birth_percent_damage, call sites 2305/2318, num_blows default 1900, heavy gate 2298-2304, class.txt multipliers/min-weight/max-attacks incl. Rogue 20 vs header comment 30, worked examples 454/303/238 correct, hit_chance 12%/5%/floor 9, crit constants (scale 1/5/0/1, -60, range 5000, levels 400/700/900/1300), crit at 807 excluded for unarmed, stat index 0/3-18/15+/37, encumbrance, fear -20/+8, stealth 30 cap.
+Missed: Dual-licence line is fine. Nothing important missed in calc_blows.
+
+Fixed 2026-10-12 (Sonnet fixer): blows_table cite widened to 889-928 (table with comments, 12 rows, last row near 927); mana row now starts at msp = 1 and is 0 when levels <= 0 (player-calcs.c 1492-1499). No significant missed mechanism per checker. Both verified over ssh; sketch unchanged.

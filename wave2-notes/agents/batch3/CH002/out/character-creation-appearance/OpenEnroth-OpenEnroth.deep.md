@@ -148,3 +148,9 @@ Not run: none of this was executed; every claim above is from reading the code a
 - Faces and scars: the donor has a 20-entry face and voice list and no scar or wound appearance on creation. Scars-as-grades cannot be taken from this code.
 - Name rules: a 15-character limit while typing (234). No character set or word check was read in this creation path (not read).
 - LGPL-3.0: clean-room. The sketch is written from the mechanism; no donor line is translated.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: Cost formula, race table (all 28 rows), step swap, floor base-2, cap, OK gate (UI 203), ChangeClass, voice/face cycles, voice 22 gap (GetSexByVoice default assert), body type, licence all verified against Character.cpp and UIPartyCreation.cpp. Only nit: none material.
+Missed: UIPartyCreation 190-196 caps extra skill picks via GetSkillIdxByOrder(3)==INVALID (only 2 picks beyond 2 primaries) - touched but not stated as the 4-skill rule's source.

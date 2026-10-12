@@ -101,3 +101,9 @@ export { stepFight, onKo, mayShowFlash, ATTRACT_RESET_MS, OBSTACLES_PER_ARENA };
 - Donor detail (not traced to a bug): the attract reset and the battle end both use one variable, `menuTimer`. The attract branch clears it at 1570 and the battle branch at 1601. I did not trace whether a switch from attract to the menu during the 2400 ms wait can fire a stale reset (restart and the menu switch were not read). Fix in Frankendom: one timer owner per mode, cancelled on every mode change.
 - The attract fight reuses the same `updateAI` as the player's enemy (1790, 1792). Fine for a demo; it means attract fights run the full AI cost every frame. Frankendom's per-tick NPC budget (post-K item 3) should cap attract fights like any other fight.
 - Not read: `updateAI` body, `restart()`, `buildArena`, `ARENA_SHAPES` values, and the title screen markup.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: none found; handleVictory 1563-1612 attract branch 2400 ms and no ledger, 1789-1792 two AI steps, 1479 flash gate, 1088-1089 and 1279-1281 session flag, 1102-1103 lock, 1866-1867 start, randomShape 530-533, GPL-3 plus restricted note all match. Honest not-read list. The stale-timer worry is largely covered by the mode==='attract' re-check inside the timeout (main.ts:1572) and the !gameOver check at 1603
+Missed: btn-start click calls openMenu() to end attract (main.ts:1286) - the actual exit path from attract, which the note says was not read

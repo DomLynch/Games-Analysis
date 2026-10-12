@@ -10,7 +10,7 @@ Checked: Read in full: `SbbGen.zig` (all 97 lines), `SbbEnumerationGenerator.zig
 - A blueprint marks its attachment points as child blocks (slots) and its anchor as an origin block. `BlueprintEntry.init` (sbb.zig 96-148) strips the origin and slot markers out of the pasted voxels and keeps their positions and faces. More than one origin is an error (sbb.zig 114).
 - Placement (`SbbGen.placeSbb`, lines 59-77), in order:
   1. Pick one alternative with the seeded alias sampler (`getBlueprints`, sbb.zig 334). A `null` alternative returns at once (SbbGen 60).
-  2. Align the blueprint's origin face to the face the parent exposes. `alignDirections` returns the number of quarter turns that do this (SbbGen 80-90). Then apply the rotation mode: a fixed mode adds its turns to the alignment; random or inherit use the alignment alone (sbb.zig 176-181).
+  2. Align the blueprint's origin face to the face the parent exposes. `alignDirections` returns the number of quarter turns that do this (SbbGen 80-90). Before the first placement, `SbbGen.generate` (line 56) turns the kit's rotation setting into a starting rotation (`getInitialRotation`, sbb.zig 182-188): fixed stays, random becomes fixed with a random 0-3 turns, inherit becomes fixed 0. Then the rotation is applied: a fixed rotation adds its turns to the alignment (sbb.zig 176-181; the random and inherit branches of `apply` give the alignment alone but are not reached for roots, since the start is already fixed). A kit whose rotation entry fails to parse defaults to random (SbbGen 38-46). The paste mode defaults to `degradable` (SbbGen 49).
   3. Paste position = attach point minus the rotated origin minus one step out along the attach face (SbbGen 69).
   4. Paste the blueprint with the structure's paste mode (SbbGen 71).
   5. For each slot in the rotated blueprint with a configured child, place the child at paste position plus the slot offset, facing the slot's face, with rotation fixed 0 for horizontal slots (SbbGen 73-76; sbb.zig 192-199).
@@ -45,7 +45,7 @@ Checked: Read in full: `SbbGen.zig` (all 97 lines), `SbbEnumerationGenerator.zig
 
 ## 4. TypeScript sketch
 
-simplified: The sketch keeps the donor order: sample one alternative (null ends the branch), align the origin face, paste so the rotated origin sits one step behind the attach point, then recurse into each configured slot with rotation fixed 0 for horizontal slots. It changes two things on purpose: (1) recursion is capped at `MAX_DEPTH = 8` (fix; the donor has no cap, and a cycle in the children map with no null alternative would not terminate); (2) the alias table is replaced by a cumulative pick over the same weights (the same distribution, without the O(1) table). It omits: up and down slots and their rotation rules (the SBB's own `rotation` field is read only there), the voxel paste itself, the four pre-rotated blueprint variants (the sketch rotates positions directly; the origin and the slots use the same rotation, so the paste offset cancels), block registration, the signs and the column and row enumeration, and the paste mode.
+simplified: The sketch keeps the donor order: sample one alternative (null ends the branch), align the origin face, paste so the rotated origin sits one step behind the attach point, then recurse into each configured slot with rotation fixed 0 for horizontal slots. It adds `initialMode` for the root's starting rotation (random by default, as the donor). It changes two things on purpose: (1) recursion is capped at `MAX_DEPTH = 8` (fix; the donor has no cap, and a cycle in the children map with no null alternative would not terminate); (2) the alias table is replaced by a cumulative pick over the same weights (the same distribution, without the O(1) table). It omits: up and down slots and their rotation rules (the SBB's own `rotation` field is read only there), the voxel paste itself, the four pre-rotated blueprint variants (the sketch rotates positions directly; the origin and the slots use the same rotation, so the paste offset cancels), block registration, the signs and the column and row enumeration, and the paste mode.
 
 ```ts
 // Licence: GPL-3.0 text only (donor LICENSE file; no per-file headers found). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -115,10 +115,17 @@ function placeSbb(sbb: Sbb, at: Vec, attach: Dir | null, mode: Mode, depth: numb
   }
 }
 
-// A world root is placed with zero turns (donor: the enumeration pins roots to fixed 0).
-export function placeRoot(root: Sbb, at: Vec, rand: () => number): Placed[] {
+// Donor getInitialRotation: a fixed mode stays, random becomes fixed with a random 0-3 turns, inherit becomes fixed 0.
+// Default for a kit with a bad rotation entry is random (donor SbbGen.zig 44). The enumeration pins its roots to fixed 0.
+function initialMode(mode: Mode, rand: () => number): Mode {
+  if (mode.kind === "fixed") return mode;
+  if (mode.kind === "inherit") return { kind: "fixed", turns: 0 };
+  return { kind: "fixed", turns: Math.floor(rand() * 4) as Turns };
+}
+
+export function placeRoot(root: Sbb, at: Vec, rand: () => number, rotation: Mode = { kind: "random" }): Placed[] {
   const out: Placed[] = [];
-  placeSbb(root, at, null, { kind: "fixed", turns: 0 }, 0, rand, out);
+  placeSbb(root, at, null, initialMode(rotation, rand), 0, rand, out);
   return out;
 }
 
@@ -144,7 +151,16 @@ Acceptance: a server test with a fixed seed builds a hub with three named servic
 - GPL-3.0: clean-room only. The sketch is written from the mechanism; no donor line is translated.
 - Donor defect, recursion: no depth limit in the donor (`placeSbb`, SbbGen 59-77). A children cycle with no `null` alternative would not terminate. fix: depth cap (sketch `MAX_DEPTH`) and reject cycles when the kits load. The enumeration's own recursive case (SbbEnumerationGenerator 73-95) does allow cycles, so the risk is real, not theoretical. The sketch caps depth; Frankendom should also reject cycles at load.
 - Donor defect, seed: the seed for these structures is `worldSeed*wpy` (174): a plain product, so a row's seed is shared by every cell in that row, and the product has as many trailing zero bits as the row coordinate has factors of two. Whether the RNG tolerates this was not read. fix: derive a per-cell seed by a hash of the zone seed and the cell (not in the sketch).
-- Donor defect, dead field: roots take zero turns in the enumeration, so an SBB's own `rotation` field does nothing for roots and nothing for horizontal children (sbb.zig 199). fix: drop the field for kits that are not up or down slots, or make the loader honour it for roots (the sketch omits it).
+- Donor defect, dead field: in the world enumeration roots are pinned to zero turns, so an SBB's own `rotation` field does nothing for roots and nothing for horizontal children (sbb.zig 199). fix: drop the field for kits that are not up or down slots, or make the loader honour it for roots (the sketch omits it).
+- Data defaults a kit author relies on: rotation `random` and paste mode `degradable` (SbbGen 38-49).
 - Signage here is a block entity whose text is the structure id (SbbEnumerationGenerator 159). That is a dev label, not a player-facing name; a shop or inn sign needs its own text data.
 - The donor's blue-noise candidate placer (`SimpleStructureGen.zig`, `noise/BlueNoise.zig`) is a separate, real mechanism for spacing and LOD density (chance `1-(1-p/16)^(s*s)` for far samples). It was read and is not in this note; it is a candidate for row 23 spawn density in another cell.
 - Frankendom ruling: one engine, server-verified state. The donor runs this placement in `src/server/terrain` (server code) from a seed per chunk, so the layout is a function of the seed and not a client choice. Frankendom should keep the same property: generate the zone layout on the server from a zone seed, or ship it as data, and have the client render what the server sent.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Step 2 / sketch: note says random or inherit rotation 'use the alignment alone' and the sketch's turns for non-fixed modes = alignment only; but SbbGen.generate:56 first calls getInitialRotation(seed) (sbb.zig:~182-190) which turns a random root into fixed(random 0-3), so a random-mode root gets random turns plus alignment (apply() then adds, sbb.zig:176-181). The note never mentions getInitialRotation, so the sketch cannot reproduce random-rotation roots (the donor default rotation on a parse error is .random, SbbGen.zig:44). Otherwise all checked lines hold: placeSbb 59-77, pastePosition 69, alignDirections 80-97, getChildRotation fixed 0 for horizontal (sbb.zig:199), chance default 1.0 (sbb.zig:251), enumeration defaultState disabled (:30), roots 65-69, sort 101, pins 111-112, index mod (145), heights 0/128 (148), sign row 1023 (152), sign id (159), seed worldSeed*wpy (174), alias sample (utils.zig 188-194), GPL-3.0 LICENSE, saguaro.zig.zon content.
+Missed: SbbGen.zig:49 placeMode default 'degradable' and :44 default rotation .random (data defaults a kit author relies on); sbb.zig getInitialRotation for roots.
+
+Fixed 2026-10-12 (Sonnet fixer): step 2 and the sketch now include the root's starting rotation (getInitialRotation: random becomes a random 0-3 fixed turn), so random-rotation roots work (placeRoot takes a rotation, default random); noted the rotation=random and placeMode=degradable defaults. Verified over ssh (SbbGen.zig 36-56, sbb.zig 170-200); sketch re-typechecked.

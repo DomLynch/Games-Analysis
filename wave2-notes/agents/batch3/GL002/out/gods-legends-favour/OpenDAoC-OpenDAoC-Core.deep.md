@@ -171,3 +171,9 @@ Grep counts above are file counts from one `grep -rliw` pass over GameServer, Co
 
 Reuse tag: rewrite-from-idea (GPL-3.0; clean-room only)
 Brief rule served: one engine (the bonus is applied in the engine's damage and heal step, not in the client); kills and carry state server-verified; rule numbers in the focus brief n/a
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: All claims verified: eRelicType 11-16; RELIC_EFFECT_INTERVAL 4000 at 23; ReturnRelicInterval = RELIC_RETURN_TIME*1000 at 39; Interact order (carrying/dead/stealth refusals 56-72, own realm 76, CanPickupRelicFromShrine 82, enemies>=16 for players 89-96, backpack add, CurrentCarrier 105, pad removal 111, Realm=0 119); GetEnemiesOnPad radius 500 at 218 vs PAD_AREA_RADIUS 250 at 17; MountRelic refuses at 3 (134), capture credit VISIBILITY_DISTANCE*5 at 165-168, Realm set 182; CarrierTimerTick 334-367 with frontier block commented out; SetHandlers 373-377 events; PlayerAbsence 389-406; PlayerLoosesRelic 228-273 and the stale drop position defect is real (CurrentCarrier nulled at 258, Update returns at 218 before the call at 269); ReturnRelicTick 275-300; GetRelicBonusModifier 194-220 and 209/214/219 exactly as described; CanPickupRelicFromShrine 222-250; 5 call sites match (SpellHandler 2947, HealSpellHandler 115, AttackComponent 986, Arrow 242, GamePlayerUtils 340-341); defaults 10 / 20*60 / 16; GetDaysSinceCapture 129 unused; GPL v3 ok.
+Missed: Minor: when the return pad is full, RelicPadTakesOver fails (MountRelic returns false) and ReturnRelicTick still stops and nulls its timer (lines ~303-305), so the relic stays on the ground forever with no retry; the sketch retries each tick instead and the note only says it 'stays on the ground; donor logs an error'. PlayerAbsence sets Realm=0 (391) on every event including drops of unrelated items. Not important.

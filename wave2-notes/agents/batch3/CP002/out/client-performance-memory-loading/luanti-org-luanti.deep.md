@@ -98,3 +98,9 @@ Acceptance: A Vitest on the limiter: at 30 fps focused and 10 fps unfocused, 10 
 - Coupling: in single-player the donor ties the local server's fixed step to the client's fps choice (game.cpp 2119-2132). Frankendom must not do this: the server tick is fixed by server rules (row 18), and a background tab must never slow the server.
 - No uncapped mode: the minimum is 1 fps (43). Unlike the Mindustry and Cubyz donors, there is no unlimited option, which suits a phone.
 - Not read: the body of `Game::run` between the read lines, `client->step` (dtime handling), and `porting::sleep_us`.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: All checked claims hold: FpsControl::limit order and lines 38-69, preciseSleepUs 230-243, SLEEP_ACCURACY_US 2000 (win, porting.h 35) / 200 (posix, 43), defaults fps_max 60 / unfocused 10 (defaultsettings.cpp 253-254), min 1 (settingtypes 488-496), server step clamp 1..60 and simple_singleplayer_mode condition (game.cpp 2119-2132), shutdown loop 663-669, LGPL 2.1 line. Acceptance (300+-3 / 100+-2 frames; <=16 frames in 500 ms at 30 fps) is consistent with the sketch (15 frames) and would not fail a correct build.
+Missed: None significant. (Not noted: this limiter also drives the shutdown overlay loop; irrelevant.)

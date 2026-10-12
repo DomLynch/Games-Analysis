@@ -135,3 +135,9 @@ Acceptance: a server test where a 20:00-21:00 broadcast is sent exactly once at 
 
 Reuse tag: rewrite-from-idea (GPL-3.0-or-later; clean-room only)
 Brief rule served: 1 (one runtime, zones as data); server-verified state; rules 7-9 n/a
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: All checked claims hold: Process gates (world 32, zone 28), broadcast/reload_world filter 57-59, ValidateEventReadyToActivate 78-141 incl cron +10 at 92, zero-means-unset tests 244-265, end/start passes zone 47-82 / 85-149, active-list clear 67/79, in-loop RemoveActiveEvent, CheckIfEventsChanged 163-209, croncpp cron_next 884-889 adds 1 s on equality (supports the cron defect reasoning), table manifest, callers main.cpp:608 and 388, GPL-3.0-or-later header.
+Missed: None significant.

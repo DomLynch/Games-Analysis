@@ -8,20 +8,21 @@ Best transferable idea: Let a content row copy a base row by id and override onl
 
 Decision (proposed): adapt - take copy-from with proportional and relative deltas for legend and zone rows (one base per archetype, each legend a short delta), plus the retry loader and the strict key check. Reject: the mod-set global option (`EXTERNAL_OPTION`, which any mod can set and where the last load wins), because live balance numbers must be owned by the server, not by a mod load order. Clean-room, since CC-BY-SA-3.0.
 
-Acceptance: A staff legend row copies `legend-bull` and sets `proportional: {hp: 1.2}`; the preview shows 1.2x the base hp before publish. A row with a typo key (for example `hpp`) is refused at save with "unknown field", and a row whose base id does not exist is refused with that id named (not a generic "circular" message). Server test: loadRows() returns the child's delta applied over the base, a second pass resolves a row listed before its base, and a row with an unknown key adds an error.
+Acceptance: A staff legend row copies `legend-bull` and sets `proportional: {hp: 1.2}`; the preview shows 1.2x the base hp before publish. A row with a typo key (for example `hpp`, including inside `proportional` or `relative`) is refused at save with "unknown field" and is not stored, and a row whose base id does not exist is refused with that id named (not a generic "circular" message). Server test: loadRows() returns the child's delta applied over the base, a second pass resolves a row listed before its base, and a row with an unknown key adds an error and is absent from the loaded map.
 
 ## 1. Mechanism
 
 - Content unit: a JSON object with a `type` (dispatch, init.cpp 155-160) and an `id`. An object with `abstract` is a template: stored in an `abstracts` map and never spawned (generic_factory.h 283; cleared at finalize, 420).
 - Inheritance: a row with `copy-from` starts from the base's loaded fields. The base is looked up first in the loaded map (250), then in the abstracts (256). If neither has it, the row is deferred (263, `jo.allow_omitted_members()` before the defer).
 - Deferred loading: `finalize` calls `load_deferred` (419). That loop (init.cpp 186-215) makes passes over the list. Each pass tries every pending object; an object that still lacks its base goes back into the list. If a pass leaves the list the same length (no progress), each remaining object gets an error "JSON contains circular dependency, this object is discarded" (205) and the list is cleared. So the result does not depend on file or mod order, except for overrides (below).
-- Deltas on a copy-from row (only when the base loaded; otherwise the row gets a "no copy-from" warning, 952-955): for each numeric field, the order is (a) a direct value in the row wins (`jo.read` first, 957); (b) else a `proportional` scalar multiplies the inherited value (829-833: scalar must be greater than 0 and not 1; otherwise `debugmsg` and no change); (c) else a `relative` adder adds to it (899). Deltas are applied to the base value, so a child of a child multiplies its parent's already-changed value.
+- Deltas on a copy-from row (only when the base loaded; otherwise the row gets a "no copy-from" warning, 952-955): for each numeric field, the order is (a) a direct value in the row wins (`jo.read` first, 957); (b) else a `proportional` scalar multiplies the inherited value (829-833: scalar must be greater than 0 and not 1; otherwise `debugmsg` and no proportional change, and the chain falls through to the relative step, 957-958); (c) else a `relative` adder adds to it (899). Deltas are applied to the base value, so a child of a child multiplies its parent's already-changed value.
+- Abstract rows: a row with both `abstract` and `id` is a thrown error (generic_factory.h 268-271); an abstract row is keyed by its abstract name.
 - Unknown keys: after a row is read, any member that was never visited is an error (json.cpp 153-156: "Invalid or misplaced field name ... in JSON data"), unless the key begins with `//` (comment keys are allowed, 153). This catches typos at load.
 - Duplicate ids: `insert` replaces in place when the id exists (401-403). If the two definitions come from the same source, `check_duplicate_entries` throws (mod_tracker.h 79). From different sources, the later load wins.
 - Mod metadata (modinfo.json): `type` MOD_INFO, `id` (duplicates are refused with debugmsg, mod_manager.cpp 246; a `#` in the id is refused, 250; self-dependency is an error, 304). `category` is checked against a fixed list and cleared if unknown (read from 257). `dependencies`, `conflicts`, `core`, `obsolete` are read (mod_manager.cpp 233 onward, the optional calls).
 - Conflicts: `find_mod_conflict` checks the candidate against each active mod's conflicts list and the candidate's own list (mod_manager_ui.cpp 71-87); the add is refused with "It conflicts with" (106). World creation runs the same check over the whole active order (worldfactory.cpp 196-202).
 - Cycles in the mod dependency graph: `check_for_strongly_connected_components` (dependency_tree.cpp 365-395) marks nodes in any strongly connected component of size greater than one with "In Circular Dependency Cycle" (392). The routine `strong_connect` (396) was not read.
-- Mod load order: the main path uses `active_mod_order`, a list fixed when the world is created (game_io.cpp 529-531 comment: the list is already in order); duplicates are removed keeping the first (the comment is at 511; the filter and the core-mod insert follow it). The `--check-mods` path builds its dependency list in a `std::set` (game_io.cpp 192), which iterates in `operator<` order (string_id.h 235), not dependency order.
+- Mod load order: the main path uses `active_mod_order`, a list fixed when the world is created (game_io.cpp 529-531 comment: the list is already in order); duplicates are removed keeping the first (the comment is at 511; the filter and the core-mod insert follow it). The `--check-mods` path builds its dependency list in a `std::set` (game_io.cpp 192), which iterates in `operator<` order (string_id.h 230-235: a total order on the interned id, not alphabetical and not stable across process restarts), not dependency order.
 - External options: a mod's `EXTERNAL_OPTION` (type int, float, bool or string) sets a named option (worldfactory.cpp 2059 onward). `stub` marks a no-op (2063-2068). Each set overwrites the value (2079), so the last loaded mod wins. The sample is Magiclysm's `PLAYER_MAX_STR_VALUE` with value 35 (data/mods/Magiclysm/modinfo.json line 17).
 - In-game JSON editor (debug menu): `edit_json` serializes the object, lets the author edit the text, then on "rehash" deserializes into a temporary and swaps only on success (183-184). A failure shows "Error on deserialization" (187) and keeps the old object.
 - Publishing or rating: not read. A grep of `src/` for "workshop" or "publish" found only unrelated files (butchery.cpp, cata_tiles.cpp and similar), not read further.
@@ -51,7 +52,7 @@ Acceptance: A staff legend row copies `legend-bull` and sets `proportional: {hp:
 
 ## 4. TypeScript sketch
 
-simplified: The sketch keeps the donor's order: copy-from base first (loaded map, then abstracts); a direct value wins over a delta; a proportional scalar is checked (greater than 0, not 1) and multiplies; a relative adder adds; unknown keys are errors except `//` keys; a pass with no progress stops and names the missing base. It differs in four places. (1) It omits the `debugmsg` path and the warnings, returning errors in one list. (2) It does not handle lists, sets or maps (the donor's `relative` and `extend`/`delete` on containers, generic_factory.h 1122-1643); only numbers, which is all the sketch needs. (3) It does not check same-source duplicates (mod_tracker.h 79) or conflicts. (4) The donor's wording for the no-progress case says "circular dependency" even when a base id is missing; the sketch names the base and says it is missing or in a cycle, which is the fix.
+simplified: The sketch keeps the donor's order: copy-from base first (loaded map, then abstracts); a direct value wins over a delta; a proportional scalar is checked (greater than 0, not 1) and multiplies; a relative adder adds; unknown keys are errors except `//` keys; a pass with no progress stops and names the missing base. It differs in four places (and refuses a row with an unknown key outright, where the donor reports the error at the end of that row's read). (1) It omits the `debugmsg` path and the warnings, returning errors in one list. (2) It does not handle lists, sets or maps (the donor's `relative` and `extend`/`delete` on containers, generic_factory.h 1122-1643); only numbers, which is all the sketch needs. (3) It does not check same-source duplicates (mod_tracker.h 79) or conflicts. (4) The donor's wording for the no-progress case says "circular dependency" even when a base id is missing; the sketch names the base and says it is missing or in a cycle, which is the fix.
 
 ```ts
 // Licence: CC-BY-SA-3.0 (donor, LICENSE.txt). Clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -71,12 +72,16 @@ export interface LoadResult { finished: Map<string, Fields>; abstracts: Map<stri
 
 // Build one row's fields from its base (if any). Direct values win; a delta is used only when the row
 // has no direct value for that field. Deltas without a base are ignored with an error.
-function buildFields(base: Fields | undefined, row: Row, schema: Set<string>, errors: string[]): Fields {
+// Returns null (row refused) when any key, including a delta key, is not in the schema.
+function buildFields(base: Fields | undefined, row: Row, schema: Set<string>, errors: string[]): Fields | null {
   const out: Fields = { ...(base ?? {}) };
-  for (const key of Object.keys(row.fields)) {
-    if (!schema.has(key) && !key.startsWith("//")) errors.push(`${row.id}: unknown field '${key}'`);
-    out[key] = row.fields[key];
+  let refused = false;
+  const allKeys = [...Object.keys(row.fields), ...Object.keys(row.proportional ?? {}), ...Object.keys(row.relative ?? {})];
+  for (const key of allKeys) {
+    if (!schema.has(key) && !key.startsWith("//")) { errors.push(`${row.id}: unknown field '${key}'`); refused = true; }
   }
+  if (refused) return null;
+  for (const key of Object.keys(row.fields)) out[key] = row.fields[key];
   const deltaKeys = new Set([...Object.keys(row.proportional ?? {}), ...Object.keys(row.relative ?? {})]);
   for (const key of deltaKeys) {
     if (key in row.fields) continue;       // direct value wins; the delta is not applied
@@ -85,9 +90,12 @@ function buildFields(base: Fields | undefined, row: Row, schema: Set<string>, er
     if (typeof cur !== "number") { errors.push(`${row.id}: delta on non-number '${key}'`); continue; }
     const scalar = row.proportional?.[key];
     if (scalar !== undefined) {
-      if (scalar <= 0 || scalar === 1) { errors.push(`${row.id}: invalid scalar ${scalar} for '${key}'`); continue; }
-      out[key] = cur * scalar;
-      continue;
+      if (scalar <= 0 || scalar === 1) {
+        errors.push(`${row.id}: invalid scalar ${scalar} for '${key}'`); // donor: no change, then falls through to relative
+      } else {
+        out[key] = cur * scalar;
+        continue;
+      }
     }
     const adder = row.relative?.[key];
     if (adder !== undefined) out[key] = cur + adder;
@@ -110,6 +118,7 @@ export function loadRows(input: Row[], schema: Set<string>): LoadResult {
       const base = row.copyFrom === undefined ? undefined : (finished.get(row.copyFrom) ?? abstracts.get(row.copyFrom));
       if (row.copyFrom !== undefined && base === undefined) { deferred.push(row); continue; }
       const fields = buildFields(base, row, schema, errors);
+      if (fields === null) continue; // refused: unknown field
       if (row.abstract) abstracts.set(row.id, fields); else finished.set(row.id, fields);
     }
     pending = deferred;
@@ -140,7 +149,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020 /tmp/cdda-co
 - Copyleft (CC-BY-SA-3.0): no lines copied. The sketch and this note describe the mechanism only.
 - Override by order: the main path's override is by load order (game_io.cpp 529-531; later load wins by insert, generic_factory.h 401-403). Frankendom must not let two sources override the same legend silently; the same-source check (mod_tracker.h 79) is the start, and a publish step must also refuse a second definition from another author.
 - Mod-set tunables: `EXTERNAL_OPTION` lets a mod set a number by name, and the last load wins (worldfactory.cpp 2079). For Frankendom every balance number must be a server-owned row with a version, never a client or mod global. Reject this part.
-- Check path order: the `--check-mods` path builds its dependency list in a sorted set (game_io.cpp 192), so its load order is alphabetical, not the order of the dependency graph. This can change which override wins between the check run and the game. Fix in our tool: use the dependency order.
+- Check path order: the `--check-mods` path builds its dependency list in a `std::set` (game_io.cpp 192), so its load order follows interned-id order (string_id.h 230-235), not the order of the dependency graph and not a stable alphabetical order. This can change which override wins between the check run and the game. Fix in our tool: use the dependency order.
 - The no-progress message says "circular dependency" for every remaining row (init.cpp 205), including rows whose base is simply missing. Fix: name the base, as in the sketch.
 - The delta applies to the inherited value, so a chain of multipliers compounds (a child of a child multiplies its parent's changed value). Frankendom should show the flattened value in the preview, not only the delta.
 - Scalar rule: `proportional` 1 is refused as "invalid", which is correct for a no-op but can confuse authors. Our preview should say "no change" rather than error.
@@ -151,3 +160,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020 /tmp/cdda-co
 
 Reuse tag: adapt-idea (CC-BY-SA-3.0, clean-room)
 Brief rule served: zones and legends as data (Frankendom ruling: one engine, zones as data); one ledger (balance numbers are server rows, not mod globals).
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: 1) Gaps/mechanism say the --check-mods path 'iterates in alphabetical order' (std::set<mod_id>): string_id.h 230-235 says operator< 'guarantees total order but DOESN'T guarantee the same order after process restart; use LexCmp for predictable lexicographic order' - so order is by interned id, not alphabetical (the 'not dependency order' part is right; game_io.cpp 190-194). 2) Delta order: note says invalid proportional scalar gives 'debugmsg and no change' (generic_factory.h 829-830) - true, but handle_proportional then returns false so optional() falls through to handle_relative (957-958 uses && chain); a row with an invalid proportional AND a relative on the same field would still apply the relative; sketch 'continue's instead. 3) Line drift: load_deferred 186-215 correct; handle_inheritance 245-285 correct. All other cited facts verified (copy-from lookup order map then abstracts, deferral, no-progress 'circular dependency' message at init.cpp 205, '//' keys in json.cpp 153, '#' in id 250, self-dependency 304, conflicts 71-110 and worldfactory 196-202, EXTERNAL_OPTION overwrite and Magiclysm value 35 at modinfo line 17, edit_json swap-on-success, same-source duplicate throw mod_tracker.h 79).
+Missed: Donor also throws if a row has both 'abstract' and 'id' (generic_factory.h 268-271) - not covered. Also set_weights: finalize order reuse not relevant. BUILD-TEST FLAG (mild): Acceptance says a typo key 'hpp' is 'refused at save', but loadRows only appends an error and still stores the row in 'finished'; and a typo inside 'proportional'/'relative' (e.g. proportional:{hpp:1.2}) is not checked against the schema, it only yields 'delta on non-number'. Server test as worded ('adds an error') passes; the 'refused' wording does not.
+
+Fixed 2026-10-12 (Sonnet fixer): --check-mods order is interned-id order, not alphabetical (string_id.h 230-235); invalid proportional scalar falls through to relative in the donor and now in the sketch; sketch now refuses rows with unknown keys (including inside proportional/relative) so the "refused at save" acceptance holds; acceptance reworded to say the row is not stored. Also found: a row with both `abstract` and `id` throws (generic_factory.h 268-271).

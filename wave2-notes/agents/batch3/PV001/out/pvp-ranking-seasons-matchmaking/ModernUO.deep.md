@@ -7,7 +7,7 @@ Checked: Opened all of `Ladder.cs` (1-384, read in full), `DuelContext.cs` 760-9
 Best transferable idea: Scale a 1v1 result's rating change by the level gap through a small win/loss table, so beating a much higher opponent pays more and losing to a lower one costs more, with the loss scaled down at low levels.
 
 Decision (proposed): adapt - keep the gap table and the low-level loss shrink, but store the XP on the character's one ledger and make the ladder a view over it (a second ladder table would break the one-ledger ruling); fix the two defects listed in section 6.
-Acceptance: A server test: two equal-level (level 1) characters duel in the Pit, A wins, A gains 25 XP and B loses 25; a level-5 character beating a level-3 character gains 20; reading the ladder twice changes no XP.
+Acceptance: A server test: two equal-level (level 1) characters duel in the Pit, A wins, A gains 25 XP and B loses 2 (loss factor 10 at level 1: 25 x 100 x 10 / 100 / 100 = 2; an equal-level loser loses the full 25 only from level 10); a level-5 character beating a level-3 character gains 20; reading the ladder twice changes no XP.
 
 ## 1. Mechanism
 
@@ -140,3 +140,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` run on the 
 - Server authority: `Award` trusts the caller's win flag from `Finish` (DuelContext.cs 789-795 and 838-839). Frankendom kills are server-verified; the result must come from the engine's duel step, not a client message. The donor does not check this.
 - Rounding is not a defect: the donor divides by 100 twice (Ladder.cs 245, 248); for positive integers that equals one division by 10000, which the sketch uses.
 - Licence: GPL-3.0. Clean-room only: the sketch is written from the mechanism, not translated from the C#.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Acceptance test is wrong against the note's own math and the donor: 'two equal-level (level 1) characters duel, A gains 25 and B loses 25'. Real loser at level 1 loses 25*100*10/100/100 = 2 (Ladder.cs:93-100,243-248; factor 10), exactly as section 1 worked numbers say (-2); -25 only applies from level 10. A correct implementation would fail this test. Everything else holds: m_OffsetScalar 105-117, loss factors 93-100, GetLevel 171-184, GetExperienceGain order 224-256 (min 1 at 250-253), tournament x5/x2 (DuelContext 872-875), floor 0 (890-893), Find inversion (Ladder.cs:291-296) real, Award null return 860-863, settle-order defect real (838-839), registrar gate (TournamentRegistrar 44-46), GPL-3 LICENSE. Worked numbers +20, -7, -6 verified.
+Missed: None important.
+
+Fixed 2026-10-12 (Sonnet fixer): acceptance line said the level-1 loser loses 25; the donor (Ladder.cs 93-100, 243-248) and the note's own worked numbers give 2. Verified.

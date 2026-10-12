@@ -158,3 +158,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Not in this donor: content publishing, rating and upload. A grep of src and builtin for contentdb, publish and rating found no content-publish code (only unrelated hits). Publishing stays Dom-only until beta, our rule; no donor evidence for rating.
 - In-game builder: the chat commands here (for example /set at chat.lua 629 and /teleport at 570) are admin tools, not a row editor. Not read beyond their registration lines.
 - The write ceiling is a file-path rule. In a browser the same idea is a per-row ownership check, so only the shape transfers.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: No errors found. Verified: addMods 45-106 (modpack group first 55, replace 74-88, same-group clash 100), checkConflictsAndDeps throw 212, resolveDependencies 219-312 (266, 268-270, 279, 294-296, 299, 300-302, 312), shuffle 235, error text 17-36 (hint 33), MODNAME_ALLOWED_CHARS mods.h:16 enforced mods.cpp:28, checkPathWithGamedef 869-948 (904, 922, 928, 933-943), getCurrentModName 765-796, initializeSecurity 122/124/265-278, io.open write check 1108, modNamesAreTrusted true in scripting_server.h:54 and scripting_client.h:42, chat.lua grant 228-260 (230, 244, 246, 260), LICENSE.txt line 8 CC BY-SA 3.0, SPDX LGPL-2.1-or-later. Small honesty point: the note says only the DECLARATION of the server checkPathInternal was seen, but scripting_server.h:49-53 is an inline body that calls checkPathWithGamedef, so its medium-confidence caveat is actually resolved (conservative, not wrong).
+Missed: first_mod / last_mod handling (225-289) is omitted from the mechanism, though the sketch header discloses it; random_mod_load_order setting is a setting default, not examined.

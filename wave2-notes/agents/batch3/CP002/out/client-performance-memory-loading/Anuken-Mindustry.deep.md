@@ -116,3 +116,9 @@ Acceptance: A Vitest on the pacer: at a 30 fps target, 10 s of simulated frames 
 - Phone numbers are not measured. Proposed for Frankendom, untested: default 60 fps, a 30 fps cap when battery saver or thermal pressure is reported. The donor's default of 120 is a desktop value. Cap above 240 is treated as uncapped in the donor, so Frankendom should clamp instead.
 - Loading: arc's AssetManager (dependencies, async decode) is not read. The 50 ms slice is the donor's number; a phone may need a smaller slice while the zone is streaming.
 - The `PerfCounter` split (per-subsystem timing, 120-sample window, 100 ms display refresh) is a profiling hook. It is useful for the Frankendom HUD debug panel but is not needed for the fight.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: All checked claims hold: ClientLauncher.java update 217-282, targetfps 120 default/240 limit (220-222), nextFrame advance/re-anchor (226-229), assets.update(1000/loadingFPS) at 236 with loadingFPS=20 at 32, sleep block 264-268, init 292-293, PerfCounter meanWindow 120 (38) and refresh 100 ms (39), checkUpdate zero-fill 72-74, valueMs 96-102, texture threshold 4096 at 160 and warning at 73, Damage pool 33/271/329, licence GPL-3. No-clamp-on-overrun claim is true. Sketch loadSlice is looser than arc (disclosed). Acceptance test is satisfiable by the sketch.
+Missed: Donor sets 'ios' uncapped (220) which note mentions; no real miss. Minor: 'a cap change re-anchors' also means the first frame after a change gets no sleep adjustment, not mentioned.

@@ -164,3 +164,9 @@ Acceptance: server test: with 3 viewers of one fight, the view is computed once 
 
 Reuse tag: rewrite-from-idea (BSL 1.1: clean-room, shape only; no code adopted)
 Brief rule served: 1 (one engine computes the change once; the client renders it); rule 8 (row 18 cited)
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: All verified: BSL 1.1 licence, delta.rs single-table (42-53) vs join counting (57-112) and the three delete branches, emit-by-count, empty return 116-118, metrics 120-122, dedup by hash 1463-1466, eval_delta 1480, encode once 1501 and rows.clone 1513, hand-off 1389-1391, send worker 1842-1888, unbounded channel, dropped flag 161-166/826-836/2005, inbound queue 16384 (subscribe.rs 547) and 'too many requests'. Hand-traced counting examples are correct. 'MAX_ATTACKERS = 3' is a Frankendom rule, not donor.
+Missed: none

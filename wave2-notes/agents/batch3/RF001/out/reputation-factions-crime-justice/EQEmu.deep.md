@@ -14,11 +14,11 @@ Secondary (same donor, PvP hostile flag): `Mob::IsAttackAllowed` lets two client
 
 One personal number per character per faction; the con band is read from it; kills and quests change it; a hit can spread to linked factions. Order of operations for one kill:
 
-- Kill. `NPC::Death` takes the top damage dealer as the experience giver (attack.cpp 2612). If that giver is a client and merit-based faction is off (default false, ruletypes.h 690), it calls `hate_list.DoFactionHits(GetNPCFactionID(), GetPrimaryFaction(), GetFactionAmount())` (attack.cpp 2657-2658).
+- Kill. `NPC::Death` takes the top damage dealer as the experience giver (attack.cpp 2612). If that giver is a client, the NPC is not charmed (`!IsCharmed()`), and merit-based faction is off (default false, ruletypes.h 690), it calls `hate_list.DoFactionHits(GetNPCFactionID(), GetPrimaryFaction(), GetFactionAmount())` (attack.cpp 2657-2658).
 - Fan-out. `DoFactionHits` walks the whole hate list (hate_list.cpp 292-309). Every client on the list gets a hit. If the NPC has a primary faction and a faction amount, the client gets `RewardFaction(faction_id, faction_value)` (302-303); otherwise it gets the older `SetFactionLevel` path driven by the NPC's faction id (305). This is not a split of the reward: each client on the list receives the full value.
 - Reward. `RewardFaction` first applies the amount to the primary faction (`SetFactionLevel2`, client.cpp 9109). It then looks up the faction's linked factions (9111), scales each link's modifier by the amount (9143), and turns each into a signed step of at least one point in magnitude (9156, 9169). Each non-empty link is applied through `SetFactionLevel2` (9181-9192).
 - Personal range. `SetFactionLevel2` computes the range for the faction (8352-8355): floor `min(0, min - base)`, ceiling `max(0, max - base)`, from the faction row's min and max (zonedb.cpp 3527-3529, 3557-3558; the defaults are -2000 and 2000, features.h 207-208). It reads the current personal value (8358), runs an optional Lua override (8361-8369), and calls `UpdatePersonalFaction` (8371).
-- Update. `UpdatePersonalFaction` (client.cpp 8397-8447) first applies the Heroic Charisma bonus: a percentage of the hit, or a chance to double it when the percentage truncates to zero (8402-8414). Then it repairs an out-of-range value to the nearest bound (8419-8428). Otherwise it changes the value only when the hit is not already pushing against the bound it is moving towards (8429-8432), adds the hit (8436), clamps to the range (8438-8441) and writes the row (8443).
+- Update. `UpdatePersonalFaction` (client.cpp 8397-8447) first applies the Heroic Charisma bonus: a percentage of the hit, or a chance to double it when the percentage truncates to zero (8402-8414). Then it repairs an out-of-range value to the nearest bound (8419-8428) and marks a repair. Otherwise it marks a change only when the character is not a GM (`m_pp.gm != 1`), the hit is non-zero, and the value is not already at the bound the hit pushes towards (8429-8432). When either mark is set it adds the hit (8436), clamps to the range (8438-8441) and writes the row (8443). So a repaired value still receives the hit in the same call (e.g. a value above the ceiling with a negative hit ends at the ceiling plus the hit), and a GM's value is only ever repaired, never changed.
 - Read. `GetCharacterFactionLevel` returns the stored personal value (8381-8390). `GetFactionLevel` (the con shown to a player) adds alliance and item bonuses (8220-8222), computes the band (8224), turns a merchant's threatening or scowling con into dubious (8233-8234), and turns any non-scowling con into threatening when the NPC's aggro check passes (8236-8237).
 - Band. `CalculateFaction` (common/faction.cpp 57-88) sums the personal value, the base and the class, race and deity modifiers (61), then returns the first band whose minimum it meets (63-86), in this order: ally 1100, warmly 750, kindly 500, amiably 100, indifferently 0, apprehensively -100, dubiously -500, threateningly -750 (ruletypes.h 1065-1072), otherwise scowls (87).
 - Modifier keys. Class, race and deity modifiers are stored per faction under keys `c<id>`, `r<id>` and `d<id>` (zonedb.cpp 3376-3411).
@@ -39,7 +39,7 @@ One personal number per character per faction; the con band is read from it; kil
 | Reusable rule (formula) | Donor value (range) | Where in donor |
 |---|---|---|
 | Personal floor = `min(0, min - base)`; ceiling = `max(0, max - base)` | faction min and max default -2000 and +2000; floor and ceiling never on the wrong side of zero | client.cpp 8286-8290; zonedb.cpp 3528-3529, 3557-3558; features.h 207-208 |
-| Hit changes value only if not already at the bound it pushes against; result clamped | range width = max - min; bound-stuck hits are no-ops | client.cpp 8419-8441 |
+| Hit changes value only if not already at the bound it pushes against; an out-of-range value is repaired and then also takes the hit; result clamped; GMs are never changed, only repaired | range width = max - min; bound-stuck hits are no-ops | client.cpp 8419-8441 |
 | Con band = personal + base + class + race + deity, first threshold met wins | ally 1100, warmly 750, kindly 500, amiably 100, indifferently 0, apprehensively -100, dubiously -500, threateningly -750, scowls below | common/faction.cpp 61-87; ruletypes.h 1065-1072 |
 | Hostile flag = lowest bands (threatening or scowls) | threatening from -750 up to just under -500 (dubious starts at -500); scowls below -750; a merchant's threatening or scowling con is capped at dubious | common/faction.cpp 84-87; client.cpp 8233-8237 |
 | Linked-faction spread: `link_mod x amount`, magnitude at least 1, sign kept | mod per link (data); floor of 1 point (donor; see defect 1) | client.cpp 9143, 9156, 9169 |
@@ -75,13 +75,22 @@ export function personalRange(def: FactionDef): { lo: number; hi: number } {
 }
 
 // Donor UpdatePersonalFaction: an out-of-range value is repaired; a hit moves the value unless it already
-// sits at the bound it pushes against; the result is clamped to the range.
+// sits at the bound it pushes against; the result is clamped. A repaired value still takes the hit (GM exemption omitted).
 export function applyHit(current: number, hit: number, lo: number, hi: number): number {
-  if (current > hi) return hi;
-  if (current < lo) return lo;
-  if (hit === 0) return current;
-  if ((hit > 0 && current === hi) || (hit < 0 && current === lo)) return current;
-  return Math.min(hi, Math.max(lo, current + hit));
+  let v = current;
+  let repair = false;
+  let change = false;
+  if (v > hi) {
+    v = hi;
+    repair = true;
+  } else if (v < lo) {
+    v = lo;
+    repair = true;
+  } else if (hit !== 0 && ((hit > 0 && v !== hi) || (hit < 0 && v !== lo))) {
+    change = true;
+  }
+  if (!change && !repair) return v;
+  return Math.min(hi, Math.max(lo, v + hit));
 }
 
 // Donor RewardFaction: each associated faction gets mod x amount, at least 1 in magnitude, keeping the sign.
@@ -161,6 +170,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Database writes: each changed faction is written on the spot (client.cpp 8443). For a fight with many linked factions that is many writes per kill. Frankendom should batch them into the one ledger write per kill.
 - Charisma bonus: a percentage of the hit with a random doubling on truncation (client.cpp 8404-8414). This is a designer's option, not a rule of the ledger; as data it should be a catalogue field, and the random draw must come from the server's seeded source to stay server-verified.
 - PvP flag (secondary): the donor's two-sided flag (both must be flagged to attack, aggro.cpp 840-845) is a clean hostile-flag rule for our open PvP flag. The duel exception (aggro.cpp 846-853) is a separate rule that we would keep as data.
+- Also found: the kill-time faction hit is skipped for a charmed NPC (`!IsCharmed()`, attack.cpp 2657), and the personal-value change is skipped for GMs (client.cpp 8429). Both are small rules a server port should name.
 - Quest sign flip (client.cpp 8273-8279): a quest reward that is a loss on the faction should be a separate reward type in our catalogue, not a sign trick.
 
 Defects (fix each; idea kept):
@@ -170,3 +180,11 @@ Defects (fix each; idea kept):
 
 Reuse tag: rewrite-from-idea (GPL-3.0; clean-room only)
 Brief rule served: 18 (kill reward and ledger); server-verified kills (contributor rule, gap 2).
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: UpdatePersonalFaction (client.cpp 8419-8441): note and sketch applyHit say an out-of-range value is repaired to the bound and returned. Real code repairs AND then still adds the hit (8434-8436) and clamps, so e.g. current>max with a negative hit ends at max+hit. Sketch applyHit returns hi/lo and drops the hit. GM exemption m_pp.gm != 1 (8429) is in the omit list but absent from the mechanism text. DoFactionHits is also gated by !IsCharmed() (attack.cpp 2657) not mentioned. Verified OK: SetFactionLevel2 8328-8379 range 8352-8355, RewardFaction 9107-9194 (max(1,..) sign logic, zero-mod defect real), DoFactionHits 288-310, CalculateFaction 57-88 bands and ruletypes 1065-1072, merchant/aggro override 8233-8237, quest flip 8273-8279, +-2000 features.h, GPL v3, PvP aggro.cpp 835-856.
+Missed: Faction hit at kill is skipped for charmed NPCs; repair+hit behaviour above.
+
+Fixed 2026-10-12 (Sonnet fixer): verified on the donor. UpdatePersonalFaction repairs an out-of-range value and still adds the hit before clamping (8434-8441); mechanism text, table row and sketch applyHit corrected (sketch retypechecked on the VPS); added the GM exemption and the !IsCharmed gate on DoFactionHits.

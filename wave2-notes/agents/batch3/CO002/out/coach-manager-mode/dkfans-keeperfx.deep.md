@@ -183,3 +183,9 @@ Rows for the coach topic. "(not read)" = not opened in this pass; nothing is cla
 | Matchmaking from coach view | (not read) | | | |
 | Post-fight report / replay | (not read) | | | |
 | AI behaviour when the coach is absent (default tactics) | leader invalid: follower resets to idle; leader re-chosen by rank on removal; follower dropped after more than 12 failed catch-ups | rank: role class, then level, then score | 12 fails | creature_groups.c:633-637, 447-458; creature_states.c:2210, 2257 |
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: All checked claims hold: get_best_creature_to_lead_group 356-446 branch logic, digger class 0/1/2 and last-visited-wins defect (creature_groups.c:335), add_member_to_party exp_level-1, party_id guard '&&' defect at 547 and 574, script_process_new_party leader rules, process_obey_leader order and JoinCombatOrFollow door-only branch, creature_follow_leader order (12 fails, 16-turn gate, 12/6/2 tiers, 5/4 and 9/8 speeds), score table 200*score/max with 8-bit clamp, i != 31 vs model_count-1 mismatch, GROUP_MEMBERS_COUNT 30, CREATURE_PARTYS_COUNT 256, CREATURE_MAX_LEVEL 10, map00020.txt:97, GPL header lines. Not-read list honest. Tiny nit: process_obey_leader also returns early for creature_is_being_dropped (note lists it as not read).
+Missed: Minor: script_process_new_party calls get_best_creature_to_lead_group for each arriving member (creature_groups.c:887), so the digger defect also affects spawn; wait_to_turn and hero.wait_time are both set from the countdown (877).

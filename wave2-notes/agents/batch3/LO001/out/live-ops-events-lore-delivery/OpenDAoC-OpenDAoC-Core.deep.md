@@ -173,3 +173,9 @@ Acceptance: a server test with the daily boundary at 00:00 UTC, where a player l
 
 Reuse tag: rewrite-from-idea (GPL-3.0 repo; clean-room only)
 Brief rule served: one ledger; server-verified state; zones as data not applicable; tick step per row 18 sub-line.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: All cited lines verified: interval lambdas RolloverSchedulerService.cs 24-33 (weekly 7 if already Monday 29-30), load/create 35-72, Tick 87-109 break at 100, ExecuteRollover 167-187 save-before-advance with no try around SaveObject (169-170) and per-callback try 175-186, IntervalKey enum 194-201, bit mask 57, PeriodicQuestService.OnPlayerJoin 22-51, ResetQuests 60-64, DbScheduledRollover unique key line 23, GameLoop.cs:162 step, GamePlayer.cs 233 and 7788 call, repo LICENSE GPL-3 and gplheader.txt GPL v2-or-later. Sketch weekly maths matches donor; acceptance (23:59 player resets on login, online resets once at 00:00 UTC, throwing daily save still lets weekly fire) is satisfiable by the sketch.
+Missed: Tick starts with ProcessPostedActionsParallel() at line 89 (not mentioned); ForceExecute/ForceExecuteAll (136-165) are the admin triggers (noted as omitted). Subscribers: HouseRentService hourly, GravestoneService daily (CheckGravestones) are real consumers; note says grep only, which is honest.

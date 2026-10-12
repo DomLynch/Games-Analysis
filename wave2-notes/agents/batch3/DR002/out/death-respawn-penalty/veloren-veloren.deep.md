@@ -7,7 +7,7 @@ Checked: Read in full: `common/systems/src/stats.rs` death check (71-78), `commo
 Best transferable idea: a lethal hit on a humanoid first drops the hero to Downed at 1 HP while a single protection flag is armed, and an ally within 5 units can revive the hero in a timed interaction, so a many-on-one fight has a recoverable middle state before real death.
 
 Decision (proposed): adapt — keep the Downed-at-1-HP state and the timed ally revive for zone and group fights (not for duels), and cap the number of downs per fight, which the donor does not do.
-Acceptance: In a 3-on-1 zone fight (MAX_ATTACKERS = 3), the hero at 0 HP goes to Downed at 1 HP and crawls; an ally within 5 units completes a 5 s help (0.5 + 4.0 + 0.5 s) at 10 percent move speed and the hero stands at 1 HP; a second lethal hit after the help goes to Downed again, and a third (after the cap) goes to dead; a server test asserts the cap and the 5-unit range.
+Acceptance: In a zone fight with the cap set to 2 downs, the hero at 0 HP goes to Downed at 1 HP and crawls; an ally within 5 units completes a 5 s help (0.5 + 4.0 + 0.5 s) at 10 percent move speed and the hero stands at 1 HP; a second lethal hit after the help goes to Downed again, and a third lethal hit (the cap of 2 is spent) goes to dead; a server test asserts the cap and the 5-unit range. Fires when the whole 5 s interaction ends (the donor emits the event after the recovery phase).
 
 ## 1. Mechanism
 
@@ -45,21 +45,23 @@ Acceptance: In a 3-on-1 zone fight (MAX_ATTACKERS = 3), the hero at 0 HP goes to
 
 ## 4. TypeScript sketch
 
-simplified: the sketch models the death decision as one function `onLethal` (the donor splits it between `stats.rs` and the `DownedEvent` handler), the help as a check plus a completion that re-arms (the donor's hold timing and the stage check are not modelled; the event is assumed to fire after the 4.0 s action), respawn as a full revive, and the durability limiter as one function with a protected-area flag. It omits the Crawl state and its buffs, the exp awards, the loot distribution, the hardcore deletion, the waypoint choice, and the `CharacterState` changes. It adds one thing the donor does not have: nothing in the sketch caps the number of downs, so the cap from section 6 must be added by the caller.
+simplified: the sketch models the death decision as one function `onLethal` (the donor splits it between `stats.rs` and the `DownedEvent` handler), the help as a check plus a completion that re-arms (the donor's hold timing is not modelled; the donor emits the help event only after the whole buildup, action and recovery sequence, about 5.0 s), respawn as a full revive, and the durability limiter as one function with a protected-area flag. It omits the Crawl state and its buffs, the exp awards, the loot distribution, the hardcore deletion, the waypoint choice, and the `CharacterState` changes. It adds one thing the donor does not have: a per-fight down counter and cap (`downs`, `maxDowns`, default 2 in zones, 0 in the Pit), checked in `onLethal`.
 
 ```ts
 // Licence: GNU GPL version 3 (donor, copyleft). Clean-room sketch written from the described mechanism, not a translation of the donor lines.
 // clean-room
-interface Vital { hp: number; max: number; armed: boolean; canBeArmed: boolean; }
+interface Vital { hp: number; max: number; armed: boolean; canBeArmed: boolean; downs: number; maxDowns: number; }
 
 type Outcome = "alive" | "downed" | "dead";
 
 // A lethal hit: while protection is armed the hero is Downed at 1 HP, not dead.
-// Once protection is spent (or never existed), the next lethal hit kills.
+// Once protection is spent, or the per-fight down cap is reached (added: the donor has no cap),
+// the next lethal hit kills.
 function onLethal(v: Vital): Outcome {
   if (v.hp > 0) return "alive";
-  if (v.armed) {
+  if (v.armed && v.downs < v.maxDowns) {
     v.armed = false;
+    v.downs += 1;
     v.hp = 1;
     return "downed";
   }
@@ -77,8 +79,8 @@ function canHelp(target: Vital, distance: number): boolean {
   return distance <= HELP_RANGE && target.canBeArmed && !target.armed;
 }
 
-// Assumes the help event fires after the action phase (the donor stage check was not read).
-// The helped hero is re-armed at 1 HP; nothing caps how often this repeats.
+// Call this when the whole interaction (buildup, action, recovery, about 5.0 s) has finished.
+// The helped hero is re-armed at 1 HP; the cap lives in onLethal via `downs`.
 function completeHelp(target: Vital): void {
   if (target.canBeArmed) target.armed = true;
 }
@@ -87,6 +89,7 @@ function completeHelp(target: Vital): void {
 function respawn(v: Vital): void {
   v.hp = v.max;
   v.armed = v.canBeArmed;
+  v.downs = 0;
 }
 
 interface Item { id: string; durabilityLost: number; maxDurability: number; }
@@ -132,7 +135,8 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 ## 6. Gaps and risks
 
-- No cap on downs. `refresh_death_protection` (health.rs 223-226) re-arms the flag every time help completes, and nothing counts downs. A hero can be downed, helped and downed again forever in one fight. Fix: keep a down count per fight (server-side, in the one ledger), allow N downs (suggested default 1 per fight in zones, 0 in the Pit), and send the third lethal hit to dead.
+- No cap on downs. `refresh_death_protection` (health.rs 223-226) re-arms the flag every time help completes, and nothing counts downs. A hero can be downed, helped and downed again forever in one fight. Fix: keep a down count per fight (server-side, in the one ledger), allow N downs (default 2 per fight in zones, 0 in the Pit; the sketch and the acceptance both use 2), and send the lethal hit after the cap is spent to dead.
+- A downed hero at 1 HP can still be hit, and once protection is spent any lethal hit kills (stats.rs switch), so the middle state lasts only until the next hit lands.
 - Downed heroes stay at 1 HP in Crawl. Whether they regenerate or time out is not read. Frankendom needs a bleed-out rule with a number (a data field), not an open timer.
 - Helping is a timed input. The 4.0 s action is long in a 3-on-1 fight, so the hold length should be a data field per zone, and the Pit should not use the help state at all (not decided here).
 - Only humanoid bodies have protection in the donor, so non-humanoid enemies never down. Whether Frankendom wants that is a design choice; a per-body data flag would make it explicit.
@@ -141,3 +145,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - The durability limiter (mod.rs 1206-1220) is clever but depends on a 60 s memory of unequip events in a map keyed by item definition. It is server-side in the donor but the map is in the component, so it persists with the character only if the component is saved (not read).
 - Hardcore deletes the character (player.rs 336-342). Frankendom has one character per ledger entry; a permadeath mode is a separate data flag, not a second death code path.
 - GPL-3.0: this note describes the shape only. The sketch was written from the mechanism; no line of the donor is copied.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Verified OK: stats.rs 71-78 death switch order; health.rs consume/refresh/revive 208-230 and constructor copies has_death_protection (Humanoid only, body/mod.rs 973); can_help_downed interaction.rs 66-71; MAX_INTERACT_RANGE 5.0 consts.rs:7; HelpDowned movement 0.1 and durations 0.5/4.0/0.5 (interact.rs 242-251, tuple order buildup/action/recover is correct); HelpDownedEvent 361 and DownedEvent 396 handlers; MAX_EXP_DIST 150 (1145), sqrt split (1198), PvP no exp (1160); durability block 1338-1356 and damage_items mod.rs 1200-1220; UNEQUIP_TRACKING_DURATION 60 loadout.rs:17; hardcore no respawn (RespawnEvent 1541) and deletion player.rs 336-342; GPL-3 LICENSE line 2. ERRORS: (1) sketch comment 'assumes the help event fires after the action phase' is wrong: interact.rs 95-150 shows Buildup -> Action -> Recover and HelpDownedEvent is emitted only after the Recover timer finishes, i.e. at about 5.0 s, not 4.5 s. The acceptance '5 s help' is therefore right but the stated assumption is not. (2) 'stage that reaches this block was not read' - it is the post-Recover else branch (interact.rs ~134-158). (3) 'MAX_ATTACKERS = 3' is not in the donor (grep empty); it is a Frankendom constant, fine only if it exists in the repo. ACCEPTANCE FAILS ITS OWN SKETCH/DECISION: acceptance requires a hero to be Downed twice and dead on the third lethal hit (cap of 2 downs), but section 6 suggests 'default 1 down per fight in zones, 0 in the Pit', under which the second lethal hit after help is dead, and the sketch has no cap at all (the caller must add it). A correct build of the suggested default fails the acceptance test; a build of the sketch fails the 'third goes to dead' step. Pick one cap number and put it in the sketch. Also acceptance says hero 'at 0 HP goes to Downed at 1 HP' - true only because consume_death_protection sets 1.0 when current<1; fine.
+Missed: Not covered: Crawl state/bleed-out not read (admitted). The downed hero is still hittable at 1 HP and any hit kills it once protection is spent (stats.rs switch) - this is the real 'recoverable middle state' limit and is only implied. HelpDownedEvent also notifies rtsim (not relevant).
+
+Fixed 2026-10-12 (Sonnet fixer): verified the help event fires only after the Recover phase (interact.rs 134-158), so help takes about 5.0 s and the stage that emits it is now stated. Removed MAX_ATTACKERS (not in the donor). Made the cap one number (2 downs) in the acceptance, section 6 and the sketch, and added downs/maxDowns to the sketch (typechecked). Added 'Also found' line: a downed hero can still be hit and dies on the next lethal hit.

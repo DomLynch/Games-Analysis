@@ -135,3 +135,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 Reuse tag: adapt-idea (MIT, Lost City 2023-2025: code may be adapted; this sketch is clean-room)
 Brief rule served: Strategy CT rulings (chat through the writer; write-time name filter; report path with a reason row; spam limits); addendum rule "keep the idea, fix the defect".
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: None found. Verified: MessagePublicHandler gate/mute/filter/flag order (15,19,36,43); MessagePrivateHandler 14,18,23-24,34; ReportAbuseHandler 15-16,20-22,25; Player.ts:466 reset; World.ts TICKRATE 120, nextTick 362, drift 372, notifyPlayerMute 2294-2306, notifyPlayerReport 2308-2323 (MACROING/BUG_ABUSE submitInput); FriendServerRepository caps 233/268, TODO 152, isVisibleTo 332-355 incl default OFF 344; FriendServer PM branch 260-290 and sendPrivateMessage 508-525 (no ignore check); ChatModes 1-12; WordPack 44-45 clamp 80; WordEnc whitelist 35, maskChars 130-133 (end-index bug real); WordEncBadWords 15,107-108; ClientCheatHandler 560/569; LoginServer 555 todo; MIT licence. Acceptance (two lines in one tick, muted refused without using slot) passes against sketch acceptChat.
+Missed: Private messages are profanity-filtered in the OUTGOING ENCODER (network/game/server/codec/rs225/MessagePrivateEncoder.ts:22 and rs244/MessagePrivateEncoder.ts:21 call WordEnc.filter), while the raw text is stored unfiltered in private_chat (FriendServer.ts:278-288). The note says only public text is filtered and lists nothing for PMs. Also the PM handler does not run the colour/effect checks (stated) and sends before setting the flag, same as public (fine).

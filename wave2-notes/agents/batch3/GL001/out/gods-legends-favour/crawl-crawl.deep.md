@@ -16,7 +16,7 @@ Favour (the code calls it piety, 0-200) is the one per-god resource. Anger (pena
 
 **Favour out.** `lose_piety` (2698) subtracts and clamps at zero (2711-2714). If favour is below 1 it calls `excommunication()` (2724-2725). A misdeed (`_handle_piety_penance` through `dislike_response`, god-conduct.cc 348-351) takes favour = factor x monster level and adds penance = factor x level + offset, and only adds the penance if the god is still yours (dock_piety, religion.cc 2318). Removing the Amulet of Faith takes one third of favour (player-equip.cc 2572).
 
-**No passive decay.** I searched every write to `raw_piety`. Writers are the gain (2558), the loss (2712-2714), excommunication (2882), `set_piety` (which only calls gain and loss, 2337-2361), start values (ng-setup, player.cc 5746) and the Amulet drain. None runs on a timer. The only time-based leak is the piety pool. Zin's donation adds to `DUR_PIETY_POOL` (god-abil.cc 263 and 281: cost = gold/2 + 1, favour = gold x ln(gold) / 200). `_decrement_durations` (player-reacts.cc 839-843) drains one pool point and gains one favour point with a 1-in-5 chance per call, while favour is below 200. How often that function is called per game turn was not read.
+**No passive decay.** I searched every write to `raw_piety`. Writers are the gain (2558), the loss (2712-2714), excommunication (2882), `set_piety` (which only calls gain and loss, 2337-2361), start values (ng-setup, player.cc 5746) and the Amulet drain. None runs on a timer. The only time-based leak is the piety pool. Zin's donation adds to `DUR_PIETY_POOL` (god-abil.cc 261-263 and 281: cost = gold/2 + 1, favour = cost x ln(cost) / 200, so the log is of the cost, not of all the gold). `_decrement_durations` (player-reacts.cc 839-843) drains one pool point and gains one favour point with a 1-in-5 chance per call, while favour is below 200. How often that function is called per game turn was not read.
 
 **Kills.** `did_kill_conduct` (god-conduct.cc 1019-1021) passes the victim's XL. The like-response for a kill starts at numerator 90, denominator 100 (`kill_living_response`, 637-639). If the monster's level is above zero (599), the gap is `extra = 36 + 2 x monster level - your XL` (604), the denominator is multiplied by `extra` and the numerator by `extra - 12` (606). A negative gain is clamped to zero (615). So a kill of a monster far below you gives nothing, and an equal-level kill is worth about 0.9 x (1 - 12/extra) favour. Example: XL 10 against level 10 gives extra 46, so 90 x 34 / (100 x 46) = 0.665 favour per kill.
 
@@ -33,7 +33,7 @@ Favour (the code calls it piety, 0-200) is the one per-god resource. Anger (pena
 
 **Excommunication and switching.** `excommunication` (religion.cc 2864-2900) zeroes favour (2882) and sets the god to none. For Elyvilon, Ashenzari and Gozag it also docks XP equal to one XL (3046, 3074, 3095; `excom_xp_docked` 2857-2861). A voluntary leave from a good god saves favour (2887). Joining a good god later carries `(saved - 30) / 2` favour (3576-3577). Joining sets favour to 15 (3691) and clears penance (3646).
 
-**Boons by rank.** `god_power_usable` (4858-4874): rank -1 always works; anything else is blocked while angry; rank 0 always works; rank 7 is a capstone; ranks 1-6 need `piety_rank() >= rank`. The table is per god (`get_all_god_powers`, religion.cc 97-130; the Zin block is 104-113). The rank comment is at religion.h 189-192. Losing a star removes its powers with a message (`_handle_piety_loss`, 2614-2640). The gift roll is separate: random per point, not rank-gated.
+**Boons by rank.** `god_power_usable` (4858-4874): under penance only rank -1 works (rank 0 is blocked too, 4870-4872); when not angry, rank 0 always works, rank 7 needs the capstone check, ranks 1-6 need `piety_rank() >= rank`. The table is per god (`get_all_god_powers`, religion.cc 97-130; the Zin block is 104-113). The rank comment is at religion.h 189-192. Losing a star removes its powers with a message (`_handle_piety_loss`, 2614-2640). The gift roll is separate: random per point, not rank-gated.
 
 **Pantheon.** `god_likes_your_god` is true only when both gods are good (4101-4104). `god_hates_your_god` (4106-4126): Ru never cares; a non-good god always hates your god (4116-4117); Zin hates chaotic gods (4121); a good god hates an evil current god (4124).
 
@@ -71,7 +71,7 @@ Favour (the code calls it piety, 0-200) is the one per-god resource. Anger (pena
 | 3 | Patron choice and switching | Join sets favour 15 and clears penance; good-to-good carry; leaving costs XP for 3 gods | Carry = (saved - 30) / 2 | start 15; carry floor 30, divide by 2 | Excommunicate at favour 0; XP dock = one XL (Elyvilon, Ashenzari, Gozag) | None | religion.cc 3691, 3646, 2887, 3576-3577, 2882, 3046, 3074, 3095, 2860 |
 | 3b | God anger (wrath) | Anger is penance; it blocks gifts and most powers and drives retributions | Misdeed penance = factor x level + offset; wrath XP clock; per-turn roll n/20 | penance cap 200; retribution cut 1-3; XP timer = XP gap to next XL / 200 | Anger added by misdeeds (capped at 200); each XP crossing queues one retribution | Penance paid by gains; retribution cut 1-3; queue drops by one per turn | religion.cc 884-894, 866-878, 4176-4194; player.cc 2872-2875; god-wrath.cc 1826 |
 | 4 | Divine domains and aspects | Per-god like and peeve tables keyed by conduct (kill of unclean, holy, undead, demon, nonliving) | Like = numerator / denominator with level scaling; peeve = factor x level | like default 90/100; peeve factors per conduct | Kill and conduct events | None | god-conduct.cc 637-666, 780-800 (kill map) |
-| 5 | Boons at favour thresholds | Power rows unlock at star ranks, deterministic | Usable if stars >= rank and not angry; rank -1 works while angry | ranks 1-6 by star; 0 always; 7 capstone; -1 under penance | Unlock on stars gained; lock on stars lost (message) | None | religion.cc 4858-4874; religion.h 186-192; religion.cc 97-130 |
+| 5 | Boons at favour thresholds | Power rows unlock at star ranks, deterministic | Usable if stars >= rank and not angry; rank -1 is the only rank that works while angry | ranks 1-6 by star; 0 always when not angry; 7 capstone; -1 under penance | Unlock on stars gained; lock on stars lost (message) | None | religion.cc 4858-4874; religion.h 186-192; religion.cc 97-130 |
 | 6 | Signature powers per god and rank | Each god has rows (power id, rank, text); no per-named-opponent rows | Rank gate as row 5 | rank 1-7 | Unlock at rank | Cooldown not read | religion.cc 97-130 (Zin block 104-113) |
 | 7 | Shapeshifting | Temporary form swap; blocked slots meld the gear; old form ends first | transform(dur, form): Zin protection chance piety / 160 blocks it | dur from caller (not read) | Enter and exit messages | Duration timer (not read) | transform.cc 2343-2385, 2229-2230, 211, 2348 |
 | 8 | Avatars and summoned aspects | Companions are tracked per god; `remove_all_companions` clears one god's companions | Summon limits not read | not read | Hepliaklqana companions removed on losing frailty (2656) and in excommunication (3144) | not read | god-companions.cc 87; religion.cc 2656, 3144 |
@@ -86,7 +86,7 @@ Best transferable idea: one favour ledger per (player, patron) where penance is 
 
 Decision (proposed): adapt — keep the penance-first ledger, the level-gap kill curve, the star-gated power rows and the XP-clocked anger; drop the random gift roll as a boon source (GL focus item 5 wants rank rows, not random ones), fix the taper to one roll, and move the anger queue into the career row so it cannot be lost on a turn with no angry patron. Why for Frankendom: it gives the gods a real cost of misbehaviour that is data-driven and one ledger, without a new system.
 
-Acceptance: A server test seeds 10,000 gains at favour 120 and asserts the swallow rate is 40 percent; a kill of a level-1 monster by an XL 27 character gives zero favour; a player at 2 stars sees the rank-3 power hidden and at 3 stars sees it.
+Acceptance: A server test runs 10,000 independent single-point gains, resetting favour to 120 before each (favour must not be allowed to climb, since at 200 every gain is swallowed), and asserts the swallow rate is about 40 percent (favour rose in about 60 percent of trials); a kill of a level-1 monster by an XL 27 character gives zero favour; a player at 2 stars sees the rank-3 power hidden and at 3 stars sees it.
 
 ## 4. TypeScript sketch
 
@@ -206,7 +206,7 @@ export function onTurn(p: Patron, rng: Rng, retribution: () => void): void {
   p.wrathQueued -= 1;
 }
 
-// Tiered powers: rank -1 works under penance; rank 0 always (when not under penance); 1..6 by stars; 7 is a capstone flag.
+// Tiered powers: rank -1 works under penance; every other rank is blocked under penance; rank 0 always otherwise; 1..6 by stars; 7 is a capstone flag.
 export interface PowerRow { id: string; rank: number; }
 
 export function powerUsable(p: Patron, row: PowerRow, capstoneReady: boolean): boolean {
@@ -250,3 +250,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 Brief rule served: GL focus items 1, 2, 3, 3b, 5, 10; brief rule 8 (target and parity row)
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: (1) Note says rank 0 powers 'always work' (Mechanism boons, GL row 5, sketch comment); real god_power_usable religion.cc 4858-4874 blocks every rank except -1 while under penance, rank 0 included (sketch code is right, prose is wrong). (2) Zin donation 'favour = gold x ln(gold)/200': code god-abil.cc 261-263,281 uses donation_cost = gold/2+1 inside the log, divided by MAX_PIETY. Other claims verified: gain order 2510-2561, taper 2536-2538 (64 percent above 160), kill formula god-conduct 599-606 and 0.665 example, handle_god_time 4176-4194, bane constants 4000/2500/1600, breakpoints 30/50/75/100/120/160, lose_piety, set_penance_xp_timeout, carry (saved-30)/2, ostracism, GPL licence.
+Missed: Gain at MAX_PIETY always swallows (religion.cc 2532) and Ru/Beogh branches exist; partly covered. BUILD-RISK: Acceptance 'seeds 10,000 gains at favour 120 and asserts swallow rate is 40 percent' fails in the sketch if the 10,000 gains are sequential: favour climbs 0.6 per gain, hits 200 after about 130 gains, then every gain is swallowed (rate near 98 percent). Test must reset favour per trial or hold it fixed. Other acceptance lines (XL27 vs level-1 gives zero; 2 stars hides rank 3, 3 stars shows it) pass against the sketch.
+
+Fixed 2026-10-12 (Sonnet fixer): rank 0 powers are blocked under penance (religion.cc 4870-4872), prose and table corrected (sketch code already right); Zin donation formula corrected to cost x ln(cost) / 200 with cost = gold/2 + 1; acceptance rewritten so favour is reset per trial (sequential gains reach 200, where every gain is swallowed, religion.cc 2532-2533). Also found: at raw favour 200 every point is swallowed for all gods except Ru, and Ru instead stops gaining at the 6-star breakpoint (160).

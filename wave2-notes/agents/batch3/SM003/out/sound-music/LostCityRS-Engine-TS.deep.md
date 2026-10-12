@@ -135,3 +135,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 Reuse tag: rewrite-from-idea (MIT; clean-room)
 Brief rule served: addendum sound-music fold-in; rule 7 (licence read); rule 8 (target plus row 12)
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: none. Verified Midi.ts: parseMidiLength 44, header/format/track checks 55-72, running status 95-122, tempo meta 0x51 len 3 stored with tick and order (142-145), end of track 149, sysex 153-163, maxTick 186-188, SMPTE branch 191-197, PPQ branch 200-223 (500000 default at 203, sort at 201, dead guard at 208), load 263-291 (called World.ts 298), `!length` at 281, getLength 293-295, getTickLength ceil(ms/600)+1 at 297-299 (used ServerOps 346). Player.ts playSong 1987-1989 and playJingle 1991-1993; PlayerOps lowMemory gates 482, 851, 862; SynthSound write 486; MidiJingleEncoder p2(id), p2(delay) at 10-11; Packet.p2 uses setUint16 at 308 (wraps modulo 65536). MidiJingle.ts is 10 lines. MIT licence line correct.
+Missed: none significant. (D1 is a real wrap above 65535 ms as the note says; the 600 ms tick constant is a hard-coded literal, which the note records.)

@@ -6,13 +6,13 @@ Checked: Read in full: `AudioManager.cs` (113 lines). Callers read: `LevelMaster
 
 Best transferable idea: pick the music track from the zone transition (the leave track of the zone being left wins, else the entry track of the new zone), and save and restore the current track around a battle, so the zone line and the fight each set the right music without the zone knowing about battles.
 Decision (proposed): adapt — the leave/entry pair belongs in zone data (zones are data), and the save/restore pattern keeps the Pit client simple; adapt because the donor cuts instantly, has no crossfade and no voice cap.
-Acceptance: crossing a zone line plays the leave track of the zone left (or the new zone's entry track if none is set), and after a fight the previous zone track resumes without restarting (a client test asserts the current track id equals the saved id).
+Acceptance: crossing a zone line plays the leave track of the zone left (or the new zone's entry track if none is set), and after a fight the previous zone track plays again (from its start, as the donor does; it only keeps playing uninterrupted when the battle has no track of its own) (a client test asserts the current track id equals the saved id after the fight).
 
 ## 1. Mechanism
 
 - Music is one channel. `AudioManager` keeps one looping `AudioSource` under a DontDestroyOnLoad object, created on first use (62-78; loop at 73). `PlayMusic(int id)` builds `Assets/BuildSource/Musics/<id>.mp3` and loads it asynchronously; id -1 returns without a change (21-22). `PlayMusicAtPath` awaits the load (53), then sets the clip and calls Play (57-58), with no check that a newer request has started. The `AudioClip` overload skips the switch when the clip is already current (29). A track change is a hard cut: nothing fades in or out (31-32, 57-58). Volume follows the Volume setting (89).
 - Zone music: `LevelMaster.PlayMusic(currentMap)` (called at 165) plays the leave track of the previous map when it has one (276-282), otherwise the entry track of the new map (287). The leave track is `GetOutMusic` (`MapHelper.lua` 14-20): `ForceSetLeaveMusicId` when it is set and not -1, else `OutMusic`. So the track belongs to a transition: the zone you leave can pick the music you hear on the way out.
-- Battle music with resume: `LevelLoader.DoloadBattle` saves the current clip (58), loads the battle scene, and `BattleLoader` plays `battle.Music` (107). When the battle callback runs, the saved clip is set again (71). The same-clip guard (29) means a return to the same clip does not restart it.
+- Battle music with resume: `LevelLoader.DoloadBattle` saves the current clip (58), loads the battle scene, and `BattleLoader` plays `battle.Music` (107). When the battle callback runs, the saved clip is set again (71). The same-clip guard (29) compares against the clip playing at that moment, which is the battle clip by then (107), so the callback's PlayMusic(saved) sets the clip and calls Play(): the zone track restarts from the beginning. It is only a no-op when the battle set no music (battle.Music of -1), so the zone clip was never replaced.
 - Layered spell sounds: each skill display has two optional sound slots, each with a delay (`audio`/`audioDelay`, `audio2`/`audioDelay2`, default 0.5 s: `Jyx2SkillDisplayAsset.cs` 135, 142). `SkillCastHelper` schedules each present slot with `GameUtil.CallWithDelay` (105-113). `CallWithDelay` runs the action at once when the delay is 0 (132-135); otherwise it starts a timer (138) that is tied to the caster component and cancels when that component is destroyed (145). `ExecuteSoundEffect` (250-256) plays through `AudioManager.PlayClipAtPoint` at the camera position, at the SoundEffect volume (`AudioManager.cs` 100-104).
 - No priority, no voice cap: each `PlayClipAtPoint` call stands alone in these files.
 - Tick: none. These are event-driven calls (map load, battle start and end, skill cast). The only timing is the per-slot delay timer.
@@ -137,3 +137,13 @@ export {};
 - Frankendom rule: kills are server-verified. Cue delays are client presentation only; the server must never wait for a sound or a cue timer.
 - SFX are placed at the camera, not at the source: a client choice in the donor, not a spatial model.
 - Zone data: the track ids and the leave/entry pair must be zone data. The donor values are (not read).
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Note states the same-clip guard (29) means returning after a battle 'does not restart' the track, and acceptance says previous track 'resumes without restarting'. Real: guard compares to the CURRENT clip, which is the battle clip by then (BattleLoader.cs:107), so LevelLoader.cs:71 PlayMusic(formalMusic) sets clip and calls Play() = restart from 0. Resume only holds if battle.Music is -1. Everything else verified: AudioManager 18-24, 29-33, 53-58, 62-78, 89, 100-104; LevelMaster 271-287; MapHelper.lua 14-20; LevelLoader 58/71; SkillCastHelper 105-113, 250-256; GameUtil 130-146; skill display delay 0.5 at 135/142 (file is SkillEditor/Jyx2SkillDisplayAsset.cs); licence text.
+Missed: none beyond the restart semantics above (AudioManager.StopMusic 36-43 and async PlayClipAtPoint(string) 107-113 not mentioned, minor).
+
+Also found: AudioManager.StopMusic (36-43) and the async PlayClipAtPoint(string) (107-113) exist and are not covered above.
+
+Fixed 2026-10-12 (Sonnet fixer): the 'resumes without restarting' claim in the acceptance line and section 1 was wrong; the donor restarts the zone track from 0 after a fight unless the battle had no music. Verified in AudioManager.cs 26-34, BattleLoader.cs 107, LevelLoader.cs 58-71. Sketch unchanged (its setTrack also replays the saved track after a battle).

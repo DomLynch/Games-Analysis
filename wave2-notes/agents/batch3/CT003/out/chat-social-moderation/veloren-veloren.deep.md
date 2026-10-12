@@ -121,3 +121,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 Reuse tag: adapt-idea (GPL-3.0: clean-room only; the sketch is written from the mechanism)
 Brief rule served: Strategy CT rulings (spam limits; chat through the writer; mute tiers and durations); addendum rule "keep the idea, fix the defect".
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: none. Verified automod.rs 91-122 order, 146-172 update, constants 127-133, 256-byte cap chat.rs 214, SAY 100/REGION 1000 (218/217), squared test state_ext 954, is_private 197 (Tell/Group/Faction true), defaults 151-152, censor shared lib.rs 480-487, sender gate 906-911 and 916-917, call 972-976, Kill gate 1006-1011, icons 282-300. Worked numbers re-derived: volume (n-2)/5 less decay gives 0.2 at line 3, ~0.79 at 6, ~0.99 at 7, ~1.19 at 8, so warn at 6 and mute at 8 as claimed. NaN from 1/0*0 and f32::max(NaN,0)=0 reasoning is correct. Licence GPL-3 correct.
+Missed: is_private() returns None for automated types (Online, Meta, Npc, Kill etc) and unwrap_or(true) at automod.rs 104 exempts them too; the note only lists Tell/Group/Faction as the exempt private types. Minor omission.

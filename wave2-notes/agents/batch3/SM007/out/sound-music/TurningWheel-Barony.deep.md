@@ -166,3 +166,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - The ambient cull (sound_game.cpp 195-241) drops a newer near-duplicate instead of stealing a voice; that caps overlap in a crowd of identical idle sounds. It is a candidate rule for the voice pool in the STJr-SRB2 note, not built here.
 - Frankendom rulings: server-verified kills and the one ledger are unaffected. The server sends state flags (combat, boss present); the client picks the track.
 - Not compared: the OpenAL copy of `handleLevelMusic` (sound_game.cpp 686) may differ from the FMOD copy.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: none material. Verified: playMusic 101-168 (resume swap 120-129, volume 0 at 150-153, defaults reset 113-114), ladder multipliers (level 1/1 476-477, devil 2/2, herx 2/2, minotaur 5/5, sanctum 2/2, combat 4/1 577-578, shop 4/1 589-590), sound.cpp 296-321 (x5 duck, x2 rise), 369 outgoing x2, constants 650-653, cvars 135-136, game.cpp tick/accumulator 4129-4139 and sound_update once per pass 5276, TICKS_PER_SECOND 50, ambient cull 211/213 (2.25) and 241 (4.5), BSD-2 LICENSE.txt line 3. Minor wording: level branch guard (254-256) also tests !levelmusicplaying||!playing||olddarkmap!=darkmap and excludes herxaround/devilaround/magisteraround, Hell Boss exceptions; note summarises it as no boss/combat/shop.
+Missed: Level branch restarts music when the dark-map flag flips (olddarkmap != darkmap, music.cpp:254). Sanctum and combat branches exclude the 'Hell Boss'/'Sanctum' map names (528-533).

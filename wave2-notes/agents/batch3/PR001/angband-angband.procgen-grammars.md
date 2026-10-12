@@ -156,3 +156,9 @@ function pickProfile(depth: number, profiles: Profile[], rnd: (n: number) => num
   return chosen;
 }
 ```
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: Verified: copying.rst lines 5-6 licence; set_pit_type 968-993 (Rand_normal(ave,10), one_in_(rarity), fallback idx 0); build_pit 8 geometry (9x15 outer, 5x11 inner), 16 draws at depth+10, bubble sort then what[i*2], leader what[7], placement offsets and counts (I recount 59 writes: 20+14+6+6+4+6+2+1; tier5 4 corners collide with tier4 so 55 cells/4 refused); place_new_monster returns false on occupied (mon-make.c ~1092); item box x +-9 by 5 rows and one_in_(3) good; pit.txt 40 profiles (26/8/6), seven rarity-6 avg-85 dragon pits, all 8 nests rarity 1 so fallback latent; get_mon_num ood chance 25 and amount 10 (constants.txt lines 33/36, mon-make.c 231-232); randname_make logic, tries 10, vowel, player name 4-8 (player.c 386), scroll 2-8 width 24, artefact one_in_(3) quotes; generate.c reservoir pick 865-877.
+Missed: Leader is placed FIRST in the donor (centre monster before servants, with MON_GROUP_LEADER role) while sketch appends it last - no collision effect. Group index/leader role is listed as omitted. Nothing important missed.

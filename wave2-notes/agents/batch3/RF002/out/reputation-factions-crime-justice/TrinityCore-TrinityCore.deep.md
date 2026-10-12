@@ -8,7 +8,7 @@ Checked: Read in full: Player::SetContestedPvP (21933-21956), UpdateContestedPvP
 
 One hostile (PvP) flag, two timers, and a kill counter. All of it lives on the player and is advanced in `Player::Update` each tick.
 
-(a) Contact sets state. `Unit::AtTargetAttacked` (Unit.cpp 9283) handles player-on-player contact (its callers were not read). Duel opponents are excluded (9293). For the rest it calls `UpdatePvP(true)` (9295) and `SetContestedPvP(target)` (9296). `SetContestedPvP` sets the contest timer to 30000 ms (Player.cpp 21938). On first contact it also sets the attack-state bit and the contested player flag (21939-21942). A helping spell on a player who is in attack state (Spell.cpp 3146) flags the helper the same way: `SetContestedPvP()` and `UpdatePvP(true)` (3150-3151). Helping a contested player makes you contested.
+(a) Contact sets state. `Unit::AtTargetAttacked` (Unit.cpp 9283) handles player-on-player contact (its callers were not read). Duel opponents are excluded (9293). For the rest it calls `UpdatePvP(true)` (9295) and `SetContestedPvP(target)` (9296) on the attacker's player owner only (`myPlayerOwner`); the victim is not flagged by being hit. `SetContestedPvP` sets the contest timer to 30000 ms (Player.cpp 21938). On first contact it also sets the attack-state bit and the contested player flag (21939-21942), and gives the attack-state bit to the player's controlled pets (21949-21955). A helping spell on a player who is in attack state (Spell.cpp 3146) flags the helper the same way: `SetContestedPvP()` and `UpdatePvP(true)` (3150-3151). Helping a contested player makes you contested.
 
 (b) Contest timer. `UpdateContestedPvP(p_time)` runs every tick (Player.cpp 922). While the player is in combat it does nothing (21960). Otherwise it subtracts the elapsed milliseconds (21963-21966). At zero, `ResetContestedPvP` clears the attack-state bit and the contested flag (21969-21974). Net effect: "contested" means 30 s of out-of-combat time since the last contact; a long fight keeps it on.
 
@@ -18,7 +18,11 @@ One hostile (PvP) flag, two timers, and a kill counter. All of it lives on the p
 
 (e) Kill credit and honour. A kill's honour comes from `KillRewarder`, which calls `RewardHonor(victim, count, -1, Kill)` (KillRewarder.cpp 137). The -1 sends `RewardHonor` down the level-formula branch (Player.cpp 6704). Same-team kills give nothing (6713-6714). A victim at or below the killer's grey level gives nothing (6717-6721). Otherwise honour is `ceil(hk_honor_at_level_f(killer level) * (victim level - grey) / (killer level - grey))` (6725; the table function is not read). Each honourable kill increments the daily and lifetime counters (6728, 6730). So the kill count is a daily and lifetime tally that scales the reward, not a gate.
 
-Guards. `GuardAI` applies to guard creatures (GuardAI.cpp 26-27). When a guard dies, the killer's zone gets a message (68). The contest code wants nearby guards to re-check (Player.cpp 21943, comment "call MoveInLineOfSight for nearby contested guards"). But in the game code of this tree, nothing reads the contest state to decide a guard's aggro: `isAttackingPlayer()` (Unit.cpp 6067-6069) has no game callers. Its only caller is a Broken Isles script (`zone_mardum.cpp` 558). So the guard's attack rule is not in the donor's game code (the generic aggro path was not read). No bounty, jail or karma system was found.
+Guards and reputation (rebuilt in the fix pass; the first draft missed this). The contested flag does drive guard hostility, in `Object.cpp`, not in `GuardAI`. Three places read `PLAYER_FLAGS_CONTESTED_PVP` (documented at Player.h 520 as "will be attacked by contested guards"):
+- `WorldObject::GetFactionReaction` for a player looking at a creature (Object.cpp 2105-2130): a forced reputation rank wins first (2110); then, if the target's faction can hold reputation, a creature whose faction template carries the contested-guard flag is HOSTILE to a contested player (2119-2121), then the at-war state decides (hostile if at war, else friendly, 2124-2126).
+- The reverse direction, `GetFactionReactionTo` for a creature looking at a player (2152-2170): contested player and contested-guard faction gives HOSTILE first (2152-2154); then a forced rank (2155); then the player's reputation rank, clamped to at most neutral when at war (2165-2166).
+- `IsValidAttackTarget` (2443): a creature that `IsContestedGuard()` (Unit.cpp 12328) may attack a contested player even when reputation would say no; otherwise a neutral creature is attackable only if the faction is flagged at-war (2448-2453).
+So guard hostility is: contested flag (30 s out-of-combat window, section (b)) beats reputation. Reputation itself is a per-faction rank held on the player (forced rank, at-war flag, rank value) in the reputation manager; its rank thresholds and gain rules were not read in this pass. `GuardAI.cpp` (69 lines) is thin: it applies to guard creatures (26-27) and sends a zone message when a guard dies (68). `isAttackingPlayer()` (Unit.cpp 6067-6069) has no game callers (its only caller is a Broken Isles script, `zone_mardum.cpp` 558); that is why a grep for it finds nothing, not because the guard rule is missing. No bounty, jail or karma system was found.
 
 Tick: the timers are driven by `Player::Update(uint32 p_time)` (Player.cpp 886; the world-loop call that drives it was not read). The contest timer uses elapsed milliseconds (`p_time`). The PvP decay uses wall-clock seconds (`GameTime::GetGameTime()`). Two clocks, one per timer.
 
@@ -47,7 +51,7 @@ Tick: the timers are driven by `Player::Update(uint32 p_time)` (Player.cpp 886; 
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order: a contact refreshes both timers, the helper taint runs on assist, an area change sets or starts the decay, the contest countdown is skipped in combat, the flag decay runs after 300 s and never in a hostile area, and the honour gate runs same-team then grey. It leaves out the explicit toggle (`PLAYER_FLAGS_IN_PVP`), the attack-state bit (the sketch uses `contestedMs > 0` in its place), the FFA-realm exception in the same-team check, the duel-opponent exclusion, the groupsize argument, the honourless-target aura, and the contested display flag. `baseHonour` stands in for the donor's level table `hk_honor_at_level_f`, which was not read.
+simplified: the sketch keeps the donor order (the contact flags the attacker only; `reactionToPlayer` is the guard and reputation reaction; the donor's at-war handling differs between the two directions, the sketch uses the creature-to-player one): a contact refreshes both timers, the helper taint runs on assist, an area change sets or starts the decay, the contest countdown is skipped in combat, the flag decay runs after 300 s and never in a hostile area, and the honour gate runs same-team then grey. It leaves out the explicit toggle (`PLAYER_FLAGS_IN_PVP`), the attack-state bit (the sketch uses `contestedMs > 0` in its place), the FFA-realm exception in the same-team check, the duel-opponent exclusion, the groupsize argument, the honourless-target aura, and the contested display flag. `baseHonour` stands in for the donor's level table `hk_honor_at_level_f`, which was not read.
 
 ```ts
 // Licence: GPL-2.0-or-later (donor). Clean-room sketch of the shape only: hostile (PvP) flag, contest timer, helper taint, honour gate.
@@ -106,6 +110,24 @@ function killHonour(killerLevel: number, victimLevel: number, grayLevel: number,
   return Math.ceil(baseHonour * (victimLevel - grayLevel) / (killerLevel - grayLevel));
 }
 
+type Rank = "hostile" | "unfriendly" | "neutral" | "friendly" | "honored";
+const RANK_ORDER: Rank[] = ["hostile", "unfriendly", "neutral", "friendly", "honored"];
+
+interface RepState {
+  forcedRank: Rank | null;   // an effect that pins the rank for this faction
+  rank: Rank;                // the player's standing with the creature's faction
+  atWar: boolean;
+}
+
+// How a creature of a faction reads a player. A contested player is hostile to a contested-guard faction before
+// reputation is looked at; then a forced rank; then the rank, clamped to neutral or worse when at war.
+function reactionToPlayer(guardFaction: boolean, p: HostileState, rep: RepState): Rank {
+  if (guardFaction && p.contestedMs > 0) return "hostile";
+  if (rep.forcedRank !== null) return rep.forcedRank;
+  if (rep.atWar && RANK_ORDER.indexOf(rep.rank) > RANK_ORDER.indexOf("neutral")) return "neutral";
+  return rep.rank;
+}
+
 export {};
 ```
 
@@ -119,8 +141,8 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Brief rule served: 1 (one engine: the flag and the timers are decided in the engine, not the client); rules 7-9 n/a
 
 Best transferable idea: Make the hostile flag a timer that each hostile act restarts, paused in combat for the contest window and forced on in hostile zones, so the flag ends by itself after a quiet period.
-Decision (proposed): adapt — keep the three-timer shape (contact refresh, in-combat-paused contest window, idle decay with a hostile-zone override) and the anti-farming honour gate; fix the hard-coded 300 s and the single shared end-timer field; take no guard rule from this donor.
-Acceptance: a server test: an attack on a player marks both as contested for 30 s out of combat; a second attack restarts the decay; the flag clears 300 s after the last attack in a friendly zone and never in a hostile zone; a kill of a same-team player, or of a victim at or below grey, awards no honour.
+Decision (proposed): adapt — keep the three-timer shape (contact refresh, in-combat-paused contest window, idle decay with a hostile-zone override) and the anti-farming honour gate; fix the hard-coded 300 s and the single shared end-timer field; take the guard rule as well: a guard faction flag plus the contested flag beats reputation, with reputation (forced rank, at-war, rank clamp) as the fallback.
+Acceptance: a server test: an attack on a player marks the attacker (not the victim) as contested for 30 s out of combat; a second attack restarts the decay; a guard whose faction is flagged contested-guard reads a contested player as hostile even when reputation is friendly, and reads a non-contested player by reputation (at-war gives hostile); the flag clears 300 s after the last attack in a friendly zone and never in a hostile zone; a kill of a same-team player, or of a victim at or below grey, awards no honour.
 
 ## 6. Gaps and risks
 
@@ -128,9 +150,18 @@ Acceptance: a server test: an attack on a player marks both as contested for 30 
 - Defect (keep the idea, fix the constant): the 300 s decay is written into the condition at 21981. fix: name it and make it zone data, so a hostile zone or a zone with no decay is a data row.
 - Risk (keep the idea, split the field): `EndTimer` carries two meanings. An attack restamps it (24065), and the toggle-off logic reads it as "decay started" (24039, 24044). fix: separate "last hostile act" from "decay started".
 - Risk: two clocks. The contest window counts elapsed milliseconds from the tick; the decay uses wall-clock seconds. A fix: one clock in the engine tick, in ms.
-- Guards: this donor's game code does not give guards a rule that reads the contest state (see Mechanism). Frankendom guard aggro must be designed separately (parity row 2 for the AI brain; guard spawns are row 23). Do not port a guard rule from here.
+- Guards: the donor does read the contest state to decide guard hostility (Object.cpp 2119, 2152, 2443; see Mechanism). Frankendom guard aggro would use the sketch's `reactionToPlayer` (parity row 2 for the AI brain; guard spawns are row 23). The donor's reputation-manager internals were not read.
+- Also found: the contested flag is set on the attacker only, and the attack-state bit also goes to the attacker's pets; test the victim is not flagged.
 - Kill and honour: honour is granted inside the server kill path (KillRewarder). Frankendom kills are server-verified; attach the honour and tally to the same server kill event, and write one ledger entry per kill.
 - Anti-farming: the grey gate (6717-6721) is the part that transfers well: nothing for victims at or below the killer's grey level.
 - Many-on-one: the donor has no cap on how many players a single player can contest or be contested by. MAX_ATTACKERS = 3 is not in this donor and must come from our rulings.
-- Not in this donor: bounties, jail, karma and fame as a separate track. Honour tallies are the nearest thing.
+- Not in this donor (as read): bounties, jail, karma and fame as a separate track. Honour tallies and the reputation rank with at-war are the nearest things.
 - The level table `hk_honor_at_level_f` and the groupsize use (6673, 137) were not read. Do not port the honour curve until read.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: WRONG
+Errors: (1) MAIN CLAIM FALSE: Mechanism says 'nothing reads the contest state to decide a guard's aggro ... the guard's attack rule is not in the donor's game code' and the Decision says 'take no guard rule from this donor'. Real code reads PLAYER_FLAGS_CONTESTED_PVP in three places: Object.cpp:2120 (WorldObject::GetFactionReaction for player -> target: FACTION_TEMPLATE_FLAG_CONTESTED_GUARD faction + contested player => REP_HOSTILE, checked BEFORE reputation at-war), Object.cpp:2153 (reverse direction) and Object.cpp:2443 (IsValidAttackTarget: creature->IsContestedGuard() && player contested => attackable). Player.h:520 even documents the flag as 'will be attacked by contested guards'. The note only grepped isAttackingPlayer, not the flag. (2) ACCEPTANCE WRONG: 'an attack on a player marks both as contested for 30 s'. Unit::AtTargetAttacked (Unit.cpp 9283-9299) calls UpdatePvP(true) and SetContestedPvP(targetPlayer) only on myPlayerOwner (the ATTACKER); the victim is not flagged. A correct build of the donor rule fails this test. Sketch onHostileAct also flags a single actor, so the acceptance contradicts the note's own sketch. (3) The reputation/faction half of the category is absent: reputation ranks, at-war, forced ranks and faction reaction (Object.cpp 2100-2160) are the real reputation mechanism and the note says no such system found beyond honour. Verified OK: SetContestedPvP 30000 ms, attack-state bit, flag; UpdateContestedPvP paused in combat; UpdatePvPFlag 300 s and IsHostile guard; UpdatePvP stamp; UpdatePvPState hostile override and toggle-off; Player::Update call order 920-922; assist branch Spell.cpp 3146-3151; RewardHonor level formula, grey gate, same-team gate (FFA realm exception) and counters; KillRewarder -1 call; GPL-2+ header; COPYING v2.
+Missed: FACTION_TEMPLATE_FLAG_CONTESTED_GUARD / IsContestedGuard hostility (Object.cpp 2120, 2153, 2443) and the reputation at-war reaction right next to it; Creature::AtDisengage clears the attack-state bit (read, not used); pets (m_Controlled) also get the attack-state bit in SetContestedPvP.
+
+Fixed 2026-10-12 (Sonnet fixer): verdict WRONG rebuilt. The guards claim was false: PLAYER_FLAGS_CONTESTED_PVP is read at Object.cpp 2119-2121, 2152-2154 and 2443 (contested-guard faction hostile to a contested player, ahead of reputation); mechanism section now covers guards and the reputation reaction (forced rank, at-war, clamp), decision no longer says "no guard rule", sketch gains `reactionToPlayer`. Acceptance fixed: the contest flag lands on the attacker only (Unit.cpp 9293-9296), plus a guard-vs-reputation clause. Also found: pets of the attacker get the attack-state bit. Not verified: reputation-manager rank thresholds and gain rules (not read).

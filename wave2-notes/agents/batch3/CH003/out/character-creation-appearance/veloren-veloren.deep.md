@@ -193,3 +193,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020 /tmp/veloren
 Best transferable idea: one body family per species and body type holds a count table, a single clamp runs on the server before persist, and random generation draws only from those counts.
 Decision (proposed): adapt - keep the family table and the clamp, move the table into catalogue data, run the clamp on the server, and drop the client-only clamp as the only guard.
 Acceptance: a hero created with hair index 99 in a 21-style family is stored as 20 and the create is accepted, and a 21-character name is refused with the name error; a server test asserts both.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Line slips only: note puts the client randomise eyes draw at ui.rs 1955 and the TODO at 1943; real lines are about 1957 and 1944. All main claims verified: Body fields 12-35, random_with eyes 0..1 (humanoid.rs 77), validate min(index,count-1) at 84-96, Human counts (hair 20/21, beard 1/10, acc 1/1, eyes 6/7, hair colour 22, skin 18 at 235, eye colour 5 at 301), height lerp 0.85..1.1/255, BASE 20/9, scaler Human 1.05/0.99, name cap 20 chars (character.rs 12-16), seven starter rows (character_creator.rs 11-19), server never calls body.validate (only ui.rs 1908-2022), skin fallback HumanThree, GPL-3 LICENSE. Acceptance (hair 99 -> 20, 21-char name refused) is consistent with the sketch; no CLAUDE.md/AGENTS.md in donor. Sketch typecheck claim not rerun.
+Missed: Client truncates name to MAX_NAME_LENGTH in ui.rs ~1902 (listed in key functions, fine). verify_character_name counts chars not bytes (sketch uses code points, matches). Nothing important missed.
+
+Fixed 2026-10-12 (Sonnet fixer): checked the two line slips the checker listed against ui.rs 1940-1960. The note was right (Todo comment at 1943, eyes draw at 1955), so no change was made. No other error to fix.

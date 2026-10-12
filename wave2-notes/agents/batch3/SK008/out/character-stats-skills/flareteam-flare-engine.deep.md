@@ -10,8 +10,9 @@ Checked: Read in full: `StatBlock::calcBase` (985-1003), `StatBlock::applyEffect
   - (a) Level term: `lev0 = max(level - 1, 0)` (987), and `base = starting + lev0 * per_level` (991). Level 1 gets the starting value.
   - (b) Primary term: for each primary stat j (physical, mental, offense, defense: `mods/default/engine/primary_stats.txt`), `spent = max(get_primary(j) - 1, 0)` (996) and `base += spent * per_primary[j]` (1001). The first point in each primary is free. `get_primary(j)` is the player's allocated points plus effect bonuses (`StatBlock.h` 196-197). Points come from `stat_points_per_level`, default 1 (`StatBlock.cpp` 102).
   - (c) Effects: `current = (base + bonus) * bonus_multiplier` (1049). `bonus` is the sum of every additive effect magnitude (`EffectManager.cpp` 479), `bonus_multiplier` is the product of every multiplicative effect (477), and both are reset to 0 and 1 in `EffectManager::clearStatus` (355, 372). Where `clearStatus` is called is in `EffectManager.cpp` 349, 391 and 710 (the callers were not read). Primary bonuses are summed as whole numbers (494, `static_cast<int>`).
+  - (c2) `calcBase` continues past the primary term (past line 1003): it adds equipment base damage per damage type (`item_base_dmg`) and base absorb (`item_base_abs`) to the base and clamps minimum damage at 0. The sketch leaves these out.
   - (d) Floors: HP max and MP max are never below 1 (1053 and the MP line after it). Current HP and MP are clamped to the new max (`applyEffects` 1027-1040 stores the previous values; the clamp follows).
-- Order of a level-up (`recalc` 947-983): level is clamped to at least 1 (962-963), then `applyEffects` runs, then HP and MP refill only if not a level-up or if the restore flag is set (967 and the MP line after it).
+- Order of a level-up (`recalc` 947-983): level is clamped to at least 1 (962-963), then `applyEffects` runs, then HP refills when `!level_up || levelup_restore_hp || hp > max` (967-968; MP the same way with its own flag, and resource stats likewise).
 - Regen (`logic` 1136-1166), per frame:
   - Enemies out of combat (not hero, not ally) heal to full over `resting_hp_regen_seconds` (1139-1142; default 5 s, line 162).
   - Everyone else (in combat, or heroes and allies) gets `HP_REGEN / 60` per second, applied per frame (1146). MP uses `MP_REGEN / 60` per second (1154). The frame length is `1 / max_frames_per_sec`, so regen is fixed-step, not delta-time.
@@ -49,8 +50,8 @@ Each row: name | what it does | formula | number ranges | caps | file:line.
 | Accuracy | Attacker's hit rating | 100 baseline; power may multiply, add or set it | rating (percent) | none | Stats.h 29; Entity.cpp 390-396 |
 | Avoidance | Defender's rating | subtracted from accuracy | rating (percent) | clamp below | Stats.h 30; Entity.cpp 403 |
 | Miss chance | Chance a hit is avoided | true_avoidance = 100 - (accuracy - avoidance), clamped to file range (default 0 to 100) | 0 to 100 percent | avoidance_percent min,max (EngineSettings.cpp 357, 393) | Entity.cpp 403-408 |
-| Overhit | Bonus when accuracy outruns avoidance | if true_avoidance < 0, overhit with chance abs(true_avoidance) | percent of overflow | none | Entity.cpp 404, 496 |
-| Miss damage | Glancing hit | damage * random(min_miss, max_miss) / 100 | defaults not read | none | Entity.cpp 503 |
+| Overhit | Bonus when accuracy outruns avoidance | if true_avoidance < 0, overhit with chance abs(true_avoidance); overhit multiplier default 100 to 100 (no bonus) | percent of overflow | none; attackers with `perfect_accuracy` never overhit or miss | Entity.cpp 404, 496; EngineSettings.cpp 361-362 |
+| Miss damage | Glancing hit | damage * random(min_miss, max_miss) / 100 | default 0 to 0, so a miss deals nothing unless a mod sets it (EngineSettings.cpp 355-362) | none | Entity.cpp 503 |
 | Absorb | Armour soak | random(ABS_MIN, ABS_MAX), clamped to min..max percent of the hit | percent of damage; file default not read | absorb_percent min,max (commented example: 0,90) | Entity.cpp 434, 438-447; combat.txt 1 (commented) |
 | Block absorb | Soak while blocking | same clamp, using block_percent | commented example 0,100 | block_percent min,max | Entity.cpp 438; combat.txt 3 (commented) |
 | Minimum damage | Keep 1 damage | if absorb cuts to 0 and max_absorb < 100, damage is 1 | 1 | none | Entity.cpp 457-470 (approx.) |
@@ -68,6 +69,8 @@ Each row: name | what it does | formula | number ranges | caps | file:line.
 | Gap fill | Missing levels in an XP table | copy the next level up | none | none | XPScaling.cpp 119-124 |
 | Death penalty | Losses on death | currency 50 percent; total XP 0; XP since level-up 0; random item off; permadeath off | 0 to 100 percent | none | death_penalty.txt 8, 11, 14 |
 | Level | Character level | from XP table (not read) | not read | max level from table (not read) | EngineSettings.h 310 (declaration only) |
+
+Also found: `trait_armor_penetration` on a power skips all absorb (Entity.cpp 431-433), and an attacker with `perfect_accuracy` skips both the miss roll and the overhit roll (Entity.cpp 402-410).
 
 Not in this donor's default mod: a stamina pool, poise, stun ladder, skill trees, a crafting or skill point curve. The stamina example in `resource_stats.txt` is commented out.
 
@@ -138,7 +141,15 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 
 Best transferable idea: one function builds every derived stat from level, spent points and summed bonuses, in a fixed order, with a floor, so a character sheet and a fight read the same numbers.
 Decision (proposed): adopt — the stack (base from level and points, then additive and multiplicative bonuses, then a floor) is the simplest honest way to get derived stats from attributes; take it as is, with whole-point primaries and our own names.
-Acceptance: a server test computes HP for level 3 with 3 physical points, starting 10, per-level 2, per-physical 4, +5 additive and x1.5 multiplicative, and expects 40.5; the character sheet shows the same number the duel uses.
+Acceptance: a server test computes the unrounded HP for level 3 with 3 physical points, starting 10, per-level 2, per-physical 4, +5 additive and x1.5 multiplicative, and expects 40.5 (the donor keeps floats; a build with integer HP must apply its stated rounding after the stack and then expects 40 or 41 by that rule, test the unrounded value first); the character sheet shows the same number the duel uses.
 
 Reuse tag: adapt-idea (GPL-3.0; clean-room, shape only)
 Brief rule served: 1 (one engine); 7 (licence: clean-room)
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Verified: calcBase level/primary terms and free first point (StatBlock.cpp 985-1003), applyEffects (base+bonus)*mult and HP/MP floor 1 (1049-1053), bonus reset 0/1 (EffectManager.cpp 355-372), additive vs multiplicative branches (477-479), primary bonus static_cast<int> (494), regen formulas 1139-1154 (HP_REGEN/60 per second per frame; resting 5 s default at 162), stat_points_per_level 1 (102), takeHit accuracy/true_avoidance (403-408), absorb clamp/1-floor/min-1-damage, crit order crit>overhit>miss then round, trait_crits_impaired on stun/speed<100, crit default 200 (EngineSettings.cpp 360), avoidance_percent clamp, XP table gap fill (XPScaling.cpp 119-124), death penalty currency 50, GPL-3. Errors: (1) calcBase is cited as 985-1003 but continues past that: it also adds equipment base damage and absorb (item_base_dmg, item_base_abs) and clamps min/max; the note's 'Read in full' omits this. (2) recalc refill rule is incomplete: donor refills HP when (!level_up || levelup_restore_hp || hp > max), note drops the 'hp > max' case. (3) Note lists min/max_miss_damage and overhit defaults as 'not read', but EngineSettings.cpp 355-362 shows miss damage default 0..0 (a missed hit does zero damage) and overhit default 100: a real rule the table leaves as 'defaults not read'. (4) 'perfect_accuracy' (no miss, no overhit) not mentioned. Acceptance risk: expects HP 40.5; donor keeps floats, but a Frankendom build that rounds/floors HP (integer HP is normal) fails its own test. State rounding in the Decision.
+Missed: trait_armor_penetration skips all absorb (Entity.cpp 431-433); perfect_accuracy bypass of miss/overhit; miss damage default 0 so misses deal nothing; equipment base damage/absorb folded into base stats in calcBase.
+
+Fixed 2026-10-12 (Sonnet fixer): verified at StatBlock.cpp 960-1010 and Entity.cpp 398-436 and EngineSettings.cpp 350-362: calcBase also folds in equipment damage and absorb; recalc refills HP when hp > max too; miss damage defaults to 0 and overhit to 100; perfect_accuracy and armor_penetration exist. Acceptance now says the 40.5 is the unrounded float and what to do under integer HP. Sketch unchanged.

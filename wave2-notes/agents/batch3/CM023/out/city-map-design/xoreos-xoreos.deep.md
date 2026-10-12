@@ -119,3 +119,9 @@ function arrowAngle(northAxis: NorthAxis, yawDeg: number): number {
 Best transferable idea: Store each zone's minimap as two map points and the same two world points, fit a linear map per axis, and centre the party's point, so no zone needs hand-tuned offsets.
 Decision (proposed): adapt — the per-zone two-point calibration is the right shape for zones as data; take it, fix the zero-span division and the unguarded HUD path, and do not copy the 435/256 numbers.
 Acceptance: A zone whose two world points share an X or Y is rejected at load with a logged error, and at 375 wide the minimap dot stays on the party while walking and the arrow turns with the camera while the party stands still (unit test on `worldToMap` for north 0 and 3, plus a visual check).
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: none found; minimap.cpp 40,46,51-77 incl 435/256/60 and axis swap, hud.cpp 221-252 guards, module.cpp 654-683 and callers 809/1165, area.cpp 342-352, GPL-3-or-later header all match; sketch algebra matches donor
+Missed: HUD::setMinimap argument order differs from Minimap ctor (world pts first vs map pts first) and is hand-swapped at hud.cpp:233 - a trap for a port; initMinimap derives map id from module name (module.cpp 665-670)

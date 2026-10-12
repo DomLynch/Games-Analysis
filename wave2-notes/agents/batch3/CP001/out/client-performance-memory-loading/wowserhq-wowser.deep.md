@@ -179,3 +179,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Worker pool (pool.js and thread.js): the pool gives decode off the main thread and is worth a note of its own. Two gaps seen while reading: a worker-level crash (an `error` event, not a `message`) is not listened for (thread.js 9 registers `message` only), so a task on a crashed thread never settles and that thread stays busy; and `concurrency` is `hardwareConcurrency || 4` with no cap for phones (pool.js 15). Not run.
 - Not verified: the value of `canInstance` (decoded by `blizzardry`), so the share of instanceable models is unknown; the 1 ms timer clamp in browsers.
 - Scope: the donor's streamer is about props. Frankendom's zone content is spawns and actors; the lifecycle transfers, the spawn rules (row 23's caps and respawn) do not come from this file.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: All 20+ line claims verified (doodad-manager 35-183, blueprint 15-97, map 44-114, pool 6-46, thread 9, m2/index 28/56/575-588, handler 133, MIT licence). Defects 1-6 are real. Not-read list honest. Only slips: sketch comment-level.
+Missed: DoodadManager.animate (doodad-manager.js 214-232) is a second per-frame pass over animatedDoodads (visible check, receivesAnimationUpdates, billboards, skeletonHelper) not described. BUILD-RISK: Acceptance says a failed model load is retried on the next window change, but the sketch only re-queues on a later addChunk that lists that entry; a failure for a prop held by an already-loaded chunk is never retried when the window shifts elsewhere, so a correct build of the sketch can fail that test line. Also the 25x25 test needs the edge clamp (defect 6) stated as in or out of scope.

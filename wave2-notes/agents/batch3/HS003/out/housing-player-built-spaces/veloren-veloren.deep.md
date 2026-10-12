@@ -140,3 +140,9 @@ Best transferable idea: place a lot by growing a rectangle from a seed tile into
 
 Decision (proposed): adapt - take the grow-from-seed rule and the area and side minimums, with defects 1 and 2 fixed and the seed chosen by the player, not searched. Not a copy of the NPC town placement.
 Acceptance: the server places a 9x9 lot next to a road with its door on the road; a 5x3 lot at a seed with odd |x+y| never exceeds the area cap; a seed that cannot reach the minimum side is refused with a reason the phone shows.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: All checked claims hold: grow_aabr at tile.rs 76-143, i-last_growth>=4 stop, area guard uses i%2 vs side (i+|sum|)%4 (defect 1 real), guard is '> area_range.end' (defect 2 real, 16 allowed for size 3), acceptance test at end, find_near 70/6*2+1 squared = 529 cells, find_aabr needs CARDINALS road neighbour, myrmidon/guard tower/airship/farm parameters and attempt counts all match mod.rs lines, rural offset dir*min_dims*0.75+10, map.rs line 96 is the only 'player housing' hit in the tree (no-housing claim true), GPL-3 licence. Tiny omission: plaza search point is root_tile + dir.round*(plot size+1), note says only 'offsets by random direction'.
+Missed: Tiles::grow_organic (tile.rs 145+) is a second growth rule (random-walk blob, area_range.end cap) next to grow_aabr; not mentioned.

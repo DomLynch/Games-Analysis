@@ -1,6 +1,6 @@
 # crawl-crawl (character-creation-appearance, cell 3)
 
-Donor: `/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/tiledoll.cc` (with `tilemcache.cc`, `tilereg-doll.cc`, `hash.cc`, `newgame.cc`) | Licence: GNU GPL version 2 (LICENSE lines 6-7 "either version 2 of the License", header "Version 2, June 1991"; the LICENSE also says some pieces carry other GPL-compatible licences, not checked per file) | C++ | symbol `create_random_doll` (tiledoll.cc:240)
+Donor: `/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/tiledoll.cc` (with `tilemcache.cc`, `tilereg-doll.cc`, `hash.cc`, `newgame.cc`) | Licence: GNU GPL version 2 (LICENSE lines 6-8 "version 2 of the License, or (at your option) any later version", header "Version 2, June 1991"; the LICENSE also says some pieces carry other GPL-compatible licences, not checked per file) | C++ | symbol `create_random_doll` (tiledoll.cc:240)
 
 Checked: Read in full: `create_random_doll` (tiledoll.cc 240-260), `_get_random_doll_part` (227-231), the ghost doll layer fill (tilemcache.cc 1546-1558), `hash_with_seed` (hash.cc 57-62), `newgame_random_name` (newgame.cc 557-568) and the name buffer (572). Read in part: `fill_doll_for_newgame` (tiledoll.cc 962-990) and `fill_doll_equipment` (313-330, first lines only), `tilep_race_default` (tilepick-p.cc 607-620, first lines only), `_job_allowed` and `_char_defined` (newgame.cc 136-145). Not read: the tile atlas that defines `tile_player_part_start` and `tile_player_part_count` (defined outside the files I opened), the `TILEP_PART_*` enum, `job_allowed` (species.cc), `make_name` (item-name.cc), the rest of `tilep_race_default`. Searched by grep for `create_random_doll(`, `hash_with_seed(`, `MAX_NAME_LENGTH`, and scar/face terms (none found in the doll code I searched). Depth thin. Confidence high on the roll order, the chances and the seeded pick; medium on how the full doll is assembled.
 
@@ -9,7 +9,7 @@ Checked: Read in full: `create_random_doll` (tiledoll.cc 240-260), `_get_random_
 - A paper doll is a set of layers. Each layer is one tile index, taken as `tile_player_part_start[p] + random2(tile_player_part_count[p])` (tiledoll.cc 227-231). The layer list the code rolls is: body, hand1, leg, boots, hair, cloak, arm, hand2, helm, beard.
 - Random roll (`create_random_doll`, 240-260), in this order: body, hand1, leg, boots and hair are always rolled (243-247); cloak, arm, hand2 and helm are each a coin flip (250-257); beard is one in four (259). The function takes no species argument, so the same global part ranges apply to every species (this is what the code shows; whether a visible mismatch results was not checked).
 - Who calls it: the doll editor only. The randomise key in the doll editor (tilereg-doll.cc 408-409) calls `create_random_doll` on the current doll. The name screen does not roll a doll; it shows the doll built from the species, the job and the starting kit (`fill_doll_for_newgame`, tiledoll.cc 962-990, and the call in `_choose_name`).
-- Seeded look for NPCs and ghosts (tilemcache.cc 1546-1558). The seed is a hash of the monster's name XOR a hash of a data word (1546-1547). The species and job defaults are applied first. Then for each layer from cloak upward (1553) that is still unset (1555), the layer is `tile_player_part_start[p] + hash_with_seed(tile_player_part_count[p], seed, p)` (1557-1558). Same name, same look.
+- Seeded look for NPCs and ghosts (tilemcache.cc 1546-1558). The seed is a hash of the ghost's name XOR a hash of eight data words: species, job, religion, best skill, best skill rank, xl rank, damage, ac (1534-1547). So the donor look changes when the ghost's stats change; the name alone is not the seed. The species and job defaults are applied first. Then for every part from the cloak entry to the end of the donor's part list (1553) that is still unset (1555), the layer is `tile_player_part_start[p] + hash_with_seed(tile_player_part_count[p], seed, p)` (1557-1558). Same name and same stats, same look.
 - `hash_with_seed` (hash.cc 57-62): returns 0 for a count below 2 (60), otherwise a hash of (seed, id) modulo the count (62).
 - Names. `newgame_random_name` (557-568) calls `make_name()` up to 100 times (559, 561) and keeps the first name for which no save file exists (563), otherwise returns an empty string. The name buffer holds `MAX_NAME_LENGTH + 1` bytes (572), and `MAX_NAME_LENGTH` is 30 (`externs.h` 81).
 - Start gate. `_char_defined` (newgame.cc 136-138) is true only when species and job are both set. It is called in several places (1403, 1463, 2160); those callers were not read, so I do not claim how a new game is blocked without it. `_job_allowed` (141-145) bans the delver job in sprint games and otherwise defers to `job_allowed` (not read). The job is a class-like background, so the start is species plus job, not class-free.
@@ -32,7 +32,7 @@ Checked: Read in full: `create_random_doll` (tiledoll.cc 240-260), `_get_random_
 | Coin-flip layers | Chance 0.5 for cloak, arm, hand2, helm (250-257) |
 | Rare layer | Chance 0.25 for beard (259) |
 | Seeded pick per layer | `hash mod count`; zero when count is below 2 (hash.cc 60, 62) |
-| Seed from the name | hash32 of the name XOR hash of a data word (tilemcache.cc 1546-1547) |
+| Seed from name plus stats | hash32 of the name XOR hash of eight stat words (tilemcache.cc 1534-1547) |
 | Unique generated name | 100 tries, first name with no save file (newgame.cc 559-563) |
 | Name cap | 30 (externs.h 81) |
 
@@ -109,7 +109,7 @@ function seededIndex(seed: number, id: number, count: number): number {
   return count < 2 ? 0 : mix2(seed, id) % count;
 }
 
-// Donor ghost doll (tilemcache.cc 1546-1558): layers from cloak upward that the species or job
+// Donor ghost doll (tilemcache.cc 1534-1558; the donor seed is name hash XOR hash of 8 stat words, build the seed from the fields you choose): layers from cloak upward that the species or job
 // did not set get a seeded pick, so the same name always gives the same look.
 function seededDoll(setByDefaults: Doll, seed: number, ranges: RangeTable): Doll {
   const doll: Doll = { ...setByDefaults };
@@ -165,6 +165,14 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020 /tmp/crawl-c
 - The seeded pick uses `hash mod count`. For small counts the bias is small, but the mod-of-hash is not a uniform draw for every count; this does not matter for looks, but do not reuse it for any roll that pays out.
 - Not read: the tile atlas counts, the `TILEP_PART_*` enum, `job_allowed`, `make_name`, the rest of `tilep_race_default` (where the species base and the hair and beard defaults are set), and the middle of `fill_doll_equipment`.
 
-Best transferable idea: a look is a set of layers, each layer has a chance (always, coin flip, one in four), and a layer that the species or job did not set takes a seeded pick from its range so the same name always looks the same.
-Decision (proposed): adapt - keep the layer chance table and the seeded pick for fallen and NPC looks, add a per-species range table so missing layers are skipped, and keep the randomise roll for the creator only.
-Acceptance: a fallen NPC with the same name shows the same layer ids on two visits (a server test asserts identical ids for one seed), and a species with no beard range never rolls a beard (a test asserts it).
+Best transferable idea: a look is a set of layers, each layer has a chance (always, coin flip, one in four), and a layer that the species or job did not set takes a seeded pick from its range so the same name and stats always look the same (the donor seed includes the ghost's stats, so a stat change changes the look; Frankendom may seed on name only on purpose).
+Decision (proposed): adapt - keep the layer chance table and the seeded pick for fallen and NPC looks (seed = name hash XOR a hash of the fixed identity fields we choose; name-only is a deliberate choice, not the donor rule), add a per-species range table so missing layers are skipped, and keep the randomise roll for the creator only.
+Acceptance: a fallen NPC with the same name and the same seed fields shows the same layer ids on two visits (a server test asserts identical ids for one seed), and a species with no beard range never rolls a beard (a test asserts it).
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: 1) Note says seeded ghost look is 'Same name, same look' and 'a hash of the monster's name XOR a hash of a data word' (Mechanism, Best idea, Decision). Real: tilemcache.cc:1534-1547 seed = hash32(mname) ^ hash_uint32(data) where data is 8 words (species, job, religion, best_skill, best_skill_rank, xl_rank, damage, ac); so the look changes when the ghost's stats change. Name alone is not the donor seed. A build keyed on name only still passes the stated Acceptance (same seed -> same ids) but is not the donor rule. 2) Licence line quotes only 'either version 2' (LICENSE:6-8 is 'version 2 ... or (at your option) any later version'); harmless. 3) Sketch seededDoll loops 5..9 of its own 10-layer list; donor loops every part from TILEP_PART_CLOAK to TILEP_PART_MAX in enum order (1553), so layer set and ids differ (note admits ids are not donor enum). Verified OK: create_random_doll 240-260 order and chances; _get_random_doll_part 227-231; hash_with_seed hash.cc 57-62; newgame_random_name 557-568 (100 tries); buffer 572; MAX_NAME_LENGTH 30 externs.h:81; randomise key tilereg-doll.cc:408-409; _char_defined 136-138; _job_allowed 141-145; fill_doll_for_newgame 962-990 is called at newgame.cc 368/591/1802. Decision/Acceptance: no test-breaking claim.
+Missed: Seed includes ghost stats (see error 1); that is the real design point for 'same look for the same fallen hero' (stat change = look change, unless Frankendom seeds on name only on purpose).
+
+Fixed 2026-10-12 (Sonnet fixer): verified the seed is name XOR 8 stat words (tilemcache.cc 1534-1547) and corrected the mechanism, table, best idea, decision and acceptance wording; licence line now quotes 'or any later version'; sketch comment says the seed is built from chosen fields and that the sketch's 5..9 layer loop is its own list, not the donor's enum walk from cloak to the end. Sketch code unchanged (no typecheck needed).

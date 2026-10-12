@@ -8,10 +8,10 @@ Checked: Read in full: `effect::effect` and `effect::effect_impl` (units/abiliti
 
 - A unit's value (for example a resistance, or any `value` in an ability) is built by one composition function, not by a chain of ad-hoc adds. `effect::effect` (abilities.cpp 2170-2190) groups the active abilities by `priority` into an ordered map (2179-2185). It walks the groups in ascending priority (2188-2190); each group starts from the previous group's composite (`value = composite_value_`).
 - Inside one group (`effect_impl`, 2194-2286), each ability has a source id (its `id`, or `name`, 2210). For each source id only the strongest `add` survives (2253: a later value replaces the stored one only if larger), the strongest `sub`, the strongest `multiply` and the strongest `divide`. Different source ids stack. So two copies of the same trait do not add; a trait and a gear item do.
-- Caps: a group records the smallest `max_value` and the largest `min_value` across its abilities (2240 onward). `set`/`cumulative` values are handled before the adds (2201-2237; not priced here).
-- Composite: `multiplier` is the product of (multiply/100) over sources (2308); `divisor` the product of (divide/100) (2313); composite_double = (def + sum(add) - sum(sub)) x multiplier / divisor (2336). Then the clamp (2338-2344), then `std::round` to an integer (2345). The result is the next group's `def`.
+- Caps: a group records the smallest `max_value` and the largest `min_value` across its abilities (2240 onward). A `value` (set) ability replaces the base: the first one sets both a max and a min, later ones raise the max or lower the min, and the base becomes `max(setMax, 0) + min(setMin, 0)` (2206-2224, 2285-2294); most resistance abilities are written this way. A `cumulative` value is summed on top (2217-2221, 2318-2321; skipped in the sketch). A multiply or divide below 100 does apply: the donor keeps the largest value per source starting from nothing, not from 100 (2267-2284).
+- Composite: `multiplier` is the product of (multiply/100) over sources (2308); `divisor` the product of (divide/100) (2313); composite_double = (valueSet + sum(add) - sum(sub)) x multiplier / divisor (2336), where valueSet is the base `def` unless a set `value` ability replaced it (see above). Then the clamp (2338-2344), then `std::round` to an integer (2345). The result is the next group's `def`.
 - Resistance is built on this stack. `unit::resistance_value` (unit.cpp 1811-1823) starts from the movement-type base `res` (1813), keeps only the resistance abilities whose filter matches (1814-1817), builds `unit_abilities::effect` on the damage-taken scale `100 - res` (1818-1819), and returns `100 - composite` (1821). The value is a percent of damage taken (100 = normal).
-- Damage: `attack` builds `damage_multiplier = 100` (attack.cpp 184), adds time-of-day through `generic_combat_modifier` (lawful bonus) or `combat_modifier` (186-194), adds leadership (197-200), then multiplies by the resistance percent (206). `round_damage(base, multiplier, 10000)` gives the normal damage and `round_damage(base, multiplier, 20000)` the slowed damage (209-210). Both are the same formula with two divisors, so a slowed unit takes half.
+- Damage: `attack` builds `damage_multiplier = 100` (attack.cpp 184), adds time-of-day through `generic_combat_modifier` (lawful bonus) or `combat_modifier` (186-194), adds leadership (197-200), then multiplies by the resistance percent (206). `round_damage(base, multiplier, 10000)` gives the normal damage and `round_damage(base, multiplier, 20000)` the slowed damage (209-210). Both are the same formula with two divisors; `slow_damage` is the damage the unit deals while it is slowed (half of the normal damage), not damage it takes.
 - XP: a kill gives the attacker `kill_xp(defender level)` = 8 x level, and 4 at level 0 (attack.cpp 1117; game_config.hpp 51; game_config.cpp 44). Every fight gives each side `combat_xp(opponent level)` = 1 x opponent level (attack.cpp 1296-1297), added after the fight (1365, 1371).
 - Advancement gate: a unit may advance when XP >= max XP and it can advance (unit.hpp 191). Max XP is the type's `experience` (default 500, types.cpp 370) scaled by the match's experience modifier: `(experience x modifier + 50) / 100`, at least 1 (types.cpp 541-545 for the call; 542 for the formula).
 
@@ -29,7 +29,7 @@ The table is the catalogue view (SK focus): name | what it does | formula | numb
 
 | Name | What it does | Formula | Number ranges | Caps | file:line |
 |---|---|---|---|---|---|
-| Stat / value stack | Any unit value built from sources | ((def + sum add - sum sub) x prod(mul/100) / prod(div/100)), groups by priority | add/sub: integers; mul/div in percent (100 = x1) | per-group min and max (max = smallest, min = largest across abilities) | abilities.cpp:2170-2345 |
+| Stat / value stack | Any unit value built from sources | ((valueSet + sum add - sum sub) x prod(mul/100) / prod(div/100)), groups by priority; valueSet = def unless a set value replaces it | add/sub: integers; mul/div in percent (100 = x1) | per-group min and max (max = smallest, min = largest across abilities) | abilities.cpp:2170-2345 |
 | Named-source rule | Stops stacking of one source | per source id: strongest add, sub, mul, div only; different ids stack | - | - | abilities.cpp:2210, 2253 |
 | Max HP (trait bonus) | Hit points from traits | strong: +1 total; resilient: +4 total and +1 per level; healthy: +1 total and +1 per level; quick: -5% total | per trait as listed | - | traits.cfg:144; 213, 218; 181 (healthy block not read in full) |
 | Hit points (type) | Base hit points per unit type | data field | goblin Spearman 18 | - | data/core/units/goblins/Spearman.cfg:8 |
@@ -47,7 +47,7 @@ The table is the catalogue view (SK focus): name | what it does | formula | numb
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order: groups in ascending priority, each group reading the previous result; per named source the strongest add, sub, mul and div; caps as the donor's three branches; composite = (def + adds - subs) x mul / div; round at the end. Differences: (a) it assumes add, sub, mul and div are non-negative (the donor keeps the first value even when negative); (b) it drops the donor's `set` and `cumulative` values; (c) it drops the divide-by-zero log (the donor skips a zero divide); (d) it uses the corrected clamp argument order clamp(value, min, max), not the donor's order (see section 6); (e) `roundDamage` is a copy of the donor's integer rule, not a fix; it is kept because it is the tie rule the donor uses.
+simplified: the sketch keeps the donor order: groups in ascending priority, each group reading the previous result; per named source the strongest add, sub, mul and div (a mul or div under 100 applies, as in the donor); the set-value base (max of sets above zero plus min of sets below zero); caps as the donor's three branches; composite = (base + adds - subs) x mul / div; round at the end. Differences: (a) add and sub are assumed non-negative magnitudes (sub is a magnitude, the donor stores it negative and sums it); (b) it drops the donor's `cumulative` values; (c) it drops the divide-by-zero log (a zero divide is skipped); (d) it uses the corrected clamp argument order clamp(value, min, max), not the donor's order (see section 6); (e) `roundDamage` is a copy of the donor's integer rule, not a fix; it is kept because it is the tie rule the donor uses.
 
 ```ts
 // Licence: GPL-2.0-or-later (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -59,6 +59,7 @@ interface Mod {
   sub?: number;     // integer points, magnitude
   mul?: number;     // percent, 100 = x1.0
   div?: number;     // percent, 100 = x1.0
+  set?: number;     // donor `value`: replaces the base (max of sets above zero plus min of sets below zero)
   max?: number;     // cap contributed by this source
   min?: number;     // floor contributed by this source
 }
@@ -73,25 +74,33 @@ function roundDamage(base: number, bonus: number, divisor: number): number {
 }
 
 function applyGroup(def: number, group: Mod[]): number {
-  const best = new Map<string, { add: number; sub: number; mul: number; div: number }>();
+  const best = new Map<string, { add?: number; sub?: number; mul?: number; div?: number }>();
   let maxCap: number | undefined;
   let minCap: number | undefined;
+  let setMax: number | undefined;
+  let setMin: number | undefined;
   for (const m of group) {
-    const b = best.get(m.source) ?? { add: 0, sub: 0, mul: 100, div: 100 };
-    b.add = Math.max(b.add, m.add ?? 0);
-    b.sub = Math.max(b.sub, m.sub ?? 0);
-    if (m.mul !== undefined) b.mul = Math.max(b.mul, m.mul);
-    if (m.div !== undefined) b.div = Math.max(b.div, m.div);
+    const b = best.get(m.source) ?? {};
+    // Strongest per source, starting from nothing (a mul or div below 100 still applies).
+    if (m.add !== undefined) b.add = b.add === undefined ? m.add : Math.max(b.add, m.add);
+    if (m.sub !== undefined) b.sub = b.sub === undefined ? m.sub : Math.max(b.sub, m.sub);
+    if (m.mul !== undefined) b.mul = b.mul === undefined ? m.mul : Math.max(b.mul, m.mul);
+    if (m.div !== undefined && m.div !== 0) b.div = b.div === undefined ? m.div : Math.max(b.div, m.div);
     best.set(m.source, b);
+    if (m.set !== undefined) {
+      setMax = setMax === undefined ? m.set : Math.max(setMax, m.set);
+      setMin = setMin === undefined ? m.set : Math.min(setMin, m.set);
+    }
     if (m.max !== undefined) maxCap = maxCap === undefined ? m.max : Math.min(maxCap, m.max);
     if (m.min !== undefined) minCap = minCap === undefined ? m.min : Math.max(minCap, m.min);
   }
   let addition = 0, subtraction = 0, multiplier = 1, divisor = 1;
   for (const b of best.values()) {
-    addition += b.add; subtraction += b.sub;
-    multiplier *= b.mul / 100; divisor *= b.div / 100;
+    addition += b.add ?? 0; subtraction += b.sub ?? 0;
+    multiplier *= (b.mul ?? 100) / 100; divisor *= (b.div ?? 100) / 100;
   }
-  let v = (def + addition - subtraction) * multiplier / divisor;
+  const base = setMax === undefined || setMin === undefined ? def : Math.max(setMax, 0) + Math.min(setMin, 0);
+  let v = (base + addition - subtraction) * multiplier / divisor;
   // Clamp: both caps only when min < max (donor branch); the sketch passes value first.
   if (maxCap !== undefined && minCap !== undefined && minCap < maxCap) v = Math.min(maxCap, Math.max(minCap, v));
   else if (maxCap !== undefined && minCap === undefined) v = Math.min(maxCap, v);
@@ -107,7 +116,7 @@ function composeStat(base: number, mods: Mod[]): number {
 }
 ```
 
-Checks on the sketch (run): typechecks with `tsc --noEmit --strict --target es2020` on the VPS (no errors). Hand-computed: `roundDamage(10, 8500, 10000)` = 9 (8.5 goes toward base 10); `roundDamage(10, 11500, 10000)` = 11 (11.5 goes toward base); a base of 30 with source A add 2, source A add 3 and source B add 5 gives 38 (not 40).
+Checks on the sketch (run): typechecks with `tsc --noEmit --strict --target es2020` on the VPS (no errors). Hand-computed: `roundDamage(10, 8500, 10000)` = 9 (8.5 goes toward base 10); `roundDamage(10, 11500, 10000)` = 11 (11.5 goes toward base); a base of 30 with source A add 2, source A add 3 and source B add 5 gives 38 (not 40); one source with mul 80 on a base of 100 gives 80.
 
 ## 5. Lands in
 
@@ -132,4 +141,12 @@ Brief rule served: 1 (one engine computes the stack once); rules 7-9 n/a
 
 Best transferable idea: Compose every per-character value as an ordered stack of named sources where one source counts only once (its strongest entry), then clamp and round once at the end, and round damage toward the base at a tie.
 Decision (proposed): adapt - the named-source stack and the tie-toward-base rounding fit a fast duel's stat and damage math; the turn clock, the XP-for-both-sides rule and the donor's clamp order do not.
-Acceptance: A server test asserts a base of 30 with source A add 2, source A add 3 and source B add 5 gives 38, and base damage 10 at 85% gives 9 and at 115% gives 11 (ties go toward base).
+Acceptance: A server test asserts a base of 30 with source A add 2, source A add 3 and source B add 5 gives 38, a lone source with mul 80 on a base of 100 gives 80, a set value of 20 on a base of 100 gives 20, and base damage 10 at 85% gives 9 and at 115% gives 11 (ties go toward base).
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: (1) Section 1 says 'a slowed unit takes half'; slow_damage (attack.cpp:210) is the damage the slowed unit DEALS, not takes. (2) Sketch applyGroup initialises per-source mul/div at 100 and takes Math.max, so any multiply or divide below 100 (e.g. a 80% damage-taken reduction) is silently ignored; donor stores the first value and replaces only if larger (abilities.cpp 2267, 2279), so values under 100 do apply. Note only discloses the add/sub non-negative assumption, not this. Also note says donor 'keeps the first value even when negative' for add/sub, but donor keeps the maximum add (2253) / most negative sub (2260), starting from empty, not from 0. (3) Composite formula omits value_set: abilities with value= set the base (2286-2287 value_set = max(setmax,0)+min(setmin,0)) and replace def, which is how most resistance abilities are written; note says 'not priced here' but the formula row presents (def + add - sub) as complete. Verified OK: effect::effect 2170-2192 priority groups ascending, effect_id from id/name 2210, strongest add/sub/mul/div per source, min/max cap composition 2240-2247, composite 2336, std::clamp(min,max,composite) argument-order bug at 2339 (confirmed real: with min<max it returns max, UB if max>composite), std::round 2345, round_damage math.hpp 78-82, damage multiplier block attack.cpp 184-210, resistance_value unit.cpp 1811-1823, kill_xp 8*level or 4 (game_config.hpp 49-52, cpp 44), combat_xp, award lines 1117/1296-97/1365-71, experience_needed 541-545, default 500 at types.cpp 370, advances gate unit.hpp 191, xp_color 1239-1241, traits.cfg strong/dextrous/quick/intelligent/resilient lines, Spearman hp18/xp18/move5, Wolf Rider xp34, licence COPYING GPLv2. Acceptance (38; 10 at 85% -> 9; 115% -> 11) is correct against roundDamage(10,8500,10000) and (10,11500,10000).
+Missed: Sub semantics: donor stores sub as negative and sums it (2258-2261, 2336), subtle but equivalent. The 'cumulative' path (2217-2221) and set max/min (2286-2294) are the main resistance mechanism and are only mentioned as not priced.
+
+Fixed 2026-10-12 (Sonnet fixer): verified against abilities.cpp 2196-2346 that set `value` replaces the base, mul/div under 100 apply (first value kept, larger replaces), sub stored negative; slow_damage is damage dealt not taken (attack.cpp 209-210). Sketch applyGroup rewritten (set base, mul/div from nothing, zero divide skipped), formula rows corrected, acceptance extended; typechecked on the VPS. The clamp-order defect (2339) was confirmed by the checker and left as written.

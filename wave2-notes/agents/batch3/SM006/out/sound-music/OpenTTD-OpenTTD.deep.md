@@ -113,3 +113,9 @@ export {};
 
 Reuse tag: rewrite-from-idea (GPL-2.0; clean-room only)
 Brief rule served: 1 (one engine, sound is a client); rule 8 (target and parity row 12 named)
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: No errors found. Verified: StartSound 98-121 (checks 100/103/108/112, volume trim x zoom 117), _vol_factor_by_zoom 125 (255,255,255,190,134,8) with ZoomLevel enum zoom_type.h 20-30, SndPlayScreenCoordFx 203-224 (gate 206-210, pan 212-214, no clamp), tile/vehicle/global entry 226/238/246-248, _channels[8] mixer.cpp 42, MxAllocateChannel 171-177 first free or null, MxSetChannelVolume sine pan 214-220 (uint cast of possibly negative float is real), effect cube / (127*127) at 153-156, channel close 167, priority only written (sound.cpp 160/188, newgrf_act0_sounds.cpp 50; also newgrf_act11.cpp 48/60 sets 0) and never read, base volume table contains 128/90/80, shuffle music_gui.cpp 190-200, MusicLoop 448, no 'fade' in the four files, GPL v2 header line 3. Tiny nit: MxSetChannelVolume comment says volume range 0..16384 while sound->volume (128) x zoom (255) can reach 32640; not claimed in note.
+Missed: mixer.cpp 40-47 shows a sampled music stream path (_music_stream, mutex) feeding the same mixer; music drivers (src/music/*) were not checked for fade, so 'no crossfade in these files' is limited to the four named files, as the note says.

@@ -6,13 +6,13 @@ Checked: Read in full: `ArenaCityUtils::generateCity` (World/ArenaCityUtils.cpp 
 
 Best transferable idea: Build a town as a seeded grid: reserve the fixed cells first, place each service into a random empty cell one at a time before any filler, then fill the rest from a weighted table, so every town gets its services and the same seed always gives the same town.
 Decision (proposed): adapt - take the service-first placement and the seeded plan for towns in zone data; the Arena block files and the executable's reserved lists are not ours, and the town plan must be generated server-side from the zone seed so client and server agree.
-Acceptance: A 5 x 5 town generated from one zone seed shows the same layout on server and client, always contains one each of equipment, temple, tavern, noble house and mages guild (not on the palace cell), and the filler cells follow the 45/20/15/10/10 weights over 10,000 test seeds (a server test asserts the counts).
+Acceptance: A 5 x 5 town generated from one zone seed shows the same layout on server and client, always contains at least one each of equipment, temple, tavern and noble house and exactly one mages guild (not on the palace cell), and the filler cells follow the 45/20/15/10/10 weights over 10,000 test seeds (a server test asserts the counts).
 
 ## 1. Mechanism
 
 - Inputs: a city seed, the number of blocks per side (`cityDim`), the plan width from the MIF, a list of reserved block indices, a start position, and a seeded RNG (`ArenaRandom random(citySeed)` at MapGeneration.cpp 2660). The plan is a `cityDim x cityDim` row-major grid of block types (`citySize = cityDim * cityDim`, 106).
 - Step 1, reserved cells (122-131): each reserved index inside the plan is set to Reserved. These cells are never filled and never loaded from a block file.
-- Step 2, services, one at a time (134-139): `placeBlock` picks a random cell, retrying until it is Empty (115-116), and writes the block type. The order is Equipment, MagesGuild, NobleHouse, Temple, Tavern, Spacer. Each service therefore appears exactly once, before any filler can take its cell.
+- Step 2, services, one at a time (134-139): `placeBlock` picks a random cell, retrying until it is Empty (115-116), and writes the block type. The order is Equipment, MagesGuild, NobleHouse, Temple, Tavern, Spacer. Each service is therefore guaranteed at least once, before any filler can take its cell. Only MagesGuild and Spacer are unique: the filler (step 3) also produces Equipment, Tavern, Temple and NobleHouse, so a town normally has many of those.
 - Step 3, filler (142-147): `emptyBlocksInPlan` is counted once, after the services. Then, for each remaining empty cell, `generateRandomBlockType` rolls one 16-bit value and `placeBlock` puts that block type into a random empty cell (145-146). The roll's thresholds (MIFUtils.cpp 90-110) give Houses 0 to 0x7333 (45 percent), Tavern to 0xA666 (20 percent), Equipment to 0xCCCC (15 percent), Temple to 0xE666 (10 percent), and NobleHouse above that (10 percent). This filler never yields MagesGuild or Spacer; those come only from step 2.
 - Step 4, build (149-209): the plan is walked in row-major order, x fastest (202-208). Each non-reserved cell loads one block .MIF: its file name is code + "BD" + variation + rotation + ".MIF" (MIFUtils.cpp 73-86, rotation rolled first, then variation). Each block is copied into the voxel buffers at `startPosition + (column or row) * 20` (181-182), so each cell is a 20 by 20 voxel slot. The block's FLOR, MAP1 and MAP2 layers are copied.
 - Size per town (LocationDefinition.cpp 175-188): city state 6 blocks per side (36 cells), town 5 (25 cells), village 4 (16 cells).
@@ -165,3 +165,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020 arena-city-p
 - Mages guild and spacer appear only as one forced service each. The Frankendom service list should be data, so a town can drop or add services without a code change.
 - Not read (see Checked): the palace graphics pass, the building names, the block .MIF contents, the reserved-list and start-position data, and the local city point. Nothing in the note depends on them except the block contents, which the note does not describe.
 - The donor is a single-player generator; it has no server, no zone snapshot and no fight rules, so only the layout idea transfers.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Mechanism step 2 says each service 'appears exactly once' and Acceptance says 'always contains one each'; real filler (MIFUtils.cpp 88-111, ArenaCityUtils.cpp 142-147) also yields Equipment/Tavern/Temple/NobleHouse, so a town has many of those; only MagesGuild and Spacer are unique. Minor: comment at ArenaCityUtils.cpp ~152 says 'right to left' but code is row-major x-fastest (note says row-major, matches code). All line cites, weights 0x7333/A666/CCCC/E666, sizes 6/5/4, 20-voxel offset 181-182, tables 15-17, RNG 7143469 (Random.cpp 68-69), max(roll%n,1) at MIFUtils 84, licence MIT verified.
+Missed: none
+
+Fixed 2026-10-12 (Sonnet fixer): 'appears exactly once' and 'one each' changed to at least one for equipment, tavern, temple and noble house, exactly one only for mages guild (and spacer); matches the filler table in step 3 and MIFUtils.cpp 88-111. Verified against the note's own filler thresholds and ArenaCityUtils.cpp 134-147. The 'right to left' comment mismatch is a donor comment, not a note error.

@@ -121,3 +121,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - The complaint path takes the chat log from the client (`TicketHandler.cpp` 76). That is not server-verified. Fix: the server keeps the window (see the ModernUO note).
 - `HandleComplaint` is a stub: it sends a result and nothing else (`TicketHandler.cpp` 98-106). Its comment (99) says the client auto-ignores the spammer; the server does not add an ignore in that handler (reading). Do not copy the stub.
 - Ignore is by character or by account (`SocialMgr.cpp` 208). Keep the account match: it stops ignore from being dodged on an alt. Friends and ignore share one flag map with a 50 limit each (`SocialMgr.cpp` 47).
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: Verified: UpdateSpeakTime 21724-21767 (staff skip 21727, window test 21747, count>=limit 21753, never-shorten mute 21756-21758, reset 21760, count=1 else branch 21764, window end 21766), HandleChatMessage order (mute 211, AFK/DND skip 218, counter 219, GM silence 221, 511 at 227, commands 233, validate 237-242), defaults 10/1/10/100 (World.cpp 796-800, conf.dist 2082/2111), CanSpeak 785, expiry 945-950, friend/ignore limit 50u (SocialMgr.h 100-101), ignore by account 208, HandleComplaint stub 98-106, ChatLog from packet 76. Acceptance (10 lines 0.5s apart, 10th refused, 10s after trip delivered) is satisfied by the sketch.
+Missed: none

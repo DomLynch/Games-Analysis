@@ -171,3 +171,9 @@ export function spawnTick(area: ZoneArea, cat: Catalogue, rnd: Rng, place: Place
 - Data note: `crimeLevel` (tileData.hxx 165; TileManager.cxx 390) is loaded but nothing reads it in `src/`. Do not copy a field with no consumer.
 - Not read: `Randomizer` (shuffle and choose are assumed uniform), `PowerManager` (the source of the power level), and the loader beyond the zone keys, so the count of 827 entries may differ from what the game loads.
 - Minimap and landmarks: none found in `src/` (searched). The city-map topic's minimap, landmark and signage parts are not covered by this donor.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: None found. Verified: ZoneArea.cxx cap 5 (29), shuffle (32), skip occupied (43), counter increments regardless of setTileID result (54-55); getMaximumTileSize 65-104 row/column test; ZoneManager 1s/1s task (16-23), vacant+powered gate (88), unused counters (90-96); TileManager size draw 80-91, tile filter 30-44, footprint x-i,y+j 57-61, tileSizeCombinations insert at 480; setTileID bool 378, dead branch 423; MapNode 198-252; crimeLevel only loaded (TileManager 390, tileData.hxx 165); GPL-3.0 license.txt; TileData.json 827 entries, 563 RCI, R395/C121/I40/A7; commercial LOW max square 4, MEDIUM max 3, residential HIGH max 5 all match.
+Missed: "Not a defect in the note but unmentioned: ZoneArea::spawnBuildings passes an empty id to setTileID when no tile matched (value_or("""")), which returns false at MapFunctions 383 (harmless); ZoneManager::spawnBuildings loop 85-103 only guards on isVacant, never re-checks after merge. Nothing important missed."

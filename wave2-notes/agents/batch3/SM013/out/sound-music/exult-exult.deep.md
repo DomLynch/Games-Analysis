@@ -11,12 +11,12 @@ Three layers, all in the client (the engine never reads them).
 (a) Positional emitters on map objects. Two kinds. `Object_sfx` is started by usecode or by a sound on an object; `Shape_sfx` is driven by per-shape sound data. Both poll on a 100 ms grid. Each poll computes the listener, decides whether the emitter is in range, and then starts, updates or stops a voice.
 - Grid: next poll = now + 100 - (now % 100) (animate.cc:113, 151). The timing is aligned to wall-clock multiples of 100 ms, not a per-emitter timer.
 - Range gate: the emitter is silent when its squared screen-space distance from the listener is over 24 x 24 tiles (animate.cc:55; Audio.h:55).
-- Object_sfx order of steps per poll: in range and no voice yet, start (animate.cc:137); otherwise, if it has a voice, update its position (146). Out of range, it stops the voice (about 149-150, not receipted) and then, with no voice left, calls `stop();` and deletes itself (153). So a usecode loop that the player walks away from is destroyed, not paused.
+- Object_sfx order of steps per poll: in range and no voice yet, start (animate.cc:137); otherwise, if it has a voice, update its position (146). Out of range, it stops the voice (animate.cc 142-144) and then, with no voice left, calls `stop();` and deletes itself (153). So a usecode loop that the player walks away from is destroyed, not paused.
 - Shape_sfx order of steps (animate.cc 176-262): compute `looping` from the shape data (line 170); drop channels whose sound has ended (206-215); if nothing plays and nothing is due, return (218-220); roll chance before starting a non-looping sound (224); pick the variant (227); if the hourly chime is due, put it on channel slot 1 (230-236); compute volume from the shape percent (242); if out of range, stop the channels (about 256-258, not receipted); otherwise start (253) or update the position (259).
 
 Distance and pan for every wave sound (Audio.cc 758-784, AudioChannel.cc 786-817):
 - Listener = centre tile of the visible window at the camera actor's lift (Audio.cc:763-764). Not the actor's own tile.
-- distance = squared distance x 256 / 576 (Audio.cc:774). Adding the listener's lift x 8 (Audio.cc:777-778) and capping at 256.
+- distance = squared distance x 256 / 576 (Audio.cc:774). Adding the listener's lift x 8, only when that lift is above zero (Audio.cc:777-778), and capping at 256.
 - Pan = (dx x 2 - tile height - listener height) x 32 / 5 (Audio.cc:784).
 - Each side volume = volume x (256 - distance) x side balance / 65536 (AudioChannel.cc:816). Over 255 distance = silent (AudioChannel.cc:793).
 
@@ -26,8 +26,8 @@ Hourly chime: when the game clock is on minute 0 (animate.cc:232), the chime sou
 
 (c) Background bed selector (`Background_noise::handle_event`, gamewin.cc 189-298). Only compiled unless `COLOURLESS_REALLY_HATES_THE_BG_SFX` is defined (gamewin.cc:190).
 - State is a priority chain, first match wins: dungeon, then rain, then snow, then night, else outside (gamewin.cc 196-208, read).
-- The bed track is chosen per state (gamewin.cc 219-253). It is re-issued only when the state changed or no track is playing (gamewin.cc:219). Starting a track calls `start_music` (gamewin.cc:253). For MIDI, the call stops the current track first (Midi.cc:156 `stop_music();`). I found no fade in audio/ (grep for fade returned nothing), so a bed change is a hard cut.
-- A bird/cricket layer on a timer. The default delay is 8000 ms (gamewin.cc:192), set to 1000 ms while a music player exists (about line 214, not receipted). At night it picks from {61, 61, 255}; 255 is silence (gamewin.cc:269, 275). By day it picks from {82, 85, 85} only when no music track is playing (gamewin.cc:277-278). After a play it repeats with probability 1/(repeats+1) after 500-1499 ms (gamewin.cc:285-287); otherwise it resets and waits 4000-6999 ms (gamewin.cc:289).
+- The bed track is chosen per state (gamewin.cc 219-253). It is re-issued only when music is enabled and either no track is playing or the state changed, and then only if the current track is a background track (or the new state is dungeon and the current track is not combat music) (gamewin.cc:219-222). The real bed tracks play only when `play_bg_tracks` is true (digital music or MT32); otherwise the track number stays 255 and the call stops the music (224-253), and background-bed tracks left from a restored game are stopped (261-264). Night is hour below 6 or above 20 (196). `Combat_schedule::danger_music()` is called on every pass (197). Starting a track calls `start_music` (gamewin.cc:253). For MIDI, the call stops the current track first (Midi.cc:156 `stop_music();`). I found no fade in audio/ (grep for fade returned nothing), so a bed change is a hard cut.
+- A bird/cricket layer on a timer, only when the player is outside and the state is not dungeon (267). The default delay is 8000 ms (gamewin.cc:192), set to 1000 ms while a music player exists (gamewin.cc:217). At night it picks from {61, 61, 255}; 255 is silence (gamewin.cc:269, 275). By day it picks from {82, 85, 85} only when `play_bg_tracks` is false and no music track is playing (gamewin.cc:277-278). After a play it repeats with probability 1/(repeats+1) after 500-1499 ms (gamewin.cc:285-287); otherwise it resets and waits 4000-6999 ms (gamewin.cc:289).
 
 (d) Voices. Mixer has 32 wave channels (Audio.cc:62, 270). `playSample` takes the first free channel. If none is free it takes the lowest-priority channel, and only if that channel's priority is lower than the request (AudioMixer.cc:182, 185-189). Every wave sound is requested with priority 0 (Audio.cc:666), so the steal branch never fires for sound effects. When all 32 are busy, play returns -1 and the sound is dropped; the CERR "No channel was available" log sits in play_wave_sfx (line not receipted).
 
@@ -59,7 +59,7 @@ Hourly chime: when the game clock is on minute 0 (animate.cc:232), the chime sou
 | Hourly chime | hour mod 12, 12 at hour 0 and 12 (animate.cc:232-235) |
 | Bird/cricket pools | night {61, 61, 255}; day {82, 85, 85} (gamewin.cc:269-270) |
 | Bird repeat and gap | repeat 500 + rand % 1000 ms; gap 4000 + rand % 3000 ms (gamewin.cc:287, 289) |
-| Bed start delay | 8000 ms default (gamewin.cc:192); 1000 ms with a music player (line not receipted) |
+| Bed start delay | 8000 ms default (gamewin.cc:192); 1000 ms with a music player (gamewin.cc:217) |
 | Priority for every wave sound | 0 (Audio.cc:666), so no steal |
 | Music and sfx on separate sequences | slot 0 music, slot 1 sfx (Midi.cc:91-92) |
 
@@ -103,7 +103,7 @@ function spatial(listener: Vec3, at: Vec3): Spatial {
   const sq = dx * dx + dy * dy;
   if (sq > RANGE_TILES * RANGE_TILES) return { distance: SILENT, pan: 0, inRange: false };
   let distance = Math.floor((sq * 256) / (RANGE_TILES * RANGE_TILES));
-  // fix: use the height difference, not the listener's lift alone (donor adds apos.tz * 8)
+  // fix: use the height difference, not the listener's lift alone (donor adds apos.tz * 8, only when tz > 0)
   distance = Math.min(256, distance + Math.abs(at.z - listener.z) * HEIGHT_STEP);
   // fix: pan from the x offset only (donor also mixes heights into the pan term)
   const pan = Math.max(-256, Math.min(256, Math.trunc((dx * 2 * 32) / 5)));
@@ -205,7 +205,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - No crossfade anywhere in audio/. A bed change is a hard cut (Midi.cc:156 stops the track before the new one starts). Frankendom's biome border crossfades have no model in this donor and must be designed fresh.
 - Priority is 0 for every wave sound (Audio.cc:666), so the steal branch never runs and a full table drops new sounds. For fight cues that means a hit impact can be dropped while a footstep plays. Fix in the sketch: real cue priority classes, with impacts above ambience.
 - Object_sfx deletes itself when the listener leaves range (animate.cc:153). An ambient loop started by usecode is lost for good. Fix in the sketch: the emitter is kept and re-arms.
-- Height falloff uses the listener's lift only (Audio.cc:777-778). A ground torch gets quieter when the player climbs. Fix in the sketch: height difference.
+- Height falloff uses the listener's lift only (Audio.cc:777-778, only when the lift is above zero). A ground torch gets quieter when the player climbs. Fix in the sketch: height difference.
 - The MIDI sound effect path has no distance or pan and one sound slot (Audio.cc:624, Midi.cc:905). It cannot do positional cues. Reject for Frankendom cues.
 - The donor has five bed states (dungeon, rain, snow, night, outside), not biomes (gamewin.cc 196-208). Biome beds need zone data from Frankendom.
 - Hit and spell cues: not covered. The only combat sound call read is combat.cc:328 (comment "The weird noise"); the cue mapping was not read. Stingers: not read (Combat_schedule::danger_music is called at gamewin.cc but its body was not read).
@@ -218,3 +218,11 @@ Brief rule served: 1 (one engine, client-only sound); addendum sound-music rules
 Best transferable idea: Give every ambient emitter a range gate, a chance roll and a variant pick from its own data, and let the voice table steal by real priority, not a fixed 0.
 Decision (proposed): adapt - keep the emitter shape (24-tile gate, chance, variant pick, pan and falloff, grid poll) as zone data for cues and ambience; fix priority, the out-of-range delete and the height term; reject the MIDI sound path and the hard bed cut as models.
 Acceptance: Walk away from a campfire emitter and its loop goes silent, then comes back when you return; with more cues than voices, a hit impact still plays while a lower-priority footstep is dropped (client unit test of pollEmitter and allocate, no server involved).
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: (1) bird layer by day also requires !play_bg_tracks (gamewin.cc:277), note says only no track playing. (2) bed tracks only chosen as real tracks when play_bg_tracks (OGG or MT32) else tracknum stays 255 and the bed stops music (gamewin.cc:224-253), omitted; also re-issue needs music enabled and current track a background track (219-222). (3) delay 1000 is gamewin.cc:217 not 'about 214'. (4) Object_sfx out-of-range stop is lines 142-144 not 'about 149-150'. (5) height term only applies if tz>0 (Audio.cc:777). (6) bird layer only outside and not in dungeon (267). Verified: 100 ms grid, 24 tile gate, 256/576 falloff, pan formula, 32 channels, priority 0 so steal never fires, chance/range/random, chime hour%12, pools {61,61,255}/{82,85,85}, gaps, midi slots 0/1, GPL v2 or later
+Missed: night = hour<6 or >20 (gamewin.cc:196) not stated; stop_music of non-bg tracks when bg tracks disabled (261-264); Combat_schedule::danger_music is called at 197 each tick; Shape_sfx frame gate 189-198
+
+Fixed 2026-10-12 (Sonnet fixer): added the play_bg_tracks gates on the day bird layer and the bed tracks (and the re-issue conditions, 261-264 stop rule); gave exact lines for the 1000 ms delay (217) and the Object_sfx out-of-range stop (142-144); noted the height term only applies when the listener lift is above zero; noted the bird layer is outside-only and not in dungeon (267); added the night hours (196) and the per-pass danger_music call (197). Shape_sfx frame gate (189-198 per checker) not re-checked and left out. Sketch code unchanged except one comment, no re-typecheck needed.

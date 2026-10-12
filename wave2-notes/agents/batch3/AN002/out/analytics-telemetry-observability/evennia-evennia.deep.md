@@ -47,7 +47,7 @@ Which numbers suit a phone and a small Node server: the 5-failure, 5-minute logi
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor's order (check first, record bounded, log only when the lock turns on, clear an expired record on check) and adds a counter pair (`fails`, `locks`) for the metrics store. It omits the Django cache backend (the Map lives in one process), the key register that lets the server list every key (`record_ip`, `unrecord_ip`), the ban check, the account-creation path, and the defective `touch` refresh (section 6). It differs from the donor in one place on purpose: the caller must check `isLocked` first and return before `fail`, which the donor does in accounts.py 729-735.
+simplified: the sketch keeps the donor's order (check first, record bounded, log only when the lock turns on, forget a record `timeout` after its newest failure, like the donor cache expiry at 123) and adds a counter pair (`fails`, `locks`) for the metrics store. It omits the Django cache backend (the Map lives in one process), the key register that lets the server list every key (`record_ip`, `unrecord_ip`), the ban check, the account-creation path, and the defective `touch` refresh (section 6). It differs from the donor in one place on purpose: the caller must check `isLocked` first and return before `fail`, which the donor does in accounts.py 729-735.
 
 ```ts
 // clean-room: written from the mechanism in evennia-evennia server/throttle.py (BSD-3-Clause), not a translation.
@@ -71,13 +71,16 @@ export class FailThrottle {
   }
 
   // Locked = the window is full and the newest failure is still inside the timeout.
-  // An expired record is cleared here (donor check(): remove when the timeout has passed).
+  // Any record whose newest failure is older than the timeout is forgotten, full or not
+  // (the donor gets this from the cache expiry: it stores the list with ttl = timeout on every update, throttle.py 123).
   isLocked(key: string): boolean {
     const r = this.rec.get(key);
-    if (r === undefined || r.length < this.o.limit) return false;
-    if (this.t() - r[r.length - 1] < this.o.timeoutMs) return true;
-    this.rec.delete(key);
-    return false;
+    if (r === undefined) return false;
+    if (this.t() - r[r.length - 1] >= this.o.timeoutMs) {
+      this.rec.delete(key);
+      return false;
+    }
+    return r.length >= this.o.limit;
   }
 
   // Record one failed action. Returns true only on the call that turns the lock on (logged once).
@@ -102,7 +105,7 @@ export class FailThrottle {
 export {};
 ```
 
-Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS at `/tmp/AN002-evennia-fail-throttle.ts`: exit 0 (no output). The Mac hook could not run tsc (no project dev dependencies), so only the VPS run counts.
+Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS at `/tmp/AN002-evennia-fail-throttle.ts`: exit 0 (no output); re-run after the 2026-10-12 expiry fix (see Fixed line). The Mac hook could not run tsc, so only the VPS run counts.
 
 ## 5. Lands in
 
@@ -112,7 +115,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 
 Best transferable idea: a bounded record of recent rejected actions per player that refuses input and logs once when it locks, instead of logging every refused attempt.
 Decision (proposed): adapt — keep the counting, the bounded record and the log-once rule as anti-cheat telemetry; do NOT copy the login lock as a player-facing rule (a fight lock must be a short, visible state with a reason, never a silent drop). Fix the defective refresh and the cross-process caveat in the sketch.
-Acceptance: a server test sends five rejected engage commands from one player; the fifth returns the lock reason; a sixth attempt is refused without a new record or log line; after the lock time a valid engage passes; the log holds exactly one lock line for the episode.
+Acceptance: a server test sends five rejected engage commands from one player; the fifth returns the lock reason; a sixth attempt is refused without a new record or log line; after the lock time a valid engage passes; the log holds exactly one lock line for the episode; and four rejects followed by a wait of the timeout leave no record, so a fifth reject later does not lock.
 
 ## 6. Gaps and risks
 
@@ -123,3 +126,11 @@ Acceptance: a server test sends five rejected engage commands from one player; t
 - Gap 2 (rule): this throttle is per process (LocMemCache, settings_default.py 1091). Frankendom's one-engine rule means one writer per zone; the throttle must live with that writer, not in a shared cache.
 - Gap 3: the lock is a player-facing rule. The donor locks login only. In the fight, a lock must be visible and short, and must never hide a kill. Frankendom decides the reject list and the lock length; the donor gives only the shape.
 - Not read: the other Throttle callers (accounts.py 1039, 1136, 2022); the Django cache code; the dummyrunner load tester (server/profiling/dummyrunner.py, grep hit only); the mssp status export (server/portal/mssp.py, grep hit only); the logger rotation classes beyond their definitions.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Donor flow, constants, line cites, licence, Defect 1 (touch double-prefix, throttle.py 218 vs 67) and Defect 2 all verified. Error: sketch drops the donor's cache expiry. Donor stores the list with ttl=timeout on every update (throttle.py 123), so a record below the limit disappears timeout seconds after the last failure (the chain the note itself describes in section 1). Sketch isLocked/fail never expire a record with fewer than limit entries, so 5 failures spread over days lock a key; the omitted-list in section 4 does not mention this. Acceptance as written still passes; a test of 'failures forgotten after timeout' would fail on the sketch.
+Missed: Donor ban path also feeds the throttle (accounts.py 748 update on banned) - covered. Nothing major missed.
+
+Fixed 2026-10-12 (Sonnet fixer): verified throttle.py 123 stores the list with ttl=timeout on every update, so sub-limit records expire. Sketch `isLocked` now forgets any record whose newest failure is older than the timeout (not only full ones); sketch note and acceptance updated with a forgotten-after-timeout case. Typechecked on the VPS after the change: exit 0.

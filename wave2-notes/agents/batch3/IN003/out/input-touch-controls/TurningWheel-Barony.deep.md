@@ -134,3 +134,9 @@ Worked check from the sketch: stick up at raw 16384 gives forward 0.48 (the tabl
 - Camera: with a controller, the analog turn and look code is skipped (actplayer.cpp 1946-1948, 2022-2023), so the camera look comes from the right-stick `GameController` path (defect 5, halfpipe default). Whether and how those outputs move the camera was not read. If the world camera takes a stick look, use the rescaled form with the radial deadzone (cell 1), not this path.
 - Landscape vs portrait, touch hit areas and the phone layout: not in this donor (not read).
 - Lock-on (the callout lock-on `lockOnEntityUid` in actplayer.cpp and interface.cpp, grep only) and gesture specials: not read.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: Verified: BSD-2 licence line 3; getRawLeftXMove 587-614 / Y 617-643 per-axis deadzone shift; deadzone 8000 (player.hpp 74); thresholds 0.7/0.5/0.7 at player.hpp 327-329 and their application at player.cpp 745-770 (names swapped vs axes - correct finding; keyboard x_force = Right-Left at actplayer.cpp 4641 confirms +x = right); maxLeftXMove 781; backpedal 0.25 at 4611, lateral 4612, modifiers 4616-4626, x_force 4662, y_force backpedal 4680, lateral 4683; velocity 4795-4798 (.045/.0225); binding deadzone 0.2 (input.cpp 18, 1082-1102); BUTTON_ANALOG_REPEAT_TICKS unused (only input.cpp:22 and input.hpp:254); leftStickDeadzoneType only used at player.cpp 599/629/781-782 so defect 3 holds; right-stick magnitude*(normalised-deadzone) at 411/489/493 holds. Worked numbers recomputed correct (0.339, 0.48, 77%, 112%).
+Missed: None found.

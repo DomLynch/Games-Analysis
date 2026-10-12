@@ -157,3 +157,9 @@ Brief rule served: zones as data on one runtime; sound is client-only (addendum)
 Best transferable idea: each zone names one song, one looping bed and one timed one-shot event; a zone change fades the old bed out while the new one fades in, and the overlap is the crossfade.
 Decision (proposed): adapt - keep the zone bundle and the fade overlap, but step envelopes every frame, add a voice cap that uses the priority field, and drive zone change from the server-confirmed transition instead of a 1-second poll.
 Acceptance: walking from a forest zone into a crypt zone, the forest bed fades out over its fade-out time while the crypt bed fades in, both audible in the overlap, no hard cut; a client test asserts the gain changes every frame and that no more than maxVoices beds are audible at once.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: All claims held: SetEnv 32-54 (separate song/ambience swap, stop line 38, play 41/49), Advance 57-68 (EventDelay/25, pan -1..1 line 65), assumedFPS 9, envelope 45-68/76-105 incl. /25 rates, update cadence 0.2 s at sound_engine.go:180, PlaySoundID group pick 210, unbounded map 226, game.go 1 s poll 240-249 and Advance at 280, pan law ebiten_sound_effect 37-38, Priority/Cache loaded (details loader 27,29) but unread, Night fields loaded (env loader 16,18) unused, ebiten decode per play (154), PlayBGM hard cut (62-68), SoundEnv at level_details_loader.go:139, GPL-3 LICENSE. Not-read list honest.
+Missed: Minor: SoundEngine starts with timer=1 (line 130) so the first envelope step is delayed 1 s; first Advance call fires an event immediately because eventTimer starts 0 (with env NONE, EventDelay 0 this retries PlaySoundID(0) every frame, harmless). Not noted.

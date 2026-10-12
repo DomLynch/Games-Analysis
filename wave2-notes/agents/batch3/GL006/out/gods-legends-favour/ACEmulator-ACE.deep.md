@@ -43,7 +43,7 @@ Defects found in the donor (keep the idea, fix each):
 
 ## 4. TypeScript sketch
 
-simplified: the sketch follows the donor order (floor, then the death debt, then the pool loop, then vital scaling). It omits the PK-lite death-purge path, the Allegiance XP exclusion, the 2 second removal of a finished debt, the chat messages, the corpse, the min-5 vital rule, and the augmentation exceptions. It keeps the donor's threshold curve unchanged (defect 3 is left open on purpose). It uses JS numbers, not float32, so the float drift of defect 1 does not occur.
+simplified: the sketch follows the donor order (floor, then the death debt, then the pool loop, then vital scaling). It omits the PK-lite death-purge path, the Allegiance XP exclusion, the 2 second removal of a finished debt, the chat messages, the corpse, and the augmentation exceptions; `scaledMaxVital` keeps a minimum of 5 as a placeholder. It keeps the donor's threshold curve unchanged (defect 3 is left open on purpose). It uses JS numbers, not float32, so the float drift of defect 1 does not occur.
 
 ```ts
 // Licence: AGPL-3.0 (donor). Clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -120,6 +120,7 @@ Acceptance: server test: two deaths at level 20 leave vitae at 0.90 (floor is 0.
 - The death purge is not read. If the donor's purge removes the vitae row, the debt can vanish on death; whether it does is an open question.
 - Frankendom kills are server-verified. The donor's PK-lite rule (no debt when a player kills you) needs a Frankendom equivalent (duel deaths versus zone deaths); not decided.
 - A 40 percent cap on all vitals is a large nerf. It should be a data field with a default that the Strategy lane sets, not a constant.
+- The floor is applied as a minimum, not only as a cap: after each death the new value is clamped UP to the floor for the current level (EnchantmentManager.cs 436-445), so a re-death can raise vitae back to the floor if the old value was below it; the sketch's `Math.max` matches this.
 - Level 1-14 floors are tiny (1 to 39 percent). That is the donor's design, not a proven error.
 
 ## 7. GL focus table (gods-legends-favour, items 1-14)
@@ -134,12 +135,20 @@ Acceptance: server test: two deaths at level 20 leave vitae at 0.90 (floor is 0.
 | 6 | Legend signature powers | not read | monster spell lists not opened | - | - | - | - | (not read) |
 | 7 | Shapeshifting | none | grep for shapeshift / polymorph in ACE.Server: no hits | - | - | - | - | none |
 | 8 | Avatars / summons | pets exist | Pet.cs, Pet_Monster.cs, CombatPet.cs (names only); no summon limit found | - | - | - | - | (not read) |
-| 9 | Fate, luck, oaths | luck and contracts | luck appears only in rabbit's-foot crafting (RecipeManager.cs 603); ContractTracker exists, abandon action exists, no forfeit found | - | - | - | - | RecipeManager.cs 603 |
+| 9 | Fate, luck, oaths | contracts only | no luck mechanic found; the one line that names a rabbit's foot (RecipeManager.cs 603) is a damage-variance crafting case (`DamageVariance *= 0.8f`), not luck; ContractTracker exists, abandon action exists, no forfeit found | - | - | - | - | RecipeManager.cs 603 |
 | 10 | Underworld / death | Vitae debt and corpse | debt (row 1); corpse rot 15 s empty, else max(3600, L*300) s | see row 1 | 15 s; 3600 s min | death | corpse rots | Corpse.cs 27, 106-110; Player_Death.cs 200-231 |
 | 11 | Mounts | none found | word-level grep not run; earlier hits were "amount" | - | - | - | - | none (not established) |
-| 12 | Relics | none | no relic hits | - | - | - | - | none |
+| 12 | Relics | starter relic item sets only | relic-named item sets are handed out at character creation (PlayerFactoryEx.cs 482, 537, 589; sets at 623-625) and relic names appear in monster/chest weenie ids; no relic mechanic found | - | - | - | - | PlayerFactoryEx.cs 482, 537, 589 |
 | 13 | Temples / shrines | Lifestone | death broadcast to the lifestone landblock if enabled; service and offering not read | - | - | - | - | Player_Death.cs 76-77 |
 | 14 | Pantheon factions, realm pride | Allegiance trees; titles | allegiance hierarchy (AllegianceManager.cs 129-171, not read); titles are an enum (CharacterTitle.cs names only); no realm pride found | - | - | - | - | AllegianceManager.cs 324, 348; CharacterTitle.cs 208 |
 
 Best transferable idea (table): the debt-and-pool loop (row 1 and 10) is the one mechanism worth keeping; the patron tithe (row 3) is a second candidate for Core Items career rows and is not written as a note here.
 Brief rule served: 1, GL focus 1 and 10.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Core vitae mechanism fully holds: InflictVitaePenalty 125-140; PK-lite skip and purge order 200-231; UpdateXpVitae 134-181 (death level, ReduceVitae +0.01, 2 s removal); VitaeCPPoolThreshold formula; GetMinVitae logic and 0.05/0.40 defaults (PropertyManager.cs 669-670); vitae multiply before additives (CreatureVital.cs 156-162); corpse 15 s / max(3600, level*300) (Corpse.cs 27, 106-110); EnchantmentManager 436/440/456; hand-computed XP figures (3,440; 34,000; 2,652) are right; licence AGPL v3 right. Errors in the GL table (peripheral): row 14/12 says 'no relic hits' but ACE has relic items (PlayerFactoryEx.cs 482, 537, 589 and ~46 case-insensitive hits in ACE.Server); row 9 says luck appears only in 'rabbit's-foot crafting RecipeManager.cs 603' but that line is a damage-variance recipe case (target.DamageVariance *= 0.8f, 'Granite / Lucky Rabbit's Foot'), not luck. AllegianceManager caps 291/730/720 confirmed (:180-190).
+Missed: Sketch includes Math.max(5,...) in scaledMaxVital while its header says the min-5 rule is omitted (inconsistent, harmless). Not noted: UpdateVitae also clamps to <=1.0 and the death debt is re-clamped against the CURRENT level floor, so a re-death at a lower floor can raise vitae back up to the floor (a max-floor, not just a cap).
+
+Fixed 2026-10-12 (Sonnet fixer): GL table row 12 (relics: starter item sets exist, PlayerFactoryEx.cs 482/537/589, no mechanic) and row 9 (RecipeManager.cs 603 is a damage-variance recipe, not luck) corrected; sketch prose no longer claims the min-5 rule is omitted. Also found (added to gaps): the floor is a minimum as well as a cap, since the death debt is clamped up to the current-level floor. All verified over ssh; sketch code unchanged.

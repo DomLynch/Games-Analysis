@@ -115,3 +115,9 @@ Brief rule served: addendum rules 1-6; Frankendom rulings zones as data and one 
 Best transferable idea: Fill each hub's service slots one at a time, in a fixed order, from a typed pool where each pool entry can be spent once, and report a short pool instead of silently zeroing the slot.
 Decision (proposed): adapt - the typed one-use pool fits zones as data; change the donor's first-come layout order to a spread rule and fix the zero-copy fallback.
 Acceptance: A player entering a zone finds one temple, one tavern and one bank, each drawn from that zone's pool, spread across the hub; a server test asserts no pool entry is spent twice and an empty pool gives a seeded slot plus one report line, never zero values.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: Nit only: note says the 12-location cache is 'release builds only'; the code (RMBLayout.cs 44-45, 693-698) is #if !UNITY_EDITOR, i.e. any non-editor build. All other claims verified (pool 608-618, loop order 623-625, draw 645-659, replacement 665-674, KRAVE01 678-683, cache 695-696, IsNamedBuilding 15 types, GetNextBuildingFromPool empty-return 709, BuildingDirectory.cs:176 seed, Place.cs 1128 and 1196-1216, CityNavigation weights 581-600, MIT headers).
+Missed: None significant.

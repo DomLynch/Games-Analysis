@@ -6,7 +6,7 @@ Checked: Read in full: `Models/Tasks/Mate/MateXpUpdateTask.cs` (1-21); `Models/G
 
 Best transferable idea: a companion earns a flat XP drip while it is moving: the first moving sample starts one 60 s award timer, a stop cancels it, and each completed minute pays a fixed amount scaled by the server rate, so travel levels a companion and idling does not.
 Decision (proposed): adapt - travel-based XP for a hero's companion in open zones is a clean progression hook; the donor's client-velocity trigger and its missing owner check are defects, so the server must decide motion from its own positions (defect 1 below); the message and the award must report the same granted amount (defect 2).
-Acceptance: A server test with 180 s of server-measured movement grants three awards of 300 x rate; a test that stops movement at 90 s grants exactly one award; the message shows the granted amount, not 300.
+Acceptance: A server test with a 1 s tick, where each tick runs `dripDue` first and then `onMoveSample` with `serverMoving` true, and an inclusive due time, grants three awards of 300 x rate at t = 60, 120 and 180 (with the order reversed, `onMoveSample` first, the awards fall at 60, 121 and 182, so only two are due by 180 s); a test that stops movement at 90 s grants exactly one award; the message shows the granted amount, not 300.
 
 ## 1. Mechanism
 
@@ -46,9 +46,9 @@ Formula table (file:line):
 |---|---|---|---|
 | Award per minute of continuous movement | one award per start; restarts on the next moving packet | 300 x rate per 60 s | MateXpUpdateTask.cs:10; Mate.cs:661-668 |
 | XP granted | `round(ExpRate x 300)` | rate-dependent | Mate.cs:543 |
-| Continuous motion over T seconds | awards = floor(T / 60) when packets keep arriving | e.g. 180 s = 3 awards | derived from Mate.cs:668 and MateXpUpdateTask.cs:14-16 |
+| Continuous motion over T seconds | one award per 60 s plus the gap until the next moving packet after each award; between floor(T / 61) and floor(T / 60) awards depending on packet cadence | e.g. 180 s = 2 or 3 awards | derived from Mate.cs:668 and MateXpUpdateTask.cs:14-16 |
 
-Derived rows: because the task does not reschedule, the next moving packet after an award starts a new 60 s timer, so continuous movement earns one award per completed minute. A stop at 90 s after one award cancels the pending second minute and leaves one award.
+Derived rows: because the task does not reschedule, the next moving packet after an award starts a new 60 s timer, so continuous movement earns about one award per minute; each award is delayed by the gap before the next moving packet arrives, so 180 s can yield two or three. A stop at 90 s after one award cancels the pending second minute and leaves one award.
 
 ## 4. TypeScript sketch
 
@@ -113,3 +113,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Mount-specific rule kept as a note: when a fall kills a mount, all riders are killed too (`Mate.cs` 604-616). Frankendom should decide this as an explicit rule (a data flag), not inherit it by accident.
 - Frankendom rulings: the drip is an XP award, so it must go through the one ledger and be server-verified. The duel does not use companions; the Pit is a client (row 22). MAX_ATTACKERS = 3 does not apply.
 - Not verified: the level-cap overflow (`GetLevelFromExp` body from line 98), the `ExpRate` value, the `TotalMateExp` table, the mount speed and stat formulas (`Mate.cs` 40-500), `SummonMate.cs`, and what the `Stabler` NPC flag does.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Verified OK: MateXpUpdateTask.cs lines 10,12-20 (Exp=300, cancel/clear, AddExp, message uses constant Exp), CSMoveUnitPacket 124-133 with owner TODO at 129 and VelX/VelY test at 130, StartUpdateXp 659-670 (60 s), Stop 672-677, Schedule RepeatCount=1 (TaskManager2.cs 99-106), AddExp 536-571 incl. rate rounding at 543 and cap, Mileage never incremented (only copied/stored), fall-death riders, MaxMateLevel 194, licence files (README LGPL, LICENSE.GPL, LICENSE.MIT). Errors: (1) Derived row 'awards = floor(T/60) when packets keep arriving' / 'continuous movement earns one award per completed minute' is overclaimed: the donor re-arms only on the next moving packet after an award fires (task nulls itself at MateXpUpdateTask.cs 15), so 180 s of continuous movement yields 2 or 3 awards depending on packet timing. (2) ACCEPTANCE FRAGILE: '180 s of server-measured movement grants three awards' - the sketch's onMoveSample/dripDue gives awards at ~60, ~121, ~182 if the move sample arrives after dripDue on a later tick (the third falls outside 180 s); passes only if the sample is processed in the same tick, after dripDue, with inclusive boundary at exactly 180. The test needs an explicit tick order and sample cadence, or 181+ s. 'Stop at 90 s -> exactly one award' holds.
+Missed: none
+
+Fixed 2026-10-12 (Sonnet fixer): checker points verified by reading the note against MateXpUpdateTask.cs 14-16 (task clears itself) and the sketch. The 'one award per completed minute' claim was overstated and is reworded (award count depends on packet cadence). The acceptance now fixes the tick order (drip first, then sample, 1 s ticks, inclusive boundary) so a correct build gets 60/120/180; it also states the reverse order gives 60/121/182. Sketch unchanged. Donor files not re-read on the VPS this pass; the checker had already verified the cited lines.

@@ -37,7 +37,7 @@ Numbers worked out from the code: at 60 Hz one step is 16.67 ms, so the cap of 5
 
 ## 4. TypeScript sketch
 
-simplified: the donor runs the fixed step on `setInterval` and reads `clock.deltaTime`. The sketch takes the measured delta as an argument, so it can be tested without timers. It keeps the donor's order: add the delta, run whole steps up to the cap, drop the backlog when the cap is hit, reuse one context object. The `PatchLoop` class is NOT in the donor: the donor sends patches on their own `setInterval`. `PatchLoop` is the sketch's own accumulator version of that send rate, with at most one patch per frame and a drop when behind. The donor does not implement sub-steps, the unreliable channel, rewind, or the join-time rate advertisement; these are omitted.
+simplified: the donor runs the fixed step on `setInterval` and reads `clock.deltaTime`. The sketch takes the measured delta as an argument, so it can be tested without timers. It keeps the donor's order: add the delta, run whole steps up to the cap, drop the backlog when the cap is hit, reuse one context object. The `PatchLoop` class is NOT in the donor: the donor sends patches on their own `setInterval`. `PatchLoop` is the sketch's own accumulator version of that send rate, with at most one patch per frame and a drop when behind. The donor puts `subSteps`, `subDt` and `subDtMs` in the step context (1047-1050) and cascades them to predicting clients; the sketch carries the three fields in the context but runs no physics with them. The unreliable channel, rewind, and the join-time rate advertisement are omitted.
 
 ```ts
 // Licence: MIT (donor LICENSE). Code may be adapted; this sketch is written from the described mechanism.
@@ -45,6 +45,9 @@ export interface StepContext {
   dt: number;          // seconds, fixed
   dtMs: number;        // milliseconds, fixed
   tick: number;        // steps executed so far
+  subSteps: number;    // physics sub-steps per fixed step (donor ctx.subSteps, default 1)
+  subDt: number;       // dt / subSteps, seconds
+  subDtMs: number;     // dtMs / subSteps
 }
 
 // Fixed-timestep accumulator. The donor runs this on a setInterval; here the caller
@@ -57,8 +60,9 @@ export class FixedStepLoop {
   constructor(
     private readonly stepMs: number,            // 1000 / tickRate
     private readonly maxCatchupSteps = 5,       // donor MAX_CATCHUP_STEPS
+    subSteps = 1,
   ) {
-    this.ctx = { dt: stepMs / 1000, dtMs: stepMs, tick: 0 };
+    this.ctx = { dt: stepMs / 1000, dtMs: stepMs, tick: 0, subSteps, subDt: stepMs / 1000 / subSteps, subDtMs: stepMs / subSteps };
   }
 
   // Returns how many fixed steps ran this frame.
@@ -71,7 +75,7 @@ export class FixedStepLoop {
       step(this.ctx);
       ran++;
     }
-    if (ran === this.maxCatchupSteps) this.acc = 0; // hitch: drop the backlog, no spiral of death
+    if (ran === this.maxCatchupSteps) this.acc = 0; // hitch: drop the backlog, no spiral of death (donor does this even when exactly 5 steps were due with no backlog)
     return ran;
   }
 }
@@ -102,7 +106,7 @@ export {};
 ## 5. Lands in
 
 - TARGET `src/fight/loop.ts` (new module: the server's fixed-step fight loop; the duel step, the AI brain and the per-tick NPC budget run inside its step callback; the Pit client never runs it).
-- Parity-checklist row 18, sub-line "server tick: fixed step, input intake, per-tick NPC budget". Input intake (row 5) happens inside the step, one input per entity per step, as the donor's docs describe (`994-1003`).
+- Parity-checklist row 18, sub-line "server tick: fixed step, input intake, per-tick NPC budget". Input intake (row 5) happens inside the step. The donor's docs give two modes (`994-1003`): per-entity bodies apply N inputs per step (996-999), and a shared-world solver consumes exactly one input per entity per step (1000-1003). Frankendom picks one and says which.
 - Reuse tag: adopt-as-idea (MIT: code may be adapted; the sketch is clean-room)
 - Brief rule served: 1 (one engine: one fixed step decides the fight; the send rate is separate); rule 8 (row 18 cited)
 
@@ -110,7 +114,7 @@ export {};
 
 - The drop policy trades time for stability. At a hitch of more than 5 steps, the fight loses the rest of that time: the world runs behind wall-clock time, and the fight visibly skips. Frankendom must choose the cap and say what a player sees (a short slow-motion or a freeze), rather than silently dropping time.
 - The donor gives no per-step work budget. The step runs whatever is queued (NPC brains, collisions). For the per-tick NPC budget the step callback itself must cap work; the donor provides only the step count cap.
-- Patch decoupling: a patch rate faster than the sim is not a free win. The donor's own docs (`294-301`) say an entity's ADD rides the reliable channel, so a datagram sent between patches can name an entity the client has not been told about yet; the client skips that frame and the entity's first value lands one mutation later. Frankendom's one-ledger rule (kills and HP decided once, on the server) must not rely on the faster channel.
+- Patch decoupling has a cost in the donor's own docs (`286-301`), and it is about the `@unreliable` flush rate, not the patch rate against the sim: if the unreliable flush runs faster than `patchRate`, an entity's ADD rides the reliable channel, so a datagram sent between patches can name an entity the client has not been told about yet; the client skips that frame and the entity's first value lands one mutation later. Leaving the unreliable rate unset avoids it. Frankendom's one-ledger rule (kills and HP decided once, on the server) must not rely on the faster channel.
 - Server-verified kills: the step callback is where kills are decided. The donor does not verify anything in the step; the rule that a kill is decided on the server and only confirmed to the client is Frankendom's, not the donor's.
 - MAX_ATTACKERS = 3 and many-on-one are not in this loop; the donor has no hate list. The step only sets when target selection runs (row 4).
 - Pit as client: the Pit runs its own render loop; it must not run `src/fight/loop.ts`.
@@ -126,3 +130,13 @@ Acceptance: server test: a 1000 ms delta in one call at 60 Hz runs exactly 5 ste
 
 Reuse tag: adopt-as-idea (MIT: code may be adapted; the sketch is clean-room)
 Brief rule served: 1 (one engine: one fixed step decides the fight; send rate separate); rule 8 (row 18 cited)
+
+Also found: the fixed-step doc (991-992) says lag-compensation is recorded once per real frame, but the code records it in `broadcastPatch` (1416-1419), on the patch cadence.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Verified: setFixedTimestep 1021-1067 (stepMs 1024, ctx reuse 1047-1050, MAX_CATCHUP_STEPS 5 at 1051, drop acc=0 at 1065), setTimestep 936-955, patchRate setter 531-545, defaults 57-58, broadcastPatch 1374-1422 incl. applyPatches once 1391, rewind record 1416-1419, MIT. Acceptance numbers check out against the sketch (1000 ms -> 5 steps, acc 0; 16/17/16 ms at 16.667 -> 0,1,1). Errors: (1) section 4 says 'the donor does not implement sub-steps' - the donor does supply subSteps/subDt/subDtMs in the step ctx (1047-1050) and cascades them to clients; sketch's StepContext omits them, contradicting section 1 (979-989). (2) 'one input per entity per step, as the donor's docs describe (994-1003)' - docs give two modes; per-entity mode applies N inputs per body per step (996-999), only shared-world mode is one per step (1000-1003). (3) Gap 'patch rate faster than the sim' misattributes the KNOWN COST doc (294-301): it is about the @unreliable flush rate (unreliablePatchRate) running faster than patchRate, not the patch rate vs sim. Edge: dropping acc whenever ran==5 also drops when exactly 5 steps were due with no backlog (faithful to donor, not noted).
+Missed: Doc at 991-992 says lag-comp is recorded once per real frame, while code records it in broadcastPatch (1416-1419); input stamp/tickRate advertisement (1030-1035) only partly used.
+
+Fixed 2026-10-12 (Sonnet fixer): verified Room.ts 1047-1050 (ctx carries subSteps, subDt, subDtMs), 994-1003 (two input modes), and 286-301 (the cost note is about the @unreliable flush rate vs patchRate). Section 4 text, sketch context, section 5 and gap 'patch decoupling' corrected; the exact-5-steps drop is noted in the sketch. Acceptance unchanged (checker confirmed it passes). Sketch re-typechecked on the VPS after the change: exit 0.

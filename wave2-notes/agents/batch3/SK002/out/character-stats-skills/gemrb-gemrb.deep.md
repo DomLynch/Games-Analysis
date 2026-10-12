@@ -7,7 +7,7 @@ Checked: Opened Actor.cpp at the RefreshPCStats block (3025-3131), UpdateFatigue
 ## 1. Mechanism
 
 - Two stat layers. `BaseStats` is what training, level-up and items write; `Modified` is the derived value. `GetStat` returns `Modified` (447). `RefreshEffects` calls `ResetStats` and then re-applies effects every refresh (2884-2887; ResetStats not read).
-- Changing a base ability fires a property hook (`pcf_stat*`, 1194-1260). A value of zero or less either kills the actor (if the DEATH_ON_ZERO_STAT feature is on and no MinimumBaseStats effect is active) or sets the derived stat to 1 (1196-1201). The WIS hook adds a luck delta from a table at each change (1223-1227). In 3E mode the CON, DEX and WIS hooks instead adjust saves.
+- Changing a base ability fires a property hook (`pcf_stat*`, 1194-1260). A value of zero or less either kills the actor (if the DEATH_ON_ZERO_STAT feature is on and no MinimumBaseStats effect is active) or sets the derived stat to 1 (1196-1201). In 2E mode the WIS hook adds a luck delta from a table at each change (+1 at each of 15, 18 and 25, cumulative; 1223-1227). In 3E mode the CON, DEX and WIS hooks instead adjust saves.
 - `RefreshPCStats` runs once per refresh, in this order (3025-3131, read): RefreshHP; intoxication decay, which sets luck and morale penalties (3037-3050); morale recovery; attacks per round; Lore += INT and WIS lore bonuses (3104); `UpdateFatigue` (between 3104 and 3109, read); Luck += difficulty luck + intoxication luck (3109); CON hit-point regeneration (3112); thief skill bonuses from DEX and race.
 - Fatigue is a clock. Party members gain one fatigue point per 4 in-game hours since last rest (3182-3184). Each refresh, CON-table recovery is subtracted and floored at 0 (3196-3200). Fatigue does not drain stamina: it adds a luck penalty from the luck master table (`luck.2da` names `fatigmod` keyed on the FATIGUE stat; 3203-3204) and a portrait icon plus a delayed complaint when the penalty is negative (3205-3216).
 - Ability modifier (the 3E rule used by the helper): `value / 2 - 5` (10373-10375). The 2E path uses a table (`Interface::GetConstitutionBonus`, Interface.cpp 3998-4012, indexes `abilityTables->conmod`; not read).
@@ -15,13 +15,14 @@ Checked: Opened Actor.cpp at the RefreshPCStats block (3025-3131), UpdateFatigue
 - Luck roll (`LuckyRoll`, 10854-10905): the roller's luck minus the opponent's luck (10860-10868) shifts each die; each die is clamped to 1..size (10887-10890). A natural 1 counts as a miss and a natural maximum as a hit (10881-10883). Under the critical flag, all misses return 1, all hits return the maximum (10897-10898), and a result that luck alone pushed to the maximum is held one below it (10902-10903).
 - Attack roll and critical: the d20 is a critical-flagged LuckyRoll (7524); the 2E critical roll is `roll + IE_CRITICALHITBONUS + CriticalBonus` (7525). The 3E path compares to the weapon's crit range minus the crit bonus and re-rolls (7528-7535, read in part).
 - Proficiency: stars = the proficiency stat masked and capped at STYLE_STAR_MAX (6848-6849). At zero stars, a per-class non-proficiency penalty applies in 2E (6865). Style bonuses are looked up by stars in tables (`GetWeaponStyleBonus`, `GetWSpecialBonus`); class to-hit comes from `clasthac` (7032).
-- Initiative: `spdfactor = weapon Speed + speed` (7453); speed = minus the physical speed stat plus a star table value (7014-7017). Then `spdfactor = Clamp(spdfactor + LuckyRoll(1, 6, -4, LR_NEGATIVE), 0, 10)` (7456). The next attack time is `attack_round_size * spdfactor / (attacks * 10) + gameTime` (7459). So a lower spdfactor acts sooner, and luck (negated for this roll) helps.
+- Initiative: `spdfactor = weapon Speed + speed` (7453), floored at 0 before the roll (7455); speed = minus the physical speed stat plus a star table value (7014-7017). Then `spdfactor = Clamp(spdfactor + LuckyRoll(1, 6, -4, LR_NEGATIVE), 0, 10)` (7456). The next attack time is `attack_round_size * spdfactor / (attacks * 10) + gameTime` (7459). So a lower spdfactor acts sooner, and luck (negated for this roll) helps.
 - Encumbrance: max weight comes from the STR table (STR and STREXTRA, column 3; 10358), times the kit percent from `encmod` (10363), plus half again for the StrongBack feat (10365). Factor 1 within max (5312), factor 2 within twice max (5315, half speed), and a huge divisor beyond that (5324). Speed = rate / factor (5344). Hostile-side actors (EA above EA_GOODCUTOFF) skip the weight check and the division in 2E (5312, 5341).
-- Resistance: `HandleDamageTypeMods` looks up the damage type in `DamageInfoMap` (from `dmginfo.2da`), then reads the resist stat (7834). 2E percent path: `resisted = trunc(damage * r / 100)` (7856); a resistance whose magnitude exceeds the stat maximum counts as 0. 3E flat path: `resisted += resistance` (7848). Damage = damage - resisted.
-- Difficulty: when the attacker is on the hostile side (EA above the cutoff) and the damage is not flagged to ignore difficulty, damage is scaled by the difficulty DMG percent (4354-4356). The table row is DEFAULT 0, EASY -50, NORMAL -25, CORE 0, HARD 50, INSANE 100 (difflvls.2da row DMG).
+- Resistance: `HandleDamageTypeMods` looks up the damage type in `DamageInfoMap` (from `dmginfo.2da`), then reads the resist stat (7834). 2E percent path: `resisted = trunc(damage * r / 100)` (7856); a resistance whose magnitude exceeds the stat maximum counts as 0. 3E flat path: `resisted += resistance` (7848) for plain types; when the attacker exists and the type has a 'reduction' flag, it uses `GetDamageReduction(weaponEnchantment)` plus piercing/crushing missile resists instead. Damage = damage - resisted.
+- Difficulty: when the attacker is on the hostile side (EA above the cutoff) and the damage is not flagged to ignore difficulty, damage is scaled by the configured difficulty damage percent (`CFGCache.difficultyDamageMod`, 4354-4356), which the donor's comment lists as -50, -25, 0, 50, 100, 150; with the `noExtraDifficultyDmg` option a positive adjustment is skipped. The difflvls table row is DEFAULT 0, EASY -50, NORMAL -25, CORE 0, HARD 50, INSANE 100 (difflvls.2da row DMG).
+- Luck can also be added to damage dice: the `LR_DAMAGELUCK` flag adds the damage-luck stat to luck for damage rolls (10863; used at 7549, 7551).
 - Mirror images: a hit is absorbed (damage = 0, one image lost) unless `LuckyRoll(1, images + 1, 0)` returns exactly 1 (4343-4349).
-- Spell learning: a d100 LuckyRoll; a specialist school adds 15, other schools subtract 15 (6421-6426); the spell is refused when the roll exceeds the INT bonus from the table (6432).
-- Caster level: base level plus a class bonus. Priest: `IE_CASTINGLEVELBONUSCLERIC` (5275). Mage: wild-surge mod plus `IE_CASTINGLEVELBONUSMAGE` (5278). The wild-surge mod for wild mages is rolled once from a table indexed by a random row (5257) and cached (5251). Defect: the cached call returns 0, not the cached value (5251-5252; the TODO at 5250 notes a reroll to 0).
+- Spell learning: only when the learn-stats flag is set and the game difficulty is above Normal (6418); then a d100 LuckyRoll; in 2E (not 3E) a specialist mage with a typed spell school adds 15 to the roll for his own school and subtracts 15 for others (6421-6426, not in BG1 where spells lack a school); the spell is refused when the roll exceeds the INT bonus from the table (6432).
+- Caster level: base level plus a class bonus. Priest: `IE_CASTINGLEVELBONUSCLERIC` (5275). Mage: wild-surge mod plus `IE_CASTINGLEVELBONUSMAGE` (5278). The wild-surge mod for wild mages is rolled once from a table indexed by a random row (5257) and cached (5251). Non-wild-mage kits return 0 first (5245-5247). The repeat call returns 0 on purpose, so callers add the shift once (comment at 5250: it is called several times per cast); the real quirk is that 'already rolled' is tested as 'mod is non-zero', so a roll of 0 gets rerolled (the TODO at 5251).
 
 ## 2. Key functions
 
@@ -63,7 +64,7 @@ Checked: Opened Actor.cpp at the RefreshPCStats block (3025-3131), UpdateFatigue
 | Carry weight max | encumbrance | STR table (col 3, with STREXTRA), times (100 + kit %)/100, plus half for StrongBack | STR and encmod not in box | none | Actor.cpp:10356-10366 |
 | Encumbrance tier | speed penalty | 1 within max; 2 within 2x max; else huge divisor | tiers only | cannot move beyond 2x | Actor.cpp:5307-5325 |
 | Movement speed | walk speed | rate / encumbrance factor (hostile 2E skip) | rate from moverate table | 0 when cannot move | Actor.cpp:5337-5345 |
-| Skill value (iwd2) | any skill check | stat + ability if trained or UNTRAINED=1; DEX via table; floor 0 | e.g. Move_Silently DEX, UNTRAINED 1; Open_Lock DEX, UNTRAINED 0 (iwd2/skillsta.2da line 13) | floor 0 | Actor.cpp:10392-10405 |
+| Skill value (iwd2) | any skill check | stat + ability if trained or UNTRAINED=1; DEX via table; floor 0 | e.g. Move_Silently DEX, UNTRAINED 1; Open_Lock DEX, UNTRAINED 0 (iwd2/skillsta.2da lines 13 and 14) | floor 0 | Actor.cpp:10392-10405 |
 | Lore | knowledge bonus | GetLoreBonus(INT) + GetLoreBonus(WIS) | table not read | none | Actor.cpp:3104 |
 | Proficiency stars | weapon skill tier | stat masked, capped at STYLE_STAR_MAX | star max not read | STYLE_STAR_MAX | Actor.cpp:6846-6851 |
 | Non-proficiency penalty | penalty at zero stars (2E) | per-class table value | table not in box | none | Actor.cpp:6865 (read in part) |
@@ -71,20 +72,20 @@ Checked: Opened Actor.cpp at the RefreshPCStats block (3025-3131), UpdateFatigue
 | Critical | crit chance | 2E: roll + IE_CRITICALHITBONUS + CriticalBonus; 3E threat range | threat range from weapon | crit-immune flag | Actor.cpp:7525 |
 | Initiative | turn order | 1d6 minus 4 with negated luck, plus weapon speed and speed term; clamp 0-10 | 0 to 10 | hard clamp 0 and 10 | Actor.cpp:7453-7459 |
 | Damage bonus | melee and ranged damage | item bonus + DAMAGEBONUS + dual-wield + style bonus + favored-enemy | table values not read | none | Actor.cpp:6980-7012 (read in part) |
-| Difficulty damage | enemy hits scale | DMG percent when attacker is hostile-side | -50, -25, 0, 50, 100 | none | Actor.cpp:4354-4356; difflvls.2da row 4 |
+| Difficulty damage | enemy hits scale | configured damage percent (CFGCache) when attacker is hostile-side; positive part skippable | -50, -25, 0, 50, 100 (comment also lists 150) | none | Actor.cpp:4354-4356; difflvls.2da row 4 |
 | Percent resistance (2E) | damage type resist | trunc(damage * r / 100) | r out of stat max counts as 0 | |r| > stat max ignored | Actor.cpp:7834-7856 |
 | Flat resistance (3E) | damage type reduction | resisted += resistance | flat values not read | none | Actor.cpp:7848 |
 | Mirror images | absorb count | one hit absorbed unless LuckyRoll(1, n+1) == 1 | per n | count-limited | Actor.cpp:4343-4349 |
 | Spell learn chance | learn a spell | d100 LuckyRoll; school +15 or -15; fail above INT bonus | INT table not read | none | Actor.cpp:6421-6432 |
 | Caster level (priest / mage) | spell power | base level + class casting-level stat (+ wild-surge mod for wild mages) | wild-surge table not read | none | Actor.cpp:5275-5278 |
-| Wild-surge mod | random caster level shift | one roll per cast from wmLevelMods; cached | table not read | defect: repeat call returns 0 (5251-5252) | Actor.cpp:5243-5267 |
+| Wild-surge mod | random caster level shift | one roll per cast from wmLevelMods; cached | table not read | repeat call returns 0 by design; roll of 0 is rerolled (TODO, 5251-5252) | Actor.cpp:5243-5267 |
 | Damage type table | damage types and chunking | per type: resist stat, chunking threshold | FIRE 8 / CHUNKING 5; CRUSHING CHUNKING 8 | none | unhardcoded/shared/dmginfo.2da line 8 |
 
 Not read in this donor (say so, do not invent): stamina and stance economy, block/parry/riposte windows, poise and stagger ladders, hit location and bleed, armour per slot and wear, XP curves (GetXPLevel and the level table), respec, CHR use (pcf_stat_cha only sets the stat), magic school list (only the damage-type table was read). Frankendom must source these from other donors.
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor's rules (3E ability modifier, trained-only skill, luck-vs-opponent dice with the crit guard, fatigue bucket count, weight tiers, percent resist, zero-stat clamp). It omits the 3E threat-range path, the DEX skill table, morale, intoxication, Lore, proficiency stars, the difficulty percent, mirror images, the spell learn roll, and the data-table lookups (they become parameters). It FIXES the wild-surge defect: the donor returns 0 on a repeat call; the sketch returns the cached value. It also drops the donor's fatigue portrait and complaint timer.
+simplified: the sketch keeps the donor's rules (3E ability modifier, trained-only skill, luck-vs-opponent dice with the crit guard, fatigue bucket count, weight tiers, percent resist, zero-stat clamp). It omits the 3E threat-range path, the DEX skill table, morale, intoxication, Lore, proficiency stars, the difficulty percent, mirror images, the spell learn roll, and the data-table lookups (they become parameters). It keeps the donor's wild-surge rule (the roll is returned once per cast, 0 on repeat calls so callers add it once) and fixes only the donor's reroll-on-zero quirk with a separate rolled flag. It also drops the donor's fatigue portrait and complaint timer.
 
 ```ts
 // Licence: GPL-2.0-or-later (donor). clean-room sketch from the described rules, not a translation of the donor lines.
@@ -163,15 +164,17 @@ export function clampAbility(value: number, deathOnZero: boolean, minimumEffect:
   return { value: 1, dead: false };
 }
 
-// Wild-surge level offset: rolled once per cast and reused on every later call in that cast.
-// fix: the donor returns 0 on the repeat call (its TODO says so); this sketch returns the cached value.
-export interface CastState { wildMod: number | null; }
-export function wildMod(st: CastState, rng: Rng, table: number[][], level: number): number {
-  if (st.wildMod !== null) return st.wildMod;
+// Wild-surge level offset: rolled once per cast; the donor returns the roll on the first call and 0 on every
+// later call in that cast, so callers add it exactly once (by design, not a defect). Non-wild-mage kits get 0.
+// fix: the donor's "already rolled" test is "the mod is non-zero", so a roll of 0 is rerolled (its TODO);
+// this sketch keeps a separate rolled flag.
+export interface CastState { rolled: boolean; }
+export function wildMod(st: CastState, isWildMage: boolean, rng: Rng, table: number[][], level: number): number {
+  if (!isWildMage || st.rolled) return 0;
+  st.rolled = true;
   const lvl = Math.min(Math.max(level, 1), table[0].length);
   const row = rng(table.length) - 1;
-  st.wildMod = table[row][lvl - 1];
-  return st.wildMod;
+  return table[row][lvl - 1];
 }
 
 export {};
@@ -181,7 +184,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 Best transferable idea: a luck-weighted d20 where the defender's luck subtracts from the attacker's, with a critical guard so luck alone can never turn a normal result into a maximum-roll crit.
 
-Decision (proposed): adapt - take the opponent-luck roll and the critical guard, but express luck as a fight-table stat (src/fight/stats.ts) that the server rolls, and drop the per-game tables and the fatigue clock (we have stamina for fight fatigue). Fix: the wild-surge repeat-call defect is fixed in the sketch; the WIS luck comment (1223) disagrees with the pst table (15-17 = +1, 18-24 = +2, 25 = +3): fix: trust the table and correct the comment in our catalogue.
+Decision (proposed): adapt - take the opponent-luck roll and the critical guard, but express luck as a fight-table stat (src/fight/stats.ts) that the server rolls, and drop the per-game tables and the fatigue clock (we have stamina for fight fatigue). Fix: the reroll-on-zero quirk of the wild-surge roll is fixed in the sketch with a rolled flag. The WIS luck hook (1223-1227, 2E only) matches the pst table: +1 luck at each of 15, 18 and 25, cumulative (1, 2, 3); no discrepancy.
 
 Acceptance: a server test seeds 10,000 rolls for a luck +3 attacker against a luck 0 defender and asserts a measurable hit-rate shift, that a natural 1 always misses and a natural maximum always crits under the critical flag, and that no luck value turns a non-natural result into a crit.
 
@@ -203,3 +206,11 @@ Acceptance: a server test seeds 10,000 rolls for a luck +3 attacker against a lu
 - Missing from this donor (not read): stamina, block, parry, roll, stagger, hit location, armour slots, XP curve. Frankendom needs other donors for these.
 
 ---
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Verified: LuckyRoll (10854-10905) incl. opponent luck, LR_NEGATIVE, clamp, miss/hit counts, crit guard; GetSkill trained/UNTRAINED gate and DEX exclusion; GetAbilityBonus value/2-5; GetMaxEncumbrance encmod %/StrongBack; encumbrance factors 1/2/123456789 and hostile 2E skip; initiative LuckyRoll(1,6,-4,LR_NEGATIVE) clamp 0-10; mirror images; difficulty rows; skillsta UNTRAINED flags; dmginfo FIRE/CRUSHING chunking; pcf_stat zero rule; UpdateFatigue 4-hour bucket; licence SPDX GPL-2.0-or-later; 'not in box' tables (fatigmod, encmod, clasthac etc.) really absent. ERRORS: (1) Decision text and sketch claim the WIS luck comment (1223) 'disagrees with the pst table'. It does not: pcf_stat_wis comment says 'also gives a +1 Luck bonus at 15, 18, and 25' and the table luckbon.2da steps 0,1 (15),2 (18),3 (25) = +1 at each of those thresholds, cumulative. No discrepancy; the 'fix' is invented. Also this luck hook runs only when !third. (2) Wild-surge 'defect': GetWildMod returns 0 on a repeat call by design ('avoid rerolling the mod, since we get called multiple times per each cast'); callers add it once, so returning the cached value in the sketch would double-apply the shift. The TODO is about a roll that equals 0. Also non-wild-mage kits return 0 first (KIT_WILDMAGE check) which note omits. (3) Spell learn (6420-6436) only runs when LS_STATS and gameDifficulty > Normal, and the +/-15 specialist adjust only when !third and kit index and spell PrimaryType; note states it unconditionally. (4) Difficulty damage uses CFGCache.difficultyDamageMod (cfg cache) with noExtraDifficultyDmg exception (positive adjustment suppressed) and comment lists 150% too; note says plain DMG row. (5) 3E flat resist: attacker with 'reduction' types uses GetDamageReduction(weaponEnchantment), not 'resisted += resistance' (that is the else case). (6) skillsta line cite 13 is Move_Silently; Open_Lock is line 14 (trivial).
+Missed: LR_DAMAGELUCK flag adds IE_DAMAGELUCK to luck (maximised damage, righteous magic); noExtraDifficultyDmg option; initiative spdfactor floored at 0 before the luck roll (7455).
+
+Fixed 2026-10-12 (Sonnet fixer): removed the invented WIS-luck 'disagreement' (comment and table agree, 2E only); reframed the wild-surge repeat-return-0 as by design, fixed the sketch (rolled flag, kit gate, caller adds once) and re-typechecked; qualified spell learning (difficulty > Normal, 2E specialist only); difficulty uses the cfg percent with noExtraDifficultyDmg; 3E reduction path noted; skillsta lines 13 and 14. Also found: LR_DAMAGELUCK, and initiative floor at 0 before the roll. All verified over ssh.

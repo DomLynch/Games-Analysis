@@ -37,7 +37,7 @@ Checked: Read in full: `ReputationRankThresholds` and rank lookup (ReputationMgr
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order of a change (gain rate, then clamp, then spill to sisters) and the rank ladder and paragon cap. It omits: the database spillover override and its rank check, the friendship table, the at-war flag, the paragon redirect to the paragon faction, the renown branch, the sister rank cap, the rank counters, and the quest-status check in the paragon cap (the sketch takes it as a boolean). Fix applied in the sketch: the spill is truncated to whole points per change in the donor, so a small gain loses its share; the sketch carries the fraction in `spillCarry`.
+simplified: the sketch keeps the donor order of a change: spill to sisters first from the raw input, then the faction itself, with the gain rate and clamp applied inside the per-faction step for every faction touched (spill targets too), the sister rank cap, the two-stage spill modifier, and the paragon cap used as that faction's clamp. It omits: the database spillover override and its rank check, the friendship table, the at-war flag, the paragon redirect to the paragon faction, the renown branch, the rank counters, the parent-bar direct case, and the quest-status check in the paragon cap (the sketch takes it as a boolean). Fix applied in the sketch: the spill is truncated to whole points per change in the donor, so a small gain loses its share; the sketch carries the fraction in `spillCarry`.
 
 ```ts
 // Licence: GPL-2.0-or-later (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -50,7 +50,14 @@ const STAND_CAP = 42000;  // donor: Reputation_Cap
 const RANK_STARTS = [-42000, -6000, -3000, 0, 3000, 9000, 21000, 42000]; // donor thresholds, sorted
 
 interface Standing { value: number; spillCarry: number; } // spillCarry = fraction owed to sisters
-interface Faction { id: string; parent?: string; sisters: string[]; spillMod: number; gainRate: number; standing: Standing; }
+interface Paragon { step: number; rewardTaken: boolean; }
+interface Faction {
+  id: string; parent?: string; sisters: string[];
+  parentMod: number;   // donor ParentFactionMod[1]: applied once to the raw change
+  sisterMod: number;   // donor ParentFactionMod[0]: applied per target
+  spillRankCap: number; // donor ParentFactionCap[0]: a target above this rank is skipped
+  gainRate: number; standing: Standing; paragon?: Paragon;
+}
 
 // Rank = how many thresholds the standing has reached, minus one (-1 if below the first).
 export function rankOf(value: number): number {
@@ -62,34 +69,43 @@ export function rankOf(value: number): number {
   return rank;
 }
 
-// Paragon overflow: above the cap the faction keeps gaining in fixed steps. The cap is the next boundary minus one,
-// plus one more step while the reward quest is still untaken (donor: ReputationMgr.cpp 163-166).
+// Paragon overflow: the cap is the next boundary minus one, plus one more step while the reward quest is untaken
+// (donor: ReputationMgr.cpp 163-166). Non-paragon factions use the fixed cap.
 export function paragonCap(value: number, step: number, rewardTaken: boolean): number {
   let cap = value + step - (value % step) - 1;
   if (!rewardTaken) cap += step;
   return cap;
 }
 
-// Apply a change. incremental = gain or loss relative to now, scaled by the world gain rate with round-half-up.
+function maxFor(f: Faction): number {
+  return f.paragon === undefined ? STAND_CAP : paragonCap(f.standing.value, f.paragon.step, f.paragon.rewardTaken);
+}
+
+// Donor SetOneFactionReputation: the world gain rate (round half up) and the clamp are applied HERE, to every faction
+// that is changed, spill targets included.
+function setOne(f: Faction, amount: number, incremental: boolean): number {
+  const before = f.standing.value;
+  const target = incremental ? before + Math.floor(amount * f.gainRate + 0.5) : amount;
+  f.standing.value = Math.min(maxFor(f), Math.max(STAND_MIN, target));
+  return f.standing.value - before;
+}
+
+// Donor SetReputation order: spill FIRST from the raw input (not gain-rated, not clamped), then the faction itself.
 // Fix (donor defect): the donor truncates spill to int, so small gains lose their share. Here the fraction is carried.
 export function applyStanding(f: Faction, amount: number, incremental: boolean, world: Map<string, Faction>): number {
-  let delta = amount;
-  if (incremental) delta = Math.floor(amount * f.gainRate + 0.5);
-  const before = f.standing.value;
-  const after = Math.min(STAND_CAP, Math.max(STAND_MIN, incremental ? before + delta : delta));
-  f.standing.value = after;
-
-  // Sister spill: a fraction of the change, carried until a whole point is owed.
-  const owed = (after - before) * f.spillMod + f.standing.spillCarry;
-  const whole = Math.trunc(owed);
-  f.standing.spillCarry = owed - whole;
-  if (whole !== 0 && f.parent !== undefined) {
+  if (f.parent !== undefined && f.parentMod !== 0) {
+    const owed = amount * f.parentMod + f.standing.spillCarry;
+    const whole = Math.trunc(owed);
+    f.standing.spillCarry = owed - whole;
     for (const sid of f.sisters) {
       const s = world.get(sid);
-      if (s !== undefined) s.standing.value = Math.min(STAND_CAP, Math.max(STAND_MIN, s.standing.value + whole));
+      if (s === undefined || s === f) continue;
+      if (rankOf(s.standing.value) > s.spillRankCap) continue; // donor: skip a sister above its rank cap
+      const share = Math.trunc(whole * s.sisterMod);
+      if (share !== 0 || !incremental) setOne(s, share, incremental);
     }
   }
-  return after - before;
+  return setOne(f, amount, incremental);
 }
 ```
 
@@ -98,7 +114,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020 gl004-standi
 Defects in the donor, each with the fix (the idea is kept):
 - D1, small spill is lost: ReputationMgr.cpp 444 and 482 use `int32(...)` so a fractional share is cut to whole points on every change, and 483 then drops zero spill. A one-point gain with a 0.5 spill rate spills nothing. fix: carry the fraction per faction (`spillCarry` in the sketch).
 - D2, gains and losses round differently at half points: 534 uses `floor(x + 0.5)`, which rounds -2.5 to -2 but 2.5 to 3. A loss is therefore rounded toward zero at halves. fix: round half away from zero for both, or document the asymmetry as intended. Small effect; recorded, not in the sketch.
-- D3, spill ignores the sister rank cap on the database path: the cap check at 480 is in the default branch only (the database template branch checks the player's rank against the template rank just before 444, and does not check the sister cap). fix: apply one rank-cap check to both paths. Not in the sketch.
+- D3, minor: the database-template branch has its own rank check (the player's rank in the target against the template rank, line 441) but not the sister ParentFactionCap check at 480, so the two paths cap differently. Not a bug as such; if Frankendom keeps both paths, use one rank-cap rule. Not in the sketch.
 
 ## 5. Lands in
 
@@ -115,6 +131,7 @@ Defects in the donor, each with the fix (the idea is kept):
 - The paragon overflow means the standing can grow past the cap while quests are untaken. Frankendom's ledger must enforce the cap on the server, not in the client bar.
 - Spill to sisters happens without a fight check. In Frankendom, a standing change from a kill is server-verified (kills are server-verified); spill must run in the same server transaction as the kill, not as a second request.
 - Death in the donor is a six-minute timer before repop, with a corpse run and reclaim delay (CalculateCorpseReclaimDelay not read). Frankendom's death and respawn rows (17) are not covered by this note; only the timer number is recorded.
+- Also found: the donor's spill is computed before the main update from the raw input (not gain-rated), uses a two-stage modifier (ParentFactionMod[1] once, then ParentFactionMod[0] per sister) and skips sisters above ParentFactionCap (480); each spill target then gets the world gain rate applied again inside SetOneFactionReputation (534). The sketch now follows this.
 - Durability loss on death is a world-setting rate. Frankendom needs it as an engine constant, not a per-zone number, unless a zone rule says otherwise.
 - No curse, blessing, shapeshift, summon, oath, relic or mount code was read in this donor (see the GL table below), so most of items 2, 4 to 9, 11 and 12 are not covered.
 
@@ -122,7 +139,7 @@ Reuse tag: rewrite-from-idea (GPL-2.0-or-later). Brief rule served: rules 1-2 an
 
 Best transferable idea: a faction standing row whose tiers come from a sorted threshold list, whose gains spill to related factions by a fraction that is carried between changes, and whose top tier keeps paying out in steps past the cap.
 Decision (proposed): adapt - the ladder, the spill-with-carry shape and the paragon overflow fit Frankendom's pantheon standing and realm pride; the donor's WoW factions, its database spillover override and its integer spill are replaced by catalogue rows and a server-side carry, with D1 fixed in the sketch.
-Acceptance: a server test applies four gains of one point with a 0.5 sister spill and sees the sister gain exactly one point after the second change (carry), never a double count; a paragon standing has a cap equal to the donor formula (value + step - value % step - 1, plus one step while the reward is untaken), checked for a standing just above 42000; a kill's standing change and its sister spill land in one ledger transaction.
+Acceptance: a server test (source faction has a parent, parentMod 0.5, sister sisterMod 1, gainRate 1) applies four gains of one point and sees the sister gain exactly one point after the second change (carry) and two in total after the fourth, never a double count; a paragon faction driven through applyStanding past 42000 stops at the donor formula (value + step - value % step - 1, plus one step while the reward is untaken) while a non-paragon faction stops at 42000; a kill's standing change and its sister spill land in one ledger transaction.
 
 GL table (gods-legends-favour, items from GL-FOCUS.md; "not read" where I opened no code for it):
 
@@ -130,7 +147,7 @@ GL table (gods-legends-favour, items from GL-FOCUS.md; "not read" where I opened
 |---|---|---|---|---|---|---|---|
 | 1 | Favour per faction (standing) | standing per faction, rank from thresholds, clamp to the band | rank = thresholds reached minus one; gain = floor(d * rate + 0.5) | -42000..42000; thresholds -42000, -6000, -3000, 0, 3000, 9000, 21000, 42000 | incremental change from events; sister spill; crossing hostile sets at-war | none (no decay function in ReputationMgr.cpp) | ReputationMgr.cpp 40-58, 66-74, 534-541, 549, 565; spill 441-489 |
 | 2 | Blessings and curses | not read in this donor (timed buffs are spell data; not searched) | n/a | n/a | n/a | n/a | not read |
-| 3 | Patron choice and switching | at-war flag set below hostile, cleared on rising; forced reaction exists (ApplyForceReaction, 308, body not read); no switch or apostasy found in the file | at-war when rank <= hostile | rank 0..8 | crossing hostile | none | ReputationMgr.cpp 549-554 (at-war), 308 (forced reaction) |
+| 3 | Patron choice and switching | at-war flag set below hostile, cleared on rising; forced reaction exists (ApplyForceReaction, 308, body not read); no switch or apostasy found in the file | at-war when rank <= hostile | rank -1..7 | crossing hostile | none | ReputationMgr.cpp 549-554 (at-war), 308 (forced reaction) |
 | 4 | Divine domains as tags | not read | n/a | n/a | n/a | n/a | not read |
 | 5 | Boons at favour thresholds | rank is computed from the thresholds; the rank gates at-war and forced reaction here; boon rows not read | rank from thresholds | rank -1..7 | rank crossing | none | ReputationMgr.cpp 62-86 |
 | 6 | Legend signature powers | not read | n/a | n/a | n/a | n/a | not read |
@@ -142,3 +159,11 @@ GL table (gods-legends-favour, items from GL-FOCUS.md; "not read" where I opened
 | 12 | Relics and artifacts | paragon overflow gives a reward step past the cap (a repeatable reward row, not a unique item); unique item ownership not read | paragon cap = value + step - value % step - 1, +step if reward untaken | step from paragon data | every paragon step earned | none | ReputationMgr.cpp 160-166 |
 | 13 | Temples and shrines | not read (taxi and flight-path data in PlayerTaxi.cpp not read) | n/a | n/a | n/a | n/a | not read |
 | 14 | Pantheon factions and realm pride | parent and sister factions with team lists; spill from a faction to its sisters with a mod and a rank cap; database spill override | spill = int32(spill * mod), skipped above cap | mods and caps from faction data | any change to a member faction | none | ReputationMgr.cpp 441-489 |
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: (1) Sketch header claims it keeps donor order 'gain rate, then clamp, then spill'. Real order (ReputationMgr.cpp 428-513): sister/parent spill FIRST using the RAW input standing (452-486, int32(spill*mod) at 482), then the faction itself (491-506) where the gain rate and clamp are applied inside SetOneFactionReputation (534-541). The sketch spills from the already-rated, already-clamped after-before delta and spills only if f.parent is set. Mechanism section 1(b)/(c) states the correct order, so note contradicts itself. (2) Sketch clamps every faction to 42000 in applyStanding, so the paragon overflow it advertises (donor GetMaxReputation 160-166 replaces the cap for paragon factions) cannot occur through applyStanding; paragonCap is an unused standalone function. Acceptance line 2 (paragon cap just above 42000) passes only by calling paragonCap directly. (3) D3 overstated: DB-template branch does check the player's rank vs template rank at 441, which is its own cap; it just lacks the sister ParentFactionCap check at 480. (4) Table row 3 says 'rank 0..8' while rows 1/5 say -1..7 (8 thresholds give -1..7). Verified OK: thresholds and Reputation_Cap 42000 (36-58), rank helper 66-74, floor(x+0.5) at 534 (D2 correct), GetMin/GetMax 142-186 incl. paragon formula 163-166, at-war 549, KillPlayer 6-minute timer 4372, ResurrectPlayer 4269, DurabilityLossAll 4466, fall durability 665, int32 truncation at 444/482 and zero-skip at 483 (D1 correct), licence header GPL v2-or-later. Acceptance 1 (four 1-point gains, 0.5 spill, sister gains 1 after second change) passes with the sketch if the test sets parent; Acceptance 3 (single transaction) is a design rule, not testable against donor.
+Missed: Donor (ReputationMgr.cpp 480) skips spill to sisters whose rank is above ParentFactionCap, and the sketch drops this (admitted). Not noted: spill uses a two-stage modifier (ParentFactionMod[1] to parent level, then ParentFactionMod[0] per sister) and the spill is computed before the main faction update and is NOT scaled by the gain rate first; also SetOneFactionReputation applies the world gain rate to each spill target again.
+
+Fixed 2026-10-12 (Sonnet fixer): verified spill-first order (ReputationMgr.cpp 428-512) and gain rate inside SetOneFactionReputation (534); rewrote the sketch so spill runs first from the raw input, rate and clamp apply per faction, sister rank cap and two-stage mod are in, and the paragon cap is a live clamp (paragonCap is no longer unused); acceptance 1 and 2 now match the sketch; D3 softened; rank range in table row 3 fixed to -1..7. Retypechecked on the VPS.

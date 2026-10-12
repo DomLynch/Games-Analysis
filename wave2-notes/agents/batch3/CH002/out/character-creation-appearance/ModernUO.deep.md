@@ -182,3 +182,9 @@ Not run: none of this was executed; every claim above is from reading the code a
 - Protocol dependence: the stat budget depends on a client protocol flag (CharacterCreation.cs:401). A browser client has one version, so one budget is enough; a version switch would have to be a separate rule.
 - GPL-3.0: clean-room. The sketch is written from the mechanism; no donor line is translated.
 - One ledger: the donor validates stats and skills in separate functions and the template path bypasses the client's values; the sketch keeps one budget function that every build passes through, templates included.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: None found. Verified: OnCharacterCreated order (CharacterCreation.cs:200-300, skin clip 227 before race set 236), SetStats 399-415, SetName 417-427, ValidateSkills 429-474 (55-name list 22-76, zeroed skill still added at 459, total 100/120 at 473), NameVerification 106/157/190/206/264 and StartDisallowed list (gm etc.), Race.cs 16/29/39/91, Human/Elf/Gargoyle bodies, ghost ids, skin/hair ranges, Elf 32 skin and 51 hair hues, Gargoyle unclipped skin 294, ProfessionInfo.cs:101 gate, AOS prof.txt stats, GPL-3 LICENSE. Acceptance numbers (x of 90, x of 100, 99 -> skill-total, 51 -> skill-cap, '!' and 'gm' refused) all pass against the sketch.
+Missed: Minor: Alchemy fallback comment (CharacterCreation.cs:442-445) says an invalid pick becomes Alchemy at 0, but code zeroes the entry; not mentioned. Nothing that changes a decision.

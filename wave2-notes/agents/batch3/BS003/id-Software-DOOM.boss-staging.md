@@ -112,3 +112,9 @@ Decision: adapt (idea). Defects to fix in our version (keep the idea):
 - A_BrainSpit's easy-skill skip uses a static global toggle that spans all brains and all levels. Fix: a per-boss counter, reset on wake.
 - A_FatAttack1 and A_FatAttack2 change the boss's own facing before the missile is spawned, but the spawn resets the missile angle to the aim, so the nudge is lost for the first shot. Fix: set the offset on each missile's own angle and momentum, as the second shot already does.
 - Unbounded spawns: cubes spawn with no alive cap. Fix: cap alive spawns at three (MAX_ATTACKERS).
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: none found; checked A_BrainAwake/Spit/Scream/Die, A_SpawnFly weights (sum 256), FATSPREAD forms, A_BossDeath per-type scan and map-7 tags, A_KeenDie, p_map 1173-1176 immunity, p_inter armour 1/3 and 1/2, info.c states 181/150/100/10/10 and hp/pain/speed values, TICRATE 35, licence GPL v2 plus README non-profit line
+Missed: A_BossDeath non-commercial tiers (ep1 floor 666, ep4 map6 door, ep4 map8 floor, else exit) only partly described; A_BrainExplode (p_enemy.c ~1880) unmentioned; p_spec case 11 floor damage 20 per 32 tics cited but not described

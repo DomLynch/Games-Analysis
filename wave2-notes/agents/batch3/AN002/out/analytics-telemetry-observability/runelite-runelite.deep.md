@@ -109,7 +109,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 
 Best transferable idea: a client error reporter that always sends the first error of a quiet period, drops the rest during a cool-down that grows with each storm and resets when quiet, and reports how many it dropped.
 Decision (proposed): adapt — keep the first-send rule, the cool-down, the growth only after drops and the reset on quiet; fix the missing level cap, the missing dropped count and the missing text cap (sketch). Do not copy the location field as is: send zone and build id, and a coarse position only when support needs it.
-Acceptance: a client test throws 30 errors inside 2 s and checks that exactly one report goes out with suppressed=29 and that the text is at most maxChars long; after 60 s quiet, the next error goes out with no suppressed parameter.
+Acceptance: a client test (injected clock, `stepMs` 10 s) throws 30 errors inside 2 s and checks that exactly one report goes out, with no `suppressed` parameter (the first error of a quiet period is sent before any drop exists), and that its text is at most maxChars long; then, after the window, the next error goes out carrying suppressed=29; then, after a further quiet window with nothing dropped, the following error goes out with no `suppressed` parameter and the level back at 1.
 
 ## 6. Gaps and risks
 
@@ -123,3 +123,11 @@ Acceptance: a client test throws 30 errors inside 2 s and checks that exactly on
 - Gap 3 (scrub by substring): `replace(username, "%USERNAME%")` (TelemetryClient.java 112) replaces every occurrence of the user name, so a short name rewrites ordinary text in the crash log. Fix: scrub only known path forms, or hash.
 - Gap 4 (row fit): row 4 is a loose fit for a client error reporter (hint row used).
 - Not read: the injected client's call sites of `Callbacks.error`; the disable-telemetry flag handling (RuneLite.java 173, 258); FpsOverlay.java and WorldHopperPingOverlay.java (grep hits only).
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: ACCEPTANCE-FAILS-CORRECT-BUILD: Acceptance says 30 errors in 2 s give exactly one report with suppressed=29, and after 60 s quiet the next error has no suppressed param. In the note's own sketch (and the donor shape: rateLimited flag read at the NEXT send, Hooks.java 671-678, 685) the first error sends with suppressed absent; the 29 drops are only reported by the next send after the window, which then carries suppressed=29. So a correct build sends 1 report with no suppressed, and the post-60s report carries suppressed=29. Fix the test: first report has no suppressed; next report after the window has suppressed=29. Donor facts otherwise verified: Hooks.error 631-687, fields 136-138, 10_000L*errorBackoff at 681, no cap, TelemetryClient submitVmErrors 85-122 (1-day cut 89, rename 101-103, scrub 112-113), submitError enqueue 144, buildTelemetry 161-177, RuneLiteModule 255, BSD-2 LICENSE. Minor: '(RuneLite.java 357-363)' correct; reason text uses reason.toString() plus newline plus trace (note says ' - ' + reason + trace, fine).
+Missed: Donor loop is a flag-not-count design; also coord/location only added when local player exists (covered). Nothing important missed.
+
+Fixed 2026-10-12 (Sonnet fixer): rewrote the Acceptance line. The count of dropped errors is only known after the window, so the first report carries no suppressed value and the next report after the window carries suppressed=29. Sketch unchanged and consistent with this. Donor facts were already verified by the checker; nothing else to fix.

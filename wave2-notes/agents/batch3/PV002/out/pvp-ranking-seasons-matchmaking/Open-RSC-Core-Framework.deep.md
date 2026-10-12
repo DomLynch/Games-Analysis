@@ -12,7 +12,7 @@ Checked: Symbol `Player.checkAttack` at Player.java 872 (read in full, 872-935),
   (b) Duel bypass: if both are in combat, both duels are active and each is the other's opponent, return true at once (879-883). This skips the band and the cooldown below.
   (c) Reattack cooldown: unless the attack is a missile, the victim must pass `canBeReattacked()` (886). That is true when `ranAwayTimer + PVP_REATTACK_TIMER <= current tick` (4553). The timer defaults to 5 (ServerConfiguration.java 494).
   (d) Mode switch on the global flag `USES_PK_MODE` (891, set at ServerConfiguration.java 541).
-  (d1) PK mode (891-909): both players must have `pk_mode` non-zero (892). Combat level gap must be at most 5 (902). The gaps in ATTACK, DEFENSE and STRENGTH max stats must each be at most 10 (903-905). A TODO says hits are not checked (906). The message on refusal is at 907.
+  (d1) PK mode (891-909): both players must have `pk_mode` non-zero (892). Before the gap test, two more refusals run: either player inside the Lumbridge starting chunk (895-898) and a banker NPC within 5 tiles of the attacker (899-901). Combat level gap must be at most 5 (902). The gaps in ATTACK, DEFENSE and STRENGTH max stats must each be at most 10 (903-905). A TODO says hits are not checked (906). The message on refusal is at 907. The depth mode has no safe-area or banker rule, only the depth test.
   (d2) Depth mode, the else branch (910-928): both sides' `wildernessLevel()` must be at least 1 (913). The combat-level gap must be at most the attacker's depth (918) AND at most the victim's depth (923). A refusal sends two messages (919-920 and 924-925 region, not receipted).
   (e) Invulnerable or invisible victim refused (930), then return true.
 - Depth value: `wildernessLevel()` (Point.java 372-380) computes `wild = 2203 - (y + (1776 - (944 * Formulae.getHeight(this))))` (373). It is forced to -50 when `x + 2304 >= 2640` (374). If `wild > 0` the depth is `1 + wild / 6` (377-378, integer division), else 0. So depth is a tile-based number, zero outside PvP ground.
@@ -39,7 +39,7 @@ Checked: Symbol `Player.checkAttack` at Player.java 872 (read in full, 872-935),
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order (party, duel bypass, reattack cooldown, then the mode branch) and returns a reason string for each refusal, which the donor does not do. It merges the two modes into one function with the mode as a parameter, which the donor does with a global flag. It replaces the position formula with a `depth` field supplied by zone data, and it omits the stat-gap TODO, the Lumbridge and banker refusals, the invulnerable and invisible check, the NPC branch, and the missile-only path beyond skipping the cooldown.
+simplified: the sketch keeps the donor order (party, duel bypass, reattack cooldown, then the mode branch) and returns a reason string for each refusal, which the donor does not do. It merges the two modes into one function with the mode as a parameter, which the donor does with a global flag. It models the Lumbridge-chunk and banker-radius refusals as one `inSafeArea` flag from zone data. It replaces the position formula with a `depth` field supplied by zone data, and it omits the stat-gap TODO, the invulnerable and invisible check, the NPC branch, and the missile-only path beyond skipping the cooldown.
 
 ```ts
 // Licence: AGPL-3.0 (donor). clean-room sketch written from the described rule, not a translation of the donor lines.
@@ -54,6 +54,7 @@ interface Fighter {
   maxStrength: number;
   depth: number;            // PvP depth at the fighter's tile, from zone data (0 = no PvP here)
   pvpOptIn: boolean;        // mutual opt-in flag
+  inSafeArea: boolean;      // zone data: start chunk or hub (donor: Lumbridge chunk and banker radius)
   partyId: string | null;
   duelOpponentId: string | null;
   ranAwayTick: number;      // tick the victim last ran away
@@ -73,6 +74,7 @@ function canEngage(a: Fighter, v: Fighter, tick: number, missile: boolean, mode:
 
   if (mode === "optin-band") {
     if (!a.pvpOptIn || !v.pvpOptIn) return { ok: false, reason: "not opted in" };
+    if (a.inSafeArea || v.inSafeArea) return { ok: false, reason: "safe area" };
     const levelGap = Math.abs(a.combatLevel - v.combatLevel);
     if (levelGap > OPTIN_LEVEL_GAP) return { ok: false, reason: `level gap ${levelGap} > ${OPTIN_LEVEL_GAP}` };
     const statGap = Math.max(
@@ -87,8 +89,8 @@ function canEngage(a: Fighter, v: Fighter, tick: number, missile: boolean, mode:
   // Depth band: both must stand on PvP ground, and the level gap must fit BOTH depths.
   if (a.depth < 1 || v.depth < 1) return { ok: false, reason: "no PvP ground" };
   const gap = Math.abs(a.combatLevel - v.combatLevel);
-  if (gap > a.depth) return { ok: false, reason: `level gap ${gap} > your band ${a.depth}` };
-  if (gap > v.depth) return { ok: false, reason: `level gap ${gap} > their band ${v.depth}` };
+  if (gap > a.depth) return { ok: false, reason: `level gap ${gap} > band ${a.depth}` };
+  if (gap > v.depth) return { ok: false, reason: `level gap ${gap} > band ${v.depth}` };
   return { ok: true };
 }
 
@@ -111,13 +113,22 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Defect (opaque depth): depth comes from a hard-coded position formula with magic numbers and integer division (Point.java 373, 378). Fix: store the depth per zone tile band as zone data; do not port the formula.
 - Defect (incomplete stat band): the opt-in band checks only ATTACK, DEFENSE and STRENGTH max stats and the TODO at 906 says hits are not checked. Fix: list the compared stats explicitly in zone data and include hits, or document why not.
 - Defect (silent base path): the base `Mob.checkAttack` has its refusal messages commented out (Mob.java around 847-858), so the NPC-side path refuses without telling the player why. Fix: return a reason, as the sketch does.
+- Also found: the opt-in branch refuses in the Lumbridge start chunk and near a banker (Player.java 895-901), a safe-area rule that fits a town or hub flag.
 - Duel exemption returns true before the band and the cooldown. Frankendom must tie the bypass to a duel the server created, never to a client claim.
 - The mode is one global server flag (ServerConfiguration.java 541). Frankendom needs it per zone.
 - Only one caller read (AttackHandler.java 120). Missile callers (RangeEvent, ThrowingEvent, SpellHandler) were not read, so the missile path is described from the flag only.
 
 Best transferable idea: one server-side engage check that returns a reason, combining a mutual opt-in flag, a two-sided level-gap band that scales with the zone's danger depth, a reattack cooldown and a duel exemption.
 Decision (proposed): adapt - the gate shape (mutual flag, two-sided band, reason string) fits our open PvP flag and server-verified engage; the band comes from zone data and both modes go into one function, while the position formula and the donor constants are not taken as they are.
-Acceptance: two open-PvP fighters whose level gap is 7 in a zone with band 6 are refused by the server with the reason "level gap 7 > band 6" shown in the HUD, and the same pair engage once that zone's band is 8; a server test asserts both refusals and that an active mutual duel ignores the band.
+Acceptance: two open-PvP fighters whose level gap is 7 in a zone with band 6 are refused by the server with the reason "level gap 7 > band 6" shown in the HUD, and the same pair engage once that zone's band is 8 (the test sets the depth of BOTH fighters to the same band, since the gate needs the gap within each side's depth, and checks the exact reason string, which is `level gap <gap> > band <depth>` for whichever side's depth fails first, attacker first); a server test asserts both outcomes and that an active mutual duel ignores the band. In the donor the duel bypass also needs both sides in combat with active duels; the sketch simplifies this to a server-created duel link.
 
 Reuse tag: rewrite-from-idea (GNU AGPL-3.0; clean-room, shape only)
 Brief rule served: 1 (one engine: the gate runs in the server's engage step; the client only shows the reason)
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Donor claims check out: Player.checkAttack 872-935 order (party 875, duel bypass 879-884, reattack 885-889, USES_PK_MODE 891, pk gap 5 and stat gaps 10 at 902-905, TODO 906, depth branch 910-928, invuln/invis 930); Mob.checkAttack 830-875 (duel bypass commented out 832-837, messages commented out); Point.wildernessLevel 372-380; canBeReattacked 4552-4554; PVP_REATTACK_TIMER 5 (ServerConfiguration 494), USES_PK_MODE default false (541); pk_mode default 0 (Player 558-560); AttackHandler.java:120 caller; no ranking/season/matchmaking code (grep for highscore/ladder/tournament hits only unrelated files). Errors: 1) Note says PK-mode refusal is 'message at 907' and omits two further refusals inside the PK branch that it does list as unread: Lumbridge starting chunk (895-898) and banker within 5 tiles (899-901) - disclosed in the Checked line but the Mechanism text presents 891-909 as complete. 2) Duel bypass in the donor needs inCombat() on BOTH sides plus isDuelActive and victim.equals(getOpponent()); sketch reduces this to duelOpponentId equality (acceptable simplification, flagged 'simplified'). 3) ACCEPTANCE vs SKETCH MISMATCH (would make a correct build fail its own test): Acceptance expects the refusal reason 'level gap 7 > band 6'; the sketch emits `level gap ${gap} > your band ${a.depth}` / `> their band ${v.depth}` (and 'level gap N > 5' in opt-in mode), so a build copied from the sketch returns 'level gap 7 > your band 6' and fails a string-equality assertion. Pick one string (or assert on a reason code). 4) Acceptance 'band 6 refused, band 8 engages' is consistent with the depth-mode logic only if BOTH fighters stand in zones with depth >= gap; the test must set both depths.
+Missed: Nothing structural: donor really has no ranking. Missed (minor): Player.java 891 PK-mode branch also blocks near bankers and in the Lumbridge start chunk (a safe-zone rule transferable to Frankendom's town/hub); Mob.checkAttack for NPC victims returns victim.getDef().isAttackable().
+
+Fixed 2026-10-12 (Sonnet fixer): verified at Player.java 872-935 that the PK branch has the Lumbridge and banker refusals (895-901), now in mechanism, sketch (inSafeArea) and an Also-found line; reason strings in the sketch now match the acceptance exactly (`level gap 7 > band 6`); acceptance now says both depths must be set and what the reason string is; noted the donor duel bypass needs both sides in combat. Sketch retypechecked.

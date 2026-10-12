@@ -14,13 +14,14 @@ Force powers are server commands charged against one pool, the Force Power value
 
 - Self buffs (`doJediSelfBuffCommand`, JediQueueCommand.h 75-...). Order:
   1. If the buff is already active: remove it and return success. No charge (77-78).
-  2. Common checks (`doCommonJediSelfChecks`, 127-143): armour refuses (133-134); any blocking buff refuses (137-138); the pool must hold at least the modified cost (142; check at 119-120).
+  2. Common checks (`doCommonJediSelfChecks`, 127-143): a medical-command check runs first (`doCommonMedicalCommandChecks`, 128); armour refuses (133-134); any blocking buff refuses (137-138); the pool must hold at least the modified cost (142; check at 119-120).
   3. Build the buff (`createJediSelfBuff`, 146-...): first remove any overrideable buffs (148), then set the buff type, speed multiplier if speedMod > 0, and skill mods scaled by the council buff modifier (`getFrsModifiedBuffValue`, 197-225).
   4. Add the buff (101), then charge the modified cost (`doForceCost` 104; the subtraction is at 291), then play the client effect.
 - Ranged force powers (`ForcePowersQueueCommand::doCombatAction`, ForcePowersQueueCommand.h 26-82). Checks come first: target, prone, distance, line of sight, player-entry rule. The pool check is at 51. Then the combat action runs (59). A result of -1 returns invalid target and -3 returns general error, both with no charge. Any other result charges the modified cost (69), raises visibility, and returns success. If the action throws, the charge is skipped.
-- Mind trick (`JediMindTrickCommand::doQueueCommand`, JediMindTrickCommand.h 19-108). The target must be an AI agent that is a pet, not a droid or vehicle, with a linked owner (41-53). It then calls the shared force path (`doCombatAction`, 60), so the pool is charged before the roll. The roll is `failCalc = targetLevel - playerLevel + random(100)` (65); success when it is under 75 (69). On success the pet flag is removed, the agent is marked mind-tricked (80), the owner link is cleared, the faction is set to the template faction in on-leave state, and peace is forced (92). A removal timer of 10 + random(25) seconds (94) returns it (task not read). Failure sends a message only.
+- Mind trick (`JediMindTrickCommand::doQueueCommand`, JediMindTrickCommand.h 19-108). The target must be an AI agent that is a pet, not a droid or vehicle, with a linked owner (41-53). It then calls the shared force path (`doCombatAction`, 60), so the pool is charged before the roll. The roll is `failCalc = targetLevel - playerLevel + random(100)` (65); success when it is under 75 (69). On success the pet flag is removed (a faction-pet control device removes the FACTION_PET flag instead, 74-78), the agent is marked mind-tricked (80), the owner link is cleared, the faction is set to the template faction in on-leave state, and peace is forced (92). A removal timer of 10 + random(25) seconds (94) returns it (task not read). Failure sends a message only.
 
 Cost and duration rules:
+- Dark-council regen typo: the dark branch reads skill mod `force_power_dark` where the light branch reads `force_control_dark`-style control (PlayerObjectImplementation.cpp 2526), so dark Jedi get a different regen term; do not copy it.
 - Council cost (`getFrsModifiedForceCost`, JediQueueCommand.h 228-256). Base cost, plus `(int)((manipulationMod * frsModifier) + .5)` if a light or dark council modifier and a manipulation skill mod are both non-zero (255). Otherwise the base cost.
 - Council buff value (`getFrsModifiedBuffValue`, 197-225). Base value, plus `(int)((controlModifier * buffModifier) + 0.5f)` on the same pattern (224). Otherwise the base value.
 - Command duration (`getCommandDuration`, ForcePowersQueueCommand.h 114-121). If combat haste > 0: speed x (1 - haste/100) (117-118). No clamp.
@@ -28,7 +29,7 @@ Cost and duration rules:
 
 Regeneration (`activateForcePowerRegen` 2504; `doForceRegen` 2785; `ForceRegenerationEvent::run` ForceRegenerationEvent.h 24-51):
 - Activation. If the `jedi_force_power_regen` skill mod is 0, there is no regen (2512). Otherwise regen = that mod, plus (control + manipulation) / 10 for the rank (2530), then an optional multiplier and divisor (2532-2539). Timer = regen / 5 (2541). Interval = 10 / timer seconds = 50 / regen seconds (2543). The event is scheduled only if it is not already scheduled (2519).
-- Tick (`doForceRegen`). 5 points (2791). x3 while meditating (2795-2799). If the tick would overshoot max, set to max (2804-2805). Otherwise add the tick (2807). Net rate: 5 x modifier every 50/regen s, which is regen/10 points per second (derived, not quoted).
+- Tick (`doForceRegen`). Skips an incapacitated or dead player (2788). 5 points (2791). x3 only while the player is meditating and a pending `forcemeditate` task exists (2795-2799). If the tick would overshoot max, set to max (2804-2805). Otherwise add the tick (2807). Net rate: 5 x modifier every 50/regen s, which is regen/10 points per second (derived, not quoted).
 - Re-arm. `setForcePower` calls `activateForcePowerRegen` whenever the new value is below max (2768). `doForceRegen` writes through `setForcePower`, so a tick re-arms the next one while below max. Whether `isScheduled()` is still true during the event's own `run()` is in the unread Task base class.
 
 ## 2. Key functions
@@ -172,3 +173,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Fast-fight numbers: a 5 s tick at regen 10 (1 point per second) is slow for a mobile duel, so a focus special would wait a long time. The donor's regen is set per character through skill mods, so the tick rate is a catalogue value, not a constant. For a fast duel, set the regen so the tick interval is about 1 s (regen 50). Costs of 75-400 only make sense against a pool max that the donor does not give (not read).
 - Spell and power data are Lua per command (bin/scripts/commands). Frankendom must author cost and duration per power in the catalogue (row 21), not read a script.
 - Not covered: the damage side of the ranged powers and the combat manager. Those need a separate cell.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: (1) common self-check list omits doCommonMedicalCommandChecks which runs first (JediQueueCommand.h:128). (2) meditation x3 needs both isMeditating and a pending forcemeditate task (PlayerObjectImplementation.cpp 2795-2799); note says only meditating. (3) mind trick: FACTIONPET branch removes FACTION_PET not PET (JediMindTrickCommand.h 74-78) omitted. Costs, durations, 75 threshold, 10+rand(25), regen /5 and 10/timer, AGPL/LGPL licences, charge order all verified
+Missed: donor typo: dark-council regen reads skill mod force_power_dark instead of force_control_dark (PlayerObjectImplementation.cpp:2526), so dark Jedi get a different regen term; also doForceRegen skips incapacitated or dead (2788) which the sketch has but the prose does not state
+
+Fixed 2026-10-12 (Sonnet fixer): added the first-run medical-command check, the meditation x3 needs a pending forcemeditate task, the faction-pet flag branch in mind trick, the dark-council regen skill-mod typo (2526) and the incapacitated/dead skip in doForceRegen. All verified over ssh; sketch unchanged (the sketch's meditating boolean stands for meditating plus pending task).

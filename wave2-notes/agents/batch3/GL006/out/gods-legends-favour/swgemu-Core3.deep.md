@@ -15,7 +15,8 @@ Checked: Read in full: `awardFactionStanding` (FactionManager.cpp 91-150), `awar
   4. Each ally in the row loses `lose` (135-150), skipping PvP allies (138-140) and non-player-allowed rows (147-148).
 - Clamp order on a gain (2154-2183): add the amount, then `min(cap, current + amount)`, with the cap chosen by faction. On a loss (2262-2280): `max(-5000, current - amount)`, then the PvP caps are applied again.
 - PvP kill (`awardPvpFactionPoints`, 238-256): killer side +30 to its own faction (246), killer side -45 to the other faction (247), and the killed player also loses 45 of the other faction (249, 254 for the mirror case).
-- COA bonus (`giveCoaBonus`, 2210-2232): when the player's own faction is the winning faction (2204), 10 percent of the gain is added on top of the current standing (2216-2222), capped by the rank cap (2224). `int bonus = amount * 0.1f` truncates, and a bonus under 1 is dropped (2216-2218).
+- COA bonus (`giveCoaBonus`, 2210-2232): only when the gain was above zero, the faction is the player's own PvP faction and it is the Cries-of-Alderaan winning faction (gate at 2205), 10 percent of the gain is added on top of the current standing (2216-2222), capped by the rank cap (2224). `int bonus = amount * 0.1f` truncates, and a bonus under 1 is dropped (2216-2218).
+- Rank is bought with standing (verified, `bin/scripts/screenplays/gcw/recruiters/recruiterConvoHandler.lua` 84-98): a promotion needs standing >= `getRankCost(rank+1)` + the recruiter's minimum standing, then the cost is removed with `decreaseFactionStanding` and `setFactionRank(rank)` is set. So standing is spent to rise, and the rank cap then lets it grow higher. Lines 102-110 compare `getFactionPointsCap(rank)` with standing + 250 or + 1250 for the bribe options.
 - Rank-gated services: HQ terminal menu needs faction rank 4 (HQMenuComponent.cpp 90, 211) and rank above 7 for one action (183).
 - Luck: the `force_luck` skill mod adds `cashCredits * luck / 20` to credit rewards (PlayerManagerImplementation.cpp 4237-4240). Integer division.
 - Tick: none. Kills and mission rewards are events. The donor has no faction loop.
@@ -144,7 +145,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 
 Best transferable idea: each kill moves a small set of rival and allied standings by a data-driven amount (rival up by the level, own and allies down by twice that), with the top end set by the player's rank, so a pantheon is a standing row and rank is a cap, not a lottery.
 Decision (proposed): adapt — take the relation-table kill rule and the rank cap, but store the standings as ledger rows for each god, use the Frankendom kill events (server-verified), and fix the three defects in section 3. Reject the GCW-only PvP rule as written; keep the idea that PvP standing moves only on PvP kills.
-Acceptance: server test: killing one level-10 NPC of pantheon A (adjust 1.0), with rival B and ally C, gives B +10, A -20 and C -20; a standing already above its cap is not lowered by a zero gain; a 10-point gain earns the 1-point COA bonus rather than none.
+Acceptance: server test: killing one level-10 NPC of pantheon A (adjust 1.0), with rival B and ally C, gives B +10, A -20 and C -20; a standing already above its cap is not lowered by a zero gain; a 10-point gain earns the 1-point COA bonus rather than none (this bonus is a Frankendom design addition: the donor gives it only to the own PvP faction while it is the winning faction, so the test sets those two conditions and a non-winning faction gets no bonus); buying a rank costs its price in standing and fails when standing is below price plus the minimum.
 
 ## 5. Lands in
 
@@ -156,7 +157,7 @@ Acceptance: server test: killing one level-10 NPC of pantheon A (adjust 1.0), wi
 ## 6. Gaps and risks
 
 - AGPL-3.0: clean-room only. The sketch is written from the described mechanism.
-- Rank-up from points is not located. The donor shows rank as a cap and a gate, and an admin command sets it; a Frankendom version needs its own rule for how a god's rank rises.
+- Rank-up: found by the fixer in the recruiter Lua (see section 1): rank is bought with standing, not only a cap. A Frankendom version needs its own price table and a minimum-standing floor; the sketch does not cover the purchase.
 - The rank cost table (rank.iff) was not read, so the cap values (cost * 20) are formula only, not numbers.
 - Pantheon rows: the donor's relation table is data (69 rows), which fits "a new god = data rows, no code", but the table itself is GCW and creature-type driven. Frankendom needs its own rows and a legends-rule review of every name.
 - Frankendom has no PvP faction cap by rank yet; the rank cap would be a new rule in the engine.
@@ -183,3 +184,11 @@ Acceptance: server test: killing one level-10 NPC of pantheon A (adjust 1.0), wi
 
 Best transferable idea (table): row 1 (the kill relation table with rank caps) is the mechanism worth keeping; the blessing, patron and rank-up rows are not established.
 Brief rule served: 1, 17-18, GL focus items 1, 5, 14.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Verified OK: awardFactionStanding order and PvP skips, gain=level*adjust, lose=2*gain, caps 5000/-5000/1000, rank cap max(1000,cost*20) and -1 for rank past table, +30/-45, bonus int truncation, luck /20 integer division (4237-4240), 69 rows, adjust 0.0 only on fs_villager/sith_shadow/sith_shadow_nonaggro, AGPL. Errors: (1) COA bonus gate is at PlayerObjectImplementation.cpp 2205 (and requires change>0 && playerIsFaction && coa winning faction), note says 2204; (2) the COA bonus only applies to the player's OWN PvP faction, but the Acceptance 'a 10-point gain earns the 1-point COA bonus' and the sketch's coaBonus(ctx,faction,amount) have no such condition (donor path is only reached from increaseFactionStanding when playerIsFaction); a build following the note would test a bonus the donor never gives for non-PvP pantheon standing - design choice, not donor behaviour, should be stated as new. (3) FactionStandingList.h is at objects/player/variables/, not named with path (minor). (4) 'Rank-up from points not located' is an honest statement but wrong in the sense the path exists: see missed.
+Missed: Rank-up path exists: bin/scripts/screenplays/gcw/recruiters/recruiterConvoHandler.lua 84-98: requires standing >= getRankCost(rank)+minimumFactionStanding, then decreaseFactionStanding(faction, requiredPoints) and setFactionRank(rank) - i.e. rank is BOUGHT with standing (standing is spent), and 102-110 compare getFactionPointsCap(rank) >= standing+250/1250 for other recruiter options. This is the core favour->rank mechanism and the note's 'rank is a cap' framing misses that rank costs standing.
+
+Fixed 2026-10-12 (Sonnet fixer): COA gate cite corrected to 2205 with its real conditions (change > 0, own PvP faction, winning faction); acceptance now states the bonus is a design addition with the donor conditions; rank-up path added from the recruiter Lua (rank is bought with standing) and the 'not located' gap rewritten; FactionStandingList.h path is objects/player/variables/. Sketch unchanged (no typecheck needed). Also found: the rank purchase above.

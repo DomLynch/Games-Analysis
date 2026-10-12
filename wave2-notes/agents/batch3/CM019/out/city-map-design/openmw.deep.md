@@ -127,3 +127,9 @@ Acceptance: A player walks into a new zone and sees a soft circle of the minimap
 - Possible sign mismatch (unverified, not a confirmed defect): the neighbour segment key uses `y + my * -1` (527), while the distance term uses `my * (RES - 1)` without the flip (542). Whether these agree depends on the texture orientation set up in the render-to-texture code, which I did not read. The sketch mirrors the donor and marks the flip. Check before use.
 - Door markers: the donor only marks teleport doors. A Frankendom hub-with-services marker would need its own rule (services are not doors); that part is not in this donor.
 - Not in this donor: road or building grammar, hub placement, signage text. The donor has none of those; it is a map renderer for an existing world.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: None material. Verified 477-548 updatePlayer (494-499 cell/UV, 503-505 radius, 518-520 affected test, 526-527 key with my*-1, 541-545 min-merge, 547-560 dirty), 453-470 explored (<200 at 469), 617 0xff000000, sFogOfWarResolution=32 (localmap.hpp 144), constants.hpp 25/29, mCellDistance=CellGridRadius (localmap.cpp 81), mapwindow 99-101 and 698-711, worldimp 1852-1859, windowmanagerimp 882/1006-1007, saveFogOfWar 111-164, GPL-3 LICENSE. The 0.89 radius derivation is arithmetically right (sqrt(200/255)).
+Missed: Line 499 inverts v (v = 1 - |...|). That explains the y flip in the neighbour key (y + my*-1) and means the note's 'possible sign mismatch' in section 6 is not a mismatch: both the affected test and the distance term use the flipped v. The note flagged it as unverified, so no error, but the answer is in the cited lines.

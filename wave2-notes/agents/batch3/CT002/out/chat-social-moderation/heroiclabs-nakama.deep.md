@@ -20,7 +20,7 @@ Acceptance: A server test: after A blocks B, B's DM join with A and B's friend a
   (e) `tracker.UntrackByStream(stream)` (807): both users lose the presence on that DM stream, so an open DM is closed at the moment of the block.
 - DM gate, `BuildChannelId` DM case (619-653): the id must parse and not be nil. Then `UserExistsAndDoesNotBlock(target, sender)` (632). The query (`core_user.go` 204-206) is true only when the target row exists and there is no edge from the target to the sender with state 3. On false, return "User ID not found" (637), which is the same text as an unknown user. On pass, the key is again smaller id first (640-645) and the mode is DM (647).
 - The gate runs once, at join: `pipeline_channel.go` 52 is the only caller of `BuildChannelId` in the channel pipeline. Runtime wrappers (Go, Lua, JS) also call it (grep).
-- Friend add: an insert of the user-to-target edge is conditional on no state-3 edge from the target to the user (596-606). A user who was blocked cannot add the blocker; the code path is `ON CONFLICT ... DO NOTHING`, so the add fails silently (log at 634).
+- Friend add: an insert of the user-to-target edge is conditional on no state-3 edge from the target to the user (596-606). A user who was blocked cannot add the blocker; the code path is `ON CONFLICT ... DO NOTHING`, so the add does not happen. The caller logs at debug (634) and returns `sql.ErrNoRows` (635): an error, not silence, and the same path for an unknown target and a blocked target.
 - Remove friend, `deleteFriend` (690-716): one SQL DELETE removes the edge in both directions except a block coming from the other side (691). The row count picks the counter update: 1 row (703, commented "Unblocking a blocked user") or 2 rows (a friend pair). The counter is correct for either, but the comment only describes one of the two cases.
 - Send, `pipeline_channel.go` 190-222: the channel id is parsed by `ChannelIdToStream` (509-576), which splits "mode.subject.subcontext.label" into at most four parts. The content must be a JSON object: first byte '{' (202). The sender must be tracked on that stream, else "Must join channel before sending messages" (210-214). Then `ChannelMessageSend` (296-343) inserts the row if persistent and routes it to the stream.
 - Delete a message: SQL `DELETE ... WHERE id = $1 AND sender_id = $2` (`core_channel.go` 436). Only the sender can remove a message in this file.
@@ -97,8 +97,12 @@ class SocialGraph {
   }
 
   // A user who was blocked by the target cannot add the target as a friend.
-  canAddFriend(sender: string, target: string): boolean {
-    return this.state(target, sender) !== "blocked";
+  // Same error text as an unknown id (donor: both cases end in sql.ErrNoRows).
+  canAddFriend(sender: string, target: string): { ok: true } | { ok: false; error: string } {
+    if (!this.users.has(target) || this.state(target, sender) === "blocked") {
+      return { ok: false, error: "User ID not found" };
+    }
+    return { ok: true };
   }
 }
 
@@ -125,3 +129,11 @@ export {};
 
 Reuse tag: adapt (Apache-2.0)
 Brief rule served: one engine, server-verified; the gate and the untrack run on the server (row 14 for the display)
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: (1) Note says friend-add by a blocked user 'fails silently (log at 634)'. Real core_friend.go 633-635: when rowsAffected != 2 it logs at 634 and RETURNS sql.ErrNoRows (635), i.e. an error, not silence. This is the same path for unknown target and blocked target (insert guarded by EXISTS user at 596 and NOT EXISTS block at 598-602), so the Acceptance 'same text as unknown id' is plausible for friend add, but the sketch canAddFriend returns a bare boolean with no error text; builder must supply the shared error. (2) Sketch block() silently returns for unknown target before untrack, same as donor 769-771, fine. All other cited lines verified: blockFriend 743-810, UPDATE state 3 at 745, INSERT 756-763 with EXISTS, counters 775/789, opposite-edge delete 782, UntrackByStream 807, BuildChannelId DM 619-648, 'User ID not found' 637, UserExistsAndDoesNotBlock 200-211, pipeline_channel 52/202/210-214, message delete 436, size cap 4096 at config.go 903, lockout 5 / 1 min (login_attempt_cache.go 33-34, 155), console_authenticate 96/145, Apache-2.0 LICENSE.
+Missed: deleteFriend (691) deletes the edge in both directions but keeps an opposing block; note covers it. Not noted: blockFriend runs the whole batch in one tx so one failure rolls back all blocks (covered). Nothing major.
+
+Fixed 2026-10-12 (Sonnet fixer): friend-add by a blocked user is an error return (core_friend.go 633-635, verified over ssh), not silent; text corrected. Sketch canAddFriend now returns the same error as an unknown id, so it matches the Acceptance line; typechecked on the VPS. Other cites were verified by the checker.

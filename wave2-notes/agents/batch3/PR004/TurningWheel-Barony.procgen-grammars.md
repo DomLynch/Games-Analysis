@@ -150,3 +150,9 @@ Code: BSD-2-Clause (LICENSE.txt line 3). Code may be adapted with the notice. Th
 - Not run: the walk-density numbers are computed from the rule, not from a generated floor.
 - Idle, death, respawn and loot ceremony presentation: not read in the generator.
 - Readability at 375 wide: not applicable to this donor (PC sprite game); not judged.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: Verified: seeding 1296-1298; shop roll 1308-1313 (note: rand consumed before the depth check); minotaur 1327-1330 (floor 25 matches neither branch, true); secret exits 1413-1441 incl. floor 23 baphoexit with minotaurs off (1437-1441); slot rules 1895-1900, 1969, 1999, 2006, 2042; pool drops only at 1900, 2099, 2116, 2127; location budget 3884 and range form 3877-3879; normal branch 4706, balance 4717-4734, loot/monster split 4739, gold 1/10 4743, NPC 1/10 and depth>1 4767, automaton 3/4 above 15 4774, human stat 4787 on server rng, decoration 4804 (Hell excluded), gold formula 7775, monsterCurve Mines (4 rat/4 skeleton/spider/troll depth>=2) and Citadel buckets (incubus 3, goatman 4, golem 2, vampire 2, shadow 1, automaton 1, cockatrice 2), fortress 4 buckets, fallback skeleton 595, LENGTH_OF_LEVEL_REGION 5, BSD-2 LICENSE.txt. Walk-density arithmetic checks out (35 x 0.5 x 1/4 = 4.4 etc.). No Acceptance line, only Look test; nothing in it can fail a correct build. Minor: sketch slotFor ignores that the treasure slot only applies when treasureRoomLevel exists (1969).
+Missed: Loot and monster placement are gated by map.lootexcludelocations / monsterexcludelocations (4741, 4760), so a rolled slot can silently produce nothing; also on no-fit the slot is retried (--c; continue at 2106/2119) rather than skipped. Neither is in the note.

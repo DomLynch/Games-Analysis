@@ -153,3 +153,9 @@ export {};
 
 Reuse tag: rewrite-from-idea (NetHack General Public License; clean-room only)
 Brief rule served: one engine (per-monster AI state in the engine record); clean-room only (NGPL). Parity row 2.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: All claims checked hold: dat/license NGPL; wizard/cleric list contents and tiers (mcastu.c 27-35, include/mcastu.h 18-37: wizard 0,1,2,3,4,6,8,10,13,15,18,20; cleric 0,1,2,4,6,8,10,11,12,13); choose_monster_spell 89-124 incl. reroll (112-113) and fallback; castmu: 40-try loop 153-168, skip test 175, cooldown 10-m_lev / 2 at 185, fumble rn2(ml*10)<(conf?100:20) at 208 (level 1-2 always fumble, 3:67%, 5:40%, 10:20%, 20:10% all correct), damage 241-243, halved 245; monmove.c 895-902 (dist2<=49, !mspec_used); mon_regen decrement 311-312, mon.c 1193; breamm 1117 (!mspec_used && rn2(3)), cooldown 8+rn2(18) only if !utarget||!rn2(3) (1131-1132), sleep +rnd(20) (1133-1134); buzzmu lined_up && rn2(3) at 1000; mhitu.c call; player-side percent_success formulas (11*stat/2, difficulty, isqrt(900*d+2000), cap 120) and fail roll rnd(100)>chance with energy/2 (spell.c 1371-1376), SPELL_LEV_PW = lvl*5 (spell.h:36). Sketch fix min(20, level*5) gives the stated 50% at levels 1-4. Not-read list honest.
+Missed: Minor: castmu's cannot-cast test (175) also includes m_seenres (monster has seen the hero resist this attack type), omitted. breamm skips breathing at a hero when m_seenres or reflection seen (mthrowu.c ~1107-1110, returns M_ATTK_HIT without breathing) - a simple anti-waste rule not mentioned. castmu also spends the cooldown on a displaced-image miss (before 198-205), same order as fumble.

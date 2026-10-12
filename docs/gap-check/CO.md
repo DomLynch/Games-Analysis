@@ -1,0 +1,26 @@
+# Gap check: CO (coach and manager mode) - date 2026-10-12 - Frankendom repo commit 8d6ae33a9
+
+## Summary for Dom
+- 9 donor notes read (CO001-CO003), all proposed "adapt". Calls: 1 REUSE, 2 ADD, 6 SKIP.
+- Coach mode is not built (docs/briefs/coach-mode.md: post-beta; "pick a playstyle plus at most one extra instruction, then watch"). Most donor ideas assume live mid-fight commands, which that brief does not have.
+- Top additions: (1) a coach picks its stance from the race of life totals (Forge idea, lands in src/stance.ts); (2) a one-instruction command counter for the coach (boardgame.io idea, new file); no third addition is justified.
+- Four notes propose the same thing (a coach command budget: Showdown, boardgame.io, Athena, Duelyst). Merged into one row, led by boardgame.io.
+- The proposed paths under src/fight/ do not exist: src/ is flat (no src/fight folder). Real homes are named per row.
+
+## Table
+| Donor note | Idea (8 words) | We have today | Gap | Call | Lands in |
+|---|---|---|---|---|---|
+| CO001 Card-Forge-forge | pick stance from life-race ratio and force | src/stance.ts:7-22 four picks (neutral, aggressive, defensive, trickster); mood drawn from fight seed (moodOf); coach brief says "reuse the four stance names" (docs/specs/origins/combat-study.md:69). AI numbers in AiProfile, src/moves.ts:226 | Stance is chosen by a coin flip, not by who is winning the race. Stances only live behind the ?stances= preview flag (src/match.ts:71) and count as practice | ADD (post-beta, with coach mode) | src/stance.ts (new coach pick function beside moodOf). src/fight/coach-stance.ts does not exist. Keep out of the record digest or bump record version |
+| CO001 pokemonAutoChess | absent coach: auto-fill team, graded leave | AFK is a loss on the card (src/main.ts:430-439); a closed or silent duel page forfeits (src/net/pvp.ts:96-101, 236) | No bench or team in a 1v1 duel; nothing to fill. Leave rule already set by owner | SKIP (no bench; AFK and forfeit rules already exist) | none |
+| CO001 smogon-pokemon-showdown | per-round time bank, default when empty | Disconnect and silence clock with forfeit: src/net/pvp.ts:96-101, 236; reconnect classes src/net/reconnect-policy.ts | No coach command clock because coach has no live commands in the brief | SKIP, merged into boardgame.io row below | none |
+| CO002 OpenTTD | per-unit wear, breakdown roll, hub service | src/fatigue.ts is view-only stamina read (line 1-4); no state carried between fights; "Losses never demote" (docs/SCOPE.md:49-51) | A between-bout condition would be new saved state plus record changes; owner wants "keep the game simple", one ladder | SKIP (new persistent state, against the simple-ladder ruling) | none |
+| CO002 dkfans-keeperfx | ranked leader succession, leash drop-out | origins/crowd/crowd.ts:26-42, 80-104, 166 has a pack leader role, leader goes last, "leaderFell" ends the token rule. Leash distance is a mob row field, origins/mobs/row.ts:15 | Succession and drop-out are not needed: the crowd runs one token, not a following group | REUSE (origins/crowd/crowd.ts leader role; origins/mobs/row.ts leash) | none |
+| CO002 miki151-keeperrl | one order slot per group, pull out under half | Mob flee at a health percent: src/twist.ts (flee-at), origins/encounters/encounters.ts:120-136. Crowd has no group order | Coach commands one fighter, not a group; the pull-out case is already the flee-at twist | SKIP (one fighter per coach; flee-at covers pull-out) | none |
+| CO003 boardgameio-boardgame.io | per-window command count with min/max, free actions | Brief fixes the budget at "at most one extra instruction" (docs/briefs/coach-mode.md); nothing counts it. No src/fight folder | Needs a server-side counter for the single instruction, refusing a second. Also covers the Showdown bank, Athena meter and Duelyst reroll ideas (same job) | ADD (small, post-beta; keep it to a max count of one unless Dom widens the brief) | New file in flat src/, e.g. src/coach-mode.ts (src/fight/commandWindow.ts does not exist). Record the instruction in src/record.ts so replays match |
+| CO003 nkzw-tech-athena-crisis | coach meter fills from damage taken | No meter. Specials use stamina only (src/fatigue.ts reads stamina) | A charge meter and bar costs would add a second resource the brief does not have | SKIP, merged into boardgame.io row (owner design is one instruction, no meter) | none |
+| CO003 open-duelyst-duelyst | reroll offered options once before and per window | No hand or draw pool. src/loot-claims.ts and src/loot.ts only have take-one loot | Frankendom has no offers to reroll in a bout; coach picks a stance before the fight | SKIP, merged into boardgame.io row (no hand or pool) | none |
+
+## Notes and limits
+- Checked read-only: src/ (flat, 169 entries), origins/crowd, origins/mobs, origins/encounters, docs/SCOPE.md, docs/briefs/coach-mode.md, docs/specs/origins/combat-study.md. CLAUDE.md and AGENTS.md not acted on.
+- No donor numbers are copied. Copyleft donors in this topic (Forge, pokemonAutoChess, OpenTTD, keeperfx, keeperrl) are clean-room: idea only.
+- Not verified: whether the coach brief has since changed on a branch other than this checkout; whether Combat plans an in-fight coach command (the brief says no); record-version cost of a coach instruction field.

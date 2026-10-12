@@ -36,9 +36,9 @@ Acceptance: A player files a verbal-harassment report; the server attaches only 
 | Log attached to report | `VerbalHarassment` only | `PageQueue.cs` 25-28, 43 |
 | Staff counted online | last move under 600000 ms (10 min) | `PageQueue.cs` 263 |
 | Status ping | first at 1 s, then every 2 min | `PageQueue.cs` 85 |
-| Speech packet throttle (defaults) | 25 ms for 0xAD (and 0x03); chat window packet 0xB3 is not in the defaults | `PacketThrottles.cs` 43 |
+| Speech packet throttle (defaults) | 25 ms for 0x03 and 0xAD (also 0x12 text commands); chat window packet 0xB3 is not in the defaults | `PacketThrottles.cs` 42-44 |
 | Rename request throttle | 500 ms | `PacketThrottles.cs` 45 |
-| Player name | length 2-16, letters only, one exception character (space, dash, period, quote), never at the start, never two in a row | `NameVerification.cs` 106, `ContainsExceptions` 209-254 |
+| Player name | length 2-16, letters only, exception characters (space, dash, period, quote) not allowed at the start and never two in a row (the call passes maxExceptions 1, and the counter resets whenever the next exception is not adjacent, so many separated exception characters are allowed) | `NameVerification.cs` 106, `ContainsExceptions` 209-254 |
 | Disallowed word match | whole word: no letter or digit directly before or after | `NameVerification.cs` 262, 275 |
 
 The name rule is a write-time check: at character creation (`CharacterCreation.cs` 421) and at name change (`NameChangeDeed.cs` 91, call site only, not read in full). The speech filter (`ProfanityProtection.cs` 142-144) runs on the speech event, and a detected word is blocked (`Disallow`) or leads to another action chosen in config (`ProfanityProtection.cs` 23).
@@ -121,5 +121,13 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Side channels (email, Discord) move transcripts off the server. Reject for Frankendom: privacy, and it breaks the one-ledger rule.
 - The donor records what a player heard, including other players' lines. Frankendom should define a report as "what the reporter saw" and say so in the report row.
 - Storage is in memory on the player object. Whether ModernUO persists `SpeechLog` was not read. Frankendom would store the window as rows with a time-to-live, not as player state.
-- The donor's squelch is a single flag with no duration or tier (`Mobile.cs` 6952-6960). The timed mute in the TrinityCore note covers that gap.
+- The donor's squelch is a single flag with no duration or tier (the `Squelched` check in `Mobile.OnSaid`, `Mobile.cs` 6952-6960; this is the use site, not the flag definition). The timed mute in the TrinityCore note covers that gap.
 - The report row should carry the reporter's zone, position and time (the donor stores location and map on the entry, `PageQueue.cs` 40-41), so staff can place the evidence.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Name rule stated as 'one exception character ... never two in a row': NameVerification ContainsExceptions (209-254) with maxExceptions=1 allows many exception chars, only not consecutive (count resets when next isn't adjacent). Throttle row cites PacketThrottles 43 for 0xAD/0x03 25 ms; the values are lines 41-42 of the shown else-branch (rename 500 ms is 43-44 area) - line cite slightly off. 'Mobile.cs 6952-6960' squelch is the OnSaid squelched branch, not a flag definition.
+Missed: Nothing major. PageQueue.CheckAllowedToPage (HelpGump 241) is the actual one-open guard entry; note covers it. Acceptance holds against the sketch.
+
+Fixed 2026-10-12 (Sonnet fixer): verified in NameVerification.cs 209-254 that the name rule allows several separated exception characters (only adjacent ones fail); reworded. Verified the throttle defaults are at PacketThrottles.cs 42-45 (0x03 line 42, 0xAD line 43, 0x12 line 44, rename line 45), so the old cites were close; the row now cites 42-44 and adds 0x12. Squelch cite reworded as the OnSaid use site. Sketch and acceptance unchanged (checker said they hold).

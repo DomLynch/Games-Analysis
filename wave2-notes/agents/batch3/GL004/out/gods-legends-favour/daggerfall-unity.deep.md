@@ -7,13 +7,13 @@ Checked: Read in full: the donation branch (DaggerfallGuildServiceDonation.cs 55
 ## 1. Mechanism
 
 - Favour is a signed integer per faction, held in one ledger (`PersistentFactionData`), clamped to -100..100 on every write (PersistentFactionData.cs 398, with the bounds at 32-33). The donor calls it "reputation". For a temple it is the deity's faction row.
-- Donation is the active way to raise a deity's favour. Order of steps in the donation handler: (a) parse the typed amount; (b) if the player has at least that much gold (60), deduct it (63); (c) take the deity from the building's faction id (64), so the same temple button works for members and non-members; (d) read `rep = |favour|` (67); (e) roll `Dice100.SuccessRoll((2 * amount / max(rep,1)) + 1)` (68), where the chance is in percent, the division is integer, and a chance over 100 is always a success; (f) on success add exactly one favour point, with no propagation (69, comment "Does not propagate in classic"); (g) show a thanks message. The gold is spent whether or not the roll succeeds.
+- Donation is the active way to raise a deity's favour. Order of steps in the donation handler: (a) parse the typed amount; (b) if the player has at least that much gold (60), deduct it (63); there is no check that the amount is above 0, so a negative typed amount passes the gold test and adds gold (donor defect, D5); (c) take the deity from the building's faction id (64), so the same temple button works for members and non-members; (d) read `rep = |favour|` (67); (e) roll `Dice100.SuccessRoll((2 * amount / max(rep,1)) + 1)` (68), where the chance is in percent, the division is integer, and a chance over 100 is always a success; (f) on success add exactly one favour point, with no propagation (69, comment "Does not propagate in classic"); (g) show a thanks message. The gold is spent whether or not the roll succeeds.
 - So the chance falls as favour grows. At favour 0, any donation of 50 gold or more is a certain success (2*50/1 + 1 = 101). At favour 50, a 100-gold donation has a 5 percent chance (2*100/50 + 1 = 5). Large donations give more chances, so the price of favour rises with standing.
 - Other favour changes (quests, crimes, guild sync) go through `ChangeReputation(id, amount, propagate)`. With propagate on: allies get `amount / 2` and enemies get `-amount / 2` (PersistentFactionData.cs 408-409, non-propagating calls). A deity change also adds the full amount to the generic temple faction (434). Crime (PlayerEntity.cs 2298) subtracts half the crime value from the people faction, propagated.
 - Decay: game time runs a loop over every elapsed minute (PlayerEntity.cs 455). When `(minute % 161280) == 0` (458, 161280 minutes = 112 days) and `preventNormalizingReputations` is not set (458), `NormalizeReputations` moves every faction one point toward 0 (2239 and 2241; the same call also normalises legal rep).
-- Ranks: `CalculateNewRank` returns -1 ("Expelled.") below favour 0 (Guild.cs 104-105). Otherwise it walks rank r = 0..9 and stops at the first rank whose favour requirement fails (requirements 0,10,...,90 at Guild.cs 37) or whose skill gate fails (111). Rank is the only gate for the deity's service row (see below).
+- Ranks: `CalculateNewRank` returns -1 ("Expelled.") below favour 0 (Guild.cs 104-105). Otherwise it walks rank r = 0..9, breaks at the first rank whose favour requirement fails (requirements 0,10,...,90 at Guild.cs 37) or whose skill gate fails (`high < 1 || low + high < 2`, 111), and returns `--r` (114). So the result can be -1 at favour 0 or more when the skill gate fails at rank 0; -1 is not only for negative favour. Rank is the only gate for the deity's service row (see below).
 - Rank-gated boons per deity (Temple.cs 132-142 holds one row per deity): free healing when `healing <= rank` (415); Arkay cure discount `((10 - rank) << 8) / 10 * price >> 8` (421); Akatosh fast travel `((95 - rank) / 100) * duration` (435); Kynareth deep breath `((10 + rank) / 10) * duration` (445); Stendarr death avoidance, a random roll below the rank out of 50, not while submerged (454); summoning gate (496).
-- Blessing (Temple.cs 332-353): donation calls `FormulaHelper.CalculateTempleBlessing(gold, favour)`, which returns the constant 1 (FormulaHelper.cs 396). If the boost is above 0, the code is supposed to change one stat: Akatosh Speed, Dibella Luck (362), Julianos Intelligence, Kynareth Endurance, Mara Personality (`BlessingStat`, 355-372). It only logs (342) and shows a message box. No stat changes. The donor marks this itself as a TODO (341).
+- Blessing (Temple.cs 332-353): `Temple.Blessing` calls `FormulaHelper.CalculateTempleBlessing(gold, favour)`, which returns the constant 1 (FormulaHelper.cs 396). If the boost is above 0, it is meant to change one stat: Akatosh Speed, Dibella Luck (362), Julianos Intelligence, Kynareth Endurance, Mara Personality (`BlessingStat`, 355-372); Stendarr (legal rep) and Zenithar (mercantile skill) have their own branches (345-351). It only logs (342, 347, 349) and shows a message box; the donor marks this as a TODO (341). Also, nothing calls `Blessing` at all (grep of `Blessing(` finds only the definition), and the donation handler (55-76) never calls it, so the blessing is dead code, not a step in the donation path.
 - Tick: none. Donation is an event; decay is driven by game time, not a frame loop.
 
 ## 2. Key functions
@@ -83,7 +83,9 @@ export function donationChance(gold: number, rep: number): number {
 }
 
 // roll() returns an integer 0..99. Success when roll < chance, as the donor's Dice100.SuccessRoll does.
+// Fix (donor defect D5): the amount must be a whole number above 0; the donor lets a negative amount pass its gold test and adds gold.
 export function donate(ledger: Ledger, deity: string, gold: number, wallet: Wallet, roll: () => number): boolean {
+  if (!Number.isInteger(gold) || gold <= 0) return false;
   if (wallet.gold < gold) return false;
   wallet.gold -= gold;
   const row = ledger.get(deity);
@@ -92,7 +94,7 @@ export function donate(ledger: Ledger, deity: string, gold: number, wallet: Wall
   return true;
 }
 
-// Rank from favour: highest rank whose requirement is met; below 0 is expelled (-1). The donor also checks skills (omitted).
+// Rank from favour: highest rank whose requirement is met; below 0 is expelled (-1). The donor also checks skills, which can give -1 at favour 0 or more (omitted here).
 export function rankFor(rep: number): number {
   if (rep < 0) return -1;
   let r = 0;
@@ -130,12 +132,13 @@ export function blessingRow(stat: string, amount: number, nowS: number, duration
 }
 ```
 
-Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020 gl004-favour-daggerfall.ts` on the VPS (copy at /tmp/gl004-favour-daggerfall.ts): exit 0.
+Typecheck (re-run after the D5 edit): `npx -p typescript tsc --noEmit --strict --target es2020 gl004-favour-daggerfall.ts` on the VPS (copy at /tmp/gl004-favour-daggerfall.ts): exit 0.
 
 Defects in the donor, each with the fix (the idea is kept):
 - D1, blessing has no effect: Temple.cs 341-342 log only; FormulaHelper.cs 396 returns 1. fix: a timed status row (`blessingRow`) with the stat and amount as catalogue data, boost from gold and favour as a designer formula.
 - D2, one-point changes never reach allies or enemies: PersistentFactionData.cs 408-409 use integer division. fix: round the half away from zero (`changeFavour`).
 - D3, Arkay cure discount truncates early: Temple.cs 421 shifts and divides before the multiply. fix: `cureCost` as one floor.
+- D5, negative donation adds gold: DaggerfallGuildServiceDonation.cs 56-63 parses with `int.TryParse` and tests only `GetGoldAmount() >= amount`. fix: refuse any amount that is not a whole number above 0 (`donate` in the sketch).
 - D4, Ring of Namira reflect is 0 on a one-point hit against Daedra: RingOfNamiraEffect.cs 50 is `sourceDamage / 2`, integer division. fix: round half up with a floor of 1 on any landed hit (not in the sketch; the Namira table is in the Lands-in row).
 
 ## 5. Lands in
@@ -160,14 +163,14 @@ Reuse tag: adapt (MIT). Brief rule served: rules 1-2 and GL focus items 1, 2, 4,
 
 Best transferable idea: a favour row that a donation can raise only with a roll whose chance falls as the current favour rises, with rank, boons and decay all read from that one row.
 Decision (proposed): adapt — the favour ledger, the falling donation chance, the rank table and the decay are sound; the donor's blessing is unimplemented and its boons are hard-coded per deity, so Frankendom takes the shape and moves the numbers to catalogue or zone data, with D1 to D4 fixed in the sketch.
-Acceptance: a server test donates 100 gold at favour 0 (always wins, favour goes from 0 to 1), and at favour 50 (chance 5) with a seeded roll of 4 (wins) and 5 (no change); favour never leaves -100..100; a player at favour 30 holds rank 3 and gets the rank-3 boon rows, and a player at favour -1 is expelled.
+Acceptance: a server test refuses a donation of 0 or -50 gold with the wallet unchanged, then donates 100 gold at favour 0 (always wins, favour goes from 0 to 1), and at favour 50 (chance 5) with a seeded roll of 4 (wins) and 5 (no change); favour never leaves -100..100; a player at favour 30 holds rank 3 and gets the rank-3 boon rows, and a player at favour -1 is expelled.
 
 GL table (gods-legends-favour, items from GL-FOCUS.md; "not read" where the donor has no code I opened):
 
 | # | name | effect | formula | number ranges | gain/loss events | decay | file:line |
 |---|---|---|---|---|---|---|---|
 | 1 | Favour per deity (ledger row) | signed standing per faction, gates ranks and services | clamp(rep + d, -100, 100); propagate: allies d/2, enemies -d/2 | -100..100 | donation win +1 (chance floor(2*gold/max(\|rep\|,1))+1 %); quest and crime changes (crime: -(value/2) to people faction, propagated) | -1 toward 0 every 161280 game minutes (112 days) | PersistentFactionData.cs 32-33, 390-455; DaggerfallGuildServiceDonation.cs 63-69; PlayerEntity.cs 2293-2298, 455-459, 2239-2241 |
-| 2 | Blessings and curses | blessing: donation buys a stat boost for a deity (Akatosh Speed, Dibella Luck, Julianos Intelligence, Kynareth Endurance, Mara Personality); not applied, TODO | boost = CalculateTempleBlessing(gold, favour) = 1 (stub) | stat boost not implemented | donation per call | none (no timed row) | Temple.cs 332-372 (Luck at 362); FormulaHelper.cs 396. Curses: CalironsCurse.cs not read |
+| 2 | Blessings and curses | blessing: a stat boost for a deity (Akatosh Speed, Dibella Luck, Julianos Intelligence, Kynareth Endurance, Mara Personality; Stendarr legal rep, Zenithar mercantile); not applied (TODO), and the method is never called | boost = CalculateTempleBlessing(gold, favour) = 1 (stub) | stat boost not implemented | donation per call | none (no timed row) | Temple.cs 332-372 (Luck at 362); FormulaHelper.cs 396. Curses: CalironsCurse.cs not read |
 | 3 | Patron choice and switching | guild join needs favour >= 0 and skills; favour < 0 expels; no apostasy or god-anger code found (grep for apostas, wrath, anger in Game/*.cs: none in guild code) | rank -1 if rep < 0 | rank 0..9 | expulsion below 0 | none | Guild.cs 104-105; ThievesGuild.cs 129 and DarkBrotherhood.cs 134 (comments: never expel); no switch cost found |
 | 4 | Divine domains as tags driving damage | Ring of Namira reflect table by enemy team: Daedra x1/2, Undead x2, other teams x1, animal and spriggan cases no reflect | reflected = sourceDamage * mult; enemy health -= reflected; durability loss = reflected | mult 0, 1/2, 1, 2 | every landed hit on the wearer | none | RingOfNamiraEffect.cs 49-65 |
 | 5 | Boons at favour thresholds (ranks) | per-deity service rows: free healing (healing <= rank), Arkay cure discount, Akatosh fast travel, Kynareth deep breath, summoning gate, Stendarr death avoidance | Arkay (10-rank)/10; Akatosh (95-rank)/100; Kynareth (10+rank)/10; Stendarr chance rank/50 | rank 0..9; deity rows 134-141 | rank change from favour | n/a | Temple.cs 132-142, 415, 421, 435, 445, 454, 496 |
@@ -180,3 +183,11 @@ GL table (gods-legends-favour, items from GL-FOCUS.md; "not read" where the dono
 | 12 | Relics and artifacts | Ring of Namira is an artifact subtype with an effect key; one-in-world ownership and transfer not in read code | see item 4 | n/a | n/a | n/a | RingOfNamiraEffect.cs (EffectKey declaration) |
 | 13 | Temples and shrines as zone rows | a temple building carries a faction id; donation and services key off it; each deity has one rank row | deity = Temple.GetDivine(building faction id) | 8 deity rows | donation at the building | n/a | DaggerfallGuildServiceDonation.cs 64; Temple.cs 132-142 |
 | 14 | Pantheon factions and realm pride | deity factions (ids 21-35) sit under a generic temple faction; a deity change adds the full amount to it; realm and PvP pride not read | Generic_Temple propagated +d | ids 21-35 | any deity change | n/a | Temple.cs 50 (enum); PersistentFactionData.cs 434 |
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: 1) Note says donation 'calls FormulaHelper.CalculateTempleBlessing' and shows a message box (section 1 Blessing, D1, GL row 2): Temple.Blessing (Temple.cs 332-353) is never called anywhere (grep 'Blessing(' finds only its definition and the formula call inside it), and DaggerfallGuildServiceDonation.cs 55-76 has no blessing call; blessing is dead code, not a log-only stub on the donation path. 2) Rank loop: note says 'stops at first rank whose favour requirement fails'; real code returns --r after break, and the skill gate (high<1 || low+high<2) can return -1 at r=0 even with rep>=0 (Guild.cs 104-114), so rank -1 is not only 'favour<0'; sketch rankFor omits this (disclosed as omitted skills). 3) Blessing stat for Stendarr (legal rep) and Zenithar (mercantile) branch not mentioned (Temple.cs 345-351). Other claims verified: donation formula and order (DaggerfallGuildServiceDonation 63-69), Dice100 (Random.Range(0,100)<chance), clamp -100..100 (PersistentFactionData 32-33), amount/2 propagation (408-409), 161280-minute normalise (PlayerEntity 455-459, 2239-2241), rankReq 0..90 (Guild.cs 37), Arkay/Akatosh/Kynareth/Stendarr formulas, Ring of Namira table, lycanthropy comment.
+Missed: BUILD-FAIL RISK / SECURITY: donor does int.TryParse with no amount>0 check and gold check 'GetGoldAmount() >= amount' (DaggerfallGuildServiceDonation.cs 56-63): a negative amount passes and ADDS gold. The sketch donate() has the same hole (wallet.gold >= gold, wallet.gold -= gold with negative gold) and the Acceptance does not test amount<=0. Gaps list mentions a cap but not the negative/zero case. Acceptance numbers themselves hold (100 gold at rep 0 -> chance 201; rep 50 -> chance 5; roll 4 wins, 5 fails; rep 30 -> rank 3; -1 -> expelled).
+
+Fixed 2026-10-12 (Sonnet fixer): verified and corrected (1) blessing is dead code never called by donation, with the Stendarr/Zenithar branches added; (2) rank loop returns --r and the skill gate can give -1 at favour >= 0; (3) added missed defect D5, negative donation amount adds gold, fixed in the sketch (donate rejects amount <= 0) and the acceptance now tests 0 and -50. Also found: the same handler has no upper cap beyond the gold test. Sketch retypechecked.

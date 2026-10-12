@@ -70,3 +70,9 @@ Decision: adapt the time keys and the routine fallback (idea). No defect in the 
 No code sketch: this template asks for data fields, not code, so nothing was typechecked.
 
 Tags: day-night, scheduler, mood-preset, new:sky-keyframes, new:routine-fallback
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: Verified: sun keys 04:45/13:09/21:33 and midnight=gtime(1,0,0)=24h (gametime.h:11), pulse piecewise 93-103, azimuth 116-117, shadowLength 0.56 so noon elevation atan(1/0.56)=60.8 deg, normalise at lightsource.cpp:17, isNight linearstep -0.18..0 at sky.cpp:79, smoothstep 0..0.01 at 133, lux 128000/0.32 at 31-32, ambient chain 0.68/0.5/0.3 (141-146), sun colour constant at 136, cloud periods 90000/270000 (153-154), music day window 4:00..21:00 inclusive (worldsound.cpp:241), setDayTime same-day/next-day (world.cpp:390-400), routine fallback by cyclic distance (npc.cpp:3253-3267), MIT LICENSE. Nits: music fallback is zone > day/night > mode with mode order [mode, Thr?Fgt:Std, Std] (262), note says 'mode then standard' and drops the Thr->Fgt step; routine cite 3243-3259 stops before the fallback loop (3253-3267); setDayTime treats equal time as same day.
+Missed: The moon ambient term (sky.cpp:139) is not gated by sunOcclude so ambient never reaches zero at night; note's 'keep a floor on ambient' point is consistent but the donor's own floor is not stated.

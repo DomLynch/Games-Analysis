@@ -6,11 +6,11 @@ Checked: read in full: `GameServer/gameutils/Faction.cs` (159 lines), `GameServe
 
 Best transferable idea: a faction is a grudge network: one bounded number per player per faction, pushed up by the death of a friend faction's member and down by an enemy faction's member, read as a standing by simple thresholds; killers become hated by the dead member's family and liked by its rivals, with no separate criminal state.
 Decision (proposed): adapt - keep the friend and enemy link spread and the four standing bands; make the change deterministic per kill (no 20% roll); send the change line only when the stored value moves; keep the faction rows as catalogue data.
-Acceptance: after a kill, the killer's standing with a friend faction of the dead member moves by exactly one point, and the "relationship" line appears only when the number changes; a server test asserts that a value already at the limit sends no line, and that a Hostile or Aggressive standing blocks an other-realm player's interaction.
+Acceptance: after a kill, the killer's standing with a friend faction of the dead member moves by exactly one point, and the "relationship" line appears only when the number changes; a server test asserts that a value already at the limit sends no line, and that `interactBlocked(standing, sameRealm)` (in the sketch) is true for a Hostile or Aggressive standing with a player of another realm and false for the same realm or a better standing; the server checks it again when the interaction is requested.
 
 ## 1. Mechanism
 
-Data first. Each faction row has a `BaseAggroLevel` (DbFaction.cs 64). Links join two factions with an `IsFriend` flag (DbFactionLinks.cs 64; FactionMgr.cs 26-45 builds `FriendFactions` and `EnemyFactions` per faction). A faction is its own friend (Faction.cs 28). Each player's number per faction is one row, `AggroLevel` (DbFactionAggroLevel.cs 64), keyed by the character (Faction.cs 58-76; loaded at login, GamePlayer.cs 10017 and FactionMgr.cs 68-84).
+Data first. Each faction row has a `BaseAggroLevel` (DbFaction.cs 64). Links join two factions with an `IsFriend` flag (DbFactionLinks.cs 64; FactionMgr.cs 26-45 builds `FriendFactions` and `EnemyFactions` per faction; a link row adds its `FactionID` faction to the friend or enemy set of its `LinkedFactionID` faction, so each link is stored in one direction only). A faction is its own friend (Faction.cs 28). Each player's number per faction is one row, `AggroLevel` (DbFactionAggroLevel.cs 64), keyed by the character (Faction.cs 58-76; loaded at login, GamePlayer.cs 10017 and FactionMgr.cs 68-84).
 
 Order of operations for one NPC kill:
 
@@ -22,9 +22,9 @@ Order of operations for one NPC kill:
 - Consumers of the standing:
   - Examine text for an NPC uses the standing (GameNPC.cs 2213-2232).
   - Interaction is blocked when the player is not in the same realm and the standing is Hostile or worse (GameNPC.cs 2482-2489; a "dirty look" line is sent).
-  - An NPC brain aggroes a player whose standing is Aggressive (StandardMobBrain.cs 533-536). An NPC aggroes an NPC whose faction is one of its enemies (537-538).
+  - An NPC brain first skips any target that is grey-con to it (StandardMobBrain.cs 528-529), then aggroes a player whose standing is Aggressive (533-536). An NPC aggroes an NPC whose faction is one of its enemies (537-538).
   - `CanLivingAttack` refuses an attack when the two NPCs are friends (FactionMgr.cs 86-89).
-- Guard NPCs (a separate rule, not a ledger). `GuardBrain` thinks every 2000 ms (7), has an aggro level of 90 (8) and an aggro range of 750 (9). Its player scan asks others for a line-of-sight answer (23-27); its NPC scan takes the first valid NPC in range and returns (33-44), with no line-of-sight check ("No LoS check, we just attack what's in range", 42). Guards attack even grey targets (47-49), provided the server rules allow it (52-54).
+- Guard NPCs (a separate rule, not a ledger). `GuardBrain` thinks every 2000 ms (7), has an aggro level of 90 (8) and an aggro range of 750 (9). Its player scan skips Shade players and asks others for a line-of-sight answer (23-27); its NPC scan skips flying NPCs, takes the first valid NPC in range and returns (33-44), with no line-of-sight check ("No LoS check, we just attack what's in range", 42). Guards attack even grey targets (47-49), provided the server rules allow it (52-54).
 
 ## 2. Key functions
 
@@ -55,7 +55,7 @@ Order of operations for one NPC kill:
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order for one kill: each damage dealer's standing moves by +1 in each friend faction (the dead member's faction included) and -1 in each enemy faction; each move is clamped to the same range; the standing bands read the same value with the same strict thresholds. It differs from the donor in three places, which are the fixes: there is no 20% roll (every kill moves the value), the change line is sent only when the stored value actually moves, and the message uses the faction id where the donor uses the faction name. It omits: the dirty flag and database save, the thread-safe dictionary, the realm rule and the interact and examine checks, the guard brain, the faction GM commands, and the donor's removal of deleted players' records.
+simplified: the sketch keeps the donor order for one kill: each damage dealer's standing moves by +1 in each friend faction (the dead member's faction included) and -1 in each enemy faction; each move is clamped to the same range; the standing bands read the same value with the same strict thresholds. It differs from the donor in three places, which are the fixes: there is no 20% roll (every kill moves the value), the change line is sent only when the stored value actually moves, and the message uses the faction id where the donor uses the faction name. It adds `interactBlocked` for the realm interact rule. It omits: the dirty flag and database save, the thread-safe dictionary, the examine check, the grey-con skip, the guard brain, the faction GM commands, and the donor's removal of deleted players' records.
 
 ```ts
 // Licence: GPL-2.0-or-later (gplheader.txt; the repo LICENSE file is the GPL version 3 text). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -80,6 +80,12 @@ export function standingOf(aggro: number): Standing {
   if (aggro > 50) return "hostile";
   if (aggro > 25) return "neutral";
   return "friendly";
+}
+
+// Donor interact rule (GameNPC.cs 2482): a Hostile or worse standing closes interaction with a
+// player of another realm. Realm is catalogue data; the server checks this on the request too.
+export function interactBlocked(s: Standing, sameRealm: boolean): boolean {
+  return !sameRealm && (s === "hostile" || s === "aggressive");
 }
 
 export class FactionBook {
@@ -149,3 +155,11 @@ Defects (fix each; idea kept):
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later / GPL-3.0; clean-room only)
 Brief rule served: 18 (kill reward and standing ledger); server-verified kills (gap 4: interaction must also be server-checked).
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Mechanism and numbers verified (Faction.cs: clamp +-100, 20 percent Util.Chance, friend +1 incl self, enemy -1, message sent regardless of roll/clamp, bands >75/>50/>25, dirty rules; AbstractServerRules kill loop for every damage dealer; GameNPC.Interact realm + Hostile block; StandardMobBrain Aggressive; GuardBrain 2000/90/750; gplheader GPL-2-or-later, LICENSE GPL-3). Only real problem: the Acceptance line asserts 'a Hostile or Aggressive standing blocks an other-realm player's interaction' as a server test, but the sketch has no realm or interact logic and the note's own Gaps say standing must not gate server decisions; a build following the sketch fails that clause unless realms and an interact gate are added. Minor omission: StandardMobBrain skips grey-con targets before the faction check, and FactionMgr link direction (link row adds FactionID as friend of LinkedFactionID) is not described.
+Missed: Faction-based aggro never applies to grey (IsObjectGreyCon) targets (StandardMobBrain.cs ~528-530); GuardBrain skips FLYING NPCs and Shade players; CanAggroTarget at the end requires Body.Realm != None for NPC targets. Minor.
+
+Fixed 2026-10-12 (Sonnet fixer): the acceptance clause about realm interaction is now backed by `interactBlocked` in the sketch (typechecked on the VPS); link direction, the grey-con skip before the faction check, and the guard scan skips (Shade, flying) added. Not added: the checker's claim that the guard's CanAggroTarget requires a realm for NPC targets; the code read (GuardBrain.cs 52-55) has no such test (that test is in StandardMobBrain 541).

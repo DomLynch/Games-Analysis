@@ -12,13 +12,13 @@ Acceptance: Three hits landing in one 60 ms window play one hit cue, the heavies
 
 Three separate mechanisms in one engine, plus a sequencer.
 
-(a) Interaction cue slot. `play_effect_for_interaction(src, priority)` (578) defaults priority to 0 (579, config 1244). If an interaction cue is playing and started less than 0.5 s ago (581, config 1242), a new request is parked as "waiting" and played only if its priority is strictly higher than the playing cue's (614). Otherwise it is dropped, because the waiting slot is reset (611). When nothing is blocking, the first request starts a 0.06 s collect window (601, config 1231) that is polled every animation frame (604). Inside the window a higher-priority request replaces the waiting cue, and the window does not restart (592-596). When the window closes, the waiting cue is played only if it is not blocked by an equal or higher priority cue (613-614), and a higher-priority cue stops the cue that is playing (617). Priority ladder: 0 default, 1 click, 2 select (config 1244-1246); other levels such as error are passed per call (GameLayer.js 1019).
+(a) Interaction cue slot. `play_effect_for_interaction(src, priority)` (578) defaults priority to 0 (579, config 1244). If an interaction cue is playing and started less than 0.5 s ago (581, config 1242), the request is put in the waiting slot and checked at once, with no collect window (582-585): it plays immediately and stops the playing cue only if its priority is strictly higher than the playing cue's (614, 617). Otherwise it is dropped, because the waiting slot is reset (611). When nothing is blocking, the first request starts a 0.06 s collect window (601, config 1231) that is polled every animation frame (604). Inside the window a higher-priority request replaces the waiting cue, and the window does not restart (592-596). When the window closes, the waiting cue is played only if it is not blocked by an equal or higher priority cue (613-614), and a higher-priority cue stops the cue that is playing (617). Priority ladder, all in config (1244-1252): default 0, click 1, select 2, cancel 3, confirm 4, show 5, hide 6, error 7, max 9999 (a hard override). GameLayer.js 1019 uses the error level (7).
 
 Order of operations: request, then (blocked? park only if higher : collect 60 ms and keep the highest priority), then at window end re-check the block, stop any replaced cue, play.
 
 (b) Polyphony gain. `_update_sfx_volume` (286-326) counts sounds still playing and younger than 0.35 s (293, config 1234). The modifier is `(1/max(1,n))^0.3` (297, config 1239). Each sfx gain is base x master x modifier (163). In `play_effect` the new sound is started with the current gain (553) and the modifier is recounted afterwards (566), so the newest sound starts with a gain that does not count itself (defect 2).
 
-(c) Crossfades. `play_music` (398-416): when the source differs, `stop_music(fade)` (404) moves the old track into `_music_stopping` (427) and fades it out, while the new track fades in from volume 0 (310-311, through `audio_object.fade_to`, 402-434) over `MUSIC_CROSSFADE_DURATION` = 0.5 s (config 568). Voice uses the same code with `VOICE_CROSSFADE_DURATION` = 0 (config 569), which is an instant change (421-431). The tween uses a cocos `actionTween` with `EaseInOut(3.0)` (424).
+(c) Crossfades. `play_music` (398-416): when the source differs, `stop_music(fade)` (404) moves the old track into `_music_stopping` (427) and fades it out, while the new track fades in from volume 0 (310-311, through `audio_object.fade_to`, 402-434) over `MUSIC_CROSSFADE_DURATION` = 0.5 s (config 568). Voice uses the same code with `VOICE_CROSSFADE_DURATION` = 0 (config 569), which is an instant change (audio_object.js 428-432). The tween uses a cocos `actionTween` with `EaseInOut(3.0)` (audio_object.js 424); the instant change for a zero duration is the else branch at audio_object.js 428-432 (not the stop_music lines).
 
 (d) Sound sequence (`SoundEffectSequence.js`). A list of cues played in order: each step waits `cc.delayTime(duration)` (138) and then calls `playNext` (55-76). The last cue loops by re-queuing itself (71) when flagged as looping.
 
@@ -43,12 +43,12 @@ Caller evidence (grep only, these files were not opened): interaction cues from 
 | A playing cue holds the slot for a block window; equal or lower priority is dropped | 0.5 s (config.js 1242) |
 | Gain falls as a power of the count of fresh cues | Count window 0.35 s (config.js 1234); power 0.3 (config.js 1239). From the formula (computed, not run): 2, 3 and 4 fresh cues give gains of about 0.81, 0.72 and 0.66 |
 | Music handover with overlap; voice is a hard cut | Music 0.5 s (config.js 568); voice 0 s (config.js 569) |
-| Priority ladder | 0 default, 1 click, 2 select (config.js 1244-1246); other levels passed per call (not all read) |
+| Priority ladder | 0 default, 1 click, 2 select, 3 cancel, 4 confirm, 5 show, 6 hide, 7 error, 9999 max (config.js 1244-1252) |
 | Starting volumes | Music 0.04 (config.js 1226); sfx 0.3 (config.js 1228) |
 
 ## 4. TypeScript sketch
 
-simplified: keeps the interaction cue slot (collect window, block window, priority replace), the count-based gain and the linear music handover. It omits playback, the stop call (the caller must stop the cue reported as replaced; the donor stops it at audio_engine.js 617), the per-frame polling (time is passed in), the count of all sfx (only slot cues are counted), the sequence chain, and the cocos ease (linear used). It fixes defect 2 (the count includes the new cue before its gain is chosen). Defect 1 (the array used as a loop bound) does not appear in the sketch. Typecheck passed on the VPS: `npx -p typescript tsc --noEmit --strict --target es2020`, exit 0.
+simplified: keeps the interaction cue slot (collect window, block window, priority replace). The blocked path now matches the donor: a request during the 0.5 s block is decided at once, with no 60 ms collect window, the count-based gain and the linear music handover. It omits playback, the stop call (the caller must stop the cue reported as replaced; the donor stops it at audio_engine.js 617), the per-frame polling (time is passed in), the count of all sfx (only slot cues are counted), the sequence chain, and the cocos ease (linear used). It fixes defect 2 (the count includes the new cue before its gain is chosen). Defect 1 (the array used as a loop bound) does not appear in the sketch. Typecheck passed on the VPS: `npx -p typescript tsc --noEmit --strict --target es2020`, exit 0.
 
 ```ts
 // Licence: CC0-1.0 (donor open-duelyst-duelyst). Written from the described mechanism, not a translation of the donor lines.
@@ -72,12 +72,19 @@ export class CueSlot {
   constructor(private readonly cfg: CueConfig) {}
 
   // Called by gameplay code whenever a hit or spell cue fires.
-  request(id: string, priority: number, now: number): void {
+  // While a cue blocks, the request is decided at once (donor 581-585): it returns the cue to start, or null if dropped.
+  request(id: string, priority: number, now: number): { id: string; gain: number } | null {
+    const cur = this.current;
+    if (cur !== null && now - cur.startedAt < this.cfg.blockingS) {
+      if (priority <= cur.priority) return null;
+      return this.start({ id, priority }, now);
+    }
     if (this.pending === null) {
       this.pending = { id, priority, since: now };
     } else if (priority > this.pending.priority) {
       this.pending = { id, priority, since: this.pending.since }; // the window keeps its start time
     }
+    return null;
   }
 
   // Called once per frame. Returns the cue to start now with its gain, or null.
@@ -89,7 +96,10 @@ export class CueSlot {
     const cur = this.current;
     const blocked = cur !== null && now - cur.startedAt < this.cfg.blockingS;
     if (blocked && cur !== null && p.priority <= cur.priority) return null; // dropped
+    return this.start(p, now);
+  }
 
+  private start(p: { id: string; priority: number }, now: number): { id: string; gain: number } {
     // Count the new cue before choosing its gain.
     this.current = { id: p.id, priority: p.priority, startedAt: now };
     this.recent = this.recent.filter((c) => now - c.startedAt < this.cfg.stackWindowS);
@@ -119,7 +129,7 @@ export {};
 
 - Sound is client-only (camera, HUD and sound ruling). The slot chooses what to play, but the cue trigger must come from a server-verified fight event, never from a local timer that decides damage.
 - MAX_ATTACKERS = 3: three hits in one moment give about 0.72 gain each (computed, not run). The collect window should merge simultaneous hits instead of stacking them.
-- Priority has to come from hit tier (a heavier hit gets a higher priority). The donor has no damage tier, so this is a rule we must add.
+- Priority has to come from hit tier (a heavier hit gets a higher priority). The donor has no damage tier, but it does have a full priority ladder for UI cues (default 0 up to error 7, and a 9999 override), so the mechanism of a data-driven tier ladder exists; only the hit and spell tiers are ours to add.
 - The donor is a card game. Its cue files are UI sounds, not hit or spell sounds; I read the mechanism, not the assets. No layered music, stingers or biome ambience exist here.
 - Defects in the donor (idea kept, fix applied in the sketch):
   1. The loop bound is the array, not its length: audio_engine.js 270, 279 and 301 (`i < il` with `il` set to the array). The loop never runs, so stopping music and voice never get a volume update, and on desktop playing sfx never get the master volume change. fix: `il = arr.length`.
@@ -128,4 +138,12 @@ export {};
   4. Zero duration is cached: `getDuration` (119-121) caches the value once it is not null, and `audio_object.js` 150 returns 0 until metadata loads, so a step can advance at once and never re-read the real length. fix: read the duration on metadata load and do not cache 0.
   5. Web branch calls methods the bundled cocos audio class lacks. The web branch of `_update_sfx_volume` calls `getElapsed()` on a pooled cue that is still playing (audio_engine.js 315), and `SoundEffectData.getDuration` calls `getDuration()` on `cc.Audio` (`SoundEffectSequence.js` 123). In the bundled build, `cc.Audio` (lib 33665) has `getPlaying` (33711), but a grep of the whole lib file found no `getElapsed` or `getDuration` on it (the only `getElapsed` definitions are in action code, 20667). On web these read as TypeErrors when reached (not run). fix: keep our own start time and duration for each cue; never call undocumented methods on the engine's audio handle.
 - Crossfade is one old-and-new pair. A biome border needs zone data for the bed names and the fade; the 0.5 s is the donor's value, not a tuned one.
-- The cocos `EaseInOut(3.0)` formula was not read; the sketch uses a linear ramp.
+- Vendor files live under `app/vendor/`, not `vendor/` (paths in the Checked line). The cocos `EaseInOut(3.0)` formula was not read; the sketch uses a linear ramp.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: (1) Priority ladder wrong/incomplete: note says config 1244-1246 give 0 default, 1 click, 2 select and 'other levels such as error are passed per call'. config.js 1244-1252 actually defines DEFAULT 0, CLICK 1, SELECT 2, CANCEL 3, CONFIRM 4, SHOW 5, HIDE 6, ERROR 7 and MAX 9999; GameLayer 1019 uses CONFIG.ERROR_SFX_PRIORITY (7). So the whole ladder is in config, not 'passed per call'. (2) Section 1(a) says a request arriving while a cue is blocking is 'parked as waiting'; real code (581-585) sets the waiting slot and immediately calls _play_waiting_effect_for_interaction with NO 60 ms collect window, so during the 0.5 s block a higher-priority cue interrupts at once. The sketch always applies the 60 ms collect window first, so its blocked-path timing differs from the donor (acceptable design choice but sketch header says it keeps the donor's slot). (3) 'voice instant change (421-431)' cites stop_music lines; the instant branch is audio_object.js 428-432. Verified OK: license CC0-1.0 package.json; defect 1 loop bounds audio_engine.js 270, 279, 301 (il = array); _update_sfx_volume 286-326 with 0.35 s threshold/0.3 power config 1234/1239; gains 0.81/0.72/0.66 correct; play_effect 553 then 566 stale-gain defect; play_music 398-416 / stop_music 423-432; MUSIC 0.5 and VOICE 0 config 568-569; defaults 0.04/0.3 config 1226/1228; collect delay 0.06 config 1231; block 0.5 config 1242; fade_to 402-434 with EaseInOut(3.0) at 424; SoundEffectSequence 27-30 keyed by identifier (defect 3), getDuration 118-127 caches 0 (defect 4 with audio_object.js 150); cc.Audio lacks getElapsed/getDuration (defect 5; vendor files live under app/vendor/ not vendor/).
+Missed: The full priority ladder (cancel 3, confirm 4, show 5, hide 6, error 7, max 9999 at config.js 1247-1252): directly relevant to the note's own gap 'priority has to come from hit tier'; the donor already has a usable tier ladder that the note says does not exist for its cue types. Also MAX_SFX_PRIORITY 9999 is a hard-override tier.
+
+Fixed 2026-10-12 (Sonnet fixer): replaced the priority ladder with the full config list (0 to 7 and 9999, config 1244-1252) and softened the 'no tier exists' risk; corrected the blocked-path text (no collect window, decided at once) and changed the sketch to match (request() now decides at once while blocked; typecheck below); moved the voice instant-change cite to audio_object.js 428-432; noted the vendor path is app/vendor/.

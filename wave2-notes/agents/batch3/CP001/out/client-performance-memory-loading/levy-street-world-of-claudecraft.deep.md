@@ -6,19 +6,19 @@ Checked: `RenderBudgetGovernor.update` at render/render_budget.ts 529-807 (read 
 
 Best transferable idea: a quality ladder with two-sided hysteresis (drop fast when a frame is urgent, recover one rung at a time only after a stable window and a cooldown) keeps a fight's frame rate steady without flicker.
 Decision (proposed): adapt - the ladder shape fits a Pit or zone fight on a phone, but Frankendom must exempt threat telegraphs and any cue the player reads, and must drop the probe and the post-shed rungs.
-Acceptance: in a three-attacker Pit fight on a mid-range phone, a synthetic trace of 30 ms frames for 3 s steps VFX down at most once per cooldown and never below its floor; after 3 s of headroom it raises one rung; telegraph VFX never change level (unit test).
+Acceptance: with a budget set up like the donor's high tier (recoverStableS 3, cooldown 0.85 s) and rungs that include a telegraph rung marked non-sheddable, a synthetic trace of 30 ms frames for 3 s steps each sheddable rung down at most once per cooldown and never below its floor; after 3 s of headroom (frames under recoverMs) it raises one rung (a low-tier budget with recoverStableS 6 needs 6 s); with `holdRaise` true it raises nothing however long the headroom lasts; the telegraph rung level never changes (unit test).
 
 ## 1. Mechanism
 
 - One governor owns a small set of quality levels: grass density, foliage, VFX, lighting, render resolution, terrain-detail shed, and a post-processing shed ladder. Each presented frame it gets a sample (frame ms, submit ms, draw calls, triangles, visible grass tufts, dt) and returns a state with a mode (`stable`, `degrading`, `recovering`, `disabled`) and a reason.
 - Order of steps in `update` (render_budget.ts 529-807), as the code runs:
-  - (a) Inputs are clamped to 250 ms. Frame cost = max(frame, total) (536-539). The frame average moves by a fixed 0.08 of the gap each frame (540); the submit average by 0.12 (541). Submit-stall pressure = max(previous x exp(-dt/12), raw submit / 120 ms) (542-545).
+  - (a) Frame ms is clamped to 250 ms, unless the caller passes `chosenCadenceMissShare` (>= 0), in which case frame ms is replaced by `chosenCadenceFrameMs(missShare, dropFrameMs, recoverFrameMs)` (531-535) and the cap probe is skipped. Frame cost = max(frame, total) (536-539). The frame average moves by a fixed 0.08 of the gap each frame (540); the submit average by 0.12 (541). Submit-stall pressure = max(previous x exp(-dt/12), raw submit / 120 ms) (542-545).
   - (b) Pressure is the maximum of five ratios: frame average, submit, draw calls against `targetCalls`, triangles against `targetTriangles`, grass tufts against `targetGrassTufts`, and the stall pressure (572-660). A ratio of 1 or more is over budget.
-  - (c) `urgent` is true on a submit stall (>= 120 ms), or one frame at or above the tier `urgentFrameMs`, or total at or above it, or submit at or above max(12, 0.58 x urgent), or calls, triangles or tufts at or above their urgent caps (682-689).
+  - (c) `urgent` is true on a submit stall (>= 120 ms), or one frame at or above the tier `urgentFrameMs` (this term is dropped when an external frame cap is latched), or total at or above it, or submit at or above max(12, 0.58 x urgent), or calls, triangles or tufts at or above their urgent caps (682-689).
   - (d) `overBudget` is true when pressure >= 1, or the frame average >= `dropFrameMs`, or total >= drop, or submit >= max(8, 0.58 x drop) (690-694).
   - (e) Degrade runs only when (submit stall, or over budget) and the cooldown is at zero and no cap-probe dwell holds the ladder (699-703). A submit stall ignores the cooldown. If `degrade` changed something, the cooldown is armed: 0.55 x tier cooldown on an urgent frame or a probe step, 2.5x or 4x on a submit stall, and 1x otherwise (737-744). The function returns at once.
   - (f) While a stall hold is running (set on a submit stall to a tier-specific number of seconds), the mode stays `degrading` and recovery does not run (749-754).
-  - (g) Recovery needs measured headroom on every clause: frame average <= `recoverFrameMs` (or the external-cap case), total <= recover line, submit <= max(8, 0.7 x recover line), a single raw submit <= 42 ms, and stall pressure < 0.5 (758-764). Each frame that passes adds dt to `stableSeconds`. When `stableSeconds` reaches the tier `recoverStableSeconds` and the cooldown is zero, `recover` runs (782-784). Any frame that fails the headroom test resets `stableSeconds` to zero (796-798). Recovery therefore needs one unbroken window of headroom.
+  - (g) Recovery needs measured headroom on every clause, plus the caller's `holdRecovery` flag (sample field, render_budget.ts 115; checked first at 759) must not be true: frame average <= `recoverFrameMs` (or the external-cap case), total <= recover line, submit <= max(8, 0.7 x recover line), a single raw submit <= 42 ms, and stall pressure < 0.5 (758-764). Each frame that passes adds dt to `stableSeconds`. When `stableSeconds` reaches the tier `recoverStableSeconds` and the cooldown is zero, `recover` runs (782-784). Any frame that fails the headroom test resets `stableSeconds` to zero (796-798). Recovery therefore needs one unbroken window of headroom.
   - (h) Climbing above the baseline (`allowAboveBaseline`) needs calls, triangles and tufts all at or under 90% of their target caps (776-779).
 - `degrade` (951-1020) walks rungs in a fixed order, and several rungs can move in one call. Each rung is eligible under its own condition:
   - foliage: step 0.08, or 0.14 when urgent (961-965); eligible when urgent, draw-dominant, or draw pressure >= 1.08.
@@ -27,7 +27,7 @@ Acceptance: in a three-attacker Pit fight on a mid-range phone, a synthetic trac
   - VFX: step 0.05 or 0.08 (987-999); eligible on a severe frame (frame or submit >= 1.25), or when not urgent and the environment and lighting rungs are at their floors and frame or submit >= 1.
   - last resort (1010-1018): the post-processing shed takes one rung and render resolution steps by the tier `dropStep` (or `urgentDropStep`). Eligible on a severe frame, or when environment, lighting and VFX are all at their floors.
   - Returns `changed`, `exhausted` (eligible, but every rung already at its floor) or `idle`.
-- `recover` (1047-1063) raises one rung per call and returns true on success: grass, lighting, VFX and foliage back to their baselines at 0.08 each (1048-1051), then one post-shed rung (1055), then resolution by `recoverStep` (1056). Only when `allowAboveBaseline` is set does it climb above baseline: foliage and VFX to their band max at 0.08, grass at 0.06, lighting at 0.05 (1058-1061). A successful raise sets `stableSeconds` to zero and arms the cooldown at 1.5 x tier cooldown (`update` 781-792).
+- `recover` (1047-1063) raises one rung per call and returns true on success: grass, lighting, VFX and foliage back to their baselines at 0.08 each (1048-1051), then one post-shed rung (1055), then resolution by `recoverStep` (1056). Only when `allowAboveBaseline` is set does it climb above baseline: foliage and VFX to their band max at 0.08, grass at 0.06, lighting at 0.05 (1058-1061). A successful raise sets `stableSeconds` to zero and arms the cooldown at 1.5 x tier cooldown (`update` 781-792). The donor's own comment (~772) says this 1.5x cooldown is shorter than the stable window on every tier and never binds, so the real rate limit is `recoverStableSeconds`.
 - External frame-cap probe (814-932; not a browser concern as written): when the frame sits between 28 and 48 ms with CPU headroom, the governor cannot tell a display cap from GPU-bound frames, so it runs a probe. It sheds every rung to its floor, dwells 2 s, restores the start levels, dwells 2 s, and compares the frame average. If the restored average is more than 10% above the floored one, shedding helped: the candidate is refused, and the refusal survives an upward lapse for at least 60 s. Otherwise the cap is latched and frame pressure is ignored. The probe is the most complex part (candidate logic at 611-652 and the probe at 814-932) and answers a question only a GPU-bound WebGL renderer has.
 - Caller: renderer.ts 4530-4569 builds the sample and 4570 calls `update`. The call sits in `updateAdaptiveResolution` (4528; its end not read), which runs only for presented frames (9766). The comment at 9763-9765 says a skipped frame is not fed, because its wall-clock dt would read hidden time as free headroom.
 - Tick: this is a per-presented-frame update. It uses dt for cooldowns and stable seconds, and per-frame alphas for the two averages (see section 6, defect 1). It is not a fixed-step loop.
@@ -58,11 +58,11 @@ Acceptance: in a three-attacker Pit fight on a mid-range phone, a synthetic trac
 
 ## 4. TypeScript sketch
 
-simplified: the sketch uses one frame average (the donor takes the largest of frame, total, submit, draw and grass pressure) and treats every rung as eligible on each over-budget step (the donor gates each rung by its own condition, e.g. foliage only when draw-dominant). It omits the submit-stall hold and its longer cooldowns, the urgent-by-submit path, the post-shed and terrain-detail rungs, the above-baseline climb, the enrich gate, the external frame-cap probe, and the chosen-cadence input. Its order is: average, degrade if over budget and cooled down, else recover after N stable seconds. It fixes the donor's per-frame alpha by using a time constant (defect 1).
+simplified: the sketch uses one frame average (the donor takes the largest of frame, total, submit, draw and grass pressure) and treats every rung as eligible on each over-budget step (the donor gates each rung by its own condition, e.g. foliage only when draw-dominant). It degrades every sheddable rung in one step (the donor gates each rung), adds a `holdRaise` flag (the donor's `holdRecovery`, sample field at 115) and a `sheddable` flag so a telegraph rung is never lowered or raised. It omits the submit-stall hold and its longer cooldowns, the urgent-by-submit path, the post-shed and terrain-detail rungs, the above-baseline climb, the enrich gate, the external frame-cap probe, and the chosen-cadence input. Its order is: average, degrade if over budget and cooled down, else recover after N stable seconds. It fixes the donor's per-frame alpha by using a time constant (defect 1).
 
 ```ts
 // Licence: MIT (donor). Shape only, re-expressed here; no donor lines copied.
-type RungKey = 'vfx' | 'lighting' | 'grass' | 'resolution';
+type RungKey = 'vfx' | 'lighting' | 'grass' | 'resolution' | 'telegraph';
 
 interface Rung {
   key: RungKey;
@@ -71,6 +71,7 @@ interface Rung {
   step: number;        // drop step on a normal over-budget frame
   urgentStep: number;  // drop step on an urgent frame
   raiseStep: number;   // raise step on recovery
+  sheddable: boolean;  // false for a telegraph rung: never moved
 }
 
 interface Budget {
@@ -103,6 +104,7 @@ export function governorStep(
   b: Budget,
   frameMs: number,
   dtS: number,
+  holdRaise = false, // caller veto, e.g. mid-telegraph (donor holdRecovery)
 ): GovernorVerdict {
   const alpha = 1 - Math.exp(-dtS / EMA_TAU_S);
   g.ema += (frameMs - g.ema) * alpha;
@@ -114,6 +116,7 @@ export function governorStep(
     if (g.cooldownS > 0) return 'held';
     let moved = false;
     for (const r of rungs) {
+      if (!r.sheddable) continue;
       const cur = g.levels[r.key];
       if (cur <= r.floor + 0.001) continue;
       const s = urgent ? r.urgentStep : r.step;
@@ -129,10 +132,15 @@ export function governorStep(
     g.stableS = 0;
     return 'held';
   }
+  if (holdRaise) {
+    g.stableS = 0;
+    return 'held';
+  }
   g.stableS += dtS;
   if (g.stableS < b.recoverStableS || g.cooldownS > 0) return 'held';
 
   for (const r of rungs) {
+    if (!r.sheddable) continue;
     const cur = g.levels[r.key];
     if (cur >= r.baseline - 0.001) continue;
     g.levels[r.key] = Math.min(r.baseline, round2(cur + r.raiseStep));
@@ -162,3 +170,11 @@ export function governorStep(
 - Not verified: the band baselines (the levels the governor restores to) come from `GFX_BUCKET_BANDS` (gfx.ts 463 onward, not read), so the exact baseline values are not stated here.
 
 Reuse tag: adapt (MIT). Brief rule served: CP topics 1-3 (frame pacing, adaptive quality, quality tiers by device); rule 8; client-only, no server or engine change.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Core order, step sizes, rung order, tier tables (gfx.ts 386-459), cooldown multipliers (0.55/1.5/2.5/4), stall constants, MIT licence, caller line 4570/9766 all verified. Small: (1) note says urgent includes the one-frame term unconditionally; donor drops it when externalFrameCap is set (render_budget.ts ~683). (2) frameMs can be replaced by chosenCadenceFrameMs when chosenCadenceMissShare is present (update 531-535), note lists as not read but section 1 order (a) implies frame input is raw. (3) donor comment at ~772 says the 1.5x raise cooldown is shorter than the stable window on every tier and never binds; note presents it as a live gate. (4) Acceptance 'after 3 s of headroom raises one rung' is true only for high/ultra/insane tiers (recoverStableSeconds 3; low 6, medium 7): the test must name the tier or a build on low/medium fails it. Sketch also degrades all rungs per step and has no telegraph rung so 'telegraph VFX never change' passes trivially.
+Missed: holdRecovery sample flag (render_budget.ts 115, 759) lets the caller veto recovery; not mentioned and is the simplest hook for 'do not raise mid-telegraph'.
+
+Fixed 2026-10-12 (Sonnet fixer): acceptance now names the high-tier budget (3 s window; low 6, medium 7) and tests a hold flag and a non-sheddable telegraph rung; sketch gained `sheddable` and `holdRaise` and was typechecked on the VPS; urgent-term external-cap exception, chosenCadence input (531-535), holdRecovery veto, and the never-binding 1.5x cooldown added. Also found: `holdRecovery` (render_budget.ts 115, 759) is the simple hook for no raise mid-telegraph.

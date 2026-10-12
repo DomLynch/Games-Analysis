@@ -135,3 +135,9 @@ Acceptance: a test with one fighter's HP changing and three idle NPCs produces e
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 Brief rule served: 1 (one engine; snapshot built only from engine writes); row 5 for the input budget (noted, not built here)
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: none
+Missed: Not a defect in the note: Item.cpp BuildValuesUpdate gating confirmed (1813-1822). Optional: DEFAULT_VISIBILITY_INSTANCE 170 not mentioned (minor).

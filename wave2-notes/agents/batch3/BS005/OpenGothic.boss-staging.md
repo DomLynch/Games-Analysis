@@ -7,7 +7,7 @@ Checked: read common/world/worldsound.cpp 215-340 (tickSoundZone, setMusic, the 
 Half read: client engine only. OpenGothic is a single-player client, so there is no server half in this donor. The data half (Daedalus .DAT, music theme definitions, .ZEN worlds) is not in the donor.
 
 ## 1. What the player sees and feels (375 wide)
-The music changes on its own, with no HUD cue. While you walk a zone, the calm track plays. When a monster that is actually swinging at you has a weapon drawn, the track moves to a fight tier. If you put your weapon away while it is hunting you, the tier is a lower "threat" tier. If you die, the music also goes to a combat tier. Going back to calm plays a closing break and going from threat up to fight plays a fill, so the change is a short punctuation, not a cut. The music follows the attack, not the aggro: a monster that merely notices you does not start the fight track until it swings. By the code, the change can lag up to 5 s behind the first swing, because the check runs on a 5 s poll.
+The music changes on its own, with no HUD cue. While you walk a zone, the calm track plays. When a monster that is actually swinging at you has a weapon drawn, the track moves to a fight tier. If you put your weapon away while it is hunting you, the tier is a lower "threat" tier. If you die, the music goes to the fight tier if you still had a weapon drawn, and to the lower threat tier if you did not (worldsound.cpp 246-251). Going back to calm plays a closing break and going from threat up to fight plays a fill, so the change is a short punctuation, not a cut. The music follows the attack, not the aggro: a monster that merely notices you does not start the fight track until it swings. By the code, the change can lag up to 5 s behind the first swing, because the check runs on a 5 s poll.
 
 A boss-intro camera exists too: a cutscene camera follows a timed spline of keyframes and can keep the player movable or not, then hands control back after a delay.
 
@@ -20,7 +20,7 @@ A boss-intro camera exists too: a cutscene camera follows a timed spline of keyf
 ## 3. The rule behind it
 Order of operations (tickSoundZone, worldsound.cpp 215-340):
 1. Gate: no re-check until 5 s have passed (worldsound.cpp:227 `nextSoundUpdate = owner.tickCount()+5*1000`).
-2. isFgt = some NPC is currently attacking the player (isTargeted) OR the player is dead (worldsound.cpp:242).
+2. isFgt = some NPC is currently attacking the player (isTargeted) OR the player is dead (worldsound.cpp:242). The mode is then Fgt if the player has a weapon drawn, else Thr (246-251).
 3. Tier: only when isFgt. Unarmed player gives Thr, armed gives Fgt. Otherwise Std (worldsound.cpp:246-249).
 4. Combine with day or night (4:00 to 21:00 is day, worldsound.cpp:241).
 5. If zone and tags are unchanged, return (no change).
@@ -30,7 +30,7 @@ isTargeted (worldobjects.cpp:442-457) returns true only when an NPC has the play
 
 Transitions (gamemusic.cpp 74-80, same rule again at 310): going to Std from any other tier plays BREAK; going from Thr to Fgt plays FILL; going from Fgt to Thr plays nothing.
 
-Cutscene camera (cscamera.cpp 88-114, 154): keyframes carry a time. Position is a Hermite segment between keys. Between a slow key and a non-slow key the segment is eased with exponent 1.005 (almost linear). Object-attached cameras are skipped (cscamera.cpp:109). The auto-untrigger delay is the last-key delay in seconds (cscamera.cpp:114).
+Cutscene camera (cscamera.cpp 88-114, 154): keyframes carry a time. Position is a Hermite segment between keys. Between a slow key and a non-slow key the segment is eased with exponent 1.005 (almost linear): slow to non-slow uses pow(u, k), which accelerates, and non-slow to slow uses pow(u, 1/k), which decelerates (cscamera.cpp 88-96). Object-attached cameras are skipped (cscamera.cpp:108). The auto-untrigger delay is the last-key delay in seconds (cscamera.cpp:114).
 
 Designer-tunable data fields (donor value only because donor is MIT):
 
@@ -89,3 +89,13 @@ Boss-staging feel: the music and camera make the boss read as a threat before a 
 
 ## Best transferable idea
 A three-tier music state driven by "something is attacking me now and has a weapon out", with a break or fill stinger chosen by the from and to tier.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: cscamera.cpp: note says object-camera skip at :109, real line 108 (cscamera.cpp:108). Note says death 'goes to a combat tier'; real code gives Thr (not Fgt) if the dead player has no weapon drawn (worldsound.cpp:246-251). Everything else held: LICENSE MIT/Try; 5 s gate :227; isFgt :242; day 4:00-21:00 :241; 12-lookup fallback; isTargetedBy conditions (worldobjects.cpp:451-459); BREAK/FILL/NONE rule (gamemusic.cpp:74-80, 310-317); ease exponent 1.005 and delay line 114; GIL_DRAGON=47 (constants.h:60); npc.cpp:478-484 dragon reset branch; world.cpp:390-402, 510-519. Not-read list honest.
+Missed: In cscamera the slow->non-slow ease uses pow(u,k) and non-slow->slow pow(u,1/k) (accelerate vs decelerate), note only says eased. Fallback for day is only Day (never Ngt fallback) - fine. isTargeted uses parallelFor with an atomic flag (worldobjects.cpp:442-449), a thread-safe any-NPC test; not mentioned.
+
+Also found: isTargeted scans NPCs with a parallel loop and an atomic flag (worldobjects.cpp 442-449), so it is a thread-safe any-NPC test.
+
+Fixed 2026-10-12 (Sonnet fixer): object-camera line 109 to 108; death tier is Fight only with a weapon drawn, else Threat; ease direction (accelerate vs decelerate) stated; thread-safe isTargeted noted. All verified.

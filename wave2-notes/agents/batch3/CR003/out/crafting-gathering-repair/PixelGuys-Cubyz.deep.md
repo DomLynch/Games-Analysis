@@ -110,3 +110,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Defect 2 (items/recipes.zig 60, 96, 106; fix: free newKeys once): in `matchWithKeys`, the `errdefer newKeys.deinit()` at 60 and the `defer newKeys.deinit()` at 96 both run on the `return error.NoMatch` at 106, so the map is freed twice. Found by reading only; not run. The path is reached when a pattern has several candidate separators and none completes a match.
 - Zone rows (`biomes.zig` 306, 331): only the chance lines were read, so the zone population rule is not covered here (row 23 territory).
 - Recipe rows: the matcher expands `{symbol}` patterns into concrete rows at load time (recipes.zig 129-224), with `reversible` adding the mirrored row. Frankendom's catalogue can use the same expansion as a generator; the recipe data files were not read.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: All checked claims hold: GPL-3 licence line, evaluateProceduralItem 621-677 (1/(2-x), connectivity max 0 / durability 1), canBeChangedInto rotation.zig 106-114, sync.zig order (creative skip 1614, cmpxchg 1635, useDurability 1652), -|= at 773, rollback 681, finalize free, modifier math/priorities (durable/fragile/single_use files), BlockDrop chance/seed, double-free defect in recipes.zig 60/96/106 is real, zero repair/salvage hits real. Note: 'MAX_ATTACKERS = 3' is a Frankendom rule, not in this donor (grep: no hit) - it is written as a Frankendom note, not a donor claim.
+Missed: none

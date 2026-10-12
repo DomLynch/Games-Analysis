@@ -8,11 +8,12 @@ Checked: this is an entity-containment mechanism, not a housing system. Searched
 
 - Declaration: a component field annotated `@Owns` whose type is `EntityRef`, or a collection or map of `EntityRef`, is an owned reference (`ComponentFieldMetadata` 36; `Owns.java` 22). A component with any such field is a reference owner (`ComponentMetadata` 64-65).
 - Owned set = immediate children only. `listOwnedEntities(EntityRef)` (`OwnershipHelper` 30) reads each owned field of each reference-owner component, keeps the refs that still exist, and does not recurse. The javadoc above it says so.
-- Order of the three hooks (authority only):
+- The four rules below (adopt, cascade, save, deactivate) are not one ordered sequence; adopt and cascade are authority-only network hooks, save and deactivate are storage steps:
   - Component added or changed: for each owned child whose owner is not this entity, `setOwner(entity)` is called (`NetworkSystemImpl` 610 and 664-674; the check is at 669, the set at 670). So the child is adopted by the parent.
   - Component removed: every owned child is destroyed (`NetworkSystemImpl` 614-625; `forEach(EntityRef::destroy)` at 624). This is the cascade.
-  - Save (`EntityStorer` 51-53): before the owner is serialised, each owned child that is persistent and not always-relevant is stored first, recursively.
-  - Deactivate (`AbstractStorageManager` 191-200): only if the owner is active. Each owned child that is not always-relevant is destroyed if not persistent, and deactivated recursively if persistent. The donor's own TODO at 196 asks whether destroy is recursive.
+  - Save (`EntityStorer` 48-60): runs only when the entity is active (`isActive`, 49); before the owner is serialised, each owned child that is persistent and not always-relevant is stored first, recursively.
+  - Deactivate (`AbstractStorageManager` 191-204): only if the owner is active. Each owned child that is not always-relevant is destroyed if not persistent, and deactivated recursively if persistent. The donor's own TODO at 196 asks whether destroy is recursive. After the children, the owner itself is deactivated for storage (`deactivateForStorage`, ~203).
+  - The `Owns` javadoc states the contract: an owned entity is persisted and restored along with its owner.
 - Tick: none. Every rule is event-driven.
 
 ## 2. Key functions
@@ -38,7 +39,7 @@ No numeric constants. The rules are the order and the persistent / always-releva
 
 ## 4. TypeScript sketch
 
-simplified: keeps the donor's three hooks (adopt on change, save children first recursively then the owner, deactivate with a persistent split and an active-owner gate). It replaces the donor's destroy on owner removal with a `settle` callback, because a silent destroy loses player items under the one-ledger rule. It also clears the owned list after settling, which the donor does not do. It omits the authority gate, the replication, the always-relevant flag on the owner itself, and the donor's unknown behaviour of entity destroy (not read).
+simplified: keeps the donor's three hooks (adopt on change, save children first recursively then the owner, deactivate with a persistent split and an active-owner gate). It replaces the donor's destroy on owner removal with a `settle` callback, because a silent destroy loses player items under the one-ledger rule. It also clears the owned list after settling, which the donor does not do. It omits the authority gate, the owner's own `deactivateForStorage` call (donor ~203), the active-only gate on save (donor `store` runs only when `isActive`), the replication, the always-relevant flag on the owner itself, and the donor's unknown behaviour of entity destroy (not read).
 ```ts
 // Licence: Apache-2.0 (donor). Sketch written from the described mechanism; the shape is re-expressed, not copied.
 type Id = string;
@@ -117,6 +118,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 
 - Not a housing system. There is no plot, no size or placement limit, no decay or upkeep, no house permission (owner, friend, guild) and no instancing in the box. "Owner" here means containment only, not who may enter or build.
 - Destroy on owner removal (NetworkSystemImpl 624) is silent item loss. Under the one-ledger rule each owned child must go to `settle()` (refund, mail or return to bank), never destroy. The sketch does this.
+- Possible null in the cascade: `onEntityComponentRemoved` calls `listOwnedEntities(entity.getComponent(component))` after the component was removed (NetworkSystemImpl 624); if `getComponent` then returns null the call would fail. Not run. Fix in Frankendom: capture the owned ids before removal.
 - Unclear: whether destroying an owner removes its components and so runs the removal hook (the entity destroy path was not read). If it does not, owned children would outlive a destroyed plot.
 - The donor's own TODO (AbstractStorageManager 196) asks whether destroy is recursive. The deactivate path (197-199) recurses only through persistent children.
 - Save order is children first (EntityStorer 52-53). The matching load path (which must recreate children before the owner) was not read.
@@ -130,3 +132,11 @@ Acceptance: when a guild hall plot is demolished, a server test asserts that eac
 
 Reuse tag: rewrite-from-idea (Apache-2.0; code may be adapted, this sketch is still written from the mechanism)
 Brief rule served: one ledger; zones as data; server-verified cascade (authority only)
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+Errors: Cited lines and behaviour all hold (OwnershipHelper 30-41/51, NetworkSystemImpl 614-625 cascade with destroy at 624, adopt 664-674 with check 669/set 670, authority gate 623/666, EntityStorer 51-53, AbstractStorageManager 191-200 with TODO at 196, Apache-2.0, modules/ only build files). Sketch deviations not listed in its omissions: donor deactivateOrDestroyEntityRecursive finishes with getEntityManager().deactivateForStorage(entity) (line ~203) which the sketch's deactivate() lacks; donor store() only runs when entity.isActive() which sketch saveOrder lacks. Mechanism section says 'order of the three hooks' then lists four items (cosmetic).
+Missed: Owns.java javadoc says owned entities are persisted and restored with owner (supports the save-with-owner idea); onEntityComponentRemoved calls listOwnedEntities(entity.getComponent(component)) after removal - possible null component, which the note flags only as unread.
+
+Fixed 2026-10-12 (Sonnet fixer): verified on the donor. Added the missing deactivateForStorage step and the active-only save gate to the mechanism and to the sketch's omission list (code unchanged); fixed 'order of the three hooks' wording (four rules, not one sequence); noted the Owns javadoc contract and the possible null component in the cascade (flagged as unread-behaviour, not run).

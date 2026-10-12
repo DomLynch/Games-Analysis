@@ -167,3 +167,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Ruling conflicts: Frankendom takes one piece per kill (take-one loot), so a finite repair life on the piece is a sink that only matters if repair is a player action. The durability and soak must be server-written in the duel step, with one order of operations (soak, then wear, then ceiling, as the donor does; Frankendom must choose and test that order itself).
 - Frankendom has no cost model yet for repair materials; the donor charges iron (DefBlacksmithy rows) and the deed path is a separate item. Both are (not read) for their item economy.
 - Gathering and salvage are summarised, not sketched. The bank model (pool, first-harvest clock, lazy refill) is the zone-row shape for row 23 (zone population), not for row 18: nodes as zone rows need the pool, respawn and cap as zone data.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: No false claims found. Verified: BaseArmor.OnHit 727-780 (soak, 1-in-4 at 735, wear 743, ceiling 758-762, delete 770-773), ScaleArmorByDurability 992, BaseWeapon slot weights 1624-1637 and 1657-1670, Repair.cs weaken/difficulty/toWeaken/refuse order, SalvageBag 75-130 incl. failure-path defect, CraftItem 812-912, DefBlacksmithy GetChanceAtMin 0.0 and ECA, HarvestBank/Mining numbers (8x8, 10-34, 10-20 min, 1/2 consumed, elf x0.75), HarvestSystem hard ReqSkill gate plus CheckSkill. Minor imprecision only: Mining resource-row numbers (iron 0/0/100 etc) not re-verified by me (grep found only the sand row at Mining.cs:254). Acceptance (10-hit fixture; repair at skill 40 on 50/100 piece, ceiling -3 when weaken roll passes) is consistent with donor and sketch; no build-fail risk.
+Missed: Not flagged as missed: pre-AOS shield OnHit runs first (noted). Not covered: BaseArmor.OnHit applies the soak even though sketch ignores the shield; AOS branch has the SelfRepair hp+2 (noted).

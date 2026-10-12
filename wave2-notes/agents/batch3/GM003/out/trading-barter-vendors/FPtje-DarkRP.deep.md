@@ -157,3 +157,9 @@ Best transferable idea: a player-run vendor keeps a fixed margin (10 percent, or
 Decision (proposed): adapt - the list-price-plus-owner-margin split and the one-sale lock fit player vendors and bazaar stalls in one ledger; reject the client timer delivery and the stale `/give` re-trace, and reverse both legs when the buyer is gone.
 
 Acceptance: a server test sells a 100-unit item from a vendor owned by someone else: the buyer's ledger row is -100, the owner's is +10 (or +20 for an allowed team), and a second buy while the first is pending returns busy; disconnecting the buyer inside the delivery window leaves both accounts unchanged.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: None found. Verified lab_base init.lua: SalePrice 51-63 (0.8/0.9 ceil), Use 66-126 order (Once 71, owner check 75, afford 82, diff 87, owner-poor 88, hooks 93-99, lock 101, debit 104, owner credit 111, 1 s timer 118-125); owner-poor branch is unreachable for a non-owner (diff >= 0) as claimed; init clamp line 23 vs SetPrice clamp (pricecap 500/pricemin 50, config 262-264); /give 1.2 s re-trace and DistToSqr 22500; DropMoney debit then 1 s bag; BuyVehicle and BuyAmmo charge before spawn; door refund 0.666 (sv_doors 373); wallet tax 1-5 %, 600 s, canTax, off by default; drug_lab SalePrice random /8../4 and noIncome; MIT; no trade window in donor.
+Missed: Minor: wallet tax fraction is only upper-clamped (math.Min), note says clamped between min and max; the lower bound is guaranteed by canTax (money >= 2x start). Not a trade-window gap; none missed.

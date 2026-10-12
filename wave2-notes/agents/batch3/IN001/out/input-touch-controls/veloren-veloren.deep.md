@@ -109,3 +109,9 @@ export {};
 
 Reuse tag: rewrite-from-idea (GPL-3.0; clean-room only)
 Brief rule served: one engine (controls intake is engine code; touch and pad are clients); rules 7-9 n/a
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+Errors: No false claims found. Verified: apply_axis_deadzone controller.rs 152-165 (default 0.2 at 153, <=threshold or >=1 -> 0, <=0 passthrough, rescale*signum); apply_button_deadzone 167-179 unsigned; modifier_buttons RightTrigger/LeftTrigger, pan_sensitivity 10, mouse_emulation_sensitivity 12 in defaults; window.rs AxisChanged 572, inversion, deadzone, last_input >0.0001, CameraX/CameraY /100; modifier push/remove 481-493; map_controller_input 1326 with l_entry1/l_entry2 then plain button map; mouse-emulation TODO 711/713; gameplay.rs defaults (pan 100, auto_walk Toggle, stop_auto_walk_on_input true, auto_camera false, zoom_lock false, zoom_lock_behavior Auto); PressBehavior::update hud/mod.rs 831-846; dir_vec key_state.rs 40-51; should_auto_zoom_lock list session 511-543; auto-walk stop sites incl. MoveForward 940, Jump branch at 879 has no stop; aim ray 1000 units, ThirdPerson only; auto-camera 3.0/1.5/1.5, PI*0.1 / PI*0.015, set_orientation_instant copies tgt_ori. Touch grep claim true (only ui/ice/winit.rs plumbing). Acceptance math (0.6 -> 0.5) correct and the sketch passes it.
+Missed: None important.
