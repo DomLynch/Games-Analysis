@@ -1,0 +1,24 @@
+{
+  "game": "crawl-crawl",
+  "category": "sound-music",
+  "cell": 15,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/sound.cc",
+  "licence": "GPL v2 or any later version (LICENSE line 7)",
+  "licence_class": "copyleft",
+  "target_module": "origins/client/cue-router.ts",
+  "parity_row": 12,
+  "pattern_tags": ["new:cue-rule-table", "new:single-voice-switch", "new:hold-flag-unused"],
+  "data_fields": [
+    {"name": "cueRuleTable", "donor_constant": "ordered regex:file rules from the player's options (grep found no sound rules in settings/; the only example is in docs/options_guide.txt)", "unit": "none", "where": "zone data", "donor_ref": "crawl-ref/source/initfile.cc:758"},
+    {"name": "ruleChoiceWhenSeveralMatch", "donor_constant": "first match in code (sound.cc:58); guide says last (options_guide.txt:545)", "unit": "none", "where": "engine constant", "donor_ref": "crawl-ref/source/sound.cc:58"},
+    {"name": "oneVoiceLimit", "donor_constant": "1 voice when one_SDL_sound_channel is set, default off", "unit": "count", "where": "engine constant", "donor_ref": "crawl-ref/source/sound.cc:106"},
+    {"name": "holdFlagPerCue", "donor_constant": "bool, ignored on the SDL path", "unit": "none", "where": "engine constant", "donor_ref": "crawl-ref/source/sound.cc:79"}
+  ],
+  "best_idea": "Route each typed combat or UI event key through one ordered cue table with an explicit first-or-last rule and an optional single voice, instead of matching text.",
+  "decision": "adapt",
+  "decision_why": "Keep the ordered table, the explicit first-or-last choice and the single-voice cut; reject the regex-over-text trigger because sound must follow server-confirmed events, not log text; reject the hold flag unless it is built end to end.",
+  "decision_status": "proposed",
+  "acceptance": "A client test sends a typed spell-memorise event through a table with two rules for one key and asserts the chosen rule under each setting, and that the single-voice option cuts the previous cue."
+}

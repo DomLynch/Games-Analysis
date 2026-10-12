@@ -1,0 +1,20 @@
+l1j-en-classic (sound-music, cell 3). Verdict: PARTIAL (depth thin). Confidence: medium-high.
+
+Hint file (S_SkillSound.java) was the wrong place for the mechanism: it is a packet builder, not a sound system.
+
+Files opened (at least 3):
+- /mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/serverpackets/S_SkillSound.java (57 lines; read 20-57 in full: opcode write at 38, object id, gfx id, then zeros).
+- /mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/serverpackets/S_Sound.java (56 lines; read in full: sound id packet, constructor 35-37, buildPacket 39-43).
+- /mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/skill/L1SkillUse.java (cast cue branches 1338-1341, 1361, 1380-1400, 1428-1456 read; 1401-1427 not read; not the whole file).
+- /mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/L1Attack.java (proc cues 750-778; read in part).
+- /mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/L1Character.java (broadcastPacket 136-140: sends to L1World.getVisiblePlayer(this)).
+- /mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/serverpackets/S_PacketBox.java (49-62: comments only, "(Music changes)" for war and duel events; the code that sends them was not read).
+- /mnt/frankendom-donors/l1j-en-classic/db/archive/m9/l1jdb_m9.sql (table `skills`, column `castgfx` at line 1701: the cast gfx id per skill is data).
+Counts (grep): 148 call sites create S_SkillSound; 8 create S_Sound. Licence: GPL-2.0-or-later (source header "either version 2, or (at your option) any later version"; COPYING is the GPL version 2).
+
+Checked: what the donor does for sound. The server decides a cue and sends its id to the caster and to every player who can see the caster (L1Character.broadcastPacket). Two examples: a weapon proc sends a fixed id before or after the damage is doubled (L1Attack 757 for claw, 776 for edoryu); a spell sends the cast gfx id from the skills table, with per-skill branches (L1SkillUse 1380-1456). S_Sound sends a numbered sound (buildPacket 39-43; L1SkillUse 1361 sends 145). None of the donor files plays a sound, mixes two cues, sets priority, limits voices, or changes music. The id-to-sound mapping lives in the client, which is not in this donor (not read).
+
+Why not STRONG: the only sound logic is which id to send to which viewer. The parts the topic is about (layering, priority, voice limits, beds, stingers) are not in the donor. Before deciding, I weighed the per-viewer dispatch as a STRONG candidate (it fits the server-verified rule) and rejected it, because the id choice is a hard-coded branch list per skill (L1SkillUse 1380-1456) and the visibility rule (L1World.getVisiblePlayer) was not read.
+
+Best transferable idea: dispatch each cue from the server's resolved result (the proc or the cast) to the caster and the players who can see the actor, reading the cue id from the skill row, so every client shows the same cue for the same event.
+Decision (proposed): adapt — the dispatch fits server-verified results (cue sent after the server resolves a proc or a cast, to viewers in sight only); reject the hard-coded per-skill branch list and use a data field on the skill row instead; the playback and layering come from the other two donors. Acceptance: a server test asserts that one proc produces exactly one cue packet, sent to the caster and to players in sight only, and that a skill with no cue id sends none.

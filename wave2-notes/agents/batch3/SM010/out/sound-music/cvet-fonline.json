@@ -1,0 +1,28 @@
+{
+  "game": "cvet-fonline",
+  "category": "sound-music",
+  "cell": 15,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/cvet-fonline/Source/Client/AudioManager.cpp",
+  "licence": "MIT (AudioManager.h lines 11-13; repo LICENSE line 3)",
+  "licence_class": "permissive",
+  "target_module": "origins/client/audio-mixer.ts",
+  "parity_row": 12,
+  "pattern_tags": ["presence-gated", "new:live-positional-update", "new:looped-cue-with-wait", "new:single-music-slot", "new:decoded-head-streaming"],
+  "data_fields": [
+    {"name": "streamHeadDesktop", "donor_constant": "65536 bytes (0x10000)", "unit": "units", "where": "engine constant", "donor_ref": "Source/Client/AudioManager.cpp:91"},
+    {"name": "streamHeadWeb", "donor_constant": "131072 bytes (0x20000)", "unit": "units", "where": "engine constant", "donor_ref": "Source/Client/AudioManager.cpp:89"},
+    {"name": "defaultCueAttenuation", "donor_constant": "1.0", "unit": "ratio", "where": "engine constant", "donor_ref": "Source/Client/AudioManager.cpp:495"},
+    {"name": "cullAttenuationAtOrBelow", "donor_constant": "0", "unit": "ratio", "where": "engine constant", "donor_ref": "Source/Client/AudioManager.cpp:507"},
+    {"name": "musicAttenuation", "donor_constant": "1.0", "unit": "ratio", "where": "engine constant", "donor_ref": "Source/Client/AudioManager.cpp:550"},
+    {"name": "loopWaitMinimum", "donor_constant": "wait skipped at 1 ms or less", "unit": "ms", "where": "engine constant", "donor_ref": "Source/Client/AudioManager.cpp:194"},
+    {"name": "voiceLimit", "donor_constant": "none (unbounded list)", "unit": "count", "where": "engine constant", "donor_ref": "Source/Client/AudioManager.h:92"},
+    {"name": "musicSlots", "donor_constant": "1 (StopMusic before PlayMusic)", "unit": "count", "where": "engine constant", "donor_ref": "Source/Client/AudioManager.cpp:548"}
+  ],
+  "best_idea": "Cull a cue before any read when its attenuation is zero, and let a playing cue be re-positioned live by its source, so hits and loops follow the fight without reloading.",
+  "decision": "adapt",
+  "decision_why": "Take the cull before load, the live attenuation and pan update, the balance pan and the wall-clock loop wait; add the voice cap, priority, music crossfade and decoded-cue cache that this donor lacks.",
+  "decision_status": "proposed",
+  "acceptance": "A client test moves an attacker through ten steps with updateSound and asserts the cue volume follows attenuation; asserts no load at attenuation 0; asserts a looping ambience waits its set gap before each repeat."
+}

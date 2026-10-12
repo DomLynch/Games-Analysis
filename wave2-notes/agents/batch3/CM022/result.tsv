@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+vcmi-vcmi	city-map-design	P	STRONG	full	/mnt/frankendom-donors/vcmi-vcmi/client/adventureMap/CMinimap.cpp:36-306: one cached colour per tile (fog, then owner, then terrain), patched only for changed tiles and rebuilt on level change or after the AI turn; click and drag recentre the view.
+veloren-veloren	city-map-design	P	STRONG	full	/mnt/frankendom-donors/veloren-veloren/voxygen/src/hud/minimap.rs:113-156 and 265-369: overhead layer chosen at the player's ceiling height (roofs and caves by one rule), chunk load and keep radii one apart, recomposite only on chunk, z or ceiling change.
+wesnoth-wesnoth	city-map-design	P	STRONG	full	/mnt/frankendom-donors/wesnoth-wesnoth/src/minimap.cpp:54-66, 83-93 and 226-262: cell size tiers by map size, three-state shroud and fog, hubs coloured relative to the viewer (mine, enemy, allied), fogged hubs and units hidden.

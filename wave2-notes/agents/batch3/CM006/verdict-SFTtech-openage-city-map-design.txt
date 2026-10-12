@@ -1,0 +1,25 @@
+SFTtech-openage (city-map-design, cell 3): PARTIAL, depth thin
+
+Donor: /mnt/frankendom-donors/SFTtech-openage/ (C++ engine for AoE2-format games; the list hint is libopenage/pathfinding/pathfinder.cpp)
+Licence: GPL v3 or later, per /mnt/frankendom-donors/SFTtech-openage/copying.md line 3 ("under the terms of the GNU General Public License Version 3, or"). Copyleft: clean-room, shape only.
+
+Files opened (at least 3, as the rules require):
+1. libopenage/pathfinding/pathfinder.cpp (lines 1-40 and grep of get_path; the hint file)
+2. libopenage/pathfinding/grid.h (lines 1-80)
+3. libopenage/pathfinding/sector.h (lines 1-70)
+4. libopenage/pathfinding/portal.h (doc comments, lines 14-104, via grep)
+5. libopenage/pathfinding/flow_field.h (lines 1-40, via grep)
+6. libopenage/renderer/stages/hud/render_stage.h (grep, line 38)
+7. copying.md (lines 1-30)
+
+Searched with grep -rn (no hit for the topic words, except as noted): city, cities, town, village, landmark, road, minimap (hud comment only), placement (conversion scripts only), random map / RMS (none in the engine code), structure / blueprint (none in libopenage or openage).
+
+Checked: the engine's pathfinding is hierarchical flow-field routing: a Grid of fixed-size Sectors (grid.h 19, 62), each Sector holding a cost field plus Portals on its borders (sector.h 21; portal.h 27), and FlowFields built from integration fields (flow_field.h 26). I did NOT read integration_field.cpp, flow_field.cpp, sector.cpp or portal.cpp in full, so the order of the numbers is not verified (not read). Confidence high that this is routing, not layout; medium on the routing detail.
+
+Why PARTIAL, one honest sentence: the only real mechanism is routing through a sector grid, which is relevant to moving through a town but does not decide where roads, hubs, landmarks or signs go, so it is not a city-map design mechanism.
+
+Best transferable idea: split a town into fixed sectors with portal cells on the borders, so that a unit's route is looked up per sector rather than by one global search over the whole zone.
+
+Decision (proposed): reject for now - Frankendom's fights are one-on-one or at most three attackers (MAX_ATTACKERS = 3) in zones of a few screens, so a sector-and-flow-field router pays off only for crowds far larger than our rulings allow; revisit if zone size or crowd size grows.
+
+Not verified: no minimap implementation exists in this donor's code that I could find (the only minimap mention is the comment at render_stage.h 38); no town, road, landmark, sign or hub generator was found.

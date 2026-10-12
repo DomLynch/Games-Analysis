@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ValveSoftware-source-sdk-2013	sound-music	P	STRONG	full	src/game/client/c_soundscape.cpp 497-523 and 581-617 fade each bed loop by frametime over soundscape_fadetime (3.0 s) and reuse a matching wave+pitch loop; src/game/server/soundscape.cpp 245-294 keeps the holder zone while in range and lets only a strictly nearer visible zone take over
+Warzone2100-warzone2100	sound-music	P	STRONG	full	lib/sound/audio.cpp 609-645 refuses a 3D cue when more than two same-cue sources sit within the cue's audible radius (MAX_SAME_SAMPLES 2, line 42); lib/sound/track.h 31 gives linear falloff 0.0003 per unit; music hard-cuts in lib/sound/cdaudio.cpp 184-205
+afritz1-OpenTESArena	sound-music	P	STRONG	full	src/Audio/AudioManager.cpp 1100-1148 drops a sound when no source is free and skips single-instance names (SingleInstanceSounds.txt); 850-874 plays an optional stinger once and stages the main bed to start after it (990-996)

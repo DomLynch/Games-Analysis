@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+jynew-jynew	sound-music	P	STRONG	thin	AudioManager.cs:18-24,45-60,62-78 (music by id, async load, one looping source); LevelMaster.cs:271-287 (leave track before entry track); LevelLoader.cs:58,71 (battle music saved and restored); SkillCastHelper.cs:105-113 (two delayed sound slots); no crossfade, ambience beds, priority or voice cap in the donor.
+keldaanCommunity-pokemonAutoChess	sound-music	P	STRONG	thin	app/public/src/pages/utils/audio.ts:82-108 (same-key guard, hard cut, live volume); after-game.tsx:89-101 (rank jingle, then a quieter bed 1000 ms after it ends); board-manager.ts:847-851 (encounter track returns at its first loop); no hit or spell cue in this donor.
+l1j-en-classic	sound-music	P	PARTIAL	thin	S_SkillSound.java:27-43, L1Character.java:136-140, L1Attack.java:757,776, L1SkillUse.java:1438-1439 (server sends cue ids to the caster and visible players); no playback, mixing, priority or music code in the donor.

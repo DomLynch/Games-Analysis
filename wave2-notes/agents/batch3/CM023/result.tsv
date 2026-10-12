@@ -1,0 +1,3 @@
+game	category	old	verdict	depth	finding
+xoreos-xoreos	city-map-design	P	STRONG	full	/mnt/frankendom-donors/xoreos-xoreos/src/engines/kotor/gui/ingame/minimap.cpp:37-85 (with kotor/gui/ingame/hud.cpp:221-250 and kotorbase/module.cpp:677-683, area.cpp:342-352): per-area two-point linear minimap calibration from the ARE Map struct, centred on the party, with an axis swap for north 3; hint waypoint.cpp was a map-note marker loader, not the minimap.
+xu4-engine-u4	city-map-design	P	STRONG	full	/mnt/frankendom-donors/xu4-engine-u4/src/city.cpp:38-66 (with maploader.cpp:196-282, 506-550, config_boron.cpp:405-432, game.cpp:470-472): a town's services are an authored slot roster rebuilt on every entry, skipping joined companions; no minimap or signage code exists in this donor.

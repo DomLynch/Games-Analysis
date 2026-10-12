@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+0ad-0ad	city-map-design	P	STRONG	full	rmgen-common/player.js:75-112 (centre first, then one centred service group per side) and rmgen/painter/CityPainter.js:26-84 (greedy first-fit district with per-template quota and spacing) were read end to end; the hint file belgian_uplands.js only has the caller at line 270.
+Anuken-Mindustry	city-map-design	P	STRONG	full	core/src/mindustry/maps/generators/BaseGenerator.java:42-172 (one part at a time, drawn by difficulty fraction, bound to an ore tile, 1-tile clearance, passes by difficulty) was read end to end; the hint file MapIO.java is only the map reader and writer.
+Card-Forge-forge	city-map-design	P	STRONG	full	forge-gui-mobile/src/forge/adventure/world/World.java:452-757 (landmark rejection sampling with no-fly boxes, nearest-town roads with a distance cap, Bresenham carve, minimap markers) was read end to end, with eight donor defects recorded; the hint file was the right file.

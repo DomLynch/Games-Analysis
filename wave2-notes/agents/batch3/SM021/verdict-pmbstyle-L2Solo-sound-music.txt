@@ -1,0 +1,21 @@
+game: pmbstyle-L2Solo
+category: sound-music (category_no 15, cell 15)
+Verdict: PARTIAL (depth: thin)
+Donor: /mnt/frankendom-donors/pmbstyle-L2Solo | Licence: Apache License 2.0 (LICENSE header read; permissive, code may be adapted)
+Hint file: src/GameServer/Network/Response/PlaySound.js (opened in full, 19 lines). It is a packet wrapper for one named sound, not the topic's implementation.
+
+Files opened (candidates):
+1. src/GameServer/Network/Response/PlaySound.js (lines 1-19, full)
+2. src/GameServer/AfkTrade/AfkTradeService.js lines 370-405 (deliverNotifications and notifyCommitted; the only coalescing rule found)
+3. src/GameServer/Quest/QuestState.js lines 38-47 (playSound wrapper)
+4. src/GameServer/Pets/PetQuest.js lines 15-50 (sound on pet state change)
+5. src/GameServer/Bot/AI/BotAmbientDirector.js lines 1-30 (name suggests ambience; it schedules bot conversation scenes, not sound)
+
+Grep-only (narrow, src/GameServer): playSound callers (quests, AFK trade, pets only); music, ambien, crossfade, stinger, biome, priority terms (no sound hits; the one "Stinger" is an item skill name, C4EquipmentItemSkills.js 1289); SkillSound, MagicSkill, hit-sound and spell-sound terms (no sound cue on hit or cast found).
+
+Checked: the donor is a Lineage 2 server emulator. It sends one-shot named sounds from quest, pet and AFK-trade events. It has no music, layering, ambience beds, crossfades, stingers, hit or spell sounds, and no voice limit or priority. The client that plays sound is not in the box. The one real mechanism is the backlog rule: a login backlog of queued trade notices plays one sound, not one per event (AfkTradeService.js 381-382), while the live path plays one per committed trade (400).
+
+Receipts: 4 written for the lines above (pmbstyle-L2Solo rows in receipts.tsv); verifier passed.
+
+Best transferable idea: Play one cue for a backlog of queued notifications instead of one per event, so a reconnect does not stack sounds.
+Decision (proposed): adapt — apply the coalescing rule to Frankendom's reconnect backlog (loot and XP rewards queued while away) as a client cue rule under parity row 12 (combat sound cues); reject the server-packet shape, because sound is client-only in Frankendom.

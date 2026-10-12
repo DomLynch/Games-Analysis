@@ -1,0 +1,35 @@
+lichess-org-mobile	clock tool: one latch per side for the low-time sound	/mnt/frankendom-donors/lichess-org-mobile/lib/src/model/clock/clock_tool_controller.dart	36	final Map<ClockSide, bool> _hasPlayedLowTimeSound = {
+lichess-org-mobile	emergency threshold is 10 percent of the side's initial time	/mnt/frankendom-donors/lichess-org-mobile/lib/src/model/clock/clock_tool_controller.dart	90	// Emergency threshold is set to 10% of the total time
+lichess-org-mobile	threshold computed as 0.1 of initial milliseconds	/mnt/frankendom-donors/lichess-org-mobile/lib/src/model/clock/clock_tool_controller.dart	92	return Duration(milliseconds: (initialTime.inMilliseconds * 0.1).round());
+lichess-org-mobile	per-side thresholds set when the controller builds	/mnt/frankendom-donors/lichess-org-mobile/lib/src/model/clock/clock_tool_controller.dart	59	_emergencyThresholds[ClockSide.top] = _calculateEmergencyThreshold(topTime);
+lichess-org-mobile	listeners on both clocks call the emergency check	/mnt/frankendom-donors/lichess-org-mobile/lib/src/model/clock/clock_tool_controller.dart	72	_clock.whiteTime.addListener(onClockEmergency);
+lichess-org-mobile	emergency check returns if the side already played	/mnt/frankendom-donors/lichess-org-mobile/lib/src/model/clock/clock_tool_controller.dart	98	if (_hasPlayedLowTimeSound[activeSide]!) return;
+lichess-org-mobile	emergency fires only when the active side is at or under threshold	/mnt/frankendom-donors/lichess-org-mobile/lib/src/model/clock/clock_tool_controller.dart	102	if (activeSideTime <= _emergencyThresholds[activeSide]!) {
+lichess-org-mobile	sound played and latch set in the same step	/mnt/frankendom-donors/lichess-org-mobile/lib/src/model/clock/clock_tool_controller.dart	104	_hasPlayedLowTimeSound[activeSide] = true;
+lichess-org-mobile	time-control update re-arms both latches	/mnt/frankendom-donors/lichess-org-mobile/lib/src/model/clock/clock_tool_controller.dart	136	_hasPlayedLowTimeSound[ClockSide.top] = false;
+lichess-org-mobile	per-side update re-arms that side's latch	/mnt/frankendom-donors/lichess-org-mobile/lib/src/model/clock/clock_tool_controller.dart	184	_hasPlayedLowTimeSound[player] = false;
+lichess-org-mobile	reset re-arms both latches	/mnt/frankendom-donors/lichess-org-mobile/lib/src/model/clock/clock_tool_controller.dart	212	_hasPlayedLowTimeSound[ClockSide.top] = false;
+lichess-org-mobile	game controller: low time sound gated by a user preference	/mnt/frankendom-donors/lichess-org-mobile/lib/src/model/game/game_controller.dart	462	final shouldPlay = await ref.read(clockSoundProvider.future);
+lichess-org-mobile	game controller plays the low time sound when allowed	/mnt/frankendom-donors/lichess-org-mobile/lib/src/model/game/game_controller.dart	464	ref.read(soundServiceProvider).play(Sound.lowTime);
+lichess-org-mobile	move-expiration widget: fixed 8 s emergency threshold	/mnt/frankendom-donors/lichess-org-mobile/lib/src/view/game/game_player.dart	449	final emerg = timeLeft <= const Duration(seconds: 8);
+lichess-org-mobile	move-expiration latch is a State field	/mnt/frankendom-donors/lichess-org-mobile/lib/src/view/game/game_player.dart	410	bool playedEmergencySound = false;
+lichess-org-mobile	move-expiration plays once when the mover is us	/mnt/frankendom-donors/lichess-org-mobile/lib/src/view/game/game_player.dart	451	if (emerg && widget.mePlaying && !playedEmergencySound) {
+lichess-org-mobile	the latch is set through setState inside build	/mnt/frankendom-donors/lichess-org-mobile/lib/src/view/game/game_player.dart	454	playedEmergencySound = true;
+lichess-org-mobile	the warning sound is played from inside build	/mnt/frankendom-donors/lichess-org-mobile/lib/src/view/game/game_player.dart	452	ref.read(soundServiceProvider).play(Sound.lowTime);
+lichess-org-mobile	timer restarts when the time to move changes, latch not re-armed	/mnt/frankendom-donors/lichess-org-mobile/lib/src/view/game/game_player.dart	433	if (oldWidget.timeToMove != widget.timeToMove) {
+lichess-org-mobile	countdown ticks down one period per tick	/mnt/frankendom-donors/lichess-org-mobile/lib/src/view/game/game_player.dart	415	timeLeft = timeLeft - _period;
+lichess-org-mobile	sound service: theme file falls back to standard set	/mnt/frankendom-donors/lichess-org-mobile/lib/src/service/sound_service.dart	138	fullPath = '$standardPath/$file';
+lichess-org-mobile	sound service: theme file probe with rootBundle	/mnt/frankendom-donors/lichess-org-mobile/lib/src/service/sound_service.dart	136	await rootBundle.load(fullPath);
+lichess-org-mobile	sound service: at most two concurrent streams	/mnt/frankendom-donors/lichess-org-mobile/lib/src/service/sound_service.dart	15	const _kMaxConcurrentStreams = 2;
+lichess-org-mobile	sound service: stream cap passed to the plugin at start	/mnt/frankendom-donors/lichess-org-mobile/lib/src/service/sound_service.dart	166	await _soundEffectPlugin.initialize(maxStreams: _kMaxConcurrentStreams);
+lichess-org-mobile	sound service: final volume is master times the call volume	/mnt/frankendom-donors/lichess-org-mobile/lib/src/service/sound_service.dart	178	final finalVolume = _ref.read(generalPreferencesProvider).masterVolume * volume;
+lichess-org-mobile	sound service: silent when disabled or volume zero	/mnt/frankendom-donors/lichess-org-mobile/lib/src/service/sound_service.dart	179	if (!isEnabled || finalVolume == 0.0) {
+lichess-org-mobile	sound service: theme change releases then reloads the move sound first	/mnt/frankendom-donors/lichess-org-mobile/lib/src/service/sound_service.dart	206	await _loadSound(theme, Sound.move);
+lichess-org-mobile	sound service: rest of the theme loads after the move sound	/mnt/frankendom-donors/lichess-org-mobile/lib/src/service/sound_service.dart	210	await _loadAllSounds(theme, excluded: {Sound.move});
+lichess-org-mobile	sound service: iOS uses the aifc container, others mp3	/mnt/frankendom-donors/lichess-org-mobile/lib/src/service/sound_service.dart	50	final _extension = defaultTargetPlatform == TargetPlatform.iOS ? 'aifc' : 'mp3';
+lichess-org-mobile	move feedback: move sound plus light haptic, check gets medium	/mnt/frankendom-donors/lichess-org-mobile/lib/src/service/move_feedback.dart	29	final check = san.contains('+') || san.contains('#');
+lichess-org-mobile	move feedback: capture branch chosen by the x in the SAN	/mnt/frankendom-donors/lichess-org-mobile/lib/src/service/move_feedback.dart	30	if (san.contains('x')) {
+lichess-org-mobile	move feedback: check selects the medium impact	/mnt/frankendom-donors/lichess-org-mobile/lib/src/service/move_feedback.dart	19	HapticFeedback.mediumImpact();
+lichess-org-mobile	move feedback: ordinary move uses the light impact	/mnt/frankendom-donors/lichess-org-mobile/lib/src/service/move_feedback.dart	21	HapticFeedback.lightImpact();
+lichess-org-mobile	move feedback: capture uses the capture sound for the variant	/mnt/frankendom-donors/lichess-org-mobile/lib/src/service/move_feedback.dart	38	_soundService.playCaptureSound(variant);
+lichess-org-mobile	licence: GNU GPL v3	/mnt/frankendom-donors/lichess-org-mobile/LICENSE	1	GNU GENERAL PUBLIC LICENSE

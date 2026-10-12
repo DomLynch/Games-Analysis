@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+orbitersim-orbiter	sound-music	P	STRONG	full	/mnt/frankendom-donors/orbitersim-orbiter/Sound/XRSound/src/SoundPreSteps.cpp:393-435 and 457-484 (RCS sustain plus attack/release edges with re-arm, volume lerp at XRSoundEngine.cpp:513-525); MIT; one-threshold re-arm defect fixed with a 0.12 band in the sketch.
+pmbstyle-L2Solo	sound-music	P	PARTIAL	thin	/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/AfkTrade/AfkTradeService.js:381-382 coalesces a login backlog into one sound; PlaySound.js is a one-shot packet wrapper and no music, ambience, hit or spell sound logic was found; Apache-2.0.
+pokerth-pokerth	sound-music	P	STRONG	full	/mnt/frankendom-donors/pokerth-pokerth/src/gui/qt/sound/qtaudioplayer.cpp:191-237 mixes overlapping one-shot cues at 1/sqrt(N) gain and drops cues with no consumer (622); AGPL-3.0, clean-room; the donor has no voice cap or gain ramp, so both are added in the sketch.

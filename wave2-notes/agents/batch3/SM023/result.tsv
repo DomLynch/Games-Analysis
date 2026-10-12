@@ -1,0 +1,2 @@
+game	category	old	verdict	depth	finding
+xoreos-xoreos	sound-music	P	STRONG	thin	engines/nwn/area.cpp:193-229 and 232-267 (zone bed stop-then-start, volume curve at 354) with engines/nwn/area.cpp:171-192 (battle stingers stored, never played) and sound/sound.cpp:831-839 (voice pool has no priority or cap); hint file sound/wwisesoundbank.cpp is only a bank container reader

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+levy-street-world-of-claudecraft	sound-music	P	STRONG	full	src/game/music.ts:4670-4714 (update), 4576-4591 (setStreamTarget), 4606-4626 (streamKeeper), 3442-3454 (constants); zone and battle cues crossfade on separate time constants, one battle track is picked at random per fight, and a cue silent for 4 s is paused.
+lichess-org-lila	sound-music	P	STRONG	full	ui/site/src/sound.ts:86-105 (move chooser behind a 100 ms latest-wins throttle), 112-125 (countdown beats paced by interval and clip), ui/lib/src/async.ts:97-105 (throttle); one board sound per window and the last waiting call wins.
+lichess-org-mobile	sound-music	P	STRONG	full	lib/src/model/clock/clock_tool_controller.dart:36-104 (one latched low-time sound per side at 10 percent of initial time, re-armed at 136, 184, 212); lib/src/view/game/game_player.dart:410-456 (move-expiry latch is never re-armed and is set through setState inside build).
