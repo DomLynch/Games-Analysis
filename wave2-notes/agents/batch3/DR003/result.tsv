@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+TrinityCore-TrinityCore	death-respawn-penalty	P	STRONG	full	src/server/game/Entities/Player/Player.cpp:26524-26587 sets a repeat-death window that raises the corpse reclaim wait to 30, 60 or 120 s, and Handlers/MiscHandler.cpp:405-434 enforces that wait and a 39-unit radius on the server.
+OpenDAoC-OpenDAoC-Core	death-respawn-penalty	P	STRONG	full	GameServer/gameobjects/GamePlayer.cs:5908-5986 and 1642-1665 take XP at death and again at release into a grave (GameGravestone.cs:18-35) that the player recovers by praying nearby (GamePlayer.cs:1850-1877).
+daggerfall-unity	death-respawn-penalty	P	STRONG	full	Assets/Scripts/Game/PlayerDeath.cs:75-177 runs a timed, input-locked death beat (camera drop at 2.5 units/s, 2 s fade, return after 3 s) and EnemyDeath.cs:62-141 leaves a take-all corpse, with no death penalty or death respawn in the donor.

@@ -1,0 +1,20 @@
+verdict: NONE (cell 2, category spectator-coach-wagers-replays)
+donor: /mnt/frankendom-donors/nonameentername-openfight | licence: GNU LESSER GENERAL PUBLIC LICENSE Version 3 (LICENSE line 1-2), so copyleft class; clean-room, shape only if ever used
+scope: camera_scope not applicable (not a camera cell)
+depth: thin (no replay, spectator, coach, wager or lobby code exists in this donor; the only fragment is a per-frame input seam)
+
+Checked: grep -rniE "replay|spectat|coach|wager|betting|observer|rollback|netplay|recording|ghost|rewind|netcode" over src, modules and scripts (godot-cpp excluded): no hits. The hint file named by the list was not the target; the topic words were searched directly. Confidence: high that the donor has no spectator, coach, wager or replay mechanism.
+
+Files opened (at least 3 required):
+- /mnt/frankendom-donors/nonameentername-openfight/src/libopenfight/gameContext.cpp (97 lines; update at 41-57, updateObjects at 59)
+- /mnt/frankendom-donors/nonameentername-openfight/src/libopenfight/gameContext.h (FrameInput struct at 21-23)
+- /mnt/frankendom-donors/nonameentername-openfight/src/libopenfight/playerAgent.h and playerAgent.cpp (key queue of QUEUE_KEY_MAX 20 and INPUT_FRAME_MAX 10 at playerAgent.h 19-20; update at playerAgent.cpp 30-75)
+- /mnt/frankendom-donors/nonameentername-openfight/src/libopenfight/playerBridge.cpp (31 lines; facing flip by x position)
+- /mnt/frankendom-donors/nonameentername-openfight/src/libopenfight/keyState.cpp and input.h (key enum and names; no recording)
+- /mnt/frankendom-donors/nonameentername-openfight/ROADMAP.md line 8: "A title screen with character selection" is unchecked, so no lobby exists.
+
+Why NONE: the donor is a single-match local two-player engine with no record, playback, observer, coaching, betting or lobby code, and its roadmap lists the title and character-select screen as not done.
+
+Best transferable idea: The frame step takes all input as one per-frame struct (gameContext.h FrameInput; gameContext.cpp update takes it and ignores delta time), so a recorder could store those structs and a player could feed them back, but this donor never does it, so treat it as an idea, not a mechanism.
+
+Decision (proposed): reject for the spectator, coach, wager and lobby topics (no code here); the per-frame input seam is covered better by the Ikemen GO replay note (cell 1), so no adoption from this donor.

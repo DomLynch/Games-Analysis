@@ -1,0 +1,17 @@
+cell: 28 spectator-coach-wagers-replays | game: EvEmu-Project-evemu_Crucible | verdict: PARTIAL | depth: thin
+donor: /mnt/frankendom-donors/EvEmu-Project-evemu_Crucible | licence: LGPL, and the two sources disagree. README.md 70-71 says LGPL version 3 or later; the per-file header (src/eve-server/system/Damage.cpp 11) says version 2 or later. There is no LICENSE file in the box. Treat as copyleft, clean-room, shape only. C++
+
+Checked: grep -rn over src for spectat, wager, replay, coach, gamble, observer, duel, arena, tournament, lobby, playback, killmail. Hits: killmail notes (Structure.cpp 1316, CustomsOffice.cpp 487, Damage.cpp 472), NetService.h 71-72 (a list of names NarrowcastToObservers and NarrowcastToClientAndObservers, with no implementation found by grep), SystemEntity.cpp 444 ("Lobby" dungeon room label), CommandDB.cpp 221 and EVE_Skills.h 126/523 (skill id 28604 "Tournament Observation", an id only). No spectator, coach, wager or replay mechanism exists in the box.
+Files opened (4): 
+  1. src/eve-server/system/Damage.cpp (364-380 and 455-560): ShipSE::Killed, the kill-record block and its item-survival roll (the pod, insurance and wreck branches after it were not read).
+  2. src/eve-common/EVE_Damage.h (185-200): the killmail note, which says the feature is not implemented.
+  3. src/eve-server/NetService.h (60-80): the observer narrowcast names (names only).
+  4. README.md (grep for licen and GNU, lines 63-79; not read in full): the licence statement.
+Why PARTIAL: the kill record is real and read, but it is a summary of one death (killer, weapon, damage, victim HP, survivor roll), not a replay, spectator view, coach channel or wager; the donor's own note says the killmail display was never built.
+
+What is real: at death, ShipSE::Killed builds one KillData record (473-493): the victim, the killer and final blow (killer id 481, weapon, damage total 488), the victim's hull+armour+shield total (490-493), then a survivor roll per item (538, even result survives; 541 splits the quantity with a random int), then a time stamp (554) and LogKill (557).
+Defects: the security status field is a placeholder (487, "fix this"); the item-survival comment says 50% but the code is an even-check on a random int whose range was not read; the record is written inside the death routine that also handles pods, insurance and wrecks, so it cannot be reused alone.
+
+Best transferable idea: a fight card written once at the moment of death (killer, weapon, damage total, victim capacity, time), saved as one record that a lobby, a kill card or a replay index can read.
+Decision (proposed): adapt — take the one-record-per-death shape as the fight record for row 19; reject the random per-item survival roll (it is a loot rule and conflicts with take-one loot).
+Acceptance: a server test asserts that one fight-card record is written per death with killer, weapon, damage total and victim capacity filled, and that no item is removed by the record step.

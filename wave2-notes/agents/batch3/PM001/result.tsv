@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+EQEmu	pets-mounts-taming	P	STRONG	full	pets.cpp:81-136 (MakePoweredPet tier pick 387, power scaling 123-136, cap 131 defect); aggro.cpp:1665-1708 (charm break gate 1688, full-resist keep 1697); horse.cpp:109-160 (mount build, one mount, depop); mob.cpp:767,823-824 (mounted speed); client.cpp:6350-6465 (one stored minion)
+ModernUO	pets-mounts-taming	P	STRONG	full	AnimalTaming.cs:112-251,276-455 (attempt, 3-4 ticks, skill-window roll 396-406); SkillCheck.cs:178-195; BaseCreature.cs:1752-1842 (control chance, loyalty +1/-3), 4556-4584 (feeding), 5940-6060 (hourly loyalty -10, release at 0)
+veloren-veloren	pets-mounts-taming	P	STRONG	full	server/src/events/inventory_manip.rs:616-666 (collar tame, cap 3, radius 5, nearest, no roll); server/src/pet.rs:24-117 (owned rules, anchor, pet tuning 0.25); common/src/comp/pet.rs:39-74 (eligibility, mount ratio 0.7); common/systems/src/tether.rs:99-108 (spring, no damping)

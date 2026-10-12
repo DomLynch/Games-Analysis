@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ModernUO	reputation-factions-crime-justice	P	STRONG	full	GuardedRegion.cs 236-297 and 335-345 plus BaseGuard.cs 23-48 (guard call-in window, reuse-first guard spawn); PlayerMurderSystem.cs 260-317 and MurderContext.cs 86-101 (murder ledger with decay on played time)
+EQEmu	reputation-factions-crime-justice	P	STRONG	full	client.cpp 8243-8447 and 9107-9194, hate_list.cpp 288-310, common/faction.cpp 57-88 (personal faction ledger: clamped range from base, con bands, linked-faction spread); aggro.cpp 835-856 (PvP flag gate, secondary)
+OpenDAoC-OpenDAoC-Core	reputation-factions-crime-justice	P	STRONG	full	Faction.cs 88-147 (friend +1 and enemy -1 standing on kills, four standing bands); serverrules/AbstractServerRules.cs 1043-1052 (kill loop); ai/brain/Guards/GuardBrain.cs 7-54 (guard brain, secondary)

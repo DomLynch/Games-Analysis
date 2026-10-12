@@ -1,0 +1,18 @@
+cell: 28 spectator-coach-wagers-replays | game: kcopelandmgmt-Shadowbane | verdict: PARTIAL | depth: thin
+donor: /mnt/frankendom-donors/kcopelandmgmt-Shadowbane | licence: MIT (LICENSE line 9: "MIT License"; adaptation allowed) | Java
+
+Checked: searched the donor with grep -rn for spectat, wager, replay, coach, gamble, observer, duel, arena, tournament, lobby, playback, watch. Only hits: LOGINERROR_NOMOREPLAYTIME (MBServerStatics.java 97, a login error code that matched "replay"), "duel wielding" (combat damage, not duels), and PvP and bane record archives. No spectator, coach, wager or replay code exists in the box.
+Files opened (5):
+  1. src/engine/net/client/msg/WhoResponseMsg.java (lines 64-80, 150-175, 182-205): the who list, its 3 s throttle, filter types and the admin filter.
+  2. src/engine/db/archive/PvpRecord.java (lines 60-150): kill and death history (10 most recent rows) and the stored-procedure period K/D summary.
+  3. src/engine/db/archive/DataWarehouse.java (lines 28-60): the shared record queue that stores PvP and character records.
+  4. src/engine/gameManager/ChatManager.java (lines 210-224): the chat commands that print PvP and bane history.
+  5. src/engine/server/MBServerStatics.java (line 378, grep-located): WHO_WINDOW_THRESHOLD = 3000.
+Why PARTIAL: the topic (watching, coaching, wagering, replay) is absent, so the only real mechanisms are a who-list throttle and a kill/death history log, which fit fight lobby and record rows, not the four topic words.
+
+What is real: the who list refreshes at most once per 3000 ms per viewer (WhoResponseMsg.java 76; MBServerStatics.java 378). It filters by race, class, level, name and status flags (lfGroup, lfGuild, recruiting) and hides admin promotion classes by a hard-coded id range (WhoResponseMsg.java 202). The comment says the list stops at 100 players (WhoResponseMsg.java 184), but the cap sits in msg.addMember, which was not read.
+Defects: the admin filter uses magic promotion ids (<= 2503 or >= 2527); fix: a named role flag. The 100 cap is only in a comment; fix: state the cap as a constant in the sketch or tests.
+
+Best transferable idea: a fight lobby list with a per-viewer 3 s refresh throttle, a 100-row cap and status-flag filters (open PvP, looking for a fight), so the lobby cannot be spammed and players can filter for open fights.
+Decision (proposed): adapt — take the throttle and status-flag filter for the Pit lobby; drop the admin id-range rule and use a role flag; the record history stays in the existing record store.
+Acceptance: a server test asserts that a second lobby request within 3 s from the same viewer returns nothing, and that the open-PvP filter returns only players with that flag set.

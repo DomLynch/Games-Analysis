@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ikemen-engine-Ikemen-GO	spectator-coach-wagers-replays	P	STRONG	full	netplay.go:1248-1300 (ReplayFile Synchronize/Update) and rollback.go:588-657 (record and save): replay is a confirmed-input log plus seed and pre-match time, re-run through the same engine; no coach or wager code in the donor.
+nonameentername-openfight	spectator-coach-wagers-replays	P	NONE	thin	src/libopenfight/gameContext.cpp:41-57: one per-frame FrameInput drives a local two-player step; no replay, spectator, coach, wager or lobby code, and ROADMAP.md:8 lists the title and character-select screen as not done.
+open-duelyst-duelyst	spectator-coach-wagers-replays	P	STRONG	full	app/replay/replayEngine.coffee:294-375 (step replay on recorded gaps, dead-gap cap, speed) and server/routes/api/me/spectate.coffee:76-103 (buddy-gated live spectate); step timer ignores speed at line 371 (defect).
