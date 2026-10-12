@@ -10,11 +10,11 @@ Acceptance: A player lays a road beside an existing road and it joins on the sam
 
 ## 1. Mechanism
 
-- A town is one map array of tile ids. One road command runs `connectTile`: it lays the road (`layRoad`), then calls `fixZone` on the same tile (connect.cpp 180-181). Laying road on clear dirt costs 10 (line 262); river, edge and channel tiles cost 50 (line 275). Auto-bulldoze costs 1 (line 152) only when `autoBulldoze` is on and the tile has BULLBIT and is rubble/tree/non-bridge terrain (140-158); it is a conditional cost, not part of a normal road lay.
+- A town is one map array of tile ids. One road command runs `connectTile`: it lays the road (`layRoad`), then calls `fixZone` on the same tile (connect.cpp 180-181). Laying road on clear dirt costs 10 (line 262); river, edge and channel tiles cost 50 (line 275). Auto-bulldoze of a flagged tile costs 1 (line 152).
 - `fixZone` (554-571) re-derives the edited tile first, then the tile to the north (y-1), east (x+1), south (y+1) and west (x-1), each only if in bounds. Every road edit therefore repairs its neighbours.
 - `fixSingle` (582-634), for a road-type tile, builds a 4-bit mask: bit 1 for the north neighbour, 2 east, 4 south, 8 west (598, 608, 618, 628). A neighbour counts when it is a road id, or the matching rail or powered-road id, with per-direction exclusions (597, 607, 617, 627). It then writes `RoadTable[mask] | BULLBIT | BURNBIT` (632). Before the test, `neutralizeRoad` (105-108) folds ids 64 to 207 into the 16-id block 64-79 by keeping the low 4 bits, so flag bits do not change the comparison.
 - `RoadTable` (76-80) has 16 entries. Index 15, all four neighbours, maps to `INTERSECTION` (80). Index 0 maps to `ROADS` (77). The other 14 entries are table values (names only; art not read).
-- Building grammar, zone centre: `zonePlop(pos, base)` (352-382) first refuses if any of the nine footprint tiles has an id from FLOOD (48) up to ROADBASE (64), which by the enum covers flood, radiation and fire tiles (first loop of the function; not receipted line by line). Otherwise it writes `base + offset` into the in-bounds tiles only (the donor's own `@bug` at 350: partial on-map construction at the edge; see defect 5) (ring order from line 355, write at 378, offset increments at 381) and sets the centre's zone and bulldoze bits. `resPlop` (710-715) picks `base = ((value * 4 + den) * 9) + RZB - 4`: 4 land-value classes times 4 densities, each a nine-tile set. Empty residential centre is `FREEZ` = 244 (micropolis.h 532).
+- Building grammar, zone centre: `zonePlop(pos, base)` (352-382) first refuses if any of the nine footprint tiles has an id from FLOOD (48) up to ROADBASE (64), which by the enum covers flood, radiation and fire tiles (first loop of the function; not receipted line by line). Otherwise it writes `base + offset` into the nine tiles (ring order from line 355, write at 378, offset increments at 381) and sets the centre's zone and bulldoze bits. `resPlop` (710-715) picks `base = ((value * 4 + den) * 9) + RZB - 4`: 4 land-value classes times 4 densities, each a nine-tile set. Empty residential centre is `FREEZ` = 244 (micropolis.h 532).
 - Lot choice for a single house: `buildHouse` (445-491) scans the eight ring tiles around the centre (448), calls `evalLot` on each (460), keeps the highest score, and on a tie replaces the pick with a 1-in-8 draw (473). It writes one house tile (489). `evalLot` (500-523) returns -1 if the tile is not clear (509-510), else starts at 1 (513) and adds 1 for each 4-neighbour that is not DIRT and has id at or below LASTROAD = 206 (521; micropolis.h 484).
 - Growth gate (`doResidential`, 534-600): an empty centre (`FREEZ`) is always evaluated; a built zone only on a 1-in-8 draw (563). `zscore = resValve + evalRes(...)` (after the 563 gate). Immigration needs zscore above -350 (572) and a comparison of zscore - 26380 against a random signed value. An empty tile with population below 8 gets `buildHouse` from `doResIn` (613). `evalRes` (722-741) returns -3000 when traffic is negative; otherwise land value minus pollution, floored at 0, times 32, capped at 6000 (736), minus 3000 (739).
 - Demand valve (simulate.cpp 642-653): residential ratio is clamped to `resRatioMax` (642), then overwritten by line 644 (defect 2 below), then taxed (648), then added to `resValve` and clamped to `RES_VALVE_RANGE` (653).
@@ -37,7 +37,7 @@ Acceptance: A player lays a road beside an existing road and it joins on the sam
 | Building = 3x3 block of nine base+offset tiles | 9 tiles (zone.cpp 355); 16 variants = 4 values x 4 densities (714) |
 | Lot score = 1 plus adjacent count, occupied = -1 | base 1 (513); -1 (510); count over non-DIRT ids up to 206 (521) |
 | Tie break on best candidate | 1 in 8 (zone.cpp 473) |
-| Road cost by tile type | 10 clear (262); 50 water and edges (275); 1 auto-bulldoze, only if autoBulldoze on and tile has BULLBIT (140-158) |
+| Road cost by tile type | 10 clear (262); 50 water and edges (275); 1 auto-bulldoze (152) |
 | Growth gate on a built zone | 1 in 8 draw (563); immigration above zscore -350 (572) |
 | Land value to demand score | x32, cap 6000, minus 3000 (736, 739) |
 | Valve clamp | `RES_VALVE_RANGE` (simulate.cpp 653; value not read) |
@@ -118,8 +118,7 @@ class TownGrid {
   }
 }
 
-// Stamp a 3x3 block with nine ids base..base+8. All-or-nothing: refuses if any tile is off-map or blocked
-// (fixes the donor's partial edge stamp).
+// Stamp a 3x3 block with nine ids base..base+8. Refuses if any in-bounds tile is blocked.
 function stampBlock(
   g: TownGrid,
   cx: number,
@@ -129,7 +128,7 @@ function stampBlock(
 ): boolean {
   for (const [dx, dy] of RING9) {
     const c = g.at(cx + dx, cy + dy);
-    if (!c || blocked(c)) return false;
+    if (c && blocked(c)) return false;
   }
   RING9.forEach(([dx, dy], i) => {
     const c = g.at(cx + dx, cy + dy);
@@ -192,17 +191,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Defect 2, copy-paste overwrite in the valve (simulate.cpp 642-644): line 642 clamps `resRatio`, then line 644 writes `resRatio = min(indRatio, indRatioMax)`, so the residential clamp is lost and the industrial one is applied to the wrong variable. Fix: `indRatio = min(indRatio, indRatioMax)`, keep the residential clamp. Not in this note's sketch; flagged for the growth lane.
 - Defect 3, asymmetric neighbour exclusions: north and south exclude `ROADBASE` (597, 617) but east and west do not; east and west exclude `VBRIDGE` (607, 627) but north and south do not. The intent was not read. Fix: one table for all four directions (the sketch does this).
 - Defect 4, the `@bug` comment (zone.cpp 462) says score is never 0: occupied tiles return -1 (510), which never beats a best of 0, so the effect is harmless. Fix: return 0 for occupied and skip it explicitly.
-- Defect 5, partial stamp at the map edge: `zonePlop` (zone.cpp 350 `@bug`, 378) checks only in-bounds tiles for FLOOD..ROADBASE and then writes only in-bounds tiles, so an edge block is stamped partially. Fix: refuse the whole stamp if any of the nine tiles is off-map (the sketch's `stampBlock` now does, so the acceptance test of nine distinct ids holds).
-- Missed mechanism: `doResidential` forces `zscore = -500` when the zone has no power (zone.cpp 568-570), which blocks immigration; the symmetric emigration branch (585-589, `zscore < 350` and `zscore + 26380` below a signed draw) calls `doResOut`; `doResIn` returns early when pollution > 128 (604). Frankendom: unpowered or polluted zones stop growing and may shrink.
 - Risk: the tie break and the growth gate use a global random draw (getRandom16). For a server-verified world, the layout rng must be seeded per zone, or two clients will derive different towns. Frankendom rule: one ledger, server-verified.
 - Risk: each built zone draws 1-in-8 when doResidential runs (563). How often the caller runs it was not read. Frankendom row 23 needs a per-tick budget; the layout code should not sit on that path.
 - Not applicable: MAX_ATTACKERS = 3 and the fight camera. The grid does not decide attackers, and the road shapes are ground drawing the camera does not read.
 - Not read: the rail, wire and power branches of `fixSingle` (636-734), art names beyond the table, `setZonePower`, the valve's caller and `RES_VALVE_RANGE`.
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-Verdict: MINOR
-- Sketch `stampBlock` copied the donor's partial-edge-stamp `@bug` (zone.cpp 350); note listed no such defect.
-- Auto-bulldoze cost 1 (connect.cpp 152) was stated as unconditional; it needs autoBulldoze on and BULLBIT (140-158).
-- Missed: zonePlop partial stamp (350, 378); unpowered zone forces zscore -500 (568-570) and emigration branch (585-589); doResIn pollution>128 gate (604).
-
-Fixed 2026-10-12: auto-bulldoze cost stated as conditional; stampBlock made all-or-nothing and defect 5 added; missed power/emigration/pollution mechanism added as a line in section 6.

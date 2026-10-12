@@ -10,14 +10,14 @@ Acceptance: In a zone fight a player sees a 128 px minimap with dots for enemies
 
 ## 1. Mechanism
 
-- Scale. Zoom in pixels per tile is `ZoomLevel * RadarZoomMultiplier / 16` (radarSize, 210). When the minimap rotates with the player, the multiplier is `max(RADWIDTH, RADHEIGHT) / max(radarTexWidth, radarTexHeight, 1)` (resizeRadar, 270-275), where the texture size is the scroll-window size, not the full map, so at zoom level 16 the whole map fits the 128 px box (RADWIDTH = 128, `src/display3ddef.h` line 34; no receipt, the line has tab separators). Unrotated, the multiplier is 1.
+- Scale. Zoom in pixels per tile is `ZoomLevel * RadarZoomMultiplier / 16` (radarSize, 210). When the minimap rotates with the player, the multiplier is `RADWIDTH / max(map width, map height)` (resizeRadar, 274), so at zoom level 16 the whole map fits the 128 px box (RADWIDTH = 128, `src/display3ddef.h` line 34; no receipt, the line has tab separators). Unrotated, the multiplier is 1.
 - Redraw cadence. drawRadar calls setViewingWindow every frame (before the gate). It rebuilds the tile, object and overlay texture only when `frameSkip <= 0` (377), then sets `frameSkip = RADAR_FRAME_SKIP` (383), where `RADAR_FRAME_SKIP` is 10 (line 63). So the texture is rebuilt about every tenth frame.
 - Pass 1, tiles: DrawRadarTiles writes one pixel per tile. Border tiles are black; other tiles take `appliedRadarColour` (not read).
 - Pass 2, objects: DrawRadarObjects clears the overlay buffer and computes `blinkState = (gameTime - lastBlink) / BLINK_HALF_INTERVAL` (536). The division is integer, so the bool is false for the first 500 ticks of a period and true after. For each player clan, a droid is drawn only if `visibleForLocalDisplay()` or allied shared vision applies (571). Colour is own (`colRadarMe`), ally or enemy when `bEnemyAllyRadarColor` is set, otherwise the 8-colour clan palette. A droid of the selected player hit within `HIT_NOTIFICATION` (2000 ticks, line 62) is drawn in the flash colour (580). A selected droid is drawn at alpha 0.5 while `blinkState` is false (582). Structures follow the same rule per tile, with one structure per tile (gate at 634, colour writes at 640-647).
 - Blink timer. After the object pass, `if (gameTime - lastBlink >= BLINK_INTERVAL) lastBlink = gameTime;` (655-656). The timer is reset only on frames where the object pass runs, so the blink period follows the redraw cadence and the frame timing, not the game clock.
 - Overlay blend. applyMinimapOverlay (659-680) mixes each non-zero overlay pixel over the tile colour.
 - Viewing window. setViewingWindow (732-792) builds the camera footprint as four points. Two widths come from `visibleTiles.x` and the view-distance adjust (`shortX` at 744, `longX` similarly). One height comes from `visibleTiles.y` and the pitch adjust. The points are rotated by the player's yaw with RotateVector2D (764), a fixed-point cos and sin rotation (700-701). The distance adjust is `MAXDISTANCE` (5000, `src/display.h` line 238) minus the view distance, floored at 0, divided by 100 (getDistanceAdjust, 707). The pitch adjust clamps the pitch term to a range set by `MAX_PLAYER_X_ANGLE` (-1, display.h line 234) and `MIN_PLAYER_X_ANGLE` (-88, display.h line 235), then halves it (getLengthAdjust, 714-729).
-- Input. A select click on the minimap goes to CalcRadarPosition (331-363): it subtracts the radar centre (`radarCenterX/Y`), undoes the yaw when rotating, adds half the radar width/height, divides by the pixel size, adds the scroll minimum, and clamps to the scroll window. Then, if `war_GetRadarJump()` is set, the view jumps (`setViewPos`, 962), otherwise it pans (`requestRadarTrack`, 967). The order click (`WKEY_ORDER`; the mouse button was not checked) sends selected droids to the tile centre, with a queued order when the ctrl and shift keys are held (941-942).
+- Input. A select click on the minimap goes to CalcRadarPosition (331-363): it subtracts the box origin, undoes the yaw when rotating, divides by the pixel size, adds the scroll minimum, and clamps to the scroll window. Then, if `war_GetRadarJump()` is set, the view jumps (`setViewPos`, 962), otherwise it pans (`requestRadarTrack`, 967). The order click (`WKEY_ORDER`; the mouse button was not checked) sends selected droids to the tile centre, with a queued order when the ctrl and shift keys are held (941-942).
 
 ## 2. Key functions
 
@@ -89,7 +89,7 @@ export function pixelsPerTile(zoomLevel: number, rotate: boolean, mapW: number, 
   return (zoomLevel * multiplier) / 16;
 }
 
-// Pixel inside the minimap box to a tile, clamped to the scroll window (donor CalcRadarPosition, unrotated case; the donor measures from the radar centre plus half the radar size, which equals boxLeft/boxTop here).
+// Pixel inside the minimap box to a tile, clamped to the scroll window (donor CalcRadarPosition, unrotated case).
 export function minimapToTile(
   px: number,
   py: number,
@@ -166,13 +166,3 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020 warzone-mini
 - Camera footprint. The wedge reads the camera's view distance and pitch, both client-side. The donor's look range (-1 to -88, display.h) and distance cap (5000) are fixed constants; for Frankendom they should be camera data, so the owner's world camera can tune them without touching the minimap.
 - Not read (see Checked): the terrain colour function, the drag path, the render calls, the source of visibleTiles, the click-point rotation, and the frame's draw of drawRadarBlips. Nothing in this note depends on them except the exact footprint geometry on screen, which is marked medium confidence.
 - GPL-2.0-or-later: clean-room only. The sketch is written from the described mechanism.
-
-Missed mechanism (added by fixer): setViewingWindow (770-785) colours the camera footprint by campaign number (campaign 1-2 white alpha 0x3f, 3 greenish, otherwise black alpha 0x3f). A hit-flash droid that is also selected is dimmed as well.
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-Verdict: MINOR
-- resizeRadar multiplier is max(RADWIDTH,RADHEIGHT)/max(texW,texH,1), not RADWIDTH/max(map w,h) (radar.cpp 270-275).
-- CalcRadarPosition (331-363) subtracts radarCenterX/Y and adds radarWidth/2, not the box origin.
-- Missed: footprint colour by campaign (770-785); hit-flash droid that is selected is dimmed too.
-
-Fixed 2026-10-12: corrected the zoom multiplier and the click-to-tile description in the prose, clarified the sketch comment (sketch code unchanged), added the campaign-colour and dim-while-flashing line.

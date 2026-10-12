@@ -11,7 +11,7 @@ Acceptance: A server test: a PM from a player the owner ignores is not delivered
 ## 1. Mechanism
 
 - Modes (`ChatModes.ts` 8-12): private chat is ON=0, FRIENDS=1, OFF=2. A new player starts ON (`Player.ts` 305). The saved value is packed into one byte with the public and trade modes (`Player.ts` 267) and unpacked from two bits (`PlayerLoading.ts` 152), so the field can hold 3, which is not a mode.
-- Registration on world login: `FriendServer.ts` 118-128 validates the mode (outside 0..2 becomes ON, 120-122) and calls `register` (128). `register` (`FriendServerRepository.ts` 71-90) adds a staff id if the level is above 1 (82-83), stores the mode in memory (88), and loads the friend list (89). Unregister removes the mode, friends and staff entries (96-126). Ignore lists are read on demand (`getIgnores` at 164-170, which calls `loadIgnores` at 165); the ignore check in the gate (339) only works if the owner's ignore list is already loaded in memory, so a not-yet-loaded list lets the viewer through and sent to the player at login (`FriendServer.ts` 139, 433-441).
+- Registration on world login: `FriendServer.ts` 118-128 validates the mode (outside 0..2 becomes ON, 120-122) and calls `register` (128). `register` (`FriendServerRepository.ts` 71-90) adds a staff id if the level is above 1 (82-83), stores the mode in memory (88), and loads the friend list (89). Unregister removes the mode, friends and staff entries (96-126). Ignore lists are read on demand (`getIgnores` at 164-170, which calls `loadIgnores` at 165) and sent to the player at login (`FriendServer.ts` 139, 433-441).
 - Set-mode: `FriendServer.ts` 174-183 validates the same way (outside 0..2 becomes ON, 176-178), then `setChatMode` (318-322) stores it.
 - Gate `isVisibleTo(viewer, other)` (331-354), in order:
   1. Viewer is staff: visible (335-336).
@@ -36,7 +36,7 @@ Acceptance: A server test: a PM from a player the owner ignores is not delivered
 
 | Reusable algorithm | Donor constants |
 |---|---|
-| Precedence: staff, then ignore, then owner mode, then friends-only, then on | staff bypass (theirs, 335-336); ignore (339-341); mode enum ON 0, FRIENDS 1, OFF 2 (`ChatModePrivate`, `ChatModes.ts` 9-11, theirs; lines 2-4 are the public enum) |
+| Precedence: staff, then ignore, then owner mode, then friends-only, then on | staff bypass (theirs, 335-336); ignore (339-341); mode enum ON 0, FRIENDS 1, OFF 2 (`ChatModes.ts` 2-4, theirs) |
 | Unknown mode is hidden | default OFF (`FriendServerRepository.ts` 343, theirs) |
 | Invalid saved mode | becomes ON, the open setting (`FriendServer.ts` 122 and 178, theirs). Defect, see section 6 |
 | New-account default | ON (`Player.ts` 305, theirs) |
@@ -102,19 +102,9 @@ export {};
 - FRIENDS is one-directional (350): the owner's friend list must contain the viewer; mutual friendship is not required. Acceptable if stated; do not describe it as mutual.
 - Caps are account data: ignore 100 (270), friends 200 for members and 100 for non-members (229). They are engine constants, not zone data.
 - Reports: one report per tick, because `reportAbuseProtect` is cleared with the social flag (`Player.ts` 483). That is not a per-session budget. Frankendom's report path needs its own budget and a reason row (ruling).
-- A private message to the username `invalid_name` triggers the same automated two-day ban (`World.notifyPlayerBan`, `MessagePrivateHandler.ts` 22-25) as a bad report reason. A PM to a nonexistent account hits `executeTakeFirstOrThrow` on the target (`FriendServer.ts` 270-271) and throws in the friend thread (the sender line is logged nowhere); handle it as a not-found reply.
 - Malformed report or mute reason: an out-of-range report reason is answered with an automated two-day ban (`ReportAbuseHandler.ts` 14-17, 172800000 ms). A client bug can therefore ban a player. Frankendom should hold malformed input for review instead of banning.
-- Profanity filter: `WordEnc.filter` (`src/cache/wordenc/WordEnc.ts` 67-89) masks, in this order, TLDs, bad words, domains and fragments, restores a five-word whitelist (`WordEnc.ts` 33: cook, cook's, cooks, seeks, sheet), and fixes capitalisation. Public text is filtered on the way out (`MessagePublicHandler.ts` 35), and private text at encode time (`MessagePrivateEncoder.ts` 20). The raw text is kept for the log (`MessagePublicHandler.ts` 32) and written raw to the `private_chat` table (`FriendServer.ts` 281). Keep this split (raw for moderation, filtered for display), but decide the privacy rule for the raw private log before launch. The bad-word and fragment data were not read or counted.
+- Profanity filter: `WordEnc.filter` (`WordEnc.ts` 67-89) masks fragments, bad words, domains and TLDs, restores a five-word whitelist (`WordEnc.ts` 33: cook, cook's, cooks, seeks, sheet), and fixes capitalisation. Public text is filtered on the way out (`MessagePublicHandler.ts` 35), and private text at encode time (`MessagePrivateEncoder.ts` 20). The raw text is kept for the log (`MessagePublicHandler.ts` 32) and written raw to the `private_chat` table (`FriendServer.ts` 281). Keep this split (raw for moderation, filtered for display), but decide the privacy rule for the raw private log before launch. The bad-word and fragment data were not read or counted.
 - Frankendom rulings: the gate lives on the server; zones are not involved; the display-name filter is a write-time blocklist (ruling), which this donor does not do at write time.
 
 Reuse tag: adapt (MIT)
 Brief rule served: one engine, server-verified; the one gate for all social reach; row 14 for the display
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-Verdict: MINOR
-- Numbers table cited ChatModes.ts 2-4 for the private enum; that is ChatModePublic, the private enum is 9-11.
-- WordEnc.filter is at src/cache/wordenc/WordEnc.ts 67-89 and runs TLDs, bad words, domains, fragments (note had the order reversed and a bare path).
-- Ignore check at 339 only works if the owner's ignore list is loaded; note did not tie on-demand loading to the gate.
-- Missed: PM to 'invalid_name' triggers the 2-day automated ban (MessagePrivateHandler 22-25); PM to nonexistent account throws at FriendServer 270-271.
-
-Fixed 2026-10-12: enum lines, WordEnc path and order, ignore-load caveat, added the two PM edge cases.

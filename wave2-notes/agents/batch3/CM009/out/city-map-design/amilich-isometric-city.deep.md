@@ -137,7 +137,3 @@ Acceptance: in a test town, placing a second guard post changes the guard covera
 
 Reuse tag: adapt-from-idea (MIT; adaptation allowed; sketch written from the mechanism)
 Brief rule served: zones as data; one ledger (service levels and money are server state)
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-CLEAN
-- Missed (not errors): SERVICE_CONFIG also holds power_plant range 15 and water_tower range 12 (1239-1240) with the same hard disc test (1303-1323); demandLevelBoost max(0,(d-30)/70)*0.7 (1666) is passed in as a number.

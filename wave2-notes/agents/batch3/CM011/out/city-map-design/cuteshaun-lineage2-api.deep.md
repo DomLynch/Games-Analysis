@@ -114,7 +114,3 @@ function primaryRegion(spawns: { x: number; y: number }[], grid: TileGrid): numb
 - Radius and anchor count. The radius is one constant (1564), and the lookup scans every anchor per call (about 209 by the donor's comment, not counted). That is cheap at this size. A Frankendom zone count that grows much larger needs a spatial index first.
 - Derived extent (from the origin, width and height, not checked in game): x runs from -131072 to 229375 and y from -262144 to 262143 for this grid.
 - Not read: the client that performs the teleport (not in this repo), the content of `huntingzones.json`, and the NPC spawn route (`src/app/api/[chronicle]/npcs/[id]/spawns/route.ts`), which I saw only through grep.
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-Verdict: CLEAN
-- None. All verified.

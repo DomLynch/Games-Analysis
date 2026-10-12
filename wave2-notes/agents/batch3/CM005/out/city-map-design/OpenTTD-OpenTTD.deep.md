@@ -28,9 +28,9 @@ Acceptance: a seeded authoring test generates a 40-building town and asserts tha
 
 **Grid layouts (`GetTownRoadGridElement`, 1121-1168; the sloped-tile template part not traced).** The offset from the town centre is tested: a road runs along y when `grid_pos.x % 3 == 0` (1131, Grid2x2) or `% 4 == 0` (1136, Grid3x3), and along x when the other offset passes the same test. This makes blocks of 2x2 or 3x3 houses between roads.
 
-**Zone rings (`UpdateTownRadius`, 1926-1967).** Each town keeps five squared radii, one per zone: edge, outskirt, outer suburb, inner suburb, centre. For fewer than 92 houses (23 rows x 4), the radii come from a table row per four houses (1954-1955). For 92 houses or more, `mass = houses / 8` and the radii are `mass*15-40`, `mass*9-15`, 0, `mass*5-5`, `mass*3+5` (1961-1965). The comment says the offsets keep the radii from shrinking at the table boundary. I checked the boundary at 92 houses: the formula gives edge 125, outskirt 84, inner 50 and centre 38, all at or above the last table row (121, 81, 0, 49, 36) in the same zone order. The zone classifier `GetTownRadiusGroup` (2514-2526) gives the centre zone to a funded town within squared distance 25 (2518). Otherwise it loops the zones from edge to centre (`HZ_ZONE_ALL`, house.h 80-86) and keeps the last zone whose squared radius exceeds the squared distance (2522). So a tile gets the innermost ring that contains it, and the edge if none does.
+**Zone rings (`UpdateTownRadius`, 1926-1967).** Each town keeps five squared radii, one per zone: edge, outskirt, outer suburb, inner suburb, centre. For fewer than 92 houses (23 rows x 4), the radii come from a table row per four houses (1954-1955). For 92 houses or more, `mass = houses / 8` and the radii are `mass*15-40`, `mass*9-15`, 0, `mass*5-5`, `mass*3+5` (1961-1965). The comment says the offsets keep the radii from shrinking at the table boundary. I checked the boundary at 92 houses: the formula gives edge 125, outskirt 84, inner 50 and centre 38, all at or above the last table row (121, 81, 0, 49, 25) in the same zone order. The zone classifier `GetTownRadiusGroup` (2514-2526) gives the centre zone to a funded town within squared distance 25 (2518). Otherwise it loops the zones from edge to centre (`HZ_ZONE_ALL`, house.h 80-86) and keeps the last zone whose squared radius exceeds the squared distance (2522). So a tile gets the innermost ring that contains it, and the edge if none does.
 
-**House pick (`TryBuildTownHouse`, 2819).** The layout's own forbidding check runs first (`TownLayoutAllowsHouseHere`, not read). The tile's zone set is built from `GetTownRadiusGroup` (2832) plus one climate bit. Every house spec whose availability mask covers all bits of that set, (and that is enabled and not overridden) enters a pool with its weight (2852); the year range is NOT a pool filter. A weighted roll picks one (2878). Each tried spec is removed from the pool, whether or not it builds, and the loop continues until the pool is empty or a house builds. The year check (`min_year`/`max_year`) and the `BuildingIsHistorical` skip (outside world generation and the editor) run only after the roll (2894-2898); a failing spec is removed and re-rolled, so the outcome distribution matches a pre-filtered pool but the order of draws differs. Church and stadium are one-of per town (2903-2909). The not-sloped check follows (not read further).
+**House pick (`TryBuildTownHouse`, 2819).** The layout's own forbidding check runs first (`TownLayoutAllowsHouseHere`, not read). The tile's zone set is built from `GetTownRadiusGroup` (2832) plus one climate bit. Every house spec whose availability mask covers all bits of that set, and whose year range fits, enters a pool with its weight (2852). A weighted roll picks one (2878). Each tried spec is removed from the pool, whether or not it builds, and the loop continues until the pool is empty or a house builds. Church and stadium are one-of per town (2903-2909). The not-sloped check follows (not read further).
 
 ## 2. Key functions
 
@@ -94,7 +94,7 @@ function zoneOf(t: TownState, x: number, y: number, radii: number[]): Zone {
 // House pick: a spec is eligible when its availability mask covers every bit of the tile's zone set.
 // Weighted roll over the eligible pool; each tried spec is removed from the pool whether or not it builds.
 function pickHouse(specs: Spec[], tileBits: number, year: number, rng: Rng, tryBuild: (s: Spec) => boolean): Spec | null {
-  const pool = specs.filter((s) => (s.availability & tileBits) === tileBits);
+  const pool = specs.filter((s) => (s.availability & tileBits) === tileBits && year >= s.minYear && year <= s.maxYear);
   for (;;) {
     const total = pool.reduce((a, s) => a + s.weight, 0);
     if (pool.length === 0 || total <= 0) return null;
@@ -107,7 +107,6 @@ function pickHouse(specs: Spec[], tileBits: number, year: number, rng: Rng, tryB
     const pick = pool[i];
     pool[i] = pool[pool.length - 1];
     pool.pop();
-    if (year < pick.minYear || year > pick.maxYear) continue; // donor checks the year after the roll (2898)
     if (tryBuild(pick)) return pick;
   }
 }
@@ -170,11 +169,3 @@ export {};
 - Not read: `TownLayoutAllowsHouseHere`, the bridge and tunnel branches, `TOWN_GROWTH_TICKS`, `TownTicksToGameTicks`, the winter and desert goal branches, and the minimap window (`src/smallmap_gui.cpp`). The minimap and signage topics are not rated in this cell.
 - Half read: engine code for generation and growth (not the server or client half). The house specifications (their availability masks, weights and year ranges) are data and were not read; the town name strings and their grammar were not read either.
 - The sketch is only typechecked (VPS, `tsc --strict --target es2020`, exit 0). It was not run on a town.
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-MINOR.
-- Last table row quoted as 121,81,0,49,25; real last row (town_cmd.cpp 1951) is {121,81,0,49,36}. Boundary conclusion still holds (centre formula 38 >= 36).
-- Year range was described as a pool filter; real code checks year (and BuildingIsHistorical) after the roll (2894-2898), failed specs removed and re-rolled.
-- Missed: GrowTownWithExtraHouse (1646, 1657) places a second house for Grid3x3 and BetterRoads layouts; GrowTown road-block fallback is gated by TownAllowedToBuildRoads (1904).
-
-Fixed 2026-10-12: table row corrected to 36; house pick text and TypeScript sketch now check year after the roll; added the two missed mechanisms above.

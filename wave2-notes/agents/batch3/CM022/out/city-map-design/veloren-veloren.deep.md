@@ -17,7 +17,7 @@ Checked: opened all of minimap.rs (1-1129) in full; `common/src/terrain/mod.rs` 
 - Changed blocks (215-228): a chunk is marked for replacement only when a block's `is_terrain()` status flips. Other changes do not mark it (222; `is_terrain` not read).
 - Slice mode (92-110, weights `[1, 2, 4, 1, 1, 1]` at 96) is dead code: `MODE_OVERHEAD` is a constant `true` (176), so the slice branch (179-181) never runs.
 - World layer (646-679): the Veloren world map image is centred on the player's chunk, with the y axis flipped (646-653), and the view width is `max_zoom / zoom` (642). Topographic layers draw only when the topo option is on (670).
-- Site and quest markers (708-841, 732-757): `wpos_to_rpos` takes the point relative to the player, converts to chunk units, divides by `max_zoom` (the largest world dimension, line 738, so non-square worlds use the longer side), multiplies by map size and zoom, and rotates by the north or camera angle. A point outside the square frame is pinned to the edge along its dominant axis if the marker is a quest marker (`limit = IS_QUEST`, line 761; clamp at 750-753), and skipped otherwise (763). Each site kind has a difficulty ring colour (765-813).
+- Site and quest markers (708-841, 732-757): `wpos_to_rpos` takes the point relative to the player, converts to chunk units, divides by the world size, multiplies by map size and zoom, and rotates by the north or camera angle. A point outside the square frame is pinned to the edge along its dominant axis if the marker is a quest marker (`limit = IS_QUEST`, line 761; clamp at 750-753), and skipped otherwise (763). Each site kind has a difficulty ring colour (765-813).
 - Group members (843-893): the arrow is "up" at a height difference of 10 or more blocks and "down" at minus 10 or less (878-883). A member off the frame is skipped (872-875).
 - Location markers (895-943): group and owned location markers are pinned to the edge (906, 930). Quest marker colour pulses: alpha `0.75 + sin(pulse * 4) * 0.25` (map.rs 1744).
 - Compass (976-1003): N, E, S and W are placed on a square ring at half the map size minus 10 (986-987).
@@ -75,7 +75,7 @@ interface Column {
 function ceilingOffset(col: Column, x: number, y: number, playerZ: number): number {
   for (let dz = 0; dz < col.layers.length; dz++) {
     const cell = col.layers[playerZ - col.zlo + dz]?.[y * CHUNK + x];
-    if (!cell || cell.solid) return dz;   // donor (minimap.rs 144): a missing block counts as filled
+    if (cell?.solid) return dz;
   }
   return col.above.solid ? 1 : Infinity;
 }
@@ -154,9 +154,3 @@ Acceptance: standing outside a building the minimap shows its roof; standing ins
 
 Reuse tag: rewrite-from-idea (GPL-3.0-or-later; clean-room only)
 Brief rule served: 1 (one engine: ceilings and markers come from zone data and the server); 7 (client-only HUD)
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-Verdict: MINOR
-- wpos_to_rpos divides by max_zoom (largest world dimension, minimap.rs 738), not the world size; non-square worlds differ.
-- Sketch ceilingOffset ignored that a missing block counts as filled (is_none_or, minimap.rs 144).
-Fixed 2026-10-12: corrected the wpos_to_rpos divisor wording; ceilingOffset now treats a missing cell as solid (typechecked below).

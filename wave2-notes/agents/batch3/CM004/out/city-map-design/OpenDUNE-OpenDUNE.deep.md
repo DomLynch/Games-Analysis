@@ -6,17 +6,17 @@ Checked: The hinted file `src/map.h` was read in full; it is declarations only (
 
 ## 1. Mechanism
 
-- A building is a footprint of 1x1 to 3x3 tiles (7 layouts) anchored on a packed tile (64 tiles per row). The footprint offsets are in `g_table_structure_layoutTiles`; the neighbour ring (8 neighbours of a 1x1 tile, diagonals included, so not edge-only) is in `g_table_structure_layoutTilesAround`.
+- A building is a footprint of 1x1 to 3x3 tiles (7 layouts) anchored on a packed tile (64 tiles per row). The footprint offsets are in `g_table_structure_layoutTiles`; the edge-neighbour ring is in `g_table_structure_layoutTilesAround`.
 - `Structure_IsValidBuildLocation(position, type)` returns one number: 0 (invalid), 1 (valid, every footprint tile on slab), or -n (valid, n footprint tiles still need a slab). Order of checks, one footprint tile at a time, break on the first failure:
   (a) the tile is on the map (`Map_IsValidPosition`, line 761);
   (b) the terrain allows it: a `notOnConcrete` building needs `isValidForStructure2`, every other building needs `isValidForStructure` (lines 755-773);
   (c) no unit or object is on the tile (780);
   (d) a building that is not `notOnConcrete` counts every tile that is not already a concrete slab as a needed slab (776).
-- Growth rule (lines 788-811, skipped for the construction yard and in the strict-validation mode): after the footprint passes, the function scans the ring tiles and accepts the placement only if one ring tile holds a building of the player's house (798, compared to `g_playerHouseID`, not to the placing owner), or a concrete slab or wall of the player's house (804-805). The growth rule is player-only; AI placement does not use it. The sketch generalises it to any owner. If no ring tile qualifies, the placement is invalid (return 0 at 812). So a hub can only grow from its own edge.
+- Growth rule (lines 788-811, skipped for the construction yard and in the strict-validation mode): after the footprint passes, the function scans the ring tiles and accepts the placement only if one ring tile holds a building of the same owner (798), or a concrete slab or wall of the same owner (804-805). If no ring tile qualifies, the placement is invalid (return 0 at 812). So a hub can only grow from its own edge.
 - Return (813): 1 if no slab is needed, otherwise -neededSlabs.
 - Slabs are laid by `Structure_Place` (442-): a slab building builds concrete on each footprint tile that the same validity check allows, with a second pass for 2x2 slabs (the donor marks this as a "Dirt hack" for footprint tiles outside the building area). A normal building placed with a negative return loses hit points: `hitpoints -= (hpMax / 2) * tilesWithoutSlab / tileCount` (554), and it is flagged to degrade (556). A building built fully on slab does not degrade in the enhanced mode (560, guarded).
 - Slab availability: `Structure_CheckAvailableConcrete` (1375-1411) scans anchors 0..4095 and returns true if some anchor has every footprint tile on the owner's concrete. Its caller (1596) shows a hint (1598, `GUI_DisplayHint(STR_THERE_ISNT_ENOUGH_OPEN_CONCRETE...`) when concrete is short, and lets the player go ahead. It warns; it does not block.
-- AI build order: `Structure_AI_PickNextToBuild` (1980-2040) is called from the structure loop (317) when the house is AI-controlled and not the player's house, has credits, the structure is allocated, it is a factory, its countdown is 0 and it is not linked. It returns one type per call. A construction yard uses its five-slot rebuild queue (1993-2000) and takes the first slot whose type is buildable. Before the loop, a High-Tech factory strips Carryall from the buildable set and a Heavy Vehicle factory strips Harvester and MCV (2006-2024). Any other factory loops over all unit types: each buildable type is set as the candidate with a 1-in-4 random roll (2030; the first buildable type is always taken as candidate even without the roll), and a later type replaces the candidate only if its `priorityBuild` is strictly higher (2033).
+- AI build order: `Structure_AI_PickNextToBuild` (1980-2040) is called from the structure loop (317) when the house is AI-controlled and not the player's house, has credits, the structure is allocated, it is a factory, its countdown is 0 and it is not linked. It returns one type per call. A construction yard uses its five-slot rebuild queue (1993-2000) and takes the first slot whose type is buildable. Any other factory loops over all unit types: each buildable type is set as the candidate with a 1-in-4 random roll (2030), and a later type replaces the candidate only if its `priorityBuild` is strictly higher (2033).
 
 ## 2. Key functions
 
@@ -31,7 +31,7 @@ Checked: The hinted file `src/map.h` was read in full; it is declarations only (
 
 | Reusable algorithm | Game-specific constants |
 |---|---|
-| Placement needs an owned neighbour tile (hub grows one building at a time; donor checks the player's house only) | Ring of 8 incl. diagonals (1x1), up to 16 slots (theirs, structureinfo.c 1306; loop 788 over 16) |
+| Placement needs an owned edge neighbour (hub grows one building at a time) | Ring of 8 (1x1), up to 16 slots (theirs, structureinfo.c 1306; loop 788 over 16) |
 | Missing slab is a count; the return value is the count, negative | Return convention 0 / 1 / -n (theirs, structure.c 812-813) |
 | Hit-point penalty proportional to the share of tiles without slab, integer math | Half of hit points at full penalty: `(hpMax / 2) * missing / tileCount` (theirs, structure.c 554) |
 | Random 1-in-4 candidate roll, then priority | `% 4` (theirs, structure.c 2030); `priorityBuild` from the unit table (2033) |
@@ -60,7 +60,7 @@ interface Grid { w: number; h: number; cells: Cell[] } // flat, index = y * w + 
 
 interface BuildingType {
   footprint: number[];   // tile offsets from the anchor (donor: layoutTiles)
-  ring: number[];        // neighbour offsets incl. diagonals (donor: layoutTilesAround)
+  ring: number[];        // edge-adjacent offsets (donor: layoutTilesAround)
   notOnConcrete: boolean;
   isYard: boolean;       // the construction yard is exempt from the adjacency rule
   hpMax: number;
@@ -154,17 +154,8 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - The minimap part (map.c 235-319) is a second idea: a fixed viewport border of 15 x 10 tiles, drawn and cleared by a border table, with pixel origin constants. The ModernUO note (cell 1) already covers the minimap projection, so this is a corroborating source, not a second design.
 - Not read: `Map_CreateLandscape` (procedural terrain and spice, map.c 1441-1682); `Structure_ConnectWall` (walls, structure.c 1136); `Structure_FindFreePosition` (structure.c 1253); the full `GameLoop_Structure` frequency (structure.c 53).
 
-Best transferable idea: A new hub building may only be placed where one of its neighbouring tiles (diagonals count) already belongs to your hub, and each footprint tile without a paid slab costs a share of the building's durability, so the layout grows outward one building at a time.
+Best transferable idea: A new hub building may only be placed where one of its edge-adjacent tiles already belongs to your hub, and each footprint tile without a paid slab costs a share of the building's durability, so the layout grows outward one building at a time.
 
 Decision (proposed): adapt — keep the growth rule, the slab-count return and the durability penalty as a server-side zone-data validator; fix the ring map-bounds check, the bounded slab scan and the roll-first AI pick; reject the donor's unbounded anchor scan as shipped.
 
-Acceptance: A zone file that places a service with no neighbouring hub tile fails load with the named tile; a service on bare ground loads with its missing-slab count shown and its durability reduced by `(hpMax / 2) * missing / tileCount`; a server test asserts that an edge tile does not count a neighbour from the previous row.
-
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-- Verdict: MINOR
-- structure.c:798/805 compare houseID to g_playerHouseID (player's house), not 'same owner'; growth rule is player-only.
-- Ring tiles are 8 neighbours incl. diagonals, not edge-only.
-- Missed: AI pick strips Carryall (High-Tech) and Harvester/MCV (Heavy Vehicle) before the loop (2006-2024); first buildable type is always the candidate even without the 1-in-4 roll.
-
-Fixed 2026-10-12: growth rule now says player's house and player-only; ring described as 8 neighbours with diagonals (prose, table, sketch comment, best idea, acceptance); added the AI strip and first-candidate lines. Sketch code unchanged (comment only), no typecheck needed.
+Acceptance: A zone file that places a service with no edge-adjacent hub tile fails load with the named tile; a service on bare ground loads with its missing-slab count shown and its durability reduced by `(hpMax / 2) * missing / tileCount`; a server test asserts that an edge tile does not count a neighbour from the previous row.

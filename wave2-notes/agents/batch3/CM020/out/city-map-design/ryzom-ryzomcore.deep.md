@@ -110,7 +110,3 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 Reuse tag: rewrite-from-idea (AGPL-3.0; clean-room only)
 Brief rule served: camera and HUD client-only; target positions from server state; parity row 14
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-Verdict: CLEAN
-- None. Verified draw, setTarget, tracker builders, blink and km derivations. Missed (minor, not claimed): selection branch mutates _Target.Name each frame (317-321); Default branch uses stored _Target.Pos (350).

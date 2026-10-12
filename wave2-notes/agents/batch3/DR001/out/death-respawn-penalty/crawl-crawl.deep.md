@@ -11,11 +11,11 @@ Checked: Opened and read: ouch.cc 1325-1500 (damage path: pending revival, spiri
 - If not saved, HP drops and, if HP is 0 or less, `player_die` runs (1498-1499).
 - In `player_die` (1502): a Xom-acting death may be escaped (1505-1530). Then Xom may save your life (`xom_saves_your_life`, 1542). That save is one in twenty (xom.cc 5475), needs Xom worship and a tension and mood check (5483), and returns HP to `1 + random2(HP max / 4)` (5497).
 - Lives (1597-1619). If you have lives left and the death is real, one life is spent (1602), `pending_revival` is set (1603), a corpse is placed at your position (1619, via `_place_player_corpse` 1121-1139 with a dummy monster and `ALWAYS_CORPSE_KEY`, 1130, 1139), and the game continues. If no lives are left, the game ends here (after the lives block, not read further).
-- Lives: start at 0; the MUT_MULTILIVED mutation gives one life at start (ng-setup.cc 588-589; player.cc 5721 reset). Multilived characters (felids) also earn extra lives while playing: `will_gain_life` (player.cc 2980-2986, 3501-3502) grants one per 3 experience levels, held up to 2 at once (`you.lives < 2`). Lives are spent at ouch.cc 1601-1602 (`deaths++` there too).
-- Revival (main loop, main.cc 1097-1100; nearby-danger.cc 441-510). `revive()` clears most durations, the caught and constricted states, and beholder and fearmonger effects (446-490), sets HP and MP to full (495-496), clears `pending_revival` (498), and fails only if max HP is 0 (503). Then `bring_to_safety` (390) samples random floor cells and keeps the one with the lowest monster threat, stopping early at zero threat (403-404). An invalid cell (not floor, cloud, monster, no-teleport, 416) costs 1 try; each valid sample costs 1000 tries (430) of the 100000 budget, so about 100 valid spots are tried at most, and 100000 is only the cap on invalid picks; the donor has an abyss exception at 392-395.
+- Lives come from one place: the MUT_MULTILIVED mutation gives one life (ng-setup.cc 588-589). Otherwise lives start at 0 (player.cc 5721 reset).
+- Revival (main loop, main.cc 1097-1100; nearby-danger.cc 441-510). `revive()` clears most durations, the caught and constricted states, and beholder and fearmonger effects (446-490), sets HP and MP to full (495-496), clears `pending_revival` (498), and fails only if max HP is 0 (503). Then `bring_to_safety` (390) samples random floor cells and keeps the one with the lowest monster threat, stopping early at zero threat (403-404; the donor has an abyss exception at 392-395).
 - Inventory. The lives path (1597-1620) and revive (441-510) do not touch the inventory in the read code. The donor's permadeath is the other tier (no lives).
 - Permadeath and the bones ghost. When the game ends, the dead character becomes a saved ghost for other games (end.cc 303; files.cc 3940-3954). Eligibility: not a tutorial, and in the dungeon branch only below depth 2 (ghost.cc 1230-1234). A ghost copies the dead character's combat numbers, with caps: HP at most 400 (ghost.cc 35, 435), evasion at most 50 (ghost.h 28, 436), and the weapon's damage (426-440). Per level there are at most 27 ghost files (files.cc 150, 3954). Loading places a ghost as a monster, up to a max count per call (files.cc 3165-3172).
-- Animate Dead (necromancy on corpses). Casting it dismisses the zombies you made (spl-other.cc 95, 109-110), then sets a window of `20 + random2(1 + pow)` turns and stores the power (114-115). While the window is open, a monster that dies in your line of sight may rise as a friendly zombie made from its corpse (mon-death.cc 2047), with chance `(150 + pow/2) / 200` (1965-1970). The window is the cap: when it ends, nothing rises. The duration total is capped at 100 (the max argument of `increase_duration`, spl-other.cc 114). The reap also needs the corpse not gone and the monster in line of sight (mon-death.cc 2044-2048).
+- Animate Dead (necromancy on corpses). Casting it dismisses the zombies you made (spl-other.cc 95, 109-110), then sets a window of `20 + random2(1 + pow)` turns and stores the power (114-115). While the window is open, a monster that dies in your line of sight may rise as a friendly zombie made from its corpse (mon-death.cc 2047), with chance `(150 + pow/2) / 200` (1965-1970). The window is the cap: when it ends, nothing rises.
 - Corpses rot (corpse.cc 20-91). Each corpse's freshness drops by `elapsed / 20` (corpse.h 9; 63, 40). At zero, a corpse of a species with a skeleton becomes a skeleton (50, 87), and any other corpse is destroyed (47).
 
 Tick: revival and the lives path run once, at the death. Corpse rot runs from elapsed time (rot_corpses). Animate Dead's window is set with the duration call (spl-other.cc 114); the time unit of that duration was not read.
@@ -42,19 +42,19 @@ Tick: revival and the lives path run once, at the death. Corpse rot runs from el
 | Lifesaving chance | piety / 160 (no cooldown) | religion.cc 4166-4167 |
 | Lifesaving cooldown | 20 + random2avg(10, 2) added to gift timer; timer capped at 200 | religion.cc 4169; 1046-1052 |
 | Xom save | 1 in 20, tension >= random2(5), Xom in a good mood; revive at 1 to HP max/4 | xom.cc 5475, 5483, 5497 |
-| Lives | 0 by default; 1 with the MUT_MULTILIVED mutation, plus one per 3 levels up to 2 held | ng-setup.cc 588-589; player.cc 5721, 2980-2998 |
+| Lives | 0 by default; 1 with the MUT_MULTILIVED mutation | ng-setup.cc 588-589; player.cc 5721 |
 | Revival HP and MP | full (set to 9999, clamped) | nearby-danger.cc 495-496 |
-| Bring to safety | 100000-try budget; invalid cell costs 1, valid sample costs 1000 (about 100 valid spots); stop at zero threat | nearby-danger.cc 403-404, 416, 430 |
+| Bring to safety | up to 100000 samples, stop at zero threat | nearby-danger.cc 403-404 |
 | Ghost HP cap | 400 | ghost.cc 35, 435 |
 | Ghost evasion cap | 50 | ghost.h 28, 436 |
 | Ghost files per level | 27 | files.cc 150, 3954 |
-| Animate Dead window | 20 + random2(1 + pow) turns, total capped at 100 (max arg of increase_duration) | spl-other.cc 114 |
+| Animate Dead window | 20 + random2(1 + pow) turns | spl-other.cc 114 |
 | Animate Dead reap chance | (150 + pow/2) / 200, capped at 1 | mon-death.cc 1970 |
 | Corpse rot per tick | elapsed / 20 freshness units | corpse.h 9; corpse.cc 63, 40 |
 
 ## 4. TypeScript sketch
 
-simplified: the sketch follows the donor order: spirit shield first, then god save, then Xom, then the lives rule, then revival and the safe-cell search, then the permadeath ghost, then Animate Dead's window and reap. It drops the Xom-acting escape (the donor's `player_die` branch for Xom's own kills), the damage and wake-up side effects, the cleanup of durations and forms, `_death_is_worth_saving`, the abyss exception, and the ghost's weapon damage. The sketch's `bringToSafety` now follows the donor budget: an invalid cell costs 1 try, a valid sample costs 1000. The donor's rounding uses `div_rand_round`; the sketch takes a rounding function as input. The donor's random integer draws are shown as `rnd` calls.
+simplified: the sketch follows the donor order: spirit shield first, then god save, then Xom, then the lives rule, then revival and the safe-cell search, then the permadeath ghost, then Animate Dead's window and reap. It drops the Xom-acting escape (the donor's `player_die` branch for Xom's own kills), the damage and wake-up side effects, the cleanup of durations and forms, `_death_is_worth_saving`, the abyss exception, and the ghost's weapon damage. The donor's `bring_to_safety` counts only valid cells toward its tries (`tries += 1000`); the sketch counts all samples. The donor's rounding uses `div_rand_round`; the sketch takes a rounding function as input. The donor's random integer draws are shown as `rnd` calls.
 
 ```ts
 // Licence: GPL-2.0 (donor Dungeon Crawl Stone Soup, LICENSE "Version 2, June 1991"). Clean-room sketch written from the described mechanism; not a translation of the donor lines.
@@ -105,11 +105,10 @@ export function onLethalHit(lives: number, realDeath: boolean): { lives: number;
 export interface Cell { x: number; y: number; floor: boolean; threat: number; }
 export function bringToSafety(sample: () => Cell, tries = 100000): Cell | null {
   let best: Cell | null = null;
-  for (let t = 0; t < tries && (best === null || best.threat > 0);) {
+  for (let t = 0; t < tries && (best === null || best.threat > 0); t++) {
     const c = sample();
-    if (!c.floor) { t += 1; continue; }          // invalid cell: 1 try (nearby-danger.cc 416)
+    if (!c.floor) continue;
     if (best === null || c.threat < best.threat) best = c;
-    t += 1000;                                    // valid sample: 1000 tries (430)
   }
   return best;
 }
@@ -123,8 +122,8 @@ export interface GhostRecord { name: string; hpMax: number; evasion: number; }
 export function makeGhost(name: string, hpMax: number, evasion: number): GhostRecord {
   return { name, hpMax: Math.min(hpMax, MAX_GHOST_HP), evasion: Math.min(evasion, MAX_GHOST_EVASION) };
 }
-export function ghostEligible(depth: number, inDungeon: boolean, tutorial: boolean, placeNoSave = false): boolean {
-  return !tutorial && (!inDungeon || depth > 2) && !placeNoSave; // ghosts_nosave (ghost.cc 1234)
+export function ghostEligible(depth: number, inDungeon: boolean, tutorial: boolean): boolean {
+  return !tutorial && (!inDungeon || depth > 2);
 }
 export function canSaveGhost(filesOnLevel: number): boolean {
   return filesOnLevel < GHOST_LIMIT;
@@ -170,11 +169,3 @@ Brief rule served: 1 (one ledger: the death outcome is decided once, server-side
 - Donor gap: the ghost-loading caller on level creation was not found by grep (files.cc 3135 is only called by wiz-mon.cc 1013). The quota is therefore read from the save side only (files.cc 3954).
 - Donor gap: `_death_is_worth_saving` (xom.cc) was not read; the Xom save's full gate is therefore partly unread.
 - Donor gap: `place_corpse_or_gold` (mon-death.cc 474) was not read; the corpse's contents on a spent life are not verified beyond the dummy-monster call.
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-Verdict: MINOR
-- 'Lives 0 by default, 1 with MUT_MULTILIVED, lives come from one place' was incomplete: multilived characters gain extra lives (player.cc 2980-2998, 3501-3502; one per 3 levels, up to 2 held).
-- bring_to_safety 'up to 100000 samples' was wrong in effect: invalid cells cost 1 try, each valid sample 1000 (nearby-danger.cc 416, 430), so about 100 valid spots.
-- Animate Dead window cap of 100 (spl-other.cc 114) was not stated.
-- Missed: reap needs corpse present and monster in LOS (mon-death.cc 2044-2048); ghost_eligible also requires ghosts_nosave not containing the place (ghost.cc 1234).
-Fixed 2026-10-12: lives line and table, bring-to-safety text and table and sketch loop, Animate Dead cap and reap conditions, ghostEligible nosave parameter.

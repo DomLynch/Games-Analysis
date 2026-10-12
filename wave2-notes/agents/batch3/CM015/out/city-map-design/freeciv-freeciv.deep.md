@@ -15,7 +15,7 @@ Acceptance: a server test builds a hub with base slots, adds a bonus that adds s
 - If the clamped value equals the stored one, return with no change (3499-3501).
 - Otherwise compare tile counts: `city_map_tiles` of the old and new radius (3505-3506). If the counts are equal, return with no change (3508-3511). The stored radius is NOT updated in this case, because the store happens later at 3523. So a radius change that adds no tiles is ignored and the stored value keeps its old number.
 - Store the new radius (3523). If the count grew (3525-3527): refresh vision only. Nothing moves; new slots start empty.
-- If the count shrank (the else branch of that test, 3529 onward): (a) for every tile in the removed ring that this city works, empty it and count the worker (3532-3540). (b) If any workers were removed, walk the new radius from the centre outward and, for each tile that is not a free-worked tile, is not already worked by THIS city, and passes `city_can_work_tile` (which is where exclusion by other cities, enemy units and the like comes from), assign a worker there (3553-3555), decrementing the count until it reaches zero (3545-3563). (c) Any workers still unplaced become specialists: `pcity->specialists[DEFAULT_SPECIALIST] += workers` (3566-3568).
+- If the count shrank (the else branch of that test, 3529 onward): (a) for every tile in the removed ring that this city works, empty it and count the worker (3532-3540). (b) If any workers were removed, walk the new radius from the centre outward and, for each tile that is not already worked by someone else, is workable, and is not a free-worked tile, assign a worker there, decrementing the count until it reaches zero (3545-3563). (c) Any workers still unplaced become specialists: `pcity->specialists[DEFAULT_SPECIALIST] += workers` (3566-3568).
 - Then refresh vision (3571) and, for AI cities, update the advisor data (not expanded).
 - Tile order: `generate_city_map_indices` builds one index for the largest radius and sorts it by squared distance, then dx, then dy (common/city.c 545-547 build, 575 qsort, 343-360 comparator). Radius-specific iteration then walks that sorted array outward (macro bodies not read). So "nearest first" for the refill is what the sort implies; I did not read the walk itself.
 
@@ -135,7 +135,7 @@ Typecheck: copied to the VPS as /tmp/cm015-freeciv-footprint.ts, appended `expor
 - GPL-2.0-or-later: clean-room only. The sketch is written from the mechanism; no donor line is copied.
 - Defect found and fixed in the sketch: the donor does not store a new radius when the tile count is the same (citytools.c 3508-3523). The stored value then lags the effect total, so every later refresh repeats the comparison. Harmless to the tile set, but it means the stored value is not the effect total. Fix: store the new value first and skip only the worker work when the count is equal. The sketch still mirrors the donor so the difference is visible; the acceptance test should check that the stored value equals base plus bonuses.
 - Shrink ordering and the idle outcome must be one ledger: a displaced service that goes idle needs a state the server owns (Frankendom rule: one ledger, server-verified). The donor's specialist count is a plain counter, not a per-service record; do not copy that.
-- The donor's refill checks `city_can_work_tile`, free-worked and not-already-worked-by-this-city (3553-3555). Frankendom needs an equal rule (for example, a blocked or contested slot), or a refill can place a service where it cannot run.
+- The donor's refill checks `city_can_work_tile` and free-worked (not read). Frankendom needs an equal rule (for example, a blocked or contested slot), or a refill can place a service where it cannot run.
 - MAX_ATTACKERS = 3 does not apply to a service footprint: a zone ring can be larger than 3 without any duel using more than 3 attacker slots. Keep the footprint a zone-level service ring, not a fight ring.
 - Vision refresh and owner notify are client or UI concerns; they stay out of the engine.
 - The donor is a turn-based 4X city on a 2D grid. A Frankendom zone is a 3D world; a 2D footprint on the ground plane would need a rule for slope and blocked tiles that the donor does not give.
@@ -143,10 +143,3 @@ Typecheck: copied to the VPS as /tmp/cm015-freeciv-footprint.ts, appended `expor
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 Brief rule served: zones as data on one runtime; row 23 numbers as zone data; engine owns placement and idle state
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-MINOR.
-- Refill condition misstated as 'not already worked by someone else'; real test is !is_free_worked && tile_worked(ptile) != pcity && city_can_work_tile (3553-3555), i.e. not already worked by this city; other-city exclusion lives in city_can_work_tile.
-- Missed: city_refresh uses the return value to force a client sync (cityturn.c 171); the function also notifies the owner (3580) and updates the AI advisor (3575-3577). The refill loop starts at the city centre (CENTER_RADIUS_SQ) so it prefers the centre tile first.
-
-Fixed 2026-10-12: refill condition corrected in section 1 and the defects list; added the missed side effects line above. Sketch unchanged (no typecheck needed).

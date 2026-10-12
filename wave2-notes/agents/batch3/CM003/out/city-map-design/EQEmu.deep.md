@@ -10,7 +10,7 @@ Checked: Read in full: `Zone::GetClosestZonePoint` (2031-2085), `Zone::GetCloses
 - Physical lines (`zone_point_list`): `GetClosestZonePoint(location, targetZone, client, range)` (2031) walks the list. It skips lines whose version mask does not match the client (2045-2047), keeps only lines to the target zone (2051), and measures a true 2D distance (`Distance`, 2053; `position.cpp` 81 is the square root of the squared distance). The distance is set to 0 only when both axes are sentinel (2054), so a line with one sentinel axis is measured as a normal 2D distance here.
 - The range test: `max_distance2 = max_distance * max_distance` (2040) and `if(closest_dist > max_distance2)` (2078) compare a true distance to a squared bound. With the range constant 40000 (`common.h` 64) the bound is 1.6e9, so the test does not limit anything in practice. A band from 400 units up to that bound flags a cheat (2068-2071) but does not refuse.
 - Fallback without a target zone: `GetClosestZonePointWithoutZone` (2093-2128) takes the nearest line by squared planar distance, zeroing each sentinel axis on its own (2112), and compares the squared distance to the squared range (2117, 2125). This path is consistent; the range is 40000 units (`common.h` 62).
-- Zone request: an unsolicited zone request (client asks to go to zone Z) uses the nearest line to Z (`zoning.cpp` 138); if there is none, or its target is not Z, the request is cancelled and a cheat is flagged (141-147). Arrival (316-319; only +999999 counts, -999999 does not): each target axis equal to 999999 keeps the player's current coordinate; otherwise the target coordinate is used. A nearby fallback for requests with no target zone (`zoning.cpp` 100) uses the no-zone lookup with the nozone range.
+- Zone request: an unsolicited zone request (client asks to go to zone Z) uses the nearest line to Z (`zoning.cpp` 138); if there is none, or its target is not Z, the request is cancelled and a cheat is flagged (141-147). Arrival (316-319): each target axis equal to 999999 keeps the player's current coordinate; otherwise the target coordinate is used. A nearby fallback for requests with no target zone (`zoning.cpp` 100) uses the no-zone lookup with the nozone range.
 - Home travel: gate and death use bind slot 0 as the destination (`zoning.cpp` 94-95 for the target-zone choice, 288-299 for arrival, 1168 gate call, 1182-1183 `GoToDeath` into `ZoneToBindPoint`). The donor sets `ignore_restrictions = 1` for bind travel and marks it in a comment as possibly exploitable (299).
 - Virtual boxes: `Client::CheckVirtualZoneLines` (9914-9930) runs from the client update handler (`client_packet.cpp` 5074). For each virtual line: the box is centred on the line's x and y, half-size `width / 2` on both axes (9917, 9920-9923, strict comparisons); height band from `z - 10` (9924) to `z + height` (9925, strict). Inside the box, the player is moved to the line's target (MovePC).
 
@@ -41,7 +41,7 @@ simplified: the sketch keeps the nearest physical line filtered by target zone, 
 // Licence: GPL-3.0-or-later (donor, EQEmu). Clean-room sketch written from the described mechanism, not a translation of the donor lines.
 interface Pos { x: number; y: number; z: number }
 
-// Donor sentinel: 999999 (or -999999) on an axis means "any" for a trigger; on an arrival only +999999 means "keep the current value" (zoning.cpp 316-318).
+// Donor sentinel: 999999 (or -999999) on an axis means "any" for a trigger, or "keep the current value" for an arrival.
 const ANY = 999999;
 
 interface Box { halfW: number; halfD: number; zBelow: number; height: number }
@@ -58,11 +58,6 @@ interface Bind { zone: number; x: number; y: number; z: number }
 
 function isAny(v: number): boolean {
   return v === ANY || v === -ANY;
-}
-
-// Arrival keep-current test: the donor tests only +999999 here (heading uses 999, zoning.cpp 319).
-function keepsCurrent(v: number): boolean {
-  return v === ANY;
 }
 
 // Squared planar distance; an axis marked ANY does not count. Both sentinel signs are handled on each axis.
@@ -88,12 +83,12 @@ export function nearestLine(lines: ZoneLine[], p: Pos, targetZone: number, maxRa
   return best !== null && bestDist <= maxRange ? best : null;
 }
 
-// Arrival point: a target axis equal to +ANY keeps the coordinate the player came from.
+// Arrival point: a target axis marked ANY keeps the coordinate the player came from.
 export function arrival(line: ZoneLine, from: Pos): Pos {
   return {
-    x: keepsCurrent(line.targetX) ? from.x : line.targetX,
-    y: keepsCurrent(line.targetY) ? from.y : line.targetY,
-    z: keepsCurrent(line.targetZ) ? from.z : line.targetZ,
+    x: isAny(line.targetX) ? from.x : line.targetX,
+    y: isAny(line.targetY) ? from.y : line.targetY,
+    z: isAny(line.targetZ) ? from.z : line.targetZ,
   };
 }
 
@@ -131,7 +126,7 @@ Acceptance: a server test sends a zone request from 600 units away from any line
 ## 6. Gaps and risks
 
 - GPL-3.0-or-later: clean-room only. The sketch is written from the described mechanism; no donor line is translated.
-- Defect 1, range: the target-filtered lookup compares a true distance with a squared bound (zone.cpp 2040, 2053, 2078; `position.cpp` 81), so a far zone request is accepted and only flagged (2068-2071). Next step (checker, 2026-10-12): when the range test nulls the target-filtered pick, zone.cpp 2078-2082 falls back to GetClosestZonePointWithoutZone, and zoning.cpp 141 cancels only if that point's target_zone_id differs from the request; the 2068 watermap flag fires in a different case (not in a zoneline) than the no-watermap 400 band. Fix: compare true distance to a real range and refuse (sketch `nearestLine`). Consequence of the cheat flag was not read.
+- Defect 1, range: the target-filtered lookup compares a true distance with a squared bound (zone.cpp 2040, 2053, 2078; `position.cpp` 81), so a far zone request is accepted and only flagged (2068-2071). Fix: compare true distance to a real range and refuse (sketch `nearestLine`). Consequence of the cheat flag was not read.
 - Defect 2, sentinel: the target-filtered path sets the distance to 0 only when both axes are 999999 (zone.cpp 2054), so a one-axis sentinel is not treated as "any" there; the fallback zeroes each sentinel axis on its own (2112). The same line measures differently in the two lookups. Fix: one per-axis rule (sketch `planarDistSq`).
 - Defect 3, box shape: one `width` sets the half-size on both axes (client.cpp 9917, 9920-9923). A corridor cannot be described. Fix: add a depth column; the sketch has `halfW` and `halfD`.
 - Defect 4, fixed z band: the 10-unit band below the box is a constant (client.cpp 9924), not data. Fix: `zBelow` per box.
@@ -139,9 +134,3 @@ Acceptance: a server test sends a zone request from 600 units away from any line
 - Bind travel: the donor sets `ignore_restrictions = 1` for bind travel and its own comment calls it possibly exploitable (zoning.cpp 299). Not analysed further. Frankendom must decide the home-return rule in one place and test it.
 - Position trust: the box check and the zone request both run on the client-reported position (client_packet.cpp 4832, 5074). Frankendom's server-verified rule means the server must use its own last accepted position. This does not transfer as written; the donor's cheat manager is the only check read.
 - Not read: the rest of the zone handler (instances, restrictions, cheat manager actions), the water-map exception (zone.cpp 2068), the zone-points table schema beyond the loader, and any in-town layout (none found).
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-Verdict: MINOR
-- Sketch isAny treated -999999 as keep-current on arrival; donor arrival (zoning.cpp 316-318) tests only 999999 (heading 999 at 319).
-- Defect 1 'far request accepted and only flagged' omitted the next step (fallback to GetClosestZonePointWithoutZone at zone.cpp 2078-2082, cancel only if target zone differs, zoning.cpp 141); watermap flag at 2068 is a different case from the no-watermap 400 band.
-Fixed 2026-10-12: sketch arrival now uses keepsCurrent (+999999 only); Defect 1 and the arrival line now state the fallback and the sign rule.

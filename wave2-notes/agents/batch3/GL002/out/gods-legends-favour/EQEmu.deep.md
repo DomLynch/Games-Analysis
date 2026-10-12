@@ -153,7 +153,3 @@ Best transferable idea (restated for the table): one favour balance paid into ti
 
 Reuse tag: rewrite-from-idea (GPL-3.0; clean-room only)
 Brief rule served: one ledger (favour is a Core ledger row, charges written only by the server); rule numbers in the focus brief n/a
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-CLEAN
-- Missed (informational, not an error): tribute-item and tribute-money handlers (client_packet.cpp ~15960-16000) are server-gated on a valid TributeMaster NPC within USE_NPC_RANGE2; TributeItem refuses Favor<1 and checks stack quantity; LoadTributes orders tiers by level.

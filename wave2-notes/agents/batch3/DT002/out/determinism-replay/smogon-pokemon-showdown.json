@@ -1,0 +1,16 @@
+{"game":"smogon-pokemon-showdown", "category":"determinism-replay", "cell":1, "verdict":"STRONG", "depth":"full", "donor_path":"/mnt/frankendom-donors/smogon-pokemon-showdown", "licence":"MIT (LICENSE: The MIT License (MIT), Copyright (c) 2011-2026 Guangcong Luo and other contributors)", "licence_class":"permissive",
+"target_module":"src/fight/record.ts", "parity_row":19,
+"pattern_tags":["lockstep","fixed-step","new:seeded-stream","new:input-log-replay","new:save-restores-stream-position","new:tie-shuffle-spends-draws"],
+"data_fields":[
+{"name":"rng_algo","donor_constant":"sodium (ChaCha20 keystream) default; gen5 (64-bit LCG) for old logs","unit":"none","where":"engine constant","donor_ref":"sim/prng.ts:59"},
+{"name":"seed_bits","donor_constant":"128 (four 32-bit words from crypto)","unit":"units","where":"engine constant","donor_ref":"sim/prng.ts:210"},
+{"name":"damage_roll_offset","donor_constant":"random(16): 0-15 off 100, i.e. 85-100 percent","unit":"ratio","where":"engine constant","donor_ref":"sim/battle.ts:2397"},
+{"name":"fixed_point_scale","donor_constant":"4096 (factor times 4096, +2048, >> 12)","unit":"units","where":"engine constant","donor_ref":"sim/battle.ts:2322"},
+{"name":"speed_tie_draws","donor_constant":"Fisher-Yates over each tie group: group size minus 1 draws","unit":"count","where":"engine constant","donor_ref":"sim/battle.ts:459"},
+{"name":"turn_order_keys","donor_constant":"order low first, then priority high, speed high, subOrder low, effectOrder low","unit":"none","where":"engine constant","donor_ref":"sim/battle.ts:408"}
+],
+"best_idea":"One seed plus an ordered choice log rebuilds any fight exactly, and saving the RNG's position lets a fight resume mid-way.",
+"decision":"adapt",
+"decision_why":"Keeps the seeded record and save/restore of the stream position for row 19 and server-verified kills; splits the single stream into named sub-streams and keeps GM actions out of the record (donor defects fixed, idea kept).",
+"decision_status":"proposed",
+"acceptance":"A server test replays 200 stored duel records from seed and choices alone and asserts identical HP, log and kill result; a save-at-turn-5 test resumes and matches the uninterrupted run; changing only the loot table leaves duel hits unchanged."}

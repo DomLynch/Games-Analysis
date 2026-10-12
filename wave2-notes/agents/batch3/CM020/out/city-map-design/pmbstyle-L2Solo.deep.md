@@ -144,7 +144,3 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 Reuse tag: adapt (Apache-2.0)
 Brief rule served: one engine; MAX_ATTACKERS = 3; parity row 4
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-CLEAN
-- Missed (informational, not an error): pointsFor also has APPROACH_OVERRIDES (per-NPC exact points) and a point cache, and returns null when the NPC has no heading (TownNpcApproach ~120-135).

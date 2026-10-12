@@ -18,7 +18,3 @@ Donor root: `/mnt/frankendom-donors/Open-RSC-Core-Framework/server/` (server hal
 | 12. Relics and artifacts | Not read in this donor | (not read) | (not read) | (not read) | (not read) | (not read) |
 | 13. Temples and shrines as zone rows | Altar command "recharge at": refills to max level; object id 200 gets +2 levels; a Yanille altar (id 625 at y 3573) is a trapdoor, not a shrine | target = max level + (2 if object 200 else 0) | +0 or +2 levels | free (no cost read) | none | Prayer.java 15-31, 36-37 |
 | 14. Pantheon factions and realm pride | Not read in this donor (PlayerClass.java has a comment on alignment, body not read) | (not read) | (not read) | (not read) | (not read) | (not read) |
-
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-CLEAN

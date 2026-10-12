@@ -15,8 +15,8 @@ Acceptance: A server test asserts that a rate change made during the day is not 
 - Sale (L1Shop.java:220-224 to TownTable.java:105-135). On a shop sale to a player, the town is found from the NPC (L1TownLocation.getTownIdByNpcid). The sale is booked only when no monthly pass is running (L1Shop.java:221). Per unit, the variable tax is `price * rate / 100` and the fixed tax is `price * 2 / 100`, both with integer division (TownTable.java:120-121). If a non-zero rate gives 0, the variable and fixed taxes are each forced to 1 (125-129). Today's sales go up by price times count for the line (TownTable.java:117, the total sales counter).
 - Buyer's price (L1TaxCalculator.java:116-126). The buyer's town tax is the sum over units of `(int)((price * Config.RATE_SHOP_SELLING_PRICE) * rate / 100)`, where the rate is the active rate plus 2 (L1TownLocation.java:187). So the buyer pays the variable plus the fixed part.
 - Daily tick (HomeTownTimeController.java:78-90). On each day change the reserved rate becomes the active rate (TownTable.java:220), today's sales become yesterday's and today's reset to zero (236), and the in-memory map reloads.
-- Monthly pass (HomeTownTimeController.java:92-136), on day 25. Sales are paused (98). For each town 1 to 10 (109), the members are ranked by contribution, highest first (154); the total contribution is summed; the unit is the fixed pool divided by the total contribution, floored to two decimals (179-180); each member's pay becomes contribution times the unit and the contribution resets (183); the leader becomes the top contributor and the fixed pool resets to 0 (188). The order inside `monthlyProc` is: roll the rate and sales tables and reload (93-96), pause sales and save all players (98-108), run the per-town pass above (109-123), reload, set HomeTownID -1 to 0 and reset every player's contribution and save again (123-131), then `clearHomeTownID` (134, the SQL at 216) and resume sales (135). A town with no members gets leader id 0 and a null name and its fixed pool is zeroed anyway (157-160, 188-192): the pool is destroyed, not carried over. The payout itself is claim-and-zero: `getPay` (226-254) reads the character's Pay column with FOR UPDATE and sets it to 0, so each member collects once. On day 25 `monthlyProc` runs instead of `dailyProc` (only one of the two runs).
-- Return points (L1TownLocation.java:173-178). Each town has a small array of coordinates (2 to 9 points per town, counted from the arrays). One is picked uniformly at random with ThreadLocalRandom (177). The map id comes from a second table (151-167). An unknown town falls back to the Silver Knight Town points array only (175-176); the map id at 178 is `townToMap.get(townId)`, which returns null for an unknown town and throws on unboxing, so the fallback is incomplete (donor defect: fall back the map id too). Callers include the Getback path, the home-town item (C_ItemUSe.java:1172) and the Orcish Forest return (L1PcInstance.java:1306).
+- Monthly pass (HomeTownTimeController.java:92-136), on day 25. Sales are paused (98). For each town 1 to 10 (109), the members are ranked by contribution, highest first (154); the total contribution is summed; the unit is the fixed pool divided by the total contribution, floored to two decimals (179-180); each member's pay becomes contribution times the unit and the contribution resets (183); the leader becomes the top contributor and the fixed pool resets to 0 (188). Players are then saved, the home-town flag of unassigned players is cleared (216), and sales resume (135).
+- Return points (L1TownLocation.java:173-178). Each town has a small array of coordinates (2 to 9 points per town, counted from the arrays). One is picked uniformly at random with ThreadLocalRandom (177). The map id comes from a second table (151-167). An unknown town falls back to the Silver Knight Town array (176). Callers include the Getback path, the home-town item (C_ItemUSe.java:1172) and the Orcish Forest return (L1PcInstance.java:1306).
 
 ## 2. Key functions
 
@@ -113,8 +113,7 @@ function monthlyPayout(t: Town, contributions: Map<string, number>): { leader: s
   const pay = new Map<string, number>();
   for (const [id, c] of contributions) pay.set(id, c * unit);
   t.fixPool = 0;
-  // Donor: a town with no members ends with no leader and its pool is still zeroed.
-  t.leaderId = leader ?? "";
+  t.leaderId = leader ?? t.leaderId;
   t.paused = false;
   return { leader, pay };
 }
@@ -144,11 +143,3 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room, shape only)
 Brief rule served: 1 (one engine, zones as data); one ledger (one tax figure per sale); server-verified (sale and rate change on the server)
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-Verdict: MINOR
-- monthlyProc order: players are saved first (102-108), then the per-town pass, then HomeTownID -1 to 0 and contribution reset (123-127), then clearHomeTownID (134); note said players are saved after the pool pass.
-- Fallback at L1TownLocation 175-176 only substitutes the points array; townToMap.get(townId) at 178 returns null for an unknown town and unboxing throws, so the fallback claim was incomplete.
-- Missed: empty town gets leader 0/null and its pool zeroed (sketch kept the old leader); getPay 226-254 claim-and-zero payout; day-25 path replaces dailyProc.
-
-Fixed 2026-10-12: monthly order rewritten, fallback claim corrected, added empty-town and getPay lines; sketch monthlyPayout now clears the leader for an empty town. Typecheck: see report.

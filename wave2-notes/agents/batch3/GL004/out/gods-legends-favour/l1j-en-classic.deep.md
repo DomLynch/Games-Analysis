@@ -8,12 +8,12 @@ Checked: Read in full: `L1Karma.java` (85 lines). `L1MonsterInstance.java` aggre
 
 - Karma is one signed integer per character, clamped to -15500000..15500000 on every write (`L1Karma.set`, L1Karma.java 35-37, with the range at 27). `add` goes through the clamped setter (39-41).
 - The level is the sign times the number of thresholds reached, capped at eight steps. Thresholds (KARMA_POINT, 24-25): 10000, 20000, 100000, 500000, 1500000, 3000000, 5000000, 10000000, 15500000. The loop breaks at eight (53-62, cap at 56). `getPercent` gives progress toward the next step as `100 * (karma - lower) / (upper - lower)` (82-83), with integer division.
-- Awards from kills (`L1MonsterInstance.giveKarma`, 580-593): the monster's own karma is the award. If the player's karma LEVEL sign is non-zero (level 0, i.e. |karma| < 10000, gets no multiplier) and differs from the monster's karma sign, the award is multiplied by five (589-590). The result is scaled by `Config.RATE_KARMA` and added (592). Zero monster karma returns with no award (583-584).
+- Awards from kills (`L1MonsterInstance.giveKarma`, 580-593): the monster's own karma is the award. If the player's karma level sign differs from the monster's karma sign, the award is multiplied by five (589-590). The result is scaled by `Config.RATE_KARMA` and added (592). Zero monster karma returns with no award (583-584).
 - Awards from exp (`CalcExp.AddExp`, 517-533): a dead player gets nothing (519-521). The lawful axis changes on its own, scaled by a rate and a second multiplier for chaotic players (523-529). Karma changes by the exp karma value times the karma rate, times five when the award sign matches the player's current karma sign (531-533).
 - Aggression gate (`L1MonsterInstance`, 149-150): a monster whose karma is negative skips a player whose karma level is 1 or higher, and a monster whose karma is positive skips a player whose level is -1 or lower. So monsters of one alignment do not pick targets of the other alignment (the target loop continues past these players).
 - Purchase reduction (`C_NPCAction`, 1057-1074): an NPC branch takes 1, 10 or 100 of a fixed item and adds -100, -1000 or -10000, each times the karma rate. There is no sign check in these branches.
 - Betrayal reset (`C_NPCAction`, 1041-1042, NPC id 80049 by the enclosing branch at 1039): when karma is at or below -10000000, it is set to 1000000 once, and a message is sent.
-- Merchant service gates: many merchant branches check the karma level (for example `L1MerchantInstance.java` 914, 936, 960, 984, 1008 and 1233; 1032 is not a karma check); the bodies were not read.
+- Merchant service gates: many merchant branches check the karma level (for example `L1MerchantInstance.java` 1032 and 1232); the bodies were not read.
 - Tick: none. Awards happen at kill and exp events. There is no decay in the files read.
 
 ## 2. Key functions
@@ -29,7 +29,7 @@ Checked: Read in full: `L1Karma.java` (85 lines). `L1MonsterInstance.java` aggre
 |---|---|
 | Signed alignment value, clamped band, level by threshold ladder capped at eight steps | Range plus or minus 15500000; steps 10000 to 15500000 (theirs, L1Karma.java 24-27, 53-56) |
 | Progress toward the next step, integer | Percent of the step (theirs, 82-83) |
-| Award by the target's own value, times five when the signs oppose and the player's level sign is non-zero | Factor 5 (theirs, MonsterInstance 589-590); factor 5 for aligned exp award (theirs, CalcExp 533) |
+| Award by the target's own value, times five when the signs oppose | Factor 5 (theirs, MonsterInstance 589-590); factor 5 for aligned exp award (theirs, CalcExp 533) |
 | Scaled award added to the signed value | Karma rate `Config.RATE_KARMA` (theirs, 592, 533, 1058-1074) |
 | Aggression skip by sign and level | Level 1 and -1 cut-offs (theirs, MonsterInstance 149-150) |
 | Purchase reduces the value by a fixed amount for a fixed item count | 1, 10, 100 items for -100, -1000, -10000 (theirs, C_NPCAction 1057-1074) |
@@ -76,7 +76,7 @@ export function karmaPercent(k: number): number {
   return Math.floor((100 * (mag - lo)) / (hi - lo));
 }
 
-// Award from a kill or an exp event. Opposite-sign karma of the monster is worth five times (caller sets oppositeSign false when the player's level is 0), and so is an aligned award
+// Award from a kill or an exp event. Opposite-sign karma of the monster is worth five times, and so is an aligned award
 // when the exp path uses it (donor: L1MonsterInstance.java 589-592; CalcExp.java 531-533 aligned x5).
 // Fix (donor defect): the rate is applied with a carry, so a fractional rate does not silently drop small awards.
 export function awardKarma(soul: Soul, amount: number, rate: number, oppositeSign: boolean): number {
@@ -136,17 +136,17 @@ Reuse tag: rewrite-from-idea (GPL-2.0-or-later). Brief rule served: rules 1-2 an
 
 Best transferable idea: a single signed alignment meter with a fixed threshold ladder, an award that is multiplied when it moves against the player's standing, and a one-way reset at a far threshold that a player can trigger.
 Decision (proposed): adapt - the signed ladder, the level and percent readouts and the one-way reset at a threshold fit the favour and patron-switch rows; the donor's two different five-times rules, its unchecked purchase and its int truncation are replaced by one rule, a toward-zero purchase and a carried award (D1 to D3), with the reset as data (D4).
-Acceptance: a server test checks that a kill whose award opposes the player's non-zero level sign grants five times the base award, that a purchase tier of 10000 points moves karma from 5000 toward zero without crossing it, and that a player at -10000000 or below is reset to 1000000 once and not again within the cooldown row; the level readout matches the ladder at each step.
+Acceptance: a server test checks that a kill whose award opposes the player's level grants five times the base award, that a purchase tier of 10000 points moves karma from 5000 toward zero without crossing it, and that a player at -10000000 or below is reset to 1000000 once and not again within the cooldown row; the level readout matches the ladder at each step.
 
 GL table (gods-legends-favour; "not read" where I opened no code for the item):
 
 | # | name | effect | formula | number ranges | gain/loss events | decay | file:line |
 |---|---|---|---|---|---|---|---|
-| 1 | Favour (karma) | signed alignment meter per character, level readout and percent to next step | clamp(k + d, -15500000, 15500000); level = sign times steps reached, cap 8 | plus or minus 15500000; steps 10000..15500000 | kill award (monster karma, times 5 on opposing sign when the player's level sign is non-zero, times rate); exp award (times 5 when aligned); purchases of -100, -1000, -10000 | none found in files read | L1Karma.java 24-27, 35-41, 53-62, 82-83; MonsterInstance 580-593; CalcExp 531-533; C_NPCAction 1057-1074 |
+| 1 | Favour (karma) | signed alignment meter per character, level readout and percent to next step | clamp(k + d, -15500000, 15500000); level = sign times steps reached, cap 8 | plus or minus 15500000; steps 10000..15500000 | kill award (monster karma, times 5 on opposing sign, times rate); exp award (times 5 when aligned); purchases of -100, -1000, -10000 | none found in files read | L1Karma.java 24-27, 35-41, 53-62, 82-83; MonsterInstance 580-593; CalcExp 531-533; C_NPCAction 1057-1074 |
 | 2 | Blessings and curses | not read in this donor | n/a | n/a | n/a | n/a | not read |
 | 3 | Patron choice and switching | one-way reset: at or below -10000000 karma becomes 1000000, once per trigger in the branch; no god-anger or apostasy cost found in the branch | trigger and reset as constants | trigger -10000000; reset 1000000 | the NPC action | none | C_NPCAction.java 1039-1044 |
 | 4 | Divine domains as tags | not read; alignment is a single sign axis; no domain tags seen in the files read | n/a | n/a | n/a | n/a | not read |
-| 5 | Boons at thresholds | karma level gates many merchant services (checks at 914, 936, 960, 984, 1008, 1233; 914-1284 in grep); level gates aggression by sign (MonsterInstance 149-150) | level >= 1, level <= -1, level == n | level -8..8 | level change | none | MerchantInstance (grep only); MonsterInstance 149-150 |
+| 5 | Boons at thresholds | karma level gates many merchant services (checks at 1032, 1232, 914-1284 in grep); level gates aggression by sign (MonsterInstance 149-150) | level >= 1, level <= -1, level == n | level -8..8 | level change | none | MerchantInstance (grep only); MonsterInstance 149-150 |
 | 6 | Legend signature powers | not read | n/a | n/a | n/a | n/a | not read |
 | 7 | Shapeshifting | not read in this donor | n/a | n/a | n/a | n/a | not read |
 | 8 | Avatars and summons | not read in this donor | n/a | n/a | n/a | n/a | not read |
@@ -156,11 +156,3 @@ GL table (gods-legends-favour; "not read" where I opened no code for the item):
 | 12 | Relics and artifacts | not read | n/a | n/a | n/a | n/a | not read |
 | 13 | Temples and shrines | not read | n/a | n/a | n/a | n/a | not read |
 | 14 | Pantheon factions and realm pride | alignment is a two-axis value: karma (signed meter) and lawful (separate, changed by exp with a chaotic multiplier); no faction standing read | lawful: add = -(lawful * RATE_LA), times RATE_CHAO_LA when lawful is below zero | rates from config (not read) | exp event | none found | CalcExp.java 523-529 |
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-MINOR. Ladder, clamp, getPercent, CalcExp 517-533, aggression gate 149-150, 80049 betrayal 1041-1042, purchases 1057-1074, GPL2+ header and the three int-cast defects verified.
-- Kill-award rule misstated: x5 needs pcKarmaLevelSign != 0 as well (L1MonsterInstance 589-590); level-0 players get no multiplier.
-- 'L1MerchantInstance 1032' is not a karma check (real: 914, 936, 960, 984, 1008; 1233 for 80065).
-- Missed: giveKarma goes only to the player passed from the kill path (L1MonsterInstance 530 and 558, last attacker), not every damage dealer; in the exp path signum(0)==signum(0) counts karma 0 vs player karma 0 as aligned (x5 on a zero award, harmless).
-
-Fixed 2026-10-12: kill-award rule, merchant line numbers (text, parity table, mapping row) and the acceptance sentence corrected; sketch code unchanged (only a comment), so no typecheck run.

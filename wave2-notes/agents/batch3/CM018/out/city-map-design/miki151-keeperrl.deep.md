@@ -19,8 +19,8 @@ Acceptance: in a zone town a player sees every service door open onto one street
   (c) Size and side: w and h from get(3, 7) (values 3 to 6); buildingRow = get(2), a random 0 or 1, picks the row above the street (py = street - h - 1) or below it (py = street + 2) (967 and 969; the row choice is applied at 979). x is random inside the area.
   (d) Fit: the footprint plus a one-tile gap (spaceBetween = 1, 954) must not touch a filled tile. Up to 10000 tries per building (964). If no fit and i is below minBuildings, the level fails (993-994). If no fit and i is at or above the minimum, the loop stops and keeps what fitted.
   (e) Build: perimeter tiles get wall furniture, interior tiles get the ROOM attribute, and one door is placed on the street-facing wall (1011-1014): y = py + buildingRow * h, x random away from the corners for wide buildings.
-  (f) Services: building i runs insideMakers[i] (1021-1022); buildings past the list become EMPTY_ROOM (1024-1025). The constructor has `CHECK(insideMakers.size() <= minBuildings)` (936), but the member init has already `std::move()`d the parameter, so the CHECK reads the moved-from (empty) vector and never fires; the intended guard is not enforced (donor defect, keep the idea and enforce it on load). In village() the list is the elder room first (2025), then one ShopMaker per shop list (2026-2027), then stockpiles.
-- After the loop: the middle third of the street rows gets BUILDINGS_CENTER (1027-1029), the band where outside features may go. The middle tile of the street row becomes a ROAD with CONNECT_ROAD (1031-1035) only when `roadConnection` is true (village passes `!info.dontBuildRoad`).
+  (f) Services: building i runs insideMakers[i] (1021-1022); buildings past the list become EMPTY_ROOM (1024-1025). The constructor checks that the service count is at most minBuildings (936). In village() the list is the elder room first (2025), then one ShopMaker per shop list (2026-2027), then stockpiles.
+- After the loop: the middle third of the street rows gets BUILDINGS_CENTER (1027-1029), the band where outside features may go. The middle tile of the street row becomes a ROAD with CONNECT_ROAD (1032-1035).
 - Roads (1494): the map-wide maker (2974) runs after the settlements exist. It collects every CONNECT_ROAD tile in raster order (1522-1525), then for each consecutive pair (1528-1530) runs a ShortestPath search (1531-1534). Costs (getValue, 1503-1511): NO_ROAD or unwalkable and not a cut-through = infinity; water = a bridge at cost 10 (1507-1508); existing road or bridge = 1 (1509-1510); other ground = 1 + (1 + height)^2 (1511). Path tiles then get ROAD or BRIDGE furniture (1535-1540).
 - The search is a priority queue ordered by cost so far plus the heuristic (shortest_path.cpp 117, 120). The heuristic is the Manhattan distance to the other endpoint (1533). Neighbours are tried in random order (1534).
 
@@ -44,7 +44,7 @@ Acceptance: in a zone town a player sees every service door open onto one street
 | Street row = centre - 2 + [0, 5) | `height / 2 - 2`, `get(5)` (957) |
 | Retry budget per building | 10000 (964) |
 | Minimum count guard | failGen below minBuildings (993) |
-| Service i goes to building i | CHECK service count <= minBuildings (936), dead because it reads the moved-from vector |
+| Service i goes to building i | CHECK service count <= minBuildings (936) |
 | Outside feature chance on the street band | 0.2 (2036) |
 | Road cost: unroutable, water, road, ground | infinity (1506); bridge 10 (the value is on 1508, a bare `return 10;` line is under 15 characters so there is no receipt for it); road 1 (1510); ground 1 + (1 + h)^2 (1511) |
 | SMALL_VILLAGE footprint | 15 x 15 (2210) |
@@ -172,22 +172,14 @@ function connectHubs(grid: Tile[][], hubs: Pt[]): void {
 
 - GPL-2.0-or-later: clean-room only. The sketch is written from the mechanism, not translated.
 - Defect, always-true roll: `roll(1)` is `get(1) == 0` (util.cpp 81), and get(1) is always 0, so the branch at 998 always runs. The intent was a chance. fix: use a real chance (for example a 50% chance) or delete the branch.
-- Defect, adjacent attempt: the "next building beside this one" attempt (998-999, then 964-1000) shares a wall column, and the one-tile-gap test rejects it when the rows overlap. It is a wasted try only when the new building lands on the same side as the previous one (with align the two rows differ, so it is not wasted in most cases). This is from reading, not from a run. fix: remove it, or allow a shared wall on purpose and test it.
+- Defect, adjacent attempt: the "next building beside this one" attempt (998-999, then 964-1000) shares a wall column, and the one-tile-gap test rejects it when the rows overlap. So it is a wasted try in most cases. This is from reading, not from a run. fix: remove it, or allow a shared wall on purpose and test it.
 - Defect, exclusive max: `get(min, max)` never returns max (util.cpp 45). SMALL_VILLAGE (3, 4) always gets exactly 3 buildings. fix: write zone data as an inclusive range and convert once in the loader.
 - Defect, raster-order chain: Roads joins hub points in scan order (1528-1530), so one hub can be joined to a far one and roads can cross. fix: join each hub to its nearest already-connected hub (or build a spanning tree over the hubs).
 - Defect, cost of retries: 10000 tries per building (964), each test is a box scan of about (w+3)(h+3) tiles. Worst case is slow; the cost was not measured (not run). fix: lower the budget (for example 200) and report the failure to the zone loader.
 - Defect, failure is all-or-nothing: a missing road or a short town calls failGen (1537; 993-994). The retry is in code not read. fix: retry per zone with a fixed seed and log it.
-- Service rule: the donor intends service count <= minBuildings (936) but the CHECK never fires (moved-from vector). Frankendom should enforce this when the zone data loads, not during generation.
+- Service rule: the donor requires service count <= minBuildings (936). Frankendom should check this when the zone data loads, not during generation.
 - Frankendom rulings: the town is zone data (counts, sizes, street offset, road weights as data fields). The engine owns placement; the client never decides where a shop or hub sits. Shop items and prices stay in the one ledger, not in the layout code. Hub services are server-side; a client may only read the result.
 - Not transferred: the donor's room furniture, stockpiles and lake or mountain features are game-specific.
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 Brief rule served: 1 (one engine); zones as data
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-Verdict: MINOR
-- CHECK(insideMakers.size() <= minBuildings) at 936 runs after the member init std::move()d the parameter, so it reads an empty vector and never fires; note presented it as a working guard.
-- ROAD tile at 1031-1035 is placed only when roadConnection is true; note stated it unconditionally.
-- 'Wasted try in most cases' for the nextw adjacency attempt (971-973) was overstated.
-
-Fixed 2026-10-12: CHECK described as dead (idea kept, enforce on zone load), road tile made conditional, adjacency claim softened. Sketch unchanged (it has no CHECK), no typecheck needed.

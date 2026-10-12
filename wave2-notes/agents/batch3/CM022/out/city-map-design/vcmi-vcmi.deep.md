@@ -167,7 +167,3 @@ Acceptance: in a world zone the minimap shows unexplored tiles black and owned c
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 Brief rule served: 1 (one engine, zone data, ownership from the engine); 7 (client-only HUD)
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-Verdict: CLEAN
-- Nit: note says a hero does not colour its tile when hero icons are on (55-56), but the neutral-owner test (52-53) runs first, so a neutral-owned hero still colours the tile neutral. Missed: showAll fills the widget black first (199-200).

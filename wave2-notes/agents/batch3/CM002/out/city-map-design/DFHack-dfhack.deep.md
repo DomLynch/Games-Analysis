@@ -169,6 +169,3 @@ export function cycle(
 - Matching rules (`matchesFilters`, 139-190) were only partly read: material, heat safety and the special flags. A hub's inputs are simpler; the sketch keys are precomputed.
 - The donor's priority move (`makeTopPriority`) moves one task per requirement and source to the front. Frankendom needs an explicit rule for who gets priority when two hubs want the same input; the donor's rule is "whoever was made top priority last".
 - Not read: `getBucket` past 390, `itemPassesScreen` and `isAccessible` (113-122 and 76-85), the walkability update (52-75), persistence (290-330 partly).
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-CLEAN.

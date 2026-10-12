@@ -1,0 +1,15 @@
+{"game":"boardgameio-boardgame.io", "category":"determinism-replay", "cell":2, "verdict":"STRONG", "depth":"full", "donor_path":"/mnt/frankendom-donors/boardgameio-boardgame.io", "licence":"MIT (root LICENSE: Copyright (c) 2017 The boardgame.io Authors); random.alea.ts carries an MIT-style notice (Copyright 2015 David Bau)", "licence_class":"permissive",
+"target_module":"src/fight/rng.ts", "parity_row":1,
+"pattern_tags":["lockstep","new:pure-draw-state-in-state-out","new:redacted-rng-state","new:client-discard-on-random","new:time-based-default-seed"],
+"data_fields":[
+{"name":"rng_state_words","donor_constant":"4 numbers (c, s0, s1, s2) as plain data","unit":"units","where":"engine constant","donor_ref":"src/plugins/random/random.alea.ts:29"},
+{"name":"alea_carry_multiplier","donor_constant":"2091639","unit":"units","where":"engine constant","donor_ref":"src/plugins/random/random.alea.ts:65"},
+{"name":"die_default_sides","donor_constant":"6","unit":"count","where":"zone data","donor_ref":"src/plugins/random/random.ts:133"},
+{"name":"shuffle_draws_per_item","donor_constant":"one draw per remaining item (n items, n draws)","unit":"count","where":"engine constant","donor_ref":"src/plugins/random/random.ts:186"},
+{"name":"default_seed_length","donor_constant":"last 10 characters of Date.now() in base 36 (time-based; not for Frankendom)","unit":"units","where":"engine constant","donor_ref":"src/plugins/random/random.ts:56"}
+],
+"best_idea":"Keep every random draw a pure function of stored state, store that state as four plain numbers in the fight state, and let the client discard any move that drew randomness until the server answers.",
+"decision":"adapt",
+"decision_why":"Pure draws, plain-data state, player-view redaction and the client-discard rule fit server-verified kills; the time-based seed default and raw Number() exposure are donor defects to drop, and the single stream is split into named sub-streams.",
+"decision_status":"proposed",
+"acceptance":"A server test replays one duel from (seed, move list) with identical rolls; the player view for each side has no rng key; a client test shows a roll-using action leaves displayed HP unchanged until the server answers."}

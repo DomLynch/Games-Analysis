@@ -39,7 +39,7 @@ Acceptance: A zone's ruined chapel is one template where a layer with chance 64 
 | Reusable algorithm | Donor constants |
 |---|---|
 | One byte per node: 7-bit chance and a force bit | Mask 0x7F (mg_schematic.h 57); force 0x80 (63) |
-| Chance scale: 127 means always, 0 means never | Always 127 (60), never 0 (59); the 0xFF "old always" value (61) has the mask give chance 127 but ALSO carries the 0x80 force bit, so nodes loaded from an old-format (version < 2) schematic are force-placed over non-air (loader 336) |
+| Chance scale: 127 means always, 0 means never | Always 127 (60), never 0 (59); the 0xFF "old always" value (61) is read as 127 by the mask |
 | Node roll | Skip when `chance <= roll` (180), roll uniform on 1..127: a stored chance c places with (c-1)/127 (worked by hand: c = 1 never places; c = 64 places 63/127 of the time) |
 | Layer roll | Same rule on the layer chance (153) |
 | Rotation | Four quarter turns, drawn uniformly from 0..3 (decoration path 431) |
@@ -154,10 +154,3 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Cost: one pass over the whole template per placement (sx x sy x sz nodes). Fine at zone load; not for per-frame work.
 - Not a fight mechanism: no hate, no targeting, no effect on MAX_ATTACKERS = 3. It places scenery and collision-free set dressing; anything with a collider must be checked against the collider grid.
 - The minimap (`src/client/minimap.cpp`, 763 lines, read by grep only), signage and road grammars are not covered by this note.
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-MINOR. Defects 1 and 2 both verified real; masks, applyProbabilities 577, l_mapgen 1696, canPlaceDecoration 68-122, DecoSchematic::generate 401-451, SPDX header all match.
-- Note said legacy 0xFF is 'read as 127 by the mask'; 0xFF also has the force bit 0x80, so old-format (version < 2) nodes are force-placed.
-- Missed: deserialize sets slice_probs to 0xFF for version < 3 (line 298) and param1 0xFF for version < 2 (336); a 0xFF slice prob is never skipped (`<= roll` never true) and 0xFF node prob carries force-place. In generate(), centre flags for X/Z swap axes by rotation (433-444) rather than using the rotated size as placeOnVManip does.
-
-Fixed 2026-10-12: table row on 0xFF corrected (force bit); added the legacy-format and rotation-centre lines above. Sketch unchanged (no typecheck needed).

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+smogon-pokemon-showdown	determinism-replay	P	STRONG	full	sim/prng.ts:45-69,198-208,246-295 and sim/battle.ts:408-466,2996-3016 show one seeded RNG per battle, speed ties shuffled from that stream, and a choice log that replays a battle; the donor has no desync checksum.
+boardgameio-boardgame.io	determinism-replay	P	STRONG	full	src/plugins/random/random.ts:83-99 and src/plugins/plugin-random.ts:16-37 keep the PRNG state as plain data in game state and strip it from player views, and src/core/reducer.ts:522-524 makes clients discard any move that drew random numbers.
+hedgewars-hw	determinism-replay	P	STRONG	full	hedgewars/uRandom.pas:43-97 and hedgewars/uCommandHandlers.pas:384-411 show a seeded generator fed with game state and a per-turn checksum the remote side compares; uCommands.pas:110 (argument not folded) and uCommandHandlers.pas:392-398 (order-dependent injection) are defects.

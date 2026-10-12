@@ -149,7 +149,3 @@ export {};
 - Minimap (`src/openrct2-ui/windows/Map.cpp`) and landmark or signage code were not read in this pass, so this cell does not rate the minimap or signage topics.
 - Half read: engine code (placement and connection rules, not the server or client half). No data table was read for this rule: the priority numbers are literals in the code.
 - The sketch is only typechecked (VPS, `tsc --strict --target es2020`, exit 0). It was not run on a path grid.
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-Verdict: CLEAN
-- None. Missed (tiny): pre-pass FootpathUpdateQueueChains/UpdateQueueEntranceBanner (729, 733).

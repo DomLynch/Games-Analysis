@@ -184,7 +184,3 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Not a fight mechanism: it changes no combat rule, no hate, no targeting, and does not touch MAX_ATTACKERS = 3. It is zone layout, and it is relevant to the walk because a lit road is how a player finds a hub.
 - The NPC-spot exception (lamps standing on an NPC spot lose their collider; colliders.ts 1665-1666) is a rule worth copying: a town's furniture must never wall off the person you must walk up to.
 - The minimap and map-marker code (`src/ui/minimap_painter.ts`, `src/ui/minimap_markers.ts`) was not read. This note says nothing about minimap, signage text, or building grammars.
-
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-CLEAN

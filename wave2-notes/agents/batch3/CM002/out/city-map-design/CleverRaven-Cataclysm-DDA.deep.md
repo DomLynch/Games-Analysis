@@ -225,7 +225,3 @@ export function buildTown(
 - Only CITY_UNIQUE is modelled. GLOBALLY_UNIQUE and OVERMAP_UNIQUE (lines 270-274) need a zone-wide registry in Frankendom.
 - Tile grid, road bitmasks, rivers, highways, manholes and megacity are not in the sketch and are not needed for the grammar.
 - Minimap: partly read (`pixel_minimap.cpp` 74-108, 153-175). It draws terrain colour per tile and paints attacking or following monsters red with a sine flicker (`get_critter_color`, `build_batches`). It is client-only; not part of this note's mechanism; not carried into section 5.
-
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-CLEAN

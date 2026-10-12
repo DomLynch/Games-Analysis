@@ -8,10 +8,10 @@ Checked: Read in full: `ComputeDeathWaitTime` (CharacterCombat.cs 181-203), the 
 
 - Death order in `DoDie` (CharacterCombat.cs 61-68): the respawn wait is computed first (`ComputeDeathWaitTime()` at 64, comment says it runs before the death packet), then durability loss is set (66-68).
 - Respawn wait (`ComputeDeathWaitTime`, 185-203): if the last death was at least 5 minutes ago (`DeathCountResetMinutes`, 32), the streak resets to 0 (187-191). The index is `min(streak, 8)` into `[15, 30, 60, 90, 120, 150, 180, 210, 240]` seconds (31, 193-194). So deaths 1-9 in a streak wait 15, 30, 60, 90, 120, 150, 180, 210, 240 s, and every death after the ninth waits 240 s. The wait is stored as `RezWaitDuration = waitSeconds * 1000` (196), `DeadTime` is set (197), the streak increments (199) and the last death time is set (200).
-- XP loss (CharacterCombat.cs 70-92): only in the default world and below max level (70). At or above `MinimumExpLossLevel` (72), `LastExpLoss = GetExpLoss(Level, ExpLossRateAtDeath)` (74), capped to the XP earned in this level (75-77). `RecoverableExp = round(LastExpLoss * 0.80)` (78). Below that level the death is a free resurrect (81-85). At max level or outside the default world, `LastExpLoss` is set to 0 (88-90) but `RecoverableExp` is left untouched (a stale value from an earlier death can survive).
+- XP loss (CharacterCombat.cs 70-92): only in the default world and below max level (70). At or above `MinimumExpLossLevel` (72), `LastExpLoss = GetExpLoss(Level, ExpLossRateAtDeath)` (74), capped to the XP earned in this level (75-77). `RecoverableExp = round(LastExpLoss * 0.80)` (78). Below that level the death is a free resurrect (81-85). At max level or outside the default world, the loss is 0 (88-90).
 - `GetExpLoss` (ExperienceManager.cs 206-213): `floor((XP for level+1 - XP for level) * rate)`. At max level it returns 0 (208-209). So the loss is a fraction of the current level's XP span and cannot take the character down a level.
 - Respawn: the death packet uses `RezWaitDuration` for characters (Unit.cs 467); NPCs use their spawner's `RespawnTime` (474).
-- Recovery (RecoverExpEffect.cs): the labor check (37-41) runs only when the data flag `NeedLaborPower` is set, and the priest check (54-69, a priest NPC within 10 units via `GetAround<Npc>`) only when `NeedPriest` is set; `NeedMoney` is an empty stub. The labor cost is `level` up to 50, then `50 + (level - 50) * 20` (36). The labor spend (71) and `AddExp(RecoverableExp)` (74) run unconditionally once the checks pass (even if the flags are off), then `RecoverableExp` and `LastExpLoss` are cleared (75-76).
+- Recovery (RecoverExpEffect.cs): a priest NPC must be in range (56, 62-66). The labor cost is `level` up to 50, then `50 + (level - 50) * 20` (36). The labor is spent (71), `RecoverableExp` is added with `AddExp` (74), and the loss is cleared (75-76).
 - Tick: none. Death and recover are events. The wait is a countdown the server sends to the client (not read).
 
 ## 2. Key functions
@@ -34,7 +34,7 @@ Checked: Read in full: `ComputeDeathWaitTime` (CharacterCombat.cs 181-203), the 
 | Free resurrect under a minimum level | `MinimumExpLossLevel` (config, not read; CharacterCombat.cs 72) |
 
 Defects found in the donor (keep the idea, fix each):
-1. The streak is not saved. `_consecutiveDeathCount` and `_lastDeathTime` are private fields (CharacterCombat.cs 33-34) and no other code in AAEmu.Game reads or writes them. A relog or server restart resets the streak to 15 s. The database already has `dead_count` and `dead_time` columns (Character.cs 2705 writes `dead_count`; Unit.cs 517 sets `DeadTime` on death, so `dead_time` is written) but the streak does not read them. fix: restore the streak and last death time from those columns on load, and write them on death.
+1. The streak is not saved. `_consecutiveDeathCount` and `_lastDeathTime` are private fields (CharacterCombat.cs 33-34) and no other code in AAEmu.Game reads or writes them. A relog or server restart resets the streak to 15 s. The database already has `dead_count` and `dead_time` columns (Character.cs 2705 writes `dead_count`) but the streak does not read them. fix: restore the streak and last death time from those columns on load, and write them on death.
 2. `DeadCount` is never incremented in AAEmu.Game (declared at CharacterCounters.cs 10; the only other references are the load and save in Character.cs). fix: increment it in the death path, or drop the column.
 3. `RezPenaltyDuration` is declared and saved (Character.cs 105; save at 2709) but no assignment was found in AAEmu.Game. The rez penalty tier is effectively unused. fix: wire it to the escalation, or remove it.
 
@@ -131,13 +131,3 @@ Acceptance: server test: deaths 1-4 inside 5 minutes give waits of 15, 30, 60 an
 
 Best transferable idea (table): row 10 (escalation plus capped loss plus a priest return) is the mechanism worth keeping; the faction relation model (row 14) has an expiry time field that was not read and may be worth a second look.
 Brief rule served: 1, 17 (death and respawn), GL focus items 1 and 10.
-
-Missed mechanism (added by fixer): durability loss on death is gated on `MinimumExpLossLevel` (CharacterCombat.cs 66-68), the same level threshold as the XP loss.
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-Verdict: MINOR
-- RecoverExpEffect: the labor check and the priest range check are each conditional on the data flags NeedLaborPower / NeedPriest (priest radius 10 via GetAround<Npc>); the labor spend and AddExp run unconditionally. Note had presented priest-in-range and labor spend as always on.
-- Max-level branch sets LastExpLoss = 0 but leaves RecoverableExp untouched (note said loss 0 only).
-- Missed: Unit.cs 517 sets DeadTime on death; durability loss gated on MinimumExpLossLevel (CharacterCombat 66-68).
-
-Fixed 2026-10-12: rewrote the recovery bullet (flags, radius 10, unconditional spend), the max-level sentence and the dead_time remark; added the durability-gate line. No sketch code changed (the sketch already omits the priest and labor checks).

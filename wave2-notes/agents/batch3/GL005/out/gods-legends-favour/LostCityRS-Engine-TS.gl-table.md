@@ -18,7 +18,3 @@ Donor root: `/mnt/frankendom-donors/LostCityRS-Engine-TS/` (engine half, `src/en
 | 12. Relics and artifacts | Not read | (not read) | (not read) | (not read) | (not read) | (not read) |
 | 13. Temples and shrines as zone rows | None found: grep of src and data for altar, shrine, prayer, bless finds only stat code | n/a | n/a | n/a | n/a | (grep only) |
 | 14. Pantheon factions and realm pride | Not read | (not read) | (not read) | (not read) | (not read) | (not read) |
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-CLEAN
-- No material misses (Player.ts:706 is run energy recovery, so 'player decay not in this donor' holds).

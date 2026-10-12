@@ -7,11 +7,11 @@ Checked: read `PrayerDrainEvent.java` (full), `Prayers.java` (full), `PrayerHand
 ## 1. Mechanism
 
 - The unit is a prayer-points pool. It holds `level x 120` points (the donor's favour resource). Each prayer is a toggle with a drain rate and a level requirement. While any toggle is on, a per-tick event takes points from the pool. When the pool runs out, every toggle is switched off.
-- Start: in the logged-in setter, the pool is set to current prayer level x 120 and the drain event is added, but only when `!LACKS_PRAYERS` (Player.java 2085-2089; the enclosing method name was not read). Any later `setLevel` or `normalize` on the prayer skill also sets the pool to level x 120 (Skills.java 120, 352).
-- Order of steps in one drain run (PrayerDrainEvent.java 21-62): (a) stop if the player was removed (22-25); (b) sum the drain rates of all active prayers, ids 0 to 13 (32-37); (c) if the sum is 0, return (39); (d) `pointDrain = ceil(sum x 120 / (300 x (1 + (bonus - 1) / 32)))` (41), where `bonus` is the equipment prayer bonus floored at 1 (Player.java 1635-1637), not the pool; (e) if the pool is greater than `pointDrain`, subtract it (45-48) and lower the displayed prayer level to `ceil(pool / 120)` only if that is below the current level (50-54); that `setLevel` (line 53) goes through Skills.setLevel, which writes the pool as `level x 120` (Skills.java 118-121), so each time the level drops the pool is snapped UP to the level boundary (a refund of 0 to 3 points per level at a drain of 4) - a donor quirk: keep the pool as the truth and derive the level from it; (f) otherwise set the pool to 0, reset every prayer (58), send "You have run out of prayer points. Return to a church to recharge" (59), and set the displayed prayer level to 0 (60).
+- Start: in the logged-in setter, the pool is set to current prayer level x 120 and the drain event is added (Player.java 2086-2088; the enclosing method name was not read). Any later `setLevel` or `normalize` on the prayer skill also sets the pool to level x 120 (Skills.java 120, 352).
+- Order of steps in one drain run (PrayerDrainEvent.java 21-62): (a) stop if the player was removed (22-25); (b) sum the drain rates of all active prayers, ids 0 to 13 (32-37); (c) if the sum is 0, return (39); (d) `pointDrain = ceil(sum x 120 / (300 x (1 + (bonus - 1) / 32)))` (41), where `bonus` is the equipment prayer bonus floored at 1 (Player.java 1635-1637), not the pool; (e) if the pool is greater than `pointDrain`, subtract it (45-48) and lower the displayed prayer level to `ceil(pool / 120)` only if that is below the current level (50-54); (f) otherwise set the pool to 0, reset every prayer (58), send "You have run out of prayer points. Return to a church to recharge" (59), and set the displayed prayer level to 0 (60).
 - Activation (PrayerHandler.java 100-114): refused if the max prayer level is below the prayer's requirement (104-107) or the current level is 0 (109-112). Otherwise `activatePrayer` (16-66) first switches off the other prayers in the same tier, then sets this one on (65). Tiers are three slots of three ranks each: thick / rock / steel skin (defence), burst / superhuman / ultimate (strength), clarity / improved / incredible reflexes (attack). Switching is free: no points are paid on the switch itself.
 - Refill (Prayer.java plugin 15-31): command "recharge at". Target = max prayer level, plus 2 if the object id is 200. If the level is already at target, the pool is set to target x 120 (22-23). If not, the displayed level is set to target (28-29), which sets the pool through Skills.java 120.
-- Shrine variants (Prayer.java 28-42): object id 625 at y 3573 (the Yanille chaos altar) is a trapdoor that teleports the player after the recharge (a punishing shrine); when the current level is above the max (for example after a +2 shrine) the message 'You recharge' and the sound play but nothing changes (28-33). Cadence: the event is built with a 1-tick delay argument (PrayerDrainEvent.java 16, GameTickEvent.java 34). Whether it repeats each tick is from the scheduler, which I did not read.
+- Cadence: the event is built with a 1-tick delay argument (PrayerDrainEvent.java 16, GameTickEvent.java 34). Whether it repeats each tick is from the scheduler, which I did not read.
 
 ## 2. Key functions
 
@@ -98,7 +98,7 @@ Best transferable idea: a favour pool that drains by the sum of the active bless
 
 Decision (proposed): adapt - keep the drain-pool and one-of-N tier idea, not the prayer names or the numbers; the fraction carry fixes the donor's per-tick round-up. Reject the donor's per-tick ceil.
 
-Acceptance: a server test with one 15-rate blessing and a gear divisor of 32 runs 1000 ticks and removes about 3047 favour points (exact 3047.6; the donor drains 4 a tick, about 4000 minus the 0 to 3 point refunds it gives back at each level boundary); when the pool reaches 0 the blessing is off in the next snapshot and the client shows the "favour spent" message; a shrine refill sets the pool to (max + 2) x 120.
+Acceptance: a server test with one 15-rate blessing and a gear divisor of 32 runs 1000 ticks and removes about 3047 favour points (exact 3047.6, not the donor's 4000); when the pool reaches 0 the blessing is off in the next snapshot and the client shows the "favour spent" message; a shrine refill sets the pool to (max + 2) x 120.
 
 ## 5. Lands in
 
@@ -118,11 +118,3 @@ Acceptance: a server test with one 15-rate blessing and a gear divisor of 32 run
 
 Reuse tag: rewrite-from-idea (AGPL-3.0; clean-room only)
 Brief rule served: GL-FOCUS 1 and 2; "new god or legend = data rows only, no code" (the blessing list is rows).
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-Verdict: MINOR
-- Step (e) said the pool is only subtracted; setLevel(PRAYER, level) at line 53 calls Skills.setLevel which writes prayerStatePoints = level*120 (Skills 118-121), snapping the pool up to the level boundary (0-3 point refund per level at drain 4); the 'donor removes 4000' acceptance figure was slightly overstated.
-- Login drain event is only created when !LACKS_PRAYERS (Player 2085-2089), not unconditionally.
-- Missed: chaos altar object 625 at y 3573 is a teleporting trapdoor; recharge above max level changes nothing (Prayer.java 28-42).
-
-Fixed 2026-10-12: step (e) and start line corrected, acceptance figure reworded, shrine variants added. Sketch unchanged (it already omits LACKS_PRAYERS and the displayed-level write-back), no typecheck needed.

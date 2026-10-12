@@ -130,6 +130,3 @@ Acceptance: a test player walking a zone reveals a 3x3 known ring (5x5 with a sc
 
 Reuse tag: rewrite-from-idea (Sustainable Use License 1.0; clean-room, shape only)
 Brief rule served: zones as data; server tick (cooldowns in ticks, roll decided on the server)
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-Verdict: CLEAN

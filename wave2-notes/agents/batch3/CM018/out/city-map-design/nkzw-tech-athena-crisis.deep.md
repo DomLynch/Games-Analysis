@@ -14,11 +14,11 @@ Acceptance: a player sees one road between the two hubs with a river across its 
 
 - Hub pair (56-77): a random seed picks a start index in the first 40 percent of the tiles (61), then the code scans forward (62) for the first tile that is not on the edge. The second hub is the point mirror of the first, with a jitter of about two tiles either way (64-65); both must be on the map and not on the edge. The loop breaks on the first success (77).
 - Street (81-95): the movement radius is twice the map diagonal (81). A walkable path between the two hubs is found with the engine's movement pathing (87-92), its last tile is dropped (92), and each remaining tile becomes Street (95). Path semantics not read.
-- Centre (98-99): the centre is meant to be the middle of the street, off by one either way (98). It needs a street at least three tiles long (99). Donor defect (98): the code is `Math.round(streetPath.length) / 2 - 1 + random(0, 1)`; the round is applied before the divide, so for an odd street length the index is fractional (x.5), `streetPath[...]` is undefined, `center` is falsy and the whole river, plots and bridges block (99-213) is silently skipped. Odd-length streets therefore get no river or bridge. fix: round after the divide (the sketch does this); keep the idea.
-- River (102-170): the centre's four neighbours that are not street are shuffled (102-107). If two or more exist (108), the first two are the river's sides (109). From the first side, the code picks the nearest map edge and the opposite edge, with each edge point jittered by plus or minus 3 along the edge (110-113). It then paths from each edge point to its side (with cost 1, avoiding street and buildings) and marks the path plus both sides as River (170). The two sides are the first two of a shuffled list of the non-street neighbours, so they are not guaranteed to be opposite sides of the centre (after a street bend the two remaining neighbours can be adjacent). When they are diagonal-adjacent (one tile apart on both axes), the donor adds the two corner tiles between them as river too (160-168, filtered for accessible, no building, not street). So the river usually, but not always, crosses the street at the centre.
+- Centre (98-99): the centre is the middle of the street, off by one either way (98). It needs a street at least three tiles long (99).
+- River (102-170): the centre's four neighbours that are not street are shuffled (102-107). If two or more exist (108), the first two are the river's sides (109). From the first side, the code picks the nearest map edge and the opposite edge, with each edge point jittered by plus or minus 3 along the edge (110-113). It then paths from each edge point to its side (with cost 1, avoiding street and buildings) and marks the path plus both sides as River (170). Because the two sides are on opposite sides of the centre, the river crosses the street at the centre.
 - Centre plots (175-185): the four diagonal neighbours of the centre that are not street or river are shuffled; all but the first two (the .slice(2) at 183) become ConstructionSite (185).
 - Bridges (188-207): every street tile is checked. A tile with River above and below and Street left and right becomes River plus Bridge (203), the vertical case likewise. On a bridge, a coin flip (204) places a barrier building (207, HorizontalBarrier or VerticalBarrier, owner 0).
-- Hub fill (216-256), run for each player (player 1 at the first hub, player 2 at the second): the candidate tiles are the neighbours of the hub's four neighbours (flatMap of expandStar, slice(1); the exact set depends on expandStar, which was not read), deduplicated, shuffled, and filtered only to on-map and not either hub (218-229). The first eight of that shuffled list are taken (230) BEFORE the unusable tiles are skipped. Inside the loop (232-237) a candidate is skipped if it is on the edge, street, river, or already has a building (`!buildings.has(vector)`, 236), so unusable tiles eat slots and a hub can get fewer than eight plots. Each usable one becomes ConstructionSite (238). A coin flip (239-240) makes it a factory-type candidate: the factory count goes up (241) and is capped at two (215, 244). The first factory-type is Barracks or Factory by a second coin (245). Only candidates with index 0 to 5 get a building (250); the others are plots only.
+- Hub fill (216-256), run for each player (player 1 at the first hub, player 2 at the second): the candidate tiles are the neighbours of the hub's four neighbours (flatMap of expandStar, slice(1); the exact set depends on expandStar, which was not read), deduplicated, filtered to on-map, not the hub, not edge, not street or river (218-229). Eight are considered (230). Each becomes ConstructionSite (238). A coin flip (239-240) makes it a factory-type candidate: the factory count goes up (241) and is capped at two (215, 244). The first factory-type is Barracks or Factory by a second coin (245). Only candidates with index 0 to 5 get a building (250); the others are plots only.
 - Finish (258-259): convertBiome with a random biome from the list, then validateMap; if validation returns nothing, the unvalidated map is kept.
 
 ## 2. Key functions
@@ -48,7 +48,7 @@ Acceptance: a player sees one road between the two hubs with a river across its 
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order: hub pair, street, centre, river from two centre sides out to the edges, two diagonal plots kept back and two reserved, bridges with a 50 percent barrier, then a ring of eight candidate plots per hub with six buildings and at most two factory-type buildings. It differs in these ways. It uses a plain breadth-first search where the donor uses the engine's movement pathing with a unit radius. It walks straight out from each side tile to the edge, where the donor picks the nearest edge and jitters by plus or minus 3. It omits the jitter, the river fill along the diagonal, the isAccessible rule, the barrier owner, the meaning of ConstructionSite, validateMap and convertBiome. It assumes the donor's random(lo, hi) is inclusive, which is not confirmed. It filters first and then takes eight, whereas the donor takes the first eight of the on-map shuffled list and skips unusable tiles inside the loop (the sketch is changed to take eight first, as the donor does). It fixes two donor defects (section 6): the factory counter counts only placed buildings, and the Barracks check happens before the increment; it also fixes the fractional centre index (donor line 98, see section 1). The ring is tiles two steps from the hub, which is an assumption about expandStar. Typechecked on the VPS with tsc --strict, exit 0.
+simplified: the sketch keeps the donor order: hub pair, street, centre, river from two centre sides out to the edges, two diagonal plots kept back and two reserved, bridges with a 50 percent barrier, then a ring of eight candidate plots per hub with six buildings and at most two factory-type buildings. It differs in these ways. It uses a plain breadth-first search where the donor uses the engine's movement pathing with a unit radius. It walks straight out from each side tile to the edge, where the donor picks the nearest edge and jitters by plus or minus 3. It omits the jitter, the river fill along the diagonal, the isAccessible rule, the barrier owner, the meaning of ConstructionSite, validateMap and convertBiome. It assumes the donor's random(lo, hi) is inclusive, which is not confirmed. It fixes two donor defects (section 6): the factory counter counts only placed buildings, and the Barracks check happens before the increment. The ring is tiles two steps from the hub, which is an assumption about expandStar. Typechecked on the VPS with tsc --strict, exit 0.
 
 ```ts
 // Licence: MIT (donor: athena/generator/MapGenerator.tsx; LICENSE.md). Adapted in shape; written fresh from the described mechanism, not copied line by line.
@@ -200,11 +200,11 @@ function fillHub(g: Grid, hq: Pt, rand: () => number): void {
       const d = Math.abs(dx) + Math.abs(dy);
       if (d === 2) ring.push({ x: hq.x + dx, y: hq.y + dy }); // tiles two steps from the HQ
     }
-  // donor order: shuffle, keep on-map tiles that are not the hub, take eight, THEN skip unusable tiles (they eat slots)
-  const candidates = shuffle(rand, ring).filter((p) => inside(g, p) && !(p.x === hq.x && p.y === hq.y));
+  const candidates = shuffle(rand, ring).filter(
+    (p) => inside(g, p) && !onEdge(g, p) && kindAt(g, p) === 'plain',
+  );
   let factories = 0;
   candidates.slice(0, 8).forEach((p, i) => {
-    if (onEdge(g, p) || kindAt(g, p) !== 'plain') return;
     put(g, p, 'plot');
     const wantsFactory = rand() < 0.5;
     if (i > 5) return; // only the first six candidates get a building
@@ -246,7 +246,6 @@ export function generateTown(w: number, h: number, rand: () => number): Grid | n
 - Defect, dead branch: at 241 the count is already at least one, so `factories === 0 ||` at 245 is never true and the first factory-type is a plain coin flip. fix: test before the increment, or make the first one explicit (the sketch does this).
 - Defect, hub search: the scan starts at a random index in the first 40 percent and does not wrap (61-62), so the first hub is biased toward the later part of that index range. fix: wrap around, or sample random tiles and retry; check the map looks even across seeds.
 - Random helper: the code relies on @nkzw/core random(lo, hi) being inclusive (it is used as a coin flip at 204, 240 and 245). Not confirmed in the repo. fix: write an explicit inclusive helper in Frankendom and test it.
-- Defect, centre index (98): see section 1; odd-length streets skip the river and bridges. fix: round after dividing; test an odd-length street.
 - Street pathing: which end of the path gets dropped (92) was not read. fix: test that the street reaches both hubs.
 - Owners: the map sets owner ids (player 1 and 2) on hub buildings. In Frankendom the owner lives in the server ledger; the layout returns positions and types only.
 - Chokepoint idea: a bridge is one tile wide in this donor, so a bridge is a natural place for few attackers at a time. Frankendom's MAX_ATTACKERS = 3 may fit this, but that is a design idea of ours, not something the donor shows (barrier blocking was not read).
@@ -255,10 +254,3 @@ export function generateTown(w: number, h: number, rand: () => number): Grid | n
 
 Reuse tag: rewrite-from-idea (MIT; adapted in shape)
 Brief rule served: 1 (one engine); zones as data
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-Verdict: MINOR
-- Hub-fill order wrong: donor takes slice(0,8) of the shuffled on-map list first (MapGenerator.tsx 230) and skips edge/street/river/building tiles inside the loop (232-237); note and sketch filtered first.
-- River sides are not guaranteed opposite sides of the centre; donor adds a diagonal fill at 160-168.
-- Missed: centre index bug at line 98 (round before divide gives a fractional index for odd lengths, so the river/plots/bridges block is skipped); `!buildings.has(vector)` at 236 not mentioned.
-Fixed 2026-10-12: hub-fill order corrected in text and sketch; river-sides claim corrected; centre-index defect and the buildings.has skip added to section 1 and 6.

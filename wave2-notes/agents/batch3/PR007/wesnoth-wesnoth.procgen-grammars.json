@@ -1,0 +1,93 @@
+{
+  "donor": "wesnoth-wesnoth",
+  "topic": "procgen-grammars",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/wesnoth-wesnoth/src/generators/default_map_generator.cpp",
+    "/mnt/frankendom-donors/wesnoth-wesnoth/src/generators/default_map_generator_job.cpp",
+    "/mnt/frankendom-donors/wesnoth-wesnoth/src/generators/cave_map_generator.cpp",
+    "/mnt/frankendom-donors/wesnoth-wesnoth/src/generators/lua_map_generator.cpp",
+    "/mnt/frankendom-donors/wesnoth-wesnoth/data/multiplayer/scenarios/Random_Scenario.cfg",
+    "/mnt/frankendom-donors/wesnoth-wesnoth/data/schema/core/mapgen/default.cfg",
+    "/mnt/frankendom-donors/wesnoth-wesnoth/data/campaigns/World_Conquest/lua/map/generator/utilities.lua",
+    "/mnt/frankendom-donors/wesnoth-wesnoth/changelog.md"
+  ],
+  "counts": {
+    "shipped_random_scenarios_read": 1,
+    "height_bands_in_shipped_scenario": 6,
+    "converters_in_shipped_scenario": 6,
+    "village_rules_in_shipped_scenario": 9,
+    "castle_rules_per_map": 1,
+    "job_retries": 10,
+    "lake_slot_tries": 100,
+    "castle_hard_floor_tiles": 6,
+    "working_area_multiplier": 3,
+    "world_conquest_generator_entries": 17
+  },
+  "rule": "Seeded rule-list generator. One hill-based heightfield is normalised to 0-1000; ordered height bands (first match wins) label landforms; lakes are a fall-off spread seeded from high ground and rivers are a downhill-limited depth-first search to water or the edge; a second heightfield with ordered converters (height, temperature and terrain ranges) re-labels flat ground; castles are a spacing-and-terrain scan with a ranking; roads are A* over a per-terrain cost table; villages are a jittered grid with a rating-plus-neighbour-count picker. The whole job retries on failure, RNG advances across tries, and the schema types every row.",
+  "data_fields": [
+    {"name": "map_width_height", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "iterations", "unit": "count", "donor_value_or_null": null},
+    {"name": "hill_size", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "max_lakes", "unit": "count", "donor_value_or_null": null},
+    {"name": "min_lake_height", "unit": "units", "donor_value_or_null": null},
+    {"name": "lake_fall_off (donor key lake_size)", "unit": "percent", "donor_value_or_null": null},
+    {"name": "river_uphill (donor key river_frequency)", "unit": "units", "donor_value_or_null": null},
+    {"name": "temperature_iterations", "unit": "count", "donor_value_or_null": null},
+    {"name": "temperature_size", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "villages_per_1000_tiles", "unit": "ratio", "donor_value_or_null": null},
+    {"name": "roads", "unit": "count", "donor_value_or_null": null},
+    {"name": "road_windiness", "unit": "ratio", "donor_value_or_null": null},
+    {"name": "height_band_threshold", "unit": "units", "donor_value_or_null": null},
+    {"name": "converter_height_range", "unit": "units", "donor_value_or_null": null},
+    {"name": "converter_temperature_range", "unit": "units", "donor_value_or_null": null},
+    {"name": "road_cost", "unit": "ratio", "donor_value_or_null": null},
+    {"name": "village_rating", "unit": "points", "donor_value_or_null": null},
+    {"name": "castle_min_distance", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "castle_hard_floor", "unit": "tiles", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "ordered rule lists with first-match-wins for landforms and converters",
+    "seeded RNG per job, with bounded retries that advance the same RNG",
+    "river that flows downhill with a per-step uphill allowance, ending in water or off-map",
+    "lake as fall-off spread with a halving chance per ring",
+    "roads as cheapest path over a per-terrain cost table, bridges where water is crossed",
+    "village rating as base weight plus neighbour terrain counts",
+    "schema-typed rows for every generator table"
+  ],
+  "change": [
+    "rename river_frequency to river_uphill and lake_size to lake_fall_off (names are wrong in the donor)",
+    "validate that height and converter rows are sorted, or reject shadowed rows at load",
+    "add a walk-path check between spawn anchors; the donor drops failed roads silently",
+    "jitter villages in two axes (the donor reuses one offset for x and y)",
+    "make the castle choice explicit (the donor comment says random, the code is a deterministic scan)",
+    "do not expose a reroll-until-balanced note to players; check fairness on the server",
+    "let a zone carry several anchor kinds (the donor reads one castle rule per map)"
+  ],
+  "look_test": "Six zone seeds from one family row, rendered top-down at 375 px, side by side with the river rule switched off. Dom checks that each reads as a place (a lake or river, a road between two spawn points, at least three villages near water).",
+  "licence_note": "GPL v2 per COPYING; source headers say version 2 or later. Copyleft: shape only, own code, no line-by-line translation, no donor numbers in our data. Scenario data treated as copyleft under the repo COPYING.",
+  "tags": [
+    "seed-discipline",
+    "new:height-band-terrain",
+    "new:convert-rule-table",
+    "new:river-downhill",
+    "new:lake-fall-off",
+    "new:road-cost-table",
+    "new:village-rating",
+    "new:castle-spacing",
+    "new:chamber-passage-graph",
+    "new:retry-on-invalid",
+    "new:schema-validator"
+  ],
+  "not_read": [
+    "output_map crop in default_map_generator_job.cpp",
+    "naming and label flood fill (roughly 1300-1409 of default_map_generator_job.cpp, partial)",
+    "bridge branch of the road code in full (1062-1113, partial)",
+    "src/scripting/mapgen_lua_kernel.cpp",
+    "src/gui/dialogs/editor/generate_map.cpp",
+    "World_Conquest lua themes beyond utilities.lua 14-28 and 92-96 and classic.lua 1-40",
+    "client-side handling of map_data",
+    "no tests run; no generated output checked"
+  ]
+}

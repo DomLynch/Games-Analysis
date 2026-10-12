@@ -106,6 +106,3 @@ Acceptance: on the hub map at 375 wide, the pickup that reaches the threshold re
 - The hub is a menu: it has no positions, routes, districts, roads or buildings. Nothing here transfers a town layout, signage or a minimap. The donor has none (grep for minimap, town, city, landmark, shop, street found no hits in engines/hdb).
 - The star is hidden when locked (menu.cpp 573), not greyed out. A discovery hub that wants players to see the next goal needs a locked state drawn on purpose; this donor does not show one.
 - Out of scope, seen while reading: `AI::completeDelivery` (ai-inventory.cpp 301-309) shifts the board with `for (; i < _numDeliveries; i++)` (304) and `_deliveries[i] = _deliveries[i + 1];` (305). When the board is full (`kMaxDeliveries = 5`, ai.h 40), the last shift reads `_deliveries[5]`, one past the array. Not written up as a mechanism. Fix: loop to `i < _numDeliveries - 1`.
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-CLEAN

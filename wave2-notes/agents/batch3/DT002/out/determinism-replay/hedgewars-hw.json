@@ -1,0 +1,17 @@
+{"game":"hedgewars-hw", "category":"determinism-replay", "cell":3, "verdict":"STRONG", "depth":"full", "donor_path":"/mnt/frankendom-donors/hedgewars-hw", "licence":"GNU GPL version 2 (COPYING is the GPLv2 text; hedgewars/uRandom.pas header: version 2 of the License, no or-later clause)", "licence_class":"copyleft",
+"target_module":"src/fight/fingerprint.ts", "parity_row":19,
+"pattern_tags":["lockstep","fixed-step","new:turn-fingerprint","new:stamped-commands","new:history-injected-rng","new:argument-fold","new:checker-replay-verify","new:16-bit-tick-wrap"],
+"data_fields":[
+{"name":"seed_max_chars","donor_constant":"54","unit":"count","where":"engine constant","donor_ref":"hedgewars/uRandom.pas:68"},
+{"name":"prng_ring_words","donor_constant":"64","unit":"count","where":"engine constant","donor_ref":"hedgewars/uRandom.pas:43"},
+{"name":"prime_steps","donor_constant":"2048","unit":"count","where":"engine constant","donor_ref":"hedgewars/uRandom.pas:83"},
+{"name":"fill_constant","donor_constant":"0xA987A9 (0xA98765 + 68)","unit":"units","where":"engine constant","donor_ref":"hedgewars/uRandom.pas:81"},
+{"name":"wire_tick_wrap","donor_constant":"65536 (low 16 bits of GameTicks)","unit":"ticks","where":"engine constant","donor_ref":"hedgewars/uGears.pas:623"},
+{"name":"fingerprint_scope","donor_constant":"remote source only; skipped when current team has gone","unit":"none","where":"engine constant","donor_ref":"hedgewars/uCommandHandlers.pas:408"},
+{"name":"replay_record_gate","donor_constant":"all players have registered accounts","unit":"none","where":"zone data","donor_ref":"gameServer/OfficialServer/GameReplayStore.hs:53"}
+],
+"best_idea":"Fold the game's state into a per-turn fingerprint and into the random stream at the same fixed points on both sides, so drift shows up at the next turn end instead of as a silent wrong result.",
+"decision":"adapt",
+"decision_why":"The per-turn fingerprint, history-fed stream and stamped commands fit row 19 and the server's record; the donor's argument-fold, order-dependent injection and XOR-fold defects are fixed in the clean-room sketch, and the team-gone skip is kept only as a logged result.",
+"decision_status":"proposed",
+"acceptance":"A stored fight record replays to the same per-turn fingerprints; moving one gear by one unit changes the next turn fingerprint; reordering the gear list does not; changing only a command argument changes it; a skipped check appears in the ledger with its reason."}

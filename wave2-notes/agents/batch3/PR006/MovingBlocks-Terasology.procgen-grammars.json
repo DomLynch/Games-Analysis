@@ -1,0 +1,72 @@
+{
+  "donor": "MovingBlocks-Terasology",
+  "topic": "procgen-grammars",
+  "depth": "thin",
+  "half_read": "server",
+  "paths": [
+    "/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/world/generation/WorldBuilder.java",
+    "/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/world/generation/BaseFacetedWorldGenerator.java",
+    "/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/world/generation/Border3D.java",
+    "/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/world/generation/UpdatePriority.java",
+    "/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/world/zones/ProviderStore.java",
+    "/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/world/zones/Zone.java",
+    "/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/world/zones/LayeredZoneRegionFunction.java",
+    "/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/world/zones/SeededNoiseLayerThickness.java",
+    "/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/world/zones/MinMaxLayerThickness.java",
+    "/mnt/frankendom-donors/MovingBlocks-Terasology/engine/src/main/java/org/terasology/engine/world/zones/ZonePlugin.java",
+    "/mnt/frankendom-donors/MovingBlocks-Terasology/LICENSE"
+  ],
+  "counts": {
+    "content_modules_in_box": 0,
+    "facet_providers_with_Produces_annotation_in_engine_src": 0,
+    "layer_thickness_classes": 4
+  },
+  "rule": "Generation is a declared step graph: each provider Produces, Requires or Updates named facets, the builder assembles per-facet chains from those declarations, errors on a missing producer, detects cycles by update priority, and grows per-facet chunk borders from requirements. Zones are region predicates that overlay a chunk and restore blocks outside their region. Layered zones stack thickness ranges per column from the surface. The world seed is one 32-bit value copied to every provider and zone, so layers that share a rule share a noise pattern.",
+  "data_fields": [
+    {"name": "seaLevel", "unit": "units", "donor_value_or_null": "32"},
+    {"name": "facet.border.top", "unit": "units", "donor_value_or_null": "0"},
+    {"name": "facet.border.bottom", "unit": "units", "donor_value_or_null": "0"},
+    {"name": "facet.border.sides", "unit": "units", "donor_value_or_null": "0"},
+    {"name": "updatePriority", "unit": "ratio", "donor_value_or_null": "250 produces, 200 critical, 150 high, 100 normal, 50 low, 0 trivial, -50 requires"},
+    {"name": "layer.ordering", "unit": "count", "donor_value_or_null": "400, 300, 200, 100, 0, -100, -200, -300 (named presets)"},
+    {"name": "layer.thicknessMin", "unit": "units", "donor_value_or_null": null},
+    {"name": "layer.thicknessMax", "unit": "units", "donor_value_or_null": null},
+    {"name": "noise.scale", "unit": "units", "donor_value_or_null": "100"},
+    {"name": "noise.octaves", "unit": "count", "donor_value_or_null": "2"}
+  ],
+  "keep": [
+    "declared produces, requires and updates graph checked at build time",
+    "named error when a required producer is missing",
+    "cycle check by update priority",
+    "zone overlay that rasterizes only inside its region and restores everything outside",
+    "skip a zone that has no block in the chunk"
+  ],
+  "change": [
+    "one world seed shared by every layer: derive a per-zone seed from world seed plus zone id",
+    "32-bit string hash for the world seed: use a 64-bit hash of the zone id",
+    "rasterizer with a missing facet is dropped silently: make it a build error that names the rasterizer",
+    "zone initialize called twice (donor TODO): run once or make idempotent"
+  ],
+  "look_test": "Render one column of two stacked bands from one seed, once with the shared seed and once with a per-zone seed, same thickness rule. Dom says on his phone whether the shared-seed pair looks like a copy. If yes, build the per-zone seed.",
+  "licence_note": "Apache License 2.0 (LICENSE line 3; SPDX Apache-2.0 in headers; NOTICE to keep). Adaptation allowed with notice. No content assets in the box.",
+  "tags": [
+    "seed-discipline",
+    "new:facet-graph",
+    "new:missing-producer-check",
+    "new:zone-overlay",
+    "new:chunk-border",
+    "new:layer-strata"
+  ],
+  "not_read": [
+    "WorldImpl.java",
+    "RegionImpl.java",
+    "GeneratingRegion.java",
+    "WorldRasterizer.java",
+    "WorldFacet.java",
+    "EntityBuffer.java",
+    "facets directory (SurfacesFacet, ElevationFacet and others, named only)",
+    "Border3D.java lines 80-153",
+    "WorldGeneratorPluginLibrary (provider order source)",
+    "modules/ content: not present in the box (build files only)"
+  ]
+}

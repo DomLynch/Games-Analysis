@@ -136,6 +136,3 @@ Acceptance: an unexplored block stays dark on the minimap until the player's vie
 
 Reuse tag: rewrite-from-idea (GPL-3.0-or-later; clean-room only)
 Brief rule served: zones as data (fog radius and mask are data); client-only HUD; server-verified blips and explored state (one ledger)
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-Verdict: CLEAN

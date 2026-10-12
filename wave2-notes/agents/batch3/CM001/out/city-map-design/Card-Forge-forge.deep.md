@@ -29,7 +29,7 @@ Order of operations in `World.generateNew(seed)` (World.java 302 onward):
 
 Biome landmark list (BiomeData.java 70-93). A biome names its landmarks; the global list is filtered by name (76-82). Caves and dungeons are moved to the end of the list (85-92), so towns and castles are placed first and dungeons last.
 
-Data (Innistrad/world/world.json and common points_of_interest.json). World: 700 x 700 tiles, `tileSize` 16 (pixels), `miniMapTileSize` 4, `noiseZoomBiome` 30, `maxRoadDistance` 1000 (pixels, see 3 below). The landmark table: 264 entries. Types: cave 105, dungeon 103, town 25, sidebossmoderate 9, capital 6, castle 6, sidebosseasy 6, sidebosshard 3, one with no type. `radiusFactor` is 0.8 for 248 entries, 0.01 for 5, 0.2 for 1, 0.4 for 1, 0.5 for 1, 5 for 1, and missing for 7 (248+5+1+1+1+1+7 = 264). Missing means the Java float default, 0.0 (inference from the field declaration; Gson loading not read), so those seven land on their biome start point on every try.
+Data (Innistrad/world/world.json and common points_of_interest.json). World: 700 x 700 tiles, `tileSize` 16 (pixels), `miniMapTileSize` 4, `noiseZoomBiome` 30, `maxRoadDistance` 1000 (pixels, see 3 below). The landmark table: 264 entries. Types: cave 105, dungeon 103, town 25, sidebossmoderate 9, capital 6, castle 6, sidebosseasy 6, sidebosshard 3, one with no type. `radiusFactor` is 0.8 for 248 entries, 0.01 for 5, 0.2 for 1, 0.4 for 1, 5 for 1, and missing for 7. Missing means the Java float default, 0.0 (inference from the field declaration; Gson loading not read), so those seven land on their biome start point on every try.
 
 Tick: none. Generation runs once when the world is built. Per-frame code is not in these files.
 
@@ -239,11 +239,3 @@ Defects found in the donor, each with the fix (all reflected in the sketch):
 - Possible off-by-one at World.java 733 (`terrainIndex > biome.terrain.length`): the terrain bit encoding (not read) decides whether `>` or `>=` is right. Not confirmed; not counted as a defect.
 - Services in towns (shops, inn, trader) are not placed here: they live in each town's TMX map (`PointOfInterestData.map`, world JSON). Not read.
 - Landmarks, signage and the minimap beyond markers: the signage topic (names on the map) is only the town name (World.java 554-561); no road signs found in these files (not searched in depth).
-
-- Added 2026-10-12 (checker, verified on VPS): `secondSmallestIndex` (World.java 595) is just the previous best candidate when a closer town is found, so it is not a true second-nearest; a town whose nearest is found first never gets a real second. `clearTerrain` (286-294) clears [-size, size) on both axes, so the cleared square is asymmetric (one more tile on the negative side). Sprite noise at 796 divides y by `invertedHeight`, which could be 0 (Infinity). Keep the ideas; in the sketch use a true second-nearest and a symmetric clear.
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-Verdict: MINOR
-- radiusFactor tally omitted one 0.5 entry (real counts: 0.8x248, none x7, 0.01x5, 0.4, 5, 0.2, 0.5 = 264).
-- Missed: secondSmallestIndex is not a true second-nearest; clearTerrain asymmetric; sprite noise divides by invertedHeight (can be 0).
-Fixed 2026-10-12: tally now lists the 0.5 entry; added the three missed mechanisms as a short line.

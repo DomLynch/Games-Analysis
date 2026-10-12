@@ -177,6 +177,3 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Points of interest use hard-coded sprite ids (154: 161 and 254 to 257) and a portal behaviour. Frankendom: zone data should tag points of interest, not sprite numbers.
 - Not applicable: MAX_ATTACKERS = 3, the fight camera, and the Pit. A ping does not change a fight; keep it out of the duel step.
 - Not read: the body of `drawMinimap` outside the blocks listed, `sendMinimapPing`, the net send path, the handler frequency, and where callouts are created.
-
-## Checker findings (Sonnet 5.5 medium, 2026-10-12)
-CLEAN.

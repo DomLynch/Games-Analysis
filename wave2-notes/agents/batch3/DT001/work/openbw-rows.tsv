@@ -1,0 +1,90 @@
+OpenBW-openbw	Latency: an action sent now executes this many sync frames later	/mnt/frankendom-donors/OpenBW-openbw/sync.h	25	int latency = 2;
+OpenBW-openbw	Insync hash ring holds four 32-bit values	/mnt/frankendom-donors/OpenBW-openbw/sync.h	110	std::array<uint32_t, 4> insync_hash{};
+OpenBW-openbw	Scheduled action fires when the uint8 sync frame equals its frame	/mnt/frankendom-donors/OpenBW-openbw/sync.h	195	(uint8_t)sync_st.sync_frame == c->scheduled_actions.front().frame
+OpenBW-openbw	Scheduled action frame = client frame plus latency	/mnt/frankendom-donors/OpenBW-openbw/sync.h	279	(uint8_t)(client->frame + sync_st.latency)
+OpenBW-openbw	Per-client action buffer cap is 4 KiB times latency	/mnt/frankendom-donors/OpenBW-openbw/sync.h	231	const size_t max_size = 1024u * 4 * sync_st.latency;
+OpenBW-openbw	Action is rejected when the client buffer is full	/mnt/frankendom-donors/OpenBW-openbw/sync.h	240	if (new_size >= max_size) return false;
+OpenBW-openbw	Dead string build per action byte whose result is never used	/mnt/frankendom-donors/OpenBW-openbw/sync.h	278	str += format("%02x", (buffer.data() + pos)[i]);
+OpenBW-openbw	Client frame counter is an 8-bit value reported by the client	/mnt/frankendom-donors/OpenBW-openbw/sync.h	380	client->frame = r.template get<uint8_t>();
+OpenBW-openbw	Second client with a uid already present is refused	/mnt/frankendom-donors/OpenBW-openbw/sync.h	392	if (clients_with_uid >= 2) {
+OpenBW-openbw	Clients are sorted by uid so every peer sees one order	/mnt/frankendom-donors/OpenBW-openbw/sync.h	422	return a.uid < b.uid;
+OpenBW-openbw	A join resets the sync frame to zero	/mnt/frankendom-donors/OpenBW-openbw/sync.h	416	sync_st.sync_frame = 0;
+OpenBW-openbw	kill_client records a synthetic player-left action into the replay at the current frame	/mnt/frankendom-donors/OpenBW-openbw/sync.h	468	add_action(st.current_frame, client->player_slot, w.data(), w.size());
+OpenBW-openbw	kill_client executes the left action immediately rather than scheduling it	/mnt/frankendom-donors/OpenBW-openbw/sync.h	469	if (funcs.read_action(client->player_slot, r)) ++sync_st.successful_action_count;
+OpenBW-openbw	Player-left action value is 0 for voluntary leave and 6 otherwise	/mnt/frankendom-donors/OpenBW-openbw/sync.h	459	w.put<uint8_t>(player_left ? 0 : 6);
+OpenBW-openbw	Socket-close kill path wires on_kill to kill_client with player_left false	/mnt/frankendom-donors/OpenBW-openbw/sync.h	592	server.set_on_kill(h, std::bind(&syncer_t::kill_client, this, c, false));
+OpenBW-openbw	Local client's own messages are received by the local syncer directly	/mnt/frankendom-donors/OpenBW-openbw/sync.h	368	if (!h || h == sync_st.local_client) recv(sync_st.local_client, data, size);
+OpenBW-openbw	Voluntary leave is sent as the left action from the leaving client	/mnt/frankendom-donors/OpenBW-openbw/sync.h	672	send(get_player_left_action(true));
+OpenBW-openbw	Join is refused once a game has started or is counting down	/mnt/frankendom-donors/OpenBW-openbw/sync.h	580	if (sync_st.game_started || sync_st.game_starting_countdown) {
+OpenBW-openbw	Greeting value must match or the client is dropped	/mnt/frankendom-donors/OpenBW-openbw/sync.h	598	if (v != greeting_value) {
+OpenBW-openbw	Client frame is reported every sync frame	/mnt/frankendom-donors/OpenBW-openbw/sync.h	608	w.put<uint8_t>(sync_st.sync_frame);
+OpenBW-openbw	Stalled client is killed after sixty seconds without sync	/mnt/frankendom-donors/OpenBW-openbw/sync.h	616	if (now - c->last_synced >= std::chrono::seconds(60)) {
+OpenBW-openbw	Timeout kill needs the client to lag by at least the latency	/mnt/frankendom-donors/OpenBW-openbw/sync.h	617	if ((int8_t)(sync_st.sync_frame - c->frame) >= (int8_t)sync_st.latency) {
+OpenBW-openbw	Insync hash starts from the FNV-1a offset basis	/mnt/frankendom-donors/OpenBW-openbw/sync.h	626	uint32_t hash = 2166136261u;
+OpenBW-openbw	Insync hash mixes each word with FNV-1a xor then multiply	/mnt/frankendom-donors/OpenBW-openbw/sync.h	628	hash ^= (uint32_t)v;
+OpenBW-openbw	Insync hash multiplies by the FNV-1a prime	/mnt/frankendom-donors/OpenBW-openbw/sync.h	629	hash *= 16777619u;
+OpenBW-openbw	Insync hash folds the successful action count	/mnt/frankendom-donors/OpenBW-openbw/sync.h	631	add(sync_st.successful_action_count);
+OpenBW-openbw	Insync hash folds the shared LCG state	/mnt/frankendom-donors/OpenBW-openbw/sync.h	633	add(st.lcg_rand_state);
+OpenBW-openbw	Insync hash walks only the visible units list	/mnt/frankendom-donors/OpenBW-openbw/sync.h	641	for (unit_t* u : ptr(st.visible_units)) {
+OpenBW-openbw	Insync hash folds exact unit position fixed-point values	/mnt/frankendom-donors/OpenBW-openbw/sync.h	643	add(u->exact_position.x.raw_value);
+OpenBW-openbw	Insync ring advances and stores the new hash	/mnt/frankendom-donors/OpenBW-openbw/sync.h	649	sync_st.insync_hash[sync_st.insync_hash_index] = hash;
+OpenBW-openbw	Insync check message carries the ring index and value	/mnt/frankendom-donors/OpenBW-openbw/sync.h	657	w.put<uint32_t>(sync_st.insync_hash[sync_st.insync_hash_index]);
+OpenBW-openbw	Start-game RNG state is the seed XOR a CRC of the client uid strings	/mnt/frankendom-donors/OpenBW-openbw/sync.h	689	uint32_t rand_state = seed ^ data_loading::crc32_t()
+OpenBW-openbw	Start-game RNG state is stored in the shared LCG	/mnt/frankendom-donors/OpenBW-openbw/sync.h	690	st.lcg_rand_state = rand_state;
+OpenBW-openbw	Start-game seed is XOR of eight generated uid words	/mnt/frankendom-donors/OpenBW-openbw/sync.h	510	for (uint32_t v : sync_state::uid_t::generate().vals) {
+OpenBW-openbw	Start-game seed is written as a 32-bit value	/mnt/frankendom-donors/OpenBW-openbw/sync.h	513	w.put<uint32_t>(seed);
+OpenBW-openbw	Countdown before start is ten sync frames	/mnt/frankendom-donors/OpenBW-openbw/sync.h	915	sync_st.game_starting_countdown = 10;
+OpenBW-openbw	Start seed is taken from the start-game message	/mnt/frankendom-donors/OpenBW-openbw/sync.h	916	sync_st.start_game_seed = r.template get<uint32_t>();
+OpenBW-openbw	Slot shuffle draws from the shared LCG with a fixed source id	/mnt/frankendom-donors/OpenBW-openbw/sync.h	727	size_t new_index = available_slots[funcs.lcg_rand(33, 0, i)];
+OpenBW-openbw	Race randomisation draws from the shared LCG with source 144	/mnt/frankendom-donors/OpenBW-openbw/sync.h	701	if ((int)v.race > 2) v.race = (bwgame::race_t)funcs.lcg_rand(144, 0, 2);
+OpenBW-openbw	Replay seed is the LCG state recorded at game start	/mnt/frankendom-donors/OpenBW-openbw/sync.h	759	r.random_seed = st.lcg_rand_state;
+OpenBW-openbw	Insync check kills a client whose hash differs from the host ring at that index	/mnt/frankendom-donors/OpenBW-openbw/sync.h	798	if (hash != sync_st.insync_hash.at(index)) {
+OpenBW-openbw	The kick on hash mismatch removes only the reporting client	/mnt/frankendom-donors/OpenBW-openbw/sync.h	799	this->kill_client(client);
+OpenBW-openbw	Host records each action to the replay before applying it	/mnt/frankendom-donors/OpenBW-openbw/sync.h	836	add_action(st.current_frame, client->player_slot, r.get_n(n), n);
+OpenBW-openbw	A client whose slot is no longer occupied after an action is kicked	/mnt/frankendom-donors/OpenBW-openbw/sync.h	840	controller != player_t::controller_occupied
+OpenBW-openbw	Insync hash is taken every 32 sync frames	/mnt/frankendom-donors/OpenBW-openbw/sync.h	943	sync_st.sync_frame % 32 == 0
+OpenBW-openbw	Hash update is called at the 32-frame boundary	/mnt/frankendom-donors/OpenBW-openbw/sync.h	944	update_insync_hash();
+OpenBW-openbw	All-clients-in-sync test uses signed 8-bit frame distance against latency	/mnt/frankendom-donors/OpenBW-openbw/sync.h	951	if ((int8_t)(sync_st.sync_frame - c->frame) >= (int8_t)sync_st.latency) {
+OpenBW-openbw	Sync waits on a one-second timeout each call	/mnt/frankendom-donors/OpenBW-openbw/sync.h	961	server.set_timeout(std::chrono::seconds(1), std::bind(&syncer_t::timeout_func, this));
+OpenBW-openbw	Each completed sync stamps every client's last-synced time	/mnt/frankendom-donors/OpenBW-openbw/sync.h	992	c.last_synced = now;
+OpenBW-openbw	Sync applies this frame's messages after the wait	/mnt/frankendom-donors/OpenBW-openbw/sync.h	995	process_messages();
+OpenBW-openbw	Wait-for-clients loop runs until the predicate holds	/mnt/frankendom-donors/OpenBW-openbw/sync.h	987	server.run_until(std::bind(&syncer_t::on_new_client, this, std::placeholders::_1), pred);
+OpenBW-openbw	Compatibility flag skips the first frame step for BWAPI	/mnt/frankendom-donors/OpenBW-openbw/sync.h	217	if (sync_st.is_first_bwapi_compatible_frame) sync_st.is_first_bwapi_compatible_frame = false;
+OpenBW-openbw	Commented-out error for a full action buffer (silent reject instead)	/mnt/frankendom-donors/OpenBW-openbw/sync.h	239	//if (new_size >= max_size) error(
+OpenBW-openbw	Dead-code save and restore of the sync frame on join	/mnt/frankendom-donors/OpenBW-openbw/sync.h	588	sync_st.sync_frame = 0;
+OpenBW-openbw	Broadcast sends to every client when no handle is given	/mnt/frankendom-donors/OpenBW-openbw/sync_server_asio_socket.h	200	send_to(d, &v);
+OpenBW-openbw	Server-side kill clears the on_kill callback before closing	/mnt/frankendom-donors/OpenBW-openbw/sync_server_asio_socket.h	218	c->on_kill = {};
+OpenBW-openbw	Socket kill closes the connection and clears handlers	/mnt/frankendom-donors/OpenBW-openbw/sync_server_asio_socket.h	215	void kill_client(const void* h) {
+OpenBW-openbw	Socket read error invokes the on_kill callback	/mnt/frankendom-donors/OpenBW-openbw/sync_server_asio_socket.h	238	if (c->on_kill) c->on_kill();
+OpenBW-openbw	LCG step: state times 22695477 plus 1	/mnt/frankendom-donors/OpenBW-openbw/bwgame.h	13200	st.lcg_rand_state = st.lcg_rand_state * 22695477 + 1;
+OpenBW-openbw	LCG output: bits 16 to 30 of the state	/mnt/frankendom-donors/OpenBW-openbw/bwgame.h	13201	return (st.lcg_rand_state >> 16) & 0x7fff;
+OpenBW-openbw	Ranged draw scales the 15-bit output into from..to	/mnt/frankendom-donors/OpenBW-openbw/bwgame.h	13204	return from + ((lcg_rand(source) * (to - from + 1)) >> 15);
+OpenBW-openbw	Each draw bumps a per-source counter	/mnt/frankendom-donors/OpenBW-openbw/bwgame.h	13198	++st.random_counts[source];
+OpenBW-openbw	Per-source counters are an array of 256	/mnt/frankendom-donors/OpenBW-openbw/bwgame.h	237	std::array<int, 0x100> random_counts;
+OpenBW-openbw	LCG state is a single uint32 in the game state	/mnt/frankendom-donors/OpenBW-openbw/bwgame.h	239	uint32_t lcg_rand_state;
+OpenBW-openbw	Visible units are one intrusive list	/mnt/frankendom-donors/OpenBW-openbw/bwgame.h	290	intrusive_list<unit_t, default_link_f> visible_units;
+OpenBW-openbw	Hidden units are a separate intrusive list	/mnt/frankendom-donors/OpenBW-openbw/bwgame.h	291	intrusive_list<unit_t, default_link_f> hidden_units;
+OpenBW-openbw	Frame step increments the frame then runs process_frame and triggers	/mnt/frankendom-donors/OpenBW-openbw/bwgame.h	13192	++st.current_frame;
+OpenBW-openbw	process_frame order: units first, then bullets and thingies	/mnt/frankendom-donors/OpenBW-openbw/bwgame.h	13101	update_units();
+OpenBW-openbw	Bullets update after units	/mnt/frankendom-donors/OpenBW-openbw/bwgame.h	13102	update_bullets();
+OpenBW-openbw	Thingies update last in process_frame	/mnt/frankendom-donors/OpenBW-openbw/bwgame.h	13103	update_thingies();
+OpenBW-openbw	Tile visibility refresh runs every 100 frames	/mnt/frankendom-donors/OpenBW-openbw/bwgame.h	13091	if (st.update_tiles_countdown == 0) st.update_tiles_countdown = 100;
+OpenBW-openbw	Trigger timer step is 42 per frame	/mnt/frankendom-donors/OpenBW-openbw/bwgame.h	13107	int timer_step = 42;
+OpenBW-openbw	Trigger timer reload is 30 frames	/mnt/frankendom-donors/OpenBW-openbw/bwgame.h	13126	st.trigger_timer = 30;
+OpenBW-openbw	Replay game-info block is 633 bytes	/mnt/frankendom-donors/OpenBW-openbw/replay.h	110	std::array<uint8_t, 633> game_info_buffer;
+OpenBW-openbw	Replay reads the frame count from the game-info block	/mnt/frankendom-donors/OpenBW-openbw/replay.h	116	auto frame_count = gir.get<uint32_t>();
+OpenBW-openbw	Replay reads the random seed from the game-info block	/mnt/frankendom-donors/OpenBW-openbw/replay.h	119	uint32_t random_seed = gir.get<uint32_t>();
+OpenBW-openbw	Replay sets the LCG state from the recorded seed	/mnt/frankendom-donors/OpenBW-openbw/replay.h	221	st.lcg_rand_state = random_seed;
+OpenBW-openbw	Replay stores the frame count as its end frame	/mnt/frankendom-donors/OpenBW-openbw/replay.h	193	replay_st.end_frame = frame_count;
+OpenBW-openbw	Replay step runs recorded actions then one game frame	/mnt/frankendom-donors/OpenBW-openbw/replay.h	231	execute_actions(replay_st.actions_data_buffer.data()
+OpenBW-openbw	Replay step calls the state frame step after actions	/mnt/frankendom-donors/OpenBW-openbw/replay.h	232	state_functions::next_frame();
+OpenBW-openbw	Replay file identifier check	/mnt/frankendom-donors/OpenBW-openbw/replay.h	108	if (identifier != 0x53526572)
+OpenBW-openbw	Replay action stream length is read as a 32-bit count	/mnt/frankendom-donors/OpenBW-openbw/replay.h	196	replay_st.actions_data_buffer.resize(r.template get<uint32_t>());
+OpenBW-openbw	Replay saver default seed is 42 until set	/mnt/frankendom-donors/OpenBW-openbw/replay_saver.h	521	uint32_t random_seed = 42;
+OpenBW-openbw	Replay saver groups actions under a frame header	/mnt/frankendom-donors/OpenBW-openbw/replay_saver.h	544	void add_action(int current_frame, int owner
+OpenBW-openbw	Replay saver starts a new frame block when the frame changes or the block is full	/mnt/frankendom-donors/OpenBW-openbw/replay_saver.h	546	replay_saver_st.current_actions_size + 1 + data_size >= 0x100
+OpenBW-openbw	Replay saver rejects an action longer than 255 bytes	/mnt/frankendom-donors/OpenBW-openbw/replay_saver.h	550	if (data_size >= 0x100) error
+OpenBW-openbw	Replay saver writes the frame count into the game-info block	/mnt/frankendom-donors/OpenBW-openbw/replay_saver.h	574	giw.put<uint32_t>(current_frame);
+OpenBW-openbw	Replay saver writes the seed into the game-info block	/mnt/frankendom-donors/OpenBW-openbw/replay_saver.h	577	giw.put<uint32_t>(replay_saver_st.random_seed);
+OpenBW-openbw	Comment: an original bug is reproduced on purpose	/mnt/frankendom-donors/OpenBW-openbw/bwgame.h	2016	// This is an original bug. Don't fix
+OpenBW-openbw	Bounding-box expression with the reproduced bug	/mnt/frankendom-donors/OpenBW-openbw/bwgame.h	2017	bb.to.x += u->unit_type->dimensions.from.y + 1;
