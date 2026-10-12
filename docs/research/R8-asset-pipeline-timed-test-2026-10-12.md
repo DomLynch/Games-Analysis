@@ -1,12 +1,12 @@
 # R8: Hugging Face asset pipeline timing test (INTERIM, 2026-10-12, compiled for later use)
 
-Status: run 1 and the A100 smoke test are done. The 5 to 10 asset run is NOT done. Numbers are measured unless marked estimate. Not legal advice; licences are in R7.
+Status: run 1 and the A100 smoke test are done. The 4 to 10 asset run is NOT done. Numbers are measured unless marked estimate. Not legal advice; licences are in R7.
 
 ## Summary for Dom (plain English)
 - The pipeline (prompt -> picture -> TRELLIS.2 3D mesh, batched on a rented GPU) can make props, foliage, buildings and armour pieces cheaply: about $0.03 to $0.14 of GPU time per asset.
 - It is only one stage of zone creation. It does not do layout, style matching across a kit, or game-ready clean-up. Those costs are not measured yet.
 - Characters and bosses stay hand-fitted to our 65-bone rig (docs/boss-briefs/CHARACTER-RECIPE.md). This pipeline does not replace that.
-- Next step needs Dom: yes or no on ONE L40S job (5 assets, about $0.60 worst case).
+- Next step needs Dom: yes or no on ONE L40S job (4 assets, about $0.60 worst case).
 
 ## What this test is for
 Can we mass-produce props, foliage, buildings and armour pieces with prompt -> image -> TRELLIS.2 3D mesh, and what does it cost in seconds, dollars and human time per accepted asset. NOT for characters or bosses.
@@ -29,7 +29,7 @@ Can we mass-produce props, foliage, buildings and armour pieces with prompt -> i
   - quality: see hf-asset-test/smoke1_a03_ruined_tower_render.png. Clean, detailed, matches the source picture. One asset only.
 
 ## Findings
-1. The A100 was NOT faster on this asset: same tower took about 82 s on the L4, 183.5 s on the A100. Single data point; the first asset pays one-time kernel compile. A second asset is needed to know the warm speed.
+1. The A100 was NOT faster on this asset: same tower took about 100 s on the L4 (82 s generation + about 17 s glb) against about 201 s on the A100 (183.5 s generation + 17.7 s glb). Single data point; the first asset pays one-time kernel compile. A second asset is needed to know the warm speed.
 2. Fixed overhead per job is about 8 minutes (setup 61 s + preflight 278 s + download 20 s + load 131 s). That is about $0.34 on an A100 and about $0.11 on an L4 before any asset is made (the A100 overhead alone equals about 11 L4 assets of GPU time). So: ONE long job per batch, never one job per asset.
 3. If the 183 s holds, an A100 asset costs about $0.14 (183 s + 18 s at $0.0417/min), against about $0.03 on the L4 when it does not run out of memory.
 4. Remaining budget about $0.68 (restart spent about $0.52: smoke $0.4958 + CPU wheel builds about $0.02, agent estimate). A 10-asset A100 job does not fit.
@@ -38,10 +38,10 @@ Can we mass-produce props, foliage, buildings and armour pieces with prompt -> i
 ## Cost per asset by GPU (GPU time only)
 | | L4 ($0.80/h) | L40S ($1.80/h, 48 GB, sm_89) | A100 ($2.50/h, 80 GB) |
 |---|---|---|---|
-| Time per asset | about 140 s (tower about 100 s) | estimate: similar to L4, 100 to 140 s | about 200 s (one asset) |
+| Time per asset (generation + glb) | about 140 s average (tower about 100 s) | estimate: similar to L4, 100 to 140 s | about 200 s (one asset) |
 | Cost per asset when it works | about $0.03 | estimate $0.05 to $0.07 (not measured, no L40S job has run) | about $0.14 |
 | Success | 6 of 10 (3 out of memory, 1 timeout) | expected no out-of-memory (48 GB), untested | 1 of 1 |
-| Cost per good asset incl. failures | about $0.05 (estimate) | unknown | about $0.14 |
+| Cost per good asset incl. failures | about $0.05 estimate (only if nothing times out); ACTUAL run 1: $0.80 for 3 surviving meshes = about $0.27 each, because a timeout lost the meshes | unknown | about $0.14 |
 | Mesh | about 50k triangles | unknown | about 95k triangles |
 
 Read: L4 is cheapest for small, simple props that fit in 24 GB. L40S is the likely best value for bigger or detailed assets. The A100 only pays off if the L40S test shows it is much faster; the one data point says it is not.
@@ -62,10 +62,16 @@ Not covered, and needed before it counts as a zone pipeline:
 - Style consistency: 50 assets that look like one kit. Only 10 prompts and 1 clean result so far.
 - Game-readiness: 50k to 95k triangles is heavy for a mobile game. Needs decimation, island removal, watertight check, LODs, collision, texture budget.
 - Human review and Blender clean-up time per asset: not measured yet. If every asset needs heavy clean-up, people are the bottleneck again.
+### Needed so zones can use assets as data (Strategy review, 2026-10-12)
+1. One manifest row per asset, referenced by id from zone rows (zones are data rows, so an asset must be one row the same way). Fields: id, kind, triangles, LOD levels, collision, texture size, source model, licence, prompt, GPU cost, clean-up minutes.
+2. A triangle and texture budget per asset kind for a mobile web game, so the quality gate has a pass number. Ask World for it; do not guess.
+3. A style anchor per kit (a reference image or seed), so 50 assets read as one kit.
+4. Licence recorded per asset for its whole generating stack, not only in R7. An asset made through nvdiffrast carries that status until Dom rules.
+
 Pipeline versus the manual route: new pipeline wins on scale and GPU cost per asset; manual Blender + TRELLIS wins on fit to our rig, style control and proven quality. Use the pipeline for props, foliage, buildings, armour pieces; keep manual for characters and bosses.
 
 ## Decision pending (Dom)
-Recommended next job: ONE L40S job (l40sx1, $1.80/h = $0.03/min, 48 GB so no out-of-memory, sm_89 so the rebuilt wheels work) for 5 assets, ceiling 20 min (worst case $0.60). Gives the warm speed and a cost per asset. This changes Dom's A100 choice, so it needs his yes. Strategy had preferred the L40S first.
+Recommended next job: ONE L40S job (l40sx1, $1.80/h = $0.03/min, 48 GB so no out-of-memory, sm_89 so the rebuilt wheels work) for 4 assets, ceiling 20 min (worst case $0.60). Time budget: about 490 s overhead (the preflight compile may repeat on the first sm_89 run) + 4 x 140 s = about 1,050 s, roughly 17.5 min. With resume and per-asset upload, a job cut at the ceiling loses nothing already uploaded. Gives the warm speed and a cost per asset. This changes Dom's A100 choice, so it needs his yes.
 Per asset, the next run must record: GPU cost, pass or fail on the quality gate with no touch-up, triangle count, minutes of clean-up needed.
 Other open items: the nine design-brief questions (bottom of each brief); the nvdiffrast licence ruling.
 
