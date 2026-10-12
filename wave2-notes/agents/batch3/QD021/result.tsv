@@ -1,0 +1,2 @@
+game	category	old	verdict	depth	finding
+yairm210-Unciv	quests-dialogue	P	STRONG	full	/mnt/frankendom-donors/yairm210-Unciv/core/src/com/unciv/logic/civilization/managers/quests/QuestManager.kt:120-146,233-251,298-313,396-405 and QuestImplementation.kt:49-248 show a flat quest-record list with per-turn poll plus pushed completion, one-active caps and one reward ledger (DiplomacyManager.kt:448-464); dialogue-tree half not found, only Event.kt:14-22 and UniqueTriggerActivation.kt:119-136 (Floating park is an unimplemented todo).

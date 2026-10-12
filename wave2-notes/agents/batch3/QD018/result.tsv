@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+lincity-ng-lincity-ng	quests-dialogue	P	STRONG	full	src/lincity/simulate.cpp:251-319 yearly six-streak sustain test latches one win; dirty flags set by coalmine.cpp:102-103, oremine.cpp:114-117, tip.cpp:90 and port.cpp:179-183; two comments disagree with code (simulate.cpp:273 vs 275, 283 vs 287).
+opentibiabr-otclient	quests-dialogue	P	STRONG	thin	modules/game_questlog/game_questlog.lua:878-961 server pushes a full replace or single-mission upsert into a capped client mirror, sent back at game_questlog.lua:236-273 and protocolgamesend.cpp:815-833; server half that completes missions is not in this donor (not read).
+otland-forgottenserver	quests-dialogue	P	STRONG	full	data/npc/lib/npcsystem/keywordhandler.lua:116-162 per-player cursor keyword tree with three-step search and rollback; npchandler.lua:397-421 and 487-513 chat entry, focus, idle release; modules.lua:66-95 storage-gated one-time promotion.

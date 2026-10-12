@@ -1,0 +1,3 @@
+game	category	old	verdict	depth	finding
+xoreos-xoreos	inventory-bank-equipment	P	STRONG	full	/mnt/frankendom-donors/xoreos-xoreos/src/engines/nwn2/inventory.cpp:121-123,135-153,234-268 - fixed 18-slot equip array plus sparse bag; load never drops a colliding item (first free bag index, else append); no move, swap or merge in donor
+xu4-engine-u4	inventory-bank-equipment	P	STRONG	full	/mnt/frankendom-donors/xu4-engine-u4/src/item.cpp:463-499 and 445-458 - gate-then-grant pickup with move-bucket cooldown and reagent stack cap 99; no bag, bank or equipment slot model in this donor

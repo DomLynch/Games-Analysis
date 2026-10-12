@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+pmbstyle-L2Solo	quests-dialogue	P	STRONG	full	/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Quest/QuestStep.js:5-55 and src/Database.js:4785-4845: one compare-and-swap transaction commits a quest hand-in (items, quest state, XP, receipts) and memory updates only after commit.
+vcmi-vcmi	quests-dialogue	P	STRONG	full	/mnt/frankendom-donors/vcmi-vcmi/lib/mapObjects/Quest.cpp:731-823 with lib/rewardable/Limiter.cpp:80-269: seer-hut queue with requirement tree, deadline and one-shot rules, and the next quest offered only after the grant has ended.
+veloren-veloren	quests-dialogue	P	STRONG	full	/mnt/frankendom-donors/veloren-veloren/rtsim/src/rule/npc_ai/quest.rs:16-63, 66-108, 459-493 with rtsim/src/data/quest.rs:228-245: escrowed deposit settled exactly once by compare-and-exchange, refunded on timeout; hand-in order and rounding have defects.

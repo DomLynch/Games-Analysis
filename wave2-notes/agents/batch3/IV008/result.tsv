@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ValveSoftware-source-sdk-2013	inventory-bank-equipment	P	STRONG	full	src/game/server/player.cpp:6754-6796 and basecombatcharacter.cpp:2190-2223 show a duplicate pickup moving ammo to the owned gun up to the carry cap, leaving the remainder on the world pickup; hl2_player.cpp:2747-2753 adds a one-gun-per-slot swap rule.
+XProger-OpenLara	inventory-bank-equipment	P	STRONG	full	src/inventory.h:747-837 folds ammo boxes into a held weapon at a per-gun clip ratio, keeps a type-sorted list capped at 32 entries, and removes entries at zero (pickup call sites fixed/object.h:553-561).
+afritz1-OpenTESArena	inventory-bank-equipment	P	STRONG	full	src/Items/ItemInventory.cpp:183-229 stacks stackables and grows slots, src/Interface/CharacterEquipmentUiState.cpp:135-188 runs per-kind exclusive equip groups, and src/Player/Player.cpp:682-688 with ArenaPlayerUtils.cpp:15-18 maps carried weight to speed.

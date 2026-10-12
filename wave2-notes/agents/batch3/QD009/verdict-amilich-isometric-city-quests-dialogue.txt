@@ -1,0 +1,35 @@
+PARTIAL - amilich-isometric-city (quests-dialogue, cell 1, list 3)
+Donor: /mnt/frankendom-donors/amilich-isometric-city | Licence: MIT License, Copyright (c) 2025 amilich (read from LICENSE, line 1) | permissive | TypeScript/Next.js isometric city builder (IsoCity / IsoCoaster)
+Depth: thin (only a fragment of the topic exists; I read the whole fragment and the places that look for quest/objective logic)
+Checked: confidence high that there is NO quest or objective system in the play path; medium-high that the only dialogue is the one below (I did not read src/components/ui/CommandMenu.tsx or the coaster panels in full, and did not read the multiplayer code, which is out of topic).
+
+Files opened (candidates, 7):
+1. src/components/VinnieDialog.tsx (the only dialogue box; lines 20-40 and 40-84 read)
+2. src/hooks/useCheatCodes.ts (typed-phrase triggers, lines 1-10 and 60-95)
+3. src/components/Game.tsx (cheat reward switch, lines 190-219)
+4. src/context/GameContext.tsx (addMoney and addNotification, lines 1421-1440)
+5. src/games/coaster/types/economy.ts (ParkObjective, lines 360-385)
+6. src/context/CoasterContext.tsx (park settings init, lines 540-550; grep hit at 547 only)
+7. src/lib/simulation.ts (generateAdvisorMessages, lines 2016-2060)
+Searches (grep -rn, narrow to src/): quest|mission|objective|dialog|dialogue|goal|achievement|tutorial|npc|conversation; objectives?|quests?|missions?|goals?|advisors?|incidents?|tutorial|milestones?|achievements?|unlock|tasks? (hits outside these files were Radix Dialog UI wrappers, crime/fire incidents in incidentData.ts, and coaster guest code, none of it quest logic).
+
+What the donor actually has:
+- No quest state machine, no NPC conversation tree, no scripted dialogue. A grep for those words finds only Radix Dialog wrappers and advisor/incident text.
+- ParkObjective (economy.ts:378-383) is declared: type is one of five kinds (guests, rating, profit, coasters, park_value), with an optional month/year deadline and a completed flag. The park settings initialise it as an empty array (CoasterContext.tsx:547). I found no code that reads, evaluates or completes an objective. Treat it as dead schema.
+- One real dialogue: VinnieDialog.tsx. Typing the phrase "vinnie" (useCheatCodes.ts:80-82) opens a two-button offer. Accept calls addMoney(500000) (VinnieDialog.tsx:24) and posts a notification; Decline calls addMoney(10000) (VinnieDialog.tsx:34) and posts a different notification. Both outcomes are one if/else in a click handler: no state, no node graph, no follow-up.
+- The cheat rewards go through the same addMoney helper (Game.tsx:193-218 switch; addMoney at GameContext.tsx:1421, adds to stats.money at line 1426).
+- Advisor messages (simulation.ts:2017 onward) are not quests: generateAdvisorMessages turns counts (for example unpowered buildings, line 2032) into a text line with a priority threshold (line 2052: high above 10, else medium). They are regenerated each tick (GameContext.tsx clears them each tick, per its comment).
+
+Defects found while reading (keep the idea, fix in any port):
+- Motherlode notification says "You received $1,000,000!" (Game.tsx:208) but the trigger credits 50000 (useCheatCodes.ts:87, Game.tsx:205). fix: derive the message text from the same amount value.
+- The "fund" cheat sets a trigger (useCheatCodes.ts:91) but no case in the Game.tsx reward switch handles type 'fund' (switch lines 193-218 have konami, motherlode, vinnie only). fix: either add the case or delete the trigger.
+- ParkObjective is declared but never evaluated. fix: do not port the schema without an evaluator and a test.
+- The reward decision (amount, notification text) is hard-coded in the client component. fix: server-side in any Frankendom port (see decision).
+
+Best transferable idea: a dialogue offer can be data (a choice node with two options, each naming a reward and a notification) and each option's reward is posted once through the one ledger call, so the offer is a single choice, not script code.
+
+Decision (proposed): adapt - keep the two-option offer shape as a zone-data dialogue node whose accept/decline each post one server-verified ledger entry (Frankendom rulings: one ledger, server-verified); reject the donor's client-side addMoney grant, which breaks the one-ledger and server-verified rules.
+
+Frankendom target (proposed): origins/ dialogue data plus the server reward post (not in repo, not read). Parity row: 18 (loot roll and XP award, reward posting). Gaps against rulings: no quest state, no objective evaluator, no dialogue tree, no server call; the donor is client-only, so none of its reward logic is authoritative.
+
+Camera scope: not applicable (not a camera cell).
