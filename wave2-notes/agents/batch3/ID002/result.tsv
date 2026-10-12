@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+OpenXcom-OpenXcom	instancing-dungeons	P	STRONG	full	src/Battlescape/BattlescapeGenerator.cpp:193-545 (nextStage) hands a battle map to the next stage with explicit carry rules (exit tile, abort, item protocols) and the stage chain is data in bin/standard/xcom2/alienDeployments.rul:1226; defects D1-D4 recorded with fixes.
+ax-grymyr-l2dn-server	instancing-dungeons	P	STRONG	full	L2Dn/L2Dn.GameServer.Model/Model/InstanceZones/Instance.cs:58-1289 is the instance lifecycle (create, warning ladder, empty grace, eject after death, logout restore, destroy) with timers as zone data; defects D1-D5 recorded with fixes.
+dkfans-keeperfx	instancing-dungeons	P	STRONG	full	src/creature_groups.c:855-919 spawns a party as a staggered wave with one leader, src/creature_states_hero.c:905-1041 retargets on 64/400/16/200-turn timers and 1121-1168 holds an exit-gate wait; defects D1-D3 recorded with fixes.

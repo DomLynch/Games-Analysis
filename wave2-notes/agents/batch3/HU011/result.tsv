@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+afritz1-OpenTESArena	hud-ui	P	STRONG	full	OpenTESArena/src/Interface/GameWorldUiMVC.cpp:782-795 and GameState.cpp:1425-1440: HUD message lines stay up for max(floor, chars x 0.050 s) and count down on the clamped frame step; vitals bars are rounded pixel fills (1011-1012).
+alexbatalov-fallout1-ce	hud-ui	P	STRONG	full	src/game/intface.cc:1072-1151 and 2194-2316: the HP readout rolls digit by digit with the colour changing at the 25% and 50% crossings, paced by 250/(|delta|+1) ms per step, but each step holds three busy waits (input.cc:657-664), so the real time is about 0.4-0.75 s before carries.
+alexbatalov-fallout2-ce	hud-ui	P	STRONG	full	src/interface.cc:2302-2459 (rules 44-57, 70-77, 196-201): status chips show only past a threshold (poison above 0, radiation above 65), in a fixed enum order, with a six-slot array and a 130 px chain that needs about 635 px for five chips (too wide for 375 px).

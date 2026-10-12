@@ -1,0 +1,14 @@
+{"game":"lichess-org-mobile", "category":"quests-dialogue", "cell":12, "verdict":"STRONG", "depth":"full", "donor_path":"/mnt/frankendom-donors/lichess-org-mobile", "licence":"GPL-3.0 (LICENSE: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007), as read", "licence_class":"copyleft",
+ "target_module":"origins/quests/script-beats.ts", "parity_row":18, "pattern_tags":["wait-gate","new:beat-sequencer","new:pause-for-read","new:wrong-input-takeback","new:fewest-count-record"],
+ "data_fields":[
+  {"name":"opponent_beat_delay","donor_constant":"1000 ms before an uncommented opponent move plays","unit":"ms","where":"engine constant","donor_ref":"/mnt/frankendom-donors/lichess-org-mobile/lib/src/model/practice/practice_gamebook_controller.dart:17"},
+  {"name":"first_opponent_beat_delay","donor_constant":"300 ms when the chapter opens with the opponent's move","unit":"ms","where":"engine constant","donor_ref":"/mnt/frankendom-donors/lichess-org-mobile/lib/src/model/practice/practice_gamebook_controller.dart:20"},
+  {"name":"wrong_input_takeback_delay","donor_constant":"800 ms before an uncommented wrong move is taken back","unit":"ms","where":"engine constant","donor_ref":"/mnt/frankendom-donors/lichess-org-mobile/lib/src/model/practice/practice_gamebook_controller.dart:23"},
+  {"name":"beat_pause_mode","donor_constant":"rule: a beat with a caption pending waits for the player's tap (no timeout)","unit":"none","where":"zone data","donor_ref":"/mnt/frankendom-donors/lichess-org-mobile/lib/src/model/practice/practice_gamebook_controller.dart:129"},
+  {"name":"deviation_index","donor_constant":"rule: wrong move's comment at index ply + 1 (a move is indexed by the ply it produces)","unit":"count","where":"engine constant","donor_ref":"/mnt/frankendom-donors/lichess-org-mobile/lib/src/model/practice/practice_gamebook_controller.dart:200"}
+ ],
+ "best_idea":"A scripted sequence where each beat auto-advances after a delay unless a caption is pending, a wrong input is shown then taken back by timer unless the author wrote a caption for it, and the record keeps the fewest inputs.",
+ "decision":"adapt",
+ "decision_why":"Keep the pause-for-read gate, the timed take-back of a wrong input and the fewest-count record; put the delays on each beat in zone data, and make the pause non-blocking in combat, because the donor's infinite wait on a caption would freeze a fight. Any reward tied to completion must be checked on the server.",
+ "decision_status":"proposed",
+ "acceptance":"In a tutorial fight the enemy's scripted reply plays 1 s after the player's input unless that beat has a caption; a wrong input is shown and taken back after 0.8 s unless the author wrote a caption for it; the completion record keeps the fewest inputs and is verified on the server."}

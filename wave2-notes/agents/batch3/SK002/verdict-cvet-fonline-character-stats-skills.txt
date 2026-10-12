@@ -1,0 +1,24 @@
+cvet-fonline | character-stats-skills | cell 3 | VERDICT: PARTIAL | depth: thin | camera_scope: n/a (not a camera cell)
+Donor: /mnt/frankendom-donors/cvet-fonline | Licence: MIT (LICENSE line 1 "MIT License", copyright 2006-2026 Anton Tsvetinskiy aka cvet; code may be adapted)
+Evidence hint: the repo root (no single hint file); the engine has no stat file.
+
+Files opened (candidates, all read, not only grepped):
+1. Source/Common/EntityProperties.h 291-406 (read; Game and Player classes seen by grep) (CritterProperties: Condition, ControlledByPlayer, LookDistance and the rest).
+2. Source/Common/Common.h 434 (NetWrongTagSkill error code) and 974-979 (CritterCondition enum: Alive, Knockout, Dead).
+3. Source/Server/Critter.cpp 300-312 (IsDead and IsKnockout queries).
+4. Source/Scripting/ServerCritterScriptMethods.cpp 676-710 (condition change: Knockout, StandUp, Respawn actions).
+5. Source/Common/Entity.h 48-49 (ExportEntity annotations for Critter and Item, seen by grep).
+6. Source/Common/Settings.inc 414-425 and Source/Server/Server.cpp 257-316 (health-file writer: an ops file, not a game stat).
+7. Examples/MinimalMultiplayer/Scripts/Tutorial.fos 1-12 (a content-declared critter property).
+Searched with grep -rn on Source, Examples and Resources for hitpoint, health, stamina, experience, skill, perk, strength, level, param, stat and tagged: the engine has no stat formula, no derived stat, no skill table, no XP curve and no weapon stat. Resources holds fonts, effects and sprites only. The content that would define stats is not in the box.
+
+Why PARTIAL, one sentence: the donor is an MMO engine that leaves character stats to project scripts, so the only real mechanism in the box is the typed property and life-state model, not the stat or skill rules.
+
+Best transferable idea: declare each character stat once as a typed property tagged with who may see it (Common, Server or Client), whether it is mutable, public-synced and persistent, so each catalogue field carries its own visibility and save rule.
+
+Decision (proposed): adapt - take the declaration-with-visibility-tag shape for the parity row 21 catalogue fields in src/fight/stats.ts (server-only fields such as luck and the roll seed never sync to the client), and keep the Knockout state as a separate condition with stand-up and respawn actions (rule for the fight: knockout is not death). Reject the entity framework and the generated annotation pipeline: we have one engine and our catalogue is data.
+
+Target: src/fight/stats.ts | Parity row: 21 (catalogue fields).
+
+Not read: the server property write path beyond the annotations (Entity.h past line 60); who calls the Knockout transition (content code, absent); any damage or HP rule (absent).
+Confidence: high that the box has no stat or skill rules; the reading of the property model is from annotations and declarations, not from its runtime code.

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+swgemu-Core3	character-stats-skills	P	STRONG	full	CreatureObjectImplementation.cpp:3197-3245 (HAM regen with posture multipliers), 1203-1213 (hit floors), 4150-4153 (stat-scaled action cost); PlayerManagerImplementation.cpp:5084-5089 (armour encumbrance lowers secondary max).
+OpenDAoC-OpenDAoC-Core	character-stats-skills	P	STRONG	full	propertycalc/StatCalculator.cs:196-223 (four-step buff/debuff ladder at 0.5, 1, 2 rates) and 99-100 (level-based buff caps); gameobjects/GamePlayer.cs:2452-2466 (max HP) and 2478-2515 (max mana).
+TurningWheel-Barony	character-stats-skills	P	STRONG	full	src/entity.cpp:2504-2506 and 12151-12152 (kill-gated proficiency gain below 20, 1 in 20), 26326-26338 with src/monster.hpp:566-592 (three level-up stat picks from class weight rows), 4062-4070 (100 XP per level).

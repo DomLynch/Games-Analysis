@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+OpenDiablo2-OpenDiablo2	hud-ui	P	STRONG	full	d2game/d2player/globeWidget.go:183-221 - health orb fills bottom-up from an 80 px mask with hover and click-to-pin tooltip (no clamp, floor rounding, no minimap draw, no touch or lock-on in this donor)
+OpenEnroth-OpenEnroth	hud-ui	P	STRONG	full	src/GUI/UI/UIGame.cpp:1287-1531 - radar crops the terrain around the party, shows presence-gated blips at zoom-scaled marker sizes, an 8-sector arrow from yaw and a 240 px-per-turn compass (hover readout uses centre 557 vs draw 556; touch is mouse-only)
+OpenRA-OpenRA	hud-ui	P	STRONG	full	OpenRA.Mods.Common/Traits/World/RadarPings.cs:43-116 with Traits/Player/DamgeNotifier.cs:72-120 - damage starts a three-point ring on the radar that shrinks 200 to 15 px over 250 ticks, rate-limited per unit by 30 s (expiry uses == and visibility is captured once)

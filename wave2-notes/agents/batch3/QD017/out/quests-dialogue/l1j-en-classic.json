@@ -1,0 +1,17 @@
+{"game":"l1j-en-classic", "category":"quests-dialogue", "cell":12, "verdict":"STRONG", "depth":"full", "donor_path":"/mnt/frankendom-donors/l1j-en-classic", "licence":"GPL-2.0 (COPYING: GNU GPL Version 2; source headers: either version 2 or any later version), as read", "licence_class":"copyleft",
+ "target_module":"origins/quests/quest-log.ts", "parity_row":18, "pattern_tags":["new:quest-step-gate","new:data-gated-action-tree","new:turn-in-succeed-fail","new:write-after-commit","stale-state"],
+ "data_fields":[
+  {"name":"quest_end_sentinel","donor_constant":"255","unit":"none","where":"engine constant","donor_ref":"/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/L1Quest.java:64"},
+  {"name":"gate_level_min_default","donor_constant":"1","unit":"count","where":"engine constant","donor_ref":"/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/npc/action/L1NpcXmlAction.java:67"},
+  {"name":"gate_level_max_default","donor_constant":"99","unit":"count","where":"engine constant","donor_ref":"/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/npc/action/L1NpcXmlAction.java:68"},
+  {"name":"inventory_slot_cap","donor_constant":"180","unit":"count","where":"engine constant","donor_ref":"/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/npc/action/L1NpcMakeItemAction.java:131"},
+  {"name":"turn_in_material_amount","donor_constant":"per MakeItem Material Amount attribute in Quest.xml (e.g. 1 in the cloak turn-in)","unit":"count","where":"zone data","donor_ref":"/mnt/frankendom-donors/l1j-en-classic/data/xml/NpcActions/Quest.xml:4"},
+  {"name":"turn_in_reward_amount","donor_constant":"per MakeItem Item Amount attribute in Quest.xml (e.g. 1 in the cloak turn-in)","unit":"count","where":"zone data","donor_ref":"/mnt/frankendom-donors/l1j-en-classic/data/xml/NpcActions/Quest.xml:4"},
+  {"name":"quest_gate_step","donor_constant":"per QuestStep attribute in Quest.xml (0, 1, 2 ...; -1 means any started quest)","unit":"count","where":"zone data","donor_ref":"/mnt/frankendom-donors/l1j-en-classic/data/xml/NpcActions/Quest.xml:9"},
+  {"name":"listed_child_order","donor_constant":"document order; each child gate read at its own turn (donor); snapshot in sketch","unit":"none","where":"zone data","donor_ref":"/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/model/npc/action/L1NpcListedAction.java:41"}
+ ],
+ "best_idea":"A quest is a per-character integer step with an END value, and every NPC line is a data row gated on npc, level, class and step, with a Succeed or Fail branch for item turn-ins.",
+ "decision":"adapt",
+ "decision_why":"Keep the data-gated NPC action tree and the per-character step log, which fit zones-as-data and the one-ledger ruling; fix the donor's null map at login, the memory write after a failed SQL write, the Java-hardcoded quest branches and the order-dependent sibling gates before building.",
+ "decision_status":"proposed",
+ "acceptance":"Server test: a player at step 1 turns in the item; materials are consumed, the reward is granted and the step moves to END in one server transaction; a forced DB write failure leaves the in-memory step unchanged; a fresh login's first SetQuest runs without a prior gate call."}

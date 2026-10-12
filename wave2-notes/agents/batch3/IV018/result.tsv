@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+otland-forgottenserver	inventory-bank-equipment	P	STRONG	full	src/game.cpp:1073-1298 and src/depotchest.cpp:14-44: a move checks the destination, counts how many fit (clamp), then commits with a partial-fit result, and the depot counts every nested item against a holding limit.
+pmbstyle-L2Solo	inventory-bank-equipment	P	STRONG	full	src/GameServer/Actor/Backpack.js:1457-1516 and src/GameServer/Warehouse/PersonalWarehouse.js:47-95: equip clears a fixed conflict table and moves an ear or fin to its free twin, and a bank batch is validated line by line before per-line database transfers.
+rathena-rathena	inventory-bank-equipment	P	STRONG	full	src/map/pc.cpp:12500-12578 and 12015-12171: a parked item exchanges with the worn set on a bitmask, displaced worn items are parked in its place, and stacks match on id, bound flag, unique id and cards (pc.cpp:6019-6025).

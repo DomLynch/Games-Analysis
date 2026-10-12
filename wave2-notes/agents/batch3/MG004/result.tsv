@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+TrinityCore-TrinityCore	magic-spells-powers	P	STRONG	full	Unit.cpp:9350-9472 and Spell.cpp:3183-3216, 3802-3804: a per-target crowd-control ladder (100/50/25/immune, 18 s reset, PvP cap, bounce of a weaker recast); casting, cast-time and interrupt rules not covered here.
+rathena-rathena	magic-spells-powers	P	STRONG	full	skill.cpp:10122-10195 and 10253-10377; unit.cpp:1765-1772, 1981-1990, 2077-2563, 3408-3466; status.cpp:1612, 13146-13147: cast time split into a fixed windup and a variable part cut by speed/focus, any landed hit cancels a cancellable cast, and a cancelled caster is freed at once.
+Segs-Segs	magic-spells-powers	P	STRONG	full	WorldSimulation.cpp:179-305 and DataHelpers.cpp:721-905, 966; EntityHelpers.cpp:395-400: a per-player power queue with a charge timer, recharge timer, endurance cost at fire, and toggles that fire on a period and stop on empty endurance; block checks only gate the start of a charge.

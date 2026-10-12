@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+SFTtech-openage	hud-ui	P	STRONG	thin	libopenage/input/controller/game/controller.cpp:60-93 input policy send/queue/clear; send loop is a TODO at 74-77; binding.h:25 states intended send-all; HUD is drag box only (renderer/stages/hud/render_stage.h:40); string table grammar read (openage/convert/service/read/string_resource.py:139-204), no table shipped (0 entries)
+STJr-SRB2	hud-ui	P	STRONG	full	src/p_user.c:9370-9453 P_LookForEnemies: reach 512 units (x2 bullet), cone 30 deg bullet / 90 deg homing, nearest valid target, line of sight last; callers p_user.c:4831, 5187, 5308; en.po/srb2.pot counts in note
+TurningWheel-Barony	hud-ui	P	STRONG	full	src/ui/GameUI.cpp:33537-33650 updateHPBar: bar width 30% plus 2.5% per 5 HP above 20 until 160 max HP, lagging ghost holds 30 logic ticks then drains; lang/en.txt parsed by src/init.cpp:973-1040 (5728 records, grammar read)

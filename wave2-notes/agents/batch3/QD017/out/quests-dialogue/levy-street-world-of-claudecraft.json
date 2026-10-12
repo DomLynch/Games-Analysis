@@ -1,0 +1,14 @@
+{"game":"levy-street-world-of-claudecraft", "category":"quests-dialogue", "cell":12, "verdict":"STRONG", "depth":"full", "donor_path":"/mnt/frankendom-donors/levy-street-world-of-claudecraft", "licence":"MIT (LICENSE: MIT License, Copyright (c) 2026 Levy Street), as read", "licence_class":"permissive",
+ "target_module":"origins/quests/town-done.ts", "parity_row":18, "pattern_tags":["new:zone-completion-aggregate","new:entry-hint-precedence","new:client-leaf-view"],
+ "data_fields":[
+  {"name":"eastbrook_hub_radius","donor_constant":"TOWN_RADIUS = 26 (hub radius in world units)","unit":"units","where":"zone data","donor_ref":"/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/content/zone1.ts:22"},
+  {"name":"highwatch_hub_radius","donor_constant":"20 (hub radius in world units)","unit":"units","where":"zone data","donor_ref":"/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/content/zone3.ts:29"},
+  {"name":"town_errand_counted","donor_constant":"rule: not repeatable; not trainer; not group (suggestedPlayers); not instance kill; giver or turn-in inside hub; turn-in inside zone","unit":"none","where":"zone data","donor_ref":"/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/town_quests.ts:113"},
+  {"name":"errand_skipped_when_unreachable","donor_constant":"rule: retired, or class-locked to another class, is skipped and not counted","unit":"none","where":"engine constant","donor_ref":"/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/town_quests.ts:126"},
+  {"name":"zone_done_text_present","donor_constant":"optional welcomeDone string per zone (three founding zones author it)","unit":"none","where":"zone data","donor_ref":"/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/sim/content/zone1.ts:191"}
+ ],
+ "best_idea":"A zone is done when every errand the town hands out and receives inside the zone is turned in, with retired or other-class quests skipped and a zone with zero counted errands never counted as done.",
+ "decision":"adapt",
+ "decision_why":"Keep the completion rule and the done-line-over-welcome precedence; author the errand list per zone as data instead of inferring it from NPC positions, so a moved NPC cannot silently change the rule. The line is client HUD only, so any reward tied to it must move to the server.",
+ "decision_status":"proposed",
+ "acceptance":"Entering a zone with a town-done line shows it only after the last counted errand is turned in; a retired or other-class errand does not block it; a zone with zero counted errands never shows it; a server-side test asserts the authored errand list matches the NPC positions."}

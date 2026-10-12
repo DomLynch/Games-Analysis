@@ -1,0 +1,17 @@
+Inorien-AOReloaded (character-stats-skills, cell 3): verdict NONE, depth thin
+Donor: /mnt/frankendom-donors/Inorien-AOReloaded | Licence: MIT (LICENSE, "MIT License, Copyright (c) 2026 Inorien") | C++ client mod for Anarchy Online (DLL hijack, camera, input, timer bars, DValue registry)
+
+Files opened (read in part, by sed or grep on the VPS):
+1. src/hooks/timer_bar_drag.cpp lines 108-123 (the only stat-ID references in the donor: N3Msg_GetSkill thunks marked "Unused API thunks kept for documentation / future use", and kStatCurrentNano = 53).
+2. src/ao/CLAUDE.md (head, and the N3Msg_GetSkill rows at lines 345-346 by grep).
+3. src/ao/types.h and src/ao/game_api.h (grep for stat, skill, health, level: no hits beyond DValue and string/variant types).
+4. src/ao/dvalue_dump.h (the registry dump API; no character data).
+5. FEATURES.md section headings (Camera Auto-Follow, LargeAddressAware, Numpad Keys in Chat Fix, Enhanced Timer Bars, Options Panel). No stat, skill, health or progression feature.
+6. src/hooks/camera_hook.cpp and src/hooks/input_handler.cpp (grep for mouse-state names; camera and input only).
+
+Search: grep -rniI over the whole tree for strength, stamina, skill, attribute, agility, intelligence, psychic, nano, health, hitpoint, level, luck, endurance. Hits were Win32 FILE_ATTRIBUTE flags, camera and timer code, and the unused N3Msg_GetSkill thunks. No damage, health, stamina, skill-gain, level or stat-formula code exists in this donor.
+
+Why NONE, in one sentence: this is a client-side mod that only moves the camera, fixes input and labels timer bars, so the donor has no character stat or skill mechanism (its one stat link, N3Msg_GetSkill, is an uncalled thunk that reads the game's own values).
+
+Best transferable idea: a settings registry where each tunable carries a default, a min, a max and a category (the DValue layout in src/ao/CLAUDE.md) would let designers adjust stat numbers as bounded data without a rebuild.
+Decision (proposed): reject for character stats - the donor has no stat logic to take, and the bounded-registry idea is already covered by catalogue fields (parity row 21) without copying a client registry.
