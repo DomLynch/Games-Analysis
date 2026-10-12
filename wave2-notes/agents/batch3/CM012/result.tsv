@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+daggerfall-unity	city-map-design	P	STRONG	full	/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Utility/RMBLayout.cs:592-720 (named-service pool drawn one slot at a time in layout order; empty-pool path copies zeros at 655-659 with 709); note out/city-map-design/daggerfall-unity.deep.md
+diasurgical-DevilutionX	city-map-design	P	STRONG	full	/mnt/frankendom-donors/diasurgical-DevilutionX/Source/towners.cpp:760-801 (table-placed hub NPCs, presence gate, tile claim before creation; table assets/txtdata/towners/towners.tsv); note out/city-map-design/diasurgical-DevilutionX.deep.md
+dkfans-keeperfx	city-map-design	P	STRONG	full	/mnt/frankendom-donors/dkfans-keeperfx/src/roomspace.c:289-309 (footprint judged tile by tile, priced on valid tiles, one-tile fallback; price set before fallback at 294); note out/city-map-design/dkfans-keeperfx.deep.md

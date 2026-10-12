@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+pmbstyle-L2Solo	city-map-design	P	STRONG	full	/mnt/frankendom-donors/pmbstyle-L2Solo/src/GameServer/Bot/AI/TownNpcSlots.js:1-37 and TownNpcApproach.js:201-341: leased ring points for one bot per service counter (30 s lease); eviction defect at TownNpcSlots.js:17; hub/service index in Economy/TownServiceCatalog.js:46-114 and World/TownRespawn.js:97-122.
+rathena-rathena	city-map-design	P	STRONG	full	/mnt/frankendom-donors/rathena-rathena/src/map/navi.cpp:154-655: offline A* walk-step tables from each NPC and warp to each map arrival and a segmented-map flag; segmented test defect at navi.cpp:322-328.
+ryzom-ryzomcore	city-map-design	P	STRONG	full	/mnt/frankendom-donors/ryzom-ryzomcore/ryzom/client/src/interface_v3/group_compas.cpp:252-448: wayfinding arrow and distance label against a camera-or-facing reference, blink 0.3 s (group_compas.h:36); (0,0) no-target sentinel at lines 303-307.

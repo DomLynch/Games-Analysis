@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ax-grymyr-l2dn-server	city-map-design	P	PARTIAL	thin	MapRegionData.cs:13-83 and Dto/MapRegion.cs:11-96 with talking_island_town.xml:5-49 show towns as tile footprints with per-kind respawn points and a default fallback, but no layout, signage or minimap logic (AdminZone.cs was the wrong file)
+azerothcore-azerothcore-wotlk	city-map-design	P	STRONG	thin	src/server/scripts/Northrend/zone_dalaran.cpp:301-344 (guard ejects visitors by open-ground area id or building group inside a 40-yard watch range, with owner exemptions; trespass spell effect not read)
+beyond-all-reason-Beyond-All-Reason	city-map-design	P	STRONG	full	common/lib_startpoint_guesser.lua:145-310 and 397-420 place team hubs one at a time with a 575-unit claim cylinder and a 120-unit offset (walkable and fallback defects at 198-204 and 289-291)

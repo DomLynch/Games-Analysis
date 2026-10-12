@@ -1,0 +1,22 @@
+STJr-SRB2 (city-map-design, cell 1): PARTIAL, depth thin
+Donor: /mnt/frankendom-donors/STJr-SRB2 | Licence: GNU GPL version 2 (src/am_map.c header line 8, "terms of the GNU General Public License, version 2."; LICENSE file is the GPL v2 text) | class: copyleft | C
+Hint file: src/p_setup.c is the WAD level loader (P_LoadSectors 1039, P_LoadThings 1527). It is not a town layout. Located by grep only; body (not read).
+
+Files opened (candidates, at least 3):
+- src/am_map.c: header 1-12, ticker and constants 84-100, AM_Ticker 624-700 read. AM_Drawer (1134) located, body (not read).
+- src/p_spec.c: exit signpost search 3836-3870 read.
+- src/p_enemy.c: A_SignSpin 5036-5075 read.
+- src/p_setup.c: hint file, grep only.
+- LICENSE: head read.
+
+Search: grep -i over src/*.c and src/*.h for minimap, landmark, signage, signpost, hub, city, town. Result: no city or town layout, no hub with services, no road or building grammar, no minimap outside the debug automap. The real hits are the debug automap (am_map.c, guarded by devparm or cv_debug at line 457), end-of-level signposts (p_spec.c 3853-3854, p_enemy.c 5046), and the WAD level loader.
+
+Why PARTIAL: the donor does not build a city. It has two real but thin pieces that touch the topic: a debug full-level map that pans and zooms by fixed steps per tic (F_PANINC 4 at line 86; M_ZOOMIN 51/50 at 89; M_ZOOMOUT 50/51 at 92; TICRATE 35 in doomdef.h 464, so 2x in about 1 s and 0.5x in about 1 s), and an exit marker that spins on landing and falls back from the exit sector to all signposts in the level.
+
+Numbers checked: 1.02^35 = 1.99989 and (50/51)^35 = 0.50003 (python3), so the comments "2x in 1 second" and "0.5x in 1 second" are right at 35 ticks.
+
+Confidence: high that the donor has no city-layout code; medium that the automap is the only minimap-like code (AM_Drawer not read).
+
+Best transferable idea: When the nearby exit marker is missing, fall back to the level-wide markers so the player always has a goal to walk toward.
+Decision (proposed): adapt - keep the fallback rule for zone objectives (a zone's nearest marker, then all markers in the zone), not the signpost spin. Defect in the donor to fix: the automap steps per tic count (fixed 35 Hz), not per delta time; fix: express pan and zoom per second and multiply by dt in the browser.
+Reject for the player: the full-level vector automap is a debug tool and not player-centred, so it does not fit a 375-wide minimap.

@@ -1,0 +1,23 @@
+CELL 2 | game: ZenKit | category: city-map-design | parity hint: row 23 | list hint file: src/world/WayNet.cc
+Verdict: PARTIAL | depth: thin | confidence: medium-high (the format is read in full; the behaviour that would use it is not in this donor)
+Donor: /mnt/frankendom-donors/ZenKit/ | Licence: MIT (/mnt/frankendom-donors/ZenKit/license.md line 1 "# The MIT license"; source headers say SPDX MIT). Permissive: code may be adapted.
+
+Files opened (candidates, 6 files):
+1. /mnt/frankendom-donors/ZenKit/src/world/WayNet.cc (the hint file, 74 lines, read in full): WayPoint load and save, WayNet load and save, the free-point rule and the endpoint de-duplication.
+2. /mnt/frankendom-donors/ZenKit/include/zenkit/world/WayNet.hh (45 lines, read in full): WayPoint fields, WayNet points and edges, the header comment "Way-nets are used for NPC navigation and path finding."
+3. /mnt/frankendom-donors/ZenKit/src/Archive.cc lines 255-275 and 495-525: the object cache by index that WayNet's endpoint de-duplication depends on.
+4. /mnt/frankendom-donors/ZenKit/src/World.cc lines 120-132 and 214-222: the WayNet is one member of the world, read and written as its own object.
+5. /mnt/frankendom-donors/ZenKit/tests/TestWorld.cc lines 296-325: the only data-level check, with counts for one test world (2784 waypoints, 3500 edges; the test world file tests/samples/world.proprietary.zen is not in the box, so the counts are not re-checked here).
+6. /mnt/frankendom-donors/ZenKit/tests/samples/G1/Save/WORLD.SAV: read with strings only (binary save). Waypoint-like names appear (OW_PATH, NC_PATH, PSI_PATH, OCR_OUTSIDE_HUT, LOCATION), but names are not restricted to the waynet, so no attribution to waypoints was made.
+Searched: grep -rniE for landmark, town, city, village, settlement, signpost, sign, road, street, building, minimap, hub over src and include. No city-layout code. The hits were a daedalus script symbol (city_crime), vector maths in src/Boxes.cc and a camera doc line. The header says way-nets drive NPC navigation and path finding, but no path-finding algorithm exists in this library; routing lives in the game, which is not in the box.
+
+Why PARTIAL: ZenKit is a file-format library, and the waypoint graph (name, water depth, under-water flag, position, facing, edges between shared waypoints) is the only road-grammar datum here; it is loaded and saved, but nothing in the donor says how a town is laid out, where hubs, landmarks or signs go, or how NPCs walk the graph.
+
+Best transferable idea: Store a town's walkable network as zone data, with waypoints (position, facing, name) and edges between shared waypoint objects, saving stand-alone points apart from edge endpoints.
+
+Decision (proposed): adapt - take the graph shape as zone data for NPC routes if a town needs them; no engine change now; row 23 only if the graph is later used to place spawns, which this donor does not do.
+
+Mechanism detail read (for the record, not a STRONG claim):
+- Load: each listed waypoint is read and flagged free_point (WayNet.cc 31-34). Each edge reads two waypoint objects; an endpoint is pushed into points only if its shared_ptr use_count is below 3 (WayNet.cc 43-44). Archive.cc 268 and 274 return the cached object for a reference, and Archive.cc 517 caches each newly built object; so the count test means "not already listed in points" only while the cache holds one reference. This is a fragile trick, not a documented rule.
+- Save: writes only free points, counted into numWaypoints (WayNet.cc 55-58), then writes every edge as two inline waypoint objects (67-72). Stand-alone points and edge endpoints therefore round-trip as different kinds.
+- Numbers: waynetVersion is written as 1 (WayNet.cc 51). No other constants.

@@ -1,0 +1,23 @@
+game: ax-grymyr-l2dn-server
+category: city-map-design (cell 20, list cell 1 of 3)
+verdict: PARTIAL   depth: thin   camera_scope: n/a
+licence: MIT (/mnt/frankendom-donors/ax-grymyr-l2dn-server/LICENSE.txt, line 1 "MIT License", line 3 "Copyright (c) 2024-2025 Grymyr, L2Dn Server Project"). Code may be adapted.
+hint file: AdminCommandHandlers/AdminZone.cs is the WRONG file for this topic (admin readout of the town name, lines 43-67).
+
+Files opened (all on the VPS, read only, under /mnt/frankendom-donors/ax-grymyr-l2dn-server/L2Dn/):
+1. L2Dn.GameServer.Scripts/Handlers/AdminCommandHandlers/AdminZone.cs (hint file, lines 43-67 read)
+2. L2Dn.GameServer.StaticData/StaticData/MapRegionData.cs (whole file, 83 lines)
+3. L2Dn.GameServer.StaticData/Dto/MapRegion.cs (whole file, 97 lines)
+4. L2Dn.GameServer.StaticData.Xml/MapRegions/XmlMapRegion.cs (whole file)
+5. L2Dn.GameServer.Model/InstanceManagers/MapRegionManager.cs (lines 191-315: respawn choice and GetRestartRegion)
+6. L2Dn.GameServer/DataPack/mapregion/talking_island_town.xml (lines 1-50 read; 103 lines in the file, not read to the end)
+7. L2Dn.GameServer.Scripts/Handlers/ItemHandlers/Maps.cs and L2Dn.GameServer.Model/Network/OutgoingPackets/ShowMiniMapPacket.cs (whole files)
+Searched: grep -rn for 'town' in *.cs (list reviewed); grep -rniE 'landmark|signpost|signage|minimap|wayfind' in *.cs (only the map item, the minimap packet and a Hellbound flag on Player.cs 2803-2812 matched). The data folder DataPack/mapregion holds 27 XML files; the other 26 were counted (grep -c) but not read.
+
+What the donor has: a town is one data record (name, town name, bbs flag, a tile footprint list, respawn points tagged normal / chaotic / other / banish, and a per-race redirect map). A world tile is looked up in a tile index and gets the first region on that tile, or null; a null falls back to the default region named talking_island_town. Respawn points are picked at random when RANDOM_RESPAWN_IN_TOWN_ENABLED is on, else the first one.
+
+Why PARTIAL: the mechanism is real and specific, but it is a respawn and region-lookup mechanism, not city layout. The server holds only footprints and respawn points. Roads, buildings, hubs, signage, landmarks and the minimap art are not in this donor (the minimap packet sends a map id and a seven-signs state, nothing else). Confidence: high on what is there; the town geometry may live in client files that are not in the box (not read).
+
+Best transferable idea: a town is one data record (tile footprint, named respawn points per kind, per-race redirect, default fallback) resolved by a tile lookup, so a Frankendom zone carries its own town identity and spawn points as data.
+
+Decision (proposed): adapt. Take the data shape and the fallback chain (zone respawn override, then tile region, then default region), not the city-layout claim. Frankendom target: zone data under origins/ (zones as data), with the respawn-point pick belonging to parity row 17 (death/respawn). Acceptance if built: a player who dies in a zone with no town record respawns at the default town, and a player of a banned race is sent to the other town (server test).

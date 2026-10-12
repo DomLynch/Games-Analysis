@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+Warzone2100-warzone2100	city-map-design	P	STRONG	full	src/radar.cpp:208-232, 530-657, 732-792: the minimap fits the map to a fixed box, shows only visible droids and structures, flashes the own unit for 2 s after a hit, dims selected units on a 1 s blink, and draws the camera footprint as a yaw-rotated trapezoid; the donor has no town, road or building grammar.
+ZenKit	city-map-design	P	PARTIAL	thin	src/world/WayNet.cc:26-74: a loader and saver for a waypoint graph (name, facing, edges between shared waypoints); there is no layout, routing or hub code, and the header only says way-nets serve NPC navigation.
+afritz1-OpenTESArena	city-map-design	P	STRONG	full	src/World/ArenaCityUtils.cpp:99-210 and src/Assets/MIFUtils.cpp:88-111: a seeded town grid with reserved cells, six services placed one at a time into random empty cells before weighted filler (45/20/15/10/10 by 16-bit roll), and 20-voxel block slots.

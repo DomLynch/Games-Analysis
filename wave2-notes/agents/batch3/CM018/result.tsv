@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+miki151-keeperrl	city-map-design	P	STRONG	full	level_maker.cpp:919-1038 (Buildings::make) and 1494-1540 (Roads), util.cpp:80-82: buildings are placed one at a time along a street band with a retry budget, a minimum count and service i bound to building i, then hubs are joined by a terrain-costed A* road.
+nkzw-tech-athena-crisis	city-map-design	P	STRONG	full	athena/generator/MapGenerator.tsx:56-259 (generateBuildings): two mirrored HQs get a street between them, a river is cut through the street centre with bridges where they cross (half with a barrier), and each HQ ring gets capped plots and buildings.
+open-duelyst-duelyst	city-map-design	P	PARTIAL	thin	app/view/Player.js:2003-2068 (route-piece picker by turn direction) is the only road-like rule; app/view/layers/codex/WorldMapLayer.js:32-36 is a scrolling world-map image with no towns, roads or minimap.

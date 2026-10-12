@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+STJr-SRB2	city-map-design	P	PARTIAL	thin	/mnt/frankendom-donors/STJr-SRB2/src/am_map.c:86-92,457,624-643 debug automap pans and zooms per tic (not a city layout); p_spec.c:3853-3854 and p_enemy.c:5046 exit signposts; p_setup.c:1527 is the WAD loader; no city, hub, road or building grammar found
+SimHacker-micropolis	city-map-design	P	STRONG	full	/mnt/frankendom-donors/SimHacker-micropolis/MicropolisCore/src/MicropolisEngine/src/connect.cpp:76-80,554-571,582-634 (road 4-bit neighbour mask re-derived on each edit); zone.cpp:352-382 and 445-523 (3x3 stamp, lot score)
+TurningWheel-Barony	city-map-design	P	STRONG	full	/mnt/frankendom-donors/TurningWheel-Barony/src/interface/drawminimap.cpp:893-964 and 1286-1336 (ping lifetime, blink, fade, four-live cap, 2 s lockout); src/ui/GameUI.cpp:13658-13694 (client lockout gate)

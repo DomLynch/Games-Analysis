@@ -1,0 +1,15 @@
+open-duelyst-duelyst (city-map-design, cell 3): PARTIAL, depth thin
+Donor: /mnt/frankendom-donors/open-duelyst-duelyst | Licence: CC0 1.0 Universal (LICENSE and COPYING, first lines read); CC0 is a public-domain dedication, not in the MIT/Apache/BSD list, so licence_class is for Lead to confirm (permissive in practice)
+
+Files opened (candidates):
+1. app/view/layers/codex/WorldMapLayer.js (the hint file): read 1-60 and 215-262. The codex world map is a static background image that scrolls with velocity decay (velocityDecay 0.6, line 32) and quadratic edge easing (edgeDistance 320, line 36; easing around 228-250). No towns, roads, landmarks or minimap.
+2. app/ui/views2/codex/codex_layout.js: read 340-362 (_showWorldMap). It only shows the world-map overlay; no layout data.
+3. app/view/Player.js: read 1996-2068 (getNextTilePathTile, starting at 2003). It picks a route piece (start, end, straight, corner, flipped corner) from the turn between the previous and next tile, then rotates it. This is the closest thing to a road grammar, but it draws a unit's move trail on the battle board; it lays out no city.
+4. app/sdk/modifiers/modifierBuilding.coffee: read 1-40. A card-game structure that takes turnsToBuild turns to finish (line 30). A build timer, not a city layout.
+5. Repo-wide grep (app, server, shared; .js and .coffee) for minimap, landmark, signage, settlement, village, town, city, road, building. No minimap, landmark, signage or settlement code. The lore prose in app/sdk/codex/codex.coffee and app/sdk/cards/cardLore.coffee mentions towns and cities but is text, not a mechanism.
+
+Why PARTIAL: the donor has real code for one small road-like rule (the route-piece picker in Player.js) and a world-map scroll, but no hubs, services, street or building layout, so the topic is not really there; the depth is thin because only the render-side picker is a grammar.
+
+Best transferable idea: choose each route piece from the turn between its previous and next tile (start, end, straight, corner, flipped corner) so a drawn route reads as one line.
+
+Decision (proposed): reject for city layout. The picker is client-only render code with no rule behind it, and Frankendom's zone roads should come from the generator (see the athena and keeperrl notes), not from a trail sprite picker.

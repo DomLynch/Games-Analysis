@@ -1,0 +1,17 @@
+colyseus-colyseus (city-map-design, cell 1) | Verdict: NONE | Depth: thin | Licence: MIT (LICENSE: "MIT License", Copyright (c) 2015-2026 Endel Dreyer) | Donor root: /mnt/frankendom-donors/colyseus-colyseus
+
+Hint file opened: /mnt/frankendom-donors/colyseus-colyseus/packages/core/src/MatchMaker.ts (lines 1-25 read; it is the room matchmaker, not map code).
+
+Candidates opened (4):
+1. packages/core/src/MatchMaker.ts 1-25 (hint): room creation/matchmaking imports only.
+2. packages/room-plugins/geoip/src/types.ts 1-12: the only "city" hit; it is a geo-IP country record, and its own comment says city data "belongs in a dedicated reader".
+3. packages/sdk/src/debug/layout.ts 1-20: "layout" here is the debug overlay's viewport shape (compact vs coarse), not a world layout.
+4. packages/core/src/matchmaker/RegisteredHandler.ts 1-20: room-handler registration and room-list filter keys.
+
+Search: word-boundary grep (-w) over all .ts/.js/.tsx/.md in the repo, excluding node_modules, for minimap, landmark(s), signage, city/cities, town(s), district(s), hub(s), road(s), building(s), tile(s), tilemap, grid, zone(s), spatial, region(s), waypoint, poi, overworld, world map. Every hit was a UI layout, a DB/FK layout, a geo-IP comment, a Predictor comment, or the verb "building" (query building, a URL for a coursera subdomain). A recheck with "layout" excluded gave 7 hits, all of that kind. None is about town/city layout, hubs with services, landmarks, signage, road or building grammar, or a minimap. The donor is a multiplayer room server and client SDK; it has no game world map.
+
+Checked: NONE after search; I opened 4 candidate files (listed above) and grep found no implementation of the topic. Confidence high that the topic is absent.
+
+Best transferable idea: none for city layout; the nearest real shape is a hub modelled as a room with a capped client count and metadata filters (RegisteredHandler.ts INVALID_OPTION_KEYS / filter keys), which belongs to the zone-population row (23), not map design.
+
+Decision (proposed): reject for city-map-design. Nothing here places buildings, services or landmarks; the only transferable part (capped rooms with filterable metadata for zone hubs) is a spawns/zone-population concern and is already covered by row 23 in another cell.

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+colyseus-colyseus	city-map-design	P	NONE	thin	packages/core/src/MatchMaker.ts:1-25 (hint) plus a repo-wide word search: no town, minimap, landmark, road or building code; the only "city" hit is a geo-IP comment at packages/room-plugins/geoip/src/types.ts:6.
+crawl-crawl	city-map-design	P	STRONG	full	crawl-ref/source/dgn-overview.cc:104-155 and 591-724: a discovery-only index of seen shops, altars, portals and branch stairs that is recorded on sight, moved with the feature, forgotten on destruction and listed grouped by level; vault shop cells are placed one at a time in dungeon.cc:5794-5797.
+cuteshaun-lineage2-api	city-map-design	P	STRONG	full	src/lib/data/indexes.ts:1519-1533, 1564 and 1599-1627, plus src/lib/api/dto/spawn.ts:86-111: world point to tile region (shift 15, origin 4/8, -1 unmapped), nearest authored town anchor within a 10000-unit radius with lowest-id ties, and a majority-region vote over NPC spawns.
