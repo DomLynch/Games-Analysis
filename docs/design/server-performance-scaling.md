@@ -8,23 +8,23 @@ Keep the town (presence server) smooth for 100 players now, and know exactly wha
 ## 2. What we have today
 - Tick every 100 ms (10 Hz): `origins/presence/interest.ts:12`. The ticker is aimed at the wall clock, polls every 25 ms: `origins/presence/server.ts:46-62`. No drop of late ticks, no counter for them.
 - Layer size: 80 soft, 100 hard (`interest.ts:13-14`). Default 8 layers (`origins/presence/main.ts:23`, `PRESENCE_MAX_LAYERS`), so about 640 joinable. One Node process.
-- Interest: 16 m grid, 40 m radius, nearest 40, send rate 10/5/2 Hz by distance, per-entity phase (`interest.ts:9-13`, `seenBy`). Packet is about 12 bytes per entity, one packet per client per tick (`origins/presence/wire.ts`).
+- Interest: 16 m grid, 40 m radius, nearest 40, send rate 10/5/2 Hz by distance, per-entity phase (`interest.ts:9-13`, `seenBy`). Packet is 11 bytes per entity plus a 4-byte head (`origins/presence/wire.ts:6-7`; the one-shard spec estimates about 12 with framing), one packet per client per tick.
 - Tick timing is recorded (40,000 samples, `server.ts:18`, `origins/presence/ticks.ts`); spec target: longest under 50 ms, p99 under 25 ms. No measured result is in the repo.
 - Limits per connection: 8 sockets per IP, 30 joins/min, 30 msgs/s, 64-byte message, 30 s idle (`server.ts:16`).
 - No send backpressure: every packet is written straight to the socket (`server.ts:55`).
 - Saved location: sent on leave and every 60 s (`origins/server/location.ts:4`); the presence-side sender was not found, so unverified.
-- Every database call from the writer starts a `psql` process (`origins/server/db.ts:15-33`); an open can start up to 51. No pool. This breaks first.
+- Every database call from the writer starts a `psql` process (`origins/server/db.ts:15-33`); an open can start up to 1 + 50 (`origins/server/handlers.ts:21, 33`). No pool. This breaks first.
 - Duels are client-run and server-replayed (`origins/server/encounter-verify.ts`): no live server fight loop, no server NPCs. Duel relay is a separate process (`scripts/duel-relay.mjs:33`).
 - Everything (presence, writer, verifier, relay) sits on one VPS (`docs/specs/origins/one-shard.md` section 6).
 
 ## 3. Budgets
-Every number is **proposed, needs a load test** unless marked measured. Nothing is measured yet. Bytes use the one-shard spec's own estimate (12 bytes per entity, worst 3.6 KB/s per client), not donor figures.
+Every number is **proposed, needs a load test** unless marked measured. Nothing is measured yet. Bytes use the one-shard spec's own estimate (about 12 bytes per entity, `one-shard.md` section 2; worst 3.6 KB/s per client; the repo's `wire.ts` says 11), not donor figures.
 
 | Budget | 100 concurrent | 1,000 | 10,000 |
 |---|---|---|---|
 | Players per layer | 80 soft / 100 hard (proposed, needs a load test) | same | same |
-| Layers | 2 | 13 | 125 |
-| Processes / hosts | 1 process | presence on its own host, 2-4 processes | many hosts, add at 80% of one host's measured cap (Dom ruling) |
+| Layers (80 per layer, proposed, needs a load test) | 2 | 13 | 125 |
+| Processes / hosts | 1 process | presence on its own host, 2-4 processes (proposed, needs a load test) | many hosts, add at 80% of one host's measured cap (Dom ruling) |
 | Tick rate | 10 Hz (proposed, needs a load test) | 10 Hz | 10 Hz; layers share nothing, so no change |
 | Bytes per client per second, worst case | 3.6 KB/s down, under 1 KB/s up (proposed, needs a load test) | same | same; total out about 36 MB/s worst (proposed, needs a load test) |
 | Persistence writes per second (location, every 60 s) | about 2 | about 17 | about 170; needs batching, not one `psql` each (proposed, needs a load test) |
@@ -32,7 +32,7 @@ Every number is **proposed, needs a load test** unless marked measured. Nothing 
 | Outbound queue per socket | skip a viewer's tick when its socket backlog is over a set size (size proposed, needs a load test) | same | same |
 | Dropped ticks | counted; target zero in normal play (proposed, needs a load test) | same | same |
 
-Chat and packs (from CT.md and MD.md): chat text is not in the pose wire yet; its budget must be separate from the pose budget, so a chat flood cannot slow movement. Packs are Dom-only publish before beta, loaded once at start, not per tick, so they add no tick cost; the cost is memory and start time.
+Chat and packs (from CT.md and MD.md): chat text is not in the pose wire yet; its budget must be separate from the pose budget, so a chat flood cannot slow movement. Packs are Dom-only publish before beta, loaded once at start, not per tick, so they add no tick cost (inference, not measured); the cost is memory and start time.
 
 ## 4. Build order (all parked until before launch)
 1. **Load test first.** 100-bot run, then find one host's player limit (the existing cluster/bot test, `origins/presence/cluster.ts`). Replaces every "proposed" above. Source: gap-check SP.md scaling section; no donor.
@@ -49,7 +49,7 @@ Already have, reuse as is: nearest-first cap and banded rates (SP001 Veloren, SP
 - No acked-base delta snapshots (SP003 teeworlds): our packets stand alone and WebSocket is reliable.
 - No encode-once fan-out (SP002 SpacetimeDB): viewers differ and cost is small at 100 per layer.
 - No zone shards (SP004 ACE): one single-threaded process, small layers.
-- No Supabase Realtime for movement (Dom ruling, one-shard.md section 5): limits and cost.
+- No Supabase Realtime for movement (Dom ruling, one-shard.md section 6): limits and cost.
 - No player-chosen layers, no queue as the main answer: capacity is bought ahead (Dom ruling).
 - No donor code or numbers for GPL, AGPL or BSL donors; shape only, clean-room.
 
@@ -65,3 +65,5 @@ Already have, reuse as is: nearest-first cap and banded rates (SP001 Veloren, SP
 
 ## 8. Sources
 Gap-check: SP.md, CT.md, MD.md, AN.md. Donor notes: SP001 (Veloren, TrinityCore, EQEmu), SP002 (colyseus, SpacetimeDB, ModernUO), SP003 (ioq3, teeworlds, LostCityRS-Engine-TS), SP004 (OpenDAoC, swgemu-Core3, ACEmulator). Repo: `docs/specs/origins/one-shard.md`.
+
+Checked 2026-10-12 (Sonnet checker): 7 errors fixed

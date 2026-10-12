@@ -6,7 +6,7 @@ Know whether Frankendom is healthy and fun, from numbers alone, without spying o
 
 ## 2. What we have today
 - Presence stats line once a minute, with a refused-reason counter that resets: `origins/presence/server.ts:39-41, 66-67`.
-- Health JSON at `/origins/presence/health`, with tick times on loopback only: `server.ts:73-90`. Tick ring of 40,000 samples: `server.ts:18`, `ticks.ts`.
+- Health JSON at `/origins/presence/health`, with tick times on loopback only: `server.ts:84-90`. Tick ring of 40,000 samples: `server.ts:18`, `ticks.ts`.
 - Per-IP and per-socket limits: `server.ts:16, 135-139, 190-196`.
 - Anonymous per-fight perf beacon, silent on failure, no user id: `src/perf-beacon.ts:1-8, 63-85`; table `supabase/migrations/202609280001_perf_beacons.sql`.
 - Duel connection metrics (path, rollbacks, stalls, round trip), no user id/IP, 60 rows a minute cap, 90-day delete: `supabase/migrations/202609300001_duel_metrics.sql:1-12`.
@@ -48,7 +48,7 @@ Know whether Frankendom is healthy and fun, from numbers alone, without spying o
 
 ## 6. Build order (parked until before launch)
 1. One telemetry module: bounded queue, label cap, drop counter, timed wait with `finally`. Donor AN001 heroiclabs-nakama and AN002 lichess-org-lila (merged). Lands in new `origins/server/telemetry.ts`, hooked from `origins/presence/server.ts` (counts, line 39). Clean-room, no donor numbers (lila is AGPL).
-2. Client error reporter: first error sent, cool-down, dropped count. Donor AN002 runelite-runelite. Lands beside `src/perf-beacon.ts` (reuse its send function, line 77) with a Backend table in `supabase/migrations/`.
+2. Client error reporter: first error sent, cool-down, dropped count. Donor AN002 runelite-runelite. Lands beside `src/perf-beacon.ts` (reuse `sendPerfBeacon`, `src/perf-beacon.ts:75`) with a Backend table in `supabase/migrations/`.
 3. Fight and funnel counters on the same module: settled-fight counts, trade refusals. Donor AN001/AN002 module above. Lands in `origins/server/handlers.ts` and `origins/server/encounter-verify.ts`.
 4. Rejected-command counter, log once. Donor AN002 evennia-evennia. Lands in `origins/presence/server.ts` (near line 192; the gap-check's `src/fight/` path does not exist). Counting only, no silent player lock.
 5. Byte-capped zone log with live tail. Donor AN001 clockworklabs-SpacetimeDB (BSL: shape only). Lands in new `origins/server/zone-log.ts`. Low priority.
@@ -69,3 +69,5 @@ Know whether Frankendom is healthy and fun, from numbers alone, without spying o
 
 ## 9. Sources
 Gap-check: `docs/gap-check/AN.md`, `SP.md`, `CT.md`. Donor notes: `/private/tmp/p2/wave2-haiku/batch3/AN001` and `AN002` (nakama, lila, SpacetimeDB, runelite, evennia, colyseus; Decision and Acceptance lines). Repo: `src/perf-beacon.ts`, `origins/presence/server.ts`, `origins/server/handlers.ts`, `supabase/migrations/202609280001_perf_beacons.sql`, `202609300001_duel_metrics.sql`, `GAME_SPEC.md:48, 166, 187`, `docs/specs/origins/launch-gates.md` (S4).
+
+Checked 2026-10-12 (Sonnet checker): 2 errors fixed

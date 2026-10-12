@@ -2,7 +2,7 @@
 Date 2026-10-12. Status: **parked until before launch. Implementation is NOT started.** Repo read-only, commit 8d6ae33a9 (gap-check commit). Every number below is **proposed, needs a device test** unless it is quoted from the repo.
 
 ## 1. Goal
-Fights stay smooth on a mid phone (a steady 60, or a steady 30 when the phone says so) and the phone stays cool and lasts longer. The player never sees the game get worse in a way that hides an attack. We lower the pretty things first and never touch what tells you an attack is coming. The fight itself (hits, timers, `MAX_ATTACKERS = 3`) never reads quality, so a slow phone cannot change who wins.
+Fights stay smooth on a mid phone (a steady 60, or a steady 30 when the phone says so) and the phone stays cool and lasts longer. The player never sees the game get worse in a way that hides an attack. We lower the pretty things first and never touch what tells you an attack is coming. The fight itself (hits, timers, the attacker cap; `MAX_ATTACKERS` is a Lead queue item, PR #2129 per `docs/state/lead.md:123`, not in `src/` at this commit) never reads quality, so a slow phone cannot change who wins.
 
 ## 2. What we have today
 | Piece | Where | What it does |
@@ -33,7 +33,7 @@ Today there are two tiers (phone, full). We add a third and make the tier a tabl
 The memory row is checked against the iPhone black-fighter note at the top of `src/quality.ts` (skins ~110 MB, arena ~11 MB, framebuffer extra). Load time starts at tap and ends at the first playable frame (the beacon already stamps it). Tier is picked once at load from cores, memory (`perf-beacon.ts` already reads both) and the measured cadence, with `?gfx=` still overriding.
 
 ## 4. Battery rules (all proposed, needs a device test)
-- **Unfocused cap:** visible but not focused, 10 fps. Hidden stays paused as today. The server step never follows the client cap (CP002 luanti, CP003 STK).
+- **Unfocused cap:** visible but not focused, a low frame rate (number set by the device test; the Luanti figure is copyleft and not used). Hidden stays paused as today. The server step never follows the client cap (CP002 luanti, CP003 STK).
 - **Idle cap:** no input and no fight running (menus, kill screen, pit gear sheet): 30 fps. Back to full on the first touch.
 - **Low Power Mode:** if `rafCadence` says 30, pick the low frame cap on purpose instead of missing frames.
 - **Thermal step-down:** the web cannot read heat. We use a proxy: a frame time that rises over 3 minutes at the same load. Step down one rung, same ladder as below.
@@ -64,7 +64,7 @@ The memory row is checked against the iPhone black-fighter note at the top of `s
 2. Low Power Mode on: the pacer picks 30 on purpose, fight still reads.
 3. Telegraph still stills before and after a forced drop (visual PR stills rule).
 4. Battery: 10 minutes of fights on iPhone 12, battery % and a hand-feel heat note, capped vs uncapped.
-5. Unfocus and refocus: 10 fps when unfocused, back to full in under 1 s, no sim jump.
+5. Unfocus and refocus: the low unfocused rate applies, back to full in under 1 s, no sim jump.
 6. Cold load to first playable frame, on a throttled phone profile, against the tier budget.
 7. Memory: no black fighters after 20 rematches (the 2026-09-18 defect).
 Chromium and the non-Safari runs go to CI/VPS per standing rules.
@@ -77,4 +77,6 @@ Chromium and the non-Safari runs go to CI/VPS per standing rules.
 5. Idle menus at 30 fps to save battery? **Recommend yes.**
 
 ## 9. Sources
-Gap-check `docs/gap-check/CP.md` (WL.md, SM.md, IN.md read: only the weather particle cap and flash-guard rows apply; SM and IN need nothing here). Donor notes CP001-CP003 (checked and fixed 2026-10-12) and RP002-RP018 under `/private/tmp/p2/wave2-haiku/batch3/` (unchecked; RP001 does not exist; RP012 notes have no usable idea line). Repo files above.
+Gap-check `docs/gap-check/CP.md` (WL.md, SM.md, IN.md read: only the weather particle cap and flash-guard rows apply; SM and IN need nothing here). Donor notes CP001-CP003 (checked and fixed 2026-10-12) and RP002-RP018 under `/private/tmp/p2/wave2-haiku/batch3/` (unchecked; RP001 does not exist; RP012 has hedgewars and jynew idea lines, none used here). Repo files above.
+
+Checked 2026-10-12 (Sonnet checker): 4 errors fixed
