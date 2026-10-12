@@ -1,0 +1,12 @@
+[
+ {"id":"a01_dead_oak","kind":"foliage","prompt":"a single gnarled dead oak tree with twisted bare branches and exposed roots, dark fantasy, moody, full object in frame, isolated on a plain neutral grey background, game asset concept, three-quarter view"},
+ {"id":"a02_gravestone","kind":"prop","prompt":"a single weathered mossy stone gravestone with a cracked carved cross and a small chipped base, dark fantasy, isolated on a plain neutral grey background, game asset concept, three-quarter view"},
+ {"id":"a03_ruined_tower","kind":"building","prompt":"a small ruined gothic stone watchtower with a collapsed roof and arched windows, dark fantasy, isolated on a plain neutral grey background, game asset concept, three-quarter view, whole building in frame"},
+ {"id":"a04_iron_chest","kind":"prop","prompt":"an old iron-banded wooden treasure chest, rusted hinges, slightly open lid, dark fantasy, isolated on a plain neutral grey background, game asset concept, three-quarter view"},
+ {"id":"a05_spiked_pauldron","kind":"armour","prompt":"a single spiked blackened-iron shoulder pauldron armour piece with bone trim and leather straps, dark fantasy, no wearer, isolated on a plain neutral grey background, game asset concept, three-quarter view"},
+ {"id":"a06_great_helm","kind":"armour","prompt":"a single battered iron great helm with a cracked visor and a small broken horn, dark fantasy, no wearer, no head, isolated on a plain neutral grey background, game asset concept, three-quarter view"},
+ {"id":"a07_glow_mushrooms","kind":"foliage","prompt":"a cluster of large pale glowing mushrooms growing from a mossy rock, dark fantasy, isolated on a plain neutral grey background, game asset concept, three-quarter view"},
+ {"id":"a08_brazier","kind":"prop","prompt":"a tall wrought-iron standing brazier with glowing embers and a spiked tripod base, dark fantasy, isolated on a plain neutral grey background, game asset concept, three-quarter view"},
+ {"id":"a09_bramble","kind":"foliage","prompt":"a dense thorny bramble bush with dead leaves and long black thorns, dark fantasy, isolated on a plain neutral grey background, game asset concept, three-quarter view"},
+ {"id":"a10_stone_well","kind":"building","prompt":"a ruined round stone well with a small rotting timber roof and a rusty chain, dark fantasy, isolated on a plain neutral grey background, game asset concept, three-quarter view"}
+]
