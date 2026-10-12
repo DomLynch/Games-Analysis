@@ -28,7 +28,7 @@ def sh(*a):
 def pack(game, pat, budget):
     root = f'/mnt/frankendom-donors/{game}'
     if not os.path.isdir(root): return f'\n## {game}: MISSING on the VPS\n', []
-    out = sh('rg', '-c', '-i', '-E', '--no-messages', '-g', '!*.{json,csv,tsv,txt,md,html}', pat, root)
+    out = sh('rg', '-c', '-i', '--no-messages', '-g', '!*.{json,csv,tsv,txt,md,html}', pat, root)
     files = []
     for l in out.splitlines():
         p, _, n = l.rpartition(':')
@@ -43,7 +43,7 @@ def pack(game, pat, budget):
     text, used, picked = f'\n## {game}  (repo {root})\n', 0, []
     for score, p in files:
         if used >= budget or len(picked) >= 14: break
-        o = sh('rg', '-n', '-i', '-E', '-C', '6', '--no-messages', '--max-columns', '220', pat, p)
+        o = sh('rg', '-n', '-i', '-C', '6', '--no-messages', '--max-columns', '220', pat, p)
         o = o[:9000]
         text += f'\n### {p.replace(root + "/", "")}  (hits {score})\n```\n{o}\n```\n'
         used += len(o); picked.append(p.replace(root + '/', ''))
