@@ -1,0 +1,32 @@
+{
+  "game": "diasurgical-DevilutionX",
+  "category": "character-stats-skills",
+  "cell": 2,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/player.cpp",
+  "licence": "Sustainable Use License 1.0 (LICENSE.md: use limited to own internal business purposes or non-commercial or personal use)",
+  "licence_class": "restricted",
+  "target_module": "src/fight/hero-stats.ts",
+  "parity_row": 21,
+  "pattern_tags": ["status-meter", "clamp-and-report", "named-source-stack", "new:level-budget"],
+  "data_fields": [
+    {"name": "pointsPerLevel", "donor_constant": "5", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/player.cpp:2395"},
+    {"name": "xpThresholdPerLevel", "donor_constant": "Experience.tsv: 50 cumulative rows, 2000 at level 1, 1583495809 at level 50", "unit": "points", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/tables/playerdat.cpp:53"},
+    {"name": "lvlLife", "donor_constant": "per class, attributes.tsv (warrior 2, rogue 2, sorcerer 1, barbarian 2)", "unit": "points", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/player.cpp:2397"},
+    {"name": "lvlMana", "donor_constant": "per class, attributes.tsv (warrior 1, rogue 2, sorcerer 2, barbarian 0)", "unit": "points", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/player.cpp:2408"},
+    {"name": "chrLife", "donor_constant": "per class, per point of Vitality (warrior 2, rogue 1, sorcerer 1, barbarian 2)", "unit": "points", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/player.cpp:3367"},
+    {"name": "chrMana", "donor_constant": "per class, per point of Magic (warrior 1, rogue 1, sorcerer 2, bard 1.5)", "unit": "points", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/player.cpp:3330"},
+    {"name": "attributeClassMax", "donor_constant": "per class maxStr/maxMag/maxDex/maxVit (e.g. warrior 250/50/60/100)", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/player.cpp:3310"},
+    {"name": "primaryStatCap", "donor_constant": "750", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/items.cpp:2530"},
+    {"name": "levelGapSlope", "donor_constant": "10 (gain x (1 + gap/10))", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/player.cpp:2440"},
+    {"name": "mpXpDivisor", "donor_constant": "20 (multiplayer cap: threshold / 20)", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/player.cpp:2446"},
+    {"name": "mpXpPerLevel", "donor_constant": "200 (multiplayer cap: 200 x level)", "unit": "points", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/player.cpp:2446"},
+    {"name": "maxLife", "donor_constant": "2000 HP clamp (fixed point 2000 << 6)", "unit": "points", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/items.cpp:2644"}
+  ],
+  "best_idea": "A level-up grants a fixed budget of points and a class-set max life and mana increment that refill the pools, and each stat spend is capped by that attribute's own room below its class maximum.",
+  "decision": "adapt",
+  "decision_why": "The per-level budget, the per-attribute cap and the class per-level pool growth fit Frankendom's catalogue fields; the donor's two budget branches differ, so one cap rule replaces them, and its XP award is local and unchecked, so Frankendom awards XP on the server.",
+  "decision_status": "proposed",
+  "acceptance": "A hero reaching a new level sees five new stat points, max life and mana rise and refill, and a stat spend above the class max is refused; a server test asserts that XP for a monster ten levels above is twice the base amount before the cap, and that a client cannot raise a stat past its class max."
+}

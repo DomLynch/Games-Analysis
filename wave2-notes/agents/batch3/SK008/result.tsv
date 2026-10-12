@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+angband-angband	character-stats-skills	P	STRONG	full	/mnt/frankendom-donors/angband-angband/src/player-calcs.c:1703-1735 (calc_blows) and 548, 594, 889: blows per turn from STR and DEX bands and weapon weight with a class cap, read end to end
+veloren-veloren	character-stats-skills	P	STRONG	full	/mnt/frankendom-donors/veloren-veloren/common/src/comp/energy.rs:99-127 with common/systems/src/stats.rs:110-177: stamina pool with a state-gated regen ramp, spend gate, and hit refund
+flareteam-flare-engine	character-stats-skills	P	STRONG	full	/mnt/frankendom-donors/flareteam-flare-engine/src/StatBlock.cpp:985-1003 and 1024-1049: derived stats from level, spent points and summed bonuses, then a floor; hit and damage pipeline in src/Entity.cpp 319-506

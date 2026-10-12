@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+crawl-crawl	character-stats-skills	P	STRONG	full	skills.cc:860-878 (exercise queue), 775-858 (reset_training weights), 1100-1184 (two-phase XP pool split), 1618-1639 (purchase cap 10x265), 2620-2657 (thresholds); player.cc:4412-4500 (HP/MP) and fight.cc:1759-1780 (strength and skill multipliers) for the stat rows
+CleverRaven-Cataclysm-DDA	character-stats-skills	P	STRONG	full	character_health.cpp:2187-2358 (stamina max, mod, regen), 2361-2395 (cardio fitness); character.cpp:1148-1180 (dodge gate and stamina modifier); melee.cpp:945-991 (swing cost) and 2216-2220 (block cost); cata_utility.cpp:163-196 (logistic dodge curve)
+NetHack-NetHack	character-stats-skills	P	STRONG	full	weapon.c:1424-1435 (use_skill practice), 1156-1171 (can_advance with level squared times 20), 1545-1700 (to-hit and damage ladders); uhitm.c:946, 1494-1498 (training trigger) and 376-421 (to-hit total); include/skills.h:106,120

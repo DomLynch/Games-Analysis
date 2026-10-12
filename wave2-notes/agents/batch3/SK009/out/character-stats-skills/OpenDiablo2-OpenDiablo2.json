@@ -1,0 +1,27 @@
+{
+  "game": "OpenDiablo2-OpenDiablo2",
+  "category": "character-stats-skills",
+  "cell": 1,
+  "verdict": "STRONG",
+  "depth": "full",
+  "donor_path": "/mnt/frankendom-donors/OpenDiablo2-OpenDiablo2/d2core/d2map/d2mapentity/player.go",
+  "licence": "GPL-3.0 (LICENSE file: GNU GENERAL PUBLIC LICENSE Version 3)",
+  "licence_class": "copyleft",
+  "target_module": "src/fight/stamina.ts",
+  "parity_row": 3,
+  "pattern_tags": ["status-meter", "variable-step", "hysteresis", "named-source-stack"],
+  "data_fields": [
+    {"name": "runDrainPerSec", "donor_constant": "StaminaRunDrain per class (charstats.txt; value not in repo) / 5 per tick, divisor fixed at 5", "unit": "units", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/OpenDiablo2-OpenDiablo2/d2core/d2map/d2mapentity/player.go:126"},
+    {"name": "magicStaminaDrainDivisor", "donor_constant": "5 (engine constant in donor, tuned by trying it out)", "unit": "none", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/OpenDiablo2-OpenDiablo2/d2core/d2map/d2mapentity/player.go:132"},
+    {"name": "regenPerSec", "donor_constant": "same rate as drain (player.go:142)", "unit": "units", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/OpenDiablo2-OpenDiablo2/d2core/d2map/d2mapentity/player.go:142"},
+    {"name": "relockRatio", "donor_constant": "none in donor (fix: added)", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/OpenDiablo2-OpenDiablo2/d2core/d2map/d2mapentity/player.go:137-139"},
+    {"name": "maxStamina", "donor_constant": "InitStamina per class (data not in repo)", "unit": "points", "where": "zone data", "donor_ref": "/mnt/frankendom-donors/OpenDiablo2-OpenDiablo2/d2core/d2hero/hero_stats_state.go:47"},
+    {"name": "walkSpeed", "donor_constant": "9.0", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/OpenDiablo2-OpenDiablo2/d2core/d2map/d2mapentity/player.go:38"},
+    {"name": "runSpeed", "donor_constant": "13.0", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/OpenDiablo2-OpenDiablo2/d2core/d2map/d2mapentity/player.go:39"}
+  ],
+  "best_idea": "A single stamina pool that drains per second only while sprinting and refills otherwise, with sprint dropping to walk at zero, plus an explicit lock that clears only at a refill ratio.",
+  "decision": "adapt",
+  "decision_why": "The drain and refill shape and the zero-to-walk fall-back transfer to a melee economy; the donor has no re-entry threshold and hides the rate behind a fixed divisor, so both change; the donor's stat-modifier stack is unwired and is not adopted.",
+  "decision_status": "proposed",
+  "acceptance": "The player holds sprint and watches the stamina bar empty; sprint stops and does not restart until the bar refills past the relock ratio; a server test asserts sprint is refused while locked and that the refill threshold is respected."
+}

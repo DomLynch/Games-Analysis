@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+FPtje-DarkRP	trading-barter-vendors	P	STRONG	full	lab_base/init.lua:66-126 and 51-63 read whole: owner-run vendor, 10 or 20 percent margin, 1 s delivery, one-sale lock; buyer debit and owner credit are separate calls
+FPtje-DarkRP	housing-player-built-spaces	P	STRONG	full	modules/doorsystem/sv_doors.lua:140-193 read whole: 270 s upkeep of 10 per plot plus jitter, all-or-nothing release on shortfall; ownership in sh_doors.lua:52-68 and sv_doors.lua:333-424
+FPtje-DarkRP	reputation-factions-crime-justice	P	STRONG	full	modules/hitmenu/sv_init.lua:17-134 and 222-271 read whole: bounty contract, pay-at-accept, cooldowns 120 s and 240 s, aborts with no refund

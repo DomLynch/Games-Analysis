@@ -1,0 +1,46 @@
+Game: cookgreen-OpenMB | Category: character-stats-skills (cell 3) | Verdict: PARTIAL | Depth: thin | camera_scope: n/a
+Donor root: /mnt/frankendom-donors/cookgreen-OpenMB (game code under /mnt/frankendom-donors/cookgreen-OpenMB/OpenMB/)
+Licence: GPL-3.0 (LICENSE at donor root: "Version 3, 29 June 2007"); _RESTRICTED-NOTE.txt says "RESTRICTED (copyleft GPL-3.0)." Shape only, clean-room. Copyleft.
+
+Why PARTIAL: the donor has no attribute, skill, level, XP, luck, stamina or magic system at all; the only stat-like code is a hit-point counter with no maximum, a weapon Range and Damage that are declared but never bound, and equipment slot counts.
+
+Files opened (candidates, all read unless stated):
+1. OpenMB/Game/HealthInfo.cs (full, 60 lines) - the only HP ledger.
+2. OpenMB/Game/WeaponSystem.cs (full, 83 lines) - weapon pool, next-in-circle, range check.
+3. OpenMB/Game/EquipmentSystem.cs (full, 135 lines) - weapon, clothing, ride and backpack slots.
+4. OpenMB/Game/Item.cs (lines 86, 96-165) - Range, Damage, attack event, constructor.
+5. OpenMB/Game/ItemFactory.cs (full, 70 lines) - Produce() returns null; PreProduce() builds the item.
+6. OpenMB/Script/Command/ChangeHitpointScriptCommand.cs (full, 59 lines) - the only HP change path found.
+7. OpenMB.Mods.Common/ItemTypes/ItemTypeWeapon.cs (full, 26 lines) - declares Range, Damage, ROF parameters.
+8. OpenMB/Mods/XML/ModCharacterDfnXML.cs (full, 51 lines) - character definition: id, name, skin, side, equips, flags. No stats.
+9. OpenMB/Game/Character.cs (lines 74-82, 140-152 read; the other 450 lines not read; grep for stat terms).
+Searches (grep on OpenMB, OpenMB.Mods.Common, OpenMB.DedicatedServer, Bin): Strength, Agility, Intelligence, Charisma, Ironflesh, PowerStrike, Athletics, proficiency, skill, experience, level, mana, stamina, luck. Result: no game-stat matches. The only "attribute" hits are XML serialization attributes, not game attributes. Receipts: 22 rows in receipts.tsv (note = cookgreen-OpenMB), all verified.
+
+Stat table (name | what it does | formula | number ranges | caps | file:line):
+| Hit points (HP) | per-character life counter | starts at initHP; each change adds a signed int (EffectHealth) | start 100 (constructor default; no per-character override found) | none: no max, no floor, no regen | HealthInfo.cs:35, 38, 41-44 |
+| Death | agent removed from the world | if HP < 0 at update: RemoveAgent and a kill message | removal at below zero; IsDead at zero or below (Character.cs:80) | none | HealthInfo.cs:47-57; Character.cs:76-81 |
+| HP change from script | the only HP writer found | ChangeHitpointScriptCommand: effecter id, target id, value (int) | value is any int, sign decides damage or heal | none | ChangeHitpointScriptCommand.cs:37-57 |
+| Last effecter | id of the last source that changed HP | stored on each change, printed in the kill message | id | n/a | HealthInfo.cs:43, 54-55 |
+| Weapon Range | reach of a weapon | in range if distance <= Range | declared parameter; Item.Range is never assigned (default 0) | n/a | WeaponSystem.cs:70-73; Item.cs:125; ItemTypeWeapon.cs:21 |
+| Weapon Damage | damage of a weapon | declared parameter; Item.Damage is never assigned | default 0 | n/a | Item.cs:126; ItemTypeWeapon.cs:22 |
+| ROF | rate of fire | declared parameter only; not read anywhere | n/a | n/a | ItemTypeWeapon.cs:23 |
+| Attack event | weapon hit notification | OnWeaponAttack(owner, victim) if a subscriber exists; no subscriber found | n/a | n/a | Item.cs:86, 156-161 |
+| Weapon pool | weapons carried by a character | list; next-in-circle wraps to index 0 | list length | none | WeaponSystem.cs:38-68 |
+| Equip slots | weapon slots, clothing slots, ride slot, backpack | 4 weapons, 4 clothes, 1 ride, 30 backpack; new weapon goes to the first empty slot | 4 / 4 / 1 / 30 | fixed counts | EquipmentSystem.cs:51-53, 56-66, 69-80 |
+| Armour slot | head, body, foot, hand | fixed index 0..3; a new item overwrites the slot | 4 slots | overwrite, old item not returned | EquipmentSystem.cs:104-119 |
+| Attributes (Str, Agi, Int, Cha) | none found | n/a | n/a | n/a | grep: none |
+| Skills, proficiency, levels, XP, luck, stamina, mana, magic | none found | n/a | n/a | n/a | grep: none |
+| Derived stats, regen, carry weight | none found | n/a | n/a | n/a | grep: none |
+
+Defects found (keep the idea; fix in Frankendom):
+- IsDead (<= 0) and removal (< 0) disagree: at exactly 0 HP the AI treats the agent as dead (AIAction/Attack.cs:22, Follow.cs:23) but it is not removed until a later update with HP below 0 (HealthInfo.cs:49). fix: one boundary, in the engine.
+- Range and Damage are declared as parameters and never bound from the item data, so the in-range check compares to 0 (WeaponSystem.cs:72). fix: bind every declared parameter in the item constructor and fail loudly on a missing one.
+- WeaponSystem is built with a null weapon (Character.cs:145) and the pool adds it (WeaponSystem.cs:43); CheckInRange would dereference null. fix: no null in the pool.
+- HP has no max and no clamp (HealthInfo.cs:44). fix: clamp to [0, max] in one function.
+- EquipHeadArmour and the other armour setters overwrite a slot and drop the old item (EquipmentSystem.cs:104-119). fix: return the old item or refuse.
+
+Best transferable idea: Keep the id of the last source on every HP change so the kill, and later XP and loot, can credit the right actor (HealthInfo.cs:43, 54-55).
+Decision (proposed): adapt - take only the last-source id; the rest of this donor has no stat model to adopt, and Frankendom's kills must be server-verified, so the id goes into the engine's single ledger and not into a client HP object.
+Acceptance (if built): after a server-verified kill the kill message names the player who landed the last hit, and a test asserts the same id is credited with the XP and loot award.
+
+Not verified: the other 450 lines of Character.cs; the animation and weapon-use code paths (Fire and Update are empty stubs in WeaponSystem.cs 75-81); what script files set change_hitpoint values (script data, not read).

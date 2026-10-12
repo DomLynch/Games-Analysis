@@ -1,0 +1,28 @@
+verdict: PARTIAL
+depth: thin
+cell: 3 (pvp-ranking-seasons-matchmaking)
+game: Segs-Segs
+donor: /mnt/frankendom-donors/Segs-Segs
+licence: BSD 3-Clause (as read: LICENSE.md line 1 "BSD 3-Clause License"; MapTemplate.cpp line 5 "licensed under the terms of the 3-clause BSD License"). Permissive: code may be adapted.
+camera_scope: n/a
+
+Files opened (read by line range):
+1. Servers/MapServer/MapTemplate.cpp, lines 1-105 (whole file): get_instance, shut_down_all, client_filename, base_name, mission_base_name, num_instances.
+2. Servers/MapServer/MapTemplate.h, lines 25-45 (class and get_level_range declaration).
+3. Common/GameData/map_definitions.h, lines 28-45 (MissionCategory enum).
+4. Common/GameData/map_definitions.cpp, lines 56-185 (getMissionPath, getMissionMapLevelData classifier and layout loop).
+5. Common/Servers/Opcodes.cpp, lines 127-130 (opcode name table only, read by grep).
+
+Searches run (grep -rnI, narrow to Servers, Common, Components, Data): elo, glicko, leaderboard, matchmak, ladder, tournament, season, bracket, rank, rating, pvp, duel, arena, score, standing, queue, ping, latency, level range. Result: no PvP rating, no leaderboard, no season, no duel, no tournament and no matchmaking code. ARENA_* names appear only in Common/Servers/Opcodes.cpp (127-130) as name table entries, with no handler found. "rank" matches are NPC tier (npc_definitions.h 61) and a supergroup rank field printed in a debug line (EntityHelpers.cpp 114), not ranking.
+
+Why PARTIAL: the only bracket-like mechanism is a content picker. A mission folder whose name contains 15, 30, 45 or 60 becomes a size class (map_definitions.cpp 115-133), and getMissionPath picks the layout set for the requested class, starting from the first entry as the default (65-68, 84 builds the path). But its one caller, MapTemplate::get_instance (MapTemplate.cpp 29-40), always asks for MissionCategory::MEDIUM and never receives the character level, so the player's level never chooses the bracket; the level getter is declared (MapTemplate.h 35) with no definition found; and the classifier computes a `level` substring (map_definitions.cpp 107) and never uses it. Nothing matches players by rank, rating, ping or history. The fragment is real and readable, but it is thin and does not contain the matchmaking the topic asks for.
+
+Defects in the fragment (keep the idea, fix the defect):
+- D1: the bracket is parsed by substring (`contains("15")`, map_definitions.cpp 115-129), so any folder name that contains "15" or "45" for another reason is read as that bracket. fix: store an integer bracket field per zone or instance as data.
+- D2: the caller ignores the level (MapTemplate.cpp 29 takes char_level, 40 requests MEDIUM). fix: pass the level into the pick and test it.
+- D3: the default is the first entry, not an explicit one (map_definitions.cpp 65). fix: name the default bracket in the data.
+
+Confidence: medium-high that no PvP ranking exists in this donor (grep-based search over the listed roots; no whole-tree find was run). What would change the verdict: a PvP or ladder handler under a root I did not search (none seen).
+
+Best transferable idea: store an integer bracket (for example 15, 30, 45, 60) on each zone or instance as data, pick the instance by the player's level, and name the fallback bracket explicitly.
+Decision (proposed): adapt - take the bracket-to-instance pick with the bracket as an integer zone field instead of name parsing, because zones are data in Frankendom; the rating, ping and season matchmaking in this topic is not in this donor and must come from another source.

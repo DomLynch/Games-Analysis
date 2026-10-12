@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+flareteam-flare-engine	magic-spells-powers	P	STRONG	full	src/PowerManager.cpp:2031-2155 and src/StatBlock.cpp:1439-1477: cost-gated casts with per-power cooldown, summon caps (fixed or stat-scaled, floor 1) and summons removed when the summoner's HP reaches zero; GPLv3, so clean-room only.
+kcopelandmgmt-Shadowbane	magic-spells-powers	P	STRONG	full	src/engine/gameManager/PowersManager.java:199-553 and 2612-2643: the recycle lock starts at cast press (cast time plus recycle time), movement or damage cancel only flagged powers, and a dead or re-lived caster voids the cast at completion; MIT, so adaptable.
+WarEmu-WarEmu	magic-spells-powers	P	STRONG	full	WorldServer/World/Abilities/AbilityInterface.cs:32-274 and WorldServer/World/Objects/Unit.cs:343-361: a 1500 ms global cooldown set at cast start, an action-point pool (cap 250) spent at completion with regen paused during the global cooldown; GPL-2.0-or-later, so clean-room only.

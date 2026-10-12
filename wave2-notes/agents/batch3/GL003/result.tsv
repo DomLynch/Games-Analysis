@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ryzom-ryzomcore	gods-legends-favour	P	STRONG	full	/mnt/frankendom-donors/ryzom-ryzomcore/ryzom/server/src/entities_game_service/guild_manager/fame_manager.cpp:803-986,1651-1910 per-faction favour ledger with damped gains and a kill penalty (progression_pve.cpp:1986-1997) and auto-drop below 0 (player_manager/character.cpp:18561-18571)
+wesnoth-wesnoth	gods-legends-favour	P	STRONG	full	/mnt/frankendom-donors/wesnoth-wesnoth/src/actions/attack.cpp:184-210,1506-1530 and src/tod_manager.cpp:214-272,591-620 alignment-by-time damage modifier with illumination and calibrated liminal bonus (data/core/macros/schedules.cfg:30-129)
+openmw	gods-legends-favour	P	STRONG	full	/mnt/frankendom-donors/openmw/apps/openmw/mwmechanics/mechanicsmanagerimp.cpp:475-561,1336-1401 and actors.cpp:1203-1216 derived 0-100 standing with worst-faction rule (defect at line 524) and temporary penalty cleared on payment
