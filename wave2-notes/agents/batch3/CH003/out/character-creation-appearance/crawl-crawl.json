@@ -1,0 +1,27 @@
+{
+  "game": "crawl-crawl",
+  "category": "character-creation-appearance",
+  "cell": 3,
+  "verdict": "STRONG",
+  "depth": "thin",
+  "donor_path": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/tiledoll.cc",
+  "licence": "GNU GPL version 2 (LICENSE: either version 2 of the License; Version 2, June 1991; other GPL-compatible pieces not checked per file)",
+  "licence_class": "copyleft",
+  "target_module": "origins/character/appearance.ts",
+  "parity_row": 15,
+  "pattern_tags": ["new:layer-chance-table", "new:seeded-layer-pick", "new:species-layer-ranges"],
+  "data_fields": [
+    {"name": "always_layer_chance", "donor_constant": "1 (body, hand1, leg, boots, hair are always rolled)", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/tiledoll.cc:243"},
+    {"name": "coin_flip_layer_chance", "donor_constant": "0.5 (cloak, arm, hand2, helm)", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/tiledoll.cc:250"},
+    {"name": "beard_chance", "donor_constant": "0.25 (one_chance_in(4))", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/tiledoll.cc:259"},
+    {"name": "seeded_pick_small_count_result", "donor_constant": "0 when the count is below 2, else hash mod count", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/hash.cc:60"},
+    {"name": "ghost_fill_first_layer_index", "donor_constant": "layers from cloak upward (index 5 in the roll order) are seeded", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/tilemcache.cc:1553"},
+    {"name": "random_name_tries", "donor_constant": "100", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/newgame.cc:559"},
+    {"name": "name_max_chars", "donor_constant": "30", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/externs.h:81"}
+  ],
+  "best_idea": "A look is a set of layers, each with a chance (always, coin flip, one in four), and a layer the species or job did not set takes a seeded pick so the same name always looks the same.",
+  "decision": "adapt",
+  "decision_why": "Frankendom wants a seed-stable look for NPCs and fallen heroes on the shared rig; the donor's chance table and seeded pick fit, but its roll has no species check, so a per-species range table is added. The random roll stays for the creator only.",
+  "decision_status": "proposed",
+  "acceptance": "A fallen NPC with the same name shows the same layer ids on two visits (a server test asserts identical ids for one seed), and a species with no beard range never rolls a beard (a test asserts it)."
+}

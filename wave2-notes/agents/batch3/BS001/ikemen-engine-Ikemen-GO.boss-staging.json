@@ -1,0 +1,89 @@
+{
+  "donor": "ikemen-engine-Ikemen-GO",
+  "topic": "boss-staging",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/system.go",
+    "/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/fightscreen.go",
+    "/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/bytecode.go",
+    "/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/char.go",
+    "/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/data/dizzy.zss",
+    "/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/data/common.const",
+    "/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/LICENCE.txt"
+  ],
+  "counts": {
+    "superpause_params": 13,
+    "fightscreen_round_timing_reads": 7,
+    "boss_hits_in_src_go": 0,
+    "boss_hits_in_external_lua": 0,
+    "dizzy_cooldown_ticks": 60,
+    "dizzy_points_per_normal_damage": 1.8,
+    "superpause_default_ticks": 30,
+    "superpause_default_darken": 0.5,
+    "super_target_defence_mul": 1.5
+  },
+  "rule": "Intro is one countdown (sys.intro) walked through round states. A super is a pause: time 30, darken 0.5, unhittable pause+1, opponent defence x1.5 in the combo. Stun is a points meter: each normal hit adds damage x1.8 divided by the victim's defence, supers add 0, max defaults to life, 60-tick cooldown after a non-guarded hit, meter resets when the victim is not in hit or lying state, and only one stun per combo.",
+  "data_fields": [
+    {"name": "intro_ctrl_ticks", "unit": "ticks", "donor_value_or_null": 30},
+    {"name": "intro_over_hit_ticks", "unit": "ticks", "donor_value_or_null": 10},
+    {"name": "intro_over_wait_ticks", "unit": "ticks", "donor_value_or_null": 45},
+    {"name": "intro_callfight_ticks", "unit": "ticks", "donor_value_or_null": 60},
+    {"name": "super_freeze_ticks", "unit": "ticks", "donor_value_or_null": 30},
+    {"name": "super_darken_brightness", "unit": "0-1 scale", "donor_value_or_null": 0.5},
+    {"name": "super_unhittable_extra_ticks", "unit": "ticks", "donor_value_or_null": 1},
+    {"name": "super_target_defence_mul", "unit": "multiplier", "donor_value_or_null": 1.5},
+    {"name": "stagger_points_per_normal_damage", "unit": "points per damage", "donor_value_or_null": 1.8},
+    {"name": "stagger_points_per_super_damage", "unit": "points per damage", "donor_value_or_null": 0},
+    {"name": "stagger_max", "unit": "points", "donor_value_or_null": null},
+    {"name": "stagger_cooldown_after_hit", "unit": "ticks", "donor_value_or_null": null},
+    {"name": "stun_red_flash", "unit": "ticks", "donor_value_or_null": null},
+    {"name": "stun_birds_fade_after", "unit": "ticks", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "One intro countdown with a fixed order: intros, round call, fight call, control.",
+    "Super freeze of 30 ticks with half darkening, so the super is one readable beat.",
+    "Stagger meter that divides by defence, so tanky targets fill it slower.",
+    "One stun per combo, with the meter reset after the victim is free of hits.",
+    "No damage in the short outro window between over hit time and over wait time (src/system.go:1867)."
+  ],
+  "change": [
+    "Stagger max as a boss data field, not the boss's life (donor default is life).",
+    "Hits from all attackers (up to 3) count toward the same stagger meter.",
+    "Freeze the boss and the caller, and hold the other attackers for the same ticks (donor freeze rule for other characters was not read in full).",
+    "Server owns the freeze timer, stagger count and one-stun flag; client draws only."
+  ],
+  "look_test": "Preview clips at 375 wide on the existing boss: (1) heavy move as today, (2) same move with 30-tick freeze and half-brightness screen, (3) stagger bar plus birds and 30-tick red flash after three heavy hits. Dom judges whether the freeze reads as a moment and whether the birds read at phone size.",
+  "licence_note": "MIT (LICENCE.txt:1, scope line 33: engine and scripts in the repo). Donor numbers from data/common.const and src/fightscreen.go may be used as defaults with the notice kept. data/dizzy.zss:1 says the dizzy code was adapted from another project whose licence is not in the box: dizzy values and visuals are clean-room, use our own numbers.",
+  "tags": [
+    "boss-intro",
+    "finisher-camera",
+    "stagger",
+    "flash",
+    "duration-rule",
+    "ordered-feedback",
+    "hit-stop",
+    "new:stun-birds",
+    "new:one-stun-per-combo"
+  ],
+  "not_read": [
+    "characters (not in box)",
+    "motif / fight screen definition (not in box)",
+    "stage packs (not in box)",
+    "KO and win-pose animation details beyond outroState (src/system.go from 1904)",
+    "sound files and superpause sound defaults",
+    "external/script/main.lua UI flow (grep only, 0 boss hits)",
+    "walk density, loot ceremony, readability at 375 wide (not in donor)",
+    "asset audit and catalogue for this donor (not present in batch3)"
+  ],
+  "mg011": {
+    "scope": "dragons and big creatures",
+    "breath_cones": "not found in src (only glTF light cones at src/model.go:70-71, not breath)",
+    "phases": "no per-phase boss state found in src (not read in content scripts)",
+    "flight_as_movement": "not found (hoverIdx exists at src/char.go:3694 for air hover, not read further)",
+    "armour_per_body_part": "not found",
+    "taming_bonding": "not found",
+    "mounts": "not found",
+    "transferable": "none for dragons; boss stagger rules above apply to big creatures"
+  }
+}

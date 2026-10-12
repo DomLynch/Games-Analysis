@@ -1,0 +1,81 @@
+{
+  "donor": "exult-exult",
+  "topic": "weather-time-light",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/exult-exult/gameclk.cc",
+    "/mnt/frankendom-donors/exult-exult/gameclk.h",
+    "/mnt/frankendom-donors/exult-exult/palette.h",
+    "/mnt/frankendom-donors/exult-exult/palette.cc",
+    "/mnt/frankendom-donors/exult-exult/effects.cc",
+    "/mnt/frankendom-donors/exult-exult/objs/egg.cc",
+    "/mnt/frankendom-donors/exult-exult/gamewin.cc",
+    "/mnt/frankendom-donors/exult-exult/objs/animate.cc",
+    "/mnt/frankendom-donors/exult-exult/schedule.cc",
+    "/mnt/frankendom-donors/exult-exult/data/exultmsg.txt",
+    "/mnt/frankendom-donors/exult-exult/COPYING"
+  ],
+  "counts": {
+    "weather_kinds": 7,
+    "palette_names_in_palette_h_32_45": 13,
+    "storm_timer_stages": 3,
+    "lightning_flash_lengths_ms": 2,
+    "ambient_day_entries": 3,
+    "ambient_night_entries": 3,
+    "string_table_hex_entries": 904,
+    "string_table_palette_label_entries_seen": 4
+  },
+  "rule": "Game clock: 25 sub-steps per game minute; each hour sets a palette phase (dawn 5, day 6-19, dusk 20, night otherwise, indoors always night). The palette glides from the current phase to the next hour's phase over one game hour (60 steps at 25 ticks). Weather changes glide in 20 steps at 1 tick. A storm egg runs timed sub-events: clouds at once, rain at 20-1019 ms, lightning 0-499 ms after rain, rain 2 minutes past storm end, lightning 2 minutes before it. Lightning flashes 25 or 50 ms, with a 1-in-50 quick re-flash (40-280 ms) and otherwise a 4000-6999 ms pause. Rain ramps 0-4 drops per 100 ms up to a cap and 0-14 down at the end. Weather egg packs kind (low byte) and minutes (high byte); zero minutes means 6000. Ambient bird or cricket bursts repeat with chance 1 in (repeats+1).",
+  "data_fields": [
+    {"name": "clock.substeps_per_minute", "unit": "sub-steps per game minute", "donor_value_or_null": null},
+    {"name": "clock.dawn_hour", "unit": "hour of day", "donor_value_or_null": null},
+    {"name": "clock.dusk_hour", "unit": "hour of day", "donor_value_or_null": null},
+    {"name": "palette.hour_glide_steps", "unit": "steps", "donor_value_or_null": null},
+    {"name": "palette.weather_glide_steps", "unit": "steps", "donor_value_or_null": null},
+    {"name": "storm.rain_start_ms", "unit": "ms after egg", "donor_value_or_null": null},
+    {"name": "storm.lightning_jitter_ms", "unit": "ms after rain start", "donor_value_or_null": null},
+    {"name": "storm.rain_lead_min", "unit": "game minutes past storm end", "donor_value_or_null": null},
+    {"name": "storm.lightning_lead_min", "unit": "game minutes before storm end", "donor_value_or_null": null},
+    {"name": "lightning.flash_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "lightning.reflash_chance_1_in", "unit": "1 in N flashes", "donor_value_or_null": null},
+    {"name": "lightning.pause_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "rain.drop_cap", "unit": "drops on screen", "donor_value_or_null": null},
+    {"name": "rain.ramp_up_per_check", "unit": "drops per 100 ms", "donor_value_or_null": null},
+    {"name": "rain.ramp_down_per_check", "unit": "drops per 100 ms", "donor_value_or_null": null},
+    {"name": "fog.sparkle_cap", "unit": "drops on screen", "donor_value_or_null": null},
+    {"name": "ambient.repeat_gap_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "ambient.wait_gap_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "sky.default_weather_minutes", "unit": "game minutes (0 = continuous)", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Clock-driven palette phase per hour, with the glide starting one hour early and landing on the next phase",
+    "Weather as a timed event with a fixed sub-event plan (clouds, rain, lightning with lead times)",
+    "Random lightning pause and rare quick re-flash, so flashes do not repeat on a beat",
+    "One weather field per zone event with a clearing rule (new kind clears old, except fog)",
+    "Ambient repeat rule that decays with each repeat",
+    "Hour-based chime count and hour-based sprite frame"
+  ],
+  "change": [
+    "Counters: overcast and fog counters go negative (clouds kind 6 decrements with no increment; night clamp then destructor decrement). Use one clamped channel per weather type",
+    "Indoors forced to night: the Pit keeps its own readable fixed palette; night stays for dungeon zones",
+    "Lightning full-screen flash: no flash inside an enemy telegraph window or a finisher camera",
+    "Particle caps: donor 200 rain, 100 fog; phone 80 and 40 so three attackers stay readable",
+    "Fog at night: donor says disable (open question in code); ours allows dusk",
+    "Dawn and dusk share one palette index in the donor; give dusk its own entry or say why not"
+  ],
+  "look_test": "Proposed target src/fight/sky.ts (new, client presentation only), parity row 16. On the existing fight scene add a sky flag with four presets (dawn-to-day glide, dusk-to-night glide, storm with 80 rain drops and 25/50 ms lightning with 4-7 s pauses, day fog with 40 sparkles). Publish to /preview/ with no release rows. Dom watches each for 30 s on a 375-wide phone with three attackers and judges silhouette and telegraph colour readability during the flash and in fog.",
+  "licence_note": "GPL-2.0 (COPYING: GNU GPL version 2, June 1991). Clean-room only: shape of the mechanism, no code adapted. Game content (maps, palettes, sounds) not used. Donor values are null in data_fields because the licence is GPL.",
+  "tags": ["weather-state", "day-night", "timed-event", "scheduler", "flash", "mood-preset", "new:palette-glide", "new:ambient-repeat", "new:hour-chime"],
+  "not_read": [
+    "Rain and cloud drawing (Rain_effect::paint, Clouds_effect::paint)",
+    "Palette data (PALETTES.FLX not in donor tree)",
+    "data/bg/shape_info.txt",
+    "Usecode scripts that call set_weather (grep showed clock readers only)",
+    "npctime.cc beyond the hour hook",
+    "Palette_transition::set_step after line 772 (create_intermediate not read)",
+    "Death/respawn presentation, loot ceremony, walk density, idle creature animation (not in this topic)",
+    "Game map weather egg placements (data pack, not in donor box)",
+    "Other lanes' weather code (not searched)"
+  ]
+}

@@ -1,0 +1,24 @@
+BS002 verdicts (PARTIAL and NONE cells; STRONG cells are in their notes)
+
+diasurgical-DevilutionX | boss-staging | STRONG (in note, full depth, both halves read: code and tables)
+  Confidence: high on order of operations and counts; medium on the Lazarus cutscene path (not traced through movie.cpp).
+
+diasurgical-DevilutionX | MG011 dragons and boss abilities | NONE
+  Checked (at least 3 candidates):
+    - Source/monster.cpp (read: GargoyleAi 2480-2530, tryLiftGargoyle 4976-4985, StartHeal 1045-1060)
+    - Source/missiles.cpp (grep hits only: a spell missile; no dragon, breath cone or phase)
+    - Source/translation_dummy.cpp (grep hit: flavour text, not a monster)
+    - assets/txtdata/items/unique_itemdat.tsv (grep hit: an item named Dragon's Breach, not a monster)
+  Search terms (grep, Source tree): dragon, breath, mount, tame, bond, flight, fly, phase.
+  Result: no dragon monster, no breath cone, no phases, no taming, no mounts, no armour per part.
+  Best transferable idea: a gargoyle-style retreat-and-heal phase at half HP (retreat, then heal once the player is far enough away).
+
+dhewm-dhewm3 | boss-staging | PARTIAL (engine half only; data half absent from the box)
+  Checked (at least 3 candidates): neo/d3xp/Actor.cpp (read 2215-2250, 2410-2446), neo/d3xp/Projectile.cpp (read 1722-1730, 1996-2012, 2158-2200), neo/game/Actor.cpp (grep lines 455, 628, 2173), COPYING.txt.
+  Not in the box: base/def, base/script, base/pk4. Boss intro, staging, phases, boss HP and sound: "not in the half I read".
+  Best transferable idea: a boss that only one hit kind can hurt, with its per-joint damage multipliers held as data (default 1.0).
+
+dhewm-dhewm3 | MG011 dragons and boss abilities | NONE
+  Checked (at least 3 candidates): neo/ grep (dragon, breath, tame, mount, flight, spellbook), neo/d3xp/Actor.cpp, neo/d3xp/Projectile.cpp, neo/game/Actor.cpp.
+  Result: no dragon or breath boss code, no phase system, no taming, no mounts, no flight model in the engine half. Grep hits were unrelated (framework code, imgui, a link).
+  Best transferable idea: the same allowed-hit gate and per-zone multiplier table as under boss-staging.

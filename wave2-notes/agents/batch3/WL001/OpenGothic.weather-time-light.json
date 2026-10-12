@@ -1,0 +1,66 @@
+{
+  "donor": "OpenGothic",
+  "topic": "weather-time-light",
+  "depth": "thin",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/OpenGothic/common/graphics/sky/sky.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/graphics/sky/sky.h",
+    "/mnt/frankendom-donors/OpenGothic/common/game/gametime.h",
+    "/mnt/frankendom-donors/OpenGothic/common/graphics/lightsource.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/graphics/worldview.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/world/worldsound.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/world/world.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/world/objects/npc.cpp",
+    "/mnt/frankendom-donors/OpenGothic/LICENSE"
+  ],
+  "counts": {
+    "sky_time_keys": 4,
+    "music_day_window_hours": 17,
+    "weather_state_machines_found": 0,
+    "precipitation_code_found": 0,
+    "sky_cpp_lines": 189
+  },
+  "rule": "One game clock (ms in a day). Four keyed times (rise, noon, set, midnight) give a piecewise-linear sun elevation parameter, which is normalised into a sun direction (so elevation is sine-shaped). Azimuth turns once per day. A night blend ramps from the horizon to about 10 degrees below it. Sun ambient is gated by a smoothstep on sun height. Music day/night tag uses a fixed window (04:00 to 21:00) with a fallback chain (zone, then default zone; day or night, then day; mode, then standard). Skip-to-hour rolls to the next day if the target has passed. NPC routine lookup wraps the day, and if no routine covers now it picks the one that ended most recently by cyclic distance.",
+  "data_fields": [
+    {"name": "sun_key_rise", "unit": "hh:mm", "donor_value_or_null": "04:45"},
+    {"name": "sun_key_noon", "unit": "hh:mm", "donor_value_or_null": "13:09"},
+    {"name": "sun_key_set", "unit": "hh:mm", "donor_value_or_null": "21:33"},
+    {"name": "day_end", "unit": "hh:mm", "donor_value_or_null": "24:00"},
+    {"name": "night_blend_depth", "unit": "sun height (sin of elevation)", "donor_value_or_null": 0.18},
+    {"name": "sun_ring_radius", "unit": "unitless", "donor_value_or_null": 0.56},
+    {"name": "sun_lux", "unit": "lux", "donor_value_or_null": 128000},
+    {"name": "moon_lux", "unit": "lux", "donor_value_or_null": 0.32},
+    {"name": "ambient_tuneup", "unit": "factor", "donor_value_or_null": 0.3},
+    {"name": "cloud_period_layer0", "unit": "ticks", "donor_value_or_null": 90000},
+    {"name": "cloud_period_layer1", "unit": "ticks", "donor_value_or_null": 270000},
+    {"name": "music_day_window", "unit": "hh:mm to hh:mm", "donor_value_or_null": "04:00 to 21:00"},
+    {"name": "routine_fallback", "unit": "rule", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "one clock drives sun, night blend and music tag",
+    "normalised sun ring so elevation is sine-shaped",
+    "midnight wrap at 24:00 (gtime(1,0,0) is one day)",
+    "routine fallback to the most recently ended routine",
+    "skip-to-hour rolls to next day when target has passed"
+  ],
+  "change": [
+    "replace the linear elevation segments with a smooth curve",
+    "name the commented tune-up factors as data fields instead of a stack",
+    "make the four key times per-zone data",
+    "keep a floor on ambient so threat outlines stay readable at night",
+    "sun colour is a constant in C++ (sky.cpp:136); any dusk tint is not read and should be sourced from data if wanted"
+  ],
+  "look_test": "Scene with a time scrubber 04:00 to 24:00 and the four keys marked. Publish to /preview/ with the look-test flag (no release rows). On a 375-wide phone check 13:09, 21:33 and 24:00 for hero silhouette and a three-attacker ring. Compare linear keys against a smooth curve across 21:00 to 22:00.",
+  "licence_note": "MIT, Copyright 2019 Try (LICENSE). Code may be adapted with the notice kept. This note copies no code. Donor values are facts about the sky keys and are allowed under MIT. No legal conclusion.",
+  "tags": ["day-night", "scheduler", "mood-preset", "new:sky-keyframes", "new:routine-fallback"],
+  "not_read": [
+    "shader/sky/sky.frag, fog.frag, sky_view_lut.frag and other sky shaders (names only)",
+    "worldview.cpp beyond updateLights (229-231)",
+    "world tick and game.tickCount",
+    "daytime sound objects in worldsound.cpp",
+    "npc.cpp routine start and end logic past line 3265",
+    "Gothic game data (INI sky texture names, zone and time data)",
+    "death and respawn, loot reveal, walk density, boss staging"
+  ]
+}

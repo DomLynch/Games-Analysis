@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+ryzom-ryzomcore	sound-music	P	STRONG	full	ryzom/client/src/sound_manager.cpp:1627-1660 and nel/src/sound/music_channel_fader.cpp:94-175: a one-shot or death sting plays on its own music channel while the zone bed ducks to silence over a 500 ms wall-clock ramp; the listed hint sound_bank.h is only a bank container.
+scummvm-scummvm	sound-music	P	STRONG	full	engines/wintermute/base/base_game.cpp:5352-5422: a timed crossfade between two music channels with a linear level split and an optional slot swap; the fade clock keeps running while the game is frozen (772 vs guard at 5356), which the sketch fixes.
+veloren-veloren	sound-music	P	STRONG	full	voxygen/src/audio/music.rs:233-459: a combat-music director that weighs nearby enemies by health (ceil of max HP over 70 in the shipped manifest) and gates changes with a 5 s delay; the shipped soundtrack has no uncommented combat tracks and the fallback at 500-523 ignores the music state.

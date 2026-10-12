@@ -1,0 +1,77 @@
+{
+  "donor": "DCurrent-openbor",
+  "topic": "boss-staging",
+  "depth": "thin",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.c",
+    "/mnt/frankendom-donors/DCurrent-openbor/engine/openbor.h",
+    "/mnt/frankendom-donors/DCurrent-openbor/engine/openborscript.c",
+    "/mnt/frankendom-donors/DCurrent-openbor/engine/source/openborscript/level.c",
+    "/mnt/frankendom-donors/DCurrent-openbor/engine/source/openborscript/commands.c",
+    "/mnt/frankendom-donors/DCurrent-openbor/engine/translation.txt",
+    "/mnt/frankendom-donors/DCurrent-openbor/LICENSE",
+    "/mnt/frankendom-donors/_donor-library/matrix.tsv"
+  ],
+  "counts": {
+    "boss_grep_hits_engine_c_h": 125,
+    "translation_lines": 360,
+    "translation_boss_strings": 0,
+    "slowmotion_default_duration": 2,
+    "boss_slow_default": "on",
+    "mount_rider_spawn_offset": 10
+  },
+  "rule": "Boss death: checkdeath lowers the boss count; at zero with an enemy target it clears the room (every live enemy takes its remaining health as an ATK_BOSS_DEATH hit), sets level complete, and slows the game loop until the boss's fall routine runs, which turns the slow-motion off. Slow-motion steps the logic on one loop pass in three at default duration. Victory pose only for idle, grounded survivors when the boss was defeated. Boss music switches on spawn. A HUD panel draws name, state icon and health graph for entities with a popup. Mount crash drops the rider with the same attack.",
+  "data_fields": [
+    {"name": "boss_count_per_zone", "unit": "count", "donor_value_or_null": null},
+    {"name": "boss_slow_enabled", "unit": "flag", "donor_value_or_null": null},
+    {"name": "boss_slow_duration", "unit": "loop passes per logic step", "donor_value_or_null": null},
+    {"name": "boss_music_track", "unit": "track name and offset", "donor_value_or_null": null},
+    {"name": "victory_pose_hold", "unit": "ticks", "donor_value_or_null": null},
+    {"name": "rider_spawn_y_offset", "unit": "engine units", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Slow-motion ends on the boss's landing, so the death beat has a visible end.",
+    "Clear-the-room as the level-end event on the last boss death.",
+    "Victory pose gated on idle, grounded survivors and a defeated boss.",
+    "HUD panel per boss: name, state icon (default, hurt, grabbed, dying), health graph.",
+    "Mount death drops the rider with the same fatal attack."
+  ],
+  "change": [
+    "Slow-motion is client presentation only; the server records the death at the death tick.",
+    "Cleared minions go through the normal kill path flagged as cleared, so the ledger can choose to count or skip them.",
+    "Boss count is per zone, and the clear-out waits until every boss in the zone is down.",
+    "Comment in the donor says the rider does not take damage, but the code does call its takedamage; we follow the code and write our own comment."
+  ],
+  "look_test": "Two clips of the existing boss at 375 wide: (1) instant death as today, (2) slow-motion until landing, one-second victory hold, minions cleared at the landing. Dom judges whether the landing reads as the end and whether the pose reads at phone size.",
+  "licence_note": "LICENSE (lines 1, 5, 11) reads as BSD-style, but the donor library matrix (/mnt/frankendom-donors/_donor-library/matrix.tsv, row DCurrent-openbor) says UNCLEAR. Shape only: no code, no constants, no text copied. All donor values are null.",
+  "tags": [
+    "boss-elite-pattern",
+    "ordered-feedback",
+    "hit-stop",
+    "new:boss-death-slowmo",
+    "new:boss-clear-room",
+    "new:boss-hud-panel",
+    "new:mount-rider-drop",
+    "new:victory-pose"
+  ],
+  "not_read": [
+    "content packs (levels, boss AI, entrance and phase scripts, models): not in box",
+    "sound files and music track content",
+    "HUD sprite layout values (content)",
+    "tests/test_invariant_borpak.c",
+    "remaining ~100 of the 125 boss grep hits in engine .c and .h (non-boss matches or outside the staging path)",
+    "walk density, loot ceremony, idle and ambient behaviour, readability at 375 wide (not in engine code read)",
+    "asset audit and catalogue for this donor (not present in batch3)"
+  ],
+  "mg011": {
+    "scope": "dragons and big creatures",
+    "breath_cones": "not found in engine code (grep cone, breath: 0 hits in openbor.c and openborscript)",
+    "phases": "no boss phase state in engine code; phase scripts are content (not in box)",
+    "flight_as_movement": "not found; 'fly' is obstacles flying when hit (openbor.c:49391 obstacle_fly), not flight",
+    "armour_per_body_part": "not found (grep armor, armour: 0 hits)",
+    "taming_bonding": "not found (grep tame: 0 hits)",
+    "mounts": "found: rider and mount (biker_takedamage openbor.c:49317, drop_driver openbor.c:36734); mount crash throws the rider with the same attack",
+    "transferable": "dismount-on-mount-death: rider takes the same fatal hit; dragons as mounts can reuse this"
+  }
+}

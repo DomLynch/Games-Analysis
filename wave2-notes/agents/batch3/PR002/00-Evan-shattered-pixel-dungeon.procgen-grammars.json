@@ -1,0 +1,75 @@
+{
+  "donor": "00-Evan-shattered-pixel-dungeon",
+  "topic": "procgen-grammars",
+  "depth": "full",
+  "verdict": "STRONG",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/levels/RegularLevel.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/levels/rooms/standard/StandardRoom.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/levels/rooms/secret/SecretRoom.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/levels/rooms/special/SpecialRoom.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/levels/painters/RegularPainter.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/levels/Patch.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/mobs/MobSpawner.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/buffs/ChampionEnemy.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/Dungeon.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/SPD-classes/src/main/java/com/watabou/utils/Random.java"
+  ],
+  "counts": {
+    "standard_room_list_entries": 35,
+    "secret_room_classes": 12,
+    "special_room_classes_equip": 9,
+    "special_room_classes_consumable": 10,
+    "trap_classes_not_read": 34,
+    "depth_weight_row_length": 35
+  },
+  "rule": "Counted budget fill: standard rooms are generated until a slot budget is used; large and giant rooms cost more slots. Room class is a depth-banded weight row. Mob count per floor is a base plus depth-mod plus jitter, with a larger count on large floors. Rotation: counted family slots per depth, plus rare adds at listed depths, plus per-slot alt swaps, then shuffle. Placement avoids a safe radius around the entrance. Variety queues: a per-run shuffled queue, picked with weights 6:3:1 (front, next, after), chosen item moves to the back. Secret budget: a base per five-floor band spread over remaining floors with probabilistic rounding. Champion roll always consumes the same random calls. Patch generator: seeded fill, clustering passes, optional forced fill rate.",
+  "data_fields": [
+    {"name": "rooms_budget_per_floor", "unit": "slots", "donor_value_or_null": null},
+    {"name": "room_size_slots", "unit": "slots (normal, large, giant)", "donor_value_or_null": null},
+    {"name": "mob_count_base", "unit": "count", "donor_value_or_null": null},
+    {"name": "mob_count_depth_mod", "unit": "count", "donor_value_or_null": null},
+    {"name": "mob_count_jitter", "unit": "count", "donor_value_or_null": null},
+    {"name": "large_floor_mult", "unit": "multiplier", "donor_value_or_null": null},
+    {"name": "first_floor_preset_mobs", "unit": "count", "donor_value_or_null": null},
+    {"name": "safe_radius_steps", "unit": "walk steps", "donor_value_or_null": null},
+    {"name": "second_mob_one_in_N", "unit": "1 in N", "donor_value_or_null": null},
+    {"name": "rare_add_chance", "unit": "probability per listed depth", "donor_value_or_null": null},
+    {"name": "alt_swap_chance_per_slot", "unit": "probability per slot", "donor_value_or_null": null},
+    {"name": "champion_blocked_until_depth", "unit": "depth per modifier", "donor_value_or_null": null},
+    {"name": "variety_queue_weights", "unit": "front:next:after", "donor_value_or_null": null},
+    {"name": "secret_budget_per_band", "unit": "count (base and fraction)", "donor_value_or_null": null},
+    {"name": "patch_fill", "unit": "probability", "donor_value_or_null": null},
+    {"name": "patch_clustering_passes", "unit": "count", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "budget fill with size-weighted slots",
+    "counted, shuffled family rotation with rare adds and alt swaps",
+    "front-biased variety queue (6:3:1) that moves the picked item to the back",
+    "safe radius around the entrance with no spawns",
+    "champion roll with constant random-call count (seed discipline)",
+    "patch generator for zone skins"
+  ],
+  "change": [
+    "cap total attempts in the mob placement loop (RegularLevel.java 255-299)",
+    "delete the dead floorsLeft == 0 branch (SecretRoom.java 75)",
+    "cap iterations in the Patch forced-fill loop (Patch.java)",
+    "seed rotations and champion rolls from zone seed on the server",
+    "names, families, room classes, numbers and art are ours"
+  ],
+  "look_test": "Six 375-wide stills to /preview/ (no release rows), one zone seed: a floor with the safe ring drawn; a four-slot family strip for three depth tiers; one enemy with and without a champion modifier at two frequencies. Dom judges whether each room reads from the doorway and whether the first room feels safe.",
+  "licence_note": "LICENSE.txt is GNU GPL v3; source headers GPL v3. Copyleft: clean-room, shape only; no code, tables or names copied.",
+  "tags": ["creature-family", "recolour-tier", "walk-density", "first-fight", "affix-grammar", "seed-discipline", "scheduler", "new:budget-fill", "new:variety-queue", "new:counted-rotation", "new:safe-radius"],
+  "not_read": [
+    "levels/traps/ (34 classes)",
+    "levels/features/ (5 files)",
+    "painters other than RegularPainter (Caves, City, Halls, Mining, Prison, Sewer)",
+    "paint code inside the 35 standard room classes (list and weights read only)",
+    "rooms/quest and rooms/sewerboss",
+    "rest of watabou Random helper (only chances() read)",
+    "Level.java feelings",
+    "locale and string tables",
+    "AU/DC asset or catalogue files for this donor (none in batch3 folder)"
+  ]
+}

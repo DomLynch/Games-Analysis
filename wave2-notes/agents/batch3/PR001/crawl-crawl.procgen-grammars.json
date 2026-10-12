@@ -1,0 +1,69 @@
+{
+  "donor": "crawl-crawl",
+  "topic": "procgen-grammars",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/item-name.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/artefact.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/mapdef.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/random.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/dat/des/serial/bayou.des",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/dat/des/sprint/arena_sprint.des",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/art-data.txt",
+    "/mnt/frankendom-donors/crawl-crawl/README.md"
+  ],
+  "counts": {
+    "des_files": 144,
+    "des_files_using_nsubst": 84,
+    "nsubst_lines": 3334,
+    "name_lines_in_des": 6264,
+    "unrandart_name_entries": 155,
+    "name_generator_max_steps": 150,
+    "randart_quality_range": "1-7",
+    "randart_max_distinct_props": 4
+  },
+  "rule": "Names: a letter-level generator (length 3 + 0-4, with a 1-in-5 longer tail; space allowed in the middle 4 times in 5; vowel after consonant always, after a vowel-consonant pair 2 in 5; consonant clusters 2 in 7 from begin, middle and end pools) seeded per item, so the same seed gives the same name. Artefact name: a table name for some base types by coin flip, else base + ' of X' (1 in 3) or base + quoted X (2 in 3), display width capped at 25. Randart budget: quality = 1 + Binomial(6, 21%), bad = Binomial(2, 21%), good = quality + bad, distinct properties capped at 4 (+1 at 1/20, +1 at 1/40), extra good points raise existing properties, properties drawn by weight with no repeats, each property with a max duplicate count and odds step. Glyph grammar: SUBST maps a glyph to weighted replacements (plain char weight 10, c:N explicit), ':' freezes the first roll for the spec, '=' rolls per cell; each replacement wins with chance weight/running total (one pass). NSUBST takes exact counts of a key glyph after a shuffle, specs in order, '*' for the rest.",
+  "data_fields": [
+    {"name": "name_base_len", "unit": "chars", "donor_value_or_null": null},
+    {"name": "name_extra_len", "unit": "chars (0-4)", "donor_value_or_null": null},
+    {"name": "name_long_chance", "unit": "1 in N", "donor_value_or_null": null},
+    {"name": "name_space_chance", "unit": "fraction", "donor_value_or_null": null},
+    {"name": "name_vowel_after_pair", "unit": "fraction", "donor_value_or_null": null},
+    {"name": "name_cluster_chance", "unit": "fraction", "donor_value_or_null": null},
+    {"name": "name_max_steps", "unit": "iterations", "donor_value_or_null": null},
+    {"name": "name_display_width", "unit": "columns", "donor_value_or_null": null},
+    {"name": "prop_quality_trials", "unit": "trials", "donor_value_or_null": null},
+    {"name": "prop_bad_trials", "unit": "trials", "donor_value_or_null": null},
+    {"name": "prop_trial_chance", "unit": "percent", "donor_value_or_null": null},
+    {"name": "prop_max_distinct", "unit": "properties", "donor_value_or_null": null},
+    {"name": "prop_extra_slot_chance", "unit": "1 in N (two chances)", "donor_value_or_null": null},
+    {"name": "prop_weight", "unit": "weight per property", "donor_value_or_null": null},
+    {"name": "prop_max_dup", "unit": "count per property", "donor_value_or_null": null},
+    {"name": "glyph_default_weight", "unit": "weight", "donor_value_or_null": null},
+    {"name": "glyph_fixed_roll", "unit": "bool per spec", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Seed per item; derive the name from the seed (store the seed, not the name)",
+    "Budgeted properties: quality points, a small bad-roll budget, a cap on distinct properties, extra points raise existing ones",
+    "Weighted one-pass replacement for glyph layouts",
+    "Fixed roll per zone (':') versus per-cell roll ('=')",
+    "NSUBST-style exact count placement (one boss or chest per zone)"
+  ],
+  "change": [
+    "Letter-level names are often not pronounceable; use our word lists and a 14-character cap for one line at 375 wide",
+    "Mixed quoted and 'of' name forms: pick our own split",
+    "Scope of a fixed SUBST freeze is not traced; confirm it is per placement, not per game, before relying on it"
+  ],
+  "look_test": "Generate 10 items from 10 seeds with the donor's name shape and budget (quality 1-7, max four distinct properties). Show each as a 375-wide inspect card next to our current loot cards. Judge: name readable aloud, four property lines visible without scrolling, same seed gives the same name after reload. Target: src/fight/loot-roll.ts (new), parity row 18.",
+  "licence_note": "GPLv2+ (README.md line 96). Clean-room: sketch written from the described rule; no names, tables or strings copied. Donor values are not used, so donor_value_or_null is null throughout.",
+  "tags": ["naming-grammar", "affix-grammar", "seed-discipline", "new:weighted-glyph-roll", "new:fixed-vs-per-cell-roll", "new:nsubst-exact-count"],
+  "not_read": [
+    "dungeon.cc level builder",
+    "name table behind getRandNameString",
+    "vault map bodies (only counted)",
+    "unrandart fixed-property table bodies (only the 155 NAME entries counted)",
+    "value functions beyond the good and bad stat and resist lines cited",
+    "whether a fixed SUBST freeze is per placement or per game"
+  ]
+}

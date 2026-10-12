@@ -1,0 +1,75 @@
+{
+  "donor": "veloren-veloren",
+  "topic": "procgen-grammars",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/veloren-veloren/world/src/site/namegen.rs",
+    "/mnt/frankendom-donors/veloren-veloren/world/src/site/mod.rs",
+    "/mnt/frankendom-donors/veloren-veloren/world/src/layer/spot.rs",
+    "/mnt/frankendom-donors/veloren-veloren/world/src/civ/mod.rs",
+    "/mnt/frankendom-donors/veloren-veloren/assets/world/manifests/spots.ron",
+    "/mnt/frankendom-donors/veloren-veloren/world/src/site/plot/mod.rs",
+    "/mnt/frankendom-donors/veloren-veloren/common/src/spot.rs",
+    "/mnt/frankendom-donors/veloren-veloren/LICENSE"
+  ],
+  "counts": {
+    "name_grammar_functions": 32,
+    "town_start_tokens": 59,
+    "town_end_tokens": 65,
+    "tavern_adjectives": 78,
+    "tavern_subjectives": 66,
+    "tavern_synonyms": 3,
+    "town_roll_entries_active": 7,
+    "town_roll_weight_total": 134,
+    "plot_kinds": 47,
+    "spot_generate_calls_hardcoded": 20,
+    "spot_config_arms": 22,
+    "spot_manifest_entries_in_data": 1,
+    "spot_structure_ron_files": 26
+  },
+  "rule": "Names: 1-3 syllables from start, (vowel+middle) repeated, end; biome name chosen by region area (lake >200 tiles Lake/Loch, >10 tiles Pool/Well/Pond, grassland >750 tiles). Towns: weighted roll (house 64, guard tower 5 dead, field 25, workshop 5 with a minimum, airship 15 gated on size >0.125, tavern 15 gated on size >0.125 and fewer than 2, barn 5), size*200 rounds, each placement tries a bounded number of times, a failed house becomes an open plaza. Plot size = base + spread*u^5 (rounded), so most plots take the base size. Spots: attempts = ceil(tiles*freq/1000^2), each attempt probes one point snapped to a 4-chunk grid, kept only if its condition holds and no site is there; spawn-off zeroes tree density and spawn rate on that chunk.",
+  "data_fields": [
+    {"name": "name_syllables_min", "unit": "syllables", "donor_value_or_null": null},
+    {"name": "name_syllables_max", "unit": "syllables", "donor_value_or_null": null},
+    {"name": "town_rounds_per_size", "unit": "rolls per size unit", "donor_value_or_null": null},
+    {"name": "plot_weight", "unit": "weight", "donor_value_or_null": null},
+    {"name": "plot_min_count", "unit": "count", "donor_value_or_null": null},
+    {"name": "plot_max_count", "unit": "count", "donor_value_or_null": null},
+    {"name": "plot_min_town_size", "unit": "fraction 0-1", "donor_value_or_null": null},
+    {"name": "plot_placement_tries", "unit": "attempts", "donor_value_or_null": null},
+    {"name": "plot_size_base", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "plot_size_spread", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "plot_size_exponent", "unit": "power", "donor_value_or_null": null},
+    {"name": "spot_freq", "unit": "attempts per km2 of tiles (unit depends on tile size)", "donor_value_or_null": null},
+    {"name": "spot_entity_radius", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "spot_group_count_min", "unit": "count", "donor_value_or_null": null},
+    {"name": "spot_group_count_max", "unit": "count (exclusive upper bound in donor)", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Weighted plot roll with minimums, caps and gates held as data",
+    "A failed placement leaves an open square, which can be the fight space",
+    "Area-based naming threshold: the name tells the size of the land",
+    "Spots as encounter templates with a count range and a radius"
+  ],
+  "change": [
+    "Remove the dead guard tower roll (places nothing; lines 1366-1385) and the unreachable castle arm (entry commented out at 1273, arm at 1393)",
+    "Workshop minimum must not take over every roll while none is placed (site/mod.rs 1289)",
+    "Draw one name per name, not two (civ/mod.rs 897-904 draws both and keeps one; later seeded draws shift)",
+    "Move spot kinds into data: spots.ron holds one entry, 20 kinds are hard-coded",
+    "State the unit of spot frequency in the data field (spots.ron comment says per 1000 km2, code comment says per km2)"
+  ],
+  "look_test": "Town grey-box at 375 wide: one zone, three seeds, same biome; show plaza, roadside plots, one tavern, one field. Dom judges whether a zone reads as a place at a glance and whether the open square works as a fight space. Second: ten region-grammar names beside ten current Frankendom zone names as phone titles; Dom picks the tone.",
+  "licence_note": "GPL-3.0 (LICENSE line 1). Clean-room only: name tables and word lists are donor content and are not reproduced. Sketch written from the described rule. assets/ content licence not read.",
+  "tags": ["naming-grammar", "encounter-camp", "seed-discipline", "walk-density", "new:plot-quota-lottery", "new:failed-placement-plaza", "new:biome-area-name", "new:spot-attempt-rule"],
+  "not_read": [
+    "bodies of the 47 plot kinds in world/src/site/plot/*.rs (names and foreach list only)",
+    "make_plaza, find_roadside_aabr, generate_farm bodies",
+    "cliff, savannah, coastal and desert town generators beyond their lottery heads (1884, 1997, 2191, 2384)",
+    "world/src/layer/scatter.rs, tree.rs, wildlife.rs (walk density of trees and wildlife)",
+    "24 of 26 spot structure .ron files",
+    "client presentation (voxygen): sound, camera, HUD for spots and towns",
+    "idle behaviour, death and respawn presentation, loot ceremony: not in the procgen code read",
+    "world/src/sim (terrain simulation) beyond the spot hooks"
+  ]
+}

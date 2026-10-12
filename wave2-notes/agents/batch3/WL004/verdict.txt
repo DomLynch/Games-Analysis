@@ -1,0 +1,14 @@
+cell: WL004 weather-time-light
+exult-exult: STRONG. Real mechanism read end to end (game clock, hourly palette glide, weather egg with timed storm sub-events, lightning loop, ambient burst rule). Confidence high on code read; weather egg placements (data pack) not read.
+  Best transferable idea: a server-owned game clock drives one-hour light glides and timed storm events, and the client only draws them.
+xoreos-xoreos: PARTIAL. Weather is stored and parsed but no runtime found in the code read.
+  Files opened (7, all under /mnt/frankendom-donors/xoreos-xoreos/):
+    src/engines/nwn/area.cpp
+    src/aurora/ifofile.cpp
+    src/aurora/ifofile.h
+    src/engines/witcher/lua/bindings.cpp
+    src/common/datetime.h
+    src/graphics/aurora/model_nwn.cpp
+    COPYING
+  Search: grep -rn over src for getRainChance, getSnowChance, getMinWeatherIntensity, getMaxWeatherIntensity (callers outside ifofile: none); grep for weather, rain, snow, fog, day and night terms in src (area and engine files read).
+  Best transferable idea: per-zone weather intensity range and rain and snow chances as data fields, with a day and night ambient pair per zone; this donor stores them and never runs them.

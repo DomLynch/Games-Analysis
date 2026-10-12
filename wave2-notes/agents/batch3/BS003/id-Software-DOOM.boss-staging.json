@@ -1,0 +1,77 @@
+{
+  "donor": "id-Software-DOOM",
+  "topic": "boss-staging",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_enemy.c",
+    "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_map.c",
+    "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_inter.c",
+    "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/p_spec.c",
+    "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/info.c",
+    "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/info.h",
+    "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/doomdef.h",
+    "/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/m_random.c",
+    "/mnt/frankendom-donors/id-Software-DOOM/LICENSE.TXT",
+    "/mnt/frankendom-donors/id-Software-DOOM/README.TXT"
+  ],
+  "counts": {
+    "minion_spawn_types": 11,
+    "spawn_weight_total": 256,
+    "boss_spot_array_size": 32,
+    "death_puffs": 65,
+    "death_puff_row_units": 512,
+    "fan_offsets_deg": 4,
+    "tics_per_second": 35,
+    "brain_death_tics": 120,
+    "brain_wake_tics": 181,
+    "brain_spit_cadence_tics": 150,
+    "cube_speed_units_per_tic": 10
+  },
+  "rule": "Telegraphed boss staging. Wake (sound and spot scan, then 181-tic hold), then a spit every 150 tics that launches a cube at the next spot in a round-robin ring. The cube's flight length is set at launch from distance over speed. On landing: fog, weighted minion spawn with see state if a player is found, telefrag, cube removed. Boss death: a per-type gate (alive player required, no other alive boss of the same type), then the tagged map event or exit. Death chain: 100-tic scream row of 65 puffs, two 10-tic holds, then exit. Splash immunity for two big bosses. Fan volleys are two-shot fans at 11.25 degrees.",
+  "data_fields": [
+    {"name": "wake_hold", "unit": "tics", "donor_value_or_null": null},
+    {"name": "spit_cadence", "unit": "tics", "donor_value_or_null": null},
+    {"name": "cube_speed", "unit": "map units per tic", "donor_value_or_null": null},
+    {"name": "cube_flight_length", "unit": "tics (derived: distance / speed)", "donor_value_or_null": null},
+    {"name": "spit_spot_count", "unit": "count (donor cap 32)", "donor_value_or_null": null},
+    {"name": "spawn_weight_table", "unit": "weight out of 256, 11 entries", "donor_value_or_null": null},
+    {"name": "death_scream_hold", "unit": "tics", "donor_value_or_null": null},
+    {"name": "death_hold", "unit": "tics (2 holds)", "donor_value_or_null": null},
+    {"name": "death_puff_count", "unit": "count", "donor_value_or_null": null},
+    {"name": "death_row_width", "unit": "map units", "donor_value_or_null": null},
+    {"name": "boss_hp", "unit": "hp", "donor_value_or_null": null},
+    {"name": "boss_pain_chance", "unit": "chance out of 256", "donor_value_or_null": null},
+    {"name": "fan_spread", "unit": "degrees", "donor_value_or_null": null},
+    {"name": "splash_immune", "unit": "boolean per boss type", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Telegraph: the cube's flight time is computed at launch from distance over speed, so the warning and the landing agree",
+    "Round-robin spit spots, so the lair's threat moves around the room",
+    "Cube landing as a delayed spawn at a visible spot, with fog before the spawn",
+    "Per-type boss-death gate that requires a living player and no other alive boss of the same type",
+    "Death chain order: event, staggered visual holds, then the exit",
+    "Two-shot fan volleys at a fixed angle for a readable wedge"
+  ],
+  "change": [
+    "Keep the easy-skill skip toggle in the engine per boss, not as a static global shared by all brains and levels",
+    "Guard the flight-time division by momentum (zero when the spot is on the same east-west line) and the modulo by spot count (zero spots)",
+    "Cap the spit spot list at build time and warn, instead of writing past a fixed array",
+    "Set the fan offset on each missile's own angle, since the spawn resets the missile angle to the aim",
+    "Cap alive cube spawns at three (MAX_ATTACKERS), since the donor has no cap",
+    "Telefrag becomes a push aside, so a spawn never kills a phone player",
+    "Exit is a server event with a grace timer, not a call from an animation frame",
+    "Our names and tables; spawns drawn from our Pit roster with per-zone weights"
+  ],
+  "look_test": "Build one spit lair in the Pit arena behind the current boss: three marked spots, a 1-second hold after wake, a spit every 2.5 seconds, cube flight 1.5 to 2.5 seconds, 0.3 seconds of fog, one minion, cap three alive, and a 1.2-second staggered puff row on death. Compare with today's boss at 375 wide on Dom's phone. Target: src/fight/ spit module (new), row 13 specials.",
+  "licence_note": "LICENSE.TXT in the tree is GPL v2; README says the source is released for non-profit use. Treat as GPL: shape only. Boss designs are the donor's IP: keep at category level. No legal conclusions.",
+  "tags": ["boss-elite-pattern", "boss-intro", "timed-event", "encounter-lair", "ordered-feedback", "particle-burst", "hit-sound", "duration-rule", "scheduler", "new:telegraph-spawn", "new:boss-death-gate", "new:splash-immunity", "new:fan-volley", "new:weighted-minion-table"],
+  "not_read": [
+    "WAD level data (not in the donor box): map layouts, boss spot counts per map, map scripts",
+    "Renderer and sprite data",
+    "f_finale.c and wi_stuff.c beyond boss references",
+    "sounds.c beyond names",
+    "State tics for the spider and cyberdemon attack chains (only quoted lines cited)",
+    "Source of the static-target and state tables beyond the lines cited"
+  ]
+}

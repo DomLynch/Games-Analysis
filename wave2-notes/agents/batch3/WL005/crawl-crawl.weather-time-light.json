@@ -1,0 +1,78 @@
+{
+  "donor": "crawl-crawl",
+  "topic": "weather-time-light",
+  "depth": "full",
+  "half_read": "game source (server half absent in box; dat/ text by grep only)",
+  "paths": [
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/duration-data.h",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/player.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/player-reacts.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/god-abil.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/ability.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/defines.h",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/attack.h",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/attack.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/beam.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/monster.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/areas.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/god-passive.cc",
+    "/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/cloud.cc"
+  ],
+  "counts": {
+    "duration_records_in_duration_data_h": 230,
+    "cloud_table_entries_in_cloud_cc": 44,
+    "dat_files_matching_nightfall_grep_not_counted": true
+  },
+  "rule": "Nightfall is a timed sight curve on the player: game-time duration (16 to 24 plus about two-thirds of the Invocations skill, rounded, times 10). Sight is a percent of normal sight given by the smoothstep 3t squared minus 2t cubed over the elapsed fraction t; sight is 0 for the first 5 turns, at least 1 after, and the effect ends early once sight reaches normal. Stealth is floored at 100 while active; a second cast is refused. Halo (backlit) gives attackers +5 to-hit on the defender, umbra gives -3 to attackers without nightvision, beams double both; backlit player stealth x2/5, umbra player stealth x3/2. Storm clouds apply rain (fiery targets only) then a coin-flip lightning part; rain leaves shallow water one time in five. Clouds spread by decay tiers (80/50/30 percent), children take half decay plus one, parents lose 8, spread rate loses about a tenth per spread, and player clouds vanish when out of line of sight.",
+  "data_fields": [
+    {"name": "nightfall_base_turns_low", "unit": "turns", "donor_value_or_null": null},
+    {"name": "nightfall_base_turns_high", "unit": "turns", "donor_value_or_null": null},
+    {"name": "nightfall_skill_term", "unit": "ratio (two-thirds of Invocations skill, rounded)", "donor_value_or_null": null},
+    {"name": "game_time_unit", "unit": "game-time units per normal turn", "donor_value_or_null": null},
+    {"name": "nightfall_zero_sight_window", "unit": "game-time units", "donor_value_or_null": null},
+    {"name": "nightfall_sight_floor", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "nightfall_stealth_floor", "unit": "stealth points", "donor_value_or_null": null},
+    {"name": "halo_to_hit", "unit": "to-hit points", "donor_value_or_null": null},
+    {"name": "umbra_to_hit", "unit": "to-hit points", "donor_value_or_null": null},
+    {"name": "beam_light_multiplier", "unit": "ratio", "donor_value_or_null": null},
+    {"name": "backlit_stealth_ratio", "unit": "ratio", "donor_value_or_null": null},
+    {"name": "umbra_stealth_ratio", "unit": "ratio", "donor_value_or_null": null},
+    {"name": "umbra_radius_tiers", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "robe_of_night_sight_ratio", "unit": "ratio", "donor_value_or_null": null},
+    {"name": "daystalker_sight_add", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "nightstalker_sight_sub", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "rain_damage_fiery_only", "unit": "hp (base 0, random up to 9)", "donor_value_or_null": null},
+    {"name": "rain_shallow_water_chance", "unit": "chance (1 in 5)", "donor_value_or_null": null},
+    {"name": "cloud_spread_chance_tiers", "unit": "percent (80 above 30, 50 above 20, else 30)", "donor_value_or_null": null},
+    {"name": "cloud_spread_parent_cost", "unit": "decay units", "donor_value_or_null": null},
+    {"name": "cloud_spread_rate_decay", "unit": "fraction per spread (about 1/10)", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Smoothstep sight curve over a timed darkness, with a zero-sight opening window",
+    "End-early rule when sight returns to normal",
+    "Stealth floor during the darkness",
+    "Signed halo and umbra to-hit as a readable ring telegraph",
+    "Tag-gated storm damage (fiery only) with a second coin-flip effect",
+    "Out-of-view clouds removed so hidden hazards cannot be created"
+  ],
+  "change": [
+    "Game-time becomes server ticks, inside the per-tick budget (parity row 18)",
+    "Invocations skill term replaced by a zone rank field",
+    "Stacked sight modifiers (robe, mutations, items) become data fields on gear, not code branches",
+    "Rain flood is a server terrain change; the visible puddle must come from server state",
+    "Monster sight during the darkness not read: decide separately"
+  ],
+  "look_test": "Fight camera dark sweep: 16 seconds, visible radius = normal x (3t^2 - 2t^3), floor 1 after 5 seconds, end early at normal. Three 375-wide stills at 0, 30, 60 and 90 percent with a monster at 2, 4 and 6 tiles; Dom picks where he can still react. Target file src/fight/sight.ts (new); parity row 4 (fight loop: aggro, chase, leash). Halo/umbra ring is a second test under src/fight/duel-step.ts, parity row 1.",
+  "licence_note": "GPL-2 (library matrix; LICENSE header read, version line not re-read). Shape only, clean-room. No code, text or tile art copied. Recreate under a different name and say which trait is kept (sight curve) and which changed (name, numbers, skill term).",
+  "tags": ["weather-state", "day-night", "duration-rule", "timed-event", "mood-preset", "new:halo-umbra-to-hit", "new:cloud-decay-spread", "new:sight-curve"],
+  "not_read": [
+    "view.cc and tilecell.cc darkness rendering beyond grep",
+    "skill_rdiv rounding semantics",
+    "whether monster sight changes during Nightfall",
+    "umbra radius sources beyond the passive, two items and Foul Shadow",
+    "the storm lightning effect (only the coin flip read)",
+    "rain flood duration units",
+    "timed-effects.cc end handling",
+    "dat/descript/status.txt and ability.txt Nightfall text (grep only)"
+  ]
+}

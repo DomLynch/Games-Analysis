@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+open-duelyst-duelyst	sound-music	P	STRONG	full	/mnt/frankendom-donors/open-duelyst-duelyst/app/audio/audio_engine.js:578-639 and 286-326 hold a one-voice interaction cue slot (0.06 s collect window, 0.5 s block, priority replace) and a polyphony gain, with five defects listed in the note.
+openmw	sound-music	P	STRONG	full	/mnt/frankendom-donors/openmw/apps/openmw/mwsound/regionsoundselector.cpp:18-41 with soundmanagerimp.cpp:966-980 is a per-region ambience one-shot director (silent gap 1 to 5 s, per-entry percent chance, one slot, outdoor only).
+opentibiabr-otclient	sound-music	P	STRONG	full	/mnt/frankendom-donors/opentibiabr-otclient/src/framework/sound/soundmanager_protocol.cpp:264-346 and 367-395 gate server sound events by a 1 s per-id cooldown, a random variant, 8-tile distance falloff and pan, and the donor stacks protocol cues on a lane.

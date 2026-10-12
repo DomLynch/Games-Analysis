@@ -1,0 +1,58 @@
+{
+  "donor": "xoreos-xoreos",
+  "topic": "boss-staging",
+  "depth": "thin",
+  "half_read": "server",
+  "paths": [
+    "/mnt/frankendom-donors/xoreos-xoreos/src/engines/nwn/script/function_tables.h",
+    "/mnt/frankendom-donors/xoreos-xoreos/src/engines/nwn/script/functions_object.cpp",
+    "/mnt/frankendom-donors/xoreos-xoreos/src/engines/nwn/script/container.cpp",
+    "/mnt/frankendom-donors/xoreos-xoreos/src/engines/nwn2/script/function_tables.h",
+    "/mnt/frankendom-donors/xoreos-xoreos/src/engines/dragonage/script/function_tables.h",
+    "/mnt/frankendom-donors/xoreos-xoreos/src/aurora/gdaheaders.cpp",
+    "/mnt/frankendom-donors/xoreos-xoreos/COPYING"
+  ],
+  "counts": {
+    "nwn_function_table_entries": 848,
+    "nwn_function_handler_zero": 705,
+    "nwn_function_bound": 143,
+    "gda_name_hash_entries": 2205,
+    "boss_names_in_gda": 3
+  },
+  "rule": "Designer-facing staging verb list (cutscene mode, fade to and from black, camera mode and locks, cutscene effects, play animation) with a default for each verb, and a module event for cutscene abort. In this donor most verbs are names with no handler (705 of 848 in the NWN table); PlayAnimation is bound. The GDA name table carries Boss, IsBoss and EliteBoss column names from the game data; values not in donor.",
+  "data_fields": [
+    {"name": "intro_fade_s", "unit": "seconds each way", "donor_value_or_null": null, "proposal": "0.3 to 0.5"},
+    {"name": "intro_cam_lock_s", "unit": "seconds", "donor_value_or_null": null, "proposal": "1.5 to 2"},
+    {"name": "intro_skip_window_s", "unit": "seconds", "donor_value_or_null": null, "proposal": "first 0.5 s tap skips"},
+    {"name": "boss_flag_tiers", "unit": "enum", "donor_value_or_null": null, "proposal": "normal, boss, elite boss"}
+  ],
+  "keep": [
+    "Named staging verb list with defaults",
+    "Module abort event restores control when an intro is interrupted",
+    "Intro as a state, not a timer"
+  ],
+  "change": [
+    "Every verb bound before ship; the donor leaves most unbound",
+    "Skip is a player input event, not a designer call",
+    "Input lock applies to the player only; escorts keep acting on the server"
+  ],
+  "look_test": "One arena at 375 wide: one boss, 2 s intro (fade to black 0.4 s, camera lock on boss 1.5 s, boss animation, fade back) against a no-intro variant. Style flag only, preview folder, no release rows. Dom judges: does it read as a moment, does a tap to skip feel right, does it cost control he wanted. Target file src/fight/<module>.ts (module not chosen, not read); one parity row: row 11 (fight camera).",
+  "licence_note": "GPL-3.0-or-later (COPYING:1-2). Code only; no game data in the folder. Shape only, nothing copied. No legal conclusion.",
+  "tags": ["boss-intro", "finisher-camera", "boss-elite-pattern", "new:cutscene-verbs", "new:gap-dragon-breath"],
+  "mg011": {
+    "rows": [
+      {"name": "MountObject", "effect": "script verb to mount", "formula": "n/a", "number_ranges_donor": "n/a", "cost": "n/a", "cooldown_or_cast": "n/a", "caps": "handler 0, not implemented in donor", "file_line": "nwn2 function_tables.h:928"},
+      {"name": "CommandFly", "effect": "script verb to fly a creature", "formula": "n/a", "number_ranges_donor": "n/a", "cost": "n/a", "cooldown_or_cast": "n/a", "caps": "handler 0, not implemented in donor", "file_line": "dragonage function_tables.h:938"},
+      {"name": "KobeDragon", "effect": "GDA column name, dragon type flag, values not read", "formula": "n/a", "number_ranges_donor": "n/a", "cost": "n/a", "cooldown_or_cast": "n/a", "caps": "n/a", "file_line": "gdaheaders.cpp:2225"},
+      {"name": "Dragon breath, taming, armour per body part", "effect": "none in this donor", "formula": "n/a", "number_ranges_donor": "n/a", "cost": "n/a", "cooldown_or_cast": "n/a", "caps": "n/a", "file_line": "grep src: no hits"}
+    ],
+    "resource_pools_as_data": "not in this donor"
+  },
+  "not_read": [
+    "cutscene implementation beyond the table (none found by grep)",
+    "client render and camera code",
+    "original game scripts (not in the donor folder)",
+    "GDA rows carrying Boss or EliteBoss values",
+    "src/engines/kotorbase/module.cpp:606 cutscene comment context"
+  ]
+}

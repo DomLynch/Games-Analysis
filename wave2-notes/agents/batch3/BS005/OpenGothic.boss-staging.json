@@ -1,0 +1,69 @@
+{
+  "donor": "OpenGothic",
+  "topic": "boss-staging",
+  "depth": "thin",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/OpenGothic/common/world/worldsound.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/world/worldobjects.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/gamemusic.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/gamemusic.h",
+    "/mnt/frankendom-donors/OpenGothic/common/world/triggers/cscamera.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/world/objects/npc.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/world/world.cpp",
+    "/mnt/frankendom-donors/OpenGothic/common/game/constants.h",
+    "/mnt/frankendom-donors/OpenGothic/LICENSE"
+  ],
+  "counts": {
+    "music_tiers": 3,
+    "music_daypart_variants": 2,
+    "music_theme_names_per_zone": 6,
+    "max_theme_lookups_per_change": 12,
+    "music_poll_ms": 5000,
+    "dragon_guild_constant": 47,
+    "cutscene_ease_exponent": 1.005
+  },
+  "rule": "Music tier is driven by attack state, not aggro. Every 5 s, if any NPC in normal AI with a drawn weapon is in an attack state against the player, or the player is dead, the tier is Fgt (armed) or Thr (unarmed); otherwise Std. Tier is combined with day or night. A theme is looked up by name zone_DAY|NGT_STD|FGT|THR with fallbacks: zone then default zone, day then day, mode then Fgt for Thr, then Std. Transitions: to Std from any other tier plays BREAK; Thr to Fgt plays FILL; Fgt to Thr plays nothing. Cutscene camera: time-keyed Hermite spline per keyframe, exponent 1.005 when the motion type changes between slow and not slow, object-attached cameras skipped, auto-untrigger after last key plus a delay read from the file. Dragon handling: guild GIL_DRAGON (47) is exempt from the early return in the routine reset, so dead dragons are moved to their routine point when the clock is set.",
+  "data_fields": [
+    {"name": "tier_poll_interval", "unit": "ms", "donor_value_or_null": 5000},
+    {"name": "tier_source", "unit": "enum: attack-state or aggro", "donor_value_or_null": "attack-state"},
+    {"name": "tier_transition_to_std", "unit": "enum: BREAK, FILL, NONE", "donor_value_or_null": "BREAK"},
+    {"name": "tier_transition_thr_to_fgt", "unit": "enum: BREAK, FILL, NONE", "donor_value_or_null": "FILL"},
+    {"name": "tier_transition_fgt_to_thr", "unit": "enum: BREAK, FILL, NONE", "donor_value_or_null": "NONE"},
+    {"name": "cutscene_ease_exponent", "unit": "exponent", "donor_value_or_null": 1.005},
+    {"name": "cutscene_end_delay", "unit": "s", "donor_value_or_null": null},
+    {"name": "dragon_corpse_return_on_reset", "unit": "bool", "donor_value_or_null": true}
+  ],
+  "keep": [
+    "Tier from attack state (an NPC is swinging with a weapon drawn), not from aggro",
+    "Break and fill stingers chosen by the from and to tier pair",
+    "Zone theme names with a fixed fallback chain so a missing theme still plays",
+    "Dead-player tier as the death beat",
+    "Cutscene spline with a movable flag and an end delay, client-only"
+  ],
+  "change": [
+    "Defect: the tier is polled every 5 s, so the change can lag up to 5 s behind the first swing. Fix: push the tier from the server engage and attack-start events on change, no poll",
+    "Use the attacker count (1, 2, 3 under MAX_ATTACKERS = 3) as the tier input instead of yes or no",
+    "Dragon corpse return: keep as zone data, not an engine exception keyed on a species constant"
+  ],
+  "look_test": "One zone, one enemy in the Pit-style arena. Walk up with weapon drawn: calm track, then the enemy swings: break then fight track; note the delay. Put the weapon away while it hunts: threat track. Compare the 5 s poll (donor) with an event-driven change, on phone speaker or headphones.",
+  "licence_note": "MIT (LICENSE line 1 MIT License; line 3 Copyright (c) 2019 Try). Code may be adapted with the notice kept. Gothic game content (scripts, music, dialogue, names) is not in the donor and is not reproduced.",
+  "tags": [
+    "new:music-tier",
+    "new:tier-from-attack-state",
+    "new:poll-lag-defect",
+    "new:dragon-corpse-reset",
+    "boss-intro",
+    "stinger",
+    "new:cutscene-spline"
+  ],
+  "not_read": [
+    "common/game/fightalgo.cpp (364 lines, combo fight AI)",
+    "common/game/definitions/fightaidefinitions.cpp (105 lines)",
+    "common/camera.cpp (1037 lines, main follow camera)",
+    "common/game/gamescript.cpp (Daedalus script calls)",
+    "Dragon AI, breath and fight scripts (Daedalus data, not in donor)",
+    "Flight, mounts, taming: not located by grep in common/ and game/",
+    "Idle and ambient behaviour, walk density, loot reveal, readability at 375 wide (not in code read)"
+  ]
+}

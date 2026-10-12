@@ -1,0 +1,93 @@
+{
+  "donor": "veloren-veloren",
+  "topic": "boss-staging",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/veloren-veloren/server/agent/src/attack.rs",
+    "/mnt/frankendom-donors/veloren-veloren/common/src/comp/agent.rs",
+    "/mnt/frankendom-donors/veloren-veloren/server/src/rtsim/tick.rs",
+    "/mnt/frankendom-donors/veloren-veloren/server/src/sys/agent/behavior_tree/mod.rs",
+    "/mnt/frankendom-donors/veloren-veloren/voxygen/src/audio/channel.rs",
+    "/mnt/frankendom-donors/veloren-veloren/common/src/comp/body/dragon.rs",
+    "/mnt/frankendom-donors/veloren-veloren/assets/common/entity/world/world_bosses/gigas_frost.ron",
+    "/mnt/frankendom-donors/veloren-veloren/assets/common/entity/world/world_bosses/gigas_fire.ron",
+    "/mnt/frankendom-donors/veloren-veloren/assets/common/abilities/custom/gigas_frost/frost_summons.ron",
+    "/mnt/frankendom-donors/veloren-veloren/assets/common/abilities/custom/gigas_fire/ashen_summons.ron",
+    "/mnt/frankendom-donors/veloren-veloren/assets/common/abilities/custom/gigas_fire/overheat.ron",
+    "/mnt/frankendom-donors/veloren-veloren/assets/common/abilities/ability_set_manifest.ron",
+    "/mnt/frankendom-donors/veloren-veloren/assets/common/loot_tables/world/world_bosses/gigas_frost/boss.ron",
+    "/mnt/frankendom-donors/veloren-veloren/assets/common/items/npc_armor/biped_large/gigas_frost.ron",
+    "/mnt/frankendom-donors/veloren-veloren/assets/common/entity/dungeon/myrmidon/minotaur.ron",
+    "/mnt/frankendom-donors/veloren-veloren/LICENSE"
+  ],
+  "counts": {
+    "world_boss_entity_files": 2,
+    "world_boss_summon_entity_files": 2,
+    "gigas_frost_ability_files": 10,
+    "gigas_fire_ability_files": 13,
+    "gigas_frost_ability_set_slots": 8,
+    "gigas_fire_ability_set_slots": 11,
+    "summon_steps_per_boss": 7,
+    "frost_summon_minions": 2,
+    "fire_summon_minions": 4,
+    "overheat_cap_s": 3.0,
+    "music_channel_tags": 3,
+    "dragon_species": 1
+  },
+  "rule": "Summon ladder: a boss counter starts at 1 minus step (step 1/8, so 0.875) at combat start. Each tick, if health fraction is below the counter, the boss casts its summon (frost frost_summons, fire ashen_summons). The check runs first in the decision chain. When that summon completes its recover stage, the counter drops by one step. Result: 7 summons at 87.5, 75, 62.5, 50, 37.5, 25 and 12.5 percent health, with no cooldown, so a large hit queues several summons back to back. Summon wind-up 1.75 s, cast 1.5 s, recover 0.75 s. Overheat beam (fire): a timer counts only while the beam is cast and recasting stops at 3.0 s. Weighted attack tables shift toward slow moves as damage rises. Special moves fire when a special timer passes 10 s; after each special the timer restarts at a random value up to 3 + 5 x damage fraction, so specials come sooner as the boss weakens. Minotaur: one frenzy self-buff at half health; a pillar guard at 16 units from a centre offset (50, 75) from home, armed after 4 s, that switches to ranged throws and repositions the boss 25 units from centre. World bosses (Gigas): sight 200 vs 100 default; should_stop_pursuing false, so no leash by health. Dragons: species data only (Reddragon, Female and Male body types); no dragon AI found.",
+  "data_fields": [
+    {"name": "summon_ladder_step", "unit": "fraction of max health", "donor_value_or_null": null},
+    {"name": "summon_first_fraction", "unit": "fraction of max health", "donor_value_or_null": null},
+    {"name": "summon_count_frost", "unit": "count", "donor_value_or_null": null},
+    {"name": "summon_count_fire", "unit": "count", "donor_value_or_null": null},
+    {"name": "summon_wind_up_s", "unit": "s", "donor_value_or_null": null},
+    {"name": "summon_cast_s", "unit": "s", "donor_value_or_null": null},
+    {"name": "summon_recover_s", "unit": "s", "donor_value_or_null": null},
+    {"name": "overheat_cap_s", "unit": "s", "donor_value_or_null": null},
+    {"name": "special_gap_timer_s", "unit": "s", "donor_value_or_null": null},
+    {"name": "special_timer_range_per_damage", "unit": "s", "donor_value_or_null": null},
+    {"name": "bonk_interval_s", "unit": "s", "donor_value_or_null": null},
+    {"name": "minotaur_frenzy_fraction", "unit": "fraction", "donor_value_or_null": null},
+    {"name": "minotaur_cheese_radius", "unit": "units", "donor_value_or_null": null},
+    {"name": "minotaur_cheese_delay_s", "unit": "s", "donor_value_or_null": null},
+    {"name": "boss_sight_dist", "unit": "units", "donor_value_or_null": null},
+    {"name": "default_sight_dist", "unit": "units", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Summon ladder as a counter keyed to server health, advancing only when a summon completes",
+    "Overheat beam capped in time so the boss stops itself",
+    "Weighted attack tables that shift toward heavy slow moves as damage rises",
+    "Special timer that starts at a random value up to a cap that grows with damage",
+    "Pillar guard as an arena rule, stored as zone data",
+    "World-boss pursuit flag (no health leash) for roaming bosses only"
+  ],
+  "change": [
+    "Summons count against MAX_ATTACKERS = 3: a 4-minion fire summon breaks the cap. Use 2 per summon, or count summoned minions as attackers",
+    "Add a burst cap (max_summons_per_burst) so a large hit does not queue four summons back to back (our fix to the donor catch-up)",
+    "Shorten cast and recover in data; keep the 1.75 s wind-up as the readable tell (4 s total is long for a fast duel)",
+    "Store the pillar centre offset, radius and delay as zone data"
+  ],
+  "look_test": "In the Pit, one fire giant at full health with the summon ladder shown as seven ticks on its health bar. (1) Let it fall just under 88 percent: one wind-up with the 1.75 s tell, then summons; judge the tell at phone size. (2) One big hit from 88 to about 40 percent: count the back-to-back summons; rerun with the burst cap at 1 and compare. (3) Let the beam fire: judge whether the 3 s cap reads as the boss tiring.",
+  "licence_note": "GPL-3 (LICENSE opens with GNU General Public License Version 3). Clean-room, shape only: no code copied. Donor numbers are shown as observations; Frankendom values are ours.",
+  "tags": [
+    "boss-elite-pattern",
+    "new:summon-ladder",
+    "new:overheat-cap",
+    "new:weighted-attack-table",
+    "new:pillar-cheese-guard",
+    "new:world-boss-pursuit",
+    "new:boss-phase-threshold",
+    "encounter-lair",
+    "duration-rule"
+  ],
+  "not_read": [
+    "Minotaur ability files and minotaur loot table (only the entity file line 4 read)",
+    "rtsim spawn scheduler (only the boss mapping at tick.rs 415-435 read)",
+    "common/src/states/basic_summon.rs state logic (the counter reads its Recover stage)",
+    "server/src/sys/pets.rs and the summon systems",
+    "Ability(n) to ability name mapping in InputKind code (inferred from manifest order and code comments, which agree for both sets)",
+    "Client code: voxygen boss HUD (grep only, no boss-specific HUD found), camera, audio beyond channel.rs tags",
+    "Idle and ambient behaviour, death and respawn presentation, loot reveal ceremony, walk density, readability at 375 wide"
+  ]
+}

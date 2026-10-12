@@ -1,0 +1,65 @@
+{
+  "donor": "id-Software-Quake",
+  "topic": "boss-staging",
+  "depth": "thin",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/id-Software-Quake/WinQuake/cl_parse.c",
+    "/mnt/frankendom-donors/id-Software-Quake/WinQuake/screen.c",
+    "/mnt/frankendom-donors/id-Software-Quake/WinQuake/sbar.c",
+    "/mnt/frankendom-donors/id-Software-Quake/WinQuake/view.c",
+    "/mnt/frankendom-donors/id-Software-Quake/WinQuake/cl_tent.c",
+    "/mnt/frankendom-donors/id-Software-Quake/WinQuake/menu.c",
+    "/mnt/frankendom-donors/id-Software-Quake/WinQuake/protocol.h",
+    "/mnt/frankendom-donors/id-Software-Quake/qw-qc/doors.qc",
+    "/mnt/frankendom-donors/id-Software-Quake/qw-qc/combat.qc",
+    "/mnt/frankendom-donors/id-Software-Quake/qw-qc/items.qc",
+    "/mnt/frankendom-donors/id-Software-Quake/qw-qc/client.qc",
+    "/mnt/frankendom-donors/id-Software-Quake/qw-qc/defs.qc",
+    "/mnt/frankendom-donors/id-Software-Quake/gnu.txt"
+  ],
+  "counts": {
+    "level_table_entries": 38,
+    "svc_message_ids_seen": 3,
+    "boss_monster_source_files_found": 0,
+    "svc_finale_writers_found": 0,
+    "armour_types": 3,
+    "bolt_models": 3
+  },
+  "rule": "End-of-zone presentation driven by a server state change. svc_intermission sets state 1, svc_finale sets state 2 with a text id, svc_cutscene sets state 3 with text. Each forces the full-screen view. Centre text is typed at a cvar rate (default 8 characters per second). Lightning beams last 0.2 seconds and stay up only while the server keeps re-sending them. Explosions add a 350-radius light for 0.5 seconds. Doors have speed, wait (3 s default, -1 never), lip and damage data. Armour absorbs a fraction of damage per armour type (0.3, 0.6, 0.8), capped at the armour value. No boss monster code is in this tree.",
+  "data_fields": [
+    {"name": "finale_print_rate", "unit": "characters per second", "donor_value_or_null": null},
+    {"name": "lightning_beam_life", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "explosion_light_radius", "unit": "map units", "donor_value_or_null": null},
+    {"name": "explosion_light_decay", "unit": "units per second", "donor_value_or_null": null},
+    {"name": "explosion_light_life", "unit": "seconds", "donor_value_or_null": null},
+    {"name": "door_speed", "unit": "units per second", "donor_value_or_null": null},
+    {"name": "door_wait", "unit": "seconds (-1 never returns)", "donor_value_or_null": null},
+    {"name": "door_lip", "unit": "map units", "donor_value_or_null": null},
+    {"name": "armour_fraction", "unit": "fraction of damage per armour type", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Finale state is a server event; the client only types the card and changes the view",
+    "Typed centre text at a data rate, so the beat length is tunable",
+    "Beam that dies unless the server keeps re-sending it",
+    "Explosion light with short life and decay as a separate flash from the particles and sound"
+  ],
+  "change": [
+    "Finale text is a zone-data id, not free text in the message",
+    "Typing rate chosen for a phone (test faster than 8 characters per second)",
+    "Server verifies the event and gives a grace timer before the card opens",
+    "Armour fractions become engine damage-stack data, not per body part"
+  ],
+  "look_test": "Show an end-of-zone card after a kill in the Pit at 8 and at 24 characters per second, on a 375-wide screen. Then a 0.2-second lightning beam that stops when the server stops re-sending it, next to our current spell beam. Target: src/fight/ finale card (new, server event), row 14 (HUD).",
+  "licence_note": "gnu.txt in the tree is GPL v2. Treat as GPL: shape only. Level titles in menu.c are the donor's; do not reuse them.",
+  "tags": ["new:finale-card", "stinger", "flash", "hit-sound", "particle-burst", "duration-rule", "naming-grammar", "signage", "new:server-state-change", "new:refresh-to-live-beam"],
+  "not_read": [
+    "Single-player game code and its monsters and bosses (not in the tree: no monsters.qc in qw-qc or QW/progs; grep found no boss code)",
+    "Server writer of svc_finale and svc_cutscene (grep of every .c, .h and .qc found none)",
+    "End-of-game cutscene text",
+    "Map data (.pak files not in the tree)",
+    "Hipnotic and rogue level tables (not counted)",
+    "WinQuake data folder manuals (MANUAL.TXT, TECHINFO.TXT)",
+    "WinQuake sbar.c beyond the finale overlay; server C beyond the grep"
+  ]
+}

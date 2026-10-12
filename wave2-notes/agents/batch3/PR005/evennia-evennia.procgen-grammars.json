@@ -1,0 +1,72 @@
+{
+  "donor": "evennia-evennia",
+  "topic": "procgen-grammars",
+  "verdict": "STRONG",
+  "depth": "full",
+  "half_read": "server",
+  "paths": [
+    "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/dungeon.py",
+    "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/random_tables.py",
+    "/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/tests/test_dungeon.py",
+    "/mnt/frankendom-donors/evennia-evennia/LICENSE.txt"
+  ],
+  "counts": {
+    "dungeon_py_lines": 489,
+    "random_tables_py_lines": 627,
+    "depth_name_entries": 10,
+    "frontier_budget": 2,
+    "new_exits_per_room_max": 2,
+    "exit_directions": 4,
+    "dungeon_tests": 2,
+    "death_table_entries": 8,
+    "death_table_dead_entries": 2,
+    "reaction_bands": 5,
+    "initiative_bands": 2,
+    "chargen_trait_tables_approx": "10 tables of about 20 entries (awk count, approximate)"
+  },
+  "rule": "Lazy instanced dungeon. (1) Start room exits each lead to an instance; a 5-minute ticker gives each start exit a 50 percent chance of reset, so the next party through gets a fresh instance, while a party using the same exit within the window shares it. (2) Stepping through an unbuilt exit creates a branch (one per instance) and builds the first room. (3) Build a room: target = current coordinates plus direction shift; depth = int(sqrt(x*x + y*y)); name and text from a depth table (10 entries, then dark fallback); always add an unlocked return exit. (4) Frontier budget: if fewer than two unvisited exits, add one or two new exits in shuffled directions to coordinates not yet in the grid or the start; reserve each target with an empty value until built. (5) Forward exits are locked while the room carries a not-clear tag; clear removes the tag. (6) Branch stamp refreshed only on build; hourly deleter collapses branches stamped more than a week ago, moving tagged characters to the start room with a collapse message (room cleanup is broken, see defects).",
+  "data_fields": [
+    {"name": "start_exit_reset_s", "unit": "seconds", "donor_value_or_null": 300},
+    {"name": "start_exit_reset_chance", "unit": "probability per exit per tick", "donor_value_or_null": 0.5},
+    {"name": "branch_check_s", "unit": "seconds", "donor_value_or_null": 3600},
+    {"name": "branch_life_s", "unit": "seconds (replace with empty-with-grace)", "donor_value_or_null": 604800},
+    {"name": "frontier_budget", "unit": "unvisited exits per instance", "donor_value_or_null": 2},
+    {"name": "new_exits_per_room_max", "unit": "count", "donor_value_or_null": 2},
+    {"name": "exit_directions", "unit": "set of directions (diagonals off)", "donor_value_or_null": "north,east,south,west"},
+    {"name": "depth_names", "unit": "table keyed by depth, dark fallback", "donor_value_or_null": null},
+    {"name": "reaction_bands", "unit": "labelled bands over a roll total (dice not stated)", "donor_value_or_null": "2 | 3-5 | 6-8 | 9-11 | 12"},
+    {"name": "initiative_bands", "unit": "labelled bands", "donor_value_or_null": "1-3 enemy first | 4-6 PC first"},
+    {"name": "death_table_dead_weight", "unit": "entries of 8 (duplicate entry = weight)", "donor_value_or_null": 2},
+    {"name": "instance_grace_s", "unit": "seconds with no party before collapse (proposed)", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "frontier budget of two unbuilt exits per instance, so the ledger stores only touched rooms",
+    "build a room only when a party steps through it (lazy build)",
+    "radial depth ring from the entrance as difficulty tier",
+    "blocked footer while the room is not clear",
+    "same-path-or-split line in the start room",
+    "timed start-exit reset as the respawn of a fresh instance",
+    "collapse message with a dust line returning the party to start"
+  ],
+  "change": [
+    "D1 rooms are never tagged with their branch key, so the collapse finds and deletes no rooms: tag each room with the branch key or search by the room's branch attribute",
+    "D2 docstring says an instance ends when no characters remain; code ends it a week after the last new room with characters still inside: use empty-with-grace (our ruling)",
+    "D3 stamp refreshed only on build, so an instance walked through built rooms collapses under the party: refresh on every traversal inside the instance",
+    "D4 dead no-op expression line in branch creation: remove",
+    "D5 stamp default evaluated once at import: use a callable default",
+    "D6 no tests for collapse, reset, room cleanup or frontier budget: add one each",
+    "Frankendom: 'clear' set only by a server-verified kill; group size at or under MAX_ATTACKERS = 3, rest queued",
+    "Frankendom: names and text written in our own words (donor text not carried)"
+  ],
+  "look_test": "In a test zone build one instance: entrance with two start exits, a six-room branch with a two-exit frontier, and one locked room that clears on a test kill. Dom plays it in a 375-wide text panel for about two minutes. Pass: each new room's name matches its depth; the blocked footer shows until the test kill; with life set to two minutes for the test, a forced collapse returns him to the entrance with the collapse line. Dom answers: did the walk feel like it led somewhere; did the blocked line make him stop and fight.",
+  "licence_note": "BSD 3-Clause (LICENSE.txt line 1): may adapt with notice kept. Donor numeric values carried because BSD. Room names and text rewritten in our own words.",
+  "tags": ["scheduler", "duration-rule", "encounter-lair", "walk-density", "naming-grammar", "new:lazy-room-gen", "new:frontier-budget", "new:instance-branch", "new:collapse-reset", "new:weighted-table", "new:row-23-zone-population", "new:row-17-death-respawn"],
+  "not_read": [
+    "rooms.py",
+    "most of random_tables.py (trait tables counted by awk only; name table not counted by hand)",
+    "tests beyond test names",
+    "client half (not in this box)",
+    "CLAUDE.md and AGENTS.md at repo root (treated as data, not read)",
+    "walk density per minute (not measured)"
+  ]
+}

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+cvet-fonline	character-creation-appearance	P	PARTIAL	thin	Source/Tools/ImageBaker.cpp:1679-2060 holds a bake-time skin/hair/armor colour offset per sprite; the engine has no character creation flow (Source/Server/Server.cpp:3082-3128 only fires OnPlayerLogin), so the appearance is colour-only.
+veloren-veloren	character-creation-appearance	P	STRONG	thin	common/src/comp/body/humanoid.rs:12-125 defines the species and body-type appearance with per-family index counts and a clamp (validate, 84-96); the server never calls the clamp (server/src/character_creator.rs:32-100), while the client does (voxygen/src/menu/char_selection/ui.rs:1908-2022).
+crawl-crawl	character-creation-appearance	P	STRONG	thin	crawl-ref/source/tiledoll.cc:240-260 rolls paper-doll layers at chance 1, 0.5 or 0.25, and crawl-ref/source/tilemcache.cc:1546-1558 gives unset layers a seeded pick (hash.cc:57-62) so a name always looks the same.

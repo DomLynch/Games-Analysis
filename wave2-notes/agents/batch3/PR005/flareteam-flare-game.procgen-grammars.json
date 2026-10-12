@@ -1,0 +1,81 @@
+{
+  "donor": "flareteam-flare-game",
+  "topic": "procgen-grammars",
+  "verdict": "STRONG",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/flareteam-flare-game/mods/empyrean_campaign/maps/procgen_rules/iron_labyrinth.txt",
+    "/mnt/frankendom-donors/flareteam-flare-game/mods/empyrean_campaign/maps/procgen_rules/iron_labyrinth_f1.txt",
+    "/mnt/frankendom-donors/flareteam-flare-game/tiled/iron_labyrinth/iron_labyrinth_f1.tmx",
+    "/mnt/frankendom-donors/flareteam-flare-game/tiled/iron_labyrinth/links3.tmx",
+    "/mnt/frankendom-donors/flareteam-flare-game/tiled/iron_labyrinth/room1.tmx",
+    "/mnt/frankendom-donors/flareteam-flare-game/tiled/iron_labyrinth/door_ns1.tmx",
+    "/mnt/frankendom-donors/flareteam-flare-game/tiled/ruins/rules/ruins_ruleset0.tmx",
+    "/mnt/frankendom-donors/flareteam-flare-game/mods/empyrean_campaign/maps/iron_labyrinth/room1.txt",
+    "/mnt/frankendom-donors/flareteam-flare-game/mods/empyrean_campaign/items/random/mastite_magic.txt",
+    "/mnt/frankendom-donors/flareteam-flare-game/mods/empyrean_campaign/items/categories/mastite.txt",
+    "/mnt/frankendom-donors/flareteam-flare-engine/src/Map.cpp",
+    "/mnt/frankendom-donors/flareteam-flare-engine/src/main.cpp",
+    "/mnt/frankendom-donors/flareteam-flare-engine/src/UtilsParsing.cpp",
+    "/mnt/frankendom-donors/flareteam-flare-engine/src/ItemManager.cpp"
+  ],
+  "counts": {
+    "procgen_rule_files": 4,
+    "shared_config_chunk_entries": 29,
+    "labyrinth_tiled_sources": 41,
+    "ruleset_files": 4,
+    "mastite_random_files": 10,
+    "mastite_item_sections": 63,
+    "procgen_type_tags_tiled": {"normal": 22, "links": 4, "start": 3, "end": 3, "key": 1, "door_north_south": 2, "door_west_east": 2},
+    "sampled_room_enemy_groups": {"room1": 1, "room2": 1, "room9": 4, "room18": 1, "key1": 1, "treasure_room": 0, "vendor_room": 0},
+    "enemy_group_number_range_sampled": "3,5"
+  },
+  "rule": "Seeded-or-not random walk on a grid of chunk cells, then fill. Order: (1) read floor rule file (shared settings block plus chunk list; floor files INCLUDE the shared block and add start/end chunks); (2) lay grid sized from event region and chunk size; (3) main path from a random start cell, random direction per step, refuses start/end/door/used cells, records branch roots by a rising random chance (reset after a root), first door forced once past minimum spacing, later doors by a ramping chance, each door raises door level beyond it; (4) retry main path until length in range and at least one door exists, up to an attempt cap; (5) one walk per branch root, may join same-door-level normal cells; (6) one key per door level, a random normal cell, removed from pool; (7) fill each cell with a random chunk of its type skipping campaign-unique chunks already placed, random seam chunk, hero spawn from start chunk, set campaign flag for unique chunks; (8) save result to a file and reuse until a reset flag is set.",
+  "data_fields": [
+    {"name": "door_cap", "unit": "count", "donor_value_or_null": null},
+    {"name": "door_min_spacing", "unit": "cells", "donor_value_or_null": null},
+    {"name": "main_len_min", "unit": "cells", "donor_value_or_null": null},
+    {"name": "main_len_max", "unit": "cells", "donor_value_or_null": null},
+    {"name": "main_attempts_max", "unit": "count", "donor_value_or_null": null},
+    {"name": "branch_len_min", "unit": "cells", "donor_value_or_null": null},
+    {"name": "branch_len_max", "unit": "cells", "donor_value_or_null": null},
+    {"name": "branches_per_door_level_max", "unit": "count", "donor_value_or_null": null},
+    {"name": "branch_root_chance_start", "unit": "percent", "donor_value_or_null": null},
+    {"name": "branch_root_chance_step", "unit": "percent per step", "donor_value_or_null": null},
+    {"name": "door_chance_step", "unit": "percent per step (first door forced to 100)", "donor_value_or_null": null},
+    {"name": "chunk_pool_per_type", "unit": "list of chunk ids", "donor_value_or_null": null},
+    {"name": "chunk_unique_flag", "unit": "campaign flag name", "donor_value_or_null": null},
+    {"name": "region_reset_flag", "unit": "campaign flag name", "donor_value_or_null": null},
+    {"name": "instance_seed", "unit": "integer (proposed: zone id, instance id, reset counter)", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "one key per door level placed before fill, so every gate has a reachable key",
+    "gate chance ramps per step so gates arrive at a steady pace; first gate forced",
+    "campaign-unique rooms placed at most once per campaign",
+    "cache the generated layout until a reset flag; regenerate only on reset",
+    "fixed seam rectangles so chunks join without pair-specific art",
+    "shared settings block that each floor includes, with per-floor start and end"
+  ],
+  "change": [
+    "D1 branch length draw uses the minimum as its upper bound (max ignored): clamp max to at least min and draw between them",
+    "D2 main path retry gives up silently at the attempt cap and can keep a path with no gate or key: fall back to a fixed template or new start, log as data error",
+    "D3 global RNG seeded from wall clock at boot and shared by the generator: use a per-instance seed and its own stream",
+    "D4 variant avoidance is a single bump per neighbour, not re-checked: loop with re-check of both neighbours",
+    "D5 bonus-scale typo (comma for colon) in hp_regen line of two mastite randomizer files: read as base 25 and loses range 1-25; fix to colon form and warn on bare numbers in scale strings",
+    "Frankendom: cap concurrent attackers at MAX_ATTACKERS = 3 in the fight engine; group count range stays data",
+    "Frankendom: generation runs server-side and writes an instance record to the ledger; client draws only"
+  ],
+  "look_test": "Build one three-room gate strip in a test zone (start, two rooms, key room, locked gate, end). Generate three seeds; screenshot each at 375 wide, idle, no combat. Dom answers: can I see the gate and what opens it; do the layouts differ enough; can I find the key room without a minimap. Pass = three yes answers, under a minute per seed.",
+  "licence_note": "Art and data CC-BY-SA 3.0 (README line 21; storage matrix says UNCLEAR): share-alike, category-level only, no tiles, maps, names or numeric values carried. Engine GPL-3 (COPYING line 1): clean-room, order of operations only. Donor numeric settings carried as null donor values.",
+  "tags": ["new:procgen-grammar", "new:chunk-stitch", "new:door-key-gate", "new:unique-room", "new:automap-rules", "affix-grammar", "seed-discipline", "walk-density", "new:ambient-loop", "new:loot-chest-hotspot", "new:loot-roll-tier", "encounter-lair"],
+  "not_read": [
+    "tile PNGs (no 375-wide readability judged)",
+    "about 31 of 41 labyrinth Tiled sources (read in part or counted only)",
+    "9 of 10 mastite randomizer files (grep only)",
+    "item build pipeline beyond the randomizer parser",
+    "map save/load internals",
+    "UI and client draw code",
+    "respawn and death presentation (not in the generator code read)"
+  ]
+}

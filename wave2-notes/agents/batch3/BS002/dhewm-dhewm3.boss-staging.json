@@ -1,0 +1,50 @@
+{
+  "donor": "dhewm-dhewm3",
+  "topic": "boss-staging",
+  "depth": "thin",
+  "half_read": "server",
+  "paths": [
+    "/mnt/frankendom-donors/dhewm-dhewm3/neo/d3xp/Actor.cpp",
+    "/mnt/frankendom-donors/dhewm-dhewm3/neo/d3xp/Projectile.cpp",
+    "/mnt/frankendom-donors/dhewm-dhewm3/neo/game/Actor.cpp",
+    "/mnt/frankendom-donors/dhewm-dhewm3/COPYING.txt"
+  ],
+  "counts": {
+    "boss_grep_hits_neo": 25,
+    "final_boss_gate_sites": 2,
+    "joint_damage_scale_default": 1.0
+  },
+  "rule": "Engine-side damage gate for a final boss: if the boss is flagged final, the damage function returns before any damage, unless the inflictor is the one allowed kind (the d3xp path names one projectile; the older build allows the soul-cube missile). Each joint has a damage multiplier that defaults to 1.0; hits apply ceil(damage x scale) by hit location. A player's projectile explosion on an actor with health left adds the actor's remaining health to the player's pool, except for actors with the boss spawn-arg. The end-boss beam end point is set from the Chest1 joint position.",
+  "data_fields": [
+    {"name": "final_boss_allowed_hit_kind", "unit": "enum", "donor_value_or_null": null},
+    {"name": "body_part_damage_mul", "unit": "multiplier per joint", "donor_value_or_null": null},
+    {"name": "pool_reward_skipped_for_boss", "unit": "bool", "donor_value_or_null": null},
+    {"name": "beam_aim_zone", "unit": "zone name", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "One allowed hit kind for a final boss, so the player learns one answer",
+    "Per-body-part damage multiplier as data, default 1.0",
+    "No health-pool reward from boss kills"
+  ],
+  "change": [
+    "Do not hard-code one projectile name in the engine; list allowed hit kinds per boss as data",
+    "Beam aim on a named zone of the creature, not a joint string",
+    "Blocked hits must show client feedback (donor gives none in the code read)"
+  ],
+  "look_test": "Target file src/fight/hit-zones.ts (new), parity row 7 (creature actor, zones). On an existing creature in the fight scene, flag head x2 and torso x1 and one only-this-hits boss rule. Dom taps with a normal hit and a special hit and judges whether the blocked-hit flash reads at 375 wide.",
+  "licence_note": "Code: GNU GPL v3 (COPYING.txt; Doom 3 GPL source headers). Strong copyleft: shape only, no code, names or constants copied. Content (boss names, models, sounds) belongs to id Software and the expansion owners and is not in the box. No legal conclusion.",
+  "tags": [
+    "boss-elite-pattern",
+    "new:boss-immunity-gate",
+    "new:damage-zone",
+    "new:no-pool-on-boss",
+    "new:joint-aimed-beam"
+  ],
+  "not_read": [
+    "base/def/*.def and base/script/*.script (data half absent from the box; base/ has only cfg files)",
+    "Boss intro, staging, phases, boss HP, boss sounds and GUI (data half)",
+    "neo/game/Actor.cpp beyond grep lines 455, 628, 2173",
+    "neo/d3xp/Weapon.cpp 3798 (melee powerup note) in full",
+    "Joint and damage group names per boss (data half)"
+  ]
+}

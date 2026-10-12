@@ -1,0 +1,65 @@
+{
+  "donor": "CleverRaven-Cataclysm-DDA",
+  "topic": "procgen-grammars",
+  "depth": "full",
+  "verdict": "STRONG",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/mapgen.cpp",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/regional_settings.cpp",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/map_extras.cpp",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/overmap.cpp",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/src/overmapbuffer.h",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/json/region_settings/region_settings/regional_map_settings.json",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/json/overmap/map_extras.json",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/json/mapgen_palettes/common_parameters.json",
+    "/mnt/frankendom-donors/CleverRaven-Cataclysm-DDA/data/json/overmap/overmap_special/"
+  ],
+  "counts": {
+    "map_extra_entries": 77,
+    "map_extra_collections_in_regional_settings": 18,
+    "overmap_special_objects": 320,
+    "overmap_special_files": 43,
+    "mapgen_palette_files_in_folder": 114,
+    "palette_parameter_scope_omt_lines": 266,
+    "palette_parameter_scope_overmap_special_lines": 10
+  },
+  "rule": "Gate then weight: per tile, a one-in-N roll decides whether a landmark exists; a weighted list picks which. Filter by z-band before the roll; skip the collection if nothing fits. Palette parameters carry weighted distributions and fallbacks; default scope is one overmap special, so a building keeps one skin. Nested decoration uses a large null weight. Specials: priority tiers, shuffled first-fit inside a tier, min and max occurrences, mandatory pass first. Rare uniques: a virtual deck (successes of deck_size cards), one draw per eligible overmap, reshuffle when empty.",
+  "data_fields": [
+    {"name": "landmark_gate_one_in_N", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "landmark_weight", "unit": "integer weight", "donor_value_or_null": null},
+    {"name": "landmark_z_band", "unit": "zone depth band", "donor_value_or_null": null},
+    {"name": "palette_param_weights", "unit": "weight per option", "donor_value_or_null": null},
+    {"name": "null_chunk_weight", "unit": "weight", "donor_value_or_null": null},
+    {"name": "special_priority", "unit": "tier int", "donor_value_or_null": null},
+    {"name": "special_min_max", "unit": "count per cycle", "donor_value_or_null": null},
+    {"name": "deck_successes_min", "unit": "count per cycle", "donor_value_or_null": null},
+    {"name": "deck_cards_max", "unit": "count per cycle", "donor_value_or_null": null},
+    {"name": "placement_attempts_per_sector", "unit": "count", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "gate then weight per tile",
+    "filter by z-band before the roll",
+    "palette parameters with fallbacks, scoped per zone or building",
+    "rare nested decoration via null weight",
+    "deck draw for rare unique specials"
+  ],
+  "change": [
+    "seed per-tile roll from zone seed plus tile index so the server can replay it",
+    "remove the second pick in the production extra roll (src/mapgen.cpp 296 and 301)",
+    "names, symbols, colours, numbers and landmark families are ours"
+  ],
+  "look_test": "Six 375-wide stills to /preview/ (no release rows): one room template in three palettes; the same zone at two landmark gate frequencies; one rare unique as random placement in 2 of 6 zones versus a deck guaranteeing 1 per cycle. Dom judges whether landmarks feel like a world worth walking.",
+  "licence_note": "LICENSE.txt line 1: game licensed CC BY-SA 3.0 (share-alike). Category-level inspiration only; no code, data or names copied.",
+  "tags": ["walk-density", "scheduler", "world-event", "naming-grammar", "new:gate-then-weight", "new:palette-param", "new:deck-draw", "new:filter-before-roll"],
+  "not_read": [
+    "src/overmap_special_mutable.cpp",
+    "src/overmap_special_fixed.cpp",
+    "src/overmap_noise.cpp",
+    "apply functions in src/map_extras.cpp",
+    "data/json/mapgen_palettes beyond common_parameters.json",
+    "lang/ locale and string tables",
+    "OMSPEC_FREQ use in src/overmap.cpp",
+    "AU/DC asset or catalogue files for this donor (none in batch3 folder)"
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "donor": "xoreos-xoreos",
+  "topic": "weather-time-light",
+  "depth": "thin",
+  "half_read": "client",
+  "paths": [
+    "/mnt/frankendom-donors/xoreos-xoreos/src/engines/nwn/area.cpp",
+    "/mnt/frankendom-donors/xoreos-xoreos/src/aurora/ifofile.cpp",
+    "/mnt/frankendom-donors/xoreos-xoreos/src/aurora/ifofile.h",
+    "/mnt/frankendom-donors/xoreos-xoreos/src/engines/witcher/lua/bindings.cpp",
+    "/mnt/frankendom-donors/xoreos-xoreos/src/common/datetime.h",
+    "/mnt/frankendom-donors/xoreos-xoreos/src/graphics/aurora/model_nwn.cpp",
+    "/mnt/frankendom-donors/xoreos-xoreos/COPYING"
+  ],
+  "counts": {
+    "ifo_weather_fields_read": 4,
+    "ifo_weather_getters_with_callers": 0,
+    "area_ambient_pairs_read": 1,
+    "area_ambient_pairs_played_night": 0,
+    "witcher_weather_lua_classes_empty": 2,
+    "model_lightning_controllers_named": 3
+  },
+  "rule": "Module IFO carries Mod_MinWeatInt (default 0), Mod_MaxWeatInt (default 100), Mod_RainChance (default 0), Mod_SnowChance (default 0). All four are stored and exposed by getters that have no caller in src. Area ambient sound and music are read as day and night pairs with a volume curve 1.25 times (1 minus 5 to the power of minus v over 127); only the day track is played (night branch is a TODO). No weather runtime was found in the engine code read.",
+  "data_fields": [
+    {"name": "weather.intensity_min", "unit": "0-100", "donor_value_or_null": null},
+    {"name": "weather.intensity_max", "unit": "0-100", "donor_value_or_null": null},
+    {"name": "weather.rain_chance", "unit": "percent", "donor_value_or_null": null},
+    {"name": "weather.snow_chance", "unit": "percent", "donor_value_or_null": null},
+    {"name": "ambient.day_track", "unit": "track id", "donor_value_or_null": null},
+    {"name": "ambient.night_track", "unit": "track id", "donor_value_or_null": null},
+    {"name": "ambient.volume_day", "unit": "0-127", "donor_value_or_null": null},
+    {"name": "ambient.volume_night", "unit": "0-127", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Per-zone weather intensity range (min and max) as data",
+    "Per-zone rain and snow chance as data",
+    "Day and night ambient and music pair per zone"
+  ],
+  "change": [
+    "The night branch must actually play (donor TODO in music and ambient functions)",
+    "The weather fields need a runtime; the donor stores them and never reads them",
+    "Indoor zones force rain and snow chance to zero"
+  ],
+  "look_test": "None from this donor alone: no weather visual exists in the code read. For sound, play the day and night ambient tracks of one zone on a phone and compare; Lead to place the row. Visual weather direction comes from the exult look test.",
+  "licence_note": "GPL-3.0 (COPYING: GNU GPL version 3, 29 June 2007). Clean-room only. Data-field names are ours; no code adapted; no game content used. Donor values are null because the licence is GPL.",
+  "tags": ["day-night", "weather-state", "new:unrun-data", "new:zone-audio"],
+  "not_read": [
+    "Module (IFO, ARE) files and data pack the fields come from (not in donor tree read)",
+    "Rendering of model lightning controllers",
+    "Ambient sound 2DA table contents beyond the lookup line",
+    "Witcher and Dragon Age weather code beyond the bindings",
+    "Full-tree weather search (grep over src only, plus area files)",
+    "Death/respawn, loot, walk density, idle animation (not in this topic)",
+    "Other lanes' weather code (not searched)"
+  ]
+}

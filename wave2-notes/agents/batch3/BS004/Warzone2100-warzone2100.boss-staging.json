@@ -1,0 +1,95 @@
+{
+  "donor": "Warzone2100-warzone2100",
+  "topic": "boss-staging",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/data/base/script/campaign/cam2-2.js",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/data/base/script/campaign/cam3-1.js",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/data/base/script/campaign/cam1-3.js",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/data/base/script/campaign/libcampaign_includes/nexus.js",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/data/base/script/campaign/libcampaign_includes/misc.js",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/data/base/script/campaign/libcampaign_includes/video.js",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/data/base/script/campaign/libcampaign_includes/tactics.js",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/data/base/stats/brain.json",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/data/mp/stats/brain.json",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/data/mp/stats/research.json",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/data/base/stats/weapons.json",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/src/cmddroid.cpp",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/src/droid.cpp",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/src/wzapi.cpp",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/src/quickjs_backend.cpp",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/COPYING",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/COPYING.README",
+    "/mnt/frankendom-donors/Warzone2100-warzone2100/COPYING.NONGPL"
+  ],
+  "counts": {
+    "campaign_cam_scripts_in_folder": 52,
+    "campaign_lib_entries_in_folder": 19,
+    "cam_scripts_read_closely": 6,
+    "launch_countdown_cues": 15,
+    "detonation_countdown_cues": 14,
+    "voice_or_sound_cues_per_poll": 1,
+    "countdown_poll_seconds": 0.4,
+    "commander_capacity_mp_base": 6,
+    "commander_capacity_per_rank": 2,
+    "commander_rank_count": 9,
+    "commander_production_kill_cap": 36,
+    "commander_hitpoints_mp": 500,
+    "vtol_weapons_with_attack_runs": 21,
+    "nexus_unit_target_chance_pct": [20, 40],
+    "nexus_gift_chance_pct": 70,
+    "difficulty_timer_multipliers": {"supereasy": 2.0, "easy": 1.5, "medium": 1.0, "hard": 0.85, "insane": 0.70}
+  },
+  "rule": "Escape-and-return state machine (trigger on route, hit only on one half of the route, retreat to a point with radius, repair threshold 67 percent, then return; camCallOnce so it fires once). Countdown cue ladder: ordered (remaining time, cue) list, one cue checked per 0.4 s poll, cue played if remaining is at or below its time, dropped silently if the clock is more than 2 s past it, then removed. Timers scale by difficulty multiplier, counts do not. Commander escort capacity = base + per-rank x rank index, with production capped at a kill count. Attached units gain +1 effective rank. Escort kills feed the commander XP. VTOL attack runs: each run spends one ammo, empty at numAttackRuns (x numRounds for salvo), cannot leave the rearm pad until full and undamaged. Nexus takeover ladder: first attack on HQ, then unit or building picks, unit pick filtered by experience thresholds that rise with research steps, 70 percent takeover versus 30 percent destroy.",
+  "data_fields": [
+    {"name": "boss_escape_radius_tiles", "unit": "tiles", "donor_value_or_null": null, "proposal": "4 to 6"},
+    {"name": "boss_heal_threshold_pct", "unit": "percent HP", "donor_value_or_null": null, "proposal": "67"},
+    {"name": "escort_max", "unit": "units", "donor_value_or_null": null, "proposal": "3 (equals MAX_ATTACKERS)"},
+    {"name": "escort_rank_bonus", "unit": "ranks", "donor_value_or_null": null, "proposal": "+1 while attached"},
+    {"name": "doom_cue_window_s", "unit": "seconds", "donor_value_or_null": null, "proposal": "2"},
+    {"name": "doom_cue_marks_s", "unit": "seconds list", "donor_value_or_null": null, "proposal": "60, 30, 10, 5, 3, 1"},
+    {"name": "timer_mult_by_tier", "unit": "multiplier", "donor_value_or_null": null, "proposal": "normal 1.0, hard 0.85, insane 0.70"},
+    {"name": "boss_first_target", "unit": "enum", "donor_value_or_null": null, "proposal": "zone beacon, not a random unit"}
+  ],
+  "keep": [
+    "Turn-back only on one half of the route (exit half), not on the whole route",
+    "Retreat fires once per engagement (camCallOnce)",
+    "Heal to threshold, then return to the fight",
+    "One cue per poll, late-window drop, ordered cue list",
+    "Difficulty scales timers, never counts",
+    "Attached units gain +1 effective rank; escort kills feed the boss XP",
+    "Boss first attack goes at a fixed anchor target, then rank-gated picks",
+    "VTOL style run-and-rearm cycle as a flying boss phase"
+  ],
+  "change": [
+    "Escort max 3, not the donor 6 (MAX_ATTACKERS)",
+    "Fix the -1 clock sentinel: a missing clock must not drain the cue list (wzapi.cpp:2705-2707 with cam3-1.js:262)",
+    "Replace the fixed 3.2 s sound-to-video gap (video.js:68) with client clip-end ack; no guessed durations",
+    "Escape state is server state, not client-only; client plays animation and cue",
+    "Whole-second clock granularity (wzapi.cpp:2709): keep the 2 s window, never compare sub-second times",
+    "Mind-like takeover is not used on player units in PvP; a boss may take a building"
+  ],
+  "look_test": "One arena at 375 wide: one boss with 2 escorts, health bar, 60 s clock with cue marks at 60, 30, 10, 5 s. Variant A: boss runs to shelter when hit on its exit half, heals to 67 percent, returns. Variant B: boss stands and fights. Style flag only; published to preview folder, no release rows. Dom judges: spot the boss in 2 s, does the run read as a plan, does the 10 s and 5 s beep move him, does A make him chase. Target file src/fight/<module>.ts (module not chosen, not read); one parity row: row 4 (leash).",
+  "licence_note": "GPL-2.0-or-later for source and data (COPYING:2; COPYING.README:14-16); exception stated at COPYING.README:22; videos and music not covered; some art CC BY-SA 3.0 or CC0 (COPYING.NONGPL). Shape only, nothing copied. No legal conclusion.",
+  "tags": ["encounter-escort", "roaming-boss", "timed-event", "scheduler", "ordered-feedback", "duration-rule", "boss-elite-pattern", "new:conversion-ladder", "new:flight-phase", "new:rearm-cycle", "new:command-capacity", "new:gap-dragon-breath", "world-event"],
+  "mg011": {
+    "rows": [
+      {"name": "VTOL attack-run cycle", "effect": "each run spends one ammo; at the limit the unit returns to a pad", "formula": "runs = numAttackRuns; salvo runs = numRounds x numAttackRuns", "number_ranges_donor": "numAttackRuns 1 (bombs), 2 to 3 (rockets, missiles), 4 to 6 (cannons, MG, rail)", "cost": "ammo", "cooldown_or_cast": "rearm wait, timing not read", "caps": "cannot leave pad until ammo full and undamaged", "file_line": "droid.cpp:3343-3353, 3405-3406, 3358-3380; weapons.json:769, 939, 1064, 2323, 3010, 4058"},
+      {"name": "Command capacity", "effect": "commander leads a fixed count of units", "formula": "6 + 2 x rank index", "number_ranges_donor": "rank index 0 to 8, capacity 6 to 22; production cap 36 kills (rank 3, capacity 12)", "cost": "none", "cooldown_or_cast": "none", "caps": "production kill cap", "file_line": "cmddroid.cpp:195; mp brain.json:8-9, 11, 14"},
+      {"name": "Attach rank bonus", "effect": "attached unit gets +1 effective rank", "formula": "max(own level + 1, commander level)", "number_ranges_donor": "flag autoRewardRankFromAttach true", "cost": "none", "cooldown_or_cast": "none", "caps": "none", "file_line": "droid.cpp:2547-2549; mp brain.json:3"},
+      {"name": "Escort XP to commander", "effect": "escort kills add XP to commander when in range", "formula": "squared distance vs range list", "number_ranges_donor": "range list only on null fallback brain; command brain empty list (= always in range)", "cost": "none", "cooldown_or_cast": "none", "caps": "range check", "file_line": "cmddroid.cpp:199-206; droid.cpp:1074-1098; mp brain.json (ZNULLBRAIN, CommandBrain01)"},
+      {"name": "Hack ladder (mind-like takeover)", "effect": "attempt picks a unit or building; unit pick filtered by experience thresholds", "formula": "unit chance 20 or 40 pct; takeover 70 pct else destroy", "number_ranges_donor": "experience thresholds 256, 64, 16 per research step; step 4 safe outside classic mode; constructors 20, 50, 66 pct safe per step", "cost": "none", "cooldown_or_cast": "attempt timer not read", "caps": "final mission static fail chance", "file_line": "nexus.js:78, 136, 172-199, 207, 215, 223"},
+      {"name": "Dragons, breath cones, taming, mounts, armour per body part", "effect": "none in this donor", "formula": "n/a", "number_ranges_donor": "n/a", "cost": "n/a", "cooldown_or_cast": "n/a", "caps": "n/a", "file_line": "grep src and data: no hits for dragon, breath, taming, dismount; no hit-location code"}
+    ],
+    "resource_pools_as_data": "command unit hitpoints 500 (mp brain.json:6); no mana, stamina or focus"
+  },
+  "not_read": [
+    "renderer and audio mixing",
+    "data/mods/campaign/* (three other campaign trees)",
+    "most of the 52 cam*.js mission scripts (six read closely)",
+    "MP skirmish scripts beyond grep",
+    "src/ai and src/move beyond the VTOL and commander paths",
+    "boss death presentation (not in the scripts read)"
+  ]
+}

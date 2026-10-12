@@ -1,0 +1,65 @@
+{
+  "donor": "openmw",
+  "topic": "weather-time-light",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwworld/weather.cpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwworld/weather.hpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwrender/sky.cpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwworld/datetimemanager.cpp",
+    "/mnt/frankendom-donors/openmw/apps/openmw/mwworld/timestamp.cpp",
+    "/mnt/frankendom-donors/openmw/files/openmw.cfg",
+    "/mnt/frankendom-donors/openmw/components/fallback/validate.cpp",
+    "/mnt/frankendom-donors/openmw/LICENSE"
+  ],
+  "counts": {
+    "weather_types_named_in_validator": 10,
+    "weather_types_with_transition_fallback_in_cfg": 8,
+    "weather_fallback_lines_in_cfg": 287,
+    "weather_cpp_lines": 1455,
+    "sky_cpp_lines": 962
+  },
+  "rule": "A region-rolled weather. A timer (fallback interval in game hours) expires; every region forgets its weather; the current region rolls 1 to 100 over its cumulative chance table. Changes are real-time crossfades: the factor falls by elapsed real seconds times the incoming weather's speed. A change requested mid-crossfade is queued, and overflow time is carried into the queued crossfade. Colours have four time-of-day keys with pre and post bands and linear blends. Sun orbit is linear within day and within night. Thunder: strike chance per frame is frequency times 10 per minute, scaled by how far the transition is past threshold; flash is additive across strikes, decays per second, and has four distance bins. Rain emission is max drops over entrance speed times 20 per second. Clouds scroll at speed over 400 per second.",
+  "data_fields": [
+    {"name": "weather_change_interval", "unit": "game hours", "donor_value_or_null": null},
+    {"name": "sunrise_key", "unit": "hour", "donor_value_or_null": null},
+    {"name": "sunset_key", "unit": "hour", "donor_value_or_null": null},
+    {"name": "band_durations_sun_sky_ambient_fog", "unit": "hours (pre and post)", "donor_value_or_null": null},
+    {"name": "transition_speed", "unit": "factor per real second (per weather)", "donor_value_or_null": null},
+    {"name": "region_chance_table", "unit": "percent, must sum to 100", "donor_value_or_null": null},
+    {"name": "thunder_frequency", "unit": "strikes per minute at 1.0", "donor_value_or_null": null},
+    {"name": "thunder_threshold", "unit": "fraction of transition", "donor_value_or_null": null},
+    {"name": "flash_decrement", "unit": "brightness per second", "donor_value_or_null": null},
+    {"name": "max_raindrops", "unit": "count (per weather)", "donor_value_or_null": null},
+    {"name": "rain_entrance_speed", "unit": "per second", "donor_value_or_null": null},
+    {"name": "cloud_speed", "unit": "scroll per 400 per second", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "region-rolled weather from a chance table",
+    "real-time crossfade with queue and carry of overflow time",
+    "four-key time-of-day colour blend with pre and post bands",
+    "additive flash with distance bins and per-second decay",
+    "interval timer that keeps phase on expiry"
+  ],
+  "change": [
+    "renormalise region chance tables at load and warn (defect: sums not 100 fall back silently to the first weather, weather.cpp:361)",
+    "keep flash decay running every frame (defect: hard cut to zero below threshold, weather.cpp:250)",
+    "state Ashstorm and blight transition defaults in our data (validate.cpp:41 names them; cfg has no lines for them)",
+    "clamp rain emission to a minimum entrance speed (defect: divide by entrance speed, sky.cpp:428)",
+    "server rolls weather per region with the seeded PRNG and emits one change event; client crossfades"
+  ],
+  "look_test": "Publish a style flag on the existing arena scene via the look-test flag (/preview/, no release rows). Three presets: clear noon; overcast dusk with a slow crossfade; storm with flashes about every 10 seconds. On a 375-wide phone check that hero and three-attacker ring stay readable through a flash, that a crossfade does not pop, and that rain count is comfortable. Compare four-key dusk against a single key.",
+  "licence_note": "GNU GPL v3 (LICENSE, version 3). Clean-room, shape only. No code, numbers or colour codes are copied; donor values are withheld (null). No legal conclusion.",
+  "tags": ["weather-state", "day-night", "duration-rule", "flash", "stinger", "particle-burst", "mood-preset", "new:region-roll", "new:transition-carry", "new:sky-keyframes"],
+  "not_read": [
+    "components/esm3/loadregn.cpp and region records (region chance data)",
+    "components/esm3/weatherstate.cpp",
+    "apps/openmw/mwrender/fogmanager.cpp",
+    "most of apps/openmw/mwrender/sky.cpp (lines 428, 548, 605-640, 793 seen)",
+    "weather.cpp 135-218 Weather constructor (fallback names by grep only)",
+    "weather.cpp 380-470 moon model (named only)",
+    "Morrowind game data (weather and region records), not in the box",
+    "death and respawn, loot reveal, walk density, boss staging"
+  ]
+}

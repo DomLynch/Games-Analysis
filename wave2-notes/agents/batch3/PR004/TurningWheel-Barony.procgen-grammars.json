@@ -1,0 +1,79 @@
+{
+  "donor": "TurningWheel-Barony",
+  "topic": "procgen-grammars",
+  "depth": "full",
+  "half_read": "server",
+  "paths": [
+    "/mnt/frankendom-donors/TurningWheel-Barony/src/maps.cpp",
+    "/mnt/frankendom-donors/TurningWheel-Barony/src/game.hpp",
+    "/mnt/frankendom-donors/TurningWheel-Barony/LICENSE.txt",
+    "/mnt/frankendom-donors/TurningWheel-Barony/npcnames-male.txt",
+    "/mnt/frankendom-donors/TurningWheel-Barony/npcnames-female.txt",
+    "/mnt/frankendom-donors/TurningWheel-Barony/playernames-male.txt",
+    "/mnt/frankendom-donors/TurningWheel-Barony/playernames-female.txt",
+    "/mnt/frankendom-donors/TurningWheel-Barony/lang/en.txt"
+  ],
+  "counts": {
+    "monster_curve_region_branches": 9,
+    "monster_curve_mines_buckets": 10,
+    "monster_curve_citadel_buckets": 15,
+    "monster_curve_labyrinth_buckets": 20,
+    "monster_curve_hell_buckets": 20,
+    "room_slots_fixed": 4,
+    "location_budget_min": 30,
+    "location_budget_max": 39,
+    "npcnames_male_lines": 105,
+    "npcnames_female_lines": 105,
+    "playernames_male_lines": 371,
+    "playernames_female_lines": 366,
+    "lang_en_nonempty_lines": 6695
+  },
+  "rule": "Floor = seeded room assembly. Loop runs width*height times. Slot 0 entrance hall; slot 1 secret floor or treasure room; slot 2 shop when shop floor; slot 3 treasure room when secret exit; slot 4 special room if pool non-empty; other slots draw a room from a pool with repeats; a room type is dropped only when no free location fits it. Location budget = 30 + roll%10 capped by free spots. Each location: 1/2 normal branch (loot/monster by player-count divisor 4/3/2/2, default 2; loot 1/10 gold else item; monster 1/10 NPC above depth 1, automaton 3/4 above depth 15); 1/2 decoration branch (1/4 deeper, always on depth 10 or less without custom traps; not on Hell). Gold pile = 10 + roll%100 + depth. Region monster table per map name (Mines 10 buckets, Citadel 15, Labyrinth 20, Hell 20, Swamp/Ruins/Underworld 10, Caves 15, fortress 4), fallback skeleton. Shop floor 1/2 after floor 1 (not Underworld, Hell, fortress). Minotaur floors: 1/2 on depth mod 5 = 2 or 3 below 25, 2 or 4 above 25. Secret exit fixed per floor (2, 3 at 1/2, 7, 8, 11, 13, 16, 18, 23, 28, 33).",
+  "data_fields": [
+    {"name": "floor_location_budget_base", "unit": "locations", "donor_value_or_null": 30},
+    {"name": "floor_location_budget_spread", "unit": "locations", "donor_value_or_null": 10},
+    {"name": "location_normal_share", "unit": "fraction", "donor_value_or_null": 0.5},
+    {"name": "decoration_chance_deep", "unit": "fraction of decorated half", "donor_value_or_null": 0.25},
+    {"name": "monster_divisor_1_player", "unit": "divisor (monster share is 1/divisor of normal half)", "donor_value_or_null": 4},
+    {"name": "monster_divisor_2_players", "unit": "divisor", "donor_value_or_null": 3},
+    {"name": "monster_divisor_3_4_players", "unit": "divisor", "donor_value_or_null": 2},
+    {"name": "monster_divisor_default", "unit": "divisor", "donor_value_or_null": 2},
+    {"name": "gold_share_of_loot", "unit": "fraction", "donor_value_or_null": 0.1},
+    {"name": "gold_pile_base", "unit": "gold", "donor_value_or_null": 10},
+    {"name": "gold_pile_spread", "unit": "gold", "donor_value_or_null": 100},
+    {"name": "npc_share_of_monster_slots", "unit": "fraction, depth above 1", "donor_value_or_null": 0.1},
+    {"name": "automaton_share_of_npc", "unit": "fraction, depth above 15", "donor_value_or_null": 0.75},
+    {"name": "minotaur_floor_share", "unit": "fraction on region floors", "donor_value_or_null": 0.5},
+    {"name": "region_length", "unit": "floors", "donor_value_or_null": 5},
+    {"name": "monster_curve_table", "unit": "weighted buckets per map region", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Known entry on every floor (slot 0) and a known reward slot (treasure room), so the route can be learned",
+    "Pool that repeats a room type and drops it only when it does not fit",
+    "Server-only rolls on their own stream from the map stream",
+    "Monster share per location scales with the number of connected players",
+    "Gold pile grows with depth",
+    "Region monster table as a weighted list with a depth gate for the rare entries"
+  ],
+  "change": [
+    "Location picker scans the whole grid for each pick (3920-3945): precompute the free list",
+    "Loop bound is map area (1876-1877), not room count: cap placed rooms as well",
+    "Floor 25 matches neither minotaur branch (1327-1330): make the intent explicit in data",
+    "Rooms can repeat on one floor with no cap: decide per zone whether to draw without repeats",
+    "Daedalus shrine opposite-quadrant rule is hard-coded (3959-4060): move the quadrant order into zone data"
+  ],
+  "look_test": "Floor strip at 375 wide: one seed, one player and three players; each floor is a row of about 35 dots coloured monster, loot, gold, decoration or empty. Dom judges whether three players feel crowded (about 9 monsters against 4) and whether the entrance and reward at the start of the row read as a route. Second: a five-slot route card (entry, treasure, shop, special, pool) for three floors.",
+  "licence_note": "Code BSD-2-Clause (LICENSE.txt line 3): may be adapted with the notice; this note writes a clean-room sketch and copies no lines. Level maps and room files are not in the box and the game content is purchased separately; not used. Name lists not copied.",
+  "tags": ["new:fixed-opening-slots", "new:room-pool-repeat", "walk-density", "new:player-count-balance", "new:region-monster-curve", "seed-discipline", "new:shrine-opposite-exit", "naming-grammar", "new:depth-scaled-gold"],
+  "not_read": [
+    "level map files (not in this box)",
+    "sub-room code for shop, treasure and special rooms past line 2130",
+    "regular-room no-fit branch after line 2127",
+    "decoration tables past line 4610",
+    "full body of the call site at line 7866 (monsterCurve caller)",
+    "gold setup context around line 7775",
+    "gameplayCustomManager hooks and monsterCurveCustomManager file format",
+    "client half of the program (rendering, UI, sound)",
+    "lang/en.txt entries (line count only)"
+  ]
+}

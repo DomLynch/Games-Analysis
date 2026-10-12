@@ -1,0 +1,70 @@
+{
+  "donor": "PixelGuys-Cubyz",
+  "topic": "weather-time-light",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/PixelGuys-Cubyz/src/game.zig",
+    "/mnt/frankendom-donors/PixelGuys-Cubyz/src/server/world.zig",
+    "/mnt/frankendom-donors/PixelGuys-Cubyz/src/network/protocols.zig",
+    "/mnt/frankendom-donors/PixelGuys-Cubyz/src/renderer.zig",
+    "/mnt/frankendom-donors/PixelGuys-Cubyz/src/itemdrop.zig",
+    "/mnt/frankendom-donors/PixelGuys-Cubyz/src/server/terrain/biomes.zig",
+    "/mnt/frankendom-donors/PixelGuys-Cubyz/LICENSE",
+    "/mnt/frankendom-donors/PixelGuys-Cubyz/assets/cubyz (biome .zon files, counted by grep only)"
+  ],
+  "counts": {
+    "phases": 4,
+    "sky_factor_channels": 3,
+    "biome_zon_files_matching_biome_path": 226,
+    "biome_zon_with_fogColor": 35,
+    "biome_zon_with_fogDensity": 40,
+    "weather_system_hits_in_src_assets_docs": 0,
+    "sun_disc_draw_code": 0
+  },
+  "rule": "One server clock (+1 per 100 ms) is broadcast about every 2 s; the client keeps its own counter and slews to it (snap at a 10-tick gap, else one tick per packet). Phase = tick mod cycle. Ambient is a scalar that holds a night floor. Sky colour is a per-channel staged ramp on solar presence (dusk uses 1 minus progress), so blue leaves first at dusk and red last. Biome fog eases to its target with t = 1 - exp(-2 dt), then the fog colour is multiplied by the sky factor. The night tint is a per-channel floor (max with the scalar ambient).",
+  "data_fields": [
+    {"name": "cycle_real_s", "unit": "s", "donor_value_or_null": null},
+    {"name": "phase_fraction_day", "unit": "fraction", "donor_value_or_null": null},
+    {"name": "phase_fraction_dusk", "unit": "fraction", "donor_value_or_null": null},
+    {"name": "phase_fraction_night", "unit": "fraction", "donor_value_or_null": null},
+    {"name": "phase_fraction_dawn", "unit": "fraction", "donor_value_or_null": null},
+    {"name": "ambient_night_floor", "unit": "scalar 0..1", "donor_value_or_null": null},
+    {"name": "night_tint_rgb", "unit": "0..1 per channel", "donor_value_or_null": null},
+    {"name": "night_brightness_setting", "unit": "0..1 player slider", "donor_value_or_null": null},
+    {"name": "sky_ramp_red_end", "unit": "solar presence 0..1", "donor_value_or_null": null},
+    {"name": "sky_ramp_green_start", "unit": "solar presence 0..1", "donor_value_or_null": null},
+    {"name": "sky_ramp_green_end", "unit": "solar presence 0..1", "donor_value_or_null": null},
+    {"name": "sky_ramp_blue_start", "unit": "solar presence 0..1", "donor_value_or_null": null},
+    {"name": "fog_blend_rate", "unit": "per s", "donor_value_or_null": null},
+    {"name": "clock_sync_interval_s", "unit": "s", "donor_value_or_null": null},
+    {"name": "clock_snap_ticks", "unit": "ticks", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "One server clock; clients slew toward it and snap on a large gap",
+    "Phase from clock modulo cycle, with progress inside each phase",
+    "Ambient scalar with a floor at night and eased ramps at dusk and dawn",
+    "Per-channel staged sky ramp: blue leaves first at dusk, red last; reverse at dawn",
+    "Eased fog blend on biome change, frame-rate independent via exp smoothing",
+    "Fog colour multiplied by the sky factor so the horizon matches the sky"
+  ],
+  "change": [
+    "Donor draws no sun disc (TODO at renderer.zig:156); we draw a sun or moon sprite",
+    "Duels never blend fog or sky; the zone preset is read as it was at engage",
+    "Phase split and durations become zone data, not code constants",
+    "Night tint is set in our palette; no donor colour values"
+  ],
+  "look_test": "Preview-only flag on the 3-attacker Pit arena with a 4-stop time slider (dawn, noon, dusk, night) and a fixed sky preset; publish to /preview/ with no release rows. Compare noon and night stills at the fight camera at 375 wide. Dom checks that three attackers stay separable at night, that dusk reads as dusk not damage tint, and that night is dim not black.",
+  "licence_note": "GPL-3.0 (LICENSE read). Clean-room, shape only: no donor code, colours or numbers copied. Keep the idea (one clock, staged channel ramp, ambient floor, eased fog blend); change the palette, durations and phase split. No legal conclusion.",
+  "tags": ["day-night", "mood-preset", "scheduler", "new:fog-blend", "new:sky-ramp", "new:shared-clock"],
+  "target": {"file": "src/fight/zone-clock.ts", "parity_row": 16},
+  "not_read": [
+    "assets/cubyz/shaders/chunks/chunk_vertex.vert (ambientLight grepped only)",
+    "assets/cubyz/shaders/entity_vertex.vert (grepped only)",
+    "sky and star shader files (not read)",
+    "assets/cubyz/shaders/chunks/transparent_fragment.frag fog path (grepped only)",
+    "lava and water block-texture fog values (grepped only)",
+    "biome .zon contents, 226 files (counted by grep only)",
+    "creature idle behaviour, death and respawn, loot ceremony, walk density (out of topic)"
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "donor": "diasurgical-DevilutionX",
+  "topic": "boss-staging",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/monster.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/quests.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/qol/monhealthbar.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/dead.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/Source/options.cpp",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/monsters/unique_monstdat.tsv",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/monsters/monstdat.tsv",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/text/textdat.tsv",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/assets/txtdata/quests/questdat.tsv",
+    "/mnt/frankendom-donors/diasurgical-DevilutionX/LICENSE.md"
+  ],
+  "counts": {
+    "unique_rows": 100,
+    "unique_pack_leashed": 70,
+    "unique_pack_none": 29,
+    "unique_pack_independent": 1,
+    "unique_reduce_player_nonzero_rows": 0,
+    "unique_custom_to_hit_nonzero": 3,
+    "unique_custom_armor_class_nonzero": 12,
+    "monstdat_rows": 112,
+    "textdat_entries": 338,
+    "boss_speech_keys": 52,
+    "quest_rows": 24,
+    "boss_quest_pick_combinations_derived": 54,
+    "boss_hp_example_lazarus_sp_normal_hp_derived": 300
+  },
+  "rule": "Boss walk-in and kill order, as the code runs. Placement from the unique table by level (pack size 8, leashed when the table says so). Single-player HP halved, then difficulty multiplier and flat add. Leash: minion within 3 tiles of leader; leader moves only when its pack is complete. Talk gate: a talking boss does not attack until its speech effect stops (donor defect; ours uses a server timer). Death order: XP, kill count, loot, Diablo-only branch, death animation, quest kill check. Diablo camera drifts one tile per tick for 140 ticks, then the run ends. Seeded quest pool removes some boss quests per game. Enemy bar: unique name in gold-white; resist icons for uniques or after 15 kills.",
+  "data_fields": [
+    {"name": "trigger_radius_tiles", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "intro_hold_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "boss_max_hp_base", "unit": "hp", "donor_value_or_null": null},
+    {"name": "hp_mul_by_difficulty", "unit": "multiplier", "donor_value_or_null": null},
+    {"name": "hp_add_by_difficulty", "unit": "hp", "donor_value_or_null": null},
+    {"name": "active_attacker_cap", "unit": "count", "donor_value_or_null": null},
+    {"name": "pack_size", "unit": "count", "donor_value_or_null": null},
+    {"name": "leash_range", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "death_cam_ms", "unit": "ms", "donor_value_or_null": null},
+    {"name": "resist_reveal_kills", "unit": "count", "donor_value_or_null": null},
+    {"name": "retreat_hp_frac", "unit": "fraction", "donor_value_or_null": null},
+    {"name": "heal_gap_tiles", "unit": "tiles", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Timed talk hold before the first attack, so the threat is read first",
+    "Gold-white unique name on the enemy bar, and resist icons earned by kills",
+    "Unique corpse keeps its own tint and light",
+    "Order of death steps: reward first, then animation, then quest state",
+    "Leash ring around a pack; the leader waits for its pack",
+    "Seeded per-game pool of boss quests"
+  ],
+  "change": [
+    "Attack gate ends on a server timer, not on a sound effect ending (donor defect, fix: server holds talking state for intro_hold_ms; client plays the line)",
+    "Pack of 8 becomes at most 3 attacking (MAX_ATTACKERS = 3); the rest wait in the leash ring",
+    "No single-player HP halving; one HP value per boss from zone data and difficulty",
+    "Diablo-style death freeze and camera drift are client presentation only; server ends the fight at once",
+    "Gargoyle heal comment disagrees with its code (comment 1.47-25 percent, code max/64 to max/128); use our own value and fix the comment in our design doc"
+  ],
+  "look_test": "Target file src/fight/boss-staging.ts (new), parity row 9 (finisher staging). Look-test flag on the existing fight scene, no release rows. Three walk-ins at 375 wide (intro hold 0.5 s, 2 s, 3.5 s) with a gold name card, and two death drifts (2 s and 7 s). Dom says which hold reads as a threat without feeling slow.",
+  "licence_note": "Code: Sustainable Use License 1.0 (LICENSE.md). Restricted, not MIT/Apache/BSD: shape only, no code or table values copied; donor_value_or_null is null for every field. Content: boss names and speech belong to the original Diablo game (Blizzard IP); strings not quoted. Our bosses are originals. No legal conclusion.",
+  "tags": [
+    "boss-intro",
+    "boss-elite-pattern",
+    "name-card",
+    "finisher-camera",
+    "stinger",
+    "seed-discipline",
+    "new:zone-boss-table",
+    "new:talk-hold-timer",
+    "new:retreat-heal-phase"
+  ],
+  "not_read": [
+    "Source/controls/touch/* (touch targeting, what sets pcursmonst on a phone)",
+    "Source/movie.cpp (cutscene playback)",
+    "Source/levels/drlg_l*.cpp (set-piece boss room layout)",
+    "sound effect table (assets/txtdata/sound/effects.tsv)",
+    "Source/lua/* boss hooks",
+    "Multiplayer Skeleton King pack path in depth (only placement line 541)",
+    "Hellfire branches (gbIsHellfire)",
+    "Full string text of boss speech (count only, not quoted)",
+    "Gargoyle heal repeat count (how many heal ticks run)"
+  ]
+}

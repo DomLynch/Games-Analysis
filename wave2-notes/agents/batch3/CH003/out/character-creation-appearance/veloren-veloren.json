@@ -1,0 +1,31 @@
+{
+  "game": "veloren-veloren",
+  "category": "character-creation-appearance",
+  "cell": 2,
+  "verdict": "STRONG",
+  "depth": "thin",
+  "donor_path": "/mnt/frankendom-donors/veloren-veloren/common/src/comp/body/humanoid.rs",
+  "licence": "GNU GPL version 3 (LICENSE: Version 3, 29 June 2007)",
+  "licence_class": "copyleft",
+  "target_module": "origins/character/appearance.ts",
+  "parity_row": 21,
+  "pattern_tags": ["clamp-and-report", "new:family-count-table", "new:server-appearance-gate"],
+  "data_fields": [
+    {"name": "hair_styles_per_family", "donor_constant": "Human female 20, male 21 (other families 15-22)", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/veloren-veloren/common/src/comp/body/humanoid.rs:390"},
+    {"name": "beards_per_family", "donor_constant": "Human female 1, male 10 (male range 6-23)", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/veloren-veloren/common/src/comp/body/humanoid.rs:444"},
+    {"name": "skin_colours_per_family", "donor_constant": "Human 18 (families 7-18)", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/veloren-veloren/common/src/comp/body/humanoid.rs:235"},
+    {"name": "eye_colours_per_family", "donor_constant": "Human 5 (families 4-7)", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/veloren-veloren/common/src/comp/body/humanoid.rs:301"},
+    {"name": "hair_colours_per_family", "donor_constant": "Human 22 (families 13-25)", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/veloren-veloren/common/src/comp/body/humanoid.rs:358"},
+    {"name": "height_scale_min", "donor_constant": "0.85", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/veloren-veloren/common/src/comp/body/humanoid.rs:39"},
+    {"name": "height_scale_max", "donor_constant": "1.1", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/veloren-veloren/common/src/comp/body/humanoid.rs:39"},
+    {"name": "base_height", "donor_constant": "20.0 / 9.0", "unit": "units", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/veloren-veloren/common/src/comp/body/humanoid.rs:38"},
+    {"name": "human_male_scaler", "donor_constant": "1.05 (human female 0.99)", "unit": "ratio", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/veloren-veloren/common/src/comp/body/humanoid.rs:108"},
+    {"name": "name_max_chars", "donor_constant": "20", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/veloren-veloren/common/src/character.rs:12"},
+    {"name": "starter_weapon_rows", "donor_constant": "7 (one is an empty pair)", "unit": "count", "where": "engine constant", "donor_ref": "/mnt/frankendom-donors/veloren-veloren/server/src/character_creator.rs:11"}
+  ],
+  "best_idea": "One body family per species and body type holds a count table, a single clamp runs on the server before persist, and random generation draws only from those counts.",
+  "decision": "adapt",
+  "decision_why": "Frankendom needs body families on the shared rig with a count per index and a server-side clamp; the donor clamps only in the client, so the server clamp and the catalogue-held table are the fix. Not a fight-engine mechanism.",
+  "decision_status": "proposed",
+  "acceptance": "A hero created with hair index 99 in a 21-style family is stored as 20 and the create is accepted, and a 21-character name is refused with the name error; a server test asserts both."
+}

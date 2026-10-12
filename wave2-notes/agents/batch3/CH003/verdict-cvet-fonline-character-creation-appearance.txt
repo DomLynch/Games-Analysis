@@ -1,0 +1,30 @@
+cvet-fonline (character-creation-appearance, cell 1)
+Donor: /mnt/frankendom-donors/cvet-fonline | Licence: MIT License (LICENSE, "Copyright (c) 2006 - 2026, Anton Tsvetinskiy aka cvet"; read the header) | C++ engine (FOnline)
+Verdict: PARTIAL, depth thin. Confidence high that the donor has no character creation flow; medium that no other appearance code exists (grep only, not read in full).
+
+Files opened (read in part):
+1. /mnt/frankendom-donors/cvet-fonline/Source/Tools/ImageBaker.cpp lines 1679-1730 (SPR filename option parse) and 1940-2085 (per-part palette composition)
+2. /mnt/frankendom-donors/cvet-fonline/Docs/en/how-to/content/image-format.md lines 240-275 (SPR option doc)
+3. /mnt/frankendom-donors/cvet-fonline/Source/Server/Server.cpp lines 3082-3150 (LoginPlayerToNewRecord)
+4. /mnt/frankendom-donors/cvet-fonline/Source/Common/Common.h line 434 (grep hit only; enum not read beyond that line)
+5. /mnt/frankendom-donors/cvet-fonline/Source/Server/Server.h line 214 (grep hit only)
+6. Grep-only hits, not read: Docs/en/reference/script-api/events.md (OnPlayerLogin), Examples/* (no creation script found), Source/Tests/Test_ScriptBuiltins.cpp (GenderType enum used in tests only)
+
+What the donor has:
+- A bake-time colour layer. A sprite's filename may carry bracket entries "[part,r,g,b]" (ImageBaker.cpp 1682, format comment). Part 0 other, 1 skin, 2 hair, 3 armor (1679). Each part has its own RGB offset, default zero (1680). Part 0-3 sets that part; any other part index sets all parts (1716).
+- Compose: for each of the four parts in order (1957), each pixel colour is taken from palette[part] (2032), each channel with a non-zero offset is shifted and clamped to 0..255 (2048-2051), then part 0 writes every pixel (2057) and parts 1-3 write only pixels with alpha >= 128 (2060).
+- Docs confirm the same (image-format.md 253-254).
+
+What the donor does NOT have:
+- No character creation UI, no body family, no face, no scar, no name rule, no class choice. The only creation word is an error code, NetWrongTagSkill = 1029 ("Identifies character creation rejected because the required tagged-skill selection is invalid", Common.h 434); nothing in Source uses it (grep).
+- Login: LoginPlayerToNewRecord stores the new player record (Server.cpp 3120), then fires OnPlayerLogin (3128). What the new character looks like is decided by the game script on that event. The engine does not create the critter's look.
+
+Why PARTIAL and not STRONG: the one real mechanism is a bake-time colour shift for three palette layers (skin, hair, armor). It is real and read end to end, but it is a colour fragment, applied when the sprite is baked from a filename, so a player's skin or hair cannot be changed at runtime by this code. It does not cover body families, faces, scars or creation order.
+
+Best transferable idea: give one shared sprite three palette layers (skin, hair, armour) and store each character's tint as four RGB offsets of data, clamped per channel, applied at draw time (a shader palette swap) instead of at bake time.
+Decision (proposed): adapt - keep the layered-tint shape as client-only data for the catalogue (skin, hair, armour as three colour fields per character), applied in the renderer; it does not touch src/fight.
+Target and parity: client render layer under the catalogue (catalogue fields row 21, gear dressing row 15, colour grade row 16). Not a fight-engine row; the creation flow itself is not in this donor.
+Fix noted, not needed in donor: the donor's offsets are bake-time, so a live change means a re-bake. Frankendom must apply the offsets per draw, not per bake.
+
+Receipts: 17 written to /private/tmp/p2/wave2-haiku/batch3/CH003/receipts.tsv, verify_receipts.py: receipts ok 17 failed 0. The receipts prove the quoted lines exist; the sentences above were checked against the code read at the lines given.
+Not verified: the palette loader (where palette[part] comes from) was not read; the SPR runtime factory (DefaultSpriteFactory does not register .spr, per docs) was not read.

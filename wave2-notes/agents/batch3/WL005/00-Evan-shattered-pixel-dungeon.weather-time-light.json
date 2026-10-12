@@ -1,0 +1,73 @@
+{
+  "donor": "00-Evan-shattered-pixel-dungeon",
+  "topic": "weather-time-light",
+  "depth": "full",
+  "half_read": "both",
+  "paths": [
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/scenes/SurfaceScene.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/buffs/Light.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/items/Torch.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/Dungeon.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/levels/Level.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/levels/HallsLevel.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/blobs/Blob.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/blobs/Blizzard.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/blobs/StormCloud.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/items/potions/exotic/PotionOfStormClouds.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/items/trinkets/ChaoticCenser.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon/actors/Actor.java",
+    "/mnt/frankendom-donors/00-Evan-shattered-pixel-dungeon/core/src/main/assets/messages/actors/actors.properties"
+  ],
+  "counts": {
+    "blob_classes_in_actors_blobs": 23,
+    "blob_name_keys_in_actors_properties": 19,
+    "monster_classes_using_light_distance_as_sight": 6,
+    "surface_star_count": 100,
+    "surface_cloud_count": 5,
+    "level_feeling_roll_cases": 14
+  },
+  "rule": "Time of day is only the device-clock flag on the surface scene (day for hours 8 to 19 inclusive). It drives star count, cloud drift sign and brightness pairs, never gameplay. In the dungeon, light is a sight number: level default (8, or 2 under Darkness), times 5/8 on dark feelings, capped at 26 minus depth on Halls, and floored at 6 while a torch Light buff (250 turns) is active; detaching restores level sight. Gas fields (weather-like) diffuse by neighbour average minus 1 per step with a fixed per-cell interaction order (fire cleared first, inferno cancels blizzard, otherwise freeze twice).",
+  "data_fields": [
+    {"name": "day_start_hour", "unit": "local hour (inclusive)", "donor_value_or_null": null},
+    {"name": "day_end_hour", "unit": "local hour (inclusive)", "donor_value_or_null": null},
+    {"name": "star_count", "unit": "count", "donor_value_or_null": null},
+    {"name": "cloud_count", "unit": "count", "donor_value_or_null": null},
+    {"name": "cloud_drift_base", "unit": "scene speed units", "donor_value_or_null": null},
+    {"name": "grass_brightness_back_day", "unit": "multiplier", "donor_value_or_null": null},
+    {"name": "grass_brightness_back_night", "unit": "multiplier", "donor_value_or_null": null},
+    {"name": "hero_brightness_day", "unit": "multiplier", "donor_value_or_null": null},
+    {"name": "sight_default", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "sight_darkness_challenge", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "sight_dark_feeling_ratio", "unit": "ratio (5/8)", "donor_value_or_null": null},
+    {"name": "sight_halls_cap", "unit": "tiles (formula 26 - depth)", "donor_value_or_null": null},
+    {"name": "light_turns", "unit": "turns", "donor_value_or_null": null},
+    {"name": "light_sight_floor", "unit": "tiles", "donor_value_or_null": null},
+    {"name": "blob_seed_per_open_neighbour", "unit": "volume units", "donor_value_or_null": null},
+    {"name": "blob_decay_per_step", "unit": "volume units", "donor_value_or_null": null},
+    {"name": "storm_fiery_damage", "unit": "hp (formula 1 + depth/5)", "donor_value_or_null": null}
+  ],
+  "keep": [
+    "Single sight number with a max floor from a timed light buff, reset on expiry",
+    "Dark-level sight as a ratio, not a separate mode",
+    "Depth cap on sight as a zone data field",
+    "Sign flip of drift and star field fading to the horizon as the one-glance time cue",
+    "Fixed per-cell interaction order for hazard fields"
+  ],
+  "change": [
+    "Device local clock removed: day flag must come from the server zone state",
+    "Turns become server ticks; buff expiry handled by the server tick, not the client",
+    "Hazard field per arena grid only, sized to the per-tick budget (parity row 18)",
+    "No sound tied to time of day exists in the donor; add one only by design, not by copying"
+  ],
+  "look_test": "Stub zone with sight 8, 5 and 2 plus torch floor 6 on sight 2; three attackers at 4, 6 and 8 cells; three 375-wide stills plus a day and night sky driven by a server flag. Dom picks the still where he can react in time. Target file src/fight/sight.ts; parity row 4 (fight loop: aggro, chase, leash).",
+  "licence_note": "GPL-3 (donor LICENSE.txt). Shape only, clean-room. No code, sprites, strings or palette values copied. No legal conclusion.",
+  "tags": ["day-night", "mood-preset", "weather-state", "duration-rule", "timed-event", "new:sight-floor", "new:gas-field-decay"],
+  "not_read": [
+    "tile lighting and tilemap shading classes (grep only)",
+    "the code path that enters SurfaceScene on death or exit",
+    "loot reveal ceremony",
+    "walk density (what appears every 20 seconds of walking)",
+    "creature idle animations outside the surface scene",
+    "Noosa speed units (px/s assumed, not verified)"
+  ]
+}

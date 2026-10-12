@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+freeciv-freeciv	sound-music	P	STRONG	full	client/music.c 44-88 and client/audio.c 388-511, 592-602; server/mood.c 31-46: mood picks a track group, shuffled alternatives skip the last one, and a one-shot cue holds the loop and resumes it; the 2000 ms stop fade is cancelled by the next play (client/audio_sdl.c 144, 147).
+freeorion-freeorion	sound-music	P	STRONG	thin	UI/Sound.cpp 196-201, 581-620, 691-719: UI-cue guard (depth counter) and a first-free 16-source voice pool that drops cues with no priority; no layering, stingers, ambience beds or crossfade in this donor.
+hedgewars-hw	sound-music	P	STRONG	full	hedgewars/uSound.pas 660-670, 672-745, 851-891, 936-949: stinger pauses and resumes music, 8-slot voice queue with victory interrupt, theme-keyed music with sudden-death and fallback tracks, focus dampen.
