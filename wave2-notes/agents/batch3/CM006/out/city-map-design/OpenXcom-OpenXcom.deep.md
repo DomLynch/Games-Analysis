@@ -235,3 +235,7 @@ Donor defects, kept idea and fixed (each with its fix):
 - Roads are cosmetic in the donor. A duel arena needs a walkable route; the donor's AI route nodes (`loadNodes`, `attachNodeLinks`) were not read, so walkability and patrol links are unknown.
 - The Pit is a fixed arena (client only). This grammar is for open zones and does not apply to the Pit.
 - Not read: `loadMAP`, `loadRMP`, `drillModules`, `removeBlocks` (except 2915), `MiniMapView.cpp`. The minimap part of the topic is not covered by this note.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+CLEAN
+- Missed (informational, not an error): addLine (2648-2716) retries up to 20 times and ignores selectPosition's return value, so roadX/roadY can be stale when no cell is free; 'both' returns true even if the horizontal half fails.

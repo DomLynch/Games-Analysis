@@ -119,3 +119,7 @@ export {};
 
 Reuse tag: rewrite-from-idea (BSD 3-Clause; the sketch is clean-room)
 Brief rule served: addendum rules 2, 3 and 5; ruling: zones as data on one runtime
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- None. Missed: ingame_map_display.py:68 sets _MAX_MAP_SIZE from BASIC_MAP_SIZE (copy-paste defect); exit pass skips None rooms (358).

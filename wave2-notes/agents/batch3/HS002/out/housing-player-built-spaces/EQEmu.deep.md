@@ -170,3 +170,6 @@ Acceptance: two members of one guild open the hall from a phone and see the same
 
 Reuse tag: rewrite-from-idea (GPL-3.0; clean-room only)
 Brief rule served: zones as data; one ledger; parity row 23 (nearest row)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN

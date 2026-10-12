@@ -168,3 +168,7 @@ Acceptance: on a generated zone, no second hub is placed inside the first hub's 
 
 Reuse tag: rewrite-from-idea (GPL v2; clean-room only)
 Brief rule served: zones as data; server-verified, deterministic placement; the client only renders the layout.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+CLEAN

@@ -12,8 +12,8 @@ Acceptance: At level 45 an NPK death drops 2, 3 or 4 items (10,000 seeded deaths
 ## 1. Mechanism
 
 - Tiers by killer. The killer decides the tier. `IsPKDeath` is true when the victim has the PK flag and the killer is another player (`Player_Combat.cs` 714). `IsPKLiteDeath` is the same for PKLite (`Player_Combat.cs` 725-726, read in grep). Tiers, as the code runs in `Die` (150-246):
-  - NPK death (killer is a monster, or the victim is not PK): vitae penalty applies (208-209), enchantments: bad ones purged unless the augmentation keeps spells (211-220), items by the rule in step 2.
-  - PKLite death: no vitae (207-209), and in `CalculateDeathItems` the function returns an empty list at once (481). Corpse is made with no items. After death the player is set to NPK for a respite (236, `SetMinimumTimeSincePK`).
+  - NPK death (killer is a monster, or the victim is not PK): vitae penalty applies (208-209), enchantments: the condition is `IsPKDeath || AugmentationSpellsRemainPastDeath == 0` -> `RemoveAllEnchantments` (211-216), so the default NPK death removes ALL enchantments; only an NPK death with the spell-keeping augmentation removes just the bad ones (217-220), items by the rule in step 2.
+  - PKLite death: no vitae (207-209), and in `CalculateDeathItems` the function returns an empty list at once (481). The same line also returns an empty list for any death on a No Drop landblock (`corpse.IsOnNoDropLandblock`): zone data that turns item loss off for a whole area, directly reusable. Corpse is made with no items. After death the player is set to NPK for a respite (236, `SetMinimumTimeSincePK`).
   - PK death: vitae applies, all enchantments purged (211-214), items by the rule in step 2 with the donor's own PK exception (see section 6 for why the code does not match its comment).
 - Step 1, death chain: `Die` sets the victim's health to 0, counts the death, sends messages, then waits for the death animation length plus 1 s (227) before `CreateCorpse` (231) and the portal teleport. `SetMinimumTimeSincePK` runs at the end for PK and PKLite deaths (236).
 - Step 2, count (`GetNumItemsDropped`, 629-670): level 10 or below: 0 (652-653). Level 11-20: `Next(0,1)` which is inclusive, so 0 or 1 (655-656). Level 21 and up: `level / 20` plus an inclusive roll of 0 to 2 (659), capped at 14 (`MaxItemsDropped`, 623; cap at 661). For NPK deaths, the Clutch augment subtracts 5 per augment level (669), not applied to PK deaths. Coins: half, above level 5 (682).
@@ -154,3 +154,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - The Clutch augment has no Frankendom counterpart; drop it, or make the per-level reduction a gear perk with a data field.
 - Not read: the lifestone protection start point and dispel path (`LifestoneProtectionDispel` near 937); whether a corpse with no items is persisted (`saveCorpse`, 542-561); `CalculateDeathItems_Olthoi` (1065-); the bonded-destroy path (`HandleDestroyBonded`, 1029).
 - AGPL-3.0 network copyleft: this note describes the shape only. The sketch was written from the mechanism; no donor line is copied.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+- Verdict: MINOR
+- Player_Death.cs:211-222: note said NPK death purges bad enchantments unless augmentation keeps spells. Real: IsPKDeath || AugmentationSpellsRemainPastDeath == 0 -> RemoveAllEnchantments; only with the augmentation (and not PK) are just bad enchantments removed. Default NPK removes all.
+- Missed: No Drop landblock rule (Player_Death.cs:481) returns an empty drop list; note only mentioned the PKLite half.
+
+Fixed 2026-10-12: corrected the NPK enchantment claim; added the No Drop landblock line to the PKLite bullet.

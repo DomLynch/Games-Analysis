@@ -142,3 +142,7 @@ Best transferable idea: keep plots as boxes with an owner string in one spatial 
 
 Decision (proposed): adapt - the index shape transfers, but as a derived view of plot rows in the one ledger, with the three defects fixed. Not a second store.
 Acceptance: a server test places a plot, then refuses an overlapping plot; a one-node plot is found by a point query at its corner; building in another player's plot is refused by the server command, and a thin protected box is never skipped by the placement check.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+CLEAN
+- Missed (not an error): donor getNextId reuses freed ids (gap scan); the note's counter 'ids never reused' is a deliberate change. getContainerPos (numeric.h:33) floors negatives, matching the sketch's Math.floor.

@@ -11,7 +11,7 @@ Checked: read in full `WorldMgr.cs` 627-656, `Group.cs` 286-327, `Player.cs` 466
 - Award size, `GenerateRenownCount` (627-641): `RP = victimRank x 4 + victimLevel x 6` (632-635). If `RenownRate` is above 0 the count is multiplied by it (637-638); the config default is 1 (WorldConfigs.cs 50). A self-kill or missing victim gives 0 (629-630).
 - Group split, `Group.AddRenown` (308-327): first count the members who are the killer or within distance 100 (310-318). Then each of those members gets `GenerateRenownCount(member, victim) / activePlayers` (320-325, 324). Integer division rounds down, and the remainder is lost.
 - Standing and rank, `Player.AddRenown` (616-625): if stored total + gain is above the current rank's threshold (618), `RenownUp(stored + gain - threshold)` runs (619). Otherwise the gain is added to the stored total and sent (622-623).
-- `RenownUp` (626-634): loads the next rank's threshold row (628). If there is no next row (top rank) it returns (629-630), and the gain is dropped. Otherwise it sets the next rank (632) and calls `AddRenown` with the carried remainder (633).
+- `RenownUp` (626-634): loads the next rank's threshold row (628). `CurrentRenown` is assigned the next row first (628); if that row is missing (top rank) it returns (629-630) with `CurrentRenown` now null, the rank unchanged and the gain dropped. The next `AddRenown` then dereferences `CurrentRenown.Renown` at 618 and throws a NullReferenceException, so the top rank is a crash, not a harmless freeze (defect 3). Otherwise it sets the next rank (632) and calls `AddRenown` with the carried remainder (633).
 - The stored total is never reset on rank-up (only written at 622, and set to 0 at character creation in CharacterHandlers.cs 96). Example by hand, not run: threshold 1000, stored 990, gain 50. The rank-up passes 40 on, and the new rank shows 990 + 40 = 1030, not 40. This is a defect if thresholds are per rank (see section 6).
 
 ## 2. Key functions
@@ -30,13 +30,13 @@ Checked: read in full `WorldMgr.cs` 627-656, `Group.cs` 286-327, `Player.cs` 466
 | Global award multiplier | Rate 1 (theirs, WorldConfigs 50); applied only when above 0 (WorldMgr 637) |
 | Party share: in-range count, integer division | Range 100 (theirs, Group 314; unit not read); divisor = in-range count including the killer (Group 310-318) |
 | Rank-up when the total passes a per-rank threshold | Threshold is a database column per rank (theirs, Renown_Info 42); values not in the repo |
-| Top rank drops further gains | No next row returns (theirs, Player 629-630) |
+| Top rank drops further gains | No next row returns (theirs, Player 629-630); donor leaves CurrentRenown null, so the next gain throws (618) |
 | Death: timed auto-resurrect | 600 seconds (theirs, Player 472) |
 | Loot gate by renown relative to corpse level | MinRenown must not exceed (corpse level + 4) x 2 (theirs, LootsMgr 132). Example by hand: corpse level 30 gives a cap of 68 |
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order: the award formula, the group division by the in-range count (which the caller passes in, the range test is left out), and the rank-up loop with the donor's strict "above threshold" test. It drops the database rows, the distance check, the quest kill event, the packets, the GM commands, the loot and item gates, and the config read (the rate is a parameter). It changes one thing on purpose: on rank-up the progress is reset to the overshoot, where the donor keeps the old total and adds the overshoot on top. At the top rank the sketch stops the gain and drops the excess, as the donor does; the donor freezes the stored total at the threshold, which gives the same visible result. The file is checked on the VPS with `tsc --noEmit --strict --target es2020` (exit 0).
+simplified: the sketch keeps the donor order: the award formula, the group division by the in-range count (which the caller passes in, the range test is left out), and the rank-up loop with the donor's strict "above threshold" test. It drops the database rows, the distance check, the quest kill event, the packets, the GM commands, the loot and item gates, and the config read (the rate is a parameter). It changes one thing on purpose: on rank-up the progress is reset to the overshoot, where the donor keeps the old total and adds the overshoot on top. At the top rank the sketch stops the gain and drops the excess. The donor intends this, but its code does not freeze the total: it nulls `CurrentRenown` and the next gain crashes (defect 3), so the sketch keeps the idea and fixes the crash. The file is checked on the VPS with `tsc --noEmit --strict --target es2020` (exit 0).
 
 ```ts
 // Licence: unclear in the donor (GPL-2.0-or-later on two files, no header on the renown code files, no repo LICENSE). Clean-room: re-expressed from the mechanism, not translated.
@@ -54,7 +54,8 @@ function groupShare(award: number, inRangeCount: number): number {
 
 // need[r] = points to leave rank r (data, one row per rank). Donor rule: rank up when progress is strictly above need.
 // fix: the donor keeps the old total on rank-up and adds the overshoot on top, which double-counts. Here the
-// progress is reset to the overshoot. At the top rank gains stop and the excess is dropped, as in the donor.
+// progress is reset to the overshoot. At the top rank gains stop and the excess is dropped (the donor intends this
+// but nulls its current-rank row and crashes on the next gain; here the top rank is a plain state).
 function addStanding(s: Standing, gain: number, need: number[]): Standing {
   let rank = s.rank;
   let progress = s.progress + gain;
@@ -89,8 +90,17 @@ Brief rule served: GL-FOCUS 1 (favour gained by kill and split by the party) and
 - Licence unclear: clean-room only. The sketch is a re-expression, not a copy.
 - Defect 1 (kept idea, fixed): rank-up does not reset the stored total (Player.cs 618-633). If thresholds are per rank, a 990 + 50 gain against a 1000 threshold shows 1030 at the new rank, where 40 is right. If the thresholds are cumulative, the donor's arithmetic is still off, because the gain is not added before the rank-up. Either way, the sketch resets progress to the overshoot. Check the threshold table semantics before porting numbers; the table is not in this repo.
 - Defect 2 (kept idea, fixed): the item use gate compares the player's `Rank` with the item's `MinRenown` (InventoryHandlers.cs 93). `Rank` is the unit's class tier set from faction (Unit.cs 671, 684), not renown. The other gate (ItemsInterface.cs 696) compares `Renown`, which is correct. Fix: one gate, on renown.
+- Defect 3 (kept idea, fixed): top-rank crash. `RenownUp` (Player.cs 628-630) overwrites `CurrentRenown` with a null row before its null check, so a player at the top rank keeps the rank but the next `AddRenown` dereferences null at 618 and throws. Fix: look the next row up into a local, return before assigning; the sketch treats the top rank as a stable state.
 - Remainder loss: the integer division drops the remainder of each party share (for example 280 split three ways loses 1 point). State the rounding rule in the spec; the sketch rounds down on purpose.
 - The party range (100) is a distance in donor units that were not read. Frankendom must choose its own range in the zone data, and the in-range count must be computed on the server, not from client positions.
 - Frankendom rulings: the award is server-verified and one ledger. Kill credit by top damage contributor (the HeroPoints idea in cell 2) is a different rule; do not mix the two without a ruling.
 - Realm bonus columns exist (Realm.cs 41-42, strings "0") with no use found in WorldServer (grep). Not read further.
+- The group-split loop passes each member as `Killer` into `GenerateRenownCount` (Group.cs 324), so the self-kill guard is by member; harmless.
 - The donor has no creature-kill renown; if Frankendom wants standing from NPC kills, that is a new rule, not this mechanism.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Note and sketch said at top rank the donor freezes the stored total at the threshold (same visible result). Wrong: RenownUp (Player.cs 628-630) assigns CurrentRenown = GetRenown_Info(rank+1) (null at top) before the null check; the next AddRenown dereferences it at 618 and throws NullReferenceException.
+- Missed: top-rank null CurrentRenown crash; group loop passes each member as Killer (324), harmless.
+
+Fixed 2026-10-12: mechanism, numbers table, sketch comment and prose now state the crash; defect 3 added with the fix (local variable before assignment). Sketch logic unchanged (comment only), typecheck rerun below.

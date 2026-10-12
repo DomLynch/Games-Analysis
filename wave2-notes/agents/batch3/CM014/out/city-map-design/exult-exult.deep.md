@@ -121,3 +121,6 @@ Acceptance: a player opens the map and sees each zone block in its type colour w
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 Brief rule served: zones as data (one block grid per map from zone data); client-only HUD; server-verified positions for any teleport
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+CLEAN

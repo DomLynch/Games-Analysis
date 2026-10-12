@@ -124,3 +124,7 @@ Acceptance: The zone minimap shows only tiles the player has seen, and a headles
 - Per-floor store and 65536 indexing are donor-specific. Frankendom zones are data; use zone bounds instead.
 - The route cost is not a combat mechanism. It is a shape to reuse for the client only if a fight or travel feature needs client-side route previews. Server routes are not in this donor.
 - Not in this donor: town layout, road or building grammar, hub or service placement, landmark signage (all editor-only or absent). Those topics are NONE for this donor's client runtime.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+CLEAN
+- MinimapTileEmpty (flag 8) is consumed at map.cpp:1124 (hasFlag), so it is not dead; the note's 'not set in code read' is honest, the reader is in unread findEveryPath.

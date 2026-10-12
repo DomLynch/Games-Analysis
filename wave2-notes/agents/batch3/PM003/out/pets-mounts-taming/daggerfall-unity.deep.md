@@ -9,14 +9,14 @@ Checked: read in full: `DaggerfallQuestPopupWindow.cs` 33-68 (DaedraData struct 
 - Entry (`DaedraSummoningService`, 166-216). A faction's summon service reads the summoner's faction data (168-173; missing data logs and exits).
 - Pick the entity for today (175-200):
   (a) Glenmoril witches always get entry 0, Hircine (176-179);
-  (b) a witches coven gets one random entry from index 1 to 15 per in-game day, cached on the player (180-189; index 0 is excluded);
+  (b) a witches coven (faction type `WitchesCoven`) gets one random entry from index 1 to 15 per in-game day, cached on the player (180-189; index 0 is excluded). The pick is redone when the stored day differs from today OR the stored index is 0 (183);
   (c) any other faction gets the first entry whose `dayOfYear` equals today (190-199; `break` on first match);
   (d) no match: the "not today" message and no cost (201-207).
 - Confirm step (209-214): a yes/no box.
 - Confirm (`ConfirmSummon_OnButtonClick`, 218-): cost = `200000 - 1000 x summoner reputation` (224; `FormulaHelper` 1964). Not enough gold: a message with the price (226, else branch 282-). Enough gold: gold is deducted (228) before any roll.
 - Replacement (232-237): roll 1-100; if roll <= 5 (15 when storming), Sheogorath (entry 8) replaces the chosen entity.
 - Bonus (239-244): 30 when the entity's condition is None, or Rain and raining, or Thunder and storming; else 0.
-- Chance (247; `FormulaHelper` 1973): `30 + player's reputation with the entity's faction + bonus`. Roll 1-100 (248; `Dice100.Roll`, `Dice100.cs` 12). Fail when roll > chance (252): failure message (254); at a witches coven, 1 to 3 foes from 5 daedric types spawn (256-257); return with no quest.
+- Chance (247; `FormulaHelper` 1973): `30 + player's reputation with the entity's faction + bonus`. Roll 1-100 (248; `Dice100.Roll`, `Dice100.cs` 12). Fail when roll > chance (252): failure message (254); the foe spawn is gated on `summonerFactionData.ggroup == GuildGroups.Witches` (256), not on the coven faction type used for the daily pick; 1 to 3 foes from 5 daedric types spawn (256-257); return with no quest.
 - Success: if this entity's Summoned flag is already set, show the "already summoned" window (262-266). Otherwise set the flag (270) and offer the entity's quest if one exists (273-279).
 - Order matters: payment (228) is before the replacement roll (234), the chance roll (248) and the flag (270). A failed roll keeps the gold spent.
 - Tick: none. An event (a button press) with synchronous checks.
@@ -45,7 +45,7 @@ Checked: read in full: `DaggerfallQuestPopupWindow.cs` 33-68 (DaedraData struct 
 | Mages Guild summon service rank gate | rank >= 6 | MagesGuild.cs 154-155 |
 | Secondary, mount riding speed: `(LiveSpeed + dfRideBase) / 39.5`, `dfRideBase = 150 + 225 = 375` | ride base 375; cart base 250 (`dfWalkBase + 100`); ratio 39.5 | PlayerSpeedChanger.cs 30-34, 156-159 |
 | Secondary, walk formula (initial; see Checked): `(LiveSpeed + 150 - 0.5 x (100 - max(LiveSpeed, 30))) / 39.5` | drag 0 at LiveSpeed 100, 35 at LiveSpeed 30 or less | PlayerSpeedChanger.cs 389-392 |
-| Secondary, run lock while riding: `CanRun = !IsRiding` | no run while riding | PlayerSpeedChanger.cs 139 |
+| Secondary, run lock while riding: `CanRun = !IsRiding` | run flag locked while riding (GetRunSpeed still has a riding branch, 404-410) | PlayerSpeedChanger.cs 139 |
 | Secondary, mount toggle: horse or cart -> foot; else horse if owned; else cart | horse before cart | TransportManager.cs 113-126 |
 | Secondary, dismount on interior entry: building or dungeon interior -> foot | forced | TransportManager.cs 206-211 |
 
@@ -136,8 +136,16 @@ function attemptSummon(
 - Hard-coded indexes: the Sheogorath replacement is `daedraData[8]` (236) and the coven is `Random.Range(1, daedraData.Length)` (185). Fix: look the replacement up by id, not index.
 - The failure ambush is hard-coded to the witches group (256) and five foe types (257). Fix: put the ambush table on the zone row (zones as data).
 - The comment at 239 says the 30 bonus applies only to some daedra, but the code (243) also gives it to every entry whose condition is None. Read as "None means always". Fix: name that case "always" in the data so the rule reads the same in code and data.
-- Mount (secondary): riding speed is a flat add to live speed (`+375` ride base, `+250` cart base over 39.5, PlayerSpeedChanger 33-34, 158-159), and the walk drag term is not applied while riding (drag is only in the walk formula, 391-392). Riding also blocks running (139). This is a design to keep as data if Frankendom adds mounts. Dismount on interior entry (TransportManager 206-211) is a clean rule: entering a building or dungeon interior forces foot.
+- Mount (secondary): riding speed is a flat add to live speed (`+375` ride base, `+250` cart base over 39.5, PlayerSpeedChanger 33-34, 158-159), and the walk drag term is not applied while riding (drag is only in the walk formula, 391-392). Riding sets `CanRun = false` (139), but run speed is not removed: `GetRunSpeed` while riding is `baseSpeed * (1.35 + Running/200)` (PlayerSpeedChanger.cs 404-410), so only the run flag is locked and the formula would still give a run bonus. This is a design to keep as data if Frankendom adds mounts. Dismount on interior entry (TransportManager 206-211) is a clean rule: entering a building or dungeon interior forces foot.
 
 Best transferable idea: a summon is a gated service: a day table picks the entity, the price falls with the sponsor's reputation, the chance rises with the player's reputation with that entity (30 + rep + 30 bonus on matching weather), the price is paid before the roll, a Sheogorath-style replacement roll can swap the entity, and a failed roll can spawn an ambush.
 Decision (proposed): adapt - keep the day gate, the price, the chance and the replacement roll and the once-only flag, but move the roll to the server, clamp the chance, floor the price, and make the refund rule an explicit data field (the donor has no refund).
 Acceptance: a server test on a matching day, with enough gold, at a chance of 60: seeded rolls 1 to 60 summon the entity and rolls 61 to 100 fail; the gold is spent in both cases; a second success for the same entity returns "already-summoned" with no second quest.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+- Verdict: MINOR
+- DaggerfallQuestPopupWindow.cs:256: coven failure spawn is gated on ggroup == GuildGroups.Witches, not the WitchesCoven faction type used for the daily pick (:180); daily re-pick also triggers when the stored index is 0 (:183).
+- Missed: while riding GetRunSpeed uses baseSpeed * (1.35 + Running/200) (PlayerSpeedChanger.cs 404-410); only the CanRun flag is locked, so 'no run speed bonus' was wrong.
+
+Fixed 2026-10-12: split the coven pick vs failure-spawn gating, added the index-0 re-pick, and corrected the riding run claim (prose and table row).

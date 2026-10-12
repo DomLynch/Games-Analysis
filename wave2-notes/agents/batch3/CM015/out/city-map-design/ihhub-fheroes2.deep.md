@@ -144,3 +144,7 @@ Typecheck: copied to the VPS as /tmp/cm015-fheroes2-hub-gate.ts and `npx -p type
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 Brief rule served: zones as data on one runtime; one ledger for purchases; prerequisites and costs as zone data
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+CLEAN

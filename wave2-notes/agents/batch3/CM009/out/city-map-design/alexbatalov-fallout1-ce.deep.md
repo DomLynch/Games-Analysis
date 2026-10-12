@@ -8,7 +8,7 @@ Checked: The list's hint file `src/int/support/intextra.cc` is the wrong file (i
 
 - The world map is a grid of 50 by 50 unit cells. `InCity` maps a position to a hub by dividing by 50 (2861). Twelve hubs sit on fixed cells (`city_location`, 370). The fog state of each cell is kept in a 31 by 29 array (`WorldGrid`, 873). Cell values: 0 unseen, 1 seen nearby, 2 walked.
 - Reveal, called from the travel loop (1559), which runs the reveal once every third pass (`travel_line_cycle` set to 2 at 1556 and decremented; the pass rate of the loop was not read). Order inside the reveal: (a) the walker's cell becomes 2 (2382); (b) the square around the walker is set to 1 unless it is already 2 (3x3 at 2408-2424; 5x5 when the Scout perk is held, 2384-2385); (c) if the walker's column is at or left of `OceanSeeXTable[row]` (2432), every cell in that row left of the threshold becomes 2. A walked cell is never reset, so 2 means "stood on", not "here now".
-- Hub discovery (`UpdateTownStatus`, 2790). When a hub's world flag equals 1 (2809): its own grid cell becomes 1 if it was 0 (2810), and its first-visit bit is set (2814). The first-visit bits are the only gate for hub labels (`DrawTownLabels`, 3020-3023) and for fast travel (1181-1183, target = the hub's cell centre at 50 times column plus 25).
+- Hub discovery (`UpdateTownStatus`, 2790; the flag loop runs from city 1, 2796, because hub 0 is Vault 13 which is driven by game time instead, see the last bullet of this section). When a hub's world flag equals 1 (2809): its own grid cell becomes 1 if it was 0 (2810), and its first-visit bit is set (2814). The first-visit bits are the only gate for hub labels (`DrawTownLabels`, 3020-3023) and for fast travel (1181-1183, target = the hub's cell centre at 50 times column plus 25).
 - Sections, the hub entrances: each hub has up to 7 section flags from the `ElevXgvar` table (402). Each section's known flag is copied from its world flag (2798-2803). Section buttons are drawn only where the flag is set (3653). Each section has an x, y marker and a map index and file name (`TownHotSpotEntry`, 87; sample row at 603). The draw loop stops at the first entry whose x or y is zero (DrawTMAPsels, read; line not quoted).
 - Hub state swap: when a world flag is set, the Cathedral's section list is replaced by a special hub's list (`GVAR_MASTER_BLOWN`, 3641); the Military Base is swapped the same way with `GVAR_VATS_BLOWN` (read, line not quoted).
 - Drawing: `block_map` draws a 9 by 10 cell window (2950, 2954) offset by the sub-cell position (x % 50, y % 50). Unseen cells (0, case at 2956) are filled with `colorTable[0]`; seen cells (1, case at 2963) are blended dark over the map. Walked cells (2) have no case in either switch (switches at 2955 and 2981; cases 0 and 1 only, checked by grep), so they show the map at full brightness.
@@ -29,7 +29,7 @@ Checked: The list's hint file `src/int/support/intextra.cc` is the wrong file (i
 | Reusable algorithm | Game-specific constants |
 |---|---|
 | Walked cell marked, square around it marked seen, walked never reset | Cell size 50 units (2373, 2861); normal radius 1 (3 offsets, 2408); Scout radius 2 (5 offsets, 2384-2385) |
-| Edge clamp inside the reveal | Reveal clamps at column 28 (2397, 2420) and row 30 (2388, 2411). Array is 31 by 29 (873). Reset loop clears 29 rows (884). Defect: the bounds disagree. |
+| Edge clamp inside the reveal | Reveal clamps at column 28 (2397, 2420) and row 30 (2388, 2411). Array is 31 by 29 (873). Reset loop clears 29 rows (884). Defect: the bounds disagree (row 29 can be written but the reset clears only rows 0-28). |
 | Ocean rule: per-row column threshold | 30 rows (219); rule at 2432 |
 | Reveal cadence inside the travel loop | Every third pass (1555-1556) |
 | Hub shown and discovered on world flag | Flag must equal 1 (2809) |
@@ -88,8 +88,14 @@ class FogGrid {
 
 // Gate hubs and sections from world flags. A hub is shown when its gate flag is exactly 1;
 // each section is known when its flag is non-zero; the first section is forced known with its hub.
-function syncFromFlags(hubs: Hub[], flags: number[], grid: FogGrid): void {
-  for (const hub of hubs) {
+// Hub 0 (Vault 13) is skipped by the flag loop, as in the donor (loop starts at 1); it is time-gated below.
+function syncFromFlags(hubs: Hub[], flags: number[], grid: FogGrid, gameDays: number): void {
+  const vault = hubs[0];
+  if (vault) {
+    // Donor: after 10 game days (game_time / 864000 ticks) vault sections 1-3 unlock.
+    vault.sections.forEach((s, i) => { if (i === 0) s.known = true; else if (i <= 3) s.known = gameDays >= 10; });
+  }
+  for (const hub of hubs.slice(1)) {
     for (const s of hub.sections) {
       if (s.knownVar === 0) break;
       s.known = flags[s.knownVar] !== 0;
@@ -132,7 +138,7 @@ export {};
 ## 6. Gaps and risks
 
 - Licence: Sustainable Use License 1.0 allows internal business or non-commercial use only and restricts distribution (LICENSE.md, line 15). The sketch is written from the mechanism; no donor line is copied. Dom to rule whether shape-only reuse of a restricted-licence donor is acceptable.
-- Defect, bounds: the array is declared 31 by 29 (873), the reset loop clears 29 rows (884), and the reveal clamps at column 28 (2397, 2420) and row 30 (2388, 2411). Column 28 is never revealed. Fix: one COLS and ROWS constant used by reset and reveal (done in the sketch).
+- Defect, bounds: the array is declared 31 by 29 (873), the reset loop clears 29 rows (884), and the reveal clamps at column 28 (2397, 2420) and row 30 (2388, 2411). The reveal clamp makes the grid 28 wide (columns 0-27), so the unused 29th column is not itself a defect; the real inconsistency is that row 29 can be written by the reveal (row < 30) but the reset loop (884) clears only rows 0-28. Fix: one COLS and ROWS constant used by reset and reveal (done in the sketch).
 - Defect, reveal cadence: the reveal depends on a counter decremented in the travel loop (1555-1556). In Frankendom the reveal should run on the server tick (or a fixed client step), not on a travel-loop counter. Fix: tie the reveal to a fixed step and make the cadence data.
 - Fog is one-way: a walked cell (2) stays walked and is never reset. Keep it as the design; add a separate "you are here" marker if the HUD needs one (not in the donor).
 - Automap tile index: packing uses tile mod 200 and tile div 200 (972-976), while the grid header says 100 (`map_defs.h` 8). Not resolved (tile layout not read). Do not port the automap packing until the index is confirmed.
@@ -147,3 +153,12 @@ Acceptance: walking a test player across a zone reveals a 3x3 square of fog cell
 
 Reuse tag: rewrite-from-idea (Sustainable Use License 1.0; clean-room, shape only)
 Brief rule served: zones as data; one ledger (flags on the server, fog as HUD)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Sketch syncFromFlags looped from hub 0; the donor loop starts at city=1 (2796) because hub 0 (Vault 13) is time-gated.
+- 'Column 28 never revealed' is not a defect (clamp makes a 28-wide grid); the real inconsistency is row 29 writable (clamp row < 30) but not cleared by the 29-row reset loop (884).
+- Missed: Vault 13 sections 1-3 unlock when game_time()/864000 is non-zero, i.e. 10 days (2819-2829); three derived special hubs 12 Cathedral-blown, 13 Military-blown, 14 Brotherhood set from section flags (2831-2851).
+
+Fixed 2026-10-12: sketch loop now starts at hub 1 with the Vault 13 time gate added (gameDays param); bounds defect re-described; added a Time and derived gates line below.
+Time and derived gates (UpdateTownStatus 2819-2851): Vault 13 (hub 0) section 0 is always known and sections 1-3 become known once game_time()/864000 is non-zero (10 days); special hub 12 is shown when GVAR_MASTER_BLOWN is set or Cathedral section 0 or 1 is known; special hub 13 when GVAR_VATS_BLOWN is set or any of Military Base sections 0-4 is known; special hub 14 when Brotherhood section 1, 2, 3 or 4 is known.

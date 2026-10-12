@@ -115,3 +115,7 @@ Acceptance: A player who dies in zone A is placed at zone A's hub temple on the 
 - Services (shops, banks, depots) and their placement one at a time are not in the C++ read; they are Lua data and were not opened. Treat the "services placed one at a time" part of the topic as NONE for this donor's C++.
 - Road and building grammar, minimap and landmark rendering: not in this donor's C++ read (NONE).
 - The hint file `iomap.cpp` holds only the loader; the mechanism is spread over `town.h`, `iologindata.cpp`, `player.cpp`, `map.cpp`, `housetile.cpp` and `protocolgame.cpp`.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+CLEAN

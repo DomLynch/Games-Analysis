@@ -107,3 +107,6 @@ Acceptance: on a zone at 375 wide the whole zone fits the square with the longer
 - The markers use smoothed transforms of the karts (race_gui.cpp 678-680). Frankendom dots must use server-verified positions, and the map must never be a source for a hit test or a kill.
 - The donor bake depends on the rendering path (createMeshSP on GLSL, or createMesh with flatten), which was not read in full. Frankendom's zones are tile grids, so a canvas draw at load is enough.
 - The soccer invert (track.cpp 757) changes the map orientation for one team. Its condition (746-757) was not read beyond line 757.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN

@@ -13,7 +13,7 @@ Checked: Read in full: AbstractArea enter/leave (208-250), AreaMgr.LoadAllAreas 
 - Enter and leave run inside the position packet handler, not on a timer. In the older-client block (323-343) and the 1124 block (988-1018, method at 741): if the region clock is past `AreaUpdateTick`, compute the new area list for the new position (330, 995); fire `OnPlayerLeave` for each old area not in the new list (336, 1004); fire `OnPlayerEnter` for each new area not in the old list (339-340, 1011-1013); store the new list (342, 1017); set the next check 2000 ms ahead (343, 1018).
 - `OnPlayerEnter` (AbstractArea.cs 221-250): if DisplayMessage is on and a description exists, sends a localised "entered" system message (223-239); optionally sends the description to screen centre when a server property is on (242-243); plays the area sound when Sound is non-zero (245-247); raises PlayerEnter (249). `OnPlayerLeave` (208-215) sends a left message in the same way and raises PlayerLeave.
 - Two flags are read elsewhere. CanBroadcast gates the area scope of the player broadcast command: it collects players who share an area with that flag set (broadcast.cs 100-107). CheckLOS: `MustCheckLOS` (SpellHandler.cs 899-910) returns true when any current area has the flag, and the spell path (1251) sends a line-of-sight check for an NPC caster when the target is a player or the caster stands in such an area. The stealth tick (GamePlayer.cs 12818-12830) also turns on its LOS check when the player stands in a flagged area.
-- A location string is built from the first current area's description, skipping bind areas (GamePlayer.cs 7463-7464; what the string is used for was not read), so list order decides which name wins where areas overlap.
+- A location string is built from the first current area's description (GamePlayer.cs 7463-7464, inside `Player.Die`, used in the death message). If that first area is a bind area, the donor does not skip to the next area: it falls back to the zone description. So list order decides which name wins where areas overlap.
 
 ## 2. Key functions
 
@@ -147,6 +147,14 @@ Acceptance: a server test moves a player across a district edge in 0.3 s and exp
 - Defect 3, height: the height check is skipped when either Z is zero (Area.cs 227), and polygons ignore Z. A designer cannot tell from the row whether an area is 2D. Fix: an explicit `height` boolean per area in zone data.
 - Position trust: the donor takes the position from the client packet (PPUH.cs 985, 1124 path), so enter, leave and the LOS flag all follow client-reported position. Frankendom's server-verified rule means the server must compute membership from its own last accepted position. This does not transfer as written.
 - Hidden rule switch: CheckLOS changes targeting for NPC casters and the stealth reveal (SpellHandler.cs 1251; GamePlayer.cs 12820). Frankendom must list it in zone data and test it. Not read: what the LOS callbacks do when the check fails (`CheckLOSNPCToTarget`).
-- Overlap order: the location string takes the first current area (GamePlayer.cs 7464), and list order is candidate order. Frankendom needs an explicit priority field rather than list order.
+- Overlap order: the death-message location string takes the first current area (GamePlayer.cs 7464; a bind area there falls back to the zone name), and list order is candidate order. Frankendom needs an explicit priority field rather than list order.
 - Teleport destinations (hint file `DOLDatabase/Tables/Teleport.cs`; registry `WorldMgr.cs` 153; `TeleportArea.cs`; `GameTeleporter.cs`) are a fast-travel index, a different idea. Not written up here; a candidate for its own cell.
 - Not read: `Zone.cs` beyond 1080-1082, `Zones.cs`, housing tables (`DBHouse*`), `Pathing/`, the city quest scripts (`CityOfCamelot.cs`, `CityOfJordheim.cs`, `CityOfTirnaNog.cs`; listed only), and the client. No minimap code in the `.cs` files was found.
+
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+- Verdict: MINOR
+- GamePlayer.cs 7463-7464: note said the location string skips bind areas and its use was unread. Real: it is in Player.Die (death message); a bind area as CurrentAreas[0] falls back to CurrentZone.Description, it does not skip to the next area.
+- Missed: none significant.
+
+Fixed 2026-10-12: rewrote the location-string claim (lines 16 and 150) to state it is the death-message string and that a bind area falls back to the zone description.

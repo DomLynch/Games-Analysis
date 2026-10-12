@@ -114,3 +114,6 @@ Brief rule served: addendum rules 1-6; Frankendom rulings zones as data, server-
 Best transferable idea: Place hub services from a table in file order, skip rows whose presence gate is closed or whose behaviour is missing, and claim the tile before creating the NPC so multi-tile and neighbour logic can see it.
 Decision (proposed): adapt - the table-placed, gated, claim-first shape fits zones as data; move the presence gate onto the server ledger, re-check it on zone entry, and reject duplicate tiles at load instead of overwriting.
 Acceptance: Walking into the town shows the smith, healer and tavern keeper on their zone-data tiles; closing a quest's gate removes its NPC on the next zone entry; a server test asserts a duplicate tile fails at load and a row with no behaviour is reported.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN

@@ -76,3 +76,7 @@ GPL-3.0 (COPYING). Clean-room only: the data-field names are our own, and no cod
 
 Reuse tag: data-only idea (zone fields). The runtime is ours to write.
 Brief rule served: feel note for weather-time-light; the donor is thin, so the rule is the data-field set only.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+CLEAN
+- Missed (informational, not an error): the IFO file also holds the only clock data (Mod_DawnHour/DuskHour ifofile.cpp 211-212, StartHour/Day/Month/Year, minutes per hour), the inputs for the day/night switch the note says are missing; playAmbientSound always uses _ambientDayVol.

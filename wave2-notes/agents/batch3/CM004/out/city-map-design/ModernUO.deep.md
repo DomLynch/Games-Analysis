@@ -12,8 +12,8 @@ Checked: Read `MapItem.cs` in full (297 lines: SetDisplay 66-91, DisplayTo 106-1
 - Editing is gated (`Validate(Mobile)`, 208-225): the viewer must see the item, be on its map and alive, not be in a secure trade, and then either be a GM or have the item movable, not protected, and be within 2 tiles (line 220). The item cannot be held by a different mobile.
 - The window is chosen at craft time from the cartographer's skill (`CraftInit`). CityMap centres on the crafter: half-width `max(64 + skill x 4, 200)` tiles, image `clamp(32 + skill x 2, 200, 400)` px. LocalMap: half-width `64 + skill x 2`, fixed 200 px image. WorldMap keeps a fixed box (1344..1472 by 1600..1728) and widens it by `skill x 20` on each side, image `clamp(25 + skill x 6.6, 200, 400)` px. So more skill gives a wider area and a larger picture.
 - `SetDisplay` (66-91) clamps the corners to the world size (5119 x 4095) and stores the bounds. The image size is not changed by the clamp, so a window that hits the world edge is squeezed and its scale changes.
-- Order of steps when a player opens a map: double-click within 2 tiles (`OnDoubleClick`, 94-101), then `DisplayTo` (106-122) sends the details, the display window, each pin, and the editable flag. Pin edits arrive as packets (`MapItemPackets.OnMapCommand`, command 1 add, 2 insert, 3 change, 4 remove) and each one runs the same gate.
-- Treasure maps (`TreasureMap.cs` 70-108) use a 600 x 600 tile window. The window's origin is the chest minus a random offset of 150..450 tiles, so the chest lands at a random quarter-to-three-quarter point before the edge clamp. The window is then pushed back inside the world, the item is marked protected, and the chest is added as a world pin (`AddWorldPin`, 108).
+- Order of steps when a player opens a map: double-click within 2 tiles (`OnDoubleClick`, 94-101), then `DisplayTo` (106-122) sends the details, the display window, each pin, and the editable flag. Pin edits arrive as packets (`MapItemPackets.OnMapCommand`, MapItemPackets.cs 43-74: command 1 add, 2 insert, 3 change, 4 remove, 5 clear pins, 6 toggle editable). Commands 1-5 run the edit gate `ValidateEdit` (MapItem.cs 206: `_editable && Validate(from)`, so pins are editable only while the editable flag is on); command 6 (`OnToggleEditable`, 189-198) uses plain `Validate` and flips the flag.
+- Treasure maps (`TreasureMap.cs` 70-108) use a 600 x 600 tile window. The map item's picture is 300 x 300 px (TreasureMap.cs 70-71) for the 600 tile window, i.e. 2 tiles per pixel. The window's origin is the chest minus a random offset of 150..450 tiles, so the chest lands at a random quarter-to-three-quarter point before the edge clamp. The window is then pushed back inside the world, the item is marked protected, and the chest is added as a world pin (`AddWorldPin`, 108).
 - No tick. Everything is synchronous, on double-click or on a pin packet.
 
 ## 2. Key functions
@@ -124,9 +124,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Latent defect: `RemovePin` uses `index > 0` (line 253), so pin 0 can never be removed. Fix: `index >= 0` (done in the sketch).
 - Latent defect: `AddWorldPin` converts with no bounds check (242-243). A world point outside the window lands at negative or oversized pixels. Fix: refuse the pin or draw an edge marker (the sketch refuses it).
 - Scale change at the world edge: `SetDisplay` (66-91) squeezes the window at the edge but keeps the picture size, so the px-per-tile scale changes near the map border. Fix: shift the window back inside the world instead of shrinking it (as TreasureMap.cs 102-103 does), so the scale is fixed.
-- Pin editing by players is a UO habit (range 2 and "not in trade" gate). Frankendom should not add player-editable pins. The useful part is the server-issued marker, not the edit gate. Reject the edit gate.
+- Pin editing by players is a UO habit (range 2 and "not in trade" gate). Frankendom should not add player-editable pins. The useful part is the server-issued marker, not the edit gate. Reject the edit gate. Note the donor also keeps a per-map `_editable` flag (owner toggles it, command 6); the pins are read-only until it is on.
 - Frankendom ruling check: the minimap is client-only, so kills stay server-verified and the one ledger is untouched. Zone size (the world rectangle) is zone data; the pin cap and zoom constants are client tuning.
-- Not read: the packet layer beyond command 1-3 (MapItemPackets.cs 61-129), and the map drawing itself (that is in the client, not in this donor).
+- Not read: the packet writers below the command switch (MapItemPackets.cs 76-129; commands 1-6 of the switch were read), and the map drawing itself (that is in the client, not in this donor).
 - Town and hub layout (the cell's hint topic) is not in this donor. The only town code is the hand-cut `TownRegion` class (TownRegion.cs 1-22), with an `Entrance` point. A grep for signpost, landmark, town layout found no generator.
 
 Best transferable idea: Draw a fixed-scale minimap window of the world with pins stored in picture pixels, and for a hint place the target at a random quarter-to-three-quarter point of the window so it is findable but not exact.
@@ -134,3 +134,10 @@ Best transferable idea: Draw a fixed-scale minimap window of the world with pins
 Decision (proposed): adapt — keep the world-rect-to-minimap projection, the pin cap and the skill-sized view as client data; fix the Y axis, refuse off-map pins and allow pin 0 removal; reject the UO pin edit gate because players do not edit map pins in Frankendom.
 
 Acceptance: At 375 px wide the minimap shows the hero at its centre, a client test asserts `imageToWorld(worldToImage(p))` lands within 1 tile of `p` on a non-square window, and a pin placed outside the window is refused.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Packet commands were listed as 1-4 and 'Not read ... 61-129', but MapItemPackets.cs 43-74 has six commands (5 clear pins, 6 toggle editable).
+- 'Each one runs the same gate' was wrong for command 6 (OnToggleEditable uses Validate, not ValidateEdit).
+- Missed: ValidateEdit = _editable && Validate (MapItem.cs 206) and the editable flag; TreasureMap Width/Height 300 px for the 600 tile window.
+Fixed 2026-10-12: command list, gate wording, not-read line corrected; added the editable flag and the 2 tiles per pixel treasure scale.

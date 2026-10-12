@@ -179,3 +179,7 @@ Acceptance: a hub owned by the player's faction shows in the "mine" colour, an e
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 Brief rule served: 1 (one engine: hub ownership and visibility come from the server, the client only draws them); 7 (client-only HUD)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+CLEAN
+- Missed (informational, not an error): village and unit passes are skipped entirely when blindfolded (minimap.cpp 226, 267); line numbers drift by 1-2 in places (hex rect is 100-101).

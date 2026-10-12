@@ -13,10 +13,10 @@ Checked: The hinted file `src/Engine/Data/MapData.h` was read in full (46 lines)
   (c) each screen pixel samples the picture at nearest neighbour: source index = left + x * imageWidth / zoom (1346-1348). There is no bounds check (see section 6).
 - Zoom: the zoom value is a plain factor. World units per screen px = 65536 / zoom (the constant 0.000015258789 is 1/65536, at line 659). Outdoor zoom is clamped to 512..2048 and indoor to 256..4096 (Game.cpp 108, 111). The zoom buttons double and halve it (1439, 1446), then clamp. Defaults: outdoor 512 (GameConfig.h 652), indoor 1024 (649).
 - Object marks, drawn after the crop (1416-1500), each as a dot at `centre + (world - party) * zoom / 65536` (1493 shows the decoration case):
-  - object sprites only when the wizard eye is active at Expert mastery or better (1417-1418; the cartographer NPC or the debug flag also turn it on, 1311-1316);
+  - the whole mark block (object sprites, actors and decorations) sits inside `if (bWizardEyeActive)` at Expert mastery or better (1417-1511), so with the wizard eye off no marks are drawn at all (1417-1418; the cartographer NPC or the debug flag also turn it on, 1311-1316);
   - actors only when dead or nearby (1458);
   - decorations only when flagged visible on the map (1492);
-  - mark size steps up at zoom > 512 for objects and at zoom > 1024 for actors (1435, 1471).
+  - mark size steps up at zoom > 512 for objects and for decorations (1435, 1501) and at zoom > 1024 for actors (1471).
 - Heading: an arrow sprite is chosen from yaw by a chain of eight comparisons (1517-1528), and a compass strip is offset by `floor(yaw * 0.1171875 + 0.5) + 285` px (1529).
 - Discovery reveal, per drawn frame (`Outdoor.cpp` 195): the party's grid cell from `worldToGrid` (512 world units per cell, x = (wx >> 9) + 64, y = 63 - (wy >> 9); `OutdoorTerrain.h` 33-39). Around that cell, within a squared distance of 100 (radius 10) a cell is marked partly revealed, and within 49 (radius 7) fully revealed (541-551). The mask is 88 x 88 cells, one bit per cell (560-572). The world map book reads the fully-revealed bit (`MapBook.cpp` 196).
 
@@ -36,7 +36,7 @@ Checked: The hinted file `src/Engine/Data/MapData.h` was read in full (46 lines)
 | Party-centred crop of one location picture, nearest-neighbour sampling | Screen rect 137 x 117 px, asserted (theirs, UIGame.cpp 1340); placed at 488, 16 (theirs, Engine.cpp 207) |
 | Zoom as a plain factor: world units per px = 65536 / zoom | Outdoor zoom 512..2048, default 512 (theirs, Game.cpp 111; GameConfig.h 652). Indoor 256..4096, default 1024 (theirs, Game.cpp 108; GameConfig.h 649). Derived: at outdoor 512 the 137 px rect spans about 17,500 world units (137 x 128) |
 | Zoom in and out by doubling and halving, then clamp | x2 and /2 (theirs, Game.cpp 1439, 1446) |
-| Mark size steps with zoom | Object marks above 512, actor marks above 1024 (theirs, UIGame.cpp 1435, 1471) |
+| Mark size steps with zoom | Object and decoration marks above 512, actor marks above 1024 (theirs, UIGame.cpp 1435, 1501, 1471) |
 | Discovery: two rings of cells, full inside radius 7 and partly known inside radius 10 | 7 and 10 cells (theirs, Outdoor.cpp 547, 550: squared 100 and 49). Derived: 7 cells = 3,584 world units, 10 cells = 5,120 |
 | Grid window: 88 cells inside a 128-cell world grid, 512 units per cell | 88 (theirs, Outdoor.cpp 560); 512 units (theirs, OutdoorTerrain.h 38, shift 9); offset 64 and 20 (theirs, 38 and 543) |
 | Expert mastery gate on object marks | Expert (theirs, UIGame.cpp 1418) |
@@ -141,14 +141,14 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 ## 6. Gaps and risks
 
 - LGPL-3.0 is copyleft for this purpose: clean-room only. The sketch is written from the described mechanism.
-- Cell 3 asks about city and town layout, roads, buildings, signage and landmarks. None of these is in this donor. Grep for landmark, signpost and signage returned nothing. Towns are authored map files and `mapstats.txt`, and `mapstats.txt` is not in the box (`resources/` holds only CMakeLists.txt). Only the minimap and the reveal answer the cell.
+- Cell 3 asks about city and town layout, roads, buildings, signage and landmarks. None of these is in this donor. Grep for landmark, signpost and signage returned nothing. Towns are authored map files and `mapstats.txt`, and `mapstats.txt` is not in the box (`resources/` holds CMakeLists.txt plus data/, images/, scripts/ and shaders/, none of which has it). Only the minimap and the reveal answer the cell.
 - Defect, idea kept: the minimap sample has no bounds check (UIGame.cpp 1346-1348). Near the edge of the location picture the index can leave the picture. The donor is C++ and an out-of-range index is undefined behaviour; I did not run it. Fix: leave the pixel transparent off the picture (done in the sketch).
 - Defect, idea kept: the reveal loop runs `i < 10` and `j < 10` (Outdoor.cpp 542 and the matching j loop), so the offsets +10 are never visited and the east and south edge of the radius-10 ring is cut. Fix: `<= 10` (done in the sketch).
 - Unexplained, not a defect: the reveal window has a fixed -20 offset (543). Inferred from `worldToGrid`'s +64 and the 88 bound that it places the 88-cell mask inside the 128-cell world grid. The donor has no comment that says so. (Inferred.)
 - Cost, not a bug: `partymoved` is always true (1325, TODO), so the crop is rebuilt every frame. Fix for us: cache by party cell and zoom.
 - Fragile, not wrong as written: the arrow sprite is chosen by eight overlapping comparisons (1517-1528) that work only because the thresholds fall in order. Fix: a table of eight sectors.
 - Frankendom rulings: the minimap draws what the client has. In a server-verified game the server must send only the marks the player may see, or a cheat client can read hidden enemy positions from the minimap. The donor reads positions from its own local game state and has no server-side filter to copy. This is the main risk.
-- The wizard-eye gate (1418) is a skill gate on object marks. It is a good data idea for scouting: a skill tier decides which marks reach the client. Keep it as data, not a constant.
+- The wizard-eye gate (1417-1418) is a skill gate on all minimap marks (objects, actors, decorations). It is a good data idea for scouting: a skill tier decides which marks reach the client. Keep it as data, not a constant.
 - Phone size: the donor's 137 x 117 px rect is fixed (1340). At 375 px wide the rect must be sized to the screen, and the mark sizes (1-5 px) need checking at that width.
 - Not read: `Actor::ActorNearby` (the nearby rule for actor marks), `TrigLUT`, the indoor branch (1361-1415) and its blue-face outline, `MapBook.cpp` beyond the two reads, and the per-map data (`mapstats.txt`, not in the box).
 
@@ -157,3 +157,11 @@ Best transferable idea: Draw the minimap as a party-centred, north-up crop of on
 Decision (proposed): adapt — keep the party-centred crop, the clamped zoom ladder, the two-ring reveal and the mark-size steps as client data; fix the off-picture sample, the symmetric reveal loop and the one-byte-per-cell mask (bitset); adapt the wizard-eye skill gate into a server-side scouting tier for which marks are sent; reject sending marks the player cannot see.
 
 Acceptance: At 375 px wide the minimap shows the hero at its centre; the zoom-in button doubles the scale and stops at the clamp; the explored area grows as the hero walks (fully known within 7 cells, partly known within 10); a client test asserts that the reveal loop covers -10 to 10 on both axes; and a server test asserts that a hidden enemy's position is not in the minimap payload.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Note said resources/ holds only CMakeLists.txt; it also has data/, images/, scripts/, shaders/ (mapstats.txt still absent).
+- Note said only objects (and actors) depend on the wizard eye; the whole mark block incl. actors and decorations is inside if(bWizardEyeActive) (1417-1511).
+- Mark-size row omitted decorations stepping at zoom > 512 (1501).
+
+Fixed 2026-10-12: resources/ listing, wizard-eye gate scope, decoration step (1501) in the mark-size lines and numbers table.

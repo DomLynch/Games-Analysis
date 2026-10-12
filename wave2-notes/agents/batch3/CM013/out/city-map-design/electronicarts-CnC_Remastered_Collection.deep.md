@@ -22,7 +22,7 @@ Acceptance: A server test places a hub service next to the first hub (accepted),
   - `Calculate_Placement_Distances` (4982-5041): every cell is set to 255. Every friendly `IsBase` building cell (or a friendly bib/wall) gets 0 (5022). From it, square rings are walked out to `Adjacent + 1` (5024), each ring cell keeping the minimum distance (5032). The field is built once per placement.
   - `Passes_Proximity_Check` (5137-5160): a footprint cell that is off the radar returns false at once (5151). Otherwise the check passes when any footprint cell has a field value `<= Adjacent + 1` (5155).
   - `Get_Placement_State` (5066-5127): a snapshot of pass/clear for every cell in the map window, for the client ghost.
-  - The field is rebuilt only in `Start_Placement` (5679) in this file.
+  - The field is built in `Start_Placement` (DLLInterface.cpp 5679) and rebuilt by `Recalculate_Placement_Distances` (5043-5054), which `HouseClass::AI` also calls whenever `IsRecalcNeeded` fires, i.e. when a building is added or removed (HOUSE.CPP 1325-1348, right after the production scan).
 - AI placement: `Find_Cell_In_Zone` (HOUSE.CPP 7874-7915) picks a random point in the zone (7885), then scans every map cell (7896-7898), keeps only cells that pass legal placement and the same proximity check (7899-7904), and returns the legal cell nearest that point.
 
 ## 2. Key functions
@@ -65,7 +65,7 @@ interface PlacementState {
 }
 
 // Recompute the reach field from every friendly hub cell. Must be called whenever the hub set changes;
-// the donor only does this once, when placement starts (stale-state defect).
+// the donor does the same: it rebuilds on start and again whenever the house's recalc flag fires (HOUSE.CPP 1346).
 function buildReachField(hubCells: HubId[], w: number, h: number, maxDist: number): Uint8Array {
   const field = new Uint8Array(w * h).fill(255);
   for (const hub of hubCells) {
@@ -132,7 +132,7 @@ export {};
 
 - Licence: GPL-3.0 with EA section 7 terms. Clean-room only: the sketch is written from the described rule, not from the donor lines.
 - Authority gap: in this file the adjacency rule runs only on the client cursor (DISPLAY.CPP 914, 3880). `Place_Object` (HOUSE.CPP 3068-3196) does not call it; it relies on `Unlimbo` (not read). Frankendom must run the reach check in the engine. Fix: the sketch's `tryPlace` does this before the clear check.
-- Stale field: the wrapper builds the field only at `Start_Placement` (DLLInterface.cpp 5679). A hub destroyed or sold while the player is placing leaves the field stale. Fix: rebuild on every hub add or remove (`buildReachField` is cheap for a small zone).
+- Field refresh (corrected; not a donor defect): the wrapper builds the field at `Start_Placement` (DLLInterface.cpp 5679) and refreshes it on every hub add or remove via `IsRecalcNeeded` -> `Recalculate_Placement_Distances` (HOUSE.CPP 1325-1348). The sketch copies this: rebuild on every hub add or remove (`buildReachField` is cheap for a small zone).
 - Two rules that disagree for `Adjacent >= 2`: the cursor uses centre distance (DISPLAY.CPP 811-818), the wrapper uses ring reach `Adjacent + 1` (DLLInterface.cpp 5024, 5155). Fix: one function in the engine; the client reads its result.
 - Stale comment: DISPLAY.CPP 810 says "10 squares" for mines; the code uses `Adjacent`. The mine value was not read.
 - AI cost: `Find_Cell_In_Zone` scans every map cell per pick (HOUSE.CPP 7896-7904). Fix: scan only the zone's bounding box.
@@ -142,3 +142,10 @@ export {};
 
 Reuse tag: rewrite-from-idea (GPL-3.0 with EA additional terms; clean-room only)
 Brief rule served: addendum rules 2, 3, 5; ruling: server-verified placement
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Section 6 'stale field' defect and the sketch comment 'donor only does this once, at Start_Placement' were false: HOUSE.CPP 1346 calls Recalculate_Placement_Distances whenever IsRecalcNeeded fires.
+- Missed: HOUSE.CPP 1325-1348 field refresh on hub-set change, the same fix the note proposes.
+
+Fixed 2026-10-12: removed the false stale-field defect (now recorded as the donor's own refresh mechanism), corrected the line-25 claim and the sketch comment (comment only; code unchanged).

@@ -16,8 +16,8 @@ Acceptance: A server test asserts that a stage offers at most one hub service, t
 - Hub layout. A static circle of radius 20 is placed at the centre when a service is chosen (284-286). Each alive player starts on an ellipse of radius 300 by 250 around the centre (308, 311). Bots move to a smaller ellipse of radius 150 by 125 (CAROUSEL_RADIUS_X and _Y, mini-game.ts:69-70, 339-343). Avatars are radius 25 (71).
 - Release wait (312-325). The base wait is 10 s when a service was chosen and 5 s when not (313). It adds 2 s for each place between the player's rank and the count of alive players (314). Stage 0 is fixed at 12 s (317), the portal stages (0, 10, 20 in `PortalCarouselStages`, stages.ts:22) at 8 s (319), and stages below 5 use the base wait only (321). Each of these overrides replaces the whole value, the rank term included. Bots add a random 1000-6000 ms (325).
 - Ranking (game-room.ts:1533-1545). Players are sorted by life, highest first, then by level. Rank is the sorted position plus one, so rank 1 is the highest life. The release wait therefore grows with the rank term: the highest life player is released last.
-- Grants (set-up, 365-424). A service applies at once: SPINDA starts a timed NPC dialog; REGIROCK adds 15 life to each alive player (380); WOBBUFFET, CROAGUNK, MUNCHLAX, XATU, LAPRAS and CHIMECHO each add one ticket or item to each alive player; MAKUHITA adds a dojo ticket whose tier depends on the stage (400-401: gold from stage 15, silver from 10, else bronze); MAGNEZONE sets an outlaw stage from 5 to 15 and gives a notice; KINGAMBIT gives the highest-life player a crest.
-- Stop rule (842-848). When the hub closes, a player with no item taken is given a random remaining item, unless the service has a sell price and the game is not a festival; then no automatic item is given.
+- Grants (set-up, 365-424). A service applies at once: SPINDA starts a timed NPC dialog; REGIROCK adds 15 life to each alive player (380); WOBBUFFET, CROAGUNK, MUNCHLAX, XATU, LAPRAS and CHIMECHO each add one ticket or item to each alive player; MAKUHITA adds a dojo ticket whose tier depends on the stage (400-404: gold when stage >= 15 at 400, silver when >= 10 at 402, else bronze); MAGNEZONE sets an outlaw stage from 5 to 15 and gives a notice; KINGAMBIT gives the highest-life player a crest.
+- Stop rule (842-848). When the hub closes, a human player (`!player.isBot`, mini-game.ts:844; bots never get the automatic item) with no item taken is given a random remaining item, unless the service has a sell price and the game is not a festival; then no automatic item is given.
 
 ## 2. Key functions
 
@@ -37,7 +37,7 @@ Acceptance: A server test asserts that a stage offers at most one hub service, t
 | Release wait = base + gap-to-rank term | Base 10000 ms with service, 5000 without (313); 2000 ms per rank step (314) |
 | Stage-specific waits | Stage 0 12000 ms (317); portal stages 8000 ms (319) |
 | Hub ring: start ellipse and bot target ellipse | 300 x 250 px start (308, 311); 150 x 125 bot target (69-70); centre blocker radius 20 (286); avatar radius 25 (71) |
-| Grant to every alive player | Life +15 for REGIROCK (380); dojo ticket tiers by stage 10 and 15 (400-401) |
+| Grant to every alive player | Life +15 for REGIROCK (380); dojo ticket tiers by stage 10 and 15 (400-404) |
 | Rank = sorted position by life | Sort key life, then level (1533) |
 
 ## 4. TypeScript sketch
@@ -132,3 +132,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 Reuse tag: rewrite-from-idea (GPL-3.0; clean-room, shape only)
 Brief rule served: 1 (one engine, zones as data); server-verified service and grant; one ledger (grants on the character ledger)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Stop rule was described as applying to any player; donor requires !player.isBot (mini-game.ts:844), so bots never get the auto item.
+- MAKUHITA ticket tiers are at mini-game.ts 400-404 (gold >= 15 at 400, silver >= 10 at 402), note cited 400-401.
+Fixed 2026-10-12: stop rule now says human players only; ticket tier line range corrected to 400-404.

@@ -11,9 +11,10 @@ Acceptance: A server test: over 10,000 seeded breaks of a node with annihilation
 
 ## 1. Mechanism
 
-- Break pipeline (engine, authority side). A `DestroyEvent` reaches `EntityDestructionAuthoritySystem.onDestroy` (19). Order: (a) record the break in the instigator's stats map if the block has a display name and the instigator has stats (20, plus recordDestroyed); (b) create and send `BeforeDestroyEvent` (21-22); if a handler consumed it (23), nothing else happens and the entity stays; (c) otherwise send `DoDestroyEvent` (24) and destroy the entity (25).
+- Break pipeline (engine, authority side). A `DestroyEvent` reaches `EntityDestructionAuthoritySystem.onDestroy` (19). Order: (a) `recordDestroyed` (20; 29-50): when the destroyed entity has a `BlockComponent`, count it in the instigator's `GamePlayStatsComponent.blockDestroyedMap` keyed by the block display name (the name is only the map key, not a condition), creating the stats component if absent; a separate branch counts `CharacterComponent` kills in `creatureKilled`; (b) create and send `BeforeDestroyEvent` (21-22); if a handler consumed it (23), nothing else happens and the entity stays; (c) otherwise send `DoDestroyEvent` (24) and destroy the entity (25).
 - Do-destroy for a block (BlockEntitySystem 78-80). For a plain block component: `commonDestroyed` runs first (79), then the block is set to air (80). `commonDestroyed` sends `CreateBlockDropsEvent` (154) before the dust and sound effects (175), so the drop roll happens while the block is still in the world.
 - Drop roll (commonDefaultDropsHandling 115-131). Default chance is 1. If the damage source (a prefab) carries a `BlockDamageModifierComponent`, chance = 1 - `blockAnnihilationChance` (117-120). Roll `random.nextFloat() < chance` (123). On success: build an item from the block's family (124), send `OnBlockToItem` (125), then decide where it goes (127).
+- Missed: `ActAsBlockComponent` break path (BlockEntitySystem 70-73, 92-113) is a second `doDestroy`/drops handler with region drops and no `setBlock`. The default drop handlers run at `PRIORITY_TRIVIAL` (83-91) while `doDestroy` is `PRIORITY_LOW` (68-77), so other modules can pre-empt or replace the default drop by handling `CreateBlockDropsEvent` at a higher priority. Keep a data hook for that in Frankendom node rows.
 - Direct pickup first (shouldDropToWorld 138-140, isDirectPickup 149-150, giveItem 143-147). Direct pickup is true if the block has `directPickup` or the source component does (150). Only when direct pickup is true, the engine sends `GiveItemEvent` to the item with the instigator (144); if it is handled, no world drop. Otherwise `processDropping` (180-182): `DropItemEvent` at the block position and an `ImpulseEvent` with a random vector of size `impulsePower` (from the component, 130; 0 if there is no component).
 
 ## 2. Key functions
@@ -90,3 +91,10 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Node respawn: the donor's break removes the block (set to air, 80) and says nothing about respawn. Respawn and the zone population rule are row 23 territory and are not covered here.
 - Not checked: whether `random.nextVector3f` with a zero impulse returns a zero vector (the sketch assumes the kick is zero when impulsePower is zero).
 - Defects: none found in the lines read. The one behaviour to keep in mind is that a world drop happens whenever the direct grant is not handled, including a grant the bag refused, so the fallback is a design choice, not a bug.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Break stats were described as recorded 'if the block has a display name'; real code (EntityDestructionAuthoritySystem 29-50) keys on BlockComponent, display name is the map key, creates stats if absent, and has a CharacterComponent branch.
+- Missed: ActAsBlockComponent break path (70-73, 92-113); CreateBlockDropsEvent handlers at PRIORITY_TRIVIAL can be pre-empted by other modules.
+
+Fixed 2026-10-12: recordDestroyed description corrected; ActAsBlock and drop-priority line added. Sketch unchanged, no typecheck needed.

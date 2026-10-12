@@ -116,3 +116,6 @@ function populateTown(roster: NpcTemplate[], joinedCompanionIds: ReadonlySet<str
 Best transferable idea: Author a town's services as a fixed roster of slots (tile, start, role, dialogue) and rebuild the population from it on every entry, skipping party members who have joined.
 Decision (proposed): adapt — take the authored roster and the rebuild-on-entry placement for hub services; key the companion skip by character id from the ledger; keep the anger-style state in the ledger, not in the copy.
 Acceptance: Entering a test hub places exactly the authored vendor roles at their authored tiles; a companion who has joined the party is absent from the placed roster; a roster with a slot outside 1 to MAX, or a start on a blocked tile, fails zone load with an error.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+CLEAN.
