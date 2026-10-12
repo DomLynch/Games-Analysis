@@ -92,3 +92,6 @@ Other open items: the nine design-brief questions (bottom of each brief); the nv
 
 ## Licence reminders (see R7)
 Production use of TRELLIS.2 needs nvdiffrast replaced or Dom's ruling (NVIDIA non-commercial source licence). RMBG-2.0 replaced with ZhengPeng7/BiRefNet. Qwen-Image and FLUX.1-schnell are Apache-2.0. Krea-dev only for private look-dev.
+
+## Update 2026-10-12 evening: L40S job cancelled, handed over
+The one L40S job (6accea25134c60eb02606f1d, 4 assets that failed on the L4, ceiling 18 min) was submitted at 18:09 and waited 19+ minutes for a machine, never started, and was CANCELED at 18:28 by Dom's decision. Cost $0. The job scripts are prepared and committed (kind l40s4 in hf-asset-test/launch.py). Full handover for the next dev: docs/ASSET-PIPELINE-HANDOVER-FOR-NEW-DEV-2026-10-12.md.
