@@ -28,8 +28,10 @@ export interface Stamina {
 }
 
 // One tick, after movement. stepsThisTick: 0 idle, 1 walk, 2 run pace (donor stepsTaken).
-// Order: refill (walk or idle) or drain (run pace), then the zero and below-100 guards.
-export function tickStamina(s: Stamina, stepsThisTick: number, agility: number, grams: number): Stamina {
+// Order: delayed guard, then refill (walk or idle) or drain (run pace), then the zero and below-100 guards.
+// delayed: the donor returns at once while the player is delayed (Player.ts 702-704): no refill, no drain, no guards.
+export function tickStamina(s: Stamina, stepsThisTick: number, agility: number, grams: number, delayed = false): Stamina {
+  if (delayed) return s;
   let energy = s.energy;
   if (stepsThisTick < 2) {
     const recovered = Math.floor(agility / 6) + 8;

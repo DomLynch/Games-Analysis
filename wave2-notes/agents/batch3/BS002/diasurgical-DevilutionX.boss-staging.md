@@ -175,3 +175,7 @@ Best transferable idea: a timed talk hold that the server owns, before the first
 Reuse tag: adapt (idea) for the talk hold and leash ring; shape only for everything else.
 
 Brief rule served: boss-staging feel note (FEEL-TASK sections 1-7) with MG011 fold-in (the donor has few dragon mechanics, so the table is mostly "not found").
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN. HP shift/halve/NM x3+100/Hell x4, leash, talk gate, death order, 140-tick camera, gargoyle heal, 70/30 split, quest-pick groups, licence all match.
+- Missed (minor): Diablo's death also sets the single-player `pDiabloKillLevel` (max of kill level, difficulty+1) and adds light/vision at the death tile (monster.cpp 898-909); not covered by the note, not needed for the staging idea.

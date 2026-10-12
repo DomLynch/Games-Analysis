@@ -6,10 +6,10 @@ Checked: Read in full: `spellresistance.cpp` (all 96 lines); `spellutil.cpp` 23-
 
 ## 1. Mechanism
 
-- Cast start (`World::startSpellCast`, worldimp.cpp 2835-2890): if the selected spell costs more than the caster's current magicka, the cast is refused (2853). Otherwise magicka is reduced by the spell cost (2870) and fatigue is reduced by `cost * (fFatigueSpellBase + encumbrance * fFatigueSpellMult)` (2881). This happens before the success roll, so a failed cast still costs magicka and fatigue.
+- Cast start (`World::startSpellCast`, worldimp.cpp 2835-2890): if the selected spell costs more than the caster's current magicka, the cast is refused (2853). Otherwise magicka is reduced by the spell cost (2870) and fatigue is reduced by `cost * (fFatigueSpellBase + encumbrance * fFatigueSpellMult)` (2881). This happens before the success roll, so a failed cast still costs magicka and fatigue. Caveat: the donor comment at worldimp 2873 says both fFatigueSpell GMSTs are 0 in vanilla, so the fatigue spend is a data-driven option and is zero unless the game data sets it; the magicka spend is always active.
 - Cast release (`character.cpp` 1652 and the call at 1168; `World::castSpell`, worldimp.cpp 2893): for random attack animations the cast fires at once (1652, "No release text key to use"). Other casts are released from the animation (the 1168 call site; its text-key condition was not read). The target is the focus object for the player (2917), or the actor hit contact within `fCombatDistance` times the weapon or hand reach (2928; combat.cpp 665-670). Then `CastSpell::cast` runs (worldimp 2975 calls it; spellcasting.cpp 330).
-- Success gate (`CastSpell::cast`, spellcasting.cpp 350-352): chance = `getSpellSuccessChance(spell, caster, cap=true, checkMagicka=false)`. The roll is `roll0to99`; the cast fails when roll >= chance. Inside the chance function (spellutil.cpp 267-300): a silence effect gives 0 (283); the magicka test (289) is only used when `checkMagicka` is set (it is not set on this path); a spell with the always-succeed flag gives 100 (292); otherwise `chance = (base - soundMagnitude) * fatigueTerm` (295-297), clamped to 0..100 when capped (299-300).
-- Base chance (`calcSpellBaseSuccessChance`, spellutil.cpp 220-264). For each effect: `x = duration * 0.1 * baseCost * 0.5 * (min + max) + area * 0.05 * baseCost`, times 1.5 for a target-range effect (238-239), times `fEffectCostMult` (245). The margin is `s - x` where `s = 2 * skill(school)` (247-248). The effect with the smallest margin sets `lowestSkill = s`. Then `base = lowestSkill - spellCost + 0.2 * willpower + 0.1 * luck` (262).
+- Success gate (`CastSpell::cast`, spellcasting.cpp 350-352): chance = `getSpellSuccessChance(spell, caster, cap=true, checkMagicka=false)`. The roll is `roll0to99`; the cast fails when roll >= chance. Inside the chance function (spellutil.cpp 267-300) the early exits come first: a Power gives 100 or 0 by `canUsePower` (277-278), godmode gives 100 (280-281), silence gives 0 (283), and any spell type other than a normal Spell (abilities, curses, diseases) returns 100 (286-287), so only normal spells ever roll. Then the magicka test (289) is only used when `checkMagicka` is set (it is not set on this path); a spell with the always-succeed flag gives 100 (292); otherwise `chance = (base - soundMagnitude) * fatigueTerm` (295-297), clamped to 0..100 when capped (299-300). Before the spend, `startSpellCast` also refuses an already-used Power (worldimp 2860-2865).
+- Base chance (`calcSpellBaseSuccessChance`, spellutil.cpp 220-264). For each effect: `x = duration (floored to 1 unless the effect is AppliedOnce, 232-233) * 0.1 * baseCost * 0.5 * (min + max) + area * 0.05 * baseCost`, times 1.5 for a target-range effect (238-239), times `fEffectCostMult` (245). The margin is `s - x` where `s = 2 * skill(school)` (247-248). The effect with the smallest margin sets `lowestSkill = s`. Then `base = lowestSkill - spellCost + 0.2 * willpower + 0.1 * luck` (262).
 - Fatigue term (creaturestats.cpp 39-53): `fFatigueBase - fFatigueMult * (1 - current/max)`, with the normalised ratio set to 1 when max is 0 (44). It multiplies the success chance (297) and the resist threshold (47).
 - Resist (`getEffectMultiplier` 19-26; applied at spelleffects.cpp 374-376): the surviving share of a magnitude is `1 - resistance / 100` (26). If the effect has no resistance attribute, resistance is 0 (33-34). Otherwise:
   - threshold `x = (willpower + 0.1 * luck) * fatigueTerm` (47);
@@ -43,7 +43,7 @@ TABLE (magic mechanisms; cost column = magicka unless stated):
 |---|---|---|---|---|---|---|---|
 | Magicka pool | max magicka | `(fPCbaseMagickaMult or fNPCbaseMagickaMult + 0.1 * FortifyMaxMagicka) * Intelligence` | base from GMST (not in donor); fortify adds 0.1 per point | n/a | n/a | current scales with max | creaturestats 405-414 |
 | Magicka rest | magicka per hour of sleep | `fRestMagicMult * Intelligence` | GMST | n/a | per hour slept | clamp in setCurrent not read | actors 117, 907 |
-| Effect cost | cost of one effect | `0.5*(min+max) * 0.1*baseCost * duration + 0.05*area*baseCost`, times fEffectCostMult | min and max floored at 1 for spells (cost path only) | magicka (autocalc) | n/a | per-effect floor at 0 is applied in getTotalCost (29), not here | spellutil 51-55, 78-83 |
+| Effect cost | cost of one effect | `0.5*(min+max) * 0.1*baseCost * duration + 0.05*area*baseCost`, times fEffectCostMult | min and max floored at 1 for spells (cost path only); duration floored at 1 unless AppliedOnce (59-60); no-magnitude and no-duration effects use 1 (48-52) | magicka (autocalc) | n/a | per-effect floor at 0 is applied in getTotalCost (29), not here | spellutil 51-55, 78-83 |
 | Spell cost | total of effects | sum of effect costs; target-range effects x1.5; rounded | per effect | magicka | n/a | autocalc or fixed | spellutil 29, 34, 91-93 |
 | Fixed cost | spell with autocalc off | `mCost` | per spell record | magicka | n/a | n/a | spellutil 88-89 |
 | Cast gate: magicka | refuse when short | `current < cost` refused at cast start | cost as above | magicka checked | at cast start | none | worldimp 2848-2853 |
@@ -74,7 +74,7 @@ Which numbers suit a fast mobile fight: one 0..100 roll per cast, a skill margin
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order of the success gate (silence, magicka test, always-succeed, penalty, fatigue, cap) and of the resist chain (threshold, caster scale, roll, roll-under test, roll part, attribute part, cap). It omits the godmode and power-use paths, the reflect and absorb rolls, the shield terms, the other cost methods (potions and enchantments) and the duration offset and minimum area of the player method, the GMST lookups (the values are inputs), and the NoMagnitude subtraction. It differs from the donor in one place on purpose: the magnitude roll part is returned as a percent (`100 * roll / threshold`), where the donor returns a 0..1 fraction that the caller reads as a percent.
+simplified: the sketch keeps the donor order of the success gate (silence, magicka test, always-succeed, penalty, fatigue, cap) and of the resist chain (threshold, caster scale, roll, roll-under test, roll part, attribute part, cap). It omits the early exits for godmode, Power and non-Spell types (which return before any roll), the reflect and absorb rolls, the shield terms, the other cost methods (potions and enchantments) and the duration offset and minimum area of the player method, the GMST lookups (the values are inputs), and the NoMagnitude subtraction. It differs from the donor in one place on purpose: the magnitude roll part is returned as a percent (`100 * roll / threshold`), where the donor returns a 0..1 fraction that the caller reads as a percent.
 
 ```ts
 // Licence: GPL-3.0 donor (clean-room). Sketch written from the described mechanism, not a translation of the donor lines.
@@ -95,13 +95,21 @@ export interface EffectTerm {
   duration: number;
   area: number;
   targetRange: boolean;  // donor: target range multiplies the margin by 1.5
+  appliedOnce?: boolean; // donor: AppliedOnce effects skip the duration floor
+  hasMagnitude?: boolean; // donor: false (NoMagnitude) means magnitude 1
+  hasDuration?: boolean;  // donor: false (NoDuration) means duration 1
 }
 
 // Cost of one effect (the donor's GameSpell method: no duration offset, no minimum area).
+// Floors as the donor: magnitude min and max at 1, duration at 1 unless appliedOnce; no-magnitude/no-duration effects use 1.
 export function effectCost(e: EffectTerm, costMult: number): number {
-  let x = 0.5 * (e.min + e.max);
+  const minM = Math.max(1, e.hasMagnitude === false ? 1 : e.min);
+  const maxM = Math.max(1, e.hasMagnitude === false ? 1 : e.max);
+  let dur = e.hasDuration === false ? 1 : e.duration;
+  if (!e.appliedOnce) dur = Math.max(1, dur);
+  let x = 0.5 * (minM + maxM);
   x *= 0.1 * e.baseCost;
-  x *= e.duration;
+  x *= dur;
   x += 0.05 * e.area * e.baseCost;
   return x * costMult;
 }
@@ -171,7 +179,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020 /tmp/openmw-
 
 - GPL-3.0: clean-room only. The sketch is written from the formula shape and is not a translation.
 - Defect 1, units (kept idea, fixed in the sketch). `spellresistance.cpp` 68 writes `roll / min(x, 100)`, which is a 0..1 fraction (because roll is below x in that branch). Line 26 reads the result as a percent (`1 - resistance / 100`). So for a magnitude effect the roll part is at most about 0.01 of the multiplier, and only the attribute resistance can reach 100 and remove the effect (spelleffects 376). As written, the roll does almost nothing to damage and healing. Fix: percent (`100 * roll / x`); the test is that a roll just under the threshold removes almost all of a magnitude effect and a roll near 0 removes none. I did not run the game to confirm the donor's effective behaviour.
-- Defect 2, two magnitude rules (kept idea, fixed by one cost function). The cost path floors min and max at 1 for spells and uses magnitude 1 for effects without one (spellutil 51-55). The success path does not: `calcSpellBaseSuccessChance` reads `mMagnMin` and `mMagnMax` directly and has no NoMagnitude check (228-237). So a spell's price and its success chance can be computed from different magnitudes. Fix: one `effectCost` used for both.
+- Defect 2, two magnitude rules (kept idea, fixed by one cost function). The cost path floors min and max at 1 for spells and uses magnitude 1 for effects without one (spellutil 51-55). The success path does not: `calcSpellBaseSuccessChance` reads `mMagnMin` and `mMagnMax` directly and has no NoMagnitude check (228-237). So a spell's price and its success chance can be computed from different magnitudes (duration is floored the same way in both, 59-60 and 232-233). Fix: one `effectCost` used for both.
 - Failed casts cost magicka and fatigue (worldimp 2870-2881 before the roll in spellcasting 352). Frankendom's stamina (row 3) can keep this rule: a failed special costs stamina, and the server applies it once.
 - No diminishing returns for crowd control: a grep for "diminish" over `apps/openmw/mwmechanics` returns nothing. So the donor does not provide a CC ladder; Frankendom's Proof 3 ladder has no OpenMW counterpart.
 - Interrupts: not found in this read. Nothing in the cast path (spellcasting 330-390) cancels a cast once `CastSpell::cast` runs. Whether a hit or a move cancels the animation before the release was not read.
@@ -185,3 +193,11 @@ Acceptance: a server test with school skill 50, willpower 50, luck 0, fatigue te
 
 Reuse tag: rewrite-from-idea (GPL-3.0; clean-room, shape only)
 Brief rule served: 1 (one engine), 13 (specials)
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Success gate omitted the early exits: Power (spellutil 277-278), godmode (280-281) and non-Spell types (286-287) return before any roll. Confirmed.
+- Effect cost omitted the duration floor (59-60, 232-233) and hasMagnitude/hasDuration defaults (48-52); the TS effectCost did not apply the min/max floor at 1 (53-57). Confirmed.
+- Missed: worldimp 2873 comment says both fFatigueSpell GMSTs are 0 in vanilla (no fatigue loss); startSpellCast 2860-2865 refuses an already-used Power before the spend. Confirmed.
+
+Fixed 2026-10-12: added the early-exit list to the success gate and the sketch caveat; added duration floor and no-magnitude/duration defaults to the cost table, Defect 2 and the sketch effectCost (work/openmw-cast-resist.ts updated, typechecked); added the fatigue-GMST-zero caveat and the Power refusal before spend.

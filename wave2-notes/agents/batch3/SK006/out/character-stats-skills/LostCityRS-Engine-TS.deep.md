@@ -13,12 +13,13 @@ Acceptance: A server test asserts that 150 running ticks at 0 kg empty a 10000 b
 - Tick loop: `World.cycle()` runs once per tick. The tick is fixed at 600 ms (World 120: "private static readonly TICKRATE: number = 600;"). Each cycle measures drift (343) and schedules the next cycle at `nextTick += tickRate` (504) with the drift subtracted from the timeout (508). Order inside the cycle: world queue (348), clients in, NPC events, NPC turns (regen runs here, Npc 175), player turns (378), logouts, logins, zones, info, client output (408), cleanup (415), which resets each player's pathing state (1149; Player 474 then PathingEntity 593-602, which sets `stepsTaken = 0`).
 - Each player's turn: `updateMovement` moves the player (Player 1287, inside `processInteraction`). Walk is one step per tick. Run adds a second step if the first succeeded and the run flag is set (PathingEntity 146-149). `stepsTaken` counts tiles moved this tick (PathingEntity 247). Then `updateEnergy()` runs (World 722), so it sees this tick's step count.
 - `updateEnergy` (Player 701-723), in this order:
+  (0) if the player is `delayed`, return at once (702-704): no refill, no drain, no guards while delayed (cutscene, dialogue or script delay);
   (a) if `stepsTaken < 2` (idle or walk): `recovered = floor(agility/6) + 8` (706), energy = min(energy + recovered, 10000) (707). Agility is the base level of stat 16 (AGILITY).
   (b) otherwise (two tiles this tick): `kg = clamp(runweight/1000, 0, 64)` (709-710); `loss = (67 + 67*kg/64) | 0` (711); energy = max(energy - loss, 0) (712).
   (c) if energy == 0: the run flag is set to 0 and the run var is written (715-718).
   (d) if energy < 100: the temporary run flag is cleared (720-721). Ctrl-run is refused below 100 in the move handler (MoveClickHandler 35-37).
 - Weight. `calculateRunWeight` (617-646) sums `type.weight x count` for every item in inventories flagged `runweight` (628), skipping stackable objects (639) and adding grams (643). It runs only when a runweight inventory is marked changed (NetworkPlayer 379-388). The client gets `floor(kg)` (393).
-- Readout: the client receives the energy whenever its whole-percent value changes (NetworkPlayer 326-328). Energy persists across logins (Player 204 write, PlayerLoading 82 read).
+- Readout: the client receives the energy when `Math.floor(energy)/100 !== Math.floor(last)/100` (NetworkPlayer 326-328); the division is float and the floor is on the raw value, so it fires on any integer change of the stored energy (0.01 percent steps), not only on a whole-percent change. A throttle to whole percent is a Frankendom choice, not donor behaviour. Energy persists across logins (Player 204 write, PlayerLoading 82 read).
 - Tired state: energy 0 turns the run flag off. Nothing else in this repo changes speed when the bar is empty (`defaultMoveSpeed` 729-731 returns WALK when run is off). A speed penalty, if any, lives in content (not read).
 
 ## 2. Key functions
@@ -52,7 +53,7 @@ Acceptance: A server test asserts that 150 running ticks at 0 kg empty a 10000 b
 
 ## 4. TypeScript sketch
 
-simplified: keeps the donor's order (refill or drain, then the zero switch and the below-100 guard) and its constants (10000, 100, 64 kg, 67 and 67/64, +8 and /6). It takes the step count as an input and omits the movement itself (the second run step), the 600 ms tick loop and drift, the client readout throttle, persistence, the run var write, content scripts that add or drain energy, and the object weight loader. It recomputes the carried weight only when called, where the donor caches it and refreshes on an inventory change (stale-state risk, section 6).
+simplified: keeps the donor's order (delayed guard, refill or drain, then the zero switch and the below-100 guard) and its constants (10000, 100, 64 kg, 67 and 67/64, +8 and /6). It takes the step count as an input and models the delayed guard as a flag and omits the movement itself (the second run step), the 600 ms tick loop and drift, the client readout throttle, persistence, the run var write, content scripts that add or drain energy, and the object weight loader. It recomputes the carried weight only when called, where the donor caches it and refreshes on an inventory change (stale-state risk, section 6).
 
 ```ts
 // Licence: MIT (donor, LostCity LICENSE). Adapted from the mechanism; written as a fresh function, not a line-by-line translation.
@@ -85,8 +86,10 @@ export interface Stamina {
 }
 
 // One tick, after movement. stepsThisTick: 0 idle, 1 walk, 2 run pace (donor stepsTaken).
-// Order: refill (walk or idle) or drain (run pace), then the zero and below-100 guards.
-export function tickStamina(s: Stamina, stepsThisTick: number, agility: number, grams: number): Stamina {
+// Order: delayed guard, then refill (walk or idle) or drain (run pace), then the zero and below-100 guards.
+// delayed: the donor returns at once while the player is delayed (Player.ts 702-704): no refill, no drain, no guards.
+export function tickStamina(s: Stamina, stepsThisTick: number, agility: number, grams: number, delayed = false): Stamina {
+  if (delayed) return s;
   let energy = s.energy;
   if (stepsThisTick < 2) {
     const recovered = Math.floor(agility / 6) + 8;
@@ -125,3 +128,11 @@ export {};
 - Partial run: if the first of two steps succeeds and the second is blocked, the tick counts as walk and refills (PathingEntity 146-149, 247). That is a free refill next to a wall. Keep it or count the blocked step as a run tick; choose one and test it.
 - Tired state: at zero, only the run switch turns off (Player 715-717). No speed or damage penalty is in this repo. Frankendom's "tired body" needs a rule for hits and blocks (rows 3 and 17), not only sprint.
 - Server rulings: the bar lives on the server with the engine tick (checklist row 3, one ledger); the readout (NetworkPlayer 326-328) is client-only and row 14 (HUD). MAX_ATTACKERS = 3 is not touched by this mechanism.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- updateEnergy returns immediately when this.delayed is true (Player.ts 702-704); note listed refill/drain with no delay guard and the sketch lacked it. Confirmed; step (0) added and sketch gets a delayed parameter.
+- NetworkPlayer 326-328 readout test is Math.floor(energy)/100 !== Math.floor(last)/100 (float division), so it fires on any integer change, not whole-percent. Confirmed; text fixed.
+- Missed: none significant.
+
+Fixed 2026-10-12: delayed guard added to updateEnergy description and to tickStamina (note sketch and work/lostcity-stamina.ts, same code); readout wording corrected. Typecheck below in the reply table.

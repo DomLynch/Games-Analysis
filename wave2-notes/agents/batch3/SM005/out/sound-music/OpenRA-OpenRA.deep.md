@@ -164,3 +164,8 @@ Brief rule served: sound stays client-only and is driven by server-verified even
 Best transferable idea: give each source (attacker, unit) its own voice slot with an explicit do-not-play, interrupt or overlap policy, and pick clips from a shuffle bag, so many-on-one fights do not stack the same sound.
 Decision (proposed): adapt - take the per-source slot with policy and the shuffle bag, add the global cap and the prune that the donor lacks, and do not copy the shared slot for enemies or the looping stinger.
 Acceptance: with three attackers hitting the player, each attacker has its own cue slot; a second hit from the same attacker while its cue is still playing is skipped (do-not-play), and the total of cues sounding at once never exceeds the cap; a defeat stinger plays once and then the zone background resumes.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- All cited lines and behaviours verified.
+- Missed (minor): PlayPredefined plays only when player is null or the local player (Sound.cs 411), a per-team audio filter; PlayMusicThen starts looping when Settings.Sound.Repeat is set. Confirmed (411); neither is in the note.

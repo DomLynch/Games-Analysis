@@ -130,3 +130,9 @@ export {};
 - The water bed scales underwater points by 2 (64), and the clamp (23) hides that half under water is already full volume. Write that scale into the zone data so a designer can read it.
 - The one-point water branch (41-44) ignores the terrain and uses level distance only, while the sampled branch uses terrain. Pick one behaviour for Frankendom.
 - The region lists and the chances are game data and were not read; the numbers quoted are the shipped defaults only.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- No false claims found; the region sound selector, update path, fades, water updater and voice pool were verified against the code.
+- Missed (minor): the outdoor water volume applies only when |water level - player z| is under the 1024 outdoor tolerance and terrain height below 0 counts as underwater (watersoundupdater.cpp 39-64); the sketch takes the count as input and the note lists 1024 in the table but not the gate in the text.
+- Missed (minor): a listener underwater returns full volume (watersoundupdater.cpp 30-31).

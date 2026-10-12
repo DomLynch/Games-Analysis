@@ -4,13 +4,13 @@ Donor: `/mnt/frankendom-donors/nkzw-tech-athena-crisis/ui/AudioPlayer.tsx` (with
 
 Checked: Read in full: `ui/AudioPlayer.tsx` (246 lines, the hint file), `hera/audio/Music.tsx` (164 lines), `athena/info/Music.tsx` (105 lines: 85 sound names, 17 song names), `ui/Audio.tsx` (225 lines: placeholder map), `ui/types/athena-crisis-audio.d.ts` (6 lines), `athena/map/Configuration.tsx` 1-35, `athena/info/MovementType.tsx` 1-20, `hera/animations/Animation.tsx` 55-80, `hera/Unit.tsx` 495-520 and 620-735 (the movement block; 520-620 and 735-end not read). Callers grepped in `zeus dionysus hermes artemis deimos apollo ares athena hera ui offline`: the biome-music hook and `usePlayMusic` are called only from `hera/editor/MapEditor.tsx` 295-296 and `hera/campaign/CampaignEditor.tsx` 360-361. No in-game call site for the biome song was found in those directories, so in this snapshot the biome set is live only in the editors. Confidence: high on the AudioPlayer and the movement loop (read end to end, callers checked); medium on the biome-to-song path (call site limited to editors in this snapshot). Not read: the build module `athena-crisis:audio` that supplies the real audio (`ui/Audio.tsx` holds empty placeholder files), Howler internals, `hera/Unit.tsx` 520-620. camera_scope: not applicable (sound).
 
-Best transferable idea: a looping movement sound follows a unit's path, fades out over one third of a step on arrival, and an end tail fires a quarter step later (or at once), with one voice per cue name so a name never overlaps itself.
-Decision (proposed): adapt - take the timing rule (loop fades over a third of a step, tail at a quarter step or at once, silent at an infinite rate) for hero and creature step cues; Frankendom needs a global voice cap and priority per class, which this donor does not have, so those are added.
-Acceptance: when a hero moves along a path its step loop does not restart on each step, fades out over a third of one step after the last step, and the end cue starts a quarter step later; a client test asserts those times from the step length.
+Best transferable idea: a looping movement sound follows a unit's path; on arrival one timer fires after a delay, and in that same callback the loop starts a one-third-step fade-out and the end tail starts (the delay is a quarter step for a quarter-delay end sound, zero for other end sounds, two thirds of a step when there is no end sound), with one voice per cue name so a name never overlaps itself.
+Decision (proposed): adapt - take the timing rule (one arrival timer: loop fade of a third of a step and the tail start together, delay a quarter step or zero, two thirds with no tail; silent at an infinite rate) for hero and creature step cues; Frankendom needs a global voice cap and priority per class, which this donor does not have, so those are added.
+Acceptance: when a hero moves along a path its step loop does not restart on each step, starts a third-step fade-out and the end cue at the same moment, both after the arrival delay (a quarter step for a quarter-delay end sound, zero otherwise, two thirds of a step with no end sound); a client test asserts those times from the step length.
 
 ## 1. Mechanism
 
-- One player object holds one `Howl` per name (`instances` map, `ui/AudioPlayer.tsx` 20; created on first use, 200-225). All names are preloaded in idle time after first use (`preload`, 28-37, 31). One current song at a time (21).
+- One player object holds one `Howl` per name (`instances` map, `ui/AudioPlayer.tsx` 20; created on first use, 200-225). Sound names (the `Sounds` map only, not songs) are preloaded in idle time after first use (`preload`, 28-37, 32); songs are created on first play. One current song at a time (21).
 - Song change (`play`, 39-71): if the requested song is already current, return (42-44). Otherwise `stopCurrentSong` fades the old song out over 250 ms and stops it (46, 108-117, 112-113). The new song is set as current (47-48). If it is not already playing, it fades in from 0 to the volume over 250 ms (66-67). So the two songs overlap for 250 ms: a fixed-time crossfade. Nothing else changes.
 - Sound (`playSound`, 73-99): a `rate > 1` on 'Attack/MG' swaps to 'Attack/MGFast' and sets the rate to 1 (74-77). Fireworks and talking cues play at 0.66 of the sound volume (80-81). Rate `<= 0`, Infinity, or zero volume is silent (83-85). If the sound is already playing it seeks to 0 and plays again (92-94), so a name never overlaps itself. Playback speed is set with `instance.rate(rate)` (97).
 - Loop continue (`playOrContinueSound`, 101-106): plays only when not already playing (103).
@@ -22,7 +22,7 @@ Acceptance: when a hero moves along a path its step loop does not restart on eac
 - Presentation cues: attack animation sounds start after the initial delay (`hera/animations/Animation.tsx` 70-74, 72-74). A crystal plays its cue once each time the crystal changes (`hera/animations/CrystalAnimation.tsx` 30).
 - Visibility and music start (`hera/audio/Music.tsx`): music start is deferred with a timer (77-82). The delay is 3000 ms if an intro video is playing, else 100 ms (79-81, the values are on lines 80-81, not receipted). The song is looked up by route when the timer fires (78). Hiding the page pauses after 100 ms (58-61), so navigation does not pause; the pause is temporary (59) and resume happens when the page is visible again (52-55).
 - Route registry (`hera/audio/Music.tsx` 18-38): each route sets its song on mount (32) and removes it on unmount (34). Fallback song is 'hestias-serenade' (17).
-- Biome table (`hera/audio/Music.tsx` 86-136): tag 'eos-dawn' returns its song (87-88), tag 'gaias-rise' likewise (89-90). Tag 'b-side' picks the alternate set per biome (93-114). Otherwise the normal set (116-135). Seven biomes (Grassland, Desert, Snow, Swamp, Spaceship, Volcano, Luna), each with two songs, plus the two tag songs: 17 songs in total (`athena/info/Music.tsx` 88-105). Each switch ends with `satisfies never` and throws on an unknown biome (110-111, 132-133).
+- Biome table (`hera/audio/Music.tsx` 86-136): tag 'eos-dawn' returns its song (87-88), tag 'gaias-rise' likewise (89-90). Tag 'b-side' picks the alternate set per biome (93-114). Otherwise the normal set (116-135). Seven biomes (Grassland, Desert, Snow, Swamp, Spaceship, Volcano, Luna), each with two songs (14), plus the two tag songs (16), plus the fallback 'hestias-serenade' (17): 17 song names in total (`athena/info/Music.tsx` 88-105). Each switch ends with `satisfies never` and throws on an unknown biome (110-111, 132-133).
 
 ## 2. Key functions
 
@@ -172,3 +172,13 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 Reuse tag: rewrite-from-idea (MIT; code may be adapted; clean-room sketch)
 Brief rule served: 8 (target file and parity row named); 7 (licence, permissive)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: MINOR
+- Error (confirmed): Best idea and Acceptance said the tail starts a quarter step after the loop fade begins. In Unit.tsx 710-723 the loop stop (third-step fade) and the end sound are in the same timer callback, so both start at the same delay (0, quarter step, or 2/3 step with no end sound). Section 1 and the sketch (`loopStopAtMs`) were already right; headline, Decision and test corrected.
+- Error (confirmed): "all names preloaded" - preload loops over `Sounds` only (AudioPlayer.tsx 32), not songs.
+- Error (confirmed): "7 biomes x 2 + 2 tag songs = 17" is 16; the 17th is the fallback 'hestias-serenade'.
+- Missed: MovementType Amphibious falls back to Tread on non-sea tiles (MovementType.tsx 29, Unit.tsx 690-692); animation.endSound override rule (note mentions only the second).
+
+Fixed 2026-10-12: Best idea, Decision, Acceptance, preload sentence, song count. Sketch unchanged (it already models one timer), so no typecheck rerun.

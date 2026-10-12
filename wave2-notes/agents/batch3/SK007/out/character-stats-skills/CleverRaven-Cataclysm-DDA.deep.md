@@ -10,7 +10,7 @@ One stamina pool per character. Everything that tires the body spends from it, a
 
 - Pool size: `max = 3500 + 5 * cardiofit` (options PLAYER_MAX_STAMINA_BASE 3500 and PLAYER_CARDIOFIT_STAMINA_SCALING 5; character_health.cpp:2201-2202). Cardiofit = the cardio accumulator (base 1000, character.cpp:529-535) times a modifier: mutation multiplier (base 1.0), plus swimming skill / 100 (the code reads swimming; the comment says athletics, see section 6), plus lifestyle / 1000 with a double penalty when negative (character_health.cpp:2378-2392). At the defaults this gives max = 8500 (computed).
 - Spending, all in one signed number that goes negative:
-  1. Melee swing (melee.cpp:945): arm cost = `min(-50, total)`. `total` = proficiency multiplier x (weight term + melee skill - stance malus), with weight term = `-(grams/16 + 50)` (character_health.cpp:461-473; melee.cpp:966-991). Stance malus: 50 when on the ground, 20 when crouching and not using natural stance or unarmed (melee.cpp:971-973). A miss by a DEFT character adds 50 before the -50 floor (melee.cpp:933, 945).
+  1. Melee swing (melee.cpp:945): arm cost = `min(-50, total)`. `total` = proficiency multiplier x (weight term + melee skill - stance malus), with weight term = `-(grams/16 + 50)` times the limb Lift modifier `melee_stamina_cost_mod` (1.0 at default; character_health.cpp:473, character_modifiers.json:53; melee.cpp:966-991). Stance malus: 50 when on the ground, 20 when crouching and not using natural stance or unarmed (melee.cpp:971-973). A miss by a DEFT character adds 50 before the -50 floor (melee.cpp:933, 945).
   2. Block (melee.cpp:2216-2220): leg cost = `15 * 6 * (20 - melee) / 20`, using the base burn option of 15.
   3. Walking (character_health.cpp:2246-2284): leg cost = moves x burn ratio / 100, where the ratio starts at 15 and is scaled by move mode and by overburden percent.
   4. Uncanny dodge (a trait or effect; character.cpp:1911-1952): needs 300 stamina and costs 300 on legs, or 150 on legs with a bionic that also needs power.
@@ -19,9 +19,9 @@ One stamina pool per character. Everything that tires the body spends from it, a
   - The dodge modifier is `1 - logistic_range(10% of max, 90% of max, stamina)` (character.cpp:1172-1178). It is 0 at 10% of max, 0.5 at 50%, 1 at 90% (the logistic is clamped at both ends). `get_dodge` multiplies the dodge value by it (melee.cpp:1244-1245) and returns 0 when a dodge cannot be tried (melee.cpp:1215).
   - Counterattack after a dodge is refused below one third of max (character.cpp:1886).
   - Running needs stamina above zero and not winded (character.cpp:2052).
-- Running cost: move cost is multiplied by `1 / ((stamina/max + 1) / 2)`, so 1 at full and 2 at empty (character_modifier.cpp:304-308; character.cpp:6293).
-- Winded: any change that takes stamina below zero adds the body parts' windage effect (character_health.cpp:2236-2238). The "winded" effect lasts up to 30 s, gives speed -10 (effects.json:740-747), halves regen to 10% (character_health.cpp:2308-2310), and blocks dodge and run (character.cpp:1151, 2052).
-- Regen per turn: `max(1, 20 * cardiofit / 1000)` x regen multiplier, with the multiplier at least 0.1 (character_health.cpp:2299-2310), plus stim (up to 5 per turn when positive; a negative stim subtracts a share of current stamina; 2328-2335), rounded up over the turns (2353). Bionic gills add more (not read).
+- Move-cost multiplier (all move modes, not only running): `character.cpp` 6293 divides the move cost by the stamina modifier, and `burn_move_stamina` (character_health.cpp 2280-2282) multiplies its stamina burn by it too. Move cost is multiplied by `1 / ((stamina/max + 1) / 2)`, so 1 at full and 2 at empty (character_modifier.cpp:304-308; character.cpp:6293).
+- Winded: any change that takes stamina below zero adds the body parts' windage effect (character_health.cpp:2236-2238). The "winded" effect lasts up to 30 s (the windage effect is applied for 10 turns, character_health.cpp 2239), gives speed -10, a pain chance and a reaction limb-score penalty of 0.5 (effects.json:740-749), cuts regen to 10% (character_health.cpp:2308-2310), and blocks dodge and run (character.cpp:1151, 2052).
+- Regen per turn: `max(1, 20 * cardiofit / cardio_acc_base * breathing_mod)` (cardio_acc_base is 1000 at default; `stamina_recovery_breathing_mod`, character_health.cpp 2316-2317) x regen multiplier, where the multiplier is `mod_regen + (winded ? 0.1 : 1.0)` floored at 0.1 (character_health.cpp:2299-2310), plus stim (up to 5 per turn when positive; a negative stim subtracts a share of current stamina; 2328-2335), rounded up over the turns (2353). Bionic gills add more (not read).
 - Clamp: stamina stays in [0, max] (character_health.cpp:2243). A harmful cough costs 5% of max (2425-2426).
 
 ## 2. Key functions
@@ -46,7 +46,7 @@ Reusable algorithm vs game-specific constants:
 | Per-swing cost from the weapon weight, minus skill, plus stance; a floor per swing | weight/16 g + 50; floor -50; stance +50 prone, +20 crouch (character_health.cpp:471-473; melee.cpp:963, 971) |
 | Blocks cost legs, falling with skill | base 15 x 6, zero at skill 20 (melee.cpp:2216-2217) |
 | Dodge value follows a logistic of the pool, zero at the bottom, refused at a floor | band 10%-90% of max; refuse at 0.11 (character.cpp:1157, 1175-1176) |
-| Running gets dearer as the pool empties | x2 at empty (character_modifier.cpp:308) |
+| Moving gets dearer as the pool empties (every move mode) | x2 at empty (character_modifier.cpp:308) |
 | Going below zero is a state (winded) with a regen penalty | winded 30 s, speed -10, regen x0.1 (effects.json:746-747; character_health.cpp:2308) |
 | Regen per turn from a base, scaled by fitness | base 20 per turn, fitness base 1000 (external_options.json:70; character.cpp:535) |
 
@@ -66,7 +66,7 @@ Stamina table (SK-FOCUS format: name | what it does | formula | number ranges | 
 | Dodge modifier | Scales dodge value by stamina | `1 - logistic_range(0.1 max, 0.9 max, s)` | computed: 0.00 at 10%, 0.06 at 25%, 0.50 at 50%, 0.94 at 75%, 1.00 at 90% | 0 floor, 1 ceiling | character.cpp:1172-1178; melee.cpp:1244-1245; cata_utility.cpp:166-196 |
 | Counterattack gate | No counter after a dodge when tired | refused below max/3 | 1/3 of max | hard | character.cpp:1886 |
 | Run gate | Can run only with stamina and not winded | `s > 0 && !winded && legs` | s > 0 | hard | character.cpp:2052 |
-| Run cost multiplier | Move cost while running | `1 / ((s/max + 1)/2)` | 1 at full to 2 at empty (computed) | 0.5 floor on the modifier | character_modifier.cpp:304-308; character.cpp:6293 |
+| Move-cost multiplier | Move cost in every move mode (also scales walking burn) | `1 / ((s/max + 1)/2)` | 1 at full to 2 at empty (computed) | 0.5 floor on the modifier | character_modifier.cpp:304-308; character.cpp:6293 |
 | Winded state | Entered when stamina would go below zero | windage effect on body parts; effect winded 30 s, speed -10, regen x0.1 | 30 s | none in code | character_health.cpp:2236-2238; effects.json:740-747; body_parts.json:32 |
 | Uncanny dodge cost | Special dodge | needs 300 stamina, costs 300 legs; 150 legs with a bionic | 300 / 150 | needs 300 or 150 | character.cpp:1911, 1948, 1952 |
 | Cough cost | Harmful cough | 5% of max | 5% | none | character_health.cpp:2425-2426 |
@@ -80,7 +80,7 @@ Stamina table (SK-FOCUS format: name | what it does | formula | number ranges | 
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the one pool, the swing cost (weight term, melee skill, stance, -50 floor), the block cost, the dodge gate and modifier with its 0.11 floor, the run multiplier, winded below zero, and regen. It omits arms and legs split (bionic limbs), bionic power, the proficiency multiplier and DEFT miss bonus, overburden burn and weight capacity, the cardio accumulator dynamics (fitness is an input), stimulants, the 30 s winded timer, the quarter-stamina health counter, cough, counterattack, uncanny dodge, and the NPC branch. It also fixes one donor defect: the block cost goes negative above melee skill 20 (a block would give stamina back), so the sketch clamps it at zero.
+simplified: the sketch keeps the one pool, the swing cost (weight term, melee skill, stance, -50 floor), the block cost, the dodge gate and modifier with its 0.11 floor, the run multiplier, winded below zero, and regen. It omits the limb Lift modifier on swing cost and the breathing and regen-enchantment terms on regen (all three are optional arguments with default 1.0 / 0), arms and legs split (bionic limbs), bionic power, the proficiency multiplier and DEFT miss bonus, overburden burn and weight capacity, the cardio accumulator dynamics (fitness is an input), stimulants, the 30 s winded timer, the quarter-stamina health counter, cough, counterattack, uncanny dodge, and the NPC branch. It also fixes one donor defect: the block cost goes negative above melee skill 20 (a block would give stamina back), so the sketch clamps it at zero.
 
 ```ts
 // Licence: CC-BY-SA 3.0 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -136,8 +136,9 @@ function spend(f: Fighter, delta: number): void {
 }
 
 // One melee swing, arm cost as a negative number: weight term, minus melee skill, minus stance; never less than -50.
-function swingCost(weaponGrams: number, f: Fighter, stance: Stance): number {
-  const base = -(Math.floor(weaponGrams / 16) + 50);
+function swingCost(weaponGrams: number, f: Fighter, stance: Stance, liftMod: number = 1.0): number {
+  // donor multiplies the weight term by the limb Lift modifier (1.0 at default)
+  const base = -(Math.floor(weaponGrams / 16) + 50) * liftMod;
   const stanceMalus = stance === 'prone' ? 50 : stance === 'crouch' ? 20 : 0;
   return Math.min(-50, base + Math.round(f.melee) - stanceMalus);
 }
@@ -153,9 +154,10 @@ function runCostMultiplier(f: Fighter): number {
 }
 
 // Regeneration per turn: fitness-scaled base, at least 1, and 10% of that while winded.
-function regenPerTurn(f: Fighter): number {
-  const mult = f.winded ? 0.1 : 1.0;
-  return Math.max(0.1, mult) * Math.max(1, REGEN_BASE * (f.cardio / 1000));
+// modRegen is the additive regen enchantment (added to, then floored with, the winded multiplier); breathingMod is the breathing limb score (1.0 at default).
+function regenPerTurn(f: Fighter, modRegen: number = 0, breathingMod: number = 1.0): number {
+  const mult = modRegen + (f.winded ? 0.1 : 1.0);
+  return Math.max(0.1, mult) * Math.max(1, REGEN_BASE * (f.cardio / 1000) * breathingMod);
 }
 
 function regen(f: Fighter, turns: number): void {
@@ -193,4 +195,17 @@ Acceptance: a duel test with a pool of 8,500 (the donor default) shows a 1,600 g
 - Winded is any stamina change below zero, including coughs and other spends, not only melee. Frankendom should limit winded to the duel spends it means to punish.
 - Stamina is owned by the character here. The donor gives NPCs a fixed full pool (`get_stamina` returns max for NPCs, character_health.cpp:2178-2183). Frankendom's creatures need an explicit rule: a stamina or a fixed attack rate, not an accident of the NPC branch.
 - Server-verified: the pool and every spend must live on the server; the client shows the number. Kills are server-verified, so a dodge refused by the server must be the same refusal the client shows.
+- NPCs: `get_stamina_max` returns a fixed 10000 for NPCs (character_health.cpp 2189-2192) and `get_cardiofit` is 2x the base (2363-2366). `can_try_dodge` also refuses on narcosis, fearparalyze and CANNOT_MOVE (character.cpp 1150-1152). Bionic gills regen bonus was not read.
 - Magic and mental stats, luck and hit location were not read in this cell, so this note makes no claim about them.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: MINOR
+- Error: "Running cost" framing. The stamina move-cost modifier is applied for every move mode (character.cpp:6293) and in burn_move_stamina (character_health.cpp 2280-2282), not only running. Numbers 1 to 2 are right. Confirmed.
+- Error: swing weight term omitted the multiplier `melee_stamina_cost_mod` (limb Lift score, character_health.cpp:473); correct at default 1.0. Confirmed.
+- Error: regen formula omitted the breathing multiplier (character_health.cpp 2316-2317) and that mod_regen is added to the winded multiplier before the 0.1 floor (2306-2310); regen is base*cardiofit/get_cardio_acc_base, not literally /1000. Confirmed.
+- Error: winded also gives pain and a reaction limb-score penalty (effects.json 747-748); the windage effect is applied for 10 turns (2239). Confirmed.
+- Missed: NPC stamina max fixed 10000 (2189-2192) and NPC cardiofit 2x base (2363-2366); can_try_dodge also refuses on narcosis, fearparalyze, CANNOT_MOVE (character.cpp 1150-1152). Bionic gills regen bonus unread (declared).
+- Verified OK: pool, cardiofit, logarithmic_range, dodge gate 0.11 and 30.4 percent threshold, swing floor, stance, block cost, counterattack, can_run, uncanny, cough, NPC rule, skill train/rust/readBook, licence.
+
+Fixed 2026-10-12: section 1 now says the modifier applies to every move mode, adds the Lift multiplier, breathing and regen-enchantment terms, winded extras and the NPC/dodge-gate lines; sketch `swingCost` and `regenPerTurn` gained optional args (default behaviour unchanged); work/cdda-stamina.ts updated to match. Typecheck below.

@@ -10,7 +10,7 @@ Two linked halves. Use decides the weights; XP pays for the points.
 
 (a) Use sets the weights. Every practice event calls `exercise(skill, degree)` (skills.cc:860). At skill level 27 it returns at once (862). Otherwise it pushes the skill onto the back of `exercises` only when the skill is trained (870-872), and always onto `exercises_all` (875). Each push pops the front, so both queues keep a fixed length of EXERCISE_QUEUE_SIZE = 100 (defines.h:145; asserted at skills.cc:479).
 
-(b) `reset_training()` (775) turns the queue into percent weights, and only in auto-training mode (800). Each event in `exercises` adds the skill's train value (1 normal, 2 focus) (806). The `exercises_all` count is folded in with a max (818, 825). A focus skill whose weight is under 20 gets `5 * (5 - w/4)` added (838-841). The array is then scaled to total 100 (848; `_scale_array` 596-630). In manual mode the weight is just the train setting (the first loop of reset_training).
+(b) `reset_training()` (775) turns the queue into percent weights, and only in auto-training mode (800). Each event in `exercises` adds the skill's train value (1 normal, 2 focus) (806). The `exercises_all` count is folded in with a max (818, 825). A focus skill whose weight is under 20, including 0, gets `5 * (5 - w/4)` added (838-842; a skill with no recent use gets +25). The array is then scaled to total 100 (848; `_scale_array` 596-630). In manual mode the weight is just the train setting (the first loop of reset_training).
 
 (c) XP pays for points. `gain_exp` (player.cc:2905) adds the gained XP to total experience (for character level) and adds `10 * skill_xp` to the skill pool `you.exp_available` (player.cc:2968), then calls `train_skills` (player.cc:2970; `skill_xp` itself was not read). `train_skills` (1049) takes the point cost of the current cost level (`calc_skill_cost`, 169: 1 at cost level 1, 265 from cost level 24 to 27) and passes at most the XP up to the next cost level into `_train_skills` (1080-1083). The cost level moves with total XP (`calc_skill_cost_level`, 642; thresholds `skill_cost_needed` = XP table x 13, 161-163; 27 levels, 166).
 
@@ -54,7 +54,7 @@ Stat and skill table (SK-FOCUS format: name | what it does | formula | number ra
 | Strength (melee multiplier) | Scales damage for weapons that use strength | `max(1.0, 75 + 2.5*str) / 100` (computed: str 0 = 0.75x, 10 = 1.00x, 20 = 1.25x, 30 = 1.50x, -30 = 0.01x) | str about -30 to 30 in the formula; no upper limit in this function | floor 0.01x from the max(1.0, ...) term | fight.cc:1759-1769 (comments 1761-1764, line 1768) |
 | Dexterity (melee multiplier) | Same formula for weapons that use dex instead (the comment names short and long blades and ranged weapons) | same formula with dex | same | same floor | fight.cc:1759-1769; the choice is weapon_uses_strength (not read) |
 | Strength / Intelligence / Dexterity modifier | Adds bonuses to the stat from gear, form, mutations and divine stamina | Ego of that stat gives +3 per armour piece (player-stats.cc:288); each ring of that stat adds the wearing_jewellery count (291; whether it sums enchantments is not read); artefacts, form and mutations added (not read in full) | not read | none in these functions | player-stats.cc:276-300 |
-| Max HP | Sets maximum hit points from level, Fighting and species | `(XL*11/2 + 8 + perm_adj + XL*Fighting/70 + (Fighting+1)/2)`, then `* (10 + species HP mod) / 10`, plus 4 per flat-HP mutation, then robust and frail percentages (computed: XL 1 with Fighting 0 gives 13 before species; XL 27 with Fighting 0 gives 156 before species) | XL 1 to 27 (level table); species mod not read | min 1 | player.cc:4416-4427 |
+| Max HP | Sets maximum hit points from level, Fighting and species | `(XL*11/2 + 8 + perm_adj + XL*(5*Fighting)/70 + (3*Fighting+1)/2)` (the donor reads skill(FIGHTING, 5) and skill(FIGHTING, 3): the skill level at scale 5 and scale 3, so the terms are XL*5F/70 and (3F+1)/2), then `* (10 + species HP mod) / 10`, plus 4 per flat-HP mutation, then robust and frail percentages (computed: XL 1 with Fighting 0 gives 13 before species; XL 27 with Fighting 0 gives 156 before species) | XL 1 to 27 (level table); species mod not read | min 1 | player.cc:4416-4427 (4423-4424) |
 | Max MP | Sets maximum magic points from level and the two casting skills | `min(XL,23) + highest + min(8, min(highest, XL))/2`, where highest = max(Spellcasting, Invocations/2), then high-magic / low-magic percent, then species MP mod, then mp_max_adj, then 9 per ring of magical power (computed: XL 27 with Spellcasting 10 and Invocations 0 gives 37 before species and items) | XL term stops at 23 | XL term capped at 23 (player.cc:4480); the stepdown line is commented out | player.cc:4469-4500 |
 | HP regen | Points of regeneration per turn; the unit is set by the caller (not read) | `20 + max_hp/6`, plus item pips; zero if sick or regeneration is inhibited; Trog's Hand adds 100 (computed: max HP 156 gives 46) | max HP 1 and up | none seen | player.cc:1432-1460 (1437, 1453) |
 | MP regen | Points of mana regeneration | `7 + max_mp/2`; doubled with the mana regeneration mutation; +40 per amulet of mana regeneration (computed: max MP 37 gives 25) | not read beyond these terms | none seen | player.cc:1475-1495 (1480, 1489-1490) |
@@ -66,20 +66,20 @@ Stat and skill table (SK-FOCUS format: name | what it does | formula | number ra
 | Aptitude | Per-skill, per-species cost multiplier on points | factor `2^(-apt/4)`: apt 0 = x1, apt 4 = x0.5, apt -4 = x2; species table generated at build (not read) | not read | none seen | skills.cc:2620-2623, 2659-2686 |
 | Skill level cap | Highest level | 27 | 0 to 27 | hard cap 27 | defines.h:143; skills.cc:862, 887 |
 | Practice queue | Recent-use history that sets weights | 100 events; weight per event 1 normal, 2 focus | queue of 100 | fixed length | defines.h:145; skills.cc:479, 806, 872-875 |
-| Focus floor | Lifts a focus skill with little recent use | if weight w in (0, 20): w + 5*(5 - w/4) (computed: raw result 21 to 28 before scaling to 100; the comment's "20%" is not a guaranteed share) | w 1 to 19 | none | skills.cc:838-841 |
+| Focus floor | Lifts a focus skill with little recent use | if a focus skill has weight w in [0, 20): w + 5*(5 - w/4) (w = 0 gives 25) (computed: raw result 21 to 28 before scaling to 100; the comment's "20%" is not a guaranteed share) | w 0 to 19 | none | skills.cc:838-841 |
 | Weapon-practice chance | Chance one melee hit trains the weapon | `x_chance_in_y(damage, 20)`, so weapon damage/20 | damage property not read | none | exercise.cc:193 (also 180-196) |
 | Weapon-delay practice degree | Practice points per training event for a slow weapon | `1 + round(2*(mindelay - skill)/mindelay)`: skill 0 gives 3, skill at mindelay gives 1 (computed) | 1 to 3 | none | exercise.cc:145-158 |
 | Dodge practice | Trains dodging when attacked | `one_chance_in(6)` per attack | 1 in 6 | none | exercise.cc:216-219 |
 | Armour practice | Trains armour when hit | coin flip, then `random_range(1, 2)` | 1 to 2 points | none | exercise.cc:223-227 |
 | Fighting practice (when hit) | Trains Fighting when hit | coin flip (after the armour flip), then 1 point | 1 point | none | exercise.cc:228 |
-| Weapon damage by skill | Scales damage by weapon skill | `damage * (2500 + sklvl') / 2500`, with sklvl' = skill at scale 100 (scale semantics of skill() not read, so the per-level step is not computed) | level 0 to 27 | level cap 27 | fight.cc:1774-1780 |
+| Weapon damage by skill | Scales damage by weapon skill | `damage * (2500 + sklvl') / 2500`, with sklvl' = `maybe_random2(sklvl + 1, random)` where sklvl = skill at scale 100: a random 0..sklvl per hit when `random` is set (fight.cc:1777), not the flat skill (scale semantics of skill() not read, so the per-level step is not computed) | level 0 to 27 | level cap 27 | fight.cc:1774-1780 |
 | Armour encumbrance | Penalties for worn body armour and shield | comment text only (not read) | not read | not read | player.cc ~6431-6447 |
 
 Not read in this pass (outside the skill and stat mechanisms): block, parry, roll and dodge windows, damage types vs armour, crit, hit location, bleeding, armour per slot, crowd control, carry weight. These need a second pass if Strategy wants them.
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order: phase 1 by share (shuffled), a whole-share skip rule, phase 2 by weighted draw, a 27-level stop, and the 10 x 265 spend cap per purchase. It omits training targets, manuals, crosstraining, distributed-training and innate-caster modes, the second queue (exercises_all), the Gnoll path, the cost-level loop (the caller passes the pool up to the next level), and the donor's empty-queue fallback to the train setting (the queue helper returns zeros). It also changes one donor defect: the +1 rounding goes to the largest remainders, not the smallest (section 6).
+simplified: the sketch keeps the donor order: phase 1 by share (shuffled), a whole-share skip rule, phase 2 by weighted draw, a 27-level stop, and the 10 x 265 spend cap per purchase. It omits training targets, manuals, crosstraining, distributed-training and innate-caster modes, the second queue (exercises_all), the Gnoll path, the cost-level loop (the caller passes the pool up to the next level), and the donor's empty-queue fallback (reset_training 829-834: when no skill was exercised recently every trained skill gets its train setting, 1 or 2, as weight; the queue helper here returns zeros). It also changes one donor defect: the +1 rounding goes to the largest remainders, not the smallest (section 6).
 
 ```ts
 // Licence: GPL-2.0-or-later (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -191,7 +191,7 @@ function weightsFromQueue(queue: { id: string; train: 1 | 2 }[], ids: string[], 
   for (const e of queue) raw.set(e.id, (raw.get(e.id) ?? 0) + e.train);
   for (const id of focus) {
     const w = raw.get(id) ?? 0;
-    if (w > 0 && w < 20) raw.set(id, w + 5 * (5 - Math.floor(w / 4)));
+    if (w < 20) raw.set(id, w + 5 * (5 - Math.floor(w / 4)));
   }
   const total = [...raw.values()].reduce((a, b) => a + b, 0);
   const out = new Map<string, number>(ids.map(id => [id, 0]));
@@ -233,3 +233,11 @@ Acceptance: a server test with a fixed queue of 75 sword and 25 dodge events and
 - One ledger: the donor's pool is one XP number; Frankendom must keep the same ledger for kill XP (row 18) and the skill pool, with a test that the sum matches.
 - Magic and mental stats: this donor has Spellcasting and Invocations feeding max MP (player.cc:4480-4500). Frankendom's mana and focus are a separate pool; the donor's MP term is a useful shape (level term plus the best casting skill) but the numbers are DCSS's.
 - Stamina, poise and luck: not present in the donor (section 3). Do not claim them as DCSS mechanisms.
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Max HP formula used the wrong skill scaling: real player.cc:4423-4424 is XL*skill(FIGHTING,5)/70 + (skill(FIGHTING,3)+1)/2. Confirmed on the donor. Worked values used Fighting 0 and still hold.
+- Focus floor applies to any focus skill with weight under 20 including 0 (skills.cc:838-842, +25); the table and sketch said (0,20) and w>0. Confirmed on the donor.
+- Missed: reset_training empty-queue fallback (829-834) was only in the sketch caveat; apply_weapon_skill uses maybe_random2(sklvl+1) (fight.cc:1777), a random per-hit factor. Confirmed.
+
+Fixed 2026-10-12: corrected the Max HP formula and file:line; focus floor now covers weight 0 in the mechanism, table and sketch (work/crawl-skill-pool.ts updated, typechecked); stated the empty-queue fallback and the per-hit random weapon-skill factor.

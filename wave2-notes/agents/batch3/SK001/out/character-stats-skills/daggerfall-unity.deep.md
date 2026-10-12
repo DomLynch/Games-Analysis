@@ -250,3 +250,9 @@ Acceptance: a caster with Will 60 facing a mind effect has a save of 50 + 6 = 56
 
 Reuse tag: adapt (MIT: code may be adapted with the notice kept; this sketch is a fresh re-expression)
 Brief rule served: one engine (one save and one hit function called by every client); tunable numbers as data; server-verified outcomes (RNG injected, no frame-count seeds).
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- No false claims found; all numbers and line ranges verified against the donor.
+- Missed (confirmed in code): SavingThrow first rolls active magical resistance-effect flags before the 50 base (FormulaHelper.cs 1449-1455: HasResistanceFlag, then GetResistanceChance, a Dice100 success returns 0); the saving-throw bullet above starts at the 50 base (1458) and omits this early-out. Add a resistance-effect check first when porting.
+- Missed (confirmed): the exhaustion forced-rest branch also tallies Medical by 1 (PlayerEntity.cs 2438).

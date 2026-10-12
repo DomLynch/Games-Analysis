@@ -129,3 +129,8 @@ Acceptance: a server test asserts that a parry at skill 100 with the -10 modifie
 
 Reuse tag: rewrite-from-idea (GPL-3.0; clean-room only)
 Brief rule served: 1 (one combat core, two clients); SK focus item 8 (skill gain, caps, decay), item 4 (block, parry, dodge use cost)
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- No material errors. Imprecision (wording only): 'Max skill level: rule or table whichever is set' - the table max level is clamped down to the rule (116-119).
+- Missed: further CheckIncreaseSkill modifiers at call sites: attack.cpp:1656 (my_hit.skill -15), 6789 double attack -10, 6831 triple attack -10, 6456 feign death +5; rule SkillCapMaxLevel -1 means use MaxLevel (ruletypes.h:131).

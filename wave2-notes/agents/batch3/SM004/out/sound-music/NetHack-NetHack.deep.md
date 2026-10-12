@@ -10,8 +10,8 @@ Checked: The hint file `doc/sound.txt` (625 lines) is the soundlib plug-in inter
 - The rolls are sequential, in a fixed order. Each feature rolls only if the level has its flag set (`svl.level.flags.*`), so an absent feature costs no roll.
 - Non-exclusive features: fountain (1 in 400, 213-219) and sink (1 in 300, 220-225). Each plays a line and falls through, so both can play on the same turn, and later features still roll.
 - Exclusive features, tried in this order: court (1 in 200, 226-229), swamp (1 in 200, 230-237), vault (1 in 200, 238-277), beehive (1 in 200, 278-281), morgue (1 in 200, 282-285), barracks (1 in 200, 286-308), zoo (1 in 200, 309-312), shop (1 in 200, 313-329), temple (1 in 200, 330-334), oracle level (1 in 400, 335-338). The first one that plays ends the turn (a `return`).
-- Witness rule for the predicate features (court, beehive, morgue, zoo, temple, oracle): `get_iter_mons` walks the living monsters on the level (mon.c 4557-4563) and stops at the first one whose predicate returns TRUE. A predicate checks the monster's state and its room (for example, court: asleep or a lord, not an animal, in a COURT room; sounds.c 32-34). If no monster qualifies, the function returns FALSE, the roll does not end the turn, and the scan continues to the next feature (for example, 227-228 fall through when the walk finds nothing).
-- Swamp, vault and shop have no monster witness. Swamp plays its line and returns. Vault looks for the vault room; if none exists it clears the flag and returns (240-243). Shop plays a line only when the shop is tended and the hero is not in it (319-327), and returns either way (328).
+- Witness rule for the predicate features (court, beehive, morgue, zoo, temple, oracle): `get_iter_mons` walks the living monsters on the level (mon.c 4557-4563) and stops at the first one whose predicate returns TRUE. A predicate checks the monster's state and its room (for example, court: asleep, a lord or a prince, not an animal, in a COURT room; sounds.c 32-34; beehive: a flying ant in a BEEHIVE room, 61-86; temple: an active priest of that temple while the hero is outside it, 130-178; oracle: the Oracle, and the line is played only when she is not visible, 180-199, but the tick ends either way). The transferable rule: do not play an ambient cue when its source is in view. If no monster qualifies, the function returns FALSE, the roll does not end the turn, and the scan continues to the next feature (for example, 227-228 fall through when the walk finds nothing).
+- Swamp, vault and shop have no monster witness. Swamp plays its line and returns. Vault looks for the vault room; if none exists it clears the flag and returns (240-243). Shop plays a line only when the shop is tended and the hero is not in it (319-327), and returns either way (328), so a successful shop roll always ends the tick. The sketch models this by treating shop as a no-witness exclusive feature.
 - Barracks: a sleeping mercenary in a BARRACKS room, or the sixth awake one, plays the line and returns (301-305).
 - Messages are only text lines: the same `You_hear` output, with a `Soundeffect(...)` call in some branches that a sound library may use (for example, court lines at 45 and 47; `Soundeffect` is a no-op when the sound library is absent, `include/sndprocs.h` 213-226, read only).
 
@@ -19,7 +19,7 @@ Checked: The hint file `doc/sound.txt` (625 lines) is the soundlib plug-in inter
 
 - `dosounds` 202-339: the scheduler (gate, rolls in order, exclusive returns).
 - `get_iter_mons` (`src/mon.c` 4553-4565): iterate living monsters, stop at the first TRUE predicate, return that monster.
-- `throne_mon_sound` 29-58 (court), `zoo_mon_sound` 114-128, `temple_priest_sound` 130-178, `beehive_mon_sound` 61-86, `morgue_mon_sound` 88-112, `oracle_sound` 180-199: the witness predicates. Each returns TRUE only when it plays a line.
+- `throne_mon_sound` 29-58 (court), `zoo_mon_sound` 114-128, `temple_priest_sound` 130-178, `beehive_mon_sound` 61-86, `morgue_mon_sound` 88-112, `oracle_sound` 180-199: the witness predicates. Each returns TRUE when its monster matches. Most also play a line then, but `oracle_sound` returns TRUE for any Oracle monster even when she is clearly visible and nothing is played (180-199), so the tick is consumed silently.
 - `mon_in_room` 19-26: the room-type test for a monster.
 
 ## 3. Numbers vs mechanism
@@ -29,7 +29,7 @@ Checked: The hint file `doc/sound.txt` (625 lines) is the soundlib plug-in inter
 | Per-tick rare roll per present feature | fountain 1/400 (sounds.c:213); sink 1/300 (:220); court, swamp, vault, beehive, morgue, barracks, zoo, shop, temple 1/200 (:226, 230, 238, 278, 282, 286, 309, 313, 330); oracle 1/400 (:335) |
 | Gate before any roll | deaf, acoustics, engulfed, underwater (:208) |
 | Priority by return order | court > swamp > vault > beehive > morgue > barracks > zoo > shop > temple > oracle (source order, 226-338); fountain and sink never return |
-| Witness must exist, roll then does not spend the tick | predicate walk (mon.c:4561); a predicate that finds no one lets the scan continue |
+| Witness must exist, roll then does not spend the tick (not shop, which needs none and always returns; not a visible Oracle, which returns TRUE silently) | predicate walk (mon.c:4561); a predicate that finds no one lets the scan continue |
 | Altered-state line set | `hallu` 0 or 1 (:211); line index offset by `hallu` (for example :218, :235) |
 | Line choice | `rn2(3) + hallu` or `rn2(2) + hallu` (for example :41, :218, :235) |
 | Tick unit | one game turn (allmain.c:245 advances the turn counter; dosounds at :353 runs in the same pass; exact block not read) |
@@ -38,7 +38,7 @@ No cooldown: a feature can repeat on the next turn (the roll is independent each
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the gate, the fixed order, the per-feature roll that is skipped when the zone lacks the feature, the exclusive first-cue return, and the witness rule (a missed witness does not end the tick). It returns a list of cues instead of printing. It reorders nothing. It omits the donor's side effects (the shop message and `noisy_shop`, the vault gold and searching lines, the vault flag clear, the barracks head count, which the caller computes as `eligible`, the temple exclusion on astral and sanctum levels, and the `Soundeffect` hooks). Line strings are placeholders, not donor text.
+simplified: the sketch keeps the gate, the fixed order, the per-feature roll that is skipped when the zone lacks the feature, the exclusive first-cue return, and the witness rule (a missed witness does not end the tick; shop is the exception, it needs no witness and always ends the tick after a successful roll). An oracle witness whose line is suppressed because she is visible still ends the tick in the donor; the sketch plays the cue, so the caller should set `eligible` false for a visible source and accept the small difference. It returns a list of cues instead of printing. It reorders nothing. It omits the donor's side effects (the shop message and `noisy_shop`, the vault gold and searching lines, the vault flag clear, the barracks head count, which the caller computes as `eligible`, the temple exclusion on astral and sanctum levels, and the `Soundeffect` hooks). Line strings are placeholders, not donor text.
 
 ```ts
 // Licence: NGPL (NetHack General Public License, GPL family: treated as copyleft). Clean-room shape only: written from the described steps. No donor text is used; the LINE strings are placeholders.
@@ -56,9 +56,11 @@ const EXCLUSIVE: ReadonlySet<Feature> = new Set<Feature>([
   'court', 'swamp', 'vault', 'beehive', 'morgue', 'barracks', 'zoo', 'shop', 'temple', 'oracle',
 ]);
 
-// These need a creature (a witness) in the zone before they can speak. Fountain, sink, swamp and vault need none.
+// These need a creature (a witness) in the zone before they can speak. Fountain, sink, swamp, vault and shop need none
+// (donor: shop has no monster witness; after a successful roll it always ends the tick. The caller leaves 'shop' out of
+// `present` when the shop is untended or the hero is inside it, which the donor checks before it plays the line).
 const NEEDS_WITNESS: ReadonlySet<Feature> = new Set<Feature>([
-  'court', 'beehive', 'morgue', 'barracks', 'zoo', 'shop', 'temple', 'oracle',
+  'court', 'beehive', 'morgue', 'barracks', 'zoo', 'temple', 'oracle',
 ]);
 
 // Chance per fixed tick, by feature. Zone data may override each one.
@@ -85,7 +87,7 @@ const LINE: Record<Feature, { normal: string; altered: string }> = {
 
 export interface Witness {
   feature: Feature;   // the feature the creature stands in
-  eligible: boolean;  // computed by the caller (asleep, or awake and outnumbered, and so on)
+  eligible: boolean;  // computed by the caller (court: asleep, lord or prince, not an animal; beehive: flying ant; temple: active priest and hero outside the temple; and so on)
 }
 
 export interface TickInput {
@@ -139,3 +141,12 @@ Best transferable idea: a per-tick ambient director that rolls each zone feature
 Decision (proposed): adapt - keep the per-feature rolls, the fixed order and the witness rule, add a per-feature cooldown the donor lacks, and use cached zone witnesses instead of a full monster walk.
 Acceptance: At a fixed 1 Hz tick, a seeded test of 100,000 ticks in a zone with one fountain and one temple (no eligible priest in the witness list) gives about one fountain line per 400 ticks (within 10%) and no temple line, and never more than one exclusive line in a tick.
 
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: MINOR
+- Section 2 said each witness predicate returns TRUE only when it plays a line; false for `oracle_sound` (returns TRUE for any Oracle, silent when she is visible). Confirmed.
+- Sketch treated shop as needing a witness and not ending the tick on a miss; donor shop has no witness and always returns after a successful roll (313-329). Confirmed; sketch fixed.
+- Throne predicate omitted `is_prince` (32-34 is lord OR prince, not animal). Confirmed; text fixed.
+- Missed: temple needs an active priest and the hero outside the temple; the Oracle line is suppressed when she is visible but the tick is consumed; beehive needs a flying ant (S_ANT and flyer), not any sleeping monster. Transferable rule: do not play an ambient cue when its source is in view. Added to section 1.
+
+Fixed 2026-10-12: predicate-returns claim, shop witness in sketch and text, prince in court predicate, missed predicate conditions. Sketch changed; work file updated; typecheck below.

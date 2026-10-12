@@ -14,7 +14,7 @@ Checked: confidence high for the ambience, danger-theme and volume mechanisms (r
   - indoor rain (1205-1209): a separate channel on top of the indoors bed;
   - outdoor weather (1236-1314): if weather changed or no outdoor bed plays, fade the weather group and each outdoor channel for 1000 ms, then play the bed chosen by weather sound category (`switch`, 1244-1305).
 - Crossfade. A bed change is "fade the old group out for N ms, start the new channel with a fade-in of N ms" in the same frame (1171-1174 with the fade-in at 1174). Both run at once, so the old and new layers cross over for 1000 ms. The backend fade is a real track fade (`MIX_StopTrack` with a frame count, sound_backend_sdl3.cpp 391), and a track already fading is not re-armed (388, 533).
-- Sleep (1149-1155): the whole mix fades out over 300 ms once; while asleep it returns without touching channels.
+- Sleep (1149-1155): the whole mix fades out over 300 ms once; while asleep it returns without touching channels. The danger-music function has its own sleep path: it fades all audio in 100 ms once, then keeps fading the context-themes group, and an active chainsaw theme also suppresses the danger themes (1604-1615).
 - Danger music (`sfx::do_danger_music`, 1596-1657). The player's visible creatures (`get_visible_creatures( 40 )`, 1618) are counted when `attitude_to` is HOSTILE (1619). Then:
   - if the count equals the last count, return (1623-1625);
   - 0 to 4: fade the context-themes group out for 1000 ms and remember the count (1626-1629);
@@ -22,10 +22,10 @@ Checked: confidence high for the ambience, danger-theme and volume mechanisms (r
   - 10 to 14: `danger_medium` (1636-1642);
   - 15 to 19: `danger_high` (1643-1648);
   - 20 or more: `danger_extreme` (1649-1654).
-  The theme plays only if its own channel is not already playing. A count inside a tier that is already playing does nothing except update the count. The four theme channels share the `context_themes` group (sdlsound.cpp 351-353), so the group fade is what removes the previous theme.
+  The theme plays only if its own channel is not already playing. A count inside a tier that is already playing does nothing except update the count. The four theme channels share the `context_themes` group (sdlsound.cpp 351-353), so the group fade is what removes the previous theme. The weather group covers only the channels from `underground_env` to `outdoor_blizzard` (347-350); the portal storm, clear, cloudy and sunny channels (sounds.h 128-131) are outside it and are not faded by the group fade.
 - Stamina cues (`sfx::do_low_stamina_sfx`, 1659-1719): at or above 75 percent of max stamina the low-stamina group fades out over 2000 ms (1673-1675); at 74 to 50 percent a low fatigue cue plays on its own channel; 49 to 25 percent a medium cue; 24 to 0 percent a high cue. Separate male and female variants (1680-1715).
-- Positional volume (`sounds.cpp` 254-274, 2093-2104). Sound distance is planar distance plus a vertical term scaled by 5 (272-273). Heard volume is `int heard_volume = fract * distance - 1 + 100` with `fract = -4.166666` (2097-2098), floored at 0, then multiplied by a deaf multiplier of 0.1 (2102, set at 1731). Worked from the formula: 3 at distance 23 and 0 at distance 24.
-- Hits and stingers. A projectile hit on a monster picks a variant by material: stone `hit_wall`, steel `hit_metal`, else `hit_flesh` (1553-1567), with random pitch from 0.8 to 1.2 (1557). Death plays `clean_up_at_end` with `death_m` or `death_f` (1589-1593), no pitch jitter. Melee sounds run on a detached thread per call (1433-1437).
+- Positional volume (`sounds.cpp` 254-274, 2093-2104). Sound distance is planar distance plus a vertical term (263-273): the vertical displacement, plus 4 when the lower level is underground and the displacement is above 0, plus 20 for each further underground level, and the whole vertical term is then scaled by 5. This underground rule is a reusable mechanism for zones and levels. Heard volume is `int heard_volume = fract * distance - 1 + 100` with `fract = -4.166666` (2097-2098), floored at 0, then multiplied by a deaf multiplier of 0.1 (2102, set at 1731). Worked from the formula: 3 at distance 23 and 0 at distance 24.
+- Hits and stingers. A projectile hit on a monster picks a variant by material with a fleshy check first: a monster made of any fleshy material always gets `hit_flesh`; otherwise stone gives `hit_wall`, steel `hit_metal`, else `hit_flesh` (1551-1567), with random pitch from 0.8 to 1.2 (1557). Death plays `clean_up_at_end` with `death_m` or `death_f` (1589-1593), no pitch jitter. Melee sounds run on a detached thread per call (1433-1437).
 - Variant lookup (`sdlsound.cpp` 639-651, 688-718). A sound id plus variant key includes season, indoors and night; a random entry is chosen among matches (650); if none match, the `default` variant is tried (705).
 - Playlists (`sdlsound.cpp` 400-476, `music.cpp` 30-31). Music is a flat list of modes (`mp3`, `instrument`, `sound`, `title`) with one playlist each. A change calls `stop_music()`, which stops with 0 ms (485): a hard cut, no crossfade.
 
@@ -124,7 +124,17 @@ export {};
 - Hysteresis is missing (defect). The donor switches tiers at exact counts (1626-1653), so a count that flickers between 4 and 5 restarts the theme each time. Fix: the leave margin in the sketch (`TIER_LEAVE_MARGIN`, proposed value 2).
 - Voice limit is missing (defect). One-shots create a new track per play (sound_backend_sdl3.cpp 343) and melee sounds start a detached thread per call (sounds.cpp 1433-1437). A busy fight with many hits can grow without a cap. Fix: the voice pool in the sketch, with a cap and steal-by-rank.
 - Priority is unused (defect, idea kept). `sound_t` is ordered (sounds.h 24-38) and used only to mark sounds as provocative (292-314, 339). Fix: use the order to steal voices, as in the sketch.
-- Apparent double application of effect volume (flag for review, not confirmed intentional). The donor's own comment gives `effect.volume^2 * AMBIENT_SOUND_VOLUME * SOUND_EFFECT_VOLUME * volume / 1e8` (sdlsound.cpp 780). The code reassigns `volume` at 781 and reuses it at 788, so the effect volume is multiplied twice. Fix: apply the effect volume once.
+- Effect volume is applied twice on purpose (not a defect). The donor's own comment documents `effect.volume^2 * AMBIENT_SOUND_VOLUME * SOUND_EFFECT_VOLUME * volume / 1e8` (sdlsound.cpp 777-788): `volume` is reassigned at 781 and reused at 788. Keep it as a squared effect-volume curve if a quiet-biased mix is wanted; otherwise apply once.
 - Music switches are hard cuts (sdlsound.cpp 446, 485: `stop_music( 0 )`). Fix: fade the old track with the same 1000 ms window used for beds.
 - The data half is absent from the box (see Checked). The sound-effect and playlist JSON are loaded in `sdlsound.cpp` 544-638, but the values for each bed are not in this donor, so no bed volumes or file lists are claimed here.
 - The `40` radius in `get_visible_creatures` was not checked against its implementation; the tier count depends on it.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Vertical term 'scaled by 5' was incomplete: sound_distance adds +4 for the first underground level and +20 per further level before the x5 (sounds.cpp 263-272). Confirmed, fixed.
+- Weather group fade does not cover portal storm/clear/cloudy/sunny (group range underground_env..outdoor_blizzard, sdlsound.cpp 347-350). Confirmed, added.
+- Projectile-hit branch has an is_fleshy precedence (1551-1567). Confirmed, fixed.
+- 'Volume applied twice' flagged as a possible defect: the checker is right that the donor documents the effect.volume^2 formula; reworded as intended, not a defect.
+- Missed: do_danger_music sleep fades all audio in 100 ms and an active chainsaw theme suppresses danger themes (1604-1615); underground attenuation rule is reusable. Confirmed, added.
+
+Fixed 2026-10-12: vertical attenuation, weather group range, is_fleshy precedence, double-volume claim, danger sleep/chainsaw. Sketch unchanged (it omits positional volume and weather).

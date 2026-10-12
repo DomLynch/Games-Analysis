@@ -155,3 +155,8 @@ Acceptance: In a zone with ambient weights crow 3 and wind 1, a crow or wind pla
 
 Reuse tag: rewrite-from-idea (restricted licence; clean-room only)
 Brief rule served: 1
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- No errors found; the checker verified the cited line numbers, formulas, numbers and licence against the donor.
+- Missed: none.

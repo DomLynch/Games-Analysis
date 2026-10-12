@@ -53,7 +53,7 @@ TABLE (values are not recorded because the donor is restricted; "per skill" mean
 
 | name | effect | formula | number ranges | cost | cooldown/cast time | caps | file:line |
 |---|---|---|---|---|---|---|---|
-| Gate order | refuse before any state change | attack-only, cooldown, mana, gauge (read-only in the check) | n/a | none | none (instant on fire) | n/a | SkillWarrior 173-194 |
+| Gate order | refuse before any state change | mana (173), gauge (183), then CheckSkillDelay (188: attack-only test, cooldown, leadership), then CheckAttack (192); read-only in the sketch | n/a | none | none (instant on fire) | n/a | SkillWarrior 173-194 |
 | Mana pool | spent on fire | mana >= per-skill Mana | per skill, not recorded | Mana (pool 1) | n/a | refused when short; potion request sent | SkillCast.cpp 173-179 |
 | Ability gauge pool | second pool spent on fire | gauge >= per-skill AbilityGuage | per skill, not recorded | AG (pool 2) | n/a | refused when short | SkillCast.cpp 183 |
 | Reach | fire when inside reach | squared distance <= (scale x range x factor)^2 | factor above 1, not recorded | none | none | none | SkillCast.cpp 85; ZzzInterface.cpp 499 |
@@ -76,7 +76,7 @@ Defects found (keep the idea, fix the defect):
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor's gate order (attack-only, cooldown, mana, gauge), the walk-then-fire loop and the per-tick cooldown decrement by real elapsed time. It reorders the cooldown: it is written only at commit (the donor writes it inside the gate, `SkillManager.cpp` 170). It re-checks mana, gauge and cooldown at fire time on arrival (the donor re-checks only range on arrival). It omits: pathfinding and the walk itself, the server authority and ledger (not in donor), the potion auto-use request, the safe-zone allow-list, the blood-castle override, the leadership and energy requirements, the per-class weapon-special branches and the requirement cache. The range factor is a parameter (donor's value not recorded: restricted).
+simplified: the sketch keeps the donor's gate order (mana, gauge, then attack-only and cooldown as inside CheckSkillDelay), the walk-then-fire loop and the per-tick cooldown decrement by real elapsed time. It reorders the cooldown: it is written only at commit (the donor writes it inside the gate, `SkillManager.cpp` 170). It re-checks mana, gauge and cooldown at fire time on arrival (the donor re-checks only range on arrival). It omits: pathfinding and the walk itself, the server authority and ledger (not in donor), the potion auto-use request, the safe-zone allow-list, the blood-castle override, the leadership and energy requirements, the per-class weapon-special branches and the requirement cache. The range factor is a parameter (donor's value not recorded: restricted).
 
 ```ts
 // clean-room sketch: written from the described mechanism; no donor constants copied.
@@ -104,10 +104,10 @@ type Outcome = "refused" | "walking" | "fired";
 
 // Read-only gate. Cooldown is read here and written only at commit.
 function refuseReason(skill: Skill, st: CastState, attacking: boolean): string | null {
-  if (skill.attackOnly && !attacking) return "attack-only";
-  if ((st.cooldownLeftMs.get(skill.id) ?? 0) > 0) return "cooling";
   if (st.pools.mana < skill.manaCost) return "no-mana";
   if (st.pools.gauge < skill.gaugeCost) return "no-gauge";
+  if (skill.attackOnly && !attacking) return "attack-only";
+  if ((st.cooldownLeftMs.get(skill.id) ?? 0) > 0) return "cooling";
   return null;
 }
 
@@ -176,3 +176,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020 /tmp/sven-ca
 
 Reuse tag: rewrite-from-idea (restricted; shape only)
 Brief rule served: 1 (one engine); specials row 13
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Gate order misdescribed in the SK table row and the sketch header ("attack-only, cooldown, mana, gauge"). Real order in SkillWarrior: mana 173, gauge 183, CheckSkillDelay 188 (attack-only test and cooldown inside it), CheckAttack 192. Section 1(b) prose was right. Confirmed against SkillCast.cpp and SkillManager.cpp 140-171.
+- Missed: none significant.
+Fixed 2026-10-12: table row and sketch header now state the real order; sketch refuseReason reordered to mana, gauge, attack-only, cooling (note code block and work/sven-cast-gate.ts).

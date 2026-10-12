@@ -24,7 +24,7 @@ Voices and attenuation:
 - Spatialisation (S_SpatializeOrigin 425-~470): distance minus a full-volume radius of 80 (442) times `dist_mult` (445); pan sides are `0.5 x (1 + dot)` and `0.5 x (1 - dot)` (456-457), so the pan never overshoots master. The view entity is always full volume (481). `dist_mult` for an issued cue is `attenuation x 0.001` for ATTN_STATIC (566-567) and `attenuation x 0.0005` otherwise (569). ATTN_STATIC is "diminish very rapidly with distance" (`q_shared.h` 989).
 
 Ambient loops (S_AddLoopSounds 820-~909, run last in each S_Update at 1059):
-- Each entity in the frame with a loop sound is grouped with every other entity that has the same sound. The contributions are summed with the loop factor 0.003 (38) and a master of 255 (863, 874), then clamped at 255 (per side). If both sides are 0 it is skipped. One channel per distinct sound is taken with entnum 0 and entchannel 0 (884); if none is free the loop pass stops for this frame (`return`, 885-886).
+- Each entity in the frame with a loop sound is grouped with every other entity that has the same sound. The contributions are summed with the loop factor 0.003 (38) and a master of 255 (863, 874), then clamped at 255 (per side). If both sides are 0 it is skipped. One channel per distinct sound is taken with `S_PickChannel(0, 0)` (884). That call always returns a channel (the one with the least life left, wiped by memset) unless every channel belongs to the player (390-413), so a loop STEALS a live cue voice; the early `return` at 885-886 is reached only in that all-player-owned case.
 - The channel is marked to be removed next frame (894) and its position is the global mix clock modulo the sample length (896), so the loop stays in phase across frames. S_Update clears autosound channels each frame (1045-1047).
 
 Per-model variants, S_RegisterSexedSound (587-~640): a name starting with `*` is looked up as `#players/<model>/<name>`, where the model comes from the player's skin configstring (599; default `male`, 613-614). The cache is checked first (617-618). If there is no such file it aliases the male sound (634). Resolution happens once per name.
@@ -124,7 +124,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Silent cue kills a live voice. S_PickChannel wipes the chosen channel at once (413), S_IssuePlaysound spatialises the new cue with no audibility test (558, 577), and a silent cue is only cleared on the next S_Update (1045-1053). A cue that is out of range cuts a live voice and then plays nothing. Fix: test audibility first, then pick a channel only for an audible cue (the same defect as in the Quake files).
 - Unexplained drift. `s_beginofs -= 10` (711) moves the mapping 10 samples earlier on each cue in the normal window. The code gives no reason, and the clamps reset it only when a cue is late or far ahead. Fix: measure the server-to-mix clock error and correct it once per frame, not once per cue; the sketch drops the term.
 - Equal times are LIFO in the donor (720-723). Two cues at the same sample play in reverse order of arrival. Minor. Fix: FIFO, as the sketch does, if order matters for a hit then a block.
-- Loops lose to cues. S_AddLoopSounds runs last in each S_Update (1059), so when the 32 channels are full the loop pass returns early (885-886) and the remaining loops are dropped for that frame, in entity order. Fix: reserve channels for loops, or give loops a priority rule.
+- Loops steal from cues. S_AddLoopSounds runs last in each S_Update (1059) and calls `S_PickChannel(0, 0)` per distinct loop sound (884), which never refuses unless every channel is player-owned (snd_dma.c 390-413). When the 32 channels are busy, each loop wipes the channel with the least life left, which can be a hit cue about to play its tail; the early `return` (885-886) is almost never reached. Fix: give loops their own channel range (or let a loop pick only free or other-autosound channels) so ambience cannot cut a hit cue.
 - A 0.3 s early window is wide. A cue more than 0.3 s early is pulled to 0.1 s ahead (704-706), so a late-arriving server clock can still shift a hit cue by up to 0.2 s. Fix: keep the clamp, but log it so a shifted cue can be seen in tests.
 - The pool is silent when full: S_AllocPlaysound returns NULL (511) and the cue is dropped with no count. Fix: count drops per frame so the HUD and tests can see them.
 - Not in these files: layered music (one CD track per level, cl_parse.c 537; no mixing of two tracks), crossfades between tracks, stingers, and ambience beds per biome (the loops are per entity, not per zone). The Quake 1 ambience-bed note covers the zone-level bed.
@@ -133,3 +133,10 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 Brief rule served: rule 1 (one engine, two clients); rule 8 (named target and parity row)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Gap bullet 'Loops lose to cues ... loop pass returns early (885-886)' was false: S_AddLoopSounds calls S_PickChannel(0,0), which always returns the least-life channel (memset-wiped) unless all are player-owned (snd_dma 390-413), so loops steal live voices. Confirmed in code; the section 1 line and the gap bullet were rewritten and the fix redirected to protecting cues from loops.
+- Missed: S_SpatializeOrigin skips pan when dist_mult is 0 (ATTN_NONE, 449-453); S_Spatialize forces full volume for the view entity (482, already in the note). Added here as findings only; no sketch change.
+
+Fixed 2026-10-12: loop channel behaviour (section 1 and gap bullet). Sketch does not model loops, so no TypeScript changed.

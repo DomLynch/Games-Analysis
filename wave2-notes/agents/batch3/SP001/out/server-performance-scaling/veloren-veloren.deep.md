@@ -111,3 +111,8 @@ Acceptance: a server test with 60 NPCs placed 0-600 blocks from one player count
 
 Reuse tag: rewrite-from-idea (GPL-3.0; clean-room only)
 Brief rule served: 1 (one engine; server-verified kills); row 18 sub-line "server tick: fixed step, input intake, per-tick NPC budget"
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- No errors found.
+- Missed (small): the first send of any entity (last_pos none) is inserted immediately regardless of band (entity_sync.rs:573-575), so new arrivals are never delayed by the phase gate.

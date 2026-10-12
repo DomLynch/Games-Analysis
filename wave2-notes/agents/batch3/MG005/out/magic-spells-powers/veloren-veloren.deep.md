@@ -151,3 +151,9 @@ export {};
 
 Reuse tag: rewrite-from-idea (GNU GPL-3.0; clean-room only)
 Brief rule served: one engine (the pool and hit live in src/fight); server-verified outcomes; clean-room only (GPL-3.0). Parity row 13.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN
+- No errors found: BuffKind::stacks, resilience_ccr_strength values, modify_data clamps, server Add handler, CrowdControlResistance sum, energy regen, five-root ladder arithmetic (3.0/2.1/1.47/1.03/0.72), absence of Stun/Sleep/Charm/Fear kinds and GPL-3 all verified.
+- Missed (minor): Rooted/Amnesia/Winded/Frozen are the only ladder kinds; Resilience gain is taken from the already-shortened duration (note already has this).

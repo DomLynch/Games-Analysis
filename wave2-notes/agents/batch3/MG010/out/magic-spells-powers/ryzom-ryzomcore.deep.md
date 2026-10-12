@@ -11,27 +11,28 @@ Note on two copies: `sabrina/available_phrases.cpp` has a 3-argument `isPlayerAl
 A spell (phrase) is an ordered list of bricks. Each brick is a sheet with a signed Sabrina value (`Basics.SabrinaCost`), a skill-point learn price (`Basics.SPCost`), skill requirements, and prerequisite bricks. Spells are built from bricks the player already knows; the server checks that. Costs and success are both derived from the brick list.
 
 - Build (cost and credit, `magic_phrase.cpp` 128-133): for each brick, a negative sabrina value adds to `_SabrinaCredit` (as a positive number); a positive value adds to `_SabrinaCost`. Parameter costs are summed separately: HP from `CSBrickParamHp` (80), sap (the caster's magic pool) from `CSBrickParamSap` (84).
-- Learn price (`buyRolemasterPhrase`, 9689-9696): the price is the sum of `SkillPointPrice` over bricks the player does not yet know. It is paid in the skill-point pool of `_RolemasterType` (a type set from the phrase's brick family; trainers map harvest and forage bricks to the Harvest pool at 9440-9447). There is no coin charge in the lines read (9674-9760, and the tail 9760-9785 only sends a message).
+- Learn price (`buyRolemasterPhrase`, 9689-9697, with the balance check at 9700): the price is the sum of `SkillPointPrice` over bricks the player does not yet know. It is paid in the skill-point pool of `_RolemasterType` (a type set from the phrase's brick family; trainers map harvest and forage bricks to the Harvest pool at 9440-9447). There is no coin charge in the lines read (9674-9760, and the tail 9760-9785 only sends a message).
 - Learn order (9739-9742): `learnPrebuiltPhrase` runs first, then `spendSP`. The points are spent only if the phrase was learned.
 - Learnability (live `available_phrases.cpp`):
-  (a) a phrase with no unknown brick is skipped (`hasNewBrick`, 201); `learnPrebuiltPhrase` separately refuses a phrase the player already knows (`character.cpp` 14086-14115, read);
+  (a) a phrase with no unknown brick is skipped (`hasNewBrick`, 201); `learnPrebuiltPhrase` separately refuses a phrase the player already knows (`character.cpp` 14086-14115, read). The whole requirement check at 9731 runs only when `testRestrictions` is true (9711) and after the skill-point balance check (9700), so a caller can skip it;
   (b) for each unknown brick with skill requirements: at least one requirement must be at or below the cap (`skillRequiredAreBelowSkillValueLimit`, 42-55; the caller passes 250, 9466 and 9731); at least one requirement must be met by the player's `MaxLvlReached` for that skill code (`skillMatchesOneOfList`, 64-66; the test is `>=`, so a skill that later drops does not remove access);
   (c) the brick's faction fame must be at least `MinFameValue` (180);
   (d) unless bypassed, each prerequisite brick must be known or be in the same phrase (183-199).
-  The civilisation check for bricks is commented out inside this function. The trainer list adds a race filter per brick at 9440-9462 (`CivRestriction`), so race gating exists only on the trainer path.
+  The civilisation check for bricks is commented out inside this function. The trainer list adds a race filter per brick at 9445-9461 (`CivRestriction`), applied only when the bot's flags `getFilterExplicitActionTradeByBotRace` or `getFilterExplicitActionTradeByPlayerRace` are set, so race gating exists only on the trainer path and only for bots that opt in.
 - Memorize (`CCharacter::memorize`, 13649-13670): every brick must be known (13655); `checkPhraseValidity` is then called (13664), but its body is inside a comment (see section 6), so it always returns true. The memorization set then calls `evaluate()` (147), which only sets a state flag and returns true (`magic_phrase.cpp` 231-232).
-- Cast gate (`magic_phrase.cpp` 262-275): HP must be above zero and at least the HP cost (263); sap must be at least the sap cost (270). Dead casters are refused. The message names the missing resource.
+- Cast gate (`magic_phrase.cpp` 258-275): HP must be above zero and the mode not DEATH (258-262; dead casters are refused), HP must be at least the HP cost (263); sap must be at least the sap cost (270). The message names the missing resource.
 - Success (`magic_phrase.cpp` 441-467, and the same rule for combat at `combat_phrase.cpp` 1445-1448):
   (a) skill: the average of the current skill values of the bricks' skills (428, 436), minus a debuff (439), minus an armour malus (441 onward: `getArmorCastingMalus() * skill`, less `_ArmorCompensation`, clamped at 0);
   (b) relative level = `(skill + credit - 2 * cost) / 10` (464), integer division; the points per level are 10;
   (c) the success chance is a lookup at `MIDDLE_DELTA_LVL - level` after clipping the level to +-50 (`phrase_utilities_functions.cpp` 315-318; constants 26-29);
   (d) the roll is `rand(99)`, compared in the success-factor function (333-350): a critical success if `crit * chance / (crit + succ) > roll` (factor 1.1); a success if `chance > roll` (factor 1.0); a partial band with factor `(pS - roll + chance) / pS`; a failure (0); a critical failure (-1).
 - Cost (sap, HP): applied when the spell resolves. Sap is clamped at zero after the subtraction (`magic_phrase.cpp` 406-411).
+- Apply defect (410-419, 432-433, 436): sap and HP are spent first, then the skill lookup runs; if a brick's skill is missing the function returns with the cost paid and no effect, and `skillValue /= _Skills.size()` has no zero guard. Fix for Frankendom: resolve the skill and check the divisor before spending anything.
 
 ## 2. Key functions
 
 - `CMagicPhrase::build`: `/mnt/frankendom-donors/ryzom-ryzomcore/ryzom/server/src/sabrina/magic_phrase.cpp` 103-145 (credit and cost split at 128-133; parameter costs at 80 and 84).
-- `CMagicPhrase::validate` (cast gate): same file 262-285 (HP 263, sap 270).
+- `CMagicPhrase::validate` (cast gate): same file 258-285 (dead/hp<=0 258, HP cost 263, sap 270).
 - `CMagicPhrase::evaluate`: same file 228-233 (state only).
 - Apply (level and roll): same file 400-470, key lines 410 (sap), 436 (average), 441 (armour), 464-467 (level, chance, factor). The method header for 400-470 was not recorded.
 - `CCombatPhrase` level and roll: `/mnt/frankendom-donors/ryzom-ryzomcore/ryzom/server/src/sabrina/combat_phrase.cpp` 236-245 (split), 1445-1448.
@@ -48,7 +49,7 @@ A spell (phrase) is an ordered list of bricks. Each brick is a sheet with a sign
 | Relative level | `(skill + credit - 2*cost) / 10` (magic_phrase.cpp 464; combat 1445) | Each 10 points is one level. Skill and credit count 1 each; cost counts 2, so a point of cost weighs twice a point of credit. |
 | Level clip | +-50 (constants.h 26-27) | A spell can swing the chance across the full table range, so no spell is hopeless or certain on paper. |
 | Table index | `50 - level` (constants.h 29; phrase_utilities_functions.cpp 318) | The table is sheet data (not read); the index is the only rule. |
-| Roll | `rand(99)` (magic_phrase.cpp 466, read) | Roll is drawn from rand(99); the range (assumed 0 to 98) was not checked in the RNG source. Bands are the ones in section 1. |
+| Roll | `rand(99)` (magic_phrase.cpp 466, read) | Roll is drawn from rand(99); the range (assumed 0 to 98) is still NOT checked in the RNG source. Bands are the ones in section 1. |
 | Critical success factor | 1.1 (phrase_utilities_functions.cpp 333) | A fixed bonus, not a number per spell. |
 | Learn cap | 250 (character.cpp 9466, 9731) | A brick is unavailable when every one of its skill requirements is above 250 (`isSkillValueLowerThan`, egs_static_brick.h 71). |
 | Learn price | sum of `SPCost` of unknown bricks (9695) | Price in skill points, not coin. |
@@ -162,7 +163,17 @@ Acceptance: A caster with skill 100 casts a spell with credit 20 and cost 30: th
 - The learn gate checks `MaxLvlReached` (a high-water mark), so a skill that later drops keeps the spell. Decide per Frankendom ruling whether learning is permanent.
 - No coin price on phrases: the donor charges skill points per unknown brick (`egs_static_brick.cpp` 385, `character.cpp` 9695). Frankendom has one ledger for coin; if it wants a coin price, it must be a separate catalogue field.
 - No reagents: `ryzom/server/src` has no reagent code (grep found no hits). Sap and HP are the costs.
-- No stat gate on schools in the sense of a character stat (strength, wit). The gate is a skill level per brick (`LearnRequiresOneOfSkills`), plus race on trainers (9440-9462), plus fame (`fameRequiredMatchPlayerFaction`, 180). The civilisation check inside the learn function is commented out.
+- No stat gate on schools in the sense of a character stat (strength, wit). The gate is a skill level per brick (`LearnRequiresOneOfSkills`), plus race on trainers (9445-9461, only when the bot's race-filter flags are on), plus fame (`fameRequiredMatchPlayerFaction`, 180). The civilisation check inside the learn function is commented out.
 - Spending: `spendSP` adds `(uint32)sp` to the spent counter (character.cpp 20410-20420, read), which truncates fractional points on spend. Fix: keep a double and round only for display.
 - The success table values (sheet `egs_success_chance_tables`, `egs_sheets.cpp` 237) were not read. The shape and the bands are read; the numbers are not. Do not claim which numbers suit a fast fight until the table is read.
 - The sap and HP check is per cast. Whether recast or channel rules exist is not read in this cell (`CSPhrase` apply and cast timing not read).
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Learn gate (character.cpp 9731) runs only when testRestrictions is true (9711), after the SP balance check (9700); note presented it as unconditional. Confirmed in code.
+- Trainer race filter (9445-9461) is conditional on bot flags getFilterExplicitActionTradeByBotRace/PlayerRace. Confirmed.
+- Cast gate: dead/hp<=0 check is at 258, HP cost at 263; note cited 263 for both. Confirmed.
+- rand(99) range still unverified; left flagged as unchecked.
+- Missed: apply path divides by _Skills.size() with no zero guard and a failed skill lookup returns after sap/HP were spent (410-419, 432-433, 436): cost paid, no effect. Added to section 1 as a defect with a fix.
+
+Fixed 2026-10-12: learn gate and trainer race filter conditions and line ranges, cast gate line split, apply-path defect line added. No sketch change (no TypeScript touched).

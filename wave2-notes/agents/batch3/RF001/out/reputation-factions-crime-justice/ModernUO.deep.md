@@ -201,3 +201,10 @@ Defects (fix each; idea kept):
 
 Reuse tag: rewrite-from-idea (GPL-3.0; clean-room only)
 Brief rule served: 23 (zone population: caps, despawn, witness-gated spawn); server-verified kills (gap 1).
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN
+- No errors found; all cited lines and numbers verified against the donor.
+- Missed: the guard instant-kill path also sets `creature.NoKillAwards = true` (BaseGuard.cs 317) and deletes the corpse of a non-player target; directly relevant to the one-ledger / no-loot rule. Confirmed NoKillAwards at BaseGuard.cs 317.
+- Missed: `IsGuardCandidate` also excludes blessed mobiles (GuardedRegion.cs 339, `m.Blessed`).

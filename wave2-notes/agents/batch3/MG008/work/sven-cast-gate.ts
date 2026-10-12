@@ -23,10 +23,10 @@ type Outcome = "refused" | "walking" | "fired";
 
 // Read-only gate. Cooldown is read here and written only at commit.
 function refuseReason(skill: Skill, st: CastState, attacking: boolean): string | null {
-  if (skill.attackOnly && !attacking) return "attack-only";
-  if ((st.cooldownLeftMs.get(skill.id) ?? 0) > 0) return "cooling";
   if (st.pools.mana < skill.manaCost) return "no-mana";
   if (st.pools.gauge < skill.gaugeCost) return "no-gauge";
+  if (skill.attackOnly && !attacking) return "attack-only";
+  if ((st.cooldownLeftMs.get(skill.id) ?? 0) > 0) return "cooling";
   return null;
 }
 

@@ -33,7 +33,8 @@ export class StemGroup {
     return worst;
   }
 
-  // A whiff ducks the player's vocal stem to zero, unless an animation has claimed the vocal for its duration.
+  // A whiff, empty press or dropped hold ducks the player's vocal stem to zero, unless an animation has claimed the vocal
+  // for its duration (donor skips the exemption on a dropped hold; fixed here).
   onMiss(tempVocalActive: boolean): void {
     if (!tempVocalActive) this.playerVocalVolume = 0;
   }

@@ -131,3 +131,8 @@ export {};
   3. `SoundChannel::enqueue` reshuffles the whole pending queue on every add (`soundchannel.cpp` 65), so a playlist changes order mid-cycle and a track can repeat early. fix: shuffle once per cycle. This matters for layered music playlists.
   4. The main and secondary functions repeat the same body (367-426). A fix to one can miss the other. fix: one function with a lane argument.
 - The fade reversal (134-141) was checked by arithmetic only for on-to-off. The sketch does not include fades.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- All cited lines and values verified.
+- Missed (minor): playProtocolAudioFileId distance is 2D (`Position::distance` ignores z, position.h 184), so a cue on another floor plays at full strength; item ambience does check the same floor (itemambience 92). Confirmed (position.h 184); not noted as a gap. Frankendom note: add a floor test if floors exist.

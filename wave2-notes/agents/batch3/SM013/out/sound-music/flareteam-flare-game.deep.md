@@ -157,3 +157,9 @@ Brief rule served: 1 (one engine emits cue ids; the client plays them); addendum
 Best transferable idea: Pause a looping ambience when the listener is beyond its radius and resume it inside, and key each hit voice by the clip name so one clip cannot pile up.
 Decision (proposed): adapt - keep the radius pause and the named-clip voice key for zone loops and hit cues; fix the (0,0) no-position sentinel, the failed-start path and add real priority; reject the flat no-pan distance-only model for the over-the-shoulder camera.
 Acceptance: Walk 15 tiles away from a river loop and it goes quiet and returns when you come back; a second hit with the same clip restarts that clip and does not stack a second copy (client unit test of CueMixer.tick and play, no server involved).
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN
+- No errors found; mechanism, line numbers, data counts and licences all verified against the donor.
+- Missed (confirmed, `SDLSoundManager.cpp` 143-157, 249-250): `reset()` halts every looping playback and runs `logic()`; `pauseAll`/`resumeAll` exist. When a named channel is halted with `cleanup=false` the channel-finished callback is disabled, so the old playback entry never gets `finished = true` and stays in the playback map until the channel number is reused. Minor leak, not covered above.

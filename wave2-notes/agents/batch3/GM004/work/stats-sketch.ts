@@ -14,7 +14,7 @@ interface Condition {
   frozen: boolean; // true while asleep or AFK: no drain, no starvation
 }
 
-// The only function that lowers health. Sleep and starvation both call it (the donor's sleep path does not).
+// The only function that lowers health. Sleep and starvation both call it (the donor's sleep path does not for non-lethal hits; its lethal hit does go through TakeDamageInfo).
 export function takeDamage(c: Condition, amount: number): void {
   if (amount <= 0) return;
   c.health = Math.max(0, c.health - amount);

@@ -11,7 +11,7 @@ Acceptance: a client test in a fight with a pool of 8 voices: 12 grunt hits (pri
 ## 1. Mechanism
 
 - One fixed pool of voices (channels). Pool size is the console variable `snd_channels`, default 32 (s_sound.c 91). `SetChannelsNum` (296-322) allocates it. Each voice records its sound, its origin (the emitting object) and the mixer handle.
-- Each sound is one row in a table (sounds.c 28 onward): name, a singularity flag, a priority, and flags (`SF_*`). The priority is an integer; the default is 64 (`NORM_PRIORITY`, s_sound.c 149). Most of the 736 rows use 64 (grep count); the lowest seen is 8 (`fire`, sounds.c 88) and the highest 256.
+- Each sound is one row in a table (sounds.c 28 onward): name, a singularity flag, a priority, and flags (`SF_*`). The priority is an integer; the default is 64 (`NORM_PRIORITY`, s_sound.c 149). Most of the 736 rows use 64 (grep count); the lowest real sound seen is 8 (the dummy row sfx_none is 0, sounds.c 37) (`fire`, sounds.c 88) and the highest 256.
 - The start path (`S_StartSoundAtVolume`) checks audibility first (`S_AdjustSoundParams` at 675) and only then asks for a voice (`S_getChannel` at 687), then starts the mixer on that voice (720). A sound that cannot be heard takes no voice.
 - `S_getChannel` (190-259), in this order:
   1. Scan voices in index order and stop at the first free one (200). On the way: a copy of the same sound anywhere is refused if `noMultiple` (205-207); with `singularity`, the old copy is stopped and its voice reused (210-212); same origin and same sound: refused if `noInterrupt` (217-218), otherwise the old voice is stopped and reused (220-222); same origin and a different sound, both `totallySingle`: the other is stopped and the voice reused (223-229).
@@ -163,3 +163,8 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - The pool is a client resource: the server never reads voices, so server-verified kills and the one ledger are unaffected.
 - Closed captions use the same rows and priority (s_sound.c 477-480). Not written up; a candidate for the accessibility fold-in.
 - Not covered: the donor's music fades, stingers and jingle stack (see Checked). The layered-music and ambience-bed parts of this cell need a separate read.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN. 32 channels, 64 default, 736 rows, scan/steal order, X2/4/8, 1536/160/86, 0.94 at 160, mixer ignores priority all match.
+- Nit: the note says the lowest priority seen is 8; the placeholder row `sfx_none` (index 0) has priority 0 (sounds.c 37). Real sounds bottom out at 8; 0 is the dummy row only.
+Fixed 2026-10-12: lowest-priority wording now excludes the dummy row.

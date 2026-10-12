@@ -11,12 +11,12 @@ Acceptance: a client unit test on `reconcile` shows an unchanged emitter keeps i
 ## 1. Mechanism
 
 - Who asks: `Game::EnvironmentSoundMixer` (game.cpp:194) runs on focus change (`restoreSoundsForCurrentFocus`, 327-349) and on every hero movement animation step with a non-zero offset (game_startgame.cpp:1424-1425). So the ambient set is refreshed at animation rate while the hero moves.
-- Budget: `availableChannels` starts as the mixer channel count (game.cpp:196). If 2 or fewer are free it returns (197-200). Otherwise 2 are kept back "for hero's movement" (198, 202). The mixer itself is set to 32 channels (audio_manager.cpp:785).
+- Budget: `availableChannels` starts as the mixer channel count (game.cpp:196). The test is on the total configured channel count (`Mixer::getChannelCount()`, engine/audio.cpp 824-827), not on how many are free: if that count is 2 or fewer it returns (197-200). Otherwise 2 are kept back "for hero's movement" (198, 202). So the loop budget is 32 - 2 = 30 whatever is playing, which is what makes D2 true. The mixer itself is set to 32 channels (audio_manager.cpp:785).
 - Scan: a square of radius `maxOffset` = 3 tiles around the focus (229, 237-247), grown by one while the hero moves (232-235). Positions are sorted by squared distance, nearest first (250-251).
 - Audible radius: `maxDistance` is the corner distance of the scan square (253). Tiles at or beyond it are skipped (269-272). Distance is quantised to 0..255 (274-279).
 - Source type: `M82::getAdventureMapTileSound` maps the tile to a loop sound id or `UNKNOWN` (258-261). Stream tiles map to a fixed loop (`m82.cpp:207-208`); object types map through a switch (211 onward, rest not read).
 - Angle: when 3D audio is on, `atan2(x, -y)` on the offset from the hero's pixel position, normalised to 0..360 (283-296). When it is off, angle stays 0 (so each sound id appears once, the nearest tile).
-- Merge: a second source of the same sound at the same angle is dropped; the nearer one is already there because the list is sorted (298-313). Each new source costs one channel (318). The scan stops when the budget reaches 0 (319-321). So under a budget the nearest sources win.
+- Merge: a second source of the same sound at the same angle is not added; the donor keeps one entry and sets its distance to the smaller of the two (`info.distance = std::min(...)`, 298-313), which is the nearer one anyway because the list is sorted. Same net effect as dropping the farther one. Each new source costs one channel (318). The scan stops when the budget reaches 0 (319-321). So under a budget the nearest sources win.
 - Hand-off: the list goes to the audio worker (324) through `playLoopSoundsAsync` (audio_manager.cpp:835-841).
 - Reconcile (`playLoopSoundsImpl`, audio_manager.cpp:646-776), in this order:
   1. Drop loops whose voice has stopped (659-672).
@@ -169,11 +169,22 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Defect D1, angle wrap: `std::abs( effectToAdd.angle - effectToReplace.angle )` (audio_manager.cpp:610) does not wrap. A loop at 359 degrees and a wanted one at 1 degree count as 358 apart, so the wrong loop is re-aimed across the front. Fix: wrap the difference (the sketch does).
 - Defect D2, budget starves one-shots: the loop budget is every channel except 2 (game.cpp:196-202), and one-shots take any free channel (`Mix_PlayChannel( -1, ...)`, engine audio.cpp:867). With many emitters near the hero, a hit or UI sound may find no channel. This is a risk, not measured. Fix: cap the loop budget at a fixed share (for example 8 of 32) and keep a one-shot pool.
 - Defect D3, cut on focus change: `restoreSoundsForCurrentFocus` calls `ResetAudio` (game.cpp:329), which stops every loop and the music (audio_manager.cpp:943-960), then restarts them. Nothing is reused across a focus change. Fix: call `reconcile` instead of stop-all.
-- Defect D4, the restorer can restore the wrong track: `MusicRestorer` restores `lastRequestedMusicTrackId` (audio_manager.cpp:824), not the track that was playing. The header records the race (audio_manager.h:110-117). Fix: take the playing track under the same mutex when the restorer is built.
+- Defect D4, the restorer can restore the wrong track: `MusicRestorer` restores `lastRequestedMusicTrackId` (audio_manager.cpp:824), not the track that was playing. The class comment records that it restores the last requested track, not the playing one (audio_manager.h:57-62); the TODO at audio_manager.h:110-117 is a related race on `PlayCurrentMusic` (resume can pick the wrong track while the worker thread is starting a new one). Fix: take the playing track under the same mutex when the restorer is built.
 - Defect D5, no crossfade: stopping halts the old track (audio.cpp:1059) and the new one fades in over 900 ms (audio_manager.cpp:800). There is no fade-out and no overlap. Fix (adapt): fade the old track out while the new one fades in, over a zone-data time.
+- Not called out before: the reconcile pairing (step 3) pairs a leftover loop with a wanted emitter of the same sound at ANY angle (no angle limit), so a far emitter can take over a voice from a near one and the sound jumps. The scan sort uses the tile offset while the cut-off uses the pixel offset, a small inconsistency. Fix: cap the pairing angle in Frankendom and use one offset for both.
 - Frankendom rule: the emitter scan and the budget are client-only. The engine never reads them, and no ambience decides a hit or a kill.
 - The donor's music is per ground type, which is the nearest thing here to a biome bed (game.cpp:339). The mapping table (`MUS::FromGround`) was not read, so do not treat it as a biome list.
 - The ambient loops are per object and per water tile, not per biome; the stream rule is at m82.cpp:207-208.
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 Brief rule served: 1 (one engine; clients choose the sound); rules 7-9 n/a
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: MINOR
+- Budget bullet said "if 2 or fewer are free it returns"; game.cpp 196-200 tests `Mixer::getChannelCount()` (total channels), not free ones. Confirmed; reworded.
+- D4 cited audio_manager.h:110-117 as the restorer race comment; that TODO is on `PlayCurrentMusic`; the restorer comment is at about 57-62. Confirmed; citation fixed. The defect itself holds.
+- Merge step: donor keeps one entry and sets `distance = min(...)` instead of dropping the farther one (298-313); same net effect. Confirmed; reworded.
+- Missed: step-3 pairing has no angle limit, so a far emitter can steal a voice; scan sort uses the tile offset but the cut-off uses the pixel offset. Added to section 6.
+
+Fixed 2026-10-12: budget wording, D4 citation, merge wording, added the pairing and offset notes. Sketch code unchanged.

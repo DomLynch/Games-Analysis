@@ -4,7 +4,7 @@ export {};
 
 // Skill levels: 0 restricted, 1 unskilled, 2 basic, 3 skilled, 4 expert (martial skills also reach 5 and 6).
 const SKILL_LIMIT = 60;            // total advances per character
-const START_SLOTS = 2;
+const START_SLOTS = 0;             // a normal start has 0 slots; only the pauper option starts with 2
 
 interface Skill {
   level: number;                   // current level

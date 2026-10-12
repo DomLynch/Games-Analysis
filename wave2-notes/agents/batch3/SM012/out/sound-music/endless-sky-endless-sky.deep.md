@@ -172,3 +172,9 @@ Acceptance: three attackers hitting in the same frame make one hit cue, not thre
 
 Reuse tag: rewrite-from-idea (GPL-3.0-or-later; clean-room only)
 Brief rule served: 1 (one engine, two clients); 8 (target and parity row named)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN
+- No errors found; all cited lines and numbers verified against the donor.
+- Missed: none.

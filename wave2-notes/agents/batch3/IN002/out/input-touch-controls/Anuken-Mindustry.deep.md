@@ -176,3 +176,8 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 
 Reuse tag: rewrite-from-idea
 Brief rule served: 1 (one engine; target choice in src/fight; engage server-verified; camera client-only) and row 5 (controls/input)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- No false claims found. Verified: checkTargets radius 20 and canAttack/mineTile logic (MobileInput.java:88-108), tap guards and three-tap ping, longPress manualShooting, pan (:944-986), zoom with no clamp (:1001), autoPan margin and speed, updateMovement values, keyboard camera uses Time.delta (:815), LICENSE GPL v3.
+- Missed (minor): pan() also returns early when the 'keyboard' setting is on or commandRect is active (:945) and when manualShooting is on (:957); the note lists only dialog, locked and finger-down.

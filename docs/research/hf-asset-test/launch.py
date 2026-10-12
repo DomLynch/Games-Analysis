@@ -10,6 +10,7 @@ cfg={'build':('cpu-upgrade','60m','WHAT=trellis bash /w/repo/job/build_wheels.sh
  'natten':('cpu-upgrade','75m','WHAT=natten bash /w/repo/job/build_wheels.sh'),
  'smoke':('cpu-upgrade','25m','bash /w/repo/job/job_smoke.sh'),
  'smoke1':('a100-large','12m','ASSETS=a03_ruined_tower SUB=smoke1 WATCHDOG=300 exec bash /w/repo/job/job_run2.sh'),
+ 'l40s4':('l40sx1','18m','ASSETS=a04_iron_chest,a07_glow_mushrooms,a08_brazier,a10_stone_well SUB=l40s4 FLAVOR=l40sx1 PREFLIGHT_LITE=1 WATCHDOG=420 exec bash /w/repo/job/job_run2.sh'),
  'full':('a100-large','18m','ASSETS=a01_dead_oak,a02_gravestone,a03_ruined_tower,a04_iron_chest,a05_spiked_pauldron,a06_great_helm,a07_glow_mushrooms,a08_brazier,a09_bramble,a10_stone_well SUB=full WATCHDOG=300 exec bash /w/repo/job/job_run2.sh'),
  'trellis':('l4x1','35m','bash /w/repo/job/job_trellis.sh'),
  'pixal':('l4x1','15m','bash /w/repo/job/job_pixal.sh')}[kind]

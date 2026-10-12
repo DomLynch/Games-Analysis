@@ -175,3 +175,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 Reuse tag: rewrite-from-idea (GPL-3.0-or-later; clean-room only)
 Brief rule served: addendum sound-music fold-in; rule 7 (clean-room); rule 8 (target plus row 12)
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- No material errors. Remark: the D1 'stall' wording holds only at higher frame rates (at 60 fps 38 u/s still rounds to 1 per frame); the 30 vs 144 fps acceptance is consistent with that.

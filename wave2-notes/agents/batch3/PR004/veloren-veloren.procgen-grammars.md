@@ -135,3 +135,7 @@ GPL-3.0. Clean-room only: the syllable tables and word lists are donor content a
 - Not read: the bodies of the 47 plot kinds; `make_plaza`, `find_roadside_aabr` and `generate_farm` bodies; the cliff, savannah, coastal and desert town lotteries past their first lines; `layer/scatter.rs`, `layer/tree.rs`, `layer/wildlife.rs` (the walk density of trees and wildlife is not known); the 24 spot structure files not opened.
 - Not measured: spot density in tiles. The frequency is an attempt count, not a spawn count; the real density is lower wherever the condition fails.
 - Idle, death, loot ceremony and 375-wide readability of entities: not read in this donor's world code.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN. lottery weights, size*200, gates 0.125, tavern<2, size formulas, tavern 7/1/2 split, 20 generate_spots calls, spots.ron single mage tower, dead guard-tower arm, workshop==0 guard all match.
+- No errors or missed items found.

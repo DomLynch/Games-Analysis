@@ -200,3 +200,8 @@ Acceptance: server test: a 65 ms timer fires on the 72 ms turn; a 3000 ms parry 
 
 Reuse tag: rewrite-from-idea (GPL-3.0-or-later; clean-room, shape only)
 Brief rule served: 1 (one engine: one clock, server-side timer effects); rule 8 (row 18 cited)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- All checked claims hold: 8 ms tick, 4096x3 rings, Slice catch-up (TimerWheel.cs 59-70), Turn and Execute (75-178), AddTimer layer maths and zero-delay rule (192-252), `Next = Core.Now + Delay` at 237 (defect a real, BaseLight.cs:78 reads Next), overflow guard `slot > _ringSize` at 223 (defect b real), `_maxDuration` 2^38 vs 2^39 span (defect c real), 8 ms rounding, pool sizes, loop order Main.cs 711-738, idle sleep 757-785, ExecuteTasks 128 per pass, Delta coalescing, THREADGUARD, licence GPL-3.0-or-later.
+- Missed (minor): `Delta()` returns early when the map is null/Internal or the mobile is deleted (Mobile.cs:7851-7854); Main.cs also has the CheckSchedulerHealth / late-wake accounting (755-784) not covered. Nothing important.

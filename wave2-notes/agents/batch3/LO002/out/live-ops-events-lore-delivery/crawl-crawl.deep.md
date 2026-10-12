@@ -124,3 +124,10 @@ function reenterLevel(elapsed: number, bus: EventBus, turnElapsed: number): Catc
 Decision (proposed): adapt — keep the capped live catch-up followed by cheap timers on the remainder, fix the double subtraction, make the cap zone data, and make sure the live part awards no kills or loot.
 Acceptance: a server test leaves a zone empty for 300 ticks (30 turns), re-enters it, and asserts 10 live spawn-decision steps, respawn and despawn-grace timers advanced by 200 ticks, and a timer total of 300; a 50-tick absence gives 5 live steps and 0 quick steps; and a player entering that zone sees no burst of spawns at the door beyond the cap, with no kill or loot credit from the catch-up.
 Best transferable idea: after a zone sits empty, simulate at most a capped number of live turns, then advance the cheap timers by the uncapped remainder, so a long absence costs bounded work and nothing is counted twice.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN
+- No errors found; all cited lines and numbers verified against the donor.
+- Missed: `update_level` calls `delete_all_clouds()` (timed-effects.cc 629) before `simulate_time_passing`; absent from the note's order of steps. Confirmed. Frankendom reading: area effects are cleared on catch-up, not simulated.
+- Missed: the god-abil.cc:2173 caller is Chei's time-skip, `update_level(1000)` after `_run_time_step`; a second catch-up use not described. Frankendom reading: catch-up simulation has more than one trigger (return to a level, and a deliberate time-skip power). No vetoable caller was found (the note says the same).

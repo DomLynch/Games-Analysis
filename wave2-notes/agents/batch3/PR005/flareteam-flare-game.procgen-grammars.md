@@ -19,8 +19,8 @@ A stone labyrinth built from fixed room tiles. Each floor is a cross of rooms jo
 The generator is a seeded-or-not random walk on a grid of chunk cells, then a fill pass. The order matters:
 1. Read the floor's rule file: a shared settings block (door cap, door spacing, main path min/max and attempt cap, branch min/max, branches per door level) plus a chunk list. Each floor file pulls in the shared block and adds its own start and end chunks.
 2. Lay a grid of cells sized from the event region and the chunk size.
-3. Main path: pick a random start cell. Each step picks a random direction (rotating if that link is taken). A step is refused when it enters a start, end, door or already-used cell on the main path. Each accepted step opens a link between the two cells. Branch roots are recorded at random: the chance starts at 50 percent and rises by 5 each step, then resets after a root is made. Once the walk is past the minimum door spacing, a straight cell can become a door. The first door is forced (chance set to 100), later doors ramp by 5 per step. Each door raises the door level of the cells beyond it.
-4. Retry the whole main path until its length is in range and at least one door exists, up to the attempt cap.
+3. Main path: pick a random start cell. Each step picks a random direction (rotating if that link is taken). A step is refused when it enters a start, end, door or already-used cell on the main path. Each accepted step opens a link between the two cells. Branch roots are recorded at random: the chance starts at 50 percent and rises by 5 each step; after a root is made it drops to 50 and takes the same step's +5, so it restarts at 55. Once the walk is past the minimum door spacing, a straight cell can become a door. The first door is forced (chance set to 100), later doors ramp by 5 per step. Each door raises the door level of the cells beyond it.
+4. Retry the whole main path until its length is in range and at least one door exists, up to the attempt cap. The desired length is a step budget that also burns on refused steps, so real paths are often shorter than the draw; the retry loop is what enforces min and max.
 5. Branches: from each root, one walk of branch length. A branch may pass through or join existing normal cells of the same door level; it may not enter start, end or door cells.
 6. Keys: for each door level, one random normal cell becomes the key cell. Keys are removed from the normal pool so they are not reused.
 7. Fill: each cell draws a random chunk of its type from the pool, skipping unique chunks already placed in this campaign. Each seam uses a random link chunk and copies its seam rectangles. Start cell sets the hero spawn. Unique chunks set a campaign flag when placed.
@@ -32,7 +32,7 @@ Data fields (names; donor value null because the donor is CC-BY-SA data and GPL 
 - main_len_min, main_len_max (cells)
 - main_attempts_max (count) - retry cap
 - branch_len_min, branch_len_max (cells)
-- branches_per_door_level_max (count)
+- branches_per_door_level_max (count) - the branch counter resets at every door, so the cap is per door level
 - branch_root_chance_start (percent) - engine constant, not in data
 - branch_root_chance_step (percent per step) - engine constant
 - door_chance_step (percent per step) - engine constant; first door forced to 100
@@ -43,6 +43,7 @@ Data fields (names; donor value null because the donor is CC-BY-SA data and GPL 
 Defects found in the loader (keep the idea, fix each):
 - D1 Branch length uses the minimum as the upper bound (the max is ignored, so every branch has the min length). Fix: draw between min and max with max clamped to at least min.
 - D2 Main path retry gives up silently. When the attempt cap runs out, the last path is kept even if it has no door, so the level has no gate and no key. Fix: on exhaustion, fall back to a fixed template or restart from a new start cell; log it as a data error.
+- D2b If the attempt cap (`main_path_attempts_max`) is missing or 0, the retry loop never runs and no main path is built. Fix: default the cap to a positive number and log a data error when it is absent.
 - D3 Global RNG seeded from the wall clock at boot, and the generator draws from that shared stream. Layouts cannot be reproduced or checked by a server. Fix: a per-instance seed (zone id, instance id, reset counter) and its own stream.
 - D4 Variant avoidance is a single bump per neighbour and is not re-checked after the bump. A match can survive, and a wrap to zero can recreate it. Minor. Fix: loop up to N tries that re-check both neighbours.
 - D5 Data typo in two mastite randomizer files (hp_regen bonus, same line in both): a comma where a colon belongs. The engine splits on the comma, reads the bare 25 as a base value, and overwrites base 1. Fix: base:1:25 in both files; the loader should warn on a bare number inside a scale string.
@@ -69,3 +70,13 @@ Art and data are CC-BY-SA 3.0 (share-alike; no copied tiles, maps, names or nume
 - Walk density: sampled 7 room files only (enemy groups: 1 in most, 4 in one, 0 in treasure and vendor). Not measured per 20 seconds of walking.
 - Engine half read: procGen functions and parser only, not the renderer or the save format.
 - Confidence: high for the generator order (every step cross-checked against the function text); medium for the bonus-scale parser's effect on hp_regen (read the splitting and fallback code, did not run it).
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN
+- Nit (confirmed): branch-root chance after a root is set to 50 then gets +5 in the same step (effectively 55); note said only "resets".
+- Missed (confirmed): `desired_length` is decremented every pass including refused steps (flare-engine `Map.cpp` 1187), so the main path is usually shorter than the draw and the retry loop enforces min/max.
+- Missed (confirmed): with `main_path_attempts_max` missing or 0 the while-loop (1332) never runs and no main path is built.
+- Missed (confirmed): placing a door resets `branch_count` (1165), so `branches_per_door_level_max` is a per-door-level cap.
+
+Fixed 2026-10-12: root-chance wording, step-budget line in step 4, new defect D2b, per-door-level note on the branch cap field.

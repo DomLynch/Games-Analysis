@@ -19,6 +19,17 @@ function fatigueTerm(fatigue: Pool): number {
   return FATIGUE_BASE - FATIGUE_MULT * (1 - normalised);
 }
 
+// Defence term (donor combat 323-340): evasion counts only when the victim is not knocked down, paralysed or (player attacker) unaware;
+// Chameleon and Invisibility add min(100, invisoMult x magnitude) each; everything is zero if the victim's fatigue is below 0.
+interface VictimState { evasion: number; fatigueCurrent: number; knockedDown: boolean; paralysed: boolean; unaware: boolean; chameleon: number; invisibility: number; }
+function defenceTerm(v: VictimState, invisoMult: number): number {
+  if (v.fatigueCurrent < 0) return 0;
+  let d = (v.knockedDown || v.paralysed || v.unaware) ? 0 : v.evasion;
+  d += Math.min(100, invisoMult * v.chameleon);
+  d += Math.min(100, invisoMult * v.invisibility);
+  return d;
+}
+
 // Hit chance on a 0-100 scale: (skill + Agi/5 + Luck/10) x tired-body term, + fortify - blind, minus defence.
 interface AttackInput { skill: number; agi: number; luck: number; fortifyAttack: number; blind: number; }
 function hitChance(a: AttackInput, attackerFatigue: number, defenceEvasion: number): number {
@@ -73,7 +84,8 @@ function awakeFatigueRegenPerSec(endurance: number): number {
 // Demo values (not donor data): a mid-level fighter.
 const f: Pool = { base: 80, modifier: 0, current: 40 };
 const term = fatigueTerm(f);
-const hit = hitChance({ skill: 50, agi: 40, luck: 30, fortifyAttack: 0, blind: 0 }, term, 10);
+const defence = defenceTerm({ evasion: 10, fatigueCurrent: 40, knockedDown: false, paralysed: false, unaware: false, chameleon: 0, invisibility: 0 }, 1);
+const hit = hitChance({ skill: 50, agi: 40, luck: 30, fortifyAttack: 0, blind: 0 }, term, defence);
 const dmg = strengthDamage(20, 50);
 const cost = swingFatigueCost(0, 5, 1);
 const sk: Skill = { base: 40, progress: 0.9 };

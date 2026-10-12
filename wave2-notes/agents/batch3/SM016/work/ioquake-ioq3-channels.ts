@@ -18,7 +18,8 @@ export class ChannelPool {
   }
 
   // Returns the channel index, or -1 when the sound is refused.
-  // capPerSource: how many copies of one sound one source may have in play (donor: 4, or 8 for the listener).
+  // capPerSource: the most copies of one sound one source may have in play. Fix: the donor tests inplay > allowed (snd_dma.c:586),
+  // so with allowed 4 it lets a 5th copy start; this sketch uses >= so the cap is a true cap (pass 4, or 8 for the listener).
   start(sound: string, entity: number, now: number, capPerSource: number, announcer = false): number {
     let inPlay = 0;
     for (const c of this.ch) {
@@ -27,7 +28,7 @@ export class ChannelPool {
         inPlay++;
       }
     }
-    if (inPlay > capPerSource) return -1;
+    if (inPlay >= capPerSource) return -1;
 
     let idx = this.ch.findIndex((c) => c.sound === null);
     if (idx < 0) {
@@ -95,7 +96,7 @@ export interface Loop {
 export function mergeLoops(loops: Loop[], l: Listener, frame: number): Map<string, { left: number; right: number }> {
   const out = new Map<string, { left: number; right: number }>();
   for (const loop of loops) {
-    if (loop.frame !== frame) continue;
+    if (loop.kill && loop.frame !== frame) continue; // persistent loops (kill = false) stay live without re-declaring
     const master = loop.kill ? 127 : 90;
     const g = spatialize(loop.origin, l, master);
     const cur = out.get(loop.sound) ?? { left: 0, right: 0 };

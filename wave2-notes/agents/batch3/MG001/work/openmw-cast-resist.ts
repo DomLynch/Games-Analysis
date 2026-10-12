@@ -16,13 +16,21 @@ export interface EffectTerm {
   duration: number;
   area: number;
   targetRange: boolean;  // donor: target range multiplies the margin by 1.5
+  appliedOnce?: boolean; // donor: AppliedOnce effects skip the duration floor
+  hasMagnitude?: boolean; // donor: false (NoMagnitude) means magnitude 1
+  hasDuration?: boolean;  // donor: false (NoDuration) means duration 1
 }
 
 // Cost of one effect (the donor's GameSpell method: no duration offset, no minimum area).
+// Floors as the donor: magnitude min and max at 1, duration at 1 unless appliedOnce; no-magnitude/no-duration effects use 1.
 export function effectCost(e: EffectTerm, costMult: number): number {
-  let x = 0.5 * (e.min + e.max);
+  const minM = Math.max(1, e.hasMagnitude === false ? 1 : e.min);
+  const maxM = Math.max(1, e.hasMagnitude === false ? 1 : e.max);
+  let dur = e.hasDuration === false ? 1 : e.duration;
+  if (!e.appliedOnce) dur = Math.max(1, dur);
+  let x = 0.5 * (minM + maxM);
   x *= 0.1 * e.baseCost;
-  x *= e.duration;
+  x *= dur;
   x += 0.05 * e.area * e.baseCost;
   return x * costMult;
 }

@@ -184,3 +184,8 @@ Acceptance: walking from explore music into a boss zone plays the explore track 
 
 Reuse tag: rewrite-from-idea (GPL-3.0 with EA additional terms; clean-room only)
 Brief rule served: 1 (one engine, two clients); 8 (target and parity row named)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- No false claims. Verified: THEME.CPP track table and repeat flags, AI, Next_Song do-while with no exit (D2), Queue_Song guard (D1), Play_Song, Stop, Is_Allowed, THEME_DELAY, Fade_Out, AUDIO.CPP stubs, effect rows and priorities, Sound_Effect forward and live paths, Track_Length caller, GPL v3 plus section 7.
+- Missed (minor): Stop() only resets Pending/Score when Current != -1 (THEME.CPP:410); Theme.AI is also driven from Call_Back (CONQUER.CPP:1736), not only the main loop line 1140.

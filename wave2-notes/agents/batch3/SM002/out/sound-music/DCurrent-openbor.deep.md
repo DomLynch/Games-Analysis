@@ -126,3 +126,8 @@ export {};
 - Ambience beds and crossfades are not in the donor (gap). Frankendom's zones-as-data need per-zone beds; this donor gives the voice machinery only.
 - Frame-sound tables are in the packs, not in this box (gap). The one-of-range idea is verified in code only; no real hit table was read.
 - The phase stagger purpose is inferred (flagged above). If it is wrong, the stagger is harmless to drop.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- Steal rule, music channel reservation, 64x64 pool, delay math, chance roll timing, phase stagger, group match, 64 frame-sound slots, ordering and licence all hold. The chance_roll comment/code disagreement (header 169) is real.
+- Missed: frame sounds carry their own per-slot priority (openbor.c 10090 passes sound->priority; confirmed). The conclusion 'priority does not separate hit cues' is therefore only proven for the three non-frame call sites read, not for authored frame sounds. Left as a caveat; no change to Decision or sketch.

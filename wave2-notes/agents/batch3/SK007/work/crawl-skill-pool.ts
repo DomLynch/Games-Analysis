@@ -107,7 +107,7 @@ function weightsFromQueue(queue: { id: string; train: 1 | 2 }[], ids: string[], 
   for (const e of queue) raw.set(e.id, (raw.get(e.id) ?? 0) + e.train);
   for (const id of focus) {
     const w = raw.get(id) ?? 0;
-    if (w > 0 && w < 20) raw.set(id, w + 5 * (5 - Math.floor(w / 4)));
+    if (w < 20) raw.set(id, w + 5 * (5 - Math.floor(w / 4)));
   }
   const total = [...raw.values()].reduce((a, b) => a + b, 0);
   const out = new Map<string, number>(ids.map(id => [id, 0]));

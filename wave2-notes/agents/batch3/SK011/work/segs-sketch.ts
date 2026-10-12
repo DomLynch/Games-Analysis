@@ -56,13 +56,14 @@ export interface ToggleState { on: boolean; periodLeft: number; }
 
 export function toggleTick(r: Resource, p: PowerData, t: ToggleState, dtSec: number): void {
   if (!t.on) return;
-  if (r.end < p.cost) { t.on = false; return; }
+  // Donor order: fire (or count down) first, then test the switch-off conditions.
   if (t.periodLeft <= 0) {
     fire(r, p);
     t.periodLeft += p.activatePeriod;
   } else {
     t.periodLeft -= Math.min(dtSec, MAX_DT);
   }
+  if (r.end < p.cost) t.on = false; // donor also switches off on dead caster/target and out of range (omitted)
 }
 
 // Revive fraction by level 1..6 (donor ReviveLevel: AWAKEN, BOUNCE_BACK, RESTORATION, IMMORTAL_RECOVERY, REGEN_REVIVE, FULL).

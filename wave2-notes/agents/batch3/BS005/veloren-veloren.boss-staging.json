@@ -35,27 +35,91 @@
     "music_channel_tags": 3,
     "dragon_species": 1
   },
-  "rule": "Summon ladder: a boss counter starts at 1 minus step (step 1/8, so 0.875) at combat start. Each tick, if health fraction is below the counter, the boss casts its summon (frost frost_summons, fire ashen_summons). The check runs first in the decision chain. When that summon completes its recover stage, the counter drops by one step. Result: 7 summons at 87.5, 75, 62.5, 50, 37.5, 25 and 12.5 percent health, with no cooldown, so a large hit queues several summons back to back. Summon wind-up 1.75 s, cast 1.5 s, recover 0.75 s. Overheat beam (fire): a timer counts only while the beam is cast and recasting stops at 3.0 s. Weighted attack tables shift toward slow moves as damage rises. Special moves fire when a special timer passes 10 s; after each special the timer restarts at a random value up to 3 + 5 x damage fraction, so specials come sooner as the boss weakens. Minotaur: one frenzy self-buff at half health; a pillar guard at 16 units from a centre offset (50, 75) from home, armed after 4 s, that switches to ranged throws and repositions the boss 25 units from centre. World bosses (Gigas): sight 200 vs 100 default; should_stop_pursuing false, so no leash by health. Dragons: species data only (Reddragon, Female and Male body types); no dragon AI found.",
+  "rule": "Summon ladder: a boss counter starts at 1 minus step (step 1/8, so 0.875) at combat start. Each tick, if health fraction is below the counter, the boss casts its summon (frost frost_summons, fire ashen_summons). The check runs first in the frost giant's chain (the fire giant checks its overheat-beam continuation first). On every tick while the summon is in its recover stage and health is still below the counter, the counter drops by one step, so it chases health. Result: 7 summons at 87.5, 75, 62.5, 50, 37.5, 25 and 12.5 percent health with steady damage, and a large hit gives one summon with the skipped steps dropped. Summon wind-up 1.75 s, cast 1.5 s, recover 0.75 s. Overheat beam (fire): a timer counts only while the beam is cast and recasting stops at 3.0 s. Weighted attack tables shift toward slow moves as damage rises. Special moves fire when a special timer passes 10 s; after each special the timer restarts at a random value up to 3 + 5 x damage fraction, so specials come sooner as the boss weakens. Minotaur: one frenzy self-buff at half health; a pillar guard at 16 units from a centre offset (50, 75) from home, armed once the combat clock passes 4 s (a combat-start timer, reset only after a ranged recover when above 10 s) or when the player is more than 4 above the boss, that switches to ranged throws and repositions the boss 25 units from centre. World bosses (Gigas): sight 200 vs 100 default; should_stop_pursuing false, so no leash by health. Dragons: species data only (Reddragon, Female and Male body types); no dragon AI found.",
   "data_fields": [
-    {"name": "summon_ladder_step", "unit": "fraction of max health", "donor_value_or_null": null},
-    {"name": "summon_first_fraction", "unit": "fraction of max health", "donor_value_or_null": null},
-    {"name": "summon_count_frost", "unit": "count", "donor_value_or_null": null},
-    {"name": "summon_count_fire", "unit": "count", "donor_value_or_null": null},
-    {"name": "summon_wind_up_s", "unit": "s", "donor_value_or_null": null},
-    {"name": "summon_cast_s", "unit": "s", "donor_value_or_null": null},
-    {"name": "summon_recover_s", "unit": "s", "donor_value_or_null": null},
-    {"name": "overheat_cap_s", "unit": "s", "donor_value_or_null": null},
-    {"name": "special_gap_timer_s", "unit": "s", "donor_value_or_null": null},
-    {"name": "special_timer_range_per_damage", "unit": "s", "donor_value_or_null": null},
-    {"name": "bonk_interval_s", "unit": "s", "donor_value_or_null": null},
-    {"name": "minotaur_frenzy_fraction", "unit": "fraction", "donor_value_or_null": null},
-    {"name": "minotaur_cheese_radius", "unit": "units", "donor_value_or_null": null},
-    {"name": "minotaur_cheese_delay_s", "unit": "s", "donor_value_or_null": null},
-    {"name": "boss_sight_dist", "unit": "units", "donor_value_or_null": null},
-    {"name": "default_sight_dist", "unit": "units", "donor_value_or_null": null}
+    {
+      "name": "summon_ladder_step",
+      "unit": "fraction of max health",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "summon_first_fraction",
+      "unit": "fraction of max health",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "summon_count_frost",
+      "unit": "count",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "summon_count_fire",
+      "unit": "count",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "summon_wind_up_s",
+      "unit": "s",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "summon_cast_s",
+      "unit": "s",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "summon_recover_s",
+      "unit": "s",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "overheat_cap_s",
+      "unit": "s",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "special_gap_timer_s",
+      "unit": "s",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "special_timer_range_per_damage",
+      "unit": "s",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "bonk_interval_s",
+      "unit": "s",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "minotaur_frenzy_fraction",
+      "unit": "fraction",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "minotaur_cheese_radius",
+      "unit": "units",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "minotaur_cheese_delay_s",
+      "unit": "s",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "boss_sight_dist",
+      "unit": "units",
+      "donor_value_or_null": null
+    },
+    {
+      "name": "default_sight_dist",
+      "unit": "units",
+      "donor_value_or_null": null
+    }
   ],
   "keep": [
-    "Summon ladder as a counter keyed to server health, advancing only when a summon completes",
+    "Summon ladder as a counter keyed to server health that chases health during the summon recover (no catch-up)",
     "Overheat beam capped in time so the boss stops itself",
     "Weighted attack tables that shift toward heavy slow moves as damage rises",
     "Special timer that starts at a random value up to a cap that grows with damage",
@@ -64,11 +128,12 @@
   ],
   "change": [
     "Summons count against MAX_ATTACKERS = 3: a 4-minion fire summon breaks the cap. Use 2 per summon, or count summoned minions as attackers",
-    "Add a burst cap (max_summons_per_burst) so a large hit does not queue four summons back to back (our fix to the donor catch-up)",
+    "No burst cap needed: the donor counter already collapses a big hit into one summon; a catch-up flag would be a new design choice",
     "Shorten cast and recover in data; keep the 1.75 s wind-up as the readable tell (4 s total is long for a fast duel)",
-    "Store the pillar centre offset, radius and delay as zone data"
+    "Store the pillar centre offset, radius and delay as zone data",
+    "Pillar delay measured from stepping on the pillar, not from combat start (donor quirk fixed, idea kept)"
   ],
-  "look_test": "In the Pit, one fire giant at full health with the summon ladder shown as seven ticks on its health bar. (1) Let it fall just under 88 percent: one wind-up with the 1.75 s tell, then summons; judge the tell at phone size. (2) One big hit from 88 to about 40 percent: count the back-to-back summons; rerun with the burst cap at 1 and compare. (3) Let the beam fire: judge whether the 3 s cap reads as the boss tiring.",
+  "look_test": "In the Pit, one fire giant at full health with the summon ladder shown as seven ticks on its health bar. (1) Let it fall just under 88 percent: one wind-up with the 1.75 s tell, then summons; judge the tell at phone size. (2) One big hit from 88 to about 40 percent: expect exactly one summon and the next under 37.5 percent; judge whether skipped steps feel fair. (3) Let the beam fire: judge whether the 3 s cap reads as the boss tiring.",
   "licence_note": "GPL-3 (LICENSE opens with GNU General Public License Version 3). Clean-room, shape only: no code copied. Donor numbers are shown as observations; Frankendom values are ours.",
   "tags": [
     "boss-elite-pattern",

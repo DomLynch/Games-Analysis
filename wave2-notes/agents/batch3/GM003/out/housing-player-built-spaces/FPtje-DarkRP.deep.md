@@ -7,11 +7,11 @@ Checked: Read in full: `sv_doors.lua` 1-240 (ownership, keysOwn, keysUnOwn, keys
 ## 1. Mechanism
 
 - A plot is an ownable door or vehicle. Its record holds a master owner (`doorData.owner`), co-owners (`extraOwners`), players allowed to join (`allowedToOwn`), a title, and group or team locks. Ownership checks are in `sh_doors.lua` 52-68 and writes in `sv_doorvars.lua` 59-96.
-- Buying (`OwnDoor`, 333-424): a plot owned by someone else is refused unless the buyer is on its allowed-to-own list (382). Then: the buyer's cost is `GM:getDoorCost` (default 30), checked with `canAfford` and the `playerBuyDoor` hook; a vehicle limit and a plot cap of 20 apply (409); the cost is debited (414); then `keysOwn` runs (419). Inside `keysOwn` (43-85) a player on the allowed-to-own list is only added as a co-owner and returns (44-46). A master owner is recorded (71-74), the plot is added to the buyer's list (84), and the first plot starts the upkeep timer when upkeep is enabled (78-79).
-- Upkeep (only when `propertytax` is on; the default is off, config 135): every 270 s, `doPropertyTax` runs for the player (79, 140). It counts the player's plots and the plots of others on which the player is a co-owner (146-166). If there are none, it stops (170). Otherwise due = 10 x plots + a random integer from -5 to 5 (172-173). If the due is 0, it stops (180). If the player can pay, the due is debited (182-185). If not, every counted plot is released (188).
+- Buying (`OwnDoor`, 333-424): a plot owned by someone else is refused unless the buyer is on its allowed-to-own list (382). Then: the buyer must be within 200 units (squared 40000) of the plot (337); the cost comes from the `getDoorCost` hook, or `getVehicleCost` for a vehicle (387; the door default is 30), checked with `canAfford` and the `playerBuyDoor` hook; a vehicle limit and a plot cap of 20 apply (409); the cost is debited (414); then `keysOwn` runs (419). Inside `keysOwn` (43-85) a player on the allowed-to-own list is only added as a co-owner and returns (44-46). A master owner is recorded (71-74), the plot is added to the buyer's list (84), and the first plot starts the upkeep timer when upkeep is enabled (78-79).
+- Upkeep (only when `propertytax` is on; the default is off, config 135; a police player is skipped when `cit_propertytax` is on, 142, config.lua:51; the `canTaxEntity` hook can drop a plot from the bill and `canPropertyTax` can veto or override the total, 148, 175-179): every 270 s, `doPropertyTax` runs for the player (79, 140). It counts the player's plots and the plots of others on which the player is a co-owner (146-166). If there are none, it stops (170). Otherwise due = 10 x plots + a random integer from -5 to 5 (172-173). If the due is 0, it stops (180). If the player can pay, the due is debited (182-185). If not, every counted plot is released (188).
 - Release (`taxesUnOwnAll` 130-138, `keysUnOwn` 87-106): for a plot the player masters, all co-owners are removed and the owner is cleared (94-98), and the lock is released. For a plot the player only co-owns, just that player is removed.
 - Logout (`GM:PlayerDisconnected`, sv_gamemode_functions.lua 1000-1025): the tax timer is removed (1003). `keysUnOwnAll` (108-128) releases every plot in the player's own list (111-115), and removes the player's invitations from other players' plots (117-124). The owned-vehicle clean-up (983-987) runs under `removeondisconnect` (config 143, on by default).
-- Invite (`AddDoorOwner` 552-586): the owner must be near the plot (110 units squared, 556) and must already own it (573); the invited player is added to the allowed-to-own list (586). Acceptance is the buy path above, which charges the full door cost (see Gaps).
+- Invite (`AddDoorOwner` 552-586): the owner must be near the plot (110 units, squared 12100, 556) and must already own it (573); the invited player is added to the allowed-to-own list (586). Acceptance is the buy path above, which charges the full door cost (see Gaps).
 
 ## 2. Key functions
 
@@ -37,7 +37,7 @@ Checked: Read in full: `sv_doors.lua` 1-240 (ownership, keysOwn, keysUnOwn, keys
 | Plots per player | 20 (config.lua:224; check at sv_doors.lua:409) |
 | Vehicles per player | 5 (config.lua:238) |
 | Sale refund | 0.666 of cost, rounded (sv_doors.lua:373) |
-| Interaction range for buying, inviting | 110 units, as 12100 squared (sv_doors.lua:556) |
+| Interaction range | buying (OwnDoor): 200 units, as 40000 squared (sv_doors.lua:337); inviting (AddDoorOwner): 110 units, as 12100 squared (:556) |
 | Door removal delay after logout | 0 (config.lua:210); used for entities, not for doors (sv_gamemode_functions.lua:949-960) |
 | Vehicles removed on logout | on (config.lua:143), filter at sv_gamemode_functions.lua:985 |
 
@@ -121,6 +121,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Owned vehicles are removed on logout (sv_gamemode_functions.lua:985-987), while doors are released. Two rules for one kind of holding. Pick one.
 - Invited co-owners pay the full door price again. The buy branch checks the allowed-to-own list only to allow the purchase (sv_doors.lua:382); the charge (414) has no discount for it. Fix: an invite should be free, or priced once.
 - A door cost of 0 is replaced by 30 (sv_gamemode_functions.lua:22), so a free plot cannot be set. Fix: an explicit zero check.
+- Counter bug: `keysUnOwn` on a co-owner still decrements `OwnedNumz` and clears `Ownedz` for a plot the player never added (sv_doors.lua:104-105; `keysOwn` returned early at 44-46), so `taxesUnOwnAll` on co-owned plots under-counts the plot cap. Fix: only touch the counter when the plot was in the player's own list.
 - A co-owner who logs out keeps their share as far as the read code shows: `keysUnOwnAll` walks only the player's own list (sv_doors.lua:109-115), and `keysOwn` returns early for co-owners before adding them to that list (44-46). Not tested.
 - DarkRP has no furniture, storage, decor, instancing, build permission, placement or size rules, and no decay for inactivity (donor-wide grep, no hits). The housing model above is ownership, co-owners, upkeep and eviction only.
 - Frankendom rulings: the plot is a zone row; ownership and upkeep must be server-verified and settle through one ledger; a shortfall must not wipe a whole holding without a grace step.
@@ -134,3 +135,12 @@ Best transferable idea: a holding costs a fixed fee per plot plus a small random
 Decision (proposed): adapt - the per-plot upkeep with a jitter and a fixed interval is a simple, server-checkable housing sink; reject the all-or-nothing release and the instant logout release, and add a grace step before any plot is lost.
 
 Acceptance: a server test gives a player 3 plots and a 40-unit balance at the 270 s upkeep tick (due 30 plus or minus 5): the balance drops by the due and all 3 plots stay; with a 10-unit balance the first tick marks a miss and keeps the plots, and the second miss releases every plot that player holds: a plot the player masters loses its co-owners, and a plot the player only co-owns loses just that player.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Table row gave 110 units for buying; OwnDoor uses DistToSqr >= 40000 (200 units) at sv_doors.lua:337, only AddDoorOwner uses 12100 at :556. Confirmed, fixed.
+- Vehicle cost comes from the getVehicleCost hook (:387), not getDoorCost for all. Confirmed, fixed.
+- Missed: doPropertyTax skips CPs under cit_propertytax (:142) and canTaxEntity/canPropertyTax hooks can veto or override (:148, :175-179). Confirmed, added to Mechanism (sketch already says the hooks are omitted).
+- Missed: keysUnOwn on a co-owner decrements OwnedNumz and clears Ownedz for a plot never added (:104-105). Confirmed, added to Gaps with a fix.
+
+Fixed 2026-10-12: buy range, cost hook name, CP skip and hook vetoes, co-owner counter bug. Sketch unchanged.

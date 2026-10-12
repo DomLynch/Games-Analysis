@@ -32,10 +32,20 @@ export function castPower(c: CasterStats, cap: number): number {
   return cap > 0 ? Math.min(out, cap) : out;
 }
 
-// Miscast damage: none below a threshold, else level x (fail + level) / 9, rounded up.
-export function miscastDamage(spellLevel: number, fail: number): number {
+// Maximum miscast damage (what the donor shows as a bound): none below a threshold, else level x (fail + level) / 9, rounded up.
+export function maxMiscastDamage(spellLevel: number, fail: number): number {
   if (spellLevel * spellLevel * fail <= 150) return 0;
   return Math.ceil((spellLevel * (fail + spellLevel)) / 9);
+}
+
+// Actual miscast damage: `level` dice of size (level + fail), summed, divided by 9 with a random round-up of the remainder.
+// rand(max) returns 0..max-1.
+export function miscastDamage(spellLevel: number, fail: number, rand: (max: number) => number): number {
+  if (spellLevel * spellLevel * fail <= 150) return 0;
+  let sum = 0;
+  for (let i = 0; i < spellLevel; i++) sum += 1 + rand(spellLevel + fail);
+  const whole = Math.trunc(sum / 9);
+  return whole + (rand(9) < sum % 9 ? 1 : 0);
 }
 
 // The roll: average of three dice (100, 101, 101) with integer division by 3, so it sits near 50.
@@ -56,7 +66,7 @@ export function castSpell(
   const after = mp - cost;
   const fail = rawFail(c, spellLevel);
   if (failValue(fail, rand) === 0) return { mp: after, ok: true, miscast: 0 };
-  return { mp: after, ok: false, miscast: miscastDamage(spellLevel, fail) };
+  return { mp: after, ok: false, miscast: miscastDamage(spellLevel, fail, rand) };
 }
 
 export {};

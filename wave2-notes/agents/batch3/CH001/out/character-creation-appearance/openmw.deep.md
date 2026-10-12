@@ -7,16 +7,16 @@ Checked: Read race.cpp 250-300 and 322-370 (part filter, face and hair cycling, 
 ## 1. Mechanism
 
 - A body family is a race record plus a gender. The race record holds four numbers: male and female weight and height (loadrace.hpp 57; defaults 1 at loadrace.cpp 206).
-- Chargen builds a list of heads and a list of hairs for the chosen race and gender. The filter is: skin type, not not-playable (race.cpp 331), gender flag equals the chosen sex (race.cpp 337), not first-person-only, and race equals the chosen race (race.cpp 341). Lists are filled in store order. Changing gender refills both lists and resets both indices to 0 (race.cpp 346-352).
+- Chargen builds a list of heads and a list of hairs for the chosen race and gender. The filter is: not flagged not-playable (race.cpp 331), skin type (333), the wanted mesh part (335), gender flag equals the chosen sex (race.cpp 337), not first-person-only, and race equals the chosen race (race.cpp 341). Lists are filled in store order. Changing gender refills both lists and resets both indices to 0 (race.cpp 346-352).
 - The face and hair indices step through their list with `wrap` (race.cpp 282 for the face; hair is the same pattern at 294). `wrap` returns 0 when a forward step runs past the end (windowbase.cpp 27-28). The preview record takes `mAvailableHeads[mFaceIndex]` and `mAvailableHairs[mHairIndex]` (race.cpp 364, 367).
-- In the world, `NpcAnimation::updateNpcBase` reads the NPC's head and hair ids and looks each up in the body-part store (npcanimation.cpp 476, 481, 490). A werewolf form overrides both ids (476-477). A missing id logs a warning and leaves the slot empty (npcanimation.cpp 485, 494).
-- The base skeleton is chosen by gender, beast flag and werewolf flag (actorutil.cpp 8-20; the female base is line 17, the male base line 19). Beast is read from the race flags (npcanimation.cpp 502). So gender and beast pick a skeleton file; the NPC's head and hair ids pick meshes; the race ratios change scale only.
+- In the world, `NpcAnimation::updateNpcBase` reads the NPC's head and hair ids and looks each up in the body-part store (npcanimation.cpp 476, 481, 490). A werewolf form overrides both ids (476-477); a vampire (not werewolf) gets a race head override from getVampireHead (497-499). A missing id logs a warning and leaves the slot empty (npcanimation.cpp 485, 494).
+- The base skeleton is chosen by gender, beast flag and werewolf flag (apps/openmw/mwrender/actorutil.cpp 8-20; the female base is line 17, the male base line 19). Beast is read from the race flags (npcanimation.cpp 502). So gender and beast pick a skeleton file; the NPC's head and hair ids pick meshes; the race ratios change scale only.
 - Scale is one function, `Npc::adjustScale(ptr, scale, rendering)`. Order of steps:
   (a) if `rendering` is false, return at once (npc.cpp 1084-1085). So collision never sees the race body. The donor comment gives the reason: "having the same collision extents for all races" (npc.cpp 1086).
-  (b) if the ptr is the player in first person, multiply the uniform scale by height only (npc.cpp 1094-1101).
+  (b) if the ptr is the player, is in a cell and is in first person, multiply the uniform scale by height only (npc.cpp 1094-1101).
   (c) otherwise multiply x and y by the race weight and z by the race height, for the chosen gender (npc.cpp 1104-1116; male x at 1106, male z at 1108, female x at 1112, female z at 1114).
 - Physics calls it twice (physics actor.cpp 255-261): once with `rendering=false` for `mHalfExtents`, and once with `rendering=true` for `mRenderingHalfExtents`. The scene node is scaled the same way (scene.cpp 346), from `Actor::updateScale` (actor.cpp 244-247), which physicssystem.cpp 525 calls (caller context not read).
-- Speed: `CharacterController::update` starts from the cell scale (character.cpp 1982). If the setting "normalise race speed" is off (default false, settings-default.cfg 331), it multiplies by the race weight for the chosen gender (character.cpp 1984, 1988-1989). The horizontal movement vector is then multiplied by that scale (character.cpp 2503-2504).
+- Speed: `CharacterController::update` starts from the cell scale (character.cpp 1982). If the setting "normalise race speed" is off (default false, settings-default.cfg 331), it multiplies by the race weight for the chosen gender (character.cpp 1984, 1988-1989). The horizontal movement vector is then multiplied by that scale (character.cpp 2503-2504). The same setting also scales magic-bolt speed (projectilemanager.cpp 451), so race weight reaches the projectile path too.
 - Tick: none of its own. The scale is applied through `scaleObject` when the first-person or third-person view changes (npcanimation.cpp 305-306, "apply race height after view change"). Per-frame refresh of the physics extents goes through `Actor::updateScale` (actor.cpp 244-247); its per-frame caller was not read.
 
 ## 2. Key functions
@@ -130,3 +130,11 @@ Acceptance: a heavy and a light body of the same race stand on the same rig with
 
 Reuse tag: rewrite-from-idea (GPL-3.0; clean-room only)
 Brief rule served: 1 (one engine: collision and movement stay in the sim, body scale is a client render value); rules 7-9 n/a
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- race.cpp 331 is the NotPlayable check; skin type is 333 (note listed skin first). Confirmed and reordered.
+- actorutil.cpp has no directory in the note; real path apps/openmw/mwrender/actorutil.cpp. Confirmed and fixed.
+- Missed: projectilemanager.cpp:451 also reads mNormaliseRaceSpeed (confirmed, added). Vampire head override npcanimation.cpp 497-499 (confirmed, added). adjustScale first-person branch also needs ptr.isInCell() (confirmed, added).
+
+Fixed 2026-10-12: filter order and lines, actorutil.cpp full path, projectile speed line, vampire head line, isInCell condition. Sketch unchanged (it already omits vampire and projectile).

@@ -1,6 +1,6 @@
 # dhewm-dhewm3 (sound-music, cell 2)
 
-Donor: `/mnt/frankendom-donors/dhewm-dhewm3/neo/sound/snd_emitter.cpp` (with `snd_world.cpp`, `snd_system.cpp`) | Licence: GNU GPL version 3 (README.md line 223 names COPYING.txt; file header `Doom 3 GPL Source Code`, snd_world.cpp line 4) | C++ | symbols `idSoundFade::FadeDbAt44kHz`, `idSoundWorldLocal::FadeSoundClasses`, `idSoundEmitterLocal::StartSound` (channel allocation)
+Donor: `/mnt/frankendom-donors/dhewm-dhewm3/neo/sound/snd_emitter.cpp` (with `snd_world.cpp`, `snd_system.cpp`) | Licence: GNU GPL version 3 (README.md line 223 names COPYING.txt, which is GPLv3; file header `Doom 3 GPL Source Code`, snd_world.cpp line 4). README.md 223-225 adds that the Doom 3 GPL source is ALSO subject to additional terms from id Software, whose text is not in the tree; check those before any reuse | C++ | symbols `idSoundFade::FadeDbAt44kHz`, `idSoundWorldLocal::FadeSoundClasses`, `idSoundEmitterLocal::StartSound` (channel allocation)
 
 Checked: Read by line range: `neo/sound/snd_emitter.cpp` 36-76 and 700-830; `neo/sound/snd_world.cpp` 1722-1750 and 2210-2262; `neo/sound/snd_system.cpp` 924-940; `neo/game/Misc.cpp` 160-176; `neo/game/Target.cpp` 1728-1762. Grep only: `sound.h` 53-84 (flags and constants), `snd_local.h` 102 (SOUND_MAX_CHANNELS = 8), `snd_shader.cpp` (no_dups, leadin, mindistance parsing, lines 196-332), `snd_system.cpp` 363 (dB table). Candidates opened: snd_emitter.cpp, snd_world.cpp, snd_system.cpp, sound.h, snd_local.h, snd_shader.cpp, game/Misc.cpp, game/Target.cpp (8). Confidence: high on the fade maths and the channel rules as read; medium on the leadin-to-loop switch (snd_emitter.cpp 455-480 not read) and on whether music is handled differently (not read: only a comment at snd_world.cpp 1556 mentions music). The hint `INFERRED` was not a file; the real code is the snd_emitter and snd_world pair.
 
@@ -13,9 +13,9 @@ Acceptance: a client test with a fake clock: crossfading from bed A to bed B ove
 
 - Fade value: each fade is four numbers, start time, end time, start dB and end dB. Before the start the value holds at the start dB; between start and end it moves linearly in dB; at or after the end it holds the end dB (snd_emitter.cpp 52-65, lines 55-63 and 60).
 - Retarget: a new `FadeSoundClasses(cls, toDb, overS)` does nothing if the class already fades to that target over the same length (snd_world.cpp 2228-2231). Otherwise the new fade starts at the current value (2243, `fadeStartVolume = FadeDbAt44kHz(start44kHz)`), starts one mix block after the call (2239), and ends `over` seconds later (2245-2246). Because it starts at the current value, a retarget does not jump.
-- Composition: the gain of a layer is the base volume (from the shader's dB, 1734), times the channel's own fade (1740-1741), times its sound class's fade (1743-1744). Both fades are read at the same mix time.
-- dB to gain: at or below -60 dB is silence; otherwise 2^(dB/6) (snd_system.cpp 932-935, lookup table filled at 363; table index at 937-938, quantised to 0.1 dB).
-- Callers (game code, all read): the teleport ducks class 0 to -20 dB over the teleport delay and starts a sting on the body channel in the same step (Misc.cpp 163-168); the next stage restores class 0 to 0 dB over 0.25 s (Misc.cpp 172-173). A fade-class trigger (Target.cpp 1738-1749) fades any class by a dB value over a time, then schedules a restore after `fadeDuration` (1747), which fades class 0 back (1761).
+- Composition: the gain of a layer is the base volume (from the shader's dB, 1734), times the channel's own fade (1740-1741); the base volume is replaced by `leadinVolume` while the leadin sample is still within its length (snd_world.cpp 1731-1732), times its sound class's fade (1743-1744). Both fades are read at the same mix time.
+- dB to gain (`dB2Scale`, snd_system.cpp 929-939): exactly 0 dB returns 1 (930, fast path); at or below -60 dB is silence (932); at or above +60 dB it is computed as 2^(dB/6) with powf (934-935); between -60 and +60 a lookup table filled at 363 is read, quantised to 0.1 dB (937-938).
+- Callers (game code, all read): the teleport ducks class 0 to -20 dB over the teleport delay and starts a sting on the body channel in the same step (Misc.cpp 163-168); the next stage restores class 0 to 0 dB over 0.25 s (Misc.cpp 172-173). A fade-class trigger (Target.cpp 1738-1749) fades any class to `fadeIn ? fadeDB : -fadeDB` over a time (1745), then schedules a restore after `fadeDuration` (1747). The restore (1757-1762) always fades class 0 (not `fadeClass`) to `+fadeDB` (not to 0 dB): a donor defect, so a duck on any class other than 0 is never restored, and a duck never returns to 0 dB. Our `duck` helper restores the same class to 0 dB.
 - Sound classes: four classes (sound.h 79), described in the header as the way to fade most sounds down inside cinematics while dialogue keeps full volume (sound.h 77).
 - Voice limits (emitter channels, read at 700-830): each emitter has 8 channels (snd_local.h 102). A new sound takes the first free channel (782-787). If none is free, the sound is dropped and the call returns 0 (789-795). No priority is used to steal a busy channel.
 - Named-channel override: if the sound is on a named channel (not SCHANNEL_ANY), the first running sound on that same channel is stopped first (759-778, `break` at 775), so one voice per channel name.
@@ -140,3 +140,12 @@ rewrite-from-idea (GPL-3.0; clean-room only)
 
 ## Brief rule served
 Zones as data (the bed and the fade times are zone data); client-only; parity row 12 is the nearest row and is flagged as a gap for the bed crossfade.
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Event_RestoreVolume (Target.cpp 1757-1762) fades class 0 to +fadeDB regardless of fadeClass, and the activation target is fadeIn ? fadeDB : -fadeDB (1745); the note said it "fades class 0 back". Confirmed; recorded as a donor defect with our fix.
+- dB2Scale omitted the 0 dB fast path (930) and the >=60 dB powf path (934-935). Confirmed.
+- Licence line omitted README.md 223-225 additional id Software terms; COPYING.txt is GPLv3. Confirmed.
+- Missed: leadin volume scale in the same gain function (snd_world.cpp 1731-1732). Confirmed, added.
+
+Fixed 2026-10-12: rewrote the Target.cpp restore line as a defect, completed the dB2Scale line, added the additional-terms caution to the licence line, added leadinVolume to the gain composition. Sketch unchanged (it already exact-computes gain and restores the same class by a second call).

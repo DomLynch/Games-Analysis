@@ -51,8 +51,9 @@ function spend(f: Fighter, delta: number): void {
 }
 
 // One melee swing, arm cost as a negative number: weight term, minus melee skill, minus stance; never less than -50.
-function swingCost(weaponGrams: number, f: Fighter, stance: Stance): number {
-  const base = -(Math.floor(weaponGrams / 16) + 50);
+function swingCost(weaponGrams: number, f: Fighter, stance: Stance, liftMod: number = 1.0): number {
+  // donor multiplies the weight term by the limb Lift modifier (1.0 at default)
+  const base = -(Math.floor(weaponGrams / 16) + 50) * liftMod;
   const stanceMalus = stance === 'prone' ? 50 : stance === 'crouch' ? 20 : 0;
   return Math.min(-50, base + Math.round(f.melee) - stanceMalus);
 }
@@ -68,9 +69,10 @@ function runCostMultiplier(f: Fighter): number {
 }
 
 // Regeneration per turn: fitness-scaled base, at least 1, and 10% of that while winded.
-function regenPerTurn(f: Fighter): number {
-  const mult = f.winded ? 0.1 : 1.0;
-  return Math.max(0.1, mult) * Math.max(1, REGEN_BASE * (f.cardio / 1000));
+// modRegen is the additive regen enchantment (added to, then floored with, the winded multiplier); breathingMod is the breathing limb score (1.0 at default).
+function regenPerTurn(f: Fighter, modRegen: number = 0, breathingMod: number = 1.0): number {
+  const mult = modRegen + (f.winded ? 0.1 : 1.0);
+  return Math.max(0.1, mult) * Math.max(1, REGEN_BASE * (f.cardio / 1000) * breathingMod);
 }
 
 function regen(f: Fighter, turns: number): void {

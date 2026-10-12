@@ -6,13 +6,13 @@ Checked: Read in full: `raw_spell_fail` (470-554), `_skill_power` (443-456), `_s
 
 Best transferable idea: give every spell one data-driven failure curve (base, caster-stat terms, armour penalty, level table, smoothing clamp) and one roll that pays the cost before it, so a heavy caster in armour gets a visible penalty instead of a hidden one.
 Decision (proposed): adapt — keep the shape (armour penalty on casting, cost paid before the roll, miscast severity from level and failure), but replace the three-dice roll and the cubic with a single server roll on a simple table, because a turn-based curve is tuned for turns, not a fast mobile fight.
-Acceptance: the cast tooltip shows the formula's failure figure (for example 4% for a level-5 spell with skill_power 5000, INT 20 and armour penalty 40); a server test with 10,000 seeded rolls lands within 1 point of that figure, a failed cast still spends its MP, and a level-5 spell at 100% failure deals 59 miscast units.
+Acceptance: the cast tooltip shows the formula's failure figure (for example 4% for a level-5 spell with skill_power 5000, INT 20 and armour penalty 40); a server test with 10,000 seeded rolls lands within 1 point of that figure, a failed cast still spends its MP, and a level-5 spell at 100% failure has a miscast damage cap of 59 (the roll is 5 dice of size 105 divided by 9, so a test asserts the cap and the mean, never exactly 59).
 
 ## 1. Mechanism
 
 - A cast is one synchronous action. `cast_a_spell` pays the MP first (`spl-cast.cc` 1059-1061), then calls `your_spells` (1068). Inside `your_spells`, the caster's raw failure chance is computed (2400) and one roll is taken (2356). The roll is `random2avg(100, 3)`: it adds one `random2(100)` and two `random2(101)` and divides the sum by 3 with integer division (random.cc 341-346). A failure is recorded only when the roll is below the raw failure chance (2402-2403), and the fail value is `raw - roll`. The spell then runs with `force_failure || fail` (2410-2411), and a failure calls the miscast path.
-- Order of steps for one cast: (a) MP spent, always, even on failure (1061); (b) raw failure computed from caster stats, spell level and armour (470-554); (c) roll (2356); (d) fail if roll < raw failure (2402); (e) on a fail, the miscast path runs; its damage comes from the formula at 2961-2971 and is zero unless `level x level x fail > 150` (2967).
-- Raw failure: start at 60; subtract `skill_power x 6 / 100` (483); subtract `INT x 2` (484); add the armour and shield penalty (490); add a per-level table value (513); cap the chance at 400 (520); pass it through a cubic `(x^3 + 426x^2 + 82670x + 7245398) / 262144`, written in Horner form (537); clamp to 0-100 (554). Wizardry and some armour egos then scale the result by `6 / (7 + wizardry)` (419).
+- Order of steps for one cast: (a) MP spent, always, even on failure (1061); (b) raw failure computed from caster stats, spell level and armour (470-554); (c) roll (2356); (d) fail if roll < raw failure (2402); (e) on a fail, the miscast path runs; its damage is `div_rand_round(roll_dice(level, level + fail), 9)` (spl-miscast.cc:385; stated in the comment at spl-cast.cc:2959), a random roll. The function at 2961-2971 (`max_miscast_damage`) gives only the MAXIMUM, `ceil(level x (fail + level) / 9)`, and returns 0 unless `level x level x fail > 150` (2967).
+- Raw failure: start at 60; subtract `skill_power x 6 / 100` (483); subtract `INT x 2` (484); add the armour and shield penalty (490); add a per-level table value (513); cap the chance at 400 (520); pass it through a cubic `(x^3 + 426x^2 + 82670x + 7245398) / 262144`, written in Horner form (537); clamp to 0-100 (554). After the cubic, flat terms are added (subdued magic -2 per level, wild magic +4, anti-wizardry +4, energy armour ego +10, vertigo +7; spl-cast.cc 541-548). Then `_apply_spellcasting_success_boosts` (376-420) scales the result by a `fail_reduce` chain: Vehumet 2/3, forms (rime yak, sphinx, sun scarab) 2/3 for their school, armour egos (command, death, resonance), dragon-scale unrands, and wizardry `6 / (7 + wizardry)` (419). Enkindled casting then does `x * 3 / 4 - 5` and skips the armour penalty (488-494, 551-552).
 - Power: `skill_power` is the average discipline skill (scaled by 200) plus SpellCasting (scaled by 50) (455). Power = `skill_power x INT / 10` (572). Then a step-down: below 50000 (millis, see the x10 at 438) power is linear; above it grows as `50000 x log2(1 + x / 50000)` with a ceiling of 200000 (stepdown.cc 16, 19-50), then divided by 1000 and capped per spell (604-608).
 - Tick: none. Crawl is turn-based. The spell-table layout comment (`spl-data.h` 11-21) lists level, power cap, range and noise. It has no cast-time field and no cooldown field. The action cost of a cast (action energy) was not read.
 
@@ -23,8 +23,8 @@ Acceptance: the cast tooltip shows the formula's failure figure (for example 4% 
 - `calc_spell_power`: `/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/spl-cast.cc` 565-615. INT scale, step-down, cap, then the diminished-spells (611-612) and claustrophobia (614-615) modifiers.
 - `_stepdown_spellpower`: `/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/spl-cast.cc` 435-441. Calls `stepdown_value(power x 10, 50000, 50000, 150000, 200000)` and divides by 1000.
 - `your_spells` fail roll: `/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/spl-cast.cc` 2356-2412. The roll, the raw-fail comparison, the forced-failure argument.
-- `spell_mana`: `/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/spl-util.cc` 545-572. Cost = spell level, halved (rounded up) under Brilliance, 0 while enkindled.
-- `max_miscast_damage`: `/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/spl-cast.cc` 2961-2971.
+- `spell_mana`: `/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/spl-util.cc` 545-572. Cost = spell level, reduced by spellmotor and efficient magic (min 1), halved (rounded up) under Brilliance, 0 while enkindled.
+- `max_miscast_damage`: `/mnt/frankendom-donors/crawl-crawl/crawl-ref/source/spl-cast.cc` 2961-2971 (the MAXIMUM only; the real roll is in spl-miscast.cc:385).
 - `stepdown.cc` 14-50 and `random2avg` (random.cc 339-347) are the helpers the above depend on.
 
 ## 3. Numbers vs mechanism
@@ -40,15 +40,15 @@ TABLE (name | effect | formula | number ranges | cost | cooldown/cast time | cap
 | Level table | harder spells fail more | difficulty_by_level[level] | levels 0-9 add 0, 3, 15, 35, 70, 100, 150, 200, 260, 340 | 0 | none | level 0-9 | spl-cast.cc:511-513 |
 | Clamp before the cubic | keeps the cubic in range | min(chance, 400) | cap 400 | 0 | none | 400 | spl-cast.cc:520 |
 | Smoothing | maps chance to a smooth percent | (x^3 + 426x^2 + 82670x + 7245398) / 262144, then clamp | output 0-100 | 0 | none | 0-100 | spl-cast.cc:537, 554 |
-| Wizardry | scales failure down | fail x 6 / (7 + wizardry) | wizardry 1 gives x 0.75 | 0 | none | none | spl-cast.cc:419 |
+| Success boosts | scale failure down | `fail_reduce` chain: Vehumet 2/3, matching form 2/3, armour egos 2/3 (command: 180/(180+armour skill x10)), wizardry 6/(7+wizardry) | wizardry 1 gives x 0.75; flat terms before the chain: subdued -2/level, wild +4, anti-wizardry +4, energy ego +10, vertigo +7; enkindled x3/4 - 5 | 0 | none | none | spl-cast.cc:376-420, 541-552 |
 | Power | damage or effect strength | (skill_power x INT) / 10 | 2500 x 10 gives 25; 2500 x 20 gives 50; 5000 x 20 gives 79 (after step-down) | 0 | none | per-spell cap | spl-cast.cc:572, 604 |
 | Step-down | diminishing returns on power | linear below 50000 (millis); above it 50000 x log2(1 + x / 50000), ceiling 200000 | knee at power 50 | 0 | none | ceiling 200 | spl-cast.cc:438; stepdown.cc:16 |
 | Per-spell cap | hard max power | min(power, cap) | Magic Dart 25 (spl-data.h:45); Fireball 200 (spl-data.h:56) | 0 | none | per spell | spl-cast.cc:606-608 |
-| MP cost | spell cost | cost = spell level | level 1-9 gives 1-9 MP; Brilliance: ceil(level / 2); enkindled: 0 | level | none | none | spl-util.cc:557 |
+| MP cost | spell cost | cost = spell level; minus rev tier with a spellmotor gizmo (min 1); minus efficient-magic mutation level (min 1); then Brilliance halves | level 1-9 gives 1-9 MP; Brilliance: ceil(level / 2); enkindled: 0 | level | none | none | spl-util.cc:545-572 |
 | Roll | the cast die | (random2(100) + random2(101) + random2(101)) / 3, integer | 0-100, centred near 50 | 0 | none | none | random.cc:341-346; spl-cast.cc:2356 |
 | Failure | a cast fails | fail if roll < raw failure; fail value = raw - roll | raw 0 never fails; raw 100 always fails | MP still spent | none | none | spl-cast.cc:1061, 2402-2403 |
 | Miscast gate | no miscast damage at low risk | damage 0 if level x level x fail <= 150 | threshold 150 | 0 | none | none | spl-cast.cc:2967; spl-miscast.h:14 |
-| Miscast damage | damage on fail | ceil(level x (fail + level) / 9) | level 5 at fail 100 gives 59 | 0 | none | none | spl-cast.cc:2970; spl-miscast.h:11 |
+| Miscast damage | damage on fail (random) | `div_rand_round(roll_dice(level, level + fail), 9)`; the cap is `ceil(level x (fail + level) / 9)` | level 5 at fail 100: 5 dice of size 105 / 9, cap 59, mean about 29 | 0 | none | cap 59 at L5/F100 | spl-miscast.cc:385; spl-cast.cc:2959, 2970; spl-miscast.h:11 |
 
 Sample failure values, computed from these formulas by hand-checked integer arithmetic (not measured in game): L1, no skill, INT 10, no armour: 44%. L1, skill_power 2500, INT 10: 7%. L1, skill_power 2500, INT 20: 5%. L5, skill_power 5000, INT 20: 1%; same with armour penalty 40: 4%. L5, no skill, INT 10: 100%. L9, skill_power 5000, INT 30: 43%.
 
@@ -58,7 +58,7 @@ Caveat: this is turn-based. No cast time, no channel, no interrupt-by-hit was re
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order (MP spent, raw failure from stats, armour, level table, clamp, cubic, one roll, miscast only on failure) and the power step-down. It keeps the donor's cubic and three-dice roll on purpose, because the sketch shows the donor's shape; the Frankendom adaptation in section 5 would replace both with one die and a table. It drops the enkindled, wild-magic, subdued-magic, horror, claustrophobia, Vehumet, god-penance, wizardry-ego and spellmotor branches, the spell-specific miscast effects, the HP cost of some spells, and the `_do_cast` effect. It keeps the donor's integer truncation.
+simplified: the sketch keeps the donor order (MP spent, raw failure from stats, armour, level table, clamp, cubic, one roll, miscast only on failure) and the power step-down. It keeps the donor's cubic and three-dice roll on purpose, because the sketch shows the donor's shape; the Frankendom adaptation in section 5 would replace both with one die and a table. It drops the enkindled, wild-magic, subdued-magic, vertigo, energy-ego, horror, claustrophobia, Vehumet, form and armour-ego fail boosts, god-penance, wizardry-ego, efficient-magic and spellmotor branches, the spell-specific miscast effects, the HP cost of some spells, and the `_do_cast` effect. It keeps the donor's integer truncation.
 
 ```ts
 // Licence: GPL-2.0-or-later (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -95,10 +95,20 @@ export function castPower(c: CasterStats, cap: number): number {
   return cap > 0 ? Math.min(out, cap) : out;
 }
 
-// Miscast damage: none below a threshold, else level x (fail + level) / 9, rounded up.
-export function miscastDamage(spellLevel: number, fail: number): number {
+// Maximum miscast damage (what the donor shows as a bound): none below a threshold, else level x (fail + level) / 9, rounded up.
+export function maxMiscastDamage(spellLevel: number, fail: number): number {
   if (spellLevel * spellLevel * fail <= 150) return 0;
   return Math.ceil((spellLevel * (fail + spellLevel)) / 9);
+}
+
+// Actual miscast damage: `level` dice of size (level + fail), summed, divided by 9 with a random round-up of the remainder.
+// rand(max) returns 0..max-1.
+export function miscastDamage(spellLevel: number, fail: number, rand: (max: number) => number): number {
+  if (spellLevel * spellLevel * fail <= 150) return 0;
+  let sum = 0;
+  for (let i = 0; i < spellLevel; i++) sum += 1 + rand(spellLevel + fail);
+  const whole = Math.trunc(sum / 9);
+  return whole + (rand(9) < sum % 9 ? 1 : 0);
 }
 
 // The roll: average of three dice (100, 101, 101) with integer division by 3, so it sits near 50.
@@ -119,7 +129,7 @@ export function castSpell(
   const after = mp - cost;
   const fail = rawFail(c, spellLevel);
   if (failValue(fail, rand) === 0) return { mp: after, ok: true, miscast: 0 };
-  return { mp: after, ok: false, miscast: miscastDamage(spellLevel, fail) };
+  return { mp: after, ok: false, miscast: miscastDamage(spellLevel, fail, rand) };
 }
 
 export {};
@@ -145,3 +155,11 @@ export {};
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 Brief rule served: one engine; server-verified outcomes; clean-room only (GPL). Parity row 13.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Miscast damage was overstated: spl-cast.cc:2955-2970 is `max_miscast_damage` (the cap); the real damage is `div_rand_round(roll_dice(level, level + fail), 9)` (spl-cast.cc:2959; spl-miscast.cc:385). 59 is only the L5/F100 cap; a test asserting exactly 59 would be wrong. Confirmed.
+- `spell_mana` omitted the efficient-magic mutation reduction (and the spellmotor reduction was named only as unread). Confirmed (spl-util.cc 556-562).
+- Missed: armour penalty is skipped when enkindled (spl-cast.cc:488-494). Confirmed.
+- Missed: `_apply_spellcasting_success_boosts` has many more multipliers than wizardry (Vehumet, forms, armour egos, unrands, 376-420) and flat terms after the cubic (subdued/wild/anti-wizardry, energy ego +10, vertigo +7, enkindled x3/4 - 5; 541-552). Confirmed.
+Fixed 2026-10-12: Acceptance, Mechanism step (e) and raw-failure bullet, the Miscast damage, MP cost and success-boost table rows, key-function lines; sketch now has `maxMiscastDamage` (cap) and a random `miscastDamage` (work/crawl-fail-power.ts updated).

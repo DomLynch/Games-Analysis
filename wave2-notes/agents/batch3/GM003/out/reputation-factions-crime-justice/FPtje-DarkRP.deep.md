@@ -1,6 +1,6 @@
 # FPtje-DarkRP (reputation-factions-crime-justice, cell 27)
 
-Donor: `/mnt/frankendom-donors/FPtje-DarkRP/gamemode/modules/hitmenu/sv_init.lua` (`plyMeta:requestHit` 17-39 in sh_init; `placeHit` 41-58; `cancelHit` 92-102; `abortHit` 81-90; `questionCallback` 110-134; `PlayerDeath` hook 222-237) | Licence: MIT (`/mnt/frankendom-donors/FPtje-DarkRP/LICENSE.txt`, Copyright (c) 2014 Falco Peijnenburg; code may be adapted) | Lua | symbol `plyMeta:placeHit`
+Donor: `/mnt/frankendom-donors/FPtje-DarkRP/gamemode/modules/hitmenu/sv_init.lua` (`plyMeta:requestHit` 17-39 in sv_init; `placeHit` 41-58; `cancelHit` 92-102; `abortHit` 81-90; `questionCallback` 110-134; `PlayerDeath` hook 222-237) | Licence: MIT (`/mnt/frankendom-donors/FPtje-DarkRP/LICENSE.txt`, Copyright (c) 2014 Falco Peijnenburg; code may be adapted) | Lua | symbol `plyMeta:placeHit`
 
 Checked: Read in full: `modules/hitmenu/sv_init.lua` 1-271 and `modules/hitmenu/sh_init.lua` 1-60 (gates, price, cooldowns; DarkRPVars). Read in full: `modules/police/sh_init.lua` 1-215 (checks and commands) and `modules/police/sv_init.lua` 1-463 (warrant, wanted, arrest, jail timers, admin commands, hooks). Read: `modules/base/sv_gamemode_functions.lua` 470-482 and 536-570 (the wanted flag clears on death; the `PlayerDeath` signature at 519 seen by grep) and 945-1032 (disconnect). Config: hitman keys (524-536), jail, wanted and warrant keys (13, 97, 214, 278, 300, 121, 168-171). Callers: `placeHit` is called from `questionCallback` (sv_init.lua:133) in the files read; I did not run a donor-wide grep for other callers. Not read: `hitmenu/sv_interface.lua` (hook names only), `hitmenu/cl_menu.lua` (UI), `police/sv_commands.lua` (lottery, lockdown, laws), `police/sv_interface.lua`. Confidence: high on the bounty order of operations and every number listed; high on the jail-timer behaviour from the code (not run); medium on the death-clears-wanted rule (read, not run). The donor has no murder count, karma, fame or faction reputation: a donor-wide grep of `gamemode/` for murder, killcount, karma, fame and reputation returned no hits. `camera_scope` not applicable (crime and reputation).
 
@@ -177,3 +177,10 @@ Best transferable idea: a bounty is one contract record per hitman with a 20-sec
 Decision (proposed): adapt - the one-contract record with the two cooldowns and the price band is a clean, checkable bounty shape for PvP-flagged players; reject the donor's pay-at-accept with no refund on abort, and re-run the gates at accept.
 
 Acceptance: a server test: a customer orders a 1000-unit bounty on target T; the 1000 moves into escrow on accept; if a third player kills T, the customer's balance returns to its pre-order value and the hitman's is unchanged; if the hitman kills T, the hitman gains 1000, and a new bounty on T is refused for 120 s; a second order from the same customer within 240 s is refused.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Error: header put requestHit 17-39 in sh_init; it is in sv_init.lua:17-39 (sh_init holds canRequestHit 30-43). Confirmed.
+- Missed: none significant.
+
+Fixed 2026-10-12: header file attribution of requestHit.

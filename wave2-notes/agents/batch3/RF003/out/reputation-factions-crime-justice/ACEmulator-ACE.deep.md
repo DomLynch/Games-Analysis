@@ -11,14 +11,14 @@ Acceptance: two flagged fighters who hit each other both show a red "tagged" mar
 ## 1. Mechanism
 
 - Three flags sit on the player: `PlayerKillerStatus` NPK, PK and PKLite (`ACE.Entity/Enum/PlayerKillerStatus.cs`, read by grep only). A separate `PkLevel` (NPK or PK) is the level the player chose by using a switch object; it is stored as `PkLevelModifier` (`WorldObject_Properties.cs` 2690-2699). The flag follows the level except during respite and for PKLite.
-- Attack gate: `DamageTarget` (`Player_Combat.cs` 117) calls `CheckPKStatusVsTarget` at line 125. For a player target, an NPK cannot harm a player (line 1184), an NPK target cannot be harmed by a PK (line 1187), and any harmful action between different flags is refused (lines 1196-1199). A harmful spell or attack on a creature with a non-NPK flag must match the creature's flag (line 1209).
+- Attack gate: `DamageTarget` (`Player_Combat.cs` 117) calls `CheckPKStatusVsTarget` at line 125. For a player target, an NPK cannot harm a player (line 1184), an NPK target cannot be harmed by a PK (line 1187), and any harmful action between different flags is refused (refusal at 1196, return at 1202; the check also blocks harmful actions across a house boundary via `CheckHouseRestrictions`, 1190). A harmful spell or attack on a creature with a non-NPK flag must match the creature's flag (line 1209).
 - Combat tag: a successful PvP hit calls `UpdatePKTimers(attacker, this)` (line 571, from the damage path) which sets both fighters' `LastPkAttackTimestamp` to now (lines 1008-1016), unless either side is `Free` (line 1012). `PKTimerActive` is true while the flag is PK or PKLite and less than `pk_timer` (20 s) has passed (line 1019). Recall-type actions and the PK arena teleport check this flag (`Player_Location.cs` 67, 490; `Portal.cs` 159).
 - Delayed logoff: `PKLogoutActive` is true for PK-type players inside a 2-minute window (`PKLogoffTimer`, line 992; check at line 1021). Logging off then sets `IsFrozen` and a logoff time `pk_timer` seconds ahead (`Player.cs` 503-515). The comment on line 990 says 20 seconds, but the window is 2 minutes.
-- Murder counts: when a player dies to a player whose flag is PK, the killer's `PkTimestamp` is set to now and `PlayerKillsPk` goes up by one (`Player_Death.cs` 104-107). A PKLite death adds one to `PlayerKillsPkl` (line 119). Both counters start at 0 (`Player.cs` 205-208).
+- Murder counts: when a player whose flag is PK (the victim) dies to a different player, the killer's `PkTimestamp` is set to now and `PlayerKillsPk` goes up by one (`Player_Death.cs` 104-107; `IsPKDeath`, `Player_Combat.cs` 712-715, tests the victim's flag and that the killer is a different player; the killer's flag is not tested). A PKLite death adds one to `PlayerKillsPkl` (line 119). Both counters start at 0 (`Player.cs` 205-208).
 - Respite: after the death animation plus one second (`Player_Death.cs` 227), the death chain calls `SetMinimumTimeSincePK()` (line 236) for a PK or PKLite death (line 235). That sets the respite counter to 0 (line 961) and the flag to NPK (line 962). An NPK player with no respite already does nothing (line 956).
 - Respite tick: `Player.Heartbeat` calls `PK_DeathTick()` (`Player_Tick.cs` 122). Each call adds `CachedHeartbeatInterval` (line 987). The respite ends when the counter reaches `pk_respite_timer` (line 989). A player at NPK level with no world-wide PK setting clears the respite at once (lines 981-983). Otherwise the flag is restored: PK if `pk_server` is set, PKLite if `pkl_server` is set, else the player's own level (lines 1000-1014).
 - Switch (`PKModifier.cs`): a world object the player uses. Refused if the player's level is above PK or a world-wide PK setting is on (line 61), if the flag is PKLite (line 69), if the player is in respite (line 90), or if the player is an advocate (line 85). Switching NPK to PK, or PK to NPK, is allowed (line 146). Going PK to NPK is refused if less than the switch's own `MinimumTimeSincePk` has passed since the player's last PK kill (line 114); the player gets "harsh dissonance" (line 136). A successful use adds the switch's `PkLevelModifier` (+1 or -1, line 166), sets the flag to match the level (lines 168-172) after the use animation.
-- Order for one PK death: kill (top damager is a player with flag PK) → killer's murder stamp and count (106-107) → corpse after the death animation (231) → respite starts (236, 961-962) → heartbeat adds time (987) → when the counter reaches the respite length, the flag is restored (1008).
+- Order for one PK death: kill (top damager is a different player and the victim's flag is PK) → killer's murder stamp and count (106-107) → corpse after the death animation (231) → respite starts (236, 961-962) → heartbeat adds time (987) → when the counter reaches the respite length, the flag is restored (1008).
 
 ## 2. Key functions
 
@@ -43,7 +43,7 @@ Acceptance: two flagged fighters who hit each other both show a red "tagged" mar
 | Delayed logoff freeze length | 20 s, `pk_timer` (Player.cs 515) |
 | Murder count: +1 per PK kill, separate +1 per PKLite kill | counter increments at Player_Death.cs 107 and 119; no constant |
 | Switch cooldown: PK to NPK refused for the switch's own minimum time after the last PK kill | value is per switch object (`MinimumTimeSincePk` on PKModifier, read at PKModifier.cs 114); no default in code (not read in the data) |
-| Death item count (for reference, not in the sketch): level 10 and below 0; 11-20 uses `ThreadSafeRandom.Next(0, 1)`; 21+ is `level / 20` plus `Next(0, 2)` | cap 14 (`MaxItemsDropped`, Player_Death.cs 623); Miser reduction skipped for a PK death (line 667) |
+| Death item count (for reference, not in the sketch): level 10 and below 0; 11-20 uses `ThreadSafeRandom.Next(0, 1)` (inclusive upper bound, so 0 or 1 items); 21+ is `level / 20` plus `Next(0, 2)` | cap 14 (`MaxItemsDropped`, Player_Death.cs 623); Miser reduction skipped for a PK death (line 667) |
 
 ## 4. TypeScript sketch
 
@@ -149,7 +149,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - AGPL-3.0: clean-room only. The sketch is written from the mechanism. Do not port the donor's class names or messages.
 - Defect 1, comment and constant disagree: the comment at `Player_Combat.cs` 990 says the frozen logoff lasts 20 seconds, but the window that triggers it is `PKLogoffTimer`, two minutes (992). The delayed logoff freeze is `pk_timer` (20 s, Player.cs 515). fix: one named data field `logoff_window_s` = 120 with a comment that matches it, and a test that asserts both numbers.
 - Defect 2, respite counted in heartbeat steps: `MinimumTimeSincePk += CachedHeartbeatInterval` (line 987) can end up to one heartbeat (about 5 s) late, and it only advances when the player's heartbeat runs; whether offline time counts is (not read). fix: store `respiteEndsAt = now + respite_s` on the server and check it on each tick; no counter.
-- Defect 3, likely error: `ThreadSafeRandom.Next(0, 1)` (Player_Death.cs 656) returns 0 under the usual exclusive upper bound, so levels 11-20 drop no items; the code looks like a range typed as a single value (ThreadSafeRandom not read). fix: write the intended count explicitly. This does not affect the flag mechanism.
+- Defect 3 withdrawn: `ThreadSafeRandom.Next(int, int)` is inclusive (`ACE.Common/ThreadSafeRandom.cs` 28-31, `random.Next(min, max + 1)`), so `Next(0, 1)` gives 0 or 1 and levels 11-20 do drop up to one item, as the donor comment says. No defect here; this does not affect the flag mechanism.
 - The switch cooldown reads the switch object's own value, not a player stat. For us, a flag switch is not in the open-PvP design, so the cooldown is not adopted.
 - PKLite tier: Frankendom has one open PvP flag. Keeping PKLite would add a third state with its own kill counter for no current ruling; reject unless Lead asks for it.
 - Frankendom's rule that kills are server-verified: the donor credits the kill from the damage history's top damager (Player_Death.cs 95-106) and does not verify it in a separate check. We must verify the kill in the engine.
@@ -158,3 +158,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 
 Reuse tag: rewrite-from-idea (AGPL-3.0; clean-room only)
 Brief rule served: 1 (one engine: flag, tag and respite live in the engine, kills server-verified); rules 7-9 n/a
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Murder wording: the bullet and order line said the killer's flag is PK; real IsPKDeath (Player_Combat.cs 712-715) tests the victim's flag and a different killer player. The sketch onPlayerDeath already used victim.flag. Confirmed.
+- Defect 3 was false: ThreadSafeRandom.Next(min,max) is inclusive (ThreadSafeRandom.cs 28-31), so levels 11-20 drop 0 or 1 items. Confirmed; defect withdrawn.
+- Different-flag refusal is at 1196 with the return at 1202, not 1196-1199. Confirmed.
+- Missed: CheckPKStatusVsTarget also blocks harmful actions across house boundaries (CheckHouseRestrictions, 1190); now in the attack-gate bullet.
+Fixed 2026-10-12: murder wording, order line, Defect 3 withdrawn, line cite, house-boundary line. Sketch code unchanged (it was already right).

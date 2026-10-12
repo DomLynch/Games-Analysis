@@ -132,3 +132,11 @@ Acceptance: a server test asserts that equal skills land at 0.5, that a 10-point
 
 Reuse tag: rewrite-from-idea (AGPL-3.0; clean-room only)
 Brief rule served: 1 (one combat core, two clients); SK focus item 4 (block and evade) and item 5 (armour versus damage); item 12 (magic resist and cast chance, rows only)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN
+- Errors: none found.
+- Missed: WorldObject_Weapon.cs:742 declares `public static float MaxArmorRendingMod = 0.6f`, never referenced anywhere, so the 'max 60 percent' intent exists only as an unused constant; the note mentions only the comment.
+- Missed: Player-defender GetArmorMod branch unread (already declared in the note).
+- Verified OK: SkillCheck.cs, SkillFormula, attribute mods, DamageEvent lines, Creature_BodyPart, rending, shield, MagicDefenseCheck, chance values recomputed, AGPL-3.0.

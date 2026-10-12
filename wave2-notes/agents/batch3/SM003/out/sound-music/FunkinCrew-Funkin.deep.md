@@ -5,8 +5,8 @@ Donor: `/mnt/frankendom-donors/FunkinCrew-Funkin/source/funkin/audio/VoicesGroup
 Checked: Confidence high on the stem group (`SoundGroup.hx`, `VoicesGroup.hx`), the miss duck and temp-vocal gate (`PlayState.hx` 3192-3235, `BaseCharacter.hx` 334-346 and 725-736), and the voice cap (`FunkinSound.hx` 431-433, 151-153); medium on the lead-in overshoot (depends on the flixel default for `FlxSound.play`, library not in the repo, not read). Read in full: `VoicesGroup.hx` (189 lines), `SoundGroup.hx` (288 lines), `FunkinSound.hx` 29, 126-260, 280-400, 427-470, 483-580. Read in part: `PlayState.hx` 2976-2990, 3180-3240; `BaseCharacter.hx` 300-346, 720-736; `PlayAnimationSongEvent.hx` 52-68. Candidates opened (6): VoicesGroup.hx (the hint, which is the real file), SoundGroup.hx, FunkinSound.hx, PlayState.hx, BaseCharacter.hx, PlayAnimationSongEvent.hx. Not read: flixel `FlxSound` (not in the repo), the openfl `SoundMixer.MAX_ACTIVE_CHANNELS` value, `Conductor.hx`, `loadEmbedded`, the chart data that feeds `PlayAnimationSongEvent`. Stingers: one-shot effects via `playOnce` (see section 1). Ambience beds: none found in the files read. Camera scope: not applicable (sound).
 
 Best transferable idea: layered music is a set of stems on one clock, each with its own latency offset; a whiff ducks only the player's vocal stem unless an animation has claimed it, and the voice pool refuses new quiet sounds at the cap rather than stealing.
-Decision (proposed): adapt - take the one-clock stem group with per-stem offsets and the player-vocal duck on a whiff; add the temp-vocal exemption; fix the lead-in overshoot (D1) and the completion relay (D3) in the sketch; drop the openfl channel cap for our own voice budget.
-Acceptance: when the player's attack whiffs, the player's vocal stem falls to zero in the same frame while the instrumental keeps playing; a headless test seeds one whiff and asserts player-vocal gain 0 and instrumental gain 1 at the same clock time, and a test with the temp-vocal flag set leaves the stem audible.
+Decision (proposed): adapt - take the one-clock stem group with per-stem offsets and the player-vocal duck on a whiff; add the temp-vocal exemption; fix the lead-in overshoot (D1), the completion relay (D3) and the dropped-hold exemption (D4) in the sketch; drop the openfl channel cap for our own voice budget.
+Acceptance: when the player's attack whiffs, the player's vocal stem falls to zero in the same frame while the instrumental keeps playing; a headless test seeds one whiff and asserts player-vocal gain 0 and instrumental gain 1 at the same clock time, and a test with the temp-vocal flag set leaves the stem audible for a miss, an empty press and a dropped hold alike (the donor's dropped-hold path ducks anyway; this is fix D4).
 
 ## 1. Mechanism
 
@@ -19,7 +19,7 @@ Layered music (stems):
 - Drift check: `checkSyncError(targetTime)` (53-71) returns the signed deviation with the largest magnitude. Without a target it uses the first alive member as the reference. Only the caller decides what to do with the value.
 
 Gating a stem by gameplay (the part a fight can reuse):
-- A whiff (a press with no note, or a note that is missed) calls `vocals.playerVolume = 0` unless the boyfriend character has `tempVocals` set (`PlayState.hx` 3192; the same rule at 3234 for the empty-press path, and 2985 for a dropped hold). Then a random miss sound plays at a random volume (3193 at 0.5-0.6; 3235 at 0.1-0.2 for the empty press).
+- A whiff (a press with no note, or a note that is missed) calls `vocals.playerVolume = 0` unless the boyfriend character has `tempVocals` set (`PlayState.hx` 3192; the same rule at 3234 for the empty-press path). The dropped-hold path does NOT follow it: `PlayState.hx` 2982-2986 sets `playerVolume = 0` unconditionally, with no `tempVocals` check, and under the legacy voice system also sets `opponentVolume = 0` when the legacy voices do not use a player track (2984) (see D4). Then a random miss sound plays at a random volume (3193 at 0.5-0.6; 3235 at 0.1-0.2 for the empty press).
 - `tempVocals` is set by the chart event `PlayAnimationSongEvent` (`targetChar.tempVocals = force;`, line 64). It means "this animation carries its own vocal".
 - `BaseCharacter.playAnimation` (725-736): when `tempVocals` is set and the side is muted, the side's stem is set back to 1.0 for the animation's duration (728-730).
 - `BaseCharacter.onAnimationFinished` (334-346): when `tempVocals` is set, the side's stem is set back to 0 (339) and the flag is cleared.
@@ -59,11 +59,12 @@ Defects, each with its fix:
 - D1 (lead-in overshoot): the counter adds the whole frame at once (138), starts on the first frame it is at or above zero (139), and calls `super.play()` (141). The overshoot is not passed on, so the clip starts late by up to one frame. Traced; the flixel default for `startTime` in `FlxSound.play` is taken as 0 (library not read). Fix: start at the overshoot (sketch `stepLeadIn`).
 - D2 (temp-vocal flag cleared by a bad condition): `BaseCharacter.hx` 736 reads `else if (characterType != BF || characterType != DAD) tempVocals = false;`. The condition is always true, because one character cannot be both BF and DAD, so this line runs whenever the first two branches do not. When the side is already audible at the start of a temp animation (playerVolume is 1, not 0), the flag is cleared, and the end-of-animation mute (339) is then skipped. Traced, not run. The intent looks like a plain `else`; the author's intent is not verified. Fix: a plain `else` (or a flag per side), and test the already-audible case.
 - D3 (completion relay fires once per stem): `SoundGroup.add` replaces each stem's `onComplete` with a call to the group's callback (85-88). A group of N stems calls the group callback up to N times, and it also replaces any `onComplete` the stem was loaded with. No caller of the group callback was found in `PlayState` (grep for `vocals.onComplete` was empty), so this is latent. Fix: relay from one designated stem, or count completions to N.
+- D4 (dropped hold ignores the temp-vocal exemption): a dropped hold note mutes the player's stem at 2985 with no `tempVocals` check, so an animation-owned vocal is cut by a hold drop but not by a miss or an empty press (3192, 3234). The legacy-voice branch at 2984 also mutes the opponent stem. Fix: use one `onMiss(tempVocalActive)` for all three paths (the sketch's `onMiss`); test the dropped-hold case with the flag set.
 - Risk, not confirmed: `VoicesGroup.set_time` subtracts a side's offset without a clamp (74). A seek before the offset gives a negative stem time. The `FlxSound` time setter was not read, so the effect is unknown.
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the one-clock stem group with per-stem offsets, the sync check, the duck on a whiff with the temp-vocal exemption, the cap-with-important admission, and the lead-in. It fixes D1 (the lead-in starts at the overshoot). It omits the completion relay (D3, a note only), the opponent side (a mirror of the player side), the Flixel play, pause and channel list, pan and waveform, the legacy single-track voice system, the fades, and the pitch. The duck is a volume set, not a fade.
+simplified: the sketch keeps the one-clock stem group with per-stem offsets, the sync check, the duck on a whiff with the temp-vocal exemption, the cap-with-important admission, and the lead-in. It fixes D1 (the lead-in starts at the overshoot). It routes every duck path through `onMiss` (the D4 fix; the donor's dropped-hold path skips the exemption). It omits the completion relay (D3, a note only), the opponent side (a mirror of the player side), the Flixel play, pause and channel list, pan and waveform, the legacy single-track voice system, the fades, and the pitch. The duck is a volume set, not a fade.
 
 ```ts
 // Licence: Apache-2.0 (donor LICENSE.md). clean-room sketch written from the described mechanism; no donor line is translated.
@@ -101,7 +102,8 @@ export class StemGroup {
     return worst;
   }
 
-  // A whiff ducks the player's vocal stem to zero, unless an animation has claimed the vocal for its duration.
+  // A whiff, empty press or dropped hold ducks the player's vocal stem to zero, unless an animation has claimed the vocal
+  // for its duration (donor skips the exemption on a dropped hold; fixed here).
   onMiss(tempVocalActive: boolean): void {
     if (!tempVocalActive) this.playerVocalVolume = 0;
   }
@@ -145,7 +147,14 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - There is no numeric priority; "important" is a flag. Frankendom's hit confirmations for the local player should be important, and enemy ambience never important.
 - Apache-2.0 allows adaptation with the notice, but the sketch is clean-room; no line is translated.
 - Not read: flixel `FlxSound` (time setter, play default), openfl `SoundMixer.MAX_ACTIVE_CHANNELS`, `Conductor.hx`, the chart format for `PlayAnimationSongEvent`, the opponent-side code past the mirror.
-- D1 to D3 are listed with fixes; D2 is traced, not run; the author's intent for the else-if is not verified.
+- D1 to D4 are listed with fixes; D2 is traced, not run; the author's intent for the else-if is not verified.
 
 Reuse tag: rewrite-from-idea (Apache-2.0; clean-room)
 Brief rule served: addendum sound-music fold-in; rule 8 (target plus row 12); rule 6 (licence read)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- The note said the dropped-hold path (2985) follows the same tempVocals exemption; real PlayState.hx:2982-2986 zeroes `playerVolume` unconditionally (and `opponentVolume` under legacy voices) with no tempVocals check. Confirmed; recorded as defect D4.
+- Missed: the legacy-voice opponent mute at 2984. Confirmed; added.
+- Nothing else material missed.
+Fixed 2026-10-12: Gating bullet, new D4, Acceptance, Decision, sketch comment on `onMiss` (work/FunkinCrew-Funkin.ts updated).

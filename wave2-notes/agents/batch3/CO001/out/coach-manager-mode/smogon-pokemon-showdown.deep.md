@@ -159,3 +159,7 @@ Brief rule served: 5 (controls/input, command intake on the server); 1 (one engi
 Best transferable idea: give each coach a per-bout command bank that refills a fixed amount each round up to a cap, with a per-command cap and a disconnect clock, and resolve an empty bank with a server-side default rather than a free pass.
 Decision (proposed): adapt — keep the bank, per-command cap and round refill as the coach command budget, but replace the forfeit-on-disconnect rule with the default-fill, and make the bank flag an explicit data field (the donor's rule is wired to the wrong key).
 Acceptance: a coach with a 210 s bank, 10 s refill per round and a 150 s per-command cap issues commands; each round adds 10 s up to the cap; with the bank empty the next command is the coach's saved default and a fight-log row records it; a disconnected coach's clock ends at 60 s and the default is applied, not a forfeit.
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- No material errors. Imprecision (not applied, wording only): the accelerate default is 'not a challenge and no format timer rule' (room-battle.ts:203), not 'singles' only.

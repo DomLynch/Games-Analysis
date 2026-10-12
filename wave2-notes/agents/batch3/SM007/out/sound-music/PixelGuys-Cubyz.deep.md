@@ -17,7 +17,7 @@ Acceptance: walk from a bog zone into a cold-mountain zone in the browser: the b
   (b) the wanted track differs from the playing one and no fade is running: the fade-out starts (303) from the current amplitude and velocity down to 0 (305), and the wanted track is preloaded (302).
   (c) the wanted track is the playing one while a fade-out runs: the fade reverses (307-310) from the current amplitude and velocity up to 1, and progress restarts at 0.
 - Per stereo frame (317-331): progress advances by 1/(5 s x sample rate). While progress is at most 1, amplitude is the cubic in progress (326-327) times the music volume (318). When a fade-out ends (319-323) the old track is dropped (322), and the output is silent (312) until the next callback starts the wanted track. The read position wraps to 0 at the end of the buffer (333).
-- Net effect at a biome border: the old track fades out over 5 s, then the new one fades in over 5 s. The two never overlap, so there is about 5 s of quiet at each border, plus any load wait. Crossing back during the fade reverses from the current level.
+- Net effect at a biome border: the old track fades out over 5 s, then the new one fades in over 5 s. The two never overlap: a 5 s cubic fade to 0, then a separate 5 s fade from 0, so the gain is low around the joint (a dip through silence at the joint, not 5 s of silence), plus any load wait. Crossing back during the fade reverses from the current level.
 - The curve (utils.zig 1472-1479) is the cubic a + bt + ct^2 + dt^3 through (p0, m0) at t = 0 and (p1, m1) at t = 1, with c = -3p0 - 2m0 + 3p1 - m1 and d = 2p0 + m0 - 2p1 + m1 (1476-1477). Passing the current velocity as m0 keeps the curve continuous when a fade is restarted or reversed.
 
 ## 2. Key functions
@@ -133,7 +133,8 @@ Typecheck: the sketch is a module (it already has `export`). `npx -p typescript 
 ## 6. Gaps and risks
 
 - GPL-3.0: clean-room only. The sketch is written from the mechanism and the standard Hermite basis.
-- Dip to silence (donor defect): the old track reaches 0 before the new one starts, so each border costs about 5 s of quiet plus any load wait. Fix: overlap the two beds (sketch).
+- Reversal keeps the read position: `pos` is not reset on a reversal (audio.zig 331-334), so the returning track continues from where it was. Fade progress keeps counting past 1 after a fade-in with no clamp (the sketch clamps).
+- Dip to silence (donor defect): the old track reaches 0 before the new one starts, so each border dips to silence at the joint between a 5 s fade-out and a 5 s fade-in, plus any load wait (a dip, not 5 s of silence). Fix: overlap the two beds (sketch).
 - Overlap of linear gains: the sketch's gains always sum to 1, so for two unrelated tracks the mid-fade power dips by about 3 dB. Fix (not in sketch, not measured): an equal-power curve.
 - Fixed rate: the donor assumes 44100 Hz (223, 231) and never reads the device rate back. Fix: the sketch steps on real frame time; in the browser use the audio clock.
 - Loop seam: the read position wraps to 0 (333) with no crossfade at the loop point. Whether this is audible was not measured. Fix (not built): crossfade the loop end into the start.
@@ -144,3 +145,11 @@ Typecheck: the sketch is a module (it already has `export`). `npx -p typescript 
 
 Reuse tag: rewrite-from-idea (GPL-3.0; clean-room only)
 Brief rule served: client-only sound and zones as data (addendum, "Frankendom context").
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: MINOR
+- Section 1 and Gaps said the fade-out then fade-in gives 'about 5 s of quiet at each border'; real behaviour (audio.zig 301-311, 317-330) is a 5 s fade-out to 0 then a separate 5 s fade-in from 0, a dip near the joint. Confirmed. Acceptance ('no silent gap') unaffected.
+- Missed (confirmed): `pos` is not reset on reversal; progress is not clamped after fade-in.
+
+Fixed 2026-10-12: 'about 5 s of quiet' reworded to a dip at the joint in section 1 and Gaps; read-position and unclamped-progress line added to Gaps. Sketch unchanged.

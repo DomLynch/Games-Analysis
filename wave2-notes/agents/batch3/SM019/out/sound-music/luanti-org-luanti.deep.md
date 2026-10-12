@@ -128,3 +128,8 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 Reuse tag: rewrite-from-idea (LGPL-2.1-or-later; clean-room only)
 Brief rule served: 8 (target file and parity row named); 7 (licence, clean-room)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- No false claims. Verified: PlayingSound::fade and doFade, doFades swap-with-last, getLoadedSoundNameFromGroup, fadeSound zero step ignored, step order, fade-in start at gain 0, pitch warning prints start_time (log defect), alGenSources OOM path, thread loop dtime, constants in sound_constants.h, SPDX LGPL-2.1-or-later.
+- Missed (none material): a fade-in whose first doFade has dtime 0 gives gain 0 and hits the 'gain <= 0 -> stop' branch (playing_sound.cpp:211), killing the voice at start; unlikely in practice.

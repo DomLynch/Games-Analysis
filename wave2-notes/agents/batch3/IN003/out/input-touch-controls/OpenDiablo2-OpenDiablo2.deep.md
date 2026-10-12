@@ -6,19 +6,19 @@ Checked: Read in full: `OnMouseButtonRepeat` (game_controls.go 432-490), `OnMous
 
 Best transferable idea: Route a touch by hit order (HUD first, menus second, world last), latch where the touch started so a held touch never becomes a move, and rate-limit hold re-sends to a 0.25 s floor.
 Decision (proposed): adapt — the hit order, press-origin latch and hold floor are the input rules our phone tap-to-move needs; the latch fixes the globe defect, and the isometric inverse is rejected because our camera is 3D third-person.
-Acceptance: A 1 s hold on the top of the HP globe at 375 wide leaves the hero's position unchanged and sends no move; a 1 s hold on open ground sends at most 4 target updates; a tap during a cast is dropped (or buffered, whichever is chosen), and a server test asserts the move is validated against zone bounds.
+Acceptance: A single-frame tap and a 1 s hold on the top of the HP globe at 375 wide leave the hero's position unchanged and send no move (the donor sends one on the press frame); a 1 s hold on open ground sends at most 4 target updates; a tap during a cast is dropped (or buffered, whichever is chosen), and a server test asserts the move is validated against zone bounds.
 
 ## 1. Mechanism
 
-- Dispatch: the input manager's `Advance` (input_manager.go 30) checks each mouse button. A button that was just pressed goes to `OnMouseButtonDown` (162). A button that is still held goes to `OnMouseButtonRepeat` on every call (187-192). Each handler is offered to the chain in turn (propagate, not read).
+- Dispatch: the input manager's `Advance` (input_manager.go 30) checks each mouse button. `Advance` calls `updateJustPressedButton`, `updateJustReleasedButton` and `updatePressedButton` for each button in the same pass (d2input/input_manager.go ~46-49). A just-pressed button goes to `OnMouseButtonDown` (162); a button that is down goes to `OnMouseButtonRepeat` (187-192), and `IsMouseButtonPressed` (ebiten) is already true on the press frame. So the press frame dispatches Down AND Repeat, in that order. Each handler is offered to the chain in turn (propagate, not read).
 - Press (`OnMouseButtonDown`, 522-566), in order:
   1. If the cursor is inside any actionable region (HUD buttons, skills, XP, stamina, both globes), run that region's action and return (527-530). A globe click toggles its stats panel (906 for HP).
   2. If the skill select menu is open and the button is left, pass the click to it and close it (533-539).
   3. Convert the cursor to world coordinates and truncate to 0.1 tile (ScreenToWorld, then `truncateFloat64`; 426-429 for the truncation).
   4. Left button, not on an active menu rect, not casting: set the left-action time, then Shift+left casts the left skill at the point and plain left sends a move (545-553).
   5. Right button, not on an active menu rect, not casting: cast the right skill at the point (557-560).
-  No throttle is applied on press.
-- Hold (`OnMouseButtonRepeat`, 432-490): the same world conversion (439-441). For each button it computes the time since that button's last action (447-448) and fires only if at least 0.25 s has passed (450-451, const at 35). The left move needs: at least 0.25 s since the last left action, the point not on an active menu rect (449), and not casting (453). The right cast needs the same gates (481). So a held button re-sends the target at most four times per second.
+  No throttle is applied on press. A world click sets the left-action time here, which makes the same-frame Repeat fail its 0.25 s test; a UI-region press returns before touching that time (527-530), so the same-frame Repeat is not suppressed.
+- Hold (`OnMouseButtonRepeat`, 432-490): the same world conversion (439-441). For each button it computes the time since that button's last action (447-448) and fires only if at least 0.25 s has passed (450-451, const at 35). The left move needs: at least 0.25 s since the last left action, the point not on an active menu rect (449), and not casting (453). The right cast needs the same gates (481). So a held button re-sends the target at most four times per second. On the press frame the check also runs, with `lastLeft` large unless a world click just set it.
 - Casting gate: while the hero is casting, both handlers drop the input (545, 557 on press; 453, 481 on hold). Nothing is queued. The flag is set when a cast starts (player.go 234) and cleared after the cast animation has played once (99-100). The skill itself fires when the animation is half done (105-108, the threshold `half = 0.5` at 86).
 - Send: `OnPlayerMove` (game.go 321) builds a move packet from the hero's current world position and the target (326) and sends it to the server (331). The donor does not move the hero in this function (any prediction elsewhere not read).
 - Coordinates: `OrthoToWorld` (viewport.go 76-79) inverts the isometric projection used by `WorldToOrtho` (85-86) with 80 by 40 px tiles (18-19) and `half = 2` (20). Screen to world is `ScreenToOrtho` then `OrthoToWorld` (71-72).
@@ -43,11 +43,11 @@ Acceptance: A 1 s hold on the top of the HP globe at 375 wide leaves the hero's 
 | HUD layout is absolute pixels on a fixed screen | 800 x 600 (game_controls.go 434); bottom bar y 550, h 50 (83); HP globe x 30, y 525, 80 x 60 (68-71); mana globe x 695, y 525, 80 x 60 (76) |
 | Iso projection | tile 80 x 40 px, `half = 2` (viewport.go 18-20, 77-78) |
 
-Worked check of the globe band (computed from the constants): the HP globe rectangle covers y 525 to 585 (71). The bottom bar covers y 550 to 600 (83). So the top 25 of the globe's 60 rows (y 525 to 549) are outside the bar. The same holds for the mana globe (76). A press on that band takes the press path, which runs the globe action and sends no move (527-530, 906). While the button stays down, the hold path checks only the menu rect (449), so a move is sent to the screen point each 0.25 s. The client sends a move to the point under the globe, so the hero is sent that way (the server decides the path; not read).
+Worked check of the globe band (computed from the constants): the HP globe rectangle covers y 525 to 585 (71). The bottom bar covers y 550 to 600 (83). So the top 25 of the globe's 60 rows (y 525 to 549) are outside the bar. The same holds for the mana globe (76). A press on that band takes the press path, which runs the globe action and returns (527-530, 906) without touching the left-action time. In the same input pass the button is also "pressed", so `OnMouseButtonRepeat` runs on that very frame, finds `lastLeft` >= 0.25 s and the point outside the menu rects (449), and sends a move. So a plain tap on the top of a globe both toggles the panel and sends a move, from the first frame, not only after a 0.25 s hold; the hold path then keeps re-sending every 0.25 s. The client sends a move to the point under the globe, so the hero is sent that way (the server decides the path; not read).
 
-Defect (kept the idea, fix below): the hold path does not check the actionable regions, and the bottom bar misses the top of the globes. Fix: latch the press origin on touch-down and let only a world-origin hold send moves (the sketch does this). Equivalent fix in the donor: check the actionable list in the hold path too, and extend the bar rect to y 525.
+Defect (kept the idea, fix below): the hold path does not check the actionable regions, and the bottom bar misses the top of the globes. Every other actionable region (skills, XP, stamina) lies inside the bottom bar rect (y 550+), so only the two globes leak into the hold path. Down and Repeat both fire on the press frame. Fix: latch the press origin on touch-down and let only a world-origin hold send moves (the sketch does this). Equivalent fix in the donor: check the actionable list in the hold path too, and extend the bar rect to y 525.
 
-Other observation: press has no floor (545-553), so a second quick click is always accepted; only holds are rate-limited. Nothing is buffered: a click during a cast is lost (545, 557).
+Other observation: press has no floor (545-553), so a second quick click is always accepted; only holds are rate-limited (and a world press masks its own same-frame Repeat by setting the action time). Nothing is buffered: a click during a cast is lost (545, 557).
 
 ## 4. TypeScript sketch
 
@@ -122,9 +122,18 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020 od2-tap-rout
 ## 6. Gaps and risks
 
 - GPL-3.0: clean-room only. The sketch is written from the mechanism.
-- Decision (proposed): adapt. Keep the hit order (UI, menus, world), the press-origin latch (the fix for the globe defect), and the hold floor of 0.25 s. Reject the donor's isometric inverse (viewport.go 76-79): our camera is third-person in 3D, so the target comes from a ground pick, not a 2D inverse. Do not copy the 800 x 600 absolute HUD layout (game_controls.go 434): our phone layout must scale to 375 wide.
+- Decision (proposed): adapt. Keep the hit order (UI, menus, world), the press-origin latch (the fix for the globe defect; the latch is set in `onDown` before any hold, so the same-frame Repeat is already blocked), and the hold floor of 0.25 s. Reject the donor's isometric inverse (viewport.go 76-79): our camera is third-person in 3D, so the target comes from a ground pick, not a 2D inverse. Do not copy the 800 x 600 absolute HUD layout (game_controls.go 434): our phone layout must scale to 375 wide.
 - The donor drops input during a cast and never buffers it (453, 481, 545, 557). Frankendom has to choose: drop, or keep one buffered action for a short window. Pick one and test it.
 - Server side not read: the donor sends the move and the server decides the path (game.go 326-331). Frankendom must validate the tap target (inside the zone bounds, reachable, not inside a wall) and the move rate on the server.
 - No touch and no gamepad in this donor (not read). No virtual stick (cell 1 covers the stick math). Landscape vs portrait: not in this donor; the layout is fixed at 800 x 600 (434).
 - Lock-on, gesture specials and input buffering for combos: not in this donor (not read).
 - The globe defect is read from code, not run in a browser.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: MINOR
+- Error (confirmed): note said a just-pressed button goes to Down and a held one to Repeat. input_manager.go Advance runs both updateJustPressedButton and updatePressedButton in one pass and IsMouseButtonPressed is true on the press frame, so a UI-region press also hits OnMouseButtonRepeat on the same frame and sends a move. The globe-top defect fires on the first frame; "press path sends no move" was false for the globe band.
+- Missed (confirmed): same-frame Down+Repeat double dispatch; every actionable region except the two globes sits inside the bottom bar rect, so only the globes leak into the hold path.
+- Constants, handler order, 0.25 s floor, 0.1 tile truncation, globe rects, casting gate, iso inverse and GPL-3 verified.
+
+Fixed 2026-10-12: dispatch bullet, press/hold wording, globe worked check, defect paragraph, Acceptance (adds single-frame tap) and Decision (latch blocks the same-frame Repeat). Sketch already latches on touch-down, so it is unchanged and needs no typecheck rerun.

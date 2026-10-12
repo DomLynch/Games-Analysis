@@ -2,7 +2,7 @@
 
 Donor: `/mnt/frankendom-donors/Facepunch-sbox-public/engine/Sandbox.Engine/Systems/Input/Controller/Controller.Input.cs` | Licence: MIT (repo `LICENSE.md`, standard MIT text) | C# | symbol `Controller.SetAxis`
 
-Checked: Read `Controller.Input.cs` in full (85 lines). Read `InputRouter.Input.cs` 180-232 (axis entry and trigger-as-button). Read `Preferences.cs` 38-46 (stick dead zone and analog cursor speed convars). Read `SettingsCatalog.cs` line 816 (the slider). Searched the repo for touch, virtual stick, joystick, tap-to-move, input buffer and lock-on: no touch-screen or virtual-stick code. The only matches are the `Touchpad` enum values and Oculus "Touch" naming. Confidence: high on the dead-zone path, which is the whole of the controller-axis code I could find. This is a thin fragment of the topic, so depth is thin. Camera: not a camera cell.
+Checked: Read `Controller.Input.cs` in full (85 lines). Read `InputRouter.Input.cs` 180-232 (axis entry and trigger-as-button). Read `Preferences.cs` 38-46 (stick dead zone and analog cursor speed convars). Read `game/addons/menu/Code/Settings/SettingsCatalog.cs` line 816 (the slider) and 973 (settings reset). Searched the repo for touch, virtual stick, joystick, tap-to-move, input buffer and lock-on: no touch-screen or virtual-stick code. The only matches are the `Touchpad` enum values and Oculus "Touch" naming. Confidence: high on the dead-zone path, which is the whole of the controller-axis code I could find. This is a thin fragment of the topic, so depth is thin. Camera: not a camera cell.
 
 Best transferable idea: Dead-zone a stick once, in one place, against a player-tunable setting, then drive a button from an analog value with a press point, so virtual sticks on a phone get the same tuning.
 Decision (proposed): adapt. Take the single dead-zone point with a player setting and the analog-to-button step. Change the donor's per-axis dead zone to a radial one with rescale, and add a release point below the press point.
@@ -19,8 +19,8 @@ Acceptance: On a 375-wide phone, a virtual stick held inside 12.5 percent of its
   - (e) store the value on the axis record (63-73).
 - No rescale: a value just outside the dead zone passes through unchanged (line 56 only zeroes the inside). Each axis is filtered on its own (axial), so the dead zone is a cross on a diagonal push.
 - Trigger as button (InputRouter.Input.cs 204-218): non-trigger axes return (204-205). For a trigger, the raw value is remapped to 0..1 and compared with 0.75 (207, 218). The result is sent as a digital code. One threshold, no release point at this call.
-- User setting: ConVar `controller_joystick_deadzone`, default 12.5, range 0 to 50 (Preferences.cs 42-43). The settings page exposes it as a "Stick Deadzone" slider (SettingsCatalog.cs 816).
-- Analog cursor speed for menus: ConVar `controller_analog_speed`, default 2.0 (Preferences.cs 45-46). Its use was not read.
+- User setting: ConVar `controller_joystick_deadzone`, default 12.5, range 0 to 50 (Preferences.cs 42-43). The settings page exposes it as a "Stick Deadzone" slider (game/addons/menu/Code/Settings/SettingsCatalog.cs 816); a settings reset sets it back to 12.5 (same file, 973).
+- Analog cursor speed for menus: ConVar `controller_analog_speed`, default 2.0 (Preferences.cs 45-46). Its use is in `engine/Sandbox.Engine/Systems/UI/Input/PanelInput.cs` 121: the menu cursor moves by stick * screen min side * speed * `RealTime.Delta`, so it is frame-time scaled.
 
 ## 2. Key functions
 
@@ -78,8 +78,19 @@ export {};
 
 - Defect (fix in sketch): no rescale. Controller.Input.cs line 56 zeroes values inside the dead zone and leaves the rest unchanged, so speed jumps from 0 to just above the dead zone at its edge. Fix: rescale from the edge to the rim.
 - Defect (fix in sketch): the dead zone is applied per axis, which gives a cross-shaped dead area on a diagonal push. A round virtual stick needs a radial test.
-- Defect (fix: set the flag for any non-zero value): `UsingController` is set only when the value is positive (Controller.Input.cs 58-60). A push that only goes left or down does not switch the input mode. The code does not say whether that is intended.
+- Defect (fix: set the flag for any non-zero value): in `SetAxis`, `UsingController` is set only when the value is positive (Controller.Input.cs 58-60). `OnGamepadCode` (InputRouter.Input.cs 168) also sets it on any button press, and a trigger counts as a button, so only a pure stick push left or down fails to switch the input mode. The code does not say whether that is intended.
 - Gap (fix in sketch): a trigger used as a button has one threshold (InputRouter.Input.cs 218). A value hovering at 0.75 toggles on and off. Fix: a release point below the press point. The 0.6 release value is a proposal, not from the donor.
 - Gap: nothing in this repo covers phone touch: no virtual sticks, tap-to-move, lock-on, input buffering, or landscape and portrait handling. The donor covers keyboard, mouse, gamepad and VR only. Those need another donor.
 - Gap: the donor default of 12.5 percent is not tested on a phone at 375 wide. Frankendom needs its own default; Dom decides it.
 - Note: the event source for `OnGameControllerAxis` was not read, so its rate and any coalescing are unknown.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: MINOR
+- Error: the `UsingController` defect was stated too broadly. `OnGamepadCode` (InputRouter.Input.cs 168) sets it on any button or trigger-as-button, so only a pure stick push left/down is affected. Confirmed in code.
+- Error: `SettingsCatalog.cs` was given without its path; real path is game/addons/menu/Code/Settings/SettingsCatalog.cs. Confirmed.
+- Missed: SettingsCatalog.cs 973 resets the dead zone to 12.5 on a settings reset.
+- Missed: PanelInput.cs 121 scales the analog cursor by frame time (stick * speed * RealTime.Delta).
+- Verified OK: 0.125, 12.5 default, 0-50 range, 0.75 press, 2.0 speed, lines 28/50/52-56/204-218, no touch code.
+
+Fixed 2026-10-12: narrowed the UsingController defect, gave the full SettingsCatalog path, added the reset line and the cursor frame-time scaling. No sketch change.

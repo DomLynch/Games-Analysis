@@ -2,7 +2,8 @@
 interface GuardGroup {
   aggroRange: number;                       // donor: 25 unless a ring group sets its own
   playerAttackable: boolean;                // donor: group-wide switch
-  attackableAt: (fame: number) => boolean;  // donor: per-faction switch, a threshold per group script
+  attackableAbove: number[];                // donor: _FactionAttackableAbove thresholds for this faction (attackable when fame > t)
+  attackableBelow: number[];                // donor: _FactionAttackableBelow thresholds for this faction (attackable when fame < t)
   attackBelow: number;                      // donor: FameForGuardAttack (default -450000)
   helpAtOrAbove: number;                    // donor: FameForGuardHelp (default -450000)
 }
@@ -25,11 +26,16 @@ interface Floor { entityId: number; floor: number; }
 const FLOOR_TARGET = 1.0;    // donor: aggro floor for the attacked player or for the attacker
 const FLOOR_AMBIENT = 0.5;   // donor: floor for bandits and predators inside range
 
+// Donor isFactionAttackable: strict above any Above threshold, or strict below any Below threshold.
+function isFactionAttackable(g: GuardGroup, fame: number): boolean {
+  return g.attackableAbove.some((t) => fame > t) || g.attackableBelow.some((t) => fame < t);
+}
+
 // One guard tick for one visible player. Donor order: attack rule first (and it ends the player), then assist.
 function guardFloorsFor(g: GuardGroup, p: VisiblePlayer): Floor[] {
   if (!p.alive || p.distance > g.aggroRange) return [];
 
-  const willing = g.playerAttackable || g.attackableAt(p.fame);
+  const willing = g.playerAttackable || isFactionAttackable(g, p.fame);
   if (willing && (p.fame < g.attackBelow || p.outpostAttacker)) {
     return [{ entityId: p.id, floor: FLOOR_TARGET }];
   }
@@ -48,9 +54,9 @@ function guardFloorsFor(g: GuardGroup, p: VisiblePlayer): Floor[] {
   return out;
 }
 
-// Bandits and predators within range get the ambient floor.
+// Bandits and predators strictly inside range get the ambient floor (donor uses < here, players use the <= test above).
 function ambientFloors(g: GuardGroup, ambient: { id: number; distance: number }[]): Floor[] {
-  return ambient.filter((a) => a.distance <= g.aggroRange).map((a) => ({ entityId: a.id, floor: FLOOR_AMBIENT }));
+  return ambient.filter((a) => a.distance < g.aggroRange).map((a) => ({ entityId: a.id, floor: FLOOR_AMBIENT }));
 }
 
 export {};

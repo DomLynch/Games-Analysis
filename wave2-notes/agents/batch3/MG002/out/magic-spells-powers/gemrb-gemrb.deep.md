@@ -13,8 +13,8 @@ Acceptance: In a zone or Pit fight a caster hit mid-cast sees a "Disrupted" cue 
 
 - Two entry points start a cast: `CastSpell` (a target) and `CastSpellPoint` (a point). Both clear the last-target fields, set the aura cooldown when the cast is not instant and not `noInterrupt` (Scriptable.cpp 1264-1340), refuse the cast if `CanCast` fails, then run the wild-surge check and call `SpellCast`.
 - Order inside `SpellCast` (Scriptable.cpp 1353-1379, as read):
-  (a) Tier pick. If `level` is 0 it becomes the caster's level (1353); `SpellHeader = GetHeaderIndexFromLevel(level)` (1354). The tier is the extended header whose next tier needs more level than the caster has (Spell.cpp 70).
-  (b) Cast time. `casting_time` = the tier's `CastingTime` (1360). If a casting-speed cap (`CastingSpeedModifier`, parameter 2) is set below 10 and the value is above it, the value is replaced by the cap (1370-1371). Otherwise the caster's mental-speed stat is subtracted (1373). The result is clamped to 0..10 (1375). Ten units is one full round.
+  (a) Tier pick. If `level` is 0 it becomes the caster's level (1353); `SpellHeader = GetHeaderIndexFromLevel(level)` (1354). The tier is the extended header whose next tier needs more level than the caster has (Spell.cpp 70); but when the spell carries `SF_SIMPLIFIED_DURATION` the header index is the level itself, no walk (Spell.cpp 65-67).
+  (b) Cast time. `casting_time` = the tier's `CastingTime` (1360). If a casting-speed cap (`CastingSpeedModifier`, parameter 2) is set below 10 and the value is above it, the value is replaced by the cap (1370-1371). Otherwise the caster's mental-speed stat is subtracted (1373). The clamp to 0..10 (1375) sits inside the `if (actor)` block, so a non-actor caster gets the raw tier value unclamped. Ten units is one full round.
   (c) Duration. `duration = (casting_time * round_size) / 10` (1379); instant casts get 0. The donor calls this conversion "a guess which seems approximately right" (1378).
   (d) After the duration, the casting glow is queued earlier in the function and the spell's effect block is built and queued at 1395-1398. If the target is an actor the effects go to it, otherwise to the caster. The rest of `SpellCast` was not read.
 - Interruption. Every time an actor takes damage, `GetHit` calls `CheckSpellDisruption(damage)` (Actor.cpp 4129). If that returns true, `InterruptCasting` is set (4130). The check returns false at once when no cast is in progress (4140). The flag is read by `InterruptSpellcasting` (GSUtils.cpp 2187-2200), which prints a "disrupted" or "failed" line and returns true. Its four call sites (GSUtils.cpp 2376, 2382, 2496, 2501) were not read, so the actual stop of the cast is not verified. The flag is cleared at the end of `Scriptable::Update` (Scriptable.cpp 184), so it lasts one tick.
@@ -22,7 +22,7 @@ Acceptance: In a zone or Pit fight a caster hit mid-cast sees a "Disrupted" cue 
   - First-edition path (`!third`, Actor.cpp 4174-4176): any damage returns true with no roll.
   - Simplified path (feature `SIMPLE_DISRUPTION`, 4151-4152): a d20 roll; disrupt when `roll < damage + spellLevel`.
   - EE path with the `concentr` table (from 4153, read but not receipted): check mode 0 to 4 picks one of five formulas, each with a damage or spell-level term.
-  - Third-edition path (4178-4191): `roll + concentration + bonus` fails when it is at most `10 + damage + spellLevel`. Concentration is the skill (4178), +4 for the Combat Casting feat (4180-4181), +10 when the actor has the driven flag (4183-4184).
+  - Third-edition path (4178-4191): `roll + concentration + bonus` fails when it is at most `10 + damage + spellLevel`. Concentration is the skill (4178), +4 for the Combat Casting feat (4180-4181), +10 added to the concentration value (not to the bonus) when the actor has the driven flag (4183-4184); the sum is the same.
 - Saves (Actor.cpp 3273): first-edition path, `ret = stored d20 + modifier + luck` (3282), success when `ret >= stat` (3295). Third-edition path, `ret = roll + save + modifier` (3313), DC = `10 + spellLevel + saveBonus` (3317), success when `ret >= saveDC` (3384). The caller `CheckSaves` (EffectQueue.cpp 994-1040) adds the effect's save bonus and any school bonuses from the target and subtracts the caster's school focus. It tries each save type in the effect's mask and stops at the first success (1031-1040).
 - Dispel (EffectQueue.cpp 1697-1711): skips the dispeller itself (1700) and any effect without `FX_CAN_DISPEL` (1703), and rolls once per remaining effect (1707). `RollDispelChance` (1713-1729): diff = dispeller level minus the effect's caster level (1717); +5 per level above, -10 per level below (1718-1721); base 50 (1723); a d100 of 1 always fails, 100 always succeeds, else the roll must be under the chance (1725-1727). A success sets `TimingMode = FX_DURATION_JUST_EXPIRED` (1709).
 - Stacking limit (EffectQueue.cpp 1248): when the effect carries `SF_LIMIT_EFFECT_STACKING` and the target already has the same opcode from the same source, the apply body is skipped and the effect is kept with `FX_APPLIED` (1248-1251). A second copy does not stack.
@@ -46,8 +46,8 @@ TABLE (name | effect | formula | number ranges | cost | cooldown or cast time | 
 
 | name | effect | formula | number ranges | cost | cooldown / cast time | caps | file:line |
 |---|---|---|---|---|---|---|---|
-| Tier pick | chooses the extended header for the caster's level | highest tier whose next tier needs more level than the caster has | tiers in the `.spl` file (count not read) | none | none | last tier when all are met | Spell.cpp:70 |
-| Cast time | turns the tier value into a delay | `units = clamp(tier - MentalSpeed, 0, 10)`; `ms = units * round_size / 10` | units 0-10; `round_size = round_sec * ticks` (data) | none in this step (memorisation is separate, not read) | 0 to 1 round | 10 units max; a cap below 10 replaces the value and skips haste | Scriptable.cpp:1360, 1370-1379 |
+| Tier pick | chooses the extended header for the caster's level | highest tier whose next tier needs more level than the caster has | tiers in the `.spl` file (count not read) | none | none | last tier when all are met; with `SF_SIMPLIFIED_DURATION` the level is the index (Spell.cpp 65-67) | Spell.cpp:65-70 |
+| Cast time | turns the tier value into a delay | `units = clamp(tier - MentalSpeed, 0, 10)`; `ms = units * round_size / 10` | units 0-10; `round_size = round_sec * ticks` (data) | none in this step (memorisation is separate, not read) | 0 to 1 round | 10 units max, clamped only when the caster is an actor; a cap below 10 replaces the value and skips haste | Scriptable.cpp:1360, 1370-1379 |
 | Cast-time cap | caps the cast time when a casting-speed effect sets a maximum | if cap < 10 and tier > cap, units = cap | cap 0-9 | none | none | only when set | Scriptable.cpp:1370-1371 |
 | Disrupt, simple (feature flag) | a hit breaks a cast | disrupt when d20 < damage + spellLevel | d20 1-20 (assumes LuckyRoll returns 1-20; not read); chance = (damage + spellLevel - 1) / 20, max 1 | none | per hit, one tick | none | Actor.cpp:4150-4152 |
 | Disrupt, third-edition | a hit breaks a cast unless the caster holds it | fail when d20 + skill + bonus <= 10 + damage + spellLevel | skill 0+; bonus +4 Combat Casting; +10 driven | none | per hit | none | Actor.cpp:4178-4191 |
@@ -65,7 +65,7 @@ Derived by hand (not run): the simple-mode chance at damage 10, spell level 3 is
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order (tier pick, cap test first, otherwise haste, then the clamp, then scale to ms), but uses floating milliseconds where the donor uses integer division, and omits the casting glow, the wild-surge check, the memorisation and stance checks, the effect queue, the first-edition race and class save bonuses, the EE concentration table modes, and the Combat Casting and driven bonuses inside the concentration case. The disruption and dispel rules are kept as pure functions that take the roll as an input (the donor rolls inside the function).
+simplified: the sketch keeps the donor order (tier pick, cap test first, otherwise haste, then the clamp, then scale to ms), but uses floating milliseconds where the donor uses integer division, and omits the casting glow, the wild-surge check, the memorisation and stance checks, the effect queue, the first-edition race and class save bonuses, the EE concentration table modes (modes 2 and 4 use Constitution / 2 - 5 plus a plain d20, Actor.cpp 4160-4170), the `SF_SIMPLIFIED_DURATION` tier branch, and the Combat Casting and driven bonuses inside the concentration case. The disruption and dispel rules are kept as pure functions that take the roll as an input (the donor rolls inside the function).
 ```ts
 // Licence: GPL-2.0-or-later (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
 // clean-room
@@ -74,19 +74,23 @@ simplified: the sketch keeps the donor order (tier pick, cap test first, otherwi
 export interface CastTier { requiredLevel: number; castingTimeUnits: number; }
 
 // Donor order: walk the tiers and stop at the first one whose next tier needs more level than the caster has.
-export function pickTier(tiers: CastTier[], casterLevel: number): CastTier {
+// With the SF_SIMPLIFIED_DURATION spell flag the donor skips the walk and uses the level itself as the index (clamped here so it stays in range).
+export function pickTier(tiers: CastTier[], casterLevel: number, simplifiedDuration = false): CastTier {
+  if (simplifiedDuration) return tiers[Math.min(Math.max(casterLevel, 0), tiers.length - 1)];
   for (let i = 0; i < tiers.length - 1; i++) {
     if (tiers[i + 1].requiredLevel > casterLevel) return tiers[i];
   }
   return tiers[tiers.length - 1];
 }
 
-export interface CastInput { tier: CastTier; mentalSpeed: number; capUnits?: number; roundMs: number; }
+export interface CastInput { tier: CastTier; mentalSpeed: number; capUnits?: number; roundMs: number; casterIsActor?: boolean; }
 
 // Cast time in ms. A cap (if set below 10) replaces the tier value and skips haste; otherwise haste is subtracted.
 // The result is clamped to 0..10 units before it is scaled to milliseconds.
 export function castTimeMs(i: CastInput): number {
   let units = i.tier.castingTimeUnits;
+  // Donor applies cap, haste and the 0..10 clamp only when the caster is an actor; a non-actor keeps the raw tier value.
+  if (i.casterIsActor === false) return (units * i.roundMs) / 10;
   if (i.capUnits !== undefined && i.capUnits < 10 && units > i.capUnits) units = i.capUnits;
   else units -= i.mentalSpeed;
   units = Math.min(10, Math.max(0, units));
@@ -149,3 +153,12 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 Brief rule served: 1 (one combat core, two clients); MG-FOCUS (a) casting model, (g) resistances and interrupt, data for cast time and chances.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR. Numbers, order, dispel, save DC and licence verified.
+- Cast-time clamp 0..10 is inside `if (actor)` only (Scriptable.cpp 1374-1375); the note said always. Confirmed.
+- Tier pick omits the `SF_SIMPLIFIED_DURATION` branch (Spell.cpp 65-67) returning level as the index. Confirmed.
+- Driven +10 goes to concentration, not bonus (Actor.cpp 4183-4184). Confirmed; sum unchanged.
+- Missed: EE `concentr` table modes 1-4 (Actor.cpp 4153-4170) only partly described; now listed under simplified.
+
+Fixed 2026-10-12: cast-time clamp scoped to actors; SF_SIMPLIFIED_DURATION tier rule added (mechanism, table row, sketch pickTier); driven +10 attributed to concentration; EE table modes noted in omissions.

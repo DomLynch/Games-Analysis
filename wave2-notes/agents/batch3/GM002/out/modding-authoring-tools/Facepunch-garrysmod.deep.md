@@ -141,3 +141,7 @@ export {};
 - Defect D4, arm checks only the top level: `arming.lua` 103-108 checks the types of the top-level fields; entity rows, classes and count are not checked until paste. fix: validate each row (class on the allow-list, numeric fields in range, a row-count cap) at arm time.
 - The count is server-owned in Lua, but the donor mirrors it to the client only for display (100). Frankendom's server must own the count; the client number is cosmetic.
 - Not verified: the engine's own entity limits; any content publishing or rating flow (the Workshop dupe dialog in `stools/duplicator.lua` 196-263 was not read); a non-developer path to add a zone (not in this donor). The spawn list `garrysmod/settings/spawnlist_default` was not read.
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- No errors found; CheckLimit, recount, prune, LimitHit throttle, generic maker, constraints, DisableDuplicator, sbox_max defaults and licence claim verified.

@@ -16,17 +16,17 @@ One fixed sequence per server tick, scaled by a measured frame time:
 
 (b) Use gate. `checkPower` (721-791) refuses a use when endurance is below the cost (748-755, with a floating message). `usePower` (792-813) checks again: target (802), endurance (804), power block, then `queuePower`. Queueing (851-892) pushes a queued power with its recharge time, activation time and activation period (861-863), and cancels other queued powers except the one already activating.
 
-(c) Activation. In `checkActivationTimers` (179-250) the front queued power counts down by the frame time (210). When the countdown goes below zero it calls `doPower` and dequeues; toggles move to the auto list instead. Movement stops while casting.
+(c) Activation. In `checkActivationTimers` (179-250) the front queued power only starts activating if it passes `checkPowerBlock`, `checkPowerRecharge` and `checkPowerRange` (188-205; a failed block turns the activation off and dequeues), and then counts down by the frame time (210). When the countdown goes below zero it calls `doPower` and dequeues; toggles move to the auto list instead. Movement stops while casting.
 
-(d) Fire and spend. `doPower` (910-996) checks the target (`checkPowerTarget`), sets stance, queues the triggered attack moves, queues a recharge only for click powers (948-950), and spends the cost (966): `setEnd(end - EnduranceCost)`. There is no second endurance check here. `setEnd` clamps at zero (CharacterHelpers 84-86), so a shortfall is lost silently.
+(d) Fire and spend. `doPower` (910-996) checks the target (`checkPowerTarget`), sets stance, queues the triggered attack moves, queues a recharge only for click powers (948-950; `doPower` only - toggles get theirs when switched off, see (f)), and spends the cost (966): `setEnd(end - EnduranceCost)`. There is no second endurance check here. `setEnd` clamps at zero (CharacterHelpers 84-86), so a shortfall is lost silently.
 
 (e) Recharge. `checkRechargeTimers` (252-266) counts the recharge down by the frame time (256) and removes the entry at zero or below.
 
-(f) Toggles (upkeep). `checkAutoToggleTimers` (269-312): when the period timer is at or below zero it calls `doPower` (so each period spends the cost again) and adds one period (the timer does not catch up for missed periods). Each tick the toggle is switched off if endurance is below the cost (290).
+(f) Toggles (upkeep). `checkAutoToggleTimers` (269-312): when the period timer is at or below zero it calls `doPower` (so each period spends the cost again) and adds one period (the timer does not catch up for missed periods). Each tick, after that fire, the toggle is switched off if endurance is below the cost, the caster is dead, the target is dead, or the target is out of range (290-291). A switched-off toggle pushes a deactivation message to the client and is also pushed onto the recharging list (297-303), so toggles get a recharge entry on switch-off.
 
 (g) Regen. `regenHealthEnd` (337-350): health gains `maxHP x (Regeneration / 20 x frame / 12)` and endurance gains `maxEnd x (Recovery / 4.9 x frame / 12)`, each added only below max (345-348). So at a stored Regeneration of 1.0 the health rate is 1/240 of max per second; at Recovery 1.0 the endurance rate is 1/58.8 of max per second (arithmetic from the formula; the stored values are not read). Init multiplies Regeneration by four (CharacterHelpers 163), and the comment there says the base rate is 0.25.
 
-(h) Death. `changeHP` (1967): HP is clamped to max; below 0.1 the character is marked dead, HP and endurance are set to zero (1978-1985). Revive (`revivePlayer`, EntityHelpers 603-630) sets HP and endurance by level: AWAKEN HP 0.25 (611); BOUNCE_BACK HP 0.5 (614); RESTORATION HP 0.75 (617); IMMORTAL_RECOVERY HP to max (620, endurance not changed); REGEN_REVIVE HP 0.75 (623) and endurance 0.5 (624); FULL HP and endurance to max (629 onward).
+(h) Death. `changeHP(e, val)` (1967) takes an absolute HP value, not a delta (it sets HP = min(val, max)); the caller passes current minus damage. HP is clamped to max; below 0.1 the character is marked dead, HP and endurance are set to zero (1978-1985). Revive (`revivePlayer`, EntityHelpers 603-630) sets HP and endurance by level: AWAKEN HP 0.25 (611); BOUNCE_BACK HP 0.5 (614); RESTORATION HP 0.75 (617); IMMORTAL_RECOVERY HP to max (620, endurance not changed); REGEN_REVIVE HP 0.75 (623) and endurance 0.5 (624); FULL HP and endurance to max (629 onward).
 
 ## 2. Key functions
 
@@ -50,9 +50,9 @@ One fixed sequence per server tick, scaled by a measured frame time:
 | Base regen scale | Stored Regeneration multiplied by 4 at init; comment "base regen rate is .25" (CharacterHelpers 163) |
 | Use gate and spend | Gate at cost (DataHelpers 804); spend at cost with no re-check (966); clamp at zero (CharacterHelpers 86) |
 | Activation delay | `TimeToActivate` counted down by the frame (WorldSimulation 210; DataHelpers 863) |
-| Recharge | `RechargeTime` counted down by the frame (256), click powers only (948) |
-| Toggle upkeep | `ActivatePeriod` per upkeep fire (DataHelpers 862; WorldSimulation 276-283); off below cost (290) |
-| Death | HP below 0.1 (1981); endurance to zero (1985) |
+| Recharge | `RechargeTime` counted down by the frame (256), queued by `doPower` for click powers (948) and by the toggle switch-off path (297-303) |
+| Toggle upkeep | `ActivatePeriod` per upkeep fire (DataHelpers 862; WorldSimulation 276-283); off below cost, caster or target dead, or out of range (290-291); recharge entry pushed on switch-off (297-303) |
+| Death | HP below 0.1 (1981); endurance to zero (1985); `changeHP` takes an absolute HP value |
 | Revive levels | HP 0.25 / 0.5 / 0.75 / max; endurance 0.5 or max (EntityHelpers 611-630) |
 
 ### 3b. Catalogue rows (SK-FOCUS table format)
@@ -78,7 +78,7 @@ Not read in this pass, so no rows: damage types against defence (the 24-entry ar
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order: regen per tick with the donor's two formulas, the use gate and spend, the activation and recharge countdowns, toggle upkeep (spend once per period, off below cost), revive fractions, and death at health below 0.1. It omits the network and client messages, the floating messages, the target and range checks, the triggered attack moves, the stance, the queue cancellation of other powers, the limited-charge powers, the group membership of toggles, the buff timers, the delayed effects, the collision step, the Endurance discount (unimplemented in the donor too), and the team cleanup. Two fixes are in the sketch: the frame time is capped at 0.25 s (`MAX_DT`), and `fire` re-checks endurance and reports the shortfall instead of clamping silently. The power costs, times and the max tables are parameters, not donor numbers.
+simplified: the sketch keeps the donor order: regen per tick with the donor's two formulas, the use gate and spend, the activation and recharge countdowns, toggle upkeep (spend once per period, off below cost), revive fractions, and death at health below 0.1. It omits the network and client messages, the floating messages, the target and range checks, the triggered attack moves, the stance, the queue cancellation of other powers, the limited-charge powers, the group membership of toggles (`queuePower` shuts other toggles of the same GroupMembership, DataHelpers 875-889), the power-block/recharge/range preconditions on activation start, the other toggle switch-off conditions (dead caster or target, range), the recharge push on toggle switch-off, the buff timers, the delayed effects, the collision step, the Endurance discount (unimplemented in the donor too), and the team cleanup. Two fixes are in the sketch: the frame time is capped at 0.25 s (`MAX_DT`), and `fire` re-checks endurance and reports the shortfall instead of clamping silently. The power costs, times and the max tables are parameters, not donor numbers.
 
 ```ts
 // Licence: BSD-3-Clause (donor LICENSE.md). Written from the mechanism read in WorldSimulation.cpp, DataHelpers.cpp, EntityHelpers.cpp and CharacterHelpers.cpp; not a line-by-line translation.
@@ -139,13 +139,14 @@ export interface ToggleState { on: boolean; periodLeft: number; }
 
 export function toggleTick(r: Resource, p: PowerData, t: ToggleState, dtSec: number): void {
   if (!t.on) return;
-  if (r.end < p.cost) { t.on = false; return; }
+  // Donor order: fire (or count down) first, then test the switch-off conditions.
   if (t.periodLeft <= 0) {
     fire(r, p);
     t.periodLeft += p.activatePeriod;
   } else {
     t.periodLeft -= Math.min(dtSec, MAX_DT);
   }
+  if (r.end < p.cost) t.on = false; // donor also switches off on dead caster/target and out of range (omitted)
 }
 
 // Revive fraction by level 1..6 (donor ReviveLevel: AWAKEN, BOUNCE_BACK, RESTORATION, IMMORTAL_RECOVERY, REGEN_REVIVE, FULL).
@@ -188,3 +189,15 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 Reuse tag: rewrite-from-idea (BSD-3-Clause)
 Brief rule served: Frankendom rulings (one engine, server-verified state, data-driven values); parity row 21
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: MINOR
+- Error (confirmed): toggle switch-off at 290-291 also fires on dead caster, dead target and out-of-range, not only endurance below cost.
+- Error (confirmed): toggles do get a recharge entry on switch-off (WorldSimulation 297-303), so "recharge for click powers only" is true only of doPower.
+- Error (confirmed): activation start is gated by checkPowerBlock / checkPowerRecharge / checkPowerRange (188-205); the note skipped it.
+- Error (confirmed): changeHP(e, val) takes an absolute HP value (sets HP = min(val, max)), not a delta; wording clarified.
+- Error (confirmed): sketch toggleTick checked endurance before firing; the donor fires first, then checks.
+- Missed: queuePower shuts other toggles with the same GroupMembership (DataHelpers 875-889); now in the omits list.
+
+Fixed 2026-10-12: toggle upkeep text, activation gates, recharge scope, changeHP wording, numbers table, omits list; sketch `toggleTick` reordered to fire then check (work/segs-sketch.ts updated identically). Typechecked on the VPS (see reply).

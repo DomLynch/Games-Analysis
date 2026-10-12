@@ -124,3 +124,10 @@ Not run: none of this was executed; claims are from reading the code and the tab
 - Class-free start: GemRB's chargen has a class step (bg2 CharGenCommon.py 54-56, "ClassButton"), and the class offset feeds the family key. A class-free start would drop the class term and keep race and sex only. The donor does not do that; the shape transfers as "key without the class term".
 - Colours are data rows (portrait row on BG1/BG2/IWD1, race and class tables on EE), so the donor has no per-character colour choice in this path. Frankendom's colour choice (if any) is a new rule, not a donor mechanism.
 - GPL-2.0-or-later: clean-room. The sketch is written from the mechanism; no donor line is translated.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN
+- Errors: none found.
+- Missed: unhardcoded/shared/avprefix.2da: the base id 0x6000 and the avprefr/avprefg/avprefc order are themselves data (rows 0-3), so base is not hard-coded as the note implies; minor.
+- Verified OK: PaperDoll.py 120-144 line numbers, avprefc/avprefg/avprefr values and rows, pdolls rows, CLASS column miss, QueryField defVal path, GUICG1 39-40/74, GUICG5 44/54, GPL-2.0-or-later header.

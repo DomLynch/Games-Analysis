@@ -130,3 +130,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` run on the 
 - MAX_ATTACKERS = 3 is a Frankendom ruling; the donor allows any number of damagers, so the group bonus and the division by count are sized for larger groups. With 3 it is a small bonus (+25% at most).
 - Not read: the outpost experience bonus, bounty and money rules, the kill-stat update, the battleground `MaxRealmLevel` source, and where `XPGainers` is filled. Any claim about those is not made here.
 - Licence: GPL-3.0. Clean-room only: the sketch is written from the mechanism, not translated from the C#.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- All claims checked hold (ProcessRewards order and lines 41-74, worth test, defaults 300 / 125, caps, RP gap factor, group bonus, damage-share clamp, OnPlayerKilled 1307-1341, DeathTime ordering, licence GPL-3). Defects 1-3 are real.
+- Trivial: the file is at serverproperty/ServerProperties.cs (path shorthand in the note).
+- Missed (not material): `PlayedTime` is wall-clock since LastPlayed plus the stored DBCharacter.PlayedTime (GamePlayer.cs 9763-9774), so it advances only while logged in; the note flagged it as unread.

@@ -17,20 +17,20 @@ Acceptance: Forty ambient fires in one zone play one looping voice whose volume 
 - Pull from the thread (453-462). The main thread copies the thread's output into the same table, for sounds the thread reported this pass. The next frame's `updateLoops` processes those values together with the frame's direct calls.
 - Audio thread (`AudioThread`, 490-585). Runs at 20 passes per second (491-492). Each pass: copy queued sources into the list (506-512); for each valid source that `shouldAmbientSound()` (518) with volume above 0.00001 (519-520), add it to the per-sound sums (528) and mark the sound active the first time it becomes non-zero (529-531); remove invalid sources by swap (536-538); clone the active sums into the output under a lock (548); reset the sums (552-559). The run loop stops in the menu (569) and sleeps for the rest of its 50 ms slot (577).
 - Music. Wave trigger (`SoundControl` 56-63): after each `WaveEvent`, a delay of 8 to 15 s (`Mathf.random(8f, 15f) * 60f` ticks at 60 ticks per second, assumed), then boss music once if a boss group of the wave offset spawned (59, 62), otherwise a 0.46 chance to pick a track (63).
-- Music choice (`playRandom`, 214-222). Boss pool if a boss is alive; else the dark pool if `isDark()`; else the ambient pool. `getAmbientMusic`, `getDarkMusic` and `getBossMusic` (228-241) prefer the rules' pools, then the planet's, then the defaults (94-96).
+- Music choice (`playRandom`, 214-222). Boss pool if a boss is alive; else the dark pool if `isDark()`; else the ambient pool. `getAmbientMusic`, `getDarkMusic` and `getBossMusic` (228-241) prefer the rules' pools, then the planet's, then the defaults (94-96). Donor defect: `getBossMusic` (228-231) reads `state.rules.darkMusic` and `planet.darkMusic`, a copy-paste slip; only the final fallback is the boss pool. Fix: read the boss fields.
 - Dark choice (`isDark`, 244-256). Dark if the player's core is below 85 percent health (244-248, not receipted), or by a wave-based chance (251: `(log10((wave - 17) / 19) + 1) / 4`), or by an enemy-count chance (256: `enemies / 70 + 0.1`).
 - Track scheduling (`update`, 172-180). Outside the menu and editor, and when music is not disabled: if music is not set to always play, a track is rolled when `timeSinceMillis(lastPlayed) > 1000 * musicInterval / 60` (177, with `musicInterval = 3 * Time.toMinutes`, 23). The roll uses `musicChance` = 0.8 (179). `lastPlayed` is set only when the roll succeeds (180).
 - Crossfade (`play`, 265-314). Fade-out and fade-in both move by frame delta over 120 ticks (294, 297, `finTime` and `foutTime` at 23). The old track fades to near zero (299), then stops, and the new track starts at zero volume and fades in. This is a dip through silence, not an overlap.
 - One-shot tracks (`playOnce`, 317-329). Does nothing while a track plays (318). A one-shot starts at full volume with no fade-in (326).
 - Per-object loops (`SoundLoop.java`). A loop fades by 0.05 per tick in and out (10, 35, 37). It starts silent and fades in (30), stops at or below 0.001 (38).
-- Priority table (`SoundPriority.java`). Priority 3 for launch and core sounds (20-23), 2 for long weapon loops and large explosions (26-37), 1.5 for big weapon sounds (40-57), 1 for ambient loops (59-71), -1 for repair (94), -2 for footsteps (96-97). Maximum concurrent counts: lancer 5 (74), shield hit 4 (89), mech and walker steps 5 (91). Concurrency groups share one id (107-110; used at 76-78). Minimum interrupt fractions are set for every loaded sound to 0.25 and 0.5 (81), and for mech steps to 0.5 and 0.6 (84-87).
+- Priority table (`SoundPriority.java`). Priority 3 for launch and core sounds (20-23), 2 for long weapon loops and large explosions (26-37), 1.5 for big weapon sounds (40-57), 1 for ambient loops (59-71), -1 for repair (94), -2 for footsteps (96-97). Maximum concurrent counts: lancer 5 (74), shield hit 4 (89), mech and walker steps 5 (91), and a shared max of 7 over beam plasma, shoot meltdown and beam meltdown (`SoundPriority.java` 18). Concurrency groups share one id (107-110; used at 76-78). Minimum interrupt fractions are set for every loaded sound to 0.25 and 0.5 (81), and for mech steps to 0.5 and 0.6 (84-87).
 
 ## 2. Key functions
 
 - `loop(data, sound, pos, volume, pitch)` (static): `SoundControl.java` 373-383. The aggregate that every source goes through.
 - `updateLoops`: `SoundControl.java` 410-462. Eased volume, start and stop thresholds, centroid pan, weighted pitch, pull from the thread.
 - `AudioThread.doLoop`: `SoundControl.java` 505-560. Source list, falloff sums, output copy at 20 passes per second.
-- `update`: `SoundControl.java` 119-188. Track roll and interval; calls `updateLoops` at line 69. `Control.java` 688 calls `sound.update()`; the enclosing function and its frequency were not read.
+- `update`: `SoundControl.java` 119-188. Track roll and interval; calls `updateLoops` at line 187 (line 69 is in the constructor). `Control.java` 688 calls `sound.update()`; the enclosing function and its frequency were not read.
 - `play` and `playOnce`: `SoundControl.java` 265-329. Dip-through-silence fade and one-shot start.
 - `SoundPriority.init`: `SoundPriority.java` 14-101. The policy table; enforcement is not in the donor.
 
@@ -52,7 +52,7 @@ Acceptance: Forty ambient fires in one zone play one looping voice whose volume 
 | Dark chance from wave | Log term, `(log10((wave - 17)/19) + 1) / 4` (251) |
 | Dark chance from enemies | `enemies / 70 + 0.1` (256) |
 | Priority levels | 3, 2, 1.5, 1, -1, -2 (`SoundPriority.java` 20-97) |
-| Max concurrent | Lancer 5 (74), shield hit 4 (89), mech and walker steps 5 (91) |
+| Max concurrent | Lancer 5 (74), shield hit 4 (89), mech and walker steps 5 (91), beam/meltdown group 7 (18) |
 
 ## 4. TypeScript sketch
 
@@ -187,6 +187,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Possible defect, stale index in the audio thread (`SoundControl.java` 506-507, 511-512, 536): `items` and `size` are captured before queued sources are added. If the list grows during the add, `items` points at the old array while `remove(i)` edits the new one, so the swap can remove a different source. Whether this bites depends on `arc`'s `Seq` growth, which is not in the donor. Fix: drain the queue before capturing `items` and `size`.
 - Possible defect, pause carry-over (`SoundControl.java` 417): `updateLoops` returns early when paused and keeps the sums. Any direct `loop()` call made during a pause is read on resume. Whether any call happens during a pause was not checked. Fix: drop the sums while paused (sketch).
 - Possible issue, whole-sound stop (`SoundControl.java` 434): the stop path calls `sound.stop()` on the sound object, not on the stored voice id (line not receipted; the quote is short). Whether that silences other instances of the same sound depends on `arc`, not read. Fix: stop by voice id.
+- Pause muffle: `update()` fades a lowpass filter on the sound bus whenever the game is paused or a dialog is open (`SoundControl.java` 129-132, wet 1 when paused else 0, over 0.4 s, polled every 30 ticks). A cheap rule worth taking for our pause and menu states.
 - Gap, priority and voice limits: the donor has a policy table (`SoundPriority.java`) but no enforcement in this box. `setPriority`, `setMaxConcurrent`, `setConcurrentGroup` and `setMinConcurrentInterruptFraction` are `arc` calls. Frankendom needs its own cap on concurrent combat cues (the hero's cues first); the table shows the shape, not the behaviour.
 - Gap, crossfades: music fades to zero, then starts at zero volume (`SoundControl.java` 294-307). Frankendom's zone-border crossfade needs overlap; this donor does not show it.
 - Gap, biome beds: no per-biome ambient bed. The ambient music pool is chosen per rules or planet (233-236), which is the nearest analogue; there is no ambient loop bed per zone.
@@ -194,3 +195,13 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Unverified wave index: `group.getSpawned(state.wave - 2)` (59) uses an offset of 2 that was not checked against how `state.wave` is advanced. Do not copy the offset without a test.
 - Dark chance from wave (251): the log term is undefined for waves below 17 (log of a negative number). The donor's `Mathf.chance` (not read) presumably treats NaN as false; this was not confirmed.
 - Not read: `Mathf.chance`, `Time.toMinutes`, the `arc` audio classes, `calcFalloff` and `calcPan`, the reset and stop paths (72-118), `findMusic` (340-355).
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: MINOR
+- Key functions said `update()` calls `updateLoops` at line 69; the call is at 187 (line 69 is the constructor). Confirmed.
+- Section 1 said all three music getters follow the same order; `getBossMusic` (228-231) reads the darkMusic fields (copy-paste bug), only the fallback is bossMusic. Confirmed.
+- Missed (confirmed): pause lowpass filter on the sound bus (`SoundControl.java` 129-132).
+- Missed (confirmed): `max(7, beamPlasma, shootMeltdown, beamMeltdown)` at `SoundPriority.java` 18 was absent from the max-concurrent list.
+
+Fixed 2026-10-12: update() call line, getBossMusic defect, pause muffle line, max-concurrent entry. Sketch unchanged.

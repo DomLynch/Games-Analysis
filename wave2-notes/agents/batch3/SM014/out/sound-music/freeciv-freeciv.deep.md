@@ -169,3 +169,8 @@ export {}
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 Brief rule served: 1 (one engine; sound is client-only); row 12 (combat sound cues)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- All checked claims hold; no false claim found.
+- Missed (confirmed in code): stop_style_music calls audio_stop_usage, which sets switching_usage = TRUE so the next music-finished callback is swallowed (audio.c 394-398, 633-637). That flag is what makes the stop-then-play hard cut not restart the old tag. Defect 3 (stinger resume callback may not fire on stop) should be checked against this flag: if SDL does not fire the callback on stop, switching_usage stays TRUE and swallows the next real end. The timer-driven resume in the sketch avoids both flags, so the fix stands.

@@ -18,10 +18,10 @@
   "counts": {
     "map_extra_entries": 77,
     "map_extra_collections_in_regional_settings": 18,
-    "overmap_special_objects": 320,
-    "overmap_special_files": 43,
+    "overmap_special_objects": 291,
+    "overmap_special_files": 19,
     "mapgen_palette_files_in_folder": 114,
-    "palette_parameter_scope_omt_lines": 266,
+    "palette_parameter_scope_omt_lines": 267,
     "palette_parameter_scope_overmap_special_lines": 10
   },
   "rule": "Gate then weight: per tile, a one-in-N roll decides whether a landmark exists; a weighted list picks which. Filter by z-band before the roll; skip the collection if nothing fits. Palette parameters carry weighted distributions and fallbacks; default scope is one overmap special, so a building keeps one skin. Nested decoration uses a large null weight. Specials: priority tiers, shuffled first-fit inside a tier, min and max occurrences, mandatory pass first. Rare uniques: a virtual deck (successes of deck_size cards), one draw per eligible overmap, reshuffle when empty.",
@@ -59,7 +59,6 @@
     "apply functions in src/map_extras.cpp",
     "data/json/mapgen_palettes beyond common_parameters.json",
     "lang/ locale and string tables",
-    "OMSPEC_FREQ use in src/overmap.cpp",
     "AU/DC asset or catalogue files for this donor (none in batch3 folder)"
   ]
 }

@@ -37,9 +37,9 @@ Randart budget rule (`_get_randart_properties`, `artefact.cc` 1275-1292 and 1339
 3. good = max(quality + fixed_bad + bad - fixed_good, 0) (1286).
 4. max distinct properties = 4, plus 1 with chance 1/20 and another with 1/40 (1292).
 5. Extra good points beyond the cap enhance properties that already exist instead of adding new ones.
-6. Each new property is drawn from a weighted list (weights in the property table, for example Str/Int/Dex 100 (899), rF/rC 60 (905), Slay 30 (949)). A property is not drawn twice.
-7. Each property has a max duplicate count and an odds step (`max_dup`, `odds_inc`, lines 868-870 and 1369-1372).
-8. Bad value of a stat: -2 to -5 (877). Good stat: 1 to 3 (874). Resist: +1 good, -1 bad. Slay: good 2-3, bad -2 to -6 (951). Weapons always get a brand. Armour gets an ego with a coin flip (1 in 2).
+6. Each new property is drawn from a weighted list (weights in the property table, for example Str/Int/Dex 100 (899), rF/rC 60 (905), Slay 30 (949)). A property can be applied again up to its `max_dup` value (for example Str max 7, rF 2, Slay 3): after the first draw, further applications continue while the current value is at or under `max_dup` and there is an enhance point or a good point left (chance 1 in `chance_denom`, which grows by `odds_inc` each time) (1366-1374).
+7. Each property has a max duplicate count and an odds step (`max_dup`, `odds_inc`, lines 868-870 and 1369-1372); this is the repeat rule in step 6.
+8. Bad value of a stat: -2 to -5 (877). Good stat: 1 to 3 (874). Resist: +1 good, -1 bad. Slay: good 2-3, bad -2 to -6 (951). Weapons always get a brand. Armour gets an ego with a coin flip (1 in 2), except scarves and orbs, which always get one (artefact.cc 1320-1323). The brand rule is the comment "Make sure all weapons have a brand" at 1315.
 
 Glyph rule (`mapdef.cc`):
 1. A SUBST line maps one key glyph to a weighted list of replacements. A plain character has weight 10 each, so repeated letters are extra weight. A `c:N` item sets weight N directly (759, 767).
@@ -84,7 +84,7 @@ Best transferable idea: a per-item seed plus a small budget (quality points, two
 
 ## 8. TypeScript sketch (typechecked on the VPS, EXIT=0)
 
-simplified: the sketch keeps the donor budget order (quality, then bad rolls, then good points, then the distinct-property cap) and the one-pass weighted glyph choice with a per-chooser freeze. It omits the enhance step that raises existing properties past the cap, the weighted property draw and no-repeat rule, the brand and ego rules, the name generator, and the case where the freeze scope matters. The four-property cap is shown as a single roll; the donor applies it after the draws.
+simplified: the sketch keeps the donor budget order (quality, then bad rolls, then good points, then the distinct-property cap) and the one-pass weighted glyph choice with a per-chooser freeze. It omits the enhance step that raises existing properties past the cap, the weighted property draw and the `max_dup` / `odds_inc` repeat rule, the brand and ego rules, the name generator, and the case where the freeze scope matters. The four-property cap is shown as a single roll; the donor applies it after the draws.
 
 ```ts
 // Licence: Crawl is GPLv2+ (donor). Clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -134,3 +134,11 @@ function makeGlyphChooser(rng: Rng, options: Option[], fixed: boolean): () => st
   };
 }
 ```
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Error: rule 6 said a property is not drawn twice, contradicting rule 7; artefact.cc 868-870 and 1366-1374 allow repeats up to max_dup (Str 7, rF 2, Slay 3). Confirmed and fixed.
+- Not an error: 'weapons always get a brand' is supported (artefact.cc:1315 comment, _add_randart_weapon_brand).
+- Missed: armour ego coin flip excludes scarves and orbs, which always get an ego (artefact.cc 1320-1323). Added.
+
+Fixed 2026-10-12: rule 6 repeat wording, rule 7 cross-reference, armour ego exception, sketch omission wording.

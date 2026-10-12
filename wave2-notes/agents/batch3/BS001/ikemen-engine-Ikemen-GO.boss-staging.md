@@ -61,3 +61,8 @@ MIT, engine and scripts (LICENCE.txt:1 and :33). Code may be adapted with the co
 - Walk density: not in this donor (not read). Readability at 375 wide: not read (the engine has no phone size check in the parts I read).
 - Dragons and big creatures (MG011): see the JSON key mg011. No dragon, breath cone, flight, taming or per-part armour code found. src/model.go:70 and :71 hits are glTF light cones, not breath.
 - Asset audit and catalogue for this donor (batch3 AU* / DC* files): not present in batch3, not read.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- All cited lines and numbers verified (30, 0.5, 1.5, 1.8, 60, 30-tick red flash, 0 boss hits).
+- Missed (minor): the red flash and the birds are both guarded by `!numHelper(const(StateDizzyBirdsHelper))`, so each fires once per stun (dizzy.zss 147, 267; confirmed). The note did not state the guard.

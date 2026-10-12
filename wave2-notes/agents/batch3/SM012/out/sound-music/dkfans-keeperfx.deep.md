@@ -220,3 +220,9 @@ Acceptance: in a three-attacker fight with all 16 voices busy on routine hit cue
 
 Reuse tag: rewrite-from-idea (GPL-2.0; clean-room only)
 Brief rule served: 1 (one engine, two clients); 8 (target and parity row named)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN
+- No errors found: find_slot order, start_emitter_playing kick and return 0 on backend fail, SOUNDS_MAX_COUNT 16, once-per-tick gate, limit/duck logic, atmos gates and constants, room bed hard cut, terrain.cfg rows, audible radius, music fade and track formula, GPL v2 all verified; the "not read" list is honest.
+- Missed (minor): play_atmos_sound randomises pitch (73+rand*6, or 54+rand*16*4 for 1013) and scales volume by the sound-volume setting (bflib_sound.c 666-674): a cheap, transferable variation rule not covered in the note.

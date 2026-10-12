@@ -44,6 +44,21 @@ export function trackForMeter(meter: number, cfg: MusicConfig, bossUp: boolean):
   return "peace";
 }
 
+// Donor 1757-1761: a boss spawn (or its end) forces a switch at once: no random hold, no lag gate,
+// only the rule that no fade is already running.
+export function bossSwitch(s: MusicState, cfg: MusicConfig, bossUp: boolean): Track | null {
+  if (s.fading !== "none") return null;
+  if (bossUp && s.track !== "boss") return "boss";
+  if (!bossUp && s.track === "boss") return trackForMeter(s.meter, cfg, false);
+  return null;
+}
+
+// Donor 1721-1733: on PvE-driven fights (raptors, scavengers) the boss anger sets a minimum meter every 30 frames.
+export function angerFloor(s: MusicState, cfg: MusicConfig, anger: number): void {
+  if (anger > 60 && s.meter < cfg.warHigh + 1) s.meter = cfg.warHigh + 1;
+  else if (anger > 20 && s.meter < cfg.warLow + 1) s.meter = cfg.warLow + 1;
+}
+
 // Mid-track switch with hysteresis: entering a level and leaving it use different thresholds.
 export function wantedSwitch(s: MusicState, cfg: MusicConfig): Track | null {
   if (s.fading !== "none" || s.heldSec < s.holdUntilSec) return null;

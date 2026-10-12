@@ -32,6 +32,12 @@ function stepDuck(m: MusicDuck, cfg: DuckConfig, dtMs: number, eventEnded: boole
   return m.gain;
 }
 
+// Release a looping, state-bound sting (the donor's stopEventMusic on respawn). The bed then climbs back.
+function stopEvent(m: MusicDuck): void {
+  m.eventName = null;
+  m.eventLoop = false;
+}
+
 // The duck multiplies the bed channel only. The event channel is not multiplied.
 function bedGain(musicVolume: number, m: MusicDuck): number {
   return musicVolume * m.gain;

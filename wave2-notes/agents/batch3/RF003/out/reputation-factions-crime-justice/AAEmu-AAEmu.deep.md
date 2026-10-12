@@ -141,3 +141,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 
 Reuse tag: rewrite-from-idea (LGPL-3.0 / GPL-3.0 files present; clean-room only)
 Brief rule served: 1 (one ledger: meter and infamy live on the server); rules 7-9 n/a
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN. 50/3000 thresholds, CheckWantedThreshold order, AddCrime wrap defect, arrest rule, jail score 20/8/0, x10 under 30, int-division infamy, sentence rates, default 3, clearing, LGPL README all match.
+- No errors or missed items found.

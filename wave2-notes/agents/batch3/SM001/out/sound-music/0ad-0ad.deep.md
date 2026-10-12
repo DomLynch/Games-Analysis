@@ -165,3 +165,8 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Gap, audibility by camera: the off-screen cull (`SoundGroup.cpp` 204-205) uses the camera and is client-only, which fits the ruling. The engine-side gate (`CCmpSoundManager.cpp` 71) uses line-of-sight visibility to the viewed player. Frankendom should gate combat cues on the duel's participants being visible to the player, not on the camera framing.
 - Note, reads oddly but works: `splice(this.recordLength, this.damageRecord.length-1)` (`BattleDetection.js` 67) removes the one extra element. No fix needed.
 - Not read: `shouldPlaySound` in `UnitAnimation.cpp`; the caller's handling of a missing source; `CFastRand`; the rolloff model; the `Looping` tag; the `timer_Time` unit (inferred seconds).
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- No errors found; the checker verified the cited line numbers, formulas, numbers and licence against the donor.
+- Missed: none.

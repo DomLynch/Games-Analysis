@@ -165,3 +165,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Second write door for money. The admin set-money path writes the variable directly (`sv_money.lua` 278-279) and does not go through addMoney. Fix: route it through the ledger as an admin row.
 - Gap, no two-step trade window and no barter in this donor. Give is one-way and time-delayed; there is no both-confirm step. Trade mechanics belong to the TR cell (not this one).
 - Gap, wallet and property taxes are off by default (`config.lua` 135, 167). The mechanism is real and read, but a live server must turn it on on purpose.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN. cheque write/redeem/tear/merge/damage/disconnect, give 22500 and 1.2s, tax band, door refund 0.666, cost 0->30, co-owner test, config values all match.
+- No errors or missed items found.

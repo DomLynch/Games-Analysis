@@ -2,7 +2,7 @@
 
 Donor: `/mnt/frankendom-donors/AAEmu-AAEmu/AAEmu.Game/Models/Game/Skills/Skill.cs` (with `Models/Tasks/Skills/CastTask.cs`, `Models/Game/Units/Unit.cs`, `Models/Game/Units/Buffs.cs`) | Licence: README says "GNU Lesser General Public License ... version 3" (README.md:36); `LICENSE.GPL` is the GPL-3.0 text (LICENSE.GPL:2); `LICENSE.MIT` is an MIT licence for Rain0Ash 2019. Unclear mix: treated as copyleft, clean-room, shape only | C# | symbols `Skill.Use` (89), `Skill.Cast` (615), `Unit.InterruptSkills` (857)
 
-Checked: Read in full: `Skill.Use` (89-350), `Skill.Cast` (615-752), `Skill.ScheduleEffects` (830-868), `Skill.Stop` (1433-1450), `Skill.ManaCost`/`ConsumeMana` (1559-1580), `CastTask.cs` (all 22 lines), `Unit.ReduceCurrentHp` (334-356), `Unit.InterruptSkills` (857-871). Read in part: `Buffs.cs` (455-495, the apply path that calls interrupt), `Unit.cs` 427-447 (mana drain, death), `ManaRegenTemplate.cs` (all), `SkillManager.cs` (330-386, the data loader). Opened for the search: `PlotEventTemplate.cs`, `ResetAoeDiminishingEffect.cs`, `PlotManager.cs` (line 86), `SkillCaster.cs` (read; packet marshalling only, no mechanism). Not read: the skill data table itself (no SQL schema for `casting_time` in the box; values come from a database not in the donor folder), `CheckInterval` (grep for its definition found nothing in AAEmu.Game), the `Cooldowns` class, `Character` regen formula, the `SkillModifiersCache` internals, what breaks a cast on movement (no caller found for interrupt on move; not exhaustively read). Confidence: high for the cast/cooldown/GCD/mana order and for the interrupt rule; medium for "no hit interrupt" (based on the damage path read plus grep; not every damage source read).
+Checked: Read in full: `Skill.Use` (89-350), `Skill.Cast` (615-752), `Skill.ScheduleEffects` (830-868), `Skill.Stop` (1433-1450), `Skill.ManaCost`/`ConsumeMana` (1559-1580), `CastTask.cs` (all 22 lines), `Unit.ReduceCurrentHp` (334-356), `Unit.InterruptSkills` (857-871). Read in part: `Buffs.cs` (455-495, the apply path that calls interrupt), `Unit.cs` 427-447 (mana drain, death), `ManaRegenTemplate.cs` (all), `SkillManager.cs` (330-386, the data loader). Opened for the search: `PlotEventTemplate.cs`, `ResetAoeDiminishingEffect.cs`, `PlotManager.cs` (line 86), `SkillCaster.cs` (read; packet marshalling only, no mechanism). Not read: the skill data table itself (no SQL schema for `casting_time` in the box; values come from a database not in the donor folder), `CheckInterval` (an extension method defined in AAEmu.Commons/Utils/Helper.cs:56, outside AAEmu.Game; its body was not read), the `Cooldowns` class, `Character` regen formula, the `SkillModifiersCache` internals, what breaks a cast on movement (no caller found for interrupt on move; not exhaustively read). Confidence: high for the cast/cooldown/GCD/mana order and for the interrupt rule; medium for "no hit interrupt" (based on the damage path read plus grep; not every damage source read).
 
 Best transferable idea: a cast is a timed object: check the gates at start (cooldown, GCD, mana), but spend mana and start the cooldown only when the cast completes, and drop the whole cast with nothing spent when a crowd-control buff lands.
 Decision (proposed): adapt - take the start-gate / completion-spend split and the CC-drops-cast rule; change the donor's gaps (GCD set at completion, no busy check, no hit rule) and fix its defects listed in section 6.
@@ -10,14 +10,14 @@ Acceptance: a player casting a 1.5 s spell who is stunned at 0.6 s sees the cast
 
 ## 1. Mechanism
 
-- Entry: `Skill.Use` runs the gates in this order (89-350): requirements check (`UnitRequirementsGameData.CanUseSkill`, 106); per-skill cooldown (116-120); spam guard for basic attacks (129-143); global cooldown (146-154); cancel-on-start buffs (161-166); target pick (172); range min/max (213-261); mana gate (197-198).
+- Entry: `Skill.Use` runs the gates in this order (89-350): requirements check (`UnitRequirementsGameData.CanUseSkill`, 106); per-skill cooldown (116-120); spam guard for basic attacks (129-143); global cooldown (146-154); cancel-on-start buffs (161-166); target pick (172); mana gate (197-198); range min/max (213-261). The mana gate runs before the range block.
 - Spam guard: base delay 150 ms (129). For skill ids 2, 3, 4 the delay is 500 ms for a player and 1500 ms for an NPC (130-133). If the last use was less than `delay` ago and `CheckInterval(delay)` says no, the result is `CooldownTime` (135-142). The global-cooldown check (146-154) uses the same `delay` and `CheckInterval` (not read).
 - Cast time: `castTime = CastTimeMul x SkillModifiers(CastTime, CastingTime)`, then `x CastTimeMultiplier` (312-313). `CastTimeMul` for a character is `(bonus + 1000) / 1000`, so the base is 1.0 (Character.cs 633-636, bonus part not read). If `castTime > 0` a `CastTask` is scheduled (331-341); otherwise `Cast` runs at once (343-346).
 - `CastTask` runs `Skill.Cast` only if `Skill.Cancelled` is false (CastTask.cs 15-21).
 - Completion, `Skill.Cast` (615-752): (a) if the skill is not bypassing GCD, `GlobalCooldown = now + gcd x GlobalCooldownMul/100` where gcd is 1000 for a player and 1500 for an NPC when `DefaultGcd` is set (619-626); (b) `SkillTask` cleared (663); (c) `ConsumeMana` (665); (d) `Cooldowns.AddCooldown(skill, CooldownTime)` (666); (e) channel or immediate effects (744-751).
 - Channel: `StartChanneling` applies the channel buffs, optionally spawns a doodad, and schedules `EndChannelingTask` after `ChannelingTime` (774-801). Mana is spent at the start of the channel, because `ConsumeMana` runs in `Cast` before the branch.
 - Projectile delay: `ScheduleEffects` sums `EffectDelay`, `distance / EffectSpeed x 1000` ms, and the fire animation time when `UseAnimTime` is set (839-845). Effects land after that delay (858-866).
-- Interrupt: `Skill.Stop` (1433-1450) on a channel calls `EndChanneling`, broadcasts stop packets, clears `SkillTask`, and sets `Cancelled = true`. Nothing is spent in that path. `Unit.InterruptSkills` (857-871) calls `Stop` on the active task. It is called on death (`DoDie`, Unit.cs 447), on applying a buff with `Stun`, `Silence` or `Sleep` (Buffs.cs 477-478), and from many AI behaviours. `Root` is not in that list (Buffs.cs 477).
+- Interrupt: `Skill.Stop` (1433-1450) on a channel calls `EndChanneling`, broadcasts stop packets, clears `SkillTask`, and sets `Cancelled = true`. Nothing is spent in that path. `Unit.InterruptSkills` (857-871) calls `Stop` on the active task. It is called on death (`DoDie`, Unit.cs 447), on applying a buff with `Stun`, `Silence` or `Sleep` (Buffs.cs 477-478), and from many AI behaviours, and also from crafting (CharacterCraft.cs 383, CraftEffect.cs 104), `RecoverItem.cs` 41 and `Slave.cs` 818. `Root` is not in that list (Buffs.cs 477); Buffs.cs 463-466 uses Root only to unmount a riding character, not to interrupt a cast.
 - Damage: `Unit.ReduceCurrentHp` (334-356) takes absorb charges first (341-348), then lowers HP (351). It does not call `InterruptSkills` (not in this path).
 
 ## 2. Key functions
@@ -27,7 +27,7 @@ Acceptance: a player casting a 1.5 s spell who is stunned at 0.6 s sees the cast
 - `Skill.ManaCost` (1559-1565) and `ConsumeMana` (1567-1580): the mana formula and the spend.
 - `Skill.Stop` (1433-1450): the cancel path. Sets `Cancelled`, the cast never completes.
 - `CastTask.Execute` (CastTask.cs 15-21): the timer hook that calls `Cast` unless cancelled.
-- `Unit.InterruptSkills` (Unit.cs 857-871) and its three callers in `Buffs.cs` 477-478 and `Unit.DoDie` 447.
+- `Unit.InterruptSkills` (Unit.cs 857-871) and its main callers: `Buffs.cs` 477-478, `Unit.DoDie` 447, the AI behaviours, crafting (CharacterCraft.cs 383, CraftEffect.cs 104), RecoverItem.cs 41 and Slave.cs 818.
 - `Unit.ReduceCurrentMp` (Unit.cs 427-443): clamps mana to 0 (434).
 
 ## 3. Numbers vs mechanism
@@ -157,3 +157,12 @@ Brief rule served: 1 (one engine); 3 (state and timing, not the guard itself)
 
 pattern_tags: wait-gate (start gate before the cast timer), timer-wheel (cast end and cooldown as scheduled timers), new:cast-cancel-on-cc (drop cast with no spend).
 Data fields (in the sidecar JSON): gcd_ms, spam_guard_ms, cast_time_ms, cooldown_ms, mana_cost, mana_level_md, cast_time_mul, effect_speed, channel_time_ms, mp_floor.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: MINOR
+- Section 1 listed the gate order with the mana gate (197-198) after the range block (213-261); the mana gate actually runs before the range block. Confirmed against code.
+- The `CheckInterval` "not found" claim was weak: it is an extension method in AAEmu.Commons/Utils/Helper.cs:56 (outside the folder searched). Confirmed; wording corrected.
+- Missed: `InterruptSkills` has more callers than listed (CharacterCraft.cs 383, CraftEffect.cs 104, RecoverItem.cs 41, Slave.cs 818); Buffs.cs 463-466 handles Root only for unmounting a rider. Added to section 1/2.
+
+Fixed 2026-10-12: gate order sentence; `CheckInterval` location; InterruptSkills caller list and Root note. Sketch unchanged (it has no range block).

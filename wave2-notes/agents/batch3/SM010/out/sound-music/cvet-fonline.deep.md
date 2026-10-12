@@ -146,3 +146,10 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Attenuation curve: not in this donor. The engine accepts a number from the caller and multiplies. Frankendom's distance falloff and the third-person camera's listener position must be designed on our side (the camera is client-only; the listener sits at the camera, not the character).
 - Rulings: sound cues must follow server-confirmed events only, and never decide a hit, a kill or a spell result (one ledger).
 - The JSON sidecar has the data fields.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN
+- Errors: none found.
+- Missed: nothing material. PlaySound(name,...) in ProcessSounds cannot over-cap voices; no limit confirmed.
+- Verified OK: AudioManager.cpp 88-92, 109-138, 140-229, 231-409, 342/379/392, 461-480, 502/507, 516-540, 542-573, Client.cpp 3296-3300, MIT header and LICENSE line 3.

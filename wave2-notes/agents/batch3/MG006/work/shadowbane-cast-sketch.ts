@@ -5,7 +5,8 @@ interface PowerDef {
   castRamp: number;             // per-rank ramp on cast time
   recycleS: number;             // base recycle (cooldown) time, seconds
   recycleRamp: number;          // per-rank ramp on recycle
-  rampAdd: boolean;             // true: base + ramp*rank; false: base * (1 + ramp*rank)
+  castRampAdd: boolean;         // donor initRampAdd: true: base + ramp*rank; false: base * (1 + ramp*rank)
+  recycleRampAdd: boolean;      // donor recycleRampAdd, a separate flag
   cost: number;                 // base cost, resource chosen by costKind
   costRamp: number;             // per-rank ramp on cost
   costRampAdd: boolean;         // true: base + ramp*rank; false: base * (1 + ramp*rank)
@@ -40,10 +41,10 @@ function rampValue(base: number, ramp: number, rank: number, add: boolean): numb
 
 // Cast time and recycle, in ms. Recycle includes the cast time, so the lock runs from cast start.
 function castMs(def: PowerDef, rank: number): number {
-  return Math.trunc(rampValue(def.castTimeS, def.castRamp, rank, def.rampAdd) * 1000);
+  return Math.trunc(rampValue(def.castTimeS, def.castRamp, rank, def.castRampAdd) * 1000);
 }
 function recycleMs(def: PowerDef, rank: number): number {
-  return Math.trunc(rampValue(def.recycleS, def.recycleRamp, rank, def.rampAdd) * 1000) + castMs(def, rank);
+  return Math.trunc(rampValue(def.recycleS, def.recycleRamp, rank, def.recycleRampAdd) * 1000) + castMs(def, rank);
 }
 
 // Cost is ramped by rank, multiplied by bonus, and x1.5 while airborne. Creative (free) casts are not modelled.
@@ -57,8 +58,8 @@ function castCost(def: PowerDef, c: Caster): number {
 // Start a cast. Returns a reason string on refusal, or "ok" after paying the cost and scheduling the finish.
 function startCast(c: Caster, def: PowerDef, nowMs: number): string {
   if (!c.alive) return "dead";
-  if (c.pending !== null) return "already casting";                       // one pending power at a time
   if ((c.recycleUntilMs.get(def.id) ?? 0) > nowMs) return "recycling";
+  if (c.pending !== null) return "already casting";                       // one pending power at a time, checked after the lock
   if (c.stunned || c.canCastBlocked) return "blocked";
   if (!def.canCastWhileMoving && c.moving && c.remainingMoveDist > c.speed) return "moving";
   if (c.rank > def.maxRank) c.rank = def.maxRank;
@@ -76,13 +77,18 @@ function startCast(c: Caster, def: PowerDef, nowMs: number): string {
 }
 
 // Cancel rules. Each one only applies to the pending power, and a sit always cancels.
+// A cancel also releases the recycle lock (donor: cancelJob -> UsePowerJob._cancelJob -> finishRecycleTime(cancel = true)).
+function cancelPending(c: Caster): void {
+  if (c.pending) c.recycleUntilMs.delete(c.pending.def.id);
+  c.pending = null;
+}
 function onMove(c: Caster): void {
-  if (c.pending && !c.pending.def.canCastWhileMoving) c.pending = null;
+  if (c.pending && !c.pending.def.canCastWhileMoving) cancelPending(c);
 }
 function onTakeDamage(c: Caster): void {
-  if (c.pending && c.pending.def.cancelOnTakeDamage) c.pending = null;
+  if (c.pending && c.pending.def.cancelOnTakeDamage) cancelPending(c);
 }
-function onSit(c: Caster): void { c.pending = null; }
+function onSit(c: Caster): void { cancelPending(c); }
 
 // Called on the server tick; completes the pending cast when its time has come.
 function tick(c: Caster, nowMs: number, apply: (def: PowerDef) => void): void {

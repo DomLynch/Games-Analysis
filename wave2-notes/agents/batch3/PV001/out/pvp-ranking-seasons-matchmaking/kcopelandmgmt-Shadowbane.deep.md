@@ -137,3 +137,8 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` run on the 
 - Scope note: this is a guild or city control mechanic, not a player ladder. There is no elo, no matchmaking, no ping and no smurf control in this donor; the race and class gate is the only anti-misuse rule and it is about who may take a boon, not who may rank.
 - Not read: `PowersManager.applyPower` behaviour at 0 trains; the meaning of building rank -1; `claim()`; the full race and class switch was read for shape only.
 - Licence: MIT. Code may be adapted (the notice must stay with copies of the code). This sketch is clean-room from the mechanism, so it is not a copy.
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- No errors found.
+- Missed (minor): Shrine.decay() early-returns when favors==0 (Shrine.java:231); no effect on the claims.

@@ -17,11 +17,11 @@ export function castChance(value: number, min: number, max: number): number {
   return (value - min) / (max - min);
 }
 
-// Donor ScaleMana: table value times (1 - lowerManaCost/100), lower mana cost capped at 40.
-export function scaledMana(circle: number, isWand: boolean, lowerManaCost: number): number {
+// Donor ScaleMana: table value times (scalar - lowerManaCost/100); scalar starts at the Mind Rot scalar (1.0 when none), lower mana cost capped at 40.
+export function scaledMana(circle: number, isWand: boolean, lowerManaCost: number, mindRotScalar: number = 1.0): number {
   if (isWand) return 0;
   const lmc = Math.min(lowerManaCost, LOWER_MANA_CAP);
-  return Math.trunc(MANA_BY_CIRCLE[circle] * (1 - lmc / 100));
+  return Math.trunc(MANA_BY_CIRCLE[circle] * (mindRotScalar - lmc / 100));
 }
 
 // Donor MagerySpell.GetResistPercentForCircle, returned as a 0..1 chance and clamped (donor: n <= 0 false, n >= 1 true).

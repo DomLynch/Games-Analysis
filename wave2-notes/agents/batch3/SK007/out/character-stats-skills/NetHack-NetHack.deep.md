@@ -8,9 +8,9 @@ Checked: Read in full: weapon.c `slots_required` (1132-1152), `can_advance` (115
 
 A weapon skill is a level (0 to 6) with an advance counter that never resets. The counter goes up by one for every melee hit that does more than minimal damage. The player spends weapon slots to raise the level.
 
-- Training (uhitm.c:946): a hit trains only if its base damage (`dmgval`) is more than 1. A minimal hit does not train. When it trains, `use_skill(type, 1)` runs once per hit (uhitm.c:1494-1498; use_skill at weapon.c:1424-1435). `use_skill` adds `degree` to `P_ADVANCE` (weapon.c:1430) unless the skill is restricted. Other practice comes from kicks (dokick.c:122), cutting or punching through a web (hack.c:2086) and casting (spell.c:1599, by spell level).
+- Training (uhitm.c:946): a hit trains only if its base damage (`dmgval`) is more than 1. A minimal hit does not train. When it trains, `use_skill(type, 1)` runs once per hit (uhitm.c:1494-1498; use_skill at weapon.c:1424-1435). The skill trained is the thrown or fired weapon's own type for a thrown hit (`hmd->thrown ? weapon_type(skillwep) : uwep_skill_type()`, uhitm.c:1496), not only the wielded melee weapon. `use_skill` adds `degree` to `P_ADVANCE` (weapon.c:1430) unless the skill is restricted. Other practice comes from kicks (dokick.c:122), cutting or punching through a web (hack.c:2086) and casting (spell.c:1599, by spell level).
 - Eligibility (weapon.c:1156-1171): a skill can advance when it is not restricted, is below its role max, the character has fewer than 60 advances (`P_SKILL_LIMIT`, include/skills.h:120), the counter has reached `level^2 * 20` (include/skills.h:106), and the character has enough slots for that step.
-- Slots (weapon.c:1132-1152): a weapon step costs the current level in slots (unskilled to basic 1, basic to skilled 2, skilled to expert 3). Martial and bare-handed steps cost `(level + 1) / 2`. The character starts with 2 slots (u_init.c:884), gets one per experience level gained (attrib.c:1070) and one extra from a prayer gift (pray.c:994).
+- Slots (weapon.c:1132-1152): a weapon step costs the current level in slots (unskilled to basic 1, basic to skilled 2, skilled to expert 3). Martial and bare-handed steps cost `(level + 1) / 2`. A normal character starts with 0 slots (the only start grant is `u.weapon_slots = 2` in `pauper_reinit`, u_init.c:866-884, for the pauper option, as compensation for lost skills), gets one per experience level gained (attrib.c:1070) and one extra from a prayer gift (pray.c:994). `add_weapon_skill` / `lose_weapon_skill` (weapon.c:1436-1470) add and remove slots, so slots are also lost on level-down, and un-training a skill returns its slots (weapon.c:1500).
 - Advancing (weapon.c:1198-1200 and the enhance menu at weapon.c:1394): it is a player action, not automatic. `skill_advance` spends the slots and raises the level by one. The counter is not reset, so later thresholds are cumulative.
 - Use in combat: the level feeds two terms. To-hit (weapon_hit_bonus, uhitm.c:421): restricted or unskilled -4, basic 0, skilled +2, expert +3. Damage (weapon_dam_bonus, uhitm.c:1489): unskilled -2, basic 0, skilled +1, expert +2.
 - The to-hit roll (uhitm.c:376-378, 421): total = `1 + abon + target AC + intrinsic hit + luck term + XL + weapon hit value + skill term`, with an encumbrance penalty of `2 * level - 1` when encumbered (uhitm.c:408-409). A hit when `total > d20` (uhitm.c:709-710).
@@ -35,7 +35,7 @@ Reusable algorithm vs game-specific constants:
 |---|---|
 | Practice counter per skill, one point per qualifying hit, never reset | Qualifying hit = base damage above 1 (uhitm.c:946) |
 | Advance gate = level squared times a constant, cumulative | times 20 (include/skills.h:106) |
-| Advance costs a budget (slots), refilled by character level | slot cost = level (weapon), (level+1)/2 (martial); 2 at start, +1 per XL (weapon.c:1141-1151; u_init.c:884; attrib.c:1070) |
+| Advance costs a budget (slots), refilled by character level | slot cost = level (weapon), (level+1)/2 (martial); 0 at start (2 only for the pauper option), +1 per XL (weapon.c:1141-1151; u_init.c:884 in pauper_reinit; attrib.c:1070) |
 | Level gives a small to-hit and damage bonus ladder | to-hit -4, 0, +2, +3; damage -2, 0, +1, +2 (weapon.c:1559-1575; 1657-1673) |
 | Encumbrance costs to-hit in steps | -(2 x level - 1) (uhitm.c:409) |
 | Global cap on advances | 60 (include/skills.h:120) |
@@ -50,13 +50,13 @@ Stat and skill table (SK-FOCUS format: name | what it does | formula | number ra
 | Starting counter | Counter at skill_init | `practice_needed(level - 1)` (computed: a starting basic skill begins at 20) | 20 | none | weapon.c:1800-1801 |
 | Slot cost, weapon | Slots spent to raise a weapon skill | = current level (computed: 1, 2, 3) | 1 to 3 | slots never below 0 | weapon.c:1141; skill_advance 1200 |
 | Slot cost, martial | Slots for martial or bare-handed | `(level + 1) / 2` (computed: 1, 1, 2, 2, 3) | 1 to 3 | as above | weapon.c:1151 |
-| Slot income | Slots gained | start 2; +1 per XL gained; +1 per prayer gift | 2 at start | none | u_init.c:884; attrib.c:1070; pray.c:994 |
+| Slot income | Slots gained | start 0 (pauper option: 2); +1 per XL gained; +1 per prayer gift; lost on level-down | 0 at start | none | u_init.c:866-884 (pauper only); attrib.c:1070; pray.c:994; weapon.c:1436-1470 |
 | Skill to-hit | To-hit term from the level | restricted and unskilled -4; basic 0; skilled +2; expert +3 | -4 to +3 | none | weapon.c:1559-1575 (values at 1566, 1568-1575) |
 | Skill damage | Damage term from the level | unskilled -2; basic 0; skilled +1; expert +2 | -2 to +2 | none | weapon.c:1657-1673 |
 | Bare-handed to-hit | Unarmed to-hit term | `((max(level,1) - 1 + 2) * (martial ? 2 : 1)) / 2` (computed: basic gives +1, expert gives +2; martial doubles) | +1 to +3 at basic to grand master (the donor's own comment table) | none | weapon.c:1611-1613 |
 | Two-weapon | To-hit and damage penalty when fighting with both weapons | to-hit -9, -7, -5, -3 by the lower of the two skills; damage -3, -1, 0, +1 | -9 to -3; -3 to +1 | none | weapon.c:1587-1598; 1682-1694 |
 | Riding | To-hit penalty while mounted | -2 unskilled or restricted, -1 basic, 0 skilled or expert; -2 more when two-weapon | 0 to -4 | none | weapon.c:1617-1633 (riding block, read) |
-| To-hit total | Roll needed on d20 | `1 + abon + target AC + intrinsic + luck term + XL + weapon hit value + skill term` (computed: a basic-skill, XL 5, AC 5, abon 0, luck 0 fighter has total 11: hits on d20 rolls 1 to 10, a 50% chance) | total can be any integer | none | uhitm.c:376-378, 421 |
+| To-hit total | Roll needed on d20 | `1 + abon + target AC + intrinsic + luck term + XL + weapon hit value + skill term`, minus encumbrance and 3 when trapped; plus 2 each when the target is stunned, fleeing or asleep, +4 when it cannot move, +1 for an elf hitting an orc, and a Monk body-armour penalty (or the Monk unarmed bonus) (uhitm.c:386-411) (computed: a basic-skill, XL 5, AC 5, abon 0, luck 0 fighter has total 11: hits on d20 rolls 1 to 10, a 50% chance) | total can be any integer | none | uhitm.c:376-378, 421 |
 | Luck to-hit | Luck term | `sgn(luck) * ((abs(luck) + 2) / 3)` (computed: luck 1 gives 1, 4 gives 2, 7 gives 3, -4 gives -2) | -3 to +3 for luck -7 to +7 | integer division | uhitm.c:377 |
 | Monk bonus | Unarmoured, unarmed monk to-hit | `(XL / 3) + 2` | +2 at XL 1 to 2, +3 at XL 3 to 5 (computed) | only with no armour and no weapon or shield | uhitm.c:401 |
 | Encumbrance to-hit | To-hit lost when carrying too much | `-(2 * level - 1)` for encumbrance level 1 to 5 | -1 to -9 | level capped at 5 | uhitm.c:408-409; hack.c:4372-4382 |
@@ -74,7 +74,7 @@ Values quoted from lines are the donor's own; "computed" means I worked the form
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the practice counter (one point per qualifying hit, never reset), the level-squared threshold, the slot budget and the player-driven advance, the to-hit ladder and the damage ladder, the encumbrance term and the luck term. It omits two-weapon, riding, the bare-handed and martial formulas, role caps, the monk bonus, the starting counter from skill_init (the donor starts a skill's counter at the previous level's threshold), the speedy wizard advance, the other practice sources (kicks, running into things, spells), the attribute terms (`abon` and `dbon` are inputs), the d20 and damage dice (inputs), and the per-experience-level slot gain (the sketch takes slots as input). It omits no step of the order the donor uses for a hit: practice happens only after a hit that did more than one point of base damage, and the advance is never automatic.
+simplified: the sketch keeps the practice counter (one point per qualifying hit, never reset), the level-squared threshold, the slot budget and the player-driven advance, the to-hit ladder and the damage ladder, the encumbrance term and the luck term. It omits the stun/flee/sleep, can't-move, trap and elf-vs-orc terms of the to-hit total, slot loss on level-down, two-weapon, riding, the bare-handed and martial formulas, role caps, the monk bonus, the starting counter from skill_init (the donor starts a skill's counter at the previous level's threshold), the speedy wizard advance, the other practice sources (kicks, running into things, spells), the attribute terms (`abon` and `dbon` are inputs), the d20 and damage dice (inputs), and the per-experience-level slot gain (the sketch takes slots as input). It omits no step of the order the donor uses for a hit: practice happens only after a hit that did more than one point of base damage, and the advance is never automatic.
 
 ```ts
 // Licence: NGPL (donor, NetHack General Public License; GPL-style copyleft). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -83,7 +83,7 @@ export {};
 
 // Skill levels: 0 restricted, 1 unskilled, 2 basic, 3 skilled, 4 expert (martial skills also reach 5 and 6).
 const SKILL_LIMIT = 60;            // total advances per character
-const START_SLOTS = 2;
+const START_SLOTS = 0;             // a normal start has 0 slots; only the pauper option starts with 2
 
 interface Skill {
   level: number;                   // current level
@@ -164,7 +164,7 @@ function damageSkillTerm(s: Skill): number {
 
 Best transferable idea: a per-skill practice counter that never resets and is gated by level squared, with the spend of a separate budget (slots) and only a small to-hit and damage ladder per level, so the fight writes one number per hit and the player chooses when to raise it.
 Decision (proposed): adapt — keep the counter, the level-squared gate, the player-chosen advance, and the -4..+3 to-hit and -2..+2 damage ladders; replace the slot budget with Frankendom's own XP ledger (one ledger), and fix the bare-handed and to-hit display so every term is visible on the phone.
-Acceptance: a server test with a fixed seed: a fighter with 2 slots gets 20 qualifying hits (base damage above 1), enhances unskilled to basic and keeps 1 slot; a hit with base damage 1 adds no practice; on the same target the total to-hit rises by 0 at basic and by +3 at expert.
+Acceptance: a server test with a fixed seed: a fighter given 2 slots in the test setup (a normal start has 0; slots come from experience levels) gets 20 qualifying hits (base damage above 1), enhances unskilled to basic and keeps 1 slot; a hit with base damage 1 adds no practice; on the same target the total to-hit rises by 0 at basic and by +3 at expert.
 
 ## 5. Lands in
 
@@ -184,3 +184,11 @@ Acceptance: a server test with a fixed seed: a fighter with 2 slots gets 20 qual
 - Magic and mental stats: the donor gives spells their own skill counters by spell level (spell.c:1599). The formula for failure and power is not read here; Frankendom's magic (dragons, necromancy, witchcraft, mind, persuasion) needs its own pass.
 - Luck: the donor uses a luck term in to-hit (uhitm.c:377). Luck timeout and the source of luck were not read.
 - Role caps (skill_init) and the attribute tables were not read; the table above lists the caps as not read where they apply.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Starting weapon slots were wrong: u_init.c:884 is inside `pauper_reinit()` and applies only to the pauper option (compensation for lost skills); normal characters start with 0 slots. The Mechanism, the 'Slot income' row and the Acceptance rested on this. Confirmed.
+- Training also fires for thrown or fired weapons (uhitm.c:1496), not only melee. Confirmed.
+- To-hit total omits stun/flee/sleep +2, can't-move +4, trap, race terms and the Monk armour penalty (uhitm.c:386-411). Confirmed by the checker's cited range; added as a short clause.
+- Missed: slot loss on level-down and the untrain path (`lose_weapon_skill`, weapon.c:1454-1470, 1500); `u.weapon_slots` lifecycle (`add_weapon_skill`, 1436-1450). Confirmed in the grep of `weapon_slots`.
+Fixed 2026-10-12: Mechanism (training and slots bullets), the slot-cost and Slot income rows, the To-hit total row, the Acceptance (2 slots now stated as test setup); sketch constant START_SLOTS set to 0 with a comment (work/nethack-weapon-skill.ts updated).

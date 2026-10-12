@@ -20,14 +20,14 @@ Order of steps for one sound start, S_StartSoundAtVolume (254-395):
 - (e) S_getChannel (352). (i) Take the first free slot, or reuse a slot with the same origin (838-845). (ii) If none is free, take the first slot whose table priority is greater than or equal to the new sound's table priority and stop it (850-865). (iii) If none qualifies, return -1 and the new sound is dropped (850-859). Lower number means more important.
 - (f) I_StartSound calls addsfx in the mixer. addsfx (264-381) cuts an existing voice of a singleton id first (285-290: chainsaw sounds, `stnmov`, `pistol`). Otherwise it takes the first free of 8 mixer channels, or else the channel with the oldest start tick (308-323). The priority argument is discarded by I_StartSound (480).
 
-Per main-loop pass: `d_main.c` 392 calls S_UpdateSounds with the player's object. For each live game voice, if I_SoundIsPlaying is true the voice's volume and separation are recomputed (560) and it is stopped if no longer audible; if it is false the game-side voice is freed (602). S_ChangeMusic (649-686): if the same track is already playing it returns (665-668); otherwise it stops the old track and plays the new one (668-685). There is no fade. Map music is chosen by episode and map (236).
+Per main-loop pass: `d_main.c` 392 calls S_UpdateSounds with the player's object. For each live game voice, if I_SoundIsPlaying is true the voice's volume and separation are recomputed (560) and it is stopped if no longer audible; if it is false the game-side voice is freed (604). S_ChangeMusic (649-686): if the same track is already playing it returns (665-668); otherwise it stops the old track and plays the new one (668-685). There is no fade. Map music is chosen by episode and map (236).
 
 ## 2. Key functions
 
 - `S_StartSoundAtVolume`: `/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/s_sound.c` 254-395. Order: priority from link (283-298), distance and separation (304-319), pitch jitter (326-342), stop by origin (349), getChannel (352), I_StartSound (end of function).
 - `S_getChannel`: `/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/s_sound.c` 827-875. Free slot or same origin (838-845), eviction by table priority (850-865), claim the slot (871-872).
 - `S_AdjustSoundParams`: `/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/s_sound.c` 752-818. Clip test (773-774), stereo (793), linear volume (796-817).
-- `S_UpdateSounds`: `/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/s_sound.c` 519-613. Per-voice check (560), free on stopped (602).
+- `S_UpdateSounds`: `/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/s_sound.c` 519-613. Per-voice check (560), free on stopped (604).
 - `addsfx`: `/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/i_sound.c` 264-381. Singleton cut (285-290), oldest steal (308-323), per-side volume (352-361).
 - `I_SoundIsPlaying`: `/mnt/frankendom-donors/id-Software-DOOM/linuxdoom-1.10/i_sound.c` 517-520. Returns `gametic < handle`.
 
@@ -165,3 +165,13 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 Reuse tag: rewrite-from-idea (licence unclear: clean-room only)
 Brief rule served: rule 1 (one engine, two clients); rule 8 (named target and parity row)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN
+- Errors: none found (one trivial line-number slip, see below).
+- Error (trivial): the free-on-stopped line was cited as 602 (the comment); the call is at 604.
+- Missed: S_getChannel/S_StopChannel also scans other channels sharing the sfxinfo to adjust usefulness (s_sound.c 720-735); sounds.c itemup/posit1 have singularity=true but it is never read (consistent with the note). Nothing important missed.
+- Verified OK: s_sound.c, i_sound.c, doomdef.h SNDSERV, m_misc snd_channels, sounds.c priorities, singularity declared, licence header and README.
+
+Fixed 2026-10-12: free-on-stopped citation corrected to 604.

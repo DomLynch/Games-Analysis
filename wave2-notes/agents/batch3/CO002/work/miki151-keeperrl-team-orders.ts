@@ -56,10 +56,12 @@ class Team {
   }
 }
 
-// Follow rule for one creature. A 'hold' team waits; the leader never follows.
+// Follow rule for one creature. A 'hold' team makes everyone wait, leader included (donor: the else sits on the STAND_GROUND test).
+// Without hold the leader never follows (no move).
 function followStep(team: Team | undefined, me: Member, distToLeader: number): Step {
-  if (!team || team.leader.id === me.id) return 'none';
+  if (!team) return 'none';
   if (team.hasOrder('hold')) return 'wait';
+  if (team.leader.id === me.id) return 'none';
   return distToLeader > 1 ? 'follow' : 'wait';
 }
 

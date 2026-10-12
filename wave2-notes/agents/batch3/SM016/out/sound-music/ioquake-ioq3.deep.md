@@ -13,9 +13,9 @@ Acceptance: a client unit test on `ChannelPool`: ten goblin hit cues in one seco
 - Channel pool: a fixed array of `MAX_CHANNELS` (96, `snd_local.h:191`), with a free list (`S_ChannelFree` 183, `S_ChannelMalloc` 189-198). `S_ChannelMalloc` returns NULL when the free list is empty; it does not wait or prioritise.
 - Start path, in order (`S_Base_StartSoundEx`, 527):
   1. Refuse if the sound system is off (534) or the handle is out of range (542). Load the sample if it is not in memory (549-551).
-  2. Per-source cap: `allowed` = 4, or 8 when the source is the listener (562-565). Count the channels already playing the same sound from the same entity (574-584).
+  2. Per-source cap: `allowed` = 4, or 8 when the source is the listener (562-565). The test is `inplay > allowed` (586), so the donor really lets 5 copies play per source (9 for the listener). Count the channels already playing the same sound from the same entity (574-584).
   3. Double-start guard: if one of those channels started less than 50 ms ago (`time - ch->allocTime < 50`, 576), the whole call returns (580). This is checked before the cap.
-  4. If the count is over the cap, return (586-587). Only now stamp `sfx->lastTimeUsed = time` (590).
+  4. If the count is above `allowed`, return (586-587; off by one, see D4). Only now stamp `sfx->lastTimeUsed = time` (590).
   5. Take a free channel (592). If none, steal, in three stages: (a) the oldest channel of the same entity, not the listener's and not `CHAN_ANNOUNCER` (596-603); (b) the oldest channel of any entity with the same two exclusions (604-611); (c) only if channel 0 belongs to the listener (614), the oldest of all channels (613-621). If still nothing, drop the sound (622-625).
   6. Fill the channel: origin (fixed or entity), master 127, entchannel, `fullVolume` when the sound is heard through the entity (632-647).
 - Spatialize (`S_SpatializeOrigin`, 424): distance is measured from the listener, minus a full-volume radius (435-440), times `SOUND_ATTENUATE` (441). The source vector is rotated into listener axes (443) and the side term is `dot = -vec[1]` (445). Right gain is `0.5 * (1 + dot)` (454) and left gain `0.5 * (1 - dot)` (455), both clamped at 0. Each volume is `master * (1 - dist) * gain` clamped at 0 (465-473). Mono output skips the pan (447-451).
@@ -40,7 +40,7 @@ Acceptance: a client unit test on `ChannelPool`: ten goblin hit cues in one seco
 | Reusable algorithm | Game-specific constants |
 |---|---|
 | Fixed channel pool with a free list | `MAX_CHANNELS` 96 (`snd_local.h:191`) |
-| Per-source cap on copies of one sound | 4 per source, 8 for the listener (`snd_dma.c:562-565`) |
+| Per-source cap on copies of one sound | `allowed` 4 per source, 8 for the listener (`snd_dma.c:562-565`); because the test is `inplay > allowed` (586) the real maximum is 5 and 9 |
 | Double-start guard | 50 ms (`snd_dma.c:576`) |
 | Steal the oldest of the same source first, never the listener's or the announcer's | Stage order (`snd_dma.c:596-621`) |
 | Attenuation after a full-volume radius | `SOUND_FULLVOLUME` 80 (`snd_dma.c:50`), `SOUND_ATTENUATE` 0.0008 (`:52`) |
@@ -51,7 +51,7 @@ Acceptance: a client unit test on `ChannelPool`: ten goblin hit cues in one seco
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor's start order (double-start guard, then cap, then free channel, then steal in the donor's order, then refuse), the per-source cap of 4 (the caller passes 8 for the listener), the attenuation and the linear gains, and the per-frame loop merge with the clamp of 255. It changes the steal: the sketch never takes the listener's or the announcer's channel, and it refuses the sound when nothing else can be taken, where the donor's last fallback (`snd_dma.c:613-621`) can take the listener's channel when channel 0 is the listener's. It omits the sample loading, the stamp of `lastTimeUsed`, the `fullVolume` path, the doppler scale, the entity-origin lookup (the caller passes the origin), the mono branch and the donor's separate per-sound merge bookkeeping. The side-axis sign is this sketch's own convention (the donor uses `-vec[1]` in listener axes, `snd_dma.c:445`, which was not re-derived).
+simplified: the sketch keeps the donor's start order (double-start guard, then cap, then free channel, then steal in the donor's order, then refuse), the per-source cap of 4 with the off-by-one fixed (`inPlay >= cap`; the caller passes 8 for the listener), the attenuation and the linear gains, and the per-frame loop merge (only `kill` loops need re-declaring; persistent loops stay) with the clamp of 255. It changes the steal: the sketch never takes the listener's or the announcer's channel, and it refuses the sound when nothing else can be taken, where the donor's last fallback (`snd_dma.c:613-621`) can take the listener's channel when channel 0 is the listener's. It omits the sample loading, the stamp of `lastTimeUsed`, the `fullVolume` path, the doppler scale, the entity-origin lookup (the caller passes the origin), the mono branch and the donor's separate per-sound merge bookkeeping. The side-axis sign is this sketch's own convention (the donor uses `-vec[1]` in listener axes, `snd_dma.c:445`, which was not re-derived).
 
 ```ts
 // Donor licence: GPL-2.0-or-later (per snd_dma.c header: "either version 2 of the License, or (at your option) any later version"). Clean-room sketch of the shape of the mechanism, not a translation of the donor lines.
@@ -74,7 +74,8 @@ export class ChannelPool {
   }
 
   // Returns the channel index, or -1 when the sound is refused.
-  // capPerSource: how many copies of one sound one source may have in play (donor: 4, or 8 for the listener).
+  // capPerSource: the most copies of one sound one source may have in play. Fix: the donor tests inplay > allowed (snd_dma.c:586),
+  // so with allowed 4 it lets a 5th copy start; this sketch uses >= so the cap is a true cap (pass 4, or 8 for the listener).
   start(sound: string, entity: number, now: number, capPerSource: number, announcer = false): number {
     let inPlay = 0;
     for (const c of this.ch) {
@@ -83,7 +84,7 @@ export class ChannelPool {
         inPlay++;
       }
     }
-    if (inPlay > capPerSource) return -1;
+    if (inPlay >= capPerSource) return -1;
 
     let idx = this.ch.findIndex((c) => c.sound === null);
     if (idx < 0) {
@@ -151,7 +152,7 @@ export interface Loop {
 export function mergeLoops(loops: Loop[], l: Listener, frame: number): Map<string, { left: number; right: number }> {
   const out = new Map<string, { left: number; right: number }>();
   for (const loop of loops) {
-    if (loop.frame !== frame) continue;
+    if (loop.kill && loop.frame !== frame) continue; // persistent loops (kill = false) stay live without re-declaring
     const master = loop.kill ? 127 : 90;
     const g = spatialize(loop.origin, l, master);
     const cur = out.get(loop.sound) ?? { left: 0, right: 0 };
@@ -181,6 +182,8 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 
 - Copyleft (GPL-2.0-or-later): clean-room only. The sketch has no donor line.
 - Defect D1, listener fallback: the last steal stage (`snd_dma.c:613-621`) takes the oldest channel of any source, including the listener's, but is gated only on channel 0 belonging to the listener (614). So the player's own hit cue can be stolen by a remote sound. Fix: refuse instead of stealing the player's own channel (the sketch does).
+- Defect D4, cap off by one: `if (inplay>allowed) return;` (`snd_dma.c:586`) lets the (allowed+1)th copy start. Fix: `>=`, as in the sketch, so the Acceptance (never more than 4) holds. Keep the idea of a per-source cap.
+- Latent quirk: `S_FreeOldestSound` (1507-1535) starts with `used = 0`, so when no in-memory sound is older than now it frees sfx index 0. Not relevant to Frankendom (no sample cache); noted.
 - Defect D2, linear sum in loop merge: loops of one sound add linearly and clamp at 255 (`snd_dma.c:912`, 922-927), so a crowd of one sound saturates and loses its dynamic range. Fix (adapt): sum powers and take the square root, or take the maximum, then clamp. Not in the sketch.
 - Defect D3, linear pan: the gains are linear in the side term (454-455), so the centre is loud and the sides are quieter by a fixed rule. The donor shows no listening test. Fix (adapt): equal-power gains. Not in the sketch.
 - Frankendom rule: channels, caps and loop merge are client-only. The engine decides which cues exist; no channel count or steal decides a hit or a kill. With MAX_ATTACKERS = 3 the cap of 4 can only bind if one source has more than four copies of one sound in play; how often that happens in play was not measured.
@@ -190,3 +193,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 Brief rule served: 1 (one engine; clients choose the sound); rules 7-9 n/a
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Per-source cap off by one, and note/sketch/Acceptance disagreed: snd_dma.c:586 is 'if (inplay>allowed) return', so the donor allows 5 copies per source (9 for the listener); the sketch copied '>' (so allowed 5) while the Acceptance said never more than 4 (confirmed; the sketch now uses '>=', table and start path corrected, D4 added).
+- Sketch mergeLoops dropped persistent loops (kill=false, AddRealLoopingSound) that stay live without re-declaration, contrary to the note's own Mechanism (confirmed against S_Base_ClearLoopingSounds 750-765, which only clears kill loops; sketch fixed).
+- Missed, confirmed: S_FreeOldestSound frees sfx index 0 when nothing is older (used initialised to 0, :1513/1523); added as a latent quirk.
+- All other values verified (MAX_CHANNELS, 50 ms guard, steal stages and D1, spatialize constants, loop masters, clamp, background track).
+Fixed 2026-10-12: cap text and table, sketch (work/ioquake-ioq3-channels.ts) cap test and mergeLoops, D4 and latent quirk added.

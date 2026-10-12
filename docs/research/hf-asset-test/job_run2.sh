@@ -11,5 +11,8 @@ mkdir -p /w/job/images; cp -r /w/repo/job/* /w/job/; cp /w/repo/results/images/*
 git clone -q --depth 1 https://github.com/microsoft/TRELLIS.2 /w/trellis2
 cd /w/job; python preflight.py 2>&1 | tee /w_pre.txt; PRE=${PIPESTATUS[0]}; upl /w_pre.txt preflight_$JOB_TAG.txt
 [ "$PRE" = 0 ] || { echo PREFLIGHT_ABORT; tail_up; exit 1; }; echo "PREFLIGHT_DONE_AT $SECONDS"
+PD=$(cat /w_predl.pid 2>/dev/null); [ -n "$PD" ] && while kill -0 $PD 2>/dev/null; do sleep 1; done; cat /w_predl.log; echo "PREDL_WAITED_TO $SECONDS"
+python /w/repo/job/cache_sync.py restore
+( until ls /w/job/out/*.metrics.json >/dev/null 2>&1; do sleep 5; done; python /w/repo/job/cache_sync.py save ) & 
 python trellis_batch.py & PY=$!; wait $PY; RC=$?
 echo "ALL_DONE_AT $SECONDS rc=$RC"; tail_up

@@ -19,9 +19,9 @@ Acceptance: a client test with a fake clock: entering a rain zone fades the rain
 - Gate: the one ambient `AudioSource` is shared by the ordinary one-shots (A:217-225), the spatial one-shots (A:228-239), and the water sounds (A:176, A:182). A new one-shot is skipped while that source reports `isPlaying` (A:219, A:230). It is a skip, not a queue.
 - Castle: one-shots are dropped inside castle blocks when `doNotPlayInCastle` is set (A:290-298). The loop is not affected by that check.
 - Placement: a one-shot lands `Random.onUnitSphere * radius` from the player, radius = sqrt of a uniform value between 10^2 and 20^2 (A:246-251, A:249). The horizon version uses a bearing and a 3000-unit max distance (A:253-259, A:258). The spatial max distance is min distance x 8 (A:236). Spread is 45 for the Dungeon preset (the only interior preset) and 15 for Storm and SunnyDay (A:435, A:454, A:470, A:476).
-- Storm lightning: a distant strike runs 20 to 29 flashes (A:353-354, exclusive upper bound), then a 1.7 s wait, then the rolling thunder sound on the horizon (A:355, A:393). Each flash sets the light intensity to 2 and then back to its start value (A:374, A:380). This is a stinger-style pairing (light first, sound later), though it is not a music stinger.
+- Storm lightning (optional, mostly dormant): the lightning coroutine runs only when `PlayLightningEffect` is set (A:33, 273-276); the class doc says lightning sky effects are deprecated (A:21), and the field defaults to false (inspector value not read). The default storm path is just a one-shot on the horizon (A:278-286). When enabled, a distant strike runs 20 to 29 flashes (A:353-354, exclusive upper bound), with a 0.6 random frame-skip between flashes (A:329, 370), then a 1.7 s wait, then the rolling thunder sound on the horizon (A:355, A:393). Each flash sets the light intensity to 2 and then back to its start value (A:374, A:380). This is a stinger-style pairing (light first, sound later), though it is not a music stinger.
 - Cemetery: a separate countdown with its own range, 1 to 80 s (A:28-29, A:406-411), plays a distant howl or a creepy bird call around the player (A:45-50, A:308-320). It goes through the same shared gate (A:246-251 and A:228-239).
-- Water: a 50/100 chance check every `classicUpdateInterval` (A:165-186, value not read: `GameManager.classicUpdateInterval = 0.0625f` is at GameManager.cs:42, read by grep only).
+- Water: every `classicUpdateInterval` (A:165-186; `GameManager.classicUpdateInterval = 0.0625f` at GameManager.cs:42, read by grep only) the gentle water sound plays when `DFRandom.rand() < 50` (A:170) and the bubbles when submerged and `DFRandom.rand() < 100` (A:180). `DFRandom.rand()` returns 0 to 32767 (API/DFRandom.cs:52-56), so the chance is about 0.15% and 0.3% per 0.0625 s check, not 50% and 100%.
 
 Music (`SongManager` and `DaggerfallSongPlayer`) is a related but separate mechanism:
 - The context is re-checked every frame (S:198-209). A new song is picked only when the playlist changes, the game day changes or the location changes (S:222-226). If the song has stopped, the same song is restarted (S:229-230). The context holds environment, weather, time, game day, location and the arrested flag (S:62-80, S:69).
@@ -29,7 +29,7 @@ Music (`SongManager` and `DaggerfallSongPlayer`) is a related but separate mecha
 - Starting a song first calls `Stop()` (P:153-154). There is no crossfade, and no second layer: one `MidiFileSequencer` (P:51). Synth polyphony is 100 voices (P:32). Output is `sampleBuffer * Gain` (P:401, Gain 5.0 at P:44).
 
 Sound cues in combat (`EnemySounds`, the enemy-side cues):
-- Attract: the countdown runs always, but the sound fires only if the player is inside `AttractRadius` of 16 (E:26, E:94-98). The wait is an integer from 3 to 9 s (E:27-28, E:199).
+- Attract: the countdown runs always, but the sound fires only if the player is inside `AttractRadius` of 16 (E:26, E:94-98). The wait is an integer from 3 to 9 s (E:27-28, E:199). The clip is the move sound 20% of the time and the bark 80% (`Random.value > 0.8f`, E:213).
 - Occlusion: from the enemy toward the player, one raycast (E:236-238). If the hit is static geometry or a door, the volume scale is 0.25 (E:244-249). A hit on the player is ignored (E:241-242).
 - Hit: with a weapon, `Hit1` plus 0 to 4 (E:123); without, `Hit1` plus 2 or 3 (E:127); volume scale 1.1 (E:130).
 - Combat voice: a pitch jitter of 0 to 0.3 is added for one call, then restored (E:172-175).
@@ -40,7 +40,7 @@ Sound cues in combat (`EnemySounds`, the enemy-side cues):
 - `AmbientEffectsPlayer.PlayEffects`: `/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/AmbientEffectsPlayer.cs` 261-306. Castle check (290-298), index (268), storm branch (271-287), general branch with placement (300-304).
 - Gate: `/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/AmbientEffectsPlayer.cs` 217-239 (`AmbientPlayOneShot` 217-225 and `SpatializedPlayOneShot` 228-239).
 - `WeatherManager.SetAmbientEffects`: `/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Game/WeatherManager.cs` 354-384 (priority order).
-- Load wait: `/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Internal/AudioSourceExtensionMethods.cs` 23-51 (`PlayOneShotWhenReady` and `WhenClipReadyCoroutine`; gives up after 0.150 s, line 9).
+- Load wait: `/mnt/frankendom-donors/daggerfall-unity/Assets/Scripts/Internal/AudioSourceExtensionMethods.cs` 23-51 (`PlayOneShotWhenReady` and `WhenClipReadyCoroutine`; one-shots give up after 0.150 s, line 9; loops wait up to 2.0 s, `audioLoopMaxDelay`, line 10, used at line 14).
 
 ## 3. Numbers vs mechanism
 
@@ -50,7 +50,7 @@ Sound cues in combat (`EnemySounds`, the enemy-side cues):
 | Shared single slot: skip a one-shot while the slot is busy | Slot is shared by one-shots, spatial one-shots and water (theirs, A:217-239) |
 | Ring placement around the listener, radius between 10 and 20 units | sqrt of a uniform between 10^2 and 20^2 (theirs, A:249); max distance = 8 x min distance (theirs, A:236) |
 | Preset priority: weather before time of day | Rain and storm before day and night (theirs, W:360-383) |
-| Stinger pairing: a visual then a delayed sound | 20 to 29 flashes, then 1.7 s (theirs, A:353-355) |
+| Stinger pairing: a visual then a delayed sound (opt-in path, deprecated per class doc) | 20 to 29 flashes, then 1.7 s (theirs, A:353-355) |
 | Hard cut on preset change | None (the donor does not fade; this is the defect we fix) |
 
 ## 4. TypeScript sketch
@@ -147,11 +147,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - No crossfade in the donor: `Update` stops and clears the loop at once on a preset change (A:122-127). Frankendom needs the ramp (sketch, `fadeSeconds`). Pick the fade time per zone, not in code.
 - Presets are chosen by global weather and time (W:360-383), not by zone. Frankendom's ambience must come from the zone the player is in (zones as data). The donor's priority rule (weather before time) can be kept, with the zone supplying the bed.
 - The busy gate reads `isPlaying` (A:219, A:230), but `PlayOneShotWhenReady` plays only after the clip has loaded (AudioSourceExtensionMethods 23-31, 39-51). Two calls before playback can both pass the gate. Fix: the busy flag in the sketch.
-- Clip load give-up: a clip not loaded within 0.150 s is dropped silently (AudioSourceExtensionMethods 9, 46-47). On a phone this will drop sounds. Fix: preload zone clips on zone entry, or log drops.
+- Clip load give-up: a one-shot clip not loaded within 0.150 s is dropped silently (AudioSourceExtensionMethods 9, 46-47); loops get a longer 2.0 s allowance (10, 14). On a phone this will drop sounds. Fix: preload zone clips on zone entry, or log drops.
 - Horizon bearing: `Quaternion.AngleAxis(Mathf.Sqrt(Random.Range(0f, sqr(10000f))), Vector3.up)` (A:257) is not a uniform angle: sqrt of a uniform value up to 10000^2 has a density that rises with the value, so bearings near the top of the range are a bit more likely. My hand arithmetic puts the skew at single-digit percent after the wrap; not run. Fix: `Random.Range(0, 360)`. Keep the idea (a horizon sound far away), fix the draw.
 - One shared slot for ambience, water and cemetery sounds means a water bubble can block a bird call. Frankendom should decide whether ambience gets its own slot per zone.
 - Music: the donor has no layering (one sequencer, P:51) and no crossfade (P:153-154). Layering and stingers would be new design, not taken from the donor. The day-seeded song pick (S:370) is deterministic per game day, so the same song plays all day in a place. This is a single-player donor with no multiplayer clock; it only helps Frankendom if zones share one clock.
-- Lightning stinger timing (flash count, then 1.7 s, A:353-355) is worth testing as data for a boss or wave cue, but it is light-plus-sound and needs a client-side light.
+- Lightning stinger timing (flash count, then 1.7 s, A:353-355) is worth testing as data for a boss or wave cue, but it is light-plus-sound and needs a client-side light. In the donor it is an opt-in path (`PlayLightningEffect`, deprecated per the class doc), so the donor's live storm behaviour is only the horizon one-shot.
 - Not read: `Questing/Actions/PlaySong.cs` (the quest stinger path), the MIDI loader and synth (`DaggerfallSongPlayer.cs` 216-335), and the playlist tables (`SongManager.cs` 700-1034).
 
 Best transferable idea: a zone-level ambience bed with one loop and one shared one-shot slot that skips rather than queues, drawing its wait from a random window.
@@ -161,3 +161,12 @@ adapt-permitted (MIT)
 
 ## Brief rule served
 Zones as data (the preset, loop id and one-shot list are zone data); client-only; no server rule touched. Parity row 12 is the nearest row, flagged above as a gap.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Water sounds were described as a '50/100 chance check'; the code is `DFRandom.rand() < 50` and `< 100` (AmbientEffectsPlayer.cs:170, 180) and `rand()` returns 0..32767, so about 0.15% and 0.3% per 0.0625 s check. Confirmed.
+- The lightning stinger was described as active storm behaviour, but it runs only when `PlayLightningEffect` is set; the class doc calls lightning sky effects deprecated (A:21, 273-286). Confirmed (field default false; inspector value not read).
+- Missed: loops use a longer load give-up (audioLoopMaxDelay 2.0 s) than one-shots (0.150 s) (AudioSourceExtensionMethods.cs:10, 14). Confirmed.
+- Missed: attract sound is an 80/20 bark vs move split (EnemySounds.cs:213). Confirmed.
+- Missed: the lightning coroutine has a 0.6 random frame-skip (A:329, 370). Confirmed.
+Fixed 2026-10-12: Water and Storm lightning bullets, Attract bullet, Key functions load-wait line, the clip give-up gap, the lightning gap and table row. Sketch unchanged (it omits water and lightning).

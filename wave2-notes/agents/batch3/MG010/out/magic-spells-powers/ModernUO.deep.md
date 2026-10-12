@@ -10,7 +10,7 @@ Access to a spell is a skill window; the window is different for a spellbook and
 
 - Skill window (`MagerySpell.cs` 30-43): `min = _requiredSkill[ Scroll == null ? Circle + 2 : Circle ]`, `max = min + 40`. Pre-ML table, index 0 to 9: -50, -30, 0, 10, 20, 30, 40, 50, 60, 70 (line 17). So a spellbook casts from index circle+2, and a scroll from index circle, two table steps lower.
 - Ramp (`SkillCheck.cs` 60-70, read): value below min fails; value at or above max succeeds; between them the chance is `(value - min) / (max - min)`, then the location check runs (not read).
-- Mana (`MagerySpell.cs` 8, 45; `Spell.cs` 633-652): table by circle `4, 6, 9, 11, 14, 20, 40, 50`. A wand costs 0. Lower mana cost (AOS attribute) is capped at 40 percent: `mana * (1 - min(lmc, 40)/100)`, truncated.
+- Mana (`MagerySpell.cs` 8, 45; `Spell.cs` 633-652): table by circle `4, 6, 9, 11, 14, 20, 40, 50`. A wand costs 0. The scalar starts at the Mind Rot scalar (`MindRotSpell.GetMindRotScalar`, Spell.cs 635-640; 1.0 when the caster has no Mind Rot), then lower mana cost (AOS attribute, capped at 40 percent) is subtracted: `mana * (mindRot - min(lmc, 40)/100)`, truncated (Spell.cs 649-651).
 - Reagents (`Spell.cs` 260-263): free if the cast is from a scroll, if the caster is not a player, if the lower-regeneration-cost roll passes, or in a duel. Otherwise `Caster.Backpack.ConsumeTotal(Info.Reagents, Info.Amounts) == -1`. The `SpellInfo` constructor read sets each reagent amount to 1 (`SpellInfo.cs` 85-90); no other constructor was read. `ConsumeTotal` (`Container.cs` 751-767) validates every slot first and removes only if all are present; it returns the index of the first short slot.
 - Arcane gems (`MagerySpell.cs` 27-28): a magery spell may take `1 + circle` gem charges instead of reagents (1 on the SE era).
 - Cast sequence (`Spell.cs` 736-770): (1) scaled mana; (2) fizzle checks; (3) reagent consume (line 750); (4) mana check (line 754); (5) frozen, calmed, skill check; (6) mana deducted (line 770), scroll or wand charge consumed.
@@ -48,7 +48,7 @@ Access to a spell is a skill window; the window is different for a spellbook and
 | Worked example, book, Third circle, skill 50 | window 20 to 60 (index 4), chance (50 - 20)/40 = 75 percent | Playable: one number decides chance. |
 | Worked example, scroll, Third circle, skill 50 | window 0 to 40 (index 2), 50 >= 40 so always succeeds | A scroll is a sure cast at that skill. |
 | Mana table (MagerySpell 8) | 4, 6, 9, 11, 14, 20, 40, 50 by circle | Eight steps; the top two cost 40 and 50 per cast. |
-| Lower mana cost | capped at 40 percent (Spell 644-649) | Caps the discount, so a full-discount build still pays 60 percent. |
+| Lower mana cost | capped at 40 percent (Spell 644-649); scalar starts at the Mind Rot scalar (635-640), so a Mind Rot debuff changes cost | Caps the discount, so a full-discount build still pays 60 percent (when no Mind Rot). |
 | Resist | (MR/5 or MR - (skill-20)/5 - 5(1+circle)) / 2 percent (MagerySpell 91-96) | Example in section 1: 39.5 percent at MR 100 vs skill 100, First circle. |
 | Gem charges | 1 + circle (SE: 1) (MagerySpell 28) | A charge bank can replace reagents. |
 | Reagent vendor price | 3 coin for garlic, ginseng, spiders silk, sulfurous ash; 5 for black pearl and bloodmoss (stock 20) | Heal (First, reagents garlic, ginseng, spiders silk) costs 9 coin per cast at vendor base price (Heal.cs 15-17). Magic Arrow (First, sulfurous ash) costs 3 coin (MagicArrow.cs 13). |
@@ -56,7 +56,7 @@ Access to a spell is a skill window; the window is different for a spellbook and
 
 ## 4. TypeScript sketch
 
-simplified: keeps the donor's order: the scroll and book index offset, the skill window ramp, the mana table with the capped lower mana cost, the resist term, the all-or-nothing reagent check, the spellbook bit with its type and duplicate checks, and the vendor price with the town scalar. Changes: (1) the fixed cast order is shown as a function: mana check before reagents (the donor consumes reagents first, so reagents are lost on a mana shortfall, see section 6); (2) the wrong-type scroll add returns a reason instead of silently doing nothing; (3) the town scalar is an explicit branch, not `100 + tax ?? 0`; (4) the gem-charge fallback, the regeneration-cost roll, the duel exemption, cast delay, fizzle and the pre-ML/ML choice are not modelled (the table is the pre-ML one); (5) the location-based anti-macro check is not modelled; the sketch returns the chance. The sketch was typechecked on the VPS (`tsc --noEmit --strict --target es2020`, exit 0).
+simplified: keeps the donor's order: the scroll and book index offset, the skill window ramp, the mana table with the capped lower mana cost, the resist term, the all-or-nothing reagent check, the spellbook bit with its type and duplicate checks, and the vendor price with the town scalar. Changes: (0) `scaledMana` takes the Mind Rot scalar as an optional argument (default 1.0), as the donor does; (1) the fixed cast order is shown as a function: mana check before reagents (the donor consumes reagents first, so reagents are lost on a mana shortfall, see section 6); (2) the wrong-type scroll add returns a reason instead of silently doing nothing; (3) the town scalar is an explicit branch, not `100 + tax ?? 0`; (4) the gem-charge fallback, the regeneration-cost roll, the duel exemption, cast delay, fizzle and the pre-ML/ML choice are not modelled (the table is the pre-ML one); (5) the location-based anti-macro check is not modelled; the sketch returns the chance. The sketch was typechecked on the VPS (`tsc --noEmit --strict --target es2020`, exit 0).
 
 ```ts
 // Licence: GPL-3.0 (donor, LICENSE line 3). CLEAN-ROOM: written from the described mechanism only; no donor lines copied.
@@ -162,3 +162,12 @@ Acceptance: A Third-circle special cast from a book at skill 50 succeeds on a se
 - Cast delay constants (`CastDelaySecondsPerTick`, `CastDelayMinimum`) and the mana pool formula were not read, so the seconds per cast and the pool size are unknown.
 - The location check inside `CheckSkill(from, skill, loc, chance)` (anti-macro, `SkillCheck.cs` 72-74) was not read. Frankendom should not copy a location-based roll without deciding its anti-cheat role.
 - Reagents are consumed at line 750, before the `CheckFizzle()` branch at line 768, so a fizzle after the reagent step loses them. Whether that is intended was not checked. Decide whether a fizzle refunds.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: MINOR
+- Error: ScaleMana was described as mana*(1-min(lmc,40)/100) only. Real Spell.cs 633-652 starts the scalar from `MindRotSpell.GetMindRotScalar` (635-640) and then subtracts lmc/100 (649), so Mind Rot changes cost; the sketch `scaledMana` omitted it. Confirmed in code.
+- Missed: the Mind Rot cost scalar (Spell.cs 635-640). Added to section 1, section 3 and the sketch.
+- Verified OK: MagerySpell lines, resist example 39.5, scroll offsets, CheckSequence order, ConsumeTotal, AddToSpellbookEntry, GenericBuy/BaseVendor, SB prices, GPL-3.0.
+
+Fixed 2026-10-12: section 1 and 3 now include the Mind Rot scalar; sketch `scaledMana` gets an optional `mindRotScalar` (default 1.0); work/modernuo-spell-access.ts updated to match. Typecheck below.

@@ -7,7 +7,7 @@ Checked: This cell's topic is wide (orders, scouting, contracts, post-fight repo
 ## 1. Mechanism
 
 - Each vehicle has `reliability` (16-bit), `reliability_spd_dec` (decay per economy day, copied from the engine model and doubled with age), `breakdown_chance` (an 8-bit accumulator), `breakdown_ctr` and `breakdown_delay` (`vehicle_base.h` 252-257; `engine_base.h` 52).
-- Order of steps in `CheckVehicleBreakdown` (1320), called once per economy day from each vehicle type's economy-day handler (`roadveh_cmd.cpp:1731`, `ship_cmd.cpp:273`, `aircraft_cmd.cpp:464`, `train_cmd.cpp:4281`):
+- Order of steps in `CheckVehicleBreakdown` (1320), called once per economy day from each vehicle type's economy-day handler (`roadveh_cmd.cpp:1731`, `ship_cmd.cpp:273`, `aircraft_cmd.cpp:464`, `train_cmd.cpp:4281`); road vehicles call it only when `blocked_ctr == 0` (1731), so a blocked vehicle skips that day's decay and roll:
   (a) skip in the menu (1323); skip if breakdowns are off and servicing-if-no-breakdowns is on (1326);
   (b) Reduced difficulty and loading at a station: no reliability loss (1328-1329);
   (c) reliability falls by `reliability_spd_dec`, clamped to 0 and to the engine's current reliability (1333);
@@ -18,10 +18,10 @@ Checked: This cell's topic is wide (orders, scouting, contracts, post-fight repo
 - Table, read from `vehicle.cpp` 1306-1313: low reliability bands need 3 (the lowest band), rising to 250 for the top bands; the top eight bands are 150, 170, 190, 210, 230, 250, 250, 250.
 - While running, `HandleBreakdown` (1376-1435, called from road-vehicle movement code at `roadveh_cmd.cpp:1588`): state 2 means "break now": the vehicle stops (speed 0 for non-aircraft), `breakdowns_since_last_service` counts up to 255, and the state becomes 1 (1388-1390). State 1 counts `breakdown_delay` down every second tick, every fourth for trains (1423-1424). Any other non-zero state counts `breakdown_ctr` down, except while loading (1433), so the running time before a breakdown is frozen at a station.
 - Service (`VehicleServiceInDepot`, 189-205): for the whole consist, reset the breakdown count (197), set reliability to the engine's current maximum (198), divide the accumulator by four (200), and under Reduced set it to zero (201).
-- Due check (`Vehicle::NeedsServicing`, 212-232): not due while reliability is at or above the engine maximum times (100 minus the interval percent) (224), and not due while days since the last service are within the interval (230). Automatic servicing trips (`NeedsAutomaticServicing`, 294-302) happen only when no depot order is set and the vehicle is not loading; road vehicles use this at `roadveh_cmd.cpp:1679-1682`, which does nothing when the company's road-vehicle interval is 0.
+- Due check (`Vehicle::NeedsServicing`, 212-232) has three interval modes (218-230): percent of reliability (not due while reliability is at or above the engine maximum times (100 minus the interval percent)), wall-clock (interval in minutes, converted to economy months), and days (not due while days since the last service are within the interval). Automatic servicing trips (`NeedsAutomaticServicing`, 294-302) happen only when no depot order is set and the vehicle is not loading; road vehicles use this at `roadveh_cmd.cpp:1679-1682`, which does nothing when the company's road-vehicle interval is 0.
 - Defaults (`order_func.h`): trains and road vehicles 150 days (28-29), aircraft 100 (30), ships 360 (31), minimum 30 (32), maximum 800 (33).
-- Age (`AgeVehicle`, 1454-1466, called once per calendar day): from the max age, at each of the five year starts 0 to 4 (1461-1462), `reliability_spd_dec` is shifted left once (1463), so wear doubles five times.
-- Engine maximum (`engine.cpp` 681-723): reliability climbs from a start value to a maximum over phase 1 (710), holds the maximum over phase 2 (714), and falls to a final value over phase 3 (718), by engine age.
+- Age (`AgeVehicle`, 1454-1466, called once per calendar day): the test is `age - max_age == DateAtStartOfYear(i)` for i = 0..4 (1461-1462), i.e. in days, at max_age + 0, 365, 730... days (calendar-year lengths, not the vehicle's own years); each hit shifts `reliability_spd_dec` left once (1463), so wear doubles up to five times.
+- Engine maximum (`engine.cpp` 681-723): reliability climbs from a start value to a maximum over phase 1 (710), holds the maximum over phase 2 (714), and falls to a final value over phase 3 (718), by engine age; the phase lengths are in months (`engine_base.h` comment). Not modelled in the sketch.
 
 ## 2. Key functions
 
@@ -47,7 +47,7 @@ Checked: This cell's topic is wide (orders, scouting, contracts, post-fight repo
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the daily decay, the banded risk table with its accumulator, the armed event with its running countdown, the break-now step, the sideline countdown, the service reset and the age doubling. It omits: the difficulty switch beyond one flag (`softer`), the ship offset, the loading exemption for the decay, the NeedsServicing due check and the automatic depot trip, the engine reliability curve, and the exact calendar-day test (passed in as a flag). The donor counts the sideline every second tick (every fourth for trains); the sketch counts it every tick. The roll is passed in as a number so it can be a server-side draw. Order is kept: decay, then the roll, then the accumulator. Donor defect handled: the age shift is done on a 16-bit field (`vehicle.cpp:1463`); the sketch caps the value instead of letting it wrap.
+simplified: the sketch keeps the daily decay, the banded risk table with its accumulator, the armed event with its running countdown, the break-now step, the sideline countdown, the service reset and the age doubling. It omits: the difficulty switch beyond one flag (`softer`), the ship offset, the loading exemption for the decay, the NeedsServicing due check and the automatic depot trip, the engine reliability curve, the speed-below-5 and stopped gates before the roll (`vehicle.cpp` 1342-1344), the `blocked_ctr == 0` call gate for road vehicles, and the exact calendar-day test (`age - max_age == DateAtStartOfYear(i)` in days; the sketch's `isYearStart` + `ageYearsPastMax` flags are a loose stand-in). The donor counts the sideline every second tick (every fourth for trains); the sketch counts it every tick. The roll is passed in as a number so it can be a server-side draw. Order is kept: decay, then the roll, then the accumulator. Donor defect handled: the age shift is done on a 16-bit field (`vehicle.cpp:1463`); the sketch caps the value instead of letting it wrap.
 
 ```ts
 // Licence: GPL-2.0-only (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -176,3 +176,13 @@ Rows for the coach topic. "(not read)" = not opened in this pass; nothing is cla
 | Matchmaking from coach view | not applicable in the read code | | | (not read) |
 | Post-fight report / replay | breakdown count since service is the only record seen (report screens not read) | counter | 0 to 255 | vehicle.cpp:1390 |
 | AI behaviour when the coach is absent (default tactics) | due road vehicles go to a depot by themselves unless the road-vehicle interval is zero; not while loading or under a depot order | due test then depot trip | interval 0 disables | roadveh_cmd.cpp:1679-1690; vehicle.cpp:294-302 |
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: MINOR
+- Error (confirmed): "called once per economy day" - road vehicles call CheckVehicleBreakdown only when blocked_ctr == 0 (roadveh_cmd.cpp 1731).
+- Error (confirmed): sketch omitted the cur_speed < 5 and Stopped gates (vehicle.cpp 1342-1344) without listing them; now listed.
+- Error (confirmed): engine reliability phases are in months; age doubling is the day test age - max_age == DateAtStartOfYear(i), not the vehicle's own year starts. Text corrected; sketch flag kept as a stated stand-in.
+- Missed: NeedsServicing has percent, wall-clock and days interval modes (vehicle.cpp 218-230); breakdown_ctr freeze while loading and the half/quarter-rate delay were already in the note.
+
+Fixed 2026-10-12: call-gate wording, age test wording, due-check modes, engine phase unit, sketch omissions list. Sketch code unchanged, so no typecheck rerun.

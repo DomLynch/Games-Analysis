@@ -108,3 +108,10 @@ Acceptance: a server test kills the same rank-3 level-40 victim twice and sees 2
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later header; clean-room, shape only)
 Brief rule served: 1 (one ledger: the server writes the award once per verified kill; the client reads the rank)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN
+- No errors found: GenerateRenownCount, solo vs group split (uint division, distance < 100), SetDeath call, AddRenown/RenownUp/SetRenownLevel behaviour including both real defects, XP cut-off KLvl > VLvl+8, start renown, rank 100 text and licence header all verified.
+- Caveat (not an error): the "stored never reset" defect assumes per-rank thresholds; the thresholds table was not read, so if thresholds are cumulative the arithmetic is still inconsistent but the fix differs.
+- Missed (minor): group XP and renown loops both call GenerateRenownCount per member with the killer argument unused, so each member's share is identical.

@@ -130,3 +130,9 @@ export {};
 - The publish review blocks on archived packages, a type mismatch, a missing startup scene, a missing organisation and failed validation attributes (PublishPage.1.ReviewWizardPage.cs 161-185), but the licence page never blocks (PublishPage.2b line 19). Keep the blocker list short; warn on licences, as the donor does.
 - Frankendom has no user code, so the Mono.Cecil and assembly path does not transfer. Only the pin-and-allow-list shape transfers.
 - Dom-only publishing until beta (MD ruling) is not in this donor. It is a Frankendom rule the gate must enforce.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- Verify order, pin hash, pin-only-on-success, 5-location cap, IsBlocked, SB500 and the licence mapping defect all true.
+- Nits: Compiler.Build whitelist check is line 257, not 258; Verify spans 75-122, not 75-115.
+- Missed: PackageLoader has DisableAccessControl for local packages (a bypass path); Verify has a final Errors.Count>0 check (108) after the rules. Neither changes the lessons.

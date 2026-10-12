@@ -164,3 +164,8 @@ Brief rule served: one engine decides the fight state; the client chooses the th
 Best transferable idea: pick music from (zone, day or night, fight mode) through a fallback chain of named themes, and play a short fill or break when the fight mode changes, so the change is musical and not a hard cut.
 Decision (proposed): adapt - take the mode-and-fallback selection and the embellishment table, drive the change from the engage event instead of a 5-second poll, and use the server's zone name instead of the last-match scan.
 Acceptance: when a creature engages the player, the combat theme starts within one render chunk of the engage event (a client test asserts the mode change is handled in the event handler, not in a timer), with a fill played first; when the player leaves the fight, a break plays and the standard theme resumes.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN. 04:00-21:00 day, fight rule, THR with no weapon, last-zone-wins, 5s throttle, fallback chain, BREAK/FILL/NONE table, emitter radius+800, delay+rand%delayVar, mixer cut all match.
+- Missed: in `updateTheme` an empty `theme.file` calls `stopTheme()` and returns (gamemusic.cpp 121-124), so a theme with no file is silence, not a fallback. Keep as a feature: allow explicit silent themes in data.
+- The `playTheme` reloadTheme flag is dead code (the always-true reload is already listed as a defect).

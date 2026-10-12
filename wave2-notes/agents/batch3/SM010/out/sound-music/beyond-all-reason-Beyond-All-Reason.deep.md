@@ -6,11 +6,11 @@ Checked: Opened the in-game music director in full for the logic that matters (t
 
 ## 1. Mechanism
 
-- A war meter (`warMeter`) is the battle-intensity number. Each damage event adds to it: a hit of damage 1 or less is ignored, and a hit larger than the victim's max health counts only as max health (1676-1682). Every damage event also resets a quiet counter to 0 (1677).
+- A war meter (`warMeter`) is the battle-intensity number. Each damage event adds to it: a hit of damage 1 or less is ignored, and a hit larger than the victim's max health counts only as max health (1676-1682). Only a hit above 1 damage resets the quiet counter to 0 (1675-1677); a hit of 1 or less changes neither the meter nor the counter.
 - The meter decays by 4 percent once per 30 game frames (1707-1708, about once a second at the sim rate). It is capped at 3 times warHigh (1709-1710). If the quiet counter passes 40 decay ticks with no damage, the meter is set to 0 (1713-1714).
 - Track levels: peace (default), warLow (meter >= 1000), warHigh (meter >= 32500), plus a boss track (spawn flag), victory / defeat / neutral / game-over tracks, event tracks and an interlude track (see `PlayNewTrack`, from 1454). Victory, defeat and boss are whole tracks, not short stingers.
 - Track start picks the level from the meter: boss first, then warHigh (branch at 1499), then warLow (branch at 1514), then peace.
-- Mid-track switching happens on the 30-frame tick (1719) and only when no fade is running. A switch needs the track to have played for its random hold (20-60 s, 1660), and it also needs the local frame to be within 300 frames of the server's last progress report (1763). Event tracks never get interrupted (1658). Switch rules use hysteresis: peace goes up to warLow above (high+low)/2 (1766); warLow goes to warHigh only above 2 x high (1767); warLow goes down to peace at or below 0.25 x low (1769); warHigh goes down to peace at or below 0.5 x low (1768).
+- Mid-track switching happens on the 30-frame tick (1719) and only when no fade is running. A hysteresis switch needs the track to have played for its random hold (20-60 s, 1660), and it also needs the local frame to be within 300 frames of the server's last progress report (1763). Event tracks never get interrupted (1658). Boss-state switches (a boss spawning, or its flag clearing while the boss track plays) are checked first and ignore both the random hold and the lag gate (1757-1761); only a running fade blocks them. The hold and lag gate apply to the hysteresis switches below. Switch rules use hysteresis: peace goes up to warLow above (high+low)/2 (1766); warLow goes to warHigh only above 2 x high (1767); warLow goes down to peace at or below 0.25 x low (1769); warHigh goes down to peace at or below 0.5 x low (1768).
 - A switch is a fade. Switch and boss fades use direction -2 (1760, 1773), about 5 s at normal speed; the end-of-track fade (direction -1) starts when 12 s remain (1775-1776); game over uses -5 with the fast speed (1701-1703), about 1 s. The new track fades in when the game is running (PlayNewTrack, 1469-1476).
 - Ambience (`gfx_atmosphere.lua`) is not a music bed. It places one-shot sounds at randomly sampled map points, each family with its own cooldown. Wind tries a random point and plays only if the point is above a height (`wind_minHeight`, 34, 99) and in view (99); if the sample fails, the cooldown is not set, so it retries next frame (120, 198). Sea needs a point at or below -23 (41, 128); beach needs a point with depth from -19 up to 0 (47, 159). Geo vents play round-robin: the sound delay is divided by the vent count once (78), and a vent is skipped when it lies within 64 units of one already listed (67-68), so each vent comes round about every 125 frames.
 - Voice limits and priority are data, not code: `gamedata/sounds.lua` gives each folder a `maxconcurrent` (for example ui 1, weapons-mult 15, atmos 10) and a `priority` (atmos -10, atmos-local -5, atmos-geovents -3; the donor does not say what the engine does with a negative value, and the engine was not read). Per-file overrides come from a pattern table (for example `["^minigun"] = 12`, 143). The loader resolves overrides with `pairs` (380).
@@ -42,7 +42,7 @@ Checked: Opened the in-game music director in full for the logic that matters (t
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor's hit clamp, decay, cap, quiet reset, track picker and hysteresis table, and the fade. It omits the playlists and shuffle, the event and interlude tracks and their counter, the victory, defeat and game-over selection, the spectator x1.5 thresholds, the local-vs-server frame gate (1763), the file loading and the 2-second retry. It uses real seconds (dt) for decay and fades, where the donor steps once per game frame, and it keeps the meter as a float (the donor floors it). It shapes the fade in decibels (the donor's own slider curve, 557), where the donor fades a straight line of percent (590).
+simplified: the sketch keeps the donor's hit clamp, decay, cap, quiet reset, track picker and hysteresis table, and the fade. It adds the boss switch (no hold) and the raptor/scavenger anger floor. It omits the playlists and shuffle, the event and interlude tracks and their counter, the victory, defeat and game-over selection, the spectator x1.5 thresholds, the local-vs-server frame gate (1763), the file loading and the 2-second retry. It uses real seconds (dt) for decay and fades, where the donor steps once per game frame, and it keeps the meter as a float (the donor floors it). It shapes the fade in decibels (the donor's own slider curve, 557), where the donor fades a straight line of percent (590).
 
 ```ts
 // Licence: GPL-2.0-or-later (donor). Clean-room sketch from the described mechanism, not a translation.
@@ -89,6 +89,21 @@ export function trackForMeter(meter: number, cfg: MusicConfig, bossUp: boolean):
   if (meter >= cfg.warHigh) return "warHigh";
   if (meter >= cfg.warLow) return "warLow";
   return "peace";
+}
+
+// Donor 1757-1761: a boss spawn (or its end) forces a switch at once: no random hold, no lag gate,
+// only the rule that no fade is already running.
+export function bossSwitch(s: MusicState, cfg: MusicConfig, bossUp: boolean): Track | null {
+  if (s.fading !== "none") return null;
+  if (bossUp && s.track !== "boss") return "boss";
+  if (!bossUp && s.track === "boss") return trackForMeter(s.meter, cfg, false);
+  return null;
+}
+
+// Donor 1721-1733: on PvE-driven fights (raptors, scavengers) the boss anger sets a minimum meter every 30 frames.
+export function angerFloor(s: MusicState, cfg: MusicConfig, anger: number): void {
+  if (anger > 60 && s.meter < cfg.warHigh + 1) s.meter = cfg.warHigh + 1;
+  else if (anger > 20 && s.meter < cfg.warLow + 1) s.meter = cfg.warLow + 1;
 }
 
 // Mid-track switch with hysteresis: entering a level and leaving it use different thresholds.
@@ -153,3 +168,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
   6. The meter is fed by `UnitDamaged` as the widget receives it; which units the widget receives is not read (engine side). fix: feed only server-confirmed damage from the one ledger.
 - Rulings: one ledger means the meter reads the same server events that write health, so the music cannot disagree with the kill log. MAX_ATTACKERS = 3 means a 3-on-1 fight is the typical high-intensity case; zone thresholds (warLow, warHigh) belong in zone data, since a boss arena and a walk-through zone should not share them.
 - Data-field numbers the designer will want are in the JSON sidecar, not here.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- The quiet counter resets only for damage > 1 (UnitDamaged 1675-1677), not every damage event. Confirmed; note text fixed (the sketch already did this).
+- Boss-state switches (1757-1761) ignore the random hold and the serverFrame lag gate; note said every switch needs the hold. Confirmed; text fixed and a bossSwitch function added to the sketch.
+- Missed: raptor/scavenger anger forces a minimum war meter every 30 frames (1721-1733: anger >60 floors at warHigh+1, >20 at warLow+1). Confirmed; added as angerFloor in the sketch. Also an interlude branch in the picker (1515-1518) and the interlude switch (1765) remain out of the sketch, as the note already says.
+
+Fixed 2026-10-12: quiet-counter condition, boss-switch exemption from hold, sketch (note and work/bar-music-director.ts) gains bossSwitch and angerFloor.

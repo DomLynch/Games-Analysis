@@ -19,7 +19,7 @@ Volumes per entry: the default is 1 (`volume ?? 1`, 100). Rollover 0.3 (303). Bu
 
 Background music: `_SingleLoopAudio` at volume 0.6, path `Assets.music.background` (340-345).
 
-Load and play: `load()` returns one future per sound (370), so the game can preload the whole table. In the constructor the audio cache prefix is cleared (264). `play()` asserts that the sound is registered in debug builds (375-378) and then does nothing for an unknown sound (379, `?.`).
+Load and play: `load()` first runs the cache configuration (`_configureAudioCache`, whose default lambda sets the audio cache prefix to empty, 262-264), then returns one deferred loader per sound, a `List<Future<void> Function()>` of thunks (366-370), not started futures, so the caller starts the preload of the whole table. The prefix clear happens inside `load()`, not in the constructor. `play()` asserts that the sound is registered in debug builds (375-378) and then does nothing for an unknown sound (379, `?.`).
 
 ## 2. Key functions
 
@@ -167,3 +167,11 @@ Brief rule served: 1 (one engine emits cue ids; the client plays them with the p
 Best transferable idea: Give each cue its own small policy (cooldown, voice cap, random A/B clip, play-once) in one table, so repetition and stacking are controlled per sound instead of globally.
 Decision (proposed): adapt - take the per-cue policy table and its five kinds for hit, impact and voice cues in src/fight/sound-cues.ts; add a cap to simple cues and make the drop-new rule explicit; reject the package-level pool as the cap mechanism.
 Acceptance: In a 3-on-1 fight, a repeated hit grunt plays at most once per 2 s and at most the cap number of impacts overlap; the two bumper-style impact clips alternate (client unit test of CuePlayer, no server involved).
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR. Enum 14 values, five policies, 6s/2s, pools 2 and 4+4, volumes 0.3/0.6/0.6, strictly-greater test verified.
+- `load()` returns thunks (`List<Future<void> Function()>`), not futures (pinball_audio.dart 366-370). Confirmed.
+- Cache prefix clear is the default `_configureAudioCache` lambda, run in `load()`, not the constructor. Confirmed.
+- Missed (minor): throttled play passes no volume, so it uses the default.
+
+Fixed 2026-10-12: load() return type and where the prefix clear runs.

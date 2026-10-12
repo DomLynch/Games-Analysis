@@ -43,7 +43,7 @@ Acceptance: In a fight a hedgehog's lines play one at a time, the same line is n
 
 Defects (keep the idea, fix the defect):
 1. Stinger pauses before it knows the sting played. `PlayMusicSound` pauses (662) and then ignores the result of `PlaySound` (663). If the sting is masked, already playing, or its file will not open, the music stays paused until a `StopMusicSound` that may never come. fix: `playStinger` starts the sting first and pauses only on success, and `resumeIfDue` resumes at the end time as a safety.
-2. Fallback entry blocks the queue (latent). If a fallback line reaches the head while the previous line played, `PlayNextVoice` takes the else branch (744) and clears only `LastVoice`. The slot is not cleared, so the head never moves and later lines never play. No caller in this donor sets `isFallback = true` (the only use is the doc example at uSound.pas 687), so this is latent. fix: `nextVoice` removes a skipped fallback line.
+2. Fallback entry blocks the queue (live bug, reachable in normal play). If a fallback line reaches the head while the previous line played, `PlayNextVoice` takes the else branch (744) and clears only `LastVoice`. The slot is not cleared, so the head never moves and later lines never play. Callers do set `isFallback = true`: uStats.pas:360-363 queue one of sndRegret, sndGonnaGetYou, sndIllGetYou or sndJustYouWait as the 4th-parameter fallback right after a sndRevenge line (and uSound.pas 687 documents it). When the revenge line plays fine, the fallback reaches the head with `LastVoiceFailed` false, so the jam happens in ordinary play after every revenge taunt that is followed by a fallback. fix: `nextVoice` removes a skipped fallback line.
 3. Dampen can save an already-dampened level. `DampenAudio` has no "already dampened" guard, so a second focus-lost event before a focus-gained event sets `previousVolume` to the dampened value (940), and the restore (948) brings back the quiet level. Not reproduced. fix: `dampen` returns early when a saved level exists.
 4. Looped sound fade is dropped on the voice-pack branch (794 has no fade; 807 does). Small inconsistency. fix: apply the fade in both branches.
 
@@ -176,3 +176,10 @@ export {}
 
 Reuse tag: rewrite-from-idea (GPL version 2 only; clean-room only)
 Brief rule served: 1 (one engine; sound is client-only); row 12 (combat sound cues)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Error: defect 2 said no caller sets isFallback = true so the jam is latent; uStats.pas:360-363 call AddVoice(..., false, true) for the revenge/regret pairs, so the queue jam is reachable in normal play. Confirmed against PlayNextVoice 726-744 (else branch clears only LastVoice, head stays, LastVoiceFailed stays false) and fixed.
+- Missed: uStats.pas was listed as grep-only; its fallback callers are now cited.
+
+Fixed 2026-10-12: defect 2 reachability (live, not latent). The sketch already carries the skip fix, so no code change.

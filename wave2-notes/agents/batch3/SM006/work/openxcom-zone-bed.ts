@@ -17,6 +17,7 @@ function startBed(bed: ZoneBed, channelBusy: (ch: number) => boolean,
 }
 
 // Bed loudness = master sound volume x the zone's ambient volume, each clamped to [0, 1].
+// The donor passes the master option through volumeExponent (an exponential curve, Game.cpp 373) first; masterSound here is the already-curved value.
 function bedGain(masterSound: number, bed: ZoneBed): number {
   return Math.min(1, Math.max(0, masterSound)) * Math.min(1, Math.max(0, bed.volume));
 }

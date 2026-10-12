@@ -134,8 +134,10 @@ TARGET `src/fight/skills.ts` (new module: skill rows of ability weights, live tr
 - Licence: BSD-3-Clause for the CellAO.Stats files read (the clause is in the headers). Code may be adapted, but this sketch is written from the mechanism. Other folders in the donor are GPL-2.0-or-later (Cell.Core), so the licence must be checked per file.
 - Data defect, row 135: its weights sum to 1.1 (SkillTrickleTable.cs:61), so skill 135 gets about 10% more trickle than its neighbours for the same abilities. Fix: a sum-to-1 test on every row, as in the sketch.
 - Wiring defect, column order: `SetAbilityTricklers` maps column 2 to stamina, column 3 to sense, column 4 to agility and column 5 to intelligence (Stats.cs 11804-11829). The getter maps column 2 to agility, column 3 to stamina, column 4 to intelligence and column 5 to sense (StatSkill.cs 84-87). The stat ids (StatIds.cs 104-124) follow the getter's order. So four of six dependency lists are wrong. Harmless today because nothing reads `Affects` and the getter is live; it would become stale state the day someone caches the trickle. Fix: one named column map used by both, or drop the lists.
-- Table hygiene: rows for ids 1, 221, 343 and 364 carry weights of 1e-8 (SkillTrickleTable.cs:78 and the rows beside it). Id 1 is the life stat (Stats.md), so the wiring would add life as a dependent of strength. Fix: remove the rows; they are not read by the getter.
+- Table hygiene: rows for ids 1, 221, 343 and 364 carry weights of 1e-8 (SkillTrickleTable.cs:78 and the rows beside it). Id 1 is the life stat (Stats.md). The row {1, 0, 1e-8, 0, 0, 0, 0} puts its weight in column 2, which `SetAbilityTricklers` maps to stamina (Stats.cs 11805-11808), so the wiring would add life as a dependent of stamina. Fix: remove the rows; they are not read by the getter.
 - Defect, profession index 12: `professionMatrix` maps profession 13 to -1 (SkillUpdate.cs:181). The skill-cost lookup adds 1 to the matrix value, so for that profession it reads column 0 (the skill id) as the cost factor (line 215). The cost becomes the skill id times each point, not a price. Fix: a validated profession table with no -1 entries, and a test per profession.
+- Defect, profession range: `tableProfessionHitPoints` and `tableProfNanoPoints` have 14 columns (SkillUpdate.cs 56-64, 230-238) but `professionMatrix` lists 15 professions, so profession 15 (index 14) reads out of range in the HP and nano formulas. Fix: size the tables from one profession list and test every profession.
+- Inconsistency: HP uses `level.Value` (SkillUpdate.cs 90) but nano uses `level.BaseValue` (line 264), so buffs to level count for HP and not for nano. Pick one in our build.
 - Risk, monster breeds: the breed arrays have four entries (SkillUpdate.cs:77, 79) and the baseAttributes table has seven rows with a TODO for monster breeds (line 188). `attributeCost[counter, breed]` has five columns, so a breed index of 5 or more would read out of range in `CalculateIP`. Not triggered by the player path (not checked). Frankendom's monsters must not use these arrays without bounds.
 - Caps: the library has no skill cap or ability cap. The ability and skill caps, if any, are in the zone server or the sheet data (not read).
 - Frankendom ruling: the skill value is a server value (kills are server-verified). Keep the live computation on the server; the client reads the stack.
@@ -143,3 +145,12 @@ TARGET `src/fight/skills.ts` (new module: skill rows of ability weights, live tr
 
 Reuse tag: adapt-idea (BSD-3-Clause, CellAO Team; code may be adapted, sketch clean-room)
 Brief rule served: 1 (one engine computes the stat stack and the skill value; the client only reads it); the parity row is 21 (catalogue fields), and the table above is the catalogue input (SK-FOCUS items 1, 2, 9 and 12 partly).
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: MINOR
+- Gap section said the 1e-8 life row would make life a dependent of strength; its weight is in column 2, which the wiring maps to stamina (Stats.cs 11805-11808). Confirmed.
+- Missed (confirmed): HP/nano title tables have 14 columns against 15 professions (profession 15 reads out of range).
+- Missed (confirmed): HP uses `level.Value` (90), nano uses `level.BaseValue` (264).
+
+Fixed 2026-10-12: strength changed to stamina in the table-hygiene gap; profession-range defect and level Value/BaseValue inconsistency added to Gaps. Sketch unchanged.

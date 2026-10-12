@@ -16,8 +16,8 @@ Acceptance: In a 3-vs-1 fight with 12 extra ambient hit cues queued in one frame
 - Step 3, admission (`UpdateSoundParams`, 239-270): the candidates live in a list sorted highest priority first, capped at 14 (`kMaxVehicleSounds`, `Audio.h` 25; the list type is `sfl::static_vector`, line 541). A candidate finds the first entry with a lower priority (249). If none, it is appended when there is room (253-255) and dropped when full. If found and there is room, it is inserted there (263). If found and full, it overwrites that entry (267).
 - Step 4, stop: any live voice whose train is not in the admitted list is stopped and its slot freed (`kSoundIdNull`, 551-577).
 - Step 5, slots: for each admitted candidate, the voice slot already owned by that train is reused; otherwise a free slot is claimed with volume 0x30 (361-366). If there is no free slot the candidate is skipped (585 comment; the `continue` follows it).
-- Step 6, volume: the target is 0 (220) or 0x30 when the train is below the surface (227-229). The live volume moves 4 units per update toward the target (595, 599). The pan volume is reduced by the live volume (603).
-- Step 7, pan and pitch (`CreateSoundParam`, 172-232): pan comes from the train's screen position (186); vertical pan lowers the volume (`VehicleSoundsUpdateGetPanVolume`, 298-339). Pitch: base 11025 (216) + |velocity| scaled by 5512 / 16384 (212-213) + 16 per unit of doppler shift (217). The channel rate is only written when `currentTicks & 3` is 0 (519).
+- Step 6, volume: the slot volume is an attenuation, not a loudness. The target is 0 (full) or 0x30 (quiet) when the train is below the surface (220, 227-229). A newly claimed slot starts at 0x30 (366), so a new above-ground voice starts quiet and ramps to full over 12 updates, 4 units per update (595, 599). The pan volume is reduced by the live volume (603), and the channel volume is then `volume * panVol / 8 - 0x1FFF`, clamped to -10000 (469-471).
+- Step 7, pan and pitch (`CreateSoundParam`, 172-232): pan comes from the train's screen position (186); vertical pan lowers the volume (`VehicleSoundsUpdateGetPanVolume`, 298-339). Pitch (200-218): frequency = |velocity|, doubled when the car type sets `doubleSoundFrequency` (205-208), shifted right by 5 (divide by 32, 212), multiplied by 5512 and shifted right by 14 (213-214), plus base 11025 (216) plus 16 per unit of doppler shift (217). The channel rate is only written when `currentTicks & 3` is 0 and the frequency changed (519), and only for track noises and non-fixed-frequency sounds (`ShouldUpdateChannelRate`, 522). A finished looping channel is released (473-477) and a channel whose sound id changed is stopped (478-482).
 - Each train can own two channels (track sound and other sound, `UpdateSound` at 467), so 14 voices can mean up to 28 channels (count from the struct, not measured).
 
 Second mechanism in the same subsystem (read in full): a crowd bed (`PeepUpdateCrowdNoise`, `Peep.cpp` 1168-1240, called from the game update at `GameState.cpp` 339). Each update it counts guests whose sprite rectangle is inside the music viewport, weighting queuing guests 1 and others 2 (1201). It takes half of that total and subtracts 6 (1209). Below zero it mutes the bed (1210 is the test). Otherwise it sets volume to (120 - min(n, 120))^4 mapped through the viewport zoom (1222-1224). The donor comment (1220) says this scales [0, 120] to roughly [-3314, -150] dB/100. My own arithmetic from the code, at zoom level 0: n = 0 gives -3314 and n = 120 gives -150. The bed is audible from a weighted total of 12 (six walking guests, or twelve queuing). The looping channel is created once and reused (1227-1229).
@@ -41,8 +41,8 @@ Defects (keep the idea, fix the defect):
 |---|---|
 | Priority = source weight + speed term, +hysteresis while playing | Weight is train mass (sum of car mass, 102); speed term |v| >> 13 (158); playing bonus +300 (165) |
 | Hard voice cap, sorted admission | 14 voices (Audio.h 25) |
-| Volume ramp toward a target, fixed step per update | Step 4 (595, 599); new voice starts at 0x30 (366); target 0 (220) or 0x30 underground (229) |
-| Pitch from speed, rate written at a cadence | Base 11025 (216); scale 5512 / 16384 (212-213); doppler 16 per unit (217); rate every 4 ticks (519) |
+| Volume ramp toward a target, fixed step per update | Step 4 (595, 599); the value is an attenuation: new voice starts at 0x30 (quiet, 366) and ramps to 0 (full); target 0x30 underground (229) |
+| Pitch from speed, rate written at a cadence | Base 11025 (216); velocity >> 5 then x 5512 >> 14 (212-214), doubled first for cars flagged doubleSoundFrequency (205-208); doppler 16 per unit (217); rate every 4 ticks (519) |
 | Presence-gated looping bed, volume from count | Queuing weight 1, other weight 2 (1201); half, minus 6 (1209); mute below zero (1210); count cap 120 and fourth power (1222-1223) |
 
 ## 4. TypeScript sketch
@@ -112,3 +112,11 @@ export {};
 
 Reuse tag: rewrite-from-idea (GPL-3.0; clean-room only)
 Brief rule served: 1 (one engine, sound is a client); rule 8 (target and parity row 12 named)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Pitch description incomplete: the donor optionally doubles the frequency (doubleSoundFrequency, 205-208) and shifts right by 5 (212) before the 5512 multiply and 14-bit shift, so the velocity scale is 32 times smaller than the note said and the per-car doubling was missing. Confirmed (VehicleSounds.cpp 200-218).
+- Volume semantics unstated: the slot volume is an attenuation subtracted from the pan volume (603); a new voice starts at 0x30 (quiet) and ramps to full. Confirmed.
+- Missed: UpdateSound (467-528) only updates the rate for track noises and non-fixed sounds, converts volume as volume * panVol / 8 - 0x1FFF clamped to -10000, and releases a finished looping channel (473-477). Confirmed.
+- Verified OK by checker: licence, voice cap 14, SoundCanPlay, GetSoundPriority, UpdateSoundParams and defect D1, stop pass, slot claim, ramp (D2 latent), rate cadence, GameState order, crowd bed arithmetic.
+Fixed 2026-10-12: pitch formula, volume semantics and channel update path in the mechanism text and tables. Sketch unchanged (it omits pitch).

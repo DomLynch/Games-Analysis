@@ -13,9 +13,11 @@ const EXCLUSIVE: ReadonlySet<Feature> = new Set<Feature>([
   'court', 'swamp', 'vault', 'beehive', 'morgue', 'barracks', 'zoo', 'shop', 'temple', 'oracle',
 ]);
 
-// These need a creature (a witness) in the zone before they can speak. Fountain, sink, swamp and vault need none.
+// These need a creature (a witness) in the zone before they can speak. Fountain, sink, swamp, vault and shop need none
+// (donor: shop has no monster witness; after a successful roll it always ends the tick. The caller leaves 'shop' out of
+// `present` when the shop is untended or the hero is inside it, which the donor checks before it plays the line).
 const NEEDS_WITNESS: ReadonlySet<Feature> = new Set<Feature>([
-  'court', 'beehive', 'morgue', 'barracks', 'zoo', 'shop', 'temple', 'oracle',
+  'court', 'beehive', 'morgue', 'barracks', 'zoo', 'temple', 'oracle',
 ]);
 
 // Chance per fixed tick, by feature. Zone data may override each one.
@@ -42,7 +44,7 @@ const LINE: Record<Feature, { normal: string; altered: string }> = {
 
 export interface Witness {
   feature: Feature;   // the feature the creature stands in
-  eligible: boolean;  // computed by the caller (asleep, or awake and outnumbered, and so on)
+  eligible: boolean;  // computed by the caller (court: asleep, lord or prince, not an animal; beehive: flying ant; temple: active priest and hero outside the temple; and so on)
 }
 
 export interface TickInput {

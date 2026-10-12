@@ -12,9 +12,9 @@ Acceptance: Entering a zone starts its bed within one frame with no restart if i
 
 - Zone data sets the bed. `RuleTerrain` reads the bed's sound id from the ruleset (`ambience`, `RuleTerrain.cpp` 92) and its volume (`ambientVolume`, 93), defaulting to volume 0.5 (32). The battle generator copies both onto the save (`BattlescapeGenerator.cpp` 2011-2012, `SavedBattleGame::setAmbientVolume` at 2062). So the bed is chosen once per battle from the terrain (OpenXcom's word for a biome-like map set).
 - Start (`BattlescapeState::init`, 494-498). If the save has an ambience sound, call `loop()` on it, then `setVolume` with the options. `Sound::loop` (`Sound.cpp` from 110) plays the sound on channel 3 with loop count -1 (forever), but only if channel 3 is not already playing (112). So starting twice is a no-op.
-- Volume (`Game::setVolume`, `Game.cpp` 367-383). The master sound volume is set on all channels (374). Then channel 3 is set to the master sound volume times the save's ambient volume (377). With no battle loaded, channel 3 gets half the master (381-382). So the bed scales with both the master and the zone's own volume.
+- Volume (`Game::setVolume`, `Game.cpp` 367-383). The master sound volume, passed through `volumeExponent` (an exponential curve, `Game.cpp` 373 and 399-402), is set on all channels (374). Then channel 3 is set to the master sound volume times the save's ambient volume (377). With no battle loaded, channel 3 gets half the master (381-382). So the bed scales with both the master and the zone's own volume.
 - Channel plan (`Game.cpp` 667-669). The mixer is opened with 16 channels, and channels 0 to 3 are reserved (`Mix_ReserveChannels(4)`). Channel 3 is the bed. One-shots that pass channel -1 use the unreserved part of the pool (channels 4 to 15, 12 voices) (SDL_mixer API behaviour, not read in the donor).
-- Stop (`BattlescapeState::finishBattle`, `BattlescapeState.cpp` 2013-2022). `stopLoop()` halts channel 3 (`Sound.cpp` from 125, halt at 129). The lookup uses depth 0, but `stopLoop` ignores the sound object, so this is harmless (a nit, not a defect).
+- Stop. `stopLoop` is called on three exits: `BattlescapeState::finishBattle` (`BattlescapeState.cpp` 2013-2022), the abandon-game exit (`Menu/AbandonGameState.cpp` 108) and the load-game exit (`Menu/LoadGameState.cpp` 110). `stopLoop()` halts channel 3 (`Sound.cpp` from 125, halt at 129). The lookup uses depth 0, but `stopLoop` ignores the sound object, so this is harmless (a nit, not a defect).
 - Stereo one-shot (`Map::getSoundAngle`, `Map.cpp` 1717-1731). Each one-shot gets an angle from the world position: convert to screen by the camera (1722), take the x offset from the view centre (1719, 1725), clamp it to half the view width, and map it into 280 to 440 degrees (1731). The comment (1728-1729) says the sweep stops at 80 degrees, not 90, so one speaker is never fully muted. `Sound::play` applies the angle only when stereo is on (`Sound.cpp` 86-88).
 - Distance is not used. `Sound::play(channel, angle, distance)` defaults distance to 0 (`Sound.h` 44), and every caller in the grep passes only the angle. So there is no distance attenuation.
 - Music is a separate path. `Music::play` stops the current track and starts the new one at once (`Music.cpp` 93-94, with `stop()` halting it at 113). There is no fade. So a track change is a hard cut. (Search: "fade" appears in none of the music or sound files read.)
@@ -22,7 +22,7 @@ Acceptance: Entering a zone starts its bed within one frame with no restart if i
 Order of operations for a one-shot: `getSoundAngle` (camera → clamp → angle) → `Sound::play` (choose channel by -1, set position if stereo). For the bed: terrain → save (sound, volume) → `init` loop on channel 3 → `setVolume` (channel 3 = master × ambient).
 
 Defects and risks (keep the idea, fix the defect):
-- R1, the bed can silently not start. `Sound::loop` returns when channel 3 is busy (112) and reports nothing. The only stop call I found is in `finishBattle` (2022). If a battle ends by another route, the old bed keeps looping and the next battle's `loop()` returns without starting its own bed. I did not check every exit path. fix: report the busy state and stop or replace the old bed on the next zone change (the sketch returns "busy").
+- R1, the bed can silently not start. `Sound::loop` returns when channel 3 is busy (112) and reports nothing. `stopLoop` is called from `finishBattle` (2022), abandon (`AbandonGameState.cpp` 108) and load-game (`LoadGameState.cpp` 110), so the common exits do stop the bed and the risk is small. If a battle ends by some other route, the old bed would keep looping and the next battle's `loop()` would return without starting its own bed; no such route was found, but the guard is cheap. fix: report the busy state and stop or replace the old bed on the next zone change (the sketch returns "busy").
 - D2, music is a hard cut. `Music::play` halts then plays (93-94, 113). fix: fade the old track out and the new one in over a data-set time (browser build: gain ramps). This is the change the topic's crossfade needs.
 - Gap, not a defect: no distance attenuation (distance is always 0). fix: pass the world distance to the camera as the distance argument, so far sounds are quieter.
 
@@ -68,6 +68,7 @@ function startBed(bed: ZoneBed, channelBusy: (ch: number) => boolean,
 }
 
 // Bed loudness = master sound volume x the zone's ambient volume, each clamped to [0, 1].
+// The donor passes the master option through volumeExponent (an exponential curve, Game.cpp 373) first; masterSound here is the already-curved value.
 function bedGain(masterSound: number, bed: ZoneBed): number {
   return Math.min(1, Math.max(0, masterSound)) * Math.min(1, Math.max(0, bed.volume));
 }
@@ -102,7 +103,7 @@ export {};
 
 - GPL-3.0-or-later: clean-room only. The sketch is written from the mechanism, not the donor lines.
 - The donor has no crossfade and no stinger. Its music change is a hard cut (`Music.cpp` 93-94). Frankendom's zone-to-zone bed and music crossfades are therefore new work; the donor shows only where the bed is set.
-- R1 (busy bed is silently skipped) is a real code gap in the donor, but I found no path that puts a one-shot on channel 3. Frankendom should still report the busy state.
+- R1 (busy bed is silently skipped) is a small code gap in the donor (abandon and load-game exits do stop the bed), and I found no path that puts a one-shot on channel 3. Frankendom should still report the busy state.
 - The 80-degree clamp is a good rule for a 2D fight, where a fully hard-panned hit would mute one speaker. Frankendom should keep it.
 - No distance attenuation in the donor. A far enemy's cue is as loud as a near one, apart from the stereo angle. Frankendom needs a distance law as data if far cues must be quieter.
 - Ambience is chosen once per battle at generation, not per tile, so a border between two biome zones has no crossfade in the donor.
@@ -110,3 +111,10 @@ export {};
 
 Reuse tag: rewrite-from-idea (GPL-3.0-or-later; clean-room only)
 Brief rule served: 1 (one engine, sound is a client); rule 8 (target and parity row 12 named)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- R1 premise wrong: "only stop call is in finishBattle". Sound::stopLoop is also called in Menu/AbandonGameState.cpp 108 and Menu/LoadGameState.cpp 110, so the risk is much smaller than stated. Confirmed by grep over src/.
+- Game::setVolume pipes master through volumeExponent() (Game.cpp 373, 399-402); the sketch bedGain is linear. Confirmed; comment added to the sketch (the caller supplies the curved value).
+- Missed (minor): Mix_GroupChannels(1,2,0) groups channels 1-2 for UI (Game.cpp 670); Mix_FadeOutMusic exists only in VideoState, so "no fade" holds for gameplay music.
+Fixed 2026-10-12: Stop line, R1 text and its later remark, volume line, bedGain comment (also in work/openxcom-zone-bed.ts). Code logic unchanged.

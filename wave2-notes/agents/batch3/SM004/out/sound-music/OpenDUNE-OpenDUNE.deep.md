@@ -167,3 +167,10 @@ Decision (proposed): adapt - keep the cue id with two renderings and the priorit
 Acceptance: In a fight, three unit alerts within 2 s start one battle stinger and the battle track plays to its end without being restarted by later alerts; a priority-10 clip is never demoted by a priority-5 clip; a cue 80 tiles away is silent and one 40 tiles away plays at half gain on both the speech and the sound-effect path; a bed does not replay the track that just ended (bounded re-roll, so the rule holds unless the range has one track).
 
 Reuse tag: adapt (GPL-2.0)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- No false claims found; music, voice, sound-slot and speech-queue behaviour, the director flag defect and unit.c cooldown all verified against the code.
+- Missed (minor): the sandworm attack also raises the battle flag with its own 8-tick cooldown (unit.c 2700-2711); the note describes only the unit path.
+- Missed (minor): Sound_Output_Feedback(0xFFFE) (sound.c 365-383) is a cancel path that clears the speech queue, stops the voice and zeroes the channel priority.
+- Missed (minor): a start-of-scenario bed pick sits at opendune.c 1059-1060. None change the conclusions.

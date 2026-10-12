@@ -139,7 +139,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 
 - AGPL-3.0: clean-room only. The sketch is written from the mechanism.
 - Donor defects, each kept as an idea and fixed in the sketch:
-  - Mana is charged (Player_Magic.cs 857) before the movement cancel (874). A moved caster loses mana and the spell. Fix: check movement first, charge after (sketch step 2).
+  - Mana is charged (Player_Magic.cs 857), and spell components are burned (`TryBurnComponents`, 868, for non-weapon casts), before the movement cancel (874). A moved caster loses mana, components and the spell. Fix: check movement first, charge after (sketch step 2).
   - Affordability is checked once at start (1029) and not at resolution. Fix: re-check at charge (sketch step 2).
   - `difficulty / 2` on a uint truncates. Fix: real division in the sketch.
   - The mana discount uses a luck roll and two rolls. Fix: one roll, which is easier to replay in the fight record (checklist row 19).
@@ -149,3 +149,10 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Spell numbers come from a binary client table (DAT). Frankendom must author them in the catalogue (checklist row 21), not read a client file.
 - Fast-fight numbers: 6.0 units is a very short cancel distance in donor units (the donor's unit scale is not verified as metres). For a fast duel it may be too small, and the 75 range cap may be too large for the Pit. Both are engine constants until a playtest sets them. The fizzle window of 50 and the factors depend on the skill scale, which is not read.
 - Not covered: spell damage, projectiles, dispel rules, summons, mind effects. Those need a separate cell.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- All cited lines, numbers and the 28.9 percent resist figure verified.
+- Missed (minor): TryBurnComponents (Player_Magic.cs 868) consumes spell components at the same charge point, before the movement check, for non-weapon casts; the note and sketch mention only mana. Confirmed; added to the charge-before-move defect line. The sketch models mana only (components omitted on purpose).
+- Missed (minor): TryResistSpell exempts cloak casts (WorldObject_Magic.cs 132, `Cloak.IsCloak(itemCaster)`). Confirmed in code; not modelled.
+Fixed 2026-10-12: charge-before-move defect line now names components. Sketch unchanged.

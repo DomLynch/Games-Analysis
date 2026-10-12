@@ -154,3 +154,10 @@ Typecheck: `tsc --noEmit --strict --target es2020` on the VPS, exit 0 (run this 
 
 Reuse tag: rewrite-from-idea (MIT, adapted shape; sketch written clean)
 Brief rule served: rule 1 (one engine, server owns interest); no camera or client rule touched.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN
+- Errors: none found.
+- Missed: rsbuf/index.ts:156-160 removePlayer decrements observers for every NPC in the leaver's build set, so the observer-count leak applies to rebuild (level change / jump over 15 tiles), not to logout; the note does not mention this compensating path. The acceptance wording ('after viewer moves away') is consistent.
+- Verified OK: World.ts lines, build.ts constants, rebuildPlayers/nearest/zone walk, info.ts, writeNewPlayers, NPC decrement/increment, Zone.ts addObj eviction defect, WSClientSocket.send, MIT licence.

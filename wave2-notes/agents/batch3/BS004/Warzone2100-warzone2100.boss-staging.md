@@ -1,6 +1,6 @@
 # Warzone 2100 (RTS, boss-staging, depth full)
 
-Donor: Warzone2100-warzone2100 at /mnt/frankendom-donors/Warzone2100-warzone2100 (VPS). Licence: GPL-2.0-or-later for source and data (COPYING:2; COPYING.README:14-16), videos and music not covered, some art CC BY-SA 3.0 or CC0 (COPYING.NONGPL:6, :45). Shape only. Nothing copied.
+Donor: Warzone2100-warzone2100 at /mnt/frankendom-donors/Warzone2100-warzone2100 (VPS). Licence: GPL-2.0-or-later for source and data (COPYING.README:14-16; COPYING:2 is only the plain GPL v2 text, 'Version 2, June 1991'). COPYING.README says the videos and music, which are not included in the repo, are released under the same terms. Some art CC BY-SA 3.0 or CC0 (COPYING.NONGPL:6, :45). Shape only. Nothing copied.
 
 Checked: campaign mission scripts data/base/script/campaign/cam2-2.js, cam3-1.js, cam1-3.js, cam1-1s.js (comment only); libcampaign_includes/nexus.js, misc.js, video.js, tactics.js (line 20); stats data/base/stats/brain.json, data/mp/stats/brain.json, data/mp/stats/research.json (lines 33, 38), data/base/stats/weapons.json (21 VTOL weapons); C++ src/cmddroid.cpp, src/droid.cpp (getDroidLevel, getDroidEffectiveLevel, droidWithinCommanderRange, getNumAttackRuns, vtolHappy, updateVtolAttackRun), src/wzapi.cpp:2703-2709 (getMissionTime), src/quickjs_backend.cpp:1545. Decision: adapt (idea), defects fixed in the sketch list below. Confidence high on the rules listed. Best transferable idea: a boss with a small escort that turns and runs only on one half of its route when hit, heals, then returns; its doom clock is a cue list the server drops when late.
 
@@ -21,7 +21,7 @@ Checked: campaign mission scripts data/base/script/campaign/cam2-2.js, cam3-1.js
 - Repair threshold meaning, read in tactics.js:20: a health percentage at which the unit falls back to repair.
 - Cue ladder. An ordered list of (time, sound). Each server poll (0.4 s, cam3-1.js:465) it looks at the head of the list only. If remaining time is at or below the cue time, it plays the cue, unless the clock is more than 2 s past it (then it drops the cue silently). Either way it removes the head and stops for this poll (cam3-1.js:262-282). So one cue per poll and a late window.
 - Timer scaling by difficulty, not counts. camChangeOnDiff multiplies timers (misc.js:298-318): SUPEREASY 2.0, EASY 1.5, MEDIUM 1.0, HARD 0.85, INSANE 0.70, result floored. Counts are fixed.
-- Commander escort rules (MP): capacity = 6 + 2 per rank index (mp brain.json:8-9, cmddroid.cpp:195), rank index from kill thresholds 0, 12, 24, 36, 48, 60, 72, 84, 96 (mp brain.json:14), produced commanders capped at 36 kills (mp brain.json:11, droid.cpp:1064-1070), so a new command unit leads 12 at most.
+- Commander escort rules (MP): base capacity = 6 + 2 per rank index (mp brain.json:8-9, cmddroid.cpp:195), before research upgrades (research.json:33 BaseCommandLimit +20, :38 CommandLimitByLevel +50, which add to maxDroids and maxDroidsMult), rank index from kill thresholds 0, 12, 24, 36, 48, 60, 72, 84, 96 (mp brain.json:14), produced commanders capped at 36 kills (mp brain.json:11, droid.cpp:1064-1070), so a new command unit leads 12 at most.
 
 Data fields (our proposal, donor value null because the donor is GPL):
 - boss_escape_radius_tiles (tiles), proposal 4 to 6
@@ -52,7 +52,7 @@ Defects in the donor, with fixes (keep the idea, fix the defect):
 - Target file: src/fight/<module>.ts (module name not chosen; not read). One parity row: row 4 (leash).
 
 ## 6. Licence and IP
-- GPL-2.0-or-later source and data (COPYING:2; COPYING.README:14-16), with a stated exception at COPYING.README:22. Not a legal conclusion. Videos and music are not part of the GPL release. Some art is CC BY-SA 3.0 or CC0 (COPYING.NONGPL).
+- GPL-2.0-or-later source and data (the 'or later' wording is COPYING.README:14-16; COPYING:2 is the plain GPL v2 text), with a stated exception at COPYING.README:22. Not a legal conclusion. Videos and music are not shipped in the repo; COPYING.README:14-16 says they carry the same licence. Some art is CC BY-SA 3.0 or CC0 (COPYING.NONGPL).
 - Shape only. Recreate as an original: our boss name, our route, our numbers. Keep the trait (escape on one half, heal then return); change the trait (escort 3 not 6, no guessed clip length, no clock sentinel).
 
 ## 7. Gaps
@@ -67,7 +67,7 @@ Rows give the donor structure, numbers as read, and our proposal in the last col
 | name | effect | formula | number ranges (donor, read) | cost | cooldown or cast | caps | file:line |
 |---|---|---|---|---|---|---|---|
 | VTOL attack-run cycle (the only flight model) | each run spends one ammo; at the limit the unit must return to a pad | runs = numAttackRuns; salvo runs = numRounds x numAttackRuns | numAttackRuns: bombs 1, rockets and missiles 2 to 3, cannons and MG and rail 4 to 6 | ammo | rearm wait (timing not read) | cannot leave pad until ammo full and undamaged | droid.cpp:3343-3353, :3405-3406, :3358-3380; weapons.json:769, 939, 1064, 2323, 3010, 4058 |
-| Command capacity | a commander leads a fixed count of units | 6 + 2 x rank index | rank index 0 to 8; capacity 6 to 22 | none | none | production cap at 36 kills (rank 3, so 12) | cmddroid.cpp:195; mp brain.json:8-9, 11, 14 |
+| Command capacity | a commander leads a fixed count of units | 6 + 2 x rank index | rank index 0 to 8; base capacity 6 to 22 (research.json:33, :38 raise it: BaseCommandLimit 20, CommandLimitByLevel 50) | none | none | production cap at 36 kills (rank 3, so 12) | cmddroid.cpp:195; mp brain.json:8-9, 11, 14 |
 | Attach rank bonus | attached unit's effective rank = max(own + 1, commander rank) | +1 flat while attached | autoRewardRankFromAttach true | none | none | none | droid.cpp:2547-2549; mp brain.json:3 |
 | Escort XP to commander | escort kills add XP to the commander when inside range | squared distance check | range list only on the null fallback brain; command brain has an empty list | none | none | none | cmddroid.cpp:199-206; droid.cpp:1074-1098; brain.json (ZNULLBRAIN) |
 | Hack ladder (mind-like takeover) | attempts pick a unit or building; units filtered by rank | unit chance 20 or 40; rank gate by research step; constructors 20, 50, 66 percent safe per step | kill thresholds 256, 64, 16 per step; step 4 safe in non-classic | none | attempt timer not read | final mission: static fail chance | nexus.js:78, 172-199, 207, 215, 223 |
@@ -82,3 +82,11 @@ Idea adapt; no code.
 
 ## Brief rule served
 FEEL boss-staging; MG011 (dragons and boss abilities).
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Licence cite wrong: COPYING:2 is the plain GPL v2 title; 'or later' wording is COPYING.README:14-16 (confirmed).
+- Command capacity omits research upgrades research.json:33 (BaseCommandLimit 20) and :38 (CommandLimitByLevel 50); 'capacity 6 to 22' is the base stat only (confirmed in data; the effect is a plain add to maxDroids/maxDroidsMult per the stat names, not traced in code).
+- Everything else the checker verified holds (cue lists, poll, late-drop, camChangeOnDiff, nexus values, -1 sentinel, cap 36, video.js 3.2 s).
+- Own addition: the note said videos and music are 'not covered' by the GPL; COPYING.README:14-16 says the not-included videos and music are covered too. Corrected.
+Fixed 2026-10-12: licence cite (COPYING.README:14-16 only) and the videos/music wording; command capacity now stated as base value with research upgrades noted (section 3 and MG011 row).

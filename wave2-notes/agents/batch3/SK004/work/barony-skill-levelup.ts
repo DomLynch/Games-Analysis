@@ -1,6 +1,6 @@
 // Licence: BSD-2-Clause (donor LICENSE.txt, Turning Wheel LLC 2013-2020). Code may be adapted; this sketch is written from the described mechanism.
 // Fixes applied: (1) the donor compares the trained-proficiency id with PRO_LOCKPICKING (= 0), which is a disguised "trained" flag; the sketch takes an explicit boolean.
-// (2) the donor checks XP for one level per award (if, not while); the sketch loops so one large award can grant several levels.
+// Note: the donor checks XP for one level per call of handleEffects, but that runs every tick, so a large award levels one per tick and nothing is stranded; the sketch applies them in one step.
 
 type Rng = () => number; // returns a value in [0, 1)
 
@@ -9,11 +9,16 @@ const SKILL_CAP = 100;    // donor entity.cpp:2504
 const XP_PER_LEVEL = 100; // donor entity.cpp:4062
 const LEVEL_CAP = 255;    // donor entity.cpp:4070 (LVL < 255 check)
 
-// Kill-gated proficiency gain: only on a killing blow, only while below Basic, 1 in 20 chance, cap 100.
-// Outside this gate (other events), the donor calls increaseSkill directly; that path is not modelled here.
-function killSkillGain(prof: number, killed: boolean, rng: Rng): number {
-  if (!killed || prof >= SKILL_BASIC || prof >= SKILL_CAP) return prof;
-  if (Math.floor(rng() * 20) !== 0) return prof;
+// Combat proficiency gain, per landed weapon hit (donor entity.cpp 13186-13268): 1 in 10 on a normal hit, 1 in 8 on a killing hit,
+// 1 in 6 with a crystal weapon (checked first, kill or not). No tier gate on normal targets; a training dummy only teaches below Basic.
+// No gain against allies, other players or stasis targets (the caller passes eligible = false). Cap 100 (increaseSkill, entity.cpp:2504).
+interface CombatHit { eligible: boolean; killingBlow: boolean; crystalWeapon: boolean; targetIsDummy: boolean; }
+
+function combatSkillGain(prof: number, hit: CombatHit, rng: Rng): number {
+  if (!hit.eligible || prof >= SKILL_CAP) return prof;
+  if (hit.targetIsDummy && prof >= SKILL_BASIC) return prof;
+  const oneIn = hit.crystalWeapon ? 6 : hit.killingBlow ? 8 : 10;
+  if (Math.floor(rng() * oneIn) !== 0) return prof;
   return prof + 1;
 }
 
@@ -57,7 +62,7 @@ function applyLevelUp(stats: number[], picks: number[], trained: boolean[], rng:
   return out;
 }
 
-// XP award: loop so one large award can grant several levels (donor checks once with if).
+// XP award: the donor checks once per tick (handleEffects), so a big award levels one per tick; this applies them all in one step.
 function awardXp(exp: number, lvl: number, gained: number): { exp: number; lvl: number; levelsGained: number } {
   let e = exp + gained;
   let l = lvl;

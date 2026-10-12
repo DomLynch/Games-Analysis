@@ -43,7 +43,7 @@ Acceptance: a server test starts at 100 energy with the donor's default drain (0
 | Armour | Kept across sleep | saved before respawn and set after | not limited in this module | n/a | sleep/sv_sleep.lua 66, 69 |
 | Sleep lockout | Refuses sleep right after a sleep | KnockoutTimer + 5 >= now refuses (unless forced) | 5 s | n/a | sv_sleep.lua 2, 37 |
 | Sleep hunger | Hunger during sleep | saved at wake, restored from the same value | no net effect (as read) | n/a | sv_sleep.lua 62, 120 |
-| Sleeper damage | Damage to a sleeping player | Health -= amount, direct; world damage forced to 10 and scaled 0.1 | flat 10 for world damage | n/a | sv_sleep.lua 215-220 |
+| Sleeper damage | Damage to a sleeping player | Health -= amount, direct (SetHealth); world damage forced to 10 and scaled 0.1; on lethal damage it force-wakes, strips weapons and re-applies the damage through TakeDamageInfo (223-227) | flat 10 for world damage | n/a | sv_sleep.lua 215-220 |
 | Cook gate | Some food needs the cook job | isCook() reads the job flag | boolean | n/a | sv_hungermod.lua 38; sh_init.lua 32 |
 | Weapon clip and spare ammo | Ammo of a bought weapon | clip from weapon Primary, spare from shipment | DefaultClip / ClipSize from the weapon script | n/a | base/sv_purchasing.lua 71-75, 86-88 |
 | Locale | Player-facing strings | key = "text" lines with %s / %d placeholders, filled by DarkRP.getPhrase | 447 key lines (grep count of the key pattern; not each read) | n/a | modules/language/sh_english.lua (576 lines) |
@@ -71,7 +71,7 @@ interface Condition {
   frozen: boolean; // true while asleep or AFK: no drain, no starvation
 }
 
-// The only function that lowers health. Sleep and starvation both call it (the donor's sleep path does not).
+// The only function that lowers health. Sleep and starvation both call it (the donor's sleep path does not for non-lethal hits; its lethal hit does go through TakeDamageInfo).
 export function takeDamage(c: Condition, amount: number): void {
   if (amount <= 0) return;
   c.health = Math.max(0, c.health - amount);
@@ -120,10 +120,17 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 
 - Gap, no melee stamina, no per-action cost, no block, parry, roll or crit in this donor. The SK table's combat rows are NONE. The meter is a slow out-of-fight condition (minutes), so it does not give Frankendom its fast-fight stamina.
 - Defect, rate mismatch. The config comment says starvation is "every second" (`config.lua` 543), but the damage runs per 10 s tick (`sv_hungermod.lua` 12, `sv_player.lua` 21). The coded default is 0.3 HP per second, not 3. Fix: state rates per second in the data row and derive the tick (sketch).
-- Defect, sleep bypasses the damage path. `DamageSleepers` calls `SetHealth` directly (`sv_sleep.lua` 220), so armour and other damage rules do not apply to a sleeper, and world damage is replaced by a flat 10 (215-216). Fix: one `takeDamage` writer (sketch).
+- Defect, sleep bypasses the damage path for non-lethal hits. `DamageSleepers` calls `SetHealth` directly (`sv_sleep.lua` 220), so armour and other damage rules do not apply to a sleeping player's health loss; only the lethal hit force-wakes the player, strips weapons and re-applies the damage through `TakeDamageInfo` (223-227), so death itself uses the normal pipeline. World damage is replaced by a flat 10 (215-216). Fix: one `takeDamage` writer (sketch).
 - Defect, the sleep hunger save-restore does nothing useful. The value is saved at wake (62) and written back at wake (120), so no value is held during sleep. The energy tick skips only dead players (`sv_hungermod.lua` 8), so a sleeping (alive) player keeps draining (as read; not run). Fix: freeze the meter at sleep start (sketch `setFrozen`), a rule Dom should confirm.
 - Defect, AFK discards drain but not starvation. Energy goes back to its pre-AFK value (`sv_hungermod.lua` 23), but starvation damage applied during AFK stays (`sv_player.lua` 21-26). Fix: freeze both or neither, chosen on purpose.
 - Defect, buy-food slot before affordability. The per-player slot is taken (`sv_hungermod.lua` 61) before the affordability check (65), and the early return does not release it (release path not read). Fix: check money first, then take the slot.
 - Defect, the default food energy is 1. A food item with no energy value adds 1 (`spawned_food/init.lua` 38). Fix: refuse to spawn a food item without an energy value.
 - Ruling note. Starvation death is recorded only as a flag before the damage (`sv_player.lua` 28-31). Frankendom's server-verified kills need the death to be recorded by the damage writer, not by a flag read before the write.
 - Ruling note. The meter is a single-player value written from several places (`setSelfDarkRPVar` in the tick, eat, reset, AFK and sleep). Frankendom's one-ledger rule wants one writer; the sketch uses one `Condition` and one `step`.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Overstated: "sleeper damage bypasses the damage path" (sv_sleep.lua 220). SetHealth is direct, but lethal damage calls toggleSleep(v,"force") then v:TakeDamageInfo(dmginfo) (223-227). Confirmed against the donor code.
+- Missed (minor): nothing important.
+Fixed 2026-10-12: Sleeper damage table row, Defect line and sketch comment now say the bypass is for non-lethal hits only and that the lethal hit goes through TakeDamageInfo. Sketch code unchanged.
+

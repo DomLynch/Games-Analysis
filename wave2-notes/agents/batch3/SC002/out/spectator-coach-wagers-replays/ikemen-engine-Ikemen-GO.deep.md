@@ -4,7 +4,7 @@ Donor: `/mnt/frankendom-donors/ikemen-engine-Ikemen-GO/src/netplay.go` (ReplayFi
 
 Checked: Read in full: `ReplayFile` and its Open/Synchronize/Update/readReplayInput (netplay.go 1104-1300), replay payload encoding (101-116), header and sync writers (663-669, 1040-1058), constants (24-33), rollback recording and SaveReplay (rollback.go 226-234, 576-660), replay input source (input.go 2661-2700), replay branch of the frame loop (system.go 1008-1062, 1251-1258, 1279-1290, 4029-4080 partial, 4150-4172, 4240-4252, 4465-4480), tick accumulator (system.go 2617-2672). Searched `src` for coach, spectator, wager, bet and observer: no coach, spectator or wager code exists in this donor; the only hits are replay and netplay. Confidence: high on the replay format and playback path; medium on the timing detail in section 1 step 5 (I did not trace every caller of `addFrameTime`). Not read: the GGPO backend (`rs.session.backend`), `SaveReplay` callers (rollback.go 173, 818, 832; system.go 566), the delay-netplay recording path beyond the header and sync writes, the motif Replay Info menu (motif.go 1061). camera_scope: not a camera cell.
 
-Best transferable idea: Store only the server-confirmed input stream plus the match seed and pre-match time, then replay a fight by feeding those inputs back through the same engine, so a stored bout is re-run rather than re-recorded.
+Best transferable idea: Store the input stream (the donor records speculative inputs and relies on confirmed re-simulation overwriting them; ours records only server-confirmed ticks) plus the match seed and pre-match time, then replay a fight by feeding those inputs back through the same engine, so a stored bout is re-run rather than re-recorded.
 
 Decision (proposed): adapt - the record-inputs-not-state shape fits Pit replays as content and the server-verified kill ledger, but it works only if the fight sim is fully deterministic from seed plus inputs; Frankendom must also refuse to replay across a gap (the donor does not).
 
@@ -12,9 +12,9 @@ Acceptance: A server test re-runs a recorded 60-second duel from its stored seed
 
 ## 1. Mechanism
 
-- Recording (rollback path). Each frame the rollback session asks the backend for confirmed inputs for that frame (rollback.go 226). If a recording is open, it stores the eight input slots for that frame (rollback.go 233-235; `RecordReplayFrame`, 588-607) and advances `netTime`. Slots are 4 players x 2 (`MaxSimul * 2`, `MaxSimul` = 4). Nothing is written to disk yet: frames sit in memory.
+- Recording (rollback path). Each frame the rollback session asks the backend for the local player's speculative inputs (`SyncInput`, rollback.go 223-226). They are recorded at once; when a rollback re-simulates the frame with confirmed inputs, the record for that frame is overwritten (comment at 231-232), and `TruncateReplayFrom` (610-624) cuts the tail on rollback. So the stored stream is correct because of the overwrite, not because it was confirmed at record time. Frame N is written first by `ensureReplayFrame`/`RecordReplayFrame` (576-607). If a recording is open, it stores the eight input slots for that frame (rollback.go 233-235; `RecordReplayFrame`, 588-607) and advances `netTime`. Slots are 4 players x 2 (`MaxSimul * 2`, `MaxSimul` = 4). Nothing is written to disk yet: frames sit in memory.
 - File order (delay/rollback netplay). Header first: magic `IKRPLCFG`, format version (2), a length, and a JSON body with the sync settings and content fingerprint (netplay.go 1040-1058). Then the host's seed and pre-match time are exchanged, and both are written as a sync block: magic `IKRPLSYN`, int32 seed, int32 pmTime (663-669, 1104-1111). Then the frames.
-- Writing. `SaveReplay` runs once (guarded by `replaySaved`, rollback.go 626-632) and writes `netTime` frames, each as eight 8-byte records: 2-byte little-endian buttons, then six signed axis bytes (640-657; 101-106). A frame gap is padded with zeros and logged (rollback.go 576-586). That padding is a defect (see section 6).
+- Writing. `SaveReplay` runs once (guarded by `replaySaved`, rollback.go 626-632) and writes `netTime` frames, each as eight 8-byte records: 2-byte little-endian buttons, then six signed axis bytes (640-657; 101-106). A frame gap is padded with zeros and logged with a log line only, no error (rollback.go 576-586). That padding is a defect (see section 6).
 - Playback open. `OpenReplayFile` reads the header and rejects a sync-config version mismatch (netplay.go 1124-1148). The match calls `synchronize()`, which for a replay calls `ReplayFile.Synchronize` (system.go 1251-1258).
 - Playback start. `Synchronize` reads the seed and pmTime, calls `Srand(seed)`, sets the pre-match time, then calls `Update` once to load the first chunk (netplay.go 1248-1265).
 - Playback loop (per render frame). The frame loop calls `update()` first. In replay mode `update()` awaits one frame at the fixed rate, or a quarter of it (x4 fast-forward) while a hard button is down (system.go 1053-1056), then returns `ReplayFile.Update()` (1059). `Update` reads one chunk of eight records only when `sys.oldNextAddTime > 0` (netplay.go 1267-1300). Each controller then reads its slot through `inputRemap` (input.go 2687; netplay.go 1159-1162).
@@ -35,7 +35,7 @@ Acceptance: A server test re-runs a recorded 60-second duel from its stored seed
 | Reusable algorithm | Game-specific constants |
 |---|---|
 | A fight is a seed plus a per-tick input log; playback feeds the same log to the same sim | Eight slots per tick: `MaxSimul * 2`, `MaxSimul` = 4 (theirs, netplay.go 26 and system.go 28) |
-| Fixed record size so frame N sits at a known byte offset | 8 bytes per slot: 2 buttons + 6 axes (theirs, netplay.go 27; packing 103-105) |
+| Fixed record size so frame N sits at a known byte offset (within one sync block) | 8 bytes per slot: 2 buttons + 6 axes (theirs, netplay.go 27; packing 103-105) |
 | Replay header with a version so old files are rejected | Format version 2 (theirs, netplay.go 30); sync config version 1 (`syncConfigVersion`, netplay.go 29) |
 | Playback at the same rate as the live game | 60 Hz fixed (theirs, system.go 4469-4471); fast-forward x4 on a hard button (theirs, 1055) |
 | Search for the sync block without trusting its offset | 64 MiB search limit (theirs, netplay.go 33) |
@@ -146,14 +146,25 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - TARGET `src/fight/replay.ts` (new module): the Recorder (confirmed inputs per logical tick, seed and pre-match time in the header) and the Player (one record per tick, fed into the same `src/fight` step). Parity-checklist row 19 (fight record/replay).
 - Pit: replay playback is a client mode of the same engine. The donor does the same (one loop, `replayFile` as an input source, input.go 2686-2687).
 - Reuse tag: adapt-shape (MIT: code may be adapted; the sketch is written from the mechanism and does not copy donor lines)
-- Brief rule served: 1 (one engine: replay re-runs the same sim from inputs); server-verified (only confirmed inputs are recorded)
+- Brief rule served: 1 (one engine: replay re-runs the same sim from inputs); server-verified (our recorder accepts only confirmed ticks; the donor gets there by overwriting speculative frames on rollback)
 
 ## 6. Gaps and risks
 
 - Determinism is the whole mechanism. A replay reproduces the fight only if `src/fight` draws every random number from the seeded RNG and reads no wall clock. The donor relies on `Srand(seed)` (netplay.go 1257) and a single RNG path; I did not audit the donor's sim for stray randomness, and Frankendom's sim must be checked the same way with a test.
 - Server-verified kills: the donor stores inputs, not outcomes. A replay must re-derive the kill ledger by re-simulation; a kill list stored by a client is not evidence. Frankendom's ledger must be produced by the re-run, and a test should assert it.
-- Defect 1, silent zero-padding of frame gaps (rollback.go 576-586): a missing confirmed frame becomes an all-zero input, which changes the fight with no error. Fix: throw and mark the replay invalid (the sketch does this).
+- Defect 1, zero-padding of frame gaps with only a log line (rollback.go 576-586): a missing confirmed frame becomes an all-zero input, which changes the fight with no error. Fix: throw and mark the replay invalid (the sketch does this).
 - Defect 2, input read per render frame (netplay.go 1267-1271 via system.go 1059), not per logical tick. At 60 Hz these coincide; under turbo or pause they may not. Fix: read one record per logical tick (the sketch does this). Not run; suspected from reading only.
 - Defect 3, all frames held in memory and written once at the end (`SaveReplay`, rollback.go 626-657). A crash mid-bout loses the whole replay. Fix: append each confirmed tick to the record as it lands (not built in the sketch).
+- Sync blocks: `ReplayFile.Update` checks `atReplaySyncMarker` (netplay.go 1272-1276); a replay can hold several sync blocks (one per round) and playback zeroes the inputs when it meets one, so frame N is not at a fixed byte offset across rounds. The sketch writes one block per file and so leaves rounds out; a multi-round record needs a marker or per-round files.
 - Fixed 60 Hz playback and x4 fast-forward are engine constants here. For Frankendom, the playback rate is a client setting; the record itself is rate-independent.
 - No spectator, coach or wager code exists in this donor. Coach instructions mid-fight, live spectator feeds and Pit wagers are not covered by this note and need a different donor.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: MINOR
+- Note said rollback recording stores confirmed inputs and built Best idea / brief rule on it; real call is `SyncInput` speculative inputs (rollback.go 223-226), made correct by overwrite on confirmed re-simulation (231-232) and `TruncateReplayFrom` (610-624). Confirmed.
+- 'Silently' pads: line 581 logs the gap. Confirmed (it is a log line, not an error).
+- Missed (confirmed): `ReplayFile.Update` stops on `atReplaySyncMarker` (netplay.go 1272-1276); several sync blocks per replay, so no fixed offset across rounds.
+- Missed (confirmed): `ensureReplayFrame`/`TruncateReplayFrom` (576-624) are the real determinism guard of the donor's record.
+
+Fixed 2026-10-12: recording line, Best idea, brief-rule line, defect 1 wording, offset row; sync-marker gap added. Sketch unchanged (it records only confirmed ticks by design, with one sync block).

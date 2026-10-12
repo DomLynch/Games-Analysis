@@ -10,13 +10,13 @@ The donor's sound is an event system. One message type drives both the log line 
 
 (a) One event, two outputs. `msgt(type, fmt, ...)` adds the log line (message.c 440) and then calls `sound(type)` (443). `sound()` returns at once if the player's `use_sound` option is off (371), and otherwise signals `EVENT_SOUND` with the message type (374). The sound-core module registered its `play_sound` handler on that event (sound-core.c 383).
 
-(b) Message to variant list, from data. `message_sound_define` (sound-core.c 179-270) parses a space-separated list of sound names for a message type. Each new name gets one entry in a global sound table (deduplicated by a hash and a string compare inside the same function), and its index is added to the message's list (245-247). The cap is 16 slots with one kept spare (`MAX_SOUNDS_PER_MESSAGE` 35, the check at 245), so 15 variants per message. The data is `lib/customize/sound.prf`, lines of the form `sound:NAME:file1 file2 ...` (149 lines, e.g. HIT at line 86, SPELL at 304, AMBIENT_DAY at 33).
+(b) Message to variant list, from data. `message_sound_define` (sound-core.c 179-270) parses a space-separated list of sound names for a message type. Each new name gets one entry in a global sound table (deduplicated by a hash and a string compare inside the same function), and its index is added to the message's list (245-247). The cap is 16 slots with one kept spare (`MAX_SOUNDS_PER_MESSAGE` defined as 16 at sound-core.c line 35, the check at 245), so 15 variants per message. The data is `lib/customize/sound.prf`, lines of the form `sound:NAME:file1 file2 ...` (149 lines, e.g. HIT at line 86, SPELL at 304, AMBIENT_DAY at 33).
 
 (c) Dispatch. `play_sound` (309-334) picks one of the message's variants uniformly with `randint0` (320), loads it on first use if still unknown (327), and passes it to the platform hook (332) only if it loaded. There is no weighting, no repeat avoidance, no voice count, no priority and no cooldown in the core.
 
 (d) Platform. The file type is found by trying extensions in order (`load_sound`, sound-core.c 145; the list is in snd-sdl.c 54-56): `.mp3` first, mapped to `SDL_MUSIC`, then `.ogg`, mapped to `SDL_CHUNK`. Playback: a chunk goes to `Mix_PlayChannel(-1, ...)` (snd-sdl.c 185), any free channel; music goes to `Mix_PlayMusic(..., 1)` (190), one loop on the single music stream. The donor's `lib/sounds` folder holds 213 `.mp3` files and no `.ogg`, so in this donor every cue uses the music-stream path, and by SDL_mixer's documented behaviour a new music play replaces the one already playing. That makes cues one at a time (SDL_mixer behaviour, not read in the box). `snd-sdl.c` never calls `Mix_AllocateChannels`, so the chunk path would use the library default channel count (not read).
 
-(e) Hit quality: a critical chance and a power tier. `critical_melee` (player-attack.c 399-437): the normal case is `randint1(5000) > chance` (418 is the test line; 417-418 read). The chance is `1*weight + 5*to_h + 1*skill_to_hit - 60` (constants.txt 222 weight scale 1, 226 to-hit scale 5, 233 skill scale 1, 236 offset -60). If the roll is not above the chance, the blow is a plain `MSG_HIT`. Otherwise `power = 1*weight + randint1(650)` (422; constants 245-248), and a walk over the tier list (426) picks the first tier whose cutoff is above the power, with the last tier catching the rest. The tiers (constants.txt 261-265; fields are cutoff:mult:add:message): 400:2:5 HIT_GOOD; 700:2:10 HIT_GREAT; 900:3:15 HIT_SUPERB; 1300:3:20 HIT_HI_GREAT; catch-all 4:20 HIT_HI_SUPERB. Damage becomes `add + mult * dam` (430). The tier's message type is the same event that plays the sound (msgt at the end of the blow, player-attack.c 847-860, which uses the melee hit-type table at 704-712 for the text). The attack message type starts as `MSG_HIT` (736) and is changed by the critical call (807).
+(e) Hit quality: a critical chance and a power tier. `critical_melee` (player-attack.c 399-437): the normal case is `randint1(5000) > chance` (418 is the test line; 417-418 read). The chance is `1*weight + 5*to_h + 1*skill_to_hit - 60` (constants.txt 222 weight scale 1, 226 to-hit scale 5, 233 skill scale 1, 236 offset -60), where to_h is the player's state to_h plus the object's to_h, plus 10 (debuff-toh, constants.txt 219) when the target is debuffed, and a player-level term whose scale is 0 (229, no effect) (player-attack.c 404-415). If the roll is not above the chance, the blow is a plain `MSG_HIT`. Otherwise `power = 1*weight + randint1(650)` (422; constants 245-248), and a walk over the tier list (426) picks the first tier whose cutoff is above the power, with the last tier catching the rest. The tiers (constants.txt 261-265; fields are cutoff:mult:add:message): 400:2:5 HIT_GOOD; 700:2:10 HIT_GREAT; 900:3:15 HIT_SUPERB; 1300:3:20 HIT_HI_GREAT; catch-all 4:20 HIT_HI_SUPERB. Damage becomes `add + mult * dam` (430). The tier's message type is the same event that plays the sound (msgt at the end of the blow, player-attack.c 847-860, which uses the melee hit-type table at 704-712 for the text). The attack message type starts as `MSG_HIT` (736) and is changed by the critical call (807).
 
 (f) Sound per tier (data). The sound map gives: plain hit HIT one of two variants (plc_hit_hay, plc_hit_body; sound.prf 86); HIT_GOOD plc_hit_anvil (89); HIT_GREAT plc_hit_groan (92); HIT_SUPERB plc_hit_grunt (95); HIT_HI_GREAT plc_hit_grunt2 (98); HIT_HI_SUPERB plc_hit_anvil2 (101). So each tier has its own cue family, and the plain hit has two variants.
 
@@ -42,7 +42,7 @@ The donor's sound is an event system. One message type drives both the log line 
 | Reusable algorithm | Game-specific constants |
 |---|---|
 | One event drives the log line and the cue | msgt() calls sound(type) (message.c 443) |
-| Event to a list of variants, uniform pick | 15 variants max per event (sound-core.c 35, 245); randint0 (320) |
+| Event to a list of variants, uniform pick | 15 variants max per event (MAX_SOUNDS_PER_MESSAGE 16 defined at sound-core.c:35, check at :245); randint0 (320) |
 | Critical chance as a range roll against a weighted sum | range 5000; weight 1, to-hit 5, skill 1, offset -60 (constants.txt 222-236) |
 | Power tiers with a catch-all top tier | cutoffs 400, 700, 900, 1300, catch-all (constants.txt 261-265) |
 | Tier damage as add plus multiplier times damage | mult 2, 2, 3, 3, 4; add 5, 10, 15, 20, 20 (constants.txt 261-265) |
@@ -52,7 +52,7 @@ The donor's sound is an event system. One message type drives both the log line 
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor's critical order (chance roll first, then a power roll that walks the tiers, damage as add plus multiplier times damage), the event that carries both the tier name and the cue, and the plain-hit variant pick. It changes two things: (1) the random source is passed in (the donor calls randint0 and randint1 directly), so the sketch can be tested; (2) it returns the cue name and does not play it, so the playback path can be the channel pool from the cell 1 sketch (the donor's single music stream is the defect). It omits the ranged path, the weapon-weight and to-hit inputs beyond the parameters, the sound map loader, the ambient timer and the log line. Only the first variant of a tier is ever used by the donor for crit tiers, so the sketch's `cues` arrays keep one entry each, as the data does.
+simplified: the sketch keeps the donor's critical order (chance roll first, then a power roll that walks the tiers, damage as add plus multiplier times damage), the event that carries both the tier name and the cue, and the plain-hit variant pick. It changes two things: (1) the random source is passed in (the donor calls randint0 and randint1 directly), so the sketch can be tested; (2) it returns the cue name and does not play it, so the playback path can be the channel pool from the cell 1 sketch (the donor's single music stream is the defect). It adds an optional `targetDebuffed` input (+10 to-hit, donor debuff-toh). It omits the ranged path, the weapon-weight and to-hit inputs beyond the parameters, the sound map loader, the ambient timer and the log line. Only the first variant of a tier is ever used by the donor for crit tiers, so the sketch's `cues` arrays keep one entry each, as the data does.
 
 ```ts
 // Licence: GPL-2.0 or the Angband licence (donor, copyleft class). Clean-room sketch written from the described mechanism, not a translation of the donor.
@@ -61,6 +61,7 @@ simplified: the sketch keeps the donor's critical order (chance roll first, then
 const RANGE = 5000;
 const OFFSET = -60;
 const POWER_RANDOM = 650;
+const DEBUFF_TOH = 10; // donor melee-critical:debuff-toh, added to to-hit when the target is debuffed (player-attack.c 404-406)
 
 // Tiers in ascending cutoff. The last tier has no cutoff and catches everything else.
 interface Tier {
@@ -92,8 +93,8 @@ interface HitResult {
 }
 
 // Donor order: chance roll first; a critical then gets a power roll and walks the tiers.
-function meleeHit(dam: number, weight: number, toh: number, skill: number, rng: Rng): HitResult {
-  const chance = 1 * weight + 5 * toh + 1 * skill + OFFSET;
+function meleeHit(dam: number, weight: number, toh: number, skill: number, rng: Rng, targetDebuffed = false): HitResult {
+  const chance = 1 * weight + 5 * (toh + (targetDebuffed ? DEBUFF_TOH : 0)) + 1 * skill + OFFSET;
   if (rng.int1(RANGE) > chance) {
     return { event: "HIT", damage: dam, cue: PLAIN_CUES[rng.int0(PLAIN_CUES.length)] };
   }
@@ -133,6 +134,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - The event carries the log line and the cue together (msgt). That is good: one event keeps the text, colour and sound in step. Keep it, but the text must come from the same server event.
 - Ambient is one-shot, timed by game turns, banded by depth. Frankendom zones are data, so the ambient bank is a zone field; the depth bands are not a rule to copy. Ambient is not a combat row, so Lead should decide whether it needs its own row.
 - Spell cues are data only in what was read. Do not claim a spell sound system until the cast path is read (not read).
+- Criticals are skipped for unarmed attacks (no object, player-attack.c 806-809) and the percent-damage birth option takes a different damage branch (803, 810); zero damage forces a MSG_MISS cue with the verb "fail to harm" (841-844). All three change which cue plays, so the cue picker must take them as inputs.
 - The donor's critical tiers are tuned for a 1990s-style weapon-weight model. Frankendom needs its own tier numbers as data; the shape (chance roll, power roll, tiers) transfers.
 
 Best transferable idea: one combat event carries the outcome tier, its log text and its cue family, so a critical sounds different from a plain hit by construction.
@@ -141,3 +143,11 @@ Acceptance: A critical that the engine tiers as HIT_GREAT plays the great-hit cu
 
 Reuse tag: rewrite-from-idea (GPL-2.0 or Angband licence; clean-room only)
 Brief rule served: 1
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- 'MAX_SOUNDS_PER_MESSAGE 35' mixed the define LINE (35) with its VALUE (16, sound-core.c:35); the 15-variant cap at :245 stands. Confirmed, fixed in section 1 and the numbers table.
+- Critical chance omitted terms: +m_crit_debuff_toh (10) when the target is debuffed, p->state.to_h plus the object to_h, and the player-level term (scale 0 in constants.txt, so no effect) (player-attack.c 404-415). Confirmed; text fixed and the sketch gained an optional `targetDebuffed` input.
+- Missed: criticals are skipped for unarmed attacks (obj == NULL), and the percent-damage birth option takes a different branch (player-attack.c 803-810); zero damage forces a MSG_MISS cue (841-844). Confirmed, added to the Gaps.
+
+Fixed 2026-10-12: define value 16, crit chance terms, sketch debuff input (work/angband-hit-tiers.ts updated), crit skip and miss-cue notes.

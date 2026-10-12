@@ -163,3 +163,8 @@ Best transferable idea: a fixed voice budget where a new cue steals only a stric
 
 Decision (proposed): adapt - keep the budgeted voice pool with priority steal and the own-cue tier; fix the first-match steal, the null priority and the snap-up fade; add the music crossfade the donor lacks.
 Acceptance: With 30 voices busy in a 3-attacker fight, an enemy footstep (NORMAL or LOW) never takes the player's own hit cue (HIGH); a zone bed change fades the old bed out over its set duration while the new bed fades in, and a client test sees the old bed's end listener fire once with interrupted = true and never restart it.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- No false claims. Verified: pools 30 and 2, getSource two passes, priorities, range gate, owner sounds HIGH vs world NORMAL, MIN_TIME 10 ms, landing curve, playMusic stopAll before getSource, update order, fade max(target, gain-delta), Apache-2.0.
+- Missed (minor): the music-defect trigger is slightly overstated. stopAll leaves the old listener keyed to its source; if the new track reuses the same source (HashMap order is fixed, so usually it does), the stale listener fires only when that new track later ends (restarting the OLD loop), not on the next update. The defect is real either way. Death handlers (122-145) are unthrottled as stated.

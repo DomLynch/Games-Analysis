@@ -5,19 +5,23 @@
 export interface CastTier { requiredLevel: number; castingTimeUnits: number; }
 
 // Donor order: walk the tiers and stop at the first one whose next tier needs more level than the caster has.
-export function pickTier(tiers: CastTier[], casterLevel: number): CastTier {
+// With the SF_SIMPLIFIED_DURATION spell flag the donor skips the walk and uses the level itself as the index (clamped here so it stays in range).
+export function pickTier(tiers: CastTier[], casterLevel: number, simplifiedDuration = false): CastTier {
+  if (simplifiedDuration) return tiers[Math.min(Math.max(casterLevel, 0), tiers.length - 1)];
   for (let i = 0; i < tiers.length - 1; i++) {
     if (tiers[i + 1].requiredLevel > casterLevel) return tiers[i];
   }
   return tiers[tiers.length - 1];
 }
 
-export interface CastInput { tier: CastTier; mentalSpeed: number; capUnits?: number; roundMs: number; }
+export interface CastInput { tier: CastTier; mentalSpeed: number; capUnits?: number; roundMs: number; casterIsActor?: boolean; }
 
 // Cast time in ms. A cap (if set below 10) replaces the tier value and skips haste; otherwise haste is subtracted.
 // The result is clamped to 0..10 units before it is scaled to milliseconds.
 export function castTimeMs(i: CastInput): number {
   let units = i.tier.castingTimeUnits;
+  // Donor applies cap, haste and the 0..10 clamp only when the caster is an actor; a non-actor keeps the raw tier value.
+  if (i.casterIsActor === false) return (units * i.roundMs) / 10;
   if (i.capUnits !== undefined && i.capUnits < 10 && units > i.capUnits) units = i.capUnits;
   else units -= i.mentalSpeed;
   units = Math.min(10, Math.max(0, units));

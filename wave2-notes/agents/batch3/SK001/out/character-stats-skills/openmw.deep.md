@@ -9,13 +9,13 @@ Checked: camera_scope n/a (stats topic). Read in full: stat.cpp (all), playerski
 - **Ledgers.** An attribute is `base - damage + modifier`, floored at 0 (stat.cpp 128). A negative modifier is not stored as a negative: it is converted to damage (stat.cpp 151-155), so a drain can be healed back by `restore` (stat.cpp 164-170). A pool (health, magicka, fatigue) is a `DynamicStat`: `base` and `modifier` give the max, `current` is the spendable value. `setCurrent` can rise only up to the max unless the caller passes `allowIncreaseAboveModified` (stat.cpp 69-91).
 - **Derived pools, recalculated on change.** Fatigue max = Strength + Willpower + Agility + Endurance (creaturestats 139-152); when one of the four changes, the current/max ratio is kept (line 149-151). Magicka max = factor x Intelligence, factor = 1.0 for the player and 2.0 for NPCs (creaturestats 402-414; defaults 1779, 1776), plus 0.1 per point of Fortify Maximum Magicka (creaturestats 409-410). Health base = floor(0.5 x (Strength + Endurance)) (npcstats 248-254).
 - **Fatigue as a tired-body multiplier.** `getFatigueTerm() = 1.25 - 0.5 x (1 - current/max)`, so it runs from 0.75 (empty) to 1.25 (full). When max floors to 0 the normalised value is set to 1 (creaturestats 39-52). Fortify can push current above max and the function does not clamp that (creaturestats 44 uses `max(0, current/max)`, no upper clamp; the read did not find a clamp elsewhere). The term multiplies: evasion (creaturestats 329-331), attacker hit term (combat 345), blocker and attacker block terms (combat 123, 132), spell success chance (spellutil 297) and spell resistance (spellresistance 47). A fatigue below zero is knockout (character 388).
-- **Hit chance (order of steps, as read).** (a) defence = evasion = (Agi/5 + Luck/10) x fatigueTerm + min(100, Sanctuary) (creaturestats 329-332); (b) attack = (weapon skill + Agi/5 + Luck/10) x attacker fatigueTerm, then + Fortify Attack - Blind (combat 343-347); (c) chance = round(attack - defence), with no clamp (combat 349; defence set at combat 333). A melee swing rolls `roll0to99 < chance` to hit (npc 568-570). A projectile misses when `roll0to99 >= chance` (combat 244). Both rolls use the same chance.
+- **Hit chance (order of steps, as read).** (a) defence term (combat 323-340): zero when the victim's current fatigue is below 0; otherwise evasion = (Agi/5 + Luck/10) x fatigueTerm + min(100, Sanctuary) (creaturestats 329-332) is used only if the victim is not knocked down, not paralysed and (player attacker only) not unaware; Chameleon and Invisibility each add min(100, fCombatInvisoMult x magnitude) whenever fatigue >= 0; (b) attack = (weapon skill + Agi/5 + Luck/10) x attacker fatigueTerm, then + Fortify Attack - Blind (combat 343-347); (c) chance = round(attack - defence), with no clamp (combat 349). So a knocked-down, paralysed or unaware target is hit on attack alone. A melee swing rolls `roll0to99 < chance` to hit (npc 568-570). A projectile misses when `roll0to99 >= chance` (combat 244). Both rolls use the same chance.
 - **Damage, order of steps for a weapon hit.** (a) weapon range picked by attack type and interpolated by attack strength (npc 611-620); (b) weapon condition scales damage (combat 457-461); (c) damage x (fDamageStrengthBase + Strength x fDamageStrengthMult x 0.1), i.e. x (0.5 + 0.01 x Str) by default (combat 463-475); (d) resistance, werewolf, on-hit enchantments and shields; (e) critical x4.0 when the attacker is the player and the target is unaware (npc 636-650); knocked-down target x1.5 for any attacker (npc 659-660); (f) block (below); (g) god-mode zeroes damage for the player (npc 670-671).
 - **Hand-to-hand is non-lethal first.** Hand-to-hand damage = HandToHand skill x (0.1 + 0.4 x attackStrength) (combat 482-485), optionally x Str/40 (combat 495-501, behind a setting). It is marked as health damage only when the victim is paralysed or knocked down (combat 488); otherwise the damage goes to the `fatigue` key of the hit (luamanagerimp 712-715; npc 757 applies it to fatigue). Health damage from hand-to-hand is multiplied by fHandtoHandHealthPer = 0.1 (combat 509-513).
 - **Fatigue spend.** A swing costs 2.0 + encumbrance x 0.0 + weight x attackStrength x 0.25 (combat 548-551, npc 582). A block costs 4.0 + min(1, encumbrance) x 0.0 + weight x attackStrength x 1.0 (combat 158-168). Current can drop below zero (fatigue loss passes `allowDecreaseBelowZero` true, npc 757), and below zero is knockout (character 388).
 - **Block (contest, then cost).** blockTerm = (Block skill + 0.2 Agi + 0.1 Luck) x (attackStrength x 1.0 + 1.0) x (1.25 if the blocker's forward movement is zero or less) x blocker fatigueTerm (combat 109-123). attackerTerm = (weapon skill + 0.2 Agi + 0.1 Luck) x attacker fatigueTerm (combat 125-132). Chance = clamp(int(blockTerm - attackerTerm), 10, 50) (combat 134-136). On success: shield durability loses int(damage) (combat 151-154), fatigue as above, and the Block skill is used (combat 172-173). The block also needs the blocker not to be knocked down, hit-recovering or paralysed (combat 79-81), and not in knockout (character 388-391).
 - **Spell success (cast chance).** base = 2 x school skill - spell cost + 0.2 Willpower + 0.1 Luck (spellutil 247, 262). Final = (base - Sound) x caster fatigueTerm, clamped 0-100 when capped (spellutil 295-300). Current magicka below cost gives 0 (spellutil 289-290).
-- **Spell resistance.** x = (Willpower + 0.1 Luck) x fatigueTerm x 50/castChance (spellresistance 47-54). roll = random 0-100 (57). If x <= roll there is no roll-based resistance; else the roll-based part is roll / min(x, 100), a fraction in 0-1 (spellresistance 61-68). Final = min(part + resistance attribute percent, 100) (71). Effect multiplier = 1 - final/100 (spellresistance 26).
+- **Spell resistance.** x = (Willpower + 0.1 Luck) x fatigueTerm x 50/castChance (spellresistance 47-54). roll = random 0-100 (57). For NoMagnitude effects the roll is first reduced by the resistance attribute (roll -= resistance) and, if x > roll, x is set to 100 instead of the fraction (spellresistance 57-66). Otherwise, if x <= roll there is no roll-based resistance; else the roll-based part is roll / min(x, 100), a fraction in 0-1 (spellresistance 61-68). Final = min(part + resistance attribute percent, 100) (71). Effect multiplier = 1 - final/100 (spellresistance 26).
 - **Skill use (progress ledger).** Each use adds `gain / requirement` to the skill's progress, where requirement = (base + 1) x type factor, type factor = fMajorSkillBonus 0.75, fMinorSkillBonus 1.0, else fMiscSkillBonus 1.25, times fSpecialSkillBonus 0.8 when the skill is in the class specialisation (playerskillhandlers 20-38; defaults 1762, 1772, 1775, 1811). Gain per use = the skill record's `skillGain[useType]` (skillhandlers 66). A positive gain is refused at base 100 (playerskillhandlers 161-163). When progress reaches 1 the skill goes up by 1 (166-170), and the progress is then set to 0 (115), so any overshoot past 1 is dropped (defect D1).
 - **Level and jail.** A skill level-up adds to the class level progress (iLevelupMajorMult / MinorMult, defaults 1), `NpcStats::levelUp` subtracts iLevelUpTotal (default 10, defaults 1950; npcstats 228); the caller that triggers levelUp was not read. Level-up health: +Endurance x 0.1 to base and current, current floored at 1 (npcstats 239-243). Jail: one random skill loses 1 per day, except sneak and security (playerskill 57-58, 119-136).
 - **Luck is a real stat.** It enters the hit attack term (Luck/10, combat 344), evasion (Luck/10, creaturestats 330), block terms (0.1 x Luck, combat 111, 131), cast chance (0.1 x Luck, spellutil 262) and spell resistance (0.1 x Luck, spellresistance 47).
@@ -65,8 +65,8 @@ Checked: camera_scope n/a (stats topic). Read in full: stat.cpp (all), playerski
 | Swing fatigue cost | Stamina per attack | 2.0 + enc x 0 + weight x attackStrength x 0.25 | base 2.0 | none read | combat.cpp:548-551; defaults 1705, 1706, 1839 |
 | Block fatigue cost | Stamina per block | 4.0 + min(1, enc) x 0 + weight x attackStrength x 1.0 | base 4.0 | shield durability -= int(damage) | combat.cpp:158-168, 151-154; defaults 1708, 1838 |
 | Knockout | Out of fight | fatigue current < 0 or max 0 | threshold 0 | n/a | character.cpp:388 |
-| Hit chance (melee, ranged) | Whether a swing or shot lands | round((skill + Agi/5 + Luck/10) x fatigue + fortify - blind - evasion) | e.g. 66 at full fatigue, 36 at empty (see acceptance) | no clamp; <0 always miss, >=100 always hit | combat.cpp:343-349, 244; npc.cpp:568-570 |
-| Evasion (defence) | Defence term | (Agi/5 + Luck/10) x fatigue + min(100, Sanctuary) | Sanctuary part capped at 100 | Sanctuary capped at 100 | creaturestats.cpp:327-335 |
+| Hit chance (melee, ranged) | Whether a swing or shot lands | round((skill + Agi/5 + Luck/10) x fatigue + fortify - blind - defence); defence = 0 vs knocked-down, paralysed or (player attacker) unaware victims, plus Chameleon/Invisibility terms | e.g. 66 at full fatigue, 36 at empty (see acceptance) | no clamp; <0 always miss, >=100 always hit | combat.cpp:343-349, 244; npc.cpp:568-570 |
+| Evasion (defence) | Defence term | (Agi/5 + Luck/10) x fatigue + min(100, Sanctuary); nullified (combat 323-333) vs knocked-down, paralysed or unaware victims; Chameleon/Invisibility add min(100, fCombatInvisoMult x magnitude) each (combat 334-339) | Sanctuary part capped at 100 | Sanctuary capped at 100 | creaturestats.cpp:327-335; combat.cpp:323-340 |
 | Weapon damage | Per hit | (range interpolated by attack strength) x item health fraction x (0.5 + 0.01 x Str) | range from the weapon record | none read | npc.cpp:618-620; combat.cpp:452-476; defaults 1671, 1672 |
 | Hand-to-hand damage | Bare-hand hit | HandToHand skill x (0.1 + 0.4 x attackStrength) [x Str/40 if setting] | 0.1 to 0.5 multiplier | health only if knocked down or paralysed | combat.cpp:478-530; defaults 1771, 1764 |
 | Hand-to-hand health factor | Health damage from fists on knocked-down targets | x 0.1 | 0.1 | n/a | combat.cpp:509-513; default 1731 |
@@ -86,7 +86,7 @@ Note: rows marked "none read" have no cap in the code I read. The block still bo
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order for the tired-body term, hit chance, strength damage, swing cost, use-based progress and spell chance. It does NOT clamp the hit chance (matches the donor), uses `Math.round` where C `round` rounds halves away from zero, and omits block, hand-to-hand health/fatigue routing, resistance, encumbrance, regen, level-up counters, jail and specialisation counters. Fix D1 is applied in `useSkill`: the excess progress is carried into the next point, where the donor sets progress to 0.
+simplified: the sketch keeps the donor order for the tired-body term, hit chance, strength damage, swing cost, use-based progress and spell chance. It does NOT clamp the hit chance (matches the donor), takes the defence term from a helper that zeroes evasion for knocked-down, paralysed or unaware victims (donor combat 323-340), uses `Math.round` where C `round` rounds halves away from zero, and omits block, hand-to-hand health/fatigue routing, resistance, encumbrance, regen, level-up counters, jail and specialisation counters. Fix D1 is applied in `useSkill`: the excess progress is carried into the next point, where the donor sets progress to 0.
 
 ```ts
 // Licence: GPL-3.0 (donor openmw). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -108,6 +108,17 @@ function fatigueTerm(fatigue: Pool): number {
   const max = poolMax(fatigue);
   const normalised = Math.floor(max) === 0 ? 1 : Math.max(0, fatigue.current / max);
   return FATIGUE_BASE - FATIGUE_MULT * (1 - normalised);
+}
+
+// Defence term (donor combat 323-340): evasion counts only when the victim is not knocked down, paralysed or (player attacker) unaware;
+// Chameleon and Invisibility add min(100, invisoMult x magnitude) each; everything is zero if the victim's fatigue is below 0.
+interface VictimState { evasion: number; fatigueCurrent: number; knockedDown: boolean; paralysed: boolean; unaware: boolean; chameleon: number; invisibility: number; }
+function defenceTerm(v: VictimState, invisoMult: number): number {
+  if (v.fatigueCurrent < 0) return 0;
+  let d = (v.knockedDown || v.paralysed || v.unaware) ? 0 : v.evasion;
+  d += Math.min(100, invisoMult * v.chameleon);
+  d += Math.min(100, invisoMult * v.invisibility);
+  return d;
 }
 
 // Hit chance on a 0-100 scale: (skill + Agi/5 + Luck/10) x tired-body term, + fortify - blind, minus defence.
@@ -164,7 +175,8 @@ function awakeFatigueRegenPerSec(endurance: number): number {
 // Demo values (not donor data): a mid-level fighter.
 const f: Pool = { base: 80, modifier: 0, current: 40 };
 const term = fatigueTerm(f);
-const hit = hitChance({ skill: 50, agi: 40, luck: 30, fortifyAttack: 0, blind: 0 }, term, 10);
+const defence = defenceTerm({ evasion: 10, fatigueCurrent: 40, knockedDown: false, paralysed: false, unaware: false, chameleon: 0, invisibility: 0 }, 1);
+const hit = hitChance({ skill: 50, agi: 40, luck: 30, fortifyAttack: 0, blind: 0 }, term, defence);
 const dmg = strengthDamage(20, 50);
 const cost = swingFatigueCost(0, 5, 1);
 const sk: Skill = { base: 40, progress: 0.9 };
@@ -192,6 +204,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020 /tmp/sk001-o
 - **D2, spell-resistance unit mix.** `spellresistance.cpp` 68 gives the roll part as a 0-1 fraction (roll divided by a value at most 100), and line 71 adds it to the percent resistance attribute. So the random part adds under one percentage point. Fix: express both parts in percent (multiply the roll part by 100) or both in 0-1, and test one case.
 - **D3, two fatigue regen formulas.** Sleep uses encumbrance and fEndFatigueMult (actors 929-932); awake uses neither (actors 956-958). Fix: one formula with an explicit rest multiplier, so the two cannot drift.
 - **D4, integer truncation.** Attack skill is `static_cast<int>` (combat 242) and shield damage is `int(damage)` (combat 153). Small, but a fractional skill loses its fraction. Fix: keep floats in the engine and round only for display.
+- Defence is nullified against knocked-down, paralysed and unaware targets, so a stunned target is hit on the attack term alone; Chameleon and Invisibility add to defence (combat 316-350). Keep this: it is a free stagger-reward rule.
 - The hit chance has no clamp (combat 349). A chance of 100 or more always hits and below 0 always misses. Frankendom should decide the clamp in the engine (for example 5-95) and test it, not inherit the open range.
 - The fatigue term has no upper clamp, so fortify can push it above 1.25. Decide whether the tired body can be overcharged.
 - Units: the awake regen unit of `duration` is not confirmed (caller not read); `attackStrength` range is assumed 0-1 from the interpolation (not read).
@@ -206,3 +219,11 @@ Acceptance: with skill 50, Agi 40, Luck 30 and evasion 10, a player at full stam
 
 Reuse tag: rewrite-from-idea (GPL-3.0; clean-room only)
 Brief rule served: one ledger (Stat/DynamicStat shape); tunable numbers as data fields; hit roll and spend engine-side for server verification.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Error: hit chance described as round(attack - evasion) only; getHitChance (combat.cpp 316-350) zeroes defence when the victim is knocked down, paralysed or (player attacker) unaware, applies evasion only when victim fatigue >= 0, and adds Chameleon/Invisibility (x fCombatInvisoMult, capped 100). Confirmed and fixed (text, table, sketch).
+- Error: spell resistance omitted the NoMagnitude branch (roll -= resistance; x = 100), spellresistance.cpp 57-66. Confirmed and added.
+- Missed: defence nullified vs knocked-down/paralysed/unaware targets. Added to gaps as a keep.
+
+Fixed 2026-10-12: section 1 hit chance and spell resistance, stat table rows, sketch (defenceTerm helper) and work/openmw-stats.ts, gaps.

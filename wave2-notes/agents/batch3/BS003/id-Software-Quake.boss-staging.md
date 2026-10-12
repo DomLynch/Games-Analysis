@@ -5,7 +5,7 @@ Licence: gnu.txt in the tree is GPL v2. Treat as GPL: shape only, no code copied
 
 Checked: WinQuake/cl_parse.c 930-955 (svc_intermission, svc_finale, svc_cutscene); WinQuake/screen.c 40 and 125-150 (centre text, print speed); WinQuake/sbar.c 1315-1323 (finale overlay); WinQuake/view.c 833-860 (intermission camera); WinQuake/cl_tent.c 65-101 and 194-290 (beams, explosions); WinQuake/menu.c 2385-2440 (level-name table); qw-qc/doors.qc 425-440 and 527-565 (door data); qw-qc/combat.qc 150-180 (armour absorb); qw-qc/items.qc 405-430 (armour types); qw-qc/client.qc around 223 (intermission sender); qw-qc/defs.qc and QW/progs/defs.qc (message ids); a grep of every .c, .h and .qc in the tree for boss, shambler, chthon, shub, tarbaby, finale and svc_finale. Candidates opened: 11 files. Confidence: high on the code quoted; the boss part is a clear gap, not a finding.
 
-Not read: the single-player game code and its monsters. Verdict for boss-staging: PARTIAL (thin). Half read: both. Client C (WinQuake) and the QuakeWorld server QuakeC (qw-qc). The single-player progs source with the monsters and bosses is not in this tree: no monsters.qc in qw-qc or QW/progs, and the grep found no boss code. Those names appear only as level titles in menu.c.
+Not read: the single-player game code and its monsters. Verdict for boss-staging: PARTIAL (thin). Half read: both. Client C (WinQuake) and the QuakeWorld server QuakeC (qw-qc). The single-player progs source with the monsters and bosses is not in this tree: no monsters.qc in qw-qc or QW/progs, and the grep found no single-player boss code (only QW stubs, see section 7). Those names appear only as level titles in menu.c.
 
 ## 1. What the player sees and feels (375 wide)
 At the end of a level the screen goes full-screen and the camera stops moving; the view just idles. Centre text is typed out one character at a time. A finale picture is drawn centred near the top. A lightning bolt is a beam that lasts 0.2 seconds and only stays up while the server keeps sending it again; the local player's own beam follows the player's live position each frame. An explosion flashes a bright light of radius 350 for half a second and plays a blast sound. None of this is a boss fight in this tree.
@@ -20,7 +20,7 @@ At the end of a level the screen goes full-screen and the camera stops moving; t
 ## 3. The rule behind it
 Intermission state machine (client, WinQuake/cl_parse.c 937-951): svc_intermission sets the state to 1, svc_finale sets it to 2 and carries a text string, svc_cutscene sets it to 3 and carries a text string. Each one resets the completed time and forces the full-screen view. The QuakeWorld intermission sender is at qw-qc/client.qc:223 and sends the intermission message to all clients.
 
-Centre text (WinQuake/screen.c 135): characters shown = print speed x (time now - time the text started). The print speed is a cvar with default 8 characters per second (screen.c:40). Only the finale state types the text; other centre text shows at once.
+Centre text (WinQuake/screen.c 135): characters shown = print speed x (time now - time the text started). The print speed is a cvar with default 8 characters per second (screen.c:40). Text types for any nonzero intermission state (SCR_DrawCenterString, screen.c 134-135: `if (cl.intermission)`), so both the finale (2) and cutscene (3) states type it; centre text outside an intermission shows at once.
 
 Lightning beam (WinQuake/cl_tent.c 65-101): a beam message sets an end time 0.2 seconds ahead (cl_tent.c 88 for a beam already on the same entity, 101 for a free beam slot). A new beam message for the same entity resets it, so the beam stays up only while the server keeps sending. In the per-frame update, the start point follows the player's live position only for the local player's own beam (cl_tent.c 330-345 region, not receipted). Three bolt models exist (cl_tent.c 216-227).
 
@@ -57,6 +57,7 @@ Show one end-of-zone card after a kill in the Pit: type at 8 characters per seco
 GPL v2 (gnu.txt in the tree). Shape only. The level names in menu.c are the donor's titles: do not reuse them. Keep the trait (typed card, refresh-to-live beam, data-driven door wait), change the names, text and numbers.
 
 ## 7. Gaps
+- Boss-related code that does exist: qw-qc/server.qc:30-36 defines the monster_* spawn functions (monster_boss included) as stubs that just remove the entity, so the QuakeWorld server strips single-player monsters; qw-qc/misc.qc:639-651 func_bossgate is a brush model that appears unless all four episode sigils are held (serverflags & 15 == 15). That sigil gate is the only boss staging rule in the tree: a door that stays until a progression flag completes.
 - Not in the tree: the single-player monsters and bosses (no monsters.qc, no boss code), the server that sends the finale message (grep of all .c, .h and .qc found no writer of svc_finale or svc_cutscene; the client parses them and the QuakeWorld QC defines the ids only), the end-of-game cutscene text, the map data (the .pak data is not in the tree).
 - Read in part: menu.c. The level table has 38 entries (start, 8 in episode 1, 7 in episode 2, 7 in episode 3, 8 in episode 4, the final level, 6 deathmatch levels). The hipnotic and rogue tables were not counted. Level titles are not quoted beyond one example.
 - Idle and ambient behaviour for bosses: not in the half I read (no boss monsters). The view idle at the end card is the only ambient behaviour seen (view.c 837-857: the idle scale is forced to 1 during intermission).
@@ -80,4 +81,12 @@ Best transferable idea: a finale card typed from a server event, and a 0.2-secon
 
 Reuse tag: boss-staging (partial) and dragons/boss-abilities (lightning beam only). Brief rule served: server state change first, client typing and light after.
 
-Decision: adapt (idea) for the finale card and the caster-bound beam. No boss-staging rule was taken from the boss side because the boss code is not in the tree. Defects: none found in the lines read.
+Decision: adapt (idea) for the finale card and the caster-bound beam. The only boss-side rule in the tree is the func_bossgate sigil gate (misc.qc:639-651), which maps onto the boss-locked door above (open the gate when a progress flag set is complete); no boss attack or phase rule exists because the boss code is not in the tree. Defects: none found in the lines read.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Error: note said only the finale state types the text; screen.c:134-135 types for any nonzero cl.intermission, so svc_cutscene (3) types too. Confirmed.
+- Error: note said the grep found no boss code; qw-qc/server.qc:30-36 (monster_* stubs, monster_boss = remove(self)) and qw-qc/misc.qc:639-651 (func_bossgate) exist. Confirmed.
+- Missed: func_bossgate sigil gate is the only boss staging rule in the tree; the stubs show the QW server removes single-player monsters. Added.
+
+Fixed 2026-10-12: section 3 centre-text rule (types in every intermission state), section 7 gaps and Decision (boss stubs and func_bossgate added).

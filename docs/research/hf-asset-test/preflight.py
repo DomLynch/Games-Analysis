@@ -3,15 +3,17 @@ import os, sys, time, traceback
 t=time.time(); ok=True
 def step(name, fn, fatal=True):
     global ok
-    try: fn(); print("PREFLIGHT_OK",name,flush=True)
+    t0=time.time()
+    try: fn(); print("PREFLIGHT_OK",name,round(time.time()-t0,1),"s",flush=True)
     except Exception:
         if fatal: ok=False
         print("PREFLIGHT_FAIL" if fatal else "PREFLIGHT_WARN",name,flush=True); traceback.print_exc()
 import torch
+LITE=os.environ.get("PREFLIGHT_LITE","0")=="1"   # LITE: keep the real cuda op + imports of every wheel; skip ops the first asset repeats (flash call, triton JIT/autotune)
 step("cuda", lambda: print(torch.cuda.get_device_name(0), torch.cuda.get_device_capability(0), (torch.ones(8,device="cuda")*2).sum().item()))
 def f_flash():
     import flash_attn; q=torch.randn(1,16,4,64,device="cuda",dtype=torch.float16); flash_attn.flash_attn_func(q,q,q)
-step("flash_attn", f_flash)
+step("flash_attn", f_flash) if not LITE else step("flash_attn_import", lambda: __import__("flash_attn"))
 def f_nvd():
     import nvdiffrast.torch as dr; c=dr.RasterizeCudaContext()
     pos=torch.tensor([[[-.5,-.5,0,1],[.5,-.5,0,1],[0,.5,0,1]]],dtype=torch.float32,device="cuda"); tri=torch.tensor([[0,1,2]],dtype=torch.int32,device="cuda")
@@ -35,7 +37,7 @@ def f_flex_ops():   # real tiny ops: CUDA hashmap kernel (grid_sample) + triton 
     fe=torch.randn(len(co),8,device="cuda")
     out=grid_sample_3d(fe,co,torch.Size([1,8,4,4,4]),torch.rand(1,5,3,device="cuda")*3,"trilinear"); torch.cuda.synchronize(); print("flex grid_sample ok",tuple(out.shape))
     w=torch.randn(8,3,3,3,8,device="cuda"); o,_=sparse_submanifold_conv3d(fe,co,torch.Size([1,8,4,4,4]),w,None); torch.cuda.synchronize(); print("flex triton spconv ok",tuple(o.shape))
-step("flex_gemm_ops", f_flex_ops, fatal=False)
+if not LITE: step("flex_gemm_ops", f_flex_ops, fatal=False)
 if os.environ.get("NEED_NATTEN"):
     step("natten", lambda: __import__("natten"))
 print("PREFLIGHT_S",round(time.time()-t,1))

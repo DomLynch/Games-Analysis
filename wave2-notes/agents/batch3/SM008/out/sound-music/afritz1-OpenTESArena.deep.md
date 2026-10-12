@@ -21,7 +21,7 @@ Four parts; the first two are the voice rules the cell asks about.
 - `AudioManager::playSound`: `/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Audio/AudioManager.cpp` 1100-1148 (voice pool, single-instance check, buffer, play).
 - `AudioManager::playSoundOneShot` (3D): same file, 1162-1175.
 - `AudioManager::updateSources`: same file, 953-1000 (recycling, one-shot destruction, staged music).
-- `AudioManager::setMusic`: same file, 850-874 (stinger and staging); `AudioManager::playMusic`: same file, 813-849; `AudioManager::stopMusic`: same file, 876-885 (read; it does not clear the staged name).
+- `AudioManager::setMusic`: same file, 850-874 (stinger and staging); `AudioManager::playMusic`: same file, 813-849; `AudioManager::stopMusic`: same file, 876-885 (read; it does not clear the staged name or the current-song name).
 - `AudioManager::anyPlayingSounds`: same file, 727-744.
 - `AudioManager::allocateSound` and `freeSound`: same file, 1007-1040.
 - `MusicLibrary::getRandomMusicDefinitionIf`: `/mnt/frankendom-donors/afritz1-OpenTESArena/OpenTESArena/src/Audio/MusicLibrary.cpp` 478-494.
@@ -42,7 +42,7 @@ Four parts; the first two are the voice rules the cell asks about.
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the voice pool (fixed count, drop when empty, never steal; a single-instance name is skipped while one is playing; the finished source goes back on the front of the free list; a one-shot instance is destroyed when its sound ends), plus the stinger-then-bed stage (an optional stinger plays once; the bed is staged; the bed starts when the stream is free; same-file no-op). It adds two fixes the donor lacks: `playOneShot` releases an instance that cannot start, and the staged bed is cleared only when it really starts, with `stopAll` clearing it too. It omits the OpenAL calls (buffers, gain, position, resampler, rewind), the VOC buffer lookup and its missing-buffer path (the sketch takes the source only after the instance exists and does not reorder the donor's lookup), the MIDI open, the 3D position and the `freeSound` and `stopSound` details. The donor takes the source before the buffer check; the sketch keeps the same take-then-play order.
+simplified: the sketch keeps the voice pool (fixed count, drop when empty, never steal; a single-instance name is skipped while one is playing; the finished source goes back on the front of the free list; a one-shot instance is destroyed when its sound ends), plus the stinger-then-bed stage (an optional stinger plays once; the bed is staged; the bed starts when the stream is free; same-file no-op). It adds two fixes the donor lacks: `playOneShot` releases an instance that cannot start, and the staged bed is cleared only when it really starts, with `stopAll` clearing it and the current-song name too (Defects C and E). It omits the OpenAL calls (buffers, gain, position, resampler, rewind), the VOC buffer lookup and its missing-buffer path (the sketch takes the source only after the instance exists and does not reorder the donor's lookup), the MIDI open, the 3D position and the `freeSound` and `stopSound` details. The donor takes the source before the buffer check; the sketch keeps the same take-then-play order.
 
 ```ts
 // Licence: MIT (donor, OpenTESArena). Code may be adapted; this sketch is written from the described mechanism.
@@ -185,8 +185,9 @@ export {};
 
 - Defect A, one-shot instances leak. A one-shot whose play fails keeps its instance forever. Three paths: a refused single-instance name returns before a source is taken (`AudioManager.cpp` 1115-1117); a dropped sound returns from `playSound` and `playSoundOneShot` still runs on the instance (1173); and the per-frame update skips instances with no source (960), so they are never destroyed. Fix: release the instance when the play fails (`playOneShot` in the sketch). The pool's capacity (`KeyValuePool`, not read) decides how many leaks it takes to fail an allocation (`allocateSound` logs "Couldn't allocate sound instance ID", 1011-1014); that is not measured.
 - Defect B, a missing buffer holds the source. The source is taken (1120-1121) before the VOC buffer lookup (1123), and a missing buffer returns with the source attached and never played. For a one-shot, the instance then never recycles (Defect A). Fix: look up the buffer first, then take the source.
-- Defect C, a stopped staged bed starts again. `stopMusic` (876-885) clears the stream but not `mNextSong` (the name is still set). `setMusic(nullptr)` (872) during a stinger leaves the staged bed set; the next frame starts it (`hasNextMusic` at 772 and the free-stream check at 990). Fix: clear the staged bed on every stop (`stopAll` in the sketch).
+- Defect C, a stopped staged bed starts again. `stopMusic` (876-885) clears the stream but not `mNextSong` (the name is still set). `setMusic(nullptr)` (872) during a stinger leaves the staged bed set; the next frame starts it (`hasNextMusic` at 772 and the free-stream check at 990). Fix: clear the staged bed on every stop (`stopAll` in the sketch). See also Defect E for the current-song name.
 - Defect D, a staged bed is lost when it cannot start. `playMusic` does nothing without a free source (822) and no retry is made, but the staged name is cleared right after the attempt (996). Fix: clear it only when the stream starts (the sketch does).
+- Defect E, a stopped track cannot be requested again. `stopMusic` (876-885) never clears `mCurrentSong` (it is only assigned at 840 when a stream starts). After `setMusic(nullptr)` or `stopMusic`, asking for the same track again hits the `mCurrentSong == filename` early return at 815 and silently does nothing. Fix: clear the current-song name on every stop; the sketch's `stopAll` sets `current = null` for this reason, and `play` clears it before a start so a failed start is not remembered as playing.
 - Music changes are hard cuts. `playMusic` stops the old stream at once (820). The donor has no crossfade anywhere in `src/Audio`. If Frankendom adds a zone bed, it needs a fade (the shape is the same as the Valve donor: step is frame time over fade time; that donor is restricted and is not used).
 - No priority. A sound is dropped when the pool is empty, never ranked against a telegraph or a finisher. Fix (not in the donor): a priority tier per cue; a high-priority cue may evict a lower one.
 - Sound names are code. `SoundLibrary.cpp` (10) has a TODO to load them from `SoundDefinitions.txt`; the donor's names are a fixed list of 27 in six groups. For zones as data, the cue list should be data from the start.
@@ -195,3 +196,11 @@ export {};
 
 Reuse tag: rewrite-from-idea (MIT; code may be adapted, the sketch is clean from the mechanism)
 Brief rule served: 1 (one engine, zones as data); sound is client-only; the server carries the cue id and position
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: MINOR
+- No false claim found; all cited lines check.
+- Missed defect E: `stopMusic` (AudioManager.cpp 876-885) never clears `mCurrentSong` (assigned only at 840), so after a stop the same track cannot be requested again (early return at 815). The sketch's `stopAll` already fixed it silently; now recorded as a donor defect with its reason. Confirmed against code.
+
+Fixed 2026-10-12: added Defect E, and noted it in the stopMusic key-function line and sketch intro. Sketch code unchanged.

@@ -136,3 +136,8 @@ export {};
 - Volumes are whole numbers 0..100 and the delta is truncated with int() (5410). This is a small quantisation, not a defect for music.
 - Not written up here, but relevant to the ryzom note: the mixer has 32 channel slots (`audio/mixer_intern.h` 61). A new sound takes the first free slot, and a full mixer drops the new sound with a warning (`audio/mixer.cpp` 285). There is no priority, and a second play with an id that is already in a slot is dropped (`audio/mixer.cpp` 319-322). A fight sting dropped this way is silent, so Frankendom needs an explicit priority rule.
 - Not verified: no runtime test. The sketch typecheck passed on the VPS (`tsc --noEmit --strict --target es2020`, exit 0).
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- No errors found; the checker verified the cited line numbers, formulas, numbers and licence against the donor.
+- Missed: none.

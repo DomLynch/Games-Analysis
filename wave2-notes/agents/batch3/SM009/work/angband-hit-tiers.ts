@@ -4,6 +4,7 @@
 const RANGE = 5000;
 const OFFSET = -60;
 const POWER_RANDOM = 650;
+const DEBUFF_TOH = 10; // donor melee-critical:debuff-toh, added to to-hit when the target is debuffed (player-attack.c 404-406)
 
 // Tiers in ascending cutoff. The last tier has no cutoff and catches everything else.
 interface Tier {
@@ -35,8 +36,8 @@ interface HitResult {
 }
 
 // Donor order: chance roll first; a critical then gets a power roll and walks the tiers.
-function meleeHit(dam: number, weight: number, toh: number, skill: number, rng: Rng): HitResult {
-  const chance = 1 * weight + 5 * toh + 1 * skill + OFFSET;
+function meleeHit(dam: number, weight: number, toh: number, skill: number, rng: Rng, targetDebuffed = false): HitResult {
+  const chance = 1 * weight + 5 * (toh + (targetDebuffed ? DEBUFF_TOH : 0)) + 1 * skill + OFFSET;
   if (rng.int1(RANGE) > chance) {
     return { event: "HIT", damage: dam, cue: PLAIN_CUES[rng.int0(PLAIN_CUES.length)] };
   }

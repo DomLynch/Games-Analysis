@@ -16,8 +16,8 @@ const MIN_DELAY_MS = 100; // donor min_skill_delay_limit
 const SECURITY_MS = 100;  // donor SECURITY_CASTTIME
 
 // Renewal-style split. Variable part: cut by stats, then by gear. Fixed part: cut by gear only.
-// gearCutPct and fixedCutPct are 0..100.
-export function castTimeMs(spec: CastSpec, s: CasterStats, gearCutPct: number, fixedCutPct: number): number {
+// gearCutPct and fixedCutPct are 0..100; varAdjustPct is the donor varcast_r (negative = longer), applied first.
+export function castTimeMs(spec: CastSpec, s: CasterStats, gearCutPct: number, fixedCutPct: number, varAdjustPct = 0): number {
   let variable: number;
   let fixed: number;
   if (spec.fixedMs === null) {
@@ -27,6 +27,8 @@ export function castTimeMs(spec: CastSpec, s: CasterStats, gearCutPct: number, f
     variable = spec.castMs;
     fixed = spec.fixedMs;
   }
+  // donor varcast_r: only acts when negative (a status that lengthens the variable part); applied before the stat cut
+  if (varAdjustPct < 0) variable = variable * (1 - Math.min(varAdjustPct, 100) / 100);
   if (!spec.ignoresStats) {
     variable = variable * (1 - Math.sqrt((2 * s.speed + s.focus) / STAT_SCALE));
   }

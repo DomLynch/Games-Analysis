@@ -108,3 +108,9 @@ Acceptance: a new player answers ten questions, sees one playstyle hint, and the
 
 Reuse tag: rewrite-from-idea (MIT: code may be adapted; donor tables are game data and are not reused)
 Brief rule served: one character and one ledger (the quiz writes a hint, never a class field); rule 7 (MIT, licence kept)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- All checked claims match the code (licence, 40 questions, pick-10, weights, answer table, scan, nibble mask, confirm token, noClassIndex, wizard flow).
+- Nit: the field comment at quiz line 66 lists mage/rogue/warrior while the table codes and debug log say warrior/rogue/mage; the note follows the table (correct).
+- Missed: code throws if CLASSES.DAT is missing or no class matches (318-333); the note already says the sketch must treat no-match as an error.

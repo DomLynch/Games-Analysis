@@ -164,3 +164,9 @@ Acceptance: a player who keeps attacking sees the stamina bar stop refilling; af
 
 Reuse tag: adapt-idea (GPL-3.0; clean-room, shape only)
 Brief rule served: 1 (one engine); 7 (licence: clean-room)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN
+- No errors found: Energy::regen order and cap, fixed point and per-tick comment, state groups, humanoid base 100, hit refund, poise thresholds/stagger times, armour formulas, poise regen never reset, skill-point curves and ability costs all verified; refill times 15 s idle / 12 s sit re-derived and correct.
+- Missed (minor): Poise::reset sets last_stun_time = now + stun duration, so the 1.0 s POISE_BUFFER_TIME grace starts after the stun ends (poise.rs 254-257); the note's "grace 1.0 s" is literally right but understates the total delay.

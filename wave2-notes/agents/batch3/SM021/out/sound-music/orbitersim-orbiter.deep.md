@@ -106,3 +106,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020 /tmp/sm021-o
 
 Reuse tag: adapt-idea (MIT; fresh code, shape only)
 Brief rule served: sound-music fold-in (layering: sustain plus one-shot edges); sound stays client-only; licence read and stated exactly (rule 6)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN. 0.20 trigger, 12 attack objects, sum of 6 axes clamp 1.0, 0.05 sustain min and validation, lerp 0.20..1.0 and 0.02 cutoff, main 0.20-1.0 / retro 0.10-0.60, release 1.0, arm/re-arm at same 0.20 (defect real), MIT licences all match.
+- No errors or missed items found.

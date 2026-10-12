@@ -19,7 +19,7 @@ Acceptance: A server test: a swing with base cost 100 costs 50 at stamina 900 an
 - Wounds (`addWounds` 1403-1437): a wound value is capped so that it is at most base - 1 (1427-1428). Wounds are a separate ledger from current HAM.
 - Skill points: a pool that starts at 250 (`SkillManager.cpp:427`). Learning a skill withdraws its cost (364). A recount in `awardSkill` (427-437) rebuilds the expected pool as 250 minus every learned cost, and overwrites the stored value on mismatch (435-437). This is a reconcile step, not a hidden second ledger.
 - XP caps: per XP type, the cap is the largest cap over the player's skill boxes that have a non-zero cap (807-820 region); defaults come from `datatables/skill/xp_limits.iff` (222, table not read). XP over the cap is clamped (831-833).
-- Skill-mod clamps (lua 57-61): WEARABLE plus or minus 25, STRUCTUREMOD plus or minus 125, BUFFMOD plus or minus 125.
+- Skill-mod clamps (lua 57-62): WEARABLE plus or minus 25, STRUCTUREMOD plus or minus 125, BUFFMOD plus or minus 125, ABILITYBONUSMOD plus or minus 125 (line 62).
 
 ## 2. Key functions
 
@@ -144,9 +144,18 @@ Donor has 9 HAM attributes (HEALTH, STRENGTH, CONSTITUTION, ACTION, QUICKNESS, S
 | Action cost (health, action, mind) | cost of a command, scaled by the paying stat | base x (1 - (stat - 300)/1200), min 0 | neutral at 300; 0 at 1500 and above; 1.25 x base at 0 stat | floor 0 | CreatureObjectImplementation.cpp:4151-4153; Berserk2Command.h:43-45 |
 | Passive wound heal | heals one wound per 100 accumulated | accumulator += int(mod x 0.2) per regen tick | mod is private_med_wound_health | one wound per 100 | CreatureObjectImplementation.cpp:3237-3241 |
 | Armour encumbrance | per armour piece, lowers secondary max and paying stat | applied through applyEncumbrancies; equip needs current secondary > encumbrance | per armour template value | equip gate on current HAM | PlayerManagerImplementation.cpp:2376-2391, 2450-2466 |
-| Shock wounds (battle fatigue) | amplifies DoT damage | damage x (1 + shock/100) | 0 to 1000 | cap 1000 | CreatureObjectImplementation.cpp:728-737; DamageOverTime.cpp:387 |
+| Shock wounds (battle fatigue) | amplifies disease DoT damage and fire-tick wounds (fire scales wounds applied, not damage) | damage x (1 + shock/100) | 0 to 1000 | cap 1000 | CreatureObjectImplementation.cpp:728-737; DamageOverTime.cpp:387 |
 | Absorption | cuts DoT damage | strength x (1 - absorb/100) | absorb 0 to 50 percent | cap 50 | DamageOverTime.cpp:275, 278 |
 | Skill points | learn cost pool | 250 minus sum of learned costs; recount on mismatch | start 250 | none read | SkillManager.cpp:364, 427-437 |
 | XP type cap | caps XP per type | cap = max over owned skill boxes; defaults from xp_limits.iff | defaults not read | XP over cap clamped | SkillManager.cpp:222, 807, 831 |
 | Skill-mod clamp | bounds a modifier | clamp to [min, max] | WEARABLE -25..25; STRUCTUREMOD and BUFFMOD -125..125 | hard | skill_mod_manager.lua:57-61 |
 | Level | sets level | setLevel does not change HAM in the body read | level-to-HAM curve not read | not read | CreatureObjectImplementation.cpp:634-652 |
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN
+- No errors found; all cited lines and numbers verified against the donor.
+- Missed: `skill_mod_manager.lua` also clamps ABILITYBONUSMOD (line 62) to plus or minus 125; the note listed three clamps. Confirmed.
+- Missed: the fire tick applies shock to the wounds it applies (DamageOverTime.cpp 284), not to damage; the table row 'amplifies DoT damage' is only true of the disease tick (387). Confirmed.
+
+Fixed 2026-10-12: clamp list gained ABILITYBONUSMOD; shock-wound table row split into disease damage vs fire wounds.

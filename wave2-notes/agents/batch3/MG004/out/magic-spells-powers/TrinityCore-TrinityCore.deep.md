@@ -11,8 +11,8 @@ Checked: Read in full: `Unit::GetDiminishing`, `Unit::IncrDiminishing`, `Unit::A
 - Level lookup (Unit.cpp 9350-9361): level is the stored hit count. If no aura of the group is active and more than 18 s have passed since the last one ended, the level is 0 again. An active aura keeps the level, however long it lasts.
 - Level step (Unit.cpp 9363-9372): the count goes up by one per landed hit, but never past the group's max level (default: immune).
 - Duration (Unit.cpp 9374-9453): (a) if the duration is -1 or the group is `NONE`, nothing changes. (b) A PvP cap: when the target is a player (or a player's pet or charm) and the caster is a player, a duration above the spell's limit is set to the limit (9386-9392). The default limit is 8 s (SpellInfo.cpp 3454); some spells have their own limit (Binding Shot 3 s, SpellInfo.cpp 3422-3424). (c) The ladder multiplier is applied, but only when the group type applies to this target. The result is floored (9451).
-- Bounce (Spell.cpp 3795-3804; Unit.cpp 4914-4932): before a new CC lands, the target's existing auras in the same group are checked. The new duration (after the same ladder) is computed. If it is above 0 and shorter than an existing aura's duration, the cast fails with `SPELL_FAILED_AURA_BOUNCED`.
-- Group type (SpellInfo.cpp 3373-3390): stun and taunt are `DRTYPE_ALL` (diminished on every target, including NPCs). Every other group is `DRTYPE_PLAYER` (diminished only on players or on player-owned pets and charms, `Unit.h:698`). Positive spells are `NONE`.
+- Bounce (Spell.cpp 3795-3804, only inside the `if (!skipCheck)` block of `Spell::_cast`, so instant casts that skip the check never bounce; Unit.cpp 4914-4932): before a new CC lands, the target's existing auras in the same group are checked. The new duration (after the same ladder) is computed. If it is above 0 and shorter than an existing aura's duration, the cast fails with `SPELL_FAILED_AURA_BOUNCED`.
+- Group type (SpellInfo.cpp 3373-3390): stun and taunt are `DRTYPE_ALL` (diminished on every target, including NPCs). Every other group is `DRTYPE_PLAYER` (diminished only on players or on player-owned pets and charms, `Unit.h:698`). Positive spells are `NONE` (`diminishingGroupCompute`, SpellInfo.cpp 2999-3000). A separate `DIMINISHING_LIMITONLY` group (SharedDefines.h 6658) gets `DRTYPE_NONE` (3380-3381): the duration cap with no ladder.
 - Aura hooks (SpellAuras.cpp 2517-2531): applying an aura adds one to the group's active count; removing it subtracts one, and when the count reaches 0 the end time is stored (Unit.cpp 9468).
 - Tick: none. This is a per-hit lookup, not a loop. The clock is wall-clock game milliseconds (`GameTime::GetGameTimeMS`, Unit.cpp 9468), not a tick count.
 
@@ -39,7 +39,7 @@ Table of mechanisms (cost, cooldown and cast time do not apply: these are passiv
 | Reset window | level back to full | level 0 if no aura active and more than 18 s since last one ended | 18 s | n/a | n/a | an active aura never resets | Unit.cpp:9357 |
 | PvP cap | long CC on a player from a player is shortened | duration = min(base, limit) | default 8 s; examples 3 s (Binding Shot), 6 s (Wyvern Sting) | n/a | n/a | applied before the ladder | Unit.cpp:9386-9392; SpellInfo.cpp:3422-3428, 3454 |
 | Bounce | a weaker new CC is refused | refuse if reduced new > 0 and < existing remaining | n/a | n/a | fails the cast (aura bounced) | per target at cast time | Unit.cpp:4926-4927; Spell.cpp:3802-3804 |
-| Group type | which targets are diminished | ALL (stun, taunt) or PLAYER (rest) | n/a | n/a | n/a | Positive spells: NONE | SpellInfo.cpp:3379, 3384 |
+| Group type | which targets are diminished | ALL (stun, taunt) or PLAYER (rest) | n/a | n/a | n/a | Positive spells: NONE (group compute); LIMITONLY: cap without ladder | SpellInfo.cpp:2999-3000, 3379-3384 |
 
 Which numbers suit a fast mobile fight (proposed, not measured): the ladder (100 / 50 / 25 / 0) is short enough to use in a 30 s duel. The 18 s reset is too long for that: a duel of about 30 s would never reset once a player is stunned twice. The 8 s PvP cap is a good starting limit for a stun in a fast duel; a 2-3 s cap may suit a duel better. All of these are data fields, see the JSON sidecar.
 
@@ -155,6 +155,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Default 8 s cap: it applies to every grouped spell (SpellInfo.cpp 3454), including knockback and taunt, unless the spell names its own limit. Fix: the cap is an explicit ability field, with no default in code.
 - Targets: stun applies to NPCs as well as players (DRTYPE_ALL). Every other group applies to players only. For Frankendom's Pit (player against AI) this needs a Strategy ruling: a boss that cannot be stunned twice in a row is a different fight from one that can.
 - Same-tick hits: in a many-on-one fight (MAX_ATTACKERS = 3), two CCs can land in the same tick. The donor's hit code runs once per target per spell, so two spells are handled one after the other (order inferred from the call structure, the scheduler was not read). Frankendom must pick one order (the server's input order) and test it, or the ladder steps differ between clients.
+- Death wipes the state: `Unit::ClearDiminishings` runs on `JUST_DIED` (Unit.cpp 9206). Our fighter reset on death or round end must do the same.
 - Spell-side behaviour is not covered: cast time, interrupts, resource pools and spell data were not read in this cell.
 
 Reuse tag: rewrite-from-idea (GPL-2.0; clean-room only)
@@ -165,3 +166,13 @@ Best transferable idea: one diminishing-returns ladder (100 / 50 / 25 / immune) 
 Decision (proposed): adapt - keep the ladder numbers, the read-before-count order, the cap-then-ladder order, and the bounce check; key them on one ladder for all CC (Frankendom rule c), tick-based reset, and an explicit per-ability cap. The 18 s window is long for a fast duel: keep it as data and tune it down (proposed, not measured).
 
 Acceptance: a server test: a player hit by three harmful CCs from any mix of sources gets full, half and quarter length; the fourth is immune and the fight log says so; after the reset window with no CC active the next one is full length; a new stun that would be shorter than the one already on the target is refused.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: MINOR
+- Table row 'Group type' cited SpellInfo.cpp 3379, 3384 for 'Positive spells: NONE'; positive to `DIMINISHING_NONE` is at 2999-3000 (confirmed; 3379/3384 are the DRTYPE ALL/PLAYER cases).
+- Missed (confirmed): bounce check sits inside `if (!skipCheck)` in `Spell::_cast`, so instant/skipCheck casts never bounce.
+- Missed (confirmed): `Unit::ClearDiminishings` is called on `JUST_DIED` (Unit.cpp 9206).
+- Missed (confirmed): `DIMINISHING_LIMITONLY` (SharedDefines.h 6658) gives cap with `DRTYPE_NONE`, no ladder.
+
+Fixed 2026-10-12: group-type row and mechanism line cite 2999-3000 and add LIMITONLY; bounce line notes the skipCheck scope; death-clear added to Gaps. Sketch unchanged (it does not model these).

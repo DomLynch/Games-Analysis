@@ -151,3 +151,10 @@ Best transferable idea: The nameplate epithet is a two-axis band table (rank ban
 
 Decision (proposed): adapt - keep the two-axis epithet table and the diminishing gain as server data for the legend epithet on the nameplate and the kill card, with the kill split rebuilt so the total is conserved and the party share is computed once.
 Acceptance: A server test awards one verified kill with three eligible attackers and asserts that the fame and honour handed out sum to the kill total (no party double count); a nameplate test sets fame to 1249 and 1250 and honour to -625 and -624 and asserts that the epithet changes exactly at each edge; a +20 award at fame 2000 pays nothing.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- No false claims found; licence, fame and karma bands, ComputeTitle order, AwardFame and AwardKarma, looting rights and party double count all verified against the code.
+- Missed (minor): the skill title also requires beheld.Player (Titles.cs ~362) and GetHighestSkill has an AOS lock tie-break (~395-410).
+- Missed (minor): pet damage is credited to the master through the Responsible list (BaseCreature.cs 3353-3387), so owners of damaging pets get looting rights.
+- Missed (minor): the karma-lock rule (CheckKarmaLock, Core.UOTD) is only mentioned as omitted. None of these change the conclusions.

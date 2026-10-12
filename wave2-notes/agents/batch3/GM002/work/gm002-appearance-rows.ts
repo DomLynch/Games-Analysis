@@ -4,6 +4,8 @@ interface BodyFamily {
   model: string;          // resolved on the server; unknown ids fall back
   handsModel: string;
   handsBody: string;      // one digit per bodygroup slot, e.g. "0000000"
+  handsSkin: number;      // fixed hands skin of the row
+  matchBodySkin: boolean; // true: hands skin follows the player's chosen skin
   groupCounts: number[];  // number of variants per bodygroup slot
 }
 
@@ -52,9 +54,14 @@ function resolve(families: Map<string, BodyFamily>, a: Appearance): Resolved {
   };
 }
 
+// Donor rule: a hands row flagged matchBodySkin takes the player's skin, otherwise the row's own skin.
+function handsSkin(fam: BodyFamily, playerSkin: number): number {
+  return fam.matchBodySkin ? Math.max(0, Math.trunc(playerSkin)) : fam.handsSkin;
+}
+
 // Hands use the digit-string form (one character per slot), a different format from the space-separated player cvar.
 function parseHandsBody(s: string, count: number): number[] {
   return Array.from({ length: count }, (_, k) => (s.charAt(k) === '1' ? 1 : 0));
 }
 
-export {};
+export { handsSkin };

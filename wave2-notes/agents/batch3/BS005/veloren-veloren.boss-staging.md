@@ -7,11 +7,11 @@ Checked: read server/agent/src/attack.rs: handle_minotaur_attack 4781-4950 (fren
 Half read: server (agent and rtsim) and data (RON). Client half: grep only.
 
 ## 1. What the player sees and feels (375 wide)
-The frost giant (Gigas Frost) is a large biped. Its sight range is 200 where normal monsters have 100, and it never gives up a chase on its own. As its health drops it calls minions: the first summon comes at about 87 percent health, then at 75, 62, 50, 37, 25 and 12 percent. Each summon is a 1.75 s wind-up, 1.5 s cast and 0.75 s recover, so about 4 s of telegraph. The frost giant mixes melee, a leap shockwave, ice volleys and ice spikes, and each melee hit is followed by a "bonk" every 7 to 10 s.
+The frost giant (Gigas Frost) is a large biped. Its sight range is 200 where normal monsters have 100, and it never gives up a chase on its own. As its health drops it calls minions: the first summon comes at about 87 percent health, then at 75, 62, 50, 37, 25 and 12 percent if it is worn down steadily (a big hit that jumps over several steps gets one summon, not one per skipped step). Each summon is a 1.75 s wind-up, 1.5 s cast and 0.75 s recover, so about 4 s of telegraph. The frost giant mixes melee, a leap shockwave, ice volleys and ice spikes, and each melee hit is followed by a "bonk" every 7 to 10 s.
 
-The fire giant (Gigas Fire) swings a blade in fast and slow pairs, sometimes a whirlwind or a vertical strike, and every so often a 3-second flame beam that stops itself. It leaps to close distance after a while, and when a player stands on it from above it throws fire pillars at them.
+The fire giant (Gigas Fire) swings a blade in fast and slow pairs, sometimes a whirlwind or a vertical strike, and every so often a 3-second flame beam that stops itself. It leaps to close distance after a while, and when a player is far above or below it on a steep line (or it stands in deep water) it throws fire pillars at them.
 
-The minotaur (a dungeon boss in the Myrmidon set) goes into one frenzy at half health. If the player stands on its central pillar for more than 4 s, it stops melee and throws things from range, and walks itself to a point 25 units off the pillar to reposition.
+The minotaur (a dungeon boss in the Myrmidon set) goes into one frenzy at half health. Once a fight has run more than 4 s, a player on (or a boss standing on) the central pillar makes it stop melee and throw things from range, and it walks itself to a point 25 units off the pillar to reposition. A player more than 4 units above the boss triggers the same throwing and sends the boss home. The 4 s clock runs from combat start, not from stepping on the pillar.
 
 ## 2. Why it works / is striking
 - Readable tell: a 1.75 s wind-up before every summon. At 375 wide, a visible wind-up is the warning; the 1.5 s cast is the window to hit it.
@@ -23,10 +23,10 @@ The minotaur (a dungeon boss in the Myrmidon set) goes into one frenzy at half h
 ## 3. The rule behind it
 A. Summon ladder (frost attack.rs:5878-5895; fire attack.rs:6328, 6390):
 1. At the first combat tick the counter is set to 1 minus the step, 1 - 1/8 = 0.875 (frost line 5878 area, fire line 6328).
-2. Each tick: if health fraction < counter, push the summon input (frost Ability(3) = frost_summons; fire ASHEN_SUMMONS = Ability(9) = ashen_summons). This check is first in the chain, so it pre-empts other attacks.
-3. When that summon reaches recover, counter -= step (frost attack.rs:5900-5901; fire attack.rs:6395-6396).
-4. Result: summons at 87.5, 75, 62.5, 50, 37.5, 25, 12.5 percent. That is 7 summons, then the counter reaches 0 and the ladder is spent.
-5. Catch-up: the check has no cooldown and one decrement per completed summon. A hit from 88 percent straight to 40 percent queues four summons back to back (counter 0.875, 0.75, 0.625, 0.5 are all above 0.40).
+2. Each tick: if health fraction < counter, push the summon input (frost Ability(3) = frost_summons; fire ASHEN_SUMMONS = Ability(9) = ashen_summons). For the frost giant this check is first in the chain, so it pre-empts other attacks (5890). For the fire giant the overheat-beam continuation is checked before it (6376-6385), so a running beam finishes first.
+3. On EVERY tick while the char state is BasicSummon in its Recover stage (0.75 s), counter -= step (frost attack.rs:5897-5902; fire attack.rs:6392-6397), as long as health is still below the counter. It is not one decrement per completed summon.
+4. Result: with steady damage, summons at 87.5, 75, 62.5, 50, 37.5, 25, 12.5 percent. That is 7 summons, then the counter reaches 0 and the ladder is spent.
+5. No catch-up: the counter chases health. A hit from 88 percent straight to 40 percent gives ONE summon: during that summon's recover the counter is cut every tick (0.875, 0.75, 0.625, 0.5, 0.375) until it is at or below the health fraction, so the skipped steps are dropped and the next summon waits for health under 37.5 percent. The donor already has the burst protection we first thought we needed to add.
 6. Summons: frost summons 2 boreal minions at 5-10 units (frost_summons.ron:6-7). Fire summons 4 ashen minions at 5-15 units (ashen_summons.ron:6-7). Both have has_health: true; duration: None (no timed despawn set in the file).
 
 B. Fire overheat beam (attack.rs:6366-6377; overheat.ron):
@@ -40,11 +40,11 @@ C. Fire weighted tables and special timer (attack.rs:6266-6300, 6426-6443):
 3. Specials: whirlwind 6, vertical strike 6, overheat 6, explosive strike 1, lava leap 1, fire pillars 1 (lines 6277-6283). The special fires when the special timer passes 10 s (line 6426).
 4. After a special, the timer is reset to random(0, 3 + 5 x damage_fraction) (line 6443). Higher damage starts the timer higher, so the next special comes sooner. At 0 percent damage the average gap is about 8.5 s; at 100 percent damage, about 6 s (our arithmetic from the formula).
 
-D. Frost chase rules (attack.rs:5883-6000 area): attack-change timer cycles back to 0 after 6 s; melee range uses the Secondary strike after 5 s or when the target is behind (angle over 90), and a whirlwind when the target is more than 120 degrees behind; spikes within 16 while timer under 2; flashfreeze within 30 while timer under 4; leap within 50 when timer over 3; ice bombs within 70 when timer under 3; otherwise remote spikes. A "cheese" check (target above by a normalised z over 0.6 and distance over 5) fires remote spikes or ice bombs at about 0.2 per second.
+D. Frost chase rules (attack.rs:5883-6000 area): attack-change timer cycles back to 0 after 6 s; melee range uses the Secondary strike after 5 s or when the target is behind (angle over 90), and a whirlwind when the target is more than 120 degrees behind; spikes within 16 while timer under 2; flashfreeze within 30 while timer under 4; leap within 50 when timer over 3; ice bombs within 70 when timer under 3; otherwise remote spikes. A "cheese" check (normalised z difference over 0.6 in absolute value, so target above OR below, and distance over 5) fires remote spikes or ice bombs at about 0.2 per second (attack.rs:5956-5963). The fire giant has the same abs-z check plus a deep-water check (6337-6343).
 
 E. Minotaur (attack.rs:4789-4943):
 1. Frenzy: counter starts at 0.5 when health is above 0.5 (line 4789 constant). Below 0.5 it self-buffs with Ability(1) and the counter is set to 0 when the buff recovers (line 4901 onward). One frenzy only.
-2. Pillar cheese: centre = home + (50, 75) (line 4815). Cheese if the player or the boss is within 16 units of the centre and the cheese timer is over 4 s (line 4820). Cheese mode throws (Ability(2) or Ability(3)) and walks the boss to a point 25 units from centre, chosen by a 5 s bin of a 20 s reposition timer.
+2. Pillar cheese: centre = home + (50, 75) (line 4815). Cheese if the player or the boss is within 16 units of the centre and the cheese timer is over 4 s (line 4820). The timer (4821) counts up from combat start and is reset to 0 only when a BasicRanged recover ends with the timer above 10 s (4858-4863), so it is a combat clock, not time on the pillar. Separately, `cheesed_from_above` (target z more than 4 above the boss, 4816) triggers the same mode and also sends the boss pathing home (4938-4939). Cheese mode throws (Ability(2) or Ability(3)) and walks the boss to a point 25 units from centre, chosen by a 5 s bin of a 20 s reposition timer.
 3. Hallway chase: within 3 to 18 units above home, the boss always chases (lines 4942-4943), the comment calls it the hallway to the boss chamber.
 
 F. Pursuit (common/src/comp/agent.rs):
@@ -73,26 +73,27 @@ Designer-tunable data fields (donor values are GPL, so null):
 | bonk_interval_s | s | null |
 | minotaur_frenzy_fraction | fraction | null |
 | minotaur_cheese_radius | units | null |
-| minotaur_cheese_delay_s | s | null |
+| minotaur_cheese_delay_s (combat clock, reset rule above) | s | null |
 | boss_sight_dist | units | null |
 | default_sight_dist | units | null |
 
-Our starting values (ours, not donor): step 0.125, first 0.875, summon 2 per cast, burst cap 1 per tick, overheat cap 3.0 s, wind-up 1.75 s.
+Our starting values (ours, not donor): step 0.125, first 0.875, summon 2 per cast, overheat cap 3.0 s, wind-up 1.75 s. The counter cuts itself every tick during recover until it is at or below health, so no burst cap is needed.
 
 ## 4. For Frankendom
 - Keep: the summon ladder as a counter keyed to server health; the cap on the beam; the weighted tables that shift toward slow, heavy moves as the boss weakens; the pillar-area guard as zone data.
 - Change, rule 1: summons count against MAX_ATTACKERS = 3. A fire-style 4-minion summon breaks the cap. Use 2 per summon, or count summoned minions as attackers.
-- Change, rule 2: add a burst cap (data field max_summons_per_burst) so a big hit does not queue four summons at once. This is our fix to the donor's catch-up behaviour.
-- Server-verified fit: the ladder counter lives on the server with health, and it advances only when a summon completes. That is the right place (kills and health are server-verified).
+- Change, rule 2: none needed for big hits. The donor's counter chases health during recover, so a big hit gives one summon and drops the skipped steps. Keep that rule as is. If design later wants every step to fire (catch-up), that would be a new data flag (summon_catch_up), not the donor's behaviour. Because a big hit adds minions only once, the MAX_ATTACKERS cap in rule 1 is enough.
+- Server-verified fit: the ladder counter lives on the server with health, and it is cut each tick during summon recover until it sits at or below health. That is the right place (kills and health are server-verified).
 - Phone fit: the wind-up (1.75 s) is the tell; a 4 s total telegraph is long for a fast duel, so keep wind-up as the tell and shorten cast and recover in our data.
-- Pillar and hallway: store centre offset, radius and delay in zone data, not code.
+- Pillar and hallway: store centre offset, radius and delay in zone data, not code. Our rule: delay measured from stepping on the pillar, which is stricter than the donor's combat clock (a donor quirk: the player is punished at once after 4 s of fight, the idea kept, the quirk fixed).
+- Other ladders: the same counter pattern is reused for two more bosses in the same file with thresholds 0.20 (attack.rs:5219) and 0.10 (6735), so the ladder step is a per-boss data field.
 - Pursuit: world-boss "never leash" is a data flag (boss_leash false) for roaming bosses only.
 - Rows: summon ladder and beam cap are row 13 (specials); pursuit and sight are row 4 (fight loop, aggro, chase, leash); the server tick sub-line is "server tick: fixed step, input intake, per-tick NPC budget" (row 18 / post-K item 3) because the ladder counter and cooldown run per tick.
 
 ## 5. A 5-minute look test Dom can judge on his phone
 In the Pit, one fire giant at full health, with the summon ladder shown as seven ticks on the health bar.
 1. Let it fall to just under 88 percent: one wind-up with the 1.75 s tell, then 4 ashen minions. Judge whether the tell reads at phone size.
-2. Do one big hit from 88 to about 40 percent: count the back-to-back summons. Then rerun with the burst cap at 1 and compare.
+2. Do one big hit from 88 to about 40 percent: expect exactly one summon and the next at under 37.5 percent. Judge whether skipped steps feel fair or whether the ladder should catch up (a separate data flag to compare).
 3. Let the beam fire: judge whether the 3 s cap reads as the boss tiring.
 
 ## 6. Licence and IP
@@ -100,6 +101,7 @@ GPL-3. Clean-room: no code is copied. The mechanism shape (counter ladder, timer
 
 ## 7. Gaps
 - Not read: minotaur ability files and loot table, rtsim spawn scheduler, basic_summon.rs state logic, pets.rs, the client-side boss HUD and camera (grep only).
+- Other boss ladders in the same file (attack.rs:5219 threshold 0.20, 6735 threshold 0.10) use the same counter and were not read beyond the constants.
 - Ability(n) to name mapping: inferred from the manifest order and the code's own comments, not from the InputKind code.
 - Idle and ambient behaviour, death and respawn presentation, loot reveal ceremony, walk density: not in the code read.
 - Music: no boss stage exists here (only a comment).
@@ -110,12 +112,12 @@ Half read: server and data. Dragon data is a species only: the body type Reddrag
 
 | name | effect | formula | number ranges | cost | cooldown or cast | caps | file:line |
 |---|---|---|---|---|---|---|---|
-| Summon ladder (frost) | minions at health steps | counter starts 1 - 1/8, summon when health < counter, counter -= 1/8 per completed summon | 7 steps; 2 minions at 5-10 units | none | 1.75 + 1.5 + 0.75 s | 7 summons per boss | attack.rs:5878, 5895; frost_summons.ron:2-7 |
-| Summon ladder (fire) | 4 ashen minions at health steps | as frost | 4 minions at 5-15 units | none | 4 s total | 7 summons | attack.rs:6328, 6390; ashen_summons.ron:6-7 |
+| Summon ladder (frost) | minions at health steps | counter starts 1 - 1/8, summon when health < counter, counter -= 1/8 on every tick of summon recover while health < counter (counter chases health, no catch-up) | 7 steps; 2 minions at 5-10 units | none | 1.75 + 1.5 + 0.75 s | 7 summons per boss | attack.rs:5878, 5890-5902; frost_summons.ron:2-7 |
+| Summon ladder (fire) | 4 ashen minions at health steps | as frost | 4 minions at 5-15 units | none | 4 s total | 7 summons | attack.rs:6328, 6385-6397; ashen_summons.ron:6-7 |
 | Overheat beam (fire) | 3 s flame beam, stops by itself | timer counts while casting, cap 3.0 s | beam 1.0 s, damage 9.0, tick 4.0, range 35, max angle 65 | energy regen 2, drain 0 (file) | buildup 1.675 s, recover 0.3 s | 3.0 s beam cap | attack.rs:6223, 6366-6377; overheat.ron:2-12 |
 | Special timer (fire) | big moves with a random gap | timer = random(0, 3 + 5 x damage_fraction), fire at 10 s | gap about 6 to 8.5 s by our arithmetic | none | n/a | one special at a time | attack.rs:6426-6443 |
 | Minotaur frenzy | one self-buff at half health | counter 0.5, buff once, then 0 | one use | none | buff cast | once per fight | attack.rs:4789, 4901-4907 |
-| Minotaur pillar guard | leaves melee and throws from range if standing on its pillar | centre = home + (50,75), radius 16, delay 4 s | reposition 25 units from centre, 5 s bins | none | n/a | n/a | attack.rs:4815-4820, 4861 |
+| Minotaur pillar guard | leaves melee and throws from range if a player (or the boss) is within 16 of the pillar once the combat clock passes 4 s; also if the player is over 4 above | centre = home + (50,75), radius 16, combat clock 4 s (reset only after a ranged recover when above 10 s) | reposition 25 units from centre, 5 s bins | none | n/a | n/a | attack.rs:4815-4821, 4858-4863 |
 | Frost armour (chest) | boss drop | protection 140.0, poise 25.0, energy 150.0 | one chest piece | none | n/a | n/a | items/npc_armor/biped_large/gigas_frost.ron:7-11 |
 | Dragon species | species data only | n/a | Female and Male | n/a | n/a | n/a | common/src/comp/body/dragon.rs:38 |
 
@@ -128,4 +130,14 @@ Reuse: shape only (GPL-3). Summon ladder, beam cap, weighted tables, pillar guar
 Boss-staging feel: telegraphed wind-ups, phase ladder, self-capping beam. Served by the summon ladder and the beam cap rules.
 
 ## Best transferable idea
-A boss sheds minions at fixed health steps, one per completed summon, with a telegraphed wind-up, and a burst cap so a big hit cannot queue them all at once.
+A boss sheds minions at fixed health steps with a telegraphed wind-up; its step counter chases health during the summon recover, so a big hit yields one summon and never a pile-up.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: WRONG
+- Summon ladder catch-up claim false: counter drops on every tick of BasicSummon Recover (attack.rs:5897-5902, 6392-6397), not once per completed summon; a big hit gives one summon. Confirmed in code.
+- Minotaur cheese timer is a combat clock reset only at BasicRanged recover above 10 s (4821, 4858-4863), not time on the pillar; cheesed_from_above (z more than 4 above, 4816) also triggers it. Confirmed.
+- Summon check is first only for the frost giant; the fire giant checks overheat continuation first (6376-6385). Confirmed.
+- Frost and fire cheese checks use abs(z), so they fire for targets below as well as above (5958, 6340). Confirmed.
+- Missed: other boss ladders with thresholds 0.20 (5219) and 0.10 (6735) use the same counter pattern; the per-tick counter chase is the real rule.
+- Verified OK by checker: licence, 1/8 and 0.875, summon files, overheat.ron numbers, weighted tables, special timer arithmetic, sight and pursuit, music tags, rtsim mapping.
+Fixed 2026-10-12: rewrote the catch-up claim everywhere (section 3A, 4 change rule 2, server fit, look test, table rows, best idea) and dropped the burst cap; corrected cheese descriptions (frost abs z, fire abs z and water, minotaur combat clock and cheesed_from_above); fire summon order; added other ladders line.

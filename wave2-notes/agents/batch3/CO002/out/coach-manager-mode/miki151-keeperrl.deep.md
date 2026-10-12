@@ -7,13 +7,13 @@ Checked: Read: the team order enum, the team store (create, remove, cancel, lead
 ## 1. Mechanism
 
 - A team is a list of creatures. The first creature is the leader (`collective_teams.cpp:45`). A team is created from a list (`create`, `collective_teams.cpp:80-84`), and removing the last creature cancels it (`collective_teams.cpp:15-19`).
-- Two team orders exist: STAND_GROUND (UI text "Stop": members stand in place and do not follow the leader) and FLEE (UI text "Don't chase": members do not move toward enemies, only fight adjacent ones). The UI texts are in `english.txt:267` and `english.txt:649`. Note that FLEE does not move a creature away. It only stops chasing (`monster_ai.cpp:844-846`). The real pull-out is a separate task (see step 6).
+- Two team orders exist: STAND_GROUND (UI text "Stop": members stand in place and do not follow the leader) and FLEE (UI text "Don't chase": members do not move toward enemies, only fight adjacent ones). The UI names are `english.txt:268` ("Don't chase") and `english.txt:650` ("Stop"); `english.txt:267` and `:649` are their description strings. Note that FLEE does not move a creature away. It only stops chasing (`monster_ai.cpp:844-846`). The real pull-out is a separate task (see step 6).
 - Orders are one exclusive slot. `setTeamOrder(id, order, true)` inserts the order and erases every conflicting order (`collective_teams.cpp:93-97`). `conflict` is "two different orders" (`team_order.cpp:32-34`). With two orders this means at most one is on.
 - The player toggles an order by reading its state and writing the flipped state (`minion_controller.cpp:102-104`). No cost, cooldown or per-fight limit appears in this path (none read elsewhere).
 - Each creature's AI picks the first move that is not NoMove, in this order: equip, fighter (`getFighterMove`), steed or rider, follow team leader, priority task, the rest (`monster_ai.cpp:1088-1096`). The first-good-move template is at `monster_ai.cpp:1073-1082`.
 - Chase switch: `getFighterMove` checks the creature's active team. If the team has FLEE or STAND_GROUND, the fighter runs with `chase = false` (`monster_ai.cpp:841-848`). Otherwise `chase = true`.
 - Fighter with chase off: an adjacent enemy is attacked (`monster_ai.cpp:663`). A non-adjacent enemy is not approached: the move toward it sits inside the `chase` gate (`monster_ai.cpp:639`), which is skipped. At distance 2 only the choke-point move is still considered (659), and otherwise the function ends in NoMove. (The `else return NoMove` at 654 belongs to the chase branch only, when moveTowards fails.)
-- Follow switch: the leader never follows (`monster_ai.cpp:889` path, `creature != leader`). A non-leader in a team with STAND_GROUND waits (`monster_ai.cpp:887`, wait at 899). Otherwise it steps toward the leader when more than one tile away (`monster_ai.cpp:892-894`) and waits when within one tile (896).
+- Follow switch (`monster_ai.cpp:884-899`): under STAND_GROUND everyone in the team waits, the leader included (the `else return creature->wait()` at 898-899 pairs with the STAND_GROUND test, not the leader test). Without STAND_GROUND the leader gets NoMove (never follows itself); a non-leader steps toward the leader when more than one tile away (`monster_ai.cpp:892-894`) and waits when within one tile (896).
 - Village attacks (`village_control.cpp:185-216`): the attackers become a team (199). If the attack behaviour is non-chasing (only the steal-resource behaviour, `village_behaviour.cpp:34-39`), the team starts with FLEE (200-201). The team is activated and the launch size is recorded (216).
 - Retreat, checked every update (`village_control.cpp:310-329`): for each team not yet cancelled, count members that are not polymorphed. If the count is below `(attackSize + 1) / 2` (integer division, so ceil of half), or exactly one member is left and it is seriously wounded (316), every member gets a walk-home task chain (318-321), the team gets FLEE (323), and the team is marked cancelled (326).
 - Pruning, in `update()` (`village_control.cpp:413-438`): first `considerCancellingAttack()` (424), then a loop over teams that cancels a team when any member has no task (431-436). In the donor the loop body ends with `return;` at line 437, so the function returns after the first team. Whenever at least one team exists, the rest of `update()` is skipped: the DEMON_DEN block (440-447) and the attack launch (448-456). See Gaps.
@@ -41,10 +41,10 @@ Checked: Read: the team order enum, the team store (create, remove, cancel, lead
 |---|---|
 | One exclusive order slot per team; setting one clears the other | Two orders only (`team_order.h:5-8`) |
 | Chase off when the team holds an order; attack adjacent only | none (boolean switch, `monster_ai.cpp:844-848`) |
-| Followers wait when the team is in stand mode; step toward leader when more than one tile away | distance threshold 1 tile (`monster_ai.cpp:892`) |
+| Everyone (leader too) waits when the team is in stand mode; non-leaders step toward leader when more than one tile away | distance threshold 1 tile (`monster_ai.cpp:892`) |
 | Pull out when the group falls below ceil(launch size / 2), or one wounded member is left | ceil half, computed `(n + 1) / 2` (`village_control.cpp:316`) |
 | Attack chance per update = behaviour value | updateFreq 0.1 (`village_control.cpp:439`) |
-| Minimum attackers before a village attacks | minTeamSize per village block, e.g. 10 (`enemies.txt:469`), 4 (`enemies.txt:114`) |
+| Minimum attackers before a village attacks | minTeamSize per village block, e.g. 10 (`enemies.txt:469`), 4 (`enemies.txt:114`); also needs population >= minPopulation + minTeamSize, and the attack size is random between minTeamSize and a cap (`village_control.cpp:380-392`) |
 | Duel chance | 1.0 in one block (`enemies.txt:467`) |
 
 ## 4. TypeScript sketch
@@ -110,10 +110,12 @@ class Team {
   }
 }
 
-// Follow rule for one creature. A 'hold' team waits; the leader never follows.
+// Follow rule for one creature. A 'hold' team makes everyone wait, leader included (donor: the else sits on the STAND_GROUND test).
+// Without hold the leader never follows (no move).
 function followStep(team: Team | undefined, me: Member, distToLeader: number): Step {
-  if (!team || team.leader.id === me.id) return 'none';
+  if (!team) return 'none';
   if (team.hasOrder('hold')) return 'wait';
+  if (team.leader.id === me.id) return 'none';
   return distToLeader > 1 ? 'follow' : 'wait';
 }
 
@@ -189,3 +191,11 @@ Rows for the coach topic. "(not read)" = not opened in this pass; nothing is cla
 | Matchmaking from coach view | village attack needs fighters not in a team, not insane, not movement-restricted, and at least minTeamSize; attack chance per update = behaviour value | fighters >= minTeamSize and Random.chance(value) | minTeamSize 3 to 10 in read blocks; duelChance 1.0 | village_control.cpp:380-392, 448-456; enemies.txt:305, 469, 467 |
 | Post-fight report / replay | retreat records an event on the enemy collective; a battle summary resets when a team is commanded | event on retreat | n/a | village_control.cpp:325; player_control.cpp:2508 |
 | AI behaviour when the coach is absent (default tactics) | no active team: fighter chases; non-chasing village attacks start with FLEE; team retreats when members fall below ceil(n/2) | (n + 1) / 2 integer | n = launch size | monster_ai.cpp:848; village_control.cpp:200-201, 316 |
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Follow rule: under STAND_GROUND every team member waits, the leader included (monster_ai.cpp:884-899); the note and sketch said the leader never follows -> none (confirmed; sketch followStep fixed).
+- english.txt:267 and :649 are the order description strings; the names "Don't chase" / "Stop" are at :268 and :650 (confirmed).
+- Missed: getAttackers (village_control.cpp:380-392) also requires allMembers.size() >= minPopulation + minTeamSize and picks a random count between minTeamSize and a cap; only minTeamSize was listed (confirmed, added to section 3).
+- All other main claims verified (exclusive slot, chase switch, getFirstGoodMove order, retreat (n+1)/2, early return at 437, updateFreq, minTeamSize, duelChance, training 0.012).
+Fixed 2026-10-12: follow-switch bullet, UI-name line numbers, followStep in sketch and work/miki151-keeperrl-team-orders.ts, minTeamSize table row.
