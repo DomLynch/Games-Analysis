@@ -328,7 +328,7 @@ Analyst rank 25 | Layer Core (guess) | as-data: yes (budgets, bands, reasons as 
 | Id | Item | Rests on | Rulings | Size | Depends | Layer / data / phone | Analyst rank |
 |---|---|---|---|---|---|---|---|
 | B35 | One bounded telemetry module (label cap, drop counter), rate-limited client error reporter, byte-capped zone log with live tail | AN (Nakama+Lichess, RuneLite, SpacetimeDB, Evennia) | B12, B13 (pending Dom), B14 (pending Dom), B2 (children, pending Dom) | small to medium | none | Engine / no / yes | 35 |
-| B53 | One asset-licence manifest and credits page; a test fails on a new asset with no row | AU G8 | none | small | none | Engine / yes / yes | 53 |
+| B53 [ADD CHECK 2026-10-12 (Dom via Strategy): a new asset or row FAILS the check if its name matches a donor name list (build the list from the donor notes as you go); names, places, factions, spells, items and lore lines are never reused, not even translated or respelled] | One asset-licence manifest and credits page; a test fails on a new asset with no row | AU G8 | none | small | none | Engine / yes / yes | 53 |
 | B57 | Row inheritance layers for legend and mob rows; pack publish gate; pack order resolver; content-bundle hash pin | MD (OpenRA, 0ad, openmw, wesnoth, luanti), GM001 | P2 (one template row for many zone families; ruled) | medium; hash pin small | none | Engine / yes / yes | 57 |
 | B68 | Per-viewer views of one fight record (spectator, coach, delayed read), spectator queue, title-screen AI-vs-AI fight, replay speed, coach stance pick and one-instruction counter | SC, CO | wagers not authorised (GAME_SPEC 185); coach is post-beta; S68 pending Dom | medium | B21 | Modes / no / yes | 68 |
 

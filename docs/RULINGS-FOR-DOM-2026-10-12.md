@@ -12,6 +12,8 @@
 
 - **L4. How closely may Tier C art (no licence, non-commercial, leaked, game-rip) be recreated?** At 30 to 40 percent resemblance, no closer (was 20 to 30 percent). [Dom 2026-10-12, relayed by Strategy; applies to assets only, never to code or numbers from copyleft or restricted donors]
 
+- **L5. Names and lore of donor games.** Up to 30 to 40 percent resemblance for Tier C art is fine ONLY with a completely different name and context: no donor name, nickname, place name, faction name, spell or item name, or lore line is ever reused, not even translated or respelled; the thing gets a Frankendom name and its own one-line story. The same name rule applies to Tier B. Rule of thumb: a 20 percent lookalike with the donor's name is a legal problem; a 40 percent lookalike with its own name and story is not. [Dom 2026-10-12, relayed by Strategy] [Caution recorded by the donor-library dev: this is a product rule, not legal advice. A different name does not by itself cure copying of protected art or design; confirm with counsel before launch, like B2.]
+
 ## THE 19 (answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation; B2 and L3 stay flagged pending legal review / Dom). Dom can still change any of them.
 
 - **B1. [NOT the brief's call: launch target. Dom confirms.]** How many players do we plan for on launch day? Strategy recommends planning for 1,000 at once, and buying hosts for 10,000 only when the test shows 80 percent of one host used. [server-performance-scaling #1] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
