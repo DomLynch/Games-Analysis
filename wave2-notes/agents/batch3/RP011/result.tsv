@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+freeorion-freeorion	rendering-performance	P	STRONG	full	UI/MapWnd.cpp:4118-4217 and 2538-2575 batch range rings into one buffer per colour with a run per colour, rebuilt only on turn init; GG/src/GUI.cpp:836-869 caps frame time with a sleep, but uses 1/(cap+1) (defect).
+gawric-Unity-Client-for-L2J	rendering-performance	P	STRONG	full	l2-unity/Assets/Scripts/UI/Game/Nameplate/Rendering/L2NameplateScreenBatch.cs:218-269 and NameplateTextDrawer.cs:41-110 put all labels of a group into one glyph list and one draw, with hysteresis pixel lock in Logic/NameplatePixelSnap.cs:18-48; no off-screen cull.
+gemrb-gemrb	rendering-performance	P	STRONG	full	gemrb/core/Interface.cpp:995-1079 runs a fixed logic step with no carried time and integer step/scroll arithmetic; gemrb/core/Video/Video.cpp:121-146 caps frames with an integer interval.

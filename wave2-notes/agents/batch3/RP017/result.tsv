@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+supertuxkart-stk-code	rendering-performance	P	STRONG	full	/mnt/frankendom-donors/supertuxkart-stk-code/src/graphics/lod_node.cpp:70-116 and 204-280 (auto LOD from bounding area with quality tiers, switch floor and threshold build), consumed at src/graphics/draw_calls.cpp:151-158.
+vcmi-vcmi	rendering-performance	P	STRONG	full	/mnt/frankendom-donors/vcmi-vcmi/client/gui/FramerateManager.cpp:26-59 and client/GameEngine.cpp:112-136 (frame pacer with 100 ms delta clamp, capped idle redraw skip and remainder-carrying timers; hint CBitmapFont.cpp not read).
+veloren-veloren	rendering-performance	P	STRONG	full	/mnt/frankendom-donors/veloren-veloren/voxygen/src/mesh/greedy.rs:602-662 (greedy rectangle merge per plane keyed on material and the water flag; corner-texel atlas at 664-730 read in part).

@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+diasurgical-DevilutionX	rendering-performance	P	STRONG	full	Source/diablo.cpp:867-950 and Source/nthread.cpp:214-260: fixed 50 ms logic deadline clock, draw skipped when more than one step is late, 0..128 interpolation fraction; limiter defects at Source/engine/dx.cpp:104-110.
+dkfans-keeperfx	rendering-performance	P	STRONG	full	src/kfx/renderer/TileAtlasPacker.h:35-39 and src/engine_textures.c:95-118: 32-pixel tile grid atlas with half-texel UV inset, animated tiles as re-pointed slots behind an equality frame gate; GLTileAtlas.cpp:97-98 re-uploads all 32 variations per step.
+endless-sky-endless-sky	rendering-performance	P	STRONG	full	source/shader/BatchDrawList.cpp:107-165 and source/shader/BatchShader.cpp:115-131: rotated-box cull before vertex writes, grouping by sprite into one strip draw per sprite, calc/draw buffer handoff at source/Engine.cpp:1129-1130 and 447-448.

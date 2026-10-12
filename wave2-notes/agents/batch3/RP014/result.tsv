@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+lincity-ng-lincity-ng	rendering-performance	P	STRONG	full	src/lincity-ng/GameView.cpp:1307-1379 renders the visible tile window into a cached target and redraws it only when refreshMap is set; Game.cpp:708 gates redraw on needsRedraw; Desktop.cpp:202-203 merge defect
+nkzw-tech-athena-crisis	rendering-performance	P	STRONG	full	hera/Tiles.tsx:170-237 redraws only animated tiles on a retained canvas on one shared 180 ms clock from hera/lib/tick.tsx:11-43 and pauses when hidden; renderTile.tsx:93-109 selects atlas cells
+open-duelyst-duelyst	rendering-performance	P	STRONG	full	app/view/layers/game/TileLayer.js:94-160 switches board quality: HIGH draws one SpriteBatch into an offscreen pass then composites once (526-570, re-drawn every frame); LOW tilts the batch directly; config.js:1343 defaults to HIGH
