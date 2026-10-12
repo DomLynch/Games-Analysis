@@ -6,7 +6,7 @@ export interface Item {
   readonly sprite: Sprite;
   readonly x: number; readonly y: number; // centre in zoomed camera space (the caller multiplies by zoom, as the donor does)
   readonly ux: number; readonly uy: number; // unit vector of the facing
-  readonly width: number; readonly height: number; // sprite size in logical pixels
+  readonly width: number; readonly height: number; // HALF extents in logical pixels (donor Width()/Height() = 0.5 * zoom * scale * sprite size, Drawable.cpp 70-81); pass full size / 2
   readonly frame: number; readonly alpha: number;
   readonly clip: number; // 1 = full height; less cuts the bottom of the quad
 }

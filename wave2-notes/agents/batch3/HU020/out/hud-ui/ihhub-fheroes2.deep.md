@@ -160,3 +160,8 @@ function clickToTile(px: number, py: number, radar: Rect, world: { w: number; h:
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 Brief rule served: 8 (sections 5 and 6 against the rulings)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN.
+- Verified: radar Build/SetZoom, RedrawObjects, RedrawCursor, click-to-centre proportion, radarWidthPx 144, 850 ms long press, touch second finger, de.po counts and plural header. No error found.
+- Missed: with WITH_DEBUG, IS_DEVEL() also forces revealAll in RedrawObjects; getMainObjectType() is called with (revealOnlyVisible||revealHeroes), so hidden heroes are filtered inside the tile query, not only by the fog test; RedrawCursor also returns early when the interface is hidden and the radar is not shown.

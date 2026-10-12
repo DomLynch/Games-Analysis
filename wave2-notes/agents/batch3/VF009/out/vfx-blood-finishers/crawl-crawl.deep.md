@@ -204,6 +204,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Wall orientation: the donor uses four grid drip directions. A 3D arena needs a surface normal and a projection, so this part does not transfer as written.
 - Fire (ignite) and fire cloud: out of scope for Frankendom; drop them.
 - GPLv2+: clean-room only. The sketch is written from the mechanism, not translated.
+- Cluster details the mechanism skipped (reading): `generate_random_blood_spatter_on_level` takes a `susceptible_area` mask and skips any cluster centre outside it (donor 253-254), which the sketch does not model. `_spatter_neighbours` iterates `adjacent_iterator(where, false)`, where the second argument is `exclude_center`, so it visits 9 cells including the centre (coordit.h 116-117); the centre is already bloody or disallowed so this changes nothing in practice. It also calls `_orient_wall_blood(where, ...)` with the parent square, not the neighbour that was marked, so wall orientation for spread blood uses the wrong square (low importance for a 3D port, which drops this part).
 - Unread: the ignite cloud branch is named but not studied; the callers listed in Checked were not read end to end, so turn-timing claims are limited to the queue itself.
 
 Reuse tag: rewrite-from-idea (GPLv2+; clean-room only)
@@ -213,3 +214,10 @@ Best transferable idea: a hit's decal chance scales with its damage (damage/20 p
 
 Decision (proposed): adapt — take the chance-from-damage rule and the end-of-turn merge for a client decal layer fed by server-verified hit events; drop the 4-way wall flags and the fire branch, which do not transfer to a 3D arena.
 Acceptance: on a 375-wide phone fight, a 20-damage hit always leaves a blood mark on the victim's tile, and a 4-damage hit leaves a mark about one time in five; three 4-damage hits on the same tile in one turn produce one blood job of amount 12, and no decal is ever read by the ledger (a server test asserts the fight outcome is unchanged with decals disabled).
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+- Verdict: MINOR. Core rules verified (x_chance_in_y, amount/20 then amount/15 with no further spread, ignite doubling, surface filter, attack.cc 95-114 cap, blood_fineff merge, pop-then-fire, cluster 7+random2(9), blood_spray 5000/99/8, Makhleb radius 2 amount 20, GPLv2+).
+- Small gaps confirmed: _spatter_neighbours uses adjacent_iterator(where,false) (9 cells, includes centre) and passes the parent square to _orient_wall_blood; generate_random_blood_spatter_on_level skips clusters outside susceptible_area.
+- Missed: susceptible_area filter; the _orient_wall_blood parent-square quirk (both added to Gaps).
+
+Fixed 2026-10-12: added the cluster-details line to Gaps. Sketch unchanged.

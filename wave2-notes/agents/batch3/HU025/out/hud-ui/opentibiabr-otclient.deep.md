@@ -14,18 +14,18 @@ Acceptance: on a 375 px phone, holding the thumb in the pad's top-right corner m
 - Order of steps:
   (a) Gate: the module does nothing off mobile (joystick.lua 9).
   (b) Touch-down: non-left buttons are ignored (69). The pointer position is stored as fractions of the pad width and height (71-72). The first-step flag is set true (74). One step runs at once (75).
-  (c) Step (`executeWalk`): it re-schedules itself 20 ms later (113) before it does anything else. If the mouse is no longer pressed, it resets the knob and returns (107-111).
+  (c) Step (`executeWalk`): it first removes the pending timer event (104-105). If the mouse is no longer pressed, it resets the knob and returns without re-scheduling (107-111), which ends the loop. Otherwise it re-schedules itself 20 ms later (113), then carries on.
   (d) It clamps the two fractions to 0..1 (114-115). It takes `angle = atan2(x - 0.5, y - 0.5)` (116). Knob travel: each axis is clamped to its share of a 75 px radius (117-122). The vertical knob offset is `(y - 0.5) * 150` before the clamp (118).
   (e) Direction: a corner square (both axes within 0.3 of an edge) gives a diagonal (125-133). Otherwise, outside a 0.1 dead zone on either axis (135), the dominant axis gives N/S or W/E (136-149).
   (f) If there is a direction and a listener, it calls `moveListener(dir, firstStep)` (151-153).
-  (g) Touch-up (87-101): the flag is set false (93). The step runs once more (94) and returns early, assuming the button is up, after which the knob is reset (97-98).
+  (g) Touch-up (87-101): the flag is set false (93). The step runs once more (94) and returns early, assuming the button is up, after which the timer is removed (95) and the knob is reset (97-98).
 - Numbers: 20 ms repeat; 75 px knob radius; 150 knob scale; 0.1 dead zone; 0.3 corner.
 - Tick: no game tick here. A 20 ms UI timer (`scheduleEvent`) re-reads the thumb while it is held. Each call is one direction request. Whether the engine spaces steps is in C++ (not read).
 
 ## 2. Key functions
 
 - `onKeypadTouchPress`: `/mnt/frankendom-donors/opentibiabr-otclient/modules/game_joystick/joystick.lua` 68-78. Sets the pointer fraction and the first-step flag, then runs the step once.
-- `executeWalk`: `/mnt/frankendom-donors/opentibiabr-otclient/modules/game_joystick/joystick.lua` 103-154. The whole pad step: re-schedule, angle, knob, direction, listener.
+- `executeWalk`: `/mnt/frankendom-donors/opentibiabr-otclient/modules/game_joystick/joystick.lua` 103-154. The whole pad step: remove timer, pressed check, re-schedule, angle, knob, direction, listener.
 - `onKeypadTouchRelease`: `/mnt/frankendom-donors/opentibiabr-otclient/modules/game_joystick/joystick.lua` 87-101. Clears the flag, runs the step once more, resets the knob.
 - The only listener: `/mnt/frankendom-donors/opentibiabr-otclient/modules/game_walk/walk.lua` 272 registers `function(dir) g_game.walk(dir) end`. It drops the second argument.
 
@@ -153,3 +153,12 @@ export class TouchStick {
 
 Reuse tag: adapt (MIT)
 Brief rule served: addendum rule 2; rulings on client-only input and one engine
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+- Verdict: MINOR.
+- Step order in mechanism (c) was wrong: the isPressed check (107-111) comes first and returns without re-scheduling; the schedule (113) comes after it, and removeEvent runs at 104. Confirmed against the code.
+- The 451 keys in neededtranslations.lua: a quoted-string count over the file gives 451 (the checker's single-quote count of 455 was a method difference). Checker doubt not applied.
+- Everything else verified (MIT, pad size, 20 ms, 75, 150, 0.1, 0.3, walk.lua 272, defects 1-2, locale counts).
+- Missed: none material.
+
+Fixed 2026-10-12: corrected the order of steps in mechanism (c) and the key-function line.

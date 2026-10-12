@@ -176,3 +176,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Spread is slow by design (4 of 80 rolls), which is the idea, not a defect. Frankendom should keep it slow if a hazard spreads at all.
 - Lincity is a city sim. The fire has no damage, no hit, no finisher, no blood and no screen effect. Nothing here replaces `T_Damage`-style logic. Only the remains timeline and the protection-speeds-progress rule transfer.
 - Area-normalised event rate: the strike formula keeps the per-tile chance flat across map sizes. This is the one idea here for zone population (parity row 23): a spawn rate written as "per area" rather than "per zone". Not built in this note.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN. All verified (Fire::update, spread, animate, torch, do_random_fire, fire_rate, cover cadence, shuffle, constants, group chances, Game.cpp, ANIM_THRESHOLD, GPL v2-or-later); D1 arithmetic checks out.
+- Missed: none.

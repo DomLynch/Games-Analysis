@@ -9,7 +9,7 @@ Option storage. gameDialogAddMessageOption refuses to add past DIALOG_OPTION_ENT
 
 Reaction. _talk_to_critter_reacts (2888) adds 50 to the value (2897) and only plays head animations and fidgets; it writes no game state.
 
-Global state with a write notice. game_vars.h is an enum of named slots starting at GVAR_PLAYER_REPUTATION (line 7, the first entry) and includes quest flags such as GVAR_JET_QUEST (92) and GVAR_QUEST_VAULT_CITIZEN (98), ending at line 703. gameGetGlobalVar (984-991) checks the range (986) and returns 0 when out of range. gameSetGlobalVar (995-1020) checks the range (997) and returns -1 when out of range. Between the check and the store, it compares the reputation slot: if the new value differs, it computes the difference from the old value (1003, 1007) and posts a message ("You gained N karma." or "You lost N karma.") to the monitor. Then it stores the new value (1020). The slot array is loaded from a GAME_GLOBAL_VARS section (1029).
+Global state with a write notice. game_vars.h is an enum of named slots starting at GVAR_PLAYER_REPUTATION (line 7, the first entry) and includes quest flags such as GVAR_JET_QUEST (92) and GVAR_QUEST_VAULT_CITIZEN (98), ending at line 703. gameGetGlobalVar (984-991) checks the range (986) and returns 0 when out of range. gameSetGlobalVar (995-1020) checks the range (997) and returns -1 when out of range. Between the check and the store, it handles the reputation slot, but only when the sfall config key DISPLAY_KARMA_CHANGES is true (configGetBool, game.cc ~1000-1016): if the new value differs it computes the difference from the old value (1003, 1007) and posts a message ("You gained N karma." or "You lost N karma.") to the monitor. Then it stores the new value (1020). The slot array is loaded from a GAME_GLOBAL_VARS section (1029).
 
 ## 2. Key functions
 - _gdialogGo: game_dialog.cc:1166-1190 (fallback, process, clear).
@@ -24,15 +24,15 @@ Callers: _gdialogGo is called from _op_gsay_end (interpreter_extra.cc:3766). I d
 ## 3. Numbers vs mechanism
 - DIALOG_OPTION_ENTRIES_CAPACITY = 30 (game_dialog.cc:49).
 - Reaction tags GOOD 49, NEUTRAL 50, BAD 51 (game_dialog.cc:85-87). The choice maps them to -1, 0, 1 (2051-2060); _talk_to_critter_reacts adds 50 back (2897). Fallback option reaction 50 (1177).
-- Re-entry gate: procs run while the level is below 2 (2079).
-- The notice fires only when the reputation value changes (the diff is computed first, 1007), so an unchanged write is silent. The notice text is produced in the setter, not by the caller.
+- Re-entry gate: procs run while the level is below 2 (2079), and only when the option's proc is non-zero (2080-2081).
+- The notice fires only when the sfall config key DISPLAY_KARMA_CHANGES is true and the reputation value changes (the diff is computed first, 1007), so an unchanged write is silent, and with the key off every write is silent. The notice text is produced in the setter, not by the caller.
 - Defect (keep the idea, fix the defect): the same FIXME as Fallout 1. When the choice index is -1 (keyboard 0), the code reads a zeroed dummy entry (2026-2039). fix: reject the -1 index at input.
 - Defect: the proc name is dropped (1093-1098). fix: reference next nodes by a data id checked at load time.
 - Defect: get returns 0 and set returns -1 on an out-of-range slot (986-991 and 997-1000). fix: one error model for both.
 - Notice text is hard-coded English and named "karma" while the slot is named REPUTATION. fix: a message id from the catalogue, and one name for the slot.
 
 ## 4. TypeScript sketch
-simplified: this sketch covers the write-notice part only (the talk loop and node protocol are in the Fallout 1 sketch, the same design). It keeps the donor order (read the old value, check the watcher, notify with old and new values, then store) and the diff rule (notify only on change). It omits the donor's config flag read (the notice is always on here), the 80-byte message buffer, the sfall origin of the notice, and the save and load of the slot array. Watchers are per slot here; the donor has one hard-coded slot.
+simplified: this sketch covers the write-notice part only (the talk loop and node protocol are in the Fallout 1 sketch, the same design). It keeps the donor order (read the old value, check the watcher, notify with old and new values, then store) and the diff rule (notify only on change). It omits the donor's config flag read (DISPLAY_KARMA_CHANGES; the notice is always on here, a deliberate change: the donor shows it only when that key is on), the 80-byte message buffer, the sfall origin of the notice, and the save and load of the slot array. Watchers are per slot here; the donor has one hard-coded slot.
 
 ```ts
 export type Notify = (slot: number, oldValue: number, newValue: number) => void;
@@ -100,4 +100,10 @@ Brief rule served: judge the idea (a ledger write that notifies with the old and
 
 Best transferable idea: Every write to a named ledger slot passes the old and new value to that slot's watcher before the store, so the feed notice is derived from the one verified write.
 Decision (proposed): adapt - the notify-on-write shape fits the one-ledger ruling, but the notice must come from the server's verified write, and reputation and standing need one slot and one name.
-Acceptance: a player's standing changes by +3 from a verified kill-quest turn-in; the HUD line reads "You gained 3 standing." once; a write that leaves the value unchanged shows nothing; a server test asserts the notice is produced from the same write that updates the ledger row.
+Acceptance: with the notice setting on, a player's standing changes by +3 from a verified kill-quest turn-in; the HUD line reads "You gained 3 standing." once; a write that leaves the value unchanged shows nothing; a server test asserts the notice is produced from the same write that updates the ledger row.
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Confirmed: the karma notice in gameSetGlobalVar is gated by the sfall config key DISPLAY_KARMA_CHANGES (configGetBool, game.cc ~1000-1016); the Mechanism and Acceptance implied it was unconditional.
+- Missed: _executeProcedure is only called when the option's proc != 0 (game_dialog.cc 2080-2081).
+Fixed 2026-10-12: Mechanism, Numbers and the sketch's simplified line now state the config gate; Acceptance says 'with the notice setting on'; re-entry gate line adds the proc != 0 guard.

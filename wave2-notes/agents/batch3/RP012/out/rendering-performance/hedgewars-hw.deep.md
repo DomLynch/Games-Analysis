@@ -192,3 +192,7 @@ Acceptance: a client unit test packs 500 random sprite sizes into a 2048 atlas a
 - D6, per-frame allocation: `gear.rs` 199 allocates a new `Vec` every frame. Fix: reuse one buffer (the sketch does).
 - Frankendom gap: no sprite batching exists in the fight client. The mechanism only pays off once effect layers are many-per-frame (three attackers bleeding, sparks, dust), so the first acceptance check is the draw-call count in a three-attacker fight on a 375-wide phone frame, not the packer alone.
 - Not read: `integral-geometry` Rect and Size conventions; `Texture2D::update`; the caller of `GearRenderer::render`; `gear.rs` 176-195.
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+- Verdict: CLEAN. All checked claims hold (Fit derives Ord with short_side first, find_position, split and prune, insert_set greedy, repack accepted only if inserts.len() > used_rects.len(), gear.rs constants and single DrawArrays, texture_index unused, GPL-2 COPYING); defects D1-D6 real as stated.
+- Missed (minor): the +1 in tex_coords (gear.rs 146-149) confirms inclusive Rect edges, which the note left as unconfirmed; the sketch's half-open convention is therefore a deliberate change. Nothing important missed.

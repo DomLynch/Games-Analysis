@@ -139,3 +139,8 @@ Brief rule served: client view of engine state (HUD client-only); the lock is en
 Best transferable idea: a target lock that sticks to the last foe you hit for a fixed window (10 s by default), refreshed on each hit, and falls back to the nearest foe in range when it lapses; the frame bar keeps a 1 px minimum so a nearly dead foe stays visible.
 Decision (proposed): adapt — take the sticky last-hit lock with a timed window and nearest fallback, refresh the window on each hit (the donor does not), keep the 1 px bar minimum; leave the mouse one-shot rule for the touch and pointer decision.
 Acceptance: keyboard or gamepad in a 3-foe fight: hit foe A at 0 s and again at 9 s; A stays on the frame until 19 s, then the nearest foe in range takes the frame; a server test asserts the engine target is A at 18.9 s and the nearest foe at 19.0 s.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+- Verdict: CLEAN. No errors found.
+- Missed (minor): checkNPCFocus (GameStatePlay.cpp 230-256, read but unused) overwrites menu->enemy and resets the same timeout in the same step when no enemy is focused or the enemy is an ally (233-246); matters for who owns the frame after the sticky early return.
+- Unverified: placeholder count 72 not reproduced by a one-line grep (70 single-line matches; multi-line msgids can account for the rest).

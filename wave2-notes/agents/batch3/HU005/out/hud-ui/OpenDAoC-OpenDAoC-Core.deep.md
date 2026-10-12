@@ -15,7 +15,7 @@ Checked: the server side of the health, target and group frames, read end to end
 - Group batch (Group.cs 457-480): for each player in the group, build one list of the changed members (members of this group, same region unless the other-region flag is set), and send one `SendGroupMembersUpdate` packet per player that has a non-empty list.
 - Packet per member (PacketLib168 3895-3930): group slot byte (1 to 8, 3897); health percent from the player's cached group-window value, otherwise the living's own percent (3905); mana percent (3907); a status bitfield: dead (health at or below 0), mezzed, diseased, poisoned, link-dead (3909-3919); and if the member is in another region, zero health and mana plus the other-region bit 0x20 (3925-3928).
 - Target frame: `SendCombatAnimation` (1217) writes the defender's health percent as the last byte (1247). If the passed value is above 100, it uses the defender's live percent instead (1242-1245). So every swing carries the target's percent to the viewer, with no separate target packet.
-- Pet case: a necromancer pet's health override (NecromancerPet.cs 91-101) refreshes and notifies its owner when its percent changes (96-99). The disciple class (ClassDisciple.cs 96-105) overrides the group-window percent to show the pet's percent when a pet exists (102-103). From the grep, nothing refreshes a disciple owner when its pet's health changes; see section 6.
+- Pet case: a necromancer pet's health override (NecromancerPet.cs 91-101) refreshes and notifies its owner when its percent changes (96-99). The disciple class (ClassDisciple.cs 96-105) overrides the group-window percent to show the pet's percent when a pet exists (102-103). ClassDisciple is only the base of ClassNecromancer (playerclasses/albion/ClassNecromancer.cs:7), and the pet is a NecromancerPet, so the pet-side refresh covers the disciple's pet; this is a fourth direct group-notify path (GamePlayer.RefreshCachedHealthPercentGroupWindowAndNotifyGroup, 2269-2279, also called from SetControlledBrain at 12154). The packet layout below is the 168 version; PacketLib191.cs 16-40 overrides WriteGroupMemberUpdate and adds an endurance byte after mana.
 
 ## 2. Key functions
 
@@ -43,7 +43,7 @@ Checked: the server side of the health, target and group frames, read end to end
 
 ## 4. TypeScript sketch
 
-simplified: the sketch replaces the donor's setter-and-callback chain with one pure snapshot per viewer per tick, then diffs it against the last value sent (so the notify flag, the one-shot timer and the three update paths are not needed). It omits the XP damage-dealer clear on full heal, the regeneration start, the concentration channel, the byte casts and packet framing, the donor's zero-value other-region write (the sketch returns zeros too, but omits the byte packing), and the group-window cache. It keeps the donor's clamp, the status bit values, the other-region bit and the target percent sentinel. It fixes the stale pet percent by construction, since the frame reads the pet on every tick.
+simplified: the sketch replaces the donor's setter-and-callback chain with one pure snapshot per viewer per tick, then diffs it against the last value sent (so the notify flag, the one-shot timer and the three update paths are not needed). It omits the XP damage-dealer clear on full heal, the regeneration start, the concentration channel, the byte casts and packet framing, the donor's zero-value other-region write (the sketch returns zeros too, but omits the byte packing), and the group-window cache. It keeps the donor's clamp, the status bit values, the other-region bit and the target percent sentinel. It reads the pet on every tick, so the frame needs no pet-side hook (the donor already has one for its necromancer pet; the sketch just does not need it).
 
 ```ts
 // Licence: GPL-3.0 (OpenDAoC LICENSE, Version 3). Clean-room sketch from the described mechanism; no donor line is translated.
@@ -124,9 +124,9 @@ export {};
 
 ## 6. Gaps and risks
 
-- DEFECT, stale disciple pet frame (ClassDisciple.cs 102-103; NecromancerPet.cs 96-99; GamePlayer.cs 2440, 2266, 2473): the owner's group percent is a cache, and the only pet-side refresh is in the necromancer pet's health override. A disciple's pet taking damage does not refresh the cache, so the group frame shows the pet's percent only as of the last refresh of the owner (own health change, max change or controlled-brain change, read from the grep of call sites). Not run. Fix: derive the frame from the pet on every tick (the sketch does this), so no per-class hook is needed.
+- Not a defect (corrected 2026-10-12): the donor's pet frame is kept fresh. The disciple class is the base of the necromancer, whose pet's health setter refreshes the owner's cached group percent and notifies the group (NecromancerPet.cs 96-99; GamePlayer.cs 2269-2279). The cost is a cache plus a hook per pet type: any new pet type that forgets the hook would go stale. Fix for Frankendom: derive the frame from the pet on every tick (the sketch does this), so no per-pet hook is needed.
 - Side effect on read (GameLiving.cs 2763, 2646-2658): the max getter can fire a status notify, so reading max during a frame build changes network state. Fix: compute max once per tick and never notify from a getter.
-- Three update paths (own health, max change, concentration) each carry their own notify rule (GamePlayer.cs 2438-2441, 2281-2285, 2297-2301). Frankendom gets one rule: diff the snapshot each tick. The donor's concentration channel (owner only) is the one exception worth keeping as a data field, not a code path.
+- Update paths (own health, max change, concentration, plus the pet and controlled-brain refresh at GamePlayer 2269-2279, a fourth direct group notify) each carry their own notify rule (GamePlayer.cs 2438-2441, 2281-2285, 2297-2301). Frankendom gets one rule: diff the snapshot each tick. The donor's concentration channel (owner only) is the one exception worth keeping as a data field, not a code path.
 - Freshness: the target percent rides on each combat event (1247), while group and self frames wait for the next tick. A target frame can therefore lead the group frame by one tick. Fix: build the target percent from the same tick snapshot; the sketch's `combatTargetPct` only falls back to the live value when the sent value is above 100.
 - Other-region members: the donor sends zero health and mana with a flag (3925-3928), so a client that ignores the flag would show 0% (dead-looking) for an unseen member. Frankendom's client must check the flag before drawing a bar.
 - Group slot count: the donor's slot field is 1 to 8 (3897). Frankendom's rulings give MAX_ATTACKERS = 3, not a party size, so the slot range is not a Frankendom number; do not copy it without a ruling.
@@ -135,7 +135,7 @@ export {};
 
 Best transferable idea: Derive every frame value (self, group, target) once per server tick from state, diff it against the last value sent to each viewer, and send one batched packet per viewer with only the changed entries, carrying the target's percent on the combat event so the target frame never waits.
 
-Decision (proposed): adapt — the per-tick snapshot, the diff and the one batch per viewer are what Frankendom needs for many-on-one target frames; the donor's cache-and-hook chain is what to reject, because it caused the stale pet frame and a notify on a getter.
+Decision (proposed): adapt — the per-tick snapshot, the diff and the one batch per viewer are what Frankendom needs for many-on-one target frames; the donor's cache-and-hook chain is what to reject, because every pet type needs its own hook to keep the cache fresh, there are four separate notify paths, and a getter can notify.
 
 Acceptance: A server test: after a pet takes damage, the next tick's frame update for its owner contains exactly one entry for that pet with the new percent; a tick with no change sends no frame packet; a hit on the locked enemy carries that enemy's percent in the same tick's combat event.
 
@@ -143,3 +143,11 @@ Reuse tag: rewrite-from-idea (GPL-3.0; clean-room only)
 Brief rule served: 1 (server owns the numbers; client draws); rule 8 (row 14, post-K item 3 sub-line)
 
 Also seen, not the note's subject: the string table `GameServer/language/CZ/CZ - General.txt` (receipts in receipts.tsv): 357 lines, CRLF endings and a UTF-8 byte-order mark. 323 `key: value` entries, 0 duplicate keys, 20 comment lines, 13 blank lines, 1 line with the byte-order mark. Keys are dotted `Class.Member` names with 91 two-level prefixes; 248 keys sit under the GamePlayer prefix. Comments set the grammar: tabs are ignored before the colon (line 5), placeholders are positional `{0}` to `{5}` (line 6; 196 uses in all, `{0}` most often), and keys are meant to stay alphabetical (line 8). There are no plural, case or numeric-suffix keys, so each sentence is a finished Czech string with its own placeholders. About 22 keys name HUD words (target, health, map, window, group), counted by text match on the key only. The English file set is not compared.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+- Verdict: MINOR.
+- Error: section 6 'stale disciple pet frame' was false (ClassDisciple is only the base of ClassNecromancer; the NecromancerPet health setter calls RefreshCachedHealthPercentGroupWindowAndNotifyGroup, GamePlayer 2269-2279). Decision rationale rested on it. Confirmed against the code.
+- Missed: PacketLib191.cs 16-40 adds an endurance byte after mana, so the 168 layout described is the oldest version.
+- Missed: a fourth direct group-notify path (GamePlayer 2269-2279; callers NecromancerPet.cs 99, GamePlayer 12154), not among the 'three update paths'.
+
+Fixed 2026-10-12: removed the false stale-pet defect (section 1 pet case, section 6, sketch note, Decision); added the fourth notify path and the 191 endurance byte. Sketch code unchanged.

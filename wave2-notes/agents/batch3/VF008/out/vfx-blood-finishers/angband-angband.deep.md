@@ -2,7 +2,7 @@
 
 Donor: `/mnt/frankendom-donors/angband-angband/src/game-world.c` | Licence: GNU GPL v2 (option a) or the "Angband licence" (option b), user's choice, as read in the game-world.c header lines 10-13 | C | symbol `process_world`
 
-Checked: Read on the VPS. Read in full: the bleed block in `process_world` (game-world.c 522-539), its call to `decrease_timeouts` (651), the CUT case of `decrease_timeouts` (280-313), the blow loop's cut block (mon-attack.c 571-692, including the hit gate at 589-590), `monster_critical` (497-522), `player_timed_grade_eq` (player-timed.c 734-745) and `player_inc_timed` (1050-1067). Read in part: `player_regen_hp` (player-util.c 436; only the cut line at 470), the over-exertion site (player-util.c 855-857), the spell cut lines (project-player.c 346 and 478), the grade table (player_timed.txt 255-266). Not read: `player_inc_check` (what the `fail:4:ROCK` data line does), `take_hit` and the death path, the blow-method table (which methods set `cut:1`), the potion cures, and the rest of the decay loop after line 340. Confidence: high for the order of operations and the numbers in game-world.c and mon-attack.c; medium for "every source of a wound". camera_scope: not applicable (not a camera topic). Visual check: a grep of `src` for splatter, gore, particle or decal (outside tests and borg) returns zero hits, so this donor has no blood, decal or particle code to copy. Only the wound state is real.
+Checked: Read on the VPS. Read in full: the bleed block in `process_world` (game-world.c 522-539), its call to `decrease_timeouts` (651), the CUT case of `decrease_timeouts` (280-313), the blow loop's cut block (mon-attack.c 571-692, including the hit gate at 589-590), `monster_critical` (497-522), `player_timed_grade_eq` (player-timed.c 734-745) and `player_inc_timed` (1050-1067). Read in part: `player_regen_hp` (player-util.c 436; only the cut line at 470), the over-exertion site (player-util.c 855-857), the spell cut lines (project-player.c 346 and 478), the grade table (player_timed.txt 255-266). Read later (fixer): `player_inc_check` (player-timed.c 923, flag case at 992): the `fail:4:ROCK` line in the CUT entry makes the check return false for Rock players, and mon-attack.c 689 calls `player_inc_timed` with check true, so Rock players never gain a cut. Not read: `take_hit` and the death path, the blow-method table (which methods set `cut:1`), the potion cures, and the rest of the decay loop after line 340. Confidence: high for the order of operations and the numbers in game-world.c and mon-attack.c; medium for "every source of a wound". camera_scope: not applicable (not a camera topic). Visual check: a grep of `src` for splatter, gore, particle or decal (outside tests and borg) returns zero hits, so this donor has no blood, decal or particle code to copy. Only the wound state is real.
 
 ## 1. Mechanism
 
@@ -44,7 +44,7 @@ Over-exertion from bloodlust is a separate mechanic and is noted in section 6.
 
 ## 4. TypeScript sketch
 
-simplified: The sketch keeps the donor order for one landed blow (cut flag, then tier, then points) and for one world step (bleed first, then decay), as `process_world` does. It omits: `player_apply_damage_reduction`; the death path and its text; the stun-or-cut 50% exclusion (the sketch takes one cut flag, so a blow that would also stun is not modelled); the spell and over-exertion sources; the grade messages; the effect-handler damage (the sketch takes the final damage as input); and the real regen formula (the sketch returns 0 or the base percent only). It clamps the grade lookup at Mortal Wound, where the donor walks past its last grade. Random numbers are injected. The Rock exemption is kept where the donor has it (bleed and decay only, not at the point of adding points).
+simplified: The sketch keeps the donor order for one landed blow (cut flag, then tier, then points) and for one world step (bleed first, then decay), as `process_world` does. It omits: `player_apply_damage_reduction`; the death path and its text; the stun-or-cut 50% exclusion (the sketch takes one cut flag, so a blow that would also stun is not modelled); the spell and over-exertion sources; the grade messages; the effect-handler damage (the sketch takes the final damage as input); and the real regen formula (the sketch returns 0 or the base percent only). It clamps the grade lookup at Mortal Wound, where the donor walks past its last grade. Random numbers are injected. The Rock exemption is kept at all three places the donor has it: adding points (the `fail:4:ROCK` flag check in `player_inc_check`, player-timed.c 992, with mon-attack.c 689 passing check true), bleed damage (524-525) and decay (310-311).
 
 ```ts
 // Licence: GPL-2 or the Angband licence, at the user's choice (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -66,7 +66,7 @@ interface Fighter {
   hp: number;
   wound: number;      // wound points (donor TMD_CUT value)
   conAdjust: number;  // decay per step = 1 + CON fix value
-  rock: boolean;      // immune to bleed and decay (donor PF_ROCK branch)
+  rock: boolean;      // immune to gaining a cut, to bleed and to decay (donor PF_ROCK: fail:4:ROCK, 524, 310)
 }
 
 // Critical tier of one landed blow. maxRoll = the blow's largest possible damage.
@@ -102,7 +102,7 @@ function onBlowLanded(
   f: Fighter, cutFlag: boolean, maxRoll: number, damage: number,
   rand100: () => number, rand: (n: number) => number,
 ): void {
-  if (!cutFlag) return;
+  if (!cutFlag || f.rock) return; // donor: player_inc_check refuses CUT for Rock players
   f.wound += tierPoints(critTier(maxRoll, damage, rand100), rand);
 }
 
@@ -133,7 +133,7 @@ function regenPercent(f: Fighter, basePercent: number): number {
 - Clean-room only. The sketch is written from the mechanism, and no donor lines are copied.
 - Units. The donor's step is 10 game turns, not seconds. Frankendom must express the step as a server tick count held as data. A wall-clock timer would break the fixed-step rule.
 - Scale and cure. The pool runs to 10000 and a Mortal Wound never decays. Without a cure rule or a cap, a mortal wound lasts the whole fight and beyond. The donor's cure path (potions, not read) is the answer to check before any Pit or zone use.
-- Regen block. Any open wound stops all regeneration. With MAX_ATTACKERS = 3, a fighter cut in one round could not heal before the next. Make the regen block a data flag, not a constant.
+- Regen block. Any open wound stops all regeneration; the donor also zeroes regen for paralysis, poison and stun (player-util.c 467-470), so the block is one of several, not unique to cuts. With MAX_ATTACKERS = 3, a fighter cut in one round could not heal before the next. Make the regen block a data flag, not a constant.
 - Stacking. The donor applies one blow at a time to one player. Several wounded enemies bleeding at once, or three attackers landing cuts in one round, is not tested in the donor.
 - Death record. The donor's death cause string is "a fatal wound" (game-world.c 538). Frankendom's fight record (row 19) should store the cause the same way. Only the string was read.
 - Rock trait. The immunity is a race or class trait in the donor. Frankendom has no race trait; if reused it must be a gear or class flag from data.
@@ -146,3 +146,11 @@ Acceptance: A server test: a 20-damage blow on a 20-maximum blow with a cut flag
 
 Reuse tag: rewrite-from-idea (GPL-2 or Angband licence; clean-room only)
 Brief rule served: 1 (one engine: wound state lives in src/fight, clients only draw it)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: MINOR
+- Sketch header said the Rock exemption applies to bleed and decay only, not at adding points. Wrong: player_timed.txt CUT has `fail:4:ROCK` and player_inc_check (player-timed.c 992) refuses the effect for Rock players; mon-attack.c 689 passes check true. Confirmed in the donor; the sketch now returns early in onBlowLanded for rock fighters. The note had listed this as not read yet asserted the opposite; corrected.
+- Missed (added): regen is also zeroed by paralysis, poison and stun (player-util.c 467-470).
+
+Fixed 2026-10-12: Rock exemption now covers adding points (note text, sketch header and onBlowLanded, and work/angband-wounds.ts); regen-block risk line extended.

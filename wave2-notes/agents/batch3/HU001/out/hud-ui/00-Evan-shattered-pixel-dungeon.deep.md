@@ -120,3 +120,9 @@ Also seen (hud-ui fold-ins; each one checked in the donor, not separate notes):
 
 Reuse tag: rewrite-from-idea (GPL-3.0-or-later; clean-room only)
 Brief rule served: 14 (HUD, client-only); one-engine rule: the HUD never computes its own preview
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN
+- Trivia only: Burning average damage is 2 + Dungeon.scalingDepth()/8f (float, scalingDepth not depth) at Burning.java 266; the note writes depth/8. All other claims verified.
+- Missed: none found.

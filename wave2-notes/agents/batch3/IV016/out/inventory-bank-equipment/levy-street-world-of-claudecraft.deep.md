@@ -156,3 +156,9 @@ Typecheck: the block above, as `work/stack-fit-scratch.ts`, passes `npx -p types
 
 Reuse tag: rewrite-from-idea (MIT; clean-room sketch)
 Brief rule served: one ledger (one predicate for the check and the grant; batch and transform checked on a scratch copy before any slot changes); server-verified counts
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN.
+- Verified: BACKPACK_SLOTS, BAG_SOCKETS, DEFAULT_STACK, UNSTACKED_KINDS, countFit, canAddItem, fitsAll scratch copy, addStacked, consumeOneScratch three passes, equipBag index, unequip guard, bagsFullErrorText, canStackInstancePayloads. No error found.
+- Soft inconsistency: the header says bags.ts was 'read in full' yet the material arm of countFit/addStacked (materialStackFit, addMaterialStacked, consumeOneMaterialScratch, all in bags.ts) is listed as not read; it is covered only by 'drop materials'.
+- Missed: a #2139 overflow class motivated modelling removal identically to the remover (consumeOneScratch comment); that invariant is not carried into the sketch (the sketch's removeStacked order is its own choice, which the note admits).

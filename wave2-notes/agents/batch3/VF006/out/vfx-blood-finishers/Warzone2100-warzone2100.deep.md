@@ -137,3 +137,8 @@ Acceptance: When a gladiator dies in the Pit, four gib pieces (head, legs, arm, 
 - Pieces per death: four per person in the donor (component.cpp 1178-1181), fixed in code. Frankendom should make the count data per creature type (zone data).
 - Blood puff volume: each trail puff is one sprite (1029). Frankendom must cap live puffs (see the blood spray note, row 8) and share the cap with the spray.
 - Not read: `effectSetupBlood` body beyond lines 2125-2128, the caller of `removeDroidFX` (its visibility gate is read, the trigger is not), and the bodies of `iSinR` and `iCosR`. The velocity line (664-665) is read, but how `iSinR` and `iCosR` scale by speed is not.
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- No false claims; all checked constants, branches and licence verified.
+- Missed: none.

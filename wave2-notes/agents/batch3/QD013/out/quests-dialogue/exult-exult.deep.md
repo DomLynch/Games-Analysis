@@ -197,3 +197,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 Best transferable idea: a world-state ledger of named boolean flags (one byte each, page-grown, capped, compacted on save) whose set-to-true write is the one place that also writes a journal line, once per flag.
 Decision (proposed): adapt — keep the flag ledger, the single setter with journal-on-set, and the answer list with push/pop; key the flags by data names and the answers by id; reject the SI-only special case and the unguarded pop.
 Acceptance: a server test: setting the quest flag "met_smith" to true adds one journal line, and setting it again adds none; after save and reload the flag and the journal line are unchanged; a client message that tries to set a flag is refused. A client check: the choice list shows keys 1-9 then a-z, ESC picks the "bye" answer when one exists and does nothing when there is none.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN.
+- Errors: none; all cited lines and counts verified.
+- Missed: did_first_scene kludge in POPF (ucinternal.cc 2673-2676) is another per-game special case beside the xenka one; skip_intro flag write at gamewin.cc 2909 (already cited).

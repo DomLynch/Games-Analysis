@@ -61,8 +61,14 @@ export class Dialogue {
     const cur = this.cursorOf(ctx.playerId);
     const lower = ctx.message.toLowerCase();
     if (this.tryChildren(cur, ctx, lower)) return true;
-    if (cur.parent && this.tryChildren(cur.parent, ctx, lower)) return true;
-    if (cur !== this.root && this.tryChildren(this.root, ctx, lower)) return true;
+    // Donor: `node` is reassigned to the parent before the root test, so the
+    // root pass is skipped when the cursor or its parent is already the root.
+    let last = cur;
+    if (cur.parent) {
+      last = cur.parent;
+      if (this.tryChildren(last, ctx, lower)) return true;
+    }
+    if (last !== this.root && this.tryChildren(this.root, ctx, lower)) return true;
     return false;
   }
 }

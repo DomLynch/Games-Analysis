@@ -224,6 +224,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` run on the 
 - GPL-3.0-or-later: clean-room only. The sketch is from the mechanism.
 - Defect, point force with no distance floor: the donor computes `dist = 100.0f / dist` (161) with no lower bound. A particle at the attractor's exact position gets an infinite force, and a particle very close gets a huge kick. Keep the idea, fix: lower bound on distance (sketch `MIN_FORCE_DIST`), or a softened inverse.
 - Defect, fading particles freeze: the donor returns before the position update for any state other than normal (135), so a fading-out spray hangs in the air for its fade time. This may be intended; it looks wrong for blood, so the sketch moves particles during fades. Check in a still at 375 wide before adopting either way.
+- Also in the donor (part_particle.cpp 116-144): a lifeTime of 0 or less means the particle never expires (the age check is guarded by lifeTime > 0), while the sketch would expire a life-0 particle at once, so guard it if immortal particles are wanted; leaving the border rectangle triggers fadeOut (127-132) rather than a kill; and alpha ramps from alpha1 to alpha2 over the life (140-144), which the sketch drops.
 - Inconsistency, depth mapping: velocity and scale rise from the first value at depth 0 (172), but life is reversed: depth 0 gets the longer life (186). Intent is not documented in the donor. Frankendom should choose one direction and test it.
 - Behaviour to test: the batch timer is not advanced while at the cap (271-274), so when the first slot frees, the next batch fires at once rather than after the interval. Not a bug by itself, but a burst after a full cap can arrive early.
 - Fading particles count as live (264-265), so a fading spray uses the cap. Three hits in quick succession may thin the second burst. Frankendom should set the cap per preset and test the count in the Pit.
@@ -231,3 +232,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` run on the 
 - Pre-roll: fixed 500 ms steps and integer division drop the remainder (352-353). Frankendom ambient presets should not depend on exact pre-roll.
 - Not read: `PartEmitter::display` (320-342), `sortParticlesByZ` and `compareZ` (367-389), the border and sprite code, the script setters. The sprite draw call (`PartParticle::display`, 194-211) was read and only uses scale, rotation and alpha; the blend mode is set on the emitter.
 - Frankendom rulings: the burst is presentation only, so no kill or damage depends on it; a burst preset must not block a finisher or a hit.
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- No false claims in what the note states.
+- Missed, confirmed in part_particle.cpp: lifeTime <= 0 means immortal (116); leaving the border rectangle triggers fadeOut (127-132); alpha ramps alpha1 to alpha2 over the life (140-144, already noted as dropped).
+Fixed 2026-10-12: Added a short line in Gaps and risks for the three missed items (no sketch code change).

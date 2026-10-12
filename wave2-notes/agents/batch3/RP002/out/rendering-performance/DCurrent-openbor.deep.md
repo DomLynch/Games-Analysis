@@ -114,3 +114,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020 rp002-openbo
 
 Reuse tag: rewrite-from-idea (BSD 3-clause; clean-room sketch)
 Brief rule served: licence rule (permissive); row 16 render cost; one-engine rule not applicable to client render.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN.
+- Errors: none; all cited lines and the vga_vwait re-simulation verified.
+- Missed: Unlocked spriteq_clear stores spriteq_old_len = length before zeroing (379), harmless, not noted.

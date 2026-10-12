@@ -105,3 +105,8 @@ export {};
 - No blood, gore, decal or finisher code exists here. A separate one-slot graphic effect exists: `spotanim` sets an id, a height and a delay on the entity and sets a mask bit (Npc.ts 482-487; Player.ts 1932-1937). It was read in part and is not written up.
 - Not read: the client that draws splats and the health bar (not in the donor); the NPC side of the renderer; the content scripts that call `NPC_DAMAGE` and `DAMAGE` (not in the engine tree read here); `messages.ts` beyond the `PlayerInfoDamage` constructor.
 - Licence: MIT. Adaptation is allowed. Keep the copyright line ("Copyright (c) 2023-2026 Lost City") if any code is copied, though this note only takes the shape.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- All claims verified (applyDamage in Npc/Player, resetPathingEntity splat reset, World.cycle call lines, callers, rsbuf, MIT LICENSE; third-hit overwrite correct).
+- Missed: none.

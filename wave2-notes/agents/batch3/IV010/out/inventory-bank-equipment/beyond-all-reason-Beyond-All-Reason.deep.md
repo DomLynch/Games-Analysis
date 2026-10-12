@@ -106,3 +106,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 
 Reuse tag: adapt (GPL; clean-room, shape only)
 Brief rule served: one ledger for a charge bank (row 13); the server holds the target, the phone sends steps
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN.
+- Errors: none; all 12 line refs verified.
+- Missed: AllowCommand comment at line 95 (StockpileChanged does not fire on queue changes, hence command interception) and pass-through for non-stockpile units (99-101) not mentioned.

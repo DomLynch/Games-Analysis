@@ -120,3 +120,9 @@ String table fold-in (`src/target.c` and `lib/gamedata`): the look-text wording 
 
 Reuse tag: rewrite-from-idea (dual GPL-2 / Angband licence)
 Brief rule served: client-only HUD; row 14; one engine (the tracked target comes from the engine)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN
+- All claims verified (monster_health_attr bands, prt_health_aux, look_mon_desc, health_track, licence).
+- Missed: look text also tests monster_is_destroyed for living/undead wording; player-attack.c 1186 is a second health_track call site not listed.

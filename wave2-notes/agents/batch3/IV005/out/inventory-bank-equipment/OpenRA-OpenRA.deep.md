@@ -41,7 +41,7 @@ Acceptance: A server test asserts that a second hero engaging a chest whose pack
 
 ## 4. TypeScript sketch
 
-simplified: The sketch keeps the donor's budget (loaded + held + incoming against the cap), reserve and unreserve, the commit on arrival, the last-in-first-out unload and the lock predicate. It fixes two defects: the cap is checked inside `load` as well (the donor's `Load` trusts its callers, and three scripted callers skip the check), and the lock tests the number of holds rather than their weight sum (the donor's `ReleaseLock` tests `reservedWeight != 0`, so a zero-weight hold does not hold the lock). It omits the aircraft landing and takeoff, the loading and unloading conditions, the delays in ticks, the facing set on unload, the ejection on death and on sale, the cell search (`LoadRange`) and the carrier's activity cancel. Checked on the VPS: `tsc --noEmit --strict --target es2020` exit 0; a node run of 7 cases (a second hold refused while the first is open, the room back after a cancel, a load over the cap refused, a zero-weight hold keeps the lock, last in first out): all as expected.
+simplified: The sketch keeps the donor's budget (loaded + held + incoming against the cap), reserve and unreserve, the commit on arrival, the last-in-first-out unload and the lock predicate. It fixes two defects: the cap is checked inside `load` as well (the donor's `Load` trusts its callers, and four callers outside the ride path skip the check), and the lock tests the number of holds rather than their weight sum (the donor's `ReleaseLock` tests `reservedWeight != 0`, so a zero-weight hold does not hold the lock). It omits the aircraft landing and takeoff, the loading and unloading conditions, the delays in ticks, the facing set on unload, the ejection on death and on sale, the cell search (`LoadRange`) and the carrier's activity cancel. Checked on the VPS: `tsc --noEmit --strict --target es2020` exit 0; a node run of 7 cases (a second hold refused while the first is open, the room back after a cancel, a load over the cap refused, a zero-weight hold keeps the lock, last in first out): all as expected.
 
 ```ts
 interface Passenger { id: string; weight: number; }
@@ -109,7 +109,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 ## 6. Gaps and risks
 
 - Defect 1, lock predicate (`Cargo.cs` 316): `ReleaseLock` tests the weight sum, so a zero-weight hold does not keep the carrier locked, and a release can run while a hold is still open. Read from the code; I did not run a zero-weight case in the donor build. Fix: count the holds (sketch `locked`). The node test of the sketch confirms the fixed predicate holds the lock.
-- Defect 2, cap on load (`Cargo.cs` 379-383; callers `ParatroopersPower.cs` 219, `TransportProperties.cs` 47, `ReinforcementsGlobal.cs` 142): the commit does not check the cap, and the three scripted callers bypass the check, so they can overfill. Fix: check inside the commit (sketch `load`). Frankendom's rule (one ledger) needs one check point.
+- Defect 2, cap on load (`Cargo.cs` 379-383; callers Traits/SupportPowers/ParatroopersPower.cs 219, Scripting/Properties/TransportProperties.cs 47, Scripting/Global/ReinforcementsGlobal.cs 142 and Traits/World/CrateSpawner.cs 164): the commit does not check the cap, and the four callers bypass the check, so they can overfill. Also seen: `UnreserveSpace` returns early when the carrier is dead (`self.IsDead`, Cargo.cs 283), so a hold on a dead carrier is never released. Fix: check inside the commit (sketch `load`). Frankendom's rule (one ledger) needs one check point.
 - Gap, no expiry: the donor holds the room until a cancel or a removal from the world (`Passenger.cs` 201). A walk that stalls forever holds the room forever. Frankendom needs a time-out on the hold (not in the donor). The donor's cancel path (`RideTransport.cs` 81-90) covers cancel and removal; I did not read what happens when a passenger dies mid-walk beyond the removal hook.
 - Reject: the carrier lock (`LockForPickup`, 295-312) stops the carrier's own activity so it waits. A chest or a corpse does not move, so only the hold is needed.
 - Reject: aircraft landing and takeoff (`Cargo.cs` 304-308, 322-323). Frankendom has no aircraft.
@@ -117,3 +117,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Presentation (client only): the delays (8, 25 and 0 ticks) are timing beats for animation. Frankendom's server commit is instant, and the client may pause for the same beats, but the server must not wait for them.
 - Stacking: none. Passengers are discrete actors, not quantities. Bank: none. Gold and equipment are not modelled in this donor. Those parts of the topic are NONE for OpenRA.
 - The idea is the same as Frankendom's engage-then-commit on a server-verified action: the hold is the engage state, and the arrival check is the commit.
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Confirmed: four callers of Cargo.Load skip the cap check, not three; the fourth is Traits/World/CrateSpawner.cs:164. Paths are now given in full for ParatroopersPower, TransportProperties, ReinforcementsGlobal.
+- Missed: Cargo.UnreserveSpace returns early when self.IsDead (Cargo.cs 283), so a hold on a dead carrier is never released.
+Fixed 2026-10-12: caller count three -> four with full paths (sketch text and Defect 2), added the UnreserveSpace dead-carrier early return.

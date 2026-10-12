@@ -115,3 +115,9 @@ Brief rule served: 14 (HUD, client-only, one ledger); the addendum rule to keep 
 
 Reuse tag: rewrite-from-idea (Apache 2.0 donor; sketch written from the mechanism)
 Brief rule served: 14 (HUD, client view); idea kept, defects fixed in the sketch (addendum rule, 2026-10-10)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN.
+- Errors: ~14 claims verified (updateHealthBar 2766-2776 lerp 0.15, thresholds, POSITION_OFFSET 26, smoothLerp snap, Constants lines, licence). Cap lines are 1213-1215 vs cited 1214-1215 (trivial).
+- Missed: Per-judgment health deltas in Constants.hx 471-522 (killer +2%, miss -4%, hold +6%/s, mine -15%) drive the bar and are not covered.

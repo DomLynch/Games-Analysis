@@ -114,3 +114,6 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Defect 3, id reuse: the dedupe on id (64) means a respawn that reuses the same id is ignored until the old body is removed. Fix: key the fade by the death event, not by the object id.
 - Time scaling: the fade pauses with `Time.timeScale` (section 1). Fine for a pause menu; the Pit must decide whether a death fade runs during a pause.
 - Not written up here: `Scripts/Rendering/Effects/V2/Core/SpawnScheduler.cs` (whole file read) is a fractional spawn accumulator for particle counts: `Accumulator += countPerSecond * deltaTime`, spawns `min(remaining, floor(Accumulator))`, then subtracts what it spawned (lines 19-30). Its caller is `ParticleStreamRuntime.cs` 353. It has no clamp on the accumulator, so one long frame builds a backlog that is paid out in later calls. It is a possible separate cell for blood spray rates; not scored here.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+- Verdict: CLEAN. No errors found. Nothing significant missed.

@@ -123,3 +123,8 @@ Acceptance: Server test: a board with two open tasks (priority 9 and 4) and one 
 
 Reuse tag: rewrite-from-idea (MIT; code may be adapted; this sketch is a fresh expression)
 Brief rule served: 1 (one engine; the board is data in one place); rules 7-9 n/a
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- All claims verified (both refresh copies, 86400 s checks, priority randi()%10+1, two stores, completion match, fallback 10 tasks, MIT LICENSE).
+- Missed (minor): in the AI getter the refresh runs after the text is built (line 361 after 346-358), so the board shown is the pre-refresh one; the getter also sorts the meta list in place (344).

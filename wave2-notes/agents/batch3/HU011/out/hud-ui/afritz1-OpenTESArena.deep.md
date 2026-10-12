@@ -161,3 +161,8 @@ Best transferable idea: Give every HUD message a countdown that the text itself 
 Decision (proposed): adapt. Keep the length-based countdown and the clamped-step tick; use Frankendom's own constants, count characters not bytes, guard the zero-max bar, and reject the executable string loader (copyright and not our shape).
 
 Acceptance: At 375 px wide, a 60-character toast stays visible at least 3.0 s and a 5-character toast at least 2.5 s (Playwright timing check), and a 500 ms stall moves the countdown by at most 66.7 ms.
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- All checked claims hold (durations, bar size, gradient, thresholds, MIN_FPS, tickUiMessages, hurt flash, MIT, aExeStrings counts).
+- Nit only: aExeStrings.txt lives at data/exe/ under the repo root; the note already says data/exe/, confirmed against the donor, no change.

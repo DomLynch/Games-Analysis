@@ -6,7 +6,7 @@ Checked: The hint file `attachedeffect.cpp` is the draw path for one attached ef
 
 Best transferable idea: An effect is data with a timed end, a loop count and an end-of-effect burst, and a counted hide keeps an owner hidden while any hiding effect is still running.
 Decision (proposed): adapt — keep the data shape for finisher staging; drop the dispatcher and Lua callbacks; the server, not a client timer, decides when a kill is final.
-Acceptance: When a finisher lands the defeated creature disappears for 1.5 s and a burst plays once; a second finisher on the same creature keeps it hidden until it ends; the end hook fires exactly once even if two frames see the end.
+Acceptance: When a finisher lands the defeated creature disappears for 1.5 s and a burst plays once; a second finisher on the same creature keeps it hidden until it ends; the end hook fires exactly once even if two frames see the end (this pins the donor's existing guarantee, it is not a new fix).
 
 ## 1. Mechanism
 
@@ -41,7 +41,7 @@ Acceptance: When a finisher lands the defeated creature disappears for 1.5 s and
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order that matters for behaviour: the duration and loop checks run each frame, the end hook runs once, and the hide counter goes up on attach and down on detach. Where the donor compares the animation phase with the last phase to count a loop, the sketch counts cycle indices, which gives the same count. It omits the drawing (texture, shader, scale, opacity, light, offset and draw order), the move tween, the transform flag, the child effects, the dispatcher (the donor defers attach and detach through it), the Lua callbacks other than `onDetach`, and the permanent flag. It fixes two donor defects: the end hook can fire once only (the donor queues a detach every frame a finished loop is drawn), and the modulus in the bounce is guarded.
+simplified: the sketch keeps the donor order that matters for behaviour: the duration and loop checks run each frame, the end hook runs once, and the hide counter goes up on attach and down on detach. Where the donor compares the animation phase with the last phase to count a loop, the sketch counts cycle indices, which gives the same count. It omits the drawing (texture, shader, scale, opacity, light, offset and draw order), the move tween, the transform flag, the child effects, the dispatcher (the donor defers attach and detach through it), the Lua callbacks other than `onDetach`, and the permanent flag. It keeps the donor's once-only end hook explicit with a `detached` flag (the donor already fires it once because `detachEffect` returns false on a second call, line 71, but it still queues a detach every frame a finished loop is drawn), and it fixes one real defect: the modulus in the bounce is guarded.
 
 ```ts
 // Licence: MIT (donor, OTClient LICENSE). Shape adapted; written from the described mechanism, not a translation of the donor lines.
@@ -114,7 +114,7 @@ export const bounceSample = bounceOffset({ minHeight: 20, height: 20, msPerUnit:
 - TARGET `src/fight/finisher-fx.ts` (new, client-only effect player; the engine emits the finisher start and end events and never waits on effect timers). Parity-checklist row 9 (finishers). Blood and wounds, row 8, would reuse the same player for decal sprites, but this donor has no blood to copy.
 - Use for Frankendom: a finisher hides the defeated creature for a fixed time with a counted hide, and an end burst runs on detach. Two overlapping finishers on one creature keep it hidden until both end. The durations and the loop count are zone or content data, not engine constants.
 - Decision (proposed): adapt. Keep the data shape (duration, loop, bounce, end hook, counted hide). Drop the dispatcher and Lua callbacks; the server, not a client timer, decides when a kill is final.
-- Acceptance: when a finisher lands, the defeated creature disappears for 1.5 s and then a burst plays once; a second finisher on the same creature started during that time keeps it hidden until the second one ends; a test asserts the end hook fires exactly once even if two frames both see the end.
+- Acceptance: when a finisher lands, the defeated creature disappears for 1.5 s and then a burst plays once; a second finisher on the same creature started during that time keeps it hidden until the second one ends; a test asserts the end hook fires exactly once even if two frames both see the end (a regression pin: the donor's `detachEffect` already guarantees it).
 - Reuse tag: adapt-shape (MIT; the code may be adapted, the sketch is clean-room from the mechanism)
 - Brief rule served: 1 (one engine; the effect player is client-only); 9 (finishers) per the parity row above
 
@@ -135,3 +135,11 @@ export const bounceSample = bounceOffset({ minHeight: 20, height: 20, msPerUnit:
 
 Reuse tag: adapt-shape (MIT; clean-room sketch)
 Brief rule served: 1 (one engine, client effect player); 9 (finishers)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN (no wrong main claim; two soft overstatements).
+- The sketch header and Acceptance presented the once-only end hook as a fix; the donor's detachEffect (attachableobject.cpp 66-77) already returns false on a second call, so the hook fires once there too. Section 6 already called the per-frame queueing harmless.
+- LICENSE file says copyright 2010-2020, the source header 2010-2026; the note cites the source header, correct as stated.
+- Missed: the Transform effect's onAttach (effects.lua 74-78) also spawns effect 7 on the tile as a start burst; Lake Monster has a commented-out `loop = 1`, showing duration and loop are alternative end conditions.
+
+Fixed 2026-10-12: sketch header and both Acceptance lines no longer call the once-only end hook a new fix.

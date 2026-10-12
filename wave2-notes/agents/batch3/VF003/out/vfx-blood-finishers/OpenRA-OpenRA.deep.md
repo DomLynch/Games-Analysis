@@ -118,3 +118,7 @@ Typecheck: `tsc --noEmit --strict --target es2020` on the VPS (the block in a fi
 - Decal path (not this cell's verdict). `LeaveSmudgeWarhead.cs` 42-72 places a per-tile smudge on terrain, with a chance roll (`Chance < world.LocalRandom.Next(100)`, line 42) over an annulus of tiles, and skips air hits above `AirThreshold` (48). The smudge layer itself (`SmudgeLayer`) was not read. This is the closest donor line for row 8 decals and should be a separate candidate.
 - Finishers and blood: `ExplosionOnDamageTransition.cs` fires once when a damage state is crossed (`e.PreviousDamageState < Info.DamageState`, line 68), which is a usable finisher trigger shape but has no finisher animation or gore in it.
 - Not read: the world tick rate, the world-units-per-cell constant (the falloff distance is in unknown cell terms), the zoom path beyond line 367, and how the renderer uses the view centre.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN. All verified (Tick 44-56, AddEffect 58-66, offsets, multiplier clamp, intensity formula, ShakeOnDeath/ShakeScreenWarhead defaults, two AddEffect callers, Viewport.Scroll, smudge chances, GPL v3-or-later).
+- Missed: none. The zero-distance NaN claim holds for zero intensity; positive intensity gives +inf, capped to 10.

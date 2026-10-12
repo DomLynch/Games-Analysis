@@ -175,3 +175,8 @@ Acceptance: On each landed hit a player sees a short spark burst at the contact 
 - Light sampling (`particles.zig:293`) reads the voxel light grid, which the Pit client does not have. Keep the light step optional.
 - The `deltaTime` from the game loop is variable (`game.zig:850`). The exponential drag is frame-rate independent, but the collision step is not sub-stepped. The loop that produces `deltaTime` was not read.
 - Not read: the rest of `physics.collision.collides` after line 80, `RandomRange.get`, `getLight`, the particle shaders and the render path after line 60. The renderer's billboard math (`particles.zig:43-44`) was not checked against the shader.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN.
+- Verified: update order, addParticle, spawnParticles clip, maxCapacity, gravity and drag constants, epsilon, defaults, poof/flame values, /particles sender as only spawn call site, blood_star as only blood hit, GPL-3. No error found.
+- Missed (confirmed particles.zig 455-470): SpawnSphere with mode .spread uses the raw un-normalised offsetPos as the direction, so speed scales with distance from the centre; the note's 'outward offset direction' is true only for direction, and the sketch has no spread mode. SpawnCube spread is normalised (490) as the note says.

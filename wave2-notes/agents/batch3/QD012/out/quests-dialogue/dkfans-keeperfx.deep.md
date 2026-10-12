@@ -5,7 +5,7 @@ Donor: `/mnt/frankendom-donors/dkfans-keeperfx/src/lvl_script.c` (also `src/lvl_
 Checked: Symbol `process_level_script` at lvl_script.c 1145, read in full with its gate and call order (1145-1167). The condition engine was read in full: `condition_inactive` (lvl_script_conditions.c 438-448), `process_condition` (455-541), `process_conditions` (543-550), IF/ENDIF gate stack (553-608). Trigger lists read: party (lvl_script.c 986-1040), tunneller (1042-1082), values (1127-1143). Value dispatcher read: `script_process_value` (lvl_script_value.c 128-160) and the switch cases from 167 to 200. Confidence: high on the order of operations, the bit meanings and the numbers. Not read: the bodies of `set_player_as_won_level`, `set_player_as_lost_level` and `setup_all_player_creatures_and_diggers_leave_or_die`; the frontend objective setter `set_general_objective_with_icon` (called at lvl_script_commands.c 853); the create functions behind `process_party`; the bodies of the unlock functions after their calls. Dialogue trees: none found (the grep for "dialog" over src/*.c hits only bflib_basics.c error boxes). Hint file: lvl_script_commands.c, read in parts (objective commands 799-860, heart-lost objectives 2076-2135, message commands 6001-6050).
 
 Best transferable idea: a quest step is a condition with a latch and an edge, nested under its parent step, and its reward is a trigger that fires once and is evaluated in a fixed per-turn order.
-Decision (proposed): adapt - keep the nested gate and the one-shot trigger; route every reward through one server ledger function, because KeeperFX has two effect dispatchers (values and party triggers), which breaks the one-ledger ruling.
+Decision (proposed): adapt - keep the nested gate and the one-shot trigger; route every reward through one server ledger function, because KeeperFX has three effect paths (values, party and tunneller triggers, and an event-driven Lua trigger layer), which breaks the one-ledger ruling.
 Acceptance: a server test asserts that a nested step does not complete on the turn its parent first completes, and that its reward is granted exactly once across 1000 turns and a reconnect.
 
 ## 1. Mechanism
@@ -165,7 +165,7 @@ questTurn(s, true, false);
 ## 6. Gaps and risks
 
 - GPL-2.0: clean-room only. The sketch is written from the mechanism, not translated.
-- Two dispatchers: values go through `script_process_value` (lvl_script_value.c 128) and party and tunneller triggers go through `process_party` (lvl_script.c 992) and their own loop. The one-ledger ruling needs one function; the donor does not have one.
+- Three effect paths: values go through `script_process_value` (lvl_script_value.c 128), party and tunneller triggers go through `process_party` (lvl_script.c 992) and their own loops, and a third, event-driven Lua layer sits beside them: `src/lua_triggers.c` (397 lines; `lua_on_game_tick`, `lua_on_creature_death`, `lua_on_level_up`, `lua_on_power_cast`, `lua_on_chatmsg`, `lua_on_slab_owner_change` and others), with `lua_on_game_tick()` called at game_update.cpp:514 right after `process_level_script` (512), plus a `RUN_LUA_CODE` script command (lvl_script_commands.c 7132). This Lua layer is the more modern quest and event path and was not read beyond its function list. The one-ledger ruling needs one function; the donor has none.
 - Defect 1, stale state: an invalid player range returns early (lvl_script_conditions.c 475-478, warning at 477), so the condition keeps its old truth and edge. fix: validate every range at load, and at run time set the truth to false instead of returning.
 - Defect 2, dead check: the `if (desc == NULL)` test (lvl_script_value.c 146) can never be true, because the scan (143) stops on the table sentinel (lvl_script_commands.c 7134), which is an entry with a NULL textptr, not a NULL pointer. So the "Unexpected index" warning never fires. fix: test `desc->textptr == NULL` and fail at load.
 - Defect 3, shared message slot: quick message text is one shared slot per number, last-write-wins at load (lvl_script_commands.c 6018); two triggers with the same number show the same text. fix: give each dialogue line its own id and store its text with the quest step data.
@@ -177,3 +177,10 @@ questTurn(s, true, false);
 
 Reuse tag: rewrite-from-idea (GPL-2.0; clean-room only)
 Brief rule served: one ledger; zones as data; rules 7-9 n/a
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+- Verdict: MINOR. Main mechanism verified (process_level_script order and gate, condition_inactive, process_condition bit logic, edge on first-ever true turn, defects 1 and 2, TrgF bits, CONDITIONS_COUNT 512, SCRIPT_VALUES_COUNT 2048, GPL-2, update() lines 512 and 534).
+- Error: "two effect dispatchers (values and party triggers)" is incomplete; there is a third, event-driven Lua trigger layer. Confirmed (lua_triggers.c 397 lines; lua_on_game_tick at game_update.cpp:514).
+- Missed: the Lua event-trigger layer and the RUN_LUA_CODE command (added to Gaps and the Decision).
+
+Fixed 2026-10-12: Decision and Gaps now say three effect paths, with the Lua layer described. Sketch unchanged.

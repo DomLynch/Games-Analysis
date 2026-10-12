@@ -137,3 +137,8 @@ Decision (proposed): adapt - take the stepped width and the hold-then-drain ghos
 Acceptance: a character at 20 max HP shows a 30 percent bar and one at 160 max HP shows a full bar; a 10 HP hit leaves the ghost in place for a fixed number of logic ticks and then drains to the new HP in the same time at 60 and at 144 fps; a heal lifts the ghost to the foreground at once; at death the ghost is hidden by an explicit rule, not by reaching one pixel.
 
 Data fields (JSON): width base, step, step size, start, full-at, hold, fall divisor, snap; all engine constants (HUD view model, not zone data).
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN.
+- Verified: GameUI.cpp 108-112 constants, width block, loss snap, gain ease, 30-tick ghost hold, drain, death check, getFPSScale, ticks++ loop, init.cpp parser, en.txt line count, DEPRECATED count, BSD-2 licence. No error found.
+- Missed: if the previous max HP was larger than the current MAXHP the ghost is snapped to the setpoint (GameUI.cpp ~33570, 'resetting game'); the death fade uses opacity -= 0.5*fpsScale and slides hpFadedBase left. The sketch omits the max-HP-shrink reset.

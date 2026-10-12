@@ -172,3 +172,7 @@ Acceptance: on a phone, opening a door repaints only the changed patch in that f
 
 Reuse tag: rewrite-from-idea (GPL-3.0-or-later; clean-room only)
 Brief rule served: 1 (client-only rendering; the engine keeps state, the client only draws it); rules 7-9 n/a
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+- Verdict: CLEAN. All checked claims hold (Tilemap updateMapCell union, moveToUpdating, updateVertices 16 floats per cell and the quoted comment, draw partial range, Vertexbuffer min/max merge and glBufferData vs glBufferSubData, Rect.union in place, DungeonTilemap 3x3 plus corners, NoosaScriptNoLighting, Game.java 0.2 s clamp, Emitter catch-up loop, Visual.isVisible ignores angle, level sizes, Quad index wrap, GPL-3).
+- Missed (minor): if updateMap() is called before the buffer exists, fullUpdate stays true until a later frame (harmless).

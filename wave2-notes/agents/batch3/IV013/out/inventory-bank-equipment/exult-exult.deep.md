@@ -23,7 +23,7 @@ Stack add (`add_quantity`, contain.cc 214-272), used for quantity items:
 4. Recurse into sub-containers with dontcreate (262-265).
 5. Create new objects only for what is left (267-270). `create_quantity` (281-333) creates one object at a time through `add()` (302), so each new object is volume-checked. It stops at the first refusal (302-304).
 
-Carry cap: `Actor::get_max_weight` is 2 times strength (actors.cc 3516-3517). An object's cap is its owner's cap, unless the owner is extradimensional; with no owner the cap is 0, meaning no limit (objs.cc 1137-1149). Weights are in tenths of a stone (objs.cc 1097 comment). An object's weight is quantity times shape weight (1105). Lightweight shapes (reagents, coins) are divided by 10 with a minimum of 1 (1106-1112). A container's weight is its own weight plus every contained object, recursively (541-553).
+Carry cap: `Actor::get_max_weight` is 2 times strength (actors.cc 3516-3517). An object's cap is its owner's cap, unless the owner is extradimensional; with no owner the cap is 0, meaning no limit (objs.cc 1137-1149). Weights are in tenths of a stone (objs.cc 1097 comment). An object's weight is quantity times shape weight (1105). Lightweight shapes (reagents, coins) are divided by 10 with a minimum of 1 (1106-1111); any shape that has a quantity (Has_quantity) also gets a minimum of 1 (1114-1117), lightweight or not. A container's weight is its own weight plus every contained object, recursively (541-553).
 
 Stacks and volume: volume is the shape's volume, and the donor says quantity is ignored for volume (objs.cc 425-427; contain.cc 246-247). So one stack takes one object's volume, whatever its count. A stack holds at most 100 (objs.cc 321; `modify_quantity` caps at 478-479).
 
@@ -52,7 +52,7 @@ Refusal feedback: each refusal has its own cursor shape and a sound: too heavy (
 | Volume counted once per stack, whatever the quantity | Stack limit 100 (objs.cc 321) |
 | Carry cap = stones per point of strength | 2 per point of strength (actors.cc 3517) |
 | Weights in tenths; cap times 10 | 10 tenths per stone (contain.cc 229) |
-| Lightweight stacks: floor(quantity times weight / 10), minimum 1 | Divisor 10 (objs.cc 1105-1112) |
+| Lightweight stacks: floor(quantity times weight / 10), minimum 1; any quantity shape also minimum 1 | Divisor 10 (objs.cc 1105-1117) |
 | Clamp-and-report: admit what fits, return the rest | Per-unit estimate (contain.cc 235-236) is the flaw; see section 6 |
 | Drag weight check | `wt / 10 > cap` in whole stones (drag.cc 534) |
 
@@ -114,7 +114,7 @@ function transfer<T>(src: T[], index: number, place: (item: T) => boolean): bool
 - Weight is not enforced by the single-object add. `Container_game_object::add` (contain.cc 102-175) checks shape and volume only; weight is checked in `add_quantity` (226-242) and in the party drag check (drag.cc 517-540, called at 596). `add_readied` says "No room, or too heavy." (actors.cc 3748) but calls the base add with the volume check skipped (3749), and `fits_in_spot` has no weight check (1597-1676). So a non-stacking item can go past the cap through a path other than the drag. Fix: put the cap in the one ledger add for every item.
 - The drag check tolerates up to 0.9 stone over. `wt / 10 > cap` (drag.cc 534) compares whole stones, while the stack clamp compares tenths (contain.cc 229-232). Fix: compare tenths everywhere.
 - The integer fit admits extra units. The per-unit weight is truncated (contain.cc 235) and the fit divides by that truncated value (236). The two constructed cases in section 3 show it. Fix: exact integer fit, floor(avail x qty / total), as in the sketch.
-- Lightweight rounding. `get_weight` divides by 10 with floor and a minimum of 1 (objs.cc 1105-1112). A small stack's recorded weight is therefore inexact, and the fit inherits the error. Fix: keep ledger weights in finer units (for example hundredths), so small stacks are exact.
+- Lightweight rounding. `get_weight` divides by 10 with floor and a minimum of 1 (objs.cc 1105-1112); the same minimum of 1 applies to every quantity shape (1114-1117), so a non-lightweight stack with weight 0 also counts as 1. A small stack's recorded weight is therefore inexact, and the fit inherits the error. Fix: keep ledger weights in finer units (for example hundredths), so small stacks are exact.
 - Put-back can exceed capacity. If the source refuses, the second try skips the volume check (drag.cc 552-553). Fix: put the item back into the same ledger slot index, never through a capacity-skipping add.
 - Overflow is silent. `Actor::add` with the check skipped adds past capacity (actors.cc 3653-3671) and only prints a console warning (3667-3670), and only when `party_id` is set or `npc_num` is 0. For Frankendom loot: overflow to the ground with a visible message, as the Evennia shop does (`/mnt/frankendom-donors/evennia-evennia/evennia/contrib/tutorials/evadventure/shops.py` 310-313), and log it as a ledger event.
 - Volume ignores quantity (objs.cc 427, contain.cc 246-247). The donor's own comment doubts it ("I think U7 ignores quantity!"). A 100-stack and a single item take the same volume. Decide for Frankendom explicitly; adapt as a data field per item class, not a constant.
@@ -122,3 +122,10 @@ function transfer<T>(src: T[], index: number, place: (item: T) => boolean): bool
 - Paperdoll readout: weight is shown as tenths divided by ten (Paperdoll_gump.cc 536, 542), so the displayed total can be up to 0.9 stone below the real total, and it is not the same rounding as the drag check. Fix: one rounding rule for the check and the readout.
 - Data: the data tables are binary (equip.dat, container.dat, wgtvol.dat, ready.dat, armor.dat, weapons.dat), so they were not decoded, and the volume byte per shape was taken from the header struct (shapeinf.h 167). paperdol_info.txt (sections "characters" and "items") and gump_info.txt (container_area 84/52/22/60/40) were read as text, but the meaning of each field was not decoded. textmsg.txt has 1431 lines in three sections (shapes, msgs, miscnames; counted by section line ranges, entries not decoded).
 - Frankendom gap: the donor's caps are client-side and the donor has no server verification. In Frankendom the same caps must run on the server, and the Pit must not own the carried items.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Sec3/6 attributed the 'minimum 1' weight rule to lightweight shapes only; real objs.cc:1106-1118: lightweight is wt/10 with min 1 (1109-1111) AND any Has_quantity shape gets min 1 (1114-1117). Confirmed against the donor.
+- Missed: none significant.
+
+Fixed 2026-10-12: the three places that state the minimum-1 weight rule now include the Has_quantity case. Sketch code does not implement the weight formula, so unchanged; no typecheck needed.

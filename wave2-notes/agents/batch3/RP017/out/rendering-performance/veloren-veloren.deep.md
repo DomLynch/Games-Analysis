@@ -99,3 +99,7 @@ console.log(JSON.stringify(greedyPlane(demo, 4, 3)));
 - Per-quad texel atlas: reject for now. It adds an atlas, a texel fill and a size budget (greedy.rs 680-709) to keep per-voxel light; a browser zone can take light from vertex data if the renderer needs it. Not checked against our renderer.
 - The mask is rebuilt per plane by calling the face rule for every cell (greedy.rs 615-620). That is fine per chunk but costs time if zone tiles are re-meshed often; build once per zone change, not per frame.
 - Not read: `should_draw_greedy`, the AO and light closures, the rest of draw_texels, the vertex format, segment.rs meshes, and the terrain scene culling and LOD (voxygen/src/scene/terrain/mod.rs, voxygen/src/scene/lod.rs), which are the next note for the culling and LOD topic.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN. Verified: greedy_mesh_cross_section 602-662 as described, merge key Option<(bool,M)>, three axis passes, FaceKind, chunk cap assert, add_to_atlas 664-730 including the panic at 697-702 contradicting the comment at 687-691 (real defect), config comments, LICENSE v3; sketch demo output traces correctly by hand.
+- Missed: none.

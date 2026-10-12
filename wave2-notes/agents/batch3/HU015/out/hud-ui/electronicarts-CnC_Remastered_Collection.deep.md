@@ -2,12 +2,12 @@
 
 Donor: `/mnt/frankendom-donors/electronicarts-CnC_Remastered_Collection/TIBERIANDAWN/RADAR.CPP` | Licence: GPL-3.0-or-later per the RADAR.CPP header (line 7), plus Electronic Arts "ADDITIONAL TERMS per GNU GPL Section 7" in `LICENSE.md` line 601 (no trademark or publicity rights; no claim of affiliation; modified versions must be marked). Class: copyleft. Clean-room, shape only. | C++ | symbol `RadarClass::TacticalClass::Action`
 
-Checked: Hint file `TIBERIANDAWN/MENUS.CPP` is the main menu (`Do_Menu`, `Main_Menu`), not the HUD, so it was not used. Read in full: `RADAR.CPP` input and cursor path (`TacticalClass::Action` 1361-1529, `Click_In_Radar` 909-937, `Click_Cell_Calc` 957-968, `Zoom_Mode` 665-736, `AI` 1295-1341, `Radar_Activate` 212-306, `Radar_Cursor` 1115-1231 with the first part of its body). Read in part: `Set_Radar_Position` 1576-1640 (live branch to the blit); `RADAR.H` 113-139. Opened for callers and dead code: `DISPLAY.CPP` (967), `SIDEBAR.CPP` (grep only). String table: 785 distinct `TXT_*` IDs are `#define`d in the TIBERIANDAWN headers (`CONQUER.H` line 16 is the first); the English text bodies are not in this donor and were not located (not read). Not read: the live pixel draw path (`Draw_It` is inside `#if (0)`, lines 331-479, see section 6), `Confine_Rect`, `Set_Tactical_Position`, `Draw_Names`, `What_Action`, the caller and rate of `RadarClass::AI`. Confidence: high on the click, cursor and zoom mechanism; medium on what the on-screen radar looks like. Camera scope: not a camera cell (hud-ui). Depth: full for the input mechanism, thin for the radar drawing.
+Checked: Hint file `TIBERIANDAWN/MENUS.CPP` is the main menu (`Do_Menu`, `Main_Menu`), not the HUD, so it was not used. Read in full: `RADAR.CPP` input and cursor path (`TacticalClass::Action` 1361-1529, `Click_In_Radar` 909-937, `Click_Cell_Calc` 957-968, `Zoom_Mode` 665-736, `AI` 1295-1341, `Radar_Activate` 212-306, `Radar_Cursor` 1115-1231 with the first part of its body). Read in part: `Set_Radar_Position` 1576-1640 (live branch to the blit); `RADAR.H` 113-139. Opened for callers and dead code: `DISPLAY.CPP` (967), `SIDEBAR.CPP` (grep only). String table: 785 distinct `TXT_*` IDs are `#define`d in the TIBERIANDAWN headers (`CONQUER.H` line 16 is the first); the English text bodies are not in this donor and were not located (not read). Not read: the live pixel draw path (`Draw_It` is inside `#if (0)`, lines 331-479, see section 6), `Confine_Rect`, `Set_Tactical_Position`, `Draw_Names`, `What_Action`, the rate of `RadarClass::AI` (its caller `PowerClass::AI`, `POWER.CPP` 351, was seen by the checker). Confidence: high on the click, cursor and zoom mechanism; medium on what the on-screen radar looks like. Camera scope: not a camera cell (hud-ui). Depth: full for the input mechanism, thin for the radar drawing.
 
 ## 1. Mechanism
 
 - The radar is a whole-zone overview in a fixed frame in the HUD. The player clicks it to move the main view. The same handler also turns a click into a unit order when a unit is selected.
-- Hit test (`Click_In_Radar`, 909-937). A pointer goes through three outcomes: outside the frame returns 0 and falls through to the normal map (`Click_Cell_Calc` line 967); inside the frame but off the drawn map returns -1 and the handler sets the cursor to normal and does nothing else (1524-1525); on the drawn map returns 1 and the cell is the window origin plus the offset divided by `ZoomFactor` (926).
+- Hit test (`Click_In_Radar`, 909-937). A pointer goes through three outcomes: a point right of or below the frame returns 0 and falls through to the normal map (`Click_Cell_Calc` line 967); a point left of or above the frame passes the upper-bound frame test (921), then fails the unsigned map test (925) and also returns -1 (swallowed, never a cell); inside the frame but off the drawn map returns -1 and the handler sets the cursor to normal and does nothing else (1524-1525); on the drawn map returns 1 and the cell is the window origin plus the offset divided by `ZoomFactor` (926).
 - Order for a left press with no unit selected (1492-1511):
   1. `Click_Cell_Calc` gives the cell (1496).
   2. The view's top-left is set to the cell minus half the view width and height (1500, 1502). The low edge is clamped to the map origin with `MAX` (1501, 1503). The high edge is not clamped here.
@@ -73,7 +73,7 @@ type Hit = { kind: "miss" } | { kind: "absorb" } | { kind: "cell"; cell: Cell };
 
 // Pointer px, relative to the frame's top-left -> hit.
 // Donor: Click_In_Radar (RADAR.CPP lines 909-937). Fix: the donor tests only the upper bound on the
-// frame (x < RadIWidth), so a point left of or above the frame passes that test; here both bounds are checked.
+// frame (x < RadIWidth), so a point left of or above the frame passes that test; the unsigned cast at 925 then rejects it with -1, so the donor never yields a cell but swallows the click instead of letting it fall through. Here both bounds are checked and such a point is a plain miss.
 function hitTest(m: Minimap, px: number, py: number): Hit {
   if (px < 0 || py < 0 || px >= m.frameW || py >= m.frameH) return { kind: "miss" };
   const x = px - m.insetX;
@@ -123,11 +123,13 @@ export {};
 
 Best transferable idea: On a minimap tap, centre the main view on the tapped point (clamped at both zone edges) and show a 4-px bracket around the new view that closes over 4 frames.
 Decision (proposed): adapt — take the tap-to-jump and the bracket pulse for the zone minimap; fix the bounds in the hit test and the height; do not port the unit-order branch, because a minimap order must go through the server, not the client map.
-Acceptance: On a 375-px phone, tapping the zone minimap centres the view on the tapped point inside the zone; a bracket around the view starts 4 px larger and settles over 4 frames; a tap outside the minimap frame does nothing; a client test asserts a point left of the frame is a miss, not a cell.
+Acceptance: On a 375-px phone, tapping the zone minimap centres the view on the tapped point inside the zone; a bracket around the view starts 4 px larger and settles over 4 frames; a tap outside the minimap frame does nothing; a client test asserts a point left of the frame is a miss (falls through to the world), not a cell and not swallowed.
 
 ## 6. Gaps and risks
 
-- Defect 1, hit test has no lower bound (921). Fix: test both bounds before subtracting the inset (sketch `hitTest`). Caveat: I read the code, I did not run it. `DISPLAY.CPP` 967 calls `Click_Cell_Calc` virtually, so the donor's tactical-map click may use this path; the calling function was not read, so the runtime effect is unconfirmed.
+- Missed by the first pass: after the jump the donor sets `shadow = !Is_Visible(cell)` for the clicked cell (RADAR.CPP ~1507), so a click on unseen ground is treated differently; not modelled in the sketch.
+
+- Defect 1, hit test has no lower bound on the frame (921). Correction: the donor never returns a cell for a point left of or above the frame (the unsigned cast at 925 rejects it) but it returns -1, so the click is swallowed instead of falling through to the world map. Fix: test both bounds before subtracting the inset (sketch `hitTest`). Caveat: I read the code, I did not run it. `DISPLAY.CPP` 967 calls `Click_Cell_Calc` virtually, so the donor's tactical-map click may use this path; the calling function was not read, so the runtime effect is unconfirmed.
 - Defect 2, radar height uses the width (714: `RadarHeight = RadIWidth - rem_y`). In the low-resolution layout the frame is 72 wide and 69 high (143-144), so the clickable height is 3 px too tall. Fix: use `RadIHeight`.
 - Defect 3, the zoomed window is not centred: the centring formula is behind `#if(FALSE)` (1583-1584). This looks like a regression. Fix: restore the centred formula and keep the `Confine_Rect` clamp (1595). Caveat: `Confine_Rect` was not read.
 - Defect 4, frame counts (4, 22, 41) are ticks of the caller's rate, which was not read. Fix: store the pulse and the animation in milliseconds and advance by delta time, so the timing does not depend on frame rate.
@@ -141,3 +143,12 @@ Acceptance: On a 375-px phone, tapping the zone minimap centres the view on the 
 
 Reuse tag: rewrite-from-idea (GPL-3.0 with EA additional terms; clean-room only)
 Brief rule served: client-only HUD; zones as data (map size per zone)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: MINOR.
+- Defect 1 overstated: Click_In_Radar (RADAR.CPP 921) tests x < RadIWidth only, but the unsigned cast at 925 rejects negatives, so a left/above point returns -1 (swallowed), never a cell. Confirmed in code.
+- 'Caller of RadarClass::AI not read': POWER.CPP 351 (PowerClass::AI) calls it. Confirmed.
+- Missed: click shadow/visibility test after the jump (RADAR.CPP ~1507). Added to section 6.
+
+Fixed 2026-10-12: Defect 1 wording, hit-test description, sketch comment, Acceptance, and the caller-of-AI line corrected.

@@ -4,17 +4,17 @@ Donor: `/mnt/frankendom-donors/Warzone2100-warzone2100/lib/ivis_opengl/piedraw.c
 
 Checked: Read `piedraw.cpp` in the instanced renderer: the key and per-instance structs (251-275, 344-383), the routing in `Draw3DShape` (1267-1400, the key at 1296, the routes at 1347 and 1391, the shadow gate at 1374), the per-instance data `GenerateInstanceData` (552-580), the batch clear and compaction (1180-1266), `FinalizeInstances` (1590-1659), the pass loop in `Draw3DShapes_Instanced` (1914-2012), the frame entry points `pie_StartMeshes`, `pie_FinalizeMeshes` (1530-1542), the renderer's static instance (1405), and the caller line 1449. Candidates opened: `lib/ivis_opengl/piedef.h` (declaration, line 50), `src/effects.cpp` and `src/display3d.cpp` (callers, grep only). Not read: the `pie_Draw3DShape` wrapper in full (1400-1450), the `DrawAll` body (1664-1913, only its start and the call at 1587), `Draw3DShapes_Old` (2013 on), `pie_Draw3DShape2_Instanced` itself, the stencil shadow passes, and any frustum or distance cull outside the shadow gate (none found in this file by grep). The grep for `sort` found only shadow-edge sorts (875-881), so translucent batches are not depth-sorted here. camera_scope: n/a (rendering, not a camera topic). Confidence: high on the batch key, the per-instance data, the clear and compaction, the finalize step and the pass order (read end to end); medium on how the frame is driven (the wrappers around `DrawAll` were not read). Nothing was run.
 
-Best transferable idea: Key the draw calls on mesh, shader and pass flags only; put each unit's matrix, colour, team colour, alpha and frame index in a per-instance buffer, and draw each key once per pass, in a fixed pass order (opaque, translucent, translucent without depth write, additive).
+Best transferable idea: Key the draw calls on mesh, shader and pass flags only; put each unit's matrix, colour, team colour, alpha and frame index in a per-instance buffer, and draw each key once per pass, in a fixed order within the colour sequence (opaque, translucent, translucent without depth write, additive), with the frame split into a shadow-map depth pass and the colour passes.
 Decision (proposed): adapt. Keep the key-by-mesh-and-flags batching, the per-instance colour and team colour, and the fixed pass order. Do not port the translucent order (first-use, not depth) as it stands: sort translucent batches by distance in the engine, or limit translucency to effect meshes. The donor has no creature skeletal clips in this path, so creature clips do not transfer.
 Acceptance: A dev counter shows that N units of one model with different team colours produce one instanced draw call per pass, that adding a unit of a second model adds exactly one call, and that translucent effect instances are drawn after all opaque instances in every frame.
 
 ## 1. Mechanism
 
-- Frame start (`pie_StartMeshes`, 1530-1532). Calls `clear()` (1180-1210). `clear` counts frames. On every 600th frame (`batchCompactionIntervalFrames`, 1117; test at 1189), batches that were empty last frame are erased (1198) and the others are emptied, keeping their capacity. Every other frame all batches are emptied and their capacity kept (1182-1183 comment). Translucent and additive maps are emptied the same way, and the counters are reset.
-- Per object (`pie_Draw3DShape` calls `Draw3DShape`, 1449). The shader is chosen from the light flag (lit or unlit), and the instanced or non-instanced variant from `useInstancedRendering` (1296). Shape transforms are applied: shield scale, height-scaled construct, raise or collapse. The key is `templatedState(shader, shape, pieFlag)` (1296). The route depends on the flags: additive (test at 1329, push at 1333), translucent (test at 1341; no depth write pushes at 1347, depth write at 1351), or opaque (1391 `try_emplace` into `instanceMeshes`). For opaque stencil shadows (flag pie_SHADOW or pie_STATIC_SHADOW, fallback mode only), the squared distance from the camera is compared to `SHADOW_END_DISTANCE` (1374). Each route appends one `GenerateInstanceData` record.
-- Instance record (`GenerateInstanceData`, 552-580). Holds the 4x4 matrix, a packed vector of stretch, ECM state, a not-premultiplied flag and the frame index (574), and the colour and team colour. For additive and translucent instances the colour's alpha is replaced by `pieFlagData` (559, 563): the alpha is per instance, not part of the key. Premultiplied flags convert the colours (not read in detail).
+- Frame start (`pie_StartMeshes`, 1530-1532). Calls `clear()` (1180-1210). `clear` counts frames. On every 600th frame (`batchCompactionIntervalFrames`, 1117; test at 1189), batches that were empty last frame are erased (1198) and the others are emptied, keeping their capacity. Every other frame all batches are emptied and their capacity kept (1182-1183 comment). This sweep applies to the opaque map only (a `std::unordered_map`, 1105). Translucent, no-depth-write and additive batches are `InsertionOrderMap`s (1106-1108): they are compacted on the sweep frame and `clearRetainingCapacity()`d every frame (1226-1228), so they never carry empty batches into `FinalizeInstances`, and only the opaque loop has the empty-batch skip (1612-1614). The counters are reset.
+- Per object (`pie_Draw3DShape` calls `Draw3DShape`, 1449). The shader is chosen from the light flag (lit or unlit), and the instanced or non-instanced variant from `useInstancedRendering` (1296). Shape transforms are applied: shield scale, height-scaled construct, raise or collapse. The key is `templatedState(shader, shape, pieFlag)` (1296). The route depends on the flags: additive or premultiplied (test `pie_ADDITIVE | pie_PREMULTIPLIED` at 1329, push at 1333), translucent (test at 1341; no depth write pushes at 1347, depth write at 1351), or opaque (1391 `try_emplace` into `instanceMeshes`). For opaque stencil shadows (flag pie_SHADOW or pie_STATIC_SHADOW, fallback mode only), the squared distance from the camera is compared to `SHADOW_END_DISTANCE` (1374). Each route appends one `GenerateInstanceData` record.
+- Instance record (`GenerateInstanceData`, 552-580). Holds the 4x4 matrix, a packed vector of stretch, ECM state, a not-premultiplied flag and the frame index (574), and the colour and team colour. For ADDITIVE and TRANSLUCENT instances the colour's alpha is replaced by `pieFlagData` (557-563): the alpha is per instance, not part of the key. A PREMULTIPLIED-only instance lands in the additive batch but keeps its own alpha. Premultiplied flags also convert the colours (not read in detail). `frame %= max(1, numFrames)` is applied before the key is built (1294).
 - Finalize (`FinalizeInstances`, 1590-1659, called from `pie_FinalizeMeshes`, 1540-1542). Builds one draw call per non-empty batch, in pass order: opaque (1618), translucent (1628), translucent without depth write (1638), additive (1648). Each call records its first instance and its count. All instance data is concatenated into one array and uploaded to the current slot of a ring of `maxFramesInFlight() + 1` buffers (1171, 1657).
-- Draw (`Draw3DShapes_Instanced`, 1914-2012, from `DrawAll` at 1587). Opaque calls first (1923-1935), then the old-shadow pass, then translucent calls (1956-1963), then the no-depth-write translucent calls, then additive calls last (1989-1996). Each call is one `pie_Draw3DShape2_Instanced` with the instance buffer offset and count (1935).
+- Draw (`Draw3DShapes_Instanced`, 1914-2012, from `DrawAll` at 1587). The pass order is not one fixed sweep per frame: each pass is gated by a `drawParts` bitmask (ShadowCastingShapes, OldShadows, TranslucentShapes, AdditiveShapes), and in `MeshDepthPassMode::ShadowMap` opaque calls whose flags lack `pie_SHADOW` or `pie_STATIC_SHADOW` are skipped (~1930). One frame can therefore call it several times with different subsets (a shadow-map depth pass, then the colour passes). Within one call the order is: opaque calls first (1923-1935), then the old-shadow pass, then translucent calls (1956-1963), then the no-depth-write translucent calls, then additive calls last (1989-1996). Each call is one `pie_Draw3DShape2_Instanced` with the instance buffer offset and count (1935).
 - Order of operations in one frame: start (clear, maybe compact), route each object into a key batch, finalize into one call per batch with one upload, draw by pass.
 
 ## 2. Key functions
@@ -36,11 +36,11 @@ Acceptance: A dev counter shows that N units of one model with different team co
 | Batch storage kept between frames, emptied not freed, with a periodic sweep of unused batches | Sweep every 600 frames (theirs: 1117) |
 | Stencil shadow caster gate by squared distance | `SHADOW_END_DISTANCE` = 8000 x 8000, "keep in sync with lighting.c:FOG_END" (theirs: 65) |
 | Instance buffer ring | `maxFramesInFlight() + 1` slots (theirs: 1171) |
-| Fixed pass order | Opaque, translucent, translucent without depth write, additive (theirs: 1923, 1956, 1989) |
+| Pass order within the colour sequence | Opaque, translucent, translucent without depth write, additive (theirs: 1923, 1956, 1989); gated by `drawParts` and a shadow-map depth mode that keeps only `pie_SHADOW` / `pie_STATIC_SHADOW` opaque calls |
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order: clear with a periodic sweep (empty batches erased, others emptied with capacity kept), route each unit into a batch keyed by (shader, mesh, flags) per pass, finalize into one call per batch in pass order with one concatenated instance array, and the shadow distance gate as a helper. It simplifies four things: the donor keeps opaque batches in a hash map (order not defined), the sketch uses insertion order for every pass; the donor's rotating GPU buffer and the upload are omitted (the sketch returns the array); the donor's lighting, premultiply conversion and the non-instanced fallback are omitted, so `colour` is taken as already final; and the stretch and ECM fields are kept as plain numbers. Typechecked on the VPS with `tsc --strict --target es2020`, exit 0.
+simplified: the sketch keeps the donor order: clear with a periodic sweep (empty batches erased, others emptied with capacity kept), route each unit into a batch keyed by (shader, mesh, flags) per pass, finalize into one call per batch in pass order with one concatenated instance array, and the shadow distance gate as a helper. It simplifies four things: the donor keeps opaque batches in a hash map (order not defined) and sweeps empties only there, while the other three passes are cleared every frame (the sketch does the same); the sketch uses insertion order for every pass; it has no drawParts or shadow-map depth mode (one pass sequence per frame); the donor's rotating GPU buffer and the upload are omitted (the sketch returns the array); the donor's lighting, premultiply conversion and the non-instanced fallback are omitted, so `colour` is taken as already final; and the stretch and ECM fields are kept as plain numbers. Typechecked on the VPS with `tsc --strict --target es2020`, exit 0.
 
 ```ts
 // Licence: GPL-2.0-or-later (donor). Clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -60,6 +60,15 @@ export interface InstanceRecord {
 }
 
 export interface DrawCall { key: MeshKey; pass: Pass; first: number; count: number; }
+
+// Route test (donor 1329, 1341): additive OR premultiplied goes to the additive pass; then translucent
+// (no-depth-write split); everything else is opaque. Only ADDITIVE and TRANSLUCENT get their alpha replaced.
+export const FLAG_ADDITIVE = 1, FLAG_PREMULTIPLIED = 2, FLAG_TRANSLUCENT = 4, FLAG_NODEPTHWRITE = 8;
+export function passOf(flags: number): Pass {
+  if (flags & (FLAG_ADDITIVE | FLAG_PREMULTIPLIED)) return 'additive';
+  if (flags & FLAG_TRANSLUCENT) return (flags & FLAG_NODEPTHWRITE) ? 'translucentNoDepthWrite' : 'translucent';
+  return 'opaque';
+}
 
 const keyString = (k: MeshKey): string => `${k.shader}|${k.mesh}|${k.flags}`;
 
@@ -82,7 +91,13 @@ export class InstanceBatcher {
     this.frames++;
     const sweep = this.frames >= this.compactEvery;
     if (sweep) this.frames = 0;
-    for (const map of this.maps.values()) {
+    for (const [pass, map] of this.maps) {
+      if (pass !== 'opaque') {
+        // Donor: translucent, no-depth and additive maps are insertion-ordered and
+        // cleared every frame (compacted on the sweep frame), so they never keep empties.
+        map.clear();
+        continue;
+      }
       for (const [k, b] of map) {
         if (sweep && b.items.length === 0) map.delete(k);
         else b.items.length = 0;
@@ -141,3 +156,12 @@ export {};
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 Brief rule served: readability at 375 wide (team colour and unit count per frame inside a draw budget); client-only, no server rule applies.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR.
+- Translucent and additive maps were said to be emptied like the opaque batches; only opaque uses the retained-and-swept unordered_map (1105, 1189-1214). The other three are InsertionOrderMaps compacted on the sweep frame and cleared every frame (1226-1228), with no empty-batch skip in FinalizeInstances (1618-1648). The sketch applied the opaque rule to all four passes.
+- Route test is `pie_ADDITIVE | pie_PREMULTIPLIED` (1329): premultiplied-only meshes go to the additive pass and keep their own alpha; the note described only additive.
+- "Fixed pass order" overstated: Draw3DShapes_Instanced (1914-2012) is gated by drawParts and a depth pass mode, so a frame calls it several times with subsets (shadow-map mode skips opaque calls lacking pie_SHADOW / pie_STATIC_SHADOW).
+- Missed: the shadow-map depth pass filter and the drawParts split are the frame-level pass structure; `frame %= numFrames` before key build (1294).
+
+Fixed 2026-10-12: section 1 (clear, route, instance record, draw), section 3 row, best idea line and sketch header corrected; sketch begin() now sweeps only the opaque map and clears the others each frame, and passOf() added for the additive-or-premultiplied route (also in work/Warzone2100-batch.ts).

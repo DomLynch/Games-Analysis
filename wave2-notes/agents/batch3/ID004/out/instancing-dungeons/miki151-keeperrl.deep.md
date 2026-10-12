@@ -190,3 +190,9 @@ export {};
 
 Reuse tag: rewrite-from-idea (GPL-2.0; clean-room only, shape only)
 Brief rule served: row 23 zone population; rule 1 one engine.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN.
+- Errors: none material; sketch merges fallback tiers 3 and 4 into one list and the two prompts into one (disclosed or minor).
+- Missed: forceSteeds() call at player.cpp 871 between move and ambush not mentioned.

@@ -183,3 +183,9 @@ function strike(att: Unit, def: Unit, rawDamage: number, hits: boolean, clips: C
 Best transferable idea: The finisher clip is chosen from the engine's own kill result, starts before the strike on one shared clock, the HP bar counts down over it, and the real HP is committed only after the clip.
 Decision (proposed): adapt — keep the outcome-keyed clip and the countdown-then-commit order (the engine decides, the client shows), but take the kill flag from the server result and seed the tie-break from the fight record; the blood look is ours, since this donor has none.
 Acceptance: A killing blow plays the kill clip only when the server's fight result says dies=true, the defender's HP bar counts down over the clip and ends on the server's final HP, and replaying the same fight record picks the same clip.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN
+- All claims verified (outcome countdown, drain, unit_killed order, blood cfg offsets, licence).
+- Missed: none found.

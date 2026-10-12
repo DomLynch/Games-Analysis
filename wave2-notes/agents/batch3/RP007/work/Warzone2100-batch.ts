@@ -16,6 +16,15 @@ export interface InstanceRecord {
 
 export interface DrawCall { key: MeshKey; pass: Pass; first: number; count: number; }
 
+// Route test (donor 1329, 1341): additive OR premultiplied goes to the additive pass; then translucent
+// (no-depth-write split); everything else is opaque. Only ADDITIVE and TRANSLUCENT get their alpha replaced.
+export const FLAG_ADDITIVE = 1, FLAG_PREMULTIPLIED = 2, FLAG_TRANSLUCENT = 4, FLAG_NODEPTHWRITE = 8;
+export function passOf(flags: number): Pass {
+  if (flags & (FLAG_ADDITIVE | FLAG_PREMULTIPLIED)) return 'additive';
+  if (flags & FLAG_TRANSLUCENT) return (flags & FLAG_NODEPTHWRITE) ? 'translucentNoDepthWrite' : 'translucent';
+  return 'opaque';
+}
+
 const keyString = (k: MeshKey): string => `${k.shader}|${k.mesh}|${k.flags}`;
 
 // Shadow casters are added only when squared distance to the camera is under the cap.
@@ -37,7 +46,13 @@ export class InstanceBatcher {
     this.frames++;
     const sweep = this.frames >= this.compactEvery;
     if (sweep) this.frames = 0;
-    for (const map of this.maps.values()) {
+    for (const [pass, map] of this.maps) {
+      if (pass !== 'opaque') {
+        // Donor: translucent, no-depth and additive maps are insertion-ordered and
+        // cleared every frame (compacted on the sweep frame), so they never keep empties.
+        map.clear();
+        continue;
+      }
       for (const [k, b] of map) {
         if (sweep && b.items.length === 0) map.delete(k);
         else b.items.length = 0;

@@ -151,3 +151,7 @@ Acceptance: On a phone-width world zone (375 wide), foliage shows out to the fol
 
 Reuse tag: rewrite-from-idea (GPL-3.0; clean-room only)
 Brief rule served: zones as data (per-zone density and view distance); client-only rendering; defect rule (keep the idea, fix the defect)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+- Verdict: CLEAN. No errors found; defects 1-3 confirmed real.
+- Missed (minor): the per-frame cull callback only runs its instance loops when compute-near-far mode is active, the frustum result mask is non-zero and dNear/dFar fall outside the computed planes (lines 69-71, 92-97); the note's 'per-frame cost grows with instance count' is true but conditional. A stomp-mode setting (settings groundcover.hpp:24) exists outside the file read.

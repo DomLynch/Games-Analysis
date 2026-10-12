@@ -162,3 +162,7 @@ function tickWorld(w: World, keys: number): number {
 - The removal in `kill_entity` is correct only because the victim is marked as not existing first (28798). If the order changes in a port, the box can be re-elected by mistake.
 - Global reset: `kill_all` clears the box pointer (28923). A port must clear the lock on zone change, death and disconnect, and test each.
 - No quest state, objectives, branching or dialogue tree exists in this donor. The quest side of the topic is covered by cell 1 (CleverRaven-Cataclysm-DDA). Any dialogue-tree idea needs another donor.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+- Verdict: CLEAN. No errors found.
+- Missed (minor): is_frozen's own-freeze clause reads the global self, not e (1425); harmless because callers set self first.

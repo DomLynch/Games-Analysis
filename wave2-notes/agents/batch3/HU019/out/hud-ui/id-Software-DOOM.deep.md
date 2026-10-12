@@ -146,3 +146,7 @@ Acceptance: At 375 wide in a duel, a 25 hp hit in one tick shows the OUCH frame 
 Reuse tag: rewrite-from-idea (DOOM Source Code License per st_stuff.c header; clean-room only)
 
 Brief rule served: 1 (one engine; the HUD is a client reading engine events); fold-ins: string table, death presentation, many-on-one gap.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN. All 6+ claims verified against the donor (constants 97-126, pain formula, ladder gates, ouch sign bug 807/860, ST_Ticker, callers, p_inter 846-852/874-877, p_user 356, TICRATE, GPL v2).
+- Missed (confirmed in donor, p_inter.c 875): damagecount is added AFTER armour and invulnerability, so a hit that is ignored by god mode or invulnerability gives no face reaction, and armour-reduced damage gives a smaller one. Not stated in the note; worth a line where the pain reaction is keyed to damage taken.

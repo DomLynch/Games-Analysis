@@ -145,3 +145,8 @@ Best transferable idea: Make a mission's finish a pure state test (no waves left
 
 Decision (proposed): adapt — the finish test and the pay-by-objective rule fit quest and event objectives on the server; the spacing needs the rounding and documentation fixes, and the reward sign is inverted (the donor pays the enemy), so Frankendom takes it as a zone threat meter instead.
 Acceptance: Server test: a two-wave site event is over only after the last wave is out and every UFO is gone; a landed UFO pays the zone meter once on lifting; a base objective pays only when the base is placed; a shot-down UFO delays the next wave by a rolled amount within the documented range; a 45-minute spacing rolls between about 23 and 68 minutes (half to one-and-a-half of 45), not 0 or 30.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN.
+- Verified: isOver, think order, start, ufoShotDown spacing add, ufoLifting pay, CRASHED path, setWaveCountdown, addScore, region/country match, GeoscapeState tally, reach-base reset, live-UFO counter, header comment vs code, GPL-3+. Sketch isOver/tick order matches. No error found.
+- Missed: landing-to-site pay (AlienMission.cpp ~466) also requires _missionSiteZone != -1 and the trajectory zone equal to the spawn zone; think() also spawns a mission site when the wave's ufoType is a deployment (not only OBJECTIVE_SITE with wave.objective); the note condenses both.

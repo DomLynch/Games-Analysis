@@ -139,3 +139,7 @@ Best transferable idea: Gate a pickup on world state first, then grant it once (
 
 Decision (proposed): adapt - keep gate-then-grant, the move-bucket cooldown and the capped stack that reports overflow; change ownership to a server check inside the grant, use a seeded server roll, and drop the mystic +8 farm (the FIXME).
 Acceptance: a server test searches the same reagent location twice inside one move bucket and asserts the second search grants nothing; and a stack at 95 granted 9 caps at 99 and reports dropped 5, which the client shows as a "Dropped some" line.
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+- Verdict: CLEAN. All checked claims hold (items[] at item.cpp:51, gate order 463-482, itemAtLocation 488-499, lastreagent setters, XP 100/200/400, mystic +8 and FIXME, reagent 2+xu4_random(8) and cap 99, call sites, savegame fields, GPL v3).
+- Missed (minor): xu4_random has a USE_BORON branch (boron_random % range) that the note covers only as "non-Boron path"; the isStoneInInventory generic virt == -1 test is not mentioned. Nothing important missed.

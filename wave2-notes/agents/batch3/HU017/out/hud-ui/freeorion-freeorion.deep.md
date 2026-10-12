@@ -38,7 +38,7 @@ Numbers: bar height 10 px and 1 px gaps (70, 69); scale step 100 (71); scale flo
 
 ## 4. TypeScript sketch
 
-simplified: follows the donor order: the scale from the largest of the three values rounded up to whole steps, then the snapshot fill edge, the delta strip (gain or loss), the max outline, and the tick positions. It returns geometry only; it omits the drawing, the shading texture, the black borders, the bar height and the window resize, the MeterType colour table (the caller passes the colour), the right-click zoom, and the scroll forward. It changes three things on purpose, each fixing a donor defect: it clamps every edge to the bar (the donor computes edges without a clamp; whether a meter can go below zero was not checked); it takes the step as an argument (the donor fixes 100); and it keeps no colour list across updates (the donor's colour vector grows on every update, see section 6).
+simplified: follows the donor order: the scale from the largest of the three values rounded up to whole steps, then the snapshot fill edge, the delta strip (gain or loss), the max outline, and the tick positions. It returns geometry only; it omits the drawing, the shading texture, the black borders, the bar height and the window resize, the MeterType colour table (the caller passes the colour), the right-click zoom, and the scroll forward. It changes three things on purpose, each fixing a donor defect: it clamps every edge to the bar (the donor clamps none of the initial and projected edges and guards only the max outline's left side at 176; whether a meter can go below zero was not checked); it takes the step as an argument (the donor fixes 100); and it keeps no colour list across updates (the donor's colour vector grows on every update, see section 6).
 
 ```ts
 // Licence: GPL v2 (donor, FreeOrion source). Clean-room sketch written from the described mechanism, not a translation.
@@ -96,7 +96,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 - GPL v2: clean-room only. The sketch was written from the mechanism.
 - Projected values must be server values. The donor's "projected" comes from the engine's own projection at turn end. In a fight, the strip must show the HP the server sent for the last exchange, never a client guess of the next one.
-- Defect, unclamped edges: `INITIAL_RIGHT` and `PROJECTED_RIGHT` are computed from the raw values (154, 164) with no clamp, and the draw calls take those edges directly. A value above the range or below zero draws outside the bar. Fix: clamp (sketch `layers`).
+- Defect, unclamped edges: `INITIAL_RIGHT` and `PROJECTED_RIGHT` are computed from the raw values (154, 164) with no clamp, and the draw calls take those edges directly. A value above the range or below zero draws outside the bar. The max outline is partly guarded: it is drawn only when `SHOW_TARGET_MAX && TARGET_MAX_RIGHT > BAR_LEFT` (176), so a zero or negative max draws nothing, but it is not clamped on the right. Also, the delta strip is drawn even when `SHOW_INITIAL` is false: `INITIAL_RIGHT` is then computed from the INVALID sentinel (168-171), giving a strip against a meaningless edge. Fix: clamp all three edges and draw the delta only when both snapshot and live are valid (sketch `layers` clamps; the caller passes only valid pairs).
 - Defect, fixed step: the step is the constant 100 (71), so a bar for a small HP pool is squeezed into a fraction of its width. Fix: the step is a data field per creature or zone.
 - Defect, colour vector never cleared: `Update` clears three vectors (193-195) but not `m_bar_colours`, and pushes one colour per pair on every update (219). It grows for as long as the panel updates. The render reads the first entries (158, 181), so the picture stays right, but memory grows. Fix: derive the colour from the meter type on each draw (sketch takes colour as an argument).
 - Readability at 375 wide: each bar is 10 px high with 1 px gaps (69-70). Not measured on a device. Frankendom should cap the number of bars in the fight frame and move the rest into text.
@@ -105,3 +105,11 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 Reuse tag: adapt-from-idea (GPL v2, clean-room)
 Brief rule served: 1 (one engine: the strip is server-computed); 5 (no client-side damage prediction); section 6 string-table notes are not new mechanisms
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Sec6 said edges are unclamped for all three layers; real: the max outline is guarded by 'SHOW_TARGET_MAX && TARGET_MAX_RIGHT > BAR_LEFT' (MultiMeterStatusBar.cpp:176); only initial and projected (154, 164) are raw. Confirmed.
+- Delta strip is also drawn when SHOW_INITIAL is false (168-171). Confirmed; now noted in Sec6.
+- Missed (minor): grey per-bar background rectangles drawn first (101-106) and the outer frame (93) are not covered.
+
+Fixed 2026-10-12: Sec6 unclamped-edges defect now describes the max-outline guard and the delta-without-initial case; sketch description corrected. Sketch code unchanged, no typecheck needed.

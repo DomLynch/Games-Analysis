@@ -135,3 +135,8 @@ Brief rule served: STRONG needs real code opened, numbers explained and a self-c
 Best transferable idea: Render a long bag or bank grid one viewport plus one row at a time from a pool of tiles, load the next batch when the scroll is three rows from the bottom, and rebuild from the first batch whenever a filter or sort changes.
 Decision (proposed): adapt — take the batch, pool and scroll threshold for the phone bag and bank; recompute the batch on resize and derive the cell size from the layout; never let the client clamp a withdraw on its own.
 Acceptance: On a 375 px wide phone, the bag shows its first screen of entries at once, scrolling loads the next batch three rows before the bottom, rotating the phone recomputes the batch size, and a server test refuses a withdraw above the stored amount.
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- All checked claims hold (CELL_SIZE 36, recompute of batch and scroll threshold, debounce, slider keys, stashWithdraw, Game::move count fix, quickloot fallback, MIT, line-9 comment drift).
+- Missed: none.

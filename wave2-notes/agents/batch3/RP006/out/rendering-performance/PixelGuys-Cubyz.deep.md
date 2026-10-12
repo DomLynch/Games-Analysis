@@ -43,7 +43,7 @@ Checked: `updateAndGetRenderChunks` (mesh_storage.zig 547-709, read in full; it 
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order: start at the coarsest node around the player and draw nothing if it has no mesh; flood top-level neighbours on the far side of the player, each frustum tested; descend into the eight children only when all are meshed, testing each child; otherwise draw the node. It omits the seam masks and their re-upload (mesh_storage.zig 667-690), the mesh upload and empty-mesh filter (693-703), the GPU side (back-face and optional-group culling, the occlusion pass), the `active` flag as a separate field (the sketch uses a seen set), and the donor's choice of child order from the player's side (lines 637-657). The donor computes a base child from the player side and then flips bits, so the set of eight is the same either way; only processing order differs. The sketch uses a fixed child order.
+simplified: the sketch keeps the donor order: start at the coarsest node around the player and draw nothing if it has no mesh; flood top-level neighbours on the far side of the player, each frustum tested; descend into the eight children only when all are meshed, testing each child; otherwise draw the node. It omits the seam masks and their re-upload (mesh_storage.zig 667-690), the mesh upload and empty-mesh filter (693-703), the GPU side (back-face and optional-group culling, the occlusion pass), the `active` flag as a separate field (the sketch uses a seen set), and the donor's choice of child order from the player's side (lines 637-657). The donor computes a base child from the player side and then flips bits, so the set of eight is the same either way; only processing order differs. The sketch uses a fixed child order. One more deviation: the donor tests each of the eight children against the frustum using the PARENT's box edge (`chunkSizeVector = chunkSize*pos.voxelSize`, mesh_storage.zig 611 and 653), a deliberately conservative over-size test that keeps a child whose real box is just outside the view, so no popping at the frustum edge; the sketch and its acceptance test use the child's own edge (`half`), an exact test. If edge popping shows up in Frankendom, pass the parent edge (`edge(n.lod)`) for the child test, as the donor does.
 
 ```ts
 // Licence: GPL-3.0 (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -171,3 +171,11 @@ Acceptance: in a zone test with the camera turned 180 degrees, the draw list con
 
 Reuse tag: adapt-idea (GPL-3.0; clean-room, shape only)
 Brief rule served: licence rule (GPL-3.0, clean-room); client-only draw selection, zones as data
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR.
+- Undisclosed sketch deviation: donor child frustum test uses the parent's edge (mesh_storage.zig 611, 653, confirmed in donor); the sketch uses the child's own half edge. Now disclosed in the simplified paragraph with the one-argument change to match the donor. Sketch code left unchanged (its exact test is valid; acceptance test unchanged), so no typecheck needed.
+- Missed: same point as a rule: size the child frustum test conservatively (parent edge) to avoid popping at the frustum edge.
+- Everything else verified (walk 547-708, ChunkMeshNode, Frustum 862-894, renderer.zig lines, 12 ms budget, fps cap, settings, dither fade, GPL-3.0).
+
+Fixed 2026-10-12: simplified paragraph now lists the child-size frustum deviation.

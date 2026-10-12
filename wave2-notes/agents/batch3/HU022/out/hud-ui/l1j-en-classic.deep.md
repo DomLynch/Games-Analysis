@@ -14,7 +14,7 @@ Checked: `S_HPMeter` read in full (59 lines). `L1Party.java` 40-130 read (join, 
   - Party leave: `removeMember` removes the member, then `deleteMiniHp` if the party is not empty (L1Party.java 57-67). Both sides get ratio 0xFF, which is the hide code (L1Party.java 112-119).
   - Party in view: when a party member comes into view (`onPerceive`), the perceiver gets the subject's current ratio (L1PcInstance.java 2221-2222).
   - Pets and summons: the master gets the ratio when the summon's hp changes (L1SummonInstance.java 510-512; L1PetInstance.java 602, not read in full).
-  - GM bar: a GM with the HP-bar skill on gets a ratio for every visible monster, player, summon and pet. `updateObject` (L1PcInstance.java 3401-3418) runs over the visible objects and sends the ratio each time it runs, with no change check. It is driven by the monitor `L1PcAutoUpdate.execTask` (model/monitor/L1PcAutoUpdate.java 31). Turning the bar off sends 0xFF for each known target (L1HpBar.java 49).
+  - GM bar: a GM with the HP-bar skill on gets a ratio for every visible monster, player, summon and pet. `updateObject` (L1PcInstance.java 3401-3418) runs over the visible objects and sends the ratio each time it runs, with no change check. It is driven by the monitor `L1PcAutoUpdate.execTask` (model/monitor/L1PcAutoUpdate.java 31) and also called on teleport (utils/Teleportation.java 115, 186), from L1MonsterInstance.java 73, L1Character.java 66 and the GM command L1FindInvis.java 42, so the send cadence is not only a monitor tick. Turning the bar off sends 0xFF for each known target (L1HpBar.java 49).
 - Net effect in this donor: an ordinary player sees another player's hp only through a party (or a summon owner sees the summon). A monster's hp is shown only to a GM with the bar on. There is no player-facing enemy target frame in this donor.
 
 ## 2. Key functions
@@ -104,7 +104,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Defect 1 (live, small): the ratio floors (S_HPMeter.java 36; L1Party.java 106-108 and 126; L1SummonInstance.java 510). 1 of 300 hp reads 0%, the same as dead. Fix: floor at 1 while alive (sketch `ratioPercent`).
 - Defect 2 (possible): the guard that S_HPMeter uses for max (line 35) is missing in the party and summon divides (L1Party.java 106-108 and 126; L1SummonInstance.java 510). A max of 0 would throw. Not reached in any path read. Fix: one shared function with the guard.
 - Defect 3 (protocol): the hide code is 0xFF inside the same byte as the percent. It does not collide today because the ratio tops out at 100, but nothing enforces that. Fix: an explicit hidden flag (sketch).
-- Defect 4 (cost): the GM bar sends a ratio for every visible target on every monitor run, with no change check (L1PcInstance.java 3415-3416). The monitor interval was not read. Fix: send on change only, as the party path already does.
+- Defect 4 (cost): the GM bar sends a ratio for every visible target on every updateObject call (monitor run, teleport, monster and character hooks), with no change check (L1PcInstance.java 3415-3416). The monitor interval was not read. Fix: send on change only, as the party path already does.
 - Defect 5 (wire range): the own-hp packet clamps hp to 1 to 32767 (S_HPUpdate.java 26, 38). A boss with a larger max is clamped on the wire. Fix: a wider field, or scale for display only.
 - Rulings: the donor sends a ratio to others and exact numbers to self, which fits server-verified kills (the server computes the ratio from its own ledger) and does not leak max hp to other clients. Frankendom's one-ledger rule means the frame must be a view of the engine's hp, never a second copy.
 - Gap against Frankendom: the donor has no enemy target frame for ordinary players. Frankendom's enemy frame (cell 1, pokemon) is a different shape: per-enemy, drawn from the engine, with a shield strip. Do not copy the donor's "no enemy frame" as a design.
@@ -119,3 +119,8 @@ Acceptance: in a party of three, member A's frame shows member B as a percent an
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 Brief rule served: 1 (client view of engine values); rule 8 (named target file and parity row 14)
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Confirmed: the GM bar sweep is not only driven by L1PcAutoUpdate; updateObject() is also called from utils/Teleportation.java:115,186, L1MonsterInstance.java:73, L1Character.java:66 and command/executor/L1FindInvis.java:42, so the send cadence is not only a monitor tick.
+Fixed 2026-10-12: GM-bar mechanism line and Defect 4 now list all updateObject callers and say the cadence is per call.

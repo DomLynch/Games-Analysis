@@ -145,3 +145,9 @@ Acceptance: on a 375-wide phone, drop a bag item on an occupied slot: it snaps b
 
 Reuse tag: adapt (shape only; GPL v3 or later, clean-room, no line-by-line translation).
 Brief rule served: addendum rule 2 (judge the mechanism, not the genre) and the 2026-10-10 rule (keep the idea, fix the defect).
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN
+- All claims verified against Inventory.cpp (AddItem, slot mouse handlers, drop rule, CheckCombineCallback, shortcut swap).
+- Missed: with the inventory closed, the number key first tries CheckUseCallback(item, "") before OnAction (Inventory.cpp 1361-1371); the note says only that it uses the equip item.

@@ -134,3 +134,9 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Culling is also in the same path: `ScreenMap.RenderableActorsInBox` (`OpenRA.Game/Traits/World/ScreenMap.cs` 193-196) queries `SpatiallyPartitioned` bins of 250 px (`ScreenMapInfo.BinSize`, ScreenMap 32-37). Read, not written up here.
 - Each flush is synchronous within the game thread, and the threaded context posts the draw call to a render thread (`ThreadedGraphicsContext.cs` 482-484). Which context is live was not traced, so the cost of a cross-thread flush on a phone is unknown.
 - The vertex budget is an engine constant here. A Frankendom quality tier might make it data (per device tier), but that is a design call, not in the donor.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- All claims verified (SpriteRenderer.Flush, SetRenderStateForSprite, SheetCount 8, batch size 8192, sheet size 2048, WorldRenderer flush, GPL-3-or-later).
+- Soft point: Sec6 calls 'a 250 ms catch-up cap' in Game.cs; the code has TimestepJankThreshold 250 ms (:37) and MaxLogicTicksBehind 250 (:803), which are different knobs (the note flags it as not written up).
+- Missed: both SpriteRenderers share one tempVertexBuffer and index buffer (Renderer.cs 102-109), which is why the owner switch must flush; implied, not stated.

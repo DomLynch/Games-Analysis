@@ -145,6 +145,8 @@ export function remember(visits: Map<string, Visit>, v: Visit, keep: number): vo
 - Defect 1 (sweep skipped for near walls): when the view hit is nearer than one step, the donor's first step (1180) already exceeds the distance (1181), so no floor is swept between the player and the wall. Fix: start the sweep at half the wall distance (the sketch does this). Reading, not run.
 - Defect 2 (missing true hit counts as 0): `RaycastHit` defaults to distance 0, so with no true hit the distance test passes whenever the automap hit is also at 0. Fix: refuse when a true hit is missing (the sketch does this). Reading, not run.
 - Defect 3 (ties kept): the prune removes only entries strictly older than the Nth time (2233), so entries with the same in-game second survive and the count can exceed N. Fix: sort, keep exactly N, break ties by id (the sketch does this). Reading, not run.
+- Defect 6 (degenerate sweep side offset, reading): in the floor sweep the side offset is `Normalize(Cross(camera.rotation * Vector3.down, Vector3.down)) * 0.1` (1186-1187). When the camera is level the two vectors are parallel, the cross product is zero, and the second and third protection rays coincide with the centre ray, so the gap protection is lost in the sweep (it works only when the camera is pitched). The sketch avoids it by using a fixed side offset for downward rays (`FLOOR_SIDE`), as the donor does for the floor ray under the head (1164).
+- Deliberate removal: the true-hit existence checks (`didHitTrueLevelGeometry1..3`) are commented out of the reveal condition (1118-1120); this is the root of defect 2, so the missing-hit case is a donor choice left in, not an oversight in the note.
 - Cost: each scan can cast about 30 floor rays (one per sweep step) plus the view ray, and each ray runs three true-geometry casts and three automap casts. Frankendom's per-tick budget needs a cap on sweep points per scan (not in the sketch).
 - Clock: the donor gate uses wall-clock waits (WaitForSeconds). Frankendom's client should use its own clock with a per-frame accumulator, so the gate is testable with a fake time (the sketch takes `nowS` as an argument).
 - Persistence: the explored set is character progress. Under the one-ledger rule it must be saved in the character ledger, not in browser storage. Browser storage is only acceptable for per-viewer conveniences (the rule for artifacts also applies here). The donor's save hook is a per-save dictionary (378-392).
@@ -161,3 +163,10 @@ String tables (fold-in, read by structure and grep; no text quoted):
 
 Reuse tag: rewrite-from-idea (MIT; adaptation allowed; this sketch is clean-room from the described mechanism)
 Brief rule served: HUD is client-only; explored memory goes to the one character ledger; view length is zone data.
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+- Verdict: MINOR. No false main claim; MIT header, constants, ray order, 0.01 tolerance, defects 1-5 and the string-table counts (3,501) verified.
+- Minor: the note said the sketch uses a fixed side offset because of camera roll but did not say the donor sweep offset is degenerate. Confirmed in the code (sweep cross product of camera-down with world-down).
+- Missed: (1) degenerate sweep side offset when the camera is level (added as defect 6); (2) true-hit checks commented out in the reveal condition (added).
+
+Fixed 2026-10-12: added defect 6 and the commented-out true-hit note to section 6. Sketch unchanged (it already uses a fixed floor side offset).

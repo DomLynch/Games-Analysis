@@ -12,7 +12,7 @@ type Handler<S> = (s: S, e: Ev, advance: () => void) => void;
 
 interface Goal<S> {
   text: string;
-  delay?: number;                 // > 0: auto-advance after this long (engine timer unit not read); -1: show a Ready button
+  delay?: number;                 // > 0: auto-advance after this long (milliseconds in the donor: Trigger.js DoAfterDelay); -1: show a Ready button
   init?: (s: S) => void;          // once, on entry; not repeated on restore
   isDone?: (s: S) => boolean;     // a handler calls advance only when this holds
   on?: Partial<Record<Kind, Handler<S>>>;

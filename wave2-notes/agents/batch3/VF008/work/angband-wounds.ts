@@ -17,7 +17,7 @@ interface Fighter {
   hp: number;
   wound: number;      // wound points (donor TMD_CUT value)
   conAdjust: number;  // decay per step = 1 + CON fix value
-  rock: boolean;      // immune to bleed and decay (donor PF_ROCK branch)
+  rock: boolean;      // immune to gaining a cut, to bleed and to decay (donor PF_ROCK: fail:4:ROCK, 524, 310)
 }
 
 // Critical tier of one landed blow. maxRoll = the blow's largest possible damage.
@@ -53,7 +53,7 @@ function onBlowLanded(
   f: Fighter, cutFlag: boolean, maxRoll: number, damage: number,
   rand100: () => number, rand: (n: number) => number,
 ): void {
-  if (!cutFlag) return;
+  if (!cutFlag || f.rock) return; // donor: player_inc_check refuses CUT for Rock players
   f.wound += tierPoints(critTier(maxRoll, damage, rand100), rand);
 }
 

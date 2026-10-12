@@ -19,7 +19,7 @@ Acceptance: A server test talks to the same NPC twice as one player: a one-time 
 - `GameScript::exec` (956-975): sets the player and npc as self/other. A main choice (function id equals `info.information`, 966) marks the (player, topic) pair as known (967). A sub-choice is removed from the shared `info.choices` list (969-971). Then the script function runs (975).
 - After each entry, `onDoneText` (330) rebuilds the choices from the selected topic's sub-choices with `updateDialog` (941-952; sort key = list index). If that list is empty and depth is above zero, `onStart` runs again (333-334) with includeImp false (state is Active); if depth is zero the menu closes.
 - `npc_checkinfo` (2527-2551) is a second predicate for "does this npc have a topic for this player" with the same known filter (2538-2539) and condition check (2542-2546), but with different defaults (see section 6).
-- Known memory: a set of (npc symbol, topic symbol) pairs (3415-3422), saved with the quest state (538-540) and restored on load (552).
+- Known memory: a set of (symbol of the NPC object passed to `setNpcInfoKnown`, topic symbol) pairs (3415-3422); `exec` passes the player's handle (`pl`, 967), so in practice the key is (player, topic), saved with the quest state (538-540) and restored on load (552).
 - Quest log: `log_createtopic` accepts only Mission or Note (3275); `log_settopicstatus` accepts only the four status values (3280-3283) and calls `setStatus` (3284); `log_addentry` appends by name (3288). Topics are a flat vector; `QuestLog::setStatus` creates a missing topic as Mission unless the status is Obsolete (`questlog.cpp` 19-21). Save writes count, then name, section, status and entries (41).
 - The quest log menu picks tabs by status value (`gamemenu.cpp` 338-341) and lists the newest topic first (176).
 
@@ -46,7 +46,7 @@ Acceptance: A server test talks to the same NPC twice as one player: a one-time 
 
 ## 4. TypeScript sketch
 
-simplified: the selection order, the important-first tiers, the known and repeat rules, the except list and the sort follow the donor. Changes on purpose: (a) the donor's `except` push happens in `DialogMenu::onEntry` (404), and this sketch does it inside `exec` so one function owns the state change; (b) the sub-choice erase is a per-player `usedSub` set instead of erasing from the shared list (971), so a second player still sees the choice; (c) a missing condition counts as valid, as in the donor's `dialogChoices` (905), but the sketch does not model `npc_checkinfo`'s different default (2541); (d) the donor's `info_addchoice` and `info_clearchoices` script calls (3360-3375) are not modelled; (e) no trade flag, no dialog UI, no sound, no timing.
+simplified: the selection order, the important-first tiers, the known and repeat rules, the except list and the sort follow the donor. Changes on purpose: (a) the donor's `except` push happens in `DialogMenu::onEntry` (404), and this sketch does it inside `exec` so one function owns the state change; (a2) the donor pushes every entered `scriptFn` into `except` (dialogmenu 404), the sketch only pushes main topics, which is harmless because the filter compares against `info.information`; (b) the sub-choice erase is a per-player `usedSub` set instead of erasing from the shared list (971), so a second player still sees the choice; (c) a missing condition counts as valid, as in the donor's `dialogChoices` (905), but the sketch does not model `npc_checkinfo`'s different default (2541); (d) the donor's `info_addchoice` and `info_clearchoices` script calls (3360-3375) are not modelled; (e) no trade flag, no dialog UI, no sound, no timing.
 
 ```ts
 // Licence: MIT (donor OpenGothic, LICENSE "MIT License", Copyright (c) 2019 Try). Shape adapted; written fresh for Frankendom.
@@ -129,3 +129,12 @@ export function exec(s: DialogState, player: number, t: Topic, fn: number, run: 
 - Rewards are not ledgered here: quest rewards run inside the script functions (the `createinvitem` externals, 310-311, bodies not read). Frankendom must route every reward through the one ledger; the donor does not.
 - Known memory and quest state are saved together (536-541), which is the right shape, but `except` is not saved (it is per talk, which is correct).
 - Confidence and scope: this is a dialogue-selection and quest-log mechanism, not a quest engine. Objectives are free text in the log entries, and completion is whatever the Daedalus script sets; the donor has no objective counter.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR.
+- Known-set label said (npc symbol, topic symbol); real code keys by the INpc passed to setNpcInfoKnown(pl, info), which is the player (967). Confirmed in donor. Fixed (the exec line already said player, topic).
+- Sketch pushes `except` only for main topics; donor pushes every entered scriptFn (dialogmenu 404). Harmless, now stated in the simplified paragraph.
+- Missed: donor Status enum is Failed=3, Obsolete=4 (questlog.h, confirmed) while the checker says the Gothic script constants are OBSOLETE=3, FAILED=4, which would explain the swapped QuestStat mapping. The script constants are game data, not in the repo, so this is NOT verified from code and was not applied; the "looks swapped" defect stays flagged as unverified.
+- All other line claims verified (dialogChoices 871-930, valid default 905 vs npc_checkinfo 2541, exec 956-976, updateDialog, sort tie-break 3411, save/load, quest log bindings, MIT).
+
+Fixed 2026-10-12: known-set key description; except-push deviation noted.

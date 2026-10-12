@@ -9,8 +9,8 @@ Checked: Read in full: `BatchDrawList.cpp` (165 lines), `BatchDrawList.h` (65), 
 Effects are drawn by grouping instances by sprite, so each sprite costs one texture bind, one upload and one draw, however many instances it has on screen. Culling happens before any vertex is written.
 
 - Two lists, one per buffer (`Engine.h` 258-259). `Engine::Go` flips the calc buffer (`Engine.cpp` 1129) and queues `CalculateStep` on a worker (1130). `Engine::Wait` waits for it and sets the draw buffer to the buffer just computed (447-448). So the frame draws step N while step N+1 is computed in the other buffer.
-- Adding: in `CalculateStep` (1607), the list is cleared with the step and zoom (1616), then projectiles are added (1721-1722), then visuals (1724-1725). Stellar objects and ships go to the separate `draw[]` DrawList (234 and 1661-1666), not this batch. The body path converts the position (`(position + .5 * velocity - center) * zoom`, `BatchDrawList.cpp` 72). Every `Add` then calls `Cull` (131).
-- `Cull` (107-125): the half-extents of the rotated sprite box are `|ux*H| + |uy*W|` and `|ux*W| + |uy*H|`, times zoom (114-118). The box is compared with the centred screen rectangle (119-122; `Screen::Left()` is `WIDTH / -2`, `Screen.cpp` 147-148). An off-screen sprite returns before any vertex work.
+- Adding: in `CalculateStep` (1607), the list is cleared with the step and zoom (1616), then projectiles are added (1721-1722), then visuals (1724-1725). Only projectiles take the half-velocity offset below; visuals go through `AddVisual` (BatchDrawList.cpp 86-90) with no offset. Stellar objects and ships go to the separate `draw[]` DrawList (234 and 1661-1666), not this batch. The body path converts the position (`(position + .5 * velocity - center) * zoom`, `BatchDrawList.cpp` 72). A third overload `Add(Drawable, position, facing, clip)` (78) builds the unit as `facing.Unit() * (.5 * Zoom())`. Every `Add` then calls `Cull` (131).
+- `Cull` (107-125): first rejects a drawable with no sprite or a zero zoom (109-110). The half-extents of the rotated sprite box are `|ux*H| + |uy*W|` and `|ux*W| + |uy*H|`, times zoom (114-118). The box is compared with the centred screen rectangle (119-122; `Screen::Left()` is `WIDTH / -2`, `Screen.cpp` 147-148). An off-screen sprite returns before any vertex work.
 - Vertices: a visible instance appends six vertices to `data[sprite]` (135). The order is TL, TL, TR, BL, BR, BR (157-162). The duplicate pair at each end is a degenerate break in a triangle strip, so consecutive sprites join without a restart. Each vertex carries x, y, s, t, the frame index (one per instance, from the step, 137) and alpha (six floats, stride 24 bytes, `BatchShader.cpp` 40). `clip` shortens the quad's height and moves the bottom edge's t to `1 - clip` (148, 160-161).
 - Drawing: `Draw` (95-103) binds the shader, then for each sprite group calls `BatchShader::Add` (100). That binds the sprite's texture (122), sets the frame count (124), uploads the group with `glBufferData(..., GL_STREAM_DRAW)` (127), and issues one `glDrawArrays(GL_TRIANGLE_STRIP, 0, count / 6)` (130). Screen scale is `2/W` and `-2/H` (109).
 
@@ -41,7 +41,7 @@ Defects. Keep the idea; each fix is listed.
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the rotated-box cull before any vertex work, the grouping by sprite, the six-vertex quad with two dummy vertices at each end, the clip on the bottom edge, and one strip per group. It drops the body path (the half-velocity offset), the double-buffered calc and draw handoff, the GPU buffer and texture calls (the caller issues them from `groupsForDraw`), the alpha and frame fields beyond storing them, and the layer key that defect 1 asks for. `zoom` is a constructor value, as in `Clear(step, zoom)`.
+simplified: the sketch keeps the rotated-box cull before any vertex work, the grouping by sprite, the six-vertex quad with two dummy vertices at each end, the clip on the bottom edge, and one strip per group. It drops the early reject for a missing sprite or zero zoom (Cull 109-110), the body path (the half-velocity offset, projectiles only), the unit-from-facing overload, the double-buffered calc and draw handoff, the GPU buffer and texture calls (the caller issues them from `groupsForDraw`), the alpha and frame fields beyond storing them, and the layer key that defect 1 asks for. `zoom` is a constructor value, as in `Clear(step, zoom)`.
 
 ```ts
 // Licence: GPL-3.0-or-later (donor). clean-room sketch written from the described mechanism, not a translation of the donor lines.
@@ -52,7 +52,7 @@ export interface Item {
   readonly sprite: Sprite;
   readonly x: number; readonly y: number; // centre in zoomed camera space (the caller multiplies by zoom, as the donor does)
   readonly ux: number; readonly uy: number; // unit vector of the facing
-  readonly width: number; readonly height: number; // sprite size in logical pixels
+  readonly width: number; readonly height: number; // HALF extents in logical pixels (donor Width()/Height() = 0.5 * zoom * scale * sprite size, Drawable.cpp 70-81); pass full size / 2
   readonly frame: number; readonly alpha: number;
   readonly clip: number; // 1 = full height; less cuts the bottom of the quad
 }
@@ -133,3 +133,12 @@ Best transferable idea: Cull each effect by its rotated screen box before writin
 
 Decision (proposed): adapt — keep the rotated-box cull, the group-by-sprite strip, the dummy-vertex break and the one-step handoff; key the groups by (layer, sprite), and replace the velocity offset with a sprite reference point before we use it.
 Acceptance: Client test: with 500 effect instances in a 375-wide view, at most one draw is issued per sprite type, and an off-screen effect writes no vertices (add() returns false and the group array is unchanged); on a phone the hit flash draws above the blood decal every time.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: MINOR
+- Sketch Item.width/height were described as sprite size, but donor Drawable::Width()/Height() are half extents (0.5 * zoom * scale * sprite size, Drawable.cpp 70-81), used as half extents by Cull and Add; a caller passing full size would get a double-size quad and cull box. Confirmed; comment corrected (arithmetic unchanged).
+- Sketch omitted Cull's early reject for no sprite or zero zoom (line 109); now listed under omissions.
+- Missed (added): AddVisual (86-90) draws visuals without the 0.5*velocity offset, only projectiles use it; third overload Add(Drawable, position, facing, clip) at line 78.
+
+Fixed 2026-10-12: width/height comment in the sketch (and work/es-sprite-batch.ts) now says half extents; omissions and mechanism text updated.

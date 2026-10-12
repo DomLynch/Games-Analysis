@@ -100,3 +100,10 @@ Brief rule served: Rule 1 (the hint file Begin06.lua is the mission script; the 
 Decision (proposed): adapt. Why: take the parked-script loader and the defend-objective fail rule for zones; keep the waves as zone data with a cap; reject the text-only victory and the single-id role check, which conflict with the server-verified-kills and one-ledger rulings.
 Best transferable idea: a zone's script is a file loaded by its id only when the zone is chosen (silent when absent), and a defend objective fails the zone only on the death of its tagged entity, with waves as frame-scheduled zone data.
 Acceptance: a server test asserts an unknown zone id loads no script and raises no error; the death of a tracked objective entity fails the zone while the death of an untracked unit does not; a looped wave with maxFires 3 spawns exactly 3 times over 4 periods.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN
+- All claims verified (loader, Begin06.lua timers and one-shots, UnitDestroyed static objectiveUnitID defect, table counts, difficulty rows).
+- Missed: waves are split by side in the scenario022 briefing: backupOne/backupTwo (9 and 18 min) are player and ally contingency, Timed/Special (8 and 20 min loops) are enemy reinforcements; the note treats all four as one reinforcement-wave kind.
+- Missed: the defended tower is the ally (teamID 1) Cortex Command Tower, not the player's.

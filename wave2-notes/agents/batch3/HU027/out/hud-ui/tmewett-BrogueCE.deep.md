@@ -120,3 +120,7 @@ export {};
 rewrite-from-idea (GNU AGPL-3.0-or-later; clean-room only)
 
 Brief rule served: HUD client-only; engine snapshot; the server kill is never decided by the readout (rule 14 HUD only).
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+- Verdict: CLEAN. No errors found.
+- Missed (minor): poison alert thresholds {100,90,50} (Time.c 917-933) share the same function; the note omits them on purpose. Nothing important missed.

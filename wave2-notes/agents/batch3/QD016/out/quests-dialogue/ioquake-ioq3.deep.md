@@ -128,3 +128,8 @@ Typecheck: `tsc 5.6.3 --noEmit --strict --target es2020` on the VPS, exit 0 (run
 
 Reuse tag: rewrite-from-idea (GPL-2.0-or-later; clean-room only)
 Brief rule served: 1 (one engine decides the line; the client shows it)
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- All claims verified against be_ai_chat.c (BotChooseInitialChatMessage, BotReplyChat, cooldowns, loader, off-by-one at 2308, BotCheckConsoleMessages, GPL v2).
+- Missed (minor): bestpriority starts at -1 (2647), so a rule with priority below 0 can never win.

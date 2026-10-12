@@ -164,3 +164,7 @@ export function dealExchange(taker: Bag, giver: Bag, pool: Item[]): Item[] {
 - The Necromancy and scroll-duplicate heuristics (artifact.cpp 918-959) depend on hero skills and spell books. Reject for Frankendom; keep the principle only as "rare duplicate goes to whoever needs it less" if at all.
 - AI sort gate: the donor sorts AI bags only on hard difficulties (game/difficulty.cpp 350-361). Frankendom has no AI bag; reject unless a bot is added.
 - Phone presentation of the bag and the reveal: not read. The donor's reveal is one modal dialog with the artifact element (heroes_action.cpp 893-895); how it lays out at 375 px is (not read).
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN. Line claims verified (maxCapacity 14, PushArtifact 825-857, exchangeArtifacts steps a-j, GoldInsteadArtifact values, set assembly, PickupArtifact, battle_main transfer, licence).
+- Missed: none. (AI-sort gate is 'not EASY/NORMAL', i.e. hard and above; the note's 'hard difficulties' wording is acceptable.)

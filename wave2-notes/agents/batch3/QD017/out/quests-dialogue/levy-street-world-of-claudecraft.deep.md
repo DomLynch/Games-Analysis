@@ -80,7 +80,7 @@ export function entryHint(z: ZoneCompletion, state: (id: string) => QuestState):
 export {};
 ```
 
-## 4. TypeScript sketch
+## 4. TypeScript sketch (file copy; the code block is in section 3 above)
 
 Sketch file: /private/tmp/p2/wave2-haiku/batch3/QD017/work/levy-street-town-done.ts (same content as the block above). Typecheck on the VPS (/tmp/levy-street-town-done.ts): exit 0.
 
@@ -93,7 +93,7 @@ Target file (proposed; not checked against the Frankendom repo): origins/quests/
 1. Geometry inference is brittle. Whether a quest counts depends on where its giver and turn-in NPCs stand relative to the hub radius (town_quests.ts lines 116-117, hub radius from zone data: 26 and 20 here). Moving one NPC can silently add or remove a counted errand. Fix: author the errand list per zone as data (the sketch's counted flag), and let a test check the list against the NPC positions.
 2. Level-gated errands block the line. A quest that is only gated (header line 29) still counts, so a player who cannot take it yet sees no town_done. That is the donor's stated choice; it can keep the line silent for a long time if an errand is gated far above the entry level. Fix: decide per zone whether gated errands count; the donor does not separate them.
 3. Latent default mismatch. townQuestIds spreads the tables over the shipped ones (line 109), while townQuestsComplete uses ?? (line 141). An explicit quests: undefined would make townQuestIds throw on Object.values(undefined). No src caller passes it (only tests), so this is latent and was not reproduced. Fix: one default function for all three tables.
-4. Precedence: town_done is checked before the welcome branch (line 157 before line 160), so it wins whenever both would apply. No test isolates this case: q_wolves, the Eastbrook welcome quest, is itself a counted town errand (test line 43), so the Eastbrook town_done tests finish it first. Fine for a chat line; if Frankendom uses the rule for anything that moves state, this precedence must be tested on its own.
+4. Precedence: town_done is checked before the welcome branch (line 157 before line 160), so it wins whenever both would apply. The Eastbrook tests do not isolate it (q_wolves, the Eastbrook welcome quest, is itself a counted town errand, test line 43), but a fenbridge test does: tests/town_quests.test.ts line 229 ('a zone without a welcome quest keeps its welcome hint until the town is finished') has no welcomeQuestId, so welcome would apply, then marks every errand done and expects 'town_done' (lines 232-235). Fine for a chat line; if Frankendom uses the rule for anything that moves state, keep a precedence test like that fenbridge one.
 5. Client-only. The file header says the sim leaf is UI-only and never joins the tick. The town-done state is therefore not server-verified. That matches a chat line; it does not match a reward. Any reward or unlock tied to town completion must be computed on the server, which the donor does not do.
 6. Cost is not measured. townQuestIds scans every quest, and instanceMobIds rebuilds a set from every dungeon on each call. The call happens on a zone crossing (zone_entry_line_core.ts line 19), not per tick, so this is probably fine, but it was not timed.
 
@@ -107,3 +107,11 @@ Best transferable idea: a zone is done when every errand the town hands out and 
 
 Decision (proposed): adapt — keep the completion rule and the precedence of the done line over the welcome line; author the errand list per zone as data instead of inferring it from NPC positions, so a moved NPC cannot change the rule.
 Acceptance: entering a zone with a town-done line shows it only after the last counted errand is turned in; a retired or other-class errand does not block it; a zone with zero counted errands never shows it; a server-side test asserts the errand list in zone data matches the NPCs' positions.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR.
+- Gap 4 said no test isolates town_done precedence over welcome. False: tests/town_quests.test.ts line 229 (fenbridge has no welcomeQuestId, welcome applies, markDone all, expects town_done) isolates it. Confirmed in donor. Fixed.
+- Section 3/4 headings were muddled (sketch block sits under 3, section 4 only points to a file). Heading relabelled.
+- Missed: none. All line claims (town_quests.ts 108-161, focus.ts, data.ts, radii, welcomeDone, MIT, zone_entry_line_core.ts:19) verified.
+
+Fixed 2026-10-12: Gap 4 precedence-test claim; section 4 heading.

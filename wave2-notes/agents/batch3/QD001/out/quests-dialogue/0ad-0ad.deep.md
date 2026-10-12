@@ -2,7 +2,7 @@
 
 Donor: `/mnt/frankendom-donors/0ad-0ad/binaries/data/mods/public/maps/scripts/Tutorial.js` | Licence: GPL version 2 or later (LICENSE.txt line 18, `binaries/data/` rule; clean-room, shape only) | JavaScript (0 A.D. map trigger script) | symbol `Trigger.prototype.NextGoal`
 
-Checked: Read in full: `maps/scripts/Tutorial.js` (113 lines, the runner). Read in part: `maps/tutorials/introductory_tutorial.js` (445 lines; the goal list is 28 blocks; read lines 1-75, 108-135, 285-386, 388-445 in full; grep of every event key and `IsDone` line for the rest). Grep only: `maps/tutorials/starting_economy_walkthrough.js` (462 lines, 32 goal blocks, same shape). Other candidates opened: `maps/scripts/NonVisualTrigger.js` (end-of-game statistics, not quest logic), `maps/scenarios/death_canyon_invasion_force_triggers.js` (21 lines, a building lock), `maps/scenarios/triggers_demo.js` (first 40 lines, logging only). Not read: the engine side. The C++ Trigger component (`RegisterTrigger`, `EnableTrigger`, `DoAfterDelay`) is not in this snapshot (`find` for `*trigger*` under `source/` returned nothing), and the GUI side of the tutorial panel (the consumer of `PushNotification` and the sender of `dialog-answer`) was not read. Confidence: high on the JavaScript order of operations; low on timer units and on whether the GUI can send a ready answer on the final message. Camera: not applicable.
+Checked: Read in full: `maps/scripts/Tutorial.js` (113 lines, the runner). Read in part: `maps/tutorials/introductory_tutorial.js` (445 lines; the goal list is 28 blocks; read lines 1-75, 108-135, 285-386, 388-445 in full; grep of every event key and `IsDone` line for the rest). Grep only: `maps/tutorials/starting_economy_walkthrough.js` (462 lines, 32 goal blocks, same shape). Other candidates opened: `maps/scripts/NonVisualTrigger.js` (end-of-game statistics, not quest logic), `maps/scenarios/death_canyon_invasion_force_triggers.js` (21 lines, a building lock), `maps/scenarios/triggers_demo.js` (first 40 lines, logging only). Not read: the C++ engine side (not searched). Correction after the checker: the Trigger component is JavaScript, `binaries/data/mods/public/simulation/components/Trigger.js`, where `DoAfterDelay` (286) calls `Timer.SetTimeout(..., time, ...)` and the time is in milliseconds (doc comment, Timer.js 32-37). The GUI side of the tutorial panel (the consumer of `PushNotification` and the sender of `dialog-answer`) was not read. Confidence: high on the JavaScript order of operations; high on timer units (milliseconds) and low on whether the GUI can send a ready answer on the final message. Camera: not applicable.
 
 ## 1. Mechanism
 
@@ -17,7 +17,7 @@ Checked: Read in full: `maps/scripts/Tutorial.js` (113 lines, the runner). Read 
 - Scripted event. The enemy attack step (`LaunchAttack`, 388-418) issues an `attack-walk` command for the enemy player toward the first tower, or else the civic centre, and the next step advances when an enemy civic centre changes owner (370-376).
 - Save and reload (`OnDeserializedTrigger`, 104-113). The index steps back one goal (106), the text of the earlier goals is replayed (109-110), and `NextGoal(true)` re-enters the current goal without running its `Init` (112 and 40). Progress flags such as `farmStarted` and `trainingDone` are plain properties on the trigger object (115, 130); whether the engine saves them was not read.
 - End. The last goal's `Init` marks the player and allies as winners (`introductory_tutorial.js` 380-384).
-- Tick. There is none. The runner is event-driven. `DoAfterDelay` (66) is the only timed path. The engine's dispatch order and timer units were not read.
+- Tick. There is none. The runner is event-driven. `DoAfterDelay` (66) is the only timed path. The timer unit is milliseconds (Trigger.js 286, Timer.js 32-37); the engine's dispatch order was not read.
 - Edge in the donor (not reproduced). The end guard at line 33 uses `>`, not `>=`. After the last goal, `this.index` equals the list length (79), so `this.tutorialGoals[this.index]` is undefined (35) and `goal.Init` at 39 would throw if `NextGoal` ran again. The last goal has no handler and no delay, so it shows a Ready button (68-75). Whether the GUI can send a ready answer on that final message (it has the `leave` flag) was not read.
 
 ## 2. Key functions
@@ -36,7 +36,7 @@ Checked: Read in full: `maps/scripts/Tutorial.js` (113 lines, the runner). Read 
 | Ordered goal list, one goal live at a time | 28 goal blocks in `introductory_tutorial.js` (count of lines starting with a tab and brace, grep only); 32 in `starting_economy_walkthrough.js` (grep only) |
 | A goal that is not yet done waits only for its own events | None (structure, `Tutorial.js` 46-57) |
 | A goal already done at entry shows Ready instead of advancing | None (structure, 53-54 and 63-75) |
-| Positive delay = one-shot timer that calls `NextGoal` | No positive delay in either tutorial file (grep for `delay`). Timer unit not read (engine not in snapshot) |
+| Positive delay = one-shot timer that calls `NextGoal` | No positive delay in either tutorial file (grep for `delay`). Timer unit is milliseconds (`Trigger.js` 286 to `Timer.SetTimeout`, `Timer.js` 32-37) |
 | `-1` = Ready button, no timer | `-1` (`Tutorial.js` 61, comment; `starting_economy_walkthrough.js` 252, grep only, too short for a receipt) |
 | Ready answer must be a `dialog-answer` with `ready` | `"ready"` (`Tutorial.js` 72) |
 | Last-goal flag | index equals list length after the increment (`Tutorial.js` 79) |
@@ -47,7 +47,7 @@ Donor constants are the only numbers in this file that a designer would tune. Th
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor order (init, done check, enable only this goal's handlers, timer or Ready, then message and index step). It omits the engine trigger registration (`Tutorial.js` 12-26; the sketch takes handlers as a map on each goal), the prototype-based storage of handlers, the donor's Ready branch that overwrites a goal's own command handler when the goal is already done (69-75; the sketch keeps both), the GUI message fields, and the timer's unit (the caller's units). It changes the donor's end guard from `>` to `>=` (line 33), so an index equal to the list length is refused instead of crashing. Restore replays the earlier texts and does not run `Init`, as in the donor.
+simplified: the sketch keeps the donor order (init, done check, enable only this goal's handlers, timer or Ready, then message and index step). It omits the engine trigger registration (`Tutorial.js` 12-26; the sketch takes handlers as a map on each goal), the prototype-based storage of handlers, the donor's Ready branch that overwrites a goal's own command handler when the goal is already done (69-75; the sketch keeps both), the GUI message fields, and the timer's unit (the donor's is milliseconds; the sketch uses the caller's units). It changes the donor's end guard from `>` to `>=` (line 33), so an index equal to the list length is refused instead of crashing. Restore replays the earlier texts and does not run `Init`, as in the donor.
 
 ```ts
 // Licence: GPL version 2 or later (donor, binaries/data/). clean-room sketch of the mechanism shape, not a translation of the donor lines.
@@ -64,7 +64,7 @@ type Handler<S> = (s: S, e: Ev, advance: () => void) => void;
 
 interface Goal<S> {
   text: string;
-  delay?: number;                 // > 0: auto-advance after this long (engine timer unit not read); -1: show a Ready button
+  delay?: number;                 // > 0: auto-advance after this long (milliseconds in the donor: Trigger.js DoAfterDelay); -1: show a Ready button
   init?: (s: S) => void;          // once, on entry; not repeated on restore
   isDone?: (s: S) => boolean;     // a handler calls advance only when this holds
   on?: Partial<Record<Kind, Handler<S>>>;
@@ -167,10 +167,18 @@ export {};
 - Zones as data. The donor's goal lists are JavaScript written per map. Frankendom needs them as data that the server validates at load: an unknown event name, an unknown guard or a missing `text` should refuse the quest.
 - Restore. The donor replays text and skips `Init` on load, and it relies on trigger fields that may or may not be saved (engine not read). Frankendom should restore the step index and progress from server state, not from replayed client messages.
 - End guard. The donor's `>` at `Tutorial.js` 33 lets the index reach the list length, after which `goal.Init` (39) would throw if `NextGoal` ran again. Whether the GUI can trigger that is not confirmed. The sketch uses `>=`.
-- Timers. The donor's `DoAfterDelay` unit was not read. Frankendom timed steps should count server ticks, not wall time (the server tick sub-line under row 18 / post-K item 3: fixed step, input intake, per-tick NPC budget).
+- Timers. The donor's `DoAfterDelay` unit is milliseconds of wall time (Trigger.js 286). Frankendom timed steps should count server ticks, not wall time (the server tick sub-line under row 18 / post-K item 3: fixed step, input intake, per-tick NPC budget).
 - Ready branch. When a goal is already done at entry, the donor replaces its own `OnPlayerCommand` handler with the Ready listener (`Tutorial.js` 69-75). The sketch keeps both. This was not tested.
-- Not read: the C++ Trigger component, the GUI tutorial panel and the GUI sender of `dialog-answer`.
+- Not read: the C++ side of the engine, the GUI tutorial panel and the GUI sender of `dialog-answer`.
 
 Best transferable idea: Quest steps as an ordered list where each step listens only to its own server-emitted events, advances only when its guard holds, and restores from the step index without re-running setup.
 Decision (proposed): adapt — keep the ordered step list, per-step guards and restore rule, but in Frankendom only server-emitted events (a confirmed kill, a ledger write, a zone entry) move a step, and a client ready answer counts only while the server has that step waiting.
 Acceptance: a server test asserts that a three-kill quest advances only after three server-confirmed kill events, that a client ready sent while the step is not waiting leaves the step unchanged, and that after reload the player sees each finished step's text once without the current step's init running again.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: MINOR.
+- Note said the Trigger engine side was 'not in this snapshot' (only C++ searched); Trigger is JS at simulation/components/Trigger.js, DoAfterDelay at 286 = Timer SetTimeout in milliseconds. Confirmed in code.
+- Missed: Tutorial.js 39 and 43 assign goal.Init and goal.IsDone onto Trigger.prototype, so each goal's functions are shared global state on the prototype (a goal's Init/IsDone persist into the next goal if it does not define its own). Noted, not reproduced in the sketch.
+
+Fixed 2026-10-12: timer-unit and engine-side claims corrected (milliseconds, Trigger.js), in the Checked line, table, sketch comment, Gaps and Not-read lines.

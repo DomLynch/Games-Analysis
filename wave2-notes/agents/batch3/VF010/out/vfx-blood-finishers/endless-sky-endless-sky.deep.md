@@ -135,3 +135,9 @@ void cross; void rec; void spawned; void blast;
 - The knockout curve (0.0005, 10 to 50 percent) is a balance curve. Frankendom should take the line as zone data per gladiator class, with this curve as one possible default.
 - Frame rate: the rate ramp is counted per `StepDestroyed` call. Frankendom must use its own fixed step; the donor's step rate was not read.
 - Not read: the status-spark path (Entity.cpp 439-520), so the hit-spark side of the topic is not covered by this note. The Effect.cpp body was not read.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: CLEAN.
+- Errors: none; 809 in the table is a line number (explosionTotal += count), not a sum.
+- Missed: none significant.

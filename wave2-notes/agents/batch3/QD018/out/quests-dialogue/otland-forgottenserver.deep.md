@@ -17,11 +17,11 @@ Order of operations for one chat line (npchandler.lua:397-421):
 1. Module callbacks and the optional `CALLBACK_CREATURE_SAY` run first.
 2. If the player is out of `talkRadius` (3 tiles), the line is dropped (402-404).
 3. The line goes to `keywordHandler:processMessage` only if the player is focused and speaks privately, or is not yet focused (406-407). This is how a greeting reaches the tree before focus exists.
-4. The tree search (keywordhandler.lua:116-144): the cursor's children, then the cursor's parent's children, then the root's children (skipped if the cursor is already root).
+4. The tree search (keywordhandler.lua:116-144): the cursor's children, then the cursor's parent's children, then the root's children (the root pass is skipped when the node just searched is already root: the cursor is root, or the cursor's parent is root; the test at line 136 is `node ~= root` after node was reassigned to the parent).
 5. Within one parent (148-162): children are tried in `pairs` order. A child whose keywords match (every keyword is a Lua pattern found in the lower-cased line, 30-44; a custom matcher replaces this when keywords.callback is set, 31-33) gets the cursor (153). Its callback runs. If the callback returns false, the old cursor is restored (158) and the next child is tried. If it returns true, the match wins.
 6. A handled line sets `talkStart[cid] = os.time()` (412, 415). Only handled lines restart the idle clock; unhandled chatter does not.
 
-The reply: `NpcHandler:say` (609-635) cancels any pending delayed sequence (614-616) and schedules the text with `addEvent` after `talkDelayTime * 1000` ms (625-634). A `reset` flag on the node (StdModule.say, modules.lua:53-54) moves the cursor back to root after the reply.
+The reply: `NpcHandler:say` (609-635) cancels any pending delayed sequence (614-616). If `NPCHANDLER_TALKDELAY` is `TALKDELAY_NONE` or `shallDelay` is false it sends at once with `selfSay` (619-621); otherwise (the default, ONTHINK, and EVENT) it schedules the text with `addEvent` after `talkDelayTime * 1000` ms (625-634). A `reset` flag on the node (StdModule.say, modules.lua:53-54) moves the cursor back to root after the reply; a `moveup` parameter (55-56) instead moves the cursor up N levels via `keywordHandler:moveUp`. `promotePlayer` has a premium gate branch too (modules.lua:77, 91-93).
 
 Release: `onThink` (487-513) walks the focus list. A focused player out of range is released through `onWalkAway` (502-503); one idle for more than `idleTime` (120 s) is released through `unGreet` (504-505). `unGreet` resets the cursor (328), says the farewell (330) and releases focus (331). Releasing clears the timers and the topic scratch value (190-209).
 
@@ -29,7 +29,7 @@ Quest state: there is no quest object in the lib. The gate and reward in the lib
 
 ## 2. Key functions
 
-- `KeywordHandler:processMessage` (keywordhandler.lua:116-144): three-step search.
+- `KeywordHandler:processMessage` (keywordhandler.lua:116-144): three-step search (root pass skipped when the node just searched is root).
 - `KeywordHandler:processNodeMessage` (148-162): children, cursor move, callback, rollback.
 - `KeywordNode:processMessage` (25-27): calls the node callback (or returns true when none).
 - `KeywordNode:checkMessage` (30-44): keyword match.
@@ -47,7 +47,7 @@ Quest state: there is no quest object in the lib. The gate and reward in the lib
 
 ## 4. TypeScript sketch
 
-simplified: omits the Lua pattern matching (plain substring instead, which is the fix below), the focus list and its face-the-player update, the module callbacks, `doNPCTalkALot`, the shop and travel modules, and the talk-delay queue (it is dead code in the donor; see defects). The search order, the rollback and the reset flag match the donor. Keyword children are ordered (an array), not `pairs`.
+simplified: omits the Lua pattern matching (plain substring instead, which is the fix below), the focus list and its face-the-player update, the module callbacks, `doNPCTalkALot`, the shop and travel modules, and the talk-delay queue (it is dead code in the donor; see defects). The search order (including skipping the root pass when the cursor's parent is root), the rollback and the reset flag match the donor. `moveup` is not modelled. Keyword children are ordered (an array), not `pairs`.
 
 ```ts
 // Keyword dialogue tree with a per-player cursor. A message is tried against
@@ -113,8 +113,14 @@ export class Dialogue {
     const cur = this.cursorOf(ctx.playerId);
     const lower = ctx.message.toLowerCase();
     if (this.tryChildren(cur, ctx, lower)) return true;
-    if (cur.parent && this.tryChildren(cur.parent, ctx, lower)) return true;
-    if (cur !== this.root && this.tryChildren(this.root, ctx, lower)) return true;
+    // Donor: `node` is reassigned to the parent before the root test, so the
+    // root pass is skipped when the cursor or its parent is already the root.
+    let last = cur;
+    if (cur.parent) {
+      last = cur.parent;
+      if (this.tryChildren(last, ctx, lower)) return true;
+    }
+    if (last !== this.root && this.tryChildren(this.root, ctx, lower)) return true;
     return false;
   }
 }
@@ -144,7 +150,7 @@ Parity row: 20 (catalogue as runtime source: the dialogue trees are data read at
 - Pit as client: dialogue is not part of the Pit; the Pit only receives the result if it needs one.
 - MAX_ATTACKERS = 3: not applicable.
 - Defect 1 (onlyFocus always true): modules.lua:46 `not parameters.onlyFocus or parameters.onlyFocus` is true for nil and for false, so no node can answer unfocused players. fix: `local onlyFocus = parameters.onlyFocus ~= false`.
-- Defect 2 (talk-delay queue is dead): npchandler.lua:490-497 reads `self.talkDelay` in the ONTHINK branch, but nothing writes it (the only other mentions are the init at 115 and the clear at 494), while `say` always uses `addEvent` (619-634) whatever the mode. The header calls ONTHINK the default (6, 10), which is not what runs. fix: delete the loop, or make `say` write the queue; pick one and state it.
+- Defect 2 (talk-delay queue is dead): npchandler.lua:490-497 reads `self.talkDelay` in the ONTHINK branch, but nothing writes it (the only other mentions are the init at 115 and the clear at 494), while `say` uses `addEvent` in every mode except TALKDELAY_NONE or shallDelay=false (619-634). The header calls ONTHINK the default (6, 10), which is not what runs: the ONTHINK queue is never filled. fix: delete the loop, or make `say` write the queue; pick one and state it.
 - Defect 3 (pairs order): keywordhandler.lua:150 iterates children with `pairs`, and the first match wins. Lua does not guarantee `pairs` order. fix: `ipairs`.
 - Defect 4 (Lua pattern keywords): keywordhandler.lua:37 calls `string.find(message, v)` without the plain flag, so a keyword with a magic character matches as a pattern (a keyword with "+" or "." does not match literally). fix: `string.find(message, v, 1, true)`.
 - Defect 5 (alias reparenting): `addAliasKeyword` adds the same children to a new node (81), and `addChildKeywordNode` sets their parent to the alias (89). The "no" branch then goes to the alias, not to the original parent, until a match resets the parent (154). The two extra arguments passed at line 79 (`prevNode.condition, prevNode.action`) are fields that KeywordNode never defines. fix: keep the children's parent as the original node, and drop the two arguments.
@@ -154,3 +160,11 @@ Parity row: 20 (catalogue as runtime source: the dialogue trees are data read at
 
 Reuse tag: donor-only (GPL-2; clean-room, shape only, no line translation); no Frankendom search was done in this pass.
 Brief rule served: judge the idea, not the genre (rule 2); receipts for every cited line (rule 10, 139 verified across the three cells); keep the idea and fix the defects (Dom's 2026-10-10 rule).
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR.
+- Root pass skip: the note and sketch said skipped only when the cursor is root; donor line 136 tests the reassigned node, so it is also skipped when the cursor's parent is root. The sketch searched root children twice for a depth-1 cursor. Confirmed against keywordhandler.lua 116-144.
+- Defect 2 over-claimed that `say` always uses addEvent; npchandler.lua 619-621 sends at once with selfSay for TALKDELAY_NONE or shallDelay false. The dead-talkDelay-loop claim itself holds.
+- Missed: StdModule.say has a `moveup` option besides `reset` (modules.lua 55-56); promotePlayer has a premium gate branch (77, 91-93).
+
+Fixed 2026-10-12: root-pass skip rule corrected in step 4, Key functions, sketch header and sketch code (also in work/tfs-dialogue-tree.ts); defect 2 and the reply paragraph now say addEvent is used except in NONE mode or shallDelay false; moveup and the premium gate added.

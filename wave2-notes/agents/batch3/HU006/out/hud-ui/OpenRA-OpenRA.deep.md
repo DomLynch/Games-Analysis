@@ -8,7 +8,7 @@ Checked: cell 3 = row 3 of cells-HU006.tsv. Hint file IngameMenuLogic.cs (647 li
 
 A radar attention ping is a three-point ring drawn on the minimap at the event's cell. It is created by game events, then advanced once per logic tick and removed when its tick count reaches its duration.
 
-Creation (DamgeNotifier.Damaged, DamgeNotifier.cs:72-119): the damage is ignored when there is no local player or the local player is spectating (76), when there is no attacker (79), when the attacker shares the target's owner (82), when the attacker is the world (85), when the target type filter fails (88-92), or when an ally does 0 or less damage (94). If Game.RunTime is at or past the unit's nextActiveTick (97), a ping is added with visibility fixed as "allied with the render player" (99-100), then the sound and text notification run for the owner or an ally, and nextActiveTick is set to RunTime plus NotifyInterval (116). A negative interval means notify once (117). The ping and the notification share the same per-unit cooldown.
+Creation (DamgeNotifier.Damaged, DamgeNotifier.cs:72-119): the damage is ignored when there is no local player or the local player is spectating (76), when there is no attacker (79), when the attacker shares the target's owner (82), when the attacker is the world (85), when the target type filter fails (88-92), or when an ally does 0 or less damage (94). If Game.RunTime is at or past the unit's nextActiveTick (97), a ping is added with visibility fixed as "allied with the render player" (99-100), then the sound and text notification run for the owner or an ally, and nextActiveTick is set to RunTime plus NotifyInterval (116). A negative interval means notify once (117). The cooldown gates only the visible case: the ping is added first (99-100), then the method returns at once when the owner is not allied with the render player (101-102), before nextActiveTick is re-armed at 116. So pings for non-visible owners are never rate-limited; the sound, text and cooldown re-arm happen only for visible owners.
 
 Lifetime (RadarPings.cs:43-48, 99-107): each logic tick the ping's tick count goes up. When it equals Duration the ping is removed. Otherwise the radius goes down by 4 px but not below 15 px, and the angle goes down by 0.12 rad.
 
@@ -31,10 +31,11 @@ Order of operations: event, filters, cooldown gate, add ping, per-tick shrink an
 - Start radius 200 px, floor 15 px, shrink 4 px per tick (RadarPings.cs:23-25). The ring reaches the floor on the 47th shrink step (200 - 4 x 47 = 12, held at 15).
 - Lifetime: 250 logic ticks by default (DamgeNotifier.cs:37). The check runs before the shrink, so 249 shrink steps happen before removal. Rotation 0.12 rad per tick, so about 52 ticks per turn and about 4.75 turns over the lifetime.
 - Logic tick length: 40 ms at the default game speed (mods/ts/mod.yaml:292-294, Timestep 40). So the default ping lasts 250 x 40 ms = 10 s and reaches the floor at about 1.9 s. At the slowest speed (80 ms, line 286) it lasts 20 s; at the fastest (20 ms, line 306) it lasts 5 s. Duration is in ticks but the cooldown is in real milliseconds, so the lifetime in seconds depends on game speed.
-- Per-unit cooldown: 30000 ms by default (DamgeNotifier.cs:32). A unit under repeated fire pings at most once per 30 s.
+- Per-unit cooldown: 30000 ms by default (DamgeNotifier.cs:32). A visible unit under repeated fire pings at most once per 30 s; a non-visible one pings on every hit (early return at 101-102, before the re-arm at 116).
 - Colour: red by default (DamgeNotifier.cs:34).
 - Defect (expiry): RadarPings.cs:101 uses "++tick == Duration". A duration of 0 or less never matches, so the ping never expires. Fix: test "tick >= duration" (done in the sketch; expires on the first tick for duration <= 0).
 - Defect (visibility): DamgeNotifier.cs:99-100 captures visibility once in a local bool, so if the render player's alliance changes the ping keeps the old answer. HarvesterAttackNotifier.cs:80 uses a live lambda. Fix: pass a live function, as the harvester notifier does.
+- Defect (cooldown bypass): the early return at DamgeNotifier.cs:101-102 skips the re-arm at 116, so the cooldown never limits pings for non-visible owners. Fix: re-arm the gate before the visibility return; the sketch's notifyGate is applied to every hit regardless of visibility.
 - Mixed units: the donor's doc strings say the duration is in ticks (DamgeNotifier.cs:36) and the cooldown in milliseconds (30). Fix: state both units in the data, or use server ticks for both.
 
 ## 4. TypeScript sketch
@@ -116,4 +117,12 @@ Brief rule served: "keep the idea, fix the defect". The == expiry, the captured 
 
 Best transferable idea: A minimap ping that is started by the event itself, shrinks and rotates for a fixed number of ticks, and is rate-limited per unit by real time.
 Decision (proposed): adapt - keep the shrinking ring, the fixed lifetime and the per-unit cooldown; fix the expiry test and make the visibility live; use one time unit.
-Acceptance: When the hero takes a hostile hit, a red three-point ring appears at the hit position, shrinks from 200 px to 15 px by about 2 s at 40 ms per tick, and is gone after 250 ticks; a second hit within 30 s starts no new ring, and a test with duration 0 expires on its first tick.
+Acceptance: When the hero takes a hostile hit, a red three-point ring appears at the hit position, shrinks from 200 px to 15 px by about 2 s at 40 ms per tick, and is gone after 250 ticks; a second hit on the same unit within 30 s starts no new ring (whether or not the unit is visible to the render player; the donor limits only the visible case), and a test with duration 0 expires on its first tick.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Sec1 said the ping and notification share one per-unit cooldown; real: DamgeNotifier.cs:99-102 adds the ping then returns when not visible before nextActiveTick is re-armed (116), so non-visible owners are never rate-limited. Confirmed against the donor.
+- Acceptance 'second hit within 30 s starts no new ring' held only for the visible case. Confirmed.
+- Missed: none significant.
+
+Fixed 2026-10-12: Sec1, Sec3 cooldown line and Acceptance now state the cooldown applies only to visible owners; added a cooldown-bypass defect line with the fix (re-arm before the visibility return). Sketch unchanged (its gate already applies to every hit).

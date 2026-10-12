@@ -2,7 +2,7 @@
 
 Donor: `/mnt/frankendom-donors/Card-Forge-forge/forge-gui-mobile/src/forge/adventure/stage/GameHUD.java` (with `stage/MapStage.java`, `character/CharacterSprite.java`, `util/NavArrowActor.java`) | Licence: GPL-3.0 (`/mnt/frankendom-donors/Card-Forge-forge/LICENSE` read: "GNU GENERAL PUBLIC LICENSE", "Version 3, 29 June 2007"; copyleft, clean-room, shape only) | Java (libGDX/Scene2D) | symbol `GameHUD.updateHiddenEnemyChevrons`
 
-Checked: Read in full: `NavArrowActor.java` (76 lines). Read in part: `GameHUD.java` (lines 365, 374-377, 420-432, 440-545, 660-668, 886-910; the arrow code is 440-545 and was read in full); `MapStage.java` (552-572 and 983-991, plus grep hits); `CharacterSprite.java` (212-226, plus grep); `SettingData.java` and `SettingsScene.java` (grep); `HudScene.java` (grep, line 53). Callers: `updateHiddenEnemyChevrons` has one call site (GameHUD line 365, in `draw()`); `updateEnemyCounter` has one call site (GameHUD line 429, inside `enter()`); `enter()` is called from `HudScene.java` line 53 (grep). Greps were over `forge-gui-mobile/src` and `forge-gui/src`. Not read: the touch-to-travel handling on the minimap (GameHUD ~290-345), the world map `MapViewScene`, what calls `CharacterSprite` wake (the trigger for revealing a hidden mob), and the localiser implementation. Confidence: high on arrow placement and gating; medium on the counter staleness (single call site found by grep, not traced through every scene transition). camera_scope: not a camera cell (the arrows are screen-space HUD drawn from the map camera's projection).
+Checked: Read in full: `NavArrowActor.java` (76 lines). Read in part: `GameHUD.java` (lines 365, 374-377, 420-432, 440-545, 660-668, 886-910; the arrow code is 440-545 and was read in full); `MapStage.java` (552-572 and 983-991, plus grep hits); `CharacterSprite.java` (212-226, plus grep); `SettingData.java` and `SettingsScene.java` (grep); `HudScene.java` (grep, line 53). Callers: `updateHiddenEnemyChevrons` has one call site (GameHUD line 365, in `draw()`); `updateEnemyCounter` has one call site (GameHUD line 429, inside `enter()`); `enter()` is called from `HudScene.java` line 53 (grep). Greps were over `forge-gui-mobile/src` and `forge-gui/src`. Not read: the touch-to-travel handling on the minimap (GameHUD ~290-345), the world map `MapViewScene`, what calls `CharacterSprite` wake (the trigger for revealing a hidden mob), and the localiser implementation. Confidence: high on arrow placement and gating; the counter refresh was traced to `HudScene.enter()` (re-run on each return to a HudScene subclass, GameScene and TileMapScene). camera_scope: not a camera cell (the arrows are screen-space HUD drawn from the map camera's projection).
 
 ## 1. Mechanism
 
@@ -31,7 +31,7 @@ Hidden mobs: a map object property `hidden` sets the mob's hidden flag (MapStage
 
 | Reusable algorithm | Game-specific constants |
 |---|---|
-| Arrow points from the player's screen point toward each off-screen or hidden foe, one arrow per foe | Offset 18 units from the player (GameHUD line 504) |
+| Arrow points from the player's screen point toward each foe flagged hidden (the donor tests only the hidden flag, not camera visibility), one arrow per foe | Offset 18 units from the player (GameHUD line 504) |
 | Fan the arrows sideways so several foes do not share a spot | Lane spacing 9 units (line 503); lanes by index / 2 (line 502) |
 | Zero-distance default direction | (1, 0) when the distance is under 0.01 (lines 495-496) |
 | Arrow frame time | 0.4 s per frame (NavArrowActor line 31) |
@@ -39,7 +39,7 @@ Hidden mobs: a map object property `hidden` sets the mob's hidden flag (MapStage
 | Remaining count: on stage and not defeated | Not a number (MapStage line 986) |
 | Arrow cap | None: one arrow per hidden enemy, no cap in the donor |
 
-Defect (spread, found while reading): with `lane = index / 2` and `spread = (index % 2 == 0 ? 1 : -1) * lane * 9`, indices 0 and 1 both get lane 0 and spread 0 (line 502-503). Two hidden enemies in the same direction therefore put two arrows on the same spot. Fix: see the sketch (k = ceil(i / 2), sign - for odd i).
+Defect (spread, found while reading): with `lane = index / 2` and `spread = (index % 2 == 0 ? 1 : -1) * lane * 9`, indices 0 and 1 both get lane 0 and spread 0 (line 502-503). Any two hidden enemies (first and second in list order, whatever their directions) therefore get the same spread, and if they lie in the same direction they put two arrows on the same spot. Fix: see the sketch (k = ceil(i / 2), sign - for odd i).
 
 ## 4. TypeScript sketch
 
@@ -107,7 +107,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - GPL-3.0: clean-room only. The sketch is written from the described mechanism.
 - Meaning of "hidden": in the donor it is a designer flag on a map mob (MapStage 557, 570), revealed by a Wake animation. Frankendom's ruling is that the engine decides what the player can see. Adapt: define "hidden" as "engaged or in the zone but not in the camera view" from engine state, not as a map flag, and keep the designer flag only as a data field if a zone wants an ambush.
 - Defect 1, arrow overlap: indices 0 and 1 get spread 0 (GameHUD 502-503). Fix in the sketch (k = ceil(i / 2), sign by parity).
-- Defect 2, stale counter: the counter text is written only in `enter()` (GameHUD line 429, inside `enter()` at line 374). `enter()` runs from `HudScene.java` line 53. No per-kill refresh was found in the donor. Fix: recompute the count from the engine on every defeat event and whenever the foe list changes (Frankendom has one ledger, so the count can be a derived value, not a cached one).
+- Defect 2, counter refreshed only on scene entry (weaker than first written): the counter text is written only in `enter()` (GameHUD line 429, inside `enter()` at line 374). `HudScene.enter()` (line 50-55) calls `hud.enter()`, and `GameScene` and `TileMapScene` extend `HudScene`, so the count is re-run every time the map scene is re-entered, which is after each battle where kills happen. It is therefore not stale across battles; it would only lag for a defeat that changes the count without leaving the map scene (not found in the donor, not traced). Fix: derive the count from the engine on every defeat event and whenever the foe list changes (Frankendom has one ledger, so the count is a derived value, not a cached one). Severity: low.
 - Defect 3, no cap: one arrow per hidden enemy, unlimited (the donor creates actors on demand). A 10-foe ambush gives 10 arrows around a 375 px hero. Fix: a cap as zone data, and a rule for which arrows to keep (nearest first).
 - Readability at 375 wide: the donor ring sits 18 units from the player, so it can overlap the hero sprite on a small screen. Not measured. A phone test is needed.
 - Localisation: `forge-gui/res/languages/en-US.properties` has about 3,344 non-comment `key=value` lines (grep count) and 438 lines with `{0}` placeholders (grep count). The counter text is `lblRemainingEnemies=Remaining Enemies: {0}` (line 3522). The same bundle folder has 10 `.properties` locales and 8 `cardnames-*.txt` files. Grammar: plain English values, numbered `{0}` placeholders, and icon tokens in strings such as `[+Dot]` and `[+StrangeKey]` (GameHUD lines 435-440) and `[%80]` size markup (GameHUD lines 417 and 420). Frankendom can reuse the placeholder shape for HUD text.
@@ -115,5 +115,14 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - Not read: the minimap touch-to-travel (GameHUD ~290-345), `MapViewScene` (world map), and the wake trigger.
 
 Best transferable idea: a ring of arrows around the hero that points at each foe the player cannot see, fanned so they never stack, shown only in the fight state the player needs.
-Decision (proposed): adapt - the arrow ring suits many-on-one fights (foes outside the view or behind a wall, and the queue beyond MAX_ATTACKERS), but the donor's "hidden" is a designer flag, the spread overlaps, and the counter is stale; Frankendom takes the shape with engine-derived visibility, a fixed spread, a cap as data and a count derived from the ledger.
+Decision (proposed): adapt - the arrow ring suits many-on-one fights (foes outside the view or behind a wall, and the queue beyond MAX_ATTACKERS), but the donor's "hidden" is a designer flag, the spread overlaps, and the counter is only refreshed on scene entry; Frankendom takes the shape with engine-derived visibility, a fixed spread, a cap as data and a count derived from the ledger.
 Acceptance: a hero with two foes behind a wall sees two arrows fanned apart around the hero, pointing at them; with the setting off no arrow appears; a test asserts that the first three arrows have distinct positions and that the remaining count drops on each defeat.
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+- Verdict: MINOR.
+- Defect 2 "stale counter" overstated: HudScene.enter (line 53) runs hud.enter(), GameScene extends HudScene, so updateEnemyCounter re-runs on return to the map scene after each battle. Confirmed against the code.
+- Intro said arrows point at "off-screen or hidden" foes; donor handles only enemy.hidden (GameHUD 525). Confirmed.
+- Defect 1 happens for any two hidden foes (list indices 0 and 1), not only the same direction. Confirmed.
+- Missed: nothing major.
+
+Fixed 2026-10-12: intro wording (hidden flag only), defect 1 scope (any two hidden foes), defect 2 downgraded to low severity with the scene re-entry path, confidence line and Decision wording.

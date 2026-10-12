@@ -8,7 +8,7 @@ Checked: Hint file `icons/icon_atlas.lua` was the wrong file for the mechanism: 
 
 - One instance table per model bucket. It owns a GPU instance buffer (`newInstanceVBO:Define(maxElements, layout)`, 20) and a CPU mirror `instanceData` of `instanceStep` numbers per element (25-29). It also owns a VAO built by `makeVAOandAttach` (88) over the used elements; the unit shape widget attaches its VAOs at `gfx_DrawUnitShape_GL4.lua` 557 and 573. Default capacity is 64 (10).
 - Push (215-325), in donor order:
-  1. Validate the object (a valid unit or feature id, or a known def; message at 230) and the row size (242).
+  1. Validate the object (a valid unit or feature id, or a known def; message at 230) and the row size (242): a wrong size only logs through Spring.Echo and the push carries on and copies the row (no return).
   2. Grow first if the next slot would fill the buffer: `(usedElements + 1) >= maxElements` (259). The table doubles (148) and re-attaches its VAO; each stored object is re-bound to the new buffer (171-200). This runs before the existing-id check, so a refused duplicate can still double the buffer (defect, below).
   3. New id: index = used + 1, used increases, both maps are set (266). Existing id: refused (273) unless `updateExisting` is set; if allowed, the old index is reused.
   4. Copy the row into the mirror (280-283).
@@ -19,7 +19,7 @@ Checked: Hint file `icons/icon_atlas.lua` was the wrong file for the mechanism: 
   3. If it was the last element (fast path, 362): decrement used and drop the unit id slot. The submission entry is removed only when not dirty (374-376).
   4. Otherwise (swap-remove): the last element's index entry moves to the hole (407), its mirror row is copied over the hole (413-416), and only the moved row is uploaded (421). The last slot is cleared and used is decremented.
   5. If the last element has no recorded id (inconsistent bookkeeping), the table becomes dirty, used is decremented, and nil is returned (388-401).
-- Deferred flush. `uploadAllElements` (606-652) uploads the whole used range in one call (618), clears dirty, clears the submission and re-adds each object. A widget that defers pushes must call it. `gfx_DrawFeatureShape_GL4` does this once per bucket per frame (331, 601), so a fleet of ghosts that moves every frame costs one upload, not one per object.
+- Deferred flush. `uploadAllElements` (606-652) uploads the whole used range in one call (618), clears dirty (an empty table takes an early path that only clears the VAO submission and dirty, 609-616), clears the submission and re-adds each object. A widget that defers pushes must call it. `gfx_DrawFeatureShape_GL4` does this once per bucket per frame (331, 601), so a fleet of ghosts that moves every frame costs one upload, not one per object.
 - Draw: each table keeps one VAO and one submission over its used elements. The GPU draw count was not measured; what is read is that each table holds one submission, not one per object.
 - Icon switch (LOD by distance). In the unit shape shader, when the squared distance from the camera exceeds `iconDistance * iconDistance`, the shader draws the icon path instead of the model (175; body not read). The uniform is `27 * UnitIconDist` (731, 776), so the default is 27 x 200 = 5400 in the shader's distance units (default config value 200 at 731).
 
@@ -45,7 +45,7 @@ Checked: Hint file `icons/icon_atlas.lua` was the wrong file for the mechanism: 
 
 ## 4. TypeScript sketch
 
-simplified: keeps the donor order for pop (fill the hole with the last element, keep the index maps in step, same converge-to-dirty branch for broken bookkeeping) and for push (new-or-existing, refused unless updateExisting, row copy, then immediate single-row upload or dirty). It changes one thing on purpose: the grow check moves after the existing-id refusal and runs only when a new id takes the last spare slot, so refused pushes and updates never grow the pool (the donor grows on every push, defect below). It omits the GPU buffer, the VAO submission, the object binding (unit or feature ids), the zombie debug tracking, the resize-time revalidation of objects, and `compactInstanceVBO` (not read). Uploads are recorded as ranges in `gpuUploads` instead of calling the GPU.
+simplified: keeps the donor order for pop (fill the hole with the last element, keep the index maps in step, same converge-to-dirty branch for broken bookkeeping) and for push (new-or-existing, refused unless updateExisting, row copy, then immediate single-row upload or dirty). It changes two things on purpose: a wrong row size is refused (returns false), where the donor only logs and keeps copying; and the grow check moves after the existing-id refusal and runs only when a new id takes the last spare slot, so refused pushes and updates never grow the pool (the donor grows on every push, defect below). It omits the GPU buffer, the VAO submission, the object binding (unit or feature ids), the zombie debug tracking, the resize-time revalidation of objects, and `compactInstanceVBO` (not read). Uploads are recorded as ranges in `gpuUploads` instead of calling the GPU.
 
 ```ts
 // Licence: GPL v2 (donor LICENSE.md). Clean-room shape of a dense instance table, written from the mechanism, not a translation.
@@ -166,3 +166,9 @@ clean-room-shape (GPL v2, code not translated).
 Best transferable idea: A dense instance pool with swap-remove and deferred bulk upload lets a browser game draw hundreds of blood, decal and FX objects in one call, if the grow check runs only when a new id is added.
 Decision (proposed): adapt — the pool shape transfers to WebGL instancing for decals and FX; adapt it by checking the id before growing and by making debug tracking opt-in. Reject the engine-side object binding (unit ids) because Frankendom's draw objects are not engine units.
 Acceptance: In a fight with three attackers and a heavy hit, blood and sparks appear as one batched draw per pool (one draw call for the pool, not one per mark), a refused duplicate does not grow the pool, and a test asserts the pool's capacity is unchanged after a refused push.
+
+Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Confirmed: a wrong row size only logs via Spring.Echo and the donor push carries on copying (instancevboidtable.lua 242-250); the note said push validates it and the sketch returns false without listing the change.
+- Missed: uploadAllElements has an early path for usedElements == 0 (clears VAO submission and dirty, 609-616).
+Fixed 2026-10-12: Step 1 now says wrong size only logs; the sketch's simplified line lists the refusal as a deliberate change; the flush line mentions the empty-table early path (no sketch code change).

@@ -122,3 +122,9 @@ Acceptance: A server test: a 20-slot bag full of non-matching items accepts a pi
 - Bags accept any bag even when full (Bag.java 199, `item instanceof Bag`). If bag-in-bag must be bounded in Frankendom, it needs an explicit rule.
 - Curse binding is a hidden refusal inside unequip, with a hero buff (MagicImmune) as the exception. Frankendom should make it an explicit bound flag that the server checks before the move.
 - The lost-inventory drop path (Hero.java 2649 onward) was not read.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- All claims verified (Item.collect 206-280, merge 198-204, Bag.canHold 193-208, capacity 20, grabItems 120-127, detach 319-365, doUnequip 126-133, Armor.doEquip 232-299, resurrect 2647/2649).
+- Nit: Sec1 cites 246 for 'drops on floor'; the drop is in doUnequip 148, 246 is the call.
+- Missed: none.

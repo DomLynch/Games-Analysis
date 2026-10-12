@@ -159,3 +159,8 @@ export {};
 - MRM path not read (mesh_mrm.cpp 2269-2272 delegates to a level-detail table that was not read), so MRM triangle counts are "(not read)".
 - Fold-ins not covered by this note: foliage (`landscape_vegetable_block.cpp`), weather (`cloud_scape.cpp`), terrain (`landscape.cpp`), culling (`clip_trav.cpp`). Not read in this pass; they are candidates for a follow-up cell.
 - Hint file `bloom_effect.h` is a post-process bloom pass; not part of this mechanism.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN
+- All claims verified (defaults, constants, computeRatioAndSmooth, adapt latch, pass sequence, transform_shape pass0/pass1, defects 1 and 3 real, AGPL v3).
+- Missed: slot cross-fade blend zone not covered, mesh_multi_lod_instance.cpp 139-183 (startBlend = DistMax - BlendLength, BlendFactor, BlendOut/BlendIn flags, second LOD drawn with alpha), and the last-slot EndPolygonCount = start/2 fallback (mesh_multi_lod.cpp 159-160); relevant to graceful LOD degradation.

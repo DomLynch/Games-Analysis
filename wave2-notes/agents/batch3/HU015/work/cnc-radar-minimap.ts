@@ -25,7 +25,7 @@ type Hit = { kind: "miss" } | { kind: "absorb" } | { kind: "cell"; cell: Cell };
 
 // Pointer px, relative to the frame's top-left -> hit.
 // Donor: Click_In_Radar (RADAR.CPP lines 909-937). Fix: the donor tests only the upper bound on the
-// frame (x < RadIWidth), so a point left of or above the frame passes that test; here both bounds are checked.
+// frame (x < RadIWidth), so a point left of or above the frame passes that test (the unsigned cast at 925 then rejects it with -1, so the click is swallowed, not turned into a cell); here both bounds are checked and it is a plain miss.
 function hitTest(m: Minimap, px: number, py: number): Hit {
   if (px < 0 || py < 0 || px >= m.frameW || py >= m.frameH) return { kind: "miss" };
   const x = px - m.insetX;

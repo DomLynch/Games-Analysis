@@ -126,3 +126,6 @@ The sketch was typechecked on the VPS (`tsc --noEmit --strict --target es2020`, 
 - Cost: `IdBitSet.iter()` copies the id array on every call (build.ts 43-45) and `remove` uses `indexOf` and `splice` (build.ts 28-37). Fine at 250, not at thousands. Frankendom's server can use a Set and a per-tick array.
 - The NPC encoder shares the drop-on-budget path (info.ts 323-326) and uses a fixed radius of 15 with a 255 cap (build.ts 213, 56). It has no adaptive radius, so a crowd of NPCs is capped but not thinned by distance.
 - Not read: the rest of the NPC encoder (info.ts 346-471), `Zone.writeFullFollows` and `writePartialEncloses` (the zone streaming payloads), and the client renderer. The client bundle `public/client/client.js` was only grepped (see Checked).
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+- Verdict: CLEAN. No errors found; headline defect (lastResize never reset after a grow, build.ts 85-92) confirmed. Nothing significant missed.
