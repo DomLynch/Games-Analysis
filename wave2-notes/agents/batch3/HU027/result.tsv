@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+scummvm-scummvm	hud-ui	P	STRONG	full	/mnt/frankendom-donors/scummvm-scummvm/engines/twp/hud.cpp:212-273 (Hud::update: target-default highlight, per-verb hover wobble, click select, instant verb fires at once); also tsv.cpp:30-90 (string table grammar), twp.cpp:681-687 (caller)
+teeworlds-teeworlds	hud-ui	P	STRONG	thin	/mnt/frankendom-donors/teeworlds-teeworlds/src/game/client/components/hud.cpp:902-935 (RenderCheckpoint: signed split banner, 2 s hold then 2 s fade, sign colour, race-only, cleared on death); server sender not in box
+tmewett-BrogueCE	hud-ui	P	STRONG	full	/mnt/frankendom-donors/tmewett-BrogueCE/src/brogue/IO.c:4480-4612 (health readout as signed percent since snapshot, regen rule, Dead label); Time.c:2215-2239 (snapshot point), Time.c:893-915 (deepest-threshold alert); Time.c:2287-2295 regen gate defect

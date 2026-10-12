@@ -1,0 +1,2 @@
+game	category	old	verdict	depth	finding
+wesnoth-wesnoth	vfx-blood-finishers	P	STRONG	full	src/units/udisplay.cpp:598-767 and src/actions/attack.cpp:911-1184 show the kill/hit/miss outcome picking the attack and defend clips, a 50 ms HP countdown committed only after the clips, drain from damage dealt, and last_breath cancelling a death before the death clip; the hint file data/core/units/bats/Bat_Blood.cfg is only the unit's clip timings (-200 and -126 ms) and drain tag (line 123). No blood, gore, shake or flash code exists in this donor.

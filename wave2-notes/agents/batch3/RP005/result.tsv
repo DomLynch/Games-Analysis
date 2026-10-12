@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+OpenRA-OpenRA	rendering-performance	P	STRONG	full	OpenRA.Game/Graphics/SpriteRenderer.cs:62-162 and OpenRA.Game/Renderer.cs:382-406: one fixed vertex buffer per batch, flushed on budget, the 8-texture-slot cap or a batch-owner switch, with one draw per blend run.
+OpenRCT2-OpenRCT2	rendering-performance	P	STRONG	full	src/openrct2/drawing/InvalidationGrid.h:41-124 and InvalidationGrid.cpp:48-90: a 128 px dirty-block grid, a bounding-box scan, horizontal and vertical rectangle merge, and a redraw of only the dirty rectangles.
+OpenTTD-OpenTTD	rendering-performance	P	STRONG	full	src/viewport.cpp:278-398 with gfx.cpp:85-98 and blitter/32bpp_base.cpp:84-130: on a map pan, blit the kept pieces around windows in front and redraw only the exposed strips.

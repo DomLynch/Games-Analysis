@@ -1,0 +1,26 @@
+lichess-org-mobile (vfx-blood-finishers, cell 3): verdict PARTIAL, depth thin
+
+Donor: /mnt/frankendom-donors/lichess-org-mobile/ (Flutter/Dart, chess client)
+Licence: GPL-3.0 (LICENSE file: "GNU GENERAL PUBLIC LICENSE, Version 3, 29 June 2007"). Read, not copied; any reuse is shape only.
+
+Files opened (at least 3, as the rules require):
+1. lib/src/utils/chessboard.dart (the list hint, 33 lines, read in full): atomicExplosionSquares (10-14) returns the blast set for one move, or null.
+2. lib/src/model/analysis/common_analysis_state.dart (read 28-70): the mixin that walks to the position before the last move and calls explosionSquares on it (58-67).
+3. lib/src/widgets/game_layout.dart (read 252-266): revert guard (254-258), then ctrl.triggerExplosion (264-266).
+4. lib/src/view/analysis/analysis_board.dart (read 150-165): triggers only when the FEN changed (155), then triggerExplosion (158-160).
+5. lib/src/view/game/game_body.dart (read 340-352): the live-game trigger, computed from positionAt(stepCursor - 1) and moveAt(stepCursor) (345-351).
+6. lib/src/service/move_feedback.dart (read 1-48, full): haptic and sound per move, capture and check tiers.
+7. pubspec.yaml line 26: dartchess ^0.14.0 (the blast rule's package).
+Searches run in lib (excluding lib/l10n): particle, confetti, shake, explosion, haptic, vibrat, flash, splash, celebrat, hitstop, blood, gore, finisher, death, lottie. No particle, confetti, shake, hitstop, blood, gore or finisher code was found; the only visual effect is the atomic-chess explosion.
+
+Why PARTIAL: the one real effect here (the atomic explosion) is a board animation whose blast rule lives in the external dartchess package and whose draw call lives in the chessground package; neither is in the donor, so the mechanism that matters is not in the box (the donor only wires it: rule call, guards, trigger). The haptic tiers are real and fully read, but they are generic move feedback, not hit or finisher effects.
+
+Best transferable idea: derive one-shot effect targets from the same call that resolves the event (the blast set), compute them from the position before the event, and suppress them on revert, so a rewind never replays an explosion.
+
+Decision (proposed): adapt — the Frankendom engine should emit the blast set from the same resolve step as the damage (fight record row 19), and the client should fire the effect only on a forward step; the chess blast rule itself has no analogue to take, and the chessground draw code was not read, so there is no VFX idea to copy from this donor.
+
+Also seen (not a separate cell verdict): haptic tiers keyed by outcome in move_feedback.dart (light for a plain capture at 44, medium for a check at 42, heavy for a wrong puzzle-storm move at storm_controller.dart 113), all behind one board preference (40). This is a small outcome-to-feedback table that could feed parity row 10 (hit impact) if Frankendom wants touch feedback on hits; it is generic feedback, not a finisher mechanism.
+
+Parity row this would land on: row 10 (hit impact) for the haptic table; row 19 (fight record) for the revert rule. Not a STRONG note because the donor does not hold the blast rule or the effect code.
+
+Not verified: dartchess Atomic.explosionSquares (external), chessground triggerExplosion (external), and what prevents a second trigger when game_layout rebuilds with the same squares (the code around game_layout 264 was read only from the revert check on).

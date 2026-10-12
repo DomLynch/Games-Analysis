@@ -114,6 +114,3 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Chessground internals (the apply step and where the premove legality is called) were not read. Anything said about how the stored premove is applied is the donor's comments and call sites, not the library code.
 - String table (translation/source, 44 XML files): 3059 `<string>` entries in total; `site.xml` has 896 strings and 41 plural blocks; `nvui.xml` has 61 strings and no plurals. Placeholders: `%s` in single strings (for example "Premove recorded: %s. Hit enter to cancel"); positional `%1$s` and `%2$s` inside plural items. Plurals use only the Android-style quantity values `one` and `other` (123 `one` items and 125 `other` items across the files, 248 items in total, 125 plural blocks), so the grammar is a two-form one/other choice. `translation/source/` holds the English strings; `translation/dest/` holds per-language files (for example `dest/nvui/fr-FR.xml`).
 - Licence: AGPLv3+. Clean-room, shape only. No line-by-line translation.
-
-Reuse tag: rewrite-from-idea (AGPLv3+; clean-room only)
-Brief rule served: 1 (one engine: the buffer lives in the engine and the client only displays it); rules 7-9 n/a

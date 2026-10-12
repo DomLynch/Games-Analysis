@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+gawric-Unity-Client-for-L2J	hud-ui	P	STRONG	full	/mnt/frankendom-donors/gawric-Unity-Client-for-L2J/l2-unity/Assets/Scripts/Combat/TargetManager.cs:70-168 and 191-227: tab-target cycle over a nearest-first visible list that skips the current target and wraps, with a separate engage (attack) state; visibility gate in Camera/CameraController.cs:152-190.
+gemrb-gemrb	hud-ui	P	STRONG	full	/mnt/frankendom-donors/gemrb-gemrb/gemrb/core/GUI/GameControl.cpp:1601-1636 and 1571-1585: finger-count gesture table (select box, pan or latched-twist formation rotation, three-finger swipe) with touch-to-reveal HP; pinch delta is stored (EventMgr.cpp:480) but never read.
+hedgewars-hw	hud-ui	P	STRONG	full	/mnt/frankendom-donors/hedgewars-hw/hedgewars/uTouch.pas:89-206 and 258-338: finger-owned widget press and release, with a tap (under 200 ms, 30-unit slop) versus long-press split on release; aim servo at 459-530 has a copy error at line 492.

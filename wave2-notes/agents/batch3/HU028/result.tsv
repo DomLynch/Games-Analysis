@@ -1,0 +1,3 @@
+game	category	old	verdict	depth	finding
+veloren-veloren	hud-ui	P	STRONG	full	/mnt/frankendom-donors/veloren-veloren/voxygen/src/hud/mod.rs:2456-2478 and overhead.rs:82-88,307-368 gate enemy frames on targeted, selected, hurt, grouped or marked within a range that widens after your hit, and draw lost max HP as a ghost segment.
+xoreos-xoreos	hud-ui	P	STRONG	full	/mnt/frankendom-donors/xoreos-xoreos/src/engines/kotorbase/module.cpp:528-544 and gui/hud.cpp:179-406 give select-then-engage on a second tap and an anchored target frame; selectioncircle.cpp:104 and 115 contain two reticle show bugs.

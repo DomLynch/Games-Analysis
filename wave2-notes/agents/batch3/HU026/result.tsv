@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+pokerth-pokerth	hud-ui	P	STRONG	full	gametable/mytimeoutlabel.cpp:51-151 (widget seat timer: 3 s hold, linear drain to the server deadline, one cue) with the QML pair gamehandler.cpp:1375-1435 and PlayerTimeoutBar.qml:42-59; the two clients disagree on cue timing and the widget uses a +5 ms integer fudge
+pshenok-server-survival	hud-ui	P	STRONG	full	src/input/handlers.js:975-1110 (touch: one finger is the primary pointer, two fingers pan and zoom, a second finger drops a held node without the snap rule) with finishNodeDrag at 912-935; a placement tool acts on press before a pinch is seen
+ryzom-ryzomcore	hud-ui	P	STRONG	full	client/src/interface_v3/group_in_scene_user_info.cpp:1030-1050 and 1209-1214 (target marker to 55 m, HP bars to 28 m, hidden beyond the server's update range, no hysteresis), HP scale 1076-1109; minimap, world map and touch were not found or not read

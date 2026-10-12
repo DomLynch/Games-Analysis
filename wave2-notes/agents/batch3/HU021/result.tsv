@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+inkjs	hud-ui	P	PARTIAL	thin	templates/browser_serverless/main.js:8,17,55 and style.css:28 show a reduced-motion gate and a 200 ms reveal stagger on a sample text page; the donor has no HUD, minimap, touch, lock-on, input buffer or string table (verdict-inkjs-hud-ui.txt).
+ioquake-ioq3	hud-ui	P	STRONG	full	code/cgame/cg_draw.c:2003-2074 with cg_drawtools.c:328-351 and cg_main.c:409-414: a name label over the aimed player that holds 1000 ms and fades over 200 ms, which the order command reuses as lock-on forgiveness (out/hud-ui/ioquake-ioq3.deep.md).
+jynew-jynew	hud-ui	P	STRONG	full	Assets/Scripts/GameCore/InputLogics/Core/Context/InputContextManager.cs:63-141 with Jyx2Input_UIContext.cs:23-76: an input-context stack where only the top panel reads keys, with per-panel focus memory and a one-frame enable guard; string table read in 3rd/i18n (out/hud-ui/jynew-jynew.deep.md).

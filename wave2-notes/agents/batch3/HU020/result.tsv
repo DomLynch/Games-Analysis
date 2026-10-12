@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+id-Software-Quake-2	hud-ui	P	STRONG	full	/mnt/frankendom-donors/id-Software-Quake-2/client/cl_scrn.c:941-1225 - server-sent status-bar layout program (anchors, stat-bound numbers, colour bands, if-gates) interpreted each frame; a dead ammo flash bit (1141) and digit truncation (893) noted.
+id-Software-wolf3d	hud-ui	P	STRONG	full	/mnt/frankendom-donors/id-Software-wolf3d/WOLFSRC/WL_AGENT.C:270-322 - health portrait in 7 bands x 3 idle frames, random idle timer, killer-specific dead face; WL_PLAY.C:1157-1196 damage tint decay; restricted licence (clean-room).
+ihhub-fheroes2	hud-ui	P	STRONG	full	/mnt/frankendom-donors/ihhub-fheroes2/src/fheroes2/gui/interface_radar.cpp:283-420 - minimap as a per-tile colour raster with fog gate and category reveal filters, integer zoom and viewport cursor; localevent.cpp:1335-1470 two-finger touch gesture.

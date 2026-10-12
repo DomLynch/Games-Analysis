@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+CleverRaven-Cataclysm-DDA	rendering-performance	P	STRONG	full	src/cata_tiles.cpp:1256-1451 ortho tint batch keyed by colour, closed at a flat tile (1379), a colour change (1402) or a union box above 2x member area (1427); only runs on the non-shader path (1139-1142)
+DCurrent-openbor	rendering-performance	P	STRONG	full	engine/source/gamelib/spriteq.c:236-386 sprite queue ordered by z then sortid, z-band draw and locked base layer; engine/openbor.c:25531-25532 pause freezes the frame into one base sprite; sort is an O(n^2) unstable selection pass (236-297)
+DFHack-dfhack	rendering-performance	P	STRONG	full	plugins/rendermax/renderer_light.cpp:1254-1312 and 1395-1420 lighting split into strips, one buffer per worker, order-free max merge; merge walks the whole canvas (1307), which is the defect; decision reject for Frankendom

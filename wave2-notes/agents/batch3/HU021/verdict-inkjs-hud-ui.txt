@@ -1,0 +1,35 @@
+inkjs (hud-ui, cell 16) - verdict PARTIAL, depth thin
+
+Donor: /mnt/frankendom-donors/inkjs | Licence: MIT (LICENSE.md line 1: "MIT License", copyright inkle Ltd 2017 and inkjs contributors)
+Hint file read: /mnt/frankendom-donors/inkjs/templates/browser_serverless/main.js (97 lines, read in full).
+
+Files opened (candidates, at least 3 required):
+1. /mnt/frankendom-donors/inkjs/templates/browser_serverless/main.js (full; the hint file)
+2. /mnt/frankendom-donors/inkjs/templates/browser_with_server/main.js (diff against #1 only, not read in full; same panel logic, but loads story.json by fetch)
+3. /mnt/frankendom-donors/inkjs/templates/browser_serverless/style.css (full, 43 lines)
+4. /mnt/frankendom-donors/inkjs/src/engine/Story.ts (read: ChooseChoiceIndex at 1726, ContinueAsync at 349-358; rest not read)
+5. /mnt/frankendom-donors/inkjs/src/engine/Tag.ts (full, 22 lines)
+6. /mnt/frankendom-donors/inkjs/templates/browser_with_server/story.json and templates/browser_serverless/story.js (string table check, see below)
+Searches: grep -rniE for minimap, hud, lock-on, touch, locali[sz], i18n, gettext, translat over src, templates, docs and script. The only hits were inside story text in the sample story JSON. No HUD, health or target frame, minimap, world map, touch input, input buffer, lock-on, or locale module exists in the donor.
+
+Why PARTIAL: inkjs is a narrative (ink) runtime. Its only UI is a sample browser page that appends paragraphs to a text log and shows clickable choices. None of the hud-ui topics is implemented; only the reduced-motion gate and the reveal pacing are real code, and they are small.
+
+Mechanism that is real (read):
+- main.js line 8: the page reads the reduced-motion preference at run time (matchMedia on prefers-reduced-motion: no-preference). Line 17: the auto-scroll returns at once when reduced motion is set, so the reader scrolls by hand. The CSS (style.css line 28) turns the paragraph fade (transition opacity 1.0 s) off in the same way.
+- main.js lines 53-69: each new paragraph or choice is shown after a delay that grows by 200 ms per item (delay += 200.0), and showAfter (lines 11-13) uses a 0 ms timeout when reduced motion is on.
+- main.js line 86: a choice click removes the old choice lines, calls story.ChooseChoiceIndex(choice.index), then runs continueStory() again. Story.ts line 1726 validates the index against currentChoices before it moves the thread.
+- Story.ts line 349 ContinueAsync(millisecsLimitAsync) runs Continue with a time limit (line 358), so a long story step can be split across frames. This is a frame-budget idea, not a HUD one.
+- Tag.ts line 11: tags (# text) are the only channel from the story to the UI, built at run time from BeginTag/EndTag. The sample page does not read tags.
+
+String table / localisation (hint says open it; counted and described):
+- The donor has no locale file, no key table and no translation layer. The text lives inside the story itself: templates/browser_with_server/story.json (inkVersion 20, about 154 KB) and templates/browser_serverless/story.js (same story as a JS string).
+- Grammar of the story JSON as seen in the first 600 bytes: a root array of containers; "^" prefixes a literal text run; "\n" is a newline; "ev" ... "/ev" wraps an evaluation block; "str" ... "/str" wraps a string value inside it; "VAR?" reads a variable; "->" is a divert to a path; "c-N" are choice containers; "#f" is a flags field; "*" introduces a choice point; "{"b": ...}" nests a branch. Counted: about 1468 quoted entries that start with "^" (grep count, not checked one by one).
+- Nothing in the donor translates or switches text by language. A translation would mean one story file per language.
+
+Gaps against Frankendom rulings (HUD = parity row 14): no HUD, no frames, no minimap, no touch, no lock-on. Use only the reduced-motion gate and the "clear the old choices on pick" pattern.
+
+Best transferable idea: Read the reduced-motion preference once and gate every timed reveal and auto-scroll on it, so that the player scrolls or reads at their own pace when it is set.
+
+Decision (proposed): adopt - the reduced-motion gate is a one-line rule for HUD fades, floating numbers and auto-scroll; the text-log layout itself does not fit our HUD and is not proposed.
+Acceptance: With reduced motion on, floating damage numbers and panel fades appear at once with no timed stagger, and the panel never scrolls on its own (checked by a client test that sets the preference and counts animated frames).
+Parity row: 14 (HUD). Target if built: src/fight/hud (client only; the engine never reads it).

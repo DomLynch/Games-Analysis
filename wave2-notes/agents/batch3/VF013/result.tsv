@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+hedgewars-hw	vfx-blood-finishers	P	STRONG	full	hedgewars/uVisualGearsHandlers.pas:846-887 and hedgewars/uWorld.pas:2143-2149: big-explosion screen shake falls from 13 px to a 1 px floor over 250 ms, but its offset is added to WorldDx with no restore (fix: separate decaying offset, fixed-interval jitter)
+ioquake-ioq3	vfx-blood-finishers	P	STRONG	full	code/cgame/cg_playerstate.c:92-181, code/cgame/cg_view.c:316-355 and 559-602: damage view kick (100 ms attack, 400 ms release, scaled by damage and low health) and directional red blob, both first-person only (cg_view.c:679-682, 810-812)
+keldaanCommunity-pokemonAutoChess	vfx-blood-finishers	P	STRONG	full	app/public/src/game/components/pokemon-sprite.ts:563-612 and battle-manager.ts:177-185: leader death fades alpha over 1500 ms while followers flee on eight ring directions after a 500 ms delay for 5000 ms, removed at 5.5 s (row 17 chosen over hint row 10)

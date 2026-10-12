@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+FWGS-xash3d-fwgs	rendering-performance	P	STRONG	full	/mnt/frankendom-donors/FWGS-xash3d-fwgs/public/atlas.c:18-60 is a lowest-then-leftmost skyline packer for lightmap atlas pages; note out/rendering-performance/FWGS-xash3d-fwgs.deep.md.
+FunkinCrew-Funkin	rendering-performance	P	STRONG	full	/mnt/frankendom-donors/FunkinCrew-Funkin/source/funkin/ui/freeplay/SongItemGroup.hx:32-70 draws capsules layer by layer with a shared blur shader; hint AtlasText.hx draws one sprite per letter; note out/rendering-performance/FunkinCrew-Funkin.deep.md.
+LostCityRS-Engine-TS	rendering-performance	P	STRONG	full	/mnt/frankendom-donors/LostCityRS-Engine-TS/src/network/rsbuf/build.ts:72-132 and info.ts:21-49 give each player an adaptive view radius with a 250-entity cap and a 4997-byte packet budget; hint client.js is a minified audio bundle; note out/rendering-performance/LostCityRS-Engine-TS.deep.md.

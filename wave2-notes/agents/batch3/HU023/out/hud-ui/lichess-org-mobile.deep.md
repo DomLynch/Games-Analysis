@@ -126,6 +126,3 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - The server copy: `saveForecast` posts the lines to the server (game_repository.dart 158-166; body not read). For Frankendom the server copy is the truth and the client copy is a prediction; a mismatch must reset to the server state.
 - String table (`lib/l10n`, English source `app_en.arb`): 54 `.arb` files in `lib/l10n` (includes `app_en.arb` and `app_en_US.arb`). `app_en.arb` has 2221 message keys and 259 `@`-metadata entries (placeholder types and descriptions). 92 messages are ICU MessageFormat plurals, written as `{count, plural, =1{...} other{...}}`, so the English grammar is an exact-one choice plus "other". Named placeholders such as `{count}` and `{param2}` appear in plural bodies. No `select` messages were found in the English file. The generated `lib/l10n/l10n_*.dart` files (51 found) are not used for counts. Other locales' plural categories were not read.
 - Licence: GPL-3.0-or-later. Clean-room, shape only. No line-by-line translation.
-
-Reuse tag: rewrite-from-idea (GPL-3.0-or-later; clean-room only)
-Brief rule served: 1 (one engine: the plan is engine state, the client only displays it); rules 7-9 n/a

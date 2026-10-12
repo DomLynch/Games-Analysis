@@ -1,0 +1,4 @@
+game	category	old	verdict	depth	finding
+keldaanCommunity-pokemonAutoChess	hud-ui	P	STRONG	full	/mnt/frankendom-donors/keldaanCommunity-pokemonAutoChess/app/public/src/game/components/life-bar.ts:7-177 - segmented HP bar (one tick per 25 hp), shield overflow rescales the frame, PP bar, 150 ms eased updates; sketch typechecked
+l1j-en-classic	hud-ui	P	STRONG	full	/mnt/frankendom-donors/l1j-en-classic/src/l1j/server/server/serverpackets/S_HPMeter.java:24-59 with model/L1Party.java:50-128 - party HP shared as a 0-100 byte pushed on change and hidden with 0xff on leave; floor-to-zero and unguarded divide noted
+levy-street-world-of-claudecraft	hud-ui	P	STRONG	full	/mnt/frankendom-donors/levy-street-world-of-claudecraft/src/ui/absorb_bar.ts:1-105 with unit_frame_painter.ts:238-246 and low_health.ts:25-36 - shield drawn as a segment from the hp edge (right-aligned when overshielded), low-health vignette eases in below 35 percent hp; duplicate helper at unit_frame.ts:235-238
