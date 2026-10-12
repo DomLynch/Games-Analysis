@@ -8,27 +8,27 @@
 | Design-brief questions | 15 | 12 are accept-in-one-yes; 3 are not the brief's call (B1 launch target, B2 kids/age, B3 test box) |
 | Licences | 3 | L3 TRELLIS.2 / nvdiffrast is pending Dom |
 
-## FOR DOM: only these 19 are yours (Strategy ruled the other 139). Say "accept all" or name changes.
+## THE 19 (answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation; B2 and L3 stay flagged pending legal review / Dom). Dom can still change any of them.
 
-- **B1. [NOT the brief's call: launch target. Dom confirms.]** How many players do we plan for on launch day? Strategy recommends planning for 1,000 at once, and buying hosts for 10,000 only when the test shows 80 percent of one host used. [server-performance-scaling #1]
-- **B2. [NOT the brief's call: kids/age rule. Dom decides, legal.]** Do children play? If yes we need an age rule and the specs have none. The brief suggests no analytics beyond anonymous counts for anyone, but that is not the brief's to recommend. [analytics-telemetry #2]
-- **B13. Keep 90-day retention of analytics?** Accept: yes, same as duel metrics. [analytics-telemetry #3]
-- **B14. Who gets alerts?** Accept: one daily summary to Dom; a page only for "server down". [analytics-telemetry #4]
-- **L3. TRELLIS.2 uses nvdiffrast (NVIDIA non-commercial), which blocks shipping TRELLIS.2 output.** Pending Dom. Strategy raises this with Dom and recommends TRELLIS.2 for look-development and prototypes only; before any paid launch either swap the rasterizer or re-make the shipped assets another way. [character-build-recipe]
-- **S10. How strong are ranks?** Four ranks at 100 / 150 / 175 / 200 percent power, tuned in playtests; the stronger OpenRA numbers are the alternative for fast duels. [freeciv SK014, OpenRA SK014]
-- **S39. Do hunters remember a target for a time after losing sight, by creature tier?** Yes; Dom picks the values. [Crawl AI002]
-- **S41. Do enemies flee from a much stronger player?** Yes; Dom sets the strength gap (do not use the donor's 25). [Angband AI002]
-- **S43. How long may a cornered afraid creature stay frozen?** A capped number of turns, about 10; Dom sets it. [Angband AI002]
-- **S50. Can a report set a mute length?** No. Reports add to a count; a moderator picks 10 min / 1 h / 24 h / 7 d (gag choices 5, 30, 60 minutes); one report never means a permanent mute. [rAthena CT004, ACE CT005, Open-RSC CT005]
-- **S52. A short chat delay for brand-new characters?** Yes, 30 minutes for zone and world chat only; party, guild and whisper work at once. [AzerothCore CT004]
-- **S68. Keep every PvP fight (random seed, inputs, rule version) so any fight can be replayed?** Yes, including guest fights, and how long to keep them is your call. [OpenBW, OpenRA DT001; Hedgewars, Showdown DT002; Return to the Roots DT003]
-- **U1. Who pays the market fee, the seller or the buyer?** Seller: a cut taken from the seller, because then the price a buyer sees is the price they pay. [OpenDAoC TR005; the donor charges the buyer]
-- **U2. Should a direct player-to-player trade carry any fee?** No fee on trades; fees only on market listings, because a fee on a two-person swap is easy to dodge and annoying. [EvEmu TR005]
-- **U12. What is the lowest price a shop pays when buying from a player?** 1 gold, plus a per-item minimum set in the item's data, so a rare item can never sell for 0. [2004Scape TR005]
-- **U38. After a death in an open zone, must the player wait a rolling 30 / 60 / 120 second reclaim delay (PvE deaths included, never in the Pit)?** Yes, because without a delay death has no cost. [AzerothCore DR004, cMaNGOS DR004]
-- **U40. Does death cost XP or money?** No XP tax and no money tax for now; if an XP tax comes back, an insurance item skips it. [rAthena DR004]
-- **U41. On a player kill, does the killer take exactly one item (PvP zones only, never the Pit), at a rate set per zone?** Yes, never the donor's drop-everything. [rAthena DR004, Open-RSC DR005]
-- **U42. What does a player keep on death?** Keep 3 items unflagged, 0 if skulled (marked as an attacker), plus 1 with the protect ability, worn gear kept in unflagged zones; numbers are zone data so open-PvP zones can differ. [Open-RSC DR005]
+- **B1. [NOT the brief's call: launch target. Dom confirms.]** How many players do we plan for on launch day? Strategy recommends planning for 1,000 at once, and buying hosts for 10,000 only when the test shows 80 percent of one host used. [server-performance-scaling #1] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
+- **B2. [NOT the brief's call: kids/age rule. Dom decides, legal.]** Do children play? If yes we need an age rule and the specs have none. The brief suggests no analytics beyond anonymous counts for anyone, but that is not the brief's to recommend. [analytics-telemetry #2] [DEFAULT 2026-10-12 by Strategy + donor-library dev, PENDING LEGAL REVIEW BEFORE LAUNCH: no under-13 accounts, no free-text chat for unverified-age accounts, anonymous analytics counts only]
+- **B13. Keep 90-day retention of analytics?** Accept: yes, same as duel metrics. [analytics-telemetry #3] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
+- **B14. Who gets alerts?** Accept: one daily summary to Dom; a page only for "server down". [analytics-telemetry #4] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
+- **L3. TRELLIS.2 uses nvdiffrast (NVIDIA non-commercial), which blocks shipping TRELLIS.2 output.** Pending Dom. Strategy raises this with Dom and recommends TRELLIS.2 for look-development and prototypes only; before any paid launch either swap the rasterizer or re-make the shipped assets another way. [character-build-recipe] [DECIDED 2026-10-12 by Strategy + donor-library dev: look-dev and prototypes only; licence risk NOT accepted; swap the rasterizer or re-make shipped assets before any paid launch. PENDING Dom]
+- **S10. How strong are ranks?** Four ranks at 100 / 150 / 175 / 200 percent power, tuned in playtests; the stronger OpenRA numbers are the alternative for fast duels. [freeciv SK014, OpenRA SK014] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
+- **S39. Do hunters remember a target for a time after losing sight, by creature tier?** Yes; Dom picks the values. [Crawl AI002] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
+- **S41. Do enemies flee from a much stronger player?** Yes; Dom sets the strength gap (do not use the donor's 25). [Angband AI002] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
+- **S43. How long may a cornered afraid creature stay frozen?** A capped number of turns, about 10; Dom sets it. [Angband AI002] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
+- **S50. Can a report set a mute length?** No. Reports add to a count; a moderator picks 10 min / 1 h / 24 h / 7 d (gag choices 5, 30, 60 minutes); one report never means a permanent mute. [rAthena CT004, ACE CT005, Open-RSC CT005] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
+- **S52. A short chat delay for brand-new characters?** Yes, 30 minutes for zone and world chat only; party, guild and whisper work at once. [AzerothCore CT004] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
+- **S68. Keep every PvP fight (random seed, inputs, rule version) so any fight can be replayed?** Yes, including guest fights, and how long to keep them is your call. [OpenBW, OpenRA DT001; Hedgewars, Showdown DT002; Return to the Roots DT003] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
+- **U1. Who pays the market fee, the seller or the buyer?** Seller: a cut taken from the seller, because then the price a buyer sees is the price they pay. [OpenDAoC TR005; the donor charges the buyer] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
+- **U2. Should a direct player-to-player trade carry any fee?** No fee on trades; fees only on market listings, because a fee on a two-person swap is easy to dodge and annoying. [EvEmu TR005] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
+- **U12. What is the lowest price a shop pays when buying from a player?** 1 gold, plus a per-item minimum set in the item's data, so a rare item can never sell for 0. [2004Scape TR005] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
+- **U38. After a death in an open zone, must the player wait a rolling 30 / 60 / 120 second reclaim delay (PvE deaths included, never in the Pit)?** Yes, because without a delay death has no cost. [AzerothCore DR004, cMaNGOS DR004] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
+- **U40. Does death cost XP or money?** No XP tax and no money tax for now; if an XP tax comes back, an insurance item skips it. [rAthena DR004] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
+- **U41. On a player kill, does the killer take exactly one item (PvP zones only, never the Pit), at a rate set per zone?** Yes, never the donor's drop-everything. [rAthena DR004, Open-RSC DR005] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
+- **U42. What does a player keep on death?** Keep 3 items unflagged, 0 if skulled (marked as an attacker), plus 1 with the protect ability, worn gear kept in unflagged zones; numbers are zone data so open-PvP zones can differ. [Open-RSC DR005] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
 
 Strategy's ruling (2026-10-12): the 141 other decisions (139 plus two added from the gap-checks, U46 and U47) are ruled as written, every number kept as data and tuned in playtests. Lines are marked [ruled by Strategy 2026-10-12] below.
 
@@ -38,8 +38,8 @@ How to read this: each line is one question. Answer "yes" to accept my recommend
 ## Urgent this week (live match flow and economy)
 
 ### Trading and the market
-- **U1. Who pays the market fee, the seller or the buyer?** Seller: a cut taken from the seller, because then the price a buyer sees is the price they pay. [OpenDAoC TR005; the donor charges the buyer]
-- **U2. Should a direct player-to-player trade carry any fee?** No fee on trades; fees only on market listings, because a fee on a two-person swap is easy to dodge and annoying. [EvEmu TR005]
+- **U1. Who pays the market fee, the seller or the buyer?** Seller: a cut taken from the seller, because then the price a buyer sees is the price they pay. [OpenDAoC TR005; the donor charges the buyer] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
+- **U2. Should a direct player-to-player trade carry any fee?** No fee on trades; fees only on market listings, because a fee on a two-person swap is easy to dodge and annoying. [EvEmu TR005] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
 - **U3. Must a trade start with a request that the other player accepts?** Yes, because an unrequested window popping up is spam. [OpenDAoC TR005] [ruled by Strategy 2026-10-12]
 - **U4. Should a trade close by itself if the two players move out of range?** Yes, at once, with nothing handed over and any escrowed items returned, because otherwise people trade across the map. [AzerothCore TR004, l1j TR004] [ruled by Strategy 2026-10-12]
 - **U5. If either player changes the offer, do both confirmations reset?** Yes, because otherwise someone swaps the deal after the other side has agreed. [l1j TR004; EvEmu and OpenDAoC use the same rule] [ruled by Strategy 2026-10-12]
@@ -49,7 +49,7 @@ How to read this: each line is one question. Answer "yes" to accept my recommend
 - **U9. Can a shop discount ever push a price below zero?** No, discounts apply to the money price only and the price never goes under zero, because the donor's version paid players to buy. [Doddler TR004] [ruled by Strategy 2026-10-12]
 - **U10. Can an item picked up as "take one" loot be traded?** No in the first version; if wanted later, one bind-after-pickup rule, because free trade of take-one loot defeats the point of take-one. [AzerothCore TR004] [ruled by Strategy 2026-10-12]
 - **U11. Is shop stock shared by everyone in a zone, and does it refill on a timer?** Shared per zone, refilling on the zone's timer (not when someone looks at the shop), because it stops refill tricks and reset-by-browsing. [2004Scape TR005, AzerothCore TR004] [ruled by Strategy 2026-10-12]
-- **U12. What is the lowest price a shop pays when buying from a player?** 1 gold, plus a per-item minimum set in the item's data, so a rare item can never sell for 0. [2004Scape TR005]
+- **U12. What is the lowest price a shop pays when buying from a player?** 1 gold, plus a per-item minimum set in the item's data, so a rare item can never sell for 0. [2004Scape TR005] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
 - **U13. Should a suspicious trade or login ban the account automatically?** No: cancel, log, and flag for a person to review, because automatic bans hit innocent players on bad connections (the donors turned theirs off). [l1j TR004, Open-RSC NW003] [ruled by Strategy 2026-10-12]
 
 ### Inventory and quest rewards
@@ -85,11 +85,11 @@ How to read this: each line is one question. Answer "yes" to accept my recommend
 - **U37. Does the Pit (client-only arena) use any lag compensation?** No, unless the Pit moves its fights to the server. [Colyseus NW002] [ruled by Strategy 2026-10-12]
 
 ### Death penalty
-- **U38. After a death in an open zone, must the player wait a rolling 30 / 60 / 120 second reclaim delay (PvE deaths included, never in the Pit)?** Yes, because without a delay death has no cost. [AzerothCore DR004, cMaNGOS DR004]
+- **U38. After a death in an open zone, must the player wait a rolling 30 / 60 / 120 second reclaim delay (PvE deaths included, never in the Pit)?** Yes, because without a delay death has no cost. [AzerothCore DR004, cMaNGOS DR004] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
 - **U39. Does gear wear out on death?** No until the repair system exists, because it punishes players with nothing to spend on. [AzerothCore DR004, cMaNGOS DR004] [ruled by Strategy 2026-10-12]
-- **U40. Does death cost XP or money?** No XP tax and no money tax for now; if an XP tax comes back, an insurance item skips it. [rAthena DR004]
-- **U41. On a player kill, does the killer take exactly one item (PvP zones only, never the Pit), at a rate set per zone?** Yes, never the donor's drop-everything. [rAthena DR004, Open-RSC DR005]
-- **U42. What does a player keep on death?** Keep 3 items unflagged, 0 if skulled (marked as an attacker), plus 1 with the protect ability, worn gear kept in unflagged zones; numbers are zone data so open-PvP zones can differ. [Open-RSC DR005]
+- **U40. Does death cost XP or money?** No XP tax and no money tax for now; if an XP tax comes back, an insurance item skips it. [rAthena DR004] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
+- **U41. On a player kill, does the killer take exactly one item (PvP zones only, never the Pit), at a rate set per zone?** Yes, never the donor's drop-everything. [rAthena DR004, Open-RSC DR005] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
+- **U42. What does a player keep on death?** Keep 3 items unflagged, 0 if skulled (marked as an attacker), plus 1 with the protect ability, worn gear kept in unflagged zones; numbers are zone data so open-PvP zones can differ. [Open-RSC DR005] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
 - **U43. Does a death count as PvP if any player hurt the victim recently, even if they have since logged out?** Yes, because the drop outcome changes and logging out must not erase blame. [2004Scape DR005; the donor says no] [ruled by Strategy 2026-10-12]
 - **U44. Does kill credit reset on a full heal or after idle time?** After idle time (10 steps by default), because a heal should not wipe credit. [2004Scape DR005] [ruled by Strategy 2026-10-12]
 - **U45. Does an attack that misses still mark the attacker as a player-killer?** Yes, because choosing to attack is the offence. [2004Scape DR005] [ruled by Strategy 2026-10-12]
@@ -110,7 +110,7 @@ How to read this: each line is one question. Answer "yes" to accept my recommend
 - **S7. Hand out strength and life growth items on a measured schedule (about one life item every four levels), counted when generated?** Yes, because pure luck leaves some players behind. [Brogue SK013] [ruled by Strategy 2026-10-12]
 - **S8. Keep ally XP fed by exploring, with a bond level and a companion feat?** Yes, per character. [Brogue SK013] [ruled by Strategy 2026-10-12]
 - **S9. Do ranks come from kills or from fighting stronger foes?** From kills with a bigger award for harder foes, and no rank from killing a helpless target; the donors disagree. [OpenRA SK014, freeciv SK014] [ruled by Strategy 2026-10-12]
-- **S10. How strong are ranks?** Four ranks at 100 / 150 / 175 / 200 percent power, tuned in playtests; the stronger OpenRA numbers are the alternative for fast duels. [freeciv SK014, OpenRA SK014]
+- **S10. How strong are ranks?** Four ranks at 100 / 150 / 175 / 200 percent power, tuned in playtests; the stronger OpenRA numbers are the alternative for fast duels. [freeciv SK014, OpenRA SK014] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
 - **S11. Does the rank bonus apply to attack and defence?** Yes, both. [freeciv SK014] [ruled by Strategy 2026-10-12]
 - **S12. May an elite self-heal in a duel?** No, only where a zone allows it. [OpenRA SK014] [ruled by Strategy 2026-10-12]
 - **S13. Damage from an attack-over-defence curve instead of flat damage?** Yes, once the health scale is fixed. [KeeperRL SK014] [ruled by Strategy 2026-10-12]
@@ -143,11 +143,11 @@ How to read this: each line is one question. Answer "yes" to accept my recommend
 - **S36. Do enemies give up a chase by one shared formula with four numbers on the creature (and bosses may "never break off")?** Yes; the clock runs from the target's last hit on the creature. [Veloren AI003] [ruled by Strategy 2026-10-12]
 - **S37. Does a downed ally or item pickup outrank a hostile target?** Not against players; only for NPC allies. [Veloren AI003] [ruled by Strategy 2026-10-12]
 - **S38. Does a creature that cannot reach its target retreat if smart and retry the path rarely (1 step in 12)?** Yes; timer is one fixed value for now. [Crawl AI002, cMaNGOS AI003] [ruled by Strategy 2026-10-12]
-- **S39. Do hunters remember a target for a time after losing sight, by creature tier?** Yes; Dom picks the values. [Crawl AI002]
+- **S39. Do hunters remember a target for a time after losing sight, by creature tier?** Yes; Dom picks the values. [Crawl AI002] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
 - **S40. Do beasts flee on low health but never bosses?** Yes, as a per-creature switch. [Crawl AI002] [ruled by Strategy 2026-10-12]
-- **S41. Do enemies flee from a much stronger player?** Yes; Dom sets the strength gap (do not use the donor's 25). [Angband AI002]
+- **S41. Do enemies flee from a much stronger player?** Yes; Dom sets the strength gap (do not use the donor's 25). [Angband AI002] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
 - **S42. Do animal packs ambush instead of charging when the player is in the open and above half health?** Yes, per-creature switch. [Angband AI002] [ruled by Strategy 2026-10-12]
-- **S43. How long may a cornered afraid creature stay frozen?** A capped number of turns, about 10; Dom sets it. [Angband AI002]
+- **S43. How long may a cornered afraid creature stay frozen?** A capped number of turns, about 10; Dom sets it. [Angband AI002] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
 - **S44. Three awareness bands (lose a player far away, 97 percent keep, 25 percent notice per step in view)?** Yes. [Brogue AI002] [ruled by Strategy 2026-10-12]
 - **S45. Track scent only in zones with a player in them, and do cautious groups avoid chokepoints?** Yes to both, because it caps cost and fits the three-attacker rule. [Brogue AI002] [ruled by Strategy 2026-10-12]
 - **S46. Melee advance distances: one simple dial per creature, no circling for casters, and circle chance never below 10 percent?** Yes to all three, because it is easy to tune and nothing freezes behind a wall. [CombatPathingRevolution AI003] [ruled by Strategy 2026-10-12]
@@ -156,9 +156,9 @@ How to read this: each line is one question. Answer "yes" to accept my recommend
 ### Chat and reports
 - **S48. Reports need a reason from a short fixed list (plus a 120-character note), with a recency check?** Yes, one report per player per suspect until a moderator closes the case. [AAEmu CT004, swgemu CT005] [ruled by Strategy 2026-10-12]
 - **S49. Who clears a suspect?** A moderator action that writes a record, not an NPC conversation. [AAEmu CT004] [ruled by Strategy 2026-10-12]
-- **S50. Can a report set a mute length?** No. Reports add to a count; a moderator picks 10 min / 1 h / 24 h / 7 d (gag choices 5, 30, 60 minutes); one report never means a permanent mute. [rAthena CT004, ACE CT005, Open-RSC CT005]
+- **S50. Can a report set a mute length?** No. Reports add to a count; a moderator picks 10 min / 1 h / 24 h / 7 d (gag choices 5, 30, 60 minutes); one report never means a permanent mute. [rAthena CT004, ACE CT005, Open-RSC CT005] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
 - **S51. Does a mute keep counting while the player is logged out?** Yes, it expires by the wall clock. [rAthena CT004] [ruled by Strategy 2026-10-12]
-- **S52. A short chat delay for brand-new characters?** Yes, 30 minutes for zone and world chat only; party, guild and whisper work at once. [AzerothCore CT004]
+- **S52. A short chat delay for brand-new characters?** Yes, 30 minutes for zone and world chat only; party, guild and whisper work at once. [AzerothCore CT004] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
 - **S53. Silent drop of filtered whispers, with the sender told "filtered"?** Yes, so spammers cannot learn which word hit. [AzerothCore CT004] [ruled by Strategy 2026-10-12]
 - **S54. Does a spam report keep the last 20 messages for 10 minutes for moderators?** Yes. [AzerothCore CT004] [ruled by Strategy 2026-10-12]
 - **S55. When someone blocks you, do you get told?** Yes, keep the notice; and let players block per channel (trade, group-finder, roleplay). [ACE CT005] [ruled by Strategy 2026-10-12]
@@ -178,7 +178,7 @@ How to read this: each line is one question. Answer "yes" to accept my recommend
 - **S67. Once-only dialogue choices: hide after used, with a saved flag for quest steps?** Yes. [inkjs QU002] [ruled by Strategy 2026-10-12]
 
 ### Fight replay and fairness
-- **S68. Keep every PvP fight (random seed, inputs, rule version) so any fight can be replayed?** Yes, including guest fights, and how long to keep them is your call. [OpenBW, OpenRA DT001; Hedgewars, Showdown DT002; Return to the Roots DT003]
+- **S68. Keep every PvP fight (random seed, inputs, rule version) so any fight can be replayed?** Yes, including guest fights, and how long to keep them is your call. [OpenBW, OpenRA DT001; Hedgewars, Showdown DT002; Return to the Roots DT003] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
 - **S69. Separate random streams (damage, loot, enemy AI, spawns) from one seed?** Yes, so a change in one never shifts another. [OpenBW DT001, Showdown DT002, Quake DT003, openage DT003] [ruled by Strategy 2026-10-12]
 - **S70. A fingerprint every 32 steps or each turn, so a bad replay names its first bad moment?** Yes; a mismatch is logged, never skipped, and the fingerprint is an alarm, not a judge. [OpenBW DT001, Hedgewars DT002, Return to the Roots DT003] [ruled by Strategy 2026-10-12]
 - **S71. A fixed set of golden fights replayed on every rule change in automatic tests, and refuse to replay with a different rule version?** Yes. [OpenRA DT001, Beyond All Reason DT001] [ruled by Strategy 2026-10-12]
@@ -212,8 +212,8 @@ How to read this: each line is one question. Answer "yes" to accept my recommend
 ## Appendix: Design-brief questions
 Strategy's ruling: 12 of 15 are "accept the recommendation" in one yes. Three are not the brief's to recommend (marked).
 
-- **B1. [NOT the brief's call: launch target. Dom confirms.]** How many players do we plan for on launch day? Strategy recommends planning for 1,000 at once, and buying hosts for 10,000 only when the test shows 80 percent of one host used. [server-performance-scaling #1]
-- **B2. [NOT the brief's call: kids/age rule. Dom decides, legal.]** Do children play? If yes we need an age rule and the specs have none. The brief suggests no analytics beyond anonymous counts for anyone, but that is not the brief's to recommend. [analytics-telemetry #2]
+- **B1. [NOT the brief's call: launch target. Dom confirms.]** How many players do we plan for on launch day? Strategy recommends planning for 1,000 at once, and buying hosts for 10,000 only when the test shows 80 percent of one host used. [server-performance-scaling #1] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
+- **B2. [NOT the brief's call: kids/age rule. Dom decides, legal.]** Do children play? If yes we need an age rule and the specs have none. The brief suggests no analytics beyond anonymous counts for anyone, but that is not the brief's to recommend. [analytics-telemetry #2] [DEFAULT 2026-10-12 by Strategy + donor-library dev, PENDING LEGAL REVIEW BEFORE LAUNCH: no under-13 accounts, no free-text chat for unverified-age accounts, anonymous analytics counts only]
 - **B3. [NOT the brief's call: test box. Strategy rules.]** Where do we load-test with bots? Strategy rules: on the VPS in a spare window, never in a release window; the Hugging Face CPU only if the test needs more cores than the VPS has. This replaces the brief's "separate rented box". [server-performance-scaling #5] [ruled by Strategy 2026-10-12]
 - **B4. Move player presence to its own host before beta?** Accept: yes, before the load test, so the test reads a clean box. [server-performance-scaling #2] [ruled by Strategy 2026-10-12]
 - **B5. Save player location to the database every 120 seconds, plus on leave?** Accept: yes; it halves database cost and nothing pays from it. [server-performance-scaling #3] [ruled by Strategy 2026-10-12]
@@ -224,11 +224,11 @@ Strategy's ruling: 12 of 15 are "accept the recommendation" in one yes. Three ar
 - **B10. Which phones are the test devices?** Accept: an older Android around 3 GB for low, iPhone 12 for mid. [phone-performance-battery #4] [ruled by Strategy 2026-10-12]
 - **B11. Idle menus at 30 fps to save battery?** Accept: yes. [phone-performance-battery #5] [ruled by Strategy 2026-10-12]
 - **B12. Where do the 4 dashboards live?** Accept: a private page reading the database tables plus the health report. [analytics-telemetry #1] [ruled by Strategy 2026-10-12]
-- **B13. Keep 90-day retention of analytics?** Accept: yes, same as duel metrics. [analytics-telemetry #3]
-- **B14. Who gets alerts?** Accept: one daily summary to Dom; a page only for "server down". [analytics-telemetry #4]
+- **B13. Keep 90-day retention of analytics?** Accept: yes, same as duel metrics. [analytics-telemetry #3] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
+- **B14. Who gets alerts?** Accept: one daily summary to Dom; a page only for "server down". [analytics-telemetry #4] [answered 2026-10-12 by Strategy + donor-library dev under Dom's delegation]
 - **B15. Count fight win-rates from the first public test?** Accept: yes, aggregated only, never per player. [analytics-telemetry #5] [ruled by Strategy 2026-10-12]
 
 ## Appendix: Licences
 - **L1. CC0 (Duelyst code) and Unlicense (Warcraft Arena Unity) may be used like MIT?** Permitted: yes for code, no credit needed; leave Duelyst's art out. [Duelyst MG013, Warcraft Arena Unity NW003] [ruled by Strategy 2026-10-12]
 - **L2. OpenBW has no licence file.** Ideas only, no code copied. [OpenBW DT001] [ruled by Strategy 2026-10-12]
-- **L3. TRELLIS.2 uses nvdiffrast (NVIDIA non-commercial), which blocks shipping TRELLIS.2 output.** Pending Dom. Strategy raises this with Dom and recommends TRELLIS.2 for look-development and prototypes only; before any paid launch either swap the rasterizer or re-make the shipped assets another way. [character-build-recipe]
+- **L3. TRELLIS.2 uses nvdiffrast (NVIDIA non-commercial), which blocks shipping TRELLIS.2 output.** Pending Dom. Strategy raises this with Dom and recommends TRELLIS.2 for look-development and prototypes only; before any paid launch either swap the rasterizer or re-make the shipped assets another way. [character-build-recipe] [DECIDED 2026-10-12 by Strategy + donor-library dev: look-dev and prototypes only; licence risk NOT accepted; swap the rasterizer or re-make shipped assets before any paid launch. PENDING Dom]
