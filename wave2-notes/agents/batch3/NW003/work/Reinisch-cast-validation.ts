@@ -37,7 +37,7 @@ function validateCast(c: Caster, def: SpellDef | undefined, target: Target | und
   if (!c.known.has(def.id)) return 'NotKnown';
   if (!c.alive) return 'CasterDead';
   if ((c.cooldownLeftMs.get(def.id) ?? 0) > 0) return 'NotReady';
-  if (c.gcdLeftMs > 0 && def.triggersGcd) return 'NotReady';
+  if (c.gcdLeftMs > 0) return 'NotReady'; // donor blocks every spell while a GCD runs; only the ignore-GCD cast flag (not on our wire) skips it
   if (c.cast !== null) return 'NotReady';
   if (target !== undefined && !target.ok) return 'BadTargets';
   if (target !== undefined && Math.hypot(target.x - c.x, target.z - c.z) > def.range) return 'OutOfRange';

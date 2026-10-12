@@ -190,3 +190,8 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
   2. Should suspicion signals ever ban automatically? Recommendation: no; send them to the ledger for review, as the donor did after it disabled its auto-ban.
   3. Should login reveal "already online" or "banned" before the password is checked? Recommendation: no; one generic failure until the password checks out.
 - **Core slice.** This feeds parity row 5 (intake) through `origins/server/ingress-gate.ts`. The login and session layer has no row in the 1-23 checklist; flag that to Lead rather than filing it under row 18.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN (about 25 claims checked against real lines; no errors).
+- Missed: the lock check at `LoginRequest` 208 also exempts 127.0.0.1 and admin hosts (prose omits it; the sketch covers it through its exempt set).
+- Missed: the lock path and the unknown-user path return different codes (LOGIN_ATTEMPTS_EXCEEDED vs INVALID_CREDENTIALS), so the lock state is observable to an attacker. Not a note error; for Frankendom return one code for both.

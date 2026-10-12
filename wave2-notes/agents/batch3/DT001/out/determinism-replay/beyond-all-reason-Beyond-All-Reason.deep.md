@@ -9,11 +9,11 @@ Checked: Opened: `dbg_synctest.lua` 1-262, 278-330, 352-500, 540-739 (not read: 
 - A seeded synthetic run. Synced code (the gadget) spawns and moves units from a fixed seed; unsynced code (the same file, the `else -- UNSYNCED` branch at 568) collects one engine checksum per frame and writes a digest file at the end. Two machines or two builds that run the same seed should give the same digest. Constants: `RUN_SEED = 7654321` (19); `totalFrames = 2000` (83).
 - Anchored start. A run can start now (`beginRun(now)`, 195-197) or on a future frame given in the chat words. The comment says why: "The command to start arrives over the network, so its exact arrival frame is non-deterministic. So we want to anchor to a specific frame." (151-154). A start frame not after the current frame is refused (202-211). An armed start is held in `pendingStartFrame` (213) and begins in synced `GameFrame` when `n == pendingStartFrame` (279-280).
 - Begin. `beginRun` sets `runStartFrame` and `runEndFrame = start + totalFrames` (217-219), calls `initrandom(RUN_SEED)` (222), scans anchors, builds categories (223-224), then tells unsynced to start capture (244).
-- Draw table. `initrandom(seed)` calls `math.randomseed(seed)` (551) and fills a 5000-entry table with `math.random()` (552-554). `getrandom()` returns the next entry and wraps at 5000 (558-566). So the sequence is fixed by the seed and repeats every 5000 draws.
+- Draw table. `initrandom(seed)` calls `math.randomseed(seed)` (551) and fills a 5000-entry table with `math.random()` (552-554). `getrandom()` advances `randindex` first (it starts at 1), then reads, wrapping to 1 past 5000 (558-566); so the first draw is entry 2 and entry 1 comes only after the wrap. So the sequence is fixed by the seed and repeats every 5000 draws.
 - Order inside one synced frame (`GameFrame`, 278-310): (1) start a pending run if this is its frame (279-281); (2) return if no run is active (282); (3) `runFrame = n - runStartFrame` (286); (4) every `feedMod = 3` run frames, spawn one burst for each enabled category in table order (288-291); (5) on run frames where `runFrame % 3 == 1`, destroy expired wreckage (296-305); (6) when `n >= runEndFrame`, end the run (307-309), which removes all spawned units and features (257, 475-496) and tells unsynced to write (258).
 - Burst. For each category and each team: stop at the team cap (363-365, before any draw); draw two values for the burst centre, each offset from the anchor by `placementRadius * (draw - 0.5)` (371-372; radius 400 at 84, so about plus or minus 200); spawn up to `effectiveStep` units in a square grid (373-386); then give the new units a repeat order, three fight orders to destination anchors chosen by draws (393-398; draw at 394), and a final fight order to the anchor (399-400). Anchors are picked round-robin by a counter (410-411), so only placement and destinations use draws.
 - Effective counts. Without the opt-out, `effectiveMax = max(1, floor(max * mult / 2))` and `effectiveStep` the same (436-437). Rows with `noMultiplier` take the raw values (432-434). The category table is at 101-119: bots 400 max and 28 step (102); tanks 280 and 14 (103); fighters 280 and 14 (104); bombers 140 and 7 (105); hover, subs, ships and spiders 200 and 14 (106-109); commanders 3 and 1, with `noMultiplier` (110-118).
-- Digest. Unsynced `GameFrame` (675-699) samples `Spring.GetPrevFrameSyncChecksum()` for each frame in the window `n > start and n <= end` (682-692), but only if `Platform.hasSyncChecksums` is set (682; without it the file is written empty, 629-633). At the end it writes a digest of the checksum values in order (636-638), the per-frame checksums with their run frame (640-643), and the first and last frame, as JSON to `synctest_synchash.json` (645-652, 654-660). The digest is over the values only, so frame numbers are not part of it (636-637). The log line calls the digest "md5" (663).
+- Digest. Unsynced `GameFrame` (675-699) samples `Spring.GetPrevFrameSyncChecksum()` (the checksum of the PREVIOUS engine frame, so the entry labelled run frame k holds frame k-1's checksum) for each frame in the window `n > start and n <= end` (682-692), but only if `Platform.hasSyncChecksums` is set (682; without it the file is written empty, 629-633). At the end it writes a digest of the checksum values in order (636-638), the per-frame checksums with their run frame (640-643), and the first and last frame, as JSON to `synctest_synchash.json` (645-652, 654-660). The digest is over the values only, so frame numbers are not part of it (636-637). The donor hashes the newline-joined checksum strings with `VFS.CalculateHash(..., 0)` (line 636); the sketch uses FNV over ints, which is enough for clean-room. The log line calls the digest "md5" (663).
 - Unit state save (`game_restart_with_state.lua`). `collectUnitState` (105-224) walks all units. It skips units with no position, units inside a transport (133; `transporter`, 128), and nanoframes that have an active builder (111-121), because the builder's queue recreates them. Each kept unit becomes one row (section 7).
 - Unit state restore. The state arrives as LuaRules chunk messages (245-251), is joined and parsed with `loadstring("return " .. content)` (258), and is checked for shape (264). The restore is anchored: `restoreFrame = (Game.spawnWarpInFrame or 90) + 10` (270), applied in `GameFrame` when `n >= restoreFrame` (487-489). New units are created before old ones are removed, "so the engine never sees zero units" (289-291). Each unit is created under `pcall` (312-321), then health and build progress are set together (329), then experience (332), then the saved orders (338-344).
 - Spectator event feed. `dbg_replay_data.lua`: the unsynced gadget drops the `UnitDamaged` callin for players who are neither replaying nor spectating (22-24, 26-29). When it is kept, it forwards the full event to LuaUI (54-66). The widget that prints the events is in a block comment (71-113).
@@ -46,7 +46,7 @@ Numbers: run length 2000 (83); spawn every 3 run frames (85, 288); wreck cleanup
 
 ## 4. TypeScript sketch
 
-simplified: the sketch keeps the donor's start-and-anchor logic, the draw table and its wrap, the order of the synced frame (start, pace the spawns, sample, end), the table-driven effective counts and the digest over values only. It changes three things on purpose: the draw table is built from a private generator and never touches the global Lua RNG (donor defect: `math.randomseed` at 551); the table length is the only period, documented; and the spawn itself, the wreck cleanup, the unit placement and the unsynced file writer are left as callbacks. It omits the anchor scan, the team cap early return (the sketch draws regardless, see section 6), the save and restore path, and the spectator gate.
+simplified: the sketch keeps the donor's start-and-anchor logic, the draw table and its wrap (advance-then-read, as the donor), the order of the synced frame (start, pace the spawns, sample, end), the table-driven effective counts and the digest over values only. It changes three things on purpose: the draw table is built from a private generator and never touches the global Lua RNG (donor defect: `math.randomseed` at 551); the table length is the only period, documented; and the spawn itself, the wreck cleanup, the unit placement and the unsynced file writer are left as callbacks. It omits the anchor scan, the team cap early return (the sketch draws regardless, see section 6), the save and restore path, and the spectator gate.
 
 ```ts
 // Licence: donor GPL v2 or later (per gadget header and repo LICENSE.md). Clean-room sketch of the shape only.
@@ -77,9 +77,9 @@ function makeTable(seed: number, n: number): number[] {
 }
 
 function nextDraw(run: Run): number {
-  const v = run.table[run.cursor];
+  // Donor getrandom: advance first, then read. The cursor starts on entry 1, so the first draw is entry 2 and entry 1 comes only after the wrap.
   run.cursor = (run.cursor + 1) % run.table.length; // period is the table length (donor behaviour, kept and documented)
-  return v;
+  return run.table[run.cursor];
 }
 
 function begin(run: Run, frame: number): void {
@@ -147,6 +147,8 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Hazard: the team-cap early return (363-365) happens before any draw. So the draw sequence depends on unit counts. If a count ever differs between peers, every later draw shifts and the digest breaks from that tick on. This is useful for a test, risky for a game. Fix for us: draw before the cap check, so the sequence does not depend on counts.
 - Hazard: wreck removal walks `featurestoremove` with `pairs` (297). Lua does not define that order. Whether the order of `DestroyFeature` matters for synced state is engine-side and not read. Fix: sort the ids before destroying.
 - Hazard: restore parses saved text with `loadstring("return " .. content)` (258). Saved data is executed as Lua in synced code. Fix: parse as data with a whitelist of fields, never execute.
+- Open gap in the donor: the category table (around lines 99-100) has a TODO to add `cons` and `transports` categories; scripted moments are a second TODO (358).
+- Determinism detail: synced `GameFrame` spawns on the final frame before the `n >= runEndFrame` end check (278-309), so a burst can land on the last tick, and the digest window (`n <= end`) includes that frame.
 - Doc defect: the header (24) says the synced part "reads the file at Initialize". The code does not read a file; it takes chunk messages (245-251). Read the code, not the header.
 - Gap: the save skips units inside transports (128-133) and nanoframes whose builder is busy (111-121), and rules other than builder priority and wantcloak are not saved (203-217). A fight record must include carried state, or it cannot restore a fight in progress.
 - Gap: after a restore nothing compares the digest before and after (the restore is not hashed). Fix: take a digest before the save and after the restore, and fail the test on a difference.
@@ -164,7 +166,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 ## 8. Provenance
 
 - Repo: beyond-all-reason-Beyond-All-Reason (donor folder `/mnt/frankendom-donors/beyond-all-reason-Beyond-All-Reason`). Licence: GPL v2 for the game code (`LICENSE.md` line 2), per-file licence in the gadget header (`dbg_synctest.lua` 9, `game_restart_with_state.lua` 13, `dbg_replay_data.lua` 9: "GNU GPL, v2 or later"). Copyleft: shape only.
-- The engine (Recoil) is GPL v2 or later per `LICENSE.md` and is not in this donor folder.
+- `LICENSE.md` line 3 says only that the Recoil engine requires games to use code compatible with GPL v2 or later; it does not state the engine's own licence. The engine is not in this donor folder.
 
 ## 9. What they patched later
 
@@ -185,3 +187,14 @@ Best transferable idea: start every seeded run on an agreed future tick, draw fr
 
 Decision (proposed): adapt. Take the anchored start, the fixed draw order and the per-tick digest into the fight record for row 19; reject the global `math.randomseed` (defect, fixed with a private table), the `loadstring` restore (parse data only) and any save or restore in multiplayer.
 Acceptance: a server test runs a seeded 2000-tick fight script twice and asserts identical per-tick digests; inserting one extra draw in one category changes the digest from that tick on, and the test names the first differing tick.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: MINOR. All confirmed against the donor.
+- Digest sampling uses GetPrevFrameSyncChecksum, so the entry labelled run frame k is frame k-1's checksum; note did not say so.
+- Sketch nextDraw read-then-increment; donor getrandom increments first (randindex starts 1), so first draw is entry 2.
+- Section 8 said the engine is GPL v2 or later per LICENSE.md; LICENSE.md line 3 only says games must use compatible code.
+- Sketch digest is FNV over ints; donor hashes newline-joined strings with VFS.CalculateHash (acceptable for clean-room, now stated).
+- Missed: TODO to add cons/transports categories (dbg_synctest.lua 99); final-frame burst before the end check. Both added to section 6.
+
+Fixed 2026-10-12: nextDraw now advances then reads (work file bar-seeded-run-harness.ts updated); off-by-one checksum, getrandom order, digest hash and LICENSE.md wording corrected; two missed items added. Decision, Acceptance and Rulings unchanged (they do not rest on these claims).

@@ -160,3 +160,8 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
   2. Should a rejected action spend the cap? Recommendation: yes; the donor's bucket bug (`NetworkPlayer.ts` 139-145) is the reason to decide it now.
   3. Should a reconnect within 60 s resume the live fight state (donor's swap, `World.ts` 867-896)? Recommendation: yes, because the donor's no-response timeout is 60 s and the swap keeps the fight; the hop timer (45 s) is not needed while Frankendom runs one runtime.
 - **Core slice.** This feeds parity row 5 (intake) and the row 18 sub-line (server tick) in the first Core slice: one server-side check per fight request and one per-tick cap.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: CLEAN (30+ claims checked; only a wording nit on the ANTICHEAT 'grep returns nothing' sentence, meaning no decoder/handler binding while the declarations do match).
+- Missed: decodeIn sets lastResponse only when bytesRead>0 (NetworkPlayer.ts ~72-74), so keepalive packets (ClientProt225 NO_TIMEOUT/IDLE_TIMER) are what stop the 60s forced logout; the note does not say what resets the timeout.
+- Missed: todo 'move out of model' at the counting block (line ~138).

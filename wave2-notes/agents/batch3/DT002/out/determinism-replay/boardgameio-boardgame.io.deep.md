@@ -7,7 +7,7 @@ Checked: Read `src/plugins/random/random.ts` in full (198 lines), `src/plugins/r
 ## 1. Mechanism
 
 - **Pure draws with the stream state stored as data.** `Random` is built from the random state in plugin data (`random.ts` 63-70). Each draw restores the generator from the saved state (`alea(seed, R.prngstate)`, line 89), draws, and writes the advanced state back into the state object (93-96). So a move's result is a function of its input state: the same state gives the same draw, which the design doc states as the reason (`docs/documentation/random.md` 19-21).
-- **Seed.** The game's `seed` is used if set (`plugin-random.ts` 29-34). If not, the default is `Date.now().toString(36).slice(-10)` (`random.ts` 55-57): a time-based value, not a secret. The state carries `seed` only until the first draw; after that the saved `prngstate` takes over (88).
+- **Seed.** The game's `seed` is used if set (`plugin-random.ts` 29-34). If not, the default is `Date.now().toString(36).slice(-10)` (`random.ts` 55-57): a time-based value, not a secret. Line 88 stops using `seed` for seeding once `prngstate` exists, but `...R` (93-96) keeps `seed` in the plugin data for the whole game, so the stored seed stays in state (a leak surface if the plugin data is ever shown; see section 6).
 - **The generator (Alea, from seedrandom).** State is four numbers `c, s0, s1, s2` (`random.alea.ts` 29-34). Seeding hashes the seed text with Mash, once for a blank string per word and once per word for the seed (46-61; Mash 72-91). A step (64-69) computes `t = 2091639 * s0 + c * 2^-32`, shifts the words (`s0 = s1`, `s1 = s2`), takes `c = trunc(t)`, and returns `s2 = t - c`. The returned value is the raw draw in [0, 1).
 - **Game-facing draws** (`random.ts` 133-193): `Die(sides)` = `floor(u * sides) + 1` (135); `D4`..`D20` are the same with fixed sides; `Number()` returns the raw `u` (170-172); `Shuffle(deck)` takes one draw per remaining item, picks index `trunc(remaining * u)`, outputs that item and moves the last remaining item into the hole (186-190). So shuffling n items uses n draws.
 - **Client rule (NoClient).** The random plugin returns `isUsed()` from `noClient` (`plugin-random.ts` 16-18). The reducer, on a client, runs the move, asks `NoClient`, and if true returns the old state (`reducer.ts` 506, 522-524). The client does not show the move's result and waits for the server (`main.ts` 227-229). Test: a move that calls `random.D6()` leaves the client's `G.die` undefined (`random.test.ts` 103-126).
@@ -134,6 +134,7 @@ function clientApply<S>(old: S, result: { state: S; usedRandom: boolean }): S {
 ## 6. Gaps and risks
 
 - **Raw draws in state leak the stream.** `random.Number()` returns the raw value (`random.ts` 170-172), and the generator state is the last few raw values plus a carry (`random.alea.ts` 64-68). A move that stores `Number()` in `G` shows the generator to every player who sees `G`. My reading, not run: several consecutive raw values are enough to rebuild the state. fix: the fight state keeps only derived results (a hit, a roll, a loot pick), never a raw draw; the stream state is server-only.
+- **Seed stays in state and the bot has an unseeded path.** The plugin record keeps `seed` for the whole game (`random.ts` 93-96), so the redaction test must cover it too. The bot falls back to `Math.random()` when no seed is set (`bot.ts` 101-102), an unseeded draw path. `D8` is in `SpotValue` (`random.ts` 107) but missing from the `RandomAPI` interface (17-32), a small typing defect. Fix: drop `seed` from player-visible data, forbid unseeded fallbacks in our engine.
 - **The donor's only guard is redaction.** Redaction (`plugin-random.ts` 37) is the sole protection for the state; a new plugin that forgets it leaks it. fix: a server test asserts the player view JSON has no `rng` key, for every player view.
 - **Time-based default seed.** `Random.seed()` uses `Date.now()` (`random.ts` 55-57). fix: fight seeds come from the server's crypto source and are stored only on the server. Nothing in `src/fight` may default to time.
 - **Client discard costs a round trip.** NoClient means any roll-using move is discarded on the client and waits for the server (`reducer.ts` 522-524). That is the right rule for server-verified kills, but a hit feels slower on a phone. Dom ruling 1 below.
@@ -161,3 +162,12 @@ function clientApply<S>(old: S, result: { state: S; usedRandom: boolean }): S {
 Best transferable idea: keep every random draw a pure function of the stored state, store that state as four plain numbers in the fight state, and let the client discard any move that drew randomness until the server answers.
 Decision (proposed): adapt — take the pure draw, plain-data state and client-discard rule; drop the time-based seed default and the raw `Number()` exposure, and split the one stream into named sub-streams.
 Acceptance: the duel replay test, the player-view test and the client-discard test above all pass in CI.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR
+- Error: note said state carries seed only until the first draw; random.ts 93-96 spreads ...R so seed stays in plugin data all game.
+- Missed: bot.ts 101-102 falls back to Math.random() when unseeded.
+- Missed: D8 in SpotValue (random.ts 107) but absent from RandomAPI interface (17-32).
+- Missed: stored seed is a leak surface relevant to the redaction risk.
+
+Fixed 2026-10-12: seed-lifetime claim in Mechanism corrected; unseeded bot path, D8 typing gap and seed-in-state leak added to Gaps and risks. Sketch unchanged (it already omits the seed after setup).

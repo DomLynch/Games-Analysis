@@ -26,9 +26,9 @@ function makeTable(seed: number, n: number): number[] {
 }
 
 function nextDraw(run: Run): number {
-  const v = run.table[run.cursor];
+  // Donor getrandom: advance first, then read. The cursor starts on entry 1, so the first draw is entry 2 and entry 1 comes only after the wrap.
   run.cursor = (run.cursor + 1) % run.table.length; // period is the table length (donor behaviour, kept and documented)
-  return v;
+  return run.table[run.cursor];
 }
 
 function begin(run: Run, frame: number): void {

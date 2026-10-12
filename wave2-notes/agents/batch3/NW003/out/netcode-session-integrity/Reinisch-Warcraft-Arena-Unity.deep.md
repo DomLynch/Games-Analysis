@@ -18,17 +18,17 @@ Server authority for casts, with display-only copies on the client. Requests com
 - **Prepare.** `Spell.Prepare` (277-288) computes power costs (281), runs `ValidateCast` (283), and calls `Cast` only on success (287).
 - **Check chain (`ValidateCast`, 290-353), in this order, first failure wins:**
   1. triggered-by-aura flag: return Success at once (292-293), skipping every later check;
-  2. known spell (295-296);
+  2. known spell (295-296), checked only when the caster is a Player (`Caster is Player player && ...`); non-player casters skip it;
   3. caster alive, unless passive or castable while dead (299-300);
-  4. per-spell cooldown, with the comment "check cooldowns to prevent cheating" (302-304);
-  5. global cooldown, unless the cast carries the ignore-GCD flag (307-308);
+  4. per-spell cooldown, with the comment "check cooldowns to prevent cheating" (302-304); ready means a charge is available when the spell uses charges, otherwise no cooldown entry (`SpellHistory.IsReady` 58-62);
+  5. global cooldown: blocks EVERY spell while one runs, unless the cast carries the ignore-GCD flag (307-308); the DoesNotTriggerGcd attribute does not exempt a spell here, it only stops a cast from starting a new GCD;
   6. already casting, unless the spell can cast while casting (311-312);
   7. combo points (314-315);
   8. explicit target and target checks, unless the ignore-target flag is set (318-330);
   9. range (332-334), auras (336-338), caster state (340-342), powers (344-346), shape-shift (348-350).
 - **Begin cast (`Spell.cs` 612-626).** State becomes Casting (613). The cast is instant if the time is 0 or less, if already casting, or if the cast flags say so (619). Then the moving check (620-621) reads `casterMovementFlags`, which is the request's flags when given and the server's own motion otherwise (69). Shape-shift is removed if needed (623-624). The global cooldown starts here (626).
 - **Cast progress (`Spell.cs` 150-167).** Time left goes down by the tick delta (153). At zero the spell finishes and launches (154-158). Otherwise, once more than 200 ms have elapsed (161), a spell that is not castable while moving is cancelled if the server's motion flags interrupt casts (162-165).
-- **Cooldown bookkeeping (`SpellHistory.cs`).** The global cooldown starts when the spell does not have the DoesNotTriggerGcd attribute (88-96, skip at 90); a longer GCD already running is kept (93-94); it ticks down each update with a clamp at zero (31-32). A per-spell cooldown starts on launch from the spell's cooldown time (105-122, 120), ticks down each update (34-38), and the spell is ready when no cooldown is above zero (58-68).
+- **Cooldown bookkeeping (`SpellHistory.cs`).** The global cooldown starts when the spell does not have the DoesNotTriggerGcd attribute (88-96, skip at 90); a longer GCD already running is kept (93-94); it ticks down each update with a clamp at zero (31-32). A per-spell cooldown starts on launch from the spell's cooldown time (105-122, 120), ticks down each update (34-38), and the spell is ready when it has a charge (charged spells) or no cooldown entry (58-62).
 - **Client, display only.** `ClientSpellResultHandler` (32-45): a failure raises an event and starts nothing (34-37); a success starts the display cooldown, and only for a pure remote client (40-44). A replicated cast is shown by `SpellCast` and ticked down locally between updates (68-98), cleared at zero (96-97). The client never predicts a cast: it waits for the server's result.
 - **Admission (`NgoNetworkController.cs` 262-300).** The host's own client is always approved (268-273). A session is full at 8 players (276-281). The connection token must be valid (283-289) and the version must match (291-296). The approved token is stored per client (298). No reconnect or session-resume logic was found: a grep for reconnect or resume matched only a comment.
 
@@ -53,7 +53,7 @@ Server authority for casts, with display-only copies on the client. Requests com
 
 ## 4. TypeScript sketch
 
-simplified: keeps the donor's order (validation chain, then the start-of-cast moving check, then cost and GCD, then cast progress, then move interrupt, then launch and cooldown). Changes from the donor: the moving check reads the server's motion only; the cooldown starts on launch as in the donor; the router's client-supplied movement flags are not part of the signature at all. Omitted: the target lookup, the spell effects and damage, auras, caster state, shape-shift, combo points, charges, the ignore-GCD and ignore-target cast flags (kept out of the wire entirely in this sketch), the triggered-cast bypass (kept internal, not in this file), the power types other than one pool, the instant-cast flag, and the per-spell GCD attribute (`triggersGcd` stands in for it).
+simplified: keeps the donor's order (validation chain, then the start-of-cast moving check, then cost and GCD, then cast progress, then move interrupt, then launch and cooldown). Changes from the donor: the moving check reads the server's motion only; the cooldown starts on launch as in the donor; the GCD check blocks every spell while a GCD runs, as in the donor (the sketch has no ignore-GCD flag); the router's client-supplied movement flags are not part of the signature at all. Omitted: the target lookup, the spell effects and damage, auras, caster state, shape-shift, combo points, charges, the ignore-GCD and ignore-target cast flags (kept out of the wire entirely in this sketch), the triggered-cast bypass (kept internal, not in this file), the power types other than one pool, the instant-cast flag, and the per-spell GCD attribute (`triggersGcd` stands in for it, and only decides whether a cast starts a GCD).
 
 ```ts
 // Licence: public domain dedication (Unlicense, Reinisch-Warcraft-Arena-Unity). Clean-room sketch written from the described mechanism.
@@ -95,7 +95,7 @@ function validateCast(c: Caster, def: SpellDef | undefined, target: Target | und
   if (!c.known.has(def.id)) return 'NotKnown';
   if (!c.alive) return 'CasterDead';
   if ((c.cooldownLeftMs.get(def.id) ?? 0) > 0) return 'NotReady';
-  if (c.gcdLeftMs > 0 && def.triggersGcd) return 'NotReady';
+  if (c.gcdLeftMs > 0) return 'NotReady'; // donor blocks every spell while a GCD runs; only the ignore-GCD cast flag (not on our wire) skips it
   if (c.cast !== null) return 'NotReady';
   if (target !== undefined && !target.ok) return 'BadTargets';
   if (target !== undefined && Math.hypot(target.x - c.x, target.z - c.z) > def.range) return 'OutOfRange';
@@ -172,6 +172,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 - **Movement is client-authoritative (design, anti-cheat gap).** `ServerPlayerBroadcaster.cs` 11 says so in its own comment. The range check (`ValidateRange`, not read) therefore works on positions the client drives. Our server-verified kills rule needs the server to own the position used for range.
 - **Unregistered senders act as the host (defect).** `ServerCommandRouter.cs` 47-50 falls back to `world.PlayerManager.Player` when the sender has no registered player. The router's comment says this is for single-player and pre-registration. On a host it lets an unknown connection cast as the host. Fix: refuse, do not fall back. Whether `PlayerManager.Player` is null on a dedicated server was not read.
 - **Triggered-cast bypass skips every check (latent risk).** `Spell.cs` 292-293 returns Success before any check when the triggered flag is set. The router does not expose the flag today. Any future route that carries cast flags from the wire would skip cooldowns, range and power. Fix: keep the bypass internal in our build; no wire field for it.
+- **Other router requests are unvalidated (defect).** `OnTargetSelection` (`ServerCommandRouter.cs` 125-132) lets any client set its caster's target to any registry id with no range or team check; `OnClassChange` (120-122) lets a client switch class at will. No cast-cancel path was read. Fix: server validates target (range, team, alive) and gates class change by game state.
 - **Chat has no rate or length limit (gap, not fight).** `ServerCommandRouter.cs` 134-141 broadcasts every message to everyone. Flag to the chat lane.
 - **No prediction (design choice).** The client starts its display cooldown only after the server accepts (`ClientSpellResultHandler.cs` 34-44), so there is no rollback. The cost is one round trip before the action bar moves. Decide in ruling 3.
 - **No reconnect or session resume.** A dropped client is approved again with a new token (`NgoNetworkController.cs` 283-298) and this donor keeps no fight state for it. Our one-ledger rule needs a resume rule; the 2004Scape and Open-RSC notes show two options.
@@ -181,9 +182,20 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS,
 
 - **As-data shape.** Spell rows are `SpellInfo` assets (`ScriptableUniqueInfo<SpellInfo>`, `SpellInfo.cs` 11). Fields read: `castTime` (82), `cooldownTime` (79), `globalCooldownTime` (81), `charges` (84), plus attribute flags checked by name (`DoesNotTriggerGcd`, `CastableWhileMoving`, `CanCastWhileCasting`, `CastableWhileDead`, `RequiresComboPoints`). Row fields: id: int, castTime: int, cooldownTime: int, globalCooldownTime: int, charges: int, attributes: flag set. A new spell is one row: yes, provided the balance reference loads the new asset (the loader was not read). A new check in the chain is one row: no, it is a method in `Spell.ValidateCast`. A new result code is one enum line: yes (`SpellCastResult.cs`, fixed integer values).
 - **Provenance.** Repo Reinisch-Warcraft-Arena-Unity; Unlicense (`LICENSE` line 1). Every claim is in sections 1-3 with file and line; the receipts file has the rows (verifier passed on all 182 rows across the three donors).
-- **What they patched later.** No history available (no `.git` directory, no changelog). Comments only: "check cooldowns to prevent cheating" (`Spell.cs` 302); "A host's real cast already started its cooldowns" (`ClientSpellResultHandler.cs` 29), which marks a host/remote split that was fixed in code, not in history. Two TODOs about map traversal and visibility in `Net/Ngo/NgoEntitySpawner.cs` (148, 204) are not netcode-session topics.
+- **What they patched later.** No history available (no `.git` directory, no changelog). Comments only: "check cooldowns to prevent cheating" (`Spell.cs` 302); "A host's real cast already started its cooldowns" (`ClientSpellResultHandler.cs` 29), which only explains why the display copy is made for remote-only clients (that the split was fixed later is an inference, not shown). Two TODOs about map traversal and visibility in `Net/Ngo/NgoEntitySpawner.cs` (148, 204) are not netcode-session topics.
 - **Rulings for Dom.**
   1. Should the server own the position used for range and the moving check for every fight action? Recommendation: yes; the donor trusts the client here, which our server-verified kills ruling rules out.
   2. Should an unregistered connection be refused, not applied to the host's own player? Recommendation: yes, refuse.
   3. For v1, should the Pit show special cooldowns only after the server accepts (donor style), or predict locally and roll back? Recommendation: server result only for v1; add prediction only if the round trip is felt on a phone.
 - **Core slice.** Feeds parity row 13 (specials) through `src/fight/specials.ts` and the intake check in row 5. Ruling 1 touches row 5 and the one-ledger rule.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+
+Verdict: MINOR. All confirmed against the donor.
+- Check 2 (known spell) is conditional on the caster being a Player (Spell.cs 295); note said unconditional.
+- Cooldown readiness has a charges branch first (SpellHistory.IsReady 58-62); note said only 'no cooldown above zero'.
+- Sketch added `&& def.triggersGcd` to the GCD check; donor blocks every spell on an active GCD unless IgnoreGcd is set (Spell.cs 307-308); DoesNotTriggerGcd only affects starting a GCD (SpellHistory 88-90).
+- 'What they patched later' read the line-29 comment as a fixed host/remote split; that is an inference.
+- Missed: OnTargetSelection (125-132) accepts any target id with no checks; OnClassChange (120-122) lets a client switch class; cast-cancel path not covered. Added to section 6.
+
+Fixed 2026-10-12: check-chain items 2, 4, 5 and cooldown bookkeeping corrected; sketch GCD check now blocks every spell (work file Reinisch-cast-validation.ts updated); sketch header text updated; patched-later line softened to an inference; unvalidated target/class requests added to section 6. Decision, Acceptance and Rulings unchanged (they did not rest on the wrong claims).

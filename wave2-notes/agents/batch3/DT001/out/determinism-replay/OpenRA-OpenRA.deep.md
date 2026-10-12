@@ -2,14 +2,14 @@
 
 Donor: `/mnt/frankendom-donors/OpenRA-OpenRA/OpenRA.Game/Network/OrderManager.cs` | Licence: GPL-3.0 (COPYING is GPL v3; file headers say "version 3 of the License, or (at your option) any later version") | C# | symbols `OrderManager.TryTick`, `OrderManager.ProcessOrders`, `OrderManager.ReceiveSync`, `World.SyncHash`, `Server.HandleSyncOrder`, `ReplayConnection`, `ReplayRecorder`
 
-Checked: Opened in full: `Network/OrderManager.cs`, `Sync.cs`, `Network/ReplayConnection.cs`, `Network/ReplayRecorder.cs`, `Network/TickTime.cs`. Opened in part: `World.cs` (33, 85, 190-225, 386-520, 615-628), `Network/SyncReport.cs` (1-130 of 344), `Server/Server.cs` (307, 329, 797, 813-856, 862-873, 920-935, 1362-1372), `Network/Order.cs` (230-246), `Game.cs` (636-668), `GameSpeed.cs` (12-60), `FileFormats/ReplayMetadata.cs` (12-80), `Support/MersenneTwister.cs` (17-60), `mods/ts/mod.yaml` (281-306). Not read: `Network/Connection.cs`, `SyncReport.cs` 130-344 (dump body), the trait tick order inside `ApplyToActorsWithTraitTimed`, the value of `Game.TimestepJankThreshold`, the `NetFrameInterval` default, and any `[VerifySync]` field in the mods. Short numeric lines (Timestep values) are cited by line, not receipted, because the verifier needs 15-90 characters. Confidence: high on the hash, the lockstep order of operations, the server compare and the replay path; medium on how a replay restores the lobby settings (only the SyncInfo read in ReplayConnection.cs 69-72).
+Checked: Opened in full: `Network/OrderManager.cs`, `Sync.cs`, `Network/ReplayConnection.cs`, `Network/ReplayRecorder.cs`, `Network/TickTime.cs`. Opened in part: `World.cs` (33, 85, 190-225, 386-520, 615-628), `Network/SyncReport.cs` (1-130 of 344), `Server/Server.cs` (307, 329, 797, 813-856, 862-873, 920-935, 1362-1372), `Network/Order.cs` (230-246), `Game.cs` (37, 636-668), `GameSpeed.cs` (12-60), `FileFormats/ReplayMetadata.cs` (12-80), `Support/MersenneTwister.cs` (17-60), `mods/ts/mod.yaml` (281-306). Not read: `Network/Connection.cs`, `SyncReport.cs` 130-344 (dump body), the trait tick order inside `ApplyToActorsWithTraitTimed`, the `NetFrameInterval` default, and any `[VerifySync]` field in the mods. Short numeric lines (Timestep values) are cited by line, not receipted, because the verifier needs 15-90 characters. Confidence: high on the hash, the lockstep order of operations, the server compare and the replay path; medium on how a replay restores the lobby settings (only the SyncInfo read in ReplayConnection.cs 69-72).
 
 ## 1. Mechanism
 
 - Lockstep with a relay. Each client sends its orders for net frame N; the server relays them. A client advances the world only when every client queue holds a packet for that frame (`OrderManager.cs` 202, 300-328; the `IsReadyForNextFrame` check at 202 and `TryTick` at 300-328).
 - Order inside one loop pass (`Game.cs` 645-662): advance the tick clock (645), run immediate orders and receive packets (649), and only if `TryTick()` succeeds (658) run the order generator and `world.Tick()` (660-662).
 - Inside `ProcessOrders` (`OrderManager.cs` 234-285): dequeue one packet per client, check its frame equals `NetFrameNumber` (244-245), apply each order through `UnitOrders.ProcessOrder` (255-258), then compute `World.SyncHash()` plus a defeat bitmask (265-272) and send it (272), then `++NetFrameNumber` (284). The hash is taken after frame N's orders and before frame N's world tick.
-- The hash (`World.cs` 482-507): `n` is a running index. For each actor in ascending `ActorID` (the actor dictionary is a `SortedDictionary`, 33; the loop at 490-491) add `n++ * (1+ActorID) * HashActor`. Then each `ISync` trait hash with the same weighting (494-496), then synced effects (499-500), then `SharedRandom.Last` (503).
+- The hash (`World.cs` 482-507): `n` is a running index. For each actor in ascending `ActorID` (the actor dictionary is a `SortedDictionary`, 33; the loop at 490-491) add `n++ * (1+ActorID) * HashActor`. Then each `ISync` trait hash with the same weighting (494-496), then synced effects (499-500), then `SharedRandom.Last` (503), then a per-player hash for each player with `UnlockedRenderPlayer` (506-508). Frames below `GameSaveLastSyncFrame` (a loaded save) send hash 0 and defeat 0 instead of the real hash (`OrderManager.cs` 265-270).
 - Per-trait hashes come from a reflection-built function that folds every field or property marked `[VerifySync]` (`Sync.cs` 24, 78-107, the field filter at 89). Accepted types: int, bool (a fixed pattern, 0xaaa or 0x555, at 66-69), and a short list of custom types (44-57). Any other type throws (72-73).
 - Compare: `OrderManager.ReceiveSync` (161-170) stores the first (frame, hash, defeat) per frame and calls `OutOfSync` if a later one differs (165-166). The server does the same in `HandleSyncOrder` (`Server.cs` 813-849): it compares the full packet bytes (825), flags out-of-sync on any difference (827), otherwise stores the first packet (849) and applies the defeat state from the first client (834-847, paraphrased).
 - Out of sync: `OutOfSync` dumps the sync report (`OrderManager.cs` 91), calls `World.OutOfSync()` (92), which ends the game and pins `ReplayTimestep` to 0 (`World.cs` 621-626).
@@ -19,7 +19,7 @@ Checked: Opened in full: `Network/OrderManager.cs`, `Sync.cs`, `Network/ReplayCo
 - Replay playback: `ReplayConnection` parses the whole file into chunks (37-88). It takes the lobby settings, including the seed and game speed, from the `SyncInfo` order (69-72). A chunk is released when its frame is at most `NetFrameNumber + orderLatency` (111). Recorded sync packets go to `ReceiveSync` (117-118). The replay's own `SendSync` enqueues the locally computed hash (101-104), which is passed to `ReceiveSync` on the next receive (108-109). So a replay checks itself with the same compare as live play.
 - Replay pacing: `SuggestedTimestep` returns `World.ReplayTimestep` while the net frame is below the replay tick count (`OrderManager.cs` 214-215).
 - Seed: the server draws `randomSeed` from `DateTime.Now` (`Server.cs` 307) and puts it in the lobby global settings (329; `Session.cs` 212). `World` builds `SharedRandom` from it (`World.cs` 199) and a separate player RNG with the same seed for faction and spawn (214-216). The default `LocalRandom` (200) is seeded from `Environment.TickCount` (`MersenneTwister.cs` 26), so it is not part of the lobby seed.
-- Tick clock (`TickTime.cs` 16-49): `ShouldAdvance` is true when `tick - Value >= timestep` (35-36). `AdvanceTickTime` rounds the delta down to whole timesteps (45). If that rounded amount is at or above `Game.TimestepJankThreshold` (value not read), it jumps by that amount. Otherwise it moves one timestep (46-48).
+- Tick clock (`TickTime.cs` 16-49): `ShouldAdvance` is true when `tick - Value >= timestep` (35-36). `AdvanceTickTime` rounds the delta down to whole timesteps (45). If that rounded amount is at or above `Game.TimestepJankThreshold` (250 ms, `Game.cs` 37), it jumps by that amount. Otherwise it moves one timestep (46-48).
 - Speeds: the ts mod has a `GameSpeeds` table (`mods/ts/mod.yaml` 281-306). The default row has Timestep 40 (294) and OrderLatency 3 (295). Timesteps run from 80 (slowest) to 20 (fastest, 306).
 
 ## 2. Key functions
@@ -44,7 +44,7 @@ Checked: Opened in full: `Network/OrderManager.cs`, `Sync.cs`, `Network/ReplayCo
 | Order latency: frame N's orders apply at N + latency | OrderLatency 3 at default speed (mods/ts/mod.yaml 295) |
 | Fixed tick step | Timestep 40 ms at default; 80 slowest to 20 fastest (mods/ts/mod.yaml 286-306; not receipted, line too short) |
 | Desync report ring | 7 frames (SyncReport.cs 25) |
-| Clock catch-up after a stall | Jank threshold: value not read |
+| Clock catch-up after a stall | `TimestepJankThreshold` = 250 ms (`Game.cs` 37) |
 
 ## 4. TypeScript sketch
 
@@ -127,7 +127,8 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 
 - Copyleft: GPL-3.0. Shape only. The sketch is written from the mechanism, not translated.
 - The lockstep wait (`OrderManager.cs` 202, 300-328) means one slow client stalls every client. Our server is the authority and must not wait on clients. Reject the wait; keep the hash and the replay.
-- Defect: the hash folds only `SharedRandom.Last` (`World.cs` 503), not the generator state, so two streams in different states can agree on one tick. Fix: fold the state too (in the sketch).
+- Weak point (not a lost check): the hash folds only `SharedRandom.Last` (`World.cs` 503), not the generator state. Two streams in different states can agree on one tick, but the next draw differs, so detection is delayed by a tick or more, not missed. Fix: fold the state too (in the sketch) so the first differing tick is named exactly.
+- Missed donor guard: `Sync.RunUnsynced` (`Sync.cs` 166-205, used in `Game.cs` 650 and 660) hashes the world before and after code that must not change sim state (order generator, immediate orders) and throws "sync-changing code may not run here" if the hash moved. Keep this idea: a debug-mode wrapper that hashes before and after client-side code and fails the test if sim state changed (the Three.js client never writes sim state).
 - Defect: a malformed order is swallowed (`Order.cs` 240-244, HACK comment). If decoding differed between clients it would appear only as a later desync. Fix: reject the packet on the server, count it, and log it. Never silent.
 - Wall-clock seed (`Server.cs` 307). Fix for us: the server draws the seed once, stores it on the fight record with the rule version.
 - Floats: the donor's world positions are integers (`WPos.cs` 23). Our fight state must be integer or fixed-point before it is hashed. The Three.js client never writes sim state (kills are server-verified).
@@ -135,7 +136,7 @@ Typecheck: `npx -p typescript tsc --noEmit --strict --target es2020` on the VPS 
 - Replay version: the donor stores replays per mod and version (`ReplayRecorder.cs` 48) and checks metadata version 1 (`ReplayMetadata.cs` 45). Fix for us: refuse to replay a fight recorded under another rule version.
 - The desync dump is off by default and expensive (`OrderManager.cs` 107-109). For us: full per-tick reports only in tests; production keeps the hash only.
 - A server-side replay on desync is a donor TODO (`Server.cs` 797). For us the server is the recorder, so the replay exists by construction.
-- Not read: `Connection.cs`; the value of `TimestepJankThreshold`; the `NetFrameInterval` default; the `[VerifySync]` field list in the mods.
+- Not read: `Connection.cs`; the `NetFrameInterval` default; the `[VerifySync]` field list in the mods.
 
 ## 7. As-data shape
 
@@ -168,3 +169,13 @@ Best transferable idea: record each fight as seed, input log and rule version, a
 
 Decision (proposed): adapt. Keep the per-tick hash over id-ordered state and the replay-from-seed-and-inputs check for row 19, reject the lockstep wait (our server is the authority and must not wait for clients), and fold the RNG state (the donor's defect, fixed).
 Acceptance: a server test records a 3-on-1 fight from one seed and an input log, re-runs it from the seed, and asserts the hash matches every tick; changing one damage constant makes the test name the first differing tick.
+
+## Checker findings (Sonnet 5.5 medium, 2026-10-12)
+Verdict: MINOR (checked against the donor on the VPS; all four errors confirmed).
+- SyncHash text stopped at `SharedRandom.Last`; `World.SyncHash` continues with a per-player hash for `UnlockedRenderPlayer` (506-508). Confirmed.
+- `OrderManager.cs` 265-270 sends hash 0,0 below `GameSaveLastSyncFrame`; not stated. Confirmed.
+- `TimestepJankThreshold` is 250 (`Game.cs` 37), note said not read. Confirmed.
+- "Defect: hash folds only SharedRandom.Last" overstated: a state difference shows on the next draw, so detection is delayed, not lost. Confirmed.
+- Missed: `Sync.RunUnsynced` / `SyncCheckUnsyncedCode` (`Sync.cs` 166-205) guard against sim state changing in unsynced code. Confirmed.
+
+Fixed 2026-10-12: added the per-player hash term and the game-save zero-hash rule to the mechanism; set the jank threshold to 250 ms in the numbers table and dropped it from "Not read"; reworded the RNG-state defect as delayed detection (the sketch's state fold stays, as a precision gain); added the `RunUnsynced` guard as a kept idea. Sketch code unchanged, so no new typecheck.
