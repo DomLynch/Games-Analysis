@@ -15,3 +15,8 @@ Say which numbers suit a fast mobile fight.
 (h) ACQUISITION: learn/buy/scroll/spellmaking (Daggerfall-style custom spells: cost formula), schools gated by stats.
 (i) ECONOMY: reagents as items, spell cost in coin.
 Also report resource pools as DATA per character row (health/stamina/mana/focus). Feeds: engine row 13 (specials), Proof 3 CC ladder, catalogue row 21, stock-take row 8, Core items (reagents, corpses).
+
+## Gap groups MG009-MG011 (the first 8 magic groups did not cover these; focus ONLY on your sub-topic)
+MG009 summons-necromancy-corpses-pets: summon limits, upkeep, leash, who owns kill/loot/XP, corpses as a resource (decay, raise limits, corpse ownership), pet AI stance.
+MG010 spellmaking-acquisition-reagent-economy: learn/buy/scroll/spellmaking (Daggerfall-style custom spell cost formula), schools gated by stats, reagents as items, spell cost in coin.
+MG011 dragons-and-boss-abilities: breath cones, phases, flight phases and flight as a movement model, armour per body part, taming/bonding, mounts.
